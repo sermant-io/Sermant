@@ -1,0 +1,3 @@
+com.lubanops.apm.plugin.flowcontrol.AlibabaDubboDefinition
+com.lubanops.apm.plugin.flowcontrol.DispatcherServletDefinition
+com.lubanops.apm.plugin.flowcontrol.ApacheDubboDefinition

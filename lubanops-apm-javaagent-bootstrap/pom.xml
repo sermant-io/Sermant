@@ -1,0 +1,29 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.huawei.hwclouds.lubanops</groupId>
+        <artifactId>lubanops-apm-javaagent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <artifactId>lubanops-apm-javaagent-bootstrap</artifactId>
+    <properties>
+        <package.relative.dir>boot</package.relative.dir>
+    </properties>
+    <dependencies>
+        <!--替换javassist-->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.10.14</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,36 @@
+package com.huawei.apm.enhance;
+
+import com.lubanops.apm.bootstrap.log.LogFactory;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
+/**
+ * 拦截器链
+ */
+public class InterceptorChain {
+
+    private final static Logger LOGGER = LogFactory.getLogger();
+
+    private static final int NOT_IN_CHAIN = Integer.MAX_VALUE;
+
+    private final Map<String, Integer> priorities = new HashMap<String, Integer>();
+
+    public InterceptorChain(String[] interceptors) {
+        int index = 1;
+        for (String interceptor : interceptors) {
+            final Integer integer = priorities.get(interceptor);
+            if (integer == null) {
+                priorities.put(interceptor, index++);
+            }
+        }
+        LOGGER.info(String.format("Build interceptor chain {%s} successfully.", Arrays.toString(interceptors)));
+    }
+
+    public int getPriority(String interceptor) {
+        final Integer priority = priorities.get(interceptor);
+        return priority == null ? NOT_IN_CHAIN : priority;
+    }
+}
