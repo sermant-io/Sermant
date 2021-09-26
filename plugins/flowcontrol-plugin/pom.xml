@@ -13,6 +13,7 @@
 
     <properties>
         <sentinel.version>1.8.0</sentinel.version>
+        <package.clean.skip.flag>false</package.clean.skip.flag>
         <shade.distinct.prefix>com.lubanops.apm.dependencies.flowcontrol</shade.distinct.prefix>
     </properties>
     <dependencies>

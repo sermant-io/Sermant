@@ -44,7 +44,7 @@
                                 <fileset>
                                     <directory>${package.dir}</directory>
                                     <includes>
-                                        <include>${javaagent.package.name}.jar</include>
+                                        <include>*${javaagent.package.name}*.jar</include>
                                     </includes>
                                 </fileset>
                             </filesets>
@@ -76,7 +76,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <configuration>
-                    <finalName>${javaagent.package.name}</finalName>
+                    <outputFile>${package.dir}/${javaagent.package.name}.jar</outputFile>
                 </configuration>
             </plugin>
         </plugins>

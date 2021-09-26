@@ -186,7 +186,6 @@
         </profile>
     </profiles>
     <build>
-        <finalName>original-${project.artifactId}-${javaagent.version}</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -202,8 +201,7 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <finalName>${project.artifactId}-${javaagent.version}</finalName>
-                        <outputDirectory>${package.dir}</outputDirectory>
+                        <outputFile>${package.dir}/${project.artifactId}-${javaagent.version}.jar</outputFile>
                         <relocations>
                             <relocation>
                                 <pattern>com.alibaba</pattern>
@@ -274,9 +272,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
-                <configuration>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

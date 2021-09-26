@@ -9,10 +9,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -90,7 +97,7 @@ public class CommonLoadConfigStrategy implements LoadConfigStrategy<Properties> 
         final String typeKey = ConfigLoader.getTypeKey(cls);
         for (Field field : cls.getDeclaredFields()) {
             final String key = typeKey + '.' + ConfigLoader.getFieldKey(field);
-            final Object value = getConfig(holder, key, field.getType());
+            final Object value = getConfig(holder, key, field);
             if (value != null) {
                 setField(config, cls, field, value);
             }
@@ -146,22 +153,112 @@ public class CommonLoadConfigStrategy implements LoadConfigStrategy<Properties> 
     /**
      * 获取配置信息内容，需要经过两次转换：
      * <pre>
-     *     1.{@code fixConfig}方法，修正形如"${}"的配置
-     *     2.{@code toBaseType}方法，将配置信息字符串进行类型转换
+     *     1.{@link #fixConfig}方法，修正形如"${}"的配置
+     *     2.{@link #toBaseType}等方法，将配置信息字符串进行类型转换
      * </pre>
+     * 支持int、short、long、float、double、String和Object类型，以及他们构成的数组、List和Map
      *
      * @param config 配置主要承载对象{@link Properties}
      * @param key    配置键
-     * @param type   配置对象属性类型
-     * @param <R>    配置对象属性泛型
+     * @param field  属性
      * @return 配置信息
      */
-    private <R> R getConfig(Properties config, String key, Class<R> type) {
-        return toBaseType(fixConfig(config.getProperty(key), config), type);
+    private Object getConfig(Properties config, String key, Field field) {
+        final String configStr = fixConfig(config.getProperty(key), config);
+        final Class<?> fieldType = field.getType();
+        if (fieldType.isArray()) {
+            return toArrayType(configStr, fieldType.getComponentType());
+        } else if (List.class.equals(fieldType)) {
+            final Type[] argumentTypes = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+            if (argumentTypes.length != 1 || !(argumentTypes[0] instanceof Class)) {
+                return null;
+            }
+            return toListType(configStr, (Class<?>) argumentTypes[0]);
+        } else if (Map.class.equals(fieldType)) {
+            final Type[] argumentTypes = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+            if (argumentTypes.length != 2 || !(argumentTypes[0] instanceof Class) ||
+                    !(argumentTypes[1] instanceof Class)) {
+                return null;
+            }
+            return toMapType(configStr, (Class<?>) argumentTypes[0], (Class<?>) argumentTypes[1]);
+        } else {
+            return toBaseType(configStr, fieldType);
+        }
     }
 
     /**
-     * 将配置信息字符串进行类型转换，支持int、short、long、float、double、String和Object类型
+     * 将配置信息字符串转换为数组，需要注意以下内容：
+     * <pre>
+     *     1.数组的数据类型必须可被{@link #toBaseType}转换
+     *     2.配置信息字符串形如：{@code value,value1,value2}
+     *     3.以数组的形式返回，意味着该配置可以被修改，建议get方法返回它的复制{@link java.util.Arrays#copyOf}
+     * </pre>
+     *
+     * @param configStr 配置信息字符串
+     * @param type      数组的数据类型
+     * @return 转换后的数组
+     */
+    private Object toArrayType(String configStr, Class<?> type) {
+        final String[] configSlices = configStr.split(",");
+        final Object result = Array.newInstance(type, configSlices.length);
+        for (int i = 0; i < configSlices.length; i++) {
+            Array.set(result, i, toBaseType(configSlices[i].trim(), type));
+        }
+        return result;
+    }
+
+    /**
+     * 将配置信息字符串转换为List，需要注意以下内容：
+     * <pre>
+     *     1.List的数据类型必须可被{@link #toBaseType}转换
+     *     2.配置信息字符串形如：{@code value,value1,value2}
+     *     3.返回的List为不可变List，不要尝试修改配置中List的内容
+     * </pre>
+     *
+     * @param configStr 配置信息字符串
+     * @param type      List中数据的类型
+     * @param <R>       List中数据的泛型
+     * @return 转换后的List
+     */
+    private <R> List<R> toListType(String configStr, Class<R> type) {
+        final List<R> result = new ArrayList<R>();
+        for (String configSlice : configStr.split(",")) {
+            result.add(toBaseType(configSlice.trim(), type));
+        }
+        return Collections.unmodifiableList(result);
+    }
+
+    /**
+     * 将配置信息字符串转换为Map，需要注意以下内容：
+     * <pre>
+     *     1.Map的键值类型必须可被{@link #toBaseType}转换
+     *     2.配置信息字符串形如：{@code key:value,key2:value2}
+     *     3.如果{@code :}分割的键值对字符串数组长度不为2时，将跳过该键值对
+     *     4.如果存在相同的键，后者将覆盖前者
+     *     5.返回的Map为不可变Map，不要尝试修改配置中Map的内容
+     * </pre>
+     *
+     * @param configStr 配置信息字符串
+     * @param keyType   Map的键类型
+     * @param valueType Map的值类型
+     * @param <K>       Map的键泛型
+     * @param <V>       Map的值泛型
+     * @return 转换后的Map
+     */
+    private <K, V> Map<K, V> toMapType(String configStr, Class<K> keyType, Class<V> valueType) {
+        final Map<K, V> result = new HashMap<K, V>();
+        for (String kvSlice : configStr.split(",")) {
+            final String[] kvEntry = kvSlice.trim().split(":");
+            if (kvEntry.length != 2) {
+                continue;
+            }
+            result.put(toBaseType(kvEntry[0].trim(), keyType), toBaseType(kvEntry[1].trim(), valueType));
+        }
+        return Collections.unmodifiableMap(result);
+    }
+
+    /**
+     * 将配置信息字符串进行类型转换，支持int、short、long、float、double、String和Object类型，转换失败时返回null
      *
      * @param configStr 配置信息字符串
      * @param type      配置对象属性类型
