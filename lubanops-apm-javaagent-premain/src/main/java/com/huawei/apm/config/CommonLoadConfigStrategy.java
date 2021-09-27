@@ -294,6 +294,8 @@ public class CommonLoadConfigStrategy implements LoadConfigStrategy<Properties> 
             result = Boolean.parseBoolean(configStr);
         } else if (type == Boolean.class) {
             result = Boolean.valueOf(configStr);
+        } else if (type.isEnum()) {
+            result = Enum.valueOf((Class) type, configStr);
         } else if (type == String.class || type == Object.class) {
             result = configStr;
         } else {
