@@ -156,7 +156,7 @@ public class CommonLoadConfigStrategy implements LoadConfigStrategy<Properties> 
      *     1.{@link #fixConfig}方法，修正形如"${}"的配置
      *     2.{@link #toBaseType}等方法，将配置信息字符串进行类型转换
      * </pre>
-     * 支持int、short、long、float、double、String和Object类型，以及他们构成的数组、List和Map
+     * 支持int、short、long、float、double、枚举、String和Object类型，以及他们构成的数组、List和Map
      *
      * @param config 配置主要承载对象{@link Properties}
      * @param key    配置键
@@ -258,7 +258,7 @@ public class CommonLoadConfigStrategy implements LoadConfigStrategy<Properties> 
     }
 
     /**
-     * 将配置信息字符串进行类型转换，支持int、short、long、float、double、String和Object类型，转换失败时返回null
+     * 将配置信息字符串进行类型转换，支持int、short、long、float、double、枚举、String和Object类型，转换失败时返回null
      *
      * @param configStr 配置信息字符串
      * @param type      配置对象属性类型
