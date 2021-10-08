@@ -1,0 +1,13 @@
+com.lubanops.apm.plugin.flowreplay.mockclient.define.dubbo.DubboConsumerClientInstrumentation
+com.lubanops.apm.plugin.flowreplay.mockclient.define.dubbo.DubboProviderClientInstrumentation
+com.lubanops.apm.plugin.flowreplay.mockclient.define.dubbo.AlibabaDubboConsumerClientInstrumentation
+com.lubanops.apm.plugin.flowreplay.mockclient.define.dubbo.AlibabaDubboProviderClientInstrumentation
+com.lubanops.apm.plugin.flowreplay.mockclient.define.custom.CustomClientInstrumentation
+com.lubanops.apm.plugin.flowreplay.mockclient.define.redisson.RedissonClientInstrumentation
+com.lubanops.apm.plugin.flowreplay.mockclient.define.mysql.v8.ConnectionImplCreateInstrumentation
+com.lubanops.apm.plugin.flowreplay.mockclient.define.mysql.v8.ConnectionInstrumentation
+com.lubanops.apm.plugin.flowreplay.mockclient.define.mysql.v8.CallableStatementInstrumentation
+com.lubanops.apm.plugin.flowreplay.mockclient.define.mysql.v8.PreparedStatementInstrumentation
+com.lubanops.apm.plugin.flowreplay.mockclient.define.mysql.v8.PreparedStatementSetterInstrumentation
+com.lubanops.apm.plugin.flowreplay.mockclient.define.mysql.v8.PreparedStatementNullSetterInstrumentation
+com.lubanops.apm.plugin.flowreplay.mockclient.define.mysql.v8.PreparedStatementIgnoredSetterInstrumentation

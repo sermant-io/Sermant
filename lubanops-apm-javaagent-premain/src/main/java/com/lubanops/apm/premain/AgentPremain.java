@@ -63,19 +63,6 @@ public class AgentPremain {
                 ClassLoader parent = Thread.currentThread().getContextClassLoader();
                 // 配置初始化
                 ConfigLoader.initialize(agentArgs, ClassLoaderManager.getTargetClassLoader(parent));
-                LopsUrlClassLoader classLoader = (LopsUrlClassLoader) AccessController.doPrivileged(
-                    new PrivilegedAction() {
-                        @Override
-                        public Object run() {
-                            return new LopsUrlClassLoader(urls.toArray(new URL[urls.size()]), null);
-                        }
-                    });
-
-                Thread.currentThread().setContextClassLoader(classLoader);
-                Class<?> mainClass = classLoader.loadClass("com.lubanops.apm.core.BootStrapImpl");
-                Method startMethod = mainClass.getDeclaredMethod("main", Instrumentation.class, Map.class);
-                startMethod.invoke(null, instrumentation, argsMap);
-                Thread.currentThread().setContextClassLoader(parent);
                 // 针对NoneNamedListener初始化增强
                 NoneNamedListenerBuilder.initialize(instrumentation);
                 // 初始化byte buddy
@@ -86,8 +73,6 @@ public class AgentPremain {
                 logger.log(Level.SEVERE, "[APM PREMAIN]The JavaAgent is loaded repeatedly.");
             }
             AgentPremain.agentStatus = AgentStatus.STARTED;
-        } catch (InvocationTargetException e) {
-            logger.log(Level.SEVERE, "[APM PREMAIN]Loading javaagent failed", e.getTargetException());
         } catch (Exception e) {
             logger.log(Level.SEVERE, "[APM PREMAIN]Loading javaagent failed", e);
         }
