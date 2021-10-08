@@ -92,7 +92,7 @@ public class RedisConfig {
                 if (StringUtils.isNotEmpty(address)) {
                     String[] ips = address.split(":");
                     if (ips.length == IPS_LENGTH && pattern.matcher(ips[1]).matches()) {
-                        nodes.add(new RedisNode(ips[0].trim(), Integer.valueOf(ips[1])));
+                        nodes.add(new RedisNode(ips[0].trim(), Integer.parseInt(ips[1])));
                     }
                 }
             });

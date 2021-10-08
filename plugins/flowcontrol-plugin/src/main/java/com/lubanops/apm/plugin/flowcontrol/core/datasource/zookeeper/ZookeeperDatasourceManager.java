@@ -45,7 +45,7 @@ public class ZookeeperDatasourceManager implements DataSourceManager {
         try {
             RecordLog.info("initRules begin....");
             String remoteAddress = PluginConfigUtil.getValueByKey(ConfigConst.SENTINEL_ZOOKEEPER_ADDRESS);
-            String rootPath = PluginConfigUtil.getValueByKey(ConfigConst.SENTINEL_ZOOKEEPER_PATH);
+            String rootPath = fixRootPath(PluginConfigUtil.getValueByKey(ConfigConst.SENTINEL_ZOOKEEPER_PATH));
             String appName = AppNameUtil.getAppName();
             loadFlowRule(remoteAddress, rootPath, appName);
             loadDegradeRule(remoteAddress, rootPath, appName);
@@ -62,9 +62,18 @@ public class ZookeeperDatasourceManager implements DataSourceManager {
         }
     }
 
+    private String fixRootPath(String rootPath) {
+        if (rootPath == null || "".equals(rootPath.trim())) {
+            return "";
+        }
+        return rootPath.startsWith("/") ? rootPath.substring(1) : rootPath;
+    }
+
     private String getGroupId(String rootPath, String appName) {
-        String groupId = rootPath + CommonConst.SLASH_SIGN + appName;
-        return groupId.startsWith("/") ? groupId.substring(1) : groupId;
+        if ("".equals(rootPath)) {
+            return appName;
+        }
+        return rootPath + CommonConst.SLASH_SIGN + appName;
     }
 
     private void loadAuthorityRule(String remoteAddress, String rootPath, String appName) {

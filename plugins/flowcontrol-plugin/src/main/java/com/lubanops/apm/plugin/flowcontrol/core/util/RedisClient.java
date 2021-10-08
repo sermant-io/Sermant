@@ -21,24 +21,29 @@ import java.util.List;
  * @author liyi
  * @since 2020-08-26
  */
-public class LettuceUtils {
+public class RedisClient {
     private RedisClusterClient client;
     private StatefulRedisClusterConnection<String, String> connection;
 
-    public LettuceUtils() {
+    public RedisClient() {
         try {
             String redisUris = PluginConfigUtil.getValueByKey(ConfigConst.REDIS_URIS);
             RecordLog.info("redis urls contains : " + redisUris);
             String[] redisUriArr = redisUris.split(CommonConst.COMMA_SIGN);
             List<RedisURI> list = new ArrayList<RedisURI>();
-            for (String s : redisUriArr) {
-                list.add(RedisURI.create(s));
+            for (String uri : redisUriArr) {
+                try {
+                    list.add(RedisURI.create(uri));
+                } catch (Exception e) {
+                    RecordLog.warn(String.format("detected invalid uri {%s} when init redis", uri));
+                }
+
             }
 
             client = RedisClusterClient.create(list);
             connection = client.connect();
         } catch (Exception e) {
-            RecordLog.error("Redis connect failed." + e);
+            RecordLog.error("Redis connect failed, please check your config!" + e);
         }
     }
 

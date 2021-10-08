@@ -42,12 +42,12 @@ public class RuleCenter {
      * @param dataSource 数据源
      */
     public void registerRuleManager(String ruleType, AbstractDataSource<String, ?> dataSource) {
-        if (!ruleMap.containsKey(ruleType)) {
+        RuleWrapper ruleWrapper = ruleMap.get(ruleType);
+        if (ruleWrapper == null) {
             LOGGER.error(String.format("Un support rule type %s.", ruleType));
             return;
         }
         LOGGER.info(String.format("Register %s to rule manager.", ruleType));
-        RuleWrapper ruleWrapper = ruleMap.get(ruleType);
         ruleWrapper.registerRuleManager(dataSource);
     }
 

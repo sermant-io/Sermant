@@ -27,11 +27,9 @@ public enum PluginServiceManager {
      * @param classLoader 类加载器
      */
     public void init(ClassLoader classLoader) {
-        if (!isInit.get() && isTargetClassloader(classLoader)) {
+        if (!isInit.get() && isInit.compareAndSet(false, true) && isTargetClassloader(classLoader)) {
             loadAllPluginServices(classLoader);
             addShutdownHook();
-            // 初始化配置
-            isInit.compareAndSet(false, true);
         }
     }
 
@@ -54,7 +52,7 @@ public enum PluginServiceManager {
                 pluginServices.put(service.getClass(), service);
             } catch (Exception e) {
                 LogFactory.getLogger().warning(String.format("The plugin service {%s} init failed! {%s}",
-                    service.getClass().getName(), e.getMessage()));
+                        service.getClass().getName(), e.getMessage()));
             }
         }
         Thread.currentThread().setContextClassLoader(classLoader);
@@ -67,7 +65,7 @@ public enum PluginServiceManager {
                 entry.getValue().stop();
             } catch (Exception e) {
                 LogFactory.getLogger().warning(String.format("The plugin service {%s} stop failed! {%s}",
-                    entry.getValue().getClass().getName(), e.getMessage()));
+                        entry.getValue().getClass().getName(), e.getMessage()));
             }
         }
     }

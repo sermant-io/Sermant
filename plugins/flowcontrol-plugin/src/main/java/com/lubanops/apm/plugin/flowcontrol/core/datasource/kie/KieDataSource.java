@@ -60,20 +60,21 @@ public class KieDataSource<T> extends AutoRefreshDataSource<String, T> {
 
     @Override
     public String readSource() {
-        String kieServerAddress = PluginConfigUtil.getValueByKey(ConfigConst.CONFIG_KIE_ADDRESS);
+        String kieServerAddress = PluginConfigUtil.getValueByKey(ConfigConst.CONFIG_KIE_ADDRESS).trim();
         // huawei update by zhanghu 20210125
-        if ("".equals(kieServerAddress.trim())) {
+        if ("".equals(kieServerAddress)) {
             return lastRules;
         }
 
         KieConfigResponse config = KieConfigClient.getConfig(kieServerAddress + ConfigConst.KIE_RULES_URI);
         if (config != null) {
+            List<KieConfigItem> data = config.getData();
             // huawei update by zhanghu 20210125
-            if (config.getData() == null || config.getData().isEmpty()) {
+            if (data == null || data.isEmpty()) {
                 return lastRules;
             }
             final List<JSONObject> results = new ArrayList<JSONObject>();
-            for (KieConfigItem item : config.getData()) {
+            for (KieConfigItem item : data) {
                 if (item == null || !isTargetItem(item)) {
                     continue;
                 }

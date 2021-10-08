@@ -17,7 +17,6 @@
     </properties>
     <modules>
         <module>flowcontrol-plugin</module>
-        <module>flowrecord-plugin</module>
     </modules>
     <build>
         <plugins>

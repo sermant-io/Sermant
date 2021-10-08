@@ -45,10 +45,7 @@ public final class MetricMessage {
      * @param endTime   查询流控数据的结束书简
      * @return 流控数据
      */
-    public static String generateCurrentMessage(Long startTime, Long endTime) {
-        if (startTime == null) {
-            return "";
-        }
+    public static String generateCurrentMessage(long startTime, Long endTime) {
         String message = null;
         List<MetricNode> list;
 
