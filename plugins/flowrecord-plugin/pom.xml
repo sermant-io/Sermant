@@ -31,6 +31,9 @@
                         <configuration>
                             <relocations>
                                 <relocation>
+                                    <excludes>
+                                        <exclude>org.apache.curator.shaded.com.google.common.hash.Hashing</exclude>
+                                    </excludes>
                                     <pattern>org.apache.curator</pattern>
                                     <shadedPattern>${shade.distinct.prefix}.org.apache.curator</shadedPattern>
                                 </relocation>
@@ -82,6 +85,7 @@
                                 </relocation>
                                 <relocation>
                                     <excludes>
+                                        <exclude>org.apache.kafka.*</exclude>
                                         <exclude>org.apache.dubbo.*</exclude>
                                         <exclude>org.springframework.*</exclude>
                                     </excludes>
@@ -179,6 +183,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <shade.distinct.prefix>com.lubanops.apm.dependencies.flowrecord</shade.distinct.prefix>
     </properties>
 
 </project>

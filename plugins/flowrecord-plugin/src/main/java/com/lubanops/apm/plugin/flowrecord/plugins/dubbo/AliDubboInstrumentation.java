@@ -21,7 +21,7 @@ import net.bytebuddy.matcher.ElementMatchers;
  */
 public class AliDubboInstrumentation implements EnhanceDefinition {
     private static final String ENHANCE_CLASS = "com.alibaba.dubbo.monitor.support.MonitorFilter";
-    private static final String INTERCEPT_CLASS = "com.lubanops.apm.plugin.flowrecord.plugins.dubbo.DubboInterceptor";
+    private static final String INTERCEPT_CLASS = "com.lubanops.apm.plugin.flowrecord.plugins.dubbo.AliDubboInterceptor";
 
     @Override
     public ClassMatcher enhanceClass() {
@@ -31,7 +31,7 @@ public class AliDubboInstrumentation implements EnhanceDefinition {
     @Override
     public MethodInterceptPoint[] getMethodInterceptPoints() {
         return new MethodInterceptPoint[]{
-                MethodInterceptPoint.newInstMethodInterceptPoint(INTERCEPT_CLASS, ElementMatchers.<MethodDescription>named("main"))
+                MethodInterceptPoint.newInstMethodInterceptPoint(INTERCEPT_CLASS, ElementMatchers.<MethodDescription>named("invoke"))
         };
     }
 }

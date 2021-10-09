@@ -5,7 +5,6 @@
 package com.lubanops.apm.plugin.flowrecord.config;
 
 import com.lubanops.apm.plugin.flowrecord.utils.PluginConfigUtil;
-
 import org.apache.kafka.clients.producer.ProducerConfig;
 
 import java.util.Properties;

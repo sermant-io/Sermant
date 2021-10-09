@@ -32,8 +32,10 @@ public final class AppNameUtil {
         // use -Dproject.name first
         if (!isEmpty(app)) {
             appName = app;
-            return;
+        } else {
+            appName = "default";
         }
+        return;
     }
 
     public static String getAppName() {
