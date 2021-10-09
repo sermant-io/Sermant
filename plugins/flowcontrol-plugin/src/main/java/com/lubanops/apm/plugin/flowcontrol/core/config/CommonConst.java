@@ -4,6 +4,8 @@
 
 package com.lubanops.apm.plugin.flowcontrol.core.config;
 
+import java.nio.charset.Charset;
+
 /**
  * 普通常量类
  *
@@ -90,6 +92,12 @@ public class CommonConst {
      * 等于符号
      */
     public static final String EQUAL_SIGN = "=";
+
+    /**
+     * 编码
+     * 默认使用UTF-8
+     */
+    public static final Charset PLUGIN_ENCODE = Charset.forName("UTF-8");
 
     /**
      * 换行符号

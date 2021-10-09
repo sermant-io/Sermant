@@ -13,8 +13,6 @@ import com.lubanops.apm.plugin.flowcontrol.core.util.RedisClient;
 import com.lubanops.apm.plugin.flowcontrol.core.util.ZookeeperConnectionEnum;
 import org.apache.curator.framework.CuratorFramework;
 
-import java.nio.charset.Charset;
-
 /**
  * 从注册中心获取sentinel规则存储到本地redis
  *
@@ -52,7 +50,7 @@ public class InitRuleRedis {
                 try {
                     // 加载流控规则R
                     path = commonPath+ CommonConst.SENTINEL_RULE_FLOW;
-                    String flowValue = new String(client.getData().forPath(path), Charset.forName("UTF-8"));
+                    String flowValue = new String(client.getData().forPath(path), CommonConst.PLUGIN_ENCODE);
                     String flowKey = commonKey + CommonConst.SENTINEL_RULE_FLOW;
                     redisClient.set(flowKey, flowValue);
                 } catch (Exception e) {
@@ -61,7 +59,7 @@ public class InitRuleRedis {
                 try {
                     // 加载降级规则
                     path = commonPath+ CommonConst.SENTINEL_RULE_DEGRADE;
-                    String degradeValue = new String(client.getData().forPath(path), Charset.forName("UTF-8"));
+                    String degradeValue = new String(client.getData().forPath(path), CommonConst.PLUGIN_ENCODE);
                     String degradeKey = commonKey + CommonConst.SENTINEL_RULE_DEGRADE;
                     redisClient.set(degradeKey, degradeValue);
                 } catch (Exception e) {
@@ -70,7 +68,7 @@ public class InitRuleRedis {
                 try {
                     // 加载系统规则
                     path = commonPath+ CommonConst.SENTINEL_RULE_SYSTEM;
-                    String systemRuleValue = new String(client.getData().forPath(path), Charset.forName("UTF-8"));
+                    String systemRuleValue = new String(client.getData().forPath(path), CommonConst.PLUGIN_ENCODE);
                     String systemRuleKey = commonKey + CommonConst.SENTINEL_RULE_SYSTEM;
                     redisClient.set(systemRuleKey, systemRuleValue);
                 } catch (Exception e) {
@@ -79,7 +77,7 @@ public class InitRuleRedis {
                 try {
                     // 记载授权规则
                     path = commonPath+ CommonConst.SENTINEL_RULE_AUTHORITY;
-                    String authorityRuleValue = new String(client.getData().forPath(path), Charset.forName("UTF-8"));
+                    String authorityRuleValue = new String(client.getData().forPath(path), CommonConst.PLUGIN_ENCODE);
                     String authorityRuleKey = commonKey + CommonConst.SENTINEL_RULE_AUTHORITY;
                     redisClient.set(authorityRuleKey, authorityRuleValue);
                 } catch (Exception e) {

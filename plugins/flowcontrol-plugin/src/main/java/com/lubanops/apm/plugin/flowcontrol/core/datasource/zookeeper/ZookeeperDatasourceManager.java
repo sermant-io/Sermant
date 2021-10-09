@@ -66,7 +66,7 @@ public class ZookeeperDatasourceManager implements DataSourceManager {
         if (rootPath == null || "".equals(rootPath.trim())) {
             return "";
         }
-        return rootPath.startsWith("/") ? rootPath.substring(1) : rootPath;
+        return rootPath.startsWith(CommonConst.SLASH_SIGN) ? rootPath.substring(1) : rootPath;
     }
 
     private String getGroupId(String rootPath, String appName) {
