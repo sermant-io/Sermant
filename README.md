@@ -1,35 +1,67 @@
-2.0.1
-1.解决非守护线程导致应用无法停止的问题
-2.解决字节码增强线程死锁的问题
-3.解决lambda表达式的异步线程调用链展示异常的问题
-4.解决第一次加载类的请求没有采集的问题
-5.添加spanId长度限制
-6.支持业务状态码的key配置多层
-7.解决collector注册过快导致空指针的问题
+# JavaMesh
 
-2.0.2
-1.业务code的值支持startwith匹配配置startsWith("test")
-2.支持采集JVM中所有线程状态的数量
-3.解决和skywalking启动冲突的问题
+## 概述
 
-2.0.3
-1.解决jdkhttpclient插件日志报空指针的问题
-2.添加调master接口的超时时间设置
-3.kafka监控数据采集
-4.解决解析多层业务状态码错误的问题
-5.解决dubbo2.6.3调用链不完整问题
-6.解决dubbo2.7.8高版本不增强问题
+JavaMesh是一个基于ByteBuddy字节码技术开发的javaagent框架;框架当前提供了流量控制，流量录制插件;基于JavaMesh,只需实现少量的接口即可快速开发自己需要实现的agent功能;框架提供了基于netty的统一消息发送模块;只需部署netty-server服务，即可实现心跳或数据的传输,同时支持自定义消息类型。
 
-2.0.4
-1.支持functiongraph调用链数据采集
-2.添加方法拦截前后发送异常采集的日志
-3.修改异步线程拦截逻辑 没有采样时能把gtraceid传递下去
-4.支持grpc数据采集
-5.支持在配置文件中配置access地址
-6.解决cse数据采集报空指针的异常
-7.解决低版本grpcclient没有调用链数据的问题
+## 模块说明
 
-2.0.5
-1.支持reactor-netty
-2.解决spring的url没有规整的问题
-3.解决与百度openrasp冲突的问题
+bootstrap: 公共模块  
+IntegratedService: 消息发送模块服务端  
+core: 核心模块  
+integration:  消息发送模块客户端  
+packaging: 打包模块  
+premain: 启动入口模块
+
+## [示例插件](plugins/demo)
+
+- 示例插件中拦截了org.springframework.boot.autoconfigure.SpringBootApplication注解
+
+## [示例插件拦截的应用](Demo)
+
+## 快速开始
+
+### 环境安装
+
+- [jdk](https://www.oracle.com/java/technologies/downloads/)
+- [maven](https://maven.apache.org/download.cgi)
+- [idea](https://www.jetbrains.com/idea/)
+
+### 编译出包
+
+- 下载`JavaMesh`源码,用`idea`打开
+- 在`File | Settings | Build, Execution, Deployment | Build Tools | Maven`中配置`maven`信息
+- 在`idea`中执行`mvn clean package`
+- 编译结果文件:`JavaMesh\lubanops-apm-javaagent-packaging\target\apm-javaagent-2.0.5.tar`
+
+### 运行
+
+#### 终端
+
+- 打包[示例插件拦截的应用](Demo)
+-
+
+执行`java -javaagent:${JavaMesh}\lubanops-apm-javaagent-packaging\target\apm-javaagent-2.0.5\apm-javaagent\apm-javaagent.jar=appName=demo -jar .\DemoApplication-0.0.1 -SNAPSHOT.jar`
+,`${JavaMesh}`是框架项目路径
+
+#### IDEA
+
+- IDEA挂载JavaMesh,需在应用`Run Configuration -> VM options`
+  加入`-javaagent:${JavaMesh}\lubanops-apm-javaagent-packaging\target\apm-javaagent-2.0.5\apm-javaagent\apm-javaagent.jar=appName=Demo`
+  即可,其中`${JavaMesh}`是框架项目路径。
+- 运行[应用](Demo/src/main/java/org/apache/dubbo/demo/DemoApp.java)
+
+## 插件开发
+框架采用SPI机制进行插件的加载，插件的开发需要在resources/META-INF/service创建相应的文件(文件名与实现接口的全限定名一致)
+### [增强类接口](lubanops-apm-javaagent-bootstrap/src/main/java/com/huawei/apm/bootstrap/definition/EnhanceDefinition.java)
+- [示例](plugins/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.bootstrap.definition.EnhanceDefinition)
+- 获取待增强的目标类(enhanceClass)支持单个类名，多个类名，注解，前缀匹配需要增强的类
+- 获取封装了待增强目标方法和其拦截器的(MethodInterceptPoint)接口中，匹配增强方法支持单个方法名，多个方法名，前缀，后缀，包含等匹配方法
+### [拦截器接口](lubanops-apm-javaagent-bootstrap/src/main/java/com/huawei/apm/bootstrap/interceptors/Interceptor.java)
+- [静态拦截器](lubanops-apm-javaagent-bootstrap/src/main/java/com/huawei/apm/bootstrap/interceptors/StaticMethodInterceptor.java)
+- [示例拦截器](lubanops-apm-javaagent-bootstrap/src/main/java/com/huawei/apm/bootstrap/interceptors/InstanceMethodInterceptor.java)
+- [构造拦截器](lubanops-apm-javaagent-bootstrap/src/main/java/com/huawei/apm/bootstrap/interceptors/ConstructorInterceptor.java)
+### [插件配置接口](lubanops-apm-javaagent-bootstrap/src/main/java/com/huawei/apm/bootstrap/config/BaseConfig.java)
+- [示例](plugins/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.bootstrap.config.BaseConfig)
+### [插件初始化接口](lubanops-apm-javaagent-bootstrap/src/main/java/com/huawei/apm/bootstrap/boot/PluginService.java)
+- [示例](plugins/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.bootstrap.boot.PluginService)

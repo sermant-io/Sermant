@@ -36,6 +36,7 @@
         <module>plugins</module>
         <module>lubanops-apm-javaagent-packaging</module>
         <module>ApmService</module>
+        <module>Demo</module>
     </modules>
     <dependencyManagement>
         <dependencies>
