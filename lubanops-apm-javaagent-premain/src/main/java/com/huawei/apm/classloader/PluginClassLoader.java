@@ -13,7 +13,6 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
@@ -26,7 +25,7 @@ public class PluginClassLoader extends URLClassLoader {
     private static final PluginClassLoader INSTANCE =
             AccessController.doPrivileged(new PluginClassLoaderPrivilegedAction());
 
-    private final AtomicReference<List<JavaFileWrapper>> javaFilesReference = new AtomicReference<List<JavaFileWrapper>>(null);
+    private List<JavaFileWrapper> javaFileWrappers;
 
     private PluginClassLoader(URL[] urls, ClassLoader classLoader) {
         super(urls, classLoader);
@@ -100,20 +99,20 @@ public class PluginClassLoader extends URLClassLoader {
      * @return jar包列表
      */
     private List<JavaFileWrapper> getJavaFiles() {
-        final List<JavaFileWrapper> javaFileWrappers = javaFilesReference.get();
         if (javaFileWrappers == null) {
-            final List<URL> pluginUrls = getPluginUrl();
-            final List<JavaFileWrapper> javaFiles = new ArrayList<JavaFileWrapper>();
-            for (URL url : pluginUrls) {
-                final String path = url.getPath();
-                try {
-                    javaFiles.add(new JavaFileWrapper(path, new JarFile(url.getFile())));
-                } catch (IOException e) {
-                    LOGGER.warning(String.format("converted to [{%s}] jar file failed!", path.substring(path.lastIndexOf('/'))));
+            synchronized (PluginClassLoader.class) {
+                final List<URL> pluginUrls = getPluginUrl();
+                final List<JavaFileWrapper> javaFiles = new ArrayList<JavaFileWrapper>();
+                for (URL url : pluginUrls) {
+                    final String path = url.getPath();
+                    try {
+                        javaFiles.add(new JavaFileWrapper(path, new JarFile(url.getFile())));
+                    } catch (IOException e) {
+                        LOGGER.warning(String.format("converted to [{%s}] jar file failed!", path.substring(path.lastIndexOf('/'))));
+                    }
                 }
+                javaFileWrappers = javaFiles;
             }
-            javaFilesReference.compareAndSet(null, javaFiles);
-            return javaFiles;
         }
         return javaFileWrappers;
     }
