@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,18 +132,13 @@ public class CasConfig extends CasClientConfigurerAdapter implements WebMvcConfi
      * @return FilterRegistrationBean 返回注册过滤器
      */
     @Bean
-    public FilterRegistrationBean authenticationFilterRegistrationBean() {
-        FilterRegistrationBean authenticationFilter = new FilterRegistrationBean();
+    public FilterRegistrationBean<AuthenticationFilter> authenticationFilterRegistrationBean() {
+        FilterRegistrationBean<AuthenticationFilter> authenticationFilter = new FilterRegistrationBean<>();
         authenticationFilter.setFilter(authenticationFilter());
-        Map<String, String> initParameters = new HashMap<String, String>();
-        initParameters.put("ignorePattern", ignorePattern);
-        authenticationFilter.setInitParameters(initParameters);
+        authenticationFilter.setInitParameters(Collections.singletonMap("ignorePattern", ignorePattern));
         authenticationFilter.setOrder(Integer.parseInt(DataType.ORDER_TWO.getDataType()));
-        List<String> urlPatterns = new ArrayList<String>();
-
         // 设置匹配的url
-        urlPatterns.add("/*");
-        authenticationFilter.setUrlPatterns(urlPatterns);
+        authenticationFilter.setUrlPatterns(Collections.singletonList("/*"));
         return authenticationFilter;
     }
 }

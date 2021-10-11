@@ -34,10 +34,10 @@ public enum ZookeeperConnectionEnum {
         try {
             client = CuratorFrameworkFactory.newClient(flowControlConfig.getSentinelZookeeperAddress(),
                 new ExponentialBackoffRetry(CommonConst.SLEEP_TIME, CommonConst.RETRY_TIMES));
-        } catch (IllegalArgumentException e) {
-            RecordLog.error("create acl zk client failed, please check your acl config!", e);
+            client.start();
+        } catch (Exception e) {
+            RecordLog.error("create zk client failed, please check your config!", e);
         }
-        client.start();
     }
 
     /**

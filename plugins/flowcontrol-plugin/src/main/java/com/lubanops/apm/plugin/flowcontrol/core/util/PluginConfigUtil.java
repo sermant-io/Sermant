@@ -13,6 +13,7 @@ import com.lubanops.apm.plugin.flowcontrol.core.config.FlowControlConfig;
 import com.lubanops.apm.plugin.flowcontrol.core.config.KafkaConnectBySslSwitch;
 import org.apache.curator.framework.CuratorFramework;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -79,10 +80,12 @@ public class PluginConfigUtil {
     private static Map<String, String> loadZk() {
         Map<String, String> configProperties = new HashMap<String, String>();
         CuratorFramework zkClient = ZookeeperConnectionEnum.INSTANCE.getZookeeperConnection();
-
+        if (zkClient == null) {
+            return new HashMap<String, String>();
+        }
         try {
             String rootInfo = new String(zkClient.getData().forPath(
-                ConfigLoader.getConfig(FlowControlConfig.class).getConfigZookeeperPath() + CommonConst.SLASH_SIGN + active));
+                ConfigLoader.getConfig(FlowControlConfig.class).getConfigZookeeperPath() + CommonConst.SLASH_SIGN + active), Charset.forName("UTF-8"));
             String[] configData = rootInfo.split(CommonConst.NEWLINE_SIGN);
             for (String line : configData) {
                 String[] values = line.split(CommonConst.EQUAL_SIGN);

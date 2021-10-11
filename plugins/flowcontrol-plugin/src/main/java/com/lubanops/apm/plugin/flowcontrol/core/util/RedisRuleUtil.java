@@ -57,7 +57,9 @@ public class RedisRuleUtil {
      */
     private static boolean isZkConnect() {
         CuratorFramework client = ZookeeperConnectionEnum.INSTANCE.getZookeeperConnection();
-
+        if (client == null) {
+            return false;
+        }
         String rootPath = PluginConfigUtil.getValueByKey(ConfigConst.SENTINEL_ZOOKEEPER_PATH);
         String appName = AppNameUtil.getAppName();
         String path = rootPath + CommonConst.SLASH_SIGN

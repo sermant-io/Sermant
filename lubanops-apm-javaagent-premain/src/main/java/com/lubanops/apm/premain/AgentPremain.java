@@ -73,8 +73,10 @@ public class AgentPremain {
 
                 Thread.currentThread().setContextClassLoader(classLoader);
                 Class<?> mainClass = classLoader.loadClass("com.lubanops.apm.core.BootStrapImpl");
-                Method startMethod = mainClass.getDeclaredMethod("main", Instrumentation.class, Map.class);
-                startMethod.invoke(null, instrumentation, argsMap);
+                if (mainClass != null) {
+                    Method startMethod = mainClass.getDeclaredMethod("main", Instrumentation.class, Map.class);
+                    startMethod.invoke(null, instrumentation, argsMap);
+                }
                 Thread.currentThread().setContextClassLoader(parent);
                 // 针对NoneNamedListener初始化增强
                 NoneNamedListenerBuilder.initialize(instrumentation);
