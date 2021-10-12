@@ -106,7 +106,7 @@ public class Transformer implements AgentBuilder.Transformer {
     private DynamicType.Builder<?> enhanceConstructor(ClassLoader classLoader,
             DynamicType.Builder<?> newBuilder,
             MultiInterMethodHolder methodHolder) {
-        return newBuilder.method(methodHolder.getMatcher())
+        return newBuilder.constructor(methodHolder.getMatcher())
                 .intercept(SuperMethodCall.INSTANCE.andThen(
                         MethodDelegation.withDefaultConfiguration().to(new ConstructorEnhancer(
                                 getInterceptors(methodHolder.getInterceptors(), classLoader, ConstructorInterceptor.class)))));
