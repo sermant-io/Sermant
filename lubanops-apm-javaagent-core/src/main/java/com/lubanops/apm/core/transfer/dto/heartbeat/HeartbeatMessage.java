@@ -26,6 +26,10 @@ public class HeartbeatMessage {
         message.put("lastHeartbeat", String.valueOf(TimeUtil.currentTimeMillis()));
     }
 
+    public HeartbeatMessage registerInformation(String key, String value) {
+        message.put(key, value);
+        return this;
+    }
 
     public String generateCurrentMessage() {
         String msg = null;

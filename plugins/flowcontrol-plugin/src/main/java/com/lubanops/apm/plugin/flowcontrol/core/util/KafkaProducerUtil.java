@@ -29,10 +29,10 @@ public class KafkaProducerUtil {
      */
     public static void sendMessage(String topic, String msg) {
         KafkaProducer<String, String> producer = KafkaProducerEnum.KAFKA_PRODUCER.getKafkaProducer();
-
         try {
             sendRecord(topic, msg, producer);
         } finally {
+            // 此处需要保证数据实时性, 保证心跳正常
             producer.flush();
         }
     }

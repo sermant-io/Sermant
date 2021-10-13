@@ -23,12 +23,9 @@ import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static com.huawei.apm.enhance.InterceptorLoader.getInterceptors;
 
@@ -109,42 +106,35 @@ public class Transformer implements AgentBuilder.Transformer {
     private DynamicType.Builder<?> enhanceConstructor(ClassLoader classLoader,
             DynamicType.Builder<?> newBuilder,
             MultiInterMethodHolder methodHolder) {
-        return newBuilder.method(methodHolder.getMatcher())
+        return newBuilder.constructor(methodHolder.getMatcher())
                 .intercept(SuperMethodCall.INSTANCE.andThen(
                         MethodDelegation.withDefaultConfiguration().to(new ConstructorEnhancer(
                                 getInterceptors(methodHolder.getInterceptors(), classLoader, ConstructorInterceptor.class)))));
     }
 
-    private List<MultiInterMethodHolder> getMethodsToBeEnhanced(List<EnhanceDefinition> definitions,
-            TypeDescription typeDescription) {
-        // 构造每个拦截器的匹配条件
-        Map<String, ElementMatcher.Junction<MethodDescription>> matcherGroupByInterceptor =
-                new HashMap<String, ElementMatcher.Junction<MethodDescription>>();
+    private List<String> getMatchedInterceptors(List<EnhanceDefinition> definitions,
+            MethodDescription.InDefinedShape method) {
+        List<String> matchedInterceptors = new ArrayList<String>();
         for (EnhanceDefinition definition : definitions) {
-            MethodInterceptPoint[] interceptPoints = definition.getMethodInterceptPoints();
-            for (MethodInterceptPoint interceptPoint : interceptPoints) {
-                String interceptor = interceptPoint.getInterceptor();
-                ElementMatcher.Junction<MethodDescription> matcher = matcherGroupByInterceptor.get(interceptor);
-                if (matcher == null) {
-                    matcher = ElementMatchers.none();
+            for (MethodInterceptPoint methodInterceptPoint : definition.getMethodInterceptPoints()) {
+                if (((methodInterceptPoint.isStaticMethod() && method.isStatic()) ||
+                        (methodInterceptPoint.isConstructor() && method.isConstructor()) ||
+                        (methodInterceptPoint.isInstanceMethod() && !method.isStatic() &&
+                                !method.isConstructor())) && methodInterceptPoint.getMatcher().matches(method)) {
+                    matchedInterceptors.add(methodInterceptPoint.getInterceptor());
                 }
-                matcher = matcher.or(interceptPoint.getMatcher());
-                matcherGroupByInterceptor.put(interceptor, matcher);
             }
         }
+        return matchedInterceptors;
+    }
 
+    private List<MultiInterMethodHolder> getMethodsToBeEnhanced(List<EnhanceDefinition> definitions,
+            TypeDescription typeDescription) {
         MethodList<MethodDescription.InDefinedShape> declaredMethods = typeDescription.getDeclaredMethods();
         // 找出所有满足条件的方法以及其所对应的所有拦截器
         List<MultiInterMethodHolder> methodHolders = new LinkedList<MultiInterMethodHolder>();
-        Set<Map.Entry<String, ElementMatcher.Junction<MethodDescription>>> interceptorMatcherEntries =
-                matcherGroupByInterceptor.entrySet();
         for (MethodDescription.InDefinedShape method : declaredMethods) {
-            Set<String> matchedInterceptors = new HashSet<String>();
-            for (Map.Entry<String, ElementMatcher.Junction<MethodDescription>> entry : interceptorMatcherEntries) {
-                if (entry.getValue().matches(method)) {
-                    matchedInterceptors.add(entry.getKey());
-                }
-            }
+            List<String> matchedInterceptors = getMatchedInterceptors(definitions, method);
             if (!matchedInterceptors.isEmpty()) {
                 methodHolders.add(new MultiInterMethodHolder(method, matchedInterceptors.toArray(new String[0])));
             }

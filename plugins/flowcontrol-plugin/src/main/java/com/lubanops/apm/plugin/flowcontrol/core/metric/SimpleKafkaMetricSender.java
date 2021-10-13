@@ -23,7 +23,7 @@ public class SimpleKafkaMetricSender {
 
     public SimpleKafkaMetricSender() {
         metricInitialDurationMs = Long.parseLong(PluginConfigUtil.getValueByKey(ConfigConst.METRIC_INITIAL_DURATION));
-        startTime = System.currentTimeMillis();
+        startTime = TimeUtil.currentTimeMillis();
     }
 
     /**

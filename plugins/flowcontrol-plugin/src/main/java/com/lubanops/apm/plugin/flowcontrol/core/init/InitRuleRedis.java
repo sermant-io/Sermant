@@ -8,8 +8,8 @@ import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.util.AppNameUtil;
 import com.lubanops.apm.plugin.flowcontrol.core.config.CommonConst;
 import com.lubanops.apm.plugin.flowcontrol.core.config.ConfigConst;
-import com.lubanops.apm.plugin.flowcontrol.core.util.LettuceUtils;
 import com.lubanops.apm.plugin.flowcontrol.core.util.PluginConfigUtil;
+import com.lubanops.apm.plugin.flowcontrol.core.util.RedisClient;
 import com.lubanops.apm.plugin.flowcontrol.core.util.ZookeeperConnectionEnum;
 import org.apache.curator.framework.CuratorFramework;
 
@@ -39,47 +39,52 @@ public class InitRuleRedis {
     private static class RedisTask {
         public void run() {
             CuratorFramework client = ZookeeperConnectionEnum.INSTANCE.getZookeeperConnection();
-            LettuceUtils redisUtils = new LettuceUtils();
+            if (client == null) {
+                return;
+            }
+            RedisClient redisClient = new RedisClient();
             try {
                 String path;
+                String commonPath = getCommonPath();
+                String commonKey = getCommonKey();
                 try {
-                    // 加载流控规则
-                    path = getCommonPath() + CommonConst.SENTINEL_RULE_FLOW;
-                    String flowValue = new String(client.getData().forPath(path));
-                    String flowKey = getCommonKey() + CommonConst.SENTINEL_RULE_FLOW;
-                    redisUtils.set(flowKey, flowValue);
+                    // 加载流控规则R
+                    path = commonPath+ CommonConst.SENTINEL_RULE_FLOW;
+                    String flowValue = new String(client.getData().forPath(path), CommonConst.PLUGIN_ENCODE);
+                    String flowKey = commonKey + CommonConst.SENTINEL_RULE_FLOW;
+                    redisClient.set(flowKey, flowValue);
                 } catch (Exception e) {
                     RecordLog.error("[InitRuleRedis] failed to load flowRule backup to redis=" + e);
                 }
                 try {
                     // 加载降级规则
-                    path = getCommonPath() + CommonConst.SENTINEL_RULE_DEGRADE;
-                    String degradeValue = new String(client.getData().forPath(path));
-                    String degradeKey = getCommonKey() + CommonConst.SENTINEL_RULE_DEGRADE;
-                    redisUtils.set(degradeKey, degradeValue);
+                    path = commonPath+ CommonConst.SENTINEL_RULE_DEGRADE;
+                    String degradeValue = new String(client.getData().forPath(path), CommonConst.PLUGIN_ENCODE);
+                    String degradeKey = commonKey + CommonConst.SENTINEL_RULE_DEGRADE;
+                    redisClient.set(degradeKey, degradeValue);
                 } catch (Exception e) {
                     RecordLog.error("[InitRuleRedis] failed to load degradeRule backup to redis=" + e);
                 }
                 try {
                     // 加载系统规则
-                    path = getCommonPath() + CommonConst.SENTINEL_RULE_SYSTEM;
-                    String systemRuleValue = new String(client.getData().forPath(path));
-                    String systemRuleKey = getCommonKey() + CommonConst.SENTINEL_RULE_SYSTEM;
-                    redisUtils.set(systemRuleKey, systemRuleValue);
+                    path = commonPath+ CommonConst.SENTINEL_RULE_SYSTEM;
+                    String systemRuleValue = new String(client.getData().forPath(path), CommonConst.PLUGIN_ENCODE);
+                    String systemRuleKey = commonKey + CommonConst.SENTINEL_RULE_SYSTEM;
+                    redisClient.set(systemRuleKey, systemRuleValue);
                 } catch (Exception e) {
                     RecordLog.error("[InitRuleRedis] failed to load systemRule backup to redis=" + e);
                 }
                 try {
                     // 记载授权规则
-                    path = getCommonPath() + CommonConst.SENTINEL_RULE_AUTHORITY;
-                    String authorityRuleValue = new String(client.getData().forPath(path));
-                    String authorityRuleKey = getCommonKey() + CommonConst.SENTINEL_RULE_AUTHORITY;
-                    redisUtils.set(authorityRuleKey, authorityRuleValue);
+                    path = commonPath+ CommonConst.SENTINEL_RULE_AUTHORITY;
+                    String authorityRuleValue = new String(client.getData().forPath(path), CommonConst.PLUGIN_ENCODE);
+                    String authorityRuleKey = commonKey + CommonConst.SENTINEL_RULE_AUTHORITY;
+                    redisClient.set(authorityRuleKey, authorityRuleValue);
                 } catch (Exception e) {
                     RecordLog.error("[InitRuleRedis] failed to load authorityRule backup to redis=" + e);
                 }
             } finally {
-                redisUtils.close();
+                redisClient.close();
             }
         }
 

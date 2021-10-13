@@ -12,10 +12,9 @@ import com.alibaba.fastjson.TypeReference;
 import com.lubanops.apm.plugin.flowcontrol.core.datasource.DataSourceManager;
 import com.lubanops.apm.plugin.flowcontrol.core.datasource.kie.rule.RuleCenter;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,12 +59,10 @@ public class KieDataSourceManager implements DataSourceManager {
     }
 
     private void initDefaultRules() {
-        URL resource = getClass().getClassLoader().getResource(DEFAULT_RULE_FILE);
-        if (resource != null && resource.getFile() != null) {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(DEFAULT_RULE_FILE);
+        if (inputStream != null) {
             StringBuilder stringBuilder = new StringBuilder();
-            FileInputStream inputStream = null;
             try {
-                inputStream = new FileInputStream(resource.getFile());
                 int buf;
                 while ((buf = inputStream.read()) != -1) {
                     stringBuilder.append((char) buf);
@@ -75,9 +72,7 @@ public class KieDataSourceManager implements DataSourceManager {
                 return;
             } finally {
                 try {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
+                    inputStream.close();
                 } catch (IOException e) {
                     RecordLog.error("Input stream close failed when init kie default rules", e);
                 }

@@ -37,7 +37,7 @@ import java.util.Optional;
  */
 @Component
 public class KieConfigClient {
-    private static CloseableHttpClient client;
+    private final CloseableHttpClient client;
 
     private static final int TIME_OUT = 5000;
 
