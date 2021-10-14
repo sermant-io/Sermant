@@ -17,6 +17,7 @@
     </properties>
     <modules>
         <module>flowcontrol-plugin</module>
+        <module>servermonitor-plugin</module>
     </modules>
     <build>
         <plugins>
