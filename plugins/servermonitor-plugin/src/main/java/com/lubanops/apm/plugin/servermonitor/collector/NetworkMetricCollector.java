@@ -7,7 +7,6 @@ package com.lubanops.apm.plugin.servermonitor.collector;
 import com.lubanops.apm.plugin.servermonitor.command.Command;
 import com.lubanops.apm.plugin.servermonitor.command.CommandExecutor;
 import com.lubanops.apm.plugin.servermonitor.command.NetworkCommand;
-import com.lubanops.apm.plugin.servermonitor.entity.CpuMetric;
 import com.lubanops.apm.plugin.servermonitor.entity.NetworkMetric;
 
 /**
@@ -23,7 +22,7 @@ import com.lubanops.apm.plugin.servermonitor.entity.NetworkMetric;
  */
 public class NetworkMetricCollector {
 
-    private final NetworkMetric emptyResult = new NetworkMetric();
+    private final NetworkMetric emptyResult = NetworkMetric.newBuilder().build();
 
     /**
      * 采集周期，单位：秒
@@ -53,10 +52,10 @@ public class NetworkMetricCollector {
             networkMetric = emptyResult;
         } else {
             networkMetric = NetworkMetric.newBuilder()
-                .withReadBytesPerSec(calcReadBytesPerSec(currentNetDev))
-                .withReadPackagesPerSec(calcReadPackagesPerSec(currentNetDev))
-                .withWriteBytesPerSec(calcWriteBytesPerSec(currentNetDev))
-                .withWritePackagesPerSec(calcWritePackagesPerSec(currentNetDev))
+                .setReadBytesPerSec(calcReadBytesPerSec(currentNetDev))
+                .setReadPackagesPerSec(calcReadPackagesPerSec(currentNetDev))
+                .setWriteBytesPerSec(calcWriteBytesPerSec(currentNetDev))
+                .setWritePackagesPerSec(calcWritePackagesPerSec(currentNetDev))
                 .build();
         }
         lastNetDev = currentNetDev;

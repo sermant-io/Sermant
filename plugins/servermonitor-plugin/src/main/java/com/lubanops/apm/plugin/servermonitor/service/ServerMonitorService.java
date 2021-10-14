@@ -79,13 +79,13 @@ public class ServerMonitorService implements PluginService {
             .setTime(System.currentTimeMillis());
         if (shouldCollectLinux) {
             builder.setCpu(cpuMetricCollector.getCpuMetric())
-                .setDisks(diskMetricCollector.getDiskMetrics())
-                .setNetwork(networkMetricCollector.getNetworkMetric())
+                .addAllDisks(diskMetricCollector.getDiskMetrics())
+                .setNetWork(networkMetricCollector.getNetworkMetric())
                 .setMemory(memoryMetricCollector.getMemoryMetric());
         }
         // IBM JDK JVM指标不应该和以上Linux指标混到一块，但目前后台逻辑已经这么处理了，暂时保留
         if (isIbmJvm) {
-            builder.setIbmMemoryPools(MemoryPoolProvider.INSTANCE.getMemoryPoolMetricsList());
+            builder.addAllIbmMemoryPools(MemoryPoolProvider.INSTANCE.getMemoryPoolMetricsList());
         }
         return builder.build();
     }

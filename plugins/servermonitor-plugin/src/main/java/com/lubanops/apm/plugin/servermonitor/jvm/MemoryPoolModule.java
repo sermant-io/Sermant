@@ -4,7 +4,6 @@
 
 package com.lubanops.apm.plugin.servermonitor.jvm;
 
-
 import com.lubanops.apm.plugin.servermonitor.entity.IBMMemoryPool;
 import com.lubanops.apm.plugin.servermonitor.entity.IBMPoolType;
 
@@ -39,12 +38,12 @@ public abstract class MemoryPoolModule implements MemoryPoolMetricsAccessor {
             }
 
             MemoryUsage usage = bean.getUsage();
-            IBMMemoryPool ibmMemoryPool = new IBMMemoryPool();
-            ibmMemoryPool.setType(type);
-            ibmMemoryPool.setInit(usage.getInit());
-            ibmMemoryPool.setMax(usage.getMax());
-            ibmMemoryPool.setCommitted(usage.getCommitted());
-            ibmMemoryPool.setUsed(usage.getUsed());
+            IBMMemoryPool ibmMemoryPool = IBMMemoryPool.newBuilder()
+                .setType(type)
+                .setInit(usage.getInit())
+                .setMax(usage.getMax())
+                .setCommitted(usage.getCommitted())
+                .setUsed(usage.getUsed()).build();
 
             poolList.add(ibmMemoryPool);
         }

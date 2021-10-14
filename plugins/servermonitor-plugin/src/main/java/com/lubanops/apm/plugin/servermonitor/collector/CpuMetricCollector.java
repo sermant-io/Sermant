@@ -4,7 +4,6 @@
 
 package com.lubanops.apm.plugin.servermonitor.collector;
 
-
 import com.lubanops.apm.plugin.servermonitor.command.Command;
 import com.lubanops.apm.plugin.servermonitor.command.CommandExecutor;
 import com.lubanops.apm.plugin.servermonitor.command.CpuCommand;
@@ -27,7 +26,7 @@ public class CpuMetricCollector {
 
     private static final int SCALE = 0;
 
-    private final CpuMetric emptyResult = new CpuMetric();
+    private final CpuMetric emptyResult = CpuMetric.newBuilder().setIdlePercentage(100).build();;
 
     private CpuCommand.CpuStat lastState;
 
@@ -47,10 +46,10 @@ public class CpuMetricCollector {
             cpuMetric = emptyResult;
         } else {
             cpuMetric = CpuMetric.newBuilder()
-                .withIdlePercentage(calcIdlePercentage(currentState))
-                .withIoWaitPercentage(calcIoWaitPercentage(currentState))
-                .withSysPercentage(calcSysPercentage(currentState))
-                .withUserPercentage(calcUserPercentage(currentState))
+                .setIdlePercentage(calcIdlePercentage(currentState))
+                .setIoWaitPercentage(calcIoWaitPercentage(currentState))
+                .setSysPercentage(calcSysPercentage(currentState))
+                .setUserPercentage(calcUserPercentage(currentState))
                 .build();
         }
         lastState = currentState;

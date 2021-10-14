@@ -4,7 +4,6 @@
 
 package com.lubanops.apm.plugin.servermonitor.jvm;
 
-
 import com.lubanops.apm.plugin.servermonitor.entity.IBMMemoryPool;
 
 import java.lang.management.ManagementFactory;

@@ -19,7 +19,7 @@ import com.lubanops.apm.plugin.servermonitor.entity.MemoryMetric;
  */
 public class MemoryMetricCollector {
 
-    private final MemoryMetric emptyResult = new MemoryMetric();
+    private final MemoryMetric emptyResult = MemoryMetric.newBuilder().build();
 
     /**
      * 获取memory指标{@link MemoryMetric}
@@ -33,11 +33,11 @@ public class MemoryMetricCollector {
 
     private MemoryMetric buildResult(MemoryCommand.MemInfo memInfo) {
         return MemoryMetric.newBuilder()
-            .withMemoryTotal(memInfo.getMemoryTotal())
-            .withMemoryUsed(memInfo.getMemoryTotal() - memInfo.getMemoryFree())
-            .withBuffers(memInfo.getBuffers())
-            .withCached(memInfo.getCached())
-            .withSwapCached(memInfo.getSwapCached())
+            .setMemoryTotal(memInfo.getMemoryTotal())
+            .setMemoryUsed(memInfo.getMemoryTotal() - memInfo.getMemoryFree())
+            .setBuffers(memInfo.getBuffers())
+            .setCached(memInfo.getCached())
+            .setSwapCached(memInfo.getSwapCached())
             .build();
     }
 }

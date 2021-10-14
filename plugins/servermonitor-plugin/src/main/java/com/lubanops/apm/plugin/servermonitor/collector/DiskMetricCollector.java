@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.lubanops.apm.plugin.servermonitor.common.CalculateUtil.getPercentage;
@@ -92,15 +91,17 @@ public class DiskMetricCollector {
             DiskMetric diskMetric;
             if (lastDiskStat == null) {
                 // 如果上次采集的数据中不包含当前disk，则其为新添加的disk，缓存新disk的“零值”
-                diskMetric = new DiskMetric(deviceName);
+                diskMetric = DiskMetric.newBuilder()
+                    .setDeviceName(deviceName)
+                    .build();
                 emptyResults.put(deviceName, diskMetric);
             } else {
-                long readBytesPerSec = (currentDiskStat.getSectorsRead() - lastDiskStat.getSectorsRead()) * multiPlyFactor;
-                long writeBytesPerSec = (currentDiskStat.getSectorsWritten() - lastDiskStat.getSectorsWritten()) * multiPlyFactor;
-                double ioSpentPercentage = getPercentage(
-                    currentDiskStat.getIoSpentMillis() - lastDiskStat.getIoSpentMillis(),
-                    collectCycleMills, IO_SPENT_SCALE).doubleValue();
-                diskMetric = new DiskMetric(deviceName, readBytesPerSec, writeBytesPerSec, ioSpentPercentage);
+                diskMetric = DiskMetric.newBuilder()
+                    .setDeviceName(deviceName)
+                    .setReadBytesPerSec(calcReadBytesPerSec(currentDiskStat, lastDiskStat))
+                    .setWriteBytesPerSec(calcWriteBytesPerSec(currentDiskStat, lastDiskStat))
+                    .setIoSpentPercentage(calcIoSpentPercentage(currentDiskStat, lastDiskStat))
+                    .build();
             }
             diskMetrics.add(diskMetric);
         }
@@ -115,6 +116,20 @@ public class DiskMetricCollector {
             lastDiskStats.put(diskStat.getDeviceName(), diskStat);
         }
         return diskMetrics;
+    }
+
+    private double calcIoSpentPercentage(DiskCommand.DiskStats currentDiskStat, DiskCommand.DiskStats lastDiskStat) {
+        return getPercentage(
+            currentDiskStat.getIoSpentMillis() - lastDiskStat.getIoSpentMillis(),
+            collectCycleMills, IO_SPENT_SCALE).doubleValue();
+    }
+
+    private long calcWriteBytesPerSec(DiskCommand.DiskStats currentDiskStat, DiskCommand.DiskStats lastDiskStat) {
+        return (currentDiskStat.getSectorsWritten() - lastDiskStat.getSectorsWritten()) * multiPlyFactor;
+    }
+
+    private long calcReadBytesPerSec(DiskCommand.DiskStats currentDiskStat, DiskCommand.DiskStats lastDiskStat) {
+        return (currentDiskStat.getSectorsRead() - lastDiskStat.getSectorsRead()) * multiPlyFactor;
     }
 
     private List<DiskMetric> emptyResults() {
