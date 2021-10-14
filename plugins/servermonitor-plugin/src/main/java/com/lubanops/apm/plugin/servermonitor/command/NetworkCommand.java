@@ -6,7 +6,6 @@ import java.util.List;
 import static com.lubanops.apm.plugin.servermonitor.common.Constant.REGEX_MULTI_SPACES;
 
 /**
- * 服务器网络io的采集类
  * 执行命令：cat /proc/net/dev
  * 输出如下内容：
  * Inter-|   Receive                                                |  Transmit
@@ -34,7 +33,7 @@ public class NetworkCommand extends CommonMonitorCommand<NetworkCommand.NetDev> 
     }
 
     /**
-     * 原泛PaaS类：com.huawei.apm.plugin.collection.util.NetWorkParser
+     * 重构泛PaaS类：com.huawei.apm.plugin.collection.util.NetWorkParser parse方法
      */
     @Override
     public NetDev parseResult(InputStream inputStream) {
