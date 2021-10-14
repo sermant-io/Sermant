@@ -1,5 +1,6 @@
 package com.lubanops.apm.plugin.servermonitor.service;
 
+import com.huawei.apm.bootstrap.boot.PluginService;
 import com.lubanops.apm.plugin.servermonitor.collector.CpuMetricCollector;
 import com.lubanops.apm.plugin.servermonitor.collector.DiskMetricCollector;
 import com.lubanops.apm.plugin.servermonitor.collector.MemoryMetricCollector;
@@ -13,11 +14,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * CPU、磁盘 IO、网络IO、物理磁盘利用率、IBM jvm数据采集类
+ * CPU、磁盘 IO、网络IO、物理磁盘利用率、IBM jvm数据采集服务
  *
  * 重构泛PaaS：com.huawei.apm.plugin.collection.ServerMonitorService
  */
-public class ServerMonitorService /*implements PluginService*/ {
+public class ServerMonitorService implements PluginService {
 
     private boolean shouldCollectLinux;
 
@@ -30,7 +31,7 @@ public class ServerMonitorService /*implements PluginService*/ {
 
     private CollectTask<ServerMonitorMetric> collectTask;
 
-    //@Override
+    @Override
     public void init() {
         // TODO 此处用白名单比较合适，比如除了Windows外的其他非Linux也是不采集的
         shouldCollectLinux = !System.getProperty("os.name").contains("Windows");
@@ -68,7 +69,7 @@ public class ServerMonitorService /*implements PluginService*/ {
         collectTask.start();
     }
 
-    //@Override
+    @Override
     public void stop() {
         collectTask.stop();
     }
@@ -82,7 +83,7 @@ public class ServerMonitorService /*implements PluginService*/ {
                 .setNetwork(networkMetricCollector.getNetworkMetric())
                 .setMemory(memoryMetricCollector.getMemoryMetric());
         }
-        // IBM JDK JVM指标不应该和以上指标混到一块
+        // IBM JDK JVM指标不应该和以上Linux指标混到一块，但目前后台逻辑已经这么处理了，暂时保留
         if (isIbmJvm) {
             builder.setIbmMemoryPools(MemoryPoolProvider.INSTANCE.getMemoryPoolMetricsList());
         }

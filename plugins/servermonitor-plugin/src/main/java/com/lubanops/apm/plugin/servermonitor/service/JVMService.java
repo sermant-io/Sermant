@@ -1,5 +1,6 @@
 package com.lubanops.apm.plugin.servermonitor.service;
 
+import com.huawei.apm.bootstrap.boot.PluginService;
 import com.lubanops.apm.plugin.servermonitor.common.Consumer;
 import com.lubanops.apm.plugin.servermonitor.common.Supplier;
 import org.apache.skywalking.apm.agent.core.jvm.cpu.CPUProvider;
@@ -12,11 +13,14 @@ import org.apache.skywalking.apm.network.language.agent.v3.JVMMetric;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class ServerJVMService /*implements PluginService*/ {
+/**
+ * IBM JVM采集服务
+ */
+public class JVMService implements PluginService {
 
     private CollectTask<JVMMetric> collectTask;
 
-    //@Override
+    @Override
     public void init() {
         // TODO Get from config
         final long collectInterval = 1;
@@ -39,7 +43,7 @@ public class ServerJVMService /*implements PluginService*/ {
         collectTask.start();
     }
 
-    //@Override
+    @Override
     public void stop() {
         collectTask.stop();
     }
