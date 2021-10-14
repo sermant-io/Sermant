@@ -43,7 +43,7 @@ public class CpuMetricCollector {
 
     private CpuMetric buildResult(CpuCommand.CpuStat currentState) {
         CpuMetric cpuMetric;
-        if (lastState == null || lastState.getTotal() == currentState.getTotal()) {
+        if (lastState == null || lastState.getTotal() <= currentState.getTotal()) {
             cpuMetric = emptyResult;
         } else {
             cpuMetric = CpuMetric.newBuilder()
