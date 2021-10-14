@@ -7,6 +7,7 @@ package com.lubanops.apm.plugin.servermonitor.collector;
 import com.lubanops.apm.plugin.servermonitor.command.Command;
 import com.lubanops.apm.plugin.servermonitor.command.CommandExecutor;
 import com.lubanops.apm.plugin.servermonitor.command.NetworkCommand;
+import com.lubanops.apm.plugin.servermonitor.entity.CpuMetric;
 import com.lubanops.apm.plugin.servermonitor.entity.NetworkMetric;
 
 /**
@@ -37,9 +38,9 @@ public class NetworkMetricCollector {
     }
 
     /**
-     * 获取服务器网络信息
+     * 获取Network指标{@link NetworkMetric}
      *
-     * @return 返回ServerNetWork对象
+     * @return {@link NetworkMetric}
      */
     public NetworkMetric getNetworkMetric() {
         final NetworkCommand.NetDev currentNetDev = CommandExecutor.execute(Command.NETWORK);
