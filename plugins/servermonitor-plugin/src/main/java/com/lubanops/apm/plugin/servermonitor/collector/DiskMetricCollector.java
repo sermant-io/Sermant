@@ -27,9 +27,9 @@ import static com.lubanops.apm.plugin.servermonitor.common.CalculateUtil.getPerc
  *
  * <p>每调用一次{@link #getDiskMetrics()}方法会触发一次{@link DiskCommand}命令
  * 的执行，然后将本次执行的{@link DiskCommand.DiskStats}结果与上次执行的结果进行计
- * 算得到{@link DiskMetric}，并缓存本次执行结果用于下次计算</p>
+ * 算得到{@link DiskMetric}，并缓存本次执行结果用于下次计算。</p>
  *
- * <p>重构泛PaaS：com.huawei.apm.plugin.collection.disk.ServerDiskProvider
+ * <p>重构泛PaaS：com.huawei.apm.plugin.collection.disk.ServerDiskProvider。
  * </p>
  */
 public class DiskMetricCollector {
@@ -58,7 +58,7 @@ public class DiskMetricCollector {
     private final Map<String, DiskCommand.DiskStats> lastDiskStats = new HashMap<String, DiskCommand.DiskStats>();
 
     /**
-     * 空结果缓存
+     * 指标零值缓存，新设备或存量设备第一次的指标使用零值
      * key: diskName
      * value: DiskMetric
      */
@@ -67,19 +67,6 @@ public class DiskMetricCollector {
     public DiskMetricCollector(long collectCycle) {
         this.collectCycleMills = TimeUnit.MILLISECONDS.convert(collectCycle, TimeUnit.SECONDS);
         this.multiPlyFactor = BYTES_PER_SECTOR / collectCycle;
-        init();
-    }
-
-    private void init() {
-        List<DiskCommand.DiskStats> diskStats = CommandExecutor.execute(Command.DISK);
-        if (diskStats == null) {
-            return;
-        }
-        for (DiskCommand.DiskStats diskStat : diskStats) {
-            String deviceName = diskStat.getDeviceName();
-            lastDiskStats.put(deviceName, diskStat);
-            emptyResults.put(deviceName, new DiskMetric(deviceName));
-        }
     }
 
     /**
@@ -99,29 +86,22 @@ public class DiskMetricCollector {
     private List<DiskMetric> buildResults(List<DiskCommand.DiskStats> currentDiskStats) {
         final List<DiskMetric> diskMetrics = new LinkedList<DiskMetric>();
         for (final DiskCommand.DiskStats currentDiskStat : currentDiskStats) {
-            String deviceName = currentDiskStat.getDeviceName();
-            DiskCommand.DiskStats lastDiskStat = lastDiskStats.remove(deviceName);
-
-            long readBytesPerSec;
-            long writeBytesPerSec;
-            double ioSpentPercentage;
-
+            final String deviceName = currentDiskStat.getDeviceName();
+            final DiskCommand.DiskStats lastDiskStat = lastDiskStats.remove(deviceName);
+            DiskMetric diskMetric;
             if (lastDiskStat == null) {
-                // 如果上次采集的数据中不包含当前disk，则为新添加的disk
-                readBytesPerSec = currentDiskStat.getSectorsRead() * multiPlyFactor;
-                writeBytesPerSec = currentDiskStat.getSectorsWritten() * multiPlyFactor;
-                ioSpentPercentage = getPercentage(
-                    currentDiskStat.getIoSpentMillis(), collectCycleMills, IO_SPENT_SCALE).doubleValue();
-                // 缓存新disk的空结果
-                emptyResults.put(deviceName, new DiskMetric(deviceName));
+                // 如果上次采集的数据中不包含当前disk，则其为新添加的disk，缓存新disk的“零值”
+                diskMetric = new DiskMetric(deviceName);
+                emptyResults.put(deviceName, diskMetric);
             } else {
-                readBytesPerSec = (currentDiskStat.getSectorsRead() - lastDiskStat.getSectorsRead()) * multiPlyFactor;
-                writeBytesPerSec = (currentDiskStat.getSectorsWritten() - lastDiskStat.getSectorsWritten()) * multiPlyFactor;
-                ioSpentPercentage = getPercentage(
+                long readBytesPerSec = (currentDiskStat.getSectorsRead() - lastDiskStat.getSectorsRead()) * multiPlyFactor;
+                long writeBytesPerSec = (currentDiskStat.getSectorsWritten() - lastDiskStat.getSectorsWritten()) * multiPlyFactor;
+                double ioSpentPercentage = getPercentage(
                     currentDiskStat.getIoSpentMillis() - lastDiskStat.getIoSpentMillis(),
                     collectCycleMills, IO_SPENT_SCALE).doubleValue();
+                diskMetric = new DiskMetric(deviceName, readBytesPerSec, writeBytesPerSec, ioSpentPercentage);
             }
-            diskMetrics.add(new DiskMetric(deviceName, readBytesPerSec, writeBytesPerSec, ioSpentPercentage));
+            diskMetrics.add(diskMetric);
         }
 
         // 如果上次采集的disk在本次采集中不存在，则表示disk被移除

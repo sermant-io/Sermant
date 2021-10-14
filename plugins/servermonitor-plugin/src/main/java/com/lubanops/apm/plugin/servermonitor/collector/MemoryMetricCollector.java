@@ -13,9 +13,9 @@ import com.lubanops.apm.plugin.servermonitor.entity.MemoryMetric;
  * Linux memory指标{@link MemoryMetric}采集器
  *
  * <p>调用{@link #getMemoryMetric()}方法将执行{@link MemoryCommand}命令获取
- * {@link MemoryCommand.MemInfo}结果，然后使用此结果计算得到{@link MemoryMetric}</p>
+ * {@link MemoryCommand.MemInfo}结果，然后使用此结果计算得到{@link MemoryMetric}。</p>
  *
- * <p>重构泛PaaS：com.huawei.apm.plugin.collection.memory.ServerMemoryProvider</p>
+ * <p>重构泛PaaS：com.huawei.apm.plugin.collection.memory.ServerMemoryProvider。</p>
  */
 public class MemoryMetricCollector {
 

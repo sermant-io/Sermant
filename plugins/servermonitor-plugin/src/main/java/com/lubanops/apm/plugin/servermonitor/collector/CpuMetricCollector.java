@@ -18,9 +18,9 @@ import static com.lubanops.apm.plugin.servermonitor.common.CalculateUtil.getPerc
  *
  * <p>每调用一次{@link #getCpuMetric()}方法会触发一次{@link CpuCommand}命令
  * 的执行，然后将本次执行的{@link CpuCommand.CpuStat}结果与上次执行的结果进行计
- * 算得到{@link CpuMetric}，并缓存本次执行结果用于下次计算</p>
+ * 算得到{@link CpuMetric}，并缓存本次执行结果用于下次计算。</p>
  *
- * <p>重构泛PaaS：com.huawei.apm.plugin.collection.cpu.ServerCPUProvider
+ * <p>重构泛PaaS：com.huawei.apm.plugin.collection.cpu.ServerCPUProvider。
  * </p>
  */
 public class CpuMetricCollector {

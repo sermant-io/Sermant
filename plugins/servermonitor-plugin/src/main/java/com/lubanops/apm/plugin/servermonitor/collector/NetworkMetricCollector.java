@@ -16,9 +16,9 @@ import com.lubanops.apm.plugin.servermonitor.entity.NetworkMetric;
  *
  * <p>每调用一次{@link #getNetworkMetric()}方法会触发一次{@link NetworkCommand}命令
  * 的执行，然后将本次执行的{@link NetworkCommand.NetDev}结果与上次执行的结果进行计算得到
- * {@link NetworkMetric}，并缓存本次执行结果用于下次计算</p>
+ * {@link NetworkMetric}，并缓存本次执行结果用于下次计算。</p>
  *
- * <p>重构泛PaaS：com.huawei.apm.plugin.collection.network.ServerNetWorkProvider
+ * <p>重构泛PaaS：com.huawei.apm.plugin.collection.network.ServerNetWorkProvider。
  * </p>
  */
 public class NetworkMetricCollector {
