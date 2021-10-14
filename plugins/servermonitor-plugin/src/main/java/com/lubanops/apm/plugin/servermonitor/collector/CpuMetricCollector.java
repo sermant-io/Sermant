@@ -41,13 +41,6 @@ public class CpuMetricCollector {
         return currentState == null ? emptyResult : buildResult(currentState);
     }
 
-    /**
-     * user = user + nice 参照
-     * <a href=https://github.com/i4oolish/nmon/blob/master/lnmon.c>nmon</a>
-     *
-     * @param currentState 本次采集的指标
-     * @return CPU指标
-     */
     private CpuMetric buildResult(CpuCommand.CpuStat currentState) {
         CpuMetric cpuMetric;
         if (lastState == null) {
@@ -82,6 +75,10 @@ public class CpuMetricCollector {
             currentState.getTotal() - lastState.getTotal(), SCALE).intValue();
     }
 
+    /**
+     * user = user + nice 参照
+     * <a href=https://github.com/i4oolish/nmon/blob/master/lnmon.c>nmon</a>
+     */
     private int calcUserPercentage(CpuCommand.CpuStat currentState) {
         return getPercentage(
             (currentState.getUser() + currentState.getNice()) - (lastState.getUser() + lastState.getNice()),
