@@ -87,6 +87,7 @@ public class DiskMetricCollector {
         final List<DiskMetric> diskMetrics = new LinkedList<DiskMetric>();
         for (final DiskCommand.DiskStats currentDiskStat : currentDiskStats) {
             final String deviceName = currentDiskStat.getDeviceName();
+            // 根据设备名从last disk中检索并移除disk状态（判断是否存在）
             final DiskCommand.DiskStats lastDiskStat = lastDiskStats.remove(deviceName);
             DiskMetric diskMetric;
             if (lastDiskStat == null) {
@@ -104,13 +105,12 @@ public class DiskMetricCollector {
             diskMetrics.add(diskMetric);
         }
 
-        // 如果上次采集的disk在本次采集中不存在，则表示disk被移除
-        Set<String> removedDeviceNames = lastDiskStats.keySet();
-        for (String deviceName : removedDeviceNames) {
+        // last disk中剩下的disk表示，之前存在过，但在本次采集中已不存在的disk，即被移除的disk
+        for (String deviceName : lastDiskStats.keySet()) {
             diskMetrics.add(emptyResults.get(deviceName));
         }
 
-        // 更新disk状态
+        // 更新last disk状态
         for (DiskCommand.DiskStats diskStat : currentDiskStats) {
             lastDiskStats.put(diskStat.getDeviceName(), diskStat);
         }
