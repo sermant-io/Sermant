@@ -22,6 +22,7 @@
  *
  *
  */
+
 package com.lubanops.apm.plugin.servermonitor.common;
 
 /**
