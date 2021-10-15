@@ -11,7 +11,8 @@ import com.lubanops.apm.plugin.servermonitor.entity.NetworkMetric;
 
 /**
  * Linux network指标{@link NetworkMetric}采集器，通过执行两次{@link NetworkCommand}
- * 命令获取两次{@link NetworkCommand.NetDev}结果，来计算每秒的网络读写字节和包数量。
+ * 命令获取两次{@link NetworkCommand.NetDev}结果，来计算计算两次执行时间间隔内每秒的网络
+ * 读写字节和包数量。
  *
  * <p>每调用一次{@link #getNetworkMetric()}方法会触发一次{@link NetworkCommand}命令
  * 的执行，然后将本次执行的{@link NetworkCommand.NetDev}结果与上次执行的结果进行计算得到

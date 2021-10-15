@@ -13,7 +13,8 @@ import static com.lubanops.apm.plugin.servermonitor.common.CalculateUtil.getPerc
 
 /**
  * Linux CPU指标{@link CpuMetric}采集器，通过执行两次{@link CpuCommand}命令
- * 获取两次{@link CpuCommand.CpuStat}结果，来计算调用间隔时间内各种CPU时间占比。
+ * 获取两次{@link CpuCommand.CpuStat}结果，来计算调用间隔时间内各种CPU时间占总
+ * CPU时间的百分比。
  *
  * <p>每调用一次{@link #getCpuMetric()}方法会触发一次{@link CpuCommand}命令
  * 的执行，然后将本次执行的{@link CpuCommand.CpuStat}结果与上次执行的结果进行计
@@ -26,7 +27,7 @@ public class CpuMetricCollector {
 
     private static final int SCALE = 0;
 
-    private final CpuMetric emptyResult = CpuMetric.newBuilder().setIdlePercentage(100).build();;
+    private final CpuMetric emptyResult = CpuMetric.newBuilder().setIdlePercentage(100).build();
 
     private CpuCommand.CpuStat lastState;
 

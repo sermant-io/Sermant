@@ -21,8 +21,8 @@ import static com.lubanops.apm.plugin.servermonitor.common.CalculateUtil.getPerc
 
 /**
  * Linux disk指标{@link DiskMetric}采集器，通过执行两次{@link DiskCommand}命令
- * 获取两次{@link DiskCommand.DiskStats}结果，来计算每秒的磁盘读写字节数、和两次执
- * 行间隔时间段内IO时间所占的百分比。
+ * 获取两次{@link DiskCommand.DiskStats}结果，来计算两次执行时间间隔内每秒的磁盘读
+ * 写字节数、和该时间段内IO消耗时间所占的百分比。
  *
  * <p>每调用一次{@link #getDiskMetrics()}方法会触发一次{@link DiskCommand}命令
  * 的执行，然后将本次执行的{@link DiskCommand.DiskStats}结果与上次执行的结果进行计
