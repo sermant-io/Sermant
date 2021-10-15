@@ -1,1 +1,1 @@
-# JavaMesh
+# java-mesh
