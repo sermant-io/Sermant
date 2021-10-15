@@ -4,7 +4,7 @@
 
 package com.lubanops.apm.plugin.servermonitor.jvm;
 
-import com.lubanops.apm.plugin.servermonitor.entity.IBMMemoryPool;
+import com.lubanops.apm.plugin.servermonitor.entity.IbmJvmMetric;
 import com.lubanops.apm.plugin.servermonitor.entity.IBMPoolType;
 
 import java.lang.management.MemoryPoolMXBean;
@@ -18,6 +18,7 @@ import java.util.List;
  * @author zhengbin zhao
  * @since 2021-03-16
  */
+@Deprecated
 public abstract class MemoryPoolModule implements MemoryPoolMetricsAccessor {
     private List<MemoryPoolMXBean> beans;
 
@@ -26,8 +27,8 @@ public abstract class MemoryPoolModule implements MemoryPoolMetricsAccessor {
     }
 
     @Override
-    public List<IBMMemoryPool> getMemoryPoolMetricsList() {
-        List<IBMMemoryPool> poolList = new LinkedList<IBMMemoryPool>();
+    public List<IbmJvmMetric> getMemoryPoolMetricsList() {
+        List<IbmJvmMetric> poolList = new LinkedList<IbmJvmMetric>();
         for (MemoryPoolMXBean bean : beans) {
             String name = bean.getName();
             IBMPoolType type;
@@ -38,14 +39,15 @@ public abstract class MemoryPoolModule implements MemoryPoolMetricsAccessor {
             }
 
             MemoryUsage usage = bean.getUsage();
-            IBMMemoryPool ibmMemoryPool = IBMMemoryPool.newBuilder()
+
+            IbmJvmMetric ibmJvmMetric = IbmJvmMetric.newBuilder()
                 .setType(type)
                 .setInit(usage.getInit())
                 .setMax(usage.getMax())
                 .setCommitted(usage.getCommitted())
                 .setUsed(usage.getUsed()).build();
 
-            poolList.add(ibmMemoryPool);
+            poolList.add(ibmJvmMetric);
         }
         return poolList;
     }

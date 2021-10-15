@@ -4,7 +4,7 @@
 
 package com.lubanops.apm.plugin.servermonitor.jvm;
 
-import com.lubanops.apm.plugin.servermonitor.entity.IBMMemoryPool;
+import com.lubanops.apm.plugin.servermonitor.entity.IbmJvmMetric;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
@@ -16,6 +16,7 @@ import java.util.List;
  * @author zhengbin zhao
  * @since 2021-03-16
  */
+@Deprecated
 public enum MemoryPoolProvider {
     /**
      * 实例
@@ -43,9 +44,9 @@ public enum MemoryPoolProvider {
     /**
      * 获取内存中metric集合
      *
-     * @return IBMMemoryPool
+     * @return IbmJvmMetric
      */
-    public List<IBMMemoryPool> getMemoryPoolMetricsList() {
+    public List<IbmJvmMetric> getMemoryPoolMetricsList() {
         return metricAccessor.getMemoryPoolMetricsList();
     }
 

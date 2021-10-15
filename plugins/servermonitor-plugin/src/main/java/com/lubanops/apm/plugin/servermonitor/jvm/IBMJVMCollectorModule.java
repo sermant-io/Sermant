@@ -13,6 +13,7 @@ import java.util.List;
  * @author zhengbin zhao
  * @since 2021-03-16
  */
+@Deprecated
 public class IBMJVMCollectorModule extends MemoryPoolModule {
     public IBMJVMCollectorModule(List<MemoryPoolMXBean> beans) {
         super(beans);

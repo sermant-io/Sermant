@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * IBM JVM采集服务
+ * Oracle JVM采集服务
  */
-public class JVMService implements PluginService {
+public class OracleJvmCollectService implements PluginService {
 
     private CollectTask<JVMMetric> collectTask;
 

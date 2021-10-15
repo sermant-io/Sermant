@@ -7,12 +7,12 @@ package com.lubanops.apm.plugin.servermonitor.service;
 import com.huawei.apm.bootstrap.boot.PluginService;
 import com.lubanops.apm.plugin.servermonitor.collector.CpuMetricCollector;
 import com.lubanops.apm.plugin.servermonitor.collector.DiskMetricCollector;
+import com.lubanops.apm.plugin.servermonitor.collector.IbmJvmMetricCollector;
 import com.lubanops.apm.plugin.servermonitor.collector.MemoryMetricCollector;
 import com.lubanops.apm.plugin.servermonitor.collector.NetworkMetricCollector;
 import com.lubanops.apm.plugin.servermonitor.common.Consumer;
 import com.lubanops.apm.plugin.servermonitor.common.Supplier;
 import com.lubanops.apm.plugin.servermonitor.entity.ServerMonitorMetric;
-import com.lubanops.apm.plugin.servermonitor.jvm.MemoryPoolProvider;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,23 +24,25 @@ import java.util.concurrent.TimeUnit;
  */
 public class ServerMonitorService implements PluginService {
 
-    private boolean shouldCollectLinux;
+    private boolean collectServerMetric;
 
-    private boolean isIbmJvm;
+    private boolean collectIbmJvmMetric;
 
-    private DiskMetricCollector diskMetricCollector;
     private CpuMetricCollector cpuMetricCollector;
-    private MemoryMetricCollector memoryMetricCollector;
+    private DiskMetricCollector diskMetricCollector;
     private NetworkMetricCollector networkMetricCollector;
+    private MemoryMetricCollector memoryMetricCollector;
+
+    private IbmJvmMetricCollector ibmJvmMetricCollector;
 
     private CollectTask<ServerMonitorMetric> collectTask;
 
-    @Override
+    //@Override
     public void init() {
         // TODO 此处用白名单比较合适，比如除了Windows外的其他非Linux也是不采集的
-        shouldCollectLinux = !System.getProperty("os.name").contains("Windows");
-        isIbmJvm = System.getProperty("java.vm.vendor").contains("IBM");
-        if (!shouldCollectLinux && !isIbmJvm) {
+        collectServerMetric = !System.getProperty("os.name").contains("Windows");
+        collectIbmJvmMetric = System.getProperty("java.vm.vendor").contains("IBM");
+        if (!collectServerMetric && !collectIbmJvmMetric) {
             // LOGGER.info("The server monitor task does not need to start in current system and jvm arch.")
             return;
         }
@@ -49,11 +51,14 @@ public class ServerMonitorService implements PluginService {
         final long collectInterval = 1;
         final long consumeInterval = 60;
 
-        if (shouldCollectLinux) {
-            diskMetricCollector = new DiskMetricCollector(collectInterval);
+        if (collectServerMetric) {
             cpuMetricCollector = new CpuMetricCollector();
-            memoryMetricCollector = new MemoryMetricCollector();
+            diskMetricCollector = new DiskMetricCollector(collectInterval);
             networkMetricCollector = new NetworkMetricCollector(collectInterval);
+            memoryMetricCollector = new MemoryMetricCollector();
+        }
+        if (collectIbmJvmMetric) {
+            ibmJvmMetricCollector = new IbmJvmMetricCollector();
         }
 
         collectTask = CollectTask.create(
@@ -81,15 +86,15 @@ public class ServerMonitorService implements PluginService {
     private ServerMonitorMetric collect() {
         ServerMonitorMetric.Builder builder = ServerMonitorMetric.newBuilder()
             .setTime(System.currentTimeMillis());
-        if (shouldCollectLinux) {
+        if (collectServerMetric) {
             builder.setCpu(cpuMetricCollector.getCpuMetric())
                 .addAllDisks(diskMetricCollector.getDiskMetrics())
                 .setNetWork(networkMetricCollector.getNetworkMetric())
                 .setMemory(memoryMetricCollector.getMemoryMetric());
         }
         // IBM JDK JVM指标不应该和以上Linux指标混到一块，但目前后台逻辑已经这么处理了，暂时保留
-        if (isIbmJvm) {
-            builder.addAllIbmMemoryPools(MemoryPoolProvider.INSTANCE.getMemoryPoolMetricsList());
+        if (collectIbmJvmMetric) {
+            builder.addAllIbmJvmMetrics(ibmJvmMetricCollector.getIbmJvmMetrics());
         }
         return builder.build();
     }

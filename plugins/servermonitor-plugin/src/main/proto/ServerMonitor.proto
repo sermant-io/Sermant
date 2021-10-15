@@ -20,7 +20,7 @@ message ServerMonitorMetric {
   repeated DiskMetric disks = 3;
   NetworkMetric netWork = 4;
   MemoryMetric memory = 5;
-  repeated IBMMemoryPool ibmMemoryPools = 6;
+  repeated IbmJvmMetric ibmJvmMetrics = 6;
 }
 
 // cpu指标
@@ -56,7 +56,7 @@ message MemoryMetric {
   int64 memoryUsed = 5; // 对应cat /proc/meminfo指令的SwapCached
 }
 
-message IBMMemoryPool {
+message IbmJvmMetric {
   IBMPoolType type = 1;
   int64 init = 2;
   int64 max = 3;
