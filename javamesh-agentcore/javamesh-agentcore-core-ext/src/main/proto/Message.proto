@@ -1,0 +1,27 @@
+syntax = "proto3";
+option java_package = "com.huawei.apm.core.ext.lubanops.transport.netty.pojo";
+
+message NettyMessage{
+
+  enum MessageType {
+    HEARTBEAT_PING = 0;
+    HEARTBEAT_PONG = 1;
+    SERVICE_DATA = 2;
+  }
+
+  MessageType messageType = 1;
+  HeartBeat heartBeat = 2;
+  repeated ServiceData serviceData = 3;
+
+
+}
+message HeartBeat{
+
+}
+message ServiceData{
+  enum DataType{
+    SERVICE_HEARTBEAT = 0;
+  }
+  DataType dataType = 1;
+  bytes data = 2;
+}

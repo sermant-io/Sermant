@@ -1,73 +1,86 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.huawei.hwclouds.lubanops</groupId>
-    <artifactId>lubanops-apm-javaagent</artifactId>
+    <groupId>com.huawei.javamesh</groupId>
+    <artifactId>javamesh</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
     <properties>
         <encoding>UTF-8</encoding>
         <jdk.version>1.6</jdk.version>
+
+        <slf4j.version>1.7.30</slf4j.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <commons-collections.version>4.4</commons-collections.version>
+        <guice.version>4.1.0</guice.version>
+        <http.client.version>4.5.13</http.client.version>
+        <http.core.version>4.4.13</http.core.version>
+        <Java-WebSocket.version>1.5.1</Java-WebSocket.version>
+        <netty.version>4.1.63.Final</netty.version>
+        <protobuf.version>3.13.0</protobuf.version>
+        <fastjson.version>1.2.76</fastjson.version>
+        <xml.apis.version>1.4.01</xml.apis.version>
+        <snake.yaml.version>1.26</snake.yaml.version>
+        <asm.version>8.0.1</asm.version>
+        <byte.buddy.version>1.10.14</byte.buddy.version>
+
+        <grpc.version>1.36.1</grpc.version>
         <guava-jdk6.version>19.0</guava-jdk6.version>
         <guava-jdk8.version>29.0-jre</guava-jdk8.version>
         <guava.version>${guava-jdk6.version}</guava.version>
-        <grpc.version>1.36.1</grpc.version>
-        <protobuf.version>3.13.0</protobuf.version>
-        <netty.version>4.1.63.Final</netty.version>
+
+        <junit.version>4.12</junit.version>
+        <mockito-core.version>3.9.0</mockito-core.version>
+
         <os.plugin.version>1.5.0.Final</os.plugin.version>
         <protubuf.plugin.version>0.5.1</protubuf.plugin.version>
-        <mockito-core.version>3.9.0</mockito-core.version>
-        <javaagent.dir>${pom.basedir}/..</javaagent.dir>
-        <package.temp.dir>lubanops-apm-javaagent-packaging/temp</package.temp.dir>
-        <package.relative.dir>${project.artifactId}</package.relative.dir>
-        <package.dir>${javaagent.dir}/${package.temp.dir}/${package.relative.dir}</package.dir>
-        <package.clean.skip.flag>false</package.clean.skip.flag>
-        <dependency.skip.flag>true</dependency.skip.flag>
-        <dependency.dir>${javaagent.dir}/${package.temp.dir}/lib</dependency.dir>
-        <dependency.clean.skip.flag>${dependency.skip.flag}</dependency.clean.skip.flag>
+
+        <javamesh.name>javamesh-agent</javamesh.name>
+        <javamesh.version>2.0.5</javamesh.version>
+        <javamesh.basedir>${pom.basedir}/..</javamesh.basedir>
+
+        <package.temp.dir>${javamesh.basedir}/${javamesh.name}-${javamesh.version}</package.temp.dir>
+        <package.agent.dir>${package.temp.dir}/agent</package.agent.dir>
+        <package.backend.dir>${package.temp.dir}/backends</package.backend.dir>
+        <package.output.dir>${project.build.outputDirectory}</package.output.dir>
+
+        <dependency.output.dir>${package.agent.dir}/lib</dependency.output.dir>
+
         <shade.common.prefix>com.huawei</shade.common.prefix>
-        <shade.distinct.prefix>${artifactId}</shade.distinct.prefix>
+        <shade.distinct.prefix>${project.artifactId}</shade.distinct.prefix>
     </properties>
-    <modules>
-        <module>lubanops-apm-javaagent-bootstrap</module>
-        <module>lubanops-apm-javaagent-premain</module>
-        <module>lubanops-apm-javaagent-integration</module>
-        <module>lubanops-apm-javaagent-core</module>
-        <module>plugins</module>
-        <module>lubanops-apm-javaagent-packaging</module>
-        <module>ApmService</module>
-    </modules>
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.huawei.hwclouds.lubanops</groupId>
-                <artifactId>lubanops-apm-javaagent-premain</artifactId>
-                <version>1.0.0</version>
+                <groupId>com.huawei.javamesh</groupId>
+                <artifactId>javamesh-agentcore-premain</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.huawei.hwclouds.lubanops</groupId>
-                <artifactId>lubanops-apm-javaagent-bootstrap</artifactId>
-                <version>1.0.0</version>
+                <groupId>com.huawei.javamesh</groupId>
+                <artifactId>javamesh-agentcore-bootstrap</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.huawei.hwclouds.lubanops</groupId>
-                <artifactId>lubanops-apm-javaagent-integration</artifactId>
-                <version>1.0.0</version>
+                <groupId>com.huawei.javamesh</groupId>
+                <artifactId>javamesh-agentcore-core-ext</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.huawei.hwclouds.lubanops</groupId>
-                <artifactId>lubanops-apm-javaagent-core</artifactId>
-                <version>1.0.0</version>
+                <groupId>com.huawei.javamesh</groupId>
+                <artifactId>javamesh-agentcore-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.5.13</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>4.4.13</version>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -75,19 +88,9 @@
                 <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
-		      <groupId>org.apache.commons</groupId>
-	      	  <artifactId>commons-collections4</artifactId>
-		      <version>4.4</version>
-		    </dependency>
-            <dependency>
-			    <groupId>com.alibaba</groupId>
-			    <artifactId>fastjson</artifactId>
-			    <version>1.2.76</version>
-			</dependency>
-            <dependency>
-                <groupId>xml-apis</groupId>
-                <artifactId>xml-apis</artifactId>
-                <version>1.4.01</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.inject</groupId>
@@ -105,26 +108,20 @@
                 <version>${guice.version}</version>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.12</version>
-                <scope>test</scope>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${http.client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${http.core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.java-websocket</groupId>
                 <artifactId>Java-WebSocket</artifactId>
                 <version>${Java-WebSocket.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-	            <artifactId>slf4j-api</artifactId>
-                <version>1.7.30</version>
-            </dependency>
-            <dependency>
-			    <groupId>org.slf4j</groupId>
-			    <artifactId>slf4j-simple</artifactId>
-			    <version>1.7.30</version>
-			</dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
@@ -136,57 +133,112 @@
                 <version>${protobuf.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>${xml.apis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snake.yaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${asm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-commons</artifactId>
+                <version>${asm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${byte.buddy.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito-core.version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>1.26</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <profiles>
         <profile>
-            <id>dev</id>
-            <properties>
-                <app.env>dev</app.env>
-                <javaagent.version>2.0.5</javaagent.version>
-                <commons-lang3.version>3.12.0</commons-lang3.version>
-                <guice.version>4.1.0</guice.version>
-                <Java-WebSocket.version>1.5.1</Java-WebSocket.version>
-            </properties>
+            <id>prepare</id>
+            <modules>
+                <module>javamesh-prepare</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>agent</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <modules>
+                <module>javamesh-agentcore</module>
+            </modules>
         </profile>
         <profile>
-            <id>fuxi</id>
-            <properties>
-                <app.env>fuxi</app.env>
-                <jdk.version>1.7</jdk.version>
-                <javaagent.version>2.0.5</javaagent.version>
-                <commons-lang3.version>3.12.0</commons-lang3.version>
-                <guice.version>4.1.0</guice.version>
-                <Java-WebSocket.version>1.5.1</Java-WebSocket.version>
-            </properties>
+            <id>plugin</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>javamesh-agentcore</module>
+                <module>javamesh-samples</module>
+            </modules>
         </profile>
         <profile>
-            <id>jdk6</id>
-            <properties>
-                <app.env>jdk6</app.env>
-                <jdk.version>1.6</jdk.version>
-                <javaagent.version>2.0.5</javaagent.version>
-                <commons-lang3.version>3.3.2</commons-lang3.version>
-                <guice.version>4.1.0</guice.version>
-                <Java-WebSocket.version>1.5.1</Java-WebSocket.version>
-            </properties>
+            <id>backend</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>javamesh-samples</module>
+                <module>javamesh-backend</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>example</id>
+            <modules>
+                <module>javamesh-agentcore</module>
+                <module>javamesh-samples</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>package</id>
+            <modules>
+                <module>javamesh-package</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>all</id>
+            <modules>
+                <module>javamesh-prepare</module>
+                <module>javamesh-agentcore</module>
+                <module>javamesh-samples</module>
+                <module>javamesh-backend</module>
+                <module>javamesh-package</module>
+            </modules>
         </profile>
     </profiles>
     <build>
-        <finalName>original-${project.artifactId}-${javaagent.version}</finalName>
+        <finalName>${project.artifactId}-${javamesh.version}</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -202,8 +254,7 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <finalName>${project.artifactId}-${javaagent.version}</finalName>
-                        <outputDirectory>${package.dir}</outputDirectory>
+                        <outputFile>${package.output.dir}/${project.artifactId}-${javamesh.version}.jar</outputFile>
                         <relocations>
                             <relocation>
                                 <pattern>com.alibaba</pattern>
@@ -214,52 +265,38 @@
                                 <shadedPattern>${shade.common.prefix}.org.yaml</shadedPattern>
                             </relocation>
                             <relocation>
+                                <pattern>org.objectweb.asm</pattern>
+                                <shadedPattern>${shade.common.prefix}.org.objectweb.asm</shadedPattern>
+                            </relocation>
+                            <relocation>
                                 <pattern>net.bytebuddy</pattern>
                                 <shadedPattern>${shade.common.prefix}.net.bytebuddy</shadedPattern>
                             </relocation>
                         </relocations>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <executions>
+                        <execution>
+                            <id>copy-dependencies</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${dependency.output.dir}</outputDirectory>
+                                <includeScope>compile</includeScope><!-- todo -->
+                                <excludeGroupIds>${project.groupId}</excludeGroupIds>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
-                <executions>
-                    <execution>
-                        <id>package-clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
-                            <skip>${package.clean.skip.flag}</skip>
-                            <filesets>
-                                <fileset>
-                                    <directory>${package.dir}</directory>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>dependency-clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
-                            <skip>${dependency.clean.skip.flag}</skip>
-                            <filesets>
-                                <fileset>
-                                    <directory>${dependency.dir}</directory>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -274,9 +311,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
-                <configuration>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -291,26 +325,6 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <skip>${dependency.skip.flag}</skip>
-                            <outputDirectory>${dependency.dir}</outputDirectory>
-                            <includeScope>compile</includeScope>
-                            <excludeGroupIds>com.huawei.hwclouds.lubanops</excludeGroupIds>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
