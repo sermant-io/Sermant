@@ -25,6 +25,8 @@ import java.util.concurrent.TimeUnit;
  * 方法提供的Linux指令，并通过{@link MonitorCommand#parseResult(InputStream)}和
  * {@link MonitorCommand#handleError(InputStream)}来处理外部进程的输出流和错误流，
  * 外部进程的输出流的处理结果作为方法的结果。</p>
+ *
+ * <p>重构泛PaaS：com.huawei.apm.plugin.collection.util.RunLinuxCommand</p>
  */
 public class CommandExecutor {
 
