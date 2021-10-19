@@ -17,24 +17,19 @@
         <package.sample.name>example</package.sample.name>
     </properties>
 
-    <modules>
-        <module>demo-application</module>
-    </modules>
-
     <profiles>
         <profile>
-            <id>plugin</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>example</id>
             <modules>
                 <module>demo-plugin</module>
+                <module>demo-application</module>
             </modules>
         </profile>
         <profile>
             <id>all</id>
             <modules>
                 <module>demo-plugin</module>
+                <module>demo-application</module>
             </modules>
         </profile>
     </profiles>
