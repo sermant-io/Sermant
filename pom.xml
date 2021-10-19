@@ -180,6 +180,9 @@
     <profiles>
         <profile>
             <id>prepare</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>javamesh-prepare</module>
             </modules>
@@ -222,6 +225,9 @@
         </profile>
         <profile>
             <id>package</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>javamesh-package</module>
             </modules>

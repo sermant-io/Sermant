@@ -18,11 +18,11 @@ JavaMesh是一个基于ByteBuddy字节码技术开发的javaagent框架;框架�
    - javamesh-samples/javamesh-example: 插件示例
    - javamesh-samples/javamesh-flowcontrol: 流控插件及后端
 
-## [示例插件](javamesh-samples/javamesh-examples/demo-plugin)
+## [示例插件](javamesh-samples/javamesh-example/demo-plugin)
 
 - 示例插件中拦截了org.springframework.boot.autoconfigure.SpringBootApplication注解
 
-## [示例插件拦截的应用](javamesh-samples/javamesh-examples/demo-application)
+## [示例插件拦截的应用](javamesh-samples/javamesh-example/demo-application)
 
 ## 快速开始
 
@@ -43,7 +43,7 @@ JavaMesh是一个基于ByteBuddy字节码技术开发的javaagent框架;框架�
 
 #### 终端
 
-- 打包[示例插件拦截的应用](javamesh-samples/javamesh-examples/demo-application)
+- 打包[示例插件拦截的应用](javamesh-samples/javamesh-example/demo-application)
 -
 
 执行`java -javaagent:${JavaMesh}\javamesh-agent-x.x.x\agent\javamesh-agent.jar=appName=${appName} -jar .\DemoApplication-0.0.1 -SNAPSHOT.jar`
@@ -54,23 +54,23 @@ JavaMesh是一个基于ByteBuddy字节码技术开发的javaagent框架;框架�
 - IDEA挂载JavaMesh,需在应用`Run Configuration -> VM options`
   加入`-javaagent:${JavaMesh}\javamesh-agent-x.x.x\agent\javamesh-agent.jar=appName=${appName}`
   即可,其中`${JavaMesh}`是框架项目路径,`${appName}`为应用名称。
-- 运行[应用](javamesh-samples/javamesh-examples/demo-application/src/main/java/com/lubanops/demo/DemoApplication.java)
+- 运行[应用](javamesh-samples/javamesh-example/demo-application/src/main/java/com/huawei/example/demo/DemoApplication.java)
 
 ## 插件开发
 框架采用SPI机制进行插件的加载，插件的开发需要在resources/META-INF/service创建相应的文件(文件名与实现接口的全限定名一致)
-### [增强类接口](javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/definition/EnhanceDefinition.java)
+### [增强类接口](javamesh-agentcore/javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/definition/EnhanceDefinition.java)
 该接口定义了两个方法：`ClassMatcher enhanceClass()`和`MethodInterceptPoint[] getMethodInterceptPoints()`：  
 `ClassMatcher enhanceClass()`用来获取需要增强的目标类，支持单个和多个类，注解，也可以通过前缀匹配需要增强的类；  
 `MethodInterceptPoint[] getMethodInterceptPoints()`用来获取封装了待增强目标方法和其拦截器的MethodInterceptPoint(对应的拦截器接口说明在下面详细说明)，支持返回多个不同类型的拦截器。
-- [spi文件示例](javamesh-samples/javamesh-examples/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.bootstrap.definition.EnhanceDefinition)  
+- [spi文件示例](javamesh-samples/javamesh-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.bootstrap.definition.EnhanceDefinition)  
   文件名为接口类文件的全限定名；  
   文件内容为实现了该接口的类的全限定名；    
   文件位置按照spi的机制应放到模块`resources/META-INF/services`。
-- [实现示例](javamesh-samples/javamesh-examples/demo-plugin/src/main/java/com/lubanops/apm/demo/BootInstrumentation.java)
+- [实现示例](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/BootInstrumentation.java)
   ```java
   public class BootInstrumentation implements EnhanceDefinition {
     public static final String ENHANCE_ANNOTATION = "org.springframework.boot.autoconfigure.SpringBootApplication";
-    private static final String INTERCEPT_CLASS = "com.lubanops.apm.demo.BootInterceptor";
+    private static final String INTERCEPT_CLASS = "com.huawei.example.demo.BootInterceptor";
   
     @Override
     public ClassMatcher enhanceClass() {
@@ -85,12 +85,12 @@ JavaMesh是一个基于ByteBuddy字节码技术开发的javaagent框架;框架�
     }
   }
   ```
-  在示例代码中增强了`org.springframework.boot.autoconfigure.SpringBootApplication`类，拦截器的类为`com.lubanops.apm.demo.BootInterceptor`，实现了静态方法拦截接口(这部分在下面详细说明)，拦截的方法为`main`方法。
-### [拦截器接口](javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/interceptors/Interceptor.java)
+  在示例代码中增强了`org.springframework.boot.autoconfigure.SpringBootApplication`类，拦截器的类为`com.huawei.example.demo.BootInterceptor`，实现了静态方法拦截接口(这部分在下面详细说明)，拦截的方法为`main`方法。
+### [拦截器接口](javamesh-agentcore/javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/interceptors/Interceptor.java)
 该部分接口的实现不需要通过spi机制加载；  
 拦截器接口的实现类用在增强类接口的`getMethodInterceptPoints()`方法中；
 根据方法的不同扩展出了三种拦截器接口，分别是静态方法拦截器`StaticMethodInterceptor`，实例方法拦截器`InstanceMethodInterceptor`,构造方法拦截器`ConstructorInterceptor`。
-- [静态拦截器](javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/interceptors/StaticMethodInterceptor.java)  
+- [静态拦截器](javamesh-agentcore/javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/interceptors/StaticMethodInterceptor.java)  
   该拦截器接口中有三个方法：`before`, `after`, `onThrow`。  
   `before`在拦截方法执行前前运行；`after`在拦截方法执行结束后运行；`onThrow`用于异常处理。
   ```java
@@ -112,14 +112,14 @@ JavaMesh是一个基于ByteBuddy字节码技术开发的javaagent框架;框架�
       }
   }
   ```
-- [示例拦截器](javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/interceptors/InstanceMethodInterceptor.java)  
+- [示例拦截器](javamesh-agentcore/javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/interceptors/InstanceMethodInterceptor.java)  
   该拦截器接口中有三个方法：`before`, `after`, `onThrow`。  
   `before`在拦截方法执行前前运行；`after`在拦截方法执行结束后运行；`onThrow`为异常处理。
-- [构造拦截器](javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/interceptors/ConstructorInterceptor.java)
+- [构造拦截器](javamesh-agentcore/javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/interceptors/ConstructorInterceptor.java)
 - 该拦截器接口中有一个方法：`onConstruct`。
-### [插件配置接口](javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/config/BaseConfig.java)
+### [插件配置接口](javamesh-agentcore/javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/config/BaseConfig.java)
 插件配置接口实现类中写入插件运行过程中需要的配置信息。
-- [spi文件示例](javamesh-samples/javamesh-examples/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.bootstrap.config.BaseConfig)  
+- [spi文件示例](javamesh-samples/javamesh-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.bootstrap.config.BaseConfig)  
   文件名为接口类文件的全限定名；  
   文件内容为实现了该接口的类的全限定名；    
   文件位置按照spi的机制应放到模块`resources/META-INF/services`。
@@ -129,8 +129,8 @@ public class DemoConfig implements BaseConfig {
     private String pluginName = "demo";
 }
 ```
-### [插件初始化接口](javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/boot/PluginService.java)
-- [spi文件示例](javamesh-samples/javamesh-examples/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.bootstrap.boot.PluginService)  
+### [插件初始化接口](javamesh-agentcore/javamesh-agentcore-bootstrap/src/main/java/com/huawei/apm/bootstrap/boot/PluginService.java)
+- [spi文件示例](javamesh-samples/javamesh-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.bootstrap.boot.PluginService)  
   文件名为接口类文件的全限定名；  
   文件内容为实现了该接口的类的全限定名；    
   文件位置按照spi的机制应放到模块`resources/META-INF/services`。  

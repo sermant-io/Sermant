@@ -1,4 +1,4 @@
-package com.lubanops.apm.demo;
+package com.huawei.example.demo;
 
 import com.huawei.apm.bootstrap.definition.EnhanceDefinition;
 import com.huawei.apm.bootstrap.definition.MethodInterceptPoint;

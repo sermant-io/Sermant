@@ -1,4 +1,4 @@
-package com.lubanops.demo;
+package com.huawei.example.demo;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

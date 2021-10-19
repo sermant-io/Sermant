@@ -16,7 +16,6 @@
     </dependencies>
 
     <properties>
-        <package.sample.dir>${package.backend.dir}</package.sample.dir>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
