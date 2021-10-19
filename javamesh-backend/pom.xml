@@ -8,8 +8,6 @@
         <version>1.0.0</version>
     </parent>
     <artifactId>javamesh-backend</artifactId>
-    <name>netty-server</name>
-    <description>Demo project for Spring Boot</description>
 
     <properties>
         <package.output.dir>${package.backend.dir}/${project.artifactId}</package.output.dir>
@@ -83,12 +81,19 @@
         </extensions>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.huawei.apm.backend.NettyServerApplication</mainClass>
+                    <outputDirectory>${package.output.dir}</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
