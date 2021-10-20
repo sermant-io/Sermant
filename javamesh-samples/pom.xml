@@ -24,6 +24,7 @@
             <modules>
                 <module>javamesh-flowcontrol</module>
                 <module>javamesh-server-monitor</module>
+                <module>javamesh-flowrecord</module>
             </modules>
         </profile>
         <profile>
@@ -48,6 +49,7 @@
                 <module>javamesh-flowcontrol</module>
                 <module>javamesh-server-monitor</module>
                 <module>javamesh-example</module>
+                <module>javamesh-flowrecord</module>
             </modules>
         </profile>
     </profiles>
