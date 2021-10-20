@@ -33,14 +33,14 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>ApmService</module>
+                <module>flowcontrol-server</module>
             </modules>
         </profile>
         <profile>
             <id>all</id>
             <modules>
                 <module>flowcontrol-plugin</module>
-                <module>ApmService</module>
+                <module>flowcontrol-server</module>
             </modules>
         </profile>
     </profiles>
