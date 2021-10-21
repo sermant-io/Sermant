@@ -28,7 +28,7 @@
             </modules>
         </profile>
         <profile>
-            <id>backend</id>
+            <id>ext</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>

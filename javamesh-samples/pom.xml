@@ -23,12 +23,10 @@
             </activation>
             <modules>
                 <module>javamesh-flowcontrol</module>
-                <module>javamesh-server-monitor</module>
-                <module>javamesh-flowrecord</module>
             </modules>
         </profile>
         <profile>
-            <id>backend</id>
+            <id>ext</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -46,9 +44,9 @@
         <profile>
             <id>all</id>
             <modules>
+                <module>javamesh-example</module>
                 <module>javamesh-flowcontrol</module>
                 <module>javamesh-server-monitor</module>
-                <module>javamesh-example</module>
                 <module>javamesh-flowrecord</module>
             </modules>
         </profile>
