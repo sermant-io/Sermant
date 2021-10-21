@@ -41,7 +41,8 @@
 
         <package.temp.dir>${javamesh.basedir}/${javamesh.name}-${javamesh.version}</package.temp.dir>
         <package.agent.dir>${package.temp.dir}/agent</package.agent.dir>
-        <package.backend.dir>${package.temp.dir}/backends</package.backend.dir>
+        <package.server.dir>${package.temp.dir}/server</package.server.dir>
+        <package.webapp.dir>${package.temp.dir}/webapp</package.webapp.dir>
         <package.output.dir>${project.build.outputDirectory}</package.output.dir>
 
         <dependency.output.dir>${package.agent.dir}/lib</dependency.output.dir>
@@ -207,7 +208,7 @@
             </modules>
         </profile>
         <profile>
-            <id>backend</id>
+            <id>ext</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
