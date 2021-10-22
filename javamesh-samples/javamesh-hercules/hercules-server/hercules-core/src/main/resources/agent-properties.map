@@ -1,0 +1,13 @@
+agent.verbose,,verbose
+agent.controller_host,,agent.controller.ip,agent.console.ip,agent.controller_ip
+agent.controller_port,16001,agent.controller.port,agent.console.port
+agent.region,,
+agent.host_id,,agent.hostid
+agent.server_mode,,
+agent.all_logs,false,agent.send.all.logs
+agent.limit_xmx,true,agent.useXmxLimit
+agent.java_opt,,agent.javaopt
+agent.keep_logs,false,
+agent.update_always,false,
+agent.enable_local_dns,true,
+agent.enable_security,true,
