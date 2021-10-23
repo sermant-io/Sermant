@@ -1,5 +1,6 @@
 package com.huawei.apm.premain;
 
+import com.huawei.apm.bootstrap.boot.CoreServiceManager;
 import com.huawei.apm.bootstrap.config.ConfigLoader;
 import com.huawei.apm.bootstrap.serialize.SerializerHolder;
 import com.huawei.apm.premain.classloader.ClassLoaderManager;
@@ -84,6 +85,8 @@ public class AgentPremain {
                 ByteBuddyAgentBuilder.initialize(instrumentation);
                 // 重定义, 使之可被bytebuddy增强
                 BootstrapEnhance.reTransformClasses(instrumentation);
+                // 启动核心服务
+                CoreServiceManager.INSTANCE.initServices();
             } else {
                 logger.log(Level.SEVERE, "[APM PREMAIN]The JavaAgent is loaded repeatedly.");
             }
