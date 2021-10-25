@@ -18,7 +18,7 @@ message ServerMonitorMetric {
   int64 time = 1;
   CpuMetric cpu = 2;
   repeated DiskMetric disks = 3;
-  NetworkMetric netWork = 4;
+  NetworkMetric network = 4;
   MemoryMetric memory = 5;
   repeated IbmJvmMetric ibmJvmMetrics = 6;
 }
