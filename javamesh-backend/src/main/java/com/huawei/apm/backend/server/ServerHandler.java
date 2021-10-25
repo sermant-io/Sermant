@@ -62,6 +62,15 @@ public class ServerHandler extends BaseHandler {
                 case Message.ServiceData.DataType.SERVICE_HEARTBEAT_VALUE:
                     producer.send(new ProducerRecord<>(conf.getTopicHeartBeat(), Bytes.wrap(message)));
                     break;
+                case Message.ServiceData.DataType.LOG_VALUE:
+                    producer.send(new ProducerRecord<>(conf.getTopicLog(), Bytes.wrap(message)));
+                    break;
+                case Message.ServiceData.DataType.PLUGIN_FLOW_CONTROL_DATA_VALUE:
+                    producer.send(new ProducerRecord<>(conf.getTopicFlowControl(), Bytes.wrap(message)));
+                    break;
+                case Message.ServiceData.DataType.PLUGIN_FLOW_RECORD_DATA_VALUE:
+                    producer.send(new ProducerRecord<>(conf.getTopicFlowRecord(), Bytes.wrap(message)));
+                    break;
                 default:
                     break;
             }
