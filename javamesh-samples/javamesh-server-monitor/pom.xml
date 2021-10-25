@@ -25,7 +25,6 @@
             </activation>
             <modules>
                 <module>server-monitor-plugin</module>
-                <module>x-paas-server</module>
             </modules>
         </profile>
         <profile>
