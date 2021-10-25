@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.huawei.apm.core.ext.lubanops.transport.ClientManager;
 import com.huawei.apm.core.lubanops.transfer.dto.heartbeat.HeartbeatMessage;
 import com.huawei.apm.core.ext.lubanops.transport.netty.client.NettyClient;
 import com.huawei.apm.core.ext.lubanops.transport.netty.client.NettyClientFactory;
@@ -110,7 +111,7 @@ public class RegionMasterService extends AbstractMasterService {
             String msg = heartbeatMessage.generateCurrentMessage();
             if (msg != null && !"".equals(msg)) {
                 LOGGER.log(Level.INFO, "[KafkaHeartbeatSender] heartbeat message=" + msg);
-                NettyClientFactory factory = NettyClientFactory.getInstance();
+                NettyClientFactory factory = ClientManager.getNettyClientFactory();
                 NettyClient nettyClient = factory.getNettyClient(
                         AgentConfigManager.getNettyServerIp(),
                         Integer.parseInt(AgentConfigManager.getNettyServerPort()));
