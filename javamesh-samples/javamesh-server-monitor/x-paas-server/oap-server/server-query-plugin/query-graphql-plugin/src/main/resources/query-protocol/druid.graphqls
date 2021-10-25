@@ -1,0 +1,24 @@
+type NodeRecord {
+    name: String
+    activeCount: Long
+    poolingCount: Long
+    maxActive: Long
+}
+
+type NodeRecords {
+    records: [NodeRecord!]!
+    total: Long!
+}
+
+input DruidQueryCondition {
+    pageNum: Int
+    pageSize: Int
+    nameKeyword: String
+    databasePeer: String
+}
+
+extend type Query {
+    queryApps(condition: DruidQueryCondition, duration: Duration): NodeRecords
+    queryInstances(appName: String!, condition: DruidQueryCondition, duration: Duration): NodeRecords
+    queryDataSources(instanceName: String!, condition: DruidQueryCondition, duration: Duration): NodeRecords
+}

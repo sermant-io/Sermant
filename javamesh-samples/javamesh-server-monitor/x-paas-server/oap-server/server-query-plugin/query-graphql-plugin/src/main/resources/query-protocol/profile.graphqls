@@ -1,0 +1,159 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Profile task create need data
+input ProfileTaskCreationRequest {
+    # need to monitor service id
+    serviceId: ID!
+    # endpoint name to monitored under the special service.
+    endpointName: String!
+    # if null means the task starts ASAP, otherwise the task begin after the startTime(based on agent side time)
+    startTime: Long
+    # duration of this task (minute)
+    duration: Int!
+    # when the segment starts to execute, how long must it take before the monitor can be enbaled
+    minDurationThreshold: Int!
+    # when start monitor, time interval for each dumping the stack
+    dumpPeriod: Int!
+    # max number of traces will monitor on the sniffer
+    maxSamplingCount: Int!
+}
+
+# Profile task create result
+type ProfileTaskCreationResult {
+    # if null or empty means the task create success, otherwise get create error reason
+    errorReason: String
+
+    # get data id when create success
+    id: String
+}
+
+# Profile task log operation type
+enum ProfileTaskLogOperationType {
+    # when sniffer has notified
+    NOTIFIED,
+    # when sniffer has execution finished to report
+    EXECUTION_FINISHED
+}
+
+# Profile task execute log
+type ProfileTaskLog {
+    id: String!
+    # execute instance
+    instanceId: ID!
+    instanceName: String!
+    # operation type
+    operationType: ProfileTaskLogOperationType!
+    # operation time
+    operationTime: Long!
+}
+
+# Profile
+type ProfileTask {
+    id: String!
+    # monitor service
+    serviceId: ID!
+    serviceName: String!
+    # endpoint name to monitored under the special service.
+    endpointName: String!
+    # task start time (timestamp)
+    startTime: Long!
+    # duration of this task (minute)
+    duration: Int!
+    # when the segment starts to execute, how long must it take before the monitor can be enbaled
+    minDurationThreshold: Int!
+    # when start monitor, time interval for each dumping the stack
+    dumpPeriod: Int!
+    # max number of traces will monitor on the sniffer
+    maxSamplingCount: Int!
+
+    # instance operation logs
+    logs: [ProfileTaskLog!]!
+}
+
+# Profile thread stack anayze tree element
+type ProfileStackElement {
+    # work for tree building, id matches multiple parentId
+    id: ID!
+    parentId: ID!
+    # stack code signature
+    codeSignature: String!
+    # Include the execution time of children(millisecond)
+    duration: Int!
+    # Exclude  the execution time of children(millisecond)
+    durationChildExcluded: Int!
+    # continuous dump count
+    count: Int!
+}
+
+# Profile thread stack anayze tree
+type ProfileStackTree {
+    elements: [ProfileStackElement!]!
+}
+
+# Profile analyze result
+type ProfileAnalyzation {
+    # if not empty means backend has information gave to the user
+    # such as: a large number of snapshots, only analyze part of the data
+    tip: String
+    # thread stack dump analyze trees
+    trees: [ProfileStackTree!]!
+}
+
+type ProfiledSpan {
+    spanId: Int!
+    parentSpanId: Int!
+    serviceCode: String!
+    serviceInstanceName: ID!
+    startTime: Long!
+    endTime: Long!
+    endpointName: String
+    # There are three span types: Local, Entry and Exit
+    type: String!
+    # Peer network id, e.g. host+port, ip+port
+    peer: String
+    component: String
+    isError: Boolean
+    # There are 5 layers: Unknown, Database, RPCFramework, Http, MQ and Cache
+    layer: String
+    tags: [KeyValue!]!
+    logs: [LogEntity!]!
+}
+
+type ProfiledSegment {
+    spans: [ProfiledSpan!]!
+}
+
+input ProfileAnalyzeTimeRange {
+    start: Long!
+    end: Long!
+}
+
+extend type Mutation {
+    # crate new profile task
+    createProfileTask(creationRequest: ProfileTaskCreationRequest): ProfileTaskCreationResult!
+}
+
+extend type Query {
+    # query all task list, order by ProfileTask#startTime descending
+    getProfileTaskList(serviceId: ID, endpointName: String): [ProfileTask!]!
+    # query all task profiled segment list
+    getProfileTaskSegmentList(taskID: String): [BasicTrace!]!
+    # query profiled segemnt
+    getProfiledSegment(segmentId: String): ProfiledSegment
+    # analyze profiled segment, start and end time use timestamp(millisecond)
+    getProfileAnalyze(segmentId: String!, timeRanges: [ProfileAnalyzeTimeRange!]!): ProfileAnalyzation!
+}

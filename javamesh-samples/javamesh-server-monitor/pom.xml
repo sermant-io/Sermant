@@ -25,12 +25,14 @@
             </activation>
             <modules>
                 <module>server-monitor-plugin</module>
+                <module>x-paas-server</module>
             </modules>
         </profile>
         <profile>
             <id>all</id>
             <modules>
                 <module>server-monitor-plugin</module>
+                <module>x-paas-server</module>
             </modules>
         </profile>
     </profiles>

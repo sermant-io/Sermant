@@ -1,0 +1,67 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2020-2021. All rights reserved.
+ */
+
+/*
+*cpu
+*/
+server_monitor_cpu_user = from(ServerMonitorCPUMetric.user).max();
+server_monitor_cpu_sys = from(ServerMonitorCPUMetric.sys).max();
+server_monitor_cpu_wait = from(ServerMonitorCPUMetric.wait).max();
+server_monitor_cpu_idle = from(ServerMonitorCPUMetric.idle).max();
+/*
+*磁盘IO
+*/
+server_monitor_disk_ioread = from(ServerMonitorDiskMetric.ioRead).max();
+server_monitor_disk_iowrite = from(ServerMonitorDiskMetric.ioWrite).max();
+server_monitor_disk_iobusy = from(ServerMonitorDiskMetric.ioBusy).maxDouble();
+/*
+*物理内存
+*/
+server_monitor_memory_memorytotal = from(ServerMonitorMemoryMetric.memoryTotal).max();
+server_monitor_memory_swapcached = from(ServerMonitorMemoryMetric.swapCached).max();
+server_monitor_memory_cached = from(ServerMonitorMemoryMetric.cached).max();
+server_monitor_memory_buffers = from(ServerMonitorMemoryMetric.buffers).max();
+server_monitor_memory_memoryused = from(ServerMonitorMemoryMetric.memoryUsed).max();
+/*
+*网络IO
+*/
+server_monitor_network_readbyte = from(ServerMonitorNetWorkMetric.readByte).max();
+server_monitor_network_sendbyte = from(ServerMonitorNetWorkMetric.sendByte).max();
+server_monitor_network_readpacket = from(ServerMonitorNetWorkMetric.readPacket).max();
+server_monitor_network_sendpacket = from(ServerMonitorNetWorkMetric.sendPacket).max();
+/*
+*ibm jdk
+*/
+instance_ibmjvm_memory_heap_tenured_soa_init = from(ServiceInstanceIBMJVMMemoryPool.init).filter(poolType == IBMMemoryPoolType.IBM_TENURED_SOA_USAGE).max();
+instance_ibmjvm_memory_heap_tenured_soa_used = from(ServiceInstanceIBMJVMMemoryPool.used).filter(poolType == IBMMemoryPoolType.IBM_TENURED_SOA_USAGE).max();
+instance_ibmjvm_memory_heap_tenured_soa_max = from(ServiceInstanceIBMJVMMemoryPool.max).filter(poolType == IBMMemoryPoolType.IBM_TENURED_SOA_USAGE).max();
+instance_ibmjvm_memory_heap_tenured_soa_committed = from(ServiceInstanceIBMJVMMemoryPool.committed).filter(poolType == IBMMemoryPoolType.IBM_TENURED_SOA_USAGE).max();
+instance_ibmjvm_memory_heap_tenured_loa_init = from(ServiceInstanceIBMJVMMemoryPool.init).filter(poolType == IBMMemoryPoolType.IBM_TENURED_LOA_USAGE).max();
+instance_ibmjvm_memory_heap_tenured_loa_used = from(ServiceInstanceIBMJVMMemoryPool.used).filter(poolType == IBMMemoryPoolType.IBM_TENURED_LOA_USAGE).max();
+instance_ibmjvm_memory_heap_tenured_loa_max = from(ServiceInstanceIBMJVMMemoryPool.max).filter(poolType == IBMMemoryPoolType.IBM_TENURED_LOA_USAGE).max();
+instance_ibmjvm_memory_heap_tenured_loa_committed = from(ServiceInstanceIBMJVMMemoryPool.committed).filter(poolType == IBMMemoryPoolType.IBM_TENURED_LOA_USAGE).max();
+instance_ibmjvm_memory_heap_nursery_allocate_init = from(ServiceInstanceIBMJVMMemoryPool.init).filter(poolType == IBMMemoryPoolType.IBM_NURSERY_ALLOCATE_USAGE).max();
+instance_ibmjvm_memory_heap_nursery_allocate_used = from(ServiceInstanceIBMJVMMemoryPool.used).filter(poolType == IBMMemoryPoolType.IBM_NURSERY_ALLOCATE_USAGE).max();
+instance_ibmjvm_memory_heap_nursery_allocate_max = from(ServiceInstanceIBMJVMMemoryPool.max).filter(poolType == IBMMemoryPoolType.IBM_NURSERY_ALLOCATE_USAGE).max();
+instance_ibmjvm_memory_heap_nursery_allocate_committed = from(ServiceInstanceIBMJVMMemoryPool.committed).filter(poolType == IBMMemoryPoolType.IBM_NURSERY_ALLOCATE_USAGE).max();
+instance_ibmjvm_memory_heap_nursery_survivor_init = from(ServiceInstanceIBMJVMMemoryPool.init).filter(poolType == IBMMemoryPoolType.IBM_NURSERY_SURVIVOR_USAGE).max();
+instance_ibmjvm_memory_heap_nursery_survivor_used = from(ServiceInstanceIBMJVMMemoryPool.used).filter(poolType == IBMMemoryPoolType.IBM_NURSERY_SURVIVOR_USAGE).max();
+instance_ibmjvm_memory_heap_nursery_survivor_max = from(ServiceInstanceIBMJVMMemoryPool.max).filter(poolType == IBMMemoryPoolType.IBM_NURSERY_SURVIVOR_USAGE).max();
+instance_ibmjvm_memory_heap_nursery_survivor_committed = from(ServiceInstanceIBMJVMMemoryPool.committed).filter(poolType == IBMMemoryPoolType.IBM_NURSERY_SURVIVOR_USAGE).max();
+instance_ibmjvm_memory_nonheap_class_storage_init = from(ServiceInstanceIBMJVMMemoryPool.init).filter(poolType == IBMMemoryPoolType.IBM_CLASS_STORAGE_USAGE).max();
+instance_ibmjvm_memory_nonheap_class_storage_used = from(ServiceInstanceIBMJVMMemoryPool.used).filter(poolType == IBMMemoryPoolType.IBM_CLASS_STORAGE_USAGE).max();
+instance_ibmjvm_memory_nonheap_class_storage_max = from(ServiceInstanceIBMJVMMemoryPool.max).filter(poolType == IBMMemoryPoolType.IBM_CLASS_STORAGE_USAGE).max();
+instance_ibmjvm_memory_nonheap_class_storage_committed = from(ServiceInstanceIBMJVMMemoryPool.committed).filter(poolType == IBMMemoryPoolType.IBM_CLASS_STORAGE_USAGE).max();
+instance_ibmjvm_memory_nonheap_miscellaneous_init = from(ServiceInstanceIBMJVMMemoryPool.init).filter(poolType == IBMMemoryPoolType.IBM_MISCELLANEOUS_USAGE).max();
+instance_ibmjvm_memory_nonheap_miscellaneous_used = from(ServiceInstanceIBMJVMMemoryPool.used).filter(poolType == IBMMemoryPoolType.IBM_MISCELLANEOUS_USAGE).max();
+instance_ibmjvm_memory_nonheap_miscellaneous_max = from(ServiceInstanceIBMJVMMemoryPool.max).filter(poolType == IBMMemoryPoolType.IBM_MISCELLANEOUS_USAGE).max();
+instance_ibmjvm_memory_nonheap_miscellaneous_committed = from(ServiceInstanceIBMJVMMemoryPool.committed).filter(poolType == IBMMemoryPoolType.IBM_MISCELLANEOUS_USAGE).max();
+instance_ibmjvm_memory_nonheap_code_cache_init = from(ServiceInstanceIBMJVMMemoryPool.init).filter(poolType == IBMMemoryPoolType.IBM_CODE_CACHE_USAGE).max();
+instance_ibmjvm_memory_nonheap_code_cache_used = from(ServiceInstanceIBMJVMMemoryPool.used).filter(poolType == IBMMemoryPoolType.IBM_CODE_CACHE_USAGE).max();
+instance_ibmjvm_memory_nonheap_code_cache_max = from(ServiceInstanceIBMJVMMemoryPool.max).filter(poolType == IBMMemoryPoolType.IBM_CODE_CACHE_USAGE).max();
+instance_ibmjvm_memory_nonheap_code_cache_committed = from(ServiceInstanceIBMJVMMemoryPool.committed).filter(poolType == IBMMemoryPoolType.IBM_CODE_CACHE_USAGE).max();
+instance_ibmjvm_memory_nonheap_data_cache_init = from(ServiceInstanceIBMJVMMemoryPool.init).filter(poolType == IBMMemoryPoolType.IBM_DATA_CACHE_USAGE).max();
+instance_ibmjvm_memory_nonheap_data_cache_used = from(ServiceInstanceIBMJVMMemoryPool.used).filter(poolType == IBMMemoryPoolType.IBM_DATA_CACHE_USAGE).max();
+instance_ibmjvm_memory_nonheap_data_cache_max = from(ServiceInstanceIBMJVMMemoryPool.max).filter(poolType == IBMMemoryPoolType.IBM_DATA_CACHE_USAGE).max();
+instance_ibmjvm_memory_nonheap_data_cache_committed = from(ServiceInstanceIBMJVMMemoryPool.committed).filter(poolType == IBMMemoryPoolType.IBM_DATA_CACHE_USAGE).max();

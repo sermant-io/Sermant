@@ -1,0 +1,84 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ */
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.huawei.apm.network.language.agent.v3";
+
+import "common/Common.proto";
+
+service ServerMonitoringMetricReportService {
+  rpc collect (ServerMonitoringCollection) returns (Commands){
+  }
+}
+
+message ServerMonitoringCollection {
+  repeated ServerMonitoringMetric metric = 1;
+  string service = 2;
+  string serviceInstance = 3;
+  int32 copy = 4;
+  string labelMetricValue = 5;
+}
+
+message ServerMonitoringMetric {
+  int64 time = 1;
+  ServerCPU cpu = 2;
+  repeated ServerDisk disk = 3;
+  ServerNetWork netWork = 4;
+  ServerMemory memory = 5;
+  repeated IBMMemoryPool ibmMemoryPool = 6;
+}
+
+message ServerCPU {
+  int64 user = 1;
+  int64 sys = 2;
+  int64 wait = 3;
+  int64 idle = 4;
+  int64 timeBucket = 5;
+}
+
+message ServerDisk {
+  int64 ioRead = 1;
+  int64 ioWrite = 2;
+  double ioBusy = 3;
+  int64 timeBucket = 4;
+  string diskName = 5;
+}
+
+message ServerNetWork {
+  int64 totalReadBytes = 1;
+  int64 totalWriteBytes = 2;
+  int64 totalReadPackage = 3;
+  int64 totalWritePackage = 4;
+  int64 timeBucket = 5;
+}
+
+message ServerMemory {
+  int64 memoryTotal = 1;
+  int64 swapCached = 2;
+  int64 cached = 3;
+  int64 buffers = 4;
+  int64 memoryUsed = 5;
+  int64 timeBucket = 6;
+}
+
+message IBMMemoryPool {
+  IBMPoolType type = 1;
+  int64 init = 2;
+  int64 max = 3;
+  int64 used = 4;
+  int64 committed = 5;
+  int64 timeBucket = 6;
+}
+
+enum IBMPoolType {
+  IBM_CODE_CACHE_USAGE = 0;
+  IBM_DATA_CACHE_USAGE = 1;
+  IBM_TENURED_SOA_USAGE = 2;
+  IBM_TENURED_LOA_USAGE = 3;
+  IBM_NURSERY_ALLOCATE_USAGE = 4;
+  IBM_NURSERY_SURVIVOR_USAGE = 5;
+  IBM_CLASS_STORAGE_USAGE = 6;
+  IBM_MISCELLANEOUS_USAGE = 7;
+}

@@ -1,0 +1,90 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.apache.skywalking.apm.network.language.agent.v3";
+option csharp_namespace = "SkyWalking.NetworkProtocol.V3";
+option go_package = "skywalking/network/language/agent/v3";
+
+import "common/Common.proto";
+
+// Collect performance raw data from browser.
+service BrowserPerfService {
+
+    // report once per page
+    rpc collectPerfData (BrowserPerfData) returns (Commands) {
+    }
+
+    // report one or more error logs for pages, could report multiple times.
+    rpc collectErrorLogs (stream BrowserErrorLog) returns (Commands) {
+    }
+}
+
+message BrowserPerfData {
+    string service = 1;
+    // Service version in browser is the Instance concept in the backend.
+    string serviceVersion = 2;
+    // Perf data time
+    int64 time = 3;
+    // Page path in browser is the endpoint concept in the backend
+    // Page path in the browser, mostly it is URI, without parameter
+    string pagePath = 4;
+    // Unit of all time related field should be `ms`.
+    int32 redirectTime = 5;
+    int32 dnsTime = 6;
+    int32 reqTime = 7;
+    // analysis dom tree time
+    int32 domAnalysisTime = 8;
+    int32 domReadyTime = 9;
+    // page blank time
+    int32 blankTime = 10;
+}
+
+message BrowserErrorLog {
+    // UUID
+    string uniqueId = 1;
+    string service = 2;
+    // Service version in browser is the Instance concept in the backend.
+    string serviceVersion = 3;
+    // Error log time
+    int64 time = 4;
+    // Page path in browser is the endpoint concept in the backend
+    // Page path in the browser, mostly it is URI, without parameter
+    string pagePath = 5;
+    ErrorCategory category = 6;
+    string grade = 7;
+    string message = 8;
+    int32 line = 9;
+    int32 col = 10;
+    string stack = 11;
+    string errorUrl = 12;
+    // Then the PV with error is only calculated when firstReportedError is true.
+    bool firstReportedError = 13;
+}
+
+enum ErrorCategory {
+    ajax = 0;
+    resource = 1;
+    vue = 2;
+    promise = 3;
+    js = 4;
+    unknown = 5;
+}
+

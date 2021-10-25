@@ -1,0 +1,93 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Query the cluster brief based on the given duration
+type ClusterBrief {
+    numOfService: Int!
+    numOfEndpoint: Int!
+    numOfDatabase: Int!
+    numOfCache: Int!
+    numOfMQ: Int!
+}
+
+type Service {
+    id: ID!
+    name: String!
+}
+
+type ServiceInstance {
+    id: ID!
+    name: String!
+    attributes: [Attribute!]!
+    language: Language!
+    instanceUUID: String!
+}
+
+type Attribute {
+    name: String!
+    value: String!
+}
+
+type Endpoint {
+    id: ID!
+    name: String!
+}
+
+type EndpointInfo {
+    id: ID!
+    name: String!
+    serviceId: ID!
+    serviceName: String!
+}
+
+type Database {
+    id: ID!
+    name: String!
+    type: String!
+}
+
+type TimeInfo {
+  # server current timezone, format: +0800
+  timezone: String
+  # server current timestamp, format: 1569124528392
+  currentTimestamp: Long
+}
+
+extend type Query {
+    # Normal service related metainfo 
+    getAllServices(duration: Duration!): [Service!]!
+    searchServices(duration: Duration!, keyword: String!): [Service!]!
+    searchService(serviceCode: String!): Service
+    
+    # Fetch all services of Browser type
+    getAllBrowserServices(duration: Duration!): [Service!]!
+
+    # Service intance query
+    getServiceInstances(duration: Duration!, serviceId: ID!): [ServiceInstance!]!
+
+    # Endpoint query
+    # Consider there are huge numbers of endpoint,
+    # must use endpoint owner's service id, keyword and limit filter to do query.
+    searchEndpoint(keyword: String!, serviceId: ID!, limit: Int!): [Endpoint!]!
+    getEndpointInfo(endpointId: ID!): EndpointInfo
+
+    # Database related meta info.
+    getAllDatabases(duration: Duration!): [Database!]!
+    getTimeInfo: TimeInfo
+
+    # Deprecated query, left only for not breaking UI for short term.
+    getGlobalBrief(duration: Duration!): ClusterBrief
+}

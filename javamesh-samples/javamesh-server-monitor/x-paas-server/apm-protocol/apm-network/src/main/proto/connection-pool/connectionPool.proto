@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.huawei.apm.network.language.agent.v3";
+
+import "common/Common.proto";
+
+service ConnectionPoolMetricReporterService {
+  rpc collect (ConnectionPoolCollection) returns (Commands) {
+  }
+}
+
+enum ConnectionPoolType {
+  DRUID = 0;
+  C3P0 = 1;
+  DBCP = 2;
+}
+
+message ConnectionPoolCollection {
+  repeated ConnectionPoolMetric instanceMetrics = 1;
+  ConnectionPoolType poolTyp = 2;
+  int32 copy = 3;
+  string labelMetricValue = 4;
+}
+
+message ConnectionPoolMetric {
+  Instance instance = 1;
+  repeated DataSourceBean dataSourceBeans = 2;
+  int64 timestamp = 3;
+}
+
+message Instance {
+  string machineIp = 1;
+  string instanceName = 2;
+  string appName = 3;
+  int32 activeCount = 4;
+  int32 poolingCount = 5;
+  int32 maxActive = 6;
+  int32 initSize = 7;
+  string countStatistic = 8;
+}
+
+message DataSourceBean {
+  string dataSourceName = 1;
+  string instanceName = 2;
+  int32 activeCount = 3;
+  int32 poolingCount = 4;
+  int32 maxActive = 5;
+  int32 initSize = 6;
+  string databasePeer = 7;
+}

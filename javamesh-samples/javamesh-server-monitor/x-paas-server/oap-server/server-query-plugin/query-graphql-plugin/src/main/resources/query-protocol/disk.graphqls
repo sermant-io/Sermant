@@ -1,0 +1,19 @@
+input DiskCondition {
+    serviceInstanceName: String
+    serviceName: String
+    startTime: String
+    endTime: String
+    metricName: String
+}
+
+type DiskIoMetric {
+    diskName: String!
+    valueList: [Long]!
+}
+
+extend type Query {
+    # Read time-series values in the duration of required metrics
+    queryReadBytes(condition: DiskCondition!, duration: Duration!): [DiskIoMetric!]
+    queryWriteBytes(condition: DiskCondition!, duration: Duration!): [DiskIoMetric!]
+    queryBusy(condition: DiskCondition!, duration: Duration!): [DiskIoMetric!]
+}

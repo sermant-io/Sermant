@@ -1,0 +1,13 @@
+// 存放数据源信息 统计活动连接数指标
+druid_datasource_active_count=from(ConnectionPoolMetric.activeCount).filter(dimensionType == NodeRecordType.DATASOURCE).filter(connectionPoolType == ConnectionPoolType.DRUID).max();
+// 可用连接数指标
+druid_datasource_pooling_count=from(ConnectionPoolMetric.poolingCount).filter(dimensionType == NodeRecordType.DATASOURCE).filter(connectionPoolType == ConnectionPoolType.DRUID).max();
+// 最大可激活连接数指标
+druid_datasource_max_active_count=from(ConnectionPoolMetric.maxActive).filter(dimensionType == NodeRecordType.DATASOURCE).filter(connectionPoolType == ConnectionPoolType.DRUID).max();
+// 活动连接数/最大连接数
+druid_connections_percent = from(ConnectionPoolMetric.ratio).filter(dimensionType == NodeRecordType.DATASOURCE).filter(connectionPoolType == ConnectionPoolType.DRUID).maxDouble();
+
+// 存放应用信息 统计活动连接数指标
+druid_app_active_count = from(ConnectionPoolMetric.activeCount).filter(dimensionType == NodeRecordType.APP).filter(connectionPoolType == ConnectionPoolType.DRUID).max();
+// 存放实例信息 统计活动连接数指标
+druid_instance_active_count = from(ConnectionPoolMetric.activeCount).filter(dimensionType == NodeRecordType.IP_INSTANCE).filter(connectionPoolType == ConnectionPoolType.DRUID).max();

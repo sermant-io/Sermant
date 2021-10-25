@@ -1,0 +1,144 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Metrics v2 query protocol is an alternative metrics query(s) of original v1,
+# defined in the metric.graphql, top-n-records.graphqls, and aggregation.graphqls.
+# By leveraging the new ID rule(no register) in the v8, we could query metrics based on name(s) directly.
+
+# Metrics type is a new concept since v8.
+enum MetricsType {
+    # Can't find the metrics type definition.
+    UNKNOWN
+    # Regular value type is suitable for readMetricsValue, readMetricsValues and sortMetrics
+    REGULAR_VALUE
+    # Metrics value includes multiple labels, is suitable for readLabeledMetricsValues
+    # Label should be assigned before the query happens, such as at the setting stage
+    LABELED_VALUE
+    # Heatmap value suitable for readHeatMap
+    HEATMAP
+    # Top metrics is for readSampledRecords only.
+    SAMPLED_RECORD
+}
+
+input Entity {
+    # 1. scope=All, no name is required.
+    # 2. scope=Service, ServiceInstance and Endpoint, set neccessary serviceName/serviceInstanceName/endpointName
+    # 3. Scope=ServiceRelation, ServiceInstanceRelation and EndpointRelation
+    #    serviceName/serviceInstanceName/endpointName is/are the source(s)
+    #    destServiceName/destServiceInstanceName/destEndpointName is/are destination(s)
+    #    set necessary names of sources and destinations.
+    scope: Scope!
+    serviceName: String
+    # Normal service is the service having installed agent or metrics reported directly.
+    # Unnormal service is conjectural service, usually detected by the agent.
+    normal: Boolean
+    serviceInstanceName: String
+    endpointName: String
+    destServiceName: String
+    # Normal service is the service having installed agent or metrics reported directly.
+    # Unnormal service is conjectural service, usually detected by the agent.
+    destNormal: Boolean
+    destServiceInstanceName: String
+    destEndpointName: String
+}
+
+input MetricsCondition {
+    # Metrics name, which should be defined in OAL script
+    # Such as:
+    # Endpoint_avg = from(Endpoint.latency).avg()
+    # Then, `Endpoint_avg`
+    name: String!
+    # Follow entity definition description.
+    entity: Entity!
+}
+
+input TopNCondition {
+    # Metrics name
+    name: String!
+    # Could be null if query the global top N.
+    parentService: String
+    # Normal service is the service having installed agent or metrics reported directly.
+    # Unnormal service is conjectural service, usually detected by the agent.
+    normal: Boolean
+    # Indicate the metrics entity scope.
+    # This is required in sortMetrics query.
+    # Only accept scope = Service/ServiceInstance/Endpoint, ignore others due to those are pointless.
+    scope: Scope
+    topN: Int!
+    order: Order!
+}
+
+type MetricsValues {
+    # Could be null if no label assigned in the query condition
+    label: String
+    # Values of this label value.
+    values: IntValues
+}
+
+type HeatMap {
+    # Each element of values matches the time point of the query duration.
+    # The element in the IntValues represents the value of the same index bucket
+    values: [HeatMapColumn!]!
+    # Bucket describes the ranges of #values represent.
+    buckets: [Bucket!]!
+}
+
+type HeatMapColumn {
+    id: ID!
+    values: [Long!]!
+}
+
+# Bucket represents the value range.
+type Bucket {
+    # Usually the number represents the min value of this bucket,
+    # could be `infinite-` string as unbounded value
+    min: String!
+    # Usually the number represents the max value of this bucket,
+    # could be `infinite+` string as unbounded value
+    max: String!
+}
+
+type SelectedRecord {
+    # Literal string name for visualization
+    name: String!
+    # ID represents the owner of this entity.
+    id: ID!
+    # Usually an integer value as this is metrics.
+    value: String
+    # Have value, Only if the record has related trace id.
+    # UI should show this as an attached value.
+    refId: ID
+}
+
+extend type Query {
+    # Metrics definition metadata query. Response the metrics type which determines the suitable query methods.
+    typeOfMetrics(name: String!): MetricsType!
+
+    # Read metrics single value in the duration of required metrics
+    readMetricsValue(condition: MetricsCondition!, duration: Duration!): Int!
+    # Read time-series values in the duration of required metrics
+    readMetricsValues(condition: MetricsCondition!, duration: Duration!): MetricsValues!
+    # Read entity list of required metrics and parent entity type.
+    sortMetrics(condition: TopNCondition!, duration: Duration!): [SelectedRecord!]!
+    # Read value in the given time duration, usually as a linear.
+    # labels: the labels you need to query.
+    readLabeledMetricsValues(condition: MetricsCondition!, labels: [String!]!, duration: Duration!): [MetricsValues!]!
+    # Heatmap is bucket based value statistic result.
+    readHeatMap(condition: MetricsCondition!, duration: Duration!): HeatMap
+    # Read the sampled records
+    # TopNCondition#scope is not required.
+    readSampledRecords(condition: TopNCondition!, duration: Duration!): [SelectedRecord!]!
+}

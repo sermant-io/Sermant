@@ -1,0 +1,69 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ */
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.lubanops.apm.plugin.servermonitor.entity";
+
+import "server-monitoring/ServerMonitoring.proto";
+
+message ServerMonitorCollection {
+  repeated ServerMonitorMetric metric = 1;
+  string service = 2;
+  string serviceInstance = 3;
+  int32 copy = 4;
+  string labelMetricValue = 5;
+}
+
+message ServerMonitorMetric {
+  int64 time = 1;
+  CpuMetric cpu = 2;
+  repeated DiskMetric disks = 3;
+  NetworkMetric network = 4;
+  MemoryMetric memory = 5;
+  repeated IbmJvmMetric ibmJvmMetrics = 6;
+}
+
+// cpu指标
+message CpuMetric {
+  int32 idlePercentage = 1; // idle时间百分占比
+  int32 ioWaitPercentage = 2; // io wait时间百分占比
+  int32 sysPercentage = 3; // sys时间百分占比
+  int32 userPercentage = 4; // user和nice时间百分占比
+}
+
+// disk指标
+message DiskMetric {
+  string deviceName = 1; // 设备名称
+  int64 readBytesPerSec = 2; // 采集周期内的每秒读字节数
+  int64 writeBytesPerSec = 3; // 采集周期内的每秒写字节数
+  double ioSpentPercentage = 4; // 采集周期内，IO花费的时间百分占比，精度2
+}
+
+// network指标
+message NetworkMetric {
+  int64 readBytesPerSec = 1; // 采集周期内的每秒读字节数
+  int64 writeBytesPerSec = 2; // 采集周期内的每秒写字节数
+  int64 readPackagesPerSec = 3; // 采集周期内的每秒读包数
+  int64 writePackagesPerSec = 4; // 采集周期内的每秒写包数
+}
+
+// memory指标
+message MemoryMetric {
+  int64 memoryTotal = 1; // 总内存大小
+  int64 swapCached = 2; // 已使用的内存大小
+  int64 cached = 3; // 对应cat /proc/meminfo指令的Cached
+  int64 buffers = 4; // 对应cat /proc/meminfo指令的Buffers
+  int64 memoryUsed = 5; // 对应cat /proc/meminfo指令的SwapCached
+}
+
+message IbmJvmMetric {
+  IBMPoolType type = 1;
+  int64 init = 2;
+  int64 max = 3;
+  int64 used = 4;
+  int64 committed = 5;
+  int64 timeBucket = 6;
+}
+

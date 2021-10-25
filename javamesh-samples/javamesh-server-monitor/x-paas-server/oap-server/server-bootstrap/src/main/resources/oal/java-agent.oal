@@ -1,0 +1,64 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+// JVM instance metrics
+instance_jvm_cpu = from(ServiceInstanceJVMCPU.usePercent).doubleAvg();
+instance_jvm_memory_heap = from(ServiceInstanceJVMMemory.used).filter(heapStatus == true).longAvg();
+instance_jvm_memory_noheap = from(ServiceInstanceJVMMemory.used).filter(heapStatus == false).longAvg();
+instance_jvm_memory_heap_max = from(ServiceInstanceJVMMemory.max).filter(heapStatus == true).longAvg();
+instance_jvm_memory_noheap_max = from(ServiceInstanceJVMMemory.max).filter(heapStatus == false).longAvg();
+instance_jvm_young_gc_time = from(ServiceInstanceJVMGC.time).filter(phrase == GCPhrase.NEW).sum();
+instance_jvm_old_gc_time = from(ServiceInstanceJVMGC.time).filter(phrase == GCPhrase.OLD).sum();
+instance_jvm_young_gc_count = from(ServiceInstanceJVMGC.count).filter(phrase == GCPhrase.NEW).sum();
+instance_jvm_old_gc_count = from(ServiceInstanceJVMGC.count).filter(phrase == GCPhrase.OLD).sum();
+instance_jvm_thread_live_count = from(ServiceInstanceJVMThread.liveCount).longAvg();
+instance_jvm_thread_daemon_count = from(ServiceInstanceJVMThread.daemonCount).longAvg();
+instance_jvm_thread_peak_count = from(ServiceInstanceJVMThread.peakCount).longAvg();
+/*
+*huawei update issue 47 add ibm and oracle jvm index
+*迭代五 #47 添加(获取的是一分钟内的最大值)
+*下面为oracle jvm的heap和noheap中各个参数的used、init、max和committed四个参数的索引，以及数据对应关系。
+*例子：instance_jvm_memory_noheap_cache_used:es索引
+*ServiceInstanceJVMMemoryPool：对应实例类
+*MemoryPoolType：jvm参数枚举类
+*41-64行
+*/
+instance_oraclejvm_memory_noheap_code_cache_used = from(ServiceInstanceJVMMemoryPool.used).filter(poolType == MemoryPoolType.CODE_CACHE_USAGE).max();
+instance_oraclejvm_memory_noheap_code_cache_init = from(ServiceInstanceJVMMemoryPool.init).filter(poolType == MemoryPoolType.CODE_CACHE_USAGE).max();
+instance_oraclejvm_memory_noheap_code_cache_max = from(ServiceInstanceJVMMemoryPool.max).filter(poolType == MemoryPoolType.CODE_CACHE_USAGE).max();
+instance_oraclejvm_memory_noheap_code_cache_committed = from(ServiceInstanceJVMMemoryPool.committed).filter(poolType == MemoryPoolType.CODE_CACHE_USAGE).max();
+instance_oraclejvm_memory_heap_eden_used = from(ServiceInstanceJVMMemoryPool.used).filter(poolType == MemoryPoolType.NEWGEN_USAGE).max();
+instance_oraclejvm_memory_heap_eden_init = from(ServiceInstanceJVMMemoryPool.init).filter(poolType == MemoryPoolType.NEWGEN_USAGE).max();
+instance_oraclejvm_memory_heap_eden_max = from(ServiceInstanceJVMMemoryPool.max).filter(poolType == MemoryPoolType.NEWGEN_USAGE).max();
+instance_oraclejvm_memory_heap_eden_committed = from(ServiceInstanceJVMMemoryPool.committed).filter(poolType == MemoryPoolType.NEWGEN_USAGE).max();
+instance_oraclejvm_memory_heap_old_used = from(ServiceInstanceJVMMemoryPool.used).filter(poolType == MemoryPoolType.OLDGEN_USAGE).max();
+instance_oraclejvm_memory_heap_old_init = from(ServiceInstanceJVMMemoryPool.init).filter(poolType == MemoryPoolType.OLDGEN_USAGE).max();
+instance_oraclejvm_memory_heap_old_max = from(ServiceInstanceJVMMemoryPool.max).filter(poolType == MemoryPoolType.OLDGEN_USAGE).max();
+instance_oraclejvm_memory_heap_old_committed = from(ServiceInstanceJVMMemoryPool.committed).filter(poolType == MemoryPoolType.OLDGEN_USAGE).max();
+instance_oraclejvm_memory_heap_survivor_used = from(ServiceInstanceJVMMemoryPool.used).filter(poolType == MemoryPoolType.SURVIVOR_USAGE).max();
+instance_oraclejvm_memory_heap_survivor_init = from(ServiceInstanceJVMMemoryPool.init).filter(poolType == MemoryPoolType.SURVIVOR_USAGE).max();
+instance_oraclejvm_memory_heap_survivor_max = from(ServiceInstanceJVMMemoryPool.max).filter(poolType == MemoryPoolType.SURVIVOR_USAGE).max();
+instance_oraclejvm_memory_heap_survivor_committed = from(ServiceInstanceJVMMemoryPool.committed).filter(poolType == MemoryPoolType.SURVIVOR_USAGE).max();
+instance_oraclejvm_memory_noheap_permgen_used = from(ServiceInstanceJVMMemoryPool.used).filter(poolType == MemoryPoolType.PERMGEN_USAGE).max();
+instance_oraclejvm_memory_noheap_permgen_init = from(ServiceInstanceJVMMemoryPool.init).filter(poolType == MemoryPoolType.PERMGEN_USAGE).max();
+instance_oraclejvm_memory_noheap_permgen_max = from(ServiceInstanceJVMMemoryPool.max).filter(poolType == MemoryPoolType.PERMGEN_USAGE).max();
+instance_oraclejvm_memory_noheap_permgen_committed = from(ServiceInstanceJVMMemoryPool.committed).filter(poolType == MemoryPoolType.PERMGEN_USAGE).max();
+instance_oraclejvm_memory_noheap_metaspace_used = from(ServiceInstanceJVMMemoryPool.used).filter(poolType == MemoryPoolType.METASPACE_USAGE).max();
+instance_oraclejvm_memory_noheap_metaspace_init = from(ServiceInstanceJVMMemoryPool.init).filter(poolType == MemoryPoolType.METASPACE_USAGE).max();
+instance_oraclejvm_memory_noheap_metaspace_max = from(ServiceInstanceJVMMemoryPool.max).filter(poolType == MemoryPoolType.METASPACE_USAGE).max();
+instance_oraclejvm_memory_noheap_metaspace_committed = from(ServiceInstanceJVMMemoryPool.committed).filter(poolType == MemoryPoolType.METASPACE_USAGE).max();

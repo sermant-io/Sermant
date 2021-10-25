@@ -1,0 +1,82 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Legacy metrics query protocol
+# Replaced by the metrics-v2 in the future
+
+input MetricCondition {
+    # Metric name, which should be defined in OAL script
+    # Such as:
+    # Endpoint_avg = from(Endpoint.latency).avg()
+    # Then, `Endpoint_avg`
+    name: String!
+    # Id in this metric type.
+    # In the above case, the id should be endpoint id.
+    id: ID
+}
+
+input BatchMetricConditions {
+    # Metric name, which should be defined in OAL script
+    # Such as:
+    # Endpoint_avg = from(Endpoint.latency).avg()
+    # Then, `Endpoint_avg`
+    name: String!
+    # Id in this metric type.
+    # In the above case, the id should be endpoint id.
+    ids: [ID!]!
+}
+
+type IntValues {
+    values: [KVInt!]!
+}
+
+type KVInt {
+    id: ID!
+    # This is the value, the caller must understand the Unit.
+    # Such as:
+    # 1. If ask for cpm metric, the unit and result should be count.
+    # 2. If ask for response time (p99 or avg), the unit should be millisecond.
+    value: Long!
+}
+
+type Thermodynamic {
+    # Each element in nodes represents a point in Thermodynamic Diagram
+    # And the element includes three values:
+    # 1) Time Bucket based on query duration
+    # 2) Response time index.
+    #    Response time = [responseTimeStep * index, responseTimeStep * (index+1))
+    #    The last element: [Response Time * index, MAX)
+    # 3) The number of calls in this response time duration.
+    #
+    # Example:
+    # [ [0, 0, 10], [0, 1, 43], ...]
+    # These ^^^ two represent the left bottom element, and another element above it.
+    nodes: [[Int]!]!
+    axisYStep: Int!
+}
+
+
+extend type Query {
+    getValues(metric: BatchMetricConditions!, duration: Duration!): IntValues
+    getLinearIntValues(metric: MetricCondition!, duration: Duration!): IntValues
+    # Query the type of metrics including multiple values, and format them as multiple linears.
+    # The seq of these multiple lines base on the calculation func in OAL
+    # Such as, should us this to query the result of func percentile(50,75,90,95,99) in OAL,
+    # then five lines will be responsed, p50 is the first element of return value.
+    getMultipleLinearIntValues(metric: MetricCondition!, numOfLinear: Int!, duration: Duration!): [IntValues!]!
+    getSubsetOfMultipleLinearIntValues(metric: MetricCondition!, linearIndex: [Int!]!, duration: Duration!): [IntValues!]!
+    getThermodynamic(metric: MetricCondition!, duration: Duration!): Thermodynamic
+}

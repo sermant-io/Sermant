@@ -1,0 +1,70 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Dashboard Configuration provides the management capabilities for SkyWalking native UI.
+enum TemplateType {
+    DASHBOARD,
+    TOPOLOGY_SERVICE,
+    TOPOLOGY_INSTANCE,
+    TOPOLOGY_ENDPOINT,
+    TOPOLOGY_SERVICE_RELATION,
+    TOPOLOGY_SERVICE_INSTANCE_RELATION
+}
+
+type DashboardConfiguration {
+    name: String!,
+    type: TemplateType!,
+    # JSON based configuration. The format of text is the export result on the UI page.
+    configuration: String!,
+    # Activated means this configuration should effect directly.
+    # If the name is already used in the browser storage, the UI decides the behaviour, override/ignore/user-confirmation.
+    activated: Boolean!,
+    # Disable means this template is not working.
+    disabled: Boolean!
+}
+
+extend type Query {
+    # Read all configuration templates for dashboard and topology pages.
+    # Dashboard could have multiple options and partial actived.
+    # Topology templates should be unique for every typs, if more than one exists, UI should choose one only.
+    #
+    # includingDisabled represents whether includes the disabled templates in the query result. Default value is false.
+    # Mostly, should not include, but in the management page, should consider support this.
+    getAllTemplates(includingDisabled: Boolean): [DashboardConfiguration!]!
+}
+
+input DashboardSetting {
+    name: String!,
+    type: TemplateType!,
+    # JSON based configuration. The format of text is the export result on the UI page.
+    configuration: String!,
+    # Active means this configuration should display directly.
+    # If the name is already used in the browser storage, the UI decides the behaviour, override/ignore/user-confirmation.
+    active: Boolean!,
+}
+
+type TemplateChangeStatus {
+    # True means change successfully.
+    status: Boolean!,
+    message: String
+}
+
+# Template Management page provides the creation, update and deletion for the different template typs.
+#extend type Mutation {
+#    addTemplate(setting: DashboardSetting!): TemplateChangeStatus!
+#    changeTemplate(setting: DashboardSetting!): TemplateChangeStatus!
+#    disableTemplate(name: String!): TemplateChangeStatus!
+#}
