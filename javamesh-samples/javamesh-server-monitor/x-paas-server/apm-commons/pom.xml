@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one or more
   ~ contributor license agreements.  See the NOTICE file distributed with
@@ -31,10 +30,19 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>apm-protocol</artifactId>
+    <artifactId>apm-commons</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>apm-network</module>
+        <module>apm-util</module>
+        <module>apm-datacarrier</module>
     </modules>
+
+    <name>apm-commons</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <compiler.version>1.8</compiler.version>
+    </properties>
 </project>
