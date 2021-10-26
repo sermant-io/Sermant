@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 插件配置类
  *
- * @author h30007557
+ * @author HapThorin
  * @version 1.0.0
  * @since 2021/8/24
  */

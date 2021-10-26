@@ -5,6 +5,8 @@
 package com.huawei.apm.bootstrap.config;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -12,15 +14,19 @@ import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.description.method.MethodDescription;
+import net.bytebuddy.implementation.InvocationHandlerAdapter;
+import net.bytebuddy.matcher.ElementMatchers;
+
 import com.huawei.apm.bootstrap.lubanops.commons.LubanApmConstants;
 import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-
 import com.huawei.apm.bootstrap.serialize.SerializerHolder;
 
 /**
  * 配置储存器
  *
- * @author h30007557
+ * @author HapThorin
  * @version 1.0.0
  * @since 2021/8/26
  */
@@ -76,6 +82,17 @@ public abstract class ConfigLoader {
     }
 
     /**
+     * 附带ClassLoader的类型键
+     *
+     * @param typeKey     类型键
+     * @param classLoader ClassLoader
+     * @return 附带ClassLoader的类型键
+     */
+    private static String getCLTypeKey(String typeKey, ClassLoader classLoader) {
+        return typeKey + "@" + Integer.toHexString(classLoader.hashCode());
+    }
+
+    /**
      * 通过配置对象类型获取配置对象
      *
      * @param cls 配置对象类型
@@ -83,31 +100,65 @@ public abstract class ConfigLoader {
      * @return 配置对象
      */
     public static <R extends BaseConfig> R getConfig(Class<R> cls) {
-        final R config = getConfig(getTypeKey(cls), cls);
-        if (config == null) {
-            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                    "Missing configured instance of [%s], please check.", cls.getName()));
+        final ClassLoader classLoader = cls.getClassLoader();
+        final String typeKey = getTypeKey(cls);
+        final String clTypeKey = getCLTypeKey(typeKey, classLoader);
+        BaseConfig clConfig = CONFIG_MAP.get(clTypeKey);
+        if (clConfig == null || !cls.isAssignableFrom(clConfig.getClass())) {
+            final BaseConfig Config = CONFIG_MAP.get(typeKey);
+            if (Config != null) {
+                if (Config.getClass().getClassLoader() == classLoader) {
+                    clConfig = getProxy(Config, classLoader);
+                } else {
+                    clConfig = getProxy(SerializerHolder.deserialize(SerializerHolder.serialize(Config), cls),
+                            classLoader);
+                }
+                CONFIG_MAP.put(clTypeKey, clConfig);
+            } else {
+                LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
+                        "Missing configured instance of [%s], please check.", cls.getName()));
+            }
         }
-        return config;
+        return (R) clConfig;
     }
 
     /**
-     * 通过配置对象类型获取配置对象
+     * 获取配置对象的byte-buddy代理，禁用set方法
      *
-     * @param configKey 配置键
-     * @param cls       配置对象类型
-     * @param <R>       配置对象泛型
-     * @return 配置对象
+     * @param config      源配置对象
+     * @param classLoader 用于加载代理类的classloader
+     * @return 配置对象的byte-buddy代理
      */
-    private static <R extends BaseConfig> R getConfig(String configKey, Class<R> cls) {
-        final BaseConfig config = CONFIG_MAP.get(configKey);
+    private static BaseConfig getProxy(final BaseConfig config, ClassLoader classLoader) {
         if (config == null) {
             return null;
         }
-        if (cls == config.getClass()) {
-            return (R) config;
-        } else {
-            return SerializerHolder.deserialize(SerializerHolder.serialize(config), cls);
+        final Class<? extends BaseConfig> configClass = config.getClass();
+        final InvocationHandler handler = new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                final String methodName = method.getName();
+                if (methodName.startsWith("set")) {
+                    LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
+                            "Calling method [%s#%s] is not supported.", configClass, methodName));
+                    return null;
+                }
+                return method.invoke(config, args);
+            }
+        };
+        try {
+            return new ByteBuddy().subclass(configClass)
+                    .implement(BaseConfig.class)
+                    .method(ElementMatchers.<MethodDescription>any())
+                    .intercept(InvocationHandlerAdapter.of(handler))
+                    .make()
+                    .load(classLoader)
+                    .getLoaded()
+                    .getDeclaredConstructor()
+                    .newInstance();
+        } catch (Exception ignored) {
+            LOGGER.log(Level.WARNING, String.format(Locale.ROOT, "Create proxy of [%s] failed.", configClass));
+            return config;
         }
     }
 

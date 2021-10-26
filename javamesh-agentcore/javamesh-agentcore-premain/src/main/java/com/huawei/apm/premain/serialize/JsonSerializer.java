@@ -14,7 +14,7 @@ import com.huawei.apm.bootstrap.serialize.Serializer;
  * Json序列化器
  * <p>不要求目标对象实现{@link java.io.Serializable}接口，但是需要提供可访问的构造函数或setter
  *
- * @author h30007557
+ * @author HapThorin
  * @version 1.0.0
  * @since 2021/8/30
  */

@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Stack;
 
 public class DubboInterceptor implements InstanceMethodInterceptor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AliDubboInterceptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DubboInterceptor.class);
     public static final String CONSUMER_TAG = "DUBBO_CONSUMER";
     public static final String PROVIDER_TAG = "DUBBO_PROVIDER";
 
@@ -282,7 +282,7 @@ public class DubboInterceptor implements InstanceMethodInterceptor {
     private SpanEvent processConsumer(String className, String methodName, Invocation invocation, String source) {
         SpanEvent apmSpanEvent = TraceCollector.getSpanEvent();
         if (apmSpanEvent != null) {
-            apmSpanEvent = TraceCollector.onStart(className, methodName, AliDubboInterceptor.CONSUMER_TAG);
+            apmSpanEvent = TraceCollector.onStart(className, methodName, DubboInterceptor.CONSUMER_TAG);
         }
         if (apmSpanEvent != null) {
             invocation.getAttachments().put(Headers.TRACE_ID.getValue(), apmSpanEvent.getTraceId());
@@ -306,7 +306,7 @@ public class DubboInterceptor implements InstanceMethodInterceptor {
             apmGTraceId = invocation.getAttachment(Headers.GTRACE_ID.getValue());
         }
         StartTraceRequest startTraceRequest = new StartTraceRequest(className, methodName, apmTraceId, apmSpanId, apmGTraceId);
-        startTraceRequest.setKind(AliDubboInterceptor.PROVIDER_TAG);
+        startTraceRequest.setKind(DubboInterceptor.PROVIDER_TAG);
         startTraceRequest.setSource(source);
         startTraceRequest.setRealSource(source);
         apmSpanEvent = TraceCollector.onStart(startTraceRequest);

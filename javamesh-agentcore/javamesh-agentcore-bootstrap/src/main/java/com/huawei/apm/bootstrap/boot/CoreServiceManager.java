@@ -35,9 +35,6 @@ public enum CoreServiceManager {
     private void loadService(CoreService service) {
         Class<? extends CoreService> serviceClass = service.getClass();
         Class<?>[] serviceInterfaces = serviceClass.getInterfaces();
-        if (serviceInterfaces.length == 1) {
-            throw new ServiceInitException("No implementing interface");
-        }
         for (Class<?> interfaceClass : serviceInterfaces) {
             if (interfaceClass.equals(CoreService.class)) {
                 continue;

@@ -13,7 +13,13 @@
     <dependencies>
         <dependency>
             <groupId>com.huawei.javamesh</groupId>
+            <artifactId>javamesh-agentcore-bootstrap</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.huawei.javamesh</groupId>
             <artifactId>javamesh-agentcore-core-ext</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -56,14 +62,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>${project.artifactId}-${javamesh.version}</finalName>
         <plugins>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <outputDirectory>${package.output.dir}</outputDirectory>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -74,7 +73,55 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <configuration>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.github</pattern>
+                            <shadedPattern>${shade.common.prefix}.com.github</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google</pattern>
+                            <shadedPattern>${shade.common.prefix}.com.google</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>javax.inject</pattern>
+                            <shadedPattern>${shade.common.prefix}.javax.inject</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>javax.xml</pattern>
+                            <shadedPattern>${shade.common.prefix}.javax.xml</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>net.jpountz</pattern>
+                            <shadedPattern>${shade.common.prefix}.net.jpountz</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.aopalliance</pattern>
+                            <shadedPattern>${shade.common.prefix}.org.aopalliance</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.apache</pattern>
+                            <shadedPattern>${shade.common.prefix}.org.apache</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.slf4j</pattern>
+                            <shadedPattern>${shade.common.prefix}.org.slf4j</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.w3c</pattern>
+                            <shadedPattern>${shade.common.prefix}.org.w3c</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.xerial</pattern>
+                            <shadedPattern>${shade.common.prefix}.org.xerial</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.xml</pattern>
+                            <shadedPattern>${shade.common.prefix}.org.xml</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -13,19 +13,15 @@ import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
 import com.huawei.apm.bootstrap.lubanops.log.LogPathUtils;
 import com.huawei.apm.premain.lubanops.agent.AgentStatus;
 import com.huawei.apm.premain.lubanops.agent.ArgumentBuilder;
-import com.huawei.apm.premain.lubanops.classloader.LopsUrlClassLoader;
 import com.huawei.apm.premain.lubanops.log.CollectorLogFactory;
 import com.huawei.apm.premain.lubanops.utils.LibPathUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.security.AccessController;
 import java.security.CodeSource;
-import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,50 +49,49 @@ public class AgentPremain {
                 agentStatus = AgentStatus.LOADING;
                 // 添加bootstrap包到bootstrap classloader中
                 loadBootstrap(instrumentation);
+                // 解析入参
                 Map argsMap = argumentBuilder.build(agentArgs, new LogInitCallback());
+                // 添加core和ext
+                loadCoreLib(instrumentation);
                 // 获取javaagent依赖的包
-                final List<URL> urls = LibPathUtils.getLibUrl();
-                urls.add(AgentPremain.class.getProtectionDomain().getCodeSource().getLocation());
                 logger.info("[APM PREMAIN]loading javaagent.");
-                addAgentPath(argsMap);
                 // 初始化序列化器
                 SerializerHolder.initialize(PluginClassLoader.getDefault());
-                ClassLoader parent = Thread.currentThread().getContextClassLoader();
+                ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
                 // 配置初始化
-                ConfigLoader.initialize(agentArgs, ClassLoaderManager.getTargetClassLoader(parent));
-                LopsUrlClassLoader classLoader = (LopsUrlClassLoader) AccessController.doPrivileged(
-                    new PrivilegedAction() {
-                        @Override
-                        public Object run() {
-                            return new LopsUrlClassLoader(urls.toArray(new URL[urls.size()]), null);
-                        }
-                    });
+                ConfigLoader.initialize(agentArgs, ClassLoaderManager.getTargetClassLoader(currentClassLoader));
 
-                Thread.currentThread().setContextClassLoader(classLoader);
-                Class<?> mainClass = classLoader.loadClass("com.huawei.apm.core.lubanops.BootStrapImpl");
+                // 反射调用BootStrapImpl#main
+                addAgentPath(argsMap);
+                final Class<?> mainClass = currentClassLoader.loadClass("com.huawei.apm.core.lubanops.BootStrapImpl");
                 if (mainClass != null) {
                     Method startMethod = mainClass.getDeclaredMethod("main", Instrumentation.class, Map.class);
                     startMethod.invoke(null, instrumentation, argsMap);
                 }
-                Thread.currentThread().setContextClassLoader(parent);
+
+                // 启动核心服务
+                CoreServiceManager.INSTANCE.initServices();
                 // 针对NoneNamedListener初始化增强
                 NoneNamedListenerBuilder.initialize(instrumentation);
                 // 初始化byte buddy
                 ByteBuddyAgentBuilder.initialize(instrumentation);
                 // 重定义, 使之可被bytebuddy增强
                 BootstrapEnhance.reTransformClasses(instrumentation);
-                // 启动核心服务
-                CoreServiceManager.INSTANCE.initServices();
             } else {
                 logger.log(Level.SEVERE, "[APM PREMAIN]The JavaAgent is loaded repeatedly.");
             }
             AgentPremain.agentStatus = AgentStatus.STARTED;
-        } catch (InvocationTargetException e) {
-            logger.log(Level.SEVERE, "[APM PREMAIN]Loading javaagent failed", e.getTargetException());
         } catch (Exception e) {
             logger.log(Level.SEVERE, "[APM PREMAIN]Loading javaagent failed", e);
         }
 
+    }
+
+    private static void loadCoreLib(Instrumentation instrumentation) throws IOException {
+        final List<URL> urls = LibPathUtils.getLibUrl();
+        for (URL url : urls) {
+            instrumentation.appendToSystemClassLoaderSearch(new JarFile(url.getPath()));
+        }
     }
 
     //~~internal methods
