@@ -14,7 +14,7 @@ import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
 /**
  * 序列化管理者，提供对ClassLoader键消息传递的类型转换方法
  *
- * @author h30007557
+ * @author HapThorin
  * @version 1.0.0
  * @since 2021/9/3
  */

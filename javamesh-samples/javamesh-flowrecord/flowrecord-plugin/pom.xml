@@ -135,6 +135,11 @@
         </dependency>
         <dependency>
             <groupId>com.huawei.javamesh</groupId>
+            <artifactId>javamesh-agentcore-core-ext</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.huawei.javamesh</groupId>
             <artifactId>javamesh-agentcore-bootstrap</artifactId>
         </dependency>
         <dependency>

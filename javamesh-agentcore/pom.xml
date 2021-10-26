@@ -41,6 +41,9 @@
         </profile>
         <profile>
             <id>example</id>
+            <properties>
+                <app.env>test</app.env>
+            </properties>
             <modules>
                 <module>javamesh-agentcore-bootstrap</module>
             </modules>
@@ -48,7 +51,7 @@
         <profile>
             <id>all</id>
             <properties>
-                <app.env>dev</app.env>
+                <app.env>test</app.env>
             </properties>
             <modules>
                 <module>javamesh-agentcore-bootstrap</module>

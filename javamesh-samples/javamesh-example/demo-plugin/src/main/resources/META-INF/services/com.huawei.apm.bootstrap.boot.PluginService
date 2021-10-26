@@ -1,1 +1,2 @@
-com.huawei.example.demo.demoService
+com.huawei.example.demo.service.DemoService
+com.huawei.example.demo.service.DemoHeartBeatService

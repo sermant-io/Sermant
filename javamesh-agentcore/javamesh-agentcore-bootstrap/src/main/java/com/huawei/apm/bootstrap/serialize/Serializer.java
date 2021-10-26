@@ -19,7 +19,7 @@ import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
  * 序列化器
  * <p>涉及到服务功能与插件间的参数或返回值类型的ClassLoader不一致时，需要通过序列化器进行转化
  *
- * @author h30007557
+ * @author HapThorin
  * @version 1.0.0
  * @since 2021/8/30
  */

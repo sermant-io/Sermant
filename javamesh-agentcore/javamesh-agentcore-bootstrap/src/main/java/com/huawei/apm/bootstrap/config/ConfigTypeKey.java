@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * <p>与{@link ConfigFieldKey}一同构建配置键，{@link ConfigFieldKey}不存在时，直接使用属性名
  * <p>见{@link ConfigLoader#getTypeKey(Class)}
  *
- * @author h30007557
+ * @author HapThorin
  * @version 1.0.0
  * @since 2021/8/19
  */

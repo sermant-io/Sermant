@@ -1,1 +1,4 @@
-com.huawei.example.demo.BootInstrumentation
+com.huawei.example.demo.definition.DemoAnnotationDefinition
+com.huawei.example.demo.definition.DemoNameDefinition
+com.huawei.example.demo.definition.DemoSuperTypeDefinition
+com.huawei.example.demo.definition.DemoTraceDefinition
