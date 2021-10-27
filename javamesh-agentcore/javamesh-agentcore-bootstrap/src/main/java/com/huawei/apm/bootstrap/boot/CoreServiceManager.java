@@ -4,9 +4,12 @@
 
 package com.huawei.apm.bootstrap.boot;
 
+import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.logging.Logger;
 
 /**
  * <Code>CoreService<Code/>管理器，加载、启动所有定义的服务实例。
@@ -16,6 +19,8 @@ import java.util.ServiceLoader;
 public enum CoreServiceManager {
 
     INSTANCE;
+
+    private static final Logger LOGGER = LogFactory.getLogger();
 
     private final Map<String, CoreService> services = new HashMap<String, CoreService>();
 
@@ -59,8 +64,12 @@ public enum CoreServiceManager {
     }
 
     private void startService() {
-        for (CoreService service : services.values()) {
-            service.start();
+        for (Map.Entry<String, CoreService> serviceEntry : services.entrySet()) {
+            try {
+                serviceEntry.getValue().start();
+            } catch (Exception e) {
+                throw new ServiceInitException("Failed to start service [" + serviceEntry.getKey() + "] cause by: ", e);
+            }
         }
     }
 
@@ -68,8 +77,13 @@ public enum CoreServiceManager {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
-                for (CoreService service : services.values()) {
-                    service.stop();
+                for (Map.Entry<String, CoreService> serviceEntry : services.entrySet()) {
+                    try {
+                        serviceEntry.getValue().stop();
+                    } catch (Exception e) {
+                        LOGGER.warning("Failed to start service [" + serviceEntry.getKey() + "] since: "
+                            + e.getMessage());
+                    }
                 }
             }
         }));

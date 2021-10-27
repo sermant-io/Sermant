@@ -4,7 +4,9 @@
 
 package com.huawei.javamesh.sample.servermonitor.service;
 
+import com.huawei.apm.bootstrap.boot.CoreServiceManager;
 import com.huawei.apm.bootstrap.boot.PluginService;
+import com.huawei.apm.bootstrap.service.send.UnifiedGatewayClient;
 import com.huawei.javamesh.sample.servermonitor.collector.CpuMetricCollector;
 import com.huawei.javamesh.sample.servermonitor.collector.DiskMetricCollector;
 import com.huawei.javamesh.sample.servermonitor.collector.IbmJvmMetricCollector;
@@ -24,6 +26,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class ServerMonitorService implements PluginService {
 
+    private final static int GATEWAY_DATA_TYPE = 4;
+
     private boolean collectServerMetric;
 
     private boolean collectIbmJvmMetric;
@@ -36,6 +40,8 @@ public class ServerMonitorService implements PluginService {
     private IbmJvmMetricCollector ibmJvmMetricCollector;
 
     private CollectTask<ServerMonitorMetric> collectTask;
+
+    private UnifiedGatewayClient gatewayClient;
 
     @Override
     public void init() {
@@ -60,6 +66,8 @@ public class ServerMonitorService implements PluginService {
         if (collectIbmJvmMetric) {
             ibmJvmMetricCollector = new IbmJvmMetricCollector();
         }
+
+        gatewayClient = CoreServiceManager.INSTANCE.getService(UnifiedGatewayClient.class);
 
         collectTask = CollectTask.create(
             new Supplier<ServerMonitorMetric>() {
@@ -100,5 +108,12 @@ public class ServerMonitorService implements PluginService {
     }
 
     private void send(List<ServerMonitorMetric> metrics) {
+        if (metrics == null || metrics.isEmpty()) {
+            // LOG
+            return;
+        }
+        for (ServerMonitorMetric metric : metrics) {
+            gatewayClient.send(metric.toByteArray(), GATEWAY_DATA_TYPE);
+        }
     }
 }
