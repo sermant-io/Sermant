@@ -1,4 +1,4 @@
-/* 
+/*
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.ngrinder.user.controller;
 
@@ -39,8 +39,8 @@ public class UserControllerTest extends AbstractNGrinderTransactionalTest {
 
 	/**
 	 * Test method for
-	 * {@link org.ngrinder.user.controller.UserController#getAll(org.springframework.ui.ModelMap, org.ngrinder.model.Role,
-	 * org.springframework.data.domain.Pageable, java.lang.String)}
+	 * {@link UserController#getAll(ModelMap, Role,
+	 * Pageable, String)}
 	 * .
 	 */
 	@Test
@@ -60,8 +60,8 @@ public class UserControllerTest extends AbstractNGrinderTransactionalTest {
 
 	/**
 	 * Test method for
-	 * {@link org.ngrinder.user.controller.UserController#getOne(org.ngrinder.model.User,
-	 * org.springframework.ui.ModelMap)}
+	 * {@link UserController#getOne(User,
+	 * ModelMap)}
 	 * .
 	 */
 	@Test
@@ -74,8 +74,8 @@ public class UserControllerTest extends AbstractNGrinderTransactionalTest {
 
 	/**
 	 * Test method for
-	 * {@link org.ngrinder.user.controller.UserController#save(org.ngrinder.model.User,
-	 * org.ngrinder.model.User, org.springframework.ui.ModelMap)}
+	 * {@link UserController#save(User,
+	 * User, ModelMap)}
 	 * .
 	 */
 	@Test
@@ -139,7 +139,7 @@ public class UserControllerTest extends AbstractNGrinderTransactionalTest {
 
 	/**
 	 * Test method for
-	 * {@link org.ngrinder.user.controller.UserController#delete(org.springframework.ui.ModelMap, java.lang.String)}
+	 * {@link UserController#delete(ModelMap, String)}
 	 * .
 	 */
 	@SuppressWarnings("unchecked")

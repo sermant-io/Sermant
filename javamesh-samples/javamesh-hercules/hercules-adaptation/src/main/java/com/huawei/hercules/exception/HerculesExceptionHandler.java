@@ -1,25 +1,29 @@
 package com.huawei.hercules.exception;
 
+import com.alibaba.fastjson.JSONObject;
 import feign.FeignException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class HerculesExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
-    public void exceptionHandler(Exception e) {
+    public JSONObject exceptionHandler(Exception e) {
         // 返回401
-        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletResponse response = servletRequestAttributes.getResponse();
+        JSONObject errorMsg = new JSONObject();
         if (e instanceof FeignException.Unauthorized) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            errorMsg.put("code", HttpServletResponse.SC_UNAUTHORIZED);
+            errorMsg.put("message", "UNAUTHORIZED");
         } else {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            errorMsg.put("code", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            errorMsg.put("message", e.getMessage());
         }
+        return errorMsg;
     }
 }

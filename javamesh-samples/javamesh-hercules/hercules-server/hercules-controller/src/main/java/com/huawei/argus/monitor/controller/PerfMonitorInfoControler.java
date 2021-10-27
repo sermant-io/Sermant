@@ -252,7 +252,7 @@ public class PerfMonitorInfoControler extends BaseController {
 					//JVM_MP的时间和数据特殊处理
 					if (("JVM_MP").equals(seriesName)) {
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-						java.util.Date lastTime = new Date(detailJson.getDouble("last_time").longValue());
+						Date lastTime = new Date(detailJson.getDouble("last_time").longValue());
 						detailJson.put("last_time", sdf.format(lastTime));
 
 						String[] usage = detailJson.getString("usage").split(",");

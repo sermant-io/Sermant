@@ -127,15 +127,19 @@ public class RestPerftestController extends RestBaseController {
 	@RequestMapping({"/list", "/", ""})
 	public JSONObject getAll(User user, @RequestParam(required = false) String query,
 							 @RequestParam(required = false) String tag, @RequestParam(required = false) String queryFilter,
-							 @PageableDefault(page = 0, size = 10) Pageable pageable) {
+							 @PageableDefault(page = 0, size = 10) Pageable pageable,
+							 @RequestParam(required = false) String testName,
+							 @RequestParam(required = false) String testType,
+							 @RequestParam(required = false) String scriptPath,
+							 @RequestParam(required = false) String owner) {
 		pageable = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(),
 			defaultIfNull(pageable.getSort(),
 				new Sort(Sort.Direction.DESC, "id")));
-		Page<PerfTest> tests = perfTestService.getPagedAll(user, query, tag, queryFilter, pageable);
+		Page<PerfTest> tests = perfTestService.getPagedAll(user, query, tag, queryFilter, pageable, testName, testType, scriptPath, owner);
 		if (tests.getNumberOfElements() == 0) {
 			pageable = new PageRequest(0, pageable.getPageSize(), defaultIfNull(pageable.getSort(),
 				new Sort(Sort.Direction.DESC, "id")));
-			tests = perfTestService.getPagedAll(user, query, tag, queryFilter, pageable);
+			tests = perfTestService.getPagedAll(user, query, tag, queryFilter, pageable, testName, testType, scriptPath, owner);
 		}
 		annotateDateMarker(tests);
 		JSONObject modelInfos = new JSONObject();
@@ -168,8 +172,24 @@ public class RestPerftestController extends RestBaseController {
 	@RequestMapping({"/alllist"})
 	public JSONObject getAll(User user, @RequestParam(required = false) String query,
 							 @RequestParam(required = false) String tag, @RequestParam(required = false) String queryFilter,
-							 @RequestParam(required = false) String pages) {
-		return getAll(user, query, tag, queryFilter, getPageable(pages));
+							 @RequestParam(required = false) String pages,
+							 @RequestParam(required = false) String testName,
+							 @RequestParam(required = false) String testType,
+							 @RequestParam(required = false) String scriptPath,
+							 @RequestParam(required = false) String owner) {
+		return getAll(user, query, tag, queryFilter, getPageable(pages), testName, testType, scriptPath, owner);
+	}
+
+	/**
+	 * 查询压测任务的标签
+	 * @param user 当前用户
+	 * @param query 查询关键字
+	 * @return
+	 */
+	@RequestMapping({"/allTags"})
+	public List<String> getAllTags(User user, @RequestParam(required = false) String query) {
+		List<String> allTags = tagService.getAllTagStringsByKeywords(user, query);
+		return allTags == null ? Collections.emptyList() : allTags;
 	}
 
 	private void annotateDateMarker(Page<PerfTest> tests) {
@@ -476,6 +496,8 @@ public class RestPerftestController extends RestBaseController {
 	public HttpEntity<String> delete(User user, @RequestParam(value = "ids", defaultValue = "") String ids) {
 		for (String idStr : StringUtils.split(ids, ",")) {
 			perfTestService.delete(user, NumberUtils.toLong(idStr, 0));
+			// 删除场景与压测任务的关系
+			scenarioPerfTestService.deleteByOneId(user, null, NumberUtils.toLong(idStr, 0), null);
 		}
 		return successJsonHttpEntity();
 	}

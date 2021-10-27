@@ -54,6 +54,7 @@ import static org.ngrinder.common.util.ExceptionUtils.processException;
 import static org.ngrinder.common.util.PathUtils.removePrependedSlash;
 import static org.ngrinder.common.util.PathUtils.trimPathSeparatorBothSides;
 import static org.ngrinder.common.util.Preconditions.checkNotNull;
+import static org.python.modules.math.e;
 
 @RestController
 @RequestMapping("/rest/script")
@@ -179,6 +180,7 @@ public class RestFileEntryController extends RestBaseController {
 		FileEntry entry = new FileEntry();
 		entry.setPath(fileName);
 		JSONObject modelInfos = new JSONObject();
+		Map<String, Object> file = new HashMap<>();
 		if (scriptHandler instanceof ProjectHandler) {
 			if (!fileEntryService.hasFileEntry(user, PathUtils.join(path, fileName))) {
 				fileEntryService.prepareNewEntry(user, path, fileName, name, testUrl, scriptHandler,
@@ -195,14 +197,20 @@ public class RestFileEntryController extends RestBaseController {
 
 		} else {
 			String fullPath = PathUtils.join(path, fileName);
+			FileEntry fileEntry = null;
 			if (fileEntryService.hasFileEntry(user, fullPath)) {
-				modelInfos.put("file", fileEntryService.getOne(user, fullPath));
+				fileEntry = fileEntryService.getOne(user, fullPath);
 			} else {
-				modelInfos.put("file", fileEntryService.prepareNewEntry(user, path, fileName, name, testUrl,
-					scriptHandler, createLibAndResources, options));
+				fileEntry = fileEntryService.prepareNewEntry(user, path, fileName, name, testUrl,
+					scriptHandler, createLibAndResources, options);
 			}
+			file.put("path", fileEntry.getPath());
+			file.put("description", fileEntry.getDescription());
+			file.put("content", fileEntry.getContent());
+			file.put("properties", fileEntry.getProperties());
 		}
 		modelInfos.put(JSON_SUCCESS, true);
+		modelInfos.put("file", file);
 		modelInfos.put("breadcrumbPath", getScriptPathBreadcrumbs(PathUtils.join(path, fileName)));
 		modelInfos.put("scriptHandler", scriptHandler);
 		modelInfos.put("createLibAndResource", createLibAndResources);
@@ -341,6 +349,28 @@ public class RestFileEntryController extends RestBaseController {
 		return modelInfos;
 	}
 
+	/**
+	 * 判断脚本是否存在
+	 * @param user 当前用户
+	 * @param path 脚本全路径
+	 * @return 判断结果
+	 */
+	@RequestMapping(value = "/hasScript", method = RequestMethod.GET)
+	boolean hasScript(User user, @RequestParam String path) {
+		if (StringUtils.isEmpty(path)) {
+			return false;
+		}
+		List<FileEntry> files = fileEntryService.getAll(user);
+		if (files == null || files.isEmpty()) {
+			return false;
+		}
+		for (FileEntry fileEntry: files) {
+			if (path.equals(fileEntry.getPath())) {
+				return true;
+			}
+		}
+		return false;
+	}
 	/**
 	 * Save a fileEntry and return to the the path.
 	 *

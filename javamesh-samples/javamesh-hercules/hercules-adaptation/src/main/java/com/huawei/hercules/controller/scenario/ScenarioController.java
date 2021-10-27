@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -62,11 +63,29 @@ public class ScenarioController extends BaseController {
         return returnSuccess();
     }
 
+    /**
+     * 压测场景更新
+     * @param params 场景信息
+     * @return 更新结果
+     */
     @RequestMapping(value = "/scenario", method = RequestMethod.PUT)
     public JSONObject update(@RequestBody JSONObject params) {
         return create(params);
     }
 
+    /**
+     * 压测场景查询
+     * @param keywords 模糊查询关键字：支持应用名、场景名称、标签、描述的模糊查询
+     * @param app_name 应用名筛选
+     * @param create_by 创建人筛选
+     * @param scenario_type 场景类型筛选
+     * @param scenario_name 场景名称筛选
+     * @param pageSize 分页信息
+     * @param current 当前页
+     * @param sorter 排序关键字
+     * @param order 排序方式
+     * @return 查询结果
+     */
     @RequestMapping(value = "/scenario", method = RequestMethod.GET)
     public JSONObject queryScenario(@RequestParam(required = false) String keywords,
                                     @RequestParam(name = "app_name[]", required = false) String[] app_name,
@@ -121,6 +140,11 @@ public class ScenarioController extends BaseController {
         return result;
     }
 
+    /**
+     * 删除场景
+     * @param scenario_id 场景ID
+     * @return 删除结果
+     */
     @RequestMapping(value = "/scenario", method = RequestMethod.DELETE)
     public JSONObject delete(@RequestParam(name = "scenario_id[]") String[] scenario_id) {
         if (StringUtils.isEmpty(scenario_id)) {
@@ -134,7 +158,31 @@ public class ScenarioController extends BaseController {
         return returnSuccess();
     }
 
-
+    /**
+     * 校验场景下是否有压测任务
+     * @param scenario_id 场景ID
+     * @return 含有压测任务的场景名称结果
+     */
+    @RequestMapping(value = "/scenario/deleteCheck", method = RequestMethod.GET)
+    public JSONObject deleteCheck(@RequestParam(name = "scenario_id[]") String[] scenario_id) {
+        // 判断场景下是否有压测任务
+        List<Long> scenarioIds = Arrays.stream(scenario_id)
+                .map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+        JSONObject result = new JSONObject();
+        Set<Object> scenarioNames = new HashSet<>();
+        result.put("data", scenarioNames);
+        if (scenarioIds.isEmpty()) {
+            return result;
+        }
+        JSONObject allPerfTestByScenarioIds = scenarioService.getAllPerfTestByScenarioIds(scenarioIds);
+        List<Map<String, Object>> perfTests = (List<Map<String, Object>>) allPerfTestByScenarioIds.get("scenarioInfos");
+        if (perfTests != null && !perfTests.isEmpty()) {
+            for (Map<String, Object> test : perfTests) {
+                scenarioNames.add(test.get("scenarioName"));
+            }
+        }
+        return result;
+    }
     /**
      * 下拉列表查询
      *

@@ -1,15 +1,11 @@
 package com.huawei.hercules.service.script;
 
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.hercules.config.FeignSupportConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -29,11 +25,11 @@ public interface IScripService {
      */
     @RequestMapping(value = "/new/script", method = RequestMethod.POST)
     JSONObject createForm(@RequestParam(required = false) String path,
-                          @RequestParam(value = "testUrl", required = false) String testUrl,
-                          @RequestParam("fileName") String fileName,
-                          @RequestParam(value = "scriptType", required = false) String scriptType,
-                          @RequestParam(value = "createLibAndResource", defaultValue = "false") boolean createLibAndResources,
-                          @RequestParam(value = "options", required = false) String options);
+                                 @RequestParam(value = "testUrl", required = false) String testUrl,
+                                 @RequestParam("fileName") String fileName,
+                                 @RequestParam(value = "scriptType", required = false) String scriptType,
+                                 @RequestParam(value = "createLibAndResource", defaultValue = "false") boolean createLibAndResources,
+                                 @RequestParam(value = "options", required = false) String options);
 
 
     /**
@@ -89,18 +85,6 @@ public interface IScripService {
     String delete(@RequestParam(required = false) String path, @RequestParam("filesString") String filesString);
 
     /**
-     * 上传脚本
-     *
-     * @param path 路径
-     * @param description 备注信息
-     * @return 上传保存结果
-     */
-    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    String uploadFile(@RequestParam String path, @RequestParam("description") String description,
-                      @RequestPart("uploadFile") MultipartFile uploadFile);
-
-
-    /**
      * 下载脚本
      *
      * @param path 路径
@@ -131,4 +115,12 @@ public interface IScripService {
     @RequestMapping(value = "/api/validateScript", method = RequestMethod.POST)
     HttpEntity<String> validateScript(@RequestParam String jsonObject,
                                       @RequestParam(value = "hostString", required = false) String hostString);
+
+    /**
+     * 判断脚本是否存在
+     * @param path 脚本路径
+     * @return 判断结果
+     */
+    @RequestMapping(value = "/hasScript", method = RequestMethod.GET)
+    boolean hasScript(@RequestParam String path);
 }

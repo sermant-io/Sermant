@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @FeignClient(url = "${decisionEngine.url}" + "/rest/perftest", name = "perftest")
 public interface IPerftestService {
 
@@ -22,7 +24,11 @@ public interface IPerftestService {
     @RequestMapping({"/alllist"})
     JSONObject getAll(@RequestParam(required = false) String query,
                       @RequestParam(required = false) String tag, @RequestParam(required = false) String queryFilter,
-                      @RequestParam(required = false) String pages);
+                      @RequestParam(required = false) String pages,
+                      @RequestParam(required = false) String testName,
+                      @RequestParam(required = false) String testType,
+                      @RequestParam(required = false) String scriptPath,
+                      @RequestParam(required = false) String owner);
 
     /**
      * 任务删除
@@ -149,4 +155,12 @@ public interface IPerftestService {
      */
     @RequestMapping(value = "/leave_comment", method = RequestMethod.POST)
     String updateLeaveComment(@RequestParam Long id, @RequestParam("testComment") String testComment);
+
+    /**
+     * 查询压测任务的标签
+     * @param query 查询关键字
+     * @return 标签列表
+     */
+    @RequestMapping({"/allTags"})
+    List<String> getAllTags(@RequestParam(required = false) String query);
 }

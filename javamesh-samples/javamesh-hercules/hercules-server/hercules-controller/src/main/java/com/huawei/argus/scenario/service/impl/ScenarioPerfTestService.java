@@ -2,6 +2,7 @@ package com.huawei.argus.scenario.service.impl;
 
 import com.huawei.argus.scenario.repository.ScenarioPerfTestRepository;
 import com.huawei.argus.scenario.service.IScenarioPerfTestService;
+import org.ngrinder.model.PerfTest;
 import org.ngrinder.model.ScenarioPerfTest;
 import org.ngrinder.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,15 @@ public class ScenarioPerfTestService implements IScenarioPerfTestService {
 	}
 
 	@Override
+	public List<ScenarioPerfTest> getAllByScenarioIds(User user, Long[] scenarioIds) {
+		Specifications<ScenarioPerfTest> spec = Specifications.where(idEmptyPredicate());
+		if (!org.springframework.util.StringUtils.isEmpty(scenarioIds)) {
+			spec = spec.and(idSetEqual("scenarioId", scenarioIds));
+		}
+		return scenarioPerfTestRepository.findAll(spec);
+	}
+
+	@Override
 	public void deleteByOneId(User user, Long id, Long perfTestId, Long scenarioId) {
 		scenarioPerfTestRepository.deleteByOneId(id, perfTestId, scenarioId);
 	}
@@ -61,6 +71,15 @@ public class ScenarioPerfTestService implements IScenarioPerfTestService {
 			@Override
 			public Predicate toPredicate(Root<ScenarioPerfTest> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				return root.get(column).in(id);
+			}
+		};
+	}
+
+	public static Specification<ScenarioPerfTest> idSetEqual(final String column, final Long[] ids) {
+		return new Specification<ScenarioPerfTest>() {
+			@Override
+			public Predicate toPredicate(Root<ScenarioPerfTest> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				return root.get(column).in((Object[]) ids);
 			}
 		};
 	}

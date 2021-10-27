@@ -28,6 +28,19 @@ public class TestReportController extends BaseController {
         getKeys();
     }
 
+    /**
+     * 压测报告查询
+     * @param pageSize 分页信息
+     * @param current 当前页
+     * @param keywords 模糊查询关键字：测试名称
+     * @param test_type 压测类型
+     * @param start_time 开始时间
+     * @param end_time 完成时间
+     * @param test_name 测试名称筛选
+     * @param sorter 排序关键字
+     * @param order 排序方式
+     * @return 压测报告查询结果
+     */
     @RequestMapping(value = {"/report"}, method = RequestMethod.GET)
     public JSONObject getPagedAll(@RequestParam(required = false, defaultValue = "10") int pageSize,
                                   @RequestParam(required = false, defaultValue = "1") int current,
@@ -72,7 +85,11 @@ public class TestReportController extends BaseController {
         return result;
     }
 
-
+    /**
+     * 删除报告
+     * @param test_id 报告ID
+     * @return 删除结果
+     */
     @RequestMapping(value = "/report", method = RequestMethod.DELETE)
     public JSONObject delete(@RequestParam(required = false, name = "test_id[]") String[] test_id) {
         testReportService.delete(arrayToStr(test_id));

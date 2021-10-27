@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.hercules.controller.BaseController;
 import com.huawei.hercules.service.perftest.IPerftestService;
+import com.huawei.hercules.service.scenario.IScenarioService;
 import com.huawei.hercules.service.script.IScripService;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -37,6 +39,9 @@ public class ScriptController extends BaseController {
 
     @Autowired
     IPerftestService perftestService;
+
+    @Autowired
+    private IScenarioService scenarioService;
 
     @Value("${decisionEngine.url}")
     private String host;
@@ -86,7 +91,7 @@ public class ScriptController extends BaseController {
             fileEntry.put("path", file.get("path"));
             fileEntry.put("description", file.get("description"));
             fileEntry.put("content", file.get("content"));
-            String targetHosts = properties == null ? null : properties.get("targetHosts").toString();
+            String targetHosts = (properties == null || StringUtils.isEmpty(properties.get("targetHosts"))) ? "" : (String)properties.get("targetHosts");
             String basePath = scripService.saveScript(parseScript(fileEntry.toString()), targetHosts, "0", createLibAndResources);
             result.put(JSON_RESULT_KEY, SUCCESS);
             result.put("basePath", basePath);
@@ -159,6 +164,9 @@ public class ScriptController extends BaseController {
                 file.put("script_name", file.get("fileName"));
                 file.put("version", file.get("revision"));
                 file.put("size", file.get("fileSize"));
+                if ("DIR".equals(file.get("fileType"))) {
+                    file.put("size", null);
+                }
                 file.put("commit", file.get("description"));
                 file.put("update_time", longToDate((Long) file.get("lastModifiedDate")));
             }
@@ -193,6 +201,11 @@ public class ScriptController extends BaseController {
         return scripts;
     }
 
+    /**
+     * 新建文件夹
+     * @param params 文件夹信息：父路径+文件夹名称
+     * @return 新建结果
+     */
     @RequestMapping(value = "/script/folder", method = RequestMethod.POST)
     public JSONObject addFolder(@RequestBody JSONObject params) {
         if (params == null) {
@@ -206,6 +219,12 @@ public class ScriptController extends BaseController {
         return jsonObject;
     }
 
+    /**
+     * 删除脚本
+     * @param folder 父目录
+     * @param script_name 脚本文件名
+     * @return 删除结果
+     */
     @RequestMapping(value = "/script", method = RequestMethod.DELETE)
     public JSONObject delete(@RequestParam(required = false) String folder, @RequestParam(name = "script_name[]") String[] script_name) {
         if (StringUtils.isEmpty(script_name)) {
@@ -217,6 +236,40 @@ public class ScriptController extends BaseController {
             return returnError("脚本删除失败");
         }
         return returnSuccess();
+    }
+
+    /**
+     * 校验脚本下是否有压测场景存在
+     * @param folder 父目录
+     * @param script_name 脚本名称
+     * @return 有关联压测场景的脚本名称列表
+     */
+    @RequestMapping(value = "/script/deleteCheck", method = RequestMethod.GET)
+    public JSONObject deleteCheck(@RequestParam(required = false) String folder, @RequestParam(name = "script_name[]") String[] script_name) {
+        JSONObject result = new JSONObject();
+        Set<Object> scriptNames = new HashSet<>();
+        result.put("data", scriptNames);
+        if (script_name == null || script_name.length == 0) {
+            return result;
+        }
+        List<String> allScriptPath = new ArrayList<>();
+        for (String scriptName : script_name) {
+            if (StringUtils.isEmpty(folder)) {
+                allScriptPath.add(scriptName);
+            } else {
+                allScriptPath.add(folder + "/" + scriptName);
+            }
+        }
+
+        // 查询脚本关联的压测场景
+        JSONObject scenarios = scenarioService.getAllByScriptPaths(allScriptPath);
+        List<Map<String, Object>> perfTests = (List<Map<String, Object>>) scenarios.get("scenarioInfos");
+        if (perfTests != null && !perfTests.isEmpty()) {
+            for (Map<String, Object> test : perfTests) {
+                scriptNames.add(test.get("scriptPath"));
+            }
+        }
+        return result;
     }
 
     /**
@@ -278,6 +331,12 @@ public class ScriptController extends BaseController {
         }
     }
 
+    /**
+     * 下载脚本
+     * @param path 脚本全路径
+     * @param response 响应结果
+     * @throws Exception 异常
+     */
     @RequestMapping("script/download")
     public void downloadFile(@RequestParam(required = false) String path, HttpServletResponse response) throws Exception {
         JSONObject jsonObject = scripService.downloadFile(path);
@@ -407,6 +466,9 @@ public class ScriptController extends BaseController {
         if (array != null && !array.isEmpty()) {
             for (Object item : array) {
                 JSONObject current = (JSONObject) item;
+                if (current.size() == 0 || StringUtils.isEmpty(current.get("key"))) {
+                    continue;
+                }
                 JSONObject thisItem = new JSONObject();
                 thisItem.put("name", current.get("key"));
                 thisItem.put("value", current.get("value"));
@@ -421,11 +483,14 @@ public class ScriptController extends BaseController {
         if (array != null && !array.isEmpty()) {
             for (Object item : array) {
                 JSONObject current = (JSONObject) item;
+                if (current.size() == 0 || StringUtils.isEmpty(current.get("key"))) {
+                    continue;
+                }
                 JSONObject thisItem = new JSONObject();
                 thisItem.put("name", current.get("key"));
-                thisItem.put("value", current.get("value"));
-                thisItem.put("domain", current.get("value_a"));
-                thisItem.put("path", current.get("value_b"));
+                thisItem.put("value", StringUtils.isEmpty(current.get("value")) ? "" : current.get("value"));
+                thisItem.put("domain", StringUtils.isEmpty(current.get("value_a")) ? "" : current.get("value_a"));
+                thisItem.put("path", StringUtils.isEmpty(current.get("value_b")) ? "" : current.get("value_b"));
                 target.add(thisItem);
             }
         }

@@ -20,6 +20,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
+import static org.ngrinder.common.util.CollectionUtils.newArrayList;
+
 @Service
 public class ScenarioService implements IScenarioService {
 	@Autowired
@@ -45,22 +47,22 @@ public class ScenarioService implements IScenarioService {
 
 		if (!org.springframework.util.StringUtils.isEmpty(appName)) {
 			String[] appNames = appName.trim().split(",");
-			spec = spec.and(idSetEqual("appName", appNames));
+			spec = spec.and(setEqual("appName", appNames));
 		}
 
 		if (!org.springframework.util.StringUtils.isEmpty(createBy)) {
 			String[] createBys = createBy.trim().split(",");
-			spec = spec.and(idSetEqual("createBy", createBys));
+			spec = spec.and(setEqual("createBy", createBys));
 		}
 
 		if (!org.springframework.util.StringUtils.isEmpty(scenarioType)) {
 			String[] scenarioTypes = scenarioType.trim().split(",");
-			spec = spec.and(idSetEqual("scenarioType", scenarioTypes));
+			spec = spec.and(setEqual("scenarioType", scenarioTypes));
 		}
 
 		if (!org.springframework.util.StringUtils.isEmpty(scenarioName)) {
 			String[] scenarioTypes = scenarioName.trim().split(",");
-			spec = spec.and(idSetEqual("scenarioName", scenarioTypes));
+			spec = spec.and(setEqual("scenarioName", scenarioTypes));
 		}
 
 		if (StringUtils.isNotBlank(query)) {
@@ -80,11 +82,31 @@ public class ScenarioService implements IScenarioService {
 		scenarioRepository.delete(scenario);
 	}
 
-	public static Specification<Scenario> idSetEqual(final String column, final Object[] ids) {
+	@Override
+	public List<Scenario> getAll(Long[] ids) {
+		if (ids.length == 0) {
+			return newArrayList();
+		}
+		Specifications<Scenario> spec = Specifications.where(idEmptyPredicate());
+		spec = spec.and(setEqual("id", ids));
+		return scenarioRepository.findAll(spec);
+	}
+
+	@Override
+	public List<Scenario> getAllByScriptPaths(User user, List<String> scriptPaths) {
+		if (scriptPaths.size() == 0) {
+			return newArrayList();
+		}
+		Specifications<Scenario> spec = Specifications.where(idEmptyPredicate());
+		spec = spec.and(setEqual("scriptPath", scriptPaths.toArray()));
+		return scenarioRepository.findAll(spec);
+	}
+
+	public static Specification<Scenario> setEqual(final String column, final Object[] values) {
 		return new Specification<Scenario>() {
 			@Override
 			public Predicate toPredicate(Root<Scenario> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				return root.get(column).in(ids);
+				return root.get(column).in(values);
 			}
 		};
 	}
