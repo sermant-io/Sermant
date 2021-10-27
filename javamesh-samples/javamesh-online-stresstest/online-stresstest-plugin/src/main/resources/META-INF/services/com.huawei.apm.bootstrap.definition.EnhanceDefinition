@@ -1,0 +1,6 @@
+com.lubanops.stresstest.servlet.WebRequestEnhance
+com.lubanops.stresstest.db.mybatis.MybatisEnhance
+com.lubanops.stresstest.http.HttpClientEnhance
+com.lubanops.stresstest.http.AsyncHttpClientEnhance
+com.lubanops.stresstest.kafka.KafkaProducerEnhance
+com.lubanops.stresstest.kafka.KafkaConsumerEnhance
