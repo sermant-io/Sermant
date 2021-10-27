@@ -19,7 +19,7 @@ import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
  *     2.将配置信息加载到配置对象中{@link #loadConfig(Object, BaseConfig)}
  * </pre>
  *
- * @author h30007557
+ * @author HapThorin
  * @version 1.0.0
  * @since 2021/8/18
  */

@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * <p>主要作用是修正成员属性和配置键之间的差异
  * <p>见{@link ConfigLoader#getFieldKey(java.lang.reflect.Field)}
  *
- * @author h30007557
+ * @author HapThorin
  * @version 1.0.0
  * @since 2021/8/19
  */

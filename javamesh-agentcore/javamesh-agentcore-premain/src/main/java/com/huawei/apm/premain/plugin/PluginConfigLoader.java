@@ -26,7 +26,7 @@ import com.huawei.apm.premain.lubanops.utils.LibPathUtils;
 /**
  * 插件配置{@link PluginConfig}加载器
  *
- * @author h30007557
+ * @author HapThorin
  * @version 1.0.0
  * @since 2021/8/24
  */
