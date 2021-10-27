@@ -29,7 +29,7 @@ public class DemoConfigInterceptor implements StaticMethodInterceptor {
 
     @Override
     public Object after(Class<?> clazz, Method method, Object[] arguments, Object result) throws Exception {
-        System.out.println("DemoConfig: " + config);
+        System.out.println(clazz.getSimpleName() + ": " + config);
         System.out.println(clazz.getSimpleName() + ": [DemoConfigInterceptor]-after");
         return result;
     }

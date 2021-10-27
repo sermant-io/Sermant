@@ -5,7 +5,6 @@
 package com.huawei.example.demo.config;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +46,7 @@ public class DemoConfig implements BaseConfig {
      */
     @ConfigFieldKey("str2DoubleMap") // 修改参数名称后缀
     private Map<String, Double> map;
-    
+
     /**
      * 枚举类型
      */
