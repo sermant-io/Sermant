@@ -131,8 +131,17 @@ public class NamedListenerTransformer {
                 }
             } else {
                 if (method.isConstructor()) {
-                    points.add(MethodInterceptPoint.newConstructorInterceptPoint(
-                            method.getInterceptor(), junction));
+                    // 参数转换
+                    List<String> params = convertParams(method.getParams());
+                    // 构造参数条件
+                    junction = buildParamsJunction(method, junction, params);
+                    for (MethodDescription.InDefinedShape methodDescription : declaredMethods) {
+                        if (!methodDescription.isConstructor() || !isMatchParams(params, methodDescription)) {
+                            continue;
+                        }
+                        points.add(MethodInterceptPoint.newConstructorInterceptPoint(
+                                method.getInterceptor(), junction));
+                    }
                 } else {
                     junction = junction.and(named(method.getMethod()));
                     // 参数转换
@@ -175,6 +184,9 @@ public class NamedListenerTransformer {
     }
 
     private boolean isMatchParams(List<String> params, MethodDescription.InDefinedShape methodDescription) {
+        if (params.isEmpty()) {
+            return true;
+        }
         ParameterList<ParameterDescription.InDefinedShape> parameters = methodDescription.getParameters();
         if (parameters.size() == params.size()) {
             // 比较参数类型

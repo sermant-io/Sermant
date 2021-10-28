@@ -36,5 +36,8 @@ public class DemoApplication {
         DemoTraceService.trace();
         DemoTraceService.trace();
         DemoTraceService.trace();
+        // 测试启动类增强
+        Thread.getAllStackTraces();
+        new Thread().setName("demo-thread-test");
     }
 }
