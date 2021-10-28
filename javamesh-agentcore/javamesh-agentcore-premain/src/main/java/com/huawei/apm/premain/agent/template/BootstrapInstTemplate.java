@@ -54,7 +54,7 @@ public class BootstrapInstTemplate {
      * @param method    被增强方法
      * @param arguments 所有参数
      * @param adviceCls 动态advice类
-     * @return 是否跳过主要流程
+     * @return 是否进行主要流程
      * @throws Exception 发生异常
      */
     @Advice.OnMethodEnter(skipOn = Advice.OnDefaultValue.class)
@@ -88,7 +88,7 @@ public class BootstrapInstTemplate {
      * @param obj       被拦截的对象
      * @param method    被拦截的方法
      * @param arguments 所有参数
-     * @return 是否跳过主要流程
+     * @return 是否进行主要流程
      * @throws Exception 调用异常
      */
     public static boolean beforeInstMethod(Object obj, Method method, Object[] arguments) throws Exception {
@@ -99,10 +99,10 @@ public class BootstrapInstTemplate {
         for (InstanceMethodInterceptor interceptor : interceptors) {
             interceptor.before(obj, method, arguments, beforeResult);
             if (!beforeResult.isContinue()) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**
