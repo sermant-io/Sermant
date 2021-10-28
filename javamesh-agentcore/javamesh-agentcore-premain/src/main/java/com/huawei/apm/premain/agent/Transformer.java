@@ -42,6 +42,9 @@ public class Transformer implements AgentBuilder.Transformer {
 
     @Override
     public DynamicType.Builder<?> transform(final DynamicType.Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader, JavaModule module) {
+        if (classLoader == null) {
+            return new BootstrapTransformer(enhanceDefinitionLoader).transform(builder, typeDescription, null, module);
+        }
         final List<Listener> nameListeners = enhanceDefinitionLoader.findNameListeners(typeDescription);
         final List<EnhanceDefinition> definitions = enhanceDefinitionLoader.findDefinitions(typeDescription);
 
