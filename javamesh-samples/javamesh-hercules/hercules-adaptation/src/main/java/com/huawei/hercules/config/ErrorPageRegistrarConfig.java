@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class ErrorPageRegistrarConfig implements ErrorPageRegistrar {
     @Override
     public void registerErrorPages(ErrorPageRegistry registry) {
-        registry.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/index.html"));
+        registry.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/public/index.html"));
     }
     @Bean
     public TomcatServletWebServerFactory webServerFactory() {

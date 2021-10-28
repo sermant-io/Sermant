@@ -50,7 +50,6 @@ public abstract class DownloadUtils {
             response.reset();
             response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
             response.setContentType("application/octet-stream");
-            response.addHeader("Content-Length", "" + inputStream.available());
             toClient = new BufferedOutputStream(response.getOutputStream());
             int readLength;
             while (((readLength = inputStream.read(buffer)) != -1)) {

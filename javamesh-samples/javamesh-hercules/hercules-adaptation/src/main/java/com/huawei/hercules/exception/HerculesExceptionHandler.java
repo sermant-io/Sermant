@@ -5,6 +5,7 @@ import feign.FeignException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -15,15 +16,28 @@ public class HerculesExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     public JSONObject exceptionHandler(Exception e) {
-        // 返回401
+        // build errorMsg
         JSONObject errorMsg = new JSONObject();
-        if (e instanceof FeignException.Unauthorized) {
-            errorMsg.put("code", HttpServletResponse.SC_UNAUTHORIZED);
-            errorMsg.put("message", "UNAUTHORIZED");
-        } else {
-            errorMsg.put("code", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            errorMsg.put("message", e.getMessage());
+        errorMsg.put("code", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        errorMsg.put("message", e.getMessage());
+
+        // check weather login
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
+        if (servletRequestAttributes == null) {
+            return errorMsg;
         }
+        HttpServletResponse response = servletRequestAttributes.getResponse();
+        if (response == null) {
+            return errorMsg;
+        }
+        if (!(e instanceof FeignException.Unauthorized)) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return errorMsg;
+        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        errorMsg.put("code", HttpServletResponse.SC_UNAUTHORIZED);
+        errorMsg.put("message", "UNAUTHORIZED");
         return errorMsg;
     }
 }

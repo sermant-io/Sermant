@@ -110,8 +110,8 @@ public class AgentManagerController {
             return;
         }
         elementObject.put(ResponseInfoKey.AGENT_ID, elementObject.remove(DatabaseInfoKey.AGENT_ID));
-        elementObject.put(ResponseInfoKey.AGENT_STATE,
-                AgentStatus.getShowStatus(elementObject.getString(DatabaseInfoKey.AGENT_STATE)));
+        String statusType = elementObject.getString(DatabaseInfoKey.AGENT_STATE);
+        elementObject.put(ResponseInfoKey.AGENT_STATE, AgentStatus.getShowStatus(statusType));
         elementObject.put(ResponseInfoKey.AGENT_LABEL, elementObject.get(DatabaseInfoKey.AGENT_STATE));
         elementObject.remove(DatabaseInfoKey.AGENT_STATE);
         elementObject.put(ResponseInfoKey.AGENT_IP, elementObject.remove(DatabaseInfoKey.AGENT_IP));

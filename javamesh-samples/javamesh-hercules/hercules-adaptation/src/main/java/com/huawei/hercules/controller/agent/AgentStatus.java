@@ -21,12 +21,12 @@ public enum AgentStatus {
     /**
      * Agent忙碌状态
      */
-    INACTIVE("running", "BUSY"),
+    BUSY("running", "BUSY"),
 
     /**
      * Agent离线状态
      */
-    BUSY("pending", "INACTIVE");
+    INACTIVE("pending", "INACTIVE");
 
     /**
      * 前端展示需要的状态类型
@@ -59,7 +59,7 @@ public enum AgentStatus {
         if (StringUtils.isEmpty(realStatusType)) {
             return false;
         }
-        return realStatusType.equalsIgnoreCase(realStatusType);
+        return this.realStatusType.equalsIgnoreCase(realStatusType);
     }
 
     public String getShowStatusType() {
