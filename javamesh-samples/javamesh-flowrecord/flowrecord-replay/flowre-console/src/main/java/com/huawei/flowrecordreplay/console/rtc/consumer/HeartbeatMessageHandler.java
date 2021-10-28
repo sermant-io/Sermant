@@ -64,7 +64,7 @@ public class HeartbeatMessageHandler implements WorkHandler<HeartbeatMessage> {
             RedisUtil.asyncSetSet(appnameKey, app);
 
             // 按hash存
-            String ip = event.getIp();
+            String ip = event.getIp().get(0);
             String key = app + heartbeatFlag;
             String value = JSON.toJSONString(event);
             RedisUtil.asyncSetHash(key, ip, value);
