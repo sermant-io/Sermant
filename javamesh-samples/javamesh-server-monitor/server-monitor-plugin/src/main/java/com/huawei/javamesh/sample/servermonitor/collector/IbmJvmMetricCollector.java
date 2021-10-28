@@ -4,6 +4,7 @@
 
 package com.huawei.javamesh.sample.servermonitor.collector;
 
+import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
 import com.huawei.javamesh.sample.servermonitor.entity.IBMPoolType;
 import com.huawei.javamesh.sample.servermonitor.entity.IbmJvmMetric;
 import com.huawei.javamesh.sample.servermonitor.common.CheckIBMParameter;
@@ -15,6 +16,7 @@ import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * IBM JVM 采集器
@@ -22,6 +24,8 @@ import java.util.Map;
  * 重构泛PaaS：com.huawei.apm.plugin.collection.jvm.MemoryPoolModule
  */
 public class IbmJvmMetricCollector {
+
+    private static final Logger LOGGER = LogFactory.getLogger();
 
     private final Map<IBMPoolType, MemoryPoolMXBean> memoryPoolMxBeans =
         new EnumMap<IBMPoolType, MemoryPoolMXBean>(IBMPoolType.class);
@@ -48,7 +52,7 @@ public class IbmJvmMetricCollector {
             }
         }
         if (memoryPoolMxBeans.isEmpty()) {
-            // LOGGER.warn("No ibm memory pool found.");
+            LOGGER.warning("No ibm memory pool found.");
         }
     }
 

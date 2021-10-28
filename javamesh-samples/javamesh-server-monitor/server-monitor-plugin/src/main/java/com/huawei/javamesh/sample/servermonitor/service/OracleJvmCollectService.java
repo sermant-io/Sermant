@@ -4,7 +4,10 @@
 
 package com.huawei.javamesh.sample.servermonitor.service;
 
+import com.huawei.apm.bootstrap.boot.CoreServiceManager;
 import com.huawei.apm.bootstrap.boot.PluginService;
+import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.bootstrap.service.send.GatewayClient;
 import com.huawei.javamesh.sample.servermonitor.common.Consumer;
 import com.huawei.javamesh.sample.servermonitor.common.Supplier;
 import org.apache.skywalking.apm.agent.core.jvm.cpu.CPUProvider;
@@ -16,19 +19,28 @@ import org.apache.skywalking.apm.network.language.agent.v3.JVMMetric;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * Oracle JVM采集服务
  */
 public class OracleJvmCollectService implements PluginService {
 
+    private static final Logger LOGGER = LogFactory.getLogger();
+
+    private final static int GATEWAY_DATA_TYPE = 5;
+
     private CollectTask<JVMMetric> collectTask;
+
+    private GatewayClient gatewayClient;
 
     @Override
     public void init() {
         // Get from config
         final long collectInterval = 1;
         final long consumeInterval = 60;
+
+        gatewayClient = CoreServiceManager.INSTANCE.getService(GatewayClient.class);
 
         collectTask = CollectTask.create(
             new Supplier<JVMMetric>() {
@@ -45,6 +57,7 @@ public class OracleJvmCollectService implements PluginService {
             }, consumeInterval,
             TimeUnit.SECONDS);
         collectTask.start();
+        LOGGER.info("Oracle jvm metric collect task started.");
     }
 
     @Override
@@ -64,5 +77,12 @@ public class OracleJvmCollectService implements PluginService {
     }
 
     private void send(List<JVMMetric> metrics) {
+        if (metrics == null || metrics.isEmpty()) {
+            LOGGER.warning("No Oracle jvm metric was collected.");
+            return;
+        }
+        for (JVMMetric metric : metrics) {
+            gatewayClient.send(metric.toByteArray(), GATEWAY_DATA_TYPE);
+        }
     }
 }

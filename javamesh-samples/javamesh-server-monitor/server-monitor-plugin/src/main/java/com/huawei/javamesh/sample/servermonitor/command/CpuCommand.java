@@ -4,8 +4,11 @@
 
 package com.huawei.javamesh.sample.servermonitor.command;
 
+import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+
 import java.io.InputStream;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static com.huawei.javamesh.sample.servermonitor.common.Constant.REGEX_MULTI_SPACES;
 
@@ -29,6 +32,8 @@ import static com.huawei.javamesh.sample.servermonitor.common.Constant.REGEX_MUL
  * 只取第一行的cpu
  */
 public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
+
+    private static final Logger LOGGER = LogFactory.getLogger();
 
     private static final String COMMAND = "cat /proc/stat";
 
@@ -69,7 +74,7 @@ public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
                 }
             }
         }
-        // LOGGER.error("Illegal result.")
+        LOGGER.severe("Illegal result.");
         return null;
     }
 
