@@ -11,7 +11,7 @@ import com.huawei.apm.bootstrap.definition.MethodInterceptPoint;
 import com.huawei.apm.bootstrap.matcher.ClassMatcher;
 import com.huawei.apm.bootstrap.matcher.ClassMatchers;
 import com.huawei.flowrecord.config.CommonConst;
-import com.huawei.flowrecord.config.ConfigConst;
+import com.huawei.flowrecord.config.FlowRecordConfig;
 import com.huawei.flowrecord.utils.PluginConfigUtil;
 
 import net.bytebuddy.description.method.MethodDescription;
@@ -21,10 +21,10 @@ import net.bytebuddy.matcher.StringMatcher;
 
 /**
  * 自定义应用拦截点
- *
  */
 public class CustomInstrumentation implements EnhanceDefinition {
-    private static final String ENHANCE_CLASS = PluginConfigUtil.getValueByKey(ConfigConst.CUSTOM_ENHANCE_CLASS);
+    private static final FlowRecordConfig flowRecordConfig = PluginConfigUtil.getFlowRecordConfig();
+    private static final String ENHANCE_CLASS = flowRecordConfig.getCustomEnhanceClass();
     private static final String INSTANCE_METHOD_INTERCEPT_CLASS =
             "com.huawei.flowrecord.plugins.custom.CustomInstanceMethodInterceptor";
     private static final String STATIC_METHOD_INTERCEPT_CLASS =
@@ -39,9 +39,9 @@ public class CustomInstrumentation implements EnhanceDefinition {
     public MethodInterceptPoint[] getMethodInterceptPoints() {
         return new MethodInterceptPoint[]{
                 MethodInterceptPoint.newInstMethodInterceptPoint(INSTANCE_METHOD_INTERCEPT_CLASS,
-                        setMethodMatcher(PluginConfigUtil.getValueByKey(ConfigConst.CUSTOM_ENHANCE_INSTANCE_METHOD))),
+                        setMethodMatcher(flowRecordConfig.getCustomEnhanceInstanceMethod())),
                 MethodInterceptPoint.newStaticMethodInterceptPoint(STATIC_METHOD_INTERCEPT_CLASS,
-                        setMethodMatcher(PluginConfigUtil.getValueByKey(ConfigConst.CUSTOM_ENHANCE_STATIC_METHOD)))
+                        setMethodMatcher(flowRecordConfig.getCustomEnhanceStaticMethod()))
         };
     }
 

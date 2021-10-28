@@ -11,7 +11,6 @@ import java.util.Properties;
 
 /**
  * kafka配置
- *
  */
 public class KafkaConst {
     /**
@@ -20,37 +19,38 @@ public class KafkaConst {
      * @return Properties
      */
     public static Properties producerConfig() {
+        FlowRecordConfig flowRecordConfig = PluginConfigUtil.getFlowRecordConfig();
         Properties properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-            PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_BOOTSTRAP_SERVERS));
+                flowRecordConfig.getKafkaBootstrapServers());
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-            PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_KEY_SERIALIZER));
+                flowRecordConfig.getKafkaKeySerializer());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-            PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_VALUE_SERIALIZER));
+                flowRecordConfig.getKafkaValueSerializer());
 
         // producer需要server接收到数据之后发出的确认接收的信号 ack 0,1,all
         properties.put(ProducerConfig.ACKS_CONFIG,
-            PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_ACKS));
+                flowRecordConfig.getKafkaAcks());
 
         // 控制生产者发送请求最大大小,默认1M （这个参数和Kafka主机的message.max.bytes 参数有关系）
         properties.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG,
-            PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_MAX_REQUEST_SIZE));
+                flowRecordConfig.getKafkaMaxRequestSize());
 
         // 生产者内存缓冲区大小
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG,
-            PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_BUFFER_MEMORY));
+                flowRecordConfig.getKafkaBufferMemory());
 
         // 重发消息次数
         properties.put(ProducerConfig.RETRIES_CONFIG,
-            PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_RETRIES));
+                flowRecordConfig.getKafkaRetries());
 
         // 客户端将等待请求的响应的最大时间
         properties.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG,
-            PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_REQUEST_TIMEOUT_MS));
+                flowRecordConfig.getKafkaRequestTimeoutMs());
 
         // 最大阻塞时间，超过则抛出异常
         properties.put(ProducerConfig.MAX_BLOCK_MS_CONFIG,
-            PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_MAX_BLOCK_MS));
+                flowRecordConfig.getKafkaMaxBlockMs());
 
         return properties;
     }
