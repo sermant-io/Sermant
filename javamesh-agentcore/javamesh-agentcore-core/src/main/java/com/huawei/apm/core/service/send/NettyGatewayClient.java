@@ -7,7 +7,7 @@ package com.huawei.apm.core.service.send;
 import com.huawei.apm.bootstrap.boot.CoreService;
 import com.huawei.apm.bootstrap.lubanops.config.AgentConfigManager;
 import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-import com.huawei.apm.bootstrap.service.send.UnifiedGatewayClient;
+import com.huawei.apm.bootstrap.service.send.GatewayClient;
 import com.huawei.apm.core.ext.lubanops.transport.ClientManager;
 import com.huawei.apm.core.ext.lubanops.transport.netty.client.NettyClient;
 import com.huawei.apm.core.ext.lubanops.transport.netty.pojo.Message;
@@ -15,9 +15,9 @@ import com.huawei.apm.core.ext.lubanops.transport.netty.pojo.Message;
 import java.util.logging.Logger;
 
 /**
- * 基于Netty Client的统一网关发送服务
+ * 基于Netty Client的网关发送服务
  */
-public class NettyUnifiedGatewayClient implements UnifiedGatewayClient, CoreService {
+public class NettyGatewayClient implements GatewayClient, CoreService {
 
     private static final Logger LOGGER = LogFactory.getLogger();
 

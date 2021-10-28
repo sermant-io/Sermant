@@ -5,9 +5,9 @@
 package com.huawei.apm.bootstrap.service.send;
 
 /**
- * 统一网关客户端
+ * 网关的客户端
  */
-public interface UnifiedGatewayClient {
+public interface GatewayClient {
 
     /**
      * 向统一网关发送数据
