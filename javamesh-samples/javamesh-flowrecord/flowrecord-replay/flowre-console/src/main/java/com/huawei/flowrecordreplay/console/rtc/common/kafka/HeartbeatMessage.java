@@ -11,6 +11,7 @@ import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 心跳数据的实体类
@@ -39,7 +40,7 @@ public class HeartbeatMessage extends AbstractMessage {
     /**
      * IP地址
      */
-    private String ip;
+    private List<String> ip;
     /**
      * 心跳版本
      */
@@ -49,13 +50,19 @@ public class HeartbeatMessage extends AbstractMessage {
      */
     private transient int retryTimes;
 
+    private String name;
+
+    private String appType;
+
+    private Date lastHeartbeat;
+
     /**
      * 验证字符是否合规
      *
      * @return true为合规。false为不合规
      */
     public boolean validate() {
-        return StringUtils.isNoneBlank(app, hostname, ip)
-                && heartbeatVersion != null;
+        return StringUtils.isNoneBlank(app, hostname)
+                && heartbeatVersion != null && ip.size() > 0;
     }
 }
