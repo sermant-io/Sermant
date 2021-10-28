@@ -81,7 +81,7 @@ public enum CoreServiceManager {
                     try {
                         serviceEntry.getValue().stop();
                     } catch (Exception e) {
-                        LOGGER.warning("Failed to start service [" + serviceEntry.getKey() + "] since: "
+                        LOGGER.warning("Failed to stop service [" + serviceEntry.getKey() + "] since: "
                             + e.getMessage());
                     }
                 }
