@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ */
+
 package com.huawei.javamesh.sample.servermonitor.service;
 
 import com.huawei.apm.bootstrap.boot.CoreServiceManager;
@@ -14,6 +18,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+/**
+ * IBM JVM采集服务
+ */
 public class IbmJvmCollectService implements PluginService {
 
     private static final Logger LOGGER = LogFactory.getLogger();
