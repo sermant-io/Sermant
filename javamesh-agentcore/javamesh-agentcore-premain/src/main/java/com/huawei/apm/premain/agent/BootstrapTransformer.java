@@ -239,16 +239,20 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
          * @return 动态Advice增强器的名称
          */
         private String getAdviceClassName(Class<?> templateCls, MethodDescription.InDefinedShape method) {
-            final StringBuilder sb = new StringBuilder().append(method.getDeclaringType().getTypeName());
+            final StringBuilder builder = new StringBuilder().append(method.getDeclaringType().getTypeName());
             if (!method.isConstructor()) {
-                sb.append('#').append(method.getName());
+                builder.append('#').append(method.getName());
             }
-            sb.append("(");
-            for (ParameterDescription.InDefinedShape parameter : method.getParameters()) {
-                sb.append(parameter.getType().getTypeName()).append(',');
+            builder.append("(");
+            final ParameterList<ParameterDescription.InDefinedShape> parameters = method.getParameters();
+            for (int i = 0; i < parameters.size(); i++) {
+                if (i > 0) {
+                    builder.append(',');
+                }
+                builder.append(parameters.get(i).getType().getTypeName());
             }
-            sb.append(')');
-            return templateCls.getName() + "_" + Integer.toHexString(sb.toString().hashCode());
+            builder.append(')');
+            return templateCls.getName() + "_" + Integer.toHexString(builder.toString().hashCode());
         }
 
         /**
@@ -282,7 +286,7 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
         }
 
         /**
-         * 调用动态Advice增强器类的静态prepare方法，将两组拦截器传入
+         * 将两组拦截器赋值为动态Advice增强器类的ORIGIN_INTERCEPTORS和INTERCEPTORS
          *
          * @param adviceCls          动态Advice增强器类
          * @param originInterceptors luban拦截器列表
@@ -291,8 +295,8 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
          */
         private void prepareAdviceClass(Class<?> adviceCls, List<? extends Interceptor> originInterceptors,
                 List<? extends Interceptor> interceptors) throws Exception {
-            adviceCls.getDeclaredMethod("prepare", List.class, List.class)
-                    .invoke(null, originInterceptors, interceptors);
+            adviceCls.getDeclaredField("ORIGIN_INTERCEPTORS").set(null, originInterceptors);
+            adviceCls.getDeclaredField("INTERCEPTORS").set(null, interceptors);
         }
 
         /**
