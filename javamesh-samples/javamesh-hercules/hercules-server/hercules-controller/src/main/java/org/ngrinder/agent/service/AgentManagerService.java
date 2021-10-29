@@ -105,15 +105,10 @@ public class AgentManagerService extends AbstractAgentManagerService {
 												 String sortColumn,
 												 String sortType,
 												 String region) {
-		// 查询agent信息首先判断是不是集群模式，如果是集群模式，需要根据region查询对应agent，这里根据是不是集群封装查询specification
-		Specification<AgentInfo> notClusteredSpecification = new Specification<AgentInfo>() {
-			@Override
-			public Predicate toPredicate(Root<AgentInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-				return null;
-			}
-		};
-		Specification<AgentInfo> startWithRegionSpecification = AgentManagerSpecification.startWithRegion(region);
-		Specification<AgentInfo> specification = StringUtils.isEmpty(region) ? null : startWithRegionSpecification;
+		// construct specification base on region
+		Specification<AgentInfo> specification = StringUtils.isEmpty(region)
+			? null
+			: AgentManagerSpecification.startWithRegion(region);
 
 		// 通过spring jpa方法分页查询agent数据
 		int calculatePageNumber = current <= 0 ? 0 : current - 1;

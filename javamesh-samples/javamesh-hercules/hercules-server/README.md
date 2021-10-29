@@ -45,13 +45,52 @@ database.password=123456
 > 待打包完成之后，把hercules-controller模块中的hercules-controller-0.0.1.war部署到tomcat即可。
 
 ### 三. 部署agent
-#### 1. 新增ngrinder_agent的home目录
+#### 1. 在上面项目启动之后，压测引擎页面下载agent
+![img.png](agent_download_guide.png)
+#### 2. 上传agent的tar包到指定服务器之后解压，执行结果如下
 ```
-mkdir /usr/local/nGrinder/ngrinder_agent
+[root@ecs-flow-0005 ngrinder-agent]# pwd
+/opt/package/ngrinder-agent
+[root@ecs-flow-0005 ngrinder-agent]# ll
+total 496
+-rw-r--r-- 1 root root    535 Oct 14 10:16 __agent.conf
+drwxr-xr-x 2 root root   4096 Oct  8 11:26 lib
+-rwxr-xr-x 1 root root    367 Aug 24 15:30 run_agent.bat
+-rwxr-xr-x 1 root root     83 Aug 24 15:30 run_agent_bg.sh
+-rwxr-xr-x 1 root root    237 Aug 24 15:30 run_agent_internal.bat
+-rwxr-xr-x 1 root root     99 Aug 24 15:30 run_agent_internal.sh
+-rwxr-xr-x 1 root root    312 Aug 24 15:30 run_agent.sh
+-rw-r--r-- 1 root root 463149 Oct 28 20:06 run.log
+-rwxr-xr-x 1 root root    135 Aug 24 15:30 stop_agent.bat
+-rwxr-xr-x 1 root root    136 Aug 24 15:30 stop_agent.sh
+[root@ecs-flow-0005 ngrinder-agent]#
+
 ```
-#### 2. 设置ngrinder_agent的环境变量
-```export NGRINDER_AGENT_HOME=/usr/local/nGrinder/ngrinder_agent```
-#### 3. 在/usr/local/nGrinder/ngrinder_agent中新增配置文件agent.conf
+#### 3. 进入agent解压目录之后使用命令启动
+```
+Usage: run_agent_bg.sh [options]
+  Options:
+    -ah, --agent-home
+       this agent's unique home path. The default is ~/.ngrinder_agent
+    -ch, --controller-host
+       controller host or ip.
+    -cp, --controller-port
+       controller port.
+    -hi, --host-id
+       this agent's unique host id
+    -o, --overwrite-config
+       overwrite overwrite the existing .ngrinder_agent/agent.conf with the
+       local __agent.conf
+    -r, --region
+       region
+    -s, --silent
+       silent mode
+    -v, --version
+       show version
+    -help, -?, -h
+       prints this message
+```
+#### 4. 当然也可以通过配置文件启动，修改agent当前目录中的__agent.conf文件，内容如下，然后使用[run_agent_bg.sh -o]启动
 ```
 common.start_mode=agent
 # controller ip
@@ -75,11 +114,5 @@ agent.region=NONE
 # some jvm is not compatible with DNSJava. If so, set this false.
 #agent.enable_local_dns=false
 ```
-#### 4. 启动ngrinder-agent
-1) 将ngrinder-agent-3.4.2.tar文件上传到虚机任意位置
-    >此tar包暂时还未支持页面下载
-2) 解压ngrinder-agent-3.4.2.tar
-3) 进入解压目录执行命令
-```nohup sh run_agent.sh > run.log 2>&1 &```
 
 到此处，nGrinder controller和agent就部署完毕！
