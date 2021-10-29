@@ -5,9 +5,9 @@
 package com.huawei.javamesh.sample.servermonitor.collector;
 
 import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-import com.huawei.javamesh.sample.servermonitor.entity.IBMPoolType;
-import com.huawei.javamesh.sample.servermonitor.entity.IbmJvmMetric;
 import com.huawei.javamesh.sample.servermonitor.common.CheckIBMParameter;
+import com.huawei.javamesh.sample.servermonitor.entity.IbmPoolMetric;
+import com.huawei.javamesh.sample.servermonitor.entity.IbmPoolType;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
@@ -27,28 +27,28 @@ public class IbmJvmMetricCollector {
 
     private static final Logger LOGGER = LogFactory.getLogger();
 
-    private final Map<IBMPoolType, MemoryPoolMXBean> memoryPoolMxBeans =
-        new EnumMap<IBMPoolType, MemoryPoolMXBean>(IBMPoolType.class);
+    private final Map<IbmPoolType, MemoryPoolMXBean> memoryPoolMxBeans =
+        new EnumMap<IbmPoolType, MemoryPoolMXBean>(IbmPoolType.class);
 
     public IbmJvmMetricCollector() {
         for (MemoryPoolMXBean mxBean : ManagementFactory.getMemoryPoolMXBeans()) {
             String name = mxBean.getName();
             if (CheckIBMParameter.CLASS_STORAGE.getParameter().equals(name)) {
-                memoryPoolMxBeans.put(IBMPoolType.IBM_CLASS_STORAGE_USAGE, mxBean);
+                memoryPoolMxBeans.put(IbmPoolType.IBM_CLASS_STORAGE_USAGE, mxBean);
             } else if (CheckIBMParameter.MISCELLANEOUS.getParameter().equals(name)) {
-                memoryPoolMxBeans.put(IBMPoolType.IBM_MISCELLANEOUS_USAGE, mxBean);
+                memoryPoolMxBeans.put(IbmPoolType.IBM_MISCELLANEOUS_USAGE, mxBean);
             } else if (CheckIBMParameter.NURSERY_ALLOCATE.getParameter().equals(name)) {
-                memoryPoolMxBeans.put(IBMPoolType.IBM_NURSERY_ALLOCATE_USAGE, mxBean);
+                memoryPoolMxBeans.put(IbmPoolType.IBM_NURSERY_ALLOCATE_USAGE, mxBean);
             } else if (CheckIBMParameter.NURSERY_SURVIVOR.getParameter().equals(name)) {
-                memoryPoolMxBeans.put(IBMPoolType.IBM_NURSERY_SURVIVOR_USAGE, mxBean);
+                memoryPoolMxBeans.put(IbmPoolType.IBM_NURSERY_SURVIVOR_USAGE, mxBean);
             } else if (CheckIBMParameter.TENURED_LOA.getParameter().equals(name)) {
-                memoryPoolMxBeans.put(IBMPoolType.IBM_TENURED_LOA_USAGE, mxBean);
+                memoryPoolMxBeans.put(IbmPoolType.IBM_TENURED_LOA_USAGE, mxBean);
             } else if (CheckIBMParameter.TENURED_SOA.getParameter().equals(name)) {
-                memoryPoolMxBeans.put(IBMPoolType.IBM_TENURED_SOA_USAGE, mxBean);
+                memoryPoolMxBeans.put(IbmPoolType.IBM_TENURED_SOA_USAGE, mxBean);
             } else if (CheckIBMParameter.CODE_CACHE.getParameter().equals(name)) {
-                memoryPoolMxBeans.put(IBMPoolType.IBM_CODE_CACHE_USAGE, mxBean);
+                memoryPoolMxBeans.put(IbmPoolType.IBM_CODE_CACHE_USAGE, mxBean);
             } else if (CheckIBMParameter.DATA_CACHE.getParameter().equals(name)) {
-                memoryPoolMxBeans.put(IBMPoolType.IBM_DATA_CACHE_USAGE, mxBean);
+                memoryPoolMxBeans.put(IbmPoolType.IBM_DATA_CACHE_USAGE, mxBean);
             }
         }
         if (memoryPoolMxBeans.isEmpty()) {
@@ -56,18 +56,18 @@ public class IbmJvmMetricCollector {
         }
     }
 
-    public List<IbmJvmMetric> getIbmJvmMetrics() {
-        List<IbmJvmMetric> jvmMetrics = new LinkedList<IbmJvmMetric>();
-        for (Map.Entry<IBMPoolType, MemoryPoolMXBean> typeAndBeanEntry : memoryPoolMxBeans.entrySet()) {
+    public List<IbmPoolMetric> getIbmJvmMetrics() {
+        List<IbmPoolMetric> jvmMetrics = new LinkedList<IbmPoolMetric>();
+        for (Map.Entry<IbmPoolType, MemoryPoolMXBean> typeAndBeanEntry : memoryPoolMxBeans.entrySet()) {
             final MemoryUsage memoryUsage = typeAndBeanEntry.getValue().getUsage();
-            IbmJvmMetric ibmJvmMetric = IbmJvmMetric.newBuilder()
+            IbmPoolMetric ibmPoolMetric = IbmPoolMetric.newBuilder()
                 .setType(typeAndBeanEntry.getKey())
                 .setInit(memoryUsage.getInit())
                 .setMax(memoryUsage.getMax())
                 .setCommitted(memoryUsage.getCommitted())
                 .setUsed(memoryUsage.getUsed())
                 .build();
-            jvmMetrics.add(ibmJvmMetric);
+            jvmMetrics.add(ibmPoolMetric);
         }
         return jvmMetrics;
     }
