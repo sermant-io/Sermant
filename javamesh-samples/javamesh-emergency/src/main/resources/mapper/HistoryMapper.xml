@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huawei.emergency.mapper.HistoryMapper">
+    <resultMap id="HistoryMap" type="com.huawei.emergency.entity.HistoryEntity">
+        <result column="history_id" property="historyId" jdbcType="INTEGER"/>
+        <result column="scene_id" property="sceneId" jdbcType="INTEGER"/>
+        <result column="scene_user" property="sceneUser" jdbcType="VARCHAR"/>
+        <result column="scene_name" property="sceneName" jdbcType="VARCHAR"/>
+        <result column="execute_user_name" property="executeUser" jdbcType="VARCHAR"/>
+        <result column="execute_time" property="executeTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="HistoryDetailMap" type="com.huawei.emergency.entity.HistoryDetailEntity">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="relation_id" property="relationId" jdbcType="INTEGER"/>
+        <result column="scene_id" property="sceneId" jdbcType="INTEGER"/>
+        <result column="script_id" property="scriptId" jdbcType="INTEGER"/>
+        <result column="execution_mode" property="executionMode" jdbcType="INTEGER"/>
+        <result column="server_ip" property="serverIp" jdbcType="VARCHAR"/>
+        <result column="server_port" property="serverPort" jdbcType="VARCHAR"/>
+        <result column="server_user" property="serverUser" jdbcType="VARCHAR"/>
+        <result column="context" property="context" jdbcType="LONGVARCHAR"/>
+        <result column="script_sequence" property="scriptSequence" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="ListDetailsMap" type="com.huawei.emergency.dto.ListDetailsDto">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="script_name" property="scriptName" jdbcType="VARCHAR"/>
+        <result column="script_user" property="scriptUser" jdbcType="VARCHAR"/>
+        <result column="submit_info" property="submitInfo" jdbcType="VARCHAR"/>
+        <result column="execution_mode" property="executionMode" jdbcType="VARCHAR"/>
+        <result column="server_ip" property="serverIp" jdbcType="VARCHAR"/>
+        <result column="server_port" property="serverPort" jdbcType="VARCHAR"/>
+        <result column="server_user" property="serverUser" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="DownLoadMap" type="com.huawei.emergency.dto.DownloadLogDto">
+        <result column="log" property="log" jdbcType="LONGVARCHAR"/>
+        <result column="script_name" property="scriptName" jdbcType="VARCHAR"/>
+        <result column="scene_name" property="sceneName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="insertHistory" parameterType="com.huawei.emergency.entity.HistoryEntity">
+        <selectKey keyColumn="history_id" keyProperty="historyId" order="AFTER" resultType="Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO history
+        (scene_id,execute_user_name,execute_time)
+        VALUES
+        (#{sceneId},#{executeUser},#{executeTime})
+    </insert>
+
+    <insert id="insertDetail" parameterType="List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO history_details
+        (history_id,relation_id,scene_id,script_id,status,execution_mode,server_user,server_ip,server_port,script_sequence)
+        VALUES
+        <foreach collection="list" item="detail" separator=",">
+            (#{detail.historyId},#{detail.relationId},#{detail.sceneId},#{detail.scriptId},#{detail.status},#{detail.executionMode},#{detail.serverUser},#{detail.serverIp},#{detail.serverPort},#{detail.scriptSequence})
+        </foreach>
+    </insert>
+
+    <select id="getDetailsFromRelation" parameterType="Integer" resultMap="HistoryDetailMap">
+        SELECT relation_id,
+               scene_id,
+               script_id,
+               execution_mode,
+               server_user,
+               server_ip,
+               server_port,
+               script_sequence,
+               context
+        FROM (SELECT id AS relation_id,
+                     scene_id,
+                     script_name,
+                     script_user,
+                     execution_mode,
+                     server_user,
+                     server_ip,
+                     server_port,
+                     script_sequence
+              FROM scene_script_relation
+              WHERE scene_id = #{sceneId}) ssr
+                 INNER JOIN (
+            SELECT script_id,
+                   script_name,
+                   user_name AS script_user,
+                   context
+            FROM (SELECT script_id, script_name, user_name, context
+                  FROM script
+                  ORDER BY update_time DESC LIMIT #{countScript}) s
+            GROUP BY script_name,
+                     user_name
+        ) ss ON ssr.script_name = ss.script_name
+            AND ssr.script_user = ss.script_user
+        ORDER BY script_sequence ASC
+    </select>
+
+    <select id="listHistory" parameterType="com.huawei.emergency.dto.ListHistoryParam" resultMap="HistoryMap">
+        SELECT h.history_id,s.scene_name,s.scene_user,h.execute_user_name,h.execute_time
+        FROM history h JOIN scene s ON h.scene_id = s.scene_id
+        <where>
+            <if test="userName!='admin'">
+                execute_user_name = #{userName}
+            </if>
+            <choose>
+                <when test="keywords!=null and keywords!='' ">
+                    AND scene_name LIKE CONCAT('%',#{keywords},'%')
+                </when>
+                <when test="sceneUser!=null">
+                    AND scene_user in
+                    <foreach collection="sceneUser" item="sceneUser" index="index" open="(" close=")" separator=",">
+                        #{sceneUser}
+                    </foreach>
+                </when>
+                <when test="sceneName!=null">
+                    AND scene_name in
+                    <foreach collection="sceneName" item="sceneName" index="index" open="(" close=")" separator=",">
+                        #{sceneName}
+                    </foreach>
+                </when>
+            </choose>
+        </where>
+    </select>
+
+    <select id="listHistoryDetails" parameterType="Integer" resultMap="ListDetailsMap">
+        SELECT hd.id,
+               sc.script_name,
+               sc.user_name AS script_user,
+               sc.submit_info,
+               CASE
+                   hd.execution_mode
+                   WHEN 0 THEN
+                       'local'
+                   WHEN 1 THEN
+                       'romote'
+                   END      AS execution_mode,
+               hd.server_ip,
+               hd.server_port,
+               hd.server_user,
+               CASE
+                   hd.status
+                   WHEN 0 THEN
+                       'pending'
+                   WHEN 1 THEN
+                       'running'
+                   WHEN 2 THEN
+                       'success'
+                   WHEN 3 THEN
+                       'cancel'
+                   WHEN 4 THEN
+                       'fail'
+                   END      AS STATUS
+        FROM history_details hd,
+             script sc
+        WHERE history_id = #{historyId}
+          AND hd.script_id = sc.script_id
+    </select>
+
+    <select id="selectDetailById" parameterType="Integer" resultMap="DownLoadMap">
+        SELECT hd.log,
+               sc.script_name,
+               sce.scene_name
+        FROM history_details hd,
+             script sc,
+             scene sce
+        WHERE hd.id = #{id}
+          AND hd.script_id = sc.script_id
+          AND hd.scene_id = sce.scene_id
+    </select>
+
+    <update id="updateHistoryDetailsStatusAndLog" parameterType="com.huawei.emergency.entity.HistoryEntity">
+        update history_details
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="log != null">
+                log = #{log}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>
