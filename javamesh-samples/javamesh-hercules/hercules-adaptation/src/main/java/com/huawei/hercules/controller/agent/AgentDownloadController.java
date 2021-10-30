@@ -5,7 +5,7 @@
 package com.huawei.hercules.controller.agent;
 
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.hercules.controller.agent.constant.ResponseInfoKey;
+import com.huawei.hercules.controller.agent.constant.ResponseColumn;
 import com.huawei.hercules.exception.HerculesException;
 import com.huawei.hercules.service.agent.IAgentDownloadService;
 import com.huawei.hercules.util.DownloadUtils;
@@ -80,7 +80,7 @@ public class AgentDownloadController {
         JSONObject jsonObject = new JSONObject();
         Map<String, String> link = new HashMap<>();
         link.put("link", packageName);
-        jsonObject.put(ResponseInfoKey.RESPONSE_DATA_ELEMENT, link);
+        jsonObject.put(ResponseColumn.RESPONSE_DATA_ELEMENT, link);
         return jsonObject;
     }
 }

@@ -7,9 +7,9 @@ package com.huawei.hercules.controller.agent;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.hercules.controller.agent.constant.AgentManagerType;
-import com.huawei.hercules.controller.agent.constant.DatabaseInfoKey;
-import com.huawei.hercules.controller.agent.constant.PerformanceServerKey;
-import com.huawei.hercules.controller.agent.constant.ResponseInfoKey;
+import com.huawei.hercules.controller.agent.constant.DatabaseColumn;
+import com.huawei.hercules.controller.agent.constant.AgentPerformanceColumn;
+import com.huawei.hercules.controller.agent.constant.ResponseColumn;
 import com.huawei.hercules.exception.HerculesException;
 import com.huawei.hercules.service.agent.IAgentManagerService;
 import org.slf4j.Logger;
@@ -24,16 +24,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.huawei.hercules.controller.agent.constant.PerformanceResponseKey.DATA_ELEMENT;
-import static com.huawei.hercules.controller.agent.constant.PerformanceResponseKey.MEMORY_USAGE_ELEMENT;
-import static com.huawei.hercules.controller.agent.constant.PerformanceResponseKey.CPU_USAGE_ELEMENT;
-import static com.huawei.hercules.controller.agent.constant.PerformanceServerKey.CPU_USED_PERCENTAGE;
-import static com.huawei.hercules.controller.agent.constant.PerformanceServerKey.FREE_MEMORY;
-import static com.huawei.hercules.controller.agent.constant.PerformanceServerKey.TOTAL_MEMORY;
+import static com.huawei.hercules.controller.agent.constant.PerformanceResponseColumn.CPU_USAGE_ELEMENT;
+import static com.huawei.hercules.controller.agent.constant.PerformanceResponseColumn.DATA_ELEMENT;
+import static com.huawei.hercules.controller.agent.constant.PerformanceResponseColumn.MEMORY_USAGE_ELEMENT;
+import static com.huawei.hercules.controller.agent.constant.AgentPerformanceColumn.CPU_USED_PERCENTAGE;
+import static com.huawei.hercules.controller.agent.constant.AgentPerformanceColumn.FREE_MEMORY;
+import static com.huawei.hercules.controller.agent.constant.AgentPerformanceColumn.TOTAL_MEMORY;
 import static com.huawei.hercules.util.ListUtils.listJoinBySeparator;
 
 /**
@@ -75,18 +76,19 @@ public class AgentManagerController {
                                 @RequestParam(required = false) String order,
                                 @RequestParam(required = false) String region) {
         LOGGER.info("Start to get agent paging information, pageSize={}, current={}", pageSize, current);
-        JSONObject agentPage = agentManagerService.getAgentPage(pageSize, current, sorter, order, region);
+        String databaseSortColumn = DatabaseColumn.getDatabaseColumnName(sorter);
+        JSONObject agentPage = agentManagerService.getAgentPage(pageSize, current, databaseSortColumn, order, region);
         if (agentPage == null) {
             LOGGER.error("Failed to get agent paging information, pageSize={}, current={}", pageSize, current);
             throw new HerculesException("Failed to get agent paging information.");
         }
         LOGGER.debug("Succeed to get agent paging information, info={}.", agentPage);
-        if (!agentPage.containsKey(DatabaseInfoKey.RESPONSE_DATA_ELEMENT)) {
+        if (!agentPage.containsKey(DatabaseColumn.RESPONSE_DATA_ELEMENT)) {
             LOGGER.warn("Can not find data parameter in response, info={}.", agentPage);
             return agentPage;
         }
         LOGGER.info("Start to convert agent information.");
-        JSONArray agentsJsonArray = agentPage.getJSONArray(DatabaseInfoKey.RESPONSE_DATA_ELEMENT);
+        JSONArray agentsJsonArray = agentPage.getJSONArray(DatabaseColumn.RESPONSE_DATA_ELEMENT);
         for (int i = 0; i < agentsJsonArray.size(); i++) {
             JSONObject elementObject = agentsJsonArray.getJSONObject(i);
             convertToWebFormat(elementObject);
@@ -95,7 +97,7 @@ public class AgentManagerController {
         LOGGER.info("Succeed to convert agent paging information, pageSize={}, current={}", pageSize, current);
 
         // 因为getJSONArray返回的是一个新的对象，所以这里要重新设置一下data
-        agentPage.put(DatabaseInfoKey.RESPONSE_DATA_ELEMENT, agentsJsonArray);
+        agentPage.put(DatabaseColumn.RESPONSE_DATA_ELEMENT, agentsJsonArray);
         return agentPage;
     }
 
@@ -109,15 +111,15 @@ public class AgentManagerController {
             LOGGER.warn("Null agent information can not convert to web format.");
             return;
         }
-        elementObject.put(ResponseInfoKey.AGENT_ID, elementObject.remove(DatabaseInfoKey.AGENT_ID));
-        String statusType = elementObject.getString(DatabaseInfoKey.AGENT_STATE);
-        elementObject.put(ResponseInfoKey.AGENT_STATE, AgentStatus.getShowStatus(statusType));
-        elementObject.put(ResponseInfoKey.AGENT_LABEL, elementObject.get(DatabaseInfoKey.AGENT_STATE));
-        elementObject.remove(DatabaseInfoKey.AGENT_STATE);
-        elementObject.put(ResponseInfoKey.AGENT_IP, elementObject.remove(DatabaseInfoKey.AGENT_IP));
-        elementObject.put(ResponseInfoKey.AGENT_NAME, elementObject.remove(DatabaseInfoKey.AGENT_NAME));
-        elementObject.put(ResponseInfoKey.AGENT_APPROVED, elementObject.getBoolean(DatabaseInfoKey.AGENT_APPROVED));
-        elementObject.remove(DatabaseInfoKey.AGENT_APPROVED);
+        elementObject.put(ResponseColumn.AGENT_ID, elementObject.remove(DatabaseColumn.AGENT_ID));
+        String statusType = elementObject.getString(DatabaseColumn.AGENT_STATE);
+        elementObject.put(ResponseColumn.AGENT_STATE, AgentStatus.getShowStatus(statusType));
+        elementObject.put(ResponseColumn.AGENT_LABEL, elementObject.get(DatabaseColumn.AGENT_STATE));
+        elementObject.remove(DatabaseColumn.AGENT_STATE);
+        elementObject.put(ResponseColumn.AGENT_IP, elementObject.remove(DatabaseColumn.AGENT_IP));
+        elementObject.put(ResponseColumn.AGENT_NAME, elementObject.remove(DatabaseColumn.AGENT_NAME));
+        elementObject.put(ResponseColumn.AGENT_APPROVED, elementObject.getBoolean(DatabaseColumn.AGENT_APPROVED));
+        elementObject.remove(DatabaseColumn.AGENT_APPROVED);
     }
 
     /**
@@ -138,7 +140,7 @@ public class AgentManagerController {
         LOGGER.info("Get agent info from server:{}.", responseJsonObject);
         JSONObject agentJsonObject = responseJsonObject.getJSONObject("agent");
         convertToWebFormat(agentJsonObject);
-        returnJsonObject.put(ResponseInfoKey.RESPONSE_DATA_ELEMENT, agentJsonObject);
+        returnJsonObject.put(ResponseColumn.RESPONSE_DATA_ELEMENT, agentJsonObject);
         LOGGER.debug("Succeed to return agent information:{}.", returnJsonObject);
         return returnJsonObject;
     }
@@ -152,20 +154,14 @@ public class AgentManagerController {
     @RequestMapping(value = "/agent/chart", method = RequestMethod.GET, params = "agent_id")
     public JSONObject getAgentPerformance(@RequestParam("agent_id") Long agentId) {
         LOGGER.debug("Start to get agent performance, id={}.", agentId);
-        JSONObject responseJsonObject = agentManagerService.getOneById(agentId);
-        if (responseJsonObject == null) {
-            LOGGER.error("The response is null when get agent by id, id = [{}].", agentId);
-            throw new HerculesException("The response is null when get agent by id, id=[" + agentId + "].");
-        }
-        LOGGER.info("Get agent info from server:{}.", responseJsonObject);
-        JSONObject agentInfoJSONObject = responseJsonObject.getJSONObject(PerformanceServerKey.AGENT_ELEMENT);
+        JSONObject agentInfoJSONObject = getAgentContentById(agentId);
         if (agentInfoJSONObject == null || agentInfoJSONObject.isEmpty()) {
-            LOGGER.error("The agent not exist, id = [{}].", agentId);
-            throw new HerculesException("The agent not exist, id=[" + agentId + "].");
+            LOGGER.error("The agent not exist in system, get performance failed, id={}", agentId);
+            throw new HerculesException("The agent not exist in system, id=" + agentId);
         }
         HttpEntity<String> httpEntity = agentManagerService.getState(agentId,
-                agentInfoJSONObject.getString(DatabaseInfoKey.AGENT_IP),
-                agentInfoJSONObject.getString(DatabaseInfoKey.AGENT_NAME));
+                agentInfoJSONObject.getString(DatabaseColumn.AGENT_IP),
+                agentInfoJSONObject.getString(DatabaseColumn.AGENT_NAME));
         if (httpEntity == null) {
             LOGGER.error("The response is null when get agent performance, id = [{}].", agentId);
             throw new HerculesException("The response is null when get agent performance, id=[" + agentId + "].");
@@ -193,36 +189,36 @@ public class AgentManagerController {
     }
 
     /**
-     * 删除一个agent
+     * 删除多个agent
      *
-     * @param agentId agentId
+     * @param idsString comma separated agent id list
      * @return 删除成功为true，反之为false
      */
     @RequestMapping(value = "/agent", params = "agent_id", method = RequestMethod.DELETE)
-    public JSONObject deleteOne(@RequestParam("agent_id") Long agentId) {
-        HttpEntity<String> httpEntity = agentManagerService.deleteOne(agentId, AgentManagerType.AGENT_MANAGER_DELETE);
-        if (httpEntity == null) {
-            LOGGER.error("The response is null when delete an agent, id = [{}].", agentId);
-            throw new HerculesException("The response is null when delete an agent, id=[" + agentId + "].");
+    public JSONObject deleteMany(@RequestParam("agent_id") String idsString) {
+        if (StringUtils.isEmpty(idsString)) {
+            throw new HerculesException("The param agent_id is not exist or empty.");
         }
-        LOGGER.info("Delete an agent result:{}.", httpEntity.getBody());
-        return JSONObject.parseObject(httpEntity.getBody());
-    }
+        String[] idsArray = idsString.split(",");
 
-    /**
-     * 删除多个agent
-     *
-     * @param ids comma separated agent id list
-     * @return 删除成功为true，反之为false
-     */
-    @RequestMapping(value = "/agent", params = "agent_ids", method = RequestMethod.DELETE)
-    public JSONObject deleteMany(@RequestParam("agent_ids") String ids) {
-        HttpEntity<String> httpEntity = agentManagerService.deleteMany(ids, AgentManagerType.AGENT_MANAGER_DELETE);
-        if (httpEntity == null) {
-            LOGGER.error("The response is null when delete agents, ids = [{}].", ids);
-            throw new HerculesException("The response is null when delete agents, ids = [" + ids + "].");
+        // 判断是否所有id都存在且是inactive状态，不通过直接抛出不合法异常
+        List<String> invalidIds = new ArrayList<>();
+        for (String id : idsArray) {
+            if (isAgentStatusMatch(getAgentContentById(parseAgentId(id)), AgentStatus.INACTIVE)) {
+                continue;
+            }
+            invalidIds.add(id);
         }
-        LOGGER.info("Delete agents result:{}.", httpEntity.getBody());
+        if (!invalidIds.isEmpty()) {
+            LOGGER.error("Find non-existent or non-inactive agents when remove them, invalid ids={}.", invalidIds);
+            throw new HerculesException("Find non-existent or non-inactive agents when remove them, ids=" + invalidIds);
+        }
+        HttpEntity<String> httpEntity = agentManagerService.deleteMany(idsString, AgentManagerType.AGENT_MANAGER_DELETE);
+        if (httpEntity == null) {
+            LOGGER.error("No result for removing agents, ids = [{}].", idsString);
+            throw new HerculesException("No result for removing agents, ids = [" + idsString + "].");
+        }
+        LOGGER.info("Remove agents result:{}.", httpEntity.getBody());
         return JSONObject.parseObject(httpEntity.getBody());
     }
 
@@ -235,11 +231,22 @@ public class AgentManagerController {
     @RequestMapping(value = "/agent/stop", method = RequestMethod.POST)
     public JSONObject managerOne(@RequestBody Map<String, List<String>> needStopAgent) {
         List<String> agentIdsList = needStopAgent.get("agent_id");
+        List<String> invalidIds = new ArrayList<>();
+        for (String id : agentIdsList) {
+            if (isAgentStatusMatch(getAgentContentById(parseAgentId(id)), AgentStatus.BUSY)) {
+                continue;
+            }
+            invalidIds.add(id);
+        }
+        if (!invalidIds.isEmpty()) {
+            LOGGER.error("Find non-existent or non-busy agents when stop them, ids:{}", invalidIds);
+            throw new HerculesException("Find non-existent or non-busy agents when stop them, ids:" + invalidIds);
+        }
         String agentIds = listJoinBySeparator(agentIdsList, ',');
         HttpEntity<String> httpEntity = agentManagerService.managerMany(agentIds, AgentManagerType.AGENT_MANAGER_STOP);
         if (httpEntity == null) {
-            LOGGER.error("The response is null when stop agent, ids = [{}], action = [stop].", agentIds);
-            throw new HerculesException("The response is null when stop agent, ids=[" + agentIds + "].");
+            LOGGER.error("No result for stop agents, ids = [{}], action = [stop].", agentIds);
+            throw new HerculesException("No result for stop agents, ids=[" + agentIds + "].");
         }
         LOGGER.info("Stop agent result:{}.", httpEntity.getBody());
         return JSONObject.parseObject(httpEntity.getBody());
@@ -284,5 +291,50 @@ public class AgentManagerController {
     JSONObject cleanupInactiveAgent() {
         HttpEntity<String> httpEntity = agentManagerService.cleanUpAgentsInInactiveRegion();
         return JSONObject.parseObject(httpEntity.getBody());
+    }
+
+    /**
+     * 判断agent状态是否与指定的状态信息匹配
+     *
+     * @param agentInfo   agent信息
+     * @param agentStatus agent状态
+     * @return 匹配时返回true，不匹配时返回false
+     */
+    private boolean isAgentStatusMatch(JSONObject agentInfo, AgentStatus agentStatus) {
+        if (agentInfo == null || agentStatus == null) {
+            return false;
+        }
+        String status = agentInfo.getString(DatabaseColumn.AGENT_STATE);
+        return agentStatus.isStatusMatched(status);
+    }
+
+    /**
+     * 获取agent在数据库中保存的信息
+     *
+     * @param agentId agentId
+     * @return agent在数据库中保存的信息
+     */
+    private JSONObject getAgentContentById(Long agentId) {
+        JSONObject responseJsonObject = agentManagerService.getOneById(agentId);
+        if (responseJsonObject == null) {
+            LOGGER.error("Get the agent info failed by id, id = [{}].", agentId);
+            throw new HerculesException("Get the agent info failed by id, id=[" + agentId + "].");
+        }
+        LOGGER.info("Get agent info from server:{}.", responseJsonObject);
+        return responseJsonObject.getJSONObject(AgentPerformanceColumn.AGENT_ELEMENT);
+    }
+
+    /**
+     * 把agentId字符串转换成长整型id
+     *
+     * @param agentIdString id字符串
+     * @return 长整型id
+     */
+    private Long parseAgentId(String agentIdString) {
+        try {
+            return Long.parseLong(agentIdString);
+        } catch (NumberFormatException numberFormatException) {
+            throw new HerculesException("The agent id must be number, value=" + agentIdString);
+        }
     }
 }

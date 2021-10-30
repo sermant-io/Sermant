@@ -628,7 +628,6 @@ public class AgentManagerService extends AbstractAgentManagerService {
 	 */
 	@Transactional
 	public void delete(Long id) {
-		stopAgent(id);
 		agentManagerRepository.delete(id);
 	}
 }

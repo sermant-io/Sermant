@@ -19,7 +19,7 @@ public class HerculesExceptionHandler {
         // build errorMsg
         JSONObject errorMsg = new JSONObject();
         errorMsg.put("code", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        errorMsg.put("message", e.getMessage());
+        errorMsg.put("msg", e.getMessage());
 
         // check weather login
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
@@ -32,12 +32,11 @@ public class HerculesExceptionHandler {
             return errorMsg;
         }
         if (!(e instanceof FeignException.Unauthorized)) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return errorMsg;
         }
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         errorMsg.put("code", HttpServletResponse.SC_UNAUTHORIZED);
-        errorMsg.put("message", "UNAUTHORIZED");
+        errorMsg.put("msg", "UNAUTHORIZED");
         return errorMsg;
     }
 }

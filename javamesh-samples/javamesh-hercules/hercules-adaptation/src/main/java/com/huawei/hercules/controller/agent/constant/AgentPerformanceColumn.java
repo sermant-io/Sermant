@@ -10,7 +10,7 @@ package com.huawei.hercules.controller.agent.constant;
  * @author z30009938
  * @since 2021-10-20
  */
-public class PerformanceServerKey {
+public class AgentPerformanceColumn {
     public static final String AGENT_ELEMENT = "agent";
     public static final String CPU_USED_PERCENTAGE = "cpuUsedPercentage";
     public static final String TOTAL_MEMORY = "totalMemory";
