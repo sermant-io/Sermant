@@ -8,6 +8,7 @@ import com.huawei.apm.bootstrap.common.BeforeResult;
 import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
 import com.huawei.apm.bootstrap.lubanops.trace.TraceCollector;
 import com.huawei.flowrecord.config.ConfigConst;
+import com.huawei.flowrecord.config.FlowRecordConfig;
 import com.huawei.flowrecord.domain.RecordStatus;
 import com.huawei.flowrecord.domain.Recorder;
 import com.huawei.flowrecord.init.RedissonProcessThreadPool;
@@ -32,10 +33,10 @@ import java.util.HashMap;
 
 /**
  * redisson拦截增强类
- *
  */
 public class RedissonInterceptor implements InstanceMethodInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedissonInterceptor.class);
+    private static final FlowRecordConfig flowRecordConfig = PluginConfigUtil.getFlowRecordConfig();
 
     public int setSubCallCount(String subCallKey) {
 
@@ -69,7 +70,7 @@ public class RedissonInterceptor implements InstanceMethodInterceptor {
             recordRequest.setResponseClass(result.getClass().getName());
             recordRequest.setTimestamp(new Date());
             String serializedRequest = JSON.toJSONString(recordRequest, SerializerFeature.WriteMapNullValue);
-            KafkaProducerUtil.sendMessage(PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_REQUEST_TOPIC), serializedRequest);
+            KafkaProducerUtil.sendMessage(flowRecordConfig.getKafkaRequestTopic(), serializedRequest);
         }
     }
 

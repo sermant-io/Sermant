@@ -4,7 +4,10 @@
 
 package com.huawei.javamesh.sample.servermonitor.service;
 
+import com.huawei.apm.bootstrap.boot.CoreServiceManager;
 import com.huawei.apm.bootstrap.boot.PluginService;
+import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.bootstrap.service.send.GatewayClient;
 import com.huawei.javamesh.sample.servermonitor.collector.CpuMetricCollector;
 import com.huawei.javamesh.sample.servermonitor.collector.DiskMetricCollector;
 import com.huawei.javamesh.sample.servermonitor.collector.IbmJvmMetricCollector;
@@ -16,6 +19,7 @@ import com.huawei.javamesh.sample.servermonitor.entity.ServerMonitorMetric;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * CPU、磁盘 IO、网络IO、物理磁盘利用率、IBM jvm数据采集服务
@@ -23,6 +27,10 @@ import java.util.concurrent.TimeUnit;
  * 重构泛PaaS：com.huawei.apm.plugin.collection.ServerMonitorService
  */
 public class ServerMonitorService implements PluginService {
+
+    private static final Logger LOGGER = LogFactory.getLogger();
+
+    private final static int GATEWAY_DATA_TYPE = 4;
 
     private boolean collectServerMetric;
 
@@ -37,13 +45,15 @@ public class ServerMonitorService implements PluginService {
 
     private CollectTask<ServerMonitorMetric> collectTask;
 
+    private GatewayClient gatewayClient;
+
     @Override
     public void init() {
         // 此处用白名单比较合适，比如除了Windows外的其他非Linux也是不采集的
         collectServerMetric = !System.getProperty("os.name").contains("Windows");
         collectIbmJvmMetric = System.getProperty("java.vm.vendor").contains("IBM");
         if (!collectServerMetric && !collectIbmJvmMetric) {
-            // LOGGER.info("The server monitor task does not need to start in current system and jvm arch.")
+            LOGGER.info("The server monitor task does not need to start in current system and jvm arch.");
             return;
         }
 
@@ -61,6 +71,8 @@ public class ServerMonitorService implements PluginService {
             ibmJvmMetricCollector = new IbmJvmMetricCollector();
         }
 
+        gatewayClient = CoreServiceManager.INSTANCE.getService(GatewayClient.class);
+
         collectTask = CollectTask.create(
             new Supplier<ServerMonitorMetric>() {
                 @Override
@@ -76,6 +88,7 @@ public class ServerMonitorService implements PluginService {
             }, consumeInterval,
             TimeUnit.SECONDS);
         collectTask.start();
+        LOGGER.info("Server monitor metric collect task started.");
     }
 
     @Override
@@ -100,5 +113,12 @@ public class ServerMonitorService implements PluginService {
     }
 
     private void send(List<ServerMonitorMetric> metrics) {
+        if (metrics == null || metrics.isEmpty()) {
+            LOGGER.warning("No server monitor metric was collected.");
+            return;
+        }
+        for (ServerMonitorMetric metric : metrics) {
+            gatewayClient.send(metric.toByteArray(), GATEWAY_DATA_TYPE);
+        }
     }
 }

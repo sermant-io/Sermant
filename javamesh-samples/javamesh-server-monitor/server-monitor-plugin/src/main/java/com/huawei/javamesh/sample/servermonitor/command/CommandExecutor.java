@@ -4,6 +4,7 @@
 
 package com.huawei.javamesh.sample.servermonitor.command;
 
+import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
 import com.huawei.javamesh.sample.servermonitor.common.Consumer;
 import com.huawei.javamesh.sample.servermonitor.common.Function;
 
@@ -16,6 +17,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * Linux指令执行器
@@ -30,6 +32,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class CommandExecutor {
 
+    private static final Logger LOGGER = LogFactory.getLogger();
+
     private static final Runtime RUNTIME = Runtime.getRuntime();
 
     private static final ExecutorService POOL = new ThreadPoolExecutor(2, 2,
@@ -42,7 +46,7 @@ public class CommandExecutor {
         try {
             process = RUNTIME.exec(command.getCommand());
         } catch (IOException e) {
-            // LOGGER.error("command exec failed.")
+            LOGGER.severe("Failed to execute command, " + e.getMessage());
             // JDK6 用不了Optional
             return null;
         }
@@ -62,7 +66,7 @@ public class CommandExecutor {
         } catch (InterruptedException e) {
             // Ignored.
         } catch (ExecutionException e) {
-            // LOG
+            LOGGER.severe("Failed to parse result, " + e.getMessage());
         } finally {
             closeStream(errorStream);
             closeStream(inputStream);
@@ -71,7 +75,11 @@ public class CommandExecutor {
     }
 
     private static void closeStream(InputStream inputStream) {
-
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            // ignored
+        }
     }
 
     private static <T> Future<T> parseResult(final MonitorCommand<T> command, final InputStream inputStream) {
@@ -105,15 +113,7 @@ public class CommandExecutor {
 
         @Override
         public T call() {
-            try {
-                return function.apply(inputStream);
-            } finally {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    //ignored
-                }
-            }
+            return function.apply(inputStream);
         }
     }
 
@@ -130,15 +130,7 @@ public class CommandExecutor {
 
         @Override
         public void run() {
-            try {
-                consumer.accept(inputStream);
-            } finally {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    //ignored
-                }
-            }
+            consumer.accept(inputStream);
         }
     }
 

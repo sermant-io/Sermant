@@ -42,4 +42,10 @@ public class KafkaConf {
     // 录制插件topic name
     @Value("topic-flowecord")
     private String topicFlowRecord;
+
+    @Value("${kafka.server-monitor.topic}")
+    private String topicServerMonitor;
+
+    @Value("${kafka.oracle-jvm-monitor.topic}")
+    private String topicOracleJvmMonitor;
 }

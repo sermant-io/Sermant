@@ -8,6 +8,7 @@ import com.huawei.apm.bootstrap.common.BeforeResult;
 import com.huawei.apm.bootstrap.interceptors.StaticMethodInterceptor;
 import com.huawei.apm.bootstrap.lubanops.trace.TraceCollector;
 import com.huawei.flowrecord.config.ConfigConst;
+import com.huawei.flowrecord.config.FlowRecordConfig;
 import com.huawei.flowrecord.domain.RecordStatus;
 import com.huawei.flowrecord.domain.Recorder;
 import com.huawei.flowrecord.utils.PluginConfigUtil;
@@ -28,10 +29,10 @@ import java.util.HashMap;
 
 /**
  * 自定义应用静态方法增强类
- *
  */
 public class CustomStaticMethodInterceptor implements StaticMethodInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomStaticMethodInterceptor.class);
+    private static final FlowRecordConfig flowRecordConfig = PluginConfigUtil.getFlowRecordConfig();
 
     private void sendRecorder(String subCallKey, int subCallCount, Method method, Object[] params, Object ret,
                               HashMap<String, String> jobMap) {
@@ -50,7 +51,7 @@ public class CustomStaticMethodInterceptor implements StaticMethodInterceptor {
             recordRequest.setResponseClass(ret.getClass().getName());
             recordRequest.setTimestamp(new Date());
             String serializedRequest = JSON.toJSONString(recordRequest, SerializerFeature.WriteMapNullValue);
-            KafkaProducerUtil.sendMessage(PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_REQUEST_TOPIC), serializedRequest);
+            KafkaProducerUtil.sendMessage(flowRecordConfig.getKafkaRequestTopic(), serializedRequest);
         }
     }
 
