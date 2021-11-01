@@ -32,9 +32,9 @@ public class BootstrapConstTemplate {
     private static final Logger LOGGER = LogFactory.getLogger();
 
     /**
-     * luban拦截器列表
+     * luban拦截器
      */
-    public static List<Interceptor> ORIGIN_INTERCEPTORS;
+    public static Interceptor ORIGIN_INTERCEPTOR;
 
     /**
      * 拦截器列表
@@ -46,11 +46,10 @@ public class BootstrapConstTemplate {
      * <p>由于类加载器限制，需要使用反射调用外部方法，需要构建出动态advice类的全限定名，再用当前类加载器加载
      * <p>由于jvm重定义的限制，不能添加静态属性，动态advice类只能通过局部参数传递
      *
-     * @param arguments            所有入参
-     * @param constructor          构造函数本身
-     * @param adviceCls            动态advice类
-     * @param originInterceptorItr luban拦截器双向迭代器
-     * @param constInterceptorItr  构造拦截器双向迭代器
+     * @param arguments           所有入参
+     * @param constructor         构造函数本身
+     * @param adviceCls           动态advice类
+     * @param constInterceptorItr 构造拦截器双向迭代器
      * @throws Exception 发生异常
      */
     @Advice.OnMethodEnter(suppress = Throwable.class)
@@ -58,7 +57,6 @@ public class BootstrapConstTemplate {
             @Advice.AllArguments(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object[] arguments,
             @Advice.Origin Constructor<?> constructor,
             @Advice.Local(value = "ADVICE_CLS") Class<?> adviceCls,
-            @Advice.Local(value = "ORIGIN_INTERCEPTOR_ITR") ListIterator<?> originInterceptorItr,
             @Advice.Local(value = "CONST_INTERCEPTOR_ITR") ListIterator<?> constInterceptorItr
     ) throws Exception {
         final StringBuilder builder = new StringBuilder()
@@ -74,24 +72,22 @@ public class BootstrapConstTemplate {
         builder.append(')');
         final String adviceClsName = "com.huawei.apm.premain.agent.template.BootstrapConstTemplate_" +
                 Integer.toHexString(builder.toString().hashCode());
-        adviceCls = Thread.currentThread().getContextClassLoader().loadClass(adviceClsName);
-        originInterceptorItr = (ListIterator<?>) adviceCls.getDeclaredMethod("getOriginInterceptorItr").invoke(null);
+        adviceCls = ClassLoader.getSystemClassLoader().loadClass(adviceClsName);
         constInterceptorItr = (ListIterator<?>) adviceCls.getDeclaredMethod("getConstInterceptorItr").invoke(null);
         final Object[] dynamicArgs = arguments;
         adviceCls.getDeclaredMethod("beforeConstructor",
-                Object[].class, Constructor.class, ListIterator.class, ListIterator.class
-        ).invoke(null, dynamicArgs, constructor, originInterceptorItr, constInterceptorItr);
+                Object[].class, Constructor.class, ListIterator.class
+        ).invoke(null, dynamicArgs, constructor, constInterceptorItr);
         arguments = dynamicArgs;
     }
 
     /**
      * 方法执行后调用
      *
-     * @param obj                  生成的对象
-     * @param arguments            所有入参
-     * @param adviceCls            动态advice类
-     * @param originInterceptorItr luban拦截器双向迭代器
-     * @param constInterceptorItr  构造拦截器双向迭代器
+     * @param obj                 生成的对象
+     * @param arguments           所有入参
+     * @param adviceCls           动态advice类
+     * @param constInterceptorItr 构造拦截器双向迭代器
      * @throws Exception 发生异常
      */
     @Advice.OnMethodExit(suppress = Throwable.class)
@@ -99,21 +95,11 @@ public class BootstrapConstTemplate {
             @Advice.This(typing = Assigner.Typing.DYNAMIC) Object obj,
             @Advice.AllArguments Object[] arguments,
             @Advice.Local(value = "ADVICE_CLS") Class<?> adviceCls,
-            @Advice.Local(value = "ORIGIN_INTERCEPTOR_ITR") ListIterator<?> originInterceptorItr,
             @Advice.Local(value = "CONST_INTERCEPTOR_ITR") ListIterator<?> constInterceptorItr
     ) throws Exception {
         adviceCls.getDeclaredMethod("afterConstructor",
-                Object.class, Object[].class, ListIterator.class, ListIterator.class
-        ).invoke(null, obj, arguments, originInterceptorItr, constInterceptorItr);
-    }
-
-    /**
-     * 获取luban拦截器双向迭代器
-     *
-     * @return luban拦截器双向迭代器
-     */
-    public static ListIterator<Interceptor> getOriginInterceptorItr() {
-        return ORIGIN_INTERCEPTORS.listIterator();
+                Object.class, Object[].class, ListIterator.class
+        ).invoke(null, obj, arguments, constInterceptorItr);
     }
 
     /**
@@ -128,14 +114,13 @@ public class BootstrapConstTemplate {
     /**
      * 调用luban拦截器的onStart方法
      *
-     * @param arguments            所有入参
-     * @param constructor          构造函数本身
-     * @param originInterceptorItr luban拦截器双向迭代器
-     * @param constInterceptorItr  构造拦截器双向迭代器
+     * @param arguments           所有入参
+     * @param constructor         构造函数本身
+     * @param constInterceptorItr 构造拦截器双向迭代器
      */
     public static void beforeConstructor(Object[] arguments, Constructor<?> constructor,
-            ListIterator<Interceptor> originInterceptorItr, ListIterator<ConstructorInterceptor> constInterceptorItr) {
-        final Object[] dynamicArgs = beforeOriginIntercept(arguments, constructor, originInterceptorItr);
+            ListIterator<ConstructorInterceptor> constInterceptorItr) {
+        final Object[] dynamicArgs = beforeOriginIntercept(arguments, constructor);
         if (dynamicArgs != arguments && dynamicArgs != null && dynamicArgs.length == arguments.length) {
             System.arraycopy(dynamicArgs, 0, arguments, 0, arguments.length);
         }
@@ -145,25 +130,24 @@ public class BootstrapConstTemplate {
     /**
      * 调用luban拦截器的onStart方法
      *
-     * @param arguments            所有入参
-     * @param constructor          构造函数本身
-     * @param originInterceptorItr luban拦截器双向迭代器
+     * @param arguments   所有入参
+     * @param constructor 构造函数本身
      * @return 修正的参数列表
      */
-    private static Object[] beforeOriginIntercept(Object[] arguments, Constructor<?> constructor,
-            ListIterator<Interceptor> originInterceptorItr) {
-        while (originInterceptorItr.hasNext()) {
-            final Interceptor interceptor = originInterceptorItr.next();
-            try {
-                final Object[] dynamicArgs = interceptor.onStart(null, arguments, constructor.getName(), "constructor");
-                if (dynamicArgs != null && dynamicArgs.length == arguments.length) {
-                    arguments = dynamicArgs;
-                }
-            } catch (Throwable t) {
-                LOGGER.severe(String.format(Locale.ROOT,
-                        "invoke onStart method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",
-                        constructor.getDeclaringClass().getName(), "constructor", t.getMessage()));
+    private static Object[] beforeOriginIntercept(Object[] arguments, Constructor<?> constructor) {
+        if (ORIGIN_INTERCEPTOR == null) {
+            return arguments;
+        }
+        try {
+            final Object[] dynamicArgs = ORIGIN_INTERCEPTOR.onStart(
+                    constructor.getDeclaringClass(), arguments, constructor.getName(), "constructor");
+            if (dynamicArgs != null && dynamicArgs.length == arguments.length) {
+                return dynamicArgs;
             }
+        } catch (Throwable t) {
+            LOGGER.severe(String.format(Locale.ROOT,
+                    "invoke onStart method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",
+                    constructor.getDeclaringClass().getName(), "constructor", t.getMessage()));
         }
         return arguments;
     }
@@ -186,35 +170,32 @@ public class BootstrapConstTemplate {
     /**
      * 调用luban拦截器的onFinally方法和构造拦截器的onConstruct方法
      *
-     * @param obj                  生成的对象
-     * @param arguments            所有入参
-     * @param originInterceptorItr luban拦截器双向迭代器
-     * @param constInterceptorItr  构造拦截器双向迭代器
+     * @param obj                 生成的对象
+     * @param arguments           所有入参
+     * @param constInterceptorItr 构造拦截器双向迭代器
      */
     public static void afterConstructor(Object obj, Object[] arguments,
-            ListIterator<Interceptor> originInterceptorItr, ListIterator<ConstructorInterceptor> constInterceptorItr) {
+            ListIterator<ConstructorInterceptor> constInterceptorItr) {
         afterConstIntercept(obj, arguments, constInterceptorItr);
-        afterOriginIntercept(obj, arguments, originInterceptorItr);
+        afterOriginIntercept(obj, arguments);
     }
 
     /**
      * 调用luban拦截器的onFinally方法
      *
-     * @param obj                  生成的对象
-     * @param arguments            所有入参
-     * @param originInterceptorItr luban拦截器双向迭代器
+     * @param obj       生成的对象
+     * @param arguments 所有入参
      */
-    private static void afterOriginIntercept(Object obj, Object[] arguments,
-            ListIterator<Interceptor> originInterceptorItr) {
-        while (originInterceptorItr.hasPrevious()) {
-            final Interceptor interceptor = originInterceptorItr.previous();
-            try {
-                interceptor.onFinally(null, arguments, null, obj.getClass().getName(), "constructor");
-            } catch (Throwable t) {
-                LOGGER.severe(String.format(Locale.ROOT,
-                        "invoke onFinally method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",
-                        obj.getClass().getName(), "constructor", t.getMessage()));
-            }
+    private static void afterOriginIntercept(Object obj, Object[] arguments) {
+        if (ORIGIN_INTERCEPTOR == null) {
+            return;
+        }
+        try {
+            ORIGIN_INTERCEPTOR.onFinally(obj, arguments, null, obj.getClass().getName(), "constructor");
+        } catch (Throwable t) {
+            LOGGER.severe(String.format(Locale.ROOT,
+                    "invoke onFinally method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",
+                    obj.getClass().getName(), "constructor", t.getMessage()));
         }
     }
 

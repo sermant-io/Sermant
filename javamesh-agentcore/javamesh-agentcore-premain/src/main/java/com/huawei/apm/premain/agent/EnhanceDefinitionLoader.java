@@ -1,7 +1,10 @@
 package com.huawei.apm.premain.agent;
 
+import com.huawei.apm.bootstrap.common.VersionChecker;
 import com.huawei.apm.bootstrap.definition.EnhanceDefinition;
 import com.huawei.apm.bootstrap.lubanops.NamedListener;
+import com.huawei.apm.bootstrap.lubanops.TransformerMethod;
+import com.huawei.apm.bootstrap.lubanops.utils.Util;
 import com.huawei.apm.bootstrap.matcher.ClassMatcher;
 import com.huawei.apm.bootstrap.matcher.NameMatcher;
 import com.huawei.apm.bootstrap.matcher.NonNameMatcher;
@@ -9,7 +12,6 @@ import com.huawei.apm.bootstrap.lubanops.Listener;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +38,7 @@ enum EnhanceDefinitionLoader {
      * key : 增强类
      * value: 拦截器列表
      */
-    private final Map<String, LinkedList<Listener>> originMatchNamedListeners =
-        new HashMap<String, LinkedList<Listener>>();
+    private final Map<String, Listener> originMatchNamedListeners = new HashMap<String, Listener>();
 
     EnhanceDefinitionLoader() {
         load();
@@ -74,21 +75,19 @@ enum EnhanceDefinitionLoader {
     }
 
     private void resolveNamedListener(Listener listener) {
+        String version = Util.getJarVersionFromProtectionDomain(listener.getClass().getProtectionDomain());
+        if (!new VersionChecker(version, listener).check()) {
+            return;
+        }
         Set<String> classes = listener.getClasses();
-        if (classes == null || classes.size() == 0) {
+        if (classes == null || classes.isEmpty()) {
             return;
         }
         for (String originClass : classes) {
             if (originClass == null || originClass.length() == 0) {
-                return;
+                continue;
             }
-            final String replacedClass = originClass.replace('/', '.');
-            LinkedList<Listener> topListeners = originMatchNamedListeners.get(replacedClass);
-            if (topListeners == null) {
-                topListeners = new LinkedList<Listener>();
-                originMatchNamedListeners.put(replacedClass, topListeners);
-            }
-            topListeners.add(listener);
+            originMatchNamedListeners.put(originClass.replace('/', '.'), new BufferedListener(listener));
         }
     }
 
@@ -138,12 +137,62 @@ enum EnhanceDefinitionLoader {
         return matchDefinitions;
     }
 
-    public List<Listener> findNameListeners(TypeDescription typeDescription) {
+    public Listener findNameListener(TypeDescription typeDescription) {
         // 适配原始插件
-        LinkedList<Listener> originMatchListeners = originMatchNamedListeners.get(typeDescription.getTypeName());
-        if (originMatchListeners == null) {
-            return Collections.emptyList();
+        return originMatchNamedListeners.get(typeDescription.getTypeName());
+    }
+
+    private static class BufferedListener implements Listener {
+        private volatile boolean initFlag = true;
+        private volatile boolean addTagFlag = true;
+        private final Listener listener;
+
+        private BufferedListener(Listener listener) {
+            this.listener = listener;
         }
-        return originMatchListeners;
+
+        @Override
+        public void init() {
+            if (initFlag) {
+                synchronized (listener) {
+                    if (initFlag) {
+                        listener.init();
+                        initFlag = false;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public Set<String> getClasses() {
+            return listener.getClasses();
+        }
+
+        @Override
+        public List<TransformerMethod> getTransformerMethod() {
+            return listener.getTransformerMethod();
+        }
+
+        @Override
+        public boolean hasAttribute() {
+            return listener.hasAttribute();
+        }
+
+        @Override
+        public List<String> getFields() {
+            return listener.getFields();
+        }
+
+        @Override
+        public void addTag() {
+            if (addTagFlag) {
+                synchronized (listener) {
+                    if (addTagFlag) {
+                        listener.addTag();
+                        addTagFlag = false;
+                    }
+                }
+            }
+        }
     }
 }
