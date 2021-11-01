@@ -1,6 +1,7 @@
 package com.huawei.apm.premain.enhance.enhancer;
 
 import com.huawei.apm.bootstrap.interceptors.ConstructorInterceptor;
+import com.huawei.apm.bootstrap.lubanops.Interceptor;
 import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
@@ -13,13 +14,14 @@ import java.util.logging.Logger;
 /**
  * 多Interceptor构造方法增强委派类
  */
-public final class ConstructorEnhancer {
+public final class ConstructorEnhancer extends OriginEnhancer {
 
     private final static Logger LOGGER = LogFactory.getLogger();
 
     private final List<ConstructorInterceptor> interceptors;
 
-    public ConstructorEnhancer(List<ConstructorInterceptor> interceptors) {
+    public ConstructorEnhancer(Interceptor originInterceptor, List<ConstructorInterceptor> interceptors) {
+        super(originInterceptor);
         this.interceptors = Collections.unmodifiableList(interceptors);
     }
 
@@ -31,6 +33,7 @@ public final class ConstructorEnhancer {
      */
     @RuntimeType
     public void intercept(@This Object obj, @AllArguments Object[] arguments) {
+        onFinally(obj, arguments, null, null);
         for (ConstructorInterceptor interceptor : interceptors) {
             try {
                 interceptor.onConstruct(obj, arguments);

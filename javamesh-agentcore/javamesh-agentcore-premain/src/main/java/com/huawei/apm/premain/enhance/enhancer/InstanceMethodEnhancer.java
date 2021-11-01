@@ -3,6 +3,7 @@ package com.huawei.apm.premain.enhance.enhancer;
 import com.huawei.apm.bootstrap.common.BeforeResult;
 import com.huawei.apm.bootstrap.exception.FlowControlException;
 import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
+import com.huawei.apm.bootstrap.lubanops.Interceptor;
 import com.huawei.apm.premain.common.OverrideArgumentsCall;
 import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
@@ -25,7 +26,8 @@ public final class InstanceMethodEnhancer extends AbstractAroundEnhancer {
 
     private final List<InstanceMethodInterceptor> interceptors;
 
-    public InstanceMethodEnhancer(List<InstanceMethodInterceptor> interceptors) {
+    public InstanceMethodEnhancer(Interceptor originInterceptor, List<InstanceMethodInterceptor> interceptors) {
+        super(originInterceptor);
         this.interceptors = Collections.unmodifiableList(interceptors);
     }
 

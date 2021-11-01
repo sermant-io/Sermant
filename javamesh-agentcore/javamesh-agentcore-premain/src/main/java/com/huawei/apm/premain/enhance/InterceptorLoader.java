@@ -4,6 +4,7 @@ import com.huawei.apm.bootstrap.interceptors.Interceptor;
 import com.huawei.apm.premain.classloader.ClassLoaderManager;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -27,7 +28,7 @@ public class InterceptorLoader {
 
     private static final InterceptorChain EMPTY_CHAIN = new InterceptorChain(new String[0]);
 
-    public static <T extends Interceptor> List<T> getInterceptors(String[] interceptorsName,
+    public static <T extends Interceptor> List<T> getInterceptors(Collection<String> interceptorsName,
         ClassLoader classLoader,
         Class<T> interceptorType) {
         final InterceptorChain chainConfig = getInterceptorChain(interceptorsName);
@@ -45,7 +46,7 @@ public class InterceptorLoader {
         return interceptorList;
     }
 
-    private static InterceptorChain getInterceptorChain(String[] interceptorsName) {
+    private static InterceptorChain getInterceptorChain(Collection<String> interceptorsName) {
         Set<InterceptorChain> interceptorChains = new HashSet<InterceptorChain>();
         for (String interceptor : interceptorsName) {
             InterceptorChain chain = CHAIN_MANAGER.getChain(interceptor);

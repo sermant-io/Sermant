@@ -1,6 +1,7 @@
 package com.huawei.apm.premain.enhance.enhancer;
 
 import com.huawei.apm.bootstrap.common.BeforeResult;
+import com.huawei.apm.bootstrap.lubanops.Interceptor;
 import com.huawei.apm.premain.common.OverrideArgumentsCall;
 
 import java.lang.reflect.Method;
@@ -8,7 +9,10 @@ import java.lang.reflect.Method;
 /**
  * 抽象环绕增强委派类
  */
-public abstract class AbstractAroundEnhancer {
+public abstract class AbstractAroundEnhancer  extends OriginEnhancer {
+    protected AbstractAroundEnhancer(Interceptor originInterceptor) {
+        super(originInterceptor);
+    }
 
     /**
      * 环绕增强方法
@@ -23,7 +27,8 @@ public abstract class AbstractAroundEnhancer {
     protected Object doIntercept(final Object origin,
             final Method method,
             final OverrideArgumentsCall callable,
-            final Object[] arguments) throws Throwable {
+            Object[] arguments) throws Throwable {
+        arguments = onStart(origin, arguments, method);
         final EnhanceContext context = new EnhanceContext(origin, method, arguments);
         BeforeResult beforeResult = doBefore(context);
         Object result = null;
@@ -35,9 +40,11 @@ public abstract class AbstractAroundEnhancer {
             }
         } catch (Throwable t) {
             doOnThrow(context, t);
+            onError(origin, arguments, method, t);
             throw t;
         } finally {
             result = doAfter(context, result);
+            onFinally(origin, arguments, method, result);
         }
         return result;
     }

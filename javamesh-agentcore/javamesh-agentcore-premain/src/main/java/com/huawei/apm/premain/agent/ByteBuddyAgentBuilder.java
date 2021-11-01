@@ -12,8 +12,7 @@ public class ByteBuddyAgentBuilder {
     public static void initialize(Instrumentation instrumentation) {
         EnhanceDefinitionLoader loader = EnhanceDefinitionLoader.INSTANCE;
         new AgentBuilder.Default(new ByteBuddy())
-            .ignore(BuilderHelpers.buildIgnoreClassNamePrefixMatch())
-            .ignore(BuilderHelpers.ignoreAgentClassLoader())
+            .ignore(BuilderHelpers.ignoreClass())
             .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
             .type(loader.buildMatch())
             .transform(new Transformer(loader))

@@ -2,6 +2,7 @@ package com.huawei.apm.premain.enhance.enhancer;
 
 import com.huawei.apm.bootstrap.common.BeforeResult;
 import com.huawei.apm.bootstrap.interceptors.StaticMethodInterceptor;
+import com.huawei.apm.bootstrap.lubanops.Interceptor;
 import com.huawei.apm.premain.common.OverrideArgumentsCall;
 import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
@@ -23,7 +24,8 @@ public final class StaticMethodEnhancer extends AbstractAroundEnhancer {
 
     private final List<StaticMethodInterceptor> interceptors;
 
-    public StaticMethodEnhancer(List<StaticMethodInterceptor> interceptors) {
+    public StaticMethodEnhancer(Interceptor originInterceptor, List<StaticMethodInterceptor> interceptors) {
+        super(originInterceptor);
         this.interceptors = Collections.unmodifiableList(interceptors);
     }
 
