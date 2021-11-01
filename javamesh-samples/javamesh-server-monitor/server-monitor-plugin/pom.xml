@@ -23,6 +23,10 @@
             <artifactId>javamesh-agentcore-bootstrap</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.huawei.javamesh</groupId>
+            <artifactId>protocol</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>
@@ -34,33 +38,10 @@
             <artifactId>apm-agent-core</artifactId>
             <version>${apm-agent-core.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.xolstice.maven.plugins</groupId>
-                <artifactId>protobuf-maven-plugin</artifactId>
-                <version>${protubuf.plugin.version}</version>
-                <configuration>
-                    <!--exe:${os.detected.classifier}-->
-                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:windows-x86_64</protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:windows-x86_64</pluginArtifact>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>compile-custom</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
                 <executions>
