@@ -1,11 +1,13 @@
 package com.huawei.apm.core.lubanops;
 
 import com.huawei.apm.bootstrap.lubanops.agent.AgentInfo;
+import com.huawei.apm.bootstrap.lubanops.api.APIService;
 import com.huawei.apm.bootstrap.lubanops.api.InstrumentationManager;
 import com.huawei.apm.bootstrap.lubanops.config.AgentConfigManager;
 import com.huawei.apm.bootstrap.lubanops.config.IdentityConfigManager;
 import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
 import com.huawei.apm.bootstrap.lubanops.utils.AgentUtils;
+import com.huawei.apm.core.lubanops.api.JSONImpl;
 import com.huawei.apm.core.lubanops.container.AgentServiceContainer;
 import com.huawei.apm.core.lubanops.update.UpdateThread;
 import com.huawei.apm.core.lubanops.utils.AgentPath;
@@ -39,6 +41,7 @@ public class BootStrapImpl {
             IdentityConfigManager.init(argsMap, agentPath.getAgentPath());
             LOGGER.info("----------------------javaagent starting----------------------");
             InstrumentationManager.inst = instrumentation;
+            APIService.setJsonApi(new JSONImpl());
 
             // 设置javaagent启动时间和版本信息
             AgentInfo.setAgentStartTime(System.currentTimeMillis());
