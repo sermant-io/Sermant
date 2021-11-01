@@ -3,6 +3,7 @@ package com.huawei.hercules.controller.script;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.hercules.controller.BaseController;
+import com.huawei.hercules.exception.HerculesException;
 import com.huawei.hercules.service.perftest.IPerftestService;
 import com.huawei.hercules.service.scenario.IScenarioService;
 import com.huawei.hercules.service.script.IScripService;
@@ -29,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -58,11 +58,20 @@ public class ScriptController extends BaseController {
             return returnError("参数缺失");
         }
 
-        String path = params.getString("folder");
+        String parentPath = params.getString("folder");
         String testUrl = params.getString("for_url");
         String fileName = params.getString("script_name");
         String scriptType = getScriptType(params.getString("language"));
+        JSONObject getFolderFilesResponse = scripService.getAllList(StringUtils.isEmpty(parentPath) ? "" : parentPath);
 
+        // 判断是否存在同名脚本
+        JSONArray allFilesInFolder = getFolderFilesResponse.getJSONArray("files");
+        if (isFileExist(ScriptType.getWholeScriptName(fileName, scriptType), null, allFilesInFolder)
+                && ScriptType.isScript(scriptType)) {
+            throw new HerculesException("The script already exist!");
+        }
+
+        // 新增
         fileName = getAllfileName(fileName, scriptType);
         boolean createLibAndResources = false;
         if (params.get("has_resource") != null) {
@@ -73,8 +82,9 @@ public class ScriptController extends BaseController {
         options.put("headers", parseScript(params.getJSONArray("headers")));
         options.put("cookies", parseScriptCookies(params.getJSONArray("cookies")));
         options.put("params", parseScript(params.getJSONArray("params")));
+
         // 1.创建
-        JSONObject creat = scripService.createForm(path, testUrl, fileName, scriptType, createLibAndResources, options.toJSONString());
+        JSONObject creat = scripService.createForm(parentPath, testUrl, fileName, scriptType, createLibAndResources, options.toJSONString());
         if (GROOVY_MAVEN_TYPE.equalsIgnoreCase(scriptType)) {
             if (creat.getBoolean("success")) {
                 return returnSuccess();
@@ -91,7 +101,7 @@ public class ScriptController extends BaseController {
             fileEntry.put("path", file.get("path"));
             fileEntry.put("description", file.get("description"));
             fileEntry.put("content", file.get("content"));
-            String targetHosts = (properties == null || StringUtils.isEmpty(properties.get("targetHosts"))) ? "" : (String)properties.get("targetHosts");
+            String targetHosts = (properties == null || StringUtils.isEmpty(properties.get("targetHosts"))) ? "" : (String) properties.get("targetHosts");
             String basePath = scripService.saveScript(parseScript(fileEntry.toString()), targetHosts, "0", createLibAndResources);
             result.put(JSON_RESULT_KEY, SUCCESS);
             result.put("basePath", basePath);
@@ -203,6 +213,7 @@ public class ScriptController extends BaseController {
 
     /**
      * 新建文件夹
+     *
      * @param params 文件夹信息：父路径+文件夹名称
      * @return 新建结果
      */
@@ -211,17 +222,65 @@ public class ScriptController extends BaseController {
         if (params == null) {
             return returnError("参数缺失");
         }
-        String path = params.getString("folder");
+        String parentPath = params.getString("folder");
         String folder = params.getString("folder_name");
-        String spath = scripService.addFolder(path, folder);
+        JSONObject getFolderFilesResponse = scripService.getAllList(StringUtils.isEmpty(parentPath) ? "" : parentPath);
+        JSONArray allFilesInFolder = getFolderFilesResponse.getJSONArray("files");
+        if (isFileExist(folder, ScriptType.DIR.getRealName(), allFilesInFolder)) {
+            throw new HerculesException("The folder already exists!");
+        }
+        String wholePath = scripService.addFolder(parentPath, folder);
         JSONObject jsonObject = returnSuccess();
-        jsonObject.put("path", spath);
+        jsonObject.put("path", wholePath);
         return jsonObject;
     }
 
     /**
+     * 判断在返回的父目录文件列表中，是否存在fileName同名的文件，这里包括文件夹和脚本，或者资源 <br/>
+     * 如果没有传文件类型，则名称能匹配上就返回true <br/>
+     * 如果文件类型没有匹配上，则名称和类型都必须匹配上才返回true
+     *
+     * @param needValidateFolder   文件名称
+     * @param needValidateFileType 文件类型
+     * @param filesInParentFolder  文件列表
+     * @return 存在同名且类型相同的文件时，返回true，反之返回false
+     */
+    private boolean isFileExist(String needValidateFolder, String needValidateFileType, JSONArray filesInParentFolder) {
+        // 如果返回的列表是空的，说明没有文件存在，返回false
+        if (filesInParentFolder == null || filesInParentFolder.isEmpty()) {
+            return false;
+        }
+
+        // 判断如果needValidateFolder或者needValidateFileType是空，则抛出异常
+        if (StringUtils.isEmpty(needValidateFolder)) {
+            throw new HerculesException("The folder name can not be empty.");
+        }
+
+        // 判断每一个文件是否和传入的文件名和类型相同
+        for (int i = 0; i < filesInParentFolder.size(); i++) {
+            JSONObject fileInfo = filesInParentFolder.getJSONObject(i);
+            String existFileType = fileInfo.getString("fileType");
+            String existFileName = fileInfo.getString("fileName");
+
+            // 如果没有传文件类型，则名称能匹配上就返回true
+            if (StringUtils.isEmpty(needValidateFileType) && needValidateFolder.equals(existFileName)) {
+                return true;
+            }
+
+            // 如果文件类型没有匹配上，则名称和类型都必须匹配上才返回true
+            if (needValidateFolder.equals(existFileName) && needValidateFileType.equalsIgnoreCase(existFileType)) {
+                return true;
+            }
+        }
+
+        // 遍历所有的文件之后，未发现同名且类型相同的，则返回false
+        return false;
+    }
+
+    /**
      * 删除脚本
-     * @param folder 父目录
+     *
+     * @param folder      父目录
      * @param script_name 脚本文件名
      * @return 删除结果
      */
@@ -240,7 +299,8 @@ public class ScriptController extends BaseController {
 
     /**
      * 校验脚本下是否有压测场景存在
-     * @param folder 父目录
+     *
+     * @param folder      父目录
      * @param script_name 脚本名称
      * @return 有关联压测场景的脚本名称列表
      */
@@ -276,17 +336,29 @@ public class ScriptController extends BaseController {
      * 上传脚本
      *
      * @param request request
-     * @param folder 路径
-     * @param commit 提交信息
-     * @param file 文件
+     * @param folder  路径
+     * @param commit  提交信息
+     * @param file    文件
      * @return 上传结果状态
      * @throws IOException 异常
      */
     @RequestMapping(value = "/script/upload", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public JSONObject uploadFile(HttpServletRequest request, @RequestParam(required = false) String folder, @RequestParam String commit,
                                  @RequestParam("file") MultipartFile file) throws IOException {
-        String url = host + "/rest/script/uploadFile";//服务端要调用的外部接口
-        //httpclients构造post请求
+        String originFileName = file.getOriginalFilename();
+
+        // 判断是否存在同名脚本
+        JSONObject getFolderFilesResponse = scripService.getAllList(StringUtils.isEmpty(folder) ? "" : folder);
+        JSONArray allFilesInFolder = getFolderFilesResponse.getJSONArray("files");
+        if (isFileExist(originFileName, null, allFilesInFolder)
+                && ScriptType.isScript(ScriptType.getScriptShowType(originFileName))) {
+            throw new HerculesException("The script already exist!");
+        }
+
+        // 后端服务请求url
+        String url = host + "/rest/script/uploadFile";
+
+        // httpClients构造post请求
         CloseableHttpClient httpClient = HttpClients.createDefault();
         try {
             HttpPost httpPost = new HttpPost(url);
@@ -306,12 +378,11 @@ public class ScriptController extends BaseController {
             }
             //HttpMultipartMode.RFC6532参数的设定是为避免文件名为中文时乱码
             MultipartEntityBuilder builder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.RFC6532);
-            String originFileName = file.getOriginalFilename();
             builder.addBinaryBody("uploadFile", file.getBytes(), ContentType.MULTIPART_FORM_DATA, originFileName);
             ContentType contentType = ContentType.create(HTTP.PLAIN_TEXT_TYPE, HTTP.UTF_8);
-            StringBody contentBody = new StringBody(commit,contentType);
+            StringBody contentBody = new StringBody(commit, contentType);
             builder.addPart("description", contentBody);
-            contentBody = new StringBody(folder,contentType);
+            contentBody = new StringBody(folder, contentType);
             builder.addPart("path", contentBody);
             builder.setCharset(MIME.UTF8_CHARSET);
             org.apache.http.HttpEntity entity = builder.build();
@@ -333,7 +404,8 @@ public class ScriptController extends BaseController {
 
     /**
      * 下载脚本
-     * @param path 脚本全路径
+     *
+     * @param path     脚本全路径
      * @param response 响应结果
      * @throws Exception 异常
      */
@@ -349,7 +421,7 @@ public class ScriptController extends BaseController {
     /**
      * 查看脚本
      *
-     * @param path 路径
+     * @param path     路径
      * @param revision 版本
      * @return 脚本信息
      */
@@ -431,7 +503,7 @@ public class ScriptController extends BaseController {
      * 删除主机
      *
      * @param host_id 主机地址
-     * @param path 路径
+     * @param path    路径
      * @return 删除状态
      */
     @RequestMapping(value = "/script/host", method = RequestMethod.DELETE)
