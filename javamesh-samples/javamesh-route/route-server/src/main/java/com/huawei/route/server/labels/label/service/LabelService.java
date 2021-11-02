@@ -6,7 +6,7 @@ package com.huawei.route.server.labels.label.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.route.server.common.Result;
+import com.huawei.route.common.Result;
 import com.huawei.route.server.labels.vo.LabelBusinessVo;
 import com.huawei.route.server.labels.vo.LabelValidVo;
 import com.huawei.route.server.labels.vo.LabelVo;

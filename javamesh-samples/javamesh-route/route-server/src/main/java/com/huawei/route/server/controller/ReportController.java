@@ -6,7 +6,7 @@ package com.huawei.route.server.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
-import com.huawei.route.server.common.Result;
+import com.huawei.route.common.Result;
 import com.huawei.route.server.entity.AbstractInstance;
 import com.huawei.route.server.entity.AbstractService;
 import com.huawei.route.server.entity.ServiceRegistrarMessage;

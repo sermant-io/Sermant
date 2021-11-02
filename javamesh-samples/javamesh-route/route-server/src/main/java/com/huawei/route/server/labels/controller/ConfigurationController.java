@@ -4,7 +4,7 @@
 
 package com.huawei.route.server.labels.controller;
 
-import com.huawei.route.server.common.Result;
+import com.huawei.route.common.Result;
 import com.huawei.route.server.labels.configuration.Configuration;
 import com.huawei.route.server.labels.configuration.ConfigurationVo;
 import com.huawei.route.server.labels.configuration.EditEnvInfo;

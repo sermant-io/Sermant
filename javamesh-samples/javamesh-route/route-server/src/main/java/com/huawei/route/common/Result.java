@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
  */
 
-package com.huawei.route.server.common;
+package com.huawei.route.common;
 
 import lombok.Builder;
 import lombok.Getter;

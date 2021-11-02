@@ -93,6 +93,9 @@ public class AgentHeartbeat {
     @KafkaListener(topics = "${heartbeat.topic:topic-heartbeat}")
     public void getHeartbeat(String msg) {
         JSONObject heartbeatMsg = JSON.parseObject(msg);
+        if (!isLabelHeartbeat(heartbeatMsg)) {
+            return;
+        }
         String instanceName = heartbeatMsg.getString(LabelConstant.INSTANCE_NAME_MARKING);
         String serviceName = heartbeatMsg.getString(LabelConstant.SERVICE_NAME_MARKING);
         if (StringUtils.isNotEmpty(instanceName) && StringUtils.isNotEmpty(serviceName)) {
@@ -112,6 +115,20 @@ public class AgentHeartbeat {
             heartbeat.put(instanceName, heartbeatMsg.toJSONString());
             setHeartbeat(serviceName, heartbeat);
         }
+    }
+
+    /**
+     * 是否为标签库心跳
+     * javamesh心跳根据name对各自插件的心跳进行区分，标签库有许多独有的数据, 需特别整理
+     *
+     * @param msg 心跳信息
+     * @return 是否为标签库心跳
+     */
+    private boolean isLabelHeartbeat(JSONObject msg) {
+        if (msg == null) {
+            return false;
+        }
+        return StringUtils.equals(msg.getString("name"), LabelConstant.HEARTBEAT_NAME);
     }
 
     /**

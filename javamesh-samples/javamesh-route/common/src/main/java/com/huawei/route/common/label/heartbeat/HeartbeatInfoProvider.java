@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
  */
 
-package com.huawei.route.nacos.heartbeat;
+package com.huawei.route.common.label.heartbeat;
 
 import com.huawei.apm.bootstrap.boot.heartbeat.HeartbeatService;
 

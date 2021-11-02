@@ -4,7 +4,7 @@
 
 package com.huawei.route.server.register;
 
-import com.huawei.route.server.common.RouteThreadFactory;
+import com.huawei.route.common.RouteThreadFactory;
 import com.huawei.route.server.entity.AbstractInstance;
 import com.huawei.route.server.entity.AbstractService;
 import com.huawei.route.server.entity.ServiceRegistrarMessage;

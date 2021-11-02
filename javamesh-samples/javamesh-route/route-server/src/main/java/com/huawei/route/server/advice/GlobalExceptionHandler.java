@@ -4,7 +4,7 @@
 
 package com.huawei.route.server.advice;
 
-import com.huawei.route.server.common.Result;
+import com.huawei.route.common.Result;
 import io.lettuce.core.RedisException;
 import org.apache.kafka.common.KafkaException;
 import org.slf4j.Logger;

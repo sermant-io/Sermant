@@ -4,7 +4,7 @@
 
 package com.huawei.route.server.labels.controller;
 
-import com.huawei.route.server.common.Result;
+import com.huawei.route.common.Result;
 import com.huawei.route.server.labels.label.service.LabelService;
 import com.huawei.route.server.labels.vo.LabelBusinessVo;
 import com.huawei.route.server.labels.vo.LabelValidVo;

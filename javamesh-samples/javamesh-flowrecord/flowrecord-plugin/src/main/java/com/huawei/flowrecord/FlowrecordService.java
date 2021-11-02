@@ -9,7 +9,7 @@ import com.huawei.flowrecord.utils.PluginConfigUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FlowRecordService implements PluginService {
+public class FlowrecordService implements PluginService {
 
     private static final HeartbeatService HEARTBEAT_SERVICE = CoreServiceManager.INSTANCE.getService(HeartbeatService.class);
     private final FlowRecordConfig flowRecordConfig = PluginConfigUtil.getFlowRecordConfig();

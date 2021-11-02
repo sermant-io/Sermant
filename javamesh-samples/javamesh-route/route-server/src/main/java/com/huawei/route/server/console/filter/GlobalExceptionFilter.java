@@ -5,7 +5,7 @@
 package com.huawei.route.server.console.filter;
 
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.route.server.common.Result;
+import com.huawei.route.common.Result;
 import io.lettuce.core.RedisException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

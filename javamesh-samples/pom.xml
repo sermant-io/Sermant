@@ -1,9 +1,6 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <modules>
-        <module>javamesh-route</module>
-    </modules>
     <parent>
         <groupId>com.huawei.javamesh</groupId>
         <artifactId>javamesh</artifactId>
@@ -25,9 +22,9 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>javamesh-flowcontrol</module>
+                <!--<module>javamesh-flowcontrol</module>
                 <module>javamesh-server-monitor</module>
-                <module>javamesh-flowrecord</module>
+                <module>javamesh-flowrecord</module>-->
                 <module>javamesh-route</module>
             </modules>
         </profile>

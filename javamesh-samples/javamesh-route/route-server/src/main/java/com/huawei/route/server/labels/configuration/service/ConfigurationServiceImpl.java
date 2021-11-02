@@ -5,7 +5,7 @@
 package com.huawei.route.server.labels.configuration.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.route.server.common.Result;
+import com.huawei.route.common.Result;
 import com.huawei.route.server.labels.configuration.Configuration;
 import com.huawei.route.server.labels.configuration.ConfigurationVo;
 import com.huawei.route.server.labels.configuration.EditEnvInfo;

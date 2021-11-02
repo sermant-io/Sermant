@@ -7,7 +7,7 @@ package com.huawei.route.server.rules;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.huawei.route.server.common.RouteThreadFactory;
+import com.huawei.route.common.RouteThreadFactory;
 import com.huawei.route.server.labels.label.service.LabelService;
 import com.huawei.route.server.config.RouteServerProperties;
 import com.huawei.route.server.constants.RouteConstants;

@@ -4,7 +4,7 @@
 
 package com.huawei.route.server.console.controller;
 
-import com.huawei.route.server.common.Result;
+import com.huawei.route.common.Result;
 import com.huawei.route.server.console.util.DataType;
 import com.huawei.route.server.console.util.SystemUtils;
 import org.slf4j.Logger;

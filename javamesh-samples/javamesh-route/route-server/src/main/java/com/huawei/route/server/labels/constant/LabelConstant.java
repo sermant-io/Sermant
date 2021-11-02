@@ -144,9 +144,9 @@ public class LabelConstant {
     public static final String PATTERN_WITH_CHINESE = "^[\\u4E00-\\u9FA5A-Za-z0-9_\\-]+$";
 
     /**
-     * 无损演练：agent-drill的标签key
+     * 标签库心跳名称
      */
-    public static final String AGENT_DRILL_LABEL_KEY = "agent-drill";
+    public static final String HEARTBEAT_NAME = "TAG_HEARTBEAT";
 
     private LabelConstant() {
     }

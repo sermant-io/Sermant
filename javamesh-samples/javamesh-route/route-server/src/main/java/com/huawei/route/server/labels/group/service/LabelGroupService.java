@@ -4,7 +4,7 @@
 
 package com.huawei.route.server.labels.group.service;
 
-import com.huawei.route.server.common.Result;
+import com.huawei.route.common.Result;
 import com.huawei.route.server.labels.group.LabelGroup;
 
 /**

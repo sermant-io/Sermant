@@ -4,7 +4,7 @@
 
 package com.huawei.route.server.labels.exception;
 
-import com.huawei.route.server.common.Result;
+import com.huawei.route.common.Result;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.converter.HttpMessageNotReadableException;

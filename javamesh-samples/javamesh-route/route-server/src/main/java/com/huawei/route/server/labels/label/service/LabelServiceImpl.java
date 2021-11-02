@@ -9,7 +9,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.ValueFilter;
-import com.huawei.route.server.common.Result;
+import com.huawei.route.common.Result;
 import com.huawei.route.server.labels.constant.LabelConstant;
 import com.huawei.route.server.labels.exception.CustomGenericException;
 import com.huawei.route.server.labels.group.service.LabelGroupService;

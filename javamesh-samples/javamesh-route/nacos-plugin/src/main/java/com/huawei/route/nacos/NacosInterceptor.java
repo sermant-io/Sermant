@@ -8,7 +8,7 @@ package com.huawei.route.nacos;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.huawei.apm.bootstrap.common.BeforeResult;
 import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
-import com.huawei.route.nacos.heartbeat.HeartbeatInfoProvider;
+import com.huawei.route.common.label.heartbeat.HeartbeatInfoProvider;
 
 import java.lang.reflect.Method;
 import java.util.Map;

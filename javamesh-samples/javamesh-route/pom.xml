@@ -16,6 +16,8 @@
     <modules>
         <module>route-server</module>
         <module>nacos-plugin</module>
+        <module>common</module>
+        <module>label-plugin</module>
     </modules>
 
     <artifactId>javamesh-route</artifactId>
