@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
  */
 
-package com.huawei.route.common.label.utils;
+package com.huawei.route.common.utils;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;

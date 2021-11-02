@@ -11,7 +11,7 @@ import com.huawei.apm.bootstrap.lubanops.config.IdentityConfigManager;
 import com.huawei.apm.bootstrap.lubanops.utils.StringUtils;
 import com.huawei.route.common.factory.NamedThreadFactory;
 import com.huawei.route.common.label.heartbeat.HeartbeatInfoProvider;
-import com.huawei.route.common.label.utils.IpUtil;
+import com.huawei.route.common.utils.IpUtil;
 
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;

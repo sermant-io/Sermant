@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
  */
 
-package com.huawei.route.common.label.constants;
+package com.huawei.route.common.constants;
 
 import java.nio.charset.Charset;
 
