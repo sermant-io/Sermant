@@ -33,9 +33,9 @@ public class BootstrapStaticTemplate {
     private static final Logger LOGGER = LogFactory.getLogger();
 
     /**
-     * luban拦截器列表
+     * luban拦截器
      */
-    public static List<Interceptor> ORIGIN_INTERCEPTORS;
+    public static Interceptor ORIGIN_INTERCEPTOR;
 
     /**
      * 拦截器列表
@@ -51,7 +51,6 @@ public class BootstrapStaticTemplate {
      * @param method               被增强方法
      * @param arguments            所有参数
      * @param adviceCls            动态advice类
-     * @param originInterceptorItr luban插件的双向迭代器
      * @param staticInterceptorItr 静态插件的双向迭代器
      * @return 是否进行主要流程
      * @throws Exception 发生异常
@@ -62,7 +61,6 @@ public class BootstrapStaticTemplate {
             @Advice.Origin Method method,
             @Advice.AllArguments(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object[] arguments,
             @Advice.Local(value = "ADVICE_CLS") Class<?> adviceCls,
-            @Advice.Local(value = "ORIGIN_INTERCEPTOR_ITR") ListIterator<?> originInterceptorItr,
             @Advice.Local(value = "STATIC_INTERCEPTOR_ITR") ListIterator<?> staticInterceptorItr
     ) throws Exception {
         final StringBuilder builder = new StringBuilder()
@@ -80,13 +78,12 @@ public class BootstrapStaticTemplate {
         builder.append(')');
         final String adviceClsName = "com.huawei.apm.premain.agent.template.BootstrapStaticTemplate_" +
                 Integer.toHexString(builder.toString().hashCode());
-        adviceCls = Thread.currentThread().getContextClassLoader().loadClass(adviceClsName);
-        originInterceptorItr = (ListIterator<?>) adviceCls.getDeclaredMethod("getOriginInterceptorItr").invoke(null);
+        adviceCls = ClassLoader.getSystemClassLoader().loadClass(adviceClsName);
         staticInterceptorItr = (ListIterator<?>) adviceCls.getDeclaredMethod("getStaticInterceptorItr").invoke(null);
         final Object[] dynamicArgs = arguments;
         final Boolean res = (Boolean) adviceCls.getDeclaredMethod("beforeStaticMethod",
-                Class.class, Method.class, Object[].class, ListIterator.class, ListIterator.class
-        ).invoke(null, cls, method, dynamicArgs, originInterceptorItr, staticInterceptorItr);
+                Class.class, Method.class, Object[].class, ListIterator.class
+        ).invoke(null, cls, method, dynamicArgs, staticInterceptorItr);
         arguments = dynamicArgs;
         return res;
     }
@@ -100,7 +97,6 @@ public class BootstrapStaticTemplate {
      * @param result               调用结果
      * @param throwable            抛出异常
      * @param adviceCls            动态advice类
-     * @param originInterceptorItr luban插件的双向迭代器
      * @param staticInterceptorItr 静态插件的双向迭代器
      * @throws Exception 调用异常
      */
@@ -112,22 +108,11 @@ public class BootstrapStaticTemplate {
             @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object result,
             @Advice.Thrown Throwable throwable,
             @Advice.Local(value = "ADVICE_CLS") Class<?> adviceCls,
-            @Advice.Local(value = "ORIGIN_INTERCEPTOR_ITR") ListIterator<?> originInterceptorItr,
             @Advice.Local(value = "STATIC_INTERCEPTOR_ITR") ListIterator<?> staticInterceptorItr
     ) throws Exception {
         result = adviceCls.getDeclaredMethod("afterStaticMethod",
-                Class.class, Method.class, Object[].class, Object.class, Throwable.class, ListIterator.class,
-                ListIterator.class
-        ).invoke(null, cls, method, arguments, result, throwable, originInterceptorItr, staticInterceptorItr);
-    }
-
-    /**
-     * 获取luban插件的双向迭代器
-     *
-     * @return luban插件的双向迭代器
-     */
-    public static ListIterator<Interceptor> getOriginInterceptorItr() {
-        return ORIGIN_INTERCEPTORS.listIterator();
+                Class.class, Method.class, Object[].class, Object.class, Throwable.class, ListIterator.class
+        ).invoke(null, cls, method, arguments, result, throwable, staticInterceptorItr);
     }
 
     /**
@@ -145,14 +130,12 @@ public class BootstrapStaticTemplate {
      * @param cls                  被拦截的类
      * @param method               被拦截的方法
      * @param arguments            所有参数
-     * @param originInterceptorItr luban插件的双向迭代器
      * @param staticInterceptorItr 静态插件的双向迭代器
      * @return 是否进行主要流程
      */
     public static boolean beforeStaticMethod(Class<?> cls, Method method, Object[] arguments,
-            ListIterator<Interceptor> originInterceptorItr,
             ListIterator<StaticMethodInterceptor> staticInterceptorItr) {
-        final Object[] dynamicArgs = beforeOriginIntercept(cls, method, arguments, originInterceptorItr);
+        final Object[] dynamicArgs = beforeOriginIntercept(cls, method, arguments);
         if (dynamicArgs != arguments && dynamicArgs != null && dynamicArgs.length == arguments.length) {
             System.arraycopy(dynamicArgs, 0, arguments, 0, arguments.length);
         }
@@ -162,26 +145,24 @@ public class BootstrapStaticTemplate {
     /**
      * 调用luban拦截器的onStart方法
      *
-     * @param cls                  被拦截的类
-     * @param method               被拦截的方法
-     * @param arguments            所有参数
-     * @param originInterceptorItr luban插件的双向迭代器
+     * @param cls       被拦截的类
+     * @param method    被拦截的方法
+     * @param arguments 所有参数
      * @return 修正的参数列表
      */
-    private static Object[] beforeOriginIntercept(Class<?> cls, Method method, Object[] arguments,
-            ListIterator<Interceptor> originInterceptorItr) {
-        while (originInterceptorItr.hasNext()) {
-            final Interceptor interceptor = originInterceptorItr.next();
-            try {
-                final Object[] dynamicArgs = interceptor.onStart(null, arguments, cls.getName(), method.getName());
-                if (dynamicArgs != null && dynamicArgs.length == arguments.length) {
-                    arguments = dynamicArgs;
-                }
-            } catch (Throwable t) {
-                LOGGER.severe(String.format(Locale.ROOT,
-                        "invoke onStart method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",
-                        cls.getName(), method.getName(), t.getMessage()));
+    private static Object[] beforeOriginIntercept(Class<?> cls, Method method, Object[] arguments) {
+        if (ORIGIN_INTERCEPTOR == null) {
+            return arguments;
+        }
+        try {
+            final Object[] dynamicArgs = ORIGIN_INTERCEPTOR.onStart(cls, arguments, cls.getName(), method.getName());
+            if (dynamicArgs != null && dynamicArgs.length == arguments.length) {
+                return dynamicArgs;
             }
+        } catch (Throwable t) {
+            LOGGER.severe(String.format(Locale.ROOT,
+                    "invoke onStart method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",
+                    cls.getName(), method.getName(), t.getMessage()));
         }
         return arguments;
     }
@@ -222,48 +203,45 @@ public class BootstrapStaticTemplate {
      * @param arguments            所有参数
      * @param result               调用结果
      * @param throwable            抛出异常
-     * @param originInterceptorItr luban插件的双向迭代器
      * @param staticInterceptorItr 静态插件的双向迭代器
      * @return 调用结果
      */
     public static Object afterStaticMethod(Class<?> cls, Method method, Object[] arguments, Object result,
-            Throwable throwable, ListIterator<Interceptor> originInterceptorItr,
-            ListIterator<StaticMethodInterceptor> staticInterceptorItr) {
+            Throwable throwable, ListIterator<StaticMethodInterceptor> staticInterceptorItr) {
         result = afterStaticIntercept(cls, method, arguments, result, throwable, staticInterceptorItr);
-        afterOriginIntercept(cls, method, arguments, result, throwable, originInterceptorItr);
+        afterOriginIntercept(cls, method, arguments, result, throwable);
         return result;
     }
 
     /**
      * 调用luban拦截器的onFinally、onError方法
      *
-     * @param cls                  被拦截的类
-     * @param method               被拦截方法
-     * @param arguments            所有参数
-     * @param result               调用结果
-     * @param throwable            抛出异常
-     * @param originInterceptorItr luban插件的双向迭代器
+     * @param cls       被拦截的类
+     * @param method    被拦截方法
+     * @param arguments 所有参数
+     * @param result    调用结果
+     * @param throwable 抛出异常
      */
     private static void afterOriginIntercept(Class<?> cls, Method method, Object[] arguments, Object result,
-            Throwable throwable, ListIterator<Interceptor> originInterceptorItr) {
-        while (originInterceptorItr.hasPrevious()) {
-            final Interceptor interceptor = originInterceptorItr.previous();
-            if (throwable != null) {
-                try {
-                    interceptor.onError(null, arguments, throwable, cls.getName(), method.getName());
-                } catch (Throwable t) {
-                    LOGGER.severe(String.format(Locale.ROOT,
-                            "invoke onError method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",
-                            cls.getName(), method.getName(), t.getMessage()));
-                }
-            }
+            Throwable throwable) {
+        if (ORIGIN_INTERCEPTOR == null) {
+            return;
+        }
+        if (throwable != null) {
             try {
-                interceptor.onFinally(null, arguments, result, cls.getName(), method.getName());
+                ORIGIN_INTERCEPTOR.onError(null, arguments, throwable, cls.getName(), method.getName());
             } catch (Throwable t) {
                 LOGGER.severe(String.format(Locale.ROOT,
-                        "invoke onFinally method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",
+                        "invoke onError method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",
                         cls.getName(), method.getName(), t.getMessage()));
             }
+        }
+        try {
+            ORIGIN_INTERCEPTOR.onFinally(null, arguments, result, cls.getName(), method.getName());
+        } catch (Throwable t) {
+            LOGGER.severe(String.format(Locale.ROOT,
+                    "invoke onFinally method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",
+                    cls.getName(), method.getName(), t.getMessage()));
         }
     }
 

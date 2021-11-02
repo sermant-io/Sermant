@@ -5,7 +5,6 @@
 package com.huawei.apm.premain.agent;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -23,17 +22,14 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
 
-import com.huawei.apm.bootstrap.common.VersionChecker;
 import com.huawei.apm.bootstrap.definition.EnhanceDefinition;
-import com.huawei.apm.bootstrap.definition.MethodInterceptPoint;
 import com.huawei.apm.bootstrap.interceptors.ConstructorInterceptor;
 import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
 import com.huawei.apm.bootstrap.interceptors.Interceptor;
 import com.huawei.apm.bootstrap.interceptors.StaticMethodInterceptor;
 import com.huawei.apm.bootstrap.lubanops.Listener;
-import com.huawei.apm.bootstrap.lubanops.TransformerMethod;
 import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-import com.huawei.apm.bootstrap.lubanops.utils.Util;
+import com.huawei.apm.premain.agent.boot.PluginServiceManager;
 import com.huawei.apm.premain.agent.template.BootstrapConstTemplate;
 import com.huawei.apm.premain.agent.template.BootstrapInstTemplate;
 import com.huawei.apm.premain.agent.template.BootstrapStaticTemplate;
@@ -64,20 +60,39 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
     @Override
     public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,
             ClassLoader classLoader, JavaModule module) {
-        final List<Listener> nameListeners = enhanceDefinitionLoader.findNameListeners(typeDescription);
+        final Listener listener = enhanceDefinitionLoader.findNameListener(typeDescription);
         final List<EnhanceDefinition> definitions = enhanceDefinitionLoader.findDefinitions(typeDescription);
-        if (nameListeners.isEmpty() && definitions.isEmpty()) {
+        if (listener == null && definitions.isEmpty()) {
             return builder;
         }
+        classLoader = ClassLoader.getSystemClassLoader(); // 使用当前线程作增强操作
+        // 启动类的插件服务使用当前线程的ClassLoader初始化
+        PluginServiceManager.INSTANCE.init(classLoader);
+        return enhanceMethods(listener, definitions, builder, typeDescription, classLoader);
+    }
+
+    /**
+     * 判断并增强该类所有方法
+     *
+     * @param listener        luban监听器
+     * @param definitions     增强定义
+     * @param builder         动态构建器
+     * @param typeDescription 被增强类描述
+     * @param classLoader     用于增强的类加载器
+     * @return 动态构建器
+     */
+    private DynamicType.Builder<?> enhanceMethods(Listener listener, List<EnhanceDefinition> definitions,
+            DynamicType.Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader) {
         DynamicType.Builder<?> newBuilder = builder;
-        final ClassLoader loader = Thread.currentThread().getContextClassLoader(); // 使用当前线程加载模板类
         final MethodList<MethodDescription.InDefinedShape> declaredMethods = typeDescription.getDeclaredMethods();
         for (MethodDescription.InDefinedShape method : declaredMethods) {
             if (method.isNative()) {
                 continue;
             }
-            final VisitGuide guide = new VisitGuide(method, loader);
-            guide.addOriginInterceptors(nameListeners); // 添加luban插件的拦截器
+            final VisitGuide guide = new VisitGuide(method, classLoader);
+            if (listener != null) {
+                guide.setOriginInterceptor(listener); // 添加luban插件的拦截器
+            }
             guide.addInterceptors(definitions); // 添加插件的拦截器
             try {
                 newBuilder = guide.resolve(newBuilder, method);
@@ -92,99 +107,17 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
     /**
      * 被增强类方法的visit向导
      */
-    private static class VisitGuide {
-        /**
-         * 被增强类的方法
-         */
-        private final MethodDescription.InDefinedShape method;
-
+    private static class VisitGuide extends InterceptorCollector {
         /**
          * 加载模板类的ClassLoader
          */
         private final ClassLoader classLoader;
 
-        /**
-         * luban插件增强当前方法的拦截器名称
-         */
-        private final List<String> originInterceptorNames;
-
-        /**
-         * 增强当前方法的拦截器名称
-         */
-        private final List<String> interceptorNames;
-
         private VisitGuide(MethodDescription.InDefinedShape method, ClassLoader classLoader) {
-            this.method = method;
+            super(method);
             this.classLoader = classLoader;
-            this.originInterceptorNames = new ArrayList<String>();
-            this.interceptorNames = new ArrayList<String>();
         }
 
-        /**
-         * 添加luban插件增强当前方法的拦截器
-         *
-         * @param listeners luban的监听器列表
-         */
-        private void addOriginInterceptors(List<Listener> listeners) {
-            for (Listener listener : listeners) {
-                String version = Util.getJarVersionFromProtectionDomain(listener.getClass().getProtectionDomain());
-                if (!new VersionChecker(version, listener).check()) {
-                    continue;
-                }
-                listener.addTag();
-                for (TransformerMethod transformerMethod : listener.getTransformerMethod()) {
-                    // 同为构造函数且参数列表一致、或同为普通方法且方法名和参数列表一致时，通过
-                    if (((method.isConstructor() && transformerMethod.isConstructor()) ||
-                            (!method.isConstructor() && !transformerMethod.isConstructor() &&
-                                    method.getName().equals(transformerMethod.getMethod()))) &&
-                            (isParamsMatch(transformerMethod))) {
-                        originInterceptorNames.add(transformerMethod.getMethod());
-                    }
-                }
-            }
-        }
-
-        /**
-         * 检查参数类型是否匹配，当luban监听器中没有声明参数类型时同样表示匹配
-         *
-         * @param transformerMethod luban声明的方法对象
-         * @return 参数类型是否匹配
-         */
-        private boolean isParamsMatch(TransformerMethod transformerMethod) {
-            final List<String> params = transformerMethod.getParams();
-            if (params.isEmpty()) {
-                return true;
-            }
-            final ParameterList<ParameterDescription.InDefinedShape> parameters = method.getParameters();
-            if (params.size() != parameters.size()) {
-                return false;
-            }
-            for (int i = 0; i < params.size(); i++) {
-                if (!params.get(i).equals(parameters.get(i).getType().getTypeName())) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        /**
-         * 添加当前方法的拦截器
-         *
-         * @param enhanceDefinitions 增强定义列表
-         */
-        private void addInterceptors(List<EnhanceDefinition> enhanceDefinitions) {
-            for (EnhanceDefinition definition : enhanceDefinitions) {
-                for (MethodInterceptPoint point : definition.getMethodInterceptPoints()) {
-                    // 方法类型相同且满足匹配条件时通过
-                    if (((point.isStaticMethod() && method.isStatic()) ||
-                            (point.isConstructor() && method.isConstructor()) ||
-                            (point.isInstanceMethod() && !method.isStatic() && !method.isConstructor())) &&
-                            (point.getMatcher().matches(method))) {
-                        interceptorNames.add(point.getInterceptor());
-                    }
-                }
-            }
-        }
 
         /**
          * 尝试使用Advice的方式增强目标类，此处只做分类，操作见{@link #doResolve(DynamicType.Builder, Class, Class)}
@@ -196,7 +129,7 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
          */
         private DynamicType.Builder<?> resolve(DynamicType.Builder<?> builder, MethodDescription.InDefinedShape method)
                 throws Exception {
-            if (originInterceptorNames.isEmpty() && interceptorNames.isEmpty()) {
+            if (originInterceptorName == null && interceptorNames.isEmpty()) {
                 return builder;
             }
             if (method.isStatic()) {
@@ -222,12 +155,12 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
             final String adviceClsName = getAdviceClassName(templateCls, method);
             final byte[] adviceClsBytes = createAdviceClass(templateCls, adviceClsName);
             final Class<?> adviceCls = defineAdviceClass(adviceClsName, adviceClsBytes);
-            final List<? extends Interceptor> originInterceptors = InterceptorLoader.getInterceptors(
-                    originInterceptorNames.toArray(new String[0]), classLoader,
-                    com.huawei.apm.bootstrap.lubanops.Interceptor.class);
+            final Interceptor originInterceptor = originInterceptorName == null ? null :
+                    InterceptorLoader.getInterceptor(originInterceptorName, classLoader,
+                            com.huawei.apm.bootstrap.lubanops.Interceptor.class);
             final List<? extends Interceptor> interceptors = InterceptorLoader.getInterceptors(
-                    interceptorNames.toArray(new String[0]), classLoader, interceptorType);
-            prepareAdviceClass(adviceCls, originInterceptors, interceptors);
+                    interceptorNames, classLoader, interceptorType);
+            prepareAdviceClass(adviceCls, originInterceptor, interceptors);
             return visitAdvice(builder, adviceCls, adviceClsBytes);
         }
 
@@ -288,14 +221,14 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
         /**
          * 将两组拦截器赋值为动态Advice增强器类的ORIGIN_INTERCEPTORS和INTERCEPTORS
          *
-         * @param adviceCls          动态Advice增强器类
-         * @param originInterceptors luban拦截器列表
-         * @param interceptors       拦截器列表
+         * @param adviceCls         动态Advice增强器类
+         * @param originInterceptor luban拦截器列表
+         * @param interceptors      拦截器列表
          * @throws Exception 执行prepare方法失败
          */
-        private void prepareAdviceClass(Class<?> adviceCls, List<? extends Interceptor> originInterceptors,
+        private void prepareAdviceClass(Class<?> adviceCls, Interceptor originInterceptor,
                 List<? extends Interceptor> interceptors) throws Exception {
-            adviceCls.getDeclaredField("ORIGIN_INTERCEPTORS").set(null, originInterceptors);
+            adviceCls.getDeclaredField("ORIGIN_INTERCEPTOR").set(null, originInterceptor);
             adviceCls.getDeclaredField("INTERCEPTORS").set(null, interceptors);
         }
 
