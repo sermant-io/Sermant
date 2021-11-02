@@ -5,7 +5,7 @@
 package com.huawei.javamesh.sample.servermonitor.common;
 
 
-import com.huawei.javamesh.sample.servermonitor.entity.IBMPoolType;
+import com.huawei.javamesh.sample.servermonitor.entity.IbmPoolType;
 
 /**
  * IBM MemoryPoolMXBean 枚举类
@@ -87,24 +87,24 @@ public enum CheckIBMParameter {
      * @param param jvm参数名称
      * @return 返回池类型
      */
-    public static IBMPoolType returnPoolType(String param) {
-        IBMPoolType type;
+    public static IbmPoolType returnPoolType(String param) {
+        IbmPoolType type;
         if (param.equals(CheckIBMParameter.CLASS_STORAGE.getParameter())) {
-            type = IBMPoolType.IBM_CLASS_STORAGE_USAGE;
+            type = IbmPoolType.IBM_CLASS_STORAGE_USAGE;
         } else if (param.equals(CheckIBMParameter.MISCELLANEOUS.getParameter())) {
-            type = IBMPoolType.IBM_MISCELLANEOUS_USAGE;
+            type = IbmPoolType.IBM_MISCELLANEOUS_USAGE;
         } else if (param.equals(CheckIBMParameter.NURSERY_ALLOCATE.getParameter())) {
-            type = IBMPoolType.IBM_NURSERY_ALLOCATE_USAGE;
+            type = IbmPoolType.IBM_NURSERY_ALLOCATE_USAGE;
         } else if (param.equals(CheckIBMParameter.NURSERY_SURVIVOR.getParameter())) {
-            type = IBMPoolType.IBM_NURSERY_SURVIVOR_USAGE;
+            type = IbmPoolType.IBM_NURSERY_SURVIVOR_USAGE;
         } else if (param.equals(CheckIBMParameter.TENURED_LOA.getParameter())) {
-            type = IBMPoolType.IBM_TENURED_LOA_USAGE;
+            type = IbmPoolType.IBM_TENURED_LOA_USAGE;
         } else if (param.equals(CheckIBMParameter.TENURED_SOA.getParameter())) {
-            type = IBMPoolType.IBM_TENURED_SOA_USAGE;
+            type = IbmPoolType.IBM_TENURED_SOA_USAGE;
         } else if (param.equals(CheckIBMParameter.CODE_CACHE.getParameter())) {
-            type = IBMPoolType.IBM_CODE_CACHE_USAGE;
+            type = IbmPoolType.IBM_CODE_CACHE_USAGE;
         } else {
-            type = IBMPoolType.IBM_DATA_CACHE_USAGE;
+            type = IbmPoolType.IBM_DATA_CACHE_USAGE;
         }
         return type;
     }
