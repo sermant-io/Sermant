@@ -7,11 +7,11 @@ package com.huawei.example.demo.interceptor;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.StaticMethodInterceptor;
-import com.huawei.apm.bootstrap.lubanops.trace.SpanEvent;
-import com.huawei.apm.bootstrap.lubanops.trace.StartTraceRequest;
-import com.huawei.apm.bootstrap.lubanops.trace.TraceCollector;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
+import com.huawei.apm.core.lubanops.bootstrap.trace.SpanEvent;
+import com.huawei.apm.core.lubanops.bootstrap.trace.StartTraceRequest;
+import com.huawei.apm.core.lubanops.bootstrap.trace.TraceCollector;
 
 /**
  * 链路监控功能的拦截器示例，本示例将展示如何在插件端使用链路监控功能

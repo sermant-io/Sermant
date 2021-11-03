@@ -4,7 +4,7 @@
 
 package com.lubanops.stresstest.db.mybatis;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.lubanops.stresstest.config.ConfigFactory;
 import com.lubanops.stresstest.config.bean.DataSourceInfo;
 import com.lubanops.stresstest.core.Reflection;

@@ -1,11 +1,11 @@
 package com.huawei.flowrecord.plugins.dubbo;
 
-import com.huawei.apm.bootstrap.lubanops.TransformAccess;
-import com.huawei.apm.bootstrap.lubanops.collector.api.FutureStatsAccessor;
-import com.huawei.apm.bootstrap.lubanops.trace.Headers;
-import com.huawei.apm.bootstrap.lubanops.trace.SpanEvent;
-import com.huawei.apm.bootstrap.lubanops.trace.StartTraceRequest;
-import com.huawei.apm.bootstrap.lubanops.trace.TraceCollector;
+import com.huawei.apm.core.lubanops.bootstrap.TransformAccess;
+import com.huawei.apm.core.lubanops.bootstrap.collector.api.FutureStatsAccessor;
+import com.huawei.apm.core.lubanops.bootstrap.trace.Headers;
+import com.huawei.apm.core.lubanops.bootstrap.trace.SpanEvent;
+import com.huawei.apm.core.lubanops.bootstrap.trace.StartTraceRequest;
+import com.huawei.apm.core.lubanops.bootstrap.trace.TraceCollector;
 import com.huawei.flowrecord.config.FlowRecordConfig;
 import com.huawei.flowrecord.utils.*;
 import org.apache.dubbo.common.URL;
@@ -17,8 +17,8 @@ import org.apache.dubbo.rpc.support.RpcUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.flowrecord.config.CommonConst;
 import com.huawei.flowrecord.config.ConfigConst;
 import com.huawei.flowrecord.config.CorrelationConst;

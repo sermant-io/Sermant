@@ -4,8 +4,8 @@
 
 package com.lubanops.stresstest.db.mybatis;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;

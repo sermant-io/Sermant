@@ -5,7 +5,7 @@
 package com.lubanops.stresstest.db.factory;
 
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 import javax.sql.DataSource;
 import java.util.HashMap;

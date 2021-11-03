@@ -4,7 +4,7 @@
 
 package com.lubanops.stresstest.core;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;

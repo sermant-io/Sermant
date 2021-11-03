@@ -17,7 +17,7 @@
     </properties>
     <profiles>
         <profile>
-            <id>plugin</id>
+            <id>agent</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -30,18 +30,20 @@
             </modules>
         </profile>
         <profile>
+            <id>example</id>
+            <modules>
+                <module>javamesh-example</module>
+            </modules>
+        </profile>
+        <profile>
             <id>ext</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
                 <module>javamesh-flowcontrol</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>example</id>
-            <modules>
-                <module>javamesh-example</module>
+                <module>javamesh-flowrecord</module>
+                <module>javamesh-server-monitor</module>
             </modules>
         </profile>
         <profile>
