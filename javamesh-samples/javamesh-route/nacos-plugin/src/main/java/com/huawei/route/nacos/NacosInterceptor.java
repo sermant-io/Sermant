@@ -9,6 +9,9 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.huawei.apm.bootstrap.common.BeforeResult;
 import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
 import com.huawei.route.common.label.heartbeat.HeartbeatInfoProvider;
+import com.huawei.route.report.cache.ServiceRegisterCache;
+import com.huawei.route.report.common.entity.ServiceEssentialMessage;
+import com.huawei.route.report.common.entity.ServiceRegisterMessage;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -31,27 +34,30 @@ public class NacosInterceptor implements InstanceMethodInterceptor {
         String group = (String) arguments[1];
         Map<String, String> metadata = instance.getMetadata();
         registerHeartbeat(metadata, instance, (String)arguments[0]);
-        /*if ("consumer".equals(metadata.get("side")) || metadata.containsValue("SPRING_CLOUD")) {
-            // instance.getClusterName() == null is dubbo else spring cloud
-            if (instance.getClusterName() == null) {
-                ServiceRegisterMessage serviceRegisterMessage = new ServiceRegisterMessage();
-                serviceRegisterMessage.setServiceName(metadata.get("application"));
-                serviceRegisterMessage.setRoot(group);
-                serviceRegisterMessage.setClusterName(instance.getClusterName());
-                serviceRegisterMessage.setDownServiceName(metadata.get("interface"));
-                serviceRegisterMessage.setProtocol("DUBBO");
-                serviceRegisterMessage.setRegistry("NACOS");
-                ServiceRegisterCache.getInstance().addServiceRegisterMessageByDownService(serviceRegisterMessage);
-            } else {
-                ServiceEssentialMessage serviceEssentialMessage = new ServiceEssentialMessage();
-                serviceEssentialMessage.setProtocol("SPRING_CLOUD");
-                serviceEssentialMessage.setRegistry("NACOS");
-                serviceEssentialMessage.setClusterName(instance.getClusterName());
-                serviceEssentialMessage.setRoot(group);
-                serviceEssentialMessage.setServiceName((String) allArguments[0]);
-                ServiceRegisterCache.getInstance().addServiceRegisterMessage(serviceEssentialMessage);
-            }
-        }*/
+        if (metadata.containsKey("side")) {
+            // dubbo应用数据处理
+            ServiceRegisterMessage serviceRegisterMessage = new ServiceRegisterMessage();
+            serviceRegisterMessage.setServiceName(metadata.get("application"));
+            serviceRegisterMessage.setRoot(group);
+            serviceRegisterMessage.setClusterName(instance.getClusterName());
+            serviceRegisterMessage.setDownServiceName(metadata.get("interface"));
+            serviceRegisterMessage.setProtocol("DUBBO");
+            serviceRegisterMessage.setRegistry("NACOS");
+            serviceRegisterMessage.setPort(instance.getPort());
+            serviceRegisterMessage.setIp(instance.getIp());
+            ServiceRegisterCache.getInstance().addServiceRegisterMessageByDownService(serviceRegisterMessage);
+        } else {
+            // spring数据梳理
+            ServiceEssentialMessage serviceEssentialMessage = new ServiceEssentialMessage();
+            serviceEssentialMessage.setProtocol("SPRING_CLOUD");
+            serviceEssentialMessage.setRegistry("NACOS");
+            serviceEssentialMessage.setClusterName(instance.getClusterName());
+            serviceEssentialMessage.setRoot(group);
+            serviceEssentialMessage.setServiceName((String) arguments[0]);
+            serviceEssentialMessage.setPort(instance.getPort());
+            serviceEssentialMessage.setIp(instance.getIp());
+            ServiceRegisterCache.getInstance().addServiceRegisterMessage(serviceEssentialMessage);
+        }
     }
 
     @Override

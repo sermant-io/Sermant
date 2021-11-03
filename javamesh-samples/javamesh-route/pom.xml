@@ -18,6 +18,7 @@
         <module>nacos-plugin</module>
         <module>common</module>
         <module>label-plugin</module>
+        <module>report-plugin</module>
     </modules>
 
     <artifactId>javamesh-route</artifactId>
@@ -54,5 +55,4 @@
             </modules>
         </profile>
     </profiles>
-
 </project>

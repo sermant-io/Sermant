@@ -43,29 +43,30 @@ public class IpUtil {
      * @return ipv4列表
      */
     public static List<String> getAllIpv4() {
-        if (ipv4List == null) {
-            ipv4List = new LinkedList<String>();
-            try {
-                Enumeration<NetworkInterface> interfs = NetworkInterface.getNetworkInterfaces();
-                while (interfs.hasMoreElements()) {
-                    NetworkInterface networkInterface = interfs.nextElement();
-                    Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-                    while (inetAddresses.hasMoreElements()) {
-                        InetAddress address = inetAddresses.nextElement();
-                        if (address instanceof Inet4Address) {
-                            String addressStr = address.getHostAddress();
-                            if ("127.0.0.1".equals(addressStr)) {
-                                continue;
-                            } else if ("localhost".equals(addressStr)) {
-                                continue;
-                            }
-                            ipv4List.add(addressStr);
+        if (ipv4List != null) {
+            return ipv4List;
+        }
+        ipv4List = new LinkedList<String>();
+        try {
+            Enumeration<NetworkInterface> interfs = NetworkInterface.getNetworkInterfaces();
+            while (interfs.hasMoreElements()) {
+                NetworkInterface networkInterface = interfs.nextElement();
+                Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+                while (inetAddresses.hasMoreElements()) {
+                    InetAddress address = inetAddresses.nextElement();
+                    if (address instanceof Inet4Address) {
+                        String addressStr = address.getHostAddress();
+                        if ("127.0.0.1".equals(addressStr)) {
+                            continue;
+                        } else if ("localhost".equals(addressStr)) {
+                            continue;
                         }
+                        ipv4List.add(addressStr);
                     }
                 }
-            } catch (SocketException ignored) {
-                // ignored
             }
+        } catch (SocketException ignored) {
+            // ignored
         }
         return ipv4List;
     }
