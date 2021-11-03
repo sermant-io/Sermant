@@ -49,7 +49,7 @@ public class PathDataUpdater {
                 zkClient.setData().forPath(path, data);
             }
         } catch (Exception e) {
-            LOGGER.warn("update path data failed for notification");
+            LOGGER.warn("update path data failed for notification, reason: {}", e.getMessage());
         }
     }
 }

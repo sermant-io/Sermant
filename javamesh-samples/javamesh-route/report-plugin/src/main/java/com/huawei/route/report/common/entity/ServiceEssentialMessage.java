@@ -11,11 +11,7 @@ package com.huawei.route.report.common.entity;
  * @version 1.0
  * @since 2021-07-14
  */
-public class ServiceEssentialMessage {
-    /**
-     * 当前服务名称
-     */
-    private String serviceName;
+public class ServiceEssentialMessage extends BaseReportMessage {
 
     /**
      * Zookeeper中代表根路径；nacos中代表分组；serviceComb中代表所属应用
@@ -41,32 +37,19 @@ public class ServiceEssentialMessage {
      * 协议，有dubbo和springcloud两种
      */
     private String protocol;
-
     /**
-     * 实例ip地址
+     * 命名空间，nacos独有
      */
-    private String ip;
+    private String namespaceId;
 
-    /**
-     * 端口
-     */
-    private int port;
-
-    public String getIp() {
-        return ip;
+    public String getNamespaceId() {
+        return namespaceId;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setNamespaceId(String namespaceId) {
+        this.namespaceId = namespaceId;
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
 
     public String getRegistry() {
         return registry;
@@ -82,14 +65,6 @@ public class ServiceEssentialMessage {
 
     public void setProtocol(String protocol) {
         this.protocol = protocol;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
     }
 
     public String getRoot() {
@@ -118,13 +93,17 @@ public class ServiceEssentialMessage {
 
     @Override
     public String toString() {
-        return "ServiceEssentialMessage{"
-            + "serviceName='" + serviceName + '\''
-            + ", root='" + root + '\''
-            + ", registrarServiceName='" + registrarServiceName + '\''
-            + ", clusterName='" + clusterName + '\''
-            + ", registry='" + registry + '\''
-            + ", protocol='" + protocol + '\''
-            + '}';
+        return "ServiceEssentialMessage{" +
+                "serviceName='" + serviceName + '\'' +
+                ", ldc='" + ldc + '\'' +
+                ", ip='" + ip + '\'' +
+                ", port=" + port +
+                ", root='" + root + '\'' +
+                ", registrarServiceName='" + registrarServiceName + '\'' +
+                ", clusterName='" + clusterName + '\'' +
+                ", registry='" + registry + '\'' +
+                ", protocol='" + protocol + '\'' +
+                ", namespaceId='" + namespaceId + '\'' +
+                '}';
     }
 }

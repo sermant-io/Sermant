@@ -15,16 +15,6 @@ public class ReporterConstants {
     }
 
     /**
-     * 路由服务端server的地址,默认值
-     */
-    public static final String DEFAULT_TARGET_SERVER_URL = "http://localhost:8010/getAddrList";
-
-    /**
-     * 路由服务端server的错误上报地址,默认值
-     */
-    public static final String DEFAULT_REPORT_SERVER_URL = "http://localhost:8010/reportException";
-
-    /**
      * ldc的配置内容
      */
     public static final String VALUE_KEY = "value";
@@ -33,6 +23,11 @@ public class ReporterConstants {
      * ldc名称的key
      */
     public static final String LDC_KEY = "ldc";
+
+    /**
+     * 是否为网关
+     */
+    public static final String IS_GATE_WAY_KEY = "isGateWay";
 
     /**
      * businesses配置的key
@@ -50,7 +45,7 @@ public class ReporterConstants {
     public static final String ON_KEY = "on";
 
     /**
-     * 标签名称的key
+     * 标签库配置的ldc的key
      */
-    public static final String LABEL_NAME_KEY = "labelName";
+    public static final String LDC_CONFIGURATION_KEY = "LDC_CONFIGURATION";
 }

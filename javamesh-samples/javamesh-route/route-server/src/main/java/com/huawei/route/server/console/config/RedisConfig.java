@@ -7,7 +7,7 @@ package com.huawei.route.server.console.config;
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import io.lettuce.core.cluster.ClusterClientOptions;
 import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 public class RedisConfig {
     private static final int MAX_WAIT_MILLIONS = 2000;
 
-    private static Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+    private static final Pattern PATTERN = Pattern.compile("^[-\\+]?[\\d]*$");
 
     private static final long REFRESH_TRIGGERS_TIMEOUT = 30L;
 
@@ -93,7 +93,7 @@ public class RedisConfig {
             clusterNodes.forEach(address -> {
                 if (StringUtils.isNotEmpty(address)) {
                     String[] ips = address.split(":");
-                    if (ips.length == ipsLength && pattern.matcher(ips[1]).matches()) {
+                    if (ips.length == ipsLength && PATTERN.matcher(ips[1]).matches()) {
                         nodes.add(new RedisNode(ips[0].trim(), Integer.valueOf(ips[1])));
                     }
                 }

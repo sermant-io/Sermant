@@ -37,4 +37,5 @@
         <maven.compiler.target>8</maven.compiler.target>
         <fastjson.version>1.2.73</fastjson.version>
     </properties>
+
 </project>

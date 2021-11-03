@@ -6,7 +6,6 @@ package com.huawei.route.label;
 
 import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
 import com.huawei.apm.core.lubanops.api.JSONImpl;
-import com.huawei.route.common.constants.LabelConstants;
 import com.huawei.route.common.label.observers.LabelObservers;
 import com.huawei.route.common.label.observers.LabelProperties;
 import io.netty.buffer.ByteBuf;

@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
  */
 
-package com.huawei.route.common.constants;
+package com.huawei.route.label;
 
 import java.nio.charset.Charset;
 
@@ -30,9 +30,14 @@ public class LabelConstants {
     public static final String LABEL_NAME_KEY = "labelName";
 
     /**
-     * agent-core的标签key
+     * 鲁班默认
      */
-    public static final String AGENT_CORE_LABEL_KEY = "agent-core";
+    public static final String DEFAULT_INSTANCE_NAME = "default";
+
+    /**
+     * 生成实例名的uuid长度
+     */
+    public static final int INSTANCE_NAME_PREFIX_LEN = 8;
 
     /**
      * 默认编码

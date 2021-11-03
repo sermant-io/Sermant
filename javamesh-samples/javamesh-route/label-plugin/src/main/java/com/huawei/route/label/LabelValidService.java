@@ -81,9 +81,12 @@ public enum LabelValidService {
 
     private String getInstanceName() {
         String instanceName = IdentityConfigManager.getInstanceName();
-        return StringUtils.isBlank(instanceName)
-                ? UUID.randomUUID().toString().replaceAll("-", "") + "@" + IpUtil.getIpV4()
-                : instanceName;
+        if (StringUtils.isBlank(instanceName) || StringUtils.equals(instanceName, LabelConstants.DEFAULT_INSTANCE_NAME)) {
+            // 为确保实例名不同，如果未默认名称,则使用uuid生成实例名称
+            String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+            return uuid.substring(uuid.length() - LabelConstants.INSTANCE_NAME_PREFIX_LEN) + "@" + IpUtil.getIpV4();
+        }
+        return instanceName;
     }
 
 }

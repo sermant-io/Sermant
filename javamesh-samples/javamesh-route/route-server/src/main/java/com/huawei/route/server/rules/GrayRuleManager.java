@@ -8,12 +8,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.huawei.route.common.RouteThreadFactory;
-import com.huawei.route.server.labels.label.service.LabelService;
 import com.huawei.route.server.config.RouteServerProperties;
 import com.huawei.route.server.constants.RouteConstants;
 import com.huawei.route.server.entity.AbstractInstance;
 import com.huawei.route.server.entity.AbstractService;
 import com.huawei.route.server.entity.ServiceRegistrarMessage;
+import com.huawei.route.server.labels.label.service.LabelService;
 import com.huawei.route.server.register.RegisterSyncManager;
 import com.huawei.route.server.share.RouteSharer;
 import lombok.Getter;
@@ -54,12 +54,8 @@ public class GrayRuleManager<S extends AbstractService<T>, T extends AbstractIns
         this.labelService = labelService;
     }
 
-    private RegisterSyncManager<S, T> registerSyncManager;
-
     @Autowired
-    public void setRegisterSyncManager(RegisterSyncManager<S, T> registerSyncManager) {
-        this.registerSyncManager = registerSyncManager;
-    }
+    private RegisterSyncManager<S, T> registerSyncManager;
 
     private RouteServerProperties routeServerProperties;
 

@@ -83,8 +83,14 @@ public class HttpClientUtils {
 
     private static CloseableHttpClient client;
 
+    private static final RequestConfig defaultRequestConfig;
+
     static {
         createClient();
+        defaultRequestConfig = RequestConfig.custom()
+                .setConnectTimeout(CONNECT_TIMEOUT)
+                .setSocketTimeout(SOCKET_TIMEOUT)
+                .build();
     }
 
     private static synchronized void createClient() {
@@ -185,11 +191,7 @@ public class HttpClientUtils {
 
         // 创建http对象
         HttpGet httpGet = new HttpGet(uriBuilder.build());
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(CONNECT_TIMEOUT)
-                .setSocketTimeout(SOCKET_TIMEOUT)
-                .build();
-        httpGet.setConfig(requestConfig);
+        httpGet.setConfig(defaultRequestConfig);
 
         // 设置请求头
         packageHeader(headers, httpGet);
@@ -245,11 +247,7 @@ public class HttpClientUtils {
 
         // 创建http对象
         HttpPost httpPost = new HttpPost(url);
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(CONNECT_TIMEOUT)
-                .setSocketTimeout(SOCKET_TIMEOUT)
-                .build();
-        httpPost.setConfig(requestConfig);
+        httpPost.setConfig(defaultRequestConfig);
 
         // 设置请求头
         packageHeader(headers, httpPost);
@@ -283,11 +281,7 @@ public class HttpClientUtils {
 
         // 创建http对象
         HttpPost httpPost = new HttpPost(url);
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(CONNECT_TIMEOUT)
-                .setSocketTimeout(SOCKET_TIMEOUT)
-                .build();
-        httpPost.setConfig(requestConfig);
+        httpPost.setConfig(defaultRequestConfig);
         StringEntity stringEntity = new StringEntity(json, Consts.UTF_8);
         stringEntity.setContentType(new BasicHeader("Content-Type", "application/json;charset=utf-8"));
         stringEntity.setContentEncoding(Consts.UTF_8.name());
@@ -324,11 +318,7 @@ public class HttpClientUtils {
     public static HttpClientResult doPut(String url, Map<String, String> params) throws IOException {
         CloseableHttpClient httpClient = getClient();
         HttpPut httpPut = new HttpPut(url);
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(CONNECT_TIMEOUT)
-                .setSocketTimeout(SOCKET_TIMEOUT)
-                .build();
-        httpPut.setConfig(requestConfig);
+        httpPut.setConfig(defaultRequestConfig);
 
         packageParam(params, httpPut);
 
@@ -351,11 +341,7 @@ public class HttpClientUtils {
     public static HttpClientResult doDelete(String url) throws IOException {
         CloseableHttpClient httpClient = getClient();
         HttpDelete httpDelete = new HttpDelete(url);
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(CONNECT_TIMEOUT)
-                .setSocketTimeout(SOCKET_TIMEOUT)
-                .build();
-        httpDelete.setConfig(requestConfig);
+        httpDelete.setConfig(defaultRequestConfig);
 
         CloseableHttpResponse httpResponse = httpClient.execute(httpDelete);
         try {

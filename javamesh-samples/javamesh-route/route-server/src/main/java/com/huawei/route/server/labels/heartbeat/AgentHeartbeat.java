@@ -13,7 +13,7 @@ import com.huawei.route.server.labels.constant.LabelConstant;
 import com.huawei.route.server.labels.label.service.LabelService;
 import com.huawei.route.server.labels.vo.ScheduleLabelValidVo;
 import com.huawei.route.server.rules.TagInstanceIpMapper;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4,12 +4,9 @@
 
 package com.huawei.route.report.cache;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
 import com.huawei.apm.bootstrap.lubanops.utils.StringUtils;
-import com.huawei.route.common.label.observers.LabelProperties;
+import com.huawei.route.report.common.LdcConfiguration;
 import com.huawei.route.report.common.entity.ServiceEssentialMessage;
 import com.huawei.route.report.common.entity.ServiceRegisterMessage;
 
@@ -20,11 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -41,26 +36,6 @@ public class ServiceRegisterCache {
      * 实例对象
      */
     private static final ServiceRegisterCache SERVICE_REGISTER_CACHE = new ServiceRegisterCache();
-
-    /**
-     * 获取ldc信息的key
-     */
-    private final String LDC_KEY = "LDC_CONFIGURATION";
-
-    /**
-     * ldc的名称的key
-     */
-    private final String LDC_NAME_KEY = "ldc";
-
-    /**
-     * 标签配置的business的key
-     */
-    private final String LDC_BUSINESS_KEY = "businesses";
-
-    /**
-     * ldc数据的key
-     */
-    private final String LDC_VALUE_KEY = "value";
 
     /**
      * 未完整的缓存集合
@@ -154,26 +129,9 @@ public class ServiceRegisterCache {
         if (StringUtils.isNotBlank(registry)) {
             serviceRegisterMessage.setRegistry(registry);
         }
-
-        Map<String, Properties> labelProperties = LabelProperties.getAllLabelProperties();
-        if (!labelProperties.containsKey(LDC_KEY)) {
-            return;
-        }
-        LOGGER.finer(String.format("ldc configuration message is:%s", labelProperties.get(LDC_KEY)));
-        JSONObject ldcJson = JSON.parseObject(labelProperties.get(LDC_KEY).getProperty(LDC_VALUE_KEY));
-        if (ldcJson != null) {
-            String ldc = ldcJson.getString(LDC_NAME_KEY);
-            JSONArray businessArray;
-            try {
-                businessArray = JSONArray.parseArray(ldcJson.getString(LDC_BUSINESS_KEY));
-                serviceRegisterMessage.setLdc(ldc);
-                serviceRegisterMessage.setBusinesses(businessArray);
-            } catch (ClassCastException classCastException) {
-                LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH,
-                        "ldc businesses label configuration error. ldc configuration is:%s",
-                        ldcJson.toJSONString()), classCastException);
-            }
-        }
+        final LdcConfiguration ldcConfiguration = LdcConfiguration.getInstance();
+        serviceRegisterMessage.setLdc(ldcConfiguration.getLdc());
+        serviceRegisterMessage.setBusinesses(ldcConfiguration.getBusinesses());
     }
 
     /**
@@ -226,31 +184,29 @@ public class ServiceRegisterCache {
      */
     public void notifyLdcMessageComing() {
         LOGGER.finer("ldc label has change or first time run service!");
-        Properties routeConfigProperties = LabelProperties.getAllLabelProperties().get(LDC_KEY);
-        JSONObject ldcJson = JSON.parseObject(routeConfigProperties.getProperty(LDC_VALUE_KEY));
-
+        final LdcConfiguration ldcConfiguration = LdcConfiguration.getInstance();
         // 信息已经补全但是发送失败并且ldc信息已经做了更新
         List<ServiceRegisterMessage> list = new ArrayList<ServiceRegisterMessage>(serviceRegisterMessageBlockingDeque.size());
         serviceRegisterMessageBlockingDeque.drainTo(list);
         for (ServiceRegisterMessage message : list) {
-            message.setLdc(ldcJson.getString(LDC_NAME_KEY));
-            message.setBusinesses(JSONArray.parseArray(ldcJson.getString(LDC_BUSINESS_KEY)));
+            message.setLdc(ldcConfiguration.getLdc());
+            message.setBusinesses(ldcConfiguration.getBusinesses());
             serviceRegisterMessageBlockingDeque.offer(message);
         }
 
         // 上报信息已经上报过，修改之后再一次上报
         for (Map.Entry<String, ServiceRegisterMessage> entry : alreadySentRegisterMessageDeque.entrySet()) {
             ServiceRegisterMessage message = entry.getValue();
-            message.setLdc(ldcJson.getString(LDC_NAME_KEY));
-            message.setBusinesses(JSONArray.parseArray(ldcJson.getString(LDC_BUSINESS_KEY)));
+            message.setLdc(ldcConfiguration.getLdc());
+            message.setBusinesses(ldcConfiguration.getBusinesses());
             offerServiceRegisterMessage(message);
         }
 
         // 信息未补全
         if (!serviceRegisterMessageList.isEmpty()) {
             for (ServiceRegisterMessage message : serviceRegisterMessageList) {
-                message.setLdc(ldcJson.getString(LDC_NAME_KEY));
-                message.setBusinesses(JSONArray.parseArray(ldcJson.getString(LDC_BUSINESS_KEY)));
+                message.setLdc(ldcConfiguration.getLdc());
+                message.setBusinesses(ldcConfiguration.getBusinesses());
             }
             filterData();
         }
