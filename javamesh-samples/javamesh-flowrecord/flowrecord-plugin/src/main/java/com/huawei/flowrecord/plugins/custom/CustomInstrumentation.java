@@ -6,10 +6,10 @@ package com.huawei.flowrecord.plugins.custom;
 
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
-import com.huawei.apm.bootstrap.definition.EnhanceDefinition;
-import com.huawei.apm.bootstrap.definition.MethodInterceptPoint;
-import com.huawei.apm.bootstrap.matcher.ClassMatcher;
-import com.huawei.apm.bootstrap.matcher.ClassMatchers;
+import com.huawei.apm.core.agent.definition.EnhanceDefinition;
+import com.huawei.apm.core.agent.definition.MethodInterceptPoint;
+import com.huawei.apm.core.agent.matcher.ClassMatcher;
+import com.huawei.apm.core.agent.matcher.ClassMatchers;
 import com.huawei.flowrecord.config.CommonConst;
 import com.huawei.flowrecord.config.FlowRecordConfig;
 import com.huawei.flowrecord.utils.PluginConfigUtil;

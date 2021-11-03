@@ -5,7 +5,7 @@
 package com.lubanops.stresstest.core;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
-import com.huawei.apm.bootstrap.lubanops.utils.StringUtils;
+import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.lubanops.stresstest.config.ConfigFactory;
 
 import java.util.Locale;

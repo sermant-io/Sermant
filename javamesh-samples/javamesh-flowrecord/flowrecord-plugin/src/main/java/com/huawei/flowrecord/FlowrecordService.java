@@ -1,13 +1,10 @@
 package com.huawei.flowrecord;
 
-import com.huawei.apm.bootstrap.boot.CoreServiceManager;
-import com.huawei.apm.bootstrap.boot.PluginService;
-import com.huawei.apm.bootstrap.boot.heartbeat.HeartbeatService;
+import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.service.PluginService;
+import com.huawei.apm.core.service.heartbeat.HeartbeatService;
 import com.huawei.flowrecord.config.FlowRecordConfig;
 import com.huawei.flowrecord.utils.PluginConfigUtil;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class FlowrecordService implements PluginService {
 

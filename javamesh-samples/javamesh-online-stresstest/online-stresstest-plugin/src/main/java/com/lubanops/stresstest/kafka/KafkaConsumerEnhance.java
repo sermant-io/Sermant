@@ -5,13 +5,12 @@
 package com.lubanops.stresstest.kafka;
 
 
-import com.huawei.apm.bootstrap.definition.EnhanceDefinition;
-import com.huawei.apm.bootstrap.definition.MethodInterceptPoint;
-import com.huawei.apm.bootstrap.matcher.ClassMatcher;
-import com.huawei.apm.bootstrap.matcher.ClassMatchers;
-import net.bytebuddy.description.method.MethodDescription;
+import com.huawei.apm.core.agent.definition.EnhanceDefinition;
+import com.huawei.apm.core.agent.definition.MethodInterceptPoint;
+import com.huawei.apm.core.agent.matcher.ClassMatcher;
+import com.huawei.apm.core.agent.matcher.ClassMatchers;
+
 import net.bytebuddy.matcher.ElementMatchers;
-import net.bytebuddy.matcher.MethodReturnTypeMatcher;
 
 /**
  * KafkaConsumer 增强

@@ -4,8 +4,8 @@
 
 package com.lubanops.stresstest.config;
 
-import com.huawei.apm.bootstrap.lubanops.api.APIService;
-import com.huawei.apm.bootstrap.lubanops.api.JSONAPI;
+import com.huawei.apm.core.lubanops.bootstrap.api.APIService;
+import com.huawei.apm.core.lubanops.bootstrap.api.JSONAPI;
 import com.lubanops.stresstest.config.bean.DataSourceInfo;
 
 import java.util.Map;

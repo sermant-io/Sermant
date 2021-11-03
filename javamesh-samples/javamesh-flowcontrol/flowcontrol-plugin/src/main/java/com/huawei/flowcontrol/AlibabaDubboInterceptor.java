@@ -7,7 +7,7 @@ package com.huawei.flowcontrol;
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.RpcContext;
-import com.huawei.apm.bootstrap.common.BeforeResult;
+import com.huawei.apm.core.agent.common.BeforeResult;
 import org.apache.dubbo.rpc.Result;
 
 import java.lang.reflect.Method;

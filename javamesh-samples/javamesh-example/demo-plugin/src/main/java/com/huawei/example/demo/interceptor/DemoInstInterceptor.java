@@ -6,8 +6,8 @@ package com.huawei.example.demo.interceptor;
 
 import java.lang.reflect.Method;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 
 /**
  * 实例方法的拦截器示例，本示例将展示如何对实例方法进行增强

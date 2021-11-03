@@ -42,7 +42,7 @@
 
 - 添加`功能(function)`模块，依据该`功能(function)`中包含的内容，在[javamesh-samples的pom文件](pom.xml)中添加相应模块：
   - 在`id`为`all`的`profile`中添加该模块。
-  - 如果该`功能(function)`包含`插件(plugin)`，那么需要在`id`为`plugin`的`profile`中添加该模块。
+  - 如果该`功能(function)`包含`插件(plugin)`，那么需要在`id`为`agent`的`profile`中添加该模块。
   - 如果该`功能(function)`包含其他内容，则需要在`id`为`ext`的`profile`中添加该模块。
   - 在`功能(function)`的`pom.xml`中添加以下标签：
   ```xml
@@ -59,7 +59,7 @@
   ```xml
   <profiles>
     <profile>
-      <id>plugin</id>
+      <id>agent</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -121,10 +121,10 @@
 
 ## 打包流程
 
-目前[JavaMesh](../pom.xml)的打包过程中，包含`prepare`、`agent`、`plugin`、`ext`、`example`、`package`和`all`
+目前[JavaMesh](../pom.xml)的打包过程中，包含`prepare`、`agent`、`ext`、`example`、`package`和`all`
 7个步骤，其中与[javamesh-samples](pom.xml)相关的步骤如下：
 
-- `plugin`: 对所有`插件(plugin)`进行打包，他们将输出到产品`agent/plugins/${功能名称}`目录。
+- `agent`: 对所有`插件(plugin)`进行打包，他们将输出到产品`agent/plugins/${功能名称}`目录。
 - `ext`: 对所有附加件进行打包，包括`后端(server)`、`前端(webapp)`和`其他(other)`，其中`后端(server)`将输出到产品的`server/${功能名称}`目录，`前端(webapp)`将输出到产品的`webapp/${功能名称}`目录，`其他(other)`没有特殊的打包要求。
 - `example`: 对示例功能[javamesh-example](javamesh-example)进行打包。
 - `all`: 对上述的所有内容进行打包。

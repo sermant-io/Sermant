@@ -4,7 +4,7 @@
 
 package com.huawei.example.demo.service;
 
-import com.huawei.apm.bootstrap.boot.PluginService;
+import com.huawei.apm.core.service.PluginService;
 
 /**
  * 示例服务，本示例中将展示如何编写一个插件服务

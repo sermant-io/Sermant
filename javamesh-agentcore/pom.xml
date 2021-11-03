@@ -10,7 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>javamesh-agentcore-bootstrap</module>
+        <module>javamesh-agentcore-core</module>
+        <module>javamesh-agentcore-premain</module>
     </modules>
 
     <artifactId>javamesh-agentcore</artifactId>
@@ -23,42 +24,18 @@
             <properties>
                 <app.env>dev</app.env>
             </properties>
-            <modules>
-                <module>javamesh-agentcore-bootstrap</module>
-                <module>javamesh-agentcore-premain</module>
-                <module>javamesh-agentcore-core-ext</module>
-                <module>javamesh-agentcore-core</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>plugin</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>javamesh-agentcore-bootstrap</module>
-            </modules>
         </profile>
         <profile>
             <id>example</id>
             <properties>
                 <app.env>test</app.env>
             </properties>
-            <modules>
-                <module>javamesh-agentcore-bootstrap</module>
-            </modules>
         </profile>
         <profile>
             <id>all</id>
             <properties>
                 <app.env>test</app.env>
             </properties>
-            <modules>
-                <module>javamesh-agentcore-bootstrap</module>
-                <module>javamesh-agentcore-premain</module>
-                <module>javamesh-agentcore-core-ext</module>
-                <module>javamesh-agentcore-core</module>
-            </modules>
         </profile>
     </profiles>
 

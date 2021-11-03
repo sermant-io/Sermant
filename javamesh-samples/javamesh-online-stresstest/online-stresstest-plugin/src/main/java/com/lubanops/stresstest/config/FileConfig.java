@@ -4,7 +4,7 @@
 
 package com.lubanops.stresstest.config;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 import java.io.*;
 import java.util.Properties;

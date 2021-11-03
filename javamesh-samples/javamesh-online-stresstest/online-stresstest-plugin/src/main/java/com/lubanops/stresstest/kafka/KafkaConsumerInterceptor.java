@@ -3,8 +3,8 @@
  */
 package com.lubanops.stresstest.kafka;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 import java.lang.reflect.Method;

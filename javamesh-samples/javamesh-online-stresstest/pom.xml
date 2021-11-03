@@ -21,7 +21,7 @@
 
     <profiles>
         <profile>
-            <id>plugin</id>
+            <id>agent</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>

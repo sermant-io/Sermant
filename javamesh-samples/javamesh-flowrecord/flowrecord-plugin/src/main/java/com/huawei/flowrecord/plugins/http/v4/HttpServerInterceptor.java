@@ -1,9 +1,9 @@
 package com.huawei.flowrecord.plugins.http.v4;
 
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
-import com.huawei.apm.bootstrap.lubanops.trace.TraceCollector;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.apm.core.lubanops.bootstrap.trace.TraceCollector;
 import com.huawei.flowrecord.config.CommonConst;
 import com.huawei.flowrecord.config.FlowRecordConfig;
 import com.huawei.flowrecord.domain.*;

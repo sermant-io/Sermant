@@ -2,8 +2,8 @@ package com.lubanops.apm.plugin.threadlocal;
 
 import com.alibaba.ttl.TtlCallable;
 import com.alibaba.ttl.TtlRunnable;
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;

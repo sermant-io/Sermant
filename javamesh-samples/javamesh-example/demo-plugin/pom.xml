@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>com.huawei.javamesh</groupId>
-            <artifactId>javamesh-agentcore-bootstrap</artifactId>
+            <artifactId>javamesh-agentcore-core</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

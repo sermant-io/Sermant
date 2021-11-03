@@ -4,10 +4,10 @@
 
 package com.huawei.javamesh.sample.servermonitor.service;
 
-import com.huawei.apm.bootstrap.boot.CoreServiceManager;
-import com.huawei.apm.bootstrap.boot.PluginService;
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-import com.huawei.apm.bootstrap.service.send.GatewayClient;
+import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.service.PluginService;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.service.send.GatewayClient;
 import com.huawei.javamesh.sample.servermonitor.collector.IbmJvmMetricCollector;
 import com.huawei.javamesh.sample.servermonitor.common.Consumer;
 import com.huawei.javamesh.sample.servermonitor.common.Supplier;

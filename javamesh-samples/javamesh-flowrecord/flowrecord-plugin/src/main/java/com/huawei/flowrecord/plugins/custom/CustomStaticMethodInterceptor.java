@@ -4,9 +4,9 @@
 
 package com.huawei.flowrecord.plugins.custom;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.StaticMethodInterceptor;
-import com.huawei.apm.bootstrap.lubanops.trace.TraceCollector;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
+import com.huawei.apm.core.lubanops.bootstrap.trace.TraceCollector;
 import com.huawei.flowrecord.config.ConfigConst;
 import com.huawei.flowrecord.config.FlowRecordConfig;
 import com.huawei.flowrecord.domain.RecordStatus;

@@ -4,9 +4,9 @@
 
 package com.huawei.example.demo.service;
 
-import com.huawei.apm.bootstrap.boot.CoreServiceManager;
-import com.huawei.apm.bootstrap.boot.PluginService;
-import com.huawei.apm.bootstrap.boot.heartbeat.HeartbeatService;
+import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.service.PluginService;
+import com.huawei.apm.core.service.heartbeat.HeartbeatService;
 
 /**
  * 本示例中，将展示如何在插件服务中使用心跳功能
