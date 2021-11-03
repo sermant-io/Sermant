@@ -4,8 +4,8 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>javamesh-samples</artifactId>
         <groupId>com.huawei.javamesh</groupId>
@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>route-server</module>
-        <module>apm-dubbo-2.7.x-gray-plugin</module>
+        <module>gray-dubbo-2.7.x-plugin</module>
         <module>nacos-plugin</module>
         <module>common</module>
         <module>label-plugin</module>
