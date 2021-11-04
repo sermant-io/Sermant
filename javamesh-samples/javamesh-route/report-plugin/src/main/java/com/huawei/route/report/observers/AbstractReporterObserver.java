@@ -5,7 +5,7 @@
 package com.huawei.route.report.observers;
 
 import com.huawei.route.common.label.observers.LabelUpdateObserver;
-import com.huawei.route.report.cache.ServiceRegisterCache;
+import com.huawei.route.common.report.cache.ServiceRegisterCache;
 
 /**
  * 上报模块标签配置更新器

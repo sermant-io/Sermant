@@ -5,7 +5,7 @@
 package com.huawei.route.report.send;
 
 
-import com.huawei.route.report.common.entity.ServiceRegisterMessage;
+import com.huawei.route.common.report.common.entity.ServiceRegisterMessage;
 
 import java.io.IOException;
 import java.util.HashSet;

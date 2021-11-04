@@ -4,20 +4,17 @@
 
 package com.huawei.route.common.gray.addr;
 
-import com.huawei.apm.core.config.ConfigLoader;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.route.common.factory.NamedThreadFactory;
 import com.huawei.route.common.gray.addr.entity.Addr;
 import com.huawei.route.common.gray.addr.entity.Instances;
-import com.huawei.route.common.gray.config.GrayConfig;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
+import com.huawei.route.common.report.acquire.TargetAddrAcquire;
+import com.huawei.route.common.report.common.entity.HttpClientResult;
 import com.huawei.route.common.utils.CollectionUtils;
-import com.huawei.route.common.utils.HttpClientResult;
-import com.huawei.route.common.utils.HttpClientUtils;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -187,8 +184,7 @@ public class AddrCache {
         JSONObject json = new JSONObject();
         json.put(GrayConstant.QUERY_SERVICE_ADDR_KEY, CACHE.keySet());
         try {
-            HttpClientResult httpClientResult = HttpClientUtils
-                    .doPost(ConfigLoader.getConfig(GrayConfig.class).getQueryInstanceAddrUrl(), json.toJSONString());
+            HttpClientResult httpClientResult = TargetAddrAcquire.getInstance().queryInstanceList(json.toJSONString());
             setCache(JSONArray.parseArray(httpClientResult.getContent(), Addr.class));
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Route server is error.", e);

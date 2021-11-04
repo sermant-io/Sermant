@@ -4,7 +4,7 @@
 
 package com.huawei.route.report.observers;
 
-import com.huawei.route.report.common.ReporterConstants;
+import com.huawei.route.common.report.common.ReporterConstants;
 
 import java.util.Map;
 import java.util.Properties;

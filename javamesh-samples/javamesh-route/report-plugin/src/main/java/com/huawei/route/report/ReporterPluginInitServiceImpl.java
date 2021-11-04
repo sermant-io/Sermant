@@ -9,12 +9,12 @@ import com.huawei.apm.core.config.ConfigLoader;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.route.common.factory.NamedThreadFactory;
 import com.huawei.route.common.label.observers.LabelObservers;
-import com.huawei.route.report.acquire.TargetAddrAcquire;
-import com.huawei.route.report.cache.ServiceRegisterCache;
-import com.huawei.route.report.common.entity.ServiceRegisterMessage;
+import com.huawei.route.common.report.acquire.TargetAddrAcquire;
+import com.huawei.route.common.report.cache.ServiceRegisterCache;
+import com.huawei.route.common.report.common.entity.ServiceRegisterMessage;
 import com.huawei.route.report.observers.GrayConfigurationObserver;
 import com.huawei.route.report.observers.LdcConfigurationObserver;
-import com.huawei.route.report.resterrormanage.LoggerPrintManage;
+import com.huawei.route.common.report.print.LoggerPrintManager;
 import com.huawei.route.report.send.ServiceRegistrarMessageSender;
 
 import java.util.Set;
@@ -48,7 +48,7 @@ public class ReporterPluginInitServiceImpl implements PluginService {
                 ServiceRegisterCache.getInstance().addServiceRegisterMessage(list);
 
                 // 判断错误日志是否打印，如果接口出现问题频繁打印影响其他问题定位
-                if (LoggerPrintManage.getInstance().shouldPrintLogger()) {
+                if (LoggerPrintManager.getInstance().shouldPrintLogger()) {
                     LOGGER.log(Level.WARNING, "send ServiceRegistrarMessage to route server fail. {}",
                             t.getMessage());
                 }

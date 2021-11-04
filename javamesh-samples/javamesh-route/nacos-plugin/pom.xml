@@ -38,12 +38,6 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.huawei.javamesh</groupId>
-            <artifactId>report-plugin</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <build>

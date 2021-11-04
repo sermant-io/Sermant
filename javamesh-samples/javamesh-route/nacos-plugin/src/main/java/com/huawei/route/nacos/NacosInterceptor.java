@@ -10,9 +10,9 @@ import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.route.common.label.heartbeat.HeartbeatInfoProvider;
 import com.huawei.route.common.threadlocal.ThreadLocalContext;
-import com.huawei.route.report.cache.ServiceRegisterCache;
-import com.huawei.route.report.common.entity.ServiceEssentialMessage;
-import com.huawei.route.report.common.entity.ServiceRegisterMessage;
+import com.huawei.route.common.report.cache.ServiceRegisterCache;
+import com.huawei.route.common.report.common.entity.ServiceEssentialMessage;
+import com.huawei.route.common.report.common.entity.ServiceRegisterMessage;
 
 import java.lang.reflect.Method;
 import java.util.Map;

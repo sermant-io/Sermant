@@ -17,7 +17,6 @@
     <description>标签库开启插件</description>
     <properties>
         <package.sample.dir>${package.agent.dir}/plugins</package.sample.dir>
-        <shade.distinct.prefix>com.huawei.plugin.dependencies.label</shade.distinct.prefix>
     </properties>
 
     <dependencies>
@@ -42,7 +41,7 @@
                     <relocations>
                         <relocation>
                             <pattern>io.netty</pattern>
-                            <shadedPattern>${shade.distinct.prefix}.io.netty</shadedPattern>
+                            <shadedPattern>${shade.common.prefix}.io.netty</shadedPattern>
                         </relocation>
                     </relocations>
                     <transformers>

@@ -7,9 +7,9 @@ package com.huawei.route.report;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.route.report.common.entity.ServiceRegisterMessage;
+import com.huawei.route.common.report.common.entity.ServiceRegisterMessage;
 import com.huawei.route.report.send.ServiceRegistrarMessageSender;
-import com.huawei.route.report.acquire.TargetAddrAcquire;
+import com.huawei.route.common.report.acquire.TargetAddrAcquire;
 
 import java.io.IOException;
 import java.util.Locale;
