@@ -35,6 +35,11 @@ public class FailedInfo {
      */
     public static final String UPDATE_SCENE_FAIL = "修改场景失败";
 
+    /**
+     * 上传文件失败
+     */
+    public static final String UPLOAD_FAIL = "文件上传失败";
+
     private FailedInfo() {
     }
 }

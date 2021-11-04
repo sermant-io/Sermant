@@ -9,11 +9,16 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>emergency_drill</artifactId>
+    <artifactId>javamesh-emergency</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>emergency_drill</name>
-    <description>emergency_drill</description>
+    <name>javamesh-emergency</name>
+    <description>javamesh-emergency</description>
     <properties>
+        <!-- 文件拷贝时的编码 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- 编译时的编码 -->
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <java.version>1.8</java.version>
         <mybatis.version>2.1.0</mybatis.version>
         <druid.version>1.1.10</druid.version>
@@ -127,8 +132,39 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <!-- 项目编码-->
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <linkXRef>false</linkXRef>
+                    <encoding>UTF-8</encoding>
+                    <configLocation>./checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                    <configurationFile>src/main/resources/mybatis-generator.xml</configurationFile>
+                    <overwrite>true</overwrite>
+                    <includeAllDependencies>true</includeAllDependencies>
+                </configuration>
             </plugin>
         </plugins>
     </build>

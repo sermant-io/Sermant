@@ -46,6 +46,8 @@ spring:
   #        deny: 192.168.31.253
   #        reset-enable: false
 mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
   type-aliases-package: com.huawei.emergency.mapper
   mapper-locations: classpath*:mapper/*.xml
 #用户名
