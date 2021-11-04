@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  * @version 1.0
  * @since 2021-07-15
  */
-public class SendServiceRegisterMessage implements ServiceRegistrarMessageSender {
+public class DefaultServiceRegisterMessageSender implements ServiceRegistrarMessageSender {
     private static final Logger LOGGER = LogFactory.getLogger();
 
     @Override

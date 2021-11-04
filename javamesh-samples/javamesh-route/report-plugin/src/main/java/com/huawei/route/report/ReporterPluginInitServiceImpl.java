@@ -80,7 +80,7 @@ public class ReporterPluginInitServiceImpl implements PluginService {
         // 初始化上报器
         TargetAddrAcquire.initAcquire(config.getServerUrls());
         // 初始化发送器
-        httpSender = new SendServiceRegisterMessage();
+        httpSender = new DefaultServiceRegisterMessageSender();
     }
 
     @Override

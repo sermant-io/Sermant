@@ -36,12 +36,6 @@
             <groupId>com.huawei.javamesh</groupId>
             <artifactId>common</artifactId>
             <version>1.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.alibaba</groupId>
-                    <artifactId>fastjson</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
     <build>
@@ -58,8 +52,8 @@
                         <configuration>
                             <relocations>
                                 <relocation>
-                                    <pattern>org.apache</pattern>
-                                    <shadedPattern>${shade.common.prefix}.org.apache</shadedPattern>
+                                    <pattern>org.apache.http</pattern>
+                                    <shadedPattern>${shade.common.prefix}.org.apache.http</shadedPattern>
                                 </relocation>
                             </relocations>
                             <transformers>
