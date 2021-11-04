@@ -4,7 +4,7 @@
 
 package com.huawei.gray.dubbo.strategy;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.gray.dubbo.strategy.type.ArrayTypeStrategy;
 import com.huawei.gray.dubbo.strategy.type.EmptyTypeStrategy;
 import com.huawei.gray.dubbo.strategy.type.EnabledTypeStrategy;

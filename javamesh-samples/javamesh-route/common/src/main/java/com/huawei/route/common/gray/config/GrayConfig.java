@@ -4,8 +4,8 @@
 
 package com.huawei.route.common.gray.config;
 
-import com.huawei.apm.bootstrap.config.BaseConfig;
-import com.huawei.apm.bootstrap.config.ConfigTypeKey;
+import com.huawei.apm.core.config.BaseConfig;
+import com.huawei.apm.core.config.ConfigTypeKey;
 
 /**
  * 灰度配置

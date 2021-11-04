@@ -4,12 +4,11 @@
 
 package com.huawei.gray.dubbo.registry;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.gray.dubbo.utils.RouterUtil;
-
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.registry.integration.RegistryDirectory;
 import org.apache.dubbo.rpc.Invoker;

@@ -4,8 +4,8 @@
 
 package com.huawei.route.report.cache;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-import com.huawei.apm.bootstrap.lubanops.utils.StringUtils;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.route.report.common.LdcConfiguration;
 import com.huawei.route.report.common.entity.ServiceEssentialMessage;
 import com.huawei.route.report.common.entity.ServiceRegisterMessage;

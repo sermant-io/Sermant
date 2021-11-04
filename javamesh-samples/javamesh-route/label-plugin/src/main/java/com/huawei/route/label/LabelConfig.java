@@ -4,8 +4,8 @@
 
 package com.huawei.route.label;
 
-import com.huawei.apm.bootstrap.config.BaseConfig;
-import com.huawei.apm.bootstrap.config.ConfigTypeKey;
+import com.huawei.apm.core.config.BaseConfig;
+import com.huawei.apm.core.config.ConfigTypeKey;
 
 /**
  * 标签库配置

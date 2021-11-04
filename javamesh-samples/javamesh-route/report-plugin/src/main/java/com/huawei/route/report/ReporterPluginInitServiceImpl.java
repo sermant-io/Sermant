@@ -4,9 +4,9 @@
 
 package com.huawei.route.report;
 
-import com.huawei.apm.bootstrap.boot.PluginService;
-import com.huawei.apm.bootstrap.config.ConfigLoader;
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.service.PluginService;
+import com.huawei.apm.core.config.ConfigLoader;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.route.common.factory.NamedThreadFactory;
 import com.huawei.route.common.label.observers.LabelObservers;
 import com.huawei.route.report.acquire.TargetAddrAcquire;

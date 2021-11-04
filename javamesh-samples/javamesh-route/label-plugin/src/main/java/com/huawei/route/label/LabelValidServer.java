@@ -4,7 +4,7 @@
 
 package com.huawei.route.label;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.AdaptiveRecvByteBufAllocator;
 import io.netty.channel.ChannelFuture;

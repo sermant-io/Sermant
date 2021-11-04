@@ -4,8 +4,8 @@
 
 package com.huawei.route.report;
 
-import com.huawei.apm.bootstrap.config.BaseConfig;
-import com.huawei.apm.bootstrap.config.ConfigTypeKey;
+import com.huawei.apm.core.config.BaseConfig;
+import com.huawei.apm.core.config.ConfigTypeKey;
 
 /**
  * 上报插件配置

@@ -4,8 +4,8 @@
 
 package com.huawei.route.label;
 
-import com.huawei.apm.bootstrap.boot.PluginService;
-import com.huawei.apm.bootstrap.config.ConfigLoader;
+import com.huawei.apm.core.service.PluginService;
+import com.huawei.apm.core.config.ConfigLoader;
 
 /**
  * 标签初始化

@@ -4,8 +4,8 @@
 
 package com.huawei.route.nacos;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.StaticMethodInterceptor;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
 import com.huawei.route.common.threadlocal.ThreadLocalContext;
 
 import java.lang.reflect.Method;

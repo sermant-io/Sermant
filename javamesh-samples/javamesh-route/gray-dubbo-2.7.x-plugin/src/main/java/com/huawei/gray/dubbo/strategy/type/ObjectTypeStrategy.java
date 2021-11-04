@@ -4,8 +4,8 @@
 
 package com.huawei.gray.dubbo.strategy.type;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-import com.huawei.apm.bootstrap.lubanops.utils.StringUtils;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
 
 import java.lang.reflect.Field;

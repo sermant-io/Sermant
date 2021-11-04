@@ -7,7 +7,7 @@ package com.huawei.route.report.common;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 import java.util.List;
 import java.util.Locale;

@@ -4,11 +4,11 @@
 
 package com.huawei.route.label;
 
-import com.huawei.apm.bootstrap.boot.CoreServiceManager;
-import com.huawei.apm.bootstrap.boot.heartbeat.HeartbeatInterval;
-import com.huawei.apm.bootstrap.boot.heartbeat.HeartbeatService;
-import com.huawei.apm.bootstrap.lubanops.config.IdentityConfigManager;
-import com.huawei.apm.bootstrap.lubanops.utils.StringUtils;
+import com.huawei.apm.core.lubanops.bootstrap.config.IdentityConfigManager;
+import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.service.heartbeat.HeartbeatInterval;
+import com.huawei.apm.core.service.heartbeat.HeartbeatService;
 import com.huawei.route.common.factory.NamedThreadFactory;
 import com.huawei.route.common.label.heartbeat.HeartbeatInfoProvider;
 import com.huawei.route.common.utils.IpUtil;

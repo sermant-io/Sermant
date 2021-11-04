@@ -4,8 +4,8 @@
 
 package com.huawei.route.common.label.observers;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-import com.huawei.apm.bootstrap.lubanops.utils.StringUtils;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

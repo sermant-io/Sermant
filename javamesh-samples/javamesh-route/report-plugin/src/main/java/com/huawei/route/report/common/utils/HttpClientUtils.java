@@ -4,7 +4,7 @@
 
 package com.huawei.route.report.common.utils;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.route.report.common.entity.HttpClientResult;
 import org.apache.http.Consts;
 import org.apache.http.HttpStatus;

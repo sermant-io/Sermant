@@ -4,7 +4,7 @@
 
 package com.huawei.route.common.label.heartbeat;
 
-import com.huawei.apm.bootstrap.boot.heartbeat.HeartbeatService;
+import com.huawei.apm.core.service.heartbeat.HeartbeatService;
 
 import java.util.HashMap;
 import java.util.Map;

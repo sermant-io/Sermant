@@ -4,7 +4,7 @@
 
 package com.huawei.gray.dubbo.label;
 
-import com.huawei.apm.bootstrap.lubanops.utils.StringUtils;
+import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.route.common.constants.GrayConstant;
 import com.huawei.route.common.gray.addr.AddrCache;

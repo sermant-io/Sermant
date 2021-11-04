@@ -4,8 +4,8 @@
 
 package com.huawei.route.common.gray.addr;
 
-import com.huawei.apm.bootstrap.config.ConfigLoader;
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.config.ConfigLoader;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.route.common.constants.GrayConstant;
 import com.huawei.route.common.factory.NamedThreadFactory;
 import com.huawei.route.common.gray.addr.entity.Addr;

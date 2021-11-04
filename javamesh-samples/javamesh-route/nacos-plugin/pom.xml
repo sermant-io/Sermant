@@ -27,12 +27,6 @@
             <version>${nacos.version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.huawei.javamesh</groupId>
-            <artifactId>javamesh-agentcore-bootstrap</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>com.huawei.javamesh</groupId>
             <artifactId>javamesh-agentcore-core</artifactId>

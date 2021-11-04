@@ -6,8 +6,8 @@ package com.huawei.route.report.acquire;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-import com.huawei.apm.bootstrap.lubanops.utils.StringUtils;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.route.report.acquire.selector.UrlSelectorFacade;
 import com.huawei.route.report.common.entity.DataSource;
 import com.huawei.route.report.common.entity.HttpClientResult;

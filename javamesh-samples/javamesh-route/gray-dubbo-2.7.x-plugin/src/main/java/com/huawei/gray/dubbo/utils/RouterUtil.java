@@ -4,8 +4,8 @@
 
 package com.huawei.gray.dubbo.utils;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-import com.huawei.apm.bootstrap.lubanops.utils.StringUtils;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.gray.dubbo.label.GrayLabelObserver;
 import com.huawei.gray.dubbo.strategy.TypeStrategy;

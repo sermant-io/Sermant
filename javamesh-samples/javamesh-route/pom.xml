@@ -31,12 +31,15 @@
 
     <profiles>
         <profile>
-            <id>plugin</id>
+            <id>agent</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
                 <module>nacos-plugin</module>
+                <module>report-plugin</module>
+                <module>label-plugin</module>
+                <module>gray-dubbo-2.7.x-plugin</module>
             </modules>
         </profile>
         <profile>
@@ -53,6 +56,9 @@
             <modules>
                 <module>nacos-plugin</module>
                 <module>route-server</module>
+                <module>report-plugin</module>
+                <module>label-plugin</module>
+                <module>gray-dubbo-2.7.x-plugin</module>
             </modules>
         </profile>
     </profiles>
