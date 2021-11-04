@@ -26,6 +26,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.huawei.apm.core.exception.ConfigDupIndexException;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
@@ -176,7 +177,7 @@ public class CommonLoadConfigStrategy implements LoadConfigStrategy<Properties> 
      * @return 配置信息
      */
     private Object getConfig(Properties config, String key, Field field) {
-        final String configStr = fixConfig(config.getProperty(key), config);
+        final String configStr = fixConfig(key, config.getProperty(key), config);
         final Class<?> fieldType = field.getType();
         if (fieldType.isArray()) {
             return toArrayType(configStr, fieldType.getComponentType());
@@ -291,19 +292,24 @@ public class CommonLoadConfigStrategy implements LoadConfigStrategy<Properties> 
     /**
      * 修正形如"${}"的配置，解析为配置、环境变量或系统变量
      *
+     * @param configKey 配置信息键
      * @param configStr 配置信息字符串
+     * @param config    配置信息集
      * @return 修正后的配置信息字符串
      */
-    private String fixConfig(String configStr, Properties config) {
+    private String fixConfig(String configKey, String configStr, Properties config) {
         if (configStr != null && configStr.matches("^.*\\$\\{[\\w.:]+}.*$")) {
             final int startIndex = configStr.indexOf("${") + 2;
             final int endIndex = configStr.indexOf('}', startIndex);
             final String envKey = configStr.substring(startIndex, endIndex);
             final int separatorIndex = envKey.indexOf(':');
             final String key = separatorIndex >= 0 ? envKey.substring(0, separatorIndex) : envKey;
+            if (configKey.equals(key)) {
+                throw new ConfigDupIndexException(key);
+            }
             final String defaultValue = separatorIndex >= 0 ? envKey.substring(separatorIndex + 1) : "";
             final String fixedValue = getFixedValue(key, defaultValue, config);
-            return fixConfig(configStr.substring(0, startIndex - 2) + fixedValue
+            return fixConfig(configKey, configStr.substring(0, startIndex - 2) + fixedValue
                     + configStr.substring(endIndex + 1), config);
         }
         return configStr;
@@ -361,6 +367,7 @@ public class CommonLoadConfigStrategy implements LoadConfigStrategy<Properties> 
      *
      * @param key          键
      * @param defaultValue 默认值
+     * @param config       配置信息
      * @return 环境变量或系统变量
      */
     private String getFixedValue(String key, String defaultValue, Properties config) {
