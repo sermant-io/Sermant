@@ -11,5 +11,4 @@ package com.huawei.route.server.rules.define.matcher;
  * @since 2021-10-23
  */
 public interface Matcher {
-
 }

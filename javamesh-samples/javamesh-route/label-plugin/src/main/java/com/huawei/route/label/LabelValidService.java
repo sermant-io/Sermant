@@ -49,6 +49,11 @@ public enum LabelValidService {
             new LinkedBlockingQueue<Runnable>(),
             new NamedThreadFactory("Thread-LabelValid-Service"));
 
+    /**
+     * 服务启动入口
+     *
+     * @param port 指定的netty端口
+     */
     public synchronized void start(final int port) {
         if (isInit) {
             return;
@@ -63,6 +68,9 @@ public enum LabelValidService {
         initHeartbeat(port);
     }
 
+    /**
+     * 服务停止
+     */
     public synchronized void stop() {
         threadPoolExecutor.shutdown();
     }
@@ -88,5 +96,4 @@ public enum LabelValidService {
         }
         return instanceName;
     }
-
 }

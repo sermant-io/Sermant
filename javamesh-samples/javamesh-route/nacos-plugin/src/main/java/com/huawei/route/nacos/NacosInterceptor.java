@@ -75,8 +75,7 @@ public class NacosInterceptor implements InstanceMethodInterceptor {
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
-
+    public void onThrow(Object obj, Method method, Object[] arguments, Throwable throwable) {
     }
 
     private void registerHeartbeat(Map<String, String> metadata, Instance instance, String serviceName) {

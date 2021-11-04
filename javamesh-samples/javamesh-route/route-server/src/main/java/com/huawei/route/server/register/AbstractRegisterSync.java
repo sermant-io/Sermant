@@ -35,6 +35,10 @@ public abstract class AbstractRegisterSync<S extends AbstractService<T>, T exten
     @Resource(name = "redisRouteSharer")
     private RouteSharer<ServiceRegistrarMessage> redisRouteSharer;
 
+    /**
+     * 注册数据共享通知器
+     * 基于zookeeper的观察者模式，当数据更新时，通知到每一个路由server对共享的数据进行更新
+     */
     @PostConstruct
     public void register() {
         zookeeperPathNotifierManager.registerTrigger(RouteConstants.SHARE_NOTIFIER_PATH, data -> {

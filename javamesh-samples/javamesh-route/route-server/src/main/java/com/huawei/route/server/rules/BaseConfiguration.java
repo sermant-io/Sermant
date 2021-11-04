@@ -18,7 +18,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BaseConfiguration {
-
     /**
      * 该配置是否生效
      */

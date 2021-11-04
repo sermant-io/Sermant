@@ -35,6 +35,13 @@ public class LabelValidClient {
         this.port = port;
     }
 
+    /**
+     * netty客户端启动入口
+     *
+     * @param data 需发送的数据
+     * @return String
+     * @throws InterruptedException 线程中断抛出
+     */
     public String start(String data) throws InterruptedException {
         EventLoopGroup clientGroup = new NioEventLoopGroup();
         Bootstrap clientBootStrap = new Bootstrap();

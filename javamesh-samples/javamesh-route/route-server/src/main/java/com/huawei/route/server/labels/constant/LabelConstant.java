@@ -52,11 +52,6 @@ public class LabelConstant {
     public static final String VALID_MARKING = "on";
 
     /**
-     * 值为true的字符串
-     */
-    public static final String TRUE_STRING = "true";
-
-    /**
      * 错误码 -1
      */
     public static final int ERROR_CODE = -1;
@@ -97,11 +92,6 @@ public class LabelConstant {
     public static final String INSTANCE_NAMES = "instanceNames";
 
     /**
-     * 标签组的key标识
-     */
-    public static final String LABEL_GROUPS = "labelGroups";
-
-    /**
      * 标签生效后存储的redis的key
      */
     public static final String TEMP_STRING = "temp";
@@ -111,15 +101,10 @@ public class LabelConstant {
      */
     public static final String VALID = "valid";
 
-    public static final int ERROR_CODE_ONE = 1;
-
-    public static final int SUCCESS_CODE = 0;
-
     /**
-     * 无权限操作
+     * 失败码
      */
-    public static final int PERMISSION_ERROR_CODE = 2;
-    public static final String PERMISSION_ERROR_MSG = "无权限操作";
+    public static final int ERROR_CODE_ONE = 1;
 
     /**
      * netty ip
@@ -131,6 +116,9 @@ public class LabelConstant {
      */
     public static final String NETTY_PORT = "netty.port";
 
+    /**
+     * 更新时间戳
+     */
     public static final String UPDATE_TIMESTAMP = "updateTimeStamp";
 
     /**

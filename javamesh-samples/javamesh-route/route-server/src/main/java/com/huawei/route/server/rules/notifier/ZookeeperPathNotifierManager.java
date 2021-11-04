@@ -62,6 +62,9 @@ public class ZookeeperPathNotifierManager {
         listenerCache.put(path, pathTrigger);
     }
 
+    /**
+     * 关闭所有监听器
+     */
     @PreDestroy
     public void close() {
         listenerCache.values().forEach(PathTrigger::close);
@@ -87,12 +90,20 @@ public class ZookeeperPathNotifierManager {
             }
         }
 
+        /**
+         * 关闭tree cache
+         */
         public void close() {
             if (this.treeCache != null) {
                 this.treeCache.close();
             }
         }
 
+        /**
+         * 添加监听器
+         *
+         * @param notifier 通知监听器
+         */
         public void addListener(Notifier notifier) {
             if (this.treeCache != null) {
                 treeCache.getListenable().addListener(new NotifierCacheListener(notifier));
@@ -107,6 +118,12 @@ public class ZookeeperPathNotifierManager {
             this.notifier = notifier;
         }
 
+        /**
+         * zk事件
+         *
+         * @param client zk客户端
+         * @param event 事件
+         */
         @Override
         public void childEvent(CuratorFramework client, TreeCacheEvent event) {
             final TreeCacheEvent.Type type = event.getType();

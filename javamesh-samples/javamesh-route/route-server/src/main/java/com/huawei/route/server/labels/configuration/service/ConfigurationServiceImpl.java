@@ -62,6 +62,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         this.zkClient = zkClient;
     }
 
+    /**
+     * zookeeper客户端初始化
+     */
     @PostConstruct
     public void init() {
         try {
@@ -301,7 +304,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         } catch (CustomGenericException e) {
             result = Result.ofFail(e.getCode(), e.getErrMsg());
         } catch (Exception e) {
-            LOGGER.error("修改配置失败", e);
+            LOGGER.error("update config failed!", e);
             throw new CustomGenericException(ERROR_CODE_ONE, "修改配置失败: " + e.getMessage());
         }
         return result;

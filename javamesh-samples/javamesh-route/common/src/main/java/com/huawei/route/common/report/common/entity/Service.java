@@ -5,16 +5,29 @@ import com.alibaba.fastjson.annotation.JSONField;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 服务
+ */
 public class Service {
     private ServiceStatus serviceStatus;
 
     private String serviceName;
 
+    /**
+     * 获取服务状态
+     *
+     * @return 服务状态
+     */
     @JSONField(name = "status")
     public int getStatus() {
         return serviceStatus.getStatus();
     }
 
+    /**
+     * 设置服务状态
+     *
+     * @param status 状态
+     */
     @JSONField(name = "status")
     public void setStatus(int status) {
         this.serviceStatus = ServiceStatus.getEnum(status);
@@ -30,6 +43,9 @@ public class Service {
         this.serviceStatus = serviceStatus;
     }
 
+    /**
+     * 服务状态
+     */
     public enum ServiceStatus {
         /**
          * 正常
@@ -49,10 +65,21 @@ public class Service {
             }
         }
 
+        /**
+         * 获取状态
+         *
+         * @return 状态
+         */
         public int getStatus() {
             return status;
         }
 
+        /**
+         * 获取服务状态
+         *
+         * @param status 状态
+         * @return ServiceStatus
+         */
         public static ServiceStatus getEnum(int status) {
             return CODE_MAP.get(status);
         }

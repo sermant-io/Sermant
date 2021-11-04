@@ -6,6 +6,7 @@ import com.huawei.route.server.rules.InstanceTagConfiguration;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -17,7 +18,6 @@ import java.util.Objects;
  */
 @Getter
 public abstract class AbstractInstance {
-
     /**
      * 该实例的ldc
      */
@@ -80,9 +80,14 @@ public abstract class AbstractInstance {
     @JsonIgnore
     public abstract String getHolderKey();
 
+    /**
+     * 获取实例键
+     *
+     * @return instanceKey
+     */
     @JsonIgnore
     public String getInstanceKey() {
-        return String.format("%s@%d", ip , port);
+        return String.format(Locale.ENGLISH, "%s@%d", ip , port);
     }
 
     public void setInstanceTagConfiguration(InstanceTagConfiguration instanceTagConfiguration) {
@@ -104,6 +109,11 @@ public abstract class AbstractInstance {
         }
     }
 
+    /**
+     * 获取标签名
+     *
+     * @return 标签名
+     */
     @JsonIgnore
     public String getTagName() {
         if (currentTag == null) {
@@ -113,14 +123,14 @@ public abstract class AbstractInstance {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        AbstractInstance instance = (AbstractInstance) o;
+        AbstractInstance instance = (AbstractInstance) obj;
         return port == instance.port && ip.equals(instance.ip);
     }
 

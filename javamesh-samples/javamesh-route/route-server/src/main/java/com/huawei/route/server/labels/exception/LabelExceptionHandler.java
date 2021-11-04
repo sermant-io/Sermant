@@ -28,22 +28,40 @@ import static com.huawei.route.server.labels.constant.LabelConstant.ERROR_CODE_O
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class LabelExceptionHandler {
+    /**
+     * 处理标签组自定义异常
+     *
+     * @param exception 自定义异常
+     * @return Result
+     */
     @ResponseBody
     @ExceptionHandler(value = CustomGenericException.class)
-    public Result<Object> labelErrorHandler(CustomGenericException e) {
-        if (e != null) {
-            return Result.ofFail(e.getCode(), e.getErrMsg());
+    public Result<Object> labelErrorHandler(CustomGenericException exception) {
+        if (exception != null) {
+            return Result.ofFail(exception.getCode(), exception.getErrMsg());
         }
 
         return Result.builder().build();
     }
 
+    /**
+     * 参数异常处理
+     *
+     * @param notValidException 参数异常
+     * @return Result
+     */
     @ResponseBody
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public Result labelErrorHandler(MethodArgumentNotValidException e) {
-        return Result.ofFail(ERROR_CODE_ONE, e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+    public Result labelErrorHandler(MethodArgumentNotValidException notValidException) {
+        return Result.ofFail(ERROR_CODE_ONE, notValidException.getBindingResult().getAllErrors().get(0).getDefaultMessage());
     }
 
+    /**
+     * 未知异常处理
+     *
+     * @param exception 异常
+     * @return Result
+     */
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public Result labelErrorHandler(Exception exception) {
@@ -51,18 +69,29 @@ public class LabelExceptionHandler {
             return Result.ofFail(ERROR_CODE_ONE, "参数错误");
         }
         return Result.ofFail(ERROR_CODE_ONE, exception.getMessage());
-
     }
 
+    /**
+     * 绑定异常处理
+     *
+     * @param bindException 绑定异常
+     * @return Result
+     */
     @ResponseBody
     @ExceptionHandler(value = BindException.class)
-    public Result labelErrorHandler(BindException e) {
-        return Result.ofFail(ERROR_CODE, e.getBindingResult().getFieldError().getDefaultMessage());
+    public Result labelErrorHandler(BindException bindException) {
+        return Result.ofFail(ERROR_CODE, bindException.getBindingResult().getFieldError().getDefaultMessage());
     }
 
+    /**
+     * 校验异常处理
+     *
+     * @param violationException 校验异常
+     * @return Result
+     */
     @ResponseBody
     @ExceptionHandler(value = ConstraintViolationException.class)
-    public Result labelErrorHandler(ConstraintViolationException e) {
-        return Result.ofFail(ERROR_CODE, e.getConstraintViolations().iterator().next().getMessage());
+    public Result labelErrorHandler(ConstraintViolationException violationException) {
+        return Result.ofFail(ERROR_CODE, violationException.getConstraintViolations().iterator().next().getMessage());
     }
 }

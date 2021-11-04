@@ -73,6 +73,9 @@ public class LoginController {
 
     private String loginUrl;
 
+    /**
+     * 初始化方法，解析cas登录地址
+     */
     @PostConstruct
     public void init() {
         String serviceUrl = casClientUrl.replace(":", "%3A");

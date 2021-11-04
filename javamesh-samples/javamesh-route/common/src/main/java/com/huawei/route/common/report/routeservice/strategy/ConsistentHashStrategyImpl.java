@@ -40,12 +40,12 @@ public class ConsistentHashStrategyImpl implements InterfaceRouteStrategy {
         TreeMap<Long, T> addressRing = new TreeMap<Long, T>();
         for (T address : addrList) {
             for (int i = 0; i < VIRTUAL_NODE_NUM; i++) {
-                long addressHash = HashcodeUtil.FNV1_32_HASH("SHARD-" + address + "-NODE-" + i);
+                long addressHash = HashcodeUtil.fnv132Hash("SHARD-" + address + "-NODE-" + i);
                 addressRing.put(addressHash, address);
             }
         }
 
-        Long requestAddrHashcode = HashcodeUtil.FNV1_32_HASH(param);
+        Long requestAddrHashcode = HashcodeUtil.fnv132Hash(param);
         SortedMap<Long, T> tailMap = addressRing.tailMap(requestAddrHashcode);
         if (!tailMap.isEmpty()) {
             return tailMap.get(tailMap.firstKey());

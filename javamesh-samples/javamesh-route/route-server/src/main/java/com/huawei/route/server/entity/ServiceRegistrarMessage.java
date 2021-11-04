@@ -17,7 +17,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ServiceRegistrarMessage extends BaseRegistrarMessage{
-
     /**
      * 下游服务名称
      */

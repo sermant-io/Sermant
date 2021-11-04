@@ -16,17 +16,24 @@ import java.util.Collection;
  * @author zhouss
  * @since 2021-10-18
  */
-@SuppressWarnings("all")
 public abstract class RouteSharer<T> {
-
-    private final PathDataUpdater pathDataUpdater;
-
-    String SHARE_KEY = "ROUTE_SERVER_SHARE";
+    /**
+     * 数据分享键
+     */
+    protected static final String SHARE_KEY = "ROUTE_SERVER_SHARE";
 
     protected RouteSharer(PathDataUpdater pathDataUpdater) {
         this.pathDataUpdater = pathDataUpdater;
     }
 
+    private final PathDataUpdater pathDataUpdater;
+
+    /**
+     * 数据共享
+     *
+     * @param data 共享数据
+     * @return 是否共享成功
+     */
     public boolean share(T[] data) {
         if (shareAllData(data)) {
             pathDataUpdater.updatePathData(RouteConstants.SHARE_NOTIFIER_PATH, null);

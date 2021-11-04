@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
+import java.util.Locale;
+
 /**
  * 标签库心跳
  *
@@ -45,12 +47,12 @@ public class InstanceHeartBeat {
     }
 
     /**
-     * 实例key，由ip@port组合
+     * 实例key
      *
      * @return key
      */
     public String getInstanceKey() {
-        return String.format("%s@%d", ip, registerPort);
+        return String.format(Locale.ENGLISH, "%s@%d", ip, registerPort);
     }
 
     /**
@@ -63,5 +65,4 @@ public class InstanceHeartBeat {
         return new InstanceHeartBeat(heartbeatJson.getString("ip"),
                 heartbeatJson.getInteger("registerPort"), heartbeatJson.getString("registerServiceName"));
     }
-
 }

@@ -129,7 +129,7 @@ public class ServiceInstanceListener implements EventListener {
      * @return InstanceHolder
      */
     private Map<String, InstanceHolder<NacosInstance>> convert(List<Instance> instances, String serviceName,
-                                                               String nacosServiceName) {
+        String nacosServiceName) {
         final NacosService nacosService = registerInfo.get(serviceName);
         // 1、获取实例列表
         Map<String, InstanceHolder<NacosInstance>> instanceHolders = getInstanceHolders(nacosService);
@@ -144,10 +144,7 @@ public class ServiceInstanceListener implements EventListener {
     }
 
     private void updateInstanceHolder(InstanceHolder<NacosInstance> nacosInstanceInstanceHolder,
-                                      String nacosServiceName,
-                                      List<Instance> instances,
-                                      String serviceName,
-                                      String holderKey) {
+        String nacosServiceName, List<Instance> instances, String serviceName, String holderKey) {
         // 获取旧的分组实例列表缓存，其中集合存储的数据为 ip@port
         final Set<String> oldIpGroup = getOldGroupInstances(nacosInstanceInstanceHolder, nacosServiceName);
         final Set<String> newIpGroup = new HashSet<>();
@@ -169,7 +166,7 @@ public class ServiceInstanceListener implements EventListener {
     }
 
     private Set<String> getOldGroupInstances(InstanceHolder<NacosInstance> nacosInstanceInstanceHolder,
-                                             String nacosServiceName) {
+        String nacosServiceName) {
         Map<String, Set<String>> serviceGroup = nacosInstanceInstanceHolder.getServiceGroup();
         if (serviceGroup == null) {
             serviceGroup = new HashMap<>();
@@ -200,7 +197,7 @@ public class ServiceInstanceListener implements EventListener {
      * @return NacosInstance
      */
     private NacosInstance buildNacosInstance(InstanceHolder<NacosInstance> nacosInstanceInstanceHolder,
-                                             Instance instance, String serviceName) {
+        Instance instance, String serviceName) {
         NacosInstance originInstance = nacosInstanceInstanceHolder
                 .getInstance(getInstanceKey(instance.getIp(), instance.getPort()));
         if (originInstance == null) {
@@ -279,9 +276,10 @@ public class ServiceInstanceListener implements EventListener {
     /**
      * 判定当前服务是否为dubbo服务
      * dubbo服务分以下梁总格式
-     * ‘DEFAULT_GROUP@@providers:com.huawei.demo.dubbo.nacos.DemoService::’
-     * ’DEFAULT_GROUP@@consumers:com.huawei.demo.dubbo.nacos.DemoService::‘
+     * 生产者格式‘DEFAULT_GROUP@@providers:com.huawei.demo.dubbo.nacos.DemoService::’
+     * 消费者格式’DEFAULT_GROUP@@consumers:com.huawei.demo.dubbo.nacos.DemoService::‘
      *
+     * @param serviceName 服务名
      * @return 是否为dubbo服务
      */
     private boolean isDubboService(String serviceName) {

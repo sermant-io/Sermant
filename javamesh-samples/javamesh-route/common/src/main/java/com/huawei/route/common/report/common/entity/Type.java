@@ -37,6 +37,12 @@ public enum Type {
         return name;
     }
 
+    /**
+     * 获取目标类型
+     *
+     * @param type 字符串类型
+     * @return 转换后类型
+     */
     public static Type getEnum(String type) {
         return CODE_MAP.get(type);
     }

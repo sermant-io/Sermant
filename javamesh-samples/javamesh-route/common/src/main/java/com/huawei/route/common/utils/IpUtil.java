@@ -48,9 +48,9 @@ public class IpUtil {
         }
         ipv4List = new LinkedList<String>();
         try {
-            Enumeration<NetworkInterface> interfs = NetworkInterface.getNetworkInterfaces();
-            while (interfs.hasMoreElements()) {
-                NetworkInterface networkInterface = interfs.nextElement();
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = networkInterfaces.nextElement();
                 Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
                 while (inetAddresses.hasMoreElements()) {
                     InetAddress address = inetAddresses.nextElement();

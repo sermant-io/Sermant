@@ -13,7 +13,6 @@ package com.huawei.route.server.rules.notifier;
  * @since 2021-10-21
  */
 public interface Notifier {
-
     /**
      * 通知数据变更
      *

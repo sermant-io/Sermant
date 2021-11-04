@@ -83,11 +83,11 @@ public class HttpClientUtils {
 
     private static CloseableHttpClient client;
 
-    private static final RequestConfig defaultRequestConfig;
+    private static final RequestConfig DEFAULT_REQUEST_CONFIG;
 
     static {
         createClient();
-        defaultRequestConfig = RequestConfig.custom()
+        DEFAULT_REQUEST_CONFIG = RequestConfig.custom()
                 .setConnectTimeout(CONNECT_TIMEOUT)
                 .setSocketTimeout(SOCKET_TIMEOUT)
                 .build();
@@ -98,7 +98,7 @@ public class HttpClientUtils {
             return;
         }
         try {
-            //采用绕过验证的方式处理https请求
+            // 采用绕过验证的方式处理https请求
             SSLContext sslcontext = createIgnoreVerifySSL();
 
             // 设置协议http和https对应的处理socket链接工厂的对象
@@ -124,7 +124,7 @@ public class HttpClientUtils {
             IdleConnectionMonitorThread idleConnectionMonitorThread = new IdleConnectionMonitorThread(connManager);
             idleConnectionMonitorThread.start();
 
-            //创建自定义的httpclient对象
+            // 创建自定义的httpclient对象
             client = HttpClients.custom()
                     .setConnectionManager(connManager)
                     .setConnectionManagerShared(true)
@@ -191,7 +191,7 @@ public class HttpClientUtils {
 
         // 创建http对象
         HttpGet httpGet = new HttpGet(uriBuilder.build());
-        httpGet.setConfig(defaultRequestConfig);
+        httpGet.setConfig(DEFAULT_REQUEST_CONFIG);
 
         // 设置请求头
         packageHeader(headers, httpGet);
@@ -247,7 +247,7 @@ public class HttpClientUtils {
 
         // 创建http对象
         HttpPost httpPost = new HttpPost(url);
-        httpPost.setConfig(defaultRequestConfig);
+        httpPost.setConfig(DEFAULT_REQUEST_CONFIG);
 
         // 设置请求头
         packageHeader(headers, httpPost);
@@ -281,7 +281,7 @@ public class HttpClientUtils {
 
         // 创建http对象
         HttpPost httpPost = new HttpPost(url);
-        httpPost.setConfig(defaultRequestConfig);
+        httpPost.setConfig(DEFAULT_REQUEST_CONFIG);
         StringEntity stringEntity = new StringEntity(json, Consts.UTF_8);
         stringEntity.setContentType(new BasicHeader("Content-Type", "application/json;charset=utf-8"));
         stringEntity.setContentEncoding(Consts.UTF_8.name());
@@ -318,7 +318,7 @@ public class HttpClientUtils {
     public static HttpClientResult doPut(String url, Map<String, String> params) throws IOException {
         CloseableHttpClient httpClient = getClient();
         HttpPut httpPut = new HttpPut(url);
-        httpPut.setConfig(defaultRequestConfig);
+        httpPut.setConfig(DEFAULT_REQUEST_CONFIG);
 
         packageParam(params, httpPut);
 
@@ -341,7 +341,7 @@ public class HttpClientUtils {
     public static HttpClientResult doDelete(String url) throws IOException {
         CloseableHttpClient httpClient = getClient();
         HttpDelete httpDelete = new HttpDelete(url);
-        httpDelete.setConfig(defaultRequestConfig);
+        httpDelete.setConfig(DEFAULT_REQUEST_CONFIG);
 
         CloseableHttpResponse httpResponse = httpClient.execute(httpDelete);
         try {
@@ -433,12 +433,12 @@ public class HttpClientUtils {
         X509TrustManager trustManager = new X509TrustManager() {
             @Override
             public void checkClientTrusted(java.security.cert.X509Certificate[] paramArrayOfX509Certificate,
-                                           String paramString) {
+                String paramString) {
             }
 
             @Override
             public void checkServerTrusted(java.security.cert.X509Certificate[] paramArrayOfX509Certificate,
-                                           String paramString) {
+                String paramString) {
             }
 
             @Override
@@ -458,8 +458,10 @@ public class HttpClientUtils {
         return client;
     }
 
+    /**
+     * 线程清理，守护线程
+     */
     public static class IdleConnectionMonitorThread extends Thread {
-
         private final HttpClientConnectionManager connMgr;
 
         private volatile boolean shutdown;
@@ -469,6 +471,9 @@ public class HttpClientUtils {
             this.connMgr = connMgr;
         }
 
+        /**
+         * 定时清理
+         */
         @Override
         public void run() {
             try {
@@ -489,6 +494,9 @@ public class HttpClientUtils {
             }
         }
 
+        /**
+         * 关闭方法
+         */
         public void shutdown() {
             shutdown = true;
             synchronized (this) {

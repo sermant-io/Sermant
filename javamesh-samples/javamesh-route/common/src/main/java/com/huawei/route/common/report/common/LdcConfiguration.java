@@ -46,7 +46,6 @@ public class LdcConfiguration {
     private List<ServiceGroup> businesses;
 
     private LdcConfiguration() {
-
     }
 
     public String getLdc() {
@@ -73,6 +72,12 @@ public class LdcConfiguration {
         this.businesses = businesses;
     }
 
+    /**
+     * 解析LDC标签配置
+     *
+     * @param labelProperties 标签数据
+     * @return ldc标签
+     */
     public static LdcConfiguration resolveConfiguration(Map<String, Properties> labelProperties) {
         Properties routeConfigProperties = labelProperties.get(ReporterConstants.LDC_CONFIGURATION_KEY);
         JSONObject ldcJson;
@@ -120,6 +125,9 @@ public class LdcConfiguration {
         return businesses != null && !businesses.isEmpty();
     }
 
+    /**
+     * 业务组
+     */
     public static class ServiceGroup {
         private String groupName;
 

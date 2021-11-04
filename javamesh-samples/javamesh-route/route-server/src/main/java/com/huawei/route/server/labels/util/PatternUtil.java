@@ -14,12 +14,23 @@ import static com.huawei.route.server.labels.constant.LabelConstant.ERROR_CODE_O
  * @date 2021/8/11
  */
 public class PatternUtil {
+    /**
+     * 校验标签组
+     *
+     * @param labelGroupName 标签组名
+     */
     public static void checkLabelGroupName(String labelGroupName) {
         if (!Pattern.matches(LabelConstant.PATTERN_WITH_CHINESE, labelGroupName)) {
             throw new CustomGenericException(ERROR_CODE_ONE, "标签组名只支持中文、字母、数字、中划线和下划线");
         }
     }
 
+    /**
+     * 校验标签组名和标签
+     *
+     * @param labelGroupName 标签组
+     * @param labelName 标签
+     */
     public static void checkLabelGroupNameAndLabelName(String labelGroupName, String labelName) {
         checkLabelGroupName(labelGroupName);
         if (!Pattern.matches(LabelConstant.PATTERN_WITHOUT_CHINESE, labelName)) {
@@ -27,6 +38,11 @@ public class PatternUtil {
         }
     }
 
+    /**
+     * 校验配置名
+     *
+     * @param configName 配置名
+     */
     public static void checkConfigName(String configName) {
         if (!Pattern.matches(LabelConstant.PATTERN_WITHOUT_CHINESE, configName)) {
             throw new CustomGenericException(ERROR_CODE_ONE, "配置名只支持字母、数字、中划线和下划线");

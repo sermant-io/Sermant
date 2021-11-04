@@ -13,7 +13,6 @@ import com.huawei.route.server.config.RouteServerProperties;
  * @since 2021-10-26
  */
 public class NacosConstants {
-
     /**
      * dubbo服务名
      */

@@ -17,7 +17,6 @@ import javax.annotation.PostConstruct;
  **/
 @Configuration
 public class RedisSessionConfiguration extends RedisHttpSessionConfiguration {
-
     @Value("${spring.session.timeout:60}")
     private int sessionTimeout;
 

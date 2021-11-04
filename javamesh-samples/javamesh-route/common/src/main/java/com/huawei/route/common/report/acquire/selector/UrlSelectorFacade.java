@@ -13,7 +13,6 @@ import java.util.List;
  * @since 2021-11-02
  */
 public class UrlSelectorFacade {
-
     /**
      * url选择器
      * 默认轮询

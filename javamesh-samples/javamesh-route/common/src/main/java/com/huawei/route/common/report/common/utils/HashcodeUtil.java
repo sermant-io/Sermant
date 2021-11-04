@@ -20,13 +20,13 @@ public class HashcodeUtil {
      * @param str 待求hashcode的字符串
      * @return long
      */
-    public static Long FNV1_32_HASH(String str) {
-        final long p = 1677769L;
+    public static Long fnv132Hash(String str) {
+        final long point = 1677769L;
 
         long hash = 0L;
         long len = str.length();
         for (int i = 0; i < len; i++) {
-            hash = (hash ^ str.charAt(i)) * p;
+            hash = (hash ^ str.charAt(i)) * point;
         }
         hash += hash << 13;
         hash ^= hash >> 7;

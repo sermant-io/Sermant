@@ -1,7 +1,9 @@
 package com.huawei.route.common.report.common.entity;
 
+/**
+ * 数据源
+ */
 public class DataSource {
-
     private String name;
 
     public DataSource() {

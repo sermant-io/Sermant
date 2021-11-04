@@ -11,7 +11,9 @@ package com.huawei.route.server.share;
  * @since 2021-10-28
  */
 public class ShareKey {
-    @SuppressWarnings("unused")
+    /**
+     * 共享键，默认routeServer:shareData
+     */
     public String getShareKey() {
         return "routeServer:shareData";
     }

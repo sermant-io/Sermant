@@ -12,6 +12,7 @@ package com.huawei.route.server.register.selector;
  */
 public class RollingSelector extends UrlSelector{
     private int index = 0;
+
     @Override
     String getUrlByStrategy(String[] urls) {
         index++;

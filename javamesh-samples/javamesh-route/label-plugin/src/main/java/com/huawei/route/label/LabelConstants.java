@@ -13,7 +13,6 @@ import java.nio.charset.Charset;
  * @since 2020-10-13
  */
 public class LabelConstants {
-
     /**
      * true的字符串
      */

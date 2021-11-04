@@ -15,7 +15,6 @@ import com.huawei.apm.core.config.ConfigTypeKey;
  */
 @ConfigTypeKey("route.label.plugin")
 public class LabelConfig implements BaseConfig {
-
     /**
      * 标签库端口
      * 默认8001

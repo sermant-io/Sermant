@@ -19,6 +19,11 @@ public class DownServiceCache {
 
     private static final DownServiceCache DOWN_SERVICE_CACHE = new DownServiceCache();
 
+    /**
+     * 获取缓存单例
+     *
+     * @return 单例
+     */
     public static DownServiceCache getInstance() {
         return DOWN_SERVICE_CACHE;
     }

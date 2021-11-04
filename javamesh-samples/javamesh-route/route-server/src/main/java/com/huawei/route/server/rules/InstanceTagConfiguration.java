@@ -151,6 +151,5 @@ public class InstanceTagConfiguration extends BaseConfiguration {
         } else {
             return JSONObject.parseObject(match.toJSONString(), TypeMatcher.class);
         }
-
     }
 }

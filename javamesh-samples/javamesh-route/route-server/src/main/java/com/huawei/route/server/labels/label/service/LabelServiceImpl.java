@@ -166,6 +166,10 @@ public class LabelServiceImpl implements LabelService {
         }
         // 修改标签，给标签修改服务时，需要判断服务是否已经挂了相同的标签
         checkServiceHasLabel(label.getServiceNames(), labelGroupName, labelName);
+        return updateLabel(labelPath, labelData, label);
+    }
+
+    private Result<String> updateLabel(String labelPath, String labelData, LabelVo label) {
         Result<String> result;
         try {
             // 获取之前的服务和实例
@@ -189,12 +193,7 @@ public class LabelServiceImpl implements LabelService {
                 }
             });
             // 检查取消勾选的服务是否存在生效的标签
-            checkCancelServices(labelGroupName, labelName, cancelServices);
-            // 改变模板不推送
-//            THREAD_POOL.execute(() -> {
-//                // 让新的服务实例的标签生效
-//                addLabelServiceAndTakeEffect(label);
-//            });
+            checkCancelServices(label.getLabelGroupName(), label.getLabelName(), cancelServices);
             label.setUpdateTimeStamp(System.currentTimeMillis());
             redisTemplate.opsForValue().set(labelPath, JSONObject.toJSONString(label, new BooleanValueFilter()));
             if (StringUtils.isEmpty(serviceNames)) {
@@ -203,8 +202,8 @@ public class LabelServiceImpl implements LabelService {
             // 去掉取消勾选的服务
             cancelServices.forEach(serviceName -> {
                 // 会把这个服务所有的标签去掉？不应该是只去掉这一个标签吗？
-                deleteLabelValidInfo(serviceName, labelGroupName, labelName);
-                LOGGER.info("update label {}, and delete service={}", labelName, serviceName);
+                deleteLabelValidInfo(serviceName, label.getLabelGroupName(), label.getLabelName());
+                LOGGER.info("update label {}, and delete service={}", label.getLabelName(), serviceName);
             });
             // 给新加的服务保存实例标签缓存
             addLabelService(label, addServices);
@@ -274,7 +273,7 @@ public class LabelServiceImpl implements LabelService {
         } catch (CustomGenericException e) {
             throw e;
         } catch (Exception exception) {
-            LOGGER.error("标签删除失败", exception);
+            LOGGER.error("deleted label failed", exception);
             result = Result.ofFail(ERROR_CODE_ONE, "Delete label failed.");
         }
         return result;
@@ -442,7 +441,7 @@ public class LabelServiceImpl implements LabelService {
      * 动态查询标签受用业务
      *
      * @param labelGroupName 标签组名
-     * @param labelName 标签名
+     * @param labelName      标签名
      * @return Result
      */
     @Override
@@ -481,7 +480,7 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     public JSONObject selectRawLabelInstance(String serviceName, String labelGroupName,
-                                             String labelName, JSONObject label) {
+        String labelName, JSONObject label) {
         List<String> instanceNames = agentHeartbeat.getServiceMappedInstances(serviceName);
         if (CollectionUtils.isEmpty(instanceNames)) {
             return null;
@@ -525,7 +524,7 @@ public class LabelServiceImpl implements LabelService {
     }
 
     private Map<Object, Object> getInstanceLabel(String serviceName, String instance, String labelGroupName,
-                                                 String labelName) {
+        String labelName) {
         String tempPath = PathUtil.getInstanceTempLabelPath(serviceName, instance, labelGroupName, labelName);
         if (Boolean.TRUE.equals(redisTemplate.hasKey(tempPath))) {
             return redisTemplate.opsForHash().entries(tempPath);
@@ -547,7 +546,7 @@ public class LabelServiceImpl implements LabelService {
 
         // 过滤出服务的标签
         return listLabel.stream()
-                .filter(k -> k.getJSONArray(SERVICE_NAMES_MARKING).contains(serviceName))
+                .filter(label -> label.getJSONArray(SERVICE_NAMES_MARKING).contains(serviceName))
                 .collect(Collectors.toList());
     }
 
@@ -647,7 +646,6 @@ public class LabelServiceImpl implements LabelService {
         String heartbeat = instanceMappedHeartbeat.getString(instance);
         if (StringUtils.isEmpty(heartbeat)) {
             throw new CustomGenericException(ERROR_CODE_ONE, "找不到该实例");
-
         }
         JSONObject json = JSONObject.parseObject(heartbeat);
         return sendLabelToAgent(json.getString(LabelConstant.NETTY_IP), json.getInteger(LabelConstant.NETTY_PORT), map);
@@ -660,11 +658,7 @@ public class LabelServiceImpl implements LabelService {
         String labelGroupName = label.getLabelGroupName();
         String labelName = label.getLabelName();
         for (String serviceName : serviceNames) {
-            try {
-                deleteLabelValidInfo(serviceName, labelGroupName, labelName);
-            } catch (Exception e) {
-                LOGGER.error("Failed to delete instance's old label.", e);
-                // 删除失败直接return，否则下面发送标签成功后，前端会展示的标签有可能与实际发送的标签不一致
+            if (tryToDeleteValidInfo(serviceName, labelGroupName, labelName)) {
                 continue;
             }
             JSONObject heartbeat = agentHeartbeat.getServiceHeartbeat(serviceName);
@@ -673,13 +667,7 @@ public class LabelServiceImpl implements LabelService {
             }
             heartbeat.entrySet().parallelStream().forEach(entry -> {
                 String instanceName = entry.getKey();
-                Map<Object, Object> labelMap = new HashMap<>();
-                labelMap.put(SERVICE_NAME_MARKING, serviceName);
-                labelMap.put(INSTANCE_NAME_MARKING, instanceName);
-                labelMap.put(VALID_MARKING, Boolean.FALSE.toString());
-                labelMap.put(LABEL_GROUP_NAME_MARKING, labelGroupName);
-                labelMap.put(LABEL_NAME_MARKING, labelName);
-                labelMap.put(VALUE_OF_LABEL, label.getValue());
+                Map<Object, Object> labelMap = buildLabelMap(label, serviceName, instanceName);
                 try {
                     redisTemplate.opsForHash()
                             .putAll(PathUtil.getInstanceLabelPath(serviceName, instanceName, labelGroupName, labelName),
@@ -698,12 +686,7 @@ public class LabelServiceImpl implements LabelService {
         String labelGroupName = label.getLabelGroupName();
         String labelName = label.getLabelName();
         for (String serviceName : label.getServiceNames()) {
-            try {
-                // 这个是为了修复缓存丢失可能导致的bug
-                deleteLabelValidInfo(serviceName, labelGroupName, labelName);
-            } catch (Exception e) {
-                LOGGER.error("Failed to delete instance's old label.", e);
-                // 删除失败直接return，否则下面发送标签成功后，前端会展示的标签有可能与实际发送的标签不一致
+            if (tryToDeleteValidInfo(serviceName, labelGroupName, labelName)) {
                 continue;
             }
             JSONObject heartbeat = agentHeartbeat.getServiceHeartbeat(serviceName);
@@ -712,13 +695,7 @@ public class LabelServiceImpl implements LabelService {
             }
             heartbeat.entrySet().parallelStream().forEach(entry -> {
                 String instanceName = entry.getKey();
-                Map<Object, Object> labelMap = new HashMap<>();
-                labelMap.put(SERVICE_NAME_MARKING, serviceName);
-                labelMap.put(INSTANCE_NAME_MARKING, instanceName);
-                labelMap.put(VALID_MARKING, label.getOn().toLowerCase(Locale.ENGLISH));
-                labelMap.put(LABEL_GROUP_NAME_MARKING, labelGroupName);
-                labelMap.put(LABEL_NAME_MARKING, labelName);
-                labelMap.put(VALUE_OF_LABEL, label.getValue());
+                Map<Object, Object> labelMap = buildLabelMap(label, serviceName, instanceName);
                 try {
                     JSONObject heartbeatMsg = JSONObject.parseObject((String) entry.getValue());
                     // agent接收不成功则设置为false
@@ -739,6 +716,29 @@ public class LabelServiceImpl implements LabelService {
                 }
             });
         }
+    }
+
+    private boolean tryToDeleteValidInfo(String serviceName, String labelGroupName, String labelName) {
+        try {
+            // 这个是为了修复缓存丢失可能导致的bug
+            deleteLabelValidInfo(serviceName, labelGroupName, labelName);
+        } catch (Exception e) {
+            LOGGER.error("Failed to delete instance's old label.", e);
+            // 删除失败直接return，否则下面发送标签成功后，前端会展示的标签有可能与实际发送的标签不一致
+            return true;
+        }
+        return false;
+    }
+
+    private Map<Object, Object> buildLabelMap(LabelVo label, String serviceName, String instanceName) {
+        Map<Object, Object> labelMap = new HashMap<>();
+        labelMap.put(SERVICE_NAME_MARKING, serviceName);
+        labelMap.put(INSTANCE_NAME_MARKING, instanceName);
+        labelMap.put(VALID_MARKING, label.getOn().toLowerCase(Locale.ENGLISH));
+        labelMap.put(LABEL_GROUP_NAME_MARKING, label.getLabelGroupName());
+        labelMap.put(LABEL_NAME_MARKING, label.getLabelName());
+        labelMap.put(VALUE_OF_LABEL, label.getValue());
+        return labelMap;
     }
 
     private void deleteLabelValidInfo(String serviceName, String labelGroupName, String labelName) {

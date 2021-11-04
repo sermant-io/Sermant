@@ -14,7 +14,6 @@ import java.util.Properties;
  * @since 2021-07-01
  */
 public interface LabelUpdateObserver {
-
     /**
      * 通知方法
      *

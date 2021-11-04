@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 @Component
 @ConditionalOnClass(NacosSyncCondition.class)
 public class NacosTagClassifier implements TagClassifier<NacosService, NacosInstance> {
-
     @Override
     public Map<String, NacosService> classifier(Map<String, NacosService> registerInfo) {
         // 关联上报数据， 该块暂时无需求

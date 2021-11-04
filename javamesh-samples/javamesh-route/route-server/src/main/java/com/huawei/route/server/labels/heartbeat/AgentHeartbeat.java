@@ -42,6 +42,9 @@ public class AgentHeartbeat {
     private static final Logger LOGGER = LoggerFactory.getLogger(AgentHeartbeat.class);
     private static final String REDIS_KEY_PREFIX = LabelConstant.GENERAL_PAAS + LabelConstant.SEPARATOR;
 
+    /**
+     * redis心跳键
+     */
     public static final String HEARTBEAT_HASH_KEY = REDIS_KEY_PREFIX + "heartbeat";
 
     private static final String EFFECT_FLAG = "effectFlag";
@@ -217,7 +220,6 @@ public class AgentHeartbeat {
         JSONObject heartbeat = JSONObject.parseObject(msg);
         if (!onlyHealthy) {
             return heartbeat;
-
         }
         // 过滤掉不健康的服务
         return new JSONObject(heartbeat.entrySet().stream()

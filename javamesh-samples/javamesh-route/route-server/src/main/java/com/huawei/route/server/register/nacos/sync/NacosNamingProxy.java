@@ -33,7 +33,6 @@ import static com.alibaba.nacos.client.utils.LogUtils.NAMING_LOGGER;
  */
 @Component
 public class NacosNamingProxy extends NamingProxy {
-
     private final RouteServerProperties routeServerProperties;
 
     private final List<String> serverList;

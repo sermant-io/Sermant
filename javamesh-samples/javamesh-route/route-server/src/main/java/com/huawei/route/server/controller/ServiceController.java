@@ -24,11 +24,15 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/route/v1")
 public class ServiceController<S extends AbstractService<T>, T extends AbstractInstance> {
-
     @Autowired
     private ServiceInstanceRepository<S, T> serviceInstanceRepository;
 
-
+    /**
+     * 查询服务实例列表
+     *
+     * @param request 请求参数
+     * @return 实例列表
+     */
     @PostMapping("/instance/condition/list")
     public List<ResponseService<T>> queryServiceInstances(@RequestBody ServiceRequest request) {
         return serviceInstanceRepository.queryServiceInstance(request.getServiceNames(), request.getLdc(), request.getTagName());

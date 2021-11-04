@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 /**
  * 灰度规则更新通知
@@ -31,10 +32,12 @@ public class GrayTagConfigurationNotifier implements Notifier{
     @Autowired
     private PathDataUpdater pathDataUpdater;
 
-    @SuppressWarnings("rawtypes")
     @Autowired
     private GrayRuleManager grayRuleManager;
 
+    /**
+     * 初始化启动注册zookeeper监听器
+     */
     @PostConstruct
     public void registerListener() {
         zookeeperPathNotifierManager.registerTrigger(RouteConstants.TAG_NOTIFIER_PATH, this);
@@ -57,8 +60,8 @@ public class GrayTagConfigurationNotifier implements Notifier{
         if (StringUtils.isEmpty(serviceName) || StringUtils.isEmpty(instanceName)) {
             return String.valueOf(timeMillis).getBytes(StandardCharsets.UTF_8);
         }
-        return String.format("%s%s%s%s%d", serviceName, RouteConstants.COMMON_SEPARATOR, instanceName,
-                RouteConstants.COMMON_SEPARATOR, timeMillis).getBytes(StandardCharsets.UTF_8);
+        return String.format(Locale.ENGLISH, "%s%s%s%s%d", serviceName, RouteConstants.COMMON_SEPARATOR,
+                instanceName, RouteConstants.COMMON_SEPARATOR, timeMillis).getBytes(StandardCharsets.UTF_8);
     }
 
     @Override

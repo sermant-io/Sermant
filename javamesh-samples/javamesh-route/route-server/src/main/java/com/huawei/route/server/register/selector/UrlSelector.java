@@ -23,6 +23,7 @@ public abstract class UrlSelector {
         }
         return getUrlByStrategy(urls);
     }
+
     /**
      * 根据一定规则指定一个url
      *

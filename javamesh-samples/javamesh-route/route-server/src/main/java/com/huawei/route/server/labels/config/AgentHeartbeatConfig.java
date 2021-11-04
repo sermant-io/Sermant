@@ -15,20 +15,27 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AgentHeartbeatConfig {
+    /**
+     * 默认心跳存活时间 单位：毫秒
+     */
     public static final int DEFAULT_MACHINE_HEALTHY_TIMEOUT_MS = 60_000;
 
     private static int HELTHY_TIMEOUT;
 
     @Value("${agent.heartbeat.unhealthyMachineMillis:60000}")
-    public void setHelthyTimeout(int timeout){
+    public void setHelthyTimeout(int timeout) {
         HELTHY_TIMEOUT = timeout;
     }
 
+    /**
+     * 获取判定存活的心跳时间
+     *
+     * @return 存活时间
+     */
     public static int getUnhealthyMachineMillis() {
-        //huawei update change log: 心跳健康时间读取配置文件，配置为0，取默认值
-        if(HELTHY_TIMEOUT!=0){
+        if (HELTHY_TIMEOUT != 0) {
             return HELTHY_TIMEOUT;
-        }else{
+        } else {
             return DEFAULT_MACHINE_HEALTHY_TIMEOUT_MS;
         }
     }

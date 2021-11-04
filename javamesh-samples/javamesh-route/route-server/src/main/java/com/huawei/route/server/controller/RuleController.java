@@ -24,10 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/route/v1/rule")
 @RestController
 public class RuleController<S extends AbstractService<T>, T extends AbstractInstance> {
-
     @Autowired
     private InstanceRuleRepository<S, T> instanceRuleRepository;
 
+    /**
+     * 查询对应实例的标签规则
+     *
+     * @param ruleRequest 请求参数 ip port
+     * @return 规则配置
+     */
     @PostMapping("/instance")
     public InstanceTagConfiguration queryInstanceRule(@RequestBody RuleRequest ruleRequest) {
         return instanceRuleRepository.queryInstanceRule(ruleRequest.getIp(), ruleRequest.getPort());

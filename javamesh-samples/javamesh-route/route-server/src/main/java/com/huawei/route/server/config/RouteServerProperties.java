@@ -20,9 +20,11 @@ import org.springframework.stereotype.Component;
 @Setter
 @Getter
 public class RouteServerProperties {
-
     private final GrayConfiguration gray = new GrayConfiguration();
 
+    /**
+     * 灰度配置
+     */
     @Getter
     @Setter
     public static class GrayConfiguration {

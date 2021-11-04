@@ -20,9 +20,11 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class RouteShareProperties {
-
     private final RedisShareConfiguration redis = new RedisShareConfiguration();
 
+    /**
+     * redis相关配置
+     */
     @Getter
     @Setter
     public static class RedisShareConfiguration {

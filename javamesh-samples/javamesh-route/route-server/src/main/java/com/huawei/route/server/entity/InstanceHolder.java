@@ -39,6 +39,12 @@ public class InstanceHolder<T extends AbstractInstance> {
      */
     private Map<String, Set<String>> serviceGroup;
 
+    /**
+     * 通过键获取实例
+     *
+     * @param instanceKey 实例键
+     * @return 实例
+     */
     public T getInstance(String instanceKey) {
         if (instances == null || StringUtils.isEmpty(instanceKey)) {
             return null;
@@ -46,6 +52,11 @@ public class InstanceHolder<T extends AbstractInstance> {
         return instances.get(instanceKey);
     }
 
+    /**
+     * 移除实例
+     *
+     * @param instanceKey 实例键
+     */
     public void remove(String instanceKey) {
         if (instances == null || StringUtils.isEmpty(instanceKey)) {
             return;
@@ -53,6 +64,11 @@ public class InstanceHolder<T extends AbstractInstance> {
         instances.remove(instanceKey);
     }
 
+    /**
+     * 更新实例
+     *
+     * @param instanceKey 实例键
+     */
     public void update(String instanceKey, T instance) {
         if (instance == null || StringUtils.isEmpty(instanceKey)) {
             return;
@@ -63,6 +79,12 @@ public class InstanceHolder<T extends AbstractInstance> {
         instances.put(instanceKey, instance);
     }
 
+    /**
+     * 更新服务组
+     *
+     * @param key 原生服务名
+     * @param set ip端口值集合
+     */
     public void updateServiceGroup(String key, Set<String> set) {
         if (StringUtils.isEmpty(key) || CollectionUtils.isEmpty(set)) {
             return;

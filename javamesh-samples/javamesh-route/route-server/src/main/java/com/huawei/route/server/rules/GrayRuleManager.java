@@ -76,8 +76,10 @@ public class GrayRuleManager<S extends AbstractService<T>, T extends AbstractIns
 
     private ThreadPoolExecutor initThread;
 
+    /**
+     * 启动时定时去判断是否初始化成功，初始化成功后停止线程
+     */
     @PostConstruct
-    @SuppressWarnings("all")
     public void syncInstanceTagConfiguration() {
         initThread = new ThreadPoolExecutor(1, 1,
                 RouteConstants.INIT_WAIT_MS,
@@ -100,6 +102,9 @@ public class GrayRuleManager<S extends AbstractService<T>, T extends AbstractIns
         });
     }
 
+    /**
+     * 清理数据，关闭线程
+     */
     @PreDestroy
     public void destroy() {
         initThread.shutdown();
@@ -234,6 +239,9 @@ public class GrayRuleManager<S extends AbstractService<T>, T extends AbstractIns
         private List<RawTagInstanceConfiguration> instanceTagConfigurations;
     }
 
+    /**
+     * 标签库的实例配置
+     */
     @Getter
     @Setter
     public static class RawTagInstanceConfiguration {
@@ -245,6 +253,11 @@ public class GrayRuleManager<S extends AbstractService<T>, T extends AbstractIns
 
         private InstanceTagConfiguration instanceTagConfiguration;
 
+        /**
+         * 配置是否合法
+         *
+         * @return 是否合法
+         */
         public boolean isValid() {
             return !StringUtils.equalsIgnoreCase(on, "false")
                     && StringUtils.isNotEmpty(instanceName)

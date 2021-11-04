@@ -35,8 +35,8 @@ public class ClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, ByteBuf o) {
-        channelInitializer.setResponse(o.toString(StandardCharsets.UTF_8));
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, ByteBuf msg) {
+        channelInitializer.setResponse(msg.toString(StandardCharsets.UTF_8));
         channelHandlerContext.close();
     }
 

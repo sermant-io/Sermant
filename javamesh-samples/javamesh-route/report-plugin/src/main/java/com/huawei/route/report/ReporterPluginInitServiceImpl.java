@@ -4,22 +4,22 @@
 
 package com.huawei.route.report;
 
-import com.huawei.apm.core.service.PluginService;
 import com.huawei.apm.core.config.ConfigLoader;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.service.PluginService;
 import com.huawei.route.common.factory.NamedThreadFactory;
 import com.huawei.route.common.label.observers.LabelObservers;
 import com.huawei.route.common.report.acquire.TargetAddrAcquire;
 import com.huawei.route.common.report.cache.ServiceRegisterCache;
 import com.huawei.route.common.report.common.entity.ServiceRegisterMessage;
+import com.huawei.route.common.report.print.LoggerPrintManager;
 import com.huawei.route.report.observers.GrayConfigurationObserver;
 import com.huawei.route.report.observers.LdcConfigurationObserver;
-import com.huawei.route.common.report.print.LoggerPrintManager;
 import com.huawei.route.report.send.ServiceRegistrarMessageSender;
 
 import java.util.Set;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +35,10 @@ public class ReporterPluginInitServiceImpl implements PluginService {
     private static ServiceRegistrarMessageSender httpSender;
     private volatile ScheduledFuture<?> sendFuture;
 
-    public void run() {
+    /**
+     * 定时上报注册信息
+     */
+    public void report() {
         int sendMessageSize = ServiceRegisterCache.getInstance().needSendMessageSize();
         if (sendMessageSize > 0) {
             Set<ServiceRegisterMessage> list = ServiceRegisterCache.getInstance().getServiceRegisterMessageList();
@@ -62,20 +65,19 @@ public class ReporterPluginInitServiceImpl implements PluginService {
         final ReporterConfig config = ConfigLoader.getConfig(ReporterConfig.class);
         // 注册标签库修改监听
         LabelObservers.INSTANCE.registerLabelObservers(new LdcConfigurationObserver());
+        final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("registerMessage-sender"));
         LabelObservers.INSTANCE.registerLabelObservers(new GrayConfigurationObserver());
         // 启动定时器
-        sendFuture = Executors.newSingleThreadScheduledExecutor(
-                new NamedThreadFactory("registerMessage-sender"))
-                .scheduleAtFixedRate(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            ReporterPluginInitServiceImpl.this.run();
-                        } catch (Exception e) {
-                            LOGGER.log(Level.WARNING, "registerMessage sender and upload failure.", e);
-                        }
-                    }
-                }, config.getReportIntervalMs(), config.getReportIntervalMs(), TimeUnit.MICROSECONDS);
+        sendFuture = scheduledThreadPoolExecutor.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ReporterPluginInitServiceImpl.this.report();
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "registerMessage sender and upload failure.", e);
+                }
+            }
+        }, config.getReportIntervalMs(), config.getReportIntervalMs(), TimeUnit.MICROSECONDS);
 
         // 初始化上报器
         TargetAddrAcquire.initAcquire(config.getServerUrls());
@@ -85,6 +87,6 @@ public class ReporterPluginInitServiceImpl implements PluginService {
 
     @Override
     public void stop() {
-            sendFuture.cancel(true);
+        sendFuture.cancel(true);
     }
 }

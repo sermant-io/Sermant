@@ -38,6 +38,13 @@ public class Result<R> {
      */
     private boolean success;
 
+    /**
+     * 成功返回结果
+     *
+     * @param data 响应数据
+     * @param <R>  数据类型
+     * @return R
+     */
     public static <R> Result<R> ofSuccess(R data) {
         return Result.<R>builder()
                 .success(true)
@@ -46,6 +53,13 @@ public class Result<R> {
                 .build();
     }
 
+    /**
+     * 无数据成功返回
+     *
+     * @param msg 提示信息
+     * @param <R> 数据类型
+     * @return R
+     */
     public static <R> Result<R> ofSuccessMsg(String msg) {
         return Result.<R>builder()
                 .success(true)
@@ -53,6 +67,14 @@ public class Result<R> {
                 .build();
     }
 
+    /**
+     * 失败返回
+     *
+     * @param code 返回码
+     * @param msg  错误提示信息
+     * @param <R>  数据类型
+     * @return R
+     */
     public static <R> Result<R> ofFail(int code, String msg) {
         return Result.<R>builder()
                 .success(false)
@@ -61,6 +83,15 @@ public class Result<R> {
                 .build();
     }
 
+    /**
+     * 失败返回
+     *
+     * @param code 响应码
+     * @param msg  提示信息
+     * @param data 响应数据
+     * @param <R>  数据类型
+     * @return R
+     */
     public static <R> Result<R> ofFail(int code, String msg, R data) {
         return Result.<R>builder()
                 .success(false)

@@ -32,24 +32,48 @@ public class GlobalExceptionHandler {
      */
     private static final int ERROR_CODE = HttpStatus.INTERNAL_SERVER_ERROR.value();
 
+    /**
+     * 未知异常处理
+     *
+     * @param exception 异常
+     * @return Result
+     */
     @ExceptionHandler(Exception.class)
     public Result<String> handleNotCatchException(Exception exception) {
         LOGGER.error("An error occur which not be caught in system.", exception);
         return Result.ofFail(ERROR_CODE, "操作失败，系统发生一个未知异常！");
     }
 
+    /**
+     * kafka异常处理
+     *
+     * @param exception 异常
+     * @return Result
+     */
     @ExceptionHandler({KafkaException.class, org.springframework.kafka.KafkaException.class})
     public Result<String> handleKafkaException(Exception exception) {
         LOGGER.error("An error occur in system when using kafka.", exception);
         return Result.ofFail(ERROR_CODE, "操作失败，请检查kafka相关组件！");
     }
 
+    /**
+     * redis异常处理
+     *
+     * @param exception 异常
+     * @return Result
+     */
     @ExceptionHandler({JedisException.class, RedisException.class})
     public Result<String> handleRedisException(Exception exception) {
         LOGGER.error("An error occur in system when using redis.", exception);
         return Result.ofFail(ERROR_CODE, "操作失败，请检查redis相关组件！");
     }
 
+    /**
+     * zookeeper异常处理
+     *
+     * @param exception 异常
+     * @return Result
+     */
     @ExceptionHandler({
             org.apache.curator.shaded.com.google.common.base.VerifyException.class,
             org.apache.curator.shaded.com.google.common.cache.CacheLoader.InvalidCacheLoadException.class,

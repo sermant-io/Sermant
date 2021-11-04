@@ -46,7 +46,6 @@ public class RedisRouteSharer<T extends ShareKey> extends RouteSharer<T> {
     }
 
     @Override
-    @SuppressWarnings("all")
     public boolean shareAllData(T[] dataArray) {
         int count = 0;
         while (count < routeShareProperties.getRedis().getMaxTryLockCount()) {

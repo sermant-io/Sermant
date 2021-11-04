@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author zhouss
  * @since 2021-11-03
  */
-@SuppressWarnings("all")
 public enum ThreadLocalContext {
     /**
      * 线程上下文变量单例
@@ -32,18 +31,42 @@ public enum ThreadLocalContext {
         threadLocal.set(this);
     }
 
+    /**
+     * 存放变量
+     *
+     * @param key 存放键
+     * @param val 存放值
+     */
     public void put(String key, Object val) {
         context.put(key, val);
     }
 
+    /**
+     * 获取变量
+     * @param key 存放键
+     * @return Object
+     */
     public Object get(String key) {
         return context.get(key);
     }
 
+    /**
+     * 获取变量
+     *
+     * @param key 键
+     * @param tClass 目标类型
+     * @param <T> 目标类型
+     * @return 值
+     */
     public <T> T get(String key, Class<T> tClass) {
         return (T) context.get(key);
     }
 
+    /**
+     * 移除变量
+     *
+     * @param key 键
+     */
     public void remove(String key) {
         context.remove(key);
         if (context.isEmpty()) {

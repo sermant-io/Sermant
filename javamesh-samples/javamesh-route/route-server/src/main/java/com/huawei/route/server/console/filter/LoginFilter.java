@@ -8,7 +8,9 @@ import com.huawei.route.server.console.auth.AuthServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,8 +34,8 @@ import java.io.IOException;
  * 修改单号：
  * 修改内容：session过期返回417状态码，未登录返回401状态码
  */
-//@Order(2)
-//@Component
+@Order(2)
+@Component
 public class LoginFilter implements Filter {
     /**
      * 保存cas session的key
@@ -70,19 +72,18 @@ public class LoginFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
             String servletPath = httpRequest.getServletPath();
 
             // 判断是否是忽略url
-            if (/*ignorePattern.contains(servletPath)*/true) {
-                chain.doFilter(new SafeHttpServletRequestWrapper((HttpServletRequest) request), response);
-//                chain.doFilter(request, response);
+            if (ignorePattern.contains(servletPath)) {
+                chain.doFilter(request, response);
                 return;
             }
             SafeHttpServletRequestWrapper requestWrapper =
-                new SafeHttpServletRequestWrapper((HttpServletRequest) request);
+                    new SafeHttpServletRequestWrapper((HttpServletRequest) request);
             if (response instanceof HttpServletResponse) {
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
                 HttpSession session = requestWrapper.getSession();

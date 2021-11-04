@@ -13,18 +13,28 @@ import com.alibaba.fastjson.annotation.JSONField;
  * @since 2021-06-11
  */
 public class TargetServiceAddress {
-
     private String url;
 
     private Type type;
 
     private String ldc;
 
+    /**
+     * 获取服务类型
+     *
+     * @return String
+     */
     @JSONField(name = "type")
     public String getTypeValue() {
         return type.getName();
     }
 
+    /**
+     * 设置服务类型
+     * {@link Type}
+     *
+     * @param type 类型
+     */
     @JSONField(name = "type")
     public void setTypeValue(String type) {
         this.type = Type.getEnum(type);

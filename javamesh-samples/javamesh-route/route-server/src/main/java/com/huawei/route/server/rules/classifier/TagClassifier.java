@@ -24,7 +24,6 @@ import java.util.Map;
  * @since 2021-10-14
  */
 public interface TagClassifier<S extends AbstractService<T>, T extends AbstractInstance> {
-
     /**
      * LDC归类数据
      *

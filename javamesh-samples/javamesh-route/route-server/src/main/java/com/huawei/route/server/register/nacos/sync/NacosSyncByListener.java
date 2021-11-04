@@ -58,7 +58,6 @@ public class NacosSyncByListener extends AbstractRegisterSync<NacosService, Naco
     private final Map<String, NacosService> registerInfo = new ConcurrentHashMap<>();
 
     /**
-     *
      * key : namespace
      * value : {@link NamespaceNamingService}
      */
@@ -84,6 +83,9 @@ public class NacosSyncByListener extends AbstractRegisterSync<NacosService, Naco
      */
     private volatile boolean isInitializedSuccess = false;
 
+    /**
+     * 同步器初始化
+     */
     @PostConstruct
     public void init() {
         try {
@@ -142,14 +144,15 @@ public class NacosSyncByListener extends AbstractRegisterSync<NacosService, Naco
      * 解析配置的命名空间服务
      */
     private void resolveConfigurationNamespaceGroup() {
-        //1.自定义分组处理, 优先使用自定义组，否则使用预先指定的namespace与group
+        // 1.自定义分组处理, 优先使用自定义组，否则使用预先指定的namespace与group
         final String customNamespaces = routeServerProperties.getGray().getNacos().getCustomNamespaceGroup();
         if (StringUtils.isNotEmpty(customNamespaces)) {
             // 切割多组
-            final String[] namespaces = StringUtils.split(customNamespaces,
+            final String[] namespaceParts = StringUtils.split(customNamespaces,
                     NacosConstants.CUSTOM_NACOS_NAMESPACE_SEPARATOR);
-            for (String namespace : namespaces) {
-                subscribers.put(getGroupKey(namespace), NamespaceGroup.builder().namespace(namespace.trim()).build());
+            for (String namespace : namespaceParts) {
+                subscribers.put(getGroupKey(namespace.trim()),
+                        NamespaceGroup.builder().namespace(namespace.trim()).build());
             }
         } else {
             String namespace = routeServerProperties.getGray().getNacos().getNamespaceId();
@@ -201,7 +204,6 @@ public class NacosSyncByListener extends AbstractRegisterSync<NacosService, Naco
                 .nacosSeparator(routeServerProperties.getGray().getNacos().getServiceSeparator())
                 .namespace(namespace)
                 .build();
-
     }
 
     private NamingService createNamingService(String namespace) throws NacosException {
@@ -258,7 +260,7 @@ public class NacosSyncByListener extends AbstractRegisterSync<NacosService, Naco
     }
 
     private void updateNameGroups(Map<String, Set<String>> latestServices, Map<String, Set<String>> oldServices,
-                                  NamespaceNamingService namingService) {
+        NamespaceNamingService namingService) {
         // 对比更新
         latestServices.forEach((group, groupServices) -> {
             final Set<String> services = oldServices.getOrDefault(group, Collections.emptySet());

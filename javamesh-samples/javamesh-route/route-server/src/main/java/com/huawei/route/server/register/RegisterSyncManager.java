@@ -59,6 +59,10 @@ public class RegisterSyncManager<S extends AbstractService<T>, T extends Abstrac
 
     private ScheduledExecutorService scheduledExecutorService;
 
+    /**
+     * 注册中心同步管理器初始化
+     * 主要初始化定时拉取的定时任务
+     */
     @PostConstruct
     public void init() {
         registerInfo = new HashMap<>();
@@ -86,6 +90,9 @@ public class RegisterSyncManager<S extends AbstractService<T>, T extends Abstrac
         registerSync.update(serviceRegistrarMessages);
     }
 
+    /**
+     * 停止方法
+     */
     @PreDestroy
     public void destroy() {
         if (scheduledExecutorService != null) {
@@ -94,7 +101,6 @@ public class RegisterSyncManager<S extends AbstractService<T>, T extends Abstrac
     }
 
     class RegisterSyncTask implements Runnable {
-
         @Override
         public void run() {
             try {

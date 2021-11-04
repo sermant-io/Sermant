@@ -12,7 +12,6 @@ package com.huawei.route.common.report.common.entity;
  * @since 2021-07-14
  */
 public class ServiceEssentialMessage extends BaseReportMessage {
-
     /**
      * Zookeeper中代表根路径；nacos中代表分组；serviceComb中代表所属应用
      */

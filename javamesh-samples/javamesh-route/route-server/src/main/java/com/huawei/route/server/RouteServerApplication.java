@@ -11,11 +11,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+/**
+ * route server启动类
+ */
 @SpringBootApplication
 @EnableScheduling
 @EnableConfigurationProperties
 public class RouteServerApplication extends SpringBootServletInitializer {
-
     public static void main(String[] args) {
         SpringApplication.run(RouteServerApplication.class, args);
     }

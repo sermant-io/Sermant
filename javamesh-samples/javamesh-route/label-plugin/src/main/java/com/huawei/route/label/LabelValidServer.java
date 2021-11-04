@@ -40,6 +40,11 @@ public class LabelValidServer {
     public LabelValidServer() {
     }
 
+    /**
+     * netty服务启动入口
+     *
+     * @param port 指定netty端口
+     */
     public void start(int port) {
         NioEventLoopGroup group = new NioEventLoopGroup();
         ServerBootstrap serverBootstrap = new ServerBootstrap();

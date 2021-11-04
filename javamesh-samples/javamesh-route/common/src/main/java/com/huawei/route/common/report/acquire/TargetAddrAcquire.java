@@ -116,7 +116,7 @@ public class TargetAddrAcquire {
      * @return 目标服务地址
      */
     public TargetServiceAddress getTargetAddr(LDC ldc, Type targetServiceType,
-                                              String targetServiceName) {
+        String targetServiceName) {
         return getTargetAddr(ldc, targetServiceType, targetServiceName, RouteStrategys.ROUND_STRATEGY);
     }
 
@@ -130,7 +130,7 @@ public class TargetAddrAcquire {
      * @return 目标服务地址
      */
     public TargetServiceAddress getTargetAddr(LDC ldc, Type targetServiceType,
-                                              String targetServiceName, RouteStrategys strategy) {
+        String targetServiceName, RouteStrategys strategy) {
         if (targetServiceName == null || "".equals(targetServiceName)) {
             LOGGER.warning("targetServiceName is null or empty.");
             return null;

@@ -36,12 +36,18 @@ public class Tag extends HashMap<String, String> {
      * @param tagName 标签版本
      * @return tag
      */
-    @SuppressWarnings("unused")
     public Tag putTagName(String tagName) {
         this.put(RouteConstants.TAG_NAME_KEY, tagName);
         return this;
     }
 
+    /**
+     * 添加标签
+     *
+     * @param tagKey 标签键
+     * @param tagName 标签值
+     * @return Tag
+     */
     public Tag addTag(String tagKey, String tagName) {
         this.put(tagKey, tagName);
         return this;

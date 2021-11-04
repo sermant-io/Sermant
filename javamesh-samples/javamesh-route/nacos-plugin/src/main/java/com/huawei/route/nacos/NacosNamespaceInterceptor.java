@@ -18,10 +18,8 @@ import java.lang.reflect.Method;
  * @since 2021-11-03
  */
 public class NacosNamespaceInterceptor implements StaticMethodInterceptor {
-
     @Override
     public void before(Class<?> clazz, Method method, Object[] arguments, BeforeResult beforeResult) {
-
     }
 
     @Override
@@ -32,7 +30,6 @@ public class NacosNamespaceInterceptor implements StaticMethodInterceptor {
     }
 
     @Override
-    public void onThrow(Class<?> clazz, Method method, Object[] arguments, Throwable t) {
-
+    public void onThrow(Class<?> clazz, Method method, Object[] arguments, Throwable throwable) {
     }
 }

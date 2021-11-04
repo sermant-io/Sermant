@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class GrayTagConfigurationWrapper {
-
     @Autowired(required = false)
     private GrayTagConfigurationNotifier grayTagConfigurationNotifier;
 
