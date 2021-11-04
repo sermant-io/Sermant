@@ -4,6 +4,8 @@
 
 package com.huawei.route.report.observers;
 
+import com.huawei.route.report.common.ReporterConstants;
+
 import java.util.Map;
 import java.util.Properties;
 
@@ -21,6 +23,6 @@ public class GrayConfigurationObserver extends AbstractReporterObserver{
 
     @Override
     public String getLabelName() {
-        return "GARY_CONFIGURATION";
+        return ReporterConstants.GRAY_CONFIGURATION_KEY;
     }
 }

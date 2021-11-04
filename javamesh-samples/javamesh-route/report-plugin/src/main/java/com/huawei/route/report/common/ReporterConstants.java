@@ -48,4 +48,9 @@ public class ReporterConstants {
      * 标签库配置的ldc的key
      */
     public static final String LDC_CONFIGURATION_KEY = "LDC_CONFIGURATION";
+
+    /**
+     * 标签库配置的灰度配置
+     */
+    public static final String GRAY_CONFIGURATION_KEY = "GRAY_CONFIGURATION";
 }
