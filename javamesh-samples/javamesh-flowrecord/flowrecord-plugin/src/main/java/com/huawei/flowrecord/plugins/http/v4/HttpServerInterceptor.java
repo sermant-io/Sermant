@@ -4,12 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.apm.core.lubanops.bootstrap.trace.TraceCollector;
+import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.service.send.GatewayClient;
 import com.huawei.flowrecord.config.CommonConst;
-import com.huawei.flowrecord.config.FlowRecordConfig;
 import com.huawei.flowrecord.domain.*;
 import com.huawei.flowrecord.utils.AppNameUtil;
-import com.huawei.flowrecord.utils.KafkaProducerUtil;
-import com.huawei.flowrecord.utils.PluginConfigUtil;
 import org.apache.curator.shaded.com.google.common.hash.Hashing;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,7 @@ import java.util.Map;
 
 public class HttpServerInterceptor implements InstanceMethodInterceptor {
 
-    private static final FlowRecordConfig flowRecordConfig = PluginConfigUtil.getFlowRecordConfig();
+    private final GatewayClient gatewayClient = CoreServiceManager.INSTANCE.getService(GatewayClient.class);
 
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
@@ -163,6 +162,6 @@ public class HttpServerInterceptor implements InstanceMethodInterceptor {
         recordData.setResponseClass("java.lang.Object");
         recordData.setResponseBody(JSONObject.toJSONString(responseEntity));
         String serializeData = JSONObject.toJSONString(recordData);
-        KafkaProducerUtil.sendMessage(flowRecordConfig.getKafkaRequestTopic(), serializeData);
+        gatewayClient.send(serializeData.getBytes(StandardCharsets.UTF_8), CommonConst.FLOW_RECORD_DATA_TYPE);
     }
 }

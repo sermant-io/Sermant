@@ -14,6 +14,7 @@
     <properties>
         <package.sample.dir>${package.agent.dir}/plugins</package.sample.dir>
         <shade.distinct.prefix>com.lubanops.apm.dependencies.flowrecord</shade.distinct.prefix>
+        <org.apache.curator.version>4.3.0</org.apache.curator.version>
     </properties>
     <build>
         <plugins>
@@ -35,13 +36,6 @@
                         </goals>
                         <configuration>
                             <relocations>
-                                <relocation>
-                                    <excludes>
-                                        <exclude>org.apache.curator.shaded.com.google.common.hash.Hashing</exclude>
-                                    </excludes>
-                                    <pattern>org.apache.curator</pattern>
-                                    <shadedPattern>${shade.distinct.prefix}.org.apache.curator</shadedPattern>
-                                </relocation>
                                 <relocation>
                                     <pattern>com.google</pattern>
                                     <shadedPattern>${shade.distinct.prefix}.com.google</shadedPattern>
@@ -90,6 +84,7 @@
                                 </relocation>
                                 <relocation>
                                     <excludes>
+                                        <exclude>org.apache.curator.*</exclude>
                                         <exclude>org.apache.kafka.*</exclude>
                                         <exclude>org.apache.dubbo.*</exclude>
                                         <exclude>org.apache.http.*</exclude>
@@ -153,7 +148,7 @@
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-client</artifactId>
-            <version>4.3.0</version>
+            <version>${org.apache.curator.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -171,13 +166,13 @@
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
-            <version>4.3.0</version>
+            <version>${org.apache.curator.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-recipes</artifactId>
-            <version>4.3.0</version>
+            <version>${org.apache.curator.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

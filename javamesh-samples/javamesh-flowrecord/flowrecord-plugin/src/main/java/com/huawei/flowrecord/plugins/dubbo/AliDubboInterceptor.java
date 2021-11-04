@@ -14,10 +14,11 @@ import com.huawei.apm.core.lubanops.bootstrap.trace.Headers;
 import com.huawei.apm.core.lubanops.bootstrap.trace.SpanEvent;
 import com.huawei.apm.core.lubanops.bootstrap.trace.StartTraceRequest;
 import com.huawei.apm.core.lubanops.bootstrap.trace.TraceCollector;
+import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.service.send.GatewayClient;
 import com.huawei.flowrecord.config.CommonConst;
 import com.huawei.flowrecord.config.ConfigConst;
 import com.huawei.flowrecord.config.CorrelationConst;
-import com.huawei.flowrecord.config.FlowRecordConfig;
 import com.huawei.flowrecord.domain.RecordContext;
 import com.huawei.flowrecord.domain.RecordJob;
 import com.huawei.flowrecord.domain.RecordStatus;
@@ -51,10 +52,10 @@ import java.util.Stack;
  */
 public class AliDubboInterceptor implements InstanceMethodInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(AliDubboInterceptor.class);
-    private static final FlowRecordConfig flowRecordConfig = PluginConfigUtil.getFlowRecordConfig();
     public static final String CONSUMER_TAG = "DUBBO_CONSUMER";
     public static final String PROVIDER_TAG = "DUBBO_PROVIDER";
 
+    private final GatewayClient gatewayClient = CoreServiceManager.INSTANCE.getService(GatewayClient.class);
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
         Invoker invoker = (Invoker) arguments[0];
@@ -201,7 +202,7 @@ public class AliDubboInterceptor implements InstanceMethodInterceptor {
         recordRequest.setRequestClass(recordContext.requestClass);
         recordRequest.setResponseClass(result.recreate().getClass().getName());
         String serializedrequest = JSON.toJSONString(recordRequest, SerializerFeature.WriteMapNullValue);
-        KafkaProducerUtil.sendMessage(flowRecordConfig.getKafkaRequestTopic(), serializedrequest);
+        gatewayClient.send(serializedrequest.getBytes(StandardCharsets.UTF_8), CommonConst.FLOW_RECORD_DATA_TYPE);
     }
 
     private boolean isRecord(RecordJob recordJob, Invocation invocation) throws UnknownHostException {
@@ -239,6 +240,7 @@ public class AliDubboInterceptor implements InstanceMethodInterceptor {
             RecordStatus.map.put(RecordJob.recordJob.getJobId(), invoker.getInterface().getName() + CommonConst.POINT_SIGN
                     + invocation.getMethodName());
             String map = JSON.toJSONString(RecordStatus.map);
+            relationContext = new HashMap<String, String>();
             relationContext.put(ConfigConst.RECORD_LIST, map);
         } else {
             JSONObject jsonObject = JSONObject.parseObject(relationContext.get(ConfigConst.RECORD_LIST));
@@ -313,7 +315,7 @@ public class AliDubboInterceptor implements InstanceMethodInterceptor {
         String apmTraceId = invocation.getAttachment(Headers.TRACE_ID.getValue());
         String apmSpanId = invocation.getAttachment(Headers.SPAN_ID.getValue());
         String apmGTraceId = null;
-        if (StringUtil.isBlank(apmTraceId)) {
+        if (apmTraceId == null || StringUtil.isBlank(apmTraceId)) {
             apmGTraceId = invocation.getAttachment(Headers.GTRACE_ID.getValue());
         }
         StartTraceRequest startTraceRequest = new StartTraceRequest(className, methodName, apmTraceId, apmSpanId, apmGTraceId);
