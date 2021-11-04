@@ -1,4 +1,4 @@
-package com.huawei.route.common.constants;
+package com.huawei.route.common.gray.constants;
 
 /**
  * 常量

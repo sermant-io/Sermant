@@ -6,11 +6,11 @@ package com.huawei.route.common.gray.addr;
 
 import com.huawei.apm.core.config.ConfigLoader;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.route.common.constants.GrayConstant;
 import com.huawei.route.common.factory.NamedThreadFactory;
 import com.huawei.route.common.gray.addr.entity.Addr;
 import com.huawei.route.common.gray.addr.entity.Instances;
 import com.huawei.route.common.gray.config.GrayConfig;
+import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
 import com.huawei.route.common.utils.CollectionUtils;
 import com.huawei.route.common.utils.HttpClientResult;

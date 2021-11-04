@@ -6,7 +6,7 @@ package com.huawei.gray.dubbo.strategy.type;
 
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
-import com.huawei.route.common.constants.GrayConstant;
+import com.huawei.route.common.gray.constants.GrayConstant;
 
 import java.util.logging.Logger;
 

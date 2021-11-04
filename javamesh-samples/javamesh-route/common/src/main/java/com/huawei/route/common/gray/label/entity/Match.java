@@ -79,8 +79,7 @@ public class Match {
         return headers;
     }
 
-    public void setHeaders(
-            Map<String, List<MatchRule>> headers) {
+    public void setHeaders(Map<String, List<MatchRule>> headers) {
         this.headers = headers;
     }
 }
