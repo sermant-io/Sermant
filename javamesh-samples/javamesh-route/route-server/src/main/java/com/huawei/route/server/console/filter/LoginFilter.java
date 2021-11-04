@@ -34,8 +34,8 @@ import java.io.IOException;
  * 修改单号：
  * 修改内容：session过期返回417状态码，未登录返回401状态码
  */
-@Order(2)
-@Component
+ @Order(2)
+ @Component
 public class LoginFilter implements Filter {
     /**
      * 保存cas session的key
@@ -44,27 +44,19 @@ public class LoginFilter implements Filter {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginFilter.class);
 
     /**
-     * 创建性能剖析请求的，请求条件
-     */
-    private static final String PROFILE_CONDITION = "createProfileTask($creationRequest: ProfileTaskCreationRequest)";
-
-    /**
      * 是否加载sentinel bean
      */
     @Value("${conditional.cas.load}")
     private boolean isCasLoad;
-
-    @Value("${zuul.routes.api.path}")
-    private String apmUrl;
-
-    @Value("${collection.logaudit}")
-    private boolean isCollection = true;
 
     /**
      * 自定义的忽略url
      */
     @Value("#{'${ignorePattern}'.replace(',','|')}")
     private String ignorePattern;
+
+    @Value("${conditional.cas.login.skip:false}")
+    private boolean skipLogin;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -76,11 +68,9 @@ public class LoginFilter implements Filter {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
             String servletPath = httpRequest.getServletPath();
+            if (skipLogin || ignorePattern.contains(servletPath)) {
+                chain.doFilter(new SafeHttpServletRequestWrapper((HttpServletRequest) request), response);
 
-            // 判断是否是忽略url
-            if (ignorePattern.contains(servletPath)) {
-                chain.doFilter(request, response);
-                return;
             }
             SafeHttpServletRequestWrapper requestWrapper =
                     new SafeHttpServletRequestWrapper((HttpServletRequest) request);
