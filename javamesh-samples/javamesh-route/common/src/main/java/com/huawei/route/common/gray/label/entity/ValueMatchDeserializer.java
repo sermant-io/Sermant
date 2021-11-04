@@ -5,7 +5,7 @@
 package com.huawei.route.common.gray.label.entity;
 
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.route.common.constants.GrayConstant;
+import com.huawei.route.common.gray.constants.GrayConstant;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;

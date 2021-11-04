@@ -6,8 +6,8 @@ package com.huawei.gray.dubbo.label;
 
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.gray.dubbo.cache.DubboCache;
-import com.huawei.route.common.constants.GrayConstant;
 import com.huawei.route.common.gray.addr.AddrCache;
+import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;

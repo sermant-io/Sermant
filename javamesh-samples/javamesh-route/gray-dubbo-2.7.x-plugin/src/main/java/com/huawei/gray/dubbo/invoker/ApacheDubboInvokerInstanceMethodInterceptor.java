@@ -8,16 +8,17 @@ import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.gray.dubbo.cache.DubboCache;
-import com.huawei.gray.dubbo.strategy.rule.RuleType;
+import com.huawei.gray.dubbo.strategy.RuleStrategyEnum;
 import com.huawei.gray.dubbo.utils.RouterUtil;
-import com.huawei.route.common.constants.GrayConstant;
 import com.huawei.route.common.gray.addr.AddrCache;
 import com.huawei.route.common.gray.addr.entity.Instances;
 import com.huawei.route.common.gray.addr.entity.Metadata;
+import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;
 import com.huawei.route.common.gray.label.entity.Route;
 import com.huawei.route.common.gray.label.entity.Rule;
+
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.remoting.exchange.ExchangeClient;
 import org.apache.dubbo.rpc.Invocation;
@@ -75,12 +76,12 @@ public class ApacheDubboInvokerInstanceMethodInterceptor implements InstanceMeth
         if (RpcContext.getContext().isConsumerSide()) {
             String version = grayConfiguration.getCurrentTag().getVersion();
             String interfaceName = requestUrl.getServiceInterface() + "." + invocation.getMethodName();
-            List<Rule> rules =
-                    RouterUtil.getValidRules(grayConfiguration, targetService, interfaceName, DubboCache.getAppName());
+            List<Rule> rules = RouterUtil.getValidRules(grayConfiguration, targetService, interfaceName);
             List<Route> routes = RouterUtil.getRoutes(rules, invocation.getArguments());
-            RuleType ruleType = CollectionUtils.isEmpty(routes) ? RuleType.UPSTREAM : RuleType.WEIGHT;
-            String targetServiceIp =
-                    ruleType.getTargetServiceIp(routes, targetService, interfaceName, version, invocation);
+            RuleStrategyEnum ruleStrategyEnum =
+                    CollectionUtils.isEmpty(routes) ? RuleStrategyEnum.UPSTREAM : RuleStrategyEnum.WEIGHT;
+            String targetServiceIp = ruleStrategyEnum.getTargetServiceIp(routes, targetService, interfaceName, version,
+                    invocation);
             Instances instance = AddrCache.getInstance(targetService, targetServiceIp);
             if (instance != null && instance.getMetadata() != null) {
                 Metadata metadata = instance.getMetadata();

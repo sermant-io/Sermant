@@ -10,8 +10,8 @@ import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.gray.dubbo.label.GrayLabelObserver;
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
 import com.huawei.gray.dubbo.strategy.TypeStrategyChooser;
-import com.huawei.route.common.constants.GrayConstant;
 import com.huawei.route.common.gray.addr.entity.Instances;
+import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;
@@ -272,21 +272,18 @@ public class RouterUtil {
         }
         if (client instanceof HeaderExchangeClient) {
             // 修改其中channel的地址
-            Object headerExchangeClient = getField(client, CLIENT_FIELD_NAME_CHANNEL); // HeaderExchangeClient
-            NettyClient channel =
-                    (NettyClient) getField(headerExchangeClient, CLIENT_FIELD_NAME_CHANNEL); // NettyClient
-
+            Object headerExchangeClient = getField(client, CLIENT_FIELD_NAME_CHANNEL);
+            NettyClient channel = (NettyClient) getField(headerExchangeClient, CLIENT_FIELD_NAME_CHANNEL);
             URL url = channel.getUrl();
             // 如果地址相同，则不需要更换
-            if (url.getHost().equals(newUrl.getHost())
-                    && url.getPort() == newUrl.getPort()
+            if (url.getHost().equals(newUrl.getHost()) && url.getPort() == newUrl.getPort()
                     && getServiceName(url).equals(getServiceName(newUrl))
                     && getInterfaceName(url).equals(getInterfaceName(newUrl))
                     && getMethodName(url).equals(getMethodName(newUrl))) {
                 return;
             }
-            ChannelHandler handler =
-                    getField(NettyClient.class, ChannelHandler.class, channel, CLIENT_FIELD_NAME_HANDLER);
+            ChannelHandler handler = getField(NettyClient.class, ChannelHandler.class, channel,
+                    CLIENT_FIELD_NAME_HANDLER);
             try {
                 NettyClient newNettyClient = new NettyClient(newUrl, handler);
                 // 替换client类型
@@ -460,11 +457,10 @@ public class RouterUtil {
      * @param grayConfiguration 标签
      * @param targetService 目标服务
      * @param interfaceName 接口
-     * @param applicationName 来源应用名，即目标应用的上游应用
      * @return 目标规则
      */
     public static List<Rule> getValidRules(GrayConfiguration grayConfiguration, String targetService,
-            String interfaceName, String applicationName) {
+            String interfaceName) {
         if (GrayConfiguration.isInValid(grayConfiguration)) {
             return Collections.emptyList();
         }
@@ -474,7 +470,7 @@ public class RouterUtil {
         }
         List<Rule> list = new ArrayList<Rule>();
         for (Rule rule : routeRule.get(targetService)) {
-            if (!isValidRule(rule, applicationName, interfaceName)) {
+            if (!isValidRule(rule, interfaceName)) {
                 continue;
             }
 
@@ -520,7 +516,7 @@ public class RouterUtil {
         }
     }
 
-    private static boolean isValidRule(Rule rule, String applicationName, String interfaceName) {
+    private static boolean isValidRule(Rule rule, String interfaceName) {
         if (rule == null) {
             return false;
         }
@@ -529,7 +525,7 @@ public class RouterUtil {
             return false;
         }
         String source = match.getSource();
-        if (StringUtils.isNotBlank(source) && !source.equals(applicationName)) {
+        if (StringUtils.isNotBlank(source) && !source.equals(DubboCache.getAppName())) {
             return false;
         }
         if (!interfaceName.equals(match.getPath())) {
@@ -601,6 +597,7 @@ public class RouterUtil {
             // 如果是全匹配，走到这里，说明没有不匹配的，直接return
             return rule.getRoute();
         }
+        // 如果不是全匹配，走到这里，说明没有一个规则能够匹配上，则继续下一个规则
         return null;
     }
 

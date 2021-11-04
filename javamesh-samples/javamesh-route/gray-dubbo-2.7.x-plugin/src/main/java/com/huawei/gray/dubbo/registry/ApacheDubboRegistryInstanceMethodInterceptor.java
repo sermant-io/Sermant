@@ -9,6 +9,7 @@ import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.gray.dubbo.utils.RouterUtil;
+
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.registry.integration.RegistryDirectory;
 import org.apache.dubbo.rpc.Invoker;
@@ -52,8 +53,8 @@ public class ApacheDubboRegistryInstanceMethodInterceptor implements InstanceMet
             // 获取注册监听类
             RegistryDirectory<?> registryDirectory = (RegistryDirectory<?>) obj;
             // 通过反射获取到cachedInvokerUrls变量，其中cachedInvokerUrls为应用的缓存
-            Map<String, Invoker<?>> invokerMap =
-                    RouterUtil.getField(RegistryDirectory.class, Map.class, registryDirectory, URL_INVOKER_FIELD_NAME);
+            Map<String, Invoker<?>> invokerMap = RouterUtil.getField(RegistryDirectory.class, Map.class,
+                    registryDirectory, URL_INVOKER_FIELD_NAME);
             if (invokerMap != null) {
                 // 将本地路由地址全量更新至本地缓存
                 DubboCache.updateLocalAddr(getLocalAddr(invokerMap));
