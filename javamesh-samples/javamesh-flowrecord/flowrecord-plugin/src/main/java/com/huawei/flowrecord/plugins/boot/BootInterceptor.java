@@ -4,10 +4,10 @@
 
 package com.huawei.flowrecord.plugins.boot;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.StaticMethodInterceptor;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
 import com.huawei.flowrecord.init.InitListener;
-import com.huawei.flowrecord.plugins.dubbo.AliDubboInterceptor;
+
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

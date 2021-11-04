@@ -4,7 +4,7 @@
 
 package com.huawei.javamesh.sample.servermonitor.command;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 import java.io.InputStream;
 import java.util.List;

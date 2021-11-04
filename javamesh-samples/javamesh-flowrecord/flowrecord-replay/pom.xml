@@ -23,7 +23,7 @@
 
     <properties>
         <javamesh.basedir>${pom.basedir}/../../../..</javamesh.basedir>
-<!--        <package.sample.name>${package.server.dir}</package.sample.name>-->
+        <package.sample.dir>${package.server.dir}</package.sample.dir>
 
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>

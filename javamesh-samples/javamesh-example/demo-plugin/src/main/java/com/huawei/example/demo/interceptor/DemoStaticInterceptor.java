@@ -6,8 +6,8 @@ package com.huawei.example.demo.interceptor;
 
 import java.lang.reflect.Method;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.StaticMethodInterceptor;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
 
 /**
  * 静态函数的拦截器示例，本示例将展示如何对静态函数进行增强

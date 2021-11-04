@@ -4,7 +4,7 @@
 
 package com.huawei.flowrecord.utils;
 
-import com.huawei.apm.bootstrap.config.ConfigLoader;
+import com.huawei.apm.core.config.ConfigLoader;
 import com.huawei.flowrecord.config.FlowRecordConfig;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;

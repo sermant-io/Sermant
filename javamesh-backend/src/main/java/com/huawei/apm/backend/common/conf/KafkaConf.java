@@ -48,4 +48,7 @@ public class KafkaConf {
 
     @Value("${kafka.oracle-jvm-monitor.topic}")
     private String topicOracleJvmMonitor;
+
+    @Value("${kafka.ibm-jvm-monitor.topic}")
+    private String topicIbmJvmMonitor;
 }

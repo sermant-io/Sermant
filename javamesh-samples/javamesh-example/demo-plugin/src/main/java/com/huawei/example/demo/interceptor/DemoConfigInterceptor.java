@@ -6,9 +6,9 @@ package com.huawei.example.demo.interceptor;
 
 import java.lang.reflect.Method;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.config.ConfigLoader;
-import com.huawei.apm.bootstrap.interceptors.StaticMethodInterceptor;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.config.ConfigLoader;
+import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
 import com.huawei.example.demo.config.DemoConfig;
 
 /**

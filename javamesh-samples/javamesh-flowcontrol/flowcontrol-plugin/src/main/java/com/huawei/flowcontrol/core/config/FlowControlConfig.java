@@ -1,7 +1,7 @@
 package com.huawei.flowcontrol.core.config;
 
-import com.huawei.apm.bootstrap.config.BaseConfig;
-import com.huawei.apm.bootstrap.config.ConfigTypeKey;
+import com.huawei.apm.core.config.BaseConfig;
+import com.huawei.apm.core.config.ConfigTypeKey;
 
 @ConfigTypeKey("flow.control.plugin")
 public class FlowControlConfig implements BaseConfig {

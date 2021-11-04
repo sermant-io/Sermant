@@ -11,19 +11,58 @@
         <package.output.dir>${package.agent.dir}/core</package.output.dir>
     </properties>
     <dependencies>
+        <!--替换javassist-->
         <dependency>
-            <groupId>com.huawei.javamesh</groupId>
-            <artifactId>javamesh-agentcore-bootstrap</artifactId>
-            <scope>provided</scope>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.huawei.javamesh</groupId>
-            <artifactId>javamesh-agentcore-core-ext</artifactId>
-            <scope>provided</scope>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.java-websocket</groupId>
+            <artifactId>Java-WebSocket</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -62,6 +101,13 @@
         </dependency>
     </dependencies>
     <build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>${os.plugin.version}</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -77,12 +123,28 @@
                 <configuration>
                     <relocations>
                         <relocation>
+                            <pattern>net.bytebuddy</pattern>
+                            <shadedPattern>${shade.common.prefix}.net.bytebuddy</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.alibaba</pattern>
+                            <shadedPattern>${shade.common.prefix}.com.alibaba</shadedPattern>
+                        </relocation>
+                        <relocation>
                             <pattern>com.github</pattern>
                             <shadedPattern>${shade.common.prefix}.com.github</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.google</pattern>
                             <shadedPattern>${shade.common.prefix}.com.google</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>google.protobuf</pattern>
+                            <shadedPattern>${shade.common.prefix}.google.protobuf</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>io.netty</pattern>
+                            <shadedPattern>${shade.common.prefix}.io.netty</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>javax.inject</pattern>
@@ -105,6 +167,14 @@
                             <shadedPattern>${shade.common.prefix}.org.apache</shadedPattern>
                         </relocation>
                         <relocation>
+                            <pattern>org.java_websocket</pattern>
+                            <shadedPattern>${shade.common.prefix}.org.java_websocket</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.objectweb.asm</pattern>
+                            <shadedPattern>${shade.common.prefix}.org.objectweb.asm</shadedPattern>
+                        </relocation>
+                        <relocation>
                             <pattern>org.slf4j</pattern>
                             <shadedPattern>${shade.common.prefix}.org.slf4j</shadedPattern>
                         </relocation>
@@ -120,8 +190,58 @@
                             <pattern>org.xml</pattern>
                             <shadedPattern>${shade.common.prefix}.org.xml</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>org.yaml</pattern>
+                            <shadedPattern>${shade.common.prefix}.org.yaml</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-config</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${package.agent.dir}</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/config/${app.env}</directory>
+                                    <includes>
+                                        <include>apm.config</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>${protubuf.plugin.version}</version>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
+                    </protocArtifact>
+                    <pluginId>grpc-java</pluginId>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
+                    </pluginArtifact>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

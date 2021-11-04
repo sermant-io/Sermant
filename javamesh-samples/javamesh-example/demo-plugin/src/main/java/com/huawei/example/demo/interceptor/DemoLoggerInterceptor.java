@@ -7,9 +7,9 @@ package com.huawei.example.demo.interceptor;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.StaticMethodInterceptor;
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
  * 日志功能的拦截器示例，本示例将展示如何在插件端使用日志功能

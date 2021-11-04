@@ -17,14 +17,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
-import com.huawei.apm.bootstrap.boot.heartbeat.HeartbeatInterval;
-import com.huawei.apm.bootstrap.boot.heartbeat.HeartbeatService;
-import com.huawei.apm.bootstrap.lubanops.config.AgentConfigManager;
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-import com.huawei.apm.core.ext.lubanops.transport.ClientManager;
-import com.huawei.apm.core.ext.lubanops.transport.netty.client.NettyClient;
-import com.huawei.apm.core.ext.lubanops.transport.netty.pojo.Message;
-import com.huawei.apm.core.lubanops.transfer.dto.heartbeat.HeartbeatMessage;
+import com.huawei.apm.core.lubanops.bootstrap.config.AgentConfigManager;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.lubanops.core.transfer.dto.heartbeat.HeartbeatMessage;
+import com.huawei.apm.core.lubanops.integration.transport.ClientManager;
+import com.huawei.apm.core.lubanops.integration.transport.netty.client.NettyClient;
+import com.huawei.apm.core.lubanops.integration.transport.netty.pojo.Message;
 
 /**
  * {@link HeartbeatService}的实现

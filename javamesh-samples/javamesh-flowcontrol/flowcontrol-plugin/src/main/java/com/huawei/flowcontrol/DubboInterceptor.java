@@ -5,9 +5,9 @@ import com.alibaba.csp.sentinel.EntryType;
 import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
-import com.huawei.apm.bootstrap.exception.FlowControlException;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.apm.core.exception.FlowControlException;
 import com.huawei.flowcontrol.util.SentinelRuleUtil;
 import com.huawei.flowcontrol.util.TraceEntryUtils;
 

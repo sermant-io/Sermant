@@ -1,7 +1,7 @@
 package com.huawei.flowrecord.config;
 
-import com.huawei.apm.bootstrap.config.BaseConfig;
-import com.huawei.apm.bootstrap.config.ConfigTypeKey;
+import com.huawei.apm.core.config.BaseConfig;
+import com.huawei.apm.core.config.ConfigTypeKey;
 import lombok.Getter;
 import lombok.Setter;
 

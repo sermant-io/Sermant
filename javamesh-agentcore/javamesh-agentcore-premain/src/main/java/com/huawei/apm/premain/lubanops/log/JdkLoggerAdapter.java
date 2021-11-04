@@ -5,8 +5,8 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogPathUtils;
-import com.huawei.apm.bootstrap.lubanops.log.LoggerAdapter;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogPathUtils;
+import com.huawei.apm.core.lubanops.bootstrap.log.LoggerAdapter;
 
 /**
  * @author

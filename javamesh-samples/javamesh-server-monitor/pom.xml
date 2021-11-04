@@ -19,20 +19,42 @@
 
     <profiles>
         <profile>
-            <id>plugin</id>
+            <id>agent</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>protocol</module>
                 <module>server-monitor-plugin</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>ext</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>metric-server</module>
             </modules>
         </profile>
         <profile>
             <id>all</id>
             <modules>
+                <module>protocol</module>
                 <module>server-monitor-plugin</module>
+                <module>metric-server</module>
             </modules>
         </profile>
     </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.huawei.javamesh</groupId>
+                <artifactId>protocol</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

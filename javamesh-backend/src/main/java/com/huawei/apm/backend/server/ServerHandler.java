@@ -77,6 +77,9 @@ public class ServerHandler extends BaseHandler {
                 case Message.ServiceData.DataType.ORACLE_JVM_MONITOR_VALUE:
                     producer.send(new ProducerRecord<>(conf.getTopicOracleJvmMonitor(), Bytes.wrap(message)));
                     break;
+                case Message.ServiceData.DataType.IBM_JVM_MONITOR_VALUE:
+                    producer.send(new ProducerRecord<>(conf.getTopicIbmJvmMonitor(), Bytes.wrap(message)));
+                    break;
                 default:
                     break;
             }

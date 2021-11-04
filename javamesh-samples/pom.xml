@@ -17,15 +17,24 @@
     </properties>
     <profiles>
         <profile>
-            <id>plugin</id>
+            <id>agent</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <!--<module>javamesh-flowcontrol</module>
+                <module>javamesh-flowcontrol</module>
                 <module>javamesh-server-monitor</module>
                 <module>javamesh-flowrecord</module>-->
                 <module>javamesh-route</module>
+                <module>javamesh-flowrecord</module>
+                <module>javamesh-threadlocal</module>
+                <module>javamesh-online-stresstest</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>example</id>
+            <modules>
+                <module>javamesh-example</module>
             </modules>
         </profile>
         <profile>
@@ -51,6 +60,8 @@
                 <module>javamesh-server-monitor</module>
                 <module>javamesh-flowrecord</module>
                 <module>javamesh-route</module>
+                <module>javamesh-threadlocal</module>
+                <module>javamesh-online-stresstest</module>
             </modules>
         </profile>
     </profiles>

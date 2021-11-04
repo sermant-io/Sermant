@@ -7,10 +7,10 @@ package com.huawei.example.demo.definition;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatchers;
 
-import com.huawei.apm.bootstrap.definition.EnhanceDefinition;
-import com.huawei.apm.bootstrap.definition.MethodInterceptPoint;
-import com.huawei.apm.bootstrap.matcher.ClassMatcher;
-import com.huawei.apm.bootstrap.matcher.ClassMatchers;
+import com.huawei.apm.core.agent.definition.EnhanceDefinition;
+import com.huawei.apm.core.agent.definition.MethodInterceptPoint;
+import com.huawei.apm.core.agent.matcher.ClassMatcher;
+import com.huawei.apm.core.agent.matcher.ClassMatchers;
 
 /**
  * 通过名称定位到拦截点的增强定义，本示例处理测试构造函数、静态方法和示例方法三种拦截点外，还会测试日志功能和统一配置
