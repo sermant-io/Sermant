@@ -6,7 +6,8 @@ import com.huawei.apm.core.lubanops.bootstrap.trace.Headers;
 import com.huawei.apm.core.lubanops.bootstrap.trace.SpanEvent;
 import com.huawei.apm.core.lubanops.bootstrap.trace.StartTraceRequest;
 import com.huawei.apm.core.lubanops.bootstrap.trace.TraceCollector;
-import com.huawei.flowrecord.config.FlowRecordConfig;
+import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.service.send.GatewayClient;
 import com.huawei.flowrecord.utils.*;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.rpc.Invocation;
@@ -42,9 +43,10 @@ import java.util.Stack;
 
 public class DubboInterceptor implements InstanceMethodInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(DubboInterceptor.class);
-    private static final FlowRecordConfig flowRecordConfig = PluginConfigUtil.getFlowRecordConfig();
     public static final String CONSUMER_TAG = "DUBBO_CONSUMER";
     public static final String PROVIDER_TAG = "DUBBO_PROVIDER";
+
+    private final GatewayClient gatewayClient = CoreServiceManager.INSTANCE.getService(GatewayClient.class);
 
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
@@ -192,7 +194,7 @@ public class DubboInterceptor implements InstanceMethodInterceptor {
         recordRequest.setRequestClass(recordContext.requestClass);
         recordRequest.setResponseClass(result.recreate().getClass().getName());
         String serializedrequest = JSON.toJSONString(recordRequest, SerializerFeature.WriteMapNullValue);
-        KafkaProducerUtil.sendMessage(flowRecordConfig.getKafkaRequestTopic(), serializedrequest);
+        gatewayClient.send(serializedrequest.getBytes(StandardCharsets.UTF_8), CommonConst.FLOW_RECORD_DATA_TYPE);
     }
 
     private boolean isRecord(RecordJob recordJob, Invocation invocation) throws UnknownHostException {
