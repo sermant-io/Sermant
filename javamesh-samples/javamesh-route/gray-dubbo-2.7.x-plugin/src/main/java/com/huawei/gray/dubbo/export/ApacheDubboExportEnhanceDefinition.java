@@ -22,7 +22,7 @@ public class ApacheDubboExportEnhanceDefinition implements EnhanceDefinition {
     private static final String EXPORT_ENHANCE_CLASS = "org.apache.dubbo.config.ServiceConfig";
 
     private static final String EXPORT_INTERCEPT_CLASS
-            = "com.huawei.apm.plugin.gray.dubbo.export.ApacheDubboExportInstanceMethodInterceptor";
+            = "com.huawei.gray.dubbo.export.ApacheDubboExportInstanceMethodInterceptor";
 
     private static final String ENHANCE_METHOD_NAME = "export";
 

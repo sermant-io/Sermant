@@ -16,8 +16,15 @@ import java.util.logging.Logger;
  * @date 2021/10/13
  */
 public abstract class TypeStrategy {
-    protected static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LogFactory.getLogger();
 
+    /**
+     * 获取参数值
+     *
+     * @param arg 参数
+     * @param type 获取参数的方式
+     * @return 参数值
+     */
     public abstract String getValue(Object arg, String type);
 
     /**
@@ -39,18 +46,40 @@ public abstract class TypeStrategy {
         }
     }
 
+    /**
+     * 开始字符串
+     *
+     * @return 开始字符串
+     */
     public String getBeginFlag() {
         return "";
     }
 
+    /**
+     * 结束字符串
+     *
+     * @return 结束字符串
+     */
     public String getEndFlag() {
         return "";
     }
 
+    /**
+     * 检查获取参数的类型
+     *
+     * @param type 类型
+     * @return 是否合法
+     */
     public boolean checkType(String type) {
         return StringUtils.isNotBlank(type) && type.startsWith(getBeginFlag()) && type.endsWith(getEndFlag());
     }
 
+    /**
+     * 获取参数的key值
+     *
+     * @param type 获取参数类型
+     * @return key值
+     */
     public String getKey(String type) {
         return type.substring(getBeginFlag().length(), type.length() - getEndFlag().length());
     }

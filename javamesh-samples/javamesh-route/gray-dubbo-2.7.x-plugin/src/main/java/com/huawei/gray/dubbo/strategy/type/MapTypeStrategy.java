@@ -19,8 +19,8 @@ public class MapTypeStrategy extends TypeStrategy {
     public String getValue(Object arg, String type) {
         if (arg instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) arg;
-            Object o = map.get(getKey(type));
-            return o == null ? null : String.valueOf(o);
+            Object object = map.get(getKey(type));
+            return object == null ? null : String.valueOf(object);
         }
         return null;
     }

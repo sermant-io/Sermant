@@ -59,9 +59,9 @@ import java.util.logging.Logger;
  * @since 2021年6月21日
  */
 public class RouterUtil {
-    public static final String URL_PARA_APP_NAME = "application"; // dubbo请求中应用名
+    private static final String URL_PARA_APP_NAME = "application"; // dubbo请求中应用名
 
-    public static final String REMOTE_APP_NAME = "remote.application"; // dubbo请求中下游应用名
+    private static final String REMOTE_APP_NAME = "remote.application"; // dubbo请求中下游应用名
 
     private static final String URL_PARA_METHOD_NAME = "methods"; // dubbo请求中方法名
 
@@ -273,18 +273,20 @@ public class RouterUtil {
         if (client instanceof HeaderExchangeClient) {
             // 修改其中channel的地址
             Object headerExchangeClient = getField(client, CLIENT_FIELD_NAME_CHANNEL); // HeaderExchangeClient
-            NettyClient channel = (NettyClient) getField(headerExchangeClient,
-                    CLIENT_FIELD_NAME_CHANNEL); // NettyClient
+            NettyClient channel =
+                    (NettyClient) getField(headerExchangeClient, CLIENT_FIELD_NAME_CHANNEL); // NettyClient
 
             URL url = channel.getUrl();
             // 如果地址相同，则不需要更换
-            if (url.getHost().equals(newUrl.getHost()) && url.getPort() == newUrl.getPort() && getServiceName(
-                    url).equals(getServiceName(newUrl)) && getInterfaceName(url).equals(getInterfaceName(newUrl))
+            if (url.getHost().equals(newUrl.getHost())
+                    && url.getPort() == newUrl.getPort()
+                    && getServiceName(url).equals(getServiceName(newUrl))
+                    && getInterfaceName(url).equals(getInterfaceName(newUrl))
                     && getMethodName(url).equals(getMethodName(newUrl))) {
                 return;
             }
-            ChannelHandler handler = getField(NettyClient.class, ChannelHandler.class, channel,
-                    CLIENT_FIELD_NAME_HANDLER);
+            ChannelHandler handler =
+                    getField(NettyClient.class, ChannelHandler.class, channel, CLIENT_FIELD_NAME_HANDLER);
             try {
                 NettyClient newNettyClient = new NettyClient(newUrl, handler);
                 // 替换client类型
@@ -321,8 +323,8 @@ public class RouterUtil {
      * @throws NoSuchFieldException 可能会抛出的异常
      * @throws IllegalAccessException 可能会抛出的异常
      */
-    public static AbstractInvoker<?> getTargetInvoker(Invoker<?> invoker) throws NoSuchFieldException,
-            IllegalAccessException {
+    public static AbstractInvoker<?> getTargetInvoker(Invoker<?> invoker)
+            throws NoSuchFieldException, IllegalAccessException {
         if (invoker instanceof AbstractInvoker) {
             return (AbstractInvoker<?>) invoker;
         }
@@ -475,29 +477,12 @@ public class RouterUtil {
             if (!isValidRule(rule, applicationName, interfaceName)) {
                 continue;
             }
+
             // 去掉无效的规则
-            Map<String, List<MatchRule>> args = rule.getMatch().getArgs();
-            Iterator<Entry<String, List<MatchRule>>> matchRuleListIterator = args.entrySet().iterator();
-            while (matchRuleListIterator.hasNext()) {
-                if (isInValidArgs(matchRuleListIterator.next())) {
-                    matchRuleListIterator.remove();
-                }
-            }
-            for (List<MatchRule> matchRules : args.values()) {
-                Iterator<MatchRule> matchRuleIterator = matchRules.iterator();
-                while (matchRuleIterator.hasNext()) {
-                    if (isInValidMatchRule(matchRuleIterator.next())) {
-                        matchRuleIterator.remove();
-                    }
-                }
-            }
+            removeInValidRules(rule.getMatch().getArgs());
+
             // 去掉无效的路由
-            Iterator<Route> routeIterator = rule.getRoute().iterator();
-            while (routeIterator.hasNext()) {
-                if (isInValidRoute(routeIterator.next())) {
-                    routeIterator.remove();
-                }
-            }
+            removeInValidRoute(rule.getRoute());
             list.add(rule);
         }
         Collections.sort(list, new Comparator<Rule>() {
@@ -507,6 +492,32 @@ public class RouterUtil {
             }
         });
         return list;
+    }
+
+    private static void removeInValidRules(Map<String, List<MatchRule>> args) {
+        Iterator<Entry<String, List<MatchRule>>> matchRuleListIterator = args.entrySet().iterator();
+        while (matchRuleListIterator.hasNext()) {
+            if (isInValidArgs(matchRuleListIterator.next())) {
+                matchRuleListIterator.remove();
+            }
+        }
+        for (List<MatchRule> matchRules : args.values()) {
+            Iterator<MatchRule> matchRuleIterator = matchRules.iterator();
+            while (matchRuleIterator.hasNext()) {
+                if (isInValidMatchRule(matchRuleIterator.next())) {
+                    matchRuleIterator.remove();
+                }
+            }
+        }
+    }
+
+    private static void removeInValidRoute(List<Route> routeList) {
+        Iterator<Route> routeIterator = routeList.iterator();
+        while (routeIterator.hasNext()) {
+            if (isInValidRoute(routeIterator.next())) {
+                routeIterator.remove();
+            }
+        }
     }
 
     private static boolean isValidRule(Rule rule, String applicationName, String interfaceName) {
@@ -535,8 +546,9 @@ public class RouterUtil {
     }
 
     private static boolean isInValidMatchRule(MatchRule matchRule) {
-        return matchRule == null || matchRule.getValueMatch() == null || CollectionUtils
-                .isEmpty(matchRule.getValueMatch().getValues()) || matchRule.getValueMatch().getMatchStrategy() == null;
+        return matchRule == null || matchRule.getValueMatch() == null
+                || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
+                || matchRule.getValueMatch().getMatchStrategy() == null;
     }
 
     private static boolean isInValidRoute(Route route) {
@@ -551,36 +563,43 @@ public class RouterUtil {
      * @return 匹配的路由
      */
     public static List<Route> getRoutes(List<Rule> list, Object[] arguments) {
-        for1:
         for (Rule rule : list) {
-            Match match = rule.getMatch();
-            boolean fullMatch = match.isFullMatch();
-            Map<String, List<MatchRule>> args = match.getArgs();
-            for (Entry<String, List<MatchRule>> entry : args.entrySet()) {
-                String key = entry.getKey();
-                if (!key.startsWith(GrayConstant.DUBBO_SOURCE_TYPE_PREFIX)) {
-                    continue;
+            List<Route> routeList = getRoutes(arguments, rule);
+            if (routeList != null) {
+                return routeList;
+            }
+        }
+        return null;
+    }
+
+    private static List<Route> getRoutes(Object[] arguments, Rule rule) {
+        Match match = rule.getMatch();
+        boolean fullMatch = match.isFullMatch();
+        Map<String, List<MatchRule>> args = match.getArgs();
+        for (Entry<String, List<MatchRule>> entry : args.entrySet()) {
+            String key = entry.getKey();
+            if (!key.startsWith(GrayConstant.DUBBO_SOURCE_TYPE_PREFIX)) {
+                continue;
+            }
+            List<MatchRule> matchRuleList = entry.getValue();
+            for (MatchRule matchRule : matchRuleList) {
+                ValueMatch valueMatch = matchRule.getValueMatch();
+                List<String> values = valueMatch.getValues();
+                MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
+                String arg = getArg(matchRule.getType(), key, arguments);
+                if (!fullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                    // 如果不是全匹配，且匹配了一个，那么直接return
+                    return rule.getRoute();
                 }
-                List<MatchRule> matchRuleList = entry.getValue();
-                for (MatchRule matchRule : matchRuleList) {
-                    ValueMatch valueMatch = matchRule.getValueMatch();
-                    List<String> values = valueMatch.getValues();
-                    MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
-                    String arg = getArg(matchRule.getType(), key, arguments);
-                    if (!fullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                        // 如果不是全匹配，且匹配了一个，那么直接return
-                        return rule.getRoute();
-                    }
-                    if (fullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                        // 如果是全匹配，且有一个不匹配，则继续下一个规则
-                        continue for1;
-                    }
+                if (fullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                    // 如果是全匹配，且有一个不匹配，则继续下一个规则
+                    return null;
                 }
             }
-            if (fullMatch) {
-                // 如果是全匹配，走到这里，说明没有不匹配的，直接return
-                return rule.getRoute();
-            }
+        }
+        if (fullMatch) {
+            // 如果是全匹配，走到这里，说明没有不匹配的，直接return
+            return rule.getRoute();
         }
         return null;
     }
@@ -638,7 +657,7 @@ public class RouterUtil {
             // 初始化对应的类
             LabelObservers.INSTANCE.registerLabelObservers(new GrayLabelObserver());
             TypeStrategyChooser typeStrategyChooser = TypeStrategyChooser.INSTANCE;
-            LOGGER.info("necessary init type strategy." + typeStrategyChooser);
+            LOGGER.info("necessary init type strategy.");
         }
     }
 }

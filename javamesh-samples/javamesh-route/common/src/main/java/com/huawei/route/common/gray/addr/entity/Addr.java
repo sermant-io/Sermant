@@ -54,6 +54,12 @@ public class Addr {
         this.registerType = registerType;
     }
 
+    /**
+     * 地址是否为空
+     *
+     * @param addr 地址
+     * @return 是否为空
+     */
     public static boolean isEmpty(Addr addr) {
         return addr == null || CollectionUtils.isEmpty(addr.instances);
     }

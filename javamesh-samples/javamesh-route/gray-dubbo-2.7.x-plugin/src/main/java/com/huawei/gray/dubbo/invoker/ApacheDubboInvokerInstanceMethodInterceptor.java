@@ -76,12 +76,12 @@ public class ApacheDubboInvokerInstanceMethodInterceptor implements InstanceMeth
         if (RpcContext.getContext().isConsumerSide()) {
             String version = grayConfiguration.getCurrentTag().getVersion();
             String interfaceName = requestUrl.getServiceInterface() + "." + invocation.getMethodName();
-            List<Rule> rules = RouterUtil.getValidRules(grayConfiguration, targetService, interfaceName,
-                    DubboCache.getAppName());
+            List<Rule> rules =
+                    RouterUtil.getValidRules(grayConfiguration, targetService, interfaceName, DubboCache.getAppName());
             List<Route> routes = RouterUtil.getRoutes(rules, invocation.getArguments());
             RuleType ruleType = CollectionUtils.isEmpty(routes) ? RuleType.UPSTREAM : RuleType.WEIGHT;
-            String targetServiceIp = ruleType.getTargetServiceIp(routes, targetService, interfaceName, version,
-                    invocation);
+            String targetServiceIp =
+                    ruleType.getTargetServiceIp(routes, targetService, interfaceName, version, invocation);
             Instances instance = AddrCache.getInstance(targetService, targetServiceIp);
             if (instance != null && instance.getMetadata() != null) {
                 Metadata metadata = instance.getMetadata();
@@ -114,17 +114,17 @@ public class ApacheDubboInvokerInstanceMethodInterceptor implements InstanceMeth
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
-        dealException(t);
+    public void onThrow(Object obj, Method method, Object[] arguments, Throwable throwable) {
+        dealException(throwable);
     }
 
     /**
      * 出现异常时，只记录日志
      *
-     * @param exception 异常信息
+     * @param throwable 异常信息
      */
-    private void dealException(Throwable exception) {
-        LOGGER.log(Level.SEVERE, "Registry error!", exception);
+    private void dealException(Throwable throwable) {
+        LOGGER.log(Level.SEVERE, "Registry error!", throwable);
     }
 
     private void changeInvokerClients(DubboInvoker<?> invoker, String host, URL requestUrl, String version,

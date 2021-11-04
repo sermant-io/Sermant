@@ -4,8 +4,11 @@
 
 package com.huawei.gray.dubbo.strategy.type;
 
+import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
 import com.huawei.route.common.constants.GrayConstant;
+
+import java.util.logging.Logger;
 
 /**
  * enabled匹配策略
@@ -14,11 +17,13 @@ import com.huawei.route.common.constants.GrayConstant;
  * @date 2021/10/13
  */
 public class EnabledTypeStrategy extends TypeStrategy {
+    private static final Logger LOGGER = LogFactory.getLogger();
+
     @Override
     public String getValue(Object arg, String type) {
         try {
-            Object o = arg.getClass().getMethod(getKey(type)).invoke(arg);
-            return o == null ? null : String.valueOf(o);
+            Object object = arg.getClass().getMethod(getKey(type)).invoke(arg);
+            return object == null ? null : String.valueOf(object);
         } catch (Exception e) {
             LOGGER.warning("Cannot invoke the method, type is " + type);
             return Boolean.FALSE.toString();

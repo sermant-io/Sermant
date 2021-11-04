@@ -18,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2021/11/3
  */
 public class DubboCache {
-
     // 本地路由缓存
     private static final Map<String, Set<String>> LOCAL_CACHE = new ConcurrentHashMap<String, Set<String>>();
 
@@ -94,5 +93,4 @@ public class DubboCache {
     public static void setAppName(String appName) {
         APP_NAME = appName;
     }
-
 }

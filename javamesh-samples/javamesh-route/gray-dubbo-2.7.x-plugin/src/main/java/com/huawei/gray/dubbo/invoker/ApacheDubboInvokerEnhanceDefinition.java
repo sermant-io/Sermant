@@ -19,22 +19,22 @@ import net.bytebuddy.matcher.ElementMatchers;
  * @since 2021年6月28日
  */
 public class ApacheDubboInvokerEnhanceDefinition implements EnhanceDefinition {
-    private static final String REGISTRY_ENHANCE_CLASS = "org.apache.dubbo.rpc.protocol.dubbo.DubboInvoker";
+    private static final String INVOKER_ENHANCE_CLASS = "org.apache.dubbo.rpc.protocol.dubbo.DubboInvoker";
 
-    private static final String REGISTRY_INTERCEPT_CLASS
-            = "com.huawei.apm.plugin.gray.dubbo.invoker.ApacheDubboInvokerInstanceMethodInterceptor";
+    private static final String INVOKER_INTERCEPT_CLASS
+            = "com.huawei.gray.dubbo.invoker.ApacheDubboInvokerInstanceMethodInterceptor";
 
     private static final String ENHANCE_METHOD_NAME = "doInvoke";
 
     @Override
     public ClassMatcher enhanceClass() {
-        return ClassMatchers.named(REGISTRY_ENHANCE_CLASS);
+        return ClassMatchers.named(INVOKER_ENHANCE_CLASS);
     }
 
     @Override
     public MethodInterceptPoint[] getMethodInterceptPoints() {
         return new MethodInterceptPoint[]{
-                MethodInterceptPoint.newInstMethodInterceptPoint(REGISTRY_INTERCEPT_CLASS,
+                MethodInterceptPoint.newInstMethodInterceptPoint(INVOKER_INTERCEPT_CLASS,
                         ElementMatchers.<MethodDescription>named(ENHANCE_METHOD_NAME))};
     }
 }

@@ -92,7 +92,7 @@ public class HttpClientUtils {
             return;
         }
         try {
-            //采用绕过验证的方式处理https请求
+            // 采用绕过验证的方式处理https请求
             SSLContext sslcontext = createIgnoreVerifySsL();
 
             // 设置协议http和https对应的处理socket链接工厂的对象
@@ -118,7 +118,7 @@ public class HttpClientUtils {
             IdleConnectionMonitorThread idleConnectionMonitorThread = new IdleConnectionMonitorThread(connManager);
             idleConnectionMonitorThread.start();
 
-            //创建自定义的httpclient对象
+            // 创建自定义的httpclient对象
             client = HttpClients.custom()
                     .setConnectionManager(connManager)
                     .setConnectionManagerShared(true)
@@ -173,7 +173,6 @@ public class HttpClientUtils {
      */
     public static HttpClientResult doGet(String url, Map<String, String> headers, Map<String, String> params)
             throws URISyntaxException, IOException {
-
         // 创建访问的地址
         URIBuilder uriBuilder = new URIBuilder(url);
         if (params != null) {
@@ -477,8 +476,10 @@ public class HttpClientUtils {
         return client;
     }
 
+    /**
+     * 空闲连接检测
+     */
     public static class IdleConnectionMonitorThread extends Thread {
-
         private final HttpClientConnectionManager connMgr;
 
         private volatile boolean shutdown;

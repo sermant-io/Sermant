@@ -53,8 +53,8 @@ public class ApacheDubboRegistryInstanceMethodInterceptor implements InstanceMet
             // 获取注册监听类
             RegistryDirectory<?> registryDirectory = (RegistryDirectory<?>) obj;
             // 通过反射获取到cachedInvokerUrls变量，其中cachedInvokerUrls为应用的缓存
-            Map<String, Invoker<?>> invokerMap = RouterUtil.getField(RegistryDirectory.class, Map.class,
-                    registryDirectory, URL_INVOKER_FIELD_NAME);
+            Map<String, Invoker<?>> invokerMap =
+                    RouterUtil.getField(RegistryDirectory.class, Map.class, registryDirectory, URL_INVOKER_FIELD_NAME);
             if (invokerMap != null) {
                 // 将本地路由地址全量更新至本地缓存
                 DubboCache.updateLocalAddr(getLocalAddr(invokerMap));
@@ -66,17 +66,17 @@ public class ApacheDubboRegistryInstanceMethodInterceptor implements InstanceMet
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
-        dealException(t);
+    public void onThrow(Object obj, Method method, Object[] arguments, Throwable throwable) {
+        dealException(throwable);
     }
 
     /**
      * 出现异常时，只记录日志
      *
-     * @param exception 异常信息
+     * @param throwable 异常信息
      */
-    private void dealException(Throwable exception) {
-        LOGGER.log(Level.SEVERE, "Registry error!", exception);
+    private void dealException(Throwable throwable) {
+        LOGGER.log(Level.SEVERE, "Registry error!", throwable);
     }
 
     private Map<String, Map<String, String>> getLocalParameters(Map<String, Invoker<?>> invokerMap) {

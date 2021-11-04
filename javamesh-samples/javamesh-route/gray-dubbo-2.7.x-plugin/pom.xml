@@ -17,9 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dubbo.version>2.7.0</dubbo.version>
         <javax-servlet-api.version>3.0.1</javax-servlet-api.version>
-        <sentinel.version>1.8.0</sentinel.version>
-        <!--<fastjson.version>1.2.73</fastjson.version>-->
-        <httpclient.version>4.5.13</httpclient.version>
+        <package.sample.dir>${package.agent.dir}/plugins</package.sample.dir>
     </properties>
 
     <dependencies>
@@ -37,22 +35,10 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--<dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>${fastjson.version}</version>
-        </dependency>-->
-
         <dependency>
             <groupId>com.huawei.javamesh</groupId>
             <artifactId>javamesh-agentcore-bootstrap</artifactId>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
         </dependency>
 
         <!-- 路由部分公共模块 -->
@@ -60,8 +46,40 @@
             <groupId>com.huawei.javamesh</groupId>
             <artifactId>common</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.alibaba.fastjson</pattern>
+                                    <shadedPattern>${shade.distinct.prefix}.com.alibaba.fastjson</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.bytebuddy</pattern>
+                                    <shadedPattern>${shade.common.prefix}.net.bytebuddy</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

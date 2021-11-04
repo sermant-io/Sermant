@@ -23,8 +23,8 @@ public class ListTypeStrategy extends TypeStrategy {
             if (index < 0 || index >= list.size()) {
                 return null;
             }
-            Object o = list.get(index);
-            return o == null ? null : String.valueOf(o);
+            Object object = list.get(index);
+            return object == null ? null : String.valueOf(object);
         }
         return null;
     }

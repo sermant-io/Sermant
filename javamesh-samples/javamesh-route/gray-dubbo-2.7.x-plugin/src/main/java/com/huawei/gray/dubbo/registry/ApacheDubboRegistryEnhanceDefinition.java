@@ -22,7 +22,7 @@ public class ApacheDubboRegistryEnhanceDefinition implements EnhanceDefinition {
     private static final String REGISTRY_ENHANCE_CLASS = "org.apache.dubbo.registry.integration.RegistryDirectory";
 
     private static final String REGISTRY_INTERCEPT_CLASS
-            = "com.huawei.apm.plugin.gray.dubbo.registry.ApacheDubboRegistryInstanceMethodInterceptor";
+            = "com.huawei.gray.dubbo.registry.ApacheDubboRegistryInstanceMethodInterceptor";
 
     private static final String ENHANCE_METHOD_NAME = "notify";
 

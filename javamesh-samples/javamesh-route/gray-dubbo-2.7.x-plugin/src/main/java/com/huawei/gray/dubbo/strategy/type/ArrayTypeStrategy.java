@@ -21,8 +21,8 @@ public class ArrayTypeStrategy extends TypeStrategy {
             if (index < 0 || index >= arr.length) {
                 return null;
             }
-            Object o = arr[index];
-            return o == null ? null : String.valueOf(o);
+            Object object = arr[index];
+            return object == null ? null : String.valueOf(object);
         }
         return null;
     }

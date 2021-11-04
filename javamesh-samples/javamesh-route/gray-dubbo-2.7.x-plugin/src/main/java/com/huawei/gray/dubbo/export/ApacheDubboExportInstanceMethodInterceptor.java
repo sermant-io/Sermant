@@ -58,17 +58,17 @@ public class ApacheDubboExportInstanceMethodInterceptor implements InstanceMetho
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
-        dealException(t);
+    public void onThrow(Object obj, Method method, Object[] arguments, Throwable throwable) {
+        dealException(throwable);
     }
 
     /**
      * 出现异常时，只记录日志
      *
-     * @param exception 异常信息
+     * @param throwable 异常信息
      */
-    private void dealException(Throwable exception) {
-        LOGGER.log(Level.SEVERE, "ServiceConfig error!", exception);
+    private void dealException(Throwable throwable) {
+        LOGGER.log(Level.SEVERE, "ServiceConfig error!", throwable);
     }
 
     private void setAppName(List<URL> cachedUrls) {

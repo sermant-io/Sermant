@@ -1,0 +1,7 @@
+#
+# Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
+#
+
+com.huawei.gray.dubbo.export.ApacheDubboExportEnhanceDefinition
+com.huawei.gray.dubbo.invoker.ApacheDubboInvokerEnhanceDefinition
+com.huawei.gray.dubbo.registry.ApacheDubboRegistryEnhanceDefinition

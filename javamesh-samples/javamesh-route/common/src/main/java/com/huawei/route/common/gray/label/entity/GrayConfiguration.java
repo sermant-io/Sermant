@@ -89,6 +89,11 @@ public class GrayConfiguration {
         return grayConfiguration == null || !grayConfiguration.isRealValid();
     }
 
+    /**
+     * 是否有效
+     *
+     * @return 是否有效
+     */
     public boolean isRealValid() {
         return on && valid;
     }
