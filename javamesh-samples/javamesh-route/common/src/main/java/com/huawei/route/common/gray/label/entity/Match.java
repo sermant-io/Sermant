@@ -13,7 +13,7 @@ import java.util.Map;
  * 匹配规则
  *
  * @author pengyuyi
- * @date 2021/10/27
+ * @since 2021/10/27
  */
 public class Match {
     /**
@@ -42,6 +42,18 @@ public class Match {
      */
     @JSONField(deserializeUsing = ValueMatchDeserializer.class)
     private Map<String, List<MatchRule>> headers;
+
+    /**
+     * spring http parameter规则
+     */
+    @JSONField(deserializeUsing = ValueMatchDeserializer.class)
+    private Map<String, List<MatchRule>> parameters;
+
+    /**
+     * spring http cookie规则
+     */
+    @JSONField(deserializeUsing = ValueMatchDeserializer.class)
+    private Map<String, List<MatchRule>> cookie;
 
     public String getSource() {
         return source;
@@ -81,5 +93,21 @@ public class Match {
 
     public void setHeaders(Map<String, List<MatchRule>> headers) {
         this.headers = headers;
+    }
+
+    public Map<String, List<MatchRule>> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, List<MatchRule>> parameters) {
+        this.parameters = parameters;
+    }
+
+    public Map<String, List<MatchRule>> getCookie() {
+        return cookie;
+    }
+
+    public void setCookie(Map<String, List<MatchRule>> cookie) {
+        this.cookie = cookie;
     }
 }

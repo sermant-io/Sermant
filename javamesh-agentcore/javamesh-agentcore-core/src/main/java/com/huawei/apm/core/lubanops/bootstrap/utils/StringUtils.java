@@ -22,6 +22,10 @@ public class StringUtils {
         return str1.equals(str2);
     }
 
+    public static boolean equalsIgnoreCase(String str1, String str2) {
+        return str1 == null ? str2 == null : str1.equalsIgnoreCase(str2);
+    }
+
     public static String stringTruncat(String oldStr, int maxLength, String endWith) {
         // 判断字符串是否为null或空
         if (StringUtils.isBlank(oldStr)) {
