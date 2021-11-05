@@ -3,6 +3,7 @@
  */
 package com.lubanops.stresstest.kafka;
 
+import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.lubanops.stresstest.core.Reflection;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -47,7 +48,7 @@ public class ConsumerBuilder {
         if (keyObject instanceof Deserializer) {
             valueDeserializer = (Deserializer<V>) valueObject;
         }
-        return new KafkaConsumer<K, V>(props, keyDeserializer, valueDeserializer);
+        return new KafkaConsumer<>(props, keyDeserializer, valueDeserializer);
     }
 
     private static void updateNormal(Properties props, Object instance) {
@@ -94,12 +95,29 @@ public class ConsumerBuilder {
     private static void updateMetadata(Properties props, Object instance) {
         Reflection.getDeclaredValue("metadata", instance).ifPresent(metadata -> {
             updateProps(props, ConsumerConfig.METADATA_MAX_AGE_CONFIG, metadata, "metadataExpireMs");
-            Reflection.getDeclaredValue("cache", metadata).flatMap(cache ->
-                    Reflection.getDeclaredValue("nodes", cache)).ifPresent(nodes -> {
-                if (nodes instanceof Map) {
-                    props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootStrapServers((Map<Integer, Node>) nodes));
-                }
-            });
+            oldUpdateBootServers(props, metadata);
+            if (props.containsKey(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG)) {
+                return;
+            }
+            newUpdateBootServers(props, metadata);
+        });
+    }
+
+    private static void oldUpdateBootServers(Properties props, Object value) {
+        Reflection.getDeclaredValue("cluster", value).flatMap(cluster ->
+                Reflection.getDeclaredValue("nodes", cluster)).ifPresent(nodes -> {
+            if (nodes instanceof Collection) {
+                props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootStrapServers((Collection<Node>) nodes));
+            }
+        });
+    }
+
+    private static void newUpdateBootServers(Properties props, Object value) {
+        Reflection.getDeclaredValue("cache", value).flatMap(cache ->
+                Reflection.getDeclaredValue("nodes", cache)).ifPresent(nodes -> {
+            if (nodes instanceof Map) {
+                props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootStrapServers(((Map<Integer, Node>) nodes).values()));
+            }
         });
     }
 
@@ -132,6 +150,9 @@ public class ConsumerBuilder {
             updateProps(props, ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, coordinator, "autoCommitIntervalMs");
             updateProps(props, ConsumerConfig.EXCLUDE_INTERNAL_TOPICS_CONFIG, coordinator, "excludeInternalTopics");
             updateProps(props, ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, coordinator, "sessionTimeoutMs");
+            if (StringUtils.isBlank(props.getProperty(ConsumerConfig.GROUP_ID_CONFIG))) {
+                updateProps(props, ConsumerConfig.GROUP_ID_CONFIG, coordinator, "groupId");
+            }
         });
     }
 
@@ -140,9 +161,9 @@ public class ConsumerBuilder {
                 props.put(configName, value));
     }
 
-    private static String getBootStrapServers(Map<Integer, Node> nodes) {
+    private static String getBootStrapServers(Collection<Node> nodes) {
         StringBuilder builder = new StringBuilder();
-        for (Node node : nodes.values()) {
+        for (Node node : nodes) {
             builder.append(node.host()).append(":").append(node.port()).append(",");
         }
         return builder.substring(0, builder.length() - 1);

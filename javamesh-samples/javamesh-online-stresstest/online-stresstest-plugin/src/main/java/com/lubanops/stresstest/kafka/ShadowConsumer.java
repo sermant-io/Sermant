@@ -94,18 +94,18 @@ public class ShadowConsumer<K, V> implements Consumer<K, V> {
     }
 
     private ConsumerRecords originalPoll(Duration timeout) {
+        Tester.setTest(false);
         ConsumerRecords records = originalConsumer.poll(timeout);
         if (records.count() < SIZE) {
             useOriginal = false;
         }
-        Tester.setTest(false);
         return records;
     }
 
     private ConsumerRecords testPoll(Duration timeout) {
+        Tester.setTest(true);
         ConsumerRecords records = testConsumer.poll(timeout);
         useOriginal = true;
-        Tester.setTest(true);
         return records;
     }
 

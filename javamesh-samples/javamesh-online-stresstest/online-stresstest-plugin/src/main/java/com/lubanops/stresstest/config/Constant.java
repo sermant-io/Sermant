@@ -13,9 +13,25 @@ package com.lubanops.stresstest.config;
 public interface Constant {
     String DB = "db";
 
-    String TEST_TOPIC = "test.topic";
+    String TEST_TOPIC = "topic";
+
+    String REDIS_KEY = "redis.key";
+
+    String REDIS_REPOSITORY = "redis.repository";
+
+    String MONGO_KEY = "mongo.key";
+
+    String MONGO_REPOSITORY = "mongo.repository";
 
     String SHADOW = "shadow_";
 
     String HTTP_INTERCEPTOR = "com.lubanops.stresstest.http.HttpClientInterceptor";
+    /**
+     * 压测标记key
+     */
+    String TEST_FLAG = "x-test";
+    /**
+     * 压测标记值
+     */
+    String TEST_VALUE = "true";
 }

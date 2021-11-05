@@ -12,7 +12,7 @@ import com.lubanops.stresstest.core.Tester;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
-import static com.lubanops.stresstest.core.Tester.TEST_FLAG;
+import static com.lubanops.stresstest.config.Constant.TEST_FLAG;
 
 /**
  * HTTP 拦截器，当请求头中包含压测字段时，给线程打上压测标记。

@@ -1,31 +1,33 @@
 /*
  * Copyright (c) Huawei Technologies Co., Ltd. 2020-2021. All rights reserved.
  */
-package com.lubanops.stresstest.kafka;
+
+package com.lubanops.stresstest.db.mongodb;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import com.lubanops.stresstest.config.ConfigFactory;
+import com.lubanops.stresstest.core.Tester;
 
 import java.lang.reflect.Method;
 
 /**
- * KafkaConsumer 增强实现
+ * Mongo database 增强实现
  *
  * @author yiwei
- * @since 2021/10/27
+ * @since 2021/10/21
  */
-public class KafkaConsumerInterceptor implements InstanceMethodInterceptor {
+public class MongoDatabaseInterceptor implements InstanceMethodInterceptor {
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
     }
 
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) {
-        if (result instanceof ShadowConsumer) {
-            return result;
+        if (Tester.isTest() && ConfigFactory.getConfig().isMongoShadowRepositories() ) {
+            return ShadowMongodb.getInstance().getShadowDatabaseFromClient(obj, (String) arguments[0]);
         }
-        return new ShadowConsumer<>((KafkaConsumer<?, ?>)result);
+        return result;
     }
 
     @Override
