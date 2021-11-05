@@ -12,11 +12,6 @@ package com.huawei.route.server.constants;
  */
 public class RouteConstants {
     /**
-     * 匹配值分割符
-     */
-    public static final String VALUES_SEPARATOR = ",";
-
-    /**
      * 服务映射初始化容量大小
      */
     public static final int INIT_SERVICE_MAPPER_CAPACITY = 2;
@@ -75,4 +70,9 @@ public class RouteConstants {
      * 延时初始化时间
      */
     public static final long INIT_WAIT_MS = 5 * 1000;
+
+    /**
+     * 通知最大队列数
+     */
+    public static final int LABEL_UPDATE_WORKER_QUEUE_SIZE = 100;
 }

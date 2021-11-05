@@ -59,7 +59,7 @@ public class LoginFilter implements Filter {
     private boolean skipLogin;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
     }
 
     @Override
@@ -70,7 +70,7 @@ public class LoginFilter implements Filter {
             String servletPath = httpRequest.getServletPath();
             if (skipLogin || ignorePattern.contains(servletPath)) {
                 chain.doFilter(new SafeHttpServletRequestWrapper((HttpServletRequest) request), response);
-
+                return;
             }
             SafeHttpServletRequestWrapper requestWrapper =
                     new SafeHttpServletRequestWrapper((HttpServletRequest) request);
@@ -78,7 +78,7 @@ public class LoginFilter implements Filter {
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
                 HttpSession session = requestWrapper.getSession();
 
-                Object object = null;
+                Object object;
                 if (!isCasLoad) {
                     // 获取sentinel用户信息
                     object = session.getAttribute(AuthServiceImpl.WEB_SESSION_KEY);
