@@ -25,6 +25,7 @@
                 <module>javamesh-flowcontrol</module>
                 <module>javamesh-server-monitor</module>
                 <module>javamesh-flowrecord</module>
+                <module>javamesh-route</module>
                 <module>javamesh-threadlocal</module>
                 <module>javamesh-online-stresstest</module>
                 <module>javamesh-route</module>
@@ -43,8 +44,6 @@
             </activation>
             <modules>
                 <module>javamesh-flowcontrol</module>
-                <module>javamesh-flowrecord</module>
-                <module>javamesh-server-monitor</module>
             </modules>
         </profile>
         <profile>
