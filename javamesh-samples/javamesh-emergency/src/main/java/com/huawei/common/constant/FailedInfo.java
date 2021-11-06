@@ -40,6 +40,26 @@ public class FailedInfo {
      */
     public static final String UPLOAD_FAIL = "文件上传失败";
 
+    /**
+     * 脚本信息不存在
+     */
+    public static final String SCRIPT_NOT_EXISTS = "脚本信息不存在";
+
+    /**
+     * 新建脚本失败
+     */
+    public static final String SCRIPT_CREATE_FAIL = "新建脚本失败";
+
+    /**
+     * 参数异常
+     */
+    public static final String PARAM_INVALID = "参数异常";
+
+    /**
+     * 脚本名已存在
+     */
+    public static final String SCRIPT_NAME_EXISTS = "脚本名已存在";
+
     private FailedInfo() {
     }
 }

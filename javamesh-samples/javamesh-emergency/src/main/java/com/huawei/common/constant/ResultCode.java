@@ -20,6 +20,16 @@ public class ResultCode {
      */
     public static final int SERVER_INFO_NULL = -2;
 
+    /**
+     * 脚本名已存在
+     */
+    public static final int SCRIPT_NAME_EXISTS = -3;
+
+    /**
+     * 参数异常
+     */
+    public static final int PARAM_INVALID = -4;
+
     private ResultCode() {
     }
 }

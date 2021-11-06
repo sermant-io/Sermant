@@ -1,6 +1,7 @@
 /*
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
- */
+ *//*
+
 
 package com.huawei.emergency.controller;
 
@@ -33,12 +34,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+*/
 /**
  * 脚本管理controller
  *
  * @author h30009881
  * @since 2021-10-14
- */
+ *//*
+
 @RestController
 @RequestMapping("/api")
 public class ScriptController {
@@ -48,7 +51,8 @@ public class ScriptController {
     @Autowired
     private ScriptService scriptService;
 
-    /**
+    */
+/**
      * 脚本列表查询
      *
      * @param keywords
@@ -60,7 +64,8 @@ public class ScriptController {
      * @param sorter
      * @param order
      * @return {@link CommonResult}
-     */
+     *//*
+
     @GetMapping("/script")
     public CommonResult<List<ScriptListDto>> listScript(
         @RequestParam(value = "keywords", required = false) String keywords,
@@ -76,12 +81,14 @@ public class ScriptController {
         return scriptService.listScript(param);
     }
 
-    /**
+    */
+/**
      * 脚本删除
      *
      * @param scriptDeleteParam
      * @return {@link CommonResult}
-     */
+     *//*
+
     @PostMapping("/script/delete")
     public CommonResult deleteScript(@RequestBody ScriptDeleteParam scriptDeleteParam) {
         Object[] data = scriptDeleteParam.getData();
@@ -96,23 +103,27 @@ public class ScriptController {
         }
     }
 
-    /**
+    */
+/**
      * 脚本下载
      *
      * @param scriptId
      * @param response
-     */
+     *//*
+
     @GetMapping("/script/download")
     public void downloadScript(@RequestParam(value = "script_id") int scriptId, HttpServletResponse response) {
         scriptService.downloadScript(scriptId, response);
     }
 
-    /**
+    */
+/**
      * 创建文件夹
      *
      * @param folderParam
      * @return {@link CommonResult}
-     */
+     *//*
+
     @PostMapping("/script/folder")
     public CommonResult createFolder(@RequestBody FolderParam folderParam) {
         folderParam.setUserName(userName);
@@ -124,14 +135,16 @@ public class ScriptController {
         }
     }
 
-    /**
+    */
+/**
      * 上传文件
      *
      * @param folderId
      * @param submitInfo
      * @param file
      * @return {@link CommonResult} 上传结果
-     */
+     *//*
+
     @PostMapping("/script/upload")
     public CommonResult uploadScript(@RequestParam(value = "folder_id", required = false) String folderId,
                                      @RequestParam(value = "submit_info") String submitInfo,
@@ -145,12 +158,14 @@ public class ScriptController {
         }
     }
 
-    /**
+    */
+/**
      * 获取脚本实例
      *
      * @param scriptId
      * @return CommonResult 脚本信息
-     */
+     *//*
+
     @GetMapping("/script/get")
     public CommonResult<ScriptInfoDto> selectScript(@RequestParam(value = "script_id") int scriptId) {
         ScriptInfoDto script = scriptService.selectScript(scriptId);
@@ -191,3 +206,4 @@ public class ScriptController {
         return CommonResult.success(scriptInfoDto);
     }
 }
+*/

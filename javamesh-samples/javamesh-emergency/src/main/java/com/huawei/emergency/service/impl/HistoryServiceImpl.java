@@ -4,6 +4,8 @@
 
 package com.huawei.emergency.service.impl;
 
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.symmetric.AES;
 import com.huawei.common.api.CommonResult;
 import com.huawei.common.exception.ApiException;
 import com.huawei.common.util.PageUtil;
@@ -22,14 +24,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -100,5 +102,25 @@ public class HistoryServiceImpl implements HistoryService {
                 log.error("Close stream failed");
             }
         }
+    }
+
+    public static void main(String[] args) throws UnsupportedEncodingException {
+
+        SecretKey secretKey = SecureUtil.generateKey("AES");
+        System.out.println(new String(secretKey.getEncoded(),"gbk"));
+        AES aes = SecureUtil.aes("1234123412341234".getBytes(StandardCharsets.UTF_8));
+        byte[] encrypt = aes.encrypt("123456");
+        byte[] encode = Base64.getEncoder().encode(encrypt);
+        String s = new String(encode, "utf-8");
+        System.out.println(s);
+        byte[] decode = Base64.getDecoder().decode(s);
+        byte[] decrypt = aes.decrypt(decode);
+        System.out.println(new String(decrypt,"utf-8"));
+        /*byte[] decrypt = aes.decrypt("decode".getBytes());
+        byte[] decode = Base64.getDecoder().decode(decrypt);
+        System.out.println(new String(decrypt));
+        byte[] encrypt = aes.encrypt(decrypt);
+        byte[] encode = Base64.getEncoder().encode(encrypt);*/
+        //System.out.println(new String(encode));
     }
 }

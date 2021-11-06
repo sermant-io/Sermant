@@ -123,4 +123,12 @@ public interface EmergencyScriptMapper {
 
 
     List<EmergencyScript> listScript(String userName,String auth, String scriptName, String scriptUser);
+
+    EmergencyScript getScriptInfo(int scriptId);
+
+    String selectScriptNameById(int scriptId);
+
+    List<String> searchScript(String scriptName, String userName,String auth);
+
+    EmergencyScript getScriptByName(String scriptName);
 }

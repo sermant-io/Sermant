@@ -6,11 +6,12 @@ package com.huawei.emergency.controller;
 
 import com.huawei.common.api.CommonResult;
 import com.huawei.common.constant.FailedInfo;
+import com.huawei.common.constant.ResultCode;
 import com.huawei.emergency.dto.ScriptDeleteParam;
-import com.huawei.emergency.dto.ScriptInfoDto;
 import com.huawei.emergency.entity.EmergencyScript;
 import com.huawei.emergency.service.EmergencyScriptService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +32,7 @@ public class EmergencyScriptController {
     @Autowired
     private EmergencyScriptService service;
 
-    @GetMapping("/emergency/script")
+    @GetMapping("/script")
     public CommonResult<List<EmergencyScript>> listScript(
             HttpServletRequest request,
             @RequestParam(value = "script_name", required = false) String scriptName,
@@ -99,7 +100,46 @@ public class EmergencyScriptController {
     @GetMapping("/script/get")
     public CommonResult<EmergencyScript> selectScript(@RequestParam(value = "script_id") int scriptId) {
         EmergencyScript script = service.selectScript(scriptId);
+        if (script == null) {
+            return CommonResult.failed(FailedInfo.SCRIPT_NOT_EXISTS);
+        }
         return CommonResult.success(script);
     }
 
+    @PostMapping("/script")
+    @ResponseBody
+    public CommonResult insertScript(HttpServletRequest request,@RequestBody @Validated EmergencyScript script) {
+        int count = service.insertScript(request,script);
+        if (count == 1) {
+            return CommonResult.success(count);
+        } else if (count == ResultCode.SCRIPT_NAME_EXISTS) {
+            return CommonResult.failed(FailedInfo.SCRIPT_NAME_EXISTS);
+        } else {
+            return CommonResult.failed(FailedInfo.SCRIPT_CREATE_FAIL);
+        }
+    }
+
+    @PutMapping("/script")
+    public CommonResult updateScript(HttpServletRequest request,@RequestBody EmergencyScript script) {
+        int count = service.updateScript(request,script);
+        if (count == 1) {
+            return CommonResult.success(count);
+        } else if (count == ResultCode.SCRIPT_NAME_EXISTS) {
+            return CommonResult.failed(FailedInfo.SCRIPT_NAME_EXISTS);
+        } else {
+            return CommonResult.failed("文件修改失败");
+        }
+    }
+
+    @GetMapping("/script/search")
+    public CommonResult searchScript(HttpServletRequest request,@RequestParam(value = "script_name", required = false) String scriptName) {
+        List<String> scriptNames = service.searchScript(request,scriptName);
+        return CommonResult.success(scriptNames);
+    }
+
+    @GetMapping("/script/getByName")
+    public CommonResult getScriptEntityByName(@RequestParam(value = "script_name") String scriptName) {
+        EmergencyScript script = service.getScriptByName(scriptName);
+        return CommonResult.success(script);
+    }
 }

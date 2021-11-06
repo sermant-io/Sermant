@@ -191,14 +191,14 @@
     insert into emergency_script (script_name, is_public, script_type, 
       submit_info, have_password, password_mode, 
       password, server_user, server_ip, 
-      script_user, update_time, have_param, 
+      script_user, have_param,
       param, script_status, content
       )
-    values (#{scriptName,jdbcType=VARCHAR}, #{isPublic,jdbcType=INTEGER}, #{scriptType,jdbcType=INTEGER}, 
-      #{submitInfo,jdbcType=VARCHAR}, #{havePassword,jdbcType=INTEGER}, #{passwordMode,jdbcType=INTEGER}, 
+    values (#{scriptName,jdbcType=VARCHAR}, #{isPublic,jdbcType=VARCHAR}, #{scriptType,jdbcType=VARCHAR},
+      #{submitInfo,jdbcType=VARCHAR}, #{havePassword,jdbcType=VARCHAR}, #{passwordMode,jdbcType=VARCHAR},
       #{password,jdbcType=VARCHAR}, #{serverUser,jdbcType=VARCHAR}, #{serverIp,jdbcType=VARCHAR}, 
-      #{scriptUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{haveParam,jdbcType=INTEGER}, 
-      #{param,jdbcType=VARCHAR}, #{scriptStatus,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}
+      #{scriptUser,jdbcType=VARCHAR}, #{haveParam,jdbcType=VARCHAR},
+      #{param,jdbcType=VARCHAR}, #{scriptStatus,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.huawei.emergency.entity.EmergencyScript">
@@ -262,19 +262,19 @@
         #{scriptName,jdbcType=VARCHAR},
       </if>
       <if test="isPublic != null">
-        #{isPublic,jdbcType=INTEGER},
+        #{isPublic,jdbcType=VARCHAR},
       </if>
       <if test="scriptType != null">
-        #{scriptType,jdbcType=INTEGER},
+        #{scriptType,jdbcType=VARCHAR},
       </if>
       <if test="submitInfo != null">
         #{submitInfo,jdbcType=VARCHAR},
       </if>
       <if test="havePassword != null">
-        #{havePassword,jdbcType=INTEGER},
+        #{havePassword,jdbcType=VARCHAR},
       </if>
       <if test="passwordMode != null">
-        #{passwordMode,jdbcType=INTEGER},
+        #{passwordMode,jdbcType=VARCHAR},
       </if>
       <if test="password != null">
         #{password,jdbcType=VARCHAR},
@@ -292,13 +292,13 @@
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="haveParam != null">
-        #{haveParam,jdbcType=INTEGER},
+        #{haveParam,jdbcType=VARCHAR},
       </if>
       <if test="param != null">
         #{param,jdbcType=VARCHAR},
       </if>
       <if test="scriptStatus != null">
-        #{scriptStatus,jdbcType=INTEGER},
+        #{scriptStatus,jdbcType=VARCHAR},
       </if>
       <if test="content != null">
         #{content,jdbcType=LONGVARCHAR},
@@ -329,19 +329,19 @@
         script_name = #{record.scriptName,jdbcType=VARCHAR},
       </if>
       <if test="record.isPublic != null">
-        is_public = #{record.isPublic,jdbcType=INTEGER},
+        is_public = #{record.isPublic,jdbcType=VARCHAR},
       </if>
       <if test="record.scriptType != null">
-        script_type = #{record.scriptType,jdbcType=INTEGER},
+        script_type = #{record.scriptType,jdbcType=VARCHAR},
       </if>
       <if test="record.submitInfo != null">
         submit_info = #{record.submitInfo,jdbcType=VARCHAR},
       </if>
       <if test="record.havePassword != null">
-        have_password = #{record.havePassword,jdbcType=INTEGER},
+        have_password = #{record.havePassword,jdbcType=VARCHAR},
       </if>
       <if test="record.passwordMode != null">
-        password_mode = #{record.passwordMode,jdbcType=INTEGER},
+        password_mode = #{record.passwordMode,jdbcType=VARCHAR},
       </if>
       <if test="record.password != null">
         password = #{record.password,jdbcType=VARCHAR},
@@ -359,13 +359,13 @@
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.haveParam != null">
-        have_param = #{record.haveParam,jdbcType=INTEGER},
+        have_param = #{record.haveParam,jdbcType=VARCHAR},
       </if>
       <if test="record.param != null">
         param = #{record.param,jdbcType=VARCHAR},
       </if>
       <if test="record.scriptStatus != null">
-        script_status = #{record.scriptStatus,jdbcType=INTEGER},
+        script_status = #{record.scriptStatus,jdbcType=VARCHAR},
       </if>
       <if test="record.content != null">
         content = #{record.content,jdbcType=LONGVARCHAR},
@@ -383,19 +383,18 @@
     update emergency_script
     set script_id = #{record.scriptId,jdbcType=INTEGER},
       script_name = #{record.scriptName,jdbcType=VARCHAR},
-      is_public = #{record.isPublic,jdbcType=INTEGER},
-      script_type = #{record.scriptType,jdbcType=INTEGER},
+      is_public = #{record.isPublic,jdbcType=VARCHAR},
+      script_type = #{record.scriptType,jdbcType=VARCHAR},
       submit_info = #{record.submitInfo,jdbcType=VARCHAR},
-      have_password = #{record.havePassword,jdbcType=INTEGER},
-      password_mode = #{record.passwordMode,jdbcType=INTEGER},
+      have_password = #{record.havePassword,jdbcType=VARCHAR},
+      password_mode = #{record.passwordMode,jdbcType=VARCHAR},
       password = #{record.password,jdbcType=VARCHAR},
       server_user = #{record.serverUser,jdbcType=VARCHAR},
       server_ip = #{record.serverIp,jdbcType=VARCHAR},
       script_user = #{record.scriptUser,jdbcType=VARCHAR},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      have_param = #{record.haveParam,jdbcType=INTEGER},
+      have_param = #{record.haveParam,jdbcType=VARCHAR},
       param = #{record.param,jdbcType=VARCHAR},
-      script_status = #{record.scriptStatus,jdbcType=INTEGER},
+      script_status = #{record.scriptStatus,jdbcType=VARCHAR},
       content = #{record.content,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -409,17 +408,16 @@
     update emergency_script
     set script_id = #{record.scriptId,jdbcType=INTEGER},
       script_name = #{record.scriptName,jdbcType=VARCHAR},
-      is_public = #{record.isPublic,jdbcType=INTEGER},
-      script_type = #{record.scriptType,jdbcType=INTEGER},
+      is_public = #{record.isPublic,jdbcType=VARCHAR},
+      script_type = #{record.scriptType,jdbcType=VARCHAR},
       submit_info = #{record.submitInfo,jdbcType=VARCHAR},
-      have_password = #{record.havePassword,jdbcType=INTEGER},
-      password_mode = #{record.passwordMode,jdbcType=INTEGER},
+      have_password = #{record.havePassword,jdbcType=VARCHAR},
+      password_mode = #{record.passwordMode,jdbcType=VARCHAR},
       password = #{record.password,jdbcType=VARCHAR},
       server_user = #{record.serverUser,jdbcType=VARCHAR},
       server_ip = #{record.serverIp,jdbcType=VARCHAR},
       script_user = #{record.scriptUser,jdbcType=VARCHAR},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      have_param = #{record.haveParam,jdbcType=INTEGER},
+      have_param = #{record.haveParam,jdbcType=VARCHAR},
       param = #{record.param,jdbcType=VARCHAR},
       script_status = #{record.scriptStatus,jdbcType=INTEGER}
     <if test="_parameter != null">
@@ -437,19 +435,19 @@
         script_name = #{scriptName,jdbcType=VARCHAR},
       </if>
       <if test="isPublic != null">
-        is_public = #{isPublic,jdbcType=INTEGER},
+        is_public = #{isPublic,jdbcType=VARCHAR},
       </if>
       <if test="scriptType != null">
-        script_type = #{scriptType,jdbcType=INTEGER},
+        script_type = #{scriptType,jdbcType=VARCHAR},
       </if>
       <if test="submitInfo != null">
         submit_info = #{submitInfo,jdbcType=VARCHAR},
       </if>
       <if test="havePassword != null">
-        have_password = #{havePassword,jdbcType=INTEGER},
+        have_password = #{havePassword,jdbcType=VARCHAR},
       </if>
       <if test="passwordMode != null">
-        password_mode = #{passwordMode,jdbcType=INTEGER},
+        password_mode = #{passwordMode,jdbcType=VARCHAR},
       </if>
       <if test="password != null">
         password = #{password,jdbcType=VARCHAR},
@@ -467,13 +465,13 @@
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="haveParam != null">
-        have_param = #{haveParam,jdbcType=INTEGER},
+        have_param = #{haveParam,jdbcType=VARCHAR},
       </if>
       <if test="param != null">
         param = #{param,jdbcType=VARCHAR},
       </if>
       <if test="scriptStatus != null">
-        script_status = #{scriptStatus,jdbcType=INTEGER},
+        script_status = #{scriptStatus,jdbcType=VARCHAR},
       </if>
       <if test="content != null">
         content = #{content,jdbcType=LONGVARCHAR},
@@ -488,19 +486,18 @@
     -->
     update emergency_script
     set script_name = #{scriptName,jdbcType=VARCHAR},
-      is_public = #{isPublic,jdbcType=INTEGER},
-      script_type = #{scriptType,jdbcType=INTEGER},
+      is_public = #{isPublic,jdbcType=VARCHAR},
+      script_type = #{scriptType,jdbcType=VARCHAR},
       submit_info = #{submitInfo,jdbcType=VARCHAR},
-      have_password = #{havePassword,jdbcType=INTEGER},
-      password_mode = #{passwordMode,jdbcType=INTEGER},
+      have_password = #{havePassword,jdbcType=VARCHAR},
+      password_mode = #{passwordMode,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       server_user = #{serverUser,jdbcType=VARCHAR},
       server_ip = #{serverIp,jdbcType=VARCHAR},
       script_user = #{scriptUser,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      have_param = #{haveParam,jdbcType=INTEGER},
+      have_param = #{haveParam,jdbcType=VARCHAR},
       param = #{param,jdbcType=VARCHAR},
-      script_status = #{scriptStatus,jdbcType=INTEGER},
+      script_status = #{scriptStatus,jdbcType=VARCHAR},
       content = #{content,jdbcType=LONGVARCHAR}
     where script_id = #{scriptId,jdbcType=INTEGER}
   </update>
@@ -511,23 +508,22 @@
     -->
     update emergency_script
     set script_name = #{scriptName,jdbcType=VARCHAR},
-      is_public = #{isPublic,jdbcType=INTEGER},
-      script_type = #{scriptType,jdbcType=INTEGER},
+      is_public = #{isPublic,jdbcType=VARCHAR},
+      script_type = #{scriptType,jdbcType=VARCHAR},
       submit_info = #{submitInfo,jdbcType=VARCHAR},
-      have_password = #{havePassword,jdbcType=INTEGER},
-      password_mode = #{passwordMode,jdbcType=INTEGER},
+      have_password = #{havePassword,jdbcType=VARCHAR},
+      password_mode = #{passwordMode,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       server_user = #{serverUser,jdbcType=VARCHAR},
       server_ip = #{serverIp,jdbcType=VARCHAR},
       script_user = #{scriptUser,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      have_param = #{haveParam,jdbcType=INTEGER},
+      have_param = #{haveParam,jdbcType=VARCHAR},
       param = #{param,jdbcType=VARCHAR},
-      script_status = #{scriptStatus,jdbcType=INTEGER}
+      script_status = #{scriptStatus,jdbcType=VARCHAR}
     where script_id = #{scriptId,jdbcType=INTEGER}
   </update>
   
-  <select id="listScript" parameterType="String" resultType="EmergencyScript">
+  <select id="listScript" parameterType="String" resultType="com.huawei.emergency.entity.EmergencyScript">
     SELECT
       s.script_id,
       s.script_name,
@@ -549,7 +545,7 @@
     <where>
           <choose>
             <when test="scriptName!=null and scriptName!='' and scriptUser!=null and scriptUser!=''">
-              ( s.script_name LIKE  CONCAT('%',#{scriptName},'%') OR s.script_user LIKE  CONCAT('%',#{scriptUser},'%') )
+              ( s.script_name LIKE  CONCAT('%',#{scriptName},'%') AND s.script_user LIKE  CONCAT('%',#{scriptUser},'%') )
             </when>
             <when test="scriptName!=null and scriptName!=''">
               s.script_name LIKE  CONCAT('%',#{scriptName},'%')
@@ -559,11 +555,149 @@
             </when>
           </choose>
           <if test="auth!='admin'">
-            AND ((s.is_public = 0 AND s.script_user = #{scriptUser}) OR s.is_public = 1)
+            AND ((s.is_public = '0' AND s.script_user = #{userName}) OR s.is_public = '1')
           </if>
       AND s.script_user = u.user_name
     </where>
+  </select>
 
+  <select id="getScriptInfo" parameterType="Integer" resultType="com.huawei.emergency.entity.EmergencyScript">
+    SELECT
+      script_id,
+      script_name,
+      CASE
+        is_public
+        WHEN 0 THEN
+          'private'
+        WHEN 1 THEN
+          'public'
+        END AS is_public,
+      CASE
+        script_type
+        WHEN 0 THEN
+          'shell'
+        WHEN 1 THEN
+          'jython'
+        WHEN 2 THEN
+          'groovy'
+        END AS script_type,
+      submit_info,
+      CASE
+        have_password
+        WHEN 0 THEN
+          'noPassword'
+        WHEN 1 THEN
+          'havePassword'
+        END AS have_password,
+      CASE
+        password_mode
+        WHEN 0 THEN
+          'local'
+        WHEN 1 THEN
+          'platform'
+        END AS password_mode,
+      PASSWORD,
+      server_user,
+      server_ip,
+      content,
+      script_user,
+      update_time,
+      CASE
+        have_param
+        WHEN 0 THEN
+          'noParam'
+        WHEN 1 THEN
+          'haveParam'
+        END AS have_param,
+      param,
+      CASE
+        script_status
+        WHEN 0 THEN
+          '待审核'
+        WHEN 1 THEN
+          '已审核'
+        WHEN 2 THEN
+          '被驳回'
+        END AS script_status
+    FROM
+      emergency_script
+    WHERE
+      script_id = #{scriptId}
+  </select>
 
+  <select id="searchScript" parameterType="String" resultType="String">
+    SELECT script_name
+    FROM emergency_script
+    <where>
+      script_name LIKE CONCAT('%',#{scriptName},'%')
+      <if test="auth!='admin'">
+        AND (is_public = '1' OR (is_public = '0' AND script_user = #{userName}))
+      </if>
+    </where>
+    ORDER BY update_time DESC LIMIT 5
+  </select>
+
+  <select id="getScriptByName" parameterType="String" resultType="com.huawei.emergency.entity.EmergencyScript">
+    SELECT
+      script_id,
+      script_name,
+      CASE
+        is_public
+        WHEN 0 THEN
+          'private'
+        WHEN 1 THEN
+          'public'
+        END AS is_public,
+      CASE
+        script_type
+        WHEN 0 THEN
+          'shell'
+        WHEN 1 THEN
+          'jython'
+        WHEN 2 THEN
+          'groovy'
+        END AS script_type,
+      submit_info,
+      CASE
+        have_password
+        WHEN 0 THEN
+          'noPassword'
+        WHEN 1 THEN
+          'havePassword'
+        END AS have_password,
+      CASE
+        password_mode
+        WHEN 0 THEN
+          'local'
+        WHEN 1 THEN
+          'platform'
+        END AS password_mode,
+      PASSWORD,
+      server_user,
+      server_ip,
+      content,
+      script_user,
+      update_time,
+      CASE
+        have_param
+        WHEN 0 THEN
+          'noParam'
+        WHEN 1 THEN
+          'haveParam'
+        END AS have_param,
+      param,
+      CASE
+        script_status
+        WHEN 0 THEN
+          '待审核'
+        WHEN 1 THEN
+          '已审核'
+        WHEN 2 THEN
+          '被驳回'
+        END AS script_status
+    FROM
+      emergency_script
+    WHERE
+      script_name = #{scriptName}
   </select>
 </mapper>
