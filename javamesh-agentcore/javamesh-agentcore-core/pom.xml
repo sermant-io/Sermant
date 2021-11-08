@@ -99,6 +99,18 @@
             <version>2.5.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
+            <version>4.3.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
         <extensions>
@@ -163,6 +175,9 @@
                             <shadedPattern>${shade.common.prefix}.org.aopalliance</shadedPattern>
                         </relocation>
                         <relocation>
+                            <excludes>
+                                <exclude>org.apache.curator.*</exclude>
+                            </excludes>
                             <pattern>org.apache</pattern>
                             <shadedPattern>${shade.common.prefix}.org.apache</shadedPattern>
                         </relocation>

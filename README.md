@@ -60,6 +60,7 @@ JavaMesh的打包流程大致分为以下步骤：
 - 如何在插件端使用统一配置[DemoConfigInterceptor](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConfigInterceptor.java)
 - 如何在插件端使用心跳功能[DemoHeartBeatService](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)
 - 如何在插件端使用链路监控功能[DemoTraceInterceptor](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceInterceptor.java)
+- 如何在插件端使用配置中心功能[DemoConfigServerService](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoConfigServerService.java)
 
 ### [示例插件拦截的应用](javamesh-samples/javamesh-example/demo-application)
 

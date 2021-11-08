@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.Setter;
 import com.huawei.apm.core.config.BaseConfig;
 import com.huawei.apm.core.config.ConfigFieldKey;
 import com.huawei.apm.core.config.ConfigTypeKey;
@@ -19,8 +21,17 @@ import com.huawei.apm.core.config.ConfigTypeKey;
  * @version 1.0.0
  * @since 2021/10/25
  */
+
+@Getter
+@Setter
 @ConfigTypeKey("demo.test") // 声明前缀
 public class DemoConfig implements BaseConfig {
+
+    /**
+     * 配置中心实现类
+     */
+    private String configServerClassName = "com.huawei.apm.core.service.configServer.zookeeper.ZookeeperServer";
+
     /**
      * 基础类型配置(除byte和char)
      */
@@ -51,54 +62,6 @@ public class DemoConfig implements BaseConfig {
      * 枚举类型
      */
     private DemoType enumType;
-
-    public int getIntField() {
-        return intField;
-    }
-
-    public void setIntField(int intField) {
-        this.intField = intField;
-    }
-
-    public String getStrField() {
-        return strField;
-    }
-
-    public void setStrField(String strField) {
-        this.strField = strField;
-    }
-
-    public short[] getShortArr() {
-        return shortArr;
-    }
-
-    public void setShortArr(short[] shortArr) {
-        this.shortArr = shortArr;
-    }
-
-    public List<Long> getLongList() {
-        return longList;
-    }
-
-    public void setLongList(List<Long> longList) {
-        this.longList = longList;
-    }
-
-    public Map<String, Double> getMap() {
-        return map;
-    }
-
-    public void setMap(Map<String, Double> map) {
-        this.map = map;
-    }
-
-    public DemoType getEnumType() {
-        return enumType;
-    }
-
-    public void setEnumType(DemoType enumType) {
-        this.enumType = enumType;
-    }
 
     @Override
     public String toString() {

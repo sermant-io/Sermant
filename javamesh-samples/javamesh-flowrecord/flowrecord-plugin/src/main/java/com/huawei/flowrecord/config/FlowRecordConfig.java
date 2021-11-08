@@ -11,6 +11,11 @@ import lombok.Setter;
 public class FlowRecordConfig implements BaseConfig {
 
     /**
+     * 配置中心实现类
+     */
+    private String configServerClassName = "com.huawei.apm.core.service.configServer.zookeeper.ZookeeperServer";
+
+    /**
      * 流配置中心 zookeeper地址
      */
     private String zookeeperAddress = "127.0.0.1:2181";

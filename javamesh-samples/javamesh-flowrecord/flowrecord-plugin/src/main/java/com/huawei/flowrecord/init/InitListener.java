@@ -4,6 +4,8 @@
 
 package com.huawei.flowrecord.init;
 
+import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.service.configServer.zookeeper.ZookeeperServer;
 import com.huawei.flowrecord.config.CommonConst;
 import com.huawei.flowrecord.config.ConfigConst;
 import com.huawei.flowrecord.config.FlowRecordConfig;
@@ -14,12 +16,10 @@ import com.huawei.flowrecord.utils.AppNameUtil;
 import com.alibaba.fastjson.JSON;
 
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.UnhandledErrorListener;
 import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 import org.apache.curator.framework.recipes.cache.TreeCacheListener;
-import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.CreateMode;
 import org.slf4j.Logger;
@@ -41,11 +41,8 @@ public class InitListener {
 
     private static final String PARENTPATH = flowRecordConfig.getZookeeperPath() +
             CommonConst.SLASH_SIGN + AppNameUtil.getAppName() + CommonConst.SLASH_SIGN + ConfigConst.CURRENT_JOB;
-    private static final CuratorFramework treeCacheClient = CuratorFrameworkFactory.builder()
-            .connectString(flowRecordConfig.getZookeeperAddress())
-            .sessionTimeoutMs(Integer.parseInt(flowRecordConfig.getZookeeperTimeout()))
-            .retryPolicy(new ExponentialBackoffRetry(CommonConst.SLEEP_TIME, CommonConst.RETRY_TIMES))
-            .build();
+    private static final ZookeeperServer zkServer = CoreServiceManager.INSTANCE.getService(flowRecordConfig.getConfigServerClassName());
+    private static final CuratorFramework treeCacheClient = zkServer.getClient();
     private static final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(4);
 
     public static void doinit() throws Exception {
@@ -54,8 +51,7 @@ public class InitListener {
         treeCache();
     }
 
-    public static void init() throws Exception {
-        treeCacheClient.start();
+    public static void init() {
         try {
             if (treeCacheClient.checkExists().forPath(PARENTPATH) == null) {
                 treeCacheClient.create().creatingParentContainersIfNeeded().withMode(CreateMode.PERSISTENT)

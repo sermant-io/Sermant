@@ -39,6 +39,10 @@ public enum CoreServiceManager {
         return (T) services.get(serviceClass.getName());
     }
 
+    public <T> T getService(String className) {
+        return (T) services.get(className);
+    }
+
     private void loadService(CoreService service) {
         Class<? extends CoreService> serviceClass = service.getClass();
         Class<?>[] serviceInterfaces = serviceClass.getInterfaces();
@@ -72,7 +76,7 @@ public enum CoreServiceManager {
                         serviceEntry.getValue().stop();
                     } catch (Exception e) {
                         LOGGER.warning("Failed to stop service [" + serviceEntry.getKey() + "] since: "
-                            + e.getMessage());
+                                + e.getMessage());
                     }
                 }
             }
