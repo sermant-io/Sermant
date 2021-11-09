@@ -29,7 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -50,7 +52,7 @@ public class NettyClient {
 
     private static final int WAIT_TIME = 30;
 
-    private static final int SEND_INTERNAL_MILLISECOND = 1000;
+    private static final int SEND_INTERNAL_MILLISECOND = 10000;
 
     private static final int RECONNECT_INTERVAL_SECOND = 10;
 
@@ -72,6 +74,8 @@ public class NettyClient {
     private Bootstrap bootstrap;
 
     private Channel channel;
+
+    private ScheduledExecutorService pool;
 
     public NettyClient(String serverIp, int serverPort) {
         ip = serverIp;
@@ -107,31 +111,31 @@ public class NettyClient {
     /**
      * 连接服务器
      */
-    public void doConnect() {
+    public synchronized void doConnect() {
+        LOGGER.info("do connect");
         if (channel != null && channel.isActive()) {
             return;
+        }
+        if (pool != null && !pool.isShutdown()) {
+            pool.shutdownNow();
         }
         ChannelFuture connect = bootstrap.connect(ip, port);
 
         // 添加连接监听
-        connect.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture channelFuture) {
-                // 如果连接成功，启动发送线程，循环发送消息队列中的内容
-                if (channelFuture.isSuccess()) {
-                    channel = channelFuture.channel();
-                    LOGGER.info("Successfully Connected to server {}:{}...", ip, port);
-                    new Thread(new Sender(channel, queue, sendInterval)).start();
-                } else {
-                    // 失败则在X秒后重试连接
-                    LOGGER.info("Failed to connect,try reconnecting after {} seconds...", reconectInterval);
-                    channelFuture.channel().eventLoop().schedule(new Runnable() {
-                        @Override
-                        public void run() {
-                            doConnect();
-                        }
-                    }, reconectInterval, TimeUnit.SECONDS);
+        connect.addListener((ChannelFutureListener) channelFuture -> {
+            // 如果连接成功，启动发送线程，循环发送消息队列中的内容
+            if (channelFuture.isSuccess()) {
+                channel = channelFuture.channel();
+                if (channel.isActive()) {
+                    Sender sender = new Sender(channel, queue);
+                    LOGGER.info("Successfully Connected to server");
+                    pool = Executors.newScheduledThreadPool(1);
+                    pool.scheduleAtFixedRate(sender, 0, sendInterval, TimeUnit.MILLISECONDS);
                 }
+            } else {
+                // 失败则在X秒后重试连接
+                LOGGER.info("Failed to connect,try reconnecting after {} seconds...", reconectInterval);
+                channelFuture.channel().eventLoop().schedule(this::doConnect, reconectInterval, TimeUnit.SECONDS);
             }
         });
     }
@@ -139,10 +143,14 @@ public class NettyClient {
     /**
      * 发送数据至服务端
      *
-     * @param msg 传输数据
+     * @param msg      传输数据
      * @param dataType 数据类型
      */
     public void sendData(byte[] msg, Message.ServiceData.DataType dataType) {
+        if (msg == null) {
+            LOGGER.warn("Message is null.");
+            return;
+        }
         byte[] compressMsg = GzipUtils.compress(msg);
         Message.ServiceData serviceData = Message.ServiceData.newBuilder()
                 .setDataType(dataType)
