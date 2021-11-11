@@ -29,35 +29,29 @@ public class Sender implements Runnable {
 
     private Channel channel;
 
-    private int sendInterval;
-
-    public Sender(Channel channel, BlockingQueue<Message.ServiceData> queue, int sendInterval) {
+    public Sender(Channel channel, BlockingQueue<Message.ServiceData> queue) {
         this.queue = queue;
         this.channel = channel;
-        this.sendInterval = sendInterval;
     }
 
     @Override
     public void run() {
         List<Message.ServiceData> list;
 
-        // 当channel不为空且存活时，循环遍历消息队列
-        while (channel != null && channel.isActive()) {
-            // 消息队列不为空时，发送消息
-            if (queue.size() > 0) {
-                try {
-                    list = new ArrayList<>();
-                    queue.drainTo(list);
-                    Message.NettyMessage message = Message.NettyMessage.newBuilder()
-                            .setMessageType(Message.NettyMessage.MessageType.SERVICE_DATA)
-                            .addAllServiceData(list)
-                            .build();
-                    channel.writeAndFlush(message);
-                    Thread.sleep(sendInterval);
-                } catch (InterruptedException e) {
-                    LOGGER.error("Exception occurs when send message.Exception info: {}", e);
-                }
+        //消息队列不为空时，发送消息
+        if (queue.size() > 0) {
+            list = new ArrayList<>();
+            queue.drainTo(list);
+            Message.NettyMessage message = Message.NettyMessage.newBuilder()
+                    .setMessageType(Message.NettyMessage.MessageType.SERVICE_DATA)
+                    .addAllServiceData(list)
+                    .build();
+            if(channel==null){
+                LOGGER.info("channel is null");
             }
+
+            channel.writeAndFlush(message);
+            LOGGER.info("The message is sent to the gateway successfully. Number of messages: {}", list.size());
         }
     }
 }

@@ -27,17 +27,15 @@ public class ThreadPools {
     // 线程池维护线程所允许的空闲时间
     private static final long ALIVE_TIME = 2000L;
 
+    // 线程缓冲队列大小
+    private static int queueSize = 1000;
+
     // 线程缓冲队列
-    private static BlockingQueue<Runnable> bqueue = new LinkedBlockingQueue<Runnable>(1000);
+    private static BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>(queueSize);
 
     // ThreadPoolExecutor线程池对象
-    private static ThreadPoolExecutor exec = new ThreadPoolExecutor(SIZE_CORE_POOL, SIZE_MAX_POOL, ALIVE_TIME,
-            TimeUnit.MILLISECONDS, bqueue, new ThreadFactory() {
-                @Override
-                public Thread newThread(Runnable r) {
-                    return new Thread(r);
-                }
-            }, new ThreadPoolExecutor.AbortPolicy());
+    public static ThreadPoolExecutor exec = new ThreadPoolExecutor(SIZE_CORE_POOL, SIZE_MAX_POOL, ALIVE_TIME,
+            TimeUnit.MILLISECONDS, blockingQueue, Thread::new, new ThreadPoolExecutor.AbortPolicy());
 
     public static ThreadPoolExecutor getExecutor() {
         return exec;
