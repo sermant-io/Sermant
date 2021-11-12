@@ -15,18 +15,43 @@
         <package.sample.dir>${package.server.dir}</package.sample.dir>
         <spring-boot-starter.version>2.3.4.RELEASE</spring-boot-starter.version>
         <spring-kafka.version>2.5.6.RELEASE</spring-kafka.version>
+        <apm-agent-core.version>8.1.0</apm-agent-core.version>
+        <influxdb-client-java.version>3.4.0</influxdb-client-java.version>
     </properties>
 
     <dependencies>
         <dependency>
+            <groupId>com.huawei.javamesh</groupId>
+            <artifactId>protocol</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot-starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
             <version>${spring-kafka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.influxdb</groupId>
+            <artifactId>influxdb-client-java</artifactId>
+            <version>${influxdb-client-java.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.skywalking</groupId>
+            <artifactId>apm-network</artifactId>
+            <version>${apm-agent-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 
@@ -41,4 +66,17 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
