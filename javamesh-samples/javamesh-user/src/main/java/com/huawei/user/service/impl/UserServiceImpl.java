@@ -250,6 +250,7 @@ public class UserServiceImpl implements UserService {
             case ROLE_ADMIN:
                 user.setRole("ADMIN");
         }
+        user.setUpdateTime(getTimestamp());
         int count = mapper.updateUser(user);
         if (count == 1) {
             return SUCCESS;

@@ -8,22 +8,22 @@
     </select>
     <select id="selectUserByName" parameterType="String" resultType="com.huawei.user.entity.UserEntity">
         SELECT user_id AS userName, user_name AS nickName, password, role_name AS role
-        FROM nuser n
+        FROM NUSER n
         WHERE n.user_id = #{userName}
     </select>
     <select id="countByName" parameterType="String" resultType="Integer">
         SELECT COUNT(1)
-        FROM nuser
+        FROM NUSER
         WHERE user_id = #{userName}
     </select>
     <update id="changePassword" parameterType="String">
-        UPDATE nuser
+        UPDATE NUSER
         SET password = #{password}
         WHERE user_id = #{userName}
     </update>
 
     <insert id="insertUser" parameterType="com.huawei.user.entity.UserEntity">
-        INSERT INTO nuser (created_date, last_modified_date,password, enabled, role_name, user_id, user_name)
+        INSERT INTO NUSER (created_date, last_modified_date,password, enabled, role_name, user_id, user_name)
         values (#{createTime}, #{updateTime},#{password}, #{enabled}, #{role}, #{userName}, #{nickName})
     </insert>
 
@@ -32,7 +32,7 @@
         SELECT user_id AS userName, user_name AS nickName,CASE role_name WHEN 'ADMIN' THEN '管理员' WHEN 'APPROVER' THEN
         '审核员' WHEN 'OPERATOR' THEN '操作员' END AS role,last_modified_date AS updateTime,CASE enabled WHEN 'T' THEN '正常'
         WHEN 'F' THEN '失效' END AS enabled
-        FROM nuser
+        FROM NUSER
         <where>
             <if test="userName!=null and userName!=''">
                 user_id LIKE CONCAT('%',#{userName},'%')
@@ -50,7 +50,7 @@
     </select>
 
     <update id="updateEnableByName">
-        UPDATE nuser
+        UPDATE NUSER
         SET enabled = #{enable}
         WHERE user_id IN
         <foreach collection="usernames" item="userName" index="index" open="(" close=")" separator=",">
@@ -59,14 +59,14 @@
     </update>
 
     <update id="updatePwdByName">
-        UPDATE nuser
+        UPDATE NUSER
         SET password = #{password}
         WHERE user_id = #{userName}
     </update>
 
     <update id="updateUser" parameterType="com.huawei.user.entity.UserEntity">
-        UPDATE nuser
-        SET user_name = #{nickName},role_name = #{role}
+        UPDATE NUSER
+        SET user_name = #{nickName},role_name = #{role},last_modified_date=#{updateTime}
         WHERE user_id = #{userName}
     </update>
 </mapper>
