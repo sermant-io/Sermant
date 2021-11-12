@@ -2,7 +2,6 @@ package com.huawei.apm.core.agent.enhancer;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.common.OverrideArgumentsCall;
-import com.huawei.apm.core.exception.FlowControlException;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.apm.core.lubanops.bootstrap.Interceptor;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
@@ -50,7 +49,7 @@ public final class InstanceMethodEnhancer extends AbstractAroundEnhancer {
     }
 
     @Override
-    protected BeforeResult doBefore(final EnhanceContext context) throws Throwable {
+    protected BeforeResult doBefore(final EnhanceContext context) {
         BeforeResult beforeResult = new BeforeResult();
         for (InstanceMethodInterceptor interceptor : interceptors) {
             context.increaseInvokedIndex();
@@ -83,7 +82,7 @@ public final class InstanceMethodEnhancer extends AbstractAroundEnhancer {
 
     private void execBefore(final InstanceMethodInterceptor interceptor,
             final EnhanceContext context,
-            final BeforeResult beforeResult) throws Throwable {
+            final BeforeResult beforeResult) {
         Object origin = context.getOrigin();
         Method method = context.getMethod();
         try {
@@ -91,10 +90,7 @@ public final class InstanceMethodEnhancer extends AbstractAroundEnhancer {
         } catch (Throwable t) {
             LOGGER.severe(String.format("An error occurred before [{%s}#{%s}] in interceptor [{%s}]: [{%s}]",
                     origin.getClass().getName(), method.getName(), interceptor.getClass().getName(), t.getMessage()));
-            if (t instanceof FlowControlException) {
-                // 流控异常特别梳理，需将异常抛给用户，让用户自身做处理
-                throw t;
-            }
+            throwBizException(t);
         }
     }
 
@@ -109,6 +105,7 @@ public final class InstanceMethodEnhancer extends AbstractAroundEnhancer {
             LOGGER.severe(String.format("An error occurred while handling throwable thrown by"
                             + " [{%s}#{%s}] in interceptor [{%s}]: [{%s}].",
                     origin.getClass().getName(), method.getName(), interceptor.getClass().getName(), t.getMessage()));
+            throwBizException(t);
         }
     }
 
@@ -123,6 +120,7 @@ public final class InstanceMethodEnhancer extends AbstractAroundEnhancer {
         } catch (Throwable t) {
             LOGGER.severe(String.format("An error occurred after [{%s}#{%s}] in interceptor [{%s}]: [{%s}].",
                     origin.getClass().getName(), method.getName(), interceptor.getClass().getName(), t.getMessage()));
+            throwBizException(t);
         }
         return returnResult;
     }
