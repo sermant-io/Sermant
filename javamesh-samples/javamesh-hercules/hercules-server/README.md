@@ -5,7 +5,55 @@
     （1）JDK1.8  
     （2）Tomcat8.5以上
     （3）MySQL8.0
-### 二. NGrinder Controller部署
+    （4）Maven 3.5以上
+### 二. 中间件配置
+#### 1. MySql配置
+ 创建名为hercules的数据库，该数据库无法自动创建，需要人工提前创建
+```
+create database `hercules` character set utf8 collate utf8_general_ci;
+
+```
+#### 2. Tomcat配置
+ Tomcat除了正常配置外，为了满足能执行maven_project类型的脚本，需要在tomcat启动时添加maven.home参数
+ 执行命令：
+```
+vim ${tomcat_home}/bin/catalina.sh
+```
+ 添加如下内容到文件里面：
+```
+# maven.home根据实际环境配置，这里只是举例
+JAVA_OPTS="-Xms1024m -Xmx1024m -XX:MaxPermSize=200m -Dmaven.home=/usr/local/apache-maven-3.8.3"
+#CATALINA_OPTS="-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8899"
+
+# 以下路径根据实际环境配置，这里只是举例
+export TOMCAT_HOME=/usr/local/apache-tomcat-8.5.71
+export CATALINA_HOME=/usr/local/apache-tomcat-8.5.71
+export CATALINA_BASE=/usr/local/apache-tomcat-8.5.71
+
+```
+#### 3. Maven配置
+ maven需要在maven.home/conf/settings.xml中配置好仓库服务器和本地仓库
+ 以下内容为举例：
+```
+    <localRepository>/opt/maven-respository</localRepository>
+
+    <mirrors>
+        <!-- mirror
+         | Specifies a repository mirror site to use instead of a given repository. The repository that
+         | this mirror serves has an ID that matches the mirrorOf element of this mirror. IDs are used
+         | for inheritance and direct lookup purposes, and must be unique across the set of mirrors.
+         |
+		-->
+
+        <mirror>
+            <id>nexus-aliyun-central</id>
+            <name>aliyun4</name>
+            <url>http://maven.aliyun.com/nexus/content/repositories/central/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+    </mirrors>
+```
+### 三. NGrinder Controller部署
 #### 1. 新增nGrinder的home目录
 ```
 mkdir /usr/local/nGrinder/ngrinder
@@ -13,6 +61,7 @@ mkdir /usr/local/nGrinder/ngrinder_ex
 ```
 
 #### 2. 设置nGrinder的环境变量
+这里是演示实例，所以只设置了一下临时变量，用户可考虑直接在/etc/profile配置成环境变量
 ```
 export NGRINDER_HOME=/usr/local/nGrinder/ngrinder
 export NGRINDER_EX_HOME=/usr/local/nGrinder/ngrinder_ex
@@ -41,6 +90,10 @@ database.password=123456
 ```
 
 #### 4. 在项目最上层目录使用maven命令打包
+ 代码仓地址
+```
+https://github.com/huaweicloud/java-mesh/tree/develop
+```
  改代码配置文件javamesh-samples/javamesh-hercules/hercules-server/hercules-controller/src/main/resources/websocket.properties
 ```
 
@@ -50,7 +103,7 @@ task.status.update.notify.uri=/argus/api/task/ws
 # 需要接收任务改变通知的web地址，其实就是hercules前端集群机器的地址
 websocket.notify.host=100.94.169.125:9091,100.94.169.124:9091
 ```
- 修改配置之后使用maven打包
+ 修改配置之后使用maven打包,在javamesh-samples/javamesh-hercules/hercules-server目录下执行命令
 ```mvn clean package -Dmaven.test.skip=true```
 > 待打包完成之后，把hercules-controller模块中的hercules-controller-0.0.1.war部署到tomcat即可。
 
