@@ -99,8 +99,11 @@ public class ServerMonitorService implements PluginService {
             LOGGER.warning("No server monitor metric was collected.");
             return;
         }
-        ServerMetricCollection serverMetricCollection = ServerMetricCollection.newBuilder()
-            .addAllMetrics(metrics).build();
-        gatewayClient.send(serverMetricCollection.toByteArray(), GATEWAY_DATA_TYPE);
+        ServerMetricCollection collection = ServerMetricCollection.newBuilder()
+            .setService("service") // 占位
+            .setServiceInstance("service_instance") // 占位
+            .addAllMetrics(metrics)
+            .build();
+        gatewayClient.send(collection.toByteArray(), GATEWAY_DATA_TYPE);
     }
 }

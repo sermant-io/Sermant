@@ -16,6 +16,7 @@ import org.apache.skywalking.apm.agent.core.jvm.memory.MemoryProvider;
 import org.apache.skywalking.apm.agent.core.jvm.memorypool.MemoryPoolProvider;
 import org.apache.skywalking.apm.agent.core.jvm.thread.ThreadProvider;
 import org.apache.skywalking.apm.network.language.agent.v3.JVMMetric;
+import org.apache.skywalking.apm.network.language.agent.v3.JVMMetricCollection;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -81,8 +82,12 @@ public class OracleJvmCollectService implements PluginService {
             LOGGER.warning("No Oracle jvm metric was collected.");
             return;
         }
-        for (JVMMetric metric : metrics) {
-            gatewayClient.send(metric.toByteArray(), GATEWAY_DATA_TYPE);
-        }
+
+        JVMMetricCollection collection = JVMMetricCollection.newBuilder()
+            .setService("service") // 占位
+            .setServiceInstance("service_instance") // 占位
+            .addAllMetrics(metrics)
+            .build();
+        gatewayClient.send(collection.toByteArray(), GATEWAY_DATA_TYPE);
     }
 }
