@@ -131,4 +131,6 @@ public interface EmergencyScriptMapper {
     List<String> searchScript(String scriptName, String userName,String auth);
 
     EmergencyScript getScriptByName(String scriptName);
+
+    String selectUserById(int scriptId);
 }

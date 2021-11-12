@@ -14,11 +14,11 @@ import java.util.Map;
 public interface EmergencyScriptService {
     CommonResult<List<EmergencyScript>> listScript(HttpServletRequest request, String scriptName, String scriptUser, int pageSize, int current, String sorter, String order);
 
-    int deleteScripts(Object[] data);
+    int deleteScripts(int[] scriptIds);
 
     void downloadScript(int scriptId, HttpServletResponse response);
 
-    Map<String, String> uploadScript(MultipartFile file);
+    int uploadScript(HttpServletRequest request,EmergencyScript script,MultipartFile file);
 
     EmergencyScript selectScript(int scriptId);
 
@@ -29,4 +29,12 @@ public interface EmergencyScriptService {
     List<String> searchScript(HttpServletRequest request, String scriptName);
 
     EmergencyScript getScriptByName(String scriptName);
+
+    String submitReview(HttpServletRequest request,EmergencyScript script);
+
+    int approve(Map<String, Object> map);
+
+    CommonResult debugScript(int scriptId);
+
+    Map debugLog(int id);
 }

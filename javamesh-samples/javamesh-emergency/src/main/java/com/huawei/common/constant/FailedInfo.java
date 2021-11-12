@@ -59,6 +59,10 @@ public class FailedInfo {
      * 脚本名已存在
      */
     public static final String SCRIPT_NAME_EXISTS = "脚本名已存在";
+    public static final String SUBMIT_REVIEW_FAIL = "提审失败";
+    public static final String DOWNLOAD_SCRIPT_FAIL = "下载文件失败";
+    public static final String INSUFFICIENT_PERMISSIONS = "权限不足";
+    public static final String APPROVE_FAIL = "审核失败";
 
     private FailedInfo() {
     }

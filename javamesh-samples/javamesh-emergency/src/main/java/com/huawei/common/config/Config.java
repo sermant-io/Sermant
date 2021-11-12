@@ -18,12 +18,7 @@ import org.springframework.stereotype.Component;
  * @since 2021-10-30
  */
 @Component
-public class Config implements ErrorPageRegistrar {
-    @Override
-    public void registerErrorPages(ErrorPageRegistry registry) {
-        registry.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/index.html"));
-    }
-
+public class Config {
     @Bean
     public TomcatServletWebServerFactory webServerFactory() {
         TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();

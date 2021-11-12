@@ -8,7 +8,6 @@
         <version>2.2.10.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
     <artifactId>javamesh-emergency</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>javamesh-emergency</name>
@@ -51,6 +50,10 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
 
 
         <dependency>
@@ -121,6 +124,23 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.openfeign.form</groupId>
+            <artifactId>feign-form</artifactId>
+            <version>3.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign.form</groupId>
+            <artifactId>feign-form-spring</artifactId>
+            <version>3.8.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-httpclient</artifactId>
+            <version>11.6</version>
+        </dependency>
+
         <!-- 命令执行 -->
         <dependency>
             <groupId>com.jcraft</groupId>
@@ -132,6 +152,12 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-crypto</artifactId>
             <version>5.7.15</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
     </dependencies>
 
