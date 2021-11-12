@@ -4,3 +4,16 @@ com.lubanops.stresstest.http.HttpClientEnhance
 com.lubanops.stresstest.http.AsyncHttpClientEnhance
 com.lubanops.stresstest.kafka.KafkaProducerEnhance
 com.lubanops.stresstest.kafka.KafkaConsumerEnhance
+com.lubanops.stresstest.redis.jedis.JedisClusterCRCEnhance
+com.lubanops.stresstest.redis.jedis.JedisKeyEnhance
+com.lubanops.stresstest.redis.jedis.JedisPoolEnhance
+com.lubanops.stresstest.redis.lettuce.LettuceKeyEnhance
+com.lubanops.stresstest.redis.lettuce.LettucePoolEnhance
+com.lubanops.stresstest.redis.redisson.RedissonKeyEnhance
+com.lubanops.stresstest.redis.redisson.RedissonClusterEnhance
+com.lubanops.stresstest.redis.redisson.workaround.RedissonQueueEnhance
+com.lubanops.stresstest.redis.redisson.workaround.RedissonLimiterEnhance
+com.lubanops.stresstest.redis.redisson.workaround.RedissonLimiterDeleteEnhance
+com.lubanops.stresstest.redis.redisson.RedissonObjectEnhance
+com.lubanops.stresstest.db.mongodb.MongoCollectionEnhance
+com.lubanops.stresstest.db.mongodb.MongoDatabaseEnhance

@@ -13,8 +13,8 @@ import org.apache.http.HttpRequest;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
-import static com.lubanops.stresstest.core.Tester.TEST_FLAG;
-import static com.lubanops.stresstest.core.Tester.TEST_VALUE;
+import static com.lubanops.stresstest.config.Constant.TEST_FLAG;
+import static com.lubanops.stresstest.config.Constant.TEST_VALUE;
 
 /**
  * HttpClient 拦截器，如果是压测线程发送请求时，则在头部加上压测字段

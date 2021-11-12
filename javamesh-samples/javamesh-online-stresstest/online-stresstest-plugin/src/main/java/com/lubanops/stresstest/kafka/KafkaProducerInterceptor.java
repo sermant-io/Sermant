@@ -13,8 +13,8 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import java.lang.reflect.Method;
 
 import static com.lubanops.stresstest.core.Reflection.*;
-import static com.lubanops.stresstest.core.Tester.TEST_FLAG;
-import static com.lubanops.stresstest.core.Tester.TEST_VALUE;
+import static com.lubanops.stresstest.config.Constant.TEST_FLAG;
+import static com.lubanops.stresstest.config.Constant.TEST_VALUE;
 
 /**
  * KafkaProducer 增强实现

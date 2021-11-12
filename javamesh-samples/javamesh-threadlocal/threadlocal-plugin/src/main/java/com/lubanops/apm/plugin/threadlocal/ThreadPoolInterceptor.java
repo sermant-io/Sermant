@@ -17,7 +17,6 @@ import java.util.concurrent.Callable;
 public class ThreadPoolInterceptor implements InstanceMethodInterceptor {
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
-        System.out.println("ThreadLocal before.");
         for (int i = 0; i < arguments.length; i++) {
             if (arguments[i] instanceof Runnable) {
                 arguments[i] = TtlRunnable.get((Runnable) arguments[i], false, true);
@@ -35,6 +34,6 @@ public class ThreadPoolInterceptor implements InstanceMethodInterceptor {
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
+    public void onThrow(Object obj, Method method, Object[] arguments, Throwable throwable) {
     }
 }

@@ -7,6 +7,7 @@ package com.lubanops.stresstest.core;
 import com.alibaba.ttl.TransmittableThreadLocal;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.lubanops.stresstest.config.ConfigFactory;
+import com.sun.org.apache.xalan.internal.xsltc.runtime.StringValueHandler;
 
 import java.util.Locale;
 
@@ -17,14 +18,6 @@ import java.util.Locale;
  * @since 2021/10/21
  */
 public class Tester {
-    /**
-     * 压测标记key
-     */
-    public static final String TEST_FLAG = "x-test";
-    /**
-     * 压测标记值
-     */
-    public static final String TEST_VALUE = "true";
     /**
      * TransmittableThreadLocal 确保除了在本线程内部传递，还能在本地线程之间，本地线程池之间传递。
      */
@@ -66,5 +59,15 @@ public class Tester {
      */
     public static boolean isTestPrefix(String topic, String prefix) {
         return StringUtils.isNotBlank(topic) && topic.toLowerCase(Locale.ROOT).startsWith(prefix);
+    }
+
+    /**
+     * 给mongodb collection增加影子前缀
+     * @param collectionName 原collection
+     * @return 修改后的collection
+     */
+    public static String addTestMongodb(String collectionName) {
+        String prefix = ConfigFactory.getConfig().getTestMongodbPrefix();
+        return isTestPrefix(collectionName, prefix)? collectionName: prefix + collectionName;
     }
 }
