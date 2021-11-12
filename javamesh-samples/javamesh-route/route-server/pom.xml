@@ -452,6 +452,7 @@
                 <configuration>
                     <fork>true</fork>
                     <mainClass>com.huawei.route.server.RouteServerApplication</mainClass>
+                    <outputDirectory>${package.output.dir}</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
