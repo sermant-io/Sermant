@@ -1,0 +1,67 @@
+server:
+  port: 9092
+  servlet:
+    context-path: /argus-user
+  compression:
+    enabled: true
+    mime-types: application/javascript,text/css,application/json,application/xml,text/html,text/xml,text/plain
+spring:
+  application:
+    name: argus-user
+  cloud:
+    zookeeper:
+      connect-string: 127.0.0.1:2181
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/hercules?createDatabaseIfNotExist=true&serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:root}
+    #schema:
+     # - classpath:create-table.sql
+    initialization-mode: always
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM sys_user
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      max-pool-prepared-statement-per-connection-size: 20
+      pool-prepared-statements: true
+      filter: stat,wall,log4j
+      connect-properties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
+
+  #      web-stat-filter:
+  #        enabled: true
+  #        url-pattern: /*
+  #        exclusions: .js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*
+  #      stat-view-servlet:
+  #        url-pattern: /druid/*
+  #        allow: 127.0.0.1
+  #        deny: 192.168.31.253
+  #        reset-enable: false
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  type-aliases-package: com.huawei.user.mapper
+  mapper-locations: classpath*:mapper/*.xml
+#用户名
+user_name: admin
+key: 1234123412341234
+decisionEngine.url: http://100.94.174.17:8089/hercules-controller-0.0.1
+jsch:
+  connectTimeout: 30000
+  knownHosts: /root/.ssh/known_hosts
+  privateKey: /root/.ssh/id_rsa
+script:
+  location: /tmp/
+  executor:
+    corePoolSize: 4
+    maxPoolSize: 8
+    keepAliveTime: 60
+    blockingQueueSize: 8

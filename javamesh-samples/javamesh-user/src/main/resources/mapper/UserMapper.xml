@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huawei.user.mapper.UserMapper">
+    <select id="getAuthByRole" parameterType="String" resultType="String">
+        SELECT auth_name
+        FROM emergency_auth
+        WHERE role_name = #{role}
+    </select>
+    <select id="selectUserByName" parameterType="String" resultType="com.huawei.user.entity.UserEntity">
+        SELECT user_id AS userName, user_name AS nickName, password, role_name AS role
+        FROM nuser n
+        WHERE n.user_id = #{userName}
+    </select>
+    <select id="countByName" parameterType="String" resultType="Integer">
+        SELECT COUNT(1)
+        FROM nuser
+        WHERE user_id = #{userName}
+    </select>
+    <update id="changePassword" parameterType="String">
+        UPDATE nuser
+        SET password = #{password}
+        WHERE user_id = #{userName}
+    </update>
+
+    <insert id="insertUser" parameterType="com.huawei.user.entity.UserEntity">
+        INSERT INTO nuser (created_date, last_modified_date,password, enabled, role_name, user_id, user_name)
+        values (#{createTime}, #{updateTime},#{password}, #{enabled}, #{role}, #{userName}, #{nickName})
+    </insert>
+
+    <select id="listUser" parameterType="com.huawei.user.entity.UserEntity"
+            resultType="com.huawei.user.entity.UserEntity">
+        SELECT user_id AS userName, user_name AS nickName,CASE role_name WHEN 'ADMIN' THEN '管理员' WHEN 'APPROVER' THEN
+        '审核员' WHEN 'OPERATOR' THEN '操作员' END AS role,last_modified_date AS updateTime,CASE enabled WHEN 'T' THEN '正常'
+        WHEN 'F' THEN '失效' END AS enabled
+        FROM nuser
+        <where>
+            <if test="userName!=null and userName!=''">
+                user_id LIKE CONCAT('%',#{userName},'%')
+            </if>
+            <if test="nickName!=null and nickName!=''">
+                AND user_name LIKE CONCAT('%',#{nickName},'%')
+            </if>
+            <if test="role!=null and role!=''">
+                AND role_name = #{role}
+            </if>
+            <if test="enabled!=null and enabled!=''">
+                AND enabled = #{enabled}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateEnableByName">
+        UPDATE nuser
+        SET enabled = #{enable}
+        WHERE user_id IN
+        <foreach collection="usernames" item="userName" index="index" open="(" close=")" separator=",">
+            #{userName}
+        </foreach>
+    </update>
+
+    <update id="updatePwdByName">
+        UPDATE nuser
+        SET password = #{password}
+        WHERE user_id = #{userName}
+    </update>
+
+    <update id="updateUser" parameterType="com.huawei.user.entity.UserEntity">
+        UPDATE nuser
+        SET user_name = #{nickName},role_name = #{role}
+        WHERE user_id = #{userName}
+    </update>
+</mapper>
