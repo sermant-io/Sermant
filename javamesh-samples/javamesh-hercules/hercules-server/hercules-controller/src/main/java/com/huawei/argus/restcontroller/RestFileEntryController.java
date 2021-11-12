@@ -7,13 +7,10 @@ import com.nhncorp.lucy.security.xss.XssPreventer;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.ngrinder.common.controller.BaseController;
 import org.ngrinder.common.controller.RestAPI;
-import org.ngrinder.common.util.EncodingUtils;
 import org.ngrinder.common.util.HttpContainerContext;
 import org.ngrinder.common.util.PathUtils;
 import org.ngrinder.common.util.UrlUtils;
-import org.ngrinder.infra.spring.RemainedPath;
 import org.ngrinder.model.User;
 import org.ngrinder.script.handler.ProjectHandler;
 import org.ngrinder.script.handler.ScriptHandler;
@@ -31,30 +28,36 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.Comparator;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Lists.newArrayList;
-import static java.util.Collections.sort;
 import static org.apache.commons.io.FilenameUtils.getPath;
 import static org.ngrinder.common.util.EncodingUtils.encodePathWithUTF8;
 import static org.ngrinder.common.util.ExceptionUtils.processException;
 import static org.ngrinder.common.util.PathUtils.removePrependedSlash;
 import static org.ngrinder.common.util.PathUtils.trimPathSeparatorBothSides;
 import static org.ngrinder.common.util.Preconditions.checkNotNull;
-import static org.python.modules.math.e;
 
 @RestController
 @RequestMapping("/rest/script")
@@ -170,11 +173,11 @@ public class RestFileEntryController extends RestBaseController {
 							 @RequestParam(value = "createLibAndResource", defaultValue = "false") boolean createLibAndResources,
 							 @RequestParam(value = "options", required = false) String options) {
 		fileName = StringUtils.trimToEmpty(fileName);
-		String name = "Test1";
+		String hostIp = "Test1";
 		if (StringUtils.isEmpty(testUrl)) {
 			testUrl = StringUtils.defaultIfBlank(testUrl, "http://please_modify_this.com");
 		} else {
-			name = UrlUtils.getHost(testUrl);
+			hostIp = UrlUtils.getHost(testUrl);
 		}
 		ScriptHandler scriptHandler = fileEntryService.getScriptHandler(scriptType);
 		FileEntry entry = new FileEntry();
@@ -183,7 +186,7 @@ public class RestFileEntryController extends RestBaseController {
 		Map<String, Object> file = new HashMap<>();
 		if (scriptHandler instanceof ProjectHandler) {
 			if (!fileEntryService.hasFileEntry(user, PathUtils.join(path, fileName))) {
-				fileEntryService.prepareNewEntry(user, path, fileName, name, testUrl, scriptHandler,
+				fileEntryService.prepareNewEntry(user, path, fileName, hostIp, testUrl, scriptHandler,
 					createLibAndResources, options);
 				modelInfos.put("message", fileName + " project is created.");
 				modelInfos.put(JSON_SUCCESS, true);
@@ -201,7 +204,7 @@ public class RestFileEntryController extends RestBaseController {
 			if (fileEntryService.hasFileEntry(user, fullPath)) {
 				fileEntry = fileEntryService.getOne(user, fullPath);
 			} else {
-				fileEntry = fileEntryService.prepareNewEntry(user, path, fileName, name, testUrl,
+				fileEntry = fileEntryService.prepareNewEntry(user, path, fileName, hostIp, testUrl,
 					scriptHandler, createLibAndResources, options);
 			}
 			file.put("path", fileEntry.getPath());

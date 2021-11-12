@@ -3,6 +3,7 @@ package com.huawei.hercules.service.perftest;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @FeignClient(url = "${decisionEngine.url}" + "/rest/perftest", name = "perftest")
-public interface IPerftestService {
+public interface IPerfTestService {
 
     /**
      * 任务列表查询
@@ -86,7 +87,7 @@ public interface IPerftestService {
      * @param id 任务ID
      * @return 任务信息
      */
-    @RequestMapping("/pertTestId")
+    @RequestMapping("/perfTestId")
     JSONObject getOne(@RequestParam Long id);
 
     /**

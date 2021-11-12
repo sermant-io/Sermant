@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -13,17 +14,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "MONITORING_CONFIG")
 public class MonitoringConfig extends BaseEntity<MonitoringConfig> {
-
-	private static final int MAX_LONG_STRING_SIZE = 9990;
-
-	private static final int MAX_STRING_SIZE = 2048;
-
-	public MonitoringConfig() {
-
-	}
-
+	@OneToOne(targetEntity = PerfTest.class)
 	@JsonIgnore
-	@OneToOne(mappedBy = "monitoringConfig")
+	@JoinColumn(name="id", referencedColumnName = "id")
 	private PerfTest perfTest;
 
 	@Expose

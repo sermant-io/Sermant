@@ -1140,7 +1140,7 @@ public class PerfTestService extends AbstractPerfTestService implements Controll
 	public Collection<PerfTestStatistics> getCurrentPerfTestStatistics() {
 		Map<User, PerfTestStatistics> perfTestPerUser = newHashMap();
 		for (PerfTest each : getAll(null, getProcessingOrTestingTestStatus())) {
-			User lastModifiedUser = each.getCreatedUser().getUserBaseInfo();
+			User lastModifiedUser = each.getCreatedUser().obtainUserBaseInfo();
 			PerfTestStatistics perfTestStatistics = perfTestPerUser.get(lastModifiedUser);
 			if (perfTestStatistics == null) {
 				perfTestStatistics = new PerfTestStatistics(lastModifiedUser);

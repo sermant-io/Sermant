@@ -5,7 +5,6 @@
 package com.huawei.hercules.controller.script;
 
 import org.springframework.util.StringUtils;
-import sun.swing.StringUIClientPropertyKey;
 
 /**
  * 功能描述：脚本类型定义
@@ -91,11 +90,14 @@ public enum ScriptType {
      * @return 文件全名
      */
     public static String getWholeScriptName(String prefixName, String fileType) {
+        if (StringUtils.isEmpty(prefixName)) {
+            return prefixName;
+        }
         ScriptType[] scriptTypes = values();
         for (ScriptType scriptType : scriptTypes) {
             if (scriptType.showName.equalsIgnoreCase(fileType)
                     || scriptType.realName.equalsIgnoreCase(fileType)) {
-                return prefixName + scriptType.suffixName;
+                return prefixName.endsWith(scriptType.suffixName) ? prefixName : prefixName + scriptType.suffixName;
             }
         }
         return prefixName;

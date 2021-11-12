@@ -109,6 +109,7 @@
 	<http pattern="/monitor/download/**" security="none"/>
 	<http pattern="/jnlp/**" security="none"/>
 	<http pattern="/sign_up/**" security="none"/>
+	<http pattern="/user/api/password" security="none"/>
 
 	<beans:bean id="basicProcessingFilter"
 				class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
@@ -130,6 +131,7 @@
 		<intercept-url pattern="/monitor-properties.map"/>
 		<intercept-url pattern="/agent/**"/>
 		<intercept-url pattern="/user/**"/>
+		<intercept-url pattern="/user/api/information"/>
 		<custom-filter ref="basicProcessingFilter" position="BASIC_AUTH_FILTER"/>
 		<custom-filter ref="pluggablePreAuthFilter" position="PRE_AUTH_FILTER"/>
 		<custom-filter ref="ngrinderUserPasswordAuthenticationFilter" position="FORM_LOGIN_FILTER"/>

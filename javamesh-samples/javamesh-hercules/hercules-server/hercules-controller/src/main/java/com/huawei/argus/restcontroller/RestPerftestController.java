@@ -151,10 +151,10 @@ public class RestPerftestController extends RestBaseController {
 		modelInfos.put("query", query);
 		putPageIntoModelMap(modelInfos, pageable);
 		// 查询压测场景信息
-		Iterator<Object> content = ((JSONArray) testListPage.get("content")).stream().iterator();
+		Iterator<Object> content = testListPage.getJSONArray("content").stream().iterator();
 		while (content.hasNext()) {
 			JSONObject next = (JSONObject) content.next();
-			Long perfTestId = Long.parseLong(next.get("id").toString());
+			Long perfTestId = next.getLong("id");
 			List<ScenarioPerfTest> allByID = scenarioPerfTestService.getAllByID(user, perfTestId, null);
 			if (allByID != null && !allByID.isEmpty()) {
 				Long scenarioId = allByID.get(0).getScenarioId();
@@ -182,7 +182,8 @@ public class RestPerftestController extends RestBaseController {
 
 	/**
 	 * 查询压测任务的标签
-	 * @param user 当前用户
+	 *
+	 * @param user  当前用户
 	 * @param query 查询关键字
 	 * @return
 	 */
@@ -229,7 +230,7 @@ public class RestPerftestController extends RestBaseController {
 	 * @param id   perf test id
 	 * @return perftest/detail
 	 */
-	@RequestMapping("/pertTestId")
+	@RequestMapping("/perfTestId")
 	public JSONObject getOne(User user, @RequestParam Long id) {
 		PerfTest test = null;
 		if (id != null) {
@@ -424,8 +425,8 @@ public class RestPerftestController extends RestBaseController {
 		if (newOne.getStatus() != Status.SAVED) {
 			checkArgument(StringUtils.isNotBlank(newOne.getScriptName()), "scriptName should be provided.");
 		}
-		checkArgument(newOne.getVuserPerAgent() == newOne.getProcesses() * newOne.getThreads(),
-			"vuserPerAgent should be equal to (processes * threads)");
+/*		checkArgument(newOne.getVuserPerAgent() = newOne.getProcesses() * newOne.getThreads(),
+			"vuserPerAgent should be less than (processes * threads)");*/
 	}
 
 	/**
@@ -758,9 +759,10 @@ public class RestPerftestController extends RestBaseController {
 	public JSONObject getReportById(@RequestParam long id) {
 		JSONObject modelInfos = new JSONObject();
 		PerfTest test = perfTestService.getOne(id);
-		if (test != null) {
-			modelInfos.put("test", modelStrToJson(test.toString()));
+		if (test == null) {
+			return modelInfos;
 		}
+		modelInfos.put("test", modelStrToJson(test.toString()));
 		modelInfos.put("plugins", perfTestService.getAvailableReportPlugins(id));
 		return modelInfos;
 	}
@@ -950,10 +952,14 @@ public class RestPerftestController extends RestBaseController {
 
 	@RequestMapping({"/api/perf"})
 	public HttpEntity<String> getPerfGraphById(@RequestParam("id") long id,
-										   @RequestParam(defaultValue = "") String dataType,
-										   @RequestParam(defaultValue = "false") boolean onlyTotal,
-										   @RequestParam int imgWidth) {
+											   @RequestParam(defaultValue = "") String dataType,
+											   @RequestParam(defaultValue = "false") boolean onlyTotal,
+											   @RequestParam int imgWidth) {
 		String[] dataTypes = checkNotEmpty(StringUtils.split(dataType, ","), "dataType argument should be provided");
+		PerfTest perfTest = perfTestService.getOne(id);
+		if (perfTest == null) {
+			return toJsonHttpEntity(null);
+		}
 		return toJsonHttpEntity(getPerfGraphData(id, dataTypes, onlyTotal, imgWidth));
 	}
 
@@ -1353,10 +1359,11 @@ public class RestPerftestController extends RestBaseController {
 
 	/**
 	 * 计算TPS图标数据
-	 * @param interval ngrinder采集间隔
+	 *
+	 * @param interval     ngrinder采集间隔
 	 * @param thisDuration 展示数据的总时间区间，单位秒
 	 * @param thisInterval 展示数据的时间间隔，单位秒
-	 * @param tpsStr ngrinder采集数
+	 * @param tpsStr       ngrinder采集数
 	 * @return
 	 */
 	private List<Map<String, Object>> getTps(int interval, int thisDuration, int thisInterval, String tpsStr) {
@@ -1410,7 +1417,7 @@ public class RestPerftestController extends RestBaseController {
 		}
 		sb.append(minutes).append(":");
 
-		long second = time % 60 ;
+		long second = time % 60;
 		if (second < 10) {
 			sb.append("0");
 		}

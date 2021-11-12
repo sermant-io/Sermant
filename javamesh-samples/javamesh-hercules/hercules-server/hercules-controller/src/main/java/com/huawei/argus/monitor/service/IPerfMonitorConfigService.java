@@ -1,7 +1,6 @@
 package com.huawei.argus.monitor.service;
 
 import org.ngrinder.model.MonitoringConfig;
-import org.ngrinder.model.PerfScene;
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,8 +1,10 @@
 package com.huawei.hercules.controller.perftest;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.hercules.controller.BaseController;
-import com.huawei.hercules.service.perftest.IPerftestService;
+import com.huawei.hercules.exception.HerculesException;
+import com.huawei.hercules.service.perftest.IPerfTestService;
 import com.huawei.hercules.service.scenario.IScenarioService;
 import com.huawei.hercules.service.script.IScripService;
 import org.slf4j.Logger;
@@ -10,135 +12,204 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.*;
+
 @RestController
 @RequestMapping("/api")
-public class PerftestController extends BaseController {
+public class PerfTestController extends BaseController {
+    /**
+     * 日志
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PerfTestController.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(PerftestController.class);
+    /**
+     * 没有agent异常的报错信息
+     */
     private static final String ERROR_AGENT_COUNT = "可运行的代理agent数为0，不能执行压测任务";
+
+    /**
+     * 压测脚本不存在的保报错信息
+     */
     private static final String ERROR_SCRIPT_REVISION = "压测脚本不存在，不能执行压测任务";
+
+    /**
+     * 压测场景不存在的报错信息
+     */
     private static final String ERROR_NO_SCENARIO = "关联压测场景不存在，不能执行压测任务";
-    /** 最大虚拟用户数 **/
+
+    /**
+     * 最大虚拟用户数
+     **/
     private static final int MAX_VUSER_COUNT = 3000;
+
+    /**
+     * 超过最大虚拟用户数的报错信息
+     */
     private static final String ERROR_VUSER_COUNT = "超过了最大虚拟用户数" + MAX_VUSER_COUNT;
 
+    /**
+     *
+     */
     private static final int IMG_WIDTH = 600;
+
+    /**
+     * 最大图标展示节点个数
+     */
     private static final int MAX_CHART_POINT_COUNT = 10000;
 
     @Autowired
-    private IPerftestService perftestService;
+    private IPerfTestService perfTestService;
 
     @Autowired
     private IScenarioService scenarioService;
 
     @Autowired
     IScripService scripService;
-    /**
-     * key的对应关系
-     **/
-    private static Map<String, String> perfTestKeys = new HashMap<>();
-
-    /**
-     * 脚本运行状态
-     **/
-    private static Map<String, String> perfTestStatus = new HashMap<>();
-
-    static {
-        getKeys();
-        getStatus();
-    }
 
     /**
      * 查询任务列表
      *
-     * @param keywords       关键字
-     * @param label 标签
-     * @param status         状态
-     * @param pageSize       页数
-     * @param current        页码
-     * @param sorter         排序关键字
-     * @param order          排序
+     * @param keywords 关键字
+     * @param label    标签
+     * @param status   状态
+     * @param pageSize 页数
+     * @param current  页码
+     * @param sorter   排序关键字
+     * @param order    排序
      * @return 任务列表信息
      */
     @RequestMapping(value = {"/task"}, method = RequestMethod.GET)
     public JSONObject getAll(@RequestParam(required = false) String keywords,
-                             @RequestParam(required = false) String label, @RequestParam(required = false, name = "status[]") String[] status,
+                             @RequestParam(required = false) String label,
+                             @RequestParam(required = false, name = "status[]") String[] status,
                              @RequestParam(required = false, defaultValue = "10") int pageSize,
                              @RequestParam(required = false, defaultValue = "1") int current,
                              @RequestParam(required = false) String sorter,
                              @RequestParam(required = false) String order,
-                             @RequestParam(required = false, name = "test_name[]") String[] test_name,
-                             @RequestParam(required = false, name = "test_type[]") String[] test_type,
-                             @RequestParam(required = false, name = "script_path[]") String[] script_path,
+                             @RequestParam(required = false, name = "test_name[]") String[] testName,
+                             @RequestParam(required = false, name = "test_type[]") String[] testType,
+                             @RequestParam(required = false, name = "script_path[]") String[] scriptPath,
                              @RequestParam(required = false, name = "owner[]") String[] owner) {
 
         // 1.查询条件的转换
         JSONObject pagesInfo = new JSONObject();
         pagesInfo.put("size", pageSize);
         pagesInfo.put("page", current == 0 ? 0 : current - 1);
-        if (!StringUtils.isEmpty(sorter) && !StringUtils.isEmpty(order) && perfTestKeys.containsKey(sorter)) {
+        if (!StringUtils.isEmpty(sorter)
+                && !StringUtils.isEmpty(order)
+                && !StringUtils.isEmpty(getServerKey(sorter))) {
             StringJoiner sj = new StringJoiner(",");
-            sj.add(perfTestKeys.get(sorter)).add(getOrder(order));
+            sj.add(getServerKey(sorter)).add(getOrder(order));
             pagesInfo.put("sort", sj.toString());
         }
         String queryFilter = arrayToStr(status).replaceAll("running", "R").replaceAll("pending", "S");
 
         // 2. 查询结果
-        JSONObject result = perftestService.getAll(keywords, label, queryFilter, pagesInfo.toString(), arrayToStr(test_name), arrayToStr(test_type), arrayToStr(script_path), arrayToStr(owner));
+        JSONObject result = perfTestService.getAll(keywords, label, queryFilter, pagesInfo.toString(),
+                arrayToStr(testName), arrayToStr(testType), arrayToStr(scriptPath), arrayToStr(owner));
 
         // 3.结果适配
-        if (result != null) {
-            Map<String, Object> testListPage = (Map<String, Object>) result.get("testListPage");
-            List<Map<String, Object>> files = (List<Map<String, Object>>) testListPage.get("content");
-            result.put("total", testListPage.get("total"));
-            for (Map<String, Object> file : files) {
-                file.put("test_name", file.get(perfTestKeys.get("test_name")));
-                file.put("desc", file.get(perfTestKeys.get("desc")));
-                List<String> labels = new ArrayList<>();
-                if (!StringUtils.isEmpty(file.get(perfTestKeys.get("label")))) {
-                    labels.addAll(Arrays.asList(file.get(perfTestKeys.get("label")).toString().trim().split(",")));
-                }
-                file.put("label", labels);
-                file.put("test_type", CUSTOM_SCRIPT/*file.get(perfTestKeys.get("test_type"))*/);
-                file.put("test_id", file.get(perfTestKeys.get("test_id")));
-                file.put("script_path", file.get(perfTestKeys.get("script_path")));
-                Map<String, Object> createdUser = (Map<String, Object>) file.get("createdUser");
-                file.put("owner", createdUser.get(perfTestKeys.get("owner")));
-                file.put("start_time", file.get(perfTestKeys.get("start_time")));
-                file.put("duration", getDurationTime((String) file.get("duration")));
-                if ("R".equalsIgnoreCase((String)file.get("threshold"))) {
-                    file.put("duration", file.get("runCount"));
-                }
-                file.put("mtt", file.get(perfTestKeys.get("mtt")));
-                file.put("fail_rate", toPercent((String) file.get("errors"), (String) file.get("tests"))); // errors / tests
-                file.put("status", perfTestStatus.get(file.get("status").toString()));
-
-                // 格式化日期格式
-                file.put("start_time", dataFormat((String)file.get("start_time")));
-            }
-            result.put("data", files);
+        JSONObject response = new JSONObject();
+        response.put(TOTAL.getShowKey(), 0);
+        response.put("data", Collections.emptyList());
+        if (result == null || result.isEmpty()) {
+            LOGGER.error("The result is null when search tasks from server.");
+            return response;
         }
-        return result;
+        JSONObject testListPage = result.getJSONObject("testListPage");
+        if (testListPage == null || testListPage.isEmpty()) {
+            LOGGER.error("The element testListPage in result is empty, result:{}", result);
+            return response;
+        }
+        JSONArray tasks = testListPage.getJSONArray("content");
+        if (tasks == null || tasks.isEmpty()) {
+            LOGGER.error("No task, result:{}", result);
+            return response;
+        }
+        response.put(TOTAL.getShowKey(), testListPage.get(TOTAL.getServerKey()));
+        List<JSONObject> responseTasksList = new ArrayList<>();
+        for (int i = 0; i < tasks.size(); i++) {
+            JSONObject task = tasks.getJSONObject(i);
+            JSONObject oneResponseTask = buildResponseTask(task);
+            responseTasksList.add(oneResponseTask);
+        }
+        response.put("data", responseTasksList);
+        return response;
+    }
+
+    /**
+     * 根据后端的task消息构建一个前端返回的task任务
+     *
+     * @param task 后端task消息
+     * @return 前端task消息
+     */
+    private JSONObject buildResponseTask(JSONObject task) {
+        JSONObject oneResponseTask = new JSONObject();
+        if (task == null || task.isEmpty()) {
+            return oneResponseTask;
+        }
+        oneResponseTask.put(TEST_NAME.getShowKey(), task.get(TEST_NAME.getServerKey()));
+        oneResponseTask.put(DESC.getShowKey(), task.get(DESC.getServerKey()));
+        List<String> labels = new ArrayList<>();
+        if (!StringUtils.isEmpty(task.get(LABEL.getServerKey()))) {
+            labels.addAll(Arrays.asList(task.getString(LABEL.getServerKey()).trim().split(",")));
+        }
+        oneResponseTask.put(LABEL.getShowKey(), labels);
+
+        /*task.get(perfTestKeys.get("test_type"))*/
+        oneResponseTask.put(TEST_TYPE.getShowKey(), CUSTOM_SCRIPT);
+        oneResponseTask.put(TEST_ID.getShowKey(), task.get(TEST_ID.getServerKey()));
+        oneResponseTask.put(SCRIPT_PATH.getShowKey(), task.get(SCRIPT_PATH.getServerKey()));
+        Map<String, Object> createdUser = task.getJSONObject("createdUser");
+        oneResponseTask.put(OWNER.getShowKey(), createdUser.get(OWNER.getServerKey()));
+        oneResponseTask.put(DURATION.getShowKey(), getDurationTime(task.getString(DURATION.getServerKey())));
+        if ("R".equalsIgnoreCase(task.getString("threshold"))) {
+            oneResponseTask.put(DURATION.getShowKey(), task.get("runCount"));
+        }
+        oneResponseTask.put(MTT.getShowKey(), task.get(MTT.getServerKey()));
+        String failPercent = toPercent(task.getString(FAIL_RATE.getServerKey()), task.getString("tests"));
+        oneResponseTask.put(FAIL_RATE.getShowKey(), failPercent);
+        String taskStatus = TaskStatus.getShowValue(task.getString(STATUS.getServerKey()));
+        oneResponseTask.put(STATUS.getShowKey(), taskStatus);
+        oneResponseTask.put(STATUS_LABEL.getShowKey(), task.getString(STATUS.getServerKey()));
+        oneResponseTask.put(TPS.getShowKey(), task.getString(TPS.getServerKey()));
+        oneResponseTask.put(MONITORING_HOST.getShowKey(), task.get(MONITORING_HOST.getServerKey()));
+
+        // 格式化日期格式
+        oneResponseTask.put(START_TIME.getShowKey(), dataFormat(task.getString(START_TIME.getServerKey())));
+        return oneResponseTask;
     }
 
     /**
      * 删除任务
      *
-     * @param test_id 任务ID
+     * @param taskId 任务ID
      * @return 删除结果
      */
     @RequestMapping(value = "/task", method = RequestMethod.DELETE)
-    public HttpEntity<String> delete(@RequestParam(defaultValue = "") String test_id) {
-        return perftestService.delete(test_id);
+    public HttpEntity<String> delete(@RequestParam(value = "test_id", defaultValue = "") String taskId) {
+        return perfTestService.delete(taskId);
     }
 
     /**
@@ -159,8 +230,8 @@ public class PerftestController extends BaseController {
         // agent数由前段输入
         int maxAgentCount = (int) agentInfo.get("agentCount");
         int agentCount = Integer.parseInt(params.get("agent").toString());
-        if (!params.containsKey("agent") || agentCount <=0
-            || agentCount > maxAgentCount) {
+        if (!params.containsKey("agent") || agentCount <= 0
+                || agentCount > maxAgentCount) {
             return returnError("代理数只能设置为1-" + maxAgentCount);
         }
         // 如果是运行，没有agent数，直接返回并提醒
@@ -183,7 +254,7 @@ public class PerftestController extends BaseController {
         getProcessAndThreads(perfTestInfos, params.getLong("vuser"));
         // 保存
         perfTestInfos.put("scheduledTime", params.get("start_time"));
-        JSONObject jsonObject = perftestService.saveOne(perfTestInfos.toString(), false);
+        JSONObject jsonObject = perfTestService.saveOne(perfTestInfos.toString(), false);
 
         // 保存成功之后保存任务与场景的关系
         saveScenarioPerfTest(scenario.getInteger("id"), jsonObject.getInteger("id"));
@@ -205,7 +276,7 @@ public class PerftestController extends BaseController {
         }
 
         String testId = (String) params.get("test_id");
-        JSONObject testInfo = perftestService.getOne(Long.parseLong(testId));
+        JSONObject testInfo = perfTestService.getOne(Long.parseLong(testId));
         Map<String, Object> perfTestInfos = (Map<String, Object>) testInfo.get("test");
         if (perfTestInfos == null || perfTestInfos.isEmpty()) {
             return returnError("压测任务不存在");
@@ -215,7 +286,7 @@ public class PerftestController extends BaseController {
             return returnError("可运行的agent数" + maxAgentCount + "小于设置的agent数" + perfTestInfos.get("agentCount"));
         }
         // 判断压测脚本是否存在
-        if(!scripService.hasScript(String.valueOf(perfTestInfos.get("scriptName")))) {
+        if (!scripService.hasScript(String.valueOf(perfTestInfos.get("scriptName")))) {
             return returnError(ERROR_SCRIPT_REVISION);
         }
         // 判断压测场景
@@ -235,18 +306,11 @@ public class PerftestController extends BaseController {
             clearPerfTestOldFieldsValue(perfTestInfos);
         }
         perfTestInfos.put("scheduledTime", params.get("start_time"));
-        JSONObject jsonObject = perftestService.saveOne(JSONObject.toJSONString(perfTestInfos), isClone.get());
+        JSONObject jsonObject = perfTestService.saveOne(JSONObject.toJSONString(perfTestInfos), isClone.get());
 
         // 保存成功之后保存任务与场景的关系
-        if (scenario != null && isClone.get()) {
+        if (isClone.get()) {
             saveScenarioPerfTest(scenario.getInteger("id"), jsonObject.getInteger("id"));
-        }
-
-        // 休眠
-        try {
-            TimeUnit.SECONDS.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
         return returnSuccess();
     }
@@ -260,7 +324,7 @@ public class PerftestController extends BaseController {
     @RequestMapping(value = "/task/stop", method = RequestMethod.POST)
     public JSONObject taskStop(@RequestBody JSONObject params) {
         String testId = (String) params.get("test_id");
-        perftestService.stop(testId);
+        perfTestService.stop(testId);
         // 休眠
         try {
             TimeUnit.SECONDS.sleep(2);
@@ -288,7 +352,7 @@ public class PerftestController extends BaseController {
             return refreshTestRunningById(Long.parseLong(test_id));
         }
 
-        JSONObject report = perftestService.getReportSectionById(Long.parseLong(test_id), IMG_WIDTH, start, interval);
+        JSONObject report = perfTestService.getReportSectionById(Long.parseLong(test_id), IMG_WIDTH, start, interval);
         if (report == null) {
             return returnError();
         }
@@ -314,8 +378,11 @@ public class PerftestController extends BaseController {
      */
     @RequestMapping(value = {"/report/get"}, method = RequestMethod.GET)
     public JSONObject getReports(@RequestParam String test_id) {
-        JSONObject report = perftestService.getReportById(Long.parseLong(test_id));
-        Map<String, Object> test = (Map<String, Object>) report.get("test");
+        JSONObject report = perfTestService.getReportById(Long.parseLong(test_id));
+        if (report == null || report.isEmpty()) {
+            throw new HerculesException("Report data don't found, please confirm the task status.");
+        }
+        Map<String, Object> test = report.getJSONObject("test");
         parseTest(test);
         report.put("data", test);
         return report;
@@ -332,9 +399,15 @@ public class PerftestController extends BaseController {
     public JSONObject getAllChart(@RequestParam Integer test_id) {
         String dataType = "TPS,Errors,Mean_Test_Time_(ms),Mean_time_to_first_byte,User_defined,Vuser";
 
-        HttpEntity<String> reports = perftestService.getPerfGraphById(test_id, dataType, false, IMG_WIDTH);
+        HttpEntity<String> reports = perfTestService.getPerfGraphById(test_id, dataType, false, IMG_WIDTH);
+        if (reports == null) {
+            throw new HerculesException("Report data don't found, please confirm the task status.");
+        }
         String body = reports.getBody();
         JSONObject perfGraphData = JSONObject.parseObject(body);
+        if (perfGraphData == null || perfGraphData.isEmpty()) {
+            throw new HerculesException("Report data don't found, please confirm the task status.");
+        }
         // 查询任务信息
         int interval = (int) perfGraphData.get("chartInterval");
         return parseChart(interval, getChart(perfGraphData, "TPS"), getChart(perfGraphData, "Mean_Test_Time_ms")
@@ -344,7 +417,8 @@ public class PerftestController extends BaseController {
 
     /**
      * 下载日志文件
-     * @param test_id ID
+     *
+     * @param test_id  ID
      * @param log_name 日志名称
      * @param response 响应
      * @throws Exception 异常
@@ -354,7 +428,7 @@ public class PerftestController extends BaseController {
         if (test_id <= 0 || StringUtils.isEmpty(log_name)) {
             return;
         }
-        JSONObject jsonObject = perftestService.downloadLogByID(test_id, log_name);
+        JSONObject jsonObject = perfTestService.downloadLogByID(test_id, log_name);
         if (jsonObject == null || !jsonObject.getBoolean(JSON_RESULT_KEY)) {
             return;
         }
@@ -364,6 +438,7 @@ public class PerftestController extends BaseController {
 
     /**
      * 测试注释更新
+     *
      * @param params 入参
      * @return 更新结果
      */
@@ -372,7 +447,7 @@ public class PerftestController extends BaseController {
         if (params == null || !params.containsKey("test_id")) {
             return returnError();
         }
-        perftestService.updateLeaveComment(Long.parseLong(params.getString("test_id")), params.getString("test_comment"));
+        perfTestService.updateLeaveComment(Long.parseLong(params.getString("test_id")), params.getString("test_comment"));
         return returnSuccess();
     }
 
@@ -450,18 +525,20 @@ public class PerftestController extends BaseController {
 
     /**
      * 查询压测任务的标签
+     *
      * @param value
      * @return
      */
     @RequestMapping(value = {"/task/tags"}, method = RequestMethod.GET)
     public JSONObject getAllTags(@RequestParam(required = false) String value) {
         JSONObject result = returnSuccess();
-        result.put("data", perftestService.getAllTags(value));
+        result.put("data", perfTestService.getAllTags(value));
         return result;
     }
 
     /**
      * 获取最大的可用代理数
+     *
      * @return 可用代理数
      */
     @RequestMapping(value = {"/task/maxAgent"}, method = RequestMethod.GET)
@@ -472,7 +549,6 @@ public class PerftestController extends BaseController {
         result.put("data", agentCount);
         return result;
     }
-
 
     /**
      * 压力图时间坐标轴数据：保留两位小数
@@ -487,7 +563,7 @@ public class PerftestController extends BaseController {
     }
 
     private JSONObject refreshTestRunningById(long id) {
-        HttpEntity<String> stringHttpEntity = perftestService.refreshTestRunningById(id);
+        HttpEntity<String> stringHttpEntity = perfTestService.refreshTestRunningById(id);
         String body = stringHttpEntity.getBody();
         JSONObject report = JSONObject.parseObject(body);
         JSONObject runningReport = new JSONObject();
@@ -535,7 +611,7 @@ public class PerftestController extends BaseController {
             tps.add(thisTps);
             test.put("chart", tps);
         } catch (Exception e) {
-            logger.error("Time format conversion failed!");
+            LOGGER.error("Time format conversion failed!");
             return returnError();
         }
         return runningReport;
@@ -613,8 +689,8 @@ public class PerftestController extends BaseController {
     }
 
     private void parseTest(Map<String, Object> test) {
-        test.put("status_label", perfTestStatus.get(test.get("status").toString()));
-        test.put("status", perfTestStatus.get(test.get("status").toString()));
+        test.put("status_label", TaskStatus.getShowValue(test.get("status").toString()));
+        test.put("status", TaskStatus.getShowValue(test.get("status").toString()));
         test.put("test_name", test.get("testName"));
         test.put("label", StringUtils.isEmpty(test.get("tagString")) ? null : test.get("tagString").toString().split(","));
         test.put("desc", test.get("description"));
@@ -636,26 +712,30 @@ public class PerftestController extends BaseController {
         test.put("process", test.get("processes"));
         test.put("thread", test.get("threads"));
         test.put("tps_max", test.get("peakTps"));
-        test.put("progress_message", parseStrToArray((String)test.get("progressMessage")));
+        test.put("progress_message", parseStrToArray((String) test.get("progressMessage")));
 
         // 格式化日期格式
-        test.put("start_time", dataFormat((String)test.get("start_time")));
-        test.put("end_time", dataFormat((String)test.get("end_time")));
+        test.put("start_time", dataFormat((String) test.get("start_time")));
+        test.put("end_time", dataFormat((String) test.get("end_time")));
     }
 
     /**
      * 根据代理数，计算进程数、线程数、更新代理数
      *
      * @param perfTestInfos 任务信息
-     * @param total 总代理数
+     * @param total         总代理数
      */
     private void getProcessAndThreads(JSONObject perfTestInfos, long total) {
         long processes = getProcessCount(total);
         long threads = total / processes;
+
+        // 前端要求用户显示必须和设置一致，所以这么改，原逻辑是
+        // perfTestInfos.put("vuserPerAgent", processes * threads)
+        // com.huawei.argus.restcontroller.RestPerftestController.validate有关联影响
         // 根据vuserPerAgent计算的
         perfTestInfos.put("processes", processes);
         perfTestInfos.put("threads", threads);
-        perfTestInfos.put("vuserPerAgent", processes * threads);
+        perfTestInfos.put("vuserPerAgent", total);
     }
 
     /**
@@ -702,9 +782,9 @@ public class PerftestController extends BaseController {
         Map<String, Object> scenarioListPage = (Map<String, Object>) scenario.get("scenarioListPage");
         List<Map<String, Object>> files = (List<Map<String, Object>>) scenarioListPage.get("content");
         if (files != null && !files.isEmpty()) {
-            String path = (String)files.get(0).get("scriptPath");
+            String path = (String) files.get(0).get("scriptPath");
             // 判断压测脚本是否存在
-            if(!scripService.hasScript(path)) {
+            if (!scripService.hasScript(path)) {
                 return returnError("压测脚本不存在");
             }
             JSONObject success = returnSuccess();
@@ -738,6 +818,7 @@ public class PerftestController extends BaseController {
         perfTestInfos.put("rampUpInitSleepTime", params.get("init_wait"));
         perfTestInfos.put("rampUpIncrementInterval", params.get("growth_interval"));
         perfTestInfos.put("status", Boolean.parseBoolean(String.valueOf(params.get("run"))) ? "READY" : "SAVED");
+        perfTestInfos.put("monitoringHosts", params.get("monitoring_hosts"));
     }
 
 
@@ -820,38 +901,9 @@ public class PerftestController extends BaseController {
         return String.valueOf(Double.parseDouble(errors) + Double.parseDouble(tests));
     }
 
-    private static void getKeys() {
-        if (perfTestKeys.isEmpty()) {
-            perfTestKeys.put("test_id", "id");
-            perfTestKeys.put("test_name", "testName");
-            perfTestKeys.put("test_type", "scenarioType");
-            perfTestKeys.put("script_path", "scriptName");
-            perfTestKeys.put("owner", "name");
-            perfTestKeys.put("start_time", "startTime");
-            perfTestKeys.put("duration", "duration");
-            perfTestKeys.put("tps", "tps");
-            perfTestKeys.put("mtt", "meanTestTime");
-            perfTestKeys.put("fail_rate", "errors");
-            perfTestKeys.put("desc", "description");
-            perfTestKeys.put("label", "tagString");
-
-        }
-    }
-
-    private static void getStatus() {
-        if (perfTestStatus.isEmpty()) {
-            perfTestStatus.put("CANCELED", "fail");
-            perfTestStatus.put("FINISHED", "success");
-            perfTestStatus.put("READY", "pending");
-            perfTestStatus.put("SAVED", "pending");
-            perfTestStatus.put("STOP_BY_ERROR", "fail");
-            perfTestStatus.put("TESTING", "running");
-        }
-    }
-
     public Map<String, Object> getAgentInfo() {
         Map<String, Object> result = new HashMap<>();
-        JSONObject defaultInfos = perftestService.openForm();
+        JSONObject defaultInfos = perfTestService.openForm();
         int agentCount = 0;
         result.put("agentCount", agentCount);
         if (defaultInfos == null) {

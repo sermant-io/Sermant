@@ -29,7 +29,9 @@ import org.ngrinder.common.util.PathUtils;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 
 import static org.ngrinder.common.util.AccessUtils.getSafe;
@@ -294,8 +296,8 @@ public class PerfTest extends BaseModel<PerfTest> {
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	@JoinTable(name = "PERF_TEST_TAG", /** join column */
-			joinColumns = @JoinColumn(name = "perf_test_id"), /** inverse join column */
-			inverseJoinColumns = @JoinColumn(name = "tag_id"))
+		joinColumns = @JoinColumn(name = "perf_test_id"), /** inverse join column */
+		inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	@Sort(comparator = Tag.class, type = SortType.COMPARATOR)
 	private SortedSet<Tag> tags;
 
@@ -320,11 +322,15 @@ public class PerfTest extends BaseModel<PerfTest> {
 
 	// NEW ADDED
 
-	@OneToOne(cascade={CascadeType.ALL})
-	@JoinColumn(name = "monitoring_config_id")
+	@OneToOne(targetEntity = MonitoringConfig.class, cascade = {CascadeType.ALL})
+	@JoinColumn(name="id", referencedColumnName = "id")
 	private MonitoringConfig monitoringConfig;
 
-	@OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToMany(cascade = {CascadeType.ALL}, targetEntity = MonitoringHost.class)
+	@JoinColumn(name="test_id", referencedColumnName = "id")
+	private Set<MonitoringHost> monitoringHosts = new HashSet<>();
+
+	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name = "scene_id")
 	private PerfScene perfScene;
 
@@ -390,6 +396,7 @@ public class PerfTest extends BaseModel<PerfTest> {
 	public String getTestIdentifier() {
 		return "perftest_" + getId() + "_" + (getLastModifiedUser() == null ? userId : getLastModifiedUser().getUserId());
 	}
+
 	@Transient
 	private String userId;
 
@@ -714,7 +721,7 @@ public class PerfTest extends BaseModel<PerfTest> {
 	 */
 	public String getRuntimeStr() {
 		long ms = (this.finishTime == null || this.startTime == null) ? 0 : this.finishTime.getTime()
-				- this.startTime.getTime();
+			- this.startTime.getTime();
 		return DateUtils.ms2Time(ms);
 	}
 
@@ -916,6 +923,14 @@ public class PerfTest extends BaseModel<PerfTest> {
 
 	public void setMonitoringConfig(MonitoringConfig monitoringConfig) {
 		this.monitoringConfig = monitoringConfig;
+	}
+
+	public Set<MonitoringHost> getMonitoringHosts() {
+		return monitoringHosts;
+	}
+
+	public void setMonitoringHosts(Set<MonitoringHost> monitoringHosts) {
+		this.monitoringHosts = monitoringHosts;
 	}
 
 	public PerfScene getPerfScene() {

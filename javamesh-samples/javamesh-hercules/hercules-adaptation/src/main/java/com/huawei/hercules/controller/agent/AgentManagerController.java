@@ -7,8 +7,8 @@ package com.huawei.hercules.controller.agent;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.hercules.controller.agent.constant.AgentManagerType;
-import com.huawei.hercules.controller.agent.constant.DatabaseColumn;
 import com.huawei.hercules.controller.agent.constant.AgentPerformanceColumn;
+import com.huawei.hercules.controller.agent.constant.DatabaseColumn;
 import com.huawei.hercules.controller.agent.constant.ResponseColumn;
 import com.huawei.hercules.exception.HerculesException;
 import com.huawei.hercules.service.agent.IAgentManagerService;
@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,12 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.huawei.hercules.controller.agent.constant.PerformanceResponseColumn.CPU_USAGE_ELEMENT;
-import static com.huawei.hercules.controller.agent.constant.PerformanceResponseColumn.DATA_ELEMENT;
-import static com.huawei.hercules.controller.agent.constant.PerformanceResponseColumn.MEMORY_USAGE_ELEMENT;
 import static com.huawei.hercules.controller.agent.constant.AgentPerformanceColumn.CPU_USED_PERCENTAGE;
 import static com.huawei.hercules.controller.agent.constant.AgentPerformanceColumn.FREE_MEMORY;
 import static com.huawei.hercules.controller.agent.constant.AgentPerformanceColumn.TOTAL_MEMORY;
+import static com.huawei.hercules.controller.agent.constant.PerformanceResponseColumn.CPU_USAGE_ELEMENT;
+import static com.huawei.hercules.controller.agent.constant.PerformanceResponseColumn.DATA_ELEMENT;
+import static com.huawei.hercules.controller.agent.constant.PerformanceResponseColumn.MEMORY_USAGE_ELEMENT;
 import static com.huawei.hercules.util.ListUtils.listJoinBySeparator;
 
 /**
@@ -255,16 +254,33 @@ public class AgentManagerController {
     /**
      * 根据action操作agents
      *
-     * @param agentId agent ids
-     * @param action  {@link AgentManagerType}
+     * @param params agent 参数
      * @return 操作成功为true，反之为false
      */
-    @RequestMapping(value = "/agent/{action}", params = "agent_id", method = {RequestMethod.PUT, RequestMethod.POST})
-    public JSONObject managerOne(@RequestParam(value = "agent_id") String agentId, @PathVariable String action) {
-        HttpEntity<String> httpEntity = agentManagerService.managerMany(agentId, action);
+    @RequestMapping(value = "/agent/license", method = RequestMethod.POST)
+    public JSONObject agentLicense(@RequestBody JSONObject params) {
+        Long agentId = params.getLong("agent_id");
+        boolean needApproved = params.getBoolean("licensed");
+        JSONObject agentContent = getAgentContentById(agentId);
+        if (agentContent == null || agentContent.isEmpty()) {
+            throw new HerculesException("The agent not exist.");
+        }
+        Boolean isApproved = agentContent.getBoolean(DatabaseColumn.AGENT_APPROVED);
+        if (needApproved && isApproved) {
+            throw new HerculesException("The agent already been approved.");
+        }
+        if (!needApproved && !isApproved) {
+            throw new HerculesException("The agent already been disapproved.");
+        }
+        HttpEntity<String> httpEntity = null;
+        if (needApproved) {
+            httpEntity = agentManagerService.managerOne(agentId, "approve");
+        }
+        if (!needApproved) {
+            httpEntity = agentManagerService.managerOne(agentId, "disapprove");
+        }
         if (httpEntity == null) {
-            LOGGER.error("The response is null when manager agents, ids = [{}], action = [{}].", agentId, action);
-            throw new HerculesException("The response is null when manager agents, ids = [" + agentId + "].");
+            throw new HerculesException("Approve or disapprove agent failed.");
         }
         LOGGER.info("Manager agents result:{}.", httpEntity.getBody());
         return JSONObject.parseObject(httpEntity.getBody());

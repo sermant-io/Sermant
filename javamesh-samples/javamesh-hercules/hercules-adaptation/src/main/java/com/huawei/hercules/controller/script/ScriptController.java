@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.hercules.controller.BaseController;
 import com.huawei.hercules.exception.HerculesException;
-import com.huawei.hercules.service.perftest.IPerftestService;
+import com.huawei.hercules.service.perftest.IPerfTestService;
 import com.huawei.hercules.service.scenario.IScenarioService;
 import com.huawei.hercules.service.script.IScripService;
 import org.apache.http.HttpResponse;
@@ -23,13 +23,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -38,7 +50,7 @@ public class ScriptController extends BaseController {
     IScripService scripService;
 
     @Autowired
-    IPerftestService perftestService;
+    IPerfTestService perftestService;
 
     @Autowired
     private IScenarioService scenarioService;
@@ -72,7 +84,7 @@ public class ScriptController extends BaseController {
         }
 
         // 新增
-        fileName = getAllfileName(fileName, scriptType);
+        fileName = ScriptType.getWholeScriptName(fileName, scriptType);
         boolean createLibAndResources = false;
         if (params.get("has_resource") != null) {
             createLibAndResources = params.getBoolean("has_resource");
@@ -159,7 +171,12 @@ public class ScriptController extends BaseController {
      * @return 脚本列表
      */
     @RequestMapping(value = "/script", method = RequestMethod.GET)
-    public JSONObject queryScriptList(@RequestParam(required = false) String folder, @RequestParam(required = false) int pageSize, @RequestParam(required = false) String keywords) {
+    public JSONObject queryScriptList(@RequestParam(required = false) String folder,
+                                      @RequestParam(defaultValue = "10") int pageSize,
+                                      @RequestParam(defaultValue = "1") int current,
+                                      @RequestParam(required = false) String sorter,
+                                      @RequestParam(required = false) String order,
+                                      @RequestParam(required = false) String keywords) {
         JSONObject result;
         if (StringUtils.isEmpty(keywords)) {
             result = scripService.getAllList(folder == null ? "" : folder);
@@ -167,9 +184,10 @@ public class ScriptController extends BaseController {
             result = scripService.search(keywords);
         }
         if (result != null) {
-            List<Map<String, Object>> files = (List<Map<String, Object>>) result.get("files");
+            JSONArray files = result.getJSONArray("files");
             result.put("total", files.size());
-            for (Map<String, Object> file : files) {
+            for (int i = 0; i < files.size(); i++) {
+                JSONObject file = files.getJSONObject(i);
                 file.put("type", "DIR".equals(file.get("fileType")) ? "folder" : "file");
                 file.put("script_name", file.get("fileName"));
                 file.put("version", file.get("revision"));
@@ -180,7 +198,9 @@ public class ScriptController extends BaseController {
                 file.put("commit", file.get("description"));
                 file.put("update_time", longToDate((Long) file.get("lastModifiedDate")));
             }
-            result.put("data", files);
+            ScriptSorter scriptSorter = new ScriptSorter();
+            List<JSONObject> sortAndPageResult = scriptSorter.sortAndPage(files, sorter, order, pageSize, current);
+            result.put("data", sortAndPageResult);
             result.remove("files");
         }
         return result;
@@ -567,15 +587,6 @@ public class ScriptController extends BaseController {
             }
         }
         return target;
-    }
-
-    private String getAllfileName(String fileName, String scriptType) {
-        if ("jython".equalsIgnoreCase(scriptType) && !fileName.endsWith(".py")) {
-            fileName = fileName + ".py";
-        } else if ("groovy".equalsIgnoreCase(scriptType) && !fileName.endsWith("groovy")) {
-            fileName = fileName + ".groovy";
-        }
-        return fileName;
     }
 
     private String getScriptType(String scriptType) {

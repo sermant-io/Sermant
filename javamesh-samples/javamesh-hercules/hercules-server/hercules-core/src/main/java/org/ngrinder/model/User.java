@@ -341,7 +341,7 @@ public class User extends BaseModel<User> {
 	 */
 	// It will throw StackOverflowException if return User that contains owners and followers value
 	// in getCurrentPerfTestStatistics() method.so just return base User info
-	public User getUserBaseInfo() {
+	public User obtainUserBaseInfo() {
 		User userInfo = new User();
 		userInfo.setId(this.getId());
 		userInfo.setUserId(this.getUserId());

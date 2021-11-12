@@ -1,7 +1,7 @@
 package com.huawei.hercules.controller.report;
 
 import com.huawei.hercules.controller.BaseController;
-import com.huawei.hercules.service.perftest.IPerftestService;
+import com.huawei.hercules.service.perftest.IPerfTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReportController extends BaseController {
 
     @Autowired
-    IPerftestService perftestService;
+    IPerfTestService perftestService;
 
 
 }
