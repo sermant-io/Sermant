@@ -2,6 +2,7 @@ package com.huawei.apm.core.agent.enhancer;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.common.OverrideArgumentsCall;
+import com.huawei.apm.core.exception.BizException;
 import com.huawei.apm.core.lubanops.bootstrap.Interceptor;
 
 import java.lang.reflect.Method;
@@ -47,6 +48,17 @@ public abstract class AbstractAroundEnhancer  extends OriginEnhancer {
             onFinally(origin, arguments, method, result);
         }
         return result;
+    }
+
+    /**
+     * 抛出业务异常
+     *
+     * @param throwable 拦截器执行异常
+     */
+    protected void throwBizException(Throwable throwable) {
+        if (throwable instanceof BizException) {
+            throw (BizException) throwable;
+        }
     }
 
     /**

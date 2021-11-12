@@ -2,7 +2,9 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2020-2021. All rights reserved.
  */
 
-package com.huawei.apm.core.exception;
+package com.huawei.flowcontrol.exception;
+
+import com.huawei.apm.core.exception.BizException;
 
 /**
  * 流控异常类
@@ -11,7 +13,7 @@ package com.huawei.apm.core.exception;
  * @author liyi
  * @since 1.0 2020-10-10
  */
-public class FlowControlException extends RuntimeException {
+public class FlowControlException extends BizException {
     /**
      * 通用自定义类构造方法
      *

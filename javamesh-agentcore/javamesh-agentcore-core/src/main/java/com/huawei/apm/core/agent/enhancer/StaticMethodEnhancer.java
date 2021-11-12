@@ -88,6 +88,7 @@ public final class StaticMethodEnhancer extends AbstractAroundEnhancer {
         } catch (Throwable t) {
             LOGGER.severe(String.format("An error occurred before [{%s}#{%s}] in interceptor [{%s}]: [{%s}]",
                     clazz.getName(), method.getName(), interceptor.getClass().getName(), t.getMessage()));
+            throwBizException(t);
         }
     }
 
@@ -102,6 +103,7 @@ public final class StaticMethodEnhancer extends AbstractAroundEnhancer {
             LOGGER.severe(String.format("An error occurred while handling throwable thrown by"
                             + " [{%s}#{%s}] in interceptor [{%s}]: [{%s}].",
                     clazz.getName(), method.getName(), interceptor.getClass().getName(), t.getMessage()));
+            throwBizException(t);
         }
     }
 
@@ -116,6 +118,7 @@ public final class StaticMethodEnhancer extends AbstractAroundEnhancer {
         } catch (Throwable t) {
             LOGGER.severe(String.format("An error occurred after [{%s}#{%s}] in interceptor [{%s}]: [{%s}].",
                     clazz.getName(), method.getName(), interceptor.getClass().getName(), t.getMessage()));
+            throwBizException(t);
         }
         return returnResult;
     }
