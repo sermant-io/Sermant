@@ -184,7 +184,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
     public EmergencyScript selectScript(int scriptId) {
         EmergencyScript scriptInfo = mapper.getScriptInfo(scriptId);
         try {
-            if (scriptInfo.getPasswordMode().equals("local")) {
+            if (scriptInfo.getHavePassword().equals("有") && scriptInfo.getPasswordMode().equals("本地")) {
                 scriptInfo.setPassword(passwordUtil.decodePassword(scriptInfo.getPassword()));
             }
         } catch (UnsupportedEncodingException e) {
@@ -327,7 +327,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
 
     private boolean isParamInvalid(EmergencyScript script) {
         if (script.getHavePassword().equals("havePassword") &&
-            (StringUtils.isBlank(script.getPassword()) || StringUtils.isBlank(script.getPasswordMode()))) {
+                (StringUtils.isBlank(script.getPassword()) || StringUtils.isBlank(script.getPasswordMode()))) {
             return true;
         }
         return false;
