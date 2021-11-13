@@ -14,6 +14,7 @@ import com.huawei.emergency.entity.EmergencyScriptExample;
 import com.huawei.emergency.entity.User;
 import com.huawei.emergency.mapper.EmergencyScriptMapper;
 import com.huawei.emergency.service.EmergencyScriptService;
+import com.huawei.script.exec.log.LogRespone;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +70,9 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
         User user = (User) request.getSession().getAttribute("userInfo");
         String auth;
         List<String> userAuth = user.getAuth();
-        if(userAuth.contains(AUTH_ADMIN)){
+        if (userAuth.contains(AUTH_ADMIN)) {
             auth = AUTH_ADMIN;
-        } else if(userAuth.contains(AUTH_APPROVER)){
+        } else if (userAuth.contains(AUTH_APPROVER)) {
             auth = AUTH_APPROVER;
         } else {
             auth = "";
@@ -156,10 +157,10 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
 
     @Override
     public int uploadScript(HttpServletRequest request, EmergencyScript script, MultipartFile file) {
-        if("undefined".equals(script.getServerIp())){
+        if ("undefined".equals(script.getServerIp())) {
             script.setServerIp(null);
         }
-        if("undefined".equals(script.getParam())){
+        if ("undefined".equals(script.getParam())) {
             script.setParam(null);
         }
         try {
@@ -287,7 +288,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
     }
 
     @Override
-    public Map debugLog(int id) {
+    public LogRespone debugLog(int detailId, int lineIndex) {
         return null;
     }
 

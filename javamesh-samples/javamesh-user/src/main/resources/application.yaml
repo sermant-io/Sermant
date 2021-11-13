@@ -15,8 +15,8 @@ spring:
     url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/hercules?createDatabaseIfNotExist=true&serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:root}
-    #schema:
-     # - classpath:create-table.sql
+    schema:
+      - classpath:create-table.sql
     initialization-mode: always
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
