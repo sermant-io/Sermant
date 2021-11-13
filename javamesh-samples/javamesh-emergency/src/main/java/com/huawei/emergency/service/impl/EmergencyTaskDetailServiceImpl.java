@@ -28,7 +28,7 @@ import javax.annotation.Resource;
  * @since 2021-11-04
  **/
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class EmergencyTaskDetailServiceImpl implements EmergencyTaskDetailService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmergencyTaskDetailServiceImpl.class);
 
@@ -77,7 +77,7 @@ public class EmergencyTaskDetailServiceImpl implements EmergencyTaskDetailServic
 
 
     @Override
-    public CommonResult ensure(int recordId, String result) {
+    public CommonResult ensure(int recordId, String result,String userName) {
         EmergencyExecRecordWithBLOBs needEnsureRecord = execRecordMapper.selectByPrimaryKey(recordId);
         if (needEnsureRecord == null || needEnsureRecord.getRecordId() == null) {
             return CommonResult.failed("请选择正确的子任务。");
@@ -89,13 +89,12 @@ public class EmergencyTaskDetailServiceImpl implements EmergencyTaskDetailServic
         EmergencyExecRecordWithBLOBs updateRecord = new EmergencyExecRecordWithBLOBs();
         updateRecord.setStatus(result);
         updateRecord.setRecordId(needEnsureRecord.getRecordId());
-        updateRecord.setEnsureUser("admin");
+        updateRecord.setEnsureUser(userName);
         if (execRecordMapper.updateByPrimaryKeySelective(updateRecord) == 0) {
             return CommonResult.failed("确认失败！");
         }
 
         // 当前子任务完成，执行后续任务
-        //onComplete(needEnsureRecord);
         if ("5".equals(result)) {
             if (needEnsureRecord.getTaskId() != null) {
                 taskService.onComplete(needEnsureRecord);

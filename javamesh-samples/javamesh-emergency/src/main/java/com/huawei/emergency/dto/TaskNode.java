@@ -31,4 +31,5 @@ public class TaskNode {
     private Integer planId;
     private Integer sceneId;
     private Integer taskId;
+    private String createUser;
 }

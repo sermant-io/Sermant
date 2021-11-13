@@ -8,6 +8,7 @@ import com.huawei.common.api.CommonResult;
 import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordExample;
 import com.huawei.emergency.entity.EmergencyScript;
+import com.huawei.emergency.entity.EmergencyScriptExample;
 import com.huawei.emergency.entity.EmergencyTask;
 import com.huawei.emergency.entity.EmergencyTaskExample;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
@@ -35,7 +36,7 @@ import javax.annotation.Resource;
  * @since 2021-11-04
  **/
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class EmergencyTaskServiceImpl implements EmergencyTaskService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmergencyTaskServiceImpl.class);
 
@@ -94,7 +95,7 @@ public class EmergencyTaskServiceImpl implements EmergencyTaskService {
                         .andTaskIdIsNull();
                     List<EmergencyExecRecord> parentRecords = execRecordMapper.selectByExample(parentRecordCondition);
                     parentRecords.forEach(sceneService::onComplete);
-                } else{
+                } else {
                     // 通知父任务
                     EmergencyExecRecordExample parentRecordCondition = new EmergencyExecRecordExample();
                     parentRecordCondition.createCriteria()
@@ -151,10 +152,19 @@ public class EmergencyTaskServiceImpl implements EmergencyTaskService {
         }
 
         EmergencyTask insertTask = new EmergencyTask();
+
+        if (StringUtils.isNotEmpty(emergencyTask.getScriptName())) {
+            EmergencyScriptExample scriptExample = new EmergencyScriptExample();
+            scriptExample.createCriteria().andScriptNameEqualTo(emergencyTask.getScriptName());
+            final List<EmergencyScript> emergencyScripts = scriptMapper.selectByExample(scriptExample);
+            if (emergencyScripts.size() > 0) {
+                insertTask.setScriptId(emergencyScripts.get(0).getScriptId());
+                insertTask.setScriptName(emergencyScripts.get(0).getScriptName());
+            }
+        }
         insertTask.setTaskName(emergencyTask.getTaskName());
         insertTask.setChannelType(emergencyTask.getChannelType());
-        insertTask.setScriptId(emergencyTask.getScriptId());
-        insertTask.setCreateUser("admin");
+        insertTask.setCreateUser(emergencyTask.getCreateUser());
         if (emergencyTask.getScriptId() != null) {
             EmergencyScript script = scriptMapper.selectByPrimaryKey(emergencyTask.getScriptId());
             if (script != null) {

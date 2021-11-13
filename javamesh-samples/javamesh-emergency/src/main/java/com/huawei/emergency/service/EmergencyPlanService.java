@@ -26,7 +26,7 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
      * @param planId 预案ID
      * @return {@link CommonResult}
      */
-    CommonResult exec(int planId);
+    CommonResult exec(int planId, String userName);
 
     /**
      * 预案审核
@@ -34,7 +34,7 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
      * @param plan {@link EmergencyPlan}
      * @return {@link CommonResult}
      */
-    CommonResult approve(EmergencyPlan plan);
+    CommonResult approve(EmergencyPlan plan, String userName);
 
     CommonResult query(int planId);
 
@@ -42,7 +42,7 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
 
     CommonResult plan(CommonPage<PlanQueryParams> params);
 
-    CommonResult reExec(int recordId);
+    CommonResult reExec(int recordId, String userName);
 
     CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params);
 
@@ -50,7 +50,7 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
 
     CommonResult allTaskExecRecords(CommonPage<EmergencyExecRecord> params);
 
-    CommonResult save(int planId,List<TaskNode> listNodes);
+    CommonResult save(int planId, List<TaskNode> listNodes, String userName);
 
     CommonResult submit(int planId);
 }

@@ -66,6 +66,7 @@ public class ServerSessionFactory {
         Session session = sessionCache.getOrDefault(serverInfo, createSession(serverInfo));
         if (!session.isConnected()) {
             long startConnect = System.currentTimeMillis();
+            session.setPassword(serverInfo.getServerPassword());
             session.connect(connectTimeout);
             LOGGER.info("connect to server {}:{} cost {} ms",
                 session.getHost(), session.getPort(), System.currentTimeMillis() - startConnect);

@@ -16,11 +16,15 @@ import java.util.List;
 public class PlanQueryDto {
     private Integer key;
     private Integer planId;
+    private Integer historyId;
     private String planNo;
     private String planName;
     private String status;
     private String statusLabel;
     private String createTime;
     private String creator;
+    private String executeTime;
+    private String startTime;
+    private String confirm;
     private List<PlanDetailQueryDto> expand;
 }

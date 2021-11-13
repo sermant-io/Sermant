@@ -7,6 +7,7 @@ package com.huawei.script.exec.executor;
 import com.huawei.script.exec.ExecResult;
 import com.huawei.script.exec.log.LogCallBack;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
         String fileName = "";
         try {
             fileName = createScriptFile(scriptExecInfo.getScriptName(), scriptExecInfo.getScriptContext());
-            return exec(commands(fileName), logCallback);
+            return exec(commands(fileName, scriptExecInfo.getParams()), logCallback);
         } catch (FileNotFoundException e) {
             return ExecResult.fail("Please check out your scriptLocation.");
         } catch (IOException e) {
@@ -59,7 +60,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
             if (StringUtils.isNotEmpty(fileName)) {
                 File file = new File(fileName);
                 if (file.exists() && file.delete()) {
-                    LOGGER.info("script file {} was deleted.",fileName);
+                    LOGGER.info("script file {} was deleted.", fileName);
                 }
             }
         }
@@ -108,7 +109,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
         return result.toString();
     }
 
-    private String[] commands(String command) {
-        return new String[]{SH, SH_C, command};
+    private String[] commands(String command, String[] params) {
+        return (String[]) ArrayUtils.addAll(new String[]{SH, SH_C, command}, params);
     }
 }

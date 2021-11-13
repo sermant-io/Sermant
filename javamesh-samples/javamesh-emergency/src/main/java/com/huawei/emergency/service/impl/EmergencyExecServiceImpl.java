@@ -14,10 +14,14 @@ import com.huawei.emergency.mapper.EmergencyExecMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
 import com.huawei.emergency.service.EmergencyExecService;
 
+import com.huawei.script.exec.log.LogMemoryStore;
+import com.huawei.script.exec.log.LogRespone;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -31,6 +35,7 @@ import javax.annotation.Resource;
  * @since 2021-11-09
  **/
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class EmergencyExecServiceImpl implements EmergencyExecService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmergencyExecServiceImpl.class);
 
@@ -65,7 +70,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
 
         // 增加执行记录
         EmergencyExec exec = new EmergencyExec();
-        exec.setCreateUser("admin");
+        exec.setCreateUser("system");
         exec.setScriptId(script.getScriptId());
         execMapper.insertSelective(exec);
 
@@ -86,7 +91,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
         record.setHavePassword(script.getHavePassword());
         record.setPasswordMode(script.getPasswordMode());
         record.setPassword(script.getPassword());
-        record.setCreateUser("admin");
+        record.setCreateUser("system");
         recordMapper.insertSelective(record);
 
         threadPoolExecutor.execute(handlerFactory.handle(record));
@@ -99,12 +104,25 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
         return CommonResult.success(result);
     }
 
-    @Override
-    public String getLog(int recordId) {
+    private String getLog(int recordId) {
         EmergencyExecRecordWithBLOBs record = recordMapper.selectByPrimaryKey(recordId);
         if (record == null){
             return "";
         }
         return record.getLog();
+    }
+
+    @Override
+    public LogRespone getLog(int recordId, int line) {
+        String log = getLog(recordId);
+        if (StringUtils.isEmpty(log)) {
+            return LogMemoryStore.getLog(recordId, line);
+        }
+        String[] split = log.split(System.lineSeparator());
+        if (split.length >= line) {
+            String[] needLogs = Arrays.copyOfRange(split, line - 1, split.length);
+            return new LogRespone(null, needLogs);
+        }
+        return new LogRespone(null, new String[]{log});
     }
 }

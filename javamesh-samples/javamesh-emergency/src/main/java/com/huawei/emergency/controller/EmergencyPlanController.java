@@ -10,7 +10,10 @@ import com.huawei.emergency.dto.PlanQueryParams;
 import com.huawei.emergency.dto.PlanSaveParams;
 import com.huawei.emergency.dto.TaskNode;
 import com.huawei.emergency.entity.EmergencyPlan;
+import com.huawei.emergency.entity.User;
 import com.huawei.emergency.service.EmergencyPlanService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 预案管理controller
  *
@@ -30,14 +35,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class EmergencyPlanController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmergencyPlanController.class);
 
     @Autowired
     private EmergencyPlanService planService;
 
 
     @PutMapping("/plan")
-    public CommonResult save(@RequestBody PlanSaveParams params) {
-        return planService.save(params.getPlanId(), params.getExpand());
+    public CommonResult save(HttpServletRequest request, @RequestBody PlanSaveParams params) {
+        String userName = "";
+        try {
+            User user = (User) request.getSession().getAttribute("userInfo");
+            if (user != null) {
+                userName = user.getUserName();
+            }
+        } catch (Exception e) {
+            LOGGER.error("get user info error.", e);
+        }
+        return planService.save(params.getPlanId(), params.getExpand(), userName);
     }
 
     /**
@@ -47,11 +62,20 @@ public class EmergencyPlanController {
      * @return {@link CommonResult}
      */
     @PostMapping("/plan/run")
-    public CommonResult run(@RequestBody EmergencyPlan plan) {
-        if (plan.getPlanId() == null){
+    public CommonResult run(HttpServletRequest request, @RequestBody EmergencyPlan plan) {
+        String userName = "";
+        try {
+            User user = (User) request.getSession().getAttribute("userInfo");
+            if (user != null) {
+                userName = user.getUserName();
+            }
+        } catch (Exception e) {
+            LOGGER.error("get user info error.", e);
+        }
+        if (plan.getPlanId() == null) {
             return CommonResult.failed("请选择需要运行的预案");
         }
-        return planService.exec(plan.getPlanId());
+        return planService.exec(plan.getPlanId(), userName);
     }
 
     /**
@@ -61,9 +85,9 @@ public class EmergencyPlanController {
      */
     @GetMapping("/plan")
     public CommonResult queryPlan(@RequestParam(value = "plan_name_no", required = false) String planName,
-                                  @RequestParam(value = "scene_name_no", required = false) String sceneName,
-                                  @RequestParam(value = "task_name_no",required = false) String taskName,
-                                  @RequestParam(value = "script_name_no",required = false) String scriptName,
+                                  @RequestParam(value = "scena_name_no", required = false) String sceneName,
+                                  @RequestParam(value = "task_name_no", required = false) String taskName,
+                                  @RequestParam(value = "script_name", required = false) String scriptName,
                                   @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
                                   @RequestParam(value = "current", defaultValue = "1") int current,
                                   @RequestParam(value = "sorter", defaultValue = "create_time") String sorter,
@@ -72,7 +96,11 @@ public class EmergencyPlanController {
         params.setPageSize(pageSize);
         params.setPageIndex(current);
         params.setSortField(sorter);
-        params.setSortType(order);
+        if (order.equals("ascend")) {
+            params.setSortType("ASC");
+        } else {
+            params.setSortType("DESC");
+        }
         PlanQueryParams planParams = new PlanQueryParams();
         planParams.setPlanName(planName);
         planParams.setSceneName(sceneName);
@@ -100,7 +128,15 @@ public class EmergencyPlanController {
      * @return {@link CommonResult}
      */
     @PostMapping("/plan/task")
-    public CommonResult addTask(@RequestBody TaskNode taskNode) {
+    public CommonResult addTask(HttpServletRequest request, @RequestBody TaskNode taskNode) {
+        try {
+            User user = (User) request.getSession().getAttribute("userInfo");
+            if (user != null) {
+                taskNode.setCreateUser(user.getUserName());
+            }
+        } catch (Exception e) {
+            LOGGER.error("get user info error.", e);
+        }
         return planService.addTask(taskNode);
     }
 
@@ -111,7 +147,15 @@ public class EmergencyPlanController {
      * @return {@link CommonResult} 可以通过{@link CommonResult#getData()}获取新增后的预案信息
      */
     @PostMapping("/plan")
-    public CommonResult addPlan(@RequestBody EmergencyPlan emergencyPlan) {
+    public CommonResult addPlan(HttpServletRequest request, @RequestBody EmergencyPlan emergencyPlan) {
+        try {
+            User user = (User) request.getSession().getAttribute("userInfo");
+            if (user != null) {
+                emergencyPlan.setCreateUser(user.getUserName());
+            }
+        } catch (Exception e) {
+            LOGGER.error("get user info error.", e);
+        }
         return planService.add(emergencyPlan);
     }
 
@@ -146,9 +190,18 @@ public class EmergencyPlanController {
      * @return
      */
     @PostMapping("/plan/approve")
-    public CommonResult approve(@RequestBody EmergencyPlan emergencyPlan) {
+    public CommonResult approve(HttpServletRequest request, @RequestBody EmergencyPlan emergencyPlan) {
+        String userName = "";
+        try {
+            User user = (User) request.getSession().getAttribute("userInfo");
+            if (user != null) {
+                userName = user.getUserName();
+            }
+        } catch (Exception e) {
+            LOGGER.error("get user info error.", e);
+        }
         emergencyPlan.setCheckResult(parseCheckResult(emergencyPlan.getCheckResult()));
-        return planService.approve(emergencyPlan);
+        return planService.approve(emergencyPlan, userName);
     }
 
     private String parseCheckResult(String checkResult) {

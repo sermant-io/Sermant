@@ -36,7 +36,7 @@ public interface EmergencyPlanMapper {
 
     List<PlanDetailQueryDto> queryPlanDetailDto(Integer id);
 
-    List<PlanQueryDto> allPlanRecords();
+    List<PlanQueryDto> allPlanRecords(EmergencyPlan plan);
 
     List<PlanQueryDto> allSceneRecords(Integer execId);
 

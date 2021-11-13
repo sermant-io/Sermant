@@ -37,4 +37,9 @@ public class ScriptExecInfo {
      * <p>如果为本地执行，则无需理会此字段 </p>
      */
     private ServerInfo remoteServerInfo;
+
+    /**
+     * 运行参数
+     */
+    private String[] params;
 }
