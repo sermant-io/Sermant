@@ -193,8 +193,8 @@ public class EmergencyScriptController {
     }
 
     @PostMapping("/script/debug")
-    public CommonResult debugScript(@RequestParam(value = "script_id") int scriptId) {
-        return service.debugScript(scriptId);
+    public CommonResult debugScript(@RequestBody Map<String,Integer> param) {
+        return service.debugScript(param.get("script_id"));
     }
 
     @GetMapping("/script/debugLog")
