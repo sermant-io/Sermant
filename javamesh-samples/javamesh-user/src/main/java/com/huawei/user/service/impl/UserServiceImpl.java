@@ -53,7 +53,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity getUserInfo(HttpServletRequest request) {
-        return (UserEntity) request.getSession().getAttribute("userInfo");
+        UserEntity user = (UserEntity) request.getSession().getAttribute("userInfo");
+        String role = user.getRole();
+        switch (role) {
+            case "ADMIN":
+                user.setRole(ROLE_ADMIN);
+                break;
+            case "APPROVER":
+                user.setRole(ROLE_APPROVER);
+                break;
+            case "OPERATOR":
+                user.setRole(ROLE_OPERATOR);
+        }
+        return user;
     }
 
     @Override

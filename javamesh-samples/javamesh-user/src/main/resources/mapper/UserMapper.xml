@@ -34,8 +34,9 @@
         WHEN 'F' THEN '失效' END AS enabled
         FROM NUSER
         <where>
+            role_name!='SUPER_USER' AND role_name!='SYSTEM_USER' AND role_name!="USER"
             <if test="userName!=null and userName!=''">
-                user_id LIKE CONCAT('%',#{userName},'%')
+                AND user_id LIKE CONCAT('%',#{userName},'%')
             </if>
             <if test="nickName!=null and nickName!=''">
                 AND user_name LIKE CONCAT('%',#{nickName},'%')
