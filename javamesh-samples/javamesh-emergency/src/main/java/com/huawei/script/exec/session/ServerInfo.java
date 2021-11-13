@@ -18,11 +18,21 @@ import java.util.Objects;
 public class ServerInfo {
     private String serverIp;
     private String serverUser;
+    private String serverPassword;
     private int serverPort;
 
+    public ServerInfo(String serverIp, String serverUser) {
+        this(serverIp,serverUser,"",22);
+    }
+
     public ServerInfo(String serverIp, String serverUser, int serverPort) {
+        this(serverIp,serverUser,"",serverPort);
+    }
+
+    public ServerInfo(String serverIp, String serverUser, String serverPassword, int serverPort) {
         this.serverIp = serverIp;
         this.serverUser = serverUser;
+        this.serverPassword = serverPassword;
         this.serverPort = serverPort;
     }
 

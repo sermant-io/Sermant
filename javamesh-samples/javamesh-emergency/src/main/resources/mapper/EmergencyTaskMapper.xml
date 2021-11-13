@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huawei.emergency.mapper.EmergencyTaskMapper">
+  <resultMap id="BaseResultMap" type="com.huawei.emergency.entity.EmergencyTask">
+    <id column="task_id" jdbcType="INTEGER" property="taskId" />
+    <result column="task_no" jdbcType="VARCHAR" property="taskNo" />
+    <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+    <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
+    <result column="script_id" jdbcType="INTEGER" property="scriptId" />
+    <result column="pre_task_id" jdbcType="INTEGER" property="preTaskId" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_valid" jdbcType="VARCHAR" property="isValid" />
+    <result column="channel_type" jdbcType="VARCHAR" property="channelType" />
+    <result column="script_name" jdbcType="VARCHAR" property="scriptName" />
+    <result column="submit_info" jdbcType="VARCHAR" property="submitInfo" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    task_id, task_no, task_name, scene_id, script_id, pre_task_id, create_user, create_time, 
+    is_valid, channel_type, script_name, submit_info
+  </sql>
+  <select id="selectByExample" parameterType="com.huawei.emergency.entity.EmergencyTaskExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from emergency_task
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from emergency_task
+    where task_id = #{taskId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from emergency_task
+    where task_id = #{taskId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huawei.emergency.entity.EmergencyTaskExample">
+    delete from emergency_task
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huawei.emergency.entity.EmergencyTask">
+    <selectKey keyProperty="taskId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into emergency_task (task_no, task_name, scene_id, 
+      script_id, pre_task_id, create_user, 
+      create_time, is_valid, channel_type, 
+      script_name, submit_info)
+    values (#{taskNo,jdbcType=VARCHAR}, #{taskName,jdbcType=VARCHAR}, #{sceneId,jdbcType=INTEGER}, 
+      #{scriptId,jdbcType=INTEGER}, #{preTaskId,jdbcType=INTEGER}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{isValid,jdbcType=VARCHAR}, #{channelType,jdbcType=VARCHAR}, 
+      #{scriptName,jdbcType=VARCHAR}, #{submitInfo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huawei.emergency.entity.EmergencyTask">
+    <selectKey keyProperty="taskId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into emergency_task
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskNo != null">
+        task_no,
+      </if>
+      <if test="taskName != null">
+        task_name,
+      </if>
+      <if test="sceneId != null">
+        scene_id,
+      </if>
+      <if test="scriptId != null">
+        script_id,
+      </if>
+      <if test="preTaskId != null">
+        pre_task_id,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="isValid != null">
+        is_valid,
+      </if>
+      <if test="channelType != null">
+        channel_type,
+      </if>
+      <if test="scriptName != null">
+        script_name,
+      </if>
+      <if test="submitInfo != null">
+        submit_info,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="taskNo != null">
+        #{taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="taskName != null">
+        #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="sceneId != null">
+        #{sceneId,jdbcType=INTEGER},
+      </if>
+      <if test="scriptId != null">
+        #{scriptId,jdbcType=INTEGER},
+      </if>
+      <if test="preTaskId != null">
+        #{preTaskId,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null">
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="channelType != null">
+        #{channelType,jdbcType=VARCHAR},
+      </if>
+      <if test="scriptName != null">
+        #{scriptName,jdbcType=VARCHAR},
+      </if>
+      <if test="submitInfo != null">
+        #{submitInfo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huawei.emergency.entity.EmergencyTaskExample" resultType="java.lang.Long">
+    select count(*) from emergency_task
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update emergency_task
+    <set>
+      <if test="record.taskId != null">
+        task_id = #{record.taskId,jdbcType=INTEGER},
+      </if>
+      <if test="record.taskNo != null">
+        task_no = #{record.taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskName != null">
+        task_name = #{record.taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sceneId != null">
+        scene_id = #{record.sceneId,jdbcType=INTEGER},
+      </if>
+      <if test="record.scriptId != null">
+        script_id = #{record.scriptId,jdbcType=INTEGER},
+      </if>
+      <if test="record.preTaskId != null">
+        pre_task_id = #{record.preTaskId,jdbcType=INTEGER},
+      </if>
+      <if test="record.createUser != null">
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isValid != null">
+        is_valid = #{record.isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.channelType != null">
+        channel_type = #{record.channelType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scriptName != null">
+        script_name = #{record.scriptName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.submitInfo != null">
+        submit_info = #{record.submitInfo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update emergency_task
+    set task_id = #{record.taskId,jdbcType=INTEGER},
+      task_no = #{record.taskNo,jdbcType=VARCHAR},
+      task_name = #{record.taskName,jdbcType=VARCHAR},
+      scene_id = #{record.sceneId,jdbcType=INTEGER},
+      script_id = #{record.scriptId,jdbcType=INTEGER},
+      pre_task_id = #{record.preTaskId,jdbcType=INTEGER},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      is_valid = #{record.isValid,jdbcType=VARCHAR},
+      channel_type = #{record.channelType,jdbcType=VARCHAR},
+      script_name = #{record.scriptName,jdbcType=VARCHAR},
+      submit_info = #{record.submitInfo,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huawei.emergency.entity.EmergencyTask">
+    update emergency_task
+    <set>
+      <if test="taskNo != null">
+        task_no = #{taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="taskName != null">
+        task_name = #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="sceneId != null">
+        scene_id = #{sceneId,jdbcType=INTEGER},
+      </if>
+      <if test="scriptId != null">
+        script_id = #{scriptId,jdbcType=INTEGER},
+      </if>
+      <if test="preTaskId != null">
+        pre_task_id = #{preTaskId,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null">
+        is_valid = #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="channelType != null">
+        channel_type = #{channelType,jdbcType=VARCHAR},
+      </if>
+      <if test="scriptName != null">
+        script_name = #{scriptName,jdbcType=VARCHAR},
+      </if>
+      <if test="submitInfo != null">
+        submit_info = #{submitInfo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where task_id = #{taskId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huawei.emergency.entity.EmergencyTask">
+    update emergency_task
+    set task_no = #{taskNo,jdbcType=VARCHAR},
+      task_name = #{taskName,jdbcType=VARCHAR},
+      scene_id = #{sceneId,jdbcType=INTEGER},
+      script_id = #{scriptId,jdbcType=INTEGER},
+      pre_task_id = #{preTaskId,jdbcType=INTEGER},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      is_valid = #{isValid,jdbcType=VARCHAR},
+      channel_type = #{channelType,jdbcType=VARCHAR},
+      script_name = #{scriptName,jdbcType=VARCHAR},
+      submit_info = #{submitInfo,jdbcType=VARCHAR}
+    where task_id = #{taskId,jdbcType=INTEGER}
+  </update>
+
+  <select id="countPassedPlanByTaskId" parameterType="Integer" resultType="java.lang.Long">
+    SELECT
+      count(1)
+    FROM
+      emergency_task t2,
+      emergency_scene t3,
+      emergency_plan t4
+    WHERE
+      t2.task_id = #{id}
+      AND t3.id = t2.scene_id
+      AND t4.plan_id = t3.plan_id
+      AND t4.check_result = '1'
+      AND t4.is_valid = '1'
+  </select>
+</mapper>

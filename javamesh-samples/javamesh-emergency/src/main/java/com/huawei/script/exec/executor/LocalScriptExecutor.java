@@ -59,7 +59,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
             if (StringUtils.isNotEmpty(fileName)) {
                 File file = new File(fileName);
                 if (file.exists() && file.delete()) {
-                    LOGGER.info("success delete script file");
+                    LOGGER.info("script file {} was deleted.",fileName);
                 }
             }
         }
