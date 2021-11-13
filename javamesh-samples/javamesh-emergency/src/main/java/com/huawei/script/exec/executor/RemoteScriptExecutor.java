@@ -68,7 +68,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
                 return uploadFileResult;
             }
             fileName = uploadFileResult.getMsg();
-            return exec(session, String.format(Locale.ROOT, "sh %s", fileName), logCallback);
+            return exec(session, commands(fileName, scriptExecInfo.getParams()), logCallback);
         } catch (JSchException | IOException | SftpException e) {
             LOGGER.error("Can't get remote server session.", e);
             return ExecResult.fail(e.getMessage());
@@ -111,7 +111,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
             channel = (ChannelSftp) session.openChannel("sftp");
             channel.connect();
             channel.rm(fileName);
-            LOGGER.debug("script file {} was deleted.",fileName);
+            LOGGER.debug("script file {} was deleted.", fileName);
         } catch (JSchException | SftpException e) {
             LOGGER.error("Failed to delete file {}.{}", fileName, e.getMessage());
             ExecResult.fail(e.getMessage());
@@ -194,5 +194,15 @@ public class RemoteScriptExecutor implements ScriptExecutor {
         execResult.setCode(channel.getExitStatus());
         execResult.setMsg(result.toString());
         return execResult;
+    }
+
+    private String commands(String fileName, String[] params) {
+        StringBuilder result = new StringBuilder(fileName);
+        if (params != null) {
+            for (String param : params) {
+                result.append(" ").append(param);
+            }
+        }
+        return String.format(Locale.ROOT, "sh %s", result);
     }
 }

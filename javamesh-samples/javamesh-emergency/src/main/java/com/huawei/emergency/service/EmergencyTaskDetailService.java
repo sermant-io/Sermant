@@ -11,5 +11,5 @@ import com.huawei.common.api.CommonResult;
  * @since 2021-11-04
  **/
 public interface EmergencyTaskDetailService extends EmergencyCallBack {
-    CommonResult ensure(int recordId,String result);
+    CommonResult ensure(int recordId,String result,String userName);
 }

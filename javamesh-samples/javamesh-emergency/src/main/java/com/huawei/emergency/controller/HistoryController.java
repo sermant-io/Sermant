@@ -34,7 +34,7 @@ public class HistoryController {
     @Autowired
     private HistoryService historyService;
 
-    @GetMapping("/history")
+    //@GetMapping("/history")
     public CommonResult listHistory(@RequestParam(value = "keywords", required = false) String keywords,
                                     @RequestParam(value = "scene_name[]", required = false) String[] sceneName,
                                     @RequestParam(value = "scene_user[]", required = false) String[] sceneUser,

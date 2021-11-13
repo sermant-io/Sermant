@@ -18,10 +18,14 @@ public class SceneExecDto {
     private Integer sceneId;
     private String sceneNo;
     private String sceneName;
+    private Integer scenaId;
+    private String scenaNo;
+    private String scenaName;
     private Integer taskId;
     private String taskNo;
     private String taskName;
     private String creator;
+    private String operator;
     private String startTime;
     private String endTime;
     private String status;

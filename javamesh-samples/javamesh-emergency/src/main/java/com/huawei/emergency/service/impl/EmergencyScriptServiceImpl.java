@@ -1,7 +1,5 @@
 package com.huawei.emergency.service.impl;
 
-import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.symmetric.AES;
 import com.github.pagehelper.PageHelper;
 import com.huawei.common.api.CommonResult;
 import com.huawei.common.constant.FailedInfo;
@@ -16,12 +14,10 @@ import com.huawei.emergency.entity.User;
 import com.huawei.emergency.mapper.EmergencyScriptMapper;
 import com.huawei.emergency.service.EmergencyExecService;
 import com.huawei.emergency.service.EmergencyScriptService;
-import com.huawei.script.exec.log.LogMemoryStore;
 import com.huawei.script.exec.log.LogRespone;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -300,16 +296,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
 
     @Override
     public LogRespone debugLog(int detailId, int lineIndex) {
-        String log = execService.getLog(detailId);
-        if (StringUtils.isEmpty(log)) {
-            return LogMemoryStore.getLog(detailId, lineIndex);
-        }
-        String[] split = log.split(System.lineSeparator());
-        if (split.length >= lineIndex) {
-            String[] needLogs = Arrays.copyOfRange(split, lineIndex - 1, split.length);
-            return new LogRespone(null, needLogs);
-        }
-        return new LogRespone(null, new String[]{log});
+        return execService.getLog(detailId,lineIndex);
     }
 
     private void extracted(EmergencyScript script) {

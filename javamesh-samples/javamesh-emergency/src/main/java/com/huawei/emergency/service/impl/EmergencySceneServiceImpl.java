@@ -25,7 +25,7 @@ import javax.annotation.Resource;
  * @since 2021-11-04
  **/
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class EmergencySceneServiceImpl implements EmergencySceneService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmergencySceneServiceImpl.class);
 

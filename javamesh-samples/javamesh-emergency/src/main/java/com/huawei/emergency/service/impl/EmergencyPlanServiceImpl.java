@@ -82,9 +82,6 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     @Resource(name = "passwordRestTemplate")
     private RestTemplate restTemplate;
 
-    @Value("${user_name}")
-    private String userName;
-
     @Override
     public CommonResult add(EmergencyPlan emergencyPlan) {
         if (StringUtils.isEmpty(emergencyPlan.getPlanName())) {
@@ -92,7 +89,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         }
         EmergencyPlan insertPlan = new EmergencyPlan();
         insertPlan.setPlanName(emergencyPlan.getPlanName());
-        insertPlan.setCreateUser(userName);
+        insertPlan.setCreateUser(emergencyPlan.getCreateUser());
         planMapper.insertSelective(insertPlan);
 
         EmergencyPlan updatePlanNO = new EmergencyPlan();
@@ -208,7 +205,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     }
 
     @Override
-    public CommonResult exec(int planId) {
+    public CommonResult exec(int planId,String userName) {
         if (!havePass(planId)) {
             return CommonResult.failed("当前预案未审核，无法执行。");
         }
@@ -252,7 +249,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     }
 
     @Override
-    public CommonResult approve(EmergencyPlan plan) {
+    public CommonResult approve(EmergencyPlan plan,String userName) {
         if (plan.getPlanId() == null) {
             return CommonResult.failed("请选择正确的预案");
         }
@@ -261,10 +258,10 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         if (haveRunning(plan.getPlanId())) {
             return CommonResult.failed("当前预案正在执行中，无法修改审核结果。");
         }
-        if (StringUtils.isEmpty(plan.getCheckResult())){
+        if (StringUtils.isEmpty(plan.getCheckResult())) {
             return CommonResult.failed("审核结果不能为空");
         }
-        if (!"2".equals(plan.getCheckResult()) && !"3".equals(plan.getCheckResult())){
+        if (!"2".equals(plan.getCheckResult()) && !"3".equals(plan.getCheckResult())) {
             return CommonResult.failed("审核结果不正确");
         }
 
@@ -300,11 +297,17 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         EmergencyTask task = new EmergencyTask();
         task.setTaskName(taskNode.getTaskName());
         task.setScriptId(taskNode.getScriptId());
-        task.setChannelType(task.getChannelType());
+        task.setChannelType(taskNode.getChannelType());
+        task.setCreateUser(taskNode.getCreateUser());
 
-        final EmergencyTask data = taskService.add(task).getData();
-        taskNode.setKey(data.getTaskId());
-        return CommonResult.success(taskNode);
+        final CommonResult<EmergencyTask> addResult = taskService.add(task);
+        if (addResult.getData() == null) {
+            return addResult;
+        } else {
+            EmergencyTask data = addResult.getData();
+            taskNode.setKey(data.getTaskId());
+            return CommonResult.success(taskNode);
+        }
     }
 
     @Override
@@ -323,7 +326,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     }
 
     @Override
-    public CommonResult reExec(int recordId) {
+    public CommonResult reExec(int recordId,String userName) {
         EmergencyExecRecordWithBLOBs oldRecord = execRecordMapper.selectByPrimaryKey(recordId);
         if (!"3".equals(oldRecord.getStatus())) {
             return CommonResult.failed("请选择执行失败的执行记录");
@@ -349,9 +352,10 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
 
     @Override
     public CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params) {
-        Page<PlanQueryDto> pageInfo = PageHelper.startPage(params.getPageIndex(), params.getPageSize())
+        Page<PlanQueryDto> pageInfo = PageHelper
+            .startPage(params.getPageIndex(), params.getPageSize(), params.getSortField() + System.lineSeparator() + params.getSortType())
             .doSelectPage(() -> {
-                planMapper.allPlanRecords();
+                planMapper.allPlanRecords(params.getObject());
             });
         return CommonResult.success(pageInfo.getResult(), (int) pageInfo.getTotal());
     }
@@ -376,7 +380,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     }
 
     @Override
-    public CommonResult save(int planId, List<TaskNode> listNodes) {
+    public CommonResult save(int planId, List<TaskNode> listNodes,String userName) {
         if (listNodes == null) {
             return CommonResult.success();
         }
@@ -409,7 +413,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             if ("同步".equals(scene.getSync())) {
                 insertDetail.setPreSceneId(preSceneId);
                 preSceneId = scene.getKey();
-            }else{
+            } else {
                 insertDetail.setSync("异步");
             }
             detailMapper.insertSelective(insertDetail);
@@ -424,7 +428,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         if (plan == null || !"1".equals(plan.getIsValid())) {
             return CommonResult.failed("预案不存在");
         }
-        if ("1".equals(plan.getCheckResult()) || "2".equals(plan.getCheckResult())){
+        if ("1".equals(plan.getCheckResult()) || "2".equals(plan.getCheckResult())) {
             return CommonResult.failed("预案已审核通过或正在审核中");
         }
 
@@ -444,7 +448,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
      */
     private void handleChildren(EmergencyPlanDetail planDetail, List<TaskNode> childrenNode) {
         Integer preTaskId = null;
-        if (childrenNode == null){
+        if (childrenNode == null) {
             return;
         }
         for (TaskNode task : childrenNode) {
@@ -462,10 +466,10 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             if ("同步".equals(task.getSync())) {
                 insertTaskDetail.setPreTaskId(preTaskId);
                 preTaskId = task.getKey();
-            }else{
+            } else {
                 insertTaskDetail.setSync("异步");
             }
-            insertTaskDetail.setCreateUser(userName);
+            insertTaskDetail.setCreateUser(planDetail.getCreateUser());
             detailMapper.insertSelective(insertTaskDetail);
             handleChildren(insertTaskDetail, task.getChildren());
         }

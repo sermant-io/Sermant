@@ -51,6 +51,8 @@ public class EmergencyExecRecord {
 
     private String isValid;
 
+    private String sync;
+
     public Integer getRecordId() {
         return recordId;
     }
@@ -241,6 +243,14 @@ public class EmergencyExecRecord {
 
     public void setIsValid(String isValid) {
         this.isValid = isValid == null ? null : isValid.trim();
+    }
+
+    public String getSync() {
+        return sync;
+    }
+
+    public void setSync(String sync) {
+        this.sync = sync;
     }
 
     private Integer detailId;

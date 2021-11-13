@@ -26,6 +26,7 @@
     <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
     <result column="ensure_user" jdbcType="VARCHAR" property="ensureUser" />
     <result column="is_valid" jdbcType="VARCHAR" property="isValid" />
+    <result column="sync" jdbcType="VARCHAR" property="sync" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
     <result column="script_content" jdbcType="LONGVARCHAR" property="scriptContent" />
@@ -93,7 +94,7 @@
     record_id, exec_id, plan_id, scene_id, task_id, pre_scene_id, pre_task_id, parent_task_id, 
     status, script_id, script_name, script_type, script_params, server_ip, server_user, 
     have_password, password_mode, password, create_user, create_time, start_time, end_time, 
-    ensure_user, is_valid
+    ensure_user, is_valid, sync
   </sql>
   <sql id="Blob_Column_List">
     script_content, log
@@ -159,8 +160,8 @@
       server_ip, server_user, have_password, 
       password_mode, password, create_user, 
       create_time, start_time, end_time, 
-      ensure_user, is_valid, script_content, 
-      log)
+      ensure_user, is_valid, sync, 
+      script_content, log)
     values (#{execId,jdbcType=INTEGER}, #{planId,jdbcType=INTEGER}, #{sceneId,jdbcType=INTEGER}, 
       #{taskId,jdbcType=INTEGER}, #{preSceneId,jdbcType=INTEGER}, #{preTaskId,jdbcType=INTEGER}, 
       #{parentTaskId,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, #{scriptId,jdbcType=INTEGER}, 
@@ -168,8 +169,8 @@
       #{serverIp,jdbcType=VARCHAR}, #{serverUser,jdbcType=VARCHAR}, #{havePassword,jdbcType=VARCHAR}, 
       #{passwordMode,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
-      #{ensureUser,jdbcType=VARCHAR}, #{isValid,jdbcType=VARCHAR}, #{scriptContent,jdbcType=LONGVARCHAR}, 
-      #{log,jdbcType=LONGVARCHAR})
+      #{ensureUser,jdbcType=VARCHAR}, #{isValid,jdbcType=VARCHAR}, #{sync,jdbcType=VARCHAR}, 
+      #{scriptContent,jdbcType=LONGVARCHAR}, #{log,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
     <selectKey keyProperty="recordId" order="AFTER" resultType="java.lang.Integer">
@@ -245,6 +246,9 @@
       </if>
       <if test="isValid != null">
         is_valid,
+      </if>
+      <if test="sync != null">
+        sync,
       </if>
       <if test="scriptContent != null">
         script_content,
@@ -322,6 +326,9 @@
       </if>
       <if test="isValid != null">
         #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="sync != null">
+        #{sync,jdbcType=VARCHAR},
       </if>
       <if test="scriptContent != null">
         #{scriptContent,jdbcType=LONGVARCHAR},
@@ -412,6 +419,9 @@
       <if test="record.isValid != null">
         is_valid = #{record.isValid,jdbcType=VARCHAR},
       </if>
+      <if test="record.sync != null">
+        sync = #{record.sync,jdbcType=VARCHAR},
+      </if>
       <if test="record.scriptContent != null">
         script_content = #{record.scriptContent,jdbcType=LONGVARCHAR},
       </if>
@@ -449,6 +459,7 @@
       end_time = #{record.endTime,jdbcType=TIMESTAMP},
       ensure_user = #{record.ensureUser,jdbcType=VARCHAR},
       is_valid = #{record.isValid,jdbcType=VARCHAR},
+      sync = #{record.sync,jdbcType=VARCHAR},
       script_content = #{record.scriptContent,jdbcType=LONGVARCHAR},
       log = #{record.log,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
@@ -480,7 +491,8 @@
       start_time = #{record.startTime,jdbcType=TIMESTAMP},
       end_time = #{record.endTime,jdbcType=TIMESTAMP},
       ensure_user = #{record.ensureUser,jdbcType=VARCHAR},
-      is_valid = #{record.isValid,jdbcType=VARCHAR}
+      is_valid = #{record.isValid,jdbcType=VARCHAR},
+      sync = #{record.sync,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -557,6 +569,9 @@
       <if test="isValid != null">
         is_valid = #{isValid,jdbcType=VARCHAR},
       </if>
+      <if test="sync != null">
+        sync = #{sync,jdbcType=VARCHAR},
+      </if>
       <if test="scriptContent != null">
         script_content = #{scriptContent,jdbcType=LONGVARCHAR},
       </if>
@@ -591,6 +606,7 @@
       end_time = #{endTime,jdbcType=TIMESTAMP},
       ensure_user = #{ensureUser,jdbcType=VARCHAR},
       is_valid = #{isValid,jdbcType=VARCHAR},
+      sync = #{sync,jdbcType=VARCHAR},
       script_content = #{scriptContent,jdbcType=LONGVARCHAR},
       log = #{log,jdbcType=LONGVARCHAR}
     where record_id = #{recordId,jdbcType=INTEGER}
@@ -619,7 +635,8 @@
       start_time = #{startTime,jdbcType=TIMESTAMP},
       end_time = #{endTime,jdbcType=TIMESTAMP},
       ensure_user = #{ensureUser,jdbcType=VARCHAR},
-      is_valid = #{isValid,jdbcType=VARCHAR}
+      is_valid = #{isValid,jdbcType=VARCHAR},
+      sync = #{sync,jdbcType=VARCHAR}
     where record_id = #{recordId,jdbcType=INTEGER}
   </update>
 
@@ -640,7 +657,8 @@
       ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.server_user ELSE script.server_user END ) server_user,
       ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.have_password ELSE script.have_password END ) have_password,
       ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.password_mode ELSE script.password_mode END ) password_mode,
-      ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.`password` ELSE script.`password` END ) AS `password`
+      ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.`password` ELSE script.`password` END ) AS `password`,
+       plan_detail.sync
     FROM
       emergency_plan plan
         LEFT JOIN emergency_plan_detail plan_detail ON plan.plan_id = plan_detail.plan_id

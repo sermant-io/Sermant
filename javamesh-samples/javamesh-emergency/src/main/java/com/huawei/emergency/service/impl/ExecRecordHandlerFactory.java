@@ -4,6 +4,7 @@
 
 package com.huawei.emergency.service.impl;
 
+import com.huawei.common.util.PasswordUtil;
 import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordExample;
 import com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs;
@@ -21,8 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -34,6 +37,7 @@ import javax.annotation.Resource;
  * @since 2021-11-04
  **/
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class ExecRecordHandlerFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmergencyPlanServiceImpl.class);
 
@@ -51,6 +55,9 @@ public class ExecRecordHandlerFactory {
 
     @Resource(name = "passwordRestTemplate")
     private RestTemplate restTemplate;
+
+    @Autowired
+    private PasswordUtil passwordUtil;
 
     public Runnable handle(EmergencyExecRecord currentRecord) {
         return new ExecRecordHandler(currentRecord);
@@ -88,8 +95,10 @@ public class ExecRecordHandlerFactory {
                 record.setStartTime(new Date());
                 record.setStatus("1");
                 execRecordMapper.updateByPrimaryKeySelective(record);
+                ScriptExecInfo scriptExecInfo = generateExecInfo(record);
                 if (record.getScriptId() != null) {
-                    execResult = allScriptExecutors.get("localScriptExecutor").execScript(generateExecInfo(record), new DefaultLogCallBack(record.getRecordId()));
+                    ScriptExecutor scriptExecutor = scriptExecInfo.getRemoteServerInfo() == null ? allScriptExecutors.get("localScriptExecutor") : allScriptExecutors.get("remoteScriptExecutor");
+                    execResult = scriptExecutor.execScript(scriptExecInfo, new DefaultLogCallBack(record.getRecordId()));
                 }
             } catch (Exception e) {
                 execResult = ExecResult.fail(e.getMessage());
@@ -110,9 +119,9 @@ public class ExecRecordHandlerFactory {
                 LogMemoryStore.removeLog(record.getRecordId());
                 if (execResult.isSuccess()) {
                     // detailService.onComplete(record);
-                    if(record.getTaskId() == null){
+                    if (record.getTaskId() == null) {
                         sceneService.onComplete(record);
-                    } else{
+                    } else {
                         taskService.onComplete(record);
                     }
                 }
@@ -124,6 +133,11 @@ public class ExecRecordHandlerFactory {
             execInfo.setId(record.getRecordId());
             execInfo.setScriptName(record.getScriptName() + "-" + record.getRecordId());
             execInfo.setScriptContext(record.getScriptContent());
+            if (StringUtils.isNotEmpty(record.getScriptParams())) {
+                String[] split = record.getScriptParams().split(",");
+                execInfo.setParams(split);
+            }
+
             if (StringUtils.isNotEmpty(record.getServerIp())) {
                 ServerInfo serverInfo = new ServerInfo(record.getServerIp(), record.getServerUser());
                 if ("1".equals(record.getHavePassword())) {
@@ -136,7 +150,12 @@ public class ExecRecordHandlerFactory {
 
         private String parsePassword(String mode, String source) {
             if ("0".equals(mode)) {
-                return source;
+                try {
+                    return passwordUtil.decodePassword(source);
+                } catch (UnsupportedEncodingException e) {
+                    LOGGER.error("Decode password error.", e);
+                    return source;
+                }
             }
             return restTemplate.getForObject(source, String.class);
         }
