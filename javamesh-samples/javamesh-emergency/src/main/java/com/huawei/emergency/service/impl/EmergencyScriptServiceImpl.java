@@ -9,6 +9,7 @@ import com.huawei.common.constant.ResultCode;
 import com.huawei.common.exception.ApiException;
 import com.huawei.common.util.FileUtil;
 import com.huawei.common.util.PageUtil;
+import com.huawei.common.util.PasswordUtil;
 import com.huawei.emergency.entity.EmergencyScript;
 import com.huawei.emergency.entity.EmergencyScriptExample;
 import com.huawei.emergency.entity.User;
@@ -62,8 +63,8 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
     private static final String AUTH_APPROVER = "approver";
 
 
-    @Value("${key}")
-    private String key;
+    @Autowired
+    PasswordUtil passwordUtil;
 
     @Autowired
     private EmergencyScriptMapper mapper;
@@ -184,7 +185,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
         EmergencyScript scriptInfo = mapper.getScriptInfo(scriptId);
         try {
             if (scriptInfo.getPasswordMode().equals("local")) {
-                scriptInfo.setPassword(decodePassword(scriptInfo.getPassword()));
+                scriptInfo.setPassword(passwordUtil.decodePassword(scriptInfo.getPassword()));
             }
         } catch (UnsupportedEncodingException e) {
             throw new ApiException("Failed to decode password. ", e);
@@ -247,7 +248,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
         EmergencyScript scriptInfo = mapper.getScriptByName(scriptName);
         try {
             if (scriptInfo.getHavePassword().equals(HAVE_PASSWORD) && scriptInfo.getPasswordMode().equals("local")) {
-                scriptInfo.setPassword(decodePassword(scriptInfo.getPassword()));
+                scriptInfo.setPassword(passwordUtil.decodePassword(scriptInfo.getPassword()));
             }
         } catch (UnsupportedEncodingException e) {
             throw new ApiException("Failed to decode password. ", e);
@@ -315,7 +316,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
         transLateScript(script);
         try {
             if (script.getPasswordMode() != null && script.getPasswordMode().equals(TYPE_ZERO)) {
-                script.setPassword(encodePassword(script.getPassword()));
+                script.setPassword(passwordUtil.encodePassword(script.getPassword()));
             }
         } catch (UnsupportedEncodingException e) {
             throw new ApiException("Failed to encode password. ", e);
@@ -330,24 +331,6 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
             return true;
         }
         return false;
-    }
-
-    private String encodePassword(String password) throws UnsupportedEncodingException {
-        AES aes = SecureUtil.aes(key.getBytes(StandardCharsets.UTF_8));
-
-        // AES加密
-        byte[] encrypt = aes.encrypt(password);
-
-        // Base64加密
-        byte[] encode = Base64.getEncoder().encode(encrypt);
-        return new String(encode, "utf-8");
-    }
-
-    private String decodePassword(String password) throws UnsupportedEncodingException {
-        AES aes = SecureUtil.aes(key.getBytes(StandardCharsets.UTF_8));
-        byte[] decode = Base64.getDecoder().decode(password);
-        byte[] decrypt = aes.decrypt(decode);
-        return new String(decrypt, "utf-8");
     }
 
     private void transLateScript(EmergencyScript script) {
