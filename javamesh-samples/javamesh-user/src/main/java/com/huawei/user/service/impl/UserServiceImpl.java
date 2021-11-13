@@ -9,6 +9,7 @@ import com.huawei.user.common.util.UserFeignClient;
 import com.huawei.user.entity.UserEntity;
 import com.huawei.user.mapper.UserMapper;
 import com.huawei.user.service.UserService;
+import feign.FeignException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,20 +53,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity getUserInfo(HttpServletRequest request) {
-        UserEntity user = (UserEntity) request.getSession().getAttribute("userInfo");
-        String role = user.getRole();
-        switch (role) {
-            case "ADMIN":
-                user.setRole(ROLE_ADMIN);
-                break;
-            case "APPROVER":
-                user.setRole(ROLE_APPROVER);
-                break;
-            case "OPERATOR":
-                user.setRole(ROLE_OPERATOR);
+    public CommonResult getUserInfo(HttpServletRequest request) {
+        try {
+            JSONObject userInfo = userFeignClient.getUserInfo();
+            String userId = (String) userInfo.get("userId");
+            String role = mapper.getRoleByUserName(userId);
+            List<String> auth = mapper.getAuthByRole(role);
+            UserEntity user = new UserEntity(userId, (String) userInfo.get("userName"), role, auth);
+            switch (role) {
+                case "ADMIN":
+                    user.setRole(ROLE_ADMIN);
+                    break;
+                case "APPROVER":
+                    user.setRole(ROLE_APPROVER);
+                    break;
+                case "OPERATOR":
+                    user.setRole(ROLE_OPERATOR);
+            }
+            return CommonResult.success(user);
+        } catch (FeignException e) {
+            return CommonResult.failed("Get userInfo timeout. ");
         }
-        return user;
     }
 
     @Override
@@ -116,18 +124,21 @@ public class UserServiceImpl implements UserService {
         }
         String password = encodePassword(userName, entity.getPassword());
         entity.setPassword(password);
-        switch (entity.getRole()) {
+        String role = entity.getRole();
+        entity.setRole("USER");
+        Timestamp timestamp = getTimestamp();
+        entity.setCreateTime(timestamp);
+        entity.setUpdateTime(timestamp);
+        entity.setEnabled("T");
+        count = mapper.insertUser(entity);
+        switch (role) {
             case ROLE_OPERATOR:
                 entity.setRole("OPERATOR");
                 break;
             case ROLE_APPROVER:
                 entity.setRole("APPROVER");
         }
-        Timestamp timestamp = getTimestamp();
-        entity.setCreateTime(timestamp);
-        entity.setUpdateTime(timestamp);
-        entity.setEnabled("T");
-        count = mapper.insertUser(entity);
+        count = mapper.insertRole(entity);
         if (count == 1) {
             return SUCCESS;
         }
@@ -214,7 +225,14 @@ public class UserServiceImpl implements UserService {
         String password = generatePassword();
         String encodePassword = encodePassword(userName, password);
         user.setPassword(encodePassword);
-        switch (user.getRole()) {
+        String role = user.getRole();
+        user.setRole("USER");
+        Timestamp timestamp = getTimestamp();
+        user.setCreateTime(timestamp);
+        user.setUpdateTime(timestamp);
+        user.setEnabled("T");
+        count = mapper.insertUser(user);
+        switch (role) {
             case ROLE_OPERATOR:
                 user.setRole("OPERATOR");
                 break;
@@ -224,11 +242,7 @@ public class UserServiceImpl implements UserService {
             case ROLE_ADMIN:
                 user.setRole("ADMIN");
         }
-        Timestamp timestamp = getTimestamp();
-        user.setCreateTime(timestamp);
-        user.setUpdateTime(timestamp);
-        user.setEnabled("T");
-        count = mapper.insertUser(user);
+        mapper.insertRole(user);
         user.setPassword(password);
         if (count == 1) {
             return CommonResult.success(user);
@@ -252,7 +266,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String updateUser(UserEntity user) {
-        switch (user.getRole()) {
+        String role = user.getRole();
+        user.setRole("USER");
+        user.setUpdateTime(getTimestamp());
+        int count = mapper.updateUser(user);
+        switch (role) {
             case ROLE_OPERATOR:
                 user.setRole("OPERATOR");
                 break;
@@ -262,8 +280,7 @@ public class UserServiceImpl implements UserService {
             case ROLE_ADMIN:
                 user.setRole("ADMIN");
         }
-        user.setUpdateTime(getTimestamp());
-        int count = mapper.updateUser(user);
+        mapper.insertRole(user);
         if (count == 1) {
             return SUCCESS;
         }

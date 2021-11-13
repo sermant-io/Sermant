@@ -29,23 +29,41 @@
 
     <select id="listUser" parameterType="com.huawei.user.entity.UserEntity"
             resultType="com.huawei.user.entity.UserEntity">
-        SELECT user_id AS userName, user_name AS nickName,CASE role_name WHEN 'ADMIN' THEN '管理员' WHEN 'APPROVER' THEN
-        '审核员' WHEN 'OPERATOR' THEN '操作员' END AS role,last_modified_date AS updateTime,CASE enabled WHEN 'T' THEN '正常'
-        WHEN 'F' THEN '失效' END AS enabled
-        FROM NUSER
+        SELECT
+        n.user_id AS userName,
+        n.user_name AS nickName,
+        CASE
+        r.role_name
+        WHEN 'ADMIN' THEN
+        '管理员'
+        WHEN 'APPROVER' THEN
+        '审核员'
+        WHEN 'OPERATOR' THEN
+        '操作员'
+        END AS role,
+        last_modified_date AS updateTime,
+        CASE
+        enabled
+        WHEN 'T' THEN
+        '正常'
+        WHEN 'F' THEN
+        '失效'
+        END AS enabled
+        FROM
+        NUSER n,emergency_role r
         <where>
-            role_name!='SUPER_USER' AND role_name!='SYSTEM_USER' AND role_name!="USER"
+            n.role_name!='SUPER_USER' AND n.role_name!='SYSTEM_USER' AND n.user_id = r.user_name
             <if test="userName!=null and userName!=''">
-                AND user_id LIKE CONCAT('%',#{userName},'%')
+                AND n.user_id LIKE CONCAT('%',#{userName},'%')
             </if>
             <if test="nickName!=null and nickName!=''">
-                AND user_name LIKE CONCAT('%',#{nickName},'%')
+                AND n.user_name LIKE CONCAT('%',#{nickName},'%')
             </if>
             <if test="role!=null and role!=''">
-                AND role_name = #{role}
+                AND r.role_name = #{role}
             </if>
             <if test="enabled!=null and enabled!=''">
-                AND enabled = #{enabled}
+                AND n.enabled = #{enabled}
             </if>
         </where>
     </select>
@@ -70,4 +88,14 @@
         SET user_name = #{nickName},role_name = #{role},last_modified_date=#{updateTime}
         WHERE user_id = #{userName}
     </update>
+
+    <select id="getRoleByUserName" parameterType="String" resultType="String">
+        SELECT role_name
+        FROM emergency_role
+        WHERE user_name = #{userName}
+    </select>
+
+    <insert id="insertRole" parameterType="com.huawei.user.entity.UserEntity">
+        INSERT INTO emergency_role (user_name,role_name) VALUES (#{userName},#{role})
+    </insert>
 </mapper>

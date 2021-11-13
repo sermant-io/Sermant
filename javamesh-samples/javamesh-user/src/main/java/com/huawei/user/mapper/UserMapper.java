@@ -7,7 +7,9 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
-    List<String> getAuthByRole(String role);
+    List<String> getAuthByRole(String userName);
+
+    String getRoleByUserName(String userName);
 
     int changePassword(String userName, String password);
 
@@ -24,4 +26,6 @@ public interface UserMapper {
     int updatePwdByName(String userName, String password);
 
     int updateUser(UserEntity user);
+
+    int insertRole(UserEntity entity);
 }

@@ -11,7 +11,7 @@ public interface UserService {
 
     JSONObject login(String username, String password, String nativeLanguage, String userTimezone);
 
-    UserEntity getUserInfo(HttpServletRequest request);
+    CommonResult getUserInfo(HttpServletRequest request);
 
     String logout();
 

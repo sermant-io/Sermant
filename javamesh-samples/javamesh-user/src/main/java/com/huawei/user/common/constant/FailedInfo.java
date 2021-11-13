@@ -16,6 +16,7 @@ public class FailedInfo {
     public static final String ADD_USER_FAIL = "新建用户失败";
     public static final String RESET_PWD_FAIL = "重置密码失败";
     public static final String UPDATE_USER_FAIL = "修改用户失败";
+    public static final String ENCODE_PASSWORD_FAIL = "密码加密失败";
 
     private FailedInfo() {
     }

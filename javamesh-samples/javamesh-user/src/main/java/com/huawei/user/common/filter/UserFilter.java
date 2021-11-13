@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Resource;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,7 +31,7 @@ public class UserFilter implements Filter {
     private UserEntity user;
 
     private static final Set<String> ALLOWED_PATHS = Collections.unmodifiableSet(new HashSet<>(
-            Arrays.asList("/api/user/login","/api/user/registe")));
+            Arrays.asList("/api/user/login","/api/user/registe","/api/user/me")));
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -48,11 +47,14 @@ public class UserFilter implements Filter {
             try {
                 JSONObject userInfo = userFeignClient.getUserInfo();
                 session = request.getSession();
-                String role = (String) userInfo.get("role");
-                user = new UserEntity((String)userInfo.get("userId"),(String)userInfo.get("userName"),role,mapper.getAuthByRole(role));
+                String userId = (String)userInfo.get("userId");
+                String role = mapper.getRoleByUserName(userId);
+                List<String> auth = mapper.getAuthByRole(role);
+                user = new UserEntity(userId,(String)userInfo.get("userName"),role,auth);
                 session.setAttribute("userInfo",user);
             } catch (FeignException e){
                 log.error("No login. ");
+                response.setStatus(401);
                 return;
             }
         }
