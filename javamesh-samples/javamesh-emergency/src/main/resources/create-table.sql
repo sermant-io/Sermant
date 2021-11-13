@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `emergency_script`
     `script_status` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci   NOT NULL COMMENT '脚本状态 0:新增,1:待审核,2:已审核,3:被驳回',
     `comment`       varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '审核不通过原因',
     PRIMARY KEY (`script_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;$$$
 
 CREATE TABLE IF NOT EXISTS `emergency_plan`  (
                                    `plan_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `emergency_plan`  (
                                    PRIMARY KEY (`plan_id`) USING BTREE,
                                    UNIQUE INDEX `plan_no`(`plan_no`) USING BTREE,
                                    INDEX `is_valid`(`is_valid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;$$$
 
 CREATE TABLE IF NOT EXISTS `emergency_plan_detail`  (
                                           `detail_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `emergency_plan_detail`  (
                                           INDEX `plan_id`(`plan_id`) USING BTREE,
                                           INDEX `scene_id`(`scene_id`) USING BTREE,
                                           INDEX `task_id`(`task_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 251 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 251 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;$$$
 
 CREATE TABLE IF NOT EXISTS `emergency_task`  (
                                    `task_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `emergency_task`  (
                                    UNIQUE INDEX `task_no`(`task_no`) USING BTREE,
                                    INDEX `task_name`(`task_name`) USING BTREE,
                                    INDEX `is_valid`(`is_valid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;$$$
 
 CREATE TABLE IF NOT EXISTS `emergency_exec`  (
                                    `exec_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `emergency_exec`  (
                                    `start_time` timestamp NULL DEFAULT NULL COMMENT '开始执行时间',
                                    `end_time` timestamp NULL DEFAULT NULL COMMENT '结束执行时间',
                                    PRIMARY KEY (`exec_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;$$$
 
 CREATE TABLE IF NOT EXISTS `emergency_exec_record`  (
                                           `record_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -115,4 +115,4 @@ CREATE TABLE IF NOT EXISTS `emergency_exec_record`  (
                                           `is_valid` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '有效标志',
                                           `sync` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '执行方式',
                                           PRIMARY KEY (`record_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 480 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 480 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;$$$

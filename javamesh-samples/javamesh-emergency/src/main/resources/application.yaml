@@ -17,6 +17,8 @@ spring:
     password: ${MYSQL_PASSWORD:root}
     schema:
       - classpath:create-table.sql
+      - classpath:parse_exec_status.sql
+      - classpath:parse_scene_exec_status.sql
     initialization-mode: always
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
@@ -35,6 +37,7 @@ spring:
       pool-prepared-statements: true
       filter: stat,wall,log4j
       connect-properties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
+    separator: $$$
 
   #      web-stat-filter:
   #        enabled: true
