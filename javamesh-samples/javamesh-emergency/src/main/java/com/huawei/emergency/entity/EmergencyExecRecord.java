@@ -242,4 +242,14 @@ public class EmergencyExecRecord {
     public void setIsValid(String isValid) {
         this.isValid = isValid == null ? null : isValid.trim();
     }
+
+    private Integer detailId;
+
+    public Integer getDetailId() {
+        return detailId;
+    }
+
+    public void setDetailId(Integer detailId) {
+        this.detailId = detailId;
+    }
 }

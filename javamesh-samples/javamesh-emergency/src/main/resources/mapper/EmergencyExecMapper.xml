@@ -314,6 +314,7 @@
       emergency_exec t1
         LEFT JOIN emergency_exec_record t2 ON t1.exec_id = t2.exec_id
         LEFT JOIN emergency_plan t3 ON t2.plan_id = t3.plan_id
+    where t1.plan_id is not null
     GROUP BY
       t1.exec_id,
       t3.plan_no,

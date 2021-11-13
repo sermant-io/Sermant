@@ -13,7 +13,9 @@ import com.huawei.emergency.entity.EmergencyScript;
 import com.huawei.emergency.entity.EmergencyScriptExample;
 import com.huawei.emergency.entity.User;
 import com.huawei.emergency.mapper.EmergencyScriptMapper;
+import com.huawei.emergency.service.EmergencyExecService;
 import com.huawei.emergency.service.EmergencyScriptService;
+import com.huawei.script.exec.log.LogMemoryStore;
 import com.huawei.script.exec.log.LogRespone;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +67,9 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
 
     @Autowired
     private EmergencyScriptMapper mapper;
+
+    @Autowired
+    private EmergencyExecService execService;
 
     @Override
     public CommonResult<List<EmergencyScript>> listScript(HttpServletRequest request, String scriptName, String scriptUser, int pageSize, int current, String sorter, String order) {
@@ -284,12 +290,25 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
 
     @Override
     public CommonResult debugScript(int scriptId) {
-        return null;
+        EmergencyScript emergencyScript = mapper.selectByPrimaryKey(scriptId);
+        if (emergencyScript == null) {
+            return CommonResult.failed("请选择正确的脚本");
+        }
+        return execService.exec(emergencyScript);
     }
 
     @Override
     public LogRespone debugLog(int detailId, int lineIndex) {
-        return null;
+        String log = execService.getLog(detailId);
+        if (StringUtils.isEmpty(log)) {
+            return LogMemoryStore.getLog(detailId, lineIndex);
+        }
+        String[] split = log.split(System.lineSeparator());
+        if (split.length >= lineIndex) {
+            String[] needLogs = Arrays.copyOfRange(split, lineIndex - 1, split.length);
+            return new LogRespone(null, needLogs);
+        }
+        return new LogRespone(null, new String[]{log});
     }
 
     private void extracted(EmergencyScript script) {
@@ -307,7 +326,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
 
     private boolean isParamInvalid(EmergencyScript script) {
         if (script.getHavePassword().equals("havePassword") &&
-                (StringUtils.isBlank(script.getPassword()) || StringUtils.isBlank(script.getPasswordMode()))) {
+            (StringUtils.isBlank(script.getPassword()) || StringUtils.isBlank(script.getPasswordMode()))) {
             return true;
         }
         return false;
