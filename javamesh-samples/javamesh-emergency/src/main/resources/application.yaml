@@ -45,6 +45,9 @@ spring:
   #        allow: 127.0.0.1
   #        deny: 192.168.31.253
   #        reset-enable: false
+  jackson:
+    property-naming-strategy: CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
+    default-property-inclusion: non_null
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
@@ -61,7 +64,10 @@ jsch:
 script:
   location: /tmp/
   executor:
-    corePoolSize: 4
-    maxPoolSize: 8
+    corePoolSize: 16
+    maxPoolSize: 16
     keepAliveTime: 60
-    blockingQueueSize: 8
+    blockingQueueSize: 1024
+logging:
+  level:
+    com.huawei.emergency.service: debug

@@ -111,6 +111,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
             channel = (ChannelSftp) session.openChannel("sftp");
             channel.connect();
             channel.rm(fileName);
+            LOGGER.debug("script file {} was deleted.",fileName);
         } catch (JSchException | SftpException e) {
             LOGGER.error("Failed to delete file {}.{}", fileName, e.getMessage());
             ExecResult.fail(e.getMessage());
@@ -147,7 +148,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
             long startTime = System.currentTimeMillis();
             channel.connect();
             ExecResult execResult = parseResult(channel, logCallback);
-            LOGGER.info("exec command {} cost {}ms", command, System.currentTimeMillis() - startTime);
+            LOGGER.debug("exec command {} cost {}ms", command, System.currentTimeMillis() - startTime);
             return execResult;
         } catch (IOException e) {
             LOGGER.error("Failed to get exec result.", e);

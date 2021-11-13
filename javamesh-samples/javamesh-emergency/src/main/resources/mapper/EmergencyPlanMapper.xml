@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huawei.emergency.mapper.EmergencyPlanMapper">
+  <resultMap id="BaseResultMap" type="com.huawei.emergency.entity.EmergencyPlan">
+    <id column="plan_id" jdbcType="INTEGER" property="planId" />
+    <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
+    <result column="plan_name" jdbcType="VARCHAR" property="planName" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_valid" jdbcType="VARCHAR" property="isValid" />
+    <result column="check_user" jdbcType="VARCHAR" property="checkUser" />
+    <result column="check_time" jdbcType="TIMESTAMP" property="checkTime" />
+    <result column="check_remark" jdbcType="VARCHAR" property="checkRemark" />
+    <result column="check_result" jdbcType="VARCHAR" property="checkResult" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    plan_id, plan_no, plan_name, create_user, create_time, is_valid, check_user, check_time, 
+    check_remark, check_result
+  </sql>
+  <select id="selectByExample" parameterType="com.huawei.emergency.entity.EmergencyPlanExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from emergency_plan
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from emergency_plan
+    where plan_id = #{planId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from emergency_plan
+    where plan_id = #{planId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huawei.emergency.entity.EmergencyPlanExample">
+    delete from emergency_plan
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huawei.emergency.entity.EmergencyPlan">
+    <selectKey keyProperty="planId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into emergency_plan (plan_no, plan_name, create_user, 
+      create_time, is_valid, check_user, 
+      check_time, check_remark, check_result
+      )
+    values (#{planNo,jdbcType=VARCHAR}, #{planName,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{isValid,jdbcType=VARCHAR}, #{checkUser,jdbcType=VARCHAR}, 
+      #{checkTime,jdbcType=TIMESTAMP}, #{checkRemark,jdbcType=VARCHAR}, #{checkResult,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.huawei.emergency.entity.EmergencyPlan">
+    <selectKey keyProperty="planId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into emergency_plan
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="planNo != null">
+        plan_no,
+      </if>
+      <if test="planName != null">
+        plan_name,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="isValid != null">
+        is_valid,
+      </if>
+      <if test="checkUser != null">
+        check_user,
+      </if>
+      <if test="checkTime != null">
+        check_time,
+      </if>
+      <if test="checkRemark != null">
+        check_remark,
+      </if>
+      <if test="checkResult != null">
+        check_result,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="planNo != null">
+        #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="planName != null">
+        #{planName,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null">
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="checkUser != null">
+        #{checkUser,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime != null">
+        #{checkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkRemark != null">
+        #{checkRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="checkResult != null">
+        #{checkResult,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huawei.emergency.entity.EmergencyPlanExample" resultType="java.lang.Long">
+    select count(*) from emergency_plan
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update emergency_plan
+    <set>
+      <if test="record.planId != null">
+        plan_id = #{record.planId,jdbcType=INTEGER},
+      </if>
+      <if test="record.planNo != null">
+        plan_no = #{record.planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.planName != null">
+        plan_name = #{record.planName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createUser != null">
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isValid != null">
+        is_valid = #{record.isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.checkUser != null">
+        check_user = #{record.checkUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.checkTime != null">
+        check_time = #{record.checkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.checkRemark != null">
+        check_remark = #{record.checkRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.checkResult != null">
+        check_result = #{record.checkResult,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update emergency_plan
+    set plan_id = #{record.planId,jdbcType=INTEGER},
+      plan_no = #{record.planNo,jdbcType=VARCHAR},
+      plan_name = #{record.planName,jdbcType=VARCHAR},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      is_valid = #{record.isValid,jdbcType=VARCHAR},
+      check_user = #{record.checkUser,jdbcType=VARCHAR},
+      check_time = #{record.checkTime,jdbcType=TIMESTAMP},
+      check_remark = #{record.checkRemark,jdbcType=VARCHAR},
+      check_result = #{record.checkResult,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huawei.emergency.entity.EmergencyPlan">
+    update emergency_plan
+    <set>
+      <if test="planNo != null">
+        plan_no = #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="planName != null">
+        plan_name = #{planName,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null">
+        is_valid = #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="checkUser != null">
+        check_user = #{checkUser,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime != null">
+        check_time = #{checkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkRemark != null">
+        check_remark = #{checkRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="checkResult != null">
+        check_result = #{checkResult,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where plan_id = #{planId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huawei.emergency.entity.EmergencyPlan">
+    update emergency_plan
+    set plan_no = #{planNo,jdbcType=VARCHAR},
+      plan_name = #{planName,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      is_valid = #{isValid,jdbcType=VARCHAR},
+      check_user = #{checkUser,jdbcType=VARCHAR},
+      check_time = #{checkTime,jdbcType=TIMESTAMP},
+      check_remark = #{checkRemark,jdbcType=VARCHAR},
+      check_result = #{checkResult,jdbcType=VARCHAR}
+    where plan_id = #{planId,jdbcType=INTEGER}
+  </update>
+
+  <select id="queryPlan">
+    SELECT
+      plan_detail.detail_id,
+      plan.plan_no,
+      plan.plan_name,
+      plan.check_result,
+      ( CASE WHEN plan.check_result = '0' THEN '待审核' WHEN plan.check_result = '1' THEN '审核通过' WHEN plan.check_result = '2' THEN '驳回' END ) check_result_name,
+      scene.scene_no,
+      scene.scene_name,
+      pre_task.task_no AS pre_task_no,
+      pre_task.task_name AS pre_task_name ,
+      task.task_no,
+      task.task_name,
+      script.script_name,
+      script.script_type,
+      ( CASE WHEN script.script_type = '0' THEN 'shell' WHEN script.script_type = 'jython' THEN '审核通过' WHEN script.script_type = '2' THEN 'groovy' END ) script_type_name,
+      script.submit_info
+    FROM
+      emergency_plan plan
+        LEFT JOIN emergency_plan_detail plan_detail ON plan.id = plan_detail.plan_id
+        LEFT JOIN emergency_scene scene ON scene.id = plan_detail.scene_id
+        JOIN emergency_task task ON task.task_id = plan_detail.task_id
+        left JOIN emergency_task pre_task ON pre_task.task_id = plan_detail.pre_task_id
+        LEFT JOIN emergency_script script ON task.script_id = script.script_id
+    where plan.is_valid = '1'
+      and plan_detail.is_valid = '1'
+      and plan.plan_no like '%' and plan.plan_name like '%'
+      and scene.scene_no like '%' and scene.scene_name like '%'
+      and task.task_no like '%' and task.task_name like '%'
+      and script.script_name like '%' and script.script_type = '0'
+  </select>
+  <select id="queryPlanDto" parameterType="com.huawei.emergency.dto.PlanQueryParams" resultType="com.huawei.emergency.dto.PlanQueryDto">
+    SELECT
+      plan.plan_id,
+      plan.plan_no,
+      plan.plan_name,
+      ( CASE WHEN plan.check_result = '0' THEN 'unapproved' WHEN plan.check_result = '1' THEN 'approving' WHEN plan.check_result = '2' THEN 'approved' WHEN plan.check_result = '3' THEN 'unapproved' END ) `status`,
+      ( CASE WHEN plan.check_result = '0' THEN '待审核' WHEN plan.check_result = '1' THEN '审核中' WHEN plan.check_result = '2' THEN '审核通过' WHEN plan.check_result = '3' THEN '驳回' END ) status_label,
+      date_format(plan.create_time,'%Y-%m-%d %H:%i:%s') create_time,
+      plan.create_user creator
+    FROM
+      emergency_plan plan
+    WHERE
+      plan.is_valid = '1'
+  </select>
+  <select id="queryPlanDetailDto" resultType="com.huawei.emergency.dto.PlanDetailQueryDto">
+    SELECT
+      t1.detail_id AS `key`,
+      t2.task_no scene_no,
+      t2.task_name scene_name,
+      t2.task_no scena_no,
+      t2.task_name scena_name,
+      CASE
+        WHEN t1.task_id IS NOT NULL
+          AND t1.pre_task_id IS NULL
+          AND t1.pre_scene_id IS NULL THEN
+          t2.task_no
+        WHEN t1.task_id IS NOT NULL
+          AND t1.pre_task_id IS NULL
+          AND t1.pre_scene_id IS NOT NULL THEN
+          t5.task_no ELSE t3.task_no
+        END task_no,
+      CASE
+        WHEN t1.task_id IS NOT NULL
+          AND t1.pre_task_id IS NULL
+          AND t1.pre_scene_id IS NULL THEN
+          t2.task_name
+        WHEN t1.task_id IS NOT NULL
+          AND t1.pre_task_id IS NULL
+          AND t1.pre_scene_id IS NOT NULL THEN
+          t5.task_name ELSE t3.task_name
+        END task_name,
+      t4.task_no subtask_no,
+      t4.task_name subtask_name,
+      ( CASE WHEN t1.task_id IS NULL THEN t2.channel_type ELSE t4.channel_type END ) channel_type,
+      ( CASE WHEN t1.task_id IS NULL THEN t2.script_name ELSE t4.script_name END ) script_name,
+      ( CASE WHEN t1.task_id IS NULL THEN t2.submit_info ELSE t4.submit_info END ) submit_info
+    FROM
+      emergency_plan_detail t1
+        LEFT JOIN emergency_task t2 ON t1.scene_id = t2.task_id
+        LEFT JOIN emergency_task t3 ON t1.pre_task_id = t3.task_id
+        LEFT JOIN emergency_task t4 ON t1.task_id = t4.task_id
+        LEFT JOIN emergency_task t5 ON t1.pre_scene_id = t5.task_id
+        AND t1.pre_task_id IS NULL
+        AND t1.task_id IS NOT NULL
+    WHERE
+      t1.is_valid = '1'
+      AND t1.plan_id = #{id}
+  </select>
+  <select id="allPlanRecords" resultType="com.huawei.emergency.dto.PlanQueryDto">
+    SELECT
+      t1.exec_id as `key`,
+      t1.plan_id,
+      t2.plan_no,
+      t2.plan_name,
+      t1.create_user creator,
+      date_format( t1.create_time, '%Y-%m-%d %H:%i:%s' ) create_time,
+      parse_exec_status(min(t3.`status`)) `status`
+    FROM
+      emergency_exec t1
+        LEFT JOIN emergency_plan t2 ON t1.plan_id = t2.plan_id
+        LEFT JOIN emergency_exec_record t3 on t1.exec_id = t3.exec_id and t3.is_valid='1'
+    group by t1.exec_id
+    ORDER BY
+      t1.create_time DESC
+  </select>
+  <select id="allSceneRecords" resultType="com.huawei.emergency.dto.SceneExecDto">
+    SELECT
+      t1.record_id `key`,
+      t1.exec_id,
+      t1.scene_id,
+      t2.task_no scene_no,
+      t2.task_name scene_name,
+      MIN( t1.`status` ) `status`,
+      parse_exec_status (
+              MIN( t1.`status` )) status_label
+    FROM
+      emergency_exec_record t1
+        LEFT JOIN emergency_task t2 ON t1.scene_id = t2.id
+    WHERE
+      t1.exec_id = #{execId}
+      AND t1.is_valid = '1'
+    GROUP BY
+      t1.exec_id,
+      t1.scene_id,
+      t2.task_no,
+      t2.task_name
+  </select>
+  <select id="allTaskRecords" resultType="com.huawei.emergency.dto.SceneExecDto">
+    SELECT
+      t1.record_id `key`,
+      t1.exec_id,
+      t1.scene_id,
+      scene.task_no scene_no,
+      scene.task_name scene_name,
+      task.task_no,
+      task.task_name,
+      t1.`status`,
+      parse_exec_status ( t1.`status` ) status_label,
+      DATE_FORMAT( t1.start_time, '%Y-%m-%d %H:%m:%s' ) start_time,
+      DATE_FORMAT( t1.start_time, '%Y-%m-%d %H:%m:%s' ) end_time,
+      CASE
+
+        WHEN t1.pre_task_id IS NULL THEN
+          '脚本并行' ELSE '脚本串行'
+        END sync
+    FROM
+      emergency_exec_record t1
+        LEFT JOIN emergency_task scene ON t1.scene_id = scene.task_id
+        LEFT JOIN emergency_task task ON t1.task_id = task.task_id
+    WHERE
+      t1.exec_id = #{execId}
+      AND t1.scene_id = #{sceneId}
+      AND t1.is_valid = '1'
+  </select>
+</mapper>

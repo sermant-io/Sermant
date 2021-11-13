@@ -7,6 +7,8 @@ package com.huawei.script.exec.executor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -37,5 +39,14 @@ public class ExecutorThreadPoolConfig {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
             coreSize, maxSize, keepAliveTime, TimeUnit.SECONDS, new ArrayBlockingQueue<>(blockingQueueSize));
         return threadPoolExecutor;
+    }
+
+    @Bean("passwordRestTemplate")
+    public RestTemplate restTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
+        defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
+        restTemplate.setUriTemplateHandler(defaultUriBuilderFactory);
+        return restTemplate;
     }
 }
