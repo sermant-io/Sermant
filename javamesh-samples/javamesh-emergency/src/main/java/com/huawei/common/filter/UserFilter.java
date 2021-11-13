@@ -15,10 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @WebFilter(urlPatterns = {"/*"})
 @Slf4j
@@ -50,11 +47,14 @@ public class UserFilter implements Filter {
             try {
                 JSONObject userInfo = userFeignClient.getUserInfo();
                 session = request.getSession();
-                String role = (String) userInfo.get("role");
-                user = new User((String) userInfo.get("userId"), (String) userInfo.get("userName"), role, mapper.getAuthByRole(role));
+                String userId = (String)userInfo.get("userId");
+                String role = mapper.getRoleByUserName(userId);
+                List<String> auth = mapper.getAuthByRole(role);
+                user = new User(userId,(String)userInfo.get("userName"),role,auth);
                 session.setAttribute("userInfo", user);
             } catch (FeignException e) {
                 log.error("No login. ");
+                response.setStatus(401);
                 return;
             }
         }

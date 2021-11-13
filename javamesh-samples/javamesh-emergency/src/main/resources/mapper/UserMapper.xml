@@ -6,4 +6,10 @@
         FROM emergency_auth
         WHERE role_name = #{role}
     </select>
+
+    <select id="getRoleByUserName" parameterType="String" resultType="String">
+        SELECT role_name
+        FROM emergency_role
+        WHERE user_name = #{userName}
+    </select>
 </mapper>
