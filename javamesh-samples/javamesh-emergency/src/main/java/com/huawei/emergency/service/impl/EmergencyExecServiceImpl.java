@@ -100,7 +100,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
         EmergencyExecRecord result =new EmergencyExecRecord();
         result.setExecId(record.getExecId());
         result.setRecordId(record.getRecordId());
-        result.setDetailId(record.getRecordId());
+        result.setDebugId(record.getRecordId());
         return CommonResult.success(result);
     }
 
