@@ -297,6 +297,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         EmergencyTask task = new EmergencyTask();
         task.setTaskName(taskNode.getTaskName());
         task.setScriptId(taskNode.getScriptId());
+        task.setScriptName(taskNode.getScriptName());
         task.setChannelType(taskNode.getChannelType());
         task.setCreateUser(taskNode.getCreateUser());
 
