@@ -448,11 +448,7 @@
         FROM emergency_exec_record t1
                  LEFT JOIN emergency_task t2 ON t1.scene_id = t2.task_id
         WHERE t1.exec_id = #{execId}
-          AND t1.is_valid = '1'
-        GROUP BY t1.exec_id,
-                 t1.scene_id,
-                 t2.task_no,
-                 t2.task_name
+          AND t1.is_valid = '1' and t1.task_id is null
     </select>
     <select id="allTaskRecords" resultType="com.huawei.emergency.dto.SceneExecDto">
         SELECT t1.record_id                                    `key`,
