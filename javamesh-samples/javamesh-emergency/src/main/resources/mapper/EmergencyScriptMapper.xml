@@ -543,7 +543,7 @@
             <if test="scriptUser!=null and scriptUser!=''">
                 AND s.script_user LIKE CONCAT('%',#{scriptUser},'%')
             </if>
-            <if test="auth!='admin' or auth!='approver'">
+            <if test="auth!='admin' and auth!='approver'">
                 AND ((s.is_public = '0' AND s.script_user = #{userName}) OR s.is_public = '1')
             </if>
         </where>
