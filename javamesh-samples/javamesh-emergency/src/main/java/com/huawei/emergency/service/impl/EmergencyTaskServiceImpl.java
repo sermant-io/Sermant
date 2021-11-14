@@ -159,6 +159,7 @@ public class EmergencyTaskServiceImpl implements EmergencyTaskService {
             final List<EmergencyScript> emergencyScripts = scriptMapper.selectByExample(scriptExample);
             if (emergencyScripts.size() > 0) {
                 insertTask.setScriptId(emergencyScripts.get(0).getScriptId());
+                insertTask.setSubmitInfo(emergencyScripts.get(0).getSubmitInfo());
                 insertTask.setScriptName(emergencyScripts.get(0).getScriptName());
             }
         }
