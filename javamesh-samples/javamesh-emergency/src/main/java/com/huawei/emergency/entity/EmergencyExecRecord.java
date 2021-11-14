@@ -253,13 +253,14 @@ public class EmergencyExecRecord {
         this.sync = sync;
     }
 
-    private Integer detailId;
+    private Integer debugId;
 
-    public Integer getDetailId() {
-        return detailId;
+    public Integer getDebugId() {
+        return debugId;
     }
 
-    public void setDetailId(Integer detailId) {
-        this.detailId = detailId;
+    public void setDebugId(Integer debugId) {
+        this.debugId = debugId;
     }
+
 }

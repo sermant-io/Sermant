@@ -44,8 +44,7 @@ public class UserController {
 
     @GetMapping("/user/me")
     public CommonResult getUserInfo(HttpServletRequest request) {
-        UserEntity user = service.getUserInfo(request);
-        return CommonResult.success(user);
+        return service.getUserInfo(request);
     }
 
     @PostMapping("/user/chagnePwd")
