@@ -28,4 +28,6 @@ public interface UserMapper {
     int updateUser(UserEntity user);
 
     int insertRole(UserEntity entity);
+
+    void updateRole(UserEntity user);
 }

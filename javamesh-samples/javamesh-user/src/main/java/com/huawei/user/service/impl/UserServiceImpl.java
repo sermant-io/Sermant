@@ -280,7 +280,7 @@ public class UserServiceImpl implements UserService {
             case ROLE_ADMIN:
                 user.setRole("ADMIN");
         }
-        mapper.insertRole(user);
+        mapper.updateRole(user);
         if (count == 1) {
             return SUCCESS;
         }
