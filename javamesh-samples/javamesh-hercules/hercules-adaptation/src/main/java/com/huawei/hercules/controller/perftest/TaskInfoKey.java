@@ -15,7 +15,7 @@ public enum TaskInfoKey {
     TEST_NAME("test_name", "testName"),
     TEST_TYPE("test_type", "scenarioType"),
     SCRIPT_PATH("script_path", "scriptName"),
-    OWNER("owner", "name"),
+    OWNER("owner", "userId"),
     START_TIME("start_time", "startTime"),
     DURATION("duration", "duration"),
     TPS("tps", "tps"),

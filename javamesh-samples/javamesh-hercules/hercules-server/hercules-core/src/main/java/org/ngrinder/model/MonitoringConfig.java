@@ -16,7 +16,8 @@ import javax.persistence.Table;
 public class MonitoringConfig extends BaseEntity<MonitoringConfig> {
 	@OneToOne(targetEntity = PerfTest.class)
 	@JsonIgnore
-	@JoinColumn(name="id", referencedColumnName = "id")
+	@Expose(serialize = false)
+	@JoinColumn(name="test_id", referencedColumnName = "id")
 	private PerfTest perfTest;
 
 	@Expose

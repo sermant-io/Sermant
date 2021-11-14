@@ -295,8 +295,8 @@ public class PerfTest extends BaseModel<PerfTest> {
 	private GrinderProperties grinderProperties;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-	@JoinTable(name = "PERF_TEST_TAG", /** join column */
-		joinColumns = @JoinColumn(name = "perf_test_id"), /** inverse join column */
+	@JoinTable(name = "PERF_TEST_TAG", /* join column */
+		joinColumns = @JoinColumn(name = "perf_test_id"), /* inverse join column */
 		inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	@Sort(comparator = Tag.class, type = SortType.COMPARATOR)
 	private SortedSet<Tag> tags;
@@ -322,16 +322,16 @@ public class PerfTest extends BaseModel<PerfTest> {
 
 	// NEW ADDED
 
-	@OneToOne(targetEntity = MonitoringConfig.class, cascade = {CascadeType.ALL})
-	@JoinColumn(name="id", referencedColumnName = "id")
+	@OneToOne(cascade = {CascadeType.ALL}, targetEntity = MonitoringConfig.class)
+	@JoinColumn(name = "test_id", referencedColumnName = "id")
 	private MonitoringConfig monitoringConfig;
 
 	@OneToMany(cascade = {CascadeType.ALL}, targetEntity = MonitoringHost.class)
-	@JoinColumn(name="test_id", referencedColumnName = "id")
+	@JoinColumn(name = "test_id", referencedColumnName = "id")
 	private Set<MonitoringHost> monitoringHosts = new HashSet<>();
 
-	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinColumn(name = "scene_id")
+	@OneToOne(targetEntity = PerfScene.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinColumn(name = "scene_id", referencedColumnName = "id")
 	private PerfScene perfScene;
 
 	@Expose
@@ -358,6 +358,8 @@ public class PerfTest extends BaseModel<PerfTest> {
 	@PreUpdate
 	public void init() {
 		this.status = getSafe(this.status, Status.SAVED);
+		this.setCreatedDate(new Date());
+		this.setLastModifiedDate(new Date());
 		this.agentCount = getSafe(this.agentCount);
 		this.port = getSafe(this.port);
 		this.processes = getSafe(this.processes, 1);

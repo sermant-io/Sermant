@@ -13,12 +13,14 @@
  */
 package org.ngrinder.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.ngrinder.common.util.AccessUtils.getSafe;
@@ -47,6 +49,7 @@ public class User extends BaseModel<User> {
 	/** User Name e.g) Jone Dogh. */
 	private String userName;
 
+	@Expose(serialize = false)
 	private String password;
 
 	@Expose
@@ -94,15 +97,15 @@ public class User extends BaseModel<User> {
 	@Transient
 	private User ownerUser;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "SHARED_USER", joinColumns = @JoinColumn(name = "owner_id"), // LF
-		inverseJoinColumns = @JoinColumn(name = "follow_id"))
-	private List<User> followers;
+	@ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
+	@JoinTable(name = "SHARED_USER", joinColumns = @JoinColumn(name = "owner_id", referencedColumnName = "id"), // LF
+		inverseJoinColumns = @JoinColumn(name = "follow_id", referencedColumnName = "id"))
+	private List<User> followers = new ArrayList<>();
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "SHARED_USER", joinColumns = @JoinColumn(name = "follow_id"), // LF
-		inverseJoinColumns = @JoinColumn(name = "owner_id"))
-	private List<User> owners;
+	@ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
+	@JoinTable(name = "SHARED_USER", joinColumns = @JoinColumn(name = "follow_id", referencedColumnName = "id"), // LF
+		inverseJoinColumns = @JoinColumn(name = "owner_id", referencedColumnName = "id"))
+	private List<User> owners = new ArrayList<>();
 
 	/**
 	 * Default constructor.
@@ -330,7 +333,7 @@ public class User extends BaseModel<User> {
 		this.follower = follower;
 	}
 
-	public User getFactualUser() {
+	public User obtainFactualUser() {
 		return ownerUser == null ? this : ownerUser;
 	}
 

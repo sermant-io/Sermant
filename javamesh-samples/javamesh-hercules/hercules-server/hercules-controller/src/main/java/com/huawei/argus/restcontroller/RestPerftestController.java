@@ -55,6 +55,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Lists.newArrayList;
@@ -142,13 +143,17 @@ public class RestPerftestController extends RestBaseController {
 			tests = perfTestService.getPagedAll(user, query, tag, queryFilter, pageable, testName, testType, scriptPath, owner);
 		}
 		annotateDateMarker(tests);
+		JSONObject pageInfo = new JSONObject();
+		pageInfo.put("total", tests.getTotalElements());
+		pageInfo.put("totalPages", tests.getTotalPages());
+		pageInfo.put("content", tests.getContent());
 		JSONObject modelInfos = new JSONObject();
 		modelInfos.put("tag", tag);
 		modelInfos.put("availTags", tagService.getAllTagStrings(user, StringUtils.EMPTY));
-		JSONObject testListPage = pageToJson(tests);
-		modelInfos.put("testListPage", testListPage);
+		modelInfos.put("testListPage", pageInfo);
 		modelInfos.put("queryFilter", queryFilter);
 		modelInfos.put("query", query);
+/*
 		putPageIntoModelMap(modelInfos, pageable);
 		// 查询压测场景信息
 		Iterator<Object> content = testListPage.getJSONArray("content").stream().iterator();
@@ -165,6 +170,7 @@ public class RestPerftestController extends RestBaseController {
 				}
 			}
 		}
+*/
 
 		return modelInfos;
 	}
@@ -242,7 +248,7 @@ public class RestPerftestController extends RestBaseController {
 			test.init();
 		}
 		JSONObject modelInfos = new JSONObject();
-		modelInfos.put(PARAM_TEST, modelStrToJson(test.toString()));
+		modelInfos.put(PARAM_TEST, test);
 		// Retrieve the agent count map based on create user, if the test is
 		// created by the others.
 		user = test.getCreatedUser() != null ? test.getCreatedUser() : user;
@@ -321,7 +327,7 @@ public class RestPerftestController extends RestBaseController {
 		JSONObject modelInfos = new JSONObject();
 		modelInfos.put(PARAM_QUICK_SCRIPT, newEntry.getPath());
 		modelInfos.put(PARAM_QUICK_SCRIPT_REVISION, newEntry.getRevision());
-		modelInfos.put(PARAM_TEST, modelStrToJson(createPerfTestFromQuickStart(user, "Test for " + url.getHost(), url.getHost()).toString()));
+		modelInfos.put(PARAM_TEST, createPerfTestFromQuickStart(user, "Test for " + url.getHost(), url.getHost()).toString());
 		Map<String, MutableInt> agentCountMap = agentManagerService.getAvailableAgentCountMap(user);
 
 		modelInfos.put(PARAM_REGION_AGENT_COUNT_MAP, modelStrToJson(agentCountMap.toString()));
@@ -364,6 +370,18 @@ public class RestPerftestController extends RestBaseController {
 		perfTest.setTestName(StringUtils.trimToEmpty(perfTest.getTestName()));
 		perfTest.setScriptRevision(-1L);
 		perfTest.prepare(isClone);
+		MonitoringConfig monitoringConfig = perfTest.getMonitoringConfig();
+		if (monitoringConfig != null) {
+			monitoringConfig.setPerfTest(perfTest);
+			monitoringConfig.setId(null);
+		}
+		Set<MonitoringHost> monitoringHosts = perfTest.getMonitoringHosts();
+		if (monitoringHosts != null && !monitoringHosts.isEmpty()) {
+			for (MonitoringHost monitoringHost : monitoringHosts) {
+				monitoringHost.setPerfTest(perfTest);
+				monitoringHost.setId(null);
+			}
+		}
 		perfTest = perfTestService.save(user, perfTest);
 		JSONObject modelInfos = new JSONObject();
 
@@ -572,7 +590,7 @@ public class RestPerftestController extends RestBaseController {
 	public JSONObject getReportSection(User user, @PathVariable long id) {
 		PerfTest test = getOneWithPermissionCheck(user, id, false);
 		JSONObject modelInfos = new JSONObject();
-		modelInfos.put(PARAM_TEST, modelStrToJson(test.toString()));
+		modelInfos.put(PARAM_TEST, test);
 		return modelInfos;
 	}
 
@@ -594,7 +612,7 @@ public class RestPerftestController extends RestBaseController {
 		JSONObject modelInfos = new JSONObject();
 		modelInfos.put(PARAM_LOG_LIST, perfTestService.getLogFiles(id));
 		modelInfos.put(PARAM_TEST_CHART_INTERVAL, interval * test.getSamplingInterval());
-		modelInfos.put(PARAM_TEST, modelStrToJson(test.toString()));
+		modelInfos.put(PARAM_TEST, test);
 		modelInfos.put(PARAM_TPS, perfTestService.getSingleReportDataAsJson(id, "TPS", interval));
 		return modelInfos;
 	}
@@ -606,7 +624,7 @@ public class RestPerftestController extends RestBaseController {
 		JSONObject modelInfos = new JSONObject();
 		modelInfos.put(PARAM_LOG_LIST, perfTestService.getLogFiles(id));
 		modelInfos.put(PARAM_TEST_CHART_INTERVAL, interval * test.getSamplingInterval());
-		modelInfos.put(PARAM_TEST, modelStrToJson(test.toString()));
+		modelInfos.put(PARAM_TEST, test);
 		String tps = perfTestService.getSingleReportDataAsJson(id, "TPS", interval);
 		List<Map<String, Object>> thisTps = getTps(interval * test.getSamplingInterval(), thisDuration, timeInterval, tps);
 		modelInfos.put(PARAM_TPS, thisTps);
@@ -728,7 +746,7 @@ public class RestPerftestController extends RestBaseController {
 	public HttpEntity<String> refreshTestRunningById(User user, @RequestParam long id) {
 		PerfTest test = checkNotNull(getOneWithPermissionCheck(user, id, false), "given test should be exist : " + id);
 		Map<String, Object> map = newHashMap();
-		map.put("test", modelStrToJson(test.toString()));
+		map.put("test", test);
 		map.put("status", test.getStatus());
 		map.put("perf", perfTestService.getStatistics(test));
 		map.put("agent", perfTestService.getAgentStat(test));
@@ -749,7 +767,7 @@ public class RestPerftestController extends RestBaseController {
 		JSONObject modelInfos = new JSONObject();
 		PerfTest test = perfTestService.getOne(id);
 		if (test != null) {
-			modelInfos.put("test", modelStrToJson(test.toString()));
+			modelInfos.put("test", test);
 		}
 		modelInfos.put("plugins", perfTestService.getAvailableReportPlugins(id));
 		return modelInfos;
@@ -762,7 +780,7 @@ public class RestPerftestController extends RestBaseController {
 		if (test == null) {
 			return modelInfos;
 		}
-		modelInfos.put("test", modelStrToJson(test.toString()));
+		modelInfos.put("test", test);
 		modelInfos.put("plugins", perfTestService.getAvailableReportPlugins(id));
 		return modelInfos;
 	}

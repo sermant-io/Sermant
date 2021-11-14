@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
@@ -238,6 +240,10 @@ public class PerfTestController extends BaseController {
         if (Boolean.parseBoolean(String.valueOf(params.get("run"))) && maxAgentCount <= 0) {
             return returnError(ERROR_AGENT_COUNT);
         }
+        JSONArray jvmMonitor = params.getJSONArray("jvm_monitor");
+        if (jvmMonitor != null && !jvmMonitor.isEmpty()) {
+            addJvmMonitorParam(perfTestInfos, jvmMonitor, params.getBoolean("is_monitor"));
+        }
 
         // 通过查询获取默认值
         JSONObject scenario = getScenarioId(perfTestInfos, params.getString("scenario_name"));
@@ -261,6 +267,43 @@ public class PerfTestController extends BaseController {
         return jsonObject;
     }
 
+    private void addJvmMonitorParam(JSONObject perfTestInfos, JSONArray jvmMonitor, boolean isMonitor) {
+        if (perfTestInfos == null || jvmMonitor == null) {
+            return;
+        }
+        Map<String, Boolean> jvmMonitorParam = new HashMap<>();
+        jvmMonitorParam.put("nmonAll", isMonitor);
+        jvmMonitorParam.put("jvmThr", false);
+        jvmMonitorParam.put("jvmCpu", false);
+        jvmMonitorParam.put("jvmMem", false);
+        jvmMonitorParam.put("jvmCl", false);
+        jvmMonitorParam.put("jvmGc", false);
+        jvmMonitorParam.put("jvmMp", false);
+        if (jvmMonitor.isEmpty()) {
+            perfTestInfos.put("monitoringConfig", jvmMonitorParam);
+            return;
+        }
+        if (jvmMonitor.contains("GC")) {
+            jvmMonitorParam.put("jvmGc", true);
+        }
+        if (jvmMonitor.contains("Thread")) {
+            jvmMonitorParam.put("jvmThr", true);
+        }
+        if (jvmMonitor.contains("Memory")) {
+            jvmMonitorParam.put("jvmMem", true);
+        }
+        if (jvmMonitor.contains("ClassLoading")) {
+            jvmMonitorParam.put("jvmCl", true);
+        }
+        if (jvmMonitor.contains("MemoryPool")) {
+            jvmMonitorParam.put("jvmMp", true);
+        }
+        if (jvmMonitor.contains("CPU")) {
+            jvmMonitorParam.put("jvmCpu", true);
+        }
+        perfTestInfos.put("monitoringConfig", jvmMonitorParam);
+    }
+
     /**
      * 压测任务启动
      *
@@ -275,8 +318,15 @@ public class PerfTestController extends BaseController {
             return returnError(ERROR_AGENT_COUNT);
         }
 
-        String testId = (String) params.get("test_id");
+        Object testIdObj = params.get("test_id");
+        if (testIdObj == null) {
+            return returnError("压测任务不存在");
+        }
+        String testId = testIdObj.toString();
         JSONObject testInfo = perfTestService.getOne(Long.parseLong(testId));
+        if (testInfo == null) {
+            return returnError("压测任务不存在");
+        }
         Map<String, Object> perfTestInfos = (Map<String, Object>) testInfo.get("test");
         if (perfTestInfos == null || perfTestInfos.isEmpty()) {
             return returnError("压测任务不存在");
@@ -323,49 +373,59 @@ public class PerfTestController extends BaseController {
      */
     @RequestMapping(value = "/task/stop", method = RequestMethod.POST)
     public JSONObject taskStop(@RequestBody JSONObject params) {
-        String testId = (String) params.get("test_id");
-        perfTestService.stop(testId);
-        // 休眠
-        try {
-            TimeUnit.SECONDS.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        Object testIdObj = params.get("test_id");
+        if (testIdObj == null) {
+            return returnError("Test id is empty.");
         }
-        return returnSuccess();
+        String testId = testIdObj.toString();
+        HttpEntity<String> stopResult = perfTestService.stop(testId);
+        if (stopResult == null) {
+            return returnError("Stop test fail.");
+        }
+        String body = stopResult.getBody();
+        if (StringUtils.isEmpty(body)) {
+            return returnError("Stop test fail.");
+        }
+        JSONObject bodyJson = JSONObject.parseObject(body);
+        if (bodyJson.getBoolean("success")) {
+            return returnSuccess();
+        }
+        return returnError("Stop test fail.");
     }
 
     /**
      * 查询测试报告
      *
-     * @param test_id  任务ID
+     * @param testId   任务ID
      * @param start    开始坐标
      * @param interval 间隔
      * @return 报告信息
      */
     @RequestMapping(value = "/task/get", method = RequestMethod.GET)
-    public JSONObject get(@RequestParam String test_id, @RequestParam(required = false) Integer start, @RequestParam(required = false) Integer interval) {
-        if (StringUtils.isEmpty(test_id)) {
+    public JSONObject get(@RequestParam("test_id") String testId, @RequestParam(required = false) Integer start, @RequestParam(required = false) Integer interval) {
+        if (StringUtils.isEmpty(testId)) {
             return returnError();
         }
         if (start == null || interval == null) {
             // 查询实时数据
-            return refreshTestRunningById(Long.parseLong(test_id));
+            return refreshTestRunningById(Long.parseLong(testId));
         }
 
-        JSONObject report = perfTestService.getReportSectionById(Long.parseLong(test_id), IMG_WIDTH, start, interval);
+        JSONObject report = perfTestService.getReportSectionById(Long.parseLong(testId), IMG_WIDTH, start, interval);
         if (report == null) {
             return returnError();
         }
-        Map<String, Object> test = (Map<String, Object>) report.get("test");
+        JSONObject test = report.getJSONObject("test");
         parseTest(test);
-        List<Object> logs = (List<Object>) report.get("logs");
-        test.put("log_name", logs == null ? new ArrayList<>(0) : logs);
-        List<Map<String, Object>> thisTps = (List<Map<String, Object>>) report.get("TPS");
+        JSONArray logs = report.getJSONArray("logs");
+        test.put("log_name", logs == null ? Collections.emptyList() : logs);
+        JSONArray thisTps = report.getJSONArray("TPS");
         if (thisTps == null || thisTps.isEmpty()) {
             thisTps = getDefaultTps();
         }
         test.put("chart", thisTps);
         report.put("data", test);
+        report.remove("test");
         return report;
     }
 
@@ -582,7 +642,7 @@ public class PerfTestController extends BaseController {
         Map<String, Object> thisTps = new HashMap<>();
         thisTps.put("tps", 0);
         thisTps.put("time", "00:00");
-        List<Map<String, Object>> tps = new ArrayList();
+        List<Map<String, Object>> tps = new ArrayList<>();
         tps.add(thisTps);
         test.put("chart", tps);
 
@@ -603,7 +663,7 @@ public class PerfTestController extends BaseController {
 
         try {
             // 解析实时图表
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
             Date startTime = format.parse(test.get("startTime").toString());
             Date currentDate = new Date();
             thisTps.put("tps", Double.parseDouble(lastSampleStatistics.get("TPS").toString()));
@@ -692,31 +752,87 @@ public class PerfTestController extends BaseController {
         test.put("status_label", TaskStatus.getShowValue(test.get("status").toString()));
         test.put("status", TaskStatus.getShowValue(test.get("status").toString()));
         test.put("test_name", test.get("testName"));
-        test.put("label", StringUtils.isEmpty(test.get("tagString")) ? null : test.get("tagString").toString().split(","));
+        Object tagString = test.get("tagString");
+        test.put("label", StringUtils.isEmpty(tagString) ? null : tagString.toString().split(","));
+        test.remove("tags");
         test.put("desc", test.get("description"));
         test.put("vuser", test.get("vuserPerAgent"));
         test.put("tps_peak", test.get("peakTps"));
         test.put("avg_time", test.get("meanTestTime"));
-        test.put("test_count", toTestTotal((String) test.get("tests"), (String) test.get("errors")));
+        Object errors = test.get("errors");
+        Object tests = test.get("tests");
+        test.put("test_count", toTestTotal(errors == null ? "" : errors.toString(), tests == null ? "" : tests.toString()));
         test.put("success_count", test.get("tests"));
         test.put("fail_count", test.get("errors"));
         test.put("test_comment", test.get("testComment"));
+        Object createdDate = test.get("createdDate");
+        test.put("createdDate", dateFormat(createdDate == null ? "" : createdDate.toString(), TimeUnit.MILLISECONDS));
+        Object lastModifiedDate = test.get("lastModifiedDate");
+        test.put("lastModifiedDate", dateFormat(lastModifiedDate == null ? "" : lastModifiedDate.toString(), TimeUnit.MILLISECONDS));
+        Object finishTime = test.get("finishTime");
+        test.put("finishTime", dateFormat(finishTime == null ? "" : finishTime.toString(), TimeUnit.MILLISECONDS));
+        Object scheduledTime = test.get("scheduledTime");
+        test.put("scheduledTime", dateFormat(scheduledTime == null ? "" : scheduledTime.toString(), TimeUnit.MILLISECONDS));
+        test.put("createdUser", userFormat(test.get("createdUser")));
+        test.put("lastModifiedUser", userFormat(test.get("lastModifiedUser")));
 
         // 详细报告新增
         test.put("sampling_ignore", test.get("ignoreSampleCount"));
         test.put("target_host", test.get("targetHosts"));
         test.put("start_time", test.get("startTime"));
-        test.put("test_time", getDurationTime((String) test.get("duration")));
+        Object duration = test.get("duration");
+        test.put("test_time", getDurationTime(duration == null ? "" : duration.toString()));
         test.put("end_time", test.get("finishTime"));
-        test.put("run_time", getDurationTime((String) test.get("duration"))); //end_time-startTime 时间相减
+        test.put("run_time", getDurationTime(duration == null ? "" : duration.toString())); //end_time-startTime 时间相减
         test.put("process", test.get("processes"));
         test.put("thread", test.get("threads"));
         test.put("tps_max", test.get("peakTps"));
-        test.put("progress_message", parseStrToArray((String) test.get("progressMessage")));
+        Object progressMessage = test.get("progressMessage");
+        test.put("progress_message", parseStrToArray(progressMessage == null ? "" : progressMessage.toString()));
 
         // 格式化日期格式
-        test.put("start_time", dataFormat((String) test.get("start_time")));
-        test.put("end_time", dataFormat((String) test.get("end_time")));
+        Object startTime = test.get("start_time");
+        test.put("start_time", dataFormat(startTime == null ? "" : startTime.toString()));
+        Object endTime = test.get("end_time");
+        test.put("end_time", dataFormat(endTime == null ? "" : endTime.toString()));
+    }
+
+    /**
+     * 格式化用户字符串
+     *
+     * @param userMap 用户信息map
+     * @return 用户信息简略版
+     */
+    private Map<String, Object> userFormat(Object userMap) {
+        if (userMap == null) {
+            return Collections.emptyMap();
+        }
+        if (!(userMap instanceof Map)) {
+            return Collections.emptyMap();
+        }
+        Map<?, ?> userInfo = (Map<?, ?>) userMap;
+        Map<String, Object> easyUser = new HashMap<>();
+        easyUser.put("Role", userInfo.get("role"));
+        easyUser.put("name", userInfo.get("userName"));
+        easyUser.put("ID", userInfo.get("id"));
+        return easyUser;
+    }
+
+    /**
+     * 把时间戳根据单位转换成时间字符串
+     *
+     * @param timestampString 时间戳
+     * @param timeUnit        时间单位
+     * @return 格式化的时间
+     */
+    private String dateFormat(String timestampString, TimeUnit timeUnit) {
+        try {
+            long timeMilliseconds = TimeUnit.MILLISECONDS.convert(Long.parseLong(timestampString), timeUnit);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            return sdf.format(new Date(timeMilliseconds));
+        } catch (NumberFormatException e) {
+            return "";
+        }
     }
 
     /**
@@ -779,17 +895,17 @@ public class PerfTestController extends BaseController {
         if (scenario == null) {
             return returnError("关联压测场景不存在");
         }
-        Map<String, Object> scenarioListPage = (Map<String, Object>) scenario.get("scenarioListPage");
-        List<Map<String, Object>> files = (List<Map<String, Object>>) scenarioListPage.get("content");
+        JSONObject scenarioListPage = scenario.getJSONObject("scenarioListPage");
+        JSONArray files = scenarioListPage.getJSONArray("content");
         if (files != null && !files.isEmpty()) {
-            String path = (String) files.get(0).get("scriptPath");
+            String path = (String) files.getJSONObject(0).get("scriptPath");
             // 判断压测脚本是否存在
             if (!scripService.hasScript(path)) {
                 return returnError("压测脚本不存在");
             }
             JSONObject success = returnSuccess();
-            perfTestInfos.put("scriptName", files.get(0).get("scriptPath"));
-            success.put("id", Integer.parseInt(files.get(0).get("id").toString()));
+            perfTestInfos.put("scriptName", files.getJSONObject(0).get("scriptPath"));
+            success.put("id", Integer.parseInt(files.getJSONObject(0).get("id").toString()));
             return success;
         }
         return returnError("关联压测场景不存在");
@@ -909,8 +1025,8 @@ public class PerfTestController extends BaseController {
         if (defaultInfos == null) {
             return result;
         }
-        Map<String, Object> test = (Map<String, Object>) defaultInfos.get("test");
-        Map<String, Object> regionAgentCountMap = (Map<String, Object>) defaultInfos.get("regionAgentCountMap");
+        JSONObject test = defaultInfos.getJSONObject("test");
+        JSONObject regionAgentCountMap = defaultInfos.getJSONObject("regionAgentCountMap");
         if (test == null || test.isEmpty() || regionAgentCountMap == null || regionAgentCountMap.isEmpty()) {
             return result;
         }
@@ -919,15 +1035,15 @@ public class PerfTestController extends BaseController {
         return result;
     }
 
-    private List<Map<String, Object>> getDefaultTps() {
-        List<Map<String, Object>> tps = new ArrayList<>();
+    private JSONArray getDefaultTps() {
+        JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < 90; i++) {
             Map<String, Object> thisTps = new HashMap<>();
             thisTps.put("tps", 0); // 缺省值补0
             thisTps.put("time", "00:00");
-            tps.add(thisTps);
+            jsonArray.add(thisTps);
         }
-        return tps;
+        return jsonArray;
     }
 
     private void initPerfTestFieldsValue(Map<String, Object> perfTestInfos, int agentCount) {
