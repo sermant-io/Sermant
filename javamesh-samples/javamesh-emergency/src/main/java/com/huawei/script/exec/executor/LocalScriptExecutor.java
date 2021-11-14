@@ -34,8 +34,11 @@ import java.util.Locale;
 public class LocalScriptExecutor implements ScriptExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalScriptExecutor.class);
 
-    private static final String SH = "/bin/sh";
-    private static final String SH_C = "-C";
+    //private static final String SH = "/bin/sh";
+    //private static final String SH_C = "-C";
+
+    private static final String SH = "/cmd";
+    private static final String SH_C = "/c";
 
     @Value("${script.location}")
     private String scriptLocation;
@@ -67,7 +70,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
     }
 
     private String createScriptFile(String scriptName, String scriptContent) throws IOException {
-        String fileName = String.format(Locale.ROOT, "%s%s-%s.sh",
+        String fileName = String.format(Locale.ROOT, "%s%s-%s.bat",
             scriptLocation, scriptName, System.currentTimeMillis());
         try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
             fileOutputStream.write(("echo $$" + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
