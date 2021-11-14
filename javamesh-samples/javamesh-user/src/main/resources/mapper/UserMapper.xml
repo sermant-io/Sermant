@@ -98,4 +98,7 @@
     <insert id="insertRole" parameterType="com.huawei.user.entity.UserEntity">
         INSERT INTO emergency_role (user_name,role_name) VALUES (#{userName},#{role})
     </insert>
+    <update id="updateRole" parameterType="com.huawei.user.entity.UserEntity">
+        UPDATE updateRole SET role_name=#{role} WHERE user_name=#{userName}
+    </update>
 </mapper>
