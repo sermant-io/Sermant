@@ -41,8 +41,8 @@ public class DynamicCacheConfigTest {
 		when(config.isClustered()).thenReturn(true);
 		when(config.getClusterProperties()).thenReturn(propertiesWrapper);
 		dynamicCacheConfig.setConfig(config);
-		Pair<NetworkUtils.IPPortPair, String> cacheProperties = dynamicCacheConfig.createManualDiscoveryCacheProperties(newArrayList("hello", "world"));
-		NetworkUtils.IPPortPair first = cacheProperties.getFirst();
+		Pair<IPPortPair, String> cacheProperties = dynamicCacheConfig.createManualDiscoveryCacheProperties(newArrayList("hello", "world"));
+		IPPortPair first = cacheProperties.getFirst();
 		// Then
 		assertThat(first.getIP()).isEqualTo(address1);
 		assertThat(first.getPort()).isEqualTo(10010);

@@ -21,15 +21,9 @@ public class TestLifeCycleTestReportListener implements ITestLifeCycleListener {
 	@Autowired
 	private ITestReportService testReportService;
 
-	private TestLifeCycleTestReportListener() {
-	}
-
-	@Autowired
-	ITestLifeCycleListener testLifeCycleTestReportListener;
-
 	@PostConstruct
 	public void init() {
-		PerfTestRunnable.allTestLifeCycleListeners.add(testLifeCycleTestReportListener);
+		PerfTestRunnable.allTestLifeCycleListeners.add(this);
 	}
 
 	@Override

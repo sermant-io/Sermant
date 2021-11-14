@@ -455,7 +455,8 @@ public class SingleConsole extends AbstractSingleConsole implements Listener, Sa
 	 */
 	public void waitUntilAgentConnected(int size) {
 		int trial = 1;
-		while (trial++ < 10) {
+		// update by z30009938, 10s is too short, add to 60s
+		while (trial++ < 60) {
 			// when agent finished one test, processReports will be updated as
 			// null
 			if (processReports == null || this.processReports.length != size) {

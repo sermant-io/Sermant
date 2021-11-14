@@ -189,8 +189,10 @@ public class PerfTestRunnable implements ControllerConstants {
 
 	private boolean isScheduledNow(PerfTest test) {
 		Date current = new Date();
+
+		// update by huawei, change Calendar.MINUTE to Calendar.SECOND
 		Date scheduledDate = DateUtils
-				.truncate((Date) defaultIfNull(test.getScheduledTime(), current), Calendar.MINUTE);
+				.truncate((Date) defaultIfNull(test.getScheduledTime(), current), Calendar.SECOND);
 		return current.after(scheduledDate);
 	}
 

@@ -29,7 +29,9 @@ import org.ngrinder.common.util.PathUtils;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 
 import static org.ngrinder.common.util.AccessUtils.getSafe;
@@ -293,9 +295,9 @@ public class PerfTest extends BaseModel<PerfTest> {
 	private GrinderProperties grinderProperties;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-	@JoinTable(name = "PERF_TEST_TAG", /** join column */
-			joinColumns = @JoinColumn(name = "perf_test_id"), /** inverse join column */
-			inverseJoinColumns = @JoinColumn(name = "tag_id"))
+	@JoinTable(name = "PERF_TEST_TAG", /* join column */
+		joinColumns = @JoinColumn(name = "perf_test_id"), /* inverse join column */
+		inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	@Sort(comparator = Tag.class, type = SortType.COMPARATOR)
 	private SortedSet<Tag> tags;
 
@@ -320,12 +322,16 @@ public class PerfTest extends BaseModel<PerfTest> {
 
 	// NEW ADDED
 
-	@OneToOne(cascade={CascadeType.ALL})
-	@JoinColumn(name = "monitoring_config_id")
+	@OneToOne(cascade = {CascadeType.ALL}, targetEntity = MonitoringConfig.class)
+	@JoinColumn(name = "test_id", referencedColumnName = "id")
 	private MonitoringConfig monitoringConfig;
 
-	@OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinColumn(name = "scene_id")
+	@OneToMany(cascade = {CascadeType.ALL}, targetEntity = MonitoringHost.class)
+	@JoinColumn(name = "test_id", referencedColumnName = "id")
+	private Set<MonitoringHost> monitoringHosts = new HashSet<>();
+
+	@OneToOne(targetEntity = PerfScene.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinColumn(name = "scene_id", referencedColumnName = "id")
 	private PerfScene perfScene;
 
 	@Expose
@@ -352,6 +358,8 @@ public class PerfTest extends BaseModel<PerfTest> {
 	@PreUpdate
 	public void init() {
 		this.status = getSafe(this.status, Status.SAVED);
+		this.setCreatedDate(new Date());
+		this.setLastModifiedDate(new Date());
 		this.agentCount = getSafe(this.agentCount);
 		this.port = getSafe(this.port);
 		this.processes = getSafe(this.processes, 1);
@@ -390,6 +398,7 @@ public class PerfTest extends BaseModel<PerfTest> {
 	public String getTestIdentifier() {
 		return "perftest_" + getId() + "_" + (getLastModifiedUser() == null ? userId : getLastModifiedUser().getUserId());
 	}
+
 	@Transient
 	private String userId;
 
@@ -714,7 +723,7 @@ public class PerfTest extends BaseModel<PerfTest> {
 	 */
 	public String getRuntimeStr() {
 		long ms = (this.finishTime == null || this.startTime == null) ? 0 : this.finishTime.getTime()
-				- this.startTime.getTime();
+			- this.startTime.getTime();
 		return DateUtils.ms2Time(ms);
 	}
 
@@ -916,6 +925,14 @@ public class PerfTest extends BaseModel<PerfTest> {
 
 	public void setMonitoringConfig(MonitoringConfig monitoringConfig) {
 		this.monitoringConfig = monitoringConfig;
+	}
+
+	public Set<MonitoringHost> getMonitoringHosts() {
+		return monitoringHosts;
+	}
+
+	public void setMonitoringHosts(Set<MonitoringHost> monitoringHosts) {
+		this.monitoringHosts = monitoringHosts;
 	}
 
 	public PerfScene getPerfScene() {

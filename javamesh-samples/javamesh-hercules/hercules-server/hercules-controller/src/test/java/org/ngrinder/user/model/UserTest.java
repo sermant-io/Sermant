@@ -1,4 +1,4 @@
-/* 
+/*
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.ngrinder.user.model;
 
@@ -44,7 +44,7 @@ public class UserTest extends AbstractNGrinderTransactionalTest {
 	@Autowired
 	private TagRepository tagRepository;
 
-	
+
 	@Before
 	public void before() {
 		List<PerfTest> findAll = perfTestRepository.findAll();
@@ -59,7 +59,7 @@ public class UserTest extends AbstractNGrinderTransactionalTest {
 		userRepository.deleteAll();
 		userRepository.flush();
 	}
-	
+
 	@Test
 	public void testShareUser() {
 		List<User> sharedUsers = new ArrayList<User>();
@@ -81,7 +81,7 @@ public class UserTest extends AbstractNGrinderTransactionalTest {
 		user2.setCreatedDate(new Date());
 		user2.setRole(Role.USER);
 		userRepository.save(user2);
-		
+
 		User user3 = new User();
 		user3.setUserId("hello3");
 		user3.setUserName("MyName3");
@@ -90,7 +90,7 @@ public class UserTest extends AbstractNGrinderTransactionalTest {
 		user3.setCreatedDate(new Date());
 		user3.setRole(Role.USER);
 		userRepository.save(user3);
-		
+
 		User user4 = new User();
 		user4.setUserId("hello4");
 		user4.setUserName("MyName4");
@@ -110,7 +110,7 @@ public class UserTest extends AbstractNGrinderTransactionalTest {
 		List<User> sh = sharedUser.getFollowers();
 		LOG.debug("sharedUser.getFollowers:{}", sh);
 	}
-	
+
 
 	@Test
 	public void testUser() {

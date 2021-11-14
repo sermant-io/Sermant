@@ -173,7 +173,11 @@ public class AgentPackageService {
 					if (!isJar(eachClassPath)) {
 						continue;
 					}
-					if (isAgentDependentLib(eachClassPath, "ngrinder-sh")) {
+
+					/**
+					 * update by huawei , ngrinder-sh rename to hercules-sh
+					 */
+					if (isAgentDependentLib(eachClassPath, "hercules-sh")) {
 						processJarEntries(eachClassPath, new TarArchivingZipEntryProcessor(tarOutputStream, new FilePredicate() {
 							@Override
 							public boolean evaluate(Object object) {
@@ -235,7 +239,11 @@ public class AgentPackageService {
 					if (!isJar(eachClassPath)) {
 						continue;
 					}
-					if (isAgentDependentLib(eachClassPath, "ngrinder-sh")) {
+
+					/**
+					 * update by huawei , ngrinder-sh rename to hercules-sh
+					 */
+					if (isAgentDependentLib(eachClassPath, "hercules-sh")) {
 						processJarEntries(eachClassPath, new TarArchivingZipEntryProcessor(tarOutputStream, new FilePredicate() {
 							@Override
 							public boolean evaluate(Object object) {

@@ -63,6 +63,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.ngrinder</groupId>
+			<artifactId>ngrinder-core</artifactId>
+			<version>3.4.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ngrinder</groupId>
 			<artifactId>ngrinder-groovy</artifactId>
 			<version>3.4.2</version>
 		</dependency>

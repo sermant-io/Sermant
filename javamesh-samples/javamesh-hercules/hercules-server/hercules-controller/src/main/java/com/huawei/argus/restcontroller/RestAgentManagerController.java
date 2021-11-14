@@ -2,6 +2,7 @@ package com.huawei.argus.restcontroller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Predicate;
+import com.huawei.argus.common.PageModel;
 import org.apache.commons.lang.StringUtils;
 import org.ngrinder.agent.service.AgentManagerService;
 import org.ngrinder.agent.service.AgentPackageService;
@@ -17,8 +18,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +48,7 @@ public class RestAgentManagerController extends RestBaseController {
 	/**
 	 * Get the agents.
 	 */
-	@RequestMapping({"", "/", "/list"})
+	@RequestMapping({"/list"})
 	@PreAuthorize("hasAnyRole('A', 'S', 'U')")
 	public JSONObject getAll(final User user, @RequestParam(value = "region", required = false) final String region) {
 		final Collection<? extends GrantedAuthority> authorities = getCurrentAuthorities();
@@ -85,6 +88,38 @@ public class RestAgentManagerController extends RestBaseController {
 	}
 
 	/**
+	 * Get the agents by page.
+	 */
+	@RequestMapping(value = {"/list"}, params = "pageSize")
+	@PreAuthorize("hasAnyRole('A', 'S', 'U')")
+	public JSONObject getAgentPage(final User user,
+								   @RequestParam int pageSize,
+								   @RequestParam int current,
+								   @RequestParam(required = false) String sorter,
+								   @RequestParam(required = false) String order,
+								   @RequestParam(value = "region", required = false) final String region) {
+		final Collection<? extends GrantedAuthority> authorities = getCurrentAuthorities();
+		PageModel<AgentInfo> agentInfoPage =
+			agentManagerService.getAgentInfoPage(pageSize, current, sorter, order, region);
+		Collection<AgentInfo> agents = agentInfoPage.getPageContent();
+
+		// 过滤用户能查询的agent，权限问题
+		agents = filter(agents, new Predicate<AgentInfo>() {
+			@Override
+			public boolean apply(AgentInfo agentInfo) {
+				return filterAgentByUserAuthorityAndId(authorities, user.getUserId(), region, agentInfo.getRegion());
+			}
+		});
+
+		// 封装返回结果
+		JSONObject modelInfos = new JSONObject();
+		modelInfos.put("total", agentInfoPage.getTotalCount());
+		modelInfos.put("data", listToJsonArray(Arrays.asList(agents.toArray())));
+		modelInfos.put("totalPages", agentInfoPage.getTotalPages());
+		return modelInfos;
+	}
+
+	/**
 	 * Filter agent list by referring to cluster
 	 */
 	private boolean filterAgentByCluster(String region, String agentRegion) {
@@ -107,7 +142,7 @@ public class RestAgentManagerController extends RestBaseController {
 		if (StringUtils.isEmpty(region)) {
 			return !agentRegion.contains("_owned_") || agentRegion.endsWith("_owned_" + userId);
 		} else {
-			return agentRegion.startsWith(region + "_owned_" + userId) ||  region.equals(agentRegion);
+			return agentRegion.startsWith(region + "_owned_" + userId) || region.equals(agentRegion);
 		}
 	}
 
@@ -121,13 +156,14 @@ public class RestAgentManagerController extends RestBaseController {
 	/**
 	 * Get the agent detail info for the given agent id.[方法重新命名，用于与另一个接口区分]
 	 *
-	 * @param id    agent id
+	 * @param id agent id
 	 * @return agent/agentDetail
 	 */
-	@RequestMapping(value = "/{id}")
+	@RequestMapping(value = {"/{id}"}, method = RequestMethod.GET)
 	public JSONObject getOneById(@PathVariable Long id) {
 		JSONObject modelInfos = new JSONObject();
-		modelInfos.put("agent", modelStrToJson(agentManagerService.getOne(id).toString()));
+		AgentInfo agentInfo = agentManagerService.getOne(id);
+		modelInfos.put("agent", modelStrToJson(agentInfo == null ? "" : agentInfo.toString()));
 		return modelInfos;
 	}
 
@@ -165,7 +201,7 @@ public class RestAgentManagerController extends RestBaseController {
 	 */
 	@RestAPI
 	@PreAuthorize("hasAnyRole('A', 'S', 'U')")
-	@RequestMapping(value = {"/api/states/", "/api/states"}, method = RequestMethod.GET)
+	@RequestMapping(value = {"/api/states"}, method = RequestMethod.GET)
 	public HttpEntity<String> getStates() {
 		List<AgentInfo> agents = agentManagerService.getAllVisible();
 		return toJsonHttpEntity(getAgentStatus(agents));
@@ -178,7 +214,7 @@ public class RestAgentManagerController extends RestBaseController {
 	 */
 	@RestAPI
 	@PreAuthorize("hasAnyRole('A')")
-	@RequestMapping(value = {"/api/", "/api"}, method = RequestMethod.GET)
+	@RequestMapping(value = {"/api"}, method = RequestMethod.GET)
 	public HttpEntity<String> getAll() {
 		return toJsonHttpEntity(agentManagerService.getAllVisible());
 	}
@@ -285,6 +321,37 @@ public class RestAgentManagerController extends RestBaseController {
 		return successJsonHttpEntity();
 	}
 
+	/**
+	 * Delete the given agent.
+	 *
+	 * @param id agent id
+	 * @return json message
+	 */
+	@RestAPI
+	@PreAuthorize("hasAnyRole('A')")
+	@RequestMapping(value = "/api/{id}", params = "action=delete", method = RequestMethod.DELETE)
+	HttpEntity<String> deleteOne(@PathVariable("id") Long id) {
+		agentManagerService.delete(id);
+		return successJsonHttpEntity();
+	}
+
+	/**
+	 * Delete the given agents
+	 *
+	 * @param ids comma separated agent id list
+	 * @return json message
+	 */
+	@RestAPI
+	@PreAuthorize("hasAnyRole('A')")
+	@RequestMapping(value = "/api", params = "action=delete", method = RequestMethod.DELETE)
+	HttpEntity<String> deleteMany(@RequestParam("ids") String ids) {
+		String[] split = StringUtils.split(ids, ",");
+		for (String each : split) {
+			deleteOne(Long.parseLong(each));
+		}
+		return successJsonHttpEntity();
+	}
+
 	private List<Map<String, Object>> getAgentStatus(List<AgentInfo> agents) {
 		List<Map<String, Object>> statuses = newArrayList(agents.size());
 		for (AgentInfo each : agents) {
@@ -301,7 +368,7 @@ public class RestAgentManagerController extends RestBaseController {
 	/**
 	 * Get the number of available agents.
 	 *
-	 * @param user The login user
+	 * @param user         The login user
 	 * @param targetRegion The name of target region
 	 * @return availableAgentCount Available agent count
 	 */
@@ -309,11 +376,9 @@ public class RestAgentManagerController extends RestBaseController {
 	@RequestMapping(value = {"/api/availableAgentCount"}, method = RequestMethod.GET)
 	@PreAuthorize("permitAll")
 	public HttpEntity<String> getAvailableAgentCount(User user,
-													 @RequestParam(value = "targetRegion", required = true) String targetRegion) {
+													 @RequestParam(value = "targetRegion") String targetRegion) {
 		int availableAgentCount = agentManagerService.getReadyAgentCount(user, targetRegion);
-		HttpEntity<String> returnHttpEntity = toJsonHttpEntity(buildMap("availableAgentCount",
-			availableAgentCount));
-		return returnHttpEntity;
+		return toJsonHttpEntity(buildMap("availableAgentCount", availableAgentCount));
 	}
 
 }
