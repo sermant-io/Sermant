@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_CUBRID.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_H2.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_MYSQL.xml"/>
+	<changeSet author="ngrinder.3.0-b3" id="4" dbms="h2, cubrid" onValidationFail="MARK_RAN">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="system_monitor" columnName="load_avg_1" />
+		</preConditions>
+		<comment>Delete all unused SystemDataModel DB fields.</comment>
+		<dropColumn tableName="system_monitor" columnName="load_avg_1" />
+		<dropColumn tableName="system_monitor" columnName="load_avg_5" />
+		<dropColumn tableName="system_monitor" columnName="load_avg_15" />
+		<dropColumn tableName="system_monitor" columnName="idle_cpu_value" />
+		<dropColumn tableName="system_monitor" columnName="total_cpu_value" />
+		<dropColumn tableName="system_monitor" columnName="crtime" />
+	</changeSet>
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_H2_5.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_CUBRID_6.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_7.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_8.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_9.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_11.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_12.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_13.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_14.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_15.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_16.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_17.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_18.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_19.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_20.xml" />
+    <include file="ngrinder_datachange_logfile/db.changelog_schema_21.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_22.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_23.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_24.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_25.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_26.xml" />
+	<include file="ngrinder_datachange_logfile/db.changelog_schema_27.xml" />
+</databaseChangeLog>

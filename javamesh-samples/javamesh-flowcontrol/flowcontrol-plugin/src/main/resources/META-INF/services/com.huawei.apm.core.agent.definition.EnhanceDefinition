@@ -1,0 +1,3 @@
+com.huawei.flowcontrol.AlibabaDubboDefinition
+com.huawei.flowcontrol.DispatcherServletDefinition
+com.huawei.flowcontrol.ApacheDubboDefinition
