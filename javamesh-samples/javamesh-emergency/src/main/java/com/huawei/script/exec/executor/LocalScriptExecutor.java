@@ -35,7 +35,9 @@ public class LocalScriptExecutor implements ScriptExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalScriptExecutor.class);
 
     private static final String SH = "/bin/sh";
+    //private static final String SH = "cmd";
     private static final String SH_C = "-C";
+    //private static final String SH_C = "/C";
 
     @Value("${script.location}")
     private String scriptLocation;

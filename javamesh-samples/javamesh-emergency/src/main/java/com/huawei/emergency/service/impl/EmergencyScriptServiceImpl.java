@@ -201,6 +201,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
         }
         User user = (User) request.getSession().getAttribute("userInfo");
         script.setScriptUser(user.getUserName());
+        script.setContent(FileUtil.streamToString(new ByteArrayInputStream(script.getContent().getBytes(StandardCharsets.UTF_8))));
         extracted(script);
         count = mapper.insertSelective(script);
         if (count != 1) {

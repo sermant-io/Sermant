@@ -266,6 +266,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String updateUser(UserEntity user) {
+        String userName = user.getUserName();
+        if(userName.equals("admin")){
+            return FailedInfo.CANNOT_UPDATE_ADMIN;
+        }
         String role = user.getRole();
         user.setRole("USER");
         user.setUpdateTime(getTimestamp());
