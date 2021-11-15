@@ -99,6 +99,11 @@
             <version>2.5.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>3.6.0</version>
+        </dependency>
     </dependencies>
     <build>
         <extensions>

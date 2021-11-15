@@ -44,6 +44,7 @@ public class AgentPremain {
                 Map argsMap = argumentBuilder.build(agentArgs, new LogInitCallback());
                 addAgentPath(argsMap);
 
+                System.out.println("[APM PREMAIN]loading javamesh agent.");
                 logger.info("[APM PREMAIN]loading javamesh agent.");
 
                 // 初始化路径
