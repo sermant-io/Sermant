@@ -9,6 +9,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,17 +67,16 @@ public class ServerSessionFactory {
         Session session = sessionCache.getOrDefault(serverInfo, createSession(serverInfo));
         if (!session.isConnected()) {
             long startConnect = System.currentTimeMillis();
-            session.setPassword(serverInfo.getServerPassword());
             session.connect(connectTimeout);
             LOGGER.info("connect to server {}:{} cost {} ms",
-                session.getHost(), session.getPort(), System.currentTimeMillis() - startConnect);
+                    session.getHost(), session.getPort(), System.currentTimeMillis() - startConnect);
         }
         return session;
     }
 
     private Session createSession(ServerInfo serverInfo) throws JSchException {
         Session session =
-            jsch.getSession(serverInfo.getServerUser(), serverInfo.getServerIp(), serverInfo.getServerPort());
+                jsch.getSession(serverInfo.getServerUser(), serverInfo.getServerIp(), serverInfo.getServerPort());
         session.setConfig("StrictHostKeyChecking", "no");
         for (HostKey key : jsch.getHostKeyRepository().getHostKey()) {
             if (key.getHost().equals(serverInfo.getServerIp())) {
@@ -84,6 +84,10 @@ public class ServerSessionFactory {
                 session.setConfig("server_host_key", key.getType());
                 break;
             }
+        }
+        session.setConfig("PreferredAuthentications", "password,publickey,keyboard-interactive,gssapi-with-mic");
+        if (StringUtils.isNotEmpty(serverInfo.getServerPassword())) {
+            session.setPassword(serverInfo.getServerPassword());
         }
         return session;
     }
