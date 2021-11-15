@@ -1,12 +1,10 @@
 package zookeeper;
 
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.apm.core.dynamicconfig.ConfigChangedEvent;
-import com.huawei.apm.core.dynamicconfig.ConfigurationListener;
-import com.huawei.apm.core.dynamicconfig.DynamicConfiguration;
-import com.huawei.apm.core.dynamicconfig.zookeeper.ZookeeperDynamicConfigurationFactory;
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.ZooDefs;
+import com.huawei.apm.core.service.dynamicconfig.ConfigChangedEvent;
+import com.huawei.apm.core.service.dynamicconfig.ConfigurationListener;
+import com.huawei.apm.core.service.dynamicconfig.DynamicConfiguration;
+import com.huawei.apm.core.service.dynamicconfig.zookeeper.ZookeeperDynamicConfigurationFactory;
 import org.apache.zookeeper.ZooKeeper;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,7 +12,6 @@ import org.junit.Test;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -80,7 +77,7 @@ public class ZooKeeperDynamicConfigurationFactoryTest {
 
         ZookeeperDynamicConfigurationFactory zdcf = null;
         try {
-            zdcf = (ZookeeperDynamicConfigurationFactory) Class.forName("com.huawei.apm.core.dynamicconfig.zookeeper.ZookeeperDynamicConfigurationFactory").newInstance();
+            zdcf = (ZookeeperDynamicConfigurationFactory) Class.forName("com.huawei.apm.core.service.dynamicconfig.zookeeper.ZookeeperDynamicConfigurationFactory").newInstance();
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();

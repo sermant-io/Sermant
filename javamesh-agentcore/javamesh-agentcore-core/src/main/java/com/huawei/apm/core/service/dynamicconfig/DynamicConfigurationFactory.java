@@ -14,22 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huawei.apm.core.dynamicconfig.nop;
+package com.huawei.apm.core.service.dynamicconfig;
 
-
-import com.huawei.apm.core.dynamicconfig.DynamicConfiguration;
-import com.huawei.apm.core.dynamicconfig.DynamicConfigurationFactory;
 
 import java.net.URI;
 
 /**
- *
+ * The factory interface to create the instance of {@link DynamicConfiguration}
  */
-@Deprecated
-public class NopDynamicConfigurationFactory implements DynamicConfigurationFactory {
+public interface DynamicConfigurationFactory {
 
-    @Override
-    public DynamicConfiguration getDynamicConfiguration(URI uri) {
-        return new NopDynamicConfiguration(uri);
-    }
+    DynamicConfiguration getDynamicConfiguration(URI uri);
+
 }

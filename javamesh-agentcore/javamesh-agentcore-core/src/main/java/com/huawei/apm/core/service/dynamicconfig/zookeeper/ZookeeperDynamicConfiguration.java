@@ -1,11 +1,9 @@
-package com.huawei.apm.core.dynamicconfig.zookeeper;
+package com.huawei.apm.core.service.dynamicconfig.zookeeper;
 
-import com.huawei.apm.core.dynamicconfig.Config;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.apm.core.dynamicconfig.ConfigChangedEvent;
-import com.huawei.apm.core.dynamicconfig.ConfigurationListener;
-import com.huawei.apm.core.dynamicconfig.DynamicConfiguration;
-import com.huawei.apm.core.util.StringUtils;
+import com.huawei.apm.core.service.dynamicconfig.ConfigChangedEvent;
+import com.huawei.apm.core.service.dynamicconfig.ConfigurationListener;
+import com.huawei.apm.core.service.dynamicconfig.DynamicConfiguration;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 

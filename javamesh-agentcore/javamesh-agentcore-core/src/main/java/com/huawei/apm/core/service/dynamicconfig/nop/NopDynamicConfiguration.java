@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huawei.apm.core.dynamicconfig.nop;
+package com.huawei.apm.core.service.dynamicconfig.nop;
 
-import com.huawei.apm.core.dynamicconfig.ConfigurationListener;
-import com.huawei.apm.core.dynamicconfig.DynamicConfiguration;
+import com.huawei.apm.core.service.dynamicconfig.ConfigurationListener;
+import com.huawei.apm.core.service.dynamicconfig.DynamicConfiguration;
 
 import java.net.URI;
 import java.util.SortedSet;

@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huawei.apm.core.dynamicconfig.zookeeper;
+package com.huawei.apm.core.service.dynamicconfig.zookeeper;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.huawei.apm.core.dynamicconfig.Config;
+import com.huawei.apm.core.service.dynamicconfig.Config;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.apm.core.dynamicconfig.DynamicConfiguration;
-import com.huawei.apm.core.dynamicconfig.DynamicConfigurationFactory;
+import com.huawei.apm.core.service.dynamicconfig.DynamicConfiguration;
+import com.huawei.apm.core.service.dynamicconfig.DynamicConfigurationFactory;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;

@@ -1,4 +1,4 @@
-package com.huawei.apm.core.dynamicconfig;
+package com.huawei.apm.core.service.dynamicconfig;
 
 public class Config {
 

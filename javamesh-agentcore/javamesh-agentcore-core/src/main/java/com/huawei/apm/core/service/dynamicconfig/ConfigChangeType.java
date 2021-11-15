@@ -14,20 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huawei.apm.core.dynamicconfig;
-
-import java.util.EventListener;
+package com.huawei.apm.core.service.dynamicconfig;
 
 /**
- * Config listener, will get notified when the config it listens on changes.
+ * Config change event type
  */
-public interface ConfigurationListener extends EventListener {
+public enum ConfigChangeType {
+    /**
+     * A config is created.
+     */
+    ADDED,
 
     /**
-     * Listener call back method. Listener gets notified by this method once there's any change happens on the config
-     * the listener listens on.
-     *
-     * @param event config change event
+     * A config is updated.
      */
-    void process(ConfigChangedEvent event);
+    MODIFIED,
+
+    /**
+     * A config is deleted.
+     */
+    DELETED
 }

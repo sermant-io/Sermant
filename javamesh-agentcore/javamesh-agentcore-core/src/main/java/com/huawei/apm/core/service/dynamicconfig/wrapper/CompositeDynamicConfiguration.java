@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huawei.apm.core.dynamicconfig.wrapper;
+package com.huawei.apm.core.service.dynamicconfig.wrapper;
 
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.apm.core.dynamicconfig.ConfigurationListener;
-import com.huawei.apm.core.dynamicconfig.DynamicConfiguration;
+import com.huawei.apm.core.service.dynamicconfig.ConfigurationListener;
+import com.huawei.apm.core.service.dynamicconfig.DynamicConfiguration;
 
 import java.util.HashSet;
 import java.util.Set;

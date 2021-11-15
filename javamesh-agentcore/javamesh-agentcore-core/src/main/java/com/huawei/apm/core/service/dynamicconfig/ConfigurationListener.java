@@ -14,16 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huawei.apm.core.dynamicconfig;
+package com.huawei.apm.core.service.dynamicconfig;
 
-
-import java.net.URI;
+import java.util.EventListener;
 
 /**
- * The factory interface to create the instance of {@link DynamicConfiguration}
+ * Config listener, will get notified when the config it listens on changes.
  */
-public interface DynamicConfigurationFactory {
+public interface ConfigurationListener extends EventListener {
 
-    DynamicConfiguration getDynamicConfiguration(URI uri);
-
+    /**
+     * Listener call back method. Listener gets notified by this method once there's any change happens on the config
+     * the listener listens on.
+     *
+     * @param event config change event
+     */
+    void process(ConfigChangedEvent event);
 }
