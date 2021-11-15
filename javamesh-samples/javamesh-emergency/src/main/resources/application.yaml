@@ -59,7 +59,7 @@ mybatis:
 #用户名
 user_name: admin
 key: 1234123412341234
-decisionEngine.url: http://100.94.174.17:8089/hercules-controller-0.0.1
+decisionEngine.url: http://172.31.100.79:9091/hercules-controller-0.0.1
 jsch:
   connectTimeout: 30000
   knownHosts: /root/.ssh/known_hosts
