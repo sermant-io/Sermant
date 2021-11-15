@@ -85,10 +85,9 @@ public class ServerSessionFactory {
                 break;
             }
         }
+        session.setConfig("PreferredAuthentications", "password,publickey,keyboard-interactive,gssapi-with-mic");
         if (StringUtils.isNotEmpty(serverInfo.getServerPassword())) {
             session.setPassword(serverInfo.getServerPassword());
-            session.setConfig("PreferredAuthentications", "password");
-            LOGGER.info("connect to {}:{} set PreferredAuthentications => password", serverInfo.getServerIp(), serverInfo.getServerPort());
         }
         return session;
     }
