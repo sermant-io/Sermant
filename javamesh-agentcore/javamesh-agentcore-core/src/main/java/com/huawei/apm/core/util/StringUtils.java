@@ -33,4 +33,10 @@ public class StringUtils {
     public static boolean isNotEmpty(String str) {
         return !isEmpty(str);
     }
+
+    public static String trim_even_null(String str) {
+        if (str == null)
+            return "";
+        return str.trim();
+    }
 }

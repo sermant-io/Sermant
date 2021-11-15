@@ -14,15 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huawei.apm.core.service.dynamicconfig;
+package com.huawei.apm.core.service.dynamicconfig.service;
 
-import java.util.Set;
-import java.util.SortedSet;
+import com.huawei.apm.core.service.CoreService;
 
 
-public interface DynamicConfiguration extends AutoCloseable {
-
-    String DEFAULT_GROUP = "dubbo";
+public interface DynamicConfigurationService extends CoreService, AutoCloseable {
 
     /**
      * {@link #addListener(String, String, ConfigurationListener)}
@@ -30,8 +27,8 @@ public interface DynamicConfiguration extends AutoCloseable {
      * @param key      the key to represent a configuration
      * @param listener configuration listener
      */
-    default void addListener(String key, ConfigurationListener listener) {
-        addListener(key, getDefaultGroup(), listener);
+    default boolean addListener(String key, ConfigurationListener listener) {
+        return addListener(key, getDefaultGroup(), listener);
     }
 
 
@@ -41,8 +38,8 @@ public interface DynamicConfiguration extends AutoCloseable {
      * @param key      the key to represent a configuration
      * @param listener configuration listener
      */
-    default void removeListener(String key, ConfigurationListener listener) {
-        removeListener(key, getDefaultGroup(), listener);
+    default boolean removeListener(String key, ConfigurationListener listener) {
+        return removeListener(key, getDefaultGroup(), listener);
     }
 
     /**
@@ -55,7 +52,7 @@ public interface DynamicConfiguration extends AutoCloseable {
      * @param group    the group where the key belongs to
      * @param listener configuration listener
      */
-    void addListener(String key, String group, ConfigurationListener listener);
+    boolean addListener(String key, String group, ConfigurationListener listener);
 
     /**
      * Stops one listener from listening to value changes in the specified key.
@@ -64,7 +61,7 @@ public interface DynamicConfiguration extends AutoCloseable {
      * @param group    the group where the key belongs to
      * @param listener configuration listener
      */
-    void removeListener(String key, String group, ConfigurationListener listener);
+    boolean removeListener(String key, String group, ConfigurationListener listener);
 
     /**
      * Get the configuration mapped to the given key and the given group with {@link #getDefaultTimeout() the default
@@ -85,7 +82,7 @@ public interface DynamicConfiguration extends AutoCloseable {
      */
     default String getConfig(String key)
     {
-        return getConfig(key, this.getDefaultGroup());
+        return getConfig(key, getDefaultGroup());
     }
 
 
@@ -115,36 +112,20 @@ public interface DynamicConfiguration extends AutoCloseable {
     boolean publishConfig(String key, String group, String content) ;
 
     /**
-     * Get the config keys by the specified group
-     *
-     * @param group the specified group
-     * @return the read-only non-null sorted {@link Set set} of config keys
-     * @throws UnsupportedOperationException If the under layer does not support
-     * @since 2.7.5
-     */
-    default SortedSet<String> getConfigKeys(String group) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
      * Get the default group for the operations
      *
-     * @return The default value is {@link #DEFAULT_GROUP "dubbo"}
+     * @return The default value
      * @since 2.7.5
      */
-    default String getDefaultGroup() {
-        return DEFAULT_GROUP;
-    }
+    String getDefaultGroup();
 
     /**
      * Get the default timeout for the operations in milliseconds
      *
-     * @return The default value is <code>-1L</code>
+     * @return The default value
      * @since 2.7.5
      */
-    default long getDefaultTimeout() {
-        return Config.TIMEOUT_VALUE;
-    }
+    long getDefaultTimeout();
 
     /**
      * Close the configuration

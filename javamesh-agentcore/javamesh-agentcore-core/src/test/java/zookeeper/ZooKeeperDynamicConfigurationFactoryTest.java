@@ -1,10 +1,15 @@
 package zookeeper;
 
+import com.huawei.apm.core.config.ConfigLoader;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.apm.core.service.dynamicconfig.ConfigChangedEvent;
-import com.huawei.apm.core.service.dynamicconfig.ConfigurationListener;
-import com.huawei.apm.core.service.dynamicconfig.DynamicConfiguration;
-import com.huawei.apm.core.service.dynamicconfig.zookeeper.ZookeeperDynamicConfigurationFactory;
+import com.huawei.apm.core.service.CoreService;
+import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
+import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
+import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationFactoryService;
+import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationService;
+import com.huawei.apm.core.service.dynamicconfig.zookeeper.ZookeeperDynamicConfigurationService;
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
 import static org.mockito.Mockito.mock;
@@ -29,11 +35,11 @@ public class ZooKeeperDynamicConfigurationFactoryTest {
     public void setUp() {
 
         try {
-            uri = new URI("zookeeper://localhost:2181");
+            uri = new URI("zookeeper://127.0.0.1:2181");
         } catch (URISyntaxException e) {
+            e.printStackTrace();
             Assert.fail();
         }
-
         Logger logger = Logger.getLogger("test");
         LogFactory.setLogger(logger);
 
@@ -46,8 +52,12 @@ public class ZooKeeperDynamicConfigurationFactoryTest {
         try {
             //System.out.println(uri.getRawPath());
             //System.out.println(uri.getPath());
-            System.out.println(uri.getRawSchemeSpecificPart());
-            zkClient = new ZooKeeper(uri.getHost() + ":" + uri.getPort(), 30000, null);
+            zkClient = new ZooKeeper(uri.getHost() + ":" + uri.getPort(), 30000, new Watcher() {
+                @Override
+                public void process(WatchedEvent event) {
+
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -75,33 +85,54 @@ public class ZooKeeperDynamicConfigurationFactoryTest {
     @Test
     public void testFactory() {
 
-        ZookeeperDynamicConfigurationFactory zdcf = null;
+        ServiceLoader<CoreService> sl = ServiceLoader.load(CoreService.class);
+        DynamicConfigurationFactoryService dcfs = null;
+
+        for ( CoreService cs : sl)
+        {
+            if (cs.getClass().toString().contains("DynamicConfigurationFactoryServiceImpl"))
+            {
+                dcfs = (DynamicConfigurationFactoryService) cs;
+                break;
+            }
+        }
+        Assert.assertTrue(dcfs != null);
+
+        DynamicConfigurationService dcs = dcfs.getDynamicConfigurationService();
+        dcs.publishConfig("/test", "test", "test");
+        String rs = dcs.getConfig("/test", "test");
+        Assert.assertTrue(rs.equals("test"));
+
+    }
+
+    @Test
+    public void testService() {
+
+        ZookeeperDynamicConfigurationService zdcs = null;
         try {
-            zdcf = (ZookeeperDynamicConfigurationFactory) Class.forName("com.huawei.apm.core.service.dynamicconfig.zookeeper.ZookeeperDynamicConfigurationFactory").newInstance();
+            zdcs = ZookeeperDynamicConfigurationService.getInstance();
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
         }
 
-        DynamicConfiguration dc = zdcf.getDynamicConfiguration(uri);
+        DynamicConfigurationService dcs = zdcs;
 
-        dc.publishConfig("/test", "test", "test");
-        String rs = dc.getConfig("/test", "test");
+        dcs.publishConfig("/test", "test", "test");
+        String rs = dcs.getConfig("/test", "test");
         Assert.assertTrue(rs.equals("test"));
 
-
-
-        dc.publishConfig("/test/test11", "test2", "test22");
-        rs = dc.getConfig("/test/test11", "test2");
+        zdcs.publishConfig("/test/test11", "test2", "test22");
+        rs = zdcs.getConfig("/test/test11", "test2");
         Assert.assertTrue(rs.equals("test22"));
 
-        dc.addListener("/test/test11", new ConfigurationListener() {
+        zdcs.addListener("/test/test11", new ConfigurationListener() {
             @Override
             public void process(ConfigChangedEvent event) {
                 System.out.println(event.toString());
             }
         });
-        dc.publishConfig("/test/test11", "test3", "test22");
+        zdcs.publishConfig("/test/test11", "test3", "test22");
     }
 
 

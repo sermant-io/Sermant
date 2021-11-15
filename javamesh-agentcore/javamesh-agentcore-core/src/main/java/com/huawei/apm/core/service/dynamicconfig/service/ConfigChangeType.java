@@ -14,22 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huawei.apm.core.service.dynamicconfig.nop;
-
-
-import com.huawei.apm.core.service.dynamicconfig.DynamicConfiguration;
-import com.huawei.apm.core.service.dynamicconfig.DynamicConfigurationFactory;
-
-import java.net.URI;
+package com.huawei.apm.core.service.dynamicconfig.service;
 
 /**
- *
+ * Config change event type
  */
-@Deprecated
-public class NopDynamicConfigurationFactory implements DynamicConfigurationFactory {
+public enum ConfigChangeType {
+    /**
+     * A config is created.
+     */
+    ADDED,
 
-    @Override
-    public DynamicConfiguration getDynamicConfiguration(URI uri) {
-        return new NopDynamicConfiguration(uri);
-    }
+    /**
+     * A config is updated.
+     */
+    MODIFIED,
+
+    /**
+     * A config is deleted.
+     */
+    DELETED
 }
