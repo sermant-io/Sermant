@@ -5,9 +5,9 @@ import com.alibaba.csp.sentinel.EntryType;
 import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
-import com.huawei.apm.bootstrap.exception.FlowControlException;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.flowcontrol.exception.FlowControlException;
 import com.huawei.flowcontrol.util.SentinelRuleUtil;
 import com.huawei.flowcontrol.util.TraceEntryUtils;
 
@@ -44,11 +44,7 @@ public abstract class DubboInterceptor implements InstanceMethodInterceptor {
     }
 
     protected String getResourceName(String interfaceName, String methodName) {
-        StringBuilder buf = new StringBuilder();
-        buf.append(interfaceName)
-            .append(":")
-            .append(methodName);
-        return buf.toString();
+        return interfaceName + ":" + methodName;
     }
 
     protected void handleBlockException(BlockException ex, String resourceName, BeforeResult result, String type) {

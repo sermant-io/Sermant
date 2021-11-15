@@ -7,17 +7,4 @@
     <groupId>com.huawei.javamesh</groupId>
     <artifactId>demo-application</artifactId>
     <version>1.0.0</version>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>2.5.3</version>
-        </dependency>
-    </dependencies>
-
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
-
 </project>

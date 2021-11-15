@@ -5,8 +5,8 @@
 package com.huawei.flowcontrol.core.util;
 
 import com.alibaba.csp.sentinel.log.RecordLog;
-import com.huawei.apm.bootstrap.config.ConfigLoader;
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.config.ConfigLoader;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.flowcontrol.core.config.CommonConst;
 import com.huawei.flowcontrol.core.config.ConfigConst;
 import com.huawei.flowcontrol.core.config.FlowControlConfig;

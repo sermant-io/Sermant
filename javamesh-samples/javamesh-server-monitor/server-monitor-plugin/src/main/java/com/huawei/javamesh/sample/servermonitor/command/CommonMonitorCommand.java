@@ -4,6 +4,7 @@
 
 package com.huawei.javamesh.sample.servermonitor.command;
 
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * 使用通用错误处理方式的{@link MonitorCommand}，即通过日志输出错误信息，当错误
@@ -19,6 +21,8 @@ import java.util.List;
  * @param <T>
  */
 public abstract class CommonMonitorCommand<T> implements MonitorCommand<T> {
+
+    private static final Logger LOGGER = LogFactory.getLogger();
 
     private static final int MAX_LOG_LENGTH = 200;
 
@@ -51,6 +55,6 @@ public abstract class CommonMonitorCommand<T> implements MonitorCommand<T> {
                 totalLength = newTotalLength;
             }
         }
-        // LOGGER.error outputBuilder.toString()
+        LOGGER.severe(outputBuilder.toString());
     }
 }

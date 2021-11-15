@@ -30,4 +30,25 @@ public class KafkaConf {
     // common主题名
     @Value("${kafka.heartbeat.topic}")
     private String topicHeartBeat;
+
+    // Log topic  name
+    @Value("topic-log")
+    private String topicLog;
+
+    // 流控插件topic name
+    @Value("topic-flowcontrol")
+    private String topicFlowControl;
+
+    // 录制插件topic name
+    @Value("topic-flowecord")
+    private String topicFlowRecord;
+
+    @Value("${kafka.server-monitor.topic}")
+    private String topicServerMonitor;
+
+    @Value("${kafka.oracle-jvm-monitor.topic}")
+    private String topicOracleJvmMonitor;
+
+    @Value("${kafka.ibm-jvm-monitor.topic}")
+    private String topicIbmJvmMonitor;
 }

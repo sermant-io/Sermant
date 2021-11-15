@@ -1,42 +1,30 @@
 package com.huawei.apm.premain;
 
-import com.huawei.apm.bootstrap.config.ConfigLoader;
-import com.huawei.apm.bootstrap.serialize.SerializerHolder;
-import com.huawei.apm.premain.classloader.ClassLoaderManager;
-import com.huawei.apm.premain.classloader.PluginClassLoader;
-import com.huawei.apm.premain.agent.BootstrapEnhance;
-import com.huawei.apm.premain.agent.ByteBuddyAgentBuilder;
-import com.huawei.apm.premain.agent.NoneNamedListenerBuilder;
-import com.huawei.apm.bootstrap.lubanops.commons.LubanApmConstants;
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-import com.huawei.apm.bootstrap.lubanops.log.LogPathUtils;
+import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.config.ConfigLoader;
+import com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants;
+import com.huawei.apm.core.lubanops.core.BootStrapImpl;
+import com.huawei.apm.core.common.PathIndexer;
+import com.huawei.apm.core.serialize.SerializerHolder;
+import com.huawei.apm.core.agent.ByteBuddyAgentBuilder;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogPathUtils;
 import com.huawei.apm.premain.lubanops.agent.AgentStatus;
 import com.huawei.apm.premain.lubanops.agent.ArgumentBuilder;
-import com.huawei.apm.premain.lubanops.classloader.LopsUrlClassLoader;
 import com.huawei.apm.premain.lubanops.log.CollectorLogFactory;
 import com.huawei.apm.premain.lubanops.utils.LibPathUtils;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.security.AccessController;
-import java.security.CodeSource;
-import java.security.PrivilegedAction;
-import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AgentPremain {
-
-    private static final String AGENT_JAR_FILE_NAME = "javamesh-agent.jar";
-
     private static AgentStatus agentStatus = AgentStatus.STOPPED;
 
     private static Logger logger;
@@ -50,48 +38,35 @@ public class AgentPremain {
         try {
             if (AgentStatus.STOPPED.equals(agentStatus)) {
                 agentStatus = AgentStatus.LOADING;
-                // 添加bootstrap包到bootstrap classloader中
-                loadBootstrap(instrumentation);
+                // 添加core
+                loadCoreLib(instrumentation);
+                // 初始化参数
                 Map argsMap = argumentBuilder.build(agentArgs, new LogInitCallback());
-                // 获取javaagent依赖的包
-                final List<URL> urls = LibPathUtils.getLibUrl();
-                urls.add(AgentPremain.class.getProtectionDomain().getCodeSource().getLocation());
-                logger.info("[APM PREMAIN]loading javaagent.");
                 addAgentPath(argsMap);
-                // 初始化序列化器
-                SerializerHolder.initialize(PluginClassLoader.getDefault());
-                ClassLoader parent = Thread.currentThread().getContextClassLoader();
-                // 配置初始化
-                ConfigLoader.initialize(agentArgs, ClassLoaderManager.getTargetClassLoader(parent));
-                LopsUrlClassLoader classLoader = (LopsUrlClassLoader) AccessController.doPrivileged(
-                    new PrivilegedAction() {
-                        @Override
-                        public Object run() {
-                            return new LopsUrlClassLoader(urls.toArray(new URL[urls.size()]), null);
-                        }
-                    });
 
-                Thread.currentThread().setContextClassLoader(classLoader);
-                Class<?> mainClass = classLoader.loadClass("com.huawei.apm.core.lubanops.BootStrapImpl");
-                if (mainClass != null) {
-                    Method startMethod = mainClass.getDeclaredMethod("main", Instrumentation.class, Map.class);
-                    startMethod.invoke(null, instrumentation, argsMap);
-                }
-                Thread.currentThread().setContextClassLoader(parent);
-                // 针对NoneNamedListener初始化增强
-                NoneNamedListenerBuilder.initialize(instrumentation);
+                logger.info("[APM PREMAIN]loading javamesh agent.");
+
+                // 初始化路径
+                PathIndexer.build(LibPathUtils.getConfigPath(), LibPathUtils.getPluginsPath(),
+                        Collections.singleton(LibPathUtils.getLubanOpsDirName()));
+                // 初始化序列化器
+                SerializerHolder.initialize();
+                // 初始化统一配置
+                ConfigLoader.initialize(agentArgs);
+
+                // 调用BootStrapImpl#main，启动luban核心功能
+                BootStrapImpl.main(instrumentation, argsMap);
+
+                // 启动核心服务
+                CoreServiceManager.INSTANCE.initServices();
                 // 初始化byte buddy
                 ByteBuddyAgentBuilder.initialize(instrumentation);
-                // 重定义, 使之可被bytebuddy增强
-                BootstrapEnhance.reTransformClasses(instrumentation);
             } else {
-                logger.log(Level.SEVERE, "[APM PREMAIN]The JavaAgent is loaded repeatedly.");
+                logger.log(Level.SEVERE, "[APM PREMAIN]Javamesh agent has already been loaded.");
             }
             AgentPremain.agentStatus = AgentStatus.STARTED;
-        } catch (InvocationTargetException e) {
-            logger.log(Level.SEVERE, "[APM PREMAIN]Loading javaagent failed", e.getTargetException());
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "[APM PREMAIN]Loading javaagent failed", e);
+            logger.log(Level.SEVERE, "[APM PREMAIN]Loading javamesh agent failed", e);
         }
 
     }
@@ -99,30 +74,25 @@ public class AgentPremain {
     //~~internal methods
 
     private static void addAgentPath(Map argsMap) {
-        String agentPath = LibPathUtils.getAgentPath();
-        String bootPath = LibPathUtils.getBootstrapJarPath();
-        String pluginsPath = LibPathUtils.getPluginsPath() + File.separatorChar + LibPathUtils.getLubanOpsDirName();
-        argsMap.put(LubanApmConstants.AGENT_PATH_COMMONS, agentPath);
-        argsMap.put(LubanApmConstants.BOOT_PATH_COMMONS, bootPath);
-        argsMap.put(LubanApmConstants.PLUGINS_PATH_COMMONS, pluginsPath);
+        argsMap.put(LubanApmConstants.AGENT_PATH_COMMONS, LibPathUtils.getAgentPath());
+        argsMap.put(LubanApmConstants.BOOT_PATH_COMMONS, LibPathUtils.getCorePath());
+        argsMap.put(LubanApmConstants.PLUGINS_PATH_COMMONS, LibPathUtils.getLubanOpsPluginsPath());
     }
 
-    private static void loadBootstrap(Instrumentation instrumentation) throws IOException {
-        ProtectionDomain pd = AgentPremain.class.getProtectionDomain();
-        CodeSource cs = pd.getCodeSource();
-        String jarPath = cs.getLocation().getPath();
-        String agentPath = jarPath.substring(0, jarPath.lastIndexOf(AGENT_JAR_FILE_NAME));
-        String bootPath = agentPath + File.separator + "boot";
-        List<JarFile> bootstrapJar = new ArrayList<JarFile>();
-        File libDir = new File(bootPath);
-        File[] files = libDir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                bootstrapJar.add(new JarFile(file));
+    private static void loadCoreLib(Instrumentation instrumentation) throws IOException {
+        final File coreDir = new File(LibPathUtils.getCorePath());
+        if (coreDir.exists() && coreDir.isDirectory()) {
+            final File[] jars = coreDir.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(".jar");
+                }
+            });
+            if (jars != null) {
+                for (File jar : jars) {
+                    instrumentation.appendToSystemClassLoaderSearch(new JarFile(jar));
+                }
             }
-        }
-        for (JarFile jar : bootstrapJar) {
-            instrumentation.appendToBootstrapClassLoaderSearch(jar);
         }
     }
 

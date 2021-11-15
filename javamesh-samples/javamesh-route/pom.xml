@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>javamesh-samples</artifactId>
+        <groupId>com.huawei.javamesh</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <modules>
+        <module>route-server</module>
+        <module>gray-dubbo-2.7.x-plugin</module>
+        <module>nacos-plugin</module>
+        <module>common</module>
+        <module>label-plugin</module>
+        <module>report-plugin</module>
+        <module>gray-feign-http-9.x-plugin</module>
+    </modules>
+
+    <artifactId>javamesh-route</artifactId>
+
+    <properties>
+        <javamesh.basedir>${pom.basedir}/../../..</javamesh.basedir>
+        <package.sample.name>route-server</package.sample.name>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>agent</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>gray-feign-http-9.x-plugin</module>
+                <module>nacos-plugin</module>
+                <module>report-plugin</module>
+                <module>label-plugin</module>
+                <module>gray-dubbo-2.7.x-plugin</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>ext</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>route-server</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>all</id>
+            <modules>
+                <module>gray-feign-http-9.x-plugin</module>
+                <module>nacos-plugin</module>
+                <module>route-server</module>
+                <module>report-plugin</module>
+                <module>label-plugin</module>
+                <module>gray-dubbo-2.7.x-plugin</module>
+            </modules>
+        </profile>
+    </profiles>
+</project>

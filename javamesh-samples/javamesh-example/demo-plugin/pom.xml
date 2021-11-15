@@ -10,19 +10,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>demo-plugin</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>com.huawei.javamesh</groupId>
-            <artifactId>javamesh-agentcore-bootstrap</artifactId>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
 
     <properties>
         <package.sample.dir>${package.agent.dir}/plugins</package.sample.dir>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.huawei.javamesh</groupId>
+            <artifactId>javamesh-agentcore-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>

@@ -1,18 +1,17 @@
 package com.huawei.apm.premain.lubanops.utils;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
  * 获取javaagent依赖的jar
@@ -200,8 +199,20 @@ public class LibPathUtils {
         return getAgentPath() + File.separator + "boot";
     }
 
+    public static String getCorePath() {
+        return getAgentPath() + File.separatorChar + "core";
+    }
+
+    public static String getConfigPath() {
+        return getAgentPath() + File.separatorChar + LubanApmConstants.CONFIG_FILENAME;
+    }
+
     public static String getPluginsPath() {
         return getAgentPath() + File.separatorChar + "plugins";
+    }
+
+    public static String getLubanOpsPluginsPath() {
+        return getPluginsPath() + File.separatorChar + getLubanOpsDirName();
     }
 
     public static String getLubanOpsDirName() {

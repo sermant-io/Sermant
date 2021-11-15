@@ -1,0 +1,2 @@
+com.huawei.apm.core.service.heartbeat.HeartbeatServiceImpl
+com.huawei.apm.core.service.send.NettyGatewayClient

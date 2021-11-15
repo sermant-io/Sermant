@@ -1,7 +1,7 @@
 package com.huawei.flowcontrol.service;
 
-import com.huawei.apm.bootstrap.boot.PluginService;
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
+import com.huawei.apm.core.service.PluginService;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.flowcontrol.core.FlowControlThreadFactory;
 import com.huawei.flowcontrol.core.config.CommonConst;
 import com.huawei.flowcontrol.core.init.InitExecutor;

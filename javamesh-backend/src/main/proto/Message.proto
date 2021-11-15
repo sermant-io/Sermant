@@ -21,6 +21,12 @@ message HeartBeat{
 message ServiceData{
   enum DataType{
     SERVICE_HEARTBEAT = 0;
+    LOG = 1;
+    PLUGIN_FLOW_CONTROL_DATA = 2;
+    PLUGIN_FLOW_RECORD_DATA = 3;
+    SERVER_MONITOR = 4;
+    ORACLE_JVM_MONITOR = 5;
+    IBM_JVM_MONITOR = 6;
   }
   DataType dataType = 1;
   bytes data = 2;

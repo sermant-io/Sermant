@@ -1,17 +1,17 @@
 package com.huawei.apm.premain.lubanops.agent;
 
-import static com.huawei.apm.bootstrap.lubanops.commons.LubanApmConstants.APP_NAME_COMMONS;
-import static com.huawei.apm.bootstrap.lubanops.commons.LubanApmConstants.BIZ_PATH_COMMONS;
-import static com.huawei.apm.bootstrap.lubanops.commons.LubanApmConstants.CONFIG_FILENAME;
-import static com.huawei.apm.bootstrap.lubanops.commons.LubanApmConstants.ENV_COMMONS;
-import static com.huawei.apm.bootstrap.lubanops.commons.LubanApmConstants.ENV_SECRET_COMMONS;
-import static com.huawei.apm.bootstrap.lubanops.commons.LubanApmConstants.ENV_TAG_COMMONS;
-import static com.huawei.apm.bootstrap.lubanops.commons.LubanApmConstants.INSTANCE_NAME_COMMONS;
-import static com.huawei.apm.bootstrap.lubanops.commons.LubanApmConstants.SUB_BUSINESS_COMMONS;
+import static com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants.APP_NAME_COMMONS;
+import static com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants.BIZ_PATH_COMMONS;
+import static com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants.CONFIG_FILENAME;
+import static com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants.ENV_COMMONS;
+import static com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants.ENV_SECRET_COMMONS;
+import static com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants.ENV_TAG_COMMONS;
+import static com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants.INSTANCE_NAME_COMMONS;
+import static com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants.SUB_BUSINESS_COMMONS;
 
-import com.huawei.apm.bootstrap.lubanops.commons.ValidatorUtil;
-import com.huawei.apm.bootstrap.lubanops.utils.FileUtils;
-import com.huawei.apm.bootstrap.lubanops.utils.StringUtils;
+import com.huawei.apm.core.lubanops.bootstrap.commons.ValidatorUtil;
+import com.huawei.apm.core.lubanops.bootstrap.utils.FileUtils;
+import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.apm.premain.AgentPremain;
 import com.huawei.apm.premain.lubanops.utils.LibPathUtils;
 
@@ -218,10 +218,10 @@ public class ArgumentBuilder {
                 if (BIZ_PATH_COMMONS.equals(pair[0])) {
                     bizPath = pair[1];
                 }
-                if (SUB_BUSINESS_COMMONS.equals(pair[0])) {
-                    subBusiness = pair[1];
-                }
                 if (ENV_SECRET_COMMONS.equals(pair[0])) {
+                    if (SUB_BUSINESS_COMMONS.equals(pair[0])) {
+                        subBusiness = pair[1];
+                    }
                     envSecret = pair[1];
                 }
             }

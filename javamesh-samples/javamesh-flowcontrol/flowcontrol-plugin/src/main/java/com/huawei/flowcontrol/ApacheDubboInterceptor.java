@@ -4,7 +4,7 @@
 
 package com.huawei.flowcontrol;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
+import com.huawei.apm.core.agent.common.BeforeResult;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;

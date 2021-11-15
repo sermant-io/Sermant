@@ -1,6 +1,6 @@
 package com.huawei.flowcontrol.core.config;
 
-import com.huawei.apm.bootstrap.config.ConfigLoader;
+import com.huawei.apm.core.config.ConfigLoader;
 
 import java.util.Properties;
 

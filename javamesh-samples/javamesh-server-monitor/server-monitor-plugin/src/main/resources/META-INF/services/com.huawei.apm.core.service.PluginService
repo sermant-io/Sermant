@@ -1,0 +1,3 @@
+com.huawei.javamesh.sample.servermonitor.service.ServerMonitorService
+com.huawei.javamesh.sample.servermonitor.service.OracleJvmCollectService
+com.huawei.javamesh.sample.servermonitor.service.IbmJvmCollectService
