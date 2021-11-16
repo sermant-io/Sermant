@@ -15,7 +15,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+/**
+ *
+ * Zookeeper implementation for DynamicConfigurationService
+ *
+ */
 public class ZookeeperDynamicConfigurationService implements DynamicConfigurationService {
 
     private static final Logger logger = LogFactory.getLogger();

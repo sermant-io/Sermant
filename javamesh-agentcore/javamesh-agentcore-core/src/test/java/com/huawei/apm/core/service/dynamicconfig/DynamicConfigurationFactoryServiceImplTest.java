@@ -1,4 +1,4 @@
-package zookeeper;
+package com.huawei.apm.core.service.dynamicconfig;
 
 import com.huawei.apm.core.config.ConfigLoader;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 import static org.mockito.Mockito.mock;
 
-public class ZooKeeperDynamicConfigurationFactoryTest {
+public class DynamicConfigurationFactoryServiceImplTest {
 
 //    ZooKeeper zkClient;
     URI uri;
