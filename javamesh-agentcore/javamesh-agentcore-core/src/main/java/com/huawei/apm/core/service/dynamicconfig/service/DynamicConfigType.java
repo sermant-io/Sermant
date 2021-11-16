@@ -10,8 +10,8 @@ package com.huawei.apm.core.service.dynamicconfig.service;
  */
 public enum DynamicConfigType {
 
-    ZooKeeper,
+    ZOO_KEEPER,
 
-    Nop;
+    NOP;
 
 }

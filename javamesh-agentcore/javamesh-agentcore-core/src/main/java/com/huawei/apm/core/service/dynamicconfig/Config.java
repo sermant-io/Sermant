@@ -57,6 +57,6 @@ public class Config implements BaseConfig {
 
     protected String zookeeper_uri = "zookeeper://127.0.0.1:2181";
 
-    protected DynamicConfigType dynamicConfigType = DynamicConfigType.ZooKeeper;
+    protected DynamicConfigType dynamicConfigType = DynamicConfigType.ZOO_KEEPER;
 
 }

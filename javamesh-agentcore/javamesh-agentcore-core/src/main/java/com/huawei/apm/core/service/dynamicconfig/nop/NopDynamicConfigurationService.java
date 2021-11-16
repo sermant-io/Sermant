@@ -87,13 +87,4 @@ public class NopDynamicConfigurationService implements DynamicConfigurationServi
         // no-op
     }
 
-    @Override
-    public void start() {
-
-    }
-
-    @Override
-    public void stop() {
-
-    }
 }

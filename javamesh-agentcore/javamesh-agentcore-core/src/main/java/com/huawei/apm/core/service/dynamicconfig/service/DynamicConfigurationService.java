@@ -19,7 +19,7 @@ package com.huawei.apm.core.service.dynamicconfig.service;
 import com.huawei.apm.core.service.CoreService;
 
 
-public interface DynamicConfigurationService extends CoreService, AutoCloseable {
+public interface DynamicConfigurationService extends AutoCloseable {
 
     /**
      * {@link #addListener(String, String, ConfigurationListener)}
@@ -148,4 +148,5 @@ public interface DynamicConfigurationService extends CoreService, AutoCloseable 
     default boolean removeConfig(String key, String group) throws Exception {
         throw new UnsupportedOperationException();
     }
+
 }

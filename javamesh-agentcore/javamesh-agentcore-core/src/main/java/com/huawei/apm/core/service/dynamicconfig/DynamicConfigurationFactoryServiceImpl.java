@@ -18,10 +18,10 @@ public class DynamicConfigurationFactoryServiceImpl implements DynamicConfigurat
 
     protected DynamicConfigurationService getDynamicConfigurationService(DynamicConfigType dct) {
 
-        if ( dct == DynamicConfigType.ZooKeeper )
+        if ( dct == DynamicConfigType.ZOO_KEEPER)
             return ZookeeperDynamicConfigurationService.getInstance();
 
-        if ( dct == DynamicConfigType.Nop )
+        if ( dct == DynamicConfigType.NOP)
             return NopDynamicConfigurationService.getInstance();
 
         return null;
@@ -39,6 +39,10 @@ public class DynamicConfigurationFactoryServiceImpl implements DynamicConfigurat
 
     @Override
     public void stop() {
-
+        try {
+            this.getDynamicConfigurationService().close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

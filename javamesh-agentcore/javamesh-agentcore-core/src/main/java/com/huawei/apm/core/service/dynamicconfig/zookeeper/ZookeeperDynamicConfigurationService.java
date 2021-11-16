@@ -211,23 +211,14 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
     }
 
     @Override
-    public void start()
+    public void close()
     {
-        if ( ZookeeperDynamicConfigurationService.getInstance() == null )
-        {
-            logger.log(Level.SEVERE, "init zookeeper config error");
-            throw new RuntimeException("init zookeeper config error");
-        }
-    }
-
-    @Override
-    public void stop() {
-
         try {
-            zkClient.close();
+            this.zkClient.close();
         } catch (InterruptedException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
-
     }
+
+
 }

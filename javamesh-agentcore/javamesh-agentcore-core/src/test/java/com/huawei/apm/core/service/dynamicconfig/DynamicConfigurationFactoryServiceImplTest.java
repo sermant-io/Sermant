@@ -50,8 +50,6 @@ public class DynamicConfigurationFactoryServiceImplTest {
         ZooKeeper zkClient = null;
 
         try {
-            //System.out.println(uri.getRawPath());
-            //System.out.println(uri.getPath());
             zkClient = new ZooKeeper(uri.getHost() + ":" + uri.getPort(), 30000, new Watcher() {
                 @Override
                 public void process(WatchedEvent event) {
@@ -126,10 +124,12 @@ public class DynamicConfigurationFactoryServiceImplTest {
         rs = zdcs.getConfig("/test/test11", "test2");
         Assert.assertTrue(rs.equals("test22"));
 
-        zdcs.addListener("/test/test11", new ConfigurationListener() {
+        zdcs.addListener("/test/test11", "test2", new ConfigurationListener() {
             @Override
             public void process(ConfigChangedEvent event) {
+
                 System.out.println(event.toString());
+
             }
         });
         zdcs.publishConfig("/test/test11", "test3", "test22");
