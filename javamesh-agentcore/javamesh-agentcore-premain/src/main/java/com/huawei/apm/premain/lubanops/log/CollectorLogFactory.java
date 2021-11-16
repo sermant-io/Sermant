@@ -3,6 +3,7 @@ package com.huawei.apm.premain.lubanops.log;
 import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,18 +13,25 @@ import com.huawei.apm.core.lubanops.bootstrap.log.LogPathUtils;
 public class CollectorLogFactory {
     private static final ConcurrentMap<String, Logger> LOGGERS = new ConcurrentHashMap<String, Logger>();
 
-    /** 3个 */
+    /**
+     * 3个
+     */
     public static final int FILE_COUNT = 3;
 
-    /** 20M */
+    /**
+     * 20M
+     */
     public static final int FILE_SIZE = 1024 * 1024 * 20;
 
     private static FileHandler fileHandler;
 
-    // private static ConsoleHandler consoleHandler;
+    private static ConsoleHandler consoleHandler = new ConsoleHandler();
 
     static {
         try {
+            consoleHandler.setFormatter(new java.util.logging.SimpleFormatter());
+            consoleHandler.setLevel(Level.SEVERE);
+
             String logFilePath = LogPathUtils.getLogPath() + "logs" + File.separator;
             File fileFolder = new File(logFilePath);
             boolean result = true;
@@ -50,6 +58,7 @@ public class CollectorLogFactory {
             logger = LOGGERS.get(key);
         } else {
             logger = Logger.getLogger(key);
+            logger.addHandler(consoleHandler);
             if (fileHandler != null) {
                 logger.addHandler(fileHandler);
             }
