@@ -11,7 +11,6 @@ JavaMesh是一个基于ByteBuddy字节码技术开发的javaagent框架;框架�
    - javamesh-agentcore/javamesh-agentcore-premain: 启动入口模块
  - javamesh-backend: 消息发送模块服务端
  - javamesh-package: 打包模块  
- - javamesh-prepare: 初始化模块，现用作清理临时文件
  - javamesh-samples: 样品模块，内含各种功能的插件及其附加件
    - javamesh-samples/javamesh-example: 插件示例
    - javamesh-samples/javamesh-flowcontrol: 流控功能
@@ -22,7 +21,6 @@ JavaMesh是一个基于ByteBuddy字节码技术开发的javaagent框架;框架�
 
 JavaMesh的打包流程大致分为以下步骤：
 
-- prepare: 清理临时文件夹并拷贝外部插件、后端和前端
 - agent: 编译、打包核心功能和插件
 - example: 编译、打包核心功能和示例模块(默认不开启)
 - ext: 编译、打包插件附带的后端、前端和其他附加件
@@ -35,9 +33,9 @@ JavaMesh的打包流程大致分为以下步骤：
 
 - javamesh-agent-x.x.x/agent: javamesh-agent的客户端
   - javamesh-agent-x.x.x/agent/javamesh-agent.jar: javamesh-agent的agent包
-  - javamesh-agent-x.x.x/agent/apm.config: javamesh-agent的配置文件
+  - javamesh-agent-x.x.x/agent/bootstrap.properties: javamesh-agent的配置文件
   - javamesh-agent-x.x.x/agent/core: javamesh-agent的核心实现包存放目录
-  - javamesh-agent-x.x.x/agent/plugins: javamesh-agent的插件包存放目录
+  - javamesh-agent-x.x.x/agent/pluginPackage: javamesh-agent的插件包存放目录
 - javamesh-agent-x.x.x/server: javamesh-agent和各个插件的相应后端存放目录
 - javamesh-agent-x.x.x/webapp: 各个后端对应的前端目录
 
@@ -47,15 +45,16 @@ JavaMesh的打包流程大致分为以下步骤：
 
 示例插件中将展示以下内容：
 
-- 如何编写一个增强定义[EnhanceDefinition](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/definition/EnhanceDefinition.java)
+- 如何编写一个增强定义[EnhanceDefinition](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/agent/definition/EnhanceDefinition.java)
   - 如何定位到一个被注解修饰的类[DemoAnnotationDefinition](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoAnnotationDefinition.java)
   - 如何通过名称定位到一个类[DemoNameDefinition](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoNameDefinition.java)
   - 如何定位到一个超类的子类[DemoSuperTypeDefinition](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoSuperTypeDefinition.java)
-- 如何编写一个拦截器[Interceptor](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/interceptors/Interceptor.java)
+- 如何编写一个拦截器[Interceptor](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/agent/interceptor/Interceptor.java)
   - 如何编写一个构造函数的拦截器[DemoConstInterceptor](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConstInterceptor.java)
   - 如何编写一个示例方法的拦截器[DemoInstInterceptor](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoInstInterceptor.java)
   - 如何编写一个静态方法的拦截器[DemoStaticInterceptor](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoStaticInterceptor.java)
-- 如何编写一个插件服务[DemoService](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoService.java)
+- 如何编写一个简单插件服务[DemoSimpleService](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)
+- 如何编写一个复杂插件服务[DemoComplexServiceImpl](javamesh-samples/javamesh-example/demo-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java)
 - 如何使用框架服务
   - 如何在插件端使用日志功能[DemoLoggerInterceptor](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoLoggerInterceptor.java)
   - 如何在插件端使用静态配置[DemoConfigInterceptor](javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConfigInterceptor.java)
@@ -104,11 +103,13 @@ java -javaagent:${JavaMesh}\javamesh-agent-x.x.x\agent\javamesh-agent.jar=appNam
 
 ## 插件开发
 框架采用SPI机制进行插件的加载，插件的开发需要在resources/META-INF/service创建相应的文件(文件名与实现接口的全限定名一致)
-### [增强类接口](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/definition/EnhanceDefinition.java)
+
+本节将以示例工程为例，介绍开发插件过程中可能涉及的一些内容，[了解更多插件开发相关的详细信息，可以点击这里](javamesh-samples/README.md)。
+### [增强类接口](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/agent/definition/EnhanceDefinition.java)
 该接口定义了两个方法：`ClassMatcher enhanceClass()`和`MethodInterceptPoint[] getMethodInterceptPoints()`：  
 `ClassMatcher enhanceClass()`用来获取需要增强的目标类，支持单个和多个类，注解，也可以通过前缀匹配需要增强的类；  
 `MethodInterceptPoint[] getMethodInterceptPoints()`用来获取封装了待增强目标方法和其拦截器的MethodInterceptPoint(对应的拦截器接口说明在下面详细说明)，支持返回多个不同类型的拦截器。
-- [spi文件示例](javamesh-samples/javamesh-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.bootstrap.definition.EnhanceDefinition)  
+- [spi文件示例](javamesh-samples/javamesh-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.core.agent.definition.EnhanceDefinition)  
   文件名为接口类文件的全限定名；  
   文件内容为实现了该接口的类的全限定名；    
   文件位置按照spi的机制应放到模块`resources/META-INF/services`。
@@ -132,11 +133,11 @@ public class DemoAnnotationDefinition implements EnhanceDefinition {
 }
 ```
 在示例代码中增强了`com.huawei.example.demo.DemoAnnotation`注解修饰的类，拦截器的类为`com.huawei.example.demo.interceptor.DemoStaticInterceptor`，实现了静态方法拦截接口(这部分在下面详细说明)，拦截的方法为`staticFunc`方法。
-### [拦截器接口](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/interceptors/Interceptor.java)
+### [拦截器接口](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/agent/interceptor/Interceptor.java)
 该部分接口的实现不需要通过spi机制加载；  
 拦截器接口的实现类用在增强类接口的`getMethodInterceptPoints()`方法中；
 根据方法的不同扩展出了三种拦截器接口，分别是静态方法拦截器`StaticMethodInterceptor`，实例方法拦截器`InstanceMethodInterceptor`,构造方法拦截器`ConstructorInterceptor`。
-- [静态拦截器](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/interceptors/StaticMethodInterceptor.java)  
+- [静态拦截器](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/agent/interceptor/StaticMethodInterceptor.java)  
   该拦截器接口中有三个方法：`before`, `after`, `onThrow`。  
   `before`在拦截方法执行前前运行；`after`在拦截方法执行结束后运行；`onThrow`用于异常处理。
 ```java
@@ -158,14 +159,14 @@ public class DemoStaticInterceptor implements StaticMethodInterceptor {
     }
 }
 ```
-- [示例拦截器](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/interceptors/InstanceMethodInterceptor.java)  
+- [实例拦截器](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/agent/interceptor/InstanceMethodInterceptor.java)  
   该拦截器接口中有三个方法：`before`, `after`, `onThrow`。  
   `before`在拦截方法执行前前运行；`after`在拦截方法执行结束后运行；`onThrow`为异常处理。
-- [构造拦截器](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/interceptors/ConstructorInterceptor.java)
+- [构造拦截器](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/agent/interceptor/ConstructorInterceptor.java)
 - 该拦截器接口中有一个方法：`onConstruct`。
-### [插件配置接口](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/config/BaseConfig.java)
+### [插件配置接口](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/plugin/config/PluginConfig.java)
 插件配置接口实现类中写入插件运行过程中需要的配置信息。
-- [spi文件示例](javamesh-samples/javamesh-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.bootstrap.config.BaseConfig)  
+- [spi文件示例](javamesh-samples/javamesh-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.core.plugin.config.PluginConfig)  
   文件名为接口类文件的全限定名；  
   文件内容为实现了该接口的类的全限定名；    
   文件位置按照spi的机制应放到模块`resources/META-INF/services`。
@@ -176,8 +177,8 @@ public class DemoConfig implements BaseConfig {
     private Map<String, Double> map = Collections.emptyMap();
 }
 ```
-### [插件初始化接口](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/boot/PluginService.java)
-- [spi文件示例](javamesh-samples/javamesh-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.bootstrap.boot.PluginService)  
+### [插件初始化接口](javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/plugin/service/PluginService.java)
+- [spi文件示例](javamesh-samples/javamesh-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.apm.core.plugin.service.PluginService)  
   文件名为接口类文件的全限定名；  
   文件内容为实现了该接口的类的全限定名；    
   文件位置按照spi的机制应放到模块`resources/META-INF/services`。  
@@ -188,8 +189,8 @@ public class DemoConfig implements BaseConfig {
 ```java
 public class DemoService implements PluginService {
     @Override
-    public void init() {
-        System.out.println("[DemoService]-init");
+    public void start() {
+        System.out.println("[DemoService]-start");
     }
 
     @Override

@@ -4,8 +4,8 @@
 
 package com.huawei.route.label;
 
-import com.huawei.apm.core.config.BaseConfig;
-import com.huawei.apm.core.config.ConfigTypeKey;
+import com.huawei.apm.core.config.common.ConfigTypeKey;
+import com.huawei.apm.core.plugin.config.PluginConfig;
 
 /**
  * 标签库配置
@@ -14,7 +14,7 @@ import com.huawei.apm.core.config.ConfigTypeKey;
  * @since 2021-11-02
  */
 @ConfigTypeKey("route.label.plugin")
-public class LabelConfig implements BaseConfig {
+public class LabelConfig implements PluginConfig {
     /**
      * 标签库端口
      * 默认8001

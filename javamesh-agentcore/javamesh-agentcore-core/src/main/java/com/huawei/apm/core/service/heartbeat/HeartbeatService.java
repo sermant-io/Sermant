@@ -6,7 +6,7 @@ package com.huawei.apm.core.service.heartbeat;
 
 import java.util.Map;
 
-import com.huawei.apm.core.service.CoreService;
+import com.huawei.apm.core.service.BaseService;
 
 /**
  * 心跳服务
@@ -15,7 +15,7 @@ import com.huawei.apm.core.service.CoreService;
  * @version 1.0.0
  * @since 2021/10/25
  */
-public interface HeartbeatService extends CoreService {
+public interface HeartbeatService extends BaseService {
     /**
      * 注册心跳
      *

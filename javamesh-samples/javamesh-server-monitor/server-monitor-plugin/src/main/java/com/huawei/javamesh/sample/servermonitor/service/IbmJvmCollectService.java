@@ -4,8 +4,8 @@
 
 package com.huawei.javamesh.sample.servermonitor.service;
 
-import com.huawei.apm.core.service.CoreServiceManager;
-import com.huawei.apm.core.service.PluginService;
+import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.service.send.GatewayClient;
 import com.huawei.javamesh.sample.servermonitor.collector.IbmJvmMetricCollector;
@@ -34,7 +34,7 @@ public class IbmJvmCollectService implements PluginService {
     private IbmJvmMetricCollector ibmJvmMetricCollector;
 
     @Override
-    public void init() {
+    public void start() {
         boolean needCollect = System.getProperty("java.vm.vendor").contains("IBM");
         if (!needCollect) {
             LOGGER.info("The IBM jvm metric collect task does not need to start in current jvm arch.");
@@ -42,7 +42,7 @@ public class IbmJvmCollectService implements PluginService {
         }
 
         ibmJvmMetricCollector = new IbmJvmMetricCollector();
-        gatewayClient = CoreServiceManager.INSTANCE.getService(GatewayClient.class);
+        gatewayClient = ServiceManager.getService(GatewayClient.class);
 
         // Get from config
         final long collectInterval = 1;

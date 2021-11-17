@@ -130,7 +130,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.huawei.recordconsole.RecordConsoleApplication</mainClass>
-                    <outputDirectory>${package.output.dir}</outputDirectory>
+                    <outputDirectory>${package.server.output.dir}</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>

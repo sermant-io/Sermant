@@ -6,7 +6,7 @@ package com.huawei.route.label;
 
 import com.huawei.apm.core.lubanops.bootstrap.config.IdentityConfigManager;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
-import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.heartbeat.HeartbeatInterval;
 import com.huawei.apm.core.service.heartbeat.HeartbeatService;
 import com.huawei.route.common.factory.NamedThreadFactory;
@@ -76,7 +76,7 @@ public enum LabelValidService {
     }
 
     private void initHeartbeat(int port) {
-        HeartbeatService heartbeatService = CoreServiceManager.INSTANCE.getService(HeartbeatService.class);
+        HeartbeatService heartbeatService = ServiceManager.getService(HeartbeatService.class);
         heartbeatService.heartbeat(HEARTBEAT_NAME, HeartbeatInfoProvider.getInstance(),
                 HeartbeatInterval.OFTEN);
         // 新增心跳内容

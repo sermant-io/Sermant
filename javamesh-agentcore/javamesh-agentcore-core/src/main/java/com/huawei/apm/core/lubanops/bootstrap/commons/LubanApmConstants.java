@@ -24,7 +24,7 @@ public class LubanApmConstants {
     public final static String MONITOR_DATA_TYPE = "MonitorData";
 
     // ~~ config key
-    public final static String CONFIG_FILENAME = "apm.config";
+    public final static String CONFIG_FILENAME = "bootstrap.properties";
 
     public final static String APP_NAME_COMMONS = "appName";
 

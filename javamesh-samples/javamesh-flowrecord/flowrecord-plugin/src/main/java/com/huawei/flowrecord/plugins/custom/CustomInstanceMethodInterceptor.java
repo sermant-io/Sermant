@@ -7,7 +7,7 @@ package com.huawei.flowrecord.plugins.custom;
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.apm.core.lubanops.bootstrap.trace.TraceCollector;
-import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.send.GatewayClient;
 import com.huawei.flowrecord.config.CommonConst;
 import com.huawei.flowrecord.config.ConfigConst;
@@ -32,7 +32,7 @@ import java.util.HashMap;
  */
 public class CustomInstanceMethodInterceptor implements InstanceMethodInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomInstanceMethodInterceptor.class);
-    private final GatewayClient gatewayClient = CoreServiceManager.INSTANCE.getService(GatewayClient.class);
+    private final GatewayClient gatewayClient = ServiceManager.getService(GatewayClient.class);
 
     private void sendRecorder(String subCallKey, int subCallCount, Method method, Object[] params, Object ret,
                               HashMap<String, String> jobMap) {

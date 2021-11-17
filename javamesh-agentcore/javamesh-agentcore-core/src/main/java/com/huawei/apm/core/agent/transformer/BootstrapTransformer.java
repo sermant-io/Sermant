@@ -27,14 +27,13 @@ import com.huawei.apm.core.agent.definition.EnhanceDefinition;
 import com.huawei.apm.core.agent.interceptor.ConstructorInterceptor;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.apm.core.agent.interceptor.Interceptor;
+import com.huawei.apm.core.agent.interceptor.InterceptorLoader;
 import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
-import com.huawei.apm.core.lubanops.bootstrap.Listener;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.apm.core.plugin.PluginServiceManager;
 import com.huawei.apm.core.agent.template.BootstrapConstTemplate;
 import com.huawei.apm.core.agent.template.BootstrapInstTemplate;
 import com.huawei.apm.core.agent.template.BootstrapStaticTemplate;
-import com.huawei.apm.core.agent.interceptor.InterceptorLoader;
+import com.huawei.apm.core.lubanops.bootstrap.Listener;
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
  * 启动类加载器加载类的Transformer
@@ -58,9 +57,7 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
         if (listener == null && definitions.isEmpty()) {
             return builder;
         }
-        classLoader = ClassLoader.getSystemClassLoader(); // 使用当前线程作增强操作
-        // 启动类的插件服务使用当前线程的ClassLoader初始化
-        PluginServiceManager.INSTANCE.init(classLoader);
+        classLoader = ClassLoader.getSystemClassLoader();
         return enhanceMethods(listener, definitions, builder, typeDescription, classLoader);
     }
 
