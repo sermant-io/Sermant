@@ -10,7 +10,6 @@ package com.huawei.flowcontrol.core.datasource;
  * @author liyi
  * @since 2020-08-26
  */
-@FunctionalInterface
 public interface DataSourceManager {
     /**
      * 初始化规则
