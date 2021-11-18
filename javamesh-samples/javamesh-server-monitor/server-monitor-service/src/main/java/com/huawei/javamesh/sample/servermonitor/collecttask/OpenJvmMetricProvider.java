@@ -2,14 +2,13 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
  */
 
-package com.huawei.javamesh.sample.servermonitor.service;
+package com.huawei.javamesh.sample.servermonitor.collecttask;
 
-import com.huawei.apm.core.service.ServiceManager;
-import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.plugin.config.PluginConfigManager;
+import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.send.GatewayClient;
-import com.huawei.javamesh.sample.servermonitor.common.Consumer;
-import com.huawei.javamesh.sample.servermonitor.common.Supplier;
+import com.huawei.javamesh.sample.servermonitor.config.ServiceConfig;
 import org.apache.skywalking.apm.agent.core.jvm.cpu.CPUProvider;
 import org.apache.skywalking.apm.agent.core.jvm.gc.GCProvider;
 import org.apache.skywalking.apm.agent.core.jvm.memory.MemoryProvider;
@@ -19,54 +18,33 @@ import org.apache.skywalking.apm.network.language.agent.v3.JVMMetric;
 import org.apache.skywalking.apm.network.language.agent.v3.JVMMetricCollection;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * Oracle JVM采集服务
+ * OpenJdk JVM Metric Provider
  */
-public class OracleJvmCollectService implements PluginService {
-
+public class OpenJvmMetricProvider implements MetricProvider<JVMMetric> {
     private static final Logger LOGGER = LogFactory.getLogger();
+    private static final int GATEWAY_DATA_TYPE = 5;
+    private static final OpenJvmMetricProvider INSTANCE = new OpenJvmMetricProvider();
 
-    private final static int GATEWAY_DATA_TYPE = 5;
+    private final GatewayClient gatewayClient;
+    private final String service;
+    private final String serviceInstance;
 
-    private CollectTask<JVMMetric> collectTask;
-
-    private GatewayClient gatewayClient;
-
-    @Override
-    public void start() {
-        // Get from config
-        final long collectInterval = 1;
-        final long consumeInterval = 60;
-
+    private OpenJvmMetricProvider() {
+        ServiceConfig config = PluginConfigManager.getPluginConfig(ServiceConfig.class);
+        service = config.getService();
+        serviceInstance = config.getServiceInstance();
         gatewayClient = ServiceManager.getService(GatewayClient.class);
+    }
 
-        collectTask = CollectTask.create(
-            new Supplier<JVMMetric>() {
-                @Override
-                public JVMMetric get() {
-                    return collect();
-                }
-            }, collectInterval,
-            new Consumer<List<JVMMetric>>() {
-                @Override
-                public void accept(List<JVMMetric> serverMonitoringMetrics) {
-                    send(serverMonitoringMetrics);
-                }
-            }, consumeInterval,
-            TimeUnit.SECONDS);
-        collectTask.start();
-        LOGGER.info("Oracle jvm metric collect task started.");
+    public static OpenJvmMetricProvider getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public void stop() {
-        collectTask.stop();
-    }
-
-    private JVMMetric collect() {
+    public JVMMetric collect() {
         final long currentTimeMillis = System.currentTimeMillis();
         return JVMMetric.newBuilder().setTime(currentTimeMillis)
             .setCpu(CPUProvider.INSTANCE.getCpuMetric())
@@ -77,15 +55,15 @@ public class OracleJvmCollectService implements PluginService {
             .build();
     }
 
-    private void send(List<JVMMetric> metrics) {
+    @Override
+    public void consume(List<JVMMetric> metrics) {
         if (metrics == null || metrics.isEmpty()) {
             LOGGER.warning("No Oracle jvm metric was collected.");
             return;
         }
-
         JVMMetricCollection collection = JVMMetricCollection.newBuilder()
-            .setService("service") // 占位
-            .setServiceInstance("service_instance") // 占位
+            .setService(service)
+            .setServiceInstance(serviceInstance)
             .addAllMetrics(metrics)
             .build();
         gatewayClient.send(collection.toByteArray(), GATEWAY_DATA_TYPE);
