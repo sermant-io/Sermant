@@ -4,10 +4,12 @@
 
 package com.huawei.apm.core.service.send;
 
+import com.huawei.apm.core.service.BaseService;
+
 /**
  * 网关的客户端
  */
-public interface GatewayClient {
+public interface GatewayClient extends BaseService {
 
     /**
      * 向统一网关发送数据

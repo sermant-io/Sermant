@@ -12,7 +12,7 @@
     <artifactId>server-monitor-plugin</artifactId>
 
     <properties>
-        <package.sample.dir>${package.agent.dir}/plugins</package.sample.dir>
+        <package.sample.type>plugin</package.sample.type>
         <commons-io.version>2.6</commons-io.version>
         <apm-agent-core.version>8.1.0</apm-agent-core.version>
     </properties>

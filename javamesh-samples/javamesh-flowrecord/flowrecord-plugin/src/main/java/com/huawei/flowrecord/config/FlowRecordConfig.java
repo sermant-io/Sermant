@@ -1,14 +1,15 @@
 package com.huawei.flowrecord.config;
 
-import com.huawei.apm.core.config.BaseConfig;
-import com.huawei.apm.core.config.ConfigTypeKey;
+import com.huawei.apm.core.config.common.ConfigTypeKey;
+import com.huawei.apm.core.plugin.config.PluginConfig;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @ConfigTypeKey("flow.record.plugin")
-public class FlowRecordConfig implements BaseConfig {
+public class FlowRecordConfig implements PluginConfig {
 
     /**
      * 流配置中心 zookeeper地址

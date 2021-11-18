@@ -1,10 +1,10 @@
 package com.huawei.flowcontrol.core.config;
 
-import com.huawei.apm.core.config.BaseConfig;
-import com.huawei.apm.core.config.ConfigTypeKey;
+import com.huawei.apm.core.config.common.ConfigTypeKey;
+import com.huawei.apm.core.plugin.config.PluginConfig;
 
 @ConfigTypeKey("flow.control.plugin")
-public class FlowControlConfig implements BaseConfig {
+public class FlowControlConfig implements PluginConfig {
     /**
      * 流控插件kafka地址
      */

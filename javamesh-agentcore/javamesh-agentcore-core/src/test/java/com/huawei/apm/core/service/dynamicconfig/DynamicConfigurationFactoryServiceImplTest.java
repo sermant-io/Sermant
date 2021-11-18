@@ -1,8 +1,7 @@
 package com.huawei.apm.core.service.dynamicconfig;
 
-import com.huawei.apm.core.config.ConfigLoader;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.apm.core.service.CoreService;
+import com.huawei.apm.core.service.BaseService;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationFactoryService;
@@ -83,10 +82,10 @@ public class DynamicConfigurationFactoryServiceImplTest {
     @Test
     public void testFactory() {
 
-        ServiceLoader<CoreService> sl = ServiceLoader.load(CoreService.class);
+        ServiceLoader<BaseService> sl = ServiceLoader.load(BaseService.class);
         DynamicConfigurationFactoryService dcfs = null;
 
-        for ( CoreService cs : sl)
+        for ( BaseService cs : sl)
         {
             if (cs.getClass().toString().contains("DynamicConfigurationFactoryServiceImpl"))
             {

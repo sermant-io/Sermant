@@ -14,7 +14,7 @@ import com.huawei.apm.core.agent.enhancer.ConstructorEnhancer;
 import com.huawei.apm.core.agent.enhancer.InstanceMethodEnhancer;
 import com.huawei.apm.core.agent.enhancer.MemberFieldsHandler;
 import com.huawei.apm.core.agent.enhancer.StaticMethodEnhancer;
-import com.huawei.apm.core.plugin.PluginServiceManager;
+import com.huawei.apm.core.plugin.service.PluginServiceManager;
 import com.huawei.apm.core.lubanops.bootstrap.Listener;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.method.MethodDescription;
@@ -34,7 +34,7 @@ import java.util.List;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
 /**
- * 多次增强Transformer
+ * 委派Transformer，支持多次增强
  */
 public class DelegateTransformer implements AgentBuilder.Transformer {
     private static final String ENHANCED_FIELD_NAME = "_$lopsAttribute_enhanced";
@@ -42,17 +42,12 @@ public class DelegateTransformer implements AgentBuilder.Transformer {
     @Override
     public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,
             ClassLoader classLoader, JavaModule module) {
-        if (classLoader == null) {
-            return new BootstrapTransformer().transform(builder, typeDescription, null, module);
-        }
         final EnhanceDefinitionLoader loader = EnhanceDefinitionLoader.getInstance();
         final Listener listener = loader.findNameListener(typeDescription);
         final List<EnhanceDefinition> definitions = loader.findDefinitions(typeDescription);
         if (listener == null && definitions.isEmpty()) {
             return builder;
         }
-        // 初始化插件, 只会调用一次, 目的是使用增强类的类加载器对插件初始化, 这样可保证拦截器以及初始化的内容数据可共享
-        PluginServiceManager.INSTANCE.init(classLoader);
         return enhanceMethods(listener, definitions, builder, typeDescription, classLoader);
     }
 

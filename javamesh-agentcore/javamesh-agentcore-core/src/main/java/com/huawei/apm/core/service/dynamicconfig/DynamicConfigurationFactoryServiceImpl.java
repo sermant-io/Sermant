@@ -1,6 +1,5 @@
 package com.huawei.apm.core.service.dynamicconfig;
 
-import com.huawei.apm.core.service.CoreService;
 import com.huawei.apm.core.service.dynamicconfig.nop.NopDynamicConfigurationService;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigType;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationFactoryService;
@@ -13,7 +12,7 @@ import com.huawei.apm.core.service.dynamicconfig.zookeeper.ZookeeperDynamicConfi
  * The implementation for the DynamicConfigurationFactoryService
  *
  */
-public class DynamicConfigurationFactoryServiceImpl implements DynamicConfigurationFactoryService, CoreService {
+public class DynamicConfigurationFactoryServiceImpl implements DynamicConfigurationFactoryService {
 
 
     protected DynamicConfigurationService getDynamicConfigurationService(DynamicConfigType dct) {

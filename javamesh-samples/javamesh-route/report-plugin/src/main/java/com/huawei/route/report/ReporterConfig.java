@@ -4,8 +4,8 @@
 
 package com.huawei.route.report;
 
-import com.huawei.apm.core.config.BaseConfig;
-import com.huawei.apm.core.config.ConfigTypeKey;
+import com.huawei.apm.core.config.common.ConfigTypeKey;
+import com.huawei.apm.core.plugin.config.PluginConfig;
 
 /**
  * 上报插件配置
@@ -14,7 +14,7 @@ import com.huawei.apm.core.config.ConfigTypeKey;
  * @since 2021-11-02
  */
 @ConfigTypeKey("route.reporter.plugin")
-public class ReporterConfig implements BaseConfig {
+public class ReporterConfig implements PluginConfig {
     /**
      * 路由server地址
      */

@@ -16,9 +16,6 @@
  */
 package com.huawei.apm.core.service.dynamicconfig.service;
 
-import com.huawei.apm.core.service.CoreService;
-
-
 public interface DynamicConfigurationService extends AutoCloseable {
 
     /**

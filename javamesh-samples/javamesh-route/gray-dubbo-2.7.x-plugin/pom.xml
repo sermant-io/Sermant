@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dubbo.version>2.7.0</dubbo.version>
         <javax-servlet-api.version>3.0.1</javax-servlet-api.version>
-        <package.sample.dir>${package.agent.dir}/plugins</package.sample.dir>
+        <package.sample.type>plugin</package.sample.type>
     </properties>
 
     <dependencies>

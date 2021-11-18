@@ -1,8 +1,8 @@
 package com.huawei.apm.core.service.dynamicconfig;
 
-import com.huawei.apm.core.config.BaseConfig;
-import com.huawei.apm.core.config.ConfigLoader;
-import com.huawei.apm.core.config.ConfigTypeKey;
+import com.huawei.apm.core.config.ConfigManager;
+import com.huawei.apm.core.config.common.BaseConfig;
+import com.huawei.apm.core.config.common.ConfigTypeKey;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigType;
 
@@ -25,7 +25,7 @@ public class Config implements BaseConfig {
     public synchronized static Config getInstance()
     {
         if ( singleInst == null ) {
-            Config config = ConfigLoader.getConfig(Config.class);
+            Config config = ConfigManager.getConfig(Config.class);
             singleInst = config;
         }
         if ( singleInst == null ) {

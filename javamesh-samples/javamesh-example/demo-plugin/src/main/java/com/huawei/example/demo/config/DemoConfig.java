@@ -8,19 +8,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.huawei.apm.core.config.BaseConfig;
-import com.huawei.apm.core.config.ConfigFieldKey;
-import com.huawei.apm.core.config.ConfigTypeKey;
+import com.huawei.apm.core.config.common.ConfigFieldKey;
+import com.huawei.apm.core.config.common.ConfigTypeKey;
+import com.huawei.apm.core.plugin.config.AliaConfig;
 
 /**
- * 统一配置示例，实现{@link BaseConfig}接口
+ * 统一配置示例
  *
  * @author HapThorin
  * @version 1.0.0
  * @since 2021/10/25
  */
 @ConfigTypeKey("demo.test") // 声明前缀
-public class DemoConfig implements BaseConfig {
+public class DemoConfig extends AliaConfig { // 有设置拦截器别名需求的继承AliaConfig，否则实现PluginConfig
     /**
      * 基础类型配置(除byte和char)
      */
@@ -30,6 +30,11 @@ public class DemoConfig implements BaseConfig {
      * 字符串类型配置
      */
     private String strField;
+
+    /**
+     * 复杂类型配置
+     */
+    private DemoPojo pojoField;
 
     /**
      * 数组类型，子类型为基础类型、字符串或枚举
@@ -44,8 +49,8 @@ public class DemoConfig implements BaseConfig {
     /**
      * 字典类型，子类型为基础类型、字符串或枚举
      */
-    @ConfigFieldKey("str2DoubleMap") // 修改参数名称后缀
-    private Map<String, Double> map;
+    @ConfigFieldKey("str2DemoSimplePojoMap") // 为属性起别名
+    private Map<String, DemoPojo> map;
 
     /**
      * 枚举类型
@@ -68,6 +73,14 @@ public class DemoConfig implements BaseConfig {
         this.strField = strField;
     }
 
+    public DemoPojo getPojoField() {
+        return pojoField;
+    }
+
+    public void setPojoField(DemoPojo pojoField) {
+        this.pojoField = pojoField;
+    }
+
     public short[] getShortArr() {
         return shortArr;
     }
@@ -84,11 +97,11 @@ public class DemoConfig implements BaseConfig {
         this.longList = longList;
     }
 
-    public Map<String, Double> getMap() {
+    public Map<String, DemoPojo> getMap() {
         return map;
     }
 
-    public void setMap(Map<String, Double> map) {
+    public void setMap(Map<String, DemoPojo> map) {
         this.map = map;
     }
 
@@ -103,11 +116,13 @@ public class DemoConfig implements BaseConfig {
     @Override
     public String toString() {
         return "DemoConfig{" +
-                "intField=" + intField + ", " +
-                "strField='" + strField + "', " +
-                "shortArr=" + Arrays.toString(shortArr) + ", " +
-                "longList=" + longList + ", " +
-                "map=" + map + ", " +
-                "enumType=" + enumType + "}";
+                "intField=" + intField +
+                ", strField='" + strField + '\'' +
+                ", demoComplexPojoField=" + pojoField +
+                ", shortArr=" + Arrays.toString(shortArr) +
+                ", longList=" + longList +
+                ", map=" + map +
+                ", enumType=" + enumType +
+                "} " + super.toString();
     }
 }

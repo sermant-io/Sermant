@@ -4,8 +4,8 @@
 
 package com.huawei.javamesh.sample.servermonitor.service;
 
-import com.huawei.apm.core.service.CoreServiceManager;
-import com.huawei.apm.core.service.PluginService;
+import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.service.send.GatewayClient;
 import com.huawei.javamesh.sample.servermonitor.common.Consumer;
@@ -36,12 +36,12 @@ public class OracleJvmCollectService implements PluginService {
     private GatewayClient gatewayClient;
 
     @Override
-    public void init() {
+    public void start() {
         // Get from config
         final long collectInterval = 1;
         final long consumeInterval = 60;
 
-        gatewayClient = CoreServiceManager.INSTANCE.getService(GatewayClient.class);
+        gatewayClient = ServiceManager.getService(GatewayClient.class);
 
         collectTask = CollectTask.create(
             new Supplier<JVMMetric>() {

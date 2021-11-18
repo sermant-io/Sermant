@@ -22,19 +22,19 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <app.env>dev</app.env>
+                <profile.id>agent</profile.id>
             </properties>
         </profile>
         <profile>
             <id>example</id>
             <properties>
-                <app.env>test</app.env>
+                <profile.id>example</profile.id>
             </properties>
         </profile>
         <profile>
             <id>all</id>
             <properties>
-                <app.env>test</app.env>
+                <profile.id>all</profile.id>
             </properties>
         </profile>
     </profiles>

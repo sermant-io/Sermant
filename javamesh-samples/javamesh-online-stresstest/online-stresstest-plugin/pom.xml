@@ -13,7 +13,7 @@
     <artifactId>online-stresstest-plugin</artifactId>
     <version>1.0.0</version>
     <properties>
-        <package.sample.dir>${package.agent.dir}/plugins</package.sample.dir>
+        <package.sample.type>plugin</package.sample.type>
     </properties>
     <build>
         <plugins>

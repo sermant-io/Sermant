@@ -4,8 +4,8 @@
 
 package com.huawei.javamesh.sample.servermonitor.service;
 
-import com.huawei.apm.core.service.CoreServiceManager;
-import com.huawei.apm.core.service.PluginService;
+import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.service.send.GatewayClient;
 import com.huawei.javamesh.sample.servermonitor.collector.CpuMetricCollector;
@@ -42,7 +42,7 @@ public class ServerMonitorService implements PluginService {
     private GatewayClient gatewayClient;
 
     @Override
-    public void init() {
+    public void start() {
         // 此处用白名单比较合适，比如除了Windows外的其他非Linux也是不采集的
         boolean needCollect = !System.getProperty("os.name").contains("Windows");
 
@@ -59,7 +59,7 @@ public class ServerMonitorService implements PluginService {
         networkMetricCollector = new NetworkMetricCollector(collectInterval);
         memoryMetricCollector = new MemoryMetricCollector();
 
-        gatewayClient = CoreServiceManager.INSTANCE.getService(GatewayClient.class);
+        gatewayClient = ServiceManager.getService(GatewayClient.class);
 
         collectTask = CollectTask.create(
             new Supplier<ServerMetric>() {

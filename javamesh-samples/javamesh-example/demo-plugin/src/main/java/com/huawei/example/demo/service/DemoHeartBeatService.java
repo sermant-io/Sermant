@@ -4,8 +4,8 @@
 
 package com.huawei.example.demo.service;
 
-import com.huawei.apm.core.service.CoreServiceManager;
-import com.huawei.apm.core.service.PluginService;
+import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.apm.core.service.heartbeat.HeartbeatService;
 
 /**
@@ -16,11 +16,10 @@ import com.huawei.apm.core.service.heartbeat.HeartbeatService;
  * @since 2021/10/25
  */
 public class DemoHeartBeatService implements PluginService {
-    private static final HeartbeatService HEARTBEAT_SERVICE =
-            CoreServiceManager.INSTANCE.getService(HeartbeatService.class);
+    private static final HeartbeatService HEARTBEAT_SERVICE = ServiceManager.getService(HeartbeatService.class);
 
     @Override
-    public void init() {
+    public void start() {
         // 注册心跳功能
         HEARTBEAT_SERVICE.heartbeat("demo_heartbeat");
     }

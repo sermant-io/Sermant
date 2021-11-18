@@ -5,7 +5,7 @@
 package com.huawei.flowcontrol.core.util;
 
 import com.alibaba.csp.sentinel.log.RecordLog;
-import com.huawei.apm.core.config.ConfigLoader;
+import com.huawei.apm.core.config.ConfigManager;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.flowcontrol.core.config.CommonConst;
 import com.huawei.flowcontrol.core.config.ConfigConst;
@@ -35,7 +35,7 @@ public class PluginConfigUtil {
 
     static {
         // 待后续接入配置中心
-        setPropertiesFromFlowControlConfig(ConfigLoader.getConfig(FlowControlConfig.class));
+        setPropertiesFromFlowControlConfig(ConfigManager.getConfig(FlowControlConfig.class));
     }
 
     /**
@@ -85,7 +85,7 @@ public class PluginConfigUtil {
         }
         try {
             String rootInfo = new String(zkClient.getData().forPath(
-                ConfigLoader.getConfig(FlowControlConfig.class).getConfigZookeeperPath() + CommonConst.SLASH_SIGN + active), Charset.forName("UTF-8"));
+                ConfigManager.getConfig(FlowControlConfig.class).getConfigZookeeperPath() + CommonConst.SLASH_SIGN + active), Charset.forName("UTF-8"));
             String[] configData = rootInfo.split(CommonConst.NEWLINE_SIGN);
             for (String line : configData) {
                 String[] values = line.split(CommonConst.EQUAL_SIGN);
