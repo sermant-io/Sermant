@@ -4,7 +4,7 @@
 
 package com.huawei.route.label;
 
-import com.huawei.apm.core.config.ConfigManager;
+import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.apm.core.plugin.service.PluginService;
 
 /**
@@ -16,7 +16,7 @@ import com.huawei.apm.core.plugin.service.PluginService;
 public class LabelInitServiceImpl implements PluginService {
     @Override
     public void start() {
-        final LabelConfig config = ConfigManager.getConfig(LabelConfig.class);
+        final LabelConfig config = PluginConfigManager.getPluginConfig(LabelConfig.class);
         if (config.isLabelOpen()) {
             LabelValidService.INSTANCE.start(config.getPort());
         }

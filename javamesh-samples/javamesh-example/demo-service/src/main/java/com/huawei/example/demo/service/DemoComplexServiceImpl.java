@@ -6,8 +6,8 @@ package com.huawei.example.demo.service;
 
 import java.util.logging.Logger;
 
-import com.huawei.apm.core.config.ConfigManager;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.example.demo.config.DemoConfig;
 import com.huawei.example.demo.config.DemoServiceConfig;
@@ -45,9 +45,9 @@ public class DemoComplexServiceImpl implements DemoComplexService {
     @Override
     public void passiveFunc() {
         System.out.println("[DemoComplexService]-passiveFunc");
-        final DemoServiceConfig serviceConfig = ConfigManager.getConfig(DemoServiceConfig.class);
+        final DemoServiceConfig serviceConfig = PluginConfigManager.getPluginConfig(DemoServiceConfig.class);
         System.out.println(getClass().getSimpleName() + ": " + serviceConfig);
-        final DemoConfig demoConfig = ConfigManager.getConfig(DemoConfig.class);
+        final DemoConfig demoConfig = PluginConfigManager.getPluginConfig(DemoConfig.class);
         System.out.println(getClass().getSimpleName() + ": " + demoConfig);
         logger.info("[DemoService]-passiveFunc");
     }

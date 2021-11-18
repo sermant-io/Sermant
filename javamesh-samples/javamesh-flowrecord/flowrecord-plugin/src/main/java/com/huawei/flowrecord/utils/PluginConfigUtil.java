@@ -4,7 +4,7 @@
 
 package com.huawei.flowrecord.utils;
 
-import com.huawei.apm.core.config.ConfigManager;
+import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.flowrecord.config.FlowRecordConfig;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
@@ -18,7 +18,7 @@ public class PluginConfigUtil {
 
     static {
         try {
-            flowRecordConfig = ConfigManager.getConfig(FlowRecordConfig.class);
+            flowRecordConfig = PluginConfigManager.getPluginConfig(FlowRecordConfig.class);
         } catch (Exception e) {
             LOGGER.info("[flowrecord]: cannot get properties");
         }
