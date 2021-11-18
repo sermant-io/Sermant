@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>server-monitor-plugin</artifactId>
+    <artifactId>server-monitor-service</artifactId>
 
     <properties>
         <package.sample.type>plugin</package.sample.type>
