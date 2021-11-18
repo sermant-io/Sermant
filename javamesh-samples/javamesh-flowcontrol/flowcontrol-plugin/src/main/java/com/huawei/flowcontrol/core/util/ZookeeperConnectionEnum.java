@@ -5,7 +5,7 @@
 package com.huawei.flowcontrol.core.util;
 
 import com.alibaba.csp.sentinel.log.RecordLog;
-import com.huawei.apm.core.config.ConfigManager;
+import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.flowcontrol.core.config.CommonConst;
 import com.huawei.flowcontrol.core.config.FlowControlConfig;
 import org.apache.curator.framework.CuratorFramework;
@@ -27,7 +27,7 @@ public enum ZookeeperConnectionEnum {
     private CuratorFramework client;
 
     ZookeeperConnectionEnum() {
-        final FlowControlConfig flowControlConfig = ConfigManager.getConfig(FlowControlConfig.class);
+        final FlowControlConfig flowControlConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
         RecordLog.info("start connect zookeeper, address: [{}]", flowControlConfig.getSentinelZookeeperAddress());
 
         // 创建 CuratorFrameworkImpl实例
