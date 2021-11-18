@@ -25,7 +25,7 @@
             </activation>
             <modules>
                 <module>protocol</module>
-                <module>server-monitor-plugin</module>
+                <module>server-monitor-service</module>
             </modules>
         </profile>
         <profile>
@@ -41,7 +41,7 @@
             <id>all</id>
             <modules>
                 <module>protocol</module>
-                <module>server-monitor-plugin</module>
+                <module>server-monitor-service</module>
                 <module>metric-server</module>
             </modules>
         </profile>
