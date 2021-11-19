@@ -15,6 +15,8 @@
         <package.sample.type>plugin</package.sample.type>
         <commons-io.version>2.6</commons-io.version>
         <apm-agent-core.version>8.1.0</apm-agent-core.version>
+        <lombok.version>1.18.12</lombok.version>
+        <config.skip.flag>false</config.skip.flag>
     </properties>
 
     <dependencies>
@@ -37,6 +39,11 @@
             <groupId>org.apache.skywalking</groupId>
             <artifactId>apm-agent-core</artifactId>
             <version>${apm-agent-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
         </dependency>
     </dependencies>
 

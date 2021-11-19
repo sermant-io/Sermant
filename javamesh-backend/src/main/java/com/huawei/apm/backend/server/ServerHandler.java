@@ -80,6 +80,9 @@ public class ServerHandler extends BaseHandler {
                 case Message.ServiceData.DataType.IBM_JVM_MONITOR_VALUE:
                     producer.send(new ProducerRecord<>(conf.getTopicIbmJvmMonitor(), Bytes.wrap(message)));
                     break;
+                case Message.ServiceData.DataType.AGENT_REGISTRATION_VALUE:
+                    producer.send(new ProducerRecord<>(conf.getTopicAgentRegistration(), Bytes.wrap(message)));
+                    break;
                 default:
                     break;
             }
