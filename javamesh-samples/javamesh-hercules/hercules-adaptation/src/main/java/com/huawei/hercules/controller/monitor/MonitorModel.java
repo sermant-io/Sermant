@@ -4,6 +4,8 @@
 
 package com.huawei.hercules.controller.monitor;
 
+import com.huawei.hercules.service.influxdb.metric.tree.impl.RootMetric;
+
 import java.util.Map;
 
 /**
@@ -21,7 +23,7 @@ public class MonitorModel {
     /**
      * 查询数据
      */
-    private Map<String, Object> data;
+    private RootMetric data;
 
     public boolean isSuccess() {
         return success;
@@ -31,11 +33,11 @@ public class MonitorModel {
         this.success = success;
     }
 
-    public Map<String, Object> getData() {
+    public RootMetric getData() {
         return data;
     }
 
-    public void setData(Map<String, Object> data) {
+    public void setData(RootMetric data) {
         this.data = data;
     }
 }

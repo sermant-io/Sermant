@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -177,33 +178,59 @@ public class ScriptController extends BaseController {
                                       @RequestParam(required = false) String sorter,
                                       @RequestParam(required = false) String order,
                                       @RequestParam(required = false) String keywords) {
-        JSONObject result;
-        if (StringUtils.isEmpty(keywords)) {
-            result = scripService.getAllList(folder == null ? "" : folder);
-        } else {
-            result = scripService.search(keywords);
-        }
+        JSONObject result = scripService.getAllList(folder == null ? "" : folder);
         if (result != null) {
             JSONArray files = result.getJSONArray("files");
-            result.put("total", files.size());
-            for (int i = 0; i < files.size(); i++) {
-                JSONObject file = files.getJSONObject(i);
-                file.put("type", "DIR".equals(file.get("fileType")) ? "folder" : "file");
-                file.put("script_name", file.get("fileName"));
-                file.put("version", file.get("revision"));
-                file.put("size", file.get("fileSize"));
-                if ("DIR".equals(file.get("fileType"))) {
-                    file.put("size", null);
+            Iterator<Object> iteratorForFiles = files.iterator();
+            while (iteratorForFiles.hasNext()) {
+                JSONObject oneFile = (JSONObject) iteratorForFiles.next();
+                String description = oneFile.getString("description");
+                String fileName = oneFile.getString("fileName");
+
+                // 判断是否含有关键字，如果有关键字，名称和提交信息里面没有关键字就直接放弃掉
+                if (!isContainString(description, keywords) && !isContainString(fileName, keywords)) {
+                    iteratorForFiles.remove();
+                    continue;
                 }
-                file.put("commit", file.get("description"));
-                file.put("update_time", longToDate((Long) file.get("lastModifiedDate")));
+                oneFile.put("type", "DIR".equals(oneFile.get("fileType")) ? "folder" : "file");
+                oneFile.put("script_name", fileName);
+                oneFile.put("version", oneFile.get("revision"));
+                oneFile.put("size", oneFile.get("fileSize"));
+                if ("DIR".equals(oneFile.get("fileType"))) {
+                    oneFile.put("size", null);
+                }
+                oneFile.put("commit", description);
+                oneFile.put("update_time", longToDate((Long) oneFile.get("lastModifiedDate")));
             }
+
+            // 统计处理之后满足条件的文件数量
+            result.put("total", files.size());
+
+            // 脚本排序
             ScriptSorter scriptSorter = new ScriptSorter();
             List<JSONObject> sortAndPageResult = scriptSorter.sortAndPage(files, sorter, order, pageSize, current);
             result.put("data", sortAndPageResult);
             result.remove("files");
         }
         return result;
+    }
+
+    /**
+     * 判断被检测字符串是否含有指定字符串
+     *
+     * @param checkedString 被检测字符串
+     * @param value         需要检测的字符串
+     * @return 被检测字符串包含检测字符串时返回true，反之返回false
+     */
+    private boolean isContainString(String checkedString, String value) {
+        // 优先判断检测值是否为空，如果为空，说明不需要检测，直接返回true，不能和下面的逻辑颠倒
+        if (StringUtils.isEmpty(value)) {
+            return true;
+        }
+        if (StringUtils.isEmpty(checkedString)) {
+            return false;
+        }
+        return checkedString.contains(value);
     }
 
     /**

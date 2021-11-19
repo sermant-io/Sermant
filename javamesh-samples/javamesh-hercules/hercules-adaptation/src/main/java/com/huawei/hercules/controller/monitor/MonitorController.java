@@ -4,7 +4,10 @@
 
 package com.huawei.hercules.controller.monitor;
 
-import com.huawei.hercules.controller.monitor.influxdb.SqlModel;
+import com.huawei.hercules.service.influxdb.IMonitorService;
+import com.huawei.hercules.service.influxdb.SqlParam;
+import com.huawei.hercules.service.influxdb.metric.tree.impl.RootMetric;
+import com.huawei.hercules.service.perftest.IPerfTestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +33,12 @@ public class MonitorController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MonitorController.class);
 
     @Autowired
-    private MonitorService monitorService;
+    private IMonitorService monitorService;
 
     @GetMapping("/monitor")
-    public MonitorModel getMonitorInfo(@RequestParam String ip, @RequestParam String host) {
-        SqlModel sqlModel = new SqlModel();
-        sqlModel.setIp(ip);
-        Map<String, Object> allMonitorData = monitorService.getAllMonitorData(sqlModel);
+    public MonitorModel getMonitorInfo(@RequestParam SqlParam sqlParam) {
+        LOGGER.debug("Monitor param:{}", sqlParam);
+        RootMetric allMonitorData = monitorService.getAllMonitorData(sqlParam);
         MonitorModel monitorModel = new MonitorModel();
         monitorModel.setSuccess(true);
         monitorModel.setData(allMonitorData);
