@@ -245,6 +245,7 @@
                                     <excludes>
                                         <exclude>org.apache.dubbo.*</exclude>
                                         <exclude>org.springframework.*</exclude>
+                                        <exclude>org.apache.servicecomb.*</exclude>
                                     </excludes>
                                     <pattern>org</pattern>
                                     <shadedPattern>${shade.distinct.prefix}.org</shadedPattern>

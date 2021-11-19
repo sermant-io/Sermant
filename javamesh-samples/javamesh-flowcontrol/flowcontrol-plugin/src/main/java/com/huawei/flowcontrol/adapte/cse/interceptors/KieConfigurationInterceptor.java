@@ -26,8 +26,10 @@ public class KieConfigurationInterceptor implements InstanceMethodInterceptor {
             CseServiceMeta.getInstance().setEnvironment((String) arguments[0]);
         } else if (method.getName().equals(CseConstants.CUSTOM_LABEL_METHOD)) {
             CseServiceMeta.getInstance().setCustomLabel((String) arguments[0]);
-        }  else if (method.getName().equals(CseConstants.APP_NAME_METHOD)) {
+        } else if (method.getName().equals(CseConstants.APP_NAME_METHOD)) {
             CseServiceMeta.getInstance().setApp((String) arguments[0]);
+        } else if (method.getName().equals(CseConstants.SERVICE_NAME_METHOD)) {
+            CseServiceMeta.getInstance().setServiceName((String) arguments[0]);
         } else {
             CseServiceMeta.getInstance().setCustomLabelValue((String) arguments[0]);
         }
@@ -35,7 +37,7 @@ public class KieConfigurationInterceptor implements InstanceMethodInterceptor {
 
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) {
-        return null;
+        return result;
     }
 
     @Override

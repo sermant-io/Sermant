@@ -28,7 +28,7 @@ import org.junit.Test;
 public class RuleResolveTest {
     @Before
     public void before() {
-        CseServiceMeta.getInstance().setService("helloService");
+        CseServiceMeta.getInstance().setServiceName("helloService");
     }
 
     @Test

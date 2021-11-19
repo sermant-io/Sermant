@@ -66,10 +66,12 @@ public class KieClient extends AbstractClient {
         final StringBuilder requestUrl = new StringBuilder().append(clientUrlManager.getUrl()).append(kieApi);
         requestUrl.append(formatNullString(request.getLabelCondition()))
                 .append("&reversion=")
-                .append(formatNullString(request.getRevision()))
-                .append("&wait=");
+                .append(formatNullString(request.getRevision()));
+        if (request.isAccurateMatchLabel()) {
+            requestUrl.append("&match=exact");
+        }
         if (request.getWait() != null) {
-            requestUrl.append(formatNullString(request.getWait())).append("s");
+            requestUrl.append("&wait=").append(formatNullString(request.getWait())).append("s");
         }
         final HttpResult httpResult = httpClient.doGet(requestUrl.toString(), request.getRequestConfig());
         return responseHandler.handle(httpResult);

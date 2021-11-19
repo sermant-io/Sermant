@@ -49,21 +49,21 @@ public interface ResultHandler<R> {
             if (kieResponse == null) {
                 return null;
             }
-            kieResponse.setRevision(String.valueOf(result.getResponseHeaders().get("X-Kie-Revision")));
+            if (result.getCode() == HttpStatus.SC_NOT_MODIFIED) {
+                // KIE如果响应状态码为304，则表示没有相关键变更
+                kieResponse.setChanged(false);
+            }
             // 过滤掉disabled的kv配置
             final List<KieConfigEntity> data = kieResponse.getData();
             if (data == null) {
                 return kieResponse;
             }
+            kieResponse.setRevision(String.valueOf(result.getResponseHeaders().get("X-Kie-Revision")));
             filter(data);
             kieResponse.setTotal(data.size());
-            if (result.getCode() == HttpStatus.SC_NOT_MODIFIED) {
-                // KIE如果响应状态码为304，则表示没有相关键变更
-                kieResponse.setChanged(false);
-            }
+
             return kieResponse;
         }
-
         /**
          * 过滤未开启的kv
          *

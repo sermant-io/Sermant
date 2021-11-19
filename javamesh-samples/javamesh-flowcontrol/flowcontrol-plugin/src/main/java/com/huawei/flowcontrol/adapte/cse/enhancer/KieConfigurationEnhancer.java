@@ -31,6 +31,7 @@ public class KieConfigurationEnhancer implements EnhanceDefinition {
                 MethodInterceptPoint.newInstMethodInterceptPoint(
                         "com.huawei.flowcontrol.adapte.cse.interceptors.KieConfigurationInterceptor",
                         ElementMatchers.<MethodDescription>namedOneOf(
+                                CseConstants.SERVICE_NAME_METHOD,
                                 CseConstants.APP_NAME_METHOD,
                                 CseConstants.ENVIRONMENT_METHOD,
                                 CseConstants.PROJECT_METHOD,

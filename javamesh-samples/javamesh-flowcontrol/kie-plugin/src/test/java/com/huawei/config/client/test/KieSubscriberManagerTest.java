@@ -21,6 +21,8 @@ import java.util.EventObject;
  */
 public class KieSubscriberManagerTest {
 
+    private static final String WAIT = "50";
+
     @Test
     public void testSubscribe() throws InterruptedException {
         final SubscriberManager instance = SubscriberManager.getInstance();
@@ -56,6 +58,74 @@ public class KieSubscriberManagerTest {
                 });
         Thread.sleep(10000000);
     }
+
+    @Test
+    public void testaaa() throws InterruptedException {
+        final SubscriberManager instance = SubscriberManager.getInstance();
+        instance.subscribe(buildServiceRequest(), new ConfigurationListener() {
+            @Override
+            public void onEvent(EventObject object) {
+                final Object source = object.getSource();
+                if (source instanceof KvDataHolder.EventDataHolder) {
+                    KvDataHolder.EventDataHolder eventDataHolder = (KvDataHolder.EventDataHolder) source;
+                    System.out.println("added" + eventDataHolder.getAdded());
+                    System.out.println("deleted" + eventDataHolder.getDeleted());
+                    System.out.println("modified" + eventDataHolder.getModified());
+                    System.out.println("=============================service==============================");
+                }
+            }
+        });
+        instance.subscribe(buildAppRequest(), new ConfigurationListener() {
+            @Override
+            public void onEvent(EventObject object) {
+                final Object source = object.getSource();
+                if (source instanceof KvDataHolder.EventDataHolder) {
+                    KvDataHolder.EventDataHolder eventDataHolder = (KvDataHolder.EventDataHolder) source;
+                    System.out.println("added" + eventDataHolder.getAdded());
+                    System.out.println("deleted" + eventDataHolder.getDeleted());
+                    System.out.println("modified" + eventDataHolder.getModified());
+                    System.out.println("=============================app==============================");
+                }
+            }
+        });
+
+        instance.subscribe(buildCustomRequest(), new ConfigurationListener() {
+            @Override
+            public void onEvent(EventObject object) {
+                final Object source = object.getSource();
+                if (source instanceof KvDataHolder.EventDataHolder) {
+                    KvDataHolder.EventDataHolder eventDataHolder = (KvDataHolder.EventDataHolder) source;
+                    System.out.println("added" + eventDataHolder.getAdded());
+                    System.out.println("deleted" + eventDataHolder.getDeleted());
+                    System.out.println("modified" + eventDataHolder.getModified());
+                    System.out.println("=============================custom==============================");
+                }
+            }
+        });
+        Thread.sleep(10000000);
+    }
+    private KieRequest buildServiceRequest() {
+        return KieRequestFactory.buildKieRequest(WAIT, null,
+                        KieRequestFactory.buildLabels(
+                                KieRequestFactory.buildLabel("app", "sc"),
+                                KieRequestFactory.buildLabel("service", "b"),
+                                KieRequestFactory.buildLabel("environment", "production")));
+    }
+
+    private KieRequest buildAppRequest() {
+        return KieRequestFactory.buildKieRequest(WAIT, null,
+                        KieRequestFactory.buildLabels(
+                                KieRequestFactory.buildLabel("app", "sc"),
+                                KieRequestFactory.buildLabel("environment", "production")));
+    }
+
+    private KieRequest buildCustomRequest() {
+        return KieRequestFactory.buildKieRequest(WAIT, null,
+                        KieRequestFactory.buildLabels(
+                                KieRequestFactory.buildLabel("public",
+                                        "")));
+    }
+
 
     @Test
     public void testSubscribeLongRequest() throws InterruptedException {

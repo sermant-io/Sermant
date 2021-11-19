@@ -24,7 +24,7 @@ public class CseConstants {
     /**
      * sc获取服务名的方法名
      */
-    public static final String SERVICE_NAME_METHOD = "getName";
+    public static final String SERVICE_NAME_METHOD = "setServiceName";
 
     /**
      * sc获取服务版本的方法名

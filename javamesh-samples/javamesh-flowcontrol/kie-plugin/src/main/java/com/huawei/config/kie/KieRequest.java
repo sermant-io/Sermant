@@ -26,11 +26,14 @@ public class KieRequest {
      * "wait until any kv changed. for example wait=5s, server will not response until 5 seconds,
      * during that time window, if any kv changed, server will return 200 and kv list,
      * otherwise return 304 and empty body",
+     *
+     * 建议时间不超过50s,超过50s的将以50s计算
      */
     private String wait;
 
     /**
      * 请求版本
+     * 若配置中心版本高于当前版本，则会返回新数据
      */
     private String revision;
 
@@ -38,6 +41,13 @@ public class KieRequest {
      * http请求配置
      */
     private RequestConfig requestConfig;
+
+    /**
+     * 匹配标签
+     * true : 精确匹配标签的kv
+     * false : 匹配包含labelCondition的所有kv
+     */
+    private boolean accurateMatchLabel = true;
 
     public RequestConfig getRequestConfig() {
         return requestConfig;
@@ -54,6 +64,14 @@ public class KieRequest {
     public KieRequest setLabelCondition(String labelCondition) {
         this.labelCondition = labelCondition;
         return this;
+    }
+
+    public boolean isAccurateMatchLabel() {
+        return accurateMatchLabel;
+    }
+
+    public void setAccurateMatchLabel(boolean accurateMatchLabel) {
+        this.accurateMatchLabel = accurateMatchLabel;
     }
 
     public String getWait() {

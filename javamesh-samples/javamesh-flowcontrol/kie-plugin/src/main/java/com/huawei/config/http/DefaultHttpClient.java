@@ -5,6 +5,7 @@
 package com.huawei.config.http;
 
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.config.listener.SubscriberManager;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -12,7 +13,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -32,6 +38,17 @@ public class DefaultHttpClient implements com.huawei.config.http.HttpClient {
      */
     private static final int DEFAULT_TIMEOUT_MS = 5000;
 
+    /**
+     * 最大的连接数
+     * 该值建议 > {@link com.huawei.config.listener.SubscriberManager}最大线程数MAX_THREAD_SIZE
+     */
+    private static final int MAX_TOTAL = SubscriberManager.MAX_THREAD_SIZE * 2;
+
+    /**
+     * 没分支最大连接数
+     */
+    private static final int DEFAULT_MAX_PER_ROUTE = 10;
+
     private final HttpClient httpClient;
 
     public DefaultHttpClient() {
@@ -40,12 +57,38 @@ public class DefaultHttpClient implements com.huawei.config.http.HttpClient {
                         .setSocketTimeout(DEFAULT_TIMEOUT_MS)
                         .setConnectionRequestTimeout(DEFAULT_TIMEOUT_MS)
                         .build()
-        ).build();
+        ).setConnectionManager(buildConnectionManager()).build();
     }
 
     public DefaultHttpClient(RequestConfig requestConfig) {
-        this.httpClient = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
+        this.httpClient = HttpClientBuilder.create()
+                .setDefaultRequestConfig(requestConfig)
+                .setConnectionManager(buildConnectionManager())
+                .build();
     }
+
+
+    /**
+     * 配置连接池的主要目的是防止在发送请求时连接不够导致无法请求
+     * 特别是针对订阅者
+     *
+     * @return PoolingHttpClientConnectionManager
+     */
+    private PoolingHttpClientConnectionManager buildConnectionManager() {
+        RegistryBuilder<ConnectionSocketFactory> builder = RegistryBuilder.create();
+        builder.register("http", PlainConnectionSocketFactory.INSTANCE);
+        // 如果需配置SSL 在此处注册https
+        Registry<ConnectionSocketFactory> connectionSocketFactoryRegistry = builder.build();
+
+        //connection pool management
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(
+                connectionSocketFactoryRegistry);
+        connectionManager.setMaxTotal(MAX_TOTAL);
+        connectionManager.setDefaultMaxPerRoute(DEFAULT_MAX_PER_ROUTE);
+        return connectionManager;
+    }
+
+
 
     /**
      * get请求

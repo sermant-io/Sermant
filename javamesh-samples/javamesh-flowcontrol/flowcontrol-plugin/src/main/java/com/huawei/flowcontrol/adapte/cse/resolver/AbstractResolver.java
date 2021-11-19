@@ -139,11 +139,11 @@ public abstract class AbstractResolver<T extends Configurable> {
         for (String service : services.split(CseConstants.SERVICE_SEPARATOR)) {
             String[] serviceAndVersion = service.split(CseConstants.SERVICE_VERSION_SEPARATOR);
             // 服务名匹配
-            if (serviceAndVersion.length == 1 && serviceAndVersion[0].equals(CseServiceMeta.getInstance().getService())) {
+            if (serviceAndVersion.length == 1 && serviceAndVersion[0].equals(CseServiceMeta.getInstance().getServiceName())) {
                 return true;
             }
             // 服务加版本匹配
-            if (serviceAndVersion.length == 2 && serviceAndVersion[0].equals(CseServiceMeta.getInstance().getService())
+            if (serviceAndVersion.length == 2 && serviceAndVersion[0].equals(CseServiceMeta.getInstance().getServiceName())
                     && serviceAndVersion[1].equals(CseServiceMeta.getInstance().getVersion())) {
                 return true;
             }

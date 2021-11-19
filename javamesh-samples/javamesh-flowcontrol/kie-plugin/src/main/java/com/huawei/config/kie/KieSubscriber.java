@@ -11,7 +11,13 @@ package com.huawei.config.kie;
  * @since 2021-11-18
  */
 public class KieSubscriber {
-    private Boolean isKeeperRequest;
+    /**
+     * 最大等待时间
+     * 50S
+     */
+    private static final int MAX_WAIT = 50;
+
+    private Boolean isLongConnectionRequest;
 
     private final KieRequest kieRequest;
 
@@ -24,22 +30,25 @@ public class KieSubscriber {
      *
      * @return boolean
      */
-    public boolean isKeeperRequest() {
+    public boolean isLongConnectionRequest() {
         String wait = kieRequest.getWait();
-        if (this.isKeeperRequest != null) {
-            return this.isKeeperRequest;
+        if (this.isLongConnectionRequest != null) {
+            return this.isLongConnectionRequest;
         }
         if (wait == null || wait.trim().length() == 0) {
-            this.isKeeperRequest = false;
+            this.isLongConnectionRequest = false;
             return false;
         }
         try {
             final int parseWait = Integer.parseInt(wait);
-            this.isKeeperRequest = parseWait >= 1;
+            this.isLongConnectionRequest = parseWait >= 1;
+            if (parseWait > MAX_WAIT) {
+                kieRequest.setWait(String.valueOf(MAX_WAIT));
+            }
         } catch (Exception ex) {
-            this.isKeeperRequest = false;
+            this.isLongConnectionRequest = false;
         }
-        return this.isKeeperRequest;
+        return this.isLongConnectionRequest;
     }
 
     @Override
@@ -53,7 +62,7 @@ public class KieSubscriber {
 
         KieSubscriber that = (KieSubscriber) obj;
 
-        if (!isKeeperRequest.equals(that.isKeeperRequest)) {
+        if (!isLongConnectionRequest.equals(that.isLongConnectionRequest)) {
             return false;
         }
         return kieRequest != null ? kieRequest.equals(that.kieRequest) : that.kieRequest == null;
@@ -61,7 +70,7 @@ public class KieSubscriber {
 
     @Override
     public int hashCode() {
-        int result = ((isKeeperRequest == null || !isKeeperRequest )  ? 1 : 0);
+        int result = ((isLongConnectionRequest == null || !isLongConnectionRequest)  ? 1 : 0);
         result = 31 * result + (kieRequest != null ? kieRequest.hashCode() : 0);
         return result;
     }

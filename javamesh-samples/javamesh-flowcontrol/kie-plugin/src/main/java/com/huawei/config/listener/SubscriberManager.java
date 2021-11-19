@@ -21,12 +21,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,6 +41,11 @@ import java.util.logging.Logger;
 public class SubscriberManager {
     private static final Logger LOGGER = LogFactory.getLogger();
 
+    /**
+     * 最大线程数
+     */
+    public static final int MAX_THREAD_SIZE = 50;
+
     private static final SubscriberManager INSTANCE = new SubscriberManager();
 
     /**
@@ -47,24 +54,9 @@ public class SubscriberManager {
     private static final int THREAD_SIZE = 5;
 
     /**
-     * 最大线程数
-     */
-    private static final int MAX_THREAD_SIZE = 50;
-
-    /**
      * 秒转换为毫秒
      */
     private static final int SECONDS_UNIT = 1000;
-
-    /**
-     * 线程空闲时间
-     */
-    private static final long KEEP_ALIVE_TIME_MS = 60 * SECONDS_UNIT;
-
-    /**
-     * 最大任务数
-     */
-    private static final int KEEPER_QUEUE_SIZE = 50;
 
     /**
      * 定时请求间隔
@@ -72,10 +64,16 @@ public class SubscriberManager {
     private static final int SCHEDULE_REQUEST_INTERVAL_MS = 5000;
 
     /**
+     * 当前长连接请求数
+     * 要求最大连接数必须小于 MAX_THREAD_SIZE
+     *
+     */
+    private final AtomicInteger curLongConnectionRequestCount = new AtomicInteger(0);
+
+    /**
      * map<监听键, 监听该键的监听器列表>
      */
-    private final Map<KieSubscriber, List<KieListenerWrapper>> listenerMap =
-            new ConcurrentHashMap<KieSubscriber, List<KieListenerWrapper>>();
+    private final Map<KieSubscriber, List<KieListenerWrapper>> listenerMap = new ConcurrentHashMap<KieSubscriber, List<KieListenerWrapper>>();
 
     /**
      * TODO 获取url，从配置获取
@@ -84,10 +82,12 @@ public class SubscriberManager {
 
     /**
      * 订阅执行器
+     * 最大支持MAX_THREAD_SIZE个任务
+     * 由于是长连接请求，必然会占用线程，因此这里不考虑将任务存在队列中
      */
-    private final ThreadPoolExecutor keeperRequestExecutor = new ThreadPoolExecutor(THREAD_SIZE, MAX_THREAD_SIZE,
-            KEEP_ALIVE_TIME_MS, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(KEEPER_QUEUE_SIZE),
-            new APMThreadFactory("kie-subscribe-keeper-task"));
+    private final ThreadPoolExecutor longRequestExecutor = new ThreadPoolExecutor(THREAD_SIZE, MAX_THREAD_SIZE,
+            0, TimeUnit.MILLISECONDS, new SynchronousQueue<Runnable>(),
+            new APMThreadFactory("kie-subscribe-long-task"));
 
     /**
      * 快速返回的请求
@@ -98,7 +98,7 @@ public class SubscriberManager {
     /**
      * 注册监听器
      *
-     * @param kieRequest 请求
+     * @param kieRequest            请求
      * @param configurationListener 监听器
      */
     public void subscribe(KieRequest kieRequest, ConfigurationListener configurationListener) {
@@ -106,18 +106,24 @@ public class SubscriberManager {
             return;
         }
         final KieSubscriber kieSubscriber = new KieSubscriber(kieRequest);
-        List<KieListenerWrapper> configurationListeners = listenerMap.get(kieSubscriber);
-        if (configurationListeners == null) {
-            configurationListeners = new ArrayList<KieListenerWrapper>();
-        }
         Task task;
         KieListenerWrapper kieListenerWrapper = new KieListenerWrapper(configurationListener, new KvDataHolder());
-        if (!kieSubscriber.isKeeperRequest()) {
+        if (!kieSubscriber.isLongConnectionRequest()) {
             task = new ShortTimerTask(kieSubscriber, kieListenerWrapper);
         } else {
+            if (exceedMaxLongRequestCount()) {
+                LOGGER.warning(String.format(Locale.ENGLISH,
+                        "Exceeded max long connection request subscribers, the max number is %s, it will be discarded!",
+                        curLongConnectionRequestCount.get()));
+                return;
+            }
             buildRequestConfig(kieRequest);
             task = new LoopPullTask(kieSubscriber, kieListenerWrapper);
             firstRequest(kieRequest, kieListenerWrapper);
+        }
+        List<KieListenerWrapper> configurationListeners = listenerMap.get(kieSubscriber);
+        if (configurationListeners == null) {
+            configurationListeners = new ArrayList<KieListenerWrapper>();
         }
         kieListenerWrapper.setTask(task);
         configurationListeners.add(kieListenerWrapper);
@@ -126,17 +132,30 @@ public class SubscriberManager {
     }
 
     /**
+     * 是否超过最大限制长连接任务数
+     *
+     * @return boolean
+     */
+    private boolean exceedMaxLongRequestCount() {
+        return curLongConnectionRequestCount.incrementAndGet() > MAX_THREAD_SIZE;
+    }
+
+    /**
      * 针对长请求的场景需要做第一次拉取，获取已有的数据
      *
-     * @param kieRequest 请求体
+     * @param kieRequest         请求体
      * @param kieListenerWrapper 监听器
      */
     public void firstRequest(KieRequest kieRequest, KieListenerWrapper kieListenerWrapper) {
-        final KieRequest cloneRequest = KieRequestFactory
-                .buildKieRequest(kieRequest.getRevision(), kieRequest.getLabelCondition());
-        final KieResponse kieResponse = kieClient.queryConfigurations(cloneRequest);
-        if (kieResponse.isChanged()) {
-            publishEvent(kieResponse, kieListenerWrapper);
+        try {
+            final KieRequest cloneRequest = KieRequestFactory
+                    .buildKieRequest(kieRequest.getRevision(), kieRequest.getLabelCondition());
+            final KieResponse kieResponse = kieClient.queryConfigurations(cloneRequest);
+            if (kieResponse != null && kieResponse.isChanged()) {
+                tryPublishEvent(kieResponse, kieListenerWrapper);
+            }
+        } catch (Exception ex) {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Pull the first request failed! %s", ex.getMessage()));
         }
     }
 
@@ -185,15 +204,19 @@ public class SubscriberManager {
     }
 
     private void executeTask(final Task task) {
-        if (task.isKeeperRequest()) {
-            keeperRequestExecutor.execute(new TaskRunnable(task));
-        } else {
-            scheduledExecutorService.scheduleAtFixedRate(
-                    new TaskRunnable(task), 0, SCHEDULE_REQUEST_INTERVAL_MS, TimeUnit.MILLISECONDS);
+        try {
+            if (task.isLongConnectionRequest()) {
+                longRequestExecutor.execute(new TaskRunnable(task));
+            } else {
+                scheduledExecutorService.scheduleAtFixedRate(
+                        new TaskRunnable(task), 0, SCHEDULE_REQUEST_INTERVAL_MS, TimeUnit.MILLISECONDS);
+            }
+        } catch (RejectedExecutionException ex) {
+            LOGGER.warning("Rejected the task " + task.getClass() + " " + ex.getMessage());
         }
     }
 
-    private void publishEvent(KieResponse kieResponse, KieListenerWrapper kieListenerWrapper) {
+    private void tryPublishEvent(KieResponse kieResponse, KieListenerWrapper kieListenerWrapper) {
         final KvDataHolder kvDataHolder = kieListenerWrapper.getKvDataHolder();
         final KvDataHolder.EventDataHolder eventDataHolder = kvDataHolder.analyzeLatestData(kieResponse);
         if (eventDataHolder.isChanged()) {
@@ -230,7 +253,7 @@ public class SubscriberManager {
          *
          * @return boolean
          */
-        boolean isKeeperRequest();
+        boolean isLongConnectionRequest();
 
         /**
          * 任务终止
@@ -277,13 +300,14 @@ public class SubscriberManager {
         @Override
         public void executeInner() {
             final KieResponse kieResponse = kieClient.queryConfigurations(kieSubscriber.getKieRequest());
-            if (kieResponse!= null && kieResponse.isChanged()) {
-                publishEvent(kieResponse, kieListenerWrapper);
+            if (kieResponse != null && kieResponse.isChanged()) {
+                tryPublishEvent(kieResponse, kieListenerWrapper);
+                kieSubscriber.getKieRequest().setRevision(kieResponse.getRevision());
             }
         }
 
         @Override
-        public boolean isKeeperRequest() {
+        public boolean isLongConnectionRequest() {
             return false;
         }
     }
@@ -304,38 +328,46 @@ public class SubscriberManager {
         public void executeInner() {
             try {
                 final KieResponse kieResponse = kieClient.queryConfigurations(kieSubscriber.getKieRequest());
-                if (kieResponse!= null && kieResponse.isChanged()) {
-                    publishEvent(kieResponse, kieListenerWrapper);
+                if (kieResponse != null && kieResponse.isChanged()) {
+                    tryPublishEvent(kieResponse, kieListenerWrapper);
+                    kieSubscriber.getKieRequest().setRevision(kieResponse.getRevision());
                 }
                 SubscriberManager.this.executeTask(this);
             } catch (Exception ex) {
                 LOGGER.warning(String.format(Locale.ENGLISH, "pull kie config failed, %s, it will rePull", ex.getMessage()));
                 ++failCount;
-                SubscriberManager.this.executeTask(new BackOffSleepTask(this, failCount));
+                SubscriberManager.this.executeTask(new SleepCallBackTask(this, failCount));
             }
         }
 
         @Override
-        public boolean isKeeperRequest() {
-            return kieSubscriber.isKeeperRequest();
+        public boolean isLongConnectionRequest() {
+            return kieSubscriber.isLongConnectionRequest();
         }
     }
 
-    class BackOffSleepTask extends AbstractTask {
+    class SleepCallBackTask extends AbstractTask {
         private final Task nextTask;
 
-        private final int failedCount;
+        private int failedCount;
 
-        public BackOffSleepTask(Task nextTask, int failedCount) {
+        private long waitTimeMs;
+
+        public SleepCallBackTask(Task nextTask, int failedCount) {
             this.nextTask = nextTask;
             this.failedCount = failedCount;
         }
 
         @Override
         public void executeInner() {
-            long baseMs = 3000;
             long maxWaitMs = 60 * 1000 * 60;
-            long wait = Math.min(maxWaitMs, baseMs * failedCount * failedCount);
+            long wait;
+            if (waitTimeMs != 0) {
+                wait = Math.min(waitTimeMs, maxWaitMs);
+            } else {
+                long baseMs = 3000;
+                wait = Math.min(maxWaitMs, baseMs * failedCount * failedCount);
+            }
             try {
                 Thread.sleep(wait);
                 SubscriberManager.this.executeTask(nextTask);
@@ -345,8 +377,8 @@ public class SubscriberManager {
         }
 
         @Override
-        public boolean isKeeperRequest() {
-            return nextTask.isKeeperRequest();
+        public boolean isLongConnectionRequest() {
+            return nextTask.isLongConnectionRequest();
         }
 
         @Override
