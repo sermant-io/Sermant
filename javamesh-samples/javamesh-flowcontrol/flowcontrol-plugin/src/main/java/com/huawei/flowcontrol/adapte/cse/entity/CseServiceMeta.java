@@ -16,14 +16,39 @@ public class CseServiceMeta {
     private static final CseServiceMeta INSTANCE = new CseServiceMeta();
 
     /**
+     * sc app名
+     */
+    private String app;
+
+    /**
      * 服务名
      */
-    private String name;
+    private String service;
 
     /**
      * 版本
      */
     private String version;
+
+    /**
+     * 环境
+     */
+    private String environment;
+
+    /**
+     * sc自定义值
+     */
+    private String customLabelValue;
+
+    /**
+     * sc自定义标签
+     */
+    private String customLabel;
+
+    /**
+     * kie-project
+     */
+    private String project;
 
     private CseServiceMeta() {
 
@@ -33,12 +58,12 @@ public class CseServiceMeta {
         return INSTANCE;
     }
 
-    public String getName() {
-        return name;
+    public String getService() {
+        return service;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setService(String service) {
+        this.service = service;
     }
 
     public String getVersion() {
@@ -47,5 +72,56 @@ public class CseServiceMeta {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
+
+    public String getCustomLabelValue() {
+        return customLabelValue;
+    }
+
+    public void setCustomLabelValue(String customLabelValue) {
+        this.customLabelValue = customLabelValue;
+    }
+
+    public String getCustomLabel() {
+        return customLabel;
+    }
+
+    public void setCustomLabel(String customLabel) {
+        this.customLabel = customLabel;
+    }
+
+    public String getProject() {
+        return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
+    }
+
+    public String getApp() {
+        return app;
+    }
+
+    public void setApp(String app) {
+        this.app = app;
+    }
+
+    /**
+     * 当前数据是否都已经获取
+     *
+     * @return boolean
+     */
+    public boolean isReady() {
+        return service != null && version != null && project != null
+                && customLabel != null && customLabelValue != null
+                && environment != null && app != null;
     }
 }

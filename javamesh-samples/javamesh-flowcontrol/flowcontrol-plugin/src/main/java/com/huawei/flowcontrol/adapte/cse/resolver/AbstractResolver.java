@@ -64,6 +64,8 @@ public abstract class AbstractResolver<T extends Configurable> {
             final T rule = parseRule(businessKey, ruleEntity.getValue(), false);
             if (rule != null) {
                 rules.put(businessKey, rule);
+            } else {
+                rules.remove(businessKey);
             }
         }
     }
@@ -87,7 +89,7 @@ public abstract class AbstractResolver<T extends Configurable> {
         if (rule == null) {
             return null;
         }
-        // 3、设置名称
+        // 3、设置名称以及服务名
         rule.setName(businessKey);
         // 4、判断规则是否合法
         if (rule.isValid()) {
@@ -127,11 +129,11 @@ public abstract class AbstractResolver<T extends Configurable> {
         for (String service : services.split(CseConstants.SERVICE_SEPARATOR)) {
             String[] serviceAndVersion = service.split(CseConstants.SERVICE_VERSION_SEPARATOR);
             // 服务名匹配
-            if (serviceAndVersion.length == 1 && serviceAndVersion[0].equals(CseServiceMeta.getInstance().getName())) {
+            if (serviceAndVersion.length == 1 && serviceAndVersion[0].equals(CseServiceMeta.getInstance().getService())) {
                 return true;
             }
             // 服务加版本匹配
-            if (serviceAndVersion.length == 2 && serviceAndVersion[0].equals(CseServiceMeta.getInstance().getName())
+            if (serviceAndVersion.length == 2 && serviceAndVersion[0].equals(CseServiceMeta.getInstance().getService())
                     && serviceAndVersion[1].equals(CseServiceMeta.getInstance().getVersion())) {
                 return true;
             }

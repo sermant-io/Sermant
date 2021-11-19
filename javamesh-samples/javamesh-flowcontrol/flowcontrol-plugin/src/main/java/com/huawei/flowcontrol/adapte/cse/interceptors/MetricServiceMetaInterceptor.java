@@ -26,7 +26,7 @@ public class MetricServiceMetaInterceptor implements InstanceMethodInterceptor {
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) {
         if (method.getName().equals(CseConstants.SERVICE_NAME_METHOD)) {
-            CseServiceMeta.getInstance().setName(String.valueOf(result));
+            CseServiceMeta.getInstance().setService(String.valueOf(result));
         } else if (method.getName().equals(CseConstants.SERVICE_VERSION_METHOD)) {
             CseServiceMeta.getInstance().setVersion(String.valueOf(result));
         } else {

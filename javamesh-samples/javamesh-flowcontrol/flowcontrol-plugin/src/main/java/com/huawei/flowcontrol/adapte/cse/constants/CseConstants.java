@@ -30,4 +30,29 @@ public class CseConstants {
      * sc获取服务版本的方法名
      */
     public static final String SERVICE_VERSION_METHOD = "getVersion";
+
+    /**
+     * sc设置project方法
+     */
+    public static final String PROJECT_METHOD = "setProject";
+
+    /**
+     * sc设置自定义标签的方法
+     */
+    public static final String CUSTOM_LABEL_METHOD = "setCustomLabel";
+
+    /**
+     * sc设置自定义标签值的方法
+     */
+    public static final String CUSTOM_LABEL_VALUE_METHOD = "setCustomLabelValue";
+
+    /**
+     * sc设置自定义环境的方法
+     */
+    public static final String ENVIRONMENT_METHOD = "setEnvironment";
+
+    /**
+     * app名
+     */
+    public static final String APP_NAME_METHOD = "setAppName";
 }
