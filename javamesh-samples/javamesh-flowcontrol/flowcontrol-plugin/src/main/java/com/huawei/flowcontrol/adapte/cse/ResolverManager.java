@@ -37,8 +37,9 @@ public enum ResolverManager {
      * 解析配置
      *
      * @param rulesMap 配置中心获取的规则数据
+     * @param forDelete 是否是为了移除场景
      */
-    public void resolve(Map<String, String> rulesMap) {
+    public void resolve(Map<String, String> rulesMap, boolean forDelete) {
         final Set<Map.Entry<String, AbstractResolver<?>>> resolvers = resolversMap.entrySet();
         for (Map.Entry<String, String> ruleEntity : rulesMap.entrySet()) {
             final String key = ruleEntity.getKey();
@@ -46,11 +47,20 @@ public enum ResolverManager {
                 if (!key.startsWith(resolverEntry.getKey())) {
                     continue;
                 }
+                String businessKey = key.substring(resolverEntry.getKey().length());
                 // 匹配以该配置打头的解析器，更新解析器内容
-                resolverEntry.getValue().parseRule(key.substring(resolverEntry.getKey().length())
-                        , ruleEntity.getValue(), true);
+                resolverEntry.getValue().parseRule(businessKey, ruleEntity.getValue(), true, forDelete);
             }
         }
+    }
+
+    /**
+     * 解析配置
+     *
+     * @param rulesMap 配置中心获取的规则数据
+     */
+    public void resolve(Map<String, String> rulesMap) {
+        resolve(rulesMap, false);
     }
 
     public Map<String, AbstractResolver<?>> getResolversMap() {

@@ -38,7 +38,7 @@ public class RuleResolveTest {
                 "rate: 1\n" +
                 "services: helloService";
         final RateLimitingRuleResolver rateLimitingRuleResolver = new RateLimitingRuleResolver();
-        final RateLimitingRule userLoginAction = rateLimitingRuleResolver.parseRule("userLoginAction", source, false);
+        final RateLimitingRule userLoginAction = rateLimitingRuleResolver.parseRule("userLoginAction", source, false, false);
         Assert.assertEquals(userLoginAction.getRate(), 1L);
         Assert.assertEquals(userLoginAction.getServices(), "helloService");
         Assert.assertEquals(userLoginAction.getParsedTimeoutDuration(), 10000L);
@@ -50,7 +50,7 @@ public class RuleResolveTest {
         String source = "maxConcurrentCalls: 1000 # 最大并发数\n" +
                 "maxWaitDuration: 110 # 最大等待时间，默认单位为ms，支持秒为100S\n" +
                 "services: helloService";
-        final BulkThreadRule userLoginAction = new BulkThreadRuleResolver().parseRule("userLoginAction", source, false);
+        final BulkThreadRule userLoginAction = new BulkThreadRuleResolver().parseRule("userLoginAction", source, false, false);
         Assert.assertEquals(userLoginAction.getMaxConcurrentCalls(), 1000);
         Assert.assertEquals(userLoginAction.getServices(), "helloService");
         Assert.assertEquals(userLoginAction.getParsedMaxWaitDuration(), 110000);
@@ -66,7 +66,7 @@ public class RuleResolveTest {
                 "slidingWindowSize: 1000 # 滑动窗口大小，支持秒(S),分钟(M)\n" +
                 "services: helloService";
         final CircuitBreakerRuleResolver circuitBreakerRuleResolver = new CircuitBreakerRuleResolver();
-        final CircuitBreakerRule userLoginAction = circuitBreakerRuleResolver.parseRule("userLoginAction", source, false);
+        final CircuitBreakerRule userLoginAction = circuitBreakerRuleResolver.parseRule("userLoginAction", source, false, false);
         Assert.assertEquals(userLoginAction.getFailureRateThreshold(), 50f, 5f);
         Assert.assertEquals(userLoginAction.getSlowCallRateThreshold(), 100f, 5f);
         Assert.assertEquals(userLoginAction.getParsedSlowCallDurationThreshold(), 60000L);
@@ -87,7 +87,7 @@ public class RuleResolveTest {
                 "retryStrategy: FixedInterval\n" +
                 "waitDuration: \"10S\"\n" +
                 "services: helloService";
-        final RetryRule userLoginAction = new RetryResolver().parseRule("userLoginAction", source, false);
+        final RetryRule userLoginAction = new RetryResolver().parseRule("userLoginAction", source, false, false);
         Assert.assertEquals(userLoginAction.getMaxAttempts(), 10);
         Assert.assertTrue(userLoginAction.getRetryOnResponseStatus().contains("502"));
         Assert.assertEquals(userLoginAction.getParsedWaitDuration(), 10000L);
@@ -117,7 +117,7 @@ public class RuleResolveTest {
                 "    name: rule1\n" +
                 "    showAlert: false\n" +
                 "    uniqIndex: npkls";
-        final BusinessMatcher userLoginAction = new MatchGroupResolver().parseRule("userLoginAction", source, false);
+        final BusinessMatcher userLoginAction = new MatchGroupResolver().parseRule("userLoginAction", source, false, false);
         Assert.assertTrue(userLoginAction.getMatches().get(0).getMethod().contains("GET"));
         Assert.assertEquals(userLoginAction.getMatches().get(0).getName(), "rule1");
         Assert.assertTrue(userLoginAction.getMatches().get(0).getHeaders().containsKey("key2"));

@@ -61,7 +61,7 @@ public abstract class AbstractResolver<T extends Configurable> {
                 continue;
             }
             String businessKey = key.substring(configKeyPrefix.length());
-            final T rule = parseRule(businessKey, ruleEntity.getValue(), false);
+            final T rule = parseRule(businessKey, ruleEntity.getValue(), false, false);
             if (rule != null) {
                 rules.put(businessKey, rule);
             } else {
@@ -76,10 +76,20 @@ public abstract class AbstractResolver<T extends Configurable> {
      * @param businessKey 业务场景名
      * @param value       业务规则
      * @param override 是否覆盖规则， 用于单个业务场景更新时
+     * @param forDelete 为了删除的场景，则直接移除该业务配置
      * @return 转换后的规则
      */
-    public T parseRule(String businessKey, String value, boolean override) {
-        if (StringUtils.isEmpty(businessKey) || StringUtils.isEmpty(value)) {
+    public T parseRule(String businessKey, String value, boolean override, boolean forDelete) {
+        if (StringUtils.isEmpty(businessKey)) {
+            return null;
+        }
+        if (forDelete) {
+            rules.remove(businessKey);
+            return null;
+        }
+        // 值为空场景，用户删除了该业务场景名
+        if (StringUtils.isEmpty(value) && override) {
+            rules.remove(businessKey);
             return null;
         }
         // 1、移除旧的配置

@@ -13,6 +13,7 @@ import com.huawei.config.listener.SubscriberManager;
 import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
 
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -109,8 +110,8 @@ public class KieConfigSyncer implements PluginService {
             if (source instanceof KvDataHolder.EventDataHolder) {
                 KvDataHolder.EventDataHolder eventDataHolder = (KvDataHolder.EventDataHolder) source;
                 ResolverManager.INSTANCE.resolve(eventDataHolder.getAdded());
-                ResolverManager.INSTANCE.resolve(eventDataHolder.getDeleted());
                 ResolverManager.INSTANCE.resolve(eventDataHolder.getModified());
+                ResolverManager.INSTANCE.resolve(eventDataHolder.getDeleted(), true);
             }
         }
     }
