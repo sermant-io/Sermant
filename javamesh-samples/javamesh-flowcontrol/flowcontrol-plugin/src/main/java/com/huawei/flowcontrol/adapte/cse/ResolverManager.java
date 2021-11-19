@@ -67,7 +67,7 @@ public enum ResolverManager {
         return resolversMap;
     }
 
-    public AbstractResolver getResolver(String configKey) {
+    public AbstractResolver<?> getResolver(String configKey) {
         return resolversMap.get(configKey);
     }
 
