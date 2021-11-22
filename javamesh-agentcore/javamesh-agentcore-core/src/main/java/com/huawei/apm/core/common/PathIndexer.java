@@ -39,6 +39,11 @@ public class PathIndexer {
     public static String JAVAMESH_PLUGIN_PACKAGE_DIR = "javamesh.plugin.package.dir";
 
     /**
+     * logback配置的键
+     */
+    public static String JAVAMESH_LOGBACK_SETTING_FILE = "javamesh.log.setting.file";
+
+    /**
      * 配置文件
      */
     private static File configFile;
