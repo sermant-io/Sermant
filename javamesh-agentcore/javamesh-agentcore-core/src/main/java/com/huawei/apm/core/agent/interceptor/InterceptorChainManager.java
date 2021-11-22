@@ -1,16 +1,14 @@
 package com.huawei.apm.core.agent.interceptor;
 
-import com.huawei.apm.core.common.InterceptorChainConfig;
-import com.huawei.apm.core.config.ConfigLoader;
-import com.huawei.apm.core.plugin.PluginConfig;
-import com.huawei.apm.core.plugin.PluginConfigLoader;
-import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
-
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.huawei.apm.core.config.ConfigManager;
+import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.apm.core.plugin.config.AliaConfig;
 
 /**
  * 拦截器链加载类
@@ -21,20 +19,9 @@ public class InterceptorChainManager {
 
     private static final String INTERCEPTORS_SEPARATOR = ",";
 
-    private static final InterceptorChainManager INSTANCE = new InterceptorChainManager();
+    private static final Map<String, String> aliaAndNameMap = new HashMap<String, String>();
 
     private final Map<String, InterceptorChain> interceptorChains = new HashMap<String, InterceptorChain>();
-
-    private InterceptorChainManager() {
-        final InterceptorChainConfig config = ConfigLoader.getConfig(InterceptorChainConfig.class);
-        if (config != null) {
-            buildChains(config);
-        }
-    }
-
-    public static InterceptorChainManager getInstance() {
-        return INSTANCE;
-    }
 
     public InterceptorChain getChain(String interceptorName) {
         return interceptorChains.get(interceptorName);
@@ -45,24 +32,23 @@ public class InterceptorChainManager {
         if (StringUtils.isBlank(chainsConfigText)) {
             return;
         }
-        final Map<String, String> aliaAndNameMap = getAliaAndNameMap();
         String[] chainConfigs = chainsConfigText.split(MULTI_CHAINS_SEPARATOR);
         for (String chainConfig : chainConfigs) {
             if (StringUtils.isBlank(chainConfig)) {
                 continue;
             }
-            buildChain(chainConfig, aliaAndNameMap);
+            buildChain(chainConfig);
         }
     }
 
-    private void buildChain(String chainConfig, Map<String, String> aliaAndNameMap) {
+    private void buildChain(String chainConfig) {
         String[] interceptorsConfig = chainConfig.split(INTERCEPTORS_SEPARATOR);
         Set<String> interceptors = new LinkedHashSet<String>();
         for (String interceptorOrAlia : interceptorsConfig) {
             if (StringUtils.isBlank(interceptorOrAlia)) {
                 continue;
             }
-            String interceptor = aliaAndNameMap.get(interceptorOrAlia);
+            String interceptor = InterceptorChainManager.aliaAndNameMap.get(interceptorOrAlia);
             if (StringUtils.isBlank(interceptor)) {
                 interceptor = interceptorOrAlia;
             }
@@ -76,24 +62,20 @@ public class InterceptorChainManager {
         }
     }
 
-    private Map<String, String> getAliaAndNameMap() {
-        final Map<String, String> aliaAndNameMap = new HashMap<String, String>();
-        PluginConfigLoader.foreachPluginConfig(new AliaPluginConfigConsumer(aliaAndNameMap));
-        return aliaAndNameMap;
+    public static InterceptorChainManager newInstance() {
+        final InterceptorChainManager instance = new InterceptorChainManager();
+        final InterceptorChainConfig config = ConfigManager.getConfig(InterceptorChainConfig.class);
+        if (config != null) {
+            instance.buildChains(config);
+        }
+        return instance;
     }
 
-    static class AliaPluginConfigConsumer implements PluginConfigLoader.PluginConfigConsumer {
-        private final Map<String, String> aliaAndNameMap;
-
-        AliaPluginConfigConsumer(Map<String, String> aliaAndNameMap) {
-            this.aliaAndNameMap = aliaAndNameMap;
-        }
-
-        @Override
-        public void accept(PluginConfig pluginConfig) {
-            final String pluginName = pluginConfig.getPluginName();
-            List<PluginConfig.InterceptorAlia> interceptors = pluginConfig.getInterceptors();
-            for (PluginConfig.InterceptorAlia interceptor : interceptors) {
+    public static void addAlia(AliaConfig pluginAliaConfig) {
+        final String pluginName = pluginAliaConfig.getPluginName();
+        List<AliaConfig.InterceptorAlia> interceptors = pluginAliaConfig.getInterceptors();
+        if (interceptors != null && !interceptors.isEmpty()) {
+            for (AliaConfig.InterceptorAlia interceptor : interceptors) {
                 aliaAndNameMap.put(pluginName + "." + interceptor.getAlia(), interceptor.getName());
             }
         }

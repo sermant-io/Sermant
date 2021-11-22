@@ -1,11 +1,11 @@
 package com.huawei.apm.core.agent;
 
+import java.lang.instrument.Instrumentation;
+
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
 
-import java.lang.instrument.Instrumentation;
-
-import com.huawei.apm.core.agent.transformer.DelegateTransformer;
+import com.huawei.apm.core.agent.transformer.CommonTransformer;
 
 /**
  * 插件增强Builder
@@ -16,7 +16,7 @@ public class ByteBuddyAgentBuilder {
             .ignore(new IgnoreClassMatcher())
             .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
             .type(EnhanceDefinitionLoader.getInstance().buildMatch())
-            .transform(new DelegateTransformer())
+            .transform(new CommonTransformer())
             .with(new LoadListener())
             .installOn(instrumentation);
     }

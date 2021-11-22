@@ -2,7 +2,6 @@ package com.huawei.apm.core.agent;
 
 import com.huawei.apm.core.agent.common.VersionChecker;
 import com.huawei.apm.core.agent.definition.EnhanceDefinition;
-import com.huawei.apm.core.classloader.PluginClassLoader;
 import com.huawei.apm.core.lubanops.bootstrap.NamedListener;
 import com.huawei.apm.core.lubanops.bootstrap.TransformerMethod;
 import com.huawei.apm.core.lubanops.bootstrap.utils.Util;
@@ -18,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 
 import static net.bytebuddy.matcher.ElementMatchers.isInterface;
@@ -98,7 +98,7 @@ public enum EnhanceDefinitionLoader {
      * @return SPI 列表
      */
     private Iterable<? extends Listener> loadNamedListener() {
-        return PluginClassLoader.load(Listener.class);
+        return ServiceLoader.load(Listener.class);
     }
 
     /**
@@ -107,7 +107,7 @@ public enum EnhanceDefinitionLoader {
      * @return SPI 列表
      */
     private Iterable<? extends EnhanceDefinition> loadEnhanceDefinition() {
-        return PluginClassLoader.load(EnhanceDefinition.class);
+        return ServiceLoader.load(EnhanceDefinition.class);
     }
 
     public ElementMatcher<TypeDescription> buildMatch() {

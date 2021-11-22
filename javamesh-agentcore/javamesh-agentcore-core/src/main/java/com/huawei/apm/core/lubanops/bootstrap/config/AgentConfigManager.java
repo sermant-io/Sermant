@@ -80,7 +80,7 @@ public class AgentConfigManager {
 
     public static void init(String configPath) {
         Properties properties = FileUtils.readFilePropertyByPath(
-                configPath + File.separator + LubanApmConstants.CONFIG_FILENAME);
+                configPath + File.separator + "config"+ File.separator + LubanApmConstants.CONFIG_FILENAME);
         masterAuthAk = properties.getProperty(MASTER_ACCESS_KEY);
         masterAuthSk = properties.getProperty(MASTER_SECRET_KEY);
         masterAddress = properties.getProperty(MASTER_ADDRESS);

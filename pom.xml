@@ -42,10 +42,14 @@
         <package.temp.dir>${javamesh.basedir}/${javamesh.name}-${javamesh.version}</package.temp.dir>
         <package.agent.dir>${package.temp.dir}/agent</package.agent.dir>
         <package.server.dir>${package.temp.dir}/server</package.server.dir>
-        <package.webapp.dir>${package.temp.dir}/webapp</package.webapp.dir>
         <package.output.dir>${project.build.outputDirectory}</package.output.dir>
 
         <dependency.output.dir>${package.agent.dir}/lib</dependency.output.dir>
+
+        <config.skip.flag>true</config.skip.flag>
+        <config.file.name>config.properties</config.file.name>
+        <config.source.dir>src/main/resources/config</config.source.dir>
+        <config.output.dir>${package.agent.dir}/config</config.output.dir>
 
         <shade.common.prefix>com.huawei</shade.common.prefix>
         <shade.distinct.prefix>${project.artifactId}</shade.distinct.prefix>
@@ -170,15 +174,6 @@
     </dependencyManagement>
     <profiles>
         <profile>
-            <id>prepare</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>javamesh-prepare</module>
-            </modules>
-        </profile>
-        <profile>
             <id>agent</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -217,7 +212,6 @@
         <profile>
             <id>all</id>
             <modules>
-                <module>javamesh-prepare</module>
                 <module>javamesh-agentcore</module>
                 <module>javamesh-samples</module>
                 <module>javamesh-backend</module>
@@ -250,6 +244,33 @@
                             </relocation>
                         </relocations>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <executions>
+                        <execution>
+                            <id>copy-config</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <skip>${config.skip.flag}</skip>
+                                <outputDirectory>${config.output.dir}</outputDirectory>
+                                <overwrite>true</overwrite>
+                                <resources>
+                                    <resource>
+                                        <directory>${config.source.dir}</directory>
+                                        <includes>
+                                            <include>${config.file.name}</include>
+                                        </includes>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

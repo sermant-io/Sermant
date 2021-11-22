@@ -10,6 +10,8 @@
     <properties>
         <package.output.dir>${package.agent.dir}</package.output.dir>
         <javaagent.package.name>${javamesh.name}</javaagent.package.name>
+        <config.skip.flag>false</config.skip.flag>
+        <config.file.name>bootstrap.properties</config.file.name>
     </properties>
     <dependencies>
         <dependency>

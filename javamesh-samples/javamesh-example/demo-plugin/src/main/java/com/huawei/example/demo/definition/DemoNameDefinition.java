@@ -47,11 +47,15 @@ public class DemoNameDefinition implements EnhanceDefinition {
                         ElementMatchers.<MethodDescription>named("instFunc")
                 ),
                 MethodInterceptPoint.newStaticMethodInterceptPoint(
+                        "com.huawei.example.demo.interceptor.DemoLoggerInterceptor",
+                        ElementMatchers.<MethodDescription>named("staticFunc")
+                ),
+                MethodInterceptPoint.newStaticMethodInterceptPoint(
                         "com.huawei.example.demo.interceptor.DemoConfigInterceptor",
                         ElementMatchers.<MethodDescription>named("staticFunc")
                 ),
                 MethodInterceptPoint.newStaticMethodInterceptPoint(
-                        "com.huawei.example.demo.interceptor.DemoLoggerInterceptor",
+                        "com.huawei.example.demo.interceptor.DemoServiceInterceptor",
                         ElementMatchers.<MethodDescription>named("staticFunc")
                 )
         };

@@ -9,6 +9,7 @@
     <artifactId>javamesh-agentcore-core</artifactId>
     <properties>
         <package.output.dir>${package.agent.dir}/core</package.output.dir>
+        <config.skip.flag>false</config.skip.flag>
     </properties>
     <dependencies>
         <!--替换javassist-->
@@ -99,6 +100,11 @@
             <version>2.5.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>3.6.0</version>
+        </dependency>
     </dependencies>
     <build>
         <extensions>
@@ -109,6 +115,27 @@
             </extension>
         </extensions>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <executions>
+                    <execution>
+                        <id>agent-clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${package.temp.dir}</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -203,19 +230,19 @@
                 <version>3.2.0</version>
                 <executions>
                     <execution>
-                        <id>copy-config</id>
+                        <id>copy-plugin-setting</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${package.agent.dir}</outputDirectory>
+                            <outputDirectory>${config.output.dir}</outputDirectory>
                             <overwrite>true</overwrite>
                             <resources>
                                 <resource>
-                                    <directory>src/main/resources/config/${app.env}</directory>
+                                    <directory>${config.source.dir}/${profile.id}</directory>
                                     <includes>
-                                        <include>apm.config</include>
+                                        <include>plugins.yaml</include>
                                     </includes>
                                 </resource>
                             </resources>

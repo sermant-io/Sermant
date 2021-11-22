@@ -51,4 +51,7 @@ public class KafkaConf {
 
     @Value("${kafka.ibm-jvm-monitor.topic}")
     private String topicIbmJvmMonitor;
+
+    @Value("${kafka.agent-registration.topic}")
+    private String topicAgentRegistration;
 }

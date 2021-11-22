@@ -4,7 +4,6 @@
 
 package com.huawei.apm.core.service.send;
 
-import com.huawei.apm.core.service.CoreService;
 import com.huawei.apm.core.lubanops.bootstrap.config.AgentConfigManager;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.lubanops.integration.transport.ClientManager;
@@ -16,7 +15,7 @@ import java.util.logging.Logger;
 /**
  * 基于Netty Client的网关发送服务
  */
-public class NettyGatewayClient implements GatewayClient, CoreService {
+public class NettyGatewayClient implements GatewayClient {
 
     private static final Logger LOGGER = LogFactory.getLogger();
 

@@ -12,7 +12,7 @@
     <artifactId>flowrecord-plugin</artifactId>
 
     <properties>
-        <package.sample.dir>${package.agent.dir}/plugins</package.sample.dir>
+        <package.sample.type>plugin</package.sample.type>
         <shade.distinct.prefix>com.lubanops.apm.dependencies.flowrecord</shade.distinct.prefix>
         <org.apache.curator.version>4.3.0</org.apache.curator.version>
     </properties>

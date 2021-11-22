@@ -12,7 +12,6 @@
     <artifactId>metric-server</artifactId>
 
     <properties>
-        <package.sample.dir>${package.server.dir}</package.sample.dir>
         <spring-boot-starter.version>2.3.4.RELEASE</spring-boot-starter.version>
         <spring-kafka.version>2.5.6.RELEASE</spring-kafka.version>
         <apm-agent-core.version>8.1.0</apm-agent-core.version>

@@ -73,7 +73,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.huawei.flowre.mockserver.MockServerStarter</mainClass>
-                    <outputDirectory>${package.output.dir}</outputDirectory>
+                    <outputDirectory>${package.server.output.dir}</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>

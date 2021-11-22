@@ -1,8 +1,5 @@
 package com.huawei.apm.core.agent.interceptor;
 
-import com.huawei.apm.core.classloader.ClassLoaderManager;
-import com.huawei.apm.core.exception.EnhanceException;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.huawei.apm.core.exception.EnhanceException;
 
 /**
  * 拦截器加载器
@@ -24,13 +23,12 @@ public class InterceptorLoader {
      */
     private static final Map<String, Interceptor> INTERCEPTOR_CACHE = new ConcurrentHashMap<String, Interceptor>();
 
-    private static final InterceptorChainManager CHAIN_MANAGER = InterceptorChainManager.getInstance();
+    private static final InterceptorChainManager CHAIN_MANAGER = InterceptorChainManager.newInstance();
 
     private static final InterceptorChain EMPTY_CHAIN = new InterceptorChain(new String[0]);
 
     public static <T extends Interceptor> List<T> getInterceptors(Collection<String> interceptorsName,
-        ClassLoader classLoader,
-        Class<T> interceptorType) {
+        ClassLoader classLoader, Class<T> interceptorType) {
         final InterceptorChain chainConfig = getInterceptorChain(interceptorsName);
 
         final List<T> interceptorList = new ArrayList<T>();
@@ -67,9 +65,9 @@ public class InterceptorLoader {
     public static <T extends Interceptor> T getInterceptor(final String interceptor,
         ClassLoader classLoader,
         final Class<T> interceptorType) {
-        // classloader为空的场景，则使用当前的classloader
+        // classloader不允许为空
         if (classLoader == null) {
-            classLoader = InterceptorLoader.class.getClassLoader();
+            throw new IllegalArgumentException("ClassLoader should not be empty. ");
         }
         String interceptorKey = generateKey(interceptor, classLoader);
         Interceptor cacheInterceptor = INTERCEPTOR_CACHE.get(interceptorKey);
@@ -85,8 +83,7 @@ public class InterceptorLoader {
         ClassLoader classLoader,
         Class<T> interceptorType) {
         try {
-            final ClassLoader targetClassLoader = ClassLoaderManager.getTargetClassLoader(classLoader);
-            Class<?> clazz = Class.forName(interceptor, true, targetClassLoader);
+            final Class<?> clazz = Class.forName(interceptor, true, classLoader);
             if (interceptorType.isAssignableFrom(clazz)) {
                 // noinspection unchecked
                 return (T) clazz.newInstance();

@@ -13,8 +13,6 @@
     <packaging>jar</packaging>
 
     <properties>
-        <package.sample.dir>${package.server.dir}</package.sample.dir>
-
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring.boot.version>2.3.4.RELEASE</spring.boot.version>
@@ -598,7 +596,7 @@
                 <configuration>
                     <fork>true</fork>
                     <mainClass>com.huawei.flowcontrol.DashboardApplication</mainClass>
-                    <outputDirectory>${package.output.dir}</outputDirectory>
+                    <outputDirectory>${package.server.output.dir}</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>

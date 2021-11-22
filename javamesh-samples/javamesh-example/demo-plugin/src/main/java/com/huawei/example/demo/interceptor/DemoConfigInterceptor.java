@@ -7,8 +7,8 @@ package com.huawei.example.demo.interceptor;
 import java.lang.reflect.Method;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
-import com.huawei.apm.core.config.ConfigLoader;
 import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
+import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.example.demo.config.DemoConfig;
 
 /**
@@ -24,7 +24,7 @@ public class DemoConfigInterceptor implements StaticMethodInterceptor {
     @Override
     public void before(Class<?> clazz, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
         System.out.println(clazz.getSimpleName() + ": [DemoConfigInterceptor]-before");
-        config = ConfigLoader.getConfig(DemoConfig.class);
+        config = PluginConfigManager.getPluginConfig(DemoConfig.class);
     }
 
     @Override
