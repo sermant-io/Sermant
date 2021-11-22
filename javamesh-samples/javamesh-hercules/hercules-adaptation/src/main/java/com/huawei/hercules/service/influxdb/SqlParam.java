@@ -12,6 +12,11 @@ package com.huawei.hercules.service.influxdb;
  */
 public class SqlParam {
     /**
+     * 测试任务id
+     */
+    private Long testId;
+
+    /**
      * 开始时间
      */
     private String startTime;
@@ -22,11 +27,6 @@ public class SqlParam {
     private String endTime;
 
     /**
-     * 指标名称
-     */
-    private String measurement;
-
-    /**
      * 监控主机ip地址
      */
     private String ip;
@@ -35,6 +35,24 @@ public class SqlParam {
      * 监控主机
      */
     private String host;
+
+    /**
+     * 是否监控jvm数据
+     */
+    private Boolean isMonitorJvm;
+
+    /**
+     * jvm类型
+     */
+    private String jvmType;
+
+    public Long getTestId() {
+        return testId;
+    }
+
+    public void setTestId(Long testId) {
+        this.testId = testId;
+    }
 
     public String getStartTime() {
         return startTime;
@@ -50,14 +68,6 @@ public class SqlParam {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
-    }
-
-    public String getMeasurement() {
-        return measurement;
-    }
-
-    public void setMeasurement(String measurement) {
-        this.measurement = measurement;
     }
 
     public String getIp() {
@@ -76,14 +86,32 @@ public class SqlParam {
         this.host = host;
     }
 
+    public Boolean getMonitorJvm() {
+        return isMonitorJvm;
+    }
+
+    public void setMonitorJvm(Boolean monitorJvm) {
+        isMonitorJvm = monitorJvm;
+    }
+
+    public String getJvmType() {
+        return jvmType;
+    }
+
+    public void setJvmType(String jvmType) {
+        this.jvmType = jvmType;
+    }
+
     @Override
     public String toString() {
-        return "{" +
-                "startTime='" + startTime + '\'' +
+        return "SqlParam{" +
+                "testId=" + testId +
+                ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
-                ", measurement='" + measurement + '\'' +
                 ", ip='" + ip + '\'' +
                 ", host='" + host + '\'' +
+                ", isMonitorJvm=" + isMonitorJvm +
+                ", jvmType='" + jvmType + '\'' +
                 '}';
     }
 }

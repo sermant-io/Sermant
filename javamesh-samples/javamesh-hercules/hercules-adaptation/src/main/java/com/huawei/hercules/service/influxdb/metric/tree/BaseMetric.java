@@ -10,6 +10,7 @@ import com.huawei.hercules.service.influxdb.query.MetricQueryServiceLoader;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -70,7 +71,11 @@ public class BaseMetric implements IMetric {
     @Override
     public void initMetric(List<IMetric> allMetrics, SqlParam sqlParam) {
         // 初始化当前指标数据
-        this.metricData = MetricQueryServiceLoader.getMetricData(type, sqlParam);
+        if (sqlParam == null) {
+            this.metricData = Collections.emptyList();
+        } else {
+            this.metricData = MetricQueryServiceLoader.getMetricData(type, sqlParam);
+        }
 
         // 添加子指标
         if (allMetrics == null || allMetrics.isEmpty()) {
