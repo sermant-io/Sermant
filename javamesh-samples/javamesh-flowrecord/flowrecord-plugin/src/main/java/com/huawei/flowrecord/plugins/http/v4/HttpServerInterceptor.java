@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.apm.core.lubanops.bootstrap.trace.TraceCollector;
-import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.send.GatewayClient;
 import com.huawei.flowrecord.config.CommonConst;
 import com.huawei.flowrecord.domain.*;
@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class HttpServerInterceptor implements InstanceMethodInterceptor {
 
-    private final GatewayClient gatewayClient = CoreServiceManager.INSTANCE.getService(GatewayClient.class);
+    private final GatewayClient gatewayClient = ServiceManager.getService(GatewayClient.class);
 
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {

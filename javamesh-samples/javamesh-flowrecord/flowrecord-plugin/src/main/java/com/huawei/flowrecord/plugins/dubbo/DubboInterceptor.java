@@ -6,7 +6,7 @@ import com.huawei.apm.core.lubanops.bootstrap.trace.Headers;
 import com.huawei.apm.core.lubanops.bootstrap.trace.SpanEvent;
 import com.huawei.apm.core.lubanops.bootstrap.trace.StartTraceRequest;
 import com.huawei.apm.core.lubanops.bootstrap.trace.TraceCollector;
-import com.huawei.apm.core.service.CoreServiceManager;
+import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.send.GatewayClient;
 import com.huawei.flowrecord.utils.*;
 import org.apache.dubbo.common.URL;
@@ -46,7 +46,7 @@ public class DubboInterceptor implements InstanceMethodInterceptor {
     public static final String CONSUMER_TAG = "DUBBO_CONSUMER";
     public static final String PROVIDER_TAG = "DUBBO_PROVIDER";
 
-    private final GatewayClient gatewayClient = CoreServiceManager.INSTANCE.getService(GatewayClient.class);
+    private final GatewayClient gatewayClient = ServiceManager.getService(GatewayClient.class);
 
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {

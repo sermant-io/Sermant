@@ -1,6 +1,6 @@
 package com.huawei.flowcontrol.service;
 
-import com.huawei.apm.core.service.PluginService;
+import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.flowcontrol.core.FlowControlThreadFactory;
 import com.huawei.flowcontrol.core.config.CommonConst;
@@ -19,7 +19,7 @@ public class FlowControlService implements PluginService {
         new FlowControlThreadFactory("FLOW_CONTROL_INIT_THREAD"));
 
     @Override
-    public void init() {
+    public void start() {
         executorService.execute(new FlowControlInitTask());
     }
 

@@ -1,0 +1,35 @@
+demo.test:
+  pluginName: example
+  interceptors:
+    - name: com.huawei.example.demo.interceptor.DemoConfigInterceptor
+      alia: DemoConfigInterceptor
+    - name: com.huawei.example.demo.interceptor.DemoConstInterceptor
+      alia: DemoConstInterceptor
+    - name: com.huawei.example.demo.interceptor.DemoInstInterceptor
+      alia: DemoInstInterceptor
+    - name: com.huawei.example.demo.interceptor.DemoLoggerInterceptor
+      alia: DemoLoggerInterceptor
+    - name: com.huawei.example.demo.interceptor.DemoStaticInterceptor
+      alia: DemoStaticInterceptor
+    - name: com.huawei.example.demo.interceptor.DemoTraceInterceptor
+      alia: DemoTraceInterceptor
+  intField: 123456
+  strField: hello world, intField = ${intField}, appName = ${appName}, user.home = ${user.home}
+  pojoField:
+    intField: 123
+    strField: stringField0, intField = ${intField}, appName = ${appName}, user.home = ${user.home}
+  shortArr: [ 100, 101, 102 ]
+  longList: [ 100, 101, 102 ]
+  str2DemoSimplePojoMap:
+    str:
+      intField: 0
+      str: stringField0 # yaml配置中，数组、List和Map中的复杂对象不支持字段别名(ConfigFieldKey)，字符串不支持值转换(${})
+    str1:
+      intField: 1
+      str: stringField1
+    str2:
+      intField: 2
+      str: stringField2
+  enumType: DEMO
+com.huawei.example.demo.config.DemoServiceConfig:
+  testField: test-field-value

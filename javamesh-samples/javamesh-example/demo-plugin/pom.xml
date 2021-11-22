@@ -12,7 +12,8 @@
     <artifactId>demo-plugin</artifactId>
 
     <properties>
-        <package.sample.dir>${package.agent.dir}/plugins</package.sample.dir>
+        <package.sample.type>plugin</package.sample.type>
+        <config.skip.flag>false</config.skip.flag>
     </properties>
 
     <dependencies>

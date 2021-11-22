@@ -4,9 +4,9 @@
 
 package com.huawei.route.report;
 
-import com.huawei.apm.core.config.ConfigLoader;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.apm.core.service.PluginService;
+import com.huawei.apm.core.plugin.config.PluginConfigManager;
+import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.route.common.factory.NamedThreadFactory;
 import com.huawei.route.common.label.observers.LabelObservers;
 import com.huawei.route.common.report.acquire.TargetAddrAcquire;
@@ -61,8 +61,8 @@ public class ReporterPluginInitServiceImpl implements PluginService {
     }
 
     @Override
-    public void init() {
-        final ReporterConfig config = ConfigLoader.getConfig(ReporterConfig.class);
+    public void start() {
+        final ReporterConfig config = PluginConfigManager.getPluginConfig(ReporterConfig.class);
         // 注册标签库修改监听
         LabelObservers.INSTANCE.registerLabelObservers(new LdcConfigurationObserver());
         final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("registerMessage-sender"));

@@ -17,7 +17,7 @@
     <description>路由上报组件</description>
 
     <properties>
-        <package.sample.dir>${package.agent.dir}/plugins</package.sample.dir>
+        <package.sample.type>plugin</package.sample.type>
         <shade.distinct.prefix>com.huawei.plugin.dependencies.label</shade.distinct.prefix>
     </properties>
     <dependencies>

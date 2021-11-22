@@ -1,0 +1,3 @@
+# 执行-Pexample参数打包时使用，仅含示例工程
+plugins:
+  - example

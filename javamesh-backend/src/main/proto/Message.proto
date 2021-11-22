@@ -27,6 +27,7 @@ message ServiceData{
     SERVER_MONITOR = 4;
     ORACLE_JVM_MONITOR = 5;
     IBM_JVM_MONITOR = 6;
+    AGENT_REGISTRATION = 7;
   }
   DataType dataType = 1;
   bytes data = 2;

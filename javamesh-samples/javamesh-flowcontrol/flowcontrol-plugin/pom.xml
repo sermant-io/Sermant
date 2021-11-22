@@ -12,7 +12,7 @@
     <artifactId>flowcontrol-plugin</artifactId>
 
     <properties>
-        <package.sample.dir>${package.agent.dir}/plugins</package.sample.dir>
+        <package.sample.type>plugin</package.sample.type>
         <sentinel.version>1.8.0</sentinel.version>
         <shade.distinct.prefix>com.lubanops.apm.dependencies.flowcontrol</shade.distinct.prefix>
     </properties>
