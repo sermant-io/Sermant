@@ -12,6 +12,11 @@ public enum DynamicConfigType {
 
     ZOO_KEEPER,
 
+    /**
+     * servicecomb-kie 配置中心
+     */
+    KIE,
+
     NOP;
 
 }

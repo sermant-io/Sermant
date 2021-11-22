@@ -4,22 +4,25 @@
 
 package com.huawei.flowcontrol.adapte.cse;
 
+import com.alibaba.fastjson.JSONObject;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.apm.core.service.PluginService;
-import com.huawei.config.kie.KieRequest;
-import com.huawei.config.kie.KieRequestFactory;
-import com.huawei.config.listener.ConfigurationListener;
-import com.huawei.config.listener.KvDataHolder;
-import com.huawei.config.listener.SubscriberManager;
+import com.huawei.apm.core.plugin.service.PluginService;
+import com.huawei.apm.core.service.dynamicconfig.kie.KieDynamicConfigurationService;
+import com.huawei.apm.core.service.dynamicconfig.kie.listener.KvDataHolder;
+import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
+import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
 
-import java.util.EventObject;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+
+import static com.huawei.apm.core.service.dynamicconfig.kie.kie.KieRequestFactory.buildKieRequest;
+import static com.huawei.apm.core.service.dynamicconfig.kie.kie.KieRequestFactory.buildLabel;
+import static com.huawei.apm.core.service.dynamicconfig.kie.kie.KieRequestFactory.buildLabels;
 
 /**
  * kie同步
@@ -40,13 +43,13 @@ public class KieConfigSyncer implements PluginService {
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    private final Map<KieRequest, ConfigurationListener> listenerCache = new LinkedHashMap<KieRequest, ConfigurationListener>();
+    private final Map<String, ConfigurationListener> listenerCache = new LinkedHashMap<String, ConfigurationListener>();
 
     /**
      * 初始化通知
      */
     @Override
-    public void init() {
+    public void start() {
         executorService.submit(new Runnable() {
             @Override
             public void run() {
@@ -65,8 +68,8 @@ public class KieConfigSyncer implements PluginService {
 
     @Override
     public void stop() {
-        for (Map.Entry<KieRequest, ConfigurationListener> entry : listenerCache.entrySet()) {
-            SubscriberManager.getInstance().unSubscribe(entry.getKey(), entry.getValue());
+        for (Map.Entry<String, ConfigurationListener> entry : listenerCache.entrySet()) {
+            KieDynamicConfigurationService.getInstance().addListener(entry.getKey(), entry.getValue());
         }
     }
 
@@ -74,53 +77,46 @@ public class KieConfigSyncer implements PluginService {
         buildAppRequest();
         buildServiceRequest();
         buildCustomRequest();
-        for (Map.Entry<KieRequest, ConfigurationListener> entry : listenerCache.entrySet()) {
-            SubscriberManager.getInstance().subscribe(entry.getKey(), entry.getValue());
+        for (Map.Entry<String, ConfigurationListener> entry : listenerCache.entrySet()) {
+            KieDynamicConfigurationService.getInstance().addListener(entry.getKey(), entry.getValue());
         }
     }
 
     private void buildServiceRequest() {
-        final KieRequest serviceRequest =
-                KieRequestFactory.buildKieRequest(WAIT, null,
-                        KieRequestFactory.buildLabels(
-                                KieRequestFactory.buildLabel("app", CseServiceMeta.getInstance().getApp()),
-                                KieRequestFactory.buildLabel("service", CseServiceMeta.getInstance().getServiceName()),
-                                KieRequestFactory.buildLabel("environment", CseServiceMeta.getInstance().getEnvironment())));
+        final String serviceRequest = buildKieRequest(WAIT, null, buildLabels(
+                                buildLabel("app", CseServiceMeta.getInstance().getApp()),
+                                buildLabel("service", CseServiceMeta.getInstance().getServiceName()),
+                                buildLabel("environment", CseServiceMeta.getInstance().getEnvironment())));
         listenerCache.put(serviceRequest, new KieConfigListener());
     }
 
     private void buildAppRequest() {
-        final KieRequest appEnvironmentRequest =
-                KieRequestFactory.buildKieRequest(WAIT, null,
-                        KieRequestFactory.buildLabels(
-                                KieRequestFactory.buildLabel("app", CseServiceMeta.getInstance().getApp()),
-                                KieRequestFactory.buildLabel("environment", CseServiceMeta.getInstance().getEnvironment())));
+        final String appEnvironmentRequest = buildKieRequest(WAIT, null, buildLabels(
+                                buildLabel("app", CseServiceMeta.getInstance().getApp()),
+                                buildLabel("environment", CseServiceMeta.getInstance().getEnvironment())));
         listenerCache.put(appEnvironmentRequest, new KieConfigListener());
     }
 
     private void buildCustomRequest() {
-        final KieRequest customRequest =
-                KieRequestFactory.buildKieRequest(WAIT, null,
-                        KieRequestFactory.buildLabels(
-                                KieRequestFactory.buildLabel(CseServiceMeta.getInstance().getCustomLabel(),
+        final String customRequest = buildKieRequest(WAIT, null, buildLabels(
+                                buildLabel(CseServiceMeta.getInstance().getCustomLabel(),
                                         CseServiceMeta.getInstance().getCustomLabelValue())));
         listenerCache.put(customRequest, new KieConfigListener());
     }
 
     static class KieConfigListener implements ConfigurationListener {
+
         @Override
-        public void onEvent(EventObject object) {
-            final Object source = object.getSource();
-            if (source instanceof KvDataHolder.EventDataHolder) {
-                KvDataHolder.EventDataHolder eventDataHolder = (KvDataHolder.EventDataHolder) source;
-                LOGGER.config(String.format(Locale.ENGLISH,
-                        "Received config success! added keys:[%s], modified keys:[%s], deleted keys:[%s]",
-                        eventDataHolder.getAdded().keySet(), eventDataHolder.getModified().keySet(),
-                        eventDataHolder.getDeleted().keySet()));
-                ResolverManager.INSTANCE.resolve(eventDataHolder.getAdded());
-                ResolverManager.INSTANCE.resolve(eventDataHolder.getModified());
-                ResolverManager.INSTANCE.resolve(eventDataHolder.getDeleted(), true);
-            }
+        public void process(ConfigChangedEvent event) {
+            KvDataHolder.EventDataHolder eventDataHolder = JSONObject.parseObject(event.getContent(),
+                    KvDataHolder.EventDataHolder.class);;
+            LOGGER.config(String.format(Locale.ENGLISH,
+                    "Received config success! added keys:[%s], modified keys:[%s], deleted keys:[%s]",
+                    eventDataHolder.getAdded().keySet(), eventDataHolder.getModified().keySet(),
+                    eventDataHolder.getDeleted().keySet()));
+            ResolverManager.INSTANCE.resolve(eventDataHolder.getAdded());
+            ResolverManager.INSTANCE.resolve(eventDataHolder.getModified());
+            ResolverManager.INSTANCE.resolve(eventDataHolder.getDeleted(), true);
         }
     }
 }

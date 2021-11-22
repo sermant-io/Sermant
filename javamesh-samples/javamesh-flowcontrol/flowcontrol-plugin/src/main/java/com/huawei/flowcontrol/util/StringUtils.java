@@ -21,4 +21,63 @@ public class StringUtils {
     public static boolean isEmpty(String val) {
         return val == null || "".equals(val.trim());
     }
+
+    /**
+     * 两个字符串是否相等
+     *
+     * @param str1 字符串1
+     * @param str2 字符串2
+     * @return boolean
+     */
+    public static boolean equal(String str1, String str2) {
+        if (str1 == null && str2 == null) {
+            return true;
+        }
+        if (str1 == null || str2 == null) {
+            return false;
+        }
+        return str1.equals(str2);
+    }
+
+    /**
+     * 字符串是否包含
+     *
+     * @param source 源字符串
+     * @param subStr 字符串
+     * @return boolean
+     */
+    public static boolean contains(String source, String subStr) {
+        if (source == null || subStr == null) {
+            return false;
+        }
+        return source.contains(subStr);
+    }
+
+    /**
+     * 字符串是否以suffix结尾
+     *
+     * @param source 源字符串
+     * @param suffix 后缀
+     * @return boolean
+     */
+    public static boolean suffix(String source, String suffix) {
+        if (source == null || suffix == null) {
+            return false;
+        }
+        return source.endsWith(suffix);
+    }
+
+    /**
+     * 字符串是否以suffix结尾
+     *
+     * @param source 源字符串
+     * @param prefix 后缀
+     * @return boolean
+     */
+    public static boolean prefix(String source, String prefix) {
+        if (source == null || prefix == null) {
+            return false;
+        }
+        return source.startsWith(prefix);
+    }
 }

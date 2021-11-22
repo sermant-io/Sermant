@@ -31,10 +31,13 @@ public class RequestMatcher implements Matcher {
 
     /**
      * 方法类型
-     * POST
-     * GET
-     * PUT
-     * DELETE
+     *     GET,
+     *     POST,
+     *     PUT,
+     *     DELETE,
+     *     HEAD,
+     *     PATCH,
+     *     OPTIONS;
      */
     private List<String> method;
 

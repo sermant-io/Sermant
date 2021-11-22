@@ -95,12 +95,6 @@
             <version>1.5.0-Hoxton</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.huawei.javamesh</groupId>
-            <artifactId>kie-plugin</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
-        </dependency>
 
         <!--huawei update 更新jar版本至优选库版本，原版本2.0.5.RELEASE，优选库版本2.3.4.RELEASE-->
         <dependency>

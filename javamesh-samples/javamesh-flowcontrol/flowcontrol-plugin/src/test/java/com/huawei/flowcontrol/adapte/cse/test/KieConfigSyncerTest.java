@@ -17,7 +17,6 @@ public class KieConfigSyncerTest {
     @Test
     public void testSync() throws InterruptedException {
         final KieConfigSyncer kieConfigSyncer = new KieConfigSyncer();
-        kieConfigSyncer.init();
-        Thread.sleep(100000000);
+        kieConfigSyncer.start();
     }
 }

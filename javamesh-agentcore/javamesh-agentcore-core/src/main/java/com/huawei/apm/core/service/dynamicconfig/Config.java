@@ -59,4 +59,33 @@ public class Config implements BaseConfig {
 
     protected DynamicConfigType dynamicConfigType = DynamicConfigType.ZOO_KEEPER;
 
+    /**
+     * kie配置地址
+     */
+    protected String kieUrl = "http://172.31.100.55:30110";
+
+    /**
+     * 默认kie的命名空间
+     */
+    protected String defaultProject = "default";
+
+    public String getKieUrl() {
+        return kieUrl;
+    }
+
+    public void setKieUrl(String kieUrl) {
+        this.kieUrl = kieUrl;
+    }
+
+    public String getDefaultProject() {
+        return defaultProject;
+    }
+
+    public void setDefaultProject(String defaultProject) {
+        this.defaultProject = defaultProject;
+    }
+
+    public void setDynamicConfigType(DynamicConfigType dynamicConfigType) {
+        this.dynamicConfigType = dynamicConfigType;
+    }
 }
