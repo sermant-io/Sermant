@@ -91,7 +91,7 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
             }
 
         } catch (Exception exception) {
-            LOGGER.warning("Format kie request failed! raw json : " + key);
+            LOGGER.warning("Subscribed kie request failed! raw key : " + key);
             return false;
         }
         return true;
