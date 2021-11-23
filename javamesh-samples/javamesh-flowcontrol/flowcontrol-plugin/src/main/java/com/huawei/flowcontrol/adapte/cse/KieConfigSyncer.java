@@ -7,10 +7,14 @@ package com.huawei.flowcontrol.adapte.cse;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.plugin.service.PluginService;
+import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.apm.core.service.dynamicconfig.Config;
+import com.huawei.apm.core.service.dynamicconfig.DynamicConfigurationFactoryServiceImpl;
 import com.huawei.apm.core.service.dynamicconfig.kie.KieDynamicConfigurationServiceImpl;
 import com.huawei.apm.core.service.dynamicconfig.kie.listener.KvDataHolder;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
+import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigType;
 import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
 
 import java.util.LinkedHashMap;
@@ -45,11 +49,18 @@ public class KieConfigSyncer implements PluginService {
 
     private final Map<String, ConfigurationListener> listenerCache = new LinkedHashMap<String, ConfigurationListener>();
 
+    private final DynamicConfigurationFactoryServiceImpl dynamicConfigurationFactoryService =
+            ServiceManager.getService(DynamicConfigurationFactoryServiceImpl.class);
+
     /**
      * 初始化通知
      */
     @Override
     public void start() {
+        // 此块只会适配KIE配置中心
+        if (Config.getDynamicConfigType() != DynamicConfigType.KIE) {
+            return;
+        }
         executorService.submit(new Runnable() {
             @Override
             public void run() {
@@ -69,7 +80,7 @@ public class KieConfigSyncer implements PluginService {
     @Override
     public void stop() {
         for (Map.Entry<String, ConfigurationListener> entry : listenerCache.entrySet()) {
-            KieDynamicConfigurationServiceImpl.getInstance().addListener(entry.getKey(), entry.getValue());
+            dynamicConfigurationFactoryService.getDynamicConfigurationService().addListener(entry.getKey(), entry.getValue());
         }
     }
 
@@ -78,7 +89,7 @@ public class KieConfigSyncer implements PluginService {
         buildServiceRequest();
         buildCustomRequest();
         for (Map.Entry<String, ConfigurationListener> entry : listenerCache.entrySet()) {
-            KieDynamicConfigurationServiceImpl.getInstance().addListener(entry.getKey(), entry.getValue());
+            dynamicConfigurationFactoryService.getDynamicConfigurationService().addListener(entry.getKey(), entry.getValue());
         }
     }
 
