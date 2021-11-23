@@ -107,9 +107,6 @@ public class SubscriberManager {
      * @param configurationListener 监听器
      */
     public void subscribe(KieRequest kieRequest, ConfigurationListener configurationListener) {
-        if (kieRequest == null || configurationListener == null) {
-            return;
-        }
         final KieSubscriber kieSubscriber = new KieSubscriber(kieRequest);
         Task task;
         KieListenerWrapper kieListenerWrapper = new KieListenerWrapper(configurationListener, new KvDataHolder());

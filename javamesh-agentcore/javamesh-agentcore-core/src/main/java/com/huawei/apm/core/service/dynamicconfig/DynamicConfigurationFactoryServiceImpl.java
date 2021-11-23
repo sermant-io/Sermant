@@ -1,6 +1,6 @@
 package com.huawei.apm.core.service.dynamicconfig;
 
-import com.huawei.apm.core.service.dynamicconfig.kie.KieDynamicConfigurationService;
+import com.huawei.apm.core.service.dynamicconfig.kie.KieDynamicConfigurationServiceImpl;
 import com.huawei.apm.core.service.dynamicconfig.nop.NopDynamicConfigurationService;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigType;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationFactoryService;
@@ -22,7 +22,7 @@ public class DynamicConfigurationFactoryServiceImpl implements DynamicConfigurat
             return ZookeeperDynamicConfigurationService.getInstance();
 
         if ( dct == DynamicConfigType.KIE)
-            return KieDynamicConfigurationService.getInstance();
+            return KieDynamicConfigurationServiceImpl.getInstance();
 
         if ( dct == DynamicConfigType.NOP)
             return NopDynamicConfigurationService.getInstance();

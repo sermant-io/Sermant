@@ -62,7 +62,7 @@ public class Config implements BaseConfig {
     /**
      * kie配置地址
      */
-    protected String kieUrl = "http://172.31.100.55:30110";
+    protected String kieUrl = "http://127.0.0.1:30110";
 
     /**
      * 默认kie的命名空间

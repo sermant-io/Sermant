@@ -4,7 +4,7 @@
 
 package com.huawei.apm.core.service.dynamicconfig;
 
-import com.huawei.apm.core.service.dynamicconfig.kie.KieDynamicConfigurationService;
+import com.huawei.apm.core.service.dynamicconfig.kie.KieDynamicConfigurationServiceImpl;
 import com.huawei.apm.core.service.dynamicconfig.kie.kie.KieRequestFactory;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
@@ -18,11 +18,11 @@ import org.junit.Test;
  * @since 2021-11-22
  */
 public class KieDynamicConfigurationServiceImplTest {
-    private KieDynamicConfigurationService instance;
+    private KieDynamicConfigurationServiceImpl instance;
 
     @Before
     public void setUp() {
-        instance = KieDynamicConfigurationService.getInstance();
+        instance = KieDynamicConfigurationServiceImpl.getInstance();
     }
 
     @Test

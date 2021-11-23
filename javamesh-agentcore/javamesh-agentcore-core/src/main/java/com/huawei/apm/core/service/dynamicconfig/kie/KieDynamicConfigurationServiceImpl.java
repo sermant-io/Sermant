@@ -17,16 +17,21 @@ import java.util.logging.Logger;
 
 /**
  * kie配置中心实现
- *
+ * key生成规则：基于KieRequest实体类生成，例如需要
+ *      <p>1.创建标签version:1.0的监听
+ *         <p>KieRequestFactory.buildKieRequest(new String[]{KieRequestFactory.buildLabel("version", "1.0")});</p>
+ *      <p>2.创建标签version:1.0并打开长连接监听,20S一个周期（最大不可超过50S）</p>
+ *        <p>KieRequestFactory.buildKieRequest(20, new String[]{KieRequestFactory.buildLabel("version", "1.0")});</p>
+ *<p></p>
  * @author zhouss
  * @since 2021-11-22
  */
-public class KieDynamicConfigurationService implements DynamicConfigurationService {
+public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationService {
     private static final Logger LOGGER = LogFactory.getLogger();
 
     private static SubscriberManager subscriberManager;
 
-    private static KieDynamicConfigurationService instance;
+    private static KieDynamicConfigurationServiceImpl instance;
 
     private final KeyHandler<KieRequest> kieRequestKeyHandler = new DefaultKeyHandler<KieRequest>();
 
@@ -35,9 +40,9 @@ public class KieDynamicConfigurationService implements DynamicConfigurationServi
      *
      * @return KieDynamicConfigurationService
      */
-    public static synchronized KieDynamicConfigurationService getInstance() {
+    public static synchronized KieDynamicConfigurationServiceImpl getInstance() {
         if (instance == null) {
-            instance = new KieDynamicConfigurationService();
+            instance = new KieDynamicConfigurationServiceImpl();
             subscriberManager = new SubscriberManager(Config.getInstance().getKieUrl());
         }
         return instance;
@@ -75,7 +80,7 @@ public class KieDynamicConfigurationService implements DynamicConfigurationServi
 
     private boolean updateListener(String key, String group, ConfigurationListener listener, boolean forSubscribe) {
         final KieRequest kieRequest = kieRequestKeyHandler.handle(key, KieRequest.class);
-        if (kieRequest == null) {
+        if (kieRequest == null || listener == null) {
             return false;
         }
         try {
