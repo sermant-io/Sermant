@@ -54,4 +54,7 @@ public class KafkaConf {
 
     @Value("${kafka.agent-registration.topic}")
     private String topicAgentRegistration;
+
+    @Value("${kafka.druid-monitor.topic}")
+    private String topicDruidMonitor;
 }
