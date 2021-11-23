@@ -69,7 +69,7 @@ public class HttpServerInterceptor implements InstanceMethodInterceptor {
 
         httpRequestEntity.setMethod(httpServletRequest.getMethod());
         httpRequestEntity.setHeadMap(headerMap);
-        httpRequestEntity.setHttpRequestBody(httpServletRequest.toString());
+        httpRequestEntity.setHttpRequestBody(httpServletRequest.getParameterMap());
 
         HttpServletResponse httpServletResponse = (HttpServletResponse) arguments[1];
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
