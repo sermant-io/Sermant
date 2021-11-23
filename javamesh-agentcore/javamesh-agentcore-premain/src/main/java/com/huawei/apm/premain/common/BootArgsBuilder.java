@@ -180,5 +180,6 @@ public abstract class BootArgsBuilder {
         argsMap.put(PathIndexer.JAVAMESH_CONFIG_FILE, PathDeclarer.getConfigPath());
         argsMap.put(PathIndexer.JAVAMESH_PLUGIN_SETTING_FILE, PathDeclarer.getPluginSettingPath());
         argsMap.put(PathIndexer.JAVAMESH_PLUGIN_PACKAGE_DIR, PathDeclarer.getPluginPackagePath());
+        argsMap.put(PathIndexer.JAVAMESH_LOGBACK_SETTING_FILE, PathDeclarer.getLogbackSettingPath());
     }
 }
