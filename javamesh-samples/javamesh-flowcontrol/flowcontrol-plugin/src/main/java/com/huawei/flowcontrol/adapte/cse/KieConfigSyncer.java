@@ -10,7 +10,6 @@ import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.dynamicconfig.Config;
 import com.huawei.apm.core.service.dynamicconfig.DynamicConfigurationFactoryServiceImpl;
-import com.huawei.apm.core.service.dynamicconfig.kie.KieDynamicConfigurationServiceImpl;
 import com.huawei.apm.core.service.dynamicconfig.kie.listener.KvDataHolder;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
@@ -80,7 +79,7 @@ public class KieConfigSyncer implements PluginService {
     @Override
     public void stop() {
         for (Map.Entry<String, ConfigurationListener> entry : listenerCache.entrySet()) {
-            dynamicConfigurationFactoryService.getDynamicConfigurationService().addListener(entry.getKey(), entry.getValue());
+            dynamicConfigurationFactoryService.getDynamicConfigurationService().removeListener(entry.getKey(), entry.getValue());
         }
     }
 
