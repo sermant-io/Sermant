@@ -7,7 +7,7 @@ package com.huawei.flowcontrol.adapte.cse;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.plugin.service.PluginService;
-import com.huawei.apm.core.service.dynamicconfig.kie.KieDynamicConfigurationService;
+import com.huawei.apm.core.service.dynamicconfig.kie.KieDynamicConfigurationServiceImpl;
 import com.huawei.apm.core.service.dynamicconfig.kie.listener.KvDataHolder;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
@@ -69,7 +69,7 @@ public class KieConfigSyncer implements PluginService {
     @Override
     public void stop() {
         for (Map.Entry<String, ConfigurationListener> entry : listenerCache.entrySet()) {
-            KieDynamicConfigurationService.getInstance().addListener(entry.getKey(), entry.getValue());
+            KieDynamicConfigurationServiceImpl.getInstance().addListener(entry.getKey(), entry.getValue());
         }
     }
 
@@ -78,7 +78,7 @@ public class KieConfigSyncer implements PluginService {
         buildServiceRequest();
         buildCustomRequest();
         for (Map.Entry<String, ConfigurationListener> entry : listenerCache.entrySet()) {
-            KieDynamicConfigurationService.getInstance().addListener(entry.getKey(), entry.getValue());
+            KieDynamicConfigurationServiceImpl.getInstance().addListener(entry.getKey(), entry.getValue());
         }
     }
 
