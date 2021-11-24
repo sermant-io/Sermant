@@ -4,8 +4,9 @@
 
 package com.huawei.hercules.service.influxdb.query;
 
+import com.huawei.hercules.controller.monitor.dto.MonitorHostDTO;
 import com.huawei.hercules.exception.HerculesException;
-import com.huawei.hercules.service.influxdb.SqlParam;
+import com.huawei.hercules.service.influxdb.metric.tree.MetricType;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public abstract class BaseMetricQueryService implements IMetricQueryService {
     /**
      * metric type
      */
-    private final String metricType;
+    private final MetricType metricType;
 
     /**
      * sql of query executor
@@ -32,7 +33,7 @@ public abstract class BaseMetricQueryService implements IMetricQueryService {
      *
      * @param metricType this metric type
      */
-    public BaseMetricQueryService(String metricType, InfluxDBSqlExecutor influxDBSqlExecutor) {
+    public BaseMetricQueryService(MetricType metricType, InfluxDBSqlExecutor influxDBSqlExecutor) {
         if (StringUtils.isEmpty(metricType)) {
             throw new HerculesException("Metric type can not be empty.");
         }
@@ -44,22 +45,22 @@ public abstract class BaseMetricQueryService implements IMetricQueryService {
     }
 
     @Override
-    public String getMetricType() {
+    public MetricType getMetricType() {
         return metricType;
     }
 
     @Override
-    public List<?> getMetricData(SqlParam sqlParam) {
-        return influxDBSqlExecutor.execute(buildSql(sqlParam), getDataType());
+    public List<?> getMetricData(MonitorHostDTO monitorHostDTO) {
+        return influxDBSqlExecutor.execute(buildSql(monitorHostDTO), getDataType());
     }
 
     /**
      * build metric query data
      *
-     * @param sqlParam query param
+     * @param monitorHostDTO query param
      * @return sql
      */
-    public abstract String buildSql(SqlParam sqlParam);
+    public abstract String buildSql(MonitorHostDTO monitorHostDTO);
 
     /**
      * get the java bean type of data

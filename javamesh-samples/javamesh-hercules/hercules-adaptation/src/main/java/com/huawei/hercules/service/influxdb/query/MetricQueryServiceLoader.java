@@ -4,7 +4,8 @@
 
 package com.huawei.hercules.service.influxdb.query;
 
-import com.huawei.hercules.service.influxdb.SqlParam;
+import com.huawei.hercules.controller.monitor.dto.MonitorHostDTO;
+import com.huawei.hercules.service.influxdb.metric.tree.MetricType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ public class MetricQueryServiceLoader {
     /**
      * 保存所有Metric服务
      */
-    private static final Map<String, IMetricQueryService> metricQueryServices = new HashMap<>();
+    private static final Map<MetricType, IMetricQueryService> metricQueryServices = new HashMap<>();
 
     static {
         ServiceLoader<IMetricQueryService> serviceLoader = ServiceLoader.load(IMetricQueryService.class);
@@ -36,7 +37,7 @@ public class MetricQueryServiceLoader {
      * @param metricType metric类型
      * @return metric查询服务
      */
-    public static IMetricQueryService getMetricQueryService(String metricType) {
+    public static IMetricQueryService getMetricQueryService(MetricType metricType) {
         return metricQueryServices.get(metricType);
     }
 
@@ -44,11 +45,11 @@ public class MetricQueryServiceLoader {
      * 查询数据
      *
      * @param metricType 指标类型
-     * @param sqlParam   查询参数
+     * @param monitorHostDTO   查询参数
      * @return 查询结果
      */
-    public static List<?> getMetricData(String metricType, SqlParam sqlParam) {
+    public static List<?> getMetricData(MetricType metricType, MonitorHostDTO monitorHostDTO) {
         IMetricQueryService metricQueryService = metricQueryServices.get(metricType);
-        return metricQueryService.getMetricData(sqlParam);
+        return metricQueryService.getMetricData(monitorHostDTO);
     }
 }

@@ -4,7 +4,14 @@
 
 package com.huawei.hercules.service.influxdb;
 
-import java.util.Map;
+import com.huawei.hercules.config.FeignRequestInterceptor;
+import com.huawei.hercules.controller.monitor.dto.AgentRegistrationDTO;
+import com.huawei.hercules.fallback.HostAppMappingFallbackFactory;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 /**
  * 功能描述：主机信息和应用部署服务实例之间的映射
@@ -12,11 +19,18 @@ import java.util.Map;
  * @author z30009938
  * @since 2021-11-22
  */
+@FeignClient(url = "${monitor.agent.url}",
+        name = "monitor",
+        fallbackFactory = HostAppMappingFallbackFactory.class,
+        configuration = FeignRequestInterceptor.class
+)
 public interface IHostApplicationMapping {
     /**
-     * 获取主机和应用映射关系信息
+     * 查询host和application之间的映射关系
      *
-     * @return 主机应用和映射关系
+     * @param hostname 主机名称
+     * @return 映射关系
      */
-    Map<String, Object> getHostApplicationMapping();
+    @GetMapping("/registrations/{hostname}")
+    List<AgentRegistrationDTO> getRegistrationsByHostname(@PathVariable("hostname") String hostname);
 }

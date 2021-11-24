@@ -5,9 +5,7 @@
 package com.huawei.hercules.service.influxdb.metric.tree;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
@@ -20,11 +18,11 @@ public class MetricInstanceLoader {
     /**
      * 保存所有Metric服务
      */
-    private static final List<IMetric> metrics = new ArrayList<>();
+    private static final List<IMetricNode> metrics = new ArrayList<>();
 
     static {
-        ServiceLoader<IMetric> serviceLoader = ServiceLoader.load(IMetric.class);
-        for (IMetric metric : serviceLoader) {
+        ServiceLoader<IMetricNode> serviceLoader = ServiceLoader.load(IMetricNode.class);
+        for (IMetricNode metric : serviceLoader) {
             metrics.add(metric);
         }
     }
@@ -34,7 +32,7 @@ public class MetricInstanceLoader {
      *
      * @return metric查询服务
      */
-    public static List<IMetric> getMetrics() {
+    public static List<IMetricNode> getMetrics() {
         return metrics;
     }
 }

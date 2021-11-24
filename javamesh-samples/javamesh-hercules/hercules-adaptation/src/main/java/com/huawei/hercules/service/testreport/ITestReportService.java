@@ -1,6 +1,8 @@
 package com.huawei.hercules.service.testreport;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huawei.hercules.config.FeignRequestInterceptor;
+import com.huawei.hercules.fallback.TestReportServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -9,7 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 压测报告
  */
-@FeignClient(url = "${decisionEngine.url}" + "/rest/testReport", name = "testreport")
+@FeignClient(
+        url = "${controller.engine.url}" + "/rest/testReport",
+        name = "testreport",
+        fallbackFactory = TestReportServiceFallbackFactory.class,
+        configuration = FeignRequestInterceptor.class
+)
 public interface ITestReportService {
 
     /**

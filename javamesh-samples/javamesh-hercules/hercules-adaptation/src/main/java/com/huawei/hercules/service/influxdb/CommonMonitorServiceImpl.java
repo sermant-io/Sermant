@@ -4,7 +4,8 @@
 
 package com.huawei.hercules.service.influxdb;
 
-import com.huawei.hercules.service.influxdb.metric.tree.impl.RootMetric;
+import com.huawei.hercules.controller.monitor.dto.MonitorHostDTO;
+import com.huawei.hercules.service.influxdb.metric.tree.impl.RootMetricNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -25,14 +26,14 @@ public class CommonMonitorServiceImpl implements IMonitorService {
     /**
      * 获取监控数据
      *
-     * @param sqlParam 查询数据参数
+     * @param monitorHostDTO 查询数据参数
      * @return 查询数据
      */
     @Override
-    public RootMetric getAllMonitorData(SqlParam sqlParam) {
-        LOGGER.debug("Start init metric, param:{}", sqlParam);
-        RootMetric rootMetric = new RootMetric();
-        rootMetric.initTree(sqlParam);
+    public RootMetricNode getAllMonitorData(MonitorHostDTO monitorHostDTO) {
+        LOGGER.debug("Start init metric, param:{}", monitorHostDTO);
+        RootMetricNode rootMetric = new RootMetricNode();
+        rootMetric.initTree(monitorHostDTO);
         return rootMetric;
     }
 }

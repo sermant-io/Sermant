@@ -4,9 +4,8 @@
 
 package com.huawei.hercules.service.influxdb;
 
-import com.huawei.hercules.service.influxdb.metric.tree.impl.RootMetric;
-
-import java.util.Map;
+import com.huawei.hercules.controller.monitor.dto.MonitorHostDTO;
+import com.huawei.hercules.service.influxdb.metric.tree.impl.RootMetricNode;
 
 /**
  * 功能描述：监控数据查询接口
@@ -18,8 +17,8 @@ public interface IMonitorService {
     /**
      * 获取监控数据
      *
-     * @param sqlParam 查询数据参数
+     * @param monitorHostDTO 查询数据参数
      * @return 查询数据
      */
-    RootMetric getAllMonitorData(SqlParam sqlParam);
+    RootMetricNode getAllMonitorData(MonitorHostDTO monitorHostDTO);
 }

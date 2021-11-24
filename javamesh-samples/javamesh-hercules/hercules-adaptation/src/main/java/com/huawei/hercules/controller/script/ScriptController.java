@@ -6,7 +6,7 @@ import com.huawei.hercules.controller.BaseController;
 import com.huawei.hercules.exception.HerculesException;
 import com.huawei.hercules.service.perftest.IPerfTestService;
 import com.huawei.hercules.service.scenario.IScenarioService;
-import com.huawei.hercules.service.script.IScripService;
+import com.huawei.hercules.service.script.IScriptService;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
@@ -48,7 +48,7 @@ import java.util.Set;
 @RequestMapping("/api")
 public class ScriptController extends BaseController {
     @Autowired
-    IScripService scripService;
+    IScriptService scripService;
 
     @Autowired
     IPerfTestService perftestService;
@@ -56,7 +56,7 @@ public class ScriptController extends BaseController {
     @Autowired
     private IScenarioService scenarioService;
 
-    @Value("${decisionEngine.url}")
+    @Value("${controller.engine.url}")
     private String host;
 
     /**

@@ -44,7 +44,6 @@ public class RestTemplateConfig {
 	public RestTemplate restTemplate() {
 		// 添加内容转换器,使用默认的内容转换器
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory());
-		// 设置编码格式为UTF-8
 		List<HttpMessageConverter<?>> converterList = restTemplate.getMessageConverters();
 		HttpMessageConverter<?> converterTarget = null;
 		for (HttpMessageConverter<?> item : converterList) {
@@ -56,19 +55,28 @@ public class RestTemplateConfig {
 		if (converterTarget != null) {
 			converterList.remove(converterTarget);
 		}
+
+		// 设置编码格式为UTF-8
 		HttpMessageConverter<?> converter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
 		converterList.add(1, converter);
-
 		LOGGER.info("-----restTemplate-----初始化完成");
 		return restTemplate;
 	}
 
+	/**
+	 * HttpRequest工厂获取方法
+	 *
+	 * @return HttpRequest获取工厂
+	 */
 	public ClientHttpRequestFactory httpRequestFactory() {
-
 		return new HttpComponentsClientHttpRequestFactory(httpClient());
-
 	}
 
+	/**
+	 * HttpClient配置
+	 *
+	 * @return HttpClient配置之后的实例
+	 */
 	public HttpClient httpClient() {
 		// 长连接保持30秒
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(30, TimeUnit.SECONDS);
@@ -79,20 +87,21 @@ public class RestTemplateConfig {
 		//同路由的并发数,路由是对maxTotal的细分
 		connectionManager.setDefaultMaxPerRoute(500);
 
-		//requestConfig
+		// requestConfig
 		RequestConfig requestConfig = RequestConfig.custom()
+
 			//服务器返回数据(response)的时间，超过该时间抛出read timeout
 			.setSocketTimeout(10000)
+
 			//连接上服务器(握手成功)的时间，超出该时间抛出connect timeout
 			.setConnectTimeout(5000)
+
 			//从连接池中获取连接的超时时间，超过该时间未拿到可用连接，会抛出org.apache.http.conn.ConnectionPoolTimeoutException: Timeout waiting for connection from pool
 			.setConnectionRequestTimeout(500)
 			.build();
-		//headers
 		List<Header> headers = new ArrayList<>();
 		headers.add(new BasicHeader("Connection", "Keep-Alive"));
 		headers.add(new BasicHeader("Content-type", "application/json;charset=UTF-8"));
-
 		return HttpClientBuilder.create()
 			.setDefaultRequestConfig(requestConfig)
 			.setConnectionManager(connectionManager)

@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
  */
 
-package com.huawei.hercules.service.influxdb;
+package com.huawei.hercules.controller.monitor.dto;
 
 /**
  * 功能描述：sql使用到的参数
@@ -10,7 +10,7 @@ package com.huawei.hercules.service.influxdb;
  * @author z30009938
  * @since 2021-11-14
  */
-public class SqlParam {
+public class MonitorHostDTO {
     /**
      * 测试任务id
      */
@@ -45,6 +45,16 @@ public class SqlParam {
      * jvm类型
      */
     private String jvmType;
+
+    /**
+     * 主机服务名称
+     */
+    private String service;
+
+    /**
+     * 主机服务中一个实例名称
+     */
+    private String serviceInstance;
 
     public Long getTestId() {
         return testId;
@@ -102,16 +112,19 @@ public class SqlParam {
         this.jvmType = jvmType;
     }
 
-    @Override
-    public String toString() {
-        return "SqlParam{" +
-                "testId=" + testId +
-                ", startTime='" + startTime + '\'' +
-                ", endTime='" + endTime + '\'' +
-                ", ip='" + ip + '\'' +
-                ", host='" + host + '\'' +
-                ", isMonitorJvm=" + isMonitorJvm +
-                ", jvmType='" + jvmType + '\'' +
-                '}';
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
+    public String getServiceInstance() {
+        return serviceInstance;
+    }
+
+    public void setServiceInstance(String serviceInstance) {
+        this.serviceInstance = serviceInstance;
     }
 }

@@ -82,7 +82,7 @@ database.type=mysql
 database.url=127.0.0.1:3306/hercules
 
 # if you want to use HA mode in cubrid, you should enable following
-# database.url_option=&althosts=secondary_ip:port
+database.url_option=useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
 
 # you should provide id / password who has a enough permission to create tables in the given db.
 database.username=root

@@ -1,16 +1,21 @@
 package com.huawei.hercules.service.perftest;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huawei.hercules.config.FeignRequestInterceptor;
+import com.huawei.hercules.fallback.PerfTestServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(url = "${decisionEngine.url}" + "/rest/perftest", name = "perftest")
+@FeignClient(url = "${controller.engine.url}" + "/rest/perftest",
+        name = "perftest",
+        fallbackFactory = PerfTestServiceFallbackFactory.class,
+        configuration = FeignRequestInterceptor.class
+)
 public interface IPerfTestService {
 
     /**

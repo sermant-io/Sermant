@@ -6,7 +6,7 @@ import com.huawei.hercules.controller.BaseController;
 import com.huawei.hercules.exception.HerculesException;
 import com.huawei.hercules.service.perftest.IPerfTestService;
 import com.huawei.hercules.service.scenario.IScenarioService;
-import com.huawei.hercules.service.script.IScripService;
+import com.huawei.hercules.service.script.IScriptService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +104,7 @@ public class PerfTestController extends BaseController {
     private IScenarioService scenarioService;
 
     @Autowired
-    IScripService scripService;
+    IScriptService scripService;
 
     /**
      * 查询任务列表
@@ -249,14 +249,16 @@ public class PerfTestController extends BaseController {
         Map<String, Object> agentInfo = getAgentInfo();
         // agent数由前段输入
         int maxAgentCount = (int) agentInfo.get("agentCount");
-        int agentCount = Integer.parseInt(params.get("agent").toString());
-        if (!params.containsKey("agent") || agentCount <= 0
-                || agentCount > maxAgentCount) {
-            return returnError("代理数只能设置为1-" + maxAgentCount);
-        }
+
         // 如果是运行，没有agent数，直接返回并提醒
-        if (Boolean.parseBoolean(String.valueOf(params.get("run")))) {
+        if (Boolean.parseBoolean(String.valueOf(params.get("run"))) && maxAgentCount <= 0) {
             return returnError(ERROR_AGENT_COUNT);
+        }
+
+        // 判断agent设置是否正确
+        int agentCount = Integer.parseInt(params.get("agent").toString());
+        if (!params.containsKey("agent") || agentCount > maxAgentCount) {
+            return returnError("代理数只能设置为1-" + maxAgentCount);
         }
 
         // 通过查询获取默认值
@@ -265,7 +267,7 @@ public class PerfTestController extends BaseController {
             return scenario;
         }
         // 转换数据参数
-        getPerfTestInfos(perfTestInfos, params);
+        setPerfTestInfos(perfTestInfos, params);
 
         // 计算进程数和线程数，更新虚拟用户数
         if (params.getLong("vuser") > MAX_VUSER_COUNT) {
@@ -398,7 +400,7 @@ public class PerfTestController extends BaseController {
         test.put("log_name", logs == null ? Collections.emptyList() : logs);
         JSONArray thisTps = report.getJSONArray("TPS");
         if (thisTps == null || thisTps.isEmpty()) {
-            thisTps = getDefaultTps(start, interval);
+            thisTps = getDefaultTps(start, interval, Math.abs(start));
         }
         test.put("chart", thisTps);
         report.put("data", test);
@@ -423,6 +425,7 @@ public class PerfTestController extends BaseController {
         Map<String, Object> test = report.getJSONObject("test");
         parseTest(test);
         report.put("data", test);
+        report.remove("test");
         return report;
     }
 
@@ -892,7 +895,7 @@ public class PerfTestController extends BaseController {
         return returnError("关联压测场景不存在");
     }
 
-    private void getPerfTestInfos(JSONObject perfTestInfos, JSONObject params) {
+    private void setPerfTestInfos(JSONObject perfTestInfos, JSONObject params) {
         perfTestInfos.put("testName", params.get("test_name"));
         perfTestInfos.put("agentCount", params.get("agent"));
         perfTestInfos.put("tagString", arrayToStr((List<String>) params.get("label")));
@@ -1016,16 +1019,22 @@ public class PerfTestController extends BaseController {
         return result;
     }
 
-    private JSONArray getDefaultTps(int duration, int interval) {
+    private JSONArray getDefaultTps(int needAddedDuration, int interval, int totalDuration) {
         JSONArray tpsInfos = new JSONArray();
-        for (int i = 0; i < Math.abs(duration); i++) {
+        for (int i = 0; i < Math.abs(needAddedDuration); i++) {
             if (i % interval != 0) {
                 continue;
             }
             Map<String, Object> thisTps = new HashMap<>();
             thisTps.put("tps", 0); // 缺省值补0
             String format = "-%s:%s";
-            thisTps.put("time", String.format(Locale.ENGLISH, format, getMinuteString(i), getSecondsString(i)));
+            int timeIndex = totalDuration - 1 - i;
+            if (timeIndex == 0) {
+                thisTps.put("time", "00:00");
+            } else {
+                String time = String.format(Locale.ENGLISH, format, getMinuteString(timeIndex), getSecondsString(timeIndex));
+                thisTps.put("time", time);
+            }
             tpsInfos.add(thisTps);
         }
         return tpsInfos;

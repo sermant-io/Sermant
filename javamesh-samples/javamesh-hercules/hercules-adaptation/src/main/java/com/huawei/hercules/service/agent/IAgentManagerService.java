@@ -5,7 +5,9 @@
 package com.huawei.hercules.service.agent;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huawei.hercules.config.FeignRequestInterceptor;
 import com.huawei.hercules.controller.agent.constant.AgentManagerType;
+import com.huawei.hercules.fallback.AgentManagerServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +21,12 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author z30009938
  * @since 2021-10-14
  */
-@FeignClient(url = "${decisionEngine.url}" + "/rest/agent", name = "agentManager")
+@FeignClient(
+        url = "${controller.engine.url}" + "/rest/agent",
+        name = "agentManager",
+        fallbackFactory = AgentManagerServiceFallbackFactory.class,
+        configuration = FeignRequestInterceptor.class
+)
 public interface IAgentManagerService {
     /**
      * 查询所有agent

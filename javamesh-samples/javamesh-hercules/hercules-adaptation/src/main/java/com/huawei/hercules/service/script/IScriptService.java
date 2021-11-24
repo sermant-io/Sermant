@@ -1,6 +1,8 @@
 package com.huawei.hercules.service.script;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huawei.hercules.config.FeignRequestInterceptor;
+import com.huawei.hercules.fallback.ScriptServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,8 +11,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
-@FeignClient(url = "${decisionEngine.url}" + "/rest/script", name = "script")
-public interface IScripService {
+@FeignClient(
+        url = "${controller.engine.url}" + "/rest/script",
+        name = "script",
+        fallbackFactory = ScriptServiceFallbackFactory.class,
+        configuration = FeignRequestInterceptor.class
+)
+public interface IScriptService {
 
     /**
      * 新建脚本

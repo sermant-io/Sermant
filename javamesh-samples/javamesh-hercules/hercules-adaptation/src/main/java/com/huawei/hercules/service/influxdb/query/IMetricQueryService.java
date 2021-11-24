@@ -4,7 +4,8 @@
 
 package com.huawei.hercules.service.influxdb.query;
 
-import com.huawei.hercules.service.influxdb.SqlParam;
+import com.huawei.hercules.controller.monitor.dto.MonitorHostDTO;
+import com.huawei.hercules.service.influxdb.metric.tree.MetricType;
 
 import java.util.List;
 
@@ -20,13 +21,13 @@ public interface IMetricQueryService {
      *
      * @return 指标类型
      */
-    String getMetricType();
+    MetricType getMetricType();
 
     /**
      * 获取指标数据
      *
-     * @param sqlParam 查询参数
+     * @param monitorHostDTO 查询参数
      * @return 指定类型的数据列表
      */
-    List<?> getMetricData(SqlParam sqlParam);
+    List<?> getMetricData(MonitorHostDTO monitorHostDTO);
 }

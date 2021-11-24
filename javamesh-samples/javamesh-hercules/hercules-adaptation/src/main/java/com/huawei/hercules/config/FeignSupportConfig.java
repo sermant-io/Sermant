@@ -18,5 +18,4 @@ public class FeignSupportConfig {
     public Encoder feignFormEncoder() {
         return new SpringFormEncoder(new SpringEncoder(messageConverters));
     }
-
 }
