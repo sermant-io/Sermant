@@ -19,6 +19,7 @@ spring:
       - classpath:create-table.sql
       - classpath:parse_exec_status.sql
       - classpath:parse_scene_exec_status.sql
+      - classpath:parse_record_exec_status.sql
     initialization-mode: always
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
