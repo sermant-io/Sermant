@@ -6,6 +6,7 @@ package com.huawei.emergency.controller;
 
 import com.huawei.common.api.CommonPage;
 import com.huawei.common.api.CommonResult;
+import com.huawei.emergency.dto.PlanQueryDto;
 import com.huawei.emergency.dto.PlanQueryParams;
 import com.huawei.emergency.dto.PlanSaveParams;
 import com.huawei.emergency.dto.TaskNode;
@@ -204,13 +205,16 @@ public class EmergencyPlanController {
      * 预案审核
      *
      * @param request http请求
-     * @param emergencyPlan {@link EmergencyPlan#getPlanId()} 预案ID，{@link EmergencyPlan#getCheckResult()} 审核结果
+     * @param planQueryDto {@link PlanQueryDto#getPlanId()} 预案ID，{@link PlanQueryDto#getCheckResult()} 审核结果，{@link PlanQueryDto#getCheckResult()} 审核意见
      * @return {@link CommonResult}
      */
     @PostMapping("/plan/approve")
-    public CommonResult approve(HttpServletRequest request, @RequestBody EmergencyPlan emergencyPlan) {
-        emergencyPlan.setCheckResult(parseCheckResult(emergencyPlan.getCheckResult()));
-        return planService.approve(emergencyPlan, parseUserName(request));
+    public CommonResult approve(HttpServletRequest request, @RequestBody PlanQueryDto planQueryDto) {
+        EmergencyPlan plan = new EmergencyPlan();
+        plan.setPlanId(planQueryDto.getPlanId());
+        plan.setCheckResult(parseCheckResult(planQueryDto.getCheckResult()));
+        plan.setCheckRemark(planQueryDto.getComment());
+        return planService.approve(plan, parseUserName(request));
     }
 
     private String parseCheckResult(String checkResult) {

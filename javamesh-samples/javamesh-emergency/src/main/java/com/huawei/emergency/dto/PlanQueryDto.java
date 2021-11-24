@@ -23,6 +23,8 @@ public class PlanQueryDto {
     private String planName;
     private String status;
     private String statusLabel;
+    private String checkResult;
+    private String comment;
     private String createTime;
     private String creator;
     private String executeTime;

@@ -389,6 +389,7 @@
         WHEN plan.check_result = '1' THEN '审核中'
         WHEN plan.check_result = '2' THEN '审核通过'
         WHEN plan.check_result = '3' THEN '驳回' END) status_label,
+        plan.check_remark comment,
         date_format(plan.create_time, '%Y-%m-%d %H:%i:%s') create_time,
         plan.create_user creator
         FROM emergency_plan plan

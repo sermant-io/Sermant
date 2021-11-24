@@ -651,42 +651,42 @@
 
     <select id="selectAllPlanDetail" parameterType="java.lang.Integer"
             resultType="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
-        SELECT plan.plan_id                                                                                    AS plan_id,
-               plan_detail.scene_id                                                                            AS scene_id,
-               task.task_id                                                                                    AS task_id,
+        SELECT plan.plan_id                     AS plan_id,
+               plan_detail.scene_id             AS scene_id,
+               task.task_id                     AS task_id,
                plan_detail.pre_scene_id,
                plan_detail.pre_task_id,
                plan_detail.parent_task_id,
                (CASE
                     WHEN plan_detail.task_id IS NULL THEN scene_script.script_id
-                    ELSE script.script_id END)                                                                    script_id,
+                    ELSE script.script_id END)     script_id,
                (CASE
                     WHEN plan_detail.task_id IS NULL THEN scene_script.script_name
-                    ELSE script.script_name END)                                                                  script_name,
+                    ELSE script.script_name END)   script_name,
                (CASE
                     WHEN plan_detail.task_id IS NULL THEN scene_script.content
-                    ELSE script.content END)                                                                   AS script_content,
+                    ELSE script.content END)    AS script_content,
                (CASE
                     WHEN plan_detail.task_id IS NULL THEN scene_script.script_type
-                    ELSE script.script_type END)                                                                  script_type,
+                    ELSE script.script_type END)   script_type,
                (CASE
                     WHEN plan_detail.task_id IS NULL THEN scene_script.param
-                    ELSE script.param END)                                                                     AS script_params,
+                    ELSE script.param END)      AS script_params,
                (CASE
                     WHEN plan_detail.task_id IS NULL THEN scene_script.server_ip
-                    ELSE script.server_ip END)                                                                    server_ip,
+                    ELSE script.server_ip END)     server_ip,
                (CASE
                     WHEN plan_detail.task_id IS NULL THEN scene_script.server_user
-                    ELSE script.server_user END)                                                                  server_user,
+                    ELSE script.server_user END)   server_user,
                (CASE
                     WHEN plan_detail.task_id IS NULL THEN scene_script.have_password
-                    ELSE script.have_password END)                                                                have_password,
+                    ELSE script.have_password END) have_password,
                (CASE
                     WHEN plan_detail.task_id IS NULL THEN scene_script.password_mode
-                    ELSE script.password_mode END)                                                                password_mode,
+                    ELSE script.password_mode END) password_mode,
                (CASE
                     WHEN plan_detail.task_id IS NULL THEN scene_script.`password`
-                    ELSE script.`password` END)                                                                AS `password`,
+                    ELSE script.`password` END) AS `password`,
                plan_detail.sync
         FROM emergency_plan plan
                  LEFT JOIN emergency_plan_detail plan_detail ON plan.plan_id = plan_detail.plan_id
@@ -699,20 +699,23 @@
     </select>
 
     <update id="tryUpdateStartTime">
-      UPDATE emergency_exec_record t
-      SET t.start_time = #{startTime}
-      WHERE t.record_id = #{recordId}
-        AND t.is_valid = '1'
-        and t.start_time is null
+        UPDATE emergency_exec_record t
+        SET t.start_time = #{startTime}
+        WHERE t.record_id = #{recordId}
+          AND t.is_valid = '1'
+          and t.start_time is null
     </update>
 
-  <update id="tryUpdateEndTime">
-    UPDATE emergency_exec_record t
-    SET t.end_time = #{endTime}
-    WHERE t.record_id = #{recordId}
-      AND t.is_valid = '1'
-      and t.end_time is null
-  </update>
+    <update id="tryUpdateEndTime">
+        UPDATE emergency_exec_record t
+        SET t.end_time = #{endTime}
+        WHERE t.record_id = #{recordId}
+          AND t.is_valid = '1'
+          AND NOT EXISTS(
+                SELECT 1
+                FROM emergency_exec_record_detail
+                WHERE end_time IS NULL)
+    </update>
 
     <update id="tryUpdateStatus" parameterType="java.lang.Integer">
         UPDATE emergency_exec_record t
