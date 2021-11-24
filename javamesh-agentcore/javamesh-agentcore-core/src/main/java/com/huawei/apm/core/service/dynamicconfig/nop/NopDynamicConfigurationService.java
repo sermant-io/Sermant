@@ -49,12 +49,12 @@ public class NopDynamicConfigurationService implements DynamicConfigurationServi
 
 
     @Override
-    public boolean addListener(String key, String group, ConfigurationListener listener) {
+    public boolean addConfigListener(String key, String group, ConfigurationListener listener) {
         return true;
     }
 
     @Override
-    public boolean removeListener(String key, String group, ConfigurationListener listener) {
+    public boolean removeConfigListener(String key, String group, ConfigurationListener listener) {
         return true;
     }
 

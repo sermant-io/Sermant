@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -82,7 +85,7 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
 
 
     @Override
-    public boolean addListener(String key, String group, ConfigurationListener listener) {
+    public boolean addConfigListener(String key, String group, ConfigurationListener listener) {
 
         if (listener == null)
             return false;
@@ -120,7 +123,7 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
      * @param listener configuration listener
      */
     @Override
-    public boolean removeListener(String key, String group, ConfigurationListener listener) {
+    public boolean removeConfigListener(String key, String group, ConfigurationListener listener) {
         throw new UnsupportedOperationException();
     }
 
@@ -218,6 +221,64 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
         } catch (InterruptedException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
+    }
+
+    @Override
+    public List<String> listConfigsFromGroup(String group)
+    {
+        group = group.trim();
+        if (group.startsWith("/") == false)
+        {
+            group = "/"+group;
+        }
+        List<String> str_array = null;
+        try {
+            str_array = listNodesFromNode(group);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, e.getMessage(), e);
+        }
+        return str_array;
+    }
+
+    @Override
+    public List<String> listConfigsFromConfig(String key, String group)
+    {
+        group = group.trim();
+        if (group.startsWith("/") == false)
+        {
+            group = "/"+group;
+        }
+        key = key.trim();
+        if (key.startsWith("/") == false)
+        {
+            key = "/"+key;
+        }
+
+        List<String> str_array = null;
+        try {
+            str_array = listNodesFromNode(group+key);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, e.getMessage(), e);
+        }
+        return str_array;
+    }
+
+    private List<String> listNodesFromNode(String node)
+    {
+        List<String> str_array = new Vector<String>();
+        try {
+            str_array = zkClient.getChildren(node, null);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, e.getMessage(), e);
+        }
+        for (int i = 0; i < str_array.size(); i++)
+        {
+            String str = str_array.get(i);
+            List<String> str_array1 = listNodesFromNode(node + "/" + str);
+            str_array.addAll(str_array1);
+        }
+
+        return str_array;
     }
 
 

@@ -2,11 +2,13 @@ package com.huawei.apm.core.service.dynamicconfig;
 
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.service.BaseService;
+import com.huawei.apm.core.service.dynamicconfig.service.*;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationFactoryService;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationService;
 import com.huawei.apm.core.service.dynamicconfig.zookeeper.ZookeeperDynamicConfigurationService;
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
@@ -45,6 +47,17 @@ public class DynamicConfigurationFactoryServiceImplTest {
     }
 
     @Test
+    public void testConfig() {
+        DynamicConfigType type = DynamicConfigType.valueOf("NOP");
+        try {
+            type = DynamicConfigType.valueOf("Nop");
+            Assert.fail("Should not comes here");
+        } catch ( IllegalArgumentException e ) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
     public void testZKClient() {
         ZooKeeper zkClient = null;
 
@@ -76,6 +89,14 @@ public class DynamicConfigurationFactoryServiceImplTest {
         } else {
             System.err.println("zkClient is null");
             Assert.fail();
+        }
+        try {
+            List<String> str_array = zkClient.getChildren("/test2", null);
+            System.out.println(str_array);
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -123,7 +144,7 @@ public class DynamicConfigurationFactoryServiceImplTest {
         rs = zdcs.getConfig("/test/test11", "test2");
         Assert.assertTrue(rs.equals("test22"));
 
-        zdcs.addListener("/test/test11", "test2", new ConfigurationListener() {
+        zdcs.addConfigListener("/test/test11", "test2", new ConfigurationListener() {
             @Override
             public void process(ConfigChangedEvent event) {
 
@@ -132,6 +153,9 @@ public class DynamicConfigurationFactoryServiceImplTest {
             }
         });
         zdcs.publishConfig("/test/test11", "test3", "test22");
+        List<String> configs = zdcs.listConfigsFromGroup("test3");
+
+        System.out.println("end");
     }
 
 
