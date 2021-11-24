@@ -25,9 +25,11 @@ public interface SentinelRuleEntity {
     /**
      * 是否匹配
      *
+     * @param url     请求路径
      * @param headers 请求头
-     * @param method 方法类型
+     * @param method  方法类型
      * @return boolean
      */
-    boolean match(Map<String, String> headers, HttpMethod method);
+    boolean match(String url, Map<String, String> headers, HttpMethod method);
+
 }

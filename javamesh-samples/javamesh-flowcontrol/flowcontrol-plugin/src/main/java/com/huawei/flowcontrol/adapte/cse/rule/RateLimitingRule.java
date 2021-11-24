@@ -5,6 +5,10 @@
 package com.huawei.flowcontrol.adapte.cse.rule;
 
 
+import com.alibaba.csp.sentinel.slots.block.Rule;
+import com.alibaba.csp.sentinel.slots.block.RuleConstant;
+import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
+
 /**
  * 限流规则
  *
@@ -56,6 +60,15 @@ public class RateLimitingRule extends AbstractRule {
     @Override
     public boolean isValid() {
         return parsedTimeoutDuration < 0 || parsedLimitRefreshPeriod <= 0 || rate <= 0 || super.isValid();
+    }
+
+    @Override
+    public FlowRule convertToSentinelRule() {
+        final FlowRule flowRule = new FlowRule();
+        flowRule.setCount(this.rate);
+        flowRule.setGrade(RuleConstant.FLOW_GRADE_QPS);
+        flowRule.setResource(getName());
+        return flowRule;
     }
 
     public long getParsedTimeoutDuration() {

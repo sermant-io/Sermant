@@ -10,8 +10,10 @@ import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.Tracer;
 import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.flowcontrol.adapte.cse.match.MatchManager;
 import com.huawei.flowcontrol.config.CommonConst;
 import com.huawei.flowcontrol.util.FilterUtil;
 import com.huawei.flowcontrol.util.SentinelRuleUtil;
@@ -41,6 +43,8 @@ public class DispatcherServletInterceptor implements InstanceMethodInterceptor {
         }
         String resourceName = FilterUtil.filterTarget(req);
         try {
+            MatchManager.INSTANCE.tryEntry(req);
+            System.out.println(FlowRuleManager.getRules().size());
             // 流控代码
             entry = SphU.entry(resourceName, EntryType.IN);
             ENTRY_THREAD_LOCAL.set(entry);

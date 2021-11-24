@@ -4,6 +4,8 @@
 
 package com.huawei.flowcontrol.adapte.cse.rule;
 
+import com.alibaba.csp.sentinel.slots.block.Rule;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,6 +113,11 @@ public class RetryRule extends AbstractRule {
             return true;
         }
         return super.isValid();
+    }
+
+    @Override
+    public Rule convertToSentinelRule() {
+        return null;
     }
 
     public int getMaxAttempts() {

@@ -10,7 +10,6 @@ import com.huawei.apm.core.agent.matcher.ClassMatcher;
 import com.huawei.apm.core.agent.matcher.ClassMatchers;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatchers;
-import org.apache.servicecomb.governance.MicroserviceMeta;
 
 /**
  * 拦截servicecomb的服务名与版本
@@ -26,7 +25,7 @@ public class ServiceCombServiceMetaEnhancer implements EnhanceDefinition {
 
     @Override
     public ClassMatcher enhanceClass() {
-        return ClassMatchers.hasSuperTypes(MicroserviceMeta.class);
+        return ClassMatchers.hasSuperTypes("org.apache.servicecomb.governance.MicroserviceMeta");
     }
 
     @Override

@@ -4,6 +4,7 @@
 
 package com.huawei.flowcontrol.adapte.cse.rule;
 
+import com.alibaba.csp.sentinel.slots.block.Rule;
 import com.huawei.flowcontrol.util.StringUtils;
 
 /**
@@ -133,6 +134,11 @@ public class CircuitBreakerRule extends AbstractRule {
         }
 
         return super.isValid();
+    }
+
+    @Override
+    public Rule convertToSentinelRule() {
+        return null;
     }
 
     public float getFailureRateThreshold() {

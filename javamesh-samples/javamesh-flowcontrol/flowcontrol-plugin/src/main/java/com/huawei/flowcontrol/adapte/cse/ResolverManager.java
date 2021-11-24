@@ -6,6 +6,7 @@ package com.huawei.flowcontrol.adapte.cse;
 
 
 import com.huawei.flowcontrol.adapte.cse.resolver.AbstractResolver;
+import com.huawei.flowcontrol.adapte.cse.resolver.listener.ConfigUpdateListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +41,6 @@ public enum ResolverManager {
      * @param forDelete 是否是为了移除场景
      */
     public void resolve(Map<String, String> rulesMap, boolean forDelete) {
-        final Set<Map.Entry<String, AbstractResolver<?>>> resolvers = resolversMap.entrySet();
         for (Map.Entry<String, String> ruleEntity : rulesMap.entrySet()) {
             final String key = ruleEntity.getKey();
             resolve(key, ruleEntity.getValue(), forDelete);
@@ -67,6 +67,20 @@ public enum ResolverManager {
     }
 
     /**
+     * 注册监听器
+     *
+     * @param configKey 监听的规则类型
+     * @param listener 监听器
+     */
+    public void registerListener(String configKey, ConfigUpdateListener listener) {
+        String configKeyPrefix = AbstractResolver.getConfigKeyPrefix(configKey);
+        final AbstractResolver<?> abstractResolver = resolversMap.get(configKeyPrefix);
+        if (abstractResolver != null) {
+            abstractResolver.registerListener(listener);
+        }
+    }
+
+    /**
      * 解析配置
      *
      * @param rulesMap 配置中心获取的规则数据
@@ -79,13 +93,13 @@ public enum ResolverManager {
         return resolversMap;
     }
 
-    public AbstractResolver<?> getResolver(String configKey) {
-        return resolversMap.get(configKey);
+    public <R extends AbstractResolver<?>> R getResolver(String configKey) {
+        return (R) resolversMap.get(AbstractResolver.getConfigKeyPrefix(configKey));
     }
 
     private void loadSpiResolvers() {
         for (AbstractResolver<?> resolver : ServiceLoader.load(AbstractResolver.class)) {
-            final String configKeyPrefix = resolver.getConfigKeyPrefix();
+            final String configKeyPrefix = AbstractResolver.getConfigKeyPrefix(resolver.getConfigKey());
             if (".".equals(configKeyPrefix)) {
                 // 空配置跳过
                 continue;

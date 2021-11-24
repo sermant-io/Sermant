@@ -8,10 +8,13 @@ import com.huawei.flowcontrol.adapte.cse.constants.CseConstants;
 import com.huawei.flowcontrol.adapte.cse.converter.Converter;
 import com.huawei.flowcontrol.adapte.cse.converter.YamlConverter;
 import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
+import com.huawei.flowcontrol.adapte.cse.resolver.listener.ConfigUpdateListener;
 import com.huawei.flowcontrol.adapte.cse.rule.Configurable;
 import com.huawei.flowcontrol.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,22 +27,24 @@ public abstract class AbstractResolver<T extends Configurable> {
     /**
      * 各类规则配置前缀
      */
-    private String configKey;
+    private final String configKey;
 
     /**
      * 规则数据
      * map<业务场景名, 规则数据>
      */
-    private Map<String, T> rules;
+    private final Map<String, T> rules;
+
+    /**
+     * 配置更新监听
+     * 进行解析后再通知
+     */
+    private List<ConfigUpdateListener<T>> listeners = new ArrayList<ConfigUpdateListener<T>>();
 
     /**
      * 转换器
      */
-    private Converter<String, T> converter;
-
-    public AbstractResolver() {
-
-    }
+    private final Converter<String, T> converter;
 
     public AbstractResolver(String configKey) {
         this.configKey = configKey;
@@ -49,12 +54,30 @@ public abstract class AbstractResolver<T extends Configurable> {
     }
 
     /**
+     * 注册监听器
+     *
+     * @param listener 监听器
+     */
+    public synchronized void registerListener(ConfigUpdateListener<T> listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * 配置更新通知
+     */
+    public void notifyListeners() {
+        for (ConfigUpdateListener<T> listener : listeners) {
+            listener.notify(rules);
+        }
+    }
+
+    /**
      * 转换规则
      *
      * @param rulesMap 更新的规则列表
      */
     public void parseRules(Map<String, String> rulesMap) {
-        final String configKeyPrefix = getConfigKeyPrefix();
+        final String configKeyPrefix = getConfigKeyPrefix(configKey);
         for (Map.Entry<String, String> ruleEntity : rulesMap.entrySet()) {
             String key = ruleEntity.getKey();
             if (StringUtils.isEmpty(key) || !key.startsWith(configKeyPrefix)) {
@@ -111,6 +134,7 @@ public abstract class AbstractResolver<T extends Configurable> {
         if (override) {
             rules.put(businessKey, rule);
         }
+        notifyListeners();
         return rule;
     }
 
@@ -121,7 +145,7 @@ public abstract class AbstractResolver<T extends Configurable> {
      */
     protected abstract Class<T> getRuleClass();
 
-    public String getConfigKeyPrefix() {
+    public static String getConfigKeyPrefix(String configKey) {
         return configKey + ".";
     }
 
@@ -149,6 +173,10 @@ public abstract class AbstractResolver<T extends Configurable> {
             }
         }
         return false;
+    }
+
+    public String getConfigKey() {
+        return configKey;
     }
 
     public Map<String, T> getRules() {

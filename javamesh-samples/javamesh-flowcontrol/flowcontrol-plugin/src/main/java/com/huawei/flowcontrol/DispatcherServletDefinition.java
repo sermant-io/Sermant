@@ -26,7 +26,7 @@ public class DispatcherServletDefinition implements EnhanceDefinition {
     /**
      * 拦截类的全限定名
      */
-    private static final String INTERCEPT_CLASS = "com.lubanops.apm.plugin.flowcontrol.DispatcherServletInterceptor";
+    private static final String INTERCEPT_CLASS = "com.huawei.flowcontrol.DispatcherServletInterceptor";
 
     @Override
     public ClassMatcher enhanceClass() {

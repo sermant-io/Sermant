@@ -1,2 +1,2 @@
-#com.huawei.flowcontrol.service.FlowControlService
+com.huawei.flowcontrol.service.FlowControlService
 com.huawei.flowcontrol.adapte.cse.KieConfigSyncer

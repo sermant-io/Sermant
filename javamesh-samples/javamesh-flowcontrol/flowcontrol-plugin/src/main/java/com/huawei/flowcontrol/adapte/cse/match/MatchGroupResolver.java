@@ -13,7 +13,7 @@ import com.huawei.flowcontrol.adapte.cse.resolver.AbstractResolver;
  * @since 2021-11-16
  */
 public class MatchGroupResolver extends AbstractResolver<BusinessMatcher> {
-    private static final String CONFIG_KEY = "servicecomb.matchGroup";
+    public static final String CONFIG_KEY = "servicecomb.matchGroup";
 
     public MatchGroupResolver() {
         super(CONFIG_KEY);

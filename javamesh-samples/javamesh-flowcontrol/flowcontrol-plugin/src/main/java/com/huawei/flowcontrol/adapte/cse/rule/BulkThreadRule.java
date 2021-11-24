@@ -4,6 +4,8 @@
 
 package com.huawei.flowcontrol.adapte.cse.rule;
 
+import com.alibaba.csp.sentinel.slots.block.Rule;
+
 /**
  * 隔离仓规则
  *
@@ -45,6 +47,11 @@ public class BulkThreadRule extends AbstractRule {
             return true;
         }
         return super.isValid();
+    }
+
+    @Override
+    public Rule convertToSentinelRule() {
+        return null;
     }
 
     public long getParsedMaxWaitDuration() {

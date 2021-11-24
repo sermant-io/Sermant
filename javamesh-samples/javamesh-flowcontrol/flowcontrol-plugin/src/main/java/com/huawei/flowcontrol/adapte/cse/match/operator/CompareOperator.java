@@ -49,7 +49,15 @@ public class CompareOperator implements Operator {
         if (targetValue == null || patternValue == null) {
             return false;
         }
-        return false;
+        if (operators.contains(patternValue.charAt(0)) && operators.contains(patternValue.charAt(1))) {
+            // 前两个字符为比较符
+            return compare(targetValue, patternValue.substring(0, 2), patternValue.substring(2));
+        } else if (operators.contains(patternValue.charAt(0))) {
+            // 仅第一个为比较字符
+            return compare(targetValue, patternValue.substring(0, 1), patternValue.substring(1));
+        } else {
+            return false;
+        }
     }
 
     private boolean compare(String targetValue, String operator, String num) {

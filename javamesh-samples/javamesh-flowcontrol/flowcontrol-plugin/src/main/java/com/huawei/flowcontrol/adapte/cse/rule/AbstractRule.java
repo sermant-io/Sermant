@@ -13,6 +13,9 @@ import com.huawei.flowcontrol.util.StringUtils;
  * @since 2021-11-15
  */
 public abstract class AbstractRule extends Configurable implements Rule {
+
+    private String resource;
+
     /**
      * 时间格式
      */
@@ -27,6 +30,13 @@ public abstract class AbstractRule extends Configurable implements Rule {
     public boolean isValid() {
         return StringUtils.isEmpty(name);
     }
+
+    /**
+     * 转换为sentinel规则
+     *
+     * @return sentinel规则
+     */
+    public abstract com.alibaba.csp.sentinel.slots.block.Rule convertToSentinelRule();
 
     /**
      * 字符串转long类型毫秒

@@ -20,7 +20,7 @@ public class FlowControlService implements PluginService {
 
     @Override
     public void start() {
-//        executorService.execute(new FlowControlInitTask());
+        executorService.execute(new FlowControlInitTask());
     }
 
     @Override

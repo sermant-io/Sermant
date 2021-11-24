@@ -24,6 +24,6 @@ public class ResolverManagerTest {
     @Test
     public void getResolverTest() {
         Assert.assertNotNull(
-                ResolverManager.INSTANCE.getResolver(RateLimitingRuleResolver.CONFIG_KEY + "."));
+                ResolverManager.INSTANCE.getResolver(RateLimitingRuleResolver.CONFIG_KEY));
     }
 }
