@@ -5,6 +5,7 @@
 package com.huawei.emergency.service.impl;
 
 import com.huawei.common.api.CommonResult;
+import com.huawei.common.constant.RecordStatus;
 import com.huawei.emergency.entity.EmergencyExec;
 import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordExample;
@@ -14,8 +15,10 @@ import com.huawei.emergency.mapper.EmergencyExecMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
 import com.huawei.emergency.service.EmergencyExecService;
 
+import com.huawei.emergency.service.EmergencySceneService;
+import com.huawei.emergency.service.EmergencyTaskService;
 import com.huawei.script.exec.log.LogMemoryStore;
-import com.huawei.script.exec.log.LogRespone;
+import com.huawei.script.exec.log.LogResponse;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +54,17 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
     @Autowired
     private EmergencyExecRecordMapper recordMapper;
 
+    @Autowired
+    private EmergencySceneService sceneService;
+
+    @Autowired
+    private EmergencyTaskService taskService;
 
     @Override
     public CommonResult exec(EmergencyScript script) {
+        if (script == null || script.getScriptId() == null){
+            return CommonResult.failed("请选择正确的脚本.");
+        }
 
         // 是否运行
         EmergencyExecRecordExample isScriptRunning = new EmergencyExecRecordExample();
@@ -113,7 +124,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
     }
 
     @Override
-    public LogRespone getLog(int recordId, int line) {
+    public LogResponse getLog(int recordId, int line) {
         String log = getLog(recordId);
         if (StringUtils.isEmpty(log)) {
             return LogMemoryStore.getLog(recordId, line);
@@ -121,8 +132,77 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
         String[] split = log.split(System.lineSeparator());
         if (split.length >= line) {
             String[] needLogs = Arrays.copyOfRange(split, line - 1, split.length);
-            return new LogRespone(null, needLogs);
+            return new LogResponse(null, needLogs);
         }
-        return new LogRespone(null, new String[]{log});
+        return new LogResponse(null, new String[]{log});
+    }
+
+    @Override
+    public CommonResult ensure(int recordId, String result,String userName) {
+        EmergencyExecRecordWithBLOBs needEnsureRecord = recordMapper.selectByPrimaryKey(recordId);
+        if (needEnsureRecord == null || needEnsureRecord.getRecordId() == null) {
+            return CommonResult.failed("请选择正确的子任务。");
+        }
+        if (!"3".equals(needEnsureRecord.getStatus())) {
+            return CommonResult.failed("该子任务不处于执行失败，无需确认！");
+        }
+
+        EmergencyExecRecordWithBLOBs updateRecord = new EmergencyExecRecordWithBLOBs();
+        updateRecord.setStatus(result);
+        updateRecord.setRecordId(needEnsureRecord.getRecordId());
+        updateRecord.setEnsureUser(userName);
+        if (recordMapper.updateByPrimaryKeySelective(updateRecord) == 0) {
+            return CommonResult.failed("确认失败！");
+        }
+
+        // 当前子任务完成，执行后续任务
+        if ("5".equals(result)) {
+            if (needEnsureRecord.getTaskId() != null) {
+                taskService.onComplete(needEnsureRecord);
+            } else {
+                sceneService.onComplete(needEnsureRecord);
+            }
+        }
+        if ("6".equals(result)) {
+            stopOtherRecordsById(needEnsureRecord.getRecordId());
+        }
+        return CommonResult.success();
+    }
+
+    public void stopOtherRecordsById(int recordId) {
+        EmergencyExecRecordWithBLOBs record = recordMapper.selectByPrimaryKey(recordId);
+        EmergencyExecRecordWithBLOBs updateRecord = new EmergencyExecRecordWithBLOBs();
+        updateRecord.setStatus("6");
+        EmergencyExecRecordExample updateCondition = new EmergencyExecRecordExample();
+        updateCondition.createCriteria()
+            .andExecIdEqualTo(record.getExecId())
+            .andIsValidEqualTo("1")
+            .andStatusEqualTo("0");
+        recordMapper.updateByExampleSelective(updateRecord, updateCondition);
+    }
+
+    @Override
+    public CommonResult reExec(int recordId,String userName) {
+        EmergencyExecRecordWithBLOBs oldRecord = recordMapper.selectByPrimaryKey(recordId);
+        if (!RecordStatus.FAILED.getValue().equals(oldRecord.getStatus()) || !"1".equals(oldRecord.getIsValid())) {
+            return CommonResult.failed("请选择执行失败的执行记录");
+        }
+
+        EmergencyExecRecordWithBLOBs updateRecord = new EmergencyExecRecordWithBLOBs();
+        updateRecord.setRecordId(oldRecord.getRecordId());
+        updateRecord.setIsValid("0");
+        recordMapper.updateByPrimaryKeySelective(updateRecord);
+
+        oldRecord.setCreateUser(userName);
+        oldRecord.setCreateTime(null);
+        oldRecord.setStartTime(null);
+        oldRecord.setEndTime(null);
+        oldRecord.setEnsureUser(null);
+        oldRecord.setRecordId(null);
+        oldRecord.setLog(null);
+        oldRecord.setStatus(RecordStatus.PENDING.getValue());
+        recordMapper.insertSelective(oldRecord);
+        threadPoolExecutor.execute(handlerFactory.handle(oldRecord));
+        return CommonResult.success(oldRecord);
     }
 }

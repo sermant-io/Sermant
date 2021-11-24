@@ -4,8 +4,6 @@
 
 package com.huawei.emergency.controller;
 
-import cn.hutool.poi.excel.ExcelUtil;
-import cn.hutool.poi.excel.ExcelWriter;
 import com.huawei.common.api.CommonPage;
 import com.huawei.common.api.CommonResult;
 import com.huawei.emergency.dto.PlanQueryDto;
@@ -15,13 +13,15 @@ import com.huawei.emergency.entity.User;
 import com.huawei.emergency.mapper.EmergencyExecMapper;
 import com.huawei.emergency.service.EmergencyExecService;
 import com.huawei.emergency.service.EmergencyPlanService;
-import com.huawei.emergency.service.EmergencyTaskDetailService;
-import com.huawei.script.exec.log.LogRespone;
+import com.huawei.script.exec.log.LogResponse;
+
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,8 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.List;
-import java.util.Map;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,56 +53,54 @@ public class EmergencyExecController {
     private EmergencyExecService execService;
 
     @Autowired
-    private EmergencyTaskDetailService taskDetailService;
-
-    @Autowired
     private EmergencyExecMapper execMapper;
 
+    /**
+     * 重新执行某条失败的执行记录
+     *
+     * @param request http请求
+     * @param params  {@link PlanQueryDto#getKey()} 执行记录ID
+     * @return {@link CommonResult}
+     */
     @PostMapping("/history/scenario/task/runAgain")
     public CommonResult reExec(HttpServletRequest request, @RequestBody PlanQueryDto params) {
-        String userName = "";
-        try {
-            User user = (User) request.getSession().getAttribute("userInfo");
-            if (user != null) {
-                userName = user.getUserName();
-            }
-        } catch (Exception e) {
-            LOGGER.error("get user info error.", e);
-        }
         if (params.getKey() == null) {
             return CommonResult.failed("请选择正确的执行记录");
         }
-        return planService.reExec(params.getKey(), userName);
+        return execService.reExec(params.getKey(), parseUserName(request));
     }
 
+    /**
+     * 人工确认某条执行记录是否成功
+     *
+     * @param request http请求
+     * @param params  {@link PlanQueryDto#getKey()} 执行记录ID {@link PlanQueryDto#getConfirm()}} 确认结果
+     * @return {@link CommonResult}
+     */
     @PostMapping("/history/scenario/task/ensure")
     public CommonResult success(HttpServletRequest request, @RequestBody PlanQueryDto params) {
-        String userName = "";
-        try {
-            User user = (User) request.getSession().getAttribute("userInfo");
-            if (user != null) {
-                userName = user.getUserName();
-            }
-        } catch (Exception e) {
-            LOGGER.error("get user info error.", e);
-        }
         if (params.getKey() == null) {
             return CommonResult.failed("请选择正确的执行记录");
         }
         if ("成功".equals(params.getConfirm())) {
-            return taskDetailService.ensure(params.getKey(), "5", userName);
+            return execService.ensure(params.getKey(), "5", parseUserName(request));
         }
         if ("失败".equals(params.getConfirm())) {
-            return taskDetailService.ensure(params.getKey(), "6", userName);
+            return execService.ensure(params.getKey(), "6", parseUserName(request));
         }
         return CommonResult.failed("请选择确认成功或者失败");
     }
 
 
     /**
-     * 预案的执行记录
+     * 查询预案的执行记录
      *
-     * @return
+     * @param planName 预案名称
+     * @param pageSize 分页大小
+     * @param current  页码
+     * @param sorter   排序字段
+     * @param order    排序方式
+     * @return {@link CommonResult}
      */
     @GetMapping("/history")
     public CommonResult allPlanExecRecords(@RequestParam(value = "keywords", required = false) String planName,
@@ -122,10 +119,12 @@ public class EmergencyExecController {
         return planService.allPlanExecRecords(params);
     }
 
+
     /**
-     * 查询某条预案执行记录下的场景执行明细
+     * 查询某条预案执行记录下的场景执行记录
      *
-     * @return
+     * @param execId 执行ID
+     * @return {@link CommonResult}
      */
     @GetMapping("/history/scenario")
     public CommonResult allSceneExecRecords(@RequestParam("history_id") int execId) {
@@ -139,10 +138,13 @@ public class EmergencyExecController {
     /**
      * 查询某条场景执行明细下的任务执行明细
      *
-     * @return
+     * @param execId  执行ID
+     * @param sceneId 场景ID
+     * @return {@link CommonResult}
      */
     @GetMapping("/history/scenario/task")
-    public CommonResult allTaskExecRecords(@RequestParam("history_id") int execId, @RequestParam("scena_id") int sceneId) {
+    public CommonResult allTaskExecRecords(@RequestParam("history_id") int execId,
+                                           @RequestParam("scena_id") int sceneId) {
         CommonPage<EmergencyExecRecord> params = new CommonPage<>();
         EmergencyExecRecord record = new EmergencyExecRecord();
         record.setExecId(execId);
@@ -151,8 +153,16 @@ public class EmergencyExecController {
         return planService.allTaskExecRecords(params);
     }
 
+    /**
+     * 查询某条执行记录的日志
+     *
+     * @param recordId 记录ID
+     * @param lineNum  日志行号
+     * @return {@link LogResponse}
+     */
     @GetMapping("/history/scenario/task/log")
-    public LogRespone getLog(@RequestParam("key") int recordId, @RequestParam(value = "line", defaultValue = "1") int lineNum) {
+    public LogResponse getLog(@RequestParam("key") int recordId,
+                              @RequestParam(value = "line", defaultValue = "1") int lineNum) {
         int lineIndex = lineNum;
         if (lineIndex <= 0) {
             lineIndex = 1;
@@ -163,28 +173,40 @@ public class EmergencyExecController {
     /**
      * 执行记录下载
      *
-     * @param response
+     * @param response 请求响应
      */
     @GetMapping("/download")
     public void download(HttpServletResponse response) {
         ExcelWriter excelWriter = null;
         try {
-            ServletOutputStream outputStream = response.getOutputStream();
-            List<Map> allRecords = execMapper.allRecords();
+            final ServletOutputStream outputStream = response.getOutputStream();
             String fileName = "exec_records.xlsx";
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
             response.setHeader("Content-Disposition",
                 "attachment;fileName=" + new String(URLEncoder.encode(fileName, "UTF-8").getBytes("UTF-8")));
             excelWriter = ExcelUtil.getBigWriter();
-            excelWriter.renameSheet("执行记录汇总").write(allRecords);
+            excelWriter.renameSheet("执行记录汇总").write(execMapper.allRecords());
             excelWriter.flush(outputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("download error.", e);
         } finally {
             if (excelWriter != null) {
                 excelWriter.close();
             }
         }
+    }
+
+    private String parseUserName(HttpServletRequest request) {
+        String userName = "";
+        try {
+            User user = (User) request.getSession().getAttribute("userInfo");
+            if (user != null) {
+                userName = user.getUserName();
+            }
+        } catch (Exception e) {
+            LOGGER.error("get user info error.", e);
+        }
+        return userName;
     }
 }

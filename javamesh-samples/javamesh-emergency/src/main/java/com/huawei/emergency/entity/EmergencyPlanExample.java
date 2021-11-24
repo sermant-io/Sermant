@@ -774,6 +774,336 @@ public class EmergencyPlanExample {
             addCriterion("check_result not between", value1, value2, "checkResult");
             return (Criteria) this;
         }
+
+        public Criteria andScheduleTypeIsNull() {
+            addCriterion("schedule_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeIsNotNull() {
+            addCriterion("schedule_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeEqualTo(String value) {
+            addCriterion("schedule_type =", value, "scheduleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeNotEqualTo(String value) {
+            addCriterion("schedule_type <>", value, "scheduleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeGreaterThan(String value) {
+            addCriterion("schedule_type >", value, "scheduleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("schedule_type >=", value, "scheduleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeLessThan(String value) {
+            addCriterion("schedule_type <", value, "scheduleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeLessThanOrEqualTo(String value) {
+            addCriterion("schedule_type <=", value, "scheduleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeLike(String value) {
+            addCriterion("schedule_type like", value, "scheduleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeNotLike(String value) {
+            addCriterion("schedule_type not like", value, "scheduleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeIn(List<String> values) {
+            addCriterion("schedule_type in", values, "scheduleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeNotIn(List<String> values) {
+            addCriterion("schedule_type not in", values, "scheduleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeBetween(String value1, String value2) {
+            addCriterion("schedule_type between", value1, value2, "scheduleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleTypeNotBetween(String value1, String value2) {
+            addCriterion("schedule_type not between", value1, value2, "scheduleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfIsNull() {
+            addCriterion("schedule_conf is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfIsNotNull() {
+            addCriterion("schedule_conf is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfEqualTo(String value) {
+            addCriterion("schedule_conf =", value, "scheduleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfNotEqualTo(String value) {
+            addCriterion("schedule_conf <>", value, "scheduleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfGreaterThan(String value) {
+            addCriterion("schedule_conf >", value, "scheduleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfGreaterThanOrEqualTo(String value) {
+            addCriterion("schedule_conf >=", value, "scheduleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfLessThan(String value) {
+            addCriterion("schedule_conf <", value, "scheduleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfLessThanOrEqualTo(String value) {
+            addCriterion("schedule_conf <=", value, "scheduleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfLike(String value) {
+            addCriterion("schedule_conf like", value, "scheduleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfNotLike(String value) {
+            addCriterion("schedule_conf not like", value, "scheduleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfIn(List<String> values) {
+            addCriterion("schedule_conf in", values, "scheduleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfNotIn(List<String> values) {
+            addCriterion("schedule_conf not in", values, "scheduleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfBetween(String value1, String value2) {
+            addCriterion("schedule_conf between", value1, value2, "scheduleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleConfNotBetween(String value1, String value2) {
+            addCriterion("schedule_conf not between", value1, value2, "scheduleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusIsNull() {
+            addCriterion("schedule_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusIsNotNull() {
+            addCriterion("schedule_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusEqualTo(String value) {
+            addCriterion("schedule_status =", value, "scheduleStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusNotEqualTo(String value) {
+            addCriterion("schedule_status <>", value, "scheduleStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusGreaterThan(String value) {
+            addCriterion("schedule_status >", value, "scheduleStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusGreaterThanOrEqualTo(String value) {
+            addCriterion("schedule_status >=", value, "scheduleStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusLessThan(String value) {
+            addCriterion("schedule_status <", value, "scheduleStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusLessThanOrEqualTo(String value) {
+            addCriterion("schedule_status <=", value, "scheduleStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusLike(String value) {
+            addCriterion("schedule_status like", value, "scheduleStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusNotLike(String value) {
+            addCriterion("schedule_status not like", value, "scheduleStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusIn(List<String> values) {
+            addCriterion("schedule_status in", values, "scheduleStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusNotIn(List<String> values) {
+            addCriterion("schedule_status not in", values, "scheduleStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusBetween(String value1, String value2) {
+            addCriterion("schedule_status between", value1, value2, "scheduleStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleStatusNotBetween(String value1, String value2) {
+            addCriterion("schedule_status not between", value1, value2, "scheduleStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerLastTimeIsNull() {
+            addCriterion("trigger_last_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerLastTimeIsNotNull() {
+            addCriterion("trigger_last_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerLastTimeEqualTo(Long value) {
+            addCriterion("trigger_last_time =", value, "triggerLastTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerLastTimeNotEqualTo(Long value) {
+            addCriterion("trigger_last_time <>", value, "triggerLastTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerLastTimeGreaterThan(Long value) {
+            addCriterion("trigger_last_time >", value, "triggerLastTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerLastTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("trigger_last_time >=", value, "triggerLastTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerLastTimeLessThan(Long value) {
+            addCriterion("trigger_last_time <", value, "triggerLastTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerLastTimeLessThanOrEqualTo(Long value) {
+            addCriterion("trigger_last_time <=", value, "triggerLastTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerLastTimeIn(List<Long> values) {
+            addCriterion("trigger_last_time in", values, "triggerLastTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerLastTimeNotIn(List<Long> values) {
+            addCriterion("trigger_last_time not in", values, "triggerLastTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerLastTimeBetween(Long value1, Long value2) {
+            addCriterion("trigger_last_time between", value1, value2, "triggerLastTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerLastTimeNotBetween(Long value1, Long value2) {
+            addCriterion("trigger_last_time not between", value1, value2, "triggerLastTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerNextTimeIsNull() {
+            addCriterion("trigger_next_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerNextTimeIsNotNull() {
+            addCriterion("trigger_next_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerNextTimeEqualTo(Long value) {
+            addCriterion("trigger_next_time =", value, "triggerNextTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerNextTimeNotEqualTo(Long value) {
+            addCriterion("trigger_next_time <>", value, "triggerNextTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerNextTimeGreaterThan(Long value) {
+            addCriterion("trigger_next_time >", value, "triggerNextTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerNextTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("trigger_next_time >=", value, "triggerNextTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerNextTimeLessThan(Long value) {
+            addCriterion("trigger_next_time <", value, "triggerNextTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerNextTimeLessThanOrEqualTo(Long value) {
+            addCriterion("trigger_next_time <=", value, "triggerNextTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerNextTimeIn(List<Long> values) {
+            addCriterion("trigger_next_time in", values, "triggerNextTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerNextTimeNotIn(List<Long> values) {
+            addCriterion("trigger_next_time not in", values, "triggerNextTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerNextTimeBetween(Long value1, Long value2) {
+            addCriterion("trigger_next_time between", value1, value2, "triggerNextTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTriggerNextTimeNotBetween(Long value1, Long value2) {
+            addCriterion("trigger_next_time not between", value1, value2, "triggerNextTime");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

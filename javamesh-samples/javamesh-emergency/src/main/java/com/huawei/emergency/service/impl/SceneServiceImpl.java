@@ -25,7 +25,7 @@ import com.huawei.script.exec.executor.DefaultScriptCallBack;
 import com.huawei.script.exec.executor.ScriptExecTask;
 import com.huawei.script.exec.executor.ScriptExecutor;
 import com.huawei.script.exec.log.LogMemoryStore;
-import com.huawei.script.exec.log.LogRespone;
+import com.huawei.script.exec.log.LogResponse;
 
 import com.github.pagehelper.PageHelper;
 
@@ -205,7 +205,7 @@ public class SceneServiceImpl implements SceneService {
     }
 
     @Override
-    public LogRespone getLog(int sceneId, int detailId, int line) {
+    public LogResponse getLog(int sceneId, int detailId, int line) {
         DownloadLogDto downloadLogDto = historyMapper.selectDetailById(detailId);
         if (downloadLogDto == null || StringUtils.isEmpty(downloadLogDto.getLog())) {
             return LogMemoryStore.getLog(detailId, line);
@@ -213,9 +213,9 @@ public class SceneServiceImpl implements SceneService {
         String[] split = downloadLogDto.getLog().split(System.lineSeparator());
         if (split.length >= line) {
             String[] needLogs = Arrays.copyOfRange(split, line - 1, split.length);
-            return new LogRespone(null, needLogs);
+            return new LogResponse(null, needLogs);
         }
-        return new LogRespone(null, new String[]{downloadLogDto.getLog()});
+        return new LogResponse(null, new String[]{downloadLogDto.getLog()});
     }
 
     private void exec(List<HistoryDetailEntity> entity) {

@@ -34,16 +34,16 @@ public class LogMemoryStore {
      * @param lines  日志行号
      * @return 日志数组
      */
-    public static LogRespone getLog(int taskId, int lines) {
+    public static LogResponse getLog(int taskId, int lines) {
         String[] allLogs = allTaskLogs.get(taskId);
         if (allLogs == null) {
-            return new LogRespone(null, emptyArray);
+            return new LogResponse(null, emptyArray);
         }
         if (allLogs.length < lines) {
-            return new LogRespone(lines, emptyArray);
+            return new LogResponse(lines, emptyArray);
         }
         String[] logs = Arrays.copyOfRange(allLogs, lines - 1, allLogs.length);
-        return new LogRespone(allLogs.length + 1, logs);
+        return new LogResponse(allLogs.length + 1, logs);
     }
 
     /**

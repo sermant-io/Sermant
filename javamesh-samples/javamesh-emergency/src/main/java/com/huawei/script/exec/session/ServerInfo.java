@@ -16,17 +16,18 @@ import java.util.Objects;
  **/
 @Data
 public class ServerInfo {
+    private static final int DEFAULT_PORT = 22;
     private String serverIp;
     private String serverUser;
     private String serverPassword;
     private int serverPort;
 
     public ServerInfo(String serverIp, String serverUser) {
-        this(serverIp,serverUser,"",22);
+        this(serverIp, serverUser, "", DEFAULT_PORT);
     }
 
     public ServerInfo(String serverIp, String serverUser, int serverPort) {
-        this(serverIp,serverUser,"",serverPort);
+        this(serverIp, serverUser, "", serverPort);
     }
 
     public ServerInfo(String serverIp, String serverUser, String serverPassword, int serverPort) {

@@ -9,14 +9,13 @@ import com.huawei.common.constant.FailedInfo;
 import com.huawei.common.constant.ResultCode;
 import com.huawei.emergency.entity.EmergencyScript;
 import com.huawei.emergency.service.EmergencyScriptService;
-import com.huawei.script.exec.log.LogRespone;
+import com.huawei.script.exec.log.LogResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -198,8 +197,8 @@ public class EmergencyScriptController {
     }
 
     @GetMapping("/script/debugLog")
-    public LogRespone debugLog(@RequestParam(value = "debug_id") int id,
-                               @RequestParam(value = "line", defaultValue = "1") int lineNum) {
+    public LogResponse debugLog(@RequestParam(value = "debug_id") int id,
+                                @RequestParam(value = "line", defaultValue = "1") int lineNum) {
         int lineIndex = lineNum;
         if (lineIndex <= 0) {
             lineIndex = 1;

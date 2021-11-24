@@ -12,6 +12,11 @@
         <result column="check_time" jdbcType="TIMESTAMP" property="checkTime"/>
         <result column="check_remark" jdbcType="VARCHAR" property="checkRemark"/>
         <result column="check_result" jdbcType="VARCHAR" property="checkResult"/>
+        <result column="schedule_type" jdbcType="VARCHAR" property="scheduleType"/>
+        <result column="schedule_conf" jdbcType="VARCHAR" property="scheduleConf"/>
+        <result column="schedule_status" jdbcType="VARCHAR" property="scheduleStatus"/>
+        <result column="trigger_last_time" jdbcType="BIGINT" property="triggerLastTime"/>
+        <result column="trigger_next_time" jdbcType="BIGINT" property="triggerNextTime"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -76,7 +81,8 @@
     <sql id="Base_Column_List">
         plan_id
         , plan_no, plan_name, create_user, create_time, is_valid, check_user, check_time,
-    check_remark, check_result
+    check_remark, check_result, schedule_type, schedule_conf, schedule_status, trigger_last_time, 
+    trigger_next_time
     </sql>
     <select id="selectByExample" parameterType="com.huawei.emergency.entity.EmergencyPlanExample"
             resultMap="BaseResultMap">
@@ -117,12 +123,14 @@
         </selectKey>
         insert into emergency_plan (plan_no, plan_name, create_user,
         create_time, is_valid, check_user,
-        check_time, check_remark, check_result
-        )
+        check_time, check_remark, check_result,
+        schedule_type, schedule_conf, schedule_status,
+        trigger_last_time, trigger_next_time)
         values (#{planNo,jdbcType=VARCHAR}, #{planName,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR},
         #{createTime,jdbcType=TIMESTAMP}, #{isValid,jdbcType=VARCHAR}, #{checkUser,jdbcType=VARCHAR},
-        #{checkTime,jdbcType=TIMESTAMP}, #{checkRemark,jdbcType=VARCHAR}, #{checkResult,jdbcType=VARCHAR}
-        )
+        #{checkTime,jdbcType=TIMESTAMP}, #{checkRemark,jdbcType=VARCHAR}, #{checkResult,jdbcType=VARCHAR},
+        #{scheduleType,jdbcType=VARCHAR}, #{scheduleConf,jdbcType=VARCHAR}, #{scheduleStatus,jdbcType=VARCHAR},
+        #{triggerLastTime,jdbcType=BIGINT}, #{triggerNextTime,jdbcType=BIGINT})
     </insert>
     <insert id="insertSelective" parameterType="com.huawei.emergency.entity.EmergencyPlan">
         <selectKey keyProperty="planId" order="AFTER" resultType="java.lang.Integer">
@@ -157,6 +165,21 @@
             <if test="checkResult != null">
                 check_result,
             </if>
+            <if test="scheduleType != null">
+                schedule_type,
+            </if>
+            <if test="scheduleConf != null">
+                schedule_conf,
+            </if>
+            <if test="scheduleStatus != null">
+                schedule_status,
+            </if>
+            <if test="triggerLastTime != null">
+                trigger_last_time,
+            </if>
+            <if test="triggerNextTime != null">
+                trigger_next_time,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="planNo != null">
@@ -185,6 +208,21 @@
             </if>
             <if test="checkResult != null">
                 #{checkResult,jdbcType=VARCHAR},
+            </if>
+            <if test="scheduleType != null">
+                #{scheduleType,jdbcType=VARCHAR},
+            </if>
+            <if test="scheduleConf != null">
+                #{scheduleConf,jdbcType=VARCHAR},
+            </if>
+            <if test="scheduleStatus != null">
+                #{scheduleStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="triggerLastTime != null">
+                #{triggerLastTime,jdbcType=BIGINT},
+            </if>
+            <if test="triggerNextTime != null">
+                #{triggerNextTime,jdbcType=BIGINT},
             </if>
         </trim>
     </insert>
@@ -228,6 +266,21 @@
             <if test="record.checkResult != null">
                 check_result = #{record.checkResult,jdbcType=VARCHAR},
             </if>
+            <if test="record.scheduleType != null">
+                schedule_type = #{record.scheduleType,jdbcType=VARCHAR},
+            </if>
+            <if test="record.scheduleConf != null">
+                schedule_conf = #{record.scheduleConf,jdbcType=VARCHAR},
+            </if>
+            <if test="record.scheduleStatus != null">
+                schedule_status = #{record.scheduleStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="record.triggerLastTime != null">
+                trigger_last_time = #{record.triggerLastTime,jdbcType=BIGINT},
+            </if>
+            <if test="record.triggerNextTime != null">
+                trigger_next_time = #{record.triggerNextTime,jdbcType=BIGINT},
+            </if>
         </set>
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
@@ -244,7 +297,12 @@
         check_user = #{record.checkUser,jdbcType=VARCHAR},
         check_time = #{record.checkTime,jdbcType=TIMESTAMP},
         check_remark = #{record.checkRemark,jdbcType=VARCHAR},
-        check_result = #{record.checkResult,jdbcType=VARCHAR}
+        check_result = #{record.checkResult,jdbcType=VARCHAR},
+        schedule_type = #{record.scheduleType,jdbcType=VARCHAR},
+        schedule_conf = #{record.scheduleConf,jdbcType=VARCHAR},
+        schedule_status = #{record.scheduleStatus,jdbcType=VARCHAR},
+        trigger_last_time = #{record.triggerLastTime,jdbcType=BIGINT},
+        trigger_next_time = #{record.triggerNextTime,jdbcType=BIGINT}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
@@ -279,62 +337,43 @@
             <if test="checkResult != null">
                 check_result = #{checkResult,jdbcType=VARCHAR},
             </if>
+            <if test="scheduleType != null">
+                schedule_type = #{scheduleType,jdbcType=VARCHAR},
+            </if>
+            <if test="scheduleConf != null">
+                schedule_conf = #{scheduleConf,jdbcType=VARCHAR},
+            </if>
+            <if test="scheduleStatus != null">
+                schedule_status = #{scheduleStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="triggerLastTime != null">
+                trigger_last_time = #{triggerLastTime,jdbcType=BIGINT},
+            </if>
+            <if test="triggerNextTime != null">
+                trigger_next_time = #{triggerNextTime,jdbcType=BIGINT},
+            </if>
         </set>
         where plan_id = #{planId,jdbcType=INTEGER}
     </update>
     <update id="updateByPrimaryKey" parameterType="com.huawei.emergency.entity.EmergencyPlan">
         update emergency_plan
-        set plan_no      = #{planNo,jdbcType=VARCHAR},
-            plan_name    = #{planName,jdbcType=VARCHAR},
-            create_user  = #{createUser,jdbcType=VARCHAR},
-            create_time  = #{createTime,jdbcType=TIMESTAMP},
-            is_valid     = #{isValid,jdbcType=VARCHAR},
-            check_user   = #{checkUser,jdbcType=VARCHAR},
-            check_time   = #{checkTime,jdbcType=TIMESTAMP},
-            check_remark = #{checkRemark,jdbcType=VARCHAR},
-            check_result = #{checkResult,jdbcType=VARCHAR}
+        set plan_no           = #{planNo,jdbcType=VARCHAR},
+            plan_name         = #{planName,jdbcType=VARCHAR},
+            create_user       = #{createUser,jdbcType=VARCHAR},
+            create_time       = #{createTime,jdbcType=TIMESTAMP},
+            is_valid          = #{isValid,jdbcType=VARCHAR},
+            check_user        = #{checkUser,jdbcType=VARCHAR},
+            check_time        = #{checkTime,jdbcType=TIMESTAMP},
+            check_remark      = #{checkRemark,jdbcType=VARCHAR},
+            check_result      = #{checkResult,jdbcType=VARCHAR},
+            schedule_type     = #{scheduleType,jdbcType=VARCHAR},
+            schedule_conf     = #{scheduleConf,jdbcType=VARCHAR},
+            schedule_status   = #{scheduleStatus,jdbcType=VARCHAR},
+            trigger_last_time = #{triggerLastTime,jdbcType=BIGINT},
+            trigger_next_time = #{triggerNextTime,jdbcType=BIGINT}
         where plan_id = #{planId,jdbcType=INTEGER}
     </update>
 
-    <select id="queryPlan">
-        SELECT plan_detail.detail_id,
-               plan.plan_no,
-               plan.plan_name,
-               plan.check_result,
-               (CASE
-                    WHEN plan.check_result = '0' THEN '待审核'
-                    WHEN plan.check_result = '1' THEN '审核通过'
-                    WHEN plan.check_result = '2' THEN '驳回' END)      check_result_name,
-               scene.scene_no,
-               scene.scene_name,
-               pre_task.task_no   AS                                 pre_task_no,
-               pre_task.task_name AS                                 pre_task_name,
-               task.task_no,
-               task.task_name,
-               script.script_name,
-               script.script_type,
-               (CASE
-                    WHEN script.script_type = '0' THEN 'shell'
-                    WHEN script.script_type = 'jython' THEN '审核通过'
-                    WHEN script.script_type = '2' THEN 'groovy' END) script_type_name,
-               script.submit_info
-        FROM emergency_plan plan
-                 LEFT JOIN emergency_plan_detail plan_detail ON plan.id = plan_detail.plan_id
-                 LEFT JOIN emergency_scene scene ON scene.id = plan_detail.scene_id
-                 JOIN emergency_task task ON task.task_id = plan_detail.task_id
-                 left JOIN emergency_task pre_task ON pre_task.task_id = plan_detail.pre_task_id
-                 LEFT JOIN emergency_script script ON task.script_id = script.script_id
-        where plan.is_valid = '1'
-          and plan_detail.is_valid = '1'
-          and plan.plan_no like '%'
-          and plan.plan_name like '%'
-          and scene.scene_no like '%'
-          and scene.scene_name like '%'
-          and task.task_no like '%'
-          and task.task_name like '%'
-          and script.script_name like '%'
-          and script.script_type = '0'
-    </select>
     <select id="queryPlanDto" parameterType="com.huawei.emergency.dto.PlanQueryParams"
             resultType="com.huawei.emergency.dto.PlanQueryDto">
         SELECT plan.plan_id,
@@ -448,7 +487,8 @@
         FROM emergency_exec_record t1
                  LEFT JOIN emergency_task t2 ON t1.scene_id = t2.task_id
         WHERE t1.exec_id = #{execId}
-          AND t1.is_valid = '1' and t1.task_id is null
+          AND t1.is_valid = '1'
+          and t1.task_id is null
     </select>
     <select id="allTaskRecords" resultType="com.huawei.emergency.dto.SceneExecDto">
         SELECT t1.record_id                                    `key`,

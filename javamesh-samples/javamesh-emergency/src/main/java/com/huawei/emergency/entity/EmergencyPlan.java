@@ -23,6 +23,16 @@ public class EmergencyPlan {
 
     private String checkResult;
 
+    private String scheduleType;
+
+    private String scheduleConf;
+
+    private String scheduleStatus;
+
+    private Long triggerLastTime;
+
+    private Long triggerNextTime;
+
     public Integer getPlanId() {
         return planId;
     }
@@ -101,5 +111,45 @@ public class EmergencyPlan {
 
     public void setCheckResult(String checkResult) {
         this.checkResult = checkResult == null ? null : checkResult.trim();
+    }
+
+    public String getScheduleType() {
+        return scheduleType;
+    }
+
+    public void setScheduleType(String scheduleType) {
+        this.scheduleType = scheduleType == null ? null : scheduleType.trim();
+    }
+
+    public String getScheduleConf() {
+        return scheduleConf;
+    }
+
+    public void setScheduleConf(String scheduleConf) {
+        this.scheduleConf = scheduleConf == null ? null : scheduleConf.trim();
+    }
+
+    public String getScheduleStatus() {
+        return scheduleStatus;
+    }
+
+    public void setScheduleStatus(String scheduleStatus) {
+        this.scheduleStatus = scheduleStatus == null ? null : scheduleStatus.trim();
+    }
+
+    public Long getTriggerLastTime() {
+        return triggerLastTime;
+    }
+
+    public void setTriggerLastTime(Long triggerLastTime) {
+        this.triggerLastTime = triggerLastTime;
+    }
+
+    public Long getTriggerNextTime() {
+        return triggerNextTime;
+    }
+
+    public void setTriggerNextTime(Long triggerNextTime) {
+        this.triggerNextTime = triggerNextTime;
     }
 }

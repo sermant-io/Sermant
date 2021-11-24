@@ -9,7 +9,7 @@ import com.huawei.emergency.dto.AddScriptToSceneParam;
 import com.huawei.emergency.dto.SceneInfoDto;
 import com.huawei.emergency.dto.SceneListParam;
 import com.huawei.emergency.entity.SceneEntity;
-import com.huawei.script.exec.log.LogRespone;
+import com.huawei.script.exec.log.LogResponse;
 
 /**
  * 场景管理接口
@@ -33,5 +33,5 @@ public interface SceneService {
 
     void deleteScene(int[] sceneId);
 
-    LogRespone getLog(int sceneId,int detailId,int line);
+    LogResponse getLog(int sceneId, int detailId, int line);
 }

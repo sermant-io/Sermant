@@ -4,7 +4,7 @@ import com.huawei.common.api.CommonResult;
 import com.huawei.emergency.dto.ScriptInfoDto;
 import com.huawei.emergency.dto.SearchScriptDto;
 import com.huawei.emergency.entity.EmergencyScript;
-import com.huawei.script.exec.log.LogRespone;
+import com.huawei.script.exec.log.LogResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,5 +37,5 @@ public interface EmergencyScriptService {
 
     CommonResult debugScript(int scriptId);
 
-    LogRespone debugLog(int detailId,int lineIndex);
+    LogResponse debugLog(int detailId, int lineIndex);
 }

@@ -4,8 +4,6 @@
 
 package com.huawei.emergency.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.huawei.common.api.CommonPage;
 import com.huawei.common.api.CommonResult;
 import com.huawei.emergency.dto.PlanQueryDto;
@@ -25,14 +23,16 @@ import com.huawei.emergency.mapper.EmergencyExecMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
 import com.huawei.emergency.mapper.EmergencyPlanDetailMapper;
 import com.huawei.emergency.mapper.EmergencyPlanMapper;
-import com.huawei.emergency.mapper.EmergencyTaskMapper;
 import com.huawei.emergency.service.EmergencyPlanService;
 import com.huawei.emergency.service.EmergencyTaskService;
+
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -42,6 +42,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
+
 import javax.annotation.Resource;
 
 /**
@@ -69,9 +70,6 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
 
     @Autowired
     private EmergencyExecRecordMapper execRecordMapper;
-
-    @Autowired
-    private EmergencyTaskMapper taskMapper;
 
     @Autowired
     private ExecRecordHandlerFactory handlerFactory;
@@ -223,7 +221,6 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         emergencyExec.setHistoryId(emergencyExec.getExecId());
 
         // 获取所有的拓扑关系，添加详细的执行记录
-        // List<EmergencyExecRecordWithBLOBs> allExecRecords = execRecordMapper.selectAllTaskDetailByPlanId(planId);
         List<EmergencyExecRecordWithBLOBs> allExecRecords = execRecordMapper.selectAllPlanDetail(planId);
         allExecRecords.forEach(record -> {
             record.setCreateUser(userName);
@@ -233,7 +230,6 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
 
         // 开始执行不需要任何前置条件的场景
         allExecRecords.stream()
-            // .filter(record -> record.getPreSceneId() == null && record.getPreTaskId() == null && record.getPreDetailId() == null)
             .filter(record -> record.getTaskId() == null && record.getPreSceneId() == null)
             .forEach(record -> {
                 LOGGER.debug("Submit record_id={}. exec_id={}, task_id={}.", record.getRecordId(), record.getExecId(), record.getTaskId());
@@ -241,6 +237,16 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             });
         LOGGER.debug("threadPoolExecutor = {} ", threadPoolExecutor);
         return CommonResult.success(emergencyExec);
+    }
+
+    @Override
+    public CommonResult start(int planId, String userName) {
+        return CommonResult.success();
+    }
+
+    @Override
+    public CommonResult stop(int planId, String userName) {
+        return CommonResult.success();
     }
 
     @Override
@@ -324,31 +330,6 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             planQueryDto.setExpand(planMapper.queryPlanDetailDto(planQueryDto.getPlanId()));
         });
         return CommonResult.success(result, (int) pageInfo.getTotal());
-    }
-
-    @Override
-    public CommonResult reExec(int recordId,String userName) {
-        EmergencyExecRecordWithBLOBs oldRecord = execRecordMapper.selectByPrimaryKey(recordId);
-        if (!"3".equals(oldRecord.getStatus())) {
-            return CommonResult.failed("请选择执行失败的执行记录");
-        }
-
-        EmergencyExecRecordWithBLOBs updateRecord = new EmergencyExecRecordWithBLOBs();
-        updateRecord.setRecordId(oldRecord.getRecordId());
-        updateRecord.setIsValid("0");
-        execRecordMapper.updateByPrimaryKeySelective(updateRecord);
-
-        oldRecord.setCreateUser(userName);
-        oldRecord.setCreateTime(null);
-        oldRecord.setStartTime(null);
-        oldRecord.setEndTime(null);
-        oldRecord.setEnsureUser(null);
-        oldRecord.setRecordId(null);
-        oldRecord.setLog(null);
-        oldRecord.setStatus("0");
-        execRecordMapper.insertSelective(oldRecord);
-        threadPoolExecutor.execute(handlerFactory.handle(oldRecord));
-        return CommonResult.success(oldRecord);
     }
 
     @Override

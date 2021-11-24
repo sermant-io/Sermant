@@ -6,7 +6,7 @@ package com.huawei.emergency.service;
 
 import com.huawei.common.api.CommonResult;
 import com.huawei.emergency.entity.EmergencyScript;
-import com.huawei.script.exec.log.LogRespone;
+import com.huawei.script.exec.log.LogResponse;
 
 /**
  * 执行记录管理
@@ -16,5 +16,7 @@ import com.huawei.script.exec.log.LogRespone;
  **/
 public interface EmergencyExecService {
     CommonResult exec(EmergencyScript script);
-    LogRespone getLog(int recordId,int line);
+    LogResponse getLog(int recordId, int line);
+    CommonResult reExec(int recordId, String userName);
+    CommonResult ensure(int recordId,String result,String userName);
 }

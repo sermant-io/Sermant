@@ -67,10 +67,10 @@ jsch:
 script:
   location: /tmp/
   executor:
-    corePoolSize: 16
-    maxPoolSize: 16
-    keepAliveTime: 60
-    blockingQueueSize: 1024
+    maxTaskSize: 16
+    maxSubtaskSize: 8
+    blockingTaskSize: 1024
 logging:
   level:
     com.huawei.emergency.service: debug
+    com.huawei.emergency.schedule: debug

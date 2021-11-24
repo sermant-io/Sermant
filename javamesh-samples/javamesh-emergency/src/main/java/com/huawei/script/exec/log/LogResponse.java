@@ -15,7 +15,7 @@ import lombok.Data;
  **/
 @Data
 @AllArgsConstructor
-public class LogRespone {
+public class LogResponse {
     /**
      * 当前日志的行号。需要为null，代表后续没有日志产生了
      */

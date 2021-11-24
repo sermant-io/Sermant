@@ -124,7 +124,7 @@ public class EmergencyTaskServiceImpl implements EmergencyTaskService {
         LOGGER.debug("threadPoolExecutor = {} ", threadPoolExecutor);
     }
 
-    public boolean isTaskFinished(EmergencyExecRecord task) {
+    private boolean isTaskFinished(EmergencyExecRecord task) {
         EmergencyExecRecordExample finishedCondition = new EmergencyExecRecordExample();
         finishedCondition.createCriteria()
             .andExecIdEqualTo(task.getExecId())
@@ -215,74 +215,6 @@ public class EmergencyTaskServiceImpl implements EmergencyTaskService {
         updateTask.setTaskId(emergencyTask.getTaskId());
         if (taskMapper.updateByPrimaryKeySelective(updateTask) == 0) {
             return CommonResult.failed("修改失败");
-        }
-        return CommonResult.success();
-    }
-
-    @Override
-    public CommonResult bind(EmergencyTask task) {
-        if (task.getTaskId() == null ||
-            task.getPreTaskId() == null ||
-            task.getPreTaskId() == task.getTaskId()) {
-            CommonResult.failed("请选择两个不同场景进行绑定");
-        }
-
-        // 验证预案是否已经通过审核
-        if (taskMapper.countPassedPlanByTaskId(task.getTaskId()) > 0) {
-            return CommonResult.failed("无法操作已经审核通过的预案");
-        }
-
-        // 验证被依赖的任务是否有效
-        EmergencyTaskExample preTaskExist = new EmergencyTaskExample();
-        preTaskExist.createCriteria()
-            .andTaskIdEqualTo(task.getPreTaskId())
-            .andIsValidEqualTo("1");
-        List<EmergencyTask> preTask = taskMapper.selectByExample(preTaskExist);
-        if (preTask.size() == 0) {
-            return CommonResult.failed("绑定失败");
-        }
-
-        // 将被依赖的任务与当前任务关联，同时确保是同一个场景下的任务
-        EmergencyTask currentTask = new EmergencyTask();
-        currentTask.setPreTaskId(task.getPreTaskId());
-        EmergencyTaskExample currentSceneCondition = new EmergencyTaskExample();
-        currentSceneCondition.createCriteria()
-            .andTaskIdEqualTo(task.getTaskId())
-            .andSceneIdEqualTo(preTask.get(0).getSceneId())
-            .andIsValidEqualTo("1");
-        if (taskMapper.updateByExampleSelective(currentTask, currentSceneCondition) == 0) {
-            return CommonResult.failed("绑定失败");
-        }
-        return CommonResult.success();
-    }
-
-    @Override
-    public CommonResult unBind(EmergencyTask task) {
-        if (task.getTaskId() == null ||
-            task.getPreTaskId() == null) {
-            CommonResult.failed("请选择两个不同的场景解除绑定");
-        }
-
-        // 验证预案是否已经通过审核
-        if (taskMapper.countPassedPlanByTaskId(task.getTaskId()) > 0) {
-            return CommonResult.failed("无法操作已经审核通过的预案");
-        }
-
-        // 验证当前任务与被依赖的任务的关系
-        EmergencyTaskExample isTaskExist = new EmergencyTaskExample();
-        isTaskExist.createCriteria()
-            .andTaskIdEqualTo(task.getTaskId())
-            .andPreTaskIdEqualTo(task.getPreTaskId())
-            .andIsValidEqualTo("1");
-        List<EmergencyTask> currentTask = taskMapper.selectByExample(isTaskExist);
-        if (currentTask.size() == 0) {
-            return CommonResult.failed("解除失败");
-        }
-
-        // 将被依赖的任务与当前任务解除关联
-        currentTask.get(0).setPreTaskId(null);
-        if (taskMapper.updateByPrimaryKeySelective(currentTask.get(0)) == 0) {
-            return CommonResult.failed("解除失败");
         }
         return CommonResult.success();
     }

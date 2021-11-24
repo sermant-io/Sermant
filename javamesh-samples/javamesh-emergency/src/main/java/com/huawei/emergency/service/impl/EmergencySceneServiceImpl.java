@@ -50,7 +50,8 @@ public class EmergencySceneServiceImpl implements EmergencySceneService {
         isPlanFinishedCondition.createCriteria()
             .andExecIdEqualTo(record.getExecId())
             .andPlanIdEqualTo(record.getPlanId())
-            .andStatusIn(Arrays.asList("0", "1", "3", "4"));
+            .andStatusIn(Arrays.asList("0", "1", "3", "4"))
+            .andIsValidEqualTo("1");
         if (execRecordMapper.countByExample(isPlanFinishedCondition) == 0) {
             planService.onComplete(record);
             return;

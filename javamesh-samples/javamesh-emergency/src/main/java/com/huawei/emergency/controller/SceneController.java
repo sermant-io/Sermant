@@ -12,7 +12,7 @@ import com.huawei.emergency.dto.SceneInfoDto;
 import com.huawei.emergency.dto.SceneListParam;
 import com.huawei.emergency.entity.SceneEntity;
 import com.huawei.emergency.service.SceneService;
-import com.huawei.script.exec.log.LogRespone;
+import com.huawei.script.exec.log.LogResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -107,9 +107,9 @@ public class SceneController {
     }
 
     @GetMapping("/scenario/script/log")
-    public LogRespone getLog(@RequestParam("scene_id") int sceneId,
-                             @RequestParam("detail_id") int detailId,
-                             @RequestParam(value = "line", defaultValue = "1") int lineNum) {
+    public LogResponse getLog(@RequestParam("scene_id") int sceneId,
+                              @RequestParam("detail_id") int detailId,
+                              @RequestParam(value = "line", defaultValue = "1") int lineNum) {
         int lineIndex = lineNum;
         if (lineIndex <= 0) {
             lineIndex = 1;

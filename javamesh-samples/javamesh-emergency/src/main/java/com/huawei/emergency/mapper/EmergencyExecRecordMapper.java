@@ -4,7 +4,9 @@ import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordExample;
 import com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
+import java.util.Date;
 import java.util.List;
 
 public interface EmergencyExecRecordMapper {
@@ -37,4 +39,10 @@ public interface EmergencyExecRecordMapper {
     int updateByPrimaryKey(EmergencyExecRecord record);
 
     List<EmergencyExecRecordWithBLOBs> selectAllPlanDetail(Integer planId);
+
+    int tryUpdateStartTime(@Param("recordId") Integer recordId, @Param("startTime") Date startTime);
+
+    int tryUpdateEndTime(@Param("recordId") Integer recordId, @Param("endTime") Date endTime);
+
+    int tryUpdateStatus(Integer recordId);
 }
