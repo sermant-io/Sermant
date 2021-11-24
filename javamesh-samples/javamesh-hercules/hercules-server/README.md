@@ -66,7 +66,8 @@ mkdir /usr/local/nGrinder/ngrinder_ex
 export NGRINDER_HOME=/usr/local/nGrinder/ngrinder
 export NGRINDER_EX_HOME=/usr/local/nGrinder/ngrinder_ex
 ```
-
+**不配置以上变量会默认在用户home目录下面生成数据文件夹**
+**~/.ngrinder和~/.ngrinder_ex**
 #### 3. 在/usr/local/nGrinder/ngrinder中新增配置文件database.conf
 ```
 # H2 / cubrid / mysql can be set
@@ -153,7 +154,7 @@ Usage: run_agent_bg.sh [options]
     -help, -?, -h
        prints this message
 ```
-#### 4. 当然也可以通过配置文件启动，修改agent当前目录中的__agent.conf文件，内容如下，然后使用[run_agent_bg.sh -o]启动
+#### 4. 当然也可以通过配置文件启动，修改agent当前目录中的__agent.conf文件，内容如下，然后使用[run_agent_bg.sh -o -ah ${home_path}]启动
 ```
 common.start_mode=agent
 # controller ip
