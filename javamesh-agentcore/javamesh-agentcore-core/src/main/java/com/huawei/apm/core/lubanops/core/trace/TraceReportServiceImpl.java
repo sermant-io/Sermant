@@ -10,6 +10,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.huawei.apm.core.lubanops.bootstrap.api.APIService;
@@ -30,6 +31,9 @@ import com.huawei.apm.core.lubanops.core.utils.ReportDataBuilder;
 import com.huawei.apm.core.lubanops.integration.access.MessageIdGenerator;
 import com.huawei.apm.core.lubanops.integration.access.inbound.EventDataBody;
 import com.huawei.apm.core.lubanops.integration.access.inbound.EventDataRequest;
+import com.huawei.apm.core.lubanops.integration.transport.ClientManager;
+import com.huawei.apm.core.lubanops.integration.transport.netty.client.NettyClient;
+import com.huawei.apm.core.lubanops.integration.transport.netty.pojo.Message;
 
 /**
  * TraceQueueService 发送数据
@@ -46,6 +50,10 @@ public class TraceReportServiceImpl implements TraceReportService, AgentService 
             MAX_SPAN_EVENT_COUNT);
 
     private final static Logger LOGGER = LogFactory.getLogger();
+
+    final NettyClient nettyClient = ClientManager.getNettyClientFactory().getNettyClient(
+            AgentConfigManager.getNettyServerIp(),
+            Integer.parseInt(AgentConfigManager.getNettyServerPort()));
 
     @Inject
     private InvokerService invokerService;
@@ -170,7 +178,7 @@ public class TraceReportServiceImpl implements TraceReportService, AgentService 
                 }
                 logClassName = request.getBody().getClassName();
                 logMethodName = request.getBody().getMethod();
-                sendSpanEvent();
+                sendSpanEvent(request.getBody());
             } catch (Throwable e) {
                 Level level = Level.SEVERE;
                 if (hasException) {
@@ -206,6 +214,16 @@ public class TraceReportServiceImpl implements TraceReportService, AgentService 
             }
             APMCollector.onSuccess(LubanApmConstants.SPAN_EVENT_DATA_TYPE, length);
 
+        }
+
+        public void sendSpanEvent(EventDataBody eventDataBody) {
+            if (invokerService.isSendEnable()) {
+                try {
+                    nettyClient.sendData(JSONObject.toJSONBytes(eventDataBody), Message.ServiceData.DataType.AGENT_SPAN_EVENT);
+                } catch (Exception e) {
+                    LOGGER.severe("[sendSpanEvent] error:" + e.getMessage());
+                }
+            }
         }
 
         @Override
