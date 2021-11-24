@@ -4,8 +4,8 @@
 
 package com.huawei.apm.core.service.dynamicconfig.kie.listener;
 
-import com.huawei.apm.core.service.dynamicconfig.kie.kie.KieConfigEntity;
-import com.huawei.apm.core.service.dynamicconfig.kie.kie.KieResponse;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieConfigEntity;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,6 +70,7 @@ public class KvDataHolder {
         }
         return latestData;
     }
+
     /**
      * 数据变更
      */

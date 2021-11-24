@@ -2,12 +2,12 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
  */
 
-package com.huawei.apm.core.service.dynamicconfig.kie.kie;
+package com.huawei.apm.core.service.dynamicconfig.kie.client.kie;
 
 import com.huawei.apm.core.service.dynamicconfig.kie.client.AbstractClient;
 import com.huawei.apm.core.service.dynamicconfig.kie.client.ClientUrlManager;
-import com.huawei.apm.core.service.dynamicconfig.kie.http.HttpClient;
-import com.huawei.apm.core.service.dynamicconfig.kie.http.HttpResult;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.http.HttpClient;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.http.HttpResult;
 
 /**
  * kie客户端

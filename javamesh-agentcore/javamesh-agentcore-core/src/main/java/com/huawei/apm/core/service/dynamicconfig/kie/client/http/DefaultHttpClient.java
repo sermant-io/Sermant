@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
  */
 
-package com.huawei.apm.core.service.dynamicconfig.kie.http;
+package com.huawei.apm.core.service.dynamicconfig.kie.client.http;
 
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.service.dynamicconfig.kie.listener.SubscriberManager;
@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-11-17
  */
-public class DefaultHttpClient implements com.huawei.apm.core.service.dynamicconfig.kie.http.HttpClient  {
+public class DefaultHttpClient implements com.huawei.apm.core.service.dynamicconfig.kie.client.http.HttpClient {
     private static final Logger LOGGER = LogFactory.getLogger();
     /**
      * 默认超时时间

@@ -4,8 +4,8 @@
 
 package com.huawei.apm.core.service.dynamicconfig.kie.client;
 
-import com.huawei.apm.core.service.dynamicconfig.kie.http.DefaultHttpClient;
-import com.huawei.apm.core.service.dynamicconfig.kie.http.HttpClient;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.http.DefaultHttpClient;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.http.HttpClient;
 
 /**
  * 抽象客户端

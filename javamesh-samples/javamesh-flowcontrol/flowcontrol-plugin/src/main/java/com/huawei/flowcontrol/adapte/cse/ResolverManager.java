@@ -43,14 +43,26 @@ public enum ResolverManager {
         final Set<Map.Entry<String, AbstractResolver<?>>> resolvers = resolversMap.entrySet();
         for (Map.Entry<String, String> ruleEntity : rulesMap.entrySet()) {
             final String key = ruleEntity.getKey();
-            for (Map.Entry<String, AbstractResolver<?>> resolverEntry : resolvers) {
-                if (!key.startsWith(resolverEntry.getKey())) {
-                    continue;
-                }
-                String businessKey = key.substring(resolverEntry.getKey().length());
-                // 匹配以该配置打头的解析器，更新解析器内容
-                resolverEntry.getValue().parseRule(businessKey, ruleEntity.getValue(), true, forDelete);
+            resolve(key, ruleEntity.getValue(), forDelete);
+        }
+    }
+
+    /**
+     * 单个kv解析
+     *
+     * @param key 键
+     * @param value 值
+     * @param forDelete 是否是删除键
+     */
+    public void resolve(String key, String value, boolean forDelete) {
+        final Set<Map.Entry<String, AbstractResolver<?>>> resolvers = resolversMap.entrySet();
+        for (Map.Entry<String, AbstractResolver<?>> resolverEntry : resolvers) {
+            if (!key.startsWith(resolverEntry.getKey())) {
+                continue;
             }
+            String businessKey = key.substring(resolverEntry.getKey().length());
+            // 匹配以该配置打头的解析器，更新解析器内容
+            resolverEntry.getValue().parseRule(businessKey, value, true, forDelete);
         }
     }
 

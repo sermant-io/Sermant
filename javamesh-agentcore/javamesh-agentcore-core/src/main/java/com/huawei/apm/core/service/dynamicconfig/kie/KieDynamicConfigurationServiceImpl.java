@@ -4,25 +4,22 @@
 
 package com.huawei.apm.core.service.dynamicconfig.kie;
 
-import com.alibaba.fastjson.JSONException;
-import com.alibaba.fastjson.JSONObject;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.service.dynamicconfig.Config;
-import com.huawei.apm.core.service.dynamicconfig.kie.kie.KieRequest;
 import com.huawei.apm.core.service.dynamicconfig.kie.listener.SubscriberManager;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationService;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
  * kie配置中心实现
- * key生成规则：基于KieRequest实体类生成，例如需要
- *      <p>1.创建标签version:1.0的监听
- *         <p>KieRequestFactory.buildKieRequest(new String[]{KieRequestFactory.buildLabel("version", "1.0")});</p>
- *      <p>2.创建标签version:1.0并打开长连接监听,20S一个周期（最大不可超过50S）</p>
- *        <p>KieRequestFactory.buildKieRequest(20, new String[]{KieRequestFactory.buildLabel("version", "1.0")});</p>
- *<p></p>
+ * <p></p>
+ *
  * @author zhouss
  * @since 2021-11-22
  */
@@ -33,7 +30,11 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
 
     private static KieDynamicConfigurationServiceImpl instance;
 
-    private final KeyHandler<KieRequest> kieRequestKeyHandler = new DefaultKeyHandler<KieRequest>();
+    private final Map<String, List<String>> groupKeyCache = new ConcurrentHashMap<String, List<String>>();
+
+    private KieDynamicConfigurationServiceImpl() {
+
+    }
 
     /**
      * 获取实现单例
@@ -44,6 +45,7 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
         if (instance == null) {
             instance = new KieDynamicConfigurationServiceImpl();
             subscriberManager = new SubscriberManager(Config.getInstance().getKieUrl());
+//            subscriberManager = new SubscriberManager("http://172.31.100.55:30110");
         }
         return instance;
     }
@@ -78,53 +80,39 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
         return 0;
     }
 
+    /**
+     * 更新监听器（删除||添加）
+     *
+     * @param key          监听键
+     * @param group        分组， 针对KIE特别处理生成group方法{@link GroupUtils#createLabelGroup(Map)}
+     * @param listener     对应改组的监听器
+     * @param forSubscribe 是否为订阅
+     * @return 更新是否成功
+     */
     private boolean updateListener(String key, String group, ConfigurationListener listener, boolean forSubscribe) {
-        final KieRequest kieRequest = kieRequestKeyHandler.handle(key, KieRequest.class);
-        if (kieRequest == null || listener == null) {
-            return false;
-        }
+        updateGroupKey(key, group, forSubscribe);
         try {
             if (forSubscribe) {
-                subscriberManager.subscribe(kieRequest, listener);
+                return subscriberManager.addGroupListener(group, listener);
             } else {
-                subscriberManager.unSubscribe(kieRequest, listener);
+                return subscriberManager.removeGroupListener(group, listener);
             }
-
         } catch (Exception exception) {
             LOGGER.warning("Subscribed kie request failed! raw key : " + key);
             return false;
         }
-        return true;
     }
 
-    public interface KeyHandler<R> {
-        /**
-         * key处理
-         *
-         * @param key 键
-         * @param clazz 响应类型
-         * @return 处理后结果
-         */
-        R handle(String key, Class<R> clazz);
-    }
-
-    /**
-     * 默认JSON实现
-     *
-     * @param <R> 结果类型
-     */
-    static class DefaultKeyHandler<R> implements KeyHandler<R> {
-        @Override
-        public R handle(String key, Class<R> clazz) {
-            if (key == null || clazz == null) {
-                return null;
-            }
-            try {
-                return JSONObject.parseObject(key, clazz);
-            } catch (JSONException ex) {
-                LOGGER.warning("Format key failed! raw json key is : " + key);
-            }
-            return null;
+    private void updateGroupKey(String key, String group, boolean forSubscribe) {
+        List<String> keys = groupKeyCache.get(group);
+        if (keys == null) {
+            keys = new ArrayList<>();
         }
+        if (forSubscribe) {
+            keys.remove(key);
+        } else {
+            keys.add(key);
+        }
+        groupKeyCache.put(group, keys);
     }
 }

@@ -2,10 +2,10 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
  */
 
-package com.huawei.apm.core.service.dynamicconfig.kie.kie;
+package com.huawei.apm.core.service.dynamicconfig.kie.client.kie;
 
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.apm.core.service.dynamicconfig.kie.http.HttpResult;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.http.HttpResult;
 import org.apache.http.HttpStatus;
 
 import java.util.Iterator;

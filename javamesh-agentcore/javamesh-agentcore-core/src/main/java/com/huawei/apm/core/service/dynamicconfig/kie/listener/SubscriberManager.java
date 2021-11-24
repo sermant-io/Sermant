@@ -5,16 +5,15 @@
 package com.huawei.apm.core.service.dynamicconfig.kie.listener;
 
 import com.alibaba.fastjson.JSONException;
-import com.alibaba.fastjson.JSONObject;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.lubanops.integration.utils.APMThreadFactory;
+import com.huawei.apm.core.service.dynamicconfig.kie.GroupUtils;
 import com.huawei.apm.core.service.dynamicconfig.kie.client.ClientUrlManager;
-import com.huawei.apm.core.service.dynamicconfig.kie.kie.KieClient;
-import com.huawei.apm.core.service.dynamicconfig.kie.kie.KieListenerWrapper;
-import com.huawei.apm.core.service.dynamicconfig.kie.kie.KieRequest;
-import com.huawei.apm.core.service.dynamicconfig.kie.kie.KieResponse;
-import com.huawei.apm.core.service.dynamicconfig.kie.kie.KieSubscriber;
-import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieClient;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieListenerWrapper;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieRequest;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieResponse;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieSubscriber;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import org.apache.http.client.config.RequestConfig;
 
@@ -46,7 +45,7 @@ public class SubscriberManager {
     /**
      * 最大线程数
      */
-    public static final int MAX_THREAD_SIZE = 50;
+    public static final int MAX_THREAD_SIZE = 100;
 
     /**
      * 线程数
@@ -62,6 +61,11 @@ public class SubscriberManager {
      * 定时请求间隔
      */
     private static final int SCHEDULE_REQUEST_INTERVAL_MS = 5000;
+
+    /**
+     * 等待时间
+     */
+    private static final String WAIT = "20";
 
     /**
      * 当前长连接请求数
@@ -96,8 +100,42 @@ public class SubscriberManager {
             new ScheduledThreadPoolExecutor(THREAD_SIZE, new APMThreadFactory("kie-subscribe-task"));
 
     public SubscriberManager(String urls) {
-
         kieClient = new KieClient(new ClientUrlManager(urls));
+    }
+
+    /**
+     * 添加组监听
+     *
+     * @param group 标签组
+     * @param listener 监听器
+     * @return 是否添加成功
+     */
+    public boolean addGroupListener(String group, ConfigurationListener listener) {
+        if (!GroupUtils.isLabelGroup(group)) {
+            return false;
+        }
+        try {
+            return subscribe(new KieRequest().setLabelCondition(GroupUtils.getLabelCondition(group)).setWait(WAIT), listener);
+        } catch (Exception ex) {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Add group listener failed, %s", ex.getMessage()));
+            return false;
+        }
+    }
+
+    /**
+     * 移除组监听
+     *
+     * @param group 标签组
+     * @param listener 监听器
+     * @return 是否添加成功
+     */
+    public boolean removeGroupListener(String group, ConfigurationListener listener) {
+        try {
+            return unSubscribe(new KieRequest().setLabelCondition(GroupUtils.getLabelCondition(group)).setWait(WAIT), listener);
+        } catch (Exception ex) {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Removed group listener failed, %s", ex.getMessage()));
+            return false;
+        }
     }
 
     /**
@@ -106,10 +144,10 @@ public class SubscriberManager {
      * @param kieRequest            请求
      * @param configurationListener 监听器
      */
-    public void subscribe(KieRequest kieRequest, ConfigurationListener configurationListener) {
+    public boolean subscribe(KieRequest kieRequest, ConfigurationListener configurationListener) {
         final KieSubscriber kieSubscriber = new KieSubscriber(kieRequest);
         Task task;
-        KieListenerWrapper kieListenerWrapper = new KieListenerWrapper(configurationListener, new KvDataHolder());
+        KieListenerWrapper kieListenerWrapper = new KieListenerWrapper(kieRequest.getLabelCondition(), configurationListener, new KvDataHolder());
         if (!kieSubscriber.isLongConnectionRequest()) {
             task = new ShortTimerTask(kieSubscriber, kieListenerWrapper);
         } else {
@@ -117,7 +155,7 @@ public class SubscriberManager {
                 LOGGER.warning(String.format(Locale.ENGLISH,
                         "Exceeded max long connection request subscribers, the max number is %s, it will be discarded!",
                         curLongConnectionRequestCount.get()));
-                return;
+                return false;
             }
             buildRequestConfig(kieRequest);
             task = new LoopPullTask(kieSubscriber, kieListenerWrapper);
@@ -131,6 +169,7 @@ public class SubscriberManager {
         configurationListeners.add(kieListenerWrapper);
         listenerMap.put(kieSubscriber, configurationListeners);
         executeTask(task);
+        return true;
     }
 
     /**
@@ -155,6 +194,7 @@ public class SubscriberManager {
             final KieResponse kieResponse = kieClient.queryConfigurations(cloneRequest);
             if (kieResponse != null && kieResponse.isChanged()) {
                 tryPublishEvent(kieResponse, kieListenerWrapper);
+                kieRequest.setRevision(kieResponse.getRevision());
             }
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Pull the first request failed! %s", ex.getMessage()));
@@ -166,7 +206,7 @@ public class SubscriberManager {
      *
      * @param kieRequest 请求体
      */
-    public void unSubscribe(KieRequest kieRequest, ConfigurationListener configurationListener) {
+    public boolean unSubscribe(KieRequest kieRequest, ConfigurationListener configurationListener) {
         for (Map.Entry<KieSubscriber, List<KieListenerWrapper>> next : listenerMap.entrySet()) {
             if (!next.getKey().getKieRequest().equals(kieRequest)) {
                 continue;
@@ -179,10 +219,13 @@ public class SubscriberManager {
                     listenerWrapper.getTask().stop();
                     LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "%s has been stopped!",
                             configurationListener.getClass().getName()));
-                    break;
+                    return true;
                 }
             }
         }
+        LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH, "The subscriber of group %s not found!",
+                kieRequest.getLabelCondition()));
+        return false;
     }
 
     private void buildRequestConfig(KieRequest kieRequest) {
@@ -214,12 +257,10 @@ public class SubscriberManager {
         final KvDataHolder.EventDataHolder eventDataHolder = kvDataHolder.analyzeLatestData(kieResponse);
         if (eventDataHolder.isChanged()) {
             try {
-                kieListenerWrapper.getConfigurationListener().process(
-                        new ConfigChangedEvent(null, null, JSONObject.toJSONString(eventDataHolder)));
+                kieListenerWrapper.notifyListener(eventDataHolder);
             } catch (JSONException ex) {
                 LOGGER.warning("Format data to string failed when publish event!");
             }
-
         }
     }
 
@@ -348,7 +389,7 @@ public class SubscriberManager {
     class SleepCallBackTask extends AbstractTask {
         private final Task nextTask;
 
-        private int failedCount;
+        private final int failedCount;
 
         private long waitTimeMs;
 

@@ -5,7 +5,7 @@
 package com.huawei.apm.core.service.dynamicconfig;
 
 import com.huawei.apm.core.service.dynamicconfig.kie.KieDynamicConfigurationServiceImpl;
-import com.huawei.apm.core.service.dynamicconfig.kie.kie.KieRequestFactory;
+import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieRequestFactory;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import org.junit.Before;
