@@ -68,6 +68,11 @@ public class SubscriberManager {
     private static final String WAIT = "20";
 
     /**
+     * 长连接拉取间隔
+     */
+    private static final long LONG_CONNECTION_REQUEST_INTERVAL_MS = 2000L;
+
+    /**
      * 当前长连接请求数
      * 要求最大连接数必须小于 MAX_THREAD_SIZE
      *
@@ -96,8 +101,7 @@ public class SubscriberManager {
     /**
      * 快速返回的请求
      */
-    private final ScheduledExecutorService scheduledExecutorService =
-            new ScheduledThreadPoolExecutor(THREAD_SIZE, new APMThreadFactory("kie-subscribe-task"));
+    private ScheduledExecutorService scheduledExecutorService;
 
     public SubscriberManager(String urls) {
         kieClient = new KieClient(new ClientUrlManager(urls));
@@ -244,6 +248,14 @@ public class SubscriberManager {
             if (task.isLongConnectionRequest()) {
                 longRequestExecutor.execute(new TaskRunnable(task));
             } else {
+                if (scheduledExecutorService == null) {
+                    synchronized (SubscriberManager.class) {
+                        if (scheduledExecutorService == null) {
+                            scheduledExecutorService = new ScheduledThreadPoolExecutor(THREAD_SIZE,
+                                    new APMThreadFactory("kie-subscribe-task"));
+                        }
+                    }
+                }
                 scheduledExecutorService.scheduleAtFixedRate(
                         new TaskRunnable(task), 0, SCHEDULE_REQUEST_INTERVAL_MS, TimeUnit.MILLISECONDS);
             }
@@ -372,7 +384,9 @@ public class SubscriberManager {
                     tryPublishEvent(kieResponse, kieListenerWrapper);
                     kieSubscriber.getKieRequest().setRevision(kieResponse.getRevision());
                 }
-                SubscriberManager.this.executeTask(this);
+                // 间隔一段时间拉取，减轻服务压力;
+                // 如果在间隔时间段内有键变更，服务可以通过传入的revision判断是否需要将最新的数据立刻返回，不会存在键监听不到的问题
+                SubscriberManager.this.executeTask(new SleepCallBackTask(this, LONG_CONNECTION_REQUEST_INTERVAL_MS));
             } catch (Exception ex) {
                 LOGGER.warning(String.format(Locale.ENGLISH, "pull kie config failed, %s, it will rePull", ex.getMessage()));
                 ++failCount;
@@ -389,13 +403,18 @@ public class SubscriberManager {
     class SleepCallBackTask extends AbstractTask {
         private final Task nextTask;
 
-        private final int failedCount;
+        private int failedCount;
 
         private long waitTimeMs;
 
         public SleepCallBackTask(Task nextTask, int failedCount) {
             this.nextTask = nextTask;
             this.failedCount = failedCount;
+        }
+
+        public SleepCallBackTask(Task nextTask, long waitTimeMs) {
+            this.nextTask = nextTask;
+            this.waitTimeMs = waitTimeMs;
         }
 
         @Override
