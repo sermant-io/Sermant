@@ -16,11 +16,27 @@ import com.huawei.apm.core.service.ServiceManager;
  * @since 2021/11/12
  */
 public class PluginServiceManager extends ServiceManager {
+    /**
+     * 初始化插件服务
+     *
+     * @param classLoader 插件服务包的ClassLoader
+     */
     public static void initPluginService(ClassLoader classLoader) {
         for (PluginService service : ServiceLoader.load(PluginService.class, classLoader)) {
             if (loadService(service, service.getClass(), PluginService.class)) {
                 service.start();
             }
         }
+    }
+
+    /**
+     * 获取插件服务
+     *
+     * @param serviceClass 插件服务类
+     * @param <T>          插件服务类型
+     * @return 插件服务实例
+     */
+    public static <T extends PluginService> T getPluginService(Class<T> serviceClass) {
+        return getService(serviceClass);
     }
 }

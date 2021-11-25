@@ -82,7 +82,47 @@ public abstract class ConfigManager {
      * @param classLoader    类加载器，该参数决定从哪个classLoader中进行api操作
      * @param otherProcessor 其他配置操作，在封装完参数后进行，作为补充内容
      */
-    protected static synchronized void loadConfig(File configFile, Class<? extends BaseConfig> baseCls,
+    protected static void loadConfig(File configFile, Class<? extends BaseConfig> baseCls,
+            ClassLoader classLoader, ConfigConsumer otherProcessor) {
+        if (configFile.exists() && configFile.isFile()) {
+            doLoadConfig(configFile, baseCls, classLoader, otherProcessor);
+        } else {
+            loadDefaultConfig(baseCls, classLoader, otherProcessor);
+        }
+    }
+
+    /**
+     * 加载默认配置
+     *
+     * @param baseCls        配置对象的基类，该参数决定spi操作的源
+     * @param classLoader    类加载器，该参数决定从哪个classLoader中进行api操作
+     * @param otherProcessor 其他配置操作，在封装完参数后进行，作为补充内容
+     */
+    private static synchronized void loadDefaultConfig(Class<? extends BaseConfig> baseCls, ClassLoader classLoader,
+            ConfigConsumer otherProcessor) {
+        foreachConfig(new ConfigConsumer() {
+            @Override
+            public void accept(BaseConfig config) {
+                final String typeKey = ConfigKeyUtil.getTypeKey(config.getClass());
+                if (!CONFIG_MAP.containsKey(typeKey)) {
+                    CONFIG_MAP.put(typeKey, config);
+                    if (otherProcessor != null) {
+                        otherProcessor.accept(config);
+                    }
+                }
+            }
+        }, baseCls, classLoader);
+    }
+
+    /**
+     * 配置执行从配置文件中加载
+     *
+     * @param configFile     配置文件
+     * @param baseCls        配置对象的基类，该参数决定spi操作的源
+     * @param classLoader    类加载器，该参数决定从哪个classLoader中进行api操作
+     * @param otherProcessor 其他配置操作，在封装完参数后进行，作为补充内容
+     */
+    private static synchronized void doLoadConfig(File configFile, Class<? extends BaseConfig> baseCls,
             ClassLoader classLoader, ConfigConsumer otherProcessor) {
         final LoadConfigStrategy<?> loadConfigStrategy = getLoadConfigStrategy(configFile, classLoader);
         final Object holder = loadConfigStrategy.getConfigHolder(configFile, argsMap);
@@ -90,15 +130,14 @@ public abstract class ConfigManager {
             @Override
             public void accept(BaseConfig config) {
                 final String typeKey = ConfigKeyUtil.getTypeKey(config.getClass());
-                final BaseConfig existConfig = CONFIG_MAP.get(typeKey);
-                if (existConfig == null) {
+                if (CONFIG_MAP.containsKey(typeKey)) {
+                    LOGGER.warning(String.format("Cannot load config [%s] repeatedly", config.getClass().getName()));
+                } else {
                     config = ((LoadConfigStrategy) loadConfigStrategy).loadConfig(holder, config);
                     CONFIG_MAP.put(typeKey, config);
                     if (otherProcessor != null) {
                         otherProcessor.accept(config);
                     }
-                } else {
-                    LOGGER.warning(String.format("Cannot load config [%s] repeatedly", config.getClass().getName()));
                 }
             }
         }, baseCls, classLoader);

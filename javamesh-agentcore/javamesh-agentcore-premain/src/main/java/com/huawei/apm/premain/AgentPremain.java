@@ -5,51 +5,46 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
+import java.util.Locale;
 import java.util.Map;
 import java.util.jar.JarFile;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import com.huawei.apm.core.AgentCoreEntrance;
-import com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogPathUtils;
 import com.huawei.apm.premain.common.BootArgsBuilder;
 import com.huawei.apm.premain.common.PathDeclarer;
 import com.huawei.apm.premain.exception.DupPremainException;
-import com.huawei.apm.premain.exception.InitPremainException;
-import com.huawei.apm.premain.lubanops.log.CollectorLogFactory;
 
 public class AgentPremain {
-    private static Logger logger;
-
     private static boolean executeFlag = false;
 
     //~~ premain method
 
-    @SuppressWarnings("rawtypes")
     public static void premain(String agentArgs, Instrumentation instrumentation) {
+        // 执行标记，防止重复运行
+        if (executeFlag) {
+            throw new DupPremainException();
+        }
+        executeFlag = true;
+        // 初始化日志
+        final Logger logger = getLogger();
         try {
-            // 执行标记，防止重复运行
-            if (executeFlag) {
-                throw new DupPremainException();
-            }
-            executeFlag = true;
             // 添加核心库
+            logger.info("Loading core library... ");
             loadCoreLib(instrumentation);
             // 初始化启动参数
+            logger.info("Building argument map... ");
             final Map<String, Object> argsMap = BootArgsBuilder.build(agentArgs);
-            // 初始化日志
-            initLog(argsMap);
-            logger.info("[APM PREMAIN]loading javamesh agent.");
             // agent core入口
+            logger.info("Loading javamesh agent... ");
             AgentCoreEntrance.run(argsMap, instrumentation);
         } catch (Exception e) {
-            if (logger == null) {
-                throw new InitPremainException(e);
-            } else {
-                logger.log(Level.SEVERE, "[APM PREMAIN]Loading javamesh agent failed", e);
-            }
+            logger.severe(String.format(Locale.ROOT,
+                    "Loading javamesh agent failed, %s: %s. ", e.getClass(), e.getMessage()));
         }
 
     }
@@ -75,11 +70,18 @@ public class AgentPremain {
         }
     }
 
-    private static void initLog(Map<String, Object> args) {
-        final String appName = args.get(LubanApmConstants.APP_NAME_COMMONS).toString();
-        final String instanceName = args.get(LubanApmConstants.INSTANCE_NAME_COMMONS).toString();
-        LogPathUtils.build(appName, instanceName);
-        logger = CollectorLogFactory.getLogger("javamesh.apm");
-        LogFactory.setLogger(logger);
+    private static Logger getLogger() {
+        final Logger logger = Logger.getLogger("javamesh.agent");
+        final ConsoleHandler handler = new ConsoleHandler();
+        final String lineSeparator = System.getProperty("line.separator");
+        handler.setFormatter(new Formatter() {
+            @Override
+            public String format(LogRecord record) {
+                return "[" + record.getLevel() + "] " + record.getMessage() + lineSeparator;
+            }
+        });
+        logger.addHandler(handler);
+        logger.setUseParentHandlers(false);
+        return logger;
     }
 }

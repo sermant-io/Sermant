@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
-import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.apm.core.plugin.service.PluginServiceManager;
 import com.huawei.example.demo.service.DemoComplexService;
 import com.huawei.example.demo.service.DemoSimpleService;
 
@@ -26,8 +26,8 @@ public class DemoServiceInterceptor implements StaticMethodInterceptor {
     @Override
     public void before(Class<?> clazz, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
         System.out.println(clazz.getSimpleName() + ": [DemoServiceInterceptor]-before");
-        simpleService = ServiceManager.getService(DemoSimpleService.class);
-        complexService = ServiceManager.getService(DemoComplexService.class);
+        simpleService = PluginServiceManager.getPluginService(DemoSimpleService.class);
+        complexService = PluginServiceManager.getPluginService(DemoComplexService.class);
     }
 
     @Override

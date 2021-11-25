@@ -18,9 +18,13 @@ import com.huawei.apm.core.lubanops.bootstrap.Listener;
 import com.huawei.apm.core.lubanops.bootstrap.TransformerMethod;
 
 /**
- * 拦截器信息收集器
+ * 方法的相关拦截器的信息收集器
+ *
+ * @author HapThorin
+ * @version 1.0.0
+ * @since 2021/10/27
  */
-public class InterceptorCollector {
+public class MethodInterceptorCollector {
     /**
      * 被增强类的方法
      */
@@ -36,7 +40,7 @@ public class InterceptorCollector {
      */
     protected final List<String> interceptorNames;
 
-    protected InterceptorCollector(MethodDescription.InDefinedShape method) {
+    protected MethodInterceptorCollector(MethodDescription.InDefinedShape method) {
         this.method = method;
         this.interceptorNames = new ArrayList<String>();
     }

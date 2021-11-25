@@ -33,9 +33,8 @@ public class AgentCoreEntrance {
      * @throws Exception agent core执行异常
      */
     public static void run(Map<String, Object> argsMap, Instrumentation instrumentation) throws Exception {
-
         // 初始化日志
-        LogBackInit.init((String) argsMap.get(PathIndexer.JAVAMESH_LOGBACK_SETTING_FILE));
+        LogBackInit.init(argsMap);
 
         // 初始化路径
         PathIndexer.build(argsMap);

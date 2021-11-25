@@ -188,6 +188,14 @@
             <modules>
                 <module>javamesh-agentcore</module>
                 <module>javamesh-samples</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>backend</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
                 <module>javamesh-backend</module>
             </modules>
         </profile>
@@ -198,7 +206,6 @@
             </activation>
             <modules>
                 <module>javamesh-samples</module>
-                <module>javamesh-backend</module>
             </modules>
         </profile>
         <profile>

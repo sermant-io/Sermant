@@ -43,6 +43,9 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      */
     private static final Logger LOGGER = LogFactory.getLogger();
 
+    /**
+     * 启动参数
+     */
     private Map<String, Object> argsMap;
 
     @Override

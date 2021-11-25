@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.plugin.config.PluginConfigManager;
-import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.apm.core.plugin.service.PluginServiceManager;
 import com.huawei.example.demo.config.DemoConfig;
 import com.huawei.example.demo.config.DemoServiceConfig;
 
@@ -38,7 +38,7 @@ public class DemoComplexServiceImpl implements DemoComplexService {
     @Override
     public void activeFunc() {
         System.out.println("[DemoComplexService]-activeFunc");
-        final DemoSimpleService service = ServiceManager.getService(DemoSimpleService.class);
+        final DemoSimpleService service = PluginServiceManager.getPluginService(DemoSimpleService.class);
         service.passiveFunc();
     }
 
