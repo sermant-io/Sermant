@@ -32,4 +32,16 @@ public class KafkaConfig {
         return TopicBuilder.name("topic-server-monitor")
             .build();
     }
+
+    @Bean
+    public NewTopic topicOfAgentRegistration() {
+        return TopicBuilder.name("topic-agent-registration")
+            .build();
+    }
+
+    @Bean
+    public NewTopic topicOfDruidMonitor() {
+        return TopicBuilder.name("topic-druid-monitor")
+            .build();
+    }
 }

@@ -83,6 +83,9 @@ public class ServerHandler extends BaseHandler {
                 case Message.ServiceData.DataType.AGENT_REGISTRATION_VALUE:
                     producer.send(new ProducerRecord<>(conf.getTopicAgentRegistration(), Bytes.wrap(message)));
                     break;
+                case Message.ServiceData.DataType.DRUID_MONITOR_VALUE:
+                    producer.send(new ProducerRecord<>(conf.getTopicDruidMonitor(), Bytes.wrap(message)));
+                    break;
                 case Message.ServiceData.DataType.AGENT_MONITOR_VALUE:
                     producer.send(new ProducerRecord<>(conf.getTopicAgentMonitor(), Bytes.wrap(message)));
                     break;
