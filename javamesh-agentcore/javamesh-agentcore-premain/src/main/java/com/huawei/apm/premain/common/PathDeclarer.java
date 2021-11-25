@@ -78,4 +78,13 @@ public class PathDeclarer {
     public static String getLubanPluginsPath() {
         return getPluginPackagePath() + File.separatorChar + "luban";
     }
+
+    /**
+     * 获取logback日志配置
+     *
+     * @return logback日志配置
+     */
+    public static String getLogbackSettingPath() {
+        return getAgentPath() + File.separatorChar + "config" + File.separatorChar + "logback.xml";
+    }
 }

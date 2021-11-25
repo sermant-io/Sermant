@@ -26,6 +26,8 @@ message ServiceData{
     PLUGIN_FLOW_RECORD_DATA = 3;
     SERVER_MONITOR = 4;
     ORACLE_JVM_MONITOR = 5;
+    AGENT_MONITOR = 8;
+    AGENT_SPAN_EVENT = 9;
   }
   DataType dataType = 1;
   bytes data = 2;

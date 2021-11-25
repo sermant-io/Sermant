@@ -47,9 +47,27 @@ public class Config implements BaseConfig {
         return getInstance().zookeeper_uri;
     }
 
-    public static DynamicConfigType getDynamicConfigType() {
-        return getInstance().dynamicConfigType;
+    public static DynamicConfigType getDynamic_config_type() {
+        return getInstance().dynamic_config_type;
     }
+
+
+    protected void setTimeout_value(int timeout_value) {
+        this.timeout_value = timeout_value;
+    }
+
+    protected void setDefault_group(String default_group) {
+        this.default_group = default_group;
+    }
+
+    protected void setZookeeper_uri(String zookeeper_uri) {
+        this.zookeeper_uri = zookeeper_uri;
+    }
+
+    protected void setDynamic_config_type(DynamicConfigType dynamicConfigType) {
+        this.dynamic_config_type = dynamicConfigType;
+    }
+
 
     protected int timeout_value = 30000;
 
@@ -57,6 +75,6 @@ public class Config implements BaseConfig {
 
     protected String zookeeper_uri = "zookeeper://127.0.0.1:2181";
 
-    protected DynamicConfigType dynamicConfigType = DynamicConfigType.ZOO_KEEPER;
+    protected DynamicConfigType dynamic_config_type = DynamicConfigType.ZOO_KEEPER; //DynamicConfigType.ZOO_KEEPER;
 
 }

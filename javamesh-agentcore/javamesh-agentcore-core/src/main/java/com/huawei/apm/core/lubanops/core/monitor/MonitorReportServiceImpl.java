@@ -6,10 +6,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.huawei.apm.core.lubanops.bootstrap.api.HarvestListener;
 import com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants;
+import com.huawei.apm.core.lubanops.bootstrap.config.AgentConfigManager;
 import com.huawei.apm.core.lubanops.bootstrap.exception.ApmRuntimeException;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.lubanops.bootstrap.plugin.apm.APMCollector;
@@ -24,6 +26,9 @@ import com.huawei.apm.core.lubanops.core.utils.ReportDataBuilder;
 import com.huawei.apm.core.lubanops.integration.access.MessageIdGenerator;
 import com.huawei.apm.core.lubanops.integration.access.inbound.MonitorDataBody;
 import com.huawei.apm.core.lubanops.integration.access.inbound.MonitorDataRequest;
+import com.huawei.apm.core.lubanops.integration.transport.ClientManager;
+import com.huawei.apm.core.lubanops.integration.transport.netty.client.NettyClient;
+import com.huawei.apm.core.lubanops.integration.transport.netty.pojo.Message;
 
 /**
  * Monitor Queue Service.
@@ -36,6 +41,10 @@ public class MonitorReportServiceImpl extends ServiceThread implements MonitorRe
     public static final int DEFAULT_QUEUE_SIZE = 128;
 
     private final static Logger LOGGER = LogFactory.getLogger();
+
+    final NettyClient nettyClient = ClientManager.getNettyClientFactory().getNettyClient(
+            AgentConfigManager.getNettyServerIp(),
+            Integer.parseInt(AgentConfigManager.getNettyServerPort()));
 
     /**
      * default queue size
@@ -197,7 +206,7 @@ public class MonitorReportServiceImpl extends ServiceThread implements MonitorRe
                 APMCollector.onThrowable(LubanApmConstants.MONITOR_DATA_TYPE, length,
                         new ApmRuntimeException("上报数据超过1M"));
             }
-            sendData(request, bodyStr, length);
+            sendData(request.getBody());
         } catch (Exception e) {
             if (!hasException) {
                 LOGGER.log(Level.SEVERE, this.getServiceName() + " has exception.", e);
@@ -228,4 +237,14 @@ public class MonitorReportServiceImpl extends ServiceThread implements MonitorRe
         APMCollector.onSuccess(LubanApmConstants.MONITOR_DATA_TYPE, length);
     }
 
+
+    private void sendData(MonitorDataBody monitorDataBody) {
+        if (invokerService.isSendEnable()) {
+            try {
+                nettyClient.sendData(JSONObject.toJSONBytes(monitorDataBody), Message.ServiceData.DataType.AGENT_MONITOR);
+            } catch (Exception e) {
+                LOGGER.severe("[sendData] error:" + e.getMessage());
+            }
+        }
+    }
 }

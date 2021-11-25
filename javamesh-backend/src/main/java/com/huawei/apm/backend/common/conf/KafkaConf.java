@@ -57,4 +57,10 @@ public class KafkaConf {
 
     @Value("${kafka.druid-monitor.topic}")
     private String topicDruidMonitor;
+
+    @Value("${kafka.agent-monitor.topic}")
+    private String topicAgentMonitor;
+
+    @Value("${kafka.agent-span-event.topic}")
+    private String topicAgentSpanEvent;
 }
