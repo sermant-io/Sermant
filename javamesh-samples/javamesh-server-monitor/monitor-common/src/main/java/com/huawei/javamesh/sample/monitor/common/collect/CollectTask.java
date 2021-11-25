@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
  */
 
-package com.huawei.javamesh.sample.servermonitor.collecttask;
+package com.huawei.javamesh.sample.monitor.common.collect;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +33,10 @@ public class CollectTask<M> {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
+    private volatile boolean started = false;
+
+    private final Object lock = new Object();
+
     private CollectTask(MetricProvider<M> metricProvider, long collectInterval, long consumeInterval, TimeUnit timeUnit) {
         this.metricProvider = metricProvider;
         this.collectInterval = TimeUnit.NANOSECONDS.convert(collectInterval, timeUnit);
@@ -41,18 +45,24 @@ public class CollectTask<M> {
     }
 
     public void start() {
-        scheduler.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                doCollect();
+        if (!started)
+            synchronized (lock) {
+                if (!started) {
+                    scheduler.scheduleAtFixedRate(new Runnable() {
+                        @Override
+                        public void run() {
+                            doCollect();
+                        }
+                    }, 0, collectInterval, TimeUnit.NANOSECONDS);
+                    scheduler.scheduleAtFixedRate(new Runnable() {
+                        @Override
+                        public void run() {
+                            doConsume();
+                        }
+                    }, consumeInterval, consumeInterval, TimeUnit.NANOSECONDS);
+                    started = true;
+                }
             }
-        }, 0, collectInterval, TimeUnit.NANOSECONDS);
-        scheduler.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                doConsume();
-            }
-        }, consumeInterval, consumeInterval, TimeUnit.NANOSECONDS);
     }
 
     private void doCollect() {
@@ -69,7 +79,13 @@ public class CollectTask<M> {
     }
 
     public void stop() {
-        scheduler.shutdown();
+        if (started) {
+            synchronized (lock) {
+                if (started) {
+                    scheduler.shutdown();
+                }
+            }
+        }
     }
 
     public static <M> CollectTask<M> create(MetricProvider<M> collectVendor, long collectInterval,

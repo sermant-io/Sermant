@@ -2,18 +2,18 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
  */
 
-package com.huawei.javamesh.sample.servermonitor.collecttask;
+package com.huawei.javamesh.sample.servermonitor.provider;
 
-import com.huawei.apm.core.config.ConfigManager;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.send.GatewayClient;
+import com.huawei.javamesh.sample.monitor.common.collect.MetricProvider;
+import com.huawei.javamesh.sample.monitor.common.config.ServiceConfig;
 import com.huawei.javamesh.sample.servermonitor.collector.CpuMetricCollector;
 import com.huawei.javamesh.sample.servermonitor.collector.DiskMetricCollector;
 import com.huawei.javamesh.sample.servermonitor.collector.MemoryMetricCollector;
 import com.huawei.javamesh.sample.servermonitor.collector.NetworkMetricCollector;
-import com.huawei.javamesh.sample.servermonitor.config.ServiceConfig;
 import com.huawei.javamesh.sample.servermonitor.entity.ServerMetric;
 import com.huawei.javamesh.sample.servermonitor.entity.ServerMetricCollection;
 
