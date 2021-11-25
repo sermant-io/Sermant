@@ -1,10 +1,8 @@
-# Java-mesh
+# Java-mesh 开发和使用介绍
 
-**Java-mesh**是一个开源的非侵入式增强框架。
+Java-mesh 基于Java的字节码增强技术，通过 JavaAgent 对宿主应用进行非侵入式增强，以解决Java应用的微服务治理问题。JavaMesh的初衷是建立一个面向微服务治理的对开发态无侵入的解决方案生态，降低服务治理开发和使用的难度，通过抽象接口、功能整合、插件隔离等手段，达到简化开发、功能即插即用的效果。
 
-## 产品定位
-
-**Java-mesh**基于[ByteBuddy](https://github.com/raphw/byte-buddy)字节码增强技术，使用[JavaAgent](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html)技术对宿主应用进行非侵入式增强。**Java-mesh**的涉及初衷是建立一个非侵入式增强的生态，其核心诉求在于降低非侵入式增强的难度，通过抽象接口、功能整合、插件剥离等手段，达到简化开发、功能即插即用的效果。
+本文档对如何开发和使用 Java-mesh 做详细介绍。
 
 ## 运行环境
 
@@ -82,4 +80,3 @@ mvn clean package -Dmaven.test.skip
 |[服务监控功能介绍](user-guide/server-monitor/document.md)|使用手册|
 |[threadlocal功能介绍](user-guide/threadlocal/document.md)|使用手册|
 
-[返回**Java-mesh**项目首页](../README.md)
