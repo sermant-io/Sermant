@@ -10,7 +10,6 @@
 
 ![pic](docs/binary-docs/java-mesh-product-arch.png)
 
-
 如上图所示，Java-mesh 的 Javaagent 主要由两部分组成。
 
 - 核心服务框架层，提供 Java-mesh 基本的框架服务能力，以方便服务治理插件开发者开发插件。主要功能包括 动态配置服务，消息发送服务，心跳服务，等。
@@ -19,6 +18,7 @@
 Java-mesh 的 Javaagent 广泛采用类隔离技术，以保证服务治理层、框架服务层、以及用户的业务应用互相不干扰，杜绝Java类冲突问题。其技术原理如下图所示。
 
 在使用 Java-mesh 的微服务架构下，和 Java-mesh 架构相关的组件主要有三个，相关架构图如下图所示：
+
 ![pic](docs/binary-docs/java-mesh-rt-arch.png)
 
 - Java-mesh Javaagent: 动态对业务应用进行字节码增强，以满足服务治理场景需求。
