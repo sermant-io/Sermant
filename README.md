@@ -1,8 +1,9 @@
 ![pic](docs/binary-docs/java-mesh-logo.png)
 
 ### 一种基于 Javaagent 技术的 Service Mesh 解决方案
+[![Gitter](https://badges.gitter.im/JavaMeshUsers/community.svg)](https://gitter.im/JavaMeshUsers/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
-
+[![CI/IT Tests](https://github.com/huaweicloud/java-mesh/workflows/Java%20CI%20with%20Maven/badge.svg?branch=develop)](https://github.com/huaweicloud/java-mesh/actions?query=workflow:Java%20CI%20with%20Maven%20event:push%20branch:develop)
 ## Java-mesh 是什么
 
 **Java-mesh** 基于Java的字节码增强技术，通过 [JavaAgent](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html) 对宿主应用进行非侵入式增强，以解决Java应用的微服务治理问题。**JavaMesh**的初衷是建立一个面向微服务治理的对开发态无侵入的解决方案生态，降低服务治理开发和使用的难度，通过抽象接口、功能整合、插件隔离等手段，达到简化开发、功能即插即用的效果。其产品架构图如下图所示。
