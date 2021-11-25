@@ -26,5 +26,5 @@ public class HttpRequestEntity {
     /**
      * 请求json字符串
      */
-    private String httpRequestBody;
+    private Map<String, String[]> httpRequestBody;
 }

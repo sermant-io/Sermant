@@ -4,6 +4,7 @@
 
 package com.huawei.apm.core.service.dynamicconfig.kie;
 
+import com.huawei.apm.core.service.dynamicconfig.kie.utils.KieGroupUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,9 +24,9 @@ public class KeyUtilsTest {
         final HashMap<String, String> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("app", "sc");
         objectObjectHashMap.put("version", "1.0");
-        final String labelKey = GroupUtils.createLabelGroup(objectObjectHashMap);
+        final String labelKey = KieGroupUtils.createLabelGroup(objectObjectHashMap);
         Assert.assertEquals("KIE-LABEL-FLAG#label=app%3Asc&label=version%3A1.0&", labelKey);
-        final Map<String, String> stringStringMap = GroupUtils.resolveGroupLabels(labelKey);
+        final Map<String, String> stringStringMap = KieGroupUtils.resolveGroupLabels(labelKey);
         Assert.assertTrue(stringStringMap.containsKey("app") && stringStringMap.containsKey("version"));
     }
 }

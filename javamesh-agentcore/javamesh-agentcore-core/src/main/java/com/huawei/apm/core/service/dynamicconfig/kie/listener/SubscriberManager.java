@@ -7,7 +7,7 @@ package com.huawei.apm.core.service.dynamicconfig.kie.listener;
 import com.alibaba.fastjson.JSONException;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.lubanops.integration.utils.APMThreadFactory;
-import com.huawei.apm.core.service.dynamicconfig.kie.GroupUtils;
+import com.huawei.apm.core.service.dynamicconfig.kie.utils.KieGroupUtils;
 import com.huawei.apm.core.service.dynamicconfig.kie.client.ClientUrlManager;
 import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieClient;
 import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieListenerWrapper;
@@ -115,11 +115,11 @@ public class SubscriberManager {
      * @return 是否添加成功
      */
     public boolean addGroupListener(String group, ConfigurationListener listener) {
-        if (!GroupUtils.isLabelGroup(group)) {
+        if (!KieGroupUtils.isLabelGroup(group)) {
             return false;
         }
         try {
-            return subscribe(new KieRequest().setLabelCondition(GroupUtils.getLabelCondition(group)).setWait(WAIT), listener);
+            return subscribe(new KieRequest().setLabelCondition(KieGroupUtils.getLabelCondition(group)).setWait(WAIT), listener);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Add group listener failed, %s", ex.getMessage()));
             return false;
@@ -135,7 +135,7 @@ public class SubscriberManager {
      */
     public boolean removeGroupListener(String group, ConfigurationListener listener) {
         try {
-            return unSubscribe(new KieRequest().setLabelCondition(GroupUtils.getLabelCondition(group)).setWait(WAIT), listener);
+            return unSubscribe(new KieRequest().setLabelCondition(KieGroupUtils.getLabelCondition(group)).setWait(WAIT), listener);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Removed group listener failed, %s", ex.getMessage()));
             return false;

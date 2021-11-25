@@ -27,7 +27,7 @@ public class KieDynamicConfigurationServiceImplTest {
 
     @Test
     public void testAddListener() throws InterruptedException {
-        instance.addListener(KieRequestFactory.buildKieRequest("20", new String[]{KieRequestFactory.buildLabel("version", "1.0")}),
+        instance.addGroupListener(KieRequestFactory.buildKieRequest("20", new String[]{KieRequestFactory.buildLabel("version", "1.0")}),
                 new ConfigurationListener() {
             @Override
             public void process(ConfigChangedEvent event) {

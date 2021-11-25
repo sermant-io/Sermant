@@ -54,4 +54,10 @@ public class KafkaConf {
 
     @Value("${kafka.agent-registration.topic}")
     private String topicAgentRegistration;
+
+    @Value("${kafka.agent-monitor.topic}")
+    private String topicAgentMonitor;
+
+    @Value("${kafka.agent-span-event.topic}")
+    private String topicAgentSpanEvent;
 }

@@ -8,7 +8,7 @@ import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.dynamicconfig.DynamicConfigurationFactoryServiceImpl;
-import com.huawei.apm.core.service.dynamicconfig.kie.GroupUtils;
+import com.huawei.apm.core.service.dynamicconfig.kie.utils.KieGroupUtils;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangeType;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
@@ -67,7 +67,7 @@ public class KieConfigSyncer implements PluginService {
         buildCustomRequest();
         for (Map.Entry<String, KieConfigListener> entry : listenerCache.entrySet()) {
             dynamicConfigurationFactoryService.getDynamicConfigurationService()
-                    .addListener(entry.getKey(), entry.getKey(), entry.getValue());
+                    .addGroupListener(entry.getKey(), entry.getValue());
         }
     }
 
@@ -75,7 +75,7 @@ public class KieConfigSyncer implements PluginService {
     public void stop() {
         for (Map.Entry<String, KieConfigListener> entry : listenerCache.entrySet()) {
             dynamicConfigurationFactoryService.getDynamicConfigurationService()
-                    .removeListener(entry.getKey(), entry.getKey(), entry.getValue());
+                    .removeGroupListener(entry.getKey(), entry.getKey(), entry.getValue());
         }
     }
 
@@ -84,20 +84,20 @@ public class KieConfigSyncer implements PluginService {
         map.put("app", CseServiceMeta.getInstance().getApp());
         map.put("service", CseServiceMeta.getInstance().getServiceName());
         map.put("environment", CseServiceMeta.getInstance().getEnvironment());
-        listenerCache.put(GroupUtils.createLabelGroup(map), new KieConfigListener());
+        listenerCache.put(KieGroupUtils.createLabelGroup(map), new KieConfigListener());
     }
 
     private void buildAppRequest() {
         final HashMap<String, String> map = new HashMap<String, String>();
         map.put("app", CseServiceMeta.getInstance().getApp());
         map.put("environment", CseServiceMeta.getInstance().getEnvironment());
-        listenerCache.put(GroupUtils.createLabelGroup(map), new KieConfigListener());
+        listenerCache.put(KieGroupUtils.createLabelGroup(map), new KieConfigListener());
     }
 
     private void buildCustomRequest() {
         final HashMap<String, String> map = new HashMap<String, String>();
         map.put(CseServiceMeta.getInstance().getCustomLabel(), CseServiceMeta.getInstance().getCustomLabelValue());
-        listenerCache.put(GroupUtils.createLabelGroup(map), new KieConfigListener());
+        listenerCache.put(KieGroupUtils.createLabelGroup(map), new KieConfigListener());
     }
 
     static class KieConfigListener implements ConfigurationListener {

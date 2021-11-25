@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
  */
 
-package com.huawei.apm.core.service.dynamicconfig.kie;
+package com.huawei.apm.core.service.dynamicconfig.kie.utils;
 
 import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieRequestFactory;
 
@@ -17,8 +17,8 @@ import java.util.Map;
  * @author zhouss
  * @since 2021-11-23
  */
-public class GroupUtils {
-    private GroupUtils(){
+public class KieGroupUtils {
+    private KieGroupUtils(){
     }
 
     private static final String LABEL_FLAG = "KIE-LABEL-FLAG";

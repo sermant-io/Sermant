@@ -36,6 +36,9 @@ public enum MatchManager {
         for (Map.Entry<String, BusinessMatcher> entry : matchGroups.entrySet()) {
             if (entry.getValue().match(cseRequest.getApiPath(), cseRequest.getHeaders(), cseRequest.getHttpMethod())) {
                 final RateLimitingRule rule = rateLimitingRuleResolver.getRules().get(entry.getKey());
+                if (rule == null) {
+                    continue;
+                }
                 System.out.println(rule.getName());
             }
         }

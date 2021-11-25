@@ -7,7 +7,7 @@ package com.huawei.apm.core.service.dynamicconfig.kie.listener;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.apm.core.lubanops.integration.utils.APMThreadFactory;
-import com.huawei.apm.core.service.dynamicconfig.kie.GroupUtils;
+import com.huawei.apm.core.service.dynamicconfig.kie.utils.KieGroupUtils;
 import com.huawei.apm.core.service.dynamicconfig.kie.client.ClientUrlManager;
 import com.huawei.apm.core.service.dynamicconfig.kie.constants.KieConstants;
 import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieClient;
@@ -283,14 +283,14 @@ public class KieManager {
             this.key = key;
             this.group = group;
             this.listener = listener;
-            this.isLabelGroup = GroupUtils.isLabelGroup(group);
+            this.isLabelGroup = KieGroupUtils.isLabelGroup(group);
             resolveGroup();
         }
 
         private void resolveGroup() {
             if (this.isLabelGroup) {
                 // 如果为标签组，则匹配标签组
-                labels = GroupUtils.resolveGroupLabels(this.key);
+                labels = KieGroupUtils.resolveGroupLabels(this.key);
             }
         }
 

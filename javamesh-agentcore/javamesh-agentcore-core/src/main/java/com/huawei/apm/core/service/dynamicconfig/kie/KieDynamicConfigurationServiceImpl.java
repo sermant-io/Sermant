@@ -5,8 +5,8 @@
 package com.huawei.apm.core.service.dynamicconfig.kie;
 
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.apm.core.service.dynamicconfig.Config;
 import com.huawei.apm.core.service.dynamicconfig.kie.listener.SubscriberManager;
+import com.huawei.apm.core.service.dynamicconfig.kie.utils.KieGroupUtils;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationService;
 
@@ -44,20 +44,30 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
     public static synchronized KieDynamicConfigurationServiceImpl getInstance() {
         if (instance == null) {
             instance = new KieDynamicConfigurationServiceImpl();
-            subscriberManager = new SubscriberManager(Config.getInstance().getKieUrl());
-//            subscriberManager = new SubscriberManager("http://172.31.100.55:30110");
+//            subscriberManager = new SubscriberManager(Config.getInstance().getKieUrl());
+            subscriberManager = new SubscriberManager("http://172.31.100.55:30110");
         }
         return instance;
     }
 
     @Override
-    public boolean addListener(String key, String group, ConfigurationListener listener) {
-        return updateListener(key, group, listener, true);
+    public boolean removeGroupListener(String key, String group, ConfigurationListener listener) {
+        return updateListener("GroupKey", group, listener, false);
     }
 
     @Override
-    public boolean removeListener(String key, String group, ConfigurationListener listener) {
-        return updateListener(key, group, listener, false);
+    public boolean addGroupListener(String group, ConfigurationListener listener) {
+        return updateListener("GroupKey", group, listener, true);
+    }
+
+    @Override
+    public boolean addConfigListener(String key, String group, ConfigurationListener listener) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean removeConfigListener(String key, String group, ConfigurationListener listener) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -80,11 +90,16 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
         return 0;
     }
 
+    @Override
+    public List<String> listConfigsFromGroup(String group) throws Exception {
+        return groupKeyCache.get(group);
+    }
+
     /**
      * 更新监听器（删除||添加）
      *
      * @param key          监听键
-     * @param group        分组， 针对KIE特别处理生成group方法{@link GroupUtils#createLabelGroup(Map)}
+     * @param group        分组， 针对KIE特别处理生成group方法{@link KieGroupUtils#createLabelGroup(Map)}
      * @param listener     对应改组的监听器
      * @param forSubscribe 是否为订阅
      * @return 更新是否成功

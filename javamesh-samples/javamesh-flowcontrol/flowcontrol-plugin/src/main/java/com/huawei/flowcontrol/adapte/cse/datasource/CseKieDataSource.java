@@ -37,7 +37,7 @@ public class CseKieDataSource<S extends AbstractRule, R extends Rule> extends Ab
     public void updateConfig(List<S> config) {
         configData = config;
         try {
-            loadConfig();
+            getProperty().updateValue(loadConfig());
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Loaded config failed, %s", ex.getMessage()));
         }

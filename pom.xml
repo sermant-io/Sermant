@@ -188,6 +188,7 @@
             <modules>
                 <module>javamesh-agentcore</module>
                 <module>javamesh-samples</module>
+                <module>javamesh-backend</module>
             </modules>
         </profile>
         <profile>
