@@ -1,4 +1,4 @@
-![pic](docs/binary-docs/java-mesh-logo.png)
+<img src="docs/binary-docs/java-mesh-logo.png" width="30%" syt height="530%" />
 
 ### 一种基于 Javaagent 技术的 Service Mesh 解决方案
 [![Gitter](https://badges.gitter.im/JavaMeshUsers/community.svg)](https://gitter.im/JavaMeshUsers/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
