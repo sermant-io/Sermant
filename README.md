@@ -1,14 +1,14 @@
 ![pic](docs/binary-docs/java-mesh-logo.png)
 
 ### 一种基于 Javaagent 技术的 Service Mesh 解决方案
+[![Gitter](https://badges.gitter.im/JavaMeshUsers/community.svg)](https://gitter.im/JavaMeshUsers/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
-
+[![CI/IT Tests](https://github.com/huaweicloud/java-mesh/workflows/Java%20CI%20with%20Maven/badge.svg?branch=develop)](https://github.com/huaweicloud/java-mesh/actions?query=workflow:Java%20CI%20with%20Maven%20event:push%20branch:develop)
 ## Java-mesh 是什么
 
 **Java-mesh** 基于Java的字节码增强技术，通过 [JavaAgent](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html) 对宿主应用进行非侵入式增强，以解决Java应用的微服务治理问题。**JavaMesh**的初衷是建立一个面向微服务治理的对开发态无侵入的解决方案生态，降低服务治理开发和使用的难度，通过抽象接口、功能整合、插件隔离等手段，达到简化开发、功能即插即用的效果。其产品架构图如下图所示。
 
 ![pic](docs/binary-docs/java-mesh-product-arch.png)
-
 
 如上图所示，Java-mesh 的 Javaagent 主要由两部分组成。
 
@@ -18,6 +18,7 @@
 Java-mesh 的 Javaagent 广泛采用类隔离技术，以保证服务治理层、框架服务层、以及用户的业务应用互相不干扰，杜绝Java类冲突问题。其技术原理如下图所示。
 
 在使用 Java-mesh 的微服务架构下，和 Java-mesh 架构相关的组件主要有三个，相关架构图如下图所示：
+
 ![pic](docs/binary-docs/java-mesh-rt-arch.png)
 
 - Java-mesh Javaagent: 动态对业务应用进行字节码增强，以满足服务治理场景需求。

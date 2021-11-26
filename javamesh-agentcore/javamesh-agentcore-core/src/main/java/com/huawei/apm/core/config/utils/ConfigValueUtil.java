@@ -210,7 +210,7 @@ public class ConfigValueUtil {
         if (arg != null) {
             return arg.toString();
         }
-        final String configVal = provider.getFixedValue(key);
+        final String configVal = provider == null ? null : provider.getFixedValue(key);
         if (configVal != null) {
             return configVal;
         }

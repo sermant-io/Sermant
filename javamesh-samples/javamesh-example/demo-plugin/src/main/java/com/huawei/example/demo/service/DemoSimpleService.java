@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.plugin.service.PluginService;
-import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.apm.core.plugin.service.PluginServiceManager;
 
 /**
  * 示例服务，本示例中将展示如何编写一个插件服务
@@ -35,7 +35,7 @@ public class DemoSimpleService implements PluginService {
      */
     public void activeFunc() {
         System.out.println("[DemoService]-activeFunc");
-        final DemoComplexService service = ServiceManager.getService(DemoComplexService.class);
+        final DemoComplexService service = PluginServiceManager.getPluginService(DemoComplexService.class);
         service.passiveFunc();
     }
 
