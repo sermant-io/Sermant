@@ -4,7 +4,7 @@
 
 package com.huawei.route.common.report.cache;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.route.common.report.common.LdcConfiguration;
 import com.huawei.route.common.report.common.entity.ServiceEssentialMessage;
@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  * @since 2021-07-14
  */
 public class ServiceRegisterCache {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 实例对象

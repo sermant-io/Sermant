@@ -6,7 +6,7 @@ package com.huawei.route.report;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.route.common.report.common.entity.ServiceRegisterMessage;
 import com.huawei.route.report.send.ServiceRegistrarMessageSender;
 import com.huawei.route.common.report.acquire.TargetAddrAcquire;
@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * @since 2021-07-15
  */
 public class DefaultServiceRegisterMessageSender implements ServiceRegistrarMessageSender {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public Set<ServiceRegisterMessage> sendServiceRegisterMessage(Set<ServiceRegisterMessage> serviceRegisterMessages)

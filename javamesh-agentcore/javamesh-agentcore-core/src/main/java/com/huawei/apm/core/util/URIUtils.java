@@ -1,7 +1,7 @@
 package com.huawei.apm.core.util;
 
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -19,7 +19,7 @@ import static java.util.Arrays.asList;
 
 public class URIUtils {
 
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     public static String getParameter(URI uri, String name, String defaultValue) {
         if ( uri == null )

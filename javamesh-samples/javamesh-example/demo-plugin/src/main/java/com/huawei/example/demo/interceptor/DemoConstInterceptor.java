@@ -5,6 +5,7 @@
 package com.huawei.example.demo.interceptor;
 
 import com.huawei.apm.core.agent.interceptor.ConstructorInterceptor;
+import com.huawei.example.demo.common.DemoLogger;
 
 /**
  * 构造函数的拦截器示例，本示例将展示如何对构造函数进行增强
@@ -16,6 +17,6 @@ import com.huawei.apm.core.agent.interceptor.ConstructorInterceptor;
 public class DemoConstInterceptor implements ConstructorInterceptor {
     @Override
     public void onConstruct(Object obj, Object[] allArguments) {
-        System.out.println(obj + ": [DemoConstInterceptor]-onConstruct");
+        DemoLogger.println(obj + ": [DemoConstInterceptor]-onConstruct");
     }
 }

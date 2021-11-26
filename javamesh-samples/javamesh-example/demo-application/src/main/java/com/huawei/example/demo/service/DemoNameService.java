@@ -4,6 +4,9 @@
 
 package com.huawei.example.demo.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 名称匹配的示例被拦截点
  *
@@ -12,25 +15,27 @@ package com.huawei.example.demo.service;
  * @since 2021/10/25
  */
 public class DemoNameService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemoNameService.class);
+
     /**
      * 被拦截的构造函数
      */
     public DemoNameService() {
-        System.out.println("DemoNameEntity: constructor");
+        LOGGER.info("DemoNameEntity: constructor");
     }
 
     /**
      * 被拦截的实例方法
      */
     public void instFunc() {
-        System.out.println("DemoNameEntity: instFunc");
+        LOGGER.info("DemoNameEntity: instFunc");
     }
 
     /**
      * 被拦截的静态方法
      */
     public static void staticFunc() {
-        System.out.println("DemoNameEntity: staticFunc");
+        LOGGER.info("DemoNameEntity: staticFunc");
     }
 
     @Override

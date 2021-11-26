@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.common.PathIndexer;
 import com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants;
 import com.huawei.apm.core.lubanops.bootstrap.config.AgentConfigManager;
@@ -179,6 +180,6 @@ public abstract class BootArgsBuilder {
         argsMap.put(PathIndexer.JAVAMESH_CONFIG_FILE, PathDeclarer.getConfigPath());
         argsMap.put(PathIndexer.JAVAMESH_PLUGIN_SETTING_FILE, PathDeclarer.getPluginSettingPath());
         argsMap.put(PathIndexer.JAVAMESH_PLUGIN_PACKAGE_DIR, PathDeclarer.getPluginPackagePath());
-        argsMap.put(PathIndexer.JAVAMESH_LOGBACK_SETTING_FILE, PathDeclarer.getLogbackSettingPath());
+        argsMap.put(LoggerFactory.JAVAMESH_LOGBACK_SETTING_FILE, PathDeclarer.getLogbackSettingPath());
     }
 }

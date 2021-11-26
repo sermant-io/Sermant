@@ -4,7 +4,7 @@
 
 package com.huawei.route.label;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.core.api.JSONImpl;
 import com.huawei.route.common.label.observers.LabelObservers;
 import com.huawei.route.common.label.observers.LabelProperties;
@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 @ChannelHandler.Sharable
 public class LabelValidServerHandler extends ChannelInboundHandlerAdapter {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private static final String IS_LABEL_ON_KEY = "on";
     private static final String LABEL_VALUE_KEY = "value";
     private static final JSONImpl JSON = new JSONImpl();

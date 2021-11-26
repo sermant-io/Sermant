@@ -4,7 +4,7 @@
 
 package com.huawei.javamesh.sample.servermonitor.command;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.List;
@@ -33,7 +33,7 @@ import static com.huawei.javamesh.sample.servermonitor.common.Constant.REGEX_MUL
  */
 public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
 
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String COMMAND = "cat /proc/stat";
 

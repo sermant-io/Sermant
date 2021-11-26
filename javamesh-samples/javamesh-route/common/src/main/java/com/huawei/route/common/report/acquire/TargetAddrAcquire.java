@@ -6,7 +6,7 @@ package com.huawei.route.common.report.acquire;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.route.common.report.acquire.selector.UrlSelectorFacade;
 import com.huawei.route.common.report.common.entity.DataSource;
@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  * @since 2021-06-08
  */
 public class TargetAddrAcquire {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 服务端server的地址

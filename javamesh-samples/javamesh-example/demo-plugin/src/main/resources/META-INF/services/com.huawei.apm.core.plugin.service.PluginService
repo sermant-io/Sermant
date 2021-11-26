@@ -1,2 +1,3 @@
 com.huawei.example.demo.service.DemoSimpleService
 com.huawei.example.demo.service.DemoHeartBeatService
+com.huawei.example.demo.service.DemoDynaConfService

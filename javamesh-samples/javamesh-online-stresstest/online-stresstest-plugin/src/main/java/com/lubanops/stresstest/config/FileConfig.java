@@ -4,7 +4,7 @@
 
 package com.lubanops.stresstest.config;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 
 import java.io.*;
 import java.util.Properties;
@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * @since 2021/10/25
  */
 public class FileConfig extends Config {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String NAME = "stress.properties";
 

@@ -1,8 +1,8 @@
 package com.huawei.apm.core.agent.enhancer;
 
 import com.huawei.apm.core.agent.interceptor.ConstructorInterceptor;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.Interceptor;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.This;
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  */
 public final class ConstructorEnhancer extends OriginEnhancer {
 
-    private final static Logger LOGGER = LogFactory.getLogger();
+    private final static Logger LOGGER = LoggerFactory.getLogger();
 
     private final List<ConstructorInterceptor> interceptors;
 

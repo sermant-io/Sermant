@@ -32,8 +32,8 @@ import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
 import com.huawei.apm.core.agent.template.BootstrapConstTemplate;
 import com.huawei.apm.core.agent.template.BootstrapInstTemplate;
 import com.huawei.apm.core.agent.template.BootstrapStaticTemplate;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.Listener;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
  * 启动类加载器加载类的Transformer
@@ -46,7 +46,7 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
     /**
      * 日志
      */
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,

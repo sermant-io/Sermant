@@ -1,9 +1,9 @@
 package com.huawei.apm.core.service.dynamicconfig;
 
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.config.ConfigManager;
 import com.huawei.apm.core.config.common.BaseConfig;
 import com.huawei.apm.core.config.common.ConfigTypeKey;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigType;
 
 import java.util.logging.Level;
@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 @ConfigTypeKey("dynamicconfig")
 public class Config implements BaseConfig {
 
-    private static final Logger logger = LogFactory.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger();
 
     static Config singleInst;
 

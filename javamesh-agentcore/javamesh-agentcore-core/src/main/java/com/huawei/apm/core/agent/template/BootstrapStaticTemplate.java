@@ -15,8 +15,8 @@ import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.Interceptor;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
  * 启动类静态方法模板
@@ -30,7 +30,7 @@ public class BootstrapStaticTemplate {
     /**
      * 日志
      */
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * luban拦截器

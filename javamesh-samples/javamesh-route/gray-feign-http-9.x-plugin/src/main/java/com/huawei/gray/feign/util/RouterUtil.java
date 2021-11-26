@@ -4,7 +4,7 @@
 
 package com.huawei.gray.feign.util;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.gray.feign.context.CurrentInstance;
 import com.huawei.gray.feign.label.GrayLabelObserver;
@@ -51,7 +51,7 @@ import java.util.logging.Logger;
 public class RouterUtil {
     private static final AtomicBoolean INIT = new AtomicBoolean();
 
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String HTTP = "http";
 

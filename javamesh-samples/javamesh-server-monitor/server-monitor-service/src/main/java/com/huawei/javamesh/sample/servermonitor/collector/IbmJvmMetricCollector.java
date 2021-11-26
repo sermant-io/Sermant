@@ -4,7 +4,7 @@
 
 package com.huawei.javamesh.sample.servermonitor.collector;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.javamesh.sample.servermonitor.common.CheckIBMParameter;
 import com.huawei.javamesh.sample.servermonitor.entity.IbmPoolMetric;
 import com.huawei.javamesh.sample.servermonitor.entity.IbmPoolType;
@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class IbmJvmMetricCollector {
 
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final Map<IbmPoolType, MemoryPoolMXBean> memoryPoolMxBeans =
         new EnumMap<IbmPoolType, MemoryPoolMXBean>(IbmPoolType.class);

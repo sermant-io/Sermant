@@ -4,7 +4,7 @@
 
 package com.huawei.gray.dubbo.strategy;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 
 import java.util.logging.Logger;
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @date 2021/10/13
  */
 public abstract class TypeStrategy {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 获取参数值

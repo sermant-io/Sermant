@@ -10,8 +10,9 @@
     <properties>
         <package.output.dir>${package.agent.dir}</package.output.dir>
         <javaagent.package.name>${javamesh.name}</javaagent.package.name>
-        <config.skip.flag>false</config.skip.flag>
         <config.file.name>bootstrap.properties</config.file.name>
+        <config.source.dir>src/main/resources/config</config.source.dir>
+        <config.output.dir>${package.agent.dir}/config</config.output.dir>
     </properties>
     <dependencies>
         <dependency>
@@ -48,6 +49,51 @@
                 <configuration>
                     <outputFile>${package.agent.dir}/${javaagent.package.name}.jar</outputFile>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-config</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${config.output.dir}</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${config.source.dir}</directory>
+                                    <includes>
+                                        <include>${config.file.name}</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-env-config</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${config.output.dir}</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${config.source.dir}/${profile.id}</directory>
+                                    <includes>
+                                        <include>${config.file.name}</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

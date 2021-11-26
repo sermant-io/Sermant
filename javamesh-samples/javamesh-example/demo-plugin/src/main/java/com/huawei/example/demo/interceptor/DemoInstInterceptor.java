@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.example.demo.common.DemoLogger;
 
 /**
  * 实例方法的拦截器示例，本示例将展示如何对实例方法进行增强
@@ -19,17 +20,17 @@ import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
 public class DemoInstInterceptor implements InstanceMethodInterceptor {
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
-        System.out.println(obj + ": [DemoInstInterceptor]-before");
+        DemoLogger.println(obj + ": [DemoInstInterceptor]-before");
     }
 
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
-        System.out.println(obj + ": [DemoInstInterceptor]-after");
+        DemoLogger.println(obj + ": [DemoInstInterceptor]-after");
         return result;
     }
 
     @Override
     public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
-        System.out.println(obj + ": [DemoInstInterceptor]-onThrow");
+        DemoLogger.println(obj + ": [DemoInstInterceptor]-onThrow");
     }
 }

@@ -4,7 +4,7 @@
 
 package com.huawei.route.label;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.AdaptiveRecvByteBufAllocator;
 import io.netty.channel.ChannelFuture;
@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  * @since 2021-05-21
  */
 public class LabelValidServer {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final int MINIMUM = 64;
 

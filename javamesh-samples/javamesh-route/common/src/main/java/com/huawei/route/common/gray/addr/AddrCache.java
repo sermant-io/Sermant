@@ -6,7 +6,7 @@ package com.huawei.route.common.gray.addr;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.route.common.factory.NamedThreadFactory;
 import com.huawei.route.common.gray.addr.entity.Addr;
 import com.huawei.route.common.gray.addr.entity.Instances;
@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  * @date 2021/10/15
  */
 public class AddrCache {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     // 需要刷新地址的缓存
     private static final Map<String, List<Instances>> CACHE = new ConcurrentHashMap<String, List<Instances>>();

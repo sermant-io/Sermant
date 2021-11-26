@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.StaticMethodInterceptor;
 import com.huawei.apm.core.plugin.config.PluginConfigManager;
+import com.huawei.example.demo.common.DemoLogger;
 import com.huawei.example.demo.config.DemoConfig;
 
 /**
@@ -23,19 +24,19 @@ public class DemoConfigInterceptor implements StaticMethodInterceptor {
 
     @Override
     public void before(Class<?> clazz, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
-        System.out.println(clazz.getSimpleName() + ": [DemoConfigInterceptor]-before");
+        DemoLogger.println(clazz.getSimpleName() + ": [DemoConfigInterceptor]-before");
         config = PluginConfigManager.getPluginConfig(DemoConfig.class);
     }
 
     @Override
     public Object after(Class<?> clazz, Method method, Object[] arguments, Object result) throws Exception {
-        System.out.println(clazz.getSimpleName() + ": " + config);
-        System.out.println(clazz.getSimpleName() + ": [DemoConfigInterceptor]-after");
+        DemoLogger.println(clazz.getSimpleName() + ": " + config);
+        DemoLogger.println(clazz.getSimpleName() + ": [DemoConfigInterceptor]-after");
         return result;
     }
 
     @Override
     public void onThrow(Class<?> clazz, Method method, Object[] arguments, Throwable t) {
-        System.out.println(clazz.getSimpleName() + ": [DemoConfigInterceptor]-onThrow");
+        DemoLogger.println(clazz.getSimpleName() + ": [DemoConfigInterceptor]-onThrow");
     }
 }

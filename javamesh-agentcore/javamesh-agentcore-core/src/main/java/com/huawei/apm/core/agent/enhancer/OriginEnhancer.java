@@ -3,14 +3,14 @@ package com.huawei.apm.core.agent.enhancer;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.Interceptor;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
  * 原生插件适配委托类
  */
 public abstract class OriginEnhancer {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     protected final Interceptor interceptor;
 
