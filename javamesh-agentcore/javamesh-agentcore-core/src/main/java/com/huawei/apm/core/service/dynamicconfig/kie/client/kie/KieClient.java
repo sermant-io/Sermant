@@ -65,7 +65,7 @@ public class KieClient extends AbstractClient {
         }
         final StringBuilder requestUrl = new StringBuilder().append(clientUrlManager.getUrl()).append(kieApi);
         requestUrl.append(formatNullString(request.getLabelCondition()))
-                .append("&reversion=")
+                .append("&revision=")
                 .append(formatNullString(request.getRevision()));
         if (request.isAccurateMatchLabel()) {
             requestUrl.append("&match=exact");

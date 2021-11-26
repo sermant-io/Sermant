@@ -80,6 +80,12 @@ public class KieGroupUtils {
         return result;
     }
 
+    /**
+     * 获取标签信息
+     *
+     * @param group 分组
+     * @return 标签组条件
+     */
     public static String getLabelCondition(String group) {
         if (group == null || group.length() < LABEL_FLAG.length() + 1) {
             return null;
