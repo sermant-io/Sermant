@@ -30,7 +30,7 @@ public class ServiceManager {
         addStopHook();
     }
 
-    public static <T> T getService(Class<T> serviceClass) {
+    public static <T extends BaseService> T getService(Class<T> serviceClass) {
         final BaseService baseService = services.get(serviceClass.getName());
         if (baseService != null && serviceClass.isAssignableFrom(baseService.getClass())) {
             return (T) baseService;

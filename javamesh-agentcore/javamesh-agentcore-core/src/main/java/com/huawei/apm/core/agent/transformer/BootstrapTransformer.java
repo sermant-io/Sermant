@@ -97,7 +97,7 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
     /**
      * 被增强类方法的visit向导
      */
-    private static class VisitGuide extends InterceptorCollector {
+    private static class VisitGuide extends MethodInterceptorCollector {
         /**
          * 加载模板类的ClassLoader
          */

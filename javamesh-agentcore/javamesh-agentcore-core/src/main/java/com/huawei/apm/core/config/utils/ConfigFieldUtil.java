@@ -7,6 +7,7 @@ package com.huawei.apm.core.config.utils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,14 +38,16 @@ public class ConfigFieldUtil {
     public static void setField(Object obj, Field field, Object value) {
         try {
             final Method setter = getSetter(field.getDeclaringClass(), field.getName(), field.getType());
-            if (setter == null) {
-                field.set(obj, value);
-            } else {
+            if (checkMethod(setter, field)) {
                 setter.invoke(obj, value);
+            } else {
+                field.set(obj, value);
             }
         } catch (IllegalAccessException ignored) {
             LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                    "Cannot access field [%s] of [%s].", field.getName(), field.getDeclaringClass().getName()));
+                    "Cannot access field [%s] of [%s], try forced set.",
+                    field.getName(), field.getDeclaringClass().getName()));
+            forceSet(obj, field, value);
         } catch (InvocationTargetException ignored) {
             LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
                     "Failed to set field [%s] of [%s].", field.getName(), field.getDeclaringClass().getName()));
@@ -77,17 +80,35 @@ public class ConfigFieldUtil {
         }
     }
 
+    private static void forceSet(Object obj, Field field, Object value) {
+        try {
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            final int modifiers = field.getModifiers();
+            modifiersField.setInt(field, modifiers | Modifier.PUBLIC & ~Modifier.FINAL);
+            field.set(obj, value);
+            modifiersField.setInt(field, modifiers);
+        } catch (NoSuchFieldException e) {
+            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
+                    "Missing modifiers field [%s] of [%s]. ", field.getName(), field.getDeclaringClass().getName()));
+        } catch (IllegalAccessException e) {
+            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
+                    "Forced set field [%s] of [%s] failed.", field.getName(), field.getDeclaringClass().getName()));
+        }
+    }
+
     public static Object getField(Object obj, Field field) {
         try {
             final Method getter = getGetter(field.getDeclaringClass(), field.getName(), field.getType());
-            if (getter == null) {
-                return field.get(obj);
-            } else {
+            if (checkMethod(getter, field)) {
                 return getter.invoke(obj);
+            } else {
+                return field.get(obj);
             }
         } catch (IllegalAccessException ignored) {
             LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
                     "Cannot access field [%s] of [%s].", field.getName(), field.getDeclaringClass().getName()));
+            return forceGet(obj, field);
         } catch (InvocationTargetException ignored) {
             LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
                     "Failed to get field [%s] of [%s].", field.getName(), field.getDeclaringClass().getName()));
@@ -111,5 +132,28 @@ public class ConfigFieldUtil {
         } catch (NoSuchMethodException e) {
             return null;
         }
+    }
+
+    private static Object forceGet(Object obj, Field field) {
+        try {
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            final int modifiers = field.getModifiers();
+            modifiersField.setInt(field, modifiers | Modifier.PUBLIC & ~Modifier.FINAL);
+            final Object res = field.get(obj);
+            modifiersField.setInt(field, modifiers);
+            return res;
+        } catch (NoSuchFieldException e) {
+            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
+                    "Missing modifiers field [%s] of [%s]. ", field.getName(), field.getDeclaringClass().getName()));
+        } catch (IllegalAccessException e) {
+            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
+                    "Forced get field [%s] of [%s] failed.", field.getName(), field.getDeclaringClass().getName()));
+        }
+        return null;
+    }
+
+    private static boolean checkMethod(Method method, Field field) {
+        return method != null && Modifier.isStatic(method.getModifiers()) == Modifier.isStatic(field.getModifiers());
     }
 }
