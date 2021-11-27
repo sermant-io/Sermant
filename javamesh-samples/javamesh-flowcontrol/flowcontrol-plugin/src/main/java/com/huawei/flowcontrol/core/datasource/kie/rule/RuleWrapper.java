@@ -18,7 +18,7 @@ public abstract class RuleWrapper {
      *
      * @param dataSource 数据源
      */
-    protected abstract void registerRuleManager(AbstractDataSource<String, ?> dataSource);
+    protected abstract void registerRuleManager(AbstractDataSource<?, ?> dataSource);
 
     /**
      * 抽象方法，获取规则数据的类信息

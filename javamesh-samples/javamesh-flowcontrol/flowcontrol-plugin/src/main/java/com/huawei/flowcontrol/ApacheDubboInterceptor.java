@@ -4,13 +4,17 @@
 
 package com.huawei.flowcontrol;
 
+import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
 import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.flowcontrol.entry.EntryFacade;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcContext;
 
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 /**
  * apache dubbo拦截后的增强类,埋点定义sentinel资源
@@ -21,9 +25,9 @@ import java.lang.reflect.Method;
 public class ApacheDubboInterceptor extends DubboInterceptor  {
     @Override
     public void before(Object obj, Method method, Object[] allArguments, BeforeResult result) {
-        Invoker invoker = null;
+        Invoker<?> invoker = null;
         if (allArguments[0] instanceof Invoker) {
-            invoker = (Invoker) allArguments[0];
+            invoker = (Invoker<?>) allArguments[0];
         }
         Invocation invocation = null;
         if (allArguments[1] instanceof Invocation) {
@@ -32,8 +36,14 @@ public class ApacheDubboInterceptor extends DubboInterceptor  {
         if (invocation == null || invoker == null) {
             return;
         }
-        RpcContext rpcContext = RpcContext.getContext();
-        entry(rpcContext.isConsumerSide(), invoker.getInterface().getName(), invocation.getMethodName(), result);
+        System.out.printf(Locale.ENGLISH, "before: is Provider[%s], url:[%s] %n",
+                RpcContext.getContext().isProviderSide(), invocation.getInvoker().getUrl());
+        try {
+            EntryFacade.INSTANCE.tryEntry(invocation);
+        } catch (BlockException ex) {
+            handleBlockException(ex, getResourceName(invoker.getInterface().getName(), invocation.getMethodName()),
+                    result, "ApacheDubboInterceptor consumer", EntryFacade.DubboType.APACHE);
+        }
     }
 
     @Override
@@ -41,10 +51,22 @@ public class ApacheDubboInterceptor extends DubboInterceptor  {
         Result result = (Result) ret;
         // 记录dubbo的exception
         if (result != null && result.hasException()) {
-            handleException(result.getException());
+            EntryFacade.INSTANCE.tryTraceEntry(result.getException(), RpcContext.getContext().isProviderSide(),
+                    EntryFacade.DubboType.APACHE);
         }
-        removeThreadLocalEntry();
+        EntryFacade.INSTANCE.exit(EntryFacade.DubboType.APACHE);
+        System.out.printf(Locale.ENGLISH, "after: is Provider[%s], url:[%s] %n",
+                RpcContext.getContext().isProviderSide(), ((Invocation) allArguments[1]).getInvoker().getUrl());
         return ret;
     }
 
+    @Override
+    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
+        if (t != null) {
+            EntryFacade.INSTANCE.tryTraceEntry(t, RpcContext.getContext().isProviderSide(), EntryFacade.DubboType.APACHE);
+        }
+        EntryFacade.INSTANCE.exit(EntryFacade.DubboType.APACHE);
+        System.out.printf(Locale.ENGLISH, "throw: is Provider[%s], url:[%s] %n",
+                RpcContext.getContext().isProviderSide(), ((Invocation) arguments[1]).getInvoker().getUrl());
+    }
 }

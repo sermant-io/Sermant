@@ -6,13 +6,15 @@ package com.huawei.flowcontrol.adapte.cse.rule;
 
 import com.huawei.flowcontrol.util.StringUtils;
 
+import java.util.List;
+
 /**
  * 抽象规则
  *
  * @author zhouss
  * @since 2021-11-15
  */
-public abstract class AbstractRule extends Configurable implements Rule {
+public abstract class AbstractRule<SENTINEL_RULE extends com.alibaba.csp.sentinel.slots.block.Rule> extends Configurable implements Rule {
 
     private String resource;
 
@@ -36,7 +38,7 @@ public abstract class AbstractRule extends Configurable implements Rule {
      *
      * @return sentinel规则
      */
-    public abstract com.alibaba.csp.sentinel.slots.block.Rule convertToSentinelRule();
+    public abstract List<SENTINEL_RULE> convertToSentinelRule();
 
     /**
      * 字符串转long类型毫秒

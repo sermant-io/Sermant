@@ -60,6 +60,7 @@ public class KvDataHolder {
         currentData = latestData;
         return eventDataHolder;
     }
+
     private Map<String, String> formatKieResponse(KieResponse response) {
         final HashMap<String, String> latestData = new HashMap<String, String>();
         if (response == null || response.getData() == null || response.getData().isEmpty()) {

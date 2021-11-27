@@ -23,7 +23,7 @@ public class SentinelRuleUtil {
     /**
      * 降级提示信息
      */
-    public static final String DEGRADE_RESULT = "Degraded and blown";
+    public static final String DEGRADE_RESULT = "Degraded and blocked";
 
     /**
      * 默认提示信息

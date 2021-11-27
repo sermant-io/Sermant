@@ -5,7 +5,12 @@
 package com.huawei.flowcontrol.adapte.cse.rule;
 
 import com.alibaba.csp.sentinel.slots.block.Rule;
+import com.alibaba.csp.sentinel.slots.block.RuleConstant;
+import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 import com.huawei.flowcontrol.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 熔断规则
@@ -118,27 +123,57 @@ public class CircuitBreakerRule extends AbstractRule {
     @Override
     public boolean isValid() {
         if (failureRateThreshold > MAX_PERCENT || failureRateThreshold <= MIN_PERCENT) {
-            return true;
+            return false;
         }
         if (slowCallRateThreshold > MAX_PERCENT || slowCallRateThreshold <= MIN_PERCENT) {
-            return true;
+            return false;
         }
         if (parsedWaitDurationInOpenState <= 0 || parsedSlowCallDurationThreshold <= 0) {
-            return true;
+            return false;
         }
         if (permittedNumberOfCallsInHalfOpenState <= 0) {
-            return true;
+            return false;
         }
         if (minimumNumberOfCalls <= 0) {
-            return true;
+            return false;
         }
 
         return super.isValid();
     }
 
     @Override
-    public Rule convertToSentinelRule() {
-        return null;
+    public List<DegradeRule> convertToSentinelRule() {
+        final List<DegradeRule> degradeRules = new ArrayList<DegradeRule>(2);
+        if ("count".equals(this.slidingWindowType)) {
+            // 时间窗口基于请求数
+            // 暂时不支持
+
+        } else {
+            // 时间窗口基于请求时间 time
+            // 1.基于慢调用率的熔断
+            degradeRules.add(createRule(true));
+            // 2.基于错误率
+            degradeRules.add(createRule(false));
+        }
+        return degradeRules;
+    }
+
+    private DegradeRule createRule(boolean isSlowRule) {
+        final DegradeRule degradeRule = new DegradeRule();
+        degradeRule.setResource(getName());
+        degradeRule.setMinRequestAmount(this.minimumNumberOfCalls);
+        // CSE默认均为1分钟
+        degradeRule.setTimeWindow((int) DEFAULT_WAIT_DURATION_IN_OPEN_STATUS_MS / 1000);
+        degradeRule.setStatIntervalMs((int) this.parsedSlidingWindowSize);
+        if (isSlowRule) {
+            degradeRule.setGrade(RuleConstant.DEGRADE_GRADE_RT);
+            degradeRule.setSlowRatioThreshold(this.slowCallRateThreshold / 100.0);
+            degradeRule.setCount(this.parsedSlowCallDurationThreshold);
+        } else {
+            degradeRule.setGrade(RuleConstant.DEGRADE_GRADE_EXCEPTION_RATIO);
+            degradeRule.setCount(this.failureRateThreshold / 100.0);
+        }
+        return degradeRule;
     }
 
     public float getFailureRateThreshold() {

@@ -4,6 +4,7 @@
 
 package com.huawei.flowcontrol.adapte.cse.resolver;
 
+import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.flowcontrol.adapte.cse.constants.CseConstants;
 import com.huawei.flowcontrol.adapte.cse.converter.Converter;
 import com.huawei.flowcontrol.adapte.cse.converter.YamlConverter;
@@ -15,7 +16,9 @@ import com.huawei.flowcontrol.util.StringUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * 抽象解析类
@@ -24,6 +27,8 @@ import java.util.Map;
  * @since 2021-11-16
  */
 public abstract class AbstractResolver<T extends Configurable> {
+    private static final Logger LOGGER = LogFactory.getLogger();
+
     /**
      * 各类规则配置前缀
      */
@@ -67,7 +72,12 @@ public abstract class AbstractResolver<T extends Configurable> {
      */
     public void notifyListeners() {
         for (ConfigUpdateListener<T> listener : listeners) {
-            listener.notify(rules);
+            try {
+                listener.notify(rules);
+            } catch (Exception ex) {
+                LOGGER.warning(String.format(Locale.ENGLISH, "Notified listener failed when updating rule! %s",
+                        ex.getMessage()));
+            }
         }
     }
 
@@ -134,7 +144,6 @@ public abstract class AbstractResolver<T extends Configurable> {
         if (override) {
             rules.put(businessKey, rule);
         }
-        notifyListeners();
         return rule;
     }
 

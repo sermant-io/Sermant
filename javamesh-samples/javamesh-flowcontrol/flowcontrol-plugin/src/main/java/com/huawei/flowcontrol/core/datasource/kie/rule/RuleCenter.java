@@ -41,7 +41,7 @@ public class RuleCenter {
      * @param ruleType   规则类型
      * @param dataSource 数据源
      */
-    public void registerRuleManager(String ruleType, AbstractDataSource<String, ?> dataSource) {
+    public void registerRuleManager(String ruleType, AbstractDataSource<?, ?> dataSource) {
         RuleWrapper ruleWrapper = ruleMap.get(ruleType);
         if (ruleWrapper == null) {
             LOGGER.error(String.format("Un support rule type %s.", ruleType));

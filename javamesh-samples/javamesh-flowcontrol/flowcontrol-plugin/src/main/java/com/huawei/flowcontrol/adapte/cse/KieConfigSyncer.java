@@ -5,7 +5,6 @@
 package com.huawei.flowcontrol.adapte.cse;
 
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.dynamicconfig.DynamicConfigurationFactoryServiceImpl;
 import com.huawei.apm.core.service.dynamicconfig.kie.utils.KieGroupUtils;
@@ -17,8 +16,6 @@ import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,12 +25,15 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-11-18
  */
-public class KieConfigSyncer implements PluginService {
+public class KieConfigSyncer {
     private static final Logger LOGGER = LogFactory.getLogger();
 
-    private static final int WAIT_INTERVAL_MS = 2000;
+    private static final int WAIT_INTERVAL_MS = 10 * 1000;
 
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    /**
+     * 最大等待5分钟
+     */
+    private static final int MAX_WAIT_INTERVAL_MS = 60 * 5 * 1000;
 
     private final Map<String, KieConfigListener> listenerCache = new LinkedHashMap<String, KieConfigListener>();
 
@@ -43,22 +43,22 @@ public class KieConfigSyncer implements PluginService {
     /**
      * 初始化通知
      */
-    @Override
     public void start() {
         // 此块只会适配KIE配置中心
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                while (!CseServiceMeta.getInstance().isReady()) {
-                    try {
-                        Thread.sleep(WAIT_INTERVAL_MS);
-                    } catch (InterruptedException ignored) {
-                        // ignored
-                    }
+        long waitTimeMs = 0L;
+        while (!CseServiceMeta.getInstance().isReady()) {
+            try {
+                Thread.sleep(WAIT_INTERVAL_MS);
+                waitTimeMs += WAIT_INTERVAL_MS;
+                if (waitTimeMs >= MAX_WAIT_INTERVAL_MS) {
+                    // 大于最大等待时间，放弃同步
+                    return;
                 }
-                initRequests();
+            } catch (InterruptedException ignored) {
+                // ignored
             }
-        });
+        }
+        initRequests();
     }
 
     public void initRequests() {
@@ -71,7 +71,9 @@ public class KieConfigSyncer implements PluginService {
         }
     }
 
-    @Override
+    /**
+     * 停止方法
+     */
     public void stop() {
         for (Map.Entry<String, KieConfigListener> entry : listenerCache.entrySet()) {
             dynamicConfigurationFactoryService.getDynamicConfigurationService()

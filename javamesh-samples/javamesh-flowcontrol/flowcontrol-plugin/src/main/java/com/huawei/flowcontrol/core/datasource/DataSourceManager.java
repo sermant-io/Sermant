@@ -14,5 +14,10 @@ public interface DataSourceManager {
     /**
      * 初始化规则
      */
-    void initRules();
+    void start();
+
+    /**
+     * 停止方法
+     */
+    void stop();
 }

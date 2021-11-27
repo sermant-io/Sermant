@@ -1,0 +1,5 @@
+#流控配置
+# zookeeper: zookeeper配置中心适配
+# servicecomb-kie-cse-adapte: cse适配
+flow.control.plugin:
+  configCenterType: zookeeper

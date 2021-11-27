@@ -5,9 +5,11 @@
 package com.huawei.flowcontrol.adapte.cse.rule;
 
 
-import com.alibaba.csp.sentinel.slots.block.Rule;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 限流规则
@@ -15,7 +17,7 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
  * @author zhouss
  * @since 2021-11-15
  */
-public class RateLimitingRule extends AbstractRule {
+public class RateLimitingRule extends AbstractRule<FlowRule> {
     /**
      * 默认超时时间
      */
@@ -63,12 +65,13 @@ public class RateLimitingRule extends AbstractRule {
     }
 
     @Override
-    public FlowRule convertToSentinelRule() {
+    public List<FlowRule> convertToSentinelRule() {
         final FlowRule flowRule = new FlowRule();
-        flowRule.setCount(this.rate);
+        // 转换为rate/s, sentinel当前只能以1S为单位进行统计, 因此此处做一定请求比例转换
+        flowRule.setCount(this.rate * 1000.0 / this.parsedLimitRefreshPeriod);
         flowRule.setGrade(RuleConstant.FLOW_GRADE_QPS);
         flowRule.setResource(getName());
-        return flowRule;
+        return Collections.singletonList(flowRule);
     }
 
     public long getParsedTimeoutDuration() {

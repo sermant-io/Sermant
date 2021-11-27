@@ -7,6 +7,7 @@ package com.huawei.flowcontrol.adapte.cse.rule;
 import com.alibaba.csp.sentinel.slots.block.Rule;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
  * @author zhouss
  * @since 2021-11-15
  */
-public class RetryRule extends AbstractRule {
+public class RetryRule extends AbstractRule<Rule> {
     /**
      * 默认最大尝试次数
      */
@@ -116,8 +117,8 @@ public class RetryRule extends AbstractRule {
     }
 
     @Override
-    public Rule convertToSentinelRule() {
-        return null;
+    public List<Rule> convertToSentinelRule() {
+        return Collections.emptyList();
     }
 
     public int getMaxAttempts() {

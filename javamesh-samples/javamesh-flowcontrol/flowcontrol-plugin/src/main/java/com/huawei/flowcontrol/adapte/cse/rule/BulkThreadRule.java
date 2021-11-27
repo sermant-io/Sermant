@@ -6,13 +6,16 @@ package com.huawei.flowcontrol.adapte.cse.rule;
 
 import com.alibaba.csp.sentinel.slots.block.Rule;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * 隔离仓规则
  *
  * @author zhouss
  * @since 2021-11-15
  */
-public class BulkThreadRule extends AbstractRule {
+public class BulkThreadRule extends AbstractRule<Rule> {
     /**
      * 最大并发数
      */
@@ -50,8 +53,8 @@ public class BulkThreadRule extends AbstractRule {
     }
 
     @Override
-    public Rule convertToSentinelRule() {
-        return null;
+    public List<Rule> convertToSentinelRule() {
+        return Collections.emptyList();
     }
 
     public long getParsedMaxWaitDuration() {
