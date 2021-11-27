@@ -4,10 +4,13 @@
 
 package com.huawei.common.constant;
 
+import lombok.Getter;
+
 /**
  * @author y30010171
  * @since 2021-11-19
  **/
+@Getter
 public enum ScheduleType {
     NONE("0", "NONE"), // 立即运行一次
     ONCE("1", "ONCE"), // 运行一次

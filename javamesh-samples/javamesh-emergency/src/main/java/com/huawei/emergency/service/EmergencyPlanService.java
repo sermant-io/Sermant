@@ -31,11 +31,11 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
     /**
      * 预案启动
      *
-     * @param planId 预案ID
+     * @param plan 预案信息
      * @param userName 操作人
      * @return
      */
-    CommonResult start(int planId,String userName);
+    CommonResult start(EmergencyPlan plan,String userName);
 
     /**
      * 预案停止

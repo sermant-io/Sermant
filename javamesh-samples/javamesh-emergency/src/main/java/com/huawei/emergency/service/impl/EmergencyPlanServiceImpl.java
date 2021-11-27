@@ -7,6 +7,7 @@ package com.huawei.emergency.service.impl;
 import com.huawei.common.api.CommonPage;
 import com.huawei.common.api.CommonResult;
 import com.huawei.common.constant.PlanStatus;
+import com.huawei.common.constant.ScheduleType;
 import com.huawei.emergency.dto.PlanQueryDto;
 import com.huawei.emergency.dto.PlanQueryParams;
 import com.huawei.emergency.dto.SceneExecDto;
@@ -24,6 +25,7 @@ import com.huawei.emergency.mapper.EmergencyExecMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
 import com.huawei.emergency.mapper.EmergencyPlanDetailMapper;
 import com.huawei.emergency.mapper.EmergencyPlanMapper;
+import com.huawei.emergency.schedule.thread.TaskScheduleCenter;
 import com.huawei.emergency.service.EmergencyPlanService;
 import com.huawei.emergency.service.EmergencyTaskService;
 
@@ -34,6 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -78,6 +81,9 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
 
     @Autowired
     private EmergencyTaskService taskService;
+
+    @Autowired
+    private TaskScheduleCenter scheduleCenter;
 
     @Resource(name = "passwordRestTemplate")
     private RestTemplate restTemplate;
@@ -191,12 +197,68 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     }
 
     @Override
-    public CommonResult start(int planId, String userName) {
+    public CommonResult start(EmergencyPlan plan, String userName) {
+        if (plan.getPlanId() == null || StringUtils.isEmpty(plan.getScheduleType())) {
+            return CommonResult.failed("请选择正确的预案");
+        }
+        EmergencyPlan planInfo = planMapper.selectByPrimaryKey(plan.getPlanId());
+        if (planInfo == null || "0".equals(planInfo.getIsValid())) {
+            return CommonResult.failed("请选择正确的预案");
+        }
+        ScheduleType scheduleType = ScheduleType.match(plan.getScheduleType(),null);
+        if (scheduleType == null){
+            return CommonResult.failed("");
+        }
+        if (scheduleType == ScheduleType.NONE){
+            return exec(plan.getPlanId(),userName);
+        }
+        if (scheduleType == ScheduleType.CORN){
+            if (StringUtils.isEmpty(plan.getScheduleConf()) || !CronSequenceGenerator.isValidExpression(plan.getScheduleConf())){
+                return CommonResult.failed("corn表达式不合法");
+            }
+        }
+        if (scheduleType == ScheduleType.FIX_DATE){
+            if (StringUtils.isEmpty(plan.getScheduleConf())){
+                return CommonResult.failed("请设置间隔时间");
+            }
+            try {
+                int fixSecond = Integer.valueOf(plan.getScheduleConf());
+                if (fixSecond < 1) {
+                    return CommonResult.failed("请设置间隔时间大于1s");
+                }
+            } catch (NumberFormatException e){
+                return CommonResult.failed("请设置间隔时间为数字");
+            }
+        }
+        if (scheduleType == ScheduleType.ONCE){
+            try {
+                long nextTriggerTime = Long.valueOf(plan.getScheduleConf());
+                if (System.currentTimeMillis() > nextTriggerTime){
+                    return CommonResult.failed("请设置正确的执行时间");
+                }
+            } catch (NumberFormatException e){
+                return CommonResult.failed("请设置正确的执行时间");
+            }
+        }
+        Date nextTriggerTime = scheduleCenter.generateNextTriggerTime(plan, new Date(System.currentTimeMillis() + TaskScheduleCenter.PRE_READ));
+        EmergencyPlan updatePlan = new EmergencyPlan();
+        updatePlan.setPlanId(plan.getPlanId());
+        updatePlan.setScheduleStatus("1");
+        updatePlan.setTriggerLastTime(0L);
+        updatePlan.setTriggerNextTime(nextTriggerTime.getTime());
         return CommonResult.success();
     }
 
     @Override
     public CommonResult stop(int planId, String userName) {
+        EmergencyPlan plan = planMapper.selectByPrimaryKey(planId);
+        if (plan == null || "0".equals(plan.getIsValid())) {
+            return CommonResult.failed("请选择正确的预案");
+        }
+        EmergencyPlan updatePlan = new EmergencyPlan();
+        updatePlan.setPlanId(planId);
+        updatePlan.setScheduleStatus("0");
+        planMapper.updateByPrimaryKeySelective(updatePlan);
         return CommonResult.success();
     }
 

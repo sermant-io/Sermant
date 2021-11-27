@@ -32,8 +32,8 @@ import javax.annotation.PreDestroy;
  **/
 @Component
 public class TaskScheduleCenter {
+    public static final long PRE_READ = 5000L;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskScheduleCenter.class);
-    private static final long PRE_READ = 5000L;
     private static final String SCHEDULE_THREAD_NAME = "task-schedule";
     private static final String CONSUMER_THREAD_NAME = "task-consumer";
 
@@ -227,13 +227,15 @@ public class TaskScheduleCenter {
         planMapper.updateByPrimaryKeySelective(updatePlan);
     }
 
-    private Date generateNextTriggerTime(EmergencyPlan plan, Date from) {
+    public Date generateNextTriggerTime(EmergencyPlan plan, Date from) {
         ScheduleType scheduleType = ScheduleType.match(plan.getScheduleType(), ScheduleType.NONE);
         if (ScheduleType.CORN == scheduleType) {
             CronSequenceGenerator cronSequenceGenerator = new CronSequenceGenerator(plan.getScheduleConf());
             return cronSequenceGenerator.next(from);
         } else if (ScheduleType.FIX_DATE == scheduleType) {
             return new Date(from.getTime() + Integer.valueOf(plan.getScheduleConf()) * 1000);
+        } else if (ScheduleType.ONCE == scheduleType){
+            return from;
         }
         return null;
     }

@@ -87,7 +87,7 @@ public class EmergencyPlanController {
         if (plan.getPlanId() == null) {
             return CommonResult.failed("请选择需要启动的预案");
         }
-        return planService.start(plan.getPlanId(), parseUserName(request));
+        return planService.start(plan, parseUserName(request));
     }
 
     /**
