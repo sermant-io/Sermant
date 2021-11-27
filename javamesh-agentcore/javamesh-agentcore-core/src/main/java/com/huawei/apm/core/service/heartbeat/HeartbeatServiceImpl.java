@@ -17,8 +17,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.config.AgentConfigManager;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.lubanops.core.transfer.dto.heartbeat.HeartbeatMessage;
 import com.huawei.apm.core.lubanops.integration.transport.ClientManager;
 import com.huawei.apm.core.lubanops.integration.transport.netty.client.NettyClient;
@@ -35,7 +35,7 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     /**
      * 日志
      */
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 心跳信息的集合，键为心跳名称，值为心跳信息的提供方式

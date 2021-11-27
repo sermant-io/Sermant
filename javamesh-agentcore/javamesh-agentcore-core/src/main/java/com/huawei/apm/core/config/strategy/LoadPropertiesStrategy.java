@@ -20,13 +20,13 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.config.common.BaseConfig;
 import com.huawei.apm.core.config.common.ConfigFieldKey;
 import com.huawei.apm.core.config.common.ConfigTypeKey;
 import com.huawei.apm.core.config.utils.ConfigFieldUtil;
 import com.huawei.apm.core.config.utils.ConfigKeyUtil;
 import com.huawei.apm.core.config.utils.ConfigValueUtil;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
  * 加载配置对象策略{@link LoadConfigStrategy}的通用properties文件实现，其中主要配置信息承载对象为{@link Properties}
@@ -41,8 +41,11 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
     /**
      * 日志
      */
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    /**
+     * 启动参数
+     */
     private Map<String, Object> argsMap;
 
     @Override

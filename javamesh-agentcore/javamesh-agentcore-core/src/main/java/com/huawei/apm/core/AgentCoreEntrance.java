@@ -10,12 +10,10 @@ import java.util.Map;
 import com.huawei.apm.core.agent.ByteBuddyAgentBuilder;
 import com.huawei.apm.core.common.PathIndexer;
 import com.huawei.apm.core.config.ConfigManager;
-import com.huawei.apm.core.log.LogBackInit;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.core.BootStrapImpl;
 import com.huawei.apm.core.plugin.PluginManager;
 import com.huawei.apm.core.service.ServiceManager;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
  * agent core入口
@@ -33,10 +31,8 @@ public class AgentCoreEntrance {
      * @throws Exception agent core执行异常
      */
     public static void run(Map<String, Object> argsMap, Instrumentation instrumentation) throws Exception {
-
         // 初始化日志
-        LogBackInit.init((String) argsMap.get(PathIndexer.JAVAMESH_LOGBACK_SETTING_FILE));
-
+        LoggerFactory.init(argsMap);
         // 初始化路径
         PathIndexer.build(argsMap);
         // 初始化统一配置
@@ -51,5 +47,7 @@ public class AgentCoreEntrance {
         PluginManager.initialize(instrumentation);
         // 初始化byte buddy
         ByteBuddyAgentBuilder.initialize(instrumentation);
+        // 回滚日志
+        LoggerFactory.rollback();
     }
 }

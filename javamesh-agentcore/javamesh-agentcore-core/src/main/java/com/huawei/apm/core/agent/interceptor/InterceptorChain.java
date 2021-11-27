@@ -1,6 +1,6 @@
 package com.huawei.apm.core.agent.interceptor;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  */
 public class InterceptorChain {
 
-    private final static Logger LOGGER = LogFactory.getLogger();
+    private final static Logger LOGGER = LoggerFactory.getLogger();
 
     private static final int NOT_IN_CHAIN = Integer.MAX_VALUE;
 

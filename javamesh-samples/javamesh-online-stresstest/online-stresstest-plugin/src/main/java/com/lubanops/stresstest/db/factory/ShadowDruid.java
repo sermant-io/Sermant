@@ -6,7 +6,7 @@ package com.lubanops.stresstest.db.factory;
 
 import com.alibaba.druid.pool.DruidDataSource;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.lubanops.stresstest.config.bean.DataSourceInfo;
 
@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * @since 2021/10/21
  */
 public class ShadowDruid implements Shadow {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public DataSource shadowDataSource(DataSource source, DataSourceInfo shadowInfo) {

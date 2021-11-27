@@ -4,7 +4,7 @@
 
 package com.huawei.gray.dubbo.utils;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.gray.dubbo.label.GrayLabelObserver;
@@ -81,7 +81,7 @@ public class RouterUtil {
 
     private static final AtomicBoolean INIT = new AtomicBoolean();
 
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private RouterUtil() {
     }

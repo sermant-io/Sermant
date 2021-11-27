@@ -7,10 +7,10 @@ import java.net.URL;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 
 public class FileUtil {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     public static String getCanonicalPath(File file) {
         try {

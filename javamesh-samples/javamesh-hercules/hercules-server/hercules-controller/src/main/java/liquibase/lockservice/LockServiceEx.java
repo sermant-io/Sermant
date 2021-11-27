@@ -1,4 +1,4 @@
-/* 
+/*
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package liquibase.lockservice;
 
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Extended {@link LockService} to use 'T' or 'F' for the lock table's boolean
  * column.
- * 
+ *
  * @author JunHo Yoon
  * @since 3.0
  */
@@ -64,7 +64,7 @@ public final class LockServiceEx {
 
 	/**
 	 * Get {@link LockServiceEx} instance.
-	 * 
+	 *
 	 * @param database
 	 *            corresponding database instance
 	 * @return {@link LockServiceEx} instance
@@ -86,7 +86,7 @@ public final class LockServiceEx {
 
 	/**
 	 * Check if it has change log lock.
-	 * 
+	 *
 	 * @return true if it has the change lock
 	 */
 	public boolean hasChangeLogLock() {
@@ -95,7 +95,7 @@ public final class LockServiceEx {
 
 	/**
 	 * Wait for lock.
-	 * 
+	 *
 	 * @throws LockException
 	 *             occurs when lock manipulation is failed.
 	 */
@@ -134,7 +134,7 @@ public final class LockServiceEx {
 	/**
 	 * Acquire lock. Instead of liquibase implementation, nGrinder added the
 	 * type resolution for boolean value.
-	 * 
+	 *
 	 * @return true if successful
 	 * @throws LockException
 	 *             occurs when the lock aquire is failed.
@@ -187,7 +187,7 @@ public final class LockServiceEx {
 
 	/**
 	 * Check return value is boolean or not.
-	 * 
+	 *
 	 * @param value
 	 *            returnValue
 	 * @return true if true
@@ -218,7 +218,7 @@ public final class LockServiceEx {
 
 	/**
 	 * Release Lock.
-	 * 
+	 *
 	 * @throws LockException
 	 *             exception.
 	 */
@@ -260,7 +260,7 @@ public final class LockServiceEx {
 
 	/**
 	 * List up locks.
-	 * 
+	 *
 	 * @return {@link DatabaseChangeLogLock} array.
 	 * @throws LockException
 	 *             occurs when lock list up is failed.
@@ -299,7 +299,7 @@ public final class LockServiceEx {
 
 	/**
 	 * Releases whatever locks are on the database change log table.
-	 * 
+	 *
 	 * @throws LockException
 	 *             exception
 	 * @throws DatabaseException
@@ -310,7 +310,7 @@ public final class LockServiceEx {
 		releaseLock();
 		/*
 		 * try { releaseLock(); } catch (LockException e) { // ignore ?
-		 * LogFactory.getLogger().info("Ignored exception in forceReleaseLock: "
+		 * LoggerFactory.getLogger().info("Ignored exception in forceReleaseLock: "
 		 * + e.getMessage()); }
 		 */
 	}

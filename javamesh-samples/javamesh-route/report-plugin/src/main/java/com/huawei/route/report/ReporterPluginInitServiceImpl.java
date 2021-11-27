@@ -4,7 +4,7 @@
 
 package com.huawei.route.report;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.route.common.factory.NamedThreadFactory;
@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  * @since 2021-11-02
  */
 public class ReporterPluginInitServiceImpl implements PluginService {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private static ServiceRegistrarMessageSender httpSender;
     private volatile ScheduledFuture<?> sendFuture;
 

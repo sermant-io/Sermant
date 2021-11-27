@@ -1,7 +1,7 @@
 package com.huawei.flowcontrol.service;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.plugin.service.PluginService;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.service.dynamicconfig.Config;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigType;
 import com.huawei.flowcontrol.adapte.cse.KieConfigSyncer;
@@ -54,7 +54,7 @@ public class FlowControlServiceImpl implements PluginService {
                     InitRuleRedis.doInit();
                 }
             } catch (Exception e) {
-                LogFactory.getLogger().warning(String.format("Init Flow control plugin failed, {%s}", e));
+                LoggerFactory.getLogger().warning(String.format("Init Flow control plugin failed, {%s}", e));
             }
             final String configCenterType = PluginConfigUtil.getValueByKey(ConfigConst.CONFIG_CENTER_TYPE);
             DataSourceInitUtils.initRules(configCenterType);

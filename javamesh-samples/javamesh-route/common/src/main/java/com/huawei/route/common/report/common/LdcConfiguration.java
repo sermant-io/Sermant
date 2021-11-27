@@ -7,7 +7,7 @@ package com.huawei.route.common.report.common;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 
 import java.util.List;
 import java.util.Locale;
@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * @since 2021-11-03
  */
 public class LdcConfiguration {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 单例

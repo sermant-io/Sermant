@@ -8,8 +8,6 @@ import java.io.File;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-
 /**
  * 路径索引器
  *
@@ -21,7 +19,7 @@ public class PathIndexer {
     /**
      * 日志
      */
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * javamesh的配置文件名的键
@@ -37,11 +35,6 @@ public class PathIndexer {
      * pluginPackage插件包的键
      */
     public static String JAVAMESH_PLUGIN_PACKAGE_DIR = "javamesh.plugin.package.dir";
-
-    /**
-     * logback配置的键
-     */
-    public static String JAVAMESH_LOGBACK_SETTING_FILE = "javamesh.log.setting.file";
 
     /**
      * 配置文件

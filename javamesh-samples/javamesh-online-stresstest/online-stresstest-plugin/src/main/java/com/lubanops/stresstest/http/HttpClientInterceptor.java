@@ -6,7 +6,7 @@ package com.lubanops.stresstest.http;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.lubanops.stresstest.core.Tester;
 import org.apache.http.HttpRequest;
 
@@ -23,7 +23,7 @@ import static com.lubanops.stresstest.config.Constant.TEST_VALUE;
  * @since 2021/10/21
  */
 public class HttpClientInterceptor implements InstanceMethodInterceptor {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {

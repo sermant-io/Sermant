@@ -6,7 +6,7 @@ package com.huawei.gray.dubbo.export;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.gray.dubbo.utils.RouterUtil;
 
@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  * @since 2021年7月7日
  */
 public class ApacheDubboExportInstanceMethodInterceptor implements InstanceMethodInterceptor {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String URLS_FIELD_NAME = "urls";
 

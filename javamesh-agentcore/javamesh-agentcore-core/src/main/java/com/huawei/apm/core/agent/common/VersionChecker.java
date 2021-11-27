@@ -1,8 +1,8 @@
 package com.huawei.apm.core.agent.common;
 
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.Listener;
 import com.huawei.apm.core.lubanops.bootstrap.commons.ConditionOnVersion;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 
 import java.util.logging.Level;
@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  */
 public class VersionChecker {
 
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private String version;
 

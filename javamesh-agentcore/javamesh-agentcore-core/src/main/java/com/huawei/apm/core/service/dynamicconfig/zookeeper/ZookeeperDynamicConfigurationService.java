@@ -1,7 +1,8 @@
 package com.huawei.apm.core.service.dynamicconfig.zookeeper;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.service.dynamicconfig.Config;
+import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangeType;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationService;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class ZookeeperDynamicConfigurationService implements DynamicConfigurationService {
 
-    private static final Logger logger = LogFactory.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger();
 
     ZooKeeper zkClient;
 
@@ -83,6 +83,32 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
         return serviceInst;
     }
 
+    private String getPath(String key, String group) {
+        group = fixGroup(group);
+        return group.startsWith("/") ? group + key : '/' + group + key;
+    }
+
+    private String fixGroup(String group) {
+        return group == null ? getDefaultGroup() : group;
+    }
+
+    private ConfigChangeType transEventType(Watcher.Event.EventType type) {
+        switch (type) {
+            case NodeCreated:
+                return ConfigChangeType.ADDED;
+            case NodeDeleted:
+                return ConfigChangeType.DELETED;
+            case None:
+            case NodeDataChanged:
+            case DataWatchRemoved:
+            case ChildWatchRemoved:
+            case NodeChildrenChanged:
+            case PersistentWatchRemoved:
+            default:
+                return ConfigChangeType.MODIFIED;
+        }
+    }
+
 
     @Override
     public boolean addConfigListener(String key, String group, ConfigurationListener listener) {
@@ -90,26 +116,22 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
         if (listener == null)
             return false;
 
-        if (group == null)
-            group = "";
-        else
-            group = "/" + group;
-
-        Stat st = new Stat();
-        String finalGroup = group;
+        final String finalGroup = fixGroup(group);
+        final String fullPath = getPath(key, finalGroup);
         Watcher wc = new Watcher() {
             @Override
             public void process(WatchedEvent event) {
-                String content = getConfig(event.getPath());
-                ConfigChangedEvent cce = new ConfigChangedEvent(key, finalGroup, content);
-                if ( ! event.getPath().equals(finalGroup + key) )
-                    logger.log(Level.WARNING, "unexpected event " + event.toString() + " for " + key + ":" + finalGroup);
+                if ( ! fullPath.equals(event.getPath()) )
+                    logger.log(Level.WARNING, "unexpected event " + event + " for " + key + ":" + finalGroup);
+                String content = getConfig(key, finalGroup);
+                ConfigChangeType changeType = transEventType(event.getType());
+                ConfigChangedEvent cce = new ConfigChangedEvent(key, finalGroup, content, changeType);
                 listener.process(cce);
             }
         };
 
         try {
-            zkClient.getData(group + key, wc, st) ;
+            zkClient.addWatch(fullPath, wc, AddWatchMode.PERSISTENT) ;
         } catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage(), e);
             return false;
@@ -133,15 +155,12 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
     @Override
     public String getConfig(String key, String group)  {
 
-        if (group == null)
-            group = "";
-        else
-            group = "/" + group;
+        final String fullPath = getPath(key, group);
 
         String rs = null;
         try {
             Stat st = new Stat();
-            rs = new String(zkClient.getData(group + key, false, st));
+            rs = new String(zkClient.getData(fullPath, false, st));
         } catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage(), e);
             return null;
@@ -153,14 +172,11 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
     @Override
     public boolean publishConfig(String key, String group, String content) {
 
-        if (group == null)
-            group = "";
-        else
-            group = "/" + group;
+        final String fullPath = getPath(key, group);
 
         boolean rs = false;
         try {
-            rs = this.updateNode(group + key, content.getBytes(StandardCharsets.UTF_8), -1);
+            rs = this.updateNode(fullPath, content.getBytes(StandardCharsets.UTF_8), -1);
         } catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage(), e);
             return false;
@@ -173,11 +189,9 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
     protected boolean createRecursivly(String path)
     {
         try {
-            System.out.println(path);
             if (zkClient.exists(path, null) == null && path.length() > 0) {
                 String temp = path.substring(0, path.lastIndexOf("/"));
                 if ( temp != null && temp.length() > 1 ) {
-                    System.out.println(temp);
                     createRecursivly(temp);
                 }
                 zkClient.create(path, null, ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
@@ -274,8 +288,9 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
         for (int i = 0; i < str_array.size(); i++)
         {
             String str = str_array.get(i);
-            List<String> str_array1 = listNodesFromNode(node + "/" + str);
-            str_array.addAll(str_array1);
+            for (String grandChild : listNodesFromNode(node + "/" + str)) {
+                str_array.add(str + '/' + grandChild);
+            }
         }
 
         return str_array;

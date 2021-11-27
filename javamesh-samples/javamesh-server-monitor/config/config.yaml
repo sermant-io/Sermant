@@ -5,3 +5,7 @@ server.monitor:
   collectInterval: 1
   consumeInterval: 60
   timeunit : SECONDS
+druid.monitor:
+  collectInterval: 1
+  consumeInterval: 10
+  timeunit: SECONDS

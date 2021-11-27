@@ -5,7 +5,7 @@ package com.lubanops.stresstest.redis.redisson.workaround;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,7 +20,7 @@ import static com.lubanops.stresstest.redis.redisson.RedissonUtils.buildShadowOb
  * @since 2021/11/3
  */
 public class RedissonShadowInterceptor implements InstanceMethodInterceptor {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {

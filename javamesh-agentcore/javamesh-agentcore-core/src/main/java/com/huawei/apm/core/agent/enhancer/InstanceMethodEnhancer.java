@@ -3,8 +3,8 @@ package com.huawei.apm.core.agent.enhancer;
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.common.OverrideArgumentsCall;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.Interceptor;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Morph;
 import net.bytebuddy.implementation.bind.annotation.Origin;
@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  */
 public final class InstanceMethodEnhancer extends AbstractAroundEnhancer {
 
-    private final static Logger LOGGER = LogFactory.getLogger();
+    private final static Logger LOGGER = LoggerFactory.getLogger();
 
     private final List<InstanceMethodInterceptor> interceptors;
 

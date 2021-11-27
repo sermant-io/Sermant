@@ -5,19 +5,19 @@
 package com.huawei.javamesh.sample.servermonitor.service;
 
 import com.huawei.apm.core.config.ConfigManager;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.send.GatewayClient;
-import com.huawei.javamesh.sample.servermonitor.collecttask.CollectTask;
-import com.huawei.javamesh.sample.servermonitor.collecttask.IbmJvmMetricProvider;
-import com.huawei.javamesh.sample.servermonitor.collecttask.OpenJvmMetricProvider;
-import com.huawei.javamesh.sample.servermonitor.collecttask.ServerMonitorMetricProvider;
+import com.huawei.javamesh.sample.monitor.common.collect.CollectTask;
+import com.huawei.javamesh.sample.monitor.common.config.ServiceConfig;
 import com.huawei.javamesh.sample.servermonitor.config.ServerMonitorConfig;
-import com.huawei.javamesh.sample.servermonitor.config.ServiceConfig;
 import com.huawei.javamesh.sample.servermonitor.entity.AgentRegistration;
 import com.huawei.javamesh.sample.servermonitor.entity.NetworkAddress;
+import com.huawei.javamesh.sample.servermonitor.provider.IbmJvmMetricProvider;
+import com.huawei.javamesh.sample.servermonitor.provider.OpenJvmMetricProvider;
+import com.huawei.javamesh.sample.servermonitor.provider.ServerMonitorMetricProvider;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -36,7 +36,7 @@ public class MonitorService implements PluginService {
 
     private static final int AGENT_REG_DATA_TYPE = 7;
 
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final List<CollectTask<?>> collectTasks = new LinkedList<CollectTask<?>>();
 

@@ -3,7 +3,7 @@
  */
 package com.lubanops.stresstest.redis.redisson;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.lubanops.stresstest.config.ConfigFactory;
 import com.lubanops.stresstest.core.Reflection;
 import com.lubanops.stresstest.redis.redisson.config.ShadowConfigChains;
@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * @since 2021/11/4
  */
 public class RedissonUtils {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private static final String CONNECTION_MANAGER = "org.redisson.connection.ConnectionManager";
     private static final String ASYNC_EXECUTOR = "org.redisson.command.CommandAsyncExecutor";
     private static final String REDISSON_CLIENT = "org.redisson.api.RedissonClient";

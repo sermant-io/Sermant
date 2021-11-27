@@ -5,7 +5,7 @@
 package com.huawei.flowcontrol.core.util;
 
 import com.alibaba.csp.sentinel.log.RecordLog;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.flowcontrol.core.config.ConfigConst;
 import com.huawei.flowcontrol.core.config.FlowControlConfig;
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * @since 2020-08-26
  */
 public class PluginConfigUtil {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private static String active;
     private static Properties properties;
 

@@ -5,7 +5,7 @@
 package com.huawei.flowcontrol.core.datasource.kie.util;
 
 import com.alibaba.fastjson.JSON;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.flowcontrol.core.datasource.kie.util.response.KieConfigResponse;
 
 import org.apache.http.HttpEntity;
@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public class KieConfigClient {
     private static final CloseableHttpClient CLIENT = HttpClients.createDefault();
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private KieConfigClient() {
     }

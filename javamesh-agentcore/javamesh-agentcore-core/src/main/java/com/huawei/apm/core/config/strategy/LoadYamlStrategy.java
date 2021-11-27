@@ -20,16 +20,16 @@ import java.util.logging.Logger;
 
 import org.yaml.snakeyaml.Yaml;
 
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.config.common.BaseConfig;
 import com.huawei.apm.core.config.common.ConfigFieldKey;
 import com.huawei.apm.core.config.utils.ConfigKeyUtil;
 import com.huawei.apm.core.config.utils.ConfigValueUtil;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
  * yaml格式文件的加载策略
  * <p>yaml格式转换对于数组、List和Map中涉及的复杂对象，不支持{@link ConfigFieldKey}修正字段名
- * <p>yaml格式转换对于数组、List和Map中的字符串，不支持{@code ${}}转换，字符串和复杂类型支持支持
+ * <p>yaml格式转换对于数组、List和Map中的字符串，不支持{@code ${}}转换，字符串和复杂类型支持
  * <p>yaml格式转换仅在字符串做{@code ${}}转换时使用入参，不支持使用入参直接设置字段值
  *
  * @author HapThorin
@@ -40,8 +40,11 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     /**
      * 日志
      */
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    /**
+     * 启动参数
+     */
     private Map<String, Object> argsMap;
 
     /**
@@ -94,11 +97,10 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
         if (!(typeVal instanceof Map)) {
             return config;
         }
-        fixFieldKey((Map) typeVal, cls);
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(cls.getClassLoader());
-            return (R) yaml.loadAs(yaml.dump(typeVal), cls);
+            return (R) yaml.loadAs(yaml.dump(fixEntry((Map) typeVal, cls)), cls);
         } finally {
             Thread.currentThread().setContextClassLoader(classLoader);
         }
@@ -107,37 +109,63 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     /**
      * 修正键，如果属性被{@link ConfigFieldKey}修饰，则将{@link ConfigFieldKey#value()}转化为属性值
      *
-     * @param typeVal 类对应的配置信息
+     * @param typeMap 类对应的配置信息
      * @param cls     类Class
      */
-    private void fixFieldKey(Map typeVal, Class<?> cls) {
+    private Map fixEntry(Map typeMap, Class<?> cls) {
         if (cls == Object.class || Map.class.isAssignableFrom(cls)) {
-            return;
+            return typeMap;
         }
-        fixFieldKey(typeVal, cls.getSuperclass());
+        typeMap = fixEntry(typeMap, cls.getSuperclass());
         for (Field field : cls.getDeclaredFields()) {
             final ConfigFieldKey configFieldKey = field.getAnnotation(ConfigFieldKey.class);
             final String fieldKey = configFieldKey == null ? field.getName() : configFieldKey.value();
-            final Object subTypeVal = configFieldKey == null ? typeVal.get(fieldKey) : typeVal.remove(fieldKey);
+            final Object subTypeVal = configFieldKey == null ? typeMap.get(fieldKey) : typeMap.remove(fieldKey);
+            if (subTypeVal == null) {
+                continue;
+            }
+            final Object fixedVal;
             if (subTypeVal instanceof Map) {
-                fixFieldKey((Map) subTypeVal, field.getType());
+                fixedVal = fixEntry((Map) subTypeVal, field.getType());
                 if (configFieldKey != null) {
-                    typeVal.put(field.getName(), subTypeVal);
+                    typeMap.put(field.getName(), fixedVal);
                 }
-            } else if (subTypeVal instanceof String && field.getType() == String.class) {
-                final String fixedVal = ConfigValueUtil.fixValue(fieldKey, (String) subTypeVal, argsMap,
-                        new ConfigValueUtil.FixedValueProvider() {
-                            @Override
-                            public String getFixedValue(String key) {
-                                final Object fixedVal = typeVal.get(key);
-                                if (fixedVal == null || fixedVal instanceof List || fixedVal instanceof Map) {
-                                    return null;
-                                }
-                                return fixedVal.toString();
-                            }
-                        });
-                typeVal.put(field.getName(), fixedVal);
+            } else {
+                fixedVal = fixValStr(typeMap, subTypeVal);
+                typeMap.put(field.getName(), fixedVal);
             }
         }
+        return typeMap;
+    }
+
+    /**
+     * 修正值中形如"${}"的部分
+     *
+     * @param typeMap    父Map
+     * @param subTypeVal 当前值
+     * @return 修正后的值
+     */
+    private Object fixValStr(Map typeMap, Object subTypeVal) {
+        final ConfigValueUtil.FixedValueProvider provider = new ConfigValueUtil.FixedValueProvider() {
+            @Override
+            public String getFixedValue(String key) {
+                final Object fixedVal = typeMap.get(key);
+                if (fixedVal instanceof String || fixedVal instanceof Integer) {
+                    return fixedVal.toString();
+                }
+                return null;
+            }
+        };
+        final Object fixedVal;
+        if (subTypeVal instanceof List) {
+            fixedVal = yaml.loadAs(
+                    ConfigValueUtil.fixValue("", yaml.dump(subTypeVal), argsMap, provider),
+                    List.class);
+        } else if (subTypeVal instanceof String) {
+            fixedVal = ConfigValueUtil.fixValue("", (String) subTypeVal, argsMap, provider);
+        } else {
+            fixedVal = subTypeVal;
+        }
+        return fixedVal;
     }
 }

@@ -24,10 +24,12 @@ public interface BaseService {
     /**
      * 服务启动方法
      */
-    void start();
+    default void start() {
+    }
 
     /**
      * 服务关闭方法
      */
-    void stop();
+    default void stop() {
+    }
 }

@@ -4,7 +4,7 @@
 
 package com.huawei.route.common.report.common.utils;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.route.common.report.common.entity.HttpClientResult;
 import org.apache.http.Consts;
 import org.apache.http.HttpStatus;
@@ -58,7 +58,7 @@ import java.util.logging.Logger;
  * @since 2021-06-15
  */
 public class HttpClientUtils {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 编码格式。发送编码格式统一用UTF-8

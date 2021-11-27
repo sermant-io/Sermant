@@ -14,7 +14,6 @@ import com.huawei.apm.core.agent.enhancer.ConstructorEnhancer;
 import com.huawei.apm.core.agent.enhancer.InstanceMethodEnhancer;
 import com.huawei.apm.core.agent.enhancer.MemberFieldsHandler;
 import com.huawei.apm.core.agent.enhancer.StaticMethodEnhancer;
-import com.huawei.apm.core.plugin.service.PluginServiceManager;
 import com.huawei.apm.core.lubanops.bootstrap.Listener;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.method.MethodDescription;
@@ -98,7 +97,7 @@ public class DelegateTransformer implements AgentBuilder.Transformer {
                 .intercept(MethodDelegation.withDefaultConfiguration().to(new MemberFieldsHandler(fields)));
     }
 
-    private static class MultiInterMethodHolder extends InterceptorCollector {
+    private static class MultiInterMethodHolder extends MethodInterceptorCollector {
         private MultiInterMethodHolder(MethodDescription.InDefinedShape method) {
             super(method);
         }

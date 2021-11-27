@@ -4,7 +4,7 @@
 
 package com.lubanops.stresstest.redis;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.lubanops.stresstest.config.ConfigFactory;
 
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class RedisUtils {
     private static final String PATTERN = "(redis://)*([A-Za-z0-9.]+:*\\d*?$)";
     private static final String KEY = ConfigFactory.getConfig().getTestRedisPrefix();
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private static final String DEFAULT_CHARSET = "UTF-8";
     private static final String ADDRESS = "address";
     private static final String SLAVE = "slave";

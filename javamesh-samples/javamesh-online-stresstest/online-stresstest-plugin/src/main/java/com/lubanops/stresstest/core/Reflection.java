@@ -4,7 +4,7 @@
 
 package com.lubanops.stresstest.core;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  * @since 2021/10/21
  */
 public class Reflection {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 方法执行。
