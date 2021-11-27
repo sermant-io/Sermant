@@ -21,7 +21,7 @@ public class EmergencyPlan {
 
     private String checkRemark;
 
-    private String checkResult;
+    private String status;
 
     private String scheduleType;
 
@@ -32,6 +32,8 @@ public class EmergencyPlan {
     private Long triggerLastTime;
 
     private Long triggerNextTime;
+
+    private Date updateTime;
 
     public Integer getPlanId() {
         return planId;
@@ -105,12 +107,12 @@ public class EmergencyPlan {
         this.checkRemark = checkRemark == null ? null : checkRemark.trim();
     }
 
-    public String getCheckResult() {
-        return checkResult;
+    public String getStatus() {
+        return status;
     }
 
-    public void setCheckResult(String checkResult) {
-        this.checkResult = checkResult == null ? null : checkResult.trim();
+    public void setStatus(String status) {
+        this.status = status == null ? null : status.trim();
     }
 
     public String getScheduleType() {
@@ -151,5 +153,13 @@ public class EmergencyPlan {
 
     public void setTriggerNextTime(Long triggerNextTime) {
         this.triggerNextTime = triggerNextTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

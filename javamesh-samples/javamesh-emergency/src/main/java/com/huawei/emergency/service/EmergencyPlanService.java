@@ -56,6 +56,8 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
 
     CommonResult query(int planId);
 
+    CommonResult<EmergencyPlan> get(int planId);
+
     CommonResult addTask(TaskNode taskNode);
 
     CommonResult plan(CommonPage<PlanQueryParams> params);

@@ -9,7 +9,6 @@ import com.huawei.common.util.PasswordUtil;
 import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordDetail;
 import com.huawei.emergency.entity.EmergencyExecRecordDetailExample;
-import com.huawei.emergency.entity.EmergencyExecRecordExample;
 import com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs;
 import com.huawei.emergency.mapper.EmergencyExecRecordDetailMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
@@ -21,6 +20,7 @@ import com.huawei.script.exec.executor.ScriptExecutor;
 import com.huawei.script.exec.log.DefaultLogCallBack;
 import com.huawei.script.exec.log.LogMemoryStore;
 import com.huawei.script.exec.session.ServerInfo;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +42,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
@@ -107,6 +108,7 @@ public class ExecRecordHandlerFactory {
     @PreDestroy
     public void shutdown() {
         remoteServerThreadCache.values().forEach(ThreadPoolExecutor::shutdown);
+        LOGGER.info("The remoteServerThreadCache stop.");
     }
 
     /**
@@ -154,6 +156,12 @@ public class ExecRecordHandlerFactory {
         }
     }
 
+    /**
+     * 脚本任务分发执行器
+     *
+     * @author y30010171
+     * @since 2021-11-04
+     **/
     private class ExecRecordDetailHandler implements Runnable {
         private final EmergencyExecRecordWithBLOBs record;
         private final EmergencyExecRecordDetail recordDetail;

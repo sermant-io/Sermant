@@ -1,10 +1,24 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ */
+
 package com.huawei.emergency.mapper;
 
 import com.huawei.emergency.entity.EmergencyExecRecordDetail;
 import com.huawei.emergency.entity.EmergencyExecRecordDetailExample;
-import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
+/**
+ * 预案执行记录明细mapper
+ *
+ * @author y30010171
+ * @since 2021-11-15
+ **/
+@Mapper
 public interface EmergencyExecRecordDetailMapper {
     long countByExample(EmergencyExecRecordDetailExample example);
 

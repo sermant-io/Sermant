@@ -6,6 +6,7 @@ package com.huawei.emergency.controller;
 
 import com.huawei.common.api.CommonPage;
 import com.huawei.common.api.CommonResult;
+import com.huawei.common.constant.PlanStatus;
 import com.huawei.emergency.dto.PlanQueryDto;
 import com.huawei.emergency.dto.PlanQueryParams;
 import com.huawei.emergency.dto.PlanSaveParams;
@@ -14,6 +15,7 @@ import com.huawei.emergency.entity.EmergencyPlan;
 import com.huawei.emergency.entity.User;
 import com.huawei.emergency.service.EmergencyPlanService;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -101,6 +106,25 @@ public class EmergencyPlanController {
     }
 
     /**
+     * 查询预案的编号与名称
+     *
+     * @param planId 预案ID
+     * @return {@link CommonResult}
+     */
+    @GetMapping("/plan/get")
+    public CommonResult get(@RequestParam("plan_id") int planId) {
+        CommonResult<EmergencyPlan> queryData = planService.get(planId);
+        EmergencyPlan plan = queryData.getData();
+        EmergencyPlan returnPlan = new EmergencyPlan();
+        if (plan != null) {
+            returnPlan.setPlanId(plan.getPlanId());
+            returnPlan.setPlanNo(plan.getPlanNo());
+            returnPlan.setPlanName(plan.getPlanName());
+        }
+        return CommonResult.success(returnPlan);
+    }
+
+    /**
      * 查询预案以及预案下的任务信息
      *
      * @param planName   预案名称或编号
@@ -118,9 +142,10 @@ public class EmergencyPlanController {
                                   @RequestParam(value = "scena_name_no", required = false) String sceneName,
                                   @RequestParam(value = "task_name_no", required = false) String taskName,
                                   @RequestParam(value = "script_name", required = false) String scriptName,
+                                  @RequestParam(value = "status_label", required = false) String statusLabel,
                                   @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
                                   @RequestParam(value = "current", defaultValue = "1") int current,
-                                  @RequestParam(value = "sorter", defaultValue = "create_time") String sorter,
+                                  @RequestParam(value = "sorter", defaultValue = "update_time") String sorter,
                                   @RequestParam(value = "order", defaultValue = "DESC") String order) {
         CommonPage<PlanQueryParams> params = new CommonPage<>();
         params.setPageSize(pageSize);
@@ -136,6 +161,9 @@ public class EmergencyPlanController {
         planParams.setSceneName(sceneName);
         planParams.setTaskName(taskName);
         planParams.setScriptName(scriptName);
+        if (StringUtils.isNotEmpty(statusLabel)) {
+            planParams.setStatus(PlanStatus.matchByLabel(statusLabel, PlanStatus.NEW).getValue());
+        }
         params.setObject(planParams);
         return planService.plan(params);
     }
@@ -154,7 +182,7 @@ public class EmergencyPlanController {
     /**
      * 新增一个任务
      *
-     * @param request http请求
+     * @param request  http请求
      * @param taskNode 任务信息
      * @return {@link CommonResult}
      */
@@ -167,7 +195,7 @@ public class EmergencyPlanController {
     /**
      * 新增一个预案
      *
-     * @param request http请求
+     * @param request       http请求
      * @param emergencyPlan {@link EmergencyPlan#getPlanName()} 预案名称
      * @return {@link CommonResult}
      */
@@ -204,7 +232,7 @@ public class EmergencyPlanController {
     /**
      * 预案审核
      *
-     * @param request http请求
+     * @param request      http请求
      * @param planQueryDto {@link PlanQueryDto#getPlanId()} 预案ID，{@link PlanQueryDto#getCheckResult()} 审核结果，{@link PlanQueryDto#getCheckResult()} 审核意见
      * @return {@link CommonResult}
      */
@@ -212,19 +240,28 @@ public class EmergencyPlanController {
     public CommonResult approve(HttpServletRequest request, @RequestBody PlanQueryDto planQueryDto) {
         EmergencyPlan plan = new EmergencyPlan();
         plan.setPlanId(planQueryDto.getPlanId());
-        plan.setCheckResult(parseCheckResult(planQueryDto.getCheckResult()));
+        plan.setStatus(parseCheckResult(planQueryDto.getCheckResult()));
         plan.setCheckRemark(planQueryDto.getComment());
         return planService.approve(plan, parseUserName(request));
     }
 
     private String parseCheckResult(String checkResult) {
         if ("通过".equals(checkResult)) {
-            return "2";
+            return PlanStatus.APPROVED.getValue();
         }
         if ("驳回".equals(checkResult)) {
-            return "3";
+            return PlanStatus.REJECT.getValue();
         }
         return checkResult;
+    }
+
+    @GetMapping("/plan/search/status_label")
+    public CommonResult planStatus() {
+        return CommonResult.success(
+            Arrays.stream(PlanStatus.values())
+                .map(PlanStatus::getStatusLabel)
+                .collect(Collectors.toList()).toArray()
+        );
     }
 
     private String parseUserName(HttpServletRequest request) {

@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS `emergency_plan`  (
                                    `schedule_status` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '调度状态 0停止调度 1开始调度',
                                    `trigger_last_time` bigint(13) NOT NULL DEFAULT 0 COMMENT '上次触发的时间戳',
                                    `trigger_next_time` bigint(13) NOT NULL DEFAULT 0 COMMENT '下次触发的时间戳',
+    `update_time` timestamp  NULL DEFAULT NULL COMMENT '更新时间',
                                    PRIMARY KEY (`plan_id`) USING BTREE,
                                    UNIQUE INDEX `plan_no`(`plan_no`) USING BTREE,
                                    INDEX `is_valid`(`is_valid`) USING BTREE

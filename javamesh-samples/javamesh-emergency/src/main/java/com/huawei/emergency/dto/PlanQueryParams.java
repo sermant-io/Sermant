@@ -18,4 +18,5 @@ public class PlanQueryParams {
     private String sceneName;
     private String taskName;
     private String scriptName;
+    private String status;
 }

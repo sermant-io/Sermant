@@ -27,6 +27,7 @@ public class PlanQueryDto {
     private String comment;
     private String createTime;
     private String creator;
+    private String updateTime;
     private String executeTime;
     private String startTime;
     private String confirm;

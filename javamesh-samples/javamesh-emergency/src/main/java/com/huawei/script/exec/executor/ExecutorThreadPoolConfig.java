@@ -24,7 +24,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  **/
 @Configuration
 public class ExecutorThreadPoolConfig {
-    public static final String THREAD_NAME_PREFIX = "task-exec-";
+    private static final String THREAD_NAME_PREFIX = "task-exec-";
+
     private static final long KEEP_ALIVE_TIME = 60L;
 
     @Value("${script.executor.maxTaskSize}")
@@ -41,7 +42,7 @@ public class ExecutorThreadPoolConfig {
      * 设置核心线程数与最大线程数一致，使得创建的线程与线程名一致。
      * 每个脚本在不同服务器执行时，根据此线程名去获取一个线程池来并发执行。
      *
-     * @return
+     * @return {@link ThreadPoolExecutor}
      */
     @Bean(destroyMethod = "shutdown")
     public ThreadPoolExecutor scriptExecThreadPool() {
