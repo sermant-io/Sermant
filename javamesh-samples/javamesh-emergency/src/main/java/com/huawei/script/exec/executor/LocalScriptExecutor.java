@@ -4,11 +4,6 @@
 
 package com.huawei.script.exec.executor;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.huawei.script.exec.ExecResult;
 import com.huawei.script.exec.log.LogCallBack;
 
@@ -27,16 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicLong;
-import javax.annotation.Nullable;
 
 /**
  * 用于本地linux服务器上执行shell脚本
@@ -48,10 +34,8 @@ import javax.annotation.Nullable;
 public class LocalScriptExecutor implements ScriptExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalScriptExecutor.class);
 
-    //private static final String SH = "/bin/sh";
-    private static final String SH = "cmd";
-    //private static final String SH_C = "-C";
-    private static final String SH_C = "/C";
+    private static final String SH = "/bin/sh";
+    private static final String SH_C = "-C";
 
     @Value("${script.location}")
     private String scriptLocation = "/tmp/";
@@ -83,7 +67,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
     }
 
     private String createScriptFile(String scriptName, String scriptContent) throws IOException {
-        String fileName = String.format(Locale.ROOT, "%s%s-%s.bat",
+        String fileName = String.format(Locale.ROOT, "%s%s-%s.sh",
             scriptLocation, scriptName, System.nanoTime());
         try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
             fileOutputStream.write(("echo $$" + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
@@ -127,55 +111,5 @@ public class LocalScriptExecutor implements ScriptExecutor {
 
     private String[] commands(String command, String[] params) {
         return (String[]) ArrayUtils.addAll(new String[]{SH, SH_C, command}, params);
-    }
-
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-        LocalScriptExecutor localScriptExecutor = new LocalScriptExecutor();
-        ScriptExecInfo script10 = new ScriptExecInfo();
-        script10.setScriptName("test-error");
-        script10.setScriptContext("ping 127.0.0.1 -n 10");
-        ExecutorService executorService = Executors.newFixedThreadPool(4, new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                //thread.setDaemon(true);
-                return thread;
-            }
-        });
-        final ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(executorService);
-        long start = System.currentTimeMillis();
-        ListenableFuture<ExecResult> submit1 = listeningExecutorService.submit(() -> localScriptExecutor.execScript(script10, null));
-        ListenableFuture<ExecResult> submit2 = listeningExecutorService.submit(() -> localScriptExecutor.execScript(script10, null));
-        ListenableFuture<ExecResult> submit3 = listeningExecutorService.submit(() -> localScriptExecutor.execScript(script10, null));
-        ListenableFuture<ExecResult> submit4 = listeningExecutorService.submit(() -> localScriptExecutor.execScript(script10, null));
-        FutureCallback<ExecResult> callback = new FutureCallback<ExecResult>() {
-            @Override
-            public void onSuccess(@Nullable ExecResult result) {
-                LOGGER.info("cost {} ms", System.currentTimeMillis() - start);
-                System.out.println(result);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                LOGGER.error("cost {} ms", System.currentTimeMillis() - start);
-            }
-        };
-        //List<ExecResult> execResults = listListenableFuture.get(2,TimeUnit.SECONDS);
-        AtomicLong timeOut = new AtomicLong(2000L);
-        Arrays.asList(submit1,submit2,submit3,submit4).forEach( submit ->{
-            try {
-                Futures.addCallback(submit, callback);
-                submit.get(timeOut.get(),TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (TimeoutException e) {
-                submit.cancel(true);
-                timeOut.set(100L);
-                e.printStackTrace();
-            }
-        });
-        LOGGER.info("cost {} ms", System.currentTimeMillis() - start);
     }
 }
