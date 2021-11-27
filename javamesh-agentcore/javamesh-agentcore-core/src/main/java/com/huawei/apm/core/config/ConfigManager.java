@@ -12,11 +12,11 @@ import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.common.PathIndexer;
 import com.huawei.apm.core.config.common.BaseConfig;
 import com.huawei.apm.core.config.strategy.LoadConfigStrategy;
 import com.huawei.apm.core.config.utils.ConfigKeyUtil;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
  * 配置储存器
@@ -29,7 +29,7 @@ public abstract class ConfigManager {
     /**
      * 日志
      */
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 配置对象集合，键为配置对象的实现类Class，值为加载完毕的配置对象

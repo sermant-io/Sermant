@@ -4,7 +4,7 @@
 
 package com.lubanops.stresstest.db.mybatis;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.lubanops.stresstest.config.ConfigFactory;
 import com.lubanops.stresstest.config.bean.DataSourceInfo;
 import com.lubanops.stresstest.core.Reflection;
@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  * @since 2021/20/22
  */
 public class ShadowDataSource implements DataSource {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String JDBC_PREFIX = "jdbc:";
     /**

@@ -17,6 +17,7 @@
         <package.output.dir>${package.sample.dir}/${package.sample.name}/${package.sample.type}</package.output.dir>
         <package.server.output.dir>${package.server.dir}/${package.sample.name}</package.server.output.dir>
 
+        <config.skip.flag>true</config.skip.flag>
         <config.file.name>config.yaml</config.file.name>
         <config.source.dir>../config</config.source.dir>
         <config.output.dir>${package.sample.dir}/${package.sample.name}/config</config.output.dir>
@@ -66,4 +67,38 @@
             </modules>
         </profile>
     </profiles>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <executions>
+                        <execution>
+                            <id>copy-config</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <skip>${config.skip.flag}</skip>
+                                <outputDirectory>${config.output.dir}</outputDirectory>
+                                <overwrite>true</overwrite>
+                                <resources>
+                                    <resource>
+                                        <directory>${config.source.dir}</directory>
+                                        <includes>
+                                            <include>${config.file.name}</include>
+                                        </includes>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

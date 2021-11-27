@@ -1,6 +1,6 @@
 package com.huawei.apm.core.agent;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
@@ -9,11 +9,14 @@ import net.bytebuddy.utility.JavaModule;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * byte buddy增强监听器，用于保存增强后的字节码
  */
 class LoadListener implements AgentBuilder.Listener {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private final String exportPath = System.getProperty("apm.agent.class.export.path");
     @Override
     public void onDiscovery(String typeName, ClassLoader classLoader, JavaModule module, boolean loaded) {
@@ -31,8 +34,7 @@ class LoadListener implements AgentBuilder.Listener {
                 dynamicType.saveIn(new File(exportPath));
             }
         } catch (IOException e) {
-            LogFactory.getLogger()
-                    .warning(String.format("save class {%s} byte code failed", typeDescription.getTypeName()));
+            LOGGER.warning(String.format("save class {%s} byte code failed", typeDescription.getTypeName()));
         }
     }
 

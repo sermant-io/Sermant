@@ -4,7 +4,7 @@
 
 package com.huawei.javamesh.sample.servermonitor.command;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  */
 public abstract class CommonMonitorCommand<T> implements MonitorCommand<T> {
 
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final int MAX_LOG_LENGTH = 200;
 

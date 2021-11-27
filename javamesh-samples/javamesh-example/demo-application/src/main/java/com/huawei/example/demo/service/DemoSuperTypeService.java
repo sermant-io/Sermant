@@ -4,6 +4,9 @@
 
 package com.huawei.example.demo.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 超类拦截的示例被拦截点
  *
@@ -12,25 +15,27 @@ package com.huawei.example.demo.service;
  * @since 2021/10/25
  */
 public class DemoSuperTypeService implements DemoInterface {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemoNameService.class);
+    
     /**
      * 被拦截的构造函数
      */
     public DemoSuperTypeService() {
-        System.out.println("DemoSuperTypeEntity: constructor");
+        LOGGER.info("DemoSuperTypeEntity: constructor");
     }
 
     /**
      * 被拦截的实例方法
      */
     public void instFunc() {
-        System.out.println("DemoSuperTypeEntity: instFunc");
+        LOGGER.info("DemoSuperTypeEntity: instFunc");
     }
 
     /**
      * 被拦截的静态方法
      */
     public static void staticFunc() {
-        System.out.println("DemoSuperTypeEntity: staticFunc");
+        LOGGER.info("DemoSuperTypeEntity: staticFunc");
     }
 
     @Override

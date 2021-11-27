@@ -7,6 +7,9 @@ package com.huawei.example.demo.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 链路功能的模拟通信示例
  *
@@ -15,6 +18,8 @@ import java.util.Map;
  * @since 2021/10/25
  */
 public class DemoTraceService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemoNameService.class);
+
     private final static ThreadLocal<Map<String, String>> END_POINT = new ThreadLocal<Map<String, String>>();
 
     /**
@@ -45,7 +50,7 @@ public class DemoTraceService {
      * @param message 数据集
      */
     private static void service(Map<String, String> message) {
-        System.out.println("DemoTraceService: " + message);
+        LOGGER.info("DemoTraceService: " + message);
     }
 
     /**

@@ -4,7 +4,7 @@
 
 package com.huawei.javamesh.sample.servermonitor.provider;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.send.GatewayClient;
@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * CPU、磁盘、网络、磁盘 Metric Provider
  */
 public class ServerMonitorMetricProvider implements MetricProvider<ServerMetric> {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private static final int GATEWAY_DATA_TYPE = 4;
 
     private final CpuMetricCollector cpuMetricCollector;

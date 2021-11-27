@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 
 /**
  * 统一配置系统的字段工具类
@@ -25,7 +25,7 @@ public class ConfigFieldUtil {
     /**
      * 日志
      */
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 设置值，优先查找{@code setter}调用，不存在时尝试直接赋值

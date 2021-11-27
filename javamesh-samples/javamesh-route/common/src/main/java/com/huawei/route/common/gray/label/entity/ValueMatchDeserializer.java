@@ -4,7 +4,7 @@
 
 package com.huawei.route.common.gray.label.entity;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.route.common.gray.constants.GrayConstant;
 
 import com.alibaba.fastjson.JSONArray;
@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  * @date 2021/10/27
  */
 public class ValueMatchDeserializer implements ObjectDeserializer {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public Map<String, List<MatchRule>> deserialze(DefaultJSONParser parser, Type type, Object fieldName) {

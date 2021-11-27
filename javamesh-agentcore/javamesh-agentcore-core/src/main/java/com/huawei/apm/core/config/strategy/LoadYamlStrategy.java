@@ -20,11 +20,11 @@ import java.util.logging.Logger;
 
 import org.yaml.snakeyaml.Yaml;
 
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.config.common.BaseConfig;
 import com.huawei.apm.core.config.common.ConfigFieldKey;
 import com.huawei.apm.core.config.utils.ConfigKeyUtil;
 import com.huawei.apm.core.config.utils.ConfigValueUtil;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
  * yaml格式文件的加载策略
@@ -40,7 +40,7 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     /**
      * 日志
      */
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 启动参数

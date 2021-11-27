@@ -4,7 +4,7 @@
 
 package com.huawei.gray.dubbo.strategy.type;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
 
@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * @date 2021/10/13
  */
 public class ObjectTypeStrategy extends TypeStrategy {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public String getValue(Object arg, String type) {

@@ -6,9 +6,10 @@ package com.huawei.example.demo.service;
 
 import java.util.logging.Logger;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.apm.core.plugin.service.PluginServiceManager;
+import com.huawei.example.demo.common.DemoLogger;
 import com.huawei.example.demo.config.DemoConfig;
 import com.huawei.example.demo.config.DemoServiceConfig;
 
@@ -20,35 +21,29 @@ import com.huawei.example.demo.config.DemoServiceConfig;
  * @since 2021/11/16
  */
 public class DemoComplexServiceImpl implements DemoComplexService {
-    /**
-     * 日志
-     */
-    private final Logger logger = LogFactory.getLogger();
-
     @Override
     public void start() {
-        System.out.println("[DemoComplexService]-start");
+        DemoLogger.println("[DemoComplexService]-start");
     }
 
     @Override
     public void stop() {
-        System.out.println("[DemoComplexService]-stop");
+        DemoLogger.println("[DemoComplexService]-stop");
     }
 
     @Override
     public void activeFunc() {
-        System.out.println("[DemoComplexService]-activeFunc");
+        DemoLogger.println("[DemoComplexService]-activeFunc");
         final DemoSimpleService service = PluginServiceManager.getPluginService(DemoSimpleService.class);
         service.passiveFunc();
     }
 
     @Override
     public void passiveFunc() {
-        System.out.println("[DemoComplexService]-passiveFunc");
+        DemoLogger.println("[DemoComplexService]-passiveFunc");
         final DemoServiceConfig serviceConfig = PluginConfigManager.getPluginConfig(DemoServiceConfig.class);
-        System.out.println(getClass().getSimpleName() + ": " + serviceConfig);
+        DemoLogger.println(getClass().getSimpleName() + ": " + serviceConfig);
         final DemoConfig demoConfig = PluginConfigManager.getPluginConfig(DemoConfig.class);
-        System.out.println(getClass().getSimpleName() + ": " + demoConfig);
-        logger.info("[DemoService]-passiveFunc");
+        DemoLogger.println(getClass().getSimpleName() + ": " + demoConfig);
     }
 }

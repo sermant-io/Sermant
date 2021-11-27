@@ -3,7 +3,7 @@
  */
 package com.lubanops.stresstest.db.mongodb;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.lubanops.stresstest.config.ConfigFactory;
 import com.lubanops.stresstest.config.bean.MongoSourceInfo;
 import com.lubanops.stresstest.core.Reflection;
@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  */
 public class ShadowMongodb {
     private static final Map<String, Object> SHADOW_CLIENTS = new ConcurrentHashMap<>();
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private static final ShadowMongodb INSTANCE = new ShadowMongodb();
 
     private ShadowMongodb() { }

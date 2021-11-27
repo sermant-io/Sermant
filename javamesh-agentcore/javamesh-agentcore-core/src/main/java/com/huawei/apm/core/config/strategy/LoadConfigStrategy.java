@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.config.common.BaseConfig;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
  * 加载配置对象的策略
@@ -68,7 +68,7 @@ public interface LoadConfigStrategy<T> {
         /**
          * 日志
          */
-        private static final Logger LOGGER = LogFactory.getLogger();
+        private static final Logger LOGGER = LoggerFactory.getLogger();
 
         @Override
         public boolean canLoad(File file) {

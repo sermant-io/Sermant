@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.exception.ConfigDupIndexException;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 /**
  * 对配置中参数值进行处理的工具
@@ -28,7 +28,7 @@ public class ConfigValueUtil {
     /**
      * 日志
      */
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 将配置信息字符串转换为数组，需要注意以下内容：

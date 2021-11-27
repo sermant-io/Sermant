@@ -15,29 +15,6 @@
     </modules>
 
     <artifactId>javamesh-agentcore</artifactId>
-    <profiles>
-        <profile>
-            <id>agent</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <profile.id>agent</profile.id>
-            </properties>
-        </profile>
-        <profile>
-            <id>example</id>
-            <properties>
-                <profile.id>example</profile.id>
-            </properties>
-        </profile>
-        <profile>
-            <id>all</id>
-            <properties>
-                <profile.id>all</profile.id>
-            </properties>
-        </profile>
-    </profiles>
 
     <properties>
         <javamesh.basedir>${pom.basedir}/../..</javamesh.basedir>

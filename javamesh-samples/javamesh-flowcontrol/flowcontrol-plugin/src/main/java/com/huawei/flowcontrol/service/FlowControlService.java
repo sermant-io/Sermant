@@ -1,7 +1,7 @@
 package com.huawei.flowcontrol.service;
 
 import com.huawei.apm.core.plugin.service.PluginService;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.flowcontrol.core.FlowControlThreadFactory;
 import com.huawei.flowcontrol.core.config.CommonConst;
 import com.huawei.flowcontrol.core.init.InitExecutor;
@@ -40,7 +40,7 @@ public class FlowControlService implements PluginService {
                     InitRuleRedis.doInit();
                 }
             } catch (Exception e) {
-                LogFactory.getLogger().warning(String.format("Init Flow control plugin failed, {%s}", e));
+                LoggerFactory.getLogger().warning(String.format("Init Flow control plugin failed, {%s}", e));
             }
             InitRulesUtils.initRules();
         }

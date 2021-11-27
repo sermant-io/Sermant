@@ -16,22 +16,15 @@
  */
 package com.huawei.apm.core.service.dynamicconfig.nop;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.service.dynamicconfig.Config;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationService;
-
-import java.util.logging.Logger;
 
 /**
  *   This class is for testing purpose only.
  */
 @Deprecated
 public class NopDynamicConfigurationService implements DynamicConfigurationService {
-
-
-    private static final Logger logger = LogFactory.getLogger();
-
     static private NopDynamicConfigurationService serviceInst;
 
     private NopDynamicConfigurationService() {

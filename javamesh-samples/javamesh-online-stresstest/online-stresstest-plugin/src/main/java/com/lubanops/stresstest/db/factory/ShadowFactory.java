@@ -5,7 +5,7 @@
 package com.lubanops.stresstest.db.factory;
 
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * @since 2021/10/21
  */
 public class ShadowFactory {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 生成影子datasource工厂

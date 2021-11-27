@@ -1,6 +1,6 @@
 # Plugin
 
-本文档主要针对**Java-mesh**的[示例模块](../../javamesh-samples/javamesh-example)，插件开发过程中常见的一些场景。
+本文档主要针对**Java-mesh**的[示例模块](../../javamesh-samples/javamesh-example)，介绍插件开发过程中常见的一些场景。
 
 - [组成部分](#组成部分)
 - [插件模块](#插件模块)
@@ -14,6 +14,7 @@
     - [日志功能](#日志功能)
     - [心跳功能](#心跳功能)
     - [链路功能](#链路功能)
+    - [动态配置功能](#动态配置功能)
 - [插件服务模块](#插件服务模块)
 
 ## 组成部分
@@ -303,11 +304,11 @@ complexService.activeFunc();
 考虑到依赖隔离的问题，[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)提供给`插件(plugin)`和`服务(service)`使用的日志只能是**jul**日志，通过以下方法获取**jul**日志实例：
 ```java
 import java.util.logging.Logger;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
-Logger logger = LogFactory.getLogger();
+import com.huawei.apm.core.common.LoggerFactory;
+Logger logger = LoggerFactory.getLogger();
 ```
 
-插件开发者如果需要输出日志信息，可以参考[DemoLoggerInterceptor](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoLoggerInterceptor.java)示例开发。
+插件开发者如果需要输出日志信息，可以参考[DemoLogger](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/common/DemoLogger.java)示例开发。
 
 #### 心跳功能
 
@@ -328,7 +329,7 @@ heartbeatService.heartbeat("${verify name}");
 heartbeatService.stopHeartbeat("${verify name}");
 ```
 
-插件开发者如果需要输出日志信息，可以参考[DemoHeartBeatService](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)示例开发。
+插件开发者如果需要使用心跳功能，可以参考[DemoHeartBeatService](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)示例开发。
 
 #### 链路功能
 
@@ -410,6 +411,30 @@ heartbeatService.stopHeartbeat("${verify name}");
 鉴于`luban`插件中有完整的链路功能实现，诸如*http*、*dubbo*、*alidubbo*、*kafka*等通信组件都有增强实现，无需重复开发，因此**Java-mesh**的`示例模块`这里只是简单地抛砖引玉。
 
 如果插件开发者需要使用链路功能，优先从`luban`插件中摘取有关的插件，在其基础上进一步开发。如果没有满足需求的插件，再考虑参照[DemoTraceInterceptor](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceInterceptor.java)自行开发。
+
+### 动态配置功能
+
+动态配置功能是[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)的核心服务之一，通过以下代码获取实例：
+```java
+DynamicConfigurationService service = ServiceManager.getService(DynamicConfigurationFactoryService.class).getDynamicConfigurationService();
+```
+
+调用以下方法注册一个监听器：
+```java
+// ${group}为用户分组，${key}为监听的键，对zookeeper来说，监听的路径相当于: / + ${group} + ${key}
+// 如果不传${group}，则会默认设置为统一配置中dynamicconfig.default_group对应的值
+service.addConfigListener("${key}", "${group}", new ConfigurationListener() {
+  @Override
+  public void process(ConfigChangedEvent event) {
+    // do something
+  }
+});
+```
+
+注册监听器之后，当服务器对应节点发生创建、删除、修改、添加子节点等事件时，就会触发`process`函数。
+
+插件开发者如果需要使用动态配置，可以参考[DemoDynaConfService](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoDynaConfService.java)示例开发。
+
 
 ## 插件服务模块
 

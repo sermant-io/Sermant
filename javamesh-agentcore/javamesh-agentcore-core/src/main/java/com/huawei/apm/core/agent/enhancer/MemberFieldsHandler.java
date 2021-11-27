@@ -1,6 +1,6 @@
 package com.huawei.apm.core.agent.enhancer;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.This;
 
@@ -8,11 +8,14 @@ import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * 处理成员变量
  */
 public class MemberFieldsHandler {
+    private final static Logger LOGGER = LoggerFactory.getLogger();
+
     private final List<String> fields;
 
     public MemberFieldsHandler(List<String> fields) {
@@ -33,7 +36,7 @@ public class MemberFieldsHandler {
                 convertedFields[i] = declaredField.get(obj);
             }
         } catch (Exception e) {
-            LogFactory.getLogger().warning(String.format("invoke method getLopsFileds failed when convert the member fields! reason:[%s]", e.getMessage()));
+            LOGGER.warning(String.format("invoke method getLopsFileds failed when convert the member fields! reason:[%s]", e.getMessage()));
         }
         return convertedFields;
     }

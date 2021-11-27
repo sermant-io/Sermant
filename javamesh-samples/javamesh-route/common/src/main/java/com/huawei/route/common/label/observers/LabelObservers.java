@@ -4,7 +4,7 @@
 
 package com.huawei.route.common.label.observers;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public enum LabelObservers {
      */
     INSTANCE;
 
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final Map<String, List<LabelUpdateObserver>> observers;
 

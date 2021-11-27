@@ -4,7 +4,7 @@
 
 package com.huawei.javamesh.sample.servermonitor.command;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.javamesh.sample.servermonitor.common.Consumer;
 import com.huawei.javamesh.sample.servermonitor.common.Function;
 
@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  */
 public class CommandExecutor {
 
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final Runtime RUNTIME = Runtime.getRuntime();
 

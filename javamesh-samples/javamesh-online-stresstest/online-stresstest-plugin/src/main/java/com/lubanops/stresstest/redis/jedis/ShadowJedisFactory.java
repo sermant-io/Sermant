@@ -3,7 +3,7 @@
  */
 package com.lubanops.stresstest.redis.jedis;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.lubanops.stresstest.core.Reflection;
 import com.lubanops.stresstest.redis.RedisUtils;
 
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  * @since 2021/11/4
  */
 public class ShadowJedisFactory {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private final String shadowHostAndPort;
     private volatile Object shadowPool;
     private final ReentrantLock lock;

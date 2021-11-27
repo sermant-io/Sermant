@@ -1,6 +1,6 @@
 package com.huawei.apm.core.service.dynamicconfig;
 
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.service.dynamicconfig.nop.NopDynamicConfigurationService;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigType;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationFactoryService;
@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class DynamicConfigurationFactoryServiceImpl implements DynamicConfigurationFactoryService {
 
-    private static final Logger logger = LogFactory.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger();
 
     protected DynamicConfigurationService getDynamicConfigurationService(DynamicConfigType dct) {
 

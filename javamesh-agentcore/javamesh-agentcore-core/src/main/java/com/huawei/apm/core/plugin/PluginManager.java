@@ -21,8 +21,8 @@ import java.util.logging.Logger;
 
 import org.yaml.snakeyaml.Yaml;
 
+import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.common.PathIndexer;
-import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.plugin.classloader.PluginClassLoader;
 import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.apm.core.plugin.config.PluginSetting;
@@ -40,7 +40,7 @@ public class PluginManager {
     /**
      * 日志
      */
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     public static final String CONFIG_DIR_NAME = "config";
 
