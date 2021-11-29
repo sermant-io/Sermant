@@ -80,5 +80,5 @@ mvn clean package -Dmaven.test.skip
 |[灰度发布功能介绍](user-guide/route/document.md)|使用手册|
 |[服务监控功能介绍](user-guide/server-monitor/document.md)|使用手册|
 |[threadlocal功能介绍](user-guide/threadlocal/document.md)|使用手册|
-|[当前插件功能汇总列表](user-guide/feature-list)|使用手册|
+|[当前插件功能汇总列表](user-guide/feature-list.md)|使用手册|
 
