@@ -64,7 +64,7 @@ mvn clean package -Dmaven.test.skip
 ## 相关文档
 
 |文档名称|文档类型|
-|:-|:-|
+|---|---|
 |[插件模块开发手册](dev-guide/dev_sample.md)|开发手册|
 |[插件代码开发手册](dev-guide/dev_plugin.md)|开发手册|
 |[动态配置服务介绍](dev-guide/service_dynamicconfig.md)|开发手册|
@@ -80,4 +80,5 @@ mvn clean package -Dmaven.test.skip
 |[灰度发布功能介绍](user-guide/route/document.md)|使用手册|
 |[服务监控功能介绍](user-guide/server-monitor/document.md)|使用手册|
 |[threadlocal功能介绍](user-guide/threadlocal/document.md)|使用手册|
+|[当前插件功能汇总列表](user-guide/feature-list)|使用手册|
 
