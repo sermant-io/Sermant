@@ -5,14 +5,10 @@
 package com.huawei.apm.backend.kafka;
 
 import com.huawei.apm.backend.common.conf.KafkaConf;
-import com.huawei.apm.backend.common.constants.ProducerConstants;
 import com.huawei.apm.backend.common.exception.KafkaTopicException;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.BytesSerializer;
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.apache.kafka.common.utils.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +24,7 @@ import java.util.Properties;
 public class KafkaProducerManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaProducerManager.class);
 
-    private KafkaProducer<String, Bytes> producer;
+    private KafkaProducer<String, String> producer;
 
     private static KafkaProducerManager instance;
 
@@ -57,21 +53,16 @@ public class KafkaProducerManager {
      */
     private void setProducerConf(KafkaConf conf) throws KafkaTopicException {
         Properties properties = new Properties();
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, conf.getBootStrapServers());
-        ProducerConstants.PRODUCER_CONFIG.forEach((k, v) -> properties.setProperty(k, v));
-        delKey(properties);
-        producer = new KafkaProducer<>(properties, new StringSerializer(), new BytesSerializer());
-    }
-
-    private void delKey(Properties properties) {
-        if (!ProducerConstants.KAFKA_IS_SSL) {
-            properties.remove(ProducerConstants.KAFKA_JAAS_CONFIG_CONST);
-            properties.remove(ProducerConstants.KAFKA_SASL_MECHANISM_CONST);
-            properties.remove(ProducerConstants.KAFKA_SECURITY_PROTOCOL_CONST);
-            properties.remove(ProducerConstants.KAFKA_SSL_TRUSTSTORE_LOCATION_CONST);
-            properties.remove(ProducerConstants.KAFKA_SSL_TRUSTSTORE_PASSWORD_CONST);
-            properties.remove(ProducerConstants.KAFKA_SSL_IDENTIFICATION_ALGORITHM_CONST);
-        }
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, conf.getBootStrapServers());
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, conf.getKafkaKeySerializer());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, conf.getKafkaValueSerializer());
+        properties.put(ProducerConfig.ACKS_CONFIG, conf.getKafkaAcks());
+        properties.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, conf.getKafkaMaxRequestSize());
+        properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, conf.getKafkaBufferMemory());
+        properties.put(ProducerConfig.RETRIES_CONFIG, conf.getKafkaRetries());
+        properties.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, conf.getKafkaRequestTimeoutMs());
+        properties.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, conf.getKafkaMaxBlockMs());
+        producer = new KafkaProducer<>(properties);
     }
 
     /**
@@ -79,7 +70,7 @@ public class KafkaProducerManager {
      *
      * @return 生产者
      */
-    public KafkaProducer<String, Bytes> getProducer() {
+    public KafkaProducer<String, String> getProducer() {
         return producer;
     }
 }
