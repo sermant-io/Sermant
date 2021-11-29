@@ -4,6 +4,7 @@
 
 package com.huawei.apm.backend.server;
 
+import com.huawei.apm.backend.kafka.KafkaConsumerManager;
 import com.huawei.apm.backend.pojo.Message;
 import com.huawei.apm.backend.common.conf.KafkaConf;
 import com.huawei.apm.backend.common.exception.KafkaTopicException;
@@ -23,8 +24,8 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.common.utils.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +75,8 @@ public class NettyServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
-            KafkaProducer<String, Bytes> producer = KafkaProducerManager.getInstance(conf).getProducer();
+            KafkaProducer<String, String> producer = KafkaProducerManager.getInstance(conf).getProducer();
+            KafkaConsumer<String, String> consumer = KafkaConsumerManager.getInstance(conf).getConsumer();
             serverBootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, CONNECTION_SIZE)
@@ -89,7 +91,7 @@ public class NettyServer {
                             pipeline.addLast(new ProtobufDecoder(Message.NettyMessage.getDefaultInstance()));
                             pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
                             pipeline.addLast(new ProtobufEncoder());
-                            pipeline.addLast(new ServerHandler(producer, conf));
+                            pipeline.addLast(new ServerHandler(producer, consumer, conf));
                         }
                     });
 
