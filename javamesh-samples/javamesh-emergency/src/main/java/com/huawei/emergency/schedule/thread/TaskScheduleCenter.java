@@ -234,8 +234,6 @@ public class TaskScheduleCenter {
             return cronSequenceGenerator.next(from);
         } else if (ScheduleType.FIX_DATE == scheduleType) {
             return new Date(from.getTime() + Integer.valueOf(plan.getScheduleConf()) * 1000);
-        } else if (ScheduleType.ONCE == scheduleType) {
-            return from;
         }
         return null;
     }

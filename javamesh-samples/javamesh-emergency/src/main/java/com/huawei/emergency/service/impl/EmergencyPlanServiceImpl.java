@@ -24,6 +24,7 @@ import com.huawei.emergency.entity.EmergencyPlanDetailExample;
 import com.huawei.emergency.entity.EmergencyPlanExample;
 import com.huawei.emergency.entity.EmergencyTask;
 import com.huawei.emergency.mapper.EmergencyExecMapper;
+import com.huawei.emergency.mapper.EmergencyExecRecordDetailMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
 import com.huawei.emergency.mapper.EmergencyPlanDetailMapper;
 import com.huawei.emergency.mapper.EmergencyPlanMapper;
@@ -43,8 +44,6 @@ import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -81,7 +80,10 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     private EmergencyTaskMapper taskMapper;
 
     @Autowired
-    private EmergencyExecRecordMapper execRecordMapper;
+    private EmergencyExecRecordMapper recordMapper;
+
+    @Autowired
+    private EmergencyExecRecordDetailMapper recordDetailMapper;
 
     @Autowired
     private ExecRecordHandlerFactory handlerFactory;
@@ -182,11 +184,11 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         emergencyExec.setHistoryId(emergencyExec.getExecId());
 
         // 获取所有的拓扑关系，添加详细的执行记录
-        List<EmergencyExecRecordWithBLOBs> allExecRecords = execRecordMapper.selectAllPlanDetail(planId);
+        List<EmergencyExecRecordWithBLOBs> allExecRecords = recordMapper.selectAllPlanDetail(planId);
         allExecRecords.forEach(record -> {
             record.setCreateUser(userName);
             record.setExecId(emergencyExec.getExecId());
-            execRecordMapper.insertSelective(record);
+            recordMapper.insertSelective(record);
         });
 
         // 开始执行不需要任何前置条件的场景
@@ -237,17 +239,19 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
                 return CommonResult.failed("请设置间隔时间为数字");
             }
         }
+        long nextTriggerTime = 0L;
         if (scheduleType == ScheduleType.ONCE) {
             try {
-                long nextTriggerTime = Long.valueOf(plan.getScheduleConf());
+                nextTriggerTime = Long.valueOf(plan.getScheduleConf());
                 if (System.currentTimeMillis() > nextTriggerTime) {
                     return CommonResult.failed("请设置正确的执行时间");
                 }
             } catch (NumberFormatException e) {
                 return CommonResult.failed("请设置正确的执行时间");
             }
+        } else {
+            nextTriggerTime = scheduleCenter.generateNextTriggerTime(plan, new Date(System.currentTimeMillis() + TaskScheduleCenter.PRE_READ)).getTime();
         }
-        Date nextTriggerTime = scheduleCenter.generateNextTriggerTime(plan, new Date(System.currentTimeMillis() + TaskScheduleCenter.PRE_READ));
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setPlanId(plan.getPlanId());
         updatePlan.setStatus(PlanStatus.SCHEDULED.getValue());
@@ -255,7 +259,8 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         updatePlan.setScheduleConf(plan.getScheduleConf());
         updatePlan.setScheduleType(scheduleType.getValue());
         updatePlan.setTriggerLastTime(0L);
-        updatePlan.setTriggerNextTime(nextTriggerTime.getTime());
+        updatePlan.setTriggerNextTime(nextTriggerTime);
+        planMapper.updateByPrimaryKeySelective(updatePlan);
         return CommonResult.success();
     }
 
@@ -402,7 +407,11 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             .doSelectPage(() -> {
                 planMapper.allTaskRecords(paramsObject.getExecId(), paramsObject.getSceneId());
             });
-        return CommonResult.success(pageInfo.getResult(), (int) pageInfo.getTotal());
+        List<SceneExecDto> result = pageInfo.getResult();
+        result.forEach( recordDto ->{
+            recordDto.setServerInfo(recordDetailMapper.selectAllServerDetail(recordDto.getKey()));
+        });
+        return CommonResult.success(result, (int) pageInfo.getTotal());
     }
 
     @Override
@@ -549,7 +558,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             .andStatusIn(RecordStatus.HAS_RUNNING_STATUS)
             .andPlanIdEqualTo(planId)
             .andIsValidEqualTo(ValidEnum.VALID.getValue());
-        return execRecordMapper.countByExample(isRunningCondition) > 0;
+        return recordMapper.countByExample(isRunningCondition) > 0;
     }
 
     /**

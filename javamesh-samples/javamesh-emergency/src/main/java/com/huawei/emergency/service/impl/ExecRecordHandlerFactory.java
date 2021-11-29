@@ -126,8 +126,8 @@ public class ExecRecordHandlerFactory {
         return new ExecRecordHandler(currentRecord);
     }
 
-    public Runnable handleDetail(EmergencyExecRecordWithBLOBs record,EmergencyExecRecordDetail recordDetail) {
-        return new ExecRecordDetailHandler(record,recordDetail);
+    public Runnable handleDetail(EmergencyExecRecordWithBLOBs record, EmergencyExecRecordDetail recordDetail) {
+        return new ExecRecordDetailHandler(record, recordDetail);
     }
 
     /**
@@ -219,23 +219,23 @@ public class ExecRecordHandlerFactory {
                 updateRecordDetail.setStatus(
                     execResult.isSuccess() ? RecordStatus.SUCCESS.getValue() : RecordStatus.ENSURE_FAILED.getValue()
                 );
-                recordDetailMapper.updateByExampleSelective(updateRecordDetail, whenRunning); // 做个状态判断，防止人为取消 也被标记为执行成功
-
-                recordMapper.tryUpdateEndTimeAndLog(updateRecord.getRecordId(), endTime,updateRecordDetail.getLog());
-                recordMapper.tryUpdateStatus(updateRecord.getRecordId());
-
+                if (recordDetailMapper.updateByExampleSelective(updateRecordDetail, whenRunning) == 0) { // 做个状态判断，防止人为取消 也被标记为执行成功
+                    LOGGER.info("recordId={}, detailId={} was canceled", recordDetail.getRecordId(), recordDetail.getDetailId());
+                } else {
+                    recordMapper.tryUpdateEndTimeAndLog(updateRecord.getRecordId(), endTime, updateRecordDetail.getLog());
+                    recordMapper.tryUpdateStatus(updateRecord.getRecordId());
+                    // 回调
+                    if (execResult.isSuccess() && isRecordFinished(record.getRecordId())) {
+                        if (record.getTaskId() != null) {
+                            taskService.onComplete(record);
+                        } else {
+                            sceneService.onComplete(record);
+                        }
+                    }
+                }
 
                 // 清除实时日志的在内存中的日志残留
                 LogMemoryStore.removeLog(recordDetail.getDetailId());
-
-                // 回调
-                if (execResult.isSuccess() && isRecordFinished(record.getRecordId())) {
-                    if (record.getTaskId() != null) {
-                        taskService.onComplete(record);
-                    } else {
-                        sceneService.onComplete(record);
-                    }
-                }
             }
         }
     }

@@ -4,7 +4,10 @@
 
 package com.huawei.emergency.dto;
 
+import com.huawei.emergency.entity.EmergencyExecRecordDetail;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * 用于描述场景及任务的执行记录信息
@@ -33,4 +36,5 @@ public class SceneExecDto {
     private String status;
     private String statusLabel;
     private String sync;
+    private List<EmergencyExecRecordDetail> serverInfo;
 }

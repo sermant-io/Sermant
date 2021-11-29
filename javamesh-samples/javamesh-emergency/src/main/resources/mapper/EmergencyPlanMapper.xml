@@ -410,7 +410,8 @@
         plan.check_remark comment,
         date_format(plan.create_time, '%Y-%m-%d %H:%i:%s') create_time,
         date_format(plan.update_time, '%Y-%m-%d %H:%i:%s') update_time,
-        plan.create_user creator
+        plan.create_user creator,
+        (select max(exec_id) from emergency_exec where plan_id = plan.plan_id) as history_id
         FROM emergency_plan plan
         LEFT JOIN emergency_plan_detail plan_detail ON plan_detail.plan_id = plan.plan_id and plan_detail.is_valid = '1'
         LEFT JOIN emergency_task scene ON scene.task_id = plan_detail.scene_id

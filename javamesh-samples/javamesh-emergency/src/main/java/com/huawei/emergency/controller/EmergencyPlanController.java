@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -80,7 +82,7 @@ public class EmergencyPlanController {
      * 预案启动,开始调度
      *
      * @param request http请求
-     * @param param    {@link PlanQueryDto#getPlanId()} 预案ID {@link PlanQueryDto#getStartTime()} ()} 执行时间
+     * @param param   {@link PlanQueryDto#getPlanId()} 预案ID {@link PlanQueryDto#getStartTime()} ()} 执行时间
      * @return {@link CommonResult}
      */
     @PostMapping("/plan/schedule")
@@ -90,9 +92,14 @@ public class EmergencyPlanController {
         }
         EmergencyPlan plan = new EmergencyPlan();
         plan.setPlanId(param.getPlanId());
-        if (StringUtils.isNotEmpty(param.getStartTime())){
+        if (StringUtils.isNotEmpty(param.getStartTime())) {
             plan.setScheduleType(ScheduleType.ONCE.getValue());
-            plan.setScheduleConf(param.getStartTime());
+            try {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                plan.setScheduleConf(String.valueOf(format.parse(param.getStartTime()).getTime()));
+            } catch (ParseException e) {
+                return CommonResult.failed("启动时间设置错误");
+            }
         } else {
             plan.setScheduleType(ScheduleType.NONE.getValue());
         }

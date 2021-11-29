@@ -46,4 +46,6 @@ public interface EmergencyExecRecordDetailMapper {
     int updateByPrimaryKeyWithBLOBs(EmergencyExecRecordDetail record);
 
     int updateByPrimaryKey(EmergencyExecRecordDetail record);
+
+    List<EmergencyExecRecordDetail> selectAllServerDetail(int recordId);
 }
