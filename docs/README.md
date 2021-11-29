@@ -64,7 +64,7 @@ mvn clean package -Dmaven.test.skip
 ## 相关文档
 
 |文档名称|文档类型|
-|:-|:-|
+|---|---|
 |[插件模块开发手册](dev-guide/dev_sample.md)|开发手册|
 |[插件代码开发手册](dev-guide/dev_plugin.md)|开发手册|
 |[动态配置服务介绍](dev-guide/service_dynamicconfig.md)|开发手册|
