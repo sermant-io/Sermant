@@ -27,6 +27,10 @@ public class EmergencyExecRecordDetail {
 
     private String isValid;
 
+    private Integer pid;
+
+    private Integer serverId;
+
     private String log;
 
     public Integer getDetailId() {
@@ -123,6 +127,22 @@ public class EmergencyExecRecordDetail {
 
     public void setIsValid(String isValid) {
         this.isValid = isValid == null ? null : isValid.trim();
+    }
+
+    public Integer getPid() {
+        return pid;
+    }
+
+    public void setPid(Integer pid) {
+        this.pid = pid;
+    }
+
+    public Integer getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(Integer serverId) {
+        this.serverId = serverId;
     }
 
     public String getLog() {

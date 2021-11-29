@@ -35,9 +35,11 @@ public interface EmergencyPlanDetailMapper {
 
     EmergencyPlanDetail selectByPrimaryKey(Integer detailId);
 
-    int updateByExampleSelective(@Param("record") EmergencyPlanDetail record, @Param("example") EmergencyPlanDetailExample example);
+    int updateByExampleSelective(@Param("record") EmergencyPlanDetail record,
+                                 @Param("example") EmergencyPlanDetailExample example);
 
-    int updateByExample(@Param("record") EmergencyPlanDetail record, @Param("example") EmergencyPlanDetailExample example);
+    int updateByExample(@Param("record") EmergencyPlanDetail record,
+                        @Param("example") EmergencyPlanDetailExample example);
 
     int updateByPrimaryKeySelective(EmergencyPlanDetail record);
 

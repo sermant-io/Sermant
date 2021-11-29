@@ -128,7 +128,8 @@ CREATE TABLE IF NOT EXISTS `emergency_exec_record_detail`  (
                                                  `exec_id` int(11) NOT NULL COMMENT '执行ID',
                                                  `record_id` int(11) NOT NULL COMMENT '执行记录ID',
                                                  `status` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '执行状态（0 待执行 1执行中 2执行成功 3执行失败 4执行取消 5人工确认成功 6人工确认失败）',
-                                                 `server_ip` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '远程服务器IP',
+    `server_id`     int(11)  NULL DEFAULT NULL COMMENT '服务器ID',
+    `server_ip` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '远程服务器IP',
                                                  `log` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '运行日志',
                                                  `create_user` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
                                                  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -137,5 +138,23 @@ CREATE TABLE IF NOT EXISTS `emergency_exec_record_detail`  (
                                                  `ensure_user` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '确认人',
                                                  `ensure_time` timestamp NULL DEFAULT NULL COMMENT '确认时间',
                                                  `is_valid` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '有效标志',
+    `pid`     int(5)  NULL DEFAULT NULL COMMENT '进程号',
                                                  PRIMARY KEY (`detail_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;$$$
+
+CREATE TABLE IF NOT EXISTS `emergency_server`
+(
+    `server_id`     int(11) NOT NULL AUTO_INCREMENT COMMENT '服务器ID',
+    `server_name`   varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '服务器名称',
+    `server_user`   varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'root' COMMENT '服务器用户',
+    `server_ip`     varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '服务器IP',
+    `server_port`   int(5) NOT NULL DEFAULT 22 COMMENT '服务器端口',
+    `have_password` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '有无密码 0:无密码,1:有密码',
+    `password_mode` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码获取方式 0:本地,1:平台',
+    `password`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
+    `create_user`   varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建人',
+    `create_time`   timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`   timestamp NULL DEFAULT NULL COMMENT '最后修改时间',
+    `is_valid` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '是否生效',
+    PRIMARY KEY (`server_id`) USING BTREE
+    ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;

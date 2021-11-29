@@ -7,6 +7,7 @@ package com.huawei.emergency.controller;
 import com.huawei.common.api.CommonPage;
 import com.huawei.common.api.CommonResult;
 import com.huawei.common.constant.PlanStatus;
+import com.huawei.common.constant.ScheduleType;
 import com.huawei.emergency.dto.PlanQueryDto;
 import com.huawei.emergency.dto.PlanQueryParams;
 import com.huawei.emergency.dto.PlanSaveParams;
@@ -29,8 +30,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -79,13 +80,21 @@ public class EmergencyPlanController {
      * 预案启动,开始调度
      *
      * @param request http请求
-     * @param plan    {@link EmergencyPlan#getPlanId()} 预案ID
+     * @param param    {@link PlanQueryDto#getPlanId()} 预案ID {@link PlanQueryDto#getStartTime()} ()} 执行时间
      * @return {@link CommonResult}
      */
-    @PostMapping("/plan/start")
-    public CommonResult start(HttpServletRequest request, @RequestBody EmergencyPlan plan) {
-        if (plan.getPlanId() == null) {
+    @PostMapping("/plan/schedule")
+    public CommonResult start(HttpServletRequest request, @RequestBody PlanQueryDto param) {
+        if (param.getPlanId() == null) {
             return CommonResult.failed("请选择需要启动的预案");
+        }
+        EmergencyPlan plan = new EmergencyPlan();
+        plan.setPlanId(param.getPlanId());
+        if (StringUtils.isNotEmpty(param.getStartTime())){
+            plan.setScheduleType(ScheduleType.ONCE.getValue());
+            plan.setScheduleConf(param.getStartTime());
+        } else {
+            plan.setScheduleType(ScheduleType.NONE.getValue());
         }
         return planService.start(plan, parseUserName(request));
     }
@@ -97,7 +106,7 @@ public class EmergencyPlanController {
      * @param plan    {@link EmergencyPlan#getPlanId()} 预案ID
      * @return {@link CommonResult}
      */
-    @PostMapping("/plan/stop")
+    @PostMapping("/plan/cancel")
     public CommonResult stop(HttpServletRequest request, @RequestBody EmergencyPlan plan) {
         if (plan.getPlanId() == null) {
             return CommonResult.failed("请选择需要停止的预案");
@@ -127,14 +136,15 @@ public class EmergencyPlanController {
     /**
      * 查询预案以及预案下的任务信息
      *
-     * @param planName   预案名称或编号
-     * @param sceneName  场景名称或编号
-     * @param taskName   任务名称或编号
-     * @param scriptName 脚本名称
-     * @param pageSize   分页大小
-     * @param current    当前页码
-     * @param sorter     排序字段
-     * @param order      排序方式
+     * @param planName    预案名称或编号
+     * @param sceneName   场景名称或编号
+     * @param taskName    任务名称或编号
+     * @param scriptName  脚本名称
+     * @param statusLabel 预案状态
+     * @param pageSize    分页大小
+     * @param current     当前页码
+     * @param sorter      排序字段
+     * @param order       排序方式
      * @return {@link CommonResult}
      */
     @GetMapping("/plan")
@@ -233,7 +243,9 @@ public class EmergencyPlanController {
      * 预案审核
      *
      * @param request      http请求
-     * @param planQueryDto {@link PlanQueryDto#getPlanId()} 预案ID，{@link PlanQueryDto#getCheckResult()} 审核结果，{@link PlanQueryDto#getCheckResult()} 审核意见
+     * @param planQueryDto {@link PlanQueryDto#getPlanId()} 预案ID，
+     *                     {@link PlanQueryDto#getCheckResult()} 审核结果，
+     *                     {@link PlanQueryDto#getCheckResult()} 审核意见
      * @return {@link CommonResult}
      */
     @PostMapping("/plan/approve")

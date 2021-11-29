@@ -8,6 +8,7 @@ import com.huawei.common.api.CommonPage;
 import com.huawei.common.api.CommonResult;
 import com.huawei.emergency.dto.PlanQueryDto;
 import com.huawei.emergency.entity.EmergencyExecRecord;
+import com.huawei.emergency.entity.EmergencyExecRecordDetail;
 import com.huawei.emergency.entity.EmergencyPlan;
 import com.huawei.emergency.entity.User;
 import com.huawei.emergency.mapper.EmergencyExecMapper;
@@ -208,5 +209,39 @@ public class EmergencyExecController {
             LOGGER.error("get user info error.", e);
         }
         return userName;
+    }
+
+    @PostMapping("/history/stop")
+    public CommonResult stopOneServer(HttpServletRequest request, @RequestBody EmergencyExecRecordDetail detail) {
+        return execService.stopOneServer(detail.getDetailId(), parseUserName(request));
+    }
+
+    @PostMapping("/history/start")
+    public CommonResult startOneServer(HttpServletRequest request, @RequestBody EmergencyExecRecordDetail detail) {
+        return execService.startOneServer(detail.getDetailId(), parseUserName(request));
+    }
+
+    @PostMapping("/history/ensure")
+    public CommonResult ensureOneServer(HttpServletRequest request, @RequestBody EmergencyExecRecordDetail detail) {
+        if (detail.getDetailId() == null) {
+            return CommonResult.failed("请选择正确的执行记录");
+        }
+        if ("成功".equals(detail.getStatus())) {
+            return execService.ensure(detail.getDetailId(), "5", parseUserName(request));
+        }
+        if ("失败".equals(detail.getStatus())) {
+            return execService.ensure(detail.getDetailId(), "6", parseUserName(request));
+        }
+        return CommonResult.failed("请选择确认成功或者失败");
+    }
+
+    @GetMapping("/history/log")
+    public LogResponse logOneServer(@RequestParam("key") int detailId,
+                                    @RequestParam(value = "line", defaultValue = "1") int lineNum) {
+        int lineIndex = lineNum;
+        if (lineIndex <= 0) {
+            lineIndex = 1;
+        }
+        return execService.logOneServer(detailId, lineIndex);
     }
 }

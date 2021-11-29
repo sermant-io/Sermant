@@ -393,18 +393,26 @@
         WHEN plan.status = '0' THEN 'unapproved'
         WHEN plan.status = '1' THEN 'approving'
         WHEN plan.status = '2' THEN 'approved'
-        WHEN plan.status = '3' THEN 'unapproved' END) `status`,
+        WHEN plan.status = '3' THEN 'unapproved'
+        WHEN plan.status = '4' THEN 'running'
+        WHEN plan.status = '5' THEN 'ran'
+        WHEN plan.status = '6' THEN 'ran'
+        WHEN plan.status = '7' THEN 'wait' END) `status`,
         (CASE
         WHEN plan.status = '0' THEN '待审核'
         WHEN plan.status = '1' THEN '审核中'
         WHEN plan.status = '2' THEN '审核通过'
-        WHEN plan.status = '3' THEN '驳回' END) status_label,
+        WHEN plan.status = '3' THEN '驳回'
+        WHEN plan.status = '4' THEN '运行中'
+        WHEN plan.status = '5' THEN '运行成功'
+        WHEN plan.status = '6' THEN '运行失败'
+        WHEN plan.status = '7' THEN '调度中' END) status_label,
         plan.check_remark comment,
         date_format(plan.create_time, '%Y-%m-%d %H:%i:%s') create_time,
         date_format(plan.update_time, '%Y-%m-%d %H:%i:%s') update_time,
         plan.create_user creator
         FROM emergency_plan plan
-        LEFT JOIN emergency_plan_detail plan_detail ON plan_detail.plan_id = plan.plan_id
+        LEFT JOIN emergency_plan_detail plan_detail ON plan_detail.plan_id = plan.plan_id and plan_detail.is_valid = '1'
         LEFT JOIN emergency_task scene ON scene.task_id = plan_detail.scene_id
         LEFT JOIN emergency_script scene_script ON scene_script.script_id = scene.script_id
         LEFT JOIN emergency_task task ON task.task_id = plan_detail.task_id
@@ -426,6 +434,7 @@
         <if test="status !=null and status !=''">
             and plan.status = #{status}
         </if>
+        group by plan.plan_id
         ORDER BY plan.update_time
     </select>
     <select id="queryPlanDetailDto" resultType="com.huawei.emergency.dto.PlanDetailQueryDto">

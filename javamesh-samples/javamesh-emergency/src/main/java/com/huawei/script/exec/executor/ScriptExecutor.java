@@ -6,6 +6,7 @@ package com.huawei.script.exec.executor;
 
 import com.huawei.script.exec.ExecResult;
 import com.huawei.script.exec.log.LogCallBack;
+import com.huawei.script.exec.session.ServerInfo;
 
 /**
  * 脚本执行器
@@ -43,4 +44,6 @@ public interface ScriptExecutor {
      * <p>通过{@link ExecResult#getMsg()}获取执行时的所有日志信息</p>
      */
     ExecResult execScript(ScriptExecInfo scriptExecInfo, LogCallBack logCallback);
+
+    ExecResult cancel(ServerInfo serverInfo,int pid);
 }

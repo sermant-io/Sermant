@@ -6,11 +6,10 @@ package com.huawei.emergency.mapper;
 
 import com.huawei.emergency.entity.EmergencyExecRecordDetail;
 import com.huawei.emergency.entity.EmergencyExecRecordDetailExample;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 /**
  * 预案执行记录明细mapper

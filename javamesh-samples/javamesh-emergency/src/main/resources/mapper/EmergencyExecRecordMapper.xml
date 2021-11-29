@@ -706,9 +706,9 @@
         and t.start_time is null
     </update>
 
-    <update id="tryUpdateEndTime">
+    <update id="tryUpdateEndTimeAndLog">
         UPDATE emergency_exec_record t
-        SET t.end_time = #{endTime}
+        SET t.end_time = #{endTime},t.log = #{log}
         WHERE t.record_id = #{recordId}
           AND t.is_valid = '1'
           AND NOT EXISTS(

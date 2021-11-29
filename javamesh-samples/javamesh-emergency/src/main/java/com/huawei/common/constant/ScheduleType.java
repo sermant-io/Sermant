@@ -7,15 +7,29 @@ package com.huawei.common.constant;
 import lombok.Getter;
 
 /**
+ * 调度类型枚举
+ *
  * @author y30010171
  * @since 2021-11-19
  **/
 @Getter
 public enum ScheduleType {
-    NONE("0", "NONE"), // 立即运行一次
-    ONCE("1", "ONCE"), // 运行一次
-    CORN("2", "CORN"), // corn表达式
-    FIX_DATE("3", "FIX_DATE"); // 固定间隔
+    /**
+     * 没有调度，即马上运行
+     */
+    NONE("0", "NONE"),
+    /**
+     * 仅调度一次，在固定时间点触发
+     */
+    ONCE("1", "ONCE"),
+    /**
+     * 按照corn表达式调度，仅限6位
+     */
+    CORN("2", "CORN"),
+    /**
+     * 按照固定时间间隔调度 单位秒
+     */
+    FIX_DATE("3", "FIX_DATE");
 
 
     private String value;

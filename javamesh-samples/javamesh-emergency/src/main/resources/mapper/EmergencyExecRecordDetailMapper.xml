@@ -14,6 +14,8 @@
     <result column="ensure_user" jdbcType="VARCHAR" property="ensureUser" />
     <result column="ensure_time" jdbcType="TIMESTAMP" property="ensureTime" />
     <result column="is_valid" jdbcType="VARCHAR" property="isValid" />
+    <result column="pid" jdbcType="INTEGER" property="pid" />
+    <result column="server_id" jdbcType="INTEGER" property="serverId" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.huawei.emergency.entity.EmergencyExecRecordDetail">
     <result column="log" jdbcType="LONGVARCHAR" property="log" />
@@ -78,7 +80,7 @@
   </sql>
   <sql id="Base_Column_List">
     detail_id, exec_id, record_id, status, server_ip, create_user, create_time, start_time, 
-    end_time, ensure_user, ensure_time, is_valid
+    end_time, ensure_user, ensure_time, is_valid, pid, server_id
   </sql>
   <sql id="Blob_Column_List">
     log
@@ -140,13 +142,13 @@
     insert into emergency_exec_record_detail (exec_id, record_id, status, 
       server_ip, create_user, create_time, 
       start_time, end_time, ensure_user, 
-      ensure_time, is_valid, log
-      )
+      ensure_time, is_valid, pid, 
+      server_id, log)
     values (#{execId,jdbcType=INTEGER}, #{recordId,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, 
       #{serverIp,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{ensureUser,jdbcType=VARCHAR}, 
-      #{ensureTime,jdbcType=TIMESTAMP}, #{isValid,jdbcType=VARCHAR}, #{log,jdbcType=LONGVARCHAR}
-      )
+      #{ensureTime,jdbcType=TIMESTAMP}, #{isValid,jdbcType=VARCHAR}, #{pid,jdbcType=INTEGER}, 
+      #{serverId,jdbcType=INTEGER}, #{log,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.huawei.emergency.entity.EmergencyExecRecordDetail">
     <selectKey keyProperty="detailId" order="AFTER" resultType="java.lang.Integer">
@@ -187,6 +189,12 @@
       <if test="isValid != null">
         is_valid,
       </if>
+      <if test="pid != null">
+        pid,
+      </if>
+      <if test="serverId != null">
+        server_id,
+      </if>
       <if test="log != null">
         log,
       </if>
@@ -224,6 +232,12 @@
       </if>
       <if test="isValid != null">
         #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null">
+        #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="serverId != null">
+        #{serverId,jdbcType=INTEGER},
       </if>
       <if test="log != null">
         #{log,jdbcType=LONGVARCHAR},
@@ -275,6 +289,12 @@
       <if test="record.isValid != null">
         is_valid = #{record.isValid,jdbcType=VARCHAR},
       </if>
+      <if test="record.pid != null">
+        pid = #{record.pid,jdbcType=INTEGER},
+      </if>
+      <if test="record.serverId != null">
+        server_id = #{record.serverId,jdbcType=INTEGER},
+      </if>
       <if test="record.log != null">
         log = #{record.log,jdbcType=LONGVARCHAR},
       </if>
@@ -297,6 +317,8 @@
       ensure_user = #{record.ensureUser,jdbcType=VARCHAR},
       ensure_time = #{record.ensureTime,jdbcType=TIMESTAMP},
       is_valid = #{record.isValid,jdbcType=VARCHAR},
+      pid = #{record.pid,jdbcType=INTEGER},
+      server_id = #{record.serverId,jdbcType=INTEGER},
       log = #{record.log,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -315,7 +337,9 @@
       end_time = #{record.endTime,jdbcType=TIMESTAMP},
       ensure_user = #{record.ensureUser,jdbcType=VARCHAR},
       ensure_time = #{record.ensureTime,jdbcType=TIMESTAMP},
-      is_valid = #{record.isValid,jdbcType=VARCHAR}
+      is_valid = #{record.isValid,jdbcType=VARCHAR},
+      pid = #{record.pid,jdbcType=INTEGER},
+      server_id = #{record.serverId,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -356,6 +380,12 @@
       <if test="isValid != null">
         is_valid = #{isValid,jdbcType=VARCHAR},
       </if>
+      <if test="pid != null">
+        pid = #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="serverId != null">
+        server_id = #{serverId,jdbcType=INTEGER},
+      </if>
       <if test="log != null">
         log = #{log,jdbcType=LONGVARCHAR},
       </if>
@@ -375,6 +405,8 @@
       ensure_user = #{ensureUser,jdbcType=VARCHAR},
       ensure_time = #{ensureTime,jdbcType=TIMESTAMP},
       is_valid = #{isValid,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=INTEGER},
+      server_id = #{serverId,jdbcType=INTEGER},
       log = #{log,jdbcType=LONGVARCHAR}
     where detail_id = #{detailId,jdbcType=INTEGER}
   </update>
@@ -390,7 +422,9 @@
       end_time = #{endTime,jdbcType=TIMESTAMP},
       ensure_user = #{ensureUser,jdbcType=VARCHAR},
       ensure_time = #{ensureTime,jdbcType=TIMESTAMP},
-      is_valid = #{isValid,jdbcType=VARCHAR}
+      is_valid = #{isValid,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=INTEGER},
+      server_id = #{serverId,jdbcType=INTEGER}
     where detail_id = #{detailId,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -5,6 +5,7 @@
 package com.huawei.emergency.service.impl;
 
 import com.huawei.common.constant.RecordStatus;
+import com.huawei.common.constant.ValidEnum;
 import com.huawei.common.util.PasswordUtil;
 import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordDetail;
@@ -18,6 +19,7 @@ import com.huawei.script.exec.ExecResult;
 import com.huawei.script.exec.executor.ScriptExecInfo;
 import com.huawei.script.exec.executor.ScriptExecutor;
 import com.huawei.script.exec.log.DefaultLogCallBack;
+import com.huawei.script.exec.log.LogCallBack;
 import com.huawei.script.exec.log.LogMemoryStore;
 import com.huawei.script.exec.session.ServerInfo;
 
@@ -77,6 +79,9 @@ public class ExecRecordHandlerFactory {
     @Autowired
     private Map<String, ScriptExecutor> allScriptExecutors;
 
+    @Autowired
+    private LogCallBack logCallBack;
+
     @Resource(name = "passwordRestTemplate")
     private RestTemplate restTemplate;
 
@@ -121,13 +126,17 @@ public class ExecRecordHandlerFactory {
         return new ExecRecordHandler(currentRecord);
     }
 
+    public Runnable handleDetail(EmergencyExecRecordWithBLOBs record,EmergencyExecRecordDetail recordDetail) {
+        return new ExecRecordDetailHandler(record,recordDetail);
+    }
+
     /**
      * 脚本执行器
      *
      * @author y30010171
      * @since 2021-11-04
      **/
-    private class ExecRecordHandler implements Runnable {
+    public class ExecRecordHandler implements Runnable {
         private final EmergencyExecRecord currentRecord;
 
         ExecRecordHandler(EmergencyExecRecord currentRecord) {
@@ -162,7 +171,7 @@ public class ExecRecordHandlerFactory {
      * @author y30010171
      * @since 2021-11-04
      **/
-    private class ExecRecordDetailHandler implements Runnable {
+    public class ExecRecordDetailHandler implements Runnable {
         private final EmergencyExecRecordWithBLOBs record;
         private final EmergencyExecRecordDetail recordDetail;
 
@@ -193,7 +202,7 @@ public class ExecRecordHandlerFactory {
                     ScriptExecutor scriptExecutor = execInfo.getRemoteServerInfo() == null
                         ? allScriptExecutors.get("localScriptExecutor")
                         : allScriptExecutors.get("remoteScriptExecutor");
-                    execResult = scriptExecutor.execScript(execInfo, new DefaultLogCallBack(record.getRecordId()));
+                    execResult = scriptExecutor.execScript(execInfo, logCallBack);
                 }
             } catch (Exception e) {
                 execResult = ExecResult.fail(e.getMessage());
@@ -203,15 +212,18 @@ public class ExecRecordHandlerFactory {
                 EmergencyExecRecordDetailExample whenRunning = new EmergencyExecRecordDetailExample();
                 whenRunning.createCriteria()
                     .andDetailIdEqualTo(recordDetail.getDetailId())
-                    .andIsValidEqualTo("1")
+                    .andIsValidEqualTo(ValidEnum.VALID.getValue())
                     .andStatusEqualTo(RecordStatus.RUNNING.getValue());
                 updateRecordDetail.setEndTime(endTime);
                 updateRecordDetail.setLog(execResult.getMsg());
-                updateRecordDetail.setStatus(execResult.isSuccess() ? RecordStatus.SUCCESS.getValue() : RecordStatus.ENSURE_FAILED.getValue());
+                updateRecordDetail.setStatus(
+                    execResult.isSuccess() ? RecordStatus.SUCCESS.getValue() : RecordStatus.ENSURE_FAILED.getValue()
+                );
                 recordDetailMapper.updateByExampleSelective(updateRecordDetail, whenRunning); // 做个状态判断，防止人为取消 也被标记为执行成功
 
-                recordMapper.tryUpdateEndTime(updateRecord.getRecordId(), endTime);
+                recordMapper.tryUpdateEndTimeAndLog(updateRecord.getRecordId(), endTime,updateRecordDetail.getLog());
                 recordMapper.tryUpdateStatus(updateRecord.getRecordId());
+
 
                 // 清除实时日志的在内存中的日志残留
                 LogMemoryStore.removeLog(recordDetail.getDetailId());
@@ -228,7 +240,7 @@ public class ExecRecordHandlerFactory {
         }
     }
 
-    private ScriptExecInfo generateExecInfo(EmergencyExecRecordWithBLOBs record, EmergencyExecRecordDetail recordDetail) {
+    public ScriptExecInfo generateExecInfo(EmergencyExecRecordWithBLOBs record, EmergencyExecRecordDetail recordDetail) {
         ScriptExecInfo execInfo = new ScriptExecInfo();
         execInfo.setId(recordDetail.getDetailId());
         execInfo.setScriptName(record.getScriptName() + "-" + record.getRecordId());
@@ -248,7 +260,7 @@ public class ExecRecordHandlerFactory {
         return execInfo;
     }
 
-    private List<EmergencyExecRecordDetail> generateRecordDetail(EmergencyExecRecord record) {
+    public List<EmergencyExecRecordDetail> generateRecordDetail(EmergencyExecRecord record) {
         List<EmergencyExecRecordDetail> result = new ArrayList<>();
         if (StringUtils.isNotEmpty(record.getServerIp())) {
             String[] ipArr = record.getServerIp().split(",");
@@ -272,7 +284,7 @@ public class ExecRecordHandlerFactory {
         return result;
     }
 
-    private String parsePassword(String mode, String source) {
+    public String parsePassword(String mode, String source) {
         if ("0".equals(mode)) {
             try {
                 return passwordUtil.decodePassword(source);
@@ -284,12 +296,12 @@ public class ExecRecordHandlerFactory {
         return restTemplate.getForObject(source, String.class);
     }
 
-    private boolean isRecordFinished(int recordId) {
+    public boolean isRecordFinished(int recordId) {
         EmergencyExecRecordDetailExample isFinished = new EmergencyExecRecordDetailExample();
         isFinished.createCriteria()
             .andRecordIdEqualTo(recordId)
-            .andIsValidEqualTo("1")
-            .andStatusIn(Arrays.asList("0", "1", "3", "4"));
+            .andIsValidEqualTo(ValidEnum.VALID.getValue())
+            .andStatusIn(RecordStatus.HAS_RUNNING_STATUS);
         return recordDetailMapper.countByExample(isFinished) == 0;
     }
 }

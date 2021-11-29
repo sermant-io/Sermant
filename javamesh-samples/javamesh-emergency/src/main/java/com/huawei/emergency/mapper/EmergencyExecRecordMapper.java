@@ -38,11 +38,14 @@ public interface EmergencyExecRecordMapper {
 
     EmergencyExecRecordWithBLOBs selectByPrimaryKey(Integer recordId);
 
-    int updateByExampleSelective(@Param("record") EmergencyExecRecordWithBLOBs record, @Param("example") EmergencyExecRecordExample example);
+    int updateByExampleSelective(@Param("record") EmergencyExecRecordWithBLOBs record,
+                                 @Param("example") EmergencyExecRecordExample example);
 
-    int updateByExampleWithBLOBs(@Param("record") EmergencyExecRecordWithBLOBs record, @Param("example") EmergencyExecRecordExample example);
+    int updateByExampleWithBLOBs(@Param("record") EmergencyExecRecordWithBLOBs record,
+                                 @Param("example") EmergencyExecRecordExample example);
 
-    int updateByExample(@Param("record") EmergencyExecRecord record, @Param("example") EmergencyExecRecordExample example);
+    int updateByExample(@Param("record") EmergencyExecRecord record,
+                        @Param("example") EmergencyExecRecordExample example);
 
     int updateByPrimaryKeySelective(EmergencyExecRecordWithBLOBs record);
 
@@ -54,7 +57,7 @@ public interface EmergencyExecRecordMapper {
 
     int tryUpdateStartTime(@Param("recordId") Integer recordId, @Param("startTime") Date startTime);
 
-    int tryUpdateEndTime(@Param("recordId") Integer recordId, @Param("endTime") Date endTime);
+    int tryUpdateEndTimeAndLog(@Param("recordId") Integer recordId, @Param("endTime") Date endTime,@Param("log") String log);
 
     int tryUpdateStatus(Integer recordId);
 }

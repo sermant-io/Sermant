@@ -1,7 +1,17 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ */
+
 package com.huawei.emergency.entity;
 
 import java.util.Date;
 
+/**
+ * 执行记录
+ *
+ * @author y30010171
+ * @since 2021-11-15
+ **/
 public class EmergencyExec {
     private Integer execId;
 
@@ -22,6 +32,8 @@ public class EmergencyExec {
     private Date startTime;
 
     private Date endTime;
+
+    private Integer historyId; // 仅用于返回前端显示
 
     public Integer getExecId() {
         return execId;
@@ -102,8 +114,6 @@ public class EmergencyExec {
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
-
-    private Integer historyId;
 
     public Integer getHistoryId() {
         return historyId;

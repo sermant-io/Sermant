@@ -5,9 +5,11 @@
 package com.huawei.emergency.schedule.thread;
 
 import com.huawei.common.constant.ScheduleType;
+import com.huawei.common.constant.ValidEnum;
 import com.huawei.emergency.entity.EmergencyPlan;
 import com.huawei.emergency.entity.EmergencyPlanExample;
 import com.huawei.emergency.mapper.EmergencyPlanMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,24 +22,29 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 /**
+ * 任务调度器，以预案为单位
+ *
  * @author y30010171
  * @since 2021-11-19
  **/
 @Component
 public class TaskScheduleCenter {
+    /**
+     * 预读时间
+     */
     public static final long PRE_READ = 5000L;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskScheduleCenter.class);
     private static final String SCHEDULE_THREAD_NAME = "task-schedule";
     private static final String CONSUMER_THREAD_NAME = "task-consumer";
 
-    private volatile static Map<Integer, List<Integer>> scheduledPlans = new ConcurrentHashMap<>();
+    private static volatile Map<Integer, List<Integer>> scheduledPlans = new ConcurrentHashMap<>();
 
     private volatile boolean isScheduleStop = false;
     private Thread scheduleThread;
@@ -45,10 +52,10 @@ public class TaskScheduleCenter {
     private volatile boolean isConsumeStop = false;
 
     @Autowired
-    EmergencyPlanMapper planMapper;
+    private EmergencyPlanMapper planMapper;
 
     @Autowired
-    TaskTrigger trigger;
+    private TaskTrigger trigger;
 
     public TaskScheduleCenter() {
         scheduleThread = new Thread(() -> {
@@ -66,8 +73,8 @@ public class TaskScheduleCenter {
                 try {
                     EmergencyPlanExample needScheduled = new EmergencyPlanExample();
                     needScheduled.createCriteria()
-                        .andIsValidEqualTo("1")
-                        .andScheduleStatusEqualTo("1")
+                        .andIsValidEqualTo(ValidEnum.VALID.getValue())
+                        .andScheduleStatusEqualTo(ValidEnum.VALID.getValue())
                         .andTriggerNextTimeLessThan(now + PRE_READ);
                     scheduledPlans = planMapper.selectByExample(needScheduled);
                     scheduledPlans.forEach(plan -> {
@@ -75,14 +82,10 @@ public class TaskScheduleCenter {
                             LOGGER.warn("plan {} is misfire.", plan.getPlanId());
 
                             // todo misFire
-
-
                             refreshNextTriggerTime(plan, new Date());
-
                         } else if (now > plan.getTriggerNextTime()) { // 触发时间在的前五秒内
                             // 触发一次
                             trigger.trigger(plan.getPlanId());
-
                             refreshNextTriggerTime(plan, new Date(plan.getTriggerNextTime()));
 
                             // 下次触发时间，还处于预读区间
@@ -114,11 +117,9 @@ public class TaskScheduleCenter {
             LOGGER.info("The {} stop.", SCHEDULE_THREAD_NAME);
         }, SCHEDULE_THREAD_NAME);
         scheduleThread.setDaemon(true);
-
         consumeScheduleThread = new Thread(() -> {
             LOGGER.info("The {} is running now.", CONSUMER_THREAD_NAME);
             while (!isConsumeStop) {
-
                 try {
                     TimeUnit.MILLISECONDS.sleep(1000 - System.currentTimeMillis() % 1000);
                 } catch (InterruptedException e) {
@@ -126,7 +127,6 @@ public class TaskScheduleCenter {
                         LOGGER.error(e.getMessage(), e);
                     }
                 }
-
                 try {
                     List<Integer> plans = new ArrayList<>();
                     int nowSecond = Calendar.getInstance().get(Calendar.SECOND);
@@ -217,7 +217,7 @@ public class TaskScheduleCenter {
             updatePlan.setTriggerLastTime(updatePlan.getTriggerNextTime());
             updatePlan.setTriggerNextTime(nextTriggerDate.getTime());
         } else {
-            updatePlan.setScheduleStatus("0");
+            updatePlan.setScheduleStatus(ValidEnum.IN_VALID.getValue());
             updatePlan.setTriggerLastTime(0L);
             updatePlan.setTriggerNextTime(0L);
         }
@@ -234,7 +234,7 @@ public class TaskScheduleCenter {
             return cronSequenceGenerator.next(from);
         } else if (ScheduleType.FIX_DATE == scheduleType) {
             return new Date(from.getTime() + Integer.valueOf(plan.getScheduleConf()) * 1000);
-        } else if (ScheduleType.ONCE == scheduleType){
+        } else if (ScheduleType.ONCE == scheduleType) {
             return from;
         }
         return null;

@@ -1,9 +1,19 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ */
+
 package com.huawei.emergency.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 预案与任务的拓扑关系
+ *
+ * @author y30010171
+ * @since 2021-11-15
+ **/
 public class EmergencyPlanDetailExample {
     protected String orderByClause;
 

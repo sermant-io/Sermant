@@ -7,7 +7,9 @@ package com.huawei.emergency.service.impl;
 import com.huawei.common.api.CommonPage;
 import com.huawei.common.api.CommonResult;
 import com.huawei.common.constant.PlanStatus;
+import com.huawei.common.constant.RecordStatus;
 import com.huawei.common.constant.ScheduleType;
+import com.huawei.common.constant.ValidEnum;
 import com.huawei.emergency.dto.PlanQueryDto;
 import com.huawei.emergency.dto.PlanQueryParams;
 import com.huawei.emergency.dto.SceneExecDto;
@@ -25,6 +27,7 @@ import com.huawei.emergency.mapper.EmergencyExecMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
 import com.huawei.emergency.mapper.EmergencyPlanDetailMapper;
 import com.huawei.emergency.mapper.EmergencyPlanMapper;
+import com.huawei.emergency.mapper.EmergencyTaskMapper;
 import com.huawei.emergency.schedule.thread.TaskScheduleCenter;
 import com.huawei.emergency.service.EmergencyPlanService;
 import com.huawei.emergency.service.EmergencyTaskService;
@@ -39,16 +42,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.annotation.Resource;
+
+import static com.huawei.common.constant.PlanStatus.UN_PASSED_STATUS;
 
 /**
  * 预案管理接口的实现类
@@ -74,6 +78,9 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     private EmergencyExecMapper execMapper;
 
     @Autowired
+    private EmergencyTaskMapper taskMapper;
+
+    @Autowired
     private EmergencyExecRecordMapper execRecordMapper;
 
     @Autowired
@@ -84,9 +91,6 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
 
     @Autowired
     private TaskScheduleCenter scheduleCenter;
-
-    @Resource(name = "passwordRestTemplate")
-    private RestTemplate restTemplate;
 
     @Override
     public CommonResult add(EmergencyPlan emergencyPlan) {
@@ -100,11 +104,11 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         insertPlan.setStatus(PlanStatus.NEW.getValue());
         planMapper.insertSelective(insertPlan);
 
-        EmergencyPlan updatePlanNO = new EmergencyPlan();
-        updatePlanNO.setPlanId(insertPlan.getPlanId());
-        updatePlanNO.setPlanNo(String.format("%s%s%04d", "P", LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE), insertPlan.getPlanId()));
-        planMapper.updateByPrimaryKeySelective(updatePlanNO);
-        insertPlan.setPlanNo(updatePlanNO.getPlanNo());
+        EmergencyPlan updatePlanNo = new EmergencyPlan();
+        updatePlanNo.setPlanId(insertPlan.getPlanId());
+        updatePlanNo.setPlanNo(generatePlanNo(insertPlan.getPlanId()));
+        planMapper.updateByPrimaryKeySelective(updatePlanNo);
+        insertPlan.setPlanNo(updatePlanNo.getPlanNo());
         return CommonResult.success(insertPlan);
     }
 
@@ -120,14 +124,14 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         }
 
         EmergencyPlan updatePlan = new EmergencyPlan();
-        updatePlan.setIsValid("0");
+        updatePlan.setIsValid(ValidEnum.IN_VALID.getValue());
         updatePlan.setPlanId(emergencyPlan.getPlanId());
         if (planMapper.updateByPrimaryKeySelective(updatePlan) == 0) {
             return CommonResult.failed("请选择正确的预案");
         }
 
         EmergencyPlanDetail updatePlanDetail = new EmergencyPlanDetail();
-        updatePlanDetail.setIsValid("0");
+        updatePlanDetail.setIsValid(ValidEnum.IN_VALID.getValue());
         EmergencyPlanDetailExample updatePlanDetailCondition = new EmergencyPlanDetailExample();
         updatePlanDetailCondition.createCriteria().andPlanIdEqualTo(emergencyPlan.getPlanId());
         detailMapper.updateByExampleSelective(updatePlanDetail, updatePlanDetailCondition);
@@ -202,23 +206,26 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             return CommonResult.failed("请选择正确的预案");
         }
         EmergencyPlan planInfo = planMapper.selectByPrimaryKey(plan.getPlanId());
-        if (planInfo == null || "0".equals(planInfo.getIsValid())) {
+        if (planInfo == null || ValidEnum.IN_VALID.getValue().equals(planInfo.getIsValid())) {
             return CommonResult.failed("请选择正确的预案");
         }
-        ScheduleType scheduleType = ScheduleType.match(plan.getScheduleType(),null);
-        if (scheduleType == null){
+        if (UN_PASSED_STATUS.contains(planInfo.getStatus())){
+            return CommonResult.failed("请选择已审核通过的预案");
+        }
+        ScheduleType scheduleType = ScheduleType.match(plan.getScheduleType(), null);
+        if (scheduleType == null) {
             return CommonResult.failed("");
         }
-        if (scheduleType == ScheduleType.NONE){
-            return exec(plan.getPlanId(),userName);
+        if (scheduleType == ScheduleType.NONE) {
+            return exec(plan.getPlanId(), userName);
         }
-        if (scheduleType == ScheduleType.CORN){
-            if (StringUtils.isEmpty(plan.getScheduleConf()) || !CronSequenceGenerator.isValidExpression(plan.getScheduleConf())){
+        if (scheduleType == ScheduleType.CORN) {
+            if (StringUtils.isEmpty(plan.getScheduleConf()) || !CronSequenceGenerator.isValidExpression(plan.getScheduleConf())) {
                 return CommonResult.failed("corn表达式不合法");
             }
         }
-        if (scheduleType == ScheduleType.FIX_DATE){
-            if (StringUtils.isEmpty(plan.getScheduleConf())){
+        if (scheduleType == ScheduleType.FIX_DATE) {
+            if (StringUtils.isEmpty(plan.getScheduleConf())) {
                 return CommonResult.failed("请设置间隔时间");
             }
             try {
@@ -226,24 +233,27 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
                 if (fixSecond < 1) {
                     return CommonResult.failed("请设置间隔时间大于1s");
                 }
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return CommonResult.failed("请设置间隔时间为数字");
             }
         }
-        if (scheduleType == ScheduleType.ONCE){
+        if (scheduleType == ScheduleType.ONCE) {
             try {
                 long nextTriggerTime = Long.valueOf(plan.getScheduleConf());
-                if (System.currentTimeMillis() > nextTriggerTime){
+                if (System.currentTimeMillis() > nextTriggerTime) {
                     return CommonResult.failed("请设置正确的执行时间");
                 }
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return CommonResult.failed("请设置正确的执行时间");
             }
         }
         Date nextTriggerTime = scheduleCenter.generateNextTriggerTime(plan, new Date(System.currentTimeMillis() + TaskScheduleCenter.PRE_READ));
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setPlanId(plan.getPlanId());
-        updatePlan.setScheduleStatus("1");
+        updatePlan.setStatus(PlanStatus.SCHEDULED.getValue());
+        updatePlan.setScheduleStatus(ValidEnum.VALID.getValue());
+        updatePlan.setScheduleConf(plan.getScheduleConf());
+        updatePlan.setScheduleType(scheduleType.getValue());
         updatePlan.setTriggerLastTime(0L);
         updatePlan.setTriggerNextTime(nextTriggerTime.getTime());
         return CommonResult.success();
@@ -252,12 +262,13 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     @Override
     public CommonResult stop(int planId, String userName) {
         EmergencyPlan plan = planMapper.selectByPrimaryKey(planId);
-        if (plan == null || "0".equals(plan.getIsValid())) {
+        if (plan == null || ValidEnum.IN_VALID.getValue().equals(plan.getIsValid())) {
             return CommonResult.failed("请选择正确的预案");
         }
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setPlanId(planId);
-        updatePlan.setScheduleStatus("0");
+        updatePlan.setScheduleStatus(ValidEnum.IN_VALID.getValue());
+        updatePlan.setStatus(PlanStatus.APPROVED.getValue());
         planMapper.updateByPrimaryKeySelective(updatePlan);
         return CommonResult.success();
     }
@@ -410,13 +421,15 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         planMapper.updateByPrimaryKeySelective(updatePlan);
 
         EmergencyPlanDetail oldDetails = new EmergencyPlanDetail();
-        oldDetails.setIsValid("0");
+        oldDetails.setIsValid(ValidEnum.IN_VALID.getValue());
         EmergencyPlanDetailExample updateCondition = new EmergencyPlanDetailExample();
         updateCondition.createCriteria().andPlanIdEqualTo(planId);
         detailMapper.updateByExampleSelective(oldDetails, updateCondition);
 
+        String planNO = generatePlanNo(planId);
         Integer preSceneId = null;
-        for (TaskNode scene : listNodes) {
+        for (int i = 0; i < listNodes.size(); i++) {
+            TaskNode scene = listNodes.get(i);
             if (!taskService.isTaskExist(scene.getKey())) {
                 continue;
             }
@@ -433,7 +446,11 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
                 insertDetail.setSync("异步");
             }
             detailMapper.insertSelective(insertDetail);
-            handleChildren(insertDetail, scene.getChildren());
+            EmergencyTask updateScene = new EmergencyTask();
+            updateScene.setTaskId(scene.getKey());
+            updateScene.setTaskNo(generateSceneNo(planNO, i + 1));
+            taskMapper.updateByPrimaryKeySelective(updateScene);
+            handleChildren(insertDetail, scene.getChildren(), updateScene.getTaskNo(), false);
         }
         return CommonResult.success();
     }
@@ -458,16 +475,19 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     /**
      * 生成子任务
      *
-     * @param planDetail
-     * @param childrenNode
+     * @param planDetail 父任务信息
+     * @param childrenNode 子任务信息
+     * @param parentNo 父任务编号
+     * @param isSubTask 是否为子任务
      * @return
      */
-    private void handleChildren(EmergencyPlanDetail planDetail, List<TaskNode> childrenNode) {
+    private void handleChildren(EmergencyPlanDetail planDetail, List<TaskNode> childrenNode, String parentNo, boolean isSubTask) {
         Integer preTaskId = null;
         if (childrenNode == null) {
             return;
         }
-        for (TaskNode task : childrenNode) {
+        for (int i = 0; i < childrenNode.size(); i++) {
+            TaskNode task = childrenNode.get(i);
             // 任务是否存在
             if (!taskService.isTaskExist(task.getKey())) {
                 continue;
@@ -487,7 +507,15 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             }
             insertTaskDetail.setCreateUser(planDetail.getCreateUser());
             detailMapper.insertSelective(insertTaskDetail);
-            handleChildren(insertTaskDetail, task.getChildren());
+            EmergencyTask updateTask = new EmergencyTask();
+            updateTask.setTaskId(task.getKey());
+            if (isSubTask){
+                updateTask.setTaskNo(generateSubTaskNo(parentNo, i + 1));
+            } else {
+                updateTask.setTaskNo(generateTaskNo(parentNo, i + 1));
+            }
+            taskMapper.updateByPrimaryKeySelective(updateTask);
+            handleChildren(insertTaskDetail, task.getChildren(), updateTask.getTaskNo(), true);
         }
     }
 
@@ -518,8 +546,9 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     private boolean haveRunning(int planId) {
         EmergencyExecRecordExample isRunningCondition = new EmergencyExecRecordExample();
         isRunningCondition.createCriteria()
-            .andStatusLessThan("2")
-            .andPlanIdEqualTo(planId);
+            .andStatusIn(RecordStatus.HAS_RUNNING_STATUS)
+            .andPlanIdEqualTo(planId)
+            .andIsValidEqualTo(ValidEnum.VALID.getValue());
         return execRecordMapper.countByExample(isRunningCondition) > 0;
     }
 
@@ -532,9 +561,25 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     private boolean havePass(int planId) {
         EmergencyPlanExample havePassCondition = new EmergencyPlanExample();
         havePassCondition.createCriteria()
-            .andStatusNotIn(PlanStatus.UN_PASSED_STATUS)
-            .andIsValidEqualTo("1")
+            .andStatusNotIn(UN_PASSED_STATUS)
+            .andIsValidEqualTo(ValidEnum.VALID.getValue())
             .andPlanIdEqualTo(planId);
         return planMapper.countByExample(havePassCondition) > 0;
+    }
+
+    public String generatePlanNo(int planId) {
+        return String.format(Locale.ROOT, "P%06d", planId);
+    }
+
+    public String generateSceneNo(String planNo, int index) {
+        return String.format(Locale.ROOT, "%sS%02d", planNo, index);
+    }
+
+    public String generateTaskNo(String sceneNo, int index) {
+        return String.format(Locale.ROOT, "%sT%02d", sceneNo, index);
+    }
+
+    public String generateSubTaskNo(String taskNo, int index) {
+        return String.format(Locale.ROOT, "%sC%02d", taskNo, index);
     }
 }

@@ -66,7 +66,7 @@ public class ServerSessionFactory {
      * @throws JSchException
      */
     public Session getSession(ServerInfo serverInfo) throws JSchException {
-        Session session = sessionCache.computeIfAbsent(serverInfo, (info) -> {
+        Session session = sessionCache.computeIfAbsent(serverInfo, info -> {
             try {
                 return createSession(info);
             } catch (JSchException e) {

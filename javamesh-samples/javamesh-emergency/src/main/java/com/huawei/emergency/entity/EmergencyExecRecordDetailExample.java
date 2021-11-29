@@ -874,6 +874,126 @@ public class EmergencyExecRecordDetailExample {
             addCriterion("is_valid not between", value1, value2, "isValid");
             return (Criteria) this;
         }
+
+        public Criteria andPidIsNull() {
+            addCriterion("pid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidIsNotNull() {
+            addCriterion("pid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidEqualTo(Integer value) {
+            addCriterion("pid =", value, "pid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidNotEqualTo(Integer value) {
+            addCriterion("pid <>", value, "pid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidGreaterThan(Integer value) {
+            addCriterion("pid >", value, "pid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidGreaterThanOrEqualTo(Integer value) {
+            addCriterion("pid >=", value, "pid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidLessThan(Integer value) {
+            addCriterion("pid <", value, "pid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidLessThanOrEqualTo(Integer value) {
+            addCriterion("pid <=", value, "pid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidIn(List<Integer> values) {
+            addCriterion("pid in", values, "pid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidNotIn(List<Integer> values) {
+            addCriterion("pid not in", values, "pid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidBetween(Integer value1, Integer value2) {
+            addCriterion("pid between", value1, value2, "pid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidNotBetween(Integer value1, Integer value2) {
+            addCriterion("pid not between", value1, value2, "pid");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdIsNull() {
+            addCriterion("server_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdIsNotNull() {
+            addCriterion("server_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdEqualTo(Integer value) {
+            addCriterion("server_id =", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdNotEqualTo(Integer value) {
+            addCriterion("server_id <>", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdGreaterThan(Integer value) {
+            addCriterion("server_id >", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("server_id >=", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdLessThan(Integer value) {
+            addCriterion("server_id <", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdLessThanOrEqualTo(Integer value) {
+            addCriterion("server_id <=", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdIn(List<Integer> values) {
+            addCriterion("server_id in", values, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdNotIn(List<Integer> values) {
+            addCriterion("server_id not in", values, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdBetween(Integer value1, Integer value2) {
+            addCriterion("server_id between", value1, value2, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("server_id not between", value1, value2, "serverId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
