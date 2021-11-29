@@ -9,11 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>server-monitor-service</artifactId>
+    <artifactId>databasepeer-parse-service</artifactId>
 
     <properties>
         <package.sample.type>service</package.sample.type>
-        <config.skip.flag>false</config.skip.flag>
     </properties>
 
     <dependencies>
@@ -24,24 +23,16 @@
         </dependency>
         <dependency>
             <groupId>com.huawei.javamesh</groupId>
-            <artifactId>protocol</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.huawei.javamesh</groupId>
             <artifactId>monitor-common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.skywalking</groupId>
-            <artifactId>apm-agent-core</artifactId>
+            <artifactId>apm-jdbc-commons</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>org.apache.skywalking</groupId>
+            <artifactId>apm-network</artifactId>
         </dependency>
     </dependencies>
 
@@ -58,10 +49,6 @@
                         <configuration>
                             <relocations>
                                 <relocation>
-                                    <pattern>org.apache.commons.io</pattern>
-                                    <shadedPattern>${shade.distinct.prefix}.org.apache.commons.io</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>org.apache.skywalking.apm</pattern>
                                     <shadedPattern>${shade.distinct.prefix}.org.apache.skywalking.apm</shadedPattern>
                                 </relocation>
@@ -75,5 +62,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

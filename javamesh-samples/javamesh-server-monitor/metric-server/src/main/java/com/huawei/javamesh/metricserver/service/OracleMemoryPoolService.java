@@ -41,9 +41,10 @@ public class OracleMemoryPoolService extends InfluxService {
 
     /**
      * 查询{@link OracleMemoryPoolDTO}实体列表
-     * @param type Memory Pool类型
+     *
+     * @param type  Memory Pool类型
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return @link OracleMemoryPoolDTO}实体列表
      */
     public List<OracleMemoryPoolDTO> getMemoryPools(OracleMemoryPoolDTO.OraclePoolType type, String start, String end) {

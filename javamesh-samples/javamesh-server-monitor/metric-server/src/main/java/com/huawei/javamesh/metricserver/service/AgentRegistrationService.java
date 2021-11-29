@@ -67,7 +67,7 @@ public class AgentRegistrationService {
     /**
      * 查询指定service和serviceInstance的{@link AgentRegistrationDTO}
      *
-     * @param service 服务
+     * @param service         服务
      * @param serviceInstance 服务实例
      * @return {@link AgentRegistrationDTO}实体
      */

@@ -5,11 +5,11 @@
 package com.huawei.javamesh.sample.connection.pool.collect.collector;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.huawei.apm.core.util.StringUtils;
+import com.huawei.apm.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.apm.core.plugin.service.PluginServiceManager;
+import com.huawei.javamesh.sample.monitor.common.service.DatabasePeerParseService;
 import com.huawei.javamesh.sample.servermonitor.entity.ConnectionPool;
 import com.huawei.javamesh.sample.servermonitor.entity.DataSourceBean;
-import org.apache.skywalking.apm.plugin.jdbc.connectionurl.parser.URLParser;
-import org.apache.skywalking.apm.plugin.jdbc.trace.ConnectionInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,8 +29,10 @@ public class DruidMetricCollector {
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
     private final ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
+    private final DatabasePeerParseService databasePeerParseService;
 
     private DruidMetricCollector() {
+        databasePeerParseService = PluginServiceManager.getPluginService(DatabasePeerParseService.class);
     }
 
     public static DruidMetricCollector getInstance() {
@@ -99,17 +101,6 @@ public class DruidMetricCollector {
     }
 
     private String getDatabasePeer(DruidDataSource dataSource) {
-        String url = dataSource.getUrl();
-        if (StringUtils.isBlank(url)) {
-            return null;
-        }
-        ConnectionInfo connectionInfo;
-        try {
-            connectionInfo = URLParser.parser(url);
-        } catch (Exception e) {
-            // URLParser 有空指针异常BUG
-            return null;
-        }
-        return connectionInfo == null ? null : connectionInfo.getDatabasePeer();
+        return databasePeerParseService.parse(dataSource.getUrl());
     }
 }

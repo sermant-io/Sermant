@@ -25,8 +25,9 @@ public class CommonService {
 
     /**
      * 删除指定时间段的数据，谨慎使用
+     *
      * @param start 开始时间
-     * @param stop 结束时间
+     * @param stop  结束时间
      */
     public void delete(OffsetDateTime start, OffsetDateTime stop) {
         influxDao.delete(start, stop);

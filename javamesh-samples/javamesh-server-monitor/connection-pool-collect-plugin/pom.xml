@@ -12,6 +12,7 @@
     <artifactId>connection-pool-collect-plugin</artifactId>
 
     <properties>
+        <package.sample.type>plugin</package.sample.type>
         <druid.version>1.2.5</druid.version>
     </properties>
 
@@ -36,16 +37,19 @@
             <version>${druid.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.skywalking</groupId>
-            <artifactId>apm-jdbc-commons</artifactId>
-            <version>8.1.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <configuration>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    </transformers>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

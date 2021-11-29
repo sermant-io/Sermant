@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *  IbmJvmMetric kafka接收处理类
+ * IbmJvmMetric kafka接收处理类
  */
 @Component
 public class IbmJvmMonitorKafkaReceiver {

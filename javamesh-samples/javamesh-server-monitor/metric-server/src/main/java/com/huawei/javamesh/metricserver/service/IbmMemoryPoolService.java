@@ -35,6 +35,7 @@ public class IbmMemoryPoolService extends InfluxService {
 
     /**
      * 批量添加IBM Pool
+     *
      * @param memoryPools 待添加{@link IbmMemoryPoolDTO}列表
      */
     public void batchAddMemoryPools(List<IbmMemoryPoolDTO> memoryPools) {
@@ -45,9 +46,10 @@ public class IbmMemoryPoolService extends InfluxService {
 
     /**
      * 查询指定时间段内的{@link IbmMemoryPoolDTO}
-     * @param type 类型
+     *
+     * @param type  类型
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return {@link IbmMemoryPoolDTO}实体List
      */
     public List<IbmMemoryPoolDTO> getMemoryPools(IbmPoolType type, String start, String end) {

@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class DruidMetricProvider implements MetricProvider<ConnectionPool> {
 
-    private static final int GATEWAY_DATA_TYPE = 8;
+    private static final int GATEWAY_DATA_TYPE = 10;
 
     private final DruidMetricCollector metricCollector;
     private final GatewayClient gatewayClient;

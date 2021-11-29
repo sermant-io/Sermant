@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.stream.Collectors;
 
 /**
- *  Agent注册信息 kafka接收处理类
+ * Agent注册信息 kafka接收处理类
  */
 @Component
 public class AgentRegistrationKafkaReceiver {

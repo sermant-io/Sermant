@@ -58,7 +58,7 @@ public class SkywalkingJvmMetricService extends InfluxService {
      * 查询指定时间段内的{@link CpuDTO}实体列表
      *
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return {@link CpuDTO}实体列表
      */
     public List<CpuDTO> getCpuMetrics(String start, String end) {
@@ -75,7 +75,7 @@ public class SkywalkingJvmMetricService extends InfluxService {
      * 查询指定时间段内的{@link ThreadDTO}实体列表
      *
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return {@link ThreadDTO}实体列表
      */
     public List<ThreadDTO> getThreadMetrics(String start, String end) {
@@ -94,7 +94,7 @@ public class SkywalkingJvmMetricService extends InfluxService {
      * 查询指定时间段内的{@link GcDTO}实体列表
      *
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return {@link GcDTO}实体列表
      */
     public List<GcDTO> getGcMetrics(String start, String end, GcDTO.GcType type) {

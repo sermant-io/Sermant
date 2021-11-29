@@ -10,6 +10,8 @@ import com.influxdb.annotations.Measurement;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,10 +40,27 @@ public abstract class InfluxService {
     }
 
     protected <M> List<M> query(String start, String end, Class<M> metricClass) {
+        return query(start, end, Collections.emptyMap(), metricClass);
+    }
+
+    protected <M> List<M> queryByService(String start, String end, String service, Class<M> metricClass) {
+        return query(start, end, Collections.singletonMap(TAG_SERVICE, service), metricClass);
+    }
+
+    protected <M> List<M> queryByServiceInstance(String start, String end, String service,
+                                                 String serviceInstance, Class<M> metricClass) {
+        Map<String, String> tags = new HashMap<>();
+        tags.put(TAG_SERVICE, service);
+        tags.put(TAG_SERVICE_INSTANCE, serviceInstance);
+        return query(start, end, tags, metricClass);
+    }
+
+    protected <M> List<M> query(String start, String end, Map<String, String> tags, Class<M> metricClass) {
         final InfluxQueryRequest request = InfluxQueryRequest.builder()
             .measurement(resolveMeasurement(metricClass))
             .start(start)
             .end(end)
+            .tags(tags)
             .build();
         return influxDao.query(request, metricClass);
     }
