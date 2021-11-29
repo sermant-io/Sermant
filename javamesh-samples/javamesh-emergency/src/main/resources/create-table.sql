@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `emergency_plan`  (
                                    `check_user` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '审核人',
                                    `check_time` timestamp NULL DEFAULT NULL COMMENT '审核时间',
                                    `check_remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '审核意见',
-                                   `check_result` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '审核结果 0 待审核 1 审核中 2 审核通过 3驳回',
+                                   `status` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '状态位 0 新增 1 待审核 2 已审核 3拒绝 4 运行中 5 运行成功 6 运行失败',
                                    `schedule_type` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '调度类型 0 仅触发一次 1 固定间隔 2 cron表达式',
                                    `schedule_conf` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '调度配置（cron表达式 固定间隔 时间点）',
                                    `schedule_status` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '调度状态 0停止调度 1开始调度',
