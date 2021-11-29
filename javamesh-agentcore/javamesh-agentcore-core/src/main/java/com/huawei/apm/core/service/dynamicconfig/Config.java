@@ -68,7 +68,6 @@ public class Config implements BaseConfig {
         this.dynamic_config_type = dynamicConfigType;
     }
 
-
     protected int timeout_value = 30000;
 
     protected String default_group = "java-mesh";
@@ -77,4 +76,29 @@ public class Config implements BaseConfig {
 
     protected DynamicConfigType dynamic_config_type = DynamicConfigType.ZOO_KEEPER; //DynamicConfigType.ZOO_KEEPER;
 
+    /**
+     * kie配置地址
+     */
+    protected String kie_url = "http://127.0.0.1:30110";
+
+    /**
+     * 默认kie的命名空间
+     */
+    protected String project = "default";
+
+    public String getKie_url() {
+        return kie_url;
+    }
+
+    public void setKie_url(String kie_url) {
+        this.kie_url = kie_url;
+    }
+
+    public String getProject() {
+        return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
+    }
 }

@@ -21,36 +21,43 @@ import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
 import com.alibaba.csp.sentinel.util.AppNameUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.huawei.apm.core.plugin.config.PluginConfigManager;
+import com.huawei.apm.core.service.dynamicconfig.Config;
 import com.huawei.flowcontrol.core.config.CommonConst;
 import com.huawei.flowcontrol.core.config.ConfigConst;
+import com.huawei.flowcontrol.core.config.FlowControlConfig;
 import com.huawei.flowcontrol.core.datasource.DataSourceManager;
 import com.huawei.flowcontrol.core.util.PluginConfigUtil;
 import com.huawei.flowcontrol.core.util.RedisRuleUtil;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 加载流控规则
+ * zookeeper流控规则加载
+ * <h3>|保留用于适配原生的zookeeper路径|</h3>
  *
  * @author liyi
  * @since 2020-08-26
  */
 public class ZookeeperDatasourceManager implements DataSourceManager {
+    private final List<ZookeeperCoreDataSource<?>> dataSources = new ArrayList<ZookeeperCoreDataSource<?>>();
+
     /**
      * 初始化规则
      */
     @Override
-    public void initRules() {
+    public void start() {
         try {
             RecordLog.info("initRules begin....");
-            String remoteAddress = PluginConfigUtil.getValueByKey(ConfigConst.SENTINEL_ZOOKEEPER_ADDRESS);
-            String rootPath = fixRootPath(PluginConfigUtil.getValueByKey(ConfigConst.SENTINEL_ZOOKEEPER_PATH));
+            String rootPath = fixRootPath(PluginConfigUtil.getValueByKey(ConfigConst.ZOOKEEPER_PATH));
             String appName = AppNameUtil.getAppName();
-            loadFlowRule(remoteAddress, rootPath, appName);
-            loadDegradeRule(remoteAddress, rootPath, appName);
-            loadSystemRule(remoteAddress, rootPath, appName);
-            loadAuthorityRule(remoteAddress, rootPath, appName);
+            String group = getGroupId(rootPath, appName);
+            initFlowRule(group);
+            initDegradeRule(group);
+            initAuthorityRule(group);
+            initSystemRule(group);
             RecordLog.info("initRules end");
         } catch (SentinelRpcException e) {
             RecordLog.error("[BootInterceptor] initRules loading failed=" + e);
@@ -59,6 +66,63 @@ public class ZookeeperDatasourceManager implements DataSourceManager {
                 // 判断后执行加载redis配置文件
                 RedisRuleUtil.loadRules();
             }
+        }
+    }
+
+    @Override
+    public void stop() {
+        for (ZookeeperCoreDataSource<?> dataSource : dataSources) {
+            dataSource.removeListener();
+        }
+    }
+
+    private void initFlowRule(String group) {
+        // 流控
+        final ZookeeperCoreDataSource<FlowRule> flowRuleZookeeperCoreDataSource =
+                new ZookeeperCoreDataSource<FlowRule>(CommonConst.SLASH_SIGN + CommonConst.SENTINEL_RULE_FLOW, group, FlowRule.class);
+        FlowRuleManager.register2Property(flowRuleZookeeperCoreDataSource.getProperty());
+        dataSources.add(flowRuleZookeeperCoreDataSource);
+    }
+
+    private void initDegradeRule(String group) {
+        // 熔断
+        final ZookeeperCoreDataSource<DegradeRule> degradeRuleZookeeperCoreDataSource =
+                new ZookeeperCoreDataSource<DegradeRule>(CommonConst.SLASH_SIGN + CommonConst.SENTINEL_RULE_DEGRADE, group, DegradeRule.class);
+        DegradeRuleManager.register2Property(degradeRuleZookeeperCoreDataSource.getProperty());
+        dataSources.add(degradeRuleZookeeperCoreDataSource);
+    }
+
+    private void initSystemRule(String group) {
+        // 系统
+        final ZookeeperCoreDataSource<SystemRule> systemRuleZookeeperCoreDataSource =
+                new ZookeeperCoreDataSource<SystemRule>(CommonConst.SLASH_SIGN + CommonConst.SENTINEL_RULE_SYSTEM, group, SystemRule.class);
+        SystemRuleManager.register2Property(systemRuleZookeeperCoreDataSource.getProperty());
+        dataSources.add(systemRuleZookeeperCoreDataSource);
+    }
+
+    private void initAuthorityRule(String group) {
+        // 授权
+        final ZookeeperCoreDataSource<AuthorityRule> authorityRuleZookeeperCoreDataSource =
+                new ZookeeperCoreDataSource<AuthorityRule>(CommonConst.SLASH_SIGN + CommonConst.SENTINEL_RULE_AUTHORITY, group, AuthorityRule.class);
+        AuthorityRuleManager.register2Property(authorityRuleZookeeperCoreDataSource.getProperty());
+        dataSources.add(authorityRuleZookeeperCoreDataSource);
+    }
+
+    private String getZookeeperAddress() {
+        final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
+        if (pluginConfig.isUseSelfUrl()) {
+            return PluginConfigUtil.getValueByKey(ConfigConst.ZOOKEEPER_ADDRESS);
+        } else {
+            return convertAddress(Config.getZookeeperUri());
+        }
+    }
+
+    private String convertAddress(String uri) {
+        String prefix = "zookeeper://";
+        if (uri == null || !uri.startsWith(prefix)) {
+            return CommonConst.DEFAULT_ZOOKEEPER_ADDRESS;
+        } else {
+            return uri.substring(prefix.length() + 1);
         }
     }
 

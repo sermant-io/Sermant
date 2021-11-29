@@ -19,12 +19,12 @@ public class ConfigConst {
     /**
      * sentinel配置参数 流控规则zookeeper地址
      */
-    public static final String SENTINEL_ZOOKEEPER_ADDRESS = "sentinel.zookeeper.address";
+    public static final String ZOOKEEPER_ADDRESS = "flowcontrol.zookeeper.address";
 
     /**
      * sentinel配置参数 zookeeper流控规则配置路径
      */
-    public static final String SENTINEL_ZOOKEEPER_PATH = "sentinel.zookeeper.path";
+    public static final String ZOOKEEPER_PATH = "flowcontrol.zookeeper.path";
 
     /**
      * sentinel配置参数 心跳发送默认间隔时间，单位毫秒
@@ -181,7 +181,7 @@ public class ConfigConst {
     /**
      * 对接的配置中心类型
      */
-    public static final String SENTINEL_CONFIG_TYPE = "sentinel.configCenter.type";
+    public static final String CONFIG_CENTER_TYPE = "flowcontrol.configCenter.type";
 
     /**
      * 配置中心servicecomb-kie地址

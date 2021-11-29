@@ -28,11 +28,11 @@ public enum ZookeeperConnectionEnum {
 
     ZookeeperConnectionEnum() {
         final FlowControlConfig flowControlConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
-        RecordLog.info("start connect zookeeper, address: [{}]", flowControlConfig.getSentinelZookeeperAddress());
+        RecordLog.info("start connect zookeeper, address: [{}]", flowControlConfig.getZookeeperAddress());
 
         // 创建 CuratorFrameworkImpl实例
         try {
-            client = CuratorFrameworkFactory.newClient(flowControlConfig.getSentinelZookeeperAddress(),
+            client = CuratorFrameworkFactory.newClient(flowControlConfig.getZookeeperAddress(),
                 new ExponentialBackoffRetry(CommonConst.SLEEP_TIME, CommonConst.RETRY_TIMES));
             client.start();
         } catch (Exception e) {

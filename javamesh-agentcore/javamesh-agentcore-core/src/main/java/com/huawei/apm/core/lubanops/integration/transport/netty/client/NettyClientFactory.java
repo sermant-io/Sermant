@@ -27,7 +27,7 @@ public class NettyClientFactory {
         clientMap.put(address, client);
     }
 
-    public NettyClient getNettyClient(String serverIp, int serverPort) {
+    public synchronized NettyClient getNettyClient(String serverIp, int serverPort) {
         String address = serverIp + ":" + String.valueOf(serverPort);
         if (clientMap.containsKey(address)) {
             return clientMap.get(address);

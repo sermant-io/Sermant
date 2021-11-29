@@ -1,0 +1,4 @@
+# 流控配置
+flow.control.plugin:
+  openMetricCollector: false   # 是否开启指标数据采集
+  useCseRule: false # 是否使用cse规则配置

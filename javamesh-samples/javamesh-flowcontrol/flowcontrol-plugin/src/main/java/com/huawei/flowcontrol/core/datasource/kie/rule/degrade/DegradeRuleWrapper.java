@@ -25,7 +25,7 @@ public class DegradeRuleWrapper extends RuleWrapper {
      * @param dataSource 数据源
      */
     @Override
-    public void registerRuleManager(AbstractDataSource<String, ?> dataSource) {
+    public void registerRuleManager(AbstractDataSource<?, ?> dataSource) {
         SentinelProperty property = dataSource.getProperty();
         if (property != null) {
             DegradeRuleManager.register2Property((SentinelProperty<List<DegradeRule>>)property);

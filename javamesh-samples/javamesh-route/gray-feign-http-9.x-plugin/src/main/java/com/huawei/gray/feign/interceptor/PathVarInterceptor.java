@@ -6,9 +6,8 @@ package com.huawei.gray.feign.interceptor;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.gray.feign.context.FeignResolvedURL;
-
-import feign.RequestTemplate;
+import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.gray.feign.service.PathVarService;
 
 import java.lang.reflect.Method;
 
@@ -19,8 +18,7 @@ import java.lang.reflect.Method;
  * @since 2021-11-03
  */
 public class PathVarInterceptor implements InstanceMethodInterceptor {
-
-    static final ThreadLocal<FeignResolvedURL> URL_CONTEXT = new ThreadLocal<FeignResolvedURL>();
+    private PathVarService pathVarService;
 
     /**
      * feign.ReflectiveFeign.BuildTemplateByResolvingArgs.resolve解析url路径参数前将原始url放入线程变量
@@ -32,8 +30,8 @@ public class PathVarInterceptor implements InstanceMethodInterceptor {
      */
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
-        RequestTemplate template = (RequestTemplate) arguments[1];
-        URL_CONTEXT.set(new FeignResolvedURL(template.url()));
+        pathVarService = ServiceManager.getService(PathVarService.class);
+        pathVarService.before(obj, method, arguments, beforeResult);
     }
 
     /**
@@ -46,15 +44,12 @@ public class PathVarInterceptor implements InstanceMethodInterceptor {
      */
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
-        RequestTemplate resolvedTemplate = (RequestTemplate) result;
-        URL_CONTEXT.get().setUrl(resolvedTemplate.url());
+        pathVarService.after(obj, method, arguments, result);
         return result;
     }
 
     @Override
     public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
-        if (URL_CONTEXT.get() != null) {
-            URL_CONTEXT.remove();
-        }
+        pathVarService.onThrow(obj, method, arguments, t);
     }
 }
