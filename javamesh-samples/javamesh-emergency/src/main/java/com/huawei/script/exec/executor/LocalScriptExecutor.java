@@ -116,6 +116,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
                 if (readFirstLogAsPid) {
                     logCallback.handlePid(id, lines);
                     readFirstLogAsPid = false;
+                    continue;
                 } else {
                     logCallback.handleLog(id, lines);
                 }

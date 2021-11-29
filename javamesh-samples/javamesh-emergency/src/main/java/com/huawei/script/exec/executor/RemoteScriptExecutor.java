@@ -69,7 +69,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
                 return uploadFileResult;
             }
             fileName = uploadFileResult.getMsg();
-            return exec(session, commands(fileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId());
+            return exec(session, commands("sh", fileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId());
         } catch (JSchException | IOException | SftpException e) {
             LOGGER.error("Can't get remote server session.", e);
             return ExecResult.fail(e.getMessage());
@@ -88,7 +88,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
         Session session;
         try {
             session = serverSessionFactory.getSession(serverInfo);
-            return exec(session, commands(String.format(Locale.ROOT, "kill -9 %s", pid), null), null, -1);
+            return exec(session, commands("kill", String.format(Locale.ROOT, "-9 %s", pid), null), null, -1);
         } catch (JSchException e) {
             LOGGER.error("Can't get remote server session.", e);
             return ExecResult.fail(e.getMessage());
@@ -201,6 +201,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
                     if (readFirstLogAsPid) {
                         logCallback.handlePid(id, line);
                         readFirstLogAsPid = false;
+                        continue;
                     } else {
                         logCallback.handleLog(id, line);
                     }
@@ -221,13 +222,13 @@ public class RemoteScriptExecutor implements ScriptExecutor {
         return execResult;
     }
 
-    private String commands(String fileName, String[] params) {
+    private String commands(String type, String fileName, String[] params) {
         StringBuilder result = new StringBuilder(fileName);
         if (params != null) {
             for (String param : params) {
                 result.append(" ").append(param);
             }
         }
-        return String.format(Locale.ROOT, "sh %s", result);
+        return String.format(Locale.ROOT, "%s %s", type, result);
     }
 }

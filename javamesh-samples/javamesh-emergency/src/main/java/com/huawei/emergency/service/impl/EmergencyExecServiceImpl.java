@@ -233,11 +233,10 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
         EmergencyExecRecordDetail recordDetail = recordDetailMapper.selectByPrimaryKey(detailId);
         if (recordDetail == null
             || ValidEnum.IN_VALID.getValue().equals(recordDetail.getIsValid())
-            || RecordStatus.RUNNING.getValue().equals(recordDetail.getStatus())
+            || !RecordStatus.RUNNING.getValue().equals(recordDetail.getStatus())
             || recordDetail.getPid() == null) {
             return CommonResult.failed("请选择正在执行中的记录");
         }
-
         ExecResult cancelResult;
         if (recordDetail.getServerId() == null) {
             cancelResult = scriptExecutors.get("localScriptExecutor").cancel(null, recordDetail.getPid());
@@ -250,14 +249,14 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
             if ("1".equals(server.getHavePassword())) {
                 serverInfo.setServerPassword(handlerFactory.parsePassword(server.getPasswordMode(), server.getPassword()));
             }
-            cancelResult = scriptExecutors.get("localScriptExecutor").cancel(serverInfo, recordDetail.getPid());
+            cancelResult = scriptExecutors.get("remoteScriptExecutor").cancel(serverInfo, recordDetail.getPid());
         }
         if (!cancelResult.isSuccess()) {
             return CommonResult.failed(cancelResult.getMsg());
         }
 
         EmergencyExecRecordDetail updateDetail = new EmergencyExecRecordDetail();
-        recordDetail.setDetailId(detailId);
+        updateDetail.setDetailId(detailId);
         updateDetail.setStatus(RecordStatus.CANCEL.getValue());
         updateDetail.setEndTime(new Date());
         LogResponse logResponse = LogMemoryStore.getLog(detailId, 1);
@@ -275,9 +274,11 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
     public CommonResult startOneServer(int detailId, String userName) {
         EmergencyExecRecordDetail oldDetail = recordDetailMapper.selectByPrimaryKey(detailId);
         if (oldDetail == null
-            || ValidEnum.IN_VALID.getValue().equals(oldDetail.getIsValid())
-            || RecordStatus.RUNNING.getValue().equals(oldDetail.getStatus())) {
+            || ValidEnum.IN_VALID.getValue().equals(oldDetail.getIsValid())) {
             return CommonResult.failed("请选择正在执行中的记录");
+        }
+        if (!RecordStatus.FAILED.getValue().equals(oldDetail.getStatus()) && !RecordStatus.CANCEL.getValue().equals(oldDetail.getStatus())){
+            return CommonResult.failed("请选择执行失败或取消的记录");
         }
         EmergencyExecRecordWithBLOBs record = recordMapper.selectByPrimaryKey(oldDetail.getRecordId());
         if (record == null || ValidEnum.IN_VALID.equals(record.getIsValid())) {
@@ -285,7 +286,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
         }
 
         EmergencyExecRecordDetail updateDetail = new EmergencyExecRecordDetail();
-        updateDetail.setRecordId(detailId);
+        updateDetail.setDetailId(detailId);
         updateDetail.setIsValid(ValidEnum.IN_VALID.getValue());
         recordDetailMapper.updateByPrimaryKeySelective(updateDetail);
 
@@ -309,7 +310,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
         EmergencyExecRecordDetail recordDetail = recordDetailMapper.selectByPrimaryKey(detailId);
         if (recordDetail == null
             || ValidEnum.IN_VALID.getValue().equals(recordDetail.getIsValid())
-            || RecordStatus.FAILED.getValue().equals(recordDetail.getStatus())) {
+            || !RecordStatus.FAILED.getValue().equals(recordDetail.getStatus())) {
             return CommonResult.failed("请选择执行失败的记录");
         }
         EmergencyExecRecordWithBLOBs record = recordMapper.selectByPrimaryKey(recordDetail.getRecordId());
