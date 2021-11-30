@@ -1,6 +1,6 @@
 # online-stresstest
 
-[插件目录](../../javamesh-samples/javamesh-online-stresstest)
+[插件目录](../../javamesh-plugins/javamesh-online-stresstest)
 
 [定位 是什么]: todo
 [功能 做什么]: todo

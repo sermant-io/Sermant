@@ -1,6 +1,6 @@
 # route
 
-[插件目录](../../javamesh-samples/javamesh-route)
+[插件目录](../../javamesh-plugins/javamesh-route)
 
 [定位 是什么]: todo
 [功能 做什么]: todo

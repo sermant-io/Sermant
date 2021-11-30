@@ -32,13 +32,13 @@ Java-mesh 的 Javaagent 广泛采用类隔离技术，以保证服务治理层�
 
 可通过[这里](https://github.com/huaweicloud/java-mesh/releases)下载**JavaMesh**的产品包。如果希望自行编译，请参考以下步骤。
 
-执行以下*maven*命令，对**JavaMesh**工程的[示例模块](javamesh-samples/javamesh-example)进行打包：
+执行以下*maven*命令，对**JavaMesh**工程的[示例模块](javamesh-plugins/javamesh-example)进行打包：
 
 ```shell
 mvn clean package -Dmaven.test.skip -Pexample
 ```
 
-执行以下*maven*命令，对**JavaMesh**工程的[后端模块](javamesh-samples/javamesh-backend)进行打包：
+执行以下*maven*命令，对**JavaMesh**工程的[后端模块](javamesh-plugins/javamesh-backend)进行打包：
 
 ```shell
 mvn clean package -Dmaven.test.skip -Pbackend
@@ -62,14 +62,14 @@ java -jar javamesh-agent-x.x.x\server\javamesh\javamesh-backend-x.x.x.jar
 
 ```shell
 # Linux下执行
-java -cp javamesh-samples/javamesh-example/demo-application/target/demo-application.jar \
+java -cp javamesh-plugins/javamesh-example/demo-application/target/demo-application.jar \
   -javaagent:javamesh-agent-x.x.x/agent/javamesh-agent.jar=appName=test \
   com.huawei.example.demo.DemoApplication
 ```
 
 ```bat
 :: Windows下执行
-java -cp ..\javamesh-samples\javamesh-example\demo-application\target\demo-application.jar ^
+java -cp ..\javamesh-plugins\javamesh-example\demo-application\target\demo-application.jar ^
   -javaagent:javamesh-agent-x.x.x\agent\javamesh-agent.jar=appName=test ^
   com.huawei.example.demo.DemoApplication
 ```

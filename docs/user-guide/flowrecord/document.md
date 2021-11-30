@@ -1,6 +1,6 @@
 # flowrecord
 
-[插件目录](../../javamesh-samples/javamesh-flowrecord)
+[插件目录](../../javamesh-plugins/javamesh-flowrecord)
 
 [定位 是什么]: todo
 [功能 做什么]: todo

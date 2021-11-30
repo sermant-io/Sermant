@@ -220,14 +220,14 @@
             </activation>
             <modules>
                 <module>javamesh-agentcore</module>
-                <module>javamesh-samples</module>
+                <module>javamesh-plugins</module>
             </modules>
         </profile>
         <profile>
             <id>example</id>
             <modules>
                 <module>javamesh-agentcore</module>
-                <module>javamesh-samples</module>
+                <module>javamesh-plugins</module>
             </modules>
         </profile>
         <profile>
@@ -245,7 +245,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>javamesh-samples</module>
+                <module>javamesh-plugins</module>
             </modules>
         </profile>
         <profile>
@@ -261,7 +261,7 @@
             <id>all</id>
             <modules>
                 <module>javamesh-agentcore</module>
-                <module>javamesh-samples</module>
+                <module>javamesh-plugins</module>
                 <module>javamesh-backend</module>
                 <module>javamesh-package</module>
             </modules>

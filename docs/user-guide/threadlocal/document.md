@@ -1,6 +1,6 @@
 # threadlocal
 
-[插件目录](../../javamesh-samples/javamesh-threadlocal)
+[插件目录](../../javamesh-plugins/javamesh-threadlocal)
 
 [定位 是什么]: todo
 [功能 做什么]: todo

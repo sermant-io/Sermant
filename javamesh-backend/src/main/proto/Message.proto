@@ -1,5 +1,5 @@
 syntax = "proto3";
-option java_package = "com.huawei.apm.backend.pojo";
+option java_package = "com.huawei.javamesh.backend.pojo";
 
 message NettyMessage{
 
