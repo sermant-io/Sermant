@@ -2,11 +2,14 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
  */
 
-package com.huawei.hercules.service.influxdb.metric.tree;
+package com.huawei.hercules.service.influxdb.metric.tree.impl;
 
 import com.huawei.hercules.controller.monitor.dto.MonitorHostDTO;
 import com.huawei.hercules.exception.HerculesException;
-import com.huawei.hercules.service.influxdb.query.MetricQueryServiceLoader;
+import com.huawei.hercules.service.influxdb.metric.tree.IMetricNode;
+import com.huawei.hercules.service.influxdb.metric.tree.JvmType;
+import com.huawei.hercules.service.influxdb.metric.tree.MetricType;
+import com.huawei.hercules.service.influxdb.query.IMetricQueryService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +21,7 @@ import java.util.List;
  * @author z30009938
  * @since 2021-11-19
  */
-public abstract class BaseMetricNode implements IMetricNode {
+public class CommonMetricNode implements IMetricNode {
     /**
      * 当前指标类型
      */
@@ -35,16 +38,22 @@ public abstract class BaseMetricNode implements IMetricNode {
     private final List<IMetricNode> childMetrics = new ArrayList<>();
 
     /**
+     * 数据查询服务
+     */
+    private final IMetricQueryService metricQueryService;
+
+    /**
      * 当前指标数据
      */
     private List<?> metricData;
 
-    public BaseMetricNode(MetricType currentMetricType, MetricType parentMetricType) {
+    public CommonMetricNode(MetricType currentMetricType, MetricType parentMetricType, IMetricQueryService metricQueryService) {
         if (currentMetricType == null) {
             throw new HerculesException("Metric type can not be empty.");
         }
         this.currentMetricType = currentMetricType;
         this.parentMetricType = parentMetricType;
+        this.metricQueryService = metricQueryService;
     }
 
     @Override
@@ -76,7 +85,8 @@ public abstract class BaseMetricNode implements IMetricNode {
                 this.metricData = Collections.emptyList();
                 return;
             }
-            this.metricData = MetricQueryServiceLoader.getMetricData(currentMetricType, monitorHostDTO);
+
+            this.metricData = metricQueryService.getMetricData(monitorHostDTO);
             return;
         }
 
@@ -98,5 +108,16 @@ public abstract class BaseMetricNode implements IMetricNode {
      * @param monitorHostDTO 判断是否展示的参数
      * @return true:查询和展示，false：不查询和展示
      */
-    public abstract boolean canDisplay(MonitorHostDTO monitorHostDTO);
+    public boolean canDisplay(MonitorHostDTO monitorHostDTO) {
+        if (monitorHostDTO == null) {
+            return false;
+        }
+        if (currentMetricType.getJvmType() == JvmType.NONE) {
+            return true;
+        }
+        if (!monitorHostDTO.getMonitorJvm()) {
+            return false;
+        }
+        return currentMetricType.getJvmType().getName().equals(monitorHostDTO.getJvmType());
+    }
 }

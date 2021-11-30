@@ -27,6 +27,11 @@ public class MonitorHostDTO {
     private String endTime;
 
     /**
+     * influxdb中数据所在bucket
+     */
+    private String bucket;
+
+    /**
      * 监控主机ip地址
      */
     private String ip;
@@ -126,5 +131,13 @@ public class MonitorHostDTO {
 
     public void setServiceInstance(String serviceInstance) {
         this.serviceInstance = serviceInstance;
+    }
+
+    public String getBucket() {
+        return bucket;
+    }
+
+    public void setBucket(String bucket) {
+        this.bucket = bucket;
     }
 }

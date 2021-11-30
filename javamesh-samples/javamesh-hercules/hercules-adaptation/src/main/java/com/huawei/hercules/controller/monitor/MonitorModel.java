@@ -4,7 +4,7 @@
 
 package com.huawei.hercules.controller.monitor;
 
-import com.huawei.hercules.service.influxdb.metric.tree.impl.RootMetricNode;
+import com.huawei.hercules.service.influxdb.metric.tree.IMetricNode;
 
 /**
  * 功能描述：查询结果对象封装
@@ -21,7 +21,7 @@ public class MonitorModel {
     /**
      * 查询数据
      */
-    private RootMetricNode data;
+    private IMetricNode data;
 
     public boolean isSuccess() {
         return success;
@@ -31,11 +31,11 @@ public class MonitorModel {
         this.success = success;
     }
 
-    public RootMetricNode getData() {
+    public IMetricNode getData() {
         return data;
     }
 
-    public void setData(RootMetricNode data) {
+    public void setData(IMetricNode data) {
         this.data = data;
     }
 }

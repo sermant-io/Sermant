@@ -7,12 +7,12 @@
 ```
   nohup \
   java -jar hercules-0.0.1.jar \
-  --controller.engine.url=http://xxxx:8080/hercules-controller-0.0.1 \
-  --monitor.agent.url=http://localhost:9095/agent \
+  --controller.engine.url=http://localhost:8080/hercules-controller-0.0.1 \
+  --monitor.agent.url=http://localhost:8080/agent \
   > log.out 2>&1 &  
 ```
   **备注:controller.engine.url值为项目Hercules-ngrinder中hercules-controller模块部署到Tomcat的访问地址**
   **备注:monitor.agent.url值为项目javamesh-server-monitor模块部署的访问地址**
 
-  3.启动后访问地址：http://xxxx:9091/argus
+  3.启动后访问地址：http://xxxx:9090/argus
 

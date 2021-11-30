@@ -14,11 +14,12 @@ import com.huawei.hercules.exception.HerculesException;
 import com.huawei.hercules.service.influxdb.IHostApplicationMapping;
 import com.huawei.hercules.service.influxdb.IMonitorService;
 import com.huawei.hercules.controller.monitor.dto.MonitorHostDTO;
-import com.huawei.hercules.service.influxdb.metric.tree.impl.RootMetricNode;
+import com.huawei.hercules.service.influxdb.metric.tree.IMetricNode;
 import com.huawei.hercules.service.perftest.IPerfTestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,15 +51,22 @@ public class MonitorController {
     @Autowired
     private IHostApplicationMapping hostApplicationMapping;
 
+    /**
+     * global influxdb bucket
+     */
+    @Value("${influxdb.bucket:default}")
+    private String bucket;
+
     @GetMapping("/monitor")
     public MonitorModel getMonitorInfo(@RequestParam MonitorHostDTO monitorHostDTO) {
         LOGGER.debug("Monitor param:{}", monitorHostDTO);
+        monitorHostDTO.setBucket(bucket);
         MonitorModel monitorModel = new MonitorModel();
         JSONObject perfTestInfo = perfTestService.getOne(monitorHostDTO.getTestId());
         JSONArray monitorHosts = perfTestInfo.getJSONArray(TaskInfoKey.MONITORING_HOST.getServerKey());
         initJvmConfig(monitorHostDTO, monitorHosts);
         initMonitoredServiceConfig(monitorHostDTO);
-        RootMetricNode allMonitorData = monitorService.getAllMonitorData(monitorHostDTO);
+        IMetricNode allMonitorData = monitorService.getAllMonitorData(monitorHostDTO);
         monitorModel.setSuccess(true);
         monitorModel.setData(allMonitorData);
         return monitorModel;
@@ -67,8 +75,8 @@ public class MonitorController {
     /**
      * 查询需要监控的主机是否需要获取jvm数据
      *
-     * @param monitorHostDTO     查询传入的参数信息
-     * @param monitorHosts 系统查询到的主机信息
+     * @param monitorHostDTO 查询传入的参数信息
+     * @param monitorHosts   系统查询到的主机信息
      */
     private void initJvmConfig(MonitorHostDTO monitorHostDTO, JSONArray monitorHosts) {
         if (monitorHostDTO == null || StringUtils.isEmpty(monitorHostDTO.getHost()) || StringUtils.isEmpty(monitorHostDTO.getIp())) {

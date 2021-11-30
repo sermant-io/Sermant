@@ -35,17 +35,6 @@ public class InfluxDBSqlExecutor {
      */
     private QueryApi queryApi;
 
-    /**
-     * global influxdb bucket
-     */
-    @Value("${influxdb.bucket:default}")
-    private String bucket;
-
-    /**
-     * SQL模板
-     */
-    private final String baseSql = String.format(Locale.ENGLISH, "from(bucket:\"%s\") ", bucket);
-
     @PostConstruct
     public void init() {
         this.queryApi = influxDBClient.getQueryApi();
@@ -61,6 +50,6 @@ public class InfluxDBSqlExecutor {
         if (StringUtils.isEmpty(conditionSql) || measurementType == null) {
             return Collections.emptyList();
         }
-        return queryApi.query(baseSql + conditionSql, measurementType);
+        return queryApi.query(conditionSql, measurementType);
     }
 }

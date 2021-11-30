@@ -12,6 +12,11 @@ package com.huawei.hercules.service.influxdb.metric.tree;
  */
 public enum JvmType {
     /**
+     * 非jvm类型
+     */
+    NONE("none"),
+
+    /**
      * IBM版本jvm
      */
     IBM("ibm"),

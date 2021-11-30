@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.huawei.argus.report.service.TpsCalculateService;
 import com.huawei.argus.scenario.service.IScenarioPerfTestService;
 import com.huawei.argus.scenario.service.IScenarioService;
 import net.grinder.util.LogCompressUtils;
@@ -619,9 +620,15 @@ public class RestPerftestController extends RestBaseController {
 		int sampleInterval = interval * test.getSamplingInterval();
 		modelInfos.put(PARAM_TEST_CHART_INTERVAL, sampleInterval);
 		modelInfos.put(PARAM_TEST, test);
-		String tps = perfTestService.getSingleReportDataAsJson(id, "TPS", interval);
-		List<Map<String, Object>> thisTps = getTps(sampleInterval, thisDuration, timeInterval, tps, test.getDuration());
-		modelInfos.put(PARAM_TPS, thisTps);
+		TpsCalculateService tpsCalculateService = new TpsCalculateService();
+		tpsCalculateService.setResultSampleInterval(timeInterval)
+			.setTestSampleInterval(test.getSamplingInterval())
+			.setResultShowTime(thisDuration)
+			.setNeededExecuteTime(test.getDuration())
+			.setTestStartTime(test.getStartTime().getTime())
+			.isRunning(test.getStatus() == Status.TESTING)
+			.setTpsOriginalData(perfTestService.getSingleReportDataAsJson(id, "TPS", interval));
+		modelInfos.put(PARAM_TPS, tpsCalculateService.sampleData());
 		return modelInfos;
 	}
 
@@ -674,10 +681,8 @@ public class RestPerftestController extends RestBaseController {
 			ByteArrayInputStream fis = null;
 			logFile.put("content", Files.readAllBytes(targetFile.toPath()));
 			logFile.put(JSON_SUCCESS, true);
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		} catch (IOException exception) {
-			exception.printStackTrace();
+		} catch (IOException e) {
+			CoreLogger.LOGGER.error("Error while download log. {}", logFile,  e);
 		}
 
 		return logFile;

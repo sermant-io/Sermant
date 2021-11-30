@@ -630,7 +630,7 @@ public class PerfTestController extends BaseController {
                 || lastSampleStatisticList == null || lastSampleStatisticList.isEmpty()
                 || StringUtils.isEmpty(test.get("startTime"))) {
             thisTps.put("tps", 0);
-            thisTps.put("time", "00:00");
+            thisTps.put("time", "00:00:00");
             tps.add(thisTps);
             test.put("chart", tps);
             return runningReport;
@@ -711,19 +711,12 @@ public class PerfTestController extends BaseController {
     }
 
     private String getTime(long time) {
-        StringBuilder sb = new StringBuilder();
-        long minutes = time / 60;
-        if (minutes < 10) {
-            sb.append("0");
-        }
-        sb.append(minutes).append(":");
-
-        long second = time % 60;
-        if (second < 10) {
-            sb.append("0");
-        }
-        sb.append(second);
-        return sb.toString();
+        String format = "%s:%s:%s";
+        int seconds = (int)time;
+        String hourString = getHourString(seconds);
+        String minuteString = getMinuteString(seconds);
+        String secondsString = getSecondsString(seconds);
+        return String.format(Locale.ENGLISH, format, hourString, minuteString, secondsString);
     }
 
     private String getChart(JSONObject perfGraphData, String key) {
@@ -1027,12 +1020,13 @@ public class PerfTestController extends BaseController {
             }
             Map<String, Object> thisTps = new HashMap<>();
             thisTps.put("tps", 0); // 缺省值补0
-            String format = "-%s:%s";
+            String format = "-%s:%s:%s";
             int timeIndex = totalDuration - 1 - i;
             if (timeIndex == 0) {
-                thisTps.put("time", "00:00");
+                thisTps.put("time", "00:00:00");
             } else {
-                String time = String.format(Locale.ENGLISH, format, getMinuteString(timeIndex), getSecondsString(timeIndex));
+                String time = String.format(Locale.ENGLISH, format,
+                        getHourString(timeIndex), getMinuteString(timeIndex), getSecondsString(timeIndex));
                 thisTps.put("time", time);
             }
             tpsInfos.add(thisTps);
@@ -1040,8 +1034,13 @@ public class PerfTestController extends BaseController {
         return tpsInfos;
     }
 
+    private String getHourString(int seconds) {
+        int hour = seconds / (60 * 60);
+        return hour < 10 ? "0" + hour : hour + "";
+    }
+
     private String getMinuteString(int seconds) {
-        int minute = seconds / 60;
+        int minute = (seconds % (60 * 60)) / 60;
         return minute < 10 ? "0" + minute : minute + "";
     }
 

@@ -2,14 +2,17 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
  */
 
-package com.huawei.hercules.service.influxdb.query;
+package com.huawei.hercules.service.influxdb.query.impl;
 
 import com.huawei.hercules.controller.monitor.dto.MonitorHostDTO;
 import com.huawei.hercules.exception.HerculesException;
 import com.huawei.hercules.service.influxdb.metric.tree.MetricType;
+import com.huawei.hercules.service.influxdb.query.IMetricQueryService;
+import com.huawei.hercules.service.influxdb.query.InfluxDBSqlExecutor;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 功能描述：query metric base class
@@ -17,7 +20,18 @@ import java.util.List;
  * @author z30009938
  * @since 2021-11-19
  */
-public abstract class BaseMetricQueryService implements IMetricQueryService {
+public class CommonMetricQueryService implements IMetricQueryService {
+    /**
+     * SQL模板
+     */
+    private final String baseSql = "from(bucket:\"%s\")" +
+            "|> range(" +
+            "   start : %s , stop : %s " +
+            ")" +
+            "|> filter( fn: (r) => " +
+            "   r._measurement == \"%s\" and r.service == \"%s\" and serviceInstance == \"%s\"" +
+            ")";
+
     /**
      * metric type
      */
@@ -33,7 +47,7 @@ public abstract class BaseMetricQueryService implements IMetricQueryService {
      *
      * @param metricType this metric type
      */
-    public BaseMetricQueryService(MetricType metricType, InfluxDBSqlExecutor influxDBSqlExecutor) {
+    public CommonMetricQueryService(MetricType metricType, InfluxDBSqlExecutor influxDBSqlExecutor) {
         if (StringUtils.isEmpty(metricType)) {
             throw new HerculesException("Metric type can not be empty.");
         }
@@ -60,12 +74,30 @@ public abstract class BaseMetricQueryService implements IMetricQueryService {
      * @param monitorHostDTO query param
      * @return sql
      */
-    public abstract String buildSql(MonitorHostDTO monitorHostDTO);
+    public String buildSql(MonitorHostDTO monitorHostDTO) {
+        if (monitorHostDTO == null) {
+            throw new HerculesException("The data for query is null.");
+        }
+        if (StringUtils.isEmpty(monitorHostDTO.getBucket())) {
+            throw new HerculesException("Bucket in influxdb can not be null.");
+        }
+        return String.format(
+                Locale.ENGLISH,
+                baseSql,
+                monitorHostDTO.getBucket(),
+                monitorHostDTO.getStartTime(),
+                monitorHostDTO.getEndTime(),
+                metricType.getName(),
+                monitorHostDTO.getService(),
+                monitorHostDTO.getServiceInstance());
+    }
 
     /**
      * get the java bean type of data
      *
      * @return the java bean type of data
      */
-    public abstract Class<?> getDataType();
+    public Class<?> getDataType() {
+        return metricType.getDataClassType();
+    }
 }
