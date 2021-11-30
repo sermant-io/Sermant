@@ -1,6 +1,6 @@
 package com.huawei.flowcontrol.core.config;
 
-import com.huawei.apm.bootstrap.config.ConfigLoader;
+import com.huawei.apm.core.plugin.config.PluginConfigManager;
 
 import java.util.Properties;
 
@@ -14,7 +14,7 @@ public class KafkaConnectBySslSwitch {
      * @param properties Properties对象
      */
     public static void delKey(Properties properties) {
-        final FlowControlConfig flowControlConfig = ConfigLoader.getConfig(FlowControlConfig.class);
+        final FlowControlConfig flowControlConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
         if (!flowControlConfig.isKafkaIsSsl()) {
             properties.remove(ConfigConst.KAFKA_JAAS_CONFIG_CONST);
             properties.remove(ConfigConst.KAFKA_SASL_MECHANISM_CONST);

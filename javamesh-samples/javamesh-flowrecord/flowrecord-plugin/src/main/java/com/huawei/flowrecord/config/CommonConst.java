@@ -47,4 +47,9 @@ public class CommonConst {
      * 404
      */
     public static final int SERVICE_NOT_EXIST = 404;
+
+    /**
+     *
+     */
+    public static final int FLOW_RECORD_DATA_TYPE = 3;
 }

@@ -60,7 +60,7 @@ public class RedisRuleUtil {
         if (client == null) {
             return false;
         }
-        String rootPath = PluginConfigUtil.getValueByKey(ConfigConst.SENTINEL_ZOOKEEPER_PATH);
+        String rootPath = PluginConfigUtil.getValueByKey(ConfigConst.ZOOKEEPER_PATH);
         String appName = AppNameUtil.getAppName();
         String path = rootPath + CommonConst.SLASH_SIGN
                 + appName + CommonConst.SLASH_SIGN

@@ -4,20 +4,21 @@
 
 package com.huawei.flowrecord.plugins.redisson.v3;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
-import com.huawei.apm.bootstrap.lubanops.trace.TraceCollector;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.apm.core.lubanops.bootstrap.trace.TraceCollector;
+import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.apm.core.service.send.GatewayClient;
+import com.huawei.flowrecord.config.CommonConst;
 import com.huawei.flowrecord.config.ConfigConst;
 import com.huawei.flowrecord.domain.RecordStatus;
 import com.huawei.flowrecord.domain.Recorder;
 import com.huawei.flowrecord.init.RedissonProcessThreadPool;
-import com.huawei.flowrecord.utils.PluginConfigUtil;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
-import com.huawei.flowrecord.utils.KafkaProducerUtil;
 import lombok.SneakyThrows;
 
 import org.apache.curator.shaded.com.google.common.hash.Hashing;
@@ -32,10 +33,10 @@ import java.util.HashMap;
 
 /**
  * redisson拦截增强类
- *
  */
 public class RedissonInterceptor implements InstanceMethodInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedissonInterceptor.class);
+    private final GatewayClient gatewayClient = ServiceManager.getService(GatewayClient.class);
 
     public int setSubCallCount(String subCallKey) {
 
@@ -69,7 +70,7 @@ public class RedissonInterceptor implements InstanceMethodInterceptor {
             recordRequest.setResponseClass(result.getClass().getName());
             recordRequest.setTimestamp(new Date());
             String serializedRequest = JSON.toJSONString(recordRequest, SerializerFeature.WriteMapNullValue);
-            KafkaProducerUtil.sendMessage(PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_REQUEST_TOPIC), serializedRequest);
+            gatewayClient.send(serializedRequest.getBytes(StandardCharsets.UTF_8), CommonConst.FLOW_RECORD_DATA_TYPE);
         }
     }
 

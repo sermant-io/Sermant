@@ -25,7 +25,7 @@ public class FlowRuleWrapper extends RuleWrapper {
      * @param dataSource 数据源
      */
     @Override
-    public void registerRuleManager(AbstractDataSource<String, ?> dataSource) {
+    public void registerRuleManager(AbstractDataSource<?, ?> dataSource) {
         SentinelProperty property = dataSource.getProperty();
         if (property != null) {
             FlowRuleManager.register2Property((SentinelProperty<List<FlowRule>>) property);

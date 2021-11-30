@@ -1,5 +1,5 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.huawei.javamesh</groupId>
@@ -10,29 +10,31 @@
     <packaging>pom</packaging>
     <properties>
         <javamesh.basedir>${pom.basedir}/../..</javamesh.basedir>
+
         <package.sample.name>${project.artifactId}</package.sample.name>
-        <package.sample.dir>${package.temp.dir}</package.sample.dir>
-        <package.output.dir>${package.sample.dir}/${package.sample.name}</package.output.dir>
-        <package.config.dir>${package.output.dir}/config</package.config.dir>
+        <package.sample.dir>${package.agent.dir}/pluginPackage</package.sample.dir>
+        <package.sample.type>${project.artifactId}</package.sample.type>
+        <package.output.dir>${package.sample.dir}/${package.sample.name}/${package.sample.type}</package.output.dir>
+        <package.server.output.dir>${package.server.dir}/${package.sample.name}</package.server.output.dir>
+
+        <config.skip.flag>true</config.skip.flag>
+        <config.file.name>config.yaml</config.file.name>
+        <config.source.dir>../config</config.source.dir>
+        <config.output.dir>${package.sample.dir}/${package.sample.name}/config</config.output.dir>
     </properties>
     <profiles>
         <profile>
-            <id>plugin</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>javamesh-flowcontrol</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>ext</id>
+            <id>agent</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
                 <module>javamesh-flowcontrol</module>
                 <module>javamesh-server-monitor</module>
+                <module>javamesh-flowrecord</module>
+                <module>javamesh-route</module>
+                <module>javamesh-threadlocal</module>
+                <module>javamesh-online-stresstest</module>
             </modules>
         </profile>
         <profile>
@@ -42,57 +44,62 @@
             </modules>
         </profile>
         <profile>
+            <id>ext</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>javamesh-flowcontrol</module>
+                <module>javamesh-flowrecord</module>
+                <module>javamesh-server-monitor</module>
+                <module>javamesh-route</module>
+            </modules>
+        </profile>
+        <profile>
             <id>all</id>
             <modules>
                 <module>javamesh-example</module>
                 <module>javamesh-flowcontrol</module>
                 <module>javamesh-server-monitor</module>
                 <module>javamesh-flowrecord</module>
+                <module>javamesh-route</module>
+                <module>javamesh-threadlocal</module>
+                <module>javamesh-online-stresstest</module>
             </modules>
         </profile>
     </profiles>
+
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-config</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${package.config.dir}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources/config</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-mapping</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${package.output.dir}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources</directory>
-                                    <includes>
-                                        <include>mapping.yaml</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <executions>
+                        <execution>
+                            <id>copy-config</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <skip>${config.skip.flag}</skip>
+                                <outputDirectory>${config.output.dir}</outputDirectory>
+                                <overwrite>true</overwrite>
+                                <resources>
+                                    <resource>
+                                        <directory>${config.source.dir}</directory>
+                                        <includes>
+                                            <include>${config.file.name}</include>
+                                        </includes>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>

@@ -15,24 +15,86 @@
     <properties>
         <javamesh.basedir>${pom.basedir}/../../..</javamesh.basedir>
         <package.sample.name>server-monitor</package.sample.name>
+
+        <lombok.version>1.18.12</lombok.version>
+        <commons-io.version>2.6</commons-io.version>
+        <skywalking.version>8.1.0</skywalking.version>
     </properties>
 
     <profiles>
         <profile>
-            <id>plugin</id>
+            <id>agent</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>server-monitor-plugin</module>
+                <module>protocol</module>
+                <module>monitor-common</module>
+                <module>server-monitor-service</module>
+                <module>databasepeer-parse-service</module>
+                <module>connection-pool-collect-plugin</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>ext</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>metric-server</module>
             </modules>
         </profile>
         <profile>
             <id>all</id>
             <modules>
-                <module>server-monitor-plugin</module>
+                <module>protocol</module>
+                <module>monitor-common</module>
+                <module>server-monitor-service</module>
+                <module>databasepeer-parse-service</module>
+                <module>connection-pool-collect-plugin</module>
+                <module>metric-server</module>
             </modules>
         </profile>
     </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.huawei.javamesh</groupId>
+                <artifactId>protocol</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.huawei.javamesh</groupId>
+                <artifactId>monitor-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.skywalking</groupId>
+                <artifactId>apm-agent-core</artifactId>
+                <version>${skywalking.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.skywalking</groupId>
+                <artifactId>apm-jdbc-commons</artifactId>
+                <version>${skywalking.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.skywalking</groupId>
+                <artifactId>apm-network</artifactId>
+                <version>${skywalking.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

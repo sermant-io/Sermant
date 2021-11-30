@@ -117,12 +117,12 @@ public class CommonConst {
     /**
      * sentinel配置参数 心跳发送默认间隔时间，单位毫秒
      */
-    public static final long SENTINEL_HEARTBEAT_INTERVAL = 10000L;
+    public static final long FLOW_CONTROL_HEARTBEAT_INTERVAL = 10000L;
 
     /**
      * sentinel配置参数 流控信息数据发送默认间隔时间，单位毫秒
      */
-    public static final long SENTINEL_METRIC_INTERVAL = 1000L;
+    public static final long FLOW_CONTROL_METRIC_INTERVAL = 1000L;
 
     /**
      * sentinel配置参数 启动后初始加载流控信息数据的时间段时长
@@ -158,6 +158,26 @@ public class CommonConst {
      * kafka配置参数 最大阻塞时间，超过则抛出异常
      */
     public static final long KAFKA_MAX_BLOCK_MS = 60000L;
+
+    /**
+     * 配置中心zookeeper
+     */
+    public static final String CONFIG_TYPE_ZOOKEEPER = "zookeeper";
+
+    /**
+     * 配置中心kie
+     */
+    public static final String CONFIG_TYPE_KIE = "servicecomb-kie";
+
+    /**
+     * 配置中心kie，并适配cse
+     */
+    public static final String CONFIG_TYPE_CSE_KIE = "servicecomb-kie-cse-adapter";
+
+    /**
+     * 默认zookeeper地址
+     */
+    public static final String DEFAULT_ZOOKEEPER_ADDRESS = "127.0.0.1:2181";
 
     private CommonConst() {
     }

@@ -1,10 +1,11 @@
 package com.huawei.flowcontrol.core.config;
 
-import com.huawei.apm.bootstrap.config.BaseConfig;
-import com.huawei.apm.bootstrap.config.ConfigTypeKey;
+import com.huawei.apm.core.config.common.ConfigTypeKey;
+import com.huawei.apm.core.lubanops.bootstrap.config.IdentityConfigManager;
+import com.huawei.apm.core.plugin.config.PluginConfig;
 
 @ConfigTypeKey("flow.control.plugin")
-public class FlowControlConfig implements BaseConfig {
+public class FlowControlConfig implements PluginConfig {
     /**
      * 流控插件kafka地址
      */
@@ -33,35 +34,35 @@ public class FlowControlConfig implements BaseConfig {
     /**
      * 流控插件zk地址
      */
-    private String sentinelZookeeperAddress = "127.0.0.1:2181";
+    private String zookeeperAddress = "127.0.0.1:2181";
 
     /**
      * 流控相关配置在zk中的node
      */
-    private String sentinelZookeeperPath = "/sentinel_rule_config";
+    private String flowControlZookeeperPath = "/sentinel_rule_config";
 
     /**
-     * sentinel配置参数 心跳发送默认间隔时间，单位毫秒
+     * 心跳发送默认间隔时间，单位毫秒
      */
-    private long sentinelHeartbeatInterval = CommonConst.SENTINEL_HEARTBEAT_INTERVAL;
+    private long heartbeatInterval = CommonConst.FLOW_CONTROL_HEARTBEAT_INTERVAL;
 
     /**
-     * sentinel配置参数 流控信息数据发送默认间隔时间，单位毫秒
+     * 流控信息数据发送默认间隔时间，单位毫秒
      */
-    private long sentinelMetricInterval = CommonConst.SENTINEL_METRIC_INTERVAL;
+    private long metricInterval = CommonConst.FLOW_CONTROL_METRIC_INTERVAL;
 
     /**
-     * sentinel配置参数 启动后初始加载流控信息数据的时间段时长
+     * 启动后初始加载流控信息数据的时间段时长
      */
     private long metricInitialDuration = CommonConst.METRIC_INITIAL_DURATION;
 
     /**
-     * sentinel配置参数 未提供查询流控信息数据结束时间的默认加载数据条数
+     * 未提供查询流控信息数据结束时间的默认加载数据条数
      */
     private long metricMaxLine = CommonConst.METRIC_MAX_LINE;
 
     /**
-     * sentinel配置参数 查询流控数据时,睡眠一段时间，等待限流数据写入文件再查询
+     * 查询流控数据时,睡眠一段时间，等待限流数据写入文件再查询
      */
     private long metricSleepTime = CommonConst.METRIC_SLEEP_TIME;
 
@@ -158,18 +159,88 @@ public class FlowControlConfig implements BaseConfig {
     /**
      * 配置流控插件
      */
-    private String configZookeeperPath = "/sentinel_plugin_config";
+    private String configZookeeperPath = "/flowcontrol_plugin_config";
 
     /**
      * 对接的配置中心类型，当前支持zookeeper、servicecomb-kie两种类型
      * 默认为对接zookeeper，对接kie时请改为servicecomb-kie
      */
-    private String sentinelConfigCenterType = "zookeeper";
+    private String configCenterType = "zookeeper";
 
     /**
      * servicecomb-kie地址，当配置中心配为servicecomb-kie时需填写正确的kie服务地址
      */
     private String configKieAddress = "http://localhost:30110";
+
+    /**
+     * kie标签监听的服务名
+     * 为空则使用{@link IdentityConfigManager#getAppName()}
+     * 否则使用配置的服务名
+     */
+    private String kieConfigServiceName;
+
+    /**
+     * 是否使用插件自身的url地址
+     * 该配置仅zookeeper生效
+     * 默认使用的是配置中心地址
+     */
+    private boolean useSelfUrl = false;
+
+    /**
+     * 是否开启数据采集
+     * 包含心跳、指标
+     */
+    private boolean openMetricCollector = false;
+
+    /**
+     * 是否使用线上cse配置规则
+     */
+    private boolean useCseRule = false;
+
+    /**
+     * 是否适配源泛PAAS的UI以及前后端zookeeper
+     */
+    private boolean adaptPass = false;
+
+    public boolean isAdaptPass() {
+        return adaptPass;
+    }
+
+    public void setAdaptPass(boolean adaptPass) {
+        this.adaptPass = adaptPass;
+    }
+
+    public boolean isUseCseRule() {
+        return useCseRule;
+    }
+
+    public void setUseCseRule(boolean useCseRule) {
+        this.useCseRule = useCseRule;
+    }
+
+    public String getKieConfigServiceName() {
+        return kieConfigServiceName;
+    }
+
+    public void setKieConfigServiceName(String kieConfigServiceName) {
+        this.kieConfigServiceName = kieConfigServiceName;
+    }
+
+    public boolean isOpenMetricCollector() {
+        return openMetricCollector;
+    }
+
+    public void setOpenMetricCollector(boolean openMetricCollector) {
+        this.openMetricCollector = openMetricCollector;
+    }
+
+    public boolean isUseSelfUrl() {
+        return useSelfUrl;
+    }
+
+    public void setUseSelfUrl(boolean useSelfUrl) {
+        this.useSelfUrl = useSelfUrl;
+    }
 
     public String getKafkaBootstrapServers() {
         return kafkaBootstrapServers;
@@ -177,6 +248,14 @@ public class FlowControlConfig implements BaseConfig {
 
     public void setKafkaBootstrapServers(String kafkaBootstrapServers) {
         this.kafkaBootstrapServers = kafkaBootstrapServers;
+    }
+
+    public String getConfigCenterType() {
+        return configCenterType;
+    }
+
+    public void setConfigCenterType(String configCenterType) {
+        this.configCenterType = configCenterType;
     }
 
     public String getRedisUris() {
@@ -211,36 +290,36 @@ public class FlowControlConfig implements BaseConfig {
         this.sentinelVersion = sentinelVersion;
     }
 
-    public String getSentinelZookeeperAddress() {
-        return sentinelZookeeperAddress;
+    public String getZookeeperAddress() {
+        return zookeeperAddress;
     }
 
-    public void setSentinelZookeeperAddress(String sentinelZookeeperAddress) {
-        this.sentinelZookeeperAddress = sentinelZookeeperAddress;
+    public void setZookeeperAddress(String zookeeperAddress) {
+        this.zookeeperAddress = zookeeperAddress;
     }
 
-    public String getSentinelZookeeperPath() {
-        return sentinelZookeeperPath;
+    public String getFlowControlZookeeperPath() {
+        return flowControlZookeeperPath;
     }
 
-    public void setSentinelZookeeperPath(String sentinelZookeeperPath) {
-        this.sentinelZookeeperPath = sentinelZookeeperPath;
+    public void setFlowControlZookeeperPath(String flowControlZookeeperPath) {
+        this.flowControlZookeeperPath = flowControlZookeeperPath;
     }
 
-    public long getSentinelHeartbeatInterval() {
-        return sentinelHeartbeatInterval;
+    public long getHeartbeatInterval() {
+        return heartbeatInterval;
     }
 
-    public void setSentinelHeartbeatInterval(long sentinelHeartbeatInterval) {
-        this.sentinelHeartbeatInterval = sentinelHeartbeatInterval;
+    public void setHeartbeatInterval(long heartbeatInterval) {
+        this.heartbeatInterval = heartbeatInterval;
     }
 
-    public long getSentinelMetricInterval() {
-        return sentinelMetricInterval;
+    public long getMetricInterval() {
+        return metricInterval;
     }
 
-    public void setSentinelMetricInterval(long sentinelMetricInterval) {
-        this.sentinelMetricInterval = sentinelMetricInterval;
+    public void setMetricInterval(long metricInterval) {
+        this.metricInterval = metricInterval;
     }
 
     public long getMetricInitialDuration() {
@@ -417,14 +496,6 @@ public class FlowControlConfig implements BaseConfig {
 
     public void setConfigZookeeperPath(String configZookeeperPath) {
         this.configZookeeperPath = configZookeeperPath;
-    }
-
-    public String getSentinelConfigCenterType() {
-        return sentinelConfigCenterType;
-    }
-
-    public void setSentinelConfigCenterType(String sentinelConfigCenterType) {
-        this.sentinelConfigCenterType = sentinelConfigCenterType;
     }
 
     public String getConfigKieAddress() {

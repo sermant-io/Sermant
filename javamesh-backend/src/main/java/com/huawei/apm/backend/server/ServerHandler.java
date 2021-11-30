@@ -10,15 +10,17 @@ import com.huawei.apm.backend.common.handler.BaseHandler;
 import com.huawei.apm.backend.common.util.GzipUtils;
 import com.huawei.apm.backend.pojo.Message;
 
+import com.huawei.apm.backend.service.SendService;
+import com.huawei.apm.backend.service.SendServiceManager;
 import io.netty.channel.ChannelHandlerContext;
 
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.utils.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 网关服务端handler
@@ -36,12 +38,16 @@ public class ServerHandler extends BaseHandler {
     // 随机数最小值
     private static final int MIN_RANDOM = 0;
 
-    private KafkaProducer<String, Bytes> producer;
+    private KafkaProducer<String, String> producer;
+    private KafkaConsumer<String, String> consumer;
+
+    Map<Integer, SendService> sendServiceMap = SendServiceManager.INSTANCE.getSendServices();
 
     private KafkaConf conf;
 
-    public ServerHandler(KafkaProducer<String, Bytes> producer, KafkaConf conf) {
+    public ServerHandler(KafkaProducer<String, String> producer, KafkaConsumer<String, String> consumer, KafkaConf conf) {
         this.producer = producer;
+        this.consumer = consumer;
         this.conf = conf;
     }
 
@@ -54,16 +60,14 @@ public class ServerHandler extends BaseHandler {
 
             // 解压业务数据
             byte[] message = GzipUtils.decompress(data.toByteArray());
+            String msgStr = new String(message);
             int dataType = serviceData.getDataTypeValue();
 
-            // 此处可扩展消息类型，针对不同消息类型执行相应操作
-            switch (dataType) {
-                // 心跳数据类型
-                case Message.ServiceData.DataType.SERVICE_HEARTBEAT_VALUE:
-                    producer.send(new ProducerRecord<>(conf.getTopicHeartBeat(), Bytes.wrap(message)));
-                    break;
-                default:
-                    break;
+            SendService sendService = sendServiceMap.get(dataType);
+            if (sendService != null) {
+                sendService.send(conf, msgStr);
+            } else {
+                LOGGER.error("send service is null");
             }
         }
     }

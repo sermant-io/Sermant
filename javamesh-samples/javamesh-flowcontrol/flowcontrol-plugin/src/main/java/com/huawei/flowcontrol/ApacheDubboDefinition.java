@@ -12,7 +12,7 @@ package com.huawei.flowcontrol;
  */
 public class ApacheDubboDefinition extends DubboDefinition {
     private static final String ENHANCE_CLASS = "org.apache.dubbo.monitor.support.MonitorFilter";
-    private static final String INTERCEPT_CLASS = "com.lubanops.apm.plugin.flowcontrol.ApacheDubboInterceptor";
+    private static final String INTERCEPT_CLASS = "com.huawei.flowcontrol.ApacheDubboInterceptor";
 
     public ApacheDubboDefinition() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS);

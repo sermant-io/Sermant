@@ -6,6 +6,7 @@ package com.huawei.flowrecord.init;
 
 import com.huawei.flowrecord.config.CommonConst;
 import com.huawei.flowrecord.config.ConfigConst;
+import com.huawei.flowrecord.config.FlowRecordConfig;
 import com.huawei.flowrecord.domain.RecordJob;
 import com.huawei.flowrecord.utils.PluginConfigUtil;
 import com.huawei.flowrecord.utils.AppNameUtil;
@@ -33,18 +34,19 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * zookeeper监听器
- *
  */
 public class InitListener {
+    private static final FlowRecordConfig flowRecordConfig = PluginConfigUtil.getFlowRecordConfig();
     private static final Logger LOGGER = LoggerFactory.getLogger(InitListener.class);
-    private static final String PARENTPATH = PluginConfigUtil.getValueByKey(ConfigConst.CONFIG_ZOOKEEPER_PATH) +
-        CommonConst.SLASH_SIGN + AppNameUtil.getAppName() + CommonConst.SLASH_SIGN + ConfigConst.CURRENT_JOB;
-    private static CuratorFramework treeCacheClient = CuratorFrameworkFactory.builder()
-        .connectString(PluginConfigUtil.getValueByKey(ConfigConst.CONFIG_ZOOKEEPER_ADDRESS))
-        .sessionTimeoutMs(Integer.parseInt(PluginConfigUtil.getValueByKey(ConfigConst.CONFIG_ZOOKEEPER_TIMEOUT)))
-        .retryPolicy(new ExponentialBackoffRetry(CommonConst.SLEEP_TIME, CommonConst.RETRY_TIMES))
-        .build();
-    private static ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(4);
+
+    private static final String PARENTPATH = flowRecordConfig.getZookeeperPath() +
+            CommonConst.SLASH_SIGN + AppNameUtil.getAppName() + CommonConst.SLASH_SIGN + ConfigConst.CURRENT_JOB;
+    private static final CuratorFramework treeCacheClient = CuratorFrameworkFactory.builder()
+            .connectString(flowRecordConfig.getZookeeperAddress())
+            .sessionTimeoutMs(Integer.parseInt(flowRecordConfig.getZookeeperTimeout()))
+            .retryPolicy(new ExponentialBackoffRetry(CommonConst.SLEEP_TIME, CommonConst.RETRY_TIMES))
+            .build();
+    private static final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(4);
 
     public static void doinit() throws Exception {
         // 开启zookeeper监听器
@@ -57,17 +59,17 @@ public class InitListener {
         try {
             if (treeCacheClient.checkExists().forPath(PARENTPATH) == null) {
                 treeCacheClient.create().creatingParentContainersIfNeeded().withMode(CreateMode.PERSISTENT)
-                    .forPath(PARENTPATH, "this is parent data".getBytes(StandardCharsets.UTF_8));
+                        .forPath(PARENTPATH, "this is parent data".getBytes(StandardCharsets.UTF_8));
             }
         } catch (Exception e) {
             LOGGER.info("[flowrecord]: cannot create zookeeper node");
         }
         try {
             RecordJob.recordJob = JSON.parseObject(new String(treeCacheClient.getData().forPath(PARENTPATH)), RecordJob.class);
-            String path = PluginConfigUtil.getValueByKey(ConfigConst.CONFIG_ZOOKEEPER_PATH) +
-                CommonConst.SLASH_SIGN + AppNameUtil.getAppName() + CommonConst.SLASH_SIGN +
-                RecordJob.recordJob.getJobId() + CommonConst.SLASH_SIGN +
-                InetAddress.getLocalHost().getHostAddress() + "_status";
+            String path = flowRecordConfig.getZookeeperPath() +
+                    CommonConst.SLASH_SIGN + AppNameUtil.getAppName() + CommonConst.SLASH_SIGN +
+                    RecordJob.recordJob.getJobId() + CommonConst.SLASH_SIGN +
+                    InetAddress.getLocalHost().getHostAddress() + "_status";
 
             // 判断当前任务状态
             Date date = new Date();
@@ -118,10 +120,10 @@ public class InitListener {
                         if (ZKPaths.getNodeFromPath(event.getData().getPath()).endsWith(ConfigConst.CURRENT_JOB)) {
                             try {
                                 RecordJob.recordJob = JSON.parseObject(new String(event.getData().getData()), RecordJob.class);
-                                String path = PluginConfigUtil.getValueByKey(ConfigConst.CONFIG_ZOOKEEPER_PATH) +
-                                    CommonConst.SLASH_SIGN + AppNameUtil.getAppName() + CommonConst.SLASH_SIGN +
-                                    RecordJob.recordJob.getJobId() + CommonConst.SLASH_SIGN +
-                                    InetAddress.getLocalHost().getHostAddress() + "_status";
+                                String path = flowRecordConfig.getZookeeperPath() +
+                                        CommonConst.SLASH_SIGN + AppNameUtil.getAppName() + CommonConst.SLASH_SIGN +
+                                        RecordJob.recordJob.getJobId() + CommonConst.SLASH_SIGN +
+                                        InetAddress.getLocalHost().getHostAddress() + "_status";
                                 if (RecordJob.recordJob.isTrigger()) {
                                     setEndtimer(path);
                                     client.create().withMode(CreateMode.PERSISTENT).forPath(path);
@@ -144,17 +146,17 @@ public class InitListener {
     private static void setEndtimer(String path) throws Exception {
         Date date = new Date();
         scheduledExecutorService.schedule(
-            new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        treeCacheClient.setData().forPath(path, "DONE".getBytes(StandardCharsets.UTF_8));
-                    } catch (Exception e) {
-                        LOGGER.info("[flowrecord]: cannot change the status with zookeeper path: " + path + " with finished");
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            treeCacheClient.setData().forPath(path, "DONE".getBytes(StandardCharsets.UTF_8));
+                        } catch (Exception e) {
+                            LOGGER.info("[flowrecord]: cannot change the status with zookeeper path: " + path + " with finished");
+                        }
                     }
                 }
-            }
-            , RecordJob.recordJob.getEndTime().getTime() - date.getTime(), TimeUnit.MILLISECONDS
+                , RecordJob.recordJob.getEndTime().getTime() - date.getTime(), TimeUnit.MILLISECONDS
         );
     }
 }

@@ -5,16 +5,12 @@
 package com.huawei.flowcontrol.core.util;
 
 import com.alibaba.csp.sentinel.log.RecordLog;
-import com.huawei.apm.bootstrap.config.ConfigLoader;
-import com.huawei.apm.bootstrap.lubanops.log.LogFactory;
-import com.huawei.flowcontrol.core.config.CommonConst;
+import com.huawei.apm.core.common.LoggerFactory;
+import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.flowcontrol.core.config.ConfigConst;
 import com.huawei.flowcontrol.core.config.FlowControlConfig;
 import com.huawei.flowcontrol.core.config.KafkaConnectBySslSwitch;
-import org.apache.curator.framework.CuratorFramework;
 
-import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -26,7 +22,7 @@ import java.util.logging.Logger;
  * @since 2020-08-26
  */
 public class PluginConfigUtil {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private static String active;
     private static Properties properties;
 
@@ -35,7 +31,7 @@ public class PluginConfigUtil {
 
     static {
         // 待后续接入配置中心
-        setPropertiesFromFlowControlConfig(ConfigLoader.getConfig(FlowControlConfig.class));
+        setPropertiesFromFlowControlConfig(PluginConfigManager.getPluginConfig(FlowControlConfig.class));
     }
 
     /**
@@ -53,53 +49,6 @@ public class PluginConfigUtil {
     }
 
     /**
-     * 加载配置参数
-     *
-     * @return Properties对象
-     */
-    public static Properties loadProp() {
-        Properties prop = new Properties();
-        Map<String, String> map = loadZk();
-        if (map.isEmpty()) {
-            RecordLog.error("[PluginConfigUtil] failed to load configuration center file,active=" + active);
-            LOGGER.warning(String.format("[PluginConfigUtil] failed to load configuration center file,active=[{%s}]", active));
-            return new Properties();
-        }
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            prop.put(entry.getKey(), entry.getValue());
-        }
-        RecordLog.info("[PluginConfigUtil] loading configuration center file succeeded,active=" + active);
-        return prop;
-    }
-
-    /**
-     * 从zookeeper中加载配置信息
-     *
-     * @return Map 存储从zookeeper中获取的流控规则配置
-     */
-    private static Map<String, String> loadZk() {
-        Map<String, String> configProperties = new HashMap<String, String>();
-        CuratorFramework zkClient = ZookeeperConnectionEnum.INSTANCE.getZookeeperConnection();
-        if (zkClient == null) {
-            return new HashMap<String, String>();
-        }
-        try {
-            String rootInfo = new String(zkClient.getData().forPath(
-                ConfigLoader.getConfig(FlowControlConfig.class).getConfigZookeeperPath() + CommonConst.SLASH_SIGN + active), Charset.forName("UTF-8"));
-            String[] configData = rootInfo.split(CommonConst.NEWLINE_SIGN);
-            for (String line : configData) {
-                String[] values = line.split(CommonConst.EQUAL_SIGN);
-                if (values.length > 1) {
-                    configProperties.put(values[0], values[1]);
-                }
-            }
-        } catch (Exception e) {
-            RecordLog.error("[PluginConfigUtil] loadZk " + e);
-        }
-        return configProperties;
-    }
-
-    /**
      * 将配置类的配置设置到properties，减少代码修改
      */
     private static void setPropertiesFromFlowControlConfig(FlowControlConfig flowControlConfig) {
@@ -114,14 +63,14 @@ public class PluginConfigUtil {
     private static void setValueForProperties(FlowControlConfig flowControlConfig) {
         properties.put(ConfigConst.SENTINEL_VERSION,
             flowControlConfig.getSentinelVersion());
-        properties.put(ConfigConst.SENTINEL_ZOOKEEPER_ADDRESS,
-            flowControlConfig.getSentinelZookeeperAddress());
-        properties.put(ConfigConst.SENTINEL_ZOOKEEPER_PATH,
-            flowControlConfig.getSentinelZookeeperPath());
+        properties.put(ConfigConst.ZOOKEEPER_ADDRESS,
+            flowControlConfig.getZookeeperAddress());
+        properties.put(ConfigConst.ZOOKEEPER_PATH,
+            flowControlConfig.getFlowControlZookeeperPath());
         properties.put(ConfigConst.DEFAULT_HEARTBEAT_INTERVAL,
-            flowControlConfig.getSentinelHeartbeatInterval());
+            flowControlConfig.getHeartbeatInterval());
         properties.put(ConfigConst.DEFAULT_METRIC_INTERVAL,
-            flowControlConfig.getSentinelMetricInterval());
+            flowControlConfig.getMetricInterval());
         properties.put(ConfigConst.METRIC_INITIAL_DURATION,
             flowControlConfig.getMetricInitialDuration());
         properties.put(ConfigConst.METRIC_MAXLINE,
@@ -167,8 +116,8 @@ public class PluginConfigUtil {
             flowControlConfig.getConfigProfileActive());
         properties.put(ConfigConst.CONFIG_KIE_ADDRESS,
             flowControlConfig.getConfigKieAddress());
-        properties.put(ConfigConst.SENTINEL_CONFIG_TYPE,
-            flowControlConfig.getSentinelConfigCenterType());
+        properties.put(ConfigConst.CONFIG_CENTER_TYPE,
+            flowControlConfig.getConfigCenterType());
         KafkaConnectBySslSwitch.delKey(properties);
         properties.put(ConfigConst.REDIS_HOST, flowControlConfig.getRedisHost());
         properties.put(ConfigConst.REDIS_PORT, flowControlConfig.getRedisPort());

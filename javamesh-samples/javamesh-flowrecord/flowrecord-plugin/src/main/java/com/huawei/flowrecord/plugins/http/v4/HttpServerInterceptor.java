@@ -1,16 +1,15 @@
 package com.huawei.flowrecord.plugins.http.v4;
 
-import com.huawei.apm.bootstrap.common.BeforeResult;
-import com.huawei.apm.bootstrap.interceptors.InstanceMethodInterceptor;
-import com.huawei.apm.bootstrap.lubanops.trace.TraceCollector;
+import com.alibaba.fastjson.JSONObject;
+import com.huawei.apm.core.agent.common.BeforeResult;
+import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.apm.core.lubanops.bootstrap.trace.TraceCollector;
+import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.apm.core.service.send.GatewayClient;
 import com.huawei.flowrecord.config.CommonConst;
-import com.huawei.flowrecord.config.ConfigConst;
 import com.huawei.flowrecord.domain.*;
 import com.huawei.flowrecord.utils.AppNameUtil;
-import com.huawei.flowrecord.utils.KafkaProducerUtil;
-import com.huawei.flowrecord.utils.PluginConfigUtil;
 import org.apache.curator.shaded.com.google.common.hash.Hashing;
-import com.huawei.apm.core.ext.lubanops.utils.JSON;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpServerInterceptor implements InstanceMethodInterceptor {
+
+    private final GatewayClient gatewayClient = ServiceManager.getService(GatewayClient.class);
+
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
         if (!"doService".equals(method.getName())) {
@@ -67,7 +69,7 @@ public class HttpServerInterceptor implements InstanceMethodInterceptor {
 
         httpRequestEntity.setMethod(httpServletRequest.getMethod());
         httpRequestEntity.setHeadMap(headerMap);
-        httpRequestEntity.setHttpRequestBody(httpServletRequest.toString());
+        httpRequestEntity.setHttpRequestBody(httpServletRequest.getParameterMap());
 
         HttpServletResponse httpServletResponse = (HttpServletResponse) arguments[1];
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
@@ -156,10 +158,10 @@ public class HttpServerInterceptor implements InstanceMethodInterceptor {
         recordData.setSubCallKey(subCallKey);
         recordData.setSubCallCount(setSubCallCount(subCallKey));
         recordData.setRequestClass("java.lang.String");
-        recordData.setRequestBody(JSON.toJSONString(requestEntity));
+        recordData.setRequestBody(JSONObject.toJSONString(requestEntity));
         recordData.setResponseClass("java.lang.Object");
-        recordData.setResponseBody(JSON.toJSONString(responseEntity));
-        String serializeData = JSON.toJSONString(recordData);
-        KafkaProducerUtil.sendMessage(PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_REQUEST_TOPIC), serializeData);
+        recordData.setResponseBody(JSONObject.toJSONString(responseEntity));
+        String serializeData = JSONObject.toJSONString(recordData);
+        gatewayClient.send(serializeData.getBytes(StandardCharsets.UTF_8), CommonConst.FLOW_RECORD_DATA_TYPE);
     }
 }

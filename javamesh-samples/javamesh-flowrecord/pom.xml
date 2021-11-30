@@ -19,7 +19,7 @@
 
     <profiles>
         <profile>
-            <id>plugin</id>
+            <id>agent</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -28,9 +28,19 @@
             </modules>
         </profile>
         <profile>
+            <id>ext</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>flowrecord-replay</module>
+            </modules>
+        </profile>
+        <profile>
             <id>all</id>
             <modules>
                 <module>flowrecord-plugin</module>
+                <module>flowrecord-replay</module>
             </modules>
         </profile>
     </profiles>

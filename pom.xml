@@ -42,7 +42,6 @@
         <package.temp.dir>${javamesh.basedir}/${javamesh.name}-${javamesh.version}</package.temp.dir>
         <package.agent.dir>${package.temp.dir}/agent</package.agent.dir>
         <package.server.dir>${package.temp.dir}/server</package.server.dir>
-        <package.webapp.dir>${package.temp.dir}/webapp</package.webapp.dir>
         <package.output.dir>${project.build.outputDirectory}</package.output.dir>
 
         <dependency.output.dir>${package.agent.dir}/lib</dependency.output.dir>
@@ -55,16 +54,6 @@
             <dependency>
                 <groupId>com.huawei.javamesh</groupId>
                 <artifactId>javamesh-agentcore-premain</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.huawei.javamesh</groupId>
-                <artifactId>javamesh-agentcore-bootstrap</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.huawei.javamesh</groupId>
-                <artifactId>javamesh-agentcore-core-ext</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -180,31 +169,29 @@
     </dependencyManagement>
     <profiles>
         <profile>
-            <id>prepare</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>javamesh-prepare</module>
-            </modules>
-        </profile>
-        <profile>
             <id>agent</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
                 <module>javamesh-agentcore</module>
+                <module>javamesh-samples</module>
             </modules>
         </profile>
         <profile>
-            <id>plugin</id>
+            <id>example</id>
+            <modules>
+                <module>javamesh-agentcore</module>
+                <module>javamesh-samples</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>backend</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>javamesh-agentcore</module>
-                <module>javamesh-samples</module>
+                <module>javamesh-backend</module>
             </modules>
         </profile>
         <profile>
@@ -213,14 +200,6 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>javamesh-samples</module>
-                <module>javamesh-backend</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>example</id>
-            <modules>
-                <module>javamesh-agentcore</module>
                 <module>javamesh-samples</module>
             </modules>
         </profile>
@@ -236,7 +215,6 @@
         <profile>
             <id>all</id>
             <modules>
-                <module>javamesh-prepare</module>
                 <module>javamesh-agentcore</module>
                 <module>javamesh-samples</module>
                 <module>javamesh-backend</module>
@@ -264,42 +242,11 @@
                         <outputFile>${package.output.dir}/${project.artifactId}-${javamesh.version}.jar</outputFile>
                         <relocations>
                             <relocation>
-                                <pattern>com.alibaba</pattern>
-                                <shadedPattern>${shade.common.prefix}.com.alibaba</shadedPattern>
-                            </relocation>
-                            <relocation>
-                                <pattern>org.yaml</pattern>
-                                <shadedPattern>${shade.common.prefix}.org.yaml</shadedPattern>
-                            </relocation>
-                            <relocation>
-                                <pattern>org.objectweb.asm</pattern>
-                                <shadedPattern>${shade.common.prefix}.org.objectweb.asm</shadedPattern>
-                            </relocation>
-                            <relocation>
                                 <pattern>net.bytebuddy</pattern>
                                 <shadedPattern>${shade.common.prefix}.net.bytebuddy</shadedPattern>
                             </relocation>
                         </relocations>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.2.0</version>
-                    <executions>
-                        <execution>
-                            <id>copy-dependencies</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>copy-dependencies</goal>
-                            </goals>
-                            <configuration>
-                                <outputDirectory>${dependency.output.dir}</outputDirectory>
-                                <includeScope>compile</includeScope><!-- todo -->
-                                <excludeGroupIds>${project.groupId}</excludeGroupIds>
-                            </configuration>
-                        </execution>
-                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -4,10 +4,10 @@
 
 package com.huawei.flowcontrol;
 
-import com.huawei.apm.bootstrap.definition.EnhanceDefinition;
-import com.huawei.apm.bootstrap.definition.MethodInterceptPoint;
-import com.huawei.apm.bootstrap.matcher.ClassMatcher;
-import com.huawei.apm.bootstrap.matcher.ClassMatchers;
+import com.huawei.apm.core.agent.definition.EnhanceDefinition;
+import com.huawei.apm.core.agent.definition.MethodInterceptPoint;
+import com.huawei.apm.core.agent.matcher.ClassMatcher;
+import com.huawei.apm.core.agent.matcher.ClassMatchers;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatchers;
 
@@ -26,7 +26,7 @@ public class DispatcherServletDefinition implements EnhanceDefinition {
     /**
      * 拦截类的全限定名
      */
-    private static final String INTERCEPT_CLASS = "com.lubanops.apm.plugin.flowcontrol.DispatcherServletInterceptor";
+    private static final String INTERCEPT_CLASS = "com.huawei.flowcontrol.DispatcherServletInterceptor";
 
     @Override
     public ClassMatcher enhanceClass() {
