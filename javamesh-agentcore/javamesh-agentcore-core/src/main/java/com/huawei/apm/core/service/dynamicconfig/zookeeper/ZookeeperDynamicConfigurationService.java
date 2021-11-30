@@ -6,7 +6,13 @@ import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangeType;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationService;
-import org.apache.zookeeper.*;
+import org.apache.zookeeper.AddWatchMode;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooDefs;
+import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
 import java.io.IOException;
@@ -14,14 +20,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * Zookeeper implementation for DynamicConfigurationService
- *
  */
 public class ZookeeperDynamicConfigurationService implements DynamicConfigurationService {
 
@@ -31,8 +37,7 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
 
     static private ZookeeperDynamicConfigurationService serviceInst;
 
-    private ZookeeperDynamicConfigurationService()
-    {
+    private ZookeeperDynamicConfigurationService() {
 
     }
 
@@ -46,10 +51,8 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
         return Config.getTimeout_value();
     }
 
-    public static synchronized  ZookeeperDynamicConfigurationService getInstance()
-    {
-        if ( serviceInst == null )
-        {
+    public static synchronized ZookeeperDynamicConfigurationService getInstance() {
+        if (serviceInst == null) {
             serviceInst = new ZookeeperDynamicConfigurationService();
             URI zk_uri;
 
@@ -61,8 +64,7 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
             }
 
             String zk_con_str = zk_uri.getHost();
-            if ( zk_uri.getPort() > 0 )
-            {
+            if (zk_uri.getPort() > 0) {
                 zk_con_str = zk_con_str + ":" + zk_uri.getPort();
             }
 
@@ -70,7 +72,8 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
             try {
                 zkInst = new ZooKeeper(zk_con_str, Config.getTimeout_value(), new Watcher() {
                     @Override
-                    public void process(WatchedEvent event) {}
+                    public void process(WatchedEvent event) {
+                    }
                 });
             } catch (IOException e) {
                 logger.log(Level.SEVERE, e.getMessage(), e);
@@ -109,7 +112,71 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
         }
     }
 
+    /**
+     * 添加组监听
+     * 若由Kie配置中心转换而来，则配置路径为<h4>/group/key</h4>
+     * <pre>
+     * 其中:
+     * group: 由{@link com.huawei.apm.core.service.dynamicconfig.kie.utils.LabelGroupUtils#createLabelGroup(Map)}生成
+     * key: 则是对应kie的键名
+     * </pre>
+     * <p>第一次添加会将group下的所有子路径的数据通知给监听器</p>
+     *
+     * @param group    分组
+     * @param listener 监听器
+     * @return boolean
+     */
+    @Override
+    public boolean addGroupListener(String group, ConfigurationListener listener) {
+        try {
+            if (listener == null) {
+                return false;
+            }
+            // 监听group底下所有的子节点数据变更
+            final String path = getPath("", fixGroup(group));
+            zkClient.addWatch(path, new Watcher() {
+                @Override
+                public void process(WatchedEvent event) {
+                    if (event.getPath() == null || event.getPath().equals(path)
+                            || !event.getPath().startsWith(path)) {
+                        return;
+                    }
+                    // 带有分隔符"/"的键
+                    String keyWithSeparator = event.getPath().substring(group.length() + 1);
+                    if (keyWithSeparator.length() < 1) {
+                        return;
+                    }
+                    final String content = getConfig(keyWithSeparator, group);
+                    listener.process(new ConfigChangedEvent(keyWithSeparator.substring(1), group, content,
+                            transEventType(event.getType())));
+                }
+            }, AddWatchMode.PERSISTENT_RECURSIVE);
+            notifyGroup(group, listener);
+        } catch (KeeperException.NoNodeException ignored) {
+            // ignored
+        } catch (Exception e) {
+            logger.log(Level.WARNING,
+                    String.format(Locale.ENGLISH, "Added zookeeper group listener failed, %s", e.getMessage()), e);
+            return false;
+        }
+        return true;
+    }
 
+    @Override
+    public boolean removeGroupListener(String key, String group, ConfigurationListener listener) {
+        return true;
+    }
+
+    /**
+     * 添加zookeeper路径监听
+     * 将会监听路径<code>/group/key</code>的数据变更
+     * <h3>一次添加将会将节点数据通知给监听器</h3>
+     *
+     * @param key 子路径
+     * @param group 父路径
+     * @param listener 监听器
+     * @return 当连接zk失败返回false
+     */
     @Override
     public boolean addConfigListener(String key, String group, ConfigurationListener listener) {
 
@@ -121,7 +188,7 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
         Watcher wc = new Watcher() {
             @Override
             public void process(WatchedEvent event) {
-                if ( ! fullPath.equals(event.getPath()) )
+                if (!fullPath.equals(event.getPath()))
                     logger.log(Level.WARNING, "unexpected event " + event + " for " + key + ":" + finalGroup);
                 String content = getConfig(key, finalGroup);
                 ConfigChangeType changeType = transEventType(event.getType());
@@ -131,7 +198,10 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
         };
 
         try {
-            zkClient.addWatch(fullPath, wc, AddWatchMode.PERSISTENT) ;
+            zkClient.addWatch(fullPath, wc, AddWatchMode.PERSISTENT);
+            notifyKey(key, group, listener);
+        } catch (KeeperException.NoNodeException ignored) {
+            // ignored
         } catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage(), e);
             return false;
@@ -150,10 +220,10 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
     }
 
     /**
-     * @param key      key path
+     * @param key key path
      */
     @Override
-    public String getConfig(String key, String group)  {
+    public String getConfig(String key, String group) {
 
         final String fullPath = getPath(key, group);
 
@@ -185,17 +255,15 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
     }
 
 
-
-    protected boolean createRecursivly(String path)
-    {
+    protected boolean createRecursivly(String path) {
         try {
             if (zkClient.exists(path, null) == null && path.length() > 0) {
                 String temp = path.substring(0, path.lastIndexOf("/"));
-                if ( temp != null && temp.length() > 1 ) {
+                if (temp != null && temp.length() > 1) {
                     createRecursivly(temp);
                 }
-                zkClient.create(path, null, ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-            }else{
+                zkClient.create(path, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+            } else {
 
             }
         } catch (KeeperException e) {
@@ -209,10 +277,9 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
 
     }
 
-    protected boolean updateNode(String path, byte[] data, int version)
-    {
+    protected boolean updateNode(String path, byte[] data, int version) {
         try {
-            if ( zkClient.exists(path, null) == null ) {
+            if (zkClient.exists(path, null) == null) {
                 createRecursivly(path);
             }
             zkClient.setData(path, data, version);
@@ -228,8 +295,7 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
     }
 
     @Override
-    public void close()
-    {
+    public void close() {
         try {
             this.zkClient.close();
         } catch (InterruptedException e) {
@@ -238,12 +304,10 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
     }
 
     @Override
-    public List<String> listConfigsFromGroup(String group)
-    {
+    public List<String> listConfigsFromGroup(String group) {
         group = group.trim();
-        if (group.startsWith("/") == false)
-        {
-            group = "/"+group;
+        if (group.startsWith("/") == false) {
+            group = "/" + group;
         }
         List<String> str_array = null;
         try {
@@ -255,38 +319,33 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
     }
 
     @Override
-    public List<String> listConfigsFromConfig(String key, String group)
-    {
+    public List<String> listConfigsFromConfig(String key, String group) {
         group = group.trim();
-        if (group.startsWith("/") == false)
-        {
-            group = "/"+group;
+        if (group.startsWith("/") == false) {
+            group = "/" + group;
         }
         key = key.trim();
-        if (key.startsWith("/") == false)
-        {
-            key = "/"+key;
+        if (key.startsWith("/") == false) {
+            key = "/" + key;
         }
 
         List<String> str_array = null;
         try {
-            str_array = listNodesFromNode(group+key);
+            str_array = listNodesFromNode(group + key);
         } catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage(), e);
         }
         return str_array;
     }
 
-    private List<String> listNodesFromNode(String node)
-    {
+    private List<String> listNodesFromNode(String node) {
         List<String> str_array = new Vector<String>();
         try {
             str_array = zkClient.getChildren(node, null);
         } catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage(), e);
         }
-        for (int i = 0; i < str_array.size(); i++)
-        {
+        for (int i = 0; i < str_array.size(); i++) {
             String str = str_array.get(i);
             for (String grandChild : listNodesFromNode(node + "/" + str)) {
                 str_array.add(str + '/' + grandChild);
@@ -296,5 +355,30 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
         return str_array;
     }
 
+    /**
+     * 第一次增加监听器时，将关联查询的数据传给listener
+     *
+     * @param group    分组
+     * @param listener 监听器
+     */
+    private void notifyGroup(String group, ConfigurationListener listener) {
+        final List<String> keys = listConfigsFromGroup(group);
+        if (keys != null) {
+            for (String key : keys) {
+                notifyKey(key, group, listener);
+            }
+        }
+    }
 
+    private void notifyKey(String key, String group, ConfigurationListener listener) {
+        final String content = getConfig(fixKey(key), group);
+        listener.process(new ConfigChangedEvent(key, group, content, ConfigChangeType.ADDED));
+    }
+
+    private String fixKey(String key) {
+        if (key == null) {
+            return null;
+        }
+        return key.startsWith("/") ? key : "/" + key;
+    }
 }

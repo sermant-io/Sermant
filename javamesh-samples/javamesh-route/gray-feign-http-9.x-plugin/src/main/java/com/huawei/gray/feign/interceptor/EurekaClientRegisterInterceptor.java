@@ -6,10 +6,8 @@ package com.huawei.gray.feign.interceptor;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.gray.feign.context.CurrentInstance;
-import com.huawei.gray.feign.util.RouterUtil;
-
-import com.netflix.appinfo.InstanceInfo;
+import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.gray.feign.service.RegisterService;
 
 import java.lang.reflect.Method;
 
@@ -20,6 +18,7 @@ import java.lang.reflect.Method;
  * @since 2021-11-03
  */
 public class EurekaClientRegisterInterceptor implements InstanceMethodInterceptor {
+    private RegisterService registerService;
 
     /**
      * 获取当前服务信息
@@ -31,13 +30,8 @@ public class EurekaClientRegisterInterceptor implements InstanceMethodIntercepto
      */
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
-        final Object argument = arguments[0];
-        if (argument instanceof InstanceInfo) {
-            InstanceInfo instanceInfo = (InstanceInfo) argument;
-            // 存放当前服务实例, 初始化标签观察者
-            CurrentInstance.newInstance(instanceInfo.getVIPAddress(), instanceInfo.getIPAddr(), instanceInfo.getPort());
-            RouterUtil.init();
-        }
+        registerService = ServiceManager.getService(RegisterService.class);
+        registerService.before(obj, method, arguments, beforeResult);
     }
 
     @Override

@@ -7,8 +7,10 @@ package com.huawei.flowcontrol.core.init;
 import com.alibaba.csp.sentinel.concurrent.NamedThreadFactory;
 import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.transport.config.TransportConfig;
+import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.flowcontrol.core.config.CommonConst;
 import com.huawei.flowcontrol.core.config.ConfigConst;
+import com.huawei.flowcontrol.core.config.FlowControlConfig;
 import com.huawei.flowcontrol.core.heartbeat.KafkaHeartbeatSender;
 import com.huawei.flowcontrol.core.metric.SimpleKafkaMetricSender;
 import com.huawei.flowcontrol.core.util.PluginConfigUtil;
@@ -37,6 +39,10 @@ public final class InitExecutor {
      * 初始化定时器发送流控数据和心跳数据
      */
     public static void doInit() {
+        final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
+        if (!pluginConfig.isOpenMetricCollector()) {
+            return;
+        }
         // 周期性向kafka推送流控数据
         metricSenderInit();
 
@@ -58,7 +64,7 @@ public final class InitExecutor {
             // 加载配置参数
             metricIntervalMs = Long.parseLong(metricInterval);
         } catch (NumberFormatException e) {
-            metricIntervalMs = CommonConst.SENTINEL_METRIC_INTERVAL;
+            metricIntervalMs = CommonConst.FLOW_CONTROL_METRIC_INTERVAL;
             RecordLog.warn("[InitExecutor] metricSenderInit() config center", e.toString());
         }
 

@@ -1,0 +1,2 @@
+gray.plugin:
+  grayVersion: ${GRAYVERSION}

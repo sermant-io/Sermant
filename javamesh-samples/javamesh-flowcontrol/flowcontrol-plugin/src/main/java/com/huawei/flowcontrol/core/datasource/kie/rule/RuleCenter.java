@@ -5,6 +5,7 @@
 package com.huawei.flowcontrol.core.datasource.kie.rule;
 
 import com.alibaba.csp.sentinel.datasource.AbstractDataSource;
+import com.huawei.flowcontrol.core.datasource.kie.rule.authority.AuthorityRuleWrapper;
 import com.huawei.flowcontrol.core.datasource.kie.rule.degrade.DegradeRuleWrapper;
 import com.huawei.flowcontrol.core.datasource.kie.rule.flow.FlowRuleWrapper;
 import com.huawei.flowcontrol.core.datasource.kie.rule.system.SystemRuleWrapper;
@@ -33,6 +34,7 @@ public class RuleCenter {
         ruleMap.put("FlowRule", new FlowRuleWrapper());
         ruleMap.put("DegradeRule", new DegradeRuleWrapper());
         ruleMap.put("SystemRule", new SystemRuleWrapper());
+        ruleMap.put("AuthorityRule", new AuthorityRuleWrapper());
     }
 
     /**
@@ -41,7 +43,7 @@ public class RuleCenter {
      * @param ruleType   规则类型
      * @param dataSource 数据源
      */
-    public void registerRuleManager(String ruleType, AbstractDataSource<String, ?> dataSource) {
+    public void registerRuleManager(String ruleType, AbstractDataSource<?, ?> dataSource) {
         RuleWrapper ruleWrapper = ruleMap.get(ruleType);
         if (ruleWrapper == null) {
             LOGGER.error(String.format("Un support rule type %s.", ruleType));

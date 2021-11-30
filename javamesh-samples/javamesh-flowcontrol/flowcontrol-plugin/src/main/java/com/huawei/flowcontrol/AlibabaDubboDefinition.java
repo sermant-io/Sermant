@@ -20,7 +20,7 @@ public class AlibabaDubboDefinition extends DubboDefinition {
     /**
      * 拦截类的全限定名
      */
-    private static final String INTERCEPT_CLASS = "com.lubanops.apm.plugin.flowcontrol.AlibabaDubboInterceptor";
+    private static final String INTERCEPT_CLASS = "com.huawei.flowcontrol.AlibabaDubboInterceptor";
 
     public AlibabaDubboDefinition() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS);

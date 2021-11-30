@@ -15,37 +15,15 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dubbo.version>2.7.0</dubbo.version>
-        <javax-servlet-api.version>3.0.1</javax-servlet-api.version>
         <package.sample.type>plugin</package.sample.type>
+        <config.skip.flag>false</config.skip.flag>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo</artifactId>
-            <version>${dubbo.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.huawei.javamesh</groupId>
             <artifactId>javamesh-agentcore-core</artifactId>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax-servlet-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- 路由部分公共模块 -->
-        <dependency>
-            <groupId>com.huawei.javamesh</groupId>
-            <artifactId>common</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
@@ -54,28 +32,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <configuration>
-                    <relocations>
-                        <relocation>
-                            <pattern>org.apache.http</pattern>
-                            <shadedPattern>${shade.common.prefix}.org.apache.http</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.alibaba.fastjson</pattern>
-                            <shadedPattern>${shade.common.prefix}.com.alibaba.fastjson</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>net.bytebuddy</pattern>
-                            <shadedPattern>${shade.common.prefix}.net.bytebuddy</shadedPattern>
-                        </relocation>
-                    </relocations>
-                    <transformers>
-                        <transformer
-                                implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                    </transformers>
-                </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

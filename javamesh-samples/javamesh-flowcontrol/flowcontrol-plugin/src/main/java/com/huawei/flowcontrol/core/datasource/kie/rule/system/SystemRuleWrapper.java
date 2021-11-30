@@ -25,7 +25,7 @@ public class SystemRuleWrapper extends RuleWrapper {
      * @param dataSource 数据源
      */
     @Override
-    public void registerRuleManager(AbstractDataSource<String, ?> dataSource) {
+    public void registerRuleManager(AbstractDataSource<?, ?> dataSource) {
         SentinelProperty property = dataSource.getProperty();
         if (property != null) {
             SystemRuleManager.register2Property((SentinelProperty<List<SystemRule>>) property);

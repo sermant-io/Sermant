@@ -24,9 +24,8 @@ public class NettyGatewayClient implements GatewayClient {
     @Override
     public void start() {
         nettyClient = ClientManager.getNettyClientFactory().getNettyClient(
-            AgentConfigManager.getNettyServerIp(),
-            Integer.parseInt(AgentConfigManager.getNettyServerPort()));
-        nettyClient.doConnect();
+                AgentConfigManager.getNettyServerIp(),
+                Integer.parseInt(AgentConfigManager.getNettyServerPort()));
     }
 
     @Override

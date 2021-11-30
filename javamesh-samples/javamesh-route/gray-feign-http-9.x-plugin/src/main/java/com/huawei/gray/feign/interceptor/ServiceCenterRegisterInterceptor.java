@@ -6,10 +6,8 @@ package com.huawei.gray.feign.interceptor;
 
 import com.huawei.apm.core.agent.common.BeforeResult;
 import com.huawei.apm.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.gray.feign.context.CurrentInstance;
-import com.huawei.gray.feign.util.RouterUtil;
-
-import org.apache.servicecomb.registry.api.registry.Microservice;
+import com.huawei.apm.core.service.ServiceManager;
+import com.huawei.gray.feign.service.RegisterService;
 
 import java.lang.reflect.Method;
 
@@ -20,9 +18,11 @@ import java.lang.reflect.Method;
  * @since 2021-11-03
  */
 public class ServiceCenterRegisterInterceptor implements InstanceMethodInterceptor {
+    private RegisterService registerService;
 
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
+        registerService = ServiceManager.getService(RegisterService.class);
     }
 
     /**
@@ -35,11 +35,7 @@ public class ServiceCenterRegisterInterceptor implements InstanceMethodIntercept
      */
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
-        if (result instanceof Microservice) {
-            Microservice microservice = (Microservice) result;
-            CurrentInstance.newInstance(microservice.getServiceName(), microservice.getInstance().getHostName(), -1);
-            RouterUtil.init();
-        }
+        registerService.after(obj, method, arguments, result);
         return result;
     }
 

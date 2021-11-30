@@ -12,17 +12,24 @@
     <artifactId>flowcontrol-plugin</artifactId>
 
     <properties>
+        <config.skip.flag>false</config.skip.flag>
         <package.sample.type>plugin</package.sample.type>
         <sentinel.version>1.8.0</sentinel.version>
         <shade.distinct.prefix>com.lubanops.apm.dependencies.flowcontrol</shade.distinct.prefix>
     </properties>
     <dependencies>
+        <!--Provider依赖-->
         <dependency>
             <groupId>com.huawei.javamesh</groupId>
             <artifactId>javamesh-agentcore-core</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!--agent core依赖-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>2.5.7</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.alibaba.csp</groupId>
             <artifactId>sentinel-transport-common</artifactId>
@@ -70,12 +77,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>dubbo</artifactId>
-            <version>2.5.7</version>
-            <scope>provided</scope>
-        </dependency>
         <!--插件依赖-->
         <dependency>
             <groupId>org.apache.dubbo</groupId>
@@ -83,13 +84,19 @@
             <version>2.7.3</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.huaweicloud</groupId>
+            <artifactId>servicecomb-governance</artifactId>
+            <version>1.5.0-Hoxton</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!--huawei update 更新jar版本至优选库版本，原版本2.0.5.RELEASE，优选库版本2.3.4.RELEASE-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -97,6 +104,7 @@
             <version>2.3.4.RELEASE</version>
             <scope>provided</scope>
         </dependency>
+        <!--Compile依赖-->
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
@@ -146,6 +154,12 @@
                     <artifactId>zookeeper</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <!--测试依赖-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -219,9 +233,14 @@
                                     <shadedPattern>${shade.distinct.prefix}.javax.annotation</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>org.yaml</pattern>
+                                    <shadedPattern>${shade.common.prefix}.org.yaml</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <excludes>
                                         <exclude>org.apache.dubbo.*</exclude>
                                         <exclude>org.springframework.*</exclude>
+                                        <exclude>org.apache.servicecomb.*</exclude>
                                     </excludes>
                                     <pattern>org</pattern>
                                     <shadedPattern>${shade.distinct.prefix}.org</shadedPattern>
