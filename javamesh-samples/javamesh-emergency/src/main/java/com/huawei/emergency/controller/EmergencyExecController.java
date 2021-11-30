@@ -101,6 +101,8 @@ public class EmergencyExecController {
      * @param current  页码
      * @param sorter   排序字段
      * @param order    排序方式
+     * @param creators 用于过滤的创建人
+     * @param planNames 用于过滤的预案编号
      * @return {@link CommonResult}
      */
     @GetMapping("/history")
@@ -108,12 +110,18 @@ public class EmergencyExecController {
                                            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
                                            @RequestParam(value = "current", defaultValue = "1") int current,
                                            @RequestParam(value = "sorter", defaultValue = "execute_time") String sorter,
-                                           @RequestParam(value = "order", defaultValue = "DESC") String order) {
+                                           @RequestParam(value = "order", defaultValue = "") String order,
+                                           @RequestParam(value = "creator[]", required = false) String[] creators,
+                                           @RequestParam(value = "plan_name[]", required = false) String[] planNames) {
         CommonPage<EmergencyPlan> params = new CommonPage<>();
         params.setPageSize(pageSize);
         params.setPageIndex(current);
         params.setSortField(sorter);
-        params.setSortType(order);
+        if ("ascend".equals(order)) {
+            params.setSortType("ASC");
+        } else if ("descend".equals(order)){
+            params.setSortType("DESC");
+        }
         EmergencyPlan plan = new EmergencyPlan();
         plan.setPlanName(planName);
         params.setObject(plan);

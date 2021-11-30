@@ -211,7 +211,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         if (planInfo == null || ValidEnum.IN_VALID.getValue().equals(planInfo.getIsValid())) {
             return CommonResult.failed("请选择正确的预案");
         }
-        if (UN_PASSED_STATUS.contains(planInfo.getStatus())){
+        if (UN_PASSED_STATUS.contains(planInfo.getStatus())) {
             return CommonResult.failed("请选择已审核通过的预案");
         }
         ScheduleType scheduleType = ScheduleType.match(plan.getScheduleType(), null);
@@ -384,7 +384,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     @Override
     public CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params) {
         Page<PlanQueryDto> pageInfo = PageHelper
-            .startPage(params.getPageIndex(), params.getPageSize(), params.getSortField() + System.lineSeparator() + params.getSortType())
+            .startPage(params.getPageIndex(), params.getPageSize(), StringUtils.isEmpty(params.getSortType()) ? "" : params.getSortField() + System.lineSeparator() + params.getSortType())
             .doSelectPage(() -> {
                 planMapper.allPlanRecords(params.getObject());
             });
@@ -408,8 +408,8 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
                 planMapper.allTaskRecords(paramsObject.getExecId(), paramsObject.getSceneId());
             });
         List<SceneExecDto> result = pageInfo.getResult();
-        result.forEach( recordDto ->{
-            recordDto.setServerInfo(recordDetailMapper.selectAllServerDetail(recordDto.getKey()));
+        result.forEach(recordDto -> {
+            recordDto.setScheduleInfo(recordDetailMapper.selectAllServerDetail(recordDto.getKey()));
         });
         return CommonResult.success(result, (int) pageInfo.getTotal());
     }
@@ -434,6 +434,8 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         EmergencyPlanDetailExample updateCondition = new EmergencyPlanDetailExample();
         updateCondition.createCriteria().andPlanIdEqualTo(planId);
         detailMapper.updateByExampleSelective(oldDetails, updateCondition);
+
+        taskMapper.tryClearTaskNo(planId);
 
         String planNO = generatePlanNo(planId);
         Integer preSceneId = null;
@@ -484,10 +486,10 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     /**
      * 生成子任务
      *
-     * @param planDetail 父任务信息
+     * @param planDetail   父任务信息
      * @param childrenNode 子任务信息
-     * @param parentNo 父任务编号
-     * @param isSubTask 是否为子任务
+     * @param parentNo     父任务编号
+     * @param isSubTask    是否为子任务
      * @return
      */
     private void handleChildren(EmergencyPlanDetail planDetail, List<TaskNode> childrenNode, String parentNo, boolean isSubTask) {
@@ -518,7 +520,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             detailMapper.insertSelective(insertTaskDetail);
             EmergencyTask updateTask = new EmergencyTask();
             updateTask.setTaskId(task.getKey());
-            if (isSubTask){
+            if (isSubTask) {
                 updateTask.setTaskNo(generateSubTaskNo(parentNo, i + 1));
             } else {
                 updateTask.setTaskNo(generateTaskNo(parentNo, i + 1));

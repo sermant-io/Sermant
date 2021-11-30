@@ -420,17 +420,16 @@
         LEFT JOIN emergency_script task_script ON task_script.script_id = task.script_id
         WHERE plan.is_valid = '1'
         <if test="planName !=null and planName !=''">
-            and (plan_name like concat('%',#{planName},'%') or plan_no like concat('%',#{planName},'%'))
+            and (locate(#{planName},plan_name) > 0 or locate(#{planName},plan_no) > 0)
         </if>
         <if test="sceneName !=null and sceneName !=''">
-            and (scene.task_no like concat('%',#{sceneName},'%') or scene.task_name like concat('%',#{sceneName},'%'))
+            and (locate(#{sceneName},scene.task_name) > 0 or locate(#{sceneName},scene.task_no) > 0)
         </if>
         <if test="taskName !=null and taskName !=''">
-            and (task.task_no like concat('%',#{taskName},'%') or scene.task_name like concat('%',#{taskName},'%'))
+            and (locate(#{taskName},task.task_name) > 0 or locate(#{taskName},task.task_no) > 0)
         </if>
         <if test="scriptName !=null and scriptName !=''">
-            and (scene_script.script_name like concat('%',#{scriptName},'%') or task_script.script_name like
-            concat('%',#{scriptName},'%'))
+            and (locate(#{scriptName},scene_script.script_name) > 0 or locate(#{scriptName},task_script.script_name) > 0)
         </if>
         <if test="status !=null and status !=''">
             and plan.status = #{status}
@@ -439,24 +438,26 @@
         ORDER BY plan.update_time
     </select>
     <select id="queryPlanDetailDto" resultType="com.huawei.emergency.dto.PlanDetailQueryDto">
-        SELECT t1.detail_id AS                                                              `key`,
-               t2.task_no                                                                   scene_no,
-               t2.task_name                                                                 scene_name,
-               t2.task_no                                                                   scena_no,
-               t2.task_name                                                                 scena_name,
-               t3.task_no,
-               t3.task_name,
-               t4.task_no                                                                   subtask_no,
-               t4.task_name                                                                 subtask_name,
-               (CASE WHEN t1.task_id IS NULL THEN t2.channel_type ELSE t4.channel_type END) channel_type,
-               (CASE WHEN t1.task_id IS NULL THEN t2.script_name ELSE t4.script_name END)   script_name,
-               (CASE WHEN t1.task_id IS NULL THEN t2.submit_info ELSE t4.submit_info END)   submit_info
-        FROM emergency_plan_detail t1
-                 LEFT JOIN emergency_task t2 ON t1.scene_id = t2.task_id
-                 LEFT JOIN emergency_task t3 ON t1.parent_task_id = t3.task_id
-                 LEFT JOIN emergency_task t4 ON t1.task_id = t4.task_id
-        WHERE t1.is_valid = '1'
-          AND t1.plan_id = #{id}
+        SELECT
+            t1.detail_id AS `key`,
+            t2.task_no scene_no,
+            t2.task_name scene_name,
+            t2.task_no scena_no,
+            t2.task_name scena_name,
+            ( CASE WHEN t1.parent_task_id = t1.scene_id THEN t4.task_no ELSE t3.task_no END ) task_no,
+            ( CASE WHEN t1.parent_task_id = t1.scene_id THEN t4.task_name ELSE t3.task_name END ) task_name,
+            ( CASE WHEN t1.parent_task_id != t1.scene_id THEN t4.task_no ELSE NULL END ) subtask_no,
+            ( CASE WHEN t1.parent_task_id != t1.scene_id THEN t4.task_name ELSE NULL END ) subtask_name,
+            ( CASE WHEN t1.task_id IS NULL THEN t2.channel_type ELSE t4.channel_type END ) channel_type,
+            ( CASE WHEN t1.task_id IS NULL THEN t2.script_name ELSE t4.script_name END ) script_name,
+            ( CASE WHEN t1.task_id IS NULL THEN t2.submit_info ELSE t4.submit_info END ) submit_info
+        FROM
+            emergency_plan_detail t1
+                LEFT JOIN emergency_task t2 ON t1.scene_id = t2.task_id
+                LEFT JOIN emergency_task t3 ON t1.parent_task_id = t3.task_id
+                LEFT JOIN emergency_task t4 ON t1.task_id = t4.task_id
+        WHERE t1.plan_id = #{id}
+          and t1.is_valid = '1'
     </select>
     <select id="allPlanRecords" parameterType="com.huawei.emergency.entity.EmergencyPlan" resultType="com.huawei.emergency.dto.PlanQueryDto">
         SELECT
@@ -476,7 +477,7 @@
         left JOIN emergency_exec_record t3 on t1.exec_id = t3.exec_id and t3.is_valid='1'
         where t1.plan_id is not null
         <if test="planName != null and planName != ''">
-            and t2.plan_name like concat('%',#{planName},'%')
+            and locate(#{planName},t2.plan_name) > 0
         </if>
         group by t1.exec_id
         ORDER BY

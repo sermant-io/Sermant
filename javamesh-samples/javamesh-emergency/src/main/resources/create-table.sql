@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `emergency_task`  (
                                    `script_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '脚本名称',
                                    `submit_info` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '提交信息',
                                    PRIMARY KEY (`task_id`) USING BTREE,
-                                   UNIQUE INDEX `task_no`(`task_no`) USING BTREE,
+                                   INDEX `task_no`(`task_no`) USING BTREE,
                                    INDEX `task_name`(`task_name`) USING BTREE,
                                    INDEX `is_valid`(`is_valid`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;$$$
