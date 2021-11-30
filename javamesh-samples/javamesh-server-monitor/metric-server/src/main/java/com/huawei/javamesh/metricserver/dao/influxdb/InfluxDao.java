@@ -88,9 +88,9 @@ public class InfluxDao {
     /**
      * 查询数据，使用默认的结果解析器
      *
-     * @param request {@link InfluxQueryRequest}实体
+     * @param request     {@link InfluxQueryRequest}实体
      * @param targetClass 目标类型Class
-     * @param <M> 目标类型
+     * @param <M>         目标类型
      * @return 解析后的查询结果实体列表
      */
     public <M> List<M> query(InfluxQueryRequest request, Class<M> targetClass) {
@@ -100,10 +100,10 @@ public class InfluxDao {
     /**
      * 查询数据
      *
-     * @param request {@link InfluxQueryRequest}实体
+     * @param request        {@link InfluxQueryRequest}实体
      * @param resultResolver 结果解析器
-     * @param targetClass 目标类型Class
-     * @param <M> 目标类型
+     * @param targetClass    目标类型Class
+     * @param <M>            目标类型
      * @return 解析后的查询结果实体列表
      */
     public <M> List<M> query(InfluxQueryRequest request, FluxTableResolver resultResolver, Class<M> targetClass) {
@@ -113,10 +113,10 @@ public class InfluxDao {
     /**
      * 查询数据
      *
-     * @param flux flux查询语句
+     * @param flux           flux查询语句
      * @param resultResolver 结果解析器
-     * @param targetClass 目标类型Class
-     * @param <M> 目标类型
+     * @param targetClass    目标类型Class
+     * @param <M>            目标类型
      * @return 解析后的查询结果实体列表
      */
     public <M> List<M> query(String flux, FluxTableResolver resultResolver, Class<M> targetClass) {
@@ -127,7 +127,7 @@ public class InfluxDao {
      * 删除指定时间段的数据（谨慎使用）
      *
      * @param start 开始时间
-     * @param stop   结束时间
+     * @param stop  结束时间
      */
     public void delete(OffsetDateTime start, OffsetDateTime stop) {
         deleteApi.delete(start, stop, "", bucket, org);
@@ -138,10 +138,15 @@ public class InfluxDao {
     }
 
     private String buildFlux(InfluxQueryRequest request) {
-        return FluxBuilder.from(bucket)
+        FluxBuilder fluxBuilder = FluxBuilder.from(bucket)
             .measurement(request.getMeasurement())
-            .range(request.getStart(), request.getEnd())
-            .build();
+            .range(request.getStart(), request.getEnd());
+        if (!CollectionUtils.isEmpty(request.getTags())) {
+            for (Map.Entry<String, String> entry : request.getTags().entrySet()) {
+                fluxBuilder.addFilter(FluxBuilder.Filter.newEquals(entry.getKey(), entry.getValue()));
+            }
+        }
+        return fluxBuilder.build();
     }
 
     /**

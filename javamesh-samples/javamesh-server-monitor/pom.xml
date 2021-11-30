@@ -31,6 +31,7 @@
                 <module>protocol</module>
                 <module>monitor-common</module>
                 <module>server-monitor-service</module>
+                <module>databasepeer-parse-service</module>
                 <module>connection-pool-collect-plugin</module>
             </modules>
         </profile>
@@ -49,6 +50,7 @@
                 <module>protocol</module>
                 <module>monitor-common</module>
                 <module>server-monitor-service</module>
+                <module>databasepeer-parse-service</module>
                 <module>connection-pool-collect-plugin</module>
                 <module>metric-server</module>
             </modules>
@@ -80,6 +82,16 @@
             <dependency>
                 <groupId>org.apache.skywalking</groupId>
                 <artifactId>apm-agent-core</artifactId>
+                <version>${skywalking.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.skywalking</groupId>
+                <artifactId>apm-jdbc-commons</artifactId>
+                <version>${skywalking.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.skywalking</groupId>
+                <artifactId>apm-network</artifactId>
                 <version>${skywalking.version}</version>
             </dependency>
         </dependencies>

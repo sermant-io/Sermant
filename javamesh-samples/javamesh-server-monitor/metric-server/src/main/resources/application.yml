@@ -10,6 +10,6 @@ server:
   port: 9998
 influx:
   token: yourTocken
-  bucket: yourMetric
+  bucket: yourBucket
   url: http://localhost:9096
   org: yourOrg

@@ -92,7 +92,7 @@ public class ServerMetricService extends InfluxService {
      * 查询指定时间段内的{@link CpuDTO}实体列表
      *
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return {@link CpuDTO}实体列表
      */
     public List<CpuDTO> getCpuMetrics(String start, String end) {
@@ -112,7 +112,7 @@ public class ServerMetricService extends InfluxService {
      * 查询指定时间段内的{@link MemoryDTO}实体列表
      *
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return {@link MemoryDTO}实体列表
      */
     public List<MemoryDTO> getMemoryMetrics(String start, String end) {
@@ -133,7 +133,7 @@ public class ServerMetricService extends InfluxService {
      * 查询指定时间段内的{@link NetworkDTO}实体列表
      *
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return {@link NetworkDTO}实体列表
      */
     public List<NetworkDTO> getNetworkMetrics(String start, String end) {
@@ -153,9 +153,9 @@ public class ServerMetricService extends InfluxService {
     /**
      * 查询指定类型和时间段内的{@link DiskDTO}实体列表
      *
-     * @param type {@link DiskDTO}类型
+     * @param type  {@link DiskDTO}类型
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return {@link DiskDTO}实体列表
      */
     public List<DiskDTO> getDiskMetrics(DiskDTO.ValueType type, String start, String end) {

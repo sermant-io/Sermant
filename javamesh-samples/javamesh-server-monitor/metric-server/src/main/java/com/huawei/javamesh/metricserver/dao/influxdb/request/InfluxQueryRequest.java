@@ -7,6 +7,8 @@ package com.huawei.javamesh.metricserver.dao.influxdb.request;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Map;
+
 /**
  * Influx DB 查询请求类
  */
@@ -20,37 +22,25 @@ public class InfluxQueryRequest {
      *
      * <p>Example relative time ranges:<p/>
      * <p>  Relative time range with start only. Stop defaults to now.
-     *   from(bucket:"example-bucket")
-     *   |> range(start: -1h)<p/>
+     * from(bucket:"example-bucket")
+     * |> range(start: -1h)<p/>
      *
      * <p>  Relative time range with start and stop
-     *   from(bucket:"example-bucket")
-     *   |> range(start: -1h, stop: -10m)<p/>
+     * from(bucket:"example-bucket")
+     * |> range(start: -1h, stop: -10m)<p/>
      *
      *
      * <p>Example absolute time range:<p/>
      * <p>  from(bucket:"example-bucket")
-     *   |> range(start: 2021-01-01T00:00:00Z, stop: 2021-01-01T12:00:00Z)<p/>
+     * |> range(start: 2021-01-01T00:00:00Z, stop: 2021-01-01T12:00:00Z)<p/>
      */
     private String start;
     private String end;
 
-    @Data
-    static class FiledCondition {
-        private String fieldKey;
-        private Operator operator;
-    }
-
-    @Data
-    static class TagCondition {
-        private String tagKey;
-        private String tagValue;
-        private Operator operator;
-    }
-
-    enum Operator {
-        EQ,
-        NEQ;
-    }
-
+    /**
+     * tag筛选条件
+     * <p>
+     * 仅支持tag1==value1 and tag2==value2 ...这种简单的与逻辑
+     */
+    private Map<String, String> tags;
 }

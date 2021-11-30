@@ -32,18 +32,18 @@ public class MemoryInfluxEntity extends CommonMetricInfluxEntity {
     /**
      * 对应cat /proc/meminfo指令的Cached
      */
-    @Column(name ="cached")
+    @Column(name = "cached")
     private Long cached;
 
     /**
      * 对应cat /proc/meminfo指令的Buffers
      */
-    @Column(name ="buffers")
+    @Column(name = "buffers")
     private Long buffers;
 
     /**
      * 对应cat /proc/meminfo指令的SwapCached
      */
-    @Column(name ="memory_used")
+    @Column(name = "memory_used")
     private Long memoryUsed;
 }

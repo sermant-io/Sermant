@@ -37,9 +37,10 @@ public class OracleMemoryService extends InfluxService {
 
     /**
      * 查询{@link OracleMemoryDTO}实体列表
-     * @param type Memory类型
+     *
+     * @param type  Memory类型
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return @link OracleMemoryDTO}实体列表
      */
     public List<OracleMemoryDTO> getMemoryMetrics(OracleMemoryDTO.OracleMemoryType type, String start, String end) {

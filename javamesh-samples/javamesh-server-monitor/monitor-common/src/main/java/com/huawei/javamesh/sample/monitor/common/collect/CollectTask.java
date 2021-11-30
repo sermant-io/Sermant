@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * 消费（或者可以写死为发送给服务端）。<p/>
  *
  * <p>从{@link MetricProvider#collect()}采集的数据在消费前会存在{@link #writeBuffer}中</p>
+ *
  * @param <M> 采集数据类型
  */
 public class CollectTask<M> {
