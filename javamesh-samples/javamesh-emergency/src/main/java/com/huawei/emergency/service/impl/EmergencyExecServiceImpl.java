@@ -38,6 +38,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -126,13 +127,18 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
         record.setCreateUser("system");
         recordMapper.insertSelective(record);
 
-        threadPoolExecutor.execute(handlerFactory.handle(record));
-        LOGGER.debug("threadPoolExecutor = {} ", threadPoolExecutor);
+        List<EmergencyExecRecordDetail> emergencyExecRecordDetails = handlerFactory.generateRecordDetail(record);
+        emergencyExecRecordDetails.forEach( recordDetail -> {
+            threadPoolExecutor.execute(handlerFactory.handleDetail(record,recordDetail));
+        });
+
+        //.execute(handlerFactory.handle(record));
+        //LOGGER.debug("threadPoolExecutor = {} ", threadPoolExecutor);
 
         EmergencyExecRecord result = new EmergencyExecRecord();
         result.setExecId(record.getExecId());
         result.setRecordId(record.getRecordId());
-        result.setDebugId(record.getRecordId());
+        result.setDebugId(emergencyExecRecordDetails.get(0).getDetailId());
         return CommonResult.success(result);
     }
 
@@ -146,7 +152,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
 
     @Override
     public LogResponse getLog(int recordId, int line) {
-        String log = getLog(recordId);
+        /*String log = getLog(recordId);
         if (StringUtils.isEmpty(log)) {
             return LogMemoryStore.getLog(recordId, line);
         }
@@ -155,7 +161,8 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
             String[] needLogs = Arrays.copyOfRange(split, line - 1, split.length);
             return new LogResponse(null, needLogs);
         }
-        return new LogResponse(null, new String[]{log});
+        return new LogResponse(null, new String[]{log});*/
+        return logOneServer(recordId,line);
     }
 
     @Override
