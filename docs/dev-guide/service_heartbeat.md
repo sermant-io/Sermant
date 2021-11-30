@@ -1,6 +1,6 @@
 # heartbeat
 
-[服务功能目录](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/service/heartbeat)
+[服务功能目录](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/service/heartbeat)
 
 [定位 是什么]: todo
 [功能 做什么]: todo

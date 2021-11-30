@@ -95,7 +95,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.huawei.apm.backend.NettyServerApplication</mainClass>
+                    <mainClass>com.huawei.javamesh.backend.NettyServerApplication</mainClass>
                     <outputDirectory>${package.output.dir}</outputDirectory>
                 </configuration>
                 <executions>

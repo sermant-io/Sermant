@@ -1,6 +1,6 @@
 # service name
 
-[服务功能目录](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/apm/core/service/serviceName)
+[服务功能目录](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/service/serviceName)
 
 [定位 是什么]: todo
 [功能 做什么]: todo

@@ -1,6 +1,6 @@
 # hercules
 
-[插件目录](../../javamesh-samples/javamesh-hercules)
+[插件目录](../../javamesh-plugins/javamesh-hercules)
 
 [定位 是什么]: todo
 [功能 做什么]: todo

@@ -1,5 +1,5 @@
 syntax = "proto3";
-option java_package = "com.huawei.apm.core.lubanops.integration.transport.netty.pojo";
+option java_package = "com.huawei.javamesh.core.lubanops.integration.transport.netty.pojo";
 
 message NettyMessage{
 

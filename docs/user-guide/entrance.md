@@ -14,7 +14,7 @@
 
 `resources`文件夹下：
 
-- `config/bootstrap.properties`文件，为启动配置文件，将被[BootArgsBuilder](../../javamesh-agentcore/javamesh-agentcore-premain/src/main/java/com/huawei/apm/premain/common/BootArgsBuilder.java)类加载出来，连同启动入参共同构成启动参数*Map*。
+- `config/bootstrap.properties`文件，为启动配置文件，将被[BootArgsBuilder](../../javamesh-agentcore/javamesh-agentcore-premain/src/main/java/com/huawei/javamesh/premain/common/BootArgsBuilder.java)类加载出来，连同启动入参共同构成启动参数*Map*。
 
 ## 使用方式
 
@@ -44,12 +44,12 @@ public static void premain(String agentArgs, Instrumentation inst);
 
 ## 功能解析
 
-**Java-mesh AgentCore Premain**模块作为**Java-mesh**的入口，起到的是将程序带入**核心功能**的作用，入口类[AgentPremain](../../javamesh-agentcore/javamesh-agentcore-premain/src/main/java/com/huawei/apm/premain/AgentPremain.java)所做的工作包括：
+**Java-mesh AgentCore Premain**模块作为**Java-mesh**的入口，起到的是将程序带入**核心功能**的作用，入口类[AgentPremain](../../javamesh-agentcore/javamesh-agentcore-premain/src/main/java/com/huawei/javamesh/premain/AgentPremain.java)所做的工作包括：
 
 - 防止**Java-mesh**被宿主多次带起（*JavaAgent*命令中添加了复数的**Java-mesh**入口包）。
 - 加载**核心功能**包，这里使用系统类加载器加载。
 - 将`agentArgs`和启动配置[bootstrap.properties](../../javamesh-agentcore/javamesh-agentcore-premain/src/main/resources/config/bootstrap.properties)封装为启动参数`Map`。
-- 调用**核心功能**入口[AgentCoreEntrance](../javamesh-agentcore-core/src/main/java/com/huawei/apm/core/AgentCoreEntrance.java)带起**核心功能**。
+- 调用**核心功能**入口[AgentCoreEntrance](../javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/AgentCoreEntrance.java)带起**核心功能**。
 - 注意，带起**核心功能**时需要将**路径相关参数**传递进去，这里将这些**路径相关参数**封装到启动参数`Map`中。这也说明**Java-mesh AgentCore Premain**需要做到对目录、文件位置的把控。
 
 ## 启动参数
