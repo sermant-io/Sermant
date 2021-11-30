@@ -7,6 +7,8 @@ package com.huawei.emergency.dto;
 import lombok.Data;
 
 /**
+ * 用于描述预案下的任务明细信息
+ *
  * @author y30010171
  * @since 2021-11-10
  **/

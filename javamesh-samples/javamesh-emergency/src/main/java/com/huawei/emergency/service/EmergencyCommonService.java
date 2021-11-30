@@ -9,8 +9,8 @@ import com.huawei.common.api.CommonResult;
 /**
  * 通过增删改接口
  *
- * @param <T>
  * @author y30010171
+ * @param <T>
  * @since 2021-11-04
  **/
 public interface EmergencyCommonService<T> {

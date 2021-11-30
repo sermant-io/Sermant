@@ -6,6 +6,7 @@ package com.huawei.script.exec.executor;
 
 import com.huawei.script.exec.ExecResult;
 import com.huawei.script.exec.log.LogCallBack;
+import com.huawei.script.exec.session.ServerInfo;
 import com.huawei.script.exec.session.ServerSessionFactory;
 
 import com.jcraft.jsch.Channel;
@@ -68,7 +69,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
                 return uploadFileResult;
             }
             fileName = uploadFileResult.getMsg();
-            return exec(session, commands(fileName, scriptExecInfo.getParams()), logCallback);
+            return exec(session, commands("sh", fileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId());
         } catch (JSchException | IOException | SftpException e) {
             LOGGER.error("Can't get remote server session.", e);
             return ExecResult.fail(e.getMessage());
@@ -76,6 +77,21 @@ public class RemoteScriptExecutor implements ScriptExecutor {
             if (session != null && StringUtils.isNotEmpty(fileName)) {
                 deleteFile(session, fileName);
             }
+        }
+    }
+
+    @Override
+    public ExecResult cancel(ServerInfo serverInfo, int pid) {
+        if (serverInfo == null) {
+            throw new IllegalArgumentException("need server info to cancel.");
+        }
+        Session session;
+        try {
+            session = serverSessionFactory.getSession(serverInfo);
+            return exec(session, commands("kill", String.format(Locale.ROOT, "-9 %s", pid), null), null, -1);
+        } catch (JSchException e) {
+            LOGGER.error("Can't get remote server session.", e);
+            return ExecResult.fail(e.getMessage());
         }
     }
 
@@ -131,7 +147,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
      */
     private ExecResult createRemoteDir(Session session, String remoteDirLocation) {
         String command = String.format(Locale.ROOT, "mkdir -p %s", remoteDirLocation);
-        return exec(session, command, null);
+        return exec(session, command, null, 0);
     }
 
     /**
@@ -139,15 +155,16 @@ public class RemoteScriptExecutor implements ScriptExecutor {
      *
      * @param session 远程服务器连接会话
      * @param command 命令
+     * @param id      标识本次执行的关键字
      */
-    private ExecResult exec(Session session, String command, LogCallBack logCallback) {
+    private ExecResult exec(Session session, String command, LogCallBack logCallback, int id) {
         ChannelExec channel = null;
         try {
             channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(command);
             long startTime = System.currentTimeMillis();
             channel.connect();
-            ExecResult execResult = parseResult(channel, logCallback);
+            ExecResult execResult = parseResult(channel, logCallback, id);
             LOGGER.debug("exec command {} cost {}ms", command, System.currentTimeMillis() - startTime);
             return execResult;
         } catch (IOException e) {
@@ -166,19 +183,28 @@ public class RemoteScriptExecutor implements ScriptExecutor {
     /**
      * 解析远程服务器返回的消息
      *
-     * @param channel
+     * @param channel     通道
+     * @param logCallback 处理日志回调
+     * @param id          标识本次执行的关键字
      * @return String 结果
      * @throws IOException
      */
-    private ExecResult parseResult(Channel channel, LogCallBack logCallback) throws IOException {
+    private ExecResult parseResult(Channel channel, LogCallBack logCallback, int id) throws IOException {
         ExecResult execResult = new ExecResult();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
         StringBuilder result = new StringBuilder();
+        boolean readFirstLogAsPid = true;
         while (true) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                if (logCallback != null) {
-                    logCallback.handle(line);
+                if (logCallback != null && id > 0) {
+                    if (readFirstLogAsPid) {
+                        logCallback.handlePid(id, line);
+                        readFirstLogAsPid = false;
+                        continue;
+                    } else {
+                        logCallback.handleLog(id, line);
+                    }
                 }
                 result.append(line).append(System.lineSeparator());
             }
@@ -196,13 +222,13 @@ public class RemoteScriptExecutor implements ScriptExecutor {
         return execResult;
     }
 
-    private String commands(String fileName, String[] params) {
+    private String commands(String type, String fileName, String[] params) {
         StringBuilder result = new StringBuilder(fileName);
         if (params != null) {
             for (String param : params) {
                 result.append(" ").append(param);
             }
         }
-        return String.format(Locale.ROOT, "sh %s", result);
+        return String.format(Locale.ROOT, "%s %s", type, result);
     }
 }

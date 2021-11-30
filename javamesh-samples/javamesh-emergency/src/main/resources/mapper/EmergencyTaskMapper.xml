@@ -334,4 +334,27 @@
       AND t4.check_result = '1'
       AND t4.is_valid = '1'
   </select>
+
+  <update id="tryClearTaskNo">
+    UPDATE emergency_task t
+    SET t.task_no = NULL
+    WHERE
+      t.is_valid = '1'
+      AND t.task_id IN (
+      SELECT
+        scene_id AS task_id
+      FROM
+        emergency_plan_detail
+      WHERE
+        plan_id = #{planId}
+        AND is_valid = '1' UNION
+      SELECT
+        task_id
+      FROM
+        emergency_plan_detail
+      WHERE
+        plan_id = #{planId}
+        AND is_valid = '1'
+    )
+  </update>
 </mapper>

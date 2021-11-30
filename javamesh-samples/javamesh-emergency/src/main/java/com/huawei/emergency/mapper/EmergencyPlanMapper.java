@@ -1,14 +1,28 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ */
+
 package com.huawei.emergency.mapper;
 
 import com.huawei.emergency.dto.PlanDetailQueryDto;
 import com.huawei.emergency.dto.PlanQueryDto;
 import com.huawei.emergency.dto.PlanQueryParams;
+import com.huawei.emergency.dto.SceneExecDto;
 import com.huawei.emergency.entity.EmergencyPlan;
 import com.huawei.emergency.entity.EmergencyPlanExample;
+
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * 预案mapper
+ *
+ * @author y30010171
+ * @since 2021-11-15
+ **/
+@Mapper
 public interface EmergencyPlanMapper {
     long countByExample(EmergencyPlanExample example);
 
@@ -38,7 +52,7 @@ public interface EmergencyPlanMapper {
 
     List<PlanQueryDto> allPlanRecords(EmergencyPlan plan);
 
-    List<PlanQueryDto> allSceneRecords(Integer execId);
+    List<SceneExecDto> allSceneRecords(Integer execId);
 
-    List<PlanQueryDto> allTaskRecords(Integer execId,Integer sceneId);
+    List<SceneExecDto> allTaskRecords(Integer execId,Integer sceneId);
 }

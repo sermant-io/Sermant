@@ -4,11 +4,14 @@
 
 package com.huawei.emergency.service.impl;
 
+import com.huawei.common.constant.RecordStatus;
+import com.huawei.common.constant.ValidEnum;
 import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordExample;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
 import com.huawei.emergency.service.EmergencyPlanService;
 import com.huawei.emergency.service.EmergencySceneService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
+
 import javax.annotation.Resource;
 
 /**
@@ -43,14 +47,16 @@ public class EmergencySceneServiceImpl implements EmergencySceneService {
 
     @Override
     public void onComplete(EmergencyExecRecord record) {
-        LOGGER.debug("Scene exec_id={},plan_id={},scene_id={} is finished.", record.getExecId(), record.getPlanId(), record.getSceneId());
+        LOGGER.debug("Scene exec_id={},plan_id={},scene_id={} is finished.",
+            record.getExecId(), record.getPlanId(), record.getSceneId());
 
         // 如果预案已经完成
         EmergencyExecRecordExample isPlanFinishedCondition = new EmergencyExecRecordExample();
         isPlanFinishedCondition.createCriteria()
             .andExecIdEqualTo(record.getExecId())
             .andPlanIdEqualTo(record.getPlanId())
-            .andStatusIn(Arrays.asList("0", "1", "3", "4"));
+            .andStatusIn(RecordStatus.HAS_RUNNING_STATUS)
+            .andIsValidEqualTo(ValidEnum.VALID.getValue());
         if (execRecordMapper.countByExample(isPlanFinishedCondition) == 0) {
             planService.onComplete(record);
             return;
@@ -64,8 +70,8 @@ public class EmergencySceneServiceImpl implements EmergencySceneService {
                 .andExecIdEqualTo(record.getExecId())
                 .andPreSceneIdEqualTo(record.getSceneId())
                 .andTaskIdIsNull()
-                .andStatusEqualTo("0")
-                .andIsValidEqualTo("1");
+                .andStatusEqualTo(RecordStatus.PENDING.getValue())
+                .andIsValidEqualTo(ValidEnum.VALID.getValue());
             List<EmergencyExecRecord> needExecTasks = execRecordMapper.selectByExample(needExecTaskCondition);
             needExecTasks.forEach(execRecord -> {
                 LOGGER.debug("Submit record_id={}. exec_id={}, task_id={}.", execRecord.getRecordId(), execRecord.getExecId(), execRecord.getTaskId());
@@ -75,13 +81,14 @@ public class EmergencySceneServiceImpl implements EmergencySceneService {
             EmergencyExecRecordExample subTask = new EmergencyExecRecordExample();
             subTask.createCriteria()
                 .andExecIdEqualTo(record.getExecId())
-                .andIsValidEqualTo("1")
-                .andStatusEqualTo("0")
+                .andIsValidEqualTo(ValidEnum.VALID.getValue())
+                .andStatusEqualTo(RecordStatus.PENDING.getValue())
                 .andPreTaskIdIsNull()
                 .andParentTaskIdEqualTo(record.getSceneId());
             List<EmergencyExecRecord> emergencyExecRecords = execRecordMapper.selectByExample(subTask);
             emergencyExecRecords.forEach(execRecord -> {
-                LOGGER.debug("Submit record_id={}. exec_id={}, task_id={}.", execRecord.getRecordId(), execRecord.getExecId(), execRecord.getTaskId());
+                LOGGER.debug("Submit record_id={}. exec_id={}, task_id={}.",
+                    execRecord.getRecordId(), execRecord.getExecId(), execRecord.getTaskId());
                 threadPoolExecutor.execute(handlerFactory.handle(execRecord));
             });
         }
@@ -94,8 +101,8 @@ public class EmergencySceneServiceImpl implements EmergencySceneService {
         isFinishedCondition.createCriteria()
             .andExecIdEqualTo(execId)
             .andSceneIdEqualTo(sceneId)
-            .andIsValidEqualTo("1")
-            .andStatusIn(Arrays.asList("0", "1", "3", "4"));
+            .andIsValidEqualTo(ValidEnum.VALID.getValue())
+            .andStatusIn(RecordStatus.HAS_RUNNING_STATUS);
         return execRecordMapper.countByExample(isFinishedCondition) == 0;
     }
 }

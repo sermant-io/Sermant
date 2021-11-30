@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -32,6 +33,7 @@ public class ServerSessionFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerSessionFactory.class);
     private Map<ServerInfo, Session> sessionCache = new ConcurrentHashMap<>();
     private JSch jsch = new JSch();
+    private ReentrantLock lock = new ReentrantLock();
 
     @Value("${jsch.connectTimeout}")
     private int connectTimeout;
@@ -64,19 +66,32 @@ public class ServerSessionFactory {
      * @throws JSchException
      */
     public Session getSession(ServerInfo serverInfo) throws JSchException {
-        Session session = sessionCache.getOrDefault(serverInfo, createSession(serverInfo));
+        Session session = sessionCache.computeIfAbsent(serverInfo, info -> {
+            try {
+                return createSession(info);
+            } catch (JSchException e) {
+                throw new RuntimeException("create session error.", e);
+            }
+        });
         if (!session.isConnected()) {
-            long startConnect = System.currentTimeMillis();
-            session.connect(connectTimeout);
-            LOGGER.info("connect to server {}:{} cost {} ms",
-                    session.getHost(), session.getPort(), System.currentTimeMillis() - startConnect);
+            lock.lock();
+            try {
+                if (!session.isConnected()) {
+                    long startConnect = System.currentTimeMillis();
+                    session.connect(connectTimeout);
+                    LOGGER.info("connect to server {}:{} cost {} ms",
+                        session.getHost(), session.getPort(), System.currentTimeMillis() - startConnect);
+                }
+            } finally {
+                lock.unlock();
+            }
         }
         return session;
     }
 
     private Session createSession(ServerInfo serverInfo) throws JSchException {
         Session session =
-                jsch.getSession(serverInfo.getServerUser(), serverInfo.getServerIp(), serverInfo.getServerPort());
+            jsch.getSession(serverInfo.getServerUser(), serverInfo.getServerIp(), serverInfo.getServerPort());
         session.setConfig("StrictHostKeyChecking", "no");
         for (HostKey key : jsch.getHostKeyRepository().getHostKey()) {
             if (key.getHost().equals(serverInfo.getServerIp())) {
@@ -89,6 +104,7 @@ public class ServerSessionFactory {
         if (StringUtils.isNotEmpty(serverInfo.getServerPassword())) {
             session.setPassword(serverInfo.getServerPassword());
         }
+
         return session;
     }
 

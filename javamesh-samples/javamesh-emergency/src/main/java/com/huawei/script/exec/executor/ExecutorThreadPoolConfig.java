@@ -10,9 +10,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 用于脚本执行的线程池配置
@@ -22,22 +24,42 @@ import java.util.concurrent.TimeUnit;
  **/
 @Configuration
 public class ExecutorThreadPoolConfig {
-    @Value("${script.executor.corePoolSize}")
-    private int coreSize;
+    private static final String THREAD_NAME_PREFIX = "task-exec-";
 
-    @Value("${script.executor.maxPoolSize}")
-    private int maxSize;
+    private static final long KEEP_ALIVE_TIME = 60L;
 
-    @Value("${script.executor.keepAliveTime}")
-    private long keepAliveTime;
+    @Value("${script.executor.maxTaskSize}")
+    private int maxTaskSize;
 
-    @Value("${script.executor.blockingQueueSize}")
-    private int blockingQueueSize;
+    @Value("${script.executor.maxSubtaskSize}")
+    private int maxSubtaskSize;
 
+    @Value("${script.executor.blockingTaskSize}")
+    private int blockingTaskSize;
+
+    /**
+     * 用于预案，任务，脚本执行的线程池
+     * 设置核心线程数与最大线程数一致，使得创建的线程与线程名一致。
+     * 每个脚本在不同服务器执行时，根据此线程名去获取一个线程池来并发执行。
+     *
+     * @return {@link ThreadPoolExecutor}
+     */
     @Bean(destroyMethod = "shutdown")
     public ThreadPoolExecutor scriptExecThreadPool() {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-            coreSize, maxSize, keepAliveTime, TimeUnit.SECONDS, new ArrayBlockingQueue<>(blockingQueueSize));
+            maxTaskSize,
+            maxTaskSize,
+            KEEP_ALIVE_TIME,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(blockingTaskSize),
+            new ThreadFactory() {
+                private AtomicInteger threadCount = new AtomicInteger();
+
+                @Override
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, THREAD_NAME_PREFIX + threadCount.getAndIncrement());
+                }
+            });
         return threadPoolExecutor;
     }
 

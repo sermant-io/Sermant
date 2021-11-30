@@ -24,9 +24,28 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
      * 预案执行
      *
      * @param planId 预案ID
+     * @param userName 操作人
      * @return {@link CommonResult}
      */
     CommonResult exec(int planId, String userName);
+
+    /**
+     * 预案启动
+     *
+     * @param plan 预案信息
+     * @param userName 操作人
+     * @return {@link CommonResult}
+     */
+    CommonResult start(EmergencyPlan plan,String userName);
+
+    /**
+     * 预案停止
+     *
+     * @param planId 预案ID
+     * @param userName 操作人
+     * @return {@link CommonResult}
+     */
+    CommonResult stop(int planId,String userName);
 
     /**
      * 预案审核
@@ -38,11 +57,11 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
 
     CommonResult query(int planId);
 
+    CommonResult<EmergencyPlan> get(int planId);
+
     CommonResult addTask(TaskNode taskNode);
 
     CommonResult plan(CommonPage<PlanQueryParams> params);
-
-    CommonResult reExec(int recordId, String userName);
 
     CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params);
 

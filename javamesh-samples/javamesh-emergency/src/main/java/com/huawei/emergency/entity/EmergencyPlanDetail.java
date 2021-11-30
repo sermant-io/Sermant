@@ -1,9 +1,19 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ */
+
 package com.huawei.emergency.entity;
 
 import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 预案与任务的拓扑关系
+ *
+ * @author y30010171
+ * @since 2021-11-15
+ **/
 @Data
 public class EmergencyPlanDetail {
     private Integer detailId;

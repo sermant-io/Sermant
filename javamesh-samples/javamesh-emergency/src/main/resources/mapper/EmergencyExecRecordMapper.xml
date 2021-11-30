@@ -1,673 +1,727 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huawei.emergency.mapper.EmergencyExecRecordMapper">
-  <resultMap id="BaseResultMap" type="com.huawei.emergency.entity.EmergencyExecRecord">
-    <id column="record_id" jdbcType="INTEGER" property="recordId" />
-    <result column="exec_id" jdbcType="INTEGER" property="execId" />
-    <result column="plan_id" jdbcType="INTEGER" property="planId" />
-    <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
-    <result column="task_id" jdbcType="INTEGER" property="taskId" />
-    <result column="pre_scene_id" jdbcType="INTEGER" property="preSceneId" />
-    <result column="pre_task_id" jdbcType="INTEGER" property="preTaskId" />
-    <result column="parent_task_id" jdbcType="INTEGER" property="parentTaskId" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="script_id" jdbcType="INTEGER" property="scriptId" />
-    <result column="script_name" jdbcType="VARCHAR" property="scriptName" />
-    <result column="script_type" jdbcType="VARCHAR" property="scriptType" />
-    <result column="script_params" jdbcType="VARCHAR" property="scriptParams" />
-    <result column="server_ip" jdbcType="VARCHAR" property="serverIp" />
-    <result column="server_user" jdbcType="VARCHAR" property="serverUser" />
-    <result column="have_password" jdbcType="VARCHAR" property="havePassword" />
-    <result column="password_mode" jdbcType="VARCHAR" property="passwordMode" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
-    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
-    <result column="ensure_user" jdbcType="VARCHAR" property="ensureUser" />
-    <result column="is_valid" jdbcType="VARCHAR" property="isValid" />
-    <result column="sync" jdbcType="VARCHAR" property="sync" />
-  </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
-    <result column="script_content" jdbcType="LONGVARCHAR" property="scriptContent" />
-    <result column="log" jdbcType="LONGVARCHAR" property="log" />
-  </resultMap>
-  <sql id="Example_Where_Clause">
-    <where>
-      <foreach collection="oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+    <resultMap id="BaseResultMap" type="com.huawei.emergency.entity.EmergencyExecRecord">
+        <id column="record_id" jdbcType="INTEGER" property="recordId"/>
+        <result column="exec_id" jdbcType="INTEGER" property="execId"/>
+        <result column="plan_id" jdbcType="INTEGER" property="planId"/>
+        <result column="scene_id" jdbcType="INTEGER" property="sceneId"/>
+        <result column="task_id" jdbcType="INTEGER" property="taskId"/>
+        <result column="pre_scene_id" jdbcType="INTEGER" property="preSceneId"/>
+        <result column="pre_task_id" jdbcType="INTEGER" property="preTaskId"/>
+        <result column="parent_task_id" jdbcType="INTEGER" property="parentTaskId"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="script_id" jdbcType="INTEGER" property="scriptId"/>
+        <result column="script_name" jdbcType="VARCHAR" property="scriptName"/>
+        <result column="script_type" jdbcType="VARCHAR" property="scriptType"/>
+        <result column="script_params" jdbcType="VARCHAR" property="scriptParams"/>
+        <result column="server_ip" jdbcType="VARCHAR" property="serverIp"/>
+        <result column="server_user" jdbcType="VARCHAR" property="serverUser"/>
+        <result column="have_password" jdbcType="VARCHAR" property="havePassword"/>
+        <result column="password_mode" jdbcType="VARCHAR" property="passwordMode"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="ensure_user" jdbcType="VARCHAR" property="ensureUser"/>
+        <result column="is_valid" jdbcType="VARCHAR" property="isValid"/>
+        <result column="sync" jdbcType="VARCHAR" property="sync"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+               type="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
+        <result column="script_content" jdbcType="LONGVARCHAR" property="scriptContent"/>
+        <result column="log" jdbcType="LONGVARCHAR" property="log"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_Example_Where_Clause">
-    <where>
-      <foreach collection="example.oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Base_Column_List">
-    record_id, exec_id, plan_id, scene_id, task_id, pre_scene_id, pre_task_id, parent_task_id, 
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        record_id
+        , exec_id, plan_id, scene_id, task_id, pre_scene_id, pre_task_id, parent_task_id,
     status, script_id, script_name, script_type, script_params, server_ip, server_user, 
     have_password, password_mode, password, create_user, create_time, start_time, end_time, 
     ensure_user, is_valid, sync
-  </sql>
-  <sql id="Blob_Column_List">
-    script_content, log
-  </sql>
-  <select id="selectByExampleWithBLOBs" parameterType="com.huawei.emergency.entity.EmergencyExecRecordExample" resultMap="ResultMapWithBLOBs">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    'false' as QUERYID,
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from emergency_exec_record
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
-  <select id="selectByExample" parameterType="com.huawei.emergency.entity.EmergencyExecRecordExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    'false' as QUERYID,
-    <include refid="Base_Column_List" />
-    from emergency_exec_record
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from emergency_exec_record
-    where record_id = #{recordId,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from emergency_exec_record
-    where record_id = #{recordId,jdbcType=INTEGER}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.huawei.emergency.entity.EmergencyExecRecordExample">
-    delete from emergency_exec_record
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
-    <selectKey keyProperty="recordId" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into emergency_exec_record (exec_id, plan_id, scene_id, 
-      task_id, pre_scene_id, pre_task_id, 
-      parent_task_id, status, script_id, 
-      script_name, script_type, script_params, 
-      server_ip, server_user, have_password, 
-      password_mode, password, create_user, 
-      create_time, start_time, end_time, 
-      ensure_user, is_valid, sync, 
-      script_content, log)
-    values (#{execId,jdbcType=INTEGER}, #{planId,jdbcType=INTEGER}, #{sceneId,jdbcType=INTEGER}, 
-      #{taskId,jdbcType=INTEGER}, #{preSceneId,jdbcType=INTEGER}, #{preTaskId,jdbcType=INTEGER}, 
-      #{parentTaskId,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, #{scriptId,jdbcType=INTEGER}, 
-      #{scriptName,jdbcType=VARCHAR}, #{scriptType,jdbcType=VARCHAR}, #{scriptParams,jdbcType=VARCHAR}, 
-      #{serverIp,jdbcType=VARCHAR}, #{serverUser,jdbcType=VARCHAR}, #{havePassword,jdbcType=VARCHAR}, 
-      #{passwordMode,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
-      #{ensureUser,jdbcType=VARCHAR}, #{isValid,jdbcType=VARCHAR}, #{sync,jdbcType=VARCHAR}, 
-      #{scriptContent,jdbcType=LONGVARCHAR}, #{log,jdbcType=LONGVARCHAR})
-  </insert>
-  <insert id="insertSelective" parameterType="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
-    <selectKey keyProperty="recordId" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into emergency_exec_record
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="execId != null">
-        exec_id,
-      </if>
-      <if test="planId != null">
-        plan_id,
-      </if>
-      <if test="sceneId != null">
-        scene_id,
-      </if>
-      <if test="taskId != null">
-        task_id,
-      </if>
-      <if test="preSceneId != null">
-        pre_scene_id,
-      </if>
-      <if test="preTaskId != null">
-        pre_task_id,
-      </if>
-      <if test="parentTaskId != null">
-        parent_task_id,
-      </if>
-      <if test="status != null">
-        status,
-      </if>
-      <if test="scriptId != null">
-        script_id,
-      </if>
-      <if test="scriptName != null">
-        script_name,
-      </if>
-      <if test="scriptType != null">
-        script_type,
-      </if>
-      <if test="scriptParams != null">
-        script_params,
-      </if>
-      <if test="serverIp != null">
-        server_ip,
-      </if>
-      <if test="serverUser != null">
-        server_user,
-      </if>
-      <if test="havePassword != null">
-        have_password,
-      </if>
-      <if test="passwordMode != null">
-        password_mode,
-      </if>
-      <if test="password != null">
-        password,
-      </if>
-      <if test="createUser != null">
-        create_user,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="startTime != null">
-        start_time,
-      </if>
-      <if test="endTime != null">
-        end_time,
-      </if>
-      <if test="ensureUser != null">
-        ensure_user,
-      </if>
-      <if test="isValid != null">
-        is_valid,
-      </if>
-      <if test="sync != null">
-        sync,
-      </if>
-      <if test="scriptContent != null">
-        script_content,
-      </if>
-      <if test="log != null">
-        log,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="execId != null">
-        #{execId,jdbcType=INTEGER},
-      </if>
-      <if test="planId != null">
-        #{planId,jdbcType=INTEGER},
-      </if>
-      <if test="sceneId != null">
-        #{sceneId,jdbcType=INTEGER},
-      </if>
-      <if test="taskId != null">
-        #{taskId,jdbcType=INTEGER},
-      </if>
-      <if test="preSceneId != null">
-        #{preSceneId,jdbcType=INTEGER},
-      </if>
-      <if test="preTaskId != null">
-        #{preTaskId,jdbcType=INTEGER},
-      </if>
-      <if test="parentTaskId != null">
-        #{parentTaskId,jdbcType=INTEGER},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=VARCHAR},
-      </if>
-      <if test="scriptId != null">
-        #{scriptId,jdbcType=INTEGER},
-      </if>
-      <if test="scriptName != null">
-        #{scriptName,jdbcType=VARCHAR},
-      </if>
-      <if test="scriptType != null">
-        #{scriptType,jdbcType=VARCHAR},
-      </if>
-      <if test="scriptParams != null">
-        #{scriptParams,jdbcType=VARCHAR},
-      </if>
-      <if test="serverIp != null">
-        #{serverIp,jdbcType=VARCHAR},
-      </if>
-      <if test="serverUser != null">
-        #{serverUser,jdbcType=VARCHAR},
-      </if>
-      <if test="havePassword != null">
-        #{havePassword,jdbcType=VARCHAR},
-      </if>
-      <if test="passwordMode != null">
-        #{passwordMode,jdbcType=VARCHAR},
-      </if>
-      <if test="password != null">
-        #{password,jdbcType=VARCHAR},
-      </if>
-      <if test="createUser != null">
-        #{createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="startTime != null">
-        #{startTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="endTime != null">
-        #{endTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="ensureUser != null">
-        #{ensureUser,jdbcType=VARCHAR},
-      </if>
-      <if test="isValid != null">
-        #{isValid,jdbcType=VARCHAR},
-      </if>
-      <if test="sync != null">
-        #{sync,jdbcType=VARCHAR},
-      </if>
-      <if test="scriptContent != null">
-        #{scriptContent,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="log != null">
-        #{log,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="com.huawei.emergency.entity.EmergencyExecRecordExample" resultType="java.lang.Long">
-    select count(*) from emergency_exec_record
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map">
-    update emergency_exec_record
-    <set>
-      <if test="record.recordId != null">
-        record_id = #{record.recordId,jdbcType=INTEGER},
-      </if>
-      <if test="record.execId != null">
+    </sql>
+    <sql id="Blob_Column_List">
+        script_content
+        , log
+    </sql>
+    <select id="selectByExampleWithBLOBs" parameterType="com.huawei.emergency.entity.EmergencyExecRecordExample"
+            resultMap="ResultMapWithBLOBs">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        'false' as QUERYID,
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from emergency_exec_record
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByExample" parameterType="com.huawei.emergency.entity.EmergencyExecRecordExample"
+            resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        'false' as QUERYID,
+        <include refid="Base_Column_List"/>
+        from emergency_exec_record
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from emergency_exec_record
+        where record_id = #{recordId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from emergency_exec_record
+        where record_id = #{recordId,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByExample" parameterType="com.huawei.emergency.entity.EmergencyExecRecordExample">
+        delete from emergency_exec_record
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
+        <selectKey keyProperty="recordId" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into emergency_exec_record (exec_id, plan_id, scene_id,
+        task_id, pre_scene_id, pre_task_id,
+        parent_task_id, status, script_id,
+        script_name, script_type, script_params,
+        server_ip, server_user, have_password,
+        password_mode, password, create_user,
+        create_time, start_time, end_time,
+        ensure_user, is_valid, sync,
+        script_content, log)
+        values (#{execId,jdbcType=INTEGER}, #{planId,jdbcType=INTEGER}, #{sceneId,jdbcType=INTEGER},
+        #{taskId,jdbcType=INTEGER}, #{preSceneId,jdbcType=INTEGER}, #{preTaskId,jdbcType=INTEGER},
+        #{parentTaskId,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, #{scriptId,jdbcType=INTEGER},
+        #{scriptName,jdbcType=VARCHAR}, #{scriptType,jdbcType=VARCHAR}, #{scriptParams,jdbcType=VARCHAR},
+        #{serverIp,jdbcType=VARCHAR}, #{serverUser,jdbcType=VARCHAR}, #{havePassword,jdbcType=VARCHAR},
+        #{passwordMode,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP},
+        #{ensureUser,jdbcType=VARCHAR}, #{isValid,jdbcType=VARCHAR}, #{sync,jdbcType=VARCHAR},
+        #{scriptContent,jdbcType=LONGVARCHAR}, #{log,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
+        <selectKey keyProperty="recordId" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into emergency_exec_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="execId != null">
+                exec_id,
+            </if>
+            <if test="planId != null">
+                plan_id,
+            </if>
+            <if test="sceneId != null">
+                scene_id,
+            </if>
+            <if test="taskId != null">
+                task_id,
+            </if>
+            <if test="preSceneId != null">
+                pre_scene_id,
+            </if>
+            <if test="preTaskId != null">
+                pre_task_id,
+            </if>
+            <if test="parentTaskId != null">
+                parent_task_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="scriptId != null">
+                script_id,
+            </if>
+            <if test="scriptName != null">
+                script_name,
+            </if>
+            <if test="scriptType != null">
+                script_type,
+            </if>
+            <if test="scriptParams != null">
+                script_params,
+            </if>
+            <if test="serverIp != null">
+                server_ip,
+            </if>
+            <if test="serverUser != null">
+                server_user,
+            </if>
+            <if test="havePassword != null">
+                have_password,
+            </if>
+            <if test="passwordMode != null">
+                password_mode,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="ensureUser != null">
+                ensure_user,
+            </if>
+            <if test="isValid != null">
+                is_valid,
+            </if>
+            <if test="sync != null">
+                sync,
+            </if>
+            <if test="scriptContent != null">
+                script_content,
+            </if>
+            <if test="log != null">
+                log,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="execId != null">
+                #{execId,jdbcType=INTEGER},
+            </if>
+            <if test="planId != null">
+                #{planId,jdbcType=INTEGER},
+            </if>
+            <if test="sceneId != null">
+                #{sceneId,jdbcType=INTEGER},
+            </if>
+            <if test="taskId != null">
+                #{taskId,jdbcType=INTEGER},
+            </if>
+            <if test="preSceneId != null">
+                #{preSceneId,jdbcType=INTEGER},
+            </if>
+            <if test="preTaskId != null">
+                #{preTaskId,jdbcType=INTEGER},
+            </if>
+            <if test="parentTaskId != null">
+                #{parentTaskId,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="scriptId != null">
+                #{scriptId,jdbcType=INTEGER},
+            </if>
+            <if test="scriptName != null">
+                #{scriptName,jdbcType=VARCHAR},
+            </if>
+            <if test="scriptType != null">
+                #{scriptType,jdbcType=VARCHAR},
+            </if>
+            <if test="scriptParams != null">
+                #{scriptParams,jdbcType=VARCHAR},
+            </if>
+            <if test="serverIp != null">
+                #{serverIp,jdbcType=VARCHAR},
+            </if>
+            <if test="serverUser != null">
+                #{serverUser,jdbcType=VARCHAR},
+            </if>
+            <if test="havePassword != null">
+                #{havePassword,jdbcType=VARCHAR},
+            </if>
+            <if test="passwordMode != null">
+                #{passwordMode,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="startTime != null">
+                #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ensureUser != null">
+                #{ensureUser,jdbcType=VARCHAR},
+            </if>
+            <if test="isValid != null">
+                #{isValid,jdbcType=VARCHAR},
+            </if>
+            <if test="sync != null">
+                #{sync,jdbcType=VARCHAR},
+            </if>
+            <if test="scriptContent != null">
+                #{scriptContent,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="log != null">
+                #{log,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.huawei.emergency.entity.EmergencyExecRecordExample"
+            resultType="java.lang.Long">
+        select count(*) from emergency_exec_record
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update emergency_exec_record
+        <set>
+            <if test="record.recordId != null">
+                record_id = #{record.recordId,jdbcType=INTEGER},
+            </if>
+            <if test="record.execId != null">
+                exec_id = #{record.execId,jdbcType=INTEGER},
+            </if>
+            <if test="record.planId != null">
+                plan_id = #{record.planId,jdbcType=INTEGER},
+            </if>
+            <if test="record.sceneId != null">
+                scene_id = #{record.sceneId,jdbcType=INTEGER},
+            </if>
+            <if test="record.taskId != null">
+                task_id = #{record.taskId,jdbcType=INTEGER},
+            </if>
+            <if test="record.preSceneId != null">
+                pre_scene_id = #{record.preSceneId,jdbcType=INTEGER},
+            </if>
+            <if test="record.preTaskId != null">
+                pre_task_id = #{record.preTaskId,jdbcType=INTEGER},
+            </if>
+            <if test="record.parentTaskId != null">
+                parent_task_id = #{record.parentTaskId,jdbcType=INTEGER},
+            </if>
+            <if test="record.status != null">
+                status = #{record.status,jdbcType=VARCHAR},
+            </if>
+            <if test="record.scriptId != null">
+                script_id = #{record.scriptId,jdbcType=INTEGER},
+            </if>
+            <if test="record.scriptName != null">
+                script_name = #{record.scriptName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.scriptType != null">
+                script_type = #{record.scriptType,jdbcType=VARCHAR},
+            </if>
+            <if test="record.scriptParams != null">
+                script_params = #{record.scriptParams,jdbcType=VARCHAR},
+            </if>
+            <if test="record.serverIp != null">
+                server_ip = #{record.serverIp,jdbcType=VARCHAR},
+            </if>
+            <if test="record.serverUser != null">
+                server_user = #{record.serverUser,jdbcType=VARCHAR},
+            </if>
+            <if test="record.havePassword != null">
+                have_password = #{record.havePassword,jdbcType=VARCHAR},
+            </if>
+            <if test="record.passwordMode != null">
+                password_mode = #{record.passwordMode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.password != null">
+                password = #{record.password,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createUser != null">
+                create_user = #{record.createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null">
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.startTime != null">
+                start_time = #{record.startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.endTime != null">
+                end_time = #{record.endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.ensureUser != null">
+                ensure_user = #{record.ensureUser,jdbcType=VARCHAR},
+            </if>
+            <if test="record.isValid != null">
+                is_valid = #{record.isValid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.sync != null">
+                sync = #{record.sync,jdbcType=VARCHAR},
+            </if>
+            <if test="record.scriptContent != null">
+                script_content = #{record.scriptContent,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.log != null">
+                log = #{record.log,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExampleWithBLOBs" parameterType="map">
+        update emergency_exec_record
+        set record_id = #{record.recordId,jdbcType=INTEGER},
         exec_id = #{record.execId,jdbcType=INTEGER},
-      </if>
-      <if test="record.planId != null">
         plan_id = #{record.planId,jdbcType=INTEGER},
-      </if>
-      <if test="record.sceneId != null">
         scene_id = #{record.sceneId,jdbcType=INTEGER},
-      </if>
-      <if test="record.taskId != null">
         task_id = #{record.taskId,jdbcType=INTEGER},
-      </if>
-      <if test="record.preSceneId != null">
         pre_scene_id = #{record.preSceneId,jdbcType=INTEGER},
-      </if>
-      <if test="record.preTaskId != null">
         pre_task_id = #{record.preTaskId,jdbcType=INTEGER},
-      </if>
-      <if test="record.parentTaskId != null">
         parent_task_id = #{record.parentTaskId,jdbcType=INTEGER},
-      </if>
-      <if test="record.status != null">
         status = #{record.status,jdbcType=VARCHAR},
-      </if>
-      <if test="record.scriptId != null">
         script_id = #{record.scriptId,jdbcType=INTEGER},
-      </if>
-      <if test="record.scriptName != null">
         script_name = #{record.scriptName,jdbcType=VARCHAR},
-      </if>
-      <if test="record.scriptType != null">
         script_type = #{record.scriptType,jdbcType=VARCHAR},
-      </if>
-      <if test="record.scriptParams != null">
         script_params = #{record.scriptParams,jdbcType=VARCHAR},
-      </if>
-      <if test="record.serverIp != null">
         server_ip = #{record.serverIp,jdbcType=VARCHAR},
-      </if>
-      <if test="record.serverUser != null">
         server_user = #{record.serverUser,jdbcType=VARCHAR},
-      </if>
-      <if test="record.havePassword != null">
         have_password = #{record.havePassword,jdbcType=VARCHAR},
-      </if>
-      <if test="record.passwordMode != null">
         password_mode = #{record.passwordMode,jdbcType=VARCHAR},
-      </if>
-      <if test="record.password != null">
         password = #{record.password,jdbcType=VARCHAR},
-      </if>
-      <if test="record.createUser != null">
         create_user = #{record.createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.startTime != null">
         start_time = #{record.startTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.endTime != null">
         end_time = #{record.endTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.ensureUser != null">
         ensure_user = #{record.ensureUser,jdbcType=VARCHAR},
-      </if>
-      <if test="record.isValid != null">
         is_valid = #{record.isValid,jdbcType=VARCHAR},
-      </if>
-      <if test="record.sync != null">
         sync = #{record.sync,jdbcType=VARCHAR},
-      </if>
-      <if test="record.scriptContent != null">
         script_content = #{record.scriptContent,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="record.log != null">
-        log = #{record.log,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExampleWithBLOBs" parameterType="map">
-    update emergency_exec_record
-    set record_id = #{record.recordId,jdbcType=INTEGER},
-      exec_id = #{record.execId,jdbcType=INTEGER},
-      plan_id = #{record.planId,jdbcType=INTEGER},
-      scene_id = #{record.sceneId,jdbcType=INTEGER},
-      task_id = #{record.taskId,jdbcType=INTEGER},
-      pre_scene_id = #{record.preSceneId,jdbcType=INTEGER},
-      pre_task_id = #{record.preTaskId,jdbcType=INTEGER},
-      parent_task_id = #{record.parentTaskId,jdbcType=INTEGER},
-      status = #{record.status,jdbcType=VARCHAR},
-      script_id = #{record.scriptId,jdbcType=INTEGER},
-      script_name = #{record.scriptName,jdbcType=VARCHAR},
-      script_type = #{record.scriptType,jdbcType=VARCHAR},
-      script_params = #{record.scriptParams,jdbcType=VARCHAR},
-      server_ip = #{record.serverIp,jdbcType=VARCHAR},
-      server_user = #{record.serverUser,jdbcType=VARCHAR},
-      have_password = #{record.havePassword,jdbcType=VARCHAR},
-      password_mode = #{record.passwordMode,jdbcType=VARCHAR},
-      password = #{record.password,jdbcType=VARCHAR},
-      create_user = #{record.createUser,jdbcType=VARCHAR},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      start_time = #{record.startTime,jdbcType=TIMESTAMP},
-      end_time = #{record.endTime,jdbcType=TIMESTAMP},
-      ensure_user = #{record.ensureUser,jdbcType=VARCHAR},
-      is_valid = #{record.isValid,jdbcType=VARCHAR},
-      sync = #{record.sync,jdbcType=VARCHAR},
-      script_content = #{record.scriptContent,jdbcType=LONGVARCHAR},
-      log = #{record.log,jdbcType=LONGVARCHAR}
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map">
-    update emergency_exec_record
-    set record_id = #{record.recordId,jdbcType=INTEGER},
-      exec_id = #{record.execId,jdbcType=INTEGER},
-      plan_id = #{record.planId,jdbcType=INTEGER},
-      scene_id = #{record.sceneId,jdbcType=INTEGER},
-      task_id = #{record.taskId,jdbcType=INTEGER},
-      pre_scene_id = #{record.preSceneId,jdbcType=INTEGER},
-      pre_task_id = #{record.preTaskId,jdbcType=INTEGER},
-      parent_task_id = #{record.parentTaskId,jdbcType=INTEGER},
-      status = #{record.status,jdbcType=VARCHAR},
-      script_id = #{record.scriptId,jdbcType=INTEGER},
-      script_name = #{record.scriptName,jdbcType=VARCHAR},
-      script_type = #{record.scriptType,jdbcType=VARCHAR},
-      script_params = #{record.scriptParams,jdbcType=VARCHAR},
-      server_ip = #{record.serverIp,jdbcType=VARCHAR},
-      server_user = #{record.serverUser,jdbcType=VARCHAR},
-      have_password = #{record.havePassword,jdbcType=VARCHAR},
-      password_mode = #{record.passwordMode,jdbcType=VARCHAR},
-      password = #{record.password,jdbcType=VARCHAR},
-      create_user = #{record.createUser,jdbcType=VARCHAR},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      start_time = #{record.startTime,jdbcType=TIMESTAMP},
-      end_time = #{record.endTime,jdbcType=TIMESTAMP},
-      ensure_user = #{record.ensureUser,jdbcType=VARCHAR},
-      is_valid = #{record.isValid,jdbcType=VARCHAR},
-      sync = #{record.sync,jdbcType=VARCHAR}
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
-    update emergency_exec_record
-    <set>
-      <if test="execId != null">
-        exec_id = #{execId,jdbcType=INTEGER},
-      </if>
-      <if test="planId != null">
-        plan_id = #{planId,jdbcType=INTEGER},
-      </if>
-      <if test="sceneId != null">
-        scene_id = #{sceneId,jdbcType=INTEGER},
-      </if>
-      <if test="taskId != null">
-        task_id = #{taskId,jdbcType=INTEGER},
-      </if>
-      <if test="preSceneId != null">
-        pre_scene_id = #{preSceneId,jdbcType=INTEGER},
-      </if>
-      <if test="preTaskId != null">
-        pre_task_id = #{preTaskId,jdbcType=INTEGER},
-      </if>
-      <if test="parentTaskId != null">
-        parent_task_id = #{parentTaskId,jdbcType=INTEGER},
-      </if>
-      <if test="status != null">
-        status = #{status,jdbcType=VARCHAR},
-      </if>
-      <if test="scriptId != null">
-        script_id = #{scriptId,jdbcType=INTEGER},
-      </if>
-      <if test="scriptName != null">
-        script_name = #{scriptName,jdbcType=VARCHAR},
-      </if>
-      <if test="scriptType != null">
-        script_type = #{scriptType,jdbcType=VARCHAR},
-      </if>
-      <if test="scriptParams != null">
-        script_params = #{scriptParams,jdbcType=VARCHAR},
-      </if>
-      <if test="serverIp != null">
-        server_ip = #{serverIp,jdbcType=VARCHAR},
-      </if>
-      <if test="serverUser != null">
-        server_user = #{serverUser,jdbcType=VARCHAR},
-      </if>
-      <if test="havePassword != null">
-        have_password = #{havePassword,jdbcType=VARCHAR},
-      </if>
-      <if test="passwordMode != null">
-        password_mode = #{passwordMode,jdbcType=VARCHAR},
-      </if>
-      <if test="password != null">
-        password = #{password,jdbcType=VARCHAR},
-      </if>
-      <if test="createUser != null">
-        create_user = #{createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="startTime != null">
-        start_time = #{startTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="endTime != null">
-        end_time = #{endTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="ensureUser != null">
-        ensure_user = #{ensureUser,jdbcType=VARCHAR},
-      </if>
-      <if test="isValid != null">
-        is_valid = #{isValid,jdbcType=VARCHAR},
-      </if>
-      <if test="sync != null">
-        sync = #{sync,jdbcType=VARCHAR},
-      </if>
-      <if test="scriptContent != null">
-        script_content = #{scriptContent,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="log != null">
-        log = #{log,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    where record_id = #{recordId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
-    update emergency_exec_record
-    set exec_id = #{execId,jdbcType=INTEGER},
-      plan_id = #{planId,jdbcType=INTEGER},
-      scene_id = #{sceneId,jdbcType=INTEGER},
-      task_id = #{taskId,jdbcType=INTEGER},
-      pre_scene_id = #{preSceneId,jdbcType=INTEGER},
-      pre_task_id = #{preTaskId,jdbcType=INTEGER},
-      parent_task_id = #{parentTaskId,jdbcType=INTEGER},
-      status = #{status,jdbcType=VARCHAR},
-      script_id = #{scriptId,jdbcType=INTEGER},
-      script_name = #{scriptName,jdbcType=VARCHAR},
-      script_type = #{scriptType,jdbcType=VARCHAR},
-      script_params = #{scriptParams,jdbcType=VARCHAR},
-      server_ip = #{serverIp,jdbcType=VARCHAR},
-      server_user = #{serverUser,jdbcType=VARCHAR},
-      have_password = #{havePassword,jdbcType=VARCHAR},
-      password_mode = #{passwordMode,jdbcType=VARCHAR},
-      password = #{password,jdbcType=VARCHAR},
-      create_user = #{createUser,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      start_time = #{startTime,jdbcType=TIMESTAMP},
-      end_time = #{endTime,jdbcType=TIMESTAMP},
-      ensure_user = #{ensureUser,jdbcType=VARCHAR},
-      is_valid = #{isValid,jdbcType=VARCHAR},
-      sync = #{sync,jdbcType=VARCHAR},
-      script_content = #{scriptContent,jdbcType=LONGVARCHAR},
-      log = #{log,jdbcType=LONGVARCHAR}
-    where record_id = #{recordId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.huawei.emergency.entity.EmergencyExecRecord">
-    update emergency_exec_record
-    set exec_id = #{execId,jdbcType=INTEGER},
-      plan_id = #{planId,jdbcType=INTEGER},
-      scene_id = #{sceneId,jdbcType=INTEGER},
-      task_id = #{taskId,jdbcType=INTEGER},
-      pre_scene_id = #{preSceneId,jdbcType=INTEGER},
-      pre_task_id = #{preTaskId,jdbcType=INTEGER},
-      parent_task_id = #{parentTaskId,jdbcType=INTEGER},
-      status = #{status,jdbcType=VARCHAR},
-      script_id = #{scriptId,jdbcType=INTEGER},
-      script_name = #{scriptName,jdbcType=VARCHAR},
-      script_type = #{scriptType,jdbcType=VARCHAR},
-      script_params = #{scriptParams,jdbcType=VARCHAR},
-      server_ip = #{serverIp,jdbcType=VARCHAR},
-      server_user = #{serverUser,jdbcType=VARCHAR},
-      have_password = #{havePassword,jdbcType=VARCHAR},
-      password_mode = #{passwordMode,jdbcType=VARCHAR},
-      password = #{password,jdbcType=VARCHAR},
-      create_user = #{createUser,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      start_time = #{startTime,jdbcType=TIMESTAMP},
-      end_time = #{endTime,jdbcType=TIMESTAMP},
-      ensure_user = #{ensureUser,jdbcType=VARCHAR},
-      is_valid = #{isValid,jdbcType=VARCHAR},
-      sync = #{sync,jdbcType=VARCHAR}
-    where record_id = #{recordId,jdbcType=INTEGER}
-  </update>
+        log = #{record.log,jdbcType=LONGVARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update emergency_exec_record
+        set record_id = #{record.recordId,jdbcType=INTEGER},
+        exec_id = #{record.execId,jdbcType=INTEGER},
+        plan_id = #{record.planId,jdbcType=INTEGER},
+        scene_id = #{record.sceneId,jdbcType=INTEGER},
+        task_id = #{record.taskId,jdbcType=INTEGER},
+        pre_scene_id = #{record.preSceneId,jdbcType=INTEGER},
+        pre_task_id = #{record.preTaskId,jdbcType=INTEGER},
+        parent_task_id = #{record.parentTaskId,jdbcType=INTEGER},
+        status = #{record.status,jdbcType=VARCHAR},
+        script_id = #{record.scriptId,jdbcType=INTEGER},
+        script_name = #{record.scriptName,jdbcType=VARCHAR},
+        script_type = #{record.scriptType,jdbcType=VARCHAR},
+        script_params = #{record.scriptParams,jdbcType=VARCHAR},
+        server_ip = #{record.serverIp,jdbcType=VARCHAR},
+        server_user = #{record.serverUser,jdbcType=VARCHAR},
+        have_password = #{record.havePassword,jdbcType=VARCHAR},
+        password_mode = #{record.passwordMode,jdbcType=VARCHAR},
+        password = #{record.password,jdbcType=VARCHAR},
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+        start_time = #{record.startTime,jdbcType=TIMESTAMP},
+        end_time = #{record.endTime,jdbcType=TIMESTAMP},
+        ensure_user = #{record.ensureUser,jdbcType=VARCHAR},
+        is_valid = #{record.isValid,jdbcType=VARCHAR},
+        sync = #{record.sync,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
+        update emergency_exec_record
+        <set>
+            <if test="execId != null">
+                exec_id = #{execId,jdbcType=INTEGER},
+            </if>
+            <if test="planId != null">
+                plan_id = #{planId,jdbcType=INTEGER},
+            </if>
+            <if test="sceneId != null">
+                scene_id = #{sceneId,jdbcType=INTEGER},
+            </if>
+            <if test="taskId != null">
+                task_id = #{taskId,jdbcType=INTEGER},
+            </if>
+            <if test="preSceneId != null">
+                pre_scene_id = #{preSceneId,jdbcType=INTEGER},
+            </if>
+            <if test="preTaskId != null">
+                pre_task_id = #{preTaskId,jdbcType=INTEGER},
+            </if>
+            <if test="parentTaskId != null">
+                parent_task_id = #{parentTaskId,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="scriptId != null">
+                script_id = #{scriptId,jdbcType=INTEGER},
+            </if>
+            <if test="scriptName != null">
+                script_name = #{scriptName,jdbcType=VARCHAR},
+            </if>
+            <if test="scriptType != null">
+                script_type = #{scriptType,jdbcType=VARCHAR},
+            </if>
+            <if test="scriptParams != null">
+                script_params = #{scriptParams,jdbcType=VARCHAR},
+            </if>
+            <if test="serverIp != null">
+                server_ip = #{serverIp,jdbcType=VARCHAR},
+            </if>
+            <if test="serverUser != null">
+                server_user = #{serverUser,jdbcType=VARCHAR},
+            </if>
+            <if test="havePassword != null">
+                have_password = #{havePassword,jdbcType=VARCHAR},
+            </if>
+            <if test="passwordMode != null">
+                password_mode = #{passwordMode,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ensureUser != null">
+                ensure_user = #{ensureUser,jdbcType=VARCHAR},
+            </if>
+            <if test="isValid != null">
+                is_valid = #{isValid,jdbcType=VARCHAR},
+            </if>
+            <if test="sync != null">
+                sync = #{sync,jdbcType=VARCHAR},
+            </if>
+            <if test="scriptContent != null">
+                script_content = #{scriptContent,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="log != null">
+                log = #{log,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where record_id = #{recordId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
+        update emergency_exec_record
+        set exec_id        = #{execId,jdbcType=INTEGER},
+            plan_id        = #{planId,jdbcType=INTEGER},
+            scene_id       = #{sceneId,jdbcType=INTEGER},
+            task_id        = #{taskId,jdbcType=INTEGER},
+            pre_scene_id   = #{preSceneId,jdbcType=INTEGER},
+            pre_task_id    = #{preTaskId,jdbcType=INTEGER},
+            parent_task_id = #{parentTaskId,jdbcType=INTEGER},
+            status         = #{status,jdbcType=VARCHAR},
+            script_id      = #{scriptId,jdbcType=INTEGER},
+            script_name    = #{scriptName,jdbcType=VARCHAR},
+            script_type    = #{scriptType,jdbcType=VARCHAR},
+            script_params  = #{scriptParams,jdbcType=VARCHAR},
+            server_ip      = #{serverIp,jdbcType=VARCHAR},
+            server_user    = #{serverUser,jdbcType=VARCHAR},
+            have_password  = #{havePassword,jdbcType=VARCHAR},
+            password_mode  = #{passwordMode,jdbcType=VARCHAR},
+            password       = #{password,jdbcType=VARCHAR},
+            create_user    = #{createUser,jdbcType=VARCHAR},
+            create_time    = #{createTime,jdbcType=TIMESTAMP},
+            start_time     = #{startTime,jdbcType=TIMESTAMP},
+            end_time       = #{endTime,jdbcType=TIMESTAMP},
+            ensure_user    = #{ensureUser,jdbcType=VARCHAR},
+            is_valid       = #{isValid,jdbcType=VARCHAR},
+            sync           = #{sync,jdbcType=VARCHAR},
+            script_content = #{scriptContent,jdbcType=LONGVARCHAR},
+            log            = #{log,jdbcType=LONGVARCHAR}
+        where record_id = #{recordId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.huawei.emergency.entity.EmergencyExecRecord">
+        update emergency_exec_record
+        set exec_id        = #{execId,jdbcType=INTEGER},
+            plan_id        = #{planId,jdbcType=INTEGER},
+            scene_id       = #{sceneId,jdbcType=INTEGER},
+            task_id        = #{taskId,jdbcType=INTEGER},
+            pre_scene_id   = #{preSceneId,jdbcType=INTEGER},
+            pre_task_id    = #{preTaskId,jdbcType=INTEGER},
+            parent_task_id = #{parentTaskId,jdbcType=INTEGER},
+            status         = #{status,jdbcType=VARCHAR},
+            script_id      = #{scriptId,jdbcType=INTEGER},
+            script_name    = #{scriptName,jdbcType=VARCHAR},
+            script_type    = #{scriptType,jdbcType=VARCHAR},
+            script_params  = #{scriptParams,jdbcType=VARCHAR},
+            server_ip      = #{serverIp,jdbcType=VARCHAR},
+            server_user    = #{serverUser,jdbcType=VARCHAR},
+            have_password  = #{havePassword,jdbcType=VARCHAR},
+            password_mode  = #{passwordMode,jdbcType=VARCHAR},
+            password       = #{password,jdbcType=VARCHAR},
+            create_user    = #{createUser,jdbcType=VARCHAR},
+            create_time    = #{createTime,jdbcType=TIMESTAMP},
+            start_time     = #{startTime,jdbcType=TIMESTAMP},
+            end_time       = #{endTime,jdbcType=TIMESTAMP},
+            ensure_user    = #{ensureUser,jdbcType=VARCHAR},
+            is_valid       = #{isValid,jdbcType=VARCHAR},
+            sync           = #{sync,jdbcType=VARCHAR}
+        where record_id = #{recordId,jdbcType=INTEGER}
+    </update>
 
-  <select id="selectAllPlanDetail" parameterType="java.lang.Integer" resultType="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
-    SELECT
-      plan.plan_id AS plan_id,
-      plan_detail.scene_id AS scene_id,
-      task.task_id AS task_id,
-      plan_detail.pre_scene_id,
-      plan_detail.pre_task_id,
-      plan_detail.parent_task_id,
-      ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.script_id ELSE script.script_id END ) script_id,
-      ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.script_name ELSE script.script_name END ) script_name,
-      ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.content ELSE script.content END ) AS script_content,
-      ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.script_type ELSE script.script_type END ) script_type,
-      ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.param ELSE script.param END ) AS script_params,
-      ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.server_ip ELSE script.server_ip END ) server_ip,
-      ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.server_user ELSE script.server_user END ) server_user,
-      ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.have_password ELSE script.have_password END ) have_password,
-      ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.password_mode ELSE script.password_mode END ) password_mode,
-      ( CASE WHEN plan_detail.task_id IS NULL THEN scene_script.`password` ELSE script.`password` END ) AS `password`,
-       plan_detail.sync
-    FROM
-      emergency_plan plan
-        LEFT JOIN emergency_plan_detail plan_detail ON plan.plan_id = plan_detail.plan_id
-        LEFT JOIN emergency_task task ON task.task_id = plan_detail.task_id
-        LEFT JOIN emergency_script script ON task.script_id = script.script_id
-        LEFT JOIN emergency_task scene ON scene.task_id = plan_detail.scene_id AND plan_detail.task_id IS NULL
-        LEFT JOIN emergency_script scene_script ON scene_script.script_id = scene.script_id
-    WHERE
-      plan.plan_id = #{planId,jdbcType=INTEGER}
-      AND plan_detail.is_valid = '1'
-  </select>
+    <select id="selectAllPlanDetail" parameterType="java.lang.Integer"
+            resultType="com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs">
+        SELECT plan.plan_id                                                                                    AS plan_id,
+               plan_detail.scene_id                                                                            AS scene_id,
+               task.task_id                                                                                    AS task_id,
+               plan_detail.pre_scene_id,
+               plan_detail.pre_task_id,
+               plan_detail.parent_task_id,
+               (CASE
+                    WHEN plan_detail.task_id IS NULL THEN scene_script.script_id
+                    ELSE script.script_id END)                                                                    script_id,
+               (CASE
+                    WHEN plan_detail.task_id IS NULL THEN scene_script.script_name
+                    ELSE script.script_name END)                                                                  script_name,
+               (CASE
+                    WHEN plan_detail.task_id IS NULL THEN scene_script.content
+                    ELSE script.content END)                                                                   AS script_content,
+               (CASE
+                    WHEN plan_detail.task_id IS NULL THEN scene_script.script_type
+                    ELSE script.script_type END)                                                                  script_type,
+               (CASE
+                    WHEN plan_detail.task_id IS NULL THEN scene_script.param
+                    ELSE script.param END)                                                                     AS script_params,
+               (CASE
+                    WHEN plan_detail.task_id IS NULL THEN scene_script.server_ip
+                    ELSE script.server_ip END)                                                                    server_ip,
+               (CASE
+                    WHEN plan_detail.task_id IS NULL THEN scene_script.server_user
+                    ELSE script.server_user END)                                                                  server_user,
+               (CASE
+                    WHEN plan_detail.task_id IS NULL THEN scene_script.have_password
+                    ELSE script.have_password END)                                                                have_password,
+               (CASE
+                    WHEN plan_detail.task_id IS NULL THEN scene_script.password_mode
+                    ELSE script.password_mode END)                                                                password_mode,
+               (CASE
+                    WHEN plan_detail.task_id IS NULL THEN scene_script.`password`
+                    ELSE script.`password` END)                                                                AS `password`,
+               plan_detail.sync
+        FROM emergency_plan plan
+                 LEFT JOIN emergency_plan_detail plan_detail ON plan.plan_id = plan_detail.plan_id
+                 LEFT JOIN emergency_task task ON task.task_id = plan_detail.task_id
+                 LEFT JOIN emergency_script script ON task.script_id = script.script_id
+                 LEFT JOIN emergency_task scene ON scene.task_id = plan_detail.scene_id AND plan_detail.task_id IS NULL
+                 LEFT JOIN emergency_script scene_script ON scene_script.script_id = scene.script_id
+        WHERE plan.plan_id = #{planId,jdbcType=INTEGER}
+          AND plan_detail.is_valid = '1'
+    </select>
+
+    <update id="tryUpdateStartTime">
+      UPDATE emergency_exec_record t
+      SET t.start_time = #{startTime}
+      WHERE t.record_id = #{recordId}
+        AND t.is_valid = '1'
+        and t.start_time is null
+    </update>
+
+    <update id="tryUpdateEndTimeAndLog">
+        UPDATE emergency_exec_record t
+        SET t.end_time = #{endTime},t.log = #{log}
+        WHERE t.record_id = #{recordId}
+          AND t.is_valid = '1'
+          AND NOT EXISTS(
+                SELECT 1
+                FROM emergency_exec_record_detail
+                WHERE record_id = t.record_id and end_time IS NULL and is_valid = '1'
+            )
+    </update>
+
+    <update id="tryUpdateStatus" parameterType="java.lang.Integer">
+        UPDATE emergency_exec_record t
+        SET t.`status` = parse_record_exec_status(record_id)
+        WHERE t.record_id = #{recordId}
+          AND t.is_valid = '1'
+    </update>
 </mapper>

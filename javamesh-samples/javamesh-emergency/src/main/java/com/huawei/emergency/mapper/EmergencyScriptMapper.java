@@ -1,12 +1,23 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ */
+
 package com.huawei.emergency.mapper;
 
 import com.huawei.emergency.entity.EmergencyScript;
 import com.huawei.emergency.entity.EmergencyScriptExample;
-import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
+/**
+ * 脚本mapper
+ *
+ * @author h30009881
+ * @since 2021-11-15
+ **/
 @Mapper
 public interface EmergencyScriptMapper {
     /**

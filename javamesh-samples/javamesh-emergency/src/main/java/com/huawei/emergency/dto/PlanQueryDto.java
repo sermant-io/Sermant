@@ -9,6 +9,8 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * 用于描述预案查询的显示信息
+ *
  * @author y30010171
  * @since 2021-11-10
  **/
@@ -21,8 +23,11 @@ public class PlanQueryDto {
     private String planName;
     private String status;
     private String statusLabel;
+    private String checkResult;
+    private String comment;
     private String createTime;
     private String creator;
+    private String updateTime;
     private String executeTime;
     private String startTime;
     private String confirm;

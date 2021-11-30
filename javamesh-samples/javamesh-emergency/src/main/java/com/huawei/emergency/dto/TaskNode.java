@@ -9,6 +9,8 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * 用于描述预案修改下的每个任务节点
+ *
  * @author y30010171
  * @since 2021-11-09
  **/

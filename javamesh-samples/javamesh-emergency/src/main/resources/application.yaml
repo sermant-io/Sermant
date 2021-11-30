@@ -19,6 +19,7 @@ spring:
       - classpath:create-table.sql
       - classpath:parse_exec_status.sql
       - classpath:parse_scene_exec_status.sql
+      - classpath:parse_record_exec_status.sql
     initialization-mode: always
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
@@ -59,7 +60,7 @@ mybatis:
 #用户名
 user_name: admin
 key: 1234123412341234
-decisionEngine.url: http://172.31.100.79:9091/hercules-controller-0.0.1
+decisionEngine.url: http://100.94.174.17:9091/hercules-controller-0.0.1
 jsch:
   connectTimeout: 30000
   knownHosts: /root/.ssh/known_hosts
@@ -67,10 +68,10 @@ jsch:
 script:
   location: /tmp/
   executor:
-    corePoolSize: 16
-    maxPoolSize: 16
-    keepAliveTime: 60
-    blockingQueueSize: 1024
+    maxTaskSize: 16
+    maxSubtaskSize: 8
+    blockingTaskSize: 1024
 logging:
   level:
     com.huawei.emergency.service: debug
+    com.huawei.emergency.schedule: debug

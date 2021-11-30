@@ -11,5 +11,7 @@ package com.huawei.script.exec.log;
  * @since 2021-10-26
  **/
 public interface LogCallBack {
-    void handle(String log);
+    void handleLog(int id, String log);
+
+    void handlePid(int id, String pid);
 }

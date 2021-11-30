@@ -14,7 +14,7 @@ import com.huawei.emergency.entity.User;
 import com.huawei.emergency.mapper.EmergencyScriptMapper;
 import com.huawei.emergency.service.EmergencyExecService;
 import com.huawei.emergency.service.EmergencyScriptService;
-import com.huawei.script.exec.log.LogRespone;
+import com.huawei.script.exec.log.LogResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -295,7 +294,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
     }
 
     @Override
-    public LogRespone debugLog(int detailId, int lineIndex) {
+    public LogResponse debugLog(int detailId, int lineIndex) {
         return execService.getLog(detailId,lineIndex);
     }
 
