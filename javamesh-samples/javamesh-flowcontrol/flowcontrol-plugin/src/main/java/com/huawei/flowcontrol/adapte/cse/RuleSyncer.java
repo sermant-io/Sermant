@@ -7,7 +7,7 @@ package com.huawei.flowcontrol.adapte.cse;
 import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.dynamicconfig.DynamicConfigurationFactoryServiceImpl;
-import com.huawei.apm.core.service.dynamicconfig.kie.utils.LabelGroupUtils;
+import com.huawei.apm.core.service.dynamicconfig.utils.LabelGroupUtils;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangeType;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
@@ -35,7 +35,7 @@ public class RuleSyncer {
      */
     private static final int MAX_WAIT_INTERVAL_MS = 60 * 5 * 1000;
 
-    private final Map<String, KieConfigListener> listenerCache = new LinkedHashMap<String, KieConfigListener>();
+    private final Map<String, RuleConfigListener> listenerCache = new LinkedHashMap<String, RuleConfigListener>();
 
     private final DynamicConfigurationFactoryServiceImpl dynamicConfigurationFactoryService =
             ServiceManager.getService(DynamicConfigurationFactoryServiceImpl.class);
@@ -65,7 +65,7 @@ public class RuleSyncer {
         buildAppRequest();
         buildServiceRequest();
         buildCustomRequest();
-        for (Map.Entry<String, KieConfigListener> entry : listenerCache.entrySet()) {
+        for (Map.Entry<String, RuleConfigListener> entry : listenerCache.entrySet()) {
             dynamicConfigurationFactoryService.getDynamicConfigurationService()
                     .addGroupListener(entry.getKey(), entry.getValue());
         }
@@ -75,7 +75,7 @@ public class RuleSyncer {
      * 停止方法
      */
     public void stop() {
-        for (Map.Entry<String, KieConfigListener> entry : listenerCache.entrySet()) {
+        for (Map.Entry<String, RuleConfigListener> entry : listenerCache.entrySet()) {
             dynamicConfigurationFactoryService.getDynamicConfigurationService()
                     .removeGroupListener(entry.getKey(), entry.getKey(), entry.getValue());
         }
@@ -86,23 +86,23 @@ public class RuleSyncer {
         map.put("app", CseServiceMeta.getInstance().getApp());
         map.put("service", CseServiceMeta.getInstance().getServiceName());
         map.put("environment", CseServiceMeta.getInstance().getEnvironment());
-        listenerCache.put(LabelGroupUtils.createLabelGroup(map), new KieConfigListener());
+        listenerCache.put(LabelGroupUtils.createLabelGroup(map), new RuleConfigListener());
     }
 
     private void buildAppRequest() {
         final HashMap<String, String> map = new HashMap<String, String>();
         map.put("app", CseServiceMeta.getInstance().getApp());
         map.put("environment", CseServiceMeta.getInstance().getEnvironment());
-        listenerCache.put(LabelGroupUtils.createLabelGroup(map), new KieConfigListener());
+        listenerCache.put(LabelGroupUtils.createLabelGroup(map), new RuleConfigListener());
     }
 
     private void buildCustomRequest() {
         final HashMap<String, String> map = new HashMap<String, String>();
         map.put(CseServiceMeta.getInstance().getCustomLabel(), CseServiceMeta.getInstance().getCustomLabelValue());
-        listenerCache.put(LabelGroupUtils.createLabelGroup(map), new KieConfigListener());
+        listenerCache.put(LabelGroupUtils.createLabelGroup(map), new RuleConfigListener());
     }
 
-    static class KieConfigListener implements ConfigurationListener {
+    static class RuleConfigListener implements ConfigurationListener {
 
         @Override
         public void process(ConfigChangedEvent event) {

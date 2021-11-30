@@ -40,7 +40,7 @@ public class CseDataSourceManager implements DataSourceManager {
     public void start() {
         registerFlowRuleDataSource();
         registerBreakerRuleDataSource();
-        startCseKieConfigSyncer();
+        startCseConfigSyncer();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class CseDataSourceManager implements DataSourceManager {
         ruleSyncer.stop();
     }
 
-    private void startCseKieConfigSyncer() {
+    private void startCseConfigSyncer() {
         ruleSyncer = new RuleSyncer();
         ruleSyncer.start();
     }

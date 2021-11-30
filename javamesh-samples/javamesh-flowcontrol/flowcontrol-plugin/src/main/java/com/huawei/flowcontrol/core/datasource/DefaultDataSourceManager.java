@@ -1,18 +1,17 @@
 /*
- * Copyright (c) Huawei Technologies Co., Ltd. 2020-2021. All rights reserved.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
  */
 
-package com.huawei.flowcontrol.core.datasource.kie;
+package com.huawei.flowcontrol.core.datasource;
 
 import com.alibaba.csp.sentinel.util.AppNameUtil;
 import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.apm.core.service.ServiceManager;
-import com.huawei.apm.core.service.dynamicconfig.kie.utils.LabelGroupUtils;
+import com.huawei.apm.core.service.dynamicconfig.utils.LabelGroupUtils;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationFactoryService;
 import com.huawei.flowcontrol.core.config.FlowControlConfig;
-import com.huawei.flowcontrol.core.datasource.DataSourceManager;
 import com.huawei.flowcontrol.core.datasource.kie.rule.RuleCenter;
 import com.huawei.flowcontrol.util.StringUtils;
 
@@ -31,7 +30,7 @@ public class DefaultDataSourceManager implements DataSourceManager {
     /**
      * 数据源map
      */
-    private final Map<String, KieDataSource<?>> sourceMap = new ConcurrentHashMap<String, KieDataSource<?>>();
+    private final Map<String, DefaultDataSource<?>> sourceMap = new ConcurrentHashMap<String, DefaultDataSource<?>>();
 
     /**
      * 规则中心
@@ -62,17 +61,17 @@ public class DefaultDataSourceManager implements DataSourceManager {
     private void initDataSources() {
         for (String ruleType : ruleCenter.getRuleTypes()) {
             Class<?> ruleClass = ruleCenter.getRuleClass(ruleType);
-            KieDataSource<?> kieDataSource = getKieDataSource(ruleType, ruleClass);
-            sourceMap.put(ruleType, kieDataSource);
+            DefaultDataSource<?> defaultDataSource = getDataSource(ruleType, ruleClass);
+            sourceMap.put(ruleType, defaultDataSource);
         }
     }
 
-    private <T> KieDataSource<T> getKieDataSource(String ruleKey, Class<T> ruleClass) {
-        return new KieDataSource<T>(ruleClass, ruleKey);
+    private <T> DefaultDataSource<T> getDataSource(String ruleKey, Class<T> ruleClass) {
+        return new DefaultDataSource<T>(ruleClass, ruleKey);
     }
 
     private void registerRuleManager() {
-        for (Map.Entry<String, KieDataSource<?>> entry : sourceMap.entrySet()) {
+        for (Map.Entry<String, DefaultDataSource<?>> entry : sourceMap.entrySet()) {
             ruleCenter.registerRuleManager(entry.getKey(), entry.getValue());
         }
     }
@@ -83,16 +82,16 @@ public class DefaultDataSourceManager implements DataSourceManager {
     private void initConfigListener() {
         final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
         String serviceName = AppNameUtil.getAppName();
-        if (!StringUtils.isEmpty(pluginConfig.getKieConfigServiceName())) {
-            serviceName = pluginConfig.getKieConfigServiceName();
+        if (!StringUtils.isEmpty(pluginConfig.getConfigServiceName())) {
+            serviceName = pluginConfig.getConfigServiceName();
         }
         final String groupLabel = LabelGroupUtils.createLabelGroup(Collections.singletonMap("service", serviceName));
         final DynamicConfigurationFactoryService service = ServiceManager.getService(DynamicConfigurationFactoryService.class);
         service.getDynamicConfigurationService().addGroupListener(groupLabel, new ConfigurationListener() {
             @Override
             public void process(ConfigChangedEvent event) {
-                for (KieDataSource<?> kieDataSource : sourceMap.values()) {
-                    kieDataSource.update(event);
+                for (DefaultDataSource<?> defaultDataSource : sourceMap.values()) {
+                    defaultDataSource.update(event);
                 }
             }
         });

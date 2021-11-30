@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
  */
 
-package com.huawei.apm.core.service.dynamicconfig.kie.utils;
+package com.huawei.apm.core.service.dynamicconfig.utils;
 
 import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieRequestFactory;
 

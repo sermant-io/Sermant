@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
  */
 
-package com.huawei.flowcontrol.core.datasource.kie;
+package com.huawei.flowcontrol.core.datasource;
 
 import com.alibaba.csp.sentinel.datasource.AbstractDataSource;
 import com.alibaba.csp.sentinel.datasource.Converter;
@@ -20,12 +20,12 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * kie数据源
+ * 数据源
  *
  * @author zhouss
  * @since 2021-11-26
  */
-public class KieDataSource<T> extends AbstractDataSource<ConfigChangedEvent, List<T>> implements DataSourceUpdateSupport {
+public class DefaultDataSource<T> extends AbstractDataSource<ConfigChangedEvent, List<T>> implements DataSourceUpdateSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
@@ -42,7 +42,7 @@ public class KieDataSource<T> extends AbstractDataSource<ConfigChangedEvent, Lis
      */
     private ConfigChangedEvent event;
 
-    public KieDataSource(final Class<T> ruleClass, String ruleKey) {
+    public DefaultDataSource(final Class<T> ruleClass, String ruleKey) {
         super(new Converter<ConfigChangedEvent, List<T>>() {
             @Override
             public List<T> convert(ConfigChangedEvent event) {
