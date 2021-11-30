@@ -7,7 +7,7 @@ package com.huawei.apm.core.service.dynamicconfig.kie;
 import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.apm.core.service.dynamicconfig.Config;
 import com.huawei.apm.core.service.dynamicconfig.kie.listener.SubscriberManager;
-import com.huawei.apm.core.service.dynamicconfig.kie.utils.LabelGroupUtils;
+import com.huawei.apm.core.service.dynamicconfig.utils.LabelGroupUtils;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationService;
 
@@ -108,7 +108,7 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
      * @param forSubscribe 是否为订阅
      * @return 更新是否成功
      */
-    private boolean updateListener(String key, String group, ConfigurationListener listener, boolean forSubscribe) {
+    private synchronized boolean updateListener(String key, String group, ConfigurationListener listener, boolean forSubscribe) {
         updateGroupKey(key, group, forSubscribe);
         try {
             if (forSubscribe) {

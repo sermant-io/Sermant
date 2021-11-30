@@ -6,6 +6,7 @@ import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangeType;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.apm.core.service.dynamicconfig.service.DynamicConfigurationService;
+import com.huawei.apm.core.service.dynamicconfig.utils.LabelGroupUtils;
 import org.apache.zookeeper.AddWatchMode;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
@@ -117,7 +118,7 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
      * 若由Kie配置中心转换而来，则配置路径为<h4>/group/key</h4>
      * <pre>
      * 其中:
-     * group: 由{@link com.huawei.apm.core.service.dynamicconfig.kie.utils.LabelGroupUtils#createLabelGroup(Map)}生成
+     * group: 由{@link LabelGroupUtils#createLabelGroup(Map)}生成
      * key: 则是对应kie的键名
      * </pre>
      * <p>第一次添加会将group下的所有子路径的数据通知给监听器</p>

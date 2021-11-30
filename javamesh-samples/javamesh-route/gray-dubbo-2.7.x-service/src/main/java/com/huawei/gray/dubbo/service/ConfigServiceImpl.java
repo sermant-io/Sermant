@@ -8,7 +8,7 @@ import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.dynamicconfig.DynamicConfigurationFactoryServiceImpl;
-import com.huawei.apm.core.service.dynamicconfig.kie.utils.LabelGroupUtils;
+import com.huawei.apm.core.service.dynamicconfig.utils.LabelGroupUtils;
 import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.route.common.gray.config.GrayConfig;
 import com.huawei.route.common.gray.listener.GrayConfigListener;

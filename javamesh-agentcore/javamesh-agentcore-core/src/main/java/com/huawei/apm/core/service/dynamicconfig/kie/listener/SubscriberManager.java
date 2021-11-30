@@ -12,11 +12,12 @@ import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieListenerWrapp
 import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieRequest;
 import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieResponse;
 import com.huawei.apm.core.service.dynamicconfig.kie.client.kie.KieSubscriber;
-import com.huawei.apm.core.service.dynamicconfig.kie.utils.LabelGroupUtils;
+import com.huawei.apm.core.service.dynamicconfig.utils.LabelGroupUtils;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import org.apache.http.client.config.RequestConfig;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -115,7 +116,8 @@ public class SubscriberManager {
      */
     public boolean addGroupListener(String group, ConfigurationListener listener) {
         if (!LabelGroupUtils.isLabelGroup(group)) {
-            return false;
+            // 如果非group标签（ZK配置中心场景适配），则为该group创建标签
+            group = LabelGroupUtils.createLabelGroup(Collections.singletonMap("GROUP", group));
         }
         try {
             return subscribe(new KieRequest().setLabelCondition(LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener);

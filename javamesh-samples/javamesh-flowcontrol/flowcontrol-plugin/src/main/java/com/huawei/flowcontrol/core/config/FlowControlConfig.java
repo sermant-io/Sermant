@@ -173,11 +173,11 @@ public class FlowControlConfig implements PluginConfig {
     private String configKieAddress = "http://localhost:30110";
 
     /**
-     * kie标签监听的服务名
+     * 标签监听的服务名
      * 为空则使用{@link IdentityConfigManager#getAppName()}
      * 否则使用配置的服务名
      */
-    private String kieConfigServiceName;
+    private String configServiceName;
 
     /**
      * 是否使用插件自身的url地址
@@ -218,12 +218,12 @@ public class FlowControlConfig implements PluginConfig {
         this.useCseRule = useCseRule;
     }
 
-    public String getKieConfigServiceName() {
-        return kieConfigServiceName;
+    public String getConfigServiceName() {
+        return configServiceName;
     }
 
-    public void setKieConfigServiceName(String kieConfigServiceName) {
-        this.kieConfigServiceName = kieConfigServiceName;
+    public void setConfigServiceName(String configServiceName) {
+        this.configServiceName = configServiceName;
     }
 
     public boolean isOpenMetricCollector() {

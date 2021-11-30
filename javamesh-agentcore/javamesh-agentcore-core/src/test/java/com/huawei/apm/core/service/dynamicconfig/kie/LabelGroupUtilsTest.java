@@ -4,7 +4,7 @@
 
 package com.huawei.apm.core.service.dynamicconfig.kie;
 
-import com.huawei.apm.core.service.dynamicconfig.kie.utils.LabelGroupUtils;
+import com.huawei.apm.core.service.dynamicconfig.utils.LabelGroupUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

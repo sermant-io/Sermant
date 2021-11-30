@@ -6,7 +6,7 @@ package com.huawei.apm.core.service.dynamicconfig;
 
 import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.service.dynamicconfig.kie.listener.SubscriberManager;
-import com.huawei.apm.core.service.dynamicconfig.kie.utils.LabelGroupUtils;
+import com.huawei.apm.core.service.dynamicconfig.utils.LabelGroupUtils;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.apm.core.service.dynamicconfig.service.ConfigurationListener;
 import org.junit.Assert;
