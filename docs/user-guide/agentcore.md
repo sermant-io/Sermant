@@ -2,6 +2,7 @@
 
 本文档主要介绍[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)，该模块提供处理字节码增强、统一配置、核心服务、插件管理等能力重要内核。
 
+- [核心包版本](#核心包版本)
 - [目录结构](#目录结构)
 - [字节码增强](#字节码增强)
 - [统一配置系统](#统一配置系统)
@@ -22,6 +23,15 @@
 - [相关文档](#相关文档)
 
 本文更多地只是简单介绍[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)中各个目录的意义，仅做抛砖引玉的作用，如果开发者想要更为细致的了解代码中业务逻辑，请移步至相关的目录或类查看。
+
+## 核心包版本
+
+核心包的版本，属于核心包的内禀属性，因此我们将版本的定义封装到`manifest`文件中，作为`jar`包的元信息存在。核心包版本信息封装于`manifest`文件的`Java-mesh-Version`参数中，默认取值为`javamesh.version`。在代码中，可以通过以下方法获取核心包版本：
+```java
+String version = BootArgsIndexer.getCoreVersion();
+```
+
+如果需要修改核心包的版本，可以直接修改`javamesh.version`的值。
 
 ## 目录结构
 

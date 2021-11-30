@@ -6,7 +6,11 @@ package com.huawei.apm.core.common;
 
 import java.io.File;
 import java.util.Map;
+import java.util.jar.JarFile;
 import java.util.logging.Logger;
+
+import com.huawei.apm.core.exception.SchemaException;
+import com.huawei.apm.core.util.JarFileUtil;
 
 /**
  * 路径索引器
@@ -15,26 +19,16 @@ import java.util.logging.Logger;
  * @version 1.0.0
  * @since 2021/11/3
  */
-public class PathIndexer {
+public class BootArgsIndexer {
     /**
      * 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * javamesh的配置文件名的键
+     * java agent的版本
      */
-    public static String JAVAMESH_CONFIG_FILE = "javamesh.config.file";
-
-    /**
-     * 插件的设置配置名的键
-     */
-    public static String JAVAMESH_PLUGIN_SETTING_FILE = "javamesh.plugin.setting.file";
-
-    /**
-     * pluginPackage插件包的键
-     */
-    public static String JAVAMESH_PLUGIN_PACKAGE_DIR = "javamesh.plugin.package.dir";
+    private static final String coreVersion;
 
     /**
      * 配置文件
@@ -50,6 +44,10 @@ public class PathIndexer {
      * pluginPackage插件包
      */
     private static File pluginPackageDir;
+
+    public static String getCoreVersion() {
+        return coreVersion;
+    }
 
     public static File getConfigFile() {
         return configFile;
@@ -69,17 +67,27 @@ public class PathIndexer {
      * @param argsMap 启动参数
      */
     public static void build(Map<String, Object> argsMap) {
-        configFile = new File(argsMap.get(PathIndexer.JAVAMESH_CONFIG_FILE).toString());
+        configFile = new File(argsMap.get(CommonConstant.CORE_CONFIG_FILE_KEY).toString());
         if (!configFile.exists() || !configFile.isFile()) {
             LOGGER.warning("Config file is not found! ");
         }
-        pluginSettingFile = new File(argsMap.get(PathIndexer.JAVAMESH_PLUGIN_SETTING_FILE).toString());
+        pluginSettingFile = new File(argsMap.get(CommonConstant.PLUGIN_SETTING_FILE_KEY).toString());
         if (!pluginSettingFile.exists() || !pluginSettingFile.isFile()) {
             LOGGER.warning("Plugin setting file is not found! ");
         }
-        pluginPackageDir = new File(argsMap.get(PathIndexer.JAVAMESH_PLUGIN_PACKAGE_DIR).toString());
+        pluginPackageDir = new File(argsMap.get(CommonConstant.PLUGIN_PACKAGE_DIR_KEY).toString());
         if (!pluginPackageDir.exists() || !pluginPackageDir.isDirectory()) {
             LOGGER.warning("Plugin package directory is not found! ");
+        }
+    }
+
+    static {
+        final String currentFile = BootArgsIndexer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        try {
+            coreVersion = JarFileUtil.getManifestAttr(new JarFile(currentFile), CommonConstant.CORE_VERSION_KEY)
+                    .toString();
+        } catch (Exception ignored) {
+            throw new SchemaException(SchemaException.MISSING_VERSION, currentFile);
         }
     }
 }

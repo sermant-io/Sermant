@@ -26,7 +26,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -38,7 +37,6 @@
                             <Premain-Class>com.huawei.apm.premain.AgentPremain</Premain-Class>
                             <Can-Redefine-Classes>true</Can-Redefine-Classes>
                             <Can-Retransform-Classes>true</Can-Retransform-Classes>
-                            <WiseApm-Version>${project.version}</WiseApm-Version>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -53,10 +51,8 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
                 <executions>
                     <execution>
-                        <id>copy-config</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -67,25 +63,6 @@
                             <resources>
                                 <resource>
                                     <directory>${config.source.dir}</directory>
-                                    <includes>
-                                        <include>${config.file.name}</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-env-config</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${config.output.dir}</outputDirectory>
-                            <overwrite>true</overwrite>
-                            <resources>
-                                <resource>
-                                    <directory>${config.source.dir}/${profile.id}</directory>
                                     <includes>
                                         <include>${config.file.name}</include>
                                     </includes>

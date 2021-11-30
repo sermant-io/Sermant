@@ -7,6 +7,7 @@
 - [打包流程](#打包流程)
 - [添加功能模块](#添加功能模块)
 - [插件开发流程](#插件开发流程)
+  - [插件名和版本](#插件名和版本)
   - [添加插件模块](#添加插件模块)
   - [添加插件服务模块](#添加插件服务模块)
   - [添加配置](#添加配置)
@@ -66,6 +67,21 @@
 ## 插件开发流程
 
 本节将介绍插件开发的相关流程，其中涉及的模块为`插件(plugin)`和`服务(service)`。
+
+### 插件名和版本
+
+插件的名称和版本，属于`插件(plugin)`和`服务(service)`包的内禀属性，因此我们将他们封装到`manifest`文件中，作为`jar`包的元信息存在：
+
+- **插件名称**封装于`manifest`文件的`Java-mesh-Name-Version`参数中，通过`pom`文件中的`package.sample.name`参数设定，默认含义为**功能名称**。
+- **插件版本**封装于`manifest`文件的`Java-mesh-Plugin-Version`参数中，默认取值为`javamesh.version`，可通过`pom`文件中的`package.sample.version`参数修改。
+
+在插件被加载的过程中，将对插件名称和插件版本进行校验，如果不满足以下条件的话，将抛出异常：
+
+- 对于所有`插件(plugin)`来说，由于不允许包含第三方依赖，因此，在加载`插件(plugin)`存放目录(`功能(function)`目录下的`plugin`目录)时，如果检出不含**插件名称**和**插件版本**的第三方包，将抛出异常。
+- 对于所有`插件(plugin)`和`服务(service)`来说，如果其中设置的**插件名称**与**插件设定文件**中配置的名称不一致，将抛出异常。
+- 对于所有`插件(plugin)`和`服务(service)`来说，如果其中存在多个不同的**插件版本**，将抛出异常。
+
+对于插件开发者来说，如果没有特殊的需要，不建议修改默认的设计，保持`插件(plugin)`中不使用第三方依赖、`插件(plugin)`写接口`服务(service)`写实现等原则就好。
 
 ### 添加插件模块
 
@@ -221,10 +237,8 @@
   - [DemoConstInterceptor](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConstInterceptor.java)展示了如何编写一个用于增强构造函数的拦截器。
   - [DemoStaticInterceptor](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoStaticInterceptor.java)展示了如何编写一个用于增强静态函数的拦截器。
   - [DemoInstInterceptor](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoInstInterceptor.java)展示了如何编写一个用于增强实例函数的拦截器。
-- 日志系统使用示例：
-  - [DemoLoggerInterceptor](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoLoggerInterceptor.java)展示了如何在拦截器中使用日志系统。
-  - [DemoSimpleService](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)中展示了如何在插件服务中使用日志系统。
-- 心跳功能使用示例，如[DemoHeartBeatService](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)服务所示，通常编写插件服务注册即可。
+- 日志系统使用示例，如[DemoLogger](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/common/DemoLogger.java)展示了如何在插件中获取日志类。
+- 通过心跳功能添加额外参数示例，如[DemoHeartBeatService](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)服务所示，通常使用自定义服务的方式将额外参数带入。
 - 链路功能使用示例，如[DemoTraceInterceptor](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceInterceptor.java)所示，通常链路功能应用于拦截器，对宿主应用的方法调用过程进行增强，捕获其相关的数据信息并上报。
 - 增强原生类示例，如[DemoBootstrapDefinition](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoBootstrapDefinition.java)所示，与普通类的增强方式无异。但是，考虑到修改原生类是非常危险的且风险扩散的操作，不建议对原生类进行增强。
 - 插件配置示例：插件配置是统一配置系统的特化，遵循统一配置系统的规则。[config.yaml](../../javamesh-samples/javamesh-example/config/config.yaml)是示例工程的配置文件，其中包含[DemoConfig](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)和[DemoServiceConfig](../../javamesh-samples/javamesh-example/demo-service/src/main/java/com/huawei/example/demo/config/DemoServiceConfig.java)两个配置类对应的配置信息，从配置的定义和调用可以看到：

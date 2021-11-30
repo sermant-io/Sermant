@@ -4,8 +4,6 @@
 
 package com.huawei.apm.core.service.heartbeat;
 
-import java.util.Map;
-
 import com.huawei.apm.core.service.BaseService;
 
 /**
@@ -17,54 +15,25 @@ import com.huawei.apm.core.service.BaseService;
  */
 public interface HeartbeatService extends BaseService {
     /**
-     * 注册心跳
-     *
-     * @param heartbeatName 心跳名称，用于区分不同类型心跳的名字，不可重复
+     * 心跳的版本键
      */
-    void heartbeat(String heartbeatName);
+    String VERSION_KEY = "version";
 
     /**
-     * 注册心跳
-     *
-     * @param heartbeatName 心跳名称，用于区分不同类型心跳的名字，不可重复
-     * @param infoMap       其他信息集合
+     * 心跳的插件名称键
      */
-    void heartbeat(String heartbeatName, Map<String, String> infoMap);
+    String PLUGIN_NAME_KEY = "pluginName";
 
     /**
-     * 注册心跳
-     *
-     * @param heartbeatName   心跳名称，用于区分不同类型心跳的名字，不可重复
-     * @param infoMapProvider 其他信息的提供者
-     * @param interval        心跳间隔
+     * 心跳的插件版本键
      */
-    void heartbeat(String heartbeatName, InfoMapProvider infoMapProvider, HeartbeatInterval interval);
+    String PLUGIN_VERSION_KEY = "pluginVersion";
 
     /**
-     * 注册心跳
+     * 设置额外信息
      *
-     * @param heartbeatName   心跳名称，用于区分不同类型心跳的名字，不可重复
-     * @param infoMapProvider 其他信息的提供者
-     * @param frames          帧数，意义参考{@link HeartbeatInterval#getFrames()}
+     * @param pluginName      心跳名称，用于区分不同类型心跳的名字，不可重复
+     * @param extInfoProvider 其他信息的提供者
      */
-    void heartbeat(String heartbeatName, InfoMapProvider infoMapProvider, int frames);
-
-    /**
-     * 停止心跳发送
-     *
-     * @param heartbeatName 心跳名称
-     */
-    void stopHeartbeat(String heartbeatName);
-
-    /**
-     * 信息集合提供者，当心跳发送的内容会发生改变是，需要定制信息提供方式
-     */
-    interface InfoMapProvider {
-        /**
-         * 提供信息集合
-         *
-         * @return 信息集合
-         */
-        Map<String, String> provide();
-    }
+    void setExtInfo(String pluginName, ExtInfoProvider extInfoProvider);
 }

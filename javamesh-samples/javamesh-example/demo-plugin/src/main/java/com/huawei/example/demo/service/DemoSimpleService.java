@@ -4,9 +4,6 @@
 
 package com.huawei.example.demo.service;
 
-import java.util.logging.Logger;
-
-import com.huawei.apm.core.common.LoggerFactory;
 import com.huawei.apm.core.plugin.service.PluginService;
 import com.huawei.apm.core.plugin.service.PluginServiceManager;
 import com.huawei.example.demo.common.DemoLogger;

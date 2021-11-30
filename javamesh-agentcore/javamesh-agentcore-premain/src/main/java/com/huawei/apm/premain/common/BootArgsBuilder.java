@@ -11,10 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import com.huawei.apm.core.common.LoggerFactory;
-import com.huawei.apm.core.common.PathIndexer;
-import com.huawei.apm.core.lubanops.bootstrap.commons.LubanApmConstants;
-import com.huawei.apm.core.lubanops.bootstrap.config.AgentConfigManager;
+import com.huawei.apm.core.common.CommonConstant;
 import com.huawei.apm.core.util.FieldUtil;
 
 /**
@@ -103,21 +100,21 @@ public abstract class BootArgsBuilder {
      * @param configMap 配置集
      */
     private static void addNotNullEntries(Map<String, Object> argsMap, Properties configMap) {
-        String key = LubanApmConstants.APP_NAME_COMMONS;
+        String key = CommonConstant.APP_NAME_KEY;
         if (!argsMap.containsKey(key)) {
             final String value = getCommonValue(key, configMap);
             if (value == null) {
-                throw new IllegalArgumentException(LubanApmConstants.APP_NAME_COMMONS + " not found. ");
+                throw new IllegalArgumentException(CommonConstant.APP_NAME_KEY + " not found. ");
             } else {
                 argsMap.put(key, value);
             }
         }
-        key = LubanApmConstants.INSTANCE_NAME_COMMONS;
+        key = CommonConstant.INSTANCE_NAME_KEY;
         if (!argsMap.containsKey(key)) {
             final String value = getCommonValue(key, configMap);
             argsMap.put(key, value == null ? "default" : value);
         }
-        key = LubanApmConstants.APP_TYPE_COMMON;
+        key = CommonConstant.APP_TYPE_KEY;
         if (!argsMap.containsKey(key)) {
             final String value = getCommonValue(key, configMap);
             argsMap.put(key, value == null ? 0 : Integer.parseInt(value));
@@ -132,11 +129,11 @@ public abstract class BootArgsBuilder {
      */
     private static void addNormalEntries(Map<String, Object> argsMap, Properties configMap) {
         for (String key : new String[]{
-                LubanApmConstants.ENV_COMMONS,
-                LubanApmConstants.ENV_TAG_COMMONS,
-                LubanApmConstants.BIZ_PATH_COMMONS,
-                LubanApmConstants.SUB_BUSINESS_COMMONS,
-                LubanApmConstants.ENV_SECRET_COMMONS}) {
+                CommonConstant.ENV_KEY,
+                CommonConstant.ENV_TAG_KEY,
+                CommonConstant.BIZ_PATH_KEY,
+                CommonConstant.SUB_BUSINESS_KEY,
+                CommonConstant.ENV_SECRET_KEY}) {
             if (!argsMap.containsKey(key)) {
                 final String value = getCommonValue(key, configMap);
                 if (value != null) {
@@ -154,9 +151,9 @@ public abstract class BootArgsBuilder {
      */
     private static void addSpeEntries(Map<String, Object> argsMap, Properties configMap) {
         for (String key : new String[]{
-                AgentConfigManager.MASTER_ACCESS_KEY,
-                AgentConfigManager.MASTER_SECRET_KEY,
-                AgentConfigManager.MASTER_ADDRESS}) {
+                CommonConstant.MASTER_ACCESS_KEY,
+                CommonConstant.MASTER_SECRET_KEY,
+                CommonConstant.MASTER_ADDRESS_KEY}) {
             final String camelKey = FieldUtil.toCamel(key, '.', false);
             if (!argsMap.containsKey(camelKey)) {
                 String value = configMap.getProperty(key);
@@ -174,12 +171,12 @@ public abstract class BootArgsBuilder {
      * @param argsMap 参数集
      */
     private static void addPathEntries(Map<String, Object> argsMap) {
-        argsMap.put(LubanApmConstants.AGENT_PATH_COMMONS, PathDeclarer.getAgentPath());
-        argsMap.put(LubanApmConstants.BOOT_PATH_COMMONS, PathDeclarer.getCorePath());
-        argsMap.put(LubanApmConstants.PLUGINS_PATH_COMMONS, PathDeclarer.getLubanPluginsPath());
-        argsMap.put(PathIndexer.JAVAMESH_CONFIG_FILE, PathDeclarer.getConfigPath());
-        argsMap.put(PathIndexer.JAVAMESH_PLUGIN_SETTING_FILE, PathDeclarer.getPluginSettingPath());
-        argsMap.put(PathIndexer.JAVAMESH_PLUGIN_PACKAGE_DIR, PathDeclarer.getPluginPackagePath());
-        argsMap.put(LoggerFactory.JAVAMESH_LOGBACK_SETTING_FILE, PathDeclarer.getLogbackSettingPath());
+        argsMap.put(CommonConstant.AGENT_ROOT_DIR_KEY, PathDeclarer.getAgentPath());
+        argsMap.put(CommonConstant.LUBAN_BOOT_PATH_KEY, PathDeclarer.getLubanBootPath());
+        argsMap.put(CommonConstant.LUBAN_PLUGINS_PATH_KEY, PathDeclarer.getLubanPluginsPath());
+        argsMap.put(CommonConstant.CORE_CONFIG_FILE_KEY, PathDeclarer.getConfigPath());
+        argsMap.put(CommonConstant.PLUGIN_SETTING_FILE_KEY, PathDeclarer.getPluginSettingPath());
+        argsMap.put(CommonConstant.PLUGIN_PACKAGE_DIR_KEY, PathDeclarer.getPluginPackagePath());
+        argsMap.put(CommonConstant.LOG_SETTING_FILE_KEY, PathDeclarer.getLogbackSettingPath());
     }
 }

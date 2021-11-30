@@ -1,6 +1,5 @@
 package com.huawei.apm.core.common;
 
-
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -12,16 +11,25 @@ import com.huawei.apm.core.lubanops.bootstrap.log.LogFactory;
 
 public class LoggerFactory {
     /**
-     * logback配置的键
+     * 默认的logback配置文件路径
      */
-    public static String JAVAMESH_LOGBACK_SETTING_FILE = "javamesh.log.setting.file";
-
     private static String defaultLogbackSettingPath;
 
+    /**
+     * 从启动参数中获取logback的配置文件路径
+     *
+     * @param argsMap 启动参数
+     * @return logback的配置文件路径
+     */
     private static String getLogbackSettingFile(Map<String, Object> argsMap) {
-        return argsMap.get(JAVAMESH_LOGBACK_SETTING_FILE).toString();
+        return argsMap.get(CommonConstant.LOG_SETTING_FILE_KEY).toString();
     }
 
+    /**
+     * 初始化logback配置文件路径
+     *
+     * @param argsMap 启动参数
+     */
     public static void init(Map<String, Object> argsMap) {
         final String logbackSettingPath = getLogbackSettingFile(argsMap);
         // 设置slf4j 日志 handle
@@ -32,6 +40,9 @@ public class LoggerFactory {
         LogFactory.setLogger(java.util.logging.Logger.getLogger("java-mesh"));
     }
 
+    /**
+     * 回滚默认的logback配置文件路径
+     */
     public static void rollback() {
         if (defaultLogbackSettingPath != null) {
             System.setProperty(ContextInitializer.CONFIG_FILE_PROPERTY, defaultLogbackSettingPath);
@@ -40,6 +51,11 @@ public class LoggerFactory {
         }
     }
 
+    /**
+     * 获取jul日志
+     *
+     * @return jul日志
+     */
     public static Logger getLogger() {
         return LogFactory.getLogger();
     }

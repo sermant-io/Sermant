@@ -1,5 +1,6 @@
 package com.huawei.apm.core.lubanops.core;
 
+import com.huawei.apm.core.common.BootArgsIndexer;
 import com.huawei.apm.core.lubanops.bootstrap.agent.AgentInfo;
 import com.huawei.apm.core.lubanops.bootstrap.api.APIService;
 import com.huawei.apm.core.lubanops.bootstrap.api.InstrumentationManager;
@@ -45,10 +46,7 @@ public class BootStrapImpl {
 
             // 设置javaagent启动时间和版本信息
             AgentInfo.setAgentStartTime(System.currentTimeMillis());
-            String path = BootStrapImpl.class.getProtectionDomain().getCodeSource().getLocation().getFile();
-            String javaagentVersion = path.substring(
-                    path.lastIndexOf("javamesh-agentcore-core1-") + "javamesh-agentcore-core1-".length(),
-                    path.lastIndexOf(".jar"));
+            String javaagentVersion = BootArgsIndexer.getCoreVersion();
             AgentInfo.setJavaagentVersion(javaagentVersion);
             LOGGER.info("javaagentVersion:" + javaagentVersion);
             new BootStrapImpl().start();

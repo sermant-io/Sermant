@@ -12,6 +12,7 @@
         <javamesh.basedir>${pom.basedir}/../..</javamesh.basedir>
 
         <package.sample.name>${project.artifactId}</package.sample.name>
+        <package.sample.version>${javamesh.version}</package.sample.version>
         <package.sample.dir>${package.agent.dir}/pluginPackage</package.sample.dir>
         <package.sample.type>${project.artifactId}</package.sample.type>
         <package.output.dir>${package.sample.dir}/${package.sample.name}/${package.sample.type}</package.output.dir>
@@ -74,11 +75,22 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Java-mesh-Plugin-Name>${package.sample.name}</Java-mesh-Plugin-Name>
+                                <Java-mesh-Plugin-Version>${package.sample.version}</Java-mesh-Plugin-Version>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.2.0</version>
                     <executions>
                         <execution>
-                            <id>copy-config</id>
                             <phase>package</phase>
                             <goals>
                                 <goal>copy-resources</goal>

@@ -317,19 +317,32 @@ Logger logger = LoggerFactory.getLogger();
 HeartbeatService heartbeatService = ServiceManager.getService(HeartbeatService.class);
 ```
 
-调用`heartbeat`注册心跳功能：
+心跳功能在初始化的时候就会启动执行，定期将每个插件的名称、版本等信息发送至后端服务器。目前来说，插件的心跳上报的信息包括：
+
+- `hostname`：发送客户端的主机名
+- `ip`：发送客户端的IP地址
+- `app`：应用名称，即启动参数中的`appName`
+- `appType`：应用类型，即启动参数中的`appType`
+- `heartbeatVersion`：上一次心跳发送时间
+- `lastHeartbeat`：上一次心跳发送时间
+- `version`：核心包的版本，即核心包`manifest`文件的`Java-mesh-Version`值
+- `pluginName`：插件名称，通过插件设定文件确定
+- `pluginVersion`：插件版本号，取插件jar包中`manifest`文件的`Java-mesh-Plugin-Version`值
+
+如果希望在插件上报的数据中增加额外的内容，可以调用以下api：
 ```java
-// ${verify name}用于区别其他心跳注册者
-heartbeatService.heartbeat("${verify name}");
+// ${plugin name}为插件名称，通过自定义ExtInfoProvider提供额外内容集合
+heartbeatService.setExtInfo("${plugin name}", new ExtInfoProvider() {
+  @Override
+  public Map<String, String> getExtInfo() {
+    // do something
+  }
+});
 ```
 
-调用`stopHeartbeat`方法终止心跳功能：
-```java
-// ${verify name}用于区别其他心跳注册者
-heartbeatService.stopHeartbeat("${verify name}");
-```
+插件开发者如果需要往心跳功能发送的数据包中增加额外内容，可以参考[DemoHeartBeatService](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)示例开发。
 
-插件开发者如果需要使用心跳功能，可以参考[DemoHeartBeatService](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)示例开发。
+更多心跳服务相关内容可参见[心跳服务介绍](service_heartbeat.md)。
 
 #### 链路功能
 
@@ -434,6 +447,8 @@ service.addConfigListener("${key}", "${group}", new ConfigurationListener() {
 注册监听器之后，当服务器对应节点发生创建、删除、修改、添加子节点等事件时，就会触发`process`函数。
 
 插件开发者如果需要使用动态配置，可以参考[DemoDynaConfService](../../javamesh-samples/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoDynaConfService.java)示例开发。
+
+更多动态配置服务相关内容可参见[动态配置服务介绍](service_dynamicconfig.md)。
 
 
 ## 插件服务模块

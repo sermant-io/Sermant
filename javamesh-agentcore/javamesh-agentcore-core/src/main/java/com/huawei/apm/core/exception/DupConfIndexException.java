@@ -13,8 +13,8 @@ import java.util.Locale;
  * @version 1.0.0
  * @since 2021/11/4
  */
-public class ConfigDupIndexException extends RuntimeException {
-    public ConfigDupIndexException(String key) {
+public class DupConfIndexException extends RuntimeException {
+    public DupConfIndexException(String key) {
         super(String.format(Locale.ROOT, "Unable to use [%s] to explain [%s]. ", key, key));
     }
 }

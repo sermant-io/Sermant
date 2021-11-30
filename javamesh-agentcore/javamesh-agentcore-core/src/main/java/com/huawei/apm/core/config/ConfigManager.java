@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.huawei.apm.core.common.LoggerFactory;
-import com.huawei.apm.core.common.PathIndexer;
+import com.huawei.apm.core.common.BootArgsIndexer;
 import com.huawei.apm.core.config.common.BaseConfig;
 import com.huawei.apm.core.config.strategy.LoadConfigStrategy;
 import com.huawei.apm.core.config.utils.ConfigKeyUtil;
@@ -71,7 +71,7 @@ public abstract class ConfigManager {
      */
     public static synchronized void initialize(Map<String, Object> args) {
         argsMap = args;
-        loadConfig(PathIndexer.getConfigFile(), BaseConfig.class, ClassLoader.getSystemClassLoader(), null);
+        loadConfig(BootArgsIndexer.getConfigFile(), BaseConfig.class, ClassLoader.getSystemClassLoader(), null);
     }
 
     /**
