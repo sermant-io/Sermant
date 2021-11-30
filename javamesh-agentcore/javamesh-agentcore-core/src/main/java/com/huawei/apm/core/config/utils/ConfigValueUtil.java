@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.huawei.apm.core.common.LoggerFactory;
-import com.huawei.apm.core.exception.ConfigDupIndexException;
+import com.huawei.apm.core.exception.DupConfIndexException;
 
 /**
  * 对配置中参数值进行处理的工具
@@ -185,7 +185,7 @@ public class ConfigValueUtil {
             final int separatorIndex = envKey.indexOf(':');
             final String key = separatorIndex >= 0 ? envKey.substring(0, separatorIndex) : envKey;
             if (configKey.equals(key)) {
-                throw new ConfigDupIndexException(key);
+                throw new DupConfIndexException(key);
             }
             final String defaultValue = separatorIndex >= 0 ? envKey.substring(separatorIndex + 1) : "";
             final String value = getFixedValue(key, defaultValue, argsMap, provider);

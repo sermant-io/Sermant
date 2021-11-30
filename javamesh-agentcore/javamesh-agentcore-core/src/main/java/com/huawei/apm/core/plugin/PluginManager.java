@@ -11,23 +11,30 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.instrument.Instrumentation;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 import org.yaml.snakeyaml.Yaml;
 
+import com.huawei.apm.core.common.BootArgsIndexer;
 import com.huawei.apm.core.common.LoggerFactory;
-import com.huawei.apm.core.common.PathIndexer;
+import com.huawei.apm.core.exception.SchemaException;
 import com.huawei.apm.core.plugin.classloader.PluginClassLoader;
+import com.huawei.apm.core.plugin.common.PluginConstant;
 import com.huawei.apm.core.plugin.config.PluginConfigManager;
 import com.huawei.apm.core.plugin.config.PluginSetting;
 import com.huawei.apm.core.plugin.service.PluginServiceManager;
-import com.huawei.apm.core.util.FileUtil;
+import com.huawei.apm.core.util.JarFileUtil;
 
 /**
  * 插件管理器，在这里将对插件相关的资源或操作进行管理
@@ -42,11 +49,19 @@ public class PluginManager {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    public static final String CONFIG_DIR_NAME = "config";
+    /**
+     * 插件名称与版本的集合
+     */
+    private static final Map<String, String> PLUGIN_VERSION_MAP = new HashMap<>();
 
-    public static final String PLUGIN_DIR_NAME = "plugin";
-
-    public static final String SERVICE_DIR_NAME = "service";
+    /**
+     * 获取插件名和插件版本的迭代器
+     *
+     * @return 插件名和插件版本的迭代器
+     */
+    public static Iterator<Map.Entry<String, String>> getPluginVersionItr() {
+        return PLUGIN_VERSION_MAP.entrySet().iterator();
+    }
 
     /**
      * 初始化插件包、配置、插件服务包等插件相关的内容
@@ -58,13 +73,58 @@ public class PluginManager {
         if (pluginNames == null || pluginNames.isEmpty()) {
             return;
         }
-        final String pluginPackage = FileUtil.getCanonicalPath(PathIndexer.getPluginPackageDir());
-        if (pluginPackage == null) {
+        final String pluginPackage;
+        try {
+            pluginPackage = BootArgsIndexer.getPluginPackageDir().getCanonicalPath();
+        } catch (IOException ignored) {
             return;
         }
         for (String pluginName : pluginNames) {
-            initPlugin(pluginPackage + File.separatorChar + pluginName, instrumentation);
+            initPlugin(pluginName, pluginPackage + File.separatorChar + pluginName, instrumentation);
+            setDefaultVersion(pluginName);
         }
+    }
+
+    /**
+     * 当插件的版本不存在时，使用默认的版本号
+     *
+     * @param pluginName 插件名称
+     */
+    private static void setDefaultVersion(String pluginName) {
+        if (!PLUGIN_VERSION_MAP.containsKey(pluginName)) {
+            PLUGIN_VERSION_MAP.put(pluginName, PluginConstant.PLUGIN_DEFAULT_VERSION);
+        }
+    }
+
+    /**
+     * 获取插件包目录
+     *
+     * @param pluginPath 插件根目录
+     * @return 插件包目录
+     */
+    private static File getPluginDir(String pluginPath) {
+        return new File(pluginPath + File.separatorChar + PluginConstant.PLUGIN_DIR_NAME);
+    }
+
+    /**
+     * 获取插件服务包目录
+     *
+     * @param pluginPath 插件根目录
+     * @return 插件服务包目录
+     */
+    private static File getServiceDir(String pluginPath) {
+        return new File(pluginPath + File.separatorChar + PluginConstant.SERVICE_DIR_NAME);
+    }
+
+    /**
+     * 获取插件配置文件
+     *
+     * @param pluginPath 插件根目录
+     * @return 插件配置文件
+     */
+    private static File getPluginConfigFile(String pluginPath) {
+        return new File(pluginPath + File.separatorChar + PluginConstant.CONFIG_DIR_NAME + File.separatorChar +
+                PluginConstant.CONFIG_FILE_NAME);
     }
 
     /**
@@ -76,16 +136,14 @@ public class PluginManager {
      *     4.初始化插件服务
      * </pre>
      *
+     * @param pluginName      插件名称
      * @param pluginPath      插件路径
      * @param instrumentation Instrumentation对象
      */
-    private static void initPlugin(String pluginPath, Instrumentation instrumentation) {
-        loadPlugins(new File(pluginPath + File.separatorChar + PLUGIN_DIR_NAME), instrumentation);
-        ClassLoader classLoader = loadServices(new File(pluginPath + File.separatorChar + SERVICE_DIR_NAME));
-        if (classLoader == null) {
-            classLoader = ClassLoader.getSystemClassLoader();
-        }
-        loadConfig(new File(pluginPath + File.separatorChar + CONFIG_DIR_NAME), classLoader);
+    private static void initPlugin(String pluginName, String pluginPath, Instrumentation instrumentation) {
+        loadPlugins(pluginName, getPluginDir(pluginPath), instrumentation);
+        ClassLoader classLoader = loadServices(pluginName, getServiceDir(pluginPath));
+        loadConfig(getPluginConfigFile(pluginPath), classLoader);
         initService(classLoader);
     }
 
@@ -101,11 +159,14 @@ public class PluginManager {
     /**
      * 由{@link PluginConfigManager#loadServiceConfig(java.io.File, java.lang.ClassLoader)}方法加载插件配置信息
      *
-     * @param configDir   配置文件夹
+     * @param configFile  配置文件
      * @param classLoader 加载插件服务包的自定义类加载器
      */
-    private static void loadConfig(File configDir, ClassLoader classLoader) {
-        PluginConfigManager.loadServiceConfig(configDir, classLoader);
+    private static void loadConfig(File configFile, ClassLoader classLoader) {
+        if (classLoader == null) {
+            classLoader = ClassLoader.getSystemClassLoader();
+        }
+        PluginConfigManager.loadServiceConfig(configFile, classLoader);
     }
 
     /**
@@ -131,45 +192,114 @@ public class PluginManager {
     }
 
     /**
-     * 获取所有jar包的URL
+     * 创建自定义类加载器加载所有插件服务包，若无插件服务包，则不会创建类加载器
      *
-     * @param files jar包集
+     * @param pluginName 插件名称
+     * @param serviceDir 插件服务文件夹
+     * @return 自定义类加载器
+     */
+    private static ClassLoader loadServices(String pluginName, File serviceDir) {
+        final URL[] urls = toURLs(pluginName, listJars(serviceDir));
+        if (urls.length > 0) {
+            return new PluginClassLoader(urls);
+        }
+        return null;
+    }
+
+    /**
+     * 获取插件所有jar包的URL，将进行jar包的校验和版本的校验
+     *
+     * @param pluginName 插件名称
+     * @param jars       jar包集
      * @return jar包的URL集
      */
-    private static URL[] toURLs(File[] files) {
+    private static URL[] toURLs(String pluginName, File[] jars) {
         final List<URL> urls = new ArrayList<URL>();
-        for (File file : files) {
-            final URL url = FileUtil.toURL(file);
-            if (url != null) {
-                urls.add(url);
+        for (File jar : jars) {
+            final JarFile jarFile = toJarFile(pluginName, jar, true);
+            if (jarFile != null) {
+                final URL url = toURL(jar);
+                if (url != null) {
+                    urls.add(url);
+                }
             }
         }
         return urls.toArray(new URL[0]);
     }
 
     /**
-     * 创建自定义类加载器加载所有插件服务包，若无插件服务包，则不会创建类加载器
+     * 通过文件获取url
      *
-     * @param serviceDir 插件服务文件夹
-     * @return 自定义类加载器
+     * @param file 文件
+     * @return url
      */
-    private static ClassLoader loadServices(File serviceDir) {
-        final File[] jars = listJars(serviceDir);
-        if (jars.length > 0) {
-            return new PluginClassLoader(toURLs(jars));
+    private static URL toURL(File file) {
+        try {
+            return file.toURI().toURL();
+        } catch (MalformedURLException ignored) {
+            LOGGER.warning(String.format(Locale.ROOT, "Get URL of %s failed. ", file.getName()));
         }
         return null;
     }
 
     /**
+     * 将插件包文件转换为jar包，并校验插件版本
+     *
+     * @param pluginName 插件名称
+     * @param jar        插件包文件
+     * @return 插件包jar包
+     */
+    private static JarFile toJarFile(String pluginName, File jar, boolean ifAllowExtJar) {
+        try {
+            final JarFile jarFile = new JarFile(jar);
+            if (!ifAllowExtJar && !checkSchema(pluginName, jarFile)) {
+                throw new SchemaException(SchemaException.UNEXPECTED_EXT_JAR, jar.getPath());
+            }
+            return jarFile;
+        } catch (IOException ignored) {
+            LOGGER.warning(String.format(Locale.ROOT, "Check version of %s failed. ", jar.getName()));
+        }
+        return null;
+    }
+
+    /**
+     * 检查名称和版本
+     *
+     * @param pluginName 插件名称
+     * @param jarFile    插件包
+     * @return 为真时经过名称和版本校验，为插件包或插件服务包，为假时表示第三方jar包
+     * @throws IOException 获取manifest文件异常
+     */
+    private static boolean checkSchema(String pluginName, JarFile jarFile) throws IOException {
+        final Object nameAttr = JarFileUtil.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
+        if (nameAttr == null) {
+            return false;
+        }
+        if (!nameAttr.toString().equals(pluginName)) {
+            throw new SchemaException(SchemaException.UNEXPECTED_NAME, nameAttr.toString(), pluginName);
+        }
+        final Object versionAttr = JarFileUtil.getManifestAttr(jarFile, PluginConstant.PLUGIN_VERSION_KEY);
+        final String givingVersion =
+                versionAttr == null ? PluginConstant.PLUGIN_DEFAULT_VERSION : versionAttr.toString();
+        final String expectingVersion = PLUGIN_VERSION_MAP.get(pluginName);
+        if (expectingVersion == null) {
+            PLUGIN_VERSION_MAP.put(pluginName, givingVersion);
+        } else if (!expectingVersion.equals(givingVersion)) {
+            throw new SchemaException(SchemaException.UNEXPECTED_VERSION, pluginName, givingVersion, expectingVersion);
+        }
+        return true;
+    }
+
+    /**
      * 加载所有插件包
      *
+     * @param pluginName      插件名称
      * @param pluginDir       插件包目录
      * @param instrumentation Instrumentation对象
      */
-    private static void loadPlugins(File pluginDir, Instrumentation instrumentation) {
+    private static void loadPlugins(String pluginName, File pluginDir, Instrumentation instrumentation) {
         for (File jar : listJars(pluginDir)) {
-            final JarFile jarFile = FileUtil.toJarFile(jar);
+            final JarFile jarFile = toJarFile(pluginName, jar, false);
             if (jarFile != null) {
                 instrumentation.appendToSystemClassLoaderSearch(jarFile);
             }
@@ -185,7 +315,7 @@ public class PluginManager {
         final Yaml yaml = new Yaml();
         Reader reader = null;
         try {
-            reader = new InputStreamReader(new FileInputStream(PathIndexer.getPluginSettingFile()),
+            reader = new InputStreamReader(new FileInputStream(BootArgsIndexer.getPluginSettingFile()),
                     Charset.forName("UTF-8"));
             return yaml.loadAs(reader, PluginSetting.class);
         } catch (IOException ignored) {

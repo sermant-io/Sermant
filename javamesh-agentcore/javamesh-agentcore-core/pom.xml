@@ -8,6 +8,7 @@
     </parent>
     <artifactId>javamesh-agentcore-core</artifactId>
     <properties>
+        <jdk.version>1.8</jdk.version>
         <package.output.dir>${package.agent.dir}/core</package.output.dir>
         <config.file.name>config.properties</config.file.name>
         <plugin.setting.name>plugins.yaml</plugin.setting.name>
@@ -112,12 +113,6 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>2.5.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
             <exclusions>
@@ -130,57 +125,41 @@
                     <artifactId>log4j</artifactId>
                 </exclusion>
             </exclusions>
-            <version>3.6.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
-            <version>1.7.32</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.2.6</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.6</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-to-slf4j</artifactId>
-            <version>2.14.1</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
-            <version>1.7.32</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.32</version>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
-            <version>2.12.1</version>
         </dependency>
     </dependencies>
     <build>
-        <extensions>
-            <extension>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>os-maven-plugin</artifactId>
-                <version>${os.plugin.version}</version>
-            </extension>
-        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
                 <executions>
                     <execution>
                         <id>agent-clean</id>
@@ -200,10 +179,13 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <archive>
+                        <manifestEntries>
+                            <Java-mesh-Version>${javamesh.version}</Java-mesh-Version>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
@@ -264,10 +246,6 @@
                             <shadedPattern>${shade.common.prefix}.org.java_websocket</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>org.objectweb.asm</pattern>
-                            <shadedPattern>${shade.common.prefix}.org.objectweb.asm</shadedPattern>
-                        </relocation>
-                        <relocation>
                             <pattern>org.slf4j</pattern>
                             <shadedPattern>${shade.common.prefix}.org.slf4j</shadedPattern>
                         </relocation>
@@ -293,10 +271,8 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
                 <executions>
                     <execution>
-                        <id>copy-config</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -317,7 +293,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>copy-env-config</id>
+                        <id>cover-by-env</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -343,22 +319,6 @@
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
-                <version>${protubuf.plugin.version}</version>
-                <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
-                    </protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
-                    </pluginArtifact>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>compile-custom</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

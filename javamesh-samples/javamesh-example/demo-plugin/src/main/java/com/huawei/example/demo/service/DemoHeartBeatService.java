@@ -4,9 +4,13 @@
 
 package com.huawei.example.demo.service;
 
-import com.huawei.apm.core.service.ServiceManager;
+import java.util.Collections;
+import java.util.Map;
+
 import com.huawei.apm.core.plugin.service.PluginService;
+import com.huawei.apm.core.service.ServiceManager;
 import com.huawei.apm.core.service.heartbeat.HeartbeatService;
+import com.huawei.apm.core.service.heartbeat.ExtInfoProvider;
 
 /**
  * 本示例中，将展示如何在插件服务中使用心跳功能
@@ -16,17 +20,18 @@ import com.huawei.apm.core.service.heartbeat.HeartbeatService;
  * @since 2021/10/25
  */
 public class DemoHeartBeatService implements PluginService {
-    private static final HeartbeatService HEARTBEAT_SERVICE = ServiceManager.getService(HeartbeatService.class);
-
     @Override
     public void start() {
-        // 注册心跳功能
-        HEARTBEAT_SERVICE.heartbeat("demo_heartbeat");
+        final HeartbeatService service = ServiceManager.getService(HeartbeatService.class);
+        service.setExtInfo("example", new ExtInfoProvider() {
+            @Override
+            public Map<String, String> getExtInfo() {
+                return Collections.singletonMap("exampleKey", "exampleValue");
+            }
+        });
     }
 
     @Override
     public void stop() {
-        // 停止心跳功能
-        HEARTBEAT_SERVICE.stopHeartbeat("demo_heartbeat");
     }
 }

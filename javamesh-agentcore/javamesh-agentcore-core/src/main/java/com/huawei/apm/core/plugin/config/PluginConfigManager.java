@@ -9,7 +9,6 @@ import java.io.File;
 import com.huawei.apm.core.agent.interceptor.InterceptorChainManager;
 import com.huawei.apm.core.config.ConfigManager;
 import com.huawei.apm.core.config.common.BaseConfig;
-import com.huawei.apm.core.util.FileUtil;
 
 /**
  * 插件配置管理器，${ConfigManager}统一配置管理器的特化，专门用来加载插件包配置和插件服务包配置
@@ -20,22 +19,12 @@ import com.huawei.apm.core.util.FileUtil;
  */
 public class PluginConfigManager extends ConfigManager {
     /**
-     * 插件配置文件名
-     */
-    private static final String CONFIG_FILE_NAME = "config.yaml";
-
-    /**
      * 加载插件服务包配置
      *
-     * @param configDir   配置文件夹
+     * @param configFile  配置文件夹
      * @param classLoader 加载插件服务包的类加载器
      */
-    public static void loadServiceConfig(File configDir, ClassLoader classLoader) {
-        final String configDirStr = FileUtil.getCanonicalPath(configDir);
-        if (configDirStr == null) {
-            return;
-        }
-        final File configFile = new File(configDirStr + File.separatorChar + CONFIG_FILE_NAME);
+    public static void loadServiceConfig(File configFile, ClassLoader classLoader) {
         loadConfig(configFile, PluginConfig.class, classLoader,
                 new ConfigConsumer() {
                     @Override

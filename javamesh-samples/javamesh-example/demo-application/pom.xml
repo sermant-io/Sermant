@@ -24,11 +24,6 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.6</version>
         </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.12.1</version>
-        </dependency>
     </dependencies>
 
     <build>
