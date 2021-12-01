@@ -177,7 +177,7 @@ public class EmergencyExecController {
         if (lineIndex <= 0) {
             lineIndex = 1;
         }
-        return execService.getLog(recordId, lineIndex);
+        return execService.getRecordLog(recordId, lineIndex);
     }
 
     /**

@@ -10,6 +10,7 @@ import com.huawei.common.constant.ValidEnum;
 import com.huawei.emergency.entity.EmergencyExec;
 import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordDetail;
+import com.huawei.emergency.entity.EmergencyExecRecordDetailExample;
 import com.huawei.emergency.entity.EmergencyExecRecordExample;
 import com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs;
 import com.huawei.emergency.entity.EmergencyScript;
@@ -128,8 +129,8 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
         recordMapper.insertSelective(record);
 
         List<EmergencyExecRecordDetail> emergencyExecRecordDetails = handlerFactory.generateRecordDetail(record);
-        emergencyExecRecordDetails.forEach( recordDetail -> {
-            threadPoolExecutor.execute(handlerFactory.handleDetail(record,recordDetail));
+        emergencyExecRecordDetails.forEach(recordDetail -> {
+            threadPoolExecutor.execute(handlerFactory.handleDetail(record, recordDetail));
         });
 
         //.execute(handlerFactory.handle(record));
@@ -142,16 +143,8 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
         return CommonResult.success(result);
     }
 
-    private String getLog(int recordId) {
-        EmergencyExecRecordWithBLOBs record = recordMapper.selectByPrimaryKey(recordId);
-        if (record == null) {
-            return "";
-        }
-        return record.getLog();
-    }
-
     @Override
-    public LogResponse getLog(int recordId, int line) {
+    public LogResponse getLog(int detailId, int line) {
         /*String log = getLog(recordId);
         if (StringUtils.isEmpty(log)) {
             return LogMemoryStore.getLog(recordId, line);
@@ -162,7 +155,20 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
             return new LogResponse(null, needLogs);
         }
         return new LogResponse(null, new String[]{log});*/
-        return logOneServer(recordId,line);
+        return logOneServer(detailId, line);
+    }
+
+    @Override
+    public LogResponse getRecordLog(int recordId, int line) {
+        EmergencyExecRecordDetailExample recordDetailExample = new EmergencyExecRecordDetailExample();
+        recordDetailExample.createCriteria()
+            .andIsValidEqualTo(ValidEnum.VALID.getValue())
+            .andRecordIdEqualTo(recordId);
+        List<EmergencyExecRecordDetail> emergencyExecRecordDetails = recordDetailMapper.selectByExample(recordDetailExample);
+        if (emergencyExecRecordDetails.size() == 0) {
+            return LogResponse.END;
+        }
+        return logOneServer(emergencyExecRecordDetails.get(0).getDetailId(), line);
     }
 
     @Override
@@ -284,7 +290,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
             || ValidEnum.IN_VALID.getValue().equals(oldDetail.getIsValid())) {
             return CommonResult.failed("请选择正在执行中的记录");
         }
-        if (!RecordStatus.FAILED.getValue().equals(oldDetail.getStatus()) && !RecordStatus.CANCEL.getValue().equals(oldDetail.getStatus())){
+        if (!RecordStatus.FAILED.getValue().equals(oldDetail.getStatus()) && !RecordStatus.CANCEL.getValue().equals(oldDetail.getStatus())) {
             return CommonResult.failed("请选择执行失败或取消的记录");
         }
         EmergencyExecRecordWithBLOBs record = recordMapper.selectByPrimaryKey(oldDetail.getRecordId());
@@ -349,7 +355,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
     public LogResponse logOneServer(int detailId, int line) {
         EmergencyExecRecordDetail recordDetail = recordDetailMapper.selectByPrimaryKey(detailId);
         if (recordDetail == null || ValidEnum.IN_VALID.equals(recordDetail.getIsValid())) {
-            return new LogResponse(null, null);
+            return LogResponse.END;
         }
         if (StringUtils.isEmpty(recordDetail.getLog())) {
             LogResponse log = LogMemoryStore.getLog(detailId, line);
