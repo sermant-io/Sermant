@@ -130,7 +130,7 @@ drwxr-xr-x 2 root root   4096 Oct  8 11:26 lib
 [root@ecs-flow-0005 ngrinder-agent]#
 
 ```
-#### 3. 进入agent解压目录之后使用命令启动
+#### 3. agent启动命令参数解析
 ```
 Usage: run_agent_bg.sh [options]
   Options:
@@ -178,5 +178,6 @@ agent.region=NONE
 # some jvm is not compatible with DNSJava. If so, set this false.
 #agent.enable_local_dns=false
 ```
+>${home_path}就是该agent配置和数据保存的目录，切记一定要指定清楚
 
 到此处，nGrinder controller和agent就部署完毕！

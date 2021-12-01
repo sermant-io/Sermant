@@ -64,11 +64,22 @@
 			<groupId>sonia.svnkit</groupId>
 			<artifactId>svnkit-dav</artifactId>
 			<version>1.8.4-scm1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/svnkit-dav-1.8.4-scm1.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>sonia.svnkit</groupId>
 			<artifactId>svnkit</artifactId>
 			<version>1.8.4-scm1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/svnkit-1.8.4-scm1.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>grinder</groupId>
+			<artifactId>grinder</artifactId>
+			<version>3.9.1-patch</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/grinder-3.9.1-patch.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.huawei</groupId>
@@ -339,6 +350,8 @@
 			<groupId>org.ngrinder</groupId>
 			<artifactId>universal-analytics-java</artifactId>
 			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/universal-analytics-java-1.0.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
@@ -576,7 +589,31 @@
 			</resource>
 		</resources>
 		<plugins>
-
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-libs</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/../lib</directory>
+									<includes>
+										<include>**/*.jar</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>

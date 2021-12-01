@@ -245,7 +245,7 @@ public class TpsCalculateService {
 	 * 设置测试到当前时间截止时，实际已经执行的时间毫秒数
 	 */
 	private void setActualExecuteTime() {
-		if (isRunning) {
+		if (isRunning && testStartTime > 0) {
 			this.actualExecuteTime = System.currentTimeMillis() - testStartTime;
 			return;
 		}
@@ -262,6 +262,7 @@ public class TpsCalculateService {
 			LOGGER.error("The test has not tps data.");
 			return Collections.emptyList();
 		}
+
 		// 设置测试任务实际执行时长
 		setActualExecuteTime();
 

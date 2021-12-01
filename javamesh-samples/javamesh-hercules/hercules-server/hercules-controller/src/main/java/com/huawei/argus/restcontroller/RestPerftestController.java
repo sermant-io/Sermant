@@ -1,7 +1,5 @@
 package com.huawei.argus.restcontroller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,7 +22,12 @@ import org.ngrinder.common.util.FileDownloadUtils;
 import org.ngrinder.infra.config.Config;
 import org.ngrinder.infra.logger.CoreLogger;
 import org.ngrinder.infra.spring.RemainedPath;
-import org.ngrinder.model.*;
+import org.ngrinder.model.MonitoringHost;
+import org.ngrinder.model.PerfTest;
+import org.ngrinder.model.RampUp;
+import org.ngrinder.model.Role;
+import org.ngrinder.model.Status;
+import org.ngrinder.model.User;
 import org.ngrinder.perftest.service.AgentManager;
 import org.ngrinder.perftest.service.PerfTestService;
 import org.ngrinder.perftest.service.TagService;
@@ -45,16 +48,31 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Lists.newArrayList;
@@ -63,8 +81,12 @@ import static org.ngrinder.common.util.CollectionUtils.buildMap;
 import static org.ngrinder.common.util.CollectionUtils.newHashMap;
 import static org.ngrinder.common.util.ExceptionUtils.processException;
 import static org.ngrinder.common.util.ObjectUtils.defaultIfNull;
-import static org.ngrinder.common.util.Preconditions.*;
 import static org.ngrinder.common.util.Preconditions.checkArgument;
+import static org.ngrinder.common.util.Preconditions.checkNotEmpty;
+import static org.ngrinder.common.util.Preconditions.checkNotNull;
+import static org.ngrinder.common.util.Preconditions.checkNull;
+import static org.ngrinder.common.util.Preconditions.checkState;
+import static org.ngrinder.common.util.Preconditions.checkValidURL;
 
 @RestController
 @RequestMapping("/rest/perftest")
@@ -152,25 +174,6 @@ public class RestPerftestController extends RestBaseController {
 		modelInfos.put("testListPage", pageInfo);
 		modelInfos.put("queryFilter", queryFilter);
 		modelInfos.put("query", query);
-/*
-		putPageIntoModelMap(modelInfos, pageable);
-		// 查询压测场景信息
-		Iterator<Object> content = testListPage.getJSONArray("content").stream().iterator();
-		while (content.hasNext()) {
-			JSONObject next = (JSONObject) content.next();
-			Long perfTestId = next.getLong("id");
-			List<ScenarioPerfTest> allByID = scenarioPerfTestService.getAllByID(user, perfTestId, null);
-			if (allByID != null && !allByID.isEmpty()) {
-				Long scenarioId = allByID.get(0).getScenarioId();
-				Scenario scenario = scenarioService.getOne(scenarioId);
-				if (scenario != null) {
-					next.put("scenario", modelStrToJson(scenario.toString()));
-					next.put("scenarioType", scenario.getScenarioType());
-				}
-			}
-		}
-*/
-
 		return modelInfos;
 	}
 
@@ -621,11 +624,12 @@ public class RestPerftestController extends RestBaseController {
 		modelInfos.put(PARAM_TEST_CHART_INTERVAL, sampleInterval);
 		modelInfos.put(PARAM_TEST, test);
 		TpsCalculateService tpsCalculateService = new TpsCalculateService();
+		Date startTime = test.getStartTime();
 		tpsCalculateService.setResultSampleInterval(timeInterval)
 			.setTestSampleInterval(test.getSamplingInterval())
 			.setResultShowTime(thisDuration)
 			.setNeededExecuteTime(test.getDuration())
-			.setTestStartTime(test.getStartTime().getTime())
+			.setTestStartTime(startTime == null ? 0 : startTime.getTime())
 			.isRunning(test.getStatus() == Status.TESTING)
 			.setTpsOriginalData(perfTestService.getSingleReportDataAsJson(id, "TPS", interval));
 		modelInfos.put(PARAM_TPS, tpsCalculateService.sampleData());
@@ -682,7 +686,7 @@ public class RestPerftestController extends RestBaseController {
 			logFile.put("content", Files.readAllBytes(targetFile.toPath()));
 			logFile.put(JSON_SUCCESS, true);
 		} catch (IOException e) {
-			CoreLogger.LOGGER.error("Error while download log. {}", logFile,  e);
+			CoreLogger.LOGGER.error("Error while download log. {}", logFile, e);
 		}
 
 		return logFile;
@@ -832,10 +836,13 @@ public class RestPerftestController extends RestBaseController {
 
 	private PerfTest getOneWithPermissionCheck(User user, Long id, boolean withTag) {
 		PerfTest perfTest = withTag ? perfTestService.getOneWithTag(id) : perfTestService.getOne(id);
+		if (perfTest == null) {
+			throw processException("User " + user.getUserId() + " has no PerfTest " + id);
+		}
 		if (user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.SUPER_USER)) {
 			return perfTest;
 		}
-		if (perfTest != null && !user.equals(perfTest.getCreatedUser())) {
+		if (!user.equals(perfTest.getCreatedUser())) {
 			throw processException("User " + user.getUserId() + " has no right on PerfTest " + id);
 		}
 		return perfTest;
@@ -1227,7 +1234,6 @@ public class RestPerftestController extends RestBaseController {
 		model.addAttribute("queryFilter", queryFilter);
 		model.addAttribute("query", query);
 		putPageIntoModelMap(model, pageable);
-//		return "perftest/list";
 		return toJsonHttpEntity(model);
 	}
 
@@ -1246,7 +1252,6 @@ public class RestPerftestController extends RestBaseController {
 	public ResponseEntity<PerfTest> getReportRunningDiv(User user, ModelMap model, @PathVariable long id) {
 		PerfTest test = getOneWithPermissionCheck(user, id, false);
 		model.addAttribute(PARAM_TEST, test);
-//		return "perftest/running";
 		return new ResponseEntity<PerfTest>(test, HttpStatus.OK);
 	}
 
@@ -1268,16 +1273,8 @@ public class RestPerftestController extends RestBaseController {
 		perfTest.setTestName(StringUtils.trimToEmpty(perfTest.getTestName()));
 		perfTest.setScriptRevision(-1L);
 		perfTest.prepare(isClone);
-//		perfTest.setOwnerName(user.getUserName());
 		perfTest = perfTestService.save(user, perfTest);
 		PerfTest test = perfTestService.getOne(perfTest.getId());
-//		if (perfTest.getStatus() == Status.SAVED || perfTest.getScheduledTime() != null) {
-//			System.out.println( perfTest.getClass().getName() );
-//			return new ResponseEntity(perfTest,HttpStatus.CREATED);
-//		} else {
-//			System.out.println( perfTest.getClass().getName() );
-//			return new ResponseEntity(HttpStatus.CREATED);
-//		}
 		return toJsonHttpEntity(test);
 	}
 
@@ -1371,184 +1368,5 @@ public class RestPerftestController extends RestBaseController {
 		PerfTest savePerfTest = perfTestService.save(user, test);
 		CoreLogger.LOGGER.info("test {} is created through web api by {}", test.getId(), user.getUserId());
 		return toJsonHttpEntity(test);
-	}
-
-
-	/**
-	 * 计算TPS图标数据
-	 *
-	 * @param sampleInterval nGrinder采集间隔
-	 * @param thisDuration   展示数据的总时间区间，单位秒
-	 * @param showInterval   展示数据的时间间隔，单位秒
-	 * @param tpsStr         nGrinder采集数
-	 * @param executeTime    测试执行时长
-	 * @return tps数据
-	 */
-	private List<Map<String, Object>> getTps(int sampleInterval,
-											 int thisDuration,
-											 int showInterval,
-											 String tpsStr,
-											 long executeTime) {
-		if (StringUtils.isEmpty(tpsStr)) {
-			return Collections.emptyList();
-		}
-		thisDuration = Math.abs(thisDuration);
-
-		// 获取tps原始数据
-		JSONArray tpsValues = JSON.parseArray(tpsStr);
-		if (tpsValues.isEmpty()) {
-			return Collections.emptyList();
-		}
-
-		// 先把tps中为null的转换成前一个值
-		for (int i = 0; i < tpsValues.size(); i++) {
-			Object value = tpsValues.get(i);
-			if (value == null) {
-				tpsValues.set(i, i > 0 ? tpsValues.get(i - 1) : 0);
-			}
-		}
-
-		// 根据nGrinder采集的间隔，把tps值封装成1秒钟一采集的数据，间隔中没有的值就使用紧邻的采集值
-		JSONArray oneSecondIntervalTps = getOneSecondIntervalTpsArray(sampleInterval, tpsValues, executeTime);
-
-		// 计算如果一秒钟采集一次，一共采集多少次
-		int totalTimes = (int) executeTime / 1000;
-
-		// 前端传入的查询数据时间区间，相当于要向当前时间之前查询采集多少次数据，查询时间区间-执行时间区间=需要填充的时间区间
-		int neededSupplyTimes = thisDuration - totalTimes;
-
-		// 如果拼接之后的一秒钟采集样本个数大于实际的执行时间，则计算取数开始位置
-		List<Map<String, Object>> tpsInfos = new ArrayList<>();
-		if (neededSupplyTimes > 0) {
-			// 测试执行时间不足展示时间时，数据取值开始索引按照执行时间来计算
-			int startIndex = oneSecondIntervalTps.size() - totalTimes;
-
-			// 实际采样次数不够的部分使用默认时间和tps数据补足
-			tpsInfos.addAll(buildTpsDefaultPartition(neededSupplyTimes, showInterval, thisDuration));
-
-			// 补足默认数据之后，使用真实数据填充后面的数据
-			tpsInfos.addAll(sampleTpsByInterval(showInterval, oneSecondIntervalTps, startIndex, totalTimes));
-			return tpsInfos;
-		}
-
-		// 测试执行时间大于展示时间时，数据取值开始索引按照展示时间来计算
-		int startIndex = oneSecondIntervalTps.size() - thisDuration;
-
-		// 如果采样结果已经足够，则直接从采集结果中指定位置开始拿间隔频率的tps值返回,
-		tpsInfos.addAll(sampleTpsByInterval(showInterval, oneSecondIntervalTps, startIndex, thisDuration));
-		return tpsInfos;
-	}
-
-	/**
-	 * 根据查询到的真是tps数据，构建需要返回格式的tps数据，按照频率{@see neededInterval}从指定位置{@see start}开始采集
-	 *
-	 * @param neededInterval       采集数据的频率
-	 * @param oneSecondIntervalTps 1秒频率的原始数据
-	 * @param start                数据采集开始的位置
-	 * @param baseTime             数据采集开始时的基础时间，因为前面可能已经采集了部分，所以这里设置一个基础时间
-	 * @return 固定是个的tps数据消息，包含了时间序列
-	 */
-	private List<Map<String, Object>> sampleTpsByInterval(int neededInterval,
-														  JSONArray oneSecondIntervalTps,
-														  int start,
-														  int baseTime) {
-		List<Map<String, Object>> tpsInfos = new ArrayList<>();
-		int timeIndex = baseTime - 1;
-		for (int i = start; i < oneSecondIntervalTps.size(); i++) {
-			if (i % neededInterval != 0) {
-				timeIndex--;
-				continue;
-			}
-			Map<String, Object> thisTps = new HashMap<>();
-			thisTps.put("tps", oneSecondIntervalTps.get(i));
-			String format = "-%s:%s";
-			if (timeIndex == 0) {
-				thisTps.put("time", "00:00");
-			} else {
-				String time = String.format(Locale.ENGLISH, format, getMinuteString(timeIndex), getSecondsString(timeIndex));
-				thisTps.put("time", time);
-			}
-			tpsInfos.add(thisTps);
-			timeIndex--;
-		}
-		return tpsInfos;
-	}
-
-	/**
-	 * 把原始tps数据按照采集频率封装成1秒钟采集频率的新tps数据
-	 *
-	 * @param taskTpsActualInterval tps实际采集频率
-	 * @param tpsValues             tps原始数据
-	 * @param executeTime           测试执行时间长度
-	 * @return 封装好的采集频率为1秒的tps数据
-	 */
-	private JSONArray getOneSecondIntervalTpsArray(int taskTpsActualInterval, JSONArray tpsValues, long executeTime) {
-		JSONArray oneSecondIntervalTps = new JSONArray();
-		if (taskTpsActualInterval <= 0 || tpsValues == null || tpsValues.isEmpty()) {
-			return oneSecondIntervalTps;
-		}
-		long seconds = executeTime / 1000;
-		long totalSampleNumber = (long) tpsValues.size() * taskTpsActualInterval;
-
-		// 如果按照每秒统计出来的结果与实际执行秒数匹配不上，就继续在最前面补充0
-		if (totalSampleNumber < seconds) {
-			for (int i = 0; i < seconds - totalSampleNumber; i++) {
-				oneSecondIntervalTps.add(0);
-			}
-		}
-
-		// 填充正常的采集数据值
-		for (Object tpsValue : tpsValues) {
-			for (int j = 0; j < taskTpsActualInterval; j++) {
-				oneSecondIntervalTps.add(tpsValue);
-			}
-		}
-		return oneSecondIntervalTps;
-	}
-
-	/**
-	 * 如果实际采集的数据还不足支持需要的展示区间，则需要补充默认为0的tps数据
-	 *
-	 * @param needAddDuration 需要补足的采集区间
-	 * @param interval        采集频率
-	 * @param totalDuration   总共的时间区间
-	 * @return 默认的格式tps格式数据
-	 */
-	private List<Map<String, Object>> buildTpsDefaultPartition(int needAddDuration, int interval, int totalDuration) {
-		List<Map<String, Object>> tpsInfos = new ArrayList<>();
-		for (int i = 0; i < Math.abs(needAddDuration); i++) {
-			if (i % interval != 0) {
-				continue;
-			}
-			Map<String, Object> thisTps = new HashMap<>();
-			thisTps.put("tps", 0); // 缺省值补0
-			String format = "-%s:%s";
-			int showTimeTotalSeconds = totalDuration - 1 - i;
-			thisTps.put("time", String.format(Locale.ENGLISH, format, getMinuteString(showTimeTotalSeconds), getSecondsString(showTimeTotalSeconds)));
-			tpsInfos.add(thisTps);
-		}
-		return tpsInfos;
-	}
-
-	/**
-	 * 根据时间封装tps数据格式中分钟部分字符串
-	 *
-	 * @param seconds 采集的时间，秒
-	 * @return 计算之后的分钟值
-	 */
-	private String getMinuteString(int seconds) {
-		int minute = seconds / 60;
-		return minute < 10 ? "0" + minute : minute + "";
-	}
-
-	/**
-	 * 根据时间封装tps数据格式中秒部分字符串
-	 *
-	 * @param seconds 采集的时间，秒
-	 * @return 计算之后的秒值
-	 */
-	private String getSecondsString(int seconds) {
-		int modSeconds = seconds % 60;
-		return modSeconds < 10 ? "0" + modSeconds : modSeconds + "";
 	}
 }
