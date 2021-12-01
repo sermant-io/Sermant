@@ -1,11 +1,11 @@
 package com.huawei.argus.restcontroller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.ngrinder.model.Scenario;
-import org.ngrinder.model.ScenarioPerfTest;
+import com.huawei.argus.report.service.TpsCalculateService;
 import com.huawei.argus.scenario.service.IScenarioPerfTestService;
 import com.huawei.argus.scenario.service.IScenarioService;
 import net.grinder.util.LogCompressUtils;
@@ -55,7 +55,6 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.function.Consumer;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Lists.newArrayList;
@@ -370,11 +369,6 @@ public class RestPerftestController extends RestBaseController {
 		perfTest.setTestName(StringUtils.trimToEmpty(perfTest.getTestName()));
 		perfTest.setScriptRevision(-1L);
 		perfTest.prepare(isClone);
-		MonitoringConfig monitoringConfig = perfTest.getMonitoringConfig();
-		if (monitoringConfig != null) {
-			monitoringConfig.setPerfTest(perfTest);
-			monitoringConfig.setId(null);
-		}
 		Set<MonitoringHost> monitoringHosts = perfTest.getMonitoringHosts();
 		if (monitoringHosts != null && !monitoringHosts.isEmpty()) {
 			for (MonitoringHost monitoringHost : monitoringHosts) {
@@ -623,11 +617,18 @@ public class RestPerftestController extends RestBaseController {
 		int interval = perfTestService.getReportDataInterval(id, "TPS", imgWidth);
 		JSONObject modelInfos = new JSONObject();
 		modelInfos.put(PARAM_LOG_LIST, perfTestService.getLogFiles(id));
-		modelInfos.put(PARAM_TEST_CHART_INTERVAL, interval * test.getSamplingInterval());
+		int sampleInterval = interval * test.getSamplingInterval();
+		modelInfos.put(PARAM_TEST_CHART_INTERVAL, sampleInterval);
 		modelInfos.put(PARAM_TEST, test);
-		String tps = perfTestService.getSingleReportDataAsJson(id, "TPS", interval);
-		List<Map<String, Object>> thisTps = getTps(interval * test.getSamplingInterval(), thisDuration, timeInterval, tps);
-		modelInfos.put(PARAM_TPS, thisTps);
+		TpsCalculateService tpsCalculateService = new TpsCalculateService();
+		tpsCalculateService.setResultSampleInterval(timeInterval)
+			.setTestSampleInterval(test.getSamplingInterval())
+			.setResultShowTime(thisDuration)
+			.setNeededExecuteTime(test.getDuration())
+			.setTestStartTime(test.getStartTime().getTime())
+			.isRunning(test.getStatus() == Status.TESTING)
+			.setTpsOriginalData(perfTestService.getSingleReportDataAsJson(id, "TPS", interval));
+		modelInfos.put(PARAM_TPS, tpsCalculateService.sampleData());
 		return modelInfos;
 	}
 
@@ -680,10 +681,8 @@ public class RestPerftestController extends RestBaseController {
 			ByteArrayInputStream fis = null;
 			logFile.put("content", Files.readAllBytes(targetFile.toPath()));
 			logFile.put(JSON_SUCCESS, true);
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		} catch (IOException exception) {
-			exception.printStackTrace();
+		} catch (IOException e) {
+			CoreLogger.LOGGER.error("Error while download log. {}", logFile,  e);
 		}
 
 		return logFile;
@@ -743,7 +742,7 @@ public class RestPerftestController extends RestBaseController {
 	}
 
 	@RequestMapping(value = "/api/sample")
-	public HttpEntity<String> refreshTestRunningById(User user, @RequestParam long id) {
+	public HttpEntity<Map<String, Object>> refreshTestRunningById(User user, @RequestParam long id) {
 		PerfTest test = checkNotNull(getOneWithPermissionCheck(user, id, false), "given test should be exist : " + id);
 		Map<String, Object> map = newHashMap();
 		map.put("test", test);
@@ -752,7 +751,7 @@ public class RestPerftestController extends RestBaseController {
 		map.put("agent", perfTestService.getAgentStat(test));
 		map.put("monitor", perfTestService.getMonitorStat(test));
 		map.put(PARAM_LOG_LIST, perfTestService.getLogFiles(id));
-		return toJsonHttpEntity(map);
+		return new HttpEntity<>(map);
 	}
 
 	/**
@@ -1378,68 +1377,178 @@ public class RestPerftestController extends RestBaseController {
 	/**
 	 * 计算TPS图标数据
 	 *
-	 * @param interval     ngrinder采集间隔
-	 * @param thisDuration 展示数据的总时间区间，单位秒
-	 * @param thisInterval 展示数据的时间间隔，单位秒
-	 * @param tpsStr       ngrinder采集数
-	 * @return
+	 * @param sampleInterval nGrinder采集间隔
+	 * @param thisDuration   展示数据的总时间区间，单位秒
+	 * @param showInterval   展示数据的时间间隔，单位秒
+	 * @param tpsStr         nGrinder采集数
+	 * @param executeTime    测试执行时长
+	 * @return tps数据
 	 */
-	private List<Map<String, Object>> getTps(int interval, int thisDuration, int thisInterval, String tpsStr) {
-		if (StringUtils.isEmpty(tpsStr) || tpsStr.trim().length() <= 2) {
-			return null;
+	private List<Map<String, Object>> getTps(int sampleInterval,
+											 int thisDuration,
+											 int showInterval,
+											 String tpsStr,
+											 long executeTime) {
+		if (StringUtils.isEmpty(tpsStr)) {
+			return Collections.emptyList();
 		}
 		thisDuration = Math.abs(thisDuration);
-		List<Map<String, Object>> allTpsInfo = new LinkedList<>();
-		tpsStr = tpsStr.replaceAll("null", "0");
-		String[] tps = tpsStr.substring(1, tpsStr.length() - 1).split(",");
-		int total = tps.length;
-		int duration = interval * (total - 1);
-		int thisTotal = thisDuration / thisInterval + 1;
-		int endTime = duration;
-		int thisEndTime = duration;
-		for (int i = 0; i < thisTotal; i++) {
-			Map<String, Object> thisTps = new HashMap<>();
-			allTpsInfo.add(0, thisTps);
-			if (endTime <= 0) {
-				// 前端补值
-				thisTps.put("tps", 0); // 缺省值补0
-				thisTps.put("time", getTime(thisEndTime));
-				thisEndTime = thisEndTime - thisInterval;
-				continue;
-			}
-			// 从后取数
-			if (thisEndTime >= endTime) {
-				thisTps.put("tps", Double.parseDouble(tps[endTime / interval]));
-			} else {
-				while (thisEndTime < endTime) {
-					endTime = endTime - interval;
-				}
-				thisTps.put("tps", Double.parseDouble(tps[endTime / interval]));
-			}
-			thisTps.put("time", getTime(thisEndTime));
-			thisEndTime = thisEndTime - thisInterval;
 
+		// 获取tps原始数据
+		JSONArray tpsValues = JSON.parseArray(tpsStr);
+		if (tpsValues.isEmpty()) {
+			return Collections.emptyList();
 		}
 
-		return allTpsInfo;
+		// 先把tps中为null的转换成前一个值
+		for (int i = 0; i < tpsValues.size(); i++) {
+			Object value = tpsValues.get(i);
+			if (value == null) {
+				tpsValues.set(i, i > 0 ? tpsValues.get(i - 1) : 0);
+			}
+		}
+
+		// 根据nGrinder采集的间隔，把tps值封装成1秒钟一采集的数据，间隔中没有的值就使用紧邻的采集值
+		JSONArray oneSecondIntervalTps = getOneSecondIntervalTpsArray(sampleInterval, tpsValues, executeTime);
+
+		// 计算如果一秒钟采集一次，一共采集多少次
+		int totalTimes = (int) executeTime / 1000;
+
+		// 前端传入的查询数据时间区间，相当于要向当前时间之前查询采集多少次数据，查询时间区间-执行时间区间=需要填充的时间区间
+		int neededSupplyTimes = thisDuration - totalTimes;
+
+		// 如果拼接之后的一秒钟采集样本个数大于实际的执行时间，则计算取数开始位置
+		List<Map<String, Object>> tpsInfos = new ArrayList<>();
+		if (neededSupplyTimes > 0) {
+			// 测试执行时间不足展示时间时，数据取值开始索引按照执行时间来计算
+			int startIndex = oneSecondIntervalTps.size() - totalTimes;
+
+			// 实际采样次数不够的部分使用默认时间和tps数据补足
+			tpsInfos.addAll(buildTpsDefaultPartition(neededSupplyTimes, showInterval, thisDuration));
+
+			// 补足默认数据之后，使用真实数据填充后面的数据
+			tpsInfos.addAll(sampleTpsByInterval(showInterval, oneSecondIntervalTps, startIndex, totalTimes));
+			return tpsInfos;
+		}
+
+		// 测试执行时间大于展示时间时，数据取值开始索引按照展示时间来计算
+		int startIndex = oneSecondIntervalTps.size() - thisDuration;
+
+		// 如果采样结果已经足够，则直接从采集结果中指定位置开始拿间隔频率的tps值返回,
+		tpsInfos.addAll(sampleTpsByInterval(showInterval, oneSecondIntervalTps, startIndex, thisDuration));
+		return tpsInfos;
 	}
 
-	private String getTime(long time) {
-		if (time <= 0) {
-			return "00:00";
+	/**
+	 * 根据查询到的真是tps数据，构建需要返回格式的tps数据，按照频率{@see neededInterval}从指定位置{@see start}开始采集
+	 *
+	 * @param neededInterval       采集数据的频率
+	 * @param oneSecondIntervalTps 1秒频率的原始数据
+	 * @param start                数据采集开始的位置
+	 * @param baseTime             数据采集开始时的基础时间，因为前面可能已经采集了部分，所以这里设置一个基础时间
+	 * @return 固定是个的tps数据消息，包含了时间序列
+	 */
+	private List<Map<String, Object>> sampleTpsByInterval(int neededInterval,
+														  JSONArray oneSecondIntervalTps,
+														  int start,
+														  int baseTime) {
+		List<Map<String, Object>> tpsInfos = new ArrayList<>();
+		int timeIndex = baseTime - 1;
+		for (int i = start; i < oneSecondIntervalTps.size(); i++) {
+			if (i % neededInterval != 0) {
+				timeIndex--;
+				continue;
+			}
+			Map<String, Object> thisTps = new HashMap<>();
+			thisTps.put("tps", oneSecondIntervalTps.get(i));
+			String format = "-%s:%s";
+			if (timeIndex == 0) {
+				thisTps.put("time", "00:00");
+			} else {
+				String time = String.format(Locale.ENGLISH, format, getMinuteString(timeIndex), getSecondsString(timeIndex));
+				thisTps.put("time", time);
+			}
+			tpsInfos.add(thisTps);
+			timeIndex--;
 		}
-		StringBuilder sb = new StringBuilder();
-		long minutes = time / 60;
-		if (minutes < 10) {
-			sb.append("0");
-		}
-		sb.append(minutes).append(":");
+		return tpsInfos;
+	}
 
-		long second = time % 60;
-		if (second < 10) {
-			sb.append("0");
+	/**
+	 * 把原始tps数据按照采集频率封装成1秒钟采集频率的新tps数据
+	 *
+	 * @param taskTpsActualInterval tps实际采集频率
+	 * @param tpsValues             tps原始数据
+	 * @param executeTime           测试执行时间长度
+	 * @return 封装好的采集频率为1秒的tps数据
+	 */
+	private JSONArray getOneSecondIntervalTpsArray(int taskTpsActualInterval, JSONArray tpsValues, long executeTime) {
+		JSONArray oneSecondIntervalTps = new JSONArray();
+		if (taskTpsActualInterval <= 0 || tpsValues == null || tpsValues.isEmpty()) {
+			return oneSecondIntervalTps;
 		}
-		sb.append(second);
-		return sb.toString();
+		long seconds = executeTime / 1000;
+		long totalSampleNumber = (long) tpsValues.size() * taskTpsActualInterval;
+
+		// 如果按照每秒统计出来的结果与实际执行秒数匹配不上，就继续在最前面补充0
+		if (totalSampleNumber < seconds) {
+			for (int i = 0; i < seconds - totalSampleNumber; i++) {
+				oneSecondIntervalTps.add(0);
+			}
+		}
+
+		// 填充正常的采集数据值
+		for (Object tpsValue : tpsValues) {
+			for (int j = 0; j < taskTpsActualInterval; j++) {
+				oneSecondIntervalTps.add(tpsValue);
+			}
+		}
+		return oneSecondIntervalTps;
+	}
+
+	/**
+	 * 如果实际采集的数据还不足支持需要的展示区间，则需要补充默认为0的tps数据
+	 *
+	 * @param needAddDuration 需要补足的采集区间
+	 * @param interval        采集频率
+	 * @param totalDuration   总共的时间区间
+	 * @return 默认的格式tps格式数据
+	 */
+	private List<Map<String, Object>> buildTpsDefaultPartition(int needAddDuration, int interval, int totalDuration) {
+		List<Map<String, Object>> tpsInfos = new ArrayList<>();
+		for (int i = 0; i < Math.abs(needAddDuration); i++) {
+			if (i % interval != 0) {
+				continue;
+			}
+			Map<String, Object> thisTps = new HashMap<>();
+			thisTps.put("tps", 0); // 缺省值补0
+			String format = "-%s:%s";
+			int showTimeTotalSeconds = totalDuration - 1 - i;
+			thisTps.put("time", String.format(Locale.ENGLISH, format, getMinuteString(showTimeTotalSeconds), getSecondsString(showTimeTotalSeconds)));
+			tpsInfos.add(thisTps);
+		}
+		return tpsInfos;
+	}
+
+	/**
+	 * 根据时间封装tps数据格式中分钟部分字符串
+	 *
+	 * @param seconds 采集的时间，秒
+	 * @return 计算之后的分钟值
+	 */
+	private String getMinuteString(int seconds) {
+		int minute = seconds / 60;
+		return minute < 10 ? "0" + minute : minute + "";
+	}
+
+	/**
+	 * 根据时间封装tps数据格式中秒部分字符串
+	 *
+	 * @param seconds 采集的时间，秒
+	 * @return 计算之后的秒值
+	 */
+	private String getSecondsString(int seconds) {
+		int modSeconds = seconds % 60;
+		return modSeconds < 10 ? "0" + modSeconds : modSeconds + "";
 	}
 }

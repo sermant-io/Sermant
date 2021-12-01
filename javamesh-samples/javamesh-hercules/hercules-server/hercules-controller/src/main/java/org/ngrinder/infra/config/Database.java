@@ -43,8 +43,8 @@ public enum Database {
 		@Override
 		protected void setupVariants(BasicDataSource dataSource, PropertiesWrapper databaseProperties) {
 			dataSource.setUrl(String.format(getUrlTemplate(),
-					databaseProperties.getProperty(DatabaseConfig.PROP_DATABASE_URL),
-					StringUtils.trimToEmpty(databaseProperties.getProperty(DatabaseConfig.PROP_DATABASE_URL_OPTION))));
+				databaseProperties.getProperty(DatabaseConfig.PROP_DATABASE_URL),
+				StringUtils.trimToEmpty(databaseProperties.getProperty(DatabaseConfig.PROP_DATABASE_URL_OPTION))));
 			dataSource.setUsername(databaseProperties.getProperty(DatabaseConfig.PROP_DATABASE_USERNAME));
 			dataSource.setPassword(databaseProperties.getProperty(DatabaseConfig.PROP_DATABASE_PASSWORD));
 		}
@@ -74,10 +74,15 @@ public enum Database {
 	/**
 	 * mysql
 	 */
-	mysql(com.mysql.jdbc.Driver.class, MYSQLExDialect.class, "jdbc:mysql://%s?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC") {
+	mysql(com.mysql.jdbc.Driver.class, MYSQLExDialect.class, "jdbc:mysql://%s?%s") {
 		@Override
 		protected void setupVariants(BasicDataSource dataSource, PropertiesWrapper databaseProperties) {
-			dataSource.setUrl(String.format(getUrlTemplate(), databaseProperties.getProperty(DatabaseConfig.PROP_DATABASE_URL)));
+			String databaseOptions = databaseProperties.getProperty(DatabaseConfig.PROP_DATABASE_URL_OPTION);
+			if (StringUtils.isEmpty(databaseOptions)) {
+				databaseOptions = "useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+			}
+			String databaseUrl = databaseProperties.getProperty(DatabaseConfig.PROP_DATABASE_URL);
+			dataSource.setUrl(String.format(getUrlTemplate(), databaseUrl, databaseOptions));
 			dataSource.setUsername(databaseProperties.getProperty(DatabaseConfig.PROP_DATABASE_USERNAME));
 			dataSource.setPassword(databaseProperties.getProperty(DatabaseConfig.PROP_DATABASE_PASSWORD));
 		}
@@ -120,7 +125,7 @@ public enum Database {
 	 * @since 3.1
 	 */
 	Database(Class<? extends Driver> jdbcDriver, Class<? extends Dialect> dialect, String urlTemplate,
-	         boolean clusterSupport) {
+			 boolean clusterSupport) {
 		this.clusterSupport = clusterSupport;
 		this.dialect = dialect.getCanonicalName();
 		this.jdbcDriverName = jdbcDriver.getCanonicalName();
@@ -158,8 +163,8 @@ public enum Database {
 			}
 		}
 		LOG.error("[FATAL] Database type {} is not supported.\n" +
-				"Please check the ${NGRINDER_HOME}/database.conf.\n "
-				+ "Use H2 instead.", type);
+			"Please check the ${NGRINDER_HOME}/database.conf.\n "
+			+ "Use H2 instead.", type);
 		return mysql;
 	}
 

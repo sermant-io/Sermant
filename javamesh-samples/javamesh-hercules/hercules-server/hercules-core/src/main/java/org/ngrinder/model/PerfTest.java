@@ -13,9 +13,7 @@
  */
 package org.ngrinder.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.annotations.Expose;
-import com.huawei.argus.serializer.TimestampDatetimeSerializer;
 import net.grinder.common.GrinderProperties;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -26,7 +24,21 @@ import org.hibernate.annotations.Type;
 import org.ngrinder.common.util.DateUtils;
 import org.ngrinder.common.util.PathUtils;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -101,7 +113,6 @@ public class PerfTest extends BaseModel<PerfTest> {
 	@Expose
 	/** the start time of this test. */
 	@Column(name = "start_time")
-	@JsonSerialize(using = TimestampDatetimeSerializer.class)
 	private Date startTime;
 
 	@Expose
@@ -320,17 +331,11 @@ public class PerfTest extends BaseModel<PerfTest> {
 	@Column(name = "param")
 	private String param;
 
-	// NEW ADDED
-
-	@OneToOne(cascade = {CascadeType.ALL}, targetEntity = MonitoringConfig.class)
-	@JoinColumn(name = "test_id", referencedColumnName = "id")
-	private MonitoringConfig monitoringConfig;
-
 	@OneToMany(cascade = {CascadeType.ALL}, targetEntity = MonitoringHost.class)
 	@JoinColumn(name = "test_id", referencedColumnName = "id")
 	private Set<MonitoringHost> monitoringHosts = new HashSet<>();
 
-	@OneToOne(targetEntity = PerfScene.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToOne(targetEntity = PerfScene.class)
 	@JoinColumn(name = "scene_id", referencedColumnName = "id")
 	private PerfScene perfScene;
 
@@ -917,14 +922,6 @@ public class PerfTest extends BaseModel<PerfTest> {
 
 	public void setAgentIds(String agentIds) {
 		this.agentIds = agentIds;
-	}
-
-	public MonitoringConfig getMonitoringConfig() {
-		return monitoringConfig;
-	}
-
-	public void setMonitoringConfig(MonitoringConfig monitoringConfig) {
-		this.monitoringConfig = monitoringConfig;
 	}
 
 	public Set<MonitoringHost> getMonitoringHosts() {

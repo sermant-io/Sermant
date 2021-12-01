@@ -163,7 +163,7 @@ public class RestAgentManagerController extends RestBaseController {
 	public JSONObject getOneById(@PathVariable Long id) {
 		JSONObject modelInfos = new JSONObject();
 		AgentInfo agentInfo = agentManagerService.getOne(id);
-		modelInfos.put("agent", modelStrToJson(agentInfo == null ? "" : agentInfo.toString()));
+		modelInfos.put("agent", agentInfo);
 		return modelInfos;
 	}
 

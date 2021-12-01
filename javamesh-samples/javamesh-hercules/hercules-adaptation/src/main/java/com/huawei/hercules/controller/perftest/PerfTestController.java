@@ -6,7 +6,7 @@ import com.huawei.hercules.controller.BaseController;
 import com.huawei.hercules.exception.HerculesException;
 import com.huawei.hercules.service.perftest.IPerfTestService;
 import com.huawei.hercules.service.scenario.IScenarioService;
-import com.huawei.hercules.service.script.IScripService;
+import com.huawei.hercules.service.script.IScriptService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,10 +32,27 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.huawei.hercules.controller.perftest.TaskInfoKey.*;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.DESC;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.DURATION;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.FAIL_RATE;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.LABEL;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.MONITORING_HOST;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.MTT;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.OWNER;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.SCRIPT_PATH;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.START_TIME;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.STATUS;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.STATUS_LABEL;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.TEST_ID;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.TEST_NAME;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.TEST_TYPE;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.TOTAL;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.TPS;
+import static com.huawei.hercules.controller.perftest.TaskInfoKey.getServerKey;
 
 @RestController
 @RequestMapping("/api")
@@ -87,7 +104,7 @@ public class PerfTestController extends BaseController {
     private IScenarioService scenarioService;
 
     @Autowired
-    IScripService scripService;
+    IScriptService scripService;
 
     /**
      * 查询任务列表
@@ -199,7 +216,8 @@ public class PerfTestController extends BaseController {
         oneResponseTask.put(MONITORING_HOST.getShowKey(), task.get(MONITORING_HOST.getServerKey()));
 
         // 格式化日期格式
-        oneResponseTask.put(START_TIME.getShowKey(), dataFormat(task.getString(START_TIME.getServerKey())));
+        oneResponseTask.put(START_TIME.getShowKey(), dateFormat(task.getString(START_TIME.getServerKey()),
+                TimeUnit.MILLISECONDS));
         return oneResponseTask;
     }
 
@@ -231,18 +249,16 @@ public class PerfTestController extends BaseController {
         Map<String, Object> agentInfo = getAgentInfo();
         // agent数由前段输入
         int maxAgentCount = (int) agentInfo.get("agentCount");
-        int agentCount = Integer.parseInt(params.get("agent").toString());
-        if (!params.containsKey("agent") || agentCount <= 0
-                || agentCount > maxAgentCount) {
-            return returnError("代理数只能设置为1-" + maxAgentCount);
-        }
+
         // 如果是运行，没有agent数，直接返回并提醒
         if (Boolean.parseBoolean(String.valueOf(params.get("run"))) && maxAgentCount <= 0) {
             return returnError(ERROR_AGENT_COUNT);
         }
-        JSONArray jvmMonitor = params.getJSONArray("jvm_monitor");
-        if (jvmMonitor != null && !jvmMonitor.isEmpty()) {
-            addJvmMonitorParam(perfTestInfos, jvmMonitor, params.getBoolean("is_monitor"));
+
+        // 判断agent设置是否正确
+        int agentCount = Integer.parseInt(params.get("agent").toString());
+        if (!params.containsKey("agent") || agentCount > maxAgentCount) {
+            return returnError("代理数只能设置为1-" + maxAgentCount);
         }
 
         // 通过查询获取默认值
@@ -251,7 +267,7 @@ public class PerfTestController extends BaseController {
             return scenario;
         }
         // 转换数据参数
-        getPerfTestInfos(perfTestInfos, params);
+        setPerfTestInfos(perfTestInfos, params);
 
         // 计算进程数和线程数，更新虚拟用户数
         if (params.getLong("vuser") > MAX_VUSER_COUNT) {
@@ -265,43 +281,6 @@ public class PerfTestController extends BaseController {
         // 保存成功之后保存任务与场景的关系
         saveScenarioPerfTest(scenario.getInteger("id"), jsonObject.getInteger("id"));
         return jsonObject;
-    }
-
-    private void addJvmMonitorParam(JSONObject perfTestInfos, JSONArray jvmMonitor, boolean isMonitor) {
-        if (perfTestInfos == null || jvmMonitor == null) {
-            return;
-        }
-        Map<String, Boolean> jvmMonitorParam = new HashMap<>();
-        jvmMonitorParam.put("nmonAll", isMonitor);
-        jvmMonitorParam.put("jvmThr", false);
-        jvmMonitorParam.put("jvmCpu", false);
-        jvmMonitorParam.put("jvmMem", false);
-        jvmMonitorParam.put("jvmCl", false);
-        jvmMonitorParam.put("jvmGc", false);
-        jvmMonitorParam.put("jvmMp", false);
-        if (jvmMonitor.isEmpty()) {
-            perfTestInfos.put("monitoringConfig", jvmMonitorParam);
-            return;
-        }
-        if (jvmMonitor.contains("GC")) {
-            jvmMonitorParam.put("jvmGc", true);
-        }
-        if (jvmMonitor.contains("Thread")) {
-            jvmMonitorParam.put("jvmThr", true);
-        }
-        if (jvmMonitor.contains("Memory")) {
-            jvmMonitorParam.put("jvmMem", true);
-        }
-        if (jvmMonitor.contains("ClassLoading")) {
-            jvmMonitorParam.put("jvmCl", true);
-        }
-        if (jvmMonitor.contains("MemoryPool")) {
-            jvmMonitorParam.put("jvmMp", true);
-        }
-        if (jvmMonitor.contains("CPU")) {
-            jvmMonitorParam.put("jvmCpu", true);
-        }
-        perfTestInfos.put("monitoringConfig", jvmMonitorParam);
     }
 
     /**
@@ -421,11 +400,12 @@ public class PerfTestController extends BaseController {
         test.put("log_name", logs == null ? Collections.emptyList() : logs);
         JSONArray thisTps = report.getJSONArray("TPS");
         if (thisTps == null || thisTps.isEmpty()) {
-            thisTps = getDefaultTps();
+            thisTps = getDefaultTps(start, interval, Math.abs(start));
         }
         test.put("chart", thisTps);
         report.put("data", test);
         report.remove("test");
+        report.remove("TPS");
         return report;
     }
 
@@ -445,6 +425,7 @@ public class PerfTestController extends BaseController {
         Map<String, Object> test = report.getJSONObject("test");
         parseTest(test);
         report.put("data", test);
+        report.remove("test");
         return report;
     }
 
@@ -618,7 +599,7 @@ public class PerfTestController extends BaseController {
      */
     private String getRampUpTime(long time) {
         BigDecimal timeBigDecimal = new BigDecimal(time);
-        timeBigDecimal = timeBigDecimal.divide(new BigDecimal(1000));
+        timeBigDecimal = timeBigDecimal.divide(new BigDecimal(1000), 0, RoundingMode.HALF_UP);
         return String.valueOf(timeBigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
     }
 
@@ -628,32 +609,35 @@ public class PerfTestController extends BaseController {
         JSONObject report = JSONObject.parseObject(body);
         JSONObject runningReport = new JSONObject();
 
-        Map<String, Object> test = (Map<String, Object>) report.get("test");
+        JSONObject test = report.getJSONObject("test");
         parseTest(test);
-        List<Object> logs = (List<Object>) report.get("logs");
-        test.put("log_name", logs == null ? new ArrayList<>(0) : logs);
+        JSONArray logs = report.getJSONArray("logs");
+        test.put("log_name", logs == null ? Collections.emptyList() : logs);
         runningReport.put("data", test);
-        if (!"running".equals(test.get("status"))) {
+        if (!"running".equalsIgnoreCase(test.getString("status"))) {
+            test.put("chart", Collections.emptyList());
             return runningReport;
         }
         // 解析实时数据
-        Map<String, Object> perf = (Map<String, Object>) report.get("perf");
-        // 获取累计统计数
         Map<String, Object> thisTps = new HashMap<>();
-        thisTps.put("tps", 0);
-        thisTps.put("time", "00:00");
         List<Map<String, Object>> tps = new ArrayList<>();
-        tps.add(thisTps);
-        test.put("chart", tps);
+        JSONObject perf = report.getJSONObject("perf");
 
-        Map<String, Object> totalStatistics = perf == null ? null : (Map<String, Object>) perf.get("totalStatistics");
-        List<Map<String, Object>> lastSampleStatisticList = perf == null ? null : (List<Map<String, Object>>) perf.get("lastSampleStatistics");
+        // 获取累计统计
+        JSONObject totalStatistics = perf == null ? null : perf.getJSONObject("totalStatistics");
+        JSONArray lastSampleStatisticList = perf == null ? null : perf.getJSONArray("lastSampleStatistics");
         if (totalStatistics == null || totalStatistics.isEmpty()
                 || lastSampleStatisticList == null || lastSampleStatisticList.isEmpty()
                 || StringUtils.isEmpty(test.get("startTime"))) {
+            thisTps.put("tps", 0);
+            thisTps.put("time", "00:00:00");
+            tps.add(thisTps);
+            test.put("chart", tps);
             return runningReport;
         }
-        Map<String, Object> lastSampleStatistics = lastSampleStatisticList.get(0); // 取第一条数据：目前还未遇到多条数据，暂时适配第一条
+
+        // 取第一条数据：目前还未遇到多条数据，暂时适配第一条
+        Map<String, Object> lastSampleStatistics = lastSampleStatisticList.getJSONObject(0);
         test.put("tps", ((BigDecimal) totalStatistics.get("TPS")).intValue());
         test.put("tps_peak", ((BigDecimal) totalStatistics.get("Peak_TPS")).intValue());
         test.put("avg_time", ((BigDecimal) totalStatistics.get("Mean_Test_Time_(ms)")).intValue());
@@ -663,8 +647,7 @@ public class PerfTestController extends BaseController {
 
         try {
             // 解析实时图表
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-            Date startTime = format.parse(test.get("startTime").toString());
+            Date startTime = test.getDate("startTime");
             Date currentDate = new Date();
             thisTps.put("tps", Double.parseDouble(lastSampleStatistics.get("TPS").toString()));
             thisTps.put("time", getTime((currentDate.getTime() - startTime.getTime()) / 1000));
@@ -728,19 +711,12 @@ public class PerfTestController extends BaseController {
     }
 
     private String getTime(long time) {
-        StringBuilder sb = new StringBuilder();
-        long minutes = time / 60;
-        if (minutes < 10) {
-            sb.append("0");
-        }
-        sb.append(minutes).append(":");
-
-        long second = time % 60;
-        if (second < 10) {
-            sb.append("0");
-        }
-        sb.append(second);
-        return sb.toString();
+        String format = "%s:%s:%s";
+        int seconds = (int)time;
+        String hourString = getHourString(seconds);
+        String minuteString = getMinuteString(seconds);
+        String secondsString = getSecondsString(seconds);
+        return String.format(Locale.ENGLISH, format, hourString, minuteString, secondsString);
     }
 
     private String getChart(JSONObject perfGraphData, String key) {
@@ -792,7 +768,7 @@ public class PerfTestController extends BaseController {
 
         // 格式化日期格式
         Object startTime = test.get("start_time");
-        test.put("start_time", dataFormat(startTime == null ? "" : startTime.toString()));
+        test.put("start_time", dateFormat(startTime == null ? "" : startTime.toString(), TimeUnit.MILLISECONDS));
         Object endTime = test.get("end_time");
         test.put("end_time", dataFormat(endTime == null ? "" : endTime.toString()));
     }
@@ -828,7 +804,8 @@ public class PerfTestController extends BaseController {
     private String dateFormat(String timestampString, TimeUnit timeUnit) {
         try {
             long timeMilliseconds = TimeUnit.MILLISECONDS.convert(Long.parseLong(timestampString), timeUnit);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
             return sdf.format(new Date(timeMilliseconds));
         } catch (NumberFormatException e) {
             return "";
@@ -911,7 +888,7 @@ public class PerfTestController extends BaseController {
         return returnError("关联压测场景不存在");
     }
 
-    private void getPerfTestInfos(JSONObject perfTestInfos, JSONObject params) {
+    private void setPerfTestInfos(JSONObject perfTestInfos, JSONObject params) {
         perfTestInfos.put("testName", params.get("test_name"));
         perfTestInfos.put("agentCount", params.get("agent"));
         perfTestInfos.put("tagString", arrayToStr((List<String>) params.get("label")));
@@ -1035,15 +1012,41 @@ public class PerfTestController extends BaseController {
         return result;
     }
 
-    private JSONArray getDefaultTps() {
-        JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < 90; i++) {
+    private JSONArray getDefaultTps(int needAddedDuration, int interval, int totalDuration) {
+        JSONArray tpsInfos = new JSONArray();
+        for (int i = 0; i < Math.abs(needAddedDuration); i++) {
+            if (i % interval != 0) {
+                continue;
+            }
             Map<String, Object> thisTps = new HashMap<>();
             thisTps.put("tps", 0); // 缺省值补0
-            thisTps.put("time", "00:00");
-            jsonArray.add(thisTps);
+            String format = "-%s:%s:%s";
+            int timeIndex = totalDuration - 1 - i;
+            if (timeIndex == 0) {
+                thisTps.put("time", "00:00:00");
+            } else {
+                String time = String.format(Locale.ENGLISH, format,
+                        getHourString(timeIndex), getMinuteString(timeIndex), getSecondsString(timeIndex));
+                thisTps.put("time", time);
+            }
+            tpsInfos.add(thisTps);
         }
-        return jsonArray;
+        return tpsInfos;
+    }
+
+    private String getHourString(int seconds) {
+        int hour = seconds / (60 * 60);
+        return hour < 10 ? "0" + hour : hour + "";
+    }
+
+    private String getMinuteString(int seconds) {
+        int minute = (seconds % (60 * 60)) / 60;
+        return minute < 10 ? "0" + minute : minute + "";
+    }
+
+    private String getSecondsString(int seconds) {
+        int modSeconds = seconds % 60;
+        return modSeconds < 10 ? "0" + modSeconds : modSeconds + "";
     }
 
     private void initPerfTestFieldsValue(Map<String, Object> perfTestInfos, int agentCount) {

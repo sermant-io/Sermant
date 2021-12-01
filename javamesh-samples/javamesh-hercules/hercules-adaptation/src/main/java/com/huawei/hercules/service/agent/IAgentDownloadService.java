@@ -4,6 +4,8 @@
 
 package com.huawei.hercules.service.agent;
 
+import com.huawei.hercules.config.FeignRequestInterceptor;
+import com.huawei.hercules.fallback.AgentDownLoadServiceFallbackFactory;
 import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author z30009938
  * @since 2021-10-14
  */
-@FeignClient(url = "${decisionEngine.url}" + "/rest/agent", name = "agentDownload")
+@FeignClient(
+        url = "${controller.engine.url}" + "/rest/agent",
+        name = "agentDownload",
+        fallbackFactory = AgentDownLoadServiceFallbackFactory.class,
+        configuration = FeignRequestInterceptor.class)
 public interface IAgentDownloadService {
     /**
      * Download agent.
