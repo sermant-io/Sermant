@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Arrays;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -96,12 +97,12 @@ public class EmergencyExecController {
     /**
      * 查询预案的执行记录
      *
-     * @param planName 预案名称
-     * @param pageSize 分页大小
-     * @param current  页码
-     * @param sorter   排序字段
-     * @param order    排序方式
-     * @param creators 用于过滤的创建人
+     * @param planName  预案名称
+     * @param pageSize  分页大小
+     * @param current   页码
+     * @param sorter    排序字段
+     * @param order     排序方式
+     * @param creators  用于过滤的创建人
      * @param planNames 用于过滤的预案编号
      * @return {@link CommonResult}
      */
@@ -119,13 +120,13 @@ public class EmergencyExecController {
         params.setSortField(sorter);
         if ("ascend".equals(order)) {
             params.setSortType("ASC");
-        } else if ("descend".equals(order)){
+        } else if ("descend".equals(order)) {
             params.setSortType("DESC");
         }
         EmergencyPlan plan = new EmergencyPlan();
         plan.setPlanName(planName);
         params.setObject(plan);
-        return planService.allPlanExecRecords(params);
+        return planService.allPlanExecRecords(params, planNames, creators);
     }
 
 

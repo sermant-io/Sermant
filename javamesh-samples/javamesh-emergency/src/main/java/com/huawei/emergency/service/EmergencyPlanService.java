@@ -23,7 +23,7 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
     /**
      * 预案执行
      *
-     * @param planId 预案ID
+     * @param planId   预案ID
      * @param userName 操作人
      * @return {@link CommonResult}
      */
@@ -32,20 +32,20 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
     /**
      * 预案启动
      *
-     * @param plan 预案信息
+     * @param plan     预案信息
      * @param userName 操作人
      * @return {@link CommonResult}
      */
-    CommonResult start(EmergencyPlan plan,String userName);
+    CommonResult start(EmergencyPlan plan, String userName);
 
     /**
      * 预案停止
      *
-     * @param planId 预案ID
+     * @param planId   预案ID
      * @param userName 操作人
      * @return {@link CommonResult}
      */
-    CommonResult stop(int planId,String userName);
+    CommonResult stop(int planId, String userName);
 
     /**
      * 预案审核
@@ -63,7 +63,7 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
 
     CommonResult plan(CommonPage<PlanQueryParams> params);
 
-    CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params);
+    CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params, String[] filterPlanNames, String[] filterCreators);
 
     CommonResult allSceneExecRecords(CommonPage<EmergencyExecRecord> params);
 

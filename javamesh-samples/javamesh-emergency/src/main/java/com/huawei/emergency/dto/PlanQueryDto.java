@@ -24,6 +24,7 @@ public class PlanQueryDto {
     private String status;
     private String statusLabel;
     private String checkResult;
+    private String approve;
     private String comment;
     private String createTime;
     private String creator;

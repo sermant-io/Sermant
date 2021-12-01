@@ -259,7 +259,7 @@ public class EmergencyPlanController {
     public CommonResult approve(HttpServletRequest request, @RequestBody PlanQueryDto planQueryDto) {
         EmergencyPlan plan = new EmergencyPlan();
         plan.setPlanId(planQueryDto.getPlanId());
-        plan.setStatus(parseCheckResult(planQueryDto.getCheckResult()));
+        plan.setStatus(parseCheckResult(planQueryDto.getApprove()));
         plan.setCheckRemark(planQueryDto.getComment());
         return planService.approve(plan, parseUserName(request));
     }

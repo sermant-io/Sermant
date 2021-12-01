@@ -15,6 +15,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 预案mapper
@@ -50,9 +51,9 @@ public interface EmergencyPlanMapper {
 
     List<PlanDetailQueryDto> queryPlanDetailDto(Integer id);
 
-    List<PlanQueryDto> allPlanRecords(EmergencyPlan plan);
+    List<PlanQueryDto> allPlanRecords(EmergencyPlan plan, Map<String, Object> filters);
 
     List<SceneExecDto> allSceneRecords(Integer execId);
 
-    List<SceneExecDto> allTaskRecords(Integer execId,Integer sceneId);
+    List<SceneExecDto> allTaskRecords(Integer execId, Integer sceneId);
 }

@@ -7,6 +7,7 @@ package com.huawei.emergency.service.impl;
 import com.huawei.common.constant.RecordStatus;
 import com.huawei.common.constant.ValidEnum;
 import com.huawei.common.util.PasswordUtil;
+import com.huawei.common.ws.WebSocketServer;
 import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordDetail;
 import com.huawei.emergency.entity.EmergencyExecRecordDetailExample;
@@ -55,7 +56,6 @@ import javax.annotation.Resource;
  * @since 2021-11-04
  **/
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class ExecRecordHandlerFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExecRecordHandlerFactory.class);
 
@@ -224,7 +224,7 @@ public class ExecRecordHandlerFactory {
                 } else {
                     recordMapper.tryUpdateEndTimeAndLog(updateRecord.getRecordId(), endTime, updateRecordDetail.getLog());
                     recordMapper.tryUpdateStatus(updateRecord.getRecordId());
-                    // 回调
+                    // 执行成功 并且 当前record下所有的recordDetail都处于 执行成功 或者人工确认状态
                     if (execResult.isSuccess() && isRecordFinished(record.getRecordId())) {
                         if (record.getTaskId() != null) {
                             taskService.onComplete(record);
@@ -236,6 +236,7 @@ public class ExecRecordHandlerFactory {
 
                 // 清除实时日志的在内存中的日志残留
                 LogMemoryStore.removeLog(recordDetail.getDetailId());
+                WebSocketServer.sendMessage("/task/"+recordDetail.getRecordId());
             }
         }
     }
@@ -260,6 +261,7 @@ public class ExecRecordHandlerFactory {
         return execInfo;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public List<EmergencyExecRecordDetail> generateRecordDetail(EmergencyExecRecord record) {
         List<EmergencyExecRecordDetail> result = new ArrayList<>();
         if (StringUtils.isNotEmpty(record.getServerIp())) {

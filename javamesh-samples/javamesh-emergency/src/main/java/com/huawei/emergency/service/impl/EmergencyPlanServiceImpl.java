@@ -40,13 +40,16 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.annotation.Resource;
@@ -98,6 +101,13 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     public CommonResult add(EmergencyPlan emergencyPlan) {
         if (StringUtils.isEmpty(emergencyPlan.getPlanName())) {
             return CommonResult.failed("请填写预案编号和预案名称");
+        }
+        EmergencyPlanExample isPlanNameExist = new EmergencyPlanExample();
+        isPlanNameExist.createCriteria()
+            .andPlanNameEqualTo(emergencyPlan.getPlanName())
+            .andIsValidEqualTo(ValidEnum.VALID.getValue());
+        if (planMapper.countByExample(isPlanNameExist) > 0) {
+            return CommonResult.failed("已存在预案名称相同的预案");
         }
         EmergencyPlan insertPlan = new EmergencyPlan();
         insertPlan.setPlanName(emergencyPlan.getPlanName());
@@ -382,11 +392,14 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     }
 
     @Override
-    public CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params) {
+    public CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params, String[] filterPlanNames, String[] filterCreators) {
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("planNames", filterPlanNames);
+        filters.put("creators", filterCreators);
         Page<PlanQueryDto> pageInfo = PageHelper
             .startPage(params.getPageIndex(), params.getPageSize(), StringUtils.isEmpty(params.getSortType()) ? "" : params.getSortField() + System.lineSeparator() + params.getSortType())
             .doSelectPage(() -> {
-                planMapper.allPlanRecords(params.getObject());
+                planMapper.allPlanRecords(params.getObject(), filters);
             });
         return CommonResult.success(pageInfo.getResult(), (int) pageInfo.getTotal());
     }
@@ -428,14 +441,12 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         updatePlan.setStatus(PlanStatus.NEW.getValue());
         updatePlan.setUpdateTime(new Date());
         planMapper.updateByPrimaryKeySelective(updatePlan);
-
+        taskMapper.tryClearTaskNo(planId);
         EmergencyPlanDetail oldDetails = new EmergencyPlanDetail();
         oldDetails.setIsValid(ValidEnum.IN_VALID.getValue());
         EmergencyPlanDetailExample updateCondition = new EmergencyPlanDetailExample();
         updateCondition.createCriteria().andPlanIdEqualTo(planId);
         detailMapper.updateByExampleSelective(oldDetails, updateCondition);
-
-        taskMapper.tryClearTaskNo(planId);
 
         String planNO = generatePlanNo(planId);
         Integer preSceneId = null;
@@ -521,12 +532,12 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             EmergencyTask updateTask = new EmergencyTask();
             updateTask.setTaskId(task.getKey());
             if (isSubTask) {
-                updateTask.setTaskNo(generateSubTaskNo(parentNo, i + 1));
+                updateTask.setTaskNo(generateSubTaskNo(parentNo));
             } else {
                 updateTask.setTaskNo(generateTaskNo(parentNo, i + 1));
             }
             taskMapper.updateByPrimaryKeySelective(updateTask);
-            handleChildren(insertTaskDetail, task.getChildren(), updateTask.getTaskNo(), true);
+            handleChildren(insertTaskDetail, task.getChildren(), isSubTask ? parentNo : updateTask.getTaskNo(), true);
         }
     }
 
@@ -590,7 +601,12 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         return String.format(Locale.ROOT, "%sT%02d", sceneNo, index);
     }
 
-    public String generateSubTaskNo(String taskNo, int index) {
-        return String.format(Locale.ROOT, "%sC%02d", taskNo, index);
+    public String generateSubTaskNo(String taskNo) {
+        String preFix = taskNo + "C";
+        int index = taskMapper.selectMaxSubTaskNo(preFix);
+        if (index == 99) {
+            throw new RuntimeException("最大子任务数量不能超过99");
+        }
+        return String.format(Locale.ROOT, "%s%02d", preFix, index + 1);
     }
 }
