@@ -1,11 +1,9 @@
 package com.huawei.argus.restcontroller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.ngrinder.model.Scenario;
-import org.ngrinder.model.ScenarioPerfTest;
+import com.huawei.argus.report.service.TpsCalculateService;
 import com.huawei.argus.scenario.service.IScenarioPerfTestService;
 import com.huawei.argus.scenario.service.IScenarioService;
 import net.grinder.util.LogCompressUtils;
@@ -24,7 +22,12 @@ import org.ngrinder.common.util.FileDownloadUtils;
 import org.ngrinder.infra.config.Config;
 import org.ngrinder.infra.logger.CoreLogger;
 import org.ngrinder.infra.spring.RemainedPath;
-import org.ngrinder.model.*;
+import org.ngrinder.model.MonitoringHost;
+import org.ngrinder.model.PerfTest;
+import org.ngrinder.model.RampUp;
+import org.ngrinder.model.Role;
+import org.ngrinder.model.Status;
+import org.ngrinder.model.User;
 import org.ngrinder.perftest.service.AgentManager;
 import org.ngrinder.perftest.service.PerfTestService;
 import org.ngrinder.perftest.service.TagService;
@@ -45,17 +48,31 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Lists.newArrayList;
@@ -64,8 +81,12 @@ import static org.ngrinder.common.util.CollectionUtils.buildMap;
 import static org.ngrinder.common.util.CollectionUtils.newHashMap;
 import static org.ngrinder.common.util.ExceptionUtils.processException;
 import static org.ngrinder.common.util.ObjectUtils.defaultIfNull;
-import static org.ngrinder.common.util.Preconditions.*;
 import static org.ngrinder.common.util.Preconditions.checkArgument;
+import static org.ngrinder.common.util.Preconditions.checkNotEmpty;
+import static org.ngrinder.common.util.Preconditions.checkNotNull;
+import static org.ngrinder.common.util.Preconditions.checkNull;
+import static org.ngrinder.common.util.Preconditions.checkState;
+import static org.ngrinder.common.util.Preconditions.checkValidURL;
 
 @RestController
 @RequestMapping("/rest/perftest")
@@ -153,25 +174,6 @@ public class RestPerftestController extends RestBaseController {
 		modelInfos.put("testListPage", pageInfo);
 		modelInfos.put("queryFilter", queryFilter);
 		modelInfos.put("query", query);
-/*
-		putPageIntoModelMap(modelInfos, pageable);
-		// 查询压测场景信息
-		Iterator<Object> content = testListPage.getJSONArray("content").stream().iterator();
-		while (content.hasNext()) {
-			JSONObject next = (JSONObject) content.next();
-			Long perfTestId = next.getLong("id");
-			List<ScenarioPerfTest> allByID = scenarioPerfTestService.getAllByID(user, perfTestId, null);
-			if (allByID != null && !allByID.isEmpty()) {
-				Long scenarioId = allByID.get(0).getScenarioId();
-				Scenario scenario = scenarioService.getOne(scenarioId);
-				if (scenario != null) {
-					next.put("scenario", modelStrToJson(scenario.toString()));
-					next.put("scenarioType", scenario.getScenarioType());
-				}
-			}
-		}
-*/
-
 		return modelInfos;
 	}
 
@@ -370,11 +372,6 @@ public class RestPerftestController extends RestBaseController {
 		perfTest.setTestName(StringUtils.trimToEmpty(perfTest.getTestName()));
 		perfTest.setScriptRevision(-1L);
 		perfTest.prepare(isClone);
-		MonitoringConfig monitoringConfig = perfTest.getMonitoringConfig();
-		if (monitoringConfig != null) {
-			monitoringConfig.setPerfTest(perfTest);
-			monitoringConfig.setId(null);
-		}
 		Set<MonitoringHost> monitoringHosts = perfTest.getMonitoringHosts();
 		if (monitoringHosts != null && !monitoringHosts.isEmpty()) {
 			for (MonitoringHost monitoringHost : monitoringHosts) {
@@ -623,11 +620,19 @@ public class RestPerftestController extends RestBaseController {
 		int interval = perfTestService.getReportDataInterval(id, "TPS", imgWidth);
 		JSONObject modelInfos = new JSONObject();
 		modelInfos.put(PARAM_LOG_LIST, perfTestService.getLogFiles(id));
-		modelInfos.put(PARAM_TEST_CHART_INTERVAL, interval * test.getSamplingInterval());
+		int sampleInterval = interval * test.getSamplingInterval();
+		modelInfos.put(PARAM_TEST_CHART_INTERVAL, sampleInterval);
 		modelInfos.put(PARAM_TEST, test);
-		String tps = perfTestService.getSingleReportDataAsJson(id, "TPS", interval);
-		List<Map<String, Object>> thisTps = getTps(interval * test.getSamplingInterval(), thisDuration, timeInterval, tps);
-		modelInfos.put(PARAM_TPS, thisTps);
+		TpsCalculateService tpsCalculateService = new TpsCalculateService();
+		Date startTime = test.getStartTime();
+		tpsCalculateService.setResultSampleInterval(timeInterval)
+			.setTestSampleInterval(test.getSamplingInterval())
+			.setResultShowTime(thisDuration)
+			.setNeededExecuteTime(test.getDuration())
+			.setTestStartTime(startTime == null ? 0 : startTime.getTime())
+			.isRunning(test.getStatus() == Status.TESTING)
+			.setTpsOriginalData(perfTestService.getSingleReportDataAsJson(id, "TPS", interval));
+		modelInfos.put(PARAM_TPS, tpsCalculateService.sampleData());
 		return modelInfos;
 	}
 
@@ -680,10 +685,8 @@ public class RestPerftestController extends RestBaseController {
 			ByteArrayInputStream fis = null;
 			logFile.put("content", Files.readAllBytes(targetFile.toPath()));
 			logFile.put(JSON_SUCCESS, true);
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		} catch (IOException exception) {
-			exception.printStackTrace();
+		} catch (IOException e) {
+			CoreLogger.LOGGER.error("Error while download log. {}", logFile, e);
 		}
 
 		return logFile;
@@ -743,7 +746,7 @@ public class RestPerftestController extends RestBaseController {
 	}
 
 	@RequestMapping(value = "/api/sample")
-	public HttpEntity<String> refreshTestRunningById(User user, @RequestParam long id) {
+	public HttpEntity<Map<String, Object>> refreshTestRunningById(User user, @RequestParam long id) {
 		PerfTest test = checkNotNull(getOneWithPermissionCheck(user, id, false), "given test should be exist : " + id);
 		Map<String, Object> map = newHashMap();
 		map.put("test", test);
@@ -752,7 +755,7 @@ public class RestPerftestController extends RestBaseController {
 		map.put("agent", perfTestService.getAgentStat(test));
 		map.put("monitor", perfTestService.getMonitorStat(test));
 		map.put(PARAM_LOG_LIST, perfTestService.getLogFiles(id));
-		return toJsonHttpEntity(map);
+		return new HttpEntity<>(map);
 	}
 
 	/**
@@ -833,10 +836,13 @@ public class RestPerftestController extends RestBaseController {
 
 	private PerfTest getOneWithPermissionCheck(User user, Long id, boolean withTag) {
 		PerfTest perfTest = withTag ? perfTestService.getOneWithTag(id) : perfTestService.getOne(id);
+		if (perfTest == null) {
+			throw processException("User " + user.getUserId() + " has no PerfTest " + id);
+		}
 		if (user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.SUPER_USER)) {
 			return perfTest;
 		}
-		if (perfTest != null && !user.equals(perfTest.getCreatedUser())) {
+		if (!user.equals(perfTest.getCreatedUser())) {
 			throw processException("User " + user.getUserId() + " has no right on PerfTest " + id);
 		}
 		return perfTest;
@@ -1228,7 +1234,6 @@ public class RestPerftestController extends RestBaseController {
 		model.addAttribute("queryFilter", queryFilter);
 		model.addAttribute("query", query);
 		putPageIntoModelMap(model, pageable);
-//		return "perftest/list";
 		return toJsonHttpEntity(model);
 	}
 
@@ -1247,7 +1252,6 @@ public class RestPerftestController extends RestBaseController {
 	public ResponseEntity<PerfTest> getReportRunningDiv(User user, ModelMap model, @PathVariable long id) {
 		PerfTest test = getOneWithPermissionCheck(user, id, false);
 		model.addAttribute(PARAM_TEST, test);
-//		return "perftest/running";
 		return new ResponseEntity<PerfTest>(test, HttpStatus.OK);
 	}
 
@@ -1269,16 +1273,8 @@ public class RestPerftestController extends RestBaseController {
 		perfTest.setTestName(StringUtils.trimToEmpty(perfTest.getTestName()));
 		perfTest.setScriptRevision(-1L);
 		perfTest.prepare(isClone);
-//		perfTest.setOwnerName(user.getUserName());
 		perfTest = perfTestService.save(user, perfTest);
 		PerfTest test = perfTestService.getOne(perfTest.getId());
-//		if (perfTest.getStatus() == Status.SAVED || perfTest.getScheduledTime() != null) {
-//			System.out.println( perfTest.getClass().getName() );
-//			return new ResponseEntity(perfTest,HttpStatus.CREATED);
-//		} else {
-//			System.out.println( perfTest.getClass().getName() );
-//			return new ResponseEntity(HttpStatus.CREATED);
-//		}
 		return toJsonHttpEntity(test);
 	}
 
@@ -1372,74 +1368,5 @@ public class RestPerftestController extends RestBaseController {
 		PerfTest savePerfTest = perfTestService.save(user, test);
 		CoreLogger.LOGGER.info("test {} is created through web api by {}", test.getId(), user.getUserId());
 		return toJsonHttpEntity(test);
-	}
-
-
-	/**
-	 * 计算TPS图标数据
-	 *
-	 * @param interval     ngrinder采集间隔
-	 * @param thisDuration 展示数据的总时间区间，单位秒
-	 * @param thisInterval 展示数据的时间间隔，单位秒
-	 * @param tpsStr       ngrinder采集数
-	 * @return
-	 */
-	private List<Map<String, Object>> getTps(int interval, int thisDuration, int thisInterval, String tpsStr) {
-		if (StringUtils.isEmpty(tpsStr) || tpsStr.trim().length() <= 2) {
-			return null;
-		}
-		thisDuration = Math.abs(thisDuration);
-		List<Map<String, Object>> allTpsInfo = new LinkedList<>();
-		tpsStr = tpsStr.replaceAll("null", "0");
-		String[] tps = tpsStr.substring(1, tpsStr.length() - 1).split(",");
-		int total = tps.length;
-		int duration = interval * (total - 1);
-		int thisTotal = thisDuration / thisInterval + 1;
-		int endTime = duration;
-		int thisEndTime = duration;
-		for (int i = 0; i < thisTotal; i++) {
-			Map<String, Object> thisTps = new HashMap<>();
-			allTpsInfo.add(0, thisTps);
-			if (endTime <= 0) {
-				// 前端补值
-				thisTps.put("tps", 0); // 缺省值补0
-				thisTps.put("time", getTime(thisEndTime));
-				thisEndTime = thisEndTime - thisInterval;
-				continue;
-			}
-			// 从后取数
-			if (thisEndTime >= endTime) {
-				thisTps.put("tps", Double.parseDouble(tps[endTime / interval]));
-			} else {
-				while (thisEndTime < endTime) {
-					endTime = endTime - interval;
-				}
-				thisTps.put("tps", Double.parseDouble(tps[endTime / interval]));
-			}
-			thisTps.put("time", getTime(thisEndTime));
-			thisEndTime = thisEndTime - thisInterval;
-
-		}
-
-		return allTpsInfo;
-	}
-
-	private String getTime(long time) {
-		if (time <= 0) {
-			return "00:00";
-		}
-		StringBuilder sb = new StringBuilder();
-		long minutes = time / 60;
-		if (minutes < 10) {
-			sb.append("0");
-		}
-		sb.append(minutes).append(":");
-
-		long second = time % 60;
-		if (second < 10) {
-			sb.append("0");
-		}
-		sb.append(second);
-		return sb.toString();
 	}
 }

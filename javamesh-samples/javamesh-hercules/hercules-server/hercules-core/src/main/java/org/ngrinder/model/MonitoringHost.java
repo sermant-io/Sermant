@@ -41,8 +41,13 @@ public class MonitoringHost extends BaseEntity<MonitoringHost> {
 
 	@Expose
 	@Cloneable
-	@Column(name = "tags")
-	private String tags;
+	@Column(name = "jvm_type")
+	private String jvmType;
+
+	@Expose
+	@Cloneable
+	@Column(name = "monitor_jvm")
+	private boolean monitorJvm;
 
 	public PerfTest getPerfTest() {
 		return perfTest;
@@ -68,11 +73,19 @@ public class MonitoringHost extends BaseEntity<MonitoringHost> {
 		this.ip = ip;
 	}
 
-	public String getTags() {
-		return tags;
+	public String getJvmType() {
+		return jvmType;
 	}
 
-	public void setTags(String desc) {
-		this.tags = desc;
+	public void setJvmType(String desc) {
+		this.jvmType = desc;
+	}
+
+	public boolean getMonitorJvm() {
+		return monitorJvm;
+	}
+
+	public void setMonitorJvm(boolean monitorJvm) {
+		this.monitorJvm = monitorJvm;
 	}
 }

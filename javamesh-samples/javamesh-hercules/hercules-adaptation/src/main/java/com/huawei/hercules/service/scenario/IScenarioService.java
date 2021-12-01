@@ -1,6 +1,8 @@
 package com.huawei.hercules.service.scenario;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huawei.hercules.config.FeignRequestInterceptor;
+import com.huawei.hercules.fallback.ScenarioServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,7 +13,12 @@ import java.util.List;
 /**
  * 压测场景
  */
-@FeignClient(url = "${decisionEngine.url}" + "/rest/scenario", name = "scenario")
+@FeignClient(
+        url = "${controller.engine.url}" + "/rest/scenario",
+        name = "scenario",
+        fallbackFactory = ScenarioServiceFallbackFactory.class,
+        configuration = FeignRequestInterceptor.class
+)
 public interface IScenarioService {
 
     /**

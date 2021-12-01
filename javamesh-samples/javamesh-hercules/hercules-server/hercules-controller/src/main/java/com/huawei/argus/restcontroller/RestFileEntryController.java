@@ -714,16 +714,6 @@ public class RestFileEntryController extends RestBaseController {
 					return input != null && trimPathSeparatorBothSides(getPath(input.getPath())).equals(trimmedPath);
 				}
 			}));
-//		sort(files, new Comparator<FileEntry>() {
-//			@Override
-//			public int compare(FileEntry o1, FileEntry o2) {
-//				if (o1.getFileType() == FileType.DIR && o2.getFileType() != FileType.DIR) {
-//					return -1;
-//				}
-//				return (o1.getFileName().compareTo(o2.getFileName()));
-//			}
-//
-//		});
 		for (FileEntry each : files) {
 			each.setPath(removePrependedSlash(each.getPath()));
 		}
