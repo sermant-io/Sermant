@@ -38,7 +38,7 @@ public class UserController {
             response.addCookie(cookie);
             return CommonResult.success();
         } else {
-            return CommonResult.failed("用户名或密码不存在");
+            return CommonResult.failed("登录账号或密码不存在");
         }
     }
 
@@ -81,7 +81,7 @@ public class UserController {
                                  @RequestParam(value = "status", required = false) String status,
                                  @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
                                  @RequestParam(value = "current", defaultValue = "1") int current,
-                                 @RequestParam(value = "sorter", defaultValue = "user_id") String sorter,
+                                 @RequestParam(value = "sorter", defaultValue = "created_date") String sorter,
                                  @RequestParam(value = "order", defaultValue = "DESC") String order) {
         return service.listUser(nickName, userName, role, status, pageSize, current, sorter, order);
     }

@@ -133,13 +133,13 @@ public interface EmergencyScriptMapper {
     int updateByPrimaryKey(EmergencyScript record);
 
 
-    List<EmergencyScript> listScript(String userName,String auth, String scriptName, String scriptUser);
+    List<EmergencyScript> listScript(String userName,String auth, String scriptName, String scriptUser,String status);
 
     EmergencyScript getScriptInfo(int scriptId);
 
     String selectScriptNameById(int scriptId);
 
-    List<String> searchScript(String scriptName, String userName,String auth);
+    List<String> searchScript(String scriptName, String userName,String auth,String status);
 
     EmergencyScript getScriptByName(String scriptName);
 

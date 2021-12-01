@@ -538,13 +538,16 @@
         emergency_script s
         <where>
             <if test="scriptName!=null and scriptName!=''">
-                s.script_name LIKE CONCAT('%',#{scriptName},'%')
+                s.script_name LIKE CONCAT('%',#{scriptName},'%') ESCAPE '/'
             </if>
             <if test="scriptUser!=null and scriptUser!=''">
-                AND s.script_user LIKE CONCAT('%',#{scriptUser},'%')
+                AND s.script_user LIKE CONCAT('%',#{scriptUser},'%') ESCAPE '/'
             </if>
             <if test="auth!='admin' and auth!='approver'">
                 AND ((s.is_public = '0' AND s.script_user = #{userName}) OR s.is_public = '1')
+            </if>
+            <if test="status!='' and status!=null">
+                AND s.script_status = '2'
             </if>
         </where>
     </select>
@@ -610,10 +613,13 @@
         FROM emergency_script
         <where>
             <if test="scriptName!=null and scriptName!='' ">
-                script_name LIKE CONCAT('%',#{scriptName},'%')
+                script_name LIKE CONCAT('%',#{scriptName},'%') ESCAPE '/'
             </if>
             <if test="auth!='admin'">
                 AND (is_public = '1' OR (is_public = '0' AND script_user = #{userName}))
+            </if>
+            <if test="status!='' and status!=null">
+                AND script_status = '2'
             </if>
         </where>
         ORDER BY update_time DESC LIMIT 5

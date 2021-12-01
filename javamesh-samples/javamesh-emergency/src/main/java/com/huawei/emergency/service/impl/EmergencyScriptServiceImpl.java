@@ -5,6 +5,7 @@ import com.huawei.common.api.CommonResult;
 import com.huawei.common.constant.FailedInfo;
 import com.huawei.common.constant.ResultCode;
 import com.huawei.common.exception.ApiException;
+import com.huawei.common.util.EscapeUtil;
 import com.huawei.common.util.FileUtil;
 import com.huawei.common.util.PageUtil;
 import com.huawei.common.util.PasswordUtil;
@@ -67,7 +68,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
     private EmergencyExecService execService;
 
     @Override
-    public CommonResult<List<EmergencyScript>> listScript(HttpServletRequest request, String scriptName, String scriptUser, int pageSize, int current, String sorter, String order) {
+    public CommonResult<List<EmergencyScript>> listScript(HttpServletRequest request, String scriptName, String scriptUser, int pageSize, int current, String sorter, String order, String status) {
         User user = (User) request.getSession().getAttribute("userInfo");
         String auth;
         List<String> userAuth = user.getAuth();
@@ -83,7 +84,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
         } else {
             PageHelper.orderBy(sorter + System.lineSeparator() + "DESC");
         }
-        List<EmergencyScript> emergencyScripts = mapper.listScript(user.getUserName(), auth, scriptName, scriptUser);
+        List<EmergencyScript> emergencyScripts = mapper.listScript(user.getUserName(), auth, EscapeUtil.escapeChar(scriptName), EscapeUtil.escapeChar(scriptUser), status);
         String scriptStatus;
         for (EmergencyScript script : emergencyScripts) {
             scriptStatus = script.getScriptStatus();
@@ -231,11 +232,11 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
     }
 
     @Override
-    public List<String> searchScript(HttpServletRequest request, String scriptName) {
+    public List<String> searchScript(HttpServletRequest request, String scriptName, String status) {
         User user = (User) request.getSession().getAttribute("userInfo");
         String userName = user.getUserName();
         String auth = user.getAuth().contains("admin") ? "admin" : "";
-        return mapper.searchScript(scriptName, userName, auth);
+        return mapper.searchScript(EscapeUtil.escapeChar(scriptName), userName, auth, status);
     }
 
     @Override
@@ -295,7 +296,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
 
     @Override
     public LogResponse debugLog(int detailId, int lineIndex) {
-        return execService.getLog(detailId,lineIndex);
+        return execService.getLog(detailId, lineIndex);
     }
 
     private void extracted(EmergencyScript script) {

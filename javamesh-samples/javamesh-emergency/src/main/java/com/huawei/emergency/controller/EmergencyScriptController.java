@@ -41,8 +41,9 @@ public class EmergencyScriptController {
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             @RequestParam(value = "current", defaultValue = "1") int current,
             @RequestParam(value = "sorter", defaultValue = "update_time") String sorter,
-            @RequestParam(value = "order", defaultValue = "DESC") String order) {
-        return service.listScript(request, scriptName, scriptUser, pageSize, current, sorter, order);
+            @RequestParam(value = "order", defaultValue = "DESC") String order,
+            @RequestParam(value = "status",required = false)String status) {
+        return service.listScript(request, scriptName, scriptUser, pageSize, current, sorter, order,status);
     }
 
     /**
@@ -160,8 +161,10 @@ public class EmergencyScriptController {
     }
 
     @GetMapping("/script/search")
-    public CommonResult searchScript(HttpServletRequest request, @RequestParam(value = "value", required = false) String scriptName) {
-        List<String> scriptNames = service.searchScript(request, scriptName);
+    public CommonResult searchScript(HttpServletRequest request,
+                                     @RequestParam(value = "value", required = false) String scriptName,
+                                     @RequestParam(value = "status",required = false)String status) {
+        List<String> scriptNames = service.searchScript(request, scriptName,status);
         return CommonResult.success(scriptNames);
     }
 

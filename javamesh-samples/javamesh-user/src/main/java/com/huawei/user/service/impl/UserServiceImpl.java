@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.huawei.user.common.api.CommonResult;
 import com.huawei.user.common.constant.FailedInfo;
+import com.huawei.user.common.util.EscapeUtil;
 import com.huawei.user.common.util.PageUtil;
 import com.huawei.user.common.util.UserFeignClient;
 import com.huawei.user.entity.UserEntity;
@@ -107,7 +108,7 @@ public class UserServiceImpl implements UserService {
             }
 
             // 修改密码
-            int count = mapper.changePassword(userName, encodeNewPassword);
+            int count = mapper.updatePwdByName(userName, encodeNewPassword,getTimestamp());
             if (count != 1) {
                 return FailedInfo.CHANGE_PASSWORD_FAILED;
             }
@@ -148,8 +149,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public CommonResult listUser(String nickName, String userName, String role, String status, int pageSize, int current, String sorter, String order) {
         UserEntity user = new UserEntity();
-        user.setNickName(nickName);
-        user.setUserName(userName);
+        user.setNickName(EscapeUtil.escapeChar(nickName));
+        user.setUserName(EscapeUtil.escapeChar(userName));
         if (StringUtils.isNotBlank(role)) {
             switch (role) {
                 case ROLE_OPERATOR:
@@ -190,7 +191,7 @@ public class UserServiceImpl implements UserService {
                 return FailedInfo.SUSPEND_NOT_SELF_OR_ADMIN;
             }
         }
-        int count = mapper.updateEnableByName(usernames, "F");
+        int count = mapper.updateEnableByName(usernames, "F",getTimestamp());
         int length = usernames.length;
         if (count == length) {
             return SUCCESS;
@@ -204,7 +205,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String enable(String[] usernames) {
-        int count = mapper.updateEnableByName(usernames, "T");
+        int count = mapper.updateEnableByName(usernames, "T",getTimestamp());
         int length = usernames.length;
         if (count == length) {
             return SUCCESS;
@@ -256,7 +257,7 @@ public class UserServiceImpl implements UserService {
         String userName = user.getUserName();
         String password = generatePassword();
         user.setPassword(password);
-        int count = mapper.updatePwdByName(userName, encodePassword(userName, password));
+        int count = mapper.updatePwdByName(userName, encodePassword(userName, password),getTimestamp());
         if (count == 1) {
             return CommonResult.success(user);
         } else {

@@ -54,10 +54,10 @@
         <where>
             n.role_name!='SUPER_USER' AND n.role_name!='SYSTEM_USER' AND n.user_id = r.user_name
             <if test="userName!=null and userName!=''">
-                AND n.user_id LIKE CONCAT('%',#{userName},'%')
+                AND n.user_id LIKE CONCAT('%',#{userName},'%') ESCAPE '/'
             </if>
             <if test="nickName!=null and nickName!=''">
-                AND n.user_name LIKE CONCAT('%',#{nickName},'%')
+                AND n.user_name LIKE CONCAT('%',#{nickName},'%') ESCAPE '/'
             </if>
             <if test="role!=null and role!=''">
                 AND r.role_name = #{role}
@@ -70,7 +70,7 @@
 
     <update id="updateEnableByName">
         UPDATE NUSER
-        SET enabled = #{enable}
+        SET enabled = #{enable},last_modified_date=#{timestamp}
         WHERE user_id IN
         <foreach collection="usernames" item="userName" index="index" open="(" close=")" separator=",">
             #{userName}
@@ -79,7 +79,7 @@
 
     <update id="updatePwdByName">
         UPDATE NUSER
-        SET password = #{password}
+        SET password = #{password},last_modified_date=#{timestamp}
         WHERE user_id = #{userName}
     </update>
 
