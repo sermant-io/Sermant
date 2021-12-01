@@ -77,6 +77,9 @@ public class RemoteScriptExecutor implements ScriptExecutor {
             if (session != null && StringUtils.isNotEmpty(fileName)) {
                 deleteFile(session, fileName);
             }
+            if (session != null && session.isConnected()){
+                session.disconnect();
+            }
         }
     }
 
