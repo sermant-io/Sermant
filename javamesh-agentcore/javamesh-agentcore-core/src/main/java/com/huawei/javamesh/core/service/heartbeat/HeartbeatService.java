@@ -14,10 +14,6 @@ import com.huawei.javamesh.core.service.BaseService;
  * @since 2021/10/25
  */
 public interface HeartbeatService extends BaseService {
-    /**
-     * 心跳的版本键
-     */
-    String VERSION_KEY = "version";
 
     /**
      * 心跳的插件名称键

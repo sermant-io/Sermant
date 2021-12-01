@@ -131,7 +131,6 @@ public class HeartbeatServiceImpl implements HeartbeatService {
      */
     private void heartbeat(NettyClient nettyClient, String pluginName, String pluginVersion) {
         final HeartbeatMessage message = new HeartbeatMessage()
-                .registerInformation(VERSION_KEY, BootArgsIndexer.getCoreVersion())
                 .registerInformation(PLUGIN_NAME_KEY, pluginName)
                 .registerInformation(PLUGIN_VERSION_KEY, pluginVersion);
         addExtInfo(pluginName, message);
