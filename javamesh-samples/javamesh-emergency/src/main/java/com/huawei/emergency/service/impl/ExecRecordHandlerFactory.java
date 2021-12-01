@@ -11,6 +11,7 @@ import com.huawei.common.ws.WebSocketServer;
 import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordDetail;
 import com.huawei.emergency.entity.EmergencyExecRecordDetailExample;
+import com.huawei.emergency.entity.EmergencyExecRecordExample;
 import com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs;
 import com.huawei.emergency.mapper.EmergencyExecRecordDetailMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
@@ -236,7 +237,7 @@ public class ExecRecordHandlerFactory {
 
                 // 清除实时日志的在内存中的日志残留
                 LogMemoryStore.removeLog(recordDetail.getDetailId());
-                WebSocketServer.sendMessage("/task/"+recordDetail.getRecordId());
+                notifySceneRefresh(record.getExecId(),record.getSceneId());
             }
         }
     }
@@ -305,5 +306,18 @@ public class ExecRecordHandlerFactory {
             .andIsValidEqualTo(ValidEnum.VALID.getValue())
             .andStatusIn(RecordStatus.HAS_RUNNING_STATUS);
         return recordDetailMapper.countByExample(isFinished) == 0;
+    }
+
+    public void notifySceneRefresh(int execId,int sceneId){
+        EmergencyExecRecordExample sceneRecordCondition = new EmergencyExecRecordExample();
+        sceneRecordCondition.createCriteria()
+            .andIsValidEqualTo(ValidEnum.VALID.getValue())
+            .andExecIdEqualTo(execId)
+            .andSceneIdEqualTo(sceneId)
+            .andTaskIdIsNull();
+        final List<EmergencyExecRecord> emergencyExecRecords = recordMapper.selectByExample(sceneRecordCondition);
+        if (emergencyExecRecords.size() > 0) {
+            WebSocketServer.sendMessage("/scena/" + emergencyExecRecords.get(0).getRecordId());
+        }
     }
 }
