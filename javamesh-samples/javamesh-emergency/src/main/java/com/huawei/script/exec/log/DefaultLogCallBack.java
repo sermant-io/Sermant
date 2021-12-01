@@ -40,7 +40,7 @@ public class DefaultLogCallBack implements LogCallBack {
             recordDetail.setPid(Integer.valueOf(pid));
             detailMapper.updateByPrimaryKeySelective(recordDetail);
         } catch (NumberFormatException e) {
-            LOGGER.error("cast log to pid error.", e);
+            LOGGER.error("cast log to pid error. {}", e.getMessage());
         }
     }
 }

@@ -6,6 +6,7 @@ package com.huawei.emergency.service.impl;
 
 import com.huawei.common.constant.RecordStatus;
 import com.huawei.common.constant.ValidEnum;
+import com.huawei.common.ws.WebSocketServer;
 import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordExample;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
@@ -58,12 +59,15 @@ public class EmergencySceneServiceImpl implements EmergencySceneService {
             .andStatusIn(RecordStatus.HAS_RUNNING_STATUS)
             .andIsValidEqualTo(ValidEnum.VALID.getValue());
         if (execRecordMapper.countByExample(isPlanFinishedCondition) == 0) {
+            refresh(record.getExecId(), record.getSceneId());
             planService.onComplete(record);
             return;
         }
 
         // 判断当前场景是否完成，完成则执行依赖此场景的场景,否则执行子任务
         if (isSceneFinished(record.getExecId(), record.getSceneId())) {
+            refresh(record.getExecId(), record.getSceneId());
+
             // 执行依赖此场景的场景
             EmergencyExecRecordExample needExecTaskCondition = new EmergencyExecRecordExample();
             needExecTaskCondition.createCriteria()
@@ -104,5 +108,18 @@ public class EmergencySceneServiceImpl implements EmergencySceneService {
             .andIsValidEqualTo(ValidEnum.VALID.getValue())
             .andStatusIn(RecordStatus.HAS_RUNNING_STATUS);
         return execRecordMapper.countByExample(isFinishedCondition) == 0;
+    }
+
+    public void refresh(int execId, int sceneId) {
+        EmergencyExecRecordExample sceneRecordCondition = new EmergencyExecRecordExample();
+        sceneRecordCondition.createCriteria()
+            .andIsValidEqualTo(ValidEnum.VALID.getValue())
+            .andExecIdEqualTo(execId)
+            .andSceneIdEqualTo(sceneId)
+            .andTaskIdIsNull();
+        final List<EmergencyExecRecord> emergencyExecRecords = execRecordMapper.selectByExample(sceneRecordCondition);
+        if (emergencyExecRecords.size() > 0) {
+            WebSocketServer.sendMessage("/scena/" + emergencyExecRecords.get(0).getRecordId());
+        }
     }
 }

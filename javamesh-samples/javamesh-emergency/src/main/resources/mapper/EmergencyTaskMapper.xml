@@ -357,4 +357,14 @@
         AND is_valid = '1'
     )
   </update>
+
+  <select id="selectMaxSubTaskNo" resultType="java.lang.Integer">
+    SELECT
+      IFNULL( SUBSTR( max( task_no ), LENGTH( #{preTaskNo})+ 1 ), 0 )
+    FROM
+      `emergency_task`
+    WHERE
+      task_no LIKE concat(#{preTaskNo},'%')
+      and is_valid = '1'
+  </select>
 </mapper>

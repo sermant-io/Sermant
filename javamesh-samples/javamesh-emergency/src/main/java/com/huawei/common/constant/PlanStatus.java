@@ -20,11 +20,11 @@ public enum PlanStatus {
     /**
      * 新增状态
      */
-    NEW("0", "unapproved", "待审核"),
+    NEW("0", "unapproved", "待提审"),
     /**
      * 审核中状态
      */
-    APPROVING("1", "approving", "审核中"),
+    APPROVING("1", "approving", "待审核"),
     /**
      * 审核通过状态
      */

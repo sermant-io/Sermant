@@ -43,4 +43,6 @@ public interface EmergencyTaskMapper {
     long countPassedPlanByTaskId(Integer id);
 
     int tryClearTaskNo(Integer planId);
+
+    int selectMaxSubTaskNo(String preTaskNo);
 }
