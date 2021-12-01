@@ -13,7 +13,7 @@
 
     <properties>
         <config.skip.flag>false</config.skip.flag>
-        <package.sample.type>plugin</package.sample.type>
+        <package.plugin.type>plugin</package.plugin.type>
         <sentinel.version>1.8.0</sentinel.version>
         <shade.distinct.prefix>com.lubanops.apm.dependencies.flowcontrol</shade.distinct.prefix>
     </properties>

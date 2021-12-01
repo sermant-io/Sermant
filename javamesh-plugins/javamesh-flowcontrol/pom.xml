@@ -14,7 +14,7 @@
 
     <properties>
         <javamesh.basedir>${pom.basedir}/../../..</javamesh.basedir>
-        <package.sample.name>flowcontrol</package.sample.name>
+        <package.plugin.name>flowcontrol</package.plugin.name>
     </properties>
 
     <profiles>

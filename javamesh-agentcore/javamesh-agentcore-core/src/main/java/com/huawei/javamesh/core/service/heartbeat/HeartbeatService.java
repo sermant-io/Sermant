@@ -28,8 +28,7 @@ public interface HeartbeatService extends BaseService {
     /**
      * 设置额外信息
      *
-     * @param pluginName      心跳名称，用于区分不同类型心跳的名字，不可重复
      * @param extInfoProvider 其他信息的提供者
      */
-    void setExtInfo(String pluginName, ExtInfoProvider extInfoProvider);
+    void setExtInfo(ExtInfoProvider extInfoProvider);
 }

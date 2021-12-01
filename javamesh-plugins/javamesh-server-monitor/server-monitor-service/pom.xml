@@ -12,7 +12,7 @@
     <artifactId>server-monitor-service</artifactId>
 
     <properties>
-        <package.sample.type>service</package.sample.type>
+        <package.plugin.type>service</package.plugin.type>
         <config.skip.flag>false</config.skip.flag>
     </properties>
 

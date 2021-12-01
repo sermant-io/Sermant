@@ -16,7 +16,7 @@
 
     <properties>
         <javamesh.basedir>${pom.basedir}/../../..</javamesh.basedir>
-        <package.sample.name>online-stresstest</package.sample.name>
+        <package.plugin.name>online-stresstest</package.plugin.name>
     </properties>
 
     <profiles>

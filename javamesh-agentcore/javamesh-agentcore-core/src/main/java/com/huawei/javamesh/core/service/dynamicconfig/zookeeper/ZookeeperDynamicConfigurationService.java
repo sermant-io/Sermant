@@ -342,7 +342,9 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
     private List<String> listNodesFromNode(String node) {
         List<String> str_array = new Vector<String>();
         try {
-            str_array = zkClient.getChildren(node, null);
+            if (zkClient.exists(node, false) != null) {
+                str_array = zkClient.getChildren(node, null);
+            }
         } catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage(), e);
         }

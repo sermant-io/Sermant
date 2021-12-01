@@ -23,7 +23,7 @@ public class DemoHeartBeatService implements PluginService {
     @Override
     public void start() {
         final HeartbeatService service = ServiceManager.getService(HeartbeatService.class);
-        service.setExtInfo("example", new ExtInfoProvider() {
+        service.setExtInfo(new ExtInfoProvider() {
             @Override
             public Map<String, String> getExtInfo() {
                 return Collections.singletonMap("exampleKey", "exampleValue");
