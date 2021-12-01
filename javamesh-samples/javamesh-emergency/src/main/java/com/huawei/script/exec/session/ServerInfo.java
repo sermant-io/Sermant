@@ -5,6 +5,7 @@
 package com.huawei.script.exec.session;
 
 import lombok.Data;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Objects;
 
@@ -16,6 +17,7 @@ import java.util.Objects;
  **/
 @Data
 public class ServerInfo {
+    private static final String DEFAULT_USER = "root";
     private static final int DEFAULT_PORT = 22;
     private String serverIp;
     private String serverUser;
@@ -32,7 +34,11 @@ public class ServerInfo {
 
     public ServerInfo(String serverIp, String serverUser, String serverPassword, int serverPort) {
         this.serverIp = serverIp;
-        this.serverUser = serverUser;
+        if (StringUtils.isEmpty(serverUser)) {
+            this.serverUser = DEFAULT_USER;
+        } else {
+            this.serverUser = serverUser;
+        }
         this.serverPassword = serverPassword;
         this.serverPort = serverPort;
     }
