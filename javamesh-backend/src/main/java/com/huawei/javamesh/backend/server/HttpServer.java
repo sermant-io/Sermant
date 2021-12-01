@@ -9,6 +9,8 @@ import com.huawei.javamesh.backend.util.RandomUtil;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +22,13 @@ import java.util.*;
 @RequestMapping("/apm2")
 public class HttpServer {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Hashtable.class);
+
     @Autowired
     private KafkaConf conf;
+
+    private final String DEFAULT_AGENT_NAME = "java-mesh";
+    private final String DEFAULT_PLUGIN_VERSION = "unknown";
 
     RandomUtil RANDOM_UTIL = new RandomUtil();
     private final Integer MIN = 1;
@@ -63,28 +70,25 @@ public class HttpServer {
 
     @GetMapping("/getPluginsInfo")
     public String invokeGet() {
-        KafkaConsumer<String, String> consumer = KafkaConsumerManager.getInstance(conf).getConsumer();
-        consumer.subscribe(Arrays.asList(conf.getTopicHeartBeat()));
-        ConsumerRecords<String, String> records = consumer.poll(conf.getKafkaPoolTimeoutMs());
+        ConsumerRecords<String, String> consumerRecords = getHeartbeatInfo();
         AgentInfo agentInfo = new AgentInfo();
-        boolean b = false;
-        Hashtable<String, Boolean> pluginsName = new Hashtable<String, Boolean>();
-        for (ConsumerRecord<String, String> record : records) {
+        Map<String, PluginInfo> pluginCache = new HashMap<String, PluginInfo>();
+        for (ConsumerRecord<String, String> record : consumerRecords) {
             HashMap hashMap = JSON.parseObject(record.value(), HashMap.class);
-            if (!b) {
-                agentInfo.setIp(hashMap.get("ip"));
-                agentInfo.setVersion(hashMap.get("heartbeatVersion"));
-                agentInfo.setHeartbeatTime(hashMap.get("lastHeartbeat"));
-                b = true;
+            agentInfo.setIp(hashMap.get("ip"));
+            agentInfo.setHeartbeatTime(hashMap.get("heartbeatVersion"));
+            agentInfo.setLastHeartbeatTime(hashMap.get("lastHeartbeat"));
+            agentInfo.setVersion(hashMap.get("version"));
+            String name = (String) hashMap.getOrDefault("pluginName", DEFAULT_AGENT_NAME);
+            if (!name.equals(DEFAULT_AGENT_NAME)) {
+                PluginInfo pluginInfo = new PluginInfo();
+                pluginInfo.setName(name);
+                pluginInfo.setVersion((String) hashMap.getOrDefault("pluginVersion", DEFAULT_PLUGIN_VERSION));
+                pluginCache.put(name, pluginInfo);
             }
-            String pluginName = (String) hashMap.getOrDefault("name", "agent");
-            pluginsName.put(pluginName, true);
         }
-        agentInfo.setPluginsInfo(String.join(",", pluginsName.keySet()));
-        List<AgentInfo> result = new ArrayList<>();
-        result.add(agentInfo);
-
-        return JSONObject.toJSONString(result);
+        agentInfo.setPluginsInfos(new ArrayList<>(pluginCache.values()));
+        return JSONObject.toJSONString(agentInfo);
     }
 
     public MonitorItem getMonitorItem(Hashtable<String, String> map) {
@@ -107,5 +111,18 @@ public class HttpServer {
         address.setScope(AddressScope.outer);
         address.setProtocol(Protocol.WS);
         return address;
+    }
+
+    private ConsumerRecords<String, String> getHeartbeatInfo() {
+        ConsumerRecords<String, String> consumerRecords = null;
+        try {
+            KafkaConsumer<String, String> consumer = KafkaConsumerManager.getInstance(conf).getConsumer();
+            consumer.subscribe(Arrays.asList(conf.getTopicHeartBeat()));
+            ConsumerRecords<String, String> records = consumer.poll(conf.getKafkaPoolTimeoutMs());
+            consumerRecords = records;
+        } catch (Exception e) {
+            LOGGER.error("getHeartbeatInfo failed");
+        }
+        return consumerRecords;
     }
 }

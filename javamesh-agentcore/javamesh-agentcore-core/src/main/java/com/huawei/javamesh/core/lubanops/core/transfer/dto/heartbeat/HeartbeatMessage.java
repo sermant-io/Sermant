@@ -2,6 +2,7 @@ package com.huawei.javamesh.core.lubanops.core.transfer.dto.heartbeat;
 
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.huawei.javamesh.core.common.BootArgsIndexer;
 import com.huawei.javamesh.core.lubanops.bootstrap.config.IdentityConfigManager;
 import com.huawei.javamesh.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.javamesh.core.lubanops.core.utils.NetworkUtil;
@@ -25,6 +26,7 @@ public class HeartbeatMessage {
         message.put("appType", IdentityConfigManager.getAppType());
         message.put("heartbeatVersion", String.valueOf(TimeUtil.currentTimeMillis()));
         message.put("lastHeartbeat", String.valueOf(TimeUtil.currentTimeMillis()));
+        message.put("version", BootArgsIndexer.getCoreVersion());
     }
 
     public HeartbeatMessage registerInformation(String key, String value) {
