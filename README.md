@@ -90,10 +90,10 @@ Java-mesh adopts [Apache 2.0 License.](/LICENSE)
 
 Please read  [Contribute Guide](CONTRIBUTING.md) to refer how to jion the contribution.
 
-## Other related projects
+## Declaration
 
 - [Apache/Servicecomb-java-chassis](https://github.com/apache/servicecomb-java-chassis): Java-mesh refer the service governance algorithm from Apache Servicecomb project.
 - [Apache/Servicecomb-kie](https://github.com/apache/servicecomb-kie): Java-mesh uses servicecomb-kie as the default dynamic configuration center.
-- [Apache/SkyWalking](https://skywalking.apache.org/): Part of the code in Java-mesh is built based on Apache Skywalking project.
-- [Alibaba/Sentinel](https://github.com/alibaba/Sentinel): Java-mesh's flow-control plugin refers to Alibaba Sentinel algorithm. 
+- [Apache/SkyWalking](https://skywalking.apache.org/): Part of the framework code in Java-mesh is built based on Apache Skywalking project.
+- [Alibaba/Sentinel](https://github.com/alibaba/Sentinel): Java-mesh's flow-control plugin is built based on Alibaba Sentinel project. 
 
