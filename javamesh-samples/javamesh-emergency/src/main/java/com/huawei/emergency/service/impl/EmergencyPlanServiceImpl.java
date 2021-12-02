@@ -306,6 +306,10 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         if (plan.getPlanId() == null) {
             return CommonResult.failed("请选择正确的预案");
         }
+        EmergencyPlan planInfo = planMapper.selectByPrimaryKey(plan.getPlanId());
+        if (planInfo == null || !PlanStatus.APPROVING.equals(plan.getStatus())) {
+            return CommonResult.failed("请选择待审核的预案");
+        }
 
         // 是否正在执行
         if (haveRunning(plan.getPlanId())) {
@@ -317,7 +321,6 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         if (!PlanStatus.APPROVED.getValue().equals(plan.getStatus()) && !PlanStatus.REJECT.getValue().equals(plan.getStatus())) {
             return CommonResult.failed("审核结果不正确");
         }
-
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setPlanId(plan.getPlanId());
         updatePlan.setStatus(plan.getStatus());
@@ -485,11 +488,11 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     @Override
     public CommonResult submit(int planId) {
         EmergencyPlan plan = planMapper.selectByPrimaryKey(planId);
-        if (plan == null || !"1".equals(plan.getIsValid())) {
+        if (plan == null || ValidEnum.IN_VALID.equals(plan.getIsValid())) {
             return CommonResult.failed("预案不存在");
         }
-        if (PlanStatus.APPROVING.getValue().equals(plan.getStatus()) || PlanStatus.APPROVED.getValue().equals(plan.getStatus())) {
-            return CommonResult.failed("预案已审核通过或正在审核中");
+        if (!PlanStatus.NEW.getValue().equals(plan.getStatus()) ) {
+            return CommonResult.failed("预案不为待提审状态");
         }
 
         EmergencyPlan updatePlan = new EmergencyPlan();
@@ -600,19 +603,24 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     }
 
     public String generateSceneNo(String planNo, int index) {
-        return String.format(Locale.ROOT, "%sS%02d", planNo, index);
+        return String.format(Locale.ROOT, "%sS%02d", planNo, validIndex(index));
     }
 
     public String generateTaskNo(String sceneNo, int index) {
-        return String.format(Locale.ROOT, "%sT%02d", sceneNo, index);
+        return String.format(Locale.ROOT, "%sT%02d", sceneNo, validIndex(index));
     }
 
     public String generateSubTaskNo(String taskNo) {
         String preFix = taskNo + "C";
         int index = taskMapper.selectMaxSubTaskNo(preFix);
-        if (index == 99) {
+        return String.format(Locale.ROOT, "%s%02d", preFix, validIndex(index + 1));
+    }
+
+    public int validIndex(int index) {
+        int result = Math.abs(index);
+        if (index > 99) {
             throw new RuntimeException("最大子任务数量不能超过99");
         }
-        return String.format(Locale.ROOT, "%s%02d", preFix, index + 1);
+        return result;
     }
 }
