@@ -1,0 +1,3 @@
+com.huawei.javamesh.core.service.heartbeat.HeartbeatServiceImpl
+com.huawei.javamesh.core.service.send.NettyGatewayClient
+com.huawei.javamesh.core.service.dynamicconfig.DynamicConfigurationFactoryServiceImpl
