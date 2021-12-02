@@ -41,4 +41,20 @@ public interface IScenarioService {
 	 * @param id
 	 */
 	void delete(User user, Long id);
+
+	/**
+	 * 根据ID批量查询
+	 * @param ids
+	 * @return
+	 */
+	List<Scenario> getAll(Long[] ids);
+
+
+	/**
+	 * 根据脚本查询场景
+	 * @param user
+	 * @param scriptPaths
+	 * @return
+	 */
+	List<Scenario> getAllByScriptPaths(User user, List<String> scriptPaths);
 }

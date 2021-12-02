@@ -268,10 +268,6 @@ public class PerfTestReport extends MyBaseModel<PerfTestReport> {
 	@Column(name = "param")
 	private String param;
 
-	@OneToOne(cascade=CascadeType.ALL)
-	@JoinColumn(name = "monitoring_config_id", referencedColumnName = "id")
-	private MonitoringConfig monitoringConfig;
-
 	@Expose
 	@Column(name = "perf_test_id")
 	private Long perfTestId;

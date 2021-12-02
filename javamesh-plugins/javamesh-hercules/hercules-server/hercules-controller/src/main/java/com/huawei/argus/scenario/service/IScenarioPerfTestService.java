@@ -24,6 +24,14 @@ public interface IScenarioPerfTestService {
 	List<ScenarioPerfTest> getAllByID(User user, Long perfTestId, Long scenarioId);
 
 	/**
+	 * 根据场景ID查找压测任务关联信息
+	 * @param user
+	 * @param scenarioIds
+	 * @return
+	 */
+	List<ScenarioPerfTest> getAllByScenarioIds(User user, Long[] scenarioIds);
+
+	/**
 	 * 删除:三个ID，有且只有一个有值时使用此接口
 	 * @param user
 	 * @param id

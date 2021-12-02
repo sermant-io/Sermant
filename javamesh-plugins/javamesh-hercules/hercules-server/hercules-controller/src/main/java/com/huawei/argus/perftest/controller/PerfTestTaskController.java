@@ -275,7 +275,7 @@ public class PerfTestTaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public HttpEntity saveOne(User user, PerfTest perfTest, MonitoringConfig monitoringConfig,@RequestParam(value = "perfSceneId", required = false) Long perfSceneId,
+	public HttpEntity saveOne(User user, PerfTest perfTest, @RequestParam(value = "perfSceneId", required = false) Long perfSceneId,
 							  @RequestParam(value = "isClone", required = false, defaultValue = "false") boolean isClone, ModelMap model) {
 
 		ConcurrentHashMap<String,String> resultMap = validate(user, null, perfTest);
@@ -288,17 +288,6 @@ public class PerfTestTaskController extends BaseController {
 		perfTest.setTestName(StringUtils.trimToEmpty(perfTest.getTestName()));
 		perfTest.setScriptRevision(-1L);
 		perfTest.prepare(isClone);
-		if (perfTest.getId()!=null){
-			PerfTest one = perfTestTaskService.getOne(perfTest.getId());
-			if(one.getMonitoringConfig()!=null){
-				monitoringConfig.setId(one.getMonitoringConfig().getId());
-			}
-		}
-		if(isClone){
-			monitoringConfig.setId(null);
-		}
-		perfTest.setMonitoringConfig(monitoringConfig);
-
 		PerfScene perfScene = perfSceneService.retrieve(perfSceneId);
 		perfTest.setScriptName(perfScene.getScriptPath());
 		perfTest.setPerfScene(perfScene);

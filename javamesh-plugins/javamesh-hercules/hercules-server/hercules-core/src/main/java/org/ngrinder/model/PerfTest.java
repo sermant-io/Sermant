@@ -13,9 +13,7 @@
  */
 package org.ngrinder.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.annotations.Expose;
-import com.huawei.argus.serializer.TimestampDatetimeSerializer;
 import net.grinder.common.GrinderProperties;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -26,10 +24,26 @@ import org.hibernate.annotations.Type;
 import org.ngrinder.common.util.DateUtils;
 import org.ngrinder.common.util.PathUtils;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 
 import static org.ngrinder.common.util.AccessUtils.getSafe;
@@ -99,7 +113,6 @@ public class PerfTest extends BaseModel<PerfTest> {
 	@Expose
 	/** the start time of this test. */
 	@Column(name = "start_time")
-	@JsonSerialize(using = TimestampDatetimeSerializer.class)
 	private Date startTime;
 
 	@Expose
@@ -293,9 +306,9 @@ public class PerfTest extends BaseModel<PerfTest> {
 	private GrinderProperties grinderProperties;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-	@JoinTable(name = "PERF_TEST_TAG", /** join column */
-			joinColumns = @JoinColumn(name = "perf_test_id"), /** inverse join column */
-			inverseJoinColumns = @JoinColumn(name = "tag_id"))
+	@JoinTable(name = "PERF_TEST_TAG", /* join column */
+		joinColumns = @JoinColumn(name = "perf_test_id"), /* inverse join column */
+		inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	@Sort(comparator = Tag.class, type = SortType.COMPARATOR)
 	private SortedSet<Tag> tags;
 
@@ -318,14 +331,12 @@ public class PerfTest extends BaseModel<PerfTest> {
 	@Column(name = "param")
 	private String param;
 
-	// NEW ADDED
+	@OneToMany(cascade = {CascadeType.ALL}, targetEntity = MonitoringHost.class)
+	@JoinColumn(name = "test_id", referencedColumnName = "id")
+	private Set<MonitoringHost> monitoringHosts = new HashSet<>();
 
-	@OneToOne(cascade={CascadeType.ALL})
-	@JoinColumn(name = "monitoring_config_id")
-	private MonitoringConfig monitoringConfig;
-
-	@OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinColumn(name = "scene_id")
+	@OneToOne(targetEntity = PerfScene.class)
+	@JoinColumn(name = "scene_id", referencedColumnName = "id")
 	private PerfScene perfScene;
 
 	@Expose
@@ -335,23 +346,13 @@ public class PerfTest extends BaseModel<PerfTest> {
 
 	@Transient
 	private Long perfTestReportId;
-//	private void writeObject(java.io.ObjectOutputStream s)
-//		throws java.io.IOException{
-//		s.defaultWriteObject();
-//		s.writeObject(this.perfTestReportId);
-//	}
-//	//  强行反序列化对象属性的方法
-//	private void readObject(java.io.ObjectInputStream s)
-//		throws java.io.IOException, ClassNotFoundException {
-//		s.defaultReadObject();
-//		this.perfTestReportId = (Long)s.readObject();
-//	}
-
 
 	@PrePersist
 	@PreUpdate
 	public void init() {
 		this.status = getSafe(this.status, Status.SAVED);
+		this.setCreatedDate(new Date());
+		this.setLastModifiedDate(new Date());
 		this.agentCount = getSafe(this.agentCount);
 		this.port = getSafe(this.port);
 		this.processes = getSafe(this.processes, 1);
@@ -390,6 +391,7 @@ public class PerfTest extends BaseModel<PerfTest> {
 	public String getTestIdentifier() {
 		return "perftest_" + getId() + "_" + (getLastModifiedUser() == null ? userId : getLastModifiedUser().getUserId());
 	}
+
 	@Transient
 	private String userId;
 
@@ -714,7 +716,7 @@ public class PerfTest extends BaseModel<PerfTest> {
 	 */
 	public String getRuntimeStr() {
 		long ms = (this.finishTime == null || this.startTime == null) ? 0 : this.finishTime.getTime()
-				- this.startTime.getTime();
+			- this.startTime.getTime();
 		return DateUtils.ms2Time(ms);
 	}
 
@@ -910,12 +912,12 @@ public class PerfTest extends BaseModel<PerfTest> {
 		this.agentIds = agentIds;
 	}
 
-	public MonitoringConfig getMonitoringConfig() {
-		return monitoringConfig;
+	public Set<MonitoringHost> getMonitoringHosts() {
+		return monitoringHosts;
 	}
 
-	public void setMonitoringConfig(MonitoringConfig monitoringConfig) {
-		this.monitoringConfig = monitoringConfig;
+	public void setMonitoringHosts(Set<MonitoringHost> monitoringHosts) {
+		this.monitoringHosts = monitoringHosts;
 	}
 
 	public PerfScene getPerfScene() {

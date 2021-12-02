@@ -15,12 +15,14 @@ package org.ngrinder.agent.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.huawei.argus.common.PageModel;
 import net.grinder.common.processidentity.AgentIdentity;
 import net.grinder.engine.controller.AgentControllerIdentityImplementation;
 import net.grinder.message.console.AgentControllerState;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.ngrinder.agent.repository.AgentManagerRepository;
+import org.ngrinder.agent.repository.AgentManagerSpecification;
 import org.ngrinder.common.constant.ControllerConstants;
 import org.ngrinder.infra.config.Config;
 import org.ngrinder.infra.schedule.ScheduledTaskService;
@@ -32,10 +34,18 @@ import org.ngrinder.service.AbstractAgentManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.*;
 
 import static org.ngrinder.common.util.CollectionUtils.newArrayList;
@@ -78,6 +88,67 @@ public class AgentManagerService extends AbstractAgentManagerService {
 			}
 		};
 		scheduledTaskService.addFixedDelayedScheduledTaskInTransactionContext(runnable, 1000);
+	}
+
+	/**
+	 * update by huawei, add page method for agent.
+	 *
+	 * @param pageSize   分页大小
+	 * @param current    查询的页码
+	 * @param sortColumn 排序列名称
+	 * @param sortType   拍序列方式
+	 * @param region     区域
+	 * @return 一页agent的信息
+	 */
+	public PageModel<AgentInfo> getAgentInfoPage(int pageSize,
+												 int current,
+												 String sortColumn,
+												 String sortType,
+												 String region) {
+		// construct specification base on region
+		Specification<AgentInfo> specification = StringUtils.isEmpty(region)
+			? null
+			: AgentManagerSpecification.startWithRegion(region);
+
+		// 通过spring jpa方法分页查询agent数据
+		int calculatePageNumber = current <= 0 ? 0 : current - 1;
+		LOGGER.info("Get agent page param, pageSize={}, currentPage={}, sortColumn={}, sortType={}.",
+			new Object[]{pageSize, calculatePageNumber, sortColumn, sortType});
+		Page<AgentInfo> onePageAgent = agentManagerRepository.findAll(specification,
+			new PageRequest(calculatePageNumber, pageSize, constructSortedInfo(sortColumn, sortType)));
+		LOGGER.debug("The searching result:{}.", onePageAgent);
+
+		// 如果查询结果为空，返回空数据
+		if (onePageAgent == null) {
+			return new PageModel<>(Collections.emptyList(), 0, 0);
+		}
+
+		// 如果数据不为空，查询相关信息返回
+		int totalPages = onePageAgent.getTotalPages();
+		List<AgentInfo> pageAgentContent = onePageAgent.getContent();
+		long totalElements = onePageAgent.getTotalElements();
+		return new PageModel<>(pageAgentContent, totalPages, totalElements);
+	}
+
+	/**
+	 * update by huawei, construct SortInfo by column and sortType.
+	 *
+	 * @param sortColumn 排序列名称
+	 * @param sortType   拍序列方式
+	 * @return 分页排序方式
+	 */
+	private Sort constructSortedInfo(String sortColumn, String sortType) {
+		if (StringUtils.isEmpty(sortColumn)) {
+			return null;
+		}
+
+		// 能匹配上倒序就按照倒序来排列数据
+		if ("descend".equalsIgnoreCase(sortType) || "desc".equalsIgnoreCase(sortType)) {
+			return new Sort(Sort.Direction.DESC, sortColumn);
+		}
+
+		// 不能匹配上倒序就全部按照正序排列
+		return new Sort(Sort.Direction.ASC, sortColumn);
 	}
 
 	@PreDestroy
@@ -161,15 +232,15 @@ public class AgentManagerService extends AbstractAgentManagerService {
 
 	protected boolean hasSameInfo(AgentInfo agentInfo, AgentControllerIdentityImplementation agentIdentity) {
 		return agentInfo != null &&
-				agentInfo.getPort() == agentManager.getAgentConnectingPort(agentIdentity) &&
-				StringUtils.equals(agentInfo.getRegion(), agentIdentity.getRegion()) &&
-				StringUtils.equals(StringUtils.trimToNull(agentInfo.getVersion()),
-						StringUtils.trimToNull(agentManager.getAgentVersion(agentIdentity)));
+			agentInfo.getPort() == agentManager.getAgentConnectingPort(agentIdentity) &&
+			StringUtils.equals(agentInfo.getRegion(), agentIdentity.getRegion()) &&
+			StringUtils.equals(StringUtils.trimToNull(agentInfo.getVersion()),
+				StringUtils.trimToNull(agentManager.getAgentVersion(agentIdentity)));
 	}
 
 	protected boolean hasSameState(AgentInfo agentInfo, AgentControllerIdentityImplementation agentIdentity) {
 		return agentInfo != null &&
-				agentInfo.getState() == agentManager.getAgentState(agentIdentity);
+			agentInfo.getState() == agentManager.getAgentState(agentIdentity);
 	}
 
 	/*
@@ -327,7 +398,7 @@ public class AgentManagerService extends AbstractAgentManagerService {
 	}
 
 	private AgentInfo createAgentInfo(AgentControllerIdentityImplementation agentIdentity,
-	                                  Map<String, AgentInfo> agentInfoMap) {
+									  Map<String, AgentInfo> agentInfoMap) {
 		AgentInfo agentInfo = agentInfoMap.get(createKey(agentIdentity));
 		if (agentInfo == null) {
 			agentInfo = new AgentInfo();
@@ -353,7 +424,7 @@ public class AgentManagerService extends AbstractAgentManagerService {
 	protected AgentInfo fillUpApproval(AgentInfo agentInfo) {
 		if (agentInfo.getApproved() == null) {
 			final boolean approved = config.getControllerProperties().getPropertyBoolean(ControllerConstants
-					.PROP_CONTROLLER_ENABLE_AGENT_AUTO_APPROVAL);
+				.PROP_CONTROLLER_ENABLE_AGENT_AUTO_APPROVAL);
 			agentInfo.setApproved(approved);
 		}
 		return agentInfo;
@@ -384,7 +455,7 @@ public class AgentManagerService extends AbstractAgentManagerService {
 		}
 		if (includeAgentIdentity) {
 			AgentControllerIdentityImplementation agentIdentityByIp = getAgentIdentityByIpAndName(findOne.getIp(),
-					findOne.getName());
+				findOne.getName());
 			return fillUp(findOne, agentIdentityByIp);
 		} else {
 			return findOne;
@@ -530,8 +601,8 @@ public class AgentManagerService extends AbstractAgentManagerService {
 	/**
 	 * Ready agent state count return
 	 *
-	 * @param user The login user
-	 * @param String targetRegion The name of target region
+	 * @param user         The login user
+	 * @param targetRegion The name of target region
 	 * @return ready Agent count
 	 */
 	@Override
@@ -550,4 +621,13 @@ public class AgentManagerService extends AbstractAgentManagerService {
 		return readyAgentCnt;
 	}
 
+	/**
+	 * added by huawei, @2021-10-18
+	 *
+	 * @param id agent id
+	 */
+	@Transactional
+	public void delete(Long id) {
+		agentManagerRepository.delete(id);
+	}
 }

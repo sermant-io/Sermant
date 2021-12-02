@@ -1,15 +1,24 @@
 package com.huawei.hercules.service.scenario;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huawei.hercules.config.FeignRequestInterceptor;
+import com.huawei.hercules.fallback.ScenarioServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 /**
  * 压测场景
  */
-@FeignClient(url = "${decisionEngine.url}" + "/rest/scenario", name = "scenario")
+@FeignClient(
+        url = "${controller.engine.url}" + "/rest/scenario",
+        name = "scenario",
+        fallbackFactory = ScenarioServiceFallbackFactory.class,
+        configuration = FeignRequestInterceptor.class
+)
 public interface IScenarioService {
 
     /**
@@ -70,4 +79,20 @@ public interface IScenarioService {
      */
     @RequestMapping(value = "/getAllByPerfTestId", method = RequestMethod.POST)
     JSONObject getAllByPerfTestId(@RequestParam Long perfTestId);
+
+    /**
+     * 查询场景对应的压测任务信息
+     * @param scenarioIds 场景ID信息
+     * @return 场景对应下的压测任务信息
+     */
+    @RequestMapping(value = "/getAllPerfTestByScenarioIds", method = RequestMethod.POST)
+    JSONObject getAllPerfTestByScenarioIds(@RequestParam List<Long> scenarioIds);
+
+    /**
+     * 查询场景
+     * @param scriptPaths 脚本路径
+     * @return 场景信息
+     */
+    @RequestMapping(value = "/getAllByScriptPaths", method = RequestMethod.POST)
+    JSONObject getAllByScriptPaths(@RequestParam List<String> scriptPaths);
 }
