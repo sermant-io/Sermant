@@ -75,3 +75,5 @@ logging:
   level:
     com.huawei.emergency.service: debug
     com.huawei.emergency.schedule: debug
+pagehelper:
+  reasonable: true

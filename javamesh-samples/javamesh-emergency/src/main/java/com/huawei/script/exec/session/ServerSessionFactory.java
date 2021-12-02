@@ -31,9 +31,7 @@ import javax.annotation.PreDestroy;
 @Component
 public class ServerSessionFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerSessionFactory.class);
-    private Map<ServerInfo, Session> sessionCache = new ConcurrentHashMap<>();
     private JSch jsch = new JSch();
-    private ReentrantLock lock = new ReentrantLock();
 
     @Value("${jsch.connectTimeout}")
     private int connectTimeout;
@@ -66,26 +64,11 @@ public class ServerSessionFactory {
      * @throws JSchException
      */
     public Session getSession(ServerInfo serverInfo) throws JSchException {
-        Session session = sessionCache.computeIfAbsent(serverInfo, info -> {
-            try {
-                return createSession(info);
-            } catch (JSchException e) {
-                throw new RuntimeException("create session error.", e);
-            }
-        });
-        if (!session.isConnected()) {
-            lock.lock();
-            try {
-                if (!session.isConnected()) {
-                    long startConnect = System.currentTimeMillis();
-                    session.connect(connectTimeout);
-                    LOGGER.info("connect to server {}:{} cost {} ms",
-                        session.getHost(), session.getPort(), System.currentTimeMillis() - startConnect);
-                }
-            } finally {
-                lock.unlock();
-            }
-        }
+        Session session = createSession(serverInfo);
+        long startConnect = System.currentTimeMillis();
+        session.connect(connectTimeout);
+        LOGGER.info("connect to server {}:{} cost {} ms",
+            session.getHost(), session.getPort(), System.currentTimeMillis() - startConnect);
         return session;
     }
 
@@ -106,12 +89,6 @@ public class ServerSessionFactory {
         }
 
         return session;
-    }
-
-    @PreDestroy
-    public void close() {
-        sessionCache.values().forEach(Session::disconnect);
-        LOGGER.info("All server session closed.");
     }
 
     /**
