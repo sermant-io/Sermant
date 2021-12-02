@@ -387,7 +387,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     @Override
     public CommonResult plan(CommonPage<PlanQueryParams> params) {
         Page<PlanQueryDto> pageInfo = PageHelper
-            .startPage(params.getPageIndex(), params.getPageSize(), params.getSortField() + System.lineSeparator() + params.getSortType())
+            .startPage(params.getPageIndex(), params.getPageSize(), StringUtils.isEmpty(params.getSortType()) ? "" : params.getSortField() + System.lineSeparator() + params.getSortType())
             .doSelectPage(() -> {
                 planMapper.queryPlanDto(params.getObject());
             });
@@ -491,7 +491,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         if (plan == null || ValidEnum.IN_VALID.equals(plan.getIsValid())) {
             return CommonResult.failed("预案不存在");
         }
-        if (!PlanStatus.NEW.getValue().equals(plan.getStatus()) ) {
+        if (!PlanStatus.NEW.getValue().equals(plan.getStatus())) {
             return CommonResult.failed("预案不为待提审状态");
         }
 
