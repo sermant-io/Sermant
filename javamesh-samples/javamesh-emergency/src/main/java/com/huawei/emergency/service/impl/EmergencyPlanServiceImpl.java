@@ -138,6 +138,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setIsValid(ValidEnum.IN_VALID.getValue());
         updatePlan.setPlanId(emergencyPlan.getPlanId());
+        updatePlan.setUpdateTime(new Date());
         if (planMapper.updateByPrimaryKeySelective(updatePlan) == 0) {
             return CommonResult.failed("请选择正确的预案");
         }
@@ -184,6 +185,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setPlanId(planId);
         updatePlan.setStatus(PlanStatus.RUNNING.getValue());
+        updatePlan.setUpdateTime(new Date());
         planMapper.updateByPrimaryKeySelective(updatePlan);
 
         // 添加预案执行记录
@@ -270,6 +272,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         updatePlan.setScheduleType(scheduleType.getValue());
         updatePlan.setTriggerLastTime(0L);
         updatePlan.setTriggerNextTime(nextTriggerTime);
+        updatePlan.setUpdateTime(new Date());
         planMapper.updateByPrimaryKeySelective(updatePlan);
         return CommonResult.success();
     }
@@ -284,6 +287,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         updatePlan.setPlanId(planId);
         updatePlan.setScheduleStatus(ValidEnum.IN_VALID.getValue());
         updatePlan.setStatus(PlanStatus.APPROVED.getValue());
+        updatePlan.setUpdateTime(new Date());
         planMapper.updateByPrimaryKeySelective(updatePlan);
         return CommonResult.success();
     }
@@ -320,6 +324,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         updatePlan.setCheckRemark(plan.getCheckRemark());
         updatePlan.setCheckTime(new Date());
         updatePlan.setCheckUser(userName);
+        updatePlan.setUpdateTime(new Date());
         planMapper.updateByPrimaryKeySelective(updatePlan);
         return CommonResult.success();
     }
@@ -490,6 +495,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setPlanId(planId);
         updatePlan.setStatus(PlanStatus.APPROVING.getValue());
+        updatePlan.setUpdateTime(new Date());
         planMapper.updateByPrimaryKeySelective(updatePlan);
         return CommonResult.success();
     }
