@@ -65,3 +65,5 @@ script:
     maxPoolSize: 8
     keepAliveTime: 60
     blockingQueueSize: 8
+pagehelper:
+  reasonable: true

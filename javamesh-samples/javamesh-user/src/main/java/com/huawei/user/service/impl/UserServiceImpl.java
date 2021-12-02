@@ -1,6 +1,7 @@
 package com.huawei.user.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.huawei.user.common.api.CommonResult;
 import com.huawei.user.common.constant.FailedInfo;
@@ -173,13 +174,17 @@ public class UserServiceImpl implements UserService {
             }
         }
         String mSorter = sorter.equals("update_time") ? "last_modified_date" : sorter;
+        String sortType;
         if (order.equals("ascend")) {
-            PageHelper.orderBy(mSorter + System.lineSeparator() + "ASC");
+            sortType = "ASC";
         } else {
-            PageHelper.orderBy(mSorter + System.lineSeparator() + "DESC");
+            sortType = "DESC";
         }
-        List<UserEntity> users = mapper.listUser(user);
-        return CommonResult.success(PageUtil.startPage(users, current, pageSize), users.size());
+        Page<UserEntity> pageInfo = PageHelper.startPage(current, pageSize, sorter + System.lineSeparator() + sortType).doSelectPage(() -> {
+            mapper.listUser(user);
+        });
+        List<UserEntity> users = pageInfo.getResult();
+        return CommonResult.success(users, (int)pageInfo.getTotal());
     }
 
     @Override

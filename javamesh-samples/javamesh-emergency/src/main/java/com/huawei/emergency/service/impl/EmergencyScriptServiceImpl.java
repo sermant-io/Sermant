@@ -1,5 +1,6 @@
 package com.huawei.emergency.service.impl;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.huawei.common.api.CommonResult;
 import com.huawei.common.constant.FailedInfo;
@@ -79,12 +80,16 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
         } else {
             auth = "";
         }
+        String sortType;
         if (order.equals("ascend")) {
-            PageHelper.orderBy(sorter + System.lineSeparator() + "ASC");
+            sortType = "ASC";
         } else {
-            PageHelper.orderBy(sorter + System.lineSeparator() + "DESC");
+            sortType = "DESC";
         }
-        List<EmergencyScript> emergencyScripts = mapper.listScript(user.getUserName(), auth, EscapeUtil.escapeChar(scriptName), EscapeUtil.escapeChar(scriptUser), status);
+        Page<EmergencyScript> pageInfo = PageHelper.startPage(current, pageSize, sorter + System.lineSeparator() + sortType).doSelectPage(() -> {
+            mapper.listScript(user.getUserName(), auth, EscapeUtil.escapeChar(scriptName), EscapeUtil.escapeChar(scriptUser), status);
+        });
+        List<EmergencyScript> emergencyScripts = pageInfo.getResult();
         String scriptStatus;
         for (EmergencyScript script : emergencyScripts) {
             scriptStatus = script.getScriptStatus();
@@ -106,7 +111,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
                     script.setStatusLabel(UNAPPROVED);
             }
         }
-        return CommonResult.success(PageUtil.startPage(emergencyScripts, current, pageSize), emergencyScripts.size());
+        return CommonResult.success(emergencyScripts,(int)pageInfo.getTotal());
     }
 
     @Override

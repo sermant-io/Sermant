@@ -467,7 +467,7 @@
                 content = #{content,jdbcType=LONGVARCHAR},
             </if>
             <if test="comment != null">
-                content = #{comment,jdbcType=LONGVARCHAR},
+                comment = #{comment,jdbcType=LONGVARCHAR},
             </if>
         </set>
         where script_id = #{scriptId,jdbcType=INTEGER}
