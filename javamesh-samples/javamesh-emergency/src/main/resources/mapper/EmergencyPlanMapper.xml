@@ -443,7 +443,7 @@
             and plan.status = #{status}
         </if>
         group by plan.plan_id
-        ORDER BY plan.create_time
+        ORDER BY plan.create_time desc
     </select>
     <select id="queryPlanDetailDto" resultType="com.huawei.emergency.dto.PlanDetailQueryDto">
         SELECT t1.detail_id AS                                                                     `key`,
