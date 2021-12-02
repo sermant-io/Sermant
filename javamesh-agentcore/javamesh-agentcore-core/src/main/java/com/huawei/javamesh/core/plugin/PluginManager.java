@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -55,12 +56,12 @@ public class PluginManager {
     private static final Map<String, String> PLUGIN_VERSION_MAP = new HashMap<>();
 
     /**
-     * 获取插件名和插件版本的迭代器
+     * 获取插件名和插件版本的集合
      *
-     * @return 插件名和插件版本的迭代器
+     * @return 插件名和插件版本的集合
      */
-    public static Iterator<Map.Entry<String, String>> getPluginVersionItr() {
-        return PLUGIN_VERSION_MAP.entrySet().iterator();
+    public static Map<String, String> getPluginVersionMap() {
+        return Collections.unmodifiableMap(PLUGIN_VERSION_MAP);
     }
 
     /**
@@ -257,7 +258,7 @@ public class PluginManager {
             }
             return jarFile;
         } catch (IOException ignored) {
-            LOGGER.warning(String.format(Locale.ROOT, "Check version of %s failed. ", jar.getName()));
+            LOGGER.warning(String.format(Locale.ROOT, "Check schema of %s failed. ", jar.getPath()));
         }
         return null;
     }

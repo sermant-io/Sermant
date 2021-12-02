@@ -25,7 +25,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <!--<package.sample.type>service</package.sample.type>-->
+        <!--<package.plugin.type>service</package.plugin.type>-->
     </properties>
 
     <!--<build>

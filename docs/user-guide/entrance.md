@@ -1,6 +1,6 @@
-# Entrance
+# 入口模块介绍
 
-本文档主要介绍[**Java-mesh**入口模块](../../javamesh-agentcore/javamesh-agentcore-premain)。
+本文档主要介绍[**Java-mesh入口模块**](../../javamesh-agentcore/javamesh-agentcore-premain)。
 
 ## 组成部分
 
@@ -18,7 +18,7 @@
 
 ## 使用方式
 
-**Java-mesh AgentCore Premain**模块打包输产出*JavaAgent*入口包`javamesh-agent.jar`，在执行*Java*命令时，可以添加如下参数带起**Java-mesh**：
+**入口模块**打包输产出*JavaAgent*入口包`javamesh-agent.jar`，在执行*Java*命令时，可以添加如下参数带起**Java-mesh**：
 
 ```shell
 -javaagent:javamesh-agent.jar[=${options}]
@@ -44,7 +44,7 @@ public static void premain(String agentArgs, Instrumentation inst);
 
 ## 功能解析
 
-**Java-mesh AgentCore Premain**模块作为**Java-mesh**的入口，起到的是将程序带入**核心功能**的作用，入口类[AgentPremain](../../javamesh-agentcore/javamesh-agentcore-premain/src/main/java/com/huawei/javamesh/premain/AgentPremain.java)所做的工作包括：
+**入口模块**作为**Java-mesh**的入口，起到的是将程序带入**核心功能**的作用，入口类[AgentPremain](../../javamesh-agentcore/javamesh-agentcore-premain/src/main/java/com/huawei/javamesh/premain/AgentPremain.java)所做的工作包括：
 
 - 防止**Java-mesh**被宿主多次带起（*JavaAgent*命令中添加了复数的**Java-mesh**入口包）。
 - 加载**核心功能**包，这里使用系统类加载器加载。

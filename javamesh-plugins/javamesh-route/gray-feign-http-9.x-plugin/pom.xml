@@ -12,7 +12,7 @@
     <artifactId>gray-feign-http-9.x-plugin</artifactId>
 
     <properties>
-        <package.sample.type>plugin</package.sample.type>
+        <package.plugin.type>plugin</package.plugin.type>
     </properties>
 
     <dependencies>

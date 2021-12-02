@@ -12,7 +12,7 @@
     <artifactId>demo-plugin</artifactId>
 
     <properties>
-        <package.sample.type>plugin</package.sample.type>
+        <package.plugin.type>plugin</package.plugin.type>
         <config.skip.flag>false</config.skip.flag>
     </properties>
 

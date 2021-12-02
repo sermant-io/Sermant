@@ -12,7 +12,7 @@
     <artifactId>connection-pool-collect-plugin</artifactId>
 
     <properties>
-        <package.sample.type>plugin</package.sample.type>
+        <package.plugin.type>plugin</package.plugin.type>
         <druid.version>1.2.5</druid.version>
     </properties>
 

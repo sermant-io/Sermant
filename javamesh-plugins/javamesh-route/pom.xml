@@ -25,7 +25,7 @@
 
     <properties>
         <javamesh.basedir>${pom.basedir}/../../..</javamesh.basedir>
-        <package.sample.name>route-server</package.sample.name>
+        <package.plugin.name>route-server</package.plugin.name>
     </properties>
 
     <profiles>

@@ -1,4 +1,4 @@
-# Plugin Code Developer Guide
+# 插件代码开发手册
 
 本文档主要针对**Java-mesh**的[示例模块](../../javamesh-plugins/javamesh-example)，介绍插件开发过程中常见的一些场景。
 
@@ -19,13 +19,13 @@
 
 ## 组成部分
 
-由[插件模块开发手册](dev_plugin_module.md)可知，一个插件`功能(function)`模块中可能包含以下5种内容：
+由[插件模块开发手册](dev_plugin_module.md)可知，一个`插件主模块(main)`中可能包含以下5种内容：
 
-- `插件(plugin)`，该模块主要用于声明对宿主应用的增强逻辑
-- `服务(service)`，用于为插件包提供服务实现
-- `后端(server)`，用于接收插件数据的服务端
-- `前端(webapp)`，用于对服务端数据作前端展示
-- `其他(other)`，特殊附加件，一般用作调试
+- `插件模块(plugin)`，该模块主要用于声明对宿主应用的增强逻辑
+- `服务模块(service)`，用于为插件包提供服务实现
+- `后端模块(server)`，用于接收插件数据的服务端
+- `前端模块(webapp)`，用于对服务端数据作前端展示
+- `其他模块(other)`，特殊附加件，一般用作调试
 
 考虑到后三者随实际业务场景不同有较大变化，因此赋予他们的开发自由度较高，对他们仅有模块目录和输出目录的限制。出于这点考虑，`示例模块`将不对他们做参考案例。`示例模块`中包含以下模块：
 
@@ -37,11 +37,11 @@
 
 示例插件模块`demo-plugin`中，主要用于向插件开发者展示在插件开发过程中可能遇到的一些场景以及可能使用到的一些功能。
 
-开始之前，必须约定的就是，`插件(plugin)`中，开发者只能使用*Java*原生API和[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)中的API，不能依赖或使用任何第三方依赖。如果应业务要求，需要使用第三方依赖的话，只能在`插件(plugin)`中定义接口，在`服务(service)`中编写实现。更多相关内容详见[插件模块开发手册](dev_plugin_module.md#添加插件模块)。
+开始之前，必须约定的就是，`插件模块(plugin)`中，开发者只能使用*Java*原生API和[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)中的API，不能依赖或使用任何第三方依赖。如果应业务要求，需要使用第三方依赖的话，只能在`插件模块(plugin)`中定义接口，在`服务模块(service)`中编写实现。更多相关内容详见[插件模块开发手册](dev_plugin_module.md#添加插件模块)。
 
 ### 增强定义
 
-**Java-mesh**的核心能力是对宿主应用做非侵入式的字节码增强，而这些增强规则则是插件化的。在每个**Java-mesh**的插件`功能(function)`中，都可以定义一些增强定义，针对宿主应用的某些特定方法进行字节码增强，从而实现某种功能。因此`功能(function)`如何告知**Java-mesh**该增强哪些类，是一个重要的课题。
+**Java-mesh**的核心能力是对宿主应用做非侵入式的字节码增强，而这些增强规则则是插件化的。在每个**Java-mesh**的`插件主模块(main)`中，都可以定义一些增强定义，针对宿主应用的某些特定方法进行字节码增强，从而实现某种功能。因此`插件主模块(main)`如何告知**Java-mesh**该增强哪些类，是一个重要的课题。
 
 插件的增强定义需要实现[EnhanceDefinition](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/agent/definition/EnhanceDefinition.java)接口，其中包含两个接口方法：
 
@@ -154,7 +154,7 @@
 
 - 原生类被启动类加载器加载，那么如果对他们做增强的话，就需要将被增强后的字节码重新覆盖回启动类加载器中。考虑到增强后的嵌入代码主要是在**拦截器**中编写的，而这些内容主要由系统类加载器`AppClassLoader`加载，启动类加载器无法访问。得益于[**Advice模板类**](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/agent/template)中使用反射调用拦截器的方法，使得原生类在增强时，编写的拦截器不受拘束。
 
-- 鉴于*Java*重定义*Class*的限制，我们无法修改这些原生类的元信息，那么就无法使用[**byte-buddy委派**](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/agent/transformer/DelegateTransformer.java)的方式对他们进行增强(原理是添加委派属性和静态代码块)。所幸我们可以使用[**Advice模板类**](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/agent/template)配合[**byte-buddy advice**](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/agent/transformer/BootstrapTransformer.java)技术进行增强，而现在核心模块就是这么做的。两种风格统合之后，前者用于处理系统类加载器加载的普通类，后者用于处理启动类加载器的原生类。
+- 鉴于*Java*重定义*Class*的限制，我们无法修改这些原生类的元信息，那么就无法使用[**byte-buddy委派**](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/agent/transformer/DelegateTransformer.java)的方式对他们进行增强(原理是添加委派属性和静态代码块)。所幸我们可以使用[**Advice模板类**](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/agent/template)配合[**byte-buddy advice**](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/agent/transformer/BootstrapTransformer.java)技术进行增强，而现在**核心模块**就是这么做的。两种风格统合之后，前者用于处理系统类加载器加载的普通类，后者用于处理启动类加载器的原生类。
 
 结合上述内容，其实增强原生类和增强普通类在增强定义和拦截器编写上没有什么区别，但是还是希望插件开发者尽量少地对原生类进行增强，原因有三：
 
@@ -209,7 +209,7 @@
   ConfigManager.getConfig(${base config class});
   ```
 
-从**Java-mesh**的`示例模块`的插件配置文件[config.yaml](../../javamesh-plugins/javamesh-example/config/config.yaml)可以看出，该配置文件是一个*yaml*文件，一个`功能(function)`的`插件(plugin)`和`服务(service)`中的插件配置对应的配置信息都封装在这唯一的`config.yaml`中。
+从**Java-mesh**的`示例模块`的插件配置文件[config.yaml](../../javamesh-plugins/javamesh-example/config/config.yaml)可以看出，该配置文件是一个*yaml*文件，一个`插件主模块(main)`的`插件模块(plugin)`和`服务模块(service)`中的插件配置对应的配置信息都封装在这唯一的`config.yaml`中。
 
 相较于传统的*yaml*格式配置文件对应一个*Java Pojo*对象，这里的`config.yaml`可以封装多个*Java Pojo*，他们由全限定名或别名进行区分，形成类似*Map*的结构，其中`demo.test`键对应的是**示例插件包**中的[DemoConfig](../../javamesh-plugins/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)对象，`com.huawei.example.demo.config.DemoServiceConfig`键对应的是**示例插件服务包**中的[DemoServiceConfig](../../javamesh-plugins/javamesh-example/demo-service/src/main/java/com/huawei/example/demo/config/DemoServiceConfig.java)对象。
 
@@ -262,7 +262,7 @@
   从[插件模块开发手册](dev_plugin_module.md#添加插件模块)可知，插件有**简单插件**和**复杂插件**之分，这主要和他们所定义服务的复杂程度有关：
 
   - **简单插件**中定义的服务只会使用*Java*原生*API*和[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)中自研的*API*(`com.huawei`开头)。
-  - **复杂插件**中的服务除了能使用上述*API*，还有权使用第三方依赖的*API*。这些服务需要分离出**插件服务接口**和**插件服务实现**：前者编写于`插件(plugin)`中，供拦截器调用；后者编写于`服务(service)`中，由自定义*ClassLoader*加载，以实现类加载器级别的依赖隔离。
+  - **复杂插件**中的服务除了能使用上述*API*，还有权使用第三方依赖的*API*。这些服务需要分离出**插件服务接口**和**插件服务实现**：前者编写于`插件模块(plugin)`中，供拦截器调用；后者编写于`服务模块(service)`中，由自定义*ClassLoader*加载，以实现类加载器级别的依赖隔离。
 
 #### 简单插件服务
 
@@ -288,7 +288,7 @@ simpleService.activeFunc();
 
 **复杂插件服务**比起**简单插件服务**，只有两点区别：
 
-- **复杂插件服务**在`插件(plugin)`中编写接口，在`服务(service)`中编写实现，而**简单插件服务**不需要编写接口，直接在`插件(plugin)`中实现。
+- **复杂插件服务**在`插件模块(plugin)`中编写接口，在`服务模块(service)`中编写实现，而**简单插件服务**不需要编写接口，直接在`插件模块(plugin)`中实现。
 - **复杂插件服务**的实现可以按需使用第三方依赖。
 
 [DemoComplexService](../../javamesh-plugins/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)是**复杂插件服务**示例接口，其中可以按需添加接口，如`activeFunc`方法，[DemoComplexServiceImpl](../../javamesh-plugins/javamesh-example/demo-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java)是对应的实现。我们可以通过以下代码调用`activeFunc`方法：
@@ -301,7 +301,7 @@ complexService.activeFunc();
 
 #### 日志功能
 
-考虑到依赖隔离的问题，[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)提供给`插件(plugin)`和`服务(service)`使用的日志只能是**jul**日志，通过以下方法获取**jul**日志实例：
+考虑到依赖隔离的问题，[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)提供给`插件模块(plugin)`和`服务模块(service)`使用的日志只能是**jul**日志，通过以下方法获取**jul**日志实例：
 ```java
 import java.util.logging.Logger;
 import com.huawei.javamesh.core.common.LoggerFactory;
@@ -331,8 +331,8 @@ HeartbeatService heartbeatService = ServiceManager.getService(HeartbeatService.c
 
 如果希望在插件上报的数据中增加额外的内容，可以调用以下api：
 ```java
-// ${plugin name}为插件名称，通过自定义ExtInfoProvider提供额外内容集合
-heartbeatService.setExtInfo("${plugin name}", new ExtInfoProvider() {
+// 通过自定义ExtInfoProvider提供额外内容集合
+heartbeatService.setExtInfo(new ExtInfoProvider() {
   @Override
   public Map<String, String> getExtInfo() {
     // do something

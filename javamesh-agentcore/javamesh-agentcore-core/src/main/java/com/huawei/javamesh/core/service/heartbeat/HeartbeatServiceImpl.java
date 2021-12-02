@@ -4,14 +4,15 @@
 
 package com.huawei.javamesh.core.service.heartbeat;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 import com.huawei.javamesh.core.common.BootArgsIndexer;
@@ -23,6 +24,8 @@ import com.huawei.javamesh.core.lubanops.integration.transport.ClientManager;
 import com.huawei.javamesh.core.lubanops.integration.transport.netty.client.NettyClient;
 import com.huawei.javamesh.core.lubanops.integration.transport.netty.pojo.Message;
 import com.huawei.javamesh.core.plugin.PluginManager;
+import com.huawei.javamesh.core.plugin.common.PluginConstant;
+import com.huawei.javamesh.core.util.JarFileUtil;
 
 /**
  * {@link HeartbeatService}的实现
@@ -72,20 +75,27 @@ public class HeartbeatServiceImpl implements HeartbeatService {
         EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
-                doRun();
+                execute();
             }
         });
     }
 
-    private void doRun() {
+    /**
+     * 执行循环
+     */
+    private void execute() {
         // 创建NettyClient
         final NettyClient nettyClient = ClientManager.getNettyClientFactory().getNettyClient(
                 AgentConfigManager.getNettyServerIp(),
                 Integer.parseInt(AgentConfigManager.getNettyServerPort()));
-        // 运行中循环
+        // 获取插件名和版本集合
+        final Map<String, String> pluginVersionMap = PluginManager.getPluginVersionMap();
+        // 循环运行
         while (runFlag) {
             try {
-                foreachPlugin(nettyClient);
+                for (Map.Entry<String, String> entry : pluginVersionMap.entrySet()) {
+                    heartbeat(nettyClient, entry.getKey(), entry.getValue());
+                }
             } catch (Exception e) {
                 LOGGER.warning(String.format(Locale.ROOT,
                         "Exception [%s] occurs for [%s] when sending heartbeat message, retry next time. ",
@@ -106,19 +116,6 @@ public class HeartbeatServiceImpl implements HeartbeatService {
             Thread.sleep(interval);
         } catch (InterruptedException ignored) {
             LOGGER.warning("Unexpected interrupt heartbeat waiting. ");
-        }
-    }
-
-    /**
-     * 遍历所有插件，循环发送心跳
-     *
-     * @param nettyClient netty客户端
-     */
-    private void foreachPlugin(NettyClient nettyClient) {
-        final Iterator<Map.Entry<String, String>> itr = PluginManager.getPluginVersionItr();
-        while (itr.hasNext()) {
-            final Map.Entry<String, String> entry = itr.next();
-            heartbeat(nettyClient, entry.getKey(), entry.getValue());
         }
     }
 
@@ -170,7 +167,17 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     }
 
     @Override
-    public void setExtInfo(String pluginName, ExtInfoProvider extInfo) {
-        EXT_INFO_MAP.put(pluginName, extInfo);
+    public void setExtInfo(ExtInfoProvider extInfo) {
+        final String pluginJar = extInfo.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        try {
+            final Object nameAttr = JarFileUtil.getManifestAttr(new JarFile(pluginJar), PluginConstant.PLUGIN_NAME_KEY);
+            if (nameAttr != null) {
+                EXT_INFO_MAP.put(nameAttr.toString(), extInfo);
+            } else {
+                LOGGER.warning(String.format(Locale.ROOT, "Get plugin name of %s failed. ", pluginJar));
+            }
+        } catch (IOException ignored) {
+            LOGGER.warning(String.format(Locale.ROOT, "Cannot find manifest file of %s. ", pluginJar));
+        }
     }
 }

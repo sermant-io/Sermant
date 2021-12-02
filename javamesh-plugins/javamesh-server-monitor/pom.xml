@@ -14,7 +14,7 @@
 
     <properties>
         <javamesh.basedir>${pom.basedir}/../../..</javamesh.basedir>
-        <package.sample.name>server-monitor</package.sample.name>
+        <package.plugin.name>server-monitor</package.plugin.name>
 
         <lombok.version>1.18.12</lombok.version>
         <commons-io.version>2.6</commons-io.version>

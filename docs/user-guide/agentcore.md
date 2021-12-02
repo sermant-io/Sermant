@@ -1,6 +1,6 @@
-# AgentCore
+# 核心模块介绍
 
-本文档主要介绍[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)，该模块提供处理字节码增强、统一配置、核心服务、插件管理等能力重要内核。
+本文档主要介绍[**Java-mesh核心模块**](../../javamesh-agentcore/javamesh-agentcore-core)，该模块提供处理字节码增强、统一配置、核心服务、插件管理等能力重要内核。
 
 - [核心包版本](#核心包版本)
 - [目录结构](#目录结构)
@@ -22,7 +22,7 @@
 - [LubanAgent](#LubanAgent)
 - [相关文档](#相关文档)
 
-本文更多地只是简单介绍[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)中各个目录的意义，仅做抛砖引玉的作用，如果开发者想要更为细致的了解代码中业务逻辑，请移步至相关的目录或类查看。
+本文更多地只是简单介绍[**Java-mesh核心模块**](../../javamesh-agentcore/javamesh-agentcore-core)中各个目录的意义，仅做抛砖引玉的作用，如果开发者想要更为细致的了解代码中业务逻辑，请移步至相关的目录或类查看。
 
 ## 核心包版本
 
@@ -35,7 +35,7 @@ String version = BootArgsIndexer.getCoreVersion();
 
 ## 目录结构
 
-[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)的代码包含以下目录结构：
+[**Java-mesh核心模块**](../../javamesh-agentcore/javamesh-agentcore-core)的代码包含以下目录结构：
 
 - `agent`目录，存放[字节码增强](#字节码增强)相关代码。
 - `common`目录，存放一些公共的代码。
@@ -45,9 +45,9 @@ String version = BootArgsIndexer.getCoreVersion();
 - `plugin`目录，存放[插件管理系统](#插件管理系统)相关代码。
 - `service`目录，存放[核心服务系统](#核心服务系统)相关代码。
 - `util`目录，存放公用工具类。
-- `AgentCoreEntrance`类，系[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)的入口，调用`run`方法、传入**启动参数**和*Instrumentation*对象带起。
+- `AgentCoreEntrance`类，系[**Java-mesh核心模块**](../../javamesh-agentcore/javamesh-agentcore-core)的入口，调用`run`方法、传入**启动参数**和*Instrumentation*对象带起。
 
-[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)中还包含以下资源：
+[**Java-mesh核心模块**](../../javamesh-agentcore/javamesh-agentcore-core)中还包含以下资源：
 
 - `config`目录，配置文件目录。
   - `agent/plugins.yaml`文件，默认*Profile*的插件设置。
@@ -339,7 +339,7 @@ config.example:
 
 ### 插件设定配置
 
-**插件设定配置**即`plugins.yaml`文件，在[**Java-mesh**核心功能模块](../../javamesh-agentcore/javamesh-agentcore-core)中存在三个这样的文件：
+**插件设定配置**即`plugins.yaml`文件，在[**Java-mesh核心模块**](../../javamesh-agentcore/javamesh-agentcore-core)中存在三个这样的文件：
 
 - [agent/plugins.yaml](../../javamesh-agentcore/javamesh-agentcore-core/src/main/resources/config/agent/plugins.yaml): 默认编译场景下的**插件设定配置**，不含示例工程。
 - [all/plugins.yaml](../../javamesh-agentcore/javamesh-agentcore-core/src/main/resources/config/all/plugins.yaml): 执行-Pall参数打包时的**插件设定配置**，较`agent`多了示例工程

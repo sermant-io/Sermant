@@ -13,7 +13,7 @@
     <artifactId>javamesh-threadlocal</artifactId>
     <properties>
         <javamesh.basedir>${pom.basedir}/../../..</javamesh.basedir>
-        <package.sample.name>threadlocal</package.sample.name>
+        <package.plugin.name>threadlocal</package.plugin.name>
     </properties>
 
     <profiles>

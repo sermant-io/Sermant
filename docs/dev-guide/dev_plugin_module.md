@@ -1,19 +1,19 @@
-# Plugin Module Developer Guide
+# 插件模块开发手册
 
 本文档主要针对**Java-mesh**的[插件根模块](../../javamesh-plugins)，介绍如何在`插件根模块`中添加一个插件及其服务和附加件。
 
 - [开发环境](#开发环境)
 - [组成分类](#组成分类)
 - [打包流程](#打包流程)
-- [添加功能模块](#添加功能模块)
+- [添加插件主模块](#添加插件主模块)
+  - [插件名称和版本](#插件名称和版本)
 - [插件开发流程](#插件开发流程)
-  - [插件名和版本](#插件名和版本)
   - [添加插件模块](#添加插件模块)
   - [添加插件服务模块](#添加插件服务模块)
   - [添加配置](#添加配置)
   - [示例工程解读](#示例工程解读)
   - [注意事项](#注意事项)
-  - [打包流程](#打包流程)
+  - [插件打包流程](#插件打包流程)
 - [附加件开发流程](#附加件开发流程)
 
 ## 开发环境
@@ -23,29 +23,29 @@
 
 ## 组成分类
 
-**Java-mesh**的`插件根模块`按照`功能(function)`划分子模块，每个功能子模块中可能包含以下子模块：
+**Java-mesh**的`插件根模块`按照插件功能划分子模块，即`插件主模块(main)`，其中又可以包含以下类型的子模块：
 
-- `插件(plugin)`，该模块主要用于声明对宿主应用的增强逻辑
-- `服务(service)`，用于为插件包提供服务实现
-- `后端(server)`，用于接收插件数据的服务端
-- `前端(webapp)`，用于对服务端数据作前端展示
-- `其他(other)`，特殊附加件，一般用作调试
+- `插件模块(plugin)`，该模块主要用于声明对宿主应用的增强逻辑
+- `服务模块(service)`，用于为插件包提供服务实现
+- `后端模块(server)`，用于接收插件数据的服务端
+- `前端模块(webapp)`，用于对服务端数据作前端展示
+- `其他模块(other)`，特殊附加件，一般用作调试
 
 ## 打包流程
 
 目前[Java-mesh](../../pom.xml)的打包流程中，包含`agent`、`ext`、`example`、`package`和`all`
 6个步骤，其中与[javamesh-plugins](../../javamesh-plugins/pom.xml)相关的步骤如下：
 
-- `agent`: 对除示例功能[javamesh-example](../../javamesh-plugins/javamesh-example)外所有`插件(plugin)`和`服务(service)`进行打包，他们将输出到产品`agent/pluginPackage/${功能名称}`目录。
-- `ext`: 对所有附加件进行打包，包括`后端(server)`、`前端(webapp)`和`其他(other)`，其中`后端(server)`和`前端(webapp)`将输出到产品的`server/${功能名称}`目录，`其他(other)`一般为调试用的附加件，没有打包要求。
+- `agent`: 对除示例功能[javamesh-example](../../javamesh-plugins/javamesh-example)外所有`插件模块(plugin)`和`服务模块(service)`进行打包，他们将输出到产品`agent/pluginPackage/${功能名称}`目录。
+- `ext`: 对所有附加件进行打包，包括`后端模块(server)`、`前端模块(webapp)`和`其他模块(other)`，其中`后端模块(server)`和`前端模块(webapp)`将输出到产品的`server/${功能名称}`目录，`其他模块(other)`一般为调试用的附加件，没有打包要求。
 - `example`: 对示例功能[javamesh-example](../../javamesh-plugins/javamesh-example)进行打包。
 - `all`: 对上述的所有内容进行打包。
 
-## 添加功能模块
+## 添加插件主模块
 
-- 添加`功能(function)`模块，依据该`功能(function)`中涉及的内容，在[javamesh-plugins的pom文件](../../javamesh-plugins/pom.xml)中的特定`profile`中添加相应模块：
+- 添加`插件主模块(main)`，依据该`插件主模块(main)`中涉及的内容，在[javamesh-plugins的pom文件](../../javamesh-plugins/pom.xml)中的特定`profile`中添加相应模块：
   - 必须在`id`为`all`的`profile`中添加该模块。
-  - 如果该模块包含`插件(plugin)`，那么需要在`id`为`agent`的`profile`中添加该模块。
+  - 如果该模块包含`插件模块(plugin)`，那么需要在`id`为`agent`的`profile`中添加该模块。
   - 如果该模块包含其他内容，则需要在`id`为`ext`的`profile`中添加该模块。
 - 在该模块的`pom.xml`中添加以下标签：
   ```xml
@@ -54,40 +54,46 @@
   ```xml
   <properties>
     <javamesh.basedir>${pom.basedir}/../../..</javamesh.basedir>
-    <package.sample.name>${功能名称}</package.sample.name>
+    <package.plugin.name>${插件名称}</package.plugin.name>
   </properties>
   ```
-  - 在[默认插件设置文件](../../javamesh-agentcore/javamesh-agentcore-core/src/main/resources/config/agent/plugins.yaml)和[全数插件设置文件](../../javamesh-agentcore/javamesh-agentcore-core/src/main/resources/config/all/plugins.yaml)中添加新增的`功能(function)`模块，完成注册。
+  - 在[默认插件设置文件](../../javamesh-agentcore/javamesh-agentcore-core/src/main/resources/config/agent/plugins.yaml)和[全数插件设置文件](../../javamesh-agentcore/javamesh-agentcore-core/src/main/resources/config/all/plugins.yaml)中添加新增的`插件主模块(main)`，完成注册。
 
-`功能(function)`模块的子模块开发流程参见一下章节：
-- `插件(plugin)`和`服务(service)`开发流程参见[插件开发流程](#插件开发流程)
-- `后端(server)`和`前端(webapp)`开发流程参见[附加件开发流程](#附加件开发流程)
-- `其他(other)`由于只参与调试，不涉及开发流程限定
+`插件主模块(main)`的子模块开发流程参见一下章节：
+- `插件模块(plugin)`和`服务模块(service)`开发流程参见[插件开发流程](#插件开发流程)
+- `后端模块(server)`和`前端模块(webapp)`开发流程参见[附加件开发流程](#附加件开发流程)
+- `其他模块(other)`由于只参与调试，不涉及开发流程限定
+
+### 插件名称和版本
+
+插件的名称和版本，属于`插件模块(plugin)`和`服务模块(service)`的内禀属性，因此我们将他们封装到`manifest`文件中，作为`jar`包的元信息存在：
+
+- **插件名称**封装于`manifest`文件的`Java-mesh-Name-Version`参数中，通过`pom`文件中的`package.plugin.name`参数设定，默认含义为**插件名称**。
+- **插件版本**封装于`manifest`文件的`Java-mesh-Plugin-Version`参数中，默认取值为`javamesh.version`，可通过`pom`文件中的`package.plugin.version`参数修改。
+```xml
+<properties>
+  <package.plugin.name>${插件名称}</package.plugin.name>
+  <package.plugin.version>${插件版本}</package.plugin.version>
+</properties>
+```
+
+在插件包被加载的过程中，将对`插件模块(plugin)`和`服务模块(service)`的名称和版本进行校验，如果不满足以下条件的话，将抛出异常：
+
+- 对于所有`插件模块(plugin)`来说，由于不允许包含第三方依赖，因此，在加载`插件模块(plugin)`存放目录(`插件主模块(main)`目录下的`plugin`目录)时，如果检出不含**插件名称**和**插件版本**的第三方包，将抛出异常。
+- 对于所有`插件模块(plugin)`和`服务模块(service)`来说，如果其中设置的**插件名称**与**插件设定文件**中配置的名称不一致，将抛出异常。
+- 对于所有`插件模块(plugin)`和`服务模块(service)`来说，如果其中存在多个不同的**插件版本**，将抛出异常。
+
+对于插件开发者来说，如果没有特殊的需要，不建议修改默认的设计，保持`插件模块(plugin)`中不使用第三方依赖、`插件模块(plugin)`写接口`服务模块(service)`写实现等原则就好。
 
 ## 插件开发流程
 
-本节将介绍插件开发的相关流程，其中涉及的模块为`插件(plugin)`和`服务(service)`。
-
-### 插件名和版本
-
-插件的名称和版本，属于`插件(plugin)`和`服务(service)`包的内禀属性，因此我们将他们封装到`manifest`文件中，作为`jar`包的元信息存在：
-
-- **插件名称**封装于`manifest`文件的`Java-mesh-Name-Version`参数中，通过`pom`文件中的`package.sample.name`参数设定，默认含义为**功能名称**。
-- **插件版本**封装于`manifest`文件的`Java-mesh-Plugin-Version`参数中，默认取值为`javamesh.version`，可通过`pom`文件中的`package.sample.version`参数修改。
-
-在插件被加载的过程中，将对插件名称和插件版本进行校验，如果不满足以下条件的话，将抛出异常：
-
-- 对于所有`插件(plugin)`来说，由于不允许包含第三方依赖，因此，在加载`插件(plugin)`存放目录(`功能(function)`目录下的`plugin`目录)时，如果检出不含**插件名称**和**插件版本**的第三方包，将抛出异常。
-- 对于所有`插件(plugin)`和`服务(service)`来说，如果其中设置的**插件名称**与**插件设定文件**中配置的名称不一致，将抛出异常。
-- 对于所有`插件(plugin)`和`服务(service)`来说，如果其中存在多个不同的**插件版本**，将抛出异常。
-
-对于插件开发者来说，如果没有特殊的需要，不建议修改默认的设计，保持`插件(plugin)`中不使用第三方依赖、`插件(plugin)`写接口`服务(service)`写实现等原则就好。
+本节将介绍插件开发的相关流程，其中涉及的模块为`插件模块(plugin)`和`服务模块(service)`。
 
 ### 添加插件模块
 
-结合[打包步骤](#打包步骤)中介绍的步骤，与插件开发相关的步骤有`agent`和`all`两个`profile`。如果需要为`功能(function)`模块添加`插件(plugin)`子模块：
+结合[打包流程](#打包流程)中介绍的步骤，与插件开发相关的步骤有`agent`和`all`两个`profile`。如果需要为`插件主模块(main)`添加`插件模块(plugin)`子模块：
 
-- 在`功能(function)`模块的`pom.xml`文件的以下`profile`中添加`module`：
+- 在`插件主模块(main)`的`pom.xml`文件的以下`profile`中添加`module`：
   ```xml
   <profiles>
     <profile>
@@ -107,13 +113,13 @@
     </profile>
   </profiles>
   ```
-- 为`插件(plugin)`子模块添加以下参数：
+- 为`插件模块(plugin)`子模块添加以下参数：
   ```xml
   <properties>
-    <package.sample.type>plugin</package.sample.type>
+    <package.plugin.type>plugin</package.plugin.type>
   </properties>
   ```
-- 为`插件(plugin)`子模块添加核心包依赖：
+- 为`插件模块(plugin)`子模块添加核心包依赖：
   ```xml
   <dependencies>
     <dependency>
@@ -123,8 +129,8 @@
     </dependency>
   </dependencies>
   ```
-  注意，不建议为`插件(plugin)`模块添加或使用其他第三方依赖！
-- 为`插件(plugin)`子模块添加`shade`插件，以修正`byte-buddy`依赖的全限定名：
+  注意，不建议为`插件模块(plugin)`添加或使用其他第三方依赖！
+- 为`插件模块(plugin)`子模块添加`shade`插件，以修正`byte-buddy`依赖的全限定名：
   ```xml
   <build>
     <plugins>
@@ -136,20 +142,20 @@
   </build>
   ```
 
-`插件(plugin)`模块的定位是定义宿主应用的增强逻辑，考虑到依赖冲突的问题，其增强的字节码中不能涉及对第三方依赖的使用，这时就需要分两种情况讨论：
+`插件模块(plugin)`的定位是定义宿主应用的增强逻辑，考虑到依赖冲突的问题，其增强的字节码中不能涉及对第三方依赖的使用，这时就需要分两种情况讨论：
 
-- 对于简单的插件，其中编写的插件服务只会使用核心包中的自研功能，不涉及其他需要依赖第三方依赖的复杂功能时，那么只需要开发`插件(plugin)`模块即可。`插件(plugin)`包将被系统类加载器`AppClassLoader`加载。
-- 对于一些复杂的插件，如果涉及需要依赖第三方依赖的复杂功能时，就需要在`插件(plugin)`模块设计服务接口，并编写`服务(service)`模块予以实现。其中`插件(plugin)`包仍被系统类加载器`AppClassLoader`加载，而`服务(service)`包则会优先被自定义类加载器[PluginClassLoader](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/plugin/classloader/PluginClassLoader.java)加载，以此达成类加载级别的依赖隔离。
+- 对于简单的插件，其中编写的插件服务只会使用核心包中的自研功能，不涉及其他需要依赖第三方依赖的复杂功能时，那么只需要开发`插件模块(plugin)`即可。`插件模块(plugin)`将被系统类加载器`AppClassLoader`加载。
+- 对于一些复杂的插件，如果涉及需要依赖第三方依赖的复杂功能时，就需要在`插件模块(plugin)`设计服务接口，并编写`服务模块(service)`予以实现。其中`插件模块(plugin)`仍被系统类加载器`AppClassLoader`加载，而`服务模块(service)`则会优先被自定义类加载器[PluginClassLoader](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/plugin/classloader/PluginClassLoader.java)加载，以此达成类加载级别的依赖隔离。
 
-至于**Java-mesh AgentCore Core**中的第三方依赖，他们在打包过程中会随自研代码一起，被[shade插件](https://github.com/apache/maven-shade-plugin)修正全限定名。除非`插件(plugin)`模块打包时做同样的操作，不然是无法再`插件(plugin)`模块使用的。
+至于**核心模块**中的第三方依赖，他们在打包过程中会随自研代码一起，被[shade插件](https://github.com/apache/maven-shade-plugin)修正全限定名。除非`插件模块(plugin)`打包时做同样的操作，不然是无法再`插件模块(plugin)`使用的。
 
-当然，对于`byte-buddy`包来说，由于方法匹配器没有在**Java-mesh AgentCore Core**中提取，`插件(plugin)`模块仍需沿用他们，因此对`插件(plugin)`才有修正`byte-buddy`包全限定名的要求。
+当然，对于`byte-buddy`包来说，由于方法匹配器没有在**核心模块**中提取，`插件模块(plugin)`仍需沿用他们，因此对`插件模块(plugin)`才有修正`byte-buddy`包全限定名的要求。
 
 ### 添加插件服务模块
 
-和`插件(plugin)`模块相似，添加`服务(service)`模块步骤如下：
+和`插件模块(plugin)`相似，添加`服务模块(service)`步骤如下：
 
-- 在`功能(function)`模块的`pom.xml`文件的以下`profile`中添加`module`：
+- 在`插件主模块(main)`的`pom.xml`文件的以下`profile`中添加`module`：
   ```xml
   <profiles>
     <profile>
@@ -169,13 +175,13 @@
     </profile>
   </profiles>
   ```
-- 为`服务(service)`子模块添加以下参数：
+- 为`服务模块(service)`子模块添加以下参数：
   ```xml
   <properties>
-    <package.sample.type>service</package.sample.type>
+    <package.plugin.type>service</package.plugin.type>
   </properties>
   ```
-- 为`服务(service)`子模块添加核心包和相关插件包的依赖：
+- 为`服务模块(service)`子模块添加核心包和相关插件包的依赖：
   ```xml
   <dependencies>
     <dependency>
@@ -191,8 +197,8 @@
     </dependency>
   </dependencies>
   ```
-  `服务(service)`中允许按需添加第三方依赖！
-- 为`服务(service)`子模块添加`shade`插件(或其他打包插件)打包：
+  `服务模块(service)`中允许按需添加第三方依赖！
+- 为`服务模块(service)`子模块添加`shade`插件(或其他打包插件)打包：
   ```xml
   <build>
     <plugins>
@@ -206,17 +212,17 @@
 
 ### 添加配置
 
-如果`插件(plugin)`和`服务(service)`模块中需要使用插件配置`PluginConfig`，那么需要添加插件的配置文件：
+如果`插件模块(plugin)`和`服务模块(service)`中需要使用插件配置`PluginConfig`，那么需要添加插件的配置文件：
 
-- 在`功能(function)`模块的主目录下添加`config`文件夹。
+- 在`插件主模块(main)`的主目录下添加`config`文件夹。
 - 在`config`文件夹中添加一个`config.yaml`文件，这就是插件的配置文件。
-- 在`功能(function)`模块的任意子模块(一般取第一个子模块)中添加以下配置以启动资源拷贝：
+- 在`插件主模块(main)`的任意子模块(一般取第一个子模块)中添加以下配置以启动资源拷贝：
   ```xml
   <properties>
     <config.skip.flag>false</config.skip.flag>
   </properties>
   ```
-  如果配置上述参数的子模块不在`功能(function)`模块的目录下，还需要根据该模块与`config`目录的相对位置设置以下参数：
+  如果配置上述参数的子模块不在`插件主模块(main)`的目录下，还需要根据该模块与`config`目录的相对位置设置以下参数：
   ```xml
   <properties>
     <config.source.dir>../config</config.source.dir> <!-- 调整该值为config目录的相对位置 -->
@@ -258,9 +264,9 @@
     PluginConfigManager.getPluginConfig(PluginConfigType.class)
     ```
 - 插件服务示例：插件服务是核心服务系统的特化，遵循核心服务系统的规则。
-  - 如[DemoSimpleService](../../javamesh-plugins/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)所示，是一个简单的插件服务，他编写于`插件(plugin)`模块中。鉴于简单的插件服务的定位，他只能使用java原生api以及核心包中自研的api，不能使用任何第三方api(无论核心包是否引入)。
-  - [DemoComplexService](../../javamesh-plugins/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)接口是示例`插件(plugin)`模块中定义复杂服务接口，该接口将会在`服务(service)`模块中实现。
-  - [DemoComplexServiceImpl](../../javamesh-plugins/javamesh-example/demo-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java)是[DemoComplexService](../../javamesh-plugins/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)接口的实现，他编写于`服务(service)`模块中，属于复杂的插件服务，可以按需使用第三方依赖(示例中未使用)。
+  - 如[DemoSimpleService](../../javamesh-plugins/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)所示，是一个简单的插件服务，他编写于`插件模块(plugin)`中。鉴于简单的插件服务的定位，他只能使用java原生api以及核心包中自研的api，不能使用任何第三方api(无论核心包是否引入)。
+  - [DemoComplexService](../../javamesh-plugins/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)接口是示例`插件模块(plugin)`中定义复杂服务接口，该接口将会在`服务模块(service)`中实现。
+  - [DemoComplexServiceImpl](../../javamesh-plugins/javamesh-example/demo-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java)是[DemoComplexService](../../javamesh-plugins/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)接口的实现，他编写于`服务模块(service)`中，属于复杂的插件服务，可以按需使用第三方依赖(示例中未使用)。
   - 简单的插件服务和复杂的插件服务接口都需要继承(实现)[PluginService](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/plugin/service/PluginService.java)接口。
   - 需要添加[PluginService](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/plugin/service/PluginService.java)的[spi配置文件](../../javamesh-plugins/javamesh-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.javamesh.core.plugin.service.PluginService)。
   - 通过以下代码可以获取服务对象：
@@ -274,18 +280,18 @@
 
 本节将列举一些开发插件过程中容易出现错误的点：
 
-- `插件(plugin)`包不能依赖或使用第三方依赖，如果服务功能较为复杂，必须使用第三方依赖，则可以将他们提取为`服务(service)`包，或者用shade插件隔离(不建议)。
-- 同个`功能(function)`中，如果存在多个`服务(service)`包，他们不能存在依赖冲突的问题。
+- `插件模块(plugin)`不能依赖或使用第三方依赖，如果服务功能较为复杂，必须使用第三方依赖，则可以将他们提取为`服务模块(service)`，或者用shade插件隔离(不建议)。
+- 同个`插件主模块(main)`中，如果存在多个`服务模块(service)`，他们不能存在依赖冲突的问题。
 - 继承[AliaConfig](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/plugin/config/AliaConfig.java)的插件配置类对应的spi配置文件依然是[PluginConfig](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/plugin/config/PluginConfig.java)。
 - 插件的配置文件有且只能有一个，即`config.yaml`。
 - `config.yaml`中，被数组、列表和字典包装的复杂对象将不支持[ConfigFieldKey](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/config/common/ConfigFieldKey.java)属性别名，被包装的字符串也将不支持`${xxx}`映射。
 - 配置文件中对应配置类的限定名不能重复，该规则针对全局所有统一配置有效。
-- `插件(plugin)`模块和`服务(service)`模块如果不是定义在`功能(function)`模块的目录下，需要留意输出的jar包和配置路径是否正确。
+- `插件模块(plugin)`和`服务模块(service)`如果不是定义在`插件主模块(main)`的目录下，需要留意输出的jar包和配置路径是否正确。
 - 拦截器的类型需要和[MethodInterceptPoint](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/agent/definition/MethodInterceptPoint.java)的对应方法保持一致，注意别写错。
 
-### 打包流程
+### 插件打包流程
 
-- `插件(plugin)`模块的产品输出到整个产品的`agent/pluginPackage/${功能名称}/plugin`目录。`插件(plugin)`涉及到`byte-buddy`包的使用，通常需要使用`maven-shade-plugin`插件作包名修正，添加如下标签即可：
+- `插件模块(plugin)`的产品输出到整个产品的`agent/pluginPackage/${功能名称}/plugin`目录。`插件模块(plugin)`涉及到`byte-buddy`包的使用，通常需要使用`maven-shade-plugin`插件作包名修正，添加如下标签即可：
   ```xml
   <build>
     <plugins>
@@ -296,19 +302,19 @@
     </plugins>
   </build>
   ```
-- `服务(service)`模块的产品输出到整个产品的`agent/pluginPackage/${功能名称}/service`目录：
-  - 可以选择使用`assembly`插件或`shade`插件，将带依赖的`服务(service)`包打到`agent/pluginPackage/${功能名称}/service`目录。
-  - 也可以选择使用`dependency`插件将相关的第三方依赖连同不带依赖的`服务(service)`包打到`agent/pluginPackage/${功能名称}/service`目录下。
+- `服务模块(service)`的产品输出到整个产品的`agent/pluginPackage/${功能名称}/service`目录：
+  - 可以选择使用`assembly`插件或`shade`插件，将带依赖的`服务模块(service)`打到`agent/pluginPackage/${功能名称}/service`目录。
+  - 也可以选择使用`dependency`插件将相关的第三方依赖连同不带依赖的`服务模块(service)`打到`agent/pluginPackage/${功能名称}/service`目录下。
   
-  通常，如果存在多个`服务(service)`模块，选择使用后者可以有效避免依赖冲突和减少重复依赖。当然，如果单纯为了方便，也可以像`javamesh-example`一样直接使用`shade`插件。
+  通常，如果存在多个`服务模块(service)`，选择使用后者可以有效避免依赖冲突和减少重复依赖。当然，如果单纯为了方便，也可以像`javamesh-example`一样直接使用`shade`插件。
 
 ## 附加件开发流程
 
-本节将介绍`后端(server)`和`前端(webapp)`两种附加件的开发流程，由于这两部分是`功能function`中相对独立的内容，因此没有太多开发上的限制。
+本节将介绍`后端模块(server)`和`前端模块(webapp)`两种附加件的开发流程，由于这两部分是`功能function`中相对独立的内容，因此没有太多开发上的限制。
 
-结合[打包步骤](#打包步骤)中介绍的步骤，与附加件开发相关的步骤有`ext`和`all`两个`profile`。如果需要为`功能(function)`模块添加`后端(server)`或`前端(webapp)`子模块：
+结合[打包流程](#打包流程)中介绍的步骤，与附加件开发相关的步骤有`ext`和`all`两个`profile`。如果需要为`插件主模块(main)`添加`后端模块(server)`或`前端模块(webapp)`子模块：
 
-- 在`功能(function)`模块的`pom.xml`文件的以下`profile`中添加`module`：
+- 在`插件主模块(main)`的`pom.xml`文件的以下`profile`中添加`module`：
   ```xml
   <profiles>
     <profile>
@@ -332,7 +338,7 @@
     </profile>
   </profiles>
   ```
-- 将`后端(server)`子模块和`前端(webapp)`子模块的输出调整至`${package.server.output.dir}`，常见打包插件如下：
+- 将`后端模块(server)`子模块和`前端模块(webapp)`子模块的输出调整至`${package.server.output.dir}`，常见打包插件如下：
   ```xml
   <!-- spring打包插件打包 -->
   <plugin>
@@ -392,6 +398,6 @@
     </executions>
   </plugin>
   ```
-- `后端(server)`子模块和`前端(webapp)`子模块如何开发依实际情况而定，仅有的要求，就是输出到产品的`server/${功能名称}`目录，同时提供启动他们的脚本或辅助性文本，能够帮助使用者快速启动和关闭即可。
+- `后端模块(server)`子模块和`前端模块(webapp)`子模块如何开发依实际情况而定，仅有的要求，就是输出到产品的`server/${功能名称}`目录，同时提供启动他们的脚本或辅助性文本，能够帮助使用者快速启动和关闭即可。
 
 [返回**Java-mesh**说明文档](../README.md)
