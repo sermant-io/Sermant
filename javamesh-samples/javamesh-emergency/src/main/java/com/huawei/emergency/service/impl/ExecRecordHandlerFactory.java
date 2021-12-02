@@ -20,7 +20,6 @@ import com.huawei.emergency.service.EmergencyTaskService;
 import com.huawei.script.exec.ExecResult;
 import com.huawei.script.exec.executor.ScriptExecInfo;
 import com.huawei.script.exec.executor.ScriptExecutor;
-import com.huawei.script.exec.log.DefaultLogCallBack;
 import com.huawei.script.exec.log.LogCallBack;
 import com.huawei.script.exec.log.LogMemoryStore;
 import com.huawei.script.exec.session.ServerInfo;
@@ -206,6 +205,7 @@ public class ExecRecordHandlerFactory {
                     execResult = scriptExecutor.execScript(execInfo, logCallBack);
                 }
             } catch (Exception e) {
+                LOGGER.error("exec error.", e);
                 execResult = ExecResult.fail(e.getMessage());
             } finally {
                 // 更新record,detail为执行完成，结束时间
@@ -237,7 +237,7 @@ public class ExecRecordHandlerFactory {
 
                 // 清除实时日志的在内存中的日志残留
                 LogMemoryStore.removeLog(recordDetail.getDetailId());
-                notifySceneRefresh(record.getExecId(),record.getSceneId());
+                notifySceneRefresh(record.getExecId(), record.getSceneId());
             }
         }
     }
@@ -308,7 +308,7 @@ public class ExecRecordHandlerFactory {
         return recordDetailMapper.countByExample(isFinished) == 0;
     }
 
-    public void notifySceneRefresh(int execId,int sceneId){
+    public void notifySceneRefresh(int execId, int sceneId) {
         EmergencyExecRecordExample sceneRecordCondition = new EmergencyExecRecordExample();
         sceneRecordCondition.createCriteria()
             .andIsValidEqualTo(ValidEnum.VALID.getValue())
