@@ -29,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -412,7 +413,7 @@ public class RestFileEntryController extends RestBaseController {
 	}
 
 	@RequestMapping(value = "/saveScript", method = RequestMethod.POST)
-	public String saveScript(User user, @RequestParam Map<String, String> jsonObject,
+	public String saveScript(User user, @RequestBody Map<String, String> jsonObject,
 					   @RequestParam String targetHosts, @RequestParam(defaultValue = "0") String validated,
 					   @RequestParam(defaultValue = "false") boolean createLibAndResource) {
 		FileEntry fileEntry = JSON.parseObject(jsonObject.get("script"), FileEntry.class);

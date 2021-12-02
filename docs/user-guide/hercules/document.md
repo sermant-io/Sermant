@@ -1,7 +1,7 @@
 # hercules
 
 ## 插件目录
-[javamesh-hercules](../../../javamesh-samples/javamesh-hercules)
+[javamesh-hercules](../../../javamesh-plugins/javamesh-hercules)
 
 ## 插件定位
 
@@ -28,11 +28,11 @@
 ## 插件使用方式
 ### 插件部署
 #### web端部署方法
-[hercules-adaptation 部署指导](../../../javamesh-samples/javamesh-hercules/hercules-adaptation/README.md)
+[hercules-adaptation 部署指导](../../../javamesh-plugins/javamesh-hercules/hercules-adaptation/README.md)
 #### server端部署方法
-[hercules-server 部署指导](../../../javamesh-samples/javamesh-hercules/hercules-server/README.md)
+[hercules-server 部署指导](../../../javamesh-plugins/javamesh-hercules/hercules-server/README.md)
 #### agent部署方法
-[hercules-agent 部署指导](../../../javamesh-samples/javamesh-hercules/hercules-server/README.md)
+[hercules-agent 部署指导](../../../javamesh-plugins/javamesh-hercules/hercules-server/README.md)
 #### monitor部署方法
 [monitor 部署指导](../../user-guide/server-monitor/document.md)
 ### 使用指导

@@ -95,7 +95,7 @@ database.password=123456
 ```
 https://github.com/huaweicloud/java-mesh/tree/develop
 ```
- 改代码配置文件javamesh-samples/javamesh-hercules/hercules-server/hercules-controller/src/main/resources/websocket.properties
+ 改代码配置文件javamesh-plugins/javamesh-hercules/hercules-server/hercules-controller/src/main/resources/websocket.properties
 ```
 
 # web端接收任务状态变动通知的接口uri
@@ -104,7 +104,7 @@ task.status.update.notify.uri=/argus/api/task/ws
 # 需要接收任务改变通知的web地址，其实就是hercules前端集群机器的地址
 websocket.notify.host=100.94.169.125:9091,100.94.169.124:9091
 ```
- 修改配置之后使用maven打包,在javamesh-samples/javamesh-hercules/hercules-server目录下执行命令
+ 修改配置之后使用maven打包,在javamesh-plugins/javamesh-hercules/hercules-server目录下执行命令
 ```mvn clean package -Dmaven.test.skip=true```
 > 待打包完成之后，把hercules-controller模块中的hercules-controller-0.0.1.war部署到tomcat即可。
 

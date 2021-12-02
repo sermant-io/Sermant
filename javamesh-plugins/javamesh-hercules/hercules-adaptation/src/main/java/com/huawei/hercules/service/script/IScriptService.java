@@ -5,6 +5,7 @@ import com.huawei.hercules.config.FeignRequestInterceptor;
 import com.huawei.hercules.fallback.ScriptServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,7 +50,7 @@ public interface IScriptService {
      * @return 保存结果
      */
     @RequestMapping(value = "/saveScript", method = RequestMethod.POST)
-    String saveScript(@RequestParam Map<String, String> jsonObject,
+    String saveScript(@RequestBody Map<String, String> jsonObject,
                       @RequestParam String targetHosts, @RequestParam(defaultValue = "0") String validated,
                       @RequestParam(defaultValue = "false") boolean createLibAndResource);
 
