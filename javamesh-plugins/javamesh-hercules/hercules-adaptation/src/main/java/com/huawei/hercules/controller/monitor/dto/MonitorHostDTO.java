@@ -19,7 +19,7 @@ package com.huawei.hercules.controller.monitor.dto;
 /**
  * 功能描述：sql使用到的参数
  *
- * @author z30009938
+ * 
  * @since 2021-11-14
  */
 public class MonitorHostDTO {

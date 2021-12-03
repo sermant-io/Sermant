@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * 功能描述：ListUtil
  *
- * @author z30009938
+ * 
  * @since 2021-10-20
  */
 public class ListUtils {

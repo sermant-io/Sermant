@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * 功能描述：Metric查询服务加载器，通过SPI机制把所有的查询服务加载到系统
  *
- * @author z30009938
+ * 
  * @since 2021-11-19
  */
 @Service

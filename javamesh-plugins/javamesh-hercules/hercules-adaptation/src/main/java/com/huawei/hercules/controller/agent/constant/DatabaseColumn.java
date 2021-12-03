@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 /**
  * 功能描述：agent信息在数据库中的key值
  *
- * @author z30009938
+ * 
  * @since 2021-10-20
  */
 public class DatabaseColumn {

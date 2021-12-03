@@ -21,7 +21,7 @@ import com.huawei.hercules.service.influxdb.metric.tree.IMetricNode;
 /**
  * 功能描述：查询结果对象封装
  *
- * @author z30009938
+ * 
  * @since 2021-11-12
  */
 public class MonitorModel {

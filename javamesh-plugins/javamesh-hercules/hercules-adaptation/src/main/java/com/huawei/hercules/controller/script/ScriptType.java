@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 /**
  * 功能描述：脚本类型定义
  *
- * @author z30009938
+ * 
  * @since 2021-11-01
  */
 public enum ScriptType {

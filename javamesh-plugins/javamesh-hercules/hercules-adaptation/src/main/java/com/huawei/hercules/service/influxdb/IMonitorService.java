@@ -22,7 +22,7 @@ import com.huawei.hercules.service.influxdb.metric.tree.IMetricNode;
 /**
  * 功能描述：监控数据查询接口
  *
- * @author z30009938
+ * 
  * @since 2021-11-18
  */
 public interface IMonitorService {

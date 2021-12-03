@@ -19,7 +19,7 @@ package com.huawei.hercules.controller.websocket;
 /**
  * 功能描述：WebSocket接口处理者
  *
- * @author z30009938
+ * 
  * @since 2021-11-03
  */
 public interface WebSocketEventHandler {

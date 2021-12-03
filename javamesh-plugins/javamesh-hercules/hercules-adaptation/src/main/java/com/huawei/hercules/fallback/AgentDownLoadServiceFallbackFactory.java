@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * 功能描述：agentDownload调用feign失败回调
  *
- * @author z30009938
+ * 
  * @since 2021-11-24
  */
 @Component

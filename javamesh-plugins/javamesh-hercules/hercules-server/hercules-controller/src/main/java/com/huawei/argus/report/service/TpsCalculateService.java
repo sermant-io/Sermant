@@ -41,7 +41,7 @@ import java.util.Map;
  * 1秒队列里面的数据，从第一个时间开始按照00:00:00开始计算，
  * 如果展示的区间小于队列的长度，则会从队列中某一个tps开始展示，该tps在队列的位置，相当于其执行时间秒
  *
- * @author z30009938
+ *
  * @since 2021-11-27
  */
 public class TpsCalculateService {

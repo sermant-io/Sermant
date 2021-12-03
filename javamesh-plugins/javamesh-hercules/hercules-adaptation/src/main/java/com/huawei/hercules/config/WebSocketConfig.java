@@ -23,7 +23,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 /**
  * 功能描述：web socket config class
  *
- * @author z30009938
+ * 
  * @since 2021-11-02
  */
 @Configuration

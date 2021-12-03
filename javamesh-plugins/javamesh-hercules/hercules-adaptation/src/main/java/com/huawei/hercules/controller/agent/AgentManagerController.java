@@ -51,7 +51,7 @@ import static com.huawei.hercules.util.ListUtils.listJoinBySeparator;
 /**
  * 功能描述：agent管理相关rest接口
  *
- * @author z30009938
+ * 
  * @since 2021-10-14
  */
 @RestController

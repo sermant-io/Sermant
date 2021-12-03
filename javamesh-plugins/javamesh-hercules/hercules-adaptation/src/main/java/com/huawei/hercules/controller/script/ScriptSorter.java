@@ -30,7 +30,7 @@ import java.util.PriorityQueue;
 /**
  * 功能描述：Script因为后端是文件系统svn，没有排序功能，所以这里只能自己排序
  *
- * @author z30009938
+ * 
  * @since 2021-11-04
  */
 public class ScriptSorter {

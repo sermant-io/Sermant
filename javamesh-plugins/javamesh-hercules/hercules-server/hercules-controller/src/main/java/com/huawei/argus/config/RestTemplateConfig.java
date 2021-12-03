@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 功能描述：restTemplate配置
  *
- * @author z30009938
+ *
  * @since 2021-11-03
  */
 @Configuration

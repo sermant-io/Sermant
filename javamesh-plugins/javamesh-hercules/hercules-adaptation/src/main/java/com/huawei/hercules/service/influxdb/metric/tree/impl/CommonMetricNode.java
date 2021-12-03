@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * 功能描述：指标类型基类
  *
- * @author z30009938
+ * 
  * @since 2021-11-19
  */
 public class CommonMetricNode implements IMetricNode {

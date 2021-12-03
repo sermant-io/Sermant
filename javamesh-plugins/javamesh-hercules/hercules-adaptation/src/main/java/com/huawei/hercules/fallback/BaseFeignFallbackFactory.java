@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 /**
  * 功能描述：feign失败回调
  *
- * @author z30009938
+ * 
  * @since 2021-11-22
  */
 public abstract class BaseFeignFallbackFactory<T> implements FallbackFactory<T> {

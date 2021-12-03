@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * 功能描述：WebSocket控制相关接口
  *
- * @author z30009938
+ * 
  * @since 2021-11-03
  */
 @RestController

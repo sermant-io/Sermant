@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * 功能描述：场景后端feign调用失败时回调
  *
- * @author z30009938
+ * 
  * @since 2021-11-24
  */
 @Component

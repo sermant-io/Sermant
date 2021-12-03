@@ -41,7 +41,7 @@ import java.util.Map;
 /**
  * 功能描述：状态变更报告器
  *
- * @author z30009938
+ *
  * @since 2021-11-03
  */
 @Component

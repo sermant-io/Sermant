@@ -29,7 +29,7 @@ import java.util.Locale;
 /**
  * 功能描述：query metric base class
  *
- * @author z30009938
+ * 
  * @since 2021-11-19
  */
 public class CommonMetricQueryService implements IMetricQueryService {

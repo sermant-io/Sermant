@@ -19,7 +19,7 @@ package com.huawei.hercules.controller.perftest;
 /**
  * 功能描述：
  *
- * @author z30009938
+ * 
  * @since 2021-11-03
  */
 public enum TaskInfoKey {

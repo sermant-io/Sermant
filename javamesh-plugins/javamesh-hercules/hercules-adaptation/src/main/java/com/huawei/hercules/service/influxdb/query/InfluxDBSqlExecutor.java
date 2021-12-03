@@ -31,7 +31,7 @@ import java.util.Locale;
 /**
  * 功能描述：执行sql，返回执行的类型列表数据
  *
- * @author z30009938
+ * 
  * @since 2021-11-14
  */
 @Service

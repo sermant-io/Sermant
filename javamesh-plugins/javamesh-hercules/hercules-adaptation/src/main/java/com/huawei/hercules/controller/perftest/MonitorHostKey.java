@@ -19,7 +19,7 @@ package com.huawei.hercules.controller.perftest;
 /**
  * 功能描述：监控主机中key定义
  *
- * @author z30009938
+ * 
  * @since 2021-11-22
  */
 public enum MonitorHostKey {

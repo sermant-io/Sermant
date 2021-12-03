@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * 功能描述：分页查询数据模型
  *
- * @author z30009938
+ *
  * @since 2021-10-15
  */
 public class PageModel<T> {

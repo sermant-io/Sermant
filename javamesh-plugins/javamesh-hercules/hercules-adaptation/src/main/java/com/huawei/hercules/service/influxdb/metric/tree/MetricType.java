@@ -42,7 +42,7 @@ import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.oraclepool
 /**
  * 功能描述：Metric类型
  *
- * @author z30009938
+ * 
  * @since 2021-11-23
  */
 public enum MetricType {

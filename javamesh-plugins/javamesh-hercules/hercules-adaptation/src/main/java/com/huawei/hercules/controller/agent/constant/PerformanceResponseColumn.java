@@ -19,7 +19,7 @@ package com.huawei.hercules.controller.agent.constant;
 /**
  * 功能描述：返回给前端的新能信息key
  *
- * @author z30009938
+ * 
  * @since 2021-10-20
  */
 public class PerformanceResponseColumn {

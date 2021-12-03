@@ -29,7 +29,7 @@ import java.util.Enumeration;
 /**
  * 功能描述：请求头转换拦截器
  *
- * @author z30009938
+ * 
  * @since 2021-11-24
  */
 @Configuration

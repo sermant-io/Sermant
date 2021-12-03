@@ -28,7 +28,7 @@ import java.util.Locale;
 /**
  * 功能描述：执行influxDB的Sql语句
  *
- * @author z30009938
+ * 
  * @since 2021-11-14
  */
 @Configuration
