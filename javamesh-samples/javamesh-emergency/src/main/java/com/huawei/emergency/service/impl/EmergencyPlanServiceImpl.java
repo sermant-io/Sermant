@@ -182,11 +182,6 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         if (haveRunning(planId)) {
             return CommonResult.failed("当前预案正在执行中，请先完成之前的执行。");
         }
-        EmergencyPlan updatePlan = new EmergencyPlan();
-        updatePlan.setPlanId(planId);
-        updatePlan.setStatus(PlanStatus.RUNNING.getValue());
-        updatePlan.setUpdateTime(new Date());
-        planMapper.updateByPrimaryKeySelective(updatePlan);
 
         // 添加预案执行记录
         EmergencyExec emergencyExec = new EmergencyExec();
@@ -202,6 +197,15 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             record.setExecId(emergencyExec.getExecId());
             recordMapper.insertSelective(record);
         });
+        EmergencyPlan updatePlan = new EmergencyPlan();
+        updatePlan.setPlanId(planId);
+        updatePlan.setUpdateTime(new Date());
+        updatePlan.setStatus(PlanStatus.RUNNING.getValue());
+        if (allExecRecords.size() == 0){
+            updatePlan.setStatus(PlanStatus.SUCCESS.getValue());
+        }
+        planMapper.updateByPrimaryKeySelective(updatePlan);
+
 
         // 开始执行不需要任何前置条件的场景
         allExecRecords.stream()
