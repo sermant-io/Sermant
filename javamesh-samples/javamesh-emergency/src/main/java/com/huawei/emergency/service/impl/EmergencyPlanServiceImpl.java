@@ -308,7 +308,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         }
         EmergencyPlan planInfo = planMapper.selectByPrimaryKey(plan.getPlanId());
         if (planInfo == null || !PlanStatus.APPROVING.equals(plan.getStatus())) {
-            return CommonResult.failed("请选择待审核的预案");
+            return CommonResult.failed("请选择审核中的预案");
         }
 
         // 是否正在执行
@@ -491,8 +491,8 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         if (plan == null || ValidEnum.IN_VALID.equals(plan.getIsValid())) {
             return CommonResult.failed("预案不存在");
         }
-        if (!PlanStatus.NEW.getValue().equals(plan.getStatus())) {
-            return CommonResult.failed("预案不为待提审状态");
+        if (!PlanStatus.NEW.getValue().equals(plan.getStatus()) || !PlanStatus.REJECT.getValue().equals(plan.getStatus())) {
+            return CommonResult.failed("预案不为待提审或驳回状态");
         }
 
         EmergencyPlan updatePlan = new EmergencyPlan();
