@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package com.huawei.javamesh.metricserver.dao.influxdb.entity.ibmpool;
+package com.huawei.javamesh.sample.servermonitor.common;
 
-import com.huawei.javamesh.metricserver.dao.influxdb.entity.MemoryPoolInfluxEntity;
-import com.influxdb.annotations.Measurement;
+import java.io.InputStream;
 
-/**
- * Class storage类型IBM memory pool Influxdb持久化实体
- */
-@Measurement(name = "ibm_pool_cs")
-public class CSInfluxEntity extends MemoryPoolInfluxEntity {
+public interface VoidStreamHandler {
+
+    void handle(InputStream inputStream);
 }
