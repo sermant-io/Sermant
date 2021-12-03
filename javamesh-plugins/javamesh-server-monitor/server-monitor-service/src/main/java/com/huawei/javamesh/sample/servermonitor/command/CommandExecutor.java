@@ -1,24 +1,12 @@
 /*
- * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
  */
 
 package com.huawei.javamesh.sample.servermonitor.command;
 
 import com.huawei.javamesh.core.common.LoggerFactory;
-import com.huawei.javamesh.sample.servermonitor.common.StreamHandler;
-import com.huawei.javamesh.sample.servermonitor.common.VoidStreamHandler;
+import com.huawei.javamesh.sample.servermonitor.common.Consumer;
+import com.huawei.javamesh.sample.servermonitor.common.Function;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,18 +83,18 @@ public class CommandExecutor {
     }
 
     private static <T> Future<T> parseResult(final MonitorCommand<T> command, final InputStream inputStream) {
-        return POOL.submit(new InputHandleTask<T>(new StreamHandler<T>() {
+        return POOL.submit(new InputHandleTask<T>(new Function<InputStream, T>() {
             @Override
-            public T handle(InputStream inputStream) {
+            public T apply(InputStream inputStream) {
                 return command.parseResult(inputStream);
             }
         }, inputStream));
     }
 
     private static <T> void handleErrorStream(final MonitorCommand<T> command, final InputStream errorStream) {
-        POOL.execute(new ErrorHandleTask(new VoidStreamHandler() {
+        POOL.execute(new ErrorHandleTask(new Consumer<InputStream>() {
             @Override
-            public void handle(InputStream inputStream) {
+            public void accept(InputStream inputStream) {
                 command.handleError(inputStream);
             }
         }, errorStream));
@@ -114,35 +102,35 @@ public class CommandExecutor {
 
     private static class InputHandleTask<T> implements Callable<T> {
 
-        private final StreamHandler<T> handler;
+        private final Function<InputStream, T> function;
 
         private final InputStream inputStream;
 
-        public InputHandleTask(StreamHandler<T> handler, InputStream inputStream) {
-            this.handler = handler;
+        public InputHandleTask(Function<InputStream, T> function, InputStream inputStream) {
+            this.function = function;
             this.inputStream = inputStream;
         }
 
         @Override
         public T call() {
-            return handler.handle(inputStream);
+            return function.apply(inputStream);
         }
     }
 
     private static class ErrorHandleTask implements Runnable {
 
-        private final VoidStreamHandler handler;
+        private final Consumer<InputStream> consumer;
 
         private final InputStream inputStream;
 
-        public ErrorHandleTask(VoidStreamHandler handler, InputStream inputStream) {
-            this.handler = handler;
+        public ErrorHandleTask(Consumer<InputStream> consumer, InputStream inputStream) {
+            this.consumer = consumer;
             this.inputStream = inputStream;
         }
 
         @Override
         public void run() {
-            handler.handle(inputStream);
+            consumer.accept(inputStream);
         }
     }
 
