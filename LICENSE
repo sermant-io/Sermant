@@ -199,3 +199,77 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+====================================================================================
+
+The following files contain a portion of Apache Skywalking project.
+
+com/huawei/javamesh/sample/servermonitor/provider/OpenJvmMetricProvider in this product is
+copied from org/apache/skywalking/apm/agent/core/jvm/JVMService/java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/NonNameMatcher
+copied from org/apache/skywalking/apm/agent/core/plugin/match/IndirectMatch/java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/AnnotationMatcher
+copied from org/apache/skywalking/apm/agent/core/plugin/match/ClassAnnotationMatch/java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/MultiClassMatcher
+copied from org/apache/skywalking/apm/agent/core/plugin/match/MultiClassNameMatch/java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/PrefixMatcher
+copied from org/apache/skywalking/apm/agent/core/plugin/match/PrefixMatch/java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/SuperTypeMatcher
+copied from org/apache/skywalking/apm/agent/core/plugin/match/HierarchyMatch/java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/NameMatcher
+copied from org/apache/skywalking/apm/agent/core/plugin/match/NameMatch/java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/ClassMatcher
+copied from org/apache/skywalking/apm/agent/core/plugin/match/ClassMatch/java of Apache SkyWalking project.
+
+com/huawei/gray/feign/definition/DefaultHttpClientDefinition/java
+copied from org/apache/skywalking/apm/plugin/feign/http/v9/define/DefaultHttpClientInstrumentation/java of Apache SkyWalking project.
+
+com/huawei/gray/feign/definition/PathVarDefinition/java,
+copied from org/apache/skywalking/apm/plugin/feign/http/v9/define/PathVarInstrumentation/java of Apache SkyWalking project.
+
+com/huawei/gray/feign/interceptor/DefaultHttpClientInterceptor/java,
+com/huawei/gray/feign/service/DefaultHttpClientService/java,
+com/huawei/gray/feign/service/DefaultHttpClientServiceImpl/java
+copied from: org/apache/skywalking/apm/plugin/feign/http/v9/DefaultHttpClientInterceptor/java of Apache SkyWalking project.
+
+com/huawei/gray/feign/interceptor/PathVarInterceptor/java,
+com/huawei/gray/feign/service/PathVarService/java,
+com/huawei/gray/feign/service/PathVarServiceImpl/java
+copied from: org/apache/skywalking/apm/plugin/feign/http/v9/PathVarInterceptor/java of Apache SkyWalking project.
+
+com/huawei/gray/feign/context/FeignResolvedURL/java
+copied from org/apache/skywalking/apm/plugin/feign/http/v9/FeignResolvedURL/java of Apache SkyWalking project.
+
+com/huawei/flowrecord/plugins/dubbo/AliDubboInterceptor
+copied from org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor of Apache SkyWalking project.
+
+com/huawei/flowrecord/plugins/dubbo/DubboInterceptor
+copied from org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor of Apache SkyWalking project.
+
+
+Apache SkyWalking project is published at https://github.com/apache/skywalking-java  
+and is licensed under the following License:
+
+                    --------------------------
+  
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.

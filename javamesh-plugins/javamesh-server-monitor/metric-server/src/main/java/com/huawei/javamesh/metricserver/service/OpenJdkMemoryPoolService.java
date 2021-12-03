@@ -1,18 +1,30 @@
 /*
- * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.huawei.javamesh.metricserver.service;
 
 import com.huawei.javamesh.metricserver.dao.influxdb.InfluxDao;
 import com.huawei.javamesh.metricserver.dao.influxdb.entity.MemoryPoolInfluxEntity;
-import com.huawei.javamesh.metricserver.dao.influxdb.entity.skywalkingjvm.oraclepool.CodeCacheInfluxEntity;
-import com.huawei.javamesh.metricserver.dao.influxdb.entity.skywalkingjvm.oraclepool.MetaspaceInfluxEntity;
-import com.huawei.javamesh.metricserver.dao.influxdb.entity.skywalkingjvm.oraclepool.NewGenInfluxEntity;
-import com.huawei.javamesh.metricserver.dao.influxdb.entity.skywalkingjvm.oraclepool.OldGenInfluxEntity;
-import com.huawei.javamesh.metricserver.dao.influxdb.entity.skywalkingjvm.oraclepool.PermGenInfluxEntity;
-import com.huawei.javamesh.metricserver.dao.influxdb.entity.skywalkingjvm.oraclepool.SurvivorInfluxEntity;
-import com.huawei.javamesh.metricserver.dto.skywalkingjvm.OracleMemoryPoolDTO;
+import com.huawei.javamesh.metricserver.dao.influxdb.entity.openjdk.memorypool.CodeCacheInfluxEntity;
+import com.huawei.javamesh.metricserver.dao.influxdb.entity.openjdk.memorypool.MetaspaceInfluxEntity;
+import com.huawei.javamesh.metricserver.dao.influxdb.entity.openjdk.memorypool.NewGenInfluxEntity;
+import com.huawei.javamesh.metricserver.dao.influxdb.entity.openjdk.memorypool.OldGenInfluxEntity;
+import com.huawei.javamesh.metricserver.dao.influxdb.entity.openjdk.memorypool.PermGenInfluxEntity;
+import com.huawei.javamesh.metricserver.dao.influxdb.entity.openjdk.memorypool.SurvivorInfluxEntity;
+import com.huawei.javamesh.metricserver.dto.openjdk.OpenJdkMemoryPoolDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,33 +35,33 @@ import java.util.stream.Collectors;
  * Oracle Memory Pool服务
  */
 @Service
-public class OracleMemoryPoolService extends InfluxService {
+public class OpenJdkMemoryPoolService extends InfluxService {
 
     @Autowired
-    public OracleMemoryPoolService(InfluxDao influxDao) {
+    public OpenJdkMemoryPoolService(InfluxDao influxDao) {
         super(influxDao);
     }
 
     /**
-     * 添加{@link OracleMemoryPoolDTO}实体
+     * 添加{@link OpenJdkMemoryPoolDTO}实体
      *
-     * @param memoryPool 待添加的{@link OracleMemoryPoolDTO}实体
+     * @param memoryPool 待添加的{@link OpenJdkMemoryPoolDTO}实体
      */
-    public void addMemoryPoolMetric(OracleMemoryPoolDTO memoryPool) {
+    public void addMemoryPoolMetric(OpenJdkMemoryPoolDTO memoryPool) {
         insert(() -> newEntityOfType(memoryPool.getType()), memoryPool);
     }
 
     /**
-     * 查询{@link OracleMemoryPoolDTO}实体列表
+     * 查询{@link OpenJdkMemoryPoolDTO}实体列表
      *
      * @param type  Memory Pool类型
      * @param start 开始时间
      * @param end   结束时间
      * @return @link OracleMemoryPoolDTO}实体列表
      */
-    public List<OracleMemoryPoolDTO> getMemoryPools(OracleMemoryPoolDTO.OraclePoolType type, String start, String end) {
+    public List<OpenJdkMemoryPoolDTO> getMemoryPools(OpenJdkMemoryPoolDTO.OraclePoolType type, String start, String end) {
         return query(start, end, getClassOfType(type)).stream()
-            .map(entity -> OracleMemoryPoolDTO.builder()
+            .map(entity -> OpenJdkMemoryPoolDTO.builder()
                 .service(entity.getService())
                 .serviceInstance(entity.getServiceInstance())
                 .time(entity.getTime())
@@ -61,7 +73,7 @@ public class OracleMemoryPoolService extends InfluxService {
             .collect(Collectors.toList());
     }
 
-    private MemoryPoolInfluxEntity newEntityOfType(OracleMemoryPoolDTO.OraclePoolType type) {
+    private MemoryPoolInfluxEntity newEntityOfType(OpenJdkMemoryPoolDTO.OraclePoolType type) {
         switch (type) {
             case CODE_CACHE:
                 return new CodeCacheInfluxEntity();
@@ -80,7 +92,7 @@ public class OracleMemoryPoolService extends InfluxService {
         }
     }
 
-    private Class<? extends MemoryPoolInfluxEntity> getClassOfType(OracleMemoryPoolDTO.OraclePoolType type) {
+    private Class<? extends MemoryPoolInfluxEntity> getClassOfType(OpenJdkMemoryPoolDTO.OraclePoolType type) {
         switch (type) {
             case CODE_CACHE:
                 return CodeCacheInfluxEntity.class;
