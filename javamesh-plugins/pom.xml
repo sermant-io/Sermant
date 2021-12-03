@@ -14,7 +14,7 @@
         <package.plugin.name>${project.artifactId}</package.plugin.name>
         <package.plugin.version>${javamesh.version}</package.plugin.version>
         <package.plugin.dir>${package.agent.dir}/pluginPackage</package.plugin.dir>
-        <package.plugin.type>${project.artifactId}</package.plugin.type>
+        <package.plugin.type>undefined</package.plugin.type>
         <package.output.dir>${package.plugin.dir}/${package.plugin.name}/${package.plugin.type}</package.output.dir>
         <package.server.output.dir>${package.server.dir}/${package.plugin.name}</package.server.output.dir>
 
