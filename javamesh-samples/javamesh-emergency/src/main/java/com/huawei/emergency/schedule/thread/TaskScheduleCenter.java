@@ -4,6 +4,7 @@
 
 package com.huawei.emergency.schedule.thread;
 
+import com.huawei.common.constant.PlanStatus;
 import com.huawei.common.constant.ScheduleType;
 import com.huawei.common.constant.ValidEnum;
 import com.huawei.emergency.entity.EmergencyPlan;
@@ -217,6 +218,7 @@ public class TaskScheduleCenter {
             updatePlan.setTriggerLastTime(updatePlan.getTriggerNextTime());
             updatePlan.setTriggerNextTime(nextTriggerDate.getTime());
         } else {
+            updatePlan.setStatus(PlanStatus.APPROVED.getValue());
             updatePlan.setScheduleStatus(ValidEnum.IN_VALID.getValue());
             updatePlan.setTriggerLastTime(0L);
             updatePlan.setTriggerNextTime(0L);
