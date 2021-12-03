@@ -307,8 +307,8 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             return CommonResult.failed("请选择正确的预案");
         }
         EmergencyPlan planInfo = planMapper.selectByPrimaryKey(plan.getPlanId());
-        if (planInfo == null || !PlanStatus.APPROVING.equals(plan.getStatus())) {
-            return CommonResult.failed("请选择审核中的预案");
+        if (planInfo == null || !PlanStatus.APPROVING.getValue().equals(planInfo.getStatus())) {
+            return CommonResult.failed("请选择待审核的预案");
         }
 
         // 是否正在执行
@@ -491,7 +491,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         if (plan == null || ValidEnum.IN_VALID.equals(plan.getIsValid())) {
             return CommonResult.failed("预案不存在");
         }
-        if (!PlanStatus.NEW.getValue().equals(plan.getStatus()) || !PlanStatus.REJECT.getValue().equals(plan.getStatus())) {
+        if (!PlanStatus.NEW.getValue().equals(plan.getStatus()) && !PlanStatus.REJECT.getValue().equals(plan.getStatus())) {
             return CommonResult.failed("预案不为待提审或驳回状态");
         }
 
