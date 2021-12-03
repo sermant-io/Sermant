@@ -1,5 +1,18 @@
 /*
- * Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.huawei.flowrecord.plugins.dubbo;
@@ -144,37 +157,6 @@ public class AliDubboInterceptor implements InstanceMethodInterceptor {
     @Override
     public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
 
-    }
-
-    private String generateOperationName(URL requesturl, Invocation invocation) {
-        StringBuilder operationName = new StringBuilder();
-        operationName.append(requesturl.getPath());
-        operationName.append("." + invocation.getMethodName() + "(");
-        for (Class<?> classes : invocation.getParameterTypes()) {
-            operationName.append(classes.getSimpleName() + ",");
-        }
-
-        if (invocation.getParameterTypes().length > 0) {
-            operationName.delete(operationName.length() - 1, operationName.length());
-        }
-
-        operationName.append(")");
-
-        return operationName.toString();
-    }
-
-    /**
-     * Format request url. e.g. dubbo://127.0.0.1:20880/org.apache.skywalking.apm.plugin.test.Test.test(String).
-     *
-     * @return request url.
-     */
-    private String generateRequesturl(URL url, Invocation invocation) {
-        StringBuilder requesturl = new StringBuilder();
-        requesturl.append(url.getProtocol() + "://");
-        requesturl.append(url.getHost());
-        requesturl.append(CommonConst.COLON_SIGN + url.getPort() + CommonConst.SLASH_SIGN);
-        requesturl.append(generateOperationName(url, invocation));
-        return requesturl.toString();
     }
 
     private void sendRecorder(Invocation invocation, Result ret, boolean entry, Invoker invoker, String jobId,
