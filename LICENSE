@@ -241,4 +241,4 @@ com/huawei/javamesh/core/agent/matcher/NameMatcher.java in this product is copie
 com/huawei/javamesh/core/agent/matcher/ClassMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/ClassMatch.java of Apache SkyWalking project.
 
 Apache SkyWalking project is published at https://github.com/apache/skywalking-java  
-and it's license is Apache Software Foundation License 2.0.
+and it's license is Apache License Version 2.0.
