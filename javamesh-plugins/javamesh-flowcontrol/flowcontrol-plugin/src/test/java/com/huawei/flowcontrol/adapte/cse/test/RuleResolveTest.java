@@ -19,11 +19,11 @@ package com.huawei.flowcontrol.adapte.cse.test;
 import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
 import com.huawei.flowcontrol.adapte.cse.match.BusinessMatcher;
 import com.huawei.flowcontrol.adapte.cse.match.MatchGroupResolver;
-import com.huawei.flowcontrol.adapte.cse.rule.BulkThreadRule;
+import com.huawei.flowcontrol.adapte.cse.rule.BulkheadRule;
 import com.huawei.flowcontrol.adapte.cse.rule.CircuitBreakerRule;
 import com.huawei.flowcontrol.adapte.cse.rule.RateLimitingRule;
 import com.huawei.flowcontrol.adapte.cse.rule.RetryRule;
-import com.huawei.flowcontrol.adapte.cse.resolver.BulkThreadRuleResolver;
+import com.huawei.flowcontrol.adapte.cse.resolver.BulkheadRuleResolver;
 import com.huawei.flowcontrol.adapte.cse.resolver.CircuitBreakerRuleResolver;
 import com.huawei.flowcontrol.adapte.cse.resolver.RateLimitingRuleResolver;
 import com.huawei.flowcontrol.adapte.cse.resolver.RetryResolver;
@@ -58,11 +58,11 @@ public class RuleResolveTest {
     }
 
     @Test
-    public void resolveBulkThreadRuleTest() {
+    public void resolveBulkheadRuleTest() {
         String source = "maxConcurrentCalls: 1000 # 最大并发数\n" +
                 "maxWaitDuration: 110 # 最大等待时间，默认单位为ms，支持秒为100S\n" +
                 "services: helloService";
-        final BulkThreadRule userLoginAction = new BulkThreadRuleResolver().parseRule("userLoginAction", source, false, false);
+        final BulkheadRule userLoginAction = new BulkheadRuleResolver().parseRule("userLoginAction", source, false, false);
         Assert.assertEquals(userLoginAction.getMaxConcurrentCalls(), 1000);
         Assert.assertEquals(userLoginAction.getServices(), "helloService");
         Assert.assertEquals(userLoginAction.getParsedMaxWaitDuration(), 110000);

@@ -21,6 +21,10 @@ import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
+import com.huawei.flowcontrol.adapte.cse.resolver.BulkheadRuleResolver;
+import com.huawei.flowcontrol.adapte.cse.rule.BulkheadRule;
+import com.huawei.flowcontrol.adapte.cse.rule.isolate.IsolateThreadRule;
+import com.huawei.flowcontrol.adapte.cse.rule.isolate.IsolateThreadRuleManager;
 import com.huawei.javamesh.core.common.LoggerFactory;
 import com.huawei.flowcontrol.adapte.cse.ResolverManager;
 import com.huawei.flowcontrol.adapte.cse.RuleSyncer;
@@ -32,6 +36,7 @@ import com.huawei.flowcontrol.adapte.cse.rule.RateLimitingRule;
 import com.huawei.flowcontrol.core.datasource.DataSourceManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,6 +57,7 @@ public class CseDataSourceManager implements DataSourceManager {
     public void start() {
         registerFlowRuleDataSource();
         registerBreakerRuleDataSource();
+        registerIsolateThreadRuleDataSource();
         startCseConfigSyncer();
     }
 
@@ -66,6 +72,38 @@ public class CseDataSourceManager implements DataSourceManager {
     }
 
     /**
+     * 隔离仓规则
+     */
+    private void registerIsolateThreadRuleDataSource() {
+        try {
+            final CseKieDataSource<BulkheadRule, IsolateThreadRule> isolateDataSource =
+                    new CseKieDataSource<BulkheadRule, IsolateThreadRule>(new Converter<List<BulkheadRule>, List<IsolateThreadRule>>() {
+                        @Override
+                        public List<IsolateThreadRule> convert(List<BulkheadRule> source) {
+                            if (source == null) {
+                                return Collections.emptyList();
+                            }
+                            final ArrayList<IsolateThreadRule> isolateThreadRules = new ArrayList<IsolateThreadRule>();
+                            for (BulkheadRule bulkheadRule : source) {
+                                isolateThreadRules.addAll(bulkheadRule.convertToSentinelRule());
+                            }
+                            return isolateThreadRules;
+                        }
+                    });
+            IsolateThreadRuleManager.register2Property(isolateDataSource.getProperty());
+            final ConfigUpdateListener<BulkheadRule> configUpdateListener = new ConfigUpdateListener<BulkheadRule>() {
+                @Override
+                public void notify(Map<String, BulkheadRule> rules) {
+                    isolateDataSource.updateConfig(new ArrayList<BulkheadRule>(rules.values()));
+                }
+            };
+            ResolverManager.INSTANCE.registerListener(BulkheadRuleResolver.CONFIG_KEY, configUpdateListener);
+        } catch (Exception ex) {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Init cse kie isolate rule failed! %s", ex.getMessage()));
+        }
+    }
+
+    /**
      * 注册熔断规则
      */
     private void registerBreakerRuleDataSource() {
@@ -75,7 +113,7 @@ public class CseDataSourceManager implements DataSourceManager {
                         @Override
                         public List<DegradeRule> convert(List<CircuitBreakerRule> source) {
                             if (source == null) {
-                                return null;
+                                return Collections.emptyList();
                             }
                             final List<DegradeRule> degradeRules = new ArrayList<DegradeRule>();
                             for (CircuitBreakerRule rule : source) {
@@ -107,7 +145,7 @@ public class CseDataSourceManager implements DataSourceManager {
                         @Override
                         public List<FlowRule> convert(List<RateLimitingRule> source) {
                             if (source == null) {
-                                return null;
+                                return Collections.emptyList();
                             }
                             final List<FlowRule> flowRules = new ArrayList<FlowRule>();
                             for (RateLimitingRule rule : source) {

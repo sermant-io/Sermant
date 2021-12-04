@@ -25,6 +25,7 @@ package com.huawei.flowcontrol;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.huawei.javamesh.core.agent.common.BeforeResult;
 import com.huawei.flowcontrol.entry.EntryFacade;
+import org.apache.dubbo.rpc.AsyncRpcResult;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
@@ -55,8 +56,10 @@ public class ApacheDubboInterceptor extends DubboInterceptor  {
         try {
             EntryFacade.INSTANCE.tryEntry(invocation);
         } catch (BlockException ex) {
+            // 流控异常返回给上游
+            result.setResult(AsyncRpcResult.newDefaultAsyncResult(ex.toRuntimeException(), invocation));
             handleBlockException(ex, getResourceName(invoker.getInterface().getName(), invocation.getMethodName()),
-                    result, "ApacheDubboInterceptor consumer", EntryFacade.DubboType.APACHE);
+                    "ApacheDubboInterceptor consumer", EntryFacade.DubboType.APACHE);
         }
     }
 

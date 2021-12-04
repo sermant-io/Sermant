@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package com.huawei.flowcontrol.adapte.cse.resolver;
+package com.huawei.flowcontrol.adapte.cse.rule.isolate;
 
-import com.huawei.flowcontrol.adapte.cse.rule.BulkThreadRule;
+import com.alibaba.csp.sentinel.slots.block.AbstractRule;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 
 /**
- * 隔离仓配置解析
+ * 隔离仓异常
  *
  * @author zhouss
- * @since 2021-11-16
+ * @since 2021-12-04
  */
-public class BulkThreadRuleResolver extends AbstractRuleResolver<BulkThreadRule> {
-    /**
-     * 隔离仓配置 键
-     */
-    public static final String CONFIG_KEY = "servicecomb.bulkhead";
+public class IsolateThreadException extends BlockException {
 
-    public BulkThreadRuleResolver() {
-        super(CONFIG_KEY);
-    }
-
-    @Override
-    protected Class<BulkThreadRule> getRuleClass() {
-        return BulkThreadRule.class;
+    public IsolateThreadException(String ruleLimitApp, String message, AbstractRule rule) {
+        super(ruleLimitApp, message, rule);
     }
 }

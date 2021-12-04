@@ -96,7 +96,7 @@ public class FlowControlConfig implements PluginConfig {
     /**
      * kafka配置参数 流控信息数据发送topic名称
      */
-    private String kafkaMetricTopic = "topic-flowcontrol-metric";
+    private String kafkaMetricTopic = "topic-metric";
 
     /**
      * kafka配置参数 心跳数据发送topic名称
@@ -220,6 +220,12 @@ public class FlowControlConfig implements PluginConfig {
     private boolean adaptPass = false;
 
     /**
+     * 是否抛出业务异常
+     * 默认 false
+     */
+    private boolean throwBizException = false;
+
+    /**
      * 指标数据发送方式
      * 默认Netty
      */
@@ -230,6 +236,15 @@ public class FlowControlConfig implements PluginConfig {
      * 单位MS
      */
     private long metricSleepTimeMs = 1000L;
+
+
+    public boolean isThrowBizException() {
+        return throwBizException;
+    }
+
+    public void setThrowBizException(boolean throwBizException) {
+        this.throwBizException = throwBizException;
+    }
 
     public long getMetricSleepTimeMs() {
         return metricSleepTimeMs;

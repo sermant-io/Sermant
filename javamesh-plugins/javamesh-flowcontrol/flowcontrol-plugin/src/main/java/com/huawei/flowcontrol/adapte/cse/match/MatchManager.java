@@ -76,6 +76,26 @@ public enum MatchManager {
         return match(buildApacheDubboRequest(invocation));
     }
 
+    /**
+     * 构建API路径
+     *
+     * @param interfaceName 接口名
+     * @param version 版本
+     * @param methodName 方法名
+     * @return api路径
+     */
+    public String buildApiPath(String interfaceName, String version, String methodName) {
+        if (version == null || "".equals(version)) {
+            // 作为consumer的场景，version为空
+            return interfaceName + "." + methodName;
+        } else {
+            // 作为生产者时 invocation.getTargetServiceUniqueName 该方法仅高版本有，
+            // 返回的接口信息会携带版本号例如 com.huawei.dubbotest.service.CTest:0.0.0
+            // 接口信息则没有版本com.huawei.dubbotest.service.CTest, 但低版本getAttachment会携带版本字段，因此可直接拼凑
+            return interfaceName + ":" + version + "." + methodName;
+        }
+    }
+
     private Set<String> match(CseMatchRequest cseRequest) {
         // 匹配规则
         final MatchGroupResolver resolver = ResolverManager.INSTANCE.getResolver(MatchGroupResolver.CONFIG_KEY);
@@ -108,21 +128,16 @@ public enum MatchManager {
         return new CseMatchRequest(apiPath, headers, method);
     }
 
-    public CseMatchRequest buildAlibabaDubboRequest(com.alibaba.dubbo.rpc.Invocation invocation) {
-        // invocation.getTargetServiceUniqueName 该方法高版本有，返回的接口信息会携带版本号例如 com.huawei.dubbotest.service.CTest:0.0.0
-        // 接口信息则没有版本com.huawei.dubbotest.service.CTest, 但低版本getAttachment会携带版本字段，因此可直接拼凑
-        String apiPath = invocation.getInvoker().getInterface().getName()
-                + ":" + invocation.getAttachment(DUBBO_ATTACHMENT_VERSION)
-                + "." + invocation.getMethodName();
+    private CseMatchRequest buildAlibabaDubboRequest(com.alibaba.dubbo.rpc.Invocation invocation) {
+        String apiPath = buildApiPath(invocation.getInvoker().getInterface().getName(),
+                invocation.getAttachment(DUBBO_ATTACHMENT_VERSION), invocation.getMethodName());
         return new CseMatchRequest(apiPath, invocation.getAttachments(), "POST");
     }
 
-    public CseMatchRequest buildApacheDubboRequest(org.apache.dubbo.rpc.Invocation invocation) {
+    private CseMatchRequest buildApacheDubboRequest(org.apache.dubbo.rpc.Invocation invocation) {
         // invocation.getTargetServiceUniqueName
-        String apiPath = invocation.getInvoker().getInterface().getName()
-                + ":" + invocation.getAttachment(DUBBO_ATTACHMENT_VERSION)
-                + "." + invocation.getMethodName();
+        String apiPath = buildApiPath(invocation.getInvoker().getInterface().getName(),
+                invocation.getAttachment(DUBBO_ATTACHMENT_VERSION), invocation.getMethodName());
         return new CseMatchRequest(apiPath, invocation.getAttachments(), "POST");
     }
-
 }

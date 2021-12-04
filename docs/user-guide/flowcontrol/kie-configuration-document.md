@@ -66,7 +66,20 @@ dynamicconfig.kie_url=http://127.0.0.1:30110
 }
 ```
 
-### 5.3 规则说明
+### 5.3 隔离仓规则
+
+```json
+{
+	"key": "IsolateRule",
+	"value": "[{\"resource\":\"/degrade\",\"maxWaitDuration\":1000, \"maxConcurrentCalls\": 2}]",
+	"labels": {
+		"service": "flowControlDemo"
+	},
+	"status": "enabled"
+}
+```
+
+### 5.4 规则说明
 
 | 配置项         | 说明                                                         |
 | -------------- | ------------------------------------------------------------ |
