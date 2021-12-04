@@ -121,24 +121,20 @@ gray.plugin:
 
 ## 结果验证
 
-- 前提条件 [正确打包Java-mesh](../../README.md)
+- 前提条件[正确打包Java-mesh](../../README.md)
 
-- 编译demo应用
+- 下载[Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html) ，解压后按照文档说明进行启动
+
+- 编译[demo应用](../../../javamesh-plugins/javamesh-route/demo-route/demo-gray-dubbo)
 
 ```shell
 mvn clean package
 ```
 
-- 启动入口应用
-
-```shell
-java -jar test-0.0.1.jar
-```
-
 - 启动消费者
 
 ```shell
-java -javaagent:${path}\javamesh-agent-2.0.5\agent\javamesh-agent.jar=appName=dubbo-a,instanceName=dubboA -jar dubbo-a-0.0.1.jar
+java -javaagent:${path}\javamesh-agent-2.0.5\agent\javamesh-agent.jar=appName=dubbo-a,instanceName=dubboA -jar dubbo-a.jar
 ```
 
 其中path需要替换为Java-mesh实际打包路径
@@ -146,17 +142,17 @@ java -javaagent:${path}\javamesh-agent-2.0.5\agent\javamesh-agent.jar=appName=du
 - 启动生产者
 
 ```shell
-java -jar dubbo-b-0.0.1.jar
+java -jar dubbo-b.jar
 ```
 
 - 启动灰度生产者
 
 ```shell
-java -jar -Ddubbo.servicecomb.service.version=1.0.2 -Dtest.version=V2 -Dprovider=dubbo/provider-48822.xml -Dserver.port=48022 -Ddubbo.protocol.port=48822 dubbo-b-0.0.1.jar
+java -jar dubbo-b2.jar
 ```
 
 - 测试
 
-当启动以上4个应用并正确配置灰度规则后，通过浏览器访问<http://localhost:28020/object?id=2>，即可灰度到1.0.2版本的dubbo-b应用。
+当启动以上3个应用并正确配置灰度规则后，通过浏览器访问<http://localhost:28020/object?id=2>，即可灰度到1.0.2版本的dubbo-b2应用。
 
 [返回**Java-mesh**说明文档](../../README.md)
