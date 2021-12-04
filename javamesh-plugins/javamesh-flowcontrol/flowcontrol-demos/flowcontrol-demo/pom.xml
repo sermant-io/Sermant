@@ -5,47 +5,25 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.huawei</groupId>
-    <artifactId>flowcontrol-demo-cse</artifactId>
+    <artifactId>flowcontrol-demo</artifactId>
     <version>1.0.0</version>
     <parent>
-        <artifactId>demo-flowcontrol</artifactId>
-        <groupId>com.huawei.demo.flowcontrol</groupId>
+        <artifactId>flowcontrol-demos</artifactId>
+        <groupId>com.huawei.flowcontrol.demo</groupId>
         <version>1.0.0</version>
     </parent>
-
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <spring-cloud.version>1.6.1-Finchley</spring-cloud.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.huaweicloud</groupId>
-            <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
-            <version>${spring-cloud.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.huaweicloud</groupId>
-            <artifactId>spring-cloud-huawei-config</artifactId>
-            <version>${spring-cloud.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>CseFlowControlDemo</finalName>
+        <finalName>FlowControlDemo</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

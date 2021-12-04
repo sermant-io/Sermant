@@ -7,7 +7,7 @@
 ## 1、环境准备
 
 - 搭建[KIE](https://github.com/apache/servicecomb-kie)服务端
-- 准备[DEMO](../../../javamesh-samples/javamesh-example/demo-flowcontrol/flowcontrol-demo)应用
+- 准备[DEMO](../../../javamesh-plugins/javamesh-flowcontrol/flowcontrol-demos/flowcontrol-demo)应用
 
 ## 2、下载源码并打包插件
 

@@ -5,7 +5,7 @@
 - [Open Jdk](http://openjdk.java.net/) / [Oracle Jdk](https://www.oracle.com/java/technologies/downloads/) / Huawei Jdk
 - [Zookeeper](https://zookeeper.apache.org/releases.html)
 - [Maven](https://maven.apache.org/)
-- [Demo应用](../../../javamesh-samples/javamesh-example/demo-flowcontrol/flowcontrol-demo)
+- [Demo应用](../../../javamesh-plugins/javamesh-flowcontrol/flowcontrol-demos/flowcontrol-demo)
 
 ### 2、下载源码并打包插件
 
@@ -42,7 +42,7 @@ dynamicconfig.kie_url=http://127.0.0.1:30110
 
 ### 4、打包并启动应用
 
-#### 4.1 打包[Demo应用](../../../javamesh-samples/javamesh-example/demo-flowcontrol/flowcontrol-demo)
+#### 4.1 打包[Demo应用](../../../javamesh-plugins/javamesh-flowcontrol/flowcontrol-demos/flowcontrol-demo)
 
 #### 4.2 启动应用
 
