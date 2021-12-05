@@ -199,3 +199,46 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+====================================================================================
+
+The following files contain a portion of Apache Skywalking project.
+
+com/huawei/gray/feign/definition/DefaultHttpClientDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/define/DefaultHttpClientInstrumentation.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/definition/PathVarDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/define/PathVarInstrumentation.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/interceptor/DefaultHttpClientInterceptor.java,
+com/huawei/gray/feign/service/DefaultHttpClientService.java,
+com/huawei/gray/feign/service/DefaultHttpClientServiceImpl.java
+in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/DefaultHttpClientInterceptor.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/interceptor/PathVarInterceptor.java,
+com/huawei/gray/feign/service/PathVarService.java,
+com/huawei/gray/feign/service/PathVarServiceImpl.java
+in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/PathVarInterceptor.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/context/FeignResolvedURL.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/FeignResolvedURL.java of Apache SkyWalking project.
+
+com/huawei/flowrecord/plugins/dubbo/AliDubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+
+com/huawei/flowrecord/plugins/dubbo/DubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+
+com/huawei/javamesh/sample/servermonitor/provider/OpenJvmMetricProvider.java in this product is copied from org/apache/skywalking/apm/agent/core/jvm/JVMService.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/NonNameMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/IndirectMatch.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/AnnotationMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/ClassAnnotationMatch.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/MultiClassMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/MultiClassNameMatch.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/PrefixMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/PrefixMatch.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/SuperTypeMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/HierarchyMatch.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/NameMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/NameMatch.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/ClassMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/ClassMatch.java of Apache SkyWalking project.
+
+Apache SkyWalking project is published at https://github.com/apache/skywalking-java  
+and it's license is Apache License Version 2.0.
