@@ -13,7 +13,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ */
+
+/*
+ * Based on org/apache/skywalking/apm/agent/core/plugin/match/NameMatch.java
+ * from the Apache Skywalking project.
  */
 
 package com.huawei.javamesh.core.agent.matcher;

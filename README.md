@@ -94,6 +94,6 @@ Please read  [Contribute Guide](CONTRIBUTING.md) to refer how to jion the contri
 
 - [Apache/Servicecomb-java-chassis](https://github.com/apache/servicecomb-java-chassis): Java-mesh refer the service governance algorithm from Apache Servicecomb project.
 - [Apache/Servicecomb-kie](https://github.com/apache/servicecomb-kie): Java-mesh uses servicecomb-kie as the default dynamic configuration center.
-- [Apache/SkyWalking](https://skywalking.apache.org/): Part of the framework code in Java-mesh is built based on Apache Skywalking project.
+- [Apache/SkyWalking](https://skywalking.apache.org/): The plugin architecture in this project is refered to Apache Skywalking. Part of the framework code in Java-mesh is built based on Apache Skywalking project as well.
 - [Alibaba/Sentinel](https://github.com/alibaba/Sentinel): Java-mesh's flow-control plugin is built based on Alibaba Sentinel project. 
 

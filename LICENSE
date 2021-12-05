@@ -204,41 +204,101 @@
 
 The following files contain a portion of Apache Skywalking project.
 
-com/huawei/gray/feign/definition/DefaultHttpClientDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/define/DefaultHttpClientInstrumentation.java of Apache SkyWalking project.
+com/huawei/javamesh/core/agent/common/BeforeResult.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/MethodInterceptResult.java of Apache SkyWalking project.
 
-com/huawei/gray/feign/definition/PathVarDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/define/PathVarInstrumentation.java of Apache SkyWalking project.
+com/huawei/javamesh/core/agent/common/OverrideArgumentsCall.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/OverrideCallable.java of Apache SkyWalking project.
 
-com/huawei/gray/feign/interceptor/DefaultHttpClientInterceptor.java,
-com/huawei/gray/feign/service/DefaultHttpClientService.java,
-com/huawei/gray/feign/service/DefaultHttpClientServiceImpl.java
-in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/DefaultHttpClientInterceptor.java of Apache SkyWalking project.
+com/huawei/javamesh/core/agent/definition/EnhanceDefinition.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/AbstractClassEnhancePluginDefine.java of Apache SkyWalking project.
 
-com/huawei/gray/feign/interceptor/PathVarInterceptor.java,
-com/huawei/gray/feign/service/PathVarService.java,
-com/huawei/gray/feign/service/PathVarServiceImpl.java
-in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/PathVarInterceptor.java of Apache SkyWalking project.
+com/huawei/javamesh/core/agent/definition/MethodInterceptPoint.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/interceptor/InstanceMethodsInterceptPoint.java, org/apache/skywalking/apm/agent/core/plugin/interceptor/StaticMethodsInterceptPoint.java and org/apache/skywalking/apm/agent/core/plugin/interceptor/ConstructorInterceptPoint.java of Apache SkyWalking project.
 
-com/huawei/gray/feign/context/FeignResolvedURL.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/FeignResolvedURL.java of Apache SkyWalking project.
+com/huawei/javamesh/core/agent/enhancer/AbstractAroundEnhancer.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/InstMethodsInter.java, org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/InstMethodsInterWithOverrideArgs.java, org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/StaticMethodsInter.java and org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/StaticMethodsInterWithOverrideArgs.java of Apache SkyWalking project.
 
-com/huawei/flowrecord/plugins/dubbo/AliDubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+com/huawei/javamesh/core/agent/enhancer/ConstructorEnhancer.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/ConstructorInter.java of Apache SkyWalking project.
 
-com/huawei/flowrecord/plugins/dubbo/DubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+com/huawei/javamesh/core/agent/enhancer/InstanceMethodEnhancer.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/InstMethodsInter.java and org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/InstMethodsInterWithOverrideArgs.java of Apache SkyWalking project.
 
-com/huawei/javamesh/sample/servermonitor/provider/OpenJvmMetricProvider.java in this product is copied from org/apache/skywalking/apm/agent/core/jvm/JVMService.java of Apache SkyWalking project.
+com/huawei/javamesh/core/agent/enhancer/OriginEnhancer.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/InstMethodsInter.java, org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/InstMethodsInterWithOverrideArgs.java, org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/StaticMethodsInter.java and org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/StaticMethodsInterWithOverrideArgs.java of Apache SkyWalking project.
 
-com/huawei/javamesh/core/agent/matcher/NonNameMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/IndirectMatch.java of Apache SkyWalking project.
+com/huawei/javamesh/core/agent/enhancer/StaticMethodEnhancer.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/StaticMethodsInter.java and org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/StaticMethodsInterWithOverrideArgs.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/interceptor/ConstructorInterceptor.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/InstanceConstructorInterceptor.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/interceptor/InstanceMethodInterceptor.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/InstanceMethodsAroundInterceptor.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/interceptor/InterceptorLoader.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/loader/InterceptorInstanceLoader.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/interceptor/StaticMethodInterceptor.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/interceptor/enhance/StaticMethodsAroundInterceptor.java of Apache SkyWalking project.
 
 com/huawei/javamesh/core/agent/matcher/AnnotationMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/ClassAnnotationMatch.java of Apache SkyWalking project.
 
+com/huawei/javamesh/core/agent/matcher/ClassMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/ClassMatch.java of Apache SkyWalking project.
+
 com/huawei/javamesh/core/agent/matcher/MultiClassMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/MultiClassNameMatch.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/NameMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/NameMatch.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/NonNameMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/IndirectMatch.java of Apache SkyWalking project.
 
 com/huawei/javamesh/core/agent/matcher/PrefixMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/PrefixMatch.java of Apache SkyWalking project.
 
 com/huawei/javamesh/core/agent/matcher/SuperTypeMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/HierarchyMatch.java of Apache SkyWalking project.
 
-com/huawei/javamesh/core/agent/matcher/NameMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/NameMatch.java of Apache SkyWalking project.
+com/huawei/javamesh/core/agent/transformer/DelegateTransformer.java in this product is copied from org/apache/skywalking/apm/agent/SkyWalkingAgent.java of Apache SkyWalking project.
 
-com/huawei/javamesh/core/agent/matcher/ClassMatcher.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/ClassMatch.java of Apache SkyWalking project.
+com/huawei/javamesh/core/agent/ByteBuddyAgentBuilder.java in this product is copied from org/apache/skywalking/apm/agent/SkyWalkingAgent.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/EnhanceDefinitionLoader.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/PluginBootstrap.java and org/apache/skywalking/apm/agent/core/plugin/PluginFinder.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/agent/matcher/ClassMatchers.java in this product is copied from org/apache/skywalking/apm/agent/core/plugin/match/NameMatch.java of Apache SkyWalking project.
+
+com/huawei/javamesh/core/service/ServiceManager.java in this product is copied from org/apache/skywalking/apm/agent/core/boot/ServiceManager.java of Apache SkyWalking project.
+
+com/huawei/flowcontrol/DubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInterceptor.java and org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+
+com/huawei/flowcontrol/DubboDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInstrumentation.java and org/apache/skywalking/apm/plugin/dubbo/DubboInstrumentation.java of Apache SkyWalking project.
+
+com/huawei/javamesh/sample/servermonitor/provider/OpenJvmMetricProvider.java in this product is copied from org/apache/skywalking/apm/agent/core/jvm/JVMService.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/service/PathVarServiceImpl.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/PathVarInterceptor.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/service/DefaultHttpClientServiceImpl.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/DefaultHttpClientInterceptor.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/context/FeignResolvedURL.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/FeignResolvedURL.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/service/PathVarService.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/PathVarInterceptor.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/service/DefaultHttpClientService.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/DefaultHttpClientInterceptor.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/interceptor/PathVarInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/PathVarInterceptor.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/interceptor/DefaultHttpClientInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/DefaultHttpClientInterceptor.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/definition/PathVarDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/define/PathVarInstrumentation.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/definition/HttpClientDefinition.java in this product is copied from com/huawei/apm/plugin/feign/http/v9/define/HttpClientInstrumentation.java of Apache SkyWalking project.
+
+com/huawei/gray/feign/definition/DefaultHttpClientDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/define/DefaultHttpClientInstrumentation.java of Apache SkyWalking project.
+
+com/huawei/gray/dubbo/definition/apache/MonitorFilterDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInstrumentation.java of Apache SkyWalking project.
+
+com/huawei/flowrecord/plugins/dubbo/DubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+
+com/huawei/flowrecord/plugins/dubbo/DubboInstrumentation.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInstrumentation.java of Apache SkyWalking project.
+
+com/huawei/flowrecord/plugins/dubbo/AliDubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+
+com/huawei/flowrecord/plugins/dubbo/AliDubboInstrumentation.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInstrumentation.java of Apache SkyWalking project.
+
+com/huawei/flowcontrol/ApacheDubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+
+com/huawei/flowcontrol/ApacheDubboDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInstrumentation.java of Apache SkyWalking project.
+
+com/huawei/flowcontrol/AlibabaDubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+
+com/huawei/flowcontrol/AlibabaDubboDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInstrumentation.java of Apache SkyWalking project.
+
+
 
 Apache SkyWalking project is published at https://github.com/apache/skywalking-java  
 and it's license is Apache License Version 2.0.

@@ -13,7 +13,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ */
+
+/*
+ * Based on org/apache/skywalking/apm/plugin/feign/http/v9/DefaultHttpClientInterceptor.java
+ * from the Apache Skywalking project.
  */
 
 package com.huawei.gray.feign.service;

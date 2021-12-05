@@ -15,6 +15,11 @@
  * limitations under the License.
  */
 
+/*
+ * Based on org/apache/skywalking/apm/plugin/asf/dubbo/DubboInterceptor.java
+ * from the Apache Skywalking project.
+ */
+
 package com.huawei.flowrecord.plugins.dubbo;
 
 import com.huawei.javamesh.core.lubanops.bootstrap.TransformAccess;
