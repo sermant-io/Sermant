@@ -37,7 +37,7 @@ public class LabelGroupUtilsTest {
         objectObjectHashMap.put("app", "sc");
         objectObjectHashMap.put("version", "1.0");
         final String labelKey = LabelGroupUtils.createLabelGroup(objectObjectHashMap);
-        Assert.assertEquals("KIE-LABEL-FLAG#label=app%3Asc&label=version%3A1.0&", labelKey);
+        Assert.assertEquals("app=sc&version=1.0", labelKey);
         final Map<String, String> stringStringMap = LabelGroupUtils.resolveGroupLabels(labelKey);
         Assert.assertTrue(stringStringMap.containsKey("app") && stringStringMap.containsKey("version"));
     }

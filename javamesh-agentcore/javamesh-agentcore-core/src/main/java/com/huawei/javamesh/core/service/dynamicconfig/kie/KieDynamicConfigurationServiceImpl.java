@@ -92,7 +92,7 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
 
     @Override
     public boolean publishConfig(String key, String group, String content) {
-        throw new UnsupportedOperationException();
+        return subscriberManager.publishConfig(key, group, content);
     }
 
     @Override

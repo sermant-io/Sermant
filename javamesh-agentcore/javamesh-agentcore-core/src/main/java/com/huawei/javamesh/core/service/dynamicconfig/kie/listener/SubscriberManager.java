@@ -26,10 +26,12 @@ import com.huawei.javamesh.core.service.dynamicconfig.kie.client.kie.KieResponse
 import com.huawei.javamesh.core.service.dynamicconfig.kie.client.kie.KieSubscriber;
 import com.huawei.javamesh.core.service.dynamicconfig.utils.LabelGroupUtils;
 import com.huawei.javamesh.core.service.dynamicconfig.service.ConfigurationListener;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -153,6 +155,22 @@ public class SubscriberManager {
             LOGGER.warning(String.format(Locale.ENGLISH, "Removed group listener failed, %s", ex.getMessage()));
             return false;
         }
+    }
+
+    /**
+     * 发布配置
+     *
+     * @param key 配置键
+     * @param group 分组
+     * @param content 配置内容
+     * @return 是否发布成功
+     */
+    public boolean publishConfig(String key, String group, String content) {
+        if (StringUtils.isEmpty(key)) {
+            return false;
+        }
+        final Map<String, String> labels = LabelGroupUtils.resolveGroupLabels(group);
+        return kieClient.publishConfig(key, labels, content, true);
     }
 
     /**

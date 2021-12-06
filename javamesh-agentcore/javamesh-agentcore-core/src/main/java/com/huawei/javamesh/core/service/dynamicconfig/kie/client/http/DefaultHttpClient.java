@@ -16,6 +16,7 @@
 
 package com.huawei.javamesh.core.service.dynamicconfig.kie.client.http;
 
+import com.alibaba.fastjson.JSONObject;
 import com.huawei.javamesh.core.common.LoggerFactory;
 import com.huawei.javamesh.core.service.dynamicconfig.kie.listener.SubscriberManager;
 import org.apache.http.HttpEntity;
@@ -23,17 +24,27 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -104,49 +115,6 @@ public class DefaultHttpClient implements com.huawei.javamesh.core.service.dynam
      * get请求
      *
      * @param url 请求地址
-     * @param headers 请求头
-     * @return HttpResult
-     */
-    @Override
-    public HttpResult doGet(String url, Map<String, String> headers, RequestConfig requestConfig) {
-        final HttpGet httpGet = new HttpGet(url);
-        addDefaultHeaders(httpGet);
-        addHeaders(httpGet, headers);
-        if (requestConfig != null) {
-            httpGet.setConfig(requestConfig);
-        }
-        HttpEntity entity = null;
-        HttpResponse response = null;
-        String result = null;
-        try {
-            response = this.httpClient.execute(httpGet);
-            if (response == null) {
-                return HttpResult.error();
-            }
-            entity = response.getEntity();
-            if (entity == null) {
-                return new HttpResult(response.getStatusLine().getStatusCode(), "", response.getAllHeaders());
-            }
-            result = EntityUtils.toString(entity, "UTF-8");
-        } catch (IOException ex) {
-            LOGGER.warning(String.format("Execute get request failed, %s", ex.getMessage()));
-        } finally {
-            try {
-                EntityUtils.consume(entity);
-            } catch (IOException ex) {
-                LOGGER.warning(String.format("Consumed http entity failed, %s", ex.getMessage()));
-            }
-        }
-        if (response == null) {
-            return HttpResult.error();
-        }
-        return new HttpResult(response.getStatusLine().getStatusCode(), result, response.getAllHeaders());
-    }
-
-    /**
-     * get请求
-     *
-     * @param url 请求地址
      * @return HttpResult
      */
     @Override
@@ -157,6 +125,92 @@ public class DefaultHttpClient implements com.huawei.javamesh.core.service.dynam
     @Override
     public HttpResult doGet(String url, RequestConfig requestConfig) {
         return doGet(url, null, requestConfig);
+    }
+
+    /**
+     * get请求
+     *
+     * @param url 请求地址
+     * @param headers 请求头
+     * @return HttpResult
+     */
+    @Override
+    public HttpResult doGet(String url, Map<String, String> headers, RequestConfig requestConfig) {
+        final HttpGet httpGet = new HttpGet(url);
+        beforeRequest(httpGet, requestConfig, headers);
+        return execute(httpGet);
+    }
+
+    @Override
+    public HttpResult doPost(String url, Map<String, Object> params) {
+        return doPost(url, params, null);
+    }
+
+    @Override
+    public HttpResult doPost(String url, Map<String, Object> params, RequestConfig requestConfig) {
+        return doPost(url, params, requestConfig, new HashMap<>());
+    }
+
+    @Override
+    public HttpResult doPost(String url, Map<String, Object> params, RequestConfig requestConfig, Map<String, String> headers) {
+        HttpPost httpPost = new HttpPost(url);
+        beforeRequest(httpPost, requestConfig, headers);
+        addParams(httpPost, params);
+        return execute(httpPost);
+    }
+
+    /**
+     * 执行请求
+     *
+     * @param request 请求参数
+     * @return HttpResult
+     */
+    private HttpResult execute(HttpUriRequest request) {
+        HttpEntity entity = null;
+        HttpResponse response = null;
+        String result = null;
+        try {
+            response = this.httpClient.execute(request);
+            if (response == null) {
+                return HttpResult.error();
+            }
+            entity = response.getEntity();
+            if (entity == null) {
+                return new HttpResult(response.getStatusLine().getStatusCode(), "", response.getAllHeaders());
+            }
+            result = EntityUtils.toString(entity, "UTF-8");
+        } catch (IOException ex) {
+            LOGGER.warning(String.format("Execute request failed, %s", ex.getMessage()));
+        } finally {
+            consumeEntity(entity);
+        }
+        if (response == null) {
+            return HttpResult.error();
+        }
+        return new HttpResult(response.getStatusLine().getStatusCode(), result, response.getAllHeaders());
+    }
+
+    private void consumeEntity(HttpEntity entity) {
+        try {
+            EntityUtils.consume(entity);
+        } catch (IOException ex) {
+            LOGGER.warning(String.format("Consumed http entity failed, %s", ex.getMessage()));
+        }
+    }
+
+    private void addParams(HttpPost httpPost, Map<String, Object> params) {
+        if (params == null || params.isEmpty()) {
+            return;
+        }
+        httpPost.setEntity(new StringEntity(JSONObject.toJSONString(params), ContentType.APPLICATION_JSON));
+    }
+
+    private void beforeRequest(HttpRequestBase httpRequest, RequestConfig requestConfig, Map<String, String> headers) {
+        addDefaultHeaders(httpRequest);
+        addHeaders(httpRequest, headers);
+        if (requestConfig != null) {
+            httpRequest.setConfig(requestConfig);
+        }
     }
 
     private void addHeaders(HttpRequestBase base, Map<String, String> headers) {
@@ -174,5 +228,4 @@ public class DefaultHttpClient implements com.huawei.javamesh.core.service.dynam
         base.addHeader(HttpHeaders.CONTENT_TYPE, "application/json; charset=utf-8");
         base.addHeader(HttpHeaders.USER_AGENT, "java-mesh/client");
     }
-
 }
