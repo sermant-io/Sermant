@@ -1,10 +1,6 @@
 【issue号/问题单号/需求单号】xxx超链接
 
-【修改原因】原因一：xxxx；原因二：xxx
-
 【修改内容】增加/修改/删除了xxx
-
-【检查者】@xxx @xxx @xxx
 
 【用例描述】是否需要修改用例？原因？/ 不增加用例的原因?
 
@@ -18,15 +14,9 @@ What type of PR is this?
 
 /feat
 
-What this PR does / why we need it:
-
-xxxxx
-
 Which issue(s) this PR fixes:
 
 Fixes #
-
-Special notes for your reviewer: @ xxx @xxx
 
 Use case description: xxxx
 
