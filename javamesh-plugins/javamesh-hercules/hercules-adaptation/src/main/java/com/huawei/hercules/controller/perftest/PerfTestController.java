@@ -434,7 +434,7 @@ public class PerfTestController extends BaseController {
      * @return 报告结果
      */
     @RequestMapping(value = {"/report/get"}, method = RequestMethod.GET)
-    public JSONObject getReports(@RequestParam String testId) {
+    public JSONObject getReports(@RequestParam("test_id") String testId) {
         JSONObject report = perfTestService.getReportById(Long.parseLong(testId));
         if (report == null || report.isEmpty()) {
             throw new HerculesException("Report data don't found, please confirm the task status.");
@@ -454,7 +454,7 @@ public class PerfTestController extends BaseController {
      * @return 报告信息
      */
     @RequestMapping(value = {"/report/chart"}, method = RequestMethod.GET)
-    public JSONObject getAllChart(@RequestParam Integer testId) {
+    public JSONObject getAllChart(@RequestParam("test_id") Integer testId) {
         String dataType = "TPS,Errors,Mean_Test_Time_(ms),Mean_time_to_first_byte,User_defined,Vuser";
 
         HttpEntity<String> reports = perfTestService.getPerfGraphById(testId, dataType, false, IMG_WIDTH);
@@ -482,7 +482,7 @@ public class PerfTestController extends BaseController {
      * @throws Exception 异常
      */
     @RequestMapping(value = "/task/download")
-    public void downloadLogByID(@RequestParam long testId, @RequestParam String logName, HttpServletResponse response) throws Exception {
+    public void downloadLogByID(@RequestParam("test_id") long testId, @RequestParam("log_name") String logName, HttpServletResponse response) throws Exception {
         if (testId <= 0 || StringUtils.isEmpty(logName)) {
             return;
         }
