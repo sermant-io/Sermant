@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
+/**
+ * Based on com/alibaba/csp/sentinel/dashboard/entity/rule/SystemRuleEntity.java
+ * from the Alibaba Sentinel project.
+ */
+
 package com.huawei.flowcontrol.console.entity;
 
 import com.alibaba.csp.sentinel.slots.system.SystemRule;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * 此处部分引用alibaba/Sentinel开源社区代码，诚挚感谢alibaba/Sentinel开源团队的慷慨贡献
- */
 @Getter
 @Setter
 public class SystemRuleVo extends BaseRule<SystemRule> {

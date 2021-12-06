@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * Based on com/alibaba/csp/sentinel/dashboard/config/DashboardConfig.java
+ * from the Alibaba Sentinel project.
+ */
+
 package com.huawei.flowcontrol.console.entity;
 
 import org.apache.commons.lang.StringUtils;

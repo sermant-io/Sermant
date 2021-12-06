@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * Based on com/alibaba/csp/sentinel/dashboard/discovery/MachineDiscovery.java
+ * from the Alibaba Sentinel project.
+ */
+
 package com.huawei.flowcontrol.console.repository.metric;
 
 import com.huawei.flowcontrol.console.entity.AppInfo;
@@ -22,9 +27,6 @@ import com.huawei.flowcontrol.console.entity.MachineInfo;
 import java.util.List;
 import java.util.Set;
 
-/**
- * 此处部分引用alibaba/Sentinel开源社区代码，诚挚感谢alibaba/Sentinel开源团队的慷慨贡献
- */
 public interface MachineDiscovery {
 
     String UNKNOWN_APP_NAME = "CLUSTER_NOT_STARTED";

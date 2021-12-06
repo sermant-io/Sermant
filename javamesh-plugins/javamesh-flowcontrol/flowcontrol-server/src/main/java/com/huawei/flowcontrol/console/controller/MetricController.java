@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * Based on com/alibaba/csp/sentinel/dashboard/controller/MetricController.java
+ * from the Alibaba Sentinel project.
+ */
+
 package com.huawei.flowcontrol.console.controller;
 
 import com.alibaba.csp.sentinel.util.StringUtil;
@@ -37,9 +42,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 此处部分引用alibaba/Sentinel开源社区代码，诚挚感谢alibaba/Sentinel开源团队的慷慨贡献
- */
 @RestController
 @RequestMapping("/metric")
 public class MetricController {

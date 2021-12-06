@@ -298,7 +298,93 @@ com/huawei/flowcontrol/AlibabaDubboInterceptor.java in this product is copied fr
 
 com/huawei/flowcontrol/AlibabaDubboDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInstrumentation.java of Apache SkyWalking project.
 
-
-
 Apache SkyWalking project is published at https://github.com/apache/skywalking-java  
-and it's license is Apache License Version 2.0.
+and its license is Apache License Version 2.0.
+
+====================================================================================
+
+The following files contain a portion of Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/auth/AuthService.java in this product is copied from com/alibaba/csp/sentinel/dashboard/auth/AuthService.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/auth/AuthServiceImpl.java in this product is copied from com/alibaba/csp/sentinel/dashboard/auth/FakeAuthServiceImpl.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/auth/AuthUser.java in this product is copied from com/alibaba/csp/sentinel/dashboard/auth/AuthService.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/auth/AuthUserImpl.java in this product is copied from com/alibaba/csp/sentinel/dashboard/auth/FakeAuthServiceImpl.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/controller/AppController.java in this product is copied from com/alibaba/csp/sentinel/dashboard/controller/AppController.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/controller/DegradeControllerCenter.java in this product is copied from com/alibaba/csp/sentinel/dashboard/controller/DegradeController.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/controller/FlowControllerCenter.java in this product is copied from com/alibaba/csp/sentinel/dashboard/controller/FlowControllerV1.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/controller/MetricController.java in this product is copied from com/alibaba/csp/sentinel/dashboard/controller/MetricController.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/controller/ParamFlowControllerCenter.java in this product is copied from com/alibaba/csp/sentinel/dashboard/controller/ParamFlowController.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/controller/SystemControllerCenter.java in this product is copied from com/alibaba/csp/sentinel/dashboard/controller/SystemControllerCenter.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/repository/metric/MachineDiscovery.java in this product is copied from com/alibaba/csp/sentinel/dashboard/discovery/MachineDiscovery.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/repository/metric/MetricsRepository.java in this product is copied from com/alibaba/csp/sentinel/dashboard/repository/metric/MetricsRepository.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/repository/metric/RedisMetricsRepository.java in this product is copied from com/alibaba/csp/sentinel/dashboard/repository/metric/MetricsRepository.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/AppInfo.java in this product is copied from com/alibaba/csp/sentinel/dashboard/discovery/AppInfo.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/BaseRule.java in this product is copied from com/alibaba/csp/sentinel/dashboard/entity/rule/FlowRuleEntity.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/DashboardConfig.java in this product is copied from com/alibaba/csp/sentinel/dashboard/config/DashboardConfig.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/DegradeRuleVo.java in this product is copied from com/alibaba/csp/sentinel/dashboard/entity/rule/DegradeRuleEntity.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/FlowRuleVo.java in this product is copied from com/alibaba/csp/sentinel/dashboard/entity/rule/FlowRuleEntity.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/MachineInfo.java in this product is copied from com/alibaba/csp/sentinel/dashboard/discovery/MachineInfo.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/MachineInfoVo.java in this product is copied from com/alibaba/csp/sentinel/dashboard/discovery/MachineInfo.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/MetricEntity.java in this product is copied from com/alibaba/csp/sentinel/dashboard/datasource/entity/MetricEntity.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/MetricVo.java in this product is copied from com/alibaba/csp/sentinel/dashboard/datasource/entity/MetricEntity.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/ParamFlowRuleVo.java in this product is copied from com/alibaba/csp/sentinel/dashboard/entity/rule/ParamFlowRuleEntity.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/Result.java in this product is copied from com/alibaba/csp/sentinel/dashboard/domain/Result.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/RuleProvider.java in this product is copied from com/alibaba/csp/sentinel/dashboard/rule/RuleProvider.java Alibaba Sentinel project.
+
+com/huawei/flowcontrol/console/entity/SystemRuleVo.java in this product is copied from com/alibaba/csp/sentinel/dashboard/entity/rule/SystemRuleEntity.java Alibaba Sentinel project.
+
+Alibaba Sentinel project is published at https://github.com/alibaba/Sentinel
+and its license is Apache License Version 2.0.
+
+====================================================================================
+
+The following files contain a portion of Apache ServiceComb Java Chassis project.
+
+com/huawei/flowcontrol/adapte/cse/entity/CseMatchRequest.java in this product is copied from org/apache/servicecomb/governance/marker/GovernanceRequest.java Apache ServiceComb Java Chassis project.
+
+com/huawei/flowcontrol/adapte/cse/match/operator/CompareOperator.java in this product is copied from org/apache/servicecomb/governance/marker/operator/CompareOperator.java Apache ServiceComb Java Chassis project.
+
+com/huawei/flowcontrol/adapte/cse/match/operator/ContainOperator.java in this product is copied from org/apache/servicecomb/governance/marker/operator/ContainsOperator.java Apache ServiceComb Java Chassis project.
+
+com/huawei/flowcontrol/adapte/cse/match/operator/ExactOperator.java in this product is copied from org/apache/servicecomb/governance/marker/operator/ExactOperator.java Apache ServiceComb Java Chassis project.
+
+com/huawei/flowcontrol/adapte/cse/match/operator/Operator.java in this product is copied from org/apache/servicecomb/governance/marker/operator/MatchOperator.java Apache ServiceComb Java Chassis project.
+
+com/huawei/flowcontrol/adapte/cse/match/operator/PrefixOperator.java in this product is copied from org/apache/servicecomb/governance/marker/operator/PrefixOperator.java Apache ServiceComb Java Chassis project.
+
+com/huawei/flowcontrol/adapte/cse/match/operator/SuffixOperator.java in this product is copied from org/apache/servicecomb/governance/marker/operator/SuffixOperator.java Apache ServiceComb Java Chassis project.
+
+com/huawei/flowcontrol/adapte/cse/match/BusinessMatcher.java in this product is copied from org/apache/servicecomb/governance/marker/TrafficMarker.java Apache ServiceComb Java Chassis project.
+
+com/huawei/flowcontrol/adapte/cse/match/RawOperator.java in this product is copied from org/apache/servicecomb/governance/marker/operator/RawOperator.java Apache ServiceComb Java Chassis project.
+
+com/huawei/flowcontrol/adapte/cse/match/RequestMatcher.java in this product is copied from org/apache/servicecomb/governance/marker/Matcher.java Apache ServiceComb Java Chassis project.
+
+com/huawei/flowcontrol/adapte/cse/rule/Configurable.java in this product is copied from org/apache/servicecomb/governance/entity/Configurable.java Apache ServiceComb Java Chassis project.
+
+Apache ServiceComb Java Chassis project is published at https://github.com/apache/servicecomb-java-chassis
+and its license is Apache License Version 2.0.

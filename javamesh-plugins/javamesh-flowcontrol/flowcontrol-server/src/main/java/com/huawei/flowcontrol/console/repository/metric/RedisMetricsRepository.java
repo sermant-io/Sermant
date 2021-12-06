@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * Based on com/alibaba/csp/sentinel/dashboard/repository/metric/MetricsRepository.java
+ * from the Alibaba Sentinel project.
+ */
+
 package com.huawei.flowcontrol.console.repository.metric;
 
 import com.alibaba.csp.sentinel.util.StringUtil;

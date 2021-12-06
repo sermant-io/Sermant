@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * Based on com/alibaba/csp/sentinel/dashboard/entity/rule/FlowRuleEntity.java
+ * from the Alibaba Sentinel project.
+ */
+
 package com.huawei.flowcontrol.console.entity;
 
 import com.alibaba.csp.sentinel.slots.block.AbstractRule;

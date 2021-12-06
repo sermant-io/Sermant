@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * Based on com/alibaba/csp/sentinel/dashboard/auth/FakeAuthServiceImpl.java
+ * from the Alibaba Sentinel project.
+ */
+
 package com.huawei.flowcontrol.console.auth;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,9 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 
-/**
- * 此处部分引用alibaba/Sentinel开源社区代码，诚挚感谢alibaba/Sentinel开源团队的慷慨贡献
- */
 @Component
 @Primary
 @ConditionalOnProperty(name = "auth.enabled", matchIfMissing = true)

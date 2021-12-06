@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * Based on com/alibaba/csp/sentinel/dashboard/datasource/entity/MetricEntity.java
+ * from the Alibaba Sentinel project.
+ */
+
 package com.huawei.flowcontrol.console.entity;
 
 import lombok.Getter;
@@ -21,9 +26,6 @@ import lombok.Setter;
 
 import java.util.Date;
 
-/**
- * 此处部分引用alibaba/Sentinel开源社区代码，诚挚感谢alibaba/Sentinel开源团队的慷慨贡献
- */
 @Setter
 @Getter
 public class MetricEntity {

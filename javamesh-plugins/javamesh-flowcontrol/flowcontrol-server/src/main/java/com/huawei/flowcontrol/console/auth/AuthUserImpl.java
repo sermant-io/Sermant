@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
+/**
+ * Based on com/alibaba/csp/sentinel/dashboard/auth/FakeAuthServiceImpl.java
+ * from the Alibaba Sentinel project.
+ */
+
 package com.huawei.flowcontrol.console.auth;
 
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-/**
- * 此处部分引用alibaba/Sentinel开源社区代码，诚挚感谢alibaba/Sentinel开源团队的慷慨贡献
- */
 @Component
 public class AuthUserImpl implements AuthUser, Serializable {
     private String username;

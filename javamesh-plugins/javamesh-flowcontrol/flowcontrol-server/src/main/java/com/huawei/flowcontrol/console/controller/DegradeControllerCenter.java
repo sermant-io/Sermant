@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * Based on com/alibaba/csp/sentinel/dashboard/controller/DegradeController.java
+ * from the Alibaba Sentinel project.
+ */
+
 package com.huawei.flowcontrol.console.controller;
 
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
