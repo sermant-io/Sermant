@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.huawei.hercules.controller.perftest;
 
 import com.alibaba.fastjson.JSONArray;
@@ -262,24 +278,25 @@ public class PerfTestController extends BaseController {
         }
 
         // 通过查询获取默认值
-        JSONObject scenario = getScenarioId(perfTestInfos, params.getString("scenario_name"));
-        if (!scenario.getBoolean(JSON_RESULT_KEY)) {
-            return scenario;
+        JSONObject sceneCheckResult = getScenarioId(perfTestInfos, params.getString("scenario_name"));
+        if (!sceneCheckResult.getBoolean(JSON_RESULT_KEY)) {
+            return sceneCheckResult;
         }
         // 转换数据参数
         setPerfTestInfos(perfTestInfos, params);
 
         // 计算进程数和线程数，更新虚拟用户数
-        if (params.getLong("vuser") > MAX_VUSER_COUNT) {
+        Long vuserCount = params.getLong("vuser");
+        if (vuserCount > MAX_VUSER_COUNT) {
             return returnError(ERROR_VUSER_COUNT);
         }
-        getProcessAndThreads(perfTestInfos, params.getLong("vuser"));
+        setProcessAndThreads(perfTestInfos, vuserCount);
         // 保存
         perfTestInfos.put("scheduledTime", params.get("start_time"));
         JSONObject jsonObject = perfTestService.saveOne(perfTestInfos.toString(), false);
 
         // 保存成功之后保存任务与场景的关系
-        saveScenarioPerfTest(scenario.getInteger("id"), jsonObject.getInteger("id"));
+        saveScenarioPerfTest(sceneCheckResult.getInteger("id"), jsonObject.getInteger("id"));
         return jsonObject;
     }
 
@@ -413,12 +430,12 @@ public class PerfTestController extends BaseController {
     /**
      * 报告详情页基本信息查询
      *
-     * @param test_id 任务ID
+     * @param testId 任务ID
      * @return 报告结果
      */
     @RequestMapping(value = {"/report/get"}, method = RequestMethod.GET)
-    public JSONObject getReports(@RequestParam String test_id) {
-        JSONObject report = perfTestService.getReportById(Long.parseLong(test_id));
+    public JSONObject getReports(@RequestParam String testId) {
+        JSONObject report = perfTestService.getReportById(Long.parseLong(testId));
         if (report == null || report.isEmpty()) {
             throw new HerculesException("Report data don't found, please confirm the task status.");
         }
@@ -433,14 +450,14 @@ public class PerfTestController extends BaseController {
     /**
      * 报告详情页图表信息查询
      *
-     * @param test_id 任务ID
+     * @param testId 任务ID
      * @return 报告信息
      */
     @RequestMapping(value = {"/report/chart"}, method = RequestMethod.GET)
-    public JSONObject getAllChart(@RequestParam Integer test_id) {
+    public JSONObject getAllChart(@RequestParam Integer testId) {
         String dataType = "TPS,Errors,Mean_Test_Time_(ms),Mean_time_to_first_byte,User_defined,Vuser";
 
-        HttpEntity<String> reports = perfTestService.getPerfGraphById(test_id, dataType, false, IMG_WIDTH);
+        HttpEntity<String> reports = perfTestService.getPerfGraphById(testId, dataType, false, IMG_WIDTH);
         if (reports == null) {
             throw new HerculesException("Report data don't found, please confirm the task status.");
         }
@@ -459,17 +476,17 @@ public class PerfTestController extends BaseController {
     /**
      * 下载日志文件
      *
-     * @param test_id  ID
-     * @param log_name 日志名称
+     * @param testId  ID
+     * @param logName 日志名称
      * @param response 响应
      * @throws Exception 异常
      */
     @RequestMapping(value = "/task/download")
-    public void downloadLogByID(@RequestParam long test_id, @RequestParam String log_name, HttpServletResponse response) throws Exception {
-        if (test_id <= 0 || StringUtils.isEmpty(log_name)) {
+    public void downloadLogByID(@RequestParam long testId, @RequestParam String logName, HttpServletResponse response) throws Exception {
+        if (testId <= 0 || StringUtils.isEmpty(logName)) {
             return;
         }
-        JSONObject jsonObject = perfTestService.downloadLogByID(test_id, log_name);
+        JSONObject jsonObject = perfTestService.downloadLogByID(testId, logName);
         if (jsonObject == null || !jsonObject.getBoolean(JSON_RESULT_KEY)) {
             return;
         }
@@ -524,7 +541,7 @@ public class PerfTestController extends BaseController {
 
         // 获取线程数据、进程数
         JSONObject vusers = new JSONObject();
-        getProcessAndThreads(vusers, Long.parseLong(params.get("vuser").toString()));
+        setProcessAndThreads(vusers, Long.parseLong(params.get("vuser").toString()));
         long processes = vusers.getLong("processes");
 //        long threads = vusers.getLong("threads");
         long vuserPerAgent = vusers.getLong("vuserPerAgent");
@@ -539,10 +556,8 @@ public class PerfTestController extends BaseController {
         initCount = Math.min(initCount, vuserPerAgent);
         if (initWait > 0) {
             firstPoint.put("time", getRampUpTime(initWait));
-            firstPoint.put("pressure", initCount);
-        } else {
-            firstPoint.put("pressure", initCount);
         }
+        firstPoint.put("pressure", initCount);
 
         long currentCount = initCount;
         long currentTime = Math.max(initWait, 0);
@@ -818,14 +833,11 @@ public class PerfTestController extends BaseController {
      * @param perfTestInfos 任务信息
      * @param total         总代理数
      */
-    private void getProcessAndThreads(JSONObject perfTestInfos, long total) {
+    private void setProcessAndThreads(JSONObject perfTestInfos, long total) {
         long processes = getProcessCount(total);
         long threads = total / processes;
 
         // 前端要求用户显示必须和设置一致，所以这么改，原逻辑是
-        // perfTestInfos.put("vuserPerAgent", processes * threads)
-        // com.huawei.argus.restcontroller.RestPerftestController.validate有关联影响
-        // 根据vuserPerAgent计算的
         perfTestInfos.put("processes", processes);
         perfTestInfos.put("threads", threads);
         perfTestInfos.put("vuserPerAgent", total);
@@ -899,6 +911,8 @@ public class PerfTestController extends BaseController {
         perfTestInfos.put("runCount", params.get("by_count"));
         long duration = getLongTime((Integer) params.get("by_time_h"), (Integer) params.get("by_time_m"), (Integer) params.get("by_time_s"));
         perfTestInfos.put("duration", duration);
+
+        // 小时数向上取整
         perfTestInfos.put("durationHour", (duration + 3599999L) / 3600000);
         perfTestInfos.put("samplingInterval", params.get("sampling_interval"));
         perfTestInfos.put("ignoreSampleCount", params.get("sampling_ignore"));

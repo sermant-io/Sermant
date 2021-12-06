@@ -1,5 +1,19 @@
 /*
- * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  */
 
 package com.huawei.argus.report.service;
@@ -27,7 +41,7 @@ import java.util.Map;
  * 1秒队列里面的数据，从第一个时间开始按照00:00:00开始计算，
  * 如果展示的区间小于队列的长度，则会从队列中某一个tps开始展示，该tps在队列的位置，相当于其执行时间秒
  *
- * @author z30009938
+ *
  * @since 2021-11-27
  */
 public class TpsCalculateService {

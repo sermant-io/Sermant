@@ -16,7 +16,7 @@ import javax.persistence.Table;
 /**
  * 功能描述：需要监控的服务器配置
  *
- * @author z30009938
+ *
  * @since 2021-11-11
  */
 @SuppressWarnings({"JpaDataSourceORMInspection"})

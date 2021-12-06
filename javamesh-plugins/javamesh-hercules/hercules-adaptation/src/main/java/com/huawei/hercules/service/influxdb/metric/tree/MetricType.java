@@ -1,5 +1,17 @@
 /*
- * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.huawei.hercules.service.influxdb.metric.tree;
@@ -14,23 +26,23 @@ import com.huawei.hercules.service.influxdb.measurement.ibmpool.TLInfluxEntity;
 import com.huawei.hercules.service.influxdb.measurement.ibmpool.TSInfluxEntity;
 import com.huawei.hercules.service.influxdb.measurement.servermonitor.MemoryInfluxEntity;
 import com.huawei.hercules.service.influxdb.measurement.servermonitor.NetworkInfluxEntity;
-import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.CpuInfluxEntity;
-import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.HeapMemoryInfluxEntity;
-import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.NonHeapMemoryInfluxEntity;
-import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.OldGCInfluxEntity;
-import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.ThreadInfluxEntity;
-import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.YoungGCInfluxEntity;
-import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.oraclepool.CodeCacheInfluxEntity;
-import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.oraclepool.MetaspaceInfluxEntity;
-import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.oraclepool.NewGenInfluxEntity;
-import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.oraclepool.OldGenInfluxEntity;
-import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.oraclepool.PermGenInfluxEntity;
-import com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.oraclepool.SurvivorInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.openjdk.CpuInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.openjdk.HeapMemoryInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.openjdk.NonHeapMemoryInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.openjdk.OldGCInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.openjdk.ThreadInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.openjdk.YoungGCInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.openjdk.memorypool.CodeCacheInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.openjdk.memorypool.MetaspaceInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.openjdk.memorypool.NewGenInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.openjdk.memorypool.OldGenInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.openjdk.memorypool.PermGenInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.openjdk.memorypool.SurvivorInfluxEntity;
 
 /**
  * 功能描述：Metric类型
  *
- * @author z30009938
+ * 
  * @since 2021-11-23
  */
 public enum MetricType {
