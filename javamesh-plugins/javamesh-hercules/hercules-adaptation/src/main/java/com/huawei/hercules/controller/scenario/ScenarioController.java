@@ -116,12 +116,12 @@ public class ScenarioController extends BaseController {
      */
     @RequestMapping(value = "/scenario", method = RequestMethod.GET)
     public JSONObject queryScenario(@RequestParam(required = false) String keywords,
-                                    @RequestParam(name = "appName", required = false) String[] appName,
-                                    @RequestParam(name = "createdBy", required = false) String[] createdBy,
-                                    @RequestParam(name = "scenarioType", required = false) String[] scenarioType,
-                                    @RequestParam(name = "scenarioName", required = false) String[] scenarioName,
+                                    @RequestParam(name = "app_name[]", required = false) String[] appName,
+                                    @RequestParam(name = "create_by[]", required = false) String[] createdBy,
+                                    @RequestParam(name = "scenario_type[]", required = false) String[] scenarioType,
+                                    @RequestParam(name = "scenario_name[]", required = false) String[] scenarioName,
                                     @RequestParam(required = false, defaultValue = "10") int pageSize,
-                                    @RequestParam(required = false, defaultValue = "1") int currentPageNum,
+                                    @RequestParam(value = "current", required = false, defaultValue = "1") int currentPageNum,
                                     @RequestParam(required = false) String sorter,
                                     @RequestParam(required = false) String order) {
         // 1.查询条件的转换
@@ -174,7 +174,7 @@ public class ScenarioController extends BaseController {
      * @return 删除结果
      */
     @RequestMapping(value = "/scenario", method = RequestMethod.DELETE)
-    public JSONObject delete(@RequestParam(name = "scenarioId") String[] scenarioId) {
+    public JSONObject delete(@RequestParam(name = "scenario_id[]") String[] scenarioId) {
         if (StringUtils.isEmpty(scenarioId)) {
             return returnError();
         }
@@ -192,7 +192,7 @@ public class ScenarioController extends BaseController {
      * @return 含有压测任务的场景名称结果
      */
     @RequestMapping(value = "/scenario/deleteCheck", method = RequestMethod.GET)
-    public JSONObject deleteCheck(@RequestParam(name = "scenarioId") String[] scenarioId) {
+    public JSONObject deleteCheck(@RequestParam(name = "scenario_id[]") String[] scenarioId) {
         // 判断场景下是否有压测任务
         List<Long> scenarioIds = Arrays.stream(scenarioId)
                 .map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
