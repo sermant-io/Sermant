@@ -47,8 +47,8 @@ message NetworkMetric {
 // memory指标
 message MemoryMetric {
   int64 memoryTotal = 1; // 总内存大小
-  int64 swapCached = 2; // 已使用的内存大小
+  int64 swapCached = 2; // 对应cat /proc/meminfo指令的SwapCached
   int64 cached = 3; // 对应cat /proc/meminfo指令的Cached
   int64 buffers = 4; // 对应cat /proc/meminfo指令的Buffers
-  int64 memoryUsed = 5; // 对应cat /proc/meminfo指令的SwapCached
+  int64 memoryUsed = 5; // 已使用的内存大小
 }

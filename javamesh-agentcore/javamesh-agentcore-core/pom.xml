@@ -9,6 +9,7 @@
     <artifactId>javamesh-agentcore-core</artifactId>
     <properties>
         <jdk.version>1.8</jdk.version>
+        <profile.id>agent</profile.id>
         <package.output.dir>${package.agent.dir}/core</package.output.dir>
         <config.file.name>config.properties</config.file.name>
         <plugin.setting.name>plugins.yaml</plugin.setting.name>
