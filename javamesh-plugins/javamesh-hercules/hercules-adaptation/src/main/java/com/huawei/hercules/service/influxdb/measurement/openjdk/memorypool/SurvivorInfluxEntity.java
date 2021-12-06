@@ -16,18 +16,14 @@
  *
  */
 
-package com.huawei.hercules.service.influxdb.measurement.skywalkingjvm;
+package com.huawei.hercules.service.influxdb.measurement.openjdk.memorypool;
 
-import com.huawei.hercules.service.influxdb.measurement.CommonMetricInfluxEntity;
-import com.influxdb.annotations.Column;
+import com.huawei.hercules.service.influxdb.measurement.MemoryPoolInfluxEntity;
 import com.influxdb.annotations.Measurement;
 
 /**
- * Oracle jvm metric cpu Influxdb持久化实体
+ * Survivor类型Oracle memory pool Influxdb持久化实体
  */
-@Measurement(name = "oracle_jvm_monitor_cpu")
-public class CpuInfluxEntity extends CommonMetricInfluxEntity {
-
-    @Column(name = "usage_percent")
-    private Double usagePercent;
+@Measurement(name = "oracle_pool_survivor_space")
+public class SurvivorInfluxEntity extends MemoryPoolInfluxEntity {
 }

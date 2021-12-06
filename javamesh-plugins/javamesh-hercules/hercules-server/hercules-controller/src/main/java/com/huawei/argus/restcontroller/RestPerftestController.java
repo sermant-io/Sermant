@@ -530,6 +530,7 @@ public class RestPerftestController extends RestBaseController {
 	public HttpEntity<String> delete(User user, @RequestParam(value = "ids", defaultValue = "") String ids) {
 		for (String idStr : StringUtils.split(ids, ",")) {
 			perfTestService.delete(user, NumberUtils.toLong(idStr, 0));
+
 			// 删除场景与压测任务的关系
 			scenarioPerfTestService.deleteByOneId(user, null, NumberUtils.toLong(idStr, 0), null);
 		}

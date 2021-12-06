@@ -16,19 +16,14 @@
  *
  */
 
-package com.huawei.hercules.service.influxdb.measurement.skywalkingjvm;
+package com.huawei.hercules.service.influxdb.measurement.openjdk.memorypool;
 
-import com.huawei.hercules.service.influxdb.measurement.CommonMetricInfluxEntity;
-import com.influxdb.annotations.Column;
+import com.huawei.hercules.service.influxdb.measurement.MemoryPoolInfluxEntity;
+import com.influxdb.annotations.Measurement;
 
 /**
- * Oracle jvm metric gc Influxdb持久化实体
+ * Code cache类型Oracle memory pool Influxdb持久化实体
  */
-public abstract class GCInfluxEntity extends CommonMetricInfluxEntity {
-
-    @Column(name = "gc_count")
-    private Long gcCount;
-
-    @Column(name = "gc_time")
-    private Long gcTime;
+@Measurement(name = "oracle_pool_code_cache")
+public class CodeCacheInfluxEntity extends MemoryPoolInfluxEntity {
 }

@@ -16,14 +16,14 @@
  *
  */
 
-package com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.oraclepool;
+package com.huawei.hercules.service.influxdb.measurement.openjdk.memorypool;
 
 import com.huawei.hercules.service.influxdb.measurement.MemoryPoolInfluxEntity;
 import com.influxdb.annotations.Measurement;
 
 /**
- * Code cache类型Oracle memory pool Influxdb持久化实体
+ * New gen类型Oracle memory pool Influxdb持久化实体
  */
-@Measurement(name = "oracle_pool_code_cache")
-public class CodeCacheInfluxEntity extends MemoryPoolInfluxEntity {
+@Measurement(name = "oracle_pool_new_gen")
+public class NewGenInfluxEntity extends MemoryPoolInfluxEntity {
 }

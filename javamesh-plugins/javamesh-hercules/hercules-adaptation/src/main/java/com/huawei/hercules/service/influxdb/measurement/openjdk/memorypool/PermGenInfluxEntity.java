@@ -16,14 +16,14 @@
  *
  */
 
-package com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.oraclepool;
+package com.huawei.hercules.service.influxdb.measurement.openjdk.memorypool;
 
 import com.huawei.hercules.service.influxdb.measurement.MemoryPoolInfluxEntity;
 import com.influxdb.annotations.Measurement;
 
 /**
- * Survivor类型Oracle memory pool Influxdb持久化实体
+ * Perm gen类型Oracle memory pool Influxdb持久化实体
  */
-@Measurement(name = "oracle_pool_survivor_space")
-public class SurvivorInfluxEntity extends MemoryPoolInfluxEntity {
+@Measurement(name = "oracle_pool_perm_gen")
+public class PermGenInfluxEntity extends MemoryPoolInfluxEntity {
 }

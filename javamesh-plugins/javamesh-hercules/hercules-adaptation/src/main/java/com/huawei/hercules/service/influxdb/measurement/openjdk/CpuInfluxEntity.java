@@ -16,13 +16,18 @@
  *
  */
 
-package com.huawei.hercules.service.influxdb.measurement.skywalkingjvm;
+package com.huawei.hercules.service.influxdb.measurement.openjdk;
 
+import com.huawei.hercules.service.influxdb.measurement.CommonMetricInfluxEntity;
+import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
 
 /**
- * Oracle jvm metric old gc Influxdb持久化实体
+ * Oracle jvm metric cpu Influxdb持久化实体
  */
-@Measurement(name = "oracle_jvm_monitor_old_gc")
-public class OldGCInfluxEntity extends GCInfluxEntity {
+@Measurement(name = "oracle_jvm_monitor_cpu")
+public class CpuInfluxEntity extends CommonMetricInfluxEntity {
+
+    @Column(name = "usage_percent")
+    private Double usagePercent;
 }

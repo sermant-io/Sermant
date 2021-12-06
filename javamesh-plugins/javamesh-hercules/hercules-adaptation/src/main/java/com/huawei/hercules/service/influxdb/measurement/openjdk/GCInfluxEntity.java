@@ -16,24 +16,19 @@
  *
  */
 
-package com.huawei.hercules.service.influxdb.measurement.skywalkingjvm;
+package com.huawei.hercules.service.influxdb.measurement.openjdk;
 
 import com.huawei.hercules.service.influxdb.measurement.CommonMetricInfluxEntity;
 import com.influxdb.annotations.Column;
-import com.influxdb.annotations.Measurement;
 
 /**
- * Oracle jvm metric thread Influxdb持久化实体
+ * Oracle jvm metric gc Influxdb持久化实体
  */
-@Measurement(name = "oracle_jvm_monitor_thread")
-public class ThreadInfluxEntity extends CommonMetricInfluxEntity {
+public abstract class GCInfluxEntity extends CommonMetricInfluxEntity {
 
-    @Column(name = "live_count")
-    private Long liveCount;
+    @Column(name = "gc_count")
+    private Long gcCount;
 
-    @Column(name = "daemon_count")
-    private Long daemonCount;
-
-    @Column(name = "peak_count")
-    private Long peakCount;
+    @Column(name = "gc_time")
+    private Long gcTime;
 }

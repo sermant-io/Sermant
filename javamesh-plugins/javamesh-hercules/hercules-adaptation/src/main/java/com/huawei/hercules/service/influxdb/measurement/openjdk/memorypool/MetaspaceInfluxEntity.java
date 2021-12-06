@@ -16,13 +16,14 @@
  *
  */
 
-package com.huawei.hercules.service.influxdb.measurement.skywalkingjvm;
+package com.huawei.hercules.service.influxdb.measurement.openjdk.memorypool;
 
+import com.huawei.hercules.service.influxdb.measurement.MemoryPoolInfluxEntity;
 import com.influxdb.annotations.Measurement;
 
 /**
- * Oracle jvm metric young gc Influxdb持久化实体
+ * Metaspace类型Oracle memory pool Influxdb持久化实体
  */
-@Measurement(name = "oracle_jvm_monitor_young_gc")
-public class YoungGCInfluxEntity extends GCInfluxEntity {
+@Measurement(name = "oracle_pool_metaspace")
+public class MetaspaceInfluxEntity extends MemoryPoolInfluxEntity {
 }

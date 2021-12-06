@@ -16,14 +16,14 @@
  *
  */
 
-package com.huawei.hercules.service.influxdb.measurement.skywalkingjvm;
+package com.huawei.hercules.service.influxdb.measurement.openjdk.memorypool;
 
 import com.huawei.hercules.service.influxdb.measurement.MemoryPoolInfluxEntity;
 import com.influxdb.annotations.Measurement;
 
 /**
- * Oracle jvm metric heap memory Influxdb持久化实体
+ * Old gen类型Oracle memory pool Influxdb持久化实体
  */
-@Measurement(name = "oracle_jvm_monitor_heap_memory")
-public class HeapMemoryInfluxEntity extends MemoryPoolInfluxEntity {
+@Measurement(name = "oracle_pool_old_gen")
+public class OldGenInfluxEntity extends MemoryPoolInfluxEntity {
 }

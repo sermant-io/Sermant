@@ -16,14 +16,14 @@
  *
  */
 
-package com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.oraclepool;
+package com.huawei.hercules.service.influxdb.measurement.openjdk;
 
 import com.huawei.hercules.service.influxdb.measurement.MemoryPoolInfluxEntity;
 import com.influxdb.annotations.Measurement;
 
 /**
- * New gen类型Oracle memory pool Influxdb持久化实体
+ * Oracle jvm metric non-heap memory Influxdb持久化实体
  */
-@Measurement(name = "oracle_pool_new_gen")
-public class NewGenInfluxEntity extends MemoryPoolInfluxEntity {
+@Measurement(name = "oracle_jvm_monitor_non_heap_memory")
+public class NonHeapMemoryInfluxEntity extends MemoryPoolInfluxEntity {
 }

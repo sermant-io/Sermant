@@ -64,10 +64,10 @@ import java.util.Set;
 @RequestMapping("/api")
 public class ScriptController extends BaseController {
     @Autowired
-    IScriptService scripService;
+    IScriptService scriptService;
 
     @Autowired
-    IPerfTestService perftestService;
+    IPerfTestService perfTestService;
 
     @Autowired
     private IScenarioService scenarioService;
@@ -82,7 +82,7 @@ public class ScriptController extends BaseController {
      * @return 脚本新建状态+路径
      */
     @RequestMapping(value = "/script", method = RequestMethod.POST)
-    public JSONObject creat(@RequestBody JSONObject params) {
+    public JSONObject create(@RequestBody JSONObject params) {
         if (params == null) {
             return returnError("参数缺失");
         }
@@ -91,7 +91,7 @@ public class ScriptController extends BaseController {
         String testUrl = params.getString("for_url");
         String fileName = params.getString("script_name");
         String scriptType = getScriptType(params.getString("language"));
-        JSONObject getFolderFilesResponse = scripService.getAllList(StringUtils.isEmpty(parentPath) ? "" : parentPath);
+        JSONObject getFolderFilesResponse = scriptService.getAllList(StringUtils.isEmpty(parentPath) ? "" : parentPath);
 
         // 判断是否存在同名脚本
         JSONArray allFilesInFolder = getFolderFilesResponse.getJSONArray("files");
@@ -113,7 +113,7 @@ public class ScriptController extends BaseController {
         options.put("params", parseScript(params.getJSONArray("params")));
 
         // 1.创建
-        JSONObject creat = scripService.createForm(parentPath, testUrl, fileName, scriptType, createLibAndResources, options.toJSONString());
+        JSONObject creat = scriptService.createForm(parentPath, testUrl, fileName, scriptType, createLibAndResources, options.toJSONString());
         if (GROOVY_MAVEN_TYPE.equalsIgnoreCase(scriptType)) {
             if (creat.getBoolean("success")) {
                 return returnSuccess();
@@ -131,7 +131,7 @@ public class ScriptController extends BaseController {
             fileEntry.put("description", file.get("description"));
             fileEntry.put("content", file.get("content"));
             String targetHosts = (properties == null || StringUtils.isEmpty(properties.get("targetHosts"))) ? "" : (String) properties.get("targetHosts");
-            String basePath = scripService.saveScript(parseScript(fileEntry.toString()), targetHosts, "0", createLibAndResources);
+            String basePath = scriptService.saveScript(parseScript(fileEntry.toString()), targetHosts, "0", createLibAndResources);
             result.put(JSON_RESULT_KEY, SUCCESS);
             result.put("basePath", basePath);
         }
@@ -154,7 +154,7 @@ public class ScriptController extends BaseController {
         fileEntry.put("path", params.get("path"));
         fileEntry.put("description", params.get("commit"));
         fileEntry.put("content", params.get("script"));
-        scripService.saveScript(parseScript(fileEntry.toString()), getTargetHosts(params.getString("path")), "0", false);
+        scriptService.saveScript(parseScript(fileEntry.toString()), getTargetHosts(params.getString("path")), "0", false);
         return returnSuccess();
     }
 
@@ -172,7 +172,7 @@ public class ScriptController extends BaseController {
         JSONObject fileEntry = new JSONObject();
         fileEntry.put("path", params.get("path"));
         fileEntry.put("content", params.get("script"));
-        HttpEntity<String> httpEntity = scripService.validateScript(fileEntry.toString(), getTargetHosts(params.getString("path")));
+        HttpEntity<String> httpEntity = scriptService.validateScript(fileEntry.toString(), getTargetHosts(params.getString("path")));
         String body = httpEntity.getBody();
         JSONObject jsonObject = returnSuccess();
         jsonObject.put("data", body);
@@ -194,7 +194,7 @@ public class ScriptController extends BaseController {
                                       @RequestParam(required = false) String sorter,
                                       @RequestParam(required = false) String order,
                                       @RequestParam(required = false) String keywords) {
-        JSONObject result = scripService.getAllList(folder == null ? "" : folder);
+        JSONObject result = scriptService.getAllList(folder == null ? "" : folder);
         if (result != null) {
             JSONArray files = result.getJSONArray("files");
             Iterator<Object> iteratorForFiles = files.iterator();
@@ -258,7 +258,7 @@ public class ScriptController extends BaseController {
     @RequestMapping(value = "/script/search", method = RequestMethod.GET)
     public JSONObject searchScripts(@RequestParam(required = false) String value) {
         JSONObject scripts = new JSONObject();
-        HttpEntity<String> allScripts = perftestService.getScripts("");
+        HttpEntity<String> allScripts = perfTestService.getScripts("");
         String body = allScripts.getBody();
         List<Map<String, Object>> allPaths = JSONObject.parseObject(body, List.class);
         List<String> paths = new ArrayList<>();
@@ -287,12 +287,12 @@ public class ScriptController extends BaseController {
         }
         String parentPath = params.getString("folder");
         String folder = params.getString("folder_name");
-        JSONObject getFolderFilesResponse = scripService.getAllList(StringUtils.isEmpty(parentPath) ? "" : parentPath);
+        JSONObject getFolderFilesResponse = scriptService.getAllList(StringUtils.isEmpty(parentPath) ? "" : parentPath);
         JSONArray allFilesInFolder = getFolderFilesResponse.getJSONArray("files");
         if (isFileExist(folder, ScriptType.DIR.getRealName(), allFilesInFolder)) {
             throw new HerculesException("The folder already exists!");
         }
-        String wholePath = scripService.addFolder(parentPath, folder);
+        String wholePath = scriptService.addFolder(parentPath, folder);
         JSONObject jsonObject = returnSuccess();
         jsonObject.put("path", wholePath);
         return jsonObject;
@@ -353,7 +353,7 @@ public class ScriptController extends BaseController {
             return returnError();
         }
         try {
-            scripService.delete(folder, arrayToStr(script_name));
+            scriptService.delete(folder, arrayToStr(script_name));
         } catch (Exception e) {
             return returnError("脚本删除失败");
         }
@@ -411,7 +411,7 @@ public class ScriptController extends BaseController {
         String originFileName = file.getOriginalFilename();
 
         // 判断是否存在同名脚本
-        JSONObject getFolderFilesResponse = scripService.getAllList(StringUtils.isEmpty(folder) ? "" : folder);
+        JSONObject getFolderFilesResponse = scriptService.getAllList(StringUtils.isEmpty(folder) ? "" : folder);
         JSONArray allFilesInFolder = getFolderFilesResponse.getJSONArray("files");
         if (isFileExist(originFileName, null, allFilesInFolder)
                 && ScriptType.isScript(ScriptType.getScriptShowType(originFileName))) {
@@ -474,7 +474,7 @@ public class ScriptController extends BaseController {
      */
     @RequestMapping("script/download")
     public void downloadFile(@RequestParam(required = false) String path, HttpServletResponse response) throws Exception {
-        JSONObject jsonObject = scripService.downloadFile(path);
+        JSONObject jsonObject = scriptService.downloadFile(path);
         if (jsonObject == null || !jsonObject.getBoolean(JSON_RESULT_KEY)) {
             return;
         }
@@ -491,7 +491,7 @@ public class ScriptController extends BaseController {
     @RequestMapping(value = "/script/get", method = RequestMethod.GET)
     public JSONObject getScript(@RequestParam(required = false) String path,
                                 @RequestParam(required = false) Long revision) {
-        JSONObject jsonObject = scripService.getOne(path, revision);
+        JSONObject jsonObject = scriptService.getOne(path, revision);
         JSONObject result = new JSONObject();
         Map<String, Object> file = (Map<String, Object>) jsonObject.get("file");
         if (file != null) {
@@ -500,7 +500,7 @@ public class ScriptController extends BaseController {
             file.remove("content");
 
             // 查询资源文件
-            HttpEntity<String> resources = perftestService.getResources(path, "");
+            HttpEntity<String> resources = perfTestService.getResources(path, "");
             JSONObject body = JSONObject.parseObject(resources.getBody());
             file.put("script_resource", body.get("resources"));
             file.put("targetHosts", body.get("targetHosts"));
@@ -521,7 +521,7 @@ public class ScriptController extends BaseController {
         JSONObject result = new JSONObject();
         List<Map<String, Object>> targetHosts = new LinkedList<>();
         // 查询资源文件
-        HttpEntity<String> resources = perftestService.getResources(path, "");
+        HttpEntity<String> resources = perfTestService.getResources(path, "");
         JSONObject body = JSONObject.parseObject(resources.getBody());
         String hosts = body.getString("targetHosts");
         if (!StringUtils.isEmpty(hosts)) {
@@ -558,20 +558,20 @@ public class ScriptController extends BaseController {
         fileEntry.put("description", files.get("description"));
         fileEntry.put("content", files.get("script"));
         String targetHosts = files.get("targetHosts").toString() + "," + getHost(domain, ip);
-        scripService.saveScript(parseScript(fileEntry.toString()), targetHosts, "0", false);
+        scriptService.saveScript(parseScript(fileEntry.toString()), targetHosts, "0", false);
         return returnSuccess();
     }
 
     /**
      * 删除主机
      *
-     * @param host_id 主机地址
+     * @param hostId 主机地址
      * @param path    路径
      * @return 删除状态
      */
     @RequestMapping(value = "/script/host", method = RequestMethod.DELETE)
-    public JSONObject deleteScriptHost(@RequestParam Integer host_id, @RequestParam String path) {
-        if (host_id == null || host_id <= 0) {
+    public JSONObject deleteScriptHost(@RequestParam Integer hostId, @RequestParam String path) {
+        if (hostId == null || hostId <= 0) {
             return returnError("删除的主机不存在");
         }
         // 1.查询脚本
@@ -579,12 +579,12 @@ public class ScriptController extends BaseController {
         Map<String, Object> files = (Map<String, Object>) script.get("data");
         String targetHosts = files.get("targetHosts").toString();
         String[] allHosts = targetHosts.split(",");
-        if (host_id > allHosts.length) {
+        if (hostId > allHosts.length) {
             return returnError("删除的主机不存在");
         }
 
         List<String> list = new ArrayList<>(Arrays.asList(allHosts));
-        list.remove(host_id - 1);
+        list.remove(hostId - 1);
         targetHosts = arrayToStr(list);
         // 2.保存脚本：非第一次创建createLibAndResource: false
         JSONObject fileEntry = new JSONObject();
@@ -592,7 +592,7 @@ public class ScriptController extends BaseController {
         fileEntry.put("description", files.get("description"));
         fileEntry.put("content", files.get("script"));
 
-        scripService.saveScript(parseScript(fileEntry.toString()), targetHosts, "0", false);
+        scriptService.saveScript(parseScript(fileEntry.toString()), targetHosts, "0", false);
         return returnSuccess();
     }
 
@@ -651,7 +651,7 @@ public class ScriptController extends BaseController {
         if (StringUtils.isEmpty(path)) {
             return "";
         }
-        HttpEntity<String> resources = perftestService.getResources(path, "");
+        HttpEntity<String> resources = perfTestService.getResources(path, "");
         JSONObject body = JSONObject.parseObject(resources.getBody());
         return body.getString("targetHosts");
     }

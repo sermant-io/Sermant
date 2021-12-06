@@ -16,14 +16,24 @@
  *
  */
 
-package com.huawei.hercules.service.influxdb.measurement.skywalkingjvm.oraclepool;
+package com.huawei.hercules.service.influxdb.measurement.openjdk;
 
-import com.huawei.hercules.service.influxdb.measurement.MemoryPoolInfluxEntity;
+import com.huawei.hercules.service.influxdb.measurement.CommonMetricInfluxEntity;
+import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
 
 /**
- * Perm gen类型Oracle memory pool Influxdb持久化实体
+ * Oracle jvm metric thread Influxdb持久化实体
  */
-@Measurement(name = "oracle_pool_perm_gen")
-public class PermGenInfluxEntity extends MemoryPoolInfluxEntity {
+@Measurement(name = "oracle_jvm_monitor_thread")
+public class ThreadInfluxEntity extends CommonMetricInfluxEntity {
+
+    @Column(name = "live_count")
+    private Long liveCount;
+
+    @Column(name = "daemon_count")
+    private Long daemonCount;
+
+    @Column(name = "peak_count")
+    private Long peakCount;
 }

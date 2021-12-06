@@ -110,12 +110,12 @@ public class TestReportController extends BaseController {
     /**
      * 删除报告
      *
-     * @param test_id 报告ID
+     * @param testId 报告ID
      * @return 删除结果
      */
     @RequestMapping(value = "/report", method = RequestMethod.DELETE)
-    public JSONObject delete(@RequestParam(required = false, name = "test_id[]") String[] test_id) {
-        testReportService.delete(arrayToStr(test_id));
+    public JSONObject delete(@RequestParam(required = false, name = "testId") String[] testId) {
+        testReportService.delete(arrayToStr(testId));
         return returnSuccess();
     }
 

@@ -30,8 +30,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 /**
- * @Author: j00466872
- * @Date: 2019/4/29 20:04
+ * @Author j00466872
+ * @Date 2019/4/29 20:04
  */
 @Api
 @RestController
