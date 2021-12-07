@@ -115,21 +115,11 @@ public class KieRequest {
 
         KieRequest that = (KieRequest) obj;
 
-        if (labelCondition != null ? !labelCondition.equals(that.labelCondition) : that.labelCondition != null){
-            return false;
-        }
-
-        if (wait != null ? !wait.equals(that.wait) : that.wait != null) {
-            return false;
-        }
-        return revision != null ? revision.equals(that.revision) : that.revision == null;
+        return labelCondition != null ? labelCondition.equals(that.labelCondition) : that.labelCondition == null;
     }
 
     @Override
     public int hashCode() {
-        int result = labelCondition != null ? labelCondition.hashCode() : 0;
-        result = 31 * result + (wait != null ? wait.hashCode() : 0);
-        result = 31 * result + (revision != null ? revision.hashCode() : 0);
-        return result;
+        return labelCondition != null ? labelCondition.hashCode() : 0;
     }
 }

@@ -56,4 +56,34 @@ public interface HttpClient extends Client {
      */
     HttpResult doGet(String url, RequestConfig requestConfig);
 
+    /**
+     * post请求
+     *
+     * @param url 请求地址
+     * @param params 请求参数
+     * @return HttpResult
+     */
+    HttpResult doPost(String url, Map<String, Object> params);
+
+    /**
+     * post请求
+     *
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param requestConfig 请求配置
+     * @return HttpResult
+     */
+    HttpResult doPost(String url, Map<String, Object> params,  RequestConfig requestConfig);
+
+    /**
+     * post请求
+     *
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param headers 请求头
+     * @param requestConfig 请求配置
+     * @return HttpResult
+     */
+    HttpResult doPost(String url, Map<String, Object> params, RequestConfig requestConfig, Map<String, String> headers);
+
 }

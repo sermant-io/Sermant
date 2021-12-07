@@ -21,6 +21,11 @@ import com.huawei.javamesh.core.service.dynamicconfig.kie.client.AbstractClient;
 import com.huawei.javamesh.core.service.dynamicconfig.kie.client.ClientUrlManager;
 import com.huawei.javamesh.core.service.dynamicconfig.kie.client.http.HttpClient;
 import com.huawei.javamesh.core.service.dynamicconfig.kie.client.http.HttpResult;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * kie客户端
@@ -87,6 +92,24 @@ public class KieClient extends AbstractClient {
         }
         final HttpResult httpResult = httpClient.doGet(requestUrl.toString(), request.getRequestConfig());
         return responseHandler.handle(httpResult);
+    }
+
+    /**
+     * 发布配置
+     *
+     * @param key 请求键
+     * @param labels 标签
+     * @param content 配置
+     * @return 是否发布成功
+     */
+    public boolean publishConfig(String key, Map<String, String> labels, String content, boolean enabled) {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("key", key);
+        params.put("value", content);
+        params.put("labels", labels);
+        params.put("status", enabled ? "enabled" : "disabled");
+        final HttpResult httpResult = this.httpClient.doPost(clientUrlManager.getUrl() + kieApi, params);
+        return httpResult.getCode() == HttpStatus.SC_OK;
     }
 
     private String formatNullString(String val) {

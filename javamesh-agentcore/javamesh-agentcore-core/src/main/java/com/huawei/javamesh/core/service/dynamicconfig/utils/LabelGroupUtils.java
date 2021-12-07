@@ -16,12 +16,16 @@
 
 package com.huawei.javamesh.core.service.dynamicconfig.utils;
 
-import com.huawei.javamesh.core.service.dynamicconfig.kie.client.kie.KieRequestFactory;
+import com.huawei.javamesh.core.common.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * group生成工具
@@ -30,21 +34,50 @@ import java.util.Map;
  * @since 2021-11-23
  */
 public class LabelGroupUtils {
-    private LabelGroupUtils(){
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final String GROUP_SEPARATOR = "&";
+
+    private static final String KV_SEPARATOR = "=";
+
+    /**
+     * 查询时使用的kv分隔符
+     */
+    private static final String LABEL_QUERY_SEPARATOR = ":";
+
+    /**
+     * 查询标签前缀
+     */
+    private static final String LABEL_PREFIX = "label=";
+
+    private LabelGroupUtils() {
     }
-
-    private static final String LABEL_FLAG = "LABEL-FLAG";
-
-    private static final String LABEL_SEPARATOR = "#";
 
     /**
      * 创建标签组
      *
      * @param labels 标签组
-     * @return labelGroup 例如: label=app%3Asc&label=version%3A1.0&#10
+     * @return labelGroup 例如: app=sc&service=helloService
      */
     public static String createLabelGroup(Map<String, String> labels) {
-        return LABEL_FLAG + LABEL_SEPARATOR + KieRequestFactory.buildMapLabels(labels);
+        if (labels == null || labels.isEmpty()) {
+            return StringUtils.EMPTY;
+        }
+        final StringBuilder group = new StringBuilder();
+        for (Map.Entry<String, String> entry : labels.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (key == null || value == null) {
+                LOGGER.warning(String.format(Locale.ENGLISH, "Invalid group label, key = %s, value = %s",
+                        key, value));
+                continue;
+            }
+            group.append(key).append(KV_SEPARATOR).append(value).append(GROUP_SEPARATOR);
+        }
+        if (group.length() == 0) {
+            return StringUtils.EMPTY;
+        }
+        return group.deleteCharAt(group.length() - 1).toString();
     }
 
     /**
@@ -54,13 +87,13 @@ public class LabelGroupUtils {
      * @return 是否为标签组
      */
     public static boolean isLabelGroup(String group) {
-        return group != null && group.startsWith(LABEL_FLAG + LABEL_SEPARATOR);
+        return group != null && group.contains(KV_SEPARATOR);
     }
 
     /**
      * 解析标签为map
      *
-     * @param group 标签组
+     * @param group 标签组  app=sc&service=helloService
      * @return 标签键值对
      */
     public static Map<String, String> resolveGroupLabels(String group) {
@@ -71,16 +104,11 @@ public class LabelGroupUtils {
         if (!isLabelGroup(group)) {
             return result;
         }
-        String labelCondition = getLabelCondition(group);
         try {
-            final String decode = URLDecoder.decode(labelCondition, "UTF-8");
+            final String decode = URLDecoder.decode(group, "UTF-8");
             final String[] labels = decode.split("&");
             for (String label : labels) {
-                final String[] parts = label.split("=");
-                if (parts.length != 2) {
-                    continue;
-                }
-                final String[] labelKv = parts[1].split(":");
+                final String[] labelKv = label.split("=");
                 if (labelKv.length != 2) {
                     continue;
                 }
@@ -95,13 +123,29 @@ public class LabelGroupUtils {
     /**
      * 获取标签信息
      *
-     * @param group 分组
+     * @param group 分组  app=sc&service=helloService转换label=app:sc&label=service:helloService
      * @return 标签组条件
      */
     public static String getLabelCondition(String group) {
-        if (group == null || group.length() < LABEL_FLAG.length() + 1) {
-            return null;
+        if (StringUtils.isEmpty(group)) {
+            return group;
         }
-        return  group.substring(LABEL_FLAG.length() + 1, group.length() - 1);
+        final Map<String, String> labels = resolveGroupLabels(group);
+        final StringBuilder finalGroup = new StringBuilder();
+        for (Map.Entry<String, String> entry : labels.entrySet()) {
+            finalGroup.append(LABEL_PREFIX)
+                    .append(buildSingleLabel(entry.getKey(), entry.getValue()))
+                    .append(GROUP_SEPARATOR);
+        }
+        return finalGroup.deleteCharAt(finalGroup.length() - 1).toString();
+    }
+
+    private static String buildSingleLabel(String key, String value) {
+        try {
+            return URLEncoder.encode(key + LABEL_QUERY_SEPARATOR + value, "UTF-8");
+        } catch (UnsupportedEncodingException ignored) {
+            // ignored
+        }
+        return StringUtils.EMPTY;
     }
 }

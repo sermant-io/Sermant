@@ -60,7 +60,7 @@ public class DispatcherServletInterceptor implements InstanceMethodInterceptor {
                 resp.getWriter().write(errMsg);
             }
             // 不再执行业务代码
-            result.setResult(null);
+            result.setResult(errMsg);
         }
     }
 
