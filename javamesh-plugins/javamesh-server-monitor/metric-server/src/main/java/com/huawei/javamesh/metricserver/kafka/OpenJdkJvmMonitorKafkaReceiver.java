@@ -1,18 +1,30 @@
 /*
- * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.huawei.javamesh.metricserver.kafka;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.huawei.javamesh.metricserver.dto.skywalkingjvm.CpuDTO;
-import com.huawei.javamesh.metricserver.dto.skywalkingjvm.GcDTO;
-import com.huawei.javamesh.metricserver.dto.skywalkingjvm.OracleMemoryDTO;
-import com.huawei.javamesh.metricserver.dto.skywalkingjvm.OracleMemoryPoolDTO;
-import com.huawei.javamesh.metricserver.dto.skywalkingjvm.ThreadDTO;
-import com.huawei.javamesh.metricserver.service.OracleMemoryPoolService;
-import com.huawei.javamesh.metricserver.service.OracleMemoryService;
-import com.huawei.javamesh.metricserver.service.SkywalkingJvmMetricService;
+import com.huawei.javamesh.metricserver.dto.openjdk.CpuDTO;
+import com.huawei.javamesh.metricserver.dto.openjdk.GcDTO;
+import com.huawei.javamesh.metricserver.dto.openjdk.OpenJdkMemoryDTO;
+import com.huawei.javamesh.metricserver.dto.openjdk.OpenJdkMemoryPoolDTO;
+import com.huawei.javamesh.metricserver.dto.openjdk.ThreadDTO;
+import com.huawei.javamesh.metricserver.service.OpenJdkMemoryPoolService;
+import com.huawei.javamesh.metricserver.service.OpenJdkMemoryService;
+import com.huawei.javamesh.metricserver.service.OpenJdkJvmMetricService;
 import org.apache.skywalking.apm.network.common.v3.CPU;
 import org.apache.skywalking.apm.network.language.agent.v3.GC;
 import org.apache.skywalking.apm.network.language.agent.v3.GCPhrase;
@@ -28,27 +40,27 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 
 /**
- * Skywalking JVMMetric kafka接收处理类
+ * OpenJdk JVMMetric kafka接收处理类
  */
 @Component
-public class SkywalkingJvmMonitorKafkaReceiver {
+public class OpenJdkJvmMonitorKafkaReceiver {
 
-    private final OracleMemoryService memoryService;
+    private final OpenJdkMemoryService memoryService;
 
-    private final OracleMemoryPoolService memoryPoolService;
+    private final OpenJdkMemoryPoolService memoryPoolService;
 
-    private final SkywalkingJvmMetricService jvmMetricService;
+    private final OpenJdkJvmMetricService jvmMetricService;
 
     @Autowired
-    public SkywalkingJvmMonitorKafkaReceiver(OracleMemoryService memoryService,
-                                             OracleMemoryPoolService memoryPoolService,
-                                             SkywalkingJvmMetricService jvmMetricService) {
+    public OpenJdkJvmMonitorKafkaReceiver(OpenJdkMemoryService memoryService,
+                                          OpenJdkMemoryPoolService memoryPoolService,
+                                          OpenJdkJvmMetricService jvmMetricService) {
         this.memoryService = memoryService;
         this.memoryPoolService = memoryPoolService;
         this.jvmMetricService = jvmMetricService;
     }
 
-    @KafkaListener(topics = "topic-oracle-jvm-monitor", groupId = "monitor-server")
+    @KafkaListener(topics = "topic-open-jdk-jvm-monitor", groupId = "monitor-server")
     public void onMessage(byte[] record) {
         JVMMetricCollection collection;
         try {
@@ -71,30 +83,30 @@ public class SkywalkingJvmMonitorKafkaReceiver {
 
     private void addMemoryPoolMetric(String service, String serviceInstance, Instant time, JVMMetric metric) {
         for (MemoryPool memoryPool : metric.getMemoryPoolList()) {
-            OracleMemoryPoolDTO.OraclePoolType type;
+            OpenJdkMemoryPoolDTO.OraclePoolType type;
             switch (memoryPool.getType()) {
                 case CODE_CACHE_USAGE:
-                    type = OracleMemoryPoolDTO.OraclePoolType.CODE_CACHE;
+                    type = OpenJdkMemoryPoolDTO.OraclePoolType.CODE_CACHE;
                     break;
                 case NEWGEN_USAGE:
-                    type = OracleMemoryPoolDTO.OraclePoolType.NEW_GEN;
+                    type = OpenJdkMemoryPoolDTO.OraclePoolType.NEW_GEN;
                     break;
                 case OLDGEN_USAGE:
-                    type = OracleMemoryPoolDTO.OraclePoolType.OLD_GEN;
+                    type = OpenJdkMemoryPoolDTO.OraclePoolType.OLD_GEN;
                     break;
                 case SURVIVOR_USAGE:
-                    type = OracleMemoryPoolDTO.OraclePoolType.SURVIVOR;
+                    type = OpenJdkMemoryPoolDTO.OraclePoolType.SURVIVOR;
                     break;
                 case PERMGEN_USAGE:
-                    type = OracleMemoryPoolDTO.OraclePoolType.PERM_GEN;
+                    type = OpenJdkMemoryPoolDTO.OraclePoolType.PERM_GEN;
                     break;
                 case METASPACE_USAGE:
-                    type = OracleMemoryPoolDTO.OraclePoolType.METASPACE;
+                    type = OpenJdkMemoryPoolDTO.OraclePoolType.METASPACE;
                     break;
                 default:
                     continue;
             }
-            memoryPoolService.addMemoryPoolMetric(OracleMemoryPoolDTO.builder()
+            memoryPoolService.addMemoryPoolMetric(OpenJdkMemoryPoolDTO.builder()
                 .service(service)
                 .serviceInstance(serviceInstance)
                 .time(time)
@@ -109,12 +121,12 @@ public class SkywalkingJvmMonitorKafkaReceiver {
 
     private void addMemoryMetric(String service, String serviceInstance, Instant time, JVMMetric metric) {
         for (Memory memory : metric.getMemoryList()) {
-            memoryService.addMemoryMetric(OracleMemoryDTO.builder()
+            memoryService.addMemoryMetric(OpenJdkMemoryDTO.builder()
                 .service(service)
                 .serviceInstance(serviceInstance)
                 .time(time)
-                .type(memory.getIsHeap() ? OracleMemoryDTO.OracleMemoryType.HEAP
-                    : OracleMemoryDTO.OracleMemoryType.NON_HEAP)
+                .type(memory.getIsHeap() ? OpenJdkMemoryDTO.OracleMemoryType.HEAP
+                    : OpenJdkMemoryDTO.OracleMemoryType.NON_HEAP)
                 .committed(memory.getCommitted())
                 .init(memory.getInit())
                 .max(memory.getMax())
