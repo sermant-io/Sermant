@@ -207,7 +207,7 @@ flow.control.plugin:
 
 ### 1、编译打包
 
-通过[此处](https://github.com/huaweicloud/java-mesh/releases)下载agent源码包, 并下载[Demo应用](../../../javamesh-samples/javamesh-example/demo-flowcontrol/flowcontrol-demo-cse)
+通过[此处](https://github.com/huaweicloud/java-mesh/releases)下载agent源码包, 并下载[Demo应用](../../../javamesh-plugins/javamesh-flowcontrol/flowcontrol-demos/flowcontrol-demo-cse)
 
 执行以下maven命令对agent进行打包
 

@@ -24,7 +24,6 @@
                 <module>demo-plugin</module>
                 <module>demo-service</module>
                 <module>demo-application</module>
-                <module>demo-flowcontrol</module>
             </modules>
         </profile>
         <profile>
@@ -33,7 +32,6 @@
                 <module>demo-plugin</module>
                 <module>demo-service</module>
                 <module>demo-application</module>
-                <module>demo-flowcontrol</module>
             </modules>
         </profile>
     </profiles>
