@@ -14,7 +14,6 @@
 package org.ngrinder.perftest.service;
 
 import com.huawei.argus.listener.ITestLifeCycleListener;
-import com.huawei.argus.monitor.common.MonitorSwitch;
 import com.huawei.argus.perftest.service.IPerfTestTaskService;
 import com.huawei.argus.report.service.PerfTestReportService;
 import net.grinder.SingleConsole;
@@ -97,9 +96,6 @@ public class PerfTestRunnable implements ControllerConstants {
 
 	@Autowired
 	private PerfTestReportService perfTestReportService;
-
-	@Autowired
-	private MonitorSwitch monitorSwitch;
 
 	private Runnable startRunnable;
 
@@ -189,8 +185,10 @@ public class PerfTestRunnable implements ControllerConstants {
 
 	private boolean isScheduledNow(PerfTest test) {
 		Date current = new Date();
+
+		// update by huawei, change Calendar.MINUTE to Calendar.SECOND
 		Date scheduledDate = DateUtils
-				.truncate((Date) defaultIfNull(test.getScheduledTime(), current), Calendar.MINUTE);
+				.truncate((Date) defaultIfNull(test.getScheduledTime(), current), Calendar.SECOND);
 		return current.after(scheduledDate);
 	}
 
@@ -243,9 +241,6 @@ public class PerfTestRunnable implements ControllerConstants {
 	public void doTest(final PerfTest perfTest) {
 		SingleConsole singleConsole = null;
 		try {
-			// NEW 开启监控
-			monitorSwitch.startMonitorByPerfTest(perfTest);
-
 			singleConsole = startConsole(perfTest);
 			ScriptHandler prepareDistribution = perfTestService.prepareDistribution(perfTest);
 			GrinderProperties grinderProperties = perfTestService.getGrinderProperties(perfTest, prepareDistribution);
@@ -560,9 +555,6 @@ public class PerfTestRunnable implements ControllerConstants {
 		LOG.info("Cancel test {} by user request.", perfTest.getId());
 		singleConsoleInUse.unregisterSampling();
 		try {
-			// NEW
-			monitorSwitch.stopMonitorByPerfTest(perfTest);
-
 			perfTestService.markProgressAndStatusAndFinishTimeAndStatistics(perfTest, CANCELED,
 					"Stop requested by user");
 		} catch (Exception e) {
@@ -582,9 +574,6 @@ public class PerfTestRunnable implements ControllerConstants {
 	public void doTerminate(PerfTest perfTest, SingleConsole singleConsoleInUse) {
 		singleConsoleInUse.unregisterSampling();
 		try {
-			// NEW
-			monitorSwitch.stopMonitorByPerfTest(perfTest);
-
 			perfTestService.markProgressAndStatusAndFinishTimeAndStatistics(perfTest, Status.STOP_BY_ERROR,
 					"Stopped by error");
 		} catch (Exception e) {
@@ -606,9 +595,6 @@ public class PerfTestRunnable implements ControllerConstants {
 				singleConsoleInUse.getCurrentRunningTime());
 		singleConsoleInUse.unregisterSampling();
 		try {
-			// NEW
-			monitorSwitch.stopMonitorByPerfTest(perfTest);
-
 			// stop target host monitor
 			if (perfTestService.hasTooManyError(perfTest)) {
 				perfTestService.markProgressAndStatusAndFinishTimeAndStatistics(perfTest, Status.STOP_BY_ERROR,

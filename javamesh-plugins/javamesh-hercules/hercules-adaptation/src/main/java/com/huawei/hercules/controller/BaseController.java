@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.huawei.hercules.controller;
 
 import com.alibaba.fastjson.JSONObject;
@@ -14,7 +30,9 @@ import java.util.*;
 
 public class BaseController {
 
+    /** 返回信息的key **/
     public final String JSON_MSG = "msg";
+    /** 操作结果状态可以 **/
     public final String JSON_RESULT_KEY = "success";
     public final boolean SUCCESS = true;
     public final boolean FAILURE = false;
@@ -49,6 +67,11 @@ public class BaseController {
         return format.format(date);
     }
 
+    /**
+     * 已逗号,拼接集合
+     * @param data 集合
+     * @return 拼接字符串结果
+     */
     protected String arrayToStr(List<String> data) {
         if (data == null || data.isEmpty()) {
             return "";
@@ -60,6 +83,11 @@ public class BaseController {
         return sj.toString();
     }
 
+    /**
+     * 已逗号,拼接数组
+     * @param data 集合
+     * @return 拼接字符串结果
+     */
     protected String arrayToStr(String[] data) {
         if (data == null || data.length == 0) {
             return "";
@@ -67,6 +95,11 @@ public class BaseController {
         return arrayToStr(Arrays.asList(data));
     }
 
+    /**
+     * 转换排序方式为数据库支持的
+     * @param order 排序方式
+     * @return 排序方式
+     */
     protected String getOrder(String order) {
         if ("ascend".equals(order)) {
             return "ASC";
@@ -74,6 +107,12 @@ public class BaseController {
         return "DESC";
     }
 
+    /**
+     * 拼接主机信息：域名:IP
+     * @param domain 域名
+     * @param ip IP地址
+     * @return 拼接结果
+     */
     protected CharSequence getHost(String domain, String ip) {
         StringBuilder thisHost = new StringBuilder();
         if (!StringUtils.isEmpty(domain)) {
@@ -89,12 +128,23 @@ public class BaseController {
         return thisHost.toString();
     }
 
+    /**
+     * 将脚本信息存放在Map集合中【解决feign传递时将分好;自动转变成逗号,】
+     * @param script 脚本内容
+     * @return 集合
+     */
     protected Map<String, String> parseScript(String script) {
         Map<String, String> scriptMap = new HashMap<>();
         scriptMap.put("script", script);
         return scriptMap;
     }
 
+    /**
+     * 下载文件
+     * @param jsonObject 文件内容
+     * @param response 响应
+     * @throws Exception 异常
+     */
     protected void downloadFile(JSONObject jsonObject, HttpServletResponse response) throws Exception {
         response.reset();
         response.addHeader("Content-Disposition", jsonObject.getString("Content-Disposition"));
@@ -130,4 +180,32 @@ public class BaseController {
         return time.substring(0, 19);
     }
 
+    /**
+     * 将\n的字符串数据转换成数组
+     * @param content 内容
+     * @return 数组结果
+     */
+    protected String[] parseStrToArray(String content) {
+        if (StringUtils.isEmpty(content)) {
+            return new String[0];
+        }
+        if (content.startsWith("\n")) {
+            return content.substring(2).split("\n");
+        }
+        return content.split("\n");
+    }
+
+    /**
+     * 从集合中移除指定的key
+     * @param map 集合
+     * @param keys 待异常的key信息
+     */
+    protected void removeKeys(Map<String, Object> map, String[] keys) {
+        if (keys == null || keys.length == 0) {
+            return;
+        }
+        for (String key : keys) {
+            map.remove(key);
+        }
+    }
 }

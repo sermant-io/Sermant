@@ -1,7 +1,24 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package com.huawei.argus.perftest.tuil;
 
 import com.huawei.argus.perftest.model.PerfTestVo;
-import org.ngrinder.model.MonitoringConfig;
 import org.ngrinder.model.PerfTest;
 
 /**
@@ -19,9 +36,6 @@ public class PerfTestUtil {
 		perfTestVo.setDescription(perfTest.getDescription());					//			"description": "",
         perfTestVo.setStatus(perfTest.getStatus());							//			"status": "FINISHED",
 		perfTestVo.setIgnoreSampleCount(perfTest.getIgnoreSampleCount());				//			"ignoreSampleCount": 0,
-//		perfTestVo.setScheduledTime(perfTest.getScheduledTime());					//			"scheduledTime": "May 11, 2019 11:24:41 AM",
-//		perfTestVo.setStartTime(perfTest.getStartTime());					//			"startTime": "May 11, 2019 6:26:15 PM",
-//		perfTestVo.setFinishTime(perfTest.getFinishTime());				//			"finishTime": "May 11, 2019 6:27:37 PM",
 		perfTestVo.setTargetHosts(perfTest.getTargetHosts());					//			"targetHosts": "DFAS:110.121",
 		perfTestVo.setUseRampUp(perfTest.getUseRampUp());					//			"useRampUp": false,
 		perfTestVo.setRampUpType(perfTest.getRampUpType());					//			"rampUpType": "THREAD",
@@ -43,25 +57,12 @@ public class PerfTestUtil {
 		perfTestVo.setRegion(perfTest.getRegion());					//			"region": "NONE",
 		perfTestVo.setSamplingInterval(perfTest.getSamplingInterval());					//			"samplingInterval": 1,
 		perfTestVo.setParam(perfTest.getParam());					//			"param": "0",
-//		perfTestVo.setCreatedDate(perfTest.getCreatedDate());					//			"createdDate": "May 11, 2019 6:25:38 PM",
-//		perfTestVo.setLastModifiedDate(perfTest.getLastModifiedDate());					//			"lastModifiedDate": "May 11, 2019 6:25:45 PM",
 		perfTestVo.setId(perfTest.getId());					//			"id": 57
 		perfTestVo.setSafeDistribution(perfTest.getSafeDistribution());
 
 		if (perfTest.getPerfScene() != null){
 			perfTestVo.setPerfSceneId(perfTest.getPerfScene().getId());
 			perfTestVo.setSceneType(perfTest.getPerfScene().getType());
-		}
-
-		MonitoringConfig monitoringConfig = perfTest.getMonitoringConfig();
-		if (monitoringConfig != null) {
-			perfTestVo.setNmonAll(monitoringConfig.isNmonAll());        //		private boolean nmonAll;
-			perfTestVo.setJvmThr(monitoringConfig.isJvmThr());        //		private boolean jvmThr;
-			perfTestVo.setJvmCpu(monitoringConfig.isJvmCpu());        //		private boolean jvmCpu;
-			perfTestVo.setJvmMem(monitoringConfig.isJvmMem());        //		private boolean jvmMem;
-			perfTestVo.setJvmCl(monitoringConfig.isJvmCl());        //		private boolean jvmCl;
-			perfTestVo.setJvmGc(monitoringConfig.isJvmGc());        //		private boolean jvmGc;
-			perfTestVo.setJvmMp(monitoringConfig.isJvmMp());
 		}
 
 		String agentIds = perfTest.getAgentIds();

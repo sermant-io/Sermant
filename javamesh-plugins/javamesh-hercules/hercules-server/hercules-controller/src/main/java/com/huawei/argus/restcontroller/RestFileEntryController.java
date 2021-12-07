@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package com.huawei.argus.restcontroller;
 
 import com.alibaba.fastjson.JSON;
@@ -7,13 +25,10 @@ import com.nhncorp.lucy.security.xss.XssPreventer;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.ngrinder.common.controller.BaseController;
 import org.ngrinder.common.controller.RestAPI;
-import org.ngrinder.common.util.EncodingUtils;
 import org.ngrinder.common.util.HttpContainerContext;
 import org.ngrinder.common.util.PathUtils;
 import org.ngrinder.common.util.UrlUtils;
-import org.ngrinder.infra.spring.RemainedPath;
 import org.ngrinder.model.User;
 import org.ngrinder.script.handler.ProjectHandler;
 import org.ngrinder.script.handler.ScriptHandler;
@@ -31,23 +46,31 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.Comparator;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Lists.newArrayList;
-import static java.util.Collections.sort;
 import static org.apache.commons.io.FilenameUtils.getPath;
 import static org.ngrinder.common.util.EncodingUtils.encodePathWithUTF8;
 import static org.ngrinder.common.util.ExceptionUtils.processException;
@@ -169,19 +192,20 @@ public class RestFileEntryController extends RestBaseController {
 							 @RequestParam(value = "createLibAndResource", defaultValue = "false") boolean createLibAndResources,
 							 @RequestParam(value = "options", required = false) String options) {
 		fileName = StringUtils.trimToEmpty(fileName);
-		String name = "Test1";
+		String hostIp = "Test1";
 		if (StringUtils.isEmpty(testUrl)) {
 			testUrl = StringUtils.defaultIfBlank(testUrl, "http://please_modify_this.com");
 		} else {
-			name = UrlUtils.getHost(testUrl);
+			hostIp = UrlUtils.getHost(testUrl);
 		}
 		ScriptHandler scriptHandler = fileEntryService.getScriptHandler(scriptType);
 		FileEntry entry = new FileEntry();
 		entry.setPath(fileName);
 		JSONObject modelInfos = new JSONObject();
+		Map<String, Object> file = new HashMap<>();
 		if (scriptHandler instanceof ProjectHandler) {
 			if (!fileEntryService.hasFileEntry(user, PathUtils.join(path, fileName))) {
-				fileEntryService.prepareNewEntry(user, path, fileName, name, testUrl, scriptHandler,
+				fileEntryService.prepareNewEntry(user, path, fileName, hostIp, testUrl, scriptHandler,
 					createLibAndResources, options);
 				modelInfos.put("message", fileName + " project is created.");
 				modelInfos.put(JSON_SUCCESS, true);
@@ -195,14 +219,20 @@ public class RestFileEntryController extends RestBaseController {
 
 		} else {
 			String fullPath = PathUtils.join(path, fileName);
+			FileEntry fileEntry = null;
 			if (fileEntryService.hasFileEntry(user, fullPath)) {
-				modelInfos.put("file", fileEntryService.getOne(user, fullPath));
+				fileEntry = fileEntryService.getOne(user, fullPath);
 			} else {
-				modelInfos.put("file", fileEntryService.prepareNewEntry(user, path, fileName, name, testUrl,
-					scriptHandler, createLibAndResources, options));
+				fileEntry = fileEntryService.prepareNewEntry(user, path, fileName, hostIp, testUrl,
+					scriptHandler, createLibAndResources, options);
 			}
+			file.put("path", fileEntry.getPath());
+			file.put("description", fileEntry.getDescription());
+			file.put("content", fileEntry.getContent());
+			file.put("properties", fileEntry.getProperties());
 		}
 		modelInfos.put(JSON_SUCCESS, true);
+		modelInfos.put("file", file);
 		modelInfos.put("breadcrumbPath", getScriptPathBreadcrumbs(PathUtils.join(path, fileName)));
 		modelInfos.put("scriptHandler", scriptHandler);
 		modelInfos.put("createLibAndResource", createLibAndResources);
@@ -342,6 +372,28 @@ public class RestFileEntryController extends RestBaseController {
 	}
 
 	/**
+	 * 判断脚本是否存在
+	 * @param user 当前用户
+	 * @param path 脚本全路径
+	 * @return 判断结果
+	 */
+	@RequestMapping(value = "/hasScript", method = RequestMethod.GET)
+	boolean hasScript(User user, @RequestParam String path) {
+		if (StringUtils.isEmpty(path)) {
+			return false;
+		}
+		List<FileEntry> files = fileEntryService.getAll(user);
+		if (files == null || files.isEmpty()) {
+			return false;
+		}
+		for (FileEntry fileEntry: files) {
+			if (path.equals(fileEntry.getPath())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	/**
 	 * Save a fileEntry and return to the the path.
 	 *
 	 * @param user                 current user
@@ -379,7 +431,7 @@ public class RestFileEntryController extends RestBaseController {
 	}
 
 	@RequestMapping(value = "/saveScript", method = RequestMethod.POST)
-	public String saveScript(User user, @RequestParam Map<String, String> jsonObject,
+	public String saveScript(User user, @RequestBody Map<String, String> jsonObject,
 					   @RequestParam String targetHosts, @RequestParam(defaultValue = "0") String validated,
 					   @RequestParam(defaultValue = "false") boolean createLibAndResource) {
 		FileEntry fileEntry = JSON.parseObject(jsonObject.get("script"), FileEntry.class);
@@ -681,16 +733,6 @@ public class RestFileEntryController extends RestBaseController {
 					return input != null && trimPathSeparatorBothSides(getPath(input.getPath())).equals(trimmedPath);
 				}
 			}));
-//		sort(files, new Comparator<FileEntry>() {
-//			@Override
-//			public int compare(FileEntry o1, FileEntry o2) {
-//				if (o1.getFileType() == FileType.DIR && o2.getFileType() != FileType.DIR) {
-//					return -1;
-//				}
-//				return (o1.getFileName().compareTo(o2.getFileName()));
-//			}
-//
-//		});
 		for (FileEntry each : files) {
 			each.setPath(removePrependedSlash(each.getPath()));
 		}

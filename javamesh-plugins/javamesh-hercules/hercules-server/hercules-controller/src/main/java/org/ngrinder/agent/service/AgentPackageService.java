@@ -173,7 +173,11 @@ public class AgentPackageService {
 					if (!isJar(eachClassPath)) {
 						continue;
 					}
-					if (isAgentDependentLib(eachClassPath, "ngrinder-sh")) {
+
+					/**
+					 * update by huawei , ngrinder-sh rename to hercules-sh
+					 */
+					if (isAgentDependentLib(eachClassPath, "hercules-sh")) {
 						processJarEntries(eachClassPath, new TarArchivingZipEntryProcessor(tarOutputStream, new FilePredicate() {
 							@Override
 							public boolean evaluate(Object object) {
@@ -218,9 +222,8 @@ public class AgentPackageService {
 					regionName, connectionIP, owner, false);
 			File agentTar = new File(agentPackagesDir, packageName);
 			if (agentTar.exists()) {
-				return agentTar;
+				FileUtils.deleteQuietly(agentTar);
 			}
-			FileUtils.deleteQuietly(agentTar);
 			final String basePath = "ngrinder-agent/";
 			final String libPath = basePath + "lib/";
 			TarArchiveOutputStream tarOutputStream = null;
@@ -235,7 +238,11 @@ public class AgentPackageService {
 					if (!isJar(eachClassPath)) {
 						continue;
 					}
-					if (isAgentDependentLib(eachClassPath, "ngrinder-sh")) {
+
+					/**
+					 * update by huawei , ngrinder-sh rename to hercules-sh
+					 */
+					if (isAgentDependentLib(eachClassPath, "hercules-sh")) {
 						processJarEntries(eachClassPath, new TarArchivingZipEntryProcessor(tarOutputStream, new FilePredicate() {
 							@Override
 							public boolean evaluate(Object object) {
@@ -312,9 +319,6 @@ public class AgentPackageService {
 			for (String each : StringUtils.split(dependencies, ";")) {
 				libs.add(FilenameUtils.getBaseName(each.trim()).replace("-SNAPSHOT", ""));
 			}
-			libs.add(getPackageName("ngrinder-core").replace("-SNAPSHOT", ""));
-			libs.add(getPackageName("ngrinder-runtime").replace("-SNAPSHOT", ""));
-			libs.add(getPackageName("ngrinder-groovy").replace("-SNAPSHOT", ""));
 		} catch (Exception e) {
 			LOGGER.error("Error while loading dependencies.txt", e);
 		} finally {

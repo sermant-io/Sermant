@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/argus/static/css/main.8b9eb8f4.chunk.css",
-    "main.js": "/argus/static/js/main.4af115be.chunk.js",
-    "runtime-main.js": "/argus/static/js/runtime-main.9845a307.js",
+    "main.css": "/argus/static/css/main.b9e7da76.chunk.css",
+    "main.js": "/argus/static/js/main.0f9e663a.chunk.js",
+    "runtime-main.js": "/argus/static/js/runtime-main.b8854e0b.js",
     "static/css/2.e82c75bd.chunk.css": "/argus/static/css/2.e82c75bd.chunk.css",
-    "static/js/2.83fc5c6a.chunk.js": "/argus/static/js/2.83fc5c6a.chunk.js",
-    "static/js/3.941e706d.chunk.js": "/argus/static/js/3.941e706d.chunk.js",
+    "static/js/2.cba6357d.chunk.js": "/argus/static/js/2.cba6357d.chunk.js",
+    "static/js/3.a5daad9e.chunk.js": "/argus/static/js/3.a5daad9e.chunk.js",
     "editor.worker.js": "/argus/editor.worker.js",
     "index.html": "/argus/index.html",
-    "static/js/2.83fc5c6a.chunk.js.LICENSE.txt": "/argus/static/js/2.83fc5c6a.chunk.js.LICENSE.txt",
+    "static/js/2.cba6357d.chunk.js.LICENSE.txt": "/argus/static/js/2.cba6357d.chunk.js.LICENSE.txt",
     "static/media/Calendar.fc9c5bb6.jpg": "/argus/static/media/Calendar.fc9c5bb6.jpg",
     "static/media/index.scss": "/argus/static/media/Kanban.cde7fb6c.png",
     "static/media/Left.3cbb226a.png": "/argus/static/media/Left.3cbb226a.png",
@@ -16,10 +16,10 @@
     "static/media/App.scss": "/argus/static/media/mb-icons.9615a49d.woff"
   },
   "entrypoints": [
-    "static/js/runtime-main.9845a307.js",
+    "static/js/runtime-main.b8854e0b.js",
     "static/css/2.e82c75bd.chunk.css",
-    "static/js/2.83fc5c6a.chunk.js",
-    "static/css/main.8b9eb8f4.chunk.css",
-    "static/js/main.4af115be.chunk.js"
+    "static/js/2.cba6357d.chunk.js",
+    "static/css/main.b9e7da76.chunk.css",
+    "static/js/main.0f9e663a.chunk.js"
   ]
 }

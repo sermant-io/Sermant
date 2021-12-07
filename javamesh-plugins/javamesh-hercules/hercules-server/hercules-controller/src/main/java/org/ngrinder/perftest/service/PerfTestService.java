@@ -57,9 +57,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -149,6 +153,45 @@ public class PerfTestService extends AbstractPerfTestService implements Controll
 		return perfTestRepository.findAll(spec, pageable);
 	}
 
+	public Page<PerfTest> getPagedAll(User user, String query, String tag, String queryFilter, Pageable pageable,
+									  String testName, String testType, String scriptPath, String owner) {
+		Specifications<PerfTest> spec = Specifications.where(idEmptyPredicate());
+		// User can see only his own test
+		if (user.getRole().equals(Role.USER)) {
+			spec = spec.and(createdBy(user));
+		}
+		if (StringUtils.isNotBlank(tag)) {
+			spec = spec.and(hasTag(tag));
+		}
+		if ("F".equals(queryFilter)) {
+			spec = spec.and(statusSetEqual(Status.FINISHED));
+		} else if ("R".equals(queryFilter)) {
+			spec = spec.and(statusSetEqual(Status.TESTING));
+		} else if ("S".equals(queryFilter)) {
+			spec = spec.and(statusSetEqual(Status.READY));
+			spec = spec.and(scheduledTimeNotEmptyPredicate());
+		}
+		if (StringUtils.isNotBlank(query)) {
+			spec = spec.and(likeTestNameOrDescription(query));
+		}
+
+		if (!org.springframework.util.StringUtils.isEmpty(testName)) {
+			String[] testNames = testName.trim().split(",");
+			spec = spec.and(setEqual("testName", testNames));
+		}
+
+		if (!org.springframework.util.StringUtils.isEmpty(scriptPath)) {
+			String[] scriptPaths = scriptPath.trim().split(",");
+			spec = spec.and(setEqual("scriptName", scriptPaths));
+		}
+
+		if (!org.springframework.util.StringUtils.isEmpty(owner)) {
+			String[] owners = owner.trim().split(",");
+			spec = spec.and(setEqual("createdUser", owners));
+		}
+		return perfTestRepository.findAll(spec, pageable);
+	}
+
 	/**
 	 * Get {@link PerfTest} list on the user.
 	 *
@@ -184,6 +227,15 @@ public class PerfTestService extends AbstractPerfTestService implements Controll
 		if (user.getRole().equals(Role.USER)) {
 			spec = spec.and(createdBy(user));
 		}
+		spec = spec.and(idSetEqual(ids));
+		return perfTestRepository.findAll(spec);
+	}
+
+	public List<PerfTest> getAll(Long[] ids) {
+		if (ids.length == 0) {
+			return newArrayList();
+		}
+		Specifications<PerfTest> spec = Specifications.where(idEmptyPredicate());
 		spec = spec.and(idSetEqual(ids));
 		return perfTestRepository.findAll(spec);
 	}
@@ -1088,7 +1140,7 @@ public class PerfTestService extends AbstractPerfTestService implements Controll
 	public Collection<PerfTestStatistics> getCurrentPerfTestStatistics() {
 		Map<User, PerfTestStatistics> perfTestPerUser = newHashMap();
 		for (PerfTest each : getAll(null, getProcessingOrTestingTestStatus())) {
-			User lastModifiedUser = each.getCreatedUser().getUserBaseInfo();
+			User lastModifiedUser = each.getCreatedUser().obtainUserBaseInfo();
 			PerfTestStatistics perfTestStatistics = perfTestPerUser.get(lastModifiedUser);
 			if (perfTestStatistics == null) {
 				perfTestStatistics = new PerfTestStatistics(lastModifiedUser);
@@ -1625,5 +1677,12 @@ public class PerfTestService extends AbstractPerfTestService implements Controll
 		return perfTestRepository.findAllByCreatedTimeAndRegion(start, end, region);
 	}
 
-
+	public static Specification<PerfTest> setEqual(final String column, final Object[] values) {
+		return new Specification<PerfTest>() {
+			@Override
+			public javax.persistence.criteria.Predicate toPredicate(Root<PerfTest> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				return root.get(column).in(values);
+			}
+		};
+	}
 }

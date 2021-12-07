@@ -1,16 +1,21 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
+
 package com.huawei.argus.perftest.controller;
 
 import com.alibaba.fastjson.JSONObject;
@@ -275,7 +280,7 @@ public class PerfTestTaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public HttpEntity saveOne(User user, PerfTest perfTest, MonitoringConfig monitoringConfig,@RequestParam(value = "perfSceneId", required = false) Long perfSceneId,
+	public HttpEntity saveOne(User user, PerfTest perfTest, @RequestParam(value = "perfSceneId", required = false) Long perfSceneId,
 							  @RequestParam(value = "isClone", required = false, defaultValue = "false") boolean isClone, ModelMap model) {
 
 		ConcurrentHashMap<String,String> resultMap = validate(user, null, perfTest);
@@ -288,17 +293,6 @@ public class PerfTestTaskController extends BaseController {
 		perfTest.setTestName(StringUtils.trimToEmpty(perfTest.getTestName()));
 		perfTest.setScriptRevision(-1L);
 		perfTest.prepare(isClone);
-		if (perfTest.getId()!=null){
-			PerfTest one = perfTestTaskService.getOne(perfTest.getId());
-			if(one.getMonitoringConfig()!=null){
-				monitoringConfig.setId(one.getMonitoringConfig().getId());
-			}
-		}
-		if(isClone){
-			monitoringConfig.setId(null);
-		}
-		perfTest.setMonitoringConfig(monitoringConfig);
-
 		PerfScene perfScene = perfSceneService.retrieve(perfSceneId);
 		perfTest.setScriptName(perfScene.getScriptPath());
 		perfTest.setPerfScene(perfScene);

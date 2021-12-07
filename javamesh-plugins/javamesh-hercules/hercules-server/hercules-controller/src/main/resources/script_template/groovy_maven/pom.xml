@@ -6,34 +6,13 @@
 	<version>0.0.1</version>
 
 	<properties>
-		<hercules.version>0.0.1</hercules.version>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
+		<hercules.version>3.4.2</hercules.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>argus.maven.repo</id>
-			<url>http://code-cbu.huawei.com/argus-publish/maven-repo/raw/master/repository</url>
-		</repository>
-	</repositories>
 	<dependencies>
-		<dependency>
-			<groupId>com.huawei</groupId>
-			<artifactId>hercules-groovy</artifactId>
-			<version>${hercules.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- Add the dependencies -->
-		<!--
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.0.1</version>
-		</dependency>
-		 -->
 		<!-- Put your private library like this -->
 		<!--
 		<dependency>

@@ -247,14 +247,14 @@ public class AgentImplementationEx implements Agent, AgentConstants {
 						workerFactory = new DebugThreadWorkerFactory(m_agentIdentity, m_fanOutStreamSender,
 								consoleCommunication != null, script, properties);
 					}
-					m_logger.debug("Worker launcher is prepared.");
+					m_logger.info("Worker launcher is prepared.");
 					final WorkerLauncher workerLauncher = new WorkerLauncher(properties.getInt("grinder.processes", 1),
 							workerFactory, m_eventSynchronisation, m_logger);
 					m_workerLauncherForShutdown = workerLauncher;
 					final boolean threadRampUp = properties.getBoolean("grinder.threadRampUp", false);
 					final int increment = properties.getInt("grinder.processIncrement", 0);
 					if (!threadRampUp) {
-						m_logger.debug("'Ramp Up' mode by {}.", increment);
+						m_logger.info("'Ramp Up' mode by {}.", increment);
 					}
 					if (!threadRampUp && increment > 0) {
 						final boolean moreProcessesToStart = workerLauncher.startSomeWorkers(properties.getInt(
@@ -268,8 +268,8 @@ public class AgentImplementationEx implements Agent, AgentConstants {
 							m_timer.scheduleAtFixedRate(rampUpTimerTask, incrementInterval, incrementInterval);
 						}
 					} else {
-						m_logger.debug("start all workers");
 						workerLauncher.startAllWorkers();
+						m_logger.info("start all workers");
 					}
 
 					// Wait for a termination event.
@@ -277,7 +277,7 @@ public class AgentImplementationEx implements Agent, AgentConstants {
 						final long maximumShutdownTime = 5000;
 						long consoleSignalTime = -1;
 						while (!workerLauncher.allFinished()) {
-							m_logger.debug("Waiting until all workers are finished");
+							m_logger.info("Waiting until all workers are finished");
 							if (consoleSignalTime == -1
 									&& m_consoleListener.checkForMessage(ConsoleListener.ANY
 									^ ConsoleListener.START)) {

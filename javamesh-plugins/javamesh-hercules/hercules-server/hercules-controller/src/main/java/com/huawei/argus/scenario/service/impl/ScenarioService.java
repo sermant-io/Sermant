@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package com.huawei.argus.scenario.service.impl;
 
 import com.huawei.argus.scenario.repository.ScenarioRepository;
@@ -19,6 +37,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
+
+import static org.ngrinder.common.util.CollectionUtils.newArrayList;
 
 @Service
 public class ScenarioService implements IScenarioService {
@@ -45,22 +65,22 @@ public class ScenarioService implements IScenarioService {
 
 		if (!org.springframework.util.StringUtils.isEmpty(appName)) {
 			String[] appNames = appName.trim().split(",");
-			spec = spec.and(idSetEqual("appName", appNames));
+			spec = spec.and(setEqual("appName", appNames));
 		}
 
 		if (!org.springframework.util.StringUtils.isEmpty(createBy)) {
 			String[] createBys = createBy.trim().split(",");
-			spec = spec.and(idSetEqual("createBy", createBys));
+			spec = spec.and(setEqual("createBy", createBys));
 		}
 
 		if (!org.springframework.util.StringUtils.isEmpty(scenarioType)) {
 			String[] scenarioTypes = scenarioType.trim().split(",");
-			spec = spec.and(idSetEqual("scenarioType", scenarioTypes));
+			spec = spec.and(setEqual("scenarioType", scenarioTypes));
 		}
 
 		if (!org.springframework.util.StringUtils.isEmpty(scenarioName)) {
 			String[] scenarioTypes = scenarioName.trim().split(",");
-			spec = spec.and(idSetEqual("scenarioName", scenarioTypes));
+			spec = spec.and(setEqual("scenarioName", scenarioTypes));
 		}
 
 		if (StringUtils.isNotBlank(query)) {
@@ -80,11 +100,31 @@ public class ScenarioService implements IScenarioService {
 		scenarioRepository.delete(scenario);
 	}
 
-	public static Specification<Scenario> idSetEqual(final String column, final Object[] ids) {
+	@Override
+	public List<Scenario> getAll(Long[] ids) {
+		if (ids.length == 0) {
+			return newArrayList();
+		}
+		Specifications<Scenario> spec = Specifications.where(idEmptyPredicate());
+		spec = spec.and(setEqual("id", ids));
+		return scenarioRepository.findAll(spec);
+	}
+
+	@Override
+	public List<Scenario> getAllByScriptPaths(User user, List<String> scriptPaths) {
+		if (scriptPaths.size() == 0) {
+			return newArrayList();
+		}
+		Specifications<Scenario> spec = Specifications.where(idEmptyPredicate());
+		spec = spec.and(setEqual("scriptPath", scriptPaths.toArray()));
+		return scenarioRepository.findAll(spec);
+	}
+
+	public static Specification<Scenario> setEqual(final String column, final Object[] values) {
 		return new Specification<Scenario>() {
 			@Override
 			public Predicate toPredicate(Root<Scenario> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				return root.get(column).in(ids);
+				return root.get(column).in(values);
 			}
 		};
 	}

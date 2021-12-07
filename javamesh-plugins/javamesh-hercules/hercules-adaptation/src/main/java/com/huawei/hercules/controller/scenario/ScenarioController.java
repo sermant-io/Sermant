@@ -1,13 +1,42 @@
+/*
+ * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.huawei.hercules.controller.scenario;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.hercules.controller.BaseController;
 import com.huawei.hercules.service.scenario.IScenarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -46,7 +75,7 @@ public class ScenarioController extends BaseController {
             String scenarioName = params.getString("scenario_name");
             JSONObject result = scenarioService.getPagedAll(null, null, null, null, scenarioName, null);
             if (result != null) {
-                Map<String, Object> scenarioListPage = (Map<String, Object>) result.get("scenarioListPage");
+                Map<String, Object> scenarioListPage = result.getJSONObject("scenarioListPage");
                 if (scenarioListPage.get("total") != null && Integer.parseInt(scenarioListPage.get("total").toString()) > 0) {
                     return returnError("压测场景已存在");
                 }
@@ -62,41 +91,59 @@ public class ScenarioController extends BaseController {
         return returnSuccess();
     }
 
+    /**
+     * 压测场景更新
+     * @param params 场景信息
+     * @return 更新结果
+     */
     @RequestMapping(value = "/scenario", method = RequestMethod.PUT)
     public JSONObject update(@RequestBody JSONObject params) {
         return create(params);
     }
 
+    /**
+     * 压测场景查询
+     * @param keywords 模糊查询关键字：支持应用名、场景名称、标签、描述的模糊查询
+     * @param appName 应用名筛选
+     * @param createdBy 创建人筛选
+     * @param scenarioType 场景类型筛选
+     * @param scenarioName 场景名称筛选
+     * @param pageSize 分页信息
+     * @param currentPageNum 当前页
+     * @param sorter 排序关键字
+     * @param order 排序方式
+     * @return 查询结果
+     */
     @RequestMapping(value = "/scenario", method = RequestMethod.GET)
     public JSONObject queryScenario(@RequestParam(required = false) String keywords,
-                                    @RequestParam(name = "app_name[]", required = false) String[] app_name,
-                                    @RequestParam(name = "create_by[]", required = false) String[] create_by,
-                                    @RequestParam(name = "scenario_type[]", required = false) String[] scenario_type,
-                                    @RequestParam(name = "scenario_name[]", required = false) String[] scenario_name,
+                                    @RequestParam(name = "app_name[]", required = false) String[] appName,
+                                    @RequestParam(name = "create_by[]", required = false) String[] createdBy,
+                                    @RequestParam(name = "scenario_type[]", required = false) String[] scenarioType,
+                                    @RequestParam(name = "scenario_name[]", required = false) String[] scenarioName,
                                     @RequestParam(required = false, defaultValue = "10") int pageSize,
-                                    @RequestParam(required = false, defaultValue = "1") int current,
+                                    @RequestParam(value = "current", required = false, defaultValue = "1") int currentPageNum,
                                     @RequestParam(required = false) String sorter,
                                     @RequestParam(required = false) String order) {
         // 1.查询条件的转换
         JSONObject pagesInfo = new JSONObject();
         pagesInfo.put("size", pageSize);
-        pagesInfo.put("page", current == 0 ? 0 : current - 1);
+        pagesInfo.put("page", currentPageNum == 0 ? 0 : currentPageNum - 1);
         if (!StringUtils.isEmpty(sorter) && !StringUtils.isEmpty(order)) {
             StringJoiner sj = new StringJoiner(",");
             sj.add(scenarioKeys.get(sorter)).add(getOrder(order));
             pagesInfo.put("sort", sj.toString());
         }
 
-        JSONObject result = scenarioService.getPagedAll(keywords, arrayToStr(app_name), arrayToStr(create_by), arrayToStr(scenario_type), arrayToStr(scenario_name), pagesInfo.toString());
+        JSONObject result = scenarioService.getPagedAll(keywords, arrayToStr(appName), arrayToStr(createdBy), arrayToStr(scenarioType), arrayToStr(scenarioName), pagesInfo.toString());
 
         // 2.结果适配
-        List<Map<String, Object>> files = null;
         if (result != null) {
-            Map<String, Object> scenarioListPage = (Map<String, Object>) result.get("scenarioListPage");
-            files = (List<Map<String, Object>>) scenarioListPage.get("content");
+            JSONObject scenarioListPage = result.getJSONObject("scenarioListPage");
+            JSONArray files = scenarioListPage.getJSONArray("content");
             result.put("total", scenarioListPage.get("total"));
-            for (Map<String, Object> file : files) {
+            for (int i = 0; i < files.size(); i++) {
                 Set<Map.Entry<String, String>> entries = scenarioKeys.entrySet();
+                JSONObject file = files.getJSONObject(i);
                 for (Map.Entry<String, String> next : entries) {
                     file.put(next.getKey(), file.get(next.getValue()));
                 }
@@ -107,7 +154,7 @@ public class ScenarioController extends BaseController {
                 }
                 file.put("label", labels);
 
-                Map<String, Object> user = (Map<String, Object>) file.get("createBy");
+                Map<String, Object> user = file.getJSONObject("createBy");
                 String createBy = user != null ? (String) user.get("name") : null;
                 file.put("create_by", createBy);
                 scenarioKeys.put("create_by", "name");
@@ -116,25 +163,55 @@ public class ScenarioController extends BaseController {
                 file.put("create_time", dataFormat((String)file.get("create_time")));
                 file.put("update_time", dataFormat((String)file.get("update_time")));
             }
+            result.put("data", files);
         }
-        result.put("data", files);
         return result;
     }
 
+    /**
+     * 删除场景
+     * @param scenarioId 场景ID
+     * @return 删除结果
+     */
     @RequestMapping(value = "/scenario", method = RequestMethod.DELETE)
-    public JSONObject delete(@RequestParam(name = "scenario_id[]") String[] scenario_id) {
-        if (StringUtils.isEmpty(scenario_id)) {
+    public JSONObject delete(@RequestParam(name = "scenario_id[]") String[] scenarioId) {
+        if (StringUtils.isEmpty(scenarioId)) {
             return returnError();
         }
         try {
-            scenarioService.delete(arrayToStr(scenario_id));
+            scenarioService.delete(arrayToStr(scenarioId));
         } catch (Exception e) {
             return returnError("压测场景删除失败");
         }
         return returnSuccess();
     }
 
-
+    /**
+     * 校验场景下是否有压测任务
+     * @param scenarioId 场景ID
+     * @return 含有压测任务的场景名称结果
+     */
+    @RequestMapping(value = "/scenario/deleteCheck", method = RequestMethod.GET)
+    public JSONObject deleteCheck(@RequestParam(name = "scenario_id[]") String[] scenarioId) {
+        // 判断场景下是否有压测任务
+        List<Long> scenarioIds = Arrays.stream(scenarioId)
+                .map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+        JSONObject result = new JSONObject();
+        Set<Object> scenarioNames = new HashSet<>();
+        result.put("data", scenarioNames);
+        if (scenarioIds.isEmpty()) {
+            return result;
+        }
+        JSONObject allPerfTestByScenarioIds = scenarioService.getAllPerfTestByScenarioIds(scenarioIds);
+        JSONArray perfTests = allPerfTestByScenarioIds.getJSONArray("scenarioInfos");
+        if (perfTests != null && !perfTests.isEmpty()) {
+            for (int i = 0; i < perfTests.size(); i++ ) {
+                JSONObject test = perfTests.getJSONObject(i);
+                scenarioNames.add(test.getString("scenarioName"));
+            }
+        }
+        return result;
+    }
     /**
      * 下拉列表查询
      *
@@ -151,14 +228,15 @@ public class ScenarioController extends BaseController {
 
         List<String> scenarioInfos = new ArrayList<>();
         if (result != null) {
-            Map<String, Object> scenarioListPage = (Map<String, Object>) result.get("scenarioListPage");
-            List<Map<String, Object>> content = (List<Map<String, Object>>) scenarioListPage.get("content");
+            JSONObject scenarioListPage = result.getJSONObject("scenarioListPage");
+            JSONArray content = scenarioListPage.getJSONArray("content");
 
-            for (Map file : content) {
-                scenarioInfos.add((String) file.get("scenarioName"));
+            for (int i = 0; i < content.size(); i++ ) {
+                JSONObject file = content.getJSONObject(i);
+                scenarioInfos.add(file.getString("scenarioName"));
             }
+            result.put("data", scenarioInfos);
         }
-        result.put("data", scenarioInfos);
         return result;
     }
 

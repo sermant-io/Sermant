@@ -12,7 +12,7 @@
 
 	<properties>
 		<outputfilename>${project.version}.jar</outputfilename>
-		<ngrinder.version>${project.version}</ngrinder.version>
+		<ngrinder.version>3.4.2</ngrinder.version>
 	</properties>
 
 	<dependencies>
@@ -44,27 +44,41 @@
 			<groupId>sigar</groupId>
 			<artifactId>sigar-native</artifactId>
 			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/sigar-native-1.0.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>grinder</groupId>
+			<artifactId>grinder</artifactId>
+			<version>3.9.1-patch</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/grinder-3.9.1-patch.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.python</groupId>
 			<artifactId>jython-standalone</artifactId>
 			<version>2.5.3</version>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>com.huawei</groupId>-->
-<!--			<artifactId>hercules-runtime</artifactId>-->
-<!--			<version>0.0.1</version>-->
-<!--		</dependency>-->
-
 		<dependency>
 			<groupId>org.ngrinder</groupId>
 			<artifactId>ngrinder-runtime</artifactId>
 			<version>3.4.2</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/ngrinder-runtime-3.4.2.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.ngrinder</groupId>
+			<artifactId>ngrinder-core</artifactId>
+			<version>3.4.2</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/ngrinder-core-3.4.2.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.ngrinder</groupId>
 			<artifactId>ngrinder-groovy</artifactId>
 			<version>3.4.2</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/ngrinder-groovy-3.4.2.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
@@ -211,12 +225,14 @@
 				<version>2.8</version>
 				<executions>
 					<execution>
-						<id>dependency_creation</id>
+						<id>dependency_runtime</id>
 						<phase>generate-sources</phase>
 						<configuration>
 							<fileSeparator>/</fileSeparator>
 							<pathSeparator>;</pathSeparator>
-							<includeScope>runtime</includeScope>
+							<excludeArtifactIds>
+								mockito-core,objenesis,fest-util,hamcrest-core,junit,fest-assert
+							</excludeArtifactIds>
 							<outputFile>${project.basedir}/target/classes/dependencies.txt</outputFile>
 						</configuration>
 						<goals>
