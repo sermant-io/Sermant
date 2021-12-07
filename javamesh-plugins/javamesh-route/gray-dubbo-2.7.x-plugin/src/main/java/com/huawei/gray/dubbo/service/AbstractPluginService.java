@@ -55,9 +55,11 @@ public abstract class AbstractPluginService implements PluginService {
      * @param method 增强的方法
      * @param arguments 增强方法的所有参数
      * @param result the method's original return value. May be null if the method triggers an exception.
+     * @return 结果
      * @throws Exception 增强时可能出现的异常
      */
-    public void after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
+    public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
+        return result;
     }
 
     /**

@@ -16,9 +16,9 @@
 
 package com.huawei.gray.dubbo.service;
 
+import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.javamesh.core.agent.common.BeforeResult;
 import com.huawei.javamesh.core.util.SpiLoadUtil.SpiWeight;
-import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.route.common.gray.addr.AddrCache;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
@@ -38,7 +38,7 @@ import java.util.List;
  * @author pengyuyi
  * @date 2021/11/24
  */
-@SpiWeight(4)
+@SpiWeight(2)
 public class RegistrationServiceImpl extends RegistrationService {
     /**
      * 拦截点前执行

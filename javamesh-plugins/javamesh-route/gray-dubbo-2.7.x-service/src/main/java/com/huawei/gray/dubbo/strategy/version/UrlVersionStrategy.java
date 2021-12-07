@@ -14,24 +14,28 @@
  * limitations under the License.
  */
 
-package com.huawei.gray.dubbo.definition.apache;
+package com.huawei.gray.dubbo.strategy.version;
 
-import com.huawei.gray.dubbo.definition.AbstractInstDefinition;
+import com.huawei.gray.dubbo.strategy.VersionStrategy;
+import com.huawei.route.common.gray.constants.GrayConstant;
+
+import org.apache.dubbo.rpc.Invoker;
 
 /**
- * 增强DubboInvoker类的doInvoke方法，更改路由信息
+ * 从注册url中获取版本
  *
  * @author pengyuyi
- * @since 2021年6月28日
+ * @date 2021/12/8
  */
-public class DubboInvokerDefinition extends AbstractInstDefinition {
-    private static final String ENHANCE_CLASS = "org.apache.dubbo.rpc.protocol.dubbo.DubboInvoker";
-
-    private static final String INTERCEPT_CLASS = "com.huawei.gray.dubbo.interceptor.apache.DubboInvokerInterceptor";
-
-    private static final String METHOD_NAME = "doInvoke";
-
-    public DubboInvokerDefinition() {
-        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
+public class UrlVersionStrategy implements VersionStrategy {
+    /**
+     * 从注册url中获取版本
+     *
+     * @param invoker Invoker
+     * @return 版本
+     */
+    @Override
+    public String getVersion(Invoker<?> invoker) {
+        return invoker.getUrl().getParameter(GrayConstant.GRAY_VERSION_KEY, GrayConstant.GRAY_DEFAULT_VERSION);
     }
 }

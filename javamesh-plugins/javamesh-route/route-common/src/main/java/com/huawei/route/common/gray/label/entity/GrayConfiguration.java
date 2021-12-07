@@ -46,6 +46,9 @@ public class GrayConfiguration {
      */
     private CurrentTag currentTag;
 
+    /**
+     * 版本来源
+     */
     private VersionFrom versionFrom;
 
     /**

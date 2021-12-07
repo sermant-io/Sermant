@@ -276,11 +276,7 @@ com/huawei/gray/feign/interceptor/DefaultHttpClientInterceptor.java in this prod
 
 com/huawei/gray/feign/definition/PathVarDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/define/PathVarInstrumentation.java of Apache SkyWalking project.
 
-com/huawei/gray/feign/definition/HttpClientDefinition.java in this product is copied from com/huawei/apm/plugin/feign/http/v9/define/HttpClientInstrumentation.java of Apache SkyWalking project.
-
 com/huawei/gray/feign/definition/DefaultHttpClientDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/feign/http/v9/define/DefaultHttpClientInstrumentation.java of Apache SkyWalking project.
-
-com/huawei/gray/dubbo/definition/apache/MonitorFilterDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInstrumentation.java of Apache SkyWalking project.
 
 com/huawei/flowrecord/plugins/dubbo/DubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInterceptor.java of Apache SkyWalking project.
 

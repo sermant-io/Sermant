@@ -54,26 +54,6 @@ public class GrayConstant {
     public static final String ENABLED_METHOD_NAME = ".isEnabled()";
 
     /**
-     * dubbo的版本字段
-     */
-    public static final String URL_VERSION_KEY = "version";
-
-    /**
-     * dubbo接口的默认版本
-     */
-    public static final String DUBBO_DEFAULT_VERSION = "0.0.0";
-
-    /**
-     * dubbo的分组字段
-     */
-    public static final String URL_GROUP_KEY = "group";
-
-    /**
-     * dubbo的集群名字段
-     */
-    public static final String URL_CLUSTER_NAME_KEY = "clusterName";
-
-    /**
      * 注册时灰度版本的key
      */
     public static final String GRAY_VERSION_KEY = "gray.version";

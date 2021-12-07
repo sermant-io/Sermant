@@ -14,13 +14,28 @@
  * limitations under the License.
  */
 
-package com.huawei.gray.dubbo.service;
+package com.huawei.gray.dubbo.strategy.version;
+
+import com.huawei.gray.dubbo.strategy.VersionStrategy;
+import com.huawei.route.common.gray.addr.AddrCache;
+
+import org.apache.dubbo.rpc.Invoker;
 
 /**
- * DubboInvokerInterceptor的service
+ * 从注册消息中获取版本
  *
  * @author pengyuyi
- * @date 2021/11/24
+ * @date 2021/12/8
  */
-public abstract class DubboInvokerService extends AbstractPluginService {
+public class MsgVersionStrategy implements VersionStrategy {
+    /**
+     * 从注册消息中获取版本
+     *
+     * @param invoker Invoker
+     * @return 版本
+     */
+    @Override
+    public String getVersion(Invoker<?> invoker) {
+        return AddrCache.getRegisterVersionCache(invoker.getUrl().getAddress());
+    }
 }
