@@ -32,7 +32,7 @@
                 <module>gray-feign-http-9.x-service</module>
                 <module>gray-dubbo-2.7.x-plugin</module>
                 <module>gray-dubbo-2.7.x-service</module>
-                <!--<module>route-common</module>-->
+                <module>route-common</module>
             </modules>
         </profile>
         <profile>
@@ -51,7 +51,7 @@
                 <module>gray-dubbo-2.7.x-plugin</module>
                 <module>gray-dubbo-2.7.x-service</module>
                 <module>demo-route</module>
-                <!--<module>route-common</module>-->
+                <module>route-common</module>
             </modules>
         </profile>
     </profiles>
