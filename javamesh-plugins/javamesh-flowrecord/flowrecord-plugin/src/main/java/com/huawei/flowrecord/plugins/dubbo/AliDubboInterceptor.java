@@ -164,37 +164,6 @@ public class AliDubboInterceptor implements InstanceMethodInterceptor {
 
     }
 
-    private String generateOperationName(URL requesturl, Invocation invocation) {
-        StringBuilder operationName = new StringBuilder();
-        operationName.append(requesturl.getPath());
-        operationName.append("." + invocation.getMethodName() + "(");
-        for (Class<?> classes : invocation.getParameterTypes()) {
-            operationName.append(classes.getSimpleName() + ",");
-        }
-
-        if (invocation.getParameterTypes().length > 0) {
-            operationName.delete(operationName.length() - 1, operationName.length());
-        }
-
-        operationName.append(")");
-
-        return operationName.toString();
-    }
-
-    /**
-     * Format request url. e.g. dubbo://127.0.0.1:20880/org.apache.skywalking.apm.plugin.test.Test.test(String).
-     *
-     * @return request url.
-     */
-    private String generateRequesturl(URL url, Invocation invocation) {
-        StringBuilder requesturl = new StringBuilder();
-        requesturl.append(url.getProtocol() + "://");
-        requesturl.append(url.getHost());
-        requesturl.append(CommonConst.COLON_SIGN + url.getPort() + CommonConst.SLASH_SIGN);
-        requesturl.append(generateOperationName(url, invocation));
-        return requesturl.toString();
-    }
-
     private void sendRecorder(Invocation invocation, Result ret, boolean entry, Invoker invoker, String jobId,
                               RecordContext recordContext) throws Throwable {
         Recorder recordRequest = Recorder.builder().build();
