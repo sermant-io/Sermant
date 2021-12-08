@@ -18,6 +18,7 @@ package com.huawei.javamesh.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 /**
  * 启动类
@@ -27,6 +28,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @since 2021-08-07
  */
 @SpringBootApplication
+@ConfigurationPropertiesScan
 public class NettyServerApplication {
 
     public static void main(String[] args) {
