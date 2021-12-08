@@ -56,7 +56,7 @@ public class ConfigConst {
     /**
      * sentinel配置参数 未提供查询流控信息数据结束时间的默认加载数据条数
      */
-    public static final String METRIC_MAXLINE = "metric.maxline";
+    public static final String METRIC_MAX_LINE = "metric.maxLine";
 
     /**
      * sentinel配置参数 查询流控数据时,睡眠一段时间，等待限流数据写入文件再查询

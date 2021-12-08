@@ -46,6 +46,7 @@ public class FlowControlServiceImpl implements PluginService {
     public void stop() {
         executorService.shutdown();
         DataSourceInitUtils.stop();
+        InitExecutor.stop();
     }
 
     static class FlowControlInitTask implements Runnable {

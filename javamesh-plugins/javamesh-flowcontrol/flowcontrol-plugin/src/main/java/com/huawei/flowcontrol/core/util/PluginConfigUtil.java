@@ -85,7 +85,7 @@ public class PluginConfigUtil {
             flowControlConfig.getMetricInterval());
         properties.put(ConfigConst.METRIC_INITIAL_DURATION,
             flowControlConfig.getMetricInitialDuration());
-        properties.put(ConfigConst.METRIC_MAXLINE,
+        properties.put(ConfigConst.METRIC_MAX_LINE,
             flowControlConfig.getMetricMaxLine());
         properties.put(ConfigConst.METRIC_SLEEP_TIME,
             flowControlConfig.getMetricSleepTime());
