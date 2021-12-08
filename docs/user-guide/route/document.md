@@ -123,6 +123,8 @@ gray.plugin:
 
 - 前提条件[正确打包Java-mesh](../../README.md)
 
+- 注册中心使用华为CSE，下载[Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html) ，解压后按照文档说明进行启动
+
 - 编译[demo应用](../../../javamesh-plugins/javamesh-route/demo-route/demo-gray-dubbo)
 
 ```shell
