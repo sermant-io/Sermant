@@ -28,6 +28,7 @@ import com.huawei.script.exec.log.LogMemoryStore;
 import com.huawei.script.exec.log.LogResponse;
 
 import com.huawei.script.exec.session.ServerInfo;
+import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,7 @@ import javax.annotation.Resource;
  **/
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Setter
 public class EmergencyExecServiceImpl implements EmergencyExecService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmergencyExecServiceImpl.class);
 
@@ -133,9 +135,6 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
             threadPoolExecutor.execute(handlerFactory.handleDetail(record, recordDetail));
         });
 
-        //.execute(handlerFactory.handle(record));
-        //LOGGER.debug("threadPoolExecutor = {} ", threadPoolExecutor);
-
         EmergencyExecRecord result = new EmergencyExecRecord();
         result.setExecId(record.getExecId());
         result.setRecordId(record.getRecordId());
@@ -177,7 +176,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
         if (needEnsureRecord == null || needEnsureRecord.getRecordId() == null) {
             return CommonResult.failed("请选择正确的子任务。");
         }
-        if (!"3".equals(needEnsureRecord.getStatus())) {
+        if (!RecordStatus.FAILED.getValue().equals(needEnsureRecord.getStatus())) {
             return CommonResult.failed("该子任务不处于执行失败，无需确认！");
         }
 
@@ -258,7 +257,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
             if (server == null) {
                 return CommonResult.failed("获取服务器信息失败");
             }
-            ServerInfo serverInfo = new ServerInfo(server.getServerIp(), server.getServerUser());
+            ServerInfo serverInfo = new ServerInfo(server.getServerIp(), server.getServerUser(), server.getServerPort());
             if ("1".equals(server.getHavePassword())) {
                 serverInfo.setServerPassword(handlerFactory.parsePassword(server.getPasswordMode(), server.getPassword()));
             }

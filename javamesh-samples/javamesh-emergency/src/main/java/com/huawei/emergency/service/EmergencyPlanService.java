@@ -72,4 +72,6 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
     CommonResult save(int planId, List<TaskNode> listNodes, String userName);
 
     CommonResult submit(int planId);
+
+    CommonResult copy(EmergencyPlan emergencyPlan);
 }

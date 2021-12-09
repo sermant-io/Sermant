@@ -5,6 +5,8 @@
 package com.huawei.emergency.schedule.thread;
 
 import com.huawei.common.api.CommonResult;
+import com.huawei.emergency.entity.EmergencyPlan;
+import com.huawei.emergency.mapper.EmergencyPlanMapper;
 import com.huawei.emergency.service.EmergencyPlanService;
 
 import org.slf4j.Logger;
@@ -37,6 +39,9 @@ public class TaskTrigger {
     @Autowired
     private EmergencyPlanService planService;
 
+    @Autowired
+    private EmergencyPlanMapper planMapper;
+
     public void trigger(int planId) {
         try {
             plans.offer(planId, 1, TimeUnit.SECONDS);
@@ -54,10 +59,19 @@ public class TaskTrigger {
                 try {
                     plans.drainTo(allPlans);
                     for (int i = 0; i < allPlans.size(); i++) {
-                        if (allPlans.get(i) != null) {
-                            long start = System.currentTimeMillis();
-                            CommonResult result = planService.exec(allPlans.get(i), "system");
-                            LOGGER.debug("trigger cost {} ms. {}", System.currentTimeMillis() - start, result.getMsg());
+                        try {
+                            if (allPlans.get(i) != null) {
+                                long start = System.currentTimeMillis();
+                                EmergencyPlan plan = planMapper.selectByPrimaryKey(allPlans.get(i));
+                                if (plan != null) {
+                                    CommonResult result = planService.exec(allPlans.get(i), plan.getUpdateUser());
+                                    LOGGER.debug("trigger cost {} ms. {}", System.currentTimeMillis() - start, result.getMsg());
+                                }
+                            }
+                        } catch (Exception e) {
+                            if (!isTriggerStop) {
+                                LOGGER.error("trigger plan error.", e);
+                            }
                         }
                     }
                 } catch (Exception e) {

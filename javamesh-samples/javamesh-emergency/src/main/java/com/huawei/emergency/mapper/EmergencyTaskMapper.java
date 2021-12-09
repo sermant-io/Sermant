@@ -6,8 +6,7 @@ package com.huawei.emergency.mapper;
 
 import com.huawei.emergency.entity.EmergencyTask;
 import com.huawei.emergency.entity.EmergencyTaskExample;
-
-import org.apache.ibatis.annotations.Mapper;
+import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -39,6 +38,8 @@ public interface EmergencyTaskMapper {
     int updateByExample(@Param("record") EmergencyTask record, @Param("example") EmergencyTaskExample example);
 
     int updateByPrimaryKeySelective(EmergencyTask record);
+
+    int updateByPrimaryKey(EmergencyTask record);
 
     long countPassedPlanByTaskId(Integer id);
 

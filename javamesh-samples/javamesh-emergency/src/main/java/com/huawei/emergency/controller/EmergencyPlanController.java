@@ -283,6 +283,12 @@ public class EmergencyPlanController {
         );
     }
 
+    @PostMapping("/plan/copy")
+    public CommonResult copyPlan(HttpServletRequest request, @RequestBody EmergencyPlan emergencyPlan){
+        emergencyPlan.setCreateUser(parseUserName(request));
+        return planService.copy(emergencyPlan);
+    }
+
     private String parseUserName(HttpServletRequest request) {
         String userName = "";
         try {

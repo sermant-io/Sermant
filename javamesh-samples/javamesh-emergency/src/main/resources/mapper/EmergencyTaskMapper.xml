@@ -14,6 +14,7 @@
     <result column="channel_type" jdbcType="VARCHAR" property="channelType" />
     <result column="script_name" jdbcType="VARCHAR" property="scriptName" />
     <result column="submit_info" jdbcType="VARCHAR" property="submitInfo" />
+    <result column="server_id" jdbcType="VARCHAR" property="serverId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -75,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List">
     task_id, task_no, task_name, scene_id, script_id, pre_task_id, create_user, create_time, 
-    is_valid, channel_type, script_name, submit_info
+    is_valid, channel_type, script_name, submit_info, server_id
   </sql>
   <select id="selectByExample" parameterType="com.huawei.emergency.entity.EmergencyTaskExample" resultMap="BaseResultMap">
     select
@@ -115,11 +116,13 @@
     insert into emergency_task (task_no, task_name, scene_id, 
       script_id, pre_task_id, create_user, 
       create_time, is_valid, channel_type, 
-      script_name, submit_info)
+      script_name, submit_info, server_id
+      )
     values (#{taskNo,jdbcType=VARCHAR}, #{taskName,jdbcType=VARCHAR}, #{sceneId,jdbcType=INTEGER}, 
       #{scriptId,jdbcType=INTEGER}, #{preTaskId,jdbcType=INTEGER}, #{createUser,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{isValid,jdbcType=VARCHAR}, #{channelType,jdbcType=VARCHAR}, 
-      #{scriptName,jdbcType=VARCHAR}, #{submitInfo,jdbcType=VARCHAR})
+      #{scriptName,jdbcType=VARCHAR}, #{submitInfo,jdbcType=VARCHAR}, #{serverId,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.huawei.emergency.entity.EmergencyTask">
     <selectKey keyProperty="taskId" order="AFTER" resultType="java.lang.Integer">
@@ -160,6 +163,9 @@
       <if test="submitInfo != null">
         submit_info,
       </if>
+      <if test="serverId != null">
+        server_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="taskNo != null">
@@ -194,6 +200,9 @@
       </if>
       <if test="submitInfo != null">
         #{submitInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="serverId != null">
+        #{serverId,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -242,6 +251,9 @@
       <if test="record.submitInfo != null">
         submit_info = #{record.submitInfo,jdbcType=VARCHAR},
       </if>
+      <if test="record.serverId != null">
+        server_id = #{record.serverId,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -260,7 +272,8 @@
       is_valid = #{record.isValid,jdbcType=VARCHAR},
       channel_type = #{record.channelType,jdbcType=VARCHAR},
       script_name = #{record.scriptName,jdbcType=VARCHAR},
-      submit_info = #{record.submitInfo,jdbcType=VARCHAR}
+      submit_info = #{record.submitInfo,jdbcType=VARCHAR},
+      server_id = #{record.serverId,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -301,6 +314,9 @@
       <if test="submitInfo != null">
         submit_info = #{submitInfo,jdbcType=VARCHAR},
       </if>
+      <if test="serverId != null">
+        server_id = #{serverId,jdbcType=VARCHAR},
+      </if>
     </set>
     where task_id = #{taskId,jdbcType=INTEGER}
   </update>
@@ -316,7 +332,8 @@
       is_valid = #{isValid,jdbcType=VARCHAR},
       channel_type = #{channelType,jdbcType=VARCHAR},
       script_name = #{scriptName,jdbcType=VARCHAR},
-      submit_info = #{submitInfo,jdbcType=VARCHAR}
+      submit_info = #{submitInfo,jdbcType=VARCHAR},
+      server_id = #{serverId,jdbcType=VARCHAR}
     where task_id = #{taskId,jdbcType=INTEGER}
   </update>
 

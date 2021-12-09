@@ -61,13 +61,6 @@ public class TaskScheduleCenter {
     public TaskScheduleCenter() {
         scheduleThread = new Thread(() -> {
             LOGGER.info("The {} is running now.", SCHEDULE_THREAD_NAME);
-            try {
-                TimeUnit.MILLISECONDS.sleep(PRE_READ - System.currentTimeMillis() % 1000);
-            } catch (InterruptedException e) {
-                if (!isScheduleStop) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            }
             while (!isScheduleStop) {
                 long now = System.currentTimeMillis();
                 List<EmergencyPlan> scheduledPlans = new ArrayList<>();
@@ -80,9 +73,7 @@ public class TaskScheduleCenter {
                     scheduledPlans = planMapper.selectByExample(needScheduled);
                     scheduledPlans.forEach(plan -> {
                         if (now > plan.getTriggerNextTime() + PRE_READ) {
-                            LOGGER.warn("plan {} is misfire.", plan.getPlanId());
-
-                            // todo misFire
+                            LOGGER.warn("plan {} was misfire.", plan.getPlanId());
                             refreshNextTriggerTime(plan, new Date());
                         } else if (now > plan.getTriggerNextTime()) { // 触发时间在的前五秒内
                             // 触发一次
@@ -90,7 +81,7 @@ public class TaskScheduleCenter {
                             refreshNextTriggerTime(plan, new Date(plan.getTriggerNextTime()));
 
                             // 下次触发时间，还处于预读区间
-                            if ("1".equals(plan.getScheduleStatus()) && now + PRE_READ > plan.getTriggerNextTime()) {
+                            if (ValidEnum.VALID.getValue().equals(plan.getScheduleStatus()) && now + PRE_READ > plan.getTriggerNextTime()) {
                                 int second = (int) ((plan.getTriggerNextTime() / 1000) % 60);
                                 pushScheduledPlan(second, plan.getPlanId());
                                 refreshNextTriggerTime(plan, new Date(plan.getTriggerNextTime()));
@@ -211,7 +202,7 @@ public class TaskScheduleCenter {
 
 
     private void refreshNextTriggerTime(EmergencyPlan plan, Date from) {
-        Date nextTriggerDate = generateNextTriggerTime(plan, from);
+        Date nextTriggerDate = calculateNextTriggerTime(plan, from);
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setPlanId(plan.getPlanId());
         if (nextTriggerDate != null) {
@@ -229,7 +220,7 @@ public class TaskScheduleCenter {
         planMapper.updateByPrimaryKeySelective(updatePlan);
     }
 
-    public Date generateNextTriggerTime(EmergencyPlan plan, Date from) {
+    public Date calculateNextTriggerTime(EmergencyPlan plan, Date from) {
         ScheduleType scheduleType = ScheduleType.match(plan.getScheduleType(), ScheduleType.NONE);
         if (ScheduleType.CORN == scheduleType) {
             CronSequenceGenerator cronSequenceGenerator = new CronSequenceGenerator(plan.getScheduleConf());
