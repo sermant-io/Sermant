@@ -66,9 +66,6 @@
                                     <shadedPattern>${shade.distinct.prefix}.org.apache.skywalking.apm</shadedPattern>
                                 </relocation>
                             </relocations>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                            </transformers>
                         </configuration>
                     </execution>
                 </executions>
