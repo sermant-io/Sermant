@@ -147,7 +147,7 @@ public class EmergencyServerServiceImpl implements EmergencyServerService {
 
         EmergencyServer updateServer = new EmergencyServer();
         updateServer.setServerId(server.getServerId());
-        updateServer.setLicensed(Boolean.parseBoolean(server.getLicensed()) ? "1" : "0");
+        updateServer.setLicensed(!Boolean.parseBoolean(server.getLicensed()) ? "1" : "0");
         serverMapper.updateByPrimaryKeySelective(updateServer);
         return CommonResult.success();
     }
