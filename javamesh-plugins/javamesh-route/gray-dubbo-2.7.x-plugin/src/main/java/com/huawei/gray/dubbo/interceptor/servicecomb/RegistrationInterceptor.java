@@ -16,11 +16,11 @@
 
 package com.huawei.gray.dubbo.interceptor.servicecomb;
 
+import com.huawei.gray.dubbo.service.RegistrationService;
 import com.huawei.javamesh.core.agent.common.BeforeResult;
 import com.huawei.javamesh.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.javamesh.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.javamesh.core.service.ServiceManager;
-import com.huawei.gray.dubbo.service.RegistrationService;
 
 import java.lang.reflect.Method;
 import java.util.logging.Level;

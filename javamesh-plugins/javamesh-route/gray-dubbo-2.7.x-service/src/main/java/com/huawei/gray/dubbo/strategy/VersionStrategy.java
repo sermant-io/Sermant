@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-package com.huawei.gray.dubbo.strategy.rule;
+package com.huawei.gray.dubbo.strategy;
 
-import com.huawei.gray.dubbo.strategy.RuleStrategy;
-import com.huawei.route.common.gray.label.entity.Route;
-import com.huawei.route.common.gray.label.entity.VersionFrom;
-
-import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 
-import java.util.List;
-
 /**
- * 上游传递标签匹配
+ * 版本获取策略
  *
  * @author pengyuyi
- * @date 2021/10/15
+ * @date 2021/12/8
  */
-public class UpstreamRuleStrategy implements RuleStrategy {
-    @Override
-    public List<Invoker<?>> getTargetInvoker(List<Route> routes, Invocation invocation, List<Invoker<?>> invokers,
-            VersionFrom versionFrom) {
-        return invokers;
-    }
+public interface VersionStrategy {
+    /**
+     * 获取Invoker的版本
+     *
+     * @param invoker Invoker
+     * @return 版本
+     */
+    String getVersion(Invoker<?> invoker);
 }

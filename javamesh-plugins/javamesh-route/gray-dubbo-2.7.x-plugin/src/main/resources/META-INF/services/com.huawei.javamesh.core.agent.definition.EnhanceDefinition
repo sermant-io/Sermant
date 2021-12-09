@@ -3,8 +3,6 @@
 #
 
 com.huawei.gray.dubbo.definition.apache.ClusterDefinition
-com.huawei.gray.dubbo.definition.apache.DubboInvokerDefinition
 com.huawei.gray.dubbo.definition.apache.InterfaceConfigDefinition
-com.huawei.gray.dubbo.definition.apache.MonitorFilterDefinition
 com.huawei.gray.dubbo.definition.apache.RegistryDirectoryDefinition
 com.huawei.gray.dubbo.definition.servicecomb.RegistrationDefinition

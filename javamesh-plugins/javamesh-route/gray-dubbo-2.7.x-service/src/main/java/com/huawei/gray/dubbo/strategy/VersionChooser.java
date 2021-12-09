@@ -16,30 +16,37 @@
 
 package com.huawei.gray.dubbo.strategy;
 
-import com.huawei.route.common.gray.label.entity.Route;
+import com.huawei.gray.dubbo.strategy.version.MsgVersionStrategy;
+import com.huawei.gray.dubbo.strategy.version.UrlVersionStrategy;
 import com.huawei.route.common.gray.label.entity.VersionFrom;
 
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 路由策略
+ * 版本选择器
  *
  * @author pengyuyi
- * @date 2021/10/14
+ * @date 2021/12/8
  */
-public interface RuleStrategy {
+public enum VersionChooser {
+    INSTANCE;
+
+    private final Map<String, VersionStrategy> map;
+
+    VersionChooser() {
+        map = new HashMap<String, VersionStrategy>();
+        map.put(VersionFrom.REGISTER_MSG.name(), new MsgVersionStrategy());
+        map.put(VersionFrom.REGISTER_URL.name(), new UrlVersionStrategy());
+    }
+
     /**
-     * 选取灰度应用的invokers
+     * 根据灰度配置选择一个版本策略
      *
-     * @param routes 路由规则
-     * @param invocation dubbo invocation
-     * @param invokers dubbo invokers
-     * @param versionFrom 版本号来源
-     * @return 灰度应用的invokers
+     * @param versionFrom 版本来源
+     * @return 版本策略
      */
-    List<Invoker<?>> getTargetInvoker(List<Route> routes, Invocation invocation, List<Invoker<?>> invokers,
-            VersionFrom versionFrom);
+    public VersionStrategy choose(VersionFrom versionFrom) {
+        return map.get(versionFrom.name());
+    }
 }

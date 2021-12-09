@@ -14,13 +14,27 @@
  * limitations under the License.
  */
 
-package com.huawei.gray.dubbo.service;
+package com.huawei.gray.dubbo.strategy;
+
+import org.apache.dubbo.rpc.Invoker;
+
+import java.util.Set;
 
 /**
- * MonitorFilterInterceptor的service
+ * 判断invoker是否匹配的策略
  *
  * @author pengyuyi
- * @date 2021/11/24
+ * @date 2021/12/8
  */
-public abstract class MonitorFilterService extends AbstractPluginService {
+public interface InvokerStrategy {
+    /**
+     * 判断invoker是否匹配
+     *
+     * @param invoker Invoker
+     * @param version 目标版本
+     * @param notMatchVersions 没有匹配上的版本
+     * @param versionStrategy 版本测试
+     * @return 是否匹配
+     */
+    boolean isMatch(Invoker<?> invoker, String version, Set<String> notMatchVersions, VersionStrategy versionStrategy);
 }
