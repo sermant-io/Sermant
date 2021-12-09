@@ -36,7 +36,7 @@ import java.util.Properties;
 public class KafkaProducerManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaProducerManager.class);
 
-    private KafkaProducer<String, String> producer;
+    private KafkaProducer<String, byte[]> producer;
 
     private static KafkaProducerManager instance;
 
@@ -82,7 +82,7 @@ public class KafkaProducerManager {
      *
      * @return 生产者
      */
-    public KafkaProducer<String, String> getProducer() {
+    public KafkaProducer<String, byte[]> getProducer() {
         return producer;
     }
 }

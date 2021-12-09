@@ -16,22 +16,23 @@
 
 package com.huawei.gray.dubbo.strategy.rule;
 
-import com.huawei.gray.dubbo.cache.DubboCache;
+import com.huawei.gray.dubbo.strategy.InvokerChooser;
+import com.huawei.gray.dubbo.strategy.InvokerStrategy;
 import com.huawei.gray.dubbo.strategy.RuleStrategy;
-import com.huawei.gray.dubbo.strategy.RuleStrategyEnum;
-import com.huawei.gray.dubbo.utils.RouterUtil;
-import com.huawei.route.common.gray.addr.AddrCache;
-import com.huawei.route.common.gray.addr.entity.Instances;
+import com.huawei.gray.dubbo.strategy.VersionChooser;
+import com.huawei.gray.dubbo.strategy.VersionStrategy;
 import com.huawei.route.common.gray.label.entity.Route;
+import com.huawei.route.common.gray.label.entity.VersionFrom;
+import com.huawei.route.common.utils.CollectionUtils;
 
 import org.apache.dubbo.rpc.Invocation;
-import org.springframework.util.CollectionUtils;
+import org.apache.dubbo.rpc.Invoker;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * 流量匹配
@@ -41,48 +42,37 @@ import java.util.Random;
  */
 public class WeightRuleStrategy implements RuleStrategy {
     @Override
-    public String getTargetServiceIp(List<Route> list, String targetService, String interfaceName, String version,
-            Invocation invocation) {
-        Map<String, List<Instances>> map = AddrCache.getAddr(targetService, DubboCache.getLabelName());
-        if (CollectionUtils.isEmpty(map)) {
-            return RuleStrategyEnum.UPSTREAM
-                    .getTargetServiceIp(list, targetService, interfaceName, version, invocation);
-        }
-        // 剔除不合法的路由规则，和不在地址列表中的版本应用地址
-        Iterator<Route> iterator = new ArrayList<Route>(list).iterator();
-        while (iterator.hasNext()) {
-            Route route = iterator.next();
-            if (route.getTags() == null || !map.containsKey(route.getTags().getVersion())) {
-                iterator.remove();
-            }
-        }
-        if (CollectionUtils.isEmpty(list)) {
-            return RuleStrategyEnum.UPSTREAM
-                    .getTargetServiceIp(list, targetService, interfaceName, version, invocation);
-        }
-        if (list.get(0).getWeight() == null) {
+    public List<Invoker<?>> getTargetInvoker(List<Route> routes, Invocation invocation, List<Invoker<?>> invokers,
+            VersionFrom versionFrom) {
+        if (routes.get(0).getWeight() == null) {
             // 规定第一个规则的流量为空，则设置为100
-            list.get(0).setWeight(100);
+            routes.get(0).setWeight(100);
         }
+        String targetVersion = null;
+        Set<String> notMatchVersions = new HashSet<String>();
         int begin = 1;
         int num = new Random().nextInt(100) + 1;
-        for (Route route : list) {
+        for (Route route : routes) {
             Integer weight = route.getWeight();
             if (weight == null) {
                 continue;
             }
-            String tagVersion = route.getTags().getVersion();
+            String currentVersion = route.getTags().getVersion();
             if (num >= begin && num <= begin + weight - 1) {
-                List<Instances> instances = map.get(tagVersion);
-                if (CollectionUtils.isEmpty(instances)) {
-                    return RuleStrategyEnum.UPSTREAM
-                            .getTargetServiceIp(list, targetService, interfaceName, version, invocation);
-                }
-                Instances instance = instances.get(new Random().nextInt(instances.size()));
-                return RouterUtil.getTargetAndSetAttachment(instance, invocation, tagVersion, instance.getLdc());
+                targetVersion = currentVersion;
+                break;
             }
             begin += weight;
+            notMatchVersions.add(currentVersion);
         }
-        return RuleStrategyEnum.UPSTREAM.getTargetServiceIp(list, targetService, interfaceName, version, invocation);
+        VersionStrategy versionStrategy = VersionChooser.INSTANCE.choose(versionFrom);
+        InvokerStrategy invokerStrategy = InvokerChooser.INSTANCE.choose(targetVersion);
+        List<Invoker<?>> resultList = new ArrayList<Invoker<?>>();
+        for (Invoker<?> invoker : invokers) {
+            if (invokerStrategy.isMatch(invoker, targetVersion, notMatchVersions, versionStrategy)) {
+                resultList.add(invoker);
+            }
+        }
+        return CollectionUtils.isEmpty(resultList) ? invokers : resultList;
     }
 }

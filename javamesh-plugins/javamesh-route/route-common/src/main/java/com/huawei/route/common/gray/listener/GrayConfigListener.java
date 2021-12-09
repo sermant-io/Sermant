@@ -52,13 +52,25 @@ public class GrayConfigListener implements ConfigurationListener {
 
     private final String labelName;
 
-    public GrayConfigListener(String labelName) {
+    private final String key;
+
+    /**
+     * 构造方法
+     *
+     * @param labelName 缓存的标签名
+     * @param key 配置的key
+     */
+    public GrayConfigListener(String labelName, String key) {
         super();
         this.labelName = labelName;
+        this.key = key;
     }
 
     @Override
     public void process(ConfigChangedEvent event) {
+        if (event.getKey() == null || !event.getKey().equals(key)) {
+            return;
+        }
         GrayConfiguration grayConfiguration = LabelCache.getLabel(labelName);
         Map<String, List<Rule>> routeRule = new LinkedHashMap<String, List<Rule>>();
         if (event.getChangeType() == ConfigChangeType.DELETED) {

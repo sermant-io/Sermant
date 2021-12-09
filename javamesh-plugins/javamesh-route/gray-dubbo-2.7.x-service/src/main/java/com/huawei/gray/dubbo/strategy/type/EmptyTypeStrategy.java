@@ -16,8 +16,8 @@
 
 package com.huawei.gray.dubbo.strategy.type;
 
-import com.huawei.javamesh.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
+import com.huawei.javamesh.core.lubanops.bootstrap.utils.StringUtils;
 
 /**
  * 空匹配策略

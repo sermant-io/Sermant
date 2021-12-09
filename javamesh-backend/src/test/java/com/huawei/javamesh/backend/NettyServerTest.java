@@ -2,7 +2,7 @@ package com.huawei.javamesh.backend;
 
 import static org.mockito.Mockito.mock;
 
-import com.huawei.javamesh.backend.common.conf.KafkaConf;
+import com.huawei.javamesh.backend.common.conf.DataTypeTopicMapping;
 import com.huawei.javamesh.backend.pojo.Message;
 import com.huawei.javamesh.backend.server.ServerHandler;
 
@@ -15,15 +15,15 @@ import org.junit.Before;
 import org.junit.jupiter.api.Test;
 
 public class NettyServerTest {
-    private KafkaProducer<String, String> producer;
+    private KafkaProducer<String, byte[]> producer;
     private KafkaConsumer<String, String> consumer;
 
-    private KafkaConf conf;
+    private DataTypeTopicMapping topicMapping;
 
     @Before
     public void setUp() {
         producer = mock(KafkaProducer.class);
-        conf = mock(KafkaConf.class);
+        topicMapping = mock(DataTypeTopicMapping.class);
     }
 
     /**
@@ -31,7 +31,7 @@ public class NettyServerTest {
      */
     @Test
     public void testWriteInBound() {
-        EmbeddedChannel embeddedChannel = new EmbeddedChannel(new ServerHandler(producer, consumer, conf));
+        EmbeddedChannel embeddedChannel = new EmbeddedChannel(new ServerHandler(producer, consumer, topicMapping));
         boolean writeInbound = embeddedChannel.writeInbound(Message.ServiceData.newBuilder().build());
         Assert.assertTrue(writeInbound);
         Assert.assertTrue(embeddedChannel.finish());
@@ -45,7 +45,7 @@ public class NettyServerTest {
      */
     @Test
     public void testWriteOutBound() {
-        EmbeddedChannel embeddedChannel = new EmbeddedChannel(new ServerHandler(producer, consumer, conf));
+        EmbeddedChannel embeddedChannel = new EmbeddedChannel(new ServerHandler(producer, consumer, topicMapping));
         boolean writeOutBound = embeddedChannel.writeOutbound(Message.ServiceData.newBuilder().build());
         Assert.assertTrue(writeOutBound);
         Assert.assertTrue(embeddedChannel.finish());

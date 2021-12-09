@@ -16,9 +16,9 @@
 
 package com.huawei.gray.dubbo.strategy.type;
 
+import com.huawei.gray.dubbo.strategy.TypeStrategy;
 import com.huawei.javamesh.core.common.LoggerFactory;
 import com.huawei.javamesh.core.lubanops.bootstrap.utils.StringUtils;
-import com.huawei.gray.dubbo.strategy.TypeStrategy;
 
 import java.lang.reflect.Field;
 import java.util.logging.Logger;

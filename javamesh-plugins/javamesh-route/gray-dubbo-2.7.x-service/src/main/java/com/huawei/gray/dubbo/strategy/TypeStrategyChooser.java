@@ -16,13 +16,14 @@
 
 package com.huawei.gray.dubbo.strategy;
 
-import com.huawei.javamesh.core.common.LoggerFactory;
 import com.huawei.gray.dubbo.strategy.type.ArrayTypeStrategy;
 import com.huawei.gray.dubbo.strategy.type.EmptyTypeStrategy;
 import com.huawei.gray.dubbo.strategy.type.EnabledTypeStrategy;
 import com.huawei.gray.dubbo.strategy.type.ListTypeStrategy;
 import com.huawei.gray.dubbo.strategy.type.MapTypeStrategy;
 import com.huawei.gray.dubbo.strategy.type.ObjectTypeStrategy;
+import com.huawei.javamesh.core.common.LoggerFactory;
+import com.huawei.route.common.gray.constants.GrayConstant;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -81,5 +82,34 @@ public enum TypeStrategyChooser {
         }
         LOGGER.warning("Cannot found the type strategy, type is " + type);
         return null;
+    }
+
+    /**
+     * 根据策略表达式获取参数值
+     *
+     * @param type 策略表达式
+     * @param key 参数索引
+     * @param arguments 参数数组
+     * @return 参数值
+     */
+    public String getValue(String type, String key, Object[] arguments) {
+        if (arguments == null) {
+            return null;
+        }
+        TypeStrategy typeStrategy = choose(type);
+        if (typeStrategy == null) {
+            return null;
+        }
+        int index;
+        try {
+            index = Integer.parseInt(key.substring(GrayConstant.DUBBO_SOURCE_TYPE_PREFIX.length()));
+        } catch (NumberFormatException e) {
+            LOGGER.warning("Source type " + key + " is invalid.");
+            return null;
+        }
+        if (index < 0 || index >= arguments.length || arguments[index] == null) {
+            return null;
+        }
+        return typeStrategy.getValue(arguments[index], type);
     }
 }

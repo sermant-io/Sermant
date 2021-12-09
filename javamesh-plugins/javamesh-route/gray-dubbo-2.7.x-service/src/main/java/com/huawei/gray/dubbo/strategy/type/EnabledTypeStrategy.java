@@ -16,8 +16,8 @@
 
 package com.huawei.gray.dubbo.strategy.type;
 
-import com.huawei.javamesh.core.common.LoggerFactory;
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
+import com.huawei.javamesh.core.common.LoggerFactory;
 import com.huawei.route.common.gray.constants.GrayConstant;
 
 import java.util.logging.Logger;

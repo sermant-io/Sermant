@@ -41,14 +41,14 @@ public class GrayConfig implements PluginConfig {
     private String ldc = GrayConstant.GRAY_DEFAULT_LDC;
 
     /**
-     * 自定义标签key
+     * 自定义key
      */
-    private String dubboCustomLabel = "public";
+    private String dubboKey = "gray";
 
     /**
-     * 自定义标签value
+     * 自定义组名
      */
-    private String dubboCustomLabelValue = "default";
+    private String dubboGroup = "public=default";
 
     /**
      * 其它配置
@@ -91,20 +91,20 @@ public class GrayConfig implements PluginConfig {
         this.ldc = ldc;
     }
 
-    public String getDubboCustomLabel() {
-        return dubboCustomLabel;
+    public String getDubboKey() {
+        return dubboKey;
     }
 
-    public void setDubboCustomLabel(String dubboCustomLabel) {
-        this.dubboCustomLabel = dubboCustomLabel;
+    public void setDubboKey(String dubboKey) {
+        this.dubboKey = dubboKey;
     }
 
-    public String getDubboCustomLabelValue() {
-        return dubboCustomLabelValue;
+    public String getDubboGroup() {
+        return dubboGroup;
     }
 
-    public void setDubboCustomLabelValue(String dubboCustomLabelValue) {
-        this.dubboCustomLabelValue = dubboCustomLabelValue;
+    public void setDubboGroup(String dubboGroup) {
+        this.dubboGroup = dubboGroup;
     }
 
     public Map<String, String> getProperties() {

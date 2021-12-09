@@ -17,8 +17,10 @@
 package com.huawei.gray.dubbo.strategy;
 
 import com.huawei.route.common.gray.label.entity.Route;
+import com.huawei.route.common.gray.label.entity.VersionFrom;
 
 import org.apache.dubbo.rpc.Invocation;
+import org.apache.dubbo.rpc.Invoker;
 
 import java.util.List;
 
@@ -30,15 +32,14 @@ import java.util.List;
  */
 public interface RuleStrategy {
     /**
-     * 获取目标地址ip
+     * 选取灰度应用的invokers
      *
-     * @param list 路由规则
-     * @param targetService 目标服务
-     * @param interfaceName 接口
-     * @param version 当前服务的版本
+     * @param routes 路由规则
      * @param invocation dubbo invocation
-     * @return 目标地址 ip:port
+     * @param invokers dubbo invokers
+     * @param versionFrom 版本号来源
+     * @return 灰度应用的invokers
      */
-    String getTargetServiceIp(List<Route> list, String targetService, String interfaceName, String version,
-            Invocation invocation);
+    List<Invoker<?>> getTargetInvoker(List<Route> routes, Invocation invocation, List<Invoker<?>> invokers,
+            VersionFrom versionFrom);
 }

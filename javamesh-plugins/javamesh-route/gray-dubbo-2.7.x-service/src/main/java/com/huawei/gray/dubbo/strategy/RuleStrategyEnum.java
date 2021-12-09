@@ -16,18 +16,13 @@
 
 package com.huawei.gray.dubbo.strategy;
 
-import com.huawei.javamesh.core.lubanops.bootstrap.utils.StringUtils;
-import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.gray.dubbo.strategy.rule.UpstreamRuleStrategy;
 import com.huawei.gray.dubbo.strategy.rule.WeightRuleStrategy;
-import com.huawei.gray.dubbo.utils.RouterUtil;
-import com.huawei.route.common.gray.constants.GrayConstant;
-import com.huawei.route.common.gray.label.entity.CurrentTag;
 import com.huawei.route.common.gray.label.entity.Route;
-
-import com.alibaba.fastjson.JSONObject;
+import com.huawei.route.common.gray.label.entity.VersionFrom;
 
 import org.apache.dubbo.rpc.Invocation;
+import org.apache.dubbo.rpc.Invoker;
 
 import java.util.List;
 
@@ -56,28 +51,16 @@ public enum RuleStrategyEnum {
     }
 
     /**
-     * 获取目标地址ip
+     * 选取灰度应用的invokers
      *
-     * @param list 路由规则
-     * @param targetService 目标服务
-     * @param interfaceName 接口
-     * @param version 当前服务的版本
+     * @param routes 路由规则
      * @param invocation dubbo invocation
-     * @return 目标地址 ip:port
+     * @param invokers dubbo invokers
+     * @param versionFrom 版本号来源
+     * @return 灰度应用的invokers
      */
-    public String getTargetServiceIp(List<Route> list, String targetService, String interfaceName, String version,
-            Invocation invocation) {
-        String targetIp = ruleStrategy.getTargetServiceIp(list, targetService, interfaceName, version, invocation);
-        if (StringUtils.isBlank(targetIp)) {
-            CurrentTag currentTag = new CurrentTag();
-            currentTag.setVersion(version);
-            currentTag.setLdc(RouterUtil.getLdc());
-            invocation.getAttachments().put(GrayConstant.GRAY_TAG, JSONObject.toJSONString(currentTag));
-            if (!invocation.getAttachments().containsKey(GrayConstant.GRAY_LDC)) {
-                invocation.getAttachments().put(GrayConstant.GRAY_LDC, RouterUtil.getLdc(invocation));
-            }
-            return DubboCache.getLocalAddr(targetService);
-        }
-        return targetIp;
+    public List<Invoker<?>> getTargetInvoker(List<Route> routes, Invocation invocation,
+            List<Invoker<?>> invokers, VersionFrom versionFrom) {
+        return ruleStrategy.getTargetInvoker(routes, invocation, invokers, versionFrom);
     }
 }

@@ -17,22 +17,21 @@
 package com.huawei.javamesh.backend.server;
 
 import com.google.protobuf.ByteString;
-import com.huawei.javamesh.backend.common.conf.KafkaConf;
+import com.huawei.javamesh.backend.common.conf.DataTypeTopicMapping;
 import com.huawei.javamesh.backend.common.handler.BaseHandler;
 import com.huawei.javamesh.backend.common.util.GzipUtils;
 import com.huawei.javamesh.backend.pojo.Message;
 
-import com.huawei.javamesh.backend.service.SendService;
-import com.huawei.javamesh.backend.service.SendServiceManager;
 import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 网关服务端handler
@@ -44,23 +43,15 @@ import java.util.Map;
 public class ServerHandler extends BaseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerHandler.class);
 
-    // 随机数最大值
-    private static final int MAX_RANDOM = 100;
-
-    // 随机数最小值
-    private static final int MIN_RANDOM = 0;
-
-    private KafkaProducer<String, String> producer;
+    private final KafkaProducer<String, byte[]> producer;
     private KafkaConsumer<String, String> consumer;
 
-    Map<Integer, SendService> sendServiceMap = SendServiceManager.INSTANCE.getSendServices();
+    private final DataTypeTopicMapping topicMapping;
 
-    private KafkaConf conf;
-
-    public ServerHandler(KafkaProducer<String, String> producer, KafkaConsumer<String, String> consumer, KafkaConf conf) {
+    public ServerHandler(KafkaProducer<String, byte[]> producer, KafkaConsumer<String, String> consumer, DataTypeTopicMapping topicMapping) {
         this.producer = producer;
         this.consumer = consumer;
-        this.conf = conf;
+        this.topicMapping = topicMapping;
     }
 
     @Override
@@ -72,14 +63,12 @@ public class ServerHandler extends BaseHandler {
 
             // 解压业务数据
             byte[] message = GzipUtils.decompress(data.toByteArray());
-            String msgStr = new String(message);
             int dataType = serviceData.getDataTypeValue();
-
-            SendService sendService = sendServiceMap.get(dataType);
-            if (sendService != null) {
-                sendService.send(conf, msgStr);
+            String topic = topicMapping.getTopicOfType(dataType);
+            if (StringUtils.hasText(topic)) {
+                producer.send(new ProducerRecord<>(topic, message));
             } else {
-                LOGGER.error("send service is null");
+                LOGGER.warn("Can not find the corresponding topic of type {}.", dataType);
             }
         }
     }
