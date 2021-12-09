@@ -16,6 +16,7 @@
 
 package com.huawei.javamesh.backend.server;
 
+import com.huawei.javamesh.backend.common.conf.DataTypeTopicMapping;
 import com.huawei.javamesh.backend.kafka.KafkaConsumerManager;
 import com.huawei.javamesh.backend.pojo.Message;
 import com.huawei.javamesh.backend.common.conf.KafkaConf;
@@ -72,6 +73,9 @@ public class NettyServer {
     @Autowired
     private KafkaConf conf;
 
+    @Autowired
+    private DataTypeTopicMapping topicMapping;
+
     /**
      * 服务端核心方法
      * 随tomcat启动被拉起，处理客户端连接和数据
@@ -87,7 +91,7 @@ public class NettyServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
-            KafkaProducer<String, String> producer = KafkaProducerManager.getInstance(conf).getProducer();
+            KafkaProducer<String, byte[]> producer = KafkaProducerManager.getInstance(conf).getProducer();
             KafkaConsumer<String, String> consumer = KafkaConsumerManager.getInstance(conf).getConsumer();
             serverBootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
@@ -103,7 +107,7 @@ public class NettyServer {
                             pipeline.addLast(new ProtobufDecoder(Message.NettyMessage.getDefaultInstance()));
                             pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
                             pipeline.addLast(new ProtobufEncoder());
-                            pipeline.addLast(new ServerHandler(producer, consumer, conf));
+                            pipeline.addLast(new ServerHandler(producer, consumer, topicMapping));
                         }
                     });
 
