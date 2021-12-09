@@ -388,3 +388,12 @@ com/huawei/flowcontrol/adapte/cse/rule/Configurable.java in this product is copi
 
 Apache ServiceComb Java Chassis project is published at https://github.com/apache/servicecomb-java-chassis
 and its license is Apache License Version 2.0.
+
+====================================================================================
+
+The following files contain a portion of License Maven Plugin project.
+
+javamesh-package/resources/third-party-license.ftl in this product is copied from /org/codehaus/mojo/license/third-party-file-groupByMultiLicense.ftl License Maven Plugin project.
+
+License Maven Plugin project is published at https://github.com/mojohaus/license-maven-plugin
+and its license is GNU LGPL Version 3.0.

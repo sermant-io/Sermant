@@ -5,6 +5,13 @@
     <artifactId>javamesh</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <properties>
         <encoding>UTF-8</encoding>
         <jdk.version>1.6</jdk.version>
@@ -44,6 +51,7 @@
         <grpc.version>1.36.1</grpc.version>
         <os.plugin.version>1.5.0.Final</os.plugin.version>
         <protubuf.plugin.version>0.5.1</protubuf.plugin.version>
+        <license.plugin.version>1.19</license.plugin.version>
 
         <javamesh.name>javamesh-agent</javamesh.name>
         <javamesh.version>2.0.5</javamesh.version>
@@ -53,9 +61,13 @@
         <package.agent.dir>${package.temp.dir}/agent</package.agent.dir>
         <package.server.dir>${package.temp.dir}/server</package.server.dir>
         <package.output.dir>${project.build.outputDirectory}</package.output.dir>
+        <package.license.ftl.file>third-party-license.ftl</package.license.ftl.file>
+        <package.resources.dir>javamesh-package/resources</package.resources.dir>
 
         <shade.common.prefix>com.huawei</shade.common.prefix>
         <shade.distinct.prefix>${project.artifactId}</shade.distinct.prefix>
+
+        <license.binary.suffix.file>LICENSE-binary-suffix.txt</license.binary.suffix.file>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -269,6 +281,17 @@
     </profiles>
     <build>
         <finalName>${project.artifactId}-${javamesh.version}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${javamesh.basedir}/${package.resources.dir}</directory>
+                <includes>
+                    <include>META-INF/*</include>
+                </includes>
+            </resource>
+        </resources>
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
@@ -287,6 +310,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${compiler.plugin.version}</version>
+                    <configuration>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -324,8 +352,8 @@
                             </relocation>
                         </relocations>
                         <transformers>
-                            <transformer
-                                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer"/>
                         </transformers>
                     </configuration>
                 </plugin>
@@ -354,18 +382,59 @@
                         </execution>
                     </executions>
                 </plugin>
+                <!-- execute 'mvn license:aggregate-add-third-party' to collect third party license. -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${license.plugin.version}</version>
+                    <configuration>
+                        <!-- set output directory -->
+                        <outputDirectory>${pom.basedir}/${package.resources.dir}</outputDirectory>
+                        <!-- set output file name -->
+                        <thirdPartyFilename>${license.binary.suffix.file}</thirdPartyFilename>
+                        <!-- exclude this project -->
+                        <excludedGroups>${project.groupId}</excludedGroups>
+                        <!-- exclude provided scope -->
+                        <excludedScopes>provided</excludedScopes>
+                        <!-- use this template to group result by license type -->
+                        <fileTemplate>${pom.basedir}/${package.resources.dir}/${package.license.ftl.file}</fileTemplate>
+                        <!-- merge non canonical aliases -->
+                        <!-- todo 需要进一步合并license -->
+                        <licenseMerges>
+                            <licenseMerge>
+                                Apache License, Version 2.0
+                                |The Apache License, Version 2.0
+                                |The Apache Software License, Version 2.0
+                                |Apache Public License 2.0
+                                |Apache 2
+                                |Apache 2.0
+                                |Apache-2.0
+                                |Apache License 2.0
+                                |Apache License, version 2.0
+                                |Apache License Version 2.0
+                                |Apache v2
+                                |Apache Software Licenses
+                            </licenseMerge>
+                            <licenseMerge>
+                                3-Clause BSD License
+                                |BSD 3-clause
+                                |BSD 3-Clause
+                            </licenseMerge>
+                            <licenseMerge>
+                                Eclipse Public License v1.0
+                                |Eclipse Public License 1.0
+                                |Eclipse Public License - v 1.0
+                            </licenseMerge>
+                            <licenseMerge>
+                                The MIT License
+                                |MIT License
+                            </licenseMerge>
+                        </licenseMerges>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
