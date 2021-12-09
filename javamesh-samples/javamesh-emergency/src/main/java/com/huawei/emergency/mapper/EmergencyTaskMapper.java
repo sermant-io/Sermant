@@ -6,7 +6,6 @@ package com.huawei.emergency.mapper;
 
 import com.huawei.emergency.entity.EmergencyTask;
 import com.huawei.emergency.entity.EmergencyTaskExample;
-import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
