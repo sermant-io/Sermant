@@ -43,7 +43,7 @@ import java.util.List;
 public class RegistryDirectoryServiceImpl extends RegistryDirectoryService {
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
-        if (arguments != null && arguments[0] instanceof Invocation) {
+        if (arguments != null && arguments.length > 0 && arguments[0] instanceof Invocation) {
             GrayConfiguration grayConfiguration = LabelCache.getLabel(DubboCache.getLabelName());
             if (GrayConfiguration.isInValid(grayConfiguration)) {
                 return result;
