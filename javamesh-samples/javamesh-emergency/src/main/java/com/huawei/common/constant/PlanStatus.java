@@ -48,7 +48,7 @@ public enum PlanStatus {
     /**
      * 运行失败状态
      */
-    SCHEDULED("7", "wait", "调度中");
+    SCHEDULED("7", "wait", "已预约");
 
 
     /**
