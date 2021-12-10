@@ -1,6 +1,6 @@
 # online-stresstest
 
-本文档主要介绍[影子库压测插件](../../../javamesh-plugins/javamesh-online-stresstest)以及该插件的使用方法
+本文档主要介绍[影子库压测插件](../../../sermant-plugins/sermant-online-stresstest)以及该插件的使用方法
 
 ## 功能
 影子库插件通过拦截流量，识别和传递压测标记，实现将压测流量转发到影子库的目的。
@@ -33,4 +33,4 @@ redis.repository={"address":["redis://100.100.153.226:6380"]}
 其中redis.repository为固定的关键字，表示影子redis的地址，格式为json。影子redis地址保存在address中，使用[]格式，如果时master slave模式，需要加上"slave":[]。
 **注意**：如果没有配置`redis.repository`，则redis的影子环境会直接使用当前的redis，在key前加前缀，使用shadow_key。
 
-[返回**Java-mesh**说明文档](../../README.md)
+[返回**Sermant**说明文档](../../README.md)

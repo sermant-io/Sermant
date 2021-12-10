@@ -1,6 +1,6 @@
 # 灰度路由
 
-[插件目录](../../../javamesh-plugins/javamesh-route)
+[插件目录](../../../sermant-plugins/sermant-route)
 
 ## 定位:
 
@@ -86,7 +86,7 @@ servicecomb:
             weight: 100 # 权重值，如果低于100，则有可能会转发流量到其它版本
 ```
 
-按需修改灰度发布插件的[配置文件](../../../javamesh-plugins/javamesh-route/config/config.yaml)以读取配置中心的配置：
+按需修改灰度发布插件的[配置文件](../../../sermant-plugins/sermant-route/config/config.yaml)以读取配置中心的配置：
 
 ```yaml
 gray.plugin:
@@ -121,11 +121,11 @@ gray.plugin:
 
 ## 结果验证
 
-- 前提条件[正确打包Java-mesh](../../README.md)
+- 前提条件[正确打包Sermant](../../README.md)
 
 - 注册中心使用华为CSE，下载[Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html) ，解压后按照文档说明进行启动
 
-- 编译[demo应用](../../../javamesh-plugins/javamesh-route/demo-route/demo-gray-dubbo)
+- 编译[demo应用](../../../sermant-plugins/sermant-route/demo-route/demo-gray-dubbo)
 
 ```shell
 mvn clean package
@@ -134,10 +134,10 @@ mvn clean package
 - 启动消费者
 
 ```shell
-java -javaagent:${path}\javamesh-agent-2.0.5\agent\javamesh-agent.jar=appName=dubbo-a,instanceName=dubboA -jar dubbo-a.jar
+java -javaagent:${path}\sermant-agent-2.0.5\agent\sermant-agent.jar=appName=dubbo-a,instanceName=dubboA -jar dubbo-a.jar
 ```
 
-其中path需要替换为Java-mesh实际打包路径
+其中path需要替换为Sermant实际打包路径
 
 - 启动生产者
 
@@ -155,4 +155,4 @@ java -jar dubbo-b2.jar
 
 当启动以上3个应用并正确配置灰度规则后，通过浏览器访问<http://localhost:28020/object?id=2>，即可灰度到1.0.2版本的dubbo-b2应用。
 
-[返回**Java-mesh**说明文档](../../README.md)
+[返回**Sermant**说明文档](../../README.md)
