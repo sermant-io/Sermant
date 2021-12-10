@@ -24,8 +24,8 @@ import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.huawei.javamesh.core.common.LoggerFactory;
 import com.huawei.javamesh.core.common.BootArgsIndexer;
+import com.huawei.javamesh.core.common.LoggerFactory;
 import com.huawei.javamesh.core.config.common.BaseConfig;
 import com.huawei.javamesh.core.config.strategy.LoadConfigStrategy;
 import com.huawei.javamesh.core.config.utils.ConfigKeyUtil;
@@ -142,14 +142,18 @@ public abstract class ConfigManager {
             @Override
             public void accept(BaseConfig config) {
                 final String typeKey = ConfigKeyUtil.getTypeKey(config.getClass());
-                if (CONFIG_MAP.containsKey(typeKey)) {
-                    LOGGER.warning(String.format("Cannot load config [%s] repeatedly", config.getClass().getName()));
-                } else {
+                final BaseConfig retainedConfig = CONFIG_MAP.get(typeKey);
+                if (retainedConfig == null) {
                     config = ((LoadConfigStrategy) loadConfigStrategy).loadConfig(holder, config);
                     CONFIG_MAP.put(typeKey, config);
                     if (otherProcessor != null) {
                         otherProcessor.accept(config);
                     }
+                } else if (retainedConfig.getClass() == config.getClass()) {
+                    LOGGER.fine(String.format("Skip load config [%s] repeatedly. ", config.getClass().getName()));
+                } else {
+                    LOGGER.warning(String.format("Type key of %s is %s,  same as %s's. ",
+                            config.getClass().getName(), typeKey, retainedConfig.getClass().getName()));
                 }
             }
         }, baseCls, classLoader);
