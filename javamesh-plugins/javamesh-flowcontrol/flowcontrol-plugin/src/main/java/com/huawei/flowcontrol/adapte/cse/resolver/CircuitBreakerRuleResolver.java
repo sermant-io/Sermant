@@ -24,7 +24,7 @@ import com.huawei.flowcontrol.adapte.cse.rule.CircuitBreakerRule;
  * @author zhouss
  * @since 2021-11-16
  */
-public class CircuitBreakerRuleResolver extends AbstractRuleResolver<CircuitBreakerRule> {
+public class CircuitBreakerRuleResolver extends AbstractResolver<CircuitBreakerRule> {
     /**
      * 熔断配置 键
      */

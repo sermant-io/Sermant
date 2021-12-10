@@ -24,7 +24,7 @@ import com.huawei.flowcontrol.adapte.cse.rule.RetryRule;
  * @author zhouss
  * @since 2021-11-16
  */
-public class RetryResolver extends AbstractRuleResolver<RetryRule> {
+public class RetryResolver extends AbstractResolver<RetryRule> {
     /**
      * 重试配置 键
      */

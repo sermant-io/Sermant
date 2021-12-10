@@ -352,6 +352,10 @@ com/huawei/flowcontrol/console/entity/RuleProvider.java in this product is copie
 
 com/huawei/flowcontrol/console/entity/SystemRuleVo.java in this product is copied from com/alibaba/csp/sentinel/dashboard/entity/rule/SystemRuleEntity.java of Alibaba Sentinel project.
 
+com.huawei.flowcontrol.adapte.cse.rule.isolate.IsolateThreadRuleManager in this product is copied from com/alibaba/csp/sentinel/slots/block/degrade/DegradeRuleManager.java of Alibaba Sentinel project.
+
+com/huawei/flowcontrol/adapte/cse/rule/isolate/IsolateThreadSlot.java in this product is copied from com/alibaba/csp/sentinel/slots/block/flow/FlowSlot.java of Alibaba Sentinel project.
+
 Alibaba Sentinel project is published at https://github.com/alibaba/Sentinel and its license is Apache License Version 2.0.
 
 ====================================================================================
@@ -379,6 +383,8 @@ com/huawei/flowcontrol/adapte/cse/match/RawOperator.java in this product is copi
 com/huawei/flowcontrol/adapte/cse/match/RequestMatcher.java in this product is copied from org/apache/servicecomb/governance/marker/Matcher.java of Apache ServiceComb Java Chassis project.
 
 com/huawei/flowcontrol/adapte/cse/rule/Configurable.java in this product is copied from org/apache/servicecomb/governance/entity/Configurable.java of Apache ServiceComb Java Chassis project.
+
+com/huawei/javamesh/core/service/dynamicconfig/kie/listener/SubscriberManager.java in this product is copied from on org/apache/servicecomb/config/kie/client/KieConfigManager.java of Apache ServiceComb Java Chassis project.
 
 Apache ServiceComb Java Chassis project is published at https://github.com/apache/servicecomb-java-chassis and its license is Apache License Version 2.0.
 

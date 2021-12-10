@@ -19,6 +19,7 @@ package com.huawei.flowcontrol.util;
 import com.alibaba.csp.sentinel.slots.block.AbstractRule;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
+import com.huawei.flowcontrol.adapte.cse.rule.isolate.IsolateThreadRule;
 
 /**
  * sentinel资源达到阈值后返回消息工具类
@@ -30,12 +31,17 @@ public class SentinelRuleUtil {
     /**
      * 流控提示信息
      */
-    public static final String FLOW_RESULT = "flow limited";
+    public static final String FLOW_RESULT = "Flow limited";
 
     /**
      * 降级提示信息
      */
     public static final String DEGRADE_RESULT = "Degraded and blocked";
+
+    /**
+     * 隔离仓异常
+     */
+    public static final String ISOLATE_RESULT = "Exceeded the max concurrent calls!";
 
     /**
      * 默认提示信息
@@ -56,6 +62,8 @@ public class SentinelRuleUtil {
             return FLOW_RESULT;
         } else if (rule instanceof DegradeRule) {
             return DEGRADE_RESULT;
+        } else if (rule instanceof IsolateThreadRule) {
+            return ISOLATE_RESULT;
         } else {
             return DEFAULT_RESULT;
         }

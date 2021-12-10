@@ -25,29 +25,42 @@ package com.huawei.flowcontrol;
 
 import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.huawei.javamesh.core.agent.common.BeforeResult;
-import com.huawei.javamesh.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.flowcontrol.exception.FlowControlException;
+import com.huawei.flowcontrol.core.config.FlowControlConfig;
 import com.huawei.flowcontrol.entry.EntryFacade;
+import com.huawei.flowcontrol.exception.FlowControlException;
 import com.huawei.flowcontrol.util.SentinelRuleUtil;
+import com.huawei.javamesh.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.javamesh.core.plugin.config.PluginConfigManager;
 
 import java.util.Locale;
 
 public abstract class DubboInterceptor implements InstanceMethodInterceptor {
 
+    private FlowControlConfig flowControlConfig;
+
+    private FlowControlConfig getFlowControlConfig() {
+        if (flowControlConfig == null) {
+            flowControlConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
+        }
+        return flowControlConfig;
+    }
+
     protected String getResourceName(String interfaceName, String methodName) {
         return interfaceName + ":" + methodName;
     }
 
-    protected void handleBlockException(BlockException ex, String resourceName, BeforeResult result, String type, EntryFacade.DubboType dubboType) {
+    protected void handleBlockException(BlockException ex, String resourceName, String type,
+                                        EntryFacade.DubboType dubboType) {
         try {
             final String msg = String.format(Locale.ENGLISH,
                 "[%s] has been blocked! [appName=%s, resourceName=%s]",
                 type, ex.getRuleLimitApp(), resourceName);
             RecordLog.info(msg);
-            String res = SentinelRuleUtil.getResult(ex.getRule());
-            result.setResult(res);
-            throw new FlowControlException(res);
+            if (getFlowControlConfig().isThrowBizException()) {
+                // 开启业务异常抛出，将会取代基于返回结果形式将异常返回给上游, 并且会触发dubbo重试, 默认关闭该功能
+                String res = SentinelRuleUtil.getResult(ex.getRule());
+                throw new FlowControlException(res);
+            }
         } finally {
             if (EntryFacade.DubboType.APACHE == dubboType) {
                 EntryFacade.INSTANCE.exit(dubboType);

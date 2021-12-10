@@ -1,15 +1,16 @@
 # FlowControl
 
-本文档主要介绍[流控插件](../../../javamesh-samples/javamesh-flowcontrol)以及该插件的使用方法
+本文档主要介绍[流控插件](../../../javamesh-plugins/javamesh-flowcontrol)以及该插件的使用方法
 
 
 
 ## 功能
 
-流控插件基于[Alibaba Sentinel](https://github.com/alibaba/Sentinel)框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**流控**与**熔断**能力，并且支持配置中心动态配置规则，实时生效。
+流控插件基于[Alibaba Sentinel](https://github.com/alibaba/Sentinel)框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**流控**、**熔断**与**隔离仓**能力，并且支持配置中心动态配置规则，实时生效。
 
 - **流控**：对指定接口限制1S秒内通过的QPS，当1S内流量超过指定阈值，将触发流控，限制请求流量。
 - **熔断**：对指定接口配置熔断策略，可从单位统计时间窗口内的错误率或者慢请求率进行统计，当请求错误率或者慢请求率达到指定比例阈值，即触发熔断，在时间窗口重置前，隔离所有请求。
+- **隔离仓**：针对大规模并发流量，对并发流量进行控制，避免瞬时并发流量过大导致服务崩溃
 
 
 
@@ -189,7 +190,34 @@
   >
   > `key`必须以`servicecomb.circuitBreaker.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
 
+- #### 隔离仓规则配置示例
 
+  ```json
+  {
+      "key":"servicecomb.bulkhead.scene",
+      "group":"app=region-A&service=flowControlDemo&environment=testing",
+      "content":"maxConcurrentCalls: \"5\"\nmaxWaitDuration: \"10S\"\nname: \"隔离仓\"\n"
+  }
+  ```
+
+  **隔离仓配置项说明：**
+
+  |       配置项       |                             说明                             |
+  | :----------------: | :----------------------------------------------------------: |
+  | maxConcurrentCalls |                          最大并发数                          |
+  |  maxWaitDuration   | 最大等待时间，若线程超过`maxConcurrentCalls`，会尝试等待，若超出等待时间还未获取资源，则抛出隔离仓异常 |
+  |        name        |                        可选，配置名称                        |
+
+  **规则解释:** 
+
+  - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
+  - 若最大并发数超过5，且新的请求等待10S，还未获取资源，则触发隔离仓异常
+
+  
+
+  > **注意事项：**
+  >
+  > `key`必须以`servicecomb.bulkhead.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
 
 ### 3、开启CSE规则适配开关
 

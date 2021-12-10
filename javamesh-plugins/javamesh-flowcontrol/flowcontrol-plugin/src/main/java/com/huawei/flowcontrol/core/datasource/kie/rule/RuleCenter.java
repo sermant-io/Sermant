@@ -20,6 +20,7 @@ import com.alibaba.csp.sentinel.datasource.AbstractDataSource;
 import com.huawei.flowcontrol.core.datasource.kie.rule.authority.AuthorityRuleWrapper;
 import com.huawei.flowcontrol.core.datasource.kie.rule.degrade.DegradeRuleWrapper;
 import com.huawei.flowcontrol.core.datasource.kie.rule.flow.FlowRuleWrapper;
+import com.huawei.flowcontrol.core.datasource.kie.rule.isolate.IsolateThreadRuleWrapper;
 import com.huawei.flowcontrol.core.datasource.kie.rule.system.SystemRuleWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ public class RuleCenter {
         ruleMap.put("DegradeRule", new DegradeRuleWrapper());
         ruleMap.put("SystemRule", new SystemRuleWrapper());
         ruleMap.put("AuthorityRule", new AuthorityRuleWrapper());
+        ruleMap.put("IsolateRule", new IsolateThreadRuleWrapper());
     }
 
     /**

@@ -150,7 +150,7 @@ public abstract class AbstractResolver<T extends Configurable> {
         if (rule.isValid()) {
             return null;
         }
-        if (!servicesMatch(rule.getServices())) {
+        if (!isServicesMatch(rule.getServices())) {
             return null;
         }
         if (override) {
@@ -177,7 +177,7 @@ public abstract class AbstractResolver<T extends Configurable> {
      * @param services 服务，多个服务逗号隔开
      * @return 是否匹配版本
      */
-    private boolean servicesMatch(String services) {
+    private boolean isServicesMatch(String services) {
         if (StringUtils.isEmpty(services)) {
             return true;
         }

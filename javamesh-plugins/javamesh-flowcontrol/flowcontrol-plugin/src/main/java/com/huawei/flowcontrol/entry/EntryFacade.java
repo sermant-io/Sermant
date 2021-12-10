@@ -217,7 +217,7 @@ public enum EntryFacade {
 
         protected String getResourceName(String interfaceName, String version, String methodName) {
             // invocation.getTargetServiceUniqueName
-            return interfaceName + ":" + version + "." + methodName;
+            return MatchManager.INSTANCE.buildApiPath(interfaceName, version, methodName);
         }
 
         protected void setEntry(List<Entry> entries, boolean isProvider) {
@@ -236,7 +236,6 @@ public enum EntryFacade {
                 entries.get(i).exit();
             }
         }
-
     }
 
     class ApacheDubboEntry extends DubboEntry {

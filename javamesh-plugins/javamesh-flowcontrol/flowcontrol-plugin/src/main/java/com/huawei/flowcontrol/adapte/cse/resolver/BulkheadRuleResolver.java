@@ -16,16 +16,26 @@
 
 package com.huawei.flowcontrol.adapte.cse.resolver;
 
-import com.huawei.flowcontrol.adapte.cse.rule.Configurable;
+import com.huawei.flowcontrol.adapte.cse.rule.BulkheadRule;
 
 /**
- * 规则解析器
+ * 隔离仓配置解析
  *
  * @author zhouss
  * @since 2021-11-16
  */
-public abstract class AbstractRuleResolver<T extends Configurable> extends AbstractResolver<T> {
-    protected AbstractRuleResolver(String configKey) {
-        super(configKey);
+public class BulkheadRuleResolver extends AbstractResolver<BulkheadRule> {
+    /**
+     * 隔离仓配置 键
+     */
+    public static final String CONFIG_KEY = "servicecomb.bulkhead";
+
+    public BulkheadRuleResolver() {
+        super(CONFIG_KEY);
+    }
+
+    @Override
+    protected Class<BulkheadRule> getRuleClass() {
+        return BulkheadRule.class;
     }
 }

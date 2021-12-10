@@ -27,8 +27,9 @@ import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
 import com.alibaba.dubbo.rpc.RpcContext;
-import com.huawei.javamesh.core.agent.common.BeforeResult;
+import com.alibaba.dubbo.rpc.RpcResult;
 import com.huawei.flowcontrol.entry.EntryFacade;
+import com.huawei.javamesh.core.agent.common.BeforeResult;
 
 import java.lang.reflect.Method;
 
@@ -56,8 +57,10 @@ public class AlibabaDubboInterceptor extends DubboInterceptor {
         try {
             EntryFacade.INSTANCE.tryEntry(invocation);
         } catch (BlockException ex) {
+            // 流控异常返回上游
+            result.setResult(new RpcResult(ex.toRuntimeException()));
             handleBlockException(ex, getResourceName(invoker.getInterface().getName(), invocation.getMethodName()),
-                    result, "AlibabaDubboInterceptor consumer", EntryFacade.DubboType.ALIBABA);
+                    "AlibabaDubboInterceptor consumer", EntryFacade.DubboType.ALIBABA);
         }
     }
 

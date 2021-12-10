@@ -16,7 +16,7 @@
 
 package com.huawei.flowcontrol.adapte.cse.rule;
 
-import com.alibaba.csp.sentinel.slots.block.Rule;
+import com.huawei.flowcontrol.adapte.cse.rule.isolate.IsolateThreadRule;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.List;
  * @author zhouss
  * @since 2021-11-15
  */
-public class BulkThreadRule extends AbstractRule<Rule> {
+public class BulkheadRule extends AbstractRule<IsolateThreadRule> {
     /**
      * 最大并发数
      */
@@ -65,8 +65,8 @@ public class BulkThreadRule extends AbstractRule<Rule> {
     }
 
     @Override
-    public List<Rule> convertToSentinelRule() {
-        return Collections.emptyList();
+    public List<IsolateThreadRule> convertToSentinelRule() {
+        return Collections.singletonList(new IsolateThreadRule(getName(), maxConcurrentCalls, parsedMaxWaitDuration));
     }
 
     public long getParsedMaxWaitDuration() {

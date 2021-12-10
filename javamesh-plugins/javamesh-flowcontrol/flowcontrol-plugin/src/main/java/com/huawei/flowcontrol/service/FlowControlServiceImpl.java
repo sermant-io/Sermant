@@ -16,13 +16,13 @@
 
 package com.huawei.flowcontrol.service;
 
-import com.huawei.javamesh.core.common.LoggerFactory;
-import com.huawei.javamesh.core.plugin.service.PluginService;
 import com.huawei.flowcontrol.core.FlowControlThreadFactory;
 import com.huawei.flowcontrol.core.config.CommonConst;
 import com.huawei.flowcontrol.core.init.InitExecutor;
 import com.huawei.flowcontrol.core.init.InitRuleRedis;
 import com.huawei.flowcontrol.core.util.DataSourceInitUtils;
+import com.huawei.javamesh.core.common.LoggerFactory;
+import com.huawei.javamesh.core.plugin.service.PluginService;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

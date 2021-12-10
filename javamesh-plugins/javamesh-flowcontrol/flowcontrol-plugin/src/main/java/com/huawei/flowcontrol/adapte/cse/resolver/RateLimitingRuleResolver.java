@@ -24,7 +24,7 @@ import com.huawei.flowcontrol.adapte.cse.rule.RateLimitingRule;
  * @author zhouss
  * @since 2021-11-16
  */
-public class RateLimitingRuleResolver extends AbstractRuleResolver<RateLimitingRule> {
+public class RateLimitingRuleResolver extends AbstractResolver<RateLimitingRule> {
     /**
      * 限流配置 键
      */

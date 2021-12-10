@@ -64,18 +64,21 @@ java -javaagent:JavaMesh路径\javamesh-agent-2.0.5\agent\javamesh-agent.jar=app
 
 ### 5、配置规则
 
-规则说明参考[流控文档](./flowcontrol.md#2配置流控规则)
-
 #### 5.1 确定ZK配置路径
 
 首先需确定当前的应用服务名，即`${project.name}`指定的服务名，根据不同的限流规则配置不同的子节点，路径如下：
 
 - 流控  `FlowRule`, 则ZK配置路径为`/service=${project.name}/FlowRule`
 - 熔断  `DegradeRule`, 则ZK配置路径为`/service=${project.name}/DegradeRule`
+- 隔离仓 `IsolateRule`, 则ZK配置路径为`/service=${project.name}/IsolateRule`
+
+> 说明：三类能力优先级：`流控 > 隔离仓 > 熔断`
+>
+> 若想单独测试一个能力，仅配置一项即可，或者配置不同的接口
 
 #### 5.2 配置规则
 
-1. 进入zookeeper客户端
+1. **进入zookeeper客户端**
 
    参考如下命令:
 
@@ -83,7 +86,7 @@ java -javaagent:JavaMesh路径\javamesh-agent-2.0.5\agent\javamesh-agent.jar=app
    zkCli.sh -server localhost:2181
    ```
 
-2. 创建对应该应用的根路径
+2. **创建对应该应用的根路径**
 
    参考如下命令:
 
@@ -91,7 +94,17 @@ java -javaagent:JavaMesh路径\javamesh-agent-2.0.5\agent\javamesh-agent.jar=app
    create /service=flowControlDemo ""
    ```
 
-3. 配置流控规则
+3. **配置流控规则**
+
+   规则说明：
+
+   | 规则配置项 | 说明                                                        |
+   | ---------- | ----------------------------------------------------------- |
+   | grade      | 整形，流控类型，0-基于线程数限流， 1-基于QPS限流            |
+   | resource   | 字符串，拦截接口，例如`/flow`                               |
+   | count      | 双精度，请求阈值，当单位时间内请求超过超过count时，触发流控 |
+
+   
 
    流控规则如下：
 
@@ -109,7 +122,20 @@ java -javaagent:JavaMesh路径\javamesh-agent-2.0.5\agent\javamesh-agent.jar=app
 
    其中`FlowRule`为流控路径名称，不可修改
 
-4. 配置熔断规则
+4. **配置熔断规则**
+
+   规则说明：
+
+   | 规则配置项         | 说明                                                         |
+   | ------------------ | ------------------------------------------------------------ |
+   | grade              | 整形，熔断规则类型，0-基于响应时间，1-基于异常率， 2-基于异常数 |
+   | resource           | 同流控，例如`/degrade`                                       |
+   | slowRatioThreshold | 双精度，慢调用比例，仅当grade=0场景生效                      |
+   | timeWindow         | 整形，时间窗口，单位S，熔断恢复间隔，触发熔断后，经过timeWindow再次尝试请求 |
+   | statIntervalMs     | 整形，单位统计时间，单位MS，每一个statIntervalMs作为熔断统计周期 |
+   | minRequestAmount   | 同流控                                                       |
+
+   
 
    规则内容如下：
 
@@ -123,6 +149,33 @@ java -javaagent:JavaMesh路径\javamesh-agent-2.0.5\agent\javamesh-agent.jar=app
 
    ```shell
    create /service=flowControlDemo/DegradeRule [{"grade":0,"resource":"/degrade","slowRatioThreshold":0.1,"timeWindow":10,"statIntervalMs":10000,"minRequestAmount":3,"count":100.0}]
+   ```
+
+5. **配置隔离仓规则**
+
+   规则说明：
+
+   | 规则配置项         | 说明                                                         |
+   | ------------------ | ------------------------------------------------------------ |
+   | grade              | 整形，熔断规则类型，0-基于响应时间，1-基于异常率， 2-基于异常数 |
+   | resource           | 同流控，例如`/degrade`                                       |
+   | maxConcurrentCalls | 最大并发数                                                   |
+   | maxWaitDuration    | 最大等待时间，若线程超过`maxConcurrentCalls`，会尝试等待，若超出等待时间还未获取资源，则抛出隔离仓异常 |
+
+   
+
+   规则内容如下：
+
+   ```json
+   [{"resource":"/degrade","maxWaitDuration":1000, "maxConcurrentCalls": 2}]
+   ```
+
+   规则解释：针对`/degrade`接口，若并发数超过2，且新的请求等待1S后未拿到资源，则触发隔离仓异常
+
+   配置规则路径命令如下：
+
+   ```shell
+   create /service=flowControlDemo/IsolateRule [{"resource":"/degrade","maxWaitDuration":1000, "maxConcurrentCalls": 2}]
    ```
 
    
