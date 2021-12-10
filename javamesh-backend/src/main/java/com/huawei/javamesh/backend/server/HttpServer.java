@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,20 @@ package com.huawei.javamesh.backend.server;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.javamesh.backend.common.conf.KafkaConf;
-import com.huawei.javamesh.backend.entity.*;
+import com.huawei.javamesh.backend.entity.Address;
+import com.huawei.javamesh.backend.entity.AddressScope;
+import com.huawei.javamesh.backend.entity.AddressType;
+import com.huawei.javamesh.backend.entity.AgentInfo;
+import com.huawei.javamesh.backend.entity.HeartBeatResult;
+import com.huawei.javamesh.backend.entity.MonitorItem;
+import com.huawei.javamesh.backend.entity.PluginInfo;
+import com.huawei.javamesh.backend.entity.Protocol;
+import com.huawei.javamesh.backend.entity.PublishConfigEntity;
+import com.huawei.javamesh.backend.entity.RegisterResult;
 import com.huawei.javamesh.backend.kafka.KafkaConsumerManager;
+import com.huawei.javamesh.backend.service.dynamicconfig.DynamicConfigurationFactoryServiceImpl;
+import com.huawei.javamesh.backend.service.dynamicconfig.service.DynamicConfigurationService;
+import com.huawei.javamesh.backend.service.dynamicconfig.utils.LabelGroupUtils;
 import com.huawei.javamesh.backend.util.RandomUtil;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -31,20 +43,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 @Component
 @RestController
-@RequestMapping("/apm2")
+@RequestMapping("/sermant")
 public class HttpServer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Hashtable.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpServer.class);
 
     @Autowired
     private KafkaConf conf;
 
-    private final String DEFAULT_AGENT_NAME = "java-mesh";
+    @Autowired
+    private DynamicConfigurationFactoryServiceImpl dynamicConfigurationFactoryService;
+
+    private final String DEFAULT_AGENT_NAME = "sermant";
     private final String DEFAULT_PLUGIN_VERSION = "unknown";
+    private final String SUCCESS = "success";
+    private final String FAILED = "failed";
 
     RandomUtil RANDOM_UTIL = new RandomUtil();
     private final Integer MIN = 1;
@@ -105,6 +127,20 @@ public class HttpServer {
         }
         agentInfo.setPluginsInfos(new ArrayList<>(pluginCache.values()));
         return JSONObject.toJSONString(agentInfo);
+    }
+
+    @PostMapping("/publishConfig")
+    public String invokePost(@RequestBody PublishConfigEntity publishConfig) {
+        try {
+            DynamicConfigurationService dcs = dynamicConfigurationFactoryService.getDynamicConfigurationService();
+            dcs.publishConfig(publishConfig.getKey(),
+                    LabelGroupUtils.createLabelGroup(publishConfig.getGroup()),
+                    publishConfig.getContent());
+            return SUCCESS;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        return FAILED;
     }
 
     public MonitorItem getMonitorItem(Hashtable<String, String> map) {
