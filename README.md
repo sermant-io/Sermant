@@ -1,6 +1,6 @@
 <img src="docs/binary-docs/java-mesh-logo.png" width="30%" syt height="530%" />
 
-### A service mesh solution based on JavaAgent
+### A proxyless service mesh solution based on Javaagent
 [![Gitter](https://badges.gitter.im/JavaMeshUsers/community.svg)](https://gitter.im/JavaMeshUsers/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![CI/IT Tests](https://github.com/huaweicloud/java-mesh/workflows/Java%20CI%20with%20Maven/badge.svg?branch=develop)](https://github.com/huaweicloud/java-mesh/actions?query=workflow:Java%20CI%20with%20Maven%20event:push%20branch:develop)
