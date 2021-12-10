@@ -1,6 +1,6 @@
 @echo off
 
-@rem Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+@rem Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
 @rem
 @rem Licensed under the Apache License, Version 2.0 (the "License");
 @rem you may not use this file except in compliance with the License.
