@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http:www.apache.orglicensesLICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,21 +16,31 @@
 
 package com.huawei.flowcontrol.core.metric;
 
-import com.huawei.flowcontrol.core.config.ConfigConst;
-import com.huawei.flowcontrol.core.util.KafkaProducerUtil;
-import com.huawei.flowcontrol.core.util.PluginConfigUtil;
+import com.huawei.flowcontrol.core.metric.provider.MetricProvider;
 
 /**
- * 发送sentinel客户端流控数据消息
+ * 指标发送器
  *
- * @author liyi
- * @since 2020-08-26
+ * @author zhouss
+ * @since 2021-12-07
  */
-public class SimpleKafkaMetricSender extends AbstractMetricSender {
+public interface MetricSender {
+    /**
+     * 发送指标数据
+     *
+     * @param data 发送数据
+     */
+    void sendMetric(Object data);
 
-    @Override
-    public void sendMetric(Object data) {
-        // 调用kafka发送消息
-        KafkaProducerUtil.sendMessage(PluginConfigUtil.getValueByKey(ConfigConst.KAFKA_METRIC_TOPIC), data.toString());
-    }
+    /**
+     * 默认指标数据发送
+     */
+    void sendMetric();
+
+    /**
+     * 基于提供provider发送数据
+     *
+     * @param metricProvider 指标provider
+     */
+    void sendMetric(MetricProvider metricProvider);
 }

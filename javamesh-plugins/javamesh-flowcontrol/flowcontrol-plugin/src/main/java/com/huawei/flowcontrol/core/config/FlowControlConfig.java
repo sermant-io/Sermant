@@ -16,6 +16,7 @@
 
 package com.huawei.flowcontrol.core.config;
 
+import com.huawei.flowcontrol.core.metric.MetricSendWay;
 import com.huawei.javamesh.core.config.common.ConfigTypeKey;
 import com.huawei.javamesh.core.lubanops.bootstrap.config.IdentityConfigManager;
 import com.huawei.javamesh.core.plugin.config.PluginConfig;
@@ -95,7 +96,7 @@ public class FlowControlConfig implements PluginConfig {
     /**
      * kafka配置参数 流控信息数据发送topic名称
      */
-    private String kafkaMetricTopic = "topic-metric";
+    private String kafkaMetricTopic = "topic-flowcontrol-metric";
 
     /**
      * kafka配置参数 心跳数据发送topic名称
@@ -217,6 +218,34 @@ public class FlowControlConfig implements PluginConfig {
      * 是否适配源泛PAAS的UI以及前后端zookeeper
      */
     private boolean adaptPass = false;
+
+    /**
+     * 指标数据发送方式
+     * 默认Netty
+     */
+    private MetricSendWay sendWay = MetricSendWay.NETTY;
+
+    /**
+     * 等待指标数据写入文件的等待时间
+     * 单位MS
+     */
+    private long metricSleepTimeMs = 1000L;
+
+    public long getMetricSleepTimeMs() {
+        return metricSleepTimeMs;
+    }
+
+    public void setMetricSleepTimeMs(long metricSleepTimeMs) {
+        this.metricSleepTimeMs = metricSleepTimeMs;
+    }
+
+    public MetricSendWay getSendWay() {
+        return sendWay;
+    }
+
+    public void setSendWay(MetricSendWay sendWay) {
+        this.sendWay = sendWay;
+    }
 
     public boolean isAdaptPass() {
         return adaptPass;
