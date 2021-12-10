@@ -53,9 +53,9 @@ public class RegionMasterService extends AbstractMasterService {
 
     private static final Logger LOGGER = LogFactory.getLogger();
 
-    private final static String REGISTER_URL = "/apm2/master/v1/register";
+    private final static String REGISTER_URL = "/sermant/master/v1/register";
 
-    private final static String HEARTBEAT_URL = "/apm2/master/v1/heartbeat";
+    private final static String HEARTBEAT_URL = "/sermant/master/v1/heartbeat";
 
     /**
      * master地址列表
