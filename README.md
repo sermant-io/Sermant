@@ -1,4 +1,4 @@
-<img src="docs/binary-docs/sermant-logo.png" width="30%" syt height="530%" />
+<img src="docs/binary-docs/sermant-logo.png" width="100%" syt height="530%" />
 
 ### A proxyless service mesh solution based on Javaagent
 [![Gitter](https://badges.gitter.im/SermantUsers/community.svg)](https://gitter.im/SermantUsers/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
