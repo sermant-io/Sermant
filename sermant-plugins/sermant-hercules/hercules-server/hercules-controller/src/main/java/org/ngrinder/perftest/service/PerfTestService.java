@@ -999,6 +999,7 @@ public class PerfTestService extends AbstractPerfTestService implements Controll
 			consoleProperties.setIgnoreSampleCount(getSafe(perfTest.getIgnoreSampleCount()));
 			consoleProperties.setSampleInterval(1000 * getSafe(perfTest.getSamplingInterval()));
 		} catch (Exception e) {
+			LOGGER.error("Error while setting console properties", e);
 			throw processException("Error while setting console properties", e);
 		}
 		return consoleProperties;
