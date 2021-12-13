@@ -1,0 +1,2 @@
+com.huawei.sermant.core.config.strategy.LoadPropertiesStrategy
+com.huawei.sermant.core.config.strategy.LoadYamlStrategy

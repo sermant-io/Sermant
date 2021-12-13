@@ -1,8 +1,8 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.huawei.javamesh</groupId>
-    <artifactId>javamesh</artifactId>
+    <groupId>com.huawei.sermant</groupId>
+    <artifactId>sermant</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
     <licenses>
@@ -53,16 +53,16 @@
         <protubuf.plugin.version>0.5.1</protubuf.plugin.version>
         <license.plugin.version>1.19</license.plugin.version>
 
-        <javamesh.name>javamesh-agent</javamesh.name>
-        <javamesh.version>2.0.5</javamesh.version>
-        <javamesh.basedir>${pom.basedir}/..</javamesh.basedir>
+        <sermant.name>sermant-agent</sermant.name>
+        <sermant.version>2.0.5</sermant.version>
+        <sermant.basedir>${pom.basedir}/..</sermant.basedir>
 
-        <package.temp.dir>${javamesh.basedir}/${javamesh.name}-${javamesh.version}</package.temp.dir>
+        <package.temp.dir>${sermant.basedir}/${sermant.name}-${sermant.version}</package.temp.dir>
         <package.agent.dir>${package.temp.dir}/agent</package.agent.dir>
         <package.server.dir>${package.temp.dir}/server</package.server.dir>
         <package.output.dir>${project.build.outputDirectory}</package.output.dir>
         <package.license.ftl.file>third-party-license.ftl</package.license.ftl.file>
-        <package.resources.dir>javamesh-package/resources</package.resources.dir>
+        <package.resources.dir>sermant-package/resources</package.resources.dir>
 
         <shade.common.prefix>com.huawei</shade.common.prefix>
         <shade.distinct.prefix>${project.artifactId}</shade.distinct.prefix>
@@ -72,8 +72,8 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.huawei.javamesh</groupId>
-                <artifactId>javamesh-agentcore-core</artifactId>
+                <groupId>com.huawei.sermant</groupId>
+                <artifactId>sermant-agentcore-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -231,15 +231,15 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>javamesh-agentcore</module>
-                <module>javamesh-plugins</module>
+                <module>sermant-agentcore</module>
+                <module>sermant-plugins</module>
             </modules>
         </profile>
         <profile>
             <id>example</id>
             <modules>
-                <module>javamesh-agentcore</module>
-                <module>javamesh-plugins</module>
+                <module>sermant-agentcore</module>
+                <module>sermant-plugins</module>
             </modules>
         </profile>
         <profile>
@@ -248,7 +248,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>javamesh-backend</module>
+                <module>sermant-backend</module>
             </modules>
         </profile>
         <profile>
@@ -257,7 +257,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>javamesh-plugins</module>
+                <module>sermant-plugins</module>
             </modules>
         </profile>
         <profile>
@@ -266,27 +266,27 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>javamesh-package</module>
+                <module>sermant-package</module>
             </modules>
         </profile>
         <profile>
             <id>all</id>
             <modules>
-                <module>javamesh-agentcore</module>
-                <module>javamesh-plugins</module>
-                <module>javamesh-backend</module>
-                <module>javamesh-package</module>
+                <module>sermant-agentcore</module>
+                <module>sermant-plugins</module>
+                <module>sermant-backend</module>
+                <module>sermant-package</module>
             </modules>
         </profile>
     </profiles>
     <build>
-        <finalName>${project.artifactId}-${javamesh.version}</finalName>
+        <finalName>${project.artifactId}-${sermant.version}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
             <resource>
-                <directory>${javamesh.basedir}/${package.resources.dir}</directory>
+                <directory>${sermant.basedir}/${package.resources.dir}</directory>
                 <includes>
                     <include>META-INF/*</include>
                 </includes>
@@ -344,7 +344,7 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <outputFile>${package.output.dir}/${project.artifactId}-${javamesh.version}.jar</outputFile>
+                        <outputFile>${package.output.dir}/${project.artifactId}-${sermant.version}.jar</outputFile>
                         <relocations>
                             <relocation>
                                 <pattern>net.bytebuddy</pattern>

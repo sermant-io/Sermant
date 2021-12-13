@@ -46,14 +46,14 @@
 如果开发者：
 
 - 没有修改`resources`标签的内容
-- 开发的模块中`javamesh.basedir`参数正确指向顶层目录
+- 开发的模块中`sermant.basedir`参数正确指向顶层目录
 - 不打带依赖`jar`包，或使用`shade`插件打带依赖`jar`包，且没有修改`transformers`标签
 
 那么无需对输出的`jar`包作任何调整，否则请详细阅读下面的说明，并按实际情况处理。
 
-在默认打包过程中，需要将本工程默认的`LICENSE`文件和`NOTICE`文件打入。这两个文件存放于`javamesh-package`模块的`resources/META-INF`目录下，由`resources`标签特别地指向。
+在默认打包过程中，需要将本工程默认的`LICENSE`文件和`NOTICE`文件打入。这两个文件存放于`sermant-package`模块的`resources/META-INF`目录下，由`resources`标签特别地指向。
 
-一般情况下，只要保证打包的模块(`packaging`标签的值不为`pom`)中`javamesh.basedir`参数指向本工程的顶层目录，就会默认添加这两个文件，无需特别关心。
+一般情况下，只要保证打包的模块(`packaging`标签的值不为`pom`)中`sermant.basedir`参数指向本工程的顶层目录，就会默认添加这两个文件，无需特别关心。
 
 在打包流程中，使用`shade`插件、`assembly`插件或`spring`打包插件打带依赖`jar`包时，如果打入的**第三方**`jar`包中含有`NOTICE`文件，最好将他们与本工程默认的`NOTICE`文件合并。`shade`插件的`ApacheNoticeResourceTransformer`正好可以做到这一点。这一点在顶层工程的`pom`文件中有配置，除非有修改`Transformer`的需要，否则不建议覆盖顶层工程的`shade`插件设置。
 
@@ -61,7 +61,7 @@
 
 ## RELEASE产品包
 
-`RELEASE`产品包中需要将工程源码的`LICENSE`文件和`NOTICE`文件带上，前者还需要添加`RELEASE`产品包中所有涉及的**第三方**`jar`包的`LICENSE`信息。`RELEASE`产品包还需要将与本工程`LICENSE`不同的**第三方**`LICENSE`存放于`licenses`目录中带上，该目录存放于`javamesh-package`模块的`resources`目录中。
+`RELEASE`产品包中需要将工程源码的`LICENSE`文件和`NOTICE`文件带上，前者还需要添加`RELEASE`产品包中所有涉及的**第三方**`jar`包的`LICENSE`信息。`RELEASE`产品包还需要将与本工程`LICENSE`不同的**第三方**`LICENSE`存放于`licenses`目录中带上，该目录存放于`sermant-package`模块的`resources`目录中。
 
 综上，`RELEASE`产品包内部结构形如：
 - `agent`目录: 核心增强逻辑
@@ -75,9 +75,9 @@
   ```shell
   mvn license:aggregate-add-third-party
   ```
-  生成的文件`LICENSE-binary-suffix.txt`存放于`javamesh-package`模块的`resources`目录。该过程初次执行时间较旧，请耐心等待。
+  生成的文件`LICENSE-binary-suffix.txt`存放于`sermant-package`模块的`resources`目录。该过程初次执行时间较旧，请耐心等待。
 - 工程各组件打包，输出到临时目录下。
-- 在`javamesh-package`模块打包时：
+- 在`sermant-package`模块打包时：
   - 将工程源码的`LICENSE`文件、`NOTICE`文件和`licenses`目录拷贝到临时目录中。
   - 调用脚本将`LICENSE-binary-suffix.txt`文件追加到临时目录的`LICENSE`文件。
   - 将临时目录压缩为`RELEASE`产品包。
@@ -87,4 +87,4 @@
 mvn license:aggregate-add-third-party clean package -Dmaven.test.skip
 ```
 
-[返回**Java-mesh**说明文档](../README.md)
+[返回**Sermant**说明文档](../README.md)

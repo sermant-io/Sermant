@@ -7,7 +7,7 @@
 ## 1、环境准备
 
 - 搭建[KIE](https://github.com/apache/servicecomb-kie)服务端
-- 准备[DEMO](../../../javamesh-plugins/javamesh-flowcontrol/flowcontrol-demos/flowcontrol-demo)应用
+- 准备[DEMO](../../../sermant-plugins/sermant-flowcontrol/flowcontrol-demos/flowcontrol-demo)应用
 
 ## 2、下载源码并打包插件
 
@@ -15,11 +15,11 @@
 
 ## 3、配置配置中心
 
-配置`JavaMesh`配置中心类型与地址，配置文件路劲`/JavaMesh/javamesh-agent-2.0.5/agent/config/config.properties`
+配置`Sermant`配置中心类型与地址，配置文件路劲`/Sermant/sermant-agent-2.0.5/agent/config/config.properties`
 
 ```properties
 dynamicconfig.timeout_value=30000
-dynamicconfig.default_group=java-mesh
+dynamicconfig.default_group=sermant
 # Zookeeper配置中心地址
 dynamicconfig.zookeeper_uri=zookeeper://127.0.0.1:2181
 # 配置中心类型 此处使用KIE配置中心

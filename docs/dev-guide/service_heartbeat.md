@@ -1,10 +1,10 @@
 # 心跳服务介绍
 
-本文档主要介绍**核心模块**的[心跳服务](../../javamesh-agentcore/javamesh-agentcore-core/src/main/java/com/huawei/javamesh/core/service/heartbeat)。
+本文档主要介绍**核心模块**的[心跳服务](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/heartbeat)。
 
 ## 功能定位
 
-**心跳服务**指的是**核心模块**定期向**后端模块**发送心跳包的服务，起到告知当前`Java-mesh`应用存活的作用。**心跳服务**主要针对所有插件，对每个`插件主模块(main)`，**心跳服务**都会为其定制一个心跳数据包并定期发送，这些定制化数据将在**后端模块**的后续流程中发挥作用。
+**心跳服务**指的是**核心模块**定期向**后端模块**发送心跳包的服务，起到告知当前`Sermant`应用存活的作用。**心跳服务**主要针对所有插件，对每个`插件主模块(main)`，**心跳服务**都会为其定制一个心跳数据包并定期发送，这些定制化数据将在**后端模块**的后续流程中发挥作用。
 
 ## 实现方式
 
@@ -70,7 +70,7 @@ service.setExtInfo(new ExtInfoProvider() {
 });
 ```
 
-`setExtInfo`方法在执行的时候，将通过自定义`ExtInfoProvider`实现找到所在的插件或插件服务`jar`包，获取其`manifest`文件`Java-mesh-Plugin-Name`的值，即插件名称。获取到插件名称之后，**心跳服务**才能正确地将动态参数绑定到相应的心跳数据包中。
+`setExtInfo`方法在执行的时候，将通过自定义`ExtInfoProvider`实现找到所在的插件或插件服务`jar`包，获取其`manifest`文件`Sermant-Plugin-Name`的值，即插件名称。获取到插件名称之后，**心跳服务**才能正确地将动态参数绑定到相应的心跳数据包中。
 
 `ExtInfoProvider`接口定义了`getExtInfo`方法，**心跳服务**每次构建心跳数据包时，将通过该方法获取动态获取额外参数。
 
@@ -78,6 +78,6 @@ service.setExtInfo(new ExtInfoProvider() {
 
 一般情况下，对于插件开发者来说，**心跳服务**是无需关心的内容。只有当插件`后端模块(backend)`需要从**后端模块**的kafka心跳主题中捞特定数据时，才有必要为心跳数据包定制数据。插件为其心跳数据包定制数据时，通常可以[自定义插件服务](dev_plugin_code.md#插件服务)，在`start`方法中[添加定制数据](#添加定制数据)即可。
 
-可以参考示例工程的[DemoHeartBeatService](../../javamesh-plugins/javamesh-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)进行开发。
+可以参考示例工程的[DemoHeartBeatService](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)进行开发。
 
-[返回**Java-mesh**说明文档](../README.md)
+[返回**Sermant**说明文档](../README.md)

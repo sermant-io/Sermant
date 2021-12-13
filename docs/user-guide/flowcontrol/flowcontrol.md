@@ -1,6 +1,6 @@
 # FlowControl
 
-本文档主要介绍[流控插件](../../../javamesh-plugins/javamesh-flowcontrol)以及该插件的使用方法
+本文档主要介绍[流控插件](../../../sermant-plugins/sermant-flowcontrol)以及该插件的使用方法
 
 
 
@@ -221,7 +221,7 @@
 
 ### 3、开启CSE规则适配开关
 
-修改配置文件`JavaMesh/javamesh-agent-2.0.5/agent/pluginPackage/flowcontrol/config/config.yaml`
+修改配置文件`Sermant/sermant-agent-2.0.5/agent/pluginPackage/flowcontrol/config/config.yaml`
 
 ```yaml
 # 流控配置
@@ -235,7 +235,7 @@ flow.control.plugin:
 
 ### 1、编译打包
 
-通过[此处](https://github.com/huaweicloud/java-mesh/releases)下载agent源码包, 并下载[Demo应用](../../../javamesh-plugins/javamesh-flowcontrol/flowcontrol-demos/flowcontrol-demo-cse)
+通过[此处](https://github.com/huaweicloud/Sermant/releases)下载agent源码包, 并下载[Demo应用](../../../sermant-plugins/sermant-flowcontrol/flowcontrol-demos/flowcontrol-demo-cse)
 
 执行以下maven命令对agent进行打包
 
@@ -252,7 +252,7 @@ mvn clean package
 ### 2、启动应用
 
 ```shell
-java -javaagent:${path}\javamesh-agent-2.0.5\agent\javamesh-agent.jar=appName=cseFlowControlDemo  -jar CseFlowControlDemo.jar
+java -javaagent:${path}\sermant-agent-2.0.5\agent\sermant-agent.jar=appName=cseFlowControlDemo  -jar CseFlowControlDemo.jar
 ```
 
 > 其中`${path}`为`agent`**根路径**
@@ -299,7 +299,7 @@ Dubbo应用则是通过**请求的接口:接口版本.请求方法**拼凑，例
 
 #### 启动时为什么会报HttpHostConnectException异常
 
-答：出现该异常的原因是未启动`JavaMesh`后台服务`javamesh-backhend`, 找到启动类`com.huawei.apm.backend.NettyServerApplication`启动后台服务，并重启应用即可。
+答：出现该异常的原因是未启动`Sermant`后台服务`sermant-backhend`, 找到启动类`com.huawei.apm.backend.NettyServerApplication`启动后台服务，并重启应用即可。
 
 
 
@@ -312,4 +312,4 @@ Dubbo应用则是通过**请求的接口:接口版本.请求方法**拼凑，例
 
 
 
-[返回**Java-mesh**说明文档](../../README.md)
+[返回**Sermant**说明文档](../../README.md)

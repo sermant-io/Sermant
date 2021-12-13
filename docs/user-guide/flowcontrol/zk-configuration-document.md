@@ -5,14 +5,14 @@
 - [Open Jdk](http://openjdk.java.net/) / [Oracle Jdk](https://www.oracle.com/java/technologies/downloads/) / Huawei Jdk
 - [Zookeeper](https://zookeeper.apache.org/releases.html)
 - [Maven](https://maven.apache.org/)
-- [Demo应用](../../../javamesh-plugins/javamesh-flowcontrol/flowcontrol-demos/flowcontrol-demo)
+- [Demo应用](../../../sermant-plugins/sermant-flowcontrol/flowcontrol-demos/flowcontrol-demo)
 
 ### 2、下载源码并打包插件
 
 #### 2.1 **下载源码**
 
 ```shell
-git clone -b develop https://github.com/huaweicloud/java-mesh.git
+git clone -b develop https://github.com/huaweicloud/Sermant.git
 ```
 
 #### 2.2 **打包插件**
@@ -21,15 +21,15 @@ git clone -b develop https://github.com/huaweicloud/java-mesh.git
 mvn clean package -Dpmd.skip=true -Dtest.skip=true -Drat.skip=true
 ```
 
-完成打包后，在`JavaMesh`根目录生成目录`javamesh-agent-2.0.5`
+完成打包后，在`Sermant`根目录生成目录`sermant-agent-2.0.5`
 
 ### 3、配置配置中心
 
-配置`JavaMesh`配置中心类型与地址，配置文件路劲`/JavaMesh/javamesh-agent-2.0.5/agent/config/config.properties`
+配置`Sermant`配置中心类型与地址，配置文件路劲`/Sermant/sermant-agent-2.0.5/agent/config/config.properties`
 
 ```properties
 dynamicconfig.timeout_value=30000
-dynamicconfig.default_group=java-mesh
+dynamicconfig.default_group=sermant
 # Zookeeper配置中心地址
 dynamicconfig.zookeeper_uri=zookeeper://127.0.0.1:2181
 # 配置中心类型
@@ -42,17 +42,17 @@ dynamicconfig.kie_url=http://127.0.0.1:30110
 
 ### 4、打包并启动应用
 
-#### 4.1 打包[Demo应用](../../../javamesh-plugins/javamesh-flowcontrol/flowcontrol-demos/flowcontrol-demo)
+#### 4.1 打包[Demo应用](../../../sermant-plugins/sermant-flowcontrol/flowcontrol-demos/flowcontrol-demo)
 
 #### 4.2 启动应用
 
 ```shell
-java -javaagent:JavaMesh路径\javamesh-agent-2.0.5\agent\javamesh-agent.jar=appName=flowControlDemo -Dproject.name=flowControlDemo -jar FlowControlDemo.jar
+java -javaagent:Sermant路径\sermant-agent-2.0.5\agent\sermant-agent.jar=appName=flowControlDemo -Dproject.name=flowControlDemo -jar FlowControlDemo.jar
 ```
 
 其中:
 
-- **JavaMesh路径:** 即源码路径
+- **Sermant路径:** 即源码路径
 - **project.name:** 指定监听的服务名
 
 #### 4.3 验证应用是否可用
