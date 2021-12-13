@@ -22,7 +22,6 @@ import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangeType;
 import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.sermant.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.sermant.core.service.dynamicconfig.service.DynamicConfigurationService;
-import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
 import org.apache.zookeeper.AddWatchMode;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
@@ -38,7 +37,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -131,13 +129,9 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
 
     /**
      * 添加组监听
-     * 若由Kie配置中心转换而来，则配置路径为<h4>/group/key</h4>
-     * <pre>
-     * 其中:
-     * group: 由{@link LabelGroupUtils#createLabelGroup(Map)}生成
-     * key: 则是对应kie的键名
-     * </pre>
-     * <p>第一次添加会将group下的所有子路径的数据通知给监听器</p>
+     *
+     * <h3>特别说明：</h3>
+     * <p>若监听的节点路径存在，则会将节点数据通知给监听器</p>
      *
      * @param group    分组
      * @param listener 监听器
@@ -163,9 +157,12 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
                     if (keyWithSeparator.length() < 1) {
                         return;
                     }
-                    final String content = getConfig(keyWithSeparator, group);
-                    listener.process(new ConfigChangedEvent(keyWithSeparator.substring(1), group, content,
-                            transEventType(event.getType())));
+                    ConfigChangeType changeType = transEventType(event.getType());
+                    String content = null;
+                    if (changeType != ConfigChangeType.DELETED) {
+                        content = getConfig(keyWithSeparator, group);
+                    }
+                    listener.process(new ConfigChangedEvent(keyWithSeparator.substring(1), group, content, changeType));
                 }
             }, AddWatchMode.PERSISTENT_RECURSIVE);
             notifyGroup(group, listener);
@@ -179,6 +176,59 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
         return true;
     }
 
+    /**
+     * 第一次增加监听器时，将关联查询的数据传给listener
+     *
+     * @param group    分组
+     * @param listener 监听器
+     */
+    private void notifyGroup(String group, ConfigurationListener listener) {
+        final List<String> keys = listConfigsFromGroup(group);
+        if (keys != null) {
+            for (String key : keys) {
+                notifyKey(key, group, listener);
+            }
+        }
+    }
+
+    /**
+     * 第一次增加监听器时，将关联查询的数据传给listener
+     *
+     * @param key 配置键
+     * @param group 分组
+     * @param listener 监听器
+     */
+    private void notifyKey(String key, String group, ConfigurationListener listener) {
+        final String fixedKey = fixKey(key);
+        if (!isNodeExist(getPath(fixedKey, group))) {
+            return;
+        }
+        final String content = getConfig(fixedKey, group);
+        listener.process(new ConfigChangedEvent(key, group, content, ConfigChangeType.ADDED));
+    }
+
+    /**
+     * 判断节点是否存在
+     *
+     * @param path 节点全路劲
+     * @return 当节点存在返回true
+     */
+    private boolean isNodeExist(String path) {
+        try {
+            return zkClient.exists(path, false) != null;
+        } catch (Exception ignored) {
+            // ignored
+            return false;
+        }
+    }
+
+    private String fixKey(String key) {
+        if (key == null) {
+            return null;
+        }
+        return key.startsWith("/") ? key : "/" + key;
+    }
+
     @Override
     public boolean removeGroupListener(String key, String group, ConfigurationListener listener) {
         return true;
@@ -186,8 +236,8 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
 
     /**
      * 添加zookeeper路径监听
-     * 将会监听路径<code>/group/key</code>的数据变更
-     * <h3>一次添加将会将节点数据通知给监听器</h3>
+     * <h3>特别说明：</h3>
+     * <p>若监听的节点路径存在，则会将节点数据通知给监听器</p>
      *
      * @param key 子路径
      * @param group 父路径
@@ -207,8 +257,11 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
             public void process(WatchedEvent event) {
                 if (!fullPath.equals(event.getPath()))
                     logger.log(Level.WARNING, "unexpected event " + event + " for " + key + ":" + finalGroup);
-                String content = getConfig(key, finalGroup);
                 ConfigChangeType changeType = transEventType(event.getType());
+                String content = null;
+                if (changeType != ConfigChangeType.DELETED) {
+                    content = getConfig(key, finalGroup);
+                }
                 ConfigChangedEvent cce = new ConfigChangedEvent(key, finalGroup, content, changeType);
                 listener.process(cce);
             }
@@ -358,7 +411,7 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
     private List<String> listNodesFromNode(String node) {
         List<String> str_array = new Vector<String>();
         try {
-            if (zkClient.exists(node, false) != null) {
+            if (isNodeExist(node)) {
                 str_array = zkClient.getChildren(node, null);
             }
         } catch (Exception e) {
@@ -372,32 +425,5 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
         }
 
         return str_array;
-    }
-
-    /**
-     * 第一次增加监听器时，将关联查询的数据传给listener
-     *
-     * @param group    分组
-     * @param listener 监听器
-     */
-    private void notifyGroup(String group, ConfigurationListener listener) {
-        final List<String> keys = listConfigsFromGroup(group);
-        if (keys != null) {
-            for (String key : keys) {
-                notifyKey(key, group, listener);
-            }
-        }
-    }
-
-    private void notifyKey(String key, String group, ConfigurationListener listener) {
-        final String content = getConfig(fixKey(key), group);
-        listener.process(new ConfigChangedEvent(key, group, content, ConfigChangeType.ADDED));
-    }
-
-    private String fixKey(String key) {
-        if (key == null) {
-            return null;
-        }
-        return key.startsWith("/") ? key : "/" + key;
     }
 }
