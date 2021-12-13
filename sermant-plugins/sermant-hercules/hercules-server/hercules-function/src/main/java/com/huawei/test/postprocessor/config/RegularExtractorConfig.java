@@ -66,6 +66,16 @@ public class RegularExtractorConfig {
 		this.defaultValue = builder.defaultValue;
 	}
 
+	@Override
+	public String toString() {
+		return "RegularExtractorConfig{" +
+			"regularExpression='" + regularExpression + '\'' +
+			", groupIndex=" + groupIndex +
+			", matchIndex=" + matchIndex +
+			", defaultValue='" + defaultValue + '\'' +
+			'}';
+	}
+
 	public static class Builder {
 		/**
 		 * 提取数据正则表达式

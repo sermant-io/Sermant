@@ -16,6 +16,12 @@
 
 package com.huawei.test.configelement.enums;
 
+import com.huawei.test.configelement.service.IGrinderCountService;
+import com.huawei.test.configelement.service.impl.AgentModeCountService;
+import com.huawei.test.configelement.service.impl.AllThreadModeCountService;
+import com.huawei.test.configelement.service.impl.CurrentThreadModeCountService;
+import com.huawei.test.configelement.service.impl.ProcessModeCountService;
+
 /**
  * 功能描述：参数化文件中各值共享模式
  *
@@ -26,20 +32,33 @@ public enum SharingMode {
 	/**
 	 * 所有线程共享参数文件，即每一个值只能被一个线程使用
 	 */
-	ALL_THREADS,
+	ALL_THREADS(new AllThreadModeCountService()),
 
 	/**
 	 * 当前agent共享一个参数文件，即每一个参数化的值只能在当前agent中的某一个线程中使用
 	 */
-	CURRENT_AGENT,
+	CURRENT_AGENT(new AgentModeCountService()),
 
 	/**
 	 * 当前进程共享一个参数文件，即每一个参数化的值只能在当前进程中的某一个线程中使用
 	 */
-	CURRENT_PROCESS,
+	CURRENT_PROCESS(new ProcessModeCountService()),
 
 	/**
 	 * 当前线程共享一个参数文件，即每一个线程都会处理参数化文件中的每一个值
 	 */
-	CURRENT_THREAD
+	CURRENT_THREAD(new CurrentThreadModeCountService());
+
+	/**
+	 * 模式下的取数逻辑，取出的数可以用于计数器或者参数化取值等判断
+	 */
+	private final IGrinderCountService grinderCountService;
+
+	SharingMode(IGrinderCountService grinderCountService) {
+		this.grinderCountService = grinderCountService;
+	}
+
+	public IGrinderCountService getGrinderCountService() {
+		return grinderCountService;
+	}
 }

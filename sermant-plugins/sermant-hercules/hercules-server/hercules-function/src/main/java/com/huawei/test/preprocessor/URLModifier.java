@@ -16,7 +16,7 @@
 
 package com.huawei.test.preprocessor;
 
-import com.huawei.test.PressureTestFunction;
+import com.huawei.test.BasePressureTestFunction;
 
 /**
  * 功能描述：初始化URL修改器
@@ -24,28 +24,11 @@ import com.huawei.test.PressureTestFunction;
  * @author zl
  * @since 2021-12-09
  */
-public abstract class URLModifier<T> implements PressureTestFunction {
-	/**
-	 * 初始化配置
-	 *
-	 * @param config 配置
-	 */
-	public abstract void initConfig(T config);
-
+public abstract class URLModifier<T> extends BasePressureTestFunction {
 	/**
 	 * 修改url
 	 *
 	 * @return 修改之后的url
 	 */
-	public abstract String modifyUrl(String url, String sessionHeader);
-
-	@Override
-	public void defineFunctionName(String name) {
-
-	}
-
-	@Override
-	public void addComments(String comments) {
-
-	}
+	public abstract String modifyUrl(String url, String sessionId, T config);
 }

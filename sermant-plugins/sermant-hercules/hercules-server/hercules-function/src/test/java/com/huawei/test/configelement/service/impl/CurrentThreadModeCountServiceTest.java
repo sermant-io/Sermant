@@ -14,38 +14,25 @@
  * limitations under the License.
  */
 
-package com.huawei.test.configelement.impl;
+package com.huawei.test.configelement.service.impl;
 
-import com.huawei.test.configelement.DNSCacheManager;
-import com.huawei.test.configelement.config.DNSCacheConfig;
+import com.huawei.test.configelement.service.ExecuteTimesInfo;
+import org.junit.Assert;
+import org.junit.Test;
 
-import java.util.List;
-import java.util.Map;
+public class CurrentThreadModeCountServiceTest {
 
-/**
- * 功能描述：DNS 域名管理逻辑实现
- *
- * @author zl
- * @since 2021-12-09
- */
-public class CommonDNSCacheManager extends DNSCacheManager {
-	@Override
-	public String getIp(String hostName) {
-		return null;
-	}
-
-	@Override
-	public List<Map<String, String>> getHosts() {
-		return null;
-	}
-
-	@Override
-	public void initConfig(DNSCacheConfig config) {
-
-	}
-
-	@Override
-	public boolean isConfigValid() {
-		return false;
+	@Test
+	public void test_doIncrement() {
+		ExecuteTimesInfo executeTimesInfo = new ExecuteTimesInfo.Builder()
+			.setAgentCount(2)
+			.setProcessCount(2)
+			.setThreadCount(2)
+			.setAgentNumber(1)
+			.setProcessNumber(1)
+			.setThreadNumber(1)
+			.setRunNumber(3) // 第4次执行的取数应该是3
+			.build();
+		Assert.assertEquals(3, new CurrentThreadModeCountService().doIncrement(executeTimesInfo));
 	}
 }

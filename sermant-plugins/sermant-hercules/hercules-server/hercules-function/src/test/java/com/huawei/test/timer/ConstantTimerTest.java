@@ -16,37 +16,32 @@
 
 package com.huawei.test.timer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * 功能描述：线程停止指定时长
- *
- * @author zl
- * @since 2021-12-09
- */
-public class ConstantTimer {
-	/**
-	 * 日志
-	 */
-	private static final Logger LOGGER = LoggerFactory.getLogger(ConstantTimer.class);
+public class ConstantTimerTest {
+	@Test
+	public void test_delay_when_time_less_than_0() {
+		ConstantTimer.delay(-1, TimeUnit.MILLISECONDS);
+	}
 
-	/**
-	 * 线程停止指定时长
-	 *
-	 * @param time     停止的时长
-	 * @param timeUnit 停止时长的单位
-	 */
-	public static void delay(long time, TimeUnit timeUnit) {
-		if (timeUnit == null || time <= 0) {
-			return;
-		}
-		try {
-			timeUnit.sleep(time);
-		} catch (InterruptedException e) {
-			LOGGER.error("Sleep current thread fail:{}", e.getMessage());
-		}
+	@Test
+	public void test_delay_when_time_equal_0() {
+		ConstantTimer.delay(0, TimeUnit.MILLISECONDS);
+	}
+
+	@Test
+	public void test_delay_when_timeUnit_is_null() {
+		ConstantTimer.delay(3000, null);
+	}
+
+	@Test
+	public void test_delay_when_params_are_valid() {
+		long startTime = System.currentTimeMillis();
+		ConstantTimer.delay(3000, TimeUnit.MILLISECONDS);
+		long endTime = System.currentTimeMillis();
+		Assert.assertTrue(endTime - startTime >= 3000);
 	}
 }

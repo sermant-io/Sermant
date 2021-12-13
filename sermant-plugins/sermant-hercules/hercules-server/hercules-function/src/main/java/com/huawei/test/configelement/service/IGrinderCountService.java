@@ -14,38 +14,20 @@
  * limitations under the License.
  */
 
-package com.huawei.test.configelement.impl;
-
-import com.huawei.test.configelement.DNSCacheManager;
-import com.huawei.test.configelement.config.DNSCacheConfig;
-
-import java.util.List;
-import java.util.Map;
+package com.huawei.test.configelement.service;
 
 /**
- * 功能描述：DNS 域名管理逻辑实现
+ * 功能描述：计数服务接口
  *
  * @author zl
- * @since 2021-12-09
+ * @since 2021-12-16
  */
-public class CommonDNSCacheManager extends DNSCacheManager {
-	@Override
-	public String getIp(String hostName) {
-		return null;
-	}
-
-	@Override
-	public List<Map<String, String>> getHosts() {
-		return null;
-	}
-
-	@Override
-	public void initConfig(DNSCacheConfig config) {
-
-	}
-
-	@Override
-	public boolean isConfigValid() {
-		return false;
-	}
+public interface IGrinderCountService {
+	/**
+	 * 获取当前线程下一个取数
+	 *
+	 * @param executeTimesInfo 当前线程执行信息
+	 * @return 当前线程的下一个取数
+	 */
+	int nextIncrementNumber(ExecuteTimesInfo executeTimesInfo);
 }

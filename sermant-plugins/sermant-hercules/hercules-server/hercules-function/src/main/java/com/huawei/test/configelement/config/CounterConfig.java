@@ -16,6 +16,8 @@
 
 package com.huawei.test.configelement.config;
 
+import com.huawei.test.configelement.enums.SharingMode;
+
 /**
  * 功能描述：计数器配置
  *
@@ -36,7 +38,7 @@ public class CounterConfig {
 	/**
 	 * 最大值
 	 */
-	private final int maxValue;
+	private final Integer maxValue;
 
 	/**
 	 * 数字格式
@@ -44,14 +46,9 @@ public class CounterConfig {
 	private final String numberFormat;
 
 	/**
-	 * 变量名称
+	 * 计数器工作模式
 	 */
-	private final String variableName;
-
-	/**
-	 * 是否每一个线程独立使用一个计数器
-	 */
-	private final boolean trackEachUser;
+	private final SharingMode sharingMode;
 
 	/**
 	 * 是否每次迭代完成之后都重新开始计数
@@ -66,7 +63,7 @@ public class CounterConfig {
 		return increment;
 	}
 
-	public int getMaxValue() {
+	public Integer getMaxValue() {
 		return maxValue;
 	}
 
@@ -74,15 +71,11 @@ public class CounterConfig {
 		return numberFormat;
 	}
 
-	public String getVariableName() {
-		return variableName;
+	public SharingMode getSharingMode() {
+		return sharingMode;
 	}
 
-	public boolean isTrackEachUser() {
-		return trackEachUser;
-	}
-
-	public boolean isResetEachIteration() {
+	public boolean resetEachIteration() {
 		return resetEachIteration;
 	}
 
@@ -91,8 +84,7 @@ public class CounterConfig {
 		this.increment = builder.increment;
 		this.maxValue = builder.maxValue;
 		this.numberFormat = builder.numberFormat;
-		this.variableName = builder.variableName;
-		this.trackEachUser = builder.trackEachUser;
+		this.sharingMode = builder.sharingMode;
 		this.resetEachIteration = builder.resetEachIteration;
 	}
 
@@ -110,7 +102,7 @@ public class CounterConfig {
 		/**
 		 * 最大值
 		 */
-		private int maxValue;
+		private Integer maxValue;
 
 		/**
 		 * 数字格式
@@ -118,14 +110,9 @@ public class CounterConfig {
 		private String numberFormat;
 
 		/**
-		 * 变量名称
-		 */
-		private String variableName;
-
-		/**
 		 * 是否每一个线程独立使用一个计数器
 		 */
-		private boolean trackEachUser;
+		private SharingMode sharingMode;
 
 		/**
 		 * 是否每次迭代完成之后都重新开始计数
@@ -142,7 +129,7 @@ public class CounterConfig {
 			return this;
 		}
 
-		public Builder setMaxValue(int maxValue) {
+		public Builder setMaxValue(Integer maxValue) {
 			this.maxValue = maxValue;
 			return this;
 		}
@@ -152,13 +139,8 @@ public class CounterConfig {
 			return this;
 		}
 
-		public Builder setVariableName(String variableName) {
-			this.variableName = variableName;
-			return this;
-		}
-
-		public Builder setTrackEachUser(boolean trackEachUser) {
-			this.trackEachUser = trackEachUser;
+		public Builder setSharingMode(SharingMode sharingMode) {
+			this.sharingMode = sharingMode;
 			return this;
 		}
 

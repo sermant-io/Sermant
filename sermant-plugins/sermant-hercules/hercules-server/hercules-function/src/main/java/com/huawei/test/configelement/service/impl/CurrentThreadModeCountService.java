@@ -14,38 +14,21 @@
  * limitations under the License.
  */
 
-package com.huawei.test.configelement.impl;
+package com.huawei.test.configelement.service.impl;
 
-import com.huawei.test.configelement.DNSCacheManager;
-import com.huawei.test.configelement.config.DNSCacheConfig;
-
-import java.util.List;
-import java.util.Map;
+import com.huawei.test.configelement.service.BaseGrinderCountService;
+import com.huawei.test.configelement.service.ExecuteTimesInfo;
 
 /**
- * 功能描述：DNS 域名管理逻辑实现
+ * 功能描述：Current Thread模式下的取数逻辑实现,即取数仅仅根据当前线程的情况来计算，不受其他线程干扰
  *
  * @author zl
- * @since 2021-12-09
+ * @since 2021-12-16
  */
-public class CommonDNSCacheManager extends DNSCacheManager {
+public class CurrentThreadModeCountService extends BaseGrinderCountService {
 	@Override
-	public String getIp(String hostName) {
-		return null;
-	}
-
-	@Override
-	public List<Map<String, String>> getHosts() {
-		return null;
-	}
-
-	@Override
-	public void initConfig(DNSCacheConfig config) {
-
-	}
-
-	@Override
-	public boolean isConfigValid() {
-		return false;
+	protected int doIncrement(ExecuteTimesInfo executeTimesInfo) {
+		// 直接返回执行次数就是当前线程的取数值
+		return executeTimesInfo.getRunNumber();
 	}
 }

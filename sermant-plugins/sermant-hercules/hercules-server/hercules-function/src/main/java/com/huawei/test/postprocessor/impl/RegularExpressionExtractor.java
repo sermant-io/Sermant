@@ -18,6 +18,12 @@ package com.huawei.test.postprocessor.impl;
 
 import com.huawei.test.postprocessor.Extractor;
 import com.huawei.test.postprocessor.config.RegularExtractorConfig;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 功能描述：正则表达式提取数据逻辑实现
@@ -26,8 +32,45 @@ import com.huawei.test.postprocessor.config.RegularExtractorConfig;
  * @since 2021-12-09
  */
 public class RegularExpressionExtractor extends Extractor<RegularExtractorConfig> {
+	/**
+	 * 日志
+	 */
+	private static final Logger LOGGER = LoggerFactory.getLogger(RegularExpressionExtractor.class);
+
 	@Override
 	public String extract(String content, RegularExtractorConfig extractorConfig) {
-		return null;
+		LOGGER.debug("Extract data by regular expression, content:{}, config:{}", content, extractorConfig);
+		if (StringUtils.isEmpty(content)) {
+			LOGGER.warn("The content used for extracting is an empty string.");
+			return "";
+		}
+		if (extractorConfig == null) {
+			LOGGER.warn("The config used for extracting is null.");
+			return "";
+		}
+		String regularExpression = extractorConfig.getRegularExpression();
+		if (StringUtils.isEmpty(regularExpression)) {
+			LOGGER.warn("The regular expression used for extracting is empty.");
+			return "";
+		}
+		String defaultValue = extractorConfig.getDefaultValue();
+		int matchIndex = extractorConfig.getMatchIndex();
+		Pattern pattern = Pattern.compile(regularExpression);
+		Matcher matcher = pattern.matcher(content);
+		for (int i = 0; i < matchIndex; i++) {
+			// 一直匹配配置中指定的次数，如果不能支持到匹配的次数，则直接返回默认值
+			if (!matcher.find()) {
+				LOGGER.error("Regular expressions cannot match the number of times[{}].", matchIndex);
+				return defaultValue;
+			}
+		}
+		int groupIndex = extractorConfig.getGroupIndex();
+		try {
+			String group = matcher.group(groupIndex);
+			return StringUtils.isEmpty(group) ? defaultValue : group;
+		} catch (Exception e) {
+			LOGGER.error("Occur an error when extract data, message:{}.", e.getMessage());
+			return defaultValue;
+		}
 	}
 }
