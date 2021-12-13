@@ -572,7 +572,9 @@ public class PerfTestRunnable implements ControllerConstants {
 	 *                           {@link PerfTest}
 	 */
 	public void doTerminate(PerfTest perfTest, SingleConsole singleConsoleInUse) {
-		singleConsoleInUse.unregisterSampling();
+		if (singleConsoleInUse != null) {
+			singleConsoleInUse.unregisterSampling();
+		}
 		try {
 			perfTestService.markProgressAndStatusAndFinishTimeAndStatistics(perfTest, Status.STOP_BY_ERROR,
 					"Stopped by error");
