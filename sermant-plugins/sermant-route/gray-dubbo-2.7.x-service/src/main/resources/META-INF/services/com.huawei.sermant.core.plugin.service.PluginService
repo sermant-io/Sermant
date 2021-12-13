@@ -1,0 +1,7 @@
+#
+# Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+#
+com.huawei.gray.dubbo.service.ConfigServiceImpl
+com.huawei.gray.dubbo.service.InterfaceConfigServiceImpl
+com.huawei.gray.dubbo.service.RegistrationServiceImpl
+com.huawei.gray.dubbo.service.RegistryDirectoryServiceImpl

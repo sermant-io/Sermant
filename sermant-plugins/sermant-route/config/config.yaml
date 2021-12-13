@@ -1,0 +1,3 @@
+gray.plugin:
+  dubboKey: gray #dubbo灰度规则配置的key，可自定义
+  dubboGroup: public=default #dubbo灰度规则配置的组，public、default可自定义

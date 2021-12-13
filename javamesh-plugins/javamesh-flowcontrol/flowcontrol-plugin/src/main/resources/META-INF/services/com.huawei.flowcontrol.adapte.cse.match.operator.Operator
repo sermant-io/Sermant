@@ -1,9 +1,0 @@
-#
-# Copyright (c) Huawei Technologies Co., Ltd. 2021-2022. All rights reserved.
-#
-
-com.huawei.flowcontrol.adapte.cse.match.operator.CompareOperator
-com.huawei.flowcontrol.adapte.cse.match.operator.ContainOperator
-com.huawei.flowcontrol.adapte.cse.match.operator.ExactOperator
-com.huawei.flowcontrol.adapte.cse.match.operator.PrefixOperator
-com.huawei.flowcontrol.adapte.cse.match.operator.SuffixOperator

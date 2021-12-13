@@ -1,0 +1,38 @@
+syntax = "proto3";
+option java_package = "com.huawei.sermant.core.lubanops.integration.transport.netty.pojo";
+
+message NettyMessage{
+
+  enum MessageType {
+    HEARTBEAT_PING = 0;
+    HEARTBEAT_PONG = 1;
+    SERVICE_DATA = 2;
+  }
+
+  MessageType messageType = 1;
+  HeartBeat heartBeat = 2;
+  repeated ServiceData serviceData = 3;
+
+
+}
+message HeartBeat{
+
+}
+message ServiceData{
+  enum DataType{
+    SERVICE_HEARTBEAT = 0;
+    LOG = 1;
+    PLUGIN_FLOW_CONTROL_DATA = 2;
+    PLUGIN_FLOW_RECORD_DATA = 3;
+    SERVER_MONITOR = 4;
+    ORACLE_JVM_MONITOR = 5;
+    IBM_JVM_MONITOR = 6;
+    AGENT_REGISTRATION = 7;
+    AGENT_MONITOR = 8;
+    AGENT_SPAN_EVENT = 9;
+    DRUID_MONITOR = 10;
+    FLOW_CONTROL_METRIC = 11;
+  }
+  DataType dataType = 1;
+  bytes data = 2;
+}

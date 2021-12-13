@@ -1,10 +1,17 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.huawei.javamesh</groupId>
-    <artifactId>javamesh</artifactId>
+    <groupId>com.huawei.sermant</groupId>
+    <artifactId>sermant</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <properties>
         <encoding>UTF-8</encoding>
         <jdk.version>1.6</jdk.version>
@@ -44,24 +51,29 @@
         <grpc.version>1.36.1</grpc.version>
         <os.plugin.version>1.5.0.Final</os.plugin.version>
         <protubuf.plugin.version>0.5.1</protubuf.plugin.version>
+        <license.plugin.version>1.19</license.plugin.version>
 
-        <javamesh.name>javamesh-agent</javamesh.name>
-        <javamesh.version>2.0.5</javamesh.version>
-        <javamesh.basedir>${pom.basedir}/..</javamesh.basedir>
+        <sermant.name>sermant-agent</sermant.name>
+        <sermant.version>2.0.5</sermant.version>
+        <sermant.basedir>${pom.basedir}/..</sermant.basedir>
 
-        <package.temp.dir>${javamesh.basedir}/${javamesh.name}-${javamesh.version}</package.temp.dir>
+        <package.temp.dir>${sermant.basedir}/${sermant.name}-${sermant.version}</package.temp.dir>
         <package.agent.dir>${package.temp.dir}/agent</package.agent.dir>
         <package.server.dir>${package.temp.dir}/server</package.server.dir>
         <package.output.dir>${project.build.outputDirectory}</package.output.dir>
+        <package.license.ftl.file>third-party-license.ftl</package.license.ftl.file>
+        <package.resources.dir>sermant-package/resources</package.resources.dir>
 
         <shade.common.prefix>com.huawei</shade.common.prefix>
         <shade.distinct.prefix>${project.artifactId}</shade.distinct.prefix>
+
+        <license.binary.suffix.file>LICENSE-binary-suffix.txt</license.binary.suffix.file>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.huawei.javamesh</groupId>
-                <artifactId>javamesh-agentcore-core</artifactId>
+                <groupId>com.huawei.sermant</groupId>
+                <artifactId>sermant-agentcore-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -219,15 +231,15 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>javamesh-agentcore</module>
-                <module>javamesh-plugins</module>
+                <module>sermant-agentcore</module>
+                <module>sermant-plugins</module>
             </modules>
         </profile>
         <profile>
             <id>example</id>
             <modules>
-                <module>javamesh-agentcore</module>
-                <module>javamesh-plugins</module>
+                <module>sermant-agentcore</module>
+                <module>sermant-plugins</module>
             </modules>
         </profile>
         <profile>
@@ -236,7 +248,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>javamesh-backend</module>
+                <module>sermant-backend</module>
             </modules>
         </profile>
         <profile>
@@ -245,7 +257,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>javamesh-plugins</module>
+                <module>sermant-plugins</module>
             </modules>
         </profile>
         <profile>
@@ -254,21 +266,32 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>javamesh-package</module>
+                <module>sermant-package</module>
             </modules>
         </profile>
         <profile>
             <id>all</id>
             <modules>
-                <module>javamesh-agentcore</module>
-                <module>javamesh-plugins</module>
-                <module>javamesh-backend</module>
-                <module>javamesh-package</module>
+                <module>sermant-agentcore</module>
+                <module>sermant-plugins</module>
+                <module>sermant-backend</module>
+                <module>sermant-package</module>
             </modules>
         </profile>
     </profiles>
     <build>
-        <finalName>${project.artifactId}-${javamesh.version}</finalName>
+        <finalName>${project.artifactId}-${sermant.version}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${sermant.basedir}/${package.resources.dir}</directory>
+                <includes>
+                    <include>META-INF/*</include>
+                </includes>
+            </resource>
+        </resources>
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
@@ -287,6 +310,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${compiler.plugin.version}</version>
+                    <configuration>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -316,7 +344,7 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <outputFile>${package.output.dir}/${project.artifactId}-${javamesh.version}.jar</outputFile>
+                        <outputFile>${package.output.dir}/${project.artifactId}-${sermant.version}.jar</outputFile>
                         <relocations>
                             <relocation>
                                 <pattern>net.bytebuddy</pattern>
@@ -324,8 +352,8 @@
                             </relocation>
                         </relocations>
                         <transformers>
-                            <transformer
-                                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer"/>
                         </transformers>
                     </configuration>
                 </plugin>
@@ -354,18 +382,59 @@
                         </execution>
                     </executions>
                 </plugin>
+                <!-- execute 'mvn license:aggregate-add-third-party' to collect third party license. -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${license.plugin.version}</version>
+                    <configuration>
+                        <!-- set output directory -->
+                        <outputDirectory>${pom.basedir}/${package.resources.dir}</outputDirectory>
+                        <!-- set output file name -->
+                        <thirdPartyFilename>${license.binary.suffix.file}</thirdPartyFilename>
+                        <!-- exclude this project -->
+                        <excludedGroups>${project.groupId}</excludedGroups>
+                        <!-- exclude provided scope -->
+                        <excludedScopes>provided</excludedScopes>
+                        <!-- use this template to group result by license type -->
+                        <fileTemplate>${pom.basedir}/${package.resources.dir}/${package.license.ftl.file}</fileTemplate>
+                        <!-- merge non canonical aliases -->
+                        <!-- todo 需要进一步合并license -->
+                        <licenseMerges>
+                            <licenseMerge>
+                                Apache License, Version 2.0
+                                |The Apache License, Version 2.0
+                                |The Apache Software License, Version 2.0
+                                |Apache Public License 2.0
+                                |Apache 2
+                                |Apache 2.0
+                                |Apache-2.0
+                                |Apache License 2.0
+                                |Apache License, version 2.0
+                                |Apache License Version 2.0
+                                |Apache v2
+                                |Apache Software Licenses
+                            </licenseMerge>
+                            <licenseMerge>
+                                3-Clause BSD License
+                                |BSD 3-clause
+                                |BSD 3-Clause
+                            </licenseMerge>
+                            <licenseMerge>
+                                Eclipse Public License v1.0
+                                |Eclipse Public License 1.0
+                                |Eclipse Public License - v 1.0
+                            </licenseMerge>
+                            <licenseMerge>
+                                The MIT License
+                                |MIT License
+                            </licenseMerge>
+                        </licenseMerges>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>

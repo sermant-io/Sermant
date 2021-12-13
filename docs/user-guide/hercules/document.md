@@ -1,7 +1,7 @@
 # hercules
 
 ## 插件目录
-[javamesh-hercules](../../../javamesh-plugins/javamesh-hercules)
+[sermant-hercules](../../../sermant-plugins/sermant-hercules)
 
 ## 插件定位
 
@@ -28,11 +28,11 @@
 ## 插件使用方式
 ### 插件部署
 #### web端部署方法
-[hercules-adaptation 部署指导](../../../javamesh-plugins/javamesh-hercules/hercules-adaptation/README.md)
+[hercules-adaptation 部署指导](../../../sermant-plugins/sermant-hercules/hercules-adaptation/README.md)
 #### server端部署方法
-[hercules-server 部署指导](../../../javamesh-plugins/javamesh-hercules/hercules-server/README.md)
+[hercules-server 部署指导](../../../sermant-plugins/sermant-hercules/hercules-server/README.md)
 #### agent部署方法
-[hercules-agent 部署指导](../../../javamesh-plugins/javamesh-hercules/hercules-server/README.md)
+[hercules-agent 部署指导](../../../sermant-plugins/sermant-hercules/hercules-server/README.md)
 #### monitor部署方法
 [monitor 部署指导](../../user-guide/server-monitor/document.md)
 ### 使用指导
@@ -73,4 +73,4 @@ agent明细页面查询agent性能等信息
 #### 压测报告
 压测报告菜单中查看每一个压测任务的测试报告
 
-[返回**Java-mesh**说明文档](../../README.md)
+[返回**Sermant**说明文档](../../README.md)
