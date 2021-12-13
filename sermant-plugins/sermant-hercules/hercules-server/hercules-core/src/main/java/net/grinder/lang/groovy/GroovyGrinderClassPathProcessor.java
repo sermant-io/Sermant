@@ -1,4 +1,4 @@
-/* 
+/*
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package net.grinder.lang.groovy;
 
@@ -19,7 +19,7 @@ import net.grinder.util.AbstractGrinderClassPathProcessor;
 
 /**
  * Groovy Class Path processor.
- * 
+ *
  * @author JunHo Yoon
  * @since 3.2
  */
@@ -43,6 +43,13 @@ public class GroovyGrinderClassPathProcessor extends AbstractGrinderClassPathPro
 		usefulJarList.add("commons-io");
 		usefulJarList.add("commons-lang");
 		getUselessJarList().remove("ngrinder-groovy");
+
+		/**
+		 * updated by huawei, add hercules-function package
+		 *
+		 * @since 2021-12-23
+		 */
+		usefulJarList.add("hercules-function");
 	}
 
 }

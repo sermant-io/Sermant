@@ -18,6 +18,8 @@ package com.huawei.test.configelement.config;
 
 import com.huawei.test.configelement.enums.SharingMode;
 
+import java.util.List;
+
 /**
  * 功能描述：参数化配置
  *
@@ -28,7 +30,7 @@ public class ParameterizedConfig {
 	/**
 	 * 参数名称,如果未指定参数名称，将会使用文件第一行数据来作为参数名称
 	 */
-	private final String[] parameterizedNames;
+	private final List<String> parameterizedNames;
 
 	/**
 	 * 参数化文件
@@ -70,7 +72,7 @@ public class ParameterizedConfig {
 		this.recycleOnEof = builder.recycleOnEof;
 	}
 
-	public String[] getParameterizedNames() {
+	public List<String> getParameterizedNames() {
 		return parameterizedNames;
 	}
 
@@ -83,6 +85,10 @@ public class ParameterizedConfig {
 	}
 
 	public boolean isIgnoreFirstLine() {
+		// 只有当parameterizedNames非empty或者null时设置才有用，否则设置不会生效，因为第一行会作为参数名称来处理
+		if (this.parameterizedNames == null || this.parameterizedNames.size() == 0) {
+			return false;
+		}
 		return ignoreFirstLine;
 	}
 
@@ -102,7 +108,7 @@ public class ParameterizedConfig {
 		/**
 		 * 参数名称,如果未指定参数名称，将会使用文件第一行数据来作为参数名称
 		 */
-		private String[] parameterizedNames;
+		private List<String> parameterizedNames;
 
 		/**
 		 * 参数化文件
@@ -134,7 +140,7 @@ public class ParameterizedConfig {
 		 */
 		private boolean recycleOnEof;
 
-		public Builder setParameterizedNames(String[] parameterizedNames) {
+		public Builder setParameterizedNames(List<String> parameterizedNames) {
 			this.parameterizedNames = parameterizedNames;
 			return this;
 		}

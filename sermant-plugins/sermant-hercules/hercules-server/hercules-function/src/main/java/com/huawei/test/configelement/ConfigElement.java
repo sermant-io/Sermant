@@ -60,22 +60,37 @@ public abstract class ConfigElement<T> implements PressureTestFunction {
 	 * @return 个线程执行过程中的agent，process，thread，runNumber等信息封装的bean实例
 	 */
 	public ExecuteTimesInfo getExecuteTimesInfo() {
+		return getExecuteTimesInfoBuilder().setRunNumber(Grinder.grinder.getRunNumber()).build();
+	}
+
+	/**
+	 * 获取每一个线程执行过程中的agent，process，thread，runNumber等信息
+	 *
+	 * @return 个线程执行过程中的agent，process，thread，runNumber等信息封装的bean实例
+	 */
+	public ExecuteTimesInfo getExecuteTimesInfo(int runNumber) {
+		return getExecuteTimesInfoBuilder().setRunNumber(runNumber).build();
+	}
+
+	/**
+	 * 获取执行信息构造器
+	 *
+	 * @return 执行信息构造器
+	 */
+	private ExecuteTimesInfo.Builder getExecuteTimesInfoBuilder() {
 		int totalAgents = Integer.parseInt(Grinder.grinder.getProperties().get("grinder.agents").toString()); // 设置的总加压机数
 		int totalProcesses = Integer.parseInt(Grinder.grinder.getProperties().get("grinder.processes").toString()); // 设置的总进程数
 		int totalThreads = Integer.parseInt(Grinder.grinder.getProperties().get("grinder.threads").toString()); // 设置的总线程数
 		int agentNumber = Grinder.grinder.getAgentNumber(); // 当前运行的加压机编号
 		int processNumber = Grinder.grinder.getProcessNumber(); // 当前运行的进程编号
 		int threadNumber = Grinder.grinder.getThreadNumber(); // 当前运行的线程编号
-		int runNumber = Grinder.grinder.getRunNumber(); // 当前运行的运行次数编号
 		return new ExecuteTimesInfo.Builder()
 			.setAgentCount(totalAgents)
 			.setProcessCount(totalProcesses)
 			.setThreadCount(totalThreads)
 			.setAgentNumber(agentNumber)
 			.setProcessNumber(processNumber)
-			.setThreadNumber(threadNumber)
-			.setRunNumber(runNumber)
-			.build();
+			.setThreadNumber(threadNumber);
 	}
 
 	/**
