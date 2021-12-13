@@ -24,8 +24,8 @@ A microservice architecture using Sermant has the following has the following th
 ![pic](docs/binary-docs/sermant-rt-arch.png)
 
 - Sermant Javaagent: dynamically instrument the application for the service governance capability.
-- Sermant Backend：provide the connection and the pre-processing service for the Javaagents' all uploaded-data.
-- Dynamic configuration center：Providing the instructions by dynamically update the config to the listening Javaagent. Dynamic configuration center is not directly provided by Sermant project. The projects currently support servicecomb-kie, etc.
+- Sermant Backend: provide the connection and the pre-processing service for the Javaagents' all uploaded-data.
+- Dynamic configuration center: Providing the instructions by dynamically update the config to the listening Javaagent. Dynamic configuration center is not directly provided by Sermant project. The projects currently support servicecomb-kie, etc.
 
 
 ## Quick start
@@ -60,18 +60,18 @@ java -jar sermant-agent-x.x.x/server/sermant/sermant-backend-x.x.x.jar
 java -jar sermant-agent-x.x.x\server\sermant\sermant-backend-x.x.x.jar
 ```
 
-Start **Sermant** demo project：
+Start **Sermant** demo project: 
 
 ```shell
 # Run under Linux
-java -cp sermant-samples/sermant-example/demo-application/target/demo-application.jar \
+java -cp sermant-plugins/sermant-example/demo-application/target/demo-application.jar \
   -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test \
   com.huawei.example.demo.DemoApplication
 ```
 
 ```shell
-# Windows下执行
-java -cp ..\sermant-samples\sermant-example\demo-application\target\demo-application.jar ^
+# Run under Windows
+java -cp sermant-plugins\sermant-example\demo-application\target\demo-application.jar ^
   -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test ^
   com.huawei.example.demo.DemoApplication
 ```
