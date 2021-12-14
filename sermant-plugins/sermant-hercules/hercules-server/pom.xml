@@ -10,6 +10,7 @@
 		<module>hercules-controller</module>
 		<module>hercules-starter</module>
 		<module>hercules-core</module>
+		<module>hercules-function</module>
 		<module>hercules-runtime</module>
 		<module>hercules-groovy</module>
 		<module>hercules-sh</module>
