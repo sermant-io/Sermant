@@ -18,9 +18,9 @@ package com.huawei.route.common.gray.listener;
 
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangeType;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangedEvent;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigurationListener;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeType;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;
@@ -47,7 +47,7 @@ import java.util.logging.Logger;
  * @author pengyuyi
  * @date 2021/11/29
  */
-public class GrayConfigListener implements ConfigurationListener {
+public class GrayDynamicConfigListener implements DynamicConfigListener {
     private static final Logger LOGGER = LogFactory.getLogger();
 
     private final String labelName;
@@ -60,20 +60,20 @@ public class GrayConfigListener implements ConfigurationListener {
      * @param labelName 缓存的标签名
      * @param key 配置的key
      */
-    public GrayConfigListener(String labelName, String key) {
+    public GrayDynamicConfigListener(String labelName, String key) {
         super();
         this.labelName = labelName;
         this.key = key;
     }
 
     @Override
-    public void process(ConfigChangedEvent event) {
+    public void process(DynamicConfigChangeEvent event) {
         if (event.getKey() == null || !event.getKey().equals(key)) {
             return;
         }
         GrayConfiguration grayConfiguration = LabelCache.getLabel(labelName);
         Map<String, List<Rule>> routeRule = new LinkedHashMap<String, List<Rule>>();
-        if (event.getChangeType() == ConfigChangeType.DELETED) {
+        if (event.getChangeType() == DynamicConfigChangeType.DELETED) {
             resetGrayConfiguration(grayConfiguration);
             return;
         }

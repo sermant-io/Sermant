@@ -16,6 +16,7 @@
 
 package com.huawei.sermant.core.service.dynamicconfig;
 
+import java.net.URL;
 import java.util.Collections;
 
 import org.junit.Assert;
@@ -25,8 +26,8 @@ import org.junit.Test;
 import com.huawei.sermant.core.common.CommonConstant;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.dynamicconfig.kie.listener.SubscriberManager;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangedEvent;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigurationListener;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
 
 /**
@@ -35,11 +36,12 @@ import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
  * @author zhouss
  * @since 2021-11-22
  */
-public class KieDynamicConfigurationServiceImplTest {
-
+public class KieDynamicConfigServiceTest {
     @Before
-    public void initLog() {
-        LoggerFactory.init(Collections.singletonMap(CommonConstant.LOG_SETTING_FILE_KEY, "log"));
+    public void before() {
+        final URL logbackSettingURL = getClass().getResource("/logback-test.xml");
+        Assert.assertNotNull(logbackSettingURL);
+        LoggerFactory.init(Collections.singletonMap(CommonConstant.LOG_SETTING_FILE_KEY, logbackSettingURL.getPath()));
     }
 
     @Test
@@ -47,13 +49,13 @@ public class KieDynamicConfigurationServiceImplTest {
         // 初始化日志
         final SubscriberManager subscriberManager = new SubscriberManager("http://127.0.0.1:30110");
         final String group = LabelGroupUtils.createLabelGroup(Collections.singletonMap("version", "1.0"));
-        final ConfigurationListener configurationListener = new ConfigurationListener() {
+        final DynamicConfigListener dynamicConfigListener = new DynamicConfigListener() {
             @Override
-            public void process(ConfigChangedEvent event) {
+            public void process(DynamicConfigChangeEvent event) {
                 System.out.println(event.getContent());
             }
         };
-        subscriberManager.addGroupListener(group, configurationListener);
-        Assert.assertTrue(subscriberManager.removeGroupListener(group, configurationListener));
+        subscriberManager.addGroupListener(group, dynamicConfigListener);
+        Assert.assertTrue(subscriberManager.removeGroupListener(group, dynamicConfigListener));
     }
 }

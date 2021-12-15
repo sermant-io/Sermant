@@ -21,9 +21,9 @@ import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangeType;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.flowcontrol.util.StringUtils;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeType;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-11-26
  */
-public class DefaultDataSource<T> extends AbstractDataSource<ConfigChangedEvent, List<T>> implements DataSourceUpdateSupport {
+public class DefaultDataSource<T> extends AbstractDataSource<DynamicConfigChangeEvent, List<T>> implements DataSourceUpdateSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
@@ -51,13 +51,13 @@ public class DefaultDataSource<T> extends AbstractDataSource<ConfigChangedEvent,
     /**
      * 上一次事件
      */
-    private ConfigChangedEvent event;
+    private DynamicConfigChangeEvent event;
 
     public DefaultDataSource(final Class<T> ruleClass, String ruleKey) {
-        super(new Converter<ConfigChangedEvent, List<T>>() {
+        super(new Converter<DynamicConfigChangeEvent, List<T>>() {
             @Override
-            public List<T> convert(ConfigChangedEvent event) {
-                if (event == null || event.getChangeType() == ConfigChangeType.DELETED) {
+            public List<T> convert(DynamicConfigChangeEvent event) {
+                if (event == null || event.getChangeType() == DynamicConfigChangeType.DELETED) {
                     return Collections.emptyList();
                 }
                 try {
@@ -73,7 +73,7 @@ public class DefaultDataSource<T> extends AbstractDataSource<ConfigChangedEvent,
     }
 
     @Override
-    public void update(ConfigChangedEvent event) {
+    public void update(DynamicConfigChangeEvent event) {
         final String key = event.getKey();
         if (!StringUtils.equal(ruleKey, key)) {
             return;
@@ -88,7 +88,7 @@ public class DefaultDataSource<T> extends AbstractDataSource<ConfigChangedEvent,
     }
 
     @Override
-    public ConfigChangedEvent readSource() {
+    public DynamicConfigChangeEvent readSource() {
         return this.event;
     }
 

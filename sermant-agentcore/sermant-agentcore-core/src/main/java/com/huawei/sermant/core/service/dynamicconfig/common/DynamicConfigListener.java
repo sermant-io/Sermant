@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package com.huawei.sermant.core.service.dynamicconfig.service;
+package com.huawei.sermant.core.service.dynamicconfig.common;
 
-import com.huawei.sermant.core.service.BaseService;
+import java.util.EventListener;
 
 /**
- *
- * Core service for the dynamic config service.
- * This factory is used to retrieve the default configuration service.
- *
+ * Config listener, will get notified when the config it listens on changes.
  */
-public interface DynamicConfigurationFactoryService extends BaseService {
+public interface DynamicConfigListener extends EventListener {
 
-    public DynamicConfigurationService getDynamicConfigurationService();
-
+    /**
+     * Listener call back method. Listener gets notified by this method once there's any change happens on the config
+     * the listener listens on.
+     *
+     * @param event config change event
+     */
+    void process(DynamicConfigChangeEvent event);
 }

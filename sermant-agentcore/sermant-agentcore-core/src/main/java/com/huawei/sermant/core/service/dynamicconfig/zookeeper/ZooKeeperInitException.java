@@ -14,21 +14,31 @@
  * limitations under the License.
  */
 
-package com.huawei.flowcontrol.core.datasource;
+package com.huawei.sermant.core.service.dynamicconfig.zookeeper;
 
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
+import java.util.Locale;
 
 /**
- * 数据源更新支持
+ * zookeeper客户端初始化异常
  *
- * @author zhouss
- * @since 2021-11-26
+ * @author HapThorin
+ * @version 1.0.0
+ * @since 2021/12/15
  */
-public interface DataSourceUpdateSupport {
+public class ZooKeeperInitException extends RuntimeException {
     /**
-     * 更新规则
-     *
-     * @param event 事件
+     * zookeeper断开连接
      */
-    void update(DynamicConfigChangeEvent event);
+    public ZooKeeperInitException() {
+        super("ZooKeeper client disconnected from server. ");
+    }
+
+    /**
+     * zookeeper连接失败
+     *
+     * @param connectString 连接字符串
+     */
+    public ZooKeeperInitException(String connectString) {
+        super(String.format(Locale.ROOT, "Connect to %s failed. ", connectString));
+    }
 }

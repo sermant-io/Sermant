@@ -16,13 +16,12 @@
 
 package com.huawei.example.demo.service;
 
+import com.huawei.example.demo.common.DemoLogger;
 import com.huawei.sermant.core.plugin.service.PluginService;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangedEvent;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigurationListener;
-import com.huawei.sermant.core.service.dynamicconfig.service.DynamicConfigurationFactoryService;
-import com.huawei.sermant.core.service.dynamicconfig.service.DynamicConfigurationService;
-import com.huawei.example.demo.common.DemoLogger;
+import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 /**
  * 动态配置示例
@@ -32,17 +31,17 @@ import com.huawei.example.demo.common.DemoLogger;
  * @since 2021/11/26
  */
 public class DemoDynaConfService implements PluginService {
-    private DynamicConfigurationService service;
+    private DynamicConfigService service;
 
     /**
      * 如果是zookeeper实现，修改{@code /sermant/demo/test}的值以观察动态配置效果
      */
     @Override
     public void start() {
-        service = ServiceManager.getService(DynamicConfigurationFactoryService.class).getDynamicConfigurationService();
-        service.addConfigListener("/demo/test", "sermant", new ConfigurationListener() {
+        service = ServiceManager.getService(DynamicConfigService.class);
+        service.addConfigListener("/demo/test", "sermant", new DynamicConfigListener() {
             @Override
-            public void process(ConfigChangedEvent event) {
+            public void process(DynamicConfigChangeEvent event) {
                 DemoLogger.println("[DemoDynaConfService]-" + event.toString());
             }
         });
@@ -50,9 +49,6 @@ public class DemoDynaConfService implements PluginService {
 
     @Override
     public void stop() {
-        try {
-            service.close();
-        } catch (Exception ignored) {
-        }
+        service.stop();
     }
 }
