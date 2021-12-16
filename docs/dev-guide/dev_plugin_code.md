@@ -37,7 +37,7 @@
 
 示例插件模块`demo-plugin`中，主要用于向插件开发者展示在插件开发过程中可能遇到的一些场景以及可能使用到的一些功能。
 
-开始之前，必须约定的就是，`插件模块(plugin)`中，开发者只能使用*Java*原生API和[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中的API，不能依赖或使用任何第三方依赖。如果应业务要求，需要使用第三方依赖的话，只能在`插件模块(plugin)`中定义接口，在`服务模块(service)`中编写实现。更多相关内容详见[插件模块开发手册](dev_plugin_module.md#添加插件模块)。
+开始之前，必须约定的就是，`插件模块(plugin)`中，开发者只能使用*Java*原生API和[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中的API，不能依赖或使用任何`byte-buddy`与`slf4j`以外的第三方依赖。如果应业务要求，需要使用其他第三方依赖的话，只能在`插件模块(plugin)`中定义接口，在`服务模块(service)`中编写实现。更多相关内容详见[插件模块开发手册](dev_plugin_module.md#添加插件模块)。
 
 ### 增强定义
 
@@ -261,8 +261,8 @@
 
   从[插件模块开发手册](dev_plugin_module.md#添加插件模块)可知，插件有**简单插件**和**复杂插件**之分，这主要和他们所定义服务的复杂程度有关：
 
-  - **简单插件**中定义的服务只会使用*Java*原生*API*和[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中自研的*API*(`com.huawei`开头)。
-  - **复杂插件**中的服务除了能使用上述*API*，还有权使用第三方依赖的*API*。这些服务需要分离出**插件服务接口**和**插件服务实现**：前者编写于`插件模块(plugin)`中，供拦截器调用；后者编写于`服务模块(service)`中，由自定义*ClassLoader*加载，以实现类加载器级别的依赖隔离。
+  - **简单插件**中定义的服务只能使用*Java*原生*API*、[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中自研的*API*(`com.huawei`开头)，以及`byte-buddy`和`slf4j`的*API*。
+  - **复杂插件**中的服务除了能使用上述*API*，还有权使用其他第三方依赖的*API*。这些服务需要分离出**插件服务接口**和**插件服务实现**：前者编写于`插件模块(plugin)`中，供拦截器调用；后者编写于`服务模块(service)`中，由自定义*ClassLoader*加载，以实现类加载器级别的依赖隔离。
 
 #### 简单插件服务
 
@@ -272,7 +272,7 @@ DemoSimpleService simpleService = PluginServiceManager.getPluginService(DemoSimp
 simpleService.activeFunc();
 ```
 
-对于**简单插件服务**来说，唯一的限制就是只能使用*Java*原生*API*和[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中自研的*API*(`com.huawei`开头)。
+对于**简单插件服务**来说，唯一的限制就是只能使用*Java*原生*API*，[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中自研的*API*(`com.huawei`开头)，以及`byte-buddy`和`slf4j`的*API*。
 
 插件开发者可以参照[DemoSimpleService](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)，按需编写自身业务所需的**简单插件服务**。
 
@@ -288,8 +288,8 @@ simpleService.activeFunc();
 
 **复杂插件服务**比起**简单插件服务**，只有两点区别：
 
-- **复杂插件服务**在`插件模块(plugin)`中编写接口，在`服务模块(service)`中编写实现，而**简单插件服务**不需要编写接口，直接在`插件模块(plugin)`中实现。
-- **复杂插件服务**的实现可以按需使用第三方依赖。
+- **复杂插件服务**在`插件模块(plugin)`中编写接口，在[`服务模块(service)`](#插件服务模块)中编写实现，而**简单插件服务**不需要编写接口，直接在`插件模块(plugin)`中实现。
+- **复杂插件服务**的实现可以按需使用任意第三方依赖。
 
 [DemoComplexService](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)是**复杂插件服务**示例接口，其中可以按需添加接口，如`activeFunc`方法，[DemoComplexServiceImpl](../../sermant-plugins/sermant-example/demo-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java)是对应的实现。我们可以通过以下代码调用`activeFunc`方法：
 ```java
@@ -459,6 +459,8 @@ service.addConfigListener("${key}", "${group}", new ConfigurationListener() {
 - 只能编写**插件配置**和**插件服务接口**的实现，不能编写**增强定义**、**拦截器**和**插件服务接口**
 - 允许自由添加需要的第三方依赖，打包的时候，需要提供输出依赖的方式，可以用`shade`插件或`assembly`插件打带依赖*jar*包，也可以直接使用`dependency`插件输出依赖包。
 
-[插件配置](#插件配置)和[插件服务](#插件服务)相关内容前文已有介绍，这里不做赘述。
+注意：由于`byte-buddy`和`slf4j`包的限制，还是建议直接使用`shade`插件打包，相关的规则已在[插件根模块](../../sermant-plugins)中定义完毕，直接引入插件即可，详见[插件模块开发手册](dev_plugin_module.md#添加插件服务模块)。
+
+**插件服务模块**中通常涉及[插件配置](#插件配置)和[插件服务](#插件服务)的编写，其中**插件服务**主要是指[复杂插件服务](#复杂插件服务)的实现。以上相关内容前文已有介绍，这里不做赘述。
 
 [返回**Sermant**说明文档](../README.md)
