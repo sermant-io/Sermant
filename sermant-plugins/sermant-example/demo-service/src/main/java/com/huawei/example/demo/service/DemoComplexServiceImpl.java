@@ -16,11 +16,13 @@
 
 package com.huawei.example.demo.service;
 
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.plugin.service.PluginServiceManager;
-import com.huawei.example.demo.common.DemoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.huawei.example.demo.config.DemoConfig;
 import com.huawei.example.demo.config.DemoServiceConfig;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+import com.huawei.sermant.core.plugin.service.PluginServiceManager;
 
 /**
  * 复杂服务示例实现
@@ -30,29 +32,31 @@ import com.huawei.example.demo.config.DemoServiceConfig;
  * @since 2021/11/16
  */
 public class DemoComplexServiceImpl implements DemoComplexService {
+    private static final Logger LOGGER = LoggerFactory.getLogger("slf4j.test");
+
     @Override
     public void start() {
-        DemoLogger.println("[DemoComplexService]-start");
+        LOGGER.error("[DemoComplexService]-start");
     }
 
     @Override
     public void stop() {
-        DemoLogger.println("[DemoComplexService]-stop");
+        LOGGER.error("[DemoComplexService]-stop");
     }
 
     @Override
     public void activeFunc() {
-        DemoLogger.println("[DemoComplexService]-activeFunc");
+        LOGGER.error("[DemoComplexService]-activeFunc");
         final DemoSimpleService service = PluginServiceManager.getPluginService(DemoSimpleService.class);
         service.passiveFunc();
     }
 
     @Override
     public void passiveFunc() {
-        DemoLogger.println("[DemoComplexService]-passiveFunc");
+        LOGGER.error("[DemoComplexService]-passiveFunc");
         final DemoServiceConfig serviceConfig = PluginConfigManager.getPluginConfig(DemoServiceConfig.class);
-        DemoLogger.println(getClass().getSimpleName() + ": " + serviceConfig);
+        LOGGER.error(getClass().getSimpleName() + ": " + serviceConfig);
         final DemoConfig demoConfig = PluginConfigManager.getPluginConfig(DemoConfig.class);
-        DemoLogger.println(getClass().getSimpleName() + ": " + demoConfig);
+        LOGGER.error(getClass().getSimpleName() + ": " + demoConfig);
     }
 }

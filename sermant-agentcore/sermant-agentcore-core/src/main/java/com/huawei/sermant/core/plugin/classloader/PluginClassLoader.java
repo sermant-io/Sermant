@@ -18,7 +18,9 @@ package com.huawei.sermant.core.plugin.classloader;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +32,11 @@ import java.util.Map;
  */
 public class PluginClassLoader extends URLClassLoader {
     /**
+     * 不优先使用PluginClassLoader加载的全限定名前缀
+     */
+    private final List<String> EXCLUDE_PREFIX_LIST = Collections.singletonList("com.huawei");
+
+    /**
      * 对ClassLoader内部已加载的Class的管理
      */
     private final Map<String, Class<?>> pluginClassMap = new HashMap<>();
@@ -39,12 +46,12 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     /**
-     * 自己实现一套findLoaded再find的逻辑，避免优先查找AppClassLoader的类
+     * 加载插件服务包中的类并维护
      *
      * @param name 全限定名
      * @return Class对象
      */
-    private Class<?> getPluginClass(String name) {
+    private Class<?> loadPluginClass(String name) {
         if (!pluginClassMap.containsKey(name)) {
             try {
                 pluginClassMap.put(name, findClass(name));
@@ -55,10 +62,22 @@ public class PluginClassLoader extends URLClassLoader {
         return pluginClassMap.get(name);
     }
 
+    private boolean ifExclude(String name) {
+        for (String excludePrefix : EXCLUDE_PREFIX_LIST) {
+            if (name.startsWith(excludePrefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         synchronized (getClassLoadingLock(name)) {
-            Class<?> clazz = getPluginClass(name);
+            Class<?> clazz = null;
+            if (!ifExclude(name)) {
+                clazz = loadPluginClass(name);
+            }
             if (clazz == null) {
                 clazz = super.loadClass(name, resolve);
             }
