@@ -1,3 +1,3 @@
 com.huawei.sermant.core.service.heartbeat.HeartbeatServiceImpl
 com.huawei.sermant.core.service.send.NettyGatewayClient
-com.huawei.sermant.core.service.dynamicconfig.DynamicConfigurationFactoryServiceImpl
+com.huawei.sermant.core.service.dynamicconfig.BufferedDynamicConfigService

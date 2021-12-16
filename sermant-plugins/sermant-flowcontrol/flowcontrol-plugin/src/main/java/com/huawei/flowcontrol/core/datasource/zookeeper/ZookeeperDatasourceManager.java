@@ -33,14 +33,16 @@ import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
 import com.alibaba.csp.sentinel.util.AppNameUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+
+import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.service.dynamicconfig.Config;
 import com.huawei.flowcontrol.core.config.CommonConst;
 import com.huawei.flowcontrol.core.config.ConfigConst;
 import com.huawei.flowcontrol.core.config.FlowControlConfig;
 import com.huawei.flowcontrol.core.datasource.DataSourceManager;
 import com.huawei.flowcontrol.core.util.PluginConfigUtil;
 import com.huawei.flowcontrol.core.util.RedisRuleUtil;
+import com.huawei.sermant.core.service.dynamicconfig.config.DynamicConfig;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -125,16 +127,7 @@ public class ZookeeperDatasourceManager implements DataSourceManager {
         if (pluginConfig.isUseSelfUrl()) {
             return PluginConfigUtil.getValueByKey(ConfigConst.ZOOKEEPER_ADDRESS);
         } else {
-            return convertAddress(Config.getZookeeperUri());
-        }
-    }
-
-    private String convertAddress(String uri) {
-        String prefix = "zookeeper://";
-        if (uri == null || !uri.startsWith(prefix)) {
-            return CommonConst.DEFAULT_ZOOKEEPER_ADDRESS;
-        } else {
-            return uri.substring(prefix.length() + 1);
+            return ConfigManager.getConfig(DynamicConfig.class).getServerAddress();
         }
     }
 

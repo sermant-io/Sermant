@@ -30,7 +30,7 @@ import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieListenerW
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieRequest;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieResponse;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieSubscriber;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigurationListener;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
@@ -122,8 +122,8 @@ public class SubscriberManager {
      */
     private ScheduledExecutorService scheduledExecutorService;
 
-    public SubscriberManager(String urls) {
-        kieClient = new KieClient(new ClientUrlManager(urls));
+    public SubscriberManager(String serverAddress) {
+        kieClient = new KieClient(new ClientUrlManager(serverAddress));
     }
 
     /**
@@ -133,7 +133,7 @@ public class SubscriberManager {
      * @param listener 监听器
      * @return 是否添加成功
      */
-    public boolean addGroupListener(String group, ConfigurationListener listener) {
+    public boolean addGroupListener(String group, DynamicConfigListener listener) {
         if (!LabelGroupUtils.isLabelGroup(group)) {
             // 如果非group标签（ZK配置中心场景适配），则为该group创建标签
             group = LabelGroupUtils.createLabelGroup(Collections.singletonMap("GROUP", group));
@@ -153,7 +153,7 @@ public class SubscriberManager {
      * @param listener 监听器
      * @return 是否添加成功
      */
-    public boolean removeGroupListener(String group, ConfigurationListener listener) {
+    public boolean removeGroupListener(String group, DynamicConfigListener listener) {
         try {
             return unSubscribe(new KieRequest().setLabelCondition(LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener);
         } catch (Exception ex) {
@@ -182,12 +182,13 @@ public class SubscriberManager {
      * 注册监听器
      *
      * @param kieRequest            请求
-     * @param configurationListener 监听器
+     * @param dynamicConfigListener 监听器
      */
-    public boolean subscribe(KieRequest kieRequest, ConfigurationListener configurationListener) {
+    public boolean subscribe(KieRequest kieRequest, DynamicConfigListener dynamicConfigListener) {
         final KieSubscriber kieSubscriber = new KieSubscriber(kieRequest);
         Task task;
-        KieListenerWrapper kieListenerWrapper = new KieListenerWrapper(kieRequest.getLabelCondition(), configurationListener, new KvDataHolder());
+        KieListenerWrapper kieListenerWrapper = new KieListenerWrapper(kieRequest.getLabelCondition(),
+                dynamicConfigListener, new KvDataHolder());
         if (!kieSubscriber.isLongConnectionRequest()) {
             task = new ShortTimerTask(kieSubscriber, kieListenerWrapper);
         } else {
@@ -246,24 +247,29 @@ public class SubscriberManager {
      *
      * @param kieRequest 请求体
      */
-    public boolean unSubscribe(KieRequest kieRequest, ConfigurationListener configurationListener) {
+    public boolean unSubscribe(KieRequest kieRequest, DynamicConfigListener dynamicConfigListener) {
         for (Map.Entry<KieSubscriber, List<KieListenerWrapper>> next : listenerMap.entrySet()) {
             if (!next.getKey().getKieRequest().equals(kieRequest)) {
                 continue;
             }
-            final Iterator<KieListenerWrapper> iterator = next.getValue().iterator();
-            while (iterator.hasNext()) {
-                final KieListenerWrapper listenerWrapper = iterator.next();
-                if (listenerWrapper.getConfigurationListener() == configurationListener) {
-                    iterator.remove();
-                    listenerWrapper.getTask().stop();
-                    LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "%s has been stopped!",
-                            configurationListener.getClass().getName()));
-                    return true;
+            if (dynamicConfigListener == null) {
+                listenerMap.remove(next.getKey());
+                return true;
+            } else {
+                final Iterator<KieListenerWrapper> iterator = next.getValue().iterator();
+                while (iterator.hasNext()) {
+                    final KieListenerWrapper listenerWrapper = iterator.next();
+                    if (listenerWrapper.getConfigurationListener() == dynamicConfigListener) {
+                        iterator.remove();
+                        listenerWrapper.getTask().stop();
+                        LOGGER.fine(String.format(Locale.ENGLISH, "%s has been stopped!",
+                                dynamicConfigListener.getClass().getName()));
+                        return true;
+                    }
                 }
             }
         }
-        LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH, "The subscriber of group %s not found!",
+        LOGGER.warning(String.format(Locale.ENGLISH, "The subscriber of group %s not found!",
                 kieRequest.getLabelCondition()));
         return false;
     }

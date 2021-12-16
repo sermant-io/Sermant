@@ -17,11 +17,10 @@
 package com.huawei.sermant.core.service.dynamicconfig.kie;
 
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.sermant.core.service.dynamicconfig.Config;
 import com.huawei.sermant.core.service.dynamicconfig.kie.listener.SubscriberManager;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigurationListener;
-import com.huawei.sermant.core.service.dynamicconfig.service.DynamicConfigurationService;
+import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,51 +36,36 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-11-22
  */
-public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationService {
+public class KieDynamicConfigService extends DynamicConfigService {
     private static final Logger LOGGER = LogFactory.getLogger();
 
     private static SubscriberManager subscriberManager;
 
-    private static KieDynamicConfigurationServiceImpl instance;
-
     private final Map<String, List<String>> groupKeyCache = new ConcurrentHashMap<String, List<String>>();
 
-    private KieDynamicConfigurationServiceImpl() {
-
-    }
-
-    /**
-     * 获取实现单例
-     *
-     * @return KieDynamicConfigurationService
-     */
-    public static synchronized KieDynamicConfigurationServiceImpl getInstance() {
-        if (instance == null) {
-            instance = new KieDynamicConfigurationServiceImpl();
-            subscriberManager = new SubscriberManager(Config.getInstance().getKie_url());
-        }
-        return instance;
+    public KieDynamicConfigService() {
+        subscriberManager = new SubscriberManager(CONFIG.getServerAddress());
     }
 
     @Override
-    public boolean removeGroupListener(String key, String group, ConfigurationListener listener) {
-        return updateListener("GroupKey", group, listener, false);
+    public boolean removeGroupListener(String group) {
+        return updateListener("GroupKey", group, null, false);
     }
 
     @Override
-    public boolean addGroupListener(String group, ConfigurationListener listener) {
+    public boolean addGroupListener(String group, DynamicConfigListener listener) {
         return updateListener("GroupKey", group, listener, true);
     }
 
     @Override
-    public boolean addConfigListener(String key, String group, ConfigurationListener listener) {
+    public boolean addConfigListener(String key, String group, DynamicConfigListener listener) {
         return updateListener(key, LabelGroupUtils.createLabelGroup(
                 Collections.singletonMap(fixSeparator(group, true), fixSeparator(key, false))),
                 listener, true);
     }
 
     @Override
-    public boolean removeConfigListener(String key, String group, ConfigurationListener listener) {
+    public boolean removeConfigListener(String key, String group) {
         throw new UnsupportedOperationException();
     }
 
@@ -96,17 +80,12 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
     }
 
     @Override
-    public String getDefaultGroup() {
-        return "sermant";
+    public boolean removeConfig(String key, String group) {
+        return false;
     }
 
     @Override
-    public long getDefaultTimeout() {
-        return 0;
-    }
-
-    @Override
-    public List<String> listConfigsFromGroup(String group) {
+    public List<String> listKeysFromGroup(String group) {
         return groupKeyCache.get(group);
     }
 
@@ -120,7 +99,7 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
      * @param forSubscribe 是否为订阅
      * @return 更新是否成功
      */
-    private synchronized boolean updateListener(String key, String group, ConfigurationListener listener, boolean forSubscribe) {
+    private synchronized boolean updateListener(String key, String group, DynamicConfigListener listener, boolean forSubscribe) {
         updateGroupKey(key, group, forSubscribe);
         try {
             if (forSubscribe) {
@@ -140,9 +119,9 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
             keys = new ArrayList<>();
         }
         if (forSubscribe) {
-            keys.remove(key);
-        } else {
             keys.add(key);
+        } else {
+            keys.remove(key);
         }
         groupKeyCache.put(group, keys);
     }
@@ -158,7 +137,7 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
         if (str == null) {
             if (isGroup) {
                 // 默认分组
-                str = getDefaultGroup();
+                str = CONFIG.getDefaultGroup();
             } else {
                 throw new IllegalArgumentException("Key must not be empty!");
             }

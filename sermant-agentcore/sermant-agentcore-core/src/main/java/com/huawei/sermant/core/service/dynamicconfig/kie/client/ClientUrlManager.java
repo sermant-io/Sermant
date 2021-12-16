@@ -28,11 +28,16 @@ import java.util.List;
  * @since 2021-11-17
  */
 public class ClientUrlManager {
+    /**
+     * kie的协议头
+     */
+    private static final String KIE_PROTOCOL = "http://";
+
     private final UrlSelector urlSelector = new UrlSelector();
     private List<String> urls;
 
-    public ClientUrlManager(String urls) {
-        resolveUrls(urls);
+    public ClientUrlManager(String serverAddress) {
+        resolveUrls(serverAddress);
     }
 
     /**
@@ -48,12 +53,16 @@ public class ClientUrlManager {
      * 解析url
      * 默认多个url使用逗号隔开
      *
-     * @param rawUrls url字符串
+     * @param serverAddress 服务器地址字符串
      */
-    public void resolveUrls(String rawUrls) {
-        if (rawUrls == null || rawUrls.trim().length() == 0) {
+    public void resolveUrls(String serverAddress) {
+        if (serverAddress == null || serverAddress.trim().length() == 0) {
             return;
         }
-        urls = Arrays.asList(rawUrls.split(","));
+        final String[] addressArr = serverAddress.split(",");
+        for (int i = 0; i < addressArr.length; i++) {
+            addressArr[i] = KIE_PROTOCOL + addressArr[i];
+        }
+        urls = Arrays.asList(addressArr);
     }
 }

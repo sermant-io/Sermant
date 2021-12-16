@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.sermant.core.service.dynamicconfig.service;
+package com.huawei.sermant.core.service.dynamicconfig.common;
 
 import java.util.EventObject;
 import java.util.Objects;
@@ -22,9 +22,9 @@ import java.util.Objects;
 /**
  * An event raised when the config changed, immutable.
  *
- * @see ConfigChangeType
+ * @see DynamicConfigChangeType
  */
-public class ConfigChangedEvent extends EventObject {
+public class DynamicConfigChangeEvent extends EventObject {
 
     private final String key;
 
@@ -32,13 +32,9 @@ public class ConfigChangedEvent extends EventObject {
 
     private final String content;
 
-    private final ConfigChangeType changeType;
+    private final DynamicConfigChangeType changeType;
 
-    public ConfigChangedEvent(String key, String group, String content) {
-        this(key, group, content, ConfigChangeType.MODIFIED);
-    }
-
-    public ConfigChangedEvent(String key, String group, String content, ConfigChangeType changeType) {
+    public DynamicConfigChangeEvent(String key, String group, String content, DynamicConfigChangeType changeType) {
         super(key + "," + group);
         this.key = key;
         this.group = group;
@@ -58,7 +54,7 @@ public class ConfigChangedEvent extends EventObject {
         return content;
     }
 
-    public ConfigChangeType getChangeType() {
+    public DynamicConfigChangeType getChangeType() {
         return changeType;
     }
 
@@ -77,10 +73,10 @@ public class ConfigChangedEvent extends EventObject {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ConfigChangedEvent)) {
+        if (!(o instanceof DynamicConfigChangeEvent)) {
             return false;
         }
-        ConfigChangedEvent that = (ConfigChangedEvent) o;
+        DynamicConfigChangeEvent that = (DynamicConfigChangeEvent) o;
         return Objects.equals(getKey(), that.getKey()) &&
                 Objects.equals(getGroup(), that.getGroup()) &&
                 Objects.equals(getContent(), that.getContent()) &&
