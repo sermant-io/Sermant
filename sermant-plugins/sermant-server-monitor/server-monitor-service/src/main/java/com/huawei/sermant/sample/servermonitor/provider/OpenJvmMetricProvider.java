@@ -77,7 +77,7 @@ public class OpenJvmMetricProvider implements MetricProvider<JVMMetric> {
     @Override
     public void consume(List<JVMMetric> metrics) {
         if (metrics == null || metrics.isEmpty()) {
-            LOGGER.warning("No Oracle jvm metric was collected.");
+            LOGGER.warning("No OpenJdk jvm metric was collected.");
             return;
         }
         JVMMetricCollection collection = JVMMetricCollection.newBuilder()

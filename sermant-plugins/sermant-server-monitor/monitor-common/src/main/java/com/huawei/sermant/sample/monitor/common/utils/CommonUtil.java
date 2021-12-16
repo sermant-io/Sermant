@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.huawei.sermant.sample.servermonitor.common;
+package com.huawei.sermant.sample.monitor.common.utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * 计算工具类
+ * Common工具类
  */
-public class CalculateUtil {
+public class CommonUtil {
 
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -31,4 +34,26 @@ public class CalculateUtil {
             .divide(BigDecimal.valueOf(denominator), scale, RoundingMode.HALF_UP);
     }
 
+    public static String getStackTrace(Throwable t) {
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        PrintStream printStream = null;
+        try {
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            printStream = new PrintStream(byteArrayOutputStream);
+            t.printStackTrace(printStream);
+            byte[] bytes = byteArrayOutputStream.toByteArray();
+            return new String(bytes);
+        } finally {
+            if (printStream != null) {
+                printStream.close();
+            }
+            if (byteArrayOutputStream != null) {
+                try {
+                    byteArrayOutputStream.close();
+                } catch (IOException e) {
+                    //ignored
+                }
+            }
+        }
+    }
 }

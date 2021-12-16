@@ -16,12 +16,17 @@
 
 package com.huawei.sermant.sample.monitor.common.collect;
 
+import com.huawei.sermant.core.common.LoggerFactory;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
+
+import static com.huawei.sermant.sample.monitor.common.utils.CommonUtil.getStackTrace;
 
 /**
  * 采集任务
@@ -35,6 +40,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * @param <M> 采集数据类型
  */
 public class CollectTask<M> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final AtomicReference<List<M>> writeBuffer;
 
@@ -79,7 +86,13 @@ public class CollectTask<M> {
     }
 
     private void doCollect() {
-        final M m = metricProvider.collect();
+        final M m;
+        try {
+            m = metricProvider.collect();
+        } catch (Exception e) {
+            LOGGER.severe(String.format("Failed to collect metric caused by: %s", getStackTrace(e)));
+            return;
+        }
         if (m == null) {
             return;
         }
