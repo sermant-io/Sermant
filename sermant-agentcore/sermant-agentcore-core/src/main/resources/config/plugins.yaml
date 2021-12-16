@@ -6,3 +6,4 @@ plugins:
   - route-server
   - server-monitor
   - threadlocal
+  - register-center
