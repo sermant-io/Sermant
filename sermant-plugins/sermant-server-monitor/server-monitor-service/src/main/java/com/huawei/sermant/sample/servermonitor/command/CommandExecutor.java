@@ -23,6 +23,7 @@ import com.huawei.sermant.sample.servermonitor.common.VoidStreamHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -48,7 +49,7 @@ public class CommandExecutor {
 
     private static final Runtime RUNTIME = Runtime.getRuntime();
 
-    private static final ExecutorService POOL = new ThreadPoolExecutor(2, 2,
+    private static final ExecutorService POOL = new ThreadPoolExecutor(2, 10,
         0, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
     //private static final int EXEC_TIMEOUT_SECONDS = 60;
@@ -66,11 +67,13 @@ public class CommandExecutor {
         final InputStream errorStream = process.getErrorStream();
         final InputStream inputStream = process.getInputStream();
         try {
-            handleErrorStream(command, errorStream);
+            CountDownLatch downLatch = new CountDownLatch(1);
+            handleErrorStream(command, errorStream, downLatch);
             Future<T> parseFuture = parseResult(command, inputStream);
             // JDK6 无法超时等待
             // process.waitFor(EXEC_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             process.waitFor();
+            downLatch.await();
             return parseFuture.get();
             // LOGGER.warn("timeout.")
             // Should destroy the subprocess when timout? JDK6 也用不了
@@ -103,11 +106,13 @@ public class CommandExecutor {
         }, inputStream));
     }
 
-    private static <T> void handleErrorStream(final MonitorCommand<T> command, final InputStream errorStream) {
+    private static <T> void handleErrorStream(final MonitorCommand<T> command, final InputStream errorStream,
+                                              final CountDownLatch latch) {
         POOL.execute(new ErrorHandleTask(new VoidStreamHandler() {
             @Override
             public void handle(InputStream inputStream) {
                 command.handleError(inputStream);
+                latch.countDown();
             }
         }, errorStream));
     }

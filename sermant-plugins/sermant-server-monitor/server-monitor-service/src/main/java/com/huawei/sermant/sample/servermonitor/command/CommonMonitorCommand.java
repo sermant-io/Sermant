@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static com.huawei.sermant.sample.monitor.common.utils.CommonUtil.getStackTrace;
+
 /**
  * 使用通用错误处理方式的{@link MonitorCommand}，即通过日志输出错误信息，当错误
  * 信息的长度超过200时，则忽略超过该长度的内容，并在日志内容结尾添加省略号。
@@ -44,7 +46,8 @@ public abstract class CommonMonitorCommand<T> implements MonitorCommand<T> {
         try {
             return IOUtils.readLines(inputStream, Charset.defaultCharset());
         } catch (IOException e) {
-            // LOG "Failed to parse input from subprocess."
+            LOGGER.severe(String.format("Failed to parse input from subprocess caused by: %s",
+                getStackTrace(e)));
         }
         return Collections.emptyList();
     }
@@ -52,7 +55,7 @@ public abstract class CommonMonitorCommand<T> implements MonitorCommand<T> {
     @Override
     public void handleError(InputStream errorStream) {
         final List<String> lines = readLines(errorStream);
-        StringBuilder outputBuilder = new StringBuilder();
+        StringBuilder outputBuilder = new StringBuilder("Subprocess error: ");
         int totalLength = 0;
         for (String line : lines) {
             int length = line.length();
