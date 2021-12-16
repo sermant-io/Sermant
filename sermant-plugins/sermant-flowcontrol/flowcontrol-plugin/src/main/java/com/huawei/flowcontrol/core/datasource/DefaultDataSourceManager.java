@@ -19,10 +19,10 @@ package com.huawei.flowcontrol.core.datasource;
 import com.alibaba.csp.sentinel.util.AppNameUtil;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.service.ServiceManager;
+import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangedEvent;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigurationListener;
-import com.huawei.sermant.core.service.dynamicconfig.service.DynamicConfigurationFactoryService;
 import com.huawei.flowcontrol.core.config.FlowControlConfig;
 import com.huawei.flowcontrol.core.datasource.kie.rule.RuleCenter;
 import com.huawei.flowcontrol.util.StringUtils;
@@ -98,10 +98,10 @@ public class DefaultDataSourceManager implements DataSourceManager {
             serviceName = pluginConfig.getConfigServiceName();
         }
         final String groupLabel = LabelGroupUtils.createLabelGroup(Collections.singletonMap("service", serviceName));
-        final DynamicConfigurationFactoryService service = ServiceManager.getService(DynamicConfigurationFactoryService.class);
-        service.getDynamicConfigurationService().addGroupListener(groupLabel, new ConfigurationListener() {
+        final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
+        service.addGroupListener(groupLabel, new DynamicConfigListener() {
             @Override
-            public void process(ConfigChangedEvent event) {
+            public void process(DynamicConfigChangeEvent event) {
                 for (DefaultDataSource<?> defaultDataSource : sourceMap.values()) {
                     defaultDataSource.update(event);
                 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.sermant.core.service.dynamicconfig.service;
+package com.huawei.sermant.core.service.dynamicconfig.common;
 
 
 /**
@@ -24,12 +24,12 @@ package com.huawei.sermant.core.service.dynamicconfig.service;
  * Probably will support Nacos, etcd in the future.
  *
  */
-public enum DynamicConfigType {
+public enum DynamicConfigServiceType {
 
     /**
      * zookeeper 配置中心
      */
-    ZOO_KEEPER,
+    ZOOKEEPER,
 
     /**
      * servicecomb-kie 配置中心

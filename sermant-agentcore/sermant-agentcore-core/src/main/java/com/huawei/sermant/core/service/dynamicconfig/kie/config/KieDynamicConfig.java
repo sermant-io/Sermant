@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-package com.huawei.sermant.core.service.dynamicconfig.service;
+package com.huawei.sermant.core.service.dynamicconfig.kie.config;
 
-import java.util.EventListener;
+import com.huawei.sermant.core.config.common.BaseConfig;
+import com.huawei.sermant.core.config.common.ConfigTypeKey;
 
 /**
- * Config listener, will get notified when the config it listens on changes.
+ * KIE配置
+ *
+ * @author HapThorin
+ * @version 1.0.0
+ * @since 2021/12/15
  */
-public interface ConfigurationListener extends EventListener {
-
+@ConfigTypeKey("kie.dynamic.config")
+public class KieDynamicConfig implements BaseConfig {
     /**
-     * Listener call back method. Listener gets notified by this method once there's any change happens on the config
-     * the listener listens on.
-     *
-     * @param event config change event
+     * 默认kie的命名空间
      */
-    void process(ConfigChangedEvent event);
+    private String project = "default";
+
+    public String getProject() {
+        return project;
+    }
 }

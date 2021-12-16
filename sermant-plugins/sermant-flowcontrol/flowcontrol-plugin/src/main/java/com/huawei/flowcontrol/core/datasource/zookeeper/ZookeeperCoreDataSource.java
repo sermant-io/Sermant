@@ -22,12 +22,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangeType;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangedEvent;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigurationListener;
-import com.huawei.sermant.core.service.dynamicconfig.service.DynamicConfigurationFactoryService;
 import com.huawei.flowcontrol.core.datasource.DataSourceUpdateSupport;
 import com.huawei.flowcontrol.util.StringUtils;
+import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeType;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,26 +41,26 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-11-26
  */
-public class ZookeeperCoreDataSource<T> extends AbstractDataSource<ConfigChangedEvent, List<T>>
+public class ZookeeperCoreDataSource<T> extends AbstractDataSource<DynamicConfigChangeEvent, List<T>>
         implements DataSourceUpdateSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private ConfigChangedEvent event;
+    private DynamicConfigChangeEvent event;
 
     private final String key;
 
     private final String group;
 
-    private ConfigurationListener listener;
+    private DynamicConfigListener listener;
 
     public ZookeeperCoreDataSource(final String key, final String group, final Class<T> ruleClass) {
-        super(new Converter<ConfigChangedEvent, List<T>>() {
+        super(new Converter<DynamicConfigChangeEvent, List<T>>() {
             @Override
-            public List<T> convert(ConfigChangedEvent event) {
+            public List<T> convert(DynamicConfigChangeEvent event) {
                 if (event == null || !StringUtils.equal(event.getKey(), key)) {
                     return Collections.emptyList();
                 }
-                if (event.getChangeType() == ConfigChangeType.DELETED) {
+                if (event.getChangeType() == DynamicConfigChangeType.DELETED) {
                     return Collections.emptyList();
                 }
                 try {
@@ -78,7 +78,7 @@ public class ZookeeperCoreDataSource<T> extends AbstractDataSource<ConfigChanged
     }
 
     @Override
-    public ConfigChangedEvent readSource() {
+    public DynamicConfigChangeEvent readSource() {
         return event;
     }
 
@@ -88,7 +88,7 @@ public class ZookeeperCoreDataSource<T> extends AbstractDataSource<ConfigChanged
     }
 
     @Override
-    public void update(ConfigChangedEvent event) {
+    public void update(DynamicConfigChangeEvent event) {
         this.event = event;
         try {
             getProperty().updateValue(loadConfig(event));
@@ -98,15 +98,15 @@ public class ZookeeperCoreDataSource<T> extends AbstractDataSource<ConfigChanged
     }
 
     private void initConfigListener() {
-        final DynamicConfigurationFactoryService service = ServiceManager.getService(DynamicConfigurationFactoryService.class);
-        listener = new ConfigurationListener() {
+        final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
+        listener = new DynamicConfigListener() {
             @Override
-            public void process(ConfigChangedEvent event) {
+            public void process(DynamicConfigChangeEvent event) {
                 update(event);
             }
         };
         try {
-            service.getDynamicConfigurationService().addConfigListener(key, group, listener);
+            service.addConfigListener(key, group, listener);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Added listener failed, key : %s, group : %s",
                     key, group));
@@ -115,8 +115,8 @@ public class ZookeeperCoreDataSource<T> extends AbstractDataSource<ConfigChanged
 
     public void removeListener() {
         try {
-            final DynamicConfigurationFactoryService service = ServiceManager.getService(DynamicConfigurationFactoryService.class);
-            service.getDynamicConfigurationService().removeConfigListener(key, group, listener);
+            final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
+            service.removeConfigListener(key, group);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Removed listener failed, key : %s, group : %s",
                     key, group));

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.huawei.sermant.core.service.dynamicconfig.service;
+package com.huawei.sermant.core.service.dynamicconfig.common;
 
 /**
  * Config change event type
  */
-public enum ConfigChangeType {
+public enum DynamicConfigChangeType {
     /**
      * A config is created.
      */
