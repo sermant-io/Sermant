@@ -81,12 +81,14 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
             auth = "";
         }
         String sortType;
-        if (order.equals("ascend")) {
-            sortType = "ASC";
+        if (StringUtils.isBlank(order)) {
+            sortType = "update_time" + System.lineSeparator() + "DESC";
+        } else if (order.equals("ascend")) {
+            sortType = sorter + System.lineSeparator() + "ASC";
         } else {
-            sortType = "DESC";
+            sortType = sorter + System.lineSeparator() + "DESC";
         }
-        Page<EmergencyScript> pageInfo = PageHelper.startPage(current, pageSize, sorter + System.lineSeparator() + sortType).doSelectPage(() -> {
+        Page<EmergencyScript> pageInfo = PageHelper.startPage(current, pageSize, sortType).doSelectPage(() -> {
             mapper.listScript(user.getUserName(), auth, EscapeUtil.escapeChar(scriptName), EscapeUtil.escapeChar(scriptUser), status);
         });
         List<EmergencyScript> emergencyScripts = pageInfo.getResult();
@@ -111,7 +113,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
                     script.setStatusLabel(UNAPPROVED);
             }
         }
-        return CommonResult.success(emergencyScripts,(int)pageInfo.getTotal());
+        return CommonResult.success(emergencyScripts, (int) pageInfo.getTotal());
     }
 
     @Override

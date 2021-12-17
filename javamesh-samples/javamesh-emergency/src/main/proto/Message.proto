@@ -1,0 +1,16 @@
+syntax = "proto3";
+option java_package = "com.huawei.heartbeat.entity";
+
+message HeartbeatMessage {
+  enum MessageType {
+    HEARTBEAT_PING = 0;
+    HEARTBEAT_PONG = 1;
+    REGISTER = 2;
+  }
+  MessageType messageType = 1;
+  HeartBeat heartBeat = 2;
+  bytes register = 3;
+}
+
+message HeartBeat{
+}

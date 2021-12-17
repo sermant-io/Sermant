@@ -77,3 +77,6 @@ logging:
     com.huawei.emergency.schedule: debug
 pagehelper:
   reasonable: true
+heartbeat:
+  readWaitTime: 150
+  port: 9100
