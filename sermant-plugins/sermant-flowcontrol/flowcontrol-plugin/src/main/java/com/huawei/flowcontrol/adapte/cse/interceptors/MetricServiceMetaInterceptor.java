@@ -16,10 +16,10 @@
 
 package com.huawei.flowcontrol.adapte.cse.interceptors;
 
+import com.huawei.flowcontrol.service.ServiceCombServiceMetaService;
 import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.flowcontrol.adapte.cse.constants.CseConstants;
-import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
+import com.huawei.sermant.core.service.ServiceManager;
 
 import java.lang.reflect.Method;
 
@@ -30,20 +30,23 @@ import java.lang.reflect.Method;
  * @since 2021-11-16
  */
 public class MetricServiceMetaInterceptor implements InstanceMethodInterceptor {
+    private ServiceCombServiceMetaService serviceCombServiceMetaService;
+
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
-
+        serviceCombServiceMetaService = ServiceManager.getService(ServiceCombServiceMetaService.class);
     }
 
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) {
-        if (method.getName().equals(CseConstants.SERVICE_NAME_METHOD)) {
-            CseServiceMeta.getInstance().setServiceName(String.valueOf(result));
-        } else if (method.getName().equals(CseConstants.SERVICE_VERSION_METHOD)) {
-            CseServiceMeta.getInstance().setVersion(String.valueOf(result));
-        } else {
-            return result;
-        }
+        serviceCombServiceMetaService.after(obj, method, arguments, result);
+//        if (method.getName().equals(CseConstants.SERVICE_NAME_METHOD)) {
+//            CseServiceMeta.getInstance().setServiceName(String.valueOf(result));
+//        } else if (method.getName().equals(CseConstants.SERVICE_VERSION_METHOD)) {
+//            CseServiceMeta.getInstance().setVersion(String.valueOf(result));
+//        } else {
+//            return result;
+//        }
         return result;
     }
 

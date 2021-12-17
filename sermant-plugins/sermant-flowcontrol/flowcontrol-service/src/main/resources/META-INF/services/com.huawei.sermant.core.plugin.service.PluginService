@@ -1,0 +1,6 @@
+com.huawei.flowcontrol.service.AlibabaDubboServiceImpl
+com.huawei.flowcontrol.service.ApacheDubboServiceImpl
+com.huawei.flowcontrol.service.DispatcherServletServiceImpl
+com.huawei.flowcontrol.service.FlowControlServiceImpl
+com.huawei.flowcontrol.service.KieConfigurationServiceImpl
+com.huawei.flowcontrol.service.ServiceCombServiceMetaServiceImpl

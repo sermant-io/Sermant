@@ -19,14 +19,15 @@ package com.huawei.flowcontrol.adapte.cse.test;
 import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
 import com.huawei.flowcontrol.adapte.cse.match.BusinessMatcher;
 import com.huawei.flowcontrol.adapte.cse.match.MatchGroupResolver;
-import com.huawei.flowcontrol.adapte.cse.rule.BulkheadRule;
-import com.huawei.flowcontrol.adapte.cse.rule.CircuitBreakerRule;
-import com.huawei.flowcontrol.adapte.cse.rule.RateLimitingRule;
-import com.huawei.flowcontrol.adapte.cse.rule.RetryRule;
 import com.huawei.flowcontrol.adapte.cse.resolver.BulkheadRuleResolver;
 import com.huawei.flowcontrol.adapte.cse.resolver.CircuitBreakerRuleResolver;
 import com.huawei.flowcontrol.adapte.cse.resolver.RateLimitingRuleResolver;
 import com.huawei.flowcontrol.adapte.cse.resolver.RetryResolver;
+import com.huawei.flowcontrol.adapte.cse.rule.BulkheadRule;
+import com.huawei.flowcontrol.adapte.cse.rule.CircuitBreakerRule;
+import com.huawei.flowcontrol.adapte.cse.rule.RateLimitingRule;
+import com.huawei.flowcontrol.adapte.cse.rule.RetryRule;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +51,8 @@ public class RuleResolveTest {
                 "rate: 1\n" +
                 "services: helloService";
         final RateLimitingRuleResolver rateLimitingRuleResolver = new RateLimitingRuleResolver();
-        final RateLimitingRule userLoginAction = rateLimitingRuleResolver.parseRule("userLoginAction", source, false, false);
+        final RateLimitingRule userLoginAction = rateLimitingRuleResolver
+                .parseRule("userLoginAction", source, false, false);
         Assert.assertEquals(userLoginAction.getRate(), 1L);
         Assert.assertEquals(userLoginAction.getServices(), "helloService");
         Assert.assertEquals(userLoginAction.getParsedTimeoutDuration(), 10000L);
@@ -62,7 +64,8 @@ public class RuleResolveTest {
         String source = "maxConcurrentCalls: 1000 # 最大并发数\n" +
                 "maxWaitDuration: 110 # 最大等待时间，默认单位为ms，支持秒为100S\n" +
                 "services: helloService";
-        final BulkheadRule userLoginAction = new BulkheadRuleResolver().parseRule("userLoginAction", source, false, false);
+        final BulkheadRule userLoginAction = new BulkheadRuleResolver()
+                .parseRule("userLoginAction", source, false, false);
         Assert.assertEquals(userLoginAction.getMaxConcurrentCalls(), 1000);
         Assert.assertEquals(userLoginAction.getServices(), "helloService");
         Assert.assertEquals(userLoginAction.getParsedMaxWaitDuration(), 110000);
@@ -78,7 +81,8 @@ public class RuleResolveTest {
                 "slidingWindowSize: 1000 # 滑动窗口大小，支持秒(S),分钟(M)\n" +
                 "services: helloService";
         final CircuitBreakerRuleResolver circuitBreakerRuleResolver = new CircuitBreakerRuleResolver();
-        final CircuitBreakerRule userLoginAction = circuitBreakerRuleResolver.parseRule("userLoginAction", source, false, false);
+        final CircuitBreakerRule userLoginAction = circuitBreakerRuleResolver
+                .parseRule("userLoginAction", source, false, false);
         Assert.assertEquals(userLoginAction.getFailureRateThreshold(), 50f, 5f);
         Assert.assertEquals(userLoginAction.getSlowCallRateThreshold(), 100f, 5f);
         Assert.assertEquals(userLoginAction.getParsedSlowCallDurationThreshold(), 60000L);
@@ -129,7 +133,8 @@ public class RuleResolveTest {
                 "    name: rule1\n" +
                 "    showAlert: false\n" +
                 "    uniqIndex: npkls";
-        final BusinessMatcher userLoginAction = new MatchGroupResolver().parseRule("userLoginAction", source, false, false);
+        final BusinessMatcher userLoginAction = new MatchGroupResolver()
+                .parseRule("userLoginAction", source, false, false);
         Assert.assertTrue(userLoginAction.getMatches().get(0).getMethod().contains("GET"));
         Assert.assertEquals(userLoginAction.getMatches().get(0).getName(), "rule1");
         Assert.assertTrue(userLoginAction.getMatches().get(0).getHeaders().containsKey("key2"));

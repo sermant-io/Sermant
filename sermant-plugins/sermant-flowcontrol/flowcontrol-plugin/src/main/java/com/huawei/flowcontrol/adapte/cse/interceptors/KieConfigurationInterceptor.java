@@ -16,10 +16,10 @@
 
 package com.huawei.flowcontrol.adapte.cse.interceptors;
 
+import com.huawei.flowcontrol.service.KieConfigurationService;
 import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.flowcontrol.adapte.cse.constants.CseConstants;
-import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
+import com.huawei.sermant.core.service.ServiceManager;
 
 import java.lang.reflect.Method;
 
@@ -30,21 +30,25 @@ import java.lang.reflect.Method;
  * @since 2021-11-16
  */
 public class KieConfigurationInterceptor implements InstanceMethodInterceptor {
+    private KieConfigurationService kieConfigurationService;
+
     @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
-        if (method.getName().equals(CseConstants.PROJECT_METHOD)) {
-            CseServiceMeta.getInstance().setProject((String) arguments[0]);
-        } else if (method.getName().equals(CseConstants.ENVIRONMENT_METHOD)) {
-            CseServiceMeta.getInstance().setEnvironment((String) arguments[0]);
-        } else if (method.getName().equals(CseConstants.CUSTOM_LABEL_METHOD)) {
-            CseServiceMeta.getInstance().setCustomLabel((String) arguments[0]);
-        } else if (method.getName().equals(CseConstants.APP_NAME_METHOD)) {
-            CseServiceMeta.getInstance().setApp((String) arguments[0]);
-        } else if (method.getName().equals(CseConstants.SERVICE_NAME_METHOD)) {
-            CseServiceMeta.getInstance().setServiceName((String) arguments[0]);
-        } else {
-            CseServiceMeta.getInstance().setCustomLabelValue((String) arguments[0]);
-        }
+    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
+        kieConfigurationService = ServiceManager.getService(KieConfigurationService.class);
+        kieConfigurationService.before(obj, method, arguments, beforeResult);
+//        if (method.getName().equals(CseConstants.PROJECT_METHOD)) {
+//            CseServiceMeta.getInstance().setProject((String) arguments[0]);
+//        } else if (method.getName().equals(CseConstants.ENVIRONMENT_METHOD)) {
+//            CseServiceMeta.getInstance().setEnvironment((String) arguments[0]);
+//        } else if (method.getName().equals(CseConstants.CUSTOM_LABEL_METHOD)) {
+//            CseServiceMeta.getInstance().setCustomLabel((String) arguments[0]);
+//        } else if (method.getName().equals(CseConstants.APP_NAME_METHOD)) {
+//            CseServiceMeta.getInstance().setApp((String) arguments[0]);
+//        } else if (method.getName().equals(CseConstants.SERVICE_NAME_METHOD)) {
+//            CseServiceMeta.getInstance().setServiceName((String) arguments[0]);
+//        } else {
+//            CseServiceMeta.getInstance().setCustomLabelValue((String) arguments[0]);
+//        }
     }
 
     @Override

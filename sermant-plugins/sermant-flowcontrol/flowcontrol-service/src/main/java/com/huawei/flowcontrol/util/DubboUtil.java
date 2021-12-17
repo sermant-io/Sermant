@@ -21,40 +21,38 @@
  * from the Apache Skywalking project.
  */
 
-package com.huawei.flowcontrol;
+package com.huawei.flowcontrol.util;
 
-import com.alibaba.csp.sentinel.log.RecordLog;
-import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.huawei.flowcontrol.core.config.FlowControlConfig;
 import com.huawei.flowcontrol.entry.EntryFacade;
 import com.huawei.flowcontrol.exception.FlowControlException;
-import com.huawei.flowcontrol.util.SentinelRuleUtil;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
+import com.alibaba.csp.sentinel.log.RecordLog;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 
 import java.util.Locale;
 
-public abstract class DubboInterceptor implements InstanceMethodInterceptor {
+public class DubboUtil {
+    private static FlowControlConfig flowControlConfig;
 
-    private FlowControlConfig flowControlConfig;
-
-    private FlowControlConfig getFlowControlConfig() {
+    private static FlowControlConfig getFlowControlConfig() {
         if (flowControlConfig == null) {
             flowControlConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
         }
         return flowControlConfig;
     }
 
-    protected String getResourceName(String interfaceName, String methodName) {
+    public static String getResourceName(String interfaceName, String methodName) {
         return interfaceName + ":" + methodName;
     }
 
-    protected void handleBlockException(BlockException ex, String resourceName, String type,
-                                        EntryFacade.DubboType dubboType) {
+    public static void handleBlockException(BlockException ex, String resourceName, String type,
+            EntryFacade.DubboType dubboType) {
         try {
             final String msg = String.format(Locale.ENGLISH,
-                "[%s] has been blocked! [appName=%s, resourceName=%s]",
-                type, ex.getRuleLimitApp(), resourceName);
+                    "[%s] has been blocked! [appName=%s, resourceName=%s]",
+                    type, ex.getRuleLimitApp(), resourceName);
             RecordLog.info(msg);
             if (getFlowControlConfig().isThrowBizException()) {
                 // 开启业务异常抛出，将会取代基于返回结果形式将异常返回给上游, 并且会触发dubbo重试, 默认关闭该功能

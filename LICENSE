@@ -254,7 +254,7 @@ com/huawei/sermant/core/agent/matcher/ClassMatchers.java in this product is copi
 
 com/huawei/sermant/core/service/ServiceManager.java in this product is copied from org/apache/skywalking/apm/agent/core/boot/ServiceManager.java of Apache SkyWalking project.
 
-com/huawei/flowcontrol/DubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInterceptor.java and org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+com/huawei/flowcontrol/util/DubboUtil.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInterceptor.java and org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java of Apache SkyWalking project.
 
 com/huawei/flowcontrol/DubboDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInstrumentation.java and org/apache/skywalking/apm/plugin/dubbo/DubboInstrumentation.java of Apache SkyWalking project.
 
@@ -288,9 +288,17 @@ com/huawei/flowrecord/plugins/dubbo/AliDubboInstrumentation.java in this product
 
 com/huawei/flowcontrol/ApacheDubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInterceptor.java of Apache SkyWalking project.
 
+com/huawei/flowcontrol/service/ApacheDubboService.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+
+com/huawei/flowcontrol/service/ApacheDubboServiceImpl.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+
 com/huawei/flowcontrol/ApacheDubboDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/asf/dubbo/DubboInstrumentation.java of Apache SkyWalking project.
 
 com/huawei/flowcontrol/AlibabaDubboInterceptor.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+
+com/huawei/flowcontrol/service/AlibabaDubboService.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java of Apache SkyWalking project.
+
+com/huawei/flowcontrol/service/AlibabaDubboServiceImpl.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java of Apache SkyWalking project.
 
 com/huawei/flowcontrol/AlibabaDubboDefinition.java in this product is copied from org/apache/skywalking/apm/plugin/dubbo/DubboInstrumentation.java of Apache SkyWalking project.
 

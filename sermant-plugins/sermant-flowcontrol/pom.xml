@@ -25,6 +25,7 @@
             </activation>
             <modules>
                 <module>flowcontrol-plugin</module>
+                <module>flowcontrol-service</module>
             </modules>
         </profile>
         <profile>
@@ -33,7 +34,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>flowcontrol-plugin</module>
+                <!--<module>flowcontrol-plugin</module>-->
                 <module>flowcontrol-server</module>
             </modules>
         </profile>
@@ -42,6 +43,7 @@
             <modules>
                 <module>flowcontrol-plugin</module>
                 <module>flowcontrol-server</module>
+                <module>flowcontrol-service</module>
                 <module>flowcontrol-demos</module>
             </modules>
         </profile>

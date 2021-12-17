@@ -33,8 +33,7 @@ public enum OperatorManager {
     INSTANCE;
 
     /**
-     * 所有比较器
-     * map<name, operator>
+     * 所有比较器 map<name, operator>
      */
     private final Map<String, Operator> operators = new HashMap<String, Operator>();
 
@@ -43,7 +42,7 @@ public enum OperatorManager {
     }
 
     private void loadOperators() {
-        for(Operator operator : ServiceLoader.load(Operator.class)) {
+        for (Operator operator : ServiceLoader.load(Operator.class, OperatorManager.class.getClassLoader())) {
             operators.put(operator.getId(), operator);
         }
     }
