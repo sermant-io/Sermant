@@ -134,7 +134,7 @@ mvn clean package
 - 启动消费者
 
 ```shell
-java -javaagent:${path}\sermant-agent-2.0.5\agent\sermant-agent.jar=appName=dubbo-a,instanceName=dubboA -jar dubbo-a.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=dubbo-a,instanceName=dubboA -jar dubbo-a.jar
 ```
 
 其中path需要替换为Sermant实际打包路径

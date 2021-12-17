@@ -184,7 +184,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Sermant-Version>${sermant.version}</Sermant-Version>
+                            <Sermant-Version>${project.version}</Sermant-Version>
                         </manifestEntries>
                     </archive>
                 </configuration>
