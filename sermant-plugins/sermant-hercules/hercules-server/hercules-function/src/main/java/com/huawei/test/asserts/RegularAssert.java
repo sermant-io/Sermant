@@ -16,6 +16,10 @@
 
 package com.huawei.test.asserts;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.regex.Pattern;
 
 /**
@@ -26,13 +30,26 @@ import java.util.regex.Pattern;
  */
 public class RegularAssert {
 	/**
+	 * 日志
+	 */
+	private static final Logger LOGGER = LoggerFactory.getLogger(RegularAssert.class);
+
+	/**
 	 * 判断给定的内容是否与正则表达式匹配，使用java.util.regex.Pattern实现
 	 *
-	 * @param content 内容
+	 * @param content           内容
 	 * @param regularExpression 正则表达式
 	 * @return true：内容匹配，false:内容不匹配
 	 */
 	public static boolean assertRegular(String content, String regularExpression) {
+		if (StringUtils.isEmpty(content)) {
+			LOGGER.error("The content used for regular expression matching is an empty string.");
+			return false;
+		}
+		if (StringUtils.isEmpty(regularExpression)) {
+			LOGGER.error("The regular expression used for content matching is empty.");
+			return false;
+		}
 		return Pattern.matches(regularExpression, content);
 	}
 }

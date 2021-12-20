@@ -66,23 +66,23 @@ public class HttpURLModifierConfig {
 		return sessionArgumentName;
 	}
 
-	public boolean isUseSemicolonSeparator() {
+	public boolean useSemicolonSeparator() {
 		return useSemicolonSeparator;
 	}
 
-	public boolean isUseEqual() {
+	public boolean useEqual() {
 		return useEqual;
 	}
 
-	public boolean isUseQuestionMark() {
+	public boolean useQuestionMark() {
 		return useQuestionMark;
 	}
 
-	public boolean isCacheSessionId() {
+	public boolean cacheSessionId() {
 		return cacheSessionId;
 	}
 
-	public boolean isEncodeUrl() {
+	public boolean encodeUrl() {
 		return encodeUrl;
 	}
 

@@ -14,38 +14,40 @@
  * limitations under the License.
  */
 
-package com.huawei.test.configelement.impl;
-
-import com.huawei.test.configelement.DNSCacheManager;
-import com.huawei.test.configelement.config.DNSCacheConfig;
-
-import java.util.List;
-import java.util.Map;
+package com.huawei.test;
 
 /**
- * 功能描述：DNS 域名管理逻辑实现
+ * 功能描述：压测函数基类
  *
  * @author zl
- * @since 2021-12-09
+ * @since 2021-12-14
  */
-public class CommonDNSCacheManager extends DNSCacheManager {
+public class BasePressureTestFunction implements PressureTestFunction{
+	/**
+	 * 函数名称
+	 */
+	private String functionName;
+
+	/**
+	 * 函数说明
+	 */
+	private String comments;
+
 	@Override
-	public String getIp(String hostName) {
-		return null;
+	public void defineFunctionName(String name) {
+		this.functionName = name;
 	}
 
 	@Override
-	public List<Map<String, String>> getHosts() {
-		return null;
+	public void addComments(String comments) {
+		this.comments = comments;
 	}
 
-	@Override
-	public void initConfig(DNSCacheConfig config) {
-
+	public String getFunctionName() {
+		return functionName;
 	}
 
-	@Override
-	public boolean isConfigValid() {
-		return false;
+	public String getComments() {
+		return comments;
 	}
 }

@@ -17,6 +17,7 @@
 package com.huawei.test.configelement;
 
 import com.huawei.test.configelement.config.CounterConfig;
+import com.huawei.test.configelement.service.ExecuteTimesInfo;
 
 /**
  * 功能描述：计数器接口
@@ -32,5 +33,10 @@ public abstract class Counter extends ConfigElement<CounterConfig>{
 	 */
 	public abstract String nextNumber();
 
+	/**
+	 * 是否还有下一个取值
+	 *
+	 * @return true：有， false：没有
+	 */
 	public abstract boolean hasNext();
 }

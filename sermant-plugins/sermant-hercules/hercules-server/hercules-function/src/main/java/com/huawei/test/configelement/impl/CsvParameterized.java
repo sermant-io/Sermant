@@ -37,6 +37,11 @@ public class CsvParameterized extends Parameterized {
 	}
 
 	@Override
+	public boolean isConfigValid() {
+		return false;
+	}
+
+	@Override
 	public boolean hasNext() {
 		return false;
 	}
