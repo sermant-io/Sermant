@@ -1,0 +1,24 @@
+name: Auto Close Stale Issues and PRs
+
+on:
+  schedule:
+    - cron: "0 20 * * *"
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v4.1.0
+        with:
+          stale-issue-label: Stale
+          stale-pr-label: Stale
+          stale-issue-message: >
+            This issue seems to be **Stale**. We will close it in a few days.
+          close-issue-message: >
+            We close this issue because it hasn't been updated in a while. Remove **Stale** label if you want to reopen it.
+          stale-pr-message: >
+            This PR seems to be **Stale**. We will close it in a few days.
+          close-pr-message: >
+            We close this PR because it hasn't been updated in a while. Remove **Stale** label if you want to reopen it.
+          days-before-stale: 29
+          days-before-close: 1
