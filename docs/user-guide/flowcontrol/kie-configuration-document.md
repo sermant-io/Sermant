@@ -15,7 +15,7 @@
 
 ## 3、配置配置中心
 
-配置`Sermant`配置中心类型与地址，配置文件路劲`/Sermant/sermant-agent-2.0.5/agent/config/config.properties`
+配置`Sermant`配置中心类型与地址，配置文件路劲`/Sermant/sermant-agent-x.x.x/agent/config/config.properties`
 
 ```properties
 dynamicconfig.timeout_value=30000

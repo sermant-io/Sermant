@@ -70,7 +70,7 @@
 插件的名称和版本，属于`插件模块(plugin)`和`服务模块(service)`的内禀属性，因此我们将他们封装到`manifest`文件中，作为`jar`包的元信息存在：
 
 - **插件名称**封装于`manifest`文件的`Sermant-Name-Version`参数中，通过`pom`文件中的`package.plugin.name`参数设定，默认含义为**插件名称**。
-- **插件版本**封装于`manifest`文件的`Sermant-Plugin-Version`参数中，默认取值为`sermant.version`，可通过`pom`文件中的`package.plugin.version`参数修改。
+- **插件版本**封装于`manifest`文件的`Sermant-Plugin-Version`参数中，默认取值为`project.version`，可通过`pom`文件中的`package.plugin.version`参数修改。
 ```xml
 <properties>
   <package.plugin.name>${插件名称}</package.plugin.name>

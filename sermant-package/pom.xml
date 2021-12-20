@@ -39,7 +39,7 @@
         <script.append.source>${sermant.basedir}/${package.resources.dir}/${license.binary.suffix.file}</script.append.source>
         <script.append.target>${package.temp.dir}/LICENSE</script.append.target>
         <product.output.dir>${sermant.basedir}</product.output.dir>
-        <product.output.name>${sermant.name}-${sermant.version}</product.output.name>
+        <product.output.name>${sermant.name}-${project.version}</product.output.name>
     </properties>
     <build>
         <finalName>${product.output.name}</finalName>

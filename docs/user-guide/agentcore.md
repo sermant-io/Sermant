@@ -26,12 +26,12 @@
 
 ## 核心包版本
 
-核心包的版本，属于核心包的内禀属性，因此我们将版本的定义封装到`manifest`文件中，作为`jar`包的元信息存在。核心包版本信息封装于`manifest`文件的`Sermant-Version`参数中，默认取值为`sermant.version`。在代码中，可以通过以下方法获取核心包版本：
+核心包的版本，属于核心包的内禀属性，因此我们将版本的定义封装到`manifest`文件中，作为`jar`包的元信息存在。核心包版本信息封装于`manifest`文件的`Sermant-Version`参数中，默认取值为`project.version`。在代码中，可以通过以下方法获取核心包版本：
 ```java
 String version = BootArgsIndexer.getCoreVersion();
 ```
 
-如果需要修改核心包的版本，可以直接修改`sermant.version`的值。
+如果需要修改核心包的版本，可以直接修改`project.version`的值。
 
 ## 目录结构
 
