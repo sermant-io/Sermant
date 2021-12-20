@@ -440,25 +440,18 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
 
     @Override
     public CommonResult allSceneExecRecords(CommonPage<EmergencyExecRecord> params) {
-        Page<SceneExecDto> pageInfo = PageHelper.startPage(params.getPageIndex(), params.getPageSize())
-            .doSelectPage(() -> {
-                planMapper.allSceneRecords(params.getObject().getExecId());
-            });
-        return CommonResult.success(pageInfo.getResult(), (int) pageInfo.getTotal());
+        List<SceneExecDto> sceneExecDtos = planMapper.allSceneRecords(params.getObject().getExecId());
+        return CommonResult.success(sceneExecDtos, sceneExecDtos.size());
     }
 
     @Override
     public CommonResult allTaskExecRecords(CommonPage<EmergencyExecRecord> params) {
         EmergencyExecRecord paramsObject = params.getObject();
-        Page<SceneExecDto> pageInfo = PageHelper.startPage(params.getPageIndex(), params.getPageSize())
-            .doSelectPage(() -> {
-                planMapper.allTaskRecords(paramsObject.getExecId(), paramsObject.getSceneId());
-            });
-        List<SceneExecDto> result = pageInfo.getResult();
+        List<SceneExecDto> result = planMapper.allTaskRecords(paramsObject.getExecId(), paramsObject.getSceneId());
         result.forEach(recordDto -> {
             recordDto.setScheduleInfo(recordDetailMapper.selectAllServerDetail(recordDto.getKey()));
         });
-        return CommonResult.success(result, (int) pageInfo.getTotal());
+        return CommonResult.success(result, result.size());
     }
 
     @Override
