@@ -345,7 +345,11 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setPlanId(plan.getPlanId());
         updatePlan.setStatus(plan.getStatus());
-        updatePlan.setCheckRemark(plan.getCheckRemark());
+        if (PlanStatus.REJECT.getValue().equals(plan.getStatus())) {
+            updatePlan.setCheckRemark(plan.getCheckRemark());
+        } else {
+            updatePlan.setCheckRemark("");
+        }
         updatePlan.setCheckTime(new Date());
         updatePlan.setCheckUser(userName);
         updatePlan.setUpdateTime(new Date());
