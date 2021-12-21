@@ -482,7 +482,7 @@
         IFNULL((select user_name from nuser where user_id = t1.create_user),t1.create_user) creator,
         date_format( t1.create_time, '%Y-%m-%d %H:%i:%s' ) create_time,
         date_format( t1.create_time, '%Y-%m-%d %H:%i:%s' ) execute_time,
-        date_format(min(t3.start_time), '%Y-%m-%d %H:%i:%s') start_time,
+        date_format(IFNULL(min(t3.start_time),t1.create_time), '%Y-%m-%d %H:%i:%s') start_time,
         parse_exec_status(parse_scene_exec_status(t1.exec_id,0)) `status`
         FROM
         emergency_exec t1
