@@ -5,6 +5,7 @@
 package com.huawei.script.exec.log;
 
 import com.huawei.emergency.entity.EmergencyExecRecordDetail;
+import com.huawei.emergency.entity.EmergencyExecRecordDetailExample;
 import com.huawei.emergency.mapper.EmergencyExecRecordDetailMapper;
 
 import org.slf4j.Logger;
@@ -36,11 +37,12 @@ public class DefaultLogCallBack implements LogCallBack {
     public void handlePid(int id, String pid) {
         try {
             EmergencyExecRecordDetail recordDetail = new EmergencyExecRecordDetail();
-            recordDetail.setRecordId(id);
+            recordDetail.setDetailId(id);
             recordDetail.setPid(Integer.valueOf(pid));
             detailMapper.updateByPrimaryKeySelective(recordDetail);
         } catch (NumberFormatException e) {
             LOGGER.error("cast log to pid error. {}", e.getMessage());
+            detailMapper.updateLogIfAbsent(id,pid);
         }
     }
 }
