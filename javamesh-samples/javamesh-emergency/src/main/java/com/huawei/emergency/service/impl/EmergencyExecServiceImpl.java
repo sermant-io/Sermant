@@ -352,7 +352,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
 
     @Override
     public LogResponse logOneServer(int detailId, int line) {
-        EmergencyExecRecordDetail recordDetail = recordDetailMapper.selectByPrimaryKey(detailId);
+        /*EmergencyExecRecordDetail recordDetail = recordDetailMapper.selectByPrimaryKey(detailId);
         if (recordDetail == null || ValidEnum.IN_VALID.equals(recordDetail.getIsValid())) {
             return LogResponse.END;
         }
@@ -362,6 +362,19 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
                 return new LogResponse(line, null);
             }
             return log;
+        }
+        String[] split = recordDetail.getLog().split(System.lineSeparator());
+        if (split.length >= line) {
+            String[] needLogs = Arrays.copyOfRange(split, line - 1, split.length);
+            return new LogResponse(null, needLogs);
+        }
+        return new LogResponse(null, new String[]{recordDetail.getLog()});*/
+        EmergencyExecRecordDetail recordDetail = recordDetailMapper.selectByPrimaryKey(detailId);
+        if (recordDetail == null || ValidEnum.IN_VALID.equals(recordDetail.getIsValid())) {
+            return LogResponse.END;
+        }
+        if (StringUtils.isEmpty(recordDetail.getLog())) {
+            return LogMemoryStore.getLog(detailId, line);
         }
         String[] split = recordDetail.getLog().split(System.lineSeparator());
         if (split.length >= line) {
