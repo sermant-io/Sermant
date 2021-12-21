@@ -45,6 +45,8 @@ public class EmergencyPlan {
 
     private Date updateTime;
 
+    private String updateUser;
+
     public Integer getPlanId() {
         return planId;
     }
@@ -171,5 +173,13 @@ public class EmergencyPlan {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser == null ? null : updateUser.trim();
     }
 }

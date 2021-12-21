@@ -1,5 +1,17 @@
 /*
- * Copyright (c) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved.
+ * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.huawei.emergency.service.impl;
@@ -40,11 +52,11 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -100,7 +112,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     @Override
     public CommonResult add(EmergencyPlan emergencyPlan) {
         if (StringUtils.isEmpty(emergencyPlan.getPlanName())) {
-            return CommonResult.failed("请填写预案编号和预案名称");
+            return CommonResult.failed("请填写预案名称");
         }
         EmergencyPlanExample isPlanNameExist = new EmergencyPlanExample();
         isPlanNameExist.createCriteria()
@@ -128,6 +140,10 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     public CommonResult delete(EmergencyPlan emergencyPlan) {
         if (emergencyPlan.getPlanId() == null) {
             return CommonResult.failed("请选择正确的预案");
+        }
+
+        if (havePass(emergencyPlan.getPlanId())) {
+            return CommonResult.failed("审核通过后不能删除");
         }
 
         // 是否正在执行
@@ -182,11 +198,6 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         if (haveRunning(planId)) {
             return CommonResult.failed("当前预案正在执行中，请先完成之前的执行。");
         }
-        EmergencyPlan updatePlan = new EmergencyPlan();
-        updatePlan.setPlanId(planId);
-        updatePlan.setStatus(PlanStatus.RUNNING.getValue());
-        updatePlan.setUpdateTime(new Date());
-        planMapper.updateByPrimaryKeySelective(updatePlan);
 
         // 添加预案执行记录
         EmergencyExec emergencyExec = new EmergencyExec();
@@ -202,6 +213,15 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
             record.setExecId(emergencyExec.getExecId());
             recordMapper.insertSelective(record);
         });
+        EmergencyPlan updatePlan = new EmergencyPlan();
+        updatePlan.setPlanId(planId);
+        updatePlan.setUpdateTime(new Date());
+        updatePlan.setStatus(PlanStatus.RUNNING.getValue());
+        if (allExecRecords.size() == 0) {
+            updatePlan.setStatus(PlanStatus.SUCCESS.getValue());
+        }
+        planMapper.updateByPrimaryKeySelective(updatePlan);
+
 
         // 开始执行不需要任何前置条件的场景
         allExecRecords.stream()
@@ -262,7 +282,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
                 return CommonResult.failed("请设置正确的执行时间");
             }
         } else {
-            nextTriggerTime = scheduleCenter.generateNextTriggerTime(plan, new Date(System.currentTimeMillis() + TaskScheduleCenter.PRE_READ)).getTime();
+            nextTriggerTime = scheduleCenter.calculateNextTriggerTime(plan, new Date(System.currentTimeMillis())).getTime();
         }
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setPlanId(plan.getPlanId());
@@ -273,6 +293,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         updatePlan.setTriggerLastTime(0L);
         updatePlan.setTriggerNextTime(nextTriggerTime);
         updatePlan.setUpdateTime(new Date());
+        updatePlan.setUpdateUser(userName);
         planMapper.updateByPrimaryKeySelective(updatePlan);
         return CommonResult.success();
     }
@@ -324,7 +345,11 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setPlanId(plan.getPlanId());
         updatePlan.setStatus(plan.getStatus());
-        updatePlan.setCheckRemark(plan.getCheckRemark());
+        if (PlanStatus.REJECT.getValue().equals(plan.getStatus())) {
+            updatePlan.setCheckRemark(plan.getCheckRemark());
+        } else {
+            updatePlan.setCheckRemark("");
+        }
         updatePlan.setCheckTime(new Date());
         updatePlan.setCheckUser(userName);
         updatePlan.setUpdateTime(new Date());
@@ -371,6 +396,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         task.setScriptId(taskNode.getScriptId());
         task.setScriptName(taskNode.getScriptName());
         task.setChannelType(taskNode.getChannelType());
+        task.setServerId(StringUtils.join(taskNode.getServiceId(), ","));
         task.setCreateUser(taskNode.getCreateUser());
 
         final CommonResult<EmergencyTask> addResult = taskService.add(task);
@@ -414,25 +440,18 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
 
     @Override
     public CommonResult allSceneExecRecords(CommonPage<EmergencyExecRecord> params) {
-        Page<SceneExecDto> pageInfo = PageHelper.startPage(params.getPageIndex(), params.getPageSize())
-            .doSelectPage(() -> {
-                planMapper.allSceneRecords(params.getObject().getExecId());
-            });
-        return CommonResult.success(pageInfo.getResult(), (int) pageInfo.getTotal());
+        List<SceneExecDto> sceneExecDtos = planMapper.allSceneRecords(params.getObject().getExecId());
+        return CommonResult.success(sceneExecDtos, sceneExecDtos.size());
     }
 
     @Override
     public CommonResult allTaskExecRecords(CommonPage<EmergencyExecRecord> params) {
         EmergencyExecRecord paramsObject = params.getObject();
-        Page<SceneExecDto> pageInfo = PageHelper.startPage(params.getPageIndex(), params.getPageSize())
-            .doSelectPage(() -> {
-                planMapper.allTaskRecords(paramsObject.getExecId(), paramsObject.getSceneId());
-            });
-        List<SceneExecDto> result = pageInfo.getResult();
+        List<SceneExecDto> result = planMapper.allTaskRecords(paramsObject.getExecId(), paramsObject.getSceneId());
         result.forEach(recordDto -> {
             recordDto.setScheduleInfo(recordDetailMapper.selectAllServerDetail(recordDto.getKey()));
         });
-        return CommonResult.success(result, (int) pageInfo.getTotal());
+        return CommonResult.success(result, result.size());
     }
 
     @Override
@@ -501,6 +520,47 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         updatePlan.setUpdateTime(new Date());
         planMapper.updateByPrimaryKeySelective(updatePlan);
         return CommonResult.success();
+    }
+
+    @Override
+    public CommonResult copy(EmergencyPlan emergencyPlan) {
+        if (emergencyPlan.getPlanId() == null) {
+            return CommonResult.failed("请选择要克隆的预案");
+        }
+        CommonResult<EmergencyPlan> addResult = add(emergencyPlan);
+        if (StringUtils.isNotEmpty(addResult.getMsg())) {
+            return addResult;
+        }
+        EmergencyPlan plan = addResult.getData();
+
+        //复制之前预案下的拓扑关系，重新生成任务号
+        CommonResult<List<TaskNode>> queryResult = query(emergencyPlan.getPlanId());
+        List<TaskNode> allTasks = queryResult.getData();
+        copyTaskNodes(allTasks, emergencyPlan.getCreateUser());
+        save(plan.getPlanId(), allTasks, emergencyPlan.getCreateUser());
+        return addResult;
+    }
+
+    /**
+     * 对任务拓扑图中每个任务重新生成新任务
+     *
+     * @param originTaskNodes
+     * @param userName
+     */
+    public void copyTaskNodes(List<TaskNode> originTaskNodes, String userName) {
+        if (originTaskNodes == null) {
+            return;
+        }
+        originTaskNodes.forEach(taskNode -> {
+            EmergencyTask newTask = taskMapper.selectByPrimaryKey(taskNode.getKey());
+            newTask.setTaskId(null);
+            newTask.setCreateUser(userName);
+            newTask.setCreateTime(new Date());
+            newTask.setIsValid(ValidEnum.VALID.getValue());
+            taskMapper.insertSelective(newTask);
+            taskNode.setKey(newTask.getTaskId());
+            copyTaskNodes(taskNode.getChildren(), userName);
+        });
     }
 
     /**

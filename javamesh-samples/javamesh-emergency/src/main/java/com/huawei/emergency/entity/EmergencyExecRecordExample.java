@@ -935,6 +935,76 @@ public class EmergencyExecRecordExample {
             return (Criteria) this;
         }
 
+        public Criteria andServerIdIsNull() {
+            addCriterion("server_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdIsNotNull() {
+            addCriterion("server_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdEqualTo(String value) {
+            addCriterion("server_id =", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdNotEqualTo(String value) {
+            addCriterion("server_id <>", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdGreaterThan(String value) {
+            addCriterion("server_id >", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdGreaterThanOrEqualTo(String value) {
+            addCriterion("server_id >=", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdLessThan(String value) {
+            addCriterion("server_id <", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdLessThanOrEqualTo(String value) {
+            addCriterion("server_id <=", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdLike(String value) {
+            addCriterion("server_id like", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdNotLike(String value) {
+            addCriterion("server_id not like", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdIn(List<String> values) {
+            addCriterion("server_id in", values, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdNotIn(List<String> values) {
+            addCriterion("server_id not in", values, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdBetween(String value1, String value2) {
+            addCriterion("server_id between", value1, value2, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdNotBetween(String value1, String value2) {
+            addCriterion("server_id not between", value1, value2, "serverId");
+            return (Criteria) this;
+        }
+
         public Criteria andServerIpIsNull() {
             addCriterion("server_ip is null");
             return (Criteria) this;
@@ -1672,6 +1742,76 @@ public class EmergencyExecRecordExample {
 
         public Criteria andIsValidNotBetween(String value1, String value2) {
             addCriterion("is_valid not between", value1, value2, "isValid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncIsNull() {
+            addCriterion("sync is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncIsNotNull() {
+            addCriterion("sync is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncEqualTo(String value) {
+            addCriterion("sync =", value, "sync");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncNotEqualTo(String value) {
+            addCriterion("sync <>", value, "sync");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncGreaterThan(String value) {
+            addCriterion("sync >", value, "sync");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncGreaterThanOrEqualTo(String value) {
+            addCriterion("sync >=", value, "sync");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncLessThan(String value) {
+            addCriterion("sync <", value, "sync");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncLessThanOrEqualTo(String value) {
+            addCriterion("sync <=", value, "sync");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncLike(String value) {
+            addCriterion("sync like", value, "sync");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncNotLike(String value) {
+            addCriterion("sync not like", value, "sync");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncIn(List<String> values) {
+            addCriterion("sync in", values, "sync");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncNotIn(List<String> values) {
+            addCriterion("sync not in", values, "sync");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncBetween(String value1, String value2) {
+            addCriterion("sync between", value1, value2, "sync");
+            return (Criteria) this;
+        }
+
+        public Criteria andSyncNotBetween(String value1, String value2) {
+            addCriterion("sync not between", value1, value2, "sync");
             return (Criteria) this;
         }
     }

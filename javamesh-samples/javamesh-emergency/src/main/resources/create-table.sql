@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `emergency_plan`  (
                                    `trigger_last_time` bigint(13) NOT NULL DEFAULT 0 COMMENT '上次触发的时间戳',
                                    `trigger_next_time` bigint(13) NOT NULL DEFAULT 0 COMMENT '下次触发的时间戳',
     `update_time` timestamp  NULL DEFAULT NULL COMMENT '更新时间',
+    `update_user` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '更新人',
                                    PRIMARY KEY (`plan_id`) USING BTREE,
                                    UNIQUE INDEX `plan_no`(`plan_no`) USING BTREE,
                                    INDEX `is_valid`(`is_valid`) USING BTREE
@@ -65,6 +66,7 @@ CREATE TABLE IF NOT EXISTS `emergency_task`  (
                                    `task_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务名称',
                                    `scene_id` int(11) NULL DEFAULT NULL COMMENT '场景ID',
                                    `script_id` int(11) NULL DEFAULT NULL COMMENT '脚本ID',
+    `server_id` varchar(255)  NULL DEFAULT NULL COMMENT '服务器ID集合',
                                    `pre_task_id` int(11) NULL DEFAULT NULL COMMENT '所依赖的任务ID',
                                    `create_user` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
                                    `create_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -107,7 +109,8 @@ CREATE TABLE IF NOT EXISTS `emergency_exec_record`  (
                                           `script_content` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '脚本内容',
                                           `script_type` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '脚本类型 0 shell 1 jython 2 gr0ovy',
                                           `script_params` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '脚本参数',
-                                          `server_ip` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '远程服务器IP',
+    `server_id` varchar(255)  NULL DEFAULT NULL COMMENT '服务器ID集合',
+    `server_ip` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '远程服务器IP',
                                           `server_user` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '服务器用户',
                                           `have_password` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '有无密码 0:无密码,1:有密码',
                                           `password_mode` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码获取方式 0:本地,1:平台',
@@ -142,19 +145,23 @@ CREATE TABLE IF NOT EXISTS `emergency_exec_record_detail`  (
                                                  PRIMARY KEY (`detail_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;$$$
 
-CREATE TABLE IF NOT EXISTS `emergency_server`
-(
-    `server_id`     int(11) NOT NULL AUTO_INCREMENT COMMENT '服务器ID',
-    `server_name`   varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '服务器名称',
-    `server_user`   varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'root' COMMENT '服务器用户',
-    `server_ip`     varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '服务器IP',
-    `server_port`   int(5) NOT NULL DEFAULT 22 COMMENT '服务器端口',
-    `have_password` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '有无密码 0:无密码,1:有密码',
-    `password_mode` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码获取方式 0:本地,1:平台',
-    `password`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
-    `create_user`   varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建人',
-    `create_time`   timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time`   timestamp NULL DEFAULT NULL COMMENT '最后修改时间',
-    `is_valid` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '是否生效',
-    PRIMARY KEY (`server_id`) USING BTREE
-    ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+CREATE TABLE IF NOT EXISTS `emergency_server`  (
+                                     `server_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '服务器ID',
+                                     `server_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '服务器名称',
+                                     `server_user` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'root' COMMENT '服务器用户',
+                                     `server_ip` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '服务器IP',
+                                     `server_port` int(5) NOT NULL DEFAULT 22 COMMENT '服务器端口',
+                                     `have_password` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '有无密码 0:无密码,1:有密码',
+                                     `password_mode` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码获取方式 0:本地,1:平台',
+                                     `password_uri` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码平台地址',
+                                     `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
+                                     `licensed` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'agent代理 0未许可 1已许可',
+                                     `agent_name` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'agent类型 0ngrider 1其它',
+                                     `agent_port` int(5) NULL DEFAULT NULL COMMENT 'agent启动端口',
+                                     `create_user` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建人',
+                                     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                     `update_time` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+                                     `update_user` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改人',
+                                     `is_valid` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '是否生效',
+                                     PRIMARY KEY (`server_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;

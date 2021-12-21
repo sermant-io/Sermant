@@ -39,6 +39,8 @@ public class EmergencyExecRecord {
 
     private String scriptParams;
 
+    private String serverId;
+
     private String serverIp;
 
     private String serverUser;
@@ -62,6 +64,8 @@ public class EmergencyExecRecord {
     private String isValid;
 
     private String sync;
+
+    private Integer debugId;
 
     public Integer getRecordId() {
         return recordId;
@@ -167,6 +171,14 @@ public class EmergencyExecRecord {
         this.scriptParams = scriptParams == null ? null : scriptParams.trim();
     }
 
+    public String getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(String serverId) {
+        this.serverId = serverId == null ? null : serverId.trim();
+    }
+
     public String getServerIp() {
         return serverIp;
     }
@@ -260,10 +272,8 @@ public class EmergencyExecRecord {
     }
 
     public void setSync(String sync) {
-        this.sync = sync;
+        this.sync = sync == null ? null : sync.trim();
     }
-
-    private Integer debugId;
 
     public Integer getDebugId() {
         return debugId;
@@ -272,5 +282,4 @@ public class EmergencyExecRecord {
     public void setDebugId(Integer debugId) {
         this.debugId = debugId;
     }
-
 }

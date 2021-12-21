@@ -160,6 +160,7 @@ public class EmergencyTaskServiceImpl implements EmergencyTaskService {
                 insertTask.setScriptName(emergencyScripts.get(0).getScriptName());
             }
         }
+        insertTask.setServerId(emergencyTask.getServerId());
         insertTask.setTaskName(emergencyTask.getTaskName());
         insertTask.setChannelType(emergencyTask.getChannelType());
         insertTask.setCreateUser(emergencyTask.getCreateUser());

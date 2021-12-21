@@ -48,4 +48,6 @@ public interface EmergencyExecRecordDetailMapper {
     int updateByPrimaryKey(EmergencyExecRecordDetail record);
 
     List<EmergencyExecRecordDetail> selectAllServerDetail(int recordId);
+
+    int updateLogIfAbsent(@Param("detailId") int detailId,@Param("log") String log);
 }

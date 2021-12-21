@@ -40,6 +40,8 @@ public interface EmergencyTaskMapper {
 
     int updateByPrimaryKeySelective(EmergencyTask record);
 
+    int updateByPrimaryKey(EmergencyTask record);
+
     long countPassedPlanByTaskId(Integer id);
 
     int tryClearTaskNo(Integer planId);
