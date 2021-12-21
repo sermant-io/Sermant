@@ -5,6 +5,7 @@
 package com.huawei.emergency.service.impl;
 
 import com.huawei.common.api.CommonResult;
+import com.huawei.common.constant.PlanStatus;
 import com.huawei.common.constant.RecordStatus;
 import com.huawei.common.constant.ValidEnum;
 import com.huawei.emergency.entity.EmergencyExec;
@@ -13,11 +14,13 @@ import com.huawei.emergency.entity.EmergencyExecRecordDetail;
 import com.huawei.emergency.entity.EmergencyExecRecordDetailExample;
 import com.huawei.emergency.entity.EmergencyExecRecordExample;
 import com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs;
+import com.huawei.emergency.entity.EmergencyPlan;
 import com.huawei.emergency.entity.EmergencyScript;
 import com.huawei.emergency.entity.EmergencyServer;
 import com.huawei.emergency.mapper.EmergencyExecMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordDetailMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
+import com.huawei.emergency.mapper.EmergencyPlanMapper;
 import com.huawei.emergency.mapper.EmergencyServerMapper;
 import com.huawei.emergency.service.EmergencyExecService;
 import com.huawei.emergency.service.EmergencySceneService;
@@ -81,6 +84,9 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
 
     @Autowired
     private EmergencyServerMapper serverMapper;
+
+    @Autowired
+    private EmergencyPlanMapper planMapper;
 
     @Autowired
     private Map<String, ScriptExecutor> scriptExecutors;
@@ -198,7 +204,12 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
         }
         if (RecordStatus.ENSURE_FAILED.getValue().equals(result)) {
             stopOtherRecordsById(needEnsureRecord.getRecordId());
+            EmergencyPlan plan = new EmergencyPlan();
+            plan.setPlanId(needEnsureRecord.getPlanId());
+            plan.setStatus(PlanStatus.FAILED.getValue());
+            planMapper.updateByPrimaryKeySelective(plan);
         }
+        handlerFactory.notifySceneRefresh(needEnsureRecord.getExecId(),needEnsureRecord.getSceneId());
         return CommonResult.success();
     }
 

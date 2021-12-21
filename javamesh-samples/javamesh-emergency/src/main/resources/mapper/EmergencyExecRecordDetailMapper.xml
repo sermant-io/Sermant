@@ -459,6 +459,6 @@
     <update id="updateLogIfAbsent">
         update emergency_exec_record_detail
          set log = #{log}
-         where detailId = #{detailId} and log is null
+         where detail_id = #{detailId} and log is null
     </update>
 </mapper>
