@@ -12,7 +12,7 @@
         <sermant.basedir>${pom.basedir}/../..</sermant.basedir>
 
         <package.plugin.name>${project.artifactId}</package.plugin.name>
-        <package.plugin.version>${sermant.version}</package.plugin.version>
+        <package.plugin.version>${project.version}</package.plugin.version>
         <package.plugin.dir>${package.agent.dir}/pluginPackage</package.plugin.dir>
         <package.plugin.type>undefined</package.plugin.type>
         <package.output.dir>${package.plugin.dir}/${package.plugin.name}/${package.plugin.type}</package.output.dir>

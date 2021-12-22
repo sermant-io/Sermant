@@ -16,11 +16,12 @@
 
 package com.huawei.sermant.core.service.dynamicconfig.kie.client.kie;
 
-import com.huawei.sermant.core.service.dynamicconfig.Config;
+import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.AbstractClient;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.ClientUrlManager;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.http.HttpClient;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.http.HttpResult;
+import com.huawei.sermant.core.service.dynamicconfig.kie.config.KieDynamicConfig;
 
 import org.apache.http.HttpStatus;
 
@@ -42,7 +43,7 @@ public class KieClient extends AbstractClient {
     private String kieApi;
 
     public KieClient(ClientUrlManager clientUrlManager) {
-        this(clientUrlManager, Config.getInstance().getProject());
+        this(clientUrlManager, ConfigManager.getConfig(KieDynamicConfig.class).getProject());
     }
 
     public KieClient(ClientUrlManager clientUrlManager, String project) {

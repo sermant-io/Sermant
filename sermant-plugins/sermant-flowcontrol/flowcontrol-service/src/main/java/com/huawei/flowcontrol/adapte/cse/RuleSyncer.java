@@ -18,11 +18,11 @@ package com.huawei.flowcontrol.adapte.cse;
 
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigurationFactoryServiceImpl;
+import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeType;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangeType;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigChangedEvent;
-import com.huawei.sermant.core.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
 
 import java.util.HashMap;
@@ -47,10 +47,10 @@ public class RuleSyncer {
      */
     private static final int MAX_WAIT_INTERVAL_MS = 60 * 5 * 1000;
 
-    private final Map<String, RuleConfigListener> listenerCache = new LinkedHashMap<String, RuleConfigListener>();
+    private final Map<String, RuleDynamicConfigListener> listenerCache = new LinkedHashMap<String, RuleDynamicConfigListener>();
 
-    private final DynamicConfigurationFactoryServiceImpl dynamicConfigurationFactoryService =
-            ServiceManager.getService(DynamicConfigurationFactoryServiceImpl.class);
+    private final DynamicConfigService dynamicConfigurationFactoryService =
+            ServiceManager.getService(DynamicConfigService.class);
 
     /**
      * 初始化通知
@@ -77,9 +77,8 @@ public class RuleSyncer {
         buildAppRequest();
         buildServiceRequest();
         buildCustomRequest();
-        for (Map.Entry<String, RuleConfigListener> entry : listenerCache.entrySet()) {
-            dynamicConfigurationFactoryService.getDynamicConfigurationService()
-                    .addGroupListener(entry.getKey(), entry.getValue());
+        for (Map.Entry<String, RuleDynamicConfigListener> entry : listenerCache.entrySet()) {
+            dynamicConfigurationFactoryService.addGroupListener(entry.getKey(), entry.getValue());
         }
     }
 
@@ -87,9 +86,8 @@ public class RuleSyncer {
      * 停止方法
      */
     public void stop() {
-        for (Map.Entry<String, RuleConfigListener> entry : listenerCache.entrySet()) {
-            dynamicConfigurationFactoryService.getDynamicConfigurationService()
-                    .removeGroupListener(entry.getKey(), entry.getKey(), entry.getValue());
+        for (Map.Entry<String, RuleDynamicConfigListener> entry : listenerCache.entrySet()) {
+            dynamicConfigurationFactoryService.removeGroupListener(entry.getKey());
         }
     }
 
@@ -98,28 +96,28 @@ public class RuleSyncer {
         map.put("app", CseServiceMeta.getInstance().getApp());
         map.put("service", CseServiceMeta.getInstance().getServiceName());
         map.put("environment", CseServiceMeta.getInstance().getEnvironment());
-        listenerCache.put(LabelGroupUtils.createLabelGroup(map), new RuleConfigListener());
+        listenerCache.put(LabelGroupUtils.createLabelGroup(map), new RuleDynamicConfigListener());
     }
 
     private void buildAppRequest() {
         final HashMap<String, String> map = new HashMap<String, String>();
         map.put("app", CseServiceMeta.getInstance().getApp());
         map.put("environment", CseServiceMeta.getInstance().getEnvironment());
-        listenerCache.put(LabelGroupUtils.createLabelGroup(map), new RuleConfigListener());
+        listenerCache.put(LabelGroupUtils.createLabelGroup(map), new RuleDynamicConfigListener());
     }
 
     private void buildCustomRequest() {
         final HashMap<String, String> map = new HashMap<String, String>();
         map.put(CseServiceMeta.getInstance().getCustomLabel(), CseServiceMeta.getInstance().getCustomLabelValue());
-        listenerCache.put(LabelGroupUtils.createLabelGroup(map), new RuleConfigListener());
+        listenerCache.put(LabelGroupUtils.createLabelGroup(map), new RuleDynamicConfigListener());
     }
 
-    static class RuleConfigListener implements ConfigurationListener {
+    static class RuleDynamicConfigListener implements DynamicConfigListener {
 
         @Override
-        public void process(ConfigChangedEvent event) {
+        public void process(DynamicConfigChangeEvent event) {
             ResolverManager.INSTANCE.resolve(event.getKey(), event.getContent(),
-                    event.getChangeType() == ConfigChangeType.DELETED);
+                    event.getChangeType() == DynamicConfigChangeType.DELETED);
             LOGGER.log(Level.INFO, String.format("Config [%s] has been %s ", event.getKey(), event.getChangeType()));
         }
     }

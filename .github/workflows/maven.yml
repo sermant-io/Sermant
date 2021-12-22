@@ -27,7 +27,7 @@ jobs:
         run: |
           mvn -B package -DskipTests --file pom.xml
           mkdir ${{ github.workspace }}/package
-          cp ${{ github.workspace }}/sermant-agent-2.0.5.tar ${{ github.workspace }}/package
+          cp ${{ github.workspace }}/sermant-agent-*.tar ${{ github.workspace }}/package
       - name: upload package
         uses: actions/upload-artifact@v1
         with:

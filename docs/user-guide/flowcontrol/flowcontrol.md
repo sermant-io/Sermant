@@ -221,7 +221,7 @@
 
 ### 3、开启CSE规则适配开关
 
-修改配置文件`Sermant/sermant-agent-2.0.5/agent/pluginPackage/flowcontrol/config/config.yaml`
+修改配置文件`Sermant/sermant-agent-x.x.x/agent/pluginPackage/flowcontrol/config/config.yaml`
 
 ```yaml
 # 流控配置
@@ -252,7 +252,7 @@ mvn clean package
 ### 2、启动应用
 
 ```shell
-java -javaagent:${path}\sermant-agent-2.0.5\agent\sermant-agent.jar=appName=cseFlowControlDemo  -jar CseFlowControlDemo.jar
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=cseFlowControlDemo  -jar CseFlowControlDemo.jar
 ```
 
 > 其中`${path}`为`agent`**根路径**

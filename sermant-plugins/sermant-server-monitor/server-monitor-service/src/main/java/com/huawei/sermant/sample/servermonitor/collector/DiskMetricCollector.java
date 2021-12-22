@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static com.huawei.sermant.sample.servermonitor.common.CalculateUtil.getPercentage;
+import static com.huawei.sermant.sample.monitor.common.utils.CommonUtil.getPercentage;
 
 /**
  * Linux disk指标{@link DiskMetric}采集器，通过执行两次{@link DiskCommand}命令
@@ -77,6 +77,9 @@ public class DiskMetricCollector {
     private final Map<String, DiskMetric> emptyResults = new HashMap<String, DiskMetric>();
 
     public DiskMetricCollector(long collectCycle) {
+        if (collectCycle <= 0) {
+            throw new IllegalArgumentException("Collect cycle must be positive.");
+        }
         this.collectCycleMills = TimeUnit.MILLISECONDS.convert(collectCycle, TimeUnit.SECONDS);
         this.multiPlyFactor = BYTES_PER_SECTOR / collectCycle;
     }

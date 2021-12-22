@@ -21,7 +21,7 @@ import com.huawei.sermant.sample.servermonitor.command.CommandExecutor;
 import com.huawei.sermant.sample.servermonitor.command.CpuCommand;
 import com.huawei.sermant.sample.servermonitor.entity.CpuMetric;
 
-import static com.huawei.sermant.sample.servermonitor.common.CalculateUtil.getPercentage;
+import static com.huawei.sermant.sample.monitor.common.utils.CommonUtil.getPercentage;
 
 /**
  * Linux CPU指标{@link CpuMetric}采集器，通过执行两次{@link CpuCommand}命令

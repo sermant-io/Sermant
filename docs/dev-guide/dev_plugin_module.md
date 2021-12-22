@@ -8,6 +8,7 @@
 - [添加插件主模块](#添加插件主模块)
   - [插件名称和版本](#插件名称和版本)
 - [插件开发流程](#插件开发流程)
+  - [插件开发前言](#插件开发前言)
   - [添加插件模块](#添加插件模块)
   - [添加插件服务模块](#添加插件服务模块)
   - [添加配置](#添加配置)
@@ -69,7 +70,7 @@
 插件的名称和版本，属于`插件模块(plugin)`和`服务模块(service)`的内禀属性，因此我们将他们封装到`manifest`文件中，作为`jar`包的元信息存在：
 
 - **插件名称**封装于`manifest`文件的`Sermant-Name-Version`参数中，通过`pom`文件中的`package.plugin.name`参数设定，默认含义为**插件名称**。
-- **插件版本**封装于`manifest`文件的`Sermant-Plugin-Version`参数中，默认取值为`sermant.version`，可通过`pom`文件中的`package.plugin.version`参数修改。
+- **插件版本**封装于`manifest`文件的`Sermant-Plugin-Version`参数中，默认取值为`project.version`，可通过`pom`文件中的`package.plugin.version`参数修改。
 ```xml
 <properties>
   <package.plugin.name>${插件名称}</package.plugin.name>
@@ -79,15 +80,30 @@
 
 在插件包被加载的过程中，将对`插件模块(plugin)`和`服务模块(service)`的名称和版本进行校验，如果不满足以下条件的话，将抛出异常：
 
-- 对于所有`插件模块(plugin)`来说，由于不允许包含第三方依赖，因此，在加载`插件模块(plugin)`存放目录(`插件主模块(main)`目录下的`plugin`目录)时，如果检出不含**插件名称**和**插件版本**的第三方包，将抛出异常。
+- 对于所有`插件模块(plugin)`来说，由于不允许包含`byte-buddy`和`slf4j`以外的第三方依赖，考虑到`byte-buddy`和`slf4j`包将通过`shade`插件修改全限定名，因此，在加载`插件模块(plugin)`存放目录(`插件主模块(main)`目录下的`plugin`目录)时，如果检出不含**插件名称**和**插件版本**的第三方包，将抛出异常。
 - 对于所有`插件模块(plugin)`和`服务模块(service)`来说，如果其中设置的**插件名称**与**插件设定文件**中配置的名称不一致，将抛出异常。
 - 对于所有`插件模块(plugin)`和`服务模块(service)`来说，如果其中存在多个不同的**插件版本**，将抛出异常。
 
-对于插件开发者来说，如果没有特殊的需要，不建议修改默认的设计，保持`插件模块(plugin)`中不使用第三方依赖、`插件模块(plugin)`写接口`服务模块(service)`写实现等原则就好。
+对于插件开发者来说，如果没有特殊的需要，不建议修改默认的设计，保持`插件模块(plugin)`中不使用`byte-buddy`和`slf4j`以外的第三方依赖、`插件模块(plugin)`写接口、`服务模块(service)`写实现等原则就好。
 
 ## 插件开发流程
 
 本节将介绍插件开发的相关流程，其中涉及的模块为`插件模块(plugin)`和`服务模块(service)`。
+
+### 插件开发前言
+
+`插件模块(plugin)`的定位是定义宿主应用的增强逻辑，考虑到依赖冲突的问题，其增强的字节码中不能涉及对`byte-buddy`和`slf4j`以外的第三方依赖的使用，这时就需要分两种情况讨论：
+
+- 对于简单的插件，其中编写的插件服务只会使用核心包中的自研功能，不涉及需要依赖其他第三方依赖的复杂功能时，那么只需要开发`插件模块(plugin)`即可。`插件模块(plugin)`将被系统类加载器`AppClassLoader`加载。
+- 对于一些复杂的插件，如果需要依赖其他第三方依赖的复杂功能时，就需要在`插件模块(plugin)`设计服务接口，并编写`服务模块(service)`予以实现。其中`插件模块(plugin)`仍被系统类加载器`AppClassLoader`加载，而`服务模块(service)`则会优先被自定义类加载器[PluginClassLoader](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/classloader/PluginClassLoader.java)加载，以此达成类加载级别的依赖隔离。
+
+至于**核心模块**中的第三方依赖，他们在打包过程中会随自研代码一起，被[shade插件](https://github.com/apache/maven-shade-plugin)修正全限定名。除非`插件模块(plugin)`打包时做同样的全限定名的操作，不然是无法在`插件模块(plugin)`使用的。
+
+另外，对于`byte-buddy`包来说，由于方法匹配器没有在**核心模块**中提取，`插件模块(plugin)`仍需沿用他们，因此对`插件模块(plugin)`才有修正`byte-buddy`包全限定名的要求。
+
+至于`slf4j`包，考虑到在**复杂插件服务**初始化期间，由于类加载器隔离的问题，导致第三方的`slf4j`接口使用了**核心功能模块**的配置却无法关联到**核心功能模块**的实现，因此只能修正`slf4j`的全限定名以适配。
+
+以上就是`插件模块(plugin)`和`服务模块(service)`打包时必须修正`byte-buddy`和`slf4j`的全限定名的原因，也是`插件模块(plugin)`可以使用这两个依赖的原因。
 
 ### 添加插件模块
 
@@ -129,8 +145,8 @@
     </dependency>
   </dependencies>
   ```
-  注意，不建议为`插件模块(plugin)`添加或使用其他第三方依赖！
-- 为`插件模块(plugin)`子模块添加`shade`插件，以修正`byte-buddy`依赖的全限定名：
+  注意，不能为`插件模块(plugin)`添加或使用`byte-buddy`和`slf4j`以外的第三方依赖，除非使用`shade`插件将他们的全限定名修正(不建议)！
+- 为`插件模块(plugin)`子模块添加`shade`插件，以修正`byte-buddy`和`slf4j`的全限定名，原因详见[插件开发前言](#插件开发前言)：
   ```xml
   <build>
     <plugins>
@@ -141,15 +157,6 @@
     </plugins>
   </build>
   ```
-
-`插件模块(plugin)`的定位是定义宿主应用的增强逻辑，考虑到依赖冲突的问题，其增强的字节码中不能涉及对第三方依赖的使用，这时就需要分两种情况讨论：
-
-- 对于简单的插件，其中编写的插件服务只会使用核心包中的自研功能，不涉及其他需要依赖第三方依赖的复杂功能时，那么只需要开发`插件模块(plugin)`即可。`插件模块(plugin)`将被系统类加载器`AppClassLoader`加载。
-- 对于一些复杂的插件，如果涉及需要依赖第三方依赖的复杂功能时，就需要在`插件模块(plugin)`设计服务接口，并编写`服务模块(service)`予以实现。其中`插件模块(plugin)`仍被系统类加载器`AppClassLoader`加载，而`服务模块(service)`则会优先被自定义类加载器[PluginClassLoader](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/classloader/PluginClassLoader.java)加载，以此达成类加载级别的依赖隔离。
-
-至于**核心模块**中的第三方依赖，他们在打包过程中会随自研代码一起，被[shade插件](https://github.com/apache/maven-shade-plugin)修正全限定名。除非`插件模块(plugin)`打包时做同样的操作，不然是无法再`插件模块(plugin)`使用的。
-
-当然，对于`byte-buddy`包来说，由于方法匹配器没有在**核心模块**中提取，`插件模块(plugin)`仍需沿用他们，因此对`插件模块(plugin)`才有修正`byte-buddy`包全限定名的要求。
 
 ### 添加插件服务模块
 
@@ -198,7 +205,7 @@
   </dependencies>
   ```
   `服务模块(service)`中允许按需添加第三方依赖！
-- 为`服务模块(service)`子模块添加`shade`插件(或其他打包插件)打包：
+- 为`服务模块(service)`子模块添加`shade`插件打包：
   ```xml
   <build>
     <plugins>
@@ -209,6 +216,7 @@
     </plugins>
   </build>
   ```
+  这里不建议使用其他打包插件，详见[插件开发前言](#插件开发前言)。
 
 ### 添加配置
 
@@ -266,7 +274,7 @@
 - 插件服务示例：插件服务是核心服务系统的特化，遵循核心服务系统的规则。
   - 如[DemoSimpleService](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)所示，是一个简单的插件服务，他编写于`插件模块(plugin)`中。鉴于简单的插件服务的定位，他只能使用java原生api以及核心包中自研的api，不能使用任何第三方api(无论核心包是否引入)。
   - [DemoComplexService](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)接口是示例`插件模块(plugin)`中定义复杂服务接口，该接口将会在`服务模块(service)`中实现。
-  - [DemoComplexServiceImpl](../../sermant-plugins/sermant-example/demo-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java)是[DemoComplexService](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)接口的实现，他编写于`服务模块(service)`中，属于复杂的插件服务，可以按需使用第三方依赖(示例中未使用)。
+  - [DemoComplexServiceImpl](../../sermant-plugins/sermant-example/demo-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java)是[DemoComplexService](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)接口的实现，他编写于`服务模块(service)`中，属于复杂的插件服务，可以按需使用其他第三方依赖(示例中未使用)。
   - 简单的插件服务和复杂的插件服务接口都需要继承(实现)[PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/service/PluginService.java)接口。
   - 需要添加[PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/service/PluginService.java)的[spi配置文件](../../sermant-plugins/sermant-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.sermant.core.plugin.service.PluginService)。
   - 通过以下代码可以获取服务对象：
@@ -280,7 +288,7 @@
 
 本节将列举一些开发插件过程中容易出现错误的点：
 
-- `插件模块(plugin)`不能依赖或使用第三方依赖，如果服务功能较为复杂，必须使用第三方依赖，则可以将他们提取为`服务模块(service)`，或者用shade插件隔离(不建议)。
+- `插件模块(plugin)`不能依赖或使用`byte-buddy`和`slf4j`以外第三方依赖，如果服务功能较为复杂，必须使用其他第三方依赖，则可以将他们提取为`服务模块(service)`，或者用`shade`插件隔离(不建议)。
 - 同个`插件主模块(main)`中，如果存在多个`服务模块(service)`，他们不能存在依赖冲突的问题。
 - 继承[AliaConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/config/AliaConfig.java)的插件配置类对应的spi配置文件依然是[PluginConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/config/PluginConfig.java)。
 - 插件的配置文件有且只能有一个，即`config.yaml`。
@@ -291,7 +299,7 @@
 
 ### 插件打包流程
 
-- `插件模块(plugin)`的产品输出到整个产品的`agent/pluginPackage/${功能名称}/plugin`目录。`插件模块(plugin)`涉及到`byte-buddy`包的使用，通常需要使用`maven-shade-plugin`插件作包名修正，添加如下标签即可：
+- `插件模块(plugin)`的产品输出到整个产品的`agent/pluginPackage/${功能名称}/plugin`目录，直接使用`shade`插件打包，添加如下标签即可：
   ```xml
   <build>
     <plugins>
@@ -303,10 +311,22 @@
   </build>
   ```
 - `服务模块(service)`的产品输出到整个产品的`agent/pluginPackage/${功能名称}/service`目录：
-  - 可以选择使用`assembly`插件或`shade`插件，将带依赖的`服务模块(service)`打到`agent/pluginPackage/${功能名称}/service`目录。
-  - 也可以选择使用`dependency`插件将相关的第三方依赖连同不带依赖的`服务模块(service)`打到`agent/pluginPackage/${功能名称}/service`目录下。
+  - 优先选择使用`shade`插件，添加以下标签：
+    ```xml
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+        </plugin>
+      </plugins>
+    </build>
+    ```
+  - 如果确认`服务模块(service)`不含`byte-buddy`和`slf4j`依赖，也可以：
+    - 选择使用`assembly`插件打带依赖包。
+    - 或者直接使用`jar`插件和`dependency`插件将相关的第三方依赖连同不带依赖的`服务模块(service)`包一同打到`agent/pluginPackage/${功能名称}/service`目录下。
   
-  通常，如果存在多个`服务模块(service)`，选择使用后者可以有效避免依赖冲突和减少重复依赖。当然，如果单纯为了方便，也可以像`sermant-example`一样直接使用`shade`插件。
+  另外，如果存在多个`服务模块(service)`，且他们存在公共依赖(`byte-buddy`和`slf4j`除外)，可以选择混用`shade`插件和`dependency`插件，将这些公共依赖排除出`shade`插件的依赖列表，并使用`dependency`插件导出。
 
 ## 附加件开发流程
 

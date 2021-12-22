@@ -46,6 +46,9 @@ public class NetworkMetricCollector {
     private NetworkCommand.NetDev lastNetDev;
 
     public NetworkMetricCollector(long collectCycle) {
+        if (collectCycle <= 0) {
+            throw new IllegalArgumentException("Collect cycle must be positive.");
+        }
         this.collectCycle = collectCycle;
         lastNetDev = CommandExecutor.execute(Command.NETWORK);
     }
