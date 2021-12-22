@@ -904,6 +904,76 @@ public class EmergencyTaskExample {
             addCriterion("submit_info not between", value1, value2, "submitInfo");
             return (Criteria) this;
         }
+
+        public Criteria andServerIdIsNull() {
+            addCriterion("server_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdIsNotNull() {
+            addCriterion("server_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdEqualTo(String value) {
+            addCriterion("server_id =", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdNotEqualTo(String value) {
+            addCriterion("server_id <>", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdGreaterThan(String value) {
+            addCriterion("server_id >", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdGreaterThanOrEqualTo(String value) {
+            addCriterion("server_id >=", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdLessThan(String value) {
+            addCriterion("server_id <", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdLessThanOrEqualTo(String value) {
+            addCriterion("server_id <=", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdLike(String value) {
+            addCriterion("server_id like", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdNotLike(String value) {
+            addCriterion("server_id not like", value, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdIn(List<String> values) {
+            addCriterion("server_id in", values, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdNotIn(List<String> values) {
+            addCriterion("server_id not in", values, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdBetween(String value1, String value2) {
+            addCriterion("server_id between", value1, value2, "serverId");
+            return (Criteria) this;
+        }
+
+        public Criteria andServerIdNotBetween(String value1, String value2) {
+            addCriterion("server_id not between", value1, value2, "serverId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

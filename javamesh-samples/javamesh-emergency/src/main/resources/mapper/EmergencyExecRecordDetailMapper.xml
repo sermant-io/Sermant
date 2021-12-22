@@ -455,4 +455,10 @@
         where t1.record_id = #{recordId}
           and is_valid = '1'
     </select>
+
+    <update id="updateLogIfAbsent">
+        update emergency_exec_record_detail
+         set log = #{log}
+         where detail_id = #{detailId} and log is null
+    </update>
 </mapper>

@@ -13,8 +13,10 @@ import com.huawei.emergency.entity.EmergencyExecRecordDetail;
 import com.huawei.emergency.entity.EmergencyExecRecordDetailExample;
 import com.huawei.emergency.entity.EmergencyExecRecordExample;
 import com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs;
+import com.huawei.emergency.entity.EmergencyServer;
 import com.huawei.emergency.mapper.EmergencyExecRecordDetailMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
+import com.huawei.emergency.mapper.EmergencyServerMapper;
 import com.huawei.emergency.service.EmergencySceneService;
 import com.huawei.emergency.service.EmergencyTaskService;
 import com.huawei.script.exec.ExecResult;
@@ -75,6 +77,9 @@ public class ExecRecordHandlerFactory {
 
     @Autowired
     private EmergencyExecRecordDetailMapper recordDetailMapper;
+
+    @Autowired
+    EmergencyServerMapper serverMapper;
 
     @Autowired
     private Map<String, ScriptExecutor> allScriptExecutors;
@@ -252,7 +257,16 @@ public class ExecRecordHandlerFactory {
             execInfo.setParams(split);
         }
 
-        if (StringUtils.isNotEmpty(recordDetail.getServerIp())) {
+        if (recordDetail.getServerIp() != null) {
+            EmergencyServer server = serverMapper.selectByPrimaryKey(recordDetail.getServerId());
+            if (server != null) {
+                ServerInfo serverInfo = new ServerInfo(server.getServerIp(), server.getServerUser(), server.getServerPort());
+                if ("1".equals(server.getHavePassword())) {
+                    serverInfo.setServerPassword(parsePassword(server.getPasswordMode(), server.getPassword()));
+                }
+                execInfo.setRemoteServerInfo(serverInfo);
+            }
+        } else if (StringUtils.isNotEmpty(recordDetail.getServerIp())) {
             ServerInfo serverInfo = new ServerInfo(recordDetail.getServerIp(), record.getServerUser());
             if ("1".equals(record.getHavePassword())) {
                 serverInfo.setServerPassword(parsePassword(record.getPasswordMode(), record.getPassword()));
@@ -265,22 +279,32 @@ public class ExecRecordHandlerFactory {
     @Transactional(rollbackFor = Exception.class)
     public List<EmergencyExecRecordDetail> generateRecordDetail(EmergencyExecRecord record) {
         List<EmergencyExecRecordDetail> result = new ArrayList<>();
-        if (StringUtils.isNotEmpty(record.getServerIp())) {
-            String[] ipArr = record.getServerIp().split(",");
-            for (String ip : ipArr) {
-                EmergencyExecRecordDetail recordDetail = new EmergencyExecRecordDetail();
-                recordDetail.setExecId(record.getExecId());
-                recordDetail.setRecordId(record.getRecordId());
-                recordDetail.setStatus(RecordStatus.PENDING.getValue());
-                recordDetail.setServerIp(ip);
-                recordDetailMapper.insertSelective(recordDetail);
-                result.add(recordDetail);
+        if (StringUtils.isNotEmpty(record.getServerId())) {
+            String[] serverIdArr = record.getServerId().split(",");
+            for (String serverId : serverIdArr) {
+                try {
+                    EmergencyServer server = serverMapper.selectByPrimaryKey(Integer.valueOf(serverId));
+                    if (server == null) {
+                        continue;
+                    }
+                    EmergencyExecRecordDetail recordDetail = new EmergencyExecRecordDetail();
+                    recordDetail.setExecId(record.getExecId());
+                    recordDetail.setRecordId(record.getRecordId());
+                    recordDetail.setStatus(RecordStatus.PENDING.getValue());
+                    recordDetail.setServerId(server.getServerId());
+                    recordDetail.setServerIp(server.getServerIp());
+                    recordDetailMapper.insertSelective(recordDetail);
+                    result.add(recordDetail);
+                } catch (NumberFormatException e) {
+                    LOGGER.error("parse record.serverId error,recordId={}. {}", record.getRecordId(), e.getMessage());
+                }
             }
         } else {
             EmergencyExecRecordDetail recordDetail = new EmergencyExecRecordDetail();
             recordDetail.setExecId(record.getExecId());
             recordDetail.setRecordId(record.getRecordId());
             recordDetail.setStatus(RecordStatus.PENDING.getValue());
+            recordDetail.setServerIp(record.getServerIp());
             recordDetailMapper.insertSelective(recordDetail);
             result.add(recordDetail);
         }
@@ -296,9 +320,15 @@ public class ExecRecordHandlerFactory {
                 return source;
             }
         }
-        return restTemplate.getForObject(source, String.class);
+        return "123456";
     }
 
+    /**
+     * 判断此任务记录record是否已经完成，即判断该record下是否存在未完成的record_detail
+     *
+     * @param recordId record主键
+     * @return
+     */
     public boolean isRecordFinished(int recordId) {
         EmergencyExecRecordDetailExample isFinished = new EmergencyExecRecordDetailExample();
         isFinished.createCriteria()
@@ -308,6 +338,12 @@ public class ExecRecordHandlerFactory {
         return recordDetailMapper.countByExample(isFinished) == 0;
     }
 
+    /**
+     * 向前端推送刷新执行记录下，场景页面的通知
+     *
+     * @param execId 执行Id
+     * @param sceneId 场景ID
+     */
     public void notifySceneRefresh(int execId, int sceneId) {
         EmergencyExecRecordExample sceneRecordCondition = new EmergencyExecRecordExample();
         sceneRecordCondition.createCriteria()

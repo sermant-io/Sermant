@@ -162,7 +162,7 @@ public class EmergencyPlanController {
                                   @RequestParam(value = "status_label", required = false) String statusLabel,
                                   @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
                                   @RequestParam(value = "current", defaultValue = "1") int current,
-                                  @RequestParam(value = "sorter", defaultValue = "update_time") String sorter,
+                                  @RequestParam(value = "sorter", defaultValue = "create_time") String sorter,
                                   @RequestParam(value = "order", defaultValue = "DESC") String order) {
         CommonPage<PlanQueryParams> params = new CommonPage<>();
         params.setPageSize(pageSize);
@@ -170,7 +170,7 @@ public class EmergencyPlanController {
         params.setSortField(sorter);
         if ("ascend".equals(order)) {
             params.setSortType("ASC");
-        } else {
+        } else if ("descend".equals(order)) {
             params.setSortType("DESC");
         }
         PlanQueryParams planParams = new PlanQueryParams();
@@ -281,6 +281,12 @@ public class EmergencyPlanController {
                 .map(PlanStatus::getStatusLabel)
                 .collect(Collectors.toList()).toArray()
         );
+    }
+
+    @PostMapping("/plan/copy")
+    public CommonResult copyPlan(HttpServletRequest request, @RequestBody EmergencyPlan emergencyPlan){
+        emergencyPlan.setCreateUser(parseUserName(request));
+        return planService.copy(emergencyPlan);
     }
 
     private String parseUserName(HttpServletRequest request) {

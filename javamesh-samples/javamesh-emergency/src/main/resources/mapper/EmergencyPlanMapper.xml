@@ -1,398 +1,405 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huawei.emergency.mapper.EmergencyPlanMapper">
-    <resultMap id="BaseResultMap" type="com.huawei.emergency.entity.EmergencyPlan">
-        <id column="plan_id" jdbcType="INTEGER" property="planId"/>
-        <result column="plan_no" jdbcType="VARCHAR" property="planNo"/>
-        <result column="plan_name" jdbcType="VARCHAR" property="planName"/>
-        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="is_valid" jdbcType="VARCHAR" property="isValid"/>
-        <result column="check_user" jdbcType="VARCHAR" property="checkUser"/>
-        <result column="check_time" jdbcType="TIMESTAMP" property="checkTime"/>
-        <result column="check_remark" jdbcType="VARCHAR" property="checkRemark"/>
-        <result column="status" jdbcType="VARCHAR" property="status"/>
-        <result column="schedule_type" jdbcType="VARCHAR" property="scheduleType"/>
-        <result column="schedule_conf" jdbcType="VARCHAR" property="scheduleConf"/>
-        <result column="schedule_status" jdbcType="VARCHAR" property="scheduleStatus"/>
-        <result column="trigger_last_time" jdbcType="BIGINT" property="triggerLastTime"/>
-        <result column="trigger_next_time" jdbcType="BIGINT" property="triggerNextTime"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-    </resultMap>
-    <sql id="Example_Where_Clause">
-        <where>
-            <foreach collection="oredCriteria" item="criteria" separator="or">
-                <if test="criteria.valid">
-                    <trim prefix="(" prefixOverrides="and" suffix=")">
-                        <foreach collection="criteria.criteria" item="criterion">
-                            <choose>
-                                <when test="criterion.noValue">
-                                    and ${criterion.condition}
-                                </when>
-                                <when test="criterion.singleValue">
-                                    and ${criterion.condition} #{criterion.value}
-                                </when>
-                                <when test="criterion.betweenValue">
-                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                                </when>
-                                <when test="criterion.listValue">
-                                    and ${criterion.condition}
-                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
-                                             separator=",">
-                                        #{listItem}
-                                    </foreach>
-                                </when>
-                            </choose>
-                        </foreach>
-                    </trim>
-                </if>
+  <resultMap id="BaseResultMap" type="com.huawei.emergency.entity.EmergencyPlan">
+    <id column="plan_id" jdbcType="INTEGER" property="planId" />
+    <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
+    <result column="plan_name" jdbcType="VARCHAR" property="planName" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_valid" jdbcType="VARCHAR" property="isValid" />
+    <result column="check_user" jdbcType="VARCHAR" property="checkUser" />
+    <result column="check_time" jdbcType="TIMESTAMP" property="checkTime" />
+    <result column="check_remark" jdbcType="VARCHAR" property="checkRemark" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="schedule_type" jdbcType="VARCHAR" property="scheduleType" />
+    <result column="schedule_conf" jdbcType="VARCHAR" property="scheduleConf" />
+    <result column="schedule_status" jdbcType="VARCHAR" property="scheduleStatus" />
+    <result column="trigger_last_time" jdbcType="BIGINT" property="triggerLastTime" />
+    <result column="trigger_next_time" jdbcType="BIGINT" property="triggerNextTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
             </foreach>
-        </where>
-    </sql>
-    <sql id="Update_By_Example_Where_Clause">
-        <where>
-            <foreach collection="example.oredCriteria" item="criteria" separator="or">
-                <if test="criteria.valid">
-                    <trim prefix="(" prefixOverrides="and" suffix=")">
-                        <foreach collection="criteria.criteria" item="criterion">
-                            <choose>
-                                <when test="criterion.noValue">
-                                    and ${criterion.condition}
-                                </when>
-                                <when test="criterion.singleValue">
-                                    and ${criterion.condition} #{criterion.value}
-                                </when>
-                                <when test="criterion.betweenValue">
-                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                                </when>
-                                <when test="criterion.listValue">
-                                    and ${criterion.condition}
-                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
-                                             separator=",">
-                                        #{listItem}
-                                    </foreach>
-                                </when>
-                            </choose>
-                        </foreach>
-                    </trim>
-                </if>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
             </foreach>
-        </where>
-    </sql>
-    <sql id="Base_Column_List">
-        plan_id
-        , plan_no, plan_name, create_user, create_time, is_valid, check_user, check_time,
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    plan_id, plan_no, plan_name, create_user, create_time, is_valid, check_user, check_time, 
     check_remark, status, schedule_type, schedule_conf, schedule_status, trigger_last_time, 
-    trigger_next_time, update_time
-    </sql>
-    <select id="selectByExample" parameterType="com.huawei.emergency.entity.EmergencyPlanExample"
-            resultMap="BaseResultMap">
-        select
-        <if test="distinct">
-            distinct
-        </if>
-        'false' as QUERYID,
-        <include refid="Base_Column_List"/>
-        from emergency_plan
-        <if test="_parameter != null">
-            <include refid="Example_Where_Clause"/>
-        </if>
-        <if test="orderByClause != null">
-            order by ${orderByClause}
-        </if>
-    </select>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from emergency_plan
-        where plan_id = #{planId,jdbcType=INTEGER}
-    </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-        delete
-        from emergency_plan
-        where plan_id = #{planId,jdbcType=INTEGER}
-    </delete>
-    <delete id="deleteByExample" parameterType="com.huawei.emergency.entity.EmergencyPlanExample">
-        delete from emergency_plan
-        <if test="_parameter != null">
-            <include refid="Example_Where_Clause"/>
-        </if>
-    </delete>
-    <insert id="insert" parameterType="com.huawei.emergency.entity.EmergencyPlan">
-        <selectKey keyProperty="planId" order="AFTER" resultType="java.lang.Integer">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
-        insert into emergency_plan (plan_no, plan_name, create_user,
-        create_time, is_valid, check_user,
-        check_time, check_remark, status,
-        schedule_type, schedule_conf, schedule_status,
-        trigger_last_time, trigger_next_time, update_time
-        )
-        values (#{planNo,jdbcType=VARCHAR}, #{planName,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR},
-        #{createTime,jdbcType=TIMESTAMP}, #{isValid,jdbcType=VARCHAR}, #{checkUser,jdbcType=VARCHAR},
-        #{checkTime,jdbcType=TIMESTAMP}, #{checkRemark,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
-        #{scheduleType,jdbcType=VARCHAR}, #{scheduleConf,jdbcType=VARCHAR}, #{scheduleStatus,jdbcType=VARCHAR},
-        #{triggerLastTime,jdbcType=BIGINT}, #{triggerNextTime,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}
-        )
-    </insert>
-    <insert id="insertSelective" parameterType="com.huawei.emergency.entity.EmergencyPlan">
-        <selectKey keyProperty="planId" order="AFTER" resultType="java.lang.Integer">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
-        insert into emergency_plan
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="planNo != null">
-                plan_no,
-            </if>
-            <if test="planName != null">
-                plan_name,
-            </if>
-            <if test="createUser != null">
-                create_user,
-            </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="isValid != null">
-                is_valid,
-            </if>
-            <if test="checkUser != null">
-                check_user,
-            </if>
-            <if test="checkTime != null">
-                check_time,
-            </if>
-            <if test="checkRemark != null">
-                check_remark,
-            </if>
-            <if test="status != null">
-                status,
-            </if>
-            <if test="scheduleType != null">
-                schedule_type,
-            </if>
-            <if test="scheduleConf != null">
-                schedule_conf,
-            </if>
-            <if test="scheduleStatus != null">
-                schedule_status,
-            </if>
-            <if test="triggerLastTime != null">
-                trigger_last_time,
-            </if>
-            <if test="triggerNextTime != null">
-                trigger_next_time,
-            </if>
-            <if test="updateTime != null">
-                update_time,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="planNo != null">
-                #{planNo,jdbcType=VARCHAR},
-            </if>
-            <if test="planName != null">
-                #{planName,jdbcType=VARCHAR},
-            </if>
-            <if test="createUser != null">
-                #{createUser,jdbcType=VARCHAR},
-            </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="isValid != null">
-                #{isValid,jdbcType=VARCHAR},
-            </if>
-            <if test="checkUser != null">
-                #{checkUser,jdbcType=VARCHAR},
-            </if>
-            <if test="checkTime != null">
-                #{checkTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="checkRemark != null">
-                #{checkRemark,jdbcType=VARCHAR},
-            </if>
-            <if test="status != null">
-                #{status,jdbcType=VARCHAR},
-            </if>
-            <if test="scheduleType != null">
-                #{scheduleType,jdbcType=VARCHAR},
-            </if>
-            <if test="scheduleConf != null">
-                #{scheduleConf,jdbcType=VARCHAR},
-            </if>
-            <if test="scheduleStatus != null">
-                #{scheduleStatus,jdbcType=VARCHAR},
-            </if>
-            <if test="triggerLastTime != null">
-                #{triggerLastTime,jdbcType=BIGINT},
-            </if>
-            <if test="triggerNextTime != null">
-                #{triggerNextTime,jdbcType=BIGINT},
-            </if>
-            <if test="updateTime != null">
-                #{updateTime,jdbcType=TIMESTAMP},
-            </if>
-        </trim>
-    </insert>
-    <select id="countByExample" parameterType="com.huawei.emergency.entity.EmergencyPlanExample"
-            resultType="java.lang.Long">
-        select count(*) from emergency_plan
-        <if test="_parameter != null">
-            <include refid="Example_Where_Clause"/>
-        </if>
-    </select>
-    <update id="updateByExampleSelective" parameterType="map">
-        update emergency_plan
-        <set>
-            <if test="record.planId != null">
-                plan_id = #{record.planId,jdbcType=INTEGER},
-            </if>
-            <if test="record.planNo != null">
-                plan_no = #{record.planNo,jdbcType=VARCHAR},
-            </if>
-            <if test="record.planName != null">
-                plan_name = #{record.planName,jdbcType=VARCHAR},
-            </if>
-            <if test="record.createUser != null">
-                create_user = #{record.createUser,jdbcType=VARCHAR},
-            </if>
-            <if test="record.createTime != null">
-                create_time = #{record.createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="record.isValid != null">
-                is_valid = #{record.isValid,jdbcType=VARCHAR},
-            </if>
-            <if test="record.checkUser != null">
-                check_user = #{record.checkUser,jdbcType=VARCHAR},
-            </if>
-            <if test="record.checkTime != null">
-                check_time = #{record.checkTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="record.checkRemark != null">
-                check_remark = #{record.checkRemark,jdbcType=VARCHAR},
-            </if>
-            <if test="record.status != null">
-                status = #{record.status,jdbcType=VARCHAR},
-            </if>
-            <if test="record.scheduleType != null">
-                schedule_type = #{record.scheduleType,jdbcType=VARCHAR},
-            </if>
-            <if test="record.scheduleConf != null">
-                schedule_conf = #{record.scheduleConf,jdbcType=VARCHAR},
-            </if>
-            <if test="record.scheduleStatus != null">
-                schedule_status = #{record.scheduleStatus,jdbcType=VARCHAR},
-            </if>
-            <if test="record.triggerLastTime != null">
-                trigger_last_time = #{record.triggerLastTime,jdbcType=BIGINT},
-            </if>
-            <if test="record.triggerNextTime != null">
-                trigger_next_time = #{record.triggerNextTime,jdbcType=BIGINT},
-            </if>
-            <if test="record.updateTime != null">
-                update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-            </if>
-        </set>
-        <if test="_parameter != null">
-            <include refid="Update_By_Example_Where_Clause"/>
-        </if>
-    </update>
-    <update id="updateByExample" parameterType="map">
-        update emergency_plan
-        set plan_id = #{record.planId,jdbcType=INTEGER},
+    trigger_next_time, update_time, update_user
+  </sql>
+  <select id="selectByExample" parameterType="com.huawei.emergency.entity.EmergencyPlanExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from emergency_plan
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from emergency_plan
+    where plan_id = #{planId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from emergency_plan
+    where plan_id = #{planId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huawei.emergency.entity.EmergencyPlanExample">
+    delete from emergency_plan
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huawei.emergency.entity.EmergencyPlan">
+    <selectKey keyProperty="planId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into emergency_plan (plan_no, plan_name, create_user, 
+      create_time, is_valid, check_user, 
+      check_time, check_remark, status, 
+      schedule_type, schedule_conf, schedule_status, 
+      trigger_last_time, trigger_next_time, update_time, 
+      update_user)
+    values (#{planNo,jdbcType=VARCHAR}, #{planName,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{isValid,jdbcType=VARCHAR}, #{checkUser,jdbcType=VARCHAR}, 
+      #{checkTime,jdbcType=TIMESTAMP}, #{checkRemark,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{scheduleType,jdbcType=VARCHAR}, #{scheduleConf,jdbcType=VARCHAR}, #{scheduleStatus,jdbcType=VARCHAR}, 
+      #{triggerLastTime,jdbcType=BIGINT}, #{triggerNextTime,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huawei.emergency.entity.EmergencyPlan">
+    <selectKey keyProperty="planId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into emergency_plan
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="planNo != null">
+        plan_no,
+      </if>
+      <if test="planName != null">
+        plan_name,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="isValid != null">
+        is_valid,
+      </if>
+      <if test="checkUser != null">
+        check_user,
+      </if>
+      <if test="checkTime != null">
+        check_time,
+      </if>
+      <if test="checkRemark != null">
+        check_remark,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="scheduleType != null">
+        schedule_type,
+      </if>
+      <if test="scheduleConf != null">
+        schedule_conf,
+      </if>
+      <if test="scheduleStatus != null">
+        schedule_status,
+      </if>
+      <if test="triggerLastTime != null">
+        trigger_last_time,
+      </if>
+      <if test="triggerNextTime != null">
+        trigger_next_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="planNo != null">
+        #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="planName != null">
+        #{planName,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null">
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="checkUser != null">
+        #{checkUser,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime != null">
+        #{checkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkRemark != null">
+        #{checkRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="scheduleType != null">
+        #{scheduleType,jdbcType=VARCHAR},
+      </if>
+      <if test="scheduleConf != null">
+        #{scheduleConf,jdbcType=VARCHAR},
+      </if>
+      <if test="scheduleStatus != null">
+        #{scheduleStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="triggerLastTime != null">
+        #{triggerLastTime,jdbcType=BIGINT},
+      </if>
+      <if test="triggerNextTime != null">
+        #{triggerNextTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huawei.emergency.entity.EmergencyPlanExample" resultType="java.lang.Long">
+    select count(*) from emergency_plan
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update emergency_plan
+    <set>
+      <if test="record.planId != null">
+        plan_id = #{record.planId,jdbcType=INTEGER},
+      </if>
+      <if test="record.planNo != null">
         plan_no = #{record.planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.planName != null">
         plan_name = #{record.planName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createUser != null">
         create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isValid != null">
         is_valid = #{record.isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.checkUser != null">
         check_user = #{record.checkUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.checkTime != null">
         check_time = #{record.checkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.checkRemark != null">
         check_remark = #{record.checkRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
         status = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scheduleType != null">
         schedule_type = #{record.scheduleType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scheduleConf != null">
         schedule_conf = #{record.scheduleConf,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scheduleStatus != null">
         schedule_status = #{record.scheduleStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.triggerLastTime != null">
         trigger_last_time = #{record.triggerLastTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.triggerNextTime != null">
         trigger_next_time = #{record.triggerNextTime,jdbcType=BIGINT},
-        update_time = #{record.updateTime,jdbcType=TIMESTAMP}
-        <if test="_parameter != null">
-            <include refid="Update_By_Example_Where_Clause"/>
-        </if>
-    </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.huawei.emergency.entity.EmergencyPlan">
-        update emergency_plan
-        <set>
-            <if test="planNo != null">
-                plan_no = #{planNo,jdbcType=VARCHAR},
-            </if>
-            <if test="planName != null">
-                plan_name = #{planName,jdbcType=VARCHAR},
-            </if>
-            <if test="createUser != null">
-                create_user = #{createUser,jdbcType=VARCHAR},
-            </if>
-            <if test="createTime != null">
-                create_time = #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="isValid != null">
-                is_valid = #{isValid,jdbcType=VARCHAR},
-            </if>
-            <if test="checkUser != null">
-                check_user = #{checkUser,jdbcType=VARCHAR},
-            </if>
-            <if test="checkTime != null">
-                check_time = #{checkTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="checkRemark != null">
-                check_remark = #{checkRemark,jdbcType=VARCHAR},
-            </if>
-            <if test="status != null">
-                status = #{status,jdbcType=VARCHAR},
-            </if>
-            <if test="scheduleType != null">
-                schedule_type = #{scheduleType,jdbcType=VARCHAR},
-            </if>
-            <if test="scheduleConf != null">
-                schedule_conf = #{scheduleConf,jdbcType=VARCHAR},
-            </if>
-            <if test="scheduleStatus != null">
-                schedule_status = #{scheduleStatus,jdbcType=VARCHAR},
-            </if>
-            <if test="triggerLastTime != null">
-                trigger_last_time = #{triggerLastTime,jdbcType=BIGINT},
-            </if>
-            <if test="triggerNextTime != null">
-                trigger_next_time = #{triggerNextTime,jdbcType=BIGINT},
-            </if>
-            <if test="updateTime != null">
-                update_time = #{updateTime,jdbcType=TIMESTAMP},
-            </if>
-        </set>
-        where plan_id = #{planId,jdbcType=INTEGER}
-    </update>
-    <update id="updateByPrimaryKey" parameterType="com.huawei.emergency.entity.EmergencyPlan">
-        update emergency_plan
-        set plan_no           = #{planNo,jdbcType=VARCHAR},
-            plan_name         = #{planName,jdbcType=VARCHAR},
-            create_user       = #{createUser,jdbcType=VARCHAR},
-            create_time       = #{createTime,jdbcType=TIMESTAMP},
-            is_valid          = #{isValid,jdbcType=VARCHAR},
-            check_user        = #{checkUser,jdbcType=VARCHAR},
-            check_time        = #{checkTime,jdbcType=TIMESTAMP},
-            check_remark      = #{checkRemark,jdbcType=VARCHAR},
-            status            = #{status,jdbcType=VARCHAR},
-            schedule_type     = #{scheduleType,jdbcType=VARCHAR},
-            schedule_conf     = #{scheduleConf,jdbcType=VARCHAR},
-            schedule_status   = #{scheduleStatus,jdbcType=VARCHAR},
-            trigger_last_time = #{triggerLastTime,jdbcType=BIGINT},
-            trigger_next_time = #{triggerNextTime,jdbcType=BIGINT},
-            update_time       = #{updateTime,jdbcType=TIMESTAMP}
-        where plan_id = #{planId,jdbcType=INTEGER}
-    </update>
-
-    <select id="queryPlanDto" parameterType="com.huawei.emergency.dto.PlanQueryParams"
-            resultType="com.huawei.emergency.dto.PlanQueryDto">
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null">
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update emergency_plan
+    set plan_id = #{record.planId,jdbcType=INTEGER},
+      plan_no = #{record.planNo,jdbcType=VARCHAR},
+      plan_name = #{record.planName,jdbcType=VARCHAR},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      is_valid = #{record.isValid,jdbcType=VARCHAR},
+      check_user = #{record.checkUser,jdbcType=VARCHAR},
+      check_time = #{record.checkTime,jdbcType=TIMESTAMP},
+      check_remark = #{record.checkRemark,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=VARCHAR},
+      schedule_type = #{record.scheduleType,jdbcType=VARCHAR},
+      schedule_conf = #{record.scheduleConf,jdbcType=VARCHAR},
+      schedule_status = #{record.scheduleStatus,jdbcType=VARCHAR},
+      trigger_last_time = #{record.triggerLastTime,jdbcType=BIGINT},
+      trigger_next_time = #{record.triggerNextTime,jdbcType=BIGINT},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huawei.emergency.entity.EmergencyPlan">
+    update emergency_plan
+    <set>
+      <if test="planNo != null">
+        plan_no = #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="planName != null">
+        plan_name = #{planName,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null">
+        is_valid = #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="checkUser != null">
+        check_user = #{checkUser,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime != null">
+        check_time = #{checkTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkRemark != null">
+        check_remark = #{checkRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="scheduleType != null">
+        schedule_type = #{scheduleType,jdbcType=VARCHAR},
+      </if>
+      <if test="scheduleConf != null">
+        schedule_conf = #{scheduleConf,jdbcType=VARCHAR},
+      </if>
+      <if test="scheduleStatus != null">
+        schedule_status = #{scheduleStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="triggerLastTime != null">
+        trigger_last_time = #{triggerLastTime,jdbcType=BIGINT},
+      </if>
+      <if test="triggerNextTime != null">
+        trigger_next_time = #{triggerNextTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where plan_id = #{planId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huawei.emergency.entity.EmergencyPlan">
+    update emergency_plan
+    set plan_no = #{planNo,jdbcType=VARCHAR},
+      plan_name = #{planName,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      is_valid = #{isValid,jdbcType=VARCHAR},
+      check_user = #{checkUser,jdbcType=VARCHAR},
+      check_time = #{checkTime,jdbcType=TIMESTAMP},
+      check_remark = #{checkRemark,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      schedule_type = #{scheduleType,jdbcType=VARCHAR},
+      schedule_conf = #{scheduleConf,jdbcType=VARCHAR},
+      schedule_status = #{scheduleStatus,jdbcType=VARCHAR},
+      trigger_last_time = #{triggerLastTime,jdbcType=BIGINT},
+      trigger_next_time = #{triggerNextTime,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    where plan_id = #{planId,jdbcType=INTEGER}
+  </update>
+    <select id="queryPlanDto" parameterType="com.huawei.emergency.dto.PlanQueryParams" resultType="com.huawei.emergency.dto.PlanQueryDto">
         SELECT plan.plan_id,
         plan.plan_no,
         plan.plan_name,
@@ -413,11 +420,11 @@
         WHEN plan.status = '4' THEN '运行中'
         WHEN plan.status = '5' THEN '运行成功'
         WHEN plan.status = '6' THEN '运行失败'
-        WHEN plan.status = '7' THEN '调度中' END) status_label,
+        WHEN plan.status = '7' THEN '已预约' END) status_label,
         plan.check_remark comment,
         date_format(plan.create_time, '%Y-%m-%d %H:%i:%s') create_time,
         date_format(plan.update_time, '%Y-%m-%d %H:%i:%s') update_time,
-        plan.create_user creator,
+        IFNULL((select user_name from nuser where user_id = plan.create_user),plan.create_user) creator,
         (select max(exec_id) from emergency_exec where plan_id = plan.plan_id) as history_id
         FROM emergency_plan plan
         LEFT JOIN emergency_plan_detail plan_detail ON plan_detail.plan_id = plan.plan_id and plan_detail.is_valid = '1'
@@ -443,7 +450,7 @@
             and plan.status = #{status}
         </if>
         group by plan.plan_id
-        ORDER BY plan.create_time
+        ORDER BY plan.create_time desc
     </select>
     <select id="queryPlanDetailDto" resultType="com.huawei.emergency.dto.PlanDetailQueryDto">
         SELECT t1.detail_id AS                                                                     `key`,
@@ -472,10 +479,10 @@
         t1.plan_id,
         t2.plan_no,
         t2.plan_name,
-        t1.create_user creator,
+        IFNULL((select user_name from nuser where user_id = t1.create_user),t1.create_user) creator,
         date_format( t1.create_time, '%Y-%m-%d %H:%i:%s' ) create_time,
         date_format( t1.create_time, '%Y-%m-%d %H:%i:%s' ) execute_time,
-        date_format(min(t3.start_time), '%Y-%m-%d %H:%i:%s') start_time,
+        date_format(IFNULL(min(t3.start_time),t1.create_time), '%Y-%m-%d %H:%i:%s') start_time,
         parse_exec_status(parse_scene_exec_status(t1.exec_id,0)) `status`
         FROM
         emergency_exec t1
@@ -487,13 +494,13 @@
         </if>
         <if test="filters.planNames != null and filters.planNames.length > 0">
             and t2.plan_name in
-            <foreach collection="filters.planNames" item="planName" index="index" open="(" close=")" separator=",">
+            <foreach close=")" collection="filters.planNames" index="index" item="planName" open="(" separator=",">
                 #{planName}
             </foreach>
         </if>
         <if test="filters.creators != null and filters.creators.length > 0">
-            and t1.create_user in
-            <foreach collection="filters.creators" item="creator" index="index" open="(" close=")" separator=",">
+            and IFNULL((select user_name from nuser where user_id = t1.create_user),t1.create_user) in
+            <foreach close=")" collection="filters.creators" index="index" item="creator" open="(" separator=",">
                 #{creator}
             </foreach>
         </if>
@@ -530,7 +537,7 @@
                  LEFT JOIN emergency_task t2 ON t1.scene_id = t2.task_id
         WHERE t1.exec_id = #{execId}
           AND t1.is_valid = '1'
-          and t1.task_id is null
+          and t1.task_id is null order by t2.task_no
     </select>
     <select id="allTaskRecords" resultType="com.huawei.emergency.dto.SceneExecDto">
         SELECT t1.record_id                                    `key`,
@@ -566,5 +573,6 @@
         WHERE t1.exec_id = #{execId}
           AND t1.scene_id = #{sceneId}
           AND t1.is_valid = '1'
+        ORDER BY task.task_no
     </select>
 </mapper>

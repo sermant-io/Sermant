@@ -23,6 +23,7 @@ public class TaskNode {
     private String channelType;
     private Integer scriptId;
     private String scriptName;
+    private Integer[] serviceId;
     private String submitInfo;
     private String sync;
     private List<TaskNode> children;

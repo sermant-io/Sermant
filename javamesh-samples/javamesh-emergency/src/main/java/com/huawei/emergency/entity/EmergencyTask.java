@@ -37,6 +37,8 @@ public class EmergencyTask {
 
     private String submitInfo;
 
+    private String serverId;
+
     public Integer getTaskId() {
         return taskId;
     }
@@ -131,5 +133,13 @@ public class EmergencyTask {
 
     public void setSubmitInfo(String submitInfo) {
         this.submitInfo = submitInfo == null ? null : submitInfo.trim();
+    }
+
+    public String getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(String serverId) {
+        this.serverId = serverId == null ? null : serverId.trim();
     }
 }
