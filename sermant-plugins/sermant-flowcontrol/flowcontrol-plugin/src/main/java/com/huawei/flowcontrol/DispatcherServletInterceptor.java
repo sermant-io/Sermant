@@ -24,8 +24,7 @@ import com.huawei.sermant.core.service.ServiceManager;
 import java.lang.reflect.Method;
 
 /**
- * DispatcherServlet 的 API接口增强
- * 埋点定义sentinel资源
+ * DispatcherServlet 的 API接口增强 埋点定义sentinel资源
  *
  * @author liyi
  * @since 2020-08-26
@@ -37,45 +36,16 @@ public class DispatcherServletInterceptor implements InstanceMethodInterceptor {
     public void before(Object obj, Method method, Object[] allArguments, BeforeResult result) throws Exception {
         dispatcherServletService = ServiceManager.getService(DispatcherServletService.class);
         dispatcherServletService.before(obj, method, allArguments, result);
-//        HttpServletRequest req;
-//        if (allArguments[0] instanceof HttpServletRequest) {
-//            req = (HttpServletRequest) allArguments[0];
-//        } else {
-//            return;
-//        }
-//        try {
-//            EntryFacade.INSTANCE.tryEntry(req);
-//        } catch (BlockException ex) {
-//            RecordLog.info("[DispatcherServletInterceptor] has been blocked! "
-//                    + "appName= " + ex.getRuleLimitApp() + " resourceName=" + FilterUtil.filterTarget(req));
-//            HttpServletResponse resp = null;
-//            if (allArguments[1] instanceof HttpServletResponse) {
-//                resp = (HttpServletResponse) allArguments[1];
-//            }
-//            String errMsg = SentinelRuleUtil.getResult(ex.getRule());
-//            if (resp != null) {
-//                resp.setStatus(CommonConst.HTTP_STATUS_429);
-//                resp.getWriter().write(errMsg);
-//            }
-//            // 不再执行业务代码
-//            result.setResult(errMsg);
-//        }
     }
 
     @Override
     public Object after(Object obj, Method method, Object[] allArguments, Object ret) {
         dispatcherServletService.after(obj, method, allArguments, ret);
-//        EntryFacade.INSTANCE.exit();
         return ret;
     }
 
     @Override
     public void onThrow(Object obj, Method method, Object[] allArguments, Throwable t) {
         dispatcherServletService.onThrow(obj, method, allArguments, t);
-//        if (t != null) {
-//            EntryFacade.INSTANCE.tryTraceEntry(t);
-//            EntryFacade.INSTANCE.exit();
-//            RecordLog.error("[DispatcherServletInterceptor] exception：" + t.getMessage());
-//        }
     }
 }

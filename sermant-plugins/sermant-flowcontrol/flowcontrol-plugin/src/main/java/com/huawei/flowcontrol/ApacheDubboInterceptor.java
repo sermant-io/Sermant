@@ -42,47 +42,16 @@ public class ApacheDubboInterceptor implements InstanceMethodInterceptor {
     public void before(Object obj, Method method, Object[] allArguments, BeforeResult result) throws Exception {
         apacheDubboService = ServiceManager.getService(ApacheDubboService.class);
         apacheDubboService.before(obj, method, allArguments, result);
-//        Invoker<?> invoker = null;
-//        if (allArguments[0] instanceof Invoker) {
-//            invoker = (Invoker<?>) allArguments[0];
-//        }
-//        Invocation invocation = null;
-//        if (allArguments[1] instanceof Invocation) {
-//            invocation = (Invocation) allArguments[1];
-//        }
-//        if (invocation == null || invoker == null) {
-//            return;
-//        }
-//        try {
-//            EntryFacade.INSTANCE.tryEntry(invocation);
-//        } catch (BlockException ex) {
-//            // 流控异常返回给上游
-//            result.setResult(AsyncRpcResult.newDefaultAsyncResult(ex.toRuntimeException(), invocation));
-//            handleBlockException(ex, getResourceName(invoker.getInterface().getName(), invocation.getMethodName()),
-//                    "ApacheDubboInterceptor consumer", EntryFacade.DubboType.APACHE);
-//        }
     }
 
     @Override
     public Object after(Object obj, Method method, Object[] allArguments, Object ret) {
         apacheDubboService.after(obj, method, allArguments, ret);
-//        Result result = (Result) ret;
-//        // 记录dubbo的exception
-//        if (result != null && result.hasException()) {
-//            EntryFacade.INSTANCE.tryTraceEntry(result.getException(), RpcContext.getContext().isProviderSide(),
-//                    EntryFacade.DubboType.APACHE);
-//        }
-//        EntryFacade.INSTANCE.exit(EntryFacade.DubboType.APACHE);
         return ret;
     }
 
     @Override
     public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
         apacheDubboService.onThrow(obj, method, arguments, t);
-//        if (t != null) {
-//            EntryFacade.INSTANCE
-//                    .tryTraceEntry(t, RpcContext.getContext().isProviderSide(), EntryFacade.DubboType.APACHE);
-//        }
-//        EntryFacade.INSTANCE.exit(EntryFacade.DubboType.APACHE);
     }
 }

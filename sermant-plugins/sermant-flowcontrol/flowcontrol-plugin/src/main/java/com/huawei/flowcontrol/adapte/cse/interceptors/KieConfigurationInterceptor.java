@@ -36,19 +36,6 @@ public class KieConfigurationInterceptor implements InstanceMethodInterceptor {
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
         kieConfigurationService = ServiceManager.getService(KieConfigurationService.class);
         kieConfigurationService.before(obj, method, arguments, beforeResult);
-//        if (method.getName().equals(CseConstants.PROJECT_METHOD)) {
-//            CseServiceMeta.getInstance().setProject((String) arguments[0]);
-//        } else if (method.getName().equals(CseConstants.ENVIRONMENT_METHOD)) {
-//            CseServiceMeta.getInstance().setEnvironment((String) arguments[0]);
-//        } else if (method.getName().equals(CseConstants.CUSTOM_LABEL_METHOD)) {
-//            CseServiceMeta.getInstance().setCustomLabel((String) arguments[0]);
-//        } else if (method.getName().equals(CseConstants.APP_NAME_METHOD)) {
-//            CseServiceMeta.getInstance().setApp((String) arguments[0]);
-//        } else if (method.getName().equals(CseConstants.SERVICE_NAME_METHOD)) {
-//            CseServiceMeta.getInstance().setServiceName((String) arguments[0]);
-//        } else {
-//            CseServiceMeta.getInstance().setCustomLabelValue((String) arguments[0]);
-//        }
     }
 
     @Override
