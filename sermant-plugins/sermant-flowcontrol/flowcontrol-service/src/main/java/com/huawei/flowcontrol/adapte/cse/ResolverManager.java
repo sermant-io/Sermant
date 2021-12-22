@@ -16,7 +16,6 @@
 
 package com.huawei.flowcontrol.adapte.cse;
 
-
 import com.huawei.flowcontrol.adapte.cse.match.MatchGroupResolver;
 import com.huawei.flowcontrol.adapte.cse.resolver.AbstractResolver;
 import com.huawei.flowcontrol.adapte.cse.resolver.listener.ConfigUpdateListener;
@@ -131,7 +130,8 @@ public enum ResolverManager {
     }
 
     private void loadSpiResolvers() {
-        for (AbstractResolver<?> resolver : ServiceLoader.load(AbstractResolver.class)) {
+        for (AbstractResolver<?> resolver : ServiceLoader.load(AbstractResolver.class,
+                ResolverManager.class.getClassLoader())) {
             final String configKeyPrefix = AbstractResolver.getConfigKeyPrefix(resolver.getConfigKey());
             if (".".equals(configKeyPrefix)) {
                 // 空配置跳过

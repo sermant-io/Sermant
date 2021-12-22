@@ -42,13 +42,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.servicecomb</groupId>
-            <artifactId>config-clients-common</artifactId>
-            <version>${servicecomb.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- 路由部分公共模块 -->
         <dependency>
             <groupId>com.huawei.sermant</groupId>

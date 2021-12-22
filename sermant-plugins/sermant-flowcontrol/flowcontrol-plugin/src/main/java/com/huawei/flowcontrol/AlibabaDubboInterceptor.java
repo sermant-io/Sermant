@@ -22,65 +22,37 @@
 
 package com.huawei.flowcontrol;
 
-import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.alibaba.dubbo.rpc.Invocation;
-import com.alibaba.dubbo.rpc.Invoker;
-import com.alibaba.dubbo.rpc.Result;
-import com.alibaba.dubbo.rpc.RpcContext;
-import com.alibaba.dubbo.rpc.RpcResult;
-import com.huawei.flowcontrol.entry.EntryFacade;
+import com.huawei.flowcontrol.service.AlibabaDubboService;
 import com.huawei.sermant.core.agent.common.BeforeResult;
+import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.sermant.core.service.ServiceManager;
 
 import java.lang.reflect.Method;
 
 /**
- * alibaba dubbo拦截后的增强类
- * 埋点定义sentinel资源
+ * alibaba dubbo拦截后的增强类 埋点定义sentinel资源
  *
  * @author liyi
  * @since 2020-08-26
  */
-public class AlibabaDubboInterceptor extends DubboInterceptor {
+public class AlibabaDubboInterceptor implements InstanceMethodInterceptor {
+
+    private AlibabaDubboService alibabaDubboService;
+
     @Override
-    public void before(Object obj, Method method, Object[] allArguments, BeforeResult result) {
-        Invoker<?> invoker = null;
-        if (allArguments[0] instanceof Invoker) {
-            invoker = (Invoker<?>) allArguments[0];
-        }
-        Invocation invocation = null;
-        if (allArguments[1] instanceof Invocation) {
-            invocation = (Invocation) allArguments[1];
-        }
-        if (invocation == null || invoker == null) {
-            return;
-        }
-        try {
-            EntryFacade.INSTANCE.tryEntry(invocation);
-        } catch (BlockException ex) {
-            // 流控异常返回上游
-            result.setResult(new RpcResult(ex.toRuntimeException()));
-            handleBlockException(ex, getResourceName(invoker.getInterface().getName(), invocation.getMethodName()),
-                    "AlibabaDubboInterceptor consumer", EntryFacade.DubboType.ALIBABA);
-        }
+    public void before(Object obj, Method method, Object[] allArguments, BeforeResult result) throws Exception {
+        alibabaDubboService = ServiceManager.getService(AlibabaDubboService.class);
+        alibabaDubboService.before(obj, method, allArguments, result);
     }
 
     @Override
     public Object after(Object obj, Method method, Object[] allArguments, Object ret) {
-        Result result = (Result) ret;
-        // 记录dubbo的exception
-        if (result != null && result.hasException()) {
-            EntryFacade.INSTANCE.tryTraceEntry(result.getException(), RpcContext.getContext().isProviderSide(),
-                    EntryFacade.DubboType.ALIBABA);
-        }
-        EntryFacade.INSTANCE.exit(EntryFacade.DubboType.ALIBABA);
+        alibabaDubboService.after(obj, method, allArguments, ret);
         return ret;
     }
 
     @Override
     public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
-        if (t != null) {
-            EntryFacade.INSTANCE.tryTraceEntry(t, RpcContext.getContext().isProviderSide(), EntryFacade.DubboType.ALIBABA);
-        }
-        EntryFacade.INSTANCE.exit(EntryFacade.DubboType.ALIBABA);
+        alibabaDubboService.onThrow(obj, method, arguments, t);
     }
 }

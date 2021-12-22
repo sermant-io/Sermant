@@ -17,6 +17,7 @@
 package com.huawei.flowcontrol.adapte.cse.converter;
 
 import com.huawei.sermant.core.common.LoggerFactory;
+
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -38,11 +39,13 @@ public class YamlConverter<TARGET> implements Converter<String, TARGET> {
      */
     private final Class<TARGET> targetClass;
 
-    private final Representer representer = new Representer();
+    private final Yaml yaml;
 
     public YamlConverter(Class<TARGET> targetClass) {
         this.targetClass = targetClass;
+        Representer representer = new Representer();
         representer.getPropertyUtils().setSkipMissingProperties(true);
+        yaml = new Yaml(new Constructor(new TypeDescription(targetClass, targetClass)), representer);
     }
 
     @Override
@@ -51,12 +54,16 @@ public class YamlConverter<TARGET> implements Converter<String, TARGET> {
             return null;
         }
         try {
-            Yaml yaml = new Yaml(new Constructor(new TypeDescription(targetClass, targetClass)), representer);
-            return yaml.loadAs(source, targetClass);
+            final ClassLoader appClassLoader = Thread.currentThread().getContextClassLoader();
+            // 此处需使用PluginClassLoader, 需要拿到指定的转换类
+            Thread.currentThread().setContextClassLoader(YamlConverter.class.getClassLoader());
+            final TARGET target = yaml.loadAs(source, targetClass);
+            Thread.currentThread().setContextClassLoader(appClassLoader);
+            return target;
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH,
                     "There were some errors when convert rule, target rule : [%s], source : [%s], error message : [%s]"
-            , targetClass.getName(), source, ex.getMessage()));
+                    , targetClass.getName(), source, ex.getMessage()));
         }
         return null;
     }

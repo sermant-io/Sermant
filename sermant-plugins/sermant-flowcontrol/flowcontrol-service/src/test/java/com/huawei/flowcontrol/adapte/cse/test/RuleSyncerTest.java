@@ -16,15 +16,15 @@
 
 package com.huawei.flowcontrol.adapte.cse.test;
 
-import java.util.Collections;
-
-import org.junit.Test;
-
 import com.huawei.flowcontrol.adapte.cse.RuleSyncer;
 import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
 import com.huawei.sermant.core.common.CommonConstant;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.ServiceManager;
+
+import org.junit.Test;
+
+import java.util.Collections;
 
 /**
  * 同步测试
