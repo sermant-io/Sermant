@@ -13,6 +13,7 @@
         <package.output.dir>${package.server.dir}/sermant</package.output.dir>
         <jdk.version>1.8</jdk.version>
         <spring.boot.version>2.5.3</spring.boot.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencyManagement>
