@@ -36,6 +36,7 @@
                 <module>sermant-route</module>
                 <module>sermant-threadlocal</module>
                 <module>sermant-online-stresstest</module>
+                <module>sermant-register-center</module>
             </modules>
         </profile>
         <profile>
@@ -66,6 +67,7 @@
                 <module>sermant-route</module>
                 <module>sermant-threadlocal</module>
                 <module>sermant-online-stresstest</module>
+                <module>sermant-register-center</module>
             </modules>
         </profile>
     </profiles>
