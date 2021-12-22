@@ -138,7 +138,7 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 创建节点及其所有父节点
+     * 创建节点的前置节点
      *
      * @param path 路径
      * @return 是否全部创建成功
@@ -160,7 +160,7 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 更新节点内容
+     * 更新节点内容，不存在时自动创建
      *
      * @param path 节点路径
      * @param data 数据信息

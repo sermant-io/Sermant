@@ -430,14 +430,14 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
 
 动态配置功能是[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)的核心服务之一，通过以下代码获取实例：
 ```java
-DynamicConfigurationService service = ServiceManager.getService(DynamicConfigurationFactoryService.class).getDynamicConfigurationService();
+DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
 ```
 
 调用以下方法注册一个监听器：
 ```java
 // ${group}为用户分组，${key}为监听的键，对zookeeper来说，监听的路径相当于: / + ${group} + ${key}
 // 如果不传${group}，则会默认设置为统一配置中dynamicconfig.default_group对应的值
-service.addConfigListener("${key}", "${group}", new ConfigurationListener() {
+service.addConfigListener("${key}", "${group}", new DynamicConfigListener() {
   @Override
   public void process(ConfigChangedEvent event) {
     // do something
