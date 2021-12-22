@@ -109,7 +109,50 @@
 
 ## Kie实现
 
-[需要讲清楚Key和Group的特殊要求]: todo
+对于`Kie`服务来说，所谓动态配置就是`Kie`配置的键值，`Kie`是基于标签去查询关联配置， 至于`Key`与`Group`则是关联配置的元素。`Key`即配置的键的名称，而`Group`则是关联`Key`的标签， 每一个`Key`都可配置一个或者多个标签，其格式往往如下:
+
+```properties
+{
+	"key": "keyName",                # 配置键
+	"value": "value",                # 配置值
+	"labels": {
+		"service": "serviceName"     #标签，kv形式，支持一个或者多个
+	},
+	"status": "enabled"
+}
+```
+
+相对于`Zookeeper`, `Kie`更专注于`Group`, 其传值格式也有所不同，`Kie`的传值格式如下:
+
+```properties
+groupKey1=groupValue1[&groupKey2=groupVaue2...]
+```
+
+> 其中`groupKey`为标签键， `groupValue`则为标签值，多个标签使用`&`拼接；生成`Group`可通过[LabelGroupUtils#createLabelGroup](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/utils/LabelGroupUtils.java)生成
+>
+> **特别说明：**
+>
+> ​	若传入的`Group`非以上格式，则会默认添加标签`GROUP=传入Group`
+
+`Kie`的实现见于包[kie](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/kie), 主要包含[KieDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/kie/KieDynamicConfigService.java)、[LabelGroupUtils](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/utils/LabelGroupUtils.java)与[SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java)三个类：
+
+- [KieDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/kie/KieDynamicConfigService.java)是[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/DynamicConfigService.java)的`Kie`实现类， 主要职责是封装[SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java)的订阅API以及`Group`的`Key`管理
+
+- [LabelGroupUtils](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/utils/LabelGroupUtils.java)则是负责`Group`转换，主要包含以下API：
+
+  | 方法                        | 解析                             |
+  | --------------------------- | -------------------------------- |
+  | createLabelGroup（Map）     | 创建标签，多个标签使用KV形式传入 |
+  | getLabelCondition（String） | 将Group转换为请求的条件          |
+  | isLabelGroup（String）      | 判断是否为Kie的标签              |
+
+- [SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java)主要职责是管理`Group`的所有订阅者以及进行数据更新通知；其会根据订阅的Group，即标签组，与`Kie`建立连接请求任务，动态监听数据更新变化；该类主要包含以下API：
+
+  | 方法                                                       | 解析                                                         |
+  | ---------------------------------------------------------- | ------------------------------------------------------------ |
+  | boolean addGroupListener(String, DynamicConfigListener)    | 订阅标签监听，并由[SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java)管理，建立监听任务 |
+  | boolean removeGroupListener(String, DynamicConfigListener) | 移除标签监听                                                 |
+  | boolean publishConfig(String, String, String)              | 发布Kie配置                                                  |
 
 ## 实现包装
 
