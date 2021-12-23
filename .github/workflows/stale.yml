@@ -1,3 +1,4 @@
+#
 # Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,12 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
+#
 # 用于自动关闭过期issue和pr的工作流
 # 详情请参考 https://github.com/actions/stale
 #
 # @author HapThorin
 # @date 2021/12/17
+#
 
 name: Auto Close Stale Issues and PRs
 
@@ -30,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/stale@v4.1.0
-        name: Auto Close Stale Issues
+        name: Auto Close Stale Issues and PRs
         with:
           # 为不活跃的issue添加的标签
           stale-issue-label: Stale
@@ -44,11 +48,7 @@ jobs:
           days-before-issue-stale: 29
           # issue最终关闭间隔时间，单位：天
           days-before-issue-close: 1
-          # 每次运行处理issue条数，如果待处理的数量过多，可修改该值
-          operations-per-run: 80
-      - uses: actions/stale@v4.1.0
-        name: Auto Close Stale PRs
-        with:
+
           # 为不活跃的pr添加的标签
           stale-pr-label: Stale
           # pr的不活跃警告评论
@@ -61,5 +61,6 @@ jobs:
           days-before-pr-stale: 14
           # pr最终关闭间隔时间，单位：天
           days-before-pr-close: 1
-          # 每次运行处理pr条数，如果待处理的数量过多，可修改该值
-          operations-per-run: 30
+
+          # 每次运行处理issue和PR条数，如果待处理的数量过多，可修改该值
+          operations-per-run: 100
