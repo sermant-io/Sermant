@@ -17,6 +17,7 @@
 package com.huawei.sermant.core.agent.template;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
@@ -80,12 +81,12 @@ public class BootstrapStaticTemplate {
                 .append('#')
                 .append(method.getName())
                 .append("(");
-        final Class<?>[] parameterTypes = method.getParameterTypes();
+        final Type[] parameterTypes = method.getGenericParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++) {
             if (i > 0) {
                 builder.append(',');
             }
-            builder.append(parameterTypes[i].getName());
+            builder.append(parameterTypes[i].getTypeName());
         }
         builder.append(')');
         final String adviceClsName = "com.huawei.sermant.core.agent.template.BootstrapStaticTemplate_" +
