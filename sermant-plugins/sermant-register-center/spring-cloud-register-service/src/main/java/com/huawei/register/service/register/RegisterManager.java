@@ -16,8 +16,7 @@
 
 package com.huawei.register.service.register;
 
-import com.huawei.register.service.config.RegisterConfig;
-import com.huawei.register.service.utils.CommonUtils;
+import com.huawei.register.config.RegisterConfig;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.netflix.loadbalancer.Server;
 import org.springframework.cloud.client.ServiceInstance;
@@ -116,13 +115,11 @@ public enum RegisterManager {
     /**
      * 获取服务列表
      *
-     * @param target 增强对象
      * @param <T>    server实现
      * @return 服务列表
      */
-    public <T extends Server> List<T> getServerList(Object target) {
+    public <T extends Server> List<T> getServerList(String serviceId) {
         if (isReady()) {
-            final String serviceId = (String) CommonUtils.getFieldValue(target, "serviceId");
             return curRegister.getServerList(serviceId);
         }
         // 若是未将数据准备好的场景，则返回空，不去干扰原注册中心的数据
@@ -135,7 +132,7 @@ public enum RegisterManager {
      * @param serviceId 服务名或者ID
      * @return 服务是咧列表
      */
-    public List<ServiceInstance> getServerList(String serviceId) {
+    public List<ServiceInstance> getInstanceList(String serviceId) {
         return curRegister.getDiscoveryServerList(serviceId);
     }
 

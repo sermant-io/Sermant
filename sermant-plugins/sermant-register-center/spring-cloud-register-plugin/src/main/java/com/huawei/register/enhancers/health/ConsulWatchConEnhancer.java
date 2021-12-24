@@ -14,33 +14,36 @@
  * limitations under the License.
  */
 
-package com.huawei.register.enhancers;
+package com.huawei.register.enhancers.health;
 
 import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
 import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
 import com.huawei.sermant.core.agent.matcher.ClassMatcher;
 import com.huawei.sermant.core.agent.matcher.ClassMatchers;
-import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
- * 针对eureka，consul注册中心获取实例列表拦截
+ * consul健康检测增强
  *
  * @author zhouss
  * @since 2021-12-17
  */
-public class DiscoveryClientEnhancer implements EnhanceDefinition {
+public class ConsulWatchConEnhancer implements EnhanceDefinition {
 
     /**
-     * 增强类的全限定名
-     * 该client注入优先级最高，因此只需拦截该client即可
+     * nacos心跳发送类
      */
-    private static final String ENHANCE_CLASS = "org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient";
+    private static final String ENHANCE_CLASS = "org.springframework.cloud.consul.discovery.ConsulCatalogWatch";
 
     /**
      * 拦截类的全限定名
      */
-    private static final String INTERCEPT_CLASS = "com.huawei.register.interceptors.DiscoveryClientInterceptor";
+    private static final String INTERCEPT_CLASS = "com.huawei.register.interceptors.health.ConsulWatchInterceptor";
+
+    /**
+     * 目标拦截构造方法参数长度
+     */
+    private static final int TARGET_CONSTRUCTOR_ARG_LEN = 3;
 
     @Override
     public ClassMatcher enhanceClass() {
@@ -50,8 +53,8 @@ public class DiscoveryClientEnhancer implements EnhanceDefinition {
     @Override
     public MethodInterceptPoint[] getMethodInterceptPoints() {
         return new MethodInterceptPoint[] {
-                MethodInterceptPoint.newInstMethodInterceptPoint(INTERCEPT_CLASS,
-                        ElementMatchers.<MethodDescription>named("getInstances"))
+                MethodInterceptPoint.newConstructorInterceptPoint(INTERCEPT_CLASS,
+                        ElementMatchers.takesArguments(TARGET_CONSTRUCTOR_ARG_LEN))
         };
     }
 }

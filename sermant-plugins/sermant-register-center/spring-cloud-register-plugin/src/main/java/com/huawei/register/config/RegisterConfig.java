@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.register.service.config;
+package com.huawei.register.config;
 
 import com.huawei.sermant.core.config.common.ConfigTypeKey;
 import com.huawei.sermant.core.plugin.config.PluginConfig;
@@ -77,6 +77,19 @@ public class RegisterConfig implements PluginConfig {
      * 是否开启sc的加密
      */
     private boolean sslEnabled = false;
+
+    /**
+     * 是否开启迁移模式
+     */
+    private boolean openMigration = false;
+
+    public boolean isOpenMigration() {
+        return openMigration;
+    }
+
+    public void setOpenMigration(boolean openMigration) {
+        this.openMigration = openMigration;
+    }
 
     public boolean isSslEnabled() {
         return sslEnabled;

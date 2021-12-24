@@ -54,8 +54,8 @@ public class CommonUtils {
             return null;
         }
         final String[] parts = endpoint.split(":");
-        if (parts.length == 3) {
-            return parts[1];
+        if (parts.length == 3 && parts[1].length() > 2) {
+            return parts[1].substring(2);
         }
         return null;
     }

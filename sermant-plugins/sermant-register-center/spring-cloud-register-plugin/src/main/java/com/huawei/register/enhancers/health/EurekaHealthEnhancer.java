@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.huawei.register.enhancers;
+package com.huawei.register.enhancers.health;
 
 import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
 import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
@@ -24,23 +23,23 @@ import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
- * 针对eureka，consul注册中心获取实例列表拦截
+ * 针对健康判定拦截
  *
  * @author zhouss
  * @since 2021-12-17
  */
-public class DiscoveryClientEnhancer implements EnhanceDefinition {
+public class EurekaHealthEnhancer implements EnhanceDefinition {
 
     /**
      * 增强类的全限定名
      * 该client注入优先级最高，因此只需拦截该client即可
      */
-    private static final String ENHANCE_CLASS = "org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient";
+    private static final String ENHANCE_CLASS = "com.netflix.discovery.DiscoveryClient";
 
     /**
      * 拦截类的全限定名
      */
-    private static final String INTERCEPT_CLASS = "com.huawei.register.interceptors.DiscoveryClientInterceptor";
+    private static final String INTERCEPT_CLASS = "com.huawei.register.interceptors.health.EurekaHealthInterceptor";
 
     @Override
     public ClassMatcher enhanceClass() {
@@ -51,7 +50,7 @@ public class DiscoveryClientEnhancer implements EnhanceDefinition {
     public MethodInterceptPoint[] getMethodInterceptPoints() {
         return new MethodInterceptPoint[] {
                 MethodInterceptPoint.newInstMethodInterceptPoint(INTERCEPT_CLASS,
-                        ElementMatchers.<MethodDescription>named("getInstances"))
+                        ElementMatchers.<MethodDescription>namedOneOf("renew"))
         };
     }
 }

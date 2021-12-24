@@ -16,10 +16,12 @@
 
 package com.huawei.register.interceptors;
 
+import com.huawei.register.context.RegisterContext;
 import com.huawei.register.services.RegisterCenterService;
 import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.sermant.core.service.ServiceManager;
+import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 
 import java.lang.reflect.Method;
 
@@ -29,16 +31,18 @@ import java.lang.reflect.Method;
  * @author zhouss
  * @since 2021-12-13
  */
-public class RegistrationInterceptor implements InstanceMethodInterceptor {
+public class ClientConfigurationInterceptor implements InstanceMethodInterceptor {
 
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
-        final RegisterCenterService service = ServiceManager.getService(RegisterCenterService.class);
-        service.register(arguments[0], beforeResult);
+
     }
 
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) {
+        if (result instanceof CompositeDiscoveryClient) {
+            RegisterContext.INSTANCE.setDiscoveryClient((CompositeDiscoveryClient) result);
+        }
         return result;
     }
 
