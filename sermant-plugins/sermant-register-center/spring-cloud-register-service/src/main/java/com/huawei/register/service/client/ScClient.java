@@ -21,11 +21,13 @@ import com.huawei.register.service.config.RegisterConfig;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.integration.utils.APMThreadFactory;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
 import org.apache.servicecomb.foundation.auth.SignRequest;
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpConfiguration;
 import org.apache.servicecomb.service.center.client.AddressManager;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
+import org.apache.servicecomb.service.center.client.ServiceCenterOperation;
 import org.apache.servicecomb.service.center.client.model.Framework;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
@@ -124,7 +126,7 @@ public class ScClient {
                 registration.getServiceId()));
         microserviceInstance.setStatus(MicroserviceInstanceStatus.UP);
         microserviceInstance.setServiceId(registration.getServiceId());
-        microserviceInstance.setVersion(registerConfig.getScVersion());
+        microserviceInstance.setVersion(registerConfig.getVersion());
         microserviceInstance.setHostName(registration.getHost());
         microserviceInstance.setEndpoints(buildEndpoints(registration));
         return microserviceInstance;
@@ -138,14 +140,14 @@ public class ScClient {
     private Microservice buildMicroService(Registration registration) {
         final Microservice microservice = new Microservice();
         microservice.setAlias(registration.getServiceId());
-        microservice.setAppId(registerConfig.getApp());
+        microservice.setAppId(registerConfig.getApplication());
         microservice.setEnvironment(registerConfig.getEnvironment());
         // agent相关信息
         final Framework framework = new Framework();
         framework.setName(registerConfig.getFramework());
         framework.setVersion(registerConfig.getFrameworkVersion());
         microservice.setFramework(framework);
-        microservice.setVersion(registerConfig.getScVersion());
+        microservice.setVersion(registerConfig.getVersion());
         microservice.setServiceId(registration.getServiceId());
         microservice.setServiceName(registration.getServiceId());
         microservice.setStatus(MicroserviceStatus.UP);
@@ -178,8 +180,8 @@ public class ScClient {
 
     private void initScClient() {
         client = new ServiceCenterClient(
-                createAddressManager(registerConfig.getScKieProject(), getScUrls()),
-                createSslProperties(registerConfig.isScSslEnabled()),
+                createAddressManager(registerConfig.getProject(), getScUrls()),
+                createSslProperties(registerConfig.isSslEnabled()),
                 new RequestAuthHeaderProvider() {
                     @Override
                     public Map<String, String> loadAuthHeader(SignRequest signRequest) {
@@ -191,7 +193,7 @@ public class ScClient {
     }
 
     private List<String> getScUrls() {
-        final String scKieUrls = registerConfig.getScUrls();
+        final String scKieUrls = registerConfig.getAddress();
         if (scKieUrls == null || scKieUrls.trim().length() == 0) {
             throw new IllegalArgumentException("Kie url must not be empty!");
         }
@@ -225,6 +227,10 @@ public class ScClient {
         return new AddressManager(project, kieUrls);
     }
 
+    public ServiceCenterOperation getRawClient() {
+        return client;
+    }
+
     /**
      * 心跳发送任务
      */
@@ -256,7 +262,7 @@ public class ScClient {
                         }
                     }
                 }
-            }, registerConfig.getHeartbeatIntervalMs(), registerConfig.getHeartbeatIntervalMs(), TimeUnit.MILLISECONDS);
+            }, registerConfig.getHeartbeatInterval(), registerConfig.getHeartbeatInterval(), TimeUnit.SECONDS);
         }
 
         void stop() {

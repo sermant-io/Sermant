@@ -25,28 +25,28 @@ import com.huawei.sermant.core.plugin.config.PluginConfig;
  * @author zhouss
  * @since 2021-12-16
  */
-@ConfigTypeKey(value = "spring.cloud.register.plugin")
+@ConfigTypeKey(value = "servicecomb.service")
 public class RegisterConfig implements PluginConfig {
     /**
      * sc注册中心地址
      * 多个地址使用逗号隔开
      */
-    private String scUrls = "http://127.0.0.1:30100";
+    private String address = "http://127.0.0.1:30100";
 
     /**
      * kie命名空间
      */
-    private String scKieProject = "default";
+    private String project = "default";
 
     /**
      * 服务实例心跳发送间隔
      */
-    private long heartbeatIntervalMs = 1000L;
+    private int heartbeatInterval = 15;
 
     /**
      * sc app配置
      */
-    private String app = "sermant";
+    private String application = "sermant";
 
     /**
      * sc 环境配置
@@ -66,7 +66,7 @@ public class RegisterConfig implements PluginConfig {
     /**
      * 默认sc版本
      */
-    private String scVersion = "1.0.0";
+    private String version = "1.0.0";
 
     /**
      * 注册中心类型
@@ -76,14 +76,14 @@ public class RegisterConfig implements PluginConfig {
     /**
      * 是否开启sc的加密
      */
-    private boolean scSslEnabled = false;
+    private boolean sslEnabled = false;
 
-    public boolean isScSslEnabled() {
-        return scSslEnabled;
+    public boolean isSslEnabled() {
+        return sslEnabled;
     }
 
-    public void setScSslEnabled(boolean scSslEnabled) {
-        this.scSslEnabled = scSslEnabled;
+    public void setSslEnabled(boolean sslEnabled) {
+        this.sslEnabled = sslEnabled;
     }
 
     public String getRegisterType() {
@@ -94,12 +94,12 @@ public class RegisterConfig implements PluginConfig {
         this.registerType = registerType;
     }
 
-    public String getScVersion() {
-        return scVersion;
+    public String getVersion() {
+        return version;
     }
 
-    public void setScVersion(String scVersion) {
-        this.scVersion = scVersion;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getFrameworkVersion() {
@@ -118,36 +118,36 @@ public class RegisterConfig implements PluginConfig {
         this.framework = framework;
     }
 
-    public String getScKieProject() {
-        return scKieProject;
+    public String getProject() {
+        return project;
     }
 
-    public void setScKieProject(String scKieProject) {
-        this.scKieProject = scKieProject;
+    public void setProject(String project) {
+        this.project = project;
     }
 
-    public String getScUrls() {
-        return scUrls;
+    public String getAddress() {
+        return address;
     }
 
-    public void setScUrls(String scUrls) {
-        this.scUrls = scUrls;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public long getHeartbeatIntervalMs() {
-        return heartbeatIntervalMs;
+    public int getHeartbeatInterval() {
+        return heartbeatInterval;
     }
 
-    public void setHeartbeatIntervalMs(long heartbeatIntervalMs) {
-        this.heartbeatIntervalMs = heartbeatIntervalMs;
+    public void setHeartbeatInterval(int heartbeatInterval) {
+        this.heartbeatInterval = heartbeatInterval;
     }
 
-    public String getApp() {
-        return app;
+    public String getApplication() {
+        return application;
     }
 
-    public void setApp(String app) {
-        this.app = app;
+    public void setApplication(String application) {
+        this.application = application;
     }
 
     public String getEnvironment() {

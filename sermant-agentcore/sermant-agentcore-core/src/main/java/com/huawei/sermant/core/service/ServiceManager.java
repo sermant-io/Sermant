@@ -22,13 +22,13 @@
 
 package com.huawei.sermant.core.service;
 
+import com.huawei.sermant.core.exception.DupServiceException;
+import com.huawei.sermant.core.util.SpiLoadUtil;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.ServiceLoader;
-
-import com.huawei.sermant.core.exception.DupServiceManager;
-import com.huawei.sermant.core.util.SpiLoadUtil;
 
 /**
  * <Code>CoreService<Code/>管理器，加载、启动所有定义的服务实例。
@@ -71,7 +71,7 @@ public class ServiceManager {
                 new SpiLoadUtil.WeightEqualHandler<BaseService>() {
                     @Override
                     public BaseService handle(BaseService source, BaseService target) {
-                        throw new DupServiceManager(serviceName);
+                        throw new DupServiceException(serviceName);
                     }
                 });
         if (betterService != oldService) {
