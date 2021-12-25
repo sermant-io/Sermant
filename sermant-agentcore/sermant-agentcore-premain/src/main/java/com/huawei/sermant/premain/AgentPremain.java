@@ -81,7 +81,18 @@ public class AgentPremain {
             throw new FileNotFoundException(PathDeclarer.getCorePath() + " has no core lib. ");
         }
         for (File jar : jars) {
-            instrumentation.appendToSystemClassLoaderSearch(new JarFile(jar));
+            JarFile jarFile = null;
+            try {
+                jarFile = new JarFile(jar);
+                instrumentation.appendToSystemClassLoaderSearch(jarFile);
+            } finally {
+                if (jarFile != null) {
+                    try {
+                        jarFile.close();
+                    } catch (IOException ignored) {
+                    }
+                }
+            }
         }
     }
 
