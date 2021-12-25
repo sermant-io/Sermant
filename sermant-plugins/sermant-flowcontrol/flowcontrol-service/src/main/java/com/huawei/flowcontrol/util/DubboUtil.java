@@ -60,11 +60,7 @@ public class DubboUtil {
                 throw new FlowControlException(res);
             }
         } finally {
-            if (EntryFacade.DubboType.APACHE == dubboType) {
-                EntryFacade.INSTANCE.exit(dubboType);
-            } else {
-                EntryFacade.INSTANCE.exit(dubboType);
-            }
+            EntryFacade.INSTANCE.exit(dubboType);
         }
     }
 }
