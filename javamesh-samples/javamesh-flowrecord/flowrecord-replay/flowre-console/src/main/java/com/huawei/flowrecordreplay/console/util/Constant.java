@@ -206,4 +206,34 @@ public class Constant {
      * 录制子调用index前缀
      */
     public static final String SUB_CALL_PREFIX = "subcall_";
+
+    /**
+     * AT符号
+     */
+    public static final String AT = "@";
+
+    /**
+     * 字符串header
+     */
+    public static final String HEADER = "header";
+
+    /**
+     * param
+     */
+    public static final String PARAM = "param";
+
+    /**
+     * 字符串body
+     */
+    public static final String BODY = "body";
+
+    /**
+     * csv后缀
+     */
+    public static final String CSV = ".csv";
+
+    /**
+     * csv结束符
+     */
+    public static final char UFEFF = '\ufeff';
 }

@@ -6,6 +6,8 @@ package com.huawei.flowrecordreplay.console.controller;
 
 import com.huawei.flowrecordreplay.console.datasource.elasticsearch.ElasticsearchJobStorage;
 import com.huawei.flowrecordreplay.console.datasource.elasticsearch.EsDataSource;
+import com.huawei.flowrecordreplay.console.datasource.entity.Ngrinder.NgrinderJob;
+import com.huawei.flowrecordreplay.console.datasource.entity.Ngrinder.NgrinderModels;
 import com.huawei.flowrecordreplay.console.datasource.entity.RecordJobEntity;
 import com.huawei.flowrecordreplay.console.datasource.entity.ReplayJobEntity;
 import com.huawei.flowrecordreplay.console.datasource.entity.recordresult.RecordResultCountEntity;
@@ -23,6 +25,7 @@ import com.huawei.flowrecordreplay.console.domain.CreateReplayJobRequest;
 import com.huawei.flowrecordreplay.console.domain.RecordJobs;
 import com.huawei.flowrecordreplay.console.domain.ReplayJobs;
 import com.huawei.flowrecordreplay.console.domain.Result;
+import com.huawei.flowrecordreplay.console.service.NgrinderService;
 import com.huawei.flowrecordreplay.console.service.RecordResultService;
 import com.huawei.flowrecordreplay.console.service.ReplayResultService;
 import com.huawei.flowrecordreplay.console.service.StressTestResultService;
@@ -33,6 +36,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.log4j.spi.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +94,9 @@ public class JobController {
 
     @Autowired
     private CuratorFramework zkClient;
+
+    @Autowired
+    private NgrinderService ngrinderService;
 
     /**
      * 下发录制任务
@@ -740,5 +747,17 @@ public class JobController {
             return Result.ofFail(Constant.ERROR_CODE, "Job record result is not exist");
         }
         return Result.ofSuccess(recordResultService.getSubCallMethods(jobId));
+    }
+
+    /**
+     * 下发引流压测任务
+     *
+     * @param
+     * @return 返回任务下发成功与否
+     */
+    @PostMapping("/replay-job-ngrinder")
+    public Result<NgrinderModels> setNgrinderReplay(@RequestBody NgrinderJob ngrinderJob) throws Exception {
+        NgrinderModels ngrinderModels =  ngrinderService.setNgrinderJob(ngrinderJob);
+        return Result.ofSuccess(ngrinderModels);
     }
 }
