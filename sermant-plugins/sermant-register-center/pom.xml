@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>sermant-plugins</artifactId>
         <groupId>com.huawei.sermant</groupId>
@@ -22,6 +22,8 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>dubbo-register-plugin</module>
+                <module>dubbo-register-service</module>
                 <module>spring-cloud-register-plugin</module>
                 <module>spring-cloud-register-service</module>
             </modules>
@@ -29,6 +31,8 @@
         <profile>
             <id>all</id>
             <modules>
+                <module>dubbo-register-plugin</module>
+                <module>dubbo-register-service</module>
                 <module>spring-cloud-register-plugin</module>
                 <module>spring-cloud-register-service</module>
             </modules>

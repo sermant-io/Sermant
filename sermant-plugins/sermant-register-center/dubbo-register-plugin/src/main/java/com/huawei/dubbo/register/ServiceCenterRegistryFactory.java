@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-package com.huawei.sermant.core.exception;
+package com.huawei.dubbo.register;
 
-import java.util.Locale;
+import org.apache.dubbo.common.URL;
+import org.apache.dubbo.registry.Registry;
+import org.apache.dubbo.registry.support.AbstractRegistryFactory;
 
-public class DupServiceManager extends RuntimeException {
-    public DupServiceManager(String clsName) {
-        super(String.format(Locale.ROOT, "Found more than one implement of %s. ", clsName));
+/**
+ * sc注册工厂
+ *
+ * @author provenceee
+ * @date 2021/12/15
+ */
+public class ServiceCenterRegistryFactory extends AbstractRegistryFactory {
+    @Override
+    protected Registry createRegistry(URL url) {
+        return new ServiceCenterRegistry(url);
     }
 }
