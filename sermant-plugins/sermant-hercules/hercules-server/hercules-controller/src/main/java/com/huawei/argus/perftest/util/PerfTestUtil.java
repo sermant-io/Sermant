@@ -16,7 +16,7 @@
  *
  */
 
-package com.huawei.argus.perftest.tuil;
+package com.huawei.argus.perftest.util;
 
 import com.huawei.argus.perftest.model.PerfTestVo;
 import org.ngrinder.model.PerfTest;

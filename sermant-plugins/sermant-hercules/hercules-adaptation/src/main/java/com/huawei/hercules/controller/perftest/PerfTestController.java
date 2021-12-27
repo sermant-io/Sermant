@@ -23,6 +23,7 @@ import com.huawei.hercules.exception.HerculesException;
 import com.huawei.hercules.service.perftest.IPerfTestService;
 import com.huawei.hercules.service.scenario.IScenarioService;
 import com.huawei.hercules.service.script.IScriptService;
+import com.huawei.hercules.util.MysqlCharUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,7 +162,7 @@ public class PerfTestController extends BaseController {
         String queryFilter = arrayToStr(status).replaceAll("running", "R").replaceAll("pending", "S");
 
         // 2. 查询结果
-        JSONObject result = perfTestService.getAll(keywords, label, queryFilter, pagesInfo.toString(),
+        JSONObject result = perfTestService.getAll(MysqlCharUtil.escapeSpecialChar(keywords), label, queryFilter, pagesInfo.toString(),
                 arrayToStr(testName), arrayToStr(testType), arrayToStr(scriptPath), arrayToStr(owner));
 
         // 3.结果适配
@@ -476,8 +477,8 @@ public class PerfTestController extends BaseController {
     /**
      * 下载日志文件
      *
-     * @param testId  ID
-     * @param logName 日志名称
+     * @param testId   ID
+     * @param logName  日志名称
      * @param response 响应
      * @throws Exception 异常
      */
@@ -525,40 +526,42 @@ public class PerfTestController extends BaseController {
         if (paramsInfo == null) {
             return vuserRampUp;
         }
-
-        Map<String, Object> params = (Map<String, Object>) paramsInfo.get("params");
-        if (params == null || !params.containsKey("vuser") || !params.containsKey("init_value")
-                || !params.containsKey("increment") || !params.containsKey("init_wait")
-                || !params.containsKey("growth_interval")) {
+        JSONObject params = paramsInfo.getJSONObject("params");
+        if (params == null || params.get("vuser") == null || params.get("init_value") == null
+                || params.get("increment") == null || params.get("init_wait") == null
+                || params.get("growth_interval") == null) {
             return vuserRampUp;
         }
-
-
-        int initValue = Integer.parseInt(params.get("init_value").toString());
-        int increment = Integer.parseInt(params.get("increment").toString());
-        int initWait = Integer.parseInt(params.get("init_wait").toString());
-        int growthInterval = Integer.parseInt(params.get("growth_interval").toString());
+        int initValue;
+        int increment;
+        int initWait;
+        int growthInterval;
+        try {
+            initValue = Integer.parseInt(params.get("init_value").toString());
+            increment = Integer.parseInt(params.get("increment").toString());
+            initWait = Integer.parseInt(params.get("init_wait").toString());
+            growthInterval = Integer.parseInt(params.get("growth_interval").toString());
+        } catch (NumberFormatException numberFormatException) {
+            LOGGER.error("Parse param error:{}", numberFormatException.getMessage());
+            return vuserRampUp;
+        }
 
         // 获取线程数据、进程数
         JSONObject vusers = new JSONObject();
         setProcessAndThreads(vusers, Long.parseLong(params.get("vuser").toString()));
         long processes = vusers.getLong("processes");
-//        long threads = vusers.getLong("threads");
         long vuserPerAgent = vusers.getLong("vuserPerAgent");
-
 
         // 原点数据
         Map<String, Object> firstPoint = new HashMap<>();
         data.add(firstPoint);
         firstPoint.put("time", 0);
         long initCount = initValue * processes;
-
         initCount = Math.min(initCount, vuserPerAgent);
         if (initWait > 0) {
             firstPoint.put("time", getRampUpTime(initWait));
         }
         firstPoint.put("pressure", initCount);
-
         long currentCount = initCount;
         long currentTime = Math.max(initWait, 0);
         while (currentCount < vuserPerAgent) {
@@ -575,7 +578,6 @@ public class PerfTestController extends BaseController {
         data.add(lastPoint);
         lastPoint.put("time", getRampUpTime(currentTime + 1000));
         lastPoint.put("pressure", vuserPerAgent);
-
         return vuserRampUp;
     }
 
@@ -727,7 +729,7 @@ public class PerfTestController extends BaseController {
 
     private String getTime(long time) {
         String format = "%s:%s:%s";
-        int seconds = (int)time;
+        int seconds = (int) time;
         String hourString = getHourString(seconds);
         String minuteString = getMinuteString(seconds);
         String secondsString = getSecondsString(seconds);

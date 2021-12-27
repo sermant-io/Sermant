@@ -193,7 +193,9 @@ public class ScriptController extends BaseController {
                                       @RequestParam(defaultValue = "1") int current,
                                       @RequestParam(required = false) String sorter,
                                       @RequestParam(required = false) String order,
-                                      @RequestParam(required = false) String keywords) {
+                                      @RequestParam(required = false) String keywords,
+                                      @RequestParam(required = false, name = "script_name[]") List<String> scriptNames,
+                                      @RequestParam(required = false, name = "commit[]") List<String> commits) {
         JSONObject result = scriptService.getAllList(folder == null ? "" : folder);
         if (result != null) {
             JSONArray files = result.getJSONArray("files");
@@ -208,6 +210,20 @@ public class ScriptController extends BaseController {
                     iteratorForFiles.remove();
                     continue;
                 }
+
+                // 判断名称过滤条件是否含有这个文件
+                if (scriptNames != null && !scriptNames.contains(fileName)) {
+                    iteratorForFiles.remove();
+                    continue;
+                }
+
+                // 判断提交信息过滤条件是否含有这个文件
+                if (commits != null && !commits.contains(description)) {
+                    iteratorForFiles.remove();
+                    continue;
+                }
+
+                // 转换字段
                 oneFile.put("type", "DIR".equals(oneFile.get("fileType")) ? "folder" : "file");
                 oneFile.put("script_name", fileName);
                 oneFile.put("version", oneFile.get("revision"));
@@ -566,11 +582,11 @@ public class ScriptController extends BaseController {
      * 删除主机
      *
      * @param hostId 主机地址
-     * @param path    路径
+     * @param path   路径
      * @return 删除状态
      */
     @RequestMapping(value = "/script/host", method = RequestMethod.DELETE)
-    public JSONObject deleteScriptHost(@RequestParam Integer hostId, @RequestParam String path) {
+    public JSONObject deleteScriptHost(@RequestParam(name = "host_id") Integer hostId, @RequestParam String path) {
         if (hostId == null || hostId <= 0) {
             return returnError("删除的主机不存在");
         }

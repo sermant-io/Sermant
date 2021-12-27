@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.hercules.controller.BaseController;
 import com.huawei.hercules.service.scenario.IScenarioService;
+import com.huawei.hercules.util.MysqlCharUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -133,8 +134,13 @@ public class ScenarioController extends BaseController {
             sj.add(scenarioKeys.get(sorter)).add(getOrder(order));
             pagesInfo.put("sort", sj.toString());
         }
-
-        JSONObject result = scenarioService.getPagedAll(keywords, arrayToStr(appName), arrayToStr(createdBy), arrayToStr(scenarioType), arrayToStr(scenarioName), pagesInfo.toString());
+        JSONObject result = scenarioService.getPagedAll(
+                MysqlCharUtil.escapeSpecialChar(keywords),
+                arrayToStr(appName),
+                arrayToStr(createdBy),
+                arrayToStr(scenarioType),
+                arrayToStr(scenarioName),
+                pagesInfo.toString());
 
         // 2.结果适配
         if (result != null) {

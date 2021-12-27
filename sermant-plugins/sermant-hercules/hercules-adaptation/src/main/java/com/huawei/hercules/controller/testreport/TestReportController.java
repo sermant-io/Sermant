@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.hercules.controller.BaseController;
 import com.huawei.hercules.service.testreport.ITestReportService;
+import com.huawei.hercules.util.MysqlCharUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -82,7 +83,12 @@ public class TestReportController extends BaseController {
             sj.add(testReportKeys.get(sorter)).add(getOrder(order));
             pagesInfo.put("sort", sj.toString());
         }
-        JSONObject result = testReportService.getPagedAll(keywords, test_type, arrayToStr(test_name), start_time, end_time, pagesInfo.toString());
+        JSONObject result = testReportService.getPagedAll(
+                MysqlCharUtil.escapeSpecialChar(keywords),
+                test_type,
+                arrayToStr(test_name),
+                start_time, end_time,
+                pagesInfo.toString());
 
         // 结果适配
         if (result != null) {
