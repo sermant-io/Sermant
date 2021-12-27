@@ -30,7 +30,7 @@ import com.huawei.flowcontrol.util.StringUtils;
  * @author zhouss
  * @since 2021-11-22
  */
-public class ContainOperator implements Operator {
+public class ContainsOperator implements Operator {
     @Override
     public boolean match(String targetValue, String patternValue) {
         return StringUtils.contains(targetValue, patternValue);
@@ -38,6 +38,6 @@ public class ContainOperator implements Operator {
 
     @Override
     public String getId() {
-        return "contain";
+        return "contains";
     }
 }
