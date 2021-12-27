@@ -29,7 +29,7 @@ import org.junit.Test;
 import com.huawei.sermant.core.common.CommonConstant;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.config.ConfigManager;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigServiceType;
 import com.huawei.sermant.core.service.dynamicconfig.config.DynamicConfig;
@@ -65,19 +65,19 @@ public class ZooKeeperDynamicConfigServiceTest {
     public void listenerTest() throws InterruptedException {
         service.addConfigListener("dummy-key", new DynamicConfigListener() {
             @Override
-            public void process(DynamicConfigChangeEvent event) {
+            public void process(DynamicConfigEvent event) {
                 logger.warning("Without group event: " + event);
             }
         });
         service.addConfigListener("dummy-key", "dummy-group", new DynamicConfigListener() {
             @Override
-            public void process(DynamicConfigChangeEvent event) {
+            public void process(DynamicConfigEvent event) {
                 logger.warning("With group event: " + event);
             }
         });
         service.addGroupListener("dummy-group", new DynamicConfigListener() {
             @Override
-            public void process(DynamicConfigChangeEvent event) {
+            public void process(DynamicConfigEvent event) {
                 logger.warning("Only group event: " + event);
             }
         });

@@ -20,7 +20,7 @@ import com.alibaba.csp.sentinel.util.AppNameUtil;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.service.ServiceManager;
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
 import com.huawei.flowcontrol.core.config.FlowControlConfig;
@@ -101,11 +101,11 @@ public class DefaultDataSourceManager implements DataSourceManager {
         final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
         service.addGroupListener(groupLabel, new DynamicConfigListener() {
             @Override
-            public void process(DynamicConfigChangeEvent event) {
+            public void process(DynamicConfigEvent event) {
                 for (DefaultDataSource<?> defaultDataSource : sourceMap.values()) {
                     defaultDataSource.update(event);
                 }
             }
-        });
+        }, true);
     }
 }

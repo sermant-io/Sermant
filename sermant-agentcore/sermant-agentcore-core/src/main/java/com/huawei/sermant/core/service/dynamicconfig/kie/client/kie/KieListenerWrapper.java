@@ -19,8 +19,8 @@ package com.huawei.sermant.core.service.dynamicconfig.kie.client.kie;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.dynamicconfig.kie.listener.KvDataHolder;
 import com.huawei.sermant.core.service.dynamicconfig.kie.listener.SubscriberManager;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeType;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 import java.util.Locale;
@@ -47,27 +47,42 @@ public class KieListenerWrapper {
     public void notifyListener(KvDataHolder.EventDataHolder eventDataHolder) {
         if (!eventDataHolder.getAdded().isEmpty()) {
             // 新增事件
-            notify(eventDataHolder.getAdded(), DynamicConfigChangeType.ADDED);
+            notify(eventDataHolder.getAdded(), DynamicConfigEventType.CREATE);
         }
         if (!eventDataHolder.getDeleted().isEmpty()) {
             // 删除事件
-            notify(eventDataHolder.getDeleted(), DynamicConfigChangeType.DELETED);
+            notify(eventDataHolder.getDeleted(), DynamicConfigEventType.DELETE);
         }
         if (!eventDataHolder.getModified().isEmpty()) {
             // 修改事件
-            notify(eventDataHolder.getModified(), DynamicConfigChangeType.MODIFIED);
+            notify(eventDataHolder.getModified(), DynamicConfigEventType.MODIFY);
         }
     }
 
-    private void notify(Map<String, String> configData, DynamicConfigChangeType dynamicConfigChangeType) {
+    private void notify(Map<String, String> configData, DynamicConfigEventType dynamicConfigEventType) {
         for (Map.Entry<String, String> entry : configData.entrySet()) {
             try {
-                dynamicConfigListener.process(new DynamicConfigChangeEvent(entry.getKey(), this.group, entry.getValue(),
-                        dynamicConfigChangeType));
+                notifyEvent(entry.getKey(), entry.getValue(), dynamicConfigEventType);
             } catch (Throwable ex) {
                 LOGGER.warning(String.format(Locale.ENGLISH, "Process config data failed, key: [%s], group: [%s]",
                         entry.getKey(), this.group));
             }
+        }
+    }
+
+    private void notifyEvent(String key, String value, DynamicConfigEventType eventType) {
+        switch (eventType) {
+            case CREATE:
+                dynamicConfigListener.process(DynamicConfigEvent.createEvent(key, this.group, value));
+                break;
+            case MODIFY:
+                dynamicConfigListener.process(DynamicConfigEvent.modifyEvent(key, this.group, value));
+                break;
+            case DELETE:
+                dynamicConfigListener.process(DynamicConfigEvent.deleteEvent(key, this.group, value));
+                break;
+            default:
+                LOGGER.warning(String.format(Locale.ENGLISH, "Event type [%s] is invalid. ", eventType));
         }
     }
 

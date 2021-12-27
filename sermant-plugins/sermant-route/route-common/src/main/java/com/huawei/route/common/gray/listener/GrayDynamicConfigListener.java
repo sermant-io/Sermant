@@ -18,8 +18,8 @@ package com.huawei.route.common.gray.listener;
 
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeType;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
@@ -67,13 +67,13 @@ public class GrayDynamicConfigListener implements DynamicConfigListener {
     }
 
     @Override
-    public void process(DynamicConfigChangeEvent event) {
+    public void process(DynamicConfigEvent event) {
         if (event.getKey() == null || !event.getKey().equals(key)) {
             return;
         }
         GrayConfiguration grayConfiguration = LabelCache.getLabel(labelName);
         Map<String, List<Rule>> routeRule = new LinkedHashMap<String, List<Rule>>();
-        if (event.getChangeType() == DynamicConfigChangeType.DELETED) {
+        if (event.getEventType() == DynamicConfigEventType.DELETE) {
             resetGrayConfiguration(grayConfiguration);
             return;
         }
@@ -114,7 +114,7 @@ public class GrayDynamicConfigListener implements DynamicConfigListener {
         grayConfiguration.setRouteRule(routeRule);
         grayConfiguration.setOn(!CollectionUtils.isEmpty(routeRule));
         grayConfiguration.setValid(!CollectionUtils.isEmpty(routeRule));
-        LOGGER.info(String.format("Config [%s] has been %s ", event.getKey(), event.getChangeType()));
+        LOGGER.info(String.format("Config [%s] has been %s ", event.getKey(), event.getEventType()));
     }
 
     private boolean isInValidMap(Map<?, ?> map, GrayConfiguration grayConfiguration) {

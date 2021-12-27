@@ -33,6 +33,9 @@
 |[GroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/api/GroupService.java)|List\<String> listKeysFromGroup(String)|获取组中所有键|
 |[GroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/api/GroupService.java)|boolean addGroupListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java))|为组下所有的键添加监听器|
 |[GroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/api/GroupService.java)|boolean removeGroupListener(String)|移除组下所有键的监听器|
+|[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/DynamicConfigService.java)|boolean addConfigListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean)|为某个键添加监听器(默认组)，根据入参决定是否触发初始化事件|
+|[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/DynamicConfigService.java)|boolean addConfigListener(String, String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean)|为组下某个键添加监听器，根据入参决定是否触发初始化事件|
+|[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/DynamicConfigService.java)|boolean addGroupListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean)|为组下所有的键添加监听器，根据入参决定是否触发初始化事件|
 
 以上，需要明确两个概念：
 
@@ -68,13 +71,14 @@
   |String|key|配置键|
   |String|group|配置分组|
   |String|content|配置信息|
-  |[DynamicConfigChangeType](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/common/DynamicConfigChangeType.java)|changeType|事件类型|
-- 动态配置改变事件类型[DynamicConfigChangeType](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/common/DynamicConfigChangeType.java)，含以下三种：
+  |[DynamicConfigEventType](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)|changeType|事件类型|
+- 动态配置改变事件类型[DynamicConfigEventType](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)，含以下四种：
   |枚举值|解析|
   |:-|:-|
-  |ADDED|配置新增事件|
-  |MODIFIED|配置信息修改事件|
-  |DELETED|配置删除事件|
+  |INIT|添加监听器时的初始化响应|
+  |CREATE|配置新增事件|
+  |MODIFY|配置信息修改事件|
+  |DELETE|配置删除事件|
 
 ## ZooKeeper实现
 

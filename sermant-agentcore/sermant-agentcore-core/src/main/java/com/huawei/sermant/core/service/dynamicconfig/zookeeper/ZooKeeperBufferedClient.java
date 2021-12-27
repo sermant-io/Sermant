@@ -42,7 +42,7 @@ public class ZooKeeperBufferedClient implements Closeable {
     /**
      * zk路径分隔符
      */
-    public static final String ZK_SEPARATOR = "/";
+    public static final char ZK_PATH_SEPARATOR = '/';
 
     /**
      * 默认字符集
@@ -144,11 +144,15 @@ public class ZooKeeperBufferedClient implements Closeable {
      * @return 是否全部创建成功
      */
     public boolean createParent(String path) {
-        final String parent = path.substring(0, path.lastIndexOf(ZK_SEPARATOR));
+        final int separatorIndex = path.lastIndexOf(ZK_PATH_SEPARATOR);
+        if (separatorIndex == 0) {
+            return true;
+        }
+        final String parent = path.substring(0, separatorIndex);
         if (ifNodeExist(parent)) {
             return true;
         }
-        if (parent.length() > 0 && !createParent(parent)) {
+        if (!createParent(parent)) {
             return false;
         }
         try {
@@ -219,7 +223,7 @@ public class ZooKeeperBufferedClient implements Closeable {
         }
         final List<String> nodes = new ArrayList<>();
         for (String child : children) {
-            final String childPath = path + ZK_SEPARATOR + child;
+            final String childPath = path + ZK_PATH_SEPARATOR + child;
             nodes.add(childPath);
             nodes.addAll(listAllNodes(childPath));
         }

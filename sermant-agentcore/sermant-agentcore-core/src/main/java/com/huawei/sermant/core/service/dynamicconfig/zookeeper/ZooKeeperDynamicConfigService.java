@@ -26,8 +26,7 @@ import org.apache.zookeeper.Watcher;
 
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeType;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 /**
@@ -42,6 +41,11 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
      * 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    /**
+     * zk路径分隔符
+     */
+    private static final char ZK_PATH_SEPARATOR = ZooKeeperBufferedClient.ZK_PATH_SEPARATOR;
 
     /**
      * zookeeper的包装客户端
@@ -59,75 +63,40 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 修正zk路径，补充缺少的斜杠
+     * 获取zk路径，补充缺少的斜杠
      *
-     * @param path zk节点路径
-     * @return 修正后的路径
+     * @param keyOrGroup key或group
+     * @return zk路径
      */
-    private String fixPath(String path) {
-        return path == null || path.length() <= 0 ? "" :
-                (path.startsWith(ZooKeeperBufferedClient.ZK_SEPARATOR) ? path :
-                        ZooKeeperBufferedClient.ZK_SEPARATOR + path);
+    private String toPath(String keyOrGroup) {
+        return keyOrGroup.charAt(0) == ZK_PATH_SEPARATOR ? keyOrGroup : ZK_PATH_SEPARATOR + keyOrGroup;
     }
 
     /**
-     * 修正组，如果组为空，则使用默认的组替代
+     * 获取zk路径，补充缺少的斜杠
      *
+     * @param key   键
      * @param group 组
-     * @return 修正后的组
+     * @return zk路径
      */
-    private String fixGroup(String group) {
-        return group == null || group.length() <= 0 ? CONFIG.getDefaultGroup() : group;
-    }
-
-    @Override
-    public String getConfig(String key, String group) {
-        if (key == null || key.length() <= 0) {
-            LOGGER.warning("Empty key is not allowed. ");
-            return null;
-        }
-        if (group == null) {
-            return getConfig(key);
-        }
-        return zkClient.getNode(fixPath(fixGroup(group)) + fixPath(key));
-    }
-
-    @Override
-    public boolean publishConfig(String key, String group, String content) {
-        if (key == null || key.length() <= 0) {
-            LOGGER.warning("Empty key is not allowed. ");
-            return false;
-        }
-        if (group == null) {
-            return publishConfig(key, content);
-        }
-        return zkClient.updateNode(fixPath(fixGroup(group)) + fixPath(key), content);
-    }
-
-    @Override
-    public boolean removeConfig(String key, String group) {
-        if (key == null || key.length() <= 0) {
-            LOGGER.warning("Empty key is not allowed. ");
-            return false;
-        }
-        if (group == null) {
-            return removeConfig(key);
-        }
-        return zkClient.removeNode(fixPath(fixGroup(group)) + fixPath(key));
+    private String toPath(String key, String group) {
+        return toPath(group) + toPath(key);
     }
 
     /**
-     * 转换zk事件类型
+     * 将zk事件转换为动态配置事件
      *
-     * @param type zk事件类型
-     * @return 转换后的动态配置改变类型
+     * @param key          配置键
+     * @param group        分组
+     * @param watchedEvent zk事件
+     * @return 动态配置事件
      */
-    private DynamicConfigChangeType transEventType(Watcher.Event.EventType type) {
-        switch (type) {
+    private DynamicConfigEvent transEvent(String key, String group, WatchedEvent watchedEvent) {
+        switch (watchedEvent.getType()) {
             case NodeCreated:
-                return DynamicConfigChangeType.ADDED;
+                return DynamicConfigEvent.createEvent(key, group, doGetConfig(key, group));
             case NodeDeleted:
-                return DynamicConfigChangeType.DELETED;
+                return DynamicConfigEvent.deleteEvent(key, group, doGetConfig(key, group));
             case None:
             case NodeDataChanged:
             case DataWatchRemoved:
@@ -135,21 +104,28 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
             case NodeChildrenChanged:
             case PersistentWatchRemoved:
             default:
-                return DynamicConfigChangeType.MODIFIED;
+                return DynamicConfigEvent.modifyEvent(key, group, doGetConfig(key, group));
         }
     }
 
     @Override
-    public boolean addConfigListener(String key, String group, DynamicConfigListener listener) {
-        if (key == null || key.length() <= 0) {
-            LOGGER.warning("Empty key is not allowed. ");
-            return false;
-        }
-        if (group == null) {
-            return addConfigListener(key, listener);
-        }
-        final String fixedGroup = fixGroup(group);
-        final String fullPath = fixPath(fixedGroup) + fixPath(key);
+    protected String doGetConfig(String key, String group) {
+        return zkClient.getNode(toPath(key, group));
+    }
+
+    @Override
+    protected boolean doPublishConfig(String key, String group, String content) {
+        return zkClient.updateNode(toPath(key, group), content);
+    }
+
+    @Override
+    protected boolean doRemoveConfig(String key, String group) {
+        return zkClient.removeNode(toPath(key, group));
+    }
+
+    @Override
+    protected boolean doAddConfigListener(String key, String group, DynamicConfigListener listener) {
+        final String fullPath = toPath(key, group);
         return zkClient.addDataLoopWatch(fullPath, new Watcher() {
             @Override
             public void process(WatchedEvent watchedEvent) {
@@ -159,10 +135,7 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
                             watchedEvent.getPath(), fullPath));
                     return;
                 }
-                final DynamicConfigChangeType changeType = transEventType(watchedEvent.getType());
-                final String content =
-                        changeType == DynamicConfigChangeType.DELETED ? "" : getConfig(key, fixedGroup);
-                listener.process(new DynamicConfigChangeEvent(key, fixedGroup, content, changeType));
+                listener.process(transEvent(key, group, watchedEvent));
             }
         }, new ZooKeeperBufferedClient.BreakHandler() {
             @Override
@@ -174,9 +147,26 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
     }
 
     @Override
-    public boolean addGroupListener(String group, DynamicConfigListener listener) {
-        final String fixedGroup = fixPath(fixGroup(group));
-        return zkClient.addPersistentRecursiveWatches(fixedGroup, new Watcher() {
+    protected boolean doRemoveConfigListener(String key, String group) {
+        return zkClient.removeDataWatches(toPath(key, group));
+    }
+
+    @Override
+    protected List<String> doListKeysFromGroup(String group) {
+        final String groupPath = toPath(group);
+        final List<String> keys = new ArrayList<>();
+        for (String keyPath : zkClient.listAllNodes(groupPath)) {
+            if (keyPath.startsWith(groupPath)) {
+                keys.add(keyPath.substring(groupPath.length()));
+            }
+        }
+        return keys;
+    }
+
+    @Override
+    protected boolean doAddGroupListener(String group, DynamicConfigListener listener) {
+        final String groupPath = toPath(group);
+        return zkClient.addPersistentRecursiveWatches(groupPath, new Watcher() {
             @Override
             public void process(WatchedEvent watchedEvent) {
                 final String eventPath = watchedEvent.getPath();
@@ -184,50 +174,22 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
                     LOGGER.warning("Unexpected empty event path. ");
                     return;
                 }
-                if (fixedGroup.equals(eventPath)) {
-                    LOGGER.fine(String.format(Locale.ROOT, "Skip processing group event [%s]. ", fixedGroup));
+                if (groupPath.equals(eventPath)) {
+                    LOGGER.fine(String.format(Locale.ROOT, "Skip processing group event [%s]. ", groupPath));
                     return;
                 }
-                if (!eventPath.startsWith(fixedGroup)) {
+                if (!eventPath.startsWith(groupPath) || eventPath.charAt(groupPath.length()) != ZK_PATH_SEPARATOR) {
                     LOGGER.warning(String.format(Locale.ROOT,
-                            "Event path [%s] is not child of [%s]. ", eventPath, fixedGroup));
+                            "Event path [%s] is not child of [%s]. ", eventPath, groupPath));
                     return;
                 }
-                final DynamicConfigChangeType changeType = transEventType(watchedEvent.getType());
-                final String key = eventPath.substring(fixedGroup.length());
-                final String content =
-                        changeType == DynamicConfigChangeType.DELETED ? "" : getConfig(key, fixedGroup);
-                listener.process(new DynamicConfigChangeEvent(key, group, content, changeType));
+                listener.process(transEvent(eventPath.substring(groupPath.length() + 1), group, watchedEvent));
             }
         });
     }
 
     @Override
-    public boolean removeConfigListener(String key, String group) {
-        if (key == null || key.length() <= 0) {
-            LOGGER.warning("Empty key is not allowed. ");
-            return false;
-        }
-        if (group == null) {
-            return removeConfig(key);
-        }
-        return zkClient.removeDataWatches(fixPath(fixGroup(group)) + fixPath(key));
-    }
-
-    @Override
-    public boolean removeGroupListener(String group) {
-        return zkClient.removeAllWatches(fixPath(fixGroup(group)));
-    }
-
-    @Override
-    public List<String> listKeysFromGroup(String group) {
-        final String fixedGroup = fixPath(fixGroup(group));
-        final List<String> keys = new ArrayList<>();
-        for (String path : zkClient.listAllNodes(fixedGroup)) {
-            if (path.startsWith(fixedGroup)) {
-                keys.add(path.substring(fixedGroup.length()));
-            }
-        }
-        return keys;
+    protected boolean doRemoveGroupListener(String group) {
+        return zkClient.removeAllWatches(toPath(group));
     }
 }
