@@ -16,8 +16,14 @@
 
 package com.huawei.test.configelement.impl;
 
-import com.huawei.test.configelement.Parameterized;
-import com.huawei.test.configelement.config.ParameterizedConfig;
+import com.huawei.test.configelement.BaseParameterized;
+import com.huawei.test.configelement.service.IParamFileLineSplitter;
+import com.huawei.test.configelement.service.impl.CommonParamFileLineSplitter;
+import com.huawei.test.configelement.service.impl.QuotedDataParamFileLineSplitter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * 功能描述：csv格式数据参数化实现
@@ -25,44 +31,20 @@ import com.huawei.test.configelement.config.ParameterizedConfig;
  * @author zl
  * @since 2021-12-08
  */
-public class CsvParameterized extends Parameterized {
+public class CsvParameterized extends BaseParameterized {
 	/**
-	 * 参数化配置
+	 * 日志
 	 */
-	private ParameterizedConfig config;
+	private static final Logger LOGGER = LoggerFactory.getLogger(CsvParameterized.class);
 
 	@Override
-	public void initConfig(ParameterizedConfig config) {
-		this.config = config;
-	}
-
-	@Override
-	public boolean isConfigValid() {
-		return false;
-	}
-
-	@Override
-	public boolean hasNext() {
-		return false;
-	}
-
-	@Override
-	public String[] nextLineValue() {
-		return new String[0];
-	}
-
-	@Override
-	public String nextSpecifyValue(String paramKey) {
-		return null;
-	}
-
-	@Override
-	public String nextSpecifyValue(int valueIndex) {
-		return null;
-	}
-
-	@Override
-	public String[][] obtainAllValues() {
-		return new String[0][];
+	protected List<String> splitLineContent(String lineContent, String delimiter, boolean quotData) {
+		IParamFileLineSplitter paramFileLineSplitter;
+		if (quotData) {
+			paramFileLineSplitter = new QuotedDataParamFileLineSplitter();
+		} else {
+			paramFileLineSplitter = new CommonParamFileLineSplitter();
+		}
+		return paramFileLineSplitter.splitLine(lineContent, delimiter);
 	}
 }

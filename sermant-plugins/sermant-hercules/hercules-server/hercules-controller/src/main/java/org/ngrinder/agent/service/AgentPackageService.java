@@ -319,6 +319,12 @@ public class AgentPackageService {
 			for (String each : StringUtils.split(dependencies, ";")) {
 				libs.add(FilenameUtils.getBaseName(each.trim()).replace("-SNAPSHOT", ""));
 			}
+			/**
+			 * updated by huawei, add local jar instead of nGrinder.
+			 *
+			 * @since 2021-12-23
+			 */
+			libs.add(getPackageName("hercules-core").replace("-SNAPSHOT", ""));
 		} catch (Exception e) {
 			LOGGER.error("Error while loading dependencies.txt", e);
 		} finally {
