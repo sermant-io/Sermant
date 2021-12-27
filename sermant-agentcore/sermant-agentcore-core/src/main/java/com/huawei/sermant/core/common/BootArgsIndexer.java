@@ -17,6 +17,7 @@
 package com.huawei.sermant.core.common;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
@@ -95,11 +96,19 @@ public class BootArgsIndexer {
 
     static {
         final String currentFile = BootArgsIndexer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        JarFile jarFile = null;
         try {
-            coreVersion = JarFileUtil.getManifestAttr(new JarFile(currentFile), CommonConstant.CORE_VERSION_KEY)
-                    .toString();
+            jarFile = new JarFile(currentFile);
+            coreVersion = JarFileUtil.getManifestAttr(jarFile, CommonConstant.CORE_VERSION_KEY).toString();
         } catch (Exception ignored) {
             throw new SchemaException(SchemaException.MISSING_VERSION, currentFile);
+        } finally {
+            if (jarFile != null) {
+                try {
+                    jarFile.close();
+                } catch (IOException ignored) {
+                }
+            }
         }
     }
 }

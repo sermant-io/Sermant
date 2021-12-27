@@ -228,8 +228,7 @@ public class PluginManager {
     private static URL[] toURLs(String pluginName, File[] jars) {
         final List<URL> urls = new ArrayList<URL>();
         for (File jar : jars) {
-            final JarFile jarFile = toJarFile(pluginName, jar, true);
-            if (jarFile != null) {
+            if (processByJarFile(pluginName, jar, false, null)) {
                 final URL url = toURL(jar);
                 if (url != null) {
                     urls.add(url);
@@ -255,23 +254,37 @@ public class PluginManager {
     }
 
     /**
-     * 将插件包文件转换为jar包，并校验插件版本
+     * 将插件包文件转换为jar包，再做处理
      *
-     * @param pluginName 插件名称
-     * @param jar        插件包文件
-     * @return 插件包jar包
+     * @param pluginName    插件名称
+     * @param jar           插件包文件
+     * @param ifCheckSchema 是否做jar包元数据检查
+     * @param consumer      jar包消费者
+     * @return 是否无异常处理完毕
      */
-    private static JarFile toJarFile(String pluginName, File jar, boolean ifAllowExtJar) {
+    private static boolean processByJarFile(String pluginName, File jar, boolean ifCheckSchema,
+            JarFileConsumer consumer) {
+        JarFile jarFile = null;
         try {
-            final JarFile jarFile = new JarFile(jar);
-            if (!ifAllowExtJar && !checkSchema(pluginName, jarFile)) {
+            jarFile = new JarFile(jar);
+            if (ifCheckSchema && !checkSchema(pluginName, jarFile)) {
                 throw new SchemaException(SchemaException.UNEXPECTED_EXT_JAR, jar.getPath());
             }
-            return jarFile;
+            if (consumer != null) {
+                consumer.consume(jarFile);
+            }
+            return true;
         } catch (IOException ignored) {
             LOGGER.warning(String.format(Locale.ROOT, "Check schema of %s failed. ", jar.getPath()));
+            return false;
+        } finally {
+            if (jarFile != null) {
+                try {
+                    jarFile.close();
+                } catch (IOException ignored) {
+                }
+            }
         }
-        return null;
     }
 
     /**
@@ -311,10 +324,12 @@ public class PluginManager {
      */
     private static void loadPlugins(String pluginName, File pluginDir, Instrumentation instrumentation) {
         for (File jar : listJars(pluginDir)) {
-            final JarFile jarFile = toJarFile(pluginName, jar, false);
-            if (jarFile != null) {
-                instrumentation.appendToSystemClassLoaderSearch(jarFile);
-            }
+            processByJarFile(pluginName, jar, true, new JarFileConsumer() {
+                @Override
+                public void consume(JarFile jarFile) {
+                    instrumentation.appendToSystemClassLoaderSearch(jarFile);
+                }
+            });
         }
     }
 
@@ -341,5 +356,17 @@ public class PluginManager {
                 }
             }
         }
+    }
+
+    /**
+     * JarFile消费者
+     */
+    private interface JarFileConsumer {
+        /**
+         * 消费JarFile
+         *
+         * @param jarFile JarFile对象
+         */
+        void consume(JarFile jarFile);
     }
 }

@@ -180,8 +180,10 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     @Override
     public void setExtInfo(ExtInfoProvider extInfo) {
         final String pluginJar = extInfo.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        JarFile jarFile = null;
         try {
-            final Object nameAttr = JarFileUtil.getManifestAttr(new JarFile(pluginJar), PluginConstant.PLUGIN_NAME_KEY);
+            jarFile = new JarFile(pluginJar);
+            final Object nameAttr = JarFileUtil.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
             if (nameAttr != null) {
                 EXT_INFO_MAP.put(nameAttr.toString(), extInfo);
             } else {
@@ -189,6 +191,13 @@ public class HeartbeatServiceImpl implements HeartbeatService {
             }
         } catch (IOException ignored) {
             LOGGER.warning(String.format(Locale.ROOT, "Cannot find manifest file of %s. ", pluginJar));
+        } finally {
+            if (jarFile != null) {
+                try {
+                    jarFile.close();
+                } catch (IOException ignored) {
+                }
+            }
         }
     }
 }
