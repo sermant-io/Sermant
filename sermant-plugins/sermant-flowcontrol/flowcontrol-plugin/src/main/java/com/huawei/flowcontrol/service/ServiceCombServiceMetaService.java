@@ -16,5 +16,13 @@
 
 package com.huawei.flowcontrol.service;
 
-public abstract class ServiceCombServiceMetaService extends AbstractPluginService {
+import com.huawei.sermant.core.plugin.service.PluginService;
+
+/**
+ * 调用时服务获取
+ *
+ * @author zhouss
+ * @since 2021-12-27
+ */
+public abstract class ServiceCombServiceMetaService extends AbstractPluginService implements PluginService {
 }

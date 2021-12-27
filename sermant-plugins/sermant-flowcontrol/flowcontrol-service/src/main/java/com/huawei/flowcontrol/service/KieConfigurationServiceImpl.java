@@ -23,7 +23,12 @@ import com.huawei.sermant.core.util.SpiLoadUtil.SpiWeight;
 
 import java.lang.reflect.Method;
 
-@SpiWeight(4)
+/**
+ * 拦截KieConfiguration获取配置信息
+ *
+ * @author zhouss
+ * @since 2021-12-27
+ */
 public class KieConfigurationServiceImpl extends KieConfigurationService {
     /**
      * 拦截点前执行

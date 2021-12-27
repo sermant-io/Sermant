@@ -36,7 +36,12 @@ import com.alibaba.dubbo.rpc.RpcResult;
 
 import java.lang.reflect.Method;
 
-@SpiWeight(1)
+/**
+ * alibaba dubbo拦截实现
+ *
+ * @author zhouss
+ * @since 2021-12-27
+ */
 public class AlibabaDubboServiceImpl extends AlibabaDubboService {
     /**
      * 拦截点前执行

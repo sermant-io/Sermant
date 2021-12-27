@@ -17,11 +17,13 @@
 package com.huawei.flowcontrol.service;
 
 import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.plugin.service.PluginService;
 
 import java.lang.reflect.Method;
 
-public abstract class AbstractPluginService implements PluginService {
+/**
+ * 抽象实现基类
+ */
+public abstract class AbstractPluginService {
     /**
      * 拦截点前执行
      *
@@ -41,7 +43,6 @@ public abstract class AbstractPluginService implements PluginService {
      * @param method 增强的方法
      * @param arguments 增强方法的所有参数
      * @param result the method's original return value. May be null if the method triggers an exception.
-     * @return 结果
      */
     public void after(Object obj, Method method, Object[] arguments, Object result) {
     }

@@ -22,7 +22,12 @@ import com.huawei.sermant.core.util.SpiLoadUtil.SpiWeight;
 
 import java.lang.reflect.Method;
 
-@SpiWeight(5)
+/**
+ * 拦截获取调用时的服务名
+ *
+ * @author zhouss
+ * @since 2021-12-27
+ */
 public class ServiceCombServiceMetaServiceImpl extends ServiceCombServiceMetaService {
     /**
      * 拦截点之后执行

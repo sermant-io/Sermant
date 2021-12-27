@@ -22,5 +22,13 @@
 
 package com.huawei.flowcontrol.service;
 
-public abstract class AlibabaDubboService extends AbstractPluginService {
+import com.huawei.sermant.core.plugin.service.PluginService;
+
+/**
+ * alibaba dubbo服务拦截
+ *
+ * @author zhouss
+ * @since 2021-12-27
+ */
+public abstract class AlibabaDubboService extends AbstractPluginService implements PluginService {
 }

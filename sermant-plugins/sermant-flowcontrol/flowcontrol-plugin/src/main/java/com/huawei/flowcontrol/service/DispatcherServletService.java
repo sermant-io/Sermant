@@ -16,5 +16,13 @@
 
 package com.huawei.flowcontrol.service;
 
-public abstract class DispatcherServletService extends AbstractPluginService {
+import com.huawei.sermant.core.plugin.service.PluginService;
+
+/**
+ * http请求拦截
+ *
+ * @author zhouss
+ * @since 2021-12-27
+ */
+public abstract class DispatcherServletService extends AbstractPluginService implements PluginService {
 }

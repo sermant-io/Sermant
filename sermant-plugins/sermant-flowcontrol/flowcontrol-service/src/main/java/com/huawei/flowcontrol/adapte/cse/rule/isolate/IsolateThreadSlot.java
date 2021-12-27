@@ -47,6 +47,9 @@ public class IsolateThreadSlot extends AbstractLinkedProcessorSlot<DefaultNode> 
                       Object... args) throws Throwable {
         fireEntry(context, resourceWrapper, param, count, prioritized, args);
         final List<IsolateThreadRule> rules = IsolateThreadRuleManager.getRules(resourceWrapper.getName());
+        if (rules == null || rules.size() == 0) {
+            return;
+        }
         tryEntry(rules, count);
         bindEntryExitEvent(context.getCurEntry(), rules, count);
     }
@@ -57,10 +60,8 @@ public class IsolateThreadSlot extends AbstractLinkedProcessorSlot<DefaultNode> 
     }
 
     private void tryEntry(final List<IsolateThreadRule> rules, int count) throws IsolateThreadException {
-        if (rules != null) {
-            for (IsolateThreadRule rule : rules) {
-                rule.tryEntry(count);
-            }
+        for (IsolateThreadRule rule : rules) {
+            rule.tryEntry(count);
         }
     }
 
@@ -68,8 +69,8 @@ public class IsolateThreadSlot extends AbstractLinkedProcessorSlot<DefaultNode> 
      * 绑定entry退出事件， 使entry与exit绑定在一块，避免错误release许可，导致统计数据有误
      *
      * @param curEntry 当前Entry
-     * @param rules 匹配规则列表
-     * @param count 许可数
+     * @param rules    匹配规则列表
+     * @param count    许可数
      */
     private void bindEntryExitEvent(final Entry curEntry, final List<IsolateThreadRule> rules, final int count) {
         curEntry.whenTerminate(new BiConsumer<Context, Entry>() {
