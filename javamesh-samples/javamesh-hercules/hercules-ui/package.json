@@ -29,7 +29,7 @@
     "ws": "8.2.3"
   },
   "scripts": {
-    "start": "set PORT=9000 && react-app-rewired start",
+    "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "lint": "eslint --ext .js,.vue,.ts,.jsx,.tsx src -f checkstyle -o coverage/eslint.xml"
   },
