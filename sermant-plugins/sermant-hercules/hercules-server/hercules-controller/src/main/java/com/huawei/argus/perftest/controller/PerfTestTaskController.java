@@ -22,7 +22,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.huawei.argus.perftest.service.IAgentInfoService;
 import com.huawei.argus.perftest.service.IPerfTestTaskService;
-import com.huawei.argus.perftest.tuil.PerfTestUtil;
+import com.huawei.argus.perftest.util.PerfTestUtil;
 import com.huawei.argus.scene.service.PerfSceneService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang.StringUtils;
