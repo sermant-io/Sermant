@@ -55,7 +55,7 @@ public class KieDynamicConfigServiceTest {
                 System.out.println(event.getContent());
             }
         };
-        subscriberManager.addGroupListener(group, dynamicConfigListener);
+        subscriberManager.addGroupListener(group, dynamicConfigListener, true);
         Assert.assertTrue(subscriberManager.removeGroupListener(group, dynamicConfigListener));
     }
 }

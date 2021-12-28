@@ -152,11 +152,11 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 
 - [SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java)主要职责是管理`Group`的所有订阅者以及进行数据更新通知；其会根据订阅的Group，即标签组，与`Kie`建立连接请求任务，动态监听数据更新变化；该类主要包含以下API：
 
-  | 方法                                                       | 解析                                                         |
-  | ---------------------------------------------------------- | ------------------------------------------------------------ |
-  | boolean addGroupListener(String, DynamicConfigListener)    | 订阅标签监听，并由[SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java)管理，建立监听任务 |
-  | boolean removeGroupListener(String, DynamicConfigListener) | 移除标签监听                                                 |
-  | boolean publishConfig(String, String, String)              | 发布Kie配置                                                  |
+  | 方法                                                         | 解析                                                         |
+  | ------------------------------------------------------------ | ------------------------------------------------------------ |
+  | boolean addGroupListener(String, DynamicConfigListener, boolean) | 订阅标签监听，由[SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java)管理，建立监听任务，并提供首次订阅通知能力 |
+  | boolean removeGroupListener(String, DynamicConfigListener)   | 移除标签监听                                                 |
+  | boolean publishConfig(String, String, String)                | 发布Kie配置                                                  |
 
 ## 实现包装
 

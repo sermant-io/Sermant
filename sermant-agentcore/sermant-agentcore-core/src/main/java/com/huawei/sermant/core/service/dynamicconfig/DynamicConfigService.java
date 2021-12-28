@@ -53,7 +53,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
      * @param group 组
      * @return 修正后的组
      */
-    private String fixGroup(String group) {
+    protected String fixGroup(String group) {
         return group == null || group.length() <= 0 ? CONFIG.getDefaultGroup() : group;
     }
 
@@ -124,6 +124,10 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
             LOGGER.warning("Empty key is not allowed. ");
             return false;
         }
+        if (listener == null) {
+            LOGGER.warning("Empty listener is not allowed. ");
+            return false;
+        }
         return doAddConfigListener(key, fixGroup(group), listener);
     }
 
@@ -143,6 +147,10 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
 
     @Override
     public boolean addGroupListener(String group, DynamicConfigListener listener) {
+        if (listener == null) {
+            LOGGER.warning("Empty listener is not allowed. ");
+            return false;
+        }
         return doAddGroupListener(fixGroup(group), listener);
     }
 
