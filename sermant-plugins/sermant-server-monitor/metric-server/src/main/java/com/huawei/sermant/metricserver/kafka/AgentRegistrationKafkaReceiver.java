@@ -20,7 +20,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.huawei.sermant.metricserver.dto.register.AgentRegistrationDTO;
 import com.huawei.sermant.metricserver.dto.register.NetworkAddressDTO;
 import com.huawei.sermant.metricserver.service.AgentRegistrationService;
-import com.huawei.sermant.sample.servermonitor.entity.AgentRegistration;
+import com.huawei.sermant.plugin.servermonitor.entity.AgentRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
