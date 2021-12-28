@@ -103,9 +103,8 @@ public class RemoteScriptExecutor implements ScriptExecutor {
         ChannelSftp channel = null;
         String fileName = String.format(Locale.ROOT, "%s%s-%s.sh",
             scriptLocation, scriptName, System.currentTimeMillis());
-        String finalScriptContent = ("echo $$" + System.lineSeparator()) + scriptContent;
         try (BufferedInputStream inputStream = new BufferedInputStream(
-            new ByteArrayInputStream(finalScriptContent.getBytes(StandardCharsets.UTF_8)))
+            new ByteArrayInputStream(scriptContent.getBytes(StandardCharsets.UTF_8)))
         ) {
             ExecResult createDirResult = createRemoteDir(session, scriptLocation);
             if (!createDirResult.isSuccess()) {
@@ -196,18 +195,11 @@ public class RemoteScriptExecutor implements ScriptExecutor {
         ExecResult execResult = new ExecResult();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
         StringBuilder result = new StringBuilder();
-        boolean readFirstLogAsPid = true;
         while (true) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 if (logCallback != null && id > 0) {
-                    if (readFirstLogAsPid) {
-                        logCallback.handlePid(id, line);
-                        readFirstLogAsPid = false;
-                        continue;
-                    } else {
-                        logCallback.handleLog(id, line);
-                    }
+                    logCallback.handleLog(id, line);
                 }
                 result.append(line).append(System.lineSeparator());
             }

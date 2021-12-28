@@ -78,7 +78,6 @@ public class LocalScriptExecutor implements ScriptExecutor {
         String fileName = String.format(Locale.ROOT, "%s%s-%s.sh",
             scriptLocation, scriptName, System.nanoTime());
         try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
-            fileOutputStream.write(("echo $$" + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
             fileOutputStream.write(scriptContent.getBytes(StandardCharsets.UTF_8));
             fileOutputStream.flush();
             LOGGER.info("script file {} was created.", fileName);
@@ -110,16 +109,9 @@ public class LocalScriptExecutor implements ScriptExecutor {
         StringBuilder result = new StringBuilder();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "GBK"));
         String lines;
-        boolean readFirstLogAsPid = true;
         while ((lines = bufferedReader.readLine()) != null) {
             if (logCallback != null && id > 0) {
-                if (readFirstLogAsPid) {
-                    logCallback.handlePid(id, lines);
-                    readFirstLogAsPid = false;
-                    continue;
-                } else {
-                    logCallback.handleLog(id, lines);
-                }
+                logCallback.handleLog(id, lines);
             }
             result.append(lines).append(System.lineSeparator());
         }
