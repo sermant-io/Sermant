@@ -17,9 +17,15 @@
 package com.huawei.gray.dubbo.strategy.type;
 
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
+import com.huawei.sermant.core.common.CommonConstant;
+import com.huawei.sermant.core.common.LoggerFactory;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * enabled匹配策略测试
@@ -28,6 +34,19 @@ import org.junit.Test;
  * @date 2021/12/1
  */
 public class EnabledTypeStrategyTest {
+    /**
+     * 初始化
+     */
+    @Before
+    public void before() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put(CommonConstant.LOG_SETTING_FILE_KEY, getClass().getResource("/logback-test.xml").getPath());
+        LoggerFactory.init(map);
+    }
+
+    /**
+     * 测试enabled策略
+     */
     @Test
     public void testValue() {
         TypeStrategy strategy = new EnabledTypeStrategy();
@@ -35,11 +54,16 @@ public class EnabledTypeStrategyTest {
         entity.setEnabled(true);
         // 正常情况
         Assert.assertEquals(Boolean.TRUE.toString(), strategy.getValue(entity, ".isEnabled()"));
+        // 测试找不到方法
+        Assert.assertEquals(Boolean.FALSE.toString(), strategy.getValue(entity, ".foo()"));
         // 测试null
         Assert.assertNotEquals(Boolean.TRUE.toString(), strategy.getValue(new Entity(), ".isEnabled()"));
     }
 
-    private static class Entity {
+    /**
+     * 测试实体
+     */
+    public static class Entity {
         private Boolean enabled;
 
         public Boolean isEnabled() {

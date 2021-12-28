@@ -17,13 +17,12 @@
 package com.huawei.gray.dubbo.service;
 
 import com.huawei.gray.dubbo.cache.DubboCache;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.util.SpiLoadUtil.SpiWeight;
 import com.huawei.route.common.gray.config.GrayConfig;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 import org.apache.dubbo.config.ApplicationConfig;
 
@@ -35,7 +34,6 @@ import java.lang.reflect.Method;
  * @author pengyuyi
  * @date 2021/11/24
  */
-@SpiWeight(1)
 public class InterfaceConfigServiceImpl extends InterfaceConfigService {
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {

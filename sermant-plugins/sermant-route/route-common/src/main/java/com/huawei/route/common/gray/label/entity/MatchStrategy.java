@@ -107,7 +107,10 @@ public enum MatchStrategy {
         List<String> list = new ArrayList<String>(values);
         ListIterator<String> listIterator = list.listIterator();
         while (listIterator.hasNext()) {
-            listIterator.set(listIterator.next().toUpperCase(Locale.ROOT));
+            String next = listIterator.next();
+            if (next != null) {
+                listIterator.set(next.toUpperCase(Locale.ROOT));
+            }
         }
         return valueMatchStrategy.isMatch(list, arg.toUpperCase(Locale.ROOT));
     }

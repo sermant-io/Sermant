@@ -22,8 +22,8 @@ import com.huawei.gray.dubbo.strategy.type.EnabledTypeStrategy;
 import com.huawei.gray.dubbo.strategy.type.ListTypeStrategy;
 import com.huawei.gray.dubbo.strategy.type.MapTypeStrategy;
 import com.huawei.gray.dubbo.strategy.type.ObjectTypeStrategy;
-import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.route.common.gray.constants.GrayConstant;
+import com.huawei.sermant.core.common.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -74,7 +74,7 @@ public enum TypeStrategyChooser {
      * @param type 标签规则策略表达式
      * @return 规则策略
      */
-    public TypeStrategy choose(String type) {
+    private TypeStrategy choose(String type) {
         for (TypeStrategy typeStrategy : typeStrategies) {
             if (typeStrategy.isMatch(type)) {
                 return typeStrategy;
