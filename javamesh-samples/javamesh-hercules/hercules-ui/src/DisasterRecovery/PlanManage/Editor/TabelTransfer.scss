@@ -1,0 +1,7 @@
+.TabelTransfer {
+    &>div:last-child {
+        .ant-transfer-list-body-search-wrapper {
+            display: none;
+        }
+    }
+}

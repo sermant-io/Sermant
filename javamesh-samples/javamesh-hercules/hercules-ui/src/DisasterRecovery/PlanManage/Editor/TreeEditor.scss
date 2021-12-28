@@ -1,0 +1,15 @@
+.TreeEditor {
+    display: flex;
+    .Tree {
+        width: 250px;
+        flex-shrink: 0;
+        overflow-x: auto;
+        .ant-tree-title {
+            display: inline-block;
+            width: 130px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+    }
+}

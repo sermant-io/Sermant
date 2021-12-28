@@ -1,0 +1,35 @@
+.ScriptUpdate {
+    .Card {
+        margin: 20px;
+        padding: 30px;
+        .Line {
+            display: flex;
+            .Middle {
+                width: 33.33%;
+                padding-right: 10px;
+            }
+            .Small {
+                width: 16.66%;
+                padding-right: 10px;
+            }
+        }
+        .ant-form-item-label {
+            min-width: 70px;
+        }
+        .Editor{
+            padding: 5px 0;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: #D8DADD 1px solid;
+        }
+        .ScriptParam {
+            margin-top: 10px;
+        }
+        .Buttons {
+            text-align: center;
+            button + button {
+                margin-left: 10px;
+            }
+        }
+    }
+}

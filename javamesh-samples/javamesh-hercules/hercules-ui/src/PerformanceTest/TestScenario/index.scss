@@ -1,0 +1,30 @@
+.TestScenario{
+    .PageInfo {
+        margin: 20px;
+    }
+    .Card {
+        margin: 20px;
+    }
+    .ToolBar {
+        display: flex;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        .Add{
+            margin-right: 10px;
+        }
+        .Space {
+            flex-grow: 1;
+        }
+        .Input {
+            width: 230px;
+        }
+    }
+}
+.ScenarioUpdate{
+    .Buttons {
+        text-align: center;
+        button + button {
+            margin-left: 10px;
+        }
+    }
+}

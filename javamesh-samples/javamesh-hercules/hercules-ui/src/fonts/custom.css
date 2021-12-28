@@ -1,0 +1,70 @@
+@font-face {
+	font-family:custom;
+	src:url(./custom.woff);
+}
+.ci {
+	font-family:custom;
+}
+.ci-yql-account:before {
+	content:"\E900";
+}
+.ci-yql-back:before {
+	content:"\E901";
+}
+.ci-yql-check-circle:before {
+	content:"\E902";
+}
+.ci-yql-check-o:before {
+	content:"\E903";
+}
+.ci-yql-close:before {
+	content:"\E904";
+}
+.ci-yql-gesture-up:before {
+	content:"\E905";
+}
+.ci-yql-history:before {
+	content:"\E906";
+}
+.ci-yql-lightning:before {
+	content:"\E907";
+}
+.ci-yql-list:before {
+	content:"\E908";
+}
+.ci-yql-lucky-money:before {
+	content:"\E909";
+}
+.ci-yql-mobile:before {
+	content:"\E90A";
+}
+.ci-yql-profile:before {
+	content:"\E90B";
+}
+.ci-yql-question-circle:before {
+	content:"\E90C";
+}
+.ci-yql-refresh:before {
+	content:"\E90D";
+}
+.ci-yql-refund:before {
+	content:"\E90E";
+}
+.ci-yql-safe:before {
+	content:"\E90F";
+}
+.ci-yql-search:before {
+	content:"\E910";
+}
+.ci-yql-tag:before {
+	content:"\E911";
+}
+.ci-yql-triangle-down:before {
+	content:"\E912";
+}
+.ci-yql-triangle-right:before {
+	content:"\E913";
+}
+.ci-yql-unlock:before {
+	content:"\E914";
+}

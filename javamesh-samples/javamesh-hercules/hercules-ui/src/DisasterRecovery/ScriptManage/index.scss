@@ -1,0 +1,65 @@
+.ScriptManage {
+    .Card {
+        margin: 20px;
+        .ToolBar {
+            display: flex;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            .Add {
+                margin-right: 10px;
+            }
+            .Space {
+                flex-grow: 1;
+            }
+            .Input {
+                width: 230px;
+            }
+        }
+    }
+}
+.ApproveScript {
+    .Form {
+        .Buttons {
+            text-align: center;
+            button + button {
+                margin-left: 10px;
+            }
+        }
+    }
+}
+.ScriptDetail {
+    .Desc {
+        padding: 20px;
+    }
+    .Editor{
+        padding: 5px 0;
+        border-radius: 5px;
+        border: #D8DADD 1px solid;
+        margin-bottom: 20px;
+    }
+}
+.DebugScript {
+    .ServerName {
+        flex-grow: 1;
+    }
+    .Editor{
+        padding: 5px 0;
+        margin-top: 10px;
+        border-radius: 5px;
+        border: #D8DADD 1px solid;
+    }
+}
+.AddScript {
+    .Line {
+        display: flex;
+        .Middle {
+            width: 50%;
+        }
+    }
+    .Buttons {
+        text-align: center;
+        button + button {
+            margin-left: 10px;
+        }
+    }
+}

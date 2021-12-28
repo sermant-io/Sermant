@@ -1,0 +1,19 @@
+.RunningLogDetail {
+    .Card {
+        margin: 20px;
+        .Steps {
+            flex-wrap: wrap;
+        }
+        button + button {
+            margin-left: 10px;
+        }
+    }
+}
+.TaskConfirm {
+    .Buttons {
+        text-align: center;
+        button + button {
+            margin-left: 10px;
+        }
+    }
+}

@@ -1,0 +1,26 @@
+.Scenario {
+    display: inline-block;
+    text-align: center;
+    img {
+        vertical-align: top;
+    }
+    .Content {
+        display: inline-block;
+        margin-left: 20px;
+        text-align: left;
+        .Title {
+            line-height: 30px;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .Text {
+            line-height: 20px;
+            font-size: 14px;
+            color: #101010;
+            margin-bottom: 0;
+        }
+    }
+    &.active {
+        background-color: #F3F9FF;
+    }
+}

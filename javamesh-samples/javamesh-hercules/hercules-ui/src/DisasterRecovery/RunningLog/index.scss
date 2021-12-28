@@ -1,0 +1,16 @@
+.RunningLog{
+    .Card {
+        margin: 20px;
+        .ToolBar {
+            display: flex;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            .Space {
+                flex-grow: 1;
+            }
+            .Input {
+                width: 230px;
+            }
+        }
+    }
+}

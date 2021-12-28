@@ -1,0 +1,36 @@
+.Login {
+    display: flex;
+    height: 100vh;
+    .Image {
+        flex-grow: 1;
+        background-color: #21272b;
+        position: relative;
+        .Title {
+            width: 100%;
+            position: absolute;
+            color: #ffffff;
+            font-size: 70px;
+            text-align: center;
+            margin-top: 400px;
+        }
+        .Background {
+            width: 100%;
+            animation: spin 100s linear infinite;
+            @keyframes spin {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+        }
+    }
+    .Form {
+        width: 800px;
+        padding: 300px 200px;
+        .ant-btn-primary {
+            margin-right: 15px;
+        }
+    }
+}

@@ -1,0 +1,73 @@
+.ScriptDetail {
+    .PageInfo {
+        margin: 20px;
+    }
+    .Card {
+        margin: 20px;
+        padding: 30px;
+        .Form {
+            background-color: #F3F8FF;
+            padding-top: 30px;
+            padding-bottom: 10px;
+            padding-right: 80px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            .ant-col-2 {
+                max-width: 130px;;
+            }
+            .Line {
+                display: flex;
+                & div:first-child{
+                    flex-grow: 1;
+                }
+                .Save {
+                    margin: 0 10px;
+                    background-color: #41C170;
+                    border-color: #41C170;
+                }
+            }
+        }
+        .Editor{
+            padding: 5px;
+            border-radius: 5px;
+            border: #D8DADD 1px solid;
+        }
+    }
+}
+
+.ScriptHost {
+    width: 500px;
+    height: 54px;
+    padding-left: 10px;
+    display: flex;
+    .Hosts {
+        border: #D8DADD 1px solid;
+        background-color: #FFFFFF;
+        border-radius: 2px;
+        overflow-y: scroll;
+        .anticon:hover{
+            cursor: pointer;
+        }
+    }
+    .Button {
+        width: 40px;
+        background-color: #4DA1E5;
+        margin-left: 5px;
+        border-radius: 4px;
+        padding: 5px 13px;
+        color: #FFFFFF;
+        &:hover{
+            cursor: pointer;
+        }
+    }
+}
+.ScriptDetailOrchestrate {
+    .Buttons {
+        text-align: center;
+        margin-top: 30px;
+        margin-bottom: 0;
+        button + button {
+            margin-left: 10px;
+        }
+    }
+}

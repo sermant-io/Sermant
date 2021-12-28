@@ -1,0 +1,33 @@
+.AppHome {
+    background-color: #eef3f6;
+    flex-grow: 1;
+    min-width: 1481px;
+    .Banner {
+        height: 360px;
+        width: 100%;
+    }
+    .Grid {
+        padding: 30px;
+        display: grid;
+        grid-gap: 30px 30px;
+        grid-template-columns: repeat(4, 1fr);
+        .Item {
+            padding: 30px;
+            box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.04);
+            background-color: #ffffff;
+            text-align: center;
+            .Title {
+                font-weight: bold;
+                color: #3d444f;
+            }
+            .Img {
+                margin: 20px auto;
+                width: 100%;
+            }
+            .Desc {
+                text-indent: 2em;
+                text-align: left;
+            }
+        }
+    }
+}

@@ -1,0 +1,29 @@
+.AddPlanTask {
+    .Line {
+        display: flex;
+        .Middle {
+            width: 50%;
+        }
+    }
+    .Buttons {
+        text-align: center;
+        margin-top: 20px;
+        button + button {
+            margin-left: 10px;
+        }
+    }
+    .Editor{
+        padding: 5px 0;
+        border-radius: 5px;
+        border: #D8DADD 1px solid;
+    }
+}
+
+.SearchSelect {
+    display: flex;
+}
+.SearchSelectModal {
+    .Search {
+        margin-bottom: 20px;
+    }
+}

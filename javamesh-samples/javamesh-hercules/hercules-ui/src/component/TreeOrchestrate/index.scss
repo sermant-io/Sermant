@@ -1,0 +1,18 @@
+.TreeOrchestrate {
+    display: flex;
+    .Tree {
+        width: 440px;
+        flex-shrink: 0;
+        overflow-x: auto;
+        .ant-tree-title {
+            display: inline-block;
+            width: 200px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+    }
+    .Form {
+        flex-grow: 1;
+    }
+}

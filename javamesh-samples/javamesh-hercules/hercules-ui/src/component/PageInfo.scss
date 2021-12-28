@@ -1,0 +1,19 @@
+.PageInfo {
+    border-radius: 5px;
+    font-size: 14px;
+    line-height: 22px;
+    padding: 12px 20px;
+    height: 50px;
+    background-color: #F3FFF6;
+    border: #9AD0A6 solid 1px;
+    .icon{
+        font-size: 24px;
+        color: #3FB98D;
+        margin-right: 10px;
+        vertical-align: top;
+    }
+    a {
+        color: #1A99FE;
+        text-decoration: none;
+    }
+}

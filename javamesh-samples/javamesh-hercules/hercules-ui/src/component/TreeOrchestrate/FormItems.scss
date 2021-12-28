@@ -1,0 +1,44 @@
+.RootBasicScenario {
+    .ant-radio-wrapper {
+        padding: 5px 0;
+    }
+    .ant-form-item {
+        display: inline-block;
+    }
+    .Time {
+        width: 60px;
+    }
+    .Sep {
+        font-size: 14px;
+        line-height: 30px;
+        margin: 0 8px;
+    }
+    .Format {
+        color: #FF5656;
+        font-size: 12px;
+        background-color: #FFFAFA;
+        border: #FFE3E3 1px solid;
+        border-radius: 4px;
+        padding: 2px 8px;
+        margin: 0 8px;
+    }
+}
+.HTTPRequestHeaders {
+    .FormList {
+        display: flex;
+        .Equal {
+            font-size: 14px;
+            line-height: 32px;
+            margin: 0 5px;
+        }
+        .anticon {
+            color: #0185FF;
+            font-size: 18px;
+            line-height: 32px;
+            margin-left: 20px;
+        }
+        .ant-form-item + .ant-form-item {
+            margin-left: 10px;
+        }
+    }
+}

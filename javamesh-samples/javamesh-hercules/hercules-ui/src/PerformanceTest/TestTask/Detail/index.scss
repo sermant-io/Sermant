@@ -1,0 +1,77 @@
+.TaskDetail {
+    .Card {
+        margin: 20px;
+    }
+    .Label {
+        margin-bottom: 6px;
+        font-size: 14px;
+        font-weight: bolder;
+    }
+    .SubCard {
+        border: #E5E7EA 1px solid;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        &.Info{
+            padding-top: 20px;
+            padding-bottom: 10px;
+            display: flex;
+            padding-right: 20px;
+            .Title {
+                width: 90px;
+                text-align: right;
+            }
+            .Buttons {
+                button + button {
+                    margin-top: 10px;
+                }
+                .Stop {
+                    background-color: #FF6B6B;
+                    border-color: #FF6B6B;
+                }
+            }
+        }
+        &.Basic{
+            display: flex;
+            .Item {
+                flex-grow: 1;
+                height: 80px;
+                & + .Item {
+                    border-left: #E5E7EA 1px solid;
+                }
+                .Value {
+                    margin-top: 10px;
+                    font-size: 20px;
+                    text-align: center;
+                    font-weight: 500;
+                    line-height: 30px;
+                    height: 30px;
+                }
+                .Title {
+                    text-align: center;
+                    color: #959595;
+                    font-size: 14px;
+                    line-height: 34px;
+                }
+            }
+        }
+    }
+    .Comment {
+        display: flex;
+        .Input {
+            flex-grow: 1;
+        }
+        .Button {
+            width: 50px;
+            padding: 10px 10px 0 10px;
+            background-color: #0185FF;
+            line-height: 18px;
+            color: #fff;
+            height: 54px;
+            margin-left: 10px;
+            border-radius: 0 3px 3px 0;
+            &:hover{
+                cursor: pointer;
+            }
+        }
+    }
+}
