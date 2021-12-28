@@ -1,6 +1,6 @@
 # resource-monitor
 
-本文档针对[resource-monitor模块](../../../sermant-samples/sermant-server-monitor)作介绍
+本文档针对[resource-monitor模块](../../../sermant-plugins/sermant-server-monitor)作介绍
 
  资源监控模块用于监控宿主应用所在服务器的CPU、内存、磁盘IO和网络IO等硬件资源的使用情况，以及宿主应用Java虚拟机和其所使用Druid数据库连接池的使用情况。资源监控模块会启动若干个监控线程，按照[配置文件](../../../sermant-plugins/sermant-server-monitor/config/config.yaml)所指定的采集时间间隔去采集监控数据，再按指定的发送间隔时间发往后台，配置文件内容参照[配置文件说明](#配置文件内容说明)
 
