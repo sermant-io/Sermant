@@ -66,16 +66,16 @@
 综上，`RELEASE`产品包内部结构形如：
 - `agent`目录: 核心增强逻辑
 - `server`目录: 增强逻辑配套的服务端
-- `licenses`目录: 与本工程`LICENSE`不同的**第三方**`LICENSE`存放目录
-- `LICENSE`文件: 本工程`LICENSE`文件，附加拷贝**第三方**源码的声明，以及`RELEASE`产品包中涉及的所有**第三方**`jar`包的`LICENSE`说明
-- `NOTICE`文件: 本工程`NOTICE`文件，追加拷贝**第三方**源码的`NOTICE`文件。
+- `licenses`目录: 与本工程`LICENSE`不同的**第三方开源依赖项目**`LICENSE`存放目录
+- `LICENSE`文件: 本工程`LICENSE`文件，附加拷贝**第三方开源**源码的LICENSE声明，以及`RELEASE`产品包中涉及的所有**第三方开源依赖项目**`jar`包的`LICENSE`说明
+- `NOTICE`文件: 本工程`NOTICE`文件，追加拷贝**第三方开源**源码的`NOTICE`文件。
 
 本工程通过以下方式生成`RELEASE`产品包的`LICENSE`文件、`NOTICE`文件和`licenses`目录：
 - 通过`license-maven-plugin`插件生成项目中所有涉及的第三方`jar`包的`LICENSE`信息：
   ```shell
   mvn license:aggregate-add-third-party
   ```
-  生成的文件`LICENSE-binary-suffix.txt`存放于`sermant-package`模块的`resources`目录。该过程初次执行时间较旧，请耐心等待。
+  生成的文件`LICENSE-binary-suffix.txt`存放于`sermant-package`模块的`resources`目录。该过程初次执行时间较久，请耐心等待。
 - 工程各组件打包，输出到临时目录下。
 - 在`sermant-package`模块打包时：
   - 将工程源码的`LICENSE`文件、`NOTICE`文件和`licenses`目录拷贝到临时目录中。
