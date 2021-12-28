@@ -1,5 +1,11 @@
 # 安装nodejs
 版本v14.17.1及以上
+# 配置npm代理（可选）
+配置.npmrc文件
+```
+registry=https://repo.huaweicloud.com/repository/npm/
+strict-ssl=false
+```
 # 下载依赖
 ```sh
 npm i
