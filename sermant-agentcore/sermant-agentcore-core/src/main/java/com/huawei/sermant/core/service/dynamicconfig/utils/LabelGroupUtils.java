@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -129,6 +130,10 @@ public class LabelGroupUtils {
     public static String getLabelCondition(String group) {
         if (StringUtils.isEmpty(group)) {
             return group;
+        }
+        if (!LabelGroupUtils.isLabelGroup(group)) {
+            // 如果非group标签（ZK配置中心场景适配），则为该group创建标签
+            group = LabelGroupUtils.createLabelGroup(Collections.singletonMap("GROUP", group));
         }
         final Map<String, String> labels = resolveGroupLabels(group);
         final StringBuilder finalGroup = new StringBuilder();

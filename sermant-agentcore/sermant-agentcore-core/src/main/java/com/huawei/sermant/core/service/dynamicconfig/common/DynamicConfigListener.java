@@ -29,5 +29,5 @@ public interface DynamicConfigListener extends EventListener {
      *
      * @param event config change event
      */
-    void process(DynamicConfigChangeEvent event);
+    void process(DynamicConfigEvent event);
 }

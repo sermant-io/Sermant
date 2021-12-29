@@ -19,8 +19,8 @@ package com.huawei.flowcontrol.adapte.cse;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.ServiceManager;
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeType;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
 import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
@@ -78,7 +78,7 @@ public class RuleSyncer {
         buildServiceRequest();
         buildCustomRequest();
         for (Map.Entry<String, RuleDynamicConfigListener> entry : listenerCache.entrySet()) {
-            dynamicConfigurationFactoryService.addGroupListener(entry.getKey(), entry.getValue());
+            dynamicConfigurationFactoryService.addGroupListener(entry.getKey(), entry.getValue(), true);
         }
     }
 
@@ -115,10 +115,10 @@ public class RuleSyncer {
     static class RuleDynamicConfigListener implements DynamicConfigListener {
 
         @Override
-        public void process(DynamicConfigChangeEvent event) {
+        public void process(DynamicConfigEvent event) {
             ResolverManager.INSTANCE.resolve(event.getKey(), event.getContent(),
-                    event.getChangeType() == DynamicConfigChangeType.DELETED);
-            LOGGER.log(Level.INFO, String.format("Config [%s] has been %s ", event.getKey(), event.getChangeType()));
+                    event.getEventType() == DynamicConfigEventType.DELETE);
+            LOGGER.log(Level.INFO, String.format("Config [%s] has been %s ", event.getKey(), event.getEventType()));
         }
     }
 }

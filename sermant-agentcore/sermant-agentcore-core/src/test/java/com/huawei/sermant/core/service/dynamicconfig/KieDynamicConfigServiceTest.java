@@ -25,8 +25,8 @@ import org.junit.Test;
 
 import com.huawei.sermant.core.common.CommonConstant;
 import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huawei.sermant.core.service.dynamicconfig.kie.listener.SubscriberManager;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
 
@@ -51,11 +51,11 @@ public class KieDynamicConfigServiceTest {
         final String group = LabelGroupUtils.createLabelGroup(Collections.singletonMap("version", "1.0"));
         final DynamicConfigListener dynamicConfigListener = new DynamicConfigListener() {
             @Override
-            public void process(DynamicConfigChangeEvent event) {
+            public void process(DynamicConfigEvent event) {
                 System.out.println(event.getContent());
             }
         };
-        subscriberManager.addGroupListener(group, dynamicConfigListener);
+        subscriberManager.addGroupListener(group, dynamicConfigListener, true);
         Assert.assertTrue(subscriberManager.removeGroupListener(group, dynamicConfigListener));
     }
 }

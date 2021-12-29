@@ -19,19 +19,24 @@ package com.huawei.sermant.core.service.dynamicconfig.common;
 /**
  * Config change event type
  */
-public enum DynamicConfigChangeType {
+public enum DynamicConfigEventType {
+    /**
+     * Initialize listener
+     */
+    INIT,
+
     /**
      * A config is created.
      */
-    ADDED,
+    CREATE,
 
     /**
      * A config is updated.
      */
-    MODIFIED,
+    MODIFY,
 
     /**
      * A config is deleted.
      */
-    DELETED
+    DELETE
 }

@@ -60,7 +60,7 @@ public class ConfigServiceImpl implements PluginService {
 
     private void initRequests() {
         listener = new GrayDynamicConfigListener(DubboCache.getLabelName(), grayConfig.getDubboKey());
-        configurationService.addGroupListener(grayConfig.getDubboGroup(), listener);
+        configurationService.addGroupListener(grayConfig.getDubboGroup(), listener, true);
     }
 
     @Override

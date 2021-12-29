@@ -28,42 +28,42 @@ import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListene
 @Deprecated
 public class NopDynamicConfigService extends DynamicConfigService {
     @Override
-    public String getConfig(String key, String group) {
+    protected String doGetConfig(String key, String group) {
         return "";
     }
 
     @Override
-    public boolean publishConfig(String key, String group, String content) {
+    protected boolean doPublishConfig(String key, String group, String content) {
         return true;
     }
 
     @Override
-    public boolean removeConfig(String key, String group) {
+    protected boolean doRemoveConfig(String key, String group) {
         return true;
     }
 
     @Override
-    public boolean addConfigListener(String key, String group, DynamicConfigListener listener) {
+    protected boolean doAddConfigListener(String key, String group, DynamicConfigListener listener) {
         return true;
     }
 
     @Override
-    public boolean removeConfigListener(String key, String group) {
+    protected boolean doRemoveConfigListener(String key, String group) {
         return true;
     }
 
     @Override
-    public List<String> listKeysFromGroup(String group) {
+    protected List<String> doListKeysFromGroup(String group) {
         return Collections.emptyList();
     }
 
     @Override
-    public boolean addGroupListener(String group, DynamicConfigListener listener) {
+    protected boolean doAddGroupListener(String group, DynamicConfigListener listener) {
         return true;
     }
 
     @Override
-    public boolean removeGroupListener(String group) {
+    protected boolean doRemoveGroupListener(String group) {
         return true;
     }
 }

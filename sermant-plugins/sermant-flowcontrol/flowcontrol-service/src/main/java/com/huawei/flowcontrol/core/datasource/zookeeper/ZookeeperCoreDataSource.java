@@ -25,8 +25,8 @@ import com.huawei.sermant.core.service.ServiceManager;
 import com.huawei.flowcontrol.core.datasource.DataSourceUpdateSupport;
 import com.huawei.flowcontrol.util.StringUtils;
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeType;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 import java.util.Collections;
@@ -41,11 +41,11 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-11-26
  */
-public class ZookeeperCoreDataSource<T> extends AbstractDataSource<DynamicConfigChangeEvent, List<T>>
+public class ZookeeperCoreDataSource<T> extends AbstractDataSource<DynamicConfigEvent, List<T>>
         implements DataSourceUpdateSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private DynamicConfigChangeEvent event;
+    private DynamicConfigEvent event;
 
     private final String key;
 
@@ -54,13 +54,13 @@ public class ZookeeperCoreDataSource<T> extends AbstractDataSource<DynamicConfig
     private DynamicConfigListener listener;
 
     public ZookeeperCoreDataSource(final String key, final String group, final Class<T> ruleClass) {
-        super(new Converter<DynamicConfigChangeEvent, List<T>>() {
+        super(new Converter<DynamicConfigEvent, List<T>>() {
             @Override
-            public List<T> convert(DynamicConfigChangeEvent event) {
+            public List<T> convert(DynamicConfigEvent event) {
                 if (event == null || !StringUtils.equal(event.getKey(), key)) {
                     return Collections.emptyList();
                 }
-                if (event.getChangeType() == DynamicConfigChangeType.DELETED) {
+                if (event.getEventType() == DynamicConfigEventType.DELETE) {
                     return Collections.emptyList();
                 }
                 try {
@@ -78,7 +78,7 @@ public class ZookeeperCoreDataSource<T> extends AbstractDataSource<DynamicConfig
     }
 
     @Override
-    public DynamicConfigChangeEvent readSource() {
+    public DynamicConfigEvent readSource() {
         return event;
     }
 
@@ -88,7 +88,7 @@ public class ZookeeperCoreDataSource<T> extends AbstractDataSource<DynamicConfig
     }
 
     @Override
-    public void update(DynamicConfigChangeEvent event) {
+    public void update(DynamicConfigEvent event) {
         this.event = event;
         try {
             getProperty().updateValue(loadConfig(event));
@@ -101,12 +101,12 @@ public class ZookeeperCoreDataSource<T> extends AbstractDataSource<DynamicConfig
         final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
         listener = new DynamicConfigListener() {
             @Override
-            public void process(DynamicConfigChangeEvent event) {
+            public void process(DynamicConfigEvent event) {
                 update(event);
             }
         };
         try {
-            service.addConfigListener(key, group, listener);
+            service.addConfigListener(key, group, listener, true);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Added listener failed, key : %s, group : %s",
                     key, group));

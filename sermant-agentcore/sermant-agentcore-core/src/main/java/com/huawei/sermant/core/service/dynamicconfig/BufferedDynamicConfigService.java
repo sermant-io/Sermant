@@ -76,8 +76,8 @@ public class BufferedDynamicConfigService extends DynamicConfigService {
     }
 
     @Override
-    public boolean addConfigListener(String key, DynamicConfigListener listener) {
-        return service.addConfigListener(key, listener);
+    public boolean addConfigListener(String key, DynamicConfigListener listener, boolean ifNotify) {
+        return service.addConfigListener(key, listener, ifNotify);
     }
 
     @Override
@@ -101,8 +101,8 @@ public class BufferedDynamicConfigService extends DynamicConfigService {
     }
 
     @Override
-    public boolean addConfigListener(String key, String group, DynamicConfigListener listener) {
-        return service.addConfigListener(key, group, listener);
+    public boolean addConfigListener(String key, String group, DynamicConfigListener listener, boolean ifNotify) {
+        return service.addConfigListener(key, group, listener, ifNotify);
     }
 
     @Override
@@ -116,12 +116,67 @@ public class BufferedDynamicConfigService extends DynamicConfigService {
     }
 
     @Override
-    public boolean addGroupListener(String group, DynamicConfigListener listener) {
-        return service.addGroupListener(group, listener);
+    public boolean addGroupListener(String group, DynamicConfigListener listener, boolean ifNotify) {
+        return service.addGroupListener(group, listener, ifNotify);
     }
 
     @Override
     public boolean removeGroupListener(String group) {
         return service.removeGroupListener(group);
+    }
+
+    @Override
+    public boolean addConfigListener(String key, DynamicConfigListener listener) {
+        return service.addConfigListener(key, listener);
+    }
+
+    @Override
+    public boolean addConfigListener(String key, String group, DynamicConfigListener listener) {
+        return service.addConfigListener(key, group, listener);
+    }
+
+    @Override
+    public boolean addGroupListener(String group, DynamicConfigListener listener) {
+        return service.addGroupListener(group, listener);
+    }
+
+    @Override
+    protected String doGetConfig(String key, String group) {
+        return service.doGetConfig(key, group);
+    }
+
+    @Override
+    protected boolean doPublishConfig(String key, String group, String content) {
+        return service.doPublishConfig(key, group, content);
+    }
+
+    @Override
+    protected boolean doRemoveConfig(String key, String group) {
+        return service.doRemoveConfig(key, group);
+    }
+
+    @Override
+    protected boolean doAddConfigListener(String key, String group, DynamicConfigListener listener) {
+        return service.doAddConfigListener(key, group, listener);
+    }
+
+    @Override
+    protected boolean doRemoveConfigListener(String key, String group) {
+        return service.doRemoveConfigListener(key, group);
+    }
+
+    @Override
+    protected List<String> doListKeysFromGroup(String group) {
+        return service.doListKeysFromGroup(group);
+    }
+
+    @Override
+    protected boolean doAddGroupListener(String group, DynamicConfigListener listener) {
+        return service.doAddGroupListener(group, listener);
+    }
+
+    @Override
+    protected boolean doRemoveGroupListener(String group) {
+        return service.doRemoveGroupListener(group);
     }
 }

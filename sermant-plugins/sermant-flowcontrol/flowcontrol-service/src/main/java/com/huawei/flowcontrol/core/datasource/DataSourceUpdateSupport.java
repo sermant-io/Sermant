@@ -16,7 +16,7 @@
 
 package com.huawei.flowcontrol.core.datasource;
 
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigChangeEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 /**
  * 数据源更新支持
@@ -30,5 +30,5 @@ public interface DataSourceUpdateSupport {
      *
      * @param event 事件
      */
-    void update(DynamicConfigChangeEvent event);
+    void update(DynamicConfigEvent event);
 }

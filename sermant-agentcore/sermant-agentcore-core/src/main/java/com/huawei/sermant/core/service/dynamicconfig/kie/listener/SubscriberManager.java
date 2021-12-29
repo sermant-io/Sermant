@@ -24,19 +24,18 @@ package com.huawei.sermant.core.service.dynamicconfig.kie.listener;
 
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.integration.utils.APMThreadFactory;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.ClientUrlManager;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieClient;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieListenerWrapper;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieRequest;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieResponse;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieSubscriber;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -49,7 +48,6 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -94,7 +92,6 @@ public class SubscriberManager {
     /**
      * 当前长连接请求数
      * 要求最大连接数必须小于 MAX_THREAD_SIZE
-     *
      */
     private final AtomicInteger curLongConnectionRequestCount = new AtomicInteger(0);
 
@@ -129,17 +126,15 @@ public class SubscriberManager {
     /**
      * 添加组监听
      *
-     * @param group 标签组
+     * @param group    标签组
      * @param listener 监听器
+     * @param ifNotify 是否在第一次添加时，将所有数据查询返回给调用者
      * @return 是否添加成功
      */
-    public boolean addGroupListener(String group, DynamicConfigListener listener) {
-        if (!LabelGroupUtils.isLabelGroup(group)) {
-            // 如果非group标签（ZK配置中心场景适配），则为该group创建标签
-            group = LabelGroupUtils.createLabelGroup(Collections.singletonMap("GROUP", group));
-        }
+    public boolean addGroupListener(String group, DynamicConfigListener listener, boolean ifNotify) {
         try {
-            return subscribe(new KieRequest().setLabelCondition(LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener);
+            return subscribe(new KieRequest().setLabelCondition(LabelGroupUtils.getLabelCondition(group)).setWait(WAIT),
+                    listener, ifNotify);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Add group listener failed, %s", ex.getMessage()));
             return false;
@@ -149,13 +144,14 @@ public class SubscriberManager {
     /**
      * 移除组监听
      *
-     * @param group 标签组
+     * @param group    标签组
      * @param listener 监听器
      * @return 是否添加成功
      */
     public boolean removeGroupListener(String group, DynamicConfigListener listener) {
         try {
-            return unSubscribe(new KieRequest().setLabelCondition(LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener);
+            return unSubscribe(new KieRequest().setLabelCondition(LabelGroupUtils.getLabelCondition(group)).setWait(WAIT),
+                    listener);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Removed group listener failed, %s", ex.getMessage()));
             return false;
@@ -165,8 +161,8 @@ public class SubscriberManager {
     /**
      * 发布配置
      *
-     * @param key 配置键
-     * @param group 分组
+     * @param key     配置键
+     * @param group   分组
      * @param content 配置内容
      * @return 是否发布成功
      */
@@ -183,8 +179,9 @@ public class SubscriberManager {
      *
      * @param kieRequest            请求
      * @param dynamicConfigListener 监听器
+     * @param ifNotify 是否在第一次添加时，将所有数据查询返回给调用者
      */
-    public boolean subscribe(KieRequest kieRequest, DynamicConfigListener dynamicConfigListener) {
+    public boolean subscribe(KieRequest kieRequest, DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
         final KieSubscriber kieSubscriber = new KieSubscriber(kieRequest);
         Task task;
         KieListenerWrapper kieListenerWrapper = new KieListenerWrapper(kieRequest.getLabelCondition(),
@@ -200,6 +197,8 @@ public class SubscriberManager {
             }
             buildRequestConfig(kieRequest);
             task = new LoopPullTask(kieSubscriber, kieListenerWrapper);
+        }
+        if (ifNotify) {
             firstRequest(kieRequest, kieListenerWrapper);
         }
         List<KieListenerWrapper> configurationListeners = listenerMap.get(kieSubscriber);
@@ -230,9 +229,7 @@ public class SubscriberManager {
      */
     public void firstRequest(KieRequest kieRequest, KieListenerWrapper kieListenerWrapper) {
         try {
-            final KieRequest cloneRequest = new KieRequest().setRevision(kieRequest.getRevision())
-                    .setLabelCondition(kieRequest.getLabelCondition());
-            final KieResponse kieResponse = kieClient.queryConfigurations(cloneRequest);
+            KieResponse kieResponse = queryConfigurations(kieRequest.getRevision(), kieRequest.getLabelCondition());
             if (kieResponse != null && kieResponse.isChanged()) {
                 tryPublishEvent(kieResponse, kieListenerWrapper);
                 kieRequest.setRevision(kieResponse.getRevision());
@@ -240,6 +237,18 @@ public class SubscriberManager {
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Pull the first request failed! %s", ex.getMessage()));
         }
+    }
+
+    /**
+     * 单独查询配置
+     *
+     * @param revision 版本
+     * @param label    关联标签组
+     * @return kv配置
+     */
+    public KieResponse queryConfigurations(String revision, String label) {
+        final KieRequest cloneRequest = new KieRequest().setRevision(revision).setLabelCondition(label);
+        return kieClient.queryConfigurations(cloneRequest);
     }
 
     /**
