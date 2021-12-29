@@ -24,6 +24,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * 用于本地linux服务器上执行shell脚本
@@ -51,15 +55,35 @@ public class LocalScriptExecutor implements ScriptExecutor {
     @Override
     public ExecResult execScript(ScriptExecInfo scriptExecInfo, LogCallBack logCallback) {
         String fileName = "";
+        Thread execThread = null;
         try {
             fileName = createScriptFile(scriptExecInfo.getScriptName(), scriptExecInfo.getScriptContext());
-            return exec(commands(fileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId());
+            String finalFileName = fileName;
+            if (scriptExecInfo.getTimeOut() > 0) {
+                FutureTask<ExecResult> task = new FutureTask<>(() ->
+                    exec(commands(finalFileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId())
+                );
+                execThread = new Thread(task);
+                execThread.start();
+                return task.get(scriptExecInfo.getTimeOut(), TimeUnit.MILLISECONDS);
+            } else {
+                return exec(commands(finalFileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId());
+            }
         } catch (FileNotFoundException e) {
             return ExecResult.fail("Please check out your scriptLocation.");
         } catch (IOException e) {
-            LOGGER.error("Failed to create local script.", e);
+            LOGGER.error("Failed to create local script. {}", e.getMessage());
             return ExecResult.fail(e.getMessage());
+        } catch (ExecutionException | InterruptedException e) {
+            LOGGER.error("execId={} occur error. {}", scriptExecInfo.getId(), e.getMessage());
+            return ExecResult.fail(e.getMessage());
+        } catch (TimeoutException e) {
+            LOGGER.error("execId={} was timeout", scriptExecInfo.getId());
+            return ExecResult.fail("timeOut");
         } finally {
+            if (execThread != null) {
+                execThread.interrupt();
+            }
             if (StringUtils.isNotEmpty(fileName)) {
                 File file = new File(fileName);
                 if (file.exists() && file.delete()) {
@@ -118,7 +142,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
     }
 
     private String[] commands(String command, String[] params) {
-         String[] finalCommands = (String[]) ArrayUtils.addAll(new String[]{SH, SH_C, command}, params);
-        return (String[]) ArrayUtils.add(finalCommands,"2>&1");
+        String[] finalCommands = (String[]) ArrayUtils.addAll(new String[]{SH, SH_C, command}, params);
+        return (String[]) ArrayUtils.add(finalCommands, "2>&1");
     }
 }

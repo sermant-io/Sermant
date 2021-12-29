@@ -90,6 +90,9 @@ public class ExecRecordHandlerFactory {
     @Resource(name = "passwordRestTemplate")
     private RestTemplate restTemplate;
 
+    @Value("${script.timeOut}")
+    private long timeOut;
+
     @Autowired
     private PasswordUtil passwordUtil;
 
@@ -252,6 +255,7 @@ public class ExecRecordHandlerFactory {
         execInfo.setId(recordDetail.getDetailId());
         execInfo.setScriptName(record.getScriptName() + "-" + record.getRecordId());
         execInfo.setScriptContext(record.getScriptContent());
+        execInfo.setTimeOut(timeOut);
         if (StringUtils.isNotEmpty(record.getScriptParams())) {
             String[] split = record.getScriptParams().split(",");
             execInfo.setParams(split);

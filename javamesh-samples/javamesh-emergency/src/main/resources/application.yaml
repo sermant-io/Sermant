@@ -67,6 +67,7 @@ jsch:
   privateKey: /root/.ssh/id_rsa
 script:
   location: /tmp/
+  timeOut: 300000
   executor:
     maxTaskSize: 16
     maxSubtaskSize: 8
