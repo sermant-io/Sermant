@@ -222,7 +222,6 @@ public class RemoteScriptExecutor implements ScriptExecutor {
     private ExecResult parseResult(Channel channel, LogCallBack logCallback, int id) throws IOException {
         ExecResult execResult = new ExecResult();
         BufferedReader normalInfoReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
-        BufferedReader errorInfoReader = new BufferedReader(new InputStreamReader(channel.getExtInputStream()));
         StringBuilder result = new StringBuilder();
         while (true) {
             String line;
@@ -232,16 +231,10 @@ public class RemoteScriptExecutor implements ScriptExecutor {
                 }
                 result.append(line).append(System.lineSeparator());
             }
-            while ((line = errorInfoReader.readLine()) != null) {
-                if (logCallback != null && id > 0) {
-                    logCallback.handleLog(id, line);
-                }
-                result.append(line).append(System.lineSeparator());
-            }
 
             // 命令执行完毕
             if (channel.isClosed()) {
-                if (channel.getInputStream().available() > 0 || channel.getExtInputStream().available() > 0) {
+                if (channel.getInputStream().available() > 0) {
                     continue;
                 }
                 break;
@@ -259,6 +252,6 @@ public class RemoteScriptExecutor implements ScriptExecutor {
                 result.append(" ").append(param);
             }
         }
-        return String.format(Locale.ROOT, "%s %s", type, result);
+        return String.format(Locale.ROOT, "%s %s 2>&1", type, result);
     }
 }

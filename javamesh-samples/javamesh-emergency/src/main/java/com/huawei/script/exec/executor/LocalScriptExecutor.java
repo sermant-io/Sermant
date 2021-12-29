@@ -89,8 +89,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
         try {
             Process exec = Runtime.getRuntime().exec(commands);
             String info = parseResult(exec.getInputStream(), logCallback, id);
-            String errorInfo = parseResult(exec.getErrorStream(), logCallback, id);
-            return exec.waitFor() == 0 ? ExecResult.success(info) : ExecResult.fail(errorInfo);
+            return exec.waitFor() == 0 ? ExecResult.success(info) : ExecResult.fail(info);
         } catch (IOException | InterruptedException e) {
             return ExecResult.fail(e.getMessage());
         }
@@ -119,6 +118,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
     }
 
     private String[] commands(String command, String[] params) {
-        return (String[]) ArrayUtils.addAll(new String[]{SH, SH_C, command}, params);
+         String[] finalCommands = (String[]) ArrayUtils.addAll(new String[]{SH, SH_C, command}, params);
+        return (String[]) ArrayUtils.add(finalCommands,"2>&1");
     }
 }
