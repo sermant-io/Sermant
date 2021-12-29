@@ -1,6 +1,7 @@
 package com.huawei.emergency.service.impl;
 
 import com.huawei.emergency.entity.EmergencyAgent;
+import com.huawei.emergency.entity.EmergencyAgentExample;
 import com.huawei.emergency.mapper.EmergencyAgentMapper;
 import com.huawei.emergency.service.EmergencyAgentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,5 +19,12 @@ public class EmergencyAgentServiceImpl implements EmergencyAgentService {
         agent.setPort(port);
         agent.setStatus("READY");
         mapper.insert(agent);
+    }
+
+    @Override
+    public void removeAgent(String ip){
+        EmergencyAgentExample example = new EmergencyAgentExample();
+        example.createCriteria().andIpEqualTo(ip);
+        mapper.deleteByExample(example);
     }
 }

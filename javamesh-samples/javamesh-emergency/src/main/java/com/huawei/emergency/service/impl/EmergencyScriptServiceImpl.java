@@ -1,15 +1,13 @@
 package com.huawei.emergency.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.huawei.common.api.CommonResult;
 import com.huawei.common.constant.FailedInfo;
 import com.huawei.common.constant.ResultCode;
 import com.huawei.common.exception.ApiException;
-import com.huawei.common.util.EscapeUtil;
-import com.huawei.common.util.FileUtil;
-import com.huawei.common.util.PageUtil;
-import com.huawei.common.util.PasswordUtil;
+import com.huawei.common.util.*;
 import com.huawei.emergency.entity.EmergencyScript;
 import com.huawei.emergency.entity.EmergencyScriptExample;
 import com.huawei.emergency.entity.User;
@@ -20,8 +18,12 @@ import com.huawei.script.exec.log.LogResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +70,9 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
 
     @Autowired
     private EmergencyExecService execService;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Override
     public CommonResult<List<EmergencyScript>> listScript(HttpServletRequest request, String scriptName, String scriptUser, int pageSize, int current, String sorter, String order, String status) {
@@ -329,6 +335,17 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
             throw new ApiException("Failed to encode password. ", e);
         }
         script.setScriptStatus(TYPE_ZERO);
+    }
+
+    @Override
+    public void exec(HttpServletRequest request) {
+        Map<String, String> map = new HashMap<>();
+        map.put("recordId", "1");
+        map.put("content", "println(\"my name is hjl\")");
+        map.put("scriptType", "2");
+        map.put("scriptName", "testGroovy");
+        ResponseEntity responseEntity = RestTemplateUtil.sendPostRequest(request, "http://127.0.0.1:9095/agent/execute", map);
+        System.out.println(responseEntity.getBody());
     }
 
 

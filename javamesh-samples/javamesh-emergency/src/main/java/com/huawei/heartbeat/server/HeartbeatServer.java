@@ -9,8 +9,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,9 @@ public class HeartbeatServer {
     // 网关端口
     @Value("${heartbeat.port}")
     private int port;
+
+    @Value("${server.port}")
+    private String serverPort;
 
     @Autowired
     private EmergencyAgentService service;
@@ -59,7 +60,7 @@ public class HeartbeatServer {
                             pipeline.addLast(new IdleStateHandler(readWaitTime, 0, 0));
                             pipeline.addLast(new ProtobufDecoder(Message.HeartbeatMessage.getDefaultInstance()));
                             pipeline.addLast(new ProtobufEncoder());
-                            pipeline.addLast(new ServerHandler(service));
+                            pipeline.addLast(new ServerHandler(service,serverPort));
                         }
                     });
 
