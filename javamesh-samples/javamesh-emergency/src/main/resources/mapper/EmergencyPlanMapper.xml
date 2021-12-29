@@ -424,7 +424,7 @@
         plan.check_remark comment,
         date_format(plan.create_time, '%Y-%m-%d %H:%i:%s') create_time,
         date_format(plan.update_time, '%Y-%m-%d %H:%i:%s') update_time,
-        IFNULL((select user_name from nuser where user_id = plan.create_user),plan.create_user) creator,
+        IFNULL((select user_name from NUSER where user_id = plan.create_user),plan.create_user) creator,
         (select max(exec_id) from emergency_exec where plan_id = plan.plan_id) as history_id
         FROM emergency_plan plan
         LEFT JOIN emergency_plan_detail plan_detail ON plan_detail.plan_id = plan.plan_id and plan_detail.is_valid = '1'
@@ -479,7 +479,7 @@
         t1.plan_id,
         t2.plan_no,
         t2.plan_name,
-        IFNULL((select user_name from nuser where user_id = t1.create_user),t1.create_user) creator,
+        IFNULL((select user_name from NUSER where user_id = t1.create_user),t1.create_user) creator,
         date_format( t1.create_time, '%Y-%m-%d %H:%i:%s' ) create_time,
         date_format( t1.create_time, '%Y-%m-%d %H:%i:%s' ) execute_time,
         date_format(IFNULL(min(t3.start_time),t1.create_time), '%Y-%m-%d %H:%i:%s') start_time,
@@ -499,7 +499,7 @@
             </foreach>
         </if>
         <if test="filters.creators != null and filters.creators.length > 0">
-            and IFNULL((select user_name from nuser where user_id = t1.create_user),t1.create_user) in
+            and IFNULL((select user_name from NUSER where user_id = t1.create_user),t1.create_user) in
             <foreach close=")" collection="filters.creators" index="index" item="creator" open="(" separator=",">
                 #{creator}
             </foreach>
