@@ -1,1 +1,1 @@
-com.huawei.sermant.sample.connection.pool.collect.config.DruidMonitorConfig
+com.huawei.sermant.plugin.connection.pool.collect.config.DruidMonitorConfig

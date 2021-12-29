@@ -1,1 +1,1 @@
-com.huawei.sermant.sample.connection.pool.collect.definition.DruidDataSourceStatManagerDefinition
+com.huawei.sermant.plugin.connection.pool.collect.definition.DruidDataSourceStatManagerDefinition

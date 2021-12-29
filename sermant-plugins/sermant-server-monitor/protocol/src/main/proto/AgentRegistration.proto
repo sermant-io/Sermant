@@ -4,7 +4,7 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "com.huawei.sermant.sample.servermonitor.entity";
+option java_package = "com.huawei.sermant.plugin.servermonitor.entity";
 
 message AgentRegistration {
   string service = 1;
