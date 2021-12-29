@@ -31,7 +31,12 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@SpiWeight(3)
+/**
+ * http请求拦截实现
+ *
+ * @author zhouss
+ * @since 2021-12-27
+ */
 public class DispatcherServletServiceImpl extends DispatcherServletService {
     /**
      * 拦截点前执行

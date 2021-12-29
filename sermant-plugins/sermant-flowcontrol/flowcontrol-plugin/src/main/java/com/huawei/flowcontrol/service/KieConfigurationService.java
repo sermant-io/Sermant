@@ -16,5 +16,13 @@
 
 package com.huawei.flowcontrol.service;
 
-public abstract class KieConfigurationService extends AbstractPluginService {
+import com.huawei.sermant.core.plugin.service.PluginService;
+
+/**
+ * Kie配置拦截服务
+ *
+ * @author zhouss
+ * @since 2021-12-27
+ */
+public abstract class KieConfigurationService extends AbstractPluginService implements PluginService {
 }

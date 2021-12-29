@@ -36,8 +36,12 @@ import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcContext;
 
 import java.lang.reflect.Method;
-
-@SpiWeight(2)
+/**
+ * apache dubbo拦截实现
+ *
+ * @author zhouss
+ * @since 2021-12-27
+ */
 public class ApacheDubboServiceImpl extends ApacheDubboService {
     /**
      * 拦截点前执行
