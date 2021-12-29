@@ -1,0 +1,119 @@
+.TaskForm {
+    .ant-tabs-nav {
+        background-color: #F5F7FA;
+        border-radius: 4px;
+        .ant-tabs-tab {
+            border: #F5F7FA 2px solid;
+            padding: 5px 20px;
+            margin: 0;
+            border-radius: 2px;
+            &.ant-tabs-tab-active{
+                background-color: #FFFFFF;
+            }
+        }
+        .ant-tabs-ink-bar {
+            display:none
+        }
+    }
+    .Buttons {
+        text-align: center;
+        button + button {
+            margin-left: 10px;
+        }
+    }
+    .Title {
+        color: #2976FF;
+        line-height: 34px;
+        font-size: 14px;
+        .Switch {
+            display: inline-block;
+            margin-bottom: 0;
+            margin-top: 5px;
+            margin-left: 5px;
+            .ant-form-item-control-input{
+                min-height: auto;
+            }
+        }
+    }
+    .Group {
+        border: #DBE3F2 1px solid;
+        padding: 20px 30px 0 10px;
+        margin-bottom: 20px;
+    }
+    .Line {
+        display: flex;
+        >div:first-child {
+            width: 50%;
+        }
+        >div:not(:first-child) {
+            max-width: 50%;
+            flex-grow: 1;
+            margin-left: 20px;
+        }
+        .TaskRight {
+            display: flex;
+            flex-direction: column;
+            .Group {
+                flex-grow: 1;
+                .Title {
+                    text-align: center;
+                }
+                .Chart {
+                    margin-left: 20px;
+                }
+            }
+        }
+    }
+    .Question {
+        color: #71768C;
+        font-size: 16px;
+        margin-left: 5px;
+        vertical-align: baseline;
+    }
+    .MS {
+        display: inline-block;
+    }
+}
+.SaveRun {
+    .PageInfo {
+        margin-bottom: 10px;
+    }
+    .Buttons {
+        text-align: center;
+        margin-top: 30px;
+        margin-bottom: 0;
+        button + button {
+            margin-left: 10px;
+        }
+    }
+}
+.TaskHosts {
+    .ant-table-wrapper {
+        padding-top: 10px;
+    }
+}
+.BasicScenario {
+    .ant-radio-wrapper {
+        padding: 5px 0;
+    }
+    .ant-form-item {
+        display: inline-block;
+    }
+    .Time {
+        width: 60px;
+    }
+    .Sep {
+        font-size: 14px;
+        line-height: 30px;
+        margin: 0 8px;
+    }
+    .Format {
+        color: #FF5656;
+        font-size: 12px;
+        background-color: #FFFAFA;
+        border: #FFE3E3 1px solid;
+        border-radius: 4px;
+        padding: 2px 8px;
+        margin: 0 8px;
+    }
+}

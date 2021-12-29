@@ -1,0 +1,60 @@
+.HostManage {
+    .Card {
+        margin: 20px;
+        .ToolBar {
+            display: flex;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            button + button{
+                margin-left: 10px;
+            }
+            .Space {
+                flex-grow: 1;
+            }
+            .Input {
+                width: 230px;
+            }
+        }
+        .Licensed {
+            cursor: pointer;
+            border-radius: 5px;
+            border: #3DB769 1px solid;
+            span{
+                padding: 0 5px;
+                color: #FFFFFF;
+            }
+            &.active {
+                span {
+                    &:first-child {
+                        color: #3DB769;
+                    }
+                    &:last-child {
+                        background-color: #3DB769;
+                    }
+                }
+            }
+            &.deactive {
+                span{
+                    &:last-child {
+                        color: #3DB769;
+                    }
+                    &:first-child {
+                        background-color: #3DB769;
+                    }
+                }
+            }
+        }
+    }
+    
+}
+.AddHost {
+    .Line {
+        display: flex;
+    }
+    .Buttons {
+        text-align: center;
+        button + button {
+            margin-left: 10px;
+        }
+    }
+}

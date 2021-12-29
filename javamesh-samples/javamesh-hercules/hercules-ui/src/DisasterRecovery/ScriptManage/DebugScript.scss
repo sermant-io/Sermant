@@ -1,0 +1,14 @@
+.DebugScript {
+    border-radius: 5px;
+    border: #D8DADD 1px solid;
+    padding: 5px;
+    .ServerName {
+        display: inline-block;
+        width: 500px;
+        margin-right: 10px;
+    }
+    .Log {
+        height: 150px;
+        overflow-y: auto;
+    }
+}

@@ -1,0 +1,7 @@
+@font-face {
+	font-family:material;
+	src:url(./material.woff);
+}
+.md {
+	font-family:material;
+}

@@ -1,0 +1,117 @@
+@import '~antd/dist/antd.css';
+@import "./fonts/font-awesome.css";
+@import "./fonts/mb-icons.css";
+@import "./fonts/material.css";
+@import "./fonts/custom.css";
+@font-face {
+	font-family:HuaweiSans-Regular;
+	src:url(./fonts/HuaweiSans-Regular.ttf);
+}
+body {
+  font-family:HuaweiSans-Regular;
+}
+li {
+  list-style: none;
+}
+.ant-form-item-label > label::after {
+  content: "";
+}
+.ant-descriptions-item-label::after{
+    content: "";
+}
+.ant-steps-item-title {
+  width: 240px;
+}
+.ant-input-number {
+  width: 100%;
+}
+.ant-input-number-group-wrapper {
+  width: 100%;
+}
+.WithoutLabel {
+  .ant-form-item-label {
+      display: none;
+  }
+}
+.icon {
+  line-height: 1;
+  vertical-align: bottom;
+}
+.App {
+  min-height: 100vh;
+  display: flex;
+  .AppMenu{
+    width: 35px;
+    position: relative;
+    .Logo {
+      line-height: 50px;
+      padding-left: 5px;
+      background-color: #304156;
+    }
+    .Menu {
+      position: absolute;
+      background-color: #eaeef2;
+      border-right: 1px solid #c3c3c3;
+      width: 35px;
+      z-index: 1;
+      padding-top: 10px;
+      height: calc(100% - 50px);
+      transition: width 0.2s;
+      &:hover {
+        width: 215px;
+      }
+      overflow: hidden;
+      .Item {
+        .Content {
+          width: 215px;
+          height: 35px;
+          color: rgba(0, 0, 0, 0.85);
+          .anticon {
+            font-size: 20px;
+            line-height: 35px;
+            width: 35px;
+            vertical-align: middle;
+            color: rgba(0, 0, 0, 0.6);
+          }
+        }
+        &.active{
+          .Content {
+            color: #0185FF;
+            background-color: #ffffff;
+          }
+        }
+      }
+    }
+  }
+  .AppContent{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    .AppHeader {
+      height: 50px;
+      background-color: #304156;
+      display: flex;
+      justify-content: right;
+      .Account {
+        padding-right: 20px;
+        line-height: 50px;
+        color: #ffffff;
+        cursor: pointer;
+        .anticon {
+          vertical-align: middle;
+          margin-left: 5px;
+        }
+      }
+    }
+  }
+}
+.ChangePwd {
+  .Buttons {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 0;
+    button + button {
+        margin-left: 10px;
+    }
+}
+}

@@ -1,0 +1,114 @@
+.ScriptManage {
+    .PageInfo {
+        margin: 20px;
+    }
+    .Card {
+        margin: 20px;
+        .ToolBar {
+            display: flex;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            button + button{
+                margin-left: 10px;
+            }
+            .Space {
+                flex-grow: 1;
+            }
+            .Input {
+                width: 230px;
+            }
+        }
+    }
+}
+.AddFile {
+    .Line {
+        display: flex;
+        .Label {
+            line-height: 32px;
+            font-size: 14px;
+            width: 90px;
+            text-align: right;
+            &.SubLabel{
+                width: 100px;
+            }
+        }
+        &>div + div{
+            margin-left: 10px;
+        }
+    }
+    .Info{
+        line-height: 32px;
+        color: #41C170;
+        font-size: 14px;
+        .anticon {
+            font-size: 18px;
+            line-height: 32px;
+            margin-right: 10px;
+            margin-left: 20px;
+            vertical-align: middle;
+        }
+    }
+    .ant-modal-body {
+        padding: 30px 50px;
+    }
+    .ant-collapse {
+        border: none;
+        .ant-collapse-item {
+            // border-bottom: none;
+            .ant-collapse-header {
+                background-color: #ffffff;
+                color: #0185FF;
+                .icon {
+                    font-size: 20px;
+                }
+            }
+            .ant-collapse-content-box {
+                padding: 0;
+            }
+        }
+    }
+    .SubLine {
+        padding-top: 30px;
+        .FormList {
+            display: flex;
+            .Equal {
+                font-size: 14px;
+                line-height: 32px;
+                margin: 0 5px;
+            }
+            .anticon {
+                color: #0185FF;
+                font-size: 18px;
+                line-height: 32px;
+                margin-left: 20px;
+            }
+            .ant-form-item + .ant-form-item {
+                margin-left: 10px;
+            }
+        }
+        & + .SubLine {
+            border-top: 1px solid #d9d9d9;
+        }
+    }
+    .Buttons {
+        text-align: center;
+        margin-top: 30px;
+        margin-bottom: 0;
+        button + button {
+            margin-left: 10px;
+        }
+    }
+}
+.AddFolder {
+    .Form {
+        .Inputs {
+            margin: 50px 0;
+        }
+        .Buttons {
+            text-align: center;
+            button + button {
+                margin-left: 10px;
+            }
+        }
+    }
+}

@@ -1,0 +1,47 @@
+.TestTask{
+    .PageInfo {
+        margin: 20px;
+    }
+    .Card {
+        margin: 20px;
+    }
+    .ToolBar {
+        display: flex;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        .Add{
+            margin-right: 10px;
+        }
+        .ant-checkbox-group {
+            line-height: 32px;
+            margin-left: 10px;
+        }
+        .Form {
+            flex-grow: 1;
+            display: flex;
+            .Space {
+                flex-grow: 1;
+            }
+        }
+        .Select {
+            width: 200px;
+            margin-right: 10px;
+        }
+        .Input {
+            width: 230px;
+        }
+    }
+}
+.StartButton {
+    .PageInfo {
+        margin-bottom: 10px;
+    }
+    .Buttons {
+        text-align: center;
+        margin-top: 30px;
+        margin-bottom: 0;
+        button + button {
+            margin-left: 10px;
+        }
+    }
+}

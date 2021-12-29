@@ -1,0 +1,135 @@
+.QuickStart{
+    .PageInfo {
+        margin: 20px;
+    }
+    .TypeChoose {
+        margin: 20px;
+        padding: 30px;
+        .Steps {
+            margin-bottom: 30px;
+        }
+        .Label {
+            margin-top: 20px;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: bolder;
+        }
+        .Scenario {
+            width: 380px;
+            padding: 35px 0;
+            border: #DBE3F2 solid 1px;
+            margin-right: 20px;
+        }
+        .Form {
+            .Inputs {
+                padding-top: 30px;
+                border: #DBE3F2 solid 1px;
+                padding-right: 30px;
+            }
+            .Buttons {
+                text-align: center;
+                margin-bottom: 0;
+                button {
+                    margin: 50px 10px;
+                }
+            }
+        }
+        .ScriptForm {
+            .Buttons {
+                text-align: center;
+                margin-bottom: 0;
+                button {
+                    margin: 50px 10px;
+                }
+            }
+            .Editor .ant-form-item-control-input-content{
+                width: 1100px;
+                padding: 5px 0;
+                border-radius: 5px;
+                border: #D8DADD 1px solid;
+            }
+        }
+    }
+    .BreadcrumbWarp {
+        display: flex;
+        .Breadcrumb {
+            flex-grow: 1;
+        }
+    }
+}
+
+.Param {
+    background-color: #ffffff;
+    padding-right: 20px;
+    .Icon {
+        font-size: 16px;
+        line-height: 40px;
+        margin: 0 10px;
+        vertical-align: bottom;
+    }
+}
+.ParamList {
+    .Main {
+        font-size: 12px;
+        line-height: 40px;
+        &:hover{
+            cursor: pointer;
+        }
+    }
+    position: relative;
+    .PopUp {
+        padding: 15px 20px;
+        box-sizing: border-box;
+        background-color: #ffffff;
+        border: #E4E7ED 1px solid;
+        border-radius: 4px;
+        position: absolute;
+        width: 300px;
+        z-index: 1;
+        top: 40px;
+        left: -150px;
+        .Header {
+            font-size: 14px;
+            line-height: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            .Title {
+                flex-grow: 1;
+            }
+            .Close {
+                vertical-align:sub;
+                line-height: 18px;
+                font-size: 18px;
+                &:hover{
+                    cursor: pointer;
+                }
+            }
+        }
+        .Body {
+            height: 300px;
+            overflow-y: auto;
+            .Item {
+                font-size: 14px;
+                line-height: 30px;
+            }
+        }
+    }
+}
+.SystemFunc {
+    .Main {
+        font-size: 12px;
+        line-height: 40px;
+        &:hover{
+            cursor: pointer;
+        }
+    }
+}
+.SystemParam {
+    .Main {
+        font-size: 12px;
+        line-height: 40px;
+        &:hover{
+            cursor: pointer;
+        }
+    }
+}

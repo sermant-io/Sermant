@@ -1,0 +1,19 @@
+.HostForm{
+    .Form {
+        padding: 0 150px;
+        .Info{
+            color: #41C170;
+            margin: 30px 0;
+            .anticon {
+                font-size: 16px;
+                margin-right: 10px;
+            }
+        }
+        .Buttons {
+            text-align: center;
+            button + button {
+                margin-left: 10px;
+            }
+        }
+    }
+}

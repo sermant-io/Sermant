@@ -1,0 +1,35 @@
+.UserManagement {
+    background-color: #eef3f6;
+    flex-grow: 1;
+    min-width: 1481px;
+    .Card {
+        margin: 20px;
+        .ToolBar {
+            display: flex;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            .Button{
+                margin-right: 10px;
+            }
+            .Space {
+                flex-grow: 1;
+            }
+        }
+    }
+}
+.AddUser {
+    .Buttons {
+        text-align: center;
+        button + button {
+            margin-left: 10px;
+        }
+    }
+}
+.UpdateUser {
+    .Buttons {
+        text-align: center;
+        button + button {
+            margin-left: 10px;
+        }
+    }
+}

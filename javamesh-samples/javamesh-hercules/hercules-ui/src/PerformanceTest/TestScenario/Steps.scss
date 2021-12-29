@@ -1,0 +1,35 @@
+.Steps {
+    display: flex;
+    .Step {
+        flex-grow: 1;
+        display: flex;
+        .Item{
+            flex-grow: 1;
+            text-align: center;
+            line-height: 41px;
+            color: #526D89;
+            background-color: #D0E5FC;
+            font-size: 14px;
+            &.active{
+                color: #FFFFFF;
+                background-color: #53A5FF;
+            }
+        }
+        .Head{
+            color: #D0E5FC;
+            background-color: #FFFFFF;
+            &.active{
+                color: #53A5FF;
+            }
+    
+        }
+        .Tail {
+            color: #FFFFFF;
+            background-color: #D0E5FC;
+            &.active{
+                background-color: #53A5FF;
+            }
+        }
+    }
+    
+}

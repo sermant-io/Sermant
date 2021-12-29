@@ -1,0 +1,98 @@
+.Home {
+    display: flex;
+    padding: 20px;
+    .Guide {
+        padding: 5px;
+        .Scenario {
+            width: 33%;
+            padding: 20px 0;
+        }
+        .Scenario + .Scenario {
+            border-left: #E4EEF6 1px solid;
+        }
+    }
+    .Chart {
+        overflow: hidden;
+        &>div{
+            display: inline-block;
+            text-align: center;
+        }
+    }
+    .HomeLeft {
+        flex-grow: 1;
+        margin-right: 20px;
+        &>div + div {
+            margin-top: 20px;
+        }
+    }
+    .HomeRight {
+        min-width: 425px;
+        &>div + div {
+            margin-top: 20px;
+        }
+    }
+    .WithTitle {
+        padding: 0;
+        .Title {
+            border-bottom: #DCDFE6 1px solid;
+            font-size: 14px;
+            line-height: 50px;
+            padding-left: 20px;
+        }
+        .Content {
+            padding: 14px 20px;
+        }
+    }
+    .Kanban {
+        background-image: url(Kanban.png);
+        background-repeat: no-repeat;
+        background-position: right;
+        background-size: contain;
+        background-color: #DBE3FF;
+        h2 {
+            color: #32364A;
+            font-size: 60px;
+            margin: 0;
+            line-height: 90px;
+            margin-left: 30px;
+        }
+        p {
+            margin-left: 40px;
+            font-size: 16px;
+        }
+        span {
+            width: 108px;
+            line-height: 30px;
+            text-align: center;
+            display: inline-block;
+            background-color: #4D70FF;
+            color: #FFFFFF;
+            border-radius: 20px;
+            margin-left: 30px;
+        }
+    }
+    .ScenarioList {
+        h3{
+            margin-bottom: 20px;
+        }
+    }
+}
+.Support {
+    overflow: hidden;
+    height: 290px;
+    a {
+        line-height: 30px;
+        font-size: 14px;
+        display: inline-block;
+        width: 320px;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+    }
+    .icon {
+        font-size: 22px;
+        vertical-align: top;
+        margin-left: 10px;
+        color: #FF4E4E;
+    }
+}
