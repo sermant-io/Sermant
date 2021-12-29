@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService {
             }
 
             // 修改密码
-            int count = mapper.updatePwdByName(userName, encodeNewPassword,getTimestamp());
+            int count = mapper.updatePwdByName(userName, encodeNewPassword, getTimestamp());
             if (count != 1) {
                 return FailedInfo.CHANGE_PASSWORD_FAILED;
             }
@@ -175,16 +175,18 @@ public class UserServiceImpl implements UserService {
         }
         String mSorter = sorter.equals("update_time") ? "last_modified_date" : sorter;
         String sortType;
-        if (order.equals("ascend")) {
-            sortType = "ASC";
+        if (StringUtils.isBlank(order)) {
+            sortType = "created_date" + System.lineSeparator() + "DESC";
+        } else if (order.equals("ascend")) {
+            sortType = mSorter + System.lineSeparator() + "ASC";
         } else {
-            sortType = "DESC";
+            sortType = mSorter + System.lineSeparator() + "DESC";
         }
-        Page<UserEntity> pageInfo = PageHelper.startPage(current, pageSize, sorter + System.lineSeparator() + sortType).doSelectPage(() -> {
+        Page<UserEntity> pageInfo = PageHelper.startPage(current, pageSize, sortType).doSelectPage(() -> {
             mapper.listUser(user);
         });
         List<UserEntity> users = pageInfo.getResult();
-        return CommonResult.success(users, (int)pageInfo.getTotal());
+        return CommonResult.success(users, (int) pageInfo.getTotal());
     }
 
     @Override
@@ -196,7 +198,7 @@ public class UserServiceImpl implements UserService {
                 return FailedInfo.SUSPEND_NOT_SELF_OR_ADMIN;
             }
         }
-        int count = mapper.updateEnableByName(usernames, "F",getTimestamp());
+        int count = mapper.updateEnableByName(usernames, "F", getTimestamp());
         int length = usernames.length;
         if (count == length) {
             return SUCCESS;
@@ -210,7 +212,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String enable(String[] usernames) {
-        int count = mapper.updateEnableByName(usernames, "T",getTimestamp());
+        int count = mapper.updateEnableByName(usernames, "T", getTimestamp());
         int length = usernames.length;
         if (count == length) {
             return SUCCESS;
@@ -262,7 +264,9 @@ public class UserServiceImpl implements UserService {
         String userName = user.getUserName();
         String password = generatePassword();
         user.setPassword(password);
-        int count = mapper.updatePwdByName(userName, encodePassword(userName, password),getTimestamp());
+        Timestamp timestamp = getTimestamp();
+        int count = mapper.updatePwdByName(userName, encodePassword(userName, password), timestamp);
+        user.setUpdateTime(timestamp);
         if (count == 1) {
             return CommonResult.success(user);
         } else {
@@ -273,7 +277,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String updateUser(UserEntity user) {
         String userName = user.getUserName();
-        if(userName.equals("admin")){
+        if (userName.equals("admin")) {
             return FailedInfo.CANNOT_UPDATE_ADMIN;
         }
         String role = user.getRole();

@@ -36,4 +36,6 @@ public interface EmergencyScriptService {
     CommonResult debugScript(int scriptId);
 
     LogResponse debugLog(int detailId, int lineIndex);
+
+    void exec(HttpServletRequest request);
 }

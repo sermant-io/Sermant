@@ -82,7 +82,7 @@ public class UserController {
                                  @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
                                  @RequestParam(value = "current", defaultValue = "1") int current,
                                  @RequestParam(value = "sorter", defaultValue = "created_date") String sorter,
-                                 @RequestParam(value = "order", defaultValue = "DESC") String order) {
+                                 @RequestParam(value = "order", required = false) String order) {
         return service.listUser(nickName, userName, role, status, pageSize, current, sorter, order);
     }
 

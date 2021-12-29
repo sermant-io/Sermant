@@ -209,4 +209,17 @@ public class EmergencyScriptController {
         return service.debugLog(id,lineIndex);
     }
 
+    @GetMapping("/script/exec")
+    public void exec(HttpServletRequest request){
+        service.exec(request);
+    }
+
+    @PostMapping("/script/execComplete")
+    public CommonResult execComplete(@RequestBody Map<String,String> map){
+        if(map.get("recordId").equals("0")){
+            return CommonResult.failed("recordId is valid. ");
+        }
+        return CommonResult.success();
+    }
+
 }
