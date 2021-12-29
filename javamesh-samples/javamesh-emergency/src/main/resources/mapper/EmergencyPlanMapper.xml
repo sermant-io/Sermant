@@ -555,9 +555,9 @@
                         'wait'
                     WHEN t1.`status` = '1' THEN
                         'process'
-                    WHEN t1.`status` IN ('2', '5') THEN
+                    WHEN t1.`status` IN ('2', '5', '6') THEN
                         'finish'
-                    WHEN t1.`status` IN ('3', '4', '6') THEN
+                    WHEN t1.`status` IN ('3', '4') THEN
                         'error'
                     ELSE t1.`status`
                    END

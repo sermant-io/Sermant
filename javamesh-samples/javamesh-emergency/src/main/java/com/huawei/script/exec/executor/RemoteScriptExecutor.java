@@ -30,6 +30,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * 用于在远程linux服务器执行本地脚本。
@@ -60,6 +64,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
         }
         Session session = null;
         String fileName = "";
+        Thread execThread = null;
         try {
             session = serverSessionFactory.getSession(scriptExecInfo.getRemoteServerInfo());
             ExecResult uploadFileResult =
@@ -69,15 +74,38 @@ public class RemoteScriptExecutor implements ScriptExecutor {
                 return uploadFileResult;
             }
             fileName = uploadFileResult.getMsg();
-            return exec(session, commands("sh", fileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId());
+            Session finalSession = session;
+            String finalFileName = fileName;
+            if (scriptExecInfo.getTimeOut() > 0) {
+                FutureTask<ExecResult> task = new FutureTask<>(() ->
+                    exec(finalSession, commands("sh", finalFileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId())
+                );
+                execThread = new Thread(task);
+                execThread.start();
+                return task.get(scriptExecInfo.getTimeOut(), TimeUnit.MILLISECONDS);
+            } else {
+                return exec(finalSession, commands("sh", finalFileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId());
+            }
         } catch (JSchException | IOException | SftpException e) {
             LOGGER.error("Can't get remote server session.", e);
             return ExecResult.fail(e.getMessage());
+        } catch (ExecutionException e) {
+            LOGGER.error("exec {} error. {}", scriptExecInfo.getId(), e.getMessage());
+            return ExecResult.fail("exec error");
+        } catch (InterruptedException e) {
+            LOGGER.error("exec {} was interrupted. {}", scriptExecInfo.getId(), e.getMessage());
+            return ExecResult.fail("interrupted");
+        } catch (TimeoutException e) {
+            LOGGER.error("exec {} was timeout. {}", scriptExecInfo.getId(), e.getMessage());
+            return ExecResult.fail("timeOut");
         } finally {
+            if (execThread != null) {
+                execThread.interrupt();
+            }
             if (session != null && StringUtils.isNotEmpty(fileName)) {
                 deleteFile(session, fileName);
             }
-            if (session != null && session.isConnected()){
+            if (session != null && session.isConnected()) {
                 session.disconnect();
             }
         }
@@ -193,11 +221,18 @@ public class RemoteScriptExecutor implements ScriptExecutor {
      */
     private ExecResult parseResult(Channel channel, LogCallBack logCallback, int id) throws IOException {
         ExecResult execResult = new ExecResult();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
+        BufferedReader normalInfoReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
+        BufferedReader errorInfoReader = new BufferedReader(new InputStreamReader(channel.getExtInputStream()));
         StringBuilder result = new StringBuilder();
         while (true) {
             String line;
-            while ((line = bufferedReader.readLine()) != null) {
+            while ((line = normalInfoReader.readLine()) != null) {
+                if (logCallback != null && id > 0) {
+                    logCallback.handleLog(id, line);
+                }
+                result.append(line).append(System.lineSeparator());
+            }
+            while ((line = errorInfoReader.readLine()) != null) {
                 if (logCallback != null && id > 0) {
                     logCallback.handleLog(id, line);
                 }
@@ -206,7 +241,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
 
             // 命令执行完毕
             if (channel.isClosed()) {
-                if (channel.getInputStream().available() > 0) {
+                if (channel.getInputStream().available() > 0 || channel.getExtInputStream().available() > 0) {
                     continue;
                 }
                 break;
