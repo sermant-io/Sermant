@@ -25,9 +25,12 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import javax.annotation.Resource;
 
 /**
  * 用于本地linux服务器上执行shell脚本
@@ -47,6 +50,9 @@ public class LocalScriptExecutor implements ScriptExecutor {
     @Value("${script.location}")
     private String scriptLocation = "/tmp/";
 
+    @Resource(name = "timeoutScriptExecThreadPool")
+    private ThreadPoolExecutor timeoutScriptExecThreadPool;
+
     @Override
     public String mode() {
         return LOCAL;
@@ -55,16 +61,14 @@ public class LocalScriptExecutor implements ScriptExecutor {
     @Override
     public ExecResult execScript(ScriptExecInfo scriptExecInfo, LogCallBack logCallback) {
         String fileName = "";
-        Thread execThread = null;
+        Future<ExecResult> task = null;
         try {
             fileName = createScriptFile(scriptExecInfo.getScriptName(), scriptExecInfo.getScriptContext());
             String finalFileName = fileName;
             if (scriptExecInfo.getTimeOut() > 0) {
-                FutureTask<ExecResult> task = new FutureTask<>(() ->
-                    exec(commands(finalFileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId())
+                task = timeoutScriptExecThreadPool.submit(
+                    () -> exec(commands(finalFileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId())
                 );
-                execThread = new Thread(task);
-                execThread.start();
                 return task.get(scriptExecInfo.getTimeOut(), TimeUnit.MILLISECONDS);
             } else {
                 return exec(commands(finalFileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId());
@@ -81,8 +85,8 @@ public class LocalScriptExecutor implements ScriptExecutor {
             LOGGER.error("execId={} was timeout", scriptExecInfo.getId());
             return ExecResult.fail("timeOut");
         } finally {
-            if (execThread != null) {
-                execThread.interrupt();
+            if (task != null) {
+                task.cancel(true);
             }
             if (StringUtils.isNotEmpty(fileName)) {
                 File file = new File(fileName);

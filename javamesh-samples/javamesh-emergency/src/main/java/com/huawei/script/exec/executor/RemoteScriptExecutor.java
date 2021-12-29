@@ -31,9 +31,12 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import javax.annotation.Resource;
 
 /**
  * 用于在远程linux服务器执行本地脚本。
@@ -48,6 +51,9 @@ public class RemoteScriptExecutor implements ScriptExecutor {
 
     @Autowired
     private ServerSessionFactory serverSessionFactory;
+
+    @Resource(name = "timeoutScriptExecThreadPool")
+    private ThreadPoolExecutor timeoutScriptExecThreadPool;
 
     @Value("${script.location}")
     private String scriptLocation;
@@ -64,7 +70,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
         }
         Session session = null;
         String fileName = "";
-        Thread execThread = null;
+        Future<ExecResult> task = null;
         try {
             session = serverSessionFactory.getSession(scriptExecInfo.getRemoteServerInfo());
             ExecResult uploadFileResult =
@@ -77,11 +83,9 @@ public class RemoteScriptExecutor implements ScriptExecutor {
             Session finalSession = session;
             String finalFileName = fileName;
             if (scriptExecInfo.getTimeOut() > 0) {
-                FutureTask<ExecResult> task = new FutureTask<>(() ->
+                task = timeoutScriptExecThreadPool.submit(() ->
                     exec(finalSession, commands("sh", finalFileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId())
                 );
-                execThread = new Thread(task);
-                execThread.start();
                 return task.get(scriptExecInfo.getTimeOut(), TimeUnit.MILLISECONDS);
             } else {
                 return exec(finalSession, commands("sh", finalFileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId());
@@ -99,8 +103,8 @@ public class RemoteScriptExecutor implements ScriptExecutor {
             LOGGER.error("exec {} was timeout. {}", scriptExecInfo.getId(), e.getMessage());
             return ExecResult.fail("timeOut");
         } finally {
-            if (execThread != null) {
-                execThread.interrupt();
+            if (task != null) {
+                task.cancel(true);
             }
             if (session != null && StringUtils.isNotEmpty(fileName)) {
                 deleteFile(session, fileName);
