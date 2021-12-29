@@ -566,7 +566,7 @@
                DATE_FORMAT(t1.start_time, '%Y-%m-%d %H:%i:%s') start_time,
                DATE_FORMAT(t1.end_time, '%Y-%m-%d %H:%i:%s')   end_time,
                t1.sync,
-               t1.create_user as                               operator
+          IFNULL((select user_name from NUSER where user_id = t1.create_user),t1.create_user) operator
         FROM emergency_exec_record t1
                  LEFT JOIN emergency_task scene ON t1.scene_id = scene.task_id
                  LEFT JOIN emergency_task task ON t1.task_id = task.task_id
