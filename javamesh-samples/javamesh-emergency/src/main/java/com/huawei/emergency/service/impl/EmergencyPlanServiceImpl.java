@@ -345,11 +345,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setPlanId(plan.getPlanId());
         updatePlan.setStatus(plan.getStatus());
-        if (PlanStatus.REJECT.getValue().equals(plan.getStatus())) {
-            updatePlan.setCheckRemark(plan.getCheckRemark());
-        } else {
-            updatePlan.setCheckRemark("");
-        }
+        updatePlan.setCheckRemark(plan.getCheckRemark());
         updatePlan.setCheckTime(new Date());
         updatePlan.setCheckUser(userName);
         updatePlan.setUpdateTime(new Date());
@@ -518,6 +514,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         updatePlan.setPlanId(planId);
         updatePlan.setStatus(PlanStatus.APPROVING.getValue());
         updatePlan.setUpdateTime(new Date());
+        updatePlan.setCheckRemark("");
         planMapper.updateByPrimaryKeySelective(updatePlan);
         return CommonResult.success();
     }
