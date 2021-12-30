@@ -30,9 +30,9 @@
 #### web端部署方法
 [hercules-adaptation 部署指导](../../../sermant-plugins/sermant-hercules/hercules-adaptation/README.md)
 #### server端部署方法
-[hercules-server 部署指导](../../../sermant-plugins/sermant-hercules/hercules-server/README.md)
+[hercules-server 部署指导](../../../sermant-plugins/sermant-hercules/ngrinder/README.md)
 #### agent部署方法
-[hercules-agent 部署指导](../../../sermant-plugins/sermant-hercules/hercules-server/README.md)
+[hercules-agent 部署指导](../../../sermant-plugins/sermant-hercules/ngrinder/README.md)
 #### monitor部署方法
 [monitor 部署指导](../../user-guide/server-monitor/document.md)
 ### 使用指导

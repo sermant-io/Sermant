@@ -1,0 +1,5 @@
+database.type,mysql,database
+database.url,127.0.0.1:3306/hercules,database_url
+database.url_option,useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&nullNamePatternMatchesAll=true&nullCatalogMeansCurrent=true,database_url_option
+database.username,root,database_username
+database.password,root,database_password
