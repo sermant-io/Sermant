@@ -16,9 +16,11 @@
 
 package com.huawei.gray.feign.service;
 
-import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.gray.feign.context.CurrentInstance;
-
+import com.huawei.route.common.gray.config.GrayConfig;
+import com.huawei.route.common.gray.constants.GrayConstant;
+import com.huawei.sermant.core.agent.common.BeforeResult;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 import com.netflix.appinfo.InstanceInfo;
 
@@ -27,6 +29,7 @@ import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * 注册通用的service
@@ -35,6 +38,7 @@ import java.lang.reflect.Method;
  * @date 2021/11/26
  */
 public class RegisterServiceImpl implements RegisterService {
+    private GrayConfig grayConfig;
     @Override
     public void start() {
     }
@@ -45,17 +49,20 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
+        grayConfig = PluginConfigManager.getPluginConfig(GrayConfig.class);
         final Object argument = arguments[0];
-        if (argument instanceof InstanceInfo) {
+        if (argument instanceof Registration) {
+            Registration instanceInfo = (Registration) argument;
+            Map<String, String> meta = instanceInfo.getMetadata();
+            meta.put(GrayConstant.GRAY_VERSION_KEY, grayConfig.getGrayVersion());
+            // 存放当前服务实例, 仅初始化一次
+            CurrentInstance.newInstance(instanceInfo.getServiceId(), instanceInfo.getHost(), instanceInfo.getPort());
+        }  else if (argument instanceof InstanceInfo) {
             InstanceInfo instanceInfo = (InstanceInfo) argument;
             // 存放当前服务实例, 初始化标签观察者
             CurrentInstance.newInstance(instanceInfo.getVIPAddress(), instanceInfo.getIPAddr(), instanceInfo.getPort());
         } else if (argument instanceof ZookeeperRegistration) {
             ZookeeperRegistration instanceInfo = (ZookeeperRegistration) argument;
-            // 存放当前服务实例, 仅初始化一次
-            CurrentInstance.newInstance(instanceInfo.getServiceId(), instanceInfo.getHost(), instanceInfo.getPort());
-        } else if (argument instanceof Registration) {
-            Registration instanceInfo = (Registration) argument;
             // 存放当前服务实例, 仅初始化一次
             CurrentInstance.newInstance(instanceInfo.getServiceId(), instanceInfo.getHost(), instanceInfo.getPort());
         }

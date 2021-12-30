@@ -95,7 +95,7 @@ public class ScRegister implements Register {
 
                 @Override
                 public Map<String, String> getMetadata() {
-                    return null;
+                    return microserviceInstance.getProperties();
                 }
             });
         }

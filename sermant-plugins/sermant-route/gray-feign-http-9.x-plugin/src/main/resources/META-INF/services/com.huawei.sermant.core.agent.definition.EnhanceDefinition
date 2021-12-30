@@ -2,6 +2,7 @@
 # Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
 #
 
+com.huawei.gray.feign.definition.register.RegistrationDefinition
 com.huawei.gray.feign.definition.register.EurekaClientRegisterDefinition
 com.huawei.gray.feign.definition.register.NacosRegisterDefinition
 com.huawei.gray.feign.definition.register.ServiceCenterRegisterDefinition
@@ -11,3 +12,4 @@ com.huawei.gray.feign.definition.DefaultHttpClientDefinition
 com.huawei.gray.feign.definition.HttpClientDefinition
 com.huawei.gray.feign.definition.LoadBalancerFeignClientDefinition
 com.huawei.gray.feign.definition.PathVarDefinition
+com.huawei.gray.feign.definition.ServiceInstanceListSupplierDefinition

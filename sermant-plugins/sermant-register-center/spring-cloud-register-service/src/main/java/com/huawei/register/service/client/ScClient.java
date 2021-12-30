@@ -74,6 +74,12 @@ public class ScClient {
      * https url前缀
      */
     private static final String HTTPS_URL_PREFIX = "https://";
+
+    /**
+     * 注册版本号
+     */
+    private static final String REG_VERSION_KEY = "reg.version";
+
     /**
      * 服务/实例ID
      * Map<服务ID, 实例IDS>
@@ -129,6 +135,9 @@ public class ScClient {
         microserviceInstance.setVersion(registerConfig.getVersion());
         microserviceInstance.setHostName(registration.getHost());
         microserviceInstance.setEndpoints(buildEndpoints(registration));
+        Map<String, String> meta = registration.getMetadata();
+        meta.put(REG_VERSION_KEY, registerConfig.getVersion());
+        microserviceInstance.setProperties(meta);
         return microserviceInstance;
     }
 
@@ -148,7 +157,6 @@ public class ScClient {
         framework.setVersion(registerConfig.getFrameworkVersion());
         microservice.setFramework(framework);
         microservice.setVersion(registerConfig.getVersion());
-        microservice.setServiceId(registration.getServiceId());
         microservice.setServiceName(registration.getServiceId());
         microservice.setStatus(MicroserviceStatus.UP);
         return microservice;
