@@ -1,6 +1,4 @@
-com.huawei.flowrecord.plugins.boot.BootInstrumentation
-com.huawei.flowrecord.plugins.dubbo.DubboInstrumentation
-com.huawei.flowrecord.plugins.dubbo.AliDubboInstrumentation
-com.huawei.flowrecord.plugins.custom.CustomInstrumentation
-com.huawei.flowrecord.plugins.redisson.v3.RedissonInstrumentation
-com.huawei.flowrecord.plugins.http.v4.HttpServerInstrumentation
+com.huawei.flowrecord.AliDubboDefinition
+com.huawei.flowrecord.HttpServerDefinition
+com.huawei.flowrecord.RestletDefinition
+com.huawei.flowrecord.RedissonDefinition
