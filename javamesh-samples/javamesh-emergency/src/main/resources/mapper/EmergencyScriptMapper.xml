@@ -518,7 +518,7 @@
         SELECT
         s.script_id,
         s.script_name,
-        s.script_user,
+        u.user_name as script_user,
         s.submit_info,
         s.script_status,
         s.comment,
@@ -536,10 +536,11 @@
         WHEN '1' THEN '平台'
         END AS password_mode
         FROM
-        emergency_script s
+        emergency_script s,nuser u
         <where>
+            s.script_user = u.user_id
             <if test="scriptName!=null and scriptName!=''">
-                s.script_name LIKE CONCAT('%',#{scriptName},'%') ESCAPE '/'
+                AND s.script_name LIKE CONCAT('%',#{scriptName},'%') ESCAPE '/'
             </if>
             <if test="scriptUser!=null and scriptUser!=''">
                 AND s.script_user LIKE CONCAT('%',#{scriptUser},'%') ESCAPE '/'
