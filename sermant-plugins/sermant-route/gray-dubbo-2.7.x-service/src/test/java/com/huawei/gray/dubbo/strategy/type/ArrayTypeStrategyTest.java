@@ -28,6 +28,9 @@ import org.junit.Test;
  * @date 2021/12/1
  */
 public class ArrayTypeStrategyTest {
+    /**
+     * 测试数组策略
+     */
     @Test
     public void testValue() {
         TypeStrategy strategy = new ArrayTypeStrategy();

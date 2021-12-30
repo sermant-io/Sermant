@@ -16,16 +16,16 @@
 
 package com.huawei.gray.dubbo.strategy;
 
-import com.huawei.gray.dubbo.strategy.type.ArrayTypeStrategy;
-import com.huawei.gray.dubbo.strategy.type.EmptyTypeStrategy;
-import com.huawei.gray.dubbo.strategy.type.EnabledTypeStrategy;
-import com.huawei.gray.dubbo.strategy.type.ListTypeStrategy;
-import com.huawei.gray.dubbo.strategy.type.MapTypeStrategy;
-import com.huawei.gray.dubbo.strategy.type.ObjectTypeStrategy;
+import com.huawei.sermant.core.common.CommonConstant;
+import com.huawei.sermant.core.common.LoggerFactory;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 规则策略选择器测试
@@ -34,42 +34,123 @@ import org.junit.Test;
  * @date 2021/12/1
  */
 public class TypeStrategyChooserTest {
-
     private TypeStrategyChooser chooser;
 
+    private Object[] arguments;
+
+    /**
+     * 初始化
+     */
     @Before
     public void before() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put(CommonConstant.LOG_SETTING_FILE_KEY, getClass().getResource("/logback-test.xml").getPath());
+        LoggerFactory.init(map);
         chooser = TypeStrategyChooser.INSTANCE;
+        arguments = new Object[1];
     }
 
+    /**
+     * 测试数组策略
+     */
     @Test
     public void testArray() {
-        Assert.assertTrue(chooser.choose("[0]") instanceof ArrayTypeStrategy);
+        arguments[0] = new String[]{"foo"};
+        // 正常情况
+        Assert.assertEquals("foo", chooser.getValue("[0]", "args0", arguments));
     }
 
+    /**
+     * 测试空策略
+     */
     @Test
     public void testEmpty() {
-        Assert.assertTrue(chooser.choose("") instanceof EmptyTypeStrategy);
+        arguments[0] = "foo";
+        // 正常情况
+        Assert.assertEquals("foo", chooser.getValue("", "args0", arguments));
     }
 
+    /**
+     * 测试enabled策略
+     */
     @Test
     public void testEnabled() {
-        Assert.assertTrue(chooser.choose(".isEnabled()") instanceof EnabledTypeStrategy);
+        Entity entity = new Entity();
+        entity.setEnabled(true);
+        arguments[0] = entity;
+        // 正常情况
+        Assert.assertEquals(Boolean.TRUE.toString(), chooser.getValue(".isEnabled()", "args0", arguments));
     }
 
+    /**
+     * 测试列表策略
+     */
     @Test
     public void testList() {
-        Assert.assertTrue(chooser.choose(".get(0)") instanceof ListTypeStrategy);
+        arguments[0] = Collections.singletonList("foo");
+        // 正常情况
+        Assert.assertEquals("foo", chooser.getValue(".get(0)", "args0", arguments));
     }
 
+    /**
+     * 测试map策略
+     */
     @Test
     public void testMap() {
-        Assert.assertTrue(chooser.choose(".get(\"foo\")") instanceof MapTypeStrategy);
+        arguments[0] = Collections.singletonMap("foo", "bar");
+        // 正常情况
+        Assert.assertEquals("bar", chooser.getValue(".get(\"foo\")", "args0", arguments));
     }
 
+    /**
+     * 测试实体策略
+     */
     @Test
     public void testObject() {
-        Assert.assertTrue(chooser.choose(".bar") instanceof ObjectTypeStrategy);
+        Entity entity = new Entity();
+        entity.setTest("foo");
+        arguments[0] = entity;
+        // 正常情况
+        Assert.assertEquals("foo", chooser.getValue(".test", "args0", arguments));
     }
 
+    /**
+     * 测试null（异常情况）
+     */
+    @Test
+    public void testNull() {
+        // 参数为null
+        Assert.assertNull(chooser.getValue(".test", "args0", null));
+        // 未命中TypeStrategy
+        Assert.assertNull(chooser.getValue("bar", "args0", arguments));
+        // 非数字
+        Assert.assertNull(chooser.getValue(".test", "argsA", arguments));
+        // 索引越界
+        Assert.assertNull(chooser.getValue(".test", "args1", arguments));
+    }
+
+    /**
+     * 实体
+     */
+    public static class Entity {
+        private Boolean enabled;
+
+        private String test;
+
+        public Boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getTest() {
+            return test;
+        }
+
+        public void setTest(String test) {
+            this.test = test;
+        }
+    }
 }

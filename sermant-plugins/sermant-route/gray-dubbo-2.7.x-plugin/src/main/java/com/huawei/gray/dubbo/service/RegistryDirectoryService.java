@@ -16,11 +16,13 @@
 
 package com.huawei.gray.dubbo.service;
 
+import com.huawei.sermant.core.plugin.service.PluginService;
+
 /**
  * RegistryDirectoryInterceptor的service
  *
  * @author pengyuyi
  * @date 2021/11/24
  */
-public abstract class RegistryDirectoryService extends AbstractPluginService {
+public abstract class RegistryDirectoryService extends AbstractPluginService implements PluginService {
 }

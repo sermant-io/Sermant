@@ -17,13 +17,12 @@
 package com.huawei.gray.dubbo.service;
 
 import com.huawei.gray.dubbo.cache.DubboCache;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.util.SpiLoadUtil.SpiWeight;
 import com.huawei.route.common.gray.addr.AddrCache;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;
+import com.huawei.sermant.core.agent.common.BeforeResult;
 
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
@@ -38,7 +37,6 @@ import java.util.List;
  * @author pengyuyi
  * @date 2021/11/24
  */
-@SpiWeight(2)
 public class RegistrationServiceImpl extends RegistrationService {
     /**
      * 拦截点前执行

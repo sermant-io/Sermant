@@ -19,7 +19,6 @@ package com.huawei.gray.dubbo.service;
 import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.gray.dubbo.strategy.RuleStrategyEnum;
 import com.huawei.gray.dubbo.utils.RouterUtil;
-import com.huawei.sermant.core.util.SpiLoadUtil.SpiWeight;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;
 import com.huawei.route.common.gray.label.entity.Route;
@@ -39,7 +38,6 @@ import java.util.List;
  * @author pengyuyi
  * @date 2021/11/24
  */
-@SpiWeight(3)
 public class RegistryDirectoryServiceImpl extends RegistryDirectoryService {
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {

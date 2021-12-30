@@ -31,6 +31,9 @@ import java.util.List;
  * @date 2021/12/1
  */
 public class ListTypeStrategyTest {
+    /**
+     * 测试列表策略
+     */
     @Test
     public void testValue() {
         TypeStrategy strategy = new ListTypeStrategy();

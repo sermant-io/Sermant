@@ -17,9 +17,15 @@
 package com.huawei.gray.dubbo.strategy.type;
 
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
+import com.huawei.sermant.core.common.CommonConstant;
+import com.huawei.sermant.core.common.LoggerFactory;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 实体匹配策略测试
@@ -28,6 +34,19 @@ import org.junit.Test;
  * @date 2021/12/1
  */
 public class ObjectTypeStrategyTest {
+    /**
+     * 初始化
+     */
+    @Before
+    public void before() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put(CommonConstant.LOG_SETTING_FILE_KEY, getClass().getResource("/logback-test.xml").getPath());
+        LoggerFactory.init(map);
+    }
+
+    /**
+     * 测试实体策略
+     */
     @Test
     public void testValue() {
         TypeStrategy strategy = new ObjectTypeStrategy();
@@ -37,12 +56,17 @@ public class ObjectTypeStrategyTest {
         Assert.assertEquals("bar", strategy.getValue(entity, ".test"));
         // 测试null
         Assert.assertNotEquals("bar", strategy.getValue(new Entity(), ".test"));
+        // 测试找不到字段
+        Assert.assertNull(strategy.getValue(new Entity(), ".foo"));
         // 测试不等于
         entity.setTest("foo");
         Assert.assertNotEquals("bar", strategy.getValue(entity, ".test"));
     }
 
-    private static class Entity {
+    /**
+     * 实体
+     */
+    public static class Entity {
         private String test;
 
         public String getTest() {

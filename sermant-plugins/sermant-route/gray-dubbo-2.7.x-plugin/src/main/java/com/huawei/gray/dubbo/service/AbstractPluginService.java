@@ -17,7 +17,6 @@
 package com.huawei.gray.dubbo.service;
 
 import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.plugin.service.PluginService;
 
 import java.lang.reflect.Method;
 
@@ -27,12 +26,16 @@ import java.lang.reflect.Method;
  * @author pengyuyi
  * @date 2021/11/24
  */
-public abstract class AbstractPluginService implements PluginService {
-    @Override
+public abstract class AbstractPluginService {
+    /**
+     * 启动方法
+     */
     public void start() {
     }
 
-    @Override
+    /**
+     * 停止方法
+     */
     public void stop() {
     }
 
@@ -60,16 +63,5 @@ public abstract class AbstractPluginService implements PluginService {
      */
     public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
         return result;
-    }
-
-    /**
-     * 拦截点之后执行
-     *
-     * @param obj 增强的类
-     * @param method 增强的方法
-     * @param arguments 增强方法的所有参数
-     * @param throwable 增强时可能出现的异常
-     */
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable throwable) {
     }
 }

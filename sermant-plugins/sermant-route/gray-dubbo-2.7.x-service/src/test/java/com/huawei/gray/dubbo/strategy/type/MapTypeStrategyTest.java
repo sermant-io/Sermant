@@ -31,6 +31,9 @@ import java.util.Map;
  * @date 2021/12/1
  */
 public class MapTypeStrategyTest {
+    /**
+     * 测试map策略
+     */
     @Test
     public void testValue() {
         TypeStrategy strategy = new MapTypeStrategy();
