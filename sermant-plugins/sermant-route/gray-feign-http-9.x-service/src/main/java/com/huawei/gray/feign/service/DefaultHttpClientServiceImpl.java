@@ -22,18 +22,18 @@
 
 package com.huawei.gray.feign.service;
 
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.gray.feign.context.CurrentInstance;
 import com.huawei.gray.feign.context.FeignResolvedURL;
 import com.huawei.gray.feign.context.HostContext;
 import com.huawei.gray.feign.rule.RuleType;
 import com.huawei.gray.feign.util.RouterUtil;
 import com.huawei.route.common.gray.addr.entity.Instances;
+import com.huawei.route.common.gray.config.GrayConfig;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;
 import com.huawei.route.common.gray.label.entity.Route;
 import com.huawei.route.common.gray.label.entity.Rule;
-
+import com.huawei.sermant.core.agent.common.BeforeResult;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import feign.Request;
 import org.springframework.util.CollectionUtils;
 
@@ -58,11 +58,12 @@ public class DefaultHttpClientServiceImpl implements DefaultHttpClientService {
 
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
+        GrayConfig grayConfig = PluginConfigManager.getPluginConfig(GrayConfig.class);
         Request request = (Request) arguments[0];
         String targetAppName = HostContext.get();
 
         // 根据灰度规则重构请求地址
-        GrayConfiguration grayConfiguration = LabelCache.getLabel(CurrentInstance.getInstance().getAppName());
+        GrayConfiguration grayConfiguration = LabelCache.getLabel(grayConfig.getSpringCloudKey());
         if (GrayConfiguration.isInValid(grayConfiguration)) {
             return;
         }

@@ -82,4 +82,9 @@ public class GrayConstant {
      * 灰度配置versionFrom的key
      */
     public static final String GRAY_CONFIG_VERSION_FROM_KEY = "versionFrom";
+
+    /**
+     * 注册时版本号
+     */
+    public static final String REG_VERSION_KEY = "reg.version";
 }

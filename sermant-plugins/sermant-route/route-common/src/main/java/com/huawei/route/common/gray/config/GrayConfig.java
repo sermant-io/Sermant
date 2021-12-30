@@ -51,6 +51,16 @@ public class GrayConfig implements PluginConfig {
     private String dubboGroup = "public=default";
 
     /**
+     * 自定义key
+     */
+    private String springCloudKey = "SPRINGCLOUD_GRAY_LABLE";
+
+    /**
+     * 自定义组名
+     */
+    private String springCloudGroup = "struct=spring";
+
+    /**
      * 其它配置
      */
     private Map<String, String> properties;
@@ -105,6 +115,22 @@ public class GrayConfig implements PluginConfig {
 
     public void setDubboGroup(String dubboGroup) {
         this.dubboGroup = dubboGroup;
+    }
+
+    public String getSpringCloudKey() {
+        return springCloudKey;
+    }
+
+    public void setSpringCloudKey(String springCloudKey) {
+        this.springCloudKey = springCloudKey;
+    }
+
+    public String getSpringCloudGroup() {
+        return springCloudGroup;
+    }
+
+    public void setSpringCloudGroup(String springCloudGroup) {
+        this.springCloudGroup = springCloudGroup;
     }
 
     public Map<String, String> getProperties() {
