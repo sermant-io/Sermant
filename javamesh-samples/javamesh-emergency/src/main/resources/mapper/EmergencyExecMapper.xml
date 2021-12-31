@@ -290,6 +290,110 @@
     where exec_id = #{execId,jdbcType=INTEGER}
   </update>
 
+  <select id="allPlanRecords" resultType="com.huawei.emergency.dto.PlanQueryDto">
+    SELECT
+    t1.exec_id as `key`,
+    t1.exec_id as history_id,
+    t1.plan_id,
+    t2.plan_no,
+    t2.plan_name,
+    IFNULL((select user_name from NUSER where user_id = t1.create_user),t1.create_user) creator,
+    date_format( t1.create_time, '%Y-%m-%d %H:%i:%s' ) create_time,
+    date_format( t1.create_time, '%Y-%m-%d %H:%i:%s' ) execute_time,
+    date_format(IFNULL(min(t3.start_time),t1.create_time), '%Y-%m-%d %H:%i:%s') start_time,
+    parse_exec_status(parse_scene_exec_status(t1.exec_id,0)) `status`
+    FROM
+    emergency_exec t1
+    JOIN emergency_plan t2 ON t1.plan_id = t2.plan_id
+    left JOIN emergency_exec_record t3 on t1.exec_id = t3.exec_id and t3.is_valid='1'
+    where t1.plan_id is not null
+    <if test="param1.planName != null and param1.planName != ''">
+      and locate(#{param1.planName},t2.plan_name) > 0
+    </if>
+    <if test="filters.planNames != null and filters.planNames.length > 0">
+      and t2.plan_name in
+      <foreach close=")" collection="filters.planNames" index="index" item="planName" open="(" separator=",">
+        #{planName}
+      </foreach>
+    </if>
+    <if test="filters.creators != null and filters.creators.length > 0">
+      and IFNULL((select user_name from NUSER where user_id = t1.create_user),t1.create_user) in
+      <foreach close=")" collection="filters.creators" index="index" item="creator" open="(" separator=",">
+        #{creator}
+      </foreach>
+    </if>
+    group by t1.exec_id
+    ORDER BY
+    t1.create_time DESC
+  </select>
+  <select id="allSceneRecords" resultType="com.huawei.emergency.dto.SceneExecDto">
+    SELECT t1.record_id                                              `key`,
+           t1.exec_id,
+           t1.scene_id,
+           t2.task_no                                                scene_no,
+           t2.task_name                                              scene_name,
+           t1.scene_id as                                            scena_id,
+           t2.task_no                                                scena_no,
+           t2.task_name                                              scena_name,
+           (
+             CASE
+
+               WHEN parse_scene_exec_status(t1.exec_id, t1.scene_id) = '0' THEN
+                 'wait'
+               WHEN parse_scene_exec_status(t1.exec_id, t1.scene_id) = '1' THEN
+                 'process'
+               WHEN parse_scene_exec_status(t1.exec_id, t1.scene_id) IN ('2', '5') THEN
+                 'finish'
+               WHEN parse_scene_exec_status(t1.exec_id, t1.scene_id) IN ('3', '4', '6') THEN
+                 'error'
+               ELSE t1.`status`
+               END
+             )                                                     `status`,
+           parse_exec_status(
+                   parse_scene_exec_status(t1.exec_id, t1.scene_id)) status_label
+    FROM emergency_exec_record t1
+           LEFT JOIN emergency_task t2 ON t1.scene_id = t2.task_id
+    WHERE t1.exec_id = #{execId}
+      AND t1.is_valid = '1'
+      and t1.task_id is null order by t2.task_no
+  </select>
+  <select id="allTaskRecords" resultType="com.huawei.emergency.dto.SceneExecDto">
+    SELECT t1.record_id                                    `key`,
+           t1.exec_id,
+           t1.scene_id,
+           scene.task_no                                   scene_no,
+           scene.task_name                                 scene_name,
+           t1.scene_id    as                               scena_id,
+           scene.task_no                                   scena_no,
+           scene.task_name                                 scena_name,
+           task.task_no,
+           task.task_name,
+           (CASE
+              WHEN t1.`status` = '0' THEN
+                'wait'
+              WHEN t1.`status` = '1' THEN
+                'process'
+              WHEN t1.`status` IN ('2', '5', '6') THEN
+                'finish'
+              WHEN t1.`status` IN ('3', '4') THEN
+                'error'
+              ELSE t1.`status`
+             END
+             )                                           `status`,
+           parse_exec_status(t1.`status`)                  status_label,
+           DATE_FORMAT(t1.start_time, '%Y-%m-%d %H:%i:%s') start_time,
+           DATE_FORMAT(t1.end_time, '%Y-%m-%d %H:%i:%s')   end_time,
+           t1.sync,
+           IFNULL((select user_name from NUSER where user_id = t1.create_user),t1.create_user) operator
+    FROM emergency_exec_record t1
+           LEFT JOIN emergency_task scene ON t1.scene_id = scene.task_id
+           LEFT JOIN emergency_task task ON t1.task_id = task.task_id
+    WHERE t1.exec_id = #{execId}
+      AND t1.scene_id = #{sceneId}
+      AND t1.is_valid = '1'
+    ORDER BY task.task_no
+  </select>
+
   <select id="allRecords" resultType="java.util.LinkedHashMap">
     SELECT
       t1.exec_id AS 执行编号,

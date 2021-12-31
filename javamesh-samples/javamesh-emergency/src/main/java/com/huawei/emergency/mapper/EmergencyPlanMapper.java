@@ -50,10 +50,4 @@ public interface EmergencyPlanMapper {
     List<PlanQueryDto> queryPlanDto(PlanQueryParams params);
 
     List<PlanDetailQueryDto> queryPlanDetailDto(Integer id);
-
-    List<PlanQueryDto> allPlanRecords(EmergencyPlan plan, Map<String, Object> filters);
-
-    List<SceneExecDto> allSceneRecords(Integer execId);
-
-    List<SceneExecDto> allTaskRecords(Integer execId, Integer sceneId);
 }

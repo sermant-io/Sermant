@@ -49,9 +49,6 @@ public class EmergencyExecController {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmergencyExecController.class);
 
     @Autowired
-    private EmergencyPlanService planService;
-
-    @Autowired
     private EmergencyExecService execService;
 
     @Autowired
@@ -126,7 +123,7 @@ public class EmergencyExecController {
         EmergencyPlan plan = new EmergencyPlan();
         plan.setPlanName(planName);
         params.setObject(plan);
-        return planService.allPlanExecRecords(params, planNames, creators);
+        return execService.allPlanExecRecords(params, planNames, creators);
     }
 
 
@@ -142,7 +139,7 @@ public class EmergencyExecController {
         EmergencyExecRecord record = new EmergencyExecRecord();
         record.setExecId(execId);
         params.setObject(record);
-        return planService.allSceneExecRecords(params);
+        return execService.allSceneExecRecords(params);
     }
 
     /**
@@ -160,7 +157,7 @@ public class EmergencyExecController {
         record.setExecId(execId);
         record.setSceneId(sceneId);
         params.setObject(record);
-        return planService.allTaskExecRecords(params);
+        return execService.allTaskExecRecords(params);
     }
 
     /**

@@ -422,35 +422,6 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     }
 
     @Override
-    public CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params, String[] filterPlanNames, String[] filterCreators) {
-        Map<String, Object> filters = new HashMap<>();
-        filters.put("planNames", filterPlanNames);
-        filters.put("creators", filterCreators);
-        Page<PlanQueryDto> pageInfo = PageHelper
-            .startPage(params.getPageIndex(), params.getPageSize(), StringUtils.isEmpty(params.getSortType()) ? "" : params.getSortField() + System.lineSeparator() + params.getSortType())
-            .doSelectPage(() -> {
-                planMapper.allPlanRecords(params.getObject(), filters);
-            });
-        return CommonResult.success(pageInfo.getResult(), (int) pageInfo.getTotal());
-    }
-
-    @Override
-    public CommonResult allSceneExecRecords(CommonPage<EmergencyExecRecord> params) {
-        List<SceneExecDto> sceneExecDtos = planMapper.allSceneRecords(params.getObject().getExecId());
-        return CommonResult.success(sceneExecDtos, sceneExecDtos.size());
-    }
-
-    @Override
-    public CommonResult allTaskExecRecords(CommonPage<EmergencyExecRecord> params) {
-        EmergencyExecRecord paramsObject = params.getObject();
-        List<SceneExecDto> result = planMapper.allTaskRecords(paramsObject.getExecId(), paramsObject.getSceneId());
-        result.forEach(recordDto -> {
-            recordDto.setScheduleInfo(recordDetailMapper.selectAllServerDetail(recordDto.getKey()));
-        });
-        return CommonResult.success(result, result.size());
-    }
-
-    @Override
     public CommonResult save(int planId, List<TaskNode> listNodes, String userName) {
         if (listNodes == null) {
             return CommonResult.success();

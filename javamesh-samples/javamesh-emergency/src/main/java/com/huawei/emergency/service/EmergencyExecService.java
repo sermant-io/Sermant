@@ -4,8 +4,11 @@
 
 package com.huawei.emergency.service;
 
+import com.huawei.common.api.CommonPage;
 import com.huawei.common.api.CommonResult;
+import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordDetail;
+import com.huawei.emergency.entity.EmergencyPlan;
 import com.huawei.emergency.entity.EmergencyScript;
 import com.huawei.script.exec.log.LogResponse;
 
@@ -33,4 +36,10 @@ public interface EmergencyExecService {
     CommonResult ensureOneServer(int detailId, String result, String userName);
 
     LogResponse logOneServer(int detailId, int line);
+
+    CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params, String[] filterPlanNames, String[] filterCreators);
+
+    CommonResult allSceneExecRecords(CommonPage<EmergencyExecRecord> params);
+
+    CommonResult allTaskExecRecords(CommonPage<EmergencyExecRecord> params);
 }

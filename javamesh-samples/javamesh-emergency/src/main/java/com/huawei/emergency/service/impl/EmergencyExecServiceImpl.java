@@ -4,10 +4,15 @@
 
 package com.huawei.emergency.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.huawei.common.api.CommonPage;
 import com.huawei.common.api.CommonResult;
 import com.huawei.common.constant.PlanStatus;
 import com.huawei.common.constant.RecordStatus;
 import com.huawei.common.constant.ValidEnum;
+import com.huawei.emergency.dto.PlanQueryDto;
+import com.huawei.emergency.dto.SceneExecDto;
 import com.huawei.emergency.entity.EmergencyExec;
 import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyExecRecordDetail;
@@ -43,6 +48,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -393,5 +399,34 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
             return new LogResponse(null, needLogs);
         }
         return new LogResponse(null, new String[]{recordDetail.getLog()});
+    }
+
+    @Override
+    public CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params, String[] filterPlanNames, String[] filterCreators) {
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("planNames", filterPlanNames);
+        filters.put("creators", filterCreators);
+        Page<PlanQueryDto> pageInfo = PageHelper
+            .startPage(params.getPageIndex(), params.getPageSize(), StringUtils.isEmpty(params.getSortType()) ? "" : params.getSortField() + System.lineSeparator() + params.getSortType())
+            .doSelectPage(() -> {
+                execMapper.allPlanRecords(params.getObject(), filters);
+            });
+        return CommonResult.success(pageInfo.getResult(), (int) pageInfo.getTotal());
+    }
+
+    @Override
+    public CommonResult allSceneExecRecords(CommonPage<EmergencyExecRecord> params) {
+        List<SceneExecDto> sceneExecDtos = execMapper.allSceneRecords(params.getObject().getExecId());
+        return CommonResult.success(sceneExecDtos, sceneExecDtos.size());
+    }
+
+    @Override
+    public CommonResult allTaskExecRecords(CommonPage<EmergencyExecRecord> params) {
+        EmergencyExecRecord paramsObject = params.getObject();
+        List<SceneExecDto> result = execMapper.allTaskRecords(paramsObject.getExecId(), paramsObject.getSceneId());
+        result.forEach(recordDto -> {
+            recordDto.setScheduleInfo(recordDetailMapper.selectAllServerDetail(recordDto.getKey()));
+        });
+        return CommonResult.success(result, result.size());
     }
 }

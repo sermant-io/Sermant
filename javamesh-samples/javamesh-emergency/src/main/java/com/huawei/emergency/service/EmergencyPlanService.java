@@ -63,12 +63,6 @@ public interface EmergencyPlanService extends EmergencyCommonService<EmergencyPl
 
     CommonResult plan(CommonPage<PlanQueryParams> params);
 
-    CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params, String[] filterPlanNames, String[] filterCreators);
-
-    CommonResult allSceneExecRecords(CommonPage<EmergencyExecRecord> params);
-
-    CommonResult allTaskExecRecords(CommonPage<EmergencyExecRecord> params);
-
     CommonResult save(int planId, List<TaskNode> listNodes, String userName);
 
     CommonResult submit(int planId);
