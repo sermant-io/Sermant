@@ -539,4 +539,14 @@ public class EmergencyScript {
     public void setContent(String content) {
         this.content = content == null ? null : content.trim();
     }
+
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }
