@@ -156,6 +156,14 @@ public class EmergencyServerServiceImpl implements EmergencyServerService {
     public CommonResult deleteServerList(String[] serverIds, String userName) {
         try {
             List<Integer> serverIdList = Arrays.stream(serverIds).map(Integer::parseInt).collect(Collectors.toList());
+            EmergencyServerExample isServerOnline = new EmergencyServerExample();
+            isServerOnline.createCriteria()
+                .andServerIdIn(serverIdList)
+                .andIsValidEqualTo(ValidEnum.VALID.getValue())
+                .andAgentPortIsNotNull();
+            if (serverMapper.countByExample(isServerOnline) > 0) {
+                return CommonResult.failed("请选择尚未启动agent的主机");
+            }
             EmergencyServerExample updateCondition = new EmergencyServerExample();
             updateCondition.createCriteria()
                 .andServerIdIn(serverIdList);
