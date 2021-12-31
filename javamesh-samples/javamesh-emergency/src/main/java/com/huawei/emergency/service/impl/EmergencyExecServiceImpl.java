@@ -369,14 +369,14 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
 
     @Override
     public LogResponse logOneServer(int detailId, int line) {
-        /*EmergencyExecRecordDetail recordDetail = recordDetailMapper.selectByPrimaryKey(detailId);
+        EmergencyExecRecordDetail recordDetail = recordDetailMapper.selectByPrimaryKey(detailId);
         if (recordDetail == null || ValidEnum.IN_VALID.equals(recordDetail.getIsValid())) {
             return LogResponse.END;
         }
         if (StringUtils.isEmpty(recordDetail.getLog())) {
             LogResponse log = LogMemoryStore.getLog(detailId, line);
             if (log.getLine() == null && log.getData().length == 0) { // 可能开始执行 但还未生成日志
-                return new LogResponse(line, null);
+                return new LogResponse(line, LogMemoryStore.EMPTY_ARRAY);
             }
             return log;
         }
@@ -385,8 +385,8 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
             String[] needLogs = Arrays.copyOfRange(split, line - 1, split.length);
             return new LogResponse(null, needLogs);
         }
-        return new LogResponse(null, new String[]{recordDetail.getLog()});*/
-        EmergencyExecRecordDetail recordDetail = recordDetailMapper.selectByPrimaryKey(detailId);
+        return new LogResponse(null, new String[]{recordDetail.getLog()});
+        /*EmergencyExecRecordDetail recordDetail = recordDetailMapper.selectByPrimaryKey(detailId);
         if (recordDetail == null || ValidEnum.IN_VALID.equals(recordDetail.getIsValid())) {
             return LogResponse.END;
         }
@@ -398,7 +398,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
             String[] needLogs = Arrays.copyOfRange(split, line - 1, split.length);
             return new LogResponse(null, needLogs);
         }
-        return new LogResponse(null, new String[]{recordDetail.getLog()});
+        return new LogResponse(null, new String[]{recordDetail.getLog()});*/
     }
 
     @Override
