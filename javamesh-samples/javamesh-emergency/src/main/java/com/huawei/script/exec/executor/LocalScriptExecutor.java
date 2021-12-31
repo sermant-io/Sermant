@@ -74,16 +74,16 @@ public class LocalScriptExecutor implements ScriptExecutor {
                 return exec(commands(finalFileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId());
             }
         } catch (FileNotFoundException e) {
-            return ExecResult.fail("Please check out your scriptLocation.");
+            return ExecResult.error("Please check out your scriptLocation.");
         } catch (IOException e) {
             LOGGER.error("Failed to create local script. {}", e.getMessage());
-            return ExecResult.fail(e.getMessage());
+            return ExecResult.error(e.getMessage());
         } catch (ExecutionException | InterruptedException e) {
             LOGGER.error("execId={} occur error. {}", scriptExecInfo.getId(), e.getMessage());
-            return ExecResult.fail(e.getMessage());
+            return ExecResult.error(e.getMessage());
         } catch (TimeoutException e) {
             LOGGER.error("execId={} was timeout", scriptExecInfo.getId());
-            return ExecResult.fail("timeOut");
+            return ExecResult.error("timeOut");
         } finally {
             if (task != null) {
                 task.cancel(true);
@@ -119,7 +119,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
             String info = parseResult(exec.getInputStream(), logCallback, id);
             return exec.waitFor() == 0 ? ExecResult.success(info) : ExecResult.fail(info);
         } catch (IOException | InterruptedException e) {
-            return ExecResult.fail(e.getMessage());
+            return ExecResult.error(e.getMessage());
         }
     }
 

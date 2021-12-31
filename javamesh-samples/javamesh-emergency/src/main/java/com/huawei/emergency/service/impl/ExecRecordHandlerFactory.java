@@ -225,6 +225,14 @@ public class ExecRecordHandlerFactory {
                     .andStatusEqualTo(RecordStatus.RUNNING.getValue());
                 updateRecordDetail.setEndTime(endTime);
                 updateRecordDetail.setLog(execResult.getMsg());
+                if (! execResult.isError()) {
+                    StringBuilder finalLog = new StringBuilder();
+                    for (String s : LogMemoryStore.removeLog(recordDetail.getDetailId())) {
+                        finalLog.append(s).append(System.lineSeparator());
+                    }
+                    finalLog.append(execResult.getMsg());
+                    updateRecordDetail.setLog(finalLog.toString());
+                }
                 updateRecordDetail.setStatus(
                     execResult.isSuccess() ? RecordStatus.SUCCESS.getValue() : RecordStatus.ENSURE_FAILED.getValue()
                 );
@@ -242,7 +250,6 @@ public class ExecRecordHandlerFactory {
                         }
                     }
                 }
-
                 // 清除实时日志的在内存中的日志残留
                 LogMemoryStore.removeLog(recordDetail.getDetailId());
                 notifySceneRefresh(record.getExecId(), record.getSceneId());

@@ -92,16 +92,16 @@ public class RemoteScriptExecutor implements ScriptExecutor {
             }
         } catch (JSchException | IOException | SftpException e) {
             LOGGER.error("Can't get remote server session.", e);
-            return ExecResult.fail(e.getMessage());
+            return ExecResult.error(e.getMessage());
         } catch (ExecutionException e) {
             LOGGER.error("exec {} error. {}", scriptExecInfo.getId(), e.getMessage());
-            return ExecResult.fail("exec error");
+            return ExecResult.error("exec error");
         } catch (InterruptedException e) {
             LOGGER.error("exec {} was interrupted. {}", scriptExecInfo.getId(), e.getMessage());
-            return ExecResult.fail("interrupted");
+            return ExecResult.error("interrupted");
         } catch (TimeoutException e) {
             LOGGER.error("exec {} was timeout. {}", scriptExecInfo.getId(), e.getMessage());
-            return ExecResult.fail("timeOut");
+            return ExecResult.error("timeOut");
         } finally {
             if (task != null) {
                 task.cancel(true);
@@ -164,7 +164,7 @@ public class RemoteScriptExecutor implements ScriptExecutor {
             LOGGER.debug("script file {} was deleted.", fileName);
         } catch (JSchException | SftpException e) {
             LOGGER.error("Failed to delete file {}.{}", fileName, e.getMessage());
-            ExecResult.fail(e.getMessage());
+            ExecResult.error(e.getMessage());
         } finally {
             if (channel != null && channel.isConnected()) {
                 channel.disconnect();
@@ -203,10 +203,10 @@ public class RemoteScriptExecutor implements ScriptExecutor {
             return execResult;
         } catch (IOException e) {
             LOGGER.error("Failed to get exec result.", e);
-            return ExecResult.fail(e.getMessage());
+            return ExecResult.error(e.getMessage());
         } catch (JSchException e) {
             LOGGER.error("Access remote server session error.", e);
-            return ExecResult.fail(e.getMessage());
+            return ExecResult.error(e.getMessage());
         } finally {
             if (channel != null && channel.isConnected()) {
                 channel.disconnect();
