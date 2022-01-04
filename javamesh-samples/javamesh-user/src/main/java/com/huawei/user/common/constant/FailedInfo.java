@@ -6,7 +6,7 @@ public class FailedInfo {
     public static final String CONFIRM_PASSWORD_ERROR = "两次密码不一致";
     public static final String CHANGE_PASSWORD_FAILED = "修改密码失败";
     public static final String PASSWORD_ERROR = "原密码错误";
-    public static final String USERNAME_EXISTS = "登陆账号已存在";
+    public static final String USERNAME_EXISTS = "登录账号已存在";
     public static final String REGISTER_FAILED = "注册失败";
     public static final String SUSPEND_NOT_SELF_OR_ADMIN = "不能禁用自己或admin账户";
     public static final String SUSPEND_NOT_ALL_SUCCESS = "禁用账号未全部成功";

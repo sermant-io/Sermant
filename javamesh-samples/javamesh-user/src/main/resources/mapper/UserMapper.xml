@@ -101,4 +101,10 @@
     <update id="updateRole" parameterType="com.huawei.user.entity.UserEntity">
         UPDATE emergency_role SET role_name=#{role} WHERE user_name=#{userName}
     </update>
+    
+    <select id="getUserStatus" parameterType="String" resultType="String">
+        SELECT enabled
+        FROM NUSER
+        WHERE user_id = #{userName}
+    </select>
 </mapper>
