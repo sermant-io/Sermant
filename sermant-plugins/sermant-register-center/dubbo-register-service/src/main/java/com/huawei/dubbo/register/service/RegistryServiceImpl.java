@@ -15,18 +15,21 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register;
+package com.huawei.dubbo.register.service;
 
+import com.huawei.dubbo.register.Subscription;
+import com.huawei.dubbo.register.SubscriptionData;
+import com.huawei.dubbo.register.SubscriptionKey;
 import com.huawei.dubbo.register.config.DubboCache;
 import com.huawei.dubbo.register.config.DubboConfig;
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.sermant.core.plugin.PluginManager;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.dubbo.common.URL;
+import org.apache.dubbo.registry.NotifyListener;
 import org.apache.servicecomb.http.client.auth.DefaultRequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpConfiguration.SSLProperties;
 import org.apache.servicecomb.service.center.client.AddressManager;
@@ -50,7 +53,6 @@ import org.apache.servicecomb.service.center.client.model.ServiceCenterConfigura
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -81,18 +83,19 @@ public class RegistryServiceImpl implements RegistryService {
     private static final AtomicBoolean SHUTDOWN = new AtomicBoolean();
     private static final String FRAMEWORK_NAME = "sermant";
     private static final String DEFAULT_TENANT_NAME = "default";
+    private static final String CONSUMER_PROTOCOL_PREFIX = "consumer";
+    private final List<URL> registryUrls = new ArrayList<>();
     private ServiceCenterClient client;
     private Microservice microservice;
     private MicroserviceInstance microserviceInstance;
-    private ServiceCenterRegistry serviceCenterRegistry;
     private ServiceCenterRegistration serviceCenterRegistration;
     private ServiceCenterDiscovery serviceCenterDiscovery;
     private boolean registrationInProgress = true;
     private DubboConfig config;
 
     @Override
-    public void startRegistration(DubboConfig config) {
-        this.config = config;
+    public void startRegistration() {
+        config = DubboCache.INSTANCE.getDubboConfig();
         client = new ServiceCenterClient(new AddressManager(config.getProject(), config.getAddress()),
                 new SSLProperties(), new DefaultRequestAuthHeaderProvider(), DEFAULT_TENANT_NAME,
                 Collections.emptyMap());
@@ -105,7 +108,11 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     @Override
-    public void doSubscribe(Subscription subscription) {
+    public void doSubscribe(URL url, NotifyListener notifyListener) {
+        if (!CONSUMER_PROTOCOL_PREFIX.equals(url.getProtocol())) {
+            return;
+        }
+        Subscription subscription = new Subscription(url, notifyListener);
         if (registrationInProgress) {
             PENDING_SUBSCRIBE_EVENT.add(subscription);
             return;
@@ -130,8 +137,10 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     @Override
-    public void setServiceCenterRegistry(ServiceCenterRegistry registry) {
-        serviceCenterRegistry = registry;
+    public void addRegistryUrls(URL url) {
+        if (!CONSUMER_PROTOCOL_PREFIX.equals(url.getProtocol())) {
+            registryUrls.add(url);
+        }
     }
 
     private void createMicroservice() {
@@ -141,12 +150,9 @@ public class RegistryServiceImpl implements RegistryService {
         microservice.setEnvironment(config.getEnvironment());
         Framework framework = new Framework();
         framework.setName(FRAMEWORK_NAME);
-        framework.setVersion(PluginManager.getPluginVersionMap().get(config.getPluginName()));
+        framework.setVersion(DubboCache.INSTANCE.getVersion());
         microservice.setFramework(framework);
-        if (serviceCenterRegistry != null) {
-            microservice.setSchemas(
-                    serviceCenterRegistry.getRegisters().stream().map(URL::getPath).collect(Collectors.toList()));
-        }
+        microservice.setSchemas(registryUrls.stream().map(URL::getPath).distinct().collect(Collectors.toList()));
     }
 
     private void createMicroserviceInstance() {
@@ -162,10 +168,7 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private List<String> getEndpoints() {
-        if (serviceCenterRegistry == null) {
-            return Collections.emptyList();
-        }
-        return serviceCenterRegistry.getRegisters().stream()
+        return registryUrls.stream()
                 .map(url -> new URL(url.getProtocol(), url.getHost(), url.getPort()).toString()).distinct()
                 .collect(Collectors.toList());
     }
@@ -177,12 +180,8 @@ public class RegistryServiceImpl implements RegistryService {
         serviceCenterRegistration.setMicroservice(microservice);
         serviceCenterRegistration.setMicroserviceInstance(microserviceInstance);
         serviceCenterRegistration.setHeartBeatInterval(microserviceInstance.getHealthCheck().getInterval());
-        if (serviceCenterRegistry != null) {
-            microservice.setSchemas(
-                    serviceCenterRegistry.getRegisters().stream().map(URL::getPath).collect(Collectors.toList()));
-            serviceCenterRegistration.setSchemaInfos(serviceCenterRegistry.getRegisters().stream()
-                    .map(this::createSchemaInfo).collect(Collectors.toList()));
-        }
+        serviceCenterRegistration
+                .setSchemaInfos(registryUrls.stream().map(this::createSchemaInfo).collect(Collectors.toList()));
     }
 
     private String getHost() {
@@ -195,11 +194,7 @@ public class RegistryServiceImpl implements RegistryService {
 
     private SchemaInfo createSchemaInfo(URL url) {
         URL newUrl = url.setHost(microservice.getServiceName());
-        return new SchemaInfo(newUrl.getPath(), newUrl.toString(), calcSchemaSummary(newUrl.toString()));
-    }
-
-    private static String calcSchemaSummary(String schemaContent) {
-        return DigestUtils.sha256Hex(schemaContent.getBytes(StandardCharsets.UTF_8));
+        return new SchemaInfo(newUrl.getPath(), newUrl.toString(), DigestUtils.sha256Hex(newUrl.toString()));
     }
 
     private void subscribe(Subscription subscription) {
@@ -237,7 +232,7 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private void updateInterfaceMap(Microservice service) {
-        if (service.getAppId().equals(microservice.getAppId())) {
+        if (microservice.getAppId().equals(service.getAppId())) {
             service.getSchemas().forEach(schema -> INTERFACE_MAP.put(schema, service));
         }
     }
@@ -331,8 +326,7 @@ public class RegistryServiceImpl implements RegistryService {
         instance.getEndpoints().forEach(endpoint -> {
             URL url = URL.valueOf(endpoint);
             if (schemaInfos.isEmpty()) {
-                urlMap.putIfAbsent(url.getPath(), new ArrayList<>());
-                urlMap.get(url.getPath()).add(url);
+                urlMap.computeIfAbsent(url.getPath(), value -> new ArrayList<>()).add(url);
                 return;
             }
             schemaInfos.forEach(schema -> {
@@ -340,8 +334,8 @@ public class RegistryServiceImpl implements RegistryService {
                 if (!newUrl.getProtocol().equals(url.getProtocol())) {
                     return;
                 }
-                urlMap.putIfAbsent(newUrl.getPath(), new ArrayList<>());
-                urlMap.get(newUrl.getPath()).add(newUrl.setHost(url.getHost()).setPort(url.getPort()));
+                urlMap.computeIfAbsent(newUrl.getPath(), value -> new ArrayList<>())
+                        .add(newUrl.setAddress(url.getAddress()));
             });
         });
     }

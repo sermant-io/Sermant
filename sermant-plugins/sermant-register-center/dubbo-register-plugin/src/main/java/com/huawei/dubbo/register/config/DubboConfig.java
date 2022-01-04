@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,6 @@ import java.util.List;
  */
 public class DubboConfig {
     /**
-     * 插件名
-     */
-    @Value("${sermant.register.plugin.name:register-center}")
-    private String pluginName;
-
-    /**
      * 命名空间
      */
     @Value("${servicecomb.service.project:default}")
@@ -46,7 +40,7 @@ public class DubboConfig {
     private String application;
 
     /**
-     * 版本
+     * 微服务版本
      */
     @Value("${servicecomb.service.version:0.0.0}")
     private String version;
@@ -81,39 +75,81 @@ public class DubboConfig {
     @Value("${servicecomb.service.pullInterval:15}")
     private int pullInterval;
 
-    public String getPluginName() {
-        return pluginName;
-    }
+    /**
+     * 是否开启迁移功能
+     */
+    @Value("${servicecomb.service.openMigration:false}")
+    private boolean openMigration;
 
     public String getProject() {
         return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
     }
 
     public String getApplication() {
         return application;
     }
 
+    public void setApplication(String application) {
+        this.application = application;
+    }
+
     public String getVersion() {
         return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getEnvironment() {
         return environment;
     }
 
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
+
     public List<String> getAddress() {
         return address;
+    }
+
+    public void setAddress(List<String> address) {
+        this.address = address;
     }
 
     public int getHeartbeatInterval() {
         return heartbeatInterval;
     }
 
+    public void setHeartbeatInterval(int heartbeatInterval) {
+        this.heartbeatInterval = heartbeatInterval;
+    }
+
     public int getHeartbeatRetryTimes() {
         return heartbeatRetryTimes;
     }
 
+    public void setHeartbeatRetryTimes(int heartbeatRetryTimes) {
+        this.heartbeatRetryTimes = heartbeatRetryTimes;
+    }
+
     public int getPullInterval() {
         return pullInterval;
+    }
+
+    public void setPullInterval(int pullInterval) {
+        this.pullInterval = pullInterval;
+    }
+
+    public boolean isOpenMigration() {
+        return openMigration;
+    }
+
+    public void setOpenMigration(boolean openMigration) {
+        this.openMigration = openMigration;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.huawei.dubbo.register.interceptor;
 
-import com.huawei.dubbo.register.service.RegistryConfigService;
+import com.huawei.dubbo.register.service.ApplicationConfigService;
 import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
@@ -32,13 +32,13 @@ import java.util.logging.Logger;
  * @author provenceee
  * @since 2021年11月8日
  */
-public class InterfaceConfigInterceptor implements InstanceMethodInterceptor {
+public class ApplicationConfigInterceptor implements InstanceMethodInterceptor {
     private static final Logger LOGGER = LogFactory.getLogger();
 
-    private final RegistryConfigService registryConfigService;
+    private final ApplicationConfigService applicationConfigService;
 
-    public InterfaceConfigInterceptor() {
-        registryConfigService = ServiceManager.getService(RegistryConfigService.class);
+    public ApplicationConfigInterceptor() {
+        applicationConfigService = ServiceManager.getService(ApplicationConfigService.class);
     }
 
     @Override
@@ -47,12 +47,12 @@ public class InterfaceConfigInterceptor implements InstanceMethodInterceptor {
 
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) {
-        registryConfigService.addRegistryConfig(obj);
+        applicationConfigService.getName(obj);
         return result;
     }
 
     @Override
     public void onThrow(Object obj, Method method, Object[] arguments, Throwable throwable) {
-        LOGGER.log(Level.SEVERE, "AbstractInterfaceConfig is error!", throwable);
+        LOGGER.log(Level.SEVERE, "ApplicationConfig is error!", throwable);
     }
 }

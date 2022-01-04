@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register;
+package com.huawei.dubbo.register.service;
 
-import com.huawei.dubbo.register.config.DubboConfig;
 import com.huawei.sermant.core.plugin.service.PluginService;
+
+import org.apache.dubbo.common.URL;
+import org.apache.dubbo.registry.NotifyListener;
 
 /**
  * 注册服务
@@ -26,11 +28,11 @@ import com.huawei.sermant.core.plugin.service.PluginService;
  * @date 2021/12/15
  */
 public interface RegistryService extends PluginService {
-    void startRegistration(DubboConfig config);
+    void startRegistration();
 
-    void doSubscribe(Subscription subscription);
+    void doSubscribe(URL url, NotifyListener notifyListener);
 
     void shutdown();
 
-    void setServiceCenterRegistry(ServiceCenterRegistry registry);
+    void addRegistryUrls(URL url);
 }

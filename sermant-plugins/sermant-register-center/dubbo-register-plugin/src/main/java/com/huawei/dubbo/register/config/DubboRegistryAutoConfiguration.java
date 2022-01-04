@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package com.huawei.dubbo.register.config;
 
-import com.huawei.dubbo.register.RegistryListener;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2021/12/16
  */
 @Configuration
+@Conditional(ConditionOnDubbo.class)
 public class DubboRegistryAutoConfiguration {
     /**
      * 注入注册监听器
@@ -36,19 +35,7 @@ public class DubboRegistryAutoConfiguration {
      * @return 注册监听器
      */
     @Bean
-    @Conditional(ConditionOnDubbo.class)
     public RegistryListener registryListener() {
         return new RegistryListener();
-    }
-
-    /**
-     * 注入配置类
-     *
-     * @return dubbo配置
-     */
-    @Bean
-    @Conditional(ConditionOnDubbo.class)
-    public DubboConfig dubboConfig() {
-        return new DubboConfig();
     }
 }

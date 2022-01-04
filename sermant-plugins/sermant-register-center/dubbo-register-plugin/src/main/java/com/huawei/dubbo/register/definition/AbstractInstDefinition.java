@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,28 +25,40 @@ import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
- * AbstractInterfaceConfig增强类
+ * 实例增强基类
  *
  * @author provenceee
- * @date 2021/11/24
+ * @date 2022/1/18
  */
-public class InterfaceConfigDefinition implements EnhanceDefinition {
-    private static final String ENHANCE_CLASS = "org.apache.dubbo.config.AbstractInterfaceConfig";
+public abstract class AbstractInstDefinition implements EnhanceDefinition {
+    private final String enhanceClass;
 
-    private static final String INTERCEPT_CLASS = "com.huawei.dubbo.register.interceptor.InterfaceConfigInterceptor";
+    private final String interceptClass;
 
-    // 增强loadRegistriesFromBackwardConfig方法是为了兼容2.7.0-2.7.4.1，其它版本主要是增强setRegistries方法
-    private static final String[] METHOD_NAME = {"setRegistries", "loadRegistriesFromBackwardConfig"};
+    private final String methodName;
+
+    /**
+     * 构造方法
+     *
+     * @param enhanceClass 增加类
+     * @param interceptClass 拦截类
+     * @param methodName 拦截方法
+     */
+    public AbstractInstDefinition(String enhanceClass, String interceptClass, String methodName) {
+        this.enhanceClass = enhanceClass;
+        this.interceptClass = interceptClass;
+        this.methodName = methodName;
+    }
 
     @Override
     public ClassMatcher enhanceClass() {
-        return ClassMatchers.named(ENHANCE_CLASS);
+        return ClassMatchers.named(enhanceClass);
     }
 
     @Override
     public MethodInterceptPoint[] getMethodInterceptPoints() {
         return new MethodInterceptPoint[]{
-                MethodInterceptPoint.newInstMethodInterceptPoint(INTERCEPT_CLASS,
-                        ElementMatchers.<MethodDescription>namedOneOf(METHOD_NAME))};
+                MethodInterceptPoint.newInstMethodInterceptPoint(interceptClass,
+                        ElementMatchers.<MethodDescription>named(methodName))};
     }
 }

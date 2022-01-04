@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register;
+package com.huawei.dubbo.register.config;
 
-import com.huawei.dubbo.register.config.DubboConfig;
+import com.huawei.dubbo.register.service.RegistryService;
 import com.huawei.sermant.core.service.ServiceManager;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 
@@ -32,9 +31,6 @@ import org.springframework.context.event.EventListener;
 public class RegistryListener {
     private final RegistryService registryService;
 
-    @Autowired
-    private DubboConfig config;
-
     public RegistryListener() {
         registryService = ServiceManager.getService(RegistryService.class);
     }
@@ -44,6 +40,9 @@ public class RegistryListener {
      */
     @EventListener(value = ApplicationStartedEvent.class)
     public void listen() {
-        registryService.startRegistration(config);
+        if (DubboCache.INSTANCE.isLoadSc()) {
+            // 加载了sc的注册spi才会注册到sc上面
+            registryService.startRegistration();
+        }
     }
 }

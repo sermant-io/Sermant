@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@
 package com.huawei.gray.dubbo.service;
 
 import com.huawei.gray.dubbo.cache.DubboCache;
+import com.huawei.route.common.gray.config.GrayConfig;
+import com.huawei.route.common.gray.listener.GrayDynamicConfigListener;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.plugin.service.PluginService;
 import com.huawei.sermant.core.service.ServiceManager;
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
-import com.huawei.route.common.gray.config.GrayConfig;
-import com.huawei.route.common.gray.listener.GrayDynamicConfigListener;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,8 +37,6 @@ public class ConfigServiceImpl implements PluginService {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private GrayConfig grayConfig;
-
-    private GrayDynamicConfigListener listener;
 
     private DynamicConfigService configurationService;
 
@@ -59,8 +57,8 @@ public class ConfigServiceImpl implements PluginService {
     }
 
     private void initRequests() {
-        listener = new GrayDynamicConfigListener(DubboCache.getLabelName(), grayConfig.getDubboKey());
-        configurationService.addGroupListener(grayConfig.getDubboGroup(), listener, true);
+        configurationService.addGroupListener(grayConfig.getDubboGroup(),
+                new GrayDynamicConfigListener(DubboCache.getLabelName(), grayConfig.getDubboKey()), true);
     }
 
     @Override

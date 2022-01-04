@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,13 @@ package com.huawei.dubbo.register.config;
 
 import com.huawei.sermant.core.common.BootArgsIndexer;
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.plugin.PluginManager;
 import com.huawei.sermant.core.plugin.common.PluginConstant;
 import com.huawei.sermant.core.util.JarFileUtil;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.context.properties.bind.BindResult;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -45,10 +48,14 @@ public class DubboEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
     private static final String PROPERTY_SOURCE_NAME = "dubbo-sc";
 
-    private static final String PLUGIN_NAME_KEY = "sermant.register.plugin.name";
+    private static final String SC_CONFIG_PREFIX = "servicecomb.service";
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+        if (!ConditionOnDubbo.isLoadDubbo()) {
+            // dubbo的类都无法加载，就不需要注册dubbo配置到spring中了
+            return;
+        }
         YamlPropertySourceLoader loader = new YamlPropertySourceLoader();
         try (JarFile jarFile = new JarFile(getClass().getProtectionDomain().getCodeSource().getLocation().getPath())) {
             String pluginPackageDir = BootArgsIndexer.getPluginPackageDir().getCanonicalPath();
@@ -57,7 +64,9 @@ public class DubboEnvironmentPostProcessor implements EnvironmentPostProcessor {
                     + PluginConstant.CONFIG_DIR_NAME + File.separator + PluginConstant.CONFIG_FILE_NAME;
             List<PropertySource<?>> sources = loader.load(PROPERTY_SOURCE_NAME, new FileUrlResource(configPath));
             environment.getPropertySources().addLast(sources.get(0));
-            environment.getSystemProperties().put(PLUGIN_NAME_KEY, pluginName);
+            BindResult<DubboConfig> bindResult = Binder.get(environment).bind(SC_CONFIG_PREFIX, DubboConfig.class);
+            DubboCache.INSTANCE.setDubboConfig(bindResult.orElseGet(DubboConfig::new));
+            DubboCache.INSTANCE.setVersion(PluginManager.getPluginVersionMap().get(pluginName));
         } catch (IOException e) {
             LOGGER.warning("Cannot not find the config.");
         }
