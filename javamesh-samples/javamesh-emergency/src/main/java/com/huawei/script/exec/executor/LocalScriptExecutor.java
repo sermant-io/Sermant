@@ -61,33 +61,15 @@ public class LocalScriptExecutor implements ScriptExecutor {
     @Override
     public ExecResult execScript(ScriptExecInfo scriptExecInfo, LogCallBack logCallback) {
         String fileName = "";
-        Future<ExecResult> task = null;
         try {
             fileName = createScriptFile(scriptExecInfo.getScriptName(), scriptExecInfo.getScriptContext());
-            String finalFileName = fileName;
-            if (scriptExecInfo.getTimeOut() > 0) {
-                task = timeoutScriptExecThreadPool.submit(
-                    () -> exec(commands(finalFileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId())
-                );
-                return task.get(scriptExecInfo.getTimeOut(), TimeUnit.MILLISECONDS);
-            } else {
-                return exec(commands(finalFileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId());
-            }
+            return exec(commands(fileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId(), scriptExecInfo.getTimeOut());
         } catch (FileNotFoundException e) {
             return ExecResult.error("Please check out your scriptLocation.");
         } catch (IOException e) {
             LOGGER.error("Failed to create local script. {}", e.getMessage());
             return ExecResult.error(e.getMessage());
-        } catch (ExecutionException | InterruptedException e) {
-            LOGGER.error("execId={} occur error. {}", scriptExecInfo.getId(), e.getMessage());
-            return ExecResult.error(e.getMessage());
-        } catch (TimeoutException e) {
-            LOGGER.error("execId={} was timeout", scriptExecInfo.getId());
-            return ExecResult.error("timeOut");
         } finally {
-            if (task != null) {
-                task.cancel(true);
-            }
             if (StringUtils.isNotEmpty(fileName)) {
                 File file = new File(fileName);
                 if (file.exists() && file.delete()) {
@@ -104,7 +86,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
 
     private String createScriptFile(String scriptName, String scriptContent) throws IOException {
         String fileName = String.format(Locale.ROOT, "%s%s-%s.sh",
-            scriptLocation, scriptName, System.nanoTime());
+                scriptLocation, scriptName, System.nanoTime());
         try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
             fileOutputStream.write(scriptContent.getBytes(StandardCharsets.UTF_8));
             fileOutputStream.flush();
@@ -114,12 +96,38 @@ public class LocalScriptExecutor implements ScriptExecutor {
     }
 
     private ExecResult exec(String[] commands, LogCallBack logCallback, int id) {
+        return exec(commands, logCallback, id, 0);
+    }
+
+    private ExecResult exec(String[] commands, LogCallBack logCallback, int id, long timeOut) {
+        Future<String> task = null;
+        Process process = null;
         try {
-            Process exec = Runtime.getRuntime().exec(commands);
-            String info = parseResult(exec.getInputStream(), logCallback, id);
-            return exec.waitFor() == 0 ? ExecResult.success(info) : ExecResult.fail(info);
-        } catch (IOException | InterruptedException e) {
+            process = Runtime.getRuntime().exec(commands);
+            Process finalProcess = process;
+            String info;
+            if (timeOut > 0) {
+                task = timeoutScriptExecThreadPool.submit(() -> parseResult(finalProcess.getInputStream(), logCallback, id));
+                info = task.get(timeOut, TimeUnit.MILLISECONDS);
+                return process.waitFor(timeOut, TimeUnit.MILLISECONDS) ? ExecResult.success(info) : ExecResult.fail(info);
+            } else {
+                info = parseResult(finalProcess.getInputStream(), logCallback, id);
+                return process.waitFor() == 0 ? ExecResult.success(info) : ExecResult.fail(info);
+            }
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            LOGGER.error("execId={} occur errors. {}", id, e.getMessage());
             return ExecResult.error(e.getMessage());
+        } catch (TimeoutException e) {
+            LOGGER.error("execId={} was timeout", id);
+            process.destroy();
+            return ExecResult.error("time out");
+        } finally {
+            if (task != null) {
+                task.cancel(true);
+            }
+            if (process != null && process.isAlive()) {
+                process.destroy();
+            }
         }
     }
 
