@@ -301,6 +301,11 @@ public class UserServiceImpl implements UserService {
         return FailedInfo.UPDATE_USER_FAIL;
     }
 
+    @Override
+    public String getUserStatus(String userName) {
+        return mapper.getUserStatus(userName);
+    }
+
     private String generatePassword() {
         char chars[] = PASSWORD_DIRECTORY.toCharArray();
         StringBuilder sb = new StringBuilder();

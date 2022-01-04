@@ -30,4 +30,6 @@ public interface UserService {
     CommonResult resetPwd(UserEntity user);
 
     String updateUser(UserEntity user);
+
+    String getUserStatus(String userName);
 }

@@ -29,4 +29,6 @@ public interface UserMapper {
     int insertRole(UserEntity entity);
 
     void updateRole(UserEntity user);
+
+    String getUserStatus(String userName);
 }

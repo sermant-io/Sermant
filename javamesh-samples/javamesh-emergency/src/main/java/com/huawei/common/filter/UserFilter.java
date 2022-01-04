@@ -1,11 +1,13 @@
 package com.huawei.common.filter;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.huawei.common.util.UserFeignClient;
 import com.huawei.emergency.entity.User;
 import com.huawei.emergency.mapper.UserMapper;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 @WebFilter(urlPatterns = {"/*"})
@@ -48,6 +51,13 @@ public class UserFilter implements Filter {
                 JSONObject userInfo = userFeignClient.getUserInfo();
                 session = request.getSession();
                 String userId = (String)userInfo.get("userId");
+                String enabled = mapper.getUserStatus(userId);
+                if (StringUtils.isNotBlank(enabled) && enabled.equals("F")) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("msg", "账户已被禁用");
+                    responseJson(response, jsonObject);
+                    return;
+                }
                 String role = mapper.getRoleByUserName(userId);
                 List<String> auth = mapper.getAuthByRole(role);
                 user = new User(userId,(String)userInfo.get("userName"),role,auth);
@@ -59,6 +69,23 @@ public class UserFilter implements Filter {
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    private void responseJson(HttpServletResponse response, Object obj) {
+        response.setContentType("application/json; charset=utf-8");
+        PrintWriter writer = null;
+        try {
+            writer = response.getWriter();
+            writer.print(JSONObject.toJSONString(obj, SerializerFeature.WriteMapNullValue,
+                    SerializerFeature.WriteDateUseDateFormat));
+            response.flushBuffer();
+        } catch (IOException e) {
+            log.error("Exception occurs. Exception info {}", e.getMessage());
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
     }
 
     @Override

@@ -12,4 +12,10 @@
         FROM emergency_role
         WHERE user_name = #{userName}
     </select>
+
+    <select id="getUserStatus" parameterType="String" resultType="String">
+        SELECT enabled
+        FROM NUSER
+        WHERE user_id = #{userName}
+    </select>
 </mapper>

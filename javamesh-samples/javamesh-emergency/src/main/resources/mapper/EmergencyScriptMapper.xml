@@ -526,6 +526,11 @@
         s.content,
         s.param,
         s.comment,
+        CASE s.script_type
+        WHEN '0' THEN 'shell'
+        WHEN '1' THEN 'python'
+        WHEN '2' THEN 'groovy'
+        END AS script_type,
         CASE s.have_password
         WHEN '0' THEN '否'
         WHEN '1' THEN '是'

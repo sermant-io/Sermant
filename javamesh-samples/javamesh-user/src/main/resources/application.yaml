@@ -53,7 +53,7 @@ mybatis:
 #用户名
 user_name: admin
 key: 1234123412341234
-decisionEngine.url: http://100.94.174.17:9091/hercules-controller-0.0.1
+decisionEngine.url: http://100.94.174.17:9091/ngrinder-controller-3.4.2
 jsch:
   connectTimeout: 30000
   knownHosts: /root/.ssh/known_hosts

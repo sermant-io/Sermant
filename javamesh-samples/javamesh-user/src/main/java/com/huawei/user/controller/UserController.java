@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.huawei.user.common.api.CommonResult;
 import com.huawei.user.entity.UserEntity;
 import com.huawei.user.service.UserService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,10 @@ public class UserController {
     @PostMapping("/user/login")
     public CommonResult login(HttpServletResponse response, @RequestBody JSONObject params) {
         String username = params.getString("username");
+        String enabled = service.getUserStatus(username);
+        if(StringUtils.isNotBlank(enabled)&&enabled.equals("F")){
+            return CommonResult.failed("账号已被禁用");
+        }
         String password = params.getString("password");
         String nativeLanguage = "cn";
         String userTimezone = "Asia/Shanghai";
