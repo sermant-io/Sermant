@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -112,6 +113,11 @@ public class EmergencyServerController {
         server.setServerName(serverName);
         params.setObject(server);
         return serverService.queryServerInfo(params, keyword, excludeServerIds);
+    }
+
+    @PostMapping("/stop")
+    public CommonResult stop() {
+        return CommonResult.success();
     }
 
     private String parseUserName(HttpServletRequest request) {

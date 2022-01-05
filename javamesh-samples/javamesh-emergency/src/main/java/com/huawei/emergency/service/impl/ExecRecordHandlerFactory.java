@@ -206,7 +206,7 @@ public class ExecRecordHandlerFactory {
                 recordMapper.tryUpdateStatus(updateRecord.getRecordId());
 
                 ScriptExecInfo execInfo = generateExecInfo(record, recordDetail);
-                if (record.getScriptId() != null) {
+                if (StringUtils.isNotEmpty(execInfo.getScriptContext())) {
                     ScriptExecutor scriptExecutor = execInfo.getRemoteServerInfo() == null
                             ? allScriptExecutors.get("localScriptExecutor")
                             : allScriptExecutors.get("remoteScriptExecutor");
@@ -268,7 +268,7 @@ public class ExecRecordHandlerFactory {
             execInfo.setParams(split);
         }
 
-        if (recordDetail.getServerIp() != null) {
+        if (recordDetail.getServerId() != null) {
             EmergencyServer server = serverMapper.selectByPrimaryKey(recordDetail.getServerId());
             if (server != null) {
                 ServerInfo serverInfo = new ServerInfo(server.getServerIp(), server.getServerUser(), server.getServerPort());

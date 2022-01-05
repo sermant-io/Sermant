@@ -35,5 +35,9 @@ public interface EmergencyScriptService {
 
     CommonResult debugScript(int scriptId);
 
+    CommonResult debugScriptBeforeSave(String content,String serverName);
+
     LogResponse debugLog(int detailId, int lineIndex);
+
+    CommonResult debugScriptStop(Integer debugId);
 }

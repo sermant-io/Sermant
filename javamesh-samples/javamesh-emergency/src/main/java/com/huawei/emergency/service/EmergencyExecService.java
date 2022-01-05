@@ -21,6 +21,8 @@ import com.huawei.script.exec.log.LogResponse;
 public interface EmergencyExecService {
     CommonResult exec(EmergencyScript script);
 
+    CommonResult debugScript(String content, String serverName);
+
     LogResponse getLog(int detailId, int line);
 
     LogResponse getRecordLog(int recordId, int line);

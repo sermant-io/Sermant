@@ -22,6 +22,7 @@ import com.huawei.common.constant.PlanStatus;
 import com.huawei.common.constant.RecordStatus;
 import com.huawei.common.constant.ScheduleType;
 import com.huawei.common.constant.ValidEnum;
+import com.huawei.common.ws.WebSocketServer;
 import com.huawei.emergency.dto.PlanQueryDto;
 import com.huawei.emergency.dto.PlanQueryParams;
 import com.huawei.emergency.dto.SceneExecDto;
@@ -295,6 +296,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         updatePlan.setUpdateTime(new Date());
         updatePlan.setUpdateUser(userName);
         planMapper.updateByPrimaryKeySelective(updatePlan);
+        WebSocketServer.sendMessage("/plan/" + plan.getPlanId());
         return CommonResult.success();
     }
 

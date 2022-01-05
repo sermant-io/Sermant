@@ -22,6 +22,7 @@ import com.huawei.emergency.entity.EmergencyExecRecordWithBLOBs;
 import com.huawei.emergency.entity.EmergencyPlan;
 import com.huawei.emergency.entity.EmergencyScript;
 import com.huawei.emergency.entity.EmergencyServer;
+import com.huawei.emergency.entity.EmergencyServerExample;
 import com.huawei.emergency.mapper.EmergencyExecMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordDetailMapper;
 import com.huawei.emergency.mapper.EmergencyExecRecordMapper;
@@ -155,6 +156,49 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
     }
 
     @Override
+    public CommonResult debugScript(String content, String serverName) {
+        if (StringUtils.isEmpty(content)) {
+            return CommonResult.failed("脚本内容为空");
+        }
+        EmergencyExec exec = new EmergencyExec();
+        exec.setCreateUser("system");
+        execMapper.insertSelective(exec);
+
+        EmergencyExecRecordWithBLOBs record = new EmergencyExecRecordWithBLOBs();
+        record.setExecId(exec.getExecId());
+        record.setPlanId(0);
+        record.setSceneId(0);
+        record.setTaskId(0);
+        record.setStatus(RecordStatus.PENDING.getValue());
+        record.setScriptName("debug");
+        record.setScriptContent(content);
+        record.setCreateUser("system");
+        if (StringUtils.isNotEmpty(serverName)) {
+            EmergencyServerExample isServerExist = new EmergencyServerExample();
+            isServerExist.createCriteria()
+                .andServerNameEqualTo(serverName)
+                .andIsValidEqualTo(ValidEnum.VALID.getValue());
+            List<EmergencyServer> serverList = serverMapper.selectByExample(isServerExist);
+            if (serverList.size() == 0) {
+                return CommonResult.failed("请选择正确的服务器");
+            }
+            record.setServerId(serverList.get(0).getServerId().toString());
+        }
+        recordMapper.insertSelective(record);
+
+        List<EmergencyExecRecordDetail> emergencyExecRecordDetails = handlerFactory.generateRecordDetail(record);
+        emergencyExecRecordDetails.forEach(recordDetail -> {
+            threadPoolExecutor.execute(handlerFactory.handleDetail(record, recordDetail));
+        });
+
+        EmergencyExecRecord result = new EmergencyExecRecord();
+        result.setExecId(record.getExecId());
+        result.setRecordId(record.getRecordId());
+        result.setDebugId(emergencyExecRecordDetails.get(0).getDetailId());
+        return CommonResult.success(result);
+    }
+
+    @Override
     public LogResponse getLog(int detailId, int line) {
         /*String log = getLog(recordId);
         if (StringUtils.isEmpty(log)) {
@@ -215,7 +259,7 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
             plan.setStatus(PlanStatus.FAILED.getValue());
             planMapper.updateByPrimaryKeySelective(plan);
         }
-        handlerFactory.notifySceneRefresh(needEnsureRecord.getExecId(),needEnsureRecord.getSceneId());
+        handlerFactory.notifySceneRefresh(needEnsureRecord.getExecId(), needEnsureRecord.getSceneId());
         return CommonResult.success();
     }
 

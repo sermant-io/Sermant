@@ -111,7 +111,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
                     script.setStatusLabel(UNAPPROVED);
             }
         }
-        return CommonResult.success(emergencyScripts,(int)pageInfo.getTotal());
+        return CommonResult.success(emergencyScripts, (int) pageInfo.getTotal());
     }
 
     @Override
@@ -220,6 +220,9 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
         if (isParamInvalid(script)) {
             return ResultCode.PARAM_INVALID;
         }
+        if (script.getScriptId() == null) {
+            return ResultCode.PARAM_INVALID;
+        }
 
         // 脚本名是否修改了
         String oldScriptName = mapper.selectScriptNameById(script.getScriptId());
@@ -300,8 +303,18 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
     }
 
     @Override
+    public CommonResult debugScriptBeforeSave(String content, String serverName) {
+        return execService.debugScript(content, serverName);
+    }
+
+    @Override
     public LogResponse debugLog(int detailId, int lineIndex) {
         return execService.getLog(detailId, lineIndex);
+    }
+
+    @Override
+    public CommonResult debugScriptStop(Integer debugId) {
+        return CommonResult.success();
     }
 
     private void extracted(EmergencyScript script) {
@@ -319,7 +332,7 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
 
     private boolean isParamInvalid(EmergencyScript script) {
         if ("havePassword".equals(script.getHavePassword()) &&
-                (StringUtils.isBlank(script.getPassword()) || StringUtils.isBlank(script.getPasswordMode()))) {
+            (StringUtils.isBlank(script.getPassword()) || StringUtils.isBlank(script.getPasswordMode()))) {
             return true;
         }
         return false;

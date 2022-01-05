@@ -202,13 +202,12 @@ public class RemoteScriptExecutor implements ScriptExecutor {
             return ExecResult.error(e.getMessage());
         } catch (TimeoutException e) {
             LOGGER.error("exec {} was timeout. {}", id, e.getMessage());
-            return ExecResult.error("timeOut");
+            return ExecResult.error("time out");
         } finally {
             if (task != null) {
                 task.cancel(true);
             }
             if (channel != null) {
-                LOGGER.info("disconnect channel");
                 channel.disconnect();
             }
         }

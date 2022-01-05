@@ -65,6 +65,10 @@ public class LogMemoryStore {
      */
     public static String[] removeLog(int taskId) {
         LOGGER.info("Task's log  cleaning, id is {}", taskId);
-        return allTaskLogs.remove(taskId);
+        String[] remove = allTaskLogs.remove(taskId);
+        if (remove == null) {
+            return EMPTY_ARRAY;
+        }
+        return remove;
     }
 }
