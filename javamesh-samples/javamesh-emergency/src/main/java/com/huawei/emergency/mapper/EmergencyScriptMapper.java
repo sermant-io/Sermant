@@ -9,6 +9,7 @@ import com.huawei.emergency.entity.EmergencyScriptExample;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -137,6 +138,7 @@ public interface EmergencyScriptMapper {
 
     EmergencyScript getScriptInfo(int scriptId);
 
+    @Select("select script_name from emergency_script where script_id = #{scriptId}")
     String selectScriptNameById(int scriptId);
 
     List<String> searchScript(String scriptName, String userName,String auth,String status);

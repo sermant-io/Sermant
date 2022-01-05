@@ -524,6 +524,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         originTaskNodes.forEach(taskNode -> {
             EmergencyTask newTask = taskMapper.selectByPrimaryKey(taskNode.getKey());
             newTask.setTaskId(null);
+            newTask.setTaskNo("");
             newTask.setCreateUser(userName);
             newTask.setCreateTime(new Date());
             newTask.setIsValid(ValidEnum.VALID.getValue());
