@@ -216,7 +216,7 @@ public class EmergencyScriptController {
         if (lineIndex <= 0) {
             lineIndex = 1;
         }
-        return service.debugLog(id,lineIndex);
+        return service.debugLog(id, lineIndex);
     }
 
     @GetMapping("/script/exec")
