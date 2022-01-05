@@ -22,7 +22,7 @@ public class LogMemoryStore {
     private static final Logger LOGGER = LoggerFactory.getLogger(LogMemoryStore.class);
 
     private static Map<Integer, String[]> allTaskLogs = new HashMap<>();
-    private static String[] emptyArray = new String[0];
+    public static final String[] EMPTY_ARRAY = new String[0];
 
     private LogMemoryStore() {
     }
@@ -37,10 +37,10 @@ public class LogMemoryStore {
     public static LogResponse getLog(int taskId, int lines) {
         String[] allLogs = allTaskLogs.get(taskId);
         if (allLogs == null) {
-            return new LogResponse(null, emptyArray);
+            return new LogResponse(null, EMPTY_ARRAY);
         }
         if (allLogs.length < lines) {
-            return new LogResponse(lines, emptyArray);
+            return new LogResponse(lines, EMPTY_ARRAY);
         }
         String[] logs = Arrays.copyOfRange(allLogs, lines - 1, allLogs.length);
         return new LogResponse(allLogs.length + 1, logs);
@@ -53,7 +53,7 @@ public class LogMemoryStore {
      * @param extraLogs 额外的日志
      */
     public static void addLog(int taskId, String[] extraLogs) {
-        String[] oldLogs = allTaskLogs.getOrDefault(taskId, emptyArray);
+        String[] oldLogs = allTaskLogs.getOrDefault(taskId, EMPTY_ARRAY);
         allTaskLogs.put(taskId, (String[]) ArrayUtils.addAll(oldLogs, extraLogs));
     }
 
@@ -65,6 +65,10 @@ public class LogMemoryStore {
      */
     public static String[] removeLog(int taskId) {
         LOGGER.info("Task's log  cleaning, id is {}", taskId);
-        return allTaskLogs.remove(taskId);
+        String[] remove = allTaskLogs.remove(taskId);
+        if (remove == null) {
+            return EMPTY_ARRAY;
+        }
+        return remove;
     }
 }

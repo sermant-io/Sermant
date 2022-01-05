@@ -4,9 +4,12 @@
 
 package com.huawei.emergency.mapper;
 
+import com.huawei.emergency.dto.PlanQueryDto;
+import com.huawei.emergency.dto.SceneExecDto;
 import com.huawei.emergency.entity.EmergencyExec;
 import com.huawei.emergency.entity.EmergencyExecExample;
 
+import com.huawei.emergency.entity.EmergencyPlan;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -42,6 +45,12 @@ public interface EmergencyExecMapper {
     int updateByPrimaryKeySelective(EmergencyExec record);
 
     int updateByPrimaryKey(EmergencyExec record);
+
+    List<PlanQueryDto> allPlanRecords(EmergencyPlan plan, Map<String, Object> filters);
+
+    List<SceneExecDto> allSceneRecords(Integer execId);
+
+    List<SceneExecDto> allTaskRecords(Integer execId, Integer sceneId);
 
     List<Map> allRecords();
 }

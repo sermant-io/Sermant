@@ -526,10 +526,12 @@
         s.content,
         s.param,
         s.comment,
+        case when s.script_type in ('0','1','2') then 'shell' else 'orchestrate' end as type,
         CASE s.script_type
         WHEN '0' THEN 'shell'
         WHEN '1' THEN 'python'
         WHEN '2' THEN 'groovy'
+        WHEN '3' THEN 'orchestrate'
         END AS script_type,
         CASE s.have_password
         WHEN '0' THEN '否'
@@ -540,7 +542,7 @@
         WHEN '1' THEN '平台'
         END AS password_mode
         FROM
-        emergency_script s,nuser u
+        emergency_script s,NUSER u
         <where>
             s.script_user = u.user_id
             <if test="scriptName!=null and scriptName!=''">

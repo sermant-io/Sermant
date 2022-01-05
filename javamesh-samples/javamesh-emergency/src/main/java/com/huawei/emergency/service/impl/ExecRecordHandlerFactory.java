@@ -90,6 +90,9 @@ public class ExecRecordHandlerFactory {
     @Resource(name = "passwordRestTemplate")
     private RestTemplate restTemplate;
 
+    @Value("${script.timeOut}")
+    private long timeOut;
+
     @Autowired
     private PasswordUtil passwordUtil;
 
@@ -97,19 +100,19 @@ public class ExecRecordHandlerFactory {
         ThreadPoolExecutor threadPoolExecutor = remoteServerThreadCache.get(threadName);
         if (threadPoolExecutor == null) {
             threadPoolExecutor = new ThreadPoolExecutor(
-                maxSubtaskSize,
-                maxSubtaskSize,
-                60L,
-                TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(1024),
-                new ThreadFactory() {
-                    private AtomicInteger threadCount = new AtomicInteger();
+                    maxSubtaskSize,
+                    maxSubtaskSize,
+                    60L,
+                    TimeUnit.SECONDS,
+                    new LinkedBlockingQueue<>(1024),
+                    new ThreadFactory() {
+                        private AtomicInteger threadCount = new AtomicInteger();
 
-                    @Override
-                    public Thread newThread(Runnable r) {
-                        return new Thread(r, threadName + "-" + threadCount.getAndIncrement());
-                    }
-                });
+                        @Override
+                        public Thread newThread(Runnable r) {
+                            return new Thread(r, threadName + "-" + threadCount.getAndIncrement());
+                        }
+                    });
             remoteServerThreadCache.put(threadName, threadPoolExecutor);
         }
         return threadPoolExecutor;
@@ -203,10 +206,10 @@ public class ExecRecordHandlerFactory {
                 recordMapper.tryUpdateStatus(updateRecord.getRecordId());
 
                 ScriptExecInfo execInfo = generateExecInfo(record, recordDetail);
-                if (record.getScriptId() != null) {
+                if (StringUtils.isNotEmpty(execInfo.getScriptContext())) {
                     ScriptExecutor scriptExecutor = execInfo.getRemoteServerInfo() == null
-                        ? allScriptExecutors.get("localScriptExecutor")
-                        : allScriptExecutors.get("remoteScriptExecutor");
+                            ? allScriptExecutors.get("localScriptExecutor")
+                            : allScriptExecutors.get("remoteScriptExecutor");
                     execResult = scriptExecutor.execScript(execInfo, logCallBack);
                 }
             } catch (Exception e) {
@@ -217,13 +220,21 @@ public class ExecRecordHandlerFactory {
                 Date endTime = new Date();
                 EmergencyExecRecordDetailExample whenRunning = new EmergencyExecRecordDetailExample();
                 whenRunning.createCriteria()
-                    .andDetailIdEqualTo(recordDetail.getDetailId())
-                    .andIsValidEqualTo(ValidEnum.VALID.getValue())
-                    .andStatusEqualTo(RecordStatus.RUNNING.getValue());
+                        .andDetailIdEqualTo(recordDetail.getDetailId())
+                        .andIsValidEqualTo(ValidEnum.VALID.getValue())
+                        .andStatusEqualTo(RecordStatus.RUNNING.getValue());
                 updateRecordDetail.setEndTime(endTime);
                 updateRecordDetail.setLog(execResult.getMsg());
+                if (execResult.isError()) {
+                    StringBuilder finalLog = new StringBuilder();
+                    for (String s : LogMemoryStore.removeLog(recordDetail.getDetailId())) {
+                        finalLog.append(s).append(System.lineSeparator());
+                    }
+                    finalLog.append(execResult.getMsg());
+                    updateRecordDetail.setLog(finalLog.toString());
+                }
                 updateRecordDetail.setStatus(
-                    execResult.isSuccess() ? RecordStatus.SUCCESS.getValue() : RecordStatus.ENSURE_FAILED.getValue()
+                        execResult.isSuccess() ? RecordStatus.SUCCESS.getValue() : RecordStatus.ENSURE_FAILED.getValue()
                 );
                 if (recordDetailMapper.updateByExampleSelective(updateRecordDetail, whenRunning) == 0) { // 做个状态判断，防止人为取消 也被标记为执行成功
                     LOGGER.info("recordId={}, detailId={} was canceled", recordDetail.getRecordId(), recordDetail.getDetailId());
@@ -239,7 +250,6 @@ public class ExecRecordHandlerFactory {
                         }
                     }
                 }
-
                 // 清除实时日志的在内存中的日志残留
                 LogMemoryStore.removeLog(recordDetail.getDetailId());
                 notifySceneRefresh(record.getExecId(), record.getSceneId());
@@ -252,12 +262,13 @@ public class ExecRecordHandlerFactory {
         execInfo.setId(recordDetail.getDetailId());
         execInfo.setScriptName(record.getScriptName() + "-" + record.getRecordId());
         execInfo.setScriptContext(record.getScriptContent());
+        execInfo.setTimeOut(timeOut);
         if (StringUtils.isNotEmpty(record.getScriptParams())) {
             String[] split = record.getScriptParams().split(",");
             execInfo.setParams(split);
         }
 
-        if (recordDetail.getServerIp() != null) {
+        if (recordDetail.getServerId() != null) {
             EmergencyServer server = serverMapper.selectByPrimaryKey(recordDetail.getServerId());
             if (server != null) {
                 ServerInfo serverInfo = new ServerInfo(server.getServerIp(), server.getServerUser(), server.getServerPort());
@@ -332,25 +343,25 @@ public class ExecRecordHandlerFactory {
     public boolean isRecordFinished(int recordId) {
         EmergencyExecRecordDetailExample isFinished = new EmergencyExecRecordDetailExample();
         isFinished.createCriteria()
-            .andRecordIdEqualTo(recordId)
-            .andIsValidEqualTo(ValidEnum.VALID.getValue())
-            .andStatusIn(RecordStatus.HAS_RUNNING_STATUS);
+                .andRecordIdEqualTo(recordId)
+                .andIsValidEqualTo(ValidEnum.VALID.getValue())
+                .andStatusIn(RecordStatus.HAS_RUNNING_STATUS);
         return recordDetailMapper.countByExample(isFinished) == 0;
     }
 
     /**
      * 向前端推送刷新执行记录下，场景页面的通知
      *
-     * @param execId 执行Id
+     * @param execId  执行Id
      * @param sceneId 场景ID
      */
     public void notifySceneRefresh(int execId, int sceneId) {
         EmergencyExecRecordExample sceneRecordCondition = new EmergencyExecRecordExample();
         sceneRecordCondition.createCriteria()
-            .andIsValidEqualTo(ValidEnum.VALID.getValue())
-            .andExecIdEqualTo(execId)
-            .andSceneIdEqualTo(sceneId)
-            .andTaskIdIsNull();
+                .andIsValidEqualTo(ValidEnum.VALID.getValue())
+                .andExecIdEqualTo(execId)
+                .andSceneIdEqualTo(sceneId)
+                .andTaskIdIsNull();
         final List<EmergencyExecRecord> emergencyExecRecords = recordMapper.selectByExample(sceneRecordCondition);
         if (emergencyExecRecords.size() > 0) {
             WebSocketServer.sendMessage("/scena/" + emergencyExecRecords.get(0).getRecordId());

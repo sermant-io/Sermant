@@ -228,6 +228,9 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
         if (isParamInvalid(script)) {
             return ResultCode.PARAM_INVALID;
         }
+        if (script.getScriptId() == null) {
+            return ResultCode.PARAM_INVALID;
+        }
 
         // 脚本名是否修改了
         String oldScriptName = mapper.selectScriptNameById(script.getScriptId());
@@ -308,8 +311,18 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
     }
 
     @Override
+    public CommonResult debugScriptBeforeSave(String content, String serverName) {
+        return execService.debugScript(content, serverName);
+    }
+
+    @Override
     public LogResponse debugLog(int detailId, int lineIndex) {
         return execService.getLog(detailId, lineIndex);
+    }
+
+    @Override
+    public CommonResult debugScriptStop(Integer debugId) {
+        return CommonResult.success();
     }
 
     private void extracted(EmergencyScript script) {
@@ -337,8 +350,8 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
 
 
     private boolean isParamInvalid(EmergencyScript script) {
-        if (script.getHavePassword().equals("havePassword") &&
-                (StringUtils.isBlank(script.getPassword()) || StringUtils.isBlank(script.getPasswordMode()))) {
+        if ("havePassword".equals(script.getHavePassword()) &&
+            (StringUtils.isBlank(script.getPassword()) || StringUtils.isBlank(script.getPasswordMode()))) {
             return true;
         }
         return false;
@@ -362,12 +375,16 @@ public class EmergencyScriptServiceImpl implements EmergencyScriptService {
             case "Groovy":
                 script.setScriptType(TYPE_TWO);
         }
-        switch (script.getHavePassword()) {
-            case NO_PASSWORD:
-                script.setHavePassword(TYPE_ZERO);
-                break;
-            case HAVE_PASSWORD:
-                script.setHavePassword(TYPE_ONE);
+        if (script.getHavePassword() != null) {
+            switch (script.getHavePassword()) {
+                case NO_PASSWORD:
+                    script.setHavePassword(TYPE_ZERO);
+                    break;
+                case HAVE_PASSWORD:
+                    script.setHavePassword(TYPE_ONE);
+            }
+        } else {
+            script.setHavePassword(TYPE_ZERO);
         }
         if (script.getPasswordMode() != null) {
             switch (script.getPasswordMode()) {

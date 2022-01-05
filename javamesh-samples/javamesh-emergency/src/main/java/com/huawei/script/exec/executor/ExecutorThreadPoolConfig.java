@@ -60,6 +60,32 @@ public class ExecutorThreadPoolConfig {
                     return new Thread(r, THREAD_NAME_PREFIX + threadCount.getAndIncrement());
                 }
             });
+        threadPoolExecutor.allowCoreThreadTimeOut(true);
+        return threadPoolExecutor;
+    }
+
+    /**
+     * 通过此线程池执行设置了超时时间的脚本
+     *
+     * @return {@link ThreadPoolExecutor}
+     */
+    @Bean(destroyMethod = "shutdown")
+    public ThreadPoolExecutor timeoutScriptExecThreadPool() {
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
+            maxTaskSize * maxSubtaskSize,
+            maxTaskSize * maxSubtaskSize,
+            KEEP_ALIVE_TIME,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(blockingTaskSize),
+            new ThreadFactory() {
+                private AtomicInteger threadCount = new AtomicInteger();
+
+                @Override
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, "timeout-exec-" + threadCount.getAndIncrement());
+                }
+            });
+        threadPoolExecutor.allowCoreThreadTimeOut(true);
         return threadPoolExecutor;
     }
 

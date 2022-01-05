@@ -22,6 +22,7 @@ import com.huawei.common.constant.PlanStatus;
 import com.huawei.common.constant.RecordStatus;
 import com.huawei.common.constant.ScheduleType;
 import com.huawei.common.constant.ValidEnum;
+import com.huawei.common.ws.WebSocketServer;
 import com.huawei.emergency.dto.PlanQueryDto;
 import com.huawei.emergency.dto.PlanQueryParams;
 import com.huawei.emergency.dto.SceneExecDto;
@@ -295,6 +296,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         updatePlan.setUpdateTime(new Date());
         updatePlan.setUpdateUser(userName);
         planMapper.updateByPrimaryKeySelective(updatePlan);
+        WebSocketServer.sendMessage("/plan/" + plan.getPlanId());
         return CommonResult.success();
     }
 
@@ -345,11 +347,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         EmergencyPlan updatePlan = new EmergencyPlan();
         updatePlan.setPlanId(plan.getPlanId());
         updatePlan.setStatus(plan.getStatus());
-        if (PlanStatus.REJECT.getValue().equals(plan.getStatus())) {
-            updatePlan.setCheckRemark(plan.getCheckRemark());
-        } else {
-            updatePlan.setCheckRemark("");
-        }
+        updatePlan.setCheckRemark(plan.getCheckRemark());
         updatePlan.setCheckTime(new Date());
         updatePlan.setCheckUser(userName);
         updatePlan.setUpdateTime(new Date());
@@ -426,35 +424,6 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
     }
 
     @Override
-    public CommonResult allPlanExecRecords(CommonPage<EmergencyPlan> params, String[] filterPlanNames, String[] filterCreators) {
-        Map<String, Object> filters = new HashMap<>();
-        filters.put("planNames", filterPlanNames);
-        filters.put("creators", filterCreators);
-        Page<PlanQueryDto> pageInfo = PageHelper
-            .startPage(params.getPageIndex(), params.getPageSize(), StringUtils.isEmpty(params.getSortType()) ? "" : params.getSortField() + System.lineSeparator() + params.getSortType())
-            .doSelectPage(() -> {
-                planMapper.allPlanRecords(params.getObject(), filters);
-            });
-        return CommonResult.success(pageInfo.getResult(), (int) pageInfo.getTotal());
-    }
-
-    @Override
-    public CommonResult allSceneExecRecords(CommonPage<EmergencyExecRecord> params) {
-        List<SceneExecDto> sceneExecDtos = planMapper.allSceneRecords(params.getObject().getExecId());
-        return CommonResult.success(sceneExecDtos, sceneExecDtos.size());
-    }
-
-    @Override
-    public CommonResult allTaskExecRecords(CommonPage<EmergencyExecRecord> params) {
-        EmergencyExecRecord paramsObject = params.getObject();
-        List<SceneExecDto> result = planMapper.allTaskRecords(paramsObject.getExecId(), paramsObject.getSceneId());
-        result.forEach(recordDto -> {
-            recordDto.setScheduleInfo(recordDetailMapper.selectAllServerDetail(recordDto.getKey()));
-        });
-        return CommonResult.success(result, result.size());
-    }
-
-    @Override
     public CommonResult save(int planId, List<TaskNode> listNodes, String userName) {
         if (listNodes == null) {
             return CommonResult.success();
@@ -518,6 +487,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         updatePlan.setPlanId(planId);
         updatePlan.setStatus(PlanStatus.APPROVING.getValue());
         updatePlan.setUpdateTime(new Date());
+        updatePlan.setCheckRemark("");
         planMapper.updateByPrimaryKeySelective(updatePlan);
         return CommonResult.success();
     }

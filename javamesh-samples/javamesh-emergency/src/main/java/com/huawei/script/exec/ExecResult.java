@@ -14,13 +14,16 @@ import lombok.Data;
  **/
 @Data
 public class ExecResult {
-    private static final int FAIL_CODE = -1;
+    public static final int SUCCESS_CODE = 0;
+    public static final int FAIL_CODE = -1;
+    public static final int ERROR_CODE = -99;
+
     private int code;
     private String msg;
 
     public static ExecResult success(String msg) {
         ExecResult execResult = new ExecResult();
-        execResult.setCode(0);
+        execResult.setCode(SUCCESS_CODE);
         execResult.setMsg(msg);
         return execResult;
     }
@@ -32,7 +35,19 @@ public class ExecResult {
         return execResult;
     }
 
+    public static ExecResult error(String msg) {
+        ExecResult execResult = new ExecResult();
+        execResult.setCode(ERROR_CODE);
+        execResult.setMsg(msg);
+        return execResult;
+    }
+
+
     public boolean isSuccess() {
-        return code == 0;
+        return code == SUCCESS_CODE;
+    }
+
+    public boolean isError() {
+        return code == ERROR_CODE;
     }
 }

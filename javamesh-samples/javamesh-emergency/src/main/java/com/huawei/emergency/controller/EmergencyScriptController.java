@@ -7,6 +7,7 @@ package com.huawei.emergency.controller;
 import com.huawei.common.api.CommonResult;
 import com.huawei.common.constant.FailedInfo;
 import com.huawei.common.constant.ResultCode;
+import com.huawei.emergency.entity.EmergencyExecRecord;
 import com.huawei.emergency.entity.EmergencyScript;
 import com.huawei.emergency.service.EmergencyScriptService;
 import com.huawei.script.exec.log.LogResponse;
@@ -87,8 +88,8 @@ public class EmergencyScriptController {
                                      @RequestParam(value = "script_name") String scriptName,
                                      @RequestParam(value = "submit_info") String submitInfo,
                                      @RequestParam(value = "account", required = false) String serverUser,
-                                     @RequestParam(value = "server_ip") String serverIp,
-                                     @RequestParam(value = "has_pwd") String havePassword,
+                                     @RequestParam(value = "server_ip",required = false) String serverIp,
+                                     @RequestParam(value = "has_pwd",required = false) String havePassword,
                                      @RequestParam(value = "language") String scriptType,
                                      @RequestParam(value = "param", required = false) String param,
                                      @RequestParam(value = "public") String isPublic,
@@ -163,8 +164,8 @@ public class EmergencyScriptController {
     @GetMapping("/script/search")
     public CommonResult searchScript(HttpServletRequest request,
                                      @RequestParam(value = "value", required = false) String scriptName,
-                                     @RequestParam(value = "status",required = false)String status) {
-        List<String> scriptNames = service.searchScript(request, scriptName,status);
+                                     @RequestParam(value = "status", required = false) String status) {
+        List<String> scriptNames = service.searchScript(request, scriptName, status);
         return CommonResult.success(scriptNames);
     }
 
@@ -187,16 +188,25 @@ public class EmergencyScriptController {
     @PostMapping("/script/approve")
     public CommonResult approve(@RequestBody Map<String, Object> map) {
         int count = service.approve(map);
-        if(count == 0){
+        if (count == 0) {
             return CommonResult.failed(FailedInfo.APPROVE_FAIL);
-        } else{
+        } else {
             return CommonResult.success(SUCCESS);
         }
     }
 
-    @PostMapping("/script/debug")
-    public CommonResult debugScript(@RequestBody Map<String,Integer> param) {
+    public CommonResult debugScript(@RequestBody Map<String, Integer> param) {
         return service.debugScript(param.get("script_id"));
+    }
+
+    @PostMapping("/script/debug")
+    public CommonResult debugScriptBeforeSave(@RequestBody Map<String, String> param) {
+        return service.debugScriptBeforeSave(param.get("content"), param.get("server_name"));
+    }
+
+    @PostMapping("/script/debugStop")
+    public CommonResult debugStop(@RequestBody EmergencyExecRecord param) {
+        return service.debugScriptStop(param.getDebugId());
     }
 
     @GetMapping("/script/debugLog")
@@ -206,7 +216,7 @@ public class EmergencyScriptController {
         if (lineIndex <= 0) {
             lineIndex = 1;
         }
-        return service.debugLog(id,lineIndex);
+        return service.debugLog(id, lineIndex);
     }
 
     @GetMapping("/script/exec")
@@ -221,5 +231,4 @@ public class EmergencyScriptController {
         }
         return CommonResult.success();
     }
-
 }

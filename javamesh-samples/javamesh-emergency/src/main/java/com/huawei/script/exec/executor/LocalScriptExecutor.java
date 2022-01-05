@@ -24,6 +24,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import javax.annotation.Resource;
 
 /**
  * 用于本地linux服务器上执行shell脚本
@@ -43,6 +50,9 @@ public class LocalScriptExecutor implements ScriptExecutor {
     @Value("${script.location}")
     private String scriptLocation = "/tmp/";
 
+    @Resource(name = "timeoutScriptExecThreadPool")
+    private ThreadPoolExecutor timeoutScriptExecThreadPool;
+
     @Override
     public String mode() {
         return LOCAL;
@@ -53,12 +63,12 @@ public class LocalScriptExecutor implements ScriptExecutor {
         String fileName = "";
         try {
             fileName = createScriptFile(scriptExecInfo.getScriptName(), scriptExecInfo.getScriptContext());
-            return exec(commands(fileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId());
+            return exec(commands(fileName, scriptExecInfo.getParams()), logCallback, scriptExecInfo.getId(), scriptExecInfo.getTimeOut());
         } catch (FileNotFoundException e) {
-            return ExecResult.fail("Please check out your scriptLocation.");
+            return ExecResult.error("Please check out your scriptLocation.");
         } catch (IOException e) {
-            LOGGER.error("Failed to create local script.", e);
-            return ExecResult.fail(e.getMessage());
+            LOGGER.error("Failed to create local script. {}", e.getMessage());
+            return ExecResult.error(e.getMessage());
         } finally {
             if (StringUtils.isNotEmpty(fileName)) {
                 File file = new File(fileName);
@@ -76,9 +86,8 @@ public class LocalScriptExecutor implements ScriptExecutor {
 
     private String createScriptFile(String scriptName, String scriptContent) throws IOException {
         String fileName = String.format(Locale.ROOT, "%s%s-%s.sh",
-            scriptLocation, scriptName, System.nanoTime());
+                scriptLocation, scriptName, System.nanoTime());
         try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
-            fileOutputStream.write(("echo $$" + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
             fileOutputStream.write(scriptContent.getBytes(StandardCharsets.UTF_8));
             fileOutputStream.flush();
             LOGGER.info("script file {} was created.", fileName);
@@ -87,13 +96,38 @@ public class LocalScriptExecutor implements ScriptExecutor {
     }
 
     private ExecResult exec(String[] commands, LogCallBack logCallback, int id) {
+        return exec(commands, logCallback, id, 0);
+    }
+
+    private ExecResult exec(String[] commands, LogCallBack logCallback, int id, long timeOut) {
+        Future<String> task = null;
+        Process process = null;
         try {
-            Process exec = Runtime.getRuntime().exec(commands);
-            String info = parseResult(exec.getInputStream(), logCallback, id);
-            String errorInfo = parseResult(exec.getErrorStream(), logCallback, id);
-            return exec.waitFor() == 0 ? ExecResult.success(info) : ExecResult.fail(errorInfo);
-        } catch (IOException | InterruptedException e) {
-            return ExecResult.fail(e.getMessage());
+            process = Runtime.getRuntime().exec(commands);
+            Process finalProcess = process;
+            String info;
+            if (timeOut > 0) {
+                task = timeoutScriptExecThreadPool.submit(() -> parseResult(finalProcess.getInputStream(), logCallback, id));
+                info = task.get(timeOut, TimeUnit.MILLISECONDS);
+                return process.waitFor(timeOut, TimeUnit.MILLISECONDS) ? ExecResult.success(info) : ExecResult.fail(info);
+            } else {
+                info = parseResult(finalProcess.getInputStream(), logCallback, id);
+                return process.waitFor() == 0 ? ExecResult.success(info) : ExecResult.fail(info);
+            }
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            LOGGER.error("execId={} occur errors. {}", id, e.getMessage());
+            return ExecResult.error(e.getMessage());
+        } catch (TimeoutException e) {
+            LOGGER.error("execId={} was timeout", id);
+            process.destroy();
+            return ExecResult.error("time out");
+        } finally {
+            if (task != null) {
+                task.cancel(true);
+            }
+            if (process != null && process.isAlive()) {
+                process.destroy();
+            }
         }
     }
 
@@ -110,16 +144,9 @@ public class LocalScriptExecutor implements ScriptExecutor {
         StringBuilder result = new StringBuilder();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "GBK"));
         String lines;
-        boolean readFirstLogAsPid = true;
         while ((lines = bufferedReader.readLine()) != null) {
             if (logCallback != null && id > 0) {
-                if (readFirstLogAsPid) {
-                    logCallback.handlePid(id, lines);
-                    readFirstLogAsPid = false;
-                    continue;
-                } else {
-                    logCallback.handleLog(id, lines);
-                }
+                logCallback.handleLog(id, lines);
             }
             result.append(lines).append(System.lineSeparator());
         }
@@ -127,6 +154,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
     }
 
     private String[] commands(String command, String[] params) {
-        return (String[]) ArrayUtils.addAll(new String[]{SH, SH_C, command}, params);
+        String[] finalCommands = (String[]) ArrayUtils.addAll(new String[]{SH, SH_C, command}, params);
+        return (String[]) ArrayUtils.add(finalCommands, "2>&1");
     }
 }
