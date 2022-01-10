@@ -92,6 +92,9 @@ li {
       background-color: #304156;
       display: flex;
       justify-content: right;
+      .Center {
+        flex-grow: 1;
+      }
       .Account {
         padding-right: 20px;
         line-height: 50px;

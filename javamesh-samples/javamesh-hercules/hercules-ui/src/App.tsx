@@ -65,6 +65,7 @@ export default function App() {
         </div>
         <div className="AppContent">
           <div className="AppHeader">
+            <div className='Center'></div>
             <Account />
           </div>
           <Switch>
