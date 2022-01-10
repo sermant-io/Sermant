@@ -4,7 +4,7 @@ import React from "react"
 export default function App() {
     return <>
         <Form.Item rules={[
-            { max: 64, required: true, whitespace: true },
+            { max: 64, whitespace: true },
         ]} label="应用名" name="app_name">
             <Input minLength={1} placeholder="请输入" />
         </Form.Item>

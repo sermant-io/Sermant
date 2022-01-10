@@ -8,7 +8,7 @@ import ScenarioFormItems from "./ScenarioFormItems"
 import PageInfo from "../../component/PageInfo"
 import axios from "axios"
 import ServiceSelect from "../../component/ServiceSelect"
-import MonacoEditor from "react-monaco-editor"
+import Editor from "@monaco-editor/react"
 import { useHistory } from "react-router"
 import TaskForm from "../TestTask/Create/TaskForm"
 
@@ -98,7 +98,7 @@ export default function App(props: { pageInfo: ReactNode, breadcrumb: ReactNode,
                             const res = await axios.get("/argus/api/script/get", { params: { path: value } })
                             setScript(res.data.data)
                         } catch (error: any) {
-
+                            message.error(error.message)
                         }
                     }} />
                 </Form.Item>
@@ -106,7 +106,7 @@ export default function App(props: { pageInfo: ReactNode, breadcrumb: ReactNode,
                     <Input.TextArea value={script?.script_resource} readOnly autoSize={{ minRows: 2, maxRows: 2 }} />
                 </Form.Item>
                 <Form.Item className="Editor" label="脚本详细">
-                    <MonacoEditor options={{ readOnly: true }} value={script?.script} language="python" height="620" />
+                    <Editor options={{ readOnly: true }} value={script?.script} language="python" height={620} />
                 </Form.Item>
                 <Form.Item className="Buttons">
                     <Button type="primary" onClick={function () { setIndex(0) }}>上一步</Button>

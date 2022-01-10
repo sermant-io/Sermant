@@ -7,7 +7,7 @@ import { CloseOutlined, SearchOutlined, ExclamationCircleOutlined } from '@ant-d
 import "./index.scss"
 import axios from "axios"
 import { Link, Route, useRouteMatch } from "react-router-dom"
-import CacheRoute, { CacheSwitch } from "react-router-cache-route"
+import CacheRoute, { CacheSwitch, useDidRecover } from "react-router-cache-route"
 import Detail from "./Detail"
 
 export default function App() {
@@ -39,8 +39,8 @@ function Home() {
             }
             const res = await axios.get("/argus/api/report", { params })
             setData(res.data)
-        } catch (e: any) {
-
+        } catch (error: any) {
+            message.error(error.message)
         }
         setLoading(false)
     }
@@ -50,7 +50,7 @@ function Home() {
         Modal.confirm({
             title: '是否删除？',
             icon: <ExclamationCircleOutlined />,
-            content: '删除后无法恢复，请谨慎操作',
+            content: '删除后无法恢复, 请谨慎操作',
             okType: 'danger',
             async onOk() {
                 try {
@@ -65,12 +65,13 @@ function Home() {
         })
         submit = false
     }
+    useDidRecover(load)
     useEffect(function () {
         load()
     }, [])
     return <div className="TestReport">
         <Breadcrumb label="压测报告" />
-        <PageInfo>如需下载代理，请在右上角菜单栏点击选择<Button type="link"> “下载代理” </Button>。</PageInfo>
+        <PageInfo>如需下载代理, 请在右上角菜单栏点击选择<Button type="link"> “下载代理” </Button>。</PageInfo>
         <Card>
             <div className="ToolBar">
                 <Button icon={<CloseOutlined />} onClick={function () {

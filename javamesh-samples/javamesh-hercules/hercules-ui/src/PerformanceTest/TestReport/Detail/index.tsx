@@ -1,8 +1,8 @@
-import { Line } from '@ant-design/charts'
-import { Descriptions, Tag, Tooltip } from "antd"
+import { Line } from '@antv/g2plot'
+import { Descriptions, message, Tag, Tooltip } from "antd"
 import { PresetColorTypes } from "antd/lib/_util/colors"
 import axios from "axios"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useLocation } from "react-router-dom"
 import Breadcrumb from "../../../component/Breadcrumb"
 import Card from "../../../component/Card"
@@ -18,7 +18,7 @@ export default function App() {
                 const res = await axios.get("/argus/api/report/get", { params: { test_id } })
                 setData(res.data.data)
             } catch (error: any) {
-                
+                message.error(error.message)
             }
         })()
     }, [test_id])
@@ -101,14 +101,6 @@ export default function App() {
                 </div>
             </div>
             <ReportCharts />
-            {/* <Tabs defaultActiveKey="1" type="card">
-                <Tabs.TabPane tab="压测信息" key="1">
-                    <ReportCharts />
-                </Tabs.TabPane>
-                <Tabs.TabPane tab="监控信息" key="2">
-                    <Monitor />
-                </Tabs.TabPane>
-            </Tabs> */}
         </Card>
     </div>
 }
@@ -123,7 +115,7 @@ function ReportCharts() {
                 const res = await axios.get("/argus/api/report/chart", { params: { test_id } })
                 setData(res.data.data)
             } catch (error: any) {
-                
+                message.error(error.message)
             }
         })()
     }, [test_id])
@@ -132,33 +124,46 @@ function ReportCharts() {
             <span className="Question icon fa fa-question-circle"></span>
         </Tooltip></div>
         <div className="SubCard">
-            <Line data={data} xField="time" yField="tps" color="#15c4ff"
-                height={230} xAxis={{ tickCount: 20, range: [0, 1] }} smooth={true}
-            />
+            <LineChart data={data} yField="tps" color="#15c4ff"/>
         </div>
         <div className="Label">平均时间（ms）</div>
         <div className="SubCard">
-            <Line data={data} xField="time" yField="avg_time" color="#ff699f"
-                height={230} xAxis={{ tickCount: 20, range: [0, 1] }} smooth={true}
-            />
+            <LineChart data={data} yField="avg_time" color="#ff699f"/>
         </div>
         <div className="Label">首次接收数据的平均时间（ms）</div>
         <div className="SubCard">
-            <Line data={data} xField="time" yField="receive_avg" color="#0eaa76"
-                height={230} xAxis={{ tickCount: 20, range: [0, 1] }} smooth={true}
-            />
+            <LineChart data={data} yField="receive_avg" color="#0eaa76"/>
         </div>
         <div className="Label">Vuser</div>
         <div className="SubCard">
-            <Line data={data} xField="time" yField="vuser" color="#0eaa76"
-                height={230} xAxis={{ tickCount: 20, range: [0, 1] }} smooth={true}
-            />
+            <LineChart data={data} yField="vuser" color="#0eaa76"/>
         </div>
         <div className="Label">错误</div>
         <div className="SubCard">
-            <Line data={data} xField="time" yField="fail_count" color="#15c4ff"
-                height={230} xAxis={{ tickCount: 20, range: [0, 1] }} smooth={true}
-            />
+            <LineChart data={data} yField="fail_count" color="#15c4ff"/>
         </div>
     </div>
+}
+
+function LineChart(props: {data: never[], yField: string, color: string}) {
+    const chartRef = useRef(null)
+    useEffect(function () {
+        const chart = new Line(chartRef.current!!,{
+            xField: 'time',
+            yField: props.yField,
+            color: props.color,
+            height: 230,
+            data: props.data,
+            smooth: true,
+            xAxis: { 
+                tickCount: 20, 
+                range: [0, 1] 
+            }
+        })
+        chart.render()
+        return function () {
+            chart.destroy()
+        }
+    }, [props.color, props.data, props.yField])
+    return <div ref={chartRef}></div>
 }

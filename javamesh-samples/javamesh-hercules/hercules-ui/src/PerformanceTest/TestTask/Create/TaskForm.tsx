@@ -2,20 +2,23 @@ import { Button, Checkbox, DatePicker, Form, FormInstance, Input, InputNumber, m
 import React, { useEffect, useRef, useState } from "react"
 import ServiceSelect from "../../../component/ServiceSelect"
 import HostForm from "./HostForm"
-import { Area, AreaConfig } from '@ant-design/charts'
+import { Area } from '@antv/g2plot'
 import "./TaskForm.scss"
 import axios from "axios"
-import { debounce } from "@antv/util"
+import { debounce } from "lodash"
 import { useHistory } from "react-router"
 import moment, { Moment } from "moment"
 import PageInfo from "../../../component/PageInfo"
 
-let params: any = {}
 export default function App(props: { scenarioName?: string }) {
     let submit = false
     const history = useHistory()
     const [activeKey, setActiveKey] = useState("1")
     const [form] = Form.useForm()
+    const [disable, setDisable] = useState(true)
+    const paramRef = useRef({})
+    const chartRef = useRef(null)
+    const plotRef = useRef<Area>()
     async function save(values: any, run?: boolean) {
         if (submit) return
         submit = true
@@ -24,7 +27,7 @@ export default function App(props: { scenarioName?: string }) {
             await axios.post("/argus/api/task", data)
             message.success("提交成功")
             if (props.scenarioName) {
-                history.replace("/TestTask")
+                history.replace("/PerformanceTest/TestTask")
             } else {
                 history.goBack()
             }
@@ -33,36 +36,42 @@ export default function App(props: { scenarioName?: string }) {
         }
         submit = false
     }
-    const [data, setData] = useState([])
     async function load() {
         try {
-            const res = await axios.post('/argus/api/task/pressurePrediction', { params })
-            setData(res.data.data)
+            const res = await axios.post('/argus/api/task/pressurePrediction', { params: paramRef.current })
+            plotRef.current?.changeData(res.data.data)
+            plotRef.current?.render()
         } catch (error: any) {
-            
+            message.error(error.message)
         }
     }
     const debounceRef = useRef(debounce(load, 1000))
     useEffect(function () {
         load()
-        params = {}
+        plotRef.current = new Area(chartRef.current!!,{
+            height: 250,
+            data: [],
+            xField: 'time',
+            yField: 'pressure',
+            xAxis: {
+                range: [0, 1],
+                title: {text: "执行时间（秒）"}
+            },
+            yAxis: {
+                title: {text: "虚拟用户数"}
+            },
+            point: {},
+            color: '#31baf3',
+            areaStyle: () => {
+                return {
+                    fill: 'l(270) 0:#ffffff 0.5:#e4f4fb 1:#31baf3',
+                };
+            },
+        })
+        return function () {
+            plotRef.current?.destroy()
+        }
     }, [])
-    const config: AreaConfig = {
-        smooth: true,
-        data,
-        xField: 'time',
-        yField: 'pressure',
-        xAxis: {
-            range: [0, 1]
-        },
-        point: {},
-        color: '#31baf3',
-        areaStyle: () => {
-            return {
-                fill: 'l(270) 0:#ffffff 0.5:#e4f4fb 1:#31baf3',
-            };
-        },
-    }
     return <Form className="TaskForm" form={form} requiredMark={false} labelCol={{ span: 4 }}
         initialValues={{
             scenario_name: props.scenarioName, is_monitor: true, sampling_interval: 2, sampling_ignore: 0,
@@ -115,9 +124,9 @@ export default function App(props: { scenarioName?: string }) {
                                 <AgentInput />
                             </Form.Item>
                             <Form.Item label="虚拟用户数" name="vuser" rules={[{ type: "integer", required: true }]}>
-                                <InputNumber className="InputNumber" min={1} max={3000} addonAfter="最大值：3000" onChange={function (value) {
-                                    params = { ...params, vuser: value }
-                                    load()
+                                <InputNumber className="InputNumber" min={1} max={3000} addonAfter="最大值: 3000" onChange={function (value) {
+                                    paramRef.current = { ...paramRef.current, vuser: value }
+                                    debounceRef.current()
                                 }} />
                             </Form.Item>
                             <Form.Item label="场景" name="scenario_name" rules={[{ required: true }]}>
@@ -146,11 +155,11 @@ export default function App(props: { scenarioName?: string }) {
                                 message: "格式错误"
                             }]}>
                                 <Input.TextArea showCount maxLength={50} autoSize={{ minRows: 2, maxRows: 2 }}
-                                    placeholder="测试参数可以在脚本中通过System.getProperty('param')取得，参数只能为数字、字母、下划线、逗号、圆点（.）或竖线(|)组成，禁止输入空格，长度在0-50之间。" />
+                                    placeholder="测试参数可以在脚本中通过System.getProperty('param')取得, 参数只能为数字、字母、下划线、逗号、圆点（.）或竖线(|)组成, 禁止输入空格, 长度在0-50之间。" />
                             </Form.Item>
                             <Form.Item labelCol={{ span: 5 }} valuePropName="checked" name="is_safe" label={
                                 <span>安全文件分发
-                                    <Tooltip title="如果以安全模式分发文件，速度较慢">
+                                    <Tooltip title="如果以安全模式分发文件, 速度较慢">
                                         <span className="Question icon fa fa-question-circle"></span>
                                     </Tooltip>
                                 </span>
@@ -165,8 +174,7 @@ export default function App(props: { scenarioName?: string }) {
                                 <span>压力递增</span>
                                 <Form.Item className="Switch" valuePropName="checked" name="is_increased">
                                     <Switch size="small" onChange={function (value) {
-                                        params = { ...params, is_increased: value }
-                                        load()
+                                        setDisable(!value)
                                     }} />
                                 </Form.Item>
                             </div>
@@ -176,31 +184,31 @@ export default function App(props: { scenarioName?: string }) {
                                 <Input disabled />
                             </Form.Item>
                             <Form.Item label="初始数" name="init_value" rules={[{ type: "integer" }]}>
-                                <InputNumber className="InputNumber" min={0} onChange={function (value: any) {
-                                    params = { ...params, init_value: value }
+                                <InputNumber disabled={disable} className="InputNumber" min={0} onChange={function (value: any) {
+                                    paramRef.current = { ...paramRef.current, init_value: value }
                                     debounceRef.current()
                                 }} />
                             </Form.Item>
                             <Form.Item label="增量" name="increment" rules={[{ type: "integer" }]} >
-                                <InputNumber className="InputNumber" min={0} onChange={function (value: any) {
-                                    params = { ...params, increment: value }
+                                <InputNumber disabled={disable} className="InputNumber" min={0} onChange={function (value: any) {
+                                    paramRef.current = { ...paramRef.current, increment: value }
                                     debounceRef.current()
                                 }} />
                             </Form.Item>
                             <Form.Item label="初始等待时间" name="init_wait" rules={[{ type: "integer" }]}>
-                                <InputNumber className="InputNumber" min={0} addonAfter="MS" onChange={function (value: any) {
-                                    params = { ...params, init_wait: value }
+                                <InputNumber disabled={disable} className="InputNumber" min={0} addonAfter="MS" onChange={function (value: any) {
+                                    paramRef.current = { ...paramRef.current, init_wait: value }
                                     debounceRef.current()
                                 }} />
                             </Form.Item>
                             <Form.Item label="进程增长间隔" name="growth_interval" rules={[{ type: "integer" }]}>
-                                <InputNumber addonAfter="MS" min={0} className="InputNumber" onChange={function (value: any) {
-                                    params = { ...params, growth_interval: value }
+                                <InputNumber disabled={disable} addonAfter="MS" min={0} className="InputNumber" onChange={function (value: any) {
+                                    paramRef.current = { ...paramRef.current, growth_interval: value }
                                     debounceRef.current()
                                 }} />
                             </Form.Item>
                             <div className="Title">压力预估图</div>
-                            <Area className="Chart" height={250} {...config} />
+                            <div className="Chart" ref={chartRef}></div>
                         </div>
                     </div>
                 </div>
@@ -238,11 +246,11 @@ function AgentInput(props: { onChange?: (value: number) => void }) {
                 const res = await axios.get('/argus/api/task/maxAgent')
                 setMax(res.data.data)
             } catch (error: any) {
-
+                message.error(error.message)
             }
         })()
     }, [])
-    return <InputNumber className="InputNumber" min={1} max={max} addonAfter={"最大值：" + max} onChange={props.onChange} />
+    return <InputNumber className="InputNumber" min={1} max={max} addonAfter={"最大值:" + max} onChange={props.onChange} />
 }
 
 function SaveRun(props: { form: FormInstance<any>, onFinish: (values: any) => void }) {
@@ -318,22 +326,22 @@ function BasicScenario() {
             <Radio value="by_time">测试时长</Radio>
             <div>
                 <Form.Item label="小时" className="WithoutLabel" name="by_time_h" rules={[{ type: "integer", required: basic }]}>
-                    <InputNumber className="Time" min={0} />
+                    <InputNumber className="Time" min={0} disabled={!basic}/>
                 </Form.Item>
                 <span className="Sep">:</span>
                 <Form.Item label="分钟" className="WithoutLabel" name="by_time_m" rules={[{ type: "integer", required: basic }]}>
-                    <InputNumber className="Time" min={0} max={60} />
+                    <InputNumber className="Time" min={0} max={60} disabled={!basic}/>
                 </Form.Item>
                 <span className="Sep">:</span>
                 <Form.Item label="秒" className="WithoutLabel" name="by_time_s" rules={[{ type: "integer", required: basic }]}>
-                    <InputNumber className="Time" min={0} max={60} />
+                    <InputNumber className="Time" min={0} max={60} disabled={!basic}/>
                 </Form.Item>
                 <span className="Format">HH:MM:SS</span>
             </div>
             <Radio value="by_count">测试次数</Radio>
             <div>
                 <Form.Item label="次数" className="WithoutLabel" name="by_count" rules={[{ type: "integer", required: !basic }]}>
-                    <InputNumber className="Count" min={0} max={10000} addonAfter="最大值：10000" />
+                    <InputNumber className="Count" min={0} max={10000} addonAfter="最大值:10000" disabled={basic}/>
                 </Form.Item>
             </div>
         </Radio.Group>

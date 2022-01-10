@@ -40,8 +40,8 @@ function Home() {
             }
             const res = await axios.get("/argus/api/agent", { params })
             setData(res.data)
-        } catch (e: any) {
-
+        } catch (error: any) {
+            message.error(error.message)
         } finally {
             setLoading(false)
         }
@@ -52,7 +52,7 @@ function Home() {
         Modal.confirm({
             title: '是否删除？',
             icon: <ExclamationCircleOutlined />,
-            content: '删除后无法恢复，请谨慎操作',
+            content: '删除后无法恢复, 请谨慎操作',
             okType: 'danger',
             async onOk() {
                 try {
@@ -86,7 +86,7 @@ function Home() {
     statusMap.set("fail", "#FF4E4E")
     return <div className="ScriptManage">
         <Breadcrumb label="压测引擎" />
-        <PageInfo>如需下载代理，请在右上角菜单栏点击选择<Button type="link" size="small"> “下载代理” </Button>。</PageInfo>
+        <PageInfo>如需下载代理, 请在右上角菜单栏点击选择<Button type="link" size="small"> “下载代理” </Button>。</PageInfo>
         <Card>
             <div className="ToolBar">
                 <Button className="Add" type="primary" icon={<SyncOutlined />} onClick={load}>更新代理</Button>
@@ -181,13 +181,16 @@ function Home() {
                         width: 200,
                         render(data, record) {
                             return <span className={`Licensed${data ? " active" : " deactive"}`} onClick={async function () {
+                                if (submit) return
+                                submit = true
                                 try {
                                     await axios.post('/argus/api/agent/license', { agent_id: record.agent_id, licensed: !data })
                                     message.success("修改成功")
-                                    load()
+                                    await load()
                                 } catch (error: any) {
                                     message.error(error.message)
                                 }
+                                submit = false
                             }}>
                                 <span>未许可</span>
                                 <span>已许可</span>
@@ -207,7 +210,7 @@ function AgentDownload() {
                 const res = await axios.get('/argus/api/agent/link')
                 setLink(res.data.data.link)
             } catch (error: any) {
-
+                message.error(error.message)
             }
         })()
     }, [])

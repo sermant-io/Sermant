@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react"
 import Breadcrumb from "../../../component/Breadcrumb"
 import Card from "../../../component/Card"
 import PageInfo from "../../../component/PageInfo"
-import MonacoEditor from 'react-monaco-editor'
+import Editor from "@monaco-editor/react"
 import { useLocation } from "react-router-dom"
 import axios from "axios"
 import CloseCircleOutlined from "@ant-design/icons/lib/icons/CloseCircleOutlined"
@@ -21,7 +21,7 @@ export default function App() {
     const path = urlSearchParams.get("path") || ""
     return <div className="ScriptDetail">
         <Breadcrumb label="脚本管理" sub={{ label: "详情", parentUrl: "/PerformanceTest/ScriptManage" }} />
-        <PageInfo>如需下载代理，请在右上角菜单栏点击选择<Button type="link" size="small"> “下载代理” </Button>。</PageInfo>
+        <PageInfo>如需下载代理, 请在右上角菜单栏点击选择<Button type="link" size="small"> “下载代理” </Button>。</PageInfo>
         <Card>
             <Form initialValues={{ path }} form={form} requiredMark={false} labelCol={{ span: 2 }} onFinish={async function (values) {
                 if (submit) return
@@ -78,6 +78,7 @@ export default function App() {
 
 type Host = { host_id?: string, domain?: string }
 function ScriptHosts() {
+    let submit = false
     const urlSearchParams = new URLSearchParams(useLocation().search)
     const path = urlSearchParams.get("path")
     const [hosts, setHosts] = useState<Host[]>([])
@@ -86,7 +87,7 @@ function ScriptHosts() {
             const res = await axios.get('/argus/api/script/host', { params: { path } })
             setHosts(res.data.data)
         } catch (error: any) {
-
+            message.error(error.message)
         }
     }
     useEffect(function () {
@@ -95,12 +96,15 @@ function ScriptHosts() {
     return <div className="ScriptHost">
         <div className="Hosts">{hosts.map(function (item) {
             return <ScriptHost key={item.host_id} data={item} onClick={async function () {
+                if (submit) return
+                submit = true
                 try {
                     await axios.delete('/argus/api/script/host', { params: { host_id: item.host_id, path } })
                 } catch (e: any) {
                     message.error(e.message)
                 }
-                load(path)
+                await load(path)
+                submit = false
             }} />
         })}</div>
         <HostForm onFinish={async function ({ ip, domain }) {
@@ -147,11 +151,12 @@ function ScriptEditor(props: { onChange?: (value: any) => void, path: string }) 
     }, 1000))
     return <>
         {props.path.endsWith(".groovy") && <ScriptOrchestrate setScript={setScript} path={props.path}/>}
-        <MonacoEditor height="620" language="python" value={script} onChange={debounceRef.current} />
+        <Editor height={460} language="python" value={script} onChange={debounceRef.current} />
     </>
 }
 
 function ScriptOrchestrate(props: {setScript: (script: string)=> void, path: string}) {
+    let submit = false
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [data, setData] = useState<Values>()
     const valuesRef = useRef<Values>()
@@ -167,7 +172,7 @@ function ScriptOrchestrate(props: {setScript: (script: string)=> void, path: str
                 }
                 setData({ tree, map })
             } catch (error: any) {
-
+                message.error(error.message)
             }
         })()
     }, [props.path])
@@ -183,6 +188,8 @@ function ScriptOrchestrate(props: {setScript: (script: string)=> void, path: str
             }} />}
             <div className="Buttons">
                 <Button type="primary" onClick={async function () {
+                    if (submit) return
+                    submit = true
                     try {
                         const map: any = {}
                         valuesRef.current?.map.forEach(function (value, key) {
@@ -194,6 +201,7 @@ function ScriptOrchestrate(props: {setScript: (script: string)=> void, path: str
                     } catch (error: any) {
                         message.error(error.message)
                     }
+                    submit = false
                 }}>保存</Button>
                 <Button onClick={function () {
                     setIsModalVisible(false)

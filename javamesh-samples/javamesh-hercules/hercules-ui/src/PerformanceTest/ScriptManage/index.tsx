@@ -45,13 +45,12 @@ function Home() {
                 const res = await axios.get("/argus/api/script", { params })
                 setData(res.data)
             } catch (error: any) {
-                
+                message.error(error.message)
             }
         } catch (e: any) {
             message.error(e.message)
-        } finally {
-            setLoading(false)
         }
+        setLoading(false)
     }
     async function batchDelete(selectedRowKeys: React.Key[]) {
         if (submit) return
@@ -63,7 +62,7 @@ function Home() {
             Modal.confirm({
                 title: '是否删除？',
                 icon: <ExclamationCircleOutlined />,
-                content: confirm && confirm.length > 0 && "这些脚本或文件夹被其他压测场景使用，仍然删除？" + confirm.join(" "),
+                content: confirm && confirm.length > 0 && "这些脚本或文件夹被其他压测场景使用, 仍然删除？" + confirm.join(" "),
                 okType: 'danger',
                 async onOk() {
                     try {
@@ -76,8 +75,8 @@ function Home() {
                     }
                 }
             })
-        } catch (e: any) {
-            message.error(e.message)
+        } catch (error: any) {
+            message.error(error.message)
         }
         submit = false
     }
@@ -87,7 +86,7 @@ function Home() {
     useDidRecover(load)
     return <div className="ScriptManage">
         <Breadcrumb label="脚本管理" />
-        <PageInfo>如需下载代理，请在右上角菜单栏点击选择<Button type="link" size="small"> “下载代理” </Button>。</PageInfo>
+        <PageInfo>如需下载代理, 请在右上角菜单栏点击选择<Button type="link" size="small"> “下载代理” </Button>。</PageInfo>
         <Card>
             <div className="ToolBar">
                 <AddFile load={load} folder={folder} />
@@ -268,7 +267,7 @@ function AddFile(props: { load: () => {}, folder: string[] }) {
                         { min: 3, max: 20, required: true, whitespace: true },
                         { pattern: /^[A-Za-z][\w.-]+$/, message: "格式不正确" }
                     ]}>
-                        <Input style={{ width: 525 }} placeholder='必须以字母开头，可以包括字母，数字和 ._- 最短3位，最长20位' />
+                        <Input style={{ width: 525 }} placeholder='必须以字母开头, 可以包括字母, 数字和 ._- 最短3位, 最长20位' />
                     </Form.Item>
                 </div>
                 <div className="Line">
@@ -303,7 +302,7 @@ function AddFile(props: { load: () => {}, folder: string[] }) {
                         <Checkbox>创建资源和库目录</Checkbox>
                     </Form.Item>
                     <span className="Info">
-                        <InfoCircleOutlined />您可以上传".class", ".py", ".jar" 类型的文件到lib目录，或者其他任何资源到resources目录</span>
+                        <InfoCircleOutlined />您可以上传".class", ".py", ".jar" 类型的文件到lib目录, 或者其他任何资源到resources目录</span>
                 </div>
                 <Collapse expandIconPosition="right" expandIcon={function ({ isActive }) {
                     return <span className={`icon fa fa-angle-double-${isActive ? "down" : "right"}`}></span>

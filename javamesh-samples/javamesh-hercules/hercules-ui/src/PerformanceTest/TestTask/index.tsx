@@ -1,5 +1,5 @@
 import { Button, Checkbox, DatePicker, Form, Input, message, Modal, Table } from "antd"
-import React, { useEffect, useRef, useState } from "react"
+import React, { Key, useEffect, useRef, useState } from "react"
 import Breadcrumb from "../../component/Breadcrumb"
 import Card from "../../component/Card"
 import "./index.scss"
@@ -13,6 +13,8 @@ import ServiceSelect from "../../component/ServiceSelect"
 import moment, { Moment } from "moment"
 import PageInfo from "../../component/PageInfo"
 import socket from "../socket"
+import { debounce } from "lodash"
+import View from "./View"
 
 export default function App() {
     const { path } = useRouteMatch();
@@ -20,6 +22,7 @@ export default function App() {
         <CacheRoute exact path={path} component={Home} />
         <Route exact path={`${path}/Create`}><Create /></Route>
         <Route exact path={`${path}/Detail`}><Detail /></Route>
+        <Route exact path={`${path}/View`}><View /></Route>
     </CacheSwitch>
 }
 
@@ -38,9 +41,9 @@ function Home() {
     let { path } = useRouteMatch();
     const [data, setData] = useState<{ data: Data[], total: number }>({ data: [], total: 0 })
     const [loading, setLoading] = useState(false)
-    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+    const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([])
     const stateRef = useRef<any>({})
-    const keysRef = useRef<string[]>([])
+    const keysRef = useRef<Key[]>([])
     async function load() {
         setLoading(true)
         try {
@@ -55,12 +58,11 @@ function Home() {
             const res = await axios.get("/argus/api/task", { params })
             setData(res.data)
             // 需要监听的任务列表
-            keysRef.current.length = 0
-            res.data.data.forEach(function (item: Data) {
-                keysRef.current.push("/task/" + item.test_id)
+            keysRef.current = res.data.data.map(function (item: Data) {
+                return "/task/" + item.test_id
             })
-        } catch (e: any) {
-
+        } catch (error: any) {
+            message.error(error.message)
         }
         setLoading(false)
     }
@@ -70,7 +72,7 @@ function Home() {
         Modal.confirm({
             title: '是否删除？',
             icon: <ExclamationCircleOutlined />,
-            content: '删除后无法恢复，请谨慎操作',
+            content: '删除后无法恢复, 请谨慎操作',
             okType: 'danger',
             async onOk() {
                 try {
@@ -86,13 +88,13 @@ function Home() {
         submit = false
     }
     useEffect(function () {
-        stateRef.current = {}
         load()
+        const dbLoad = debounce(load, 1000)
         function handleSocket(event: MessageEvent<any>) {
             const message = event.data
             if (keysRef.current.includes(message)) {
-                keysRef.current.length = 0
-                load()
+                // 只响应最新
+                dbLoad()
             }
         }
         socket.addEventListener("message", handleSocket)
@@ -276,21 +278,25 @@ function Home() {
                     },
                     {
                         title: "操作",
-                        width: 150,
-                        align: "center",
+                        width: 200,
+                        align: "left",
                         render(_, record) {
                             return <div className="Operation">
-                                {record.status === "running" ? <Button type="primary" size="small" onClick={async function () {
+                                {record.status === "running" && <Button type="primary" size="small" onClick={async function () {
+                                    if (submit) return
+                                    submit = true
                                     try {
                                         await axios.post("/argus/api/task/stop", { test_id: record.test_id })
                                         message.success("停止成功")
                                     } catch (e: any) {
                                         message.error(e.message)
                                     }
-                                    load()
+                                    await load()
+                                    submit = false
                                 }} style={{ backgroundColor: "#FF4E4E", borderColor: "#FF4E4E", marginRight: 10 }}
-                                >停止</Button> : <StartButton load={load} test_id={record.test_id} />}
-                                <Link to={`${path}/Detail?test_id=${record.test_id}`}>查看</Link>
+                                >停止</Button>}
+                                {record.status !== "running" && <StartButton load={load} test_id={record.test_id} />}
+                                <Link to={`${path}/View?test_id=${record.test_id}`}><Button type="link" size="small" >查看</Button></Link>
                                 <Button type="link" size="small" onClick={function () {
                                     batchDelete([record.test_id])
                                 }}

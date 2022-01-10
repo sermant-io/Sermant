@@ -11,7 +11,7 @@ export function DynamicCard(props: {scenario?: string, onClick?: (vlaue: string)
         <img src={Dynamic} alt="" />
         <div className="Content">
             <h2 className="Title">动态编排</h2>
-            <p className="Text">简单快捷，极易上手</p>
+            <p className="Text">简单快捷, 极易上手</p>
         </div>
     </div>
 }

@@ -1,31 +1,43 @@
 import { Button, Form, Input, message, Modal, Table } from "antd"
-import React, { useEffect, useRef, useState } from "react"
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import Breadcrumb from "../../component/Breadcrumb"
 import Card from "../../component/Card"
 import PageInfo from "../../component/PageInfo"
 import "./index.scss"
 import { PlusOutlined, CloseOutlined, SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
-import { Link, Route, useRouteMatch } from "react-router-dom"
+import { Link, Route, Switch, useRouteMatch } from "react-router-dom"
 import Create from "./Create"
 import axios from "axios"
 import ScenarioFormItems from "./ScenarioFormItems"
-import CacheRoute, { CacheSwitch, useDidRecover } from "react-router-cache-route"
 
 export default function App() {
-    let { path } = useRouteMatch();
-    return <CacheSwitch>
-        <CacheRoute exact path={path} component={Home} />
-        <Route exact path={`${path}/Create`}><Create /></Route>
-    </CacheSwitch>
+    let { path } = useRouteMatch()
+    const homeRef = useRef<HomeRef>(null)
+    return <>
+        <Home ref={homeRef}/>
+        <Switch>
+            <Route exact path={path} render={function() {
+                setTimeout(function() {
+                    homeRef.current?.show()
+                }, 100)
+                return null
+            }} />
+            <Route exact path={`${path}/Create`} render={function() {
+                homeRef.current?.hide()
+                return <Create />
+            }}/>
+        </Switch>
+    </>
 }
 
+type HomeRef = {show: () => void, hide: () => void}
 type Data = {
     create_by: string,
     app_name: string,
     scenario_type: string,
     scenario_id: string
 }
-function Home() {
+const Home = forwardRef<HomeRef>(function (props, ref) {
     let submit = false
     let { path } = useRouteMatch();
     const [data, setData] = useState<{ data: Data[], total: number }>({ data: [], total: 0 })
@@ -45,8 +57,8 @@ function Home() {
             }
             const res = await axios.get("/argus/api/scenario", { params })
             setData(res.data)
-        } catch (e: any) {
-            
+        } catch (error: any) {
+            message.error(error.message)
         }
         setLoading(false)
     }
@@ -60,7 +72,7 @@ function Home() {
             Modal.confirm({
                 title: '是否删除？',
                 icon: <ExclamationCircleOutlined />,
-                content: confirm && confirm.length > 0 && "这些压测场景有压测任务，仍然删除？场景名称：" + confirm.join(" "),
+                content: confirm && confirm.length > 0 && "这些压测场景有压测任务, 仍然删除? 场景名称: " + confirm.join(" "),
                 okType: 'danger',
                 async onOk() {
                     try {
@@ -81,8 +93,19 @@ function Home() {
     useEffect(function () {
         load()
     }, [])
-    useDidRecover(load)
-    return <div className="TestScenario">
+    const rootRef = useRef<HTMLDivElement>(null)
+    useImperativeHandle(ref, function() {
+        return {
+            hide: function() {
+                rootRef.current?.setAttribute("style", "display:none;")
+            },
+            show: function() {
+                rootRef.current?.removeAttribute("style")
+                load()
+            }
+        }
+    });
+    return <div className="TestScenario" ref={rootRef} style={{display: "none"}}>
         <Breadcrumb label="压测场景" />
         <PageInfo>压测场景</PageInfo>
         <Card>
@@ -206,7 +229,7 @@ function Home() {
                 ]} />
         </Card>
     </div>
-}
+})
 
 function ScenarioUpdate(props: { data: Data, load: () => {} }) {
     const [isModalVisible, setIsModalVisible] = useState(false)

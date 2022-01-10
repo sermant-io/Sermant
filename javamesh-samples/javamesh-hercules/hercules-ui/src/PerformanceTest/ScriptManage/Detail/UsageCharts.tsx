@@ -1,4 +1,5 @@
 import { Line, LineOptions } from "@antv/g2plot"
+import { message } from "antd"
 import axios from "axios"
 import React, { useEffect, useRef } from "react"
 import "./UsageCharts.scss"
@@ -45,6 +46,7 @@ export default function App(props: { url: string, params: any }) {
                 memoryChart.changeData(data)
             } catch (error: any) {
                 clearInterval(timeInterval)
+                message.error(error.message)
             }
 
         }, 1000);
@@ -56,6 +58,7 @@ export default function App(props: { url: string, params: any }) {
                 memoryChart.changeData(data)
             } catch (error: any) {
                 clearInterval(timeInterval)
+                message.error(error.message)
             }
         })()
         return function () {

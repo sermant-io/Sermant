@@ -40,8 +40,9 @@ export default function App() {
                 if (resData.status !== "running") {
                     clearInterval(timeInterval)
                 }
-            } catch (e: any) {
+            } catch (error: any) {
                 clearInterval(timeInterval)
+                message.error(error.message)
             }
         }, 1000);
         (async function () {
@@ -52,8 +53,9 @@ export default function App() {
                 chartData = resData.chart
                 chart.changeData(chartData)
                 chart.render()
-            } catch (e: any) {
+            } catch (error: any) {
                 clearInterval(timeInterval)
+                message.error(error.message)
             }
         })()
         return function () {
