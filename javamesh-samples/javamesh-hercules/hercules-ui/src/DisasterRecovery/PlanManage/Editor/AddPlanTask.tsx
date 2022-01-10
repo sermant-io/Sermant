@@ -1,10 +1,10 @@
 import { Button, Drawer, Form, Input, message, Select, Switch } from "antd";
 import axios from "axios";
 import React, { useState } from "react";
-import MonacoEditor from "react-monaco-editor";
 import "./AddPlanTask.scss"
 import SearchSelect from "./SearchSelect";
 import TabelTransfer from "./TabelTransfer";
+import Editor from "@monaco-editor/react";
 
 export default function App(props: { children: React.ReactNode, onFinish: (values: any) => void }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -48,14 +48,14 @@ export default function App(props: { children: React.ReactNode, onFinish: (value
               const res = await axios.get("/argus-emergency/api/script/getByName", { params: { name, status: "approved" } })
               setScript(res.data.data.content)
               form.setFieldsValue({ submit_info: res.data.data.submit_info })
-            } catch (error) {
-
+            } catch (error: any) {
+              message.error(error.message)
             }
           }} />
         </Form.Item>
         <Form.Item name="submit_info" labelCol={{ span: 2 }} label="脚本用途"><Input.TextArea disabled /></Form.Item>
         <div className="Editor">
-          <MonacoEditor height="150" language="shell" options={{ readOnly: true }} value={script} />
+          <Editor height={150} language="shell" options={{readOnly: true}} value={script}/>
         </div>
         <Form.Item className="Buttons">
           <Button type="primary" htmlType="submit">创建</Button>

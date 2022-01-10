@@ -1,4 +1,4 @@
-import { Select, Spin } from "antd"
+import { message, Select, Spin } from "antd"
 import React, { useRef } from "react"
 import axios from 'axios';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ export default function App(props: { url: string, value?: string, onChange?: (va
                 return { value: item }
             }))
         } catch (error: any) {
-            
+            message.error(error.message)
         }
         setLoading(false)
     }

@@ -3,7 +3,7 @@ import MockAdapter from 'axios-mock-adapter';
 import moment from 'moment';
 
 if (process.env.NODE_ENV === 'development') {
-  const mock = new MockAdapter(axios, { delayResponse: 500 });
+  const mock = new MockAdapter(axios, { delayResponse: 1000 });
   // mock.onGet('/argus/api/support').replyOnce(401)
   mock.onGet('/argus/api/support').reply(200, {
     data: Array.from({ length: 8 }, function () {
@@ -19,34 +19,10 @@ if (process.env.NODE_ENV === 'development') {
   }
   mock.onGet('/argus/api/scenario').reply(function () {
     return [200, {
-      data: [
-        scenario,
-        {
-          scenario_id: 2,
-          app_name: "QUARK", scenario_name: "VPC乌兰察布",
-          scenario_type: "引流压测", create_by: "ywx600465",
-          create_time: "2019-03-19 10:53", update_time: "2019-03-19 10:53"
-        },
-        {
-          scenario_id: 3,
-          app_name: "SRE应用接入", scenario_name: "SRE性能压测",
-          scenario_type: "自定义脚本", create_by: "j00466872",
-          create_time: "2019-03-19 10:53", update_time: "2019-03-19 10:53"
-        },
-        {
-          scenario_id: 4,
-          app_name: "CloudAgent", scenario_name: "AGENT场景",
-          scenario_type: "动态编排", create_by: "j00466872",
-          create_time: "2019-03-19 10:53", update_time: "2019-03-19 10:53"
-        },
-        {
-          scenario_id: 5,
-          app_name: "SRE乌兰察布", scenario_name: "SRE乌兰察布",
-          scenario_type: "引流压测", create_by: "xwx638736",
-          create_time: "2019-03-19 10:53", update_time: "2019-03-19 10:53"
-        },
-      ],
-      total: 5
+      data: Array.from({length: 10}, function(_, index) {
+        return {...scenario, scenario_id: index}
+      }),
+      total: 11
     }]
   });
   mock.onGet('/argus/api/scenario/search').reply(function (config) {
@@ -70,7 +46,7 @@ if (process.env.NODE_ENV === 'development') {
     return [200]
   })
   mock.onGet("/argus/api/scenario/deleteCheck").reply(200, { data: ["Argus"] })
-  mock.onDelete('/argus/api/scenario').reply(200, { msg: "场景被应用，无法删除" })
+  mock.onDelete('/argus/api/scenario').reply(200, { msg: "场景被应用, 无法删除" })
   // 压测脚本
   mock.onGet('/argus/api/script').reply(200, {
     data: [
@@ -128,7 +104,7 @@ if (process.env.NODE_ENV === 'development') {
     total: 100
   })
   mock.onGet("/argus/api/script/deleteCheck").reply(200, { data: ["xxx.py", "xxx.py"] })
-  mock.onDelete('/argus/api/script').reply(200, { msg: "删除失败，请重试" })
+  mock.onDelete('/argus/api/script').reply(200, { msg: "删除失败, 请重试" })
   mock.onPut('/argus/api/script').reply(200, { msg: "更新失败" })
   mock.onPost('/argus/api/script/check').reply(200, { data: "共三行错误\n第一行错误！\n第一行错误！\n第一行错误！\n第一行错误！" })
   mock.onGet('/argus/api/script/search').reply(200, {
@@ -190,12 +166,14 @@ aaa`,
   mock.onGet('/argus/api/task').reply(200, {
     data: Array.from({ length: 10 }, function (_, index) {
       return {
-        test_id: index, status: index === 0 ? "running" : "fail", test_name: "Test for 100.95.133.126",
+        test_id: index,
+        status: ["running", "fail", "success", "pending"][index % 4],
+        test_name: "Test for 100.95.133.126",
         status_label: "运行中",
         test_type: "快速压测", script_path: "100.95.133.126/traLongText", owner: "admin",
         start_time: "2019-03-19 10:53", duration: "00:01:00",
         tps: "7.5", mtt: "0", fail_rate: "0%",
-        label: ["a", "b"], desc: "描述，长文本长文本长文本长文本长文本长文本"
+        label: ["a", "b"], desc: "描述, 长文本长文本长文本长文本长文本长文本"
       }
     }),
     total: 80
@@ -275,7 +253,7 @@ aaa`,
       "pressure": 30
     }]
   })
-  mock.onDelete('/argus/api/task').reply(200, { msg: "删除出错了，稍后再试" })
+  mock.onDelete('/argus/api/task').reply(200, { msg: "删除出错了, 稍后再试" })
   mock.onPost('/argus/api/task/start').reply(200)
   mock.onPost('/argus/api/task/stop').reply(200, { msg: "停止失败" })
   const agent = {
@@ -305,8 +283,8 @@ aaa`,
       }
     }]
   })
-  mock.onDelete('/argus/api/agent').reply(200, { msg: "删除失败，代理运行中" })
-  mock.onPost('/argus/api/agent/stop').reply(200, { msg: "停止失败，无响应" })
+  mock.onDelete('/argus/api/agent').reply(200, { msg: "删除失败, 代理运行中" })
+  mock.onPost('/argus/api/agent/stop').reply(200, { msg: "停止失败, 无响应" })
   mock.onPost('/argus/api/agent/license').reply(200)
   mock.onGet('/argus/api/agent/link').reply(200, {
     data: {
@@ -358,12 +336,12 @@ aaa`,
     ],
     total: 12
   })
-  mock.onDelete("/argus/api/report").reply(200, { msg: "删除失败，报告不存在" })
+  mock.onDelete("/argus/api/report").reply(200, { msg: "删除失败, 报告不存在" })
   mock.onGet("/argus/api/report/get").reply(200, {
     data: {
       test_name: "argus-test 快速压测",
       label: ["ARGUS", "快速压测", "ARGUS", "性能压测"],
-      desc: "argus-test快速压测是一个测试压测，测试压测，测试压测测试压测，测试压测",
+      desc: "argus-test快速压测是一个测试压测, 测试压测, 测试压测测试压测, 测试压测",
       agent: 1, sampling_ignore: 0, plugin: 1, target_host: "100.95.133.12",
       start_time: "2019-03-19 10:20:26", test_time: "00:01:00",
       end_time: "2019-03-19 10:21:26", run_time: "00:01:00",
@@ -495,10 +473,15 @@ echo "Hello World !"
   mock.onPost('/argus-emergency/api/script/debugStop').reply(200)
   let line = 0
   mock.onGet("/argus-emergency/api/script/debugLog").reply(function () {
+    line++
     if (line < 10) {
-      line++
       return [200, {
-        data: [line + "行"],
+        data: [],
+        line
+      }]
+    } else if (line < 20) {
+      return [200, {
+        data: [line+"行"],
         line
       }]
     } else {
@@ -587,7 +570,7 @@ echo "Hello World !"
         status_label: ["已审核", "待审核", "新增", "拒绝", "运行中", "成功", "失败", "预约"][index % 8],
         create_time: "2021-01-01 00:00:00",
         creator: "z30008585",
-        comment: "备注，备注",
+        comment: "备注, 备注",
         history_id: 1,
         expand
       }
@@ -632,7 +615,7 @@ echo "Hello World !"
   mock.onGet("/argus-emergency/api/plan/task").reply(200, {
     data: [{
       key: 1,
-      title: "任务1，长文本长文本长文本长文本长文本长文本长文本",
+      title: "任务1, 长文本长文本长文本长文本长文本长文本长文本",
       task_no: 1,
       task_name: "任务1",
       channel_type: "SSH",
@@ -660,7 +643,7 @@ echo "Hello World !"
         },
         {
           key: 4,
-          title: "任务4，长文本长文本长文本长文本长文本长文本",
+          title: "任务4, 长文本长文本长文本长文本长文本长文本",
           task_no: 4,
           task_name: "任务4",
           channel_type: "SSH",
@@ -669,7 +652,7 @@ echo "Hello World !"
           sync: "同步",
           children: [{
             key: 6,
-            title: "任务6，长文本长文本长文本长文本长文本长文本",
+            title: "任务6, 长文本长文本长文本长文本长文本长文本",
             task_no: 6,
             task_name: "任务6",
             channel_type: "SSH",
@@ -748,7 +731,7 @@ echo "Hello World !"
     data: Array.from({ length: 4 }, function (_, index) {
       return {
         key: "key" + index,
-        scena_name: "A机房分流，长文本长文本长文本长文本长文本长文本长文本长文本",
+        scena_name: "A机房分流, 长文本长文本长文本长文本长文本长文本长文本长文本",
         scena_id: "id" + index,
         status: ['error', 'process', 'finish', 'wait'][index % 4],
         status_label: ["失败", "运行中", "成功", "待执行"][index % 4]
@@ -777,8 +760,13 @@ echo "Hello World !"
   mock.onPost("/argus-emergency/api/history/scenario/task/ensure").reply(200)
   mock.onGet("/argus-emergency/api/history/scenario/task/log").reply(function () {
     line++
+    if (line === 10) {
+      return [200, {
+        data: ["最后一行"]
+      }]
+    }
     return [200, {
-      data: ["第一行"],
+      data: [line+"行"],
       line
     }]
   })

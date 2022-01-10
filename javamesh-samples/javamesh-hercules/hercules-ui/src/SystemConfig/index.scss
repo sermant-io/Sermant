@@ -4,16 +4,16 @@
     min-width: 1481px;
     .Card {
         margin: 20px;
-        .ToolBar {
-            display: flex;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            .Button{
-                margin-right: 10px;
-            }
-            .Space {
-                flex-grow: 1;
-            }
+    }
+    .ToolBar {
+        display: flex;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        .Button{
+            margin-right: 10px;
+        }
+        .Space {
+            flex-grow: 1;
         }
     }
 }

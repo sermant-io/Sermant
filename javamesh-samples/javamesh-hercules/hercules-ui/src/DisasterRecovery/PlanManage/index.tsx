@@ -1,5 +1,5 @@
 import { Button, DatePicker, Form, Input, message, Modal, Popconfirm, Table } from "antd"
-import React, { useContext, useEffect, useRef, useState } from "react"
+import React, { Key, useContext, useEffect, useRef, useState } from "react"
 import { Link, Route, useHistory, useRouteMatch } from "react-router-dom"
 import Breadcrumb from "../../component/Breadcrumb"
 import Card from "../../component/Card"
@@ -14,6 +14,8 @@ import PageInfo from "../../component/PageInfo"
 import moment, { Moment } from "moment"
 import ApproveFormItems from "../ApproveFormItems"
 import { useForm } from "antd/lib/form/Form"
+import socket from "../socket"
+import { debounce } from "lodash"
 
 export default function App() {
     const { path } = useRouteMatch();
@@ -29,7 +31,10 @@ function Home() {
     const { auth } = useContext(Context)
     const [data, setData] = useState<{ data: Data[], total: number }>()
     const [loading, setLoading] = useState(false)
+    const keysRef = useRef<Key[]>([])
     const stateRef = useRef<any>({})
+    const history = useHistory()
+    let submit = false
     async function load() {
         setLoading(true)
         try {
@@ -43,13 +48,29 @@ function Home() {
             }
             const res = await axios.get("/argus-emergency/api/plan", { params })
             setData(res.data)
+            // 需要监听的任务列表
+            keysRef.current = res.data.data.map(function (item: Data) {
+               return "/plan/" + item.plan_id
+            })
         } catch (error: any) {
-
+            message.error(error.message)
         }
         setLoading(false)
     }
     useEffect(function () {
         load()
+        const dbLoad = debounce(load, 1000)
+        function handleSocket(event: MessageEvent<any>) {
+            const message = event.data
+            if (keysRef.current.includes(message)) {
+                // 只响应最新的
+                dbLoad()
+            }
+        }
+        socket.addEventListener("message", handleSocket)
+        return function () {
+            socket.removeEventListener("message", handleSocket)
+        }
     }, [])
     useDidRecover(load)
     return <div className="PlanManage">
@@ -158,7 +179,7 @@ function Home() {
                     {
                         title: "操作", width: 350, dataIndex: "plan_id", render(plan_id, record) {
                             return <>
-                                {auth.includes("operator") && <CopyPlan plan_id={plan_id}/>}
+                                {auth.includes("operator") && <CopyPlan plan_id={plan_id} />}
                                 {record.status !== "running" && auth.includes("operator") && <Link to={path + "/Editor?plan_id=" + plan_id}>
                                     <Button type="link" size="small">修改</Button>
                                 </Link>}
@@ -174,7 +195,17 @@ function Home() {
                                 }} >
                                     <Button type="link" size="small">提审</Button>
                                 </Popconfirm>}
-                                {(record.status === "approved" || record.status === "ran") && auth.includes("operator") && <Button type="link" size="small">立即执行</Button>}
+                                {(record.status === "approved" || record.status === "ran") && auth.includes("operator") && <Button type="link" size="small" onClick={async function () {
+                                    if (submit) return
+                                    submit = true
+                                    try {
+                                        const res = await axios.post("/argus-emergency/api/plan/run", { plan_id })
+                                        history.push("/DisasterRecovery/RunningLog/Detail?history_id=" + res.data.data.history_id)
+                                    } catch (error: any) {
+                                        message.error(error.message)
+                                    }
+                                    submit = false
+                                }}>立即执行</Button>}
                                 {(record.status === "approved" || record.status === "ran") && auth.includes("operator") && <RunPlan plan_id={plan_id} load={load} />}
                                 {record.status === "wait" && auth.includes("operator") && <Popconfirm title="是否取消预约？" onConfirm={async function () {
                                     try {
@@ -236,7 +267,7 @@ function AddPlan() {
     </>
 }
 
-function CopyPlan({plan_id}: { plan_id: string}) {
+function CopyPlan({ plan_id }: { plan_id: string }) {
     let submit = false
     const history = useHistory();
     const { path } = useRouteMatch()
@@ -250,7 +281,7 @@ function CopyPlan({plan_id}: { plan_id: string}) {
                 if (submit) return
                 submit = true
                 try {
-                    const res = await axios.post("/argus-emergency/api/plan/copy", {...values, plan_id })
+                    const res = await axios.post("/argus-emergency/api/plan/copy", { ...values, plan_id })
                     setIsModalVisible(false)
                     history.push(path + "/Editor?plan_id=" + res.data.data.plan_id)
                 } catch (error: any) {
@@ -301,7 +332,6 @@ function ApprovePlan(props: { plan_id: string, load: () => {} }) {
 
 function RunPlan(props: { plan_id: string, load: () => {} }) {
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const history = useHistory();
     return <>
         <Button type="link" size="small" onClick={function () {
             setIsModalVisible(true)
@@ -313,16 +343,11 @@ function RunPlan(props: { plan_id: string, load: () => {} }) {
                 const start_time = values.start_time
                 const plan_id = props.plan_id
                 try {
-                    if (start_time) {
-                        values.start_time = start_time.format("YYYY-MM-DD HH:mm:ss")
-                        const data = { ...values, plan_id }
-                        await axios.post("/argus-emergency/api/plan/schedule", data)
-                        setIsModalVisible(false)
-                        props.load()
-                    } else {
-                        const res = await axios.post("/argus-emergency/api/plan/run", { plan_id })
-                        history.push("/DisasterRecovery/RunningLog/Detail?history_id=" + res.data.data.history_id)
-                    }
+                    values.start_time = start_time.format("YYYY-MM-DD HH:mm:ss")
+                    const data = { ...values, plan_id }
+                    await axios.post("/argus-emergency/api/plan/schedule", data)
+                    setIsModalVisible(false)
+                    props.load()
                     message.success("提交成功")
                 } catch (e: any) {
                     message.error(e.message)

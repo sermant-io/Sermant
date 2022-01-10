@@ -1,4 +1,4 @@
-import { Modal } from "antd"
+import { message, Modal } from "antd"
 import axios from "axios"
 import React, { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
@@ -22,7 +22,7 @@ export default function App() {
                 }
                 setData({ tree, map })
             } catch (error: any) {
-
+                message.error(error.message)
             }
         })()
     }, [script_id])

@@ -4,7 +4,7 @@ import { FormItemLabelProps } from "antd/lib/form/FormItemLabel"
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import React, { useState } from "react"
 import "./FormItems.scss"
-import MonacoEditor from "react-monaco-editor"
+import Editor from "@monaco-editor/react";
 
 const defaults = new Map([
     ["Root", {
@@ -37,7 +37,7 @@ export default function App(props: { type: String }) {
                     message: "格式错误"
                 }]}>
                     <Input.TextArea showCount maxLength={50} autoSize={{ minRows: 2, maxRows: 2 }}
-                        placeholder="测试参数可以在脚本中通过System.getProperty('param')取得，参数只能为数字、字母、下划线、逗号、圆点（.）或竖线(|)组成，禁止输入空格，长度在0-50之间。" />
+                        placeholder="测试参数可以在脚本中通过System.getProperty('param')取得, 参数只能为数字、字母、下划线、逗号、圆点（.）或竖线(|)组成, 禁止输入空格, 长度在0-50之间。" />
                 </Form.Item>
                 <RootPresure />
             </>
@@ -115,21 +115,21 @@ export default function App(props: { type: String }) {
             return <>
                 <Divider orientation="left">Groovy脚本</Divider>
                 <Form.Item name="script">
-                    <MonacoEditor height={600} language="python" />
+                    <Editor height={400} language="python"/>
                 </Form.Item>
             </>
         case "ResponseAssertion":
             return <>
                 <Divider orientation="left">测试字段</Divider>
                 <Form.Item name="test_field">
-                    <Radio.Group options={["响应文本","响应代码","响应消息","响应头","请求头","URL样本","文档(文本)","请求数据"]}/>
+                    <Radio.Group options={["响应文本", "响应代码", "响应消息", "响应头", "请求头", "URL样本", "文档(文本)", "请求数据"]} />
                 </Form.Item>
                 <Divider orientation="left">匹配模式</Divider>
                 <Form.Item name="test_type">
-                    <Radio.Group options={["包括","匹配","相等"]}/>
+                    <Radio.Group options={["包括", "匹配", "相等"]} />
                 </Form.Item>
                 <Form.Item name="test_strings">
-                    <Input.TextArea maxLength={1000} showCount/>
+                    <Input.TextArea maxLength={1000} showCount />
                 </Form.Item>
             </>
         case "TestFunc":
@@ -139,7 +139,7 @@ export default function App(props: { type: String }) {
                 </Form.Item>
                 <Divider orientation="left">方法内容</Divider>
                 <Form.Item name="script">
-                    <MonacoEditor height={600} language="python" />
+                    <Editor height={400} language="python"/>
                 </Form.Item>
             </>
     }
@@ -170,7 +170,7 @@ function RootBasicScenario(props: FormItemLabelProps) {
             <Radio value="by_count">测试次数</Radio>
             <div>
                 <Form.Item label="次数" className="WithoutLabel" name="by_count" rules={[{ type: "integer" }]}>
-                    <InputNumber disabled={!basic} className="Count" min={0} max={10000} addonAfter="最大值：10000" />
+                    <InputNumber disabled={!basic} className="Count" min={0} max={10000} addonAfter="最大值: 10000" />
                 </Form.Item>
             </div>
         </Radio.Group>

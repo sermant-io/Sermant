@@ -6,7 +6,7 @@ import socket from "../../socket"
 import "./index.scss"
 import axios from "axios"
 import { useLocation } from "react-router-dom"
-import MonacoEditor from "react-monaco-editor"
+import Editor from "@monaco-editor/react";
 import { debounce } from 'lodash';
 
 type Scena = { key: string, scena_name: string, scena_id: string, status: 'wait' | 'process' | 'finish' | 'error', status_label: string }
@@ -31,7 +31,7 @@ export default function App() {
             taskKeysRef.current = data.map(function (item: { key: string }) { return "/task/" + item.key })
             setTaskList(data)
         } catch (error: any) {
-
+            message.error(error.message)
         }
         setLoading(false)
     }
@@ -45,7 +45,7 @@ export default function App() {
                 if (!scenaIdRef.current) scenaIdRef.current = data[0]?.scena_id
                 loadTask(history_id)
             } catch (error: any) {
-
+                message.error(error.message)
             }
         }
         loadScena(history_id);
@@ -55,10 +55,10 @@ export default function App() {
         function handleSocket(event: MessageEvent<any>) {
             const message = event.data
             if (scenaKeysRef.current.includes(message)) {
+                // 可能收到多条消息，只响应最新的
                 dbLoadScena(history_id)
-                // 停止响应任务更新
-                taskKeysRef.current.length = 0
             } else if (taskKeysRef.current.includes(message)) {
+                // 停止响应任务更新
                 dbLoadTask(history_id);
             }
         }
@@ -103,15 +103,15 @@ export default function App() {
                             return <>
                                 <Button type="primary" disabled={record.status !== "error"} size="small" onClick={async function () {
                                     if (submit) return
-                                    submit = false
+                                    submit = true
                                     try {
                                         await axios.post("/argus-emergency/api/history/scenario/task/runAgain", { history_id, key })
                                         message.success("执行成功")
-                                        loadTask(history_id)
+                                        await loadTask(history_id)
                                     } catch (error: any) {
                                         message.error(error.message)
                                     }
-                                    submit = true
+                                    submit = false
                                 }}>重新执行</Button>
                                 <TaskConfirm record={record} load={function () {
                                     loadTask(history_id)
@@ -170,7 +170,8 @@ function TaskConfirm(props: { record: Task, load: () => void }) {
 
 function TaskLog(props: { record: Task }) {
     let submit = false
-    const [debug, setDebug] = useState({ isModalVisible: false, timeInterval: undefined })
+    const [isModalVisible, setIsModalVisible] = useState(false)
+    const timeIntervalRef = useRef(0)
     const [data, setData] = useState<string[]>([])
     async function load(key: string, line?: number) {
         try {
@@ -181,37 +182,37 @@ function TaskLog(props: { record: Task }) {
             })
             return res.data.line as number
         } catch (error: any) {
-
+            message.error(error.message)
         }
-    }
-    function clear() {
-        clearInterval(debug.timeInterval)
-        setDebug({
-            isModalVisible: false,
-            timeInterval: undefined
-        })
     }
     useEffect(function () {
         return function () {
-            clearInterval(debug.timeInterval)
+            clearInterval(timeIntervalRef.current)
         }
-    }, [debug.timeInterval])
+    },[])
     return <>
         <Button type="primary" size="small" onClick={async function () {
             if (submit) return
             submit = true
             let line = await load(props.record.key)
-            setDebug({
-                isModalVisible: true,
-                timeInterval: setInterval(async function () {
-                    line = await load(props.record.key, line)
-                    if (!line) clear()
-                }, 1000) as any
-            })
             submit = false
+            setIsModalVisible(true)
+            // 设置定时器
+            if (!line) return
+            timeIntervalRef.current = setInterval(async function () {
+                line = await load(props.record.key, line)
+                if (!line) {
+                    clearInterval(timeIntervalRef.current)
+                }
+            }, 1000) as any
         }}>查看日志</Button>
-        {debug.isModalVisible && <Modal className="LogButton" title="查看日志" width={1200} visible={true} maskClosable={false} footer={null} onCancel={clear}>
-            <MonacoEditor height="620" language="plaintext" options={{ readOnly: true }} value={data.join("\n")} />
+        {isModalVisible && <Modal className="LogButton" title="查看日志" width={1200} visible={true} maskClosable={false} footer={null} onCancel={function () {
+            clearInterval(timeIntervalRef.current)
+            setIsModalVisible(false)
+            // 清理
+            setData([])
+        }}>
+            <Editor height={620} language="plaintext" options={{ readOnly: true }} value={data.join("\n")} />
         </Modal>}
     </>
 }

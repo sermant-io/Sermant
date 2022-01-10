@@ -5,6 +5,7 @@ import ServiceSelect from "../../component/ServiceSelect"
 import "./DebugScript.scss"
 
 export default function App({ form }: { form: FormInstance }) {
+    let submit = false
     const [data, setData] = useState<string[]>([])
     const [debug, setDebug] = useState({ debugId: undefined, timeInterval: undefined })
     async function load(debug_id: string, line?: number) {
@@ -16,7 +17,7 @@ export default function App({ form }: { form: FormInstance }) {
             })
             return res.data.line as number
         } catch (error: any) {
-
+            message.error(error.message)
         }
     }
     function clear() {
@@ -45,11 +46,14 @@ export default function App({ form }: { form: FormInstance }) {
                 return
             }
             setData([])
+            if (submit) return
+            submit = true
             try {
                 const content = form.getFieldValue("content")
                 const res = await axios.post('/argus-emergency/api/script/debug', { content, server_name })
                 const debugId = res.data.data.debug_id
                 let line = await load(debugId)
+                if (!line) return
                 setDebug({
                     debugId,
                     timeInterval: setInterval(async function () {
@@ -60,6 +64,7 @@ export default function App({ form }: { form: FormInstance }) {
             } catch (error: any) {
                 message.error(error.message)
             }
+            submit = false
         }}>调试</Button>}
         <ul className="Log">{data.map(function (item, index) {
             return <li key={index}>{item}</li>

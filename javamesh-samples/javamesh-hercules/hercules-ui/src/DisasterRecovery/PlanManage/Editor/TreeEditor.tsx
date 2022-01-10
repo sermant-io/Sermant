@@ -1,5 +1,5 @@
 import React, { Key } from 'react'
-import { Button, Table, Tree, Modal, Popconfirm } from 'antd';
+import { Button, Table, Tree, Modal, Popconfirm, message } from 'antd';
 import "./TreeEditor.scss"
 import axios from 'axios';
 import AddPlanTask from "./AddPlanTask"
@@ -23,10 +23,14 @@ function loop(data: Data[], key: Key, callback: (data: Data, i: number, gData: D
 export default class App extends React.Component<{ plan_id: string }> {
   state: { gData: Data[], expandedKeys: Key[] } = { gData: [], expandedKeys: [] }
   async componentDidMount() {
-    const res = await axios.get("/argus-emergency/api/plan/task", { params: { plan_id: this.props.plan_id } })
-    this.setState({
-      gData: res.data.data,
-    })
+    try {
+      const res = await axios.get("/argus-emergency/api/plan/task", { params: { plan_id: this.props.plan_id } })
+      this.setState({
+        gData: res.data.data,
+      })
+    } catch (error: any) {
+      message.error(error.message)
+    }
   }
   async save(data: Data[]) {
     this.setState({
@@ -71,7 +75,7 @@ export default class App extends React.Component<{ plan_id: string }> {
             // Drop on the content
             loop(data, dropKey, item => {
               item.children = item.children || [];
-              // where to insert 示例添加到头部，可以是随意位置
+              // where to insert 示例添加到头部, 可以是随意位置
               item.children.unshift(dragObj);
             });
           } else if (
@@ -81,7 +85,7 @@ export default class App extends React.Component<{ plan_id: string }> {
           ) {
             loop(data, dropKey, item => {
               item.children = item.children || [];
-              // where to insert 示例添加到头部，可以是随意位置
+              // where to insert 示例添加到头部, 可以是随意位置
               item.children.unshift(dragObj);
               // in previous version, we use item.children.push(dragObj) to insert the
               // item to the tail of the children

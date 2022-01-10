@@ -2,7 +2,6 @@ import { Button, Form, Input, message, Radio, Select } from "antd"
 import React, { useRef, useState } from "react"
 import Breadcrumb from "../../../component/Breadcrumb"
 import Card from "../../../component/Card"
-import MonacoEditor from 'react-monaco-editor'
 import { useHistory } from "react-router-dom"
 import axios from "axios"
 import { debounce } from 'lodash';
@@ -10,6 +9,7 @@ import "./index.scss"
 import ServiceSelect from "../../../component/ServiceSelect"
 import Upload from "../../../component/Upload"
 import DebugScript from "../DebugScript"
+import Editor from "@monaco-editor/react";
 
 export default function App() {
     let submit = false
@@ -76,7 +76,7 @@ export default function App() {
                     message: "格式错误"
                 }]}>
                     <Input.TextArea showCount maxLength={50} autoSize={{ minRows: 2, maxRows: 2 }}
-                        placeholder="测试参数可以在脚本中通过System.getProperty('param')取得，参数只能为数字、字母、下划线、逗号、圆点（.）或竖线(|)组成，禁止输入空格，长度在0-50之间。" />
+                        placeholder="测试参数可以在脚本中通过System.getProperty('param')取得, 参数只能为数字、字母、下划线、逗号、圆点（.）或竖线(|)组成, 禁止输入空格, 长度在0-50之间。" />
                 </Form.Item>
                 <Form.Item className="Buttons">
                     <Button className="Save" htmlType="submit" type="primary">提交</Button>
@@ -89,7 +89,7 @@ export default function App() {
 
 function Script() {
     const [scriptFrom, setScriptFrom] = useState("input")
-    const [script, setScript] = useState("")
+    const [script, setScript] = useState<string>()
     return <>
         <div className="Line">
             <Form.Item className="Middle" name="script_from" label="脚本来源">
@@ -103,7 +103,7 @@ function Script() {
                         const res = await axios.get("/argus-emergency/api/script/getByName", { params: { name } })
                         setScript(res.data.data.content)
                     } catch (error: any) {
-
+                        message.error(error.message)
                     }
                 }} />
             </Form.Item>}
@@ -117,10 +117,10 @@ function Script() {
     </>
 }
 
-function ScriptEditor(props: { onChange?: (value: string) => void, script: string, setScript: (script: string) => void }) {
-    const debounceRef = useRef(debounce(function (value: string) {
+function ScriptEditor(props: { onChange?: (value?: string) => void, script?: string, setScript: (script?: string) => void }) {
+    const debounceRef = useRef(debounce(function (value?: string) {
         props.setScript(value)
         props.onChange?.(value)
     }, 1000))
-    return <MonacoEditor height="200" language="shell" value={props.script} onChange={debounceRef.current} />
+    return <Editor height={200} language="shell" value={props.script} onChange={debounceRef.current}/>
 }

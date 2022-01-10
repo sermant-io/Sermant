@@ -10,7 +10,7 @@ import Oam from "./Oam.png"
 export default function App() {
     const { auth } = useContext(Context)
     const list = [
-        { title: "全链路压测", desc: "全链路压测，性能测试！", img: Limiting, link: "/PerformanceTest" },
+        { title: "全链路压测", desc: "全链路压测, 性能测试！", img: Limiting, link: "/PerformanceTest" },
         { title: "容灾切换", desc: "预案、场景、任务、脚本。", img: Limiting, link: "/DisasterRecovery" },
         { title: "系统管理", desc: "用户管理、权限管理、密码重置。", img: Oam, link: "/SystemConfig", auth: "admin" },
     ]

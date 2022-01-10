@@ -52,7 +52,7 @@ const menuGroup = new Map<String, MenuConfig[]>([
     ["After", common],
     ["TransactionController", common]
 ])
-// 计算规则，菜单
+// 计算规则, 菜单
 const rules = new Map<String, Set<String>>()
 const menus = new Map([
     ["Root", "脚本"],

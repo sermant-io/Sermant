@@ -59,7 +59,7 @@ function Registe(props: { setIsLogin: (isLogin: boolean) => void }) {
     }}>
         <Form.Item name="username" rules={[{
             pattern: /^\w{6,15}$/,
-            message: "不得少于6个字且不得超过15个字，只能输入字母、数字、下划线"
+            message: "不得少于6个字且不得超过15个字, 只能输入字母、数字、下划线"
         }]}>
             <Input prefix={<UserOutlined />} placeholder="登录账号" required maxLength={15} />
         </Form.Item>
@@ -68,7 +68,7 @@ function Registe(props: { setIsLogin: (isLogin: boolean) => void }) {
         </Form.Item>
         <Form.Item name="password" rules={[{
             pattern: /^\w{6,15}$/,
-            message: "不得少于6个字且不得超过15个字，只能输入字母、数字、下划线"
+            message: "不得少于6个字且不得超过15个字, 只能输入字母、数字、下划线"
         }]}>
             <Input.Password prefix={<LockOutlined />} placeholder="登录密码" required maxLength={15} />
         </Form.Item>

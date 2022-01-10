@@ -9,7 +9,7 @@ import { Link, Route, useHistory, useRouteMatch } from "react-router-dom"
 import Create from "./Create"
 import Orchestrate from "./Orchestrate"
 import "./index.scss"
-import MonacoEditor from "react-monaco-editor"
+import Editor from "@monaco-editor/react"
 import Context from "../../ContextProvider"
 import ApproveFormItems from "../ApproveFormItems"
 import Update from "./Update"
@@ -54,7 +54,7 @@ function Home() {
                 const res = await axios.get('/argus-emergency/api/script', { params })
                 setData(res.data)
             } catch (error: any) {
-
+                message.error(error.message)
             }
         } catch (e: any) {
             message.error(e.message)
@@ -67,7 +67,7 @@ function Home() {
         Modal.confirm({
             title: '是否删除？',
             icon: <ExclamationCircleOutlined />,
-            content: '删除后无法恢复，请谨慎操作',
+            content: '删除后无法恢复, 请谨慎操作',
             okType: 'danger',
             async onOk() {
                 try {
@@ -251,7 +251,7 @@ function ScriptDetail(props: { data: Data }) {
             <Descriptions.Item label="脚本用途">{props.data.submit_info}</Descriptions.Item>
         </Descriptions>
         <div className="Editor">
-            <MonacoEditor height="300" language="shell" options={{ readOnly: true }} value={props.data.content} />
+            <Editor height={300} language="shell" options={{ readOnly: true }} value={props.data.content} />
         </div>
     </div>
 }

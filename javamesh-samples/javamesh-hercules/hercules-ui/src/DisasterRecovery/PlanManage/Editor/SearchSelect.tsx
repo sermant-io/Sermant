@@ -22,7 +22,7 @@ export default function App(props: { value?: string, onChange?: (value: string) 
         return { value: item }
       }))
     } catch (error: any) {
-
+      message.error(error.message)
     }
     setLoading(false)
   }
@@ -61,7 +61,7 @@ function SearchSelectModal(props: { setIsModalVisible: (visible: boolean) => voi
       const res = await axios.get("/argus-emergency/api/script", { params })
       setData(res.data)
     } catch (error: any) {
-
+      message.error(error.message)
     }
     setLoading(false)
   }

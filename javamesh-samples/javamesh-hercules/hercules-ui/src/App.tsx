@@ -93,7 +93,7 @@ function Account() {
         setUser(res.data.data)
         setAuth(res.data.data.auth)
       } catch (error: any) {
-        
+        message.error(error.message)
       }
     })()
   }, [setAuth])
@@ -138,7 +138,7 @@ function ChangePwd({ username }: { username: string }) {
         </Form.Item>
         <Form.Item name="password" label="新密码" rules={[{
           pattern: /^\w{6,15}$/,
-          message: "不得少于6个字且不得超过15个字，只能输入字母、数字、下划线"
+          message: "不得少于6个字且不得超过15个字, 只能输入字母、数字、下划线"
         }]}>
           <Input.Password required maxLength={15} />
         </Form.Item>
@@ -163,9 +163,12 @@ function ChangePwd({ username }: { username: string }) {
 }
 
 function Logout() {
+  let submit = false
   const { setAuth } = useContext(Context)
   const history = useHistory()
   return <span onClick={async function () {
+    if (submit) return
+    submit = true
     try {
       await axios.post('/argus-user/api/user/logout')
       setAuth([])
@@ -174,5 +177,6 @@ function Logout() {
     } catch (error: any) {
       message.error(error.message)
     }
+    submit = false
   }}>退出登录</span>
 }

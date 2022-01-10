@@ -1,4 +1,4 @@
-import { Table, Transfer } from "antd"
+import { message, Table, Transfer } from "antd"
 import axios from "axios"
 import { debounce } from "lodash"
 import React, { useEffect, useRef, useState } from "react"
@@ -25,7 +25,7 @@ export default function App(props: { onChange?: (value: string[]) => void }) {
             const res = await axios.get("/argus-emergency/api/host", { params })
             setLeftData(res.data)
         } catch (error: any) {
-
+            message.error(error.message)
         }
         setLoading(false)
     }

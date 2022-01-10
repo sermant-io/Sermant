@@ -2,11 +2,11 @@ import { Button, Form, Input, message, Radio, Select } from "antd"
 import React, { useEffect } from "react"
 import Breadcrumb from "../../../component/Breadcrumb"
 import Card from "../../../component/Card"
-import MonacoEditor from 'react-monaco-editor'
 import { useHistory, useLocation } from "react-router-dom"
 import axios from "axios"
 import "./index.scss"
 import DebugScript from "../DebugScript"
+import Editor from "@monaco-editor/react";
 
 export default function App() {
     let submit = false
@@ -20,7 +20,7 @@ export default function App() {
                 const res = await axios.get('/argus-emergency/api/script/get', { params: { script_id } })
                 form.setFieldsValue(res.data.data)
             } catch (error: any) {
-
+                message.error(error.message)
             }
         })()
     }, [form, script_id])
@@ -33,7 +33,7 @@ export default function App() {
                     if (submit) return
                     submit = true
                     try {
-                        await axios.put('/argus-emergency/api/script', values)
+                        await axios.put('/argus-emergency/api/script', {...values, script_id})
                         message.success("更新成功")
                         history.goBack()
                     } catch (e: any) {
@@ -56,7 +56,7 @@ export default function App() {
                     <Input.TextArea maxLength={50} showCount autoSize={{ minRows: 2, maxRows: 2 }} />
                 </Form.Item>
                 <Form.Item label="脚本内容" className="Editor WithoutLabel" name="content" rules={[{ required: true, max: 5000 }]}>
-                    <MonacoEditor height="200" language="shell" />
+                    <Editor language="shell" height={200}/>
                 </Form.Item>
                 <DebugScript form={form}/>
                 <Form.Item className="ScriptParam" labelCol={{ span: 1 }} name="param" label="脚本参数" rules={[{
@@ -64,7 +64,7 @@ export default function App() {
                     message: "格式错误"
                 }]}>
                     <Input.TextArea className="Param" showCount maxLength={50} autoSize={{ minRows: 2, maxRows: 2 }}
-                        placeholder="测试参数可以在脚本中通过System.getProperty('param')取得，参数只能为数字、字母、下划线、逗号、圆点（.）或竖线(|)组成，禁止输入空格，长度在0-50之间。" />
+                        placeholder="测试参数可以在脚本中通过System.getProperty('param')取得, 参数只能为数字、字母、下划线、逗号、圆点（.）或竖线(|)组成, 禁止输入空格, 长度在0-50之间。" />
                 </Form.Item>
                 <Form.Item className="Buttons">
                     <Button className="Save" htmlType="submit" type="primary">提交</Button>

@@ -29,8 +29,8 @@ export default function App() {
             }
             const res = await axios.get("/argus-emergency/api/host", { params })
             setData(res.data)
-        } catch (e: any) {
-
+        } catch (error: any) {
+            message.error(error.message)
         }
         setLoading(false)
     }
@@ -40,7 +40,7 @@ export default function App() {
         Modal.confirm({
             title: '是否删除？',
             icon: <ExclamationCircleOutlined />,
-            content: '删除后无法恢复，请谨慎操作',
+            content: '删除后无法恢复, 请谨慎操作',
             okType: 'danger',
             async onOk() {
                 try {
@@ -135,13 +135,16 @@ export default function App() {
                         render(licensed, record) {
                             if (licensed === undefined) return null
                             return <span className={`Licensed${licensed === true ? " active" : " deactive"}`} onClick={async function () {
+                                if (submit) return
+                                submit = true
                                 try {
                                     await axios.post('/argus-emergency/api/host/license', { server_id: record.server_id, licensed: !licensed })
                                     message.success("修改成功")
-                                    load()
+                                    await load()
                                 } catch (error: any) {
                                     message.error(error.message)
                                 }
+                                submit = false
                             }}>
                                 <span>未许可</span>
                                 <span>已许可</span>

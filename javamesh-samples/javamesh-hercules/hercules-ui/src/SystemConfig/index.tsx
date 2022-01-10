@@ -25,8 +25,8 @@ export default function App() {
             }
             const res = await axios.get("/argus-user/api/user", { params })
             setData(res.data)
-        } catch (e: any) {
-            
+        } catch (error: any) {
+            message.error(error.message)
         }
         setLoading(false)
     }
@@ -179,7 +179,7 @@ export default function App() {
                                         load()
                                         Modal.confirm({
                                             title: "密码重置成功",
-                                            content: `登录账号：${res.data.data.username} 密码：${res.data.data.password}`
+                                            content: `登录账号: ${res.data.data.username} 密码: ${res.data.data.password}`
                                         })
                                     } catch (error: any) {
                                         message.error(error.message)
@@ -214,7 +214,7 @@ function AddUser(props: { load: () => void }) {
                     props.load()
                     Modal.confirm({
                         title: "用户创建成功",
-                        content: `登录账号：${res.data.data.username} 密码：${res.data.data.password}`,
+                        content: `登录账号: ${res.data.data.username} 密码: ${res.data.data.password}`,
                     })
                 } catch (error: any) {
                     message.error(error.message)
@@ -223,7 +223,7 @@ function AddUser(props: { load: () => void }) {
                 <Form.Item name="username" label="登录账号" rules={[{
                     required: true,
                     pattern: /^\w{6,15}$/,
-                    message: "不得少于6个字且不得超过15个字，只能输入字母、数字、下划线"
+                    message: "不得少于6个字且不得超过15个字, 只能输入字母、数字、下划线"
                 }]}>
                     <Input />
                 </Form.Item>

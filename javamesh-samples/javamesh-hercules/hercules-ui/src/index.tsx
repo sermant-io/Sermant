@@ -8,6 +8,9 @@ import App from './App'
 import {ContextProvider} from './ContextProvider';
 import zhCN from 'antd/lib/locale/zh_CN';
 import "./mock"
+import { loader } from "@monaco-editor/react";
+
+loader.config({ paths: { vs: "/vs" } });
 
 ReactDOM.render(<BrowserRouter>
     <ConfigProvider locale={zhCN} form={{

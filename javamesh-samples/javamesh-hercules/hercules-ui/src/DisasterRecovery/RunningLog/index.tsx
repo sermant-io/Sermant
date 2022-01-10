@@ -1,6 +1,6 @@
 import { Button, Form, Input, message, Table } from "antd";
 import React, { useEffect, useRef, useState } from "react"
-import CacheRoute, { CacheSwitch } from "react-router-cache-route";
+import CacheRoute, { CacheSwitch, useDidRecover } from "react-router-cache-route";
 import { Link, Route, useRouteMatch } from "react-router-dom";
 import Breadcrumb from "../../component/Breadcrumb";
 import Card from "../../component/Card";
@@ -53,6 +53,7 @@ function Home() {
     useEffect(function () {
         load()
     }, [])
+    useDidRecover(load)
     return <div className="RunningLog">
         <Breadcrumb label="执行记录" />
         <Card>
@@ -116,12 +117,6 @@ function Home() {
                         title: "开始时间",
                         width: 200,
                         dataIndex: "start_time",
-                        ellipsis: true
-                    },
-                    {
-                        title: "执行时间",
-                        width: 200,
-                        dataIndex: "execute_time",
                         ellipsis: true
                     }
                 ]}
