@@ -24,23 +24,23 @@ import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
- * 针对eureka，consul注册中心获取实例列表拦截
+ * 获取查询原注册中心查询实例列表客户端
  *
  * @author zhouss
  * @since 2021-12-17
  */
-public class DiscoveryClientEnhancer implements EnhanceDefinition {
+public class DiscoveryClientConfigurationEnhancer implements EnhanceDefinition {
 
     /**
      * 增强类的全限定名
      * 该client注入优先级最高，因此只需拦截该client即可
      */
-    private static final String ENHANCE_CLASS = "org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient";
+    private static final String ENHANCE_CLASS = "org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClientAutoConfiguration";
 
     /**
      * 拦截类的全限定名
      */
-    private static final String INTERCEPT_CLASS = "com.huawei.register.interceptors.DiscoveryClientInterceptor";
+    private static final String INTERCEPT_CLASS = "com.huawei.register.interceptors.ClientConfigurationInterceptor";
 
     @Override
     public ClassMatcher enhanceClass() {
@@ -51,7 +51,7 @@ public class DiscoveryClientEnhancer implements EnhanceDefinition {
     public MethodInterceptPoint[] getMethodInterceptPoints() {
         return new MethodInterceptPoint[] {
                 MethodInterceptPoint.newInstMethodInterceptPoint(INTERCEPT_CLASS,
-                        ElementMatchers.<MethodDescription>named("getInstances"))
+                        ElementMatchers.<MethodDescription>named("compositeDiscoveryClient"))
         };
     }
 }

@@ -30,8 +30,9 @@ public interface RegisterCenterService extends PluginService {
      * 拦截原spring的注册方法
      *
      * @param registration 注册信息
+     * @param result 前置返回
      */
-    void register(Object registration);
+    void register(Object registration, BeforeResult result);
 
     /**
      * 替换服务列表

@@ -17,23 +17,24 @@
 
 package com.huawei.register.service.client;
 
-import com.huawei.register.service.config.RegisterConfig;
+import com.huawei.register.config.RegisterConfig;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.integration.utils.APMThreadFactory;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-
 import org.apache.servicecomb.foundation.auth.SignRequest;
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpConfiguration;
 import org.apache.servicecomb.service.center.client.AddressManager;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterOperation;
+import org.apache.servicecomb.service.center.client.exception.OperationException;
 import org.apache.servicecomb.service.center.client.model.Framework;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstancesResponse;
 import org.apache.servicecomb.service.center.client.model.MicroserviceStatus;
+import org.apache.servicecomb.service.center.client.model.RegisteredMicroserviceInstanceResponse;
 import org.apache.servicecomb.service.center.client.model.RegisteredMicroserviceResponse;
 import org.springframework.cloud.client.serviceregistry.Registration;
 
@@ -59,11 +60,6 @@ public class ScClient {
      * 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
-
-    /**
-     * 实例后缀
-     */
-    private static final String INSTANCE_SUFFIX = "-instance";
 
     /**
      * http url前缀
@@ -121,17 +117,17 @@ public class ScClient {
             response = client.registerMicroservice(microservice);
         }
         String serviceId = response.getServiceId();
-        final MicroserviceInstance microserviceInstance = buildMicroServiceInstance(registration);
-        client.registerMicroserviceInstance(microserviceInstance);
-        updateCache(serviceId, microserviceInstance.getInstanceId());
+        final MicroserviceInstance microserviceInstance = buildMicroServiceInstance(registration, serviceId);
+        final RegisteredMicroserviceInstanceResponse registeredMicroserviceInstanceResponse = client.registerMicroserviceInstance(microserviceInstance);
+        if (registeredMicroserviceInstanceResponse != null) {
+            updateCache(serviceId, registeredMicroserviceInstanceResponse.getInstanceId());
+        }
     }
 
-    private MicroserviceInstance buildMicroServiceInstance(Registration registration) {
+    private MicroserviceInstance buildMicroServiceInstance(Registration registration, String serviceId) {
         final MicroserviceInstance microserviceInstance = new MicroserviceInstance();
-        microserviceInstance.setInstanceId(buildInstanceId(registration.getPort(), registration.getHost(),
-                registration.getServiceId()));
         microserviceInstance.setStatus(MicroserviceInstanceStatus.UP);
-        microserviceInstance.setServiceId(registration.getServiceId());
+        microserviceInstance.setServiceId(serviceId);
         microserviceInstance.setVersion(registerConfig.getVersion());
         microserviceInstance.setHostName(registration.getHost());
         microserviceInstance.setEndpoints(buildEndpoints(registration));
@@ -168,7 +164,13 @@ public class ScClient {
      * @return 实例列表
      */
     public List<MicroserviceInstance> queryInstancesByServiceId(String serviceId) {
-        final MicroserviceInstancesResponse response = client.getMicroserviceInstanceList(serviceId);
+        MicroserviceInstancesResponse response = null;
+        try {
+            response = client.getMicroserviceInstanceList(serviceId);
+        } catch (OperationException ex) {
+            LOGGER.warning(String.format(Locale.ENGLISH,
+                    "Query service center instance list failed! %s", ex.getMessage()));
+        }
         return response == null ? Collections.<MicroserviceInstance>emptyList() :
                 response.getInstances();
     }
@@ -180,10 +182,6 @@ public class ScClient {
         }
         instanceIds.add(instanceId);
         serviceInstanceIdCache.put(serviceId, instanceIds);
-    }
-
-    private String buildInstanceId(int port, String host, String serviceId) {
-        return serviceId + "-" + host + "-" + port + INSTANCE_SUFFIX;
     }
 
     private void initScClient() {

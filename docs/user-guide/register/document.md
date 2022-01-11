@@ -1,6 +1,6 @@
 # Register-Center
 
-本文主要介绍[注册中心](../../../sermant-plugins/sermant-register-center)以及该插件的使用方法
+本文主要介绍[注册中心插件](../../../sermant-plugins/sermant-register-center)以及该插件的使用方法
 
 ## 功能
 
@@ -54,4 +54,13 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=appN
 
 登录[Service Center](http://127.0.0.1:30103/)后台，查看相关服务实例是否已注册，并且访问应用接口，确认接口是否正常返回，若接口成功返回，则说明注册成功。
 
+
+
+## 更多文档
+
+- [SpringCloud注册中心迁移](./spring-cloud-register-migiration.md)
+
+
+
 [返回**Sermant**说明文档](../../README.md)
+

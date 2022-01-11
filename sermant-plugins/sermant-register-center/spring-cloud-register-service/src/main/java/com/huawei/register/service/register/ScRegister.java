@@ -18,7 +18,6 @@ package com.huawei.register.service.register;
 
 import com.huawei.register.service.client.ScClient;
 import com.huawei.register.service.utils.CommonUtils;
-import com.netflix.loadbalancer.Server;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
@@ -160,40 +159,5 @@ public class ScRegister implements Register {
             }
         }
         return null;
-    }
-
-    static class ScServer extends Server {
-        private final MetaInfo metaInfo;
-
-        public ScServer(final MicroserviceInstance microserviceInstance) {
-            super(microserviceInstance.getHostName(),
-                    CommonUtils.getPortByEndpoint(microserviceInstance.getEndpoints().get(0)));
-            this.metaInfo = new Server.MetaInfo() {
-                @Override
-                public String getAppName() {
-                    return microserviceInstance.getServiceId();
-                }
-
-                @Override
-                public String getServerGroup() {
-                    return null;
-                }
-
-                @Override
-                public String getServiceIdForDiscovery() {
-                    return null;
-                }
-
-                @Override
-                public String getInstanceId() {
-                    return microserviceInstance.getInstanceId();
-                }
-            };
-        }
-
-        @Override
-        public MetaInfo getMetaInfo() {
-            return this.metaInfo;
-        }
     }
 }
