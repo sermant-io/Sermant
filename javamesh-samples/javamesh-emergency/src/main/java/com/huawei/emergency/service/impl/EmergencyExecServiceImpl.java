@@ -418,6 +418,9 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
             return LogResponse.END;
         }
         if (StringUtils.isEmpty(recordDetail.getLog())) {
+            if (!RecordStatus.RUNNING.equals(recordDetail.getStatus())) {
+                return LogResponse.END;
+            }
             LogResponse log = LogMemoryStore.getLog(detailId, line);
             if (log.getLine() == null && log.getData().length == 0) { // 可能开始执行 但还未生成日志
                 return new LogResponse(line, LogMemoryStore.EMPTY_ARRAY);
