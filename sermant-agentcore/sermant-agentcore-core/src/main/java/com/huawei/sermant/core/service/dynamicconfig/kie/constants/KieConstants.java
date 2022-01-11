@@ -24,17 +24,7 @@ package com.huawei.sermant.core.service.dynamicconfig.kie.constants;
  */
 public class KieConstants {
     /**
-     * 核心线程数
+     * 默认groupKey
      */
-    public static final int CORE_THREAD_SIZE = 1;
-
-    /**
-     * 最大线程数
-     */
-    public static final int MAX_THREAD_SIZE = 3;
-
-    /**
-     * 队列长度
-     */
-    public static final int QUEUE_SIZE = 100;
+    public static final String DEFAULT_GROUP_KEY = "_DEFAULT_GROUP_KEY";
 }

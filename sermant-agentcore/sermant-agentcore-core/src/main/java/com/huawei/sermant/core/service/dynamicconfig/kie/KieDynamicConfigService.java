@@ -27,6 +27,7 @@ import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -48,7 +49,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
 
     @Override
     protected boolean doRemoveGroupListener(String group) {
-        return updateListener("GroupKey", group, null, false, false);
+        return updateGroupListener(group, null, false, false);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
 
     @Override
     public boolean addGroupListener(String group, DynamicConfigListener listener, boolean ifNotify) {
-        return updateListener("GroupKey", group, listener, true, ifNotify);
+        return updateGroupListener(group, listener, true, ifNotify);
     }
 
     @Override
@@ -68,14 +69,17 @@ public class KieDynamicConfigService extends DynamicConfigService {
 
     @Override
     public boolean addConfigListener(String key, String group, DynamicConfigListener listener, boolean ifNotify) {
-        return updateListener(key, LabelGroupUtils.createLabelGroup(
-                Collections.singletonMap(fixSeparator(group, true), fixSeparator(key, false))),
-                listener, true, ifNotify);
+        if (!LabelGroupUtils.isLabelGroup(group)) {
+            // 增加标签group判断, 对不规则的group进行适配处理
+            group = LabelGroupUtils.createLabelGroup(
+                    Collections.singletonMap(fixSeparator(group, true), fixSeparator(key, false)));
+        }
+        return subscriberManager.addConfigListener(key, group, listener, ifNotify);
     }
 
     @Override
     protected boolean doRemoveConfigListener(String key, String group) {
-        // KIE配置中心不支持移除单个key， 只能针对group操作
+        // 不支持移除单个监听器
         return false;
     }
 
@@ -102,7 +106,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
 
     @Override
     protected boolean doRemoveConfig(String key, String group) {
-        return false;
+        return subscriberManager.removeConfig(key, group);
     }
 
     @Override
@@ -128,15 +132,14 @@ public class KieDynamicConfigService extends DynamicConfigService {
      * 更新监听器（删除||添加）
      * 若第一次添加监听器，则会将数据通知给监听器
      *
-     * @param key          监听键
      * @param group        分组， 针对KIE特别处理生成group方法{@link LabelGroupUtils#createLabelGroup(Map)}
      * @param listener     对应改组的监听器
      * @param forSubscribe 是否为订阅
      * @param ifNotify     初次添加监听器，是否通知监听的数据
      * @return 更新是否成功
      */
-    private synchronized boolean updateListener(String key, String group, DynamicConfigListener listener,
-                                                boolean forSubscribe, boolean ifNotify) {
+    private synchronized boolean updateGroupListener(String group, DynamicConfigListener listener,
+                                                     boolean forSubscribe, boolean ifNotify) {
         if (listener == null) {
             LOGGER.warning("Empty listener is not allowed. ");
             return false;
@@ -148,7 +151,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
                 return subscriberManager.removeGroupListener(fixGroup(group), listener);
             }
         } catch (Exception exception) {
-            LOGGER.warning("Subscribed kie request failed! raw key : " + key);
+            LOGGER.warning(String.format(Locale.ENGLISH, "Subscribed kie request failed! raw group : %s", group));
             return false;
         }
     }

@@ -86,4 +86,20 @@ public interface HttpClient extends Client {
      */
     HttpResult doPost(String url, Map<String, Object> params, RequestConfig requestConfig, Map<String, String> headers);
 
+    /**
+     * put请求
+     *
+     * @param url 请求地址
+     * @param params 请求参数
+     * @return HttpResult
+     */
+    HttpResult doPut(String url, Map<String, Object> params);
+
+    /**
+     * delete请求
+     *
+     * @param url 请求地址
+     * @return HttpResult
+     */
+    HttpResult doDelete(String url);
 }
