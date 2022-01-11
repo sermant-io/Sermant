@@ -86,7 +86,7 @@ public class LocalScriptExecutor implements ScriptExecutor {
 
     private String createScriptFile(String scriptName, String scriptContent) throws IOException {
         String fileName = String.format(Locale.ROOT, "%s%s-%s.sh",
-                scriptLocation, scriptName, System.nanoTime());
+            scriptLocation, scriptName, System.nanoTime());
         try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
             fileOutputStream.write(scriptContent.getBytes(StandardCharsets.UTF_8));
             fileOutputStream.flush();
@@ -109,7 +109,11 @@ public class LocalScriptExecutor implements ScriptExecutor {
             if (timeOut > 0) {
                 task = timeoutScriptExecThreadPool.submit(() -> parseResult(finalProcess.getInputStream(), logCallback, id));
                 info = task.get(timeOut, TimeUnit.MILLISECONDS);
-                return process.waitFor(timeOut, TimeUnit.MILLISECONDS) ? ExecResult.success(info) : ExecResult.fail(info);
+                if (process.waitFor(timeOut, TimeUnit.MILLISECONDS)) {
+                    return process.waitFor() == 0 ? ExecResult.success(info) : ExecResult.fail(info);
+                } else {
+                    throw new TimeoutException();
+                }
             } else {
                 info = parseResult(finalProcess.getInputStream(), logCallback, id);
                 return process.waitFor() == 0 ? ExecResult.success(info) : ExecResult.fail(info);
