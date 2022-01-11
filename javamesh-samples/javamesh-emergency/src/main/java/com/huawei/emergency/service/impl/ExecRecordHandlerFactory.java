@@ -335,10 +335,10 @@ public class ExecRecordHandlerFactory {
     }
 
     /**
-     * 判断此任务记录record是否已经完成，即判断该record下是否存在未完成的record_detail
+     * 判断此任务记录record是否已经完成，即判断该记录下是否存在未完成的recordDetail
      *
      * @param recordId record主键
-     * @return
+     * @return 是否完成
      */
     public boolean isRecordFinished(int recordId) {
         EmergencyExecRecordDetailExample isFinished = new EmergencyExecRecordDetailExample();
@@ -364,6 +364,7 @@ public class ExecRecordHandlerFactory {
                 .andTaskIdIsNull();
         final List<EmergencyExecRecord> emergencyExecRecords = recordMapper.selectByExample(sceneRecordCondition);
         if (emergencyExecRecords.size() > 0) {
+            WebSocketServer.sendMessage("/plan/" + emergencyExecRecords.get(0).getPlanId());
             WebSocketServer.sendMessage("/scena/" + emergencyExecRecords.get(0).getRecordId());
         }
     }
