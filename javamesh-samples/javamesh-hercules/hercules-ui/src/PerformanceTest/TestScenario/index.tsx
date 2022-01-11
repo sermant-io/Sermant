@@ -19,7 +19,7 @@ export default function App() {
             <Route exact path={path} render={function() {
                 setTimeout(function() {
                     homeRef.current?.show()
-                }, 100)
+                }, 0)
                 return null
             }} />
             <Route exact path={`${path}/Create`} render={function() {
