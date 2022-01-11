@@ -232,6 +232,7 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
                 threadPoolExecutor.execute(handlerFactory.handle(record));
             });
         LOGGER.debug("threadPoolExecutor = {} ", threadPoolExecutor);
+        WebSocketServer.sendMessage("/plan/" + planId);
         return CommonResult.success(emergencyExec);
     }
 
@@ -296,7 +297,6 @@ public class EmergencyPlanServiceImpl implements EmergencyPlanService {
         updatePlan.setUpdateTime(new Date());
         updatePlan.setUpdateUser(userName);
         planMapper.updateByPrimaryKeySelective(updatePlan);
-        WebSocketServer.sendMessage("/plan/" + plan.getPlanId());
         return CommonResult.success();
     }
 
