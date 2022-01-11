@@ -100,23 +100,27 @@ public class LocalScriptExecutor implements ScriptExecutor {
     }
 
     private ExecResult exec(String[] commands, LogCallBack logCallback, int id, long timeOut) {
-        Future<String> task = null;
+        Future<String> infoTask = null;
+        Future<String> errorTask = null;
         Process process = null;
         try {
             process = Runtime.getRuntime().exec(commands);
             Process finalProcess = process;
-            String info;
             if (timeOut > 0) {
-                task = timeoutScriptExecThreadPool.submit(() -> parseResult(finalProcess.getInputStream(), logCallback, id));
-                info = task.get(timeOut, TimeUnit.MILLISECONDS);
+                infoTask = timeoutScriptExecThreadPool.submit(() -> parseResult(finalProcess.getInputStream(), logCallback, id));
+                String info = infoTask.get(timeOut, TimeUnit.MILLISECONDS);
+                errorTask = timeoutScriptExecThreadPool.submit(() -> parseResult(finalProcess.getErrorStream(), logCallback, id));
+                String errorInfo = errorTask.get(timeOut, TimeUnit.MILLISECONDS);
+                LOGGER.info("local detailId={} log is: {} ", id, info);
                 if (process.waitFor(timeOut, TimeUnit.MILLISECONDS)) {
-                    return process.waitFor() == 0 ? ExecResult.success(info) : ExecResult.fail(info);
+                    return process.exitValue() == 0 ? ExecResult.success(info) : ExecResult.fail(errorInfo);
                 } else {
                     throw new TimeoutException();
                 }
             } else {
-                info = parseResult(finalProcess.getInputStream(), logCallback, id);
-                return process.waitFor() == 0 ? ExecResult.success(info) : ExecResult.fail(info);
+                String info = parseResult(finalProcess.getInputStream(), logCallback, id);
+                String errorInfo = parseResult(finalProcess.getErrorStream(), logCallback, id);
+                return process.waitFor() == 0 ? ExecResult.success(info) : ExecResult.error(errorInfo);
             }
         } catch (IOException | InterruptedException | ExecutionException e) {
             LOGGER.error("execId={} occur errors. {}", id, e.getMessage());
@@ -126,8 +130,11 @@ public class LocalScriptExecutor implements ScriptExecutor {
             process.destroy();
             return ExecResult.error("time out");
         } finally {
-            if (task != null) {
-                task.cancel(true);
+            if (infoTask != null) {
+                infoTask.cancel(true);
+            }
+            if (errorTask != null) {
+                errorTask.cancel(true);
             }
             if (process != null && process.isAlive()) {
                 process.destroy();
