@@ -1,4 +1,4 @@
-import { Button, Descriptions, Input, Tag } from "antd";
+import { Button, Descriptions, Input, Radio, Table, Tabs, Tag } from "antd";
 import { PresetColorTypes } from "antd/lib/_util/colors";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -66,6 +66,25 @@ export default function App() {
                     <div className="Title">错误</div>
                 </div>
             </div>
+            <div className="Label">TPS图表</div>
+            <Tabs type="card" size="small">
+                <Tabs.TabPane tab="业务性能指标" key="1">
+                    <Table columns={[
+                        { title: "事务名称" },
+                        { title: "TPS" },
+                        { title: "响应时间(ms)" },
+                        { title: "成功数" },
+                        { title: "失败数" },
+                        { title: "失败率%" }
+                    ]} />
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="硬件资源指标" key="2">
+                    <Radio.Group options={["全部", "192.168.0.1"]} />
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="JVM性能指标" key="3">
+                    Content of Tab Pane 2
+                </Tabs.TabPane>
+            </Tabs>
             <div className="Label">测试注释</div>
             <div className="Comment">
                 <Input.TextArea className="Input" showCount maxLength={256} autoSize={{ minRows: 2, maxRows: 2 }} placeholder="请输入描述" />

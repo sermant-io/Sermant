@@ -118,6 +118,12 @@ function Home() {
                         width: 200,
                         dataIndex: "start_time",
                         ellipsis: true
+                    },
+                    {
+                        title: "执行时间",
+                        width: 200,
+                        dataIndex: "execute_time",
+                        ellipsis: true
                     }
                 ]}
             />

@@ -2,7 +2,7 @@ import { Button, Checkbox, DatePicker, Form, FormInstance, Input, InputNumber, m
 import React, { useEffect, useRef, useState } from "react"
 import ServiceSelect from "../../../component/ServiceSelect"
 import HostForm from "./HostForm"
-import { Area } from '@antv/g2plot'
+import { Line, LineOptions } from '@antv/g2plot'
 import "./TaskForm.scss"
 import axios from "axios"
 import { debounce } from "lodash"
@@ -10,6 +10,21 @@ import { useHistory } from "react-router"
 import moment, { Moment } from "moment"
 import PageInfo from "../../../component/PageInfo"
 
+const options: LineOptions = {
+    height: 250,
+    data: [],
+    xField: 'time',
+    yField: 'pressure',
+    xAxis: {
+        range: [0, 1],
+        title: {text: "执行时间（秒）"}
+    },
+    yAxis: {
+        title: {text: "虚拟用户数"}
+    },
+    point: {},
+    color: '#31baf3',
+}
 export default function App(props: { scenarioName?: string }) {
     let submit = false
     const history = useHistory()
@@ -18,7 +33,7 @@ export default function App(props: { scenarioName?: string }) {
     const [disable, setDisable] = useState(true)
     const paramRef = useRef({})
     const chartRef = useRef(null)
-    const plotRef = useRef<Area>()
+    const plotRef = useRef<Line>()
     async function save(values: any, run?: boolean) {
         if (submit) return
         submit = true
@@ -39,6 +54,19 @@ export default function App(props: { scenarioName?: string }) {
     async function load() {
         try {
             const res = await axios.post('/argus/api/task/pressurePrediction', { params: paramRef.current })
+            const growthInterval = (paramRef.current as {growth_interval: number}).growth_interval
+            const stepType = plotRef.current?.options.stepType
+            if (growthInterval > 0) {
+                if (stepType !== "hv") {
+                    plotRef.current?.destroy()
+                    plotRef.current = new Line(chartRef.current!!, {...options, stepType: "hv"})
+                }
+            } else {
+                if (stepType === "hv") {
+                    plotRef.current?.destroy()
+                    plotRef.current = new Line(chartRef.current!!, options)
+                }
+            }
             plotRef.current?.changeData(res.data.data)
             plotRef.current?.render()
         } catch (error: any) {
@@ -48,26 +76,7 @@ export default function App(props: { scenarioName?: string }) {
     const debounceRef = useRef(debounce(load, 1000))
     useEffect(function () {
         load()
-        plotRef.current = new Area(chartRef.current!!,{
-            height: 250,
-            data: [],
-            xField: 'time',
-            yField: 'pressure',
-            xAxis: {
-                range: [0, 1],
-                title: {text: "执行时间（秒）"}
-            },
-            yAxis: {
-                title: {text: "虚拟用户数"}
-            },
-            point: {},
-            color: '#31baf3',
-            areaStyle: () => {
-                return {
-                    fill: 'l(270) 0:#ffffff 0.5:#e4f4fb 1:#31baf3',
-                };
-            },
-        })
+        plotRef.current = new Line(chartRef.current!!, options)
         return function () {
             plotRef.current?.destroy()
         }
