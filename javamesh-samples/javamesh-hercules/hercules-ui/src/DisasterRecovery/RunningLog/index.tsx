@@ -30,23 +30,19 @@ function Home() {
     const stateRef = useRef<any>({})
     async function load() {
         setLoading(true)
+        const params = {
+            pageSize: stateRef.current.pagination?.pageSize || 10,
+            current: stateRef.current.pagination?.current,
+            sorter: stateRef.current.sorter?.field,
+            order: stateRef.current.sorter?.order,
+            ...stateRef.current.search,
+            ...stateRef.current.filters
+        }
         try {
-            const params = {
-                pageSize: stateRef.current.pagination?.pageSize || 10,
-                current: stateRef.current.pagination?.current,
-                sorter: stateRef.current.sorter?.field,
-                order: stateRef.current.sorter?.order,
-                ...stateRef.current.search,
-                ...stateRef.current.filters
-            }
-            try {
-                const res = await axios.get('/argus-emergency/api/history', { params })
-                setData(res.data)
-            } catch (error: any) {
-                
-            }
-        } catch (e: any) {
-            message.error(e.message)
+            const res = await axios.get('/argus-emergency/api/history', { params })
+            setData(res.data)
+        } catch (error: any) {
+            message.error(error.message)
         }
         setLoading(false)
     }
@@ -111,12 +107,6 @@ function Home() {
                         title: "执行状态",
                         width: 200,
                         dataIndex: "status", 
-                        ellipsis: true
-                    },
-                    {
-                        title: "开始时间",
-                        width: 200,
-                        dataIndex: "start_time",
                         ellipsis: true
                     },
                     {

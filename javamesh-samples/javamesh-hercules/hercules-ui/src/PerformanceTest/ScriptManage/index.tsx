@@ -446,6 +446,7 @@ function UploadFile(props: { load: () => {}, folder: string[] }) {
                     formData.append('file', values.file[0]);
                     const res = await fetch('/argus/api/script/upload', {
                         method: 'POST',
+                        credentials: 'same-origin',
                         body: formData
                     })
                     if (!res.ok) {

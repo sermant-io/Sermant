@@ -35,7 +35,6 @@
         display: flex;
         .Item {
             flex-grow: 1;
-            height: 80px;
             & + .Item {
                 border-left: #E5E7EA 1px solid;
             }
@@ -45,7 +44,6 @@
                 text-align: center;
                 font-weight: 500;
                 line-height: 30px;
-                height: 30px;
             }
             .Title {
                 text-align: center;
@@ -71,6 +69,45 @@
             border-radius: 0 3px 3px 0;
             &:hover{
                 cursor: pointer;
+            }
+        }
+    }
+}
+.ResourceCharts {
+    .Form {
+        margin-bottom: 20px;
+        .Input {
+            width: 230px;
+        }
+    }
+    .Grid{
+        display: flex;
+        border: #E5E7EA 1px solid;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        .Item {
+            flex-basis: 100%;
+            & + .Item {
+                border-left: #E5E7EA 1px solid;
+            }
+            .Value {
+                margin-top: 10px;
+                font-size: 20px;
+                text-align: center;
+                font-weight: 500;
+                line-height: 30px;
+            }
+            .Liquid {
+                height: 150px;
+            }
+            .Line {
+                height: 300px;
+            }
+            .Title {
+                text-align: center;
+                color: #959595;
+                font-size: 14px;
+                line-height: 34px;
             }
         }
     }
