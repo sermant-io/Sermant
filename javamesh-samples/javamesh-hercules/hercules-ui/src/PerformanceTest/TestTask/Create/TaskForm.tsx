@@ -58,13 +58,11 @@ export default function App(props: { scenarioName?: string }) {
             const stepType = plotRef.current?.options.stepType
             if (growthInterval > 0) {
                 if (stepType !== "hv") {
-                    plotRef.current?.destroy()
-                    plotRef.current = new Line(chartRef.current!!, {...options, stepType: "hv"})
+                    plotRef.current?.update({stepType: "hv"})
                 }
             } else {
                 if (stepType === "hv") {
-                    plotRef.current?.destroy()
-                    plotRef.current = new Line(chartRef.current!!, options)
+                    plotRef.current?.update({stepType: undefined})
                 }
             }
             plotRef.current?.changeData(res.data.data)

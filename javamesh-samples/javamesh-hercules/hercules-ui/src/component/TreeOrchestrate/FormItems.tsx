@@ -2,17 +2,30 @@ import { Col, Divider, Form, Input, InputNumber, Radio, Row, Select } from "antd
 import Checkbox from "antd/lib/checkbox/Checkbox"
 import { FormItemLabelProps } from "antd/lib/form/FormItemLabel"
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import "./FormItems.scss"
 import Editor from "@monaco-editor/react";
 
-const defaults = new Map([
-    ["Root", {
-        sampling_interval: 2,
-        sampling_ignore: 0,
-    }]
-])
-export { defaults }
+
+function defaultFieldsValues(type: string) {
+    switch (type) {
+        case "Root":
+            return {
+                sampling_interval: 2,
+                sampling_ignore: 0,
+            }
+        case "JSR223PostProcessor":
+        case "JSR223PreProcessor":
+        case "JSR223Assertion":
+            return {
+                language: "shell"
+            }
+        default:
+            return {}
+    }
+}
+
+export { defaultFieldsValues }
 
 export default function App(props: { type: String }) {
     switch (props.type) {
@@ -52,7 +65,7 @@ export default function App(props: { type: String }) {
                 <Row gutter={24}>
                     <Col span="6">
                         <Form.Item label="协议" name="protocol">
-                            <Input />
+                            <Select options={[{ value: "http" }]} />
                         </Form.Item>
                     </Col>
                     <Col span="12">
@@ -70,7 +83,7 @@ export default function App(props: { type: String }) {
                 <Row gutter={24}>
                     <Col span="6">
                         <Form.Item name="method">
-                            <Select options={[{ value: "GET" }, { value: "POST" }]} />
+                            <Select options={[{ value: "GET" }, { value: "POST" }, { value: "PUT" }, { value: "DELETE" }, { value: "TRACE" }, { value: "HEAD" }, { value: "OPTIONS" }]} />
                         </Form.Item>
                     </Col>
                     <Col span="12">
@@ -84,7 +97,7 @@ export default function App(props: { type: String }) {
                         </Form.Item>
                     </Col>
                 </Row>
-                <Divider orientation="left">HTTP请求</Divider>
+                <Divider orientation="left">请求参数</Divider>
                 <HTTPRequestHeaders />
                 <Divider orientation="left">消息体数据</Divider>
                 <Form.Item label="消息体" name="body">
@@ -112,12 +125,8 @@ export default function App(props: { type: String }) {
             </Form.Item>
         case "JSR223PreProcessor":
         case "JSR223PostProcessor":
-            return <>
-                <Divider orientation="left">Groovy脚本</Divider>
-                <Form.Item name="script">
-                    <Editor height={400} language="python"/>
-                </Form.Item>
-            </>
+        case "JSR223Assertion":
+            return <ScriptEditor />
         case "ResponseAssertion":
             return <>
                 <Divider orientation="left">测试字段</Divider>
@@ -139,11 +148,42 @@ export default function App(props: { type: String }) {
                 </Form.Item>
                 <Divider orientation="left">方法内容</Divider>
                 <Form.Item name="script">
-                    <Editor height={400} language="python"/>
+                    <Editor height={400} language="python" />
+                </Form.Item>
+            </>
+        case "Counter":
+            return <>
+                <Form.Item label="开始值">
+                    <InputNumber className="InputNumber" min={0} />
+                </Form.Item>
+                <Form.Item label="递增">
+                    <InputNumber className="InputNumber" min={0} />
+                </Form.Item>
+                <Form.Item label="最大值">
+                    <InputNumber className="InputNumber" min={0} />
                 </Form.Item>
             </>
     }
     return null
+}
+
+function ScriptEditor() {
+    const [language, setLanguage] = useState("")
+    const radioRef = useRef<HTMLDivElement>(null)
+    useEffect(function () {
+        setLanguage((radioRef.current?.querySelector(".ant-radio-checked > input") as HTMLInputElement).value)
+    }, [])
+    return <>
+        <Divider orientation="left">脚本内容</Divider>
+        <Form.Item name="language">
+            <Radio.Group ref={radioRef} options={["shell", "javascript", "groovy",]} onChange={function (e) {
+                setLanguage(e.target.value)
+            }} />
+        </Form.Item>
+        <Form.Item name="script">
+            <Editor height={400} language={language} />
+        </Form.Item>
+    </>
 }
 
 function RootBasicScenario(props: FormItemLabelProps) {
@@ -201,7 +241,7 @@ function RootPresure() {
 
 function HTTPRequestHeaders() {
     return <div className="HTTPRequestHeaders">
-        <Form.List initialValue={[{}]} name="headers">{function (fields, { add, remove }) {
+        <Form.List initialValue={[{}]} name="parameters">{function (fields, { add, remove }) {
             return fields.map(function (item) {
                 return <div key={item.name} className="FormList">
                     <Form.Item name={[item.name, "name"]} rules={[{ max: 32 }]}><Input /></Form.Item>

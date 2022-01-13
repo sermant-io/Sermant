@@ -40,4 +40,5 @@ export default new Map([
     ["BeanShellPostProcessor", pim],
     ["RegularExpressionExtractor", output],
     ["ResponseAssertion", preview],
+    ["JSR223Assertion", preview],
 ])

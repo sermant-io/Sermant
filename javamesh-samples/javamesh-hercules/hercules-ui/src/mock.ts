@@ -524,7 +524,6 @@ echo "Hello World !"
           { key: "9639388182807-AfterProcess" },
           { key: "9639388182808-AfterThread" },
           { key: "9639388182809-TestFunc" },
-          { key: "9639388182810-HTTPRequest" },
           { key: "9639388182811-Before" },
           { key: "9639388182812-After" },
         ]
@@ -541,7 +540,6 @@ echo "Hello World !"
         "9639388182806-TransactionController": { title: "TransactionController" },
         "9639388182807-AfterProcess": { title: "@AfterProcess" },
         "9639388182808-AfterThread": { title: "@AfterThread" },
-        "9639388182810-HTTPRequest": { title: "HTTPRequest" },
         "9639388182811-Before": { title: "@Before" },
         "9639388182812-After": { title: "@After" }
       }

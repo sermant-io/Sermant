@@ -1,7 +1,8 @@
 import { Liquid, LiquidOptions } from "@antv/g2plot";
 import { Button, Descriptions, Form, Input, Select, Table, Tabs, Tag } from "antd";
+import { useForm } from "antd/lib/form/Form";
 import { PresetColorTypes } from "antd/lib/_util/colors";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Breadcrumb from "../../../component/Breadcrumb";
 import Card from "../../../component/Card";
@@ -110,10 +111,18 @@ function BusinessCharts() {
 }
 
 function ResourceCharts() {
+    const [ips, setIps] = useState<[{ value: string }]>()
     const cpuUsageRef = useRef(null)
     const memoryUsageRef = useRef(null)
     const ioBusyRef = useRef(null)
+    const cpuRef = useRef(null)
+    const memoryRef = useRef(null)
+    const diskRef = useRef(null)
+    const networkRef = useRef(null)
+    const [form] = useForm()
     useEffect(function () {
+        form.setFieldsValue({ip: "192.168.0.1"})
+        setIps([{value: "192.168.0.1"}])
         const option: LiquidOptions = {
             percent: 0.7,
             outline: {
@@ -158,16 +167,17 @@ function ResourceCharts() {
         cpuUsageChart.render()
         memoryUsageChart.render()
         ioBusyChart.render()
+        
         return function () {
             cpuUsageChart.destroy()
             memoryUsageChart.destroy()
             ioBusyChart.destroy()
         }
-    }, [])
+    }, [form])
     return <div className="ResourceCharts">
-        <Form layout="inline" className="Form">
+        <Form form={form} layout="inline" className="Form">
             <Form.Item name="ip">
-                <Select className="Input" showSearch allowClear options={[{ value: "192.168.0.1" }]} />
+                <Select className="Input" showSearch options={ips} />
             </Form.Item>
         </Form>
         <div className="Grid">
@@ -200,21 +210,21 @@ function ResourceCharts() {
         </div>
         <div className="Grid">
             <div className="Item">
-                <div className="Line"></div>
+                <div ref={cpuRef} className="Line"></div>
                 <div className="Title">CPU</div>
             </div>
             <div className="Item">
-                <div className="Line"></div>
+                <div ref={memoryRef} className="Line"></div>
                 <div className="Title">内存</div>
             </div>
         </div>
         <div className="Grid">
             <div className="Item">
-                <div className="Line"></div>
+                <div ref={diskRef} className="Line"></div>
                 <div className="Title">磁盘IO</div>
             </div>
             <div className="Item">
-                <div className="Line"></div>
+                <div ref={networkRef} className="Line"></div>
                 <div className="Title">网络IO</div>
             </div>
         </div>

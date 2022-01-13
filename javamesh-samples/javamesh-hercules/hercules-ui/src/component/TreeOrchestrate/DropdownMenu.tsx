@@ -12,8 +12,6 @@ const Sampler: MenuConfig = {
 const LogicController: MenuConfig = {
     type: "LogicController", title: "逻辑控制器", children: [
         { type: "TransactionController", title: "事务控制器" },
-        { type: "LoopController", title: "循环控制器" },
-        { type: "WhileController", title: "While控制器" }
     ]
 }
 const Timer: MenuConfig = {
@@ -31,26 +29,48 @@ const PostProcessor: MenuConfig = {
         { type: "JSR223PostProcessor", title: "JSR223 后置处理程序" },
     ]
 }
-const Assertions: MenuConfig = {
+const ResponseAssertion: MenuConfig = {
     type: "Assertions", title: "断言器", children: [
-        { type: "ResponseAssertion", title: "响应断言" }
+        { type: "ResponseAssertion", title: "响应断言" },
+        { type: "JSR223Assertion", title: "JSR223断言"}
     ]
 }
+
+const Assertion: MenuConfig = {
+    type: "Assertions", title: "断言器", children: [
+        { type: "JSR223Assertion", title: "JSR223断言"}
+    ]
+}
+
 const TestGroup: MenuConfig = {
     type: "TestGroup", title: "代码块", children: [
         { type: "TestFunc", title: "方法代码块" }
     ]
 }
-const common = [Sampler, LogicController, Timer, PreProcessor, PostProcessor, Assertions]
+
+const ConfigElement: MenuConfig = {
+    type: "ConfigElement", title: "配置元件", children: [
+        { type: "Counter", title: "计数器"},
+        { type: "CsvDataSetConfig", title: "CSV数据文件设置"},
+        { type: "HttpCookieManager", title: "HTTP Cookie管理器" },
+        { type: "HttpHeaderManager", title: "HTTP信息头管理器"}
+    ]
+}
+
+const common = [Sampler, LogicController, Timer, Assertion, ConfigElement]
+const before = [...common, PreProcessor]
+const after = [...common, PostProcessor]
+
 const menuGroup = new Map<String, MenuConfig[]>([
-    ["Root", [...common, TestGroup]],
-    ["BeforeProcess", common],
-    ["BeforeThread", common],
-    ["AfterProcess", common],
-    ["AfterThread", common],
-    ["Before", common],
-    ["After", common],
-    ["TransactionController", common]
+    ["Root", [LogicController, TestGroup]],
+    ["BeforeProcess", before],
+    ["BeforeThread", before],
+    ["AfterProcess", after],
+    ["AfterThread", after],
+    ["Before", before],
+    ["After", after],
+    ["TransactionController", [...common, PreProcessor, PostProcessor]],
+    ["HTTPRequest", [ResponseAssertion]]
 ])
 // 计算规则, 菜单
 const rules = new Map<String, Set<String>>()
