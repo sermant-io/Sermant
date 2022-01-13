@@ -28,6 +28,7 @@ export default new Map([
     ["WhileController", view],
     ["CSVDataSetConfig", preferences],
     ["HTTPHeaderManager", preferences],
+    ["HTTPCookieManager", preferences],
     ["HTTPRequestDefaults", preferences],
     ["Counter", preferences],
     ["DNSCacheManager", preferences],
