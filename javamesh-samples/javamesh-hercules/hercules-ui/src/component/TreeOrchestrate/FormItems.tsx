@@ -1,4 +1,5 @@
-import { Col, Divider, Form, Input, InputNumber, Radio, Row, Select } from "antd"
+import { Button, Col, Divider, Form, Input, InputNumber, Radio, Row, Select, Upload } from "antd"
+import { UploadOutlined } from '@ant-design/icons';
 import Checkbox from "antd/lib/checkbox/Checkbox"
 import { FormItemLabelProps } from "antd/lib/form/FormItemLabel"
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
@@ -153,14 +154,33 @@ export default function App(props: { type: String }) {
             </>
         case "Counter":
             return <>
-                <Form.Item label="开始值">
+                <Form.Item name="start" label="开始值">
                     <InputNumber className="InputNumber" min={0} />
                 </Form.Item>
-                <Form.Item label="递增">
+                <Form.Item name="incr" label="递增">
                     <InputNumber className="InputNumber" min={0} />
                 </Form.Item>
-                <Form.Item label="最大值">
+                <Form.Item name="end" label="最大值">
                     <InputNumber className="InputNumber" min={0} />
+                </Form.Item>
+                <Form.Item name="format" label="数字格式">
+                    <Input />
+                </Form.Item>
+                <Form.Item name="name" label="引用名称">
+                    <Input />
+                </Form.Item>
+            </>
+        case "CSVDataSetConfig":
+            return <>
+                <Form.Item label="文件名" name="csv_file" valuePropName="fileList" getValueFromEvent={function(e) {
+                    return e.fileList;
+                }}>
+                    <Upload maxCount={1} action="/argus-emergency/api/upload">
+                        <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
+                </Form.Item>
+                <Form.Item label="文件编码">
+                    <Select options={[{ value: "UTF-8" }, { value: "UTF-16" }]} />
                 </Form.Item>
             </>
     }

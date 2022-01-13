@@ -1,10 +1,16 @@
 module.exports = function (app) {
     app.post('/argus/api/script/upload', function (req, res) {
-        res.json({msg: "上传失败！"})
+        res.json({msg: "上传失败"})
     });
     app.post('/argus-emergency/api/script/upload', function (_, res) {
-        res.json({ msg: "上传失败！" })
+        res.json({ msg: "上传失败" })
     });
+    app.post('/argus-emergency/api/upload', function(req, res) {
+        res.json({data: {
+            uid: "001",
+            name: "1.txt"
+        }})
+    })
     const ws = require('ws');
     const wss = new ws.WebSocketServer({ port: 8080 });
 
