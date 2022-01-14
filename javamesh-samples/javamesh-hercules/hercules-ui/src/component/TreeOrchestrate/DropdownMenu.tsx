@@ -52,8 +52,8 @@ const ConfigElement: MenuConfig = {
     type: "ConfigElement", title: "配置元件", children: [
         { type: "Counter", title: "计数器"},
         { type: "CSVDataSetConfig", title: "CSV数据文件设置"},
-        { type: "HTTPCookieManager", title: "HTTP Cookie管理器" },
-        { type: "HTTPHeaderManager", title: "HTTP信息头管理器"}
+        { type: "HTTPHeaderManager", title: "HTTP信息头管理器"},
+        { type: "HTTPCookieManager", title: "HTTP Cookie管理器" }
     ]
 }
 

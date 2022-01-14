@@ -297,7 +297,7 @@ function Home() {
                                 >停止</Button>}
                                 {record.status !== "running" && <StartButton load={load} test_id={record.test_id} />}
                                 <Link to={`${path}/Detail?test_id=${record.test_id}`}><Button type="link" size="small" >查看</Button></Link>
-                                <Link to={`${path}/View?test_id=${record.test_id}`}><Button type="link" size="small" >View</Button></Link>
+                                {/* <Link to={`${path}/View?test_id=${record.test_id}`}><Button type="link" size="small" >View</Button></Link> */}
                                 <Button type="link" size="small" onClick={function () {
                                     batchDelete([record.test_id])
                                 }}

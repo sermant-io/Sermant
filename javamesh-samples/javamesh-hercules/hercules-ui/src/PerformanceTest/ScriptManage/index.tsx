@@ -469,13 +469,7 @@ function UploadFile(props: { load: () => {}, folder: string[] }) {
                     <Form.Item name="commit" className="Input" wrapperCol={{ span: 16 }} label="提交信息" rules={[
                         { max: 64, required: true, whitespace: true },
                     ]}><Input placeholder="单行输入" /></Form.Item>
-                    <Form.Item name="file" valuePropName="fileList" wrapperCol={{ span: 16 }} label="文件" rules={[{ required: true }]}
-                        getValueFromEvent={function (e) {
-                            if (Array.isArray(e)) {
-                                return e;
-                            }
-                            return e && e.fileList;
-                        }}>
+                    <Form.Item name="file" valuePropName="fileList" wrapperCol={{ span: 16 }} label="文件" rules={[{ required: true }]}>
                         <Upload max={1} />
                     </Form.Item>
                 </div>

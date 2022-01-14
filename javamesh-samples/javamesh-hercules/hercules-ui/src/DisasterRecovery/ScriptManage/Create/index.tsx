@@ -33,7 +33,6 @@ export default function App() {
                             }
                             const res = await fetch('/argus-emergency/api/script/upload', {
                                 method: 'POST',
-                                credentials: 'same-origin',
                                 body: formData
                             })
                             if (!res.ok) {

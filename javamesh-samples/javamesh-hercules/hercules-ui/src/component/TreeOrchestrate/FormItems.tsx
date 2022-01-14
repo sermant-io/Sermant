@@ -1,11 +1,11 @@
-import { Button, Col, Divider, Form, Input, InputNumber, Radio, Row, Select, Upload } from "antd"
-import { UploadOutlined } from '@ant-design/icons';
+import { Col, Divider, Form, Input, InputNumber, Radio, Row, Select } from "antd"
 import Checkbox from "antd/lib/checkbox/Checkbox"
 import { FormItemLabelProps } from "antd/lib/form/FormItemLabel"
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import React, { useEffect, useRef, useState } from "react"
 import "./FormItems.scss"
 import Editor from "@monaco-editor/react";
+import OSSUpload from "../OSSUpload"
 
 
 function defaultFieldsValues(type: string) {
@@ -99,16 +99,22 @@ export default function App(props: { type: String }) {
                     </Col>
                 </Row>
                 <Divider orientation="left">请求参数</Divider>
-                <HTTPRequestHeaders />
+                <HTTPRequest name="parameters" />
                 <Divider orientation="left">消息体数据</Divider>
                 <Form.Item label="消息体" name="body">
                     <Input.TextArea maxLength={1000} showCount />
                 </Form.Item>
             </>
         case "JARImport":
-            return <Form.Item name="content">
-                <Input.TextArea maxLength={1000} showCount />
-            </Form.Item>
+            return <>
+                <Divider orientation="left">导入脚本</Divider>
+                <Form.Item name="content">
+                    <Editor height={400} language="java" />
+                </Form.Item>
+                <Form.Item label="JAR文件" name="filenames">
+                    <OSSUpload max={10} />
+                </Form.Item>
+            </>
         case "WhileController":
             return <>
                 <Divider orientation="left">循环继续条件</Divider>
@@ -172,16 +178,37 @@ export default function App(props: { type: String }) {
             </>
         case "CSVDataSetConfig":
             return <>
-                <Form.Item label="文件名" name="csv_file" valuePropName="fileList" getValueFromEvent={function(e) {
-                    return e.fileList;
-                }}>
-                    <Upload maxCount={1} action="/argus-emergency/api/upload">
-                        <Button icon={<UploadOutlined />}>Upload</Button>
-                    </Upload>
+                <Form.Item label="文件名" name="filenames">
+                    <OSSUpload max={2} />
                 </Form.Item>
-                <Form.Item label="文件编码">
-                    <Select options={[{ value: "UTF-8" }, { value: "UTF-16" }]} />
+                <Form.Item label="文件编码" name="file_encoding">
+                    <Select options={[{ value: "UTF-8" }, { value: "UTF-16" }, { value: "ISO-8859-15" }, { value: "US-ASCII" }]} />
                 </Form.Item>
+                <Form.Item label="变量名称(西文逗号间隔)" name="variable_names">
+                    <Input />
+                </Form.Item>
+                <Form.Item label="忽略首行(只在设置了变量名称才生效)" name="ignore_first_line">
+                    <Checkbox />
+                </Form.Item>
+                <Form.Item label="是否允许带引号" name="quoted_data">
+                    <Checkbox />
+                </Form.Item>
+                <Form.Item label="遇到文件结束符再次循环?" name="recycle">
+                    <Checkbox />
+                </Form.Item>
+                <Form.Item label="线程共享模式" name="share_mode">
+                    <Select options={[{ value: "ALL_THREADS" }, { value: "CURRENT_AGENT" }, { value: "CURRENT_PROCESS" }, { value: "CURRENT_THREAD" }]} />
+                </Form.Item>
+            </>
+        case "HTTPCookieManager":
+            return <>
+                <Divider orientation="left">Cookie</Divider>
+                <HTTPCookie />
+            </>
+        case "HTTPHeaderManager":
+            return <>
+                <Divider orientation="left">Cookie</Divider>
+                <HTTPRequest name="headers" />
             </>
     }
     return null
@@ -259,15 +286,34 @@ function RootPresure() {
     </>
 }
 
-function HTTPRequestHeaders() {
+function HTTPRequest(props: { name: string }) {
     return <div className="HTTPRequestHeaders">
-        <Form.List initialValue={[{}]} name="parameters">{function (fields, { add, remove }) {
+        <Form.List initialValue={[{}]} name={props.name}>{function (fields, { add, remove }) {
             return fields.map(function (item) {
                 return <div key={item.name} className="FormList">
                     <Form.Item name={[item.name, "name"]} rules={[{ max: 32 }]}><Input /></Form.Item>
                     <span className="Equal">=</span>
                     <Form.Item name={[item.name, "value"]} rules={[{ max: 32 }]}><Input /></Form.Item>
-                    <PlusCircleOutlined onClick={add} />
+                    <PlusCircleOutlined onClick={function(){add()}} />
+                    {item.key !== 0 && <MinusCircleOutlined onClick={function () { remove(item.name) }} />}
+                </div>
+            })
+        }}</Form.List>
+    </div>
+}
+
+function HTTPCookie() {
+    return <div className="HTTPRequestHeaders">
+        <Form.List initialValue={[{}]} name="cookies">{function (fields, { add, remove }) {
+            return fields.map(function (item) {
+                return <div key={item.name} className="FormList">
+                    <Form.Item name={[item.name, "name"]} rules={[{ max: 32 }]}><Input placeholder="名称" /></Form.Item>
+                    <span className="Equal">=</span>
+                    <Form.Item name={[item.name, "value"]} rules={[{ max: 32 }]}><Input placeholder="值" /></Form.Item>
+                    <Form.Item name={[item.name, "domain"]} rules={[{ max: 32 }]}><Input placeholder="域" /></Form.Item>
+                    <Form.Item name={[item.name, "path"]} rules={[{ max: 32 }]}><Input placeholder="路径" /></Form.Item>
+                    <Form.Item name={[item.name, "safe"]} rules={[{ max: 32 }]}><Input placeholder="安全" /></Form.Item>
+                    <PlusCircleOutlined onClick={function(){add()}} />
                     {item.key !== 0 && <MinusCircleOutlined onClick={function () { remove(item.name) }} />}
                 </div>
             })

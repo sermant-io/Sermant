@@ -520,7 +520,9 @@ echo "Hello World !"
         key: "9639388182803-Root", children: [
           { key: "9639388182804-BeforeProcess" },
           { key: "9639388182805-BeforeThread" },
-          { key: "9639388182806-TransactionController" },
+          { key: "9639388182806-TransactionController", children: [{
+            key: "9639388182812-CSVDataSetConfig"
+          }] },
           { key: "9639388182807-AfterProcess" },
           { key: "9639388182808-AfterThread" },
           { key: "9639388182809-TestFunc" },
@@ -541,7 +543,8 @@ echo "Hello World !"
         "9639388182807-AfterProcess": { title: "@AfterProcess" },
         "9639388182808-AfterThread": { title: "@AfterThread" },
         "9639388182811-Before": { title: "@Before" },
-        "9639388182812-After": { title: "@After" }
+        "9639388182812-After": { title: "@After" },
+        "9639388182812-CSVDataSetConfig": {title: "CSV数据文件设置",csv_file: "001/.npmrc"}
       }
     }
   }
