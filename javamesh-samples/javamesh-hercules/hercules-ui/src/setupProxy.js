@@ -5,7 +5,7 @@ module.exports = function (app) {
     app.post('/argus-emergency/api/script/upload', function (_, res) {
         res.json({ msg: "上传失败" })
     });
-    app.post('/argus-emergency/api/file/upload', function(req, res) {
+    app.post('/argus-emergency/api/resource', function(req, res) {
         res.json({data: {
             uid: "001"
         }})
