@@ -56,7 +56,7 @@ if (process.env.NODE_ENV === 'development') {
         update_time: "2019-03-19 10:53", version: "224 ", size: ""
       },
       {
-        type: "file", script_name: "mockKafka.py",
+        type: "file", script_name: "mockKafka.groovy",
         commit: "quark Test",
         update_time: "2019-03-19 10:53", version: "162", size: "48"
       },
@@ -544,7 +544,7 @@ echo "Hello World !"
         "9639388182808-AfterThread": { title: "@AfterThread" },
         "9639388182811-Before": { title: "@Before" },
         "9639388182812-After": { title: "@After" },
-        "9639388182812-CSVDataSetConfig": {title: "CSV数据文件设置",csv_file: "001/.npmrc"}
+        "9639388182812-CSVDataSetConfig": {title: "CSV数据文件设置",filenames: "001/.npmrc"}
       }
     }
   }
