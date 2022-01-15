@@ -19,8 +19,8 @@ if (process.env.NODE_ENV === 'development') {
   }
   mock.onGet('/argus/api/scenario').reply(function () {
     return [200, {
-      data: Array.from({length: 10}, function(_, index) {
-        return {...scenario, scenario_id: index}
+      data: Array.from({ length: 10 }, function (_, index) {
+        return { ...scenario, scenario_id: index }
       }),
       total: 11
     }]
@@ -496,7 +496,7 @@ echo "Hello World !"
       }]
     } else if (line < 20) {
       return [200, {
-        data: [line+"行"],
+        data: [line + "行"],
         line
       }]
     } else {
@@ -535,9 +535,11 @@ echo "Hello World !"
         key: "9639388182803-Root", children: [
           { key: "9639388182804-BeforeProcess" },
           { key: "9639388182805-BeforeThread" },
-          { key: "9639388182806-TransactionController", children: [{
-            key: "9639388182812-CSVDataSetConfig"
-          }] },
+          {
+            key: "9639388182806-TransactionController", children: [{
+              key: "9639388182812-CSVDataSetConfig"
+            }]
+          },
           { key: "9639388182807-AfterProcess" },
           { key: "9639388182808-AfterThread" },
           { key: "9639388182809-TestFunc" },
@@ -559,7 +561,7 @@ echo "Hello World !"
         "9639388182808-AfterThread": { title: "@AfterThread" },
         "9639388182811-Before": { title: "@Before" },
         "9639388182812-After": { title: "@After" },
-        "9639388182812-CSVDataSetConfig": {title: "CSV数据文件设置",filenames: "001/.npmrc 002/xxx"}
+        "9639388182812-CSVDataSetConfig": { title: "CSV数据文件设置", filenames: "001/.npmrc 002/xxx" }
       }
     }
   }
@@ -782,7 +784,7 @@ echo "Hello World !"
       }]
     }
     return [200, {
-      data: [line+"行"],
+      data: [line + "行"],
       line
     }]
   })
@@ -821,4 +823,6 @@ echo "Hello World !"
   mock.onGet("/argus-emergency/api/host/search/password_uri").reply(200, {
     data: ["root@192.168.0.1"]
   })
+  mock.onPost('/argus/api/script/upload').reply(200)
+  mock.onPost('/argus-emergency/api/script/upload').reply(200)
 }

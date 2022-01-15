@@ -35,7 +35,6 @@ export default function App() {
                     values.map.forEach(function (value, key) {
                         map[key] = value
                     })
-                    console.log(map)
                     await axios.put("/argus-emergency/api/script/orchestrate", { tree: values.tree, map, script_id })
                 } catch (error: any) {
                     Modal.error({
