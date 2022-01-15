@@ -2,7 +2,6 @@ import { Button, message, Modal, Table } from "antd"
 import React, { useEffect, useRef, useState } from "react"
 import Breadcrumb from "../../component/Breadcrumb"
 import Card from "../../component/Card"
-import PageInfo from "../../component/PageInfo"
 import { CloseOutlined, SyncOutlined, PauseOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import "./index.scss"
 import axios from "axios"
@@ -86,7 +85,6 @@ function Home() {
     statusMap.set("fail", "#FF4E4E")
     return <div className="ScriptManage">
         <Breadcrumb label="压测引擎" />
-        <PageInfo>如需下载代理, 请在右上角菜单栏点击选择<Button type="link" size="small"> “下载代理” </Button>。</PageInfo>
         <Card>
             <div className="ToolBar">
                 <Button className="Add" type="primary" icon={<SyncOutlined />} onClick={load}>更新代理</Button>

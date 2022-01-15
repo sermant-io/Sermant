@@ -2,7 +2,6 @@ import { Button, Input, Table, DatePicker, Select, Form, message, Modal } from "
 import React, { useEffect, useRef, useState } from "react"
 import Breadcrumb from "../../component/Breadcrumb"
 import Card from "../../component/Card"
-import PageInfo from "../../component/PageInfo"
 import { CloseOutlined, SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import "./index.scss"
 import axios from "axios"
@@ -71,7 +70,6 @@ function Home() {
     }, [])
     return <div className="TestReport">
         <Breadcrumb label="压测报告" />
-        <PageInfo>如需下载代理, 请在右上角菜单栏点击选择<Button type="link"> “下载代理” </Button>。</PageInfo>
         <Card>
             <div className="ToolBar">
                 <Button icon={<CloseOutlined />} onClick={function () {

@@ -222,6 +222,7 @@ aaa`,
   })
   mock.onGet('/argus/api/task/view').reply(200, {
     data: {
+      test_name: "测试名称",
       status: "running",
       status_label: "运行中",
       label: ["ARGUS", "快速压测", "ARGUS", "性能压测"],
@@ -819,7 +820,7 @@ echo "Hello World !"
   mock.onDelete("/argus-emergency/api/host").reply(200)
   mock.onPost("/argus-emergency/api/host/license").reply(200)
   mock.onPost("/argus-emergency/api/host").reply(200)
-  mock.onPost("/argus-emergency/api/host/stop").reply(200)
+  mock.onPost("/argus-emergency/api/host/install").reply(200)
   mock.onGet("/argus-emergency/api/host/search/password_uri").reply(200, {
     data: ["root@192.168.0.1"]
   })

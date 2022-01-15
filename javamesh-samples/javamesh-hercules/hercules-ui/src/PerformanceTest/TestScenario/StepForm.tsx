@@ -5,7 +5,6 @@ import Steps from "./Steps"
 import "./StepForm.scss"
 import { Button, Drawer, Form, Input, message } from "antd"
 import ScenarioFormItems from "./ScenarioFormItems"
-import PageInfo from "../../component/PageInfo"
 import axios from "axios"
 import ServiceSelect from "../../component/ServiceSelect"
 import Editor from "@monaco-editor/react"
@@ -13,7 +12,7 @@ import { useHistory } from "react-router"
 import TaskForm from "../TestTask/Create/TaskForm"
 
 let params = { scenario_name: "" }
-export default function App(props: { pageInfo: ReactNode, breadcrumb: ReactNode, quickStart?: boolean }) {
+export default function App(props: { breadcrumb: ReactNode, quickStart?: boolean }) {
     let submit = false
     let scenario = "Script"
     const [index, setIndex] = useState(0)
@@ -30,7 +29,6 @@ export default function App(props: { pageInfo: ReactNode, breadcrumb: ReactNode,
                 <SystemParam />
             </>}
         </div>
-        <PageInfo>{props.pageInfo}</PageInfo>
         <Card className="TypeChoose">
             <Steps keys={function () {
                 const array = ["选择场景类型"]

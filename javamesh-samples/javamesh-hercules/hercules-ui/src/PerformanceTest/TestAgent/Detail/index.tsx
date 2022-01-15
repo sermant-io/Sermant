@@ -1,10 +1,9 @@
-import { Button, message } from "antd"
+import {  message } from "antd"
 import axios from "axios"
 import React, { useEffect, useRef, useState } from "react"
 import { useLocation } from "react-router-dom"
 import Breadcrumb from "../../../component/Breadcrumb"
 import Card from "../../../component/Card"
-import PageInfo from "../../../component/PageInfo"
 import { Line, LineOptions } from "@antv/g2plot"
 import "./index.scss"
 import moment from "moment"
@@ -25,7 +24,6 @@ export default function App() {
     }, [agent_id])
     return <div className="AgentDetail">
         <Breadcrumb label="压测引擎" sub={{ label: "引擎信息", parentUrl: "/PerformanceTest/TestAgent" }} />
-        <PageInfo>如需下载代理, 请在右上角菜单栏点击选择<Button type="link" size="small"> “下载代理” </Button>。</PageInfo>
         <Card>
             <div className="Label">基本信息</div>
             <div className="SubCard Basic">

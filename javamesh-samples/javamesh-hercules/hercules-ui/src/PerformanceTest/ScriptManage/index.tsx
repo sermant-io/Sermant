@@ -2,7 +2,6 @@ import { Button, Checkbox, Collapse, Form, Input, message, Modal, Select, Table 
 import React, { useEffect, useRef, useState } from "react"
 import Breadcrumb from "../../component/Breadcrumb"
 import Card from "../../component/Card"
-import PageInfo from "../../component/PageInfo"
 import { CloseOutlined, SearchOutlined, FileTextOutlined, FolderOpenFilled, CloudUploadOutlined, PlusCircleOutlined, MinusCircleOutlined, InfoCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import axios from "axios"
 import CacheRoute, { CacheSwitch, useDidRecover } from 'react-router-cache-route'
@@ -86,7 +85,6 @@ function Home() {
     useDidRecover(load)
     return <div className="ScriptManage">
         <Breadcrumb label="脚本管理" />
-        <PageInfo>如需下载代理, 请在右上角菜单栏点击选择<Button type="link" size="small"> “下载代理” </Button>。</PageInfo>
         <Card>
             <div className="ToolBar">
                 <AddFile load={load} folder={folder} />

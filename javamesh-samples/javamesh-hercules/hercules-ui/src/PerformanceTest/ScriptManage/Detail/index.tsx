@@ -2,7 +2,6 @@ import { Button, Form, Input, message, Modal } from "antd"
 import React, { useEffect, useRef, useState } from "react"
 import Breadcrumb from "../../../component/Breadcrumb"
 import Card from "../../../component/Card"
-import PageInfo from "../../../component/PageInfo"
 import Editor from "@monaco-editor/react"
 import { useLocation } from "react-router-dom"
 import axios from "axios"
@@ -21,7 +20,6 @@ export default function App() {
     const path = urlSearchParams.get("path") || ""
     return <div className="ScriptDetail">
         <Breadcrumb label="脚本管理" sub={{ label: "详情", parentUrl: "/PerformanceTest/ScriptManage" }} />
-        <PageInfo>如需下载代理, 请在右上角菜单栏点击选择<Button type="link" size="small"> “下载代理” </Button>。</PageInfo>
         <Card>
             <Form initialValues={{ path }} form={form} requiredMark={false} labelCol={{ span: 2 }} onFinish={async function (values) {
                 if (submit) return

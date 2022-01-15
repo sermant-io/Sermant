@@ -10,12 +10,17 @@ import Card from "../../../component/Card";
 import "./index.scss"
 
 export default function App() {
-    // const [data, setData] = useState<any>()
+    const [data, setData] = useState<any>({})
     const urlSearchParams = new URLSearchParams(useLocation().search)
     const test_id = urlSearchParams.get("test_id")
-    useEffect(function(){
-        axios.get("/argus/api/task/view")
-    },[])
+
+    useEffect(function () {
+        async function load() {
+            const res = await axios.get("/argus/api/task/view", { params: { test_id } })
+            setData(res.data.data)
+        }
+        load()
+    }, [test_id])
     return <div className="TaskView">
         <Breadcrumb label="压测任务" sub={{ label: "实时TPS数据", parentUrl: "/PerformanceTest/TestTask" }} />
         <Card>
@@ -24,50 +29,50 @@ export default function App() {
                 <Descriptions>
                     <Descriptions.Item label={
                         <div className="Title">测试名称</div>
-                    }>测试名称</Descriptions.Item>
+                    }>{data.test_name}</Descriptions.Item>
                     <Descriptions.Item span={2} label={
                         <div className="Title">压测状态</div>
-                    }>压测状态</Descriptions.Item>
+                    }>{data.status_label}</Descriptions.Item>
                     <Descriptions.Item label={
                         <div className="Title">标签</div>
-                    }>{[].map(function (item: string, index: number) {
+                    }>{data.label?.map(function (item: string, index: number) {
                         return <Tag key={index} color={PresetColorTypes[index + 5 % 13]}>{item}</Tag>
                     })}</Descriptions.Item>
                     <Descriptions.Item span={2} label={
                         <div className="Title">描述</div>
-                    }>描述</Descriptions.Item>
+                    }>{data.desc}</Descriptions.Item>
                 </Descriptions>
-                <Button type="primary">
-                    <Link to={"/PerformanceTest/TestReport/Detail?test_id=" + test_id}>详细报告</Link>
-                </Button>
+                <Link to={"/PerformanceTest/TestReport/Detail?test_id=" + test_id}>
+                    <Button type="primary">详细报告</Button>
+                </Link>
             </div>
             <div className="SubCard Basic">
                 <div className="Item">
-                    <div className="Value">运行时间</div>
+                    <div className="Value">{data.duration}</div>
                     <div className="Title">运行时间</div>
                 </div>
                 <div className="Item">
-                    <div className="Value">虚拟用户数</div>
+                    <div className="Value">{data.vuser}</div>
                     <div className="Title">虚拟用户数</div>
                 </div>
                 <div className="Item">
-                    <div className="Value">TPS</div>
+                    <div className="Value">{data.tps}</div>
                     <div className="Title">TPS</div>
                 </div>
                 <div className="Item">
-                    <div className="Value">TPS峰值</div>
+                    <div className="Value">{data.tps_peak}</div>
                     <div className="Title">TPS峰值</div>
                 </div>
                 <div className="Item">
-                    <div className="Value">平均时间（ms）</div>
+                    <div className="Value">{data.avg_time}</div>
                     <div className="Title">平均时间（ms）</div>
                 </div>
                 <div className="Item">
-                    <div className="Value">执行测试数量</div>
+                    <div className="Value">{data.test_count}</div>
                     <div className="Title">执行测试数量</div>
                 </div>
                 <div className="Item">
-                    <div className="Value">测试成功数量</div>
+                    <div className="Value">{data.success_count}</div>
                     <div className="Title">测试成功数量</div>
                 </div>
                 <div className="Item">
