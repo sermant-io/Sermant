@@ -220,6 +220,21 @@ aaa`,
       },
     }]
   })
+  mock.onGet('/argus/api/task/view').reply(200, {
+    data: {
+      status: "running",
+      status_label: "运行中",
+      label: ["ARGUS", "快速压测", "ARGUS", "性能压测"],
+      desc: "LongTextLongTextLongTextLongTextLongTextLongTextLongText...",
+      duration: "12:21",
+      vuser: 10,
+      tps: 2.3,
+      tps_peak: 5,
+      avg_time: 4535.26,
+      log_name: ["anent-NONE-log1.zip", "anent-NONE-log2.zip"],
+      progress_message: ["第一行失败", "第二行失败"],
+    }
+  })
   mock.onPost('/argus/api/task/pressurePrediction').reply(200, {
     data: [{
       "time": "1",
@@ -544,7 +559,7 @@ echo "Hello World !"
         "9639388182808-AfterThread": { title: "@AfterThread" },
         "9639388182811-Before": { title: "@Before" },
         "9639388182812-After": { title: "@After" },
-        "9639388182812-CSVDataSetConfig": {title: "CSV数据文件设置",filenames: "001/.npmrc"}
+        "9639388182812-CSVDataSetConfig": {title: "CSV数据文件设置",filenames: "001/.npmrc 002/xxx"}
       }
     }
   }

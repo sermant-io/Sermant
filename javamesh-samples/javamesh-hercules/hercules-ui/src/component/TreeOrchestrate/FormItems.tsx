@@ -107,7 +107,7 @@ export default function App(props: { type: String }) {
             </>
         case "JARImport":
             return <>
-                <Divider orientation="left">导入脚本</Divider>
+                <Divider orientation="left">Import代码块</Divider>
                 <Form.Item name="content">
                     <Editor height={400} language="java" />
                 </Form.Item>
@@ -179,7 +179,7 @@ export default function App(props: { type: String }) {
         case "CSVDataSetConfig":
             return <>
                 <Form.Item label="文件名" name="filenames">
-                    <OSSUpload max={2} />
+                    <OSSUpload max={1} />
                 </Form.Item>
                 <Form.Item label="文件编码" name="file_encoding">
                     <Select options={[{ value: "UTF-8" }, { value: "UTF-16" }, { value: "ISO-8859-15" }, { value: "US-ASCII" }]} />
@@ -187,13 +187,13 @@ export default function App(props: { type: String }) {
                 <Form.Item label="变量名称(西文逗号间隔)" name="variable_names">
                     <Input />
                 </Form.Item>
-                <Form.Item label="忽略首行(只在设置了变量名称才生效)" name="ignore_first_line">
+                <Form.Item label="忽略首行(只在设置了变量名称才生效)" name="ignore_first_line" valuePropName="checked">
                     <Checkbox />
                 </Form.Item>
-                <Form.Item label="是否允许带引号" name="quoted_data">
+                <Form.Item label="是否允许带引号" name="quoted_data" valuePropName="checked">
                     <Checkbox />
                 </Form.Item>
-                <Form.Item label="遇到文件结束符再次循环?" name="recycle">
+                <Form.Item label="遇到文件结束符再次循环?" name="recycle" valuePropName="checked">
                     <Checkbox />
                 </Form.Item>
                 <Form.Item label="线程共享模式" name="share_mode">

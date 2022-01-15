@@ -139,13 +139,7 @@ export default function App(props: { scenarioName?: string }) {
                             <Form.Item label="场景" name="scenario_name" rules={[{ required: true }]}>
                                 {props.scenarioName ? <Input disabled /> : <ServiceSelect url={"/argus/api/scenario/search"} />}
                             </Form.Item>
-                            <Form.Item label="目标主机" name="hosts" rules={[{
-                                async validator(_, values: []) {
-                                    if (!values || values.length === 0) {
-                                        throw new Error("请输入目标主机")
-                                    }
-                                }
-                            }]}>
+                            <Form.Item label="目标主机" name="hosts">
                                 <TaskHosts />
                             </Form.Item>
                             <BasicScenario />

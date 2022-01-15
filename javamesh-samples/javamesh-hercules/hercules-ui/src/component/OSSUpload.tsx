@@ -8,11 +8,10 @@ export default function App(props: { max: number, value?: string, onChange?: (va
             const index = item.lastIndexOf("/")
             const uid = item.slice(0, index)
             const name = item.slice(index + 1)
-            return { uid, name, url: '/argus-emergency/api/resource/' + item }
+            return { uid, name, url: '/argus-emergency/api/resource/' + item, status: "done", response: {data: {uid}} }
         })}
         maxCount={props.max}
         onChange={function (info) {
-            console.log(info)
             props.onChange?.(info.fileList.filter(function (item) { return item.status === "done" }).map(function (item) {
                 return item.response.data.uid + "/" + item.name
             }).join(" "))

@@ -444,18 +444,7 @@ function UploadFile(props: { load: () => {}, folder: string[] }) {
                     formData.append("folder", props.folder.join("/"))
                     formData.append("commit", values.commit)
                     formData.append('file', values.file[0]);
-                    const res = await fetch('/argus/api/script/upload', {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        body: formData
-                    })
-                    if (!res.ok) {
-                        throw new Error("Request failed with status code " + res.status)
-                    }
-                    const json = await res.json()
-                    if (json.msg) {
-                        throw new Error(json.msg)
-                    }
+                    await axios.post('/argus/api/script/upload', formData)
                     setIsModalVisible(false)
                     message.success("创建成功")
                     form.resetFields()

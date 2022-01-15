@@ -1,14 +1,21 @@
-import { Liquid, LiquidOptions } from "@antv/g2plot";
+import { Line, Liquid, LiquidOptions } from "@antv/g2plot";
 import { Button, Descriptions, Form, Input, Select, Table, Tabs, Tag } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { PresetColorTypes } from "antd/lib/_util/colors";
+import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Breadcrumb from "../../../component/Breadcrumb";
 import Card from "../../../component/Card";
 import "./index.scss"
 
 export default function App() {
+    // const [data, setData] = useState<any>()
+    const urlSearchParams = new URLSearchParams(useLocation().search)
+    const test_id = urlSearchParams.get("test_id")
+    useEffect(function(){
+        axios.get("/argus/api/task/view")
+    },[])
     return <div className="TaskView">
         <Breadcrumb label="压测任务" sub={{ label: "实时TPS数据", parentUrl: "/PerformanceTest/TestTask" }} />
         <Card>
@@ -31,7 +38,7 @@ export default function App() {
                     }>描述</Descriptions.Item>
                 </Descriptions>
                 <Button type="primary">
-                    <Link to={"/PerformanceTest/TestReport/Detail?test_id=" + 123}>详细报告</Link>
+                    <Link to={"/PerformanceTest/TestReport/Detail?test_id=" + test_id}>详细报告</Link>
                 </Button>
             </div>
             <div className="SubCard Basic">
@@ -121,8 +128,8 @@ function ResourceCharts() {
     const networkRef = useRef(null)
     const [form] = useForm()
     useEffect(function () {
-        form.setFieldsValue({ip: "192.168.0.1"})
-        setIps([{value: "192.168.0.1"}])
+        form.setFieldsValue({ ip: "192.168.0.1" })
+        setIps([{ value: "192.168.0.1" }])
         const option: LiquidOptions = {
             percent: 0.7,
             outline: {
@@ -167,11 +174,37 @@ function ResourceCharts() {
         cpuUsageChart.render()
         memoryUsageChart.render()
         ioBusyChart.render()
-        
+        const data = [
+            { name: "user", time: "00:00", value: 70 }, { name: "user", time: "00:01", value: 80 }, { name: "user", time: "00:02", value: 60 },
+            { name: "system", time: "00:00", value: 60 }, { name: "system", time: "00:01", value: 50 }, { name: "system", time: "00:02", value: 90 },
+        ]
+        const cpuChart = new Line(cpuRef.current!!, {
+            data,
+            xField: "time",
+            yField: "value",
+            seriesField: "name",
+            xAxis: { tickInterval: 1, range: [0, 1] },
+            smooth: true,
+            area: {
+                style: {
+                    fillOpacity: 0.15,
+                },
+            },
+            animation: false,
+            yAxis: {
+                label: {
+                    formatter(text: any) {
+                        return text + "%"
+                    }
+                }
+            }
+        })
+        cpuChart.render()
         return function () {
             cpuUsageChart.destroy()
             memoryUsageChart.destroy()
             ioBusyChart.destroy()
+            cpuChart.destroy()
         }
     }, [form])
     return <div className="ResourceCharts">
