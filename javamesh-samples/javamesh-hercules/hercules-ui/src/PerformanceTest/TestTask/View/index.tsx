@@ -1,5 +1,5 @@
-import { Line, Liquid, LiquidOptions } from "@antv/g2plot";
-import { Button, Descriptions, Form, Input, Select, Table, Tabs, Tag } from "antd";
+import { Line, LineOptions, Liquid, LiquidOptions } from "@antv/g2plot";
+import { Button, Descriptions, Form, Input, message, Select, Table, Tabs, Tag } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { PresetColorTypes } from "antd/lib/_util/colors";
 import axios from "axios";
@@ -10,16 +10,27 @@ import Card from "../../../component/Card";
 import "./index.scss"
 
 export default function App() {
+    let submit = false
     const [data, setData] = useState<any>({})
     const urlSearchParams = new URLSearchParams(useLocation().search)
     const test_id = urlSearchParams.get("test_id")
+    const inputRef = useRef(null)
 
     useEffect(function () {
+        (async function () {
+            const res = await axios.get("/argus/api/task/view", { params: { test_id } })
+            setData(res.data.data)
+            const input: any = inputRef.current
+            input.resizableTextArea.textArea.value = res.data.data.test_comment
+        })()
         async function load() {
             const res = await axios.get("/argus/api/task/view", { params: { test_id } })
             setData(res.data.data)
         }
-        load()
+        const interval = setInterval(load, 5000)
+        return function(){
+            clearInterval(interval)
+        }
     }, [test_id])
     return <div className="TaskView">
         <Breadcrumb label="压测任务" sub={{ label: "实时TPS数据", parentUrl: "/PerformanceTest/TestTask" }} />
@@ -76,7 +87,7 @@ export default function App() {
                     <div className="Title">测试成功数量</div>
                 </div>
                 <div className="Item">
-                    <div className="Value">错误</div>
+                    <div className="Value">{data.fail_count}</div>
                     <div className="Title">错误</div>
                 </div>
             </div>
@@ -94,17 +105,29 @@ export default function App() {
             </Tabs>
             <div className="Label">测试注释</div>
             <div className="Comment">
-                <Input.TextArea className="Input" showCount maxLength={256} autoSize={{ minRows: 2, maxRows: 2 }} placeholder="请输入描述" />
-                <div className="Button">添加注释</div>
+                <Input.TextArea ref={inputRef} className="Input" showCount maxLength={256} autoSize={{ minRows: 2, maxRows: 2 }} placeholder="请输入描述" />
+                <div className="Button" onClick={async function () {
+                    if (submit) return
+                    submit = true
+                    try {
+                        const input: any = inputRef.current
+                        const test_comment = input.resizableTextArea.textArea.value
+                        await axios.put('/argus/api/task/update', { test_id, test_comment })
+                        message.success("更新成功")
+                    } catch (e: any) {
+                        message.error(e.message)
+                    }
+                    submit = false
+                }}>添加注释</div>
             </div>
             <div className="Label">日志文件</div>
-            {[].map(function (item: string, index: number) {
+            {data.log_name?.map(function (item: string, index: number) {
                 return <div key={index} >
-                    <a href={process.env.PUBLIC_URL + `/api/task/download?test_id=${123}&log_name=${item}`} target="_blank" rel="noreferrer">{item}</a>
+                    <a href={process.env.PUBLIC_URL + `/api/task/download?test_id=${test_id}&log_name=${item}`} target="_blank" rel="noreferrer">{item}</a>
                 </div>
             })}
             <div className="Label">执行日志</div>
-            {[].map(function (item: string, index: number) {
+            {data.progress_message?.map(function (item: string, index: number) {
                 return <div key={index}>{item}</div>
             })}
         </Card>
@@ -112,13 +135,24 @@ export default function App() {
 }
 
 function BusinessCharts() {
-    return <Table columns={[
-        { title: "事务名称" },
-        { title: "TPS" },
-        { title: "响应时间(ms)" },
-        { title: "成功数" },
-        { title: "失败数" },
-        { title: "失败率%" }
+    const [data, setData] = useState()
+    const urlSearchParams = new URLSearchParams(useLocation().search)
+    const test_id = urlSearchParams.get("test_id")
+    useEffect(function() {
+        async function load() {
+            const res = await axios.get('/argus/api/task/service', {params: {test_id}})
+            setData(res.data.data)
+        }
+        load()
+        setInterval(load, 5000)
+    }, [test_id])
+    return <Table dataSource={data} size="small" rowKey="transaction" pagination={false} columns={[
+        { title: "事务名称", dataIndex: "transaction" },
+        { title: "TPS", dataIndex: "tps" },
+        { title: "响应时间(ms)", dataIndex: "response_ms" },
+        { title: "成功数", dataIndex: "success_count" },
+        { title: "失败数", dataIndex: "fail_count" },
+        { title: "失败率%", dataIndex: "fail_rate" }
     ]} />
 }
 
@@ -127,7 +161,7 @@ function ResourceCharts() {
     const cpuUsageRef = useRef(null)
     const memoryUsageRef = useRef(null)
     const ioBusyRef = useRef(null)
-    const cpuRef = useRef(null)
+    const cpuRef = useRef<HTMLDivElement>(null)
     const memoryRef = useRef(null)
     const diskRef = useRef(null)
     const networkRef = useRef(null)
@@ -135,7 +169,7 @@ function ResourceCharts() {
     useEffect(function () {
         form.setFieldsValue({ ip: "192.168.0.1" })
         setIps([{ value: "192.168.0.1" }])
-        const option: LiquidOptions = {
+        const liquidOption: LiquidOptions = {
             percent: 0.7,
             outline: {
                 border: 2,
@@ -171,11 +205,12 @@ function ResourceCharts() {
                     fill: color,
                     stroke: color,
                 };
-            }
+            },
+            autoFit: false
         }
-        const cpuUsageChart = new Liquid(cpuUsageRef.current!!, option)
-        const memoryUsageChart = new Liquid(memoryUsageRef.current!!, option)
-        const ioBusyChart = new Liquid(ioBusyRef.current!!, option)
+        const cpuUsageChart = new Liquid(cpuUsageRef.current!!, liquidOption)
+        const memoryUsageChart = new Liquid(memoryUsageRef.current!!, liquidOption)
+        const ioBusyChart = new Liquid(ioBusyRef.current!!, liquidOption)
         cpuUsageChart.render()
         memoryUsageChart.render()
         ioBusyChart.render()
@@ -183,7 +218,7 @@ function ResourceCharts() {
             { name: "user", time: "00:00", value: 70 }, { name: "user", time: "00:01", value: 80 }, { name: "user", time: "00:02", value: 60 },
             { name: "system", time: "00:00", value: 60 }, { name: "system", time: "00:01", value: 50 }, { name: "system", time: "00:02", value: 90 },
         ]
-        const cpuChart = new Line(cpuRef.current!!, {
+        const lineOption: LineOptions = {
             data,
             xField: "time",
             yField: "value",
@@ -196,20 +231,23 @@ function ResourceCharts() {
                 },
             },
             animation: false,
-            yAxis: {
-                label: {
-                    formatter(text: any) {
-                        return text + "%"
-                    }
+        }
+        const cpuChart = new Line(cpuRef.current!!, {...lineOption, yAxis: {
+            label: {
+                formatter(text: any) {
+                    return text + "%"
                 }
             }
-        })
+        }})
+        const memoryChart = new Line(memoryRef.current!!, lineOption)
         cpuChart.render()
+        memoryChart.render()
         return function () {
             cpuUsageChart.destroy()
             memoryUsageChart.destroy()
             ioBusyChart.destroy()
             cpuChart.destroy()
+            memoryChart.destroy()
         }
     }, [form])
     return <div className="ResourceCharts">
@@ -248,7 +286,7 @@ function ResourceCharts() {
         </div>
         <div className="Grid">
             <div className="Item">
-                <div ref={cpuRef} className="Line"></div>
+                <div ref={cpuRef} className="Line" style={{width: "100%"}}></div>
                 <div className="Title">CPU</div>
             </div>
             <div className="Item">

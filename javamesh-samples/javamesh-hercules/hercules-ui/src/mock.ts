@@ -232,9 +232,18 @@ aaa`,
       tps: 2.3,
       tps_peak: 5,
       avg_time: 4535.26,
+      test_count: 115,
+      success_count: 114,
+      fail_count: 1,
+      test_comment: "备注文本，长文本长文本",
       log_name: ["anent-NONE-log1.zip", "anent-NONE-log2.zip"],
       progress_message: ["第一行失败", "第二行失败"],
     }
+  })
+  mock.onGet('/argus/api/task/service').reply(200, {
+    data: [
+      {transaction: '测试1',tps: 123, response_ms: 12, success_count: 9, fail_count: 1, fail_rate: "10%"}
+    ]
   })
   mock.onPost('/argus/api/task/pressurePrediction').reply(200, {
     data: [{
