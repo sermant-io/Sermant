@@ -3,12 +3,8 @@
 @import "./fonts/mb-icons.css";
 @import "./fonts/material.css";
 @import "./fonts/custom.css";
-@font-face {
-	font-family:HuaweiSans-Regular;
-	src:url(./fonts/HuaweiSans-Regular.ttf);
-}
 body {
-  font-family:HuaweiSans-Regular;
+  font-family:unset;
 }
 li {
   list-style: none;
