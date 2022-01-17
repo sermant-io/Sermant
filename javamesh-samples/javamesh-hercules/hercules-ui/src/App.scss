@@ -9,6 +9,9 @@ body {
 li {
   list-style: none;
 }
+.MonacoEditor {
+  max-width: 99%;
+}
 .ant-form-item-label > label::after {
   content: "";
 }

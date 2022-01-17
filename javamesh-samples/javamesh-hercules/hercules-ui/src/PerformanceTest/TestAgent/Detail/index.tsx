@@ -135,8 +135,12 @@ function AgentCharts({agent_id}: {agent_id: string}) {
     }, [agent_id])
     return <div className="AgentCharts">
         <div className="Label">CPU使用率</div>
-        <div ref={usageRef} className="SubCard"></div>
+        <div className="ChartCard">
+            <div ref={usageRef} className="Chart"></div>
+        </div>
         <div className="Label">内存使用率</div>
-        <div ref={memoryRef} className="SubCard"></div>
+        <div className="ChartCard">
+            <div ref={memoryRef} className="Chart"></div>
+        </div>
     </div>
 }

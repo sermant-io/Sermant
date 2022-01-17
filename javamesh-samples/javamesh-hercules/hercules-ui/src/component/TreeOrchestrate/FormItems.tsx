@@ -109,7 +109,7 @@ export default function App(props: { type: String }) {
             return <>
                 <Divider orientation="left">Import代码块</Divider>
                 <Form.Item name="content">
-                    <Editor height={400} language="java" />
+                    <Editor className="MonacoEditor" height={400} language="java" />
                 </Form.Item>
                 <Form.Item label="JAR文件" name="filenames">
                     <OSSUpload max={10} />
@@ -155,7 +155,7 @@ export default function App(props: { type: String }) {
                 </Form.Item>
                 <Divider orientation="left">方法内容</Divider>
                 <Form.Item name="script">
-                    <Editor height={400} language="python" />
+                    <Editor className="MonacoEditor" height={400} language="python" />
                 </Form.Item>
             </>
         case "Counter":
@@ -228,7 +228,7 @@ function ScriptEditor() {
             }} />
         </Form.Item>
         <Form.Item name="script">
-            <Editor height={400} language={language} />
+            <Editor className="MonacoEditor" height={400} language={language} />
         </Form.Item>
     </>
 }

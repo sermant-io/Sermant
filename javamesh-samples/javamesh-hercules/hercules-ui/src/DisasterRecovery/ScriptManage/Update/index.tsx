@@ -56,7 +56,7 @@ export default function App() {
                     <Input.TextArea maxLength={50} showCount autoSize={{ minRows: 2, maxRows: 2 }} />
                 </Form.Item>
                 <Form.Item label="脚本内容" className="Editor WithoutLabel" name="content" rules={[{ required: true, max: 5000 }]}>
-                    <Editor language="shell" height={200}/>
+                    <Editor className="MonacoEditor" language="shell" height={200}/>
                 </Form.Item>
                 <DebugScript form={form}/>
                 <Form.Item className="ScriptParam" labelCol={{ span: 1 }} name="param" label="脚本参数" rules={[{

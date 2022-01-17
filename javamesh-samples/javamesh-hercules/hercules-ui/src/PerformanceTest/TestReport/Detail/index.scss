@@ -60,11 +60,16 @@
             margin-left: 5px;
         }
     }
-    .SubCard {
-        padding: 20px;
+    .ChartCard {
         border: #E5E7EA 1px solid;
         border-radius: 5px;
         margin-bottom: 20px;
-        max-width: 99.9%;
+        padding: 20px;
+        .Chart {
+            // margin: 20px;
+            border-radius: 5px;
+            height: 250px;
+            max-width: 99%;
+        }
     }
 }

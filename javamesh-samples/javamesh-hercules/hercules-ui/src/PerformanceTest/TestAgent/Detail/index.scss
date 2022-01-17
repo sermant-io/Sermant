@@ -53,13 +53,16 @@
         font-size: 14px;
         font-weight: bolder;
     }
-    .SubCard {
+    .ChartCard {
         border: #E5E7EA 1px solid;
-        box-sizing: border-box;
         border-radius: 5px;
         margin-bottom: 20px;
         padding: 20px;
-        height: 250px;
-        max-width: 99.9%;
+        .Chart {
+            // margin: 20px;
+            border-radius: 5px;
+            height: 250px;
+            max-width: 99%;
+        }
     }
 }

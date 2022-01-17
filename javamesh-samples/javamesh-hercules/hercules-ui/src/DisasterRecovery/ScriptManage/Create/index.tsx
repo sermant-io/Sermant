@@ -112,5 +112,5 @@ function ScriptEditor(props: { onChange?: (value?: string) => void, script?: str
         props.setScript(value)
         props.onChange?.(value)
     }, 1000))
-    return <Editor height={200} language="shell" value={props.script} onChange={debounceRef.current}/>
+    return <Editor className="MonacoEditor" height={200} language="shell" value={props.script} onChange={debounceRef.current}/>
 }

@@ -149,7 +149,7 @@ function ScriptEditor(props: { onChange?: (value: any) => void, path: string }) 
     }, 1000))
     return <>
         {props.path.endsWith(".groovy") && <ScriptOrchestrate setScript={setScript} path={props.path}/>}
-        <Editor height={460} language="python" value={script} onChange={debounceRef.current} />
+        <Editor className="MonacoEditor" height={460} language="python" value={script} onChange={debounceRef.current} />
     </>
 }
 

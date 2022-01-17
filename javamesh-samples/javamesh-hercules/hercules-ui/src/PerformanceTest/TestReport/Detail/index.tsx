@@ -123,23 +123,23 @@ function ReportCharts() {
         <div className="Label">TPS图表<Tooltip title="TPS图表">
             <span className="Question icon fa fa-question-circle"></span>
         </Tooltip></div>
-        <div className="SubCard">
+        <div className="ChartCard">
             <LineChart data={data} yField="tps" color="#15c4ff"/>
         </div>
         <div className="Label">平均时间（ms）</div>
-        <div className="SubCard">
+        <div className="ChartCard">
             <LineChart data={data} yField="avg_time" color="#ff699f"/>
         </div>
         <div className="Label">首次接收数据的平均时间（ms）</div>
-        <div className="SubCard">
+        <div className="ChartCard">
             <LineChart data={data} yField="receive_avg" color="#0eaa76"/>
         </div>
         <div className="Label">Vuser</div>
-        <div className="SubCard">
+        <div className="ChartCard">
             <LineChart data={data} yField="vuser" color="#0eaa76"/>
         </div>
         <div className="Label">错误</div>
-        <div className="SubCard">
+        <div className="ChartCard">
             <LineChart data={data} yField="fail_count" color="#15c4ff"/>
         </div>
     </div>
@@ -165,5 +165,5 @@ function LineChart(props: {data: never[], yField: string, color: string}) {
             chart.destroy()
         }
     }, [props.color, props.data, props.yField])
-    return <div ref={chartRef}></div>
+    return <div className='Chart' ref={chartRef}></div>
 }
