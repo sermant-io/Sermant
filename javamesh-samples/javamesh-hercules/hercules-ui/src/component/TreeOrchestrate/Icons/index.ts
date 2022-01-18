@@ -28,6 +28,7 @@ export default new Map([
     ["WhileController", view],
     ["CSVDataSetConfig", preferences],
     ["HTTPHeaderManager", preferences],
+    ["HTTPCookieManager", preferences],
     ["HTTPRequestDefaults", preferences],
     ["Counter", preferences],
     ["DNSCacheManager", preferences],
@@ -40,4 +41,5 @@ export default new Map([
     ["BeanShellPostProcessor", pim],
     ["RegularExpressionExtractor", output],
     ["ResponseAssertion", preview],
+    ["JSR223Assertion", preview],
 ])

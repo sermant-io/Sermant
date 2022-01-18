@@ -1,12 +1,14 @@
 import { Button, Form, Input, InputNumber, message, Modal, Radio, Table } from "antd"
-import React, { useEffect, useRef, useState } from "react"
+import React, { Key, useEffect, useRef, useState } from "react"
 import Breadcrumb from "../../component/Breadcrumb"
 import Card from "../../component/Card"
-import { SearchOutlined, PlusOutlined, ExclamationCircleOutlined, CloseOutlined, PauseOutlined } from '@ant-design/icons'
+import { SearchOutlined, PlusOutlined, ExclamationCircleOutlined, CloseOutlined, ArrowDownOutlined } from '@ant-design/icons'
 import "./index.scss"
 import ServiceSelect from "../../component/ServiceSelect"
 import axios from "axios"
 import { useForm } from "antd/lib/form/Form"
+import { debounce } from "lodash"
+import socket from "../socket"
 
 type Data = { server_id: string, status: string, status_label: string }
 
@@ -16,6 +18,7 @@ export default function App() {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
     const [loading, setLoading] = useState(false)
     const stateRef = useRef<any>({})
+    const keysRef = useRef<Key[]>([])
     async function load() {
         setLoading(true)
         try {
@@ -29,6 +32,10 @@ export default function App() {
             }
             const res = await axios.get("/argus-emergency/api/host", { params })
             setData(res.data)
+            // 需要监听的任务列表
+            keysRef.current = res.data.data.map(function (item: Data) {
+                return "/host/" + item.server_id
+            })
         } catch (error: any) {
             message.error(error.message)
         }
@@ -46,7 +53,6 @@ export default function App() {
                 try {
                     await axios.delete("/argus-emergency/api/host", { params: { server_id: selectedRowKeys } })
                     message.success("删除成功")
-                    load()
                 } catch (e: any) {
                     message.error(e.message)
                 }
@@ -56,16 +62,39 @@ export default function App() {
         submit = false
     }
     async function batchStop(selectedRowKeys: React.Key[]) {
-        try {
-            await axios.post("/argus-emergency/api/host/stop", { server_id: selectedRowKeys })
-            message.success("停止成功")
-        } catch (e: any) {
-            message.error(e.message)
-        }
-        load()
+        if (submit) return
+        submit = true
+        Modal.confirm({
+            title: '是否安装？',
+            icon: <ExclamationCircleOutlined />,
+            content: '将批量安装代理, 请谨慎操作',
+            okType: 'danger',
+            async onOk() {
+                try {
+                    await axios.post("/argus-emergency/api/host/install", { server_id: selectedRowKeys })
+                    message.success("安装已提交，请稍等")
+                } catch (e: any) {
+                    message.error(e.message)
+                }
+                load()
+            },
+        })
+        submit = false
     }
     useEffect(function () {
         load()
+        const dbLoad = debounce(load, 1000)
+        function handleSocket(event: MessageEvent<any>) {
+            const message = event.data
+            if (keysRef.current.includes(message)) {
+                // 只响应最新
+                dbLoad()
+            }
+        }
+        socket.addEventListener("message", handleSocket)
+        return function () {
+            socket.removeEventListener("message", handleSocket)
+        }
     }, [])
     const statusMap = new Map<string, string>()
     statusMap.set("running", "#1A99FE")
@@ -77,18 +106,18 @@ export default function App() {
         <Card>
             <div className="ToolBar">
                 <AddHost load={load} />
-                <Button className="Delete" icon={<CloseOutlined />} onClick={function () {
+                <Button icon={<ArrowDownOutlined />} onClick={function () {
+                    if (selectedRowKeys.length === 0) {
+                        return
+                    }
+                    batchStop(selectedRowKeys)
+                }}>批量安装代理</Button>
+                <Button icon={<CloseOutlined />} onClick={function () {
                     if (selectedRowKeys.length === 0) {
                         return
                     }
                     batchDelete(selectedRowKeys)
                 }}>批量删除</Button>
-                <Button icon={<PauseOutlined />} onClick={function () {
-                    if (selectedRowKeys.length === 0) {
-                        return
-                    }
-                    batchStop(selectedRowKeys)
-                }}>停止</Button>
                 <div className="Space"></div>
                 <Form layout="inline" onFinish={function (values) {
                     stateRef.current.search = values

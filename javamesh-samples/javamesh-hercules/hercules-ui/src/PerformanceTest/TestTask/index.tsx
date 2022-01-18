@@ -278,7 +278,7 @@ function Home() {
                     },
                     {
                         title: "操作",
-                        width: 200,
+                        width: 180,
                         align: "left",
                         render(_, record) {
                             return <div className="Operation">
@@ -296,7 +296,7 @@ function Home() {
                                 }} style={{ backgroundColor: "#FF4E4E", borderColor: "#FF4E4E", marginRight: 10 }}
                                 >停止</Button>}
                                 {record.status !== "running" && <StartButton load={load} test_id={record.test_id} />}
-                                <Link to={`${path}/View?test_id=${record.test_id}`}><Button type="link" size="small" >查看</Button></Link>
+                                <Link to={`${path}/Detail?test_id=${record.test_id}`}><Button type="link" size="small" >查看</Button></Link>
                                 <Button type="link" size="small" onClick={function () {
                                     batchDelete([record.test_id])
                                 }}

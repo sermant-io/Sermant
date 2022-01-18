@@ -19,8 +19,8 @@ if (process.env.NODE_ENV === 'development') {
   }
   mock.onGet('/argus/api/scenario').reply(function () {
     return [200, {
-      data: Array.from({length: 10}, function(_, index) {
-        return {...scenario, scenario_id: index}
+      data: Array.from({ length: 10 }, function (_, index) {
+        return { ...scenario, scenario_id: index }
       }),
       total: 11
     }]
@@ -56,7 +56,7 @@ if (process.env.NODE_ENV === 'development') {
         update_time: "2019-03-19 10:53", version: "224 ", size: ""
       },
       {
-        type: "file", script_name: "mockKafka.py",
+        type: "file", script_name: "mockKafka.groovy",
         commit: "quark Test",
         update_time: "2019-03-19 10:53", version: "162", size: "48"
       },
@@ -219,6 +219,31 @@ aaa`,
         })
       },
     }]
+  })
+  mock.onGet('/argus/api/task/view').reply(200, {
+    data: {
+      test_name: "测试名称",
+      status: "running",
+      status_label: "运行中",
+      label: ["ARGUS", "快速压测", "ARGUS", "性能压测"],
+      desc: "LongTextLongTextLongTextLongTextLongTextLongTextLongText...",
+      duration: "12:21",
+      vuser: 10,
+      tps: 2.3,
+      tps_peak: 5,
+      avg_time: 4535.26,
+      test_count: 115,
+      success_count: 114,
+      fail_count: 1,
+      test_comment: "备注文本，长文本长文本",
+      log_name: ["anent-NONE-log1.zip", "anent-NONE-log2.zip"],
+      progress_message: ["第一行失败", "第二行失败"],
+    }
+  })
+  mock.onGet('/argus/api/task/service').reply(200, {
+    data: [
+      {transaction: '测试1',tps: 123, response_ms: 12, success_count: 9, fail_count: 1, fail_rate: "10%"}
+    ]
   })
   mock.onPost('/argus/api/task/pressurePrediction').reply(200, {
     data: [{
@@ -481,7 +506,7 @@ echo "Hello World !"
       }]
     } else if (line < 20) {
       return [200, {
-        data: [line+"行"],
+        data: [line + "行"],
         line
       }]
     } else {
@@ -520,11 +545,14 @@ echo "Hello World !"
         key: "9639388182803-Root", children: [
           { key: "9639388182804-BeforeProcess" },
           { key: "9639388182805-BeforeThread" },
-          { key: "9639388182806-TransactionController" },
+          {
+            key: "9639388182806-TransactionController", children: [{
+              key: "9639388182812-CSVDataSetConfig"
+            }]
+          },
           { key: "9639388182807-AfterProcess" },
           { key: "9639388182808-AfterThread" },
           { key: "9639388182809-TestFunc" },
-          { key: "9639388182810-HTTPRequest" },
           { key: "9639388182811-Before" },
           { key: "9639388182812-After" },
         ]
@@ -541,9 +569,9 @@ echo "Hello World !"
         "9639388182806-TransactionController": { title: "TransactionController" },
         "9639388182807-AfterProcess": { title: "@AfterProcess" },
         "9639388182808-AfterThread": { title: "@AfterThread" },
-        "9639388182810-HTTPRequest": { title: "HTTPRequest" },
         "9639388182811-Before": { title: "@Before" },
-        "9639388182812-After": { title: "@After" }
+        "9639388182812-After": { title: "@After" },
+        "9639388182812-CSVDataSetConfig": { title: "CSV数据文件设置", filenames: "001/.npmrc 002/xxx" }
       }
     }
   }
@@ -718,7 +746,7 @@ echo "Hello World !"
     data: Array.from({ length: 10 }, function (_, index) {
       return {
         history_id: index,
-        plan_name: "预案名称",
+        plan_name: "活动名称",
         status: ["运行中", "成功", "失败", "终止"][index % 4],
         creator: "z30008585",
         start_time: "2021-01-01 00:00:00",
@@ -766,7 +794,7 @@ echo "Hello World !"
       }]
     }
     return [200, {
-      data: [line+"行"],
+      data: [line + "行"],
       line
     }]
   })
@@ -801,8 +829,10 @@ echo "Hello World !"
   mock.onDelete("/argus-emergency/api/host").reply(200)
   mock.onPost("/argus-emergency/api/host/license").reply(200)
   mock.onPost("/argus-emergency/api/host").reply(200)
-  mock.onPost("/argus-emergency/api/host/stop").reply(200)
+  mock.onPost("/argus-emergency/api/host/install").reply(200)
   mock.onGet("/argus-emergency/api/host/search/password_uri").reply(200, {
     data: ["root@192.168.0.1"]
   })
+  mock.onPost('/argus/api/script/upload').reply(200)
+  mock.onPost('/argus-emergency/api/script/upload').reply(200)
 }

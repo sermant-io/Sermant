@@ -2,7 +2,6 @@ import { Button, Checkbox, Collapse, Form, Input, message, Modal, Select, Table 
 import React, { useEffect, useRef, useState } from "react"
 import Breadcrumb from "../../component/Breadcrumb"
 import Card from "../../component/Card"
-import PageInfo from "../../component/PageInfo"
 import { CloseOutlined, SearchOutlined, FileTextOutlined, FolderOpenFilled, CloudUploadOutlined, PlusCircleOutlined, MinusCircleOutlined, InfoCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import axios from "axios"
 import CacheRoute, { CacheSwitch, useDidRecover } from 'react-router-cache-route'
@@ -86,7 +85,6 @@ function Home() {
     useDidRecover(load)
     return <div className="ScriptManage">
         <Breadcrumb label="脚本管理" />
-        <PageInfo>如需下载代理, 请在右上角菜单栏点击选择<Button type="link" size="small"> “下载代理” </Button>。</PageInfo>
         <Card>
             <div className="ToolBar">
                 <AddFile load={load} folder={folder} />
@@ -444,17 +442,7 @@ function UploadFile(props: { load: () => {}, folder: string[] }) {
                     formData.append("folder", props.folder.join("/"))
                     formData.append("commit", values.commit)
                     formData.append('file', values.file[0]);
-                    const res = await fetch('/argus/api/script/upload', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    if (!res.ok) {
-                        throw new Error("Request failed with status code " + res.status)
-                    }
-                    const json = await res.json()
-                    if (json.msg) {
-                        throw new Error(json.msg)
-                    }
+                    await axios.post('/argus/api/script/upload', formData)
                     setIsModalVisible(false)
                     message.success("创建成功")
                     form.resetFields()
@@ -468,13 +456,7 @@ function UploadFile(props: { load: () => {}, folder: string[] }) {
                     <Form.Item name="commit" className="Input" wrapperCol={{ span: 16 }} label="提交信息" rules={[
                         { max: 64, required: true, whitespace: true },
                     ]}><Input placeholder="单行输入" /></Form.Item>
-                    <Form.Item name="file" valuePropName="fileList" wrapperCol={{ span: 16 }} label="文件" rules={[{ required: true }]}
-                        getValueFromEvent={function (e) {
-                            if (Array.isArray(e)) {
-                                return e;
-                            }
-                            return e && e.fileList;
-                        }}>
+                    <Form.Item name="file" valuePropName="fileList" wrapperCol={{ span: 16 }} label="文件" rules={[{ required: true }]}>
                         <Upload max={1} />
                     </Form.Item>
                 </div>

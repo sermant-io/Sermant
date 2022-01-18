@@ -30,7 +30,6 @@ export default function App() {
         <Breadcrumb label="脚本管理" sub={{ label: "编排", parentUrl: "/DisasterRecovery/ScriptManage" }} />
         <Card>
             {data && <TreeOrchestrate initialValues={data} onSave={async function (values) {
-                console.log(values)
                 try {
                     const map: any = {}
                     values.map.forEach(function (value, key) {

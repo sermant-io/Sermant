@@ -2,7 +2,6 @@ import { Button, Form, Input, message, Modal, Table } from "antd"
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import Breadcrumb from "../../component/Breadcrumb"
 import Card from "../../component/Card"
-import PageInfo from "../../component/PageInfo"
 import "./index.scss"
 import { PlusOutlined, CloseOutlined, SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { Link, Route, Switch, useRouteMatch } from "react-router-dom"
@@ -19,7 +18,7 @@ export default function App() {
             <Route exact path={path} render={function() {
                 setTimeout(function() {
                     homeRef.current?.show()
-                }, 100)
+                }, 0)
                 return null
             }} />
             <Route exact path={`${path}/Create`} render={function() {
@@ -107,7 +106,6 @@ const Home = forwardRef<HomeRef>(function (props, ref) {
     });
     return <div className="TestScenario" ref={rootRef} style={{display: "none"}}>
         <Breadcrumb label="压测场景" />
-        <PageInfo>压测场景</PageInfo>
         <Card>
             <div className="ToolBar">
                 <Link to={`${path}/Create`}><Button className="Add" type="primary" icon={<PlusOutlined />}>新增场景</Button></Link>

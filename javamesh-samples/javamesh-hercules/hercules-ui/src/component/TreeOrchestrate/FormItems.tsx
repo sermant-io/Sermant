@@ -2,17 +2,31 @@ import { Col, Divider, Form, Input, InputNumber, Radio, Row, Select } from "antd
 import Checkbox from "antd/lib/checkbox/Checkbox"
 import { FormItemLabelProps } from "antd/lib/form/FormItemLabel"
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import "./FormItems.scss"
 import Editor from "@monaco-editor/react";
+import OSSUpload from "../OSSUpload"
 
-const defaults = new Map([
-    ["Root", {
-        sampling_interval: 2,
-        sampling_ignore: 0,
-    }]
-])
-export { defaults }
+
+function defaultFieldsValues(type: string) {
+    switch (type) {
+        case "Root":
+            return {
+                sampling_interval: 2,
+                sampling_ignore: 0,
+            }
+        case "JSR223PostProcessor":
+        case "JSR223PreProcessor":
+        case "JSR223Assertion":
+            return {
+                language: "shell"
+            }
+        default:
+            return {}
+    }
+}
+
+export { defaultFieldsValues }
 
 export default function App(props: { type: String }) {
     switch (props.type) {
@@ -52,7 +66,7 @@ export default function App(props: { type: String }) {
                 <Row gutter={24}>
                     <Col span="6">
                         <Form.Item label="协议" name="protocol">
-                            <Input />
+                            <Select options={[{ value: "http" }]} />
                         </Form.Item>
                     </Col>
                     <Col span="12">
@@ -70,7 +84,7 @@ export default function App(props: { type: String }) {
                 <Row gutter={24}>
                     <Col span="6">
                         <Form.Item name="method">
-                            <Select options={[{ value: "GET" }, { value: "POST" }]} />
+                            <Select options={[{ value: "GET" }, { value: "POST" }, { value: "PUT" }, { value: "DELETE" }, { value: "TRACE" }, { value: "HEAD" }, { value: "OPTIONS" }]} />
                         </Form.Item>
                     </Col>
                     <Col span="12">
@@ -84,17 +98,23 @@ export default function App(props: { type: String }) {
                         </Form.Item>
                     </Col>
                 </Row>
-                <Divider orientation="left">HTTP请求</Divider>
-                <HTTPRequestHeaders />
+                <Divider orientation="left">请求参数</Divider>
+                <HTTPRequest name="parameters" />
                 <Divider orientation="left">消息体数据</Divider>
                 <Form.Item label="消息体" name="body">
                     <Input.TextArea maxLength={1000} showCount />
                 </Form.Item>
             </>
         case "JARImport":
-            return <Form.Item name="content">
-                <Input.TextArea maxLength={1000} showCount />
-            </Form.Item>
+            return <>
+                <Divider orientation="left">Import代码块</Divider>
+                <Form.Item name="content">
+                    <Editor className="MonacoEditor" height={400} language="java" />
+                </Form.Item>
+                <Form.Item label="JAR文件" name="filenames">
+                    <OSSUpload max={10} />
+                </Form.Item>
+            </>
         case "WhileController":
             return <>
                 <Divider orientation="left">循环继续条件</Divider>
@@ -112,12 +132,8 @@ export default function App(props: { type: String }) {
             </Form.Item>
         case "JSR223PreProcessor":
         case "JSR223PostProcessor":
-            return <>
-                <Divider orientation="left">Groovy脚本</Divider>
-                <Form.Item name="script">
-                    <Editor height={400} language="python"/>
-                </Form.Item>
-            </>
+        case "JSR223Assertion":
+            return <ScriptEditor />
         case "ResponseAssertion":
             return <>
                 <Divider orientation="left">测试字段</Divider>
@@ -139,11 +155,82 @@ export default function App(props: { type: String }) {
                 </Form.Item>
                 <Divider orientation="left">方法内容</Divider>
                 <Form.Item name="script">
-                    <Editor height={400} language="python"/>
+                    <Editor className="MonacoEditor" height={400} language="python" />
                 </Form.Item>
+            </>
+        case "Counter":
+            return <>
+                <Form.Item name="start" label="开始值">
+                    <InputNumber className="InputNumber" min={0} />
+                </Form.Item>
+                <Form.Item name="incr" label="递增">
+                    <InputNumber className="InputNumber" min={0} />
+                </Form.Item>
+                <Form.Item name="end" label="最大值">
+                    <InputNumber className="InputNumber" min={0} />
+                </Form.Item>
+                <Form.Item name="format" label="数字格式">
+                    <Input />
+                </Form.Item>
+                <Form.Item name="name" label="引用名称">
+                    <Input />
+                </Form.Item>
+            </>
+        case "CSVDataSetConfig":
+            return <>
+                <Form.Item label="文件名" name="filenames">
+                    <OSSUpload max={1} />
+                </Form.Item>
+                <Form.Item label="文件编码" name="file_encoding">
+                    <Select options={[{ value: "UTF-8" }, { value: "UTF-16" }, { value: "ISO-8859-15" }, { value: "US-ASCII" }]} />
+                </Form.Item>
+                <Form.Item label="变量名称(西文逗号间隔)" name="variable_names">
+                    <Input />
+                </Form.Item>
+                <Form.Item label="忽略首行(只在设置了变量名称才生效)" name="ignore_first_line" valuePropName="checked">
+                    <Checkbox />
+                </Form.Item>
+                <Form.Item label="是否允许带引号" name="quoted_data" valuePropName="checked">
+                    <Checkbox />
+                </Form.Item>
+                <Form.Item label="遇到文件结束符再次循环?" name="recycle" valuePropName="checked">
+                    <Checkbox />
+                </Form.Item>
+                <Form.Item label="线程共享模式" name="share_mode">
+                    <Select options={[{ value: "ALL_THREADS" }, { value: "CURRENT_AGENT" }, { value: "CURRENT_PROCESS" }, { value: "CURRENT_THREAD" }]} />
+                </Form.Item>
+            </>
+        case "HTTPCookieManager":
+            return <>
+                <Divider orientation="left">Cookie</Divider>
+                <HTTPCookie />
+            </>
+        case "HTTPHeaderManager":
+            return <>
+                <Divider orientation="left">Cookie</Divider>
+                <HTTPRequest name="headers" />
             </>
     }
     return null
+}
+
+function ScriptEditor() {
+    const [language, setLanguage] = useState("")
+    const radioRef = useRef<HTMLDivElement>(null)
+    useEffect(function () {
+        setLanguage((radioRef.current?.querySelector(".ant-radio-checked > input") as HTMLInputElement).value)
+    }, [])
+    return <>
+        <Divider orientation="left">脚本内容</Divider>
+        <Form.Item name="language">
+            <Radio.Group ref={radioRef} options={["shell", "javascript", "groovy",]} onChange={function (e) {
+                setLanguage(e.target.value)
+            }} />
+        </Form.Item>
+        <Form.Item name="script">
+            <Editor className="MonacoEditor" height={400} language={language} />
+        </Form.Item>
+    </>
 }
 
 function RootBasicScenario(props: FormItemLabelProps) {
@@ -199,15 +286,34 @@ function RootPresure() {
     </>
 }
 
-function HTTPRequestHeaders() {
+function HTTPRequest(props: { name: string }) {
     return <div className="HTTPRequestHeaders">
-        <Form.List initialValue={[{}]} name="headers">{function (fields, { add, remove }) {
+        <Form.List initialValue={[{}]} name={props.name}>{function (fields, { add, remove }) {
             return fields.map(function (item) {
                 return <div key={item.name} className="FormList">
                     <Form.Item name={[item.name, "name"]} rules={[{ max: 32 }]}><Input /></Form.Item>
                     <span className="Equal">=</span>
                     <Form.Item name={[item.name, "value"]} rules={[{ max: 32 }]}><Input /></Form.Item>
-                    <PlusCircleOutlined onClick={add} />
+                    <PlusCircleOutlined onClick={function(){add()}} />
+                    {item.key !== 0 && <MinusCircleOutlined onClick={function () { remove(item.name) }} />}
+                </div>
+            })
+        }}</Form.List>
+    </div>
+}
+
+function HTTPCookie() {
+    return <div className="HTTPRequestHeaders">
+        <Form.List initialValue={[{}]} name="cookies">{function (fields, { add, remove }) {
+            return fields.map(function (item) {
+                return <div key={item.name} className="FormList">
+                    <Form.Item name={[item.name, "name"]} rules={[{ max: 32 }]}><Input placeholder="名称" /></Form.Item>
+                    <span className="Equal">=</span>
+                    <Form.Item name={[item.name, "value"]} rules={[{ max: 32 }]}><Input placeholder="值" /></Form.Item>
+                    <Form.Item name={[item.name, "domain"]} rules={[{ max: 32 }]}><Input placeholder="域" /></Form.Item>
+                    <Form.Item name={[item.name, "path"]} rules={[{ max: 32 }]}><Input placeholder="路径" /></Form.Item>
+                    <Form.Item name={[item.name, "safe"]} rules={[{ max: 32 }]}><Input placeholder="安全" /></Form.Item>
+                    <PlusCircleOutlined onClick={function(){add()}} />
                     {item.key !== 0 && <MinusCircleOutlined onClick={function () { remove(item.name) }} />}
                 </div>
             })

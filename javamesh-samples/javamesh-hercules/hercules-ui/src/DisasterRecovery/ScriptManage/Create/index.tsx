@@ -31,17 +31,7 @@ export default function App() {
                             for (let key in values) {
                                 formData.append(key, values[key]);
                             }
-                            const res = await fetch('/argus-emergency/api/script/upload', {
-                                method: 'POST',
-                                body: formData
-                            })
-                            if (!res.ok) {
-                                throw new Error("Request failed with status code " + res.status)
-                            }
-                            const json = await res.json()
-                            if (json.msg) {
-                                throw new Error(json.msg)
-                            }
+                            await axios.post('/argus-emergency/api/script/upload', formData)
                         } else {
                             await axios.post('/argus-emergency/api/script', values)
                         }
@@ -122,5 +112,5 @@ function ScriptEditor(props: { onChange?: (value?: string) => void, script?: str
         props.setScript(value)
         props.onChange?.(value)
     }, 1000))
-    return <Editor height={200} language="shell" value={props.script} onChange={debounceRef.current}/>
+    return <Editor className="MonacoEditor" height={200} language="shell" value={props.script} onChange={debounceRef.current}/>
 }

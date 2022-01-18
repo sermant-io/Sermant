@@ -40,9 +40,10 @@ export default function App() {
             try {
                 const res = await axios.get("/argus-emergency/api/history/scenario", { params: { history_id } })
                 const data = res.data.data
+                if (data.length === 0) return
                 scenaKeysRef.current = data.map(function (item: { key: string }) { return "/scena/" + item.key })
                 setScenaList(data)
-                if (!scenaIdRef.current) scenaIdRef.current = data[0]?.scena_id
+                if (!scenaIdRef.current) scenaIdRef.current = data[0].scena_id
                 loadTask(history_id)
             } catch (error: any) {
                 message.error(error.message)

@@ -3,7 +3,7 @@ import { DataNode } from "antd/lib/tree"
 import { debounce } from "lodash"
 import React, { Key } from "react"
 import DropdownMenu, { menus, rules } from "./DropdownMenu"
-import FormItems, { defaults } from "./FormItems"
+import FormItems, { defaultFieldsValues } from "./FormItems"
 import Icons from "./Icons"
 import "./index.scss"
 
@@ -54,7 +54,7 @@ export default class App extends React.Component<{ initialValues: Values, onSave
                 const key = new Date().valueOf() + "-" + type
                 const data = { key, type }
                 item.children.push(data);
-                this.map.set(key, { title: menus.get(type), ...defaults.get(type) })
+                this.map.set(key, { title: menus.get(type), ...defaultFieldsValues(type) })
                 this.onSelect(data.key)
                 this.props.onSave({tree: this.state.tree, map: this.map})
                 this.setState({
