@@ -24,8 +24,11 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.config.Registry;
@@ -154,6 +157,21 @@ public class DefaultHttpClient implements com.huawei.sermant.core.service.dynami
         return execute(httpPost);
     }
 
+    @Override
+    public HttpResult doPut(String url, Map<String, Object> params) {
+        final HttpPut httpPut = new HttpPut(url);
+        beforeRequest(httpPut, null, new HashMap<>());
+        addParams(httpPut, params);
+        return execute(httpPut);
+    }
+
+    @Override
+    public HttpResult doDelete(String url) {
+        final HttpDelete httpDelete = new HttpDelete(url);
+        beforeRequest(httpDelete, null, null);
+        return execute(httpDelete);
+    }
+
     /**
      * 执行请求
      *
@@ -193,7 +211,7 @@ public class DefaultHttpClient implements com.huawei.sermant.core.service.dynami
         }
     }
 
-    private void addParams(HttpPost httpPost, Map<String, Object> params) {
+    private void addParams(HttpEntityEnclosingRequestBase httpPost, Map<String, Object> params) {
         if (params == null || params.isEmpty()) {
             return;
         }

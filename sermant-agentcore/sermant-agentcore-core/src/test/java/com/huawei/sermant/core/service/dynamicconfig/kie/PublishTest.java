@@ -6,6 +6,9 @@ package com.huawei.sermant.core.service.dynamicconfig.kie;
 
 import com.huawei.sermant.core.common.CommonConstant;
 import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.service.ServiceManager;
+import com.huawei.sermant.core.service.dynamicconfig.BaseTest;
+import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.http.DefaultHttpClient;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.http.HttpResult;
 import com.huawei.sermant.core.service.dynamicconfig.kie.listener.SubscriberManager;
@@ -25,12 +28,7 @@ import java.util.UUID;
  * @author zhouss
  * @since 2021-12-02
  */
-public class PublishTest {
-
-    @Before
-    public void initLog() {
-        LoggerFactory.init(Collections.singletonMap(CommonConstant.LOG_SETTING_FILE_KEY, "log"));
-    }
+public class PublishTest extends BaseTest {
 
     @Test
     public void testPost() {
@@ -55,4 +53,14 @@ public class PublishTest {
         Assert.assertTrue(result);
     }
 
+    @Test
+    public void testPublishSameKey() {
+        String key = "rule3";
+        String group = "a=b&c=d&e=f";
+        final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
+        service.publishConfig(key, group, "1");
+        service.publishConfig(key, group, "3");
+        final String config = service.getConfig(key, group);
+        Assert.assertEquals("3", config);
+    }
 }

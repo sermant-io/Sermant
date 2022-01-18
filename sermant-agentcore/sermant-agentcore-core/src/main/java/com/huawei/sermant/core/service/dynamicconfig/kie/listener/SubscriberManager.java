@@ -27,17 +27,17 @@ import com.huawei.sermant.core.lubanops.integration.utils.APMThreadFactory;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.ClientUrlManager;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieClient;
+import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieConfigEntity;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieListenerWrapper;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieRequest;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieResponse;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieSubscriber;
+import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.ResultHandler;
+import com.huawei.sermant.core.service.dynamicconfig.kie.constants.KieConstants;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -96,14 +96,19 @@ public class SubscriberManager {
     private final AtomicInteger curLongConnectionRequestCount = new AtomicInteger(0);
 
     /**
-     * map<监听键, 监听该键的监听器列表>
+     * map<监听键, 监听该键的监听器列表>  一个group，仅有一个KieListenerWrapper
      */
-    private final Map<KieSubscriber, List<KieListenerWrapper>> listenerMap = new ConcurrentHashMap<KieSubscriber, List<KieListenerWrapper>>();
+    private final Map<KieRequest, KieListenerWrapper> listenerMap = new ConcurrentHashMap<KieRequest, KieListenerWrapper>();
 
     /**
      * kie客户端
      */
     private final KieClient kieClient;
+
+    /**
+     * 接收所有数据，不过滤disabled的数据
+     */
+    private final ResultHandler<KieResponse> receiveAllDataHandler = new ResultHandler.DefaultResultHandler(false);
 
     /**
      * 订阅执行器
@@ -133,8 +138,27 @@ public class SubscriberManager {
      */
     public boolean addGroupListener(String group, DynamicConfigListener listener, boolean ifNotify) {
         try {
-            return subscribe(new KieRequest().setLabelCondition(LabelGroupUtils.getLabelCondition(group)).setWait(WAIT),
-                    listener, ifNotify);
+            return subscribe(KieConstants.DEFAULT_GROUP_KEY, new KieRequest().setLabelCondition(
+                    LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener, ifNotify);
+        } catch (Exception ex) {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Add group listener failed, %s", ex.getMessage()));
+            return false;
+        }
+    }
+
+    /**
+     * 添加单个key监听器
+     *
+     * @param key      键
+     * @param group    标签组
+     * @param listener 监听器
+     * @param ifNotify 是否在第一次添加时，将所有数据查询返回给调用者
+     * @return 是否添加成功
+     */
+    public boolean addConfigListener(String key, String group, DynamicConfigListener listener, boolean ifNotify) {
+        try {
+            return subscribe(key, new KieRequest().setLabelCondition(
+                    LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener, ifNotify);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Add group listener failed, %s", ex.getMessage()));
             return false;
@@ -150,8 +174,8 @@ public class SubscriberManager {
      */
     public boolean removeGroupListener(String group, DynamicConfigListener listener) {
         try {
-            return unSubscribe(new KieRequest().setLabelCondition(LabelGroupUtils.getLabelCondition(group)).setWait(WAIT),
-                    listener);
+            return unSubscribe(KieConstants.DEFAULT_GROUP_KEY, new KieRequest().setLabelCondition(
+                    LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Removed group listener failed, %s", ex.getMessage()));
             return false;
@@ -159,7 +183,7 @@ public class SubscriberManager {
     }
 
     /**
-     * 发布配置
+     * 发布配置, 若配置已存在则转为更新配置
      *
      * @param key     配置键
      * @param group   分组
@@ -167,11 +191,68 @@ public class SubscriberManager {
      * @return 是否发布成功
      */
     public boolean publishConfig(String key, String group, String content) {
-        if (StringUtils.isEmpty(key)) {
+        final String keyId = getKeyId(key, group);
+        if (keyId == null) {
+            // 无该配置 执行新增操作
+            final Map<String, String> labels = LabelGroupUtils.resolveGroupLabels(group);
+            return kieClient.publishConfig(key, labels, content, true);
+        } else {
+            return kieClient.doUpdateConfig(keyId, content, true);
+        }
+    }
+
+    /**
+     * 移除配置
+     *
+     * @param key   键名称
+     * @param group 分组
+     * @return 是否删除成功
+     */
+    public boolean removeConfig(String key, String group) {
+        final String keyId = getKeyId(key, group);
+        if (keyId == null) {
             return false;
         }
+        return kieClient.doDeleteConfig(keyId);
+    }
+
+    /**
+     * 获取key_id
+     *
+     * @param key   键
+     * @param group 组
+     * @return key_id, 若不存在则返回null
+     */
+    private String getKeyId(String key, String group) {
+        final KieResponse kieResponse = queryConfigurations(null, LabelGroupUtils.getLabelCondition(group), false);
+        if (kieResponse == null || kieResponse.getData() == null) {
+            return null;
+        }
         final Map<String, String> labels = LabelGroupUtils.resolveGroupLabels(group);
-        return kieClient.publishConfig(key, labels, content, true);
+        for (KieConfigEntity entity : kieResponse.getData()) {
+            if (isSameKey(entity, key, labels)) {
+                return entity.getId();
+            }
+        }
+        return null;
+    }
+
+    private boolean isSameKey(KieConfigEntity entity, String targetKey, Map<String, String> targetLabels) {
+        if (!StringUtils.equals(entity.getKey(), targetKey)) {
+            return false;
+        }
+        // 比较标签是否相同
+        final Map<String, String> sourceLabels = entity.getLabels();
+        if (sourceLabels == null || (sourceLabels.size() != targetLabels.size())) {
+            return false;
+        }
+        for (Map.Entry<String, String> entry : sourceLabels.entrySet()) {
+            final String labelValue = targetLabels.get(entry.getKey());
+            if (!StringUtils.equals(labelValue, entry.getValue())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -179,13 +260,33 @@ public class SubscriberManager {
      *
      * @param kieRequest            请求
      * @param dynamicConfigListener 监听器
-     * @param ifNotify 是否在第一次添加时，将所有数据查询返回给调用者
+     * @param ifNotify              是否在第一次添加时，将所有数据查询返回给调用者
      */
-    public boolean subscribe(KieRequest kieRequest, DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
+    public boolean subscribe(String key, KieRequest kieRequest, DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
+        final KieListenerWrapper oldWrapper = listenerMap.get(kieRequest);
+        if (oldWrapper == null) {
+            return firstSubscribeForGroup(key, kieRequest, dynamicConfigListener, ifNotify);
+        } else {
+            oldWrapper.addKeyListener(key, dynamicConfigListener);
+            tryNotify(oldWrapper.getKieRequest(), oldWrapper, ifNotify);
+            return true;
+        }
+    }
+
+    private void tryNotify(KieRequest request, KieListenerWrapper wrapper, boolean ifNotify) {
+        if (ifNotify) {
+            firstRequest(request, wrapper);
+        }
+    }
+
+    private boolean firstSubscribeForGroup(String key,
+                                           KieRequest kieRequest,
+                                           DynamicConfigListener dynamicConfigListener,
+                                           boolean ifNotify) {
         final KieSubscriber kieSubscriber = new KieSubscriber(kieRequest);
         Task task;
-        KieListenerWrapper kieListenerWrapper = new KieListenerWrapper(kieRequest.getLabelCondition(),
-                dynamicConfigListener, new KvDataHolder());
+        KieListenerWrapper kieListenerWrapper = new KieListenerWrapper(key,
+                dynamicConfigListener, new KvDataHolder(), kieRequest);
         if (!kieSubscriber.isLongConnectionRequest()) {
             task = new ShortTimerTask(kieSubscriber, kieListenerWrapper);
         } else {
@@ -198,16 +299,9 @@ public class SubscriberManager {
             buildRequestConfig(kieRequest);
             task = new LoopPullTask(kieSubscriber, kieListenerWrapper);
         }
-        if (ifNotify) {
-            firstRequest(kieRequest, kieListenerWrapper);
-        }
-        List<KieListenerWrapper> configurationListeners = listenerMap.get(kieSubscriber);
-        if (configurationListeners == null) {
-            configurationListeners = new ArrayList<KieListenerWrapper>();
-        }
         kieListenerWrapper.setTask(task);
-        configurationListeners.add(kieListenerWrapper);
-        listenerMap.put(kieSubscriber, configurationListeners);
+        listenerMap.put(kieRequest, kieListenerWrapper);
+        tryNotify(kieRequest, kieListenerWrapper, ifNotify);
         executeTask(task);
         return true;
     }
@@ -229,9 +323,9 @@ public class SubscriberManager {
      */
     public void firstRequest(KieRequest kieRequest, KieListenerWrapper kieListenerWrapper) {
         try {
-            KieResponse kieResponse = queryConfigurations(kieRequest.getRevision(), kieRequest.getLabelCondition());
+            KieResponse kieResponse = queryConfigurations(null, kieRequest.getLabelCondition());
             if (kieResponse != null && kieResponse.isChanged()) {
-                tryPublishEvent(kieResponse, kieListenerWrapper);
+                tryPublishEvent(kieResponse, kieListenerWrapper, true);
                 kieRequest.setRevision(kieResponse.getRevision());
             }
         } catch (Exception ex) {
@@ -247,8 +341,23 @@ public class SubscriberManager {
      * @return kv配置
      */
     public KieResponse queryConfigurations(String revision, String label) {
+        return queryConfigurations(revision, label, true);
+    }
+
+    /**
+     * 单独查询配置
+     *
+     * @param revision 版本
+     * @param label    关联标签组
+     * @param onlyEnabled 是否仅可用status=enabled
+     * @return kv配置
+     */
+    public KieResponse queryConfigurations(String revision, String label, boolean onlyEnabled) {
         final KieRequest cloneRequest = new KieRequest().setRevision(revision).setLabelCondition(label);
-        return kieClient.queryConfigurations(cloneRequest);
+        if (onlyEnabled) {
+            return kieClient.queryConfigurations(cloneRequest);
+        }
+        return kieClient.queryConfigurations(cloneRequest, receiveAllDataHandler);
     }
 
     /**
@@ -256,25 +365,22 @@ public class SubscriberManager {
      *
      * @param kieRequest 请求体
      */
-    public boolean unSubscribe(KieRequest kieRequest, DynamicConfigListener dynamicConfigListener) {
-        for (Map.Entry<KieSubscriber, List<KieListenerWrapper>> next : listenerMap.entrySet()) {
-            if (!next.getKey().getKieRequest().equals(kieRequest)) {
+    public boolean unSubscribe(String key, KieRequest kieRequest, DynamicConfigListener dynamicConfigListener) {
+        for (Map.Entry<KieRequest, KieListenerWrapper> next : listenerMap.entrySet()) {
+            if (!next.getKey().equals(kieRequest)) {
                 continue;
             }
             if (dynamicConfigListener == null) {
                 listenerMap.remove(next.getKey());
                 return true;
             } else {
-                final Iterator<KieListenerWrapper> iterator = next.getValue().iterator();
-                while (iterator.hasNext()) {
-                    final KieListenerWrapper listenerWrapper = iterator.next();
-                    if (listenerWrapper.getConfigurationListener() == dynamicConfigListener) {
-                        iterator.remove();
-                        listenerWrapper.getTask().stop();
-                        LOGGER.fine(String.format(Locale.ENGLISH, "%s has been stopped!",
-                                dynamicConfigListener.getClass().getName()));
-                        return true;
+                final KieListenerWrapper wrapper = next.getValue();
+                if (wrapper.removeKeyListener(key, dynamicConfigListener)) {
+                    if (wrapper.isEmpty()) {
+                        // 若监听器均已清空，则停止改标签组的任务
+                        wrapper.getTask().stop();
                     }
+                    return true;
                 }
             }
         }
@@ -315,10 +421,10 @@ public class SubscriberManager {
         }
     }
 
-    private void tryPublishEvent(KieResponse kieResponse, KieListenerWrapper kieListenerWrapper) {
+    private void tryPublishEvent(KieResponse kieResponse, KieListenerWrapper kieListenerWrapper, boolean isFirst) {
         final KvDataHolder kvDataHolder = kieListenerWrapper.getKvDataHolder();
-        final KvDataHolder.EventDataHolder eventDataHolder = kvDataHolder.analyzeLatestData(kieResponse);
-        if (eventDataHolder.isChanged()) {
+        final KvDataHolder.EventDataHolder eventDataHolder = kvDataHolder.analyzeLatestData(kieResponse, isFirst);
+        if (eventDataHolder.isChanged() || isFirst) {
             kieListenerWrapper.notifyListener(eventDataHolder);
         }
     }
@@ -400,7 +506,7 @@ public class SubscriberManager {
         public void executeInner() {
             final KieResponse kieResponse = kieClient.queryConfigurations(kieSubscriber.getKieRequest());
             if (kieResponse != null && kieResponse.isChanged()) {
-                tryPublishEvent(kieResponse, kieListenerWrapper);
+                tryPublishEvent(kieResponse, kieListenerWrapper, false);
                 kieSubscriber.getKieRequest().setRevision(kieResponse.getRevision());
             }
         }
@@ -428,7 +534,7 @@ public class SubscriberManager {
             try {
                 final KieResponse kieResponse = kieClient.queryConfigurations(kieSubscriber.getKieRequest());
                 if (kieResponse != null && kieResponse.isChanged()) {
-                    tryPublishEvent(kieResponse, kieListenerWrapper);
+                    tryPublishEvent(kieResponse, kieListenerWrapper, false);
                     kieSubscriber.getKieRequest().setRevision(kieResponse.getRevision());
                 }
                 // 间隔一段时间拉取，减轻服务压力;

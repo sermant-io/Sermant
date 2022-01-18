@@ -38,12 +38,16 @@ public class KvDataHolder {
     /**
      * 分析最新的数据
      *
+     * @param isFirst 是否为首次通知
      * @param response 最新数据
      * @return EventDataHolder
      */
-    public EventDataHolder analyzeLatestData(KieResponse response) {
+    public EventDataHolder analyzeLatestData(KieResponse response, boolean isFirst) {
+        if (isFirst) {
+            clear();
+        }
         final Map<String, String> latestData = formatKieResponse(response);
-        final EventDataHolder eventDataHolder = new EventDataHolder();
+        final EventDataHolder eventDataHolder = new EventDataHolder(formatRevision(response.getRevision()));
         if (currentData != null) {
             if (latestData.isEmpty()) {
                 eventDataHolder.deleted.putAll(currentData);
@@ -73,6 +77,24 @@ public class KvDataHolder {
         return eventDataHolder;
     }
 
+    private void clear() {
+        if (currentData != null) {
+            currentData.clear();
+            currentData = null;
+        }
+    }
+
+    private long formatRevision(String revision) {
+        if (revision == null) {
+            return 0L;
+        }
+        try {
+            return Long.parseLong(revision);
+        } catch (NumberFormatException ex) {
+            return 0L;
+        }
+    }
+
     private Map<String, String> formatKieResponse(KieResponse response) {
         final HashMap<String, String> latestData = new HashMap<String, String>();
         if (response == null || response.getData() == null || response.getData().isEmpty()) {
@@ -89,6 +111,11 @@ public class KvDataHolder {
      */
     public static class EventDataHolder {
         /**
+         * 版本号
+         */
+        private final long version;
+
+        /**
          * 修改的key
          */
         private Map<String, String> modified;
@@ -103,10 +130,11 @@ public class KvDataHolder {
          */
         private Map<String, String> added;
 
-        public EventDataHolder() {
+        public EventDataHolder(long version) {
             modified = new HashMap<String, String>();
             deleted = new HashMap<String, String>();
             added = new HashMap<String, String>();
+            this.version = version;
         }
 
         public Map<String, String> getModified() {
@@ -135,6 +163,10 @@ public class KvDataHolder {
 
         public boolean isChanged() {
             return !added.isEmpty() || !deleted.isEmpty() || !modified.isEmpty();
+        }
+
+        public long getVersion() {
+            return version;
         }
     }
 }
