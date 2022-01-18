@@ -72,7 +72,7 @@ function Home() {
                 pagination={{ total: data.total, size: "small", showTotal() { return `共 ${data.total} 条` }, showSizeChanger: true }}
                 columns={[
                     {
-                        title: "预案名称",
+                        title: "活动名称",
                         dataIndex: "plan_name",
                         sorter: true,
                         filters: function () {

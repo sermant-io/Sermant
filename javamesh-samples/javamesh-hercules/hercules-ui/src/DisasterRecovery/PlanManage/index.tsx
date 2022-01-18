@@ -74,7 +74,7 @@ function Home() {
     }, [])
     useDidRecover(load)
     return <div className="PlanManage">
-        <Breadcrumb label="预案管理" />
+        <Breadcrumb label="活动管理" />
         {data && <Card>
             <div className="ToolBar">
                 <AddPlan />
@@ -83,20 +83,20 @@ function Home() {
                     stateRef.current.search = values
                     load()
                 }}>
-                    <Form.Item name="plan_name_no">
-                        <Input placeholder="预案名称、编号" />
+                    <Form.Item className="Input" name="plan_name_no">
+                        <Input placeholder="活动名称、编号" />
                     </Form.Item>
-                    <Form.Item name="scena_name_no">
+                    <Form.Item className="Input" name="scena_name_no">
                         <Input placeholder="场景名称、编号" />
                     </Form.Item>
-                    <Form.Item name="task_name_no">
+                    <Form.Item className="Input" name="task_name_no">
                         <Input placeholder="任务名称、编号" />
                     </Form.Item>
-                    <Form.Item name="script_name">
+                    <Form.Item className="Input" name="script_name">
                         <Input placeholder="脚本名称" />
                     </Form.Item>
                     <Form.Item className="Input" name="status_label">
-                        <ServiceSelect placeholder="预案状态" url="/argus-emergency/api/plan/search/status_label" allowClear />
+                        <ServiceSelect placeholder="活动状态" url="/argus-emergency/api/plan/search/status_label" allowClear />
                     </Form.Item>
                     <Button htmlType="submit" icon={<SearchOutlined />}>查找</Button>
                 </Form>
@@ -170,9 +170,9 @@ function Home() {
                     }
                 }}
                 columns={[
-                    { title: "预案编号", dataIndex: "plan_no", sorter: true, ellipsis: true },
-                    { title: "预案名称", dataIndex: "plan_name", ellipsis: true },
-                    { title: "预案状态", dataIndex: "status_label", ellipsis: true },
+                    { title: "活动编号", dataIndex: "plan_no", sorter: true, ellipsis: true },
+                    { title: "活动名称", dataIndex: "plan_name", ellipsis: true },
+                    { title: "活动状态", dataIndex: "status_label", ellipsis: true },
                     { title: "创建时间", dataIndex: "create_time", sorter: true, ellipsis: true },
                     { title: "创建人", dataIndex: "creator", ellipsis: true },
                     { title: "备注", dataIndex: "comment", ellipsis: true },
@@ -238,8 +238,8 @@ function AddPlan() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = useForm()
     return <>
-        <Button disabled={!auth.includes("operator")} type="primary" icon={<PlusOutlined />} onClick={function () { setIsModalVisible(true) }}>添加预案</Button>
-        <Modal className="AddPlan" title="添加预案" width={700} visible={isModalVisible} maskClosable={false} footer={null} onCancel={function () {
+        <Button disabled={!auth.includes("operator")} type="primary" icon={<PlusOutlined />} onClick={function () { setIsModalVisible(true) }}>添加活动</Button>
+        <Modal className="AddPlan" title="添加活动" width={700} visible={isModalVisible} maskClosable={false} footer={null} onCancel={function () {
             setIsModalVisible(false)
         }}>
             <Form form={form} requiredMark={false} onFinish={async function (values) {
@@ -255,7 +255,7 @@ function AddPlan() {
                 }
                 submit = false
             }}>
-                <Form.Item label="预案名称" name="plan_name" rules={[{ required: true, max: 64 }]}><Input /></Form.Item>
+                <Form.Item label="活动名称" name="plan_name" rules={[{ required: true, max: 64 }]}><Input /></Form.Item>
                 <Form.Item className="Buttons">
                     <Button type="primary" htmlType="submit">创建</Button>
                     <Button onClick={function () {
@@ -289,7 +289,7 @@ function CopyPlan({ plan_id }: { plan_id: string }) {
                 }
                 submit = false
             }}>
-                <Form.Item label="预案名称" name="plan_name" rules={[{ required: true, max: 64 }]}><Input /></Form.Item>
+                <Form.Item label="活动名称" name="plan_name" rules={[{ required: true, max: 64 }]}><Input /></Form.Item>
                 <Form.Item className="Buttons">
                     <Button type="primary" htmlType="submit">创建</Button>
                     <Button onClick={function () {
@@ -305,7 +305,7 @@ function ApprovePlan(props: { plan_id: string, load: () => {} }) {
     const [isModalVisible, setIsModalVisible] = useState(false);
     return <>
         <Button type="link" size="small" onClick={function () { setIsModalVisible(true) }}>审核</Button>
-        <Modal className="ApprovePlan" title="审核预案" width={400} visible={isModalVisible} maskClosable={false} footer={null} onCancel={function () {
+        <Modal className="ApprovePlan" title="审核活动" width={400} visible={isModalVisible} maskClosable={false} footer={null} onCancel={function () {
             setIsModalVisible(false)
         }}>
             <Form className="Form" requiredMark={false} onFinish={async function (values) {

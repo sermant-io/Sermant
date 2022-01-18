@@ -16,7 +16,7 @@ export default function PlanInfo({ plan_id }: { plan_id: string }) {
       })()
     }, [plan_id])
     return <Descriptions className="Desc">
-      <Descriptions.Item label="预案编号">{data.plan_no}</Descriptions.Item>
-      <Descriptions.Item label="预案名称">{data.plan_name}</Descriptions.Item>
+      <Descriptions.Item label="活动编号">{data.plan_no}</Descriptions.Item>
+      <Descriptions.Item label="活动名称">{data.plan_name}</Descriptions.Item>
     </Descriptions>
   }

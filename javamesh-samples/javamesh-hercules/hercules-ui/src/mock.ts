@@ -746,7 +746,7 @@ echo "Hello World !"
     data: Array.from({ length: 10 }, function (_, index) {
       return {
         history_id: index,
-        plan_name: "预案名称",
+        plan_name: "活动名称",
         status: ["运行中", "成功", "失败", "终止"][index % 4],
         creator: "z30008585",
         start_time: "2021-01-01 00:00:00",
