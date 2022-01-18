@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.register.enhancers.health;
+package com.huawei.register.enhancers;
 
 import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
 import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
@@ -24,26 +24,27 @@ import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
- * consul健康检测增强
+ * 针对eureka，consul注册中心获取实例列表拦截
  *
  * @author zhouss
  * @since 2021-12-17
  */
-public class ConsulWatchConEnhancer implements EnhanceDefinition {
+public class IClientConfigEnhancer implements EnhanceDefinition {
 
     /**
-     * nacos心跳发送类
+     * 增强类的全限定名
+     * 该client注入优先级最高，因此只需拦截该client即可
      */
-    private static final String ENHANCE_CLASS = "org.springframework.cloud.consul.discovery.ConsulCatalogWatch";
+    private static final String ENHANCE_CLASS = "com.netflix.client.config.IClientConfig";
 
     /**
      * 拦截类的全限定名
      */
-    private static final String INTERCEPT_CLASS = "com.huawei.register.interceptors.health.ConsulWatchInterceptor";
+    private static final String INTERCEPT_CLASS = "com.huawei.register.interceptors.IClientConfigInterceptor";
 
     @Override
     public ClassMatcher enhanceClass() {
-        return ClassMatchers.named(ENHANCE_CLASS);
+        return ClassMatchers.hasSuperTypes(ENHANCE_CLASS);
     }
 
     @Override

@@ -44,7 +44,6 @@
             <version>${spring-cloud-version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
@@ -64,6 +63,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.33</version>
+        </dependency>
+
+        <!--test 依赖-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
