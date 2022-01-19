@@ -8,8 +8,10 @@ import AppHome from './AppHome'
 import DisasterRecovery from './DisasterRecovery'
 import Logo from './Logo.png'
 import {
-  HomeOutlined, SettingOutlined, ThunderboltOutlined,
-  // AppstoreOutlined, 
+  HomeOutlined, 
+  SettingOutlined, 
+  ThunderboltOutlined,
+  // AppstoreOutlined,
   DownOutlined
 } from '@ant-design/icons'
 import { Button, Dropdown, Form, Input, Menu, message, Modal } from 'antd'

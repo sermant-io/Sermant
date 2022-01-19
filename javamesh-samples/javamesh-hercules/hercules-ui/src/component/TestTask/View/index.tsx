@@ -5,8 +5,8 @@ import { PresetColorTypes } from "antd/lib/_util/colors";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import Breadcrumb from "../../../component/Breadcrumb";
-import Card from "../../../component/Card";
+import Breadcrumb from "../../Breadcrumb";
+import Card from "../../Card";
 import "./index.scss"
 
 export default function App() {

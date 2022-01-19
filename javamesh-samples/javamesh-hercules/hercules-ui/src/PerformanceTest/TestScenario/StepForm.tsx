@@ -9,7 +9,7 @@ import axios from "axios"
 import ServiceSelect from "../../component/ServiceSelect"
 import Editor from "@monaco-editor/react"
 import { useHistory } from "react-router"
-import TaskForm from "../TestTask/Create/TaskForm"
+import TaskForm from "../../component/TestTask/Create/TaskForm"
 
 let params = { scenario_name: "" }
 export default function App(props: { breadcrumb: ReactNode, quickStart?: boolean }) {

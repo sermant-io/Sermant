@@ -1,6 +1,6 @@
 import { Button, Checkbox, DatePicker, Form, FormInstance, Input, InputNumber, message, Modal, Radio, Select, Switch, Table, Tabs, Tooltip } from "antd"
 import React, { useEffect, useRef, useState } from "react"
-import ServiceSelect from "../../../component/ServiceSelect"
+import ServiceSelect from "../../ServiceSelect"
 import HostForm from "./HostForm"
 import { Line, LineOptions } from '@antv/g2plot'
 import "./TaskForm.scss"
@@ -8,7 +8,7 @@ import axios from "axios"
 import { debounce } from "lodash"
 import { useHistory } from "react-router"
 import moment, { Moment } from "moment"
-import PageInfo from "../../../component/PageInfo"
+import PageInfo from "../../PageInfo"
 
 const options: LineOptions = {
     height: 250,
