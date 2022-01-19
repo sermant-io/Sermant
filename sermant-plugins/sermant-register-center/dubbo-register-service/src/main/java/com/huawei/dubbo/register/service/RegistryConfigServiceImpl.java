@@ -45,11 +45,7 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
         if (obj instanceof AbstractInterfaceConfig && DubboCache.INSTANCE.getDubboConfig().isOpenMigration()) {
             AbstractInterfaceConfig config = (AbstractInterfaceConfig) obj;
             List<RegistryConfig> registries = config.getRegistries();
-            if (registries == null || allRegistriesAreInvalid(registries)) {
-                return;
-            }
-            if (hasScRegistryConfig(registries)) {
-                // 如果存在sc的注册配置，就不再重复加载sc注册配置了
+            if (registries == null || isInValid(registries)) {
                 return;
             }
             // 这个url不重要，重要的是protocol，所以get(0)就行
@@ -58,31 +54,27 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
             RegistryConfig registryConfig = new RegistryConfig(url.toString());
             registryConfig.setId(SC_REGISTRY_PROTOCOL);
             registryConfig.setPrefix(DUBBO_REGISTRIES_CONFIG_PREFIX);
-            registries.add(0, registryConfig);
+            registries.add(registryConfig);
         }
     }
 
-    private boolean allRegistriesAreInvalid(List<RegistryConfig> registries) {
+    private boolean isInValid(List<RegistryConfig> registries) {
+        // 是否所有的配置都是无效的
+        boolean allRegistriesAreInvalid = true;
+        // 是否存在sc的注册配置
+        boolean hasScRegistryConfig = false;
         for (RegistryConfig registry : registries) {
             if (registry == null) {
                 continue;
             }
             if (registry.isValid()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean hasScRegistryConfig(List<RegistryConfig> registries) {
-        for (RegistryConfig registry : registries) {
-            if (registry == null) {
-                continue;
+                allRegistriesAreInvalid = false;
             }
             if (SC_REGISTRY_PROTOCOL.equals(registry.getId()) || SC_REGISTRY_PROTOCOL.equals(registry.getProtocol())) {
-                return true;
+                hasScRegistryConfig = true;
             }
         }
-        return false;
+        // 如果所有的配置都是无效的或者存在sc的配置，都属于无效配置，不注册到sc
+        return allRegistriesAreInvalid || hasScRegistryConfig;
     }
 }
