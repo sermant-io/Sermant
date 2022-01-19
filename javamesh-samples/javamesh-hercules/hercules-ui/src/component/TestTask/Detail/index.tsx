@@ -1,12 +1,11 @@
 import { Button, Descriptions, Input, message, Tag } from "antd"
 import React, { useEffect, useRef, useState } from "react"
-import Breadcrumb from "../../../component/Breadcrumb"
-import Card from "../../../component/Card"
+import Breadcrumb from "../../Breadcrumb"
+import Card from "../../Card"
 import "./index.scss"
 import { PresetColorTypes } from "antd/lib/_util/colors"
 import { Link, useLocation } from "react-router-dom"
 import axios from "axios"
-import { Line } from "@antv/g2plot"
 
 export default function App() {
     let submit = false
@@ -14,53 +13,20 @@ export default function App() {
     const urlSearchParams = new URLSearchParams(useLocation().search)
     const test_id = urlSearchParams.get("test_id")
     const inputRef = useRef(null)
-    const chartRef = useRef(null)
     useEffect(function () {
-        const chart = new Line(chartRef.current!!, {
-            animation: false,
-            data: [],
-            xField: 'time',
-            yField: 'tps',
-            xAxis: { tickInterval: 5, range: [0, 1] },
-            smooth: true,
-            color: "#15c4ff",
-            padding: 40,
-            height: 230
-        })
-        let timeInterval: any
-        let chartData: any[] = [];
-        timeInterval = setInterval(async function () {
+        async function load () {
             try {
                 const res = await axios.get('/argus/api/task/get', { params: { test_id } })
                 const resData = res.data.data
                 setData(resData)
-                chartData.shift()
-                chartData.push(resData.chart[0])
-                chart.changeData(chartData)
-                if (resData.status !== "running") {
-                    clearInterval(timeInterval)
-                }
             } catch (error: any) {
-                clearInterval(timeInterval)
                 message.error(error.message)
             }
-        }, 1000);
-        (async function () {
-            try {
-                const res = await axios.get('/argus/api/task/get', { params: { test_id, start: -90, interval: 1 } })
-                const resData = res.data.data
-                setData(resData)
-                chartData = resData.chart
-                chart.changeData(chartData)
-                chart.render()
-            } catch (error: any) {
-                clearInterval(timeInterval)
-                message.error(error.message)
-            }
-        })()
+        }
+        load()
+        const timeInterval = setInterval(load, 5000);
         return function () {
             clearInterval(timeInterval)
-            chart.destroy()
         }
     }, [test_id])
     return <div className="TaskDetail">
@@ -121,10 +87,6 @@ export default function App() {
                     <div className="Value">{data?.fail_count}</div>
                     <div className="Title">错误</div>
                 </div>
-            </div>
-            <div className="Label">TPS图表</div>
-            <div className="SubCard">
-                <div className="TaskChart" ref={chartRef}></div>
             </div>
             <div className="Label">测试注释</div>
             {data && <div className="Comment">

@@ -1,7 +1,7 @@
 import React from "react"
-import Breadcrumb from "../../../component/Breadcrumb"
-import Card from "../../../component/Card"
-import PageInfo from "../../../component/PageInfo"
+import Breadcrumb from "../../Breadcrumb"
+import Card from "../../Card"
+import PageInfo from "../../PageInfo"
 import './index.scss'
 import TaskForm from "./TaskForm"
 

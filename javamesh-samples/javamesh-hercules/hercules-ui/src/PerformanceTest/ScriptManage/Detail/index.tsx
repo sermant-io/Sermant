@@ -6,7 +6,7 @@ import Editor from "@monaco-editor/react"
 import { useLocation } from "react-router-dom"
 import axios from "axios"
 import CloseCircleOutlined from "@ant-design/icons/lib/icons/CloseCircleOutlined"
-import HostForm from "../../TestTask/Create/HostForm"
+import HostForm from "../../../component/TestTask/Create/HostForm"
 import { debounce } from 'lodash';
 import "./index.scss"
 import modal from "antd/lib/modal"
