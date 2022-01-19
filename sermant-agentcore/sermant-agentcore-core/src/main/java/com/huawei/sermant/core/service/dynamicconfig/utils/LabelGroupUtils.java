@@ -103,7 +103,8 @@ public class LabelGroupUtils {
             return result;
         }
         if (!isLabelGroup(group)) {
-            return result;
+            // 如果非group标签（ZK配置中心场景适配），则为该group创建标签
+            group = LabelGroupUtils.createLabelGroup(Collections.singletonMap("GROUP", group));
         }
         try {
             final String decode = URLDecoder.decode(group, "UTF-8");

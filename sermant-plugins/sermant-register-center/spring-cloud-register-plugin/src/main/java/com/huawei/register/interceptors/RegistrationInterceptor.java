@@ -34,9 +34,7 @@ public class RegistrationInterceptor implements InstanceMethodInterceptor {
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
         final RegisterCenterService service = ServiceManager.getService(RegisterCenterService.class);
-        service.register(arguments[0]);
-        // 阻止原注册中心注册
-        beforeResult.setResult(null);
+        service.register(arguments[0], beforeResult);
     }
 
     @Override

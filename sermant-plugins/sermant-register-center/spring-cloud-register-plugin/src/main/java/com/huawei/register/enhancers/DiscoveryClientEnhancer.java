@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,9 @@ public class DiscoveryClientEnhancer implements EnhanceDefinition {
 
     /**
      * 增强类的全限定名
+     * 该client注入优先级最高，因此只需拦截该client即可
      */
-    private static final String ENHANCE_CLASS = "org.springframework.cloud.client.discovery.DiscoveryClient";
+    private static final String ENHANCE_CLASS = "org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient";
 
     /**
      * 拦截类的全限定名
@@ -43,7 +44,7 @@ public class DiscoveryClientEnhancer implements EnhanceDefinition {
 
     @Override
     public ClassMatcher enhanceClass() {
-        return ClassMatchers.hasSuperTypes(ENHANCE_CLASS);
+        return ClassMatchers.named(ENHANCE_CLASS);
     }
 
     @Override

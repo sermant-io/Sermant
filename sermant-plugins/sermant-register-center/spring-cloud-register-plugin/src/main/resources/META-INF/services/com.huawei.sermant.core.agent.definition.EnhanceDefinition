@@ -17,3 +17,9 @@
 com.huawei.register.enhancers.RegistrationEnhancer
 com.huawei.register.enhancers.ServerListEnhancer
 com.huawei.register.enhancers.DiscoveryClientEnhancer
+com.huawei.register.enhancers.DiscoveryClientConfigurationEnhancer
+com.huawei.register.enhancers.health.EurekaHealthEnhancer
+com.huawei.register.enhancers.health.NacosHealthEnhancer
+com.huawei.register.enhancers.health.ZookeeperHealthEnhancer
+com.huawei.register.enhancers.health.ConsulHealthEnhancer
+com.huawei.register.enhancers.health.ConsulWatchConEnhancer

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true">
+    <property name="log.level" value="warn"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] %logger - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <root>
+        <level value="${log.level}"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

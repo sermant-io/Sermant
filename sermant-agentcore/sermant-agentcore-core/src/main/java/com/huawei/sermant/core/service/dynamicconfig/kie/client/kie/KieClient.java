@@ -22,10 +22,10 @@ import com.huawei.sermant.core.service.dynamicconfig.kie.client.ClientUrlManager
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.http.HttpClient;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.http.HttpResult;
 import com.huawei.sermant.core.service.dynamicconfig.kie.config.KieDynamicConfig;
-
 import org.apache.http.HttpStatus;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -72,9 +72,9 @@ public class KieClient extends AbstractClient {
     /**
      * 查询Kie配置
      *
-     * @param request 请求体
+     * @param request         请求体
      * @param responseHandler http结果处理器
-     * @param <T> 转换后的目标类型
+     * @param <T>             转换后的目标类型
      * @return 响应结果
      */
     public <T> T queryConfigurations(KieRequest request, ResultHandler<T> responseHandler) {
@@ -98,18 +98,50 @@ public class KieClient extends AbstractClient {
     /**
      * 发布配置
      *
-     * @param key 请求键
-     * @param labels 标签
+     * @param key     请求键
+     * @param labels  标签
      * @param content 配置
      * @return 是否发布成功
      */
     public boolean publishConfig(String key, Map<String, String> labels, String content, boolean enabled) {
-        final Map<String, Object> params = new HashMap<>();
+        final Map<String, Object> params = new HashMap<String, Object>();
         params.put("key", key);
         params.put("value", content);
         params.put("labels", labels);
         params.put("status", enabled ? "enabled" : "disabled");
         final HttpResult httpResult = this.httpClient.doPost(clientUrlManager.getUrl() + kieApi, params);
+        return httpResult.getCode() == HttpStatus.SC_OK;
+    }
+
+    /**
+     * 更新配置
+     *
+     * @param keyId   key-id
+     * @param content 更新内容
+     * @param enabled 是否开启
+     * @return 是否更新成功
+     */
+    public boolean doUpdateConfig(String keyId, String content, boolean enabled) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        params.put("value", content);
+        params.put("status", enabled ? "enabled" : "disabled");
+        final HttpResult httpResult = this.httpClient.doPut(buildKeyIdUrl(keyId), params);
+        return httpResult.getCode() == HttpStatus.SC_OK;
+    }
+
+    private String buildKeyIdUrl(String keyId) {
+        return String.format(Locale.ENGLISH, "%s/%s",
+                clientUrlManager.getUrl() + kieApi.substring(0, kieApi.length() - 1) , keyId);
+    }
+
+    /**
+     * 删除方法
+     *
+     * @param keyId key编号
+     * @return 是否删除成功
+     */
+    public boolean doDeleteConfig(String keyId) {
+        final HttpResult httpResult = this.httpClient.doDelete(buildKeyIdUrl(keyId));
         return httpResult.getCode() == HttpStatus.SC_OK;
     }
 
