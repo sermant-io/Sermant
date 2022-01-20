@@ -63,6 +63,10 @@ public class CseDataSourceManager implements DataSourceManager {
 
     @Override
     public void stop() {
+        if (ruleSyncer == null) {
+            LOGGER.warning("DataSourceManager is not initialized!");
+            return;
+        }
         ruleSyncer.stop();
     }
 

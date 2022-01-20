@@ -17,9 +17,7 @@
 package com.huawei.flowcontrol.service;
 
 import com.huawei.flowcontrol.core.FlowControlThreadFactory;
-import com.huawei.flowcontrol.core.config.CommonConst;
 import com.huawei.flowcontrol.core.init.InitExecutor;
-import com.huawei.flowcontrol.core.init.InitRuleRedis;
 import com.huawei.flowcontrol.core.util.DataSourceInitUtils;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.service.PluginService;
@@ -55,11 +53,6 @@ public class FlowControlServiceImpl implements PluginService {
             try {
                 // 开启定时任务（发送心跳和监控数据）
                 InitExecutor.doInit();
-                // 获取启动参数，判断是否备份流控规则
-                String flag = System.getProperty(CommonConst.REDIS_RULE_STORE);
-                if (Boolean.TRUE.toString().equals(flag)) {
-                    InitRuleRedis.doInit();
-                }
                 DataSourceInitUtils.initRules();
             } catch (Throwable e) {
                 LoggerFactory.getLogger().warning(String.format("Init Flow control plugin failed, {%s}", e));

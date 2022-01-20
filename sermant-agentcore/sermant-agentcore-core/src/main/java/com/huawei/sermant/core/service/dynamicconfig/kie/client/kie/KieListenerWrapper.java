@@ -83,14 +83,14 @@ public class KieListenerWrapper {
     private void notify(Map<String, String> configData, DynamicConfigEventType dynamicConfigEventType) {
         for (Map.Entry<String, String> entry : configData.entrySet()) {
             // 通知单个key监听器
-            notifyEvent(entry.getKey(), entry.getValue(), dynamicConfigEventType);
+            notifyEvent(entry.getKey(), entry.getValue(), dynamicConfigEventType, false);
             // 通知该Group的监听器做更新
-            notifyEvent(KieConstants.DEFAULT_GROUP_KEY, entry.getValue(), dynamicConfigEventType);
+            notifyEvent(entry.getKey(), entry.getValue(), dynamicConfigEventType, true);
         }
     }
 
-    private void notifyEvent(String key, String value, DynamicConfigEventType eventType) {
-        final VersionListenerWrapper versionListenerWrapper = keyListenerMap.get(key);
+    private void notifyEvent(String key, String value, DynamicConfigEventType eventType, boolean isGroup) {
+        final VersionListenerWrapper versionListenerWrapper = keyListenerMap.get(isGroup ? KieConstants.DEFAULT_GROUP_KEY : key);
         if (versionListenerWrapper == null) {
             return;
         }
