@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,53 @@ public enum DubboCache {
      */
     private String serviceName;
 
+    /**
+     * dubbo注册配置类
+     */
+    private DubboConfig dubboConfig;
+
+    /**
+     * 注册插件的版本
+     */
+    private String version;
+
+    /**
+     * 是否加载了sc的注册spi的标志
+     */
+    private boolean loadSc;
+
     public String getServiceName() {
         return serviceName;
     }
 
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
+    }
+
+    public DubboConfig getDubboConfig() {
+        return dubboConfig;
+    }
+
+    public void setDubboConfig(DubboConfig dubboConfig) {
+        this.dubboConfig = dubboConfig;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    /**
+     * 加载sc spi
+     */
+    public void loadSc() {
+        loadSc = true;
+    }
+
+    public boolean isLoadSc() {
+        return loadSc;
     }
 }

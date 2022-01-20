@@ -30,7 +30,7 @@
 
         <dependency>
             <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo</artifactId>
+            <artifactId>dubbo-config-api</artifactId>
             <version>${dubbo.version}</version>
             <scope>provided</scope>
         </dependency>

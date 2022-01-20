@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Huawei Technologies Co., Ltd. 2021-2021. All rights reserved
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@
 
 package com.huawei.dubbo.register;
 
+import com.huawei.dubbo.register.service.RegistryService;
 import com.huawei.sermant.core.service.ServiceManager;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.registry.NotifyListener;
 import org.apache.dubbo.registry.support.FailbackRegistry;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * sc注册
@@ -32,8 +30,6 @@ import java.util.List;
  * @date 2021/12/15
  */
 public class ServiceCenterRegistry extends FailbackRegistry {
-    private static final String PROTOCOL_CONSUMER = "consumer";
-    private final List<URL> registers;
     private final RegistryService registryService;
 
     /**
@@ -43,16 +39,12 @@ public class ServiceCenterRegistry extends FailbackRegistry {
      */
     public ServiceCenterRegistry(URL url) {
         super(url);
-        this.registers = new ArrayList<>();
-        this.registryService = ServiceManager.getService(RegistryService.class);
-        this.registryService.setServiceCenterRegistry(this);
+        registryService = ServiceManager.getService(RegistryService.class);
     }
 
     @Override
     public void doRegister(URL url) {
-        if (!url.getProtocol().equals(PROTOCOL_CONSUMER)) {
-            registers.add(url);
-        }
+        registryService.addRegistryUrls(url);
     }
 
     @Override
@@ -62,9 +54,7 @@ public class ServiceCenterRegistry extends FailbackRegistry {
 
     @Override
     public void doSubscribe(URL url, NotifyListener notifyListener) {
-        if (url.getProtocol().equals(PROTOCOL_CONSUMER)) {
-            registryService.doSubscribe(new Subscription(url, notifyListener));
-        }
+        registryService.doSubscribe(url, notifyListener);
     }
 
     @Override
@@ -74,10 +64,6 @@ public class ServiceCenterRegistry extends FailbackRegistry {
 
     @Override
     public boolean isAvailable() {
-        throw new UnsupportedOperationException();
-    }
-
-    public List<URL> getRegisters() {
-        return registers;
+        return true;
     }
 }
