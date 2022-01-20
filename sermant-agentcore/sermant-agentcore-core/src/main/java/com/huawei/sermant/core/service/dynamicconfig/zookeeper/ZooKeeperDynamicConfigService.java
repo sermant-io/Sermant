@@ -157,7 +157,7 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
         final List<String> keys = new ArrayList<>();
         for (String keyPath : zkClient.listAllNodes(groupPath)) {
             if (keyPath.startsWith(groupPath)) {
-                keys.add(keyPath.substring(groupPath.length()));
+                keys.add(keyPath.substring(groupPath.length() + 1));
             }
         }
         return keys;
