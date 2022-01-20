@@ -131,7 +131,7 @@ public class ScClient {
         microserviceInstance.setVersion(registerConfig.getVersion());
         microserviceInstance.setHostName(registration.getHost());
         microserviceInstance.setEndpoints(buildEndpoints(registration));
-        Map<String, String> meta = registration.getMetadata();
+        Map<String, String> meta = new HashMap<String, String>(registration.getMetadata());
         meta.put(REG_VERSION_KEY, registerConfig.getVersion());
         microserviceInstance.setProperties(meta);
         return microserviceInstance;

@@ -22,6 +22,7 @@ import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.sermant.core.common.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -60,16 +61,16 @@ public class EurekaHealthInterceptor extends SingleStateCloseHandler implements 
     }
 
     @Override
-    protected void close() {
-        try {
-            // 关闭Eureka定时器
-            final Class<?> discoveryClientClass = Thread.currentThread().getContextClassLoader()
-                    .loadClass("com.netflix.discovery.DiscoveryClient");
-            discoveryClientClass.getDeclaredMethod("shutdown").invoke(target);
-            LOGGER.info("Eureka register center has been closed.");
-        } catch (Exception ex) {
-            LOGGER.warning(String.format(Locale.ENGLISH,
-                    "Closed eureka register center failed! %s", ex.getMessage()));
-        }
+    protected boolean needCloseRegisterCenter() {
+        return super.needCloseRegisterCenter() && super.target != null;
+    }
+
+    @Override
+    protected void close() throws Exception {
+        // 关闭Eureka定时器
+        final Class<?> discoveryClientClass = Thread.currentThread().getContextClassLoader()
+                .loadClass("com.netflix.discovery.DiscoveryClient");
+        discoveryClientClass.getDeclaredMethod("shutdown").invoke(target);
+        LOGGER.info("Eureka register center has been closed.");
     }
 }

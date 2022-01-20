@@ -73,25 +73,20 @@ public class ZookeeperHealthInterceptor extends SingleStateCloseHandler implemen
     }
 
     @Override
-    protected void close() {
-        try {
-            ZookeeperServiceWatch watch = (ZookeeperServiceWatch) target;
-            final Field curator = watch.getClass().getDeclaredField("curator");
-            curator.setAccessible(true);
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            final CuratorFramework client = (CuratorFramework) curator.get(target);
-            // 关闭客户端, 停止定时器
-            client.close();
-            final Field cache = watch.getClass().getDeclaredField("cache");
-            cache.setAccessible(true);
-            modifiersField.setInt(cache, cache.getModifiers() & ~Modifier.FINAL);
-            // 清空缓存
-            cache.set(target, null);
-            LOGGER.info("Zookeeper client has been closed.");
-        } catch (Exception ex) {
-            LOGGER.warning(String.format(Locale.ENGLISH,
-                    "Closed Zookeeper client failed! %s", ex.getMessage()));
-        }
+    protected void close() throws Exception {
+        ZookeeperServiceWatch watch = (ZookeeperServiceWatch) target;
+        final Field curator = watch.getClass().getDeclaredField("curator");
+        curator.setAccessible(true);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        final CuratorFramework client = (CuratorFramework) curator.get(target);
+        // 关闭客户端, 停止定时器
+        client.close();
+        final Field cache = watch.getClass().getDeclaredField("cache");
+        cache.setAccessible(true);
+        modifiersField.setInt(cache, cache.getModifiers() & ~Modifier.FINAL);
+        // 清空缓存
+        cache.set(target, null);
+        LOGGER.info("Zookeeper client has been closed.");
     }
 }
