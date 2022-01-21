@@ -122,6 +122,7 @@ public final class DefaultMetricProvider implements MetricProvider {
                 .setExceptionQps(node.getExceptionQps())
                 .setClassification(node.getClassification())
                 .setRt(node.getRt())
+                .setResourceCode(node.getResource().hashCode())
                 .setApp(AppNameUtil.getAppName()));
         }
         return JSONArray.toJSONString(metricEntities);

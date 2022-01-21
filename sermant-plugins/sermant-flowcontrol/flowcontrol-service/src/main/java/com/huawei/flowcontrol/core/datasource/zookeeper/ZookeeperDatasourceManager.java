@@ -33,20 +33,23 @@ import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
 import com.alibaba.csp.sentinel.util.AppNameUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-
-import com.huawei.sermant.core.config.ConfigManager;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.flowcontrol.core.config.CommonConst;
 import com.huawei.flowcontrol.core.config.ConfigConst;
 import com.huawei.flowcontrol.core.config.FlowControlConfig;
 import com.huawei.flowcontrol.core.datasource.DataSourceManager;
 import com.huawei.flowcontrol.core.util.PluginConfigUtil;
-import com.huawei.flowcontrol.core.util.RedisRuleUtil;
+import com.huawei.sermant.core.config.ConfigManager;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+import com.huawei.sermant.core.service.ServiceManager;
 import com.huawei.sermant.core.service.dynamicconfig.config.DynamicConfig;
+import com.huawei.sermant.core.service.heartbeat.ExtInfoProvider;
+import com.huawei.sermant.core.service.heartbeat.HeartbeatService;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * zookeeper流控规则加载
@@ -56,6 +59,11 @@ import java.util.List;
  * @since 2020-08-26
  */
 public class ZookeeperDatasourceManager implements DataSourceManager {
+    /**
+     * 默认的sentinel端口
+     */
+    private static final String DEFAULT_PORT = "8719";
+
     private final List<ZookeeperCoreDataSource<?>> dataSources = new ArrayList<ZookeeperCoreDataSource<?>>();
 
     /**
@@ -73,13 +81,9 @@ public class ZookeeperDatasourceManager implements DataSourceManager {
             initAuthorityRule(group);
             initSystemRule(group);
             RecordLog.info("initRules end");
+            addExtraHeartBeatInfo();
         } catch (SentinelRpcException e) {
             RecordLog.error("[BootInterceptor] initRules loading failed=" + e);
-        } finally {
-            if (FlowRuleManager.getRules().size() == 0) {
-                // 判断后执行加载redis配置文件
-                RedisRuleUtil.loadRules();
-            }
         }
     }
 
@@ -120,6 +124,16 @@ public class ZookeeperDatasourceManager implements DataSourceManager {
                 new ZookeeperCoreDataSource<AuthorityRule>(CommonConst.SLASH_SIGN + CommonConst.SENTINEL_RULE_AUTHORITY, group, AuthorityRule.class);
         AuthorityRuleManager.register2Property(authorityRuleZookeeperCoreDataSource.getProperty());
         dataSources.add(authorityRuleZookeeperCoreDataSource);
+    }
+
+    private void addExtraHeartBeatInfo() {
+        final HeartbeatService service = ServiceManager.getService(HeartbeatService.class);
+        service.setExtInfo(new ExtInfoProvider() {
+            @Override
+            public Map<String, String> getExtInfo() {
+                return Collections.singletonMap("port", DEFAULT_PORT);
+            }
+        });
     }
 
     private String getZookeeperAddress() {

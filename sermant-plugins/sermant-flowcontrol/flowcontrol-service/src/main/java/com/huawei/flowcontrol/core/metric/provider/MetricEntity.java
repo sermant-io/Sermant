@@ -29,6 +29,12 @@ public class MetricEntity {
     private String resource;
 
     /**
+     * 资源哈希码
+     * 指标数据需要
+     */
+    private int resourceCode;
+
+    /**
      * 时间戳
      */
     private long timestamp;
@@ -148,6 +154,15 @@ public class MetricEntity {
 
     public MetricEntity setClassification(int classification) {
         this.classification = classification;
+        return this;
+    }
+
+    public int getResourceCode() {
+        return resourceCode;
+    }
+
+    public MetricEntity setResourceCode(int resourceCode) {
+        this.resourceCode = resourceCode;
         return this;
     }
 }
