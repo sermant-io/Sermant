@@ -16,26 +16,24 @@
 
 package com.huawei.flowcontrol.entry;
 
+import com.huawei.flowcontrol.common.adapte.cse.match.MatchManager;
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
+import com.huawei.flowcontrol.common.entity.RequestEntity;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
 import com.alibaba.csp.sentinel.Entry;
 import com.alibaba.csp.sentinel.EntryType;
 import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.Tracer;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.alibaba.dubbo.rpc.RpcContext;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.flowcontrol.adapte.cse.match.MatchManager;
-import com.huawei.flowcontrol.core.config.FlowControlConfig;
-import com.huawei.flowcontrol.util.FilterUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 /**
- * 基于sentinel进行数据统计
- * 并对当前线程的resource entry进行处理
+ * 基于sentinel进行数据统计 并对当前线程的resource entry进行处理
  *
  * @author zhouss
  * @since 2021-11-25
@@ -46,29 +44,36 @@ public enum EntryFacade {
      */
     INSTANCE;
 
-    private final boolean useCseRule;
+    private final boolean isUseCseRule;
 
     private final HttpEntry httpEntry = new HttpEntry();
 
-    private final ApacheDubboEntry apacheDubboEntry = new ApacheDubboEntry();
-
-    private final AlibabaDubboEntry alibabaDubboEntry = new AlibabaDubboEntry();
+    private final DubboEntry dubboEntry = new DubboEntry();
 
     EntryFacade() {
         final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
-        useCseRule = pluginConfig.isUseCseRule();
+        isUseCseRule = pluginConfig.isUseCseRule();
     }
 
-    //======================================HTTP=================================//
-
     /**
-     * http请求记录
+     * ======================================HTTP================================= http请求记录
      *
      * @param request 请求数据
      * @throws BlockException 触发流控抛出
      */
-    public void tryEntry(HttpServletRequest request) throws BlockException {
+    public void tryEntry(RequestEntity request) throws BlockException {
         httpEntry.tryEntry(request);
+    }
+
+    /**
+     * apache 数据记录
+     *
+     * @param request 请求信息
+     * @param isProvider 是否为生产者
+     * @throws BlockException 触发流控抛出
+     */
+    public void tryEntry(RequestEntity request, boolean isProvider) throws BlockException {
+        dubboEntry.tryEntry(request, isProvider);
     }
 
     /**
@@ -81,60 +86,27 @@ public enum EntryFacade {
     }
 
     /**
+     * 异常记录
+     *
+     * @param throwable 异常信息
+     * @param isProvider 是否为生产端
+     */
+    public void tryTraceEntry(Throwable throwable, boolean isProvider) {
+        dubboEntry.tryTraceEntry(throwable, isProvider);
+    }
+
+    /**
      * http entry退出方法
      */
     public void exit() {
         httpEntry.exit();
     }
 
-    //================================dubbo================================//
-
-    /**
-     * apache 数据记录
-     *
-     * @param invocation 请求信息
-     * @throws BlockException 触发流控抛出
-     */
-    public void tryEntry(org.apache.dubbo.rpc.Invocation invocation) throws BlockException {
-        apacheDubboEntry.tryEntry(invocation);
-    }
-
-    /**
-     * alibaba 数据记录
-     *
-     * @param invocation 请求信息
-     * @throws BlockException 触发流控抛出
-     */
-    public void tryEntry(com.alibaba.dubbo.rpc.Invocation invocation) throws BlockException {
-        alibabaDubboEntry.tryEntry(invocation);
-    }
-
-    /**
-     * 异常记录
-     *
-     * @param throwable 异常信息
-     * @param isProvider 是否为生产端
-     * @param dubboType dubbo类型
-     */
-    public void tryTraceEntry(Throwable throwable, boolean isProvider, DubboType dubboType) {
-        if (dubboType == DubboType.ALIBABA) {
-            alibabaDubboEntry.tryTraceEntry(throwable, isProvider);
-        } else {
-            apacheDubboEntry.tryTraceEntry(throwable, isProvider);
-        }
-    }
-
     /**
      * dubbo entry退出方法
-     *
-     * @param dubboType dubbo类型
      */
-    public void exit(DubboType dubboType) {
-        if (dubboType == DubboType.ALIBABA) {
-            alibabaDubboEntry.exit();
-        } else {
-            apacheDubboEntry.exit();
-        }
+    public void exitDubbo() {
+        dubboEntry.exit();
     }
 
     public enum DubboType {
@@ -152,7 +124,7 @@ public enum EntryFacade {
     interface SimpleEntry {
     }
 
-    abstract static class DubboEntry implements SimpleEntry {
+    static class DubboEntry implements SimpleEntry {
         /**
          * provider端entry
          */
@@ -203,7 +175,6 @@ public enum EntryFacade {
 
         /**
          * entry退出
-         *
          */
         public void exit() {
             try {
@@ -215,9 +186,13 @@ public enum EntryFacade {
             }
         }
 
-        protected String getResourceName(String interfaceName, String version, String methodName) {
-            // invocation.getTargetServiceUniqueName
-            return MatchManager.INSTANCE.buildApiPath(interfaceName, version, methodName);
+        private void exit(List<Entry> entries) {
+            if (entries == null || entries.isEmpty()) {
+                return;
+            }
+            for (int i = entries.size() - 1; i >= 0; i--) {
+                entries.get(i).exit();
+            }
         }
 
         protected void setEntry(List<Entry> entries, boolean isProvider) {
@@ -228,55 +203,19 @@ public enum EntryFacade {
             }
         }
 
-        private void exit(List<Entry> entries) {
-            if (entries == null || entries.isEmpty()) {
-                return;
-            }
-            for (int i = entries.size() - 1; i >= 0; i--) {
-                entries.get(i).exit();
-            }
-        }
-    }
-
-    class ApacheDubboEntry extends DubboEntry {
-
         /**
          * apache dubbo
          *
-         * @param invocation 调用信息
+         * @param request 调用信息
          */
-        public void tryEntry(org.apache.dubbo.rpc.Invocation invocation) throws BlockException {
-            final org.apache.dubbo.rpc.RpcContext rpcContext = org.apache.dubbo.rpc.RpcContext.getContext();
-            if (useCseRule) {
+        public void tryEntry(RequestEntity request, boolean isProvider) throws BlockException {
+            if (INSTANCE.isUseCseRule) {
                 // cse适配
-                final Set<String> matchBusinesses = MatchManager.INSTANCE.matchApacheDubbo(invocation);
-                entryWithCse(matchBusinesses, rpcContext.isProviderSide());
+                final Set<String> matchBusinesses = MatchManager.INSTANCE.match(request);
+                entryWithCse(matchBusinesses, isProvider);
             } else {
-                final String resourceName = getResourceName(invocation.getInvoker().getInterface().getName(),
-                        invocation.getAttachment(MatchManager.DUBBO_ATTACHMENT_VERSION), invocation.getMethodName());
-                final Entry entry = SphU.entry(resourceName, rpcContext.isProviderSide() ? EntryType.IN : EntryType.OUT);
-                setEntry(Collections.singletonList(entry), rpcContext.isProviderSide());
-            }
-        }
-    }
-
-    class AlibabaDubboEntry extends DubboEntry {
-        /**
-         * alibaba dubbo
-         *
-         * @param invocation 调用信息
-         */
-        public void tryEntry(com.alibaba.dubbo.rpc.Invocation invocation) throws BlockException {
-            final RpcContext rpcContext = RpcContext.getContext();
-            if (useCseRule) {
-                // cse适配
-                final Set<String> matchBusinesses = MatchManager.INSTANCE.matchAlibabaDubbo(invocation);
-                entryWithCse(matchBusinesses, rpcContext.isProviderSide());
-            } else {
-                final String resourceName = getResourceName(invocation.getInvoker().getInterface().getName(),
-                        invocation.getAttachment(MatchManager.DUBBO_ATTACHMENT_VERSION), invocation.getMethodName());
-                final Entry entry = SphU.entry(resourceName, rpcContext.isProviderSide() ? EntryType.IN : EntryType.OUT);
-                setEntry(Collections.singletonList(entry), rpcContext.isProviderSide());
+                final Entry entry = SphU.entry(request.getApiPath(), isProvider ? EntryType.IN : EntryType.OUT);
+                setEntry(Collections.singletonList(entry), isProvider);
             }
         }
     }
@@ -285,22 +224,20 @@ public enum EntryFacade {
         private final ThreadLocal<List<Entry>> threadLocalEntries = new ThreadLocal<List<Entry>>();
 
         /**
-         * 统计方法
-         * 针对HTTP请求
+         * 统计方法 针对HTTP请求
          *
          * @param request 请求
          * @throws BlockException 流控异常
          */
-        public void tryEntry(HttpServletRequest request) throws BlockException {
-            if (EntryFacade.this.useCseRule) {
+        public void tryEntry(RequestEntity request) throws BlockException {
+            if (EntryFacade.this.isUseCseRule) {
                 // 开启cse兼容
                 // 1.匹配该请求的业务场景
-                final Set<String> matchBusinesses = MatchManager.INSTANCE.matchHttp(request);
+                final Set<String> matchBusinesses = MatchManager.INSTANCE.match(request);
                 entryWithCse(matchBusinesses);
-                // 2.执行
             } else {
                 // 原逻辑拦截
-                final Entry entry = SphU.entry(FilterUtil.filterTarget(request), EntryType.IN);
+                final Entry entry = SphU.entry(request.getApiPath(), EntryType.IN);
                 threadLocalEntries.set(Collections.singletonList(entry));
             }
         }

@@ -32,20 +32,19 @@ import com.alibaba.csp.sentinel.util.function.BiConsumer;
 import java.util.List;
 
 /**
- * 隔离仓实现
- * 拦截优先级如下:
- * 流控 > 隔离仓 > 熔断
+ * 隔离仓实现 拦截优先级如下: 流控 > 隔离仓 > 熔断
  *
  * @author zhouss
  * @since 2021-12-04
  */
 @SpiOrder(-1500)
 public class IsolateThreadSlot extends AbstractLinkedProcessorSlot<DefaultNode> {
-
     @Override
-    public void entry(Context context, ResourceWrapper resourceWrapper, DefaultNode param, final int count, boolean prioritized,
-                      Object... args) throws Throwable {
-        fireEntry(context, resourceWrapper, param, count, prioritized, args);
+    @SuppressWarnings("checkstyle:ParameterNumber")
+    public void entry(Context context, ResourceWrapper resourceWrapper, DefaultNode param, final int count,
+        boolean isPrioritized,
+        Object... args) throws Throwable {
+        fireEntry(context, resourceWrapper, param, count, isPrioritized, args);
         final List<IsolateThreadRule> rules = IsolateThreadRuleManager.getRules(resourceWrapper.getName());
         if (rules == null || rules.size() == 0) {
             return;
@@ -55,6 +54,7 @@ public class IsolateThreadSlot extends AbstractLinkedProcessorSlot<DefaultNode> 
     }
 
     @Override
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void exit(Context context, ResourceWrapper resourceWrapper, int count, Object... args) {
         fireExit(context, resourceWrapper, count, args);
     }
@@ -69,8 +69,8 @@ public class IsolateThreadSlot extends AbstractLinkedProcessorSlot<DefaultNode> 
      * 绑定entry退出事件， 使entry与exit绑定在一块，避免错误release许可，导致统计数据有误
      *
      * @param curEntry 当前Entry
-     * @param rules    匹配规则列表
-     * @param count    许可数
+     * @param rules 匹配规则列表
+     * @param count 许可数
      */
     private void bindEntryExitEvent(final Entry curEntry, final List<IsolateThreadRule> rules, final int count) {
         curEntry.whenTerminate(new BiConsumer<Context, Entry>() {

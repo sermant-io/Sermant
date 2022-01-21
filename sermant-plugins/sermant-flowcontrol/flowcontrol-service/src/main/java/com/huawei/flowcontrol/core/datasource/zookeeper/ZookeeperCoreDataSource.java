@@ -16,18 +16,19 @@
 
 package com.huawei.flowcontrol.core.datasource.zookeeper;
 
-import com.alibaba.csp.sentinel.datasource.AbstractDataSource;
-import com.alibaba.csp.sentinel.datasource.Converter;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONException;
+import com.huawei.flowcontrol.common.util.StringUtils;
+import com.huawei.flowcontrol.core.datasource.DataSourceUpdateSupport;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.flowcontrol.core.datasource.DataSourceUpdateSupport;
-import com.huawei.flowcontrol.util.StringUtils;
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+
+import com.alibaba.csp.sentinel.datasource.AbstractDataSource;
+import com.alibaba.csp.sentinel.datasource.Converter;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,11 +39,12 @@ import java.util.logging.Logger;
  * zookeeper作为数据源，基于agent core配置中心
  * <h3>|保留用于适配原生的zookeeper路径|</h3>
  *
+ * @param <T> 规则
  * @author zhouss
  * @since 2021-11-26
  */
 public class ZookeeperCoreDataSource<T> extends AbstractDataSource<DynamicConfigEvent, List<T>>
-        implements DataSourceUpdateSupport {
+    implements DataSourceUpdateSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private DynamicConfigEvent event;
@@ -51,23 +53,21 @@ public class ZookeeperCoreDataSource<T> extends AbstractDataSource<DynamicConfig
 
     private final String group;
 
-    private DynamicConfigListener listener;
-
     public ZookeeperCoreDataSource(final String key, final String group, final Class<T> ruleClass) {
         super(new Converter<DynamicConfigEvent, List<T>>() {
             @Override
-            public List<T> convert(DynamicConfigEvent event) {
-                if (event == null || !StringUtils.equal(event.getKey(), key)) {
+            public List<T> convert(DynamicConfigEvent receivedEvent) {
+                if (receivedEvent == null || !StringUtils.equal(receivedEvent.getKey(), key)) {
                     return Collections.emptyList();
                 }
-                if (event.getEventType() == DynamicConfigEventType.DELETE) {
+                if (receivedEvent.getEventType() == DynamicConfigEventType.DELETE) {
                     return Collections.emptyList();
                 }
                 try {
-                    return JSONArray.parseArray(event.getContent(), ruleClass);
+                    return JSONArray.parseArray(receivedEvent.getContent(), ruleClass);
                 } catch (JSONException ex) {
                     LOGGER.warning(String.format(Locale.ENGLISH, "Formatted rule failed! %s, raw value: [%s]",
-                            ex.getMessage(), event.getContent()));
+                        ex.getMessage(), receivedEvent.getContent()));
                     return Collections.emptyList();
                 }
             }
@@ -84,42 +84,45 @@ public class ZookeeperCoreDataSource<T> extends AbstractDataSource<DynamicConfig
 
     @Override
     public void close() {
-
+        ServiceManager.getService(DynamicConfigService.class).removeConfigListener(key, group);
     }
 
     @Override
-    public void update(DynamicConfigEvent event) {
-        this.event = event;
+    @SuppressWarnings("checkstyle:IllegalCatch")
+    public void update(DynamicConfigEvent receivedEvent) {
+        this.event = receivedEvent;
         try {
-            getProperty().updateValue(loadConfig(event));
+            getProperty().updateValue(loadConfig(receivedEvent));
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Updated rule failed, %s", ex.getMessage()));
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void initConfigListener() {
         final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
-        listener = new DynamicConfigListener() {
+        DynamicConfigListener listener = new DynamicConfigListener() {
             @Override
-            public void process(DynamicConfigEvent event) {
-                update(event);
+            public void process(DynamicConfigEvent receivedEvent) {
+                update(receivedEvent);
             }
         };
         try {
             service.addConfigListener(key, group, listener, true);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Added listener failed, key : %s, group : %s",
-                    key, group));
+                key, group));
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     public void removeListener() {
         try {
             final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
             service.removeConfigListener(key, group);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Removed listener failed, key : %s, group : %s",
-                    key, group));
+                key, group));
         }
     }
 }

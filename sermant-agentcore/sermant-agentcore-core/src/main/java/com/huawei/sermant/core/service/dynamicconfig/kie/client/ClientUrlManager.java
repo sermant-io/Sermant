@@ -33,6 +33,11 @@ public class ClientUrlManager {
      */
     private static final String KIE_PROTOCOL = "http://";
 
+    /**
+     * kie的协议头 加密
+     */
+    private static final String KIE_PROTOCOL_SSL = "https://";
+
     private final UrlSelector urlSelector = new UrlSelector();
     private List<String> urls;
 
@@ -61,6 +66,10 @@ public class ClientUrlManager {
         }
         final String[] addressArr = serverAddress.split(",");
         for (int i = 0; i < addressArr.length; i++) {
+            addressArr[i] = addressArr[i].trim();
+            if (addressArr[i].startsWith(KIE_PROTOCOL) || addressArr[i].startsWith(KIE_PROTOCOL_SSL)) {
+                continue;
+            }
             addressArr[i] = KIE_PROTOCOL + addressArr[i];
         }
         urls = Arrays.asList(addressArr);

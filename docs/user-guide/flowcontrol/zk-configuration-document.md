@@ -40,6 +40,14 @@ dynamicconfig.dynamic_config_type=ZOO_KEEPER
 dynamicconfig.kie_url=http://127.0.0.1:30110
 ```
 
+修改`${agent路径}/pluginPackge/flowcontrol/config/config.yaml`
+
+```yaml
+flow.control.plugin:
+  flowFramework: SENTINEL
+  useAgentConfigCenter: ${plugin.flowcontrol.use.agent.config_center:true} # 使用agent配置中心
+```
+
 ### 4、打包并启动应用
 
 #### 4.1 打包[Demo应用](../../../sermant-plugins/sermant-flowcontrol/flowcontrol-demos/flowcontrol-demo)

@@ -16,17 +16,17 @@
 
 package com.huawei.flowcontrol.adapte.cse.test;
 
-import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
-import com.huawei.flowcontrol.adapte.cse.match.BusinessMatcher;
-import com.huawei.flowcontrol.adapte.cse.match.MatchGroupResolver;
-import com.huawei.flowcontrol.adapte.cse.resolver.BulkheadRuleResolver;
-import com.huawei.flowcontrol.adapte.cse.resolver.CircuitBreakerRuleResolver;
-import com.huawei.flowcontrol.adapte.cse.resolver.RateLimitingRuleResolver;
-import com.huawei.flowcontrol.adapte.cse.resolver.RetryResolver;
-import com.huawei.flowcontrol.adapte.cse.rule.BulkheadRule;
-import com.huawei.flowcontrol.adapte.cse.rule.CircuitBreakerRule;
-import com.huawei.flowcontrol.adapte.cse.rule.RateLimitingRule;
-import com.huawei.flowcontrol.adapte.cse.rule.RetryRule;
+import com.huawei.flowcontrol.common.adapte.cse.entity.CseServiceMeta;
+import com.huawei.flowcontrol.common.adapte.cse.match.BusinessMatcher;
+import com.huawei.flowcontrol.common.adapte.cse.match.MatchGroupResolver;
+import com.huawei.flowcontrol.common.adapte.cse.resolver.BulkheadRuleResolver;
+import com.huawei.flowcontrol.common.adapte.cse.resolver.CircuitBreakerRuleResolver;
+import com.huawei.flowcontrol.common.adapte.cse.resolver.RateLimitingRuleResolver;
+import com.huawei.flowcontrol.common.adapte.cse.resolver.RetryResolver;
+import com.huawei.flowcontrol.common.adapte.cse.rule.BulkheadRule;
+import com.huawei.flowcontrol.common.adapte.cse.rule.CircuitBreakerRule;
+import com.huawei.flowcontrol.common.adapte.cse.rule.RateLimitingRule;
+import com.huawei.flowcontrol.common.adapte.cse.rule.RetryRule;
 
 import org.junit.Assert;
 import org.junit.Before;

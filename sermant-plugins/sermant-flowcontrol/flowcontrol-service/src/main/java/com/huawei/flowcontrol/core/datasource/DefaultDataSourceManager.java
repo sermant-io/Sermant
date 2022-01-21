@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,17 @@
 
 package com.huawei.flowcontrol.core.datasource;
 
-import com.alibaba.csp.sentinel.util.AppNameUtil;
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
+import com.huawei.flowcontrol.common.util.StringUtils;
+import com.huawei.flowcontrol.core.datasource.kie.rule.RuleCenter;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.service.ServiceManager;
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
-import com.huawei.flowcontrol.core.config.FlowControlConfig;
-import com.huawei.flowcontrol.core.datasource.kie.rule.RuleCenter;
-import com.huawei.flowcontrol.util.StringUtils;
+
+import com.alibaba.csp.sentinel.util.AppNameUtil;
 
 import java.util.Collections;
 import java.util.Map;
@@ -50,7 +51,6 @@ public class DefaultDataSourceManager implements DataSourceManager {
     private final RuleCenter ruleCenter = new RuleCenter();
 
     public DefaultDataSourceManager() {
-
     }
 
     @Override
@@ -67,7 +67,6 @@ public class DefaultDataSourceManager implements DataSourceManager {
 
     @Override
     public void stop() {
-
     }
 
     private void initDataSources() {

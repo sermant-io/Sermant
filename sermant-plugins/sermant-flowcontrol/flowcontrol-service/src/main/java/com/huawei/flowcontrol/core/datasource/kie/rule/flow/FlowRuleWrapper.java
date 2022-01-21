@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 
 package com.huawei.flowcontrol.core.datasource.kie.rule.flow;
 
+import com.huawei.flowcontrol.core.datasource.kie.rule.RuleWrapper;
+
 import com.alibaba.csp.sentinel.datasource.AbstractDataSource;
 import com.alibaba.csp.sentinel.property.SentinelProperty;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
-import com.huawei.flowcontrol.core.datasource.kie.rule.RuleWrapper;
 
 import java.util.List;
 

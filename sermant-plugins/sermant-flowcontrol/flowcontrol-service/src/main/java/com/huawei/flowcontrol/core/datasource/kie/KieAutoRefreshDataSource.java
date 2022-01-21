@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,23 @@
 
 package com.huawei.flowcontrol.core.datasource.kie;
 
+import com.huawei.flowcontrol.common.config.ConfigConst;
+import com.huawei.flowcontrol.common.util.PluginConfigUtil;
+import com.huawei.flowcontrol.core.datasource.kie.util.KieConfigClient;
+import com.huawei.flowcontrol.core.datasource.kie.util.response.KieConfigItem;
+import com.huawei.flowcontrol.core.datasource.kie.util.response.KieConfigLabels;
+import com.huawei.flowcontrol.core.datasource.kie.util.response.KieConfigResponse;
+
 import com.alibaba.csp.sentinel.datasource.AutoRefreshDataSource;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.util.AppNameUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.flowcontrol.core.config.ConfigConst;
-import com.huawei.flowcontrol.core.datasource.kie.util.KieConfigClient;
-import com.huawei.flowcontrol.core.datasource.kie.util.response.KieConfigItem;
-import com.huawei.flowcontrol.core.datasource.kie.util.response.KieConfigLabels;
-import com.huawei.flowcontrol.core.datasource.kie.util.response.KieConfigResponse;
-import com.huawei.flowcontrol.core.util.PluginConfigUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 数据源kie
@@ -51,7 +53,7 @@ public class KieAutoRefreshDataSource<T> extends AutoRefreshDataSource<String, T
     }
 
     public KieAutoRefreshDataSource(Converter<String, T> configParser, long recommendRefreshMs,
-                                    String ruleKey, String defaultRule) {
+        String ruleKey, String defaultRule) {
         super(configParser, recommendRefreshMs);
 
         this.ruleKey = ruleKey;
@@ -60,8 +62,9 @@ public class KieAutoRefreshDataSource<T> extends AutoRefreshDataSource<String, T
         firstLoad();
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void firstLoad() {
-        RecordLog.info(String.format("First load config, ruleKey: %s.", this.ruleKey));
+        RecordLog.info(String.format(Locale.ENGLISH, "First load config, ruleKey: %s.", this.ruleKey));
 
         try {
             getProperty().updateValue(loadConfig(this.lastRules));
@@ -107,6 +110,6 @@ public class KieAutoRefreshDataSource<T> extends AutoRefreshDataSource<String, T
             return false;
         }
         return this.ruleKey.equals(item.getKey())
-                && AppNameUtil.getAppName().equals(labels.getService());
+            && AppNameUtil.getAppName().equals(labels.getService());
     }
 }

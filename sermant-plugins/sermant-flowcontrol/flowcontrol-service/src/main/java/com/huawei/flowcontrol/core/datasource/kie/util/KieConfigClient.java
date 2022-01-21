@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 
 package com.huawei.flowcontrol.core.datasource.kie.util;
 
-import com.alibaba.fastjson.JSON;
-import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.flowcontrol.core.datasource.kie.util.response.KieConfigResponse;
+import com.huawei.sermant.core.common.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;

@@ -38,17 +38,16 @@ import java.util.Map;
  */
 public class IsolateThreadRuleManager {
     /**
-     * 规则缓存
-     * 该规则一个资源仅有一个规则，相同则覆盖
+     * 规则缓存 该规则一个资源仅有一个规则，相同则覆盖
      */
     private static final Map<String, List<IsolateThreadRule>> BULK_THREAD_RULE_CACHE =
-            new HashMap<String, List<IsolateThreadRule>>();
+        new HashMap<String, List<IsolateThreadRule>>();
 
     /**
      * 动态规则
      */
     private static SentinelProperty<List<IsolateThreadRule>> ruleProperty =
-            new DynamicSentinelProperty<List<IsolateThreadRule>>();
+        new DynamicSentinelProperty<List<IsolateThreadRule>>();
 
     /**
      * 规则监听器
@@ -59,9 +58,14 @@ public class IsolateThreadRuleManager {
         ruleProperty.addListener(RULE_LISTENER);
     }
 
+    private IsolateThreadRuleManager() {
+    }
+
     /**
      * 获取规则列表
+     *
      * @param resource 资源名称
+     * @return 隔离仓规则
      */
     public static List<IsolateThreadRule> getRules(String resource) {
         return BULK_THREAD_RULE_CACHE.get(resource);
@@ -93,7 +97,6 @@ public class IsolateThreadRuleManager {
     }
 
     static class IsolateThreadRuleListener implements PropertyListener<List<IsolateThreadRule>> {
-
         @Override
         public void configUpdate(List<IsolateThreadRule> rules) {
             updateRules(rules);
@@ -114,7 +117,8 @@ public class IsolateThreadRuleManager {
                 BULK_THREAD_RULE_CACHE.clear();
                 return;
             }
-            final HashMap<String, List<IsolateThreadRule>> newRules = new HashMap<String, List<IsolateThreadRule>>(rules.size());
+            final HashMap<String, List<IsolateThreadRule>> newRules = new HashMap<String, List<IsolateThreadRule>>(
+                rules.size());
             for (IsolateThreadRule rule : rules) {
                 List<IsolateThreadRule> isolateThreadRules = newRules.get(rule.getResource());
                 if (isolateThreadRules == null) {

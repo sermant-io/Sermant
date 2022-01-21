@@ -26,7 +26,6 @@ import com.alibaba.csp.sentinel.slots.block.BlockException;
  * @since 2021-12-04
  */
 public class IsolateThreadException extends BlockException {
-
     public IsolateThreadException(String ruleLimitApp, String message, AbstractRule rule) {
         super(ruleLimitApp, message, rule);
     }
