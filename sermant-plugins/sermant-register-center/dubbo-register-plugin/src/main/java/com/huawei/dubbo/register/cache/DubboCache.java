@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.config;
+package com.huawei.dubbo.register.cache;
 
 /**
  * dubbo应用名缓存
@@ -31,16 +31,6 @@ public enum DubboCache {
     private String serviceName;
 
     /**
-     * dubbo注册配置类
-     */
-    private DubboConfig dubboConfig;
-
-    /**
-     * 注册插件的版本
-     */
-    private String version;
-
-    /**
      * 是否加载了sc的注册spi的标志
      */
     private boolean loadSc;
@@ -51,22 +41,6 @@ public enum DubboCache {
 
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
-    }
-
-    public DubboConfig getDubboConfig() {
-        return dubboConfig;
-    }
-
-    public void setDubboConfig(DubboConfig dubboConfig) {
-        this.dubboConfig = dubboConfig;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 
     /**

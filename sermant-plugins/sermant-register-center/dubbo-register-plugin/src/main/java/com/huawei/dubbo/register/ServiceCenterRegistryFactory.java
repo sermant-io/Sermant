@@ -16,7 +16,7 @@
 
 package com.huawei.dubbo.register;
 
-import com.huawei.dubbo.register.config.DubboCache;
+import com.huawei.dubbo.register.cache.DubboCache;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.registry.Registry;

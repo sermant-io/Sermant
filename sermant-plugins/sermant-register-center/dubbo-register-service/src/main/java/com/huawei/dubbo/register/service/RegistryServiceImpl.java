@@ -20,9 +20,13 @@ package com.huawei.dubbo.register.service;
 import com.huawei.dubbo.register.Subscription;
 import com.huawei.dubbo.register.SubscriptionData;
 import com.huawei.dubbo.register.SubscriptionKey;
-import com.huawei.dubbo.register.config.DubboCache;
-import com.huawei.dubbo.register.config.DubboConfig;
+import com.huawei.dubbo.register.cache.DubboCache;
+import com.huawei.register.config.RegisterConfig;
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.plugin.PluginManager;
+import com.huawei.sermant.core.plugin.common.PluginConstant;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+import com.huawei.sermant.core.util.JarFileUtil;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -51,6 +55,7 @@ import org.apache.servicecomb.service.center.client.model.MicroservicesResponse;
 import org.apache.servicecomb.service.center.client.model.SchemaInfo;
 import org.apache.servicecomb.service.center.client.model.ServiceCenterConfiguration;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -63,6 +68,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -91,12 +97,16 @@ public class RegistryServiceImpl implements RegistryService {
     private ServiceCenterRegistration serviceCenterRegistration;
     private ServiceCenterDiscovery serviceCenterDiscovery;
     private boolean registrationInProgress = true;
-    private DubboConfig config;
+    private RegisterConfig config;
 
     @Override
     public void startRegistration() {
-        config = DubboCache.INSTANCE.getDubboConfig();
-        client = new ServiceCenterClient(new AddressManager(config.getProject(), config.getAddress()),
+        if (!DubboCache.INSTANCE.isLoadSc()) {
+            // 没有加载sc的注册spi就直接return
+            return;
+        }
+        config = PluginConfigManager.getPluginConfig(RegisterConfig.class);
+        client = new ServiceCenterClient(new AddressManager(config.getProject(), config.getAddressList()),
                 new SSLProperties(), new DefaultRequestAuthHeaderProvider(), DEFAULT_TENANT_NAME,
                 Collections.emptyMap());
         createMicroservice();
@@ -150,9 +160,19 @@ public class RegistryServiceImpl implements RegistryService {
         microservice.setEnvironment(config.getEnvironment());
         Framework framework = new Framework();
         framework.setName(FRAMEWORK_NAME);
-        framework.setVersion(DubboCache.INSTANCE.getVersion());
+        framework.setVersion(getVersion());
         microservice.setFramework(framework);
         microservice.setSchemas(registryUrls.stream().map(URL::getPath).distinct().collect(Collectors.toList()));
+    }
+
+    private String getVersion() {
+        try (JarFile jarFile = new JarFile(getClass().getProtectionDomain().getCodeSource().getLocation().getPath())) {
+            String pluginName = (String) JarFileUtil.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
+            return PluginManager.getPluginVersionMap().get(pluginName);
+        } catch (IOException e) {
+            LOGGER.warning("Cannot not get the version.");
+            return "";
+        }
     }
 
     private void createMicroserviceInstance() {
