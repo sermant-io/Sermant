@@ -414,11 +414,11 @@ public class EmergencyExecServiceImpl implements EmergencyExecService {
     @Override
     public LogResponse logOneServer(int detailId, int line) {
         EmergencyExecRecordDetail recordDetail = recordDetailMapper.selectByPrimaryKey(detailId);
-        if (recordDetail == null || ValidEnum.IN_VALID.equals(recordDetail.getIsValid())) {
+        if (recordDetail == null || ValidEnum.IN_VALID.getValue().equals(recordDetail.getIsValid())) {
             return LogResponse.END;
         }
         if (StringUtils.isEmpty(recordDetail.getLog())) {
-            if (!RecordStatus.RUNNING.equals(recordDetail.getStatus())) {
+            if (!RecordStatus.RUNNING.getValue().equals(recordDetail.getStatus())) {
                 return LogResponse.END;
             }
             LogResponse log = LogMemoryStore.getLog(detailId, line);
