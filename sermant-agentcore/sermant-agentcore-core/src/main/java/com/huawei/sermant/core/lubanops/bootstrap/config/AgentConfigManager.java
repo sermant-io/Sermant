@@ -54,9 +54,15 @@ public class AgentConfigManager {
 
     public final static String PROXY = "luban_apm_proxy";
 
-    public final static String NETTY_SERVER_IP = "nettyServerIp";
+    /**
+     * 运行 backend 模块机器的ip
+     */
+    public static final String BACKEND_IP = "backendIp";
 
-    public final static String NETTY_SERVER_PORT = "nettyServerPort";
+    /**
+     * backend 模块 netty 服务 监听的端口
+     */
+    public static final String BACKEND_PORT = "backendPort";
 
     /**
      * master地址
@@ -79,14 +85,14 @@ public class AgentConfigManager {
     private static String masterAuthSk;
 
     /**
-     * netty server ip
+     * backend ip
      */
-    private static String nettyServerIp;
+    private static String backendIp;
 
     /**
-     * netty server port
+     * backend port
      */
-    private static String nettyServerPort;
+    private static String backendPort;
 
 
     /**
@@ -100,8 +106,8 @@ public class AgentConfigManager {
         masterAuthAk = properties.getProperty(MASTER_ACCESS_KEY);
         masterAuthSk = properties.getProperty(MASTER_SECRET_KEY);
         masterAddress = properties.getProperty(MASTER_ADDRESS);
-        nettyServerIp = properties.getProperty(NETTY_SERVER_IP, LubanApmConstants.NETTY_SERVER_IP_COMMON);
-        nettyServerPort = properties.getProperty(NETTY_SERVER_PORT, LubanApmConstants.NETTY_SERVER_PORT_COMMON);
+        backendIp = properties.getProperty(BACKEND_IP, LubanApmConstants.BACKEND_IP_COMMON);
+        backendPort = properties.getProperty(BACKEND_PORT, LubanApmConstants.BACKEND_PORT_COMMON);
         setAccessAddress(properties.getProperty(ACCESS_ADDRESS));
         setLogLevel(properties.getProperty(LOG_LEVEL));
         setEventThreadCount(StringUtils.string2Int(properties.getProperty(EVENT_THREAD_COUNT), 3));
@@ -216,10 +222,10 @@ public class AgentConfigManager {
     }
 
     public static String getNettyServerIp() {
-        return nettyServerIp;
+        return backendIp;
     }
 
     public static String getNettyServerPort() {
-        return nettyServerPort;
+        return backendPort;
     }
 }
