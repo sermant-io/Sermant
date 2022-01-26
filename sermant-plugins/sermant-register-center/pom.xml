@@ -24,6 +24,7 @@
             <modules>
                 <module>dubbo-register-plugin</module>
                 <module>dubbo-register-service</module>
+                <module>register-common</module>
                 <module>spring-cloud-register-plugin</module>
                 <module>spring-cloud-register-service</module>
             </modules>
@@ -33,6 +34,7 @@
             <modules>
                 <module>dubbo-register-plugin</module>
                 <module>dubbo-register-service</module>
+                <module>register-common</module>
                 <module>spring-cloud-register-plugin</module>
                 <module>spring-cloud-register-service</module>
             </modules>

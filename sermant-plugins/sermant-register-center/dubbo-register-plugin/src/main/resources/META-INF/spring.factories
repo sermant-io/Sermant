@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.huawei.dubbo.register.config.DubboRegistryAutoConfiguration
-org.springframework.boot.env.EnvironmentPostProcessor=\
-com.huawei.dubbo.register.config.DubboEnvironmentPostProcessor

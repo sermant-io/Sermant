@@ -17,10 +17,9 @@
 package com.huawei.register.service.utils;
 
 import com.huawei.register.config.RegisterConfig;
+
 import org.junit.Assert;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * 工具类测试

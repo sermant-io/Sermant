@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.huawei.register.config;
+package com.huawei.register.service.config;
 
-import com.huawei.register.context.BaseTest;
+import com.huawei.register.config.RegisterDynamicConfigSyncer;
+import com.huawei.register.service.context.BaseTest;
+
 import org.junit.Test;
 
 /**

@@ -17,7 +17,13 @@
 package com.huawei.register.config;
 
 import com.huawei.sermant.core.config.common.ConfigTypeKey;
+import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.sermant.core.plugin.config.PluginConfig;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * spring注册插件配置
@@ -42,6 +48,16 @@ public class RegisterConfig implements PluginConfig {
      * 服务实例心跳发送间隔
      */
     private int heartbeatInterval = 15;
+
+    /**
+     * 心跳重试次数
+     */
+    private int heartbeatRetryTimes = 3;
+
+    /**
+     * 拉取实例时间间隔
+     */
+    private int pullInterval = 15;
 
     /**
      * sc app配置
@@ -143,6 +159,18 @@ public class RegisterConfig implements PluginConfig {
         return address;
     }
 
+    /**
+     * 获取逗号分隔后的地址列表
+     *
+     * @return 地址列表
+     */
+    public List<String> getAddressList() {
+        if (StringUtils.isBlank(address)) {
+            return Collections.<String>emptyList();
+        }
+        return new ArrayList<String>(Arrays.asList(address.split(",")));
+    }
+
     public void setAddress(String address) {
         this.address = address;
     }
@@ -153,6 +181,22 @@ public class RegisterConfig implements PluginConfig {
 
     public void setHeartbeatInterval(int heartbeatInterval) {
         this.heartbeatInterval = heartbeatInterval;
+    }
+
+    public int getHeartbeatRetryTimes() {
+        return heartbeatRetryTimes;
+    }
+
+    public void setHeartbeatRetryTimes(int heartbeatRetryTimes) {
+        this.heartbeatRetryTimes = heartbeatRetryTimes;
+    }
+
+    public int getPullInterval() {
+        return pullInterval;
+    }
+
+    public void setPullInterval(int pullInterval) {
+        this.pullInterval = pullInterval;
     }
 
     public String getApplication() {

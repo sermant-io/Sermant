@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.register.context;
+package com.huawei.register.service.context;
 
 import com.huawei.register.config.RegisterConfig;
 import com.huawei.sermant.core.common.CommonConstant;
@@ -25,6 +25,7 @@ import com.huawei.sermant.core.lubanops.bootstrap.config.AgentConfigManager;
 import com.huawei.sermant.core.service.ServiceManager;
 import com.huawei.sermant.core.service.dynamicconfig.config.DynamicConfig;
 import com.huawei.sermant.core.service.heartbeat.HeartbeatConfig;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 

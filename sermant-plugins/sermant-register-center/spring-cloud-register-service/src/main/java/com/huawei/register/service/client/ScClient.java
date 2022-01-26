@@ -21,6 +21,8 @@ import com.huawei.register.config.RegisterConfig;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.integration.utils.APMThreadFactory;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+import com.huawei.sermant.core.util.CollectionUtils;
+
 import org.apache.servicecomb.foundation.auth.SignRequest;
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpConfiguration;
@@ -41,6 +43,7 @@ import org.springframework.cloud.client.serviceregistry.Registration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -199,18 +202,17 @@ public class ScClient {
     }
 
     private List<String> getScUrls() {
-        final String scKieUrls = registerConfig.getAddress();
-        if (scKieUrls == null || scKieUrls.trim().length() == 0) {
+        final List<String> urlList = registerConfig.getAddressList();
+        if (CollectionUtils.isEmpty(urlList)) {
             throw new IllegalArgumentException("Kie url must not be empty!");
         }
-        final String[] urls = scKieUrls.split(",");
-        final List<String> urlList = new ArrayList<String>();
-        for (String url : urls) {
+        Iterator<String> it = urlList.iterator();
+        while (it.hasNext()) {
+            String url = it.next();
             if (!isUrlValid(url)) {
                 LOGGER.warning(String.format(Locale.ENGLISH, "Invalid url : %s", url));
-                continue;
+                it.remove();
             }
-            urlList.add(url);
         }
         return urlList;
     }

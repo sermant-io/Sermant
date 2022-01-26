@@ -16,7 +16,8 @@
 
 package com.huawei.dubbo.register.service;
 
-import com.huawei.dubbo.register.config.DubboCache;
+import com.huawei.register.config.RegisterConfig;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.config.AbstractInterfaceConfig;
@@ -35,6 +36,12 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
 
     private static final String DUBBO_REGISTRIES_CONFIG_PREFIX = "dubbo.registries.";
 
+    private final RegisterConfig config;
+
+    public RegistryConfigServiceImpl() {
+        config = PluginConfigManager.getPluginConfig(RegisterConfig.class);
+    }
+
     /**
      * 多注册中心注册到sc
      *
@@ -42,15 +49,14 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
      */
     @Override
     public void addRegistryConfig(Object obj) {
-        if (obj instanceof AbstractInterfaceConfig && DubboCache.INSTANCE.getDubboConfig().isOpenMigration()) {
-            AbstractInterfaceConfig config = (AbstractInterfaceConfig) obj;
-            List<RegistryConfig> registries = config.getRegistries();
+        if (obj instanceof AbstractInterfaceConfig && config.isOpenMigration()) {
+            AbstractInterfaceConfig interfaceConfig = (AbstractInterfaceConfig) obj;
+            List<RegistryConfig> registries = interfaceConfig.getRegistries();
             if (registries == null || isInValid(registries)) {
                 return;
             }
             // 这个url不重要，重要的是protocol，所以get(0)就行
-            URL url = URL.valueOf(DubboCache.INSTANCE.getDubboConfig().getAddress().get(0))
-                    .setProtocol(SC_REGISTRY_PROTOCOL);
+            URL url = URL.valueOf(config.getAddressList().get(0)).setProtocol(SC_REGISTRY_PROTOCOL);
             RegistryConfig registryConfig = new RegistryConfig(url.toString());
             registryConfig.setId(SC_REGISTRY_PROTOCOL);
             registryConfig.setPrefix(DUBBO_REGISTRIES_CONFIG_PREFIX);

@@ -16,7 +16,9 @@
 
 package com.huawei.dubbo.register.service;
 
-import com.huawei.dubbo.register.config.DubboCache;
+import com.huawei.dubbo.register.cache.DubboCache;
+import com.huawei.register.config.RegisterConfig;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 import org.apache.dubbo.config.ApplicationConfig;
 
@@ -32,6 +34,15 @@ import java.util.Map;
 public class ApplicationConfigServiceImpl implements ApplicationConfigService {
     private static final String GRAY_VERSION_KEY = "gray.version";
 
+    private final RegisterConfig config;
+
+    /**
+     * 初始化启动方法
+     */
+    public ApplicationConfigServiceImpl() {
+        config = PluginConfigManager.getPluginConfig(RegisterConfig.class);
+    }
+
     /**
      * 设置注册时的服务名
      *
@@ -40,15 +51,15 @@ public class ApplicationConfigServiceImpl implements ApplicationConfigService {
     @Override
     public void getName(Object obj) {
         if (obj instanceof ApplicationConfig) {
-            ApplicationConfig config = (ApplicationConfig) obj;
-            DubboCache.INSTANCE.setServiceName(config.getName());
+            ApplicationConfig applicationConfig = (ApplicationConfig) obj;
+            DubboCache.INSTANCE.setServiceName(applicationConfig.getName());
             // 灰度插件的版本号优先设置为注册时的版本号
             Map<String, String> versionMap = new HashMap<>();
-            versionMap.put(GRAY_VERSION_KEY, DubboCache.INSTANCE.getDubboConfig().getVersion());
-            if (config.getParameters() == null) {
-                config.setParameters(versionMap);
+            versionMap.put(GRAY_VERSION_KEY, config.getVersion());
+            if (applicationConfig.getParameters() == null) {
+                applicationConfig.setParameters(versionMap);
             } else {
-                config.getParameters().putAll(versionMap);
+                applicationConfig.getParameters().putAll(versionMap);
             }
         }
     }
