@@ -16,9 +16,6 @@
 
 package com.huawei.dubbo.register;
 
-import org.apache.dubbo.common.URL;
-import org.apache.dubbo.registry.NotifyListener;
-
 /**
  * 发现下游服务新增实例的实体
  *
@@ -26,8 +23,8 @@ import org.apache.dubbo.registry.NotifyListener;
  * @date 2021/12/15
  */
 public class Subscription {
-    private final URL url;
-    private final NotifyListener notifyListener;
+    private final Object url;
+    private final Object notifyListener;
 
     /**
      * 构造方法
@@ -35,16 +32,16 @@ public class Subscription {
      * @param url url
      * @param notifyListener notifyListener
      */
-    public Subscription(URL url, NotifyListener notifyListener) {
+    public Subscription(Object url, Object notifyListener) {
         this.url = url;
         this.notifyListener = notifyListener;
     }
 
-    public URL getUrl() {
+    public Object getUrl() {
         return url;
     }
 
-    public NotifyListener getNotifyListener() {
+    public Object getNotifyListener() {
         return notifyListener;
     }
 }

@@ -35,6 +35,11 @@ public enum DubboCache {
      */
     private boolean loadSc;
 
+    /**
+     * 加载的url的class(alibaba/apache)
+     */
+    private Class<?> urlClass;
+
     public String getServiceName() {
         return serviceName;
     }
@@ -52,5 +57,13 @@ public enum DubboCache {
 
     public boolean isLoadSc() {
         return loadSc;
+    }
+
+    public Class<?> getUrlClass() {
+        return urlClass;
+    }
+
+    public void setUrlClass(Class<?> urlClass) {
+        this.urlClass = urlClass;
     }
 }

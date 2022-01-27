@@ -22,6 +22,7 @@ import com.huawei.sermant.core.agent.matcher.ClassMatcher;
 import com.huawei.sermant.core.agent.matcher.ClassMatchers;
 
 import net.bytebuddy.description.method.MethodDescription;
+import net.bytebuddy.matcher.ElementMatcher.Junction;
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
@@ -30,12 +31,12 @@ import net.bytebuddy.matcher.ElementMatchers;
  * @author provenceee
  * @date 2022/1/18
  */
-public abstract class AbstractInstDefinition implements EnhanceDefinition {
+public abstract class AbstractDefinition implements EnhanceDefinition {
     private final String enhanceClass;
 
     private final String interceptClass;
 
-    private final String methodName;
+    private final String[] methodName;
 
     /**
      * 构造方法
@@ -44,7 +45,7 @@ public abstract class AbstractInstDefinition implements EnhanceDefinition {
      * @param interceptClass 拦截类
      * @param methodName 拦截方法
      */
-    public AbstractInstDefinition(String enhanceClass, String interceptClass, String methodName) {
+    public AbstractDefinition(String enhanceClass, String interceptClass, String... methodName) {
         this.enhanceClass = enhanceClass;
         this.interceptClass = interceptClass;
         this.methodName = methodName;
@@ -57,8 +58,35 @@ public abstract class AbstractInstDefinition implements EnhanceDefinition {
 
     @Override
     public MethodInterceptPoint[] getMethodInterceptPoints() {
+        return getInstMethodInterceptPoint();
+    }
+
+    /**
+     * 实例方法拦截点
+     *
+     * @return 实例方法拦截点
+     */
+    public MethodInterceptPoint[] getInstMethodInterceptPoint() {
         return new MethodInterceptPoint[]{
-                MethodInterceptPoint.newInstMethodInterceptPoint(interceptClass,
-                        ElementMatchers.<MethodDescription>named(methodName))};
+                MethodInterceptPoint.newInstMethodInterceptPoint(interceptClass, getMethodElementMatcher())};
+    }
+
+    /**
+     * 静态方法拦截点
+     *
+     * @return 静态方法拦截点
+     */
+    public MethodInterceptPoint[] getStaticMethodInterceptPoint() {
+        return new MethodInterceptPoint[]{
+                MethodInterceptPoint.newStaticMethodInterceptPoint(interceptClass, getMethodElementMatcher())};
+    }
+
+    /**
+     * 方法匹配器
+     *
+     * @return 方法匹配器
+     */
+    public Junction<MethodDescription> getMethodElementMatcher() {
+        return ElementMatchers.<MethodDescription>namedOneOf(methodName);
     }
 }

@@ -1,3 +1,7 @@
 com.huawei.dubbo.register.definition.ApplicationConfigDefinition
+com.huawei.dubbo.register.definition.ConfigValidationDefinition
 com.huawei.dubbo.register.definition.InterfaceConfigDefinition
+com.huawei.dubbo.register.definition.MigrationRuleDefinition
+com.huawei.dubbo.register.definition.MigrationRuleHandlerDefinition
+com.huawei.dubbo.register.definition.RegistryProtocolDefinition
 com.huawei.dubbo.register.definition.SpringBootDefinition

@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 增强AbstractInterfaceConfig类的getApplication方法
+ * 增强AbstractInterfaceConfig类的setRegistries/loadRegistriesFromBackwardConfig方法
  *
  * @author provenceee
  * @since 2021年11月8日

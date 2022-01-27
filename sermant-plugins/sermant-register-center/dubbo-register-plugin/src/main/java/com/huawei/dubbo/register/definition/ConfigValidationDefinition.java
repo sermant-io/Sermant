@@ -17,29 +17,22 @@
 package com.huawei.dubbo.register.definition;
 
 import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
-import com.huawei.sermant.core.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.agent.matcher.ClassMatchers;
 
 /**
- * 增强SpringBootApplication类的main方法
+ * 增强ConfigValidationUtils类的extractRegistryType方法
  *
  * @author provenceee
- * @date 2022年1月24日
+ * @date 2022年1月27日
  */
-public class SpringBootDefinition extends AbstractDefinition {
-    private static final String ENHANCE_CLASS = "org.springframework.boot.autoconfigure.SpringBootApplication";
+public class ConfigValidationDefinition extends AbstractDefinition {
+    private static final String ENHANCE_CLASS = "org.apache.dubbo.config.utils.ConfigValidationUtils";
 
-    private static final String INTERCEPT_CLASS = "com.huawei.dubbo.register.interceptor.SpringBootInterceptor";
+    private static final String INTERCEPT_CLASS = "com.huawei.dubbo.register.interceptor.ConfigValidationInterceptor";
 
-    private static final String METHOD_NAME = "main";
+    private static final String METHOD_NAME = "extractRegistryType";
 
-    public SpringBootDefinition() {
+    public ConfigValidationDefinition() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
-    }
-
-    @Override
-    public ClassMatcher enhanceClass() {
-        return ClassMatchers.annotationWith(ENHANCE_CLASS);
     }
 
     @Override

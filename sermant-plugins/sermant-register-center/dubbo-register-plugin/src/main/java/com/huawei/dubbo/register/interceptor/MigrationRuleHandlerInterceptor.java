@@ -16,43 +16,59 @@
 
 package com.huawei.dubbo.register.interceptor;
 
-import com.huawei.dubbo.register.service.ApplicationConfigService;
+import com.huawei.dubbo.register.constants.Constant;
 import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.sermant.core.service.ServiceManager;
 
+import org.apache.dubbo.registry.client.migration.MigrationInvoker;
+import org.apache.dubbo.registry.client.migration.MigrationRuleHandler;
+
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 增强ApplicationConfig类的setName方法
+ * 增强MigrationRuleHandler类的doMigrate方法
  *
  * @author provenceee
- * @since 2021年11月8日
+ * @date 2022/1/26
  */
-public class ApplicationConfigInterceptor implements InstanceMethodInterceptor {
+public class MigrationRuleHandlerInterceptor implements InstanceMethodInterceptor {
     private static final Logger LOGGER = LogFactory.getLogger();
 
-    private final ApplicationConfigService applicationConfigService;
-
-    public ApplicationConfigInterceptor() {
-        applicationConfigService = ServiceManager.getService(ApplicationConfigService.class);
-    }
+    private static final String MIGRATION_INVOKER_FIELD_NAME = "migrationInvoker";
 
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
+        if (obj instanceof MigrationRuleHandler<?>) {
+            MigrationRuleHandler<?> handler = (MigrationRuleHandler<?>) obj;
+            MigrationInvoker<?> migrationInvoker;
+            try {
+                Field field = handler.getClass().getDeclaredField(MIGRATION_INVOKER_FIELD_NAME);
+                field.setAccessible(true);
+                migrationInvoker = (MigrationInvoker<?>) field.get(handler);
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Cannot get the migrationInvoker.");
+                return;
+            }
+            // 只拦截sc协议的
+            if (!Constant.SC_REGISTRY_PROTOCOL.equals(migrationInvoker.getRegistryUrl().getProtocol())) {
+                return;
+            }
+            // sc MigrationRule的标记，适用2.7.10-2.7.15
+            arguments[0] = Constant.SC_INIT_MIGRATION_RULE;
+        }
     }
 
     @Override
     public Object after(Object obj, Method method, Object[] arguments, Object result) {
-        applicationConfigService.getName(obj);
         return result;
     }
 
     @Override
     public void onThrow(Object obj, Method method, Object[] arguments, Throwable throwable) {
-        LOGGER.log(Level.SEVERE, "ApplicationConfig is error!", throwable);
+        LOGGER.log(Level.SEVERE, "MigrationRuleHandler is error!", throwable);
     }
 }

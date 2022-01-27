@@ -17,16 +17,16 @@
 package com.huawei.dubbo.register.service;
 
 import com.huawei.dubbo.register.cache.DubboCache;
+import com.huawei.dubbo.register.utils.ReflectUtils;
 import com.huawei.register.config.RegisterConfig;
+import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-
-import org.apache.dubbo.config.ApplicationConfig;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 应用配置服务
+ * 应用配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
  *
  * @author provenceee
  * @date 2021/12/31
@@ -47,20 +47,24 @@ public class ApplicationConfigServiceImpl implements ApplicationConfigService {
      * 设置注册时的服务名
      *
      * @param obj 增强的类
+     * @see com.alibaba.dubbo.config.ApplicationConfig
+     * @see org.apache.dubbo.config.ApplicationConfig
      */
     @Override
     public void getName(Object obj) {
-        if (obj instanceof ApplicationConfig) {
-            ApplicationConfig applicationConfig = (ApplicationConfig) obj;
-            DubboCache.INSTANCE.setServiceName(applicationConfig.getName());
-            // 灰度插件的版本号优先设置为注册时的版本号
-            Map<String, String> versionMap = new HashMap<>();
-            versionMap.put(GRAY_VERSION_KEY, config.getVersion());
-            if (applicationConfig.getParameters() == null) {
-                applicationConfig.setParameters(versionMap);
-            } else {
-                applicationConfig.getParameters().putAll(versionMap);
-            }
+        String name = ReflectUtils.getName(obj);
+        if (StringUtils.isBlank(name)) {
+            return;
+        }
+        DubboCache.INSTANCE.setServiceName(name);
+        // 灰度插件的版本号优先设置为注册时的版本号
+        Map<String, String> versionMap = new HashMap<>();
+        versionMap.put(GRAY_VERSION_KEY, config.getVersion());
+        Map<String, String> map = ReflectUtils.getParameters(obj);
+        if (map == null) {
+            ReflectUtils.setParameters(obj, versionMap);
+        } else {
+            map.putAll(versionMap);
         }
     }
 }

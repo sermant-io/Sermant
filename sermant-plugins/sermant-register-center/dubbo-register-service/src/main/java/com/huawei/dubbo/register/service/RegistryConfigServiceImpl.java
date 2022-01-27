@@ -16,24 +16,21 @@
 
 package com.huawei.dubbo.register.service;
 
+import com.huawei.dubbo.register.constants.Constant;
+import com.huawei.dubbo.register.utils.ReflectUtils;
 import com.huawei.register.config.RegisterConfig;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-
-import org.apache.dubbo.common.URL;
-import org.apache.dubbo.config.AbstractInterfaceConfig;
-import org.apache.dubbo.config.RegistryConfig;
+import com.huawei.sermant.core.util.CollectionUtils;
 
 import java.util.List;
 
 /**
- * 注册配置服务
+ * 注册配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
  *
  * @author provenceee
  * @date 2021/12/31
  */
 public class RegistryConfigServiceImpl implements RegistryConfigService {
-    private static final String SC_REGISTRY_PROTOCOL = "sc";
-
     private static final String DUBBO_REGISTRIES_CONFIG_PREFIX = "dubbo.registries.";
 
     private final RegisterConfig config;
@@ -46,41 +43,45 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
      * 多注册中心注册到sc
      *
      * @param obj 增强的类
+     * @see com.alibaba.dubbo.config.AbstractInterfaceConfig
+     * @see org.apache.dubbo.config.AbstractInterfaceConfig
      */
     @Override
     public void addRegistryConfig(Object obj) {
-        if (obj instanceof AbstractInterfaceConfig && config.isOpenMigration()) {
-            AbstractInterfaceConfig interfaceConfig = (AbstractInterfaceConfig) obj;
-            List<RegistryConfig> registries = interfaceConfig.getRegistries();
-            if (registries == null || isInValid(registries)) {
-                return;
-            }
-            // 这个url不重要，重要的是protocol，所以get(0)就行
-            URL url = URL.valueOf(config.getAddressList().get(0)).setProtocol(SC_REGISTRY_PROTOCOL);
-            RegistryConfig registryConfig = new RegistryConfig(url.toString());
-            registryConfig.setId(SC_REGISTRY_PROTOCOL);
-            registryConfig.setPrefix(DUBBO_REGISTRIES_CONFIG_PREFIX);
-            registries.add(registryConfig);
+        if (!config.isOpenMigration()) {
+            return;
         }
+        List<Object> registries = ReflectUtils.getRegistries(obj);
+        if (CollectionUtils.isEmpty(registries) || isInValid(registries)) {
+            return;
+        }
+        Class<?> clazz = registries.get(0).getClass();
+        Object registryConfig = ReflectUtils.newRegistryConfig(clazz);
+        if (registryConfig == null) {
+            return;
+        }
+        ReflectUtils.setId(registryConfig, Constant.SC_REGISTRY_PROTOCOL);
+        ReflectUtils.setPrefix(registryConfig, DUBBO_REGISTRIES_CONFIG_PREFIX);
+        registries.add(registryConfig);
     }
 
-    private boolean isInValid(List<RegistryConfig> registries) {
+    private boolean isInValid(List<?> registries) {
         // 是否所有的配置都是无效的
         boolean allRegistriesAreInvalid = true;
-        // 是否存在sc的注册配置
-        boolean hasScRegistryConfig = false;
-        for (RegistryConfig registry : registries) {
+        for (Object registry : registries) {
             if (registry == null) {
                 continue;
             }
-            if (registry.isValid()) {
+            if (ReflectUtils.isValid(registry)) {
                 allRegistriesAreInvalid = false;
             }
-            if (SC_REGISTRY_PROTOCOL.equals(registry.getId()) || SC_REGISTRY_PROTOCOL.equals(registry.getProtocol())) {
-                hasScRegistryConfig = true;
+            if (Constant.SC_REGISTRY_PROTOCOL.equals(ReflectUtils.getId(registry))
+                    || Constant.SC_REGISTRY_PROTOCOL.equals(ReflectUtils.getProtocol(registry))) {
+                // 如果存在sc的配置，直接return，不注册到sc
+                return true;
             }
         }
-        // 如果所有的配置都是无效的或者存在sc的配置，都属于无效配置，不注册到sc
-        return allRegistriesAreInvalid || hasScRegistryConfig;
+        // 如果所有的配置都是无效的，则为无效配置，不注册到sc
+        return allRegistriesAreInvalid;
     }
 }

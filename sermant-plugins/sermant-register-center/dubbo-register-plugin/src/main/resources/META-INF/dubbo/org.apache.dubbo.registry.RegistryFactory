@@ -1,1 +1,1 @@
-sc=com.huawei.dubbo.register.ServiceCenterRegistryFactory
+sc=com.huawei.dubbo.register.apache.ServiceCenterRegistryFactory

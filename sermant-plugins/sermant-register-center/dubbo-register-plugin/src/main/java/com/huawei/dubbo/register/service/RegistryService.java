@@ -18,9 +18,6 @@ package com.huawei.dubbo.register.service;
 
 import com.huawei.sermant.core.plugin.service.PluginService;
 
-import org.apache.dubbo.common.URL;
-import org.apache.dubbo.registry.NotifyListener;
-
 /**
  * 注册服务
  *
@@ -28,11 +25,34 @@ import org.apache.dubbo.registry.NotifyListener;
  * @date 2021/12/15
  */
 public interface RegistryService extends PluginService {
+    /**
+     * 注册主逻辑
+     */
     void startRegistration();
 
-    void doSubscribe(URL url, NotifyListener notifyListener);
+    /**
+     * 订阅接口
+     *
+     * @param url 订阅地址
+     * @param notifyListener 实例通知监听器
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
+     * @see com.alibaba.dubbo.registry.NotifyListener
+     * @see org.apache.dubbo.registry.NotifyListener
+     */
+    void doSubscribe(Object url, Object notifyListener);
 
+    /**
+     * 关闭
+     */
     void shutdown();
 
-    void addRegistryUrls(URL url);
+    /**
+     * 增加注册接口
+     *
+     * @param url 注册url
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
+     */
+    void addRegistryUrls(Object url);
 }

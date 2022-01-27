@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register;
+package com.huawei.dubbo.register.alibaba;
 
 import com.huawei.dubbo.register.cache.DubboCache;
 
-import org.apache.dubbo.common.URL;
-import org.apache.dubbo.registry.Registry;
-import org.apache.dubbo.registry.support.AbstractRegistryFactory;
+import com.alibaba.dubbo.common.URL;
+import com.alibaba.dubbo.registry.Registry;
+import com.alibaba.dubbo.registry.support.AbstractRegistryFactory;
 
 /**
  * sc注册工厂
@@ -33,6 +33,7 @@ public class ServiceCenterRegistryFactory extends AbstractRegistryFactory {
     protected Registry createRegistry(URL url) {
         // 加载了sc的注册spi的标志
         DubboCache.INSTANCE.loadSc();
+        DubboCache.INSTANCE.setUrlClass(url.getClass());
         return new ServiceCenterRegistry(url);
     }
 }

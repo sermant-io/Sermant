@@ -14,33 +14,26 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register;
+package com.huawei.dubbo.register.apache;
+
+import com.huawei.dubbo.register.cache.DubboCache;
 
 import org.apache.dubbo.common.URL;
-import org.apache.dubbo.registry.NotifyListener;
-
-import java.util.List;
+import org.apache.dubbo.registry.Registry;
+import org.apache.dubbo.registry.support.AbstractRegistryFactory;
 
 /**
- * 订阅数据
+ * sc注册工厂
  *
  * @author provenceee
- * @date 2021/12/23
+ * @date 2021/12/15
  */
-public class SubscriptionData {
-    private final NotifyListener notifyListener;
-    private final List<URL> urls;
-
-    public SubscriptionData(NotifyListener notifyListener, List<URL> urls) {
-        this.notifyListener = notifyListener;
-        this.urls = urls;
-    }
-
-    public NotifyListener getNotifyListener() {
-        return notifyListener;
-    }
-
-    public List<URL> getUrls() {
-        return urls;
+public class ServiceCenterRegistryFactory extends AbstractRegistryFactory {
+    @Override
+    protected Registry createRegistry(URL url) {
+        // 加载了sc的注册spi的标志
+        DubboCache.INSTANCE.loadSc();
+        DubboCache.INSTANCE.setUrlClass(url.getClass());
+        return new ServiceCenterRegistry(url);
     }
 }

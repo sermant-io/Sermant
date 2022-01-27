@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,27 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.service;
-
-import com.huawei.sermant.core.plugin.service.PluginService;
+package com.huawei.dubbo.register.constants;
 
 /**
- * 接口配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
+ * 常量
  *
  * @author provenceee
- * @date 2021/12/15
+ * @date 2022/1/27
  */
-public interface RegistryConfigService extends PluginService {
+public interface Constant {
     /**
-     * 增加注册中心配置以注册到sc
-     *
-     * @param obj 增强的类
-     * @see com.alibaba.dubbo.config.AbstractInterfaceConfig
-     * @see org.apache.dubbo.config.AbstractInterfaceConfig
+     * sc注册协议名
      */
-    void addRegistryConfig(Object obj);
+    String SC_REGISTRY_PROTOCOL = "sc";
+
+    /**
+     * 协议分隔符
+     */
+    String PROTOCOL_SEPARATION = "://";
+
+    /**
+     * sc初始化迁移规则
+     */
+    String SC_INIT_MIGRATION_RULE = "scInit";
 }

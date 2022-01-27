@@ -16,20 +16,29 @@
 
 package com.huawei.dubbo.register.definition;
 
+import com.huawei.sermant.core.agent.matcher.ClassMatcher;
+import com.huawei.sermant.core.agent.matcher.ClassMatchers;
+
 /**
- * AbstractInterfaceConfig增强类
+ * ApplicationConfig增强类
  *
  * @author provenceee
  * @date 2021/11/24
  */
-public class ApplicationConfigDefinition extends AbstractInstDefinition {
-    private static final String ENHANCE_CLASS = "org.apache.dubbo.config.ApplicationConfig";
+public class ApplicationConfigDefinition extends AbstractDefinition {
+    private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.ApplicationConfig",
+            "com.alibaba.dubbo.config.ApplicationConfig"};
 
     private static final String INTERCEPT_CLASS = "com.huawei.dubbo.register.interceptor.ApplicationConfigInterceptor";
 
     private static final String METHOD_NAME = "setName";
 
     public ApplicationConfigDefinition() {
-        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
+        super(null, INTERCEPT_CLASS, METHOD_NAME);
+    }
+
+    @Override
+    public ClassMatcher enhanceClass() {
+        return ClassMatchers.multiClass(ENHANCE_CLASS);
     }
 }
