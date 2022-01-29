@@ -23,10 +23,10 @@ import com.huawei.dubbo.register.SubscriptionKey;
 import com.huawei.dubbo.register.cache.DubboCache;
 import com.huawei.register.config.RegisterConfig;
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.sermant.core.plugin.PluginManager;
 import com.huawei.sermant.core.plugin.common.PluginConstant;
+import com.huawei.sermant.core.plugin.common.PluginSchemaValidator;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.util.JarFileUtil;
+import com.huawei.sermant.core.utils.JarFileUtils;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -167,8 +167,8 @@ public class RegistryServiceImpl implements RegistryService {
 
     private String getVersion() {
         try (JarFile jarFile = new JarFile(getClass().getProtectionDomain().getCodeSource().getLocation().getPath())) {
-            String pluginName = (String) JarFileUtil.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
-            return PluginManager.getPluginVersionMap().get(pluginName);
+            String pluginName = (String) JarFileUtils.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
+            return PluginSchemaValidator.getPluginVersionMap().get(pluginName);
         } catch (IOException e) {
             LOGGER.warning("Cannot not get the version.");
             return "";

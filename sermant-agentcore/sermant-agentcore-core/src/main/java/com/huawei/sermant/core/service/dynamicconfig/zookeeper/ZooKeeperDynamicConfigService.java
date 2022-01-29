@@ -34,7 +34,7 @@ import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListene
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/12/15
+ * @since 2021-12-15
  */
 public class ZooKeeperDynamicConfigService extends DynamicConfigService {
     /**

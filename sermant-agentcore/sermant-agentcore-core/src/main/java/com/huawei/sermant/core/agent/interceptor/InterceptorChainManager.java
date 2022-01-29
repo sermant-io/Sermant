@@ -16,28 +16,54 @@
 
 package com.huawei.sermant.core.agent.interceptor;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
+import com.huawei.sermant.core.config.ConfigManager;
+import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.sermant.core.plugin.config.AliaConfig;
+
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.huawei.sermant.core.config.ConfigManager;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
-import com.huawei.sermant.core.plugin.config.AliaConfig;
-
 /**
  * 拦截器链加载类
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@AboutDelete
+@Deprecated
 public class InterceptorChainManager {
 
     private static final String MULTI_CHAINS_SEPARATOR = ";";
 
     private static final String INTERCEPTORS_SEPARATOR = ",";
 
+    @SuppressWarnings("checkstyle:ConstantName")
     private static final Map<String, String> aliaAndNameMap = new HashMap<String, String>();
 
     private final Map<String, InterceptorChain> interceptorChains = new HashMap<String, InterceptorChain>();
+
+    public static InterceptorChainManager newInstance() {
+        final InterceptorChainManager instance = new InterceptorChainManager();
+        final InterceptorChainConfig config = ConfigManager.getConfig(InterceptorChainConfig.class);
+        if (config != null) {
+            instance.buildChains(config);
+        }
+        return instance;
+    }
+
+    public static void addAlia(AliaConfig pluginAliaConfig) {
+        final String pluginName = pluginAliaConfig.getPluginName();
+        List<AliaConfig.InterceptorAlia> interceptors = pluginAliaConfig.getInterceptors();
+        if (interceptors != null && !interceptors.isEmpty()) {
+            for (AliaConfig.InterceptorAlia interceptor : interceptors) {
+                aliaAndNameMap.put(pluginName + "." + interceptor.getAlia(), interceptor.getName());
+            }
+        }
+    }
 
     public InterceptorChain getChain(String interceptorName) {
         return interceptorChains.get(interceptorName);
@@ -74,25 +100,6 @@ public class InterceptorChainManager {
             InterceptorChain interceptorChain = new InterceptorChain(interceptors.toArray(new String[0]));
             for (String interceptor : interceptors) {
                 interceptorChains.put(interceptor, interceptorChain);
-            }
-        }
-    }
-
-    public static InterceptorChainManager newInstance() {
-        final InterceptorChainManager instance = new InterceptorChainManager();
-        final InterceptorChainConfig config = ConfigManager.getConfig(InterceptorChainConfig.class);
-        if (config != null) {
-            instance.buildChains(config);
-        }
-        return instance;
-    }
-
-    public static void addAlia(AliaConfig pluginAliaConfig) {
-        final String pluginName = pluginAliaConfig.getPluginName();
-        List<AliaConfig.InterceptorAlia> interceptors = pluginAliaConfig.getInterceptors();
-        if (interceptors != null && !interceptors.isEmpty()) {
-            for (AliaConfig.InterceptorAlia interceptor : interceptors) {
-                aliaAndNameMap.put(pluginName + "." + interceptor.getAlia(), interceptor.getName());
             }
         }
     }

@@ -16,39 +16,34 @@
 
 package com.huawei.example.demo.interceptor;
 
-import java.lang.reflect.Method;
-
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.StaticMethodInterceptor;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.example.demo.common.DemoLogger;
 import com.huawei.example.demo.config.DemoConfig;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 /**
  * 统一配置功能的拦截器示例，在本示例中，将展示如何在插件端获取统一配置
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/10/25
+ * @since 2021-10-25
  */
-public class DemoConfigInterceptor implements StaticMethodInterceptor {
+public class DemoConfigInterceptor extends AbstractInterceptor {
     private DemoConfig config;
 
     @Override
-    public void before(Class<?> clazz, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
-        DemoLogger.println(clazz.getSimpleName() + ": [DemoConfigInterceptor]-before");
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        DemoLogger.println(context.getRawCls().getSimpleName() + ": [DemoConfigInterceptor]-before");
         config = PluginConfigManager.getPluginConfig(DemoConfig.class);
+        return context;
     }
 
     @Override
-    public Object after(Class<?> clazz, Method method, Object[] arguments, Object result) throws Exception {
-        DemoLogger.println(clazz.getSimpleName() + ": " + config);
-        DemoLogger.println(clazz.getSimpleName() + ": [DemoConfigInterceptor]-after");
-        return result;
-    }
-
-    @Override
-    public void onThrow(Class<?> clazz, Method method, Object[] arguments, Throwable t) {
-        DemoLogger.println(clazz.getSimpleName() + ": [DemoConfigInterceptor]-onThrow");
+    public ExecuteContext after(ExecuteContext context) throws Exception {
+        final String clsName = context.getRawCls().getSimpleName();
+        DemoLogger.println(clsName + ": " + config);
+        DemoLogger.println(clsName + ": [DemoConfigInterceptor]-after");
+        return context;
     }
 }

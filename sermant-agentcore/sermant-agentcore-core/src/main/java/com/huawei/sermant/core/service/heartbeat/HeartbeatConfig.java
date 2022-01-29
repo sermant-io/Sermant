@@ -24,7 +24,7 @@ import com.huawei.sermant.core.config.common.ConfigTypeKey;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/29
+ * @since 2021-11-29
  */
 @ConfigTypeKey("heartbeat")
 public class HeartbeatConfig implements BaseConfig {

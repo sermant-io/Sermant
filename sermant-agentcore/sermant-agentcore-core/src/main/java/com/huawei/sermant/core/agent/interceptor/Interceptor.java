@@ -19,5 +19,6 @@ package com.huawei.sermant.core.agent.interceptor;
 /**
  * 拦截器接口
  */
+@Deprecated
 public interface Interceptor {
 }

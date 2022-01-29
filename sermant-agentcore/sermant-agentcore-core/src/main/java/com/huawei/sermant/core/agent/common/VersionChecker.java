@@ -16,6 +16,7 @@
 
 package com.huawei.sermant.core.agent.common;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.bootstrap.Listener;
 import com.huawei.sermant.core.lubanops.bootstrap.commons.ConditionOnVersion;
@@ -26,7 +27,12 @@ import java.util.logging.Logger;
 
 /**
  * 插件版本检查工具
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@AboutDelete
+@Deprecated
 public class VersionChecker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
@@ -40,6 +46,7 @@ public class VersionChecker {
         this.listener = listener;
     }
 
+    @SuppressWarnings("checkstyle:RegexpSinglelineJava")
     public boolean check() {
         ConditionOnVersion conditionOnVersion = listener.getClass().getAnnotation(ConditionOnVersion.class);
         if (null == conditionOnVersion) {
@@ -55,6 +62,7 @@ public class VersionChecker {
         return false;
     }
 
+    @SuppressWarnings({"checkstyle:RegexpSinglelineJava", "checkstyle:IllegalCatch"})
     public boolean matchVersion(String definedVersion, String packageName) {
 
         try {

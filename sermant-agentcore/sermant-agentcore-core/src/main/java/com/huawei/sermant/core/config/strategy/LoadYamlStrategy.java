@@ -16,27 +16,27 @@
 
 package com.huawei.sermant.core.config.strategy;
 
+import com.huawei.sermant.core.common.CommonConstant;
+import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.config.common.BaseConfig;
+import com.huawei.sermant.core.config.common.ConfigFieldKey;
+import com.huawei.sermant.core.config.utils.ConfigKeyUtil;
+import com.huawei.sermant.core.config.utils.ConfigValueUtil;
+
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.yaml.snakeyaml.Yaml;
-
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.config.common.BaseConfig;
-import com.huawei.sermant.core.config.common.ConfigFieldKey;
-import com.huawei.sermant.core.config.utils.ConfigKeyUtil;
-import com.huawei.sermant.core.config.utils.ConfigValueUtil;
 
 /**
  * yaml格式文件的加载策略
@@ -46,23 +46,21 @@ import com.huawei.sermant.core.config.utils.ConfigValueUtil;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/12
+ * @since 2021-11-12
  */
 public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     /**
      * 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
-
-    /**
-     * 启动参数
-     */
-    private Map<String, Object> argsMap;
-
     /**
      * Yaml对象
      */
     private final Yaml yaml = new Yaml();
+    /**
+     * 启动参数
+     */
+    private Map<String, Object> argsMap;
 
     @Override
     public boolean canLoad(File file) {
@@ -74,31 +72,6 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     public Map getConfigHolder(File config, Map<String, Object> argsMap) {
         this.argsMap = argsMap;
         return readConfig(config);
-    }
-
-    /**
-     * 读取文件内容
-     *
-     * @param config 配置文件
-     * @return 配置信息
-     */
-    private Map<?, ?> readConfig(File config) {
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(config), Charset.forName("UTF-8")));
-            return yaml.loadAs(reader, Map.class);
-        } catch (IOException ignored) {
-            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                    "Missing config file [%s], please check.", config));
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ignored) {
-                }
-            }
-        }
-        return Collections.emptyMap();
     }
 
     @Override
@@ -116,6 +89,32 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
         } finally {
             Thread.currentThread().setContextClassLoader(classLoader);
         }
+    }
+
+    /**
+     * 读取文件内容
+     *
+     * @param config 配置文件
+     * @return 配置信息
+     */
+    private Map<?, ?> readConfig(File config) {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(config),
+                    CommonConstant.DEFAULT_CHARSET));
+            return yaml.loadAs(reader, Map.class);
+        } catch (IOException ignored) {
+            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
+                    "Missing config file [%s], please check.", config));
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+        return Collections.emptyMap();
     }
 
     /**

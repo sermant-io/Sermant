@@ -23,11 +23,13 @@
 
 package com.huawei.sermant.core.agent.enhancer;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
 import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.agent.common.OverrideArgumentsCall;
 import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.bootstrap.Interceptor;
+
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Morph;
 import net.bytebuddy.implementation.bind.annotation.Origin;
@@ -41,9 +43,15 @@ import java.util.logging.Logger;
 
 /**
  * 多Interceptor实例方法增强委派类
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@AboutDelete
+@Deprecated
 public final class InstanceMethodEnhancer extends AbstractAroundEnhancer {
 
+    @SuppressWarnings("checkstyle:ModifierOrder")
     private final static Logger LOGGER = LoggerFactory.getLogger();
 
     private final List<InstanceMethodInterceptor> interceptors;
@@ -103,6 +111,7 @@ public final class InstanceMethodEnhancer extends AbstractAroundEnhancer {
         return returnResult;
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void execBefore(final InstanceMethodInterceptor interceptor,
             final EnhanceContext context,
             final BeforeResult beforeResult) {
@@ -117,6 +126,7 @@ public final class InstanceMethodEnhancer extends AbstractAroundEnhancer {
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void execOnThrow(final InstanceMethodInterceptor interceptor,
             final EnhanceContext context,
             final Throwable originThrowable) {
@@ -132,6 +142,7 @@ public final class InstanceMethodEnhancer extends AbstractAroundEnhancer {
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private Object execAfter(final InstanceMethodInterceptor interceptor,
             final EnhanceContext context,
             final Object result) {

@@ -16,26 +16,39 @@
 
 package com.huawei.sermant.core.plugin.config;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * 插件设定配置
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/12
+ * @since 2021-11-12
  */
 public class PluginSetting {
     /**
      * 插件名称集
      */
-    private Set<String> plugins;
+    private List<String> plugins;
 
-    public Set<String> getPlugins() {
+    /**
+     * 适配器名称集
+     */
+    private List<String> adaptors;
+
+    public List<String> getPlugins() {
         return plugins;
     }
 
-    public void setPlugins(Set<String> plugins) {
+    public void setPlugins(List<String> plugins) {
         this.plugins = plugins;
+    }
+
+    public List<String> getAdaptors() {
+        return adaptors;
+    }
+
+    public void setAdaptors(List<String> adaptors) {
+        this.adaptors = adaptors;
     }
 }

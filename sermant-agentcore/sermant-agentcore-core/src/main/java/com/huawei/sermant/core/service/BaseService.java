@@ -17,19 +17,20 @@
 package com.huawei.sermant.core.service;
 
 /**
- * Agent核心服务接口
+ * Agent服务接口
+ * <p>
+ * 实现{@link BaseService}的服务实例会在agent启动时被创建，
+ * 并在创建完成之后，依次调用的它们的{@link #start()}方法，
+ * 同时为他们创建钩子，用于在JVM结束时调用服务是{@link #stop()}方法
+ * <p>
+ * 所有{@link BaseService}实例将由{@link ServiceManager}管理，
+ * 可通过{@link ServiceManager#getService(Class)}方法传入{@link BaseService}子类获取服务实例。
+ * {@link ServiceManager}将根据传入的{@link BaseService}类型，返回最佳的实现类。
+ * 可以通过{@link com.huawei.sermant.core.utils.SpiLoadUtils.SpiWeight}注解设置多实现类的权重。
  *
- * <p>实现该接口的服务实例会在agent启动时被创建，在所有<Code>CoreService<Code/>实例
- * 被创建完成之后再依次调用的它们的{@link #start()}方法，并为所有服务实例创建shutdown
- * hook，用于在虚拟机结束时调用服务是{@link #stop()}方法</p>
- *
- * <p>所有<Code>CoreService<Code/>实例将由{@link ServiceManager}管理，可以
- * 通过{@link ServiceManager#getService(Class)}获取相应的服务实例，其中参数
- * <code>serviceClass</code>为除<Code>CoreService<Code/>外的其他接口的类型，该
- * 接口将作为<Code>CoreService<Code/>实现类的功能接口。每个功能接口只有一个实现类被
- * 加载，该实现为默认实现。如果需要替换默认实现，需要在用于替换的实现类上添加{@link
- * com.huawei.sermant.core.util.SpiLoadUtil.SpiWeight}注解，依{@link
- * com.huawei.sermant.core.util.SpiLoadUtil.SpiWeight#value()}值选择高者。<p/>
+ * @author justforstudy-A, beetle-man, HapThorin
+ * @version 1.0.0
+ * @since 2022-01-21
  */
 public interface BaseService {
 

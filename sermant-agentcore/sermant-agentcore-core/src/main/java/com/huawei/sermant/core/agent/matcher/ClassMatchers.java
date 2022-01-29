@@ -24,7 +24,12 @@ package com.huawei.sermant.core.agent.matcher;
 
 /**
  * 匹配器Facade类
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
+@Deprecated
 public class ClassMatchers {
 
     public static NameMatcher named(String name) {

@@ -16,6 +16,7 @@
 
 package com.huawei.sermant.core.agent.interceptor;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
 import com.huawei.sermant.core.common.LoggerFactory;
 
 import java.util.Arrays;
@@ -25,15 +26,22 @@ import java.util.logging.Logger;
 
 /**
  * 拦截器链
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@AboutDelete
+@Deprecated
 public class InterceptorChain {
 
+    @SuppressWarnings("checkstyle:ModifierOrder")
     private final static Logger LOGGER = LoggerFactory.getLogger();
 
     private static final int NOT_IN_CHAIN = Integer.MAX_VALUE;
 
     private final Map<String, Integer> priorities = new HashMap<String, Integer>();
 
+    @SuppressWarnings("checkstyle:RegexpSinglelineJava")
     public InterceptorChain(String[] interceptors) {
         int index = 1;
         for (String interceptor : interceptors) {

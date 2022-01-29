@@ -24,30 +24,31 @@ import org.slf4j.LoggerFactory;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/10/25
+ * @since 2021-10-25
  */
 @DemoAnnotation
 public class DemoAnnotationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DemoAnnotationService.class);
+
     /**
      * 被拦截的构造函数
      */
     public DemoAnnotationService() {
-        LOGGER.info("DemoAnnotationEntity: constructor");
-    }
-
-    /**
-     * 被拦截的实例方法
-     */
-    public void instFunc() {
-        LOGGER.info("DemoAnnotationEntity: instFunc");
+        LOGGER.info("DemoAnnotationService: constructor");
     }
 
     /**
      * 被拦截的静态方法
      */
     public static void staticFunc() {
-        LOGGER.info("DemoAnnotationEntity: staticFunc");
+        LOGGER.info("DemoAnnotationService: staticFunc");
+    }
+
+    /**
+     * 被拦截的实例方法
+     */
+    public void memberFunc() {
+        LOGGER.info("DemoAnnotationService: memberFunc");
     }
 
     @Override

@@ -16,20 +16,21 @@
 
 package com.huawei.sermant.core.agent.template;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
+import com.huawei.sermant.core.agent.common.BeforeResult;
+import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.lubanops.bootstrap.Interceptor;
+
+import net.bytebuddy.asm.Advice;
+import net.bytebuddy.implementation.bytecode.assign.Assigner;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.logging.Logger;
-
-import net.bytebuddy.asm.Advice;
-import net.bytebuddy.implementation.bytecode.assign.Assigner;
-
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.lubanops.bootstrap.Interceptor;
 
 /**
  * 启动类实例方法模板
@@ -39,6 +40,9 @@ import com.huawei.sermant.core.lubanops.bootstrap.Interceptor;
  * @version 1.0.0
  * @since 2021/10/27
  */
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
+@AboutDelete
+@Deprecated
 public class BootstrapInstTemplate {
     /**
      * 日志
@@ -48,11 +52,13 @@ public class BootstrapInstTemplate {
     /**
      * luban拦截器
      */
+    @SuppressWarnings({"checkstyle:DeclarationOrder", "checkstyle:VisibilityModifier", "checkstyle:StaticVariableName"})
     public static Interceptor ORIGIN_INTERCEPTOR;
 
     /**
      * 拦截器列表
      */
+    @SuppressWarnings({"checkstyle:DeclarationOrder", "checkstyle:VisibilityModifier", "checkstyle:StaticVariableName"})
     public static List<InstanceMethodInterceptor> INTERCEPTORS;
 
     /**
@@ -68,6 +74,7 @@ public class BootstrapInstTemplate {
      * @return 是否进行主要流程
      * @throws Exception 发生异常
      */
+    @SuppressWarnings({"checkstyle:ParameterAssignment", "checkstyle:OperatorWrap"})
     @Advice.OnMethodEnter(suppress = Throwable.class, skipOn = Advice.OnDefaultValue.class)
     public static boolean onMethodEnter(
             @Advice.This(typing = Assigner.Typing.DYNAMIC) Object obj,
@@ -113,6 +120,7 @@ public class BootstrapInstTemplate {
      * @param instInterceptorItr 实例拦截器的双向迭代器
      * @throws Exception 调用异常
      */
+    @SuppressWarnings({"checkstyle:ParameterAssignment", "checkstyle:ParameterNumber", "checkstyle:MethodName"})
     @Advice.OnMethodExit(suppress = Throwable.class, onThrowable = Throwable.class)
     public static void OnMethodExit(
             @Advice.This(typing = Assigner.Typing.DYNAMIC) Object obj,
@@ -162,6 +170,7 @@ public class BootstrapInstTemplate {
      * @param arguments 所有参数
      * @return 修正的参数列表
      */
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private static Object[] beforeOriginIntercept(Object obj, Method method, Object[] arguments) {
         if (ORIGIN_INTERCEPTOR == null) {
             return arguments;
@@ -189,6 +198,7 @@ public class BootstrapInstTemplate {
      * @param instInterceptorItr 实例拦截器的双向迭代器
      * @return 是否进行主要流程
      */
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private static boolean beforeInstIntercept(Object obj, Method method, Object[] arguments,
             ListIterator<InstanceMethodInterceptor> instInterceptorItr) {
         final BeforeResult beforeResult = new BeforeResult();
@@ -220,6 +230,7 @@ public class BootstrapInstTemplate {
      * @param instInterceptorItr 实例拦截器的双向迭代器
      * @return 调用结果
      */
+    @SuppressWarnings({"checkstyle:ParameterNumber", "checkstyle:ParameterAssignment"})
     public static Object afterInstMethod(Object obj, Method method, Object[] arguments, Object result,
             Throwable throwable, ListIterator<InstanceMethodInterceptor> instInterceptorItr) {
         result = afterInstIntercept(obj, method, arguments, result, throwable, instInterceptorItr);
@@ -236,6 +247,7 @@ public class BootstrapInstTemplate {
      * @param result    调用结果
      * @param throwable 抛出异常
      */
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private static void afterOriginIntercept(Object obj, Method method, Object[] arguments, Object result,
             Throwable throwable) {
         if (ORIGIN_INTERCEPTOR == null) {
@@ -270,6 +282,7 @@ public class BootstrapInstTemplate {
      * @param instInterceptorItr 实例拦截器的双向迭代器
      * @return 调用结果
      */
+    @SuppressWarnings({"checkstyle:ParameterAssignment", "ParameterNumber", "IllegalCatch", "OperatorWrap"})
     private static Object afterInstIntercept(Object obj, Method method, Object[] arguments, Object result,
             Throwable throwable, ListIterator<InstanceMethodInterceptor> instInterceptorItr) {
         while (instInterceptorItr.hasPrevious()) {

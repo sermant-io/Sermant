@@ -11,7 +11,7 @@
         <package.output.dir>${package.agent.dir}</package.output.dir>
         <javaagent.package.name>${sermant.name}</javaagent.package.name>
         <config.file.name>bootstrap.properties</config.file.name>
-        <config.source.dir>src/main/resources/config</config.source.dir>
+        <config.source.dir>config</config.source.dir>
         <config.output.dir>${package.agent.dir}/config</config.output.dir>
     </properties>
     <dependencies>

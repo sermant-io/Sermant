@@ -37,6 +37,7 @@
                 <module>sermant-threadlocal</module>
                 <module>sermant-online-stresstest</module>
                 <module>sermant-register-center</module>
+                <module>sermant-luban-adaptor</module>
             </modules>
         </profile>
         <profile>
@@ -68,6 +69,7 @@
                 <module>sermant-threadlocal</module>
                 <module>sermant-online-stresstest</module>
                 <module>sermant-register-center</module>
+                <module>sermant-luban-adaptor</module>
             </modules>
         </profile>
     </profiles>

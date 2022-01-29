@@ -16,25 +16,27 @@
 
 package com.huawei.sermant.core.plugin.classloader;
 
+import com.huawei.sermant.core.config.ConfigManager;
+import com.huawei.sermant.core.plugin.agent.config.AgentConfig;
+
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 插件类加载器，用于加载插件服务包
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/12
+ * @since 2021-11-12
  */
 public class PluginClassLoader extends URLClassLoader {
     /**
      * 不优先使用PluginClassLoader加载的全限定名前缀
      */
-    private final List<String> EXCLUDE_PREFIX_LIST = Collections.singletonList("com.huawei");
+    private final Set<String> ignoredPrefixes = ConfigManager.getConfig(AgentConfig.class).getIgnoredPrefixes();
 
     /**
      * 对ClassLoader内部已加载的Class的管理
@@ -63,7 +65,7 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     private boolean ifExclude(String name) {
-        for (String excludePrefix : EXCLUDE_PREFIX_LIST) {
+        for (String excludePrefix : ignoredPrefixes) {
             if (name.startsWith(excludePrefix)) {
                 return true;
             }
@@ -86,5 +88,10 @@ public class PluginClassLoader extends URLClassLoader {
             }
             return clazz;
         }
+    }
+
+    @Override
+    public void addURL(URL url) {
+        super.addURL(url);
     }
 }

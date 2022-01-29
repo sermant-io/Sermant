@@ -16,20 +16,20 @@
 
 package com.huawei.example.demo.config;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import com.huawei.sermant.core.config.common.ConfigFieldKey;
 import com.huawei.sermant.core.config.common.ConfigTypeKey;
 import com.huawei.sermant.core.plugin.config.AliaConfig;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 统一配置示例
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/10/25
+ * @since 2021-10-25
  */
 @ConfigTypeKey("demo.test") // 声明前缀
 public class DemoConfig extends AliaConfig { // 有设置拦截器别名需求的继承AliaConfig，否则实现PluginConfig
@@ -127,14 +127,14 @@ public class DemoConfig extends AliaConfig { // 有设置拦截器别名需求�
 
     @Override
     public String toString() {
-        return "DemoConfig{" +
-                "intField=" + intField +
-                ", strField='" + strField + '\'' +
-                ", demoComplexPojoField=" + pojoField +
-                ", shortArr=" + Arrays.toString(shortArr) +
-                ", longList=" + longList +
-                ", map=" + map +
-                ", enumType=" + enumType +
-                "} " + super.toString();
+        return "DemoConfig{"
+                + "intField=" + intField
+                + ", strField='" + strField + '\''
+                + ", pojoField=" + pojoField
+                + ", shortArr=" + Arrays.toString(shortArr)
+                + ", longList=" + longList
+                + ", map=" + map
+                + ", enumType=" + enumType
+                + "} " + super.toString();
     }
 }

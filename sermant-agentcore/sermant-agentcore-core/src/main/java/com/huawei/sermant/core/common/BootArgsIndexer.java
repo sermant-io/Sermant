@@ -16,21 +16,21 @@
 
 package com.huawei.sermant.core.common;
 
+import com.huawei.sermant.core.exception.SchemaException;
+import com.huawei.sermant.core.utils.JarFileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
-import com.huawei.sermant.core.exception.SchemaException;
-import com.huawei.sermant.core.util.JarFileUtil;
-
 /**
  * 路径索引器
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/3
+ * @since 2021-11-03
  */
 public class BootArgsIndexer {
     /**
@@ -41,7 +41,7 @@ public class BootArgsIndexer {
     /**
      * java agent的版本
      */
-    private static final String coreVersion;
+    private static final String CORE_VERSION;
 
     /**
      * 配置文件
@@ -58,8 +58,11 @@ public class BootArgsIndexer {
      */
     private static File pluginPackageDir;
 
+    private BootArgsIndexer() {
+    }
+
     public static String getCoreVersion() {
-        return coreVersion;
+        return CORE_VERSION;
     }
 
     public static File getConfigFile() {
@@ -99,14 +102,15 @@ public class BootArgsIndexer {
         JarFile jarFile = null;
         try {
             jarFile = new JarFile(currentFile);
-            coreVersion = JarFileUtil.getManifestAttr(jarFile, CommonConstant.CORE_VERSION_KEY).toString();
-        } catch (Exception ignored) {
+            CORE_VERSION = JarFileUtils.getManifestAttr(jarFile, CommonConstant.CORE_VERSION_KEY).toString();
+        } catch (IOException e) {
             throw new SchemaException(SchemaException.MISSING_VERSION, currentFile);
         } finally {
             if (jarFile != null) {
                 try {
                     jarFile.close();
                 } catch (IOException ignored) {
+                    LOGGER.warning("Unexpected exception occurs. ");
                 }
             }
         }

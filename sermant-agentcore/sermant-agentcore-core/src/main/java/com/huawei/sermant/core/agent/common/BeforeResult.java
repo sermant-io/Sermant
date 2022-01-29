@@ -25,16 +25,12 @@ package com.huawei.sermant.core.agent.common;
 /**
  * 实例和静态方法拦截器前置方法执行结果承载类
  */
+@Deprecated
 public class BeforeResult {
 
     private boolean isContinue = true;
 
     private Object result;
-
-    public void setResult(Object result) {
-        this.result = result;
-        isContinue = false;
-    }
 
     public boolean isContinue() {
         return isContinue;
@@ -42,5 +38,10 @@ public class BeforeResult {
 
     public Object getResult() {
         return result;
+    }
+
+    public void setResult(Object result) {
+        this.result = result;
+        isContinue = false;
     }
 }

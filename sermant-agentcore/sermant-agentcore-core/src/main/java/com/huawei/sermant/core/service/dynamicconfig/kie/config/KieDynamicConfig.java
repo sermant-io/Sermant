@@ -24,7 +24,7 @@ import com.huawei.sermant.core.config.common.ConfigTypeKey;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/12/15
+ * @since 2021-12-15
  */
 @ConfigTypeKey("kie.dynamic.config")
 public class KieDynamicConfig implements BaseConfig {

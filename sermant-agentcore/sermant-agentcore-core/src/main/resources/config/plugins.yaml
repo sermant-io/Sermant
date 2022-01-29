@@ -1,9 +1,0 @@
-# 默认编译场景使用，不含示例工程
-plugins:
-  - flowcontrol
-  - flowrecord
-  - online-stresstest
-  - route-server
-  - server-monitor
-  - threadlocal
-  - register-center

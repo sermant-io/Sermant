@@ -23,7 +23,7 @@ import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListene
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/12/14
+ * @since 2021-12-14
  */
 public interface KeyGroupService {
     /**

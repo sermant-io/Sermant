@@ -16,19 +16,27 @@
 
 package com.huawei.example.demo.interceptor;
 
-import com.huawei.sermant.core.agent.interceptor.ConstructorInterceptor;
 import com.huawei.example.demo.common.DemoLogger;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 /**
  * 构造函数的拦截器示例，本示例将展示如何对构造函数进行增强
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/10/25
+ * @since 2021-10-25
  */
-public class DemoConstInterceptor implements ConstructorInterceptor {
+public class DemoConstInterceptor extends AbstractInterceptor {
     @Override
-    public void onConstruct(Object obj, Object[] allArguments) {
-        DemoLogger.println(obj + ": [DemoConstInterceptor]-onConstruct");
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        DemoLogger.println(context.getRawCls() + ": [DemoConstInterceptor]-before");
+        return context;
+    }
+
+    @Override
+    public ExecuteContext after(ExecuteContext context) throws Exception {
+        DemoLogger.println(context.getRawCls() + ": [DemoConstInterceptor]-after");
+        return context;
     }
 }

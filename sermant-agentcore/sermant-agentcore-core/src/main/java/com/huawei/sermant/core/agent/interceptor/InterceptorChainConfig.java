@@ -16,9 +16,17 @@
 
 package com.huawei.sermant.core.agent.interceptor;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
 import com.huawei.sermant.core.config.common.BaseConfig;
 import com.huawei.sermant.core.config.common.ConfigTypeKey;
 
+/**
+ * <p> Copyright 2021
+ *
+ * @since 2021
+ */
+@AboutDelete
+@Deprecated
 @ConfigTypeKey("interceptor")
 public class InterceptorChainConfig implements BaseConfig {
 

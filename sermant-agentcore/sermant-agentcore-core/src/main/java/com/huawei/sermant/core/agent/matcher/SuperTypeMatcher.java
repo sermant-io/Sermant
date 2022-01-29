@@ -22,7 +22,12 @@
 
 package com.huawei.sermant.core.agent.matcher;
 
-import com.huawei.sermant.core.util.Assert;
+import static net.bytebuddy.matcher.ElementMatchers.hasSuperType;
+import static net.bytebuddy.matcher.ElementMatchers.isInterface;
+import static net.bytebuddy.matcher.ElementMatchers.named;
+
+import com.huawei.sermant.core.utils.Assert;
+
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeList;
 import net.bytebuddy.matcher.ElementMatcher;
@@ -33,13 +38,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static net.bytebuddy.matcher.ElementMatchers.hasSuperType;
-import static net.bytebuddy.matcher.ElementMatchers.isInterface;
-import static net.bytebuddy.matcher.ElementMatchers.named;
-
 /**
  * 父类匹配器
  */
+@Deprecated
 public class SuperTypeMatcher implements NonNameMatcher {
 
     private final String[] superTypes;
@@ -73,8 +75,8 @@ public class SuperTypeMatcher implements NonNameMatcher {
         queue.add(typeDescription.asGenericType());
 
         for (TypeDescription.Generic current = queue.poll();
-                current != null && !types.isEmpty();
-                current = queue.poll()) {
+             current != null && !types.isEmpty();
+             current = queue.poll()) {
             types.remove(current.asRawType().getActualName());
             TypeList.Generic interfaces = current.getInterfaces();
             if (!interfaces.isEmpty()) {

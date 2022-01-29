@@ -22,9 +22,16 @@
 
 package com.huawei.sermant.core.agent.common;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
+
 /**
  * 参数覆盖调用
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@AboutDelete
+@Deprecated
 public interface OverrideArgumentsCall {
     Object call(Object[] arguments);
 }

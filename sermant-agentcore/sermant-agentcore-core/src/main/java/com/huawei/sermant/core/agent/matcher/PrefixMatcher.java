@@ -22,7 +22,8 @@
 
 package com.huawei.sermant.core.agent.matcher;
 
-import com.huawei.sermant.core.util.Assert;
+import com.huawei.sermant.core.utils.Assert;
+
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
@@ -30,6 +31,7 @@ import net.bytebuddy.matcher.ElementMatchers;
 /**
  * 类名前缀匹配器
  */
+@Deprecated
 public class PrefixMatcher implements NonNameMatcher {
 
     private final String prefix;

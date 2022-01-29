@@ -15,7 +15,7 @@
         <plugin.setting.name>plugins.yaml</plugin.setting.name>
         <log.setting.name>logback.xml</log.setting.name>
         <env.cover.skip.flag>true</env.cover.skip.flag>
-        <config.source.dir>src/main/resources/config</config.source.dir>
+        <config.source.dir>config</config.source.dir>
         <config.output.dir>${package.agent.dir}/config</config.output.dir>
     </properties>
     <profiles>
@@ -163,6 +163,14 @@
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -253,6 +261,10 @@
                         <relocation>
                             <pattern>org.java_websocket</pattern>
                             <shadedPattern>${shade.common.prefix}.org.java_websocket</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.objectweb.asm</pattern>
+                            <shadedPattern>${shade.common.prefix}.org.objectweb.asm</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.slf4j</pattern>

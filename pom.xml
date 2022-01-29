@@ -32,6 +32,7 @@
         <byte.buddy.version>1.10.14</byte.buddy.version>
         <zookeeper.version>3.6.0</zookeeper.version>
         <lombok.version>1.18.10</lombok.version>
+        <asm.version>8.0.1</asm.version>
 
         <slf4j.version>1.7.30</slf4j.version>
         <log4j2.version>2.17.0</log4j2.version>
@@ -64,7 +65,7 @@
         <package.license.ftl.file>third-party-license.ftl</package.license.ftl.file>
         <package.resources.dir>sermant-package/resources</package.resources.dir>
 
-        <shade.common.prefix>com.huawei</shade.common.prefix>
+        <shade.common.prefix>com.huawei.sermant.dependencies</shade.common.prefix>
         <shade.distinct.prefix>${project.artifactId}</shade.distinct.prefix>
 
         <license.binary.suffix.file>LICENSE-binary-suffix.txt</license.binary.suffix.file>
@@ -176,6 +177,16 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${asm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-commons</artifactId>
+                <version>${asm.version}</version>
             </dependency>
 
             <dependency>

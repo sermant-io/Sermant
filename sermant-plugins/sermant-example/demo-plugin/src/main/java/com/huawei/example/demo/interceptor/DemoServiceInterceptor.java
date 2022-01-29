@@ -16,43 +16,37 @@
 
 package com.huawei.example.demo.interceptor;
 
-import java.lang.reflect.Method;
-
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.StaticMethodInterceptor;
-import com.huawei.sermant.core.plugin.service.PluginServiceManager;
 import com.huawei.example.demo.common.DemoLogger;
 import com.huawei.example.demo.service.DemoComplexService;
 import com.huawei.example.demo.service.DemoSimpleService;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huawei.sermant.core.plugin.service.PluginServiceManager;
 
 /**
  * 插件服务的拦截器示例，在本示例中，将展示如何在拦截器中使用插件服务
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/10/25
+ * @since 2021-10-25
  */
-public class DemoServiceInterceptor implements StaticMethodInterceptor {
+public class DemoServiceInterceptor extends AbstractInterceptor {
     private DemoSimpleService simpleService;
     private DemoComplexService complexService;
 
     @Override
-    public void before(Class<?> clazz, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
-        DemoLogger.println(clazz.getSimpleName() + ": [DemoServiceInterceptor]-before");
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        DemoLogger.println(context.getRawCls().getSimpleName() + ": [DemoServiceInterceptor]-before");
         simpleService = PluginServiceManager.getPluginService(DemoSimpleService.class);
         complexService = PluginServiceManager.getPluginService(DemoComplexService.class);
+        return context;
     }
 
     @Override
-    public Object after(Class<?> clazz, Method method, Object[] arguments, Object result) throws Exception {
-        DemoLogger.println(clazz.getSimpleName() + ": [DemoServiceInterceptor]-after");
+    public ExecuteContext after(ExecuteContext context) throws Exception {
+        DemoLogger.println(context.getRawCls().getSimpleName() + ": [DemoServiceInterceptor]-after");
         simpleService.activeFunc();
         complexService.activeFunc();
-        return result;
-    }
-
-    @Override
-    public void onThrow(Class<?> clazz, Method method, Object[] arguments, Throwable t) {
-        DemoLogger.println(clazz.getSimpleName() + ": [DemoServiceInterceptor]-onThrow");
+        return context;
     }
 }

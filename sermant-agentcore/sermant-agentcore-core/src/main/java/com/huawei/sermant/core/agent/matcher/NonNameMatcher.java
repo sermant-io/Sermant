@@ -28,6 +28,7 @@ import net.bytebuddy.matcher.ElementMatcher;
 /**
  * 非类名匹配器接口
  */
+@Deprecated
 public interface NonNameMatcher extends ClassMatcher {
 
     /**

@@ -28,7 +28,7 @@ import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListene
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/26
+ * @since 2021-11-26
  */
 public class DemoDynaConfService implements PluginService {
     private DynamicConfigService service;
@@ -39,7 +39,7 @@ public class DemoDynaConfService implements PluginService {
     @Override
     public void start() {
         service = ServiceManager.getService(DynamicConfigService.class);
-        service.addConfigListener("/demo/test", "sermant", new DynamicConfigListener() {
+        service.addConfigListener("demo/test", "sermant", new DynamicConfigListener() {
             @Override
             public void process(DynamicConfigEvent event) {
                 DemoLogger.println("[DemoDynaConfService]-" + event.toString());

@@ -22,24 +22,31 @@
 
 package com.huawei.sermant.core.agent;
 
-import java.lang.instrument.Instrumentation;
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
+import com.huawei.sermant.core.agent.transformer.CommonTransformer;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
 
-import com.huawei.sermant.core.agent.transformer.CommonTransformer;
+import java.lang.instrument.Instrumentation;
 
 /**
  * 插件增强Builder
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
+@AboutDelete
+@Deprecated
 public class ByteBuddyAgentBuilder {
     public static void initialize(Instrumentation instrumentation) {
         new AgentBuilder.Default(new ByteBuddy())
-            .ignore(new IgnoreClassMatcher())
-            .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
-            .type(EnhanceDefinitionLoader.getInstance().buildMatch())
-            .transform(new CommonTransformer())
-            .with(new LoadListener())
-            .installOn(instrumentation);
+                .ignore(new IgnoreClassMatcher())
+                .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
+                .type(EnhanceDefinitionLoader.getInstance().buildMatch())
+                .transform(new CommonTransformer())
+                .with(new LoadListener())
+                .installOn(instrumentation);
     }
 }
