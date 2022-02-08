@@ -49,6 +49,7 @@ public abstract class InterceptDeclarer {
      * @param interceptors  拦截器集
      * @return 拦截声明器
      */
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static InterceptDeclarer build(MethodMatcher methodMatcher, Interceptor... interceptors) {
         if (methodMatcher == null || interceptors == null || interceptors.length <= 0) {
             throw new IllegalArgumentException("Matcher cannot be null and interceptor array cannot be empty. ");
@@ -73,6 +74,7 @@ public abstract class InterceptDeclarer {
      * @param interceptors  拦截器集
      * @return 拦截声明器
      */
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static InterceptDeclarer build(MethodMatcher methodMatcher, String... interceptors) {
         if (methodMatcher == null || interceptors == null || interceptors.length <= 0) {
             throw new IllegalArgumentException("Matcher cannot be null and interceptor array cannot be empty. ");
@@ -143,7 +145,7 @@ public abstract class InterceptDeclarer {
             if (interceptorCls.getClassLoader() == classLoader) {
                 return interceptorCls;
             } else {
-                return ClassLoaderUtils.defineClass(classLoader,
+                return ClassLoaderUtils.defineClass(interceptor, classLoader,
                         ClassLoaderUtils.getClassResource(ClassLoader.getSystemClassLoader(), interceptor));
             }
         } catch (ClassNotFoundException ignored) {

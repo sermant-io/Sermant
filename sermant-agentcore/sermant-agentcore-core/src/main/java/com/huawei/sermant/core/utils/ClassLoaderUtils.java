@@ -40,6 +40,11 @@ public class ClassLoaderUtils {
      */
     private static final int BUFFER_SIZE = 1024 * 16;
 
+    /**
+     * class文件后缀名
+     */
+    private static final String CLASSFILE_SUFFIX = ".class";
+
     private ClassLoaderUtils() {
     }
 
@@ -90,13 +95,18 @@ public class ClassLoaderUtils {
         final Enumeration<JarEntry> entry = jarFile.entries();
         while (entry.hasMoreElements()) {
             final JarEntry jarEntry = entry.nextElement();
-            if (jarEntry.isDirectory() || !jarEntry.getName().endsWith(".class")) {
+            if (jarEntry.isDirectory()) {
+                continue;
+            }
+            final String entryName = jarEntry.getName();
+            if (!entryName.endsWith(CLASSFILE_SUFFIX)) {
                 continue;
             }
             InputStream inputStream = null;
             try {
                 inputStream = jarFile.getInputStream(jarEntry);
-                defineClass(classLoader, readBytes(inputStream));
+                defineClass(entryName.substring(0, entryName.length() - CLASSFILE_SUFFIX.length()).replace('/', '.'),
+                        classLoader, readBytes(inputStream));
             } finally {
                 if (inputStream != null) {
                     inputStream.close();
@@ -146,7 +156,7 @@ public class ClassLoaderUtils {
     public static byte[] getClassResource(ClassLoader classLoader, String clsName) throws IOException {
         InputStream inputStream = null;
         try {
-            inputStream = classLoader.getResourceAsStream(clsName.replace('.', '/') + ".class");
+            inputStream = classLoader.getResourceAsStream(clsName.replace('.', '/') + CLASSFILE_SUFFIX);
             return inputStream == null ? new byte[0] : readBytes(inputStream);
         } finally {
             if (inputStream != null) {
@@ -158,6 +168,7 @@ public class ClassLoaderUtils {
     /**
      * 定义类到类加载器中
      *
+     * @param className   定义类的全限定名
      * @param classLoader 类加载器
      * @param bytes       类字节码
      * @return 类对象
@@ -165,11 +176,15 @@ public class ClassLoaderUtils {
      * @throws IllegalAccessException    无法访问defineClass方法，正常不会报出
      * @throws NoSuchMethodException     无法找到defineClass方法，正常不会报出
      */
-    public static Class<?> defineClass(ClassLoader classLoader, byte[] bytes)
+    public static Class<?> defineClass(String className, ClassLoader classLoader, byte[] bytes)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        final Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class,
-                int.class, int.class);
-        defineClass.setAccessible(true);
-        return (Class<?>) defineClass.invoke(classLoader, null, bytes, 0, bytes.length);
+        final Method loadingLock = ClassLoader.class.getDeclaredMethod("getClassLoadingLock", String.class);
+        synchronized (loadingLock.invoke(classLoader, className)) {
+            final Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class,
+                    int.class, int.class);
+            defineClass.setAccessible(true);
+            return (Class<?>) defineClass.invoke(classLoader, null, bytes, 0, bytes.length);
+        }
+
     }
 }

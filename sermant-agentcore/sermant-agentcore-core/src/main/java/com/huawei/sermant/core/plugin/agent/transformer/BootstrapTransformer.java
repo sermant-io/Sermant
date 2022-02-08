@@ -173,8 +173,9 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
     private DynamicType.Builder<?> resolve(DynamicType.Builder<?> builder, MethodDescription.InDefinedShape methodDesc,
             List<Interceptor> interceptors, Class<?> templateCls, ClassLoader classLoader)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, NoSuchFieldException {
-        final byte[] adviceClsBytes = createAdviceClass(templateCls, getAdviceClassName(templateCls, methodDesc));
-        final Class<?> adviceCls = defineAdviceClass(classLoader, adviceClsBytes);
+        final String adviceClassName = getAdviceClassName(templateCls, methodDesc);
+        final byte[] adviceClsBytes = createAdviceClass(templateCls, adviceClassName);
+        final Class<?> adviceCls = defineAdviceClass(adviceClassName, classLoader, adviceClsBytes);
         prepareAdviceClass(adviceCls, interceptors);
         return visitAdvice(builder, methodDesc, adviceCls, adviceClsBytes);
     }
@@ -211,6 +212,7 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
     /**
      * 通过字节码，使用ClassLoader定义增强Adviser
      *
+     * @param adviceClassName 增强Advice的全限定名
      * @param classLoader    被增强类的ClassLoader
      * @param adviceClsBytes 增强Adviser的字节码
      * @return 增强Adviser的Class
@@ -218,9 +220,9 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
      * @throws IllegalAccessException    无法访问defineClass方法，正常不会报出
      * @throws NoSuchMethodException     无法找到defineClass方法，正常不会报出
      */
-    private Class<?> defineAdviceClass(ClassLoader classLoader, byte[] adviceClsBytes)
+    private Class<?> defineAdviceClass(String adviceClassName, ClassLoader classLoader, byte[] adviceClsBytes)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        return ClassLoaderUtils.defineClass(classLoader, adviceClsBytes);
+        return ClassLoaderUtils.defineClass(adviceClassName, classLoader, adviceClsBytes);
     }
 
     /**

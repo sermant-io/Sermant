@@ -71,6 +71,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
      * @param methodNames 方法集
      * @return 方法匹配器对象
      */
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static MethodMatcher nameContains(String... methodNames) {
         return nameContains(new HashSet<>(Arrays.asList(methodNames)));
     }
@@ -156,6 +157,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
      * @param annotations 注解集
      * @return 方法匹配器对象
      */
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static MethodMatcher isAnnotatedWith(String... annotations) {
         return new MethodMatcher() {
             @Override
@@ -274,6 +276,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
      * @param paramTypes 参数类型集
      * @return 方法匹配器对象
      */
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static MethodMatcher paramTypesEqual(String... paramTypes) {
         return new MethodMatcher() {
             @Override
@@ -367,6 +370,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
      * @param matchers 方法匹配器集
      * @return 方法匹配器对象
      */
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     @SafeVarargs
     public static MethodMatcher not(ElementMatcher<MethodDescription>... matchers) {
         return new MethodMatcher() {
@@ -403,6 +407,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
      * @param matchers 方法匹配器集
      * @return 方法匹配器对象
      */
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     @SafeVarargs
     public static MethodMatcher and(ElementMatcher<MethodDescription>... matchers) {
         return new MethodMatcher() {
@@ -440,6 +445,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
      * @param matchers 方法匹配器集
      * @return 方法匹配器对象
      */
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     @SafeVarargs
     public static MethodMatcher or(ElementMatcher<MethodDescription>... matchers) {
         return new MethodMatcher() {
