@@ -22,7 +22,8 @@
 
 package com.huawei.sermant.core.agent.matcher;
 
-import com.huawei.sermant.core.util.Assert;
+import com.huawei.sermant.core.utils.Assert;
+
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 
@@ -33,6 +34,7 @@ import java.util.Set;
 /**
  * 多个类匹配
  */
+@Deprecated
 public class MultiClassMatcher implements NonNameMatcher {
 
     private final Set<String> classNames;

@@ -16,20 +16,20 @@
 
 package com.huawei.example.demo.service;
 
-import java.util.Collections;
-import java.util.Map;
-
 import com.huawei.sermant.core.plugin.service.PluginService;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.heartbeat.HeartbeatService;
 import com.huawei.sermant.core.service.heartbeat.ExtInfoProvider;
+import com.huawei.sermant.core.service.heartbeat.HeartbeatService;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * 本示例中，将展示如何在插件服务中使用心跳功能
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/10/25
+ * @since 2021-10-25
  */
 public class DemoHeartBeatService implements PluginService {
     @Override

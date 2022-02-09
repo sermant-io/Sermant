@@ -18,7 +18,6 @@ package com.huawei.flowcontrol.service;
 
 import com.huawei.flowcontrol.adapte.cse.constants.CseConstants;
 import com.huawei.flowcontrol.adapte.cse.entity.CseServiceMeta;
-import com.huawei.sermant.core.util.SpiLoadUtil.SpiWeight;
 
 import java.lang.reflect.Method;
 

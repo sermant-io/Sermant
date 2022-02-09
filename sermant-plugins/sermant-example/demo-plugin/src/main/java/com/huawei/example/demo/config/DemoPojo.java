@@ -23,7 +23,7 @@ import com.huawei.sermant.core.config.common.ConfigFieldKey;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/16
+ * @since 2021-11-16
  */
 public class DemoPojo {
     /**
@@ -55,9 +55,9 @@ public class DemoPojo {
 
     @Override
     public String toString() {
-        return "DemoComplexPojo{" +
-                "intField=" + intField +
-                ", str='" + str + '\'' +
-                '}';
+        return "DemoPojo{"
+                + "intField=" + intField
+                + ", str='" + str + '\''
+                + '}';
     }
 }

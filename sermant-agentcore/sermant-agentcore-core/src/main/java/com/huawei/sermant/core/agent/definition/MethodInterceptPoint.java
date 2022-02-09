@@ -30,6 +30,7 @@ import net.bytebuddy.matcher.ElementMatcher;
 /**
  * 方法拦截点
  */
+@Deprecated
 public class MethodInterceptPoint {
 
     private final String interceptor;
@@ -38,7 +39,8 @@ public class MethodInterceptPoint {
 
     private final MethodType methodType;
 
-    private MethodInterceptPoint(String interceptor, ElementMatcher<MethodDescription> methodMatcher, MethodType methodType) {
+    private MethodInterceptPoint(String interceptor, ElementMatcher<MethodDescription> methodMatcher,
+            MethodType methodType) {
         this.interceptor = interceptor;
         this.methodMatcher = methodMatcher;
         this.methodType = methodType;

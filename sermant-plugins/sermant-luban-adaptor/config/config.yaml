@@ -1,0 +1,40 @@
+adaptorName: lubanops
+adaptorLoadType: SYSTEM
+rewriteStrategy: INCREMENT
+adaptorJar: sermant-luban-adaptor-*.jar
+executeEnvDir: temp
+fileMappings:
+  - sourcePattern: config/apm.config
+    targetPattern: apm.config
+  - sourcePattern: plugin
+    targetPattern: plugins
+packageMappings:
+  - sourcePattern: com.lubanops.apm
+    targetPattern: com.huawei.sermant.lubanops.com.lubanops.apm
+  - sourcePattern: com.alibaba.fastjson
+    targetPattern: com.huawei.sermant.lubanops.com.alibaba.fastjson
+  - sourcePattern: com.google
+    targetPattern: com.huawei.sermant.lubanops.com.google
+  - sourcePattern: javassist
+    targetPattern: com.huawei.sermant.lubanops.javassist
+  - sourcePattern: javax.inject
+    targetPattern: com.huawei.sermant.lubanops.javax.inject
+  - sourcePattern: javax.xml
+    targetPattern: com.huawei.sermant.lubanops.javax.xml
+  - sourcePattern: org.aopalliance
+    targetPattern: com.huawei.sermant.lubanops.org.aopalliance
+  - sourcePattern: org.apache.commons
+    targetPattern: com.huawei.sermant.lubanops.org.apache.commons
+  - sourcePattern: org.apache.http
+    targetPattern: com.huawei.sermant.lubanops.org.apache.http
+  - sourcePattern: org.apache.xmlcommons
+    targetPattern: com.huawei.sermant.lubanops.org.apache.xmlcommons
+  - sourcePattern: org.java_websocket
+    targetPattern: com.huawei.sermant.lubanops.org.java_websocket
+  - sourcePattern: org.slf4j
+    targetPattern: com.huawei.sermant.lubanops.org.slf4j
+  - sourcePattern: org.w3c
+    targetPattern: com.huawei.sermant.lubanops.org.w3c
+  - sourcePattern: org.xml.sax
+    targetPattern: com.huawei.sermant.lubanops.org.xml.sax
+agentMainArg: appName=sermant-luban-adaptor

@@ -16,18 +16,18 @@
 
 package com.huawei.sermant.core.plugin.config;
 
-import java.io.File;
-
 import com.huawei.sermant.core.agent.interceptor.InterceptorChainManager;
 import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.config.common.BaseConfig;
+
+import java.io.File;
 
 /**
  * 插件配置管理器，${ConfigManager}统一配置管理器的特化，专门用来加载插件包配置和插件服务包配置
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/12
+ * @since 2021-11-12
  */
 public class PluginConfigManager extends ConfigManager {
     /**

@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/10/25
+ * @since 2021-10-25
  */
 public class DemoNameService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DemoNameService.class);
@@ -33,21 +33,49 @@ public class DemoNameService {
      * 被拦截的构造函数
      */
     public DemoNameService() {
-        LOGGER.info("DemoNameEntity: constructor");
-    }
-
-    /**
-     * 被拦截的实例方法
-     */
-    public void instFunc() {
-        LOGGER.info("DemoNameEntity: instFunc");
+        LOGGER.info("DemoNameService: constructor");
     }
 
     /**
      * 被拦截的静态方法
      */
     public static void staticFunc() {
-        LOGGER.info("DemoNameEntity: staticFunc");
+        LOGGER.info("DemoNameService: staticFunc");
+    }
+
+    /**
+     * 用于测试服务
+     */
+    public static void serviceFunc() {
+        LOGGER.info("DemoNameService: serviceFunc");
+    }
+
+    /**
+     * 用于测试统一配置
+     */
+    public static void configFunc() {
+        LOGGER.info("DemoNameService: configFunc");
+    }
+
+    /**
+     * 被拦截的实例方法
+     */
+    public void memberFunc() {
+        LOGGER.info("DemoNameService: memberFunc");
+    }
+
+    /**
+     * 用于测试字段设置
+     */
+    public void fieldFunc() {
+        LOGGER.info("DemoNameService: fieldFunc");
+    }
+
+    /**
+     * 用于测试接口
+     */
+    public void interfaceFunc() {
+        LOGGER.info("DemoNameService: interfaceFunc");
     }
 
     @Override

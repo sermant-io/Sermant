@@ -16,16 +16,16 @@
 
 package com.huawei.example.demo.service;
 
+import com.huawei.example.demo.common.DemoLogger;
 import com.huawei.sermant.core.plugin.service.PluginService;
 import com.huawei.sermant.core.plugin.service.PluginServiceManager;
-import com.huawei.example.demo.common.DemoLogger;
 
 /**
  * 示例服务，本示例中将展示如何编写一个插件服务
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/10/25
+ * @since 2021-10-25
  */
 public class DemoSimpleService implements PluginService {
     @Override

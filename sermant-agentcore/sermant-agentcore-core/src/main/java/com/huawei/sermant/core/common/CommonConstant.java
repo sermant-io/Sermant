@@ -19,14 +19,21 @@ package com.huawei.sermant.core.common;
 import com.huawei.sermant.core.lubanops.bootstrap.commons.LubanApmConstants;
 import com.huawei.sermant.core.lubanops.bootstrap.config.AgentConfigManager;
 
+import java.nio.charset.Charset;
+
 /**
  * 通用常量管理类，
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/27
+ * @since 2021-11-27
  */
 public class CommonConstant {
+    /**
+     * 框架默认字符集
+     */
+    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+
     /**
      * 启动配置文件名
      */
@@ -143,4 +150,7 @@ public class CommonConstant {
      * logback配置的键
      */
     public static final String LOG_SETTING_FILE_KEY = "log.setting.file";
+
+    private CommonConstant() {
+    }
 }

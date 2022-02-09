@@ -26,7 +26,7 @@ import com.huawei.example.demo.service.DemoTraceService;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/10/25
+ * @since 2021-10-25
  */
 public class DemoApplication {
     /**
@@ -37,17 +37,36 @@ public class DemoApplication {
     public static void main(String[] args) {
         // 测试通过注解修饰的方式增强的功能点
         DemoAnnotationService.staticFunc();
-        new DemoAnnotationService().instFunc();
+        new DemoAnnotationService().memberFunc();
+
         // 测试命名的方式增强的功能点
-        DemoNameService.staticFunc(); // 此处还会一同测试日志功能和统一配置功能
-        new DemoNameService().instFunc();
+        DemoNameService.staticFunc();
+        new DemoNameService().memberFunc();
+
         // 测试超类的方式增强的功能点
         DemoSuperTypeService.staticFunc();
-        new DemoSuperTypeService().instFunc();
+        new DemoSuperTypeService().memberFunc();
+
+        // 测试服务
+        DemoNameService.serviceFunc();
+
+        // 测试统一配置
+        DemoNameService.configFunc();
+
+        // 测试字段设置
+        final DemoNameService nameService = new DemoNameService();
+        nameService.fieldFunc();
+        nameService.fieldFunc();
+        new DemoNameService().fieldFunc();
+
+        // 测试接口
+        nameService.interfaceFunc();
+
         // 测试链路监控功能
         DemoTraceService.trace();
         DemoTraceService.trace();
         DemoTraceService.trace();
+
         // 测试启动类增强
         Thread.getAllStackTraces();
         new Thread().setName("demo-thread-test");

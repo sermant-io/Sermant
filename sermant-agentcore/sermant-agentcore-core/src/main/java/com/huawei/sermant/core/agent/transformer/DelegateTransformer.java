@@ -22,21 +22,25 @@
 
 package com.huawei.sermant.core.agent.transformer;
 
+import static net.bytebuddy.matcher.ElementMatchers.named;
+
 import com.huawei.sermant.core.agent.EnhanceDefinitionLoader;
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
 import com.huawei.sermant.core.agent.common.OverrideArgumentsCall;
 import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
-import com.huawei.sermant.core.agent.interceptor.ConstructorInterceptor;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.sermant.core.agent.interceptor.StaticMethodInterceptor;
-import com.huawei.sermant.core.lubanops.bootstrap.AttributeAccess;
-import com.huawei.sermant.core.lubanops.bootstrap.Interceptor;
-import com.huawei.sermant.core.lubanops.bootstrap.TransformAccess;
-import com.huawei.sermant.core.agent.interceptor.InterceptorLoader;
 import com.huawei.sermant.core.agent.enhancer.ConstructorEnhancer;
 import com.huawei.sermant.core.agent.enhancer.InstanceMethodEnhancer;
 import com.huawei.sermant.core.agent.enhancer.MemberFieldsHandler;
 import com.huawei.sermant.core.agent.enhancer.StaticMethodEnhancer;
+import com.huawei.sermant.core.agent.interceptor.ConstructorInterceptor;
+import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.sermant.core.agent.interceptor.InterceptorLoader;
+import com.huawei.sermant.core.agent.interceptor.StaticMethodInterceptor;
+import com.huawei.sermant.core.lubanops.bootstrap.AttributeAccess;
+import com.huawei.sermant.core.lubanops.bootstrap.Interceptor;
 import com.huawei.sermant.core.lubanops.bootstrap.Listener;
+import com.huawei.sermant.core.lubanops.bootstrap.TransformAccess;
+
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDescription;
@@ -52,13 +56,38 @@ import net.bytebuddy.utility.JavaModule;
 
 import java.util.List;
 
-import static net.bytebuddy.matcher.ElementMatchers.named;
-
 /**
  * 委派Transformer，支持多次增强
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@AboutDelete
+@Deprecated
 public class DelegateTransformer implements AgentBuilder.Transformer {
     private static final String ENHANCED_FIELD_NAME = "_$lopsAttribute_enhanced";
+
+    private static DynamicType.Builder<?> addEnhancedField(DynamicType.Builder<?> newBuilder) {
+        return newBuilder.defineField(ENHANCED_FIELD_NAME, Object.class, Opcodes.ACC_PRIVATE)
+                .implement(TransformAccess.class)
+                .intercept(FieldAccessor.ofField(ENHANCED_FIELD_NAME));
+    }
+
+    /**
+     * 添加成员变量
+     *
+     * @param newBuilder 构建器
+     * @param fields     定义的成员变量属性
+     * @return 构建器
+     */
+    private static DynamicType.Builder<?> addListenerFields(DynamicType.Builder<?> newBuilder, List<String> fields) {
+        if (fields == null || fields.size() == 0) {
+            return newBuilder;
+        }
+        return newBuilder.implement(AttributeAccess.class)
+                .method(named("getLopsFileds"))
+                .intercept(MethodDelegation.withDefaultConfiguration().to(new MemberFieldsHandler(fields)));
+    }
 
     @Override
     public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,
@@ -95,28 +124,6 @@ public class DelegateTransformer implements AgentBuilder.Transformer {
             newBuilder = addEnhancedField(newBuilder);
         }
         return newBuilder;
-    }
-
-    private static DynamicType.Builder<?> addEnhancedField(DynamicType.Builder<?> newBuilder) {
-        return newBuilder.defineField(ENHANCED_FIELD_NAME, Object.class, Opcodes.ACC_PRIVATE)
-                .implement(TransformAccess.class)
-                .intercept(FieldAccessor.ofField(ENHANCED_FIELD_NAME));
-    }
-
-    /**
-     * 添加成员变量
-     *
-     * @param newBuilder 构建器
-     * @param fields     定义的成员变量属性
-     * @return 构建器
-     */
-    private static DynamicType.Builder<?> addListenerFields(DynamicType.Builder<?> newBuilder, List<String> fields) {
-        if (fields == null || fields.size() == 0) {
-            return newBuilder;
-        }
-        return newBuilder.implement(AttributeAccess.class)
-                .method(named("getLopsFileds"))
-                .intercept(MethodDelegation.withDefaultConfiguration().to(new MemberFieldsHandler(fields)));
     }
 
     private static class MultiInterMethodHolder extends MethodInterceptorCollector {

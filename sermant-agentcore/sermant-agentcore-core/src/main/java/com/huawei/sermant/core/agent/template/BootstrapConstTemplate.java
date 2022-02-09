@@ -16,19 +16,20 @@
 
 package com.huawei.sermant.core.agent.template;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
+import com.huawei.sermant.core.agent.interceptor.ConstructorInterceptor;
+import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.lubanops.bootstrap.Interceptor;
+
+import net.bytebuddy.asm.Advice;
+import net.bytebuddy.implementation.bytecode.assign.Assigner;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.logging.Logger;
-
-import net.bytebuddy.asm.Advice;
-import net.bytebuddy.implementation.bytecode.assign.Assigner;
-
-import com.huawei.sermant.core.agent.interceptor.ConstructorInterceptor;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.lubanops.bootstrap.Interceptor;
 
 /**
  * 启动类构造函数模板
@@ -38,6 +39,9 @@ import com.huawei.sermant.core.lubanops.bootstrap.Interceptor;
  * @version 1.0.0
  * @since 2021/10/27
  */
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
+@AboutDelete
+@Deprecated
 public class BootstrapConstTemplate {
     /**
      * 日志
@@ -47,11 +51,13 @@ public class BootstrapConstTemplate {
     /**
      * luban拦截器
      */
+    @SuppressWarnings({"checkstyle:DeclarationOrder", "checkstyle:VisibilityModifier", "checkstyle:StaticVariableName"})
     public static Interceptor ORIGIN_INTERCEPTOR;
 
     /**
      * 拦截器列表
      */
+    @SuppressWarnings({"checkstyle:DeclarationOrder", "checkstyle:VisibilityModifier", "checkstyle:StaticVariableName"})
     public static List<ConstructorInterceptor> INTERCEPTORS;
 
     /**
@@ -65,6 +71,7 @@ public class BootstrapConstTemplate {
      * @param constInterceptorItr 构造拦截器双向迭代器
      * @throws Exception 发生异常
      */
+    @SuppressWarnings({"checkstyle:MethodName", "checkstyle:OperatorWrap", "checkstyle:ParameterAssignment"})
     @Advice.OnMethodEnter(suppress = Throwable.class)
     public static void OnMethodEnter(
             @Advice.AllArguments(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object[] arguments,
@@ -103,6 +110,7 @@ public class BootstrapConstTemplate {
      * @param constInterceptorItr 构造拦截器双向迭代器
      * @throws Exception 发生异常
      */
+    @SuppressWarnings("checkstyle:MethodName")
     @Advice.OnMethodExit(suppress = Throwable.class)
     public static void OnMethodExit(
             @Advice.This(typing = Assigner.Typing.DYNAMIC) Object obj,
@@ -147,6 +155,7 @@ public class BootstrapConstTemplate {
      * @param constructor 构造函数本身
      * @return 修正的参数列表
      */
+    @SuppressWarnings({"checkstyle:MultipleStringLiterals", "checkstyle:IllegalCatch"})
     private static Object[] beforeOriginIntercept(Object[] arguments, Constructor<?> constructor) {
         if (ORIGIN_INTERCEPTOR == null) {
             return arguments;
@@ -172,6 +181,7 @@ public class BootstrapConstTemplate {
      * @param constructor         构造函数本身
      * @param constInterceptorItr 构造拦截器双向迭代器
      */
+    @SuppressWarnings("checkstyle:RegexpMultiline")
     private static void beforeConstIntercept(Object[] arguments, Constructor<?> constructor,
             ListIterator<ConstructorInterceptor> constInterceptorItr) {
         while (constInterceptorItr.hasNext()) {
@@ -199,6 +209,7 @@ public class BootstrapConstTemplate {
      * @param obj       生成的对象
      * @param arguments 所有入参
      */
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private static void afterOriginIntercept(Object obj, Object[] arguments) {
         if (ORIGIN_INTERCEPTOR == null) {
             return;
@@ -219,6 +230,7 @@ public class BootstrapConstTemplate {
      * @param arguments           所有入参
      * @param constInterceptorItr 构造拦截器双向迭代器
      */
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private static void afterConstIntercept(Object obj, Object[] arguments,
             ListIterator<ConstructorInterceptor> constInterceptorItr) {
         while (constInterceptorItr.hasPrevious()) {

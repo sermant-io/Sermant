@@ -22,7 +22,10 @@ import java.util.Objects;
 /**
  * An event raised when the config changed, immutable.
  *
+ * @author yangyshdan, HapThorin
+ * @version 1.0.0
  * @see DynamicConfigEventType
+ * @since 2021-12-27
  */
 public class DynamicConfigEvent extends EventObject {
 
@@ -60,12 +63,12 @@ public class DynamicConfigEvent extends EventObject {
 
     @Override
     public String toString() {
-        return "DynamicConfigEvent{" +
-                "key='" + key + '\'' +
-                ", group='" + group + '\'' +
-                ", content='" + content + '\'' +
-                ", eventType=" + eventType +
-                "} " + super.toString();
+        return "DynamicConfigEvent{"
+                + "key='" + key + '\''
+                + ", group='" + group + '\''
+                + ", content='" + content + '\''
+                + ", eventType=" + eventType
+                + "} " + super.toString();
     }
 
     @Override
@@ -77,10 +80,10 @@ public class DynamicConfigEvent extends EventObject {
             return false;
         }
         DynamicConfigEvent that = (DynamicConfigEvent) o;
-        return Objects.equals(getKey(), that.getKey()) &&
-                Objects.equals(getGroup(), that.getGroup()) &&
-                Objects.equals(getContent(), that.getContent()) &&
-                getEventType() == that.getEventType();
+        return Objects.equals(getKey(), that.getKey())
+                && Objects.equals(getGroup(), that.getGroup())
+                && Objects.equals(getContent(), that.getContent())
+                && getEventType() == that.getEventType();
     }
 
     @Override

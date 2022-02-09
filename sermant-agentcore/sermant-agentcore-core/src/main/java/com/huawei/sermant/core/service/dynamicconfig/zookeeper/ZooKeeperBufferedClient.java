@@ -16,12 +16,8 @@
 
 package com.huawei.sermant.core.service.dynamicconfig.zookeeper;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.huawei.sermant.core.common.CommonConstant;
+import com.huawei.sermant.core.common.LoggerFactory;
 
 import org.apache.zookeeper.AddWatchMode;
 import org.apache.zookeeper.CreateMode;
@@ -31,12 +27,19 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Logger;
+
 /**
  * {@link ZooKeeper}的包装，封装原生api，提供更易用的api
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/12/15
+ * @since 2021-12-15
  */
 public class ZooKeeperBufferedClient implements Closeable {
     /**
@@ -45,9 +48,9 @@ public class ZooKeeperBufferedClient implements Closeable {
     public static final char ZK_PATH_SEPARATOR = '/';
 
     /**
-     * 默认字符集
+     * 日志
      */
-    private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * zk客户端对象
@@ -134,7 +137,7 @@ public class ZooKeeperBufferedClient implements Closeable {
         if (data == null) {
             return "";
         }
-        return new String(data, DEFAULT_CHARSET);
+        return new String(data, CommonConstant.DEFAULT_CHARSET);
     }
 
     /**
@@ -173,12 +176,12 @@ public class ZooKeeperBufferedClient implements Closeable {
     public boolean updateNode(String path, String data) {
         try {
             if (ifNodeExist(path)) {
-                getZkClient().setData(path, data.getBytes(DEFAULT_CHARSET), -1);
+                getZkClient().setData(path, data.getBytes(CommonConstant.DEFAULT_CHARSET), -1);
             } else {
                 if (!createParent(path)) {
                     return false;
                 }
-                getZkClient().create(path, data.getBytes(DEFAULT_CHARSET), ZooDefs.Ids.OPEN_ACL_UNSAFE,
+                getZkClient().create(path, data.getBytes(CommonConstant.DEFAULT_CHARSET), ZooDefs.Ids.OPEN_ACL_UNSAFE,
                         CreateMode.PERSISTENT);
             }
         } catch (KeeperException | InterruptedException ignored) {
@@ -315,6 +318,7 @@ public class ZooKeeperBufferedClient implements Closeable {
         try {
             zkClient.close();
         } catch (InterruptedException ignored) {
+            LOGGER.warning("Unexpected exception occurs. ");
         }
     }
 

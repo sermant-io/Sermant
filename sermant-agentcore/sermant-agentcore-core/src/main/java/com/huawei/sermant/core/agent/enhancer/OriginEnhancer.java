@@ -25,15 +25,21 @@
 
 package com.huawei.sermant.core.agent.enhancer;
 
-import java.lang.reflect.Method;
-import java.util.logging.Logger;
-
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.bootstrap.Interceptor;
 
+import java.lang.reflect.Method;
+import java.util.logging.Logger;
+
 /**
  * 原生插件适配委托类
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@AboutDelete
+@Deprecated
 public abstract class OriginEnhancer {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
@@ -43,6 +49,7 @@ public abstract class OriginEnhancer {
         this.interceptor = interceptor;
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     protected Object[] onStart(Object obj, Object[] allArguments, Method method) {
         if (interceptor == null) {
             return allArguments;
@@ -61,6 +68,7 @@ public abstract class OriginEnhancer {
         return allArguments;
     }
 
+    @SuppressWarnings({"checkstyle:IllegalCatch", "checkstyle:RegexpMultiline"})
     protected void onFinally(Object obj, Object[] allArguments, Method method, Object result) {
         if (interceptor == null) {
             return;
@@ -77,6 +85,7 @@ public abstract class OriginEnhancer {
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     protected void onError(Object obj, Object[] allArguments, Method method, Throwable throwable) {
         if (interceptor == null) {
             return;

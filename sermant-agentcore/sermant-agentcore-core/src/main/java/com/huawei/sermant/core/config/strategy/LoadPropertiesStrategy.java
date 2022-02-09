@@ -16,22 +16,7 @@
 
 package com.huawei.sermant.core.config.strategy;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.huawei.sermant.core.common.CommonConstant;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.config.common.BaseConfig;
 import com.huawei.sermant.core.config.common.ConfigFieldKey;
@@ -40,6 +25,21 @@ import com.huawei.sermant.core.config.utils.ConfigFieldUtil;
 import com.huawei.sermant.core.config.utils.ConfigKeyUtil;
 import com.huawei.sermant.core.config.utils.ConfigValueUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * 加载配置对象策略{@link LoadConfigStrategy}的通用properties文件实现，其中主要配置信息承载对象为{@link Properties}
  * <p>该策略通过文件流获取配置文件信息，并要求配置文件必须存放在当前jar包的上级目录中
@@ -47,7 +47,7 @@ import com.huawei.sermant.core.config.utils.ConfigValueUtil;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/8/19
+ * @since 2021-08-19
  */
 public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
     /**
@@ -71,39 +71,14 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      * <p>要求配置文件必须存放在当前jar包的同级目录中
      * <p>最终的配置信息将被{@code argsMap}覆盖，{@code argsMap}拥有最高优先级
      *
-     * @param config  配置文件
-     * @param argsMap 启动时设定的参数
+     * @param config      配置文件
+     * @param bootArgsMap 启动时设定的参数
      * @return 配置信息承载对象
      */
     @Override
-    public Properties getConfigHolder(File config, Map<String, Object> argsMap) {
-        this.argsMap = argsMap;
+    public Properties getConfigHolder(File config, Map<String, Object> bootArgsMap) {
+        this.argsMap = bootArgsMap;
         return readConfig(config);
-    }
-
-    /**
-     * 读取配置文件
-     *
-     * @param config 配置文件对象
-     */
-    private Properties readConfig(File config) {
-        final Properties properties = new Properties();
-        Reader reader = null;
-        try {
-            reader = new InputStreamReader(new FileInputStream(config), Charset.forName("UTF-8"));
-            properties.load(reader);
-        } catch (IOException ignored) {
-            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                    "Missing config file [%s], please check.", config));
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ignored) {
-                }
-            }
-        }
-        return properties;
     }
 
     /**
@@ -136,6 +111,32 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
             }
         }
         return config;
+    }
+
+    /**
+     * 读取配置文件
+     *
+     * @param config 配置文件对象
+     */
+    private Properties readConfig(File config) {
+        final Properties properties = new Properties();
+        Reader reader = null;
+        try {
+            reader = new InputStreamReader(new FileInputStream(config), CommonConstant.DEFAULT_CHARSET);
+            properties.load(reader);
+        } catch (IOException ignored) {
+            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
+                    "Missing config file [%s], please check.", config));
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ignored) {
+                    LOGGER.warning("Unexpected exception occurs. ");
+                }
+            }
+        }
+        return properties;
     }
 
     /**
@@ -198,8 +199,8 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
             return ConfigValueUtil.toListType(configStr, (Class<?>) argumentTypes[0]);
         } else if (Map.class.equals(fieldType)) {
             final Type[] argumentTypes = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
-            if (argumentTypes.length != 2 || !(argumentTypes[0] instanceof Class) ||
-                    !(argumentTypes[1] instanceof Class)) {
+            if (argumentTypes.length != 2 || !(argumentTypes[0] instanceof Class)
+                    || !(argumentTypes[1] instanceof Class)) {
                 return null;
             }
             return ConfigValueUtil.toMapType(configStr, (Class<?>) argumentTypes[0], (Class<?>) argumentTypes[1]);

@@ -16,6 +16,8 @@
 
 package com.huawei.sermant.core.agent.transformer;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
+
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
@@ -29,6 +31,8 @@ import net.bytebuddy.utility.JavaModule;
  * @version 1.0.0
  * @since 2021/11/12
  */
+@AboutDelete
+@Deprecated
 public class CommonTransformer implements AgentBuilder.Transformer {
     private final BootstrapTransformer bootstrapTransformer;
     private final DelegateTransformer delegateTransformer;

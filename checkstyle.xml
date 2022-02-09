@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 <module name="Checker">
+    <module name="SuppressWarningsFilter"/>
     <!--规则1.1 源文件编码格式（包括注释）必须是UTF-8，ASCII水平空格字符(0x20，即空格)是唯一允许出现的空白字符，制表符不用于缩进-->
     <property name="charset" value="UTF-8"/>
     <property name="fileExtensions" value="java"/>
@@ -22,7 +23,7 @@
         <property name="minimum" value="1"/>
         <property name="maximum" value="1"/>
         <property name="message" value="编程规范-规则2.4: 华为版权缺失或者格式不正确"/>
-        <property name="severity" value="error"/>
+        <property name="severity" value="warning"/>
     </module>
     <!-- <module name="RegexpSingleline"><property name="format" value="^\s\*\s@since\s\d{4}-\d{2}-\d{2}$"/><property name="minimum" value="1"/><property name="maximum" value="1"/><property name="severity" value="error"/><property name="message" value="编程规范-规则2.4:顶层public类javadoc缺少@since或格式不正确（正确格式示例：@since 2019-01-22）"/></module>-->
     <!-- 建议1.1 含有集合意义的属性，名称尽量包含复数形式
@@ -123,10 +124,10 @@
         <property name="format" value="(LOG|LOGGER|log|logger)\.(fatal|error|warn|info|debug).+[\u4e00-\u9fa5]+"/>
         <property name="message" value="编程规范-规则7.8: 禁止用中文打印日志"/>
     </module>
-    <module name="RegexpSingleline">
+    <!--<module name="RegexpSingleline">
         <property name="format" value="^\s*return null;\s*$"/>
         <property name="message" value="建议不要返回null! 1)编程规范-建议5.5: 集合请返回Collections.emptyXXX() 2)编程规范-建议8.6.2: 其他请使用JAVA 8 Optional特性代替"/>
-    </module>
+    </module>-->
     <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
         <property name="format" value="\s+$"/>
@@ -187,7 +188,7 @@
         <property name="message" value="编程规范-规则1.2 名字长度不能超过64个字符。"/>
     </module>
     <module name="RegexpSingleline">
-        <property name="format" value="\s[a-z](\s|;)"/>
+        <property name="format" value="^((?!for).)*(\s[a-z](\s=|;))((?!for).)*$"/>
         <property name="message" value="编程规范-规则1.2 名字长度至少2个字符（循环变量、异常变量e当作误报忽略）。"/>
     </module>
     <module name="RegexpSingleline">
@@ -233,7 +234,7 @@
         <property name="message" value="编程规范-建议3.6 减少不必要的空行，保持代码紧凑(最多一个空行)。"/>
     </module>
     <module name="RegexpMultiline">
-        <property name="format" value="Ltd. ([0-9]{4}).*[\r\n](.*[\r\n])+.*@since\s+\1"/>
+        <property name="format" value="Copyright.*([0-9]{4}).*[\r\n](.*[\r\n])+.*@since\s+\1"/>
         <property name="minimum" value="1"/>
         <property name="maximum" value="1"/>
         <property name="message" value="请检查版权声明中其实年份与@since中年份是否一致"/>
@@ -279,6 +280,8 @@
         <property name="max" value="120"/>
     </module>
     <module name="TreeWalker">
+        <module name="SuppressionCommentFilter"/>
+        <module name="SuppressWarningsHolder"/>
         <!-- 关于注释：建议代码通过合理的命名、函数短小等方式，让代码有自注释能力，然后配以简要的注释说明，不建议大量的冗余注释 -->
         <module name="JavadocType">
             <!--检查类和接口的javadoc注释，要有描述、@author/@version等内容
@@ -320,11 +323,11 @@
             <!-- 不检查html标签完整性 -->
         </module>
         <!-- 检查是否缺少@since标签 -->
-        <module name="WriteTag">
+        <!--<module name="WriteTag">
             <property name="tag" value="@since"/>
             <property name="tagFormat" value="^\d{4}-\d{2}-\d{2}$"/>
             <property name="tagSeverity" value="ignore"/>
-        </module>
+        </module>-->
 
         <module name="AnonInnerLength">
             <!-- 检查内部类，最多60行 -->
@@ -391,7 +394,7 @@
         </module>
         <module name="MagicNumber">
             <!-- 魔鬼数字 -->
-            <property name="ignoreNumbers" value="0, 1"/>
+            <property name="ignoreNumbers" value="-1, 0, 1, 2"/>
             <!-- 对-1/0/1不检查 -->
             <property name="ignoreHashCodeMethod" value="true"/>
             <property name="ignoreAnnotation" value="true"/>
@@ -509,7 +512,11 @@
         <!-- 第一章 命名检查结束-->
         <!-- 第二章 注释检查开始-->
         <!--规则2.1 注释块标签顺序-->
-        <module name="AtclauseOrder"/>
+        <module name="AtclauseOrder">
+            <property name="tagOrder" value="@param, @return, @throws, @deprecated" />
+            <property name="target"
+                      value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF" />
+        </module>
         <!-- 第二章 注释检查结束-->
         <!-- 第三章 排版检查开始-->
         <!-- 采用java风格还是c风格，例如：int[] num是java风格，int num[]是c风格。规则3.7 禁止C风格的数组声明-->

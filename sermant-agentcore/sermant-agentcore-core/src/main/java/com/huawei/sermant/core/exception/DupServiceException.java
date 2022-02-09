@@ -18,6 +18,13 @@ package com.huawei.sermant.core.exception;
 
 import java.util.Locale;
 
+/**
+ * 重复服务异常
+ *
+ * @author HapThorin
+ * @version 1.0.0
+ * @since 2021-11-17
+ */
 public class DupServiceException extends RuntimeException {
     public DupServiceException(String clsName) {
         super(String.format(Locale.ROOT, "Found more than one implement of %s. ", clsName));

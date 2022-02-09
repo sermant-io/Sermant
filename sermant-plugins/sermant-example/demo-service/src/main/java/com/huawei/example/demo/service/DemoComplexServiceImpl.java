@@ -16,20 +16,20 @@
 
 package com.huawei.example.demo.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.huawei.example.demo.config.DemoConfig;
 import com.huawei.example.demo.config.DemoServiceConfig;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.plugin.service.PluginServiceManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 复杂服务示例实现
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/16
+ * @since 2021-11-16
  */
 public class DemoComplexServiceImpl implements DemoComplexService {
     private static final Logger LOGGER = LoggerFactory.getLogger("slf4j.test");

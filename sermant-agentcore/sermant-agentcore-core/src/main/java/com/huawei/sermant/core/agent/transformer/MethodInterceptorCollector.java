@@ -16,18 +16,19 @@
 
 package com.huawei.sermant.core.agent.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
+import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
+import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
+import com.huawei.sermant.core.lubanops.bootstrap.Listener;
+import com.huawei.sermant.core.lubanops.bootstrap.TransformerMethod;
 
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.method.ParameterDescription;
 import net.bytebuddy.description.method.ParameterList;
 
-import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
-import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
-import com.huawei.sermant.core.lubanops.bootstrap.Listener;
-import com.huawei.sermant.core.lubanops.bootstrap.TransformerMethod;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 方法的相关拦截器的信息收集器
@@ -36,21 +37,21 @@ import com.huawei.sermant.core.lubanops.bootstrap.TransformerMethod;
  * @version 1.0.0
  * @since 2021/10/27
  */
+@AboutDelete
+@Deprecated
 public class MethodInterceptorCollector {
     /**
      * 被增强类的方法
      */
     protected final MethodDescription.InDefinedShape method;
-
-    /**
-     * luban插件增强当前方法的拦截器名称
-     */
-    protected String originInterceptorName;
-
     /**
      * 增强当前方法的拦截器名称
      */
     protected final List<String> interceptorNames;
+    /**
+     * luban插件增强当前方法的拦截器名称
+     */
+    protected String originInterceptorName;
 
     protected MethodInterceptorCollector(MethodDescription.InDefinedShape method) {
         this.method = method;
@@ -62,6 +63,7 @@ public class MethodInterceptorCollector {
      *
      * @param listener luban的监听器
      */
+    @SuppressWarnings("checkstyle:JavadocMethod")
     protected boolean setOriginInterceptor(Listener listener) {
         if (originInterceptorName != null) {
             return false;
@@ -86,6 +88,7 @@ public class MethodInterceptorCollector {
      * @param transformerMethod luban方法增强信息的包装类
      * @return 方法是否匹配
      */
+    @SuppressWarnings({"checkstyle:OperatorWrap", "checkstyle:BooleanExpressionComplexity"})
     private boolean isMethodMatch(TransformerMethod transformerMethod) {
         if (transformerMethod.getMethod() == null) {
             final Set<String> excludeMethods = transformerMethod.getExcludeMethods();
@@ -127,6 +130,7 @@ public class MethodInterceptorCollector {
      *
      * @param enhanceDefinitions 增强定义列表
      */
+    @SuppressWarnings({"checkstyle:BooleanExpressionComplexity", "checkstyle:OperatorWrap"})
     protected void addInterceptors(List<EnhanceDefinition> enhanceDefinitions) {
         for (EnhanceDefinition definition : enhanceDefinitions) {
             for (MethodInterceptPoint point : definition.getMethodInterceptPoints()) {

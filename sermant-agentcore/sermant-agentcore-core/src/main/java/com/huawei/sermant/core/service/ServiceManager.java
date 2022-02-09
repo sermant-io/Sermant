@@ -23,7 +23,7 @@
 package com.huawei.sermant.core.service;
 
 import com.huawei.sermant.core.exception.DupServiceException;
-import com.huawei.sermant.core.util.SpiLoadUtil;
+import com.huawei.sermant.core.utils.SpiLoadUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,65 +31,90 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
- * <Code>CoreService<Code/>管理器，加载、启动所有定义的服务实例。
+ * 服务管理器
  *
- * <p><Code>CoreService<Code/>定义在SPI声明文件当中。</p>
+ * @author justforstudy-A, beetle-man, HapThorin
+ * @version 1.0.0
+ * @since 2021-10-26
  */
 public class ServiceManager {
-    private static final Map<String, BaseService> services = new HashMap<String, BaseService>();
+    /**
+     * 服务集合
+     */
+    private static final Map<String, BaseService> SERVICES = new HashMap<String, BaseService>();
 
+    /**
+     * 初始化所有服务
+     */
     public static void initServices() {
         for (final BaseService service : ServiceLoader.load(BaseService.class)) {
             if (loadService(service, service.getClass(), BaseService.class)) {
                 service.start();
             }
         }
-        // 加载完所有服务再启动服务
-        addStopHook();
+        addStopHook(); // 加载完所有服务再启动服务
     }
 
+    /**
+     * 获取服务对象
+     *
+     * @param serviceClass 服务class
+     * @param <T>          服务泛型
+     * @return 服务实例对象
+     */
     public static <T extends BaseService> T getService(Class<T> serviceClass) {
-        final BaseService baseService = services.get(serviceClass.getName());
+        final BaseService baseService = SERVICES.get(serviceClass.getName());
         if (baseService != null && serviceClass.isAssignableFrom(baseService.getClass())) {
             return (T) baseService;
         }
         throw new IllegalArgumentException("Service instance of [" + serviceClass + "] is not found. ");
     }
 
+    /**
+     * 加载服务对象至服务集中
+     *
+     * @param service    服务对象
+     * @param serviceCls 服务class
+     * @param baseCls    服务基class，用于spi
+     * @return 是否加载成功
+     */
     protected static boolean loadService(BaseService service, Class<?> serviceCls,
             Class<? extends BaseService> baseCls) {
         if (serviceCls == null || serviceCls == baseCls || !baseCls.isAssignableFrom(serviceCls)) {
             return false;
         }
         final String serviceName = serviceCls.getName();
-        final BaseService oldService = services.get(serviceName);
+        final BaseService oldService = SERVICES.get(serviceName);
         if (oldService != null && oldService.getClass() == service.getClass()) {
             return false;
         }
-        boolean flag = false;
-        final BaseService betterService = SpiLoadUtil.getBetter(oldService, service,
-                new SpiLoadUtil.WeightEqualHandler<BaseService>() {
+        boolean isLoadSucceed = false;
+        final BaseService betterService = SpiLoadUtils.getBetter(oldService, service,
+                new SpiLoadUtils.WeightEqualHandler<BaseService>() {
                     @Override
                     public BaseService handle(BaseService source, BaseService target) {
                         throw new DupServiceException(serviceName);
                     }
                 });
         if (betterService != oldService) {
-            services.put(serviceName, service);
-            flag = true;
+            SERVICES.put(serviceName, service);
+            isLoadSucceed = true;
         }
-        flag |= loadService(service, serviceCls.getSuperclass(), baseCls);
+        isLoadSucceed |= loadService(service, serviceCls.getSuperclass(), baseCls);
         for (Class<?> interfaceCls : serviceCls.getInterfaces()) {
-            flag |= loadService(service, interfaceCls, baseCls);
+            isLoadSucceed |= loadService(service, interfaceCls, baseCls);
         }
-        return flag;
+        return isLoadSucceed;
     }
 
+    /**
+     * 添加关闭服务的钩子
+     */
     private static void addStopHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
-                for (BaseService baseService : new HashSet<>(services.values())) {
+                for (BaseService baseService : new HashSet<>(SERVICES.values())) {
                     baseService.stop();
                 }
             }

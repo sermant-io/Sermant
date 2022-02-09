@@ -24,30 +24,30 @@ import org.slf4j.LoggerFactory;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/10/25
+ * @since 2021-10-25
  */
 public class DemoSuperTypeService implements DemoInterface {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DemoNameService.class);
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemoSuperTypeService.class);
+
     /**
      * 被拦截的构造函数
      */
     public DemoSuperTypeService() {
-        LOGGER.info("DemoSuperTypeEntity: constructor");
-    }
-
-    /**
-     * 被拦截的实例方法
-     */
-    public void instFunc() {
-        LOGGER.info("DemoSuperTypeEntity: instFunc");
+        LOGGER.info("DemoSuperTypeService: constructor");
     }
 
     /**
      * 被拦截的静态方法
      */
     public static void staticFunc() {
-        LOGGER.info("DemoSuperTypeEntity: staticFunc");
+        LOGGER.info("DemoSuperTypeService: staticFunc");
+    }
+
+    /**
+     * 被拦截的实例方法
+     */
+    public void memberFunc() {
+        LOGGER.info("DemoSuperTypeService: memberFunc");
     }
 
     @Override

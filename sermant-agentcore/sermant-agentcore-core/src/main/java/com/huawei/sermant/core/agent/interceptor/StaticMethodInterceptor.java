@@ -29,6 +29,7 @@ import java.lang.reflect.Method;
 /**
  * 静态方法拦截器接口
  */
+@Deprecated
 public interface StaticMethodInterceptor extends Interceptor {
 
     /**

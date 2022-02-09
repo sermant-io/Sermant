@@ -1,0 +1,5 @@
+com.huawei.example.demo.declarer.DemoAnnotationDeclarer
+com.huawei.example.demo.declarer.DemoNameDeclarer
+com.huawei.example.demo.declarer.DemoSuperTypeDeclarer
+com.huawei.example.demo.declarer.DemoTraceDeclarer
+com.huawei.example.demo.declarer.DemoBootstrapDeclarer

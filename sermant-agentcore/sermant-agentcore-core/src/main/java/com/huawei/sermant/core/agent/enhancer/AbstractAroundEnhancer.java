@@ -25,6 +25,7 @@
 
 package com.huawei.sermant.core.agent.enhancer;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
 import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.agent.common.OverrideArgumentsCall;
 import com.huawei.sermant.core.exception.BizException;
@@ -34,8 +35,13 @@ import java.lang.reflect.Method;
 
 /**
  * 抽象环绕增强委派类
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
-public abstract class AbstractAroundEnhancer  extends OriginEnhancer {
+@AboutDelete
+@Deprecated
+public abstract class AbstractAroundEnhancer extends OriginEnhancer {
     protected AbstractAroundEnhancer(Interceptor originInterceptor) {
         super(originInterceptor);
     }
@@ -50,6 +56,7 @@ public abstract class AbstractAroundEnhancer  extends OriginEnhancer {
      * @return 增强后返回值
      * @throws Throwable 增强过程中产生的异常，当前实现使用原方法执行产生异常
      */
+    @SuppressWarnings({"checkstyle:ParameterAssignment", "checkstyle:IllegalCatch", "checkstyle:RegexpSingleline"})
     protected Object doIntercept(final Object origin,
             final Method method,
             final OverrideArgumentsCall callable,
@@ -92,6 +99,7 @@ public abstract class AbstractAroundEnhancer  extends OriginEnhancer {
      * @param context 增强上下文实例
      * @return 前置结果
      */
+    @SuppressWarnings("checkstyle:RedundantModifier")
     protected abstract BeforeResult doBefore(final EnhanceContext context) throws Throwable;
 
     /**
@@ -100,6 +108,7 @@ public abstract class AbstractAroundEnhancer  extends OriginEnhancer {
      * @param context 增强上下文实例
      * @param t       原方法异常
      */
+    @SuppressWarnings("checkstyle:RedundantModifier")
     protected abstract void doOnThrow(final EnhanceContext context, final Throwable t);
 
     /**
@@ -109,6 +118,7 @@ public abstract class AbstractAroundEnhancer  extends OriginEnhancer {
      * @param result  原方法返回值或前置方法执行结果
      * @return 最终返回结果
      */
+    @SuppressWarnings("checkstyle:RedundantModifier")
     protected abstract Object doAfter(final EnhanceContext context, final Object result);
 
     /**
@@ -116,13 +126,10 @@ public abstract class AbstractAroundEnhancer  extends OriginEnhancer {
      */
     protected static class EnhanceContext {
 
-        private int invokedIndex;
-
         private final Object origin;
-
         private final Method method;
-
         private final Object[] arguments;
+        private int invokedIndex;
 
         public EnhanceContext(Object origin, Method method, Object[] arguments) {
             this.origin = origin;

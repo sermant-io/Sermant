@@ -1,0 +1,12 @@
+# 执行-Pall参数打包时使用，较agent多了示例工程
+plugins:
+  - example
+  - flowcontrol
+  - flowrecord
+  - online-stresstest
+  - route-server
+  - server-monitor
+  - threadlocal
+  - register-center
+adaptors:
+  - lubanops

@@ -21,7 +21,6 @@ import com.huawei.flowcontrol.entry.EntryFacade;
 import com.huawei.flowcontrol.util.FilterUtil;
 import com.huawei.flowcontrol.util.SentinelRuleUtil;
 import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.util.SpiLoadUtil.SpiWeight;
 
 import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.slots.block.BlockException;

@@ -16,8 +16,10 @@
 
 package com.huawei.sermant.core.agent;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
+
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
@@ -29,15 +31,22 @@ import java.util.logging.Logger;
 
 /**
  * byte buddy增强监听器，用于保存增强后的字节码
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@AboutDelete
+@Deprecated
 class LoadListener implements AgentBuilder.Listener {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final String exportPath = System.getProperty("apm.agent.class.export.path");
+
     @Override
     public void onDiscovery(String typeName, ClassLoader classLoader, JavaModule module, boolean loaded) {
     }
 
+    @SuppressWarnings("checkstyle:RegexpSinglelineJava")
     @Override
     public void onTransformation(
             final TypeDescription typeDescription,

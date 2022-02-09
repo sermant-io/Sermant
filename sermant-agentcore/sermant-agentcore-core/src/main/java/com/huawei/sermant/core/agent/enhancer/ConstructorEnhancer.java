@@ -22,9 +22,11 @@
 
 package com.huawei.sermant.core.agent.enhancer;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
 import com.huawei.sermant.core.agent.interceptor.ConstructorInterceptor;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.bootstrap.Interceptor;
+
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.This;
@@ -35,9 +37,15 @@ import java.util.logging.Logger;
 
 /**
  * 多Interceptor构造方法增强委派类
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@AboutDelete
+@Deprecated
 public final class ConstructorEnhancer extends OriginEnhancer {
 
+    @SuppressWarnings("checkstyle:ModifierOrder")
     private final static Logger LOGGER = LoggerFactory.getLogger();
 
     private final List<ConstructorInterceptor> interceptors;
@@ -53,6 +61,7 @@ public final class ConstructorEnhancer extends OriginEnhancer {
      * @param obj       增强实例
      * @param arguments 原构造方法参数
      */
+    @SuppressWarnings("checkstyle:IllegalCatch")
     @RuntimeType
     public void intercept(@This Object obj, @AllArguments Object[] arguments) {
         onFinally(obj, arguments, null, null);

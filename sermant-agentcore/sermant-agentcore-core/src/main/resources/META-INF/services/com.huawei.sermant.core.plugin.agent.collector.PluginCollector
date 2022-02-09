@@ -1,0 +1,3 @@
+com.huawei.sermant.core.plugin.agent.collector.DefaultPluginCollector
+com.huawei.sermant.core.plugin.agent.collector.DeprecatedPluginCollector
+com.huawei.sermant.core.plugin.adaptor.collector.AdaptorCollectorManager$AdaptorPluginCollector

@@ -16,8 +16,19 @@
 
 package com.huawei.sermant.core.service.heartbeat;
 
+import com.huawei.sermant.core.common.CommonConstant;
+import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.config.ConfigManager;
+import com.huawei.sermant.core.lubanops.bootstrap.config.AgentConfigManager;
+import com.huawei.sermant.core.lubanops.core.transfer.dto.heartbeat.HeartbeatMessage;
+import com.huawei.sermant.core.lubanops.integration.transport.ClientManager;
+import com.huawei.sermant.core.lubanops.integration.transport.netty.client.NettyClient;
+import com.huawei.sermant.core.lubanops.integration.transport.netty.pojo.Message;
+import com.huawei.sermant.core.plugin.common.PluginConstant;
+import com.huawei.sermant.core.plugin.common.PluginSchemaValidator;
+import com.huawei.sermant.core.utils.JarFileUtils;
+
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,23 +38,12 @@ import java.util.concurrent.ThreadFactory;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.config.ConfigManager;
-import com.huawei.sermant.core.lubanops.bootstrap.config.AgentConfigManager;
-import com.huawei.sermant.core.lubanops.core.transfer.dto.heartbeat.HeartbeatMessage;
-import com.huawei.sermant.core.lubanops.integration.transport.ClientManager;
-import com.huawei.sermant.core.lubanops.integration.transport.netty.client.NettyClient;
-import com.huawei.sermant.core.lubanops.integration.transport.netty.pojo.Message;
-import com.huawei.sermant.core.plugin.PluginManager;
-import com.huawei.sermant.core.plugin.common.PluginConstant;
-import com.huawei.sermant.core.util.JarFileUtil;
-
 /**
  * {@link HeartbeatService}的实现
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/10/25
+ * @since 2021-10-25
  */
 public class HeartbeatServiceImpl implements HeartbeatService {
     /**
@@ -54,7 +54,7 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     /**
      * 心跳最小发送间隔
      */
-    private static final long HEARTBEAT_MINIMAL_INTERVAL = 1000;
+    private static final long HEARTBEAT_MINIMAL_INTERVAL = 1000L;
 
     /**
      * 心跳额外参数
@@ -78,11 +78,11 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     /**
      * 运行标记
      */
-    private static volatile boolean runFlag = false;
+    private static volatile boolean isRunning = false;
 
     @Override
     public synchronized void start() {
-        runFlag = true;
+        isRunning = true;
         EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
@@ -99,10 +99,12 @@ public class HeartbeatServiceImpl implements HeartbeatService {
         final NettyClient nettyClient = ClientManager.getNettyClientFactory().getNettyClient(
                 AgentConfigManager.getNettyServerIp(),
                 Integer.parseInt(AgentConfigManager.getNettyServerPort()));
+
         // 获取插件名和版本集合
-        final Map<String, String> pluginVersionMap = PluginManager.getPluginVersionMap();
+        final Map<String, String> pluginVersionMap = PluginSchemaValidator.getPluginVersionMap();
+
         // 循环运行
-        while (runFlag) {
+        while (isRunning) {
             try {
                 for (Map.Entry<String, String> entry : pluginVersionMap.entrySet()) {
                     heartbeat(nettyClient, entry.getKey(), entry.getValue());
@@ -143,7 +145,8 @@ public class HeartbeatServiceImpl implements HeartbeatService {
                 .registerInformation(PLUGIN_VERSION_KEY, pluginVersion);
         addExtInfo(pluginName, message);
         final String msg = message.generateCurrentMessage();
-        nettyClient.sendData(msg.getBytes(Charset.forName("UTF-8")), Message.ServiceData.DataType.SERVICE_HEARTBEAT);
+        nettyClient.sendData(msg.getBytes(CommonConstant.DEFAULT_CHARSET),
+                Message.ServiceData.DataType.SERVICE_HEARTBEAT);
     }
 
     /**
@@ -168,22 +171,22 @@ public class HeartbeatServiceImpl implements HeartbeatService {
 
     @Override
     public synchronized void stop() {
-        if (!runFlag) {
+        if (!isRunning) {
             LOGGER.warning("HeartbeatService has not started yet. ");
             return;
         }
-        runFlag = false;
+        isRunning = false;
         EXECUTOR.shutdown();
         EXT_INFO_MAP.clear();
     }
 
     @Override
     public void setExtInfo(ExtInfoProvider extInfo) {
-        final String pluginJar = extInfo.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        final String pluginJar = JarFileUtils.getJarUrl(extInfo.getClass()).getPath();
         JarFile jarFile = null;
         try {
             jarFile = new JarFile(pluginJar);
-            final Object nameAttr = JarFileUtil.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
+            final Object nameAttr = JarFileUtils.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
             if (nameAttr != null) {
                 EXT_INFO_MAP.put(nameAttr.toString(), extInfo);
             } else {
@@ -196,6 +199,7 @@ public class HeartbeatServiceImpl implements HeartbeatService {
                 try {
                     jarFile.close();
                 } catch (IOException ignored) {
+                    LOGGER.warning("Unexpected exception occurs. ");
                 }
             }
         }

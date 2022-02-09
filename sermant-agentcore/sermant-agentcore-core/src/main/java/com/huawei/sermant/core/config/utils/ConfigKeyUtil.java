@@ -16,17 +16,17 @@
 
 package com.huawei.sermant.core.config.utils;
 
-import java.lang.reflect.Field;
-
 import com.huawei.sermant.core.config.common.ConfigFieldKey;
 import com.huawei.sermant.core.config.common.ConfigTypeKey;
+
+import java.lang.reflect.Field;
 
 /**
  * 用于处理统一配置系统键的工具
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/16
+ * @since 2021-11-16
  */
 public class ConfigKeyUtil {
     /**
