@@ -16,8 +16,15 @@
 
 package com.huawei.sermant.core.agent.definition;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
+
 /**
  * EnhanceDefinition和Listener的顶层接口，用于做兼容
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@AboutDelete
+@Deprecated
 public interface TopListener {
 }

@@ -16,9 +16,15 @@
 
 package com.huawei.sermant.core.exception;
 
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
+
 /**
  * 增强过程异常类
+ *
+ * @since 2021
  */
+@AboutDelete
+@Deprecated
 public class EnhanceException extends RuntimeException {
 
     private static final long serialVersionUID = -4463670023518646571L;

@@ -23,7 +23,7 @@ import com.huawei.sermant.core.plugin.service.PluginService;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/16
+ * @since 2021-11-16
  */
 public interface DemoComplexService extends PluginService {
     /**

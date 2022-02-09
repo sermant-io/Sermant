@@ -27,6 +27,7 @@ import com.huawei.sermant.core.agent.matcher.ClassMatcher;
 /**
  * 增强定义
  */
+@Deprecated
 public interface EnhanceDefinition {
 
     /**

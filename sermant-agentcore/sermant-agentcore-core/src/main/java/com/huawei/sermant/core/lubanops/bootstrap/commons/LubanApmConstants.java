@@ -64,7 +64,13 @@ public class LubanApmConstants {
 
     public final static String APP_TYPE_COMMON = "appType";
 
-    public final static String NETTY_SERVER_IP_COMMON = "127.0.0.1";
+    /**
+     * 运行 backend 模块机器的ip
+     */
+    public static final String BACKEND_IP_COMMON = "127.0.0.1";
 
-    public final static String NETTY_SERVER_PORT_COMMON = "6888";
+    /**
+     * backend 模块 netty 服务 监听的端口
+     */
+    public static final String BACKEND_PORT_COMMON = "6888";
 }

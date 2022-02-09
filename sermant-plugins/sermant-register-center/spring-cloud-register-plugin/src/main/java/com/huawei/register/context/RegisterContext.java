@@ -17,6 +17,7 @@
 package com.huawei.register.context;
 
 import com.huawei.register.handler.SingleStateCloseHandler;
+import com.netflix.client.config.IClientConfig;
 import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 
 import java.util.ArrayList;
@@ -40,6 +41,11 @@ public enum RegisterContext {
      * 通常用于关闭定时服务
      */
     private Object registerWatch;
+
+    /**
+     * 当前实例注册基本信息
+     */
+    private IClientConfig iClientConfig;
 
     private final AtomicBoolean isAvailable = new AtomicBoolean(true);
 
@@ -84,5 +90,13 @@ public enum RegisterContext {
 
     public void setDiscoveryClient(CompositeDiscoveryClient discoveryClient) {
         this.discoveryClient = discoveryClient;
+    }
+
+    public IClientConfig getiClientConfig() {
+        return iClientConfig;
+    }
+
+    public void setiClientConfig(IClientConfig iClientConfig) {
+        this.iClientConfig = iClientConfig;
     }
 }

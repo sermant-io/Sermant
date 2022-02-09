@@ -16,10 +16,19 @@
 
 package com.huawei.sermant.core.agent.transformer;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Locale;
-import java.util.logging.Logger;
+import com.huawei.sermant.core.agent.EnhanceDefinitionLoader;
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
+import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
+import com.huawei.sermant.core.agent.interceptor.ConstructorInterceptor;
+import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.sermant.core.agent.interceptor.Interceptor;
+import com.huawei.sermant.core.agent.interceptor.InterceptorLoader;
+import com.huawei.sermant.core.agent.interceptor.StaticMethodInterceptor;
+import com.huawei.sermant.core.agent.template.BootstrapConstTemplate;
+import com.huawei.sermant.core.agent.template.BootstrapInstTemplate;
+import com.huawei.sermant.core.agent.template.BootstrapStaticTemplate;
+import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.lubanops.bootstrap.Listener;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
@@ -34,18 +43,10 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
 
-import com.huawei.sermant.core.agent.EnhanceDefinitionLoader;
-import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
-import com.huawei.sermant.core.agent.interceptor.ConstructorInterceptor;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.sermant.core.agent.interceptor.Interceptor;
-import com.huawei.sermant.core.agent.interceptor.InterceptorLoader;
-import com.huawei.sermant.core.agent.interceptor.StaticMethodInterceptor;
-import com.huawei.sermant.core.agent.template.BootstrapConstTemplate;
-import com.huawei.sermant.core.agent.template.BootstrapInstTemplate;
-import com.huawei.sermant.core.agent.template.BootstrapStaticTemplate;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.lubanops.bootstrap.Listener;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Locale;
+import java.util.logging.Logger;
 
 /**
  * 启动类加载器加载类的Transformer
@@ -54,12 +55,15 @@ import com.huawei.sermant.core.lubanops.bootstrap.Listener;
  * @version 1.0.0
  * @since 2021/10/27
  */
+@AboutDelete
+@Deprecated
 public class BootstrapTransformer implements AgentBuilder.Transformer {
     /**
      * 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    @SuppressWarnings("checkstyle:ParameterAssignment")
     @Override
     public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,
             ClassLoader classLoader, JavaModule module) {
@@ -83,6 +87,7 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
      * @param classLoader     用于增强的类加载器
      * @return 动态构建器
      */
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private DynamicType.Builder<?> enhanceMethods(Listener listener, List<EnhanceDefinition> definitions,
             DynamicType.Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader) {
         DynamicType.Builder<?> newBuilder = builder;
@@ -152,6 +157,7 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
          * @return 动态构造器
          * @throws Exception 增强失败
          */
+        @SuppressWarnings("checkstyle:OperatorWrap")
         private DynamicType.Builder<?> doResolve(DynamicType.Builder<?> builder, Class<?> templateCls,
                 Class<? extends Interceptor> interceptorType) throws Exception {
             final String adviceClsName = getAdviceClassName(templateCls, method);
@@ -197,6 +203,7 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
          * @param adviceClsName 动态Advice增强器的名称
          * @return 动态Advice增强器的字节码
          */
+        @SuppressWarnings("checkstyle:RegexpSinglelineJava")
         private byte[] createAdviceClass(Class<?> templateCls, String adviceClsName) {
             return new ByteBuddy()
                     .redefine(templateCls)

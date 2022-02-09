@@ -23,7 +23,7 @@ import com.huawei.sermant.core.plugin.config.PluginConfig;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/16
+ * @since 2021-11-16
  */
 public class DemoServiceConfig implements PluginConfig { // 没有设定类别名的情况，将使用类的全限定名
     private String testField;

@@ -25,7 +25,6 @@ package com.huawei.flowcontrol.service;
 import com.huawei.flowcontrol.entry.EntryFacade;
 import com.huawei.flowcontrol.util.DubboUtil;
 import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.util.SpiLoadUtil.SpiWeight;
 
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.dubbo.rpc.Invocation;

@@ -16,14 +16,14 @@
 
 package com.huawei.sermant.core.config.strategy;
 
+import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.config.common.BaseConfig;
+
 import java.io.File;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.config.common.BaseConfig;
 
 /**
  * 加载配置对象的策略
@@ -33,9 +33,10 @@ import com.huawei.sermant.core.config.common.BaseConfig;
  *     2.将配置信息加载到配置对象中{@link #loadConfig(Object, BaseConfig)}
  * </pre>
  *
+ * @param <T> 配置主体
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/8/18
+ * @since 2021-08-18
  */
 public interface LoadConfigStrategy<T> {
     /**

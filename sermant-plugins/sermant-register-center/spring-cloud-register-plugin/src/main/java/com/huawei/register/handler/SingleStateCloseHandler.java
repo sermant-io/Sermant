@@ -18,8 +18,11 @@ package com.huawei.register.handler;
 
 import com.huawei.register.config.RegisterDynamicConfig;
 import com.huawei.register.context.RegisterContext;
+import com.huawei.sermant.core.common.LoggerFactory;
 
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 
 /**
  * 关闭注册中心处理
@@ -28,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 2022-01-04
  */
 public abstract class SingleStateCloseHandler implements RegisterStateChangeHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     public SingleStateCloseHandler() {
         RegisterContext.INSTANCE.registerCloseHandler(this);
@@ -57,7 +61,7 @@ public abstract class SingleStateCloseHandler implements RegisterStateChangeHand
      * @param newState    变更后的状态
      */
     public void doChange(Object obj, Object[] arguments, boolean originState, boolean newState) {
-        if (needCloseRegisterCenter() && !newState) {
+        if (!newState) {
             doClose();
         }
         change(obj, arguments, originState, false);
@@ -72,9 +76,24 @@ public abstract class SingleStateCloseHandler implements RegisterStateChangeHand
      * 关闭注册中心，只会触发一次
      */
     public void doClose() {
-        if (IS_CLOSED.compareAndSet(false, true)) {
-            close();
+        if (needCloseRegisterCenter() && IS_CLOSED.compareAndSet(false, true)) {
+            try {
+                close();
+            } catch (Exception ex) {
+                // 重置状态
+                resetCloseState();
+                LOGGER.warning(String.format(Locale.ENGLISH,
+                        "Closed register healthy check failed! %s", ex.getMessage()));
+            }
         }
+    }
+
+    /**
+     * 重置开关状态
+     * 当某个注册中心关闭失败需要重新关闭时可调用
+     */
+    private void resetCloseState() {
+        IS_CLOSED.set(false);
     }
 
     /**
@@ -89,8 +108,10 @@ public abstract class SingleStateCloseHandler implements RegisterStateChangeHand
 
     /**
      * 关闭注册中心
+     *
+     * @throws Exception 关闭失败时抛出
      */
-    protected abstract void close();
+    protected abstract void close() throws Exception;
 
     public Object getTarget() {
         return target;

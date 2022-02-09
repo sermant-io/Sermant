@@ -16,25 +16,27 @@
 
 package com.huawei.sermant.core;
 
-import java.lang.instrument.Instrumentation;
-import java.util.Map;
-
-import com.huawei.sermant.core.agent.ByteBuddyAgentBuilder;
 import com.huawei.sermant.core.common.BootArgsIndexer;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.lubanops.core.BootStrapImpl;
-import com.huawei.sermant.core.plugin.PluginManager;
+import com.huawei.sermant.core.plugin.PluginSystemEntrance;
 import com.huawei.sermant.core.service.ServiceManager;
+
+import java.lang.instrument.Instrumentation;
+import java.util.Map;
 
 /**
  * agent core入口
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/12
+ * @since 2021-11-12
  */
 public class AgentCoreEntrance {
+    private AgentCoreEntrance() {
+    }
+
     /**
      * 入口方法
      *
@@ -48,6 +50,7 @@ public class AgentCoreEntrance {
         try {
             // 封装启动参数信息
             BootArgsIndexer.build(argsMap);
+
             // 初始化统一配置
             ConfigManager.initialize(argsMap);
 
@@ -56,10 +59,9 @@ public class AgentCoreEntrance {
 
             // 启动核心服务
             ServiceManager.initServices();
+
             // 初始化插件
-            PluginManager.initialize(instrumentation);
-            // 初始化byte buddy
-            ByteBuddyAgentBuilder.initialize(instrumentation);
+            PluginSystemEntrance.initialize(instrumentation);
         } finally {
             // 回滚日志
             LoggerFactory.rollback();

@@ -49,11 +49,11 @@ public class BaseTest {
     public static void init() throws IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
         currentClassLoader = Thread.currentThread().getContextClassLoader();
         final Class<?> configManagerClass = currentClassLoader.loadClass(AgentConfigManager.class.getName());
-        final Field nettyServerPort = configManagerClass.getDeclaredField("nettyServerPort");
-        setFieldValue(nettyServerPort, "6888", null);
+        final Field backendPort = configManagerClass.getDeclaredField("backendPort");
+        setFieldValue(backendPort, "6888", null);
 
-        final Field nettyServerIp = configManagerClass.getDeclaredField("nettyServerIp");
-        setFieldValue(nettyServerIp, "127.0.0.1", null);
+        final Field backendIp = configManagerClass.getDeclaredField("backendIp");
+        setFieldValue(backendIp, "127.0.0.1", null);
 
         final Class<?> aClass = currentClassLoader.loadClass(ConfigManager.class.getName());
         final Field configMap = aClass.getDeclaredField("CONFIG_MAP");

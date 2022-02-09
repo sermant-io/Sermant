@@ -16,12 +16,14 @@
 
 package com.huawei.sermant.core.plugin.common;
 
+import java.io.File;
+
 /**
  * 插件管理系统常量
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/27
+ * @since 2021-11-27
  */
 public class PluginConstant {
     /**
@@ -58,4 +60,14 @@ public class PluginConstant {
      * sermant插件默认版本
      */
     public static final String PLUGIN_DEFAULT_VERSION = "unknown";
+
+    /**
+     * 获取插件配置文件
+     *
+     * @param pluginPath 插件根目录
+     * @return 插件配置文件
+     */
+    public static File getPluginConfigFile(String pluginPath) {
+        return new File(pluginPath + File.separatorChar + CONFIG_DIR_NAME + File.separatorChar + CONFIG_FILE_NAME);
+    }
 }

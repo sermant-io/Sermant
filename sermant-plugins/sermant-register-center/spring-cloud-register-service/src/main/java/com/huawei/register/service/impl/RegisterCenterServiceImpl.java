@@ -66,7 +66,16 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
 
     @Override
     public void replaceServerList(Object target, BeforeResult beforeResult) {
-        final String serviceId = (String) CommonUtils.getFieldValue(target, "serviceId");
+        String serviceId = (String) CommonUtils.getFieldValue(target, "serviceId");
+        if (serviceId == null && RegisterContext.INSTANCE.getiClientConfig() != null) {
+            // 若未获取到服务名，则从注册基本信息获取
+            serviceId = RegisterContext.INSTANCE.getiClientConfig().getClientName();
+        }
+        if (serviceId == null) {
+            // 无法执行替换
+            LOGGER.warning("Can not acquire the name of service, the process to replace instance won't be finished!");
+            return;
+        }
         if (useOriginRegisterCenter()) {
             final List<ServiceInstance> serviceInstances = queryServiceInstances(serviceId);
             if (!serviceInstances.isEmpty()) {

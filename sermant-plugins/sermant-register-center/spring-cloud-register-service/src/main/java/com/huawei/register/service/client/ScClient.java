@@ -21,7 +21,6 @@ import com.huawei.register.config.RegisterConfig;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.integration.utils.APMThreadFactory;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.util.CollectionUtils;
 
 import org.apache.servicecomb.foundation.auth.SignRequest;
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
@@ -134,7 +133,7 @@ public class ScClient {
         microserviceInstance.setVersion(registerConfig.getVersion());
         microserviceInstance.setHostName(registration.getHost());
         microserviceInstance.setEndpoints(buildEndpoints(registration));
-        Map<String, String> meta = registration.getMetadata();
+        Map<String, String> meta = new HashMap<String, String>(registration.getMetadata());
         meta.put(REG_VERSION_KEY, registerConfig.getVersion());
         microserviceInstance.setProperties(meta);
         return microserviceInstance;
@@ -203,7 +202,7 @@ public class ScClient {
 
     private List<String> getScUrls() {
         final List<String> urlList = registerConfig.getAddressList();
-        if (CollectionUtils.isEmpty(urlList)) {
+        if (urlList == null || urlList.isEmpty()) {
             throw new IllegalArgumentException("Kie url must not be empty!");
         }
         Iterator<String> it = urlList.iterator();

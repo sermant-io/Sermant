@@ -23,15 +23,19 @@
 
 package com.huawei.sermant.core.agent;
 
+import static net.bytebuddy.matcher.ElementMatchers.isInterface;
+import static net.bytebuddy.matcher.ElementMatchers.not;
+
+import com.huawei.sermant.core.agent.annotations.AboutDelete;
 import com.huawei.sermant.core.agent.common.VersionChecker;
 import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
-import com.huawei.sermant.core.lubanops.bootstrap.NamedListener;
-import com.huawei.sermant.core.lubanops.bootstrap.TransformerMethod;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.Util;
 import com.huawei.sermant.core.agent.matcher.ClassMatcher;
 import com.huawei.sermant.core.agent.matcher.NameMatcher;
 import com.huawei.sermant.core.agent.matcher.NonNameMatcher;
 import com.huawei.sermant.core.lubanops.bootstrap.Listener;
+import com.huawei.sermant.core.lubanops.bootstrap.NamedListener;
+import com.huawei.sermant.core.lubanops.bootstrap.TransformerMethod;
+import com.huawei.sermant.core.lubanops.bootstrap.utils.Util;
 
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
@@ -43,24 +47,25 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 
-import static net.bytebuddy.matcher.ElementMatchers.isInterface;
-import static net.bytebuddy.matcher.ElementMatchers.not;
-
 /**
- * 插件加载器
- * 加载NamedListener以及EnhanceDefinition插件
+ * 插件加载器 加载NamedListener以及EnhanceDefinition插件
+ * <p> Copyright 2021
+ *
+ * @since 2021
  */
+@AboutDelete
+@Deprecated
 public enum EnhanceDefinitionLoader {
+    @SuppressWarnings({"checkstyle:JavadocVariable", "checkstyle:AnnotationLocation"})
     INSTANCE;
 
     private final Map<String, LinkedList<EnhanceDefinition>> nameDefinitions =
-        new HashMap<String, LinkedList<EnhanceDefinition>>();
+            new HashMap<String, LinkedList<EnhanceDefinition>>();
 
     private final List<EnhanceDefinition> nonNameDefinitions = new LinkedList<EnhanceDefinition>();
 
     /**
-     * key : 增强类
-     * value: 拦截器列表
+     * key : 增强类 value: 拦截器列表
      */
     private final Map<String, Listener> originMatchNamedListeners = new HashMap<String, Listener>();
 
@@ -68,6 +73,11 @@ public enum EnhanceDefinitionLoader {
         load();
     }
 
+    public static EnhanceDefinitionLoader getInstance() {
+        return INSTANCE;
+    }
+
+    @SuppressWarnings("checkstyle:RegexpMultiline")
     public void load() {
         // 加载插件
         for (EnhanceDefinition definition : loadEnhanceDefinition()) {
@@ -166,14 +176,10 @@ public enum EnhanceDefinitionLoader {
         return originMatchNamedListeners.get(typeDescription.getTypeName());
     }
 
-    public static EnhanceDefinitionLoader getInstance() {
-        return INSTANCE;
-    }
-
     private static class BufferedListener implements Listener {
+        private final Listener listener;
         private volatile boolean initFlag = true;
         private volatile boolean addTagFlag = true;
-        private final Listener listener;
 
         private BufferedListener(Listener listener) {
             this.listener = listener;

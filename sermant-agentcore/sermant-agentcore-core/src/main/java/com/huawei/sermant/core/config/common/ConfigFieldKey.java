@@ -16,12 +16,12 @@
 
 package com.huawei.sermant.core.config.common;
 
+import com.huawei.sermant.core.config.utils.ConfigKeyUtil;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import com.huawei.sermant.core.config.utils.ConfigKeyUtil;
 
 /**
  * 通用字段键注解
@@ -31,7 +31,7 @@ import com.huawei.sermant.core.config.utils.ConfigKeyUtil;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/8/19
+ * @since 2021-08-19
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})

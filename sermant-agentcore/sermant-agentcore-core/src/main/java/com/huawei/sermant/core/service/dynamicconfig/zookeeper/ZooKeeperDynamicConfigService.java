@@ -34,7 +34,7 @@ import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListene
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/12/15
+ * @since 2021-12-15
  */
 public class ZooKeeperDynamicConfigService extends DynamicConfigService {
     /**
@@ -157,7 +157,7 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
         final List<String> keys = new ArrayList<>();
         for (String keyPath : zkClient.listAllNodes(groupPath)) {
             if (keyPath.startsWith(groupPath)) {
-                keys.add(keyPath.substring(groupPath.length()));
+                keys.add(keyPath.substring(groupPath.length() + 1));
             }
         }
         return keys;

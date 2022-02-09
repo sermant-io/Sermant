@@ -24,7 +24,7 @@ package com.huawei.sermant.core.config.common;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/8/19
+ * @since 2021-08-19
  */
 public interface BaseConfig {
 

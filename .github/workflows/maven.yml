@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: CI
 
 on:
   push:
@@ -8,10 +8,27 @@ on:
       - develop
 
 jobs:
+
+  checkstyle:
+    name: Checkstyle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+      - name: download checkstyle
+        run: curl -o checkstyle.jar -L https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.41.1/checkstyle-8.41.1-all.jar
+      - name: checkstyle
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          java -jar checkstyle.jar -c checkstyle.xml -f xml . | reviewdog -f=checkstyle -name="Checkstyle Check" -reporter=github-pr-check
+
+
   build:
-
     runs-on: windows-latest
-
+    name: build
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 8

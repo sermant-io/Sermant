@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.huawei.sermant.core.common.CommonConstant;
-import com.huawei.sermant.core.util.FieldUtil;
+import com.huawei.sermant.core.utils.FieldUtils;
 
 /**
  * 启动参数构建器
@@ -100,7 +100,7 @@ public abstract class BootArgsBuilder {
      * @return 参数值
      */
     private static String getCommonValue(String key, Properties configMap) {
-        String value = configMap.getProperty(FieldUtil.toUnderline(key, '.', false));
+        String value = configMap.getProperty(FieldUtils.toUnderline(key, '.', false));
         value = value == null ? System.getProperty(key) : value;
         return value;
     }
@@ -166,7 +166,7 @@ public abstract class BootArgsBuilder {
                 CommonConstant.MASTER_ACCESS_KEY,
                 CommonConstant.MASTER_SECRET_KEY,
                 CommonConstant.MASTER_ADDRESS_KEY}) {
-            final String camelKey = FieldUtil.toCamel(key, '.', false);
+            final String camelKey = FieldUtils.toCamel(key, '.', false);
             if (!argsMap.containsKey(camelKey)) {
                 String value = configMap.getProperty(key);
                 value = value == null ? System.getProperty(camelKey) : value;

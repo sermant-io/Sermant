@@ -16,23 +16,23 @@
 
 package com.huawei.example.demo.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 链路功能的模拟通信示例
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/10/25
+ * @since 2021-10-25
  */
 public class DemoTraceService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DemoNameService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemoTraceService.class);
 
-    private final static ThreadLocal<Map<String, String>> END_POINT = new ThreadLocal<Map<String, String>>();
+    private static final ThreadLocal<Map<String, String>> END_POINT = new ThreadLocal<Map<String, String>>();
 
     /**
      * 主要方法
@@ -62,7 +62,7 @@ public class DemoTraceService {
      * @param message 数据集
      */
     private static void service(Map<String, String> message) {
-        LOGGER.info("DemoTraceService: " + message);
+        LOGGER.info("DemoTraceService: {}", message);
     }
 
     /**

@@ -25,6 +25,7 @@ package com.huawei.sermant.core.agent.matcher;
 /**
  * 类名匹配器
  */
+@Deprecated
 public class NameMatcher implements ClassMatcher {
 
     private final String className;

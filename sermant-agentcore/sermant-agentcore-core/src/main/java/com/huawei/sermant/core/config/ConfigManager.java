@@ -16,6 +16,12 @@
 
 package com.huawei.sermant.core.config;
 
+import com.huawei.sermant.core.common.BootArgsIndexer;
+import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.config.common.BaseConfig;
+import com.huawei.sermant.core.config.strategy.LoadConfigStrategy;
+import com.huawei.sermant.core.config.utils.ConfigKeyUtil;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Locale;
@@ -24,18 +30,12 @@ import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.huawei.sermant.core.common.BootArgsIndexer;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.config.common.BaseConfig;
-import com.huawei.sermant.core.config.strategy.LoadConfigStrategy;
-import com.huawei.sermant.core.config.utils.ConfigKeyUtil;
-
 /**
  * 配置储存器
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/8/26
+ * @since 2021-08-26
  */
 public abstract class ConfigManager {
     /**

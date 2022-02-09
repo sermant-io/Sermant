@@ -16,6 +16,9 @@
 
 package com.huawei.sermant.core.config.utils;
 
+import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.exception.DupConfIndexException;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,15 +29,12 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.exception.DupConfIndexException;
-
 /**
  * 对配置中参数值进行处理的工具
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/16
+ * @since 2021-11-16
  */
 public class ConfigValueUtil {
     /**

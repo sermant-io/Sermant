@@ -34,7 +34,7 @@ import com.huawei.sermant.core.service.dynamicconfig.config.DynamicConfig;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/12/14
+ * @since 2021-12-14
  */
 public abstract class DynamicConfigService implements BaseService, KeyService, KeyGroupService, GroupService {
     /**
