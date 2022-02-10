@@ -179,6 +179,7 @@ public class ClassLoaderUtils {
     public static Class<?> defineClass(String className, ClassLoader classLoader, byte[] bytes)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         final Method loadingLock = ClassLoader.class.getDeclaredMethod("getClassLoadingLock", String.class);
+        loadingLock.setAccessible(true);
         synchronized (loadingLock.invoke(classLoader, className)) {
             final Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class,
                     int.class, int.class);

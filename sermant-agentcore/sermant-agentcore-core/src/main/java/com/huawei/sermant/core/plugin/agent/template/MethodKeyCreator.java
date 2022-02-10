@@ -84,7 +84,7 @@ public class MethodKeyCreator {
      * @return 方法键
      */
     public static String getMethodDescKey(MethodDescription.InDefinedShape methodDesc) {
-        final StringBuilder sb = new StringBuilder().append(methodDesc.getDeclaringType().asErasure().getActualName());
+        final StringBuilder sb = new StringBuilder().append(methodDesc.getDeclaringType().asErasure().getTypeName());
         if (methodDesc.isConstructor()) {
             sb.append("#<init>(");
         } else {
@@ -95,7 +95,7 @@ public class MethodKeyCreator {
             if (i > 0) {
                 sb.append(',');
             }
-            sb.append(parameters.get(i).getType().asErasure().getActualName());
+            sb.append(parameters.get(i).getType().asErasure().getTypeName());
         }
         sb.append(')');
         return sb.toString();
