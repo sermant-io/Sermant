@@ -41,8 +41,10 @@ import net.bytebuddy.utility.JavaModule;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -62,6 +64,11 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
      * 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    /**
+     * 拦截器全局集
+     */
+    private static final Map<String, List<Interceptor>> INTERCEPTOR_GLOBAL_MAP = new HashMap<>();
 
     /**
      * 拦截定义数组
@@ -174,10 +181,18 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
             List<Interceptor> interceptors, Class<?> templateCls, ClassLoader classLoader)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, NoSuchFieldException {
         final String adviceClassName = getAdviceClassName(templateCls, methodDesc);
-        final byte[] adviceClsBytes = createAdviceClass(templateCls, adviceClassName);
-        final Class<?> adviceCls = defineAdviceClass(adviceClassName, classLoader, adviceClsBytes);
-        prepareAdviceClass(adviceCls, interceptors);
-        return visitAdvice(builder, methodDesc, adviceCls, adviceClsBytes);
+        List<Interceptor> globalInterceptors = INTERCEPTOR_GLOBAL_MAP.get(adviceClassName);
+        if (globalInterceptors == null) {
+            globalInterceptors = new ArrayList<>(interceptors);
+            INTERCEPTOR_GLOBAL_MAP.put(adviceClassName, globalInterceptors);
+            final byte[] adviceClsBytes = createAdviceClass(templateCls, adviceClassName);
+            final Class<?> adviceCls = defineAdviceClass(adviceClassName, classLoader, adviceClsBytes);
+            prepareAdviceClass(adviceCls, interceptors);
+            return visitAdvice(builder, methodDesc, adviceCls, adviceClsBytes);
+        } else {
+            globalInterceptors.addAll(interceptors);
+            return builder;
+        }
     }
 
     /**
