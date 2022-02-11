@@ -191,37 +191,37 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
     /**
      * 发送json类型的post请求
      * @param config 请求配置类参数
-     * @param jsonObject 参数列表
+     * @param jsonBody 参数列表
      * @return 返回结果
      */
     @Override
-    public HttpResponse postJson(HttpClientConfig config, JSONObject jsonObject){
+    public HttpResponse postJson(HttpClientConfig config, String jsonBody){
         HttpEntityEnclosingRequestBase httpPost = new HttpPost(config.getUrl());
-        return setJsonObject(config, jsonObject, httpPost);
+        return setJsonObject(config, jsonBody, httpPost);
     }
 
     /**
      * 发送json类型的put请求
      * @param config 请求配置类参数
-     * @param jsonObject 参数列表
+     * @param jsonBody 参数列表
      * @return 返回结果
      */
     @Override
-    public HttpResponse putJson(HttpClientConfig config, JSONObject jsonObject) {
+    public HttpResponse putJson(HttpClientConfig config, String jsonBody) {
         HttpEntityEnclosingRequestBase httpPut = new HttpPut(config.getUrl());
-        return setJsonObject(config, jsonObject, httpPut);
+        return setJsonObject(config, jsonBody, httpPut);
     }
 
     /**
      * 发送json类型的delete请求
      * @param config 请求配置类参数
-     * @param jsonObject 参数列表
+     * @param jsonBody 参数列表
      * @return 返回结果
      */
     @Override
-    public HttpResponse executeDelete(HttpClientConfig config, JSONObject jsonObject) {
+    public HttpResponse executeDelete(HttpClientConfig config, String jsonBody) {
         HttpEntityEnclosingRequestBase httpDelete = new HttpDeleteWithBody(config.getUrl());
-        return setJsonObject(config, jsonObject, httpDelete);
+        return setJsonObject(config, jsonBody, httpDelete);
     }
 
     /**
@@ -265,14 +265,14 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
     /**
      * 设置 json数据
      * @param config 配置类对象
-     * @param jsonObject json请求数据
+     * @param jsonBody json类型字符串数据
      * @param requestBase 请求对象基类
      * @return 返回响应结果
      */
-    private HttpResponse setJsonObject(HttpClientConfig config, JSONObject jsonObject, HttpEntityEnclosingRequestBase requestBase) {
+    private HttpResponse setJsonObject(HttpClientConfig config, String jsonBody, HttpEntityEnclosingRequestBase requestBase) {
         setHeader(requestBase, config.getHeaders());
         requestBase.addHeader(CONTENT_TYPE, CONTENT_TYPE_JSON);
-        StringEntity jsonEntity = new StringEntity(jsonObject.toString(), Consts.UTF_8);
+        StringEntity jsonEntity = new StringEntity(jsonBody, Consts.UTF_8);
         jsonEntity.setContentEncoding(Consts.UTF_8.name());
         requestBase.setEntity(jsonEntity);
 

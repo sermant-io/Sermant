@@ -25,7 +25,6 @@
 
         <httpclient.version>4.5.13</httpclient.version>
         <httpmime.version>4.5.13</httpmime.version>
-        <fastjson.version>1.2.73</fastjson.version>
     </properties>
 
     <dependencies>
@@ -95,11 +94,6 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
             <version>${httpmime.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>${fastjson.version}</version>
         </dependency>
     </dependencies>
 </project>

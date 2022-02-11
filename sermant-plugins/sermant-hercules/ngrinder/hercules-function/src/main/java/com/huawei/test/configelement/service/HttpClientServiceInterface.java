@@ -49,26 +49,26 @@ public interface HttpClientServiceInterface {
     /**
      * 发送json类型的post请求
      * @param config 请求配置类参数
-     * @param jsonObject 参数列表
+     * @param jsonBody 参数列表
      * @return 返回结果
      */
-    HttpResponse postJson(HttpClientConfig config, JSONObject jsonObject);
+    HttpResponse postJson(HttpClientConfig config, String jsonBody);
 
     /**
      * 发送json类型的put请求
      * @param config 请求配置类参数
-     * @param jsonObject 参数列表
+     * @param jsonBody 参数列表
      * @return 返回结果
      */
-    HttpResponse putJson(HttpClientConfig config, JSONObject jsonObject);
+    HttpResponse putJson(HttpClientConfig config, String jsonBody);
 
     /**
      * 发送json类型的delete请求
      * @param config 请求配置类参数
-     * @param jsonObject 参数列表
+     * @param jsonBody 参数列表
      * @return 返回结果
      */
-    HttpResponse executeDelete(HttpClientConfig config, JSONObject jsonObject);
+    HttpResponse executeDelete(HttpClientConfig config, String jsonBody);
 
     /**
      * 发送 head请求，不会返回消息体
