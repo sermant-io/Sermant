@@ -27,21 +27,24 @@ import java.net.URI;
  * @since 2022-01-27
  */
 public class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
+    /**
+     *  自定义请求方式
+     */
     public static final String METHOD_NAME = "DELETE";
+
+    public HttpDeleteWithBody() {
+    }
+
+    public HttpDeleteWithBody(final URI uri) {
+        this.setURI(uri);
+    }
+
+    public HttpDeleteWithBody(final String uri) {
+        this.setURI(URI.create(uri));
+    }
 
     @Override
     public String getMethod() {
         return METHOD_NAME;
-    }
-
-    public HttpDeleteWithBody(final String uri){
-        this.setURI(URI.create(uri));
-    }
-
-    public HttpDeleteWithBody(final URI uri){
-        this.setURI(uri);
-    }
-
-    public HttpDeleteWithBody(){
     }
 }

@@ -52,16 +52,16 @@ public class HttpClientConfig {
     /**
      *  是否使用连接池
      */
-    private final boolean useConnectPool;
+    private final boolean isUseConnectPool;
 
-    public HttpClientConfig(Builder builder){
+    public HttpClientConfig(Builder builder) {
         this.url = builder.url;
         this.headers = builder.headers;
         this.connectTimeout = builder.connectTimeout;
         this.socketTimeout = builder.socketTimeout;
         this.maxTotal = builder.maxTotal;
         this.defaultMaxPerRoute = builder.defaultMaxPerRoute;
-        this.useConnectPool = builder.useConnectPool;
+        this.isUseConnectPool = builder.isUseConnectPool;
     }
 
     public String getUrl() {
@@ -89,10 +89,10 @@ public class HttpClientConfig {
     }
 
     public boolean getUseConnectPool() {
-        return useConnectPool;
+        return isUseConnectPool;
     }
 
-    public static class Builder{
+    public static class Builder {
         /**
          *  请求url
          */
@@ -120,46 +120,46 @@ public class HttpClientConfig {
         /**
          *  是否使用连接池
          */
-        private boolean useConnectPool;
+        private boolean isUseConnectPool;
 
-        public Builder setUrl(String url){
+        public Builder setUrl(String url) {
             this.url = url;
             return this;
         }
 
-        public Builder setHeaders(Map<String, String> headers){
+        public Builder setHeaders(Map<String, String> headers) {
             this.headers = headers;
             return this;
         }
 
-        public Builder setConnectTimeout(int connectTimeout){
+        public Builder setConnectTimeout(int connectTimeout) {
             this.connectTimeout = connectTimeout;
             return this;
         }
 
-        public Builder setSocketTimeout(int socketTimeout){
+        public Builder setSocketTimeout(int socketTimeout) {
             this.socketTimeout = socketTimeout;
             return this;
         }
 
-        public Builder setMaxTotal(int maxTotal){
+        public Builder setMaxTotal(int maxTotal) {
             this.maxTotal = maxTotal;
             return this;
         }
 
-        public Builder setDefaultMaxPerRoute(int defaultMaxPerRoute){
+        public Builder setDefaultMaxPerRoute(int defaultMaxPerRoute) {
             this.defaultMaxPerRoute = defaultMaxPerRoute;
             return this;
         }
 
-        public Builder setUseConnectPool(boolean useConnectPool){
-            this.useConnectPool = useConnectPool;
+        @SuppressWarnings("checkstyle:HiddenField")
+        public Builder setUseConnectPool(boolean isUseConnectPool) {
+            this.isUseConnectPool = isUseConnectPool;
             return this;
         }
 
-        public HttpClientConfig build(){
+        public HttpClientConfig build() {
             return new HttpClientConfig(this);
         }
     }
-
 }

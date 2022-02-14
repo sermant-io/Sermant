@@ -16,8 +16,8 @@
 
 package com.huawei.test.configelement.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.huawei.test.configelement.config.HttpClientConfig;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 
@@ -33,13 +33,16 @@ import java.util.Set;
 public interface HttpClientServiceInterface {
     /**
      * 发送get请求
+     *
      * @param config httpclient配置类对象
      * @return 返回结果
      */
+    @SuppressWarnings("checkstyle:RegexpMultiline")
     HttpResponse executeGet(HttpClientConfig config);
 
     /**
      * 发送表单类型的post请求
+     *
      * @param config 请求配置类参数
      * @param param 参数列表
      * @return 返回结果
@@ -48,6 +51,7 @@ public interface HttpClientServiceInterface {
 
     /**
      * 发送json类型的post请求
+     *
      * @param config 请求配置类参数
      * @param jsonBody 参数列表
      * @return 返回结果
@@ -56,6 +60,7 @@ public interface HttpClientServiceInterface {
 
     /**
      * 发送json类型的put请求
+     *
      * @param config 请求配置类参数
      * @param jsonBody 参数列表
      * @return 返回结果
@@ -64,6 +69,7 @@ public interface HttpClientServiceInterface {
 
     /**
      * 发送json类型的delete请求
+     *
      * @param config 请求配置类参数
      * @param jsonBody 参数列表
      * @return 返回结果
@@ -72,6 +78,7 @@ public interface HttpClientServiceInterface {
 
     /**
      * 发送 head请求，不会返回消息体
+     *
      * @param config 请求配置类参数
      * @return 返回结果
      */
@@ -79,6 +86,7 @@ public interface HttpClientServiceInterface {
 
     /**
      * 发送 options请求用于获取服务器支持的HTTP请求方法
+     *
      * @param config 请求配置类参数
      * @return 返回结果
      */
