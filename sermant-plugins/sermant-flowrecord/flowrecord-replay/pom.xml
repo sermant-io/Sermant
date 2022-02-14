@@ -35,10 +35,10 @@
         <elasticsearch.client.version>7.5.0</elasticsearch.client.version>
         <redis.clients.version>3.2.0</redis.clients.version>
         <junit.version>4.12</junit.version>
-        <spring.test.version>5.0.9.RELEASE</spring.test.version>
+        <spring.test.version>5.3.14</spring.test.version>
         <lombok.version>1.18.10</lombok.version>
         <fastjson.version>1.2.72</fastjson.version>
-        <spring.bean.version>5.2.9.RELEASE</spring.bean.version>
+        <spring.bean.version>5.3.9</spring.bean.version>
         <kafka.clients.version>2.3.0</kafka.clients.version>
         <springframework.kafka.test.version>2.5.6.RELEASE</springframework.kafka.test.version>
         <kafka.unit.test>1.0</kafka.unit.test>
