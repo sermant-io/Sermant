@@ -17,43 +17,32 @@
 package com.huawei.dubbo.register.interceptor;
 
 import com.huawei.dubbo.register.constants.Constant;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.StaticMethodInterceptor;
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 import org.apache.dubbo.rpc.cluster.support.migration.MigrationRule;
 import org.apache.dubbo.rpc.cluster.support.migration.MigrationStep;
-
-import java.lang.reflect.Method;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * 增强MigrationRule类的parse方法
  *
  * @author provenceee
- * @date 2022年1月26日
+ * @since 2022年1月26日
  */
-public class MigrationRuleInterceptor implements StaticMethodInterceptor {
-    private static final Logger LOGGER = LogFactory.getLogger();
-
+public class MigrationRuleInterceptor extends AbstractInterceptor {
     @Override
-    public void before(Class<?> clazz, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
-        if (Constant.SC_INIT_MIGRATION_RULE.equals(arguments[0])) {
+    public ExecuteContext before(ExecuteContext context) {
+        if (Constant.SC_INIT_MIGRATION_RULE.equals(context.getArguments()[0])) {
             // 2.7.10-2.7.15，如果规则为scInit，则把MigrationRule设置为FORCE_INTERFACE，以屏蔽sc应用级注册
             MigrationRule migrationRule = new MigrationRule();
             migrationRule.setStep(MigrationStep.FORCE_INTERFACE);
-            beforeResult.setResult(migrationRule);
+            context.skip(migrationRule);
         }
+        return context;
     }
 
     @Override
-    public Object after(Class<?> clazz, Method method, Object[] arguments, Object result) throws Exception {
-        return result;
-    }
-
-    @Override
-    public void onThrow(Class<?> clazz, Method method, Object[] arguments, Throwable throwable) {
-        LOGGER.log(Level.SEVERE, "MigrationRule is error!", throwable);
+    public ExecuteContext after(ExecuteContext context) {
+        return context;
     }
 }

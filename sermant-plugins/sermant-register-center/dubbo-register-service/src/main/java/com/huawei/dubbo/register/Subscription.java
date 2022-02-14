@@ -20,7 +20,7 @@ package com.huawei.dubbo.register;
  * 发现下游服务新增实例的实体
  *
  * @author provenceee
- * @date 2021/12/15
+ * @since 2021/12/15
  */
 public class Subscription {
     private final Object url;

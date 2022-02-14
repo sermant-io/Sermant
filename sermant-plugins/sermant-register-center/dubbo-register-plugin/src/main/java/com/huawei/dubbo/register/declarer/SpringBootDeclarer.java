@@ -14,36 +14,37 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.definition;
+package com.huawei.dubbo.register.declarer;
 
-import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
-import com.huawei.sermant.core.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.agent.matcher.ClassMatchers;
+import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
  * 增强SpringBootApplication类的main方法
  *
  * @author provenceee
- * @date 2022年1月24日
+ * @since 2022年1月24日
  */
-public class SpringBootDefinition extends AbstractDefinition {
-    private static final String ENHANCE_CLASS = "org.springframework.boot.autoconfigure.SpringBootApplication";
+public class SpringBootDeclarer extends AbstractDeclarer {
+    private static final String[] ENHANCE_CLASS = {"org.springframework.boot.autoconfigure.SpringBootApplication"};
 
     private static final String INTERCEPT_CLASS = "com.huawei.dubbo.register.interceptor.SpringBootInterceptor";
 
     private static final String METHOD_NAME = "main";
 
-    public SpringBootDefinition() {
-        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
+    public SpringBootDeclarer() {
+        super(ENHANCE_CLASS);
     }
 
     @Override
-    public ClassMatcher enhanceClass() {
-        return ClassMatchers.annotationWith(ENHANCE_CLASS);
+    public ClassMatcher getClassMatcher() {
+        return ClassMatcher.isAnnotatedWith(ENHANCE_CLASS);
     }
 
     @Override
-    public MethodInterceptPoint[] getMethodInterceptPoints() {
-        return getStaticMethodInterceptPoint();
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+            InterceptDeclarer.build(getStaticMethod(METHOD_NAME), INTERCEPT_CLASS)
+        };
     }
 }

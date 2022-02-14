@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +14,33 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.definition;
+package com.huawei.dubbo.register.declarer;
 
-import com.huawei.sermant.core.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.agent.matcher.ClassMatchers;
+import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * ApplicationConfig增强类
  *
  * @author provenceee
- * @date 2021/11/24
+ * @since 2021/11/24
  */
-public class ApplicationConfigDefinition extends AbstractDefinition {
+public class ApplicationConfigDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.ApplicationConfig",
-            "com.alibaba.dubbo.config.ApplicationConfig"};
+        "com.alibaba.dubbo.config.ApplicationConfig"};
 
     private static final String INTERCEPT_CLASS = "com.huawei.dubbo.register.interceptor.ApplicationConfigInterceptor";
 
     private static final String METHOD_NAME = "setName";
 
-    public ApplicationConfigDefinition() {
-        super(null, INTERCEPT_CLASS, METHOD_NAME);
+    public ApplicationConfigDeclarer() {
+        super(ENHANCE_CLASS);
     }
 
     @Override
-    public ClassMatcher enhanceClass() {
-        return ClassMatchers.multiClass(ENHANCE_CLASS);
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME), INTERCEPT_CLASS)
+        };
     }
 }

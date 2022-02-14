@@ -17,10 +17,10 @@
 package com.huawei.dubbo.register.service;
 
 import com.huawei.dubbo.register.constants.Constant;
+import com.huawei.dubbo.register.utils.CollectionUtils;
 import com.huawei.dubbo.register.utils.ReflectUtils;
 import com.huawei.register.config.RegisterConfig;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.util.CollectionUtils;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import java.util.List;
  * 注册配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
  *
  * @author provenceee
- * @date 2021/12/31
+ * @since 2021/12/31
  */
 public class RegistryConfigServiceImpl implements RegistryConfigService {
     private static final String DUBBO_REGISTRIES_CONFIG_PREFIX = "dubbo.registries.";
@@ -65,6 +65,7 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
         registries.add(registryConfig);
     }
 
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     private boolean isInValid(List<?> registries) {
         // 是否所有的配置都是无效的
         boolean allRegistriesAreInvalid = true;
@@ -76,11 +77,12 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
                 allRegistriesAreInvalid = false;
             }
             if (Constant.SC_REGISTRY_PROTOCOL.equals(ReflectUtils.getId(registry))
-                    || Constant.SC_REGISTRY_PROTOCOL.equals(ReflectUtils.getProtocol(registry))) {
+                || Constant.SC_REGISTRY_PROTOCOL.equals(ReflectUtils.getProtocol(registry))) {
                 // 如果存在sc的配置，直接return，不注册到sc
                 return true;
             }
         }
+
         // 如果所有的配置都是无效的，则为无效配置，不注册到sc
         return allRegistriesAreInvalid;
     }

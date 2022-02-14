@@ -22,7 +22,7 @@ import com.huawei.sermant.core.plugin.service.PluginService;
  * 接口配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
  *
  * @author provenceee
- * @date 2021/12/15
+ * @since 2021/12/15
  */
 public interface RegistryConfigService extends PluginService {
     /**

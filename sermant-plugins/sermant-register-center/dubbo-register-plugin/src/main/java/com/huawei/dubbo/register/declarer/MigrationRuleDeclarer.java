@@ -14,29 +14,31 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.definition;
+package com.huawei.dubbo.register.declarer;
 
-import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
+import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 
 /**
  * 增强MigrationRule类的parse方法
  *
  * @author provenceee
- * @date 2022年1月26日
+ * @since 2022年1月26日
  */
-public class MigrationRuleDefinition extends AbstractDefinition {
-    private static final String ENHANCE_CLASS = "org.apache.dubbo.rpc.cluster.support.migration.MigrationRule";
+public class MigrationRuleDeclarer extends AbstractDeclarer {
+    private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.rpc.cluster.support.migration.MigrationRule"};
 
     private static final String INTERCEPT_CLASS = "com.huawei.dubbo.register.interceptor.MigrationRuleInterceptor";
 
     private static final String METHOD_NAME = "parse";
 
-    public MigrationRuleDefinition() {
-        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
+    public MigrationRuleDeclarer() {
+        super(ENHANCE_CLASS);
     }
 
     @Override
-    public MethodInterceptPoint[] getMethodInterceptPoints() {
-        return getStaticMethodInterceptPoint();
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+            InterceptDeclarer.build(getStaticMethod(METHOD_NAME), INTERCEPT_CLASS)
+        };
     }
 }

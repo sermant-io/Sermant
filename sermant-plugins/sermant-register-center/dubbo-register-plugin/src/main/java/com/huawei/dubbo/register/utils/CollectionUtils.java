@@ -14,23 +14,38 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.service;
+package com.huawei.dubbo.register.utils;
 
-import com.huawei.sermant.core.plugin.service.PluginService;
+import java.util.Collection;
+import java.util.Map;
 
 /**
- * 接口配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
+ * 集合工具类
  *
  * @author provenceee
- * @since 2021/12/15
+ * @since 2021/11/3
  */
-public interface ApplicationConfigService extends PluginService {
+public class CollectionUtils {
+    private CollectionUtils() {
+    }
+
     /**
-     * 获取dubbo服务名
+     * 是否为空
      *
-     * @param obj 增强的类
-     * @see com.alibaba.dubbo.config.ApplicationConfig
-     * @see org.apache.dubbo.config.ApplicationConfig
+     * @param collection 集合
+     * @return 是否为空
      */
-    void getName(Object obj);
+    public static boolean isEmpty(Collection<?> collection) {
+        return collection == null || collection.isEmpty();
+    }
+
+    /**
+     * 是否为空
+     *
+     * @param map map
+     * @return 是否为空
+     */
+    public static boolean isEmpty(Map<?, ?> map) {
+        return map == null || map.isEmpty();
+    }
 }

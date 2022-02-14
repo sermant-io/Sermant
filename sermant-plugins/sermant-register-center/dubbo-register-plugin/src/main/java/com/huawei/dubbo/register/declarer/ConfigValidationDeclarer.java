@@ -14,29 +14,31 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.definition;
+package com.huawei.dubbo.register.declarer;
 
-import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
+import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 
 /**
  * 增强ConfigValidationUtils类的extractRegistryType方法
  *
  * @author provenceee
- * @date 2022年1月27日
+ * @since 2022年1月27日
  */
-public class ConfigValidationDefinition extends AbstractDefinition {
-    private static final String ENHANCE_CLASS = "org.apache.dubbo.config.utils.ConfigValidationUtils";
+public class ConfigValidationDeclarer extends AbstractDeclarer {
+    private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.utils.ConfigValidationUtils"};
 
     private static final String INTERCEPT_CLASS = "com.huawei.dubbo.register.interceptor.ConfigValidationInterceptor";
 
     private static final String METHOD_NAME = "extractRegistryType";
 
-    public ConfigValidationDefinition() {
-        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
+    public ConfigValidationDeclarer() {
+        super(ENHANCE_CLASS);
     }
 
     @Override
-    public MethodInterceptPoint[] getMethodInterceptPoints() {
-        return getStaticMethodInterceptPoint();
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+            InterceptDeclarer.build(getStaticMethod(METHOD_NAME), INTERCEPT_CLASS)
+        };
     }
 }

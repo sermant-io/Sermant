@@ -17,24 +17,17 @@
 package com.huawei.dubbo.register.interceptor;
 
 import com.huawei.dubbo.register.service.RegistryService;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.StaticMethodInterceptor;
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huawei.sermant.core.service.ServiceManager;
-
-import java.lang.reflect.Method;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * 增强SpringBootApplication类的main方法
  *
  * @author provenceee
- * @date 2022年1月24日
+ * @since 2022年1月24日
  */
-public class SpringBootInterceptor implements StaticMethodInterceptor {
-    private static final Logger LOGGER = LogFactory.getLogger();
-
+public class SpringBootInterceptor extends AbstractInterceptor {
     private final RegistryService registryService;
 
     public SpringBootInterceptor() {
@@ -42,17 +35,13 @@ public class SpringBootInterceptor implements StaticMethodInterceptor {
     }
 
     @Override
-    public void before(Class<?> clazz, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
+    public ExecuteContext before(ExecuteContext context) {
+        return context;
     }
 
     @Override
-    public Object after(Class<?> clazz, Method method, Object[] arguments, Object result) throws Exception {
+    public ExecuteContext after(ExecuteContext context) {
         registryService.startRegistration();
-        return result;
-    }
-
-    @Override
-    public void onThrow(Class<?> clazz, Method method, Object[] arguments, Throwable throwable) {
-        LOGGER.log(Level.SEVERE, "SpringBootApplication is error!", throwable);
+        return context;
     }
 }

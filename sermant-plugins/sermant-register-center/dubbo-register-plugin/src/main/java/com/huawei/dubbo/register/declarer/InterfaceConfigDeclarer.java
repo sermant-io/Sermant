@@ -14,32 +14,34 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.definition;
+package com.huawei.dubbo.register.declarer;
 
-import com.huawei.sermant.core.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.agent.matcher.ClassMatchers;
+import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * AbstractInterfaceConfig增强类
  *
  * @author provenceee
- * @date 2021/11/24
+ * @since 2021/11/24
  */
-public class InterfaceConfigDefinition extends AbstractDefinition {
+public class InterfaceConfigDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.AbstractInterfaceConfig",
-            "com.alibaba.dubbo.config.AbstractInterfaceConfig"};
+        "com.alibaba.dubbo.config.AbstractInterfaceConfig"};
 
     private static final String INTERCEPT_CLASS = "com.huawei.dubbo.register.interceptor.InterfaceConfigInterceptor";
 
     // 增强loadRegistriesFromBackwardConfig方法是为了兼容2.7.0-2.7.4.1，其它版本主要是增强setRegistries方法
     private static final String[] METHOD_NAME = {"setRegistries", "loadRegistriesFromBackwardConfig"};
 
-    public InterfaceConfigDefinition() {
-        super(null, INTERCEPT_CLASS, METHOD_NAME);
+    public InterfaceConfigDeclarer() {
+        super(ENHANCE_CLASS);
     }
 
     @Override
-    public ClassMatcher enhanceClass() {
-        return ClassMatchers.multiClass(ENHANCE_CLASS);
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+            InterceptDeclarer.build(MethodMatcher.nameContains(METHOD_NAME), INTERCEPT_CLASS)
+        };
     }
 }

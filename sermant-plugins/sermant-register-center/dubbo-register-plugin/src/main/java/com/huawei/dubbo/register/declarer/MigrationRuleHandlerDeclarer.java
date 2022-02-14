@@ -14,23 +14,33 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.definition;
+package com.huawei.dubbo.register.declarer;
+
+import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * MigrationRuleHandler增强类
  *
  * @author provenceee
- * @date 2022/1/26
+ * @since 2022/1/26
  */
-public class MigrationRuleHandlerDefinition extends AbstractDefinition {
-    private static final String ENHANCE_CLASS = "org.apache.dubbo.registry.client.migration.MigrationRuleHandler";
+public class MigrationRuleHandlerDeclarer extends AbstractDeclarer {
+    private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.registry.client.migration.MigrationRuleHandler"};
 
     private static final String INTERCEPT_CLASS
-            = "com.huawei.dubbo.register.interceptor.MigrationRuleHandlerInterceptor";
+        = "com.huawei.dubbo.register.interceptor.MigrationRuleHandlerInterceptor";
 
     private static final String METHOD_NAME = "doMigrate";
 
-    public MigrationRuleHandlerDefinition() {
-        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
+    public MigrationRuleHandlerDeclarer() {
+        super(ENHANCE_CLASS);
+    }
+
+    @Override
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME), INTERCEPT_CLASS)
+        };
     }
 }

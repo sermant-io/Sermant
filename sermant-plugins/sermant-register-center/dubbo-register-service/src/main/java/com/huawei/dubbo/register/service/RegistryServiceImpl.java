@@ -25,10 +25,10 @@ import com.huawei.dubbo.register.utils.ReflectUtils;
 import com.huawei.register.config.RegisterConfig;
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
-import com.huawei.sermant.core.plugin.PluginManager;
 import com.huawei.sermant.core.plugin.common.PluginConstant;
+import com.huawei.sermant.core.plugin.common.PluginSchemaValidator;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.util.JarFileUtil;
+import com.huawei.sermant.core.utils.JarFileUtils;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -78,14 +78,16 @@ import java.util.stream.Collectors;
  * 注册服务类，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
  *
  * @author provenceee
- * @date 2021/12/15
+ * @since 2021/12/15
  */
+@SuppressWarnings({"checkstyle:RegexpSingleline", "checkstyle:RegexpMultiline"})
 public class RegistryServiceImpl implements RegistryService {
     private static final Logger LOGGER = LogFactory.getLogger();
     private static final EventBus EVENT_BUS = new EventBus();
     private static final Map<String, Microservice> INTERFACE_MAP = new ConcurrentHashMap<>();
     private static final Map<SubscriptionKey, Object> SUBSCRIPTIONS = new ConcurrentHashMap<>();
     private static final CountDownLatch FIRST_REGISTRATION_WAITER = new CountDownLatch(1);
+    private static final int REGISTRATION_WAITE_TIME = 30;
     private static final List<Subscription> PENDING_SUBSCRIBE_EVENT = new CopyOnWriteArrayList<>();
     private static final AtomicBoolean SHUTDOWN = new AtomicBoolean();
     private static final String FRAMEWORK_NAME = "sermant";
@@ -97,7 +99,7 @@ public class RegistryServiceImpl implements RegistryService {
     private MicroserviceInstance microserviceInstance;
     private ServiceCenterRegistration serviceCenterRegistration;
     private ServiceCenterDiscovery serviceCenterDiscovery;
-    private boolean registrationInProgress = true;
+    private boolean isRegistrationInProgress = true;
     private RegisterConfig config;
 
     @Override
@@ -108,8 +110,8 @@ public class RegistryServiceImpl implements RegistryService {
         }
         config = PluginConfigManager.getPluginConfig(RegisterConfig.class);
         client = new ServiceCenterClient(new AddressManager(config.getProject(), config.getAddressList()),
-                new SSLProperties(), new DefaultRequestAuthHeaderProvider(), DEFAULT_TENANT_NAME,
-                Collections.emptyMap());
+            new SSLProperties(), new DefaultRequestAuthHeaderProvider(), DEFAULT_TENANT_NAME,
+            Collections.emptyMap());
         createMicroservice();
         createMicroserviceInstance();
         createServiceCenterRegistration();
@@ -134,7 +136,7 @@ public class RegistryServiceImpl implements RegistryService {
             return;
         }
         Subscription subscription = new Subscription(url, notifyListener);
-        if (registrationInProgress) {
+        if (isRegistrationInProgress) {
             PENDING_SUBSCRIBE_EVENT.add(subscription);
             return;
         }
@@ -179,7 +181,7 @@ public class RegistryServiceImpl implements RegistryService {
     @Subscribe
     public void onHeartBeatEvent(HeartBeatEvent event) {
         if (event.isSuccess()) {
-            registrationInProgress = false;
+            isRegistrationInProgress = false;
             processPendingEvent();
         }
     }
@@ -191,7 +193,7 @@ public class RegistryServiceImpl implements RegistryService {
      */
     @Subscribe
     public void onMicroserviceRegistrationEvent(MicroserviceRegistrationEvent event) {
-        registrationInProgress = true;
+        isRegistrationInProgress = true;
         if (event.isSuccess()) {
             if (serviceCenterDiscovery == null) {
                 serviceCenterDiscovery = new ServiceCenterDiscovery(client, EVENT_BUS);
@@ -211,7 +213,7 @@ public class RegistryServiceImpl implements RegistryService {
      */
     @Subscribe
     public void onMicroserviceInstanceRegistrationEvent(MicroserviceInstanceRegistrationEvent event) {
-        registrationInProgress = true;
+        isRegistrationInProgress = true;
         if (event.isSuccess()) {
             updateInterfaceMap();
             FIRST_REGISTRATION_WAITER.countDown();
@@ -242,8 +244,8 @@ public class RegistryServiceImpl implements RegistryService {
 
     private String getVersion() {
         try (JarFile jarFile = new JarFile(getClass().getProtectionDomain().getCodeSource().getLocation().getPath())) {
-            String pluginName = (String) JarFileUtil.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
-            return PluginManager.getPluginVersionMap().get(pluginName);
+            String pluginName = (String) JarFileUtils.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
+            return PluginSchemaValidator.getPluginVersionMap().get(pluginName);
         } catch (IOException e) {
             LOGGER.warning("Cannot not get the version.");
             return "";
@@ -252,7 +254,7 @@ public class RegistryServiceImpl implements RegistryService {
 
     private List<String> getSchemas() {
         return registryUrls.stream().map(ReflectUtils::getPath).filter(StringUtils::isNotBlank).distinct()
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
     }
 
     private void createMicroserviceInstance() {
@@ -277,7 +279,7 @@ public class RegistryServiceImpl implements RegistryService {
 
     private List<String> getEndpoints() {
         return registryUrls.stream().map(this::getUrl).filter(StringUtils::isNotBlank).distinct()
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
     }
 
     private String getUrl(Object url) {
@@ -338,7 +340,7 @@ public class RegistryServiceImpl implements RegistryService {
 
     private void waitRegistrationDone() {
         try {
-            FIRST_REGISTRATION_WAITER.await(30, TimeUnit.SECONDS);
+            FIRST_REGISTRATION_WAITER.await(REGISTRATION_WAITE_TIME, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             LOGGER.log(Level.WARNING, "registration is not finished in 30 seconds.");
         }
@@ -395,7 +397,7 @@ public class RegistryServiceImpl implements RegistryService {
                     return;
                 }
                 urlMap.computeIfAbsent(ReflectUtils.getPath(newUrl), value -> new ArrayList<>())
-                        .add(ReflectUtils.setAddress(newUrl, ReflectUtils.getAddress(url)));
+                    .add(ReflectUtils.setAddress(newUrl, ReflectUtils.getAddress(url)));
             });
         });
     }

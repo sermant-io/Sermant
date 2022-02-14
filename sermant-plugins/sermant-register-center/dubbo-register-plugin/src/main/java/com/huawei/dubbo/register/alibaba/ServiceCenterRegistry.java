@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.alibaba.dubbo.registry.support.FailbackRegistry;
  * sc注册
  *
  * @author provenceee
- * @date 2021/12/15
+ * @since 2021/12/15
  */
 public class ServiceCenterRegistry extends FailbackRegistry {
     private final RegistryService registryService;

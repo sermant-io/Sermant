@@ -14,33 +14,37 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.definition;
+package com.huawei.dubbo.register.declarer;
 
-import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.matcher.ElementMatcher.Junction;
+import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
+
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * InterfaceCompatibleRegistryProtocol增强类
  *
  * @author provenceee
- * @date 2022/1/26
+ * @since 2022/1/26
  */
-public class RegistryProtocolDefinition extends AbstractDefinition {
-    private static final String ENHANCE_CLASS
-            = "org.apache.dubbo.registry.integration.InterfaceCompatibleRegistryProtocol";
+public class RegistryProtocolDeclarer extends AbstractDeclarer {
+    private static final String[] ENHANCE_CLASS
+        = {"org.apache.dubbo.registry.integration.InterfaceCompatibleRegistryProtocol"};
 
     private static final String INTERCEPT_CLASS = "com.huawei.dubbo.register.interceptor.RegistryProtocolInterceptor";
 
     private static final String METHOD_NAME = "getServiceDiscoveryInvoker";
 
-    public RegistryProtocolDefinition() {
-        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
+    public RegistryProtocolDeclarer() {
+        super(ENHANCE_CLASS);
     }
 
     @Override
-    public Junction<MethodDescription> getMethodElementMatcher() {
-        // 这个方法在2.7.9中是protected，2.7.9以上的版本为public，所以isProtected是为了只拦截2.7.9的版本
-        return super.getMethodElementMatcher().and(ElementMatchers.isProtected());
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+            // 这个方法在2.7.9中是protected，2.7.9以上的版本为public，所以isProtected是为了只拦截2.7.9的版本
+            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME).and(ElementMatchers.isProtected()),
+                INTERCEPT_CLASS)
+        };
     }
 }

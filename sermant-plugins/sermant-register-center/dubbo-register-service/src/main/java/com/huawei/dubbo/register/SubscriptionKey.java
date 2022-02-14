@@ -22,7 +22,7 @@ import java.util.Objects;
  * 订阅数据的key
  *
  * @author provenceee
- * @date 2021/12/23
+ * @since 2021/12/23
  */
 public class SubscriptionKey {
     private final String appId;
@@ -50,7 +50,7 @@ public class SubscriptionKey {
         if (obj != null && getClass() == obj.getClass()) {
             SubscriptionKey that = (SubscriptionKey) obj;
             return Objects.equals(appId, that.appId) && Objects.equals(serviceName, that.serviceName)
-                    && Objects.equals(interfaceName, that.interfaceName);
+                && Objects.equals(interfaceName, that.interfaceName);
         }
         return false;
     }

@@ -17,14 +17,9 @@
 package com.huawei.dubbo.register.interceptor;
 
 import com.huawei.dubbo.register.service.RegistryConfigService;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huawei.sermant.core.service.ServiceManager;
-
-import java.lang.reflect.Method;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * 增强AbstractInterfaceConfig类的setRegistries/loadRegistriesFromBackwardConfig方法
@@ -32,9 +27,7 @@ import java.util.logging.Logger;
  * @author provenceee
  * @since 2021年11月8日
  */
-public class InterfaceConfigInterceptor implements InstanceMethodInterceptor {
-    private static final Logger LOGGER = LogFactory.getLogger();
-
+public class InterfaceConfigInterceptor extends AbstractInterceptor {
     private final RegistryConfigService registryConfigService;
 
     public InterfaceConfigInterceptor() {
@@ -42,17 +35,13 @@ public class InterfaceConfigInterceptor implements InstanceMethodInterceptor {
     }
 
     @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
+    public ExecuteContext before(ExecuteContext context) {
+        return context;
     }
 
     @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) {
-        registryConfigService.addRegistryConfig(obj);
-        return result;
-    }
-
-    @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable throwable) {
-        LOGGER.log(Level.SEVERE, "AbstractInterfaceConfig is error!", throwable);
+    public ExecuteContext after(ExecuteContext context) {
+        registryConfigService.addRegistryConfig(context.getObject());
+        return context;
     }
 }

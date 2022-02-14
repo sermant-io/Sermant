@@ -15,8 +15,8 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dubbo.version>2.7.10</dubbo.version>
-        <alibaba.dubbo.version>2.6.1</alibaba.dubbo.version>
+        <dubbo.version>2.7.15</dubbo.version>
+        <alibaba.dubbo.version>2.6.12</alibaba.dubbo.version>
         <package.plugin.type>plugin</package.plugin.type>
         <config.skip.flag>false</config.skip.flag>
     </properties>
@@ -38,6 +38,11 @@
             <artifactId>dubbo-config-api</artifactId>
             <version>${alibaba.dubbo.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -19,9 +19,12 @@ package com.huawei.dubbo.register.utils;
 import com.huawei.dubbo.register.cache.DubboCache;
 import com.huawei.dubbo.register.constants.Constant;
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.utils.ClassLoaderUtils;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -31,12 +34,12 @@ import java.util.logging.Logger;
  * 反射工具类，为了同时兼容alibaba和apache dubbo，所以需要用反射的方法进行类的操作
  *
  * @author provenceee
- * @date 2022/2/7
+ * @since 2022/2/7
  */
 public class ReflectUtils {
     private static final Logger LOGGER = LogFactory.getLogger();
     private static final String SC_REGISTRY_ADDRESS =
-            Constant.SC_REGISTRY_PROTOCOL + Constant.PROTOCOL_SEPARATION + "127.0.0.1:30100";
+        Constant.SC_REGISTRY_PROTOCOL + Constant.PROTOCOL_SEPARATION + "127.0.0.1:30100";
     private static final String GET_PROTOCOL_METHOD_NAME = "getProtocol";
     private static final String GET_ADDRESS_METHOD_NAME = "getAddress";
     private static final String GET_PATH_METHOD_NAME = "getPath";
@@ -44,6 +47,7 @@ public class ReflectUtils {
     private static final String GET_NAME_METHOD_NAME = "getName";
     private static final String GET_PARAMETERS_METHOD_NAME = "getParameters";
     private static final String GET_REGISTRIES_METHOD_NAME = "getRegistries";
+    private static final String GET_EXTENSION_CLASSES_METHOD_NAME = "getExtensionClasses";
     private static final String IS_VALID_METHOD_NAME = "isValid";
     private static final String SET_HOST_METHOD_NAME = "setHost";
     private static final String SET_ADDRESS_METHOD_NAME = "setAddress";
@@ -52,6 +56,30 @@ public class ReflectUtils {
     private static final String SET_PARAMETERS_METHOD_NAME = "setParameters";
     private static final String NOTIFY_METHOD_NAME = "notify";
     private static final String VALUE_OF_METHOD_NAME = "valueOf";
+
+    private ReflectUtils() {
+    }
+
+    /**
+     * 加载宿主类
+     *
+     * @param className 宿主全限定类名
+     * @return 宿主类
+     */
+    public static Class<?> defineClass(String className) {
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            return ClassLoaderUtils.defineClass(className, contextClassLoader,
+                ClassLoaderUtils.getClassResource(ClassLoader.getSystemClassLoader(), className));
+        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | IOException e) {
+            // 有可能已经加载过了，直接用contextClassLoader.loadClass加载
+            try {
+                return contextClassLoader.loadClass(className);
+            } catch (ClassNotFoundException ex) {
+                return null;
+            }
+        }
+    }
 
     /**
      * 新建注册配置
@@ -65,9 +93,11 @@ public class ReflectUtils {
     public static <T> T newRegistryConfig(Class<T> clazz) {
         try {
             Constructor<T> constructor = clazz.getConstructor(String.class);
+
             // 这个url不重要，重要的是protocol，所以设置成127.0.0.1:30100就行
             return constructor.newInstance(SC_REGISTRY_ADDRESS);
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
+            | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, "Cannot new the registryConfig.", e);
             return null;
         }
@@ -144,7 +174,7 @@ public class ReflectUtils {
      * @see org.apache.dubbo.config.ApplicationConfig
      */
     public static Map<String, String> getParameters(Object obj) {
-        return invokeWithNoneParameter(obj, GET_PARAMETERS_METHOD_NAME, Map.class);
+        return invokeWithNoneParameter(obj, GET_PARAMETERS_METHOD_NAME, Map.class, true);
     }
 
     /**
@@ -156,7 +186,19 @@ public class ReflectUtils {
      * @see org.apache.dubbo.config.AbstractInterfaceConfig
      */
     public static List<Object> getRegistries(Object obj) {
-        return invokeWithNoneParameter(obj, GET_REGISTRIES_METHOD_NAME, List.class);
+        return invokeWithNoneParameter(obj, GET_REGISTRIES_METHOD_NAME, List.class, true);
+    }
+
+    /**
+     * 获取dubbo spi缓存类
+     *
+     * @param obj ExtensionLoader
+     * @return 缓存列表
+     * @see com.alibaba.dubbo.common.extension.ExtensionLoader
+     * @see org.apache.dubbo.common.extension.ExtensionLoader
+     */
+    public static Map<String, Class<?>> getExtensionClasses(Object obj) {
+        return invokeWithNoneParameter(obj, GET_EXTENSION_CLASSES_METHOD_NAME, Map.class, false);
     }
 
     /**
@@ -167,8 +209,9 @@ public class ReflectUtils {
      * @see com.alibaba.dubbo.config.RegistryConfig
      * @see org.apache.dubbo.config.RegistryConfig
      */
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static boolean isValid(Object obj) {
-        Boolean isValid = invokeWithNoneParameter(obj, IS_VALID_METHOD_NAME, Boolean.class);
+        Boolean isValid = invokeWithNoneParameter(obj, IS_VALID_METHOD_NAME, Boolean.class, true);
         if (isValid == null) {
             // 为null代表没有这个方法，返回true
             return true;
@@ -261,15 +304,18 @@ public class ReflectUtils {
      * @see org.apache.dubbo.common.URL
      */
     public static Object valueOf(String address) {
-        return invoke(DubboCache.INSTANCE.getUrlClass(), null, VALUE_OF_METHOD_NAME, address, String.class);
+        return invoke(new InvokeParameter(DubboCache.INSTANCE.getUrlClass(), null, VALUE_OF_METHOD_NAME, address,
+            String.class));
     }
 
     private static String invokeWithNoneParameterAndReturnString(Object obj, String name) {
-        return invokeWithNoneParameter(obj, name, String.class);
+        return invokeWithNoneParameter(obj, name, String.class, true);
     }
 
-    private static <T> T invokeWithNoneParameter(Object obj, String name, Class<T> returnClass) {
-        return returnClass.cast(invoke(obj.getClass(), obj, name, null, null));
+    private static <T> T invokeWithNoneParameter(Object obj, String name, Class<T> returnClass, boolean isPublic) {
+        InvokeParameter invokeParameter = new InvokeParameter(obj.getClass(), obj, name, null, null);
+        invokeParameter.isPublic = isPublic;
+        return returnClass.cast(invoke(invokeParameter));
     }
 
     private static Object invokeWithStringParameter(Object obj, String name, String parameter) {
@@ -277,19 +323,63 @@ public class ReflectUtils {
     }
 
     private static Object invokeWithParameter(Object obj, String name, Object parameter, Class<?> parameterClass) {
-        return invoke(obj.getClass(), obj, name, parameter, parameterClass);
+        return invoke(new InvokeParameter(obj.getClass(), obj, name, parameter, parameterClass));
     }
 
-    private static Object invoke(Class<?> invokeClass, Object obj, String name, Object parameter,
-            Class<?> parameterClass) {
+    private static Object invoke(InvokeParameter parameter) {
         try {
-            if (parameter == null || parameterClass == null) {
-                return invokeClass.getMethod(name).invoke(obj);
+            Method method = getMethod(parameter.invokeClass, parameter.name, parameter.parameterClass,
+                parameter.isPublic);
+            if (parameter.parameter == null) {
+                return method.invoke(parameter.obj);
             }
-            return invokeClass.getMethod(name, parameterClass).invoke(obj, parameter);
+            return method.invoke(parameter.obj, parameter.parameter);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             // 因版本的原因，有可能会找不到方法，所以可以忽略这些错误
             return null;
+        }
+    }
+
+    @SuppressWarnings("checkstyle:RegexpSingleline")
+    private static Method getMethod(Class<?> invokeClass, String name, Class<?> parameterClass, boolean isPublic)
+        throws NoSuchMethodException {
+        boolean hasParameter = parameterClass != null;
+        if (hasParameter && isPublic) {
+            // 有参公共方法
+            return invokeClass.getMethod(name, parameterClass);
+        }
+        if (hasParameter) {
+            // 有参非公共方法
+            Method method = invokeClass.getDeclaredMethod(name, parameterClass);
+            method.setAccessible(true);
+            return method;
+        }
+        if (isPublic) {
+            // 无参公共方法
+            return invokeClass.getMethod(name);
+        }
+
+        // 无参非公共方法
+        Method method = invokeClass.getDeclaredMethod(name);
+        method.setAccessible(true);
+        return method;
+    }
+
+    private static class InvokeParameter {
+        Class<?> invokeClass;
+        Object obj;
+        String name;
+        Object parameter;
+        Class<?> parameterClass;
+        boolean isPublic;
+
+        InvokeParameter(Class<?> invokeClass, Object obj, String name, Object parameter, Class<?> parameterClass) {
+            this.invokeClass = invokeClass;
+            this.obj = obj;
+            this.name = name;
+            this.parameter = parameter;
+            this.parameterClass = parameterClass;
+            this.isPublic = true;
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,9 @@
 package com.huawei.dubbo.register.interceptor;
 
 import com.huawei.dubbo.register.service.ApplicationConfigService;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huawei.sermant.core.service.ServiceManager;
-
-import java.lang.reflect.Method;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * 增强ApplicationConfig类的setName方法
@@ -32,9 +27,7 @@ import java.util.logging.Logger;
  * @author provenceee
  * @since 2021年11月8日
  */
-public class ApplicationConfigInterceptor implements InstanceMethodInterceptor {
-    private static final Logger LOGGER = LogFactory.getLogger();
-
+public class ApplicationConfigInterceptor extends AbstractInterceptor {
     private final ApplicationConfigService applicationConfigService;
 
     public ApplicationConfigInterceptor() {
@@ -42,17 +35,13 @@ public class ApplicationConfigInterceptor implements InstanceMethodInterceptor {
     }
 
     @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
+    public ExecuteContext before(ExecuteContext context) {
+        return context;
     }
 
     @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) {
-        applicationConfigService.getName(obj);
-        return result;
-    }
-
-    @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable throwable) {
-        LOGGER.log(Level.SEVERE, "ApplicationConfig is error!", throwable);
+    public ExecuteContext after(ExecuteContext context) {
+        applicationConfigService.getName(context.getObject());
+        return context;
     }
 }

@@ -17,15 +17,14 @@
 package com.huawei.dubbo.register.interceptor;
 
 import com.huawei.dubbo.register.constants.Constant;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 import org.apache.dubbo.registry.client.migration.MigrationInvoker;
 import org.apache.dubbo.registry.client.migration.MigrationRuleHandler;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,42 +32,40 @@ import java.util.logging.Logger;
  * 增强MigrationRuleHandler类的doMigrate方法
  *
  * @author provenceee
- * @date 2022/1/26
+ * @since 2022/1/26
  */
-public class MigrationRuleHandlerInterceptor implements InstanceMethodInterceptor {
+public class MigrationRuleHandlerInterceptor extends AbstractInterceptor {
     private static final Logger LOGGER = LogFactory.getLogger();
 
     private static final String MIGRATION_INVOKER_FIELD_NAME = "migrationInvoker";
 
     @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
-        if (obj instanceof MigrationRuleHandler<?>) {
-            MigrationRuleHandler<?> handler = (MigrationRuleHandler<?>) obj;
+    public ExecuteContext before(ExecuteContext context) {
+        if (context.getObject() instanceof MigrationRuleHandler<?>) {
+            MigrationRuleHandler<?> handler = (MigrationRuleHandler<?>) context.getObject();
             MigrationInvoker<?> migrationInvoker;
             try {
                 Field field = handler.getClass().getDeclaredField(MIGRATION_INVOKER_FIELD_NAME);
                 field.setAccessible(true);
                 migrationInvoker = (MigrationInvoker<?>) field.get(handler);
-            } catch (Exception e) {
+            } catch (NoSuchFieldException | IllegalAccessException e) {
                 LOGGER.log(Level.SEVERE, "Cannot get the migrationInvoker.");
-                return;
+                return context;
             }
+
             // 只拦截sc协议的
             if (!Constant.SC_REGISTRY_PROTOCOL.equals(migrationInvoker.getRegistryUrl().getProtocol())) {
-                return;
+                return context;
             }
+
             // sc MigrationRule的标记，适用2.7.10-2.7.15
-            arguments[0] = Constant.SC_INIT_MIGRATION_RULE;
+            context.getArguments()[0] = Constant.SC_INIT_MIGRATION_RULE;
         }
+        return context;
     }
 
     @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) {
-        return result;
-    }
-
-    @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable throwable) {
-        LOGGER.log(Level.SEVERE, "MigrationRuleHandler is error!", throwable);
+    public ExecuteContext after(ExecuteContext context) {
+        return context;
     }
 }

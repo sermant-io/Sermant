@@ -29,7 +29,7 @@ import java.util.Map;
  * 应用配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
  *
  * @author provenceee
- * @date 2021/12/31
+ * @since 2021/12/31
  */
 public class ApplicationConfigServiceImpl implements ApplicationConfigService {
     private static final String GRAY_VERSION_KEY = "gray.version";
@@ -57,6 +57,7 @@ public class ApplicationConfigServiceImpl implements ApplicationConfigService {
             return;
         }
         DubboCache.INSTANCE.setServiceName(name);
+
         // 灰度插件的版本号优先设置为注册时的版本号
         Map<String, String> versionMap = new HashMap<>();
         versionMap.put(GRAY_VERSION_KEY, config.getVersion());

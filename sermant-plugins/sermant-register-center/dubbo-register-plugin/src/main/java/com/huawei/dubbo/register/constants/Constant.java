@@ -20,21 +20,24 @@ package com.huawei.dubbo.register.constants;
  * 常量
  *
  * @author provenceee
- * @date 2022/1/27
+ * @since 2022/1/27
  */
-public interface Constant {
+public class Constant {
     /**
      * sc注册协议名
      */
-    String SC_REGISTRY_PROTOCOL = "sc";
+    public static final String SC_REGISTRY_PROTOCOL = "sc";
 
     /**
      * 协议分隔符
      */
-    String PROTOCOL_SEPARATION = "://";
+    public static final String PROTOCOL_SEPARATION = "://";
 
     /**
      * sc初始化迁移规则
      */
-    String SC_INIT_MIGRATION_RULE = "scInit";
+    public static final String SC_INIT_MIGRATION_RULE = "scInit";
+
+    private Constant() {
+    }
 }
