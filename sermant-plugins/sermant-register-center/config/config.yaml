@@ -1,8 +1,4 @@
 servicecomb.service:
-  project: default #命名空间
-  application: default #应用名
-  version: 0.0.0 #版本号
-  environment: development #环境
   address: http://127.0.0.1:30100 #注册中心地址
   heartbeatInterval: 15 #服务实例心跳发送间隔（单位：秒）
   openMigration: false #是否开启迁移功能
