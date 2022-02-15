@@ -20,7 +20,7 @@ As described above, Sermant's Javaagent has two layers of functions.
 
 Sermant's Javaagent widely adopts class isolation technology in order to eliminate the class load conflicts between framework code, plugin code, and application code.
 
-A microservice architecture using Sermant has the following has the following three components, which is depicted in the following diagram.
+A microservice architecture using Sermant has the following three components, which is depicted in the following diagram.
 
 ![pic](docs/binary-docs/sermant-rt-arch.png)
 
@@ -49,7 +49,7 @@ mvn clean package -Dmaven.test.skip -Pbackend
 
 ### Start Sermant
 
-Start **Sermant** backend
+Start **Sermant** backend, **Prepare zookeeper, kafka**.
 
 ```shell
 # Run under Linux
@@ -76,7 +76,13 @@ java -cp sermant-plugins\sermant-example\demo-application\target\demo-applicatio
   -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test ^
   com.huawei.example.demo.DemoApplication
 ```
+Check running status of Sermant
+```
+open http://localhost:8900 in browser
+```
+![pic](docs/binary-docs/backend_sermant_info.png)
 
+#### Please refer to the  [Register Plugin QuickStart](docs/QuickStart.md) for details.
 
 ## More documents to follow
 
@@ -85,7 +91,6 @@ Please refer to the  [Development Guide](docs/README.md)
 ## License
 
 Sermant adopts [Apache 2.0 License.](/LICENSE)
-
 
 ## How to contribute
 

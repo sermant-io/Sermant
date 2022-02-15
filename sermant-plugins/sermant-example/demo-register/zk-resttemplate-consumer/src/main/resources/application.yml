@@ -1,0 +1,5 @@
+server:
+  port: 8005
+spring:
+  application:
+    name: zk-rest-consumer
