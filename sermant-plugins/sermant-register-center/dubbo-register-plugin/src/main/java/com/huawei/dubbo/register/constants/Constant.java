@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.definition;
+package com.huawei.dubbo.register.constants;
 
 /**
- * AbstractInterfaceConfig增强类
+ * 常量
  *
  * @author provenceee
- * @date 2021/11/24
+ * @since 2022/1/27
  */
-public class ApplicationConfigDefinition extends AbstractInstDefinition {
-    private static final String ENHANCE_CLASS = "org.apache.dubbo.config.ApplicationConfig";
+public class Constant {
+    /**
+     * sc注册协议名
+     */
+    public static final String SC_REGISTRY_PROTOCOL = "sc";
 
-    private static final String INTERCEPT_CLASS = "com.huawei.dubbo.register.interceptor.ApplicationConfigInterceptor";
+    /**
+     * 协议分隔符
+     */
+    public static final String PROTOCOL_SEPARATION = "://";
 
-    private static final String METHOD_NAME = "setName";
+    /**
+     * sc初始化迁移规则
+     */
+    public static final String SC_INIT_MIGRATION_RULE = "scInit";
 
-    public ApplicationConfigDefinition() {
-        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
+    private Constant() {
     }
 }

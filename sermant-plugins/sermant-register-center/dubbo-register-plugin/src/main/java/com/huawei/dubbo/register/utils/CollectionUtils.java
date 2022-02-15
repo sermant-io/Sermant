@@ -14,33 +14,38 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register;
+package com.huawei.dubbo.register.utils;
 
-import org.apache.dubbo.common.URL;
-import org.apache.dubbo.registry.NotifyListener;
-
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 
 /**
- * 订阅数据
+ * 集合工具类
  *
  * @author provenceee
- * @date 2021/12/23
+ * @since 2021/11/3
  */
-public class SubscriptionData {
-    private final NotifyListener notifyListener;
-    private final List<URL> urls;
-
-    public SubscriptionData(NotifyListener notifyListener, List<URL> urls) {
-        this.notifyListener = notifyListener;
-        this.urls = urls;
+public class CollectionUtils {
+    private CollectionUtils() {
     }
 
-    public NotifyListener getNotifyListener() {
-        return notifyListener;
+    /**
+     * 是否为空
+     *
+     * @param collection 集合
+     * @return 是否为空
+     */
+    public static boolean isEmpty(Collection<?> collection) {
+        return collection == null || collection.isEmpty();
     }
 
-    public List<URL> getUrls() {
-        return urls;
+    /**
+     * 是否为空
+     *
+     * @param map map
+     * @return 是否为空
+     */
+    public static boolean isEmpty(Map<?, ?> map) {
+        return map == null || map.isEmpty();
     }
 }

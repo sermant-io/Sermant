@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register;
+package com.huawei.dubbo.register.alibaba;
 
 import com.huawei.dubbo.register.service.RegistryService;
 import com.huawei.sermant.core.service.ServiceManager;
 
-import org.apache.dubbo.common.URL;
-import org.apache.dubbo.registry.NotifyListener;
-import org.apache.dubbo.registry.support.FailbackRegistry;
+import com.alibaba.dubbo.registry.NotifyListener;
+import com.alibaba.dubbo.registry.support.FailbackRegistry;
 
 /**
  * sc注册
  *
  * @author provenceee
- * @date 2021/12/15
+ * @since 2021/12/15
  */
 public class ServiceCenterRegistry extends FailbackRegistry {
     private final RegistryService registryService;
@@ -35,30 +34,30 @@ public class ServiceCenterRegistry extends FailbackRegistry {
     /**
      * 构造方法
      *
-     * @param url url
+     * @param url 注册url
      */
-    public ServiceCenterRegistry(URL url) {
+    public ServiceCenterRegistry(com.alibaba.dubbo.common.URL url) {
         super(url);
         registryService = ServiceManager.getService(RegistryService.class);
     }
 
     @Override
-    public void doRegister(URL url) {
+    public void doRegister(com.alibaba.dubbo.common.URL url) {
         registryService.addRegistryUrls(url);
     }
 
     @Override
-    public void doUnregister(URL url) {
+    public void doUnregister(com.alibaba.dubbo.common.URL url) {
         registryService.shutdown();
     }
 
     @Override
-    public void doSubscribe(URL url, NotifyListener notifyListener) {
+    public void doSubscribe(com.alibaba.dubbo.common.URL url, NotifyListener notifyListener) {
         registryService.doSubscribe(url, notifyListener);
     }
 
     @Override
-    public void doUnsubscribe(URL url, NotifyListener notifyListener) {
+    public void doUnsubscribe(com.alibaba.dubbo.common.URL url, NotifyListener notifyListener) {
         registryService.shutdown();
     }
 

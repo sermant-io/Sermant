@@ -16,32 +16,33 @@
 
 package com.huawei.dubbo.register.interceptor;
 
-import com.huawei.dubbo.register.service.RegistryService;
+import com.huawei.dubbo.register.constants.Constant;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import org.apache.dubbo.rpc.cluster.support.migration.MigrationRule;
+import org.apache.dubbo.rpc.cluster.support.migration.MigrationStep;
 
 /**
- * 增强SpringBootApplication类的main方法
+ * 增强MigrationRule类的parse方法
  *
  * @author provenceee
- * @since 2022年1月24日
+ * @since 2022年1月26日
  */
-public class SpringBootInterceptor extends AbstractInterceptor {
-    private final RegistryService registryService;
-
-    public SpringBootInterceptor() {
-        registryService = ServiceManager.getService(RegistryService.class);
-    }
-
+public class MigrationRuleInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) {
+        if (Constant.SC_INIT_MIGRATION_RULE.equals(context.getArguments()[0])) {
+            // 2.7.10-2.7.15，如果规则为scInit，则把MigrationRule设置为FORCE_INTERFACE，以屏蔽sc应用级注册
+            MigrationRule migrationRule = new MigrationRule();
+            migrationRule.setStep(MigrationStep.FORCE_INTERFACE);
+            context.skip(migrationRule);
+        }
         return context;
     }
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        registryService.startRegistration();
         return context;
     }
 }

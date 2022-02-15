@@ -16,32 +16,44 @@
 
 package com.huawei.dubbo.register.interceptor;
 
-import com.huawei.dubbo.register.service.RegistryService;
+import com.huawei.dubbo.register.constants.Constant;
+import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import org.apache.dubbo.common.URL;
+
+import java.util.logging.Logger;
 
 /**
- * 增强SpringBootApplication类的main方法
+ * 增强InterfaceCompatibleRegistryProtocol类的getServiceDiscoveryInvoker方法
  *
  * @author provenceee
- * @since 2022年1月24日
+ * @since 2022/1/26
  */
-public class SpringBootInterceptor extends AbstractInterceptor {
-    private final RegistryService registryService;
+public class RegistryProtocolInterceptor extends AbstractInterceptor {
+    private static final Logger LOGGER = LogFactory.getLogger();
 
-    public SpringBootInterceptor() {
-        registryService = ServiceManager.getService(RegistryService.class);
-    }
-
+    /**
+     * 这个方法是为了让2.7.9不去加载sc ServiceDiscovery
+     *
+     * @param context 执行上下文
+     * @return 执行上下文
+     */
     @Override
     public ExecuteContext before(ExecuteContext context) {
+        Object[] arguments = context.getArguments();
+        if (arguments != null && arguments.length > 2 && arguments[2] instanceof URL) {
+            if (Constant.SC_REGISTRY_PROTOCOL.equals(((URL) arguments[2]).getProtocol())) {
+                // sc协议的注册，直接return，这样就可以不去加载sc ServiceDiscovery，即屏蔽2.7.9 sc应用级注册
+                context.skip(null);
+            }
+        }
         return context;
     }
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        registryService.startRegistration();
         return context;
     }
 }

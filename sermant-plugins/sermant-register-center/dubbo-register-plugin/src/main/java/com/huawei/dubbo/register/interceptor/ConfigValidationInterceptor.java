@@ -16,32 +16,43 @@
 
 package com.huawei.dubbo.register.interceptor;
 
-import com.huawei.dubbo.register.service.RegistryService;
+import com.huawei.dubbo.register.constants.Constant;
+import com.huawei.dubbo.register.utils.CollectionUtils;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import org.apache.dubbo.common.URL;
 
 /**
- * 增强SpringBootApplication类的main方法
+ * 增强ConfigValidationUtils类的extractRegistryType方法
  *
  * @author provenceee
- * @since 2022年1月24日
+ * @since 2022年1月27日
  */
-public class SpringBootInterceptor extends AbstractInterceptor {
-    private final RegistryService registryService;
+public class ConfigValidationInterceptor extends AbstractInterceptor {
+    private static final String REGISTRY_TYPE_KEY_1 = "registry-type";
 
-    public SpringBootInterceptor() {
-        registryService = ServiceManager.getService(RegistryService.class);
-    }
+    private static final String REGISTRY_TYPE_KEY_2 = "registry.type";
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
+        Object[] arguments = context.getArguments();
+        if (arguments[0] instanceof URL) {
+            URL url = (URL) arguments[0];
+
+            // 这个拦截点是为了把2.7.5-2.7.8的sc应用级注册给屏蔽掉
+            if (Constant.SC_REGISTRY_PROTOCOL.equals(url.getProtocol())
+                && !CollectionUtils.isEmpty(url.getParameters())) {
+                if (url.hasParameter(REGISTRY_TYPE_KEY_1) || url.hasParameter(REGISTRY_TYPE_KEY_2)) {
+                    arguments[0] = url.removeParameters(REGISTRY_TYPE_KEY_1, REGISTRY_TYPE_KEY_2);
+                }
+            }
+        }
         return context;
     }
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        registryService.startRegistration();
         return context;
     }
 }
