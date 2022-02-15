@@ -96,4 +96,7 @@ public class KafkaConf {
 
     @Value("${kafka.max.block.ms}")
     private String kafkaMaxBlockMs;
+
+    @Value("${heartbeat.cache}")
+    private String isHeartbeatCache;
 }

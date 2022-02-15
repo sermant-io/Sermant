@@ -16,11 +16,15 @@
 
 package com.huawei.sermant.backend.server;
 
-import com.google.protobuf.ByteString;
+import com.huawei.sermant.backend.cache.HeartbeatCache;
 import com.huawei.sermant.backend.common.conf.DataTypeTopicMapping;
 import com.huawei.sermant.backend.common.handler.BaseHandler;
 import com.huawei.sermant.backend.common.util.GzipUtils;
+import com.huawei.sermant.backend.entity.HeartbeatEntity;
 import com.huawei.sermant.backend.pojo.Message;
+
+import com.alibaba.fastjson.JSON;
+import com.google.protobuf.ByteString;
 
 import io.netty.channel.ChannelHandlerContext;
 
@@ -31,7 +35,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 网关服务端handler
@@ -47,6 +53,8 @@ public class ServerHandler extends BaseHandler {
     private KafkaConsumer<String, String> consumer;
 
     private final DataTypeTopicMapping topicMapping;
+
+    private final HashMap<String, HeartbeatEntity> hbMessages = HeartbeatCache.getHeartbeatMessages();
 
     public ServerHandler(KafkaProducer<String, byte[]> producer, KafkaConsumer<String, String> consumer, DataTypeTopicMapping topicMapping) {
         this.producer = producer;
@@ -66,6 +74,7 @@ public class ServerHandler extends BaseHandler {
             int dataType = serviceData.getDataTypeValue();
             String topic = topicMapping.getTopicOfType(dataType);
             if (StringUtils.hasText(topic)) {
+                writeHeartBeatCacheCache(topic, message);
                 producer.send(new ProducerRecord<>(topic, message));
             } else {
                 LOGGER.warn("Can not find the corresponding topic of type {}.", dataType);
@@ -89,5 +98,17 @@ public class ServerHandler extends BaseHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         LOGGER.error("Exception occurs. Exception info: {}", cause);
+    }
+
+    private void writeHeartBeatCacheCache(String topic, byte[] message) {
+        // 缓存心跳数据
+        if (Objects.equals(topic, topicMapping.getTopicOfType(0))) {
+            HeartbeatEntity heartbeatEntity = JSON.parseObject(new String(message), HeartbeatEntity.class);
+            List<String> ips = heartbeatEntity.getIp();
+            if (ips != null && ips.size() != 0 && heartbeatEntity.getPluginName() != null) {
+                String ip = ips.get(0);
+                hbMessages.put(ip, heartbeatEntity);
+            }
+        }
     }
 }
