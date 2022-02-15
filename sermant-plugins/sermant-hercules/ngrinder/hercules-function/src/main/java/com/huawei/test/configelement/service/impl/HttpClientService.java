@@ -89,7 +89,6 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
      * 请求参数配置
      */
     private HttpClientConfig config;
-    private final HttpClientBuilder httpClientBuilder = HttpClients.custom();
     private RequestConfig requestConfig;
     private CloseableHttpClient closeableHttpClient;
 
@@ -100,6 +99,8 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
     @Override
     public void initConfig(HttpClientConfig config) {
         this.config = config;
+
+        HttpClientBuilder httpClientBuilder = HttpClients.custom();
 
         // 设置请求的默认配置
         requestConfig = setRequestConfig(config);
@@ -148,7 +149,7 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
      * @param requestBase 请求对象基类
      * @param headers 请求头参数
      */
-    private static void setHeader(HttpRequestBase requestBase, Map<String, String> headers) {
+    private void setHeader(HttpRequestBase requestBase, Map<String, String> headers) {
         if (headers != null) {
             Set<Map.Entry<String, String>> entries = headers.entrySet();
             for (Map.Entry<String, String> entry:entries) {
@@ -323,8 +324,8 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
     /**
      * 设置请求参数
      */
-    @SuppressWarnings("checkstyle:JavadocMethod")
-    public static RequestConfig setRequestConfig(HttpClientConfig config) {
+    @SuppressWarnings({"checkstyle:JavadocMethod", "checkstyle:HiddenField"})
+    public RequestConfig setRequestConfig(HttpClientConfig config) {
         return RequestConfig.custom()
             // 连接超时，完成tcp 3次握手的时间上限
             .setConnectTimeout(config.getConnectTimeout())
@@ -338,7 +339,7 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
      *
      * @return ConnectionSocketFactory
      */
-    private static ConnectionSocketFactory trustHttpCertificates() {
+    private ConnectionSocketFactory trustHttpCertificates() {
         X509TrustManager x509m = new X509TrustManager() {
             @Override
             public X509Certificate[] getAcceptedIssuers() {
