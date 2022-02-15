@@ -6,60 +6,79 @@
 
 ## 功能
 
-流控插件基于[Alibaba Sentinel](https://github.com/alibaba/Sentinel)框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**流控**、**熔断**与**隔离仓**能力，并且支持配置中心动态配置规则，实时生效。
+流控插件基于[Alibaba Sentinel](https://github.com/alibaba/Sentinel)与[resilience4j](https://github.com/resilience4j)框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**流控**、**熔断**与**隔离仓**能力，并且支持配置中心动态配置规则，实时生效。
 
 - **流控**：对指定接口限制1S秒内通过的QPS，当1S内流量超过指定阈值，将触发流控，限制请求流量。
 - **熔断**：对指定接口配置熔断策略，可从单位统计时间窗口内的错误率或者慢请求率进行统计，当请求错误率或者慢请求率达到指定比例阈值，即触发熔断，在时间窗口重置前，隔离所有请求。
-- **隔离仓**：针对大规模并发流量，对并发流量进行控制，避免瞬时并发流量过大导致服务崩溃
+- **隔离仓**：针对大规模并发流量，对并发流量进行控制，避免瞬时并发流量过大导致服务崩溃。
+- **重试：**当服务遇到非致命的错误时，可以通过重试的方式避免服务的最终失败。特别注意的是，该能力仅基于[resilience4j](https://github.com/resilience4j)框架才可生效。
 
 
 
 ## 使用说明
 
-### 1、引入依赖
+### 环境准备
 
-基于不同框架在项目中引入以下依赖
+**（1）部署ServiceCenter环境与Kie环境**
 
-**Spring Cloud**
+**（2）打包编译Sermant Agent**
 
-```xml
-<dependency>
-    <groupId>com.huaweicloud</groupId>
-    <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
-    <version>${version}</version>
-</dependency>
+​	参考[Sermant源码编译](../../../QuickStart.md#源码编译)
 
-<dependency>
-    <groupId>com.huaweicloud</groupId>
-    <artifactId>spring-cloud-huawei-config</artifactId>
-    <version>${version}</version>
-</dependency>
+### 配置agent
+
+**（1）修改服务注册信息**
+
+找到[config.properties]()文件，修改如下配置
+
+```properties
+# 服务app名称， 其中sermant.agent.service.meta.application为环境变量名，可通过环境变量指定
+service.meta.application=${sermant.agent.service.meta.application:default}
+# 注册服务版本
+service.meta.version=${sermant.agent.service.meta.version:1.0.0}
+# ServiceComb命名空间
+service.meta.project=${sermant.agent.service.meta.project:default}
+# 环境
+service.meta.environment=${sermant.agent.service.meta.environment:development}
 ```
 
-> 具体使用方法请参考[Spring Cloud Huawei](https://github.com/huaweicloud/spring-cloud-huawei)
+**（2）配置注册插件**
 
+修改配置文件`${javaagent路径}/config/register-center/config/config.yaml`， 修正servicecomb注册中心地址
 
-
-**Dubbo**
-
-```xml
-<dependency>
-    <groupId>com.huaweicloud.dubbo-servicecomb</groupId>
-    <artifactId>dubbo-servicecomb-service-center</artifactId>
-    <version>${version}</version>
-</dependency>
-<dependency>
-    <groupId>com.huaweicloud.dubbo-servicecomb</groupId>
-    <artifactId>dubbo-servicecomb-config-center</artifactId>
-    <version>${version}</version>
-</dependency>
+```yaml
+servicecomb.service:
+  address: http://127.0.0.1:30100 #注册中心地址
 ```
 
-> 具体使用方法请参考[Dubbo ServiceComb](https://github.com/huaweicloud/dubbo-servicecomb)
+**（3）配置流控插件**
 
+修改配置文件`${javaagent路径}/config/flowcontrol/config/config.yaml`
 
+```yaml
+flow.control.plugin:
+  useCseRule: ${plugin.flowcontrol.adapte.cse:true} # 是否开启ServiceComb适配
+  useAgentConfigCenter: ${plugin.flowcontrol.use.agent.config_center:true} # 使用agent配置中心
+```
 
-### 2、配置流控规则
+### 部署应用
+
+执行以下命令启动应用
+
+```shell
+# 其中agent路径指打包后的路径
+# serviceName值应用名
+# applicationName即对应app名称
+# environment即对应环境名称
+# xxx.jar值打包后应用jar包
+java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dsermant.agent.service.meta.application=${applicationName} -Dsermant.agent.service.meta.environment=${environment}  -jar xxx.jar
+```
+
+### 验证应用部署
+
+登录[Service Center](localhost:30103)后台, 查看应用是否正确注册
+
+### 配置流控规则
 
 如何发布规则请参考[配置中心API]()
 
@@ -73,7 +92,7 @@
 
 > 其中**group**的配置格式为k1=v1, 多个值使用"&"分隔，例如k1=v1&k2=v2, 代表该key绑定的标签组
 
-
+**以下配置以`app=region-A`,` serviceName=flowControlDemo`, `environment=testing`举例**
 
 - #### 流量标记配置示例
 
@@ -219,23 +238,11 @@
   >
   > `key`必须以`servicecomb.bulkhead.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
 
-### 3、开启CSE规则适配开关
-
-修改配置文件`Sermant/sermant-agent-x.x.x/agent/pluginPackage/flowcontrol/config/config.yaml`
-
-```yaml
-# 流控配置
-flow.control.plugin:
-  useCseRule: true # 是否使用cse规则配置  ###此处将值设置为true###
-```
-
-
-
 ## 快速开始
 
 ### 1、编译打包
 
-通过[此处](https://github.com/huaweicloud/Sermant/releases)下载agent源码包, 并下载[Demo应用](../../../sermant-plugins/sermant-flowcontrol/flowcontrol-demos/flowcontrol-demo-cse)
+通过[此处](https://github.com/huaweicloud/Sermant/releases)下载agent源码包, 并下载[Demo应用](../../../sermant-plugins/sermant-flowcontrol/flowcontrol-demos/flowcontrol-demo)
 
 执行以下maven命令对agent进行打包
 
@@ -252,14 +259,12 @@ mvn clean package
 ### 2、启动应用
 
 ```shell
-java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=cseFlowControlDemo  -jar CseFlowControlDemo.jar
+java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=FlowControlDemo -Dsermant.agent.service.meta.application=region-A -Dsermant.agent.service.meta.environment=testing -Dspring.application.name=FlowControlDemo -jar FlowControlDemo.jar
 ```
-
-> 其中`${path}`为`agent`**根路径**
 
 ### 3、配置规则
 
-参考[配置流控规则](#2配置流控规则)配置**流量标记**与**流控规则**
+参考[配置流控规则](#配置流控规则)配置**流量标记**与**流控规则**
 
 **流量标记:**
 
@@ -291,21 +296,19 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=cseF
 
 #### 如何确定拦截的资源名是什么？
 
-答：Spring与Dubbo的资源定义名不同。
+答：Spring与Dubbo的资源定义名不同：
 
-Spring应用通过相对路径获取资源名，例如`localhost:8080/flow`,则定义的资源名为`/flow`。
+**Spring**应用通过相对路径获取资源名，例如`localhost:8080/flow`,则定义的资源名为`/flow`。
 
-Dubbo应用则是通过**请求的接口:接口版本.请求方法**拼凑，例如版本为`1.0.0`的请求接口`com.huawei.demo.TestService.hello`， 则拿到的最终定义的资源名为`com.huawei.demo.TestService:1.0.0.hello`
+**Dubbo**应用则是通过**请求的接口:接口版本.请求方法**拼凑，例如版本为`1.0.0`的请求接口`com.huawei.demo.TestService.hello`， 则拿到的最终定义的资源名为`com.huawei.demo.TestService:1.0.0.hello`
 
 #### 启动时为什么会报HttpHostConnectException异常
 
 答：出现该异常的原因是未启动`Sermant`后台服务`sermant-backhend`, 找到启动类`com.huawei.apm.backend.NettyServerApplication`启动后台服务，并重启应用即可。
 
-
-
 ## 其他
 
-如果读者**希望不使用配置中心API**，希望自己搭建环境，可参考下面的文档
+如果读者**希望不使用配置中心API且不去适配ServiceComb**，可参考下面的文档
 
 - [基于KIE配置中心配置限流规则](./kie-configuration-document.md)
 - [基于ZOOKEEPER配置中心配置限流规则](zk-configuration-document.md)

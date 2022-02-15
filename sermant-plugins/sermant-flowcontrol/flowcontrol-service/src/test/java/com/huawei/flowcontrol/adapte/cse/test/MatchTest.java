@@ -16,8 +16,8 @@
 
 package com.huawei.flowcontrol.adapte.cse.test;
 
-import com.huawei.flowcontrol.adapte.cse.match.BusinessMatcher;
-import com.huawei.flowcontrol.adapte.cse.match.MatchGroupResolver;
+import com.huawei.flowcontrol.common.adapte.cse.match.BusinessMatcher;
+import com.huawei.flowcontrol.common.adapte.cse.match.MatchGroupResolver;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

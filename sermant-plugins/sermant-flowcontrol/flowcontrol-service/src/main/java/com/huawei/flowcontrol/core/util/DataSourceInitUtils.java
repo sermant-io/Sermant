@@ -16,12 +16,12 @@
 
 package com.huawei.flowcontrol.core.util;
 
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.flowcontrol.adapte.cse.datasource.CseDataSourceManager;
-import com.huawei.flowcontrol.core.config.FlowControlConfig;
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.core.datasource.DataSourceManager;
 import com.huawei.flowcontrol.core.datasource.DefaultDataSourceManager;
 import com.huawei.flowcontrol.core.datasource.zookeeper.ZookeeperDatasourceManager;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 /**
  * 初始化加载规则数据工具类

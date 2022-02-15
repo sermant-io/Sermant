@@ -16,7 +16,7 @@
 
 package com.huawei.flowcontrol.adapte.cse.test;
 
-import com.huawei.flowcontrol.core.config.FlowControlConfig;
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.core.datasource.DefaultDataSourceManager;
 import com.huawei.flowcontrol.core.datasource.zookeeper.ZookeeperDatasourceManager;
 import org.junit.Before;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +16,84 @@
 
 package com.huawei.flowcontrol;
 
-import com.huawei.flowcontrol.service.DispatcherServletService;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
+import com.huawei.flowcontrol.common.config.CommonConst;
+import com.huawei.flowcontrol.common.entity.FixedResult;
+import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
+import com.huawei.flowcontrol.common.enums.FlowControlEnum;
+import com.huawei.flowcontrol.service.InterceptorSupporter;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
-import java.lang.reflect.Method;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * DispatcherServlet 的 API接口增强 埋点定义sentinel资源
  *
- * @author liyi
- * @since 2020-08-26
+ * @author zhouss
+ * @since 2022-02-11
  */
-public class DispatcherServletInterceptor implements InstanceMethodInterceptor {
-    private DispatcherServletService dispatcherServletService;
+public class DispatcherServletInterceptor extends InterceptorSupporter implements Interceptor {
+    /**
+     * http请求数据转换 适应plugin -> service数据传递 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
+     *
+     * @param request 请求
+     * @return HttpRequestEntity
+     */
+    private HttpRequestEntity convertToHttpEntity(HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
+        return new HttpRequestEntity(request.getPathInfo(), request.getServletPath(),
+                getHeaders(request), request.getMethod());
+    }
 
-    @Override
-    public void before(Object obj, Method method, Object[] allArguments, BeforeResult result) throws Exception {
-        dispatcherServletService = ServiceManager.getService(DispatcherServletService.class);
-        dispatcherServletService.before(obj, method, allArguments, result);
+    /**
+     * 获取http请求头信息
+     *
+     * @param request 请求信息
+     * @return headers
+     */
+    private Map<String, String> getHeaders(HttpServletRequest request) {
+        final Enumeration<String> headerNames = request.getHeaderNames();
+        final Map<String, String> headers = new HashMap<>();
+        while (headerNames.hasMoreElements()) {
+            final String headerName = headerNames.nextElement();
+            headers.put(headerName, request.getHeader(headerName));
+        }
+        return headers;
     }
 
     @Override
-    public Object after(Object obj, Method method, Object[] allArguments, Object ret) {
-        dispatcherServletService.after(obj, method, allArguments, ret);
-        return ret;
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        final Object[] allArguments = context.getArguments();
+        final HttpServletRequest argument = (HttpServletRequest) allArguments[0];
+        final FixedResult result = new FixedResult();
+        chooseHttpService().onBefore(convertToHttpEntity(argument), result);
+        if (result.isSkip() && result.getResult() instanceof FlowControlEnum) {
+            context.skip(null);
+            final HttpServletResponse response = (HttpServletResponse) allArguments[1];
+            if (response != null) {
+                response.setStatus(CommonConst.TOO_MANY_REQUEST_CODE);
+                response.getWriter().print(((FlowControlEnum) result.getResult()).getMsg());
+            }
+        }
+        return context;
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] allArguments, Throwable t) {
-        dispatcherServletService.onThrow(obj, method, allArguments, t);
+    public ExecuteContext after(ExecuteContext context) throws Exception {
+        chooseHttpService().onAfter(context.getResult());
+        return context;
+    }
+
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+        chooseHttpService().onThrow(context.getThrowable());
+        return context;
     }
 }

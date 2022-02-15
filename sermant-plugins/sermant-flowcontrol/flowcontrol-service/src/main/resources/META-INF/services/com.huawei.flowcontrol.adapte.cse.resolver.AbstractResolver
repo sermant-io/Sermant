@@ -1,8 +1,0 @@
-#
-# Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
-#
-com.huawei.flowcontrol.adapte.cse.match.MatchGroupResolver
-com.huawei.flowcontrol.adapte.cse.resolver.BulkheadRuleResolver
-com.huawei.flowcontrol.adapte.cse.resolver.CircuitBreakerRuleResolver
-com.huawei.flowcontrol.adapte.cse.resolver.RateLimitingRuleResolver
-com.huawei.flowcontrol.adapte.cse.resolver.RetryResolver

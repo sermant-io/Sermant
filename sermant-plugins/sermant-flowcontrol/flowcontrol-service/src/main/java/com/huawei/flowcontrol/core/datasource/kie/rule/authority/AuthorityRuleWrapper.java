@@ -16,13 +16,12 @@
 
 package com.huawei.flowcontrol.core.datasource.kie.rule.authority;
 
+import com.huawei.flowcontrol.core.datasource.kie.rule.RuleWrapper;
+
 import com.alibaba.csp.sentinel.datasource.AbstractDataSource;
 import com.alibaba.csp.sentinel.property.SentinelProperty;
 import com.alibaba.csp.sentinel.slots.block.authority.AuthorityRule;
 import com.alibaba.csp.sentinel.slots.block.authority.AuthorityRuleManager;
-import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
-import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
-import com.huawei.flowcontrol.core.datasource.kie.rule.RuleWrapper;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class AuthorityRuleWrapper extends RuleWrapper {
     public void registerRuleManager(AbstractDataSource<?, ?> dataSource) {
         SentinelProperty property = dataSource.getProperty();
         if (property != null) {
-            AuthorityRuleManager.register2Property((SentinelProperty<List<AuthorityRule>>)property);
+            AuthorityRuleManager.register2Property((SentinelProperty<List<AuthorityRule>>) property);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package com.huawei.flowcontrol.core.datasource;
 /**
  * 数据源管理器接口类
  *
- * @author liyi
- * @since 2020-08-26
+ * @author zhouss
+ * @since 2022-02-11
  */
 public interface DataSourceManager {
     /**

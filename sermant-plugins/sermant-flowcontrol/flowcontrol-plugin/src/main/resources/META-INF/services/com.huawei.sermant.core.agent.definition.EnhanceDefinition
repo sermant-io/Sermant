@@ -1,5 +1,0 @@
-com.huawei.flowcontrol.AlibabaDubboDefinition
-com.huawei.flowcontrol.DispatcherServletDefinition
-com.huawei.flowcontrol.ApacheDubboDefinition
-com.huawei.flowcontrol.adapte.cse.enhancer.ServiceCombServiceMetaEnhancer
-com.huawei.flowcontrol.adapte.cse.enhancer.KieConfigurationEnhancer

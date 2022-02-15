@@ -128,6 +128,10 @@ public class SubscriberManager {
         kieClient = new KieClient(new ClientUrlManager(serverAddress));
     }
 
+    public SubscriberManager(String serverAddress, String project) {
+        kieClient = new KieClient(new ClientUrlManager(serverAddress), project);
+    }
+
     /**
      * 添加组监听
      *

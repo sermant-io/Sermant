@@ -23,22 +23,20 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 隔离仓规则
- * 基于信号量实现
+ * 隔离仓规则 基于信号量实现
  *
  * @author zhouss
  * @since 2021-12-04
  */
 public class IsolateThreadRule extends AbstractRule {
-    private Semaphore semaphore;
-
     private static final long DEFAULT_WAIT_TIME_MS = 1000L;
 
     private static final int DEFAULT_CONCURRENT_CALLS = 5;
 
+    private Semaphore semaphore;
+
     /**
-     * 获取许可的最大等待时间
-     * 单位MS
+     * 获取许可的最大等待时间 单位MS
      */
     private long maxWaitDuration;
 
@@ -59,13 +57,13 @@ public class IsolateThreadRule extends AbstractRule {
         this(resource, permitNum, waitTimeMs, true);
     }
 
-    public IsolateThreadRule(String resource, int permitNum, long waitTimeMs, boolean forUse) {
+    public IsolateThreadRule(String resource, int permitNum, long waitTimeMs, boolean isForUse) {
         super();
         super.setResource(resource);
         super.setLimitApp(RuleConstant.LIMIT_APP_DEFAULT);
         this.maxWaitDuration = waitTimeMs;
         this.maxConcurrentCalls = permitNum;
-        if (forUse) {
+        if (isForUse) {
             this.semaphore = new Semaphore(permitNum);
         }
     }
@@ -73,6 +71,7 @@ public class IsolateThreadRule extends AbstractRule {
     /**
      * 尝试获取通行证
      *
+     * @param permit 令牌数
      * @throws IsolateThreadException 获取通行证失败抛出
      */
     public void tryEntry(int permit) throws IsolateThreadException {
@@ -96,6 +95,8 @@ public class IsolateThreadRule extends AbstractRule {
 
     /**
      * 请求结束, 释放通行证
+     *
+     * @param permit 令牌数
      */
     public void exit(int permit) {
         semaphore.release(permit);

@@ -16,11 +16,12 @@
 
 package com.huawei.flowcontrol.adapte.cse.datasource;
 
+import com.huawei.flowcontrol.common.adapte.cse.rule.AbstractRule;
+import com.huawei.sermant.core.common.LoggerFactory;
+
 import com.alibaba.csp.sentinel.datasource.AbstractDataSource;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.csp.sentinel.slots.block.Rule;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.flowcontrol.adapte.cse.rule.AbstractRule;
 
 import java.util.List;
 import java.util.Locale;
@@ -29,10 +30,12 @@ import java.util.logging.Logger;
 /**
  * CSE-kie规则数据
  *
+ * @param <R> 流控规则
+ * @param <S> Cse规则
  * @author zhouss
  * @since 2021-11-24
  */
-public class CseKieDataSource<S extends AbstractRule<R>, R extends Rule> extends AbstractDataSource<List<S>, List<R>> {
+public class CseKieDataSource<S extends AbstractRule, R extends Rule> extends AbstractDataSource<List<S>, List<R>> {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private List<S> configData;
@@ -46,6 +49,7 @@ public class CseKieDataSource<S extends AbstractRule<R>, R extends Rule> extends
      *
      * @param config 配置
      */
+    @SuppressWarnings("checkstyle:IllegalCatch")
     public void updateConfig(List<S> config) {
         configData = config;
         try {
@@ -62,6 +66,5 @@ public class CseKieDataSource<S extends AbstractRule<R>, R extends Rule> extends
 
     @Override
     public void close() {
-
     }
 }

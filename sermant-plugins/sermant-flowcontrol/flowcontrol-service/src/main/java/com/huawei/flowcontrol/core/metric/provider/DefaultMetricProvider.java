@@ -16,6 +16,13 @@
 
 package com.huawei.flowcontrol.core.metric.provider;
 
+import com.huawei.flowcontrol.common.config.ConfigConst;
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
+import com.huawei.flowcontrol.common.metric.provider.MetricProvider;
+import com.huawei.flowcontrol.common.util.PluginConfigUtil;
+import com.huawei.sermant.core.lubanops.bootstrap.config.IdentityConfigManager;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
 import com.alibaba.csp.sentinel.Constants;
 import com.alibaba.csp.sentinel.config.SentinelConfig;
 import com.alibaba.csp.sentinel.log.RecordLog;
@@ -26,11 +33,6 @@ import com.alibaba.csp.sentinel.util.AppNameUtil;
 import com.alibaba.csp.sentinel.util.PidUtil;
 import com.alibaba.csp.sentinel.util.TimeUtil;
 import com.alibaba.fastjson.JSONArray;
-import com.huawei.flowcontrol.core.config.ConfigConst;
-import com.huawei.flowcontrol.core.config.FlowControlConfig;
-import com.huawei.flowcontrol.core.util.PluginConfigUtil;
-import com.huawei.sermant.core.lubanops.bootstrap.config.IdentityConfigManager;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,8 +41,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 默认指标数据生成
- * 基于sentinel本地数据
+ * 默认指标数据生成 基于sentinel本地数据
  *
  * @author zhouss
  * @since 2021-12-07
@@ -54,9 +55,9 @@ public final class DefaultMetricProvider implements MetricProvider {
      * sentinel内部定义的指标数据类型，该类型不应该展示在界面上，该类数据全部跳过
      */
     private final Set<String> innerResources = new HashSet<String>(
-            Arrays.asList(Constants.CPU_USAGE_RESOURCE_NAME,
-                    Constants.TOTAL_IN_RESOURCE_NAME,
-                    Constants.SYSTEM_LOAD_RESOURCE_NAME));
+        Arrays.asList(Constants.CPU_USAGE_RESOURCE_NAME,
+            Constants.TOTAL_IN_RESOURCE_NAME,
+            Constants.SYSTEM_LOAD_RESOURCE_NAME));
 
     public DefaultMetricProvider() {
         String appName = SentinelConfig.getAppName();
@@ -64,7 +65,7 @@ public final class DefaultMetricProvider implements MetricProvider {
             appName = IdentityConfigManager.getAppName();
         }
         metricSearcher = new MetricSearcher(MetricWriter.METRIC_BASE_DIR,
-                MetricWriter.formMetricFileName(appName, PidUtil.getPid()));
+            MetricWriter.formMetricFileName(appName, PidUtil.getPid()));
     }
 
     private FlowControlConfig getFlowControlConfig() {
@@ -78,20 +79,17 @@ public final class DefaultMetricProvider implements MetricProvider {
      * 获取流控数据
      *
      * @param startTime 查询流控数据的开始时间
-     * @param endTime   查询流控数据的结束书简
+     * @param endTime 查询流控数据的结束书简
      * @return 流控数据
      */
-    private String generateCurrentMessage(long startTime, Long endTime) {
+    @SuppressWarnings("checkstyle:IllegalCatch")
+    private String generateCurrentMessage(long startTime, long endTime) {
         String message = null;
         List<MetricNode> metrics;
 
         try {
-            if (endTime != null) {
-                metrics = metricSearcher.findByTimeAndResource(startTime, endTime, null);
-            } else {
-                metrics = metricSearcher.find(startTime,
-                    Integer.parseInt(PluginConfigUtil.getValueByKey(ConfigConst.METRIC_MAX_LINE)));
-            }
+            metrics = metricSearcher.find(startTime,
+                Integer.parseInt(PluginConfigUtil.getValueByKey(ConfigConst.METRIC_MAX_LINE)));
             if (metrics != null && metrics.size() > 0) {
                 message = formatMessage(metrics);
             }

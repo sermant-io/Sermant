@@ -13,9 +13,9 @@
 
 参考文档[基于ZK配置流控规则](./zk-configuration-document.md#2下载源码并打包插件)
 
-## 3、配置配置中心
+## 3、配置插件
 
-配置`Sermant`配置中心类型与地址，配置文件路劲`/Sermant/sermant-agent-x.x.x/agent/config/config.properties`
+**3.1 配置`Sermant`配置中心类型与地址**，配置文件路径`${agent路径}/config/config.properties`
 
 ```properties
 dynamicconfig.timeout_value=30000
@@ -29,6 +29,18 @@ dynamicconfig.dynamic_config_type=KIE
 # 多个地址使用逗号隔开，例如http://127.0.0.1:30110,http://127.0.0.1:30111
 dynamicconfig.kie_url=http://127.0.0.1:30110
 ```
+
+**3.2 配置流控插件**
+
+修改`${agent路径}/pluginPackge/flowcontrol/config/config.yaml`
+
+```yaml
+flow.control.plugin:
+  flowFramework: SENTINEL
+  useAgentConfigCenter: ${plugin.flowcontrol.use.agent.config_center:true} # 使用agent配置中心
+```
+
+
 
 ## 4、打包并启动应用
 

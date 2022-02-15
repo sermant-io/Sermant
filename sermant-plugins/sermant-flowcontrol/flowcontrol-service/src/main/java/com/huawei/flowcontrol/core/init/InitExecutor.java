@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,16 @@
 
 package com.huawei.flowcontrol.core.init;
 
+import com.huawei.flowcontrol.common.config.CommonConst;
+import com.huawei.flowcontrol.common.config.ConfigConst;
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
+import com.huawei.flowcontrol.common.enums.MetricSendWay;
+import com.huawei.flowcontrol.common.util.PluginConfigUtil;
+import com.huawei.flowcontrol.core.metric.provider.DefaultMetricProvider;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
 import com.alibaba.csp.sentinel.concurrent.NamedThreadFactory;
 import com.alibaba.csp.sentinel.log.RecordLog;
-import com.huawei.flowcontrol.core.config.CommonConst;
-import com.huawei.flowcontrol.core.config.ConfigConst;
-import com.huawei.flowcontrol.core.config.FlowControlConfig;
-import com.huawei.flowcontrol.core.metric.MetricSendWay;
-import com.huawei.flowcontrol.core.util.PluginConfigUtil;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -33,8 +35,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * 初始操作
  *
- * @author liyi
- * @since 2020-08-26
+ * @author zhouss
+ * @since 2022-02-11
  */
 public final class InitExecutor {
     private static final ScheduledExecutorService POOL = new ScheduledThreadPoolExecutor(1,
@@ -54,6 +56,7 @@ public final class InitExecutor {
         if (!pluginConfig.isOpenMetricCollector()) {
             return;
         }
+
         // 周期性向kafka推送流控数据
         metricSenderInit();
     }
@@ -68,6 +71,7 @@ public final class InitExecutor {
     /**
      * 周期性向kafka推送流控数据
      */
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private static void metricSenderInit() {
         RecordLog.info("[InitExecutor] metricSenderInit() begin..");
 
@@ -84,22 +88,24 @@ public final class InitExecutor {
         }
 
         RecordLog.info("[InitExecutor] metricSenderInit() metricIntervalMs=" + metricIntervalMs);
-
         if (metricIntervalMs >= 0) {
             // 创建监控数据发送对象
             final MetricSendWay sendWay = pluginConfig.getSendWay();
+            final DefaultMetricProvider defaultMetricProvider = new DefaultMetricProvider();
+
             // 开启周期性执行线程
             POOL.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        sendWay.getSender().sendMetric();
+                        sendWay.getSender().sendMetric(defaultMetricProvider);
                     } catch (Exception e) {
                         RecordLog.warn("[InitExecutor] Send metric error", e.toString());
                     }
                 }
             }, CommonConst.INITIAL_DELAY, metricIntervalMs, TimeUnit.MILLISECONDS);
-            RecordLog.info("[InitExecutor] metricSenderInit() end: " + sendWay.getSender().getClass().getCanonicalName());
+            RecordLog
+                .info("[InitExecutor] metricSenderInit() end: " + sendWay.getSender().getClass().getCanonicalName());
         } else {
             RecordLog.error("[InitExecutor] metricIntervalMs is less than 0");
         }

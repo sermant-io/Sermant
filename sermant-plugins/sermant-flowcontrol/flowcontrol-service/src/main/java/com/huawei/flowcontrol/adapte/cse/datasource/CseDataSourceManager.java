@@ -16,24 +16,27 @@
 
 package com.huawei.flowcontrol.adapte.cse.datasource;
 
+import com.huawei.flowcontrol.adapte.cse.rule.converter.BulkheadRuleConverter;
+import com.huawei.flowcontrol.adapte.cse.rule.converter.CircuitBreakerRuleConverter;
+import com.huawei.flowcontrol.adapte.cse.rule.converter.RateLimitingRuleConverter;
+import com.huawei.flowcontrol.adapte.cse.rule.isolate.IsolateThreadRule;
+import com.huawei.flowcontrol.adapte.cse.rule.isolate.IsolateThreadRuleManager;
+import com.huawei.flowcontrol.common.adapte.cse.ResolverManager;
+import com.huawei.flowcontrol.common.adapte.cse.resolver.BulkheadRuleResolver;
+import com.huawei.flowcontrol.common.adapte.cse.resolver.CircuitBreakerRuleResolver;
+import com.huawei.flowcontrol.common.adapte.cse.resolver.RateLimitingRuleResolver;
+import com.huawei.flowcontrol.common.adapte.cse.resolver.listener.ConfigUpdateListener;
+import com.huawei.flowcontrol.common.adapte.cse.rule.BulkheadRule;
+import com.huawei.flowcontrol.common.adapte.cse.rule.CircuitBreakerRule;
+import com.huawei.flowcontrol.common.adapte.cse.rule.RateLimitingRule;
+import com.huawei.flowcontrol.core.datasource.DataSourceManager;
+import com.huawei.sermant.core.common.LoggerFactory;
+
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
-import com.huawei.flowcontrol.adapte.cse.resolver.BulkheadRuleResolver;
-import com.huawei.flowcontrol.adapte.cse.rule.BulkheadRule;
-import com.huawei.flowcontrol.adapte.cse.rule.isolate.IsolateThreadRule;
-import com.huawei.flowcontrol.adapte.cse.rule.isolate.IsolateThreadRuleManager;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.flowcontrol.adapte.cse.ResolverManager;
-import com.huawei.flowcontrol.adapte.cse.RuleSyncer;
-import com.huawei.flowcontrol.adapte.cse.resolver.CircuitBreakerRuleResolver;
-import com.huawei.flowcontrol.adapte.cse.resolver.RateLimitingRuleResolver;
-import com.huawei.flowcontrol.adapte.cse.resolver.listener.ConfigUpdateListener;
-import com.huawei.flowcontrol.adapte.cse.rule.CircuitBreakerRule;
-import com.huawei.flowcontrol.adapte.cse.rule.RateLimitingRule;
-import com.huawei.flowcontrol.core.datasource.DataSourceManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,37 +54,27 @@ import java.util.logging.Logger;
 public class CseDataSourceManager implements DataSourceManager {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private RuleSyncer ruleSyncer;
-
     @Override
     public void start() {
         registerFlowRuleDataSource();
         registerBreakerRuleDataSource();
         registerIsolateThreadRuleDataSource();
-        startCseConfigSyncer();
     }
 
     @Override
     public void stop() {
-        if (ruleSyncer == null) {
-            LOGGER.warning("DataSourceManager is not initialized!");
-            return;
-        }
-        ruleSyncer.stop();
-    }
-
-    private void startCseConfigSyncer() {
-        ruleSyncer = new RuleSyncer();
-        ruleSyncer.start();
     }
 
     /**
      * 隔离仓规则
      */
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void registerIsolateThreadRuleDataSource() {
         try {
+            final BulkheadRuleConverter bulkheadRuleConverter = new BulkheadRuleConverter();
             final CseKieDataSource<BulkheadRule, IsolateThreadRule> isolateDataSource =
-                    new CseKieDataSource<BulkheadRule, IsolateThreadRule>(new Converter<List<BulkheadRule>, List<IsolateThreadRule>>() {
+                new CseKieDataSource<BulkheadRule, IsolateThreadRule>(
+                    new Converter<List<BulkheadRule>, List<IsolateThreadRule>>() {
                         @Override
                         public List<IsolateThreadRule> convert(List<BulkheadRule> source) {
                             if (source == null) {
@@ -89,7 +82,9 @@ public class CseDataSourceManager implements DataSourceManager {
                             }
                             final ArrayList<IsolateThreadRule> isolateThreadRules = new ArrayList<IsolateThreadRule>();
                             for (BulkheadRule bulkheadRule : source) {
-                                isolateThreadRules.addAll(bulkheadRule.convertToSentinelRule());
+                                final List<IsolateThreadRule> rules = bulkheadRuleConverter
+                                    .convertToSentinelRule(bulkheadRule);
+                                isolateThreadRules.addAll(rules);
                             }
                             return isolateThreadRules;
                         }
@@ -97,7 +92,7 @@ public class CseDataSourceManager implements DataSourceManager {
             IsolateThreadRuleManager.register2Property(isolateDataSource.getProperty());
             final ConfigUpdateListener<BulkheadRule> configUpdateListener = new ConfigUpdateListener<BulkheadRule>() {
                 @Override
-                public void notify(Map<String, BulkheadRule> rules) {
+                public void notify(String updateKey, Map<String, BulkheadRule> rules) {
                     isolateDataSource.updateConfig(new ArrayList<BulkheadRule>(rules.values()));
                 }
             };
@@ -110,10 +105,13 @@ public class CseDataSourceManager implements DataSourceManager {
     /**
      * 注册熔断规则
      */
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void registerBreakerRuleDataSource() {
         try {
+            final CircuitBreakerRuleConverter circuitBreakerRuleConverter = new CircuitBreakerRuleConverter();
             final CseKieDataSource<CircuitBreakerRule, DegradeRule> degradeRuleDataSource =
-                    new CseKieDataSource<CircuitBreakerRule, DegradeRule>(new Converter<List<CircuitBreakerRule>, List<DegradeRule>>() {
+                new CseKieDataSource<CircuitBreakerRule, DegradeRule>(
+                    new Converter<List<CircuitBreakerRule>, List<DegradeRule>>() {
                         @Override
                         public List<DegradeRule> convert(List<CircuitBreakerRule> source) {
                             if (source == null) {
@@ -121,18 +119,19 @@ public class CseDataSourceManager implements DataSourceManager {
                             }
                             final List<DegradeRule> degradeRules = new ArrayList<DegradeRule>();
                             for (CircuitBreakerRule rule : source) {
-                                degradeRules.addAll(rule.convertToSentinelRule());
+                                degradeRules.addAll(circuitBreakerRuleConverter.convertToSentinelRule(rule));
                             }
                             return degradeRules;
                         }
                     });
             DegradeRuleManager.register2Property(degradeRuleDataSource.getProperty());
-            final ConfigUpdateListener<CircuitBreakerRule> configUpdateListener = new ConfigUpdateListener<CircuitBreakerRule>() {
-                @Override
-                public void notify(Map<String, CircuitBreakerRule> rules) {
-                    degradeRuleDataSource.updateConfig(new ArrayList<CircuitBreakerRule>(rules.values()));
-                }
-            };
+            final ConfigUpdateListener<CircuitBreakerRule> configUpdateListener =
+                new ConfigUpdateListener<CircuitBreakerRule>() {
+                    @Override
+                    public void notify(String updateKey, Map<String, CircuitBreakerRule> rules) {
+                        degradeRuleDataSource.updateConfig(new ArrayList<CircuitBreakerRule>(rules.values()));
+                    }
+                };
             ResolverManager.INSTANCE.registerListener(CircuitBreakerRuleResolver.CONFIG_KEY, configUpdateListener);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Init cse kie degrade rule failed! %s", ex.getMessage()));
@@ -142,10 +141,13 @@ public class CseDataSourceManager implements DataSourceManager {
     /**
      * 注册流控规则
      */
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void registerFlowRuleDataSource() {
         try {
+            final RateLimitingRuleConverter rateLimitingRuleConverter = new RateLimitingRuleConverter();
             final CseKieDataSource<RateLimitingRule, FlowRule> flowRuleDataSource =
-                    new CseKieDataSource<RateLimitingRule, FlowRule>(new Converter<List<RateLimitingRule>, List<FlowRule>>() {
+                new CseKieDataSource<RateLimitingRule, FlowRule>(
+                    new Converter<List<RateLimitingRule>, List<FlowRule>>() {
                         @Override
                         public List<FlowRule> convert(List<RateLimitingRule> source) {
                             if (source == null) {
@@ -153,19 +155,19 @@ public class CseDataSourceManager implements DataSourceManager {
                             }
                             final List<FlowRule> flowRules = new ArrayList<FlowRule>();
                             for (RateLimitingRule rule : source) {
-                                flowRules.addAll(rule.convertToSentinelRule());
+                                flowRules.addAll(rateLimitingRuleConverter.convertToSentinelRule(rule));
                             }
                             return flowRules;
                         }
                     });
             FlowRuleManager.register2Property(flowRuleDataSource.getProperty());
-            final ConfigUpdateListener<RateLimitingRule> configUpdateListener = new ConfigUpdateListener<RateLimitingRule>() {
-
-                @Override
-                public void notify(Map<String, RateLimitingRule> rules) {
-                    flowRuleDataSource.updateConfig(new ArrayList<RateLimitingRule>(rules.values()));
-                }
-            };
+            final ConfigUpdateListener<RateLimitingRule> configUpdateListener =
+                new ConfigUpdateListener<RateLimitingRule>() {
+                    @Override
+                    public void notify(String updateKey, Map<String, RateLimitingRule> rules) {
+                        flowRuleDataSource.updateConfig(new ArrayList<RateLimitingRule>(rules.values()));
+                    }
+                };
             ResolverManager.INSTANCE.registerListener(RateLimitingRuleResolver.CONFIG_KEY, configUpdateListener);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Init cse kie flow rule failed! %s", ex.getMessage()));

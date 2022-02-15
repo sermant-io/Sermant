@@ -47,6 +47,10 @@ public class KieDynamicConfigService extends DynamicConfigService {
         subscriberManager = new SubscriberManager(CONFIG.getServerAddress());
     }
 
+    public KieDynamicConfigService(String serverAddress, String project) {
+        subscriberManager = new SubscriberManager(serverAddress, project);
+    }
+
     @Override
     protected boolean doRemoveGroupListener(String group) {
         return updateGroupListener(group, null, false, false);

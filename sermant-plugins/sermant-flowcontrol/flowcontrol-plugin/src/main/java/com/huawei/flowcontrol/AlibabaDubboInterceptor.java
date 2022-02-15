@@ -1,58 +1,80 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-
-/*
- * Based on org/apache/skywalking/apm/plugin/dubbo/DubboInterceptor.java
- * from the Apache Skywalking project.
+ *
  */
 
 package com.huawei.flowcontrol;
 
-import com.huawei.flowcontrol.service.AlibabaDubboService;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
+import com.huawei.flowcontrol.common.entity.DubboRequestEntity;
+import com.huawei.flowcontrol.common.entity.FixedResult;
+import com.huawei.flowcontrol.common.enums.FlowControlEnum;
+import com.huawei.flowcontrol.common.util.ConvertUtils;
+import com.huawei.flowcontrol.service.InterceptorSupporter;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
-import java.lang.reflect.Method;
+import com.alibaba.dubbo.rpc.Invocation;
+import com.alibaba.dubbo.rpc.Result;
+import com.alibaba.dubbo.rpc.RpcContext;
+import com.alibaba.dubbo.rpc.RpcResult;
 
 /**
  * alibaba dubbo拦截后的增强类 埋点定义sentinel资源
  *
- * @author liyi
- * @since 2020-08-26
+ * @author zhouss
+ * @since 2022-02-10
  */
-public class AlibabaDubboInterceptor implements InstanceMethodInterceptor {
-
-    private AlibabaDubboService alibabaDubboService;
-
-    @Override
-    public void before(Object obj, Method method, Object[] allArguments, BeforeResult result) throws Exception {
-        alibabaDubboService = ServiceManager.getService(AlibabaDubboService.class);
-        alibabaDubboService.before(obj, method, allArguments, result);
+public class AlibabaDubboInterceptor extends InterceptorSupporter implements Interceptor {
+    /**
+     * 转换apache dubbo 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
+     *
+     * @param invocation 调用信息
+     * @return DubboRequestEntity
+     */
+    private static DubboRequestEntity convertToAlibabaDubboEntity(com.alibaba.dubbo.rpc.Invocation invocation) {
+        // invocation.getTargetServiceUniqueName
+        String apiPath = ConvertUtils.buildApiPath(invocation.getInvoker().getInterface().getName(),
+                invocation.getAttachment(ConvertUtils.DUBBO_ATTACHMENT_VERSION), invocation.getMethodName());
+        return new DubboRequestEntity(apiPath, invocation.getAttachments());
     }
 
     @Override
-    public Object after(Object obj, Method method, Object[] allArguments, Object ret) {
-        alibabaDubboService.after(obj, method, allArguments, ret);
-        return ret;
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        final Object[] allArguments = context.getArguments();
+        final FixedResult result = new FixedResult();
+        if (allArguments[1] instanceof Invocation) {
+            Invocation invocation = (Invocation) allArguments[1];
+            chooseDubboService().onBefore(convertToAlibabaDubboEntity(invocation), result,
+                    RpcContext.getContext().isProviderSide());
+            if (result.isSkip() && result.getResult() instanceof FlowControlEnum) {
+                context.skip(new RpcResult(new RuntimeException(((FlowControlEnum) result.getResult()).getMsg())));
+            }
+        }
+        return context;
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
-        alibabaDubboService.onThrow(obj, method, arguments, t);
+    public ExecuteContext after(ExecuteContext context) throws Exception {
+        Result result = (Result) context.getResult();
+        chooseDubboService().onAfter(result, RpcContext.getContext().isProviderSide(), result.hasException());
+        return context;
+    }
+
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+        chooseDubboService().onThrow(context.getThrowable(), RpcContext.getContext().isProviderSide());
+        return context;
     }
 }
