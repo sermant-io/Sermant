@@ -16,8 +16,7 @@
 
 package com.huawei.sermant.backend.server;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.huawei.sermant.backend.cache.HeartbeatCache;
 import com.huawei.sermant.backend.common.conf.KafkaConf;
 import com.huawei.sermant.backend.entity.Address;
 import com.huawei.sermant.backend.entity.AddressScope;
@@ -35,6 +34,10 @@ import com.huawei.sermant.backend.service.dynamicconfig.service.DynamicConfigura
 import com.huawei.sermant.backend.service.dynamicconfig.utils.LabelGroupUtils;
 import com.huawei.sermant.backend.util.DateUtil;
 import com.huawei.sermant.backend.util.RandomUtil;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -113,8 +116,12 @@ public class HttpServer {
 
     @GetMapping("/getPluginsInfo")
     public String invokeGet() {
-        ConsumerRecords<String, String> consumerRecords = getHeartbeatInfo();
-        return JSONObject.toJSONString(getPluginsInfo(consumerRecords));
+        if (Boolean.parseBoolean(conf.getIsHeartbeatCache())) {
+            return JSONObject.toJSONString(getHeartbeatMessageCache());
+        } else {
+            ConsumerRecords<String, String> consumerRecords = getHeartbeatInfo();
+            return JSONObject.toJSONString(getHeartbeatMessage(consumerRecords));
+        }
     }
 
     @PostMapping("/publishConfig")
@@ -174,31 +181,48 @@ public class HttpServer {
         return result.toString();
     }
 
-    private List<AgentInfo> getPluginsInfo(ConsumerRecords<String, String> consumerRecords) {
+    private List<AgentInfo> getHeartbeatMessage(ConsumerRecords<String, String> consumerRecords) {
         Map<String, AgentInfo> agentMap = new HashMap<>();
         for (ConsumerRecord<String, String> record : consumerRecords) {
             HeartbeatEntity heartbeatEntity = JSON.parseObject(record.value(), HeartbeatEntity.class);
-            List<String> ips = heartbeatEntity.getIp();
-            if (ips == null || ips.size() == NULL_IP_LENGTH) {
-                continue;
-            }
-            String ip = ips.get(DEFAULT_IP_INDEX);
-            if (agentMap.get(ip) == null) {
-                AgentInfo agentInfo = new AgentInfo();
-                agentInfo.setIp(ip);
-                agentInfo.setVersion(heartbeatEntity.getVersion());
-                agentInfo.setLastHeartbeatTime(DATE_UTIL.getFormatDate(heartbeatEntity.getLastHeartbeat()));
-                agentInfo.setHeartbeatTime(DATE_UTIL.getFormatDate(heartbeatEntity.getHeartbeatVersion()));
-                agentInfo.setPluginsMap(new HashMap<String, String>());
-                agentMap.put(ips.get(DEFAULT_IP_INDEX), agentInfo);
-            }
-            if (agentMap.get(ip) != null && heartbeatEntity.getPluginName() != null) {
-                AgentInfo agentInfo = agentMap.get(ip);
-                Map<String, String> pluginMap = agentInfo.getPluginsMap();
-                pluginMap.put(heartbeatEntity.getPluginName(), heartbeatEntity.getPluginVersion());
-                agentInfo.setPluginsMap(pluginMap);
-            }
+            setAgentInfo(agentMap, heartbeatEntity);
         }
         return new ArrayList<>(agentMap.values());
+    }
+
+    private List<AgentInfo> getHeartbeatMessageCache() {
+        HashMap<String, HeartbeatEntity> heartbeatMessages = HeartbeatCache.getHeartbeatMessages();
+        if (heartbeatMessages != null) {
+            Map<String, AgentInfo> agentMap = new HashMap<>();
+            for (HeartbeatEntity heartbeatEntity : heartbeatMessages.values()) {
+                setAgentInfo(agentMap, heartbeatEntity);
+            }
+            return new ArrayList<>(agentMap.values());
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    private void setAgentInfo(Map<String, AgentInfo> agentMap, HeartbeatEntity heartbeatEntity) {
+        List<String> ips = heartbeatEntity.getIp();
+        if (ips == null || ips.size() == NULL_IP_LENGTH) {
+            return;
+        }
+        String ip = ips.get(DEFAULT_IP_INDEX);
+        if (agentMap.get(ip) == null) {
+            AgentInfo agentInfo = new AgentInfo();
+            agentInfo.setIp(ip);
+            agentInfo.setVersion(heartbeatEntity.getVersion());
+            agentInfo.setLastHeartbeatTime(DATE_UTIL.getFormatDate(heartbeatEntity.getLastHeartbeat()));
+            agentInfo.setHeartbeatTime(DATE_UTIL.getFormatDate(heartbeatEntity.getHeartbeatVersion()));
+            agentInfo.setPluginsMap(new HashMap<String, String>());
+            agentMap.put(ips.get(DEFAULT_IP_INDEX), agentInfo);
+        }
+        if (agentMap.get(ip) != null && heartbeatEntity.getPluginName() != null) {
+            AgentInfo agentInfo = agentMap.get(ip);
+            Map<String, String> pluginMap = agentInfo.getPluginsMap();
+            pluginMap.put(heartbeatEntity.getPluginName(), heartbeatEntity.getPluginVersion());
+            agentInfo.setPluginsMap(pluginMap);
+        }
     }
 }
