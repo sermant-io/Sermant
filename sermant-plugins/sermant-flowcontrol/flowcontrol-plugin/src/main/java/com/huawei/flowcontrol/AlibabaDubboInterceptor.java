@@ -17,6 +17,7 @@
 
 package com.huawei.flowcontrol;
 
+import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.entity.DubboRequestEntity;
 import com.huawei.flowcontrol.common.entity.FixedResult;
 import com.huawei.flowcontrol.common.enums.FlowControlEnum;
@@ -28,7 +29,12 @@ import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Result;
 import com.alibaba.dubbo.rpc.RpcContext;
+import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.RpcResult;
+
+import org.apache.dubbo.rpc.Invoker;
+
+import java.util.Locale;
 
 /**
  * alibaba dubbo拦截后的增强类 埋点定义sentinel资源
@@ -46,7 +52,7 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter implements Int
     private static DubboRequestEntity convertToAlibabaDubboEntity(com.alibaba.dubbo.rpc.Invocation invocation) {
         // invocation.getTargetServiceUniqueName
         String apiPath = ConvertUtils.buildApiPath(invocation.getInvoker().getInterface().getName(),
-                invocation.getAttachment(ConvertUtils.DUBBO_ATTACHMENT_VERSION), invocation.getMethodName());
+            invocation.getAttachment(ConvertUtils.DUBBO_ATTACHMENT_VERSION), invocation.getMethodName());
         return new DubboRequestEntity(apiPath, invocation.getAttachments());
     }
 
@@ -57,18 +63,27 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter implements Int
         if (allArguments[1] instanceof Invocation) {
             Invocation invocation = (Invocation) allArguments[1];
             chooseDubboService().onBefore(convertToAlibabaDubboEntity(invocation), result,
-                    RpcContext.getContext().isProviderSide());
+                RpcContext.getContext().isProviderSide());
             if (result.isSkip() && result.getResult() instanceof FlowControlEnum) {
-                context.skip(new RpcResult(new RuntimeException(((FlowControlEnum) result.getResult()).getMsg())));
+                context.skip(new RpcResult(wrapException(invocation, (Invoker<?>) allArguments[0],
+                    ((FlowControlEnum) result.getResult()).getMsg())));
             }
         }
         return context;
     }
 
+    private RpcException wrapException(Invocation invocation, Invoker<?> invoker, String msg) {
+        return new RpcException(CommonConst.TOO_MANY_REQUEST_CODE,
+            String.format(Locale.ENGLISH, "Failed to invoke service %s.%s: %s",
+                invoker.getInterface().getName(), invocation.getMethodName(), msg));
+    }
+
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
         Result result = (Result) context.getResult();
-        chooseDubboService().onAfter(result, RpcContext.getContext().isProviderSide(), result.hasException());
+        if (result != null) {
+            chooseDubboService().onAfter(result, RpcContext.getContext().isProviderSide(), result.hasException());
+        }
         return context;
     }
 

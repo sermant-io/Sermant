@@ -16,9 +16,11 @@
 
 package com.huawei.register.config;
 
+import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.config.common.ConfigTypeKey;
 import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.sermant.core.plugin.config.PluginConfig;
+import com.huawei.sermant.core.service.meta.ServiceMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,9 +35,19 @@ import java.util.List;
  */
 @ConfigTypeKey(value = "servicecomb.service")
 public class RegisterConfig implements PluginConfig {
+    public RegisterConfig() {
+        final ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
+        if (serviceMeta == null) {
+            return;
+        }
+        this.environment = serviceMeta.getEnvironment();
+        this.application = serviceMeta.getApplication();
+        this.project = serviceMeta.getProject();
+        this.version = serviceMeta.getVersion();
+    }
+
     /**
-     * sc注册中心地址
-     * 多个地址使用逗号隔开
+     * sc注册中心地址 多个地址使用逗号隔开
      */
     private String address = "http://127.0.0.1:30100";
 
