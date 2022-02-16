@@ -17,13 +17,10 @@
 package com.huawei.dubbo.register.interceptor;
 
 import com.huawei.dubbo.register.constants.Constant;
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 import org.apache.dubbo.common.URL;
-
-import java.util.logging.Logger;
 
 /**
  * 增强InterfaceCompatibleRegistryProtocol类的getServiceDiscoveryInvoker方法
@@ -32,8 +29,6 @@ import java.util.logging.Logger;
  * @since 2022/1/26
  */
 public class RegistryProtocolInterceptor extends AbstractInterceptor {
-    private static final Logger LOGGER = LogFactory.getLogger();
-
     /**
      * 这个方法是为了让2.7.9不去加载sc ServiceDiscovery
      *
