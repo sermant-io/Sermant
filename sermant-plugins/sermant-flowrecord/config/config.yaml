@@ -1,0 +1,3 @@
+# 录制配置
+flow.record.plugin:
+  zookeeperAddress: localhost:2181
