@@ -1,35 +1,37 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
-package com.huawei.register.handler;
+package com.huawei.register.support;
 
 /**
- * 原注册中心状态变更处理
+ * 比较器
  *
+ * @param <T> 目标
+ * @param <S> 源
  * @author zhouss
- * @since 2021-12-30
+ * @since 2022-02-17
  */
-public interface RegisterStateChangeHandler {
+public interface Comparator<S, T> {
     /**
-     * 原注册中心状态变更
+     * 是否相同
      *
-     * @param arguments   参数
-     * @param obj         增强对象
-     * @param originState 变更前的状态
-     * @param newState    变更后的状态
+     * @param source 源
+     * @param target 目标
+     * @return 是否相同
      */
-    void change(Object obj, Object[] arguments, boolean originState, boolean newState);
+    boolean isSame(S source, T target);
 }

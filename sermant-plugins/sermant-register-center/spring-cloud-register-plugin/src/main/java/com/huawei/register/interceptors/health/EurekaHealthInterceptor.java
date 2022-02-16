@@ -18,13 +18,10 @@ package com.huawei.register.interceptors.health;
 
 import com.huawei.register.context.RegisterContext;
 import com.huawei.register.handler.SingleStateCloseHandler;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -33,32 +30,8 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-12-13
  */
-public class EurekaHealthInterceptor extends SingleStateCloseHandler implements InstanceMethodInterceptor {
+public class EurekaHealthInterceptor extends SingleStateCloseHandler implements Interceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
-
-    @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
-        setArguments(arguments);
-        setTarget(obj);
-    }
-
-    @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) {
-        if (result instanceof Boolean) {
-            final boolean heartbeatResult = (Boolean) result;
-            if(heartbeatResult && RegisterContext.INSTANCE.compareAndSet(false, true)) {
-                doChange(obj, arguments, false, true);
-            }
-            if (!heartbeatResult && RegisterContext.INSTANCE.compareAndSet(true, false)) {
-                doChange(obj, arguments, true, false);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
-    }
 
     @Override
     protected boolean needCloseRegisterCenter() {
@@ -69,8 +42,35 @@ public class EurekaHealthInterceptor extends SingleStateCloseHandler implements 
     protected void close() throws Exception {
         // 关闭Eureka定时器
         final Class<?> discoveryClientClass = Thread.currentThread().getContextClassLoader()
-                .loadClass("com.netflix.discovery.DiscoveryClient");
+            .loadClass("com.netflix.discovery.DiscoveryClient");
         discoveryClientClass.getDeclaredMethod("shutdown").invoke(target);
         LOGGER.info("Eureka register center has been closed.");
+    }
+
+    @Override
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        setArguments(context.getArguments());
+        setTarget(context.getObject());
+        return context;
+    }
+
+    @Override
+    public ExecuteContext after(ExecuteContext context) {
+        final Object result = context.getResult();
+        if (result instanceof Boolean) {
+            final boolean heartbeatResult = (Boolean) result;
+            if (heartbeatResult && RegisterContext.INSTANCE.compareAndSet(false, true)) {
+                doChange(context.getObject(), arguments, false, true);
+            }
+            if (!heartbeatResult && RegisterContext.INSTANCE.compareAndSet(true, false)) {
+                doChange(context.getObject(), arguments, true, false);
+            }
+        }
+        return context;
+    }
+
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) {
+        return context;
     }
 }

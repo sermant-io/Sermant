@@ -17,10 +17,10 @@
 package com.huawei.register.service.register;
 
 import com.huawei.register.config.RegisterConfig;
+import com.huawei.register.entity.MicroServiceInstance;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.netflix.loadbalancer.Server;
-import org.springframework.cloud.client.ServiceInstance;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,15 +39,9 @@ public enum RegisterManager {
     INSTANCE;
 
     /**
-     * 注册中心类型 基于spi加载
-     * Map<注册中心类型, 注册实现>
+     * 注册中心类型 基于spi加载 Map -> 注册中心类型, 注册实现
      */
-    private final Map<String, Register> registerMap = new HashMap<String, Register>();
-
-    /**
-     * 当前配置使用的注册实现
-     */
-    private Register curRegister;
+    private final Map<String, Register> registerMap = new HashMap<>();
 
     RegisterManager() {
         loadRegisters();
@@ -77,6 +71,7 @@ public enum RegisterManager {
     /**
      * 获取注册实现
      *
+     * @param registerType 注册中心类型
      * @return Register
      */
     public Register getRegister(Register.RegisterType registerType) {
@@ -87,8 +82,9 @@ public enum RegisterManager {
      * 初始化
      */
     public void start() {
-        if (isReady()) {
-            curRegister.start();
+        final Register register = getRegister();
+        if (register != null) {
+            register.start();
         }
     }
 
@@ -96,48 +92,34 @@ public enum RegisterManager {
      * 停止方法
      */
     public void stop() {
-        if (isReady()) {
-            curRegister.stop();
+        final Register register = getRegister();
+        if (register != null) {
+            register.stop();
         }
     }
 
     /**
      * 注册服务
-     *
-     * @param rawRegistration 注册信息
      */
-    public void register(Object rawRegistration) {
-        if (isReady()) {
-            curRegister.register(rawRegistration);
+    public void register() {
+        final Register register = getRegister();
+        if (register != null) {
+            register.register();
         }
     }
 
     /**
      * 获取服务列表
      *
-     * @param <T>    server实现
+     * @param serviceId 服务ID
+     * @param <T> 实例信息
      * @return 服务列表
      */
-    public <T extends Server> List<T> getServerList(String serviceId) {
-        if (isReady()) {
-            return curRegister.getServerList(serviceId);
+    public <T extends MicroServiceInstance> List<T> getServerList(String serviceId) {
+        final Register register = getRegister();
+        if (register != null) {
+            return register.getInstanceList(serviceId);
         }
-        // 若是未将数据准备好的场景，则返回空，不去干扰原注册中心的数据
-        return null;
+        return Collections.emptyList();
     }
-
-    /**
-     * 获取服务实例列表
-     *
-     * @param serviceId 服务名或者ID
-     * @return 服务是咧列表
-     */
-    public List<ServiceInstance> getInstanceList(String serviceId) {
-        return curRegister.getDiscoveryServerList(serviceId);
-    }
-
-    private boolean isReady() {
-        return (curRegister = getRegister()) != null;
-    }
-
 }

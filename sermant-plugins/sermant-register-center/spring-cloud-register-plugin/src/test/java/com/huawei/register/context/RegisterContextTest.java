@@ -17,6 +17,7 @@
 package com.huawei.register.context;
 
 import com.huawei.register.handler.SingleStateCloseHandler;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,13 +28,11 @@ import org.junit.Test;
  * @since 2022-01-05
  */
 public class RegisterContextTest {
-
     @Test
     public void testRegisterHandler() {
         RegisterContext.INSTANCE.registerCloseHandler(new SingleStateCloseHandler() {
             @Override
             protected void close() {
-
             }
         });
         // 自身注册， 加上主动注册

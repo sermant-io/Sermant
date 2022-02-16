@@ -16,9 +16,11 @@
 
 package com.huawei.register.handler;
 
+import com.huawei.register.config.RegisterConfig;
 import com.huawei.register.config.RegisterDynamicConfig;
 import com.huawei.register.context.RegisterContext;
 import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,17 +32,13 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2022-01-04
  */
-public abstract class SingleStateCloseHandler implements RegisterStateChangeHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
-
-    public SingleStateCloseHandler() {
-        RegisterContext.INSTANCE.registerCloseHandler(this);
-    }
-
+public abstract class SingleStateCloseHandler {
     /**
      * 注册中心是否关闭
      */
     protected static final AtomicBoolean IS_CLOSED = new AtomicBoolean();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 增强对象
@@ -52,30 +50,30 @@ public abstract class SingleStateCloseHandler implements RegisterStateChangeHand
      */
     protected Object[] arguments;
 
+    public SingleStateCloseHandler() {
+        RegisterContext.INSTANCE.registerCloseHandler(this);
+    }
+
     /**
      * 原注册中心状态变更
      *
-     * @param arguments   参数
-     * @param obj         增强对象
-     * @param originState 变更前的状态
-     * @param newState    变更后的状态
+     * @param allArguments 参数
+     * @param obj          增强对象
+     * @param originState  变更前的状态
+     * @param newState     变更后的状态
      */
-    public void doChange(Object obj, Object[] arguments, boolean originState, boolean newState) {
+    @SuppressWarnings("checkstyle:RegexpSingleline")
+    public void doChange(Object obj, Object[] allArguments, boolean originState, boolean newState) {
         if (!newState) {
-            doClose();
+            tryClose();
         }
-        change(obj, arguments, originState, false);
-    }
-
-    @Override
-    public void change(Object obj, Object[] arguments, boolean originState, boolean newState) {
-
     }
 
     /**
-     * 关闭注册中心，只会触发一次
+     * 关闭注册中心
      */
-    public void doClose() {
+    @SuppressWarnings("checkstyle:IllegalCatch")
+    public void tryClose() {
         if (needCloseRegisterCenter() && IS_CLOSED.compareAndSet(false, true)) {
             try {
                 close();
@@ -83,27 +81,26 @@ public abstract class SingleStateCloseHandler implements RegisterStateChangeHand
                 // 重置状态
                 resetCloseState();
                 LOGGER.warning(String.format(Locale.ENGLISH,
-                        "Closed register healthy check failed! %s", ex.getMessage()));
+                    "Closed register healthy check failed! %s", ex.getMessage()));
             }
         }
     }
 
     /**
-     * 重置开关状态
-     * 当某个注册中心关闭失败需要重新关闭时可调用
+     * 重置开关状态 当某个注册中心关闭失败需要重新关闭时可调用
      */
     private void resetCloseState() {
         IS_CLOSED.set(false);
     }
 
     /**
-     * 子类实现，默认为配置的注册开关
-     * 若需修改，则需重新实现该方法
+     * 子类实现，默认为配置的注册开关 若需修改，则需重新实现该方法
      *
      * @return 是否可关闭注册中心
      */
     protected boolean needCloseRegisterCenter() {
-        return RegisterDynamicConfig.closeOriginRegisterCenter;
+        return RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()
+            || !PluginConfigManager.getPluginConfig(RegisterConfig.class).isOpenMigration();
     }
 
     /**

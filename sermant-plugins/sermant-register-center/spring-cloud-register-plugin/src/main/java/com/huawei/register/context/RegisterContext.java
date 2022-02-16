@@ -17,11 +17,10 @@
 package com.huawei.register.context;
 
 import com.huawei.register.handler.SingleStateCloseHandler;
-import com.netflix.client.config.IClientConfig;
-import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -37,26 +36,28 @@ public enum RegisterContext {
     INSTANCE;
 
     /**
-     * 注册中心健康监听对象
-     * 通常用于关闭定时服务
+     * 注册中心健康监听对象 通常用于关闭定时服务
      */
     private Object registerWatch;
-
-    /**
-     * 当前实例注册基本信息
-     */
-    private IClientConfig iClientConfig;
 
     private final AtomicBoolean isAvailable = new AtomicBoolean(true);
 
     private final List<SingleStateCloseHandler> closeHandlers = new ArrayList<SingleStateCloseHandler>();
 
-    private CompositeDiscoveryClient discoveryClient;
+    private Object discoveryClient;
 
-    public void setAvailable(boolean isAvailable) {
-        this.isAvailable.set(isAvailable);
+    private final ClientInfo clientInfo = new ClientInfo();
+
+    public ClientInfo getClientInfo() {
+        return clientInfo;
     }
 
+    @SuppressWarnings("checkstyle:RegexpSingleline")
+    public void setAvailable(boolean available) {
+        this.isAvailable.set(available);
+    }
+
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     public boolean compareAndSet(boolean expect, boolean target) {
         return this.isAvailable.compareAndSet(expect, target);
     }
@@ -84,19 +85,78 @@ public enum RegisterContext {
         return closeHandlers;
     }
 
-    public CompositeDiscoveryClient getDiscoveryClient() {
+    public Object getDiscoveryClient() {
         return discoveryClient;
     }
 
-    public void setDiscoveryClient(CompositeDiscoveryClient discoveryClient) {
+    public void setDiscoveryClient(Object discoveryClient) {
         this.discoveryClient = discoveryClient;
     }
 
-    public IClientConfig getiClientConfig() {
-        return iClientConfig;
-    }
+    public static class ClientInfo {
+        /**
+         * 服务名 通过拦截获取
+         */
+        private String serviceName;
 
-    public void setiClientConfig(IClientConfig iClientConfig) {
-        this.iClientConfig = iClientConfig;
+        /**
+         * 域名
+         */
+        private String host;
+
+        /**
+         * 端口
+         */
+        private int port;
+
+        /**
+         * 服务id
+         */
+        private String serviceId;
+
+        /**
+         * 服务元信息
+         */
+        private Map<String, String> meta;
+
+        public String getServiceName() {
+            return serviceName;
+        }
+
+        public void setServiceName(String serviceName) {
+            this.serviceName = serviceName;
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+
+        public String getServiceId() {
+            return serviceId;
+        }
+
+        public void setServiceId(String serviceId) {
+            this.serviceId = serviceId;
+        }
+
+        public Map<String, String> getMeta() {
+            return meta;
+        }
+
+        public void setMeta(Map<String, String> meta) {
+            this.meta = meta;
+        }
     }
 }

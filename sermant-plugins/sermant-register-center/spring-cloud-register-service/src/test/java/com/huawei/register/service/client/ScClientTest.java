@@ -16,17 +16,16 @@
 
 package com.huawei.register.service.client;
 
+import com.huawei.register.context.RegisterContext;
+
 import org.apache.servicecomb.service.center.client.ServiceCenterOperation;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.cloud.client.serviceregistry.Registration;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * sc客户端测试
@@ -35,58 +34,43 @@ import java.util.Map;
  * @since 2022-01-05
  */
 public class ScClientTest extends BaseTest {
-    ScClient scClient;
-    Registration registration;
+    private static final int PORT = 8080;
+    private ScClient scClient;
 
+    /**
+     * 前置
+     */
     @Before
     public void before() {
         scClient = new ScClient();
-        registration = new Registration() {
-            @Override
-            public String getServiceId() {
-                return "test";
-            }
-
-            @Override
-            public String getHost() {
-                return "localhost";
-            }
-
-            @Override
-            public int getPort() {
-                return 8080;
-            }
-
-            @Override
-            public boolean isSecure() {
-                return false;
-            }
-
-            @Override
-            public URI getUri() {
-                return URI.create("http://localhost:8080");
-            }
-
-            @Override
-            public Map<String, String> getMetadata() {
-                return new HashMap<String, String>();
-            }
-        };
+        RegisterContext.INSTANCE.getClientInfo().setServiceName("test");
+        RegisterContext.INSTANCE.getClientInfo().setServiceId("test");
+        RegisterContext.INSTANCE.getClientInfo().setHost("localhost");
+        RegisterContext.INSTANCE.getClientInfo().setPort(PORT);
+        RegisterContext.INSTANCE.getClientInfo().setMeta(new HashMap<>());
     }
 
+    /**
+     * 构建实例信息
+     *
+     * @throws NoSuchMethodException 无该方法抛出
+     * @throws InvocationTargetException 调用异常时抛出
+     * @throws IllegalAccessException 无法拿到目标对象抛出
+     */
     @Test
     public void buildMicro() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        scClient.start();
+        scClient.init();
         final ServiceCenterOperation rawClient = scClient.getRawClient();
         Assert.assertNotNull(rawClient);
-        final Method buildMicroService = scClient.getClass().getDeclaredMethod("buildMicroService", Registration.class);
+        final Method buildMicroService = scClient.getClass().getDeclaredMethod("buildMicroService");
         buildMicroService.setAccessible(true);
-        final Object serviceResult = buildMicroService.invoke(scClient, registration);
+        final Object serviceResult = buildMicroService.invoke(scClient);
         Assert.assertNotNull(serviceResult);
-        final Method buildMicroServiceInstance = scClient.getClass().getDeclaredMethod("buildMicroServiceInstance", Registration.class, String.class);
+        final Method buildMicroServiceInstance = scClient.getClass()
+            .getDeclaredMethod("buildMicroServiceInstance", String.class);
         buildMicroServiceInstance.setAccessible(true);
-        final Object instanceResult = buildMicroServiceInstance.invoke(scClient, registration, registration.getServiceId());
+        final Object instanceResult = buildMicroServiceInstance
+            .invoke(scClient, RegisterContext.INSTANCE.getClientInfo().getServiceId());
         Assert.assertNotNull(instanceResult);
-        scClient.stop();
     }
 }

@@ -16,8 +16,7 @@
 
 package com.huawei.register.service.register;
 
-import com.netflix.loadbalancer.Server;
-import org.springframework.cloud.client.ServiceInstance;
+import com.huawei.register.entity.MicroServiceInstance;
 
 import java.util.List;
 
@@ -40,27 +39,17 @@ public interface Register {
 
     /**
      * 拦截原spring的注册方法
-     *
-     * @param registration 注册信息
      */
-    void register(Object registration);
+    void register();
 
     /**
-     * 替换服务列表
+     * 替换服务列表 基于DiscoveryClient拦截
      *
+     * @param <T> 实例信息
      * @param serviceId 服务ID
      * @return 服务列表
      */
-     <T extends Server> List<T> getServerList(String serviceId);
-
-    /**
-     * 替换服务列表
-     * 基于DiscoveryClient拦截
-     *
-     * @param serviceId 服务ID
-     * @return 服务列表
-     */
-    <T extends ServiceInstance> List<T> getDiscoveryServerList(String serviceId);
+    <T extends MicroServiceInstance> List<T> getInstanceList(String serviceId);
 
     /**
      * 注册中心类型

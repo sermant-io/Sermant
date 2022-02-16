@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.huawei.register.enhancers.health;
+package com.huawei.register.declarers.health;
 
-import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
-import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
-import com.huawei.sermant.core.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.agent.matcher.ClassMatchers;
-import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.matcher.ElementMatchers;
+import com.huawei.register.interceptors.health.ConsulWatchInterceptor;
+import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
+import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * consul健康检测增强
@@ -29,8 +28,7 @@ import net.bytebuddy.matcher.ElementMatchers;
  * @author zhouss
  * @since 2021-12-17
  */
-public class ConsulWatchConEnhancer implements EnhanceDefinition {
-
+public class ConsulWatchConDeclarer extends AbstractPluginDeclarer {
     /**
      * nacos心跳发送类
      */
@@ -39,18 +37,17 @@ public class ConsulWatchConEnhancer implements EnhanceDefinition {
     /**
      * 拦截类的全限定名
      */
-    private static final String INTERCEPT_CLASS = "com.huawei.register.interceptors.health.ConsulWatchInterceptor";
+    private static final String INTERCEPT_CLASS = ConsulWatchInterceptor.class.getCanonicalName();
 
     @Override
-    public ClassMatcher enhanceClass() {
-        return ClassMatchers.named(ENHANCE_CLASS);
+    public ClassMatcher getClassMatcher() {
+        return ClassMatcher.nameEquals(ENHANCE_CLASS);
     }
 
     @Override
-    public MethodInterceptPoint[] getMethodInterceptPoints() {
-        return new MethodInterceptPoint[] {
-                MethodInterceptPoint.newConstructorInterceptPoint(INTERCEPT_CLASS,
-                        ElementMatchers.<MethodDescription>any())
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+            InterceptDeclarer.build(MethodMatcher.isConstructor(), INTERCEPT_CLASS)
         };
     }
 }

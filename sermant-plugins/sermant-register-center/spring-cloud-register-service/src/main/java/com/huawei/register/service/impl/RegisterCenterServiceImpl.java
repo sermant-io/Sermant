@@ -18,18 +18,14 @@ package com.huawei.register.service.impl;
 
 import com.huawei.register.config.RegisterConfig;
 import com.huawei.register.context.RegisterContext;
+import com.huawei.register.entity.FixedResult;
+import com.huawei.register.entity.MicroServiceInstance;
 import com.huawei.register.service.register.RegisterManager;
-import com.huawei.register.service.register.ScServer;
 import com.huawei.register.service.utils.CommonUtils;
 import com.huawei.register.services.RegisterCenterService;
-import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -56,8 +52,8 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
     }
 
     @Override
-    public void register(Object rawRegistration, BeforeResult result) {
-        RegisterManager.INSTANCE.register(rawRegistration);
+    public void register(FixedResult result) {
+        RegisterManager.INSTANCE.register();
         if (!getRegisterConfig().isOpenMigration()) {
             // 阻止原注册中心注册
             result.setResult(null);
@@ -65,85 +61,23 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
     }
 
     @Override
-    public void replaceServerList(Object target, BeforeResult beforeResult) {
+    public List<MicroServiceInstance> getServerList(Object target) {
         String serviceId = (String) CommonUtils.getFieldValue(target, "serviceId");
-        if (serviceId == null && RegisterContext.INSTANCE.getiClientConfig() != null) {
+        if (serviceId == null && RegisterContext.INSTANCE.getClientInfo().getServiceName() != null) {
             // 若未获取到服务名，则从注册基本信息获取
-            serviceId = RegisterContext.INSTANCE.getiClientConfig().getClientName();
+            serviceId = RegisterContext.INSTANCE.getClientInfo().getServiceName();
         }
-        if (serviceId == null) {
-            // 无法执行替换
-            LOGGER.warning("Can not acquire the name of service, the process to replace instance won't be finished!");
-            return;
-        }
-        if (useOriginRegisterCenter()) {
-            final List<ServiceInstance> serviceInstances = queryServiceInstances(serviceId);
-            if (!serviceInstances.isEmpty()) {
-                final List<ScServer> servers = new ArrayList<ScServer>();
-                for (ServiceInstance instance : serviceInstances) {
-                    servers.add(new ScServer(instance));
-                }
-                beforeResult.setResult(servers);
-                LOGGER.fine("Using origin register center instance list.");
-            }
-        }
-        if (beforeResult.getResult() != null) {
-            return;
-        }
-        List<ScServer> serverList = RegisterManager.INSTANCE.getServerList(serviceId);
-        if (serverList != null) {
-            beforeResult.setResult(serverList);
-        }
+        return getServerList(serviceId);
     }
 
     @Override
-    public void replaceServerList(String serviceId, BeforeResult beforeResult) {
-        if (useOriginRegisterCenter()) {
-            // 若原注册中心可用，则使用原注册中心的实例列表
-            final List<ServiceInstance> originServiceInstances = queryServiceInstances(serviceId);
-            if (!originServiceInstances.isEmpty()) {
-                beforeResult.setResult(originServiceInstances);
-                LOGGER.fine("Using origin register center instance list.");
-            }
+    public List<MicroServiceInstance> getServerList(String serviceId) {
+        if (serviceId == null) {
+            // 无法执行替换
+            LOGGER.warning("Can not acquire the name of service, the process to replace instance won't be finished!");
+            return Collections.emptyList();
         }
-        if (beforeResult.getResult() != null) {
-            return;
-        }
-        List<ServiceInstance> serviceInstances = RegisterManager.INSTANCE.getInstanceList(serviceId);
-        if (serviceInstances != null) {
-            beforeResult.setResult(serviceInstances);
-        }
-    }
-
-    private boolean useOriginRegisterCenter() {
-        return RegisterContext.INSTANCE.isAvailable() && getRegisterConfig().isOpenMigration();
-    }
-
-    /**
-     * 查询原注册中心所有的实例列表
-     *
-     * @param serviceId 服务id
-     * @return 服务实例列表
-     */
-    private List<ServiceInstance> queryServiceInstances(String serviceId) {
-        try {
-            final CompositeDiscoveryClient discoveryClient = RegisterContext.INSTANCE.getDiscoveryClient();
-            final List<DiscoveryClient> discoveryClients = discoveryClient.getDiscoveryClients();
-            if (discoveryClients == null) {
-                return Collections.emptyList();
-            }
-            for (DiscoveryClient client : discoveryClients) {
-                List<ServiceInstance> instances = client.getInstances(serviceId);
-                if (instances != null && !instances.isEmpty()) {
-                    return instances;
-                }
-            }
-        } catch (Exception ex) {
-            // 原注册中心已经没有可用服务
-            LOGGER.info("Origin register center is not available! ");
-        }
-        RegisterContext.INSTANCE.setAvailable(false);
-        return Collections.emptyList();
+        return RegisterManager.INSTANCE.getServerList(serviceId);
     }
 
     private RegisterConfig getRegisterConfig() {
