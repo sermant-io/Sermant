@@ -24,6 +24,7 @@
                 <module>demo-plugin</module>
                 <module>demo-service</module>
                 <module>demo-application</module>
+                <module>demo-register</module>
             </modules>
         </profile>
         <profile>
@@ -32,6 +33,7 @@
                 <module>demo-plugin</module>
                 <module>demo-service</module>
                 <module>demo-application</module>
+                <module>demo-register</module>
             </modules>
         </profile>
     </profiles>
