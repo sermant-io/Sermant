@@ -52,8 +52,6 @@ public class CommandExecutor {
     private static final ExecutorService POOL = new ThreadPoolExecutor(2, 10,
         0, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
-    //private static final int EXEC_TIMEOUT_SECONDS = 60;
-
     public static <T> T execute(final MonitorCommand<T> command) {
         final Process process;
         try {
@@ -71,13 +69,10 @@ public class CommandExecutor {
             handleErrorStream(command, errorStream, downLatch);
             Future<T> parseFuture = parseResult(command, inputStream);
             // JDK6 无法超时等待
-            // process.waitFor(EXEC_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             process.waitFor();
             downLatch.await();
             return parseFuture.get();
-            // LOGGER.warn("timeout.")
             // Should destroy the subprocess when timout? JDK6 也用不了
-            // process.destroyForcibly();
         } catch (InterruptedException e) {
             // Ignored.
         } catch (ExecutionException e) {

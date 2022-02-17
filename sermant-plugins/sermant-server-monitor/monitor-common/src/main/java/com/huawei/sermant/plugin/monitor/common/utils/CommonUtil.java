@@ -51,7 +51,7 @@ public class CommonUtil {
                 try {
                     byteArrayOutputStream.close();
                 } catch (IOException e) {
-                    //ignored
+                    // ignored
                 }
             }
         }

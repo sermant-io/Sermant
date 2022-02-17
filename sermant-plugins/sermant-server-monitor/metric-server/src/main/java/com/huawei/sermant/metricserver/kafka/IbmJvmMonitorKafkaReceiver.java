@@ -52,12 +52,12 @@ public class IbmJvmMonitorKafkaReceiver {
         } catch (InvalidProtocolBufferException e) {
             return;
         }
-        final List<IbmMemoryPoolDTO> metricsToBeStored = buildDTOs(collection);
+        final List<IbmMemoryPoolDTO> metricsToBeStored = buildDtoS(collection);
         ibmMemoryPoolService.batchAddMemoryPools(metricsToBeStored);
     }
 
-    private LinkedList<IbmMemoryPoolDTO> buildDTOs(IbmJvmMetricCollection collection) {
-        final LinkedList<IbmMemoryPoolDTO> metrics = new LinkedList<>();
+    private List<IbmMemoryPoolDTO> buildDtoS(IbmJvmMetricCollection collection) {
+        final List<IbmMemoryPoolDTO> metrics = new LinkedList<>();
         final String service = collection.getService();
         final String serviceInstance = collection.getServiceInstance();
         for (IbmJvmMetric ibmJvmMetric : collection.getMetricsList()) {

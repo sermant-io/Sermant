@@ -33,6 +33,7 @@ import java.util.Map;
  */
 @ConfigTypeKey("demo.test") // 声明前缀
 public class DemoConfig extends AliaConfig { // 有设置拦截器别名需求的继承AliaConfig，否则实现PluginConfig
+
     /**
      * 基础类型配置(除byte和char)
      */
