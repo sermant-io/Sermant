@@ -13,8 +13,8 @@
 - 执行`mvn clean package -Dmaven.test.skip -Pexample` 编译示例项目
 
 # 启动
-- 运行环境需要具备ServiceComb, zookeeper。**zookeeper以默认端口正常运行, 若需修改端口配置, 请参考[backend文档](user-guide/backend.md)修改配置**.
-- 进入可执行文件根目录
+- 运行环境需要具备[ServiceComb](https://github.com/apache/servicecomb-service-center/releases), zookeeper环境。
+- 进入编译后可执行文件根目录(例如:**sermant-agent-1.0.0**)
 - 执行以下命令启动backend，详细的后端模块介绍以及更多的配置修改，请参考[backend模块](user-guide/backend.md)
   ```bash
   # windows
@@ -26,24 +26,23 @@
 - 执行以下命令启动注册插件provider示例应用
   ```bash
   # windows
-  java -javaagent:agent\sermant-agent.jar -jar ..\sermant-plugins\sermant-example\demo-register\zk-resttemplate-provider\target\zk-resttemplate-provider.jar
-  
+  java -javaagent:agent\sermant-agent.jar=appName=test -jar ..\sermant-plugins\sermant-example\demo-register\zk-resttemplate-provider\target\zk-resttemplate-provider.jar
   # mac linux
-  java -javaagent:agent/sermant-agent.jar -jar ../sermant-plugins/sermant-example/demo-register/zk-resttemplate-provider/target/zk-resttemplate-provider.jar
+  java -javaagent:agent/sermant-agent.jar=appName=test -jar ../sermant-plugins/sermant-example/demo-register/zk-resttemplate-provider/target/zk-resttemplate-provider.jar
   ```
 - 执行以下命令启动注册插件consumer示例应用
   ```bash
   # windows
-  java -javaagent:agent\sermant-agent.jar -jar ..\sermant-plugins\sermant-example\demo-register\zk-resttemplate-sonsumer\target\zk-resttemplate-consumer.jar
+  java -javaagent:agent\sermant-agent.jar=appName=test -jar ..\sermant-plugins\sermant-example\demo-register\zk-resttemplate-sonsumer\target\zk-resttemplate-consumer.jar
   
   # mac linux
-  java -javaagent:agent/sermant-agent.jar -jar ../sermant-plugins/sermant-example/demo-register/zk-resttemplate-sonsumer/target/zk-resttemplate-consumer.jar
+  java -javaagent:agent/sermant-agent.jar=appName=test -jar ../sermant-plugins/sermant-example/demo-register/zk-resttemplate-sonsumer/target/zk-resttemplate-consumer.jar
   ```
-- 浏览器访问地址: http://localhost:8900 查看框架和启用插件的运行状态。
+- 浏览器访问backend前端: http://localhost:8900 查看框架和启用插件的运行状态。
 ![pic](binary-docs/backend_sermant_info.png)
-- 浏览器访问地址: http://localhost:30103 查看应用注册状态。
-![pic](binary-docs/register_application.png)
-- 浏览器访问地址: http://localhost:8005/hello 验证provider和consumer订阅成功。
+- 浏览器访问servicecomb前端: http://localhost:30103 查看应用注册状态。
+![pic](binary-docs/register-application.PNG)
+- 浏览器访问consumer应用接口: http://localhost:8005/hello 验证provider和consumer注册和订阅成功。
 ![pic](binary-docs/check_application.png)
 
 # 当前插件功能列表
