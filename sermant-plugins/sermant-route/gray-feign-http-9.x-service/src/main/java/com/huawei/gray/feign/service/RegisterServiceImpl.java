@@ -21,6 +21,7 @@ import com.huawei.route.common.gray.config.GrayConfig;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 import com.netflix.appinfo.InstanceInfo;
 
@@ -34,49 +35,43 @@ import java.util.Map;
 /**
  * 注册通用的service
  *
- * @author pengyuyi
- * @date 2021/11/26
+ * @author provenceee
+ * @since 2021/11/26
  */
 public class RegisterServiceImpl implements RegisterService {
-    private GrayConfig grayConfig;
     @Override
-    public void start() {
-    }
-
-    @Override
-    public void stop() {
-    }
-
-    @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
-        grayConfig = PluginConfigManager.getPluginConfig(GrayConfig.class);
+    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
         final Object argument = arguments[0];
-        if (argument instanceof Registration) {
+        if (argument instanceof ZookeeperRegistration) {
+            ZookeeperRegistration instanceInfo = (ZookeeperRegistration) argument;
+
+            // 存放当前服务实例, 仅初始化一次
+            CurrentInstance.newInstance(instanceInfo.getServiceId(), instanceInfo.getHost(), instanceInfo.getPort());
+        } else if (argument instanceof Registration) {
             Registration instanceInfo = (Registration) argument;
             Map<String, String> meta = instanceInfo.getMetadata();
-            meta.put(GrayConstant.GRAY_VERSION_KEY, grayConfig.getGrayVersion());
+            meta.put(GrayConstant.GRAY_VERSION_KEY,
+                PluginConfigManager.getPluginConfig(GrayConfig.class).getGrayVersion());
+
             // 存放当前服务实例, 仅初始化一次
             CurrentInstance.newInstance(instanceInfo.getServiceId(), instanceInfo.getHost(), instanceInfo.getPort());
-        }  else if (argument instanceof InstanceInfo) {
+        } else if (argument instanceof InstanceInfo) {
             InstanceInfo instanceInfo = (InstanceInfo) argument;
+
             // 存放当前服务实例, 初始化标签观察者
             CurrentInstance.newInstance(instanceInfo.getVIPAddress(), instanceInfo.getIPAddr(), instanceInfo.getPort());
-        } else if (argument instanceof ZookeeperRegistration) {
-            ZookeeperRegistration instanceInfo = (ZookeeperRegistration) argument;
-            // 存放当前服务实例, 仅初始化一次
-            CurrentInstance.newInstance(instanceInfo.getServiceId(), instanceInfo.getHost(), instanceInfo.getPort());
         }
     }
 
     @Override
-    public void after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
+    public void after(Object obj, Method method, Object[] arguments, Object result) {
         if (result instanceof Microservice) {
             Microservice microservice = (Microservice) result;
             CurrentInstance.newInstance(microservice.getServiceName(), microservice.getInstance().getHostName(), -1);
         } else if (arguments[0] instanceof ServiceCombRegistration) {
             ServiceCombRegistration serviceCombRegistration = (ServiceCombRegistration) arguments[0];
             CurrentInstance.newInstance(serviceCombRegistration.getServiceId(), serviceCombRegistration.getHost(),
-                    serviceCombRegistration.getPort());
+                serviceCombRegistration.getPort());
         }
     }
 }

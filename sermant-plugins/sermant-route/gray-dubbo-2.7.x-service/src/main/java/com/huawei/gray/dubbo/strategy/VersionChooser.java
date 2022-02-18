@@ -26,10 +26,13 @@ import java.util.Map;
 /**
  * 版本选择器
  *
- * @author pengyuyi
- * @date 2021/12/8
+ * @author provenceee
+ * @since 2021/12/8
  */
 public enum VersionChooser {
+    /**
+     * 单例
+     */
     INSTANCE;
 
     private final Map<String, VersionStrategy> map;

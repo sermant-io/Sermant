@@ -20,8 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 线程变量上下文
- * 基于MAP管理多个键值
+ * 线程变量上下文 基于MAP管理多个键值
  *
  * @author zhouss
  * @since 2021-11-03
@@ -55,6 +54,7 @@ public enum ThreadLocalContext {
 
     /**
      * 获取变量
+     *
      * @param key 存放键
      * @return Object
      */
@@ -66,11 +66,11 @@ public enum ThreadLocalContext {
      * 获取变量
      *
      * @param key 键
-     * @param tClass 目标类型
+     * @param clazz 目标类型
      * @param <T> 目标类型
      * @return 值
      */
-    public <T> T get(String key, Class<T> tClass) {
+    public <T> T get(String key, Class<T> clazz) {
         return (T) context.get(key);
     }
 

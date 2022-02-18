@@ -21,14 +21,14 @@ import com.huawei.gray.dubbo.definition.AbstractInstDefinition;
 /**
  * 增强RegistrationListener类的notify方法
  *
- * @author pengyuyi
+ * @author provenceee
  * @since 2021年11月8日
  */
 public class RegistrationDefinition extends AbstractInstDefinition {
     private static final String ENHANCE_CLASS = "com.huaweicloud.dubbo.discovery.RegistrationListener";
 
     private static final String INTERCEPT_CLASS
-            = "com.huawei.gray.dubbo.interceptor.servicecomb.RegistrationInterceptor";
+        = "com.huawei.gray.dubbo.interceptor.servicecomb.RegistrationInterceptor";
 
     private static final String METHOD_NAME = "notify";
 

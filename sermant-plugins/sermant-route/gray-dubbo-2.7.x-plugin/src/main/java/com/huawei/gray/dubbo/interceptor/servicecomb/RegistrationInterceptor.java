@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 /**
  * 增强RegistrationListener类的notify方法
  *
- * @author pengyuyi
+ * @author provenceee
  * @since 2021年11月8日
  */
 public class RegistrationInterceptor implements InstanceMethodInterceptor {
@@ -40,7 +40,7 @@ public class RegistrationInterceptor implements InstanceMethodInterceptor {
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
         registrationService = ServiceManager.getService(RegistrationService.class);
-        registrationService.before(obj, method, arguments, beforeResult);
+        registrationService.getVersion(obj, arguments);
     }
 
     /**
@@ -51,10 +51,9 @@ public class RegistrationInterceptor implements InstanceMethodInterceptor {
      * @param arguments 增强方法的所有参数
      * @param result the method's original return value. May be null if the method triggers an exception.
      * @return 返回值
-     * @throws Exception 增强时可能出现的异常
      */
     @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
+    public Object after(Object obj, Method method, Object[] arguments, Object result) {
         return result;
     }
 

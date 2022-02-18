@@ -27,8 +27,8 @@ import java.util.List;
 /**
  * 路由策略
  *
- * @author pengyuyi
- * @date 2021/10/14
+ * @author provenceee
+ * @since 2021/10/14
  */
 public interface RuleStrategy {
     /**
@@ -41,5 +41,5 @@ public interface RuleStrategy {
      * @return 灰度应用的invokers
      */
     List<Invoker<?>> getTargetInvoker(List<Route> routes, Invocation invocation, List<Invoker<?>> invokers,
-            VersionFrom versionFrom);
+        VersionFrom versionFrom);
 }

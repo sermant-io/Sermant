@@ -17,21 +17,22 @@
 package com.huawei.route.common.gray.strategy.match;
 
 import com.huawei.route.common.gray.strategy.ValueMatchStrategy;
+import com.huawei.route.common.utils.CollectionUtils;
 
 import java.util.List;
 
 /**
  * 不大于匹配策略
  *
- * @author pengyuyi
- * @date 2021/10/23
+ * @author provenceee
+ * @since 2021/10/23
  */
 public class NoGreaterValueMatchStrategy implements ValueMatchStrategy {
     @Override
     public boolean isMatch(List<String> values, String arg) {
         try {
-            return Integer.parseInt(arg) <= Integer.parseInt(values.get(0));
-        } catch (Exception e) {
+            return !CollectionUtils.isEmpty(values) && Integer.parseInt(arg) <= Integer.parseInt(values.get(0));
+        } catch (NumberFormatException e) {
             return false;
         }
     }

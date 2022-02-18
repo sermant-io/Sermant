@@ -16,17 +16,17 @@
 
 package com.huawei.route.common.gray.config;
 
+import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.sermant.core.config.common.ConfigTypeKey;
 import com.huawei.sermant.core.plugin.config.PluginConfig;
-import com.huawei.route.common.gray.constants.GrayConstant;
 
 import java.util.Map;
 
 /**
  * 灰度配置
  *
- * @author pengyuyi
- * @date 2021/11/18
+ * @author provenceee
+ * @since 2021/11/18
  */
 @ConfigTypeKey("gray.plugin")
 public class GrayConfig implements PluginConfig {

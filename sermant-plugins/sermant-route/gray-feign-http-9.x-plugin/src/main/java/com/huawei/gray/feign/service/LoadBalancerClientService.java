@@ -24,8 +24,8 @@ import java.lang.reflect.Method;
 /**
  * LoadBalancerClientInterceptor的service
  *
- * @author pengyuyi
- * @date 2021/11/26
+ * @author provenceee
+ * @since 2021/11/26
  */
 public interface LoadBalancerClientService extends PluginService {
     /**

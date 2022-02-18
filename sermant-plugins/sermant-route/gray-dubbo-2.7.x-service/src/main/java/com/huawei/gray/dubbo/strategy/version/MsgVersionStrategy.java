@@ -24,8 +24,8 @@ import org.apache.dubbo.rpc.Invoker;
 /**
  * 从注册消息中获取版本
  *
- * @author pengyuyi
- * @date 2021/12/8
+ * @author provenceee
+ * @since 2021/12/8
  */
 public class MsgVersionStrategy implements VersionStrategy {
     /**

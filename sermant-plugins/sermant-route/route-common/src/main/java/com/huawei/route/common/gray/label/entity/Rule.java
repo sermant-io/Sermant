@@ -21,8 +21,8 @@ import java.util.List;
 /**
  * 规则
  *
- * @author pengyuyi
- * @date 2021/10/27
+ * @author provenceee
+ * @since 2021/10/27
  */
 public class Rule {
     /**

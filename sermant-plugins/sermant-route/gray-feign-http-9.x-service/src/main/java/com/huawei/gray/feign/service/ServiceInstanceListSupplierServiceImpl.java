@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.huawei.gray.feign.service;
 
 import com.huawei.route.common.gray.addr.AddrCache;
@@ -20,10 +21,12 @@ import com.huawei.route.common.gray.addr.entity.Instances;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
 import com.huawei.sermant.core.agent.common.BeforeResult;
+
+import reactor.core.publisher.Flux;
+
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.loadbalancer.core.CachingServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.core.DiscoveryClientServiceInstanceListSupplier;
-import reactor.core.publisher.Flux;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -37,15 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author fuziye
  * @since 2021-12-29
  */
-public class ServiceInstanceListSupplierServiceImpl implements ServiceInstanceListSupplierService{
-    @Override
-    public void start() {
-    }
-
-    @Override
-    public void stop() {
-    }
-
+public class ServiceInstanceListSupplierServiceImpl implements ServiceInstanceListSupplierService {
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
     }
@@ -53,24 +48,24 @@ public class ServiceInstanceListSupplierServiceImpl implements ServiceInstanceLi
     @Override
     public void after(Object obj, Method method, Object[] arguments, Object result) {
         String serviceName = "";
-        if (obj instanceof DiscoveryClientServiceInstanceListSupplier){
+        if (obj instanceof DiscoveryClientServiceInstanceListSupplier) {
             serviceName = ((DiscoveryClientServiceInstanceListSupplier) obj).getServiceId();
-        } else if (obj instanceof CachingServiceInstanceListSupplier){
+        } else if (obj instanceof CachingServiceInstanceListSupplier) {
             serviceName = ((CachingServiceInstanceListSupplier) obj).getServiceId();
         } else {
             return;
         }
 
-        Flux<List<ServiceInstance>> fluxinsts = (Flux<List<ServiceInstance>>)result;
+        Flux<List<ServiceInstance>> fluxinsts = (Flux<List<ServiceInstance>>) result;
         List<Instances> ins = new ArrayList<Instances>();
         List<ServiceInstance> insts = fluxinsts.toIterable().iterator().next();
 
         for (ServiceInstance inst : insts) {
-            Map<String, String> meta = inst.getMetadata();
             Instances in = new Instances();
             in.setIp(inst.getHost());
             in.setServiceName(serviceName);
             in.setPort(inst.getPort());
+            Map<String, String> meta = inst.getMetadata();
             CurrentTag currentTag = new CurrentTag();
             currentTag.setRegisterVersion(meta.get(GrayConstant.REG_VERSION_KEY));
             currentTag.setVersion(meta.get(GrayConstant.GRAY_VERSION_KEY));

@@ -21,7 +21,7 @@ import com.huawei.gray.dubbo.definition.AbstractInstDefinition;
 /**
  * 增强AbstractInterfaceConfig类的getApplication方法，用来获取应用名
  *
- * @author pengyuyi
+ * @author provenceee
  * @since 2021年11月8日
  */
 public class InterfaceConfigDefinition extends AbstractInstDefinition {

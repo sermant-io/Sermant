@@ -19,8 +19,8 @@ package com.huawei.route.common.gray.addr.entity;
 /**
  * 额外元数据
  *
- * @author pengyuyi
- * @date 2021/10/26
+ * @author provenceee
+ * @since 2021/10/26
  */
 public class Metadata {
     /**

@@ -22,8 +22,8 @@ import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 /**
  * 空匹配策略
  *
- * @author pengyuyi
- * @date 2021/10/13
+ * @author provenceee
+ * @since 2021/10/13
  */
 public class EmptyTypeStrategy extends TypeStrategy {
     @Override
@@ -34,5 +34,15 @@ public class EmptyTypeStrategy extends TypeStrategy {
     @Override
     public boolean isMatch(String type) {
         return StringUtils.isBlank(type);
+    }
+
+    @Override
+    public String getBeginFlag() {
+        return "";
+    }
+
+    @Override
+    public String getEndFlag() {
+        return "";
     }
 }

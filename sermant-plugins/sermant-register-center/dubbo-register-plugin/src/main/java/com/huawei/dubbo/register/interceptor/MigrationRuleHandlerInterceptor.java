@@ -25,6 +25,8 @@ import org.apache.dubbo.registry.client.migration.MigrationInvoker;
 import org.apache.dubbo.registry.client.migration.MigrationRuleHandler;
 
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,7 +48,10 @@ public class MigrationRuleHandlerInterceptor extends AbstractInterceptor {
             MigrationInvoker<?> migrationInvoker;
             try {
                 Field field = handler.getClass().getDeclaredField(MIGRATION_INVOKER_FIELD_NAME);
-                field.setAccessible(true);
+                AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                    field.setAccessible(true);
+                    return null;
+                });
                 migrationInvoker = (MigrationInvoker<?>) field.get(handler);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 LOGGER.log(Level.SEVERE, "Cannot get the migrationInvoker.");

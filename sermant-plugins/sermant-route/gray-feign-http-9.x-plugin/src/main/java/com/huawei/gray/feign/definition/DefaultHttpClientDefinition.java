@@ -22,39 +22,22 @@
 
 package com.huawei.gray.feign.definition;
 
-import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
-import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
-import com.huawei.sermant.core.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.agent.matcher.ClassMatchers;
-
-import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.matcher.ElementMatchers;
-
 /**
  * 拦截feign的ApacheHttpClient和OkHttpClient请求
  *
  * @author lilai
  * @since 2021-11-03
  */
-public class DefaultHttpClientDefinition implements EnhanceDefinition {
-
+public class DefaultHttpClientDefinition extends AbstractInstDefinition {
     /**
      * Intercept class.
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.DefaultHttpClientInterceptor";
 
-    @Override
-    public ClassMatcher enhanceClass() {
-        return ClassMatchers.named("feign.Client$Default");
-    }
-
-    @Override
-    public MethodInterceptPoint[] getMethodInterceptPoints() {
-        return new MethodInterceptPoint[]{
-                MethodInterceptPoint.newInstMethodInterceptPoint(
-                        INTERCEPT_CLASS, ElementMatchers.<MethodDescription>named("execute")
-                )
-        };
+    /**
+     * 构造方法
+     */
+    public DefaultHttpClientDefinition() {
+        super(new String[]{"feign.Client$Default"}, INTERCEPT_CLASS, "execute");
     }
 }
-

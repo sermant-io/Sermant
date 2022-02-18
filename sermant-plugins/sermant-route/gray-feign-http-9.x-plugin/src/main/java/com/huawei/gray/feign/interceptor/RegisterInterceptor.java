@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.huawei.gray.feign.interceptor;
 
-import com.huawei.gray.feign.service.LoadBalancerClientService;
+import com.huawei.gray.feign.service.RegisterService;
 import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.sermant.core.service.ServiceManager;
@@ -24,16 +24,16 @@ import com.huawei.sermant.core.service.ServiceManager;
 import java.lang.reflect.Method;
 
 /**
- * 拦截LoadBalancerFeignClientInstrumentation的execute方法，获取request的域名host（服务名称）
+ * 获取当前服务信息
  *
- * @author lilai
- * @since 2021-11-03
+ * @author provenceee
+ * @since 2022/2/18
  */
-public class LoadBalancerClientInterceptor implements InstanceMethodInterceptor {
-    private LoadBalancerClientService loadBalancerClientService;
+public abstract class RegisterInterceptor implements InstanceMethodInterceptor {
+    private RegisterService registerService;
 
     /**
-     * 拦截获取下游服务名称，并存放到线程变量中
+     * 获取当前服务信息
      *
      * @param obj 拦截对象
      * @param method 拦截方法
@@ -41,18 +41,17 @@ public class LoadBalancerClientInterceptor implements InstanceMethodInterceptor 
      * @param beforeResult change this result, if you want to truncate the method.
      */
     @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
-        loadBalancerClientService = ServiceManager.getService(LoadBalancerClientService.class);
-        loadBalancerClientService.before(obj, method, arguments, beforeResult);
+    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
+        registerService = ServiceManager.getService(RegisterService.class);
+        registerService.before(obj, method, arguments, beforeResult);
     }
 
     @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
+    public Object after(Object obj, Method method, Object[] arguments, Object result) {
+        registerService.after(obj, method, arguments, result);
         return result;
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable th) {
-        loadBalancerClientService.onThrow(obj, method, arguments, th);
-    }
+    public abstract void onThrow(Object obj, Method method, Object[] arguments, Throwable th);
 }

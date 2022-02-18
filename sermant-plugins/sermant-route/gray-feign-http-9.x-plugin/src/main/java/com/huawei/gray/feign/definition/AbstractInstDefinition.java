@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.gray.dubbo.definition.apache;
+package com.huawei.gray.feign.definition;
 
 import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
 import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
@@ -25,27 +25,40 @@ import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
- * 增强ClusterUtils类的mergeUrl方法
+ * 实例增强基类
  *
  * @author provenceee
- * @since 2021年6月28日
+ * @since 2021/11/24
  */
-public class ClusterDefinition implements EnhanceDefinition {
-    private static final String ENHANCE_CLASS = "org.apache.dubbo.rpc.cluster.support.ClusterUtils";
+public abstract class AbstractInstDefinition implements EnhanceDefinition {
+    private final String[] enhanceClass;
 
-    private static final String INTERCEPT_CLASS = "com.huawei.gray.dubbo.interceptor.apache.ClusterInterceptor";
+    private final String interceptClass;
 
-    private static final String METHOD_NAME = "mergeUrl";
+    private final String methodName;
+
+    /**
+     * 构造方法
+     *
+     * @param enhanceClass 增加类
+     * @param interceptClass 拦截类
+     * @param methodName 拦截方法
+     */
+    public AbstractInstDefinition(String[] enhanceClass, String interceptClass, String methodName) {
+        this.enhanceClass = enhanceClass;
+        this.interceptClass = interceptClass;
+        this.methodName = methodName;
+    }
 
     @Override
     public ClassMatcher enhanceClass() {
-        return ClassMatchers.named(ENHANCE_CLASS);
+        return ClassMatchers.multiClass(enhanceClass);
     }
 
     @Override
     public MethodInterceptPoint[] getMethodInterceptPoints() {
         return new MethodInterceptPoint[]{
-            MethodInterceptPoint.newStaticMethodInterceptPoint(INTERCEPT_CLASS,
-                ElementMatchers.<MethodDescription>named(METHOD_NAME))};
+            MethodInterceptPoint.newInstMethodInterceptPoint(interceptClass,
+                ElementMatchers.<MethodDescription>named(methodName))};
     }
 }

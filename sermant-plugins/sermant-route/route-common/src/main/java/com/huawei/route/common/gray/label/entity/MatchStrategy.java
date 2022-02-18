@@ -35,8 +35,8 @@ import java.util.Locale;
 /**
  * 值匹配策略
  *
- * @author pengyuyi
- * @date 2021/10/14
+ * @author provenceee
+ * @since 2021/10/14
  */
 public enum MatchStrategy {
     /**
@@ -82,8 +82,7 @@ public enum MatchStrategy {
     /**
      * 前缀匹配
      */
-    PREFIX(new PrefixValueMatchStrategy()),
-    ;
+    PREFIX(new PrefixValueMatchStrategy());
 
     private final ValueMatchStrategy valueMatchStrategy;
 
@@ -96,13 +95,14 @@ public enum MatchStrategy {
      *
      * @param values 期望值
      * @param arg 参数值
-     * @param caseInsensitive 是否区分大小写
+     * @param isCaseInsensitive 是否区分大小写
      * @return 是否匹配
      */
-    public boolean isMatch(List<String> values, String arg, boolean caseInsensitive) {
-        if (caseInsensitive || values == null || arg == null) {
+    public boolean isMatch(List<String> values, String arg, boolean isCaseInsensitive) {
+        if (isCaseInsensitive || values == null || arg == null) {
             return valueMatchStrategy.isMatch(values, arg);
         }
+
         // 如果大小写不敏感，则统一转成大写
         List<String> list = new ArrayList<String>(values);
         ListIterator<String> listIterator = list.listIterator();

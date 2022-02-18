@@ -29,8 +29,8 @@ import java.util.List;
 /**
  * 规则类型
  *
- * @author pengyuyi
- * @date 2021/10/14
+ * @author provenceee
+ * @since 2021/10/14
  */
 public enum RuleStrategyEnum {
     /**
@@ -41,8 +41,7 @@ public enum RuleStrategyEnum {
     /**
      * 上游路由
      */
-    UPSTREAM(new UpstreamRuleStrategy()),
-    ;
+    UPSTREAM(new UpstreamRuleStrategy());
 
     private final RuleStrategy ruleStrategy;
 
@@ -60,7 +59,7 @@ public enum RuleStrategyEnum {
      * @return 灰度应用的invokers
      */
     public List<Invoker<?>> getTargetInvoker(List<Route> routes, Invocation invocation,
-            List<Invoker<?>> invokers, VersionFrom versionFrom) {
+        List<Invoker<?>> invokers, VersionFrom versionFrom) {
         return ruleStrategy.getTargetInvoker(routes, invocation, invokers, versionFrom);
     }
 }

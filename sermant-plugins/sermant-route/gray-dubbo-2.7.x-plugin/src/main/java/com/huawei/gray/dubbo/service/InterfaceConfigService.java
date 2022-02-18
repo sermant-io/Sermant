@@ -21,8 +21,14 @@ import com.huawei.sermant.core.plugin.service.PluginService;
 /**
  * InterfaceConfigInterceptor的service
  *
- * @author pengyuyi
- * @date 2021/11/24
+ * @author provenceee
+ * @since 2021/11/24
  */
-public abstract class InterfaceConfigService extends AbstractPluginService implements PluginService {
+public interface InterfaceConfigService extends PluginService {
+    /**
+     * 获取并缓存应用名
+     *
+     * @param result dubbo配置类
+     */
+    void getName(Object result);
 }

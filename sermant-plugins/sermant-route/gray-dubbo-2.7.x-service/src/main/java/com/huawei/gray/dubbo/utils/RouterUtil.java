@@ -18,7 +18,6 @@ package com.huawei.gray.dubbo.utils;
 
 import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.gray.dubbo.strategy.TypeStrategyChooser;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
@@ -30,6 +29,7 @@ import com.huawei.route.common.gray.label.entity.Route;
 import com.huawei.route.common.gray.label.entity.Rule;
 import com.huawei.route.common.gray.label.entity.ValueMatch;
 import com.huawei.route.common.utils.CollectionUtils;
+import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.rpc.Invocation;
@@ -118,7 +118,7 @@ public class RouterUtil {
      * @return 目标规则
      */
     public static List<Rule> getValidRules(GrayConfiguration grayConfiguration, String targetService,
-            String interfaceName) {
+        String interfaceName) {
         if (GrayConfiguration.isInValid(grayConfiguration)) {
             return Collections.emptyList();
         }
@@ -201,8 +201,8 @@ public class RouterUtil {
 
     private static boolean isInvalidMatchRule(MatchRule matchRule) {
         return matchRule == null || matchRule.getValueMatch() == null
-                || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
-                || matchRule.getValueMatch().getMatchStrategy() == null;
+            || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
+            || matchRule.getValueMatch().getMatchStrategy() == null;
     }
 
     private static boolean isInvalidRoute(Route route) {
@@ -228,7 +228,7 @@ public class RouterUtil {
 
     private static List<Route> getRoutes(Object[] arguments, Rule rule) {
         Match match = rule.getMatch();
-        boolean fullMatch = match.isFullMatch();
+        boolean isFullMatch = match.isFullMatch();
         Map<String, List<MatchRule>> args = match.getArgs();
         for (Entry<String, List<MatchRule>> entry : args.entrySet()) {
             String key = entry.getKey();
@@ -241,20 +241,21 @@ public class RouterUtil {
                 List<String> values = valueMatch.getValues();
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
                 String arg = TypeStrategyChooser.INSTANCE.getValue(matchRule.getType(), key, arguments);
-                if (!fullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                if (!isFullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
                     // 如果不是全匹配，且匹配了一个，那么直接return
                     return rule.getRoute();
                 }
-                if (fullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                if (isFullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
                     // 如果是全匹配，且有一个不匹配，则继续下一个规则
                     return null;
                 }
             }
         }
-        if (fullMatch) {
+        if (isFullMatch) {
             // 如果是全匹配，走到这里，说明没有不匹配的，直接return
             return rule.getRoute();
         }
+
         // 如果不是全匹配，走到这里，说明没有一个规则能够匹配上，则继续下一个规则
         return null;
     }

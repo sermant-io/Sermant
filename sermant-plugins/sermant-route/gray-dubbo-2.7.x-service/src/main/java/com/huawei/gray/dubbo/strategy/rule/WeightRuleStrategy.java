@@ -37,22 +37,25 @@ import java.util.Set;
 /**
  * 流量匹配
  *
- * @author pengyuyi
- * @date 2021/10/14
+ * @author provenceee
+ * @since 2021/10/14
  */
 public class WeightRuleStrategy implements RuleStrategy {
+    private static final int ONO_HUNDRED = 100;
+
     @Override
     public List<Invoker<?>> getTargetInvoker(List<Route> routes, Invocation invocation, List<Invoker<?>> invokers,
-            VersionFrom versionFrom) {
+        VersionFrom versionFrom) {
         if (routes.get(0).getWeight() == null) {
             // 规定第一个规则的流量为空，则设置为100
-            routes.get(0).setWeight(100);
+            routes.get(0).setWeight(ONO_HUNDRED);
         }
         String targetVersion = null;
         Set<String> notMatchVersions = new HashSet<String>();
         int begin = 1;
-        int num = new Random().nextInt(100) + 1;
+        int num = new Random().nextInt(ONO_HUNDRED) + 1;
         for (Route route : routes) {
+            @SuppressWarnings("checkstyle:RegexpSingleline")
             Integer weight = route.getWeight();
             if (weight == null) {
                 continue;

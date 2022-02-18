@@ -30,8 +30,8 @@ import java.util.concurrent.Executors;
 /**
  * 配置服务
  *
- * @author pengyuyi
- * @date 2021/11/24
+ * @author provenceee
+ * @since 2021/11/24
  */
 public class ConfigServiceImpl implements PluginService {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -47,8 +47,7 @@ public class ConfigServiceImpl implements PluginService {
     public void start() {
         grayConfig = PluginConfigManager.getPluginConfig(GrayConfig.class);
         configurationService = ServiceManager.getService(DynamicConfigService.class);
-        // 此块只会适配KIE配置中心
-        executorService.submit(new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 initRequests();
@@ -58,7 +57,7 @@ public class ConfigServiceImpl implements PluginService {
 
     private void initRequests() {
         configurationService.addGroupListener(grayConfig.getDubboGroup(),
-                new GrayDynamicConfigListener(DubboCache.getLabelName(), grayConfig.getDubboKey()), true);
+            new GrayDynamicConfigListener(DubboCache.getLabelName(), grayConfig.getDubboKey()), true);
     }
 
     @Override

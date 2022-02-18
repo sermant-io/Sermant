@@ -16,13 +16,7 @@
 
 package com.huawei.gray.feign.definition.register;
 
-import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
-import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
-import com.huawei.sermant.core.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.agent.matcher.ClassMatchers;
-
-import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.matcher.ElementMatchers;
+import com.huawei.gray.feign.definition.AbstractInstDefinition;
 
 /**
  * 拦截springcloud nacos注册中心方法，获取当前服务名
@@ -30,24 +24,15 @@ import net.bytebuddy.matcher.ElementMatchers;
  * @author lilai
  * @since 2021-11-03
  */
-public class NacosRegisterDefinition implements EnhanceDefinition {
+public class NacosRegisterDefinition extends AbstractInstDefinition {
+    private static final String[] ENHANCE_CLASS = {"com.alibaba.cloud.nacos.registry.NacosServiceRegistry"};
 
     /**
      * Intercept class.
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.NacosRegisterInterceptor";
 
-    @Override
-    public ClassMatcher enhanceClass() {
-        return ClassMatchers.named("com.alibaba.cloud.nacos.registry.NacosServiceRegistry");
-    }
-
-    @Override
-    public MethodInterceptPoint[] getMethodInterceptPoints() {
-        return new MethodInterceptPoint[]{
-                MethodInterceptPoint.newInstMethodInterceptPoint(
-                        INTERCEPT_CLASS, ElementMatchers.<MethodDescription>named("register")
-                )
-        };
+    public NacosRegisterDefinition() {
+        super(ENHANCE_CLASS, INTERCEPT_CLASS, "register");
     }
 }

@@ -17,16 +17,17 @@
 package com.huawei.gray.dubbo.strategy.type;
 
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
-import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.route.common.gray.constants.GrayConstant;
+import com.huawei.sermant.core.common.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
 /**
  * enabled匹配策略
  *
- * @author pengyuyi
- * @date 2021/10/13
+ * @author provenceee
+ * @since 2021/10/13
  */
 public class EnabledTypeStrategy extends TypeStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger();
@@ -36,8 +37,14 @@ public class EnabledTypeStrategy extends TypeStrategy {
         try {
             Object object = arg.getClass().getMethod(getKey(type)).invoke(arg);
             return object == null ? null : String.valueOf(object);
-        } catch (Exception e) {
-            LOGGER.warning("Cannot invoke the method, type is " + type);
+        } catch (NoSuchMethodException e) {
+            log(type);
+            return Boolean.FALSE.toString();
+        } catch (IllegalAccessException e) {
+            log(type);
+            return Boolean.FALSE.toString();
+        } catch (InvocationTargetException e) {
+            log(type);
             return Boolean.FALSE.toString();
         }
     }
@@ -55,5 +62,9 @@ public class EnabledTypeStrategy extends TypeStrategy {
     @Override
     public String getEndFlag() {
         return "()";
+    }
+
+    private void log(String type) {
+        LOGGER.warning("Cannot invoke the method, type is " + type);
     }
 }

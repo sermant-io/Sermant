@@ -28,13 +28,13 @@ import java.util.List;
 /**
  * 上游传递标签匹配
  *
- * @author pengyuyi
- * @date 2021/10/15
+ * @author provenceee
+ * @since 2021/10/15
  */
 public class UpstreamRuleStrategy implements RuleStrategy {
     @Override
     public List<Invoker<?>> getTargetInvoker(List<Route> routes, Invocation invocation, List<Invoker<?>> invokers,
-            VersionFrom versionFrom) {
+        VersionFrom versionFrom) {
         return invokers;
     }
 }

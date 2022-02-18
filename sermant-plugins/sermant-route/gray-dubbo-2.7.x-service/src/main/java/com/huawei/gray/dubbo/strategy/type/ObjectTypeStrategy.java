@@ -21,13 +21,15 @@ import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.logging.Logger;
 
 /**
  * 实体匹配策略
  *
- * @author pengyuyi
- * @date 2021/10/13
+ * @author provenceee
+ * @since 2021/10/13
  */
 public class ObjectTypeStrategy extends TypeStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger();
@@ -35,20 +37,34 @@ public class ObjectTypeStrategy extends TypeStrategy {
     @Override
     public String getValue(Object arg, String type) {
         try {
-            Field field = arg.getClass().getDeclaredField(getKey(type));
-            field.setAccessible(true);
+            final Field field = arg.getClass().getDeclaredField(getKey(type));
+            AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                @Override
+                public Object run() {
+                    field.setAccessible(true);
+                    return null;
+                }
+            });
             Object object = field.get(arg);
             return object == null ? null : String.valueOf(object);
-        } catch (Exception e) {
-            LOGGER.warning("Cannot get the field, type is " + type);
+        } catch (IllegalArgumentException e) {
+            log(type);
+            return null;
+        } catch (IllegalAccessException e) {
+            log(type);
+            return null;
+        } catch (NoSuchFieldException e) {
+            log(type);
             return null;
         }
     }
 
     @Override
     public boolean isMatch(String type) {
-        return StringUtils.isNotBlank(type) && type.startsWith(".") && !type.contains("(") && !type.contains(")")
-                && !type.contains("[") && !type.contains("]");
+        if (StringUtils.isBlank(type) || !type.startsWith(".")) {
+            return false;
+        }
+        return !type.contains("(") && !type.contains(")") && !type.contains("[") && !type.contains("]");
     }
 
     @Override
@@ -59,5 +75,9 @@ public class ObjectTypeStrategy extends TypeStrategy {
     @Override
     public String getEndFlag() {
         return "";
+    }
+
+    private void log(String type) {
+        LOGGER.warning("Cannot get the field, type is " + type);
     }
 }

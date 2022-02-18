@@ -21,9 +21,10 @@ import com.huawei.route.common.gray.label.entity.CurrentTag;
 /**
  * 实例
  *
- * @author pengyuyi
- * @date 2021/10/15
+ * @author provenceee
+ * @since 2021/10/15
  */
+@SuppressWarnings("checkstyle:RegexpSingleline")
 public class Instances {
     /**
      * ldc

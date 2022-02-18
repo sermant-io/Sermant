@@ -22,9 +22,10 @@ import java.util.Map;
 /**
  * 灰度发布标签
  *
- * @author pengyuyi
- * @date 2021/10/27
+ * @author provenceee
+ * @since 2021/10/27
  */
+@SuppressWarnings("checkstyle:RegexpSingleline")
 public class GrayConfiguration {
     /**
      * 是否有效

@@ -19,22 +19,25 @@ package com.huawei.gray.dubbo.cache;
 /**
  * dubbo缓存
  *
- * @author pengyuyi
- * @date 2021/11/3
+ * @author provenceee
+ * @since 2021/11/3
  */
 public class DubboCache {
     // dubbo应用名
-    private static String APP_NAME;
+    private static String appName;
 
     // dubbo应用灰度标签缓存名
     private static final String GRAY_LABEL_CACHE_NAME = "DUBBO_GRAY_LABEL";
 
+    private DubboCache() {
+    }
+
     public static String getAppName() {
-        return APP_NAME;
+        return appName;
     }
 
     public static void setAppName(String appName) {
-        APP_NAME = appName;
+        DubboCache.appName = appName;
     }
 
     /**

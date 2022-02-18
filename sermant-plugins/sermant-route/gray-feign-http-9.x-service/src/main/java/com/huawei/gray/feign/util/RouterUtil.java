@@ -16,7 +16,6 @@
 
 package com.huawei.gray.feign.util;
 
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.gray.feign.context.CurrentInstance;
 import com.huawei.route.common.gray.addr.entity.Instances;
 import com.huawei.route.common.gray.constants.GrayConstant;
@@ -29,10 +28,12 @@ import com.huawei.route.common.gray.label.entity.MatchStrategy;
 import com.huawei.route.common.gray.label.entity.Route;
 import com.huawei.route.common.gray.label.entity.Rule;
 import com.huawei.route.common.gray.label.entity.ValueMatch;
+import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 
 import feign.Request;
+
 import org.springframework.util.CollectionUtils;
 
 import java.net.MalformedURLException;
@@ -57,9 +58,15 @@ import java.util.Map.Entry;
 public class RouterUtil {
     private static final String HTTP = "http";
 
+    private static final int HTTP_PORT = 80;
+
     private static final String HTTPS = "https";
 
+    private static final int HTTPS_PORT = 443;
+
     private static final String COOKIE = "Cookie";
+
+    private static final String COLON = ":";
 
     private RouterUtil() {
     }
@@ -107,11 +114,11 @@ public class RouterUtil {
         if (StringUtils.isBlank(version) || request == null) {
             return request;
         }
-        String[] arr = host.split(":");
+        String[] arr = host.split(COLON);
         if (arr.length != 2) {
             return request;
         }
-        String newUrl = replaceUrl(request.url(), arr[0], Integer.parseInt(arr[1])).toString();
+        final String newUrl = replaceUrl(request.url(), arr[0], Integer.parseInt(arr[1])).toString();
         Map<String, Collection<String>> headers = request.headers();
 
         // 由于headers有可能是一个UnmodifiableMap，所以只能new一个出来然后putAll
@@ -131,22 +138,26 @@ public class RouterUtil {
      * 使用目标ip与端口替换原始地址
      *
      * @param originUrl 原始地址
-     * @param targetServiceIP 目标IP
+     * @param targetServiceIp 目标IP
      * @param port 目标端口
      * @return 替换后的地址
      */
-    public static StringBuilder replaceUrl(String originUrl, String targetServiceIP, int port) {
+    public static StringBuilder replaceUrl(String originUrl, String targetServiceIp, int port) {
         StringBuilder url = new StringBuilder();
         try {
             URL uri = new URL(originUrl);
-            url.append(uri.getProtocol()).append("://").append(targetServiceIP);
+            url.append(uri.getProtocol()).append("://").append(targetServiceIp);
+            int targetPort;
             if (port == -1) {
                 // 若无指定端口，则使用默认的443与80端口
-                port = uri.getPort() == -1 ? (StringUtils.equalsIgnoreCase(HTTPS, uri.getProtocol()) ? 443 : 80)
-                        : uri.getPort();
+                targetPort = uri.getPort() == -1 ? (StringUtils.equalsIgnoreCase(HTTPS, uri.getProtocol()) ? HTTPS_PORT
+                    : HTTP_PORT) : uri.getPort();
+            } else {
+                targetPort = port;
             }
+
             // 附加端口与路径
-            url.append(":").append(port).append(uri.getPath());
+            url.append(COLON).append(targetPort).append(uri.getPath());
             if (!StringUtils.isBlank(uri.getQuery())) {
                 url.append("?").append(uri.getQuery());
             }
@@ -156,13 +167,27 @@ public class RouterUtil {
         return url;
     }
 
+    /**
+     * 获取目标host
+     *
+     * @param instance 实例
+     * @return host
+     */
     public static String getTargetHost(Instances instance) {
         if (instance != null && instance.getIp() != null && instance.getPort() > 0) {
-            return instance.getIp() + ":" + instance.getPort();
+            return instance.getIp() + COLON + instance.getPort();
         }
         return null;
     }
 
+    /**
+     * 获取有效规则
+     *
+     * @param grayConfiguration 灰度配置
+     * @param targetService 目标服务
+     * @param path 请求路径
+     * @return 有效规则
+     */
     public static List<Rule> getValidRules(GrayConfiguration grayConfiguration, String targetService, String path) {
         if (GrayConfiguration.isInValid(grayConfiguration)) {
             return Collections.emptyList();
@@ -176,6 +201,7 @@ public class RouterUtil {
             if (!isValidRule(rule, CurrentInstance.getInstance().getAppName(), path)) {
                 continue;
             }
+
             // 去掉无效的规则
             Map<String, List<MatchRule>> headerRules = rule.getMatch().getHeaders();
             if (headerRules != null) {
@@ -253,7 +279,7 @@ public class RouterUtil {
         }
 
         if (CollectionUtils.isEmpty(match.getHeaders()) && CollectionUtils.isEmpty(match.getParameters())
-                && CollectionUtils.isEmpty(match.getCookie())) {
+            && CollectionUtils.isEmpty(match.getCookie())) {
             return false;
         }
         return !CollectionUtils.isEmpty(rule.getRoute());
@@ -265,47 +291,48 @@ public class RouterUtil {
 
     private static boolean isInValidMatchRule(MatchRule matchRule) {
         return matchRule == null || matchRule.getValueMatch() == null || CollectionUtils
-                .isEmpty(matchRule.getValueMatch().getValues()) || matchRule.getValueMatch().getMatchStrategy() == null;
+            .isEmpty(matchRule.getValueMatch().getValues()) || matchRule.getValueMatch().getMatchStrategy() == null;
     }
 
     private static boolean isInValidRoute(Route route) {
         return route == null || route.getTags() == null || StringUtils.isBlank(route.getTags().getVersion());
     }
 
-    private static boolean isMatchHeaderRule(Map<String, List<MatchRule>> headerRules, boolean fullMatch,
-            Request request) {
+    private static boolean isMatchHeaderRule(Map<String, List<MatchRule>> headerRules, boolean isFullMatch,
+        Request request) {
         Map<String, Collection<String>> headers = request.headers();
         for (Entry<String, List<MatchRule>> entry : headerRules.entrySet()) {
             String key = entry.getKey();
             if (!headers.containsKey(key) || headers.get(key).size() == 0) {
-                if (fullMatch) {
+                if (isFullMatch) {
                     return false;
                 } else {
                     continue;
                 }
             }
-            List<MatchRule> matchRuleList = entry.getValue();
-            for (MatchRule matchRule : matchRuleList) {
+            List<MatchRule> headerMatchRuleList = entry.getValue();
+            for (MatchRule matchRule : headerMatchRuleList) {
                 ValueMatch valueMatch = matchRule.getValueMatch();
                 List<String> values = valueMatch.getValues();
-                MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
+                MatchStrategy headerMatchStrategy = valueMatch.getMatchStrategy();
                 String arg = new ArrayList<String>(headers.get(key)).get(0);
-                if (!fullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                if (!isFullMatch && headerMatchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
                     // 如果不是全匹配，且匹配了一个，那么直接return
                     return true;
                 }
-                if (fullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                if (isFullMatch && !headerMatchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
                     // 如果是全匹配，且有一个不匹配，则继续下一个规则
                     return false;
                 }
             }
         }
+
         // 执行到此处，如果是全匹配，则匹配成功，如果不是全匹配，则没有匹配到
-        return fullMatch;
+        return isFullMatch;
     }
 
-    private static boolean isMatchParamRule(Map<String, List<MatchRule>> paramRules, boolean fullMatch,
-            Request request) {
+    private static boolean isMatchParamRule(Map<String, List<MatchRule>> paramRules, boolean isFullMatch,
+        Request request) {
         Map<String, String> paramMap = new HashMap<String, String>();
         try {
             URL url = new URL(request.url());
@@ -318,17 +345,17 @@ public class RouterUtil {
             return false;
         }
 
-        return matchResultForParamAndCookie(paramRules, fullMatch, paramMap);
+        return matchResultForParamAndCookie(paramRules, isFullMatch, paramMap);
     }
 
-    private static boolean isMatchCookieRule(Map<String, List<MatchRule>> cookieRules, boolean fullMatch,
-            Request request) {
+    private static boolean isMatchCookieRule(Map<String, List<MatchRule>> cookieRules, boolean isFullMatch,
+        Request request) {
         List<String> cookieList = new ArrayList<String>(request.headers().get(COOKIE));
         Map<String, String> cookieMap = new HashMap<String, String>();
         if (transformParam(cookieList, cookieMap)) {
             return false;
         }
-        return matchResultForParamAndCookie(cookieRules, fullMatch, cookieMap);
+        return matchResultForParamAndCookie(cookieRules, isFullMatch, cookieMap);
     }
 
     private static boolean transformParam(List<String> cookieList, Map<String, String> cookieMap) {
@@ -345,12 +372,12 @@ public class RouterUtil {
         return false;
     }
 
-    private static boolean matchResultForParamAndCookie(Map<String, List<MatchRule>> rules, boolean fullMatch,
-            Map<String, String> paramMap) {
+    private static boolean matchResultForParamAndCookie(Map<String, List<MatchRule>> rules, boolean isFullMatch,
+        Map<String, String> paramMap) {
         for (Entry<String, List<MatchRule>> entry : rules.entrySet()) {
             String key = entry.getKey();
             if (!paramMap.containsKey(key)) {
-                if (fullMatch) {
+                if (isFullMatch) {
                     return false;
                 } else {
                     continue;
@@ -362,45 +389,53 @@ public class RouterUtil {
                 List<String> values = valueMatch.getValues();
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
                 String arg = paramMap.get(key);
-                if (!fullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                if (!isFullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
                     // 如果不是全匹配，且匹配了一个，那么直接return
                     return true;
                 }
-                if (fullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                if (isFullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
                     // 如果是全匹配，且有一个不匹配，则继续下一个规则
                     return false;
                 }
             }
         }
+
         // 执行到此处，如果是全匹配，则匹配成功，如果不是全匹配，则没有匹配到
-        return fullMatch;
+        return isFullMatch;
     }
 
+    /**
+     * 获取路由
+     *
+     * @param list 规则列表
+     * @param request 请求
+     * @return 路由
+     */
     public static List<Route> getRoutes(List<Rule> list, Request request) {
         // 支持headers，parameters和cookie三种参数匹配方式且允许同时配置，全匹配应满足所有三种匹配方式规则
         for (Rule rule : list) {
             Match match = rule.getMatch();
-            boolean fullMatch = match.isFullMatch();
+            boolean isFullMatch = match.isFullMatch();
 
             // headers 参数匹配
             Map<String, List<MatchRule>> headerRules = match.getHeaders();
             boolean isMatchByHeader = true;
             if (headerRules != null) {
-                isMatchByHeader = isMatchHeaderRule(headerRules, fullMatch, request);
+                isMatchByHeader = isMatchHeaderRule(headerRules, isFullMatch, request);
             }
 
             // parameters 参数匹配
             Map<String, List<MatchRule>> paramRules = match.getParameters();
             boolean isMatchByParam = true;
             if (paramRules != null) {
-                isMatchByParam = isMatchParamRule(paramRules, fullMatch, request);
+                isMatchByParam = isMatchParamRule(paramRules, isFullMatch, request);
             }
 
             // cookie 参数匹配
             Map<String, List<MatchRule>> cookieRules = match.getCookie();
             boolean isMatchByCookie = true;
             if (cookieRules != null) {
-                isMatchByCookie = isMatchCookieRule(cookieRules, fullMatch, request);
+                isMatchByCookie = isMatchCookieRule(cookieRules, isFullMatch, request);
             }
 
             if (headerRules == null && paramRules == null && cookieRules == null) {
@@ -408,12 +443,12 @@ public class RouterUtil {
             }
 
             // 全匹配需要三种配置都匹配上
-            if (fullMatch && isMatchByHeader && isMatchByParam && isMatchByCookie) {
+            if (isFullMatch && isMatchByHeader && isMatchByParam && isMatchByCookie) {
                 return rule.getRoute();
             }
 
             // 非全匹配只要其中一种规则匹配上即可
-            if (!fullMatch && (isMatchByHeader || isMatchByParam || isMatchByCookie)) {
+            if (!isFullMatch && (isMatchByHeader || isMatchByParam || isMatchByCookie)) {
                 return rule.getRoute();
             }
         }

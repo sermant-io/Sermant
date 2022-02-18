@@ -24,12 +24,15 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 标签缓存
  *
- * @author pengyuyi
- * @date 2021/10/13
+ * @author provenceee
+ * @since 2021/10/13
  */
 public class LabelCache {
     // 需要刷新标签的缓存
     private static final Map<String, GrayConfiguration> CACHE = new ConcurrentHashMap<String, GrayConfiguration>();
+
+    private LabelCache() {
+    }
 
     /**
      * 获取指定标签
