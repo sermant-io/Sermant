@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>sermant-flowcontrol</artifactId>
         <groupId>com.huawei.sermant</groupId>
@@ -51,6 +51,7 @@
         <netty.version>4.1.73.Final</netty.version>
         <cas.client.version>3.6.0</cas.client.version>
         <bcprov.version>1.67</bcprov.version>
+        <bcpkix.version>1.67</bcpkix.version>
         <cas.client.autoconfig.version>2.3.0-GA</cas.client.autoconfig.version>
         <spring.component.version>5.3.9</spring.component.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
@@ -61,6 +62,8 @@
         <httpcore.version>4.4.13</httpcore.version>
         <httpasyncclient.version>4.1.4</httpasyncclient.version>
         <httpcore-nio.version>4.4.13</httpcore-nio.version>
+        <tomcat.version>9.0.58</tomcat.version>
+        <starter.logging.version>2.6.3</starter.logging.version>
     </properties>
 
     <dependencyManagement>
@@ -189,7 +192,16 @@
                     <groupId>org.bouncycastle</groupId>
                     <artifactId>bcprov-jdk15on</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcpkix-jdk15on</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>${bcpkix.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -259,7 +271,43 @@
                     <artifactId>spring-context</artifactId>
                     <groupId>org.springframework</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-el</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-websocket</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+            <version>${starter.logging.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>${tomcat.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-websocket</artifactId>
+            <version>${tomcat.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-el</artifactId>
+            <version>${tomcat.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
