@@ -80,7 +80,6 @@ import java.util.stream.Collectors;
  * @author provenceee
  * @since 2021/12/15
  */
-@SuppressWarnings({"checkstyle:RegexpSingleline", "checkstyle:RegexpMultiline"})
 public class RegistryServiceImpl implements RegistryService {
     private static final Logger LOGGER = LogFactory.getLogger();
     private static final EventBus EVENT_BUS = new EventBus();
