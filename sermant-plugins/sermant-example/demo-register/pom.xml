@@ -17,8 +17,8 @@
     <version>1.0.0</version>
 
     <modules>
-        <module>zk-resttemplate-provider</module>
-        <module>zk-resttemplate-consumer</module>
+        <module>resttemplate-provider</module>
+        <module>resttemplate-consumer</module>
     </modules>
 
     <properties>

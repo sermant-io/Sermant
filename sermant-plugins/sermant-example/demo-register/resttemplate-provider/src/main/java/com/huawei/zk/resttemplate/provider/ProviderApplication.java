@@ -32,12 +32,12 @@ import org.springframework.web.bind.annotation.RestController;
 @SuppressWarnings("uncommentedmain")
 @SpringBootApplication
 @RestController
-public class ZkRestProviderApplication {
+public class ProviderApplication {
     @Value("${server.port}")
     int port;
 
     public static void main(String[] args) {
-        SpringApplication.run(ZkRestProviderApplication.class);
+        SpringApplication.run(ProviderApplication.class);
     }
 
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
