@@ -196,9 +196,6 @@ public class ServerMetricService extends InfluxService {
 
         private static final DiskMetricResolver INSTANCE = new DiskMetricResolver();
 
-        private DiskMetricResolver() {
-        }
-
         public static DiskMetricResolver getInstance() {
             return INSTANCE;
         }

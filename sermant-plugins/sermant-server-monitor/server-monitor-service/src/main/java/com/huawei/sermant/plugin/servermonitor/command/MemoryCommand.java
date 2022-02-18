@@ -69,9 +69,14 @@ public class MemoryCommand extends CommonMonitorCommand<MemoryCommand.MemInfo> {
             }
         }
 
-        if (memoryTotal < 0 || memoryFree < 0 || buffers < 0 || cached < 0 || swapCached < 0) {
+        if (memoryTotal < 0 || memoryFree < 0 || buffers < 0) {
             return null;
         }
+
+        if (cached < 0 || swapCached < 0) {
+            return null;
+        }
+
         return new MemInfo(memoryTotal, memoryFree, buffers, cached, swapCached);
     }
 

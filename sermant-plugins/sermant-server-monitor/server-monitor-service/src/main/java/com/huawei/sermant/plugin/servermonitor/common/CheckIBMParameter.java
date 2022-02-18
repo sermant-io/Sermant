@@ -17,7 +17,7 @@
 package com.huawei.sermant.plugin.servermonitor.common;
 
 
-import com.huawei.sermant.plugin.servermonitor.entity .IbmPoolType;
+import com.huawei.sermant.plugin.servermonitor.entity.IbmPoolType;
 
 /**
  * IBM MemoryPoolMXBean 枚举类

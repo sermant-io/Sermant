@@ -124,20 +124,4 @@ public class AgentRegistrationService {
     private String generateRegKey(String service, String serviceInstance) {
         return service + "@" + serviceInstance;
     }
-
-    private AgentRegistrationDTO deepCopy(AgentRegistrationDTO org) {
-        return AgentRegistrationDTO.builder()
-            .service(org.getService())
-            .serviceInstance(org.getServiceInstance())
-            .jvmVendor(org.getJvmVendor())
-            .jvmVersion(org.getJvmVersion())
-            .runtimeVersion(org.getRuntimeVersion())
-            .networkAddresses(org.getNetworkAddresses().stream()
-                .map(networkAddress -> NetworkAddressDTO.builder()
-                    .hostname(networkAddress.getHostname())
-                    .address(networkAddress.getAddress())
-                    .build()).collect(Collectors.toList()))
-            .build();
-    }
-
 }
