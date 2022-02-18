@@ -32,13 +32,13 @@ import org.springframework.web.client.RestTemplate;
 @SuppressWarnings("uncommentedmain")
 @SpringBootApplication
 @RestController
-public class ZkRestConsumerApplication {
+public class ConsumerApplication {
 
     @Autowired
     RestTemplate restTemplate;
 
     public static void main(String[] args) {
-        SpringApplication.run(ZkRestConsumerApplication.class);
+        SpringApplication.run(ConsumerApplication.class);
     }
 
     @GetMapping("/hello")

@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>zk-resttemplate-consumer</artifactId>
+    <artifactId>resttemplate-consumer</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -28,7 +28,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.huawei.zk.resttemplate.consumer.ZkRestConsumerApplication</mainClass>
+                            <mainClass>com.huawei.zk.resttemplate.consumer.ConsumerApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
