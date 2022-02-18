@@ -16,17 +16,17 @@
 
 package com.huawei.route.common.gray.listener;
 
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;
 import com.huawei.route.common.gray.label.entity.Rule;
 import com.huawei.route.common.gray.label.entity.VersionFrom;
 import com.huawei.route.common.utils.CollectionUtils;
+import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -44,8 +44,8 @@ import java.util.logging.Logger;
 /**
  * 配置监听器
  *
- * @author pengyuyi
- * @date 2021/11/29
+ * @author provenceee
+ * @since 2021/11/29
  */
 public class GrayDynamicConfigListener implements DynamicConfigListener {
     private static final Logger LOGGER = LogFactory.getLogger();
@@ -114,7 +114,7 @@ public class GrayDynamicConfigListener implements DynamicConfigListener {
         grayConfiguration.setRouteRule(routeRule);
         grayConfiguration.setOn(!CollectionUtils.isEmpty(routeRule));
         grayConfiguration.setValid(!CollectionUtils.isEmpty(routeRule));
-        LOGGER.info(String.format("Config [%s] has been %s ", event.getKey(), event.getEventType()));
+        LOGGER.info(String.format(Locale.ROOT, "Config [%s] has been %s ", event.getKey(), event.getEventType()));
     }
 
     private boolean isInValidMap(Map<?, ?> map, GrayConfiguration grayConfiguration) {

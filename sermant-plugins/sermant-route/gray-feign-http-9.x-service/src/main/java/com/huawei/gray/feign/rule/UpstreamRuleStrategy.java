@@ -16,13 +16,13 @@
 
 package com.huawei.gray.feign.rule;
 
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.gray.feign.util.RouterUtil;
 import com.huawei.route.common.gray.addr.AddrCache;
 import com.huawei.route.common.gray.addr.entity.Instances;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
 import com.huawei.route.common.gray.label.entity.Route;
+import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -40,13 +40,13 @@ import java.util.Map;
 public class UpstreamRuleStrategy implements RuleStrategy {
     @Override
     public Instances getTargetServiceInstance(List<Route> list, String targetService,
-            Map<String, Collection<String>> headers) {
+        Map<String, Collection<String>> headers) {
         if (headers.get(GrayConstant.GRAY_TAG).isEmpty()) {
             return null;
         }
         String tagVersion;
         CurrentTag currentTag = JSONObject
-                .parseObject(new ArrayList<String>(headers.get(GrayConstant.GRAY_TAG)).get(0), CurrentTag.class);
+            .parseObject(new ArrayList<String>(headers.get(GrayConstant.GRAY_TAG)).get(0), CurrentTag.class);
         if (currentTag != null && !StringUtils.isBlank(currentTag.getVersion())) {
             tagVersion = currentTag.getVersion();
         } else {

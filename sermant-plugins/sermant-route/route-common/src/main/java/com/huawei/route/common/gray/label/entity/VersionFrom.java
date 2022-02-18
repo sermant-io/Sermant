@@ -19,12 +19,18 @@ package com.huawei.route.common.gray.label.entity;
 /**
  * 版本来源
  *
- * @author pengyuyi
- * @date 2021/11/25
+ * @author provenceee
+ * @since 2021/11/25
  */
 public enum VersionFrom {
+    /**
+     * 版本来自注册url
+     */
     REGISTER_URL,
 
+    /**
+     * 版本来自注册信息
+     */
     REGISTER_MSG;
 
     VersionFrom() {

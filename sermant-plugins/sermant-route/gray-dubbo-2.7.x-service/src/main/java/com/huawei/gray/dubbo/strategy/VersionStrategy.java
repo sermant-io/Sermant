@@ -21,8 +21,8 @@ import org.apache.dubbo.rpc.Invoker;
 /**
  * 版本获取策略
  *
- * @author pengyuyi
- * @date 2021/12/8
+ * @author provenceee
+ * @since 2021/12/8
  */
 public interface VersionStrategy {
     /**

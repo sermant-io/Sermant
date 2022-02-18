@@ -21,8 +21,8 @@ import com.huawei.gray.dubbo.strategy.TypeStrategy;
 /**
  * 数据匹配策略
  *
- * @author pengyuyi
- * @date 2021/10/13
+ * @author provenceee
+ * @since 2021/10/13
  */
 public class ArrayTypeStrategy extends TypeStrategy {
     @Override

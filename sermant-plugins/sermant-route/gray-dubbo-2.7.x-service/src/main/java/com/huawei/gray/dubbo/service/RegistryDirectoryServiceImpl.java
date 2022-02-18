@@ -29,18 +29,17 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
  * RegistryDirectoryInterceptor的service
  *
- * @author pengyuyi
- * @date 2021/11/24
+ * @author provenceee
+ * @since 2021/11/24
  */
-public class RegistryDirectoryServiceImpl extends RegistryDirectoryService {
+public class RegistryDirectoryServiceImpl implements RegistryDirectoryService {
     @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
+    public Object selectInvokers(Object[] arguments, Object result) {
         if (arguments != null && arguments.length > 0 && arguments[0] instanceof Invocation) {
             GrayConfiguration grayConfiguration = LabelCache.getLabel(DubboCache.getLabelName());
             if (GrayConfiguration.isInValid(grayConfiguration)) {
@@ -56,9 +55,9 @@ public class RegistryDirectoryServiceImpl extends RegistryDirectoryService {
             List<Rule> rules = RouterUtil.getValidRules(grayConfiguration, targetService, interfaceName);
             List<Route> routes = RouterUtil.getRoutes(rules, invocation.getArguments());
             RuleStrategyEnum ruleStrategyEnum =
-                    CollectionUtils.isEmpty(routes) ? RuleStrategyEnum.UPSTREAM : RuleStrategyEnum.WEIGHT;
+                CollectionUtils.isEmpty(routes) ? RuleStrategyEnum.UPSTREAM : RuleStrategyEnum.WEIGHT;
             return ruleStrategyEnum.getTargetInvoker(routes, invocation, (List<Invoker<?>>) result,
-                    grayConfiguration.getVersionFrom());
+                grayConfiguration.getVersionFrom());
         }
         return result;
     }

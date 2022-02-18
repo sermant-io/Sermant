@@ -22,8 +22,8 @@
 
 package com.huawei.gray.feign.service;
 
+import com.huawei.gray.feign.context.FeignResolvedUrl;
 import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.gray.feign.context.FeignResolvedURL;
 
 import feign.RequestTemplate;
 
@@ -32,24 +32,16 @@ import java.lang.reflect.Method;
 /**
  * PathVarInterceptor的service
  *
- * @author pengyuyi
- * @date 2021/11/26
+ * @author provenceee
+ * @since 2021/11/26
  */
 public class PathVarServiceImpl implements PathVarService {
-    static final ThreadLocal<FeignResolvedURL> URL_CONTEXT = new ThreadLocal<FeignResolvedURL>();
-
-    @Override
-    public void start() {
-    }
-
-    @Override
-    public void stop() {
-    }
+    static final ThreadLocal<FeignResolvedUrl> URL_CONTEXT = new ThreadLocal<FeignResolvedUrl>();
 
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
         RequestTemplate template = (RequestTemplate) arguments[1];
-        URL_CONTEXT.set(new FeignResolvedURL(template.url()));
+        URL_CONTEXT.set(new FeignResolvedUrl(template.url()));
     }
 
     @Override

@@ -26,19 +26,18 @@ import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 import org.apache.dubbo.config.ApplicationConfig;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * InterfaceConfigInterceptor的service
  *
- * @author pengyuyi
- * @date 2021/11/24
+ * @author provenceee
+ * @since 2021/11/24
  */
-public class InterfaceConfigServiceImpl extends InterfaceConfigService {
+public class InterfaceConfigServiceImpl implements InterfaceConfigService {
     @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
+    public void getName(Object result) {
         if (result instanceof ApplicationConfig) {
             ApplicationConfig config = (ApplicationConfig) result;
             GrayConfig grayConfig = PluginConfigManager.getPluginConfig(GrayConfig.class);
@@ -64,6 +63,5 @@ public class InterfaceConfigServiceImpl extends InterfaceConfigService {
             currentTag.setLdc(ldc);
             grayConfiguration.setCurrentTag(currentTag);
         }
-        return result;
     }
 }

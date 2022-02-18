@@ -16,8 +16,8 @@
 
 package com.huawei.gray.feign.service;
 
-import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.gray.feign.context.HostContext;
+import com.huawei.sermant.core.agent.common.BeforeResult;
 
 import feign.Request;
 
@@ -27,24 +27,17 @@ import java.net.URI;
 /**
  * LoadBalancerClientInterceptor的service
  *
- * @author pengyuyi
- * @date 2021/11/26
+ * @author provenceee
+ * @since 2021/11/26
  */
 public class LoadBalancerClientServiceImpl implements LoadBalancerClientService {
-    @Override
-    public void start() {
-    }
-
-    @Override
-    public void stop() {
-    }
-
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
         final Object argument = arguments[0];
         if (argument instanceof Request) {
             Request request = (Request) argument;
             URI uri = URI.create(request.url());
+
             // 将下游服务名存入线程变量中
             HostContext.set(uri.getHost());
         }

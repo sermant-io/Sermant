@@ -22,10 +22,13 @@ import java.util.Map;
 /**
  * 集合工具类
  *
- * @author pengyuyi
- * @date 2021/11/3
+ * @author provenceee
+ * @since 2021/11/3
  */
 public class CollectionUtils {
+    private CollectionUtils() {
+    }
+
     /**
      * 是否为空
      *

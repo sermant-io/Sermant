@@ -22,39 +22,21 @@
 
 package com.huawei.gray.feign.definition;
 
-import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
-import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
-import com.huawei.sermant.core.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.agent.matcher.ClassMatchers;
-
-import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.matcher.ElementMatchers;
-
 /**
  * 拦截feign的ApacheHttpClient和OkHttpClient请求
  *
  * @author lilai
  * @since 2021-11-03
  */
-public class PathVarDefinition implements EnhanceDefinition {
+public class PathVarDefinition extends AbstractInstDefinition {
+    private static final String[] ENHANCE_CLASS = {"feign.ReflectiveFeign$BuildTemplateByResolvingArgs"};
 
     /**
      * Intercept class.
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.PathVarInterceptor";
 
-    @Override
-    public ClassMatcher enhanceClass() {
-        return ClassMatchers.named("feign.ReflectiveFeign$BuildTemplateByResolvingArgs");
-    }
-
-    @Override
-    public MethodInterceptPoint[] getMethodInterceptPoints() {
-        return new MethodInterceptPoint[]{
-                MethodInterceptPoint.newInstMethodInterceptPoint(
-                        INTERCEPT_CLASS, ElementMatchers.<MethodDescription>named("resolve")
-                )
-        };
+    public PathVarDefinition() {
+        super(ENHANCE_CLASS, INTERCEPT_CLASS, "resolve");
     }
 }
-

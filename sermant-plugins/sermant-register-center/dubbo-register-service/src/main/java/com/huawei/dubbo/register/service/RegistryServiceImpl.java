@@ -273,7 +273,8 @@ public class RegistryServiceImpl implements RegistryService {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            throw new RuntimeException("Cannot get the host.");
+            LOGGER.warning("Cannot get the host.");
+            return "";
         }
     }
 

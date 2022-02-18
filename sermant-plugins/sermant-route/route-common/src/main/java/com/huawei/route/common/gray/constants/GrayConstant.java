@@ -19,8 +19,8 @@ package com.huawei.route.common.gray.constants;
 /**
  * 常量
  *
- * @author pengyuyi
- * @date 2021/10/13
+ * @author provenceee
+ * @since 2021/10/13
  */
 public class GrayConstant {
     /**
@@ -87,4 +87,7 @@ public class GrayConstant {
      * 注册时版本号
      */
     public static final String REG_VERSION_KEY = "reg.version";
+
+    private GrayConstant() {
+    }
 }

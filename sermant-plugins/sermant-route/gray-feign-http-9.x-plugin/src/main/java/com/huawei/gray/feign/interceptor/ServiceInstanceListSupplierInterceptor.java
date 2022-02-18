@@ -45,6 +45,6 @@ public class ServiceInstanceListSupplierInterceptor implements InstanceMethodInt
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
+    public void onThrow(Object obj, Method method, Object[] arguments, Throwable th) {
     }
 }

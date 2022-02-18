@@ -24,8 +24,8 @@ import java.util.List;
 /**
  * 不等于匹配策略
  *
- * @author pengyuyi
- * @date 2021/10/23
+ * @author provenceee
+ * @since 2021/10/23
  */
 public class NoEquValueMatchStrategy implements ValueMatchStrategy {
     @Override

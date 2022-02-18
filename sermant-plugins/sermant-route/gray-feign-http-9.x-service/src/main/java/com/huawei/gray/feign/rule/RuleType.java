@@ -38,8 +38,7 @@ public enum RuleType {
     /**
      * 上游路由
      */
-    UPSTREAM(new UpstreamRuleStrategy()),
-    ;
+    UPSTREAM(new UpstreamRuleStrategy());
 
     private final RuleStrategy ruleStrategy;
 
@@ -50,12 +49,13 @@ public enum RuleType {
     /**
      * 获取目标地址ip
      *
-     * @param list          路由规则
+     * @param list 路由规则
      * @param targetService 目标服务
-     * @param headers       http请求头
+     * @param headers http请求头
      * @return 可路由的应用实例
      */
-    public Instances getTargetServiceInstance(List<Route> list, String targetService, Map<String, Collection<String>> headers) {
+    public Instances getTargetServiceInstance(List<Route> list, String targetService,
+        Map<String, Collection<String>> headers) {
         return ruleStrategy.getTargetServiceInstance(list, targetService, headers);
     }
 }

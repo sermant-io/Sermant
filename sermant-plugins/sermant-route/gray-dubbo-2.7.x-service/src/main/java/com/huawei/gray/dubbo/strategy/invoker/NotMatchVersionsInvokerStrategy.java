@@ -26,8 +26,8 @@ import java.util.Set;
 /**
  * 匹配不在notMatchVersions中的Invoker
  *
- * @author pengyuyi
- * @date 2021/12/8
+ * @author provenceee
+ * @since 2021/12/8
  */
 public class NotMatchVersionsInvokerStrategy implements InvokerStrategy {
     /**
@@ -41,7 +41,7 @@ public class NotMatchVersionsInvokerStrategy implements InvokerStrategy {
      */
     @Override
     public boolean isMatch(Invoker<?> invoker, String version, Set<String> notMatchVersions,
-            VersionStrategy versionStrategy) {
+        VersionStrategy versionStrategy) {
         return !notMatchVersions.contains(versionStrategy.getVersion(invoker));
     }
 }

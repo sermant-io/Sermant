@@ -16,13 +16,7 @@
 
 package com.huawei.gray.feign.definition.register;
 
-import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
-import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
-import com.huawei.sermant.core.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.agent.matcher.ClassMatchers;
-
-import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.matcher.ElementMatchers;
+import com.huawei.gray.feign.definition.AbstractInstDefinition;
 
 /**
  * 拦截ServiceCombServiceRegistry 创建微服务的方法，获取当前服务名
@@ -30,25 +24,16 @@ import net.bytebuddy.matcher.ElementMatchers;
  * @author lilai
  * @since 2021-11-03
  */
-public class ServiceCombRegisterDefinition implements EnhanceDefinition {
+public class ServiceCombRegisterDefinition extends AbstractInstDefinition {
+    private static final String[] ENHANCE_CLASS = {
+        "com.huaweicloud.servicecomb.discovery.registry.ServiceCombServiceRegistry"};
 
     /**
      * Intercept class.
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.ServiceCombRegisterInterceptor";
 
-    @Override
-    public ClassMatcher enhanceClass() {
-        return ClassMatchers.named("com.huaweicloud.servicecomb.discovery.registry.ServiceCombServiceRegistry");
-    }
-
-    @Override
-    public MethodInterceptPoint[] getMethodInterceptPoints() {
-        return new MethodInterceptPoint[]{
-                MethodInterceptPoint.newInstMethodInterceptPoint(
-                        INTERCEPT_CLASS, ElementMatchers.<MethodDescription>named("register")
-                )
-        };
+    public ServiceCombRegisterDefinition() {
+        super(ENHANCE_CLASS, INTERCEPT_CLASS, "register");
     }
 }
-

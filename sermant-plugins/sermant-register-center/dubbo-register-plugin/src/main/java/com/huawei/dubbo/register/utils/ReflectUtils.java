@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -350,9 +352,7 @@ public class ReflectUtils {
         }
         if (hasParameter) {
             // 有参非公共方法
-            Method method = invokeClass.getDeclaredMethod(name, parameterClass);
-            method.setAccessible(true);
-            return method;
+            return setAccessible(invokeClass.getDeclaredMethod(name, parameterClass));
         }
         if (isPublic) {
             // 无参公共方法
@@ -360,8 +360,14 @@ public class ReflectUtils {
         }
 
         // 无参非公共方法
-        Method method = invokeClass.getDeclaredMethod(name);
-        method.setAccessible(true);
+        return setAccessible(invokeClass.getDeclaredMethod(name));
+    }
+
+    private static Method setAccessible(Method method) {
+        AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+            method.setAccessible(true);
+            return null;
+        });
         return method;
     }
 

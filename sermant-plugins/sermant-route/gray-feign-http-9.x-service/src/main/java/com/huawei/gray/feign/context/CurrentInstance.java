@@ -23,8 +23,7 @@ package com.huawei.gray.feign.context;
  * @since 2021-11-03
  */
 public class CurrentInstance {
-
-    private static CurrentInstance INSTANCE = null;
+    private static CurrentInstance currentInstance = null;
 
     /**
      * 所属服务名称
@@ -53,15 +52,27 @@ public class CurrentInstance {
     /**
      * 获取实例，仅在启动的时候调用，不存在线程安全问题
      *
+     * @param appName 应用名
+     * @param ip ip
+     * @param port 端口
      */
     public static void newInstance(String appName, String ip, int port) {
-        if (INSTANCE == null) {
-            INSTANCE = new CurrentInstance(appName, ip, port);
+        if (currentInstance == null) {
+            synchronized (CurrentInstance.class) {
+                if (currentInstance == null) {
+                    currentInstance = new CurrentInstance(appName, ip, port);
+                }
+            }
         }
     }
 
+    /**
+     * 获取单例
+     *
+     * @return 单例
+     */
     public static CurrentInstance getInstance() {
-        return INSTANCE;
+        return currentInstance;
     }
 
     public String getAppName() {

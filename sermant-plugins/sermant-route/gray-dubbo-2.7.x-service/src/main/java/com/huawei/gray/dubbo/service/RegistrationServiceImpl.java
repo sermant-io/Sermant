@@ -22,38 +22,41 @@ import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;
-import com.huawei.sermant.core.agent.common.BeforeResult;
 
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.List;
 
 /**
  * RegistrationInterceptor的service
  *
- * @author pengyuyi
- * @date 2021/11/24
+ * @author provenceee
+ * @since 2021/11/24
  */
-public class RegistrationServiceImpl extends RegistrationService {
+public class RegistrationServiceImpl implements RegistrationService {
     /**
      * 拦截点前执行
      *
      * @param obj 增强的类
-     * @param method 增强的方法
      * @param arguments 增强方法的所有参数
-     * @param beforeResult 执行结果承载类
-     * @throws Exception 增强时可能出现的异常
      */
     @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
+    public void getVersion(Object obj, Object[] arguments) throws NoSuchFieldException, IllegalAccessException {
         if (arguments.length <= 2 || !(arguments[2] instanceof List<?>)) {
             return;
         }
-        Field field = obj.getClass().getDeclaredField("microservice");
-        field.setAccessible(true);
+        final Field field = obj.getClass().getDeclaredField("microservice");
+        AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            @Override
+            public Object run() {
+                field.setAccessible(true);
+                return null;
+            }
+        });
         Microservice microservice = (Microservice) field.get(obj);
         GrayConfiguration grayConfiguration = LabelCache.getLabel(DubboCache.getLabelName());
         CurrentTag currentTag = grayConfiguration.getCurrentTag();
@@ -62,7 +65,7 @@ public class RegistrationServiceImpl extends RegistrationService {
         for (MicroserviceInstance instance : instances) {
             for (String endpoint : instance.getEndpoints()) {
                 AddrCache.setRegisterVersionCache(endpoint.substring(GrayConstant.DUBBO_PREFIX.length()),
-                        instance.getVersion());
+                    instance.getVersion());
             }
         }
     }

@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 /**
  * 增强AbstractInterfaceConfig类的getApplication方法，用来获取应用名
  *
- * @author pengyuyi
+ * @author provenceee
  * @since 2021年11月8日
  */
 public class InterfaceConfigInterceptor implements InstanceMethodInterceptor {
@@ -38,7 +38,7 @@ public class InterfaceConfigInterceptor implements InstanceMethodInterceptor {
     private InterfaceConfigService interfaceConfigService;
 
     @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
+    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
         interfaceConfigService = ServiceManager.getService(InterfaceConfigService.class);
     }
 
@@ -50,11 +50,10 @@ public class InterfaceConfigInterceptor implements InstanceMethodInterceptor {
      * @param arguments 增强方法的所有参数
      * @param result the method's original return value. May be null if the method triggers an exception.
      * @return 返回值
-     * @throws Exception 增强时可能出现的异常
      */
     @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
-        interfaceConfigService.after(obj, method, arguments, result);
+    public Object after(Object obj, Method method, Object[] arguments, Object result) {
+        interfaceConfigService.getName(result);
         return result;
     }
 

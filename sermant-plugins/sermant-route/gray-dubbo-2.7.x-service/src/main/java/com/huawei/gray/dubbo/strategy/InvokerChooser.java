@@ -26,16 +26,20 @@ import java.util.Map;
 /**
  * Invoker匹配策略选择器
  *
- * @author pengyuyi
- * @date 2021/12/8
+ * @author provenceee
+ * @since 2021/12/8
  */
 public enum InvokerChooser {
+    /**
+     * 单例
+     */
     INSTANCE;
-    private final Map<String, InvokerStrategy> map;
 
     private static final String NOT_MATCH_STRATEGY_KEY = "notMatchStrategy";
 
     private static final String TARGET_STRATEGY_KEY = "targetStrategy";
+
+    private final Map<String, InvokerStrategy> map;
 
     InvokerChooser() {
         map = new HashMap<String, InvokerStrategy>();

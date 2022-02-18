@@ -22,7 +22,7 @@
 
 package com.huawei.gray.feign.service;
 
-import com.huawei.gray.feign.context.FeignResolvedURL;
+import com.huawei.gray.feign.context.FeignResolvedUrl;
 import com.huawei.gray.feign.context.HostContext;
 import com.huawei.gray.feign.rule.RuleType;
 import com.huawei.gray.feign.util.RouterUtil;
@@ -34,7 +34,9 @@ import com.huawei.route.common.gray.label.entity.Route;
 import com.huawei.route.common.gray.label.entity.Rule;
 import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
 import feign.Request;
+
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
@@ -44,18 +46,10 @@ import java.util.List;
 /**
  * DefaultHttpClientInterceptor的service
  *
- * @author pengyuyi
- * @date 2021/11/26
+ * @author provenceee
+ * @since 2021/11/26
  */
 public class DefaultHttpClientServiceImpl implements DefaultHttpClientService {
-    @Override
-    public void start() {
-    }
-
-    @Override
-    public void stop() {
-    }
-
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
         GrayConfig grayConfig = PluginConfigManager.getPluginConfig(GrayConfig.class);
@@ -71,11 +65,11 @@ public class DefaultHttpClientServiceImpl implements DefaultHttpClientService {
         // 获得url路径参数解析前的原始path
         URL url = new URL(request.url());
         String path = url.getPath();
-        FeignResolvedURL feignResolvedURL = PathVarServiceImpl.URL_CONTEXT.get();
-        if (feignResolvedURL != null) {
+        FeignResolvedUrl feignResolvedUrl = PathVarServiceImpl.URL_CONTEXT.get();
+        if (feignResolvedUrl != null) {
             try {
-                path = path.replace(feignResolvedURL.getUrl().split("[?]")[0],
-                        feignResolvedURL.getOriginUrl()).split("[?]")[0];
+                path = path.replace(feignResolvedUrl.getUrl().split("[?]")[0],
+                    feignResolvedUrl.getOriginUrl()).split("[?]")[0];
             } finally {
                 PathVarServiceImpl.URL_CONTEXT.remove();
             }
@@ -86,7 +80,7 @@ public class DefaultHttpClientServiceImpl implements DefaultHttpClientService {
         List<Route> routes = RouterUtil.getRoutes(rules, request);
         RuleType ruleType = CollectionUtils.isEmpty(routes) ? RuleType.UPSTREAM : RuleType.WEIGHT;
         Instances instance = ruleType.getTargetServiceInstance(routes, targetAppName,
-                request.headers());
+            request.headers());
         if (instance != null) {
             String targetServiceHost = RouterUtil.getTargetHost(instance);
             String version = instance.getCurrentTag().getVersion();

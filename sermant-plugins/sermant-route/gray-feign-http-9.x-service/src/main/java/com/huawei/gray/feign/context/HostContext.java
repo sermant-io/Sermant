@@ -28,14 +28,30 @@ public class HostContext {
      */
     private static final ThreadLocal<String> HOST_CONTEXT = new ThreadLocal<String>();
 
+    private HostContext() {
+    }
+
+    /**
+     * 存入host
+     *
+     * @param hostContext host
+     */
     public static void set(String hostContext) {
         HOST_CONTEXT.set(hostContext);
     }
 
+    /**
+     * 获取host
+     *
+     * @return host
+     */
     public static String get() {
         return HOST_CONTEXT.get();
     }
 
+    /**
+     * 删除host
+     */
     public static void remove() {
         HOST_CONTEXT.remove();
     }

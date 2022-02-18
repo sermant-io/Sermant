@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 /**
  * 增强RegistryDirectory类的doList方法，筛选灰度应用的地址
  *
- * @author pengyuyi
+ * @author provenceee
  * @since 2021年6月28日
  */
 public class RegistryDirectoryInterceptor implements InstanceMethodInterceptor {
@@ -38,13 +38,13 @@ public class RegistryDirectoryInterceptor implements InstanceMethodInterceptor {
     private RegistryDirectoryService registryDirectoryService;
 
     @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
+    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
         registryDirectoryService = ServiceManager.getService(RegistryDirectoryService.class);
     }
 
     @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
-        return registryDirectoryService.after(obj, method, arguments, result);
+    public Object after(Object obj, Method method, Object[] arguments, Object result) {
+        return registryDirectoryService.selectInvokers(arguments, result);
     }
 
     @Override

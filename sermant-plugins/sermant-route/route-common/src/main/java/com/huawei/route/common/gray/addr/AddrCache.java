@@ -30,8 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 地址缓存
  *
- * @author pengyuyi
- * @date 2021/10/15
+ * @author provenceee
+ * @since 2021/10/15
  */
 public class AddrCache {
     // 需要刷新地址的缓存
@@ -39,6 +39,9 @@ public class AddrCache {
 
     // 注册版本缓存
     private static final Map<String, String> REGISTER_VERSION_CACHE = new ConcurrentHashMap<String, String>();
+
+    private AddrCache() {
+    }
 
     /**
      * 获取路由服务返回的地址列表
@@ -95,7 +98,7 @@ public class AddrCache {
             }
             String instanceLdc = instance.getLdc();
             String instanceVersion =
-                    application == null ? currentTag.getVersion() : currentTag.getValidVersion(application);
+                application == null ? currentTag.getVersion() : currentTag.getValidVersion(application);
             if (ldc.equals(instanceLdc) && version.equals(instanceVersion)) {
                 // 优先返回这个实例
                 return instance;
@@ -109,6 +112,7 @@ public class AddrCache {
                 // 第三优先级
                 arr[1] = instance;
             }
+
             // 这里的优先级可考虑优化成分数的形式，然后取分数最高的
         }
         if (arr[0] != null) {

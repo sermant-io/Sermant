@@ -30,7 +30,6 @@ import java.lang.reflect.Method;
  * @since 2021-12-29
  */
 public class RegistrationInterceptor implements InstanceMethodInterceptor {
-
     @Override
     public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
         final RegisterService service = ServiceManager.getService(RegisterService.class);
@@ -43,6 +42,6 @@ public class RegistrationInterceptor implements InstanceMethodInterceptor {
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
+    public void onThrow(Object obj, Method method, Object[] arguments, Throwable th) {
     }
 }

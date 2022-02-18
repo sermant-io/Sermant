@@ -32,10 +32,13 @@ import java.util.logging.Logger;
 /**
  * 规则策略选择器
  *
- * @author pengyuyi
- * @date 2021/10/13
+ * @author provenceee
+ * @since 2021/10/13
  */
 public enum TypeStrategyChooser {
+    /**
+     * 单例
+     */
     INSTANCE;
 
     private static final Logger LOGGER = LoggerFactory.getLogger();

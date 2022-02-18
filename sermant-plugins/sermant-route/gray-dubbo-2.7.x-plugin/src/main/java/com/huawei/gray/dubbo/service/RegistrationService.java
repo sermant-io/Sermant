@@ -21,8 +21,9 @@ import com.huawei.sermant.core.plugin.service.PluginService;
 /**
  * RegistrationInterceptor的service
  *
- * @author pengyuyi
- * @date 2021/11/24
+ * @author provenceee
+ * @since 2021/11/24
  */
-public abstract class RegistrationService extends AbstractPluginService implements PluginService {
+public interface RegistrationService extends PluginService {
+    void getVersion(Object obj, Object[] arguments) throws NoSuchFieldException, IllegalAccessException;
 }

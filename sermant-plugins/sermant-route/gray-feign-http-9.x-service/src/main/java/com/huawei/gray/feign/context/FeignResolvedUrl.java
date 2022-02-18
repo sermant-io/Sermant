@@ -28,21 +28,22 @@ package com.huawei.gray.feign.context;
  * @author lilai
  * @since 2021-11-03
  */
-public class FeignResolvedURL {
+public class FeignResolvedUrl {
     /**
      * url before resolved
      */
     private String originUrl;
+
     /**
      * url after resolved
      */
     private String url;
 
-    public FeignResolvedURL(String originUrl) {
+    public FeignResolvedUrl(String originUrl) {
         this.originUrl = originUrl;
     }
 
-    public FeignResolvedURL(String originUrl, String url) {
+    public FeignResolvedUrl(String originUrl, String url) {
         this.originUrl = originUrl;
         this.url = url;
     }

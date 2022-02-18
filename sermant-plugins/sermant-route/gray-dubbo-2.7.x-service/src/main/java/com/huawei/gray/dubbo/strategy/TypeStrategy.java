@@ -24,8 +24,8 @@ import java.util.logging.Logger;
 /**
  * 规则策略
  *
- * @author pengyuyi
- * @date 2021/10/13
+ * @author provenceee
+ * @since 2021/10/13
  */
 public abstract class TypeStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger();
@@ -63,18 +63,14 @@ public abstract class TypeStrategy {
      *
      * @return 开始字符串
      */
-    public String getBeginFlag() {
-        return "";
-    }
+    public abstract String getBeginFlag();
 
     /**
      * 结束字符串
      *
      * @return 结束字符串
      */
-    public String getEndFlag() {
-        return "";
-    }
+    public abstract String getEndFlag();
 
     /**
      * 检查获取参数的类型

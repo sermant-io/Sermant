@@ -19,9 +19,10 @@ package com.huawei.route.common.gray.label.entity;
 /**
  * 参数匹配
  *
- * @author pengyuyi
- * @date 2021/10/27
+ * @author provenceee
+ * @since 2021/10/27
  */
+@SuppressWarnings("checkstyle:RegexpSingleline")
 public class MatchRule {
     /**
      * 值匹配规则

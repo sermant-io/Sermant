@@ -16,12 +16,9 @@
 
 package com.huawei.gray.feign.definition.register;
 
-import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
-import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
+import com.huawei.gray.feign.definition.AbstractInstDefinition;
 import com.huawei.sermant.core.agent.matcher.ClassMatcher;
 import com.huawei.sermant.core.agent.matcher.ClassMatchers;
-import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * 注册增强
@@ -29,7 +26,7 @@ import net.bytebuddy.matcher.ElementMatchers;
  * @author fuziye
  * @since 2021-12-29
  */
-public class RegistrationDefinition implements EnhanceDefinition {
+public class RegistrationDefinition extends AbstractInstDefinition {
     /**
      * 增强类的全限定名
      */
@@ -40,16 +37,12 @@ public class RegistrationDefinition implements EnhanceDefinition {
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.RegistrationInterceptor";
 
-    @Override
-    public ClassMatcher enhanceClass() {
-        return ClassMatchers.hasSuperTypes(ENHANCE_CLASS);
+    public RegistrationDefinition() {
+        super(null, INTERCEPT_CLASS, "register");
     }
 
     @Override
-    public MethodInterceptPoint[] getMethodInterceptPoints() {
-        return new MethodInterceptPoint[] {
-                MethodInterceptPoint.newInstMethodInterceptPoint(INTERCEPT_CLASS,
-                        ElementMatchers.<MethodDescription>named("register"))
-        };
+    public ClassMatcher enhanceClass() {
+        return ClassMatchers.hasSuperTypes(ENHANCE_CLASS);
     }
 }

@@ -30,14 +30,12 @@ import java.util.concurrent.Executors;
  * 配置服务
  *
  * @author fuziye
- * @date 2021/12/29
+ * @since 2021/12/29
  */
 public class ConfigServiceImpl implements PluginService {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private GrayConfig grayConfig;
-
-    private GrayDynamicConfigListener listener;
 
     private DynamicConfigService configurationService;
 
@@ -48,7 +46,7 @@ public class ConfigServiceImpl implements PluginService {
     public void start() {
         grayConfig = PluginConfigManager.getPluginConfig(GrayConfig.class);
         configurationService = ServiceManager.getService(DynamicConfigService.class);
-        executorService.submit(new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 initRequests();
@@ -57,8 +55,8 @@ public class ConfigServiceImpl implements PluginService {
     }
 
     private void initRequests() {
-        listener = new GrayDynamicConfigListener(grayConfig.getSpringCloudKey(), grayConfig.getSpringCloudKey());
-        configurationService.addGroupListener(grayConfig.getSpringCloudGroup(), listener, true);
+        configurationService.addGroupListener(grayConfig.getSpringCloudGroup(),
+            new GrayDynamicConfigListener(grayConfig.getSpringCloudKey(), grayConfig.getSpringCloudKey()), true);
     }
 
     @Override

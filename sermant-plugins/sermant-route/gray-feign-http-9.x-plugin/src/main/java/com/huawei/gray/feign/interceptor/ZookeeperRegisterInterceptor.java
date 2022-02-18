@@ -16,11 +16,6 @@
 
 package com.huawei.gray.feign.interceptor;
 
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.gray.feign.service.RegisterService;
-
 import java.lang.reflect.Method;
 
 /**
@@ -29,29 +24,13 @@ import java.lang.reflect.Method;
  * @author lilai
  * @since 2021-11-03
  */
-public class ZookeeperRegisterInterceptor implements InstanceMethodInterceptor {
-    private RegisterService registerService;
-
-    /**
-     * 获取当前服务信息
-     *
-     * @param obj          拦截对象
-     * @param method       拦截方法
-     * @param arguments    方法参数
-     * @param beforeResult change this result, if you want to truncate the method.
-     */
+public class ZookeeperRegisterInterceptor extends RegisterInterceptor {
     @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) throws Exception {
-        registerService = ServiceManager.getService(RegisterService.class);
-        registerService.before(obj, method, arguments, beforeResult);
-    }
-
-    @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) throws Exception {
+    public Object after(Object obj, Method method, Object[] arguments, Object result) {
         return result;
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
+    public void onThrow(Object obj, Method method, Object[] arguments, Throwable th) {
     }
 }

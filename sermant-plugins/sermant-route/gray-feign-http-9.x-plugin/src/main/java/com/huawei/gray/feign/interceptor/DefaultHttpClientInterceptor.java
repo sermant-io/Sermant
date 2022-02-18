@@ -22,10 +22,10 @@
 
 package com.huawei.gray.feign.interceptor;
 
+import com.huawei.gray.feign.service.DefaultHttpClientService;
 import com.huawei.sermant.core.agent.common.BeforeResult;
 import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.gray.feign.service.DefaultHttpClientService;
 
 import java.lang.reflect.Method;
 
@@ -41,9 +41,9 @@ public class DefaultHttpClientInterceptor implements InstanceMethodInterceptor {
     /**
      * 获取当前服务信息
      *
-     * @param obj          拦截对象
-     * @param method       拦截方法
-     * @param arguments    方法参数
+     * @param obj 拦截对象
+     * @param method 拦截方法
+     * @param arguments 方法参数
      * @param beforeResult change this result, if you want to truncate the method.
      */
     @Override
@@ -59,7 +59,7 @@ public class DefaultHttpClientInterceptor implements InstanceMethodInterceptor {
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
-        defaultHttpClientService.onThrow(obj, method, arguments, t);
+    public void onThrow(Object obj, Method method, Object[] arguments, Throwable th) {
+        defaultHttpClientService.onThrow(obj, method, arguments, th);
     }
 }
