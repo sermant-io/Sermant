@@ -28,7 +28,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.huawei.zk.resttemplate.provider.ZkRestProviderApplication</mainClass>
+                            <mainClass>com.huawei.zk.resttemplate.consumer.ZkRestConsumerApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

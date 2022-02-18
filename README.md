@@ -41,15 +41,9 @@ Execute *maven* command to package the **Sermant** project's [demo module](serma
 mvn clean package -Dmaven.test.skip -Pexample
 ```
 
-Execute *maven* command to package the **Sermant** project's [back-end module](sermant-backend).
-
-```shell
-mvn clean package -Dmaven.test.skip -Pbackend
-```
-
 ### Start Sermant
 
-Start **Sermant** backend, **Prepare zookeeper, kafka**.
+Start **Sermant** backend, **Prepare zookeeper**.
 
 ```shell
 # Run under Linux
