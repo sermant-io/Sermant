@@ -17,12 +17,12 @@
 package com.huawei.gray.dubbo.strategy.type;
 
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
+import com.huawei.gray.dubbo.utils.FieldPrivilegedAction;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 
 import java.lang.reflect.Field;
 import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.logging.Logger;
 
 /**
@@ -37,14 +37,8 @@ public class ObjectTypeStrategy extends TypeStrategy {
     @Override
     public String getValue(Object arg, String type) {
         try {
-            final Field field = arg.getClass().getDeclaredField(getKey(type));
-            AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                @Override
-                public Object run() {
-                    field.setAccessible(true);
-                    return null;
-                }
-            });
+            Field field = arg.getClass().getDeclaredField(getKey(type));
+            AccessController.doPrivileged(new FieldPrivilegedAction(field));
             Object object = field.get(arg);
             return object == null ? null : String.valueOf(object);
         } catch (IllegalArgumentException e) {
