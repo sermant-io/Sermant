@@ -59,8 +59,8 @@ public abstract class InfluxService {
         return query(start, end, Collections.singletonMap(TAG_SERVICE, service), metricClass);
     }
 
-    protected <M> List<M> queryByServiceInstance(String start, String end, String service,
-                                                 String serviceInstance, Class<M> metricClass) {
+    protected <M> List<M> queryByServiceInstance(
+            String start, String end, String service, String serviceInstance, Class<M> metricClass) {
         Map<String, String> tags = new HashMap<>();
         tags.put(TAG_SERVICE, service);
         tags.put(TAG_SERVICE_INSTANCE, serviceInstance);
@@ -69,11 +69,11 @@ public abstract class InfluxService {
 
     protected <M> List<M> query(String start, String end, Map<String, String> tags, Class<M> metricClass) {
         final InfluxQueryRequest request = InfluxQueryRequest.builder()
-            .measurement(resolveMeasurement(metricClass))
-            .start(start)
-            .end(end)
-            .tags(tags)
-            .build();
+                .measurement(resolveMeasurement(metricClass))
+                .start(start)
+                .end(end)
+                .tags(tags)
+                .build();
         return influxDao.query(request, metricClass);
     }
 

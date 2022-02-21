@@ -44,38 +44,44 @@ public class ServerMetricController {
     }
 
     @GetMapping("/cpu")
-    public List<CpuDTO> getCpuMetrics(@RequestParam String start,
-                                      @RequestParam(required = false) String end) {
+    public List<CpuDTO> getCpuMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return serverMetricService.getCpuMetrics(start, end);
     }
 
     @GetMapping("/memory")
-    public List<MemoryDTO> getMemoryMetrics(@RequestParam String start,
-                                            @RequestParam(required = false) String end) {
+    public List<MemoryDTO> getMemoryMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return serverMetricService.getMemoryMetrics(start, end);
     }
 
     @GetMapping("/network")
-    public List<NetworkDTO> getNetworkMetrics(@RequestParam String start,
-                                              @RequestParam(required = false) String end) {
+    public List<NetworkDTO> getNetworkMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return serverMetricService.getNetworkMetrics(start, end);
     }
 
     @GetMapping("/disk/read-rate")
-    public List<DiskDTO> getDiskReadRateMetrics(@RequestParam String start,
-                                                @RequestParam(required = false) String end) {
+    public List<DiskDTO> getDiskReadRateMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return serverMetricService.getDiskMetrics(DiskDTO.ValueType.READ_RATE, start, end);
     }
 
     @GetMapping("/disk/write-rate")
-    public List<DiskDTO> getDiskWriteRateMetrics(@RequestParam String start,
-                                                 @RequestParam(required = false) String end) {
+    public List<DiskDTO> getDiskWriteRateMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return serverMetricService.getDiskMetrics(DiskDTO.ValueType.WRITE_RATE, start, end);
     }
 
     @GetMapping("/disk/io-spent-percentage")
-    public List<DiskDTO> getDiskIoSpentMetrics(@RequestParam String start,
-                                               @RequestParam(required = false) String end) {
+    public List<DiskDTO> getDiskIoSpentMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return serverMetricService.getDiskMetrics(DiskDTO.ValueType.IO_SPENT_PERCENTAGE, start, end);
     }
 }

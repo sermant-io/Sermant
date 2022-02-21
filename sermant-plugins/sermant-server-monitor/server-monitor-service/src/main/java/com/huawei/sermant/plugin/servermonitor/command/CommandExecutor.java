@@ -50,7 +50,7 @@ public class CommandExecutor {
     private static final Runtime RUNTIME = Runtime.getRuntime();
 
     private static final ExecutorService POOL = new ThreadPoolExecutor(2, 10,
-        0, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+            0, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
     public static <T> T execute(final MonitorCommand<T> command) {
         final Process process;
@@ -78,18 +78,22 @@ public class CommandExecutor {
         } catch (ExecutionException e) {
             LOGGER.severe("Failed to parse result, " + e.getMessage());
         } finally {
-            closeStream(errorStream);
-            closeStream(inputStream);
+            if (errorStream != null) {
+                try {
+                    errorStream.close();
+                } catch (IOException e) {
+                    // Ignored.
+                }
+            }
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    // Ignored.
+                }
+            }
         }
         return null;
-    }
-
-    private static void closeStream(InputStream inputStream) {
-        try {
-            inputStream.close();
-        } catch (IOException e) {
-            // ignored
-        }
     }
 
     private static <T> Future<T> parseResult(final MonitorCommand<T> command, final InputStream inputStream) {
@@ -101,8 +105,8 @@ public class CommandExecutor {
         }, inputStream));
     }
 
-    private static <T> void handleErrorStream(final MonitorCommand<T> command, final InputStream errorStream,
-                                              final CountDownLatch latch) {
+    private static <T> void handleErrorStream(
+            final MonitorCommand<T> command, final InputStream errorStream, final CountDownLatch latch) {
         POOL.execute(new ErrorHandleTask(new VoidStreamHandler() {
             @Override
             public void handle(InputStream inputStream) {

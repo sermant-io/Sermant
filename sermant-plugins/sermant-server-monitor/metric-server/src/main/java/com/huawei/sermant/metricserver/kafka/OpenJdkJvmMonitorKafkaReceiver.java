@@ -52,9 +52,10 @@ public class OpenJdkJvmMonitorKafkaReceiver {
     private final OpenJdkJvmMetricService jvmMetricService;
 
     @Autowired
-    public OpenJdkJvmMonitorKafkaReceiver(OpenJdkMemoryService memoryService,
-                                          OpenJdkMemoryPoolService memoryPoolService,
-                                          OpenJdkJvmMetricService jvmMetricService) {
+    public OpenJdkJvmMonitorKafkaReceiver(
+            OpenJdkMemoryService memoryService,
+            OpenJdkMemoryPoolService memoryPoolService,
+            OpenJdkJvmMetricService jvmMetricService) {
         this.memoryService = memoryService;
         this.memoryPoolService = memoryPoolService;
         this.jvmMetricService = jvmMetricService;
@@ -107,67 +108,67 @@ public class OpenJdkJvmMonitorKafkaReceiver {
                     continue;
             }
             memoryPoolService.addMemoryPoolMetric(OpenJdkMemoryPoolDTO.builder()
-                .service(service)
-                .serviceInstance(serviceInstance)
-                .time(time)
-                .type(type)
-                .committed(memoryPool.getCommitted())
-                .init(memoryPool.getInit())
-                .max(memoryPool.getMax())
-                .used(memoryPool.getUsed())
-                .build());
+                    .service(service)
+                    .serviceInstance(serviceInstance)
+                    .time(time)
+                    .type(type)
+                    .committed(memoryPool.getCommitted())
+                    .init(memoryPool.getInit())
+                    .max(memoryPool.getMax())
+                    .used(memoryPool.getUsed())
+                    .build());
         }
     }
 
     private void addMemoryMetric(String service, String serviceInstance, Instant time, JVMMetric metric) {
         for (Memory memory : metric.getMemoryList()) {
             memoryService.addMemoryMetric(OpenJdkMemoryDTO.builder()
-                .service(service)
-                .serviceInstance(serviceInstance)
-                .time(time)
-                .type(memory.getIsHeap() ? OpenJdkMemoryDTO.OracleMemoryType.HEAP
-                    : OpenJdkMemoryDTO.OracleMemoryType.NON_HEAP)
-                .committed(memory.getCommitted())
-                .init(memory.getInit())
-                .max(memory.getMax())
-                .used(memory.getUsed())
-                .build());
+                    .service(service)
+                    .serviceInstance(serviceInstance)
+                    .time(time)
+                    .type(memory.getIsHeap() ? OpenJdkMemoryDTO.OracleMemoryType.HEAP
+                            : OpenJdkMemoryDTO.OracleMemoryType.NON_HEAP)
+                    .committed(memory.getCommitted())
+                    .init(memory.getInit())
+                    .max(memory.getMax())
+                    .used(memory.getUsed())
+                    .build());
         }
     }
 
     private void addGcMetric(String service, String serviceInstance, Instant time, JVMMetric metric) {
         for (GC gc : metric.getGcList()) {
             jvmMetricService.addGcMetric(GcDTO.builder()
-                .service(service)
-                .serviceInstance(serviceInstance)
-                .time(time)
-                .gcType(gc.getPhrase() == GCPhrase.OLD ? GcDTO.GcType.OLD : GcDTO.GcType.YOUNG)
-                .gcTime(gc.getTime())
-                .gcCount(gc.getCount())
-                .build());
+                    .service(service)
+                    .serviceInstance(serviceInstance)
+                    .time(time)
+                    .gcType(gc.getPhrase() == GCPhrase.OLD ? GcDTO.GcType.OLD : GcDTO.GcType.YOUNG)
+                    .gcTime(gc.getTime())
+                    .gcCount(gc.getCount())
+                    .build());
         }
     }
 
     private void addThreadMetric(String service, String serviceInstance, Instant time, JVMMetric metric) {
         Thread thread = metric.getThread();
         jvmMetricService.addThreadMetric(ThreadDTO.builder()
-            .service(service)
-            .serviceInstance(serviceInstance)
-            .time(time)
-            .peakCount(thread.getPeakCount())
-            .liveCount(thread.getLiveCount())
-            .daemonCount(thread.getDaemonCount())
-            .build());
+                .service(service)
+                .serviceInstance(serviceInstance)
+                .time(time)
+                .peakCount(thread.getPeakCount())
+                .liveCount(thread.getLiveCount())
+                .daemonCount(thread.getDaemonCount())
+                .build());
     }
 
     private void addCpuMetric(String service, String serviceInstance, Instant time, JVMMetric metric) {
         CPU cpu = metric.getCpu();
         jvmMetricService.addCpuMetric(CpuDTO.builder()
-            .service(service)
-            .serviceInstance(serviceInstance)
-            .time(time)
-            .usagePercent(cpu.getUsagePercent())
-            .build());
+                .service(service)
+                .serviceInstance(serviceInstance)
+                .time(time)
+                .usagePercent(cpu.getUsagePercent())
+                .build());
     }
 
 }
