@@ -17,6 +17,7 @@
 package com.huawei.gray.dubbo.service;
 
 import com.huawei.gray.dubbo.cache.DubboCache;
+import com.huawei.gray.dubbo.utils.FieldPrivilegedAction;
 import com.huawei.route.common.gray.addr.AddrCache;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
@@ -28,7 +29,6 @@ import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 
 import java.lang.reflect.Field;
 import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.List;
 
 /**
@@ -49,14 +49,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (arguments.length <= 2 || !(arguments[2] instanceof List<?>)) {
             return;
         }
-        final Field field = obj.getClass().getDeclaredField("microservice");
-        AccessController.doPrivileged(new PrivilegedAction<Object>() {
-            @Override
-            public Object run() {
-                field.setAccessible(true);
-                return null;
-            }
-        });
+        Field field = obj.getClass().getDeclaredField("microservice");
+        AccessController.doPrivileged(new FieldPrivilegedAction(field));
         Microservice microservice = (Microservice) field.get(obj);
         GrayConfiguration grayConfiguration = LabelCache.getLabel(DubboCache.getLabelName());
         CurrentTag currentTag = grayConfiguration.getCurrentTag();

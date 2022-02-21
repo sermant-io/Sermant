@@ -28,7 +28,7 @@ import net.bytebuddy.matcher.ElementMatchers;
  * 实例增强基类
  *
  * @author provenceee
- * @since  2021/11/24
+ * @since 2021/11/24
  */
 public abstract class AbstractInstDefinition implements EnhanceDefinition {
     private final String enhanceClass;
@@ -58,7 +58,7 @@ public abstract class AbstractInstDefinition implements EnhanceDefinition {
     @Override
     public MethodInterceptPoint[] getMethodInterceptPoints() {
         return new MethodInterceptPoint[]{
-                MethodInterceptPoint.newInstMethodInterceptPoint(interceptClass,
-                        ElementMatchers.<MethodDescription>named(methodName))};
+            MethodInterceptPoint.newInstMethodInterceptPoint(interceptClass,
+                ElementMatchers.<MethodDescription>named(methodName))};
     }
 }
