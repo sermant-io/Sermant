@@ -64,7 +64,7 @@ public class CollectTask<M> {
     }
 
     public void start() {
-        if (!started)
+        if (!started) {
             synchronized (lock) {
                 if (!started) {
                     scheduler.scheduleAtFixedRate(new Runnable() {
@@ -82,6 +82,7 @@ public class CollectTask<M> {
                     started = true;
                 }
             }
+        }
     }
 
     private void doCollect() {

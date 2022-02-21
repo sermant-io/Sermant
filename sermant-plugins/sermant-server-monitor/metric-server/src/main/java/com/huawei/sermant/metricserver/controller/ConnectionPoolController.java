@@ -47,12 +47,14 @@ public class ConnectionPoolController {
      *
      * @param start 开始时间
      * @param end   结束时间
+     * @param peer  database peer
      * @return 满足条件的@link DataSourceDTO}实体列表
      */
     @GetMapping("/data-sources/druid")
-    public List<DataSourceDTO> getDataSources(@RequestParam String start,
-                                              @RequestParam(required = false) String end,
-                                              @RequestParam(required = false) String peer) {
+    public List<DataSourceDTO> getDataSources(
+            @RequestParam String start,
+            @RequestParam(required = false) String end,
+            @RequestParam(required = false) String peer) {
         if (StringUtils.hasText(peer)) {
             return connectionPoolService.getDataSourcesByPeer(start, end, peer);
         } else {
@@ -69,9 +71,10 @@ public class ConnectionPoolController {
      * @return 满足条件的@link DataSourceDTO}实体列表
      */
     @GetMapping("/data-sources/druid/{service}")
-    public List<DataSourceDTO> getDataSourceOfService(@RequestParam String start,
-                                                      @RequestParam(required = false) String end,
-                                                      @PathVariable("service") String service) {
+    public List<DataSourceDTO> getDataSourceOfService(
+            @RequestParam String start,
+            @RequestParam(required = false) String end,
+            @PathVariable("service") String service) {
         return connectionPoolService.getDataSourcesOfService(start, end, service);
     }
 
@@ -85,10 +88,11 @@ public class ConnectionPoolController {
      * @return 满足条件的@link DataSourceDTO}实体列表
      */
     @GetMapping("/data-sources/druid/{service}/{instance}")
-    public List<DataSourceDTO> getDataSourceOfServiceInstance(@RequestParam String start,
-                                                              @RequestParam(required = false) String end,
-                                                              @PathVariable("service") String service,
-                                                              @PathVariable("instance") String serviceInstance) {
+    public List<DataSourceDTO> getDataSourceOfServiceInstance(
+            @RequestParam String start,
+            @RequestParam(required = false) String end,
+            @PathVariable("service") String service,
+            @PathVariable("instance") String serviceInstance) {
         return connectionPoolService.getDataSourcesOfServiceInstance(start, end, service, serviceInstance);
     }
 
@@ -103,11 +107,12 @@ public class ConnectionPoolController {
      * @return 满足条件的@link DataSourceDTO}实体列表
      */
     @GetMapping("/data-sources/druid/{service}/{instance}/{name}")
-    public List<DataSourceDTO> getDataSourcesByNameInServiceInstance(@RequestParam String start,
-                                                                     @RequestParam(required = false) String end,
-                                                                     @PathVariable("service") String service,
-                                                                     @PathVariable("instance") String serviceInstance,
-                                                                     @PathVariable("name") String name) {
+    public List<DataSourceDTO> getDataSourcesByNameInServiceInstance(
+            @RequestParam String start,
+            @RequestParam(required = false) String end,
+            @PathVariable("service") String service,
+            @PathVariable("instance") String serviceInstance,
+            @PathVariable("name") String name) {
         return connectionPoolService.getDataSourcesByNameInServiceInstance(start, end, service, serviceInstance, name);
     }
 }

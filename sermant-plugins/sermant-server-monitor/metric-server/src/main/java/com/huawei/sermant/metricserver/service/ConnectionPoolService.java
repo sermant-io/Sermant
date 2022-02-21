@@ -56,8 +56,8 @@ public class ConnectionPoolService extends InfluxService {
      */
     public List<DataSourceDTO> getDataSources(String start, String end) {
         return query(start, end, DataSourceInfluxEntity.class)
-            .stream().map(this::entity2DTO)
-            .collect(Collectors.toList());
+                .stream().map(this::entity2DTO)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -70,8 +70,8 @@ public class ConnectionPoolService extends InfluxService {
      */
     public List<DataSourceDTO> getDataSourcesOfService(String start, String end, String service) {
         return queryByService(start, end, service, DataSourceInfluxEntity.class)
-            .stream().map(this::entity2DTO)
-            .collect(Collectors.toList());
+                .stream().map(this::entity2DTO)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -83,11 +83,11 @@ public class ConnectionPoolService extends InfluxService {
      * @param serviceInstance 服务实例名
      * @return 满足条件的@link DataSourceDTO}实体列表
      */
-    public List<DataSourceDTO> getDataSourcesOfServiceInstance(String start, String end,
-                                                               String service, String serviceInstance) {
+    public List<DataSourceDTO> getDataSourcesOfServiceInstance(
+            String start, String end, String service, String serviceInstance) {
         return queryByServiceInstance(start, end, service, serviceInstance, DataSourceInfluxEntity.class)
-            .stream().map(this::entity2DTO)
-            .collect(Collectors.toList());
+                .stream().map(this::entity2DTO)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -100,15 +100,15 @@ public class ConnectionPoolService extends InfluxService {
      * @param name            数据源名称
      * @return 满足条件的@link DataSourceDTO}实体列表
      */
-    public List<DataSourceDTO> getDataSourcesByNameInServiceInstance(String start, String end, String service,
-                                                                     String serviceInstance, String name) {
+    public List<DataSourceDTO> getDataSourcesByNameInServiceInstance(
+            String start, String end, String service, String serviceInstance, String name) {
         HashMap<String, String> tags = new HashMap<>();
         tags.put(TAG_SERVICE, service);
         tags.put(TAG_SERVICE_INSTANCE, serviceInstance);
         tags.put("name", name);
         return query(start, end, tags, DataSourceInfluxEntity.class)
-            .stream().map(this::entity2DTO)
-            .collect(Collectors.toList());
+                .stream().map(this::entity2DTO)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -121,20 +121,20 @@ public class ConnectionPoolService extends InfluxService {
      */
     public List<DataSourceDTO> getDataSourcesByPeer(String start, String end, String peer) {
         return query(start, end, Collections.singletonMap("database_peer", peer), DataSourceInfluxEntity.class)
-            .stream().map(this::entity2DTO)
-            .collect(Collectors.toList());
+                .stream().map(this::entity2DTO)
+                .collect(Collectors.toList());
     }
 
     private DataSourceDTO entity2DTO(DataSourceInfluxEntity e) {
         return DataSourceDTO.builder()
-            .service(e.getService())
-            .serviceInstance(e.getServiceInstance())
-            .time(e.getTime())
-            .databasePeer(e.getDatabasePeer())
-            .name(e.getName())
-            .initialSize(e.getInitialSize())
-            .activeCount(e.getActiveCount())
-            .maxActive(e.getMaxActive())
-            .poolingCount(e.getPoolingCount()).build();
+                .service(e.getService())
+                .serviceInstance(e.getServiceInstance())
+                .time(e.getTime())
+                .databasePeer(e.getDatabasePeer())
+                .name(e.getName())
+                .initialSize(e.getInitialSize())
+                .activeCount(e.getActiveCount())
+                .maxActive(e.getMaxActive())
+                .poolingCount(e.getPoolingCount()).build();
     }
 }

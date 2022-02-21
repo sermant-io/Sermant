@@ -42,50 +42,58 @@ public class IbmPoolController {
     }
 
     @GetMapping("/memory-pool/jcc")
-    public List<IbmMemoryPoolDTO> getJITCodeCachePoolMetrics(@RequestParam String start,
-                                                             @RequestParam(required = false) String end) {
+    public List<IbmMemoryPoolDTO> getJitCodeCachePoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return service.getMemoryPools(IbmPoolType.JCC, start, end);
     }
 
     @GetMapping("/memory-pool/jdc")
-    public List<IbmMemoryPoolDTO> getJITDataCachePoolMetrics(@RequestParam String start,
-                                                             @RequestParam(required = false) String end) {
+    public List<IbmMemoryPoolDTO> getJitDataCachePoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return service.getMemoryPools(IbmPoolType.JDC, start, end);
     }
 
     @GetMapping("/memory-pool/ts")
-    public List<IbmMemoryPoolDTO> getTenuredSOAPoolMetrics(@RequestParam String start,
-                                                           @RequestParam(required = false) String end) {
+    public List<IbmMemoryPoolDTO> getTenuredSoaPoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return service.getMemoryPools(IbmPoolType.TS, start, end);
     }
 
     @GetMapping("/memory-pool/tl")
-    public List<IbmMemoryPoolDTO> getTenuredLOAPoolMetrics(@RequestParam String start,
-                                                           @RequestParam(required = false) String end) {
+    public List<IbmMemoryPoolDTO> getTenuredLoaPoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return service.getMemoryPools(IbmPoolType.TL, start, end);
     }
 
     @GetMapping("/memory-pool/na")
-    public List<IbmMemoryPoolDTO> getNurseryAllocatePoolMetrics(@RequestParam String start,
-                                                                @RequestParam(required = false) String end) {
+    public List<IbmMemoryPoolDTO> getNurseryAllocatePoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return service.getMemoryPools(IbmPoolType.NA, start, end);
     }
 
     @GetMapping("/memory-pool/ns")
-    public List<IbmMemoryPoolDTO> getNurserySurvivorPoolMetrics(@RequestParam String start,
-                                                                @RequestParam(required = false) String end) {
+    public List<IbmMemoryPoolDTO> getNurserySurvivorPoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return service.getMemoryPools(IbmPoolType.NS, start, end);
     }
 
     @GetMapping("/memory-pool/cs")
-    public List<IbmMemoryPoolDTO> getClassStoragePoolMetrics(@RequestParam String start,
-                                                             @RequestParam(required = false) String end) {
+    public List<IbmMemoryPoolDTO> getClassStoragePoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return service.getMemoryPools(IbmPoolType.CS, start, end);
     }
 
     @GetMapping("/memory-pool/mnhs")
-    public List<IbmMemoryPoolDTO> getMiscellaneousNonHeapStoragePoolMetrics(@RequestParam String start,
-                                                                            @RequestParam(required = false) String end) {
+    public List<IbmMemoryPoolDTO> getMiscellaneousNonHeapStoragePoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return service.getMemoryPools(IbmPoolType.MNHS, start, end);
     }
 }

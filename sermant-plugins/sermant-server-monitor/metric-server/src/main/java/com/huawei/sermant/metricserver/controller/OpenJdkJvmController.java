@@ -55,74 +55,86 @@ public class OpenJdkJvmController {
     }
 
     @GetMapping("/cpu")
-    public List<CpuDTO> getCpuMetrics(@RequestParam String start,
-                                      @RequestParam(required = false) String end) {
+    public List<CpuDTO> getCpuMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return jvmMetricService.getCpuMetrics(start, end);
     }
 
     @GetMapping("/thread")
-    public List<ThreadDTO> getThreadMetrics(@RequestParam String start,
-                                            @RequestParam(required = false) String end) {
+    public List<ThreadDTO> getThreadMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return jvmMetricService.getThreadMetrics(start, end);
     }
 
     @GetMapping("/gc/young")
-    public List<GcDTO> getYoungGcMetrics(@RequestParam String start,
-                                         @RequestParam(required = false) String end) {
+    public List<GcDTO> getYoungGcMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return jvmMetricService.getGcMetrics(start, end, GcDTO.GcType.YOUNG);
     }
 
     @GetMapping("/gc/old")
-    public List<GcDTO> getOldGcMetrics(@RequestParam String start,
-                                       @RequestParam(required = false) String end) {
+    public List<GcDTO> getOldGcMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return jvmMetricService.getGcMetrics(start, end, GcDTO.GcType.OLD);
     }
 
     @GetMapping("/memory/heap")
-    public List<OpenJdkMemoryDTO> getHeapMemoryMetrics(@RequestParam String start,
-                                                       @RequestParam(required = false) String end) {
+    public List<OpenJdkMemoryDTO> getHeapMemoryMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return memoryService.getMemoryMetrics(OpenJdkMemoryDTO.OracleMemoryType.HEAP, start, end);
     }
 
     @GetMapping("/memory/non-heap")
-    public List<OpenJdkMemoryDTO> getNonHeapMemoryMetrics(@RequestParam String start,
-                                                          @RequestParam(required = false) String end) {
+    public List<OpenJdkMemoryDTO> getNonHeapMemoryMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return memoryService.getMemoryMetrics(OpenJdkMemoryDTO.OracleMemoryType.NON_HEAP, start, end);
     }
 
     @GetMapping("/memory-pool/code-cache")
-    public List<OpenJdkMemoryPoolDTO> getCodeCachePoolMetrics(@RequestParam String start,
-                                                              @RequestParam(required = false) String end) {
+    public List<OpenJdkMemoryPoolDTO> getCodeCachePoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return memoryPoolService.getMemoryPools(OpenJdkMemoryPoolDTO.OraclePoolType.CODE_CACHE, start, end);
     }
 
     @GetMapping("/memory-pool/new-gen")
-    public List<OpenJdkMemoryPoolDTO> getNewGenPoolMetrics(@RequestParam String start,
-                                                           @RequestParam(required = false) String end) {
+    public List<OpenJdkMemoryPoolDTO> getNewGenPoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return memoryPoolService.getMemoryPools(OpenJdkMemoryPoolDTO.OraclePoolType.NEW_GEN, start, end);
     }
 
     @GetMapping("/memory-pool/old-gen")
-    public List<OpenJdkMemoryPoolDTO> getOldGenPoolMetrics(@RequestParam String start,
-                                                           @RequestParam(required = false) String end) {
+    public List<OpenJdkMemoryPoolDTO> getOldGenPoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return memoryPoolService.getMemoryPools(OpenJdkMemoryPoolDTO.OraclePoolType.OLD_GEN, start, end);
     }
 
     @GetMapping("/memory-pool/survivor")
-    public List<OpenJdkMemoryPoolDTO> getSurvivorPoolMetrics(@RequestParam String start,
-                                                             @RequestParam(required = false) String end) {
+    public List<OpenJdkMemoryPoolDTO> getSurvivorPoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return memoryPoolService.getMemoryPools(OpenJdkMemoryPoolDTO.OraclePoolType.SURVIVOR, start, end);
     }
 
     @GetMapping("/memory-pool/perm-gen")
-    public List<OpenJdkMemoryPoolDTO> getPermGenPoolMetrics(@RequestParam String start,
-                                                            @RequestParam(required = false) String end) {
+    public List<OpenJdkMemoryPoolDTO> getPermGenPoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return memoryPoolService.getMemoryPools(OpenJdkMemoryPoolDTO.OraclePoolType.PERM_GEN, start, end);
     }
 
     @GetMapping("/memory-pool/metaspace")
-    public List<OpenJdkMemoryPoolDTO> getMetaspacePoolMetrics(@RequestParam String start,
-                                                              @RequestParam(required = false) String end) {
+    public List<OpenJdkMemoryPoolDTO> getMetaspacePoolMetrics(
+            @RequestParam String start,
+            @RequestParam(required = false) String end) {
         return memoryPoolService.getMemoryPools(OpenJdkMemoryPoolDTO.OraclePoolType.METASPACE, start, end);
     }
 }

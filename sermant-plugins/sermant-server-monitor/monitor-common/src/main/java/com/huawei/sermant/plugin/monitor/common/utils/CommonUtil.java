@@ -31,7 +31,7 @@ public class CommonUtil {
 
     public static BigDecimal getPercentage(long numerator, long denominator, int scale) {
         return BigDecimal.valueOf(numerator).multiply(HUNDRED)
-            .divide(BigDecimal.valueOf(denominator), scale, RoundingMode.HALF_UP);
+                .divide(BigDecimal.valueOf(denominator), scale, RoundingMode.HALF_UP);
     }
 
     public static String getStackTrace(Throwable t) {
@@ -41,8 +41,7 @@ public class CommonUtil {
             byteArrayOutputStream = new ByteArrayOutputStream();
             printStream = new PrintStream(byteArrayOutputStream);
             t.printStackTrace(printStream);
-            byte[] bytes = byteArrayOutputStream.toByteArray();
-            return new String(bytes);
+            return byteArrayOutputStream.toString();
         } finally {
             if (printStream != null) {
                 printStream.close();
