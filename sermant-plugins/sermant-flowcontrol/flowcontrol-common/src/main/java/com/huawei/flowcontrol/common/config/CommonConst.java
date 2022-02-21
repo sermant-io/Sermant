@@ -17,8 +17,6 @@
 
 package com.huawei.flowcontrol.common.config;
 
-import java.nio.charset.Charset;
-
 /**
  * 普通常量类
  *
@@ -60,11 +58,6 @@ public class CommonConst {
      * HTTP太多请求异常码
      */
     public static final int TOO_MANY_REQUEST_CODE = 429;
-
-    /**
-     * metric消息发kafka时间间隔
-     */
-    public static final String METRIC_INTERVAL_MS = "sentinel.metric.interval.ms";
 
     /**
      * 周期性执行线程池名称
@@ -112,54 +105,9 @@ public class CommonConst {
     public static final String SENTINEL_RULE_SYSTEM = "system";
 
     /**
-     * 客户端默认端口
-     */
-    public static final int SENTINEL_PORT = 8719;
-
-    /**
-     * redis配置规则数据源用到
-     */
-    public static final String CHANNEL = "channel";
-
-    /**
-     * sentinel
-     */
-    public static final String SENTINEL = "sentinel";
-
-    /**
-     * 冒号符号
-     */
-    public static final String COLON_SIGN = ":";
-
-    /**
      * 斜杠符号
      */
     public static final String SLASH_SIGN = "/";
-
-    /**
-     * 等于符号
-     */
-    public static final String EQUAL_SIGN = "=";
-
-    /**
-     * 编码 默认使用UTF-8
-     */
-    public static final Charset PLUGIN_ENCODE = Charset.forName("UTF-8");
-
-    /**
-     * 换行符号
-     */
-    public static final String NEWLINE_SIGN = System.getProperty("line.separator");
-
-    /**
-     * 逗号符号
-     */
-    public static final String COMMA_SIGN = ",";
-
-    /**
-     * sentinel配置参数 查询流控数据时,睡眠一段时间，等待限流数据写入文件再查询
-     */
-    public static final long METRIC_SLEEP_TIME_MILLIS = 1000L;
 
     /**
      * sentinel配置参数 心跳发送默认间隔时间，单位毫秒

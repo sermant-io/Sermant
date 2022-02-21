@@ -19,8 +19,8 @@ package com.huawei.flowcontrol.service;
 
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.enums.FlowFramework;
-import com.huawei.flowcontrol.common.handler.retry.RetryHandler;
 import com.huawei.flowcontrol.common.support.ReflectMethodCacheSupport;
+import com.huawei.flowcontrol.retry.handler.RetryHandlerV2;
 import com.huawei.flowcontrol.service.rest4j.DubboRest4jService;
 import com.huawei.flowcontrol.service.rest4j.HttpRest4jService;
 import com.huawei.flowcontrol.service.sen.DubboSenService;
@@ -28,9 +28,12 @@ import com.huawei.flowcontrol.service.sen.HttpSenService;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.service.ServiceManager;
 
+import io.github.resilience4j.retry.RetryConfig;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -47,7 +50,7 @@ public class InterceptorSupporter extends ReflectMethodCacheSupport {
 
     protected static final String RETRY_VALUE = "$$$$RETRY_VALUE$$$";
 
-    protected final RetryHandler retryHandler = new RetryHandler();
+    protected final RetryHandlerV2 retryHandler = new RetryHandlerV2();
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -109,5 +112,37 @@ public class InterceptorSupporter extends ReflectMethodCacheSupport {
             }
             return result;
         };
+    }
+
+    /**
+     * 进行重试前的判断，若不满足条件直接返回， 防止多调用一次宿主应用接口
+     *
+     * @param retry 重试执行器
+     * @param result 结果
+     * @param throwable 第一次执行异常信息
+     * @return 是否核对通过
+     */
+    protected final boolean needRetry(io.github.resilience4j.retry.Retry retry, Object result, Throwable throwable) {
+        final long interval = retry.getRetryConfig().getIntervalBiFunction().apply(1, null);
+        final RetryConfig retryConfig = retry.getRetryConfig();
+        boolean isNeedRetry = isMatchResult(result, retryConfig.getResultPredicate()) || isTargetException(throwable,
+            retryConfig.getExceptionPredicate());
+        if (isNeedRetry) {
+            try {
+                // 按照第一次等待时间等待
+                Thread.sleep(interval);
+            } catch (InterruptedException ignored) {
+                // ignored
+            }
+        }
+        return isNeedRetry;
+    }
+
+    private boolean isMatchResult(Object result, Predicate<Object> resultPredicate) {
+        return result != null && resultPredicate.test(result);
+    }
+
+    private boolean isTargetException(Throwable throwable, Predicate<Throwable> exceptionPredicate) {
+        return throwable != null && exceptionPredicate.test(throwable);
     }
 }
