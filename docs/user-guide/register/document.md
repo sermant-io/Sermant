@@ -10,21 +10,36 @@
 
 ## 使用说明
 
-### 修改[配置文件](../../../sermant-plugins/sermant-register-center/config/config.yaml)
+### 修改[核心配置文件](../../../sermant-agentcore/sermant-agentcore-core/config/config.properties)
+
+文件打包路径为：${agent_package_path}/agent/config/config.properties
+
+配置项说明如下:
+
+```properties
+#应用名
+service.meta.application=${sermant.agent.service.meta.application:default}
+#版本号
+service.meta.version=${sermant.agent.service.meta.version:1.0.0}
+#命名空间
+service.meta.project=${sermant.agent.service.meta.project:default}
+#环境
+service.meta.environment=${sermant.agent.service.meta.environment:development}
+```
+
+### 修改[插件配置文件](../../../sermant-plugins/sermant-register-center/config/config.yaml)
+
+文件打包路径为：${agent_package_path}/agent/pluginPackage/register-center/config/config.yaml
 
 配置项说明如下:
 
 ```yaml
 servicecomb.service:
-  project: default #命名空间
-  application: default #应用名
-  version: 0.0.0 #版本号
-  environment: development #环境
-  address: http://127.0.0.1:30100 #注册中心地址，多个注册中心地址使用逗号隔开
-  heartbeatInterval: 15 #服务实例心跳发送间隔（单位：秒）
+  address: ${sermant.agent.service.meta.address:http://127.0.0.1:30100} #注册中心地址，多个注册中心地址使用逗号分隔
+  heartbeatInterval: ${sermant.agent.service.meta.heartbeatInterval:15} #服务实例心跳发送间隔（单位：秒）
 ```
 
-- 对于dubbo应用，还需要修改dubbo本身注册中心地址的配置。这个配置项一般在spring的配置文件中，比如“dubbo/provider.xml”文件中：
+- 对于dubbo应用，还需要修改dubbo本身注册中心地址的配置。这个配置项一般在dubbo应用的配置文件中，比如“dubbo/provider.xml”文件中：
 
 ```xml
 <dubbo:registry address="sc://127.0.0.1:30100"/>
@@ -54,13 +69,20 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=appN
 
 登录[Service Center](http://127.0.0.1:30103/)后台，查看相关服务实例是否已注册，并且访问应用接口，确认接口是否正常返回，若接口成功返回，则说明注册成功。
 
+## 配置说明
 
+**核心配置文件**与**插件配置文件**均支持环境变量、java -D参数配置），如下所示：
+
+```properties
+service.meta.application=${sermant.agent.service.meta.application:default}
+```
+
+以上配置代表优选读取环境变量或-D参数中sermant.agent.service.meta.application的值作为应用名，如果环境变量或-D参数中找不到这个值，则把default作为应用名。
 
 ## 更多文档
 
 - [SpringCloud注册中心迁移](./spring-cloud-register-migiration.md)
 
-
+- [Dubbo注册中心迁移](./dubbo-register-migiration.md)
 
 [返回**Sermant**说明文档](../../README.md)
-
