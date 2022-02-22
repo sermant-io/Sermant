@@ -1,4 +1,4 @@
-<img src="docs/binary-docs/sermant-logo.png" width="30%" syt height="530%" />
+<img src="docs/binary-docs/sermant-logo.png" width="25%" syt height="25%" />
 
 ### A proxyless service mesh solution based on Javaagent
 
@@ -74,7 +74,7 @@ Check running status of Sermant
 ```
 open http://localhost:8900 in browser
 ```
-![pic](docs/binary-docs/backend_sermant_info.png)
+<img src="docs/binary-docs/backend_sermant_info.png" width="50%" syt height="50%" />
 
 #### Please refer to the  [Register Plugin QuickStart](docs/QuickStart.md) for details.
 
