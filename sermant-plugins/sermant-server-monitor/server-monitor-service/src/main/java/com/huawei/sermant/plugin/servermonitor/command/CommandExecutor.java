@@ -78,22 +78,18 @@ public class CommandExecutor {
         } catch (ExecutionException e) {
             LOGGER.severe("Failed to parse result, " + e.getMessage());
         } finally {
-            if (errorStream != null) {
-                try {
-                    errorStream.close();
-                } catch (IOException e) {
-                    // Ignored.
-                }
-            }
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    // Ignored.
-                }
-            }
+            closeStream(errorStream);
+            closeStream(inputStream);
         }
         return null;
+    }
+
+    private static void closeStream(InputStream inputStream) {
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            // ignored
+        }
     }
 
     private static <T> Future<T> parseResult(final MonitorCommand<T> command, final InputStream inputStream) {
