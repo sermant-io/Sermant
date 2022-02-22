@@ -21,8 +21,8 @@ import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
 import com.huawei.flowcontrol.common.handler.retry.AbstractRetry;
 import com.huawei.flowcontrol.common.handler.retry.Retry;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
-import com.huawei.flowcontrol.common.handler.retry.RetryProcessor;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
+import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
@@ -35,6 +35,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * DispatcherServlet 的 API接口增强 埋点定义sentinel资源
@@ -43,6 +46,8 @@ import java.util.List;
  * @since 2022-02-11
  */
 public class FeignRequestInterceptor extends InterceptorSupporter implements Interceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private final Retry retry = new FeignRetry();
 
     /**
@@ -72,28 +77,47 @@ public class FeignRequestInterceptor extends InterceptorSupporter implements Int
         return context;
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
         if (!RetryContext.INSTANCE.isReady()) {
             return context;
         }
         final Object[] allArguments = context.getArguments();
-        final Request request = (Request) allArguments[0];
+        Request request = (Request) allArguments[0];
         final Collection<String> retryHeaders = request.headers().get(RETRY_KEY);
         Object result = context.getResult();
-        if (retryHeaders == null || retryHeaders.isEmpty()) {
-            final List<RetryProcessor> handlers = retryHandler.getHandlers(convertToHttpEntity(request));
-            if (!handlers.isEmpty()) {
-                // 重试仅有一个策略
-                request.headers().put(RETRY_KEY, Collections.singletonList(RETRY_VALUE));
-                result = handlers.get(0).checkAndRetry(result,
-                    createRetryFunc(context.getObject(), context.getMethod(), allArguments, result), null);
-                request.headers().remove(RETRY_KEY);
+        try {
+            if (retryHeaders == null || retryHeaders.isEmpty()) {
+                final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
+                    .getHandlers(convertToHttpEntity(request));
+                if (!handlers.isEmpty() && needRetry(handlers.get(0), result, null)) {
+                    allArguments[0] = markHeader(request);
+                    request = (Request) allArguments[0];
+
+                    // 重试仅有一个策略
+                    result = handlers.get(0).executeCheckedSupplier(() -> createRetryFunc(context.getObject(),
+                        context.getMethod(), allArguments, context.getResult()).get());
+                    request.headers().remove(RETRY_KEY);
+                }
             }
+        } catch (Throwable throwable) {
+            LOGGER.warning(String.format(Locale.ENGLISH,
+                "Failed to invoke method:%s for few times, reason:%s",
+                context.getMethod().getName(), throwable.getCause()));
+        } finally {
+            RetryContext.INSTANCE.removeRetry();
         }
         context.changeResult(result);
-        RetryContext.INSTANCE.removeRetry();
         return context;
+    }
+
+    private Request markHeader(Request request) {
+        // 此处header由于是不可变map，因此只能重新创建request替换原请求头信息
+        final Map<String, Collection<String>> headers = request.headers();
+        final HashMap<String, Collection<String>> newHeaders = new HashMap<>(headers);
+        newHeaders.put(RETRY_KEY, Collections.singletonList(RETRY_VALUE));
+        return Request.create(request.httpMethod(), request.url(), newHeaders, request.body(), request.charset());
     }
 
     @Override
@@ -107,7 +131,7 @@ public class FeignRequestInterceptor extends InterceptorSupporter implements Int
 
         @Override
         @SuppressWarnings("checkstyle:IllegalCatch")
-        protected String getCode(Object result) {
+        public String getCode(Object result) {
             final Method status = getInvokerMethod(METHOD_KEY, fn -> {
                 final Method method;
                 try {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.huawei.sermant</groupId>
         <artifactId>sermant-flowcontrol</artifactId>
@@ -15,8 +15,22 @@
         <config.skip.flag>false</config.skip.flag>
         <package.plugin.type>plugin</package.plugin.type>
         <spring.boot.version>2.5.2</spring.boot.version>
+        <resilience4j.version>1.7.1</resilience4j.version>
+        <flowcontrol.shade.path>sermant.plugin.flowcontrol</flowcontrol.shade.path>
     </properties>
     <dependencies>
+        <!--compile依赖-->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-retry</artifactId>
+            <version>${resilience4j.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!--Provider依赖-->
         <dependency>
             <groupId>com.huawei.sermant</groupId>
@@ -52,7 +66,6 @@
             <version>2.7.3</version>
             <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-core -->
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-core</artifactId>
@@ -77,6 +90,10 @@
                         <relocation>
                             <pattern>org.yaml</pattern>
                             <shadedPattern>${shade.common.prefix}.org.yaml</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>io</pattern>
+                            <shadedPattern>${flowcontrol.shade.path}.io</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

@@ -21,7 +21,6 @@ import com.huawei.flowcontrol.common.entity.DubboRequestEntity;
 import com.huawei.flowcontrol.common.handler.retry.AbstractRetry;
 import com.huawei.flowcontrol.common.handler.retry.Retry;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
-import com.huawei.flowcontrol.common.handler.retry.RetryProcessor;
 import com.huawei.flowcontrol.common.util.ConvertUtils;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 import com.huawei.sermant.core.common.LoggerFactory;
@@ -31,7 +30,7 @@ import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
-import com.alibaba.dubbo.rpc.RpcContext;
+import com.alibaba.dubbo.rpc.RpcResult;
 import com.alibaba.dubbo.rpc.cluster.LoadBalance;
 import com.alibaba.dubbo.rpc.cluster.support.AbstractClusterInvoker;
 
@@ -40,7 +39,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
@@ -68,42 +66,42 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter impleme
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
-    private Supplier<Object> createRetryFunc(Object obj, Object[] allArguments, Object ret) {
-        return () -> {
-            try {
-                if (obj instanceof AbstractClusterInvoker) {
-                    final Invocation invocation = (Invocation) allArguments[0];
-                    final List<Invoker<?>> invokers = (List<Invoker<?>>) allArguments[1];
-                    LoadBalance loadBalance = (LoadBalance) allArguments[2];
-                    final Method checkInvokers = getMethodCheckInvokers();
-                    final Method select = getMethodSelect();
+    private Object invokeRetryMethod(Object obj, Object[] allArguments, Object ret, boolean isNeedThrow,
+        boolean isRetry) throws Throwable {
+        try {
+            if (obj instanceof AbstractClusterInvoker) {
+                final Invocation invocation = (Invocation) allArguments[0];
+                final List<Invoker<?>> invokers = (List<Invoker<?>>) allArguments[1];
+                final Method checkInvokers = getMethodCheckInvokers();
+                final Method select = getMethodSelect();
 
-                    if (checkInvokers == null || select == null) {
-                        LOGGER.warning(String.format(Locale.ENGLISH, "It does not support retry for class %s",
-                            obj.getClass().getCanonicalName()));
-                        return ret;
-                    }
-
-                    // 校验invokers
-                    checkInvokers.invoke(obj, invokers, invocation);
-
-                    // 选择invoker
-                    final Invoker<?> invoke = (Invoker<?>) select.invoke(obj, loadBalance, invocation, invokers, null);
-
-                    // 执行调用
-                    final Result result = invoke.invoke(invocation);
-                    if (result.hasException()) {
-                        throw result.getException();
-                    }
-                    return result;
+                if (checkInvokers == null || select == null) {
+                    LOGGER.warning(String.format(Locale.ENGLISH, "It does not support retry for class %s",
+                        obj.getClass().getCanonicalName()));
+                    return ret;
                 }
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
-                LOGGER.warning("No such Method ! " + ex.getMessage());
-            } catch (Throwable throwable) {
-                throw new RuntimeException(throwable);
+                if (isRetry) {
+                    invocation.getAttachments().put(RETRY_KEY, RETRY_VALUE);
+                }
+
+                // 校验invokers
+                checkInvokers.invoke(obj, invokers, invocation);
+                LoadBalance loadBalance = (LoadBalance) allArguments[2];
+
+                // 选择invoker
+                final Invoker<?> invoke = (Invoker<?>) select.invoke(obj, loadBalance, invocation, invokers, null);
+
+                // 执行调用
+                final Result result = invoke.invoke(invocation);
+                if (result.hasException() && isNeedThrow) {
+                    throw result.getException();
+                }
+                return result;
             }
-            return ret;
-        };
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
+            LOGGER.warning("No such Method ! " + ex.getMessage());
+        }
+        return ret;
     }
 
     private Method getMethodSelect() {
@@ -137,29 +135,38 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter impleme
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         RetryContext.INSTANCE.setRetry(retry);
+        context.skip(null);
         return context;
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        final Object ret = context.getResult();
-        if (!RetryContext.INSTANCE.isReady() || RpcContext.getContext().isProviderSide()) {
+        if (!RetryContext.INSTANCE.isReady()) {
             return context;
         }
-        Object result = ret;
         final Object[] allArguments = context.getArguments();
         final Invocation invocation = (Invocation) allArguments[0];
-        if (invocation.getAttachments().get(RETRY_KEY) == null) {
-            final List<RetryProcessor> handlers = retryHandler.getHandlers(convertToAlibabaDubboEntity(invocation));
-            if (!handlers.isEmpty()) {
-                invocation.getAttachments().put(RETRY_KEY, RETRY_KEY);
-                result = handlers.get(0).checkAndRetry(ret, createRetryFunc(context.getObject(), allArguments, ret),
-                    ((Result) ret).getException());
-                invocation.getAttachments().remove(RETRY_KEY);
+        Object result = context.getResult();
+        try {
+            if (invocation.getAttachments().get(RETRY_KEY) == null) {
+                result = invokeRetryMethod(context.getObject(), allArguments, result, false, false);
+                final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
+                    .getHandlers(convertToAlibabaDubboEntity(invocation));
+                if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ((RpcResult) result).getException())) {
+                    invocation.getAttachments().put(RETRY_KEY, RETRY_KEY);
+                    result = handlers.get(0).executeCheckedSupplier(
+                        () -> invokeRetryMethod(context.getObject(), allArguments, context.getResult(), true,
+                            true));
+                    invocation.getAttachments().remove(RETRY_KEY);
+                }
             }
+        } catch (Throwable throwable) {
+            result = new RpcResult(throwable);
+        } finally {
+            RetryContext.INSTANCE.removeRetry();
         }
         context.changeResult(result);
-        RetryContext.INSTANCE.removeRetry();
         return context;
     }
 
@@ -170,8 +177,6 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter impleme
     }
 
     public static class AlibabaDubboRetry extends AbstractRetry {
-        private Class<? extends Throwable>[] classes;
-
         @Override
         public boolean needRetry(Set<String> statusList, Object result) {
             // dubbo不支持状态码

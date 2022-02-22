@@ -52,7 +52,7 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
                 result.add(Class.forName(className, false, Thread.currentThread().getContextClassLoader()));
             } catch (ClassNotFoundException exception) {
                 LoggerFactory.getLogger().info(String.format(Locale.ENGLISH,
-                        "Can not find retry exception class %s", className));
+                    "Can not find retry exception class %s", className));
             }
         }
         return result.toArray(new Class[0]);
