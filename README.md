@@ -70,10 +70,8 @@ java -cp sermant-plugins\sermant-example\demo-application\target\demo-applicatio
   -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test ^
   com.huawei.example.demo.DemoApplication
 ```
-Check running status of Sermant
-```
-open http://localhost:8900 in browser
-```
+Check running status of Sermant. In this example, open the browser and navigate to the URL "http://localhost:8900".
+
 <img src="docs/binary-docs/backend_sermant_info.png" width="50%" syt height="50%" />
 
 #### Please refer to the  [Register Plugin QuickStart](docs/QuickStart.md) for details.
