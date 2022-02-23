@@ -1,9 +1,19 @@
-# 说明  
-- 本文档提供了**Sermant**框架中:[注册插件](user-guide/register/document.md)在对应用无侵入的情况下，将注册到zookeeper的应用注册到ServiceComb上。
+# 说明
+本文档基于宿主应用更改注册中心的场景，我们将使用Sermant框架的注册插件，完整的展示了如何使用Sermant插件非侵入式地扩展宿主应用的功能。
+另外，更过插件功能请参见[插件列表](user-guide/feature-list.md)后自行选择。
+
+## 使用Sermant前
+如下图所示: 文档中演示使用的应用示例在未使用Sermant时, 会将应用注册到Zookeeper中。
+<img src="binary-docs/before_use_agent.png" width="50%" syt height="50%" />
+
+## 使用Sermant后
+如下图所示: 文档中演示使用的应用示例在使用Sermant时, Sermant会将原本注册到Zookeeper的应用信息注册到ServiceCenter中; Sermant采用zookeeper作为默认的配置中心，向插件提供了动态配置管理的能力。
+
+<img src="binary-docs/after_use_agent.png" width="50%" syt height="50%" />
 
 # 获取编译结果
 
-## 下载release包
+## 下载release包(当前暂无release版本)
 点击 [here](https://github.com/huaweicloud/Sermant/releases) 下载release包
 
 ## 源码编译
@@ -13,7 +23,7 @@
 - 执行`mvn clean package -Dmaven.test.skip -Pexample` 编译示例项目
 
 # 启动
-- 运行环境需要具备[ServiceComb](https://github.com/apache/servicecomb-service-center/releases) ,[zookeeper](https://zookeeper.apache.org/releases.html) 环境。
+- 运行环境需要具备[ServiceCenter](https://github.com/apache/servicecomb-service-center/releases) ,[zookeeper](https://zookeeper.apache.org/releases.html) 分别作为注册中心和配置中心。
 - 进入编译后可执行文件根目录(例如:**sermant-agent-1.0.0**)
 - 执行以下命令启动backend，详细的后端模块介绍以及更多的配置修改，请参考[backend模块](user-guide/backend.md)
   ```bash
@@ -37,25 +47,13 @@
   # mac linux
   java -javaagent:agent/sermant-agent.jar=appName=test -jar ../sermant-plugins/sermant-example/demo-register/resttemplate-consumer/target/resttemplate-consumer.jar
   ```
-- 浏览器访问backend前端: http://localhost:8900 查看框架和启用插件的运行状态。
+- 点击[here](http://localhost:8900) 查看框架和启用插件的运行状态。
 ![pic](binary-docs/backend_sermant_info.png)
-- 浏览器访问servicecomb前端: http://localhost:30103 查看应用注册状态。
+- 点击[here](http://localhost:30103) 查看应用注册状态。
 ![pic](binary-docs/register-application.PNG)
-- 浏览器访问consumer应用接口: http://localhost:8005/hello 验证provider和consumer注册和订阅成功。
-![pic](binary-docs/check_application.png)
+- 点击[here](http://localhost:8005/hello) 验证provider和consumer注册和订阅成功。
 
-# 当前插件功能列表
-
-|功能名称|子功能|状态|宿主的必要环境|支持的配置中心|
-|:-:|:-:|:-:|:-|:-:|
-|[限流降级](user-guide/flowcontrol/flowcontrol.md)|接口限流<br>应用降级<br>隔离仓|稳定|SpringBoot 1.2.0.RELEASE - 2.6.x & SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>ApacheDubbo 2.7.3 - 3.0.x<br>AlibabaDubbo 2.1.x - 2.6.x|Kie<br>ZooKeeper|
-|[流量录制回放](user-guide/flowrecord/document.md)||实验|||
-|[全链路压测](user-guide/hercules/document.md)|-|实验|-|-
-|[影子库压测](user-guide/online-stresstest/document.md)||实验|||
-|[注册中心](user-guide/register/document.md)|注册中心迁移<br>双注册中心|实验|SpringBoot 1.5.x, 2.0.0 - 2.6.2 & SpringCloud Edgware.x - 2021.0.0<br>- Eureka 1.4.x - 3.1.0<br>- Nacos 1.5.x - 2021.1<br>- Zookeeper 1.x.x - 3.1.0<br>- Consul 1.x.x - 3.1.0<br>ApacheDubbo 2.7.0 - 2.7.8, 2.7.11 - 2.7.15<br>- DubboRegistryZookeeper 2.7.0 - 2.7.8, 2.7.11 - 2.7.15<br>- DubboRegistryNacos  2.7.1 - 2.7.8, 2.7.11 - 2.7.15|Kie<br>ZooKeeper|
-|[灰度发布](user-guide/route/document.md)|-|实验|ApacheDubbo 2.7.5 - 2.7.8|Kie|
-|[服务监控](user-guide/server-monitor/document.md)|数据库连接池监控|实验|AlibabaDruid 1.0.x, 1.1.x, 1.2.0 - 1.2.8|-|
-|[线程变量插件](user-guide/threadlocal/document.md)||实验|||
+  <img src="binary-docs/check_application.png" width="50%" syt height="50%" />
 
 ## 相关文档
 
