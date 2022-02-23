@@ -1,0 +1,16 @@
+loadbalancer.plugin:
+  #负载均衡配置的key，可自定义
+  key: loadbalancer
+  #负载均衡配置的组，public、default可自定义
+  group: public=default
+  # dubbo负载均衡策略
+  # 支持随机（RANDOM，默认），轮询（ROUNDROBIN），最少活跃（LEASTACTIVE），一致性HASH（CONSISTENTHASH），
+  # 最短响应时间（SHORTESTRESPONSE，dubbo 2.7.7+）
+  dubboType: RANDOM
+  # spring-cloud-loadbalancer负载均衡策略
+  # 支持轮询（ROUND_ROBIN，默认），随机（RANDOM，spring cloud loadbalancer 2.2.7+）
+  springType: ROUND_ROBIN
+  # spring-cloud-netflix-ribbon负载均衡策略
+  # 支持区域权重（ZONE_AVOIDANCE，默认），随机（RANDOM），轮询（ROUND_ROBIN），重试（RETRY），最低并发（BEST_AVAILABLE），
+  # 可用过滤（AVAILABILITY_FILTERING），响应时间加权重（RESPONSE_TIME_WEIGHTED，Deprecated），响应时间加权重（WEIGHTED_RESPONSE_TIME）
+  ribbonType: ZONE_AVOIDANCE
