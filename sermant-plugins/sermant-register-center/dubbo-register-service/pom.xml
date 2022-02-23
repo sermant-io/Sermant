@@ -18,6 +18,7 @@
         <servicecomb.version>2.5.3</servicecomb.version>
         <dubbo.version>2.7.15</dubbo.version>
         <alibaba.dubbo.version>2.6.12</alibaba.dubbo.version>
+        <guava.version>31.0.1-jre</guava.version>
         <package.plugin.type>service</package.plugin.type>
         <config.skip.flag>false</config.skip.flag>
     </properties>
@@ -54,10 +55,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.huawei.sermant</groupId>
-            <artifactId>register-common</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.dubbo</groupId>
