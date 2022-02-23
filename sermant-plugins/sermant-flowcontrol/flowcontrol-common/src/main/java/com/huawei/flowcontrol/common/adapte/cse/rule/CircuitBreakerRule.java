@@ -29,12 +29,12 @@ public class CircuitBreakerRule extends AbstractRule {
     /**
      * 默认失败错误率阈值
      */
-    public static final float DEFAULT_FAILURE_RATE_THRESHOLD = 50;
+    public static final float DEFAULT_FAILURE_RATE_THRESHOLD = 50f;
 
     /**
      * 默认慢调用阈值
      */
-    public static final float DEFAULT_SLOW_CALL_RATE_THRESHOLD = 100;
+    public static final float DEFAULT_SLOW_CALL_RATE_THRESHOLD = 100f;
 
     /**
      * 熔断间隔
@@ -170,7 +170,7 @@ public class CircuitBreakerRule extends AbstractRule {
     public void setWaitDurationInOpenState(String waitDurationInOpenState) {
         this.waitDurationInOpenState = waitDurationInOpenState;
         this.parsedWaitDurationInOpenState = parseLongTime(waitDurationInOpenState,
-                DEFAULT_WAIT_DURATION_IN_OPEN_STATUS_MS);
+            DEFAULT_WAIT_DURATION_IN_OPEN_STATUS_MS);
     }
 
     public String getSlowCallDurationThreshold() {
@@ -180,7 +180,7 @@ public class CircuitBreakerRule extends AbstractRule {
     public void setSlowCallDurationThreshold(String slowCallDurationThreshold) {
         this.slowCallDurationThreshold = slowCallDurationThreshold;
         this.parsedSlowCallDurationThreshold = parseLongTime(slowCallDurationThreshold,
-                DEFAULT_SLOW_CALL_DURATION_THRESHOLD_MS);
+            DEFAULT_SLOW_CALL_DURATION_THRESHOLD_MS);
     }
 
     public int getPermittedNumberOfCallsInHalfOpenState() {

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /*
  * Based on com/alibaba/csp/sentinel/slots/block/flow/FlowSlot.java
  * from the Alibaba Sentinel project.
@@ -73,17 +72,27 @@ public class IsolateThreadSlot extends AbstractLinkedProcessorSlot<DefaultNode> 
      * @param count 许可数
      */
     private void bindEntryExitEvent(final Entry curEntry, final List<IsolateThreadRule> rules, final int count) {
-        curEntry.whenTerminate(new BiConsumer<Context, Entry>() {
-            @Override
-            public void accept(Context context, Entry entry) {
-                if (entry.getBlockError() != null || rules == null) {
-                    return;
-                }
-                for (IsolateThreadRule rule : rules) {
-                    // 释放许可
-                    rule.exit(count);
-                }
+        curEntry.whenTerminate(new IsolateEntryConsumer(rules, count));
+    }
+
+    static class IsolateEntryConsumer implements BiConsumer<Context, Entry> {
+        private final List<IsolateThreadRule> rules;
+        private final int count;
+
+        IsolateEntryConsumer(List<IsolateThreadRule> rules, int count) {
+            this.rules = rules;
+            this.count = count;
+        }
+
+        @Override
+        public void accept(Context context, Entry entry) {
+            if (entry.getBlockError() != null || rules == null) {
+                return;
             }
-        });
+            for (IsolateThreadRule rule : rules) {
+                // 释放许可
+                rule.exit(count);
+            }
+        }
     }
 }

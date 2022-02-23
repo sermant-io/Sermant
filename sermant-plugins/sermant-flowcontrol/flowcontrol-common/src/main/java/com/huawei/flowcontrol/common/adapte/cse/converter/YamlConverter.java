@@ -28,11 +28,11 @@ import java.util.logging.Logger;
 /**
  * yaml格式字符串转换器
  *
- * @param <TARGET> 目标值
+ * @param <T> 目标值
  * @author zhouss
  * @since 2021-11-16
  */
-public class YamlConverter<TARGET> implements Converter<String, TARGET> {
+public class YamlConverter<T> implements Converter<String, T> {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     protected final Yaml yaml;
@@ -40,9 +40,9 @@ public class YamlConverter<TARGET> implements Converter<String, TARGET> {
     /**
      * 目标类类型
      */
-    private final Class<TARGET> targetClass;
+    private final Class<T> targetClass;
 
-    public YamlConverter(Class<TARGET> targetClass) {
+    public YamlConverter(Class<T> targetClass) {
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(PluginCollectorManager.class.getClassLoader());
         this.targetClass = targetClass;
@@ -54,7 +54,7 @@ public class YamlConverter<TARGET> implements Converter<String, TARGET> {
 
     @Override
     @SuppressWarnings("checkstyle:IllegalCatch")
-    public TARGET convert(String source) {
+    public T convert(String source) {
         if (targetClass == null) {
             return null;
         }

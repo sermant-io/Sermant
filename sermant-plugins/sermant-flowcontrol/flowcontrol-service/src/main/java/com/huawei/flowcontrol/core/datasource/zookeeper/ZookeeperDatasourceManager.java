@@ -122,12 +122,7 @@ public class ZookeeperDatasourceManager implements DataSourceManager {
 
     private void addExtraHeartBeatInfo() {
         final HeartbeatService service = ServiceManager.getService(HeartbeatService.class);
-        service.setExtInfo(new ExtInfoProvider() {
-            @Override
-            public Map<String, String> getExtInfo() {
-                return Collections.singletonMap("port", DEFAULT_PORT);
-            }
-        });
+        service.setExtInfo(new FlowControlHeartInfoProvider());
     }
 
     private String fixRootPath(String rootPath) {
@@ -142,5 +137,12 @@ public class ZookeeperDatasourceManager implements DataSourceManager {
             return appName;
         }
         return rootPath + CommonConst.SLASH_SIGN + appName;
+    }
+
+    static class FlowControlHeartInfoProvider implements ExtInfoProvider {
+        @Override
+        public Map<String, String> getExtInfo() {
+            return Collections.singletonMap("port", DEFAULT_PORT);
+        }
     }
 }

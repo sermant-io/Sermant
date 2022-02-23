@@ -229,7 +229,7 @@ public class FlowControlConfig implements PluginConfig {
     /**
      * 流控框架类型
      */
-    private FlowFramework flowFramework = FlowFramework.RESILIENCE4j;
+    private FlowFramework flowFramework = FlowFramework.RESILIENCE;
 
     /**
      * 针对apache dubbo重试异常

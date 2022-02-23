@@ -15,8 +15,7 @@
  */
 
 /**
- * Based on com/alibaba/csp/sentinel/dashboard/auth/FakeAuthServiceImpl.java
- * from the Alibaba Sentinel project.
+ * Based on com/alibaba/csp/sentinel/dashboard/auth/FakeAuthServiceImpl.java from the Alibaba Sentinel project.
  */
 
 package com.huawei.flowcontrol.console.auth;
@@ -25,9 +24,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.Serializable;
 
 @Component
 @Primary
@@ -37,6 +37,7 @@ public class AuthServiceImpl implements AuthService<HttpServletRequest>, Seriali
      * session 主键
      */
     public static final String WEB_SESSION_KEY = "session_sentinel_admin";
+    private static final long serialVersionUID = 697982465930182380L;
 
     @Override
     public AuthUser getAuthUser(HttpServletRequest request) {

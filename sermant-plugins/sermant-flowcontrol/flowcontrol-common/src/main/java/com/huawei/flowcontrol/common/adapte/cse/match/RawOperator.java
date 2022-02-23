@@ -36,6 +36,7 @@ public class RawOperator extends HashMap<String, String> {
      * 默认初始化大小
      */
     private static final int DEFAULT_CAPACITY = 4;
+    private static final long serialVersionUID = 1930797351862384146L;
 
     public RawOperator() {
         super(DEFAULT_CAPACITY);

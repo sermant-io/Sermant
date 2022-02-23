@@ -25,6 +25,7 @@ import com.huawei.sermant.core.service.ServiceManager;
 import com.huawei.sermant.core.service.dynamicconfig.config.DynamicConfig;
 import com.huawei.sermant.core.service.dynamicconfig.kie.config.KieDynamicConfig;
 import com.huawei.sermant.core.service.heartbeat.HeartbeatConfig;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
@@ -69,7 +70,8 @@ public class BaseTest {
 
         final URL logbackSettingURL = BaseTest.class.getResource("/logback-test.xml");
         Assert.assertNotNull(logbackSettingURL);
-        LoggerFactory.init(Collections.<String, Object>singletonMap(CommonConstant.LOG_SETTING_FILE_KEY, logbackSettingURL.getPath()));
+        LoggerFactory.init(
+            Collections.<String, Object>singletonMap(CommonConstant.LOG_SETTING_FILE_KEY, logbackSettingURL.getPath()));
     }
 
     /**
@@ -82,7 +84,7 @@ public class BaseTest {
     protected static void removeFinalModify(Field field) throws NoSuchFieldException, IllegalAccessException {
         Field modifiersField = Field.class.getDeclaredField("modifiers");
         modifiersField.setAccessible(true);
-        modifiersField.setInt(field,field.getModifiers()&~Modifier.FINAL);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
     }
 
     /**

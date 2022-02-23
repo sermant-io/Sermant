@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,8 @@ package com.huawei.flowcontrol.console.util;
 
 import com.huawei.flowcontrol.console.auth.AuthServiceImpl;
 import com.huawei.flowcontrol.console.auth.AuthUserImpl;
+
 import org.jasig.cas.client.validation.Assertion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -44,8 +43,6 @@ public class SystemUtils {
      * long型初始值
      */
     public static final long LONG_INITIALIZE = 0L;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SystemUtils.class);
 
     /**
      * 是否加载cas bean
@@ -92,9 +89,10 @@ public class SystemUtils {
      * @param message 需要打印信息
      * @return 处理完后信息
      */
+    @SuppressWarnings("checkstyle:RegexpSinglelineJava")
     public static String sanitizeUser(String message) {
         if (message == null) {
-            return message;
+            return null;
         }
         return message.replace("\r", "\\r").replace("\n", "\\n");
     }

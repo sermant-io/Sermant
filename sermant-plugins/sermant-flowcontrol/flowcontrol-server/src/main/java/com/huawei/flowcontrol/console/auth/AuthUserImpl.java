@@ -15,8 +15,7 @@
  */
 
 /**
- * Based on com/alibaba/csp/sentinel/dashboard/auth/FakeAuthServiceImpl.java
- * from the Alibaba Sentinel project.
+ * Based on com/alibaba/csp/sentinel/dashboard/auth/FakeAuthServiceImpl.java from the Alibaba Sentinel project.
  */
 
 package com.huawei.flowcontrol.console.auth;
@@ -27,6 +26,7 @@ import java.io.Serializable;
 
 @Component
 public class AuthUserImpl implements AuthUser, Serializable {
+    private static final long serialVersionUID = 1523440608989490204L;
     private String username;
 
     public void setUsername(String username) {

@@ -128,10 +128,15 @@ public class CseServiceMeta {
      *
      * @return boolean
      */
-    @SuppressWarnings("checkstyle:BooleanExpressionComplexity")
     public boolean isReady() {
-        return serviceName != null && project != null
-            && customLabel != null && customLabelValue != null
-            && environment != null && app != null;
+        return isCustomInfoReady() && isServiceInfoReady();
+    }
+
+    private boolean isServiceInfoReady() {
+        return serviceName != null && environment != null && app != null;
+    }
+
+    private boolean isCustomInfoReady() {
+        return project != null && customLabel != null && customLabelValue != null;
     }
 }

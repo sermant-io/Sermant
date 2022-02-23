@@ -19,6 +19,7 @@ package com.huawei.flowcontrol.adapte.cse.rule.isolate;
 import com.alibaba.csp.sentinel.slots.block.AbstractRule;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
 
+import java.util.Objects;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -119,7 +120,7 @@ public class IsolateThreadRule extends AbstractRule {
         return maxConcurrentCalls;
     }
 
-    public synchronized IsolateThreadRule setMaxConcurrentCalls(int maxConcurrentCalls) {
+    public IsolateThreadRule setMaxConcurrentCalls(int maxConcurrentCalls) {
         // 差值
         final int gap = this.maxConcurrentCalls - maxConcurrentCalls;
         if (gap == 0) {
@@ -145,20 +146,12 @@ public class IsolateThreadRule extends AbstractRule {
         if (!super.equals(obj)) {
             return false;
         }
-
-        IsolateThreadRule rule = (IsolateThreadRule) obj;
-
-        if (maxWaitDuration != rule.maxWaitDuration) {
-            return false;
-        }
-        return maxConcurrentCalls == rule.maxConcurrentCalls;
+        IsolateThreadRule that = (IsolateThreadRule) obj;
+        return maxWaitDuration == that.maxWaitDuration && maxConcurrentCalls == that.maxConcurrentCalls;
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (int) (maxWaitDuration ^ (maxWaitDuration >>> 32));
-        result = 31 * result + maxConcurrentCalls;
-        return result;
+        return Objects.hash(super.hashCode(), maxWaitDuration, maxConcurrentCalls);
     }
 }

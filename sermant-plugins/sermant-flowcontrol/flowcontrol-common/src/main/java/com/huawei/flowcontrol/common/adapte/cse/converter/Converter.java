@@ -17,20 +17,19 @@
 package com.huawei.flowcontrol.common.adapte.cse.converter;
 
 /**
- * 转换器
- * 当前用于转换相关规则
+ * 转换器 当前用于转换相关规则
  *
- * @param <SOURCE>  源类型
- * @param <TARGET> 目标类型
+ * @param <S> 源类型
+ * @param <T> 目标类型
  * @author zhouss
  * @since 2021-11-16
  */
-public interface Converter<SOURCE, TARGET> {
+public interface Converter<S, T> {
     /**
      * 转换
      *
      * @param source 源数据类型
      * @return 目前数据
      */
-    TARGET convert(SOURCE source);
+    T convert(S source);
 }

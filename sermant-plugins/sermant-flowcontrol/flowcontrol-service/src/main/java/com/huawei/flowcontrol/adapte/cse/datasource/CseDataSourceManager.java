@@ -26,6 +26,7 @@ import com.huawei.flowcontrol.common.adapte.cse.resolver.BulkheadRuleResolver;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.CircuitBreakerRuleResolver;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.RateLimitingRuleResolver;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.listener.ConfigUpdateListener;
+import com.huawei.flowcontrol.common.adapte.cse.rule.AbstractRule;
 import com.huawei.flowcontrol.common.adapte.cse.rule.BulkheadRule;
 import com.huawei.flowcontrol.common.adapte.cse.rule.CircuitBreakerRule;
 import com.huawei.flowcontrol.common.adapte.cse.rule.RateLimitingRule;
@@ -71,34 +72,45 @@ public class CseDataSourceManager implements DataSourceManager {
     @SuppressWarnings("checkstyle:IllegalCatch")
     private void registerIsolateThreadRuleDataSource() {
         try {
-            final BulkheadRuleConverter bulkheadRuleConverter = new BulkheadRuleConverter();
             final CseKieDataSource<BulkheadRule, IsolateThreadRule> isolateDataSource =
-                new CseKieDataSource<BulkheadRule, IsolateThreadRule>(
-                    new Converter<List<BulkheadRule>, List<IsolateThreadRule>>() {
-                        @Override
-                        public List<IsolateThreadRule> convert(List<BulkheadRule> source) {
-                            if (source == null) {
-                                return Collections.emptyList();
-                            }
-                            final ArrayList<IsolateThreadRule> isolateThreadRules = new ArrayList<IsolateThreadRule>();
-                            for (BulkheadRule bulkheadRule : source) {
-                                final List<IsolateThreadRule> rules = bulkheadRuleConverter
-                                    .convertToSentinelRule(bulkheadRule);
-                                isolateThreadRules.addAll(rules);
-                            }
-                            return isolateThreadRules;
-                        }
-                    });
+                new CseKieDataSource<BulkheadRule, IsolateThreadRule>(new IsolateRuleConverter());
             IsolateThreadRuleManager.register2Property(isolateDataSource.getProperty());
-            final ConfigUpdateListener<BulkheadRule> configUpdateListener = new ConfigUpdateListener<BulkheadRule>() {
-                @Override
-                public void notify(String updateKey, Map<String, BulkheadRule> rules) {
-                    isolateDataSource.updateConfig(new ArrayList<BulkheadRule>(rules.values()));
-                }
-            };
+            final ConfigUpdateListener<BulkheadRule> configUpdateListener = new FlowConfigListener<>(isolateDataSource);
             ResolverManager.INSTANCE.registerListener(BulkheadRuleResolver.CONFIG_KEY, configUpdateListener);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Init cse kie isolate rule failed! %s", ex.getMessage()));
+        }
+    }
+
+    static class FlowConfigListener<T extends AbstractRule,
+        S extends com.alibaba.csp.sentinel.slots.block.AbstractRule> implements ConfigUpdateListener<T> {
+        final CseKieDataSource<T, S> dataSource;
+
+        FlowConfigListener(CseKieDataSource<T, S> isolateDataSource) {
+            this.dataSource = isolateDataSource;
+        }
+
+        @Override
+        public void notify(String updateKey, Map<String, T> rules) {
+            dataSource.updateConfig(new ArrayList<T>(rules.values()));
+        }
+    }
+
+    static class IsolateRuleConverter implements Converter<List<BulkheadRule>, List<IsolateThreadRule>> {
+        private final BulkheadRuleConverter bulkheadRuleConverter = new BulkheadRuleConverter();
+
+        @Override
+        public List<IsolateThreadRule> convert(List<BulkheadRule> source) {
+            if (source == null) {
+                return Collections.emptyList();
+            }
+            final ArrayList<IsolateThreadRule> isolateThreadRules = new ArrayList<IsolateThreadRule>();
+            for (BulkheadRule bulkheadRule : source) {
+                final List<IsolateThreadRule> rules = bulkheadRuleConverter
+                    .convertToSentinelRule(bulkheadRule);
+                isolateThreadRules.addAll(rules);
+            }
+            return isolateThreadRules;
         }
     }
 
@@ -108,33 +120,30 @@ public class CseDataSourceManager implements DataSourceManager {
     @SuppressWarnings("checkstyle:IllegalCatch")
     private void registerBreakerRuleDataSource() {
         try {
-            final CircuitBreakerRuleConverter circuitBreakerRuleConverter = new CircuitBreakerRuleConverter();
             final CseKieDataSource<CircuitBreakerRule, DegradeRule> degradeRuleDataSource =
-                new CseKieDataSource<CircuitBreakerRule, DegradeRule>(
-                    new Converter<List<CircuitBreakerRule>, List<DegradeRule>>() {
-                        @Override
-                        public List<DegradeRule> convert(List<CircuitBreakerRule> source) {
-                            if (source == null) {
-                                return Collections.emptyList();
-                            }
-                            final List<DegradeRule> degradeRules = new ArrayList<DegradeRule>();
-                            for (CircuitBreakerRule rule : source) {
-                                degradeRules.addAll(circuitBreakerRuleConverter.convertToSentinelRule(rule));
-                            }
-                            return degradeRules;
-                        }
-                    });
+                new CseKieDataSource<CircuitBreakerRule, DegradeRule>(new DegradeRuleConverter());
             DegradeRuleManager.register2Property(degradeRuleDataSource.getProperty());
-            final ConfigUpdateListener<CircuitBreakerRule> configUpdateListener =
-                new ConfigUpdateListener<CircuitBreakerRule>() {
-                    @Override
-                    public void notify(String updateKey, Map<String, CircuitBreakerRule> rules) {
-                        degradeRuleDataSource.updateConfig(new ArrayList<CircuitBreakerRule>(rules.values()));
-                    }
-                };
+            final ConfigUpdateListener<CircuitBreakerRule> configUpdateListener = new FlowConfigListener<>(
+                degradeRuleDataSource);
             ResolverManager.INSTANCE.registerListener(CircuitBreakerRuleResolver.CONFIG_KEY, configUpdateListener);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Init cse kie degrade rule failed! %s", ex.getMessage()));
+        }
+    }
+
+    static class DegradeRuleConverter implements Converter<List<CircuitBreakerRule>, List<DegradeRule>> {
+        final CircuitBreakerRuleConverter circuitBreakerRuleConverter = new CircuitBreakerRuleConverter();
+
+        @Override
+        public List<DegradeRule> convert(List<CircuitBreakerRule> source) {
+            if (source == null) {
+                return Collections.emptyList();
+            }
+            final List<DegradeRule> degradeRules = new ArrayList<DegradeRule>();
+            for (CircuitBreakerRule rule : source) {
+                degradeRules.addAll(circuitBreakerRuleConverter.convertToSentinelRule(rule));
+            }
+            return degradeRules;
         }
     }
 
@@ -144,33 +153,30 @@ public class CseDataSourceManager implements DataSourceManager {
     @SuppressWarnings("checkstyle:IllegalCatch")
     private void registerFlowRuleDataSource() {
         try {
-            final RateLimitingRuleConverter rateLimitingRuleConverter = new RateLimitingRuleConverter();
             final CseKieDataSource<RateLimitingRule, FlowRule> flowRuleDataSource =
-                new CseKieDataSource<RateLimitingRule, FlowRule>(
-                    new Converter<List<RateLimitingRule>, List<FlowRule>>() {
-                        @Override
-                        public List<FlowRule> convert(List<RateLimitingRule> source) {
-                            if (source == null) {
-                                return Collections.emptyList();
-                            }
-                            final List<FlowRule> flowRules = new ArrayList<FlowRule>();
-                            for (RateLimitingRule rule : source) {
-                                flowRules.addAll(rateLimitingRuleConverter.convertToSentinelRule(rule));
-                            }
-                            return flowRules;
-                        }
-                    });
+                new CseKieDataSource<RateLimitingRule, FlowRule>(new FlowRuleConverter());
             FlowRuleManager.register2Property(flowRuleDataSource.getProperty());
-            final ConfigUpdateListener<RateLimitingRule> configUpdateListener =
-                new ConfigUpdateListener<RateLimitingRule>() {
-                    @Override
-                    public void notify(String updateKey, Map<String, RateLimitingRule> rules) {
-                        flowRuleDataSource.updateConfig(new ArrayList<RateLimitingRule>(rules.values()));
-                    }
-                };
+            final ConfigUpdateListener<RateLimitingRule> configUpdateListener = new FlowConfigListener<>(
+                flowRuleDataSource);
             ResolverManager.INSTANCE.registerListener(RateLimitingRuleResolver.CONFIG_KEY, configUpdateListener);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Init cse kie flow rule failed! %s", ex.getMessage()));
+        }
+    }
+
+    static class FlowRuleConverter implements Converter<List<RateLimitingRule>, List<FlowRule>> {
+        final RateLimitingRuleConverter rateLimitingRuleConverter = new RateLimitingRuleConverter();
+
+        @Override
+        public List<FlowRule> convert(List<RateLimitingRule> source) {
+            if (source == null) {
+                return Collections.emptyList();
+            }
+            final List<FlowRule> flowRules = new ArrayList<FlowRule>();
+            for (RateLimitingRule rule : source) {
+                flowRules.addAll(rateLimitingRuleConverter.convertToSentinelRule(rule));
+            }
+            return flowRules;
         }
     }
 }

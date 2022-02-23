@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,37 +16,32 @@
 
 package com.huawei.flowcontrol.console.controller;
 
-import com.huawei.flowcontrol.console.auth.AuthUserImpl;
 import com.huawei.flowcontrol.console.entity.Result;
 import com.huawei.flowcontrol.console.util.DataType;
 import com.huawei.flowcontrol.console.util.SystemUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 /**
- * 文件名：LoginController
- * 版权：
- * 描述：处理登录请求
+ * 文件名：LoginController 版权： 描述：处理登录请求
  *
  * @author Gaofang Wu
- * @since 2020-11-25
- * 跟踪单号：
- * 修改单号：
- * 修改内容：添加获取全息排查url的接口
+ * @since 2020-11-25 跟踪单号： 修改单号： 修改内容：添加获取全息排查url的接口
  */
 @RestController
 @RequestMapping("/auth")
@@ -85,9 +80,6 @@ public class LoginController {
     @Value("${holographic.investigation.url}")
     private String hiUrl;
 
-    @Autowired
-    private AuthUserImpl authUserImpl;
-
     private String loginUrl;
 
     @PostConstruct
@@ -116,7 +108,7 @@ public class LoginController {
      * 重定向到前端
      *
      * @param httpServletRequest request
-     * @param response           response
+     * @param response response
      */
     @RequestMapping(value = "/toLogin", method = RequestMethod.GET)
     public void toLogin(HttpServletRequest httpServletRequest, HttpServletResponse response) {

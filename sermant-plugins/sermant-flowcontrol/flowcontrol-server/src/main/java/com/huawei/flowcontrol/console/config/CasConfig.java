@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2021 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.huawei.flowcontrol.console.config;
 
 import com.huawei.flowcontrol.console.util.DataType;
+
 import net.unicon.cas.client.configuration.CasClientConfigurerAdapter;
 import net.unicon.cas.client.configuration.EnableCasClient;
 import org.jasig.cas.client.authentication.AuthenticationFilter;
@@ -30,22 +31,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
- * 文件名：CasConfig
- * 版权：
- * 描述：加载单点登录的过滤器、监听器
+ * 文件名：CasConfig 版权： 描述：加载单点登录的过滤器、监听器
  *
  * @author Gaofang Wu
- * @since 2020-12-02
- * 跟踪单号：
- * 修改单号：
- * 修改内容：修改忽略url
+ * @since 2020-12-02 跟踪单号： 修改单号： 修改内容：修改忽略url
  */
 @Configuration
 @EnableCasClient
@@ -149,6 +143,7 @@ public class CasConfig extends CasClientConfigurerAdapter implements WebMvcConfi
         authenticationFilter.setFilter(authenticationFilter());
         authenticationFilter.setInitParameters(Collections.singletonMap("ignorePattern", ignorePattern));
         authenticationFilter.setOrder(Integer.parseInt(DataType.ORDER_TWO.getDataType()));
+
         // 设置匹配的url
         authenticationFilter.setUrlPatterns(Collections.singletonList("/*"));
         return authenticationFilter;
