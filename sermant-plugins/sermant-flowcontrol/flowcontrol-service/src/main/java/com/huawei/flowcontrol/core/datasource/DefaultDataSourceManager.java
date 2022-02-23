@@ -50,9 +50,6 @@ public class DefaultDataSourceManager implements DataSourceManager {
      */
     private final RuleCenter ruleCenter = new RuleCenter();
 
-    public DefaultDataSourceManager() {
-    }
-
     @Override
     public void start() {
         // 初始化数据源

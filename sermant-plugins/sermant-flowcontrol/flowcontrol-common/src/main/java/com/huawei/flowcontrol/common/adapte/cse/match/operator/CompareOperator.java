@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 public class CompareOperator implements Operator {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final double DOUBLE_EPSLON = 1e-6;
+    private static final double DOUBLE_EPSLON = 1e-6d;
 
     private final Set<Character> operators = new HashSet<Character>();
 
@@ -74,7 +74,7 @@ public class CompareOperator implements Operator {
         } catch (NumberFormatException ex) {
             // 转换失败的直接返回未匹配
             LOGGER.warning(
-                    String.format(Locale.ENGLISH, "Format number failed when convert %s and %s", targetValue, num));
+                String.format(Locale.ENGLISH, "Format number failed when convert %s and %s", targetValue, num));
             return false;
         }
 

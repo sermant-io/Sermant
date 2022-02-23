@@ -60,7 +60,7 @@ public abstract class AbstractResolver<T extends Configurable> {
     /**
      * 转换器
      */
-    private final Converter<String, T> converter;
+    private Converter<String, T> converter;
 
     public AbstractResolver(String configKey) {
         this(configKey, null);
@@ -70,7 +70,7 @@ public abstract class AbstractResolver<T extends Configurable> {
         this.configKey = configKey;
 
         // 线上SC目前治理策略仅支持yaml格式配置
-        this.converter = converter == null ? new YamlConverter<>(getRuleClass()) : converter;
+        this.converter = converter;
         rules = new HashMap<String, T>();
     }
 
@@ -150,6 +150,9 @@ public abstract class AbstractResolver<T extends Configurable> {
         rules.remove(businessKey);
 
         // 2、转换配置
+        if (converter == null) {
+            converter = new YamlConverter<>(getRuleClass());
+        }
         final T rule = converter.convert(value);
         if (rule == null) {
             return null;

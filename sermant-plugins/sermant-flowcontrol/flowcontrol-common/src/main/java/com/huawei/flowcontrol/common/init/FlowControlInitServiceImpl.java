@@ -37,7 +37,7 @@ import java.util.concurrent.Executors;
  */
 public class FlowControlInitServiceImpl implements PluginService {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor(
-            new FlowControlThreadFactory("FLOW_CONTROL_INIT_THREAD"));
+        new FlowControlThreadFactory("FLOW_CONTROL_INIT_THREAD"));
 
     private RuleSyncer ruleSyncer;
 
@@ -47,7 +47,7 @@ public class FlowControlInitServiceImpl implements PluginService {
             @Override
             public void run() {
                 final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
-                if (pluginConfig.getFlowFramework() != FlowFramework.RESILIENCE4j) {
+                if (pluginConfig.getFlowFramework() != FlowFramework.RESILIENCE) {
                     return;
                 }
                 if (pluginConfig.isUseCseRule()) {

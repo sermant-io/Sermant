@@ -50,7 +50,7 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter implements Int
      * @return DubboRequestEntity
      */
     private static DubboRequestEntity convertToAlibabaDubboEntity(com.alibaba.dubbo.rpc.Invocation invocation) {
-        // invocation.getTargetServiceUniqueName
+        // 高版本使用api invocation.getTargetServiceUniqueName获取路径，此处使用版本加接口，达到的最终结果一致
         String apiPath = ConvertUtils.buildApiPath(invocation.getInvoker().getInterface().getName(),
             invocation.getAttachment(ConvertUtils.DUBBO_ATTACHMENT_VERSION), invocation.getMethodName());
         return new DubboRequestEntity(apiPath, invocation.getAttachments());

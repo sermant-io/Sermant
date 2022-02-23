@@ -55,12 +55,12 @@ public class RetryRule extends AbstractRule {
     /**
      * 默认指数
      */
-    private static final float DEFAULT_MULTIPLIER = 2;
+    private static final float DEFAULT_MULTIPLIER = 2f;
 
     /**
      * 默认随机因子
      */
-    private static final double DEFAULT_RANDOMIZATION_FACTOR = 0.5;
+    private static final double DEFAULT_RANDOMIZATION_FACTOR = 0.5d;
 
     /**
      * 默认重试策略

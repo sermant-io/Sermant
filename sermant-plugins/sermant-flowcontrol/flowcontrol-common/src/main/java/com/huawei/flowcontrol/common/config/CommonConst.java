@@ -172,12 +172,12 @@ public class CommonConst {
     /**
      * 百分比
      */
-    public static final double PERCENT = 100.0;
+    public static final double PERCENT = 100.0d;
 
     /**
      * 限流请求数转换
      */
-    public static final double RATE_DIV_POINT = 1000.0;
+    public static final double RATE_DIV_POINT = 1000.0d;
 
     private CommonConst() {
     }

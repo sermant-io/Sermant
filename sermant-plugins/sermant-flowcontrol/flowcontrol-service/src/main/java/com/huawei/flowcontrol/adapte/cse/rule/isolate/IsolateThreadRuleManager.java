@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /*
  * Based on com/alibaba/csp/sentinel/slots/block/degrade/DegradeRuleManager.java
  * from the Alibaba Sentinel project.

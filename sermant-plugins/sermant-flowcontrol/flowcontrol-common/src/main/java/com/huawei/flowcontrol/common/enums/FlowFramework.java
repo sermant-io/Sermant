@@ -32,5 +32,5 @@ public enum FlowFramework {
     /**
      * 基于resilience4j
      */
-    RESILIENCE4j;
+    RESILIENCE;
 }

@@ -90,21 +90,19 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
             return classes;
         }
         synchronized (this) {
-            if (classes == null) {
-                final RetryFramework retryFramework = retryType();
-                final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
-                String[] retryExceptions;
-                if (retryFramework == RetryFramework.SPRING_CLOUD) {
-                    retryExceptions = pluginConfig.getSpringRetryExceptions();
-                } else if (retryFramework == RetryFramework.ALIBABA_DUBBO) {
-                    retryExceptions = pluginConfig.getAlibabaDubboRetryExceptions();
-                } else if (retryFramework == RetryFramework.APACHE_DUBBO) {
-                    retryExceptions = pluginConfig.getApacheDubboRetryExceptions();
-                } else {
-                    throw new IllegalArgumentException("Not supported retry framework! " + retryFramework);
-                }
-                classes = findClass(retryExceptions);
+            final RetryFramework retryFramework = retryType();
+            final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
+            String[] retryExceptions;
+            if (retryFramework == RetryFramework.SPRING_CLOUD) {
+                retryExceptions = pluginConfig.getSpringRetryExceptions();
+            } else if (retryFramework == RetryFramework.ALIBABA_DUBBO) {
+                retryExceptions = pluginConfig.getAlibabaDubboRetryExceptions();
+            } else if (retryFramework == RetryFramework.APACHE_DUBBO) {
+                retryExceptions = pluginConfig.getApacheDubboRetryExceptions();
+            } else {
+                throw new IllegalArgumentException("Not supported retry framework! " + retryFramework);
             }
+            classes = findClass(retryExceptions);
         }
         return classes;
     }
