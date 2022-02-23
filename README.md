@@ -72,7 +72,7 @@ java -cp sermant-plugins\sermant-example\demo-application\target\demo-applicatio
 ```
 Check running status of Sermant. In this example, open the browser and navigate to the URL "http://localhost:8900".
 
-<img src="docs/binary-docs/backend_sermant_info.png" width="50%" syt height="50%" />
+![pic](docs/binary-docs/backend_sermant_info.png)
 
 #### Please refer to the  [Register Plugin QuickStart](docs/QuickStart.md) for details.
 
