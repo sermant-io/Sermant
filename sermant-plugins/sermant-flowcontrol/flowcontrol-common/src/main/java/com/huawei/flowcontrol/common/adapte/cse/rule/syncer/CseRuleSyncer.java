@@ -52,8 +52,7 @@ public class CseRuleSyncer implements RuleSyncer {
      */
     private static final int MAX_WAIT_INTERVAL_MS = 60 * 5 * 1000;
 
-    private final Map<String, RuleDynamicConfigListener> listenerCache
-            = new LinkedHashMap<String, RuleDynamicConfigListener>();
+    private final Map<String, RuleDynamicConfigListener> listenerCache = new LinkedHashMap<>();
 
     private DynamicConfigService dynamicConfigurationFactoryService;
 
@@ -92,8 +91,8 @@ public class CseRuleSyncer implements RuleSyncer {
         } else {
             dynamicConfigurationFactoryService = new KieDynamicConfigService(pluginConfig.getConfigKieAddress(),
                     pluginConfig.getProject());
-            fillServiceMeta(pluginConfig);
         }
+        fillServiceMeta(pluginConfig);
     }
 
     private void fillServiceMeta(FlowControlConfig pluginConfig) {
@@ -126,7 +125,7 @@ public class CseRuleSyncer implements RuleSyncer {
     }
 
     private void buildServiceRequest() {
-        final HashMap<String, String> map = new HashMap<String, String>();
+        final HashMap<String, String> map = new HashMap<>();
         map.put("app", CseServiceMeta.getInstance().getApp());
         map.put("service", CseServiceMeta.getInstance().getServiceName());
         map.put("environment", CseServiceMeta.getInstance().getEnvironment());
@@ -134,14 +133,14 @@ public class CseRuleSyncer implements RuleSyncer {
     }
 
     private void buildAppRequest() {
-        final HashMap<String, String> map = new HashMap<String, String>();
+        final HashMap<String, String> map = new HashMap<>();
         map.put("app", CseServiceMeta.getInstance().getApp());
         map.put("environment", CseServiceMeta.getInstance().getEnvironment());
         listenerCache.put(LabelGroupUtils.createLabelGroup(map), new RuleDynamicConfigListener());
     }
 
     private void buildCustomRequest() {
-        final HashMap<String, String> map = new HashMap<String, String>();
+        final HashMap<String, String> map = new HashMap<>();
         map.put(CseServiceMeta.getInstance().getCustomLabel(), CseServiceMeta.getInstance().getCustomLabelValue());
         listenerCache.put(LabelGroupUtils.createLabelGroup(map), new RuleDynamicConfigListener());
     }
