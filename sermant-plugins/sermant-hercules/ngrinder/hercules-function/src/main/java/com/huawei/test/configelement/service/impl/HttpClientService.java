@@ -88,18 +88,14 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
     /**
      * 请求参数配置
      */
-    private HttpClientConfig config;
+    private static CloseableHttpClient closeableHttpClient;
     private RequestConfig requestConfig;
-    private CloseableHttpClient closeableHttpClient;
 
     public HttpClientService() {
     }
 
-    @SuppressWarnings("checkstyle:HiddenField")
     @Override
     public void initConfig(HttpClientConfig config) {
-        this.config = config;
-
         HttpClientBuilder httpClientBuilder = HttpClients.custom();
 
         // 设置请求的默认配置
@@ -125,22 +121,18 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
                 .build();
 
             // 创建连接池对象
-            PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
+            PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
 
-            // 连接池最大有50个连接
-            cm.setMaxTotal(config.getMaxTotal());
-            httpClientBuilder.setConnectionManager(cm);
+            // 连接池最大连接
+            connectionManager.setMaxTotal(config.getMaxTotal());
+            httpClientBuilder.setConnectionManager(connectionManager);
         }
         closeableHttpClient = httpClientBuilder.setDefaultRequestConfig(requestConfig).build();
     }
 
     @Override
     public boolean isConfigValid() {
-        if (config == null) {
-            LOGGER.error("The config for httpclient is null.");
-            return false;
-        }
-        return true;
+        return false;
     }
 
     /**
@@ -161,12 +153,10 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
     /**
      * 获取 请求的响应结果
      *
-     * @param closeableHttpClient 可关闭的连接对象
      * @param requestBase 请求对象基类
      * @return 返回响应结果
      */
-    @SuppressWarnings("checkstyle:HiddenField")
-    private HttpResponse getHttpResponse(CloseableHttpClient closeableHttpClient, HttpRequestBase requestBase) {
+    private HttpResponse getHttpResponse(HttpRequestBase requestBase) {
         try {
             CloseableHttpResponse response = closeableHttpClient.execute(requestBase);
             StatusLine statusLine = response.getStatusLine();
@@ -190,12 +180,11 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
      * @param config httpclient配置类对象
      * @return 返回结果
      */
-    @SuppressWarnings("checkstyle:HiddenField")
     @Override
     public HttpResponse executeGet(HttpClientConfig config) {
         HttpRequestBase httpGet = new HttpGet(config.getUrl());
         setHeader(httpGet, config.getHeaders());
-        return getHttpResponse(closeableHttpClient, httpGet);
+        return getHttpResponse(httpGet);
     }
 
     /**
@@ -203,9 +192,8 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
      *
      * @param config 请求配置类参数
      * @param param 参数列表
-     * @return 返回结果
+     * @return 返回结果x
      */
-    @SuppressWarnings("checkstyle:HiddenField")
     @Override
     public HttpResponse postForm(HttpClientConfig config, List<NameValuePair> param) {
         HttpEntityEnclosingRequestBase httpPost = new HttpPost(config.getUrl());
@@ -214,7 +202,7 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
         UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(param, Consts.UTF_8);
         httpPost.setEntity(formEntity);
 
-        return getHttpResponse(closeableHttpClient, httpPost);
+        return getHttpResponse(httpPost);
     }
 
     /**
@@ -224,7 +212,6 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
      * @param jsonBody 参数列表
      * @return 返回结果
      */
-    @SuppressWarnings("checkstyle:HiddenField")
     @Override
     public HttpResponse postJson(HttpClientConfig config, String jsonBody) {
         HttpEntityEnclosingRequestBase httpPost = new HttpPost(config.getUrl());
@@ -238,7 +225,6 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
      * @param jsonBody 参数列表
      * @return 返回结果
      */
-    @SuppressWarnings("checkstyle:HiddenField")
     @Override
     public HttpResponse putJson(HttpClientConfig config, String jsonBody) {
         HttpEntityEnclosingRequestBase httpPut = new HttpPut(config.getUrl());
@@ -252,7 +238,6 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
      * @param jsonBody 参数列表
      * @return 返回结果
      */
-    @SuppressWarnings("checkstyle:HiddenField")
     @Override
     public HttpResponse executeDelete(HttpClientConfig config, String jsonBody) {
         HttpEntityEnclosingRequestBase httpDelete = new HttpDeleteWithBody(config.getUrl());
@@ -265,12 +250,11 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
      * @param config 请求配置类参数
      * @return 返回结果
      */
-    @SuppressWarnings("checkstyle:HiddenField")
     @Override
     public HttpResponse executeHead(HttpClientConfig config) {
         HttpRequestBase httpHead = new HttpHead(config.getUrl());
         setHeader(httpHead, config.getHeaders());
-        return getHttpResponse(closeableHttpClient, httpHead);
+        return getHttpResponse(httpHead);
     }
 
     /**
@@ -279,7 +263,6 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
      * @param config 请求配置类参数
      * @return 返回结果
      */
-    @SuppressWarnings("checkstyle:HiddenField")
     @Override
     public Set<String> executeOptions(HttpClientConfig config) {
         HttpOptions httpOptions = new HttpOptions(config.getUrl());
@@ -309,7 +292,6 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
      * @param requestBase 请求对象基类
      * @return 返回响应结果
      */
-    @SuppressWarnings("checkstyle:HiddenField")
     private HttpResponse setJsonObject(HttpClientConfig config, String jsonBody,
                                        HttpEntityEnclosingRequestBase requestBase) {
         setHeader(requestBase, config.getHeaders());
@@ -318,14 +300,16 @@ public class HttpClientService extends ConfigElement<HttpClientConfig> implement
         jsonEntity.setContentEncoding(Consts.UTF_8.name());
         requestBase.setEntity(jsonEntity);
 
-        return getHttpResponse(closeableHttpClient, requestBase);
+        return getHttpResponse(requestBase);
     }
 
     /**
      * 设置请求参数
+     *
+     * @param config httpclient配置对象
+     * @return 返回请求配置
      */
-    @SuppressWarnings({"checkstyle:JavadocMethod", "checkstyle:HiddenField"})
-    public RequestConfig setRequestConfig(HttpClientConfig config) {
+    private RequestConfig setRequestConfig(HttpClientConfig config) {
         return RequestConfig.custom()
             // 连接超时，完成tcp 3次握手的时间上限
             .setConnectTimeout(config.getConnectTimeout())

@@ -37,7 +37,6 @@ public interface HttpClientServiceInterface {
      * @param config httpclient配置类对象
      * @return 返回结果
      */
-    @SuppressWarnings("checkstyle:RegexpMultiline")
     HttpResponse executeGet(HttpClientConfig config);
 
     /**
