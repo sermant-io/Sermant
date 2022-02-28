@@ -57,15 +57,5 @@
 
 ## 相关文档
 
-|文档名称|文档类型|
-|---|---|
-|[第三方版权说明手册](dev-guide/third_party_copyright.md)|开发手册|
-|[版本管理手册](dev-guide/version_manage.md)|开发手册|
-|[插件模块开发手册](dev-guide/dev_plugin_module.md)|开发手册|
-|[插件代码开发手册](dev-guide/dev_plugin_code.md)|开发手册|
-|[动态配置服务介绍](dev-guide/service_dynamicconfig.md)|开发手册|
-|[心跳服务介绍](dev-guide/service_heartbeat.md)|开发手册|
-|[网关服务介绍](dev-guide/service_send.md)|开发手册|
-|[核心模块介绍](user-guide/agentcore.md)|使用手册|
-|[入口模块介绍](user-guide/entrance.md)|使用手册|
-|[后端模块介绍](user-guide/backend.md)|使用手册|
+插件开发，请参考 [插件开发相关文档](https://github.com/huaweicloud/Sermant/blob/develop/docs/README.md#%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91)
+
