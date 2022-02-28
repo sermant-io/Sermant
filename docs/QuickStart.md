@@ -1,6 +1,6 @@
 # 服务注册和发现 快速开始说明
 本文档基于宿主应用更改注册中心的场景，我们将使用Sermant框架的注册插件，完整的展示了如何使用Sermant插件非侵入式地扩展宿主应用的功能。
-另外，更过插件功能请参见[插件列表](user-guide/feature-list.md)后自行选择。
+另外，更新的插件功能请参见[插件列表](user-guide/feature-list.md)后自行选择。
 
 ## 使用Sermant前
 如下图所示: 文档中演示使用的应用示例在未使用Sermant时, 会将应用注册到Zookeeper中。
