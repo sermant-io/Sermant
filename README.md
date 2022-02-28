@@ -74,7 +74,7 @@ Check running status of Sermant. In this example, open the browser and navigate 
 
 ![pic](docs/binary-docs/backend_sermant_info.png)
 
-#### Please refer to the  [Register Plugin QuickStart](docs/QuickStart.md) for details.
+#### Please refer to the  [Service Register & Discovery Plugin QuickStart](docs/QuickStart.md) for details.
 
 ## More documents to follow
 
