@@ -17,7 +17,7 @@
 
 package com.huawei.flowcontrol.service;
 
-import com.huawei.flowcontrol.common.entity.FixedResult;
+import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 
 /**
@@ -31,16 +31,16 @@ public interface DubboService {
      * 前置拦截
      *
      * @param requestEntity 请求信息
-     * @param fixedResult 修正结果
-     * @param isProvider 是否为生产者
+     * @param fixedResult   修正结果
+     * @param isProvider    是否为生产者
      */
-    void onBefore(RequestEntity requestEntity, FixedResult fixedResult, boolean isProvider);
+    void onBefore(RequestEntity requestEntity, FlowControlResult fixedResult, boolean isProvider);
 
     /**
      * 后置方法
      *
-     * @param result 响应结果
-     * @param isProvider 是否为生产者
+     * @param result       响应结果
+     * @param isProvider   是否为生产者
      * @param hasException 是否发生调用异常， dubbo场景发生异常会调用after方法
      */
     @SuppressWarnings("checkstyle:RegexpSingleline")
@@ -49,7 +49,7 @@ public interface DubboService {
     /**
      * 异常抛出方法
      *
-     * @param throwable 异常信息
+     * @param throwable  异常信息
      * @param isProvider 是否为生产者
      * @return 是否需要重试
      */

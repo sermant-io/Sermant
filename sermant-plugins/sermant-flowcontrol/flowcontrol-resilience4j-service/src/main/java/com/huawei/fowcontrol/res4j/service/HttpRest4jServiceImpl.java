@@ -17,7 +17,7 @@
 
 package com.huawei.fowcontrol.res4j.service;
 
-import com.huawei.flowcontrol.common.entity.FixedResult;
+import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 import com.huawei.flowcontrol.service.rest4j.HttpRest4jService;
 import com.huawei.fowcontrol.res4j.handler.HandlerFacade;
@@ -32,11 +32,15 @@ import com.huawei.fowcontrol.res4j.util.Rest4jExceptionUtils;
 public class HttpRest4jServiceImpl extends HttpRest4jService {
     @Override
     @SuppressWarnings("checkstyle:IllegalCatch")
-    public void onBefore(RequestEntity requestEntity, FixedResult fixedResult) {
+    public void onBefore(RequestEntity requestEntity, FlowControlResult fixedResult) {
         try {
             HandlerFacade.INSTANCE.injectHandlers(requestEntity);
         } catch (Exception ex) {
             Rest4jExceptionUtils.handleException(ex, fixedResult);
+            if (Rest4jExceptionUtils.isNeedReleasePermit(ex)) {
+                // 流控异常及时释放资源
+                HandlerFacade.INSTANCE.releasePermit();
+            }
             HandlerFacade.INSTANCE.removeHandlers();
         }
     }

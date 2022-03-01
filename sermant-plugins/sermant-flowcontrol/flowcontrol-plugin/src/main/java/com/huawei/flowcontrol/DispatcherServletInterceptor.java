@@ -17,12 +17,10 @@
 package com.huawei.flowcontrol;
 
 import com.huawei.flowcontrol.common.config.CommonConst;
-import com.huawei.flowcontrol.common.entity.FixedResult;
+import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
-import com.huawei.flowcontrol.common.enums.FlowControlEnum;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -37,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author zhouss
  * @since 2022-02-11
  */
-public class DispatcherServletInterceptor extends InterceptorSupporter implements Interceptor {
+public class DispatcherServletInterceptor extends InterceptorSupporter {
     /**
      * http请求数据转换 适应plugin -> service数据传递 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
      *
@@ -49,7 +47,7 @@ public class DispatcherServletInterceptor extends InterceptorSupporter implement
             return null;
         }
         return new HttpRequestEntity(request.getPathInfo(), request.getServletPath(),
-                getHeaders(request), request.getMethod());
+            getHeaders(request), request.getMethod());
     }
 
     /**
@@ -69,30 +67,30 @@ public class DispatcherServletInterceptor extends InterceptorSupporter implement
     }
 
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
+    protected final ExecuteContext doBefore(ExecuteContext context) throws Exception {
         final Object[] allArguments = context.getArguments();
         final HttpServletRequest argument = (HttpServletRequest) allArguments[0];
-        final FixedResult result = new FixedResult();
+        final FlowControlResult result = new FlowControlResult();
         chooseHttpService().onBefore(convertToHttpEntity(argument), result);
-        if (result.isSkip() && result.getResult() instanceof FlowControlEnum) {
+        if (result.isSkip()) {
             context.skip(null);
             final HttpServletResponse response = (HttpServletResponse) allArguments[1];
             if (response != null) {
                 response.setStatus(CommonConst.TOO_MANY_REQUEST_CODE);
-                response.getWriter().print(((FlowControlEnum) result.getResult()).getMsg());
+                response.getWriter().print(result.getResult().getMsg());
             }
         }
         return context;
     }
 
     @Override
-    public ExecuteContext after(ExecuteContext context) throws Exception {
+    protected final ExecuteContext doAfter(ExecuteContext context) {
         chooseHttpService().onAfter(context.getResult());
         return context;
     }
 
     @Override
-    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+    protected final ExecuteContext doThrow(ExecuteContext context) {
         chooseHttpService().onThrow(context.getThrowable());
         return context;
     }

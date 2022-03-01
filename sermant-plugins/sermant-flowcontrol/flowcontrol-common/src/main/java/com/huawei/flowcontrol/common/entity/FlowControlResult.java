@@ -15,37 +15,41 @@
  *
  */
 
-package com.huawei.flowcontrol.service;
+package com.huawei.flowcontrol.common.entity;
 
-import com.huawei.flowcontrol.common.entity.FlowControlResult;
-import com.huawei.flowcontrol.common.entity.RequestEntity;
+import com.huawei.flowcontrol.common.enums.FlowControlEnum;
 
 /**
- * http拦截
+ * 修正结果, 该结果确定返回数据
  *
  * @author zhouss
- * @since 2022-01-25
+ * @since 2022-02-09
  */
-public interface HttpService {
+public class FlowControlResult {
     /**
-     * 前置拦截
-     *
-     * @param requestEntity 请求信息
-     * @param fixedResult   修正结果
+     * 流控类型
      */
-    void onBefore(RequestEntity requestEntity, FlowControlResult fixedResult);
+    private FlowControlEnum flowControlEnum;
 
     /**
-     * 后置方法
-     *
-     * @param result 响应结果
+     * 是否需要跳过调用
      */
-    void onAfter(Object result);
+    private boolean isSkip = false;
 
-    /**
-     * 异常抛出方法
-     *
-     * @param throwable 异常信息
-     */
-    void onThrow(Throwable throwable);
+    public FlowControlEnum getResult() {
+        return flowControlEnum;
+    }
+
+    public void setResult(FlowControlEnum result) {
+        this.flowControlEnum = result;
+        this.isSkip = true;
+    }
+
+    public boolean isSkip() {
+        return isSkip;
+    }
+
+    public void setSkip(boolean isNeedSkip) {
+        this.isSkip = isNeedSkip;
+    }
 }

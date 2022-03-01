@@ -17,12 +17,16 @@
 
 package com.huawei.fowcontrol.res4j.util;
 
-import com.huawei.flowcontrol.common.entity.FixedResult;
+import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.enums.FlowControlEnum;
 
 import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 针对resilience4j拦截异常处理
@@ -31,6 +35,12 @@ import io.github.resilience4j.ratelimiter.RequestNotPermitted;
  * @since 2022-01-22
  */
 public class Rest4jExceptionUtils {
+    /**
+     * 需释放资源的异常类型
+     */
+    private static final Set<Class<?>> RELEASE_FLOW_CONTROL_EXCEPTIONS =
+        new HashSet<>(Arrays.asList(RequestNotPermitted.class, CallNotPermittedException.class));
+
     private Rest4jExceptionUtils() {
     }
 
@@ -38,9 +48,9 @@ public class Rest4jExceptionUtils {
      * 处理流控异常
      *
      * @param throwable 异常信息
-     * @param result 前置返回结果
+     * @param result    前置返回结果
      */
-    public static void handleException(Throwable throwable, FixedResult result) {
+    public static void handleException(Throwable throwable, FlowControlResult result) {
         if (throwable instanceof RequestNotPermitted) {
             result.setResult(FlowControlEnum.RATE_LIMITED);
         } else if (throwable instanceof CallNotPermittedException) {
@@ -50,5 +60,20 @@ public class Rest4jExceptionUtils {
         } else {
             return;
         }
+    }
+
+    /**
+     * 判断是否为流控异常
+     *
+     * @param throwable 异常类型
+     * @return 是否为流控异常
+     */
+    public static boolean isNeedReleasePermit(Throwable throwable) {
+        for (Class<?> clazz : RELEASE_FLOW_CONTROL_EXCEPTIONS) {
+            if (clazz.isAssignableFrom(throwable.getClass())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

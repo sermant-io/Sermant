@@ -25,7 +25,6 @@ import com.huawei.flowcontrol.common.util.ConvertUtils;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import org.apache.dubbo.rpc.AsyncRpcResult;
 import org.apache.dubbo.rpc.Invocation;
@@ -47,7 +46,7 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2022-02-11
  */
-public class ApacheDubboInvokerInterceptor extends InterceptorSupporter implements Interceptor {
+public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final Retry retry = new ApacheDubboRetry();
@@ -70,10 +69,10 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter implemen
      * <H2>不可抽出</H2>
      * 由于两个框架类权限定名不同, 且仅当当前的拦截器才可加载宿主类
      *
-     * @param obj 增强对象
+     * @param obj          增强对象
      * @param allArguments 方法参数
-     * @param ret 响应结果
-     * @param isNeedThrow 是否需抛出异常
+     * @param ret          响应结果
+     * @param isNeedThrow  是否需抛出异常
      * @return 方法调用器
      */
     @SuppressWarnings("checkstyle:IllegalCatch")
@@ -143,35 +142,29 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter implemen
     }
 
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
+    protected final ExecuteContext doBefore(ExecuteContext context) {
         context.skip(null);
-        RetryContext.INSTANCE.setRetry(retry);
         return context;
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
     @Override
-    public ExecuteContext after(ExecuteContext context) throws Exception {
-        if (!RetryContext.INSTANCE.isReady()) {
-            return context;
-        }
+    protected final ExecuteContext doAfter(ExecuteContext context) {
         Object result = context.getResult();
         final Object[] allArguments = context.getArguments();
         final Invocation invocation = (Invocation) allArguments[0];
         try {
-            if (invocation.getAttachments().get(RETRY_KEY) == null) {
-                // 调用宿主方法
-                result = invokeRetryMethod(context.getObject(), allArguments, result, false, false);
-                final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
-                    .getHandlers(convertToApacheDubboEntity(invocation));
-                if (!handlers.isEmpty() && needRetry(handlers.get(0), result,
-                    ((AsyncRpcResult) result).getException())) {
-                    invocation.getAttachments().put(RETRY_KEY, RETRY_VALUE);
-                    result = handlers.get(0)
-                        .executeCheckedSupplier(() -> invokeRetryMethod(context.getObject(), allArguments,
-                            context.getResult(), true, true));
-                    invocation.getAttachments().remove(RETRY_KEY);
-                }
+            // 调用宿主方法
+            RetryContext.INSTANCE.markRetry(retry);
+            result = invokeRetryMethod(context.getObject(), allArguments, result, false, false);
+            final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
+                .getHandlers(convertToApacheDubboEntity(invocation));
+            if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ((AsyncRpcResult) result).getException())) {
+                RetryContext.INSTANCE.markRetry(retry);
+                result = handlers.get(0)
+                    .executeCheckedSupplier(() -> invokeRetryMethod(context.getObject(), allArguments,
+                        context.getResult(), true, true));
+                invocation.getAttachments().remove(RETRY_KEY);
             }
         } catch (Throwable throwable) {
             result = AsyncRpcResult.newDefaultAsyncResult(throwable, invocation);
@@ -179,12 +172,6 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter implemen
             RetryContext.INSTANCE.removeRetry();
         }
         context.changeResult(result);
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-        RetryContext.INSTANCE.removeRetry();
         return context;
     }
 

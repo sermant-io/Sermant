@@ -25,7 +25,7 @@ import java.util.Map;
  * @author zhouss
  * @since 2022-01-22
  */
-public class DubboRequestEntity implements RequestEntity {
+public class DubboRequestEntity extends AbstractRequestEntity {
     /**
      * dubbo方法匹配类型
      */

@@ -15,37 +15,22 @@
  *
  */
 
-package com.huawei.flowcontrol.service;
+package com.huawei.flowcontrol.common.handler.listener;
 
-import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 
 /**
- * http拦截
+ * 处理器配置关联请求更新监听器
  *
  * @author zhouss
- * @since 2022-01-25
+ * @since 2022-02-28
  */
-public interface HttpService {
+public interface HandlerRequestListener {
     /**
-     * 前置拦截
+     * 通知配置变更
      *
-     * @param requestEntity 请求信息
-     * @param fixedResult   修正结果
+     * @param entity    关联请求
+     * @param updateKey 更新的业务场景
      */
-    void onBefore(RequestEntity requestEntity, FlowControlResult fixedResult);
-
-    /**
-     * 后置方法
-     *
-     * @param result 响应结果
-     */
-    void onAfter(Object result);
-
-    /**
-     * 异常抛出方法
-     *
-     * @param throwable 异常信息
-     */
-    void onThrow(Throwable throwable);
+    void notify(RequestEntity entity, String updateKey);
 }

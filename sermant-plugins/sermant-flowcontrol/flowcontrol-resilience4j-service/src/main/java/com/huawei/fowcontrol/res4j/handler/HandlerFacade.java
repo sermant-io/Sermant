@@ -18,12 +18,15 @@
 package com.huawei.fowcontrol.res4j.handler;
 
 import com.huawei.flowcontrol.common.entity.RequestEntity;
+import com.huawei.flowcontrol.common.handler.listener.HandlerRequestListener;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,17 +41,33 @@ public enum HandlerFacade {
      */
     INSTANCE;
 
-    private static final RateLimitingHandler RATE_LIMITING_HANDLER = new RateLimitingHandler();
+    private final RateLimitingHandler rateLimitingHandler = new RateLimitingHandler();
 
-    private static final BulkheadHandler BULKHEAD_HANDLER = new BulkheadHandler();
+    private final BulkheadHandler bulkheadHandler = new BulkheadHandler();
 
-    private static final CircuitBreakerHandler CIRCUIT_BREAKER_HANDLER = new CircuitBreakerHandler();
+    private final CircuitBreakerHandler circuitBreakerHandler = new CircuitBreakerHandler();
 
     private final Processor httpProcessor = new Processor();
 
     private final Processor dubboProviderProcessor = new Processor();
 
     private final Processor dubboConsumerProcessor = new Processor();
+
+    private final Map<RequestEntity, HandlerWrapper> requestWrapperCache = new ConcurrentHashMap<>();
+
+    HandlerFacade() {
+        registerListener();
+    }
+
+    /**
+     * 注册管理请求体匹配的业务场景更新 确保在流控规则更新后及时更新缓存，确保最新规则生效
+     */
+    private void registerListener() {
+        final FacadeRequestListener facadeRequestListener = new FacadeRequestListener();
+        rateLimitingHandler.registerListener(facadeRequestListener);
+        bulkheadHandler.registerListener(facadeRequestListener);
+        circuitBreakerHandler.registerListener(facadeRequestListener);
+    }
 
     public void injectHandlers(RequestEntity entity, boolean isProvider) {
         if (isProvider) {
@@ -89,6 +108,15 @@ public enum HandlerFacade {
         dubboConsumerProcessor.onResult(result);
     }
 
+    public void releaseDubboPermit() {
+        dubboProviderProcessor.releasePermit();
+        dubboConsumerProcessor.releasePermit();
+    }
+
+    public void releasePermit() {
+        httpProcessor.releasePermit();
+    }
+
     public void onThrow(Throwable throwable) {
         httpProcessor.onThrow(throwable);
     }
@@ -97,20 +125,25 @@ public enum HandlerFacade {
         httpProcessor.onResult(result);
     }
 
-    static class Processor {
+    class Processor {
         private final ThreadLocal<HandlerWrapper> handlerThreadLocal = new ThreadLocal<>();
 
         public void injectHandlers(RequestEntity entity) {
-            injectRateLimitingHandlers(entity);
-            injectBulkheadHandlers(entity);
-            injectCircuitBreakerHandlers(entity);
-            handlerThreadLocal.get().tryAcquirePermission();
+            // 判断缓存是否存在该请求的wrapper, 再去实际匹配创建
+            final HandlerWrapper handlerWrapper = requestWrapperCache.computeIfAbsent(entity, fn -> {
+                injectRateLimitingHandlers(entity);
+                injectBulkheadHandlers(entity);
+                injectCircuitBreakerHandlers(entity);
+                return handlerThreadLocal.get();
+            });
+            handlerThreadLocal.set(handlerWrapper);
+            handlerWrapper.tryAcquirePermission();
         }
 
         private void injectRateLimitingHandlers(RequestEntity entity) {
             HandlerWrapper handlerWrapper = handlerThreadLocal.get();
             if (handlerWrapper == null) {
-                final List<RateLimiter> handlers = RATE_LIMITING_HANDLER.getHandlers(entity);
+                final List<RateLimiter> handlers = rateLimitingHandler.getHandlers(entity);
                 handlerWrapper = new HandlerWrapper(handlers);
                 handlerThreadLocal.set(handlerWrapper);
             }
@@ -118,16 +151,24 @@ public enum HandlerFacade {
 
         private void injectBulkheadHandlers(RequestEntity entity) {
             HandlerWrapper handlerWrapper = handlerThreadLocal.get();
-            handlerWrapper.bulkheads = BULKHEAD_HANDLER.getHandlers(entity);
+            handlerWrapper.bulkheads = bulkheadHandler.getHandlers(entity);
         }
 
         private void injectCircuitBreakerHandlers(RequestEntity entity) {
             HandlerWrapper handlerWrapper = handlerThreadLocal.get();
-            handlerWrapper.circuitBreakers = CIRCUIT_BREAKER_HANDLER.getHandlers(entity);
+            handlerWrapper.circuitBreakers = circuitBreakerHandler.getHandlers(entity);
         }
 
         public void removeHandlers() {
             handlerThreadLocal.remove();
+        }
+
+        public void releasePermit() {
+            final HandlerWrapper handlerWrapper = handlerThreadLocal.get();
+            if (handlerWrapper == null) {
+                return;
+            }
+            handlerWrapper.releasePermit();
         }
 
         public void onThrow(Throwable throwable) {
@@ -178,6 +219,12 @@ public enum HandlerFacade {
             }
         }
 
+        private void releasePermit() {
+            if (bulkheads != null) {
+                bulkheads.forEach(Bulkhead::onComplete);
+            }
+        }
+
         private void onThrow(Throwable throwable) {
             if (rateLimiters != null) {
                 rateLimiters.forEach(rateLimiter -> rateLimiter.onError(throwable));
@@ -201,6 +248,13 @@ public enum HandlerFacade {
                 final TimeUnit timestampUnit = circuitBreakers.get(0).getTimestampUnit();
                 circuitBreakers.forEach(circuitBreaker -> circuitBreaker.onResult(duration, timestampUnit, result));
             }
+        }
+    }
+
+    class FacadeRequestListener implements HandlerRequestListener {
+        @Override
+        public void notify(RequestEntity entity, String updateKey) {
+            requestWrapperCache.remove(entity);
         }
     }
 }

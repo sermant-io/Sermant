@@ -46,4 +46,21 @@ public interface RequestEntity {
      * @return 方法类型
      */
     String getMethod();
+
+    /**
+     * 必须实现equal方法
+     *
+     * @param obj 比较目标
+     * @return 是否相等
+     */
+    @Override
+    boolean equals(Object obj);
+
+    /**
+     * 必须实现hashCode编码
+     *
+     * @return 哈希码
+     */
+    @Override
+    int hashCode();
 }

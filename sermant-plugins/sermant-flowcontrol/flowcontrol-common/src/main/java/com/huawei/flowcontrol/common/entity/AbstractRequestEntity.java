@@ -17,37 +17,30 @@
 
 package com.huawei.flowcontrol.common.entity;
 
+import java.util.Objects;
+
 /**
- * 修正结果, 该结果确定返回数据
+ * 用于统一重写equals与hashCode方法
  *
  * @author zhouss
- * @since 2022-02-09
+ * @since 2022-02-28
  */
-public class FixedResult {
-    /**
-     * 覆盖结果
-     */
-    private Object result;
-
-    /**
-     * 是否需要跳过调用
-     */
-    private boolean isSkip = false;
-
-    public Object getResult() {
-        return result;
+public abstract class AbstractRequestEntity implements RequestEntity {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        AbstractRequestEntity that = (AbstractRequestEntity) obj;
+        return Objects.equals(getHeaders(), that.getHeaders()) && Objects.equals(getApiPath(), that.getApiPath())
+            && Objects.equals(getMethod(), that.getMethod());
     }
 
-    public void setResult(Object result) {
-        this.result = result;
-        this.isSkip = true;
-    }
-
-    public boolean isSkip() {
-        return isSkip;
-    }
-
-    public void setSkip(boolean isNeedSkip) {
-        this.isSkip = isNeedSkip;
+    @Override
+    public int hashCode() {
+        return Objects.hash(getHeaders(), getApiPath(), getMethod());
     }
 }

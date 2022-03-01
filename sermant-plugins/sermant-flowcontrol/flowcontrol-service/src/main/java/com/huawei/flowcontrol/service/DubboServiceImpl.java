@@ -17,7 +17,7 @@
 
 package com.huawei.flowcontrol.service;
 
-import com.huawei.flowcontrol.common.entity.FixedResult;
+import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 import com.huawei.flowcontrol.entry.EntryFacade;
 import com.huawei.flowcontrol.service.sen.DubboSenService;
@@ -35,7 +35,7 @@ public class DubboServiceImpl extends DubboSenService {
     private final Exception dubboException = new Exception("dubbo exception");
 
     @Override
-    public void onBefore(RequestEntity requestEntity, FixedResult fixedResult, boolean isProvider) {
+    public void onBefore(RequestEntity requestEntity, FlowControlResult fixedResult, boolean isProvider) {
         try {
             EntryFacade.INSTANCE.tryEntry(requestEntity, isProvider);
         } catch (BlockException blockException) {

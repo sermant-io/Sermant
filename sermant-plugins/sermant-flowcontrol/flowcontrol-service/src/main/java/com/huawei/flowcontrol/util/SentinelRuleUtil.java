@@ -18,7 +18,7 @@ package com.huawei.flowcontrol.util;
 
 import com.huawei.flowcontrol.adapte.cse.rule.isolate.IsolateThreadException;
 import com.huawei.flowcontrol.adapte.cse.rule.isolate.IsolateThreadRule;
-import com.huawei.flowcontrol.common.entity.FixedResult;
+import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.enums.FlowControlEnum;
 
 import com.alibaba.csp.sentinel.slots.block.AbstractRule;
@@ -76,7 +76,7 @@ public class SentinelRuleUtil {
         }
     }
 
-    public static void handleBlockException(BlockException blockException, FixedResult fixedResult) {
+    public static void handleBlockException(BlockException blockException, FlowControlResult fixedResult) {
         if (blockException instanceof FlowException) {
             fixedResult.setResult(FlowControlEnum.RATE_LIMITED);
         } else if (blockException instanceof DegradeException) {
