@@ -22,6 +22,9 @@
         <assertj.version>3.12.1</assertj.version>
         <awaitility.version>3.1.5</awaitility.version>
         <powermock.version>2.0.0</powermock.version>
+
+        <httpclient.version>4.5.13</httpclient.version>
+        <httpmime.version>4.5.13</httpmime.version>
     </properties>
 
     <dependencies>
@@ -80,6 +83,17 @@
             <artifactId>powermock-module-junit4-rule</artifactId>
             <version>${powermock.version}</version>
             <scope>test</scope>
+        </dependency>
+        <!-- HttpClient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>${httpmime.version}</version>
         </dependency>
     </dependencies>
 </project>
