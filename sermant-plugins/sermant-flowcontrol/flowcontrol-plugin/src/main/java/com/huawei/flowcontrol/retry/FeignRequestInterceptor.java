@@ -24,19 +24,16 @@ import com.huawei.flowcontrol.common.handler.retry.RetryContext;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import feign.Request;
 
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
@@ -45,7 +42,7 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2022-02-11
  */
-public class FeignRequestInterceptor extends InterceptorSupporter implements Interceptor {
+public class FeignRequestInterceptor extends InterceptorSupporter {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final Retry retry = new FeignRetry();
@@ -72,34 +69,25 @@ public class FeignRequestInterceptor extends InterceptorSupporter implements Int
     }
 
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
-        RetryContext.INSTANCE.setRetry(retry);
+    protected final ExecuteContext doBefore(ExecuteContext context) {
         return context;
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
     @Override
-    public ExecuteContext after(ExecuteContext context) throws Exception {
-        if (!RetryContext.INSTANCE.isReady()) {
-            return context;
-        }
+    protected final ExecuteContext doAfter(ExecuteContext context) {
         final Object[] allArguments = context.getArguments();
         Request request = (Request) allArguments[0];
-        final Collection<String> retryHeaders = request.headers().get(RETRY_KEY);
         Object result = context.getResult();
         try {
-            if (retryHeaders == null || retryHeaders.isEmpty()) {
-                final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
-                    .getHandlers(convertToHttpEntity(request));
-                if (!handlers.isEmpty() && needRetry(handlers.get(0), result, null)) {
-                    allArguments[0] = markHeader(request);
-                    request = (Request) allArguments[0];
-
-                    // 重试仅有一个策略
-                    result = handlers.get(0).executeCheckedSupplier(() -> createRetryFunc(context.getObject(),
-                        context.getMethod(), allArguments, context.getResult()).get());
-                    request.headers().remove(RETRY_KEY);
-                }
+            RetryContext.INSTANCE.markRetry(retry);
+            final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
+                .getHandlers(convertToHttpEntity(request));
+            if (!handlers.isEmpty() && needRetry(handlers.get(0), result, null)) {
+                // 重试仅有一个策略
+                final Supplier<Object> retryFunc = createRetryFunc(context.getObject(),
+                    context.getMethod(), allArguments, context.getResult());
+                result = handlers.get(0).executeCheckedSupplier(retryFunc::get);
             }
         } catch (Throwable throwable) {
             LOGGER.warning(String.format(Locale.ENGLISH,
@@ -109,20 +97,6 @@ public class FeignRequestInterceptor extends InterceptorSupporter implements Int
             RetryContext.INSTANCE.removeRetry();
         }
         context.changeResult(result);
-        return context;
-    }
-
-    private Request markHeader(Request request) {
-        // 此处header由于是不可变map，因此只能重新创建request替换原请求头信息
-        final Map<String, Collection<String>> headers = request.headers();
-        final HashMap<String, Collection<String>> newHeaders = new HashMap<>(headers);
-        newHeaders.put(RETRY_KEY, Collections.singletonList(RETRY_VALUE));
-        return Request.create(request.httpMethod(), request.url(), newHeaders, request.body(), request.charset());
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-        RetryContext.INSTANCE.removeRetry();
         return context;
     }
 

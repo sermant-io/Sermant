@@ -32,7 +32,7 @@ public class FeignRequestDeclarer extends AbstractPluginDeclarer {
     /**
      * 增强类的全限定名
      */
-    private static final String ENHANCE_CLASS = "feign.Client";
+    private static final String ENHANCE_CLASS = "org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient";
 
     /**
      * 拦截类的全限定名
@@ -41,7 +41,7 @@ public class FeignRequestDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.isExtendedFrom(ENHANCE_CLASS);
+        return ClassMatcher.nameEquals(ENHANCE_CLASS);
     }
 
     @Override

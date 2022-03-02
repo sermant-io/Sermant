@@ -18,8 +18,7 @@
 package com.huawei.flowcontrol.common.handler.retry;
 
 /**
- * 重试上下文，用于管理重试策略
- * 基于不同的宿主框架类型
+ * 重试上下文，用于管理重试策略 基于不同的宿主框架类型
  *
  * @author zhouss
  * @since 2022-01-26
@@ -36,7 +35,7 @@ public enum RetryContext {
         return retryThreadLocal.get();
     }
 
-    public void setRetry(Retry retry) {
+    public void markRetry(Retry retry) {
         retryThreadLocal.set(retry);
     }
 
@@ -44,7 +43,7 @@ public enum RetryContext {
         retryThreadLocal.remove();
     }
 
-    public boolean isReady() {
+    public boolean isMarkedRetry() {
         return retryThreadLocal.get() != null;
     }
 }

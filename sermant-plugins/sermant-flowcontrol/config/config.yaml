@@ -2,7 +2,7 @@
 flow.control.plugin:
   openMetricCollector: ${plugin.flowcontrol.collect.metric:false}   # 是否开启指标数据采集
   useCseRule: ${plugin.flowcontrol.adapte.cse:true} # 是否使用cse规则配置
+  useAgentConfigCenter: ${plugin.flowcontrol.use.agent.config_center:false} # 是否使用agent配置中心, 该配置仅当useCseRule=true时生效
   customLabel: ${plugin.flowcontrol.custom.label:public} # 默认标签 useCseRule=true生效
   customLabelValue: ${plugin.flowcontrol.custom.label_value:default} # 默认标签值
   configKieAddress: ${plugin.flowcontrol.kie.address:localhost:30110} # 当流控不使用agent配置中心时生效
-  useAgentConfigCenter: ${plugin.flowcontrol.use.agent.config_center:false} # 是否使用agent配置中心

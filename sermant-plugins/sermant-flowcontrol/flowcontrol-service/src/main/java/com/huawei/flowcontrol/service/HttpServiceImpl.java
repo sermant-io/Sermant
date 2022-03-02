@@ -17,7 +17,7 @@
 
 package com.huawei.flowcontrol.service;
 
-import com.huawei.flowcontrol.common.entity.FixedResult;
+import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 import com.huawei.flowcontrol.entry.EntryFacade;
 import com.huawei.flowcontrol.service.sen.HttpSenService;
@@ -34,7 +34,7 @@ import com.alibaba.csp.sentinel.slots.block.BlockException;
  */
 public class HttpServiceImpl extends HttpSenService {
     @Override
-    public void onBefore(RequestEntity requestEntity, FixedResult fixedResult) {
+    public void onBefore(RequestEntity requestEntity, FlowControlResult fixedResult) {
         try {
             EntryFacade.INSTANCE.tryEntry(requestEntity);
         } catch (BlockException ex) {

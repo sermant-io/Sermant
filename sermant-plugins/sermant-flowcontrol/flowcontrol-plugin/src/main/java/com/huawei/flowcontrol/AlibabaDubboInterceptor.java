@@ -19,21 +19,19 @@ package com.huawei.flowcontrol;
 
 import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.entity.DubboRequestEntity;
-import com.huawei.flowcontrol.common.entity.FixedResult;
-import com.huawei.flowcontrol.common.enums.FlowControlEnum;
+import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.util.ConvertUtils;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import com.alibaba.dubbo.rpc.Invocation;
+import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.RpcResult;
 
-import org.apache.dubbo.rpc.Invoker;
-
+import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -42,7 +40,7 @@ import java.util.Locale;
  * @author zhouss
  * @since 2022-02-10
  */
-public class AlibabaDubboInterceptor extends InterceptorSupporter implements Interceptor {
+public class AlibabaDubboInterceptor extends InterceptorSupporter {
     /**
      * 转换apache dubbo 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
      *
@@ -53,20 +51,20 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter implements Int
         // 高版本使用api invocation.getTargetServiceUniqueName获取路径，此处使用版本加接口，达到的最终结果一致
         String apiPath = ConvertUtils.buildApiPath(invocation.getInvoker().getInterface().getName(),
             invocation.getAttachment(ConvertUtils.DUBBO_ATTACHMENT_VERSION), invocation.getMethodName());
-        return new DubboRequestEntity(apiPath, invocation.getAttachments());
+        return new DubboRequestEntity(apiPath, new HashMap<>(invocation.getAttachments()));
     }
 
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
+    protected final ExecuteContext doBefore(ExecuteContext context) {
         final Object[] allArguments = context.getArguments();
-        final FixedResult result = new FixedResult();
+        final FlowControlResult result = new FlowControlResult();
         if (allArguments[1] instanceof Invocation) {
             Invocation invocation = (Invocation) allArguments[1];
             chooseDubboService().onBefore(convertToAlibabaDubboEntity(invocation), result,
                 RpcContext.getContext().isProviderSide());
-            if (result.isSkip() && result.getResult() instanceof FlowControlEnum) {
-                context.skip(new RpcResult(wrapException(invocation, (Invoker<?>) allArguments[0],
-                    ((FlowControlEnum) result.getResult()).getMsg())));
+            if (result.isSkip()) {
+                context.skip(new RpcResult(
+                    wrapException(invocation, (Invoker<?>) allArguments[0], result.getResult().getMsg())));
             }
         }
         return context;
@@ -79,7 +77,7 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter implements Int
     }
 
     @Override
-    public ExecuteContext after(ExecuteContext context) throws Exception {
+    protected final ExecuteContext doAfter(ExecuteContext context) {
         Result result = (Result) context.getResult();
         if (result != null) {
             chooseDubboService().onAfter(result, RpcContext.getContext().isProviderSide(), result.hasException());
@@ -88,7 +86,7 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter implements Int
     }
 
     @Override
-    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+    protected final ExecuteContext doThrow(ExecuteContext context) {
         chooseDubboService().onThrow(context.getThrowable(), RpcContext.getContext().isProviderSide());
         return context;
     }

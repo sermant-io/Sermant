@@ -25,7 +25,6 @@ import com.huawei.flowcontrol.common.util.ConvertUtils;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
@@ -47,7 +46,7 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2022-02-10
  */
-public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter implements Interceptor {
+public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final Retry retry = new AlibabaDubboRetry();
@@ -133,33 +132,27 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter impleme
     }
 
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
-        RetryContext.INSTANCE.setRetry(retry);
+    protected final ExecuteContext doBefore(ExecuteContext context) {
         context.skip(null);
         return context;
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
     @Override
-    public ExecuteContext after(ExecuteContext context) throws Exception {
-        if (!RetryContext.INSTANCE.isReady()) {
-            return context;
-        }
+    protected final ExecuteContext doAfter(ExecuteContext context) {
         final Object[] allArguments = context.getArguments();
         final Invocation invocation = (Invocation) allArguments[0];
         Object result = context.getResult();
         try {
-            if (invocation.getAttachments().get(RETRY_KEY) == null) {
-                result = invokeRetryMethod(context.getObject(), allArguments, result, false, false);
-                final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
-                    .getHandlers(convertToAlibabaDubboEntity(invocation));
-                if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ((RpcResult) result).getException())) {
-                    invocation.getAttachments().put(RETRY_KEY, RETRY_KEY);
-                    result = handlers.get(0).executeCheckedSupplier(
-                        () -> invokeRetryMethod(context.getObject(), allArguments, context.getResult(), true,
-                            true));
-                    invocation.getAttachments().remove(RETRY_KEY);
-                }
+            // 标记当前线程执行重试
+            RetryContext.INSTANCE.markRetry(retry);
+            result = invokeRetryMethod(context.getObject(), allArguments, result, false, false);
+            final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
+                .getHandlers(convertToAlibabaDubboEntity(invocation));
+            if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ((RpcResult) result).getException())) {
+                result = handlers.get(0).executeCheckedSupplier(
+                    () -> invokeRetryMethod(context.getObject(), allArguments, context.getResult(), true,
+                        true));
             }
         } catch (Throwable throwable) {
             result = new RpcResult(throwable);
@@ -167,12 +160,6 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter impleme
             RetryContext.INSTANCE.removeRetry();
         }
         context.changeResult(result);
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-        RetryContext.INSTANCE.removeRetry();
         return context;
     }
 

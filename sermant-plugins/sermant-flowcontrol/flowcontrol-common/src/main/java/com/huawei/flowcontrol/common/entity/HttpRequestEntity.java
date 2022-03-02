@@ -27,7 +27,7 @@ import java.util.Map;
  * @author zhouss
  * @since 2022-01-22
  */
-public class HttpRequestEntity implements RequestEntity {
+public class HttpRequestEntity extends AbstractRequestEntity {
     private String apiPath;
 
     private String pathInfo;

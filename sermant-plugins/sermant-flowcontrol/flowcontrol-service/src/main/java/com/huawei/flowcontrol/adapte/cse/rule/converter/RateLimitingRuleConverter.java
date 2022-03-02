@@ -23,6 +23,8 @@ import com.huawei.flowcontrol.common.config.CommonConst;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,8 +40,9 @@ public class RateLimitingRuleConverter implements RuleConverter<RateLimitingRule
         final FlowRule flowRule = new FlowRule();
 
         // 转换为rate/s, sentinel当前只能以1S为单位进行统计, 因此此处做一定请求比例转换
-        flowRule.setCount(resilienceRule.getRate() * CommonConst.RATE_DIV_POINT
-            / resilienceRule.getParsedLimitRefreshPeriod());
+        final BigDecimal divide = BigDecimal.valueOf(resilienceRule.getRate() * CommonConst.RATE_DIV_POINT)
+            .divide(BigDecimal.valueOf(resilienceRule.getParsedLimitRefreshPeriod()), RoundingMode.CEILING);
+        flowRule.setCount(divide.doubleValue());
         flowRule.setGrade(RuleConstant.FLOW_GRADE_QPS);
         flowRule.setResource(resilienceRule.getName());
         return Collections.singletonList(flowRule);

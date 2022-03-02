@@ -36,8 +36,11 @@ public class ReflectMethodCacheSupport {
 
     protected final Method getInvokerMethod(String methodName,
             Function<? super String, ? extends Method> mappingFunction) {
-        if (methodName == null || mappingFunction == null) {
+        if (methodName == null) {
             return null;
+        }
+        if (mappingFunction == null) {
+            return cacheMethods.get(methodName);
         }
         return cacheMethods.computeIfAbsent(methodName, mappingFunction);
     }
