@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author zhouss
  * @since 2022-02-22
  */
-public abstract class InstanceInterceptorSupport {
+public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
     private final ThreadLocal<Object> threadLocal = new ThreadLocal<>();
 
     /**

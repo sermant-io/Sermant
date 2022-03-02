@@ -22,7 +22,6 @@ import com.huawei.register.services.RegisterCenterService;
 import com.huawei.register.support.InstanceInterceptorSupport;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huawei.sermant.core.service.ServiceManager;
 
 import org.springframework.cloud.client.ServiceInstance;
@@ -44,11 +43,11 @@ import java.util.stream.Collectors;
  * @author zhouss
  * @since 2021-12-13
  */
-public class DiscoveryClientInterceptor extends InstanceInterceptorSupport implements Interceptor {
+public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
+    public ExecuteContext doBefore(ExecuteContext context) {
         if (isMarked()) {
             return context;
         }
@@ -95,16 +94,6 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport imple
                 exception.getMessage()));
             return Collections.emptyList();
         }
-    }
-
-    @Override
-    public ExecuteContext after(ExecuteContext context) {
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) {
-        return context;
     }
 
     /**

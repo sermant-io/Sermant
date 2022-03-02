@@ -35,17 +35,6 @@ import java.util.List;
  */
 @ConfigTypeKey(value = "servicecomb.service")
 public class RegisterConfig implements PluginConfig {
-    public RegisterConfig() {
-        final ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
-        if (serviceMeta == null) {
-            return;
-        }
-        this.environment = serviceMeta.getEnvironment();
-        this.application = serviceMeta.getApplication();
-        this.project = serviceMeta.getProject();
-        this.version = serviceMeta.getVersion();
-    }
-
     /**
      * sc注册中心地址 多个地址使用逗号隔开
      */
@@ -59,17 +48,17 @@ public class RegisterConfig implements PluginConfig {
     /**
      * 服务实例心跳发送间隔
      */
-    private int heartbeatInterval = 15;
+    private int heartbeatInterval = ConfigConstants.DEFAULT_HEARTBEAT_INTERVAL;
 
     /**
      * 心跳重试次数
      */
-    private int heartbeatRetryTimes = 3;
+    private int heartbeatRetryTimes = ConfigConstants.DEFAULT_HEARTBEAT_RETRY_TIMES;
 
     /**
      * 拉取实例时间间隔
      */
-    private int pullInterval = 15;
+    private int pullInterval = ConfigConstants.DEFAULT_PULL_INTERVAL;
 
     /**
      * sc app配置
@@ -102,19 +91,48 @@ public class RegisterConfig implements PluginConfig {
     private String registerType = "SERVICE_COMB";
 
     /**
-     * 是否开启sc的加密
+     * 是否开启sc的加密 作为配置类，使用布尔类型不可使用is开头，否则存在配置无法读取的问题
      */
+    @SuppressWarnings("checkstyle:RegexpSingleLine")
     private boolean sslEnabled = false;
 
     /**
      * 是否开启迁移模式
      */
+    @SuppressWarnings("checkstyle:RegexpSingleLine")
     private boolean openMigration = false;
+
+    /**
+     * spring注册开关
+     */
+    @SuppressWarnings("checkstyle:RegexpSingleLine")
+    private boolean enableSpringRegister = false;
+
+    public RegisterConfig() {
+        final ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
+        if (serviceMeta == null) {
+            return;
+        }
+        this.environment = serviceMeta.getEnvironment();
+        this.application = serviceMeta.getApplication();
+        this.project = serviceMeta.getProject();
+        this.version = serviceMeta.getVersion();
+    }
+
+    public boolean isEnableSpringRegister() {
+        return enableSpringRegister;
+    }
+
+    @SuppressWarnings("checkstyle:RegexpSingleLine")
+    public void setEnableSpringRegister(boolean enableSpringRegister) {
+        this.enableSpringRegister = enableSpringRegister;
+    }
 
     public boolean isOpenMigration() {
         return openMigration;
     }
 
+    @SuppressWarnings("checkstyle:RegexpSingleLine")
     public void setOpenMigration(boolean openMigration) {
         this.openMigration = openMigration;
     }
@@ -123,6 +141,7 @@ public class RegisterConfig implements PluginConfig {
         return sslEnabled;
     }
 
+    @SuppressWarnings("checkstyle:RegexpSingleLine")
     public void setSslEnabled(boolean sslEnabled) {
         this.sslEnabled = sslEnabled;
     }

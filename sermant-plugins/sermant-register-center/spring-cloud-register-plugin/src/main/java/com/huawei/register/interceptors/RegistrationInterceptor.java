@@ -19,8 +19,8 @@ package com.huawei.register.interceptors;
 import com.huawei.register.context.RegisterContext;
 import com.huawei.register.entity.FixedResult;
 import com.huawei.register.services.RegisterCenterService;
+import com.huawei.register.support.RegisterSwitchSupport;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huawei.sermant.core.service.ServiceManager;
 
 import org.springframework.cloud.client.serviceregistry.Registration;
@@ -31,9 +31,9 @@ import org.springframework.cloud.client.serviceregistry.Registration;
  * @author zhouss
  * @since 2021-12-13
  */
-public class RegistrationInterceptor extends AbstractInterceptor {
+public class RegistrationInterceptor extends RegisterSwitchSupport {
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
+    public ExecuteContext doBefore(ExecuteContext context) {
         if (!(context.getArguments()[0] instanceof Registration)) {
             return context;
         }
@@ -52,10 +52,5 @@ public class RegistrationInterceptor extends AbstractInterceptor {
         RegisterContext.INSTANCE.getClientInfo().setMeta(registration.getMetadata());
         RegisterContext.INSTANCE.getClientInfo().setPort(registration.getPort());
         RegisterContext.INSTANCE.getClientInfo().setServiceId(registration.getServiceId());
-    }
-
-    @Override
-    public ExecuteContext after(ExecuteContext context) throws Exception {
-        return context;
     }
 }
