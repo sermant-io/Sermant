@@ -16,12 +16,25 @@
 
 package com.huawei.register.interceptors;
 
+import com.huawei.register.context.RegisterContext;
+import com.huawei.register.entity.MicroServiceInstance;
 import com.huawei.register.services.RegisterCenterService;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.register.support.InstanceInterceptorSupport;
+import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huawei.sermant.core.service.ServiceManager;
 
-import java.lang.reflect.Method;
+import com.netflix.loadbalancer.Server;
+import com.netflix.loadbalancer.ServerList;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * 拦截替换服务列表
@@ -29,21 +42,126 @@ import java.lang.reflect.Method;
  * @author zhouss
  * @since 2021-12-13
  */
-public class ServerListInterceptor implements InstanceMethodInterceptor {
+public class ServerListInterceptor extends InstanceInterceptorSupport implements Interceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
-        final RegisterCenterService service = ServiceManager.getService(RegisterCenterService.class);
-        service.replaceServerList(obj, beforeResult);
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        if (isMarked()) {
+            // 此处针对当前线程， 如果是拦截器内部调用直接pass
+            return context;
+        }
+        try {
+            mark();
+            final RegisterCenterService service = ServiceManager.getService(RegisterCenterService.class);
+            final List<MicroServiceInstance> serverList = service.getServerList(context.getObject());
+            if (!serverList.isEmpty()) {
+                // 单注册中心场景无需合并
+                context.skip(convertAndMerge(context.getObject(), serverList));
+            }
+        } finally {
+            unMark();
+        }
+        return context;
+    }
+
+    /**
+     * 合并原注册中心的服务
+     *
+     * @param serviceInstances 从迁移后的注册中心查询的实例列表
+     * @return 服务列表
+     */
+    @SuppressWarnings("checkstyle:IllegalCatch")
+    private List<Server> convertAndMerge(Object obj, List<MicroServiceInstance> serviceInstances) {
+        List<Server> result = new ArrayList<>(serviceInstances.size());
+        if (isOpenMigration() && RegisterContext.INSTANCE.isAvailable()) {
+            result.addAll(queryInstances(obj));
+        }
+        for (MicroServiceInstance microServiceInstance : serviceInstances) {
+            if (isOpenMigration()) {
+                result.removeIf(originServiceInstance ->
+                    Objects.equals(originServiceInstance.getHost(), microServiceInstance.getHost())
+                        && originServiceInstance.getPort() == microServiceInstance.getPort());
+            }
+            result.add((Server) buildInstance(microServiceInstance));
+        }
+        return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    @SuppressWarnings("checkstyle:IllegalCatch")
+    private List<Server> queryInstances(Object obj) {
+        ServerList<Server> serverList = (ServerList<Server>) obj;
+        try {
+            return serverList.getUpdatedListOfServers();
+        } catch (Exception exception) {
+            LOGGER.warning(String.format(Locale.ENGLISH,
+                "Query Instances from origin register center failed, may be it is not available! reason: %s",
+                exception.getMessage()));
+            return Collections.emptyList();
+        }
     }
 
     @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) {
-        return result;
+    public ExecuteContext after(ExecuteContext context) throws Exception {
+        return context;
     }
 
     @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
+    public ExecuteContext onThrow(ExecuteContext context) {
+        return context;
+    }
 
+    @Override
+    protected String getInstanceClassName() {
+        return "com.huawei.register.interceptors.ServerListInterceptor$ScServer";
+    }
+
+    public static class ScServer extends Server {
+        private final MicroServiceInstance microServiceInstance;
+
+        private MetaInfo metaInfo;
+
+        public ScServer(final MicroServiceInstance microServiceInstance) {
+            super(microServiceInstance.getHost(), microServiceInstance.getPort());
+            this.microServiceInstance = microServiceInstance;
+        }
+
+        @Override
+        public MetaInfo getMetaInfo() {
+            if (metaInfo == null) {
+                this.metaInfo = new Server.MetaInfo() {
+                    @Override
+                    public String getAppName() {
+                        return microServiceInstance.getServiceId();
+                    }
+
+                    @Override
+                    public String getServerGroup() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getServiceIdForDiscovery() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getInstanceId() {
+                        return microServiceInstance.getInstanceId();
+                    }
+                };
+            }
+            return this.metaInfo;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return super.equals(obj);
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
     }
 }

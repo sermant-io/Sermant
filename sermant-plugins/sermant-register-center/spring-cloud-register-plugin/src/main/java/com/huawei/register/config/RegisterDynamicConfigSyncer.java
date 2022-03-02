@@ -51,33 +51,36 @@ public class RegisterDynamicConfigSyncer implements PluginService {
     @Override
     public void start() {
         final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
-        service.addConfigListener(REGISTER_KEY, REGISTER_GROUP, new DynamicConfigListener() {
-            @Override
-            public void process(DynamicConfigEvent event) {
-                if (event.getContent() == null || event.getEventType() == DynamicConfigEventType.DELETE) {
-                    RegisterDynamicConfig.closeOriginRegisterCenter = false;
-                } else {
-                    RegisterDynamicConfig.closeOriginRegisterCenter =
-                            Boolean.parseBoolean(event.getContent());
-                }
-                if (event.getEventType() != DynamicConfigEventType.INIT) {
-                    // 初始化的参数不生效, 仅当后续修改生效, 防止用户因配置问题导致注册中心关闭
-                    tryCloseOriginRegisterCenter();
-                }
-            }
+        service.addConfigListener(REGISTER_KEY, REGISTER_GROUP, new RegisterDynamicListener());
+    }
 
-            private void tryCloseOriginRegisterCenter() {
-                if (RegisterDynamicConfig.closeOriginRegisterCenter) {
-                    for (SingleStateCloseHandler handler : RegisterContext.INSTANCE.getCloseHandlers()) {
-                        try {
-                            handler.doClose();
-                        } catch (Exception ex) {
-                            LOGGER.warning(String.format(Locale.ENGLISH,
-                                    "Origin register center closed failed! %s", ex.getMessage()));
-                        }
+    static class RegisterDynamicListener implements DynamicConfigListener {
+        @Override
+        public void process(DynamicConfigEvent event) {
+            if (event.getContent() == null || event.getEventType() == DynamicConfigEventType.DELETE) {
+                RegisterDynamicConfig.INSTANCE.setNeedCloseOriginRegisterCenter(false);
+            } else {
+                RegisterDynamicConfig.INSTANCE
+                    .setNeedCloseOriginRegisterCenter(Boolean.parseBoolean(event.getContent()));
+            }
+            if (event.getEventType() != DynamicConfigEventType.INIT) {
+                // 初始化的参数不生效, 仅当后续修改生效, 防止用户因配置问题导致注册中心关闭
+                tryCloseOriginRegisterCenter();
+            }
+        }
+
+        @SuppressWarnings("checkstyle:IllegalCatch")
+        private void tryCloseOriginRegisterCenter() {
+            if (RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()) {
+                for (SingleStateCloseHandler handler : RegisterContext.INSTANCE.getCloseHandlers()) {
+                    try {
+                        handler.tryClose();
+                    } catch (Exception ex) {
+                        LOGGER.warning(String.format(Locale.ENGLISH,
+                            "Origin register center closed failed! %s", ex.getMessage()));
                     }
                 }
             }
-        });
+        }
     }
 }

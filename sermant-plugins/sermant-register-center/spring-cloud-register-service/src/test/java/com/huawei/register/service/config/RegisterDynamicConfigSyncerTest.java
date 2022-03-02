@@ -17,7 +17,7 @@
 package com.huawei.register.service.config;
 
 import com.huawei.register.config.RegisterDynamicConfigSyncer;
-import com.huawei.register.service.context.BaseTest;
+import com.huawei.register.service.client.BaseTest;
 
 import org.junit.Test;
 

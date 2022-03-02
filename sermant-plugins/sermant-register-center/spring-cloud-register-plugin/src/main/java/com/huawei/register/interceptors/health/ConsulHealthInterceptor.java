@@ -18,12 +18,12 @@ package com.huawei.register.interceptors.health;
 
 import com.huawei.register.context.RegisterContext;
 import com.huawei.register.handler.SingleStateCloseHandler;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
 import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
+
 import org.springframework.cloud.consul.discovery.ConsulCatalogWatch;
 
-import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
 /**
@@ -32,33 +32,8 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-12-13
  */
-public class ConsulHealthInterceptor extends SingleStateCloseHandler implements InstanceMethodInterceptor {
+public class ConsulHealthInterceptor extends SingleStateCloseHandler implements Interceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
-
-    @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
-
-    }
-
-    @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) {
-        if (result != null) {
-            // 原始注册中心恢复
-            if (RegisterContext.INSTANCE.compareAndSet(false, true)) {
-                doChange(obj, arguments, false, true);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
-        final boolean originState = RegisterContext.INSTANCE.isAvailable();
-        // 如果心跳为0L，则当前实例与consul注册中心不通，针对该实例注册中心已失效
-        if (RegisterContext.INSTANCE.compareAndSet(true, false)) {
-            doChange(obj, arguments, originState, false);
-        }
-    }
 
     @Override
     protected void close() {
@@ -69,5 +44,33 @@ public class ConsulHealthInterceptor extends SingleStateCloseHandler implements 
             watch.stop();
             LOGGER.info("Consul heartbeat has been closed.");
         }
+    }
+
+    @Override
+    public ExecuteContext before(ExecuteContext context) {
+        return context;
+    }
+
+    @Override
+    public ExecuteContext after(ExecuteContext context) {
+        final Object result = context.getResult();
+        if (result != null) {
+            // 原始注册中心恢复
+            if (RegisterContext.INSTANCE.compareAndSet(false, true)) {
+                doChange(context.getObject(), arguments, false, true);
+            }
+        }
+        return context;
+    }
+
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) {
+        final boolean isOriginState = RegisterContext.INSTANCE.isAvailable();
+
+        // 如果心跳为0L，则当前实例与consul注册中心不通，针对该实例注册中心已失效
+        if (RegisterContext.INSTANCE.compareAndSet(true, false)) {
+            doChange(context.getObject(), arguments, isOriginState, false);
+        }
+        return context;
     }
 }

@@ -16,8 +16,11 @@
 
 package com.huawei.register.services;
 
-import com.huawei.sermant.core.agent.common.BeforeResult;
+import com.huawei.register.entity.FixedResult;
+import com.huawei.register.entity.MicroServiceInstance;
 import com.huawei.sermant.core.plugin.service.PluginService;
+
+import java.util.List;
 
 /**
  * 注册服务类
@@ -29,24 +32,23 @@ public interface RegisterCenterService extends PluginService {
     /**
      * 拦截原spring的注册方法
      *
-     * @param registration 注册信息
      * @param result 前置返回
      */
-    void register(Object registration, BeforeResult result);
+    void register(FixedResult result);
 
     /**
-     * 替换服务列表
-     *
-     * @param target 被增强对象
-     * @param beforeResult 前置返回结果
-     */
-    void replaceServerList(Object target, BeforeResult beforeResult);
-
-    /**
-     * 针对DiscoverClient#getInstances, 会携带serviceId
+     * 获取实例列表
      *
      * @param serviceId 服务名
-     * @param beforeResult 前置返回结果
+     * @return 实例列表
      */
-    void replaceServerList(String serviceId, BeforeResult beforeResult);
+    List<MicroServiceInstance> getServerList(String serviceId);
+
+    /**
+     * 获取实例列表
+     *
+     * @param target 被增强对象
+     * @return 实例列表
+     */
+    List<MicroServiceInstance> getServerList(Object target);
 }

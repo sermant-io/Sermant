@@ -17,21 +17,15 @@
 package com.huawei.register.service.register;
 
 import com.huawei.register.service.client.ScClient;
-import com.huawei.register.service.utils.CommonUtils;
+
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.apache.servicecomb.service.center.client.model.MicroservicesResponse;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.serviceregistry.Registration;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * SC注册实现
@@ -45,70 +39,26 @@ public class ScRegister implements Register {
     @Override
     public void start() {
         client = new ScClient();
-        client.start();
+        client.init();
     }
 
     @Override
     public void stop() {
-        client.stop();
     }
 
     @Override
-    public void register(Object rawRegistration) {
-        if (rawRegistration instanceof Registration) {
-            Registration registration = (Registration) rawRegistration;
-            client.register(registration);
-        }
+    public void register() {
+        client.register();
     }
 
     @Override
-    public List<ServiceInstance> getDiscoveryServerList(String serviceId) {
+    public List<ServicecombServiceInstance> getInstanceList(String serviceId) {
         final List<MicroserviceInstance> microserviceInstances = getScInstances(serviceId);
-        final List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
+        final List<ServicecombServiceInstance> serviceInstances = new ArrayList<>();
         for (final MicroserviceInstance microserviceInstance : microserviceInstances) {
-            serviceInstances.add(new ServiceInstance() {
-                @Override
-                public String getServiceId() {
-                    return microserviceInstance.getServiceId();
-                }
-
-                @Override
-                public String getHost() {
-                    return microserviceInstance.getHostName();
-                }
-
-                @Override
-                public int getPort() {
-                    return CommonUtils.getPortByEndpoint(microserviceInstance.getEndpoints().get(0));
-                }
-
-                @Override
-                public boolean isSecure() {
-                    return false;
-                }
-
-                @Override
-                public URI getUri() {
-                    return null;
-                }
-
-                @Override
-                public Map<String, String> getMetadata() {
-                    return microserviceInstance.getProperties();
-                }
-            });
+            serviceInstances.add(new ServicecombServiceInstance(microserviceInstance));
         }
         return serviceInstances;
-    }
-
-    @Override
-    public List<ScServer> getServerList(String serviceId) {
-        final List<MicroserviceInstance> microserviceInstances = getScInstances(serviceId);
-        final List<ScServer> servers = new ArrayList<ScServer>();
-        for (final MicroserviceInstance microserviceInstance : microserviceInstances) {
-            servers.add(new ScServer(microserviceInstance));
-        }
-        return servers;
     }
 
     @Override
@@ -125,13 +75,7 @@ public class ScRegister implements Register {
         if (microserviceInstances == null) {
             return Collections.emptyList();
         }
-        final Iterator<MicroserviceInstance> iterator = microserviceInstances.iterator();
-        while (iterator.hasNext()) {
-            final MicroserviceInstance next = iterator.next();
-            if (next.getStatus() != MicroserviceInstanceStatus.UP) {
-                iterator.remove();
-            }
-        }
+        microserviceInstances.removeIf(next -> next.getStatus() != MicroserviceInstanceStatus.UP);
         return microserviceInstances;
     }
 
@@ -147,12 +91,7 @@ public class ScRegister implements Register {
             return null;
         }
         final List<Microservice> services = response.getServices();
-        Collections.sort(services, new Comparator<Microservice>() {
-            @Override
-            public int compare(Microservice o1, Microservice o2) {
-                return (int) (Long.parseLong(o2.getModTimestamp()) - Long.parseLong(o1.getModTimestamp()));
-            }
-        });
+        services.sort((o1, o2) -> (int) (Long.parseLong(o2.getModTimestamp()) - Long.parseLong(o1.getModTimestamp())));
         for (Microservice microservice : response.getServices()) {
             if (serviceName.equals(microservice.getServiceName())) {
                 return microservice.getServiceId();

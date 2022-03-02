@@ -16,12 +16,14 @@
 
 package com.huawei.register.interceptors;
 
+import com.huawei.register.context.RegisterContext;
+import com.huawei.register.entity.FixedResult;
 import com.huawei.register.services.RegisterCenterService;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huawei.sermant.core.service.ServiceManager;
 
-import java.lang.reflect.Method;
+import org.springframework.cloud.client.serviceregistry.Registration;
 
 /**
  * 拦截获取服务列表
@@ -29,21 +31,31 @@ import java.lang.reflect.Method;
  * @author zhouss
  * @since 2021-12-13
  */
-public class RegistrationInterceptor implements InstanceMethodInterceptor {
-
+public class RegistrationInterceptor extends AbstractInterceptor {
     @Override
-    public void before(Object obj, Method method, Object[] arguments, BeforeResult beforeResult) {
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        if (!(context.getArguments()[0] instanceof Registration)) {
+            return context;
+        }
+        fillClientInfo((Registration) context.getArguments()[0]);
         final RegisterCenterService service = ServiceManager.getService(RegisterCenterService.class);
-        service.register(arguments[0], beforeResult);
+        final FixedResult fixedResult = new FixedResult();
+        service.register(fixedResult);
+        if (fixedResult.isSkip()) {
+            context.skip(fixedResult.getResult());
+        }
+        return context;
+    }
+
+    private void fillClientInfo(Registration registration) {
+        RegisterContext.INSTANCE.getClientInfo().setHost(registration.getHost());
+        RegisterContext.INSTANCE.getClientInfo().setMeta(registration.getMetadata());
+        RegisterContext.INSTANCE.getClientInfo().setPort(registration.getPort());
+        RegisterContext.INSTANCE.getClientInfo().setServiceId(registration.getServiceId());
     }
 
     @Override
-    public Object after(Object obj, Method method, Object[] arguments, Object result) {
-        return result;
-    }
-
-    @Override
-    public void onThrow(Object obj, Method method, Object[] arguments, Throwable t) {
-
+    public ExecuteContext after(ExecuteContext context) throws Exception {
+        return context;
     }
 }
