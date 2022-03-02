@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,13 @@
 
 package com.huawei.gray.dubbo.strategy;
 
-import org.apache.dubbo.rpc.Invoker;
-
 import java.util.Set;
 
 /**
  * 判断invoker是否匹配的策略
  *
  * @author provenceee
- * @since 2021/12/8
+ * @since 2021-12-08
  */
 public interface InvokerStrategy {
     /**
@@ -36,5 +34,5 @@ public interface InvokerStrategy {
      * @param versionStrategy 版本测试
      * @return 是否匹配
      */
-    boolean isMatch(Invoker<?> invoker, String version, Set<String> notMatchVersions, VersionStrategy versionStrategy);
+    boolean isMatch(Object invoker, String version, Set<String> notMatchVersions, VersionStrategy versionStrategy);
 }

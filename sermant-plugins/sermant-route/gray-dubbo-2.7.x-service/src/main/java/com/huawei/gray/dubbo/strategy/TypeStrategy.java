@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,14 @@ package com.huawei.gray.dubbo.strategy;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
  * 规则策略
  *
  * @author provenceee
- * @since 2021/10/13
+ * @since 2021-10-13
  */
 public abstract class TypeStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger();
@@ -37,7 +38,7 @@ public abstract class TypeStrategy {
      * @param type 获取参数的方式
      * @return 参数值
      */
-    public abstract String getValue(Object arg, String type);
+    public abstract Optional<String> getValue(Object arg, String type);
 
     /**
      * 是否匹配规则

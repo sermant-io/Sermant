@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,29 +19,28 @@ package com.huawei.gray.dubbo.strategy.invoker;
 import com.huawei.gray.dubbo.strategy.InvokerStrategy;
 import com.huawei.gray.dubbo.strategy.VersionStrategy;
 
-import org.apache.dubbo.rpc.Invoker;
-
 import java.util.Set;
 
 /**
- * 匹配不在notMatchVersions中的Invoker
+ * 匹配不在notMatchVersions中的invoker
  *
  * @author provenceee
- * @since 2021/12/8
+ * @since 2021-12-08
  */
 public class NotMatchVersionsInvokerStrategy implements InvokerStrategy {
     /**
-     * 匹配不在notMatchVersions中的Invoker
+     * 匹配不在notMatchVersions中的invoker
      *
      * @param invoker Invoker
      * @param version 目标版本
      * @param notMatchVersions 没有匹配上的版本
-     * @param versionStrategy 版本测试
+     * @param versionStrategy 版本策略
      * @return 是否匹配
      */
     @Override
-    public boolean isMatch(Invoker<?> invoker, String version, Set<String> notMatchVersions,
+    public boolean isMatch(Object invoker, String version, Set<String> notMatchVersions,
         VersionStrategy versionStrategy) {
+        // 由于notMatchVersions里面的版本号已经匹配过了且没有匹配上，所以要剔除掉，不能参与负载均衡，否则会导致流量比例不正确（会偏高）
         return !notMatchVersions.contains(versionStrategy.getVersion(invoker));
     }
 }

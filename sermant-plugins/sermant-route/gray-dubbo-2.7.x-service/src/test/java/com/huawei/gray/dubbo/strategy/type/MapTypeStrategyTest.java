@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,10 @@ import java.util.Map;
 /**
  * map匹配策略测试
  *
- * @author pengyuyi
- * @date 2021/12/1
+ * @author provenceee
+ * @since 2021-12-01
  */
+@SuppressWarnings("checkstyle:all")
 public class MapTypeStrategyTest {
     /**
      * 测试map策略
@@ -37,15 +38,19 @@ public class MapTypeStrategyTest {
     @Test
     public void testValue() {
         TypeStrategy strategy = new MapTypeStrategy();
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("foo", "bar");
+
         // 正常情况
-        Assert.assertEquals("bar", strategy.getValue(map, ".get(\"foo\")"));
+        Assert.assertEquals("bar", strategy.getValue(map, ".get(\"foo\")").orElse(null));
+
         // 测试null
-        Assert.assertNotEquals("bar", strategy.getValue(map, ".get(\"bar\")"));
+        Assert.assertNotEquals("bar", strategy.getValue(map, ".get(\"bar\")").orElse(null));
+
         // 测试非map
-        Assert.assertNotEquals("bar", strategy.getValue("foo", ".get(\"foo\")"));
+        Assert.assertNotEquals("bar", strategy.getValue("foo", ".get(\"foo\")").orElse(null));
+
         // 测试不等于
-        Assert.assertNotEquals("foo", strategy.getValue(map, ".get(\"foo\")"));
+        Assert.assertNotEquals("foo", strategy.getValue(map, ".get(\"foo\")").orElse(null));
     }
 }

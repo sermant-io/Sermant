@@ -16,8 +16,8 @@
 
 package com.huawei.gray.dubbo.service;
 
-import com.huawei.gray.dubbo.cache.DubboCache;
 import com.huawei.route.common.gray.config.GrayConfig;
+import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.listener.GrayDynamicConfigListener;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.plugin.service.PluginService;
@@ -31,7 +31,7 @@ import java.util.concurrent.Executors;
  * 配置服务
  *
  * @author provenceee
- * @since 2021/11/24
+ * @since 2021-11-24
  */
 public class ConfigServiceImpl implements PluginService {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -47,17 +47,12 @@ public class ConfigServiceImpl implements PluginService {
     public void start() {
         grayConfig = PluginConfigManager.getPluginConfig(GrayConfig.class);
         configurationService = ServiceManager.getService(DynamicConfigService.class);
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                initRequests();
-            }
-        });
+        executorService.execute(this::initRequests);
     }
 
     private void initRequests() {
         configurationService.addGroupListener(grayConfig.getDubboGroup(),
-            new GrayDynamicConfigListener(DubboCache.getLabelName(), grayConfig.getDubboKey()), true);
+            new GrayDynamicConfigListener(GrayConstant.GRAY_LABEL_CACHE_NAME, grayConfig.getDubboKey()), true);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,16 +30,17 @@ import java.util.Map;
 /**
  * enabled匹配策略测试
  *
- * @author pengyuyi
- * @date 2021/12/1
+ * @author provenceee
+ * @since 2021-12-01
  */
+@SuppressWarnings("checkstyle:all")
 public class EnabledTypeStrategyTest {
     /**
      * 初始化
      */
     @Before
     public void before() {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put(CommonConstant.LOG_SETTING_FILE_KEY, getClass().getResource("/logback-test.xml").getPath());
         LoggerFactory.init(map);
     }
@@ -52,16 +53,21 @@ public class EnabledTypeStrategyTest {
         TypeStrategy strategy = new EnabledTypeStrategy();
         Entity entity = new Entity();
         entity.setEnabled(true);
+
         // 正常情况
-        Assert.assertEquals(Boolean.TRUE.toString(), strategy.getValue(entity, ".isEnabled()"));
+        Assert.assertEquals(Boolean.TRUE.toString(), strategy.getValue(entity, ".isEnabled()").orElse(null));
+
         // 测试找不到方法
-        Assert.assertEquals(Boolean.FALSE.toString(), strategy.getValue(entity, ".foo()"));
+        Assert.assertEquals(Boolean.FALSE.toString(), strategy.getValue(entity, ".foo()").orElse(null));
+
         // 测试null
-        Assert.assertNotEquals(Boolean.TRUE.toString(), strategy.getValue(new Entity(), ".isEnabled()"));
+        Assert.assertNotEquals(Boolean.TRUE.toString(), strategy.getValue(new Entity(), ".isEnabled()").orElse(null));
     }
 
     /**
      * 测试实体
+     *
+     * @since 2021-12-01
      */
     public static class Entity {
         private Boolean enabled;

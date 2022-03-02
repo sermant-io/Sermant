@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.sermant.core.common.LoggerFactory;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -33,7 +34,7 @@ import java.util.logging.Logger;
  * 规则策略选择器
  *
  * @author provenceee
- * @since 2021/10/13
+ * @since 2021-10-13
  */
 public enum TypeStrategyChooser {
     /**
@@ -46,7 +47,7 @@ public enum TypeStrategyChooser {
     private final Set<TypeStrategy> typeStrategies;
 
     TypeStrategyChooser() {
-        typeStrategies = new HashSet<TypeStrategy>();
+        typeStrategies = new HashSet<>();
         init();
     }
 
@@ -77,14 +78,14 @@ public enum TypeStrategyChooser {
      * @param type 标签规则策略表达式
      * @return 规则策略
      */
-    private TypeStrategy choose(String type) {
+    private Optional<TypeStrategy> choose(String type) {
         for (TypeStrategy typeStrategy : typeStrategies) {
             if (typeStrategy.isMatch(type)) {
-                return typeStrategy;
+                return Optional.of(typeStrategy);
             }
         }
         LOGGER.warning("Cannot found the type strategy, type is " + type);
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -95,24 +96,24 @@ public enum TypeStrategyChooser {
      * @param arguments 参数数组
      * @return 参数值
      */
-    public String getValue(String type, String key, Object[] arguments) {
+    public Optional<String> getValue(String type, String key, Object[] arguments) {
         if (arguments == null) {
-            return null;
+            return Optional.empty();
         }
-        TypeStrategy typeStrategy = choose(type);
-        if (typeStrategy == null) {
-            return null;
+        Optional<TypeStrategy> typeStrategy = choose(type);
+        if (!typeStrategy.isPresent()) {
+            return Optional.empty();
         }
         int index;
         try {
             index = Integer.parseInt(key.substring(GrayConstant.DUBBO_SOURCE_TYPE_PREFIX.length()));
         } catch (NumberFormatException e) {
             LOGGER.warning("Source type " + key + " is invalid.");
-            return null;
+            return Optional.empty();
         }
         if (index < 0 || index >= arguments.length || arguments[index] == null) {
-            return null;
+            return Optional.empty();
         }
-        return typeStrategy.getValue(arguments[index], type);
+        return typeStrategy.get().getValue(arguments[index], type);
     }
 }

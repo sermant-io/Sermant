@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ import java.util.logging.Logger;
  * 配置监听器
  *
  * @author provenceee
- * @since 2021/11/29
+ * @since 2021-11-29
  */
 public class GrayDynamicConfigListener implements DynamicConfigListener {
     private static final Logger LOGGER = LogFactory.getLogger();

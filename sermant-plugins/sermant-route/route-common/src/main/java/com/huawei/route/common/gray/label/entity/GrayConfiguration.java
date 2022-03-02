@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.Map;
  * 灰度发布标签
  *
  * @author provenceee
- * @since 2021/10/27
+ * @since 2021-10-27
  */
 @SuppressWarnings("checkstyle:RegexpSingleline")
 public class GrayConfiguration {

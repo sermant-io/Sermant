@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,21 @@ import com.huawei.sermant.core.plugin.service.PluginService;
  * RegistrationInterceptor的service
  *
  * @author provenceee
- * @since 2021/11/24
+ * @since 2021-11-24
  */
 public interface RegistrationService extends PluginService {
-    void getVersion(Object obj, Object[] arguments) throws NoSuchFieldException, IllegalAccessException;
+    /**
+     * 设置下游地址-版本缓存
+     *
+     * @param addr 地址
+     * @param version 版本
+     */
+    void setRegisterVersionCache(String addr, String version);
+
+    /**
+     * 设置自身版本缓存
+     *
+     * @param version 版本
+     */
+    void setRegisterVersion(String version);
 }

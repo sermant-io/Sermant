@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-package com.huawei.gray.dubbo.utils;
+package com.huawei.gray.dubbo.service;
 
-import java.lang.reflect.Field;
-import java.security.PrivilegedAction;
+import com.huawei.sermant.core.plugin.service.PluginService;
 
 /**
- * 权限检查
+ * ClusterUtils的service
  *
  * @author provenceee
- * @since 2022/2/21
+ * @since 2022-03-09
  */
-public class FieldPrivilegedAction implements PrivilegedAction<Object> {
-    private final Field field;
-
-    public FieldPrivilegedAction(Field field) {
-        super();
-        this.field = field;
-    }
-
-    @Override
-    public Object run() {
-        field.setAccessible(true);
-        return null;
-    }
+public interface ClusterService extends PluginService {
+    /**
+     * 从url中缓存接口与下游服务名的映射关系，从map中删除灰度发布相关的参数
+     *
+     * @param arguments 请求参数
+     */
+    void doBefore(Object[] arguments);
 }

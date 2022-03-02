@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package com.huawei.route.common.gray.label.entity;
  * 版本来源
  *
  * @author provenceee
- * @since 2021/11/25
+ * @since 2021-11-25
  */
 public enum VersionFrom {
     /**
@@ -31,8 +31,5 @@ public enum VersionFrom {
     /**
      * 版本来自注册信息
      */
-    REGISTER_MSG;
-
-    VersionFrom() {
-    }
+    REGISTER_MSG
 }

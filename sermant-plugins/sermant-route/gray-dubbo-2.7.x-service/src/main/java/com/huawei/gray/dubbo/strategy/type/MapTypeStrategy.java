@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,22 +19,23 @@ package com.huawei.gray.dubbo.strategy.type;
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * map匹配策略
  *
  * @author provenceee
- * @since 2021/10/13
+ * @since 2021-10-13
  */
 public class MapTypeStrategy extends TypeStrategy {
     @Override
-    public String getValue(Object arg, String type) {
+    public Optional<String> getValue(Object arg, String type) {
         if (arg instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) arg;
             Object object = map.get(getKey(type));
-            return object == null ? null : String.valueOf(object);
+            return object == null ? Optional.empty() : Optional.of(String.valueOf(object));
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

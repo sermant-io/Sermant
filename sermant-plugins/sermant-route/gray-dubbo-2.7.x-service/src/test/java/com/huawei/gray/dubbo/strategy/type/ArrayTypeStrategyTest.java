@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,10 @@ import org.junit.Test;
 /**
  * 数组匹配策略测试
  *
- * @author pengyuyi
- * @date 2021/12/1
+ * @author provenceee
+ * @since 2021-12-01
  */
+@SuppressWarnings("checkstyle:all")
 public class ArrayTypeStrategyTest {
     /**
      * 测试数组策略
@@ -35,15 +36,20 @@ public class ArrayTypeStrategyTest {
     public void testValue() {
         TypeStrategy strategy = new ArrayTypeStrategy();
         String[] arr = new String[]{"foo", null};
+
         // 正常情况
-        Assert.assertEquals("foo", strategy.getValue(arr, "[0]"));
+        Assert.assertEquals("foo", strategy.getValue(arr, "[0]").orElse(null));
+
         // 测试null
-        Assert.assertNotEquals("foo", strategy.getValue(arr, "[1]"));
+        Assert.assertNotEquals("foo", strategy.getValue(arr, "[1]").orElse(null));
+
         // 测试越界
-        Assert.assertNotEquals("foo", strategy.getValue(arr, "[2]"));
+        Assert.assertNotEquals("foo", strategy.getValue(arr, "[2]").orElse(null));
+
         // 测试非数组
-        Assert.assertNotEquals("foo", strategy.getValue("bar", "[0]"));
+        Assert.assertNotEquals("foo", strategy.getValue("bar", "[0]").orElse(null));
+
         // 测试不等于
-        Assert.assertNotEquals("bar", strategy.getValue(arr, "[0]"));
+        Assert.assertNotEquals("bar", strategy.getValue(arr, "[0]").orElse(null));
     }
 }

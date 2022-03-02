@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package com.huawei.route.common.gray.constants;
  * 常量
  *
  * @author provenceee
- * @since 2021/10/13
+ * @since 2021-10-13
  */
 public class GrayConstant {
     /**
@@ -46,7 +46,7 @@ public class GrayConstant {
     /**
      * 灰度发布默认版本
      */
-    public static final String GRAY_DEFAULT_VERSION = "DEFAULT_VERSION";
+    public static final String GRAY_DEFAULT_VERSION = "0.0.0";
 
     /**
      * isEnabled匹配的方法名
@@ -62,11 +62,6 @@ public class GrayConstant {
      * 注册时ldc的key
      */
     public static final String GRAY_LDC_KEY = "ldc";
-
-    /**
-     * DUBBO协议前缀
-     */
-    public static final String DUBBO_PREFIX = "dubbo://";
 
     /**
      * 灰度配置servicecomb的key
@@ -87,6 +82,11 @@ public class GrayConstant {
      * 注册时版本号
      */
     public static final String REG_VERSION_KEY = "reg.version";
+
+    /**
+     * dubbo应用灰度标签缓存名
+     */
+    public static final String GRAY_LABEL_CACHE_NAME = "DUBBO_GRAY_LABEL";
 
     private GrayConstant() {
     }
