@@ -17,8 +17,8 @@
 package com.huawei.register.interceptors.health;
 
 import com.huawei.register.context.RegisterContext;
+import com.huawei.register.support.RegisterSwitchSupport;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 /**
  * 拦截ConsulCatalogWatch,用于后续关闭服务
@@ -26,14 +26,9 @@ import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
  * @author zhouss
  * @since 2021-12-31
  */
-public class ConsulWatchInterceptor extends AbstractInterceptor {
+public class ConsulWatchInterceptor extends RegisterSwitchSupport {
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
-        return context;
-    }
-
-    @Override
-    public ExecuteContext after(ExecuteContext context) throws Exception {
+    public ExecuteContext doAfter(ExecuteContext context) {
         RegisterContext.INSTANCE.setRegisterWatch(context.getObject());
         return context;
     }

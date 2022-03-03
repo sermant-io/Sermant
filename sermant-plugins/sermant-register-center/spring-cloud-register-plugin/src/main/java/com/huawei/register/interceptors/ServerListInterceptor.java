@@ -22,7 +22,6 @@ import com.huawei.register.services.RegisterCenterService;
 import com.huawei.register.support.InstanceInterceptorSupport;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huawei.sermant.core.service.ServiceManager;
 
 import com.netflix.loadbalancer.Server;
@@ -42,11 +41,11 @@ import java.util.stream.Collectors;
  * @author zhouss
  * @since 2021-12-13
  */
-public class ServerListInterceptor extends InstanceInterceptorSupport implements Interceptor {
+public class ServerListInterceptor extends InstanceInterceptorSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
+    public ExecuteContext doBefore(ExecuteContext context) {
         if (isMarked()) {
             // 此处针对当前线程， 如果是拦截器内部调用直接pass
             return context;
@@ -99,16 +98,6 @@ public class ServerListInterceptor extends InstanceInterceptorSupport implements
                 exception.getMessage()));
             return Collections.emptyList();
         }
-    }
-
-    @Override
-    public ExecuteContext after(ExecuteContext context) throws Exception {
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) {
-        return context;
     }
 
     @Override

@@ -21,7 +21,6 @@ import com.huawei.register.handler.SingleStateCloseHandler;
 import com.huawei.register.support.FieldAccessAction;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
@@ -38,7 +37,7 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-12-13
  */
-public class ZookeeperHealthInterceptor extends SingleStateCloseHandler implements Interceptor {
+public class ZookeeperHealthInterceptor extends SingleStateCloseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private boolean isAvailable(TreeCacheEvent.Type eventType) {
@@ -67,7 +66,7 @@ public class ZookeeperHealthInterceptor extends SingleStateCloseHandler implemen
     }
 
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
+    public ExecuteContext doBefore(ExecuteContext context) {
         setArguments(context.getArguments());
         setTarget(context.getObject());
         if (arguments.length > 1 && arguments[1] instanceof TreeCacheEvent) {
@@ -82,16 +81,6 @@ public class ZookeeperHealthInterceptor extends SingleStateCloseHandler implemen
                 return context;
             }
         }
-        return context;
-    }
-
-    @Override
-    public ExecuteContext after(ExecuteContext context) {
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) {
         return context;
     }
 }

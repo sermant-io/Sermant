@@ -20,7 +20,6 @@ import com.huawei.register.context.RegisterContext;
 import com.huawei.register.handler.SingleStateCloseHandler;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import org.springframework.cloud.consul.discovery.ConsulCatalogWatch;
 
@@ -32,7 +31,7 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-12-13
  */
-public class ConsulHealthInterceptor extends SingleStateCloseHandler implements Interceptor {
+public class ConsulHealthInterceptor extends SingleStateCloseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
@@ -47,12 +46,7 @@ public class ConsulHealthInterceptor extends SingleStateCloseHandler implements 
     }
 
     @Override
-    public ExecuteContext before(ExecuteContext context) {
-        return context;
-    }
-
-    @Override
-    public ExecuteContext after(ExecuteContext context) {
+    public ExecuteContext doAfter(ExecuteContext context) {
         final Object result = context.getResult();
         if (result != null) {
             // 原始注册中心恢复
@@ -64,7 +58,7 @@ public class ConsulHealthInterceptor extends SingleStateCloseHandler implements 
     }
 
     @Override
-    public ExecuteContext onThrow(ExecuteContext context) {
+    public ExecuteContext doThrow(ExecuteContext context) {
         final boolean isOriginState = RegisterContext.INSTANCE.isAvailable();
 
         // 如果心跳为0L，则当前实例与consul注册中心不通，针对该实例注册中心已失效

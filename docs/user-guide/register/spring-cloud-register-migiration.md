@@ -39,11 +39,12 @@
 
 配置说明见[注册中心插件文档](./document.md#修改配置文件)
 
-基于以上配置，**新增迁移配置**，配置内容如下：
+基于以上配置，**新增迁移配置**，并开启Spring注册插件配置内容如下：
 
 ```yaml
 servicecomb.service:
   openMigration: true #是否开启迁移功能 若进行注册中心迁移，则需将该值设置为true
+  enableSpringRegister: true #开启spring注册插件
 ```
 
 ### 启动Service Center

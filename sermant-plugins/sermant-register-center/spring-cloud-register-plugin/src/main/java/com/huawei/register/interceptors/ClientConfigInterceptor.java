@@ -17,8 +17,8 @@
 package com.huawei.register.interceptors;
 
 import com.huawei.register.context.RegisterContext;
+import com.huawei.register.support.RegisterSwitchSupport;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 import com.netflix.client.config.IClientConfig;
 
@@ -28,14 +28,9 @@ import com.netflix.client.config.IClientConfig;
  * @author zhouss
  * @since 2021-12-31
  */
-public class ClientConfigInterceptor extends AbstractInterceptor {
+public class ClientConfigInterceptor extends RegisterSwitchSupport {
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
-        return context;
-    }
-
-    @Override
-    public ExecuteContext after(ExecuteContext context) throws Exception {
+    public ExecuteContext doAfter(ExecuteContext context) {
         final Object obj = context.getObject();
         if (obj instanceof IClientConfig) {
             RegisterContext.INSTANCE.getClientInfo().setServiceName(((IClientConfig) obj).getClientName());

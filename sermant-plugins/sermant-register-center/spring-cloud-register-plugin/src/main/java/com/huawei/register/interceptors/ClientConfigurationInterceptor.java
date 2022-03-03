@@ -17,8 +17,8 @@
 package com.huawei.register.interceptors;
 
 import com.huawei.register.context.RegisterContext;
+import com.huawei.register.support.RegisterSwitchSupport;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 
@@ -28,14 +28,9 @@ import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryCl
  * @author zhouss
  * @since 2021-12-13
  */
-public class ClientConfigurationInterceptor extends AbstractInterceptor {
+public class ClientConfigurationInterceptor extends RegisterSwitchSupport {
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
-        return context;
-    }
-
-    @Override
-    public ExecuteContext after(ExecuteContext context) {
+    public ExecuteContext doAfter(ExecuteContext context) {
         final Object result = context.getResult();
         if (result instanceof CompositeDiscoveryClient) {
             RegisterContext.INSTANCE.setDiscoveryClient(result);
