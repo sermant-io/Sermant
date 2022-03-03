@@ -32,9 +32,12 @@ import java.util.Collections;
  * @author zhouss
  * @since 2021-11-18
  */
-public class CseRuleSyncerTest {
+public class CseRuleSyncerTest extends BaseTest {
+    /**
+     * 测试配置同步
+     */
     @Test
-    public void testSync() throws InterruptedException {
+    public void testSync() {
         LoggerFactory.init(Collections.singletonMap(CommonConstant.LOG_SETTING_FILE_KEY, new Object()));
         ServiceManager.initServices();
         final CseRuleSyncer cseRuleSyncer = new CseRuleSyncer();

@@ -23,9 +23,10 @@ import com.huawei.flowcontrol.common.config.ConfigConst;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.util.StringUtils;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 
 /**
@@ -34,44 +35,40 @@ import org.springframework.core.env.Environment;
  * @author zhouss
  * @since 2022-01-28
  */
-public class SpringEnvironmentInterceptor implements Interceptor {
+public class SpringEnvironmentInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         return context;
     }
 
     @Override
-    public ExecuteContext after(ExecuteContext context) throws Exception {
-        final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
-        final Object result = context.getResult();
-        if (!(result instanceof Environment)) {
+    public ExecuteContext after(ExecuteContext context) {
+        final Object applicationContext = context.getArguments()[0];
+        if (!(applicationContext instanceof ConfigurableApplicationContext) || CseServiceMeta.getInstance()
+            .isDubboService()) {
             return context;
         }
-        Environment environment = (Environment) result;
+        final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
+        Environment environment = ((ConfigurableApplicationContext) applicationContext).getEnvironment();
         if (pluginConfig.isUseCseRule() && pluginConfig.isBaseSdk()) {
             CseServiceMeta.getInstance().setProject(environment.getProperty(CseConstants.KEY_SPRING_KIE_PROJECT,
-                    CseConstants.DEFAULT_PROJECT));
+                CseConstants.DEFAULT_PROJECT));
             CseServiceMeta.getInstance().setServiceName(environment.getProperty(CseConstants.KEY_SPRING_SERVICE_NAME));
             CseServiceMeta.getInstance().setEnvironment(environment.getProperty(CseConstants.KEY_SPRING_ENVIRONMENT));
             CseServiceMeta.getInstance().setApp(environment.getProperty(CseConstants.KEY_SPRING_APP_NAME));
             CseServiceMeta.getInstance().setCustomLabel(environment.getProperty(CseConstants.KEY_SPRING_CUSTOM_LABEL,
-                    CseConstants.DEFAULT_CUSTOM_LABEL));
+                CseConstants.DEFAULT_CUSTOM_LABEL));
             CseServiceMeta.getInstance().setCustomLabelValue(environment.getProperty(
-                    CseConstants.KEY_SPRING_CUSTOM_LABEL_VALUE, CseConstants.DEFAULT_CUSTOM_LABEL_VALUE));
+                CseConstants.KEY_SPRING_CUSTOM_LABEL_VALUE, CseConstants.DEFAULT_CUSTOM_LABEL_VALUE));
             CseServiceMeta.getInstance().setVersion(environment.getProperty(CseConstants.KEY_SPRING_VERSION));
         } else {
             String serviceName = environment.getProperty(ConfigConst.SPRING_APPLICATION_NAME);
             if (StringUtils.isEmpty(serviceName)) {
-                serviceName = environment.getProperty(ConfigConst.PROJECT_NAME,
-                        CseConstants.DEFAULT_DUBBO_SERVICE_NAME);
+                serviceName = environment
+                    .getProperty(ConfigConst.PROJECT_NAME, CseConstants.DEFAULT_DUBBO_SERVICE_NAME);
             }
             CseServiceMeta.getInstance().setServiceName(serviceName);
         }
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
         return context;
     }
 }

@@ -20,7 +20,6 @@ import com.huawei.register.context.RegisterContext;
 import com.huawei.register.handler.SingleStateCloseHandler;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import java.util.logging.Logger;
 
@@ -30,7 +29,7 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-12-13
  */
-public class EurekaHealthInterceptor extends SingleStateCloseHandler implements Interceptor {
+public class EurekaHealthInterceptor extends SingleStateCloseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
@@ -48,14 +47,14 @@ public class EurekaHealthInterceptor extends SingleStateCloseHandler implements 
     }
 
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
+    public ExecuteContext doBefore(ExecuteContext context) {
         setArguments(context.getArguments());
         setTarget(context.getObject());
         return context;
     }
 
     @Override
-    public ExecuteContext after(ExecuteContext context) {
+    public ExecuteContext doAfter(ExecuteContext context) {
         final Object result = context.getResult();
         if (result instanceof Boolean) {
             final boolean heartbeatResult = (Boolean) result;
@@ -66,11 +65,6 @@ public class EurekaHealthInterceptor extends SingleStateCloseHandler implements 
                 doChange(context.getObject(), arguments, true, false);
             }
         }
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) {
         return context;
     }
 }

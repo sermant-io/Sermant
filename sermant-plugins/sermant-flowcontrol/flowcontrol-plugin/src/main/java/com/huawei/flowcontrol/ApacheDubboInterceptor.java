@@ -31,7 +31,7 @@ import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.RpcException;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Locale;
 
 /**
@@ -51,7 +51,7 @@ public class ApacheDubboInterceptor extends InterceptorSupporter {
         // 高版本使用api invocation.getTargetServiceUniqueName获取路径，此处使用版本加接口，达到的最终结果一致
         String apiPath = ConvertUtils.buildApiPath(invocation.getInvoker().getInterface().getName(),
             invocation.getAttachment(ConvertUtils.DUBBO_ATTACHMENT_VERSION), invocation.getMethodName());
-        return new DubboRequestEntity(apiPath, new HashMap<>(invocation.getAttachments()));
+        return new DubboRequestEntity(apiPath, Collections.unmodifiableMap(invocation.getAttachments()));
     }
 
     @Override

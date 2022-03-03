@@ -107,7 +107,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
                 }
                 return result;
             }
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
+        } catch (NoSuchMethodException | IllegalAccessException ex) {
             LOGGER.warning("No such Method ! " + ex.getMessage());
         }
         return ret;
@@ -157,7 +157,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
             // 调用宿主方法
             RetryContext.INSTANCE.markRetry(retry);
             result = invokeRetryMethod(context.getObject(), allArguments, result, false, false);
-            final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
+            final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
                 .getHandlers(convertToApacheDubboEntity(invocation));
             if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ((AsyncRpcResult) result).getException())) {
                 RetryContext.INSTANCE.markRetry(retry);
@@ -167,7 +167,12 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
                 invocation.getAttachments().remove(RETRY_KEY);
             }
         } catch (Throwable throwable) {
-            result = AsyncRpcResult.newDefaultAsyncResult(throwable, invocation);
+            if (throwable instanceof InvocationTargetException) {
+                InvocationTargetException exception = (InvocationTargetException) throwable;
+                result = AsyncRpcResult.newDefaultAsyncResult(exception.getTargetException(), invocation);
+            } else {
+                result = AsyncRpcResult.newDefaultAsyncResult(throwable, invocation);
+            }
         } finally {
             RetryContext.INSTANCE.removeRetry();
         }

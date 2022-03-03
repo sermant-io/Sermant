@@ -19,6 +19,7 @@ package com.huawei.register.handler;
 import com.huawei.register.config.RegisterConfig;
 import com.huawei.register.config.RegisterDynamicConfig;
 import com.huawei.register.context.RegisterContext;
+import com.huawei.register.support.RegisterSwitchSupport;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
@@ -32,7 +33,7 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2022-01-04
  */
-public abstract class SingleStateCloseHandler {
+public abstract class SingleStateCloseHandler extends RegisterSwitchSupport {
     /**
      * 注册中心是否关闭
      */
@@ -94,13 +95,16 @@ public abstract class SingleStateCloseHandler {
     }
 
     /**
-     * 子类实现，默认为配置的注册开关 若需修改，则需重新实现该方法
+     * 子类实现，默认为配置的注册开关 若需修改，则需重新实现该方法 满足条件:
+     * <li>已开启spring注册</li>
+     * <li>配置中心已下发关闭注册中心指令或者属于单注册的场景</li>
      *
      * @return 是否可关闭注册中心
      */
     protected boolean needCloseRegisterCenter() {
-        return RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()
-            || !PluginConfigManager.getPluginConfig(RegisterConfig.class).isOpenMigration();
+        return (RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()
+            || !PluginConfigManager.getPluginConfig(RegisterConfig.class).isOpenMigration())
+            && isEnableSpringRegister();
     }
 
     /**

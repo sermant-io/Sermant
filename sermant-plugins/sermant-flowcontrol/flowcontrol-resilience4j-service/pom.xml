@@ -74,6 +74,12 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!--测试依赖-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

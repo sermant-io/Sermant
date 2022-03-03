@@ -53,13 +53,42 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
 
     protected static final String RETRY_VALUE = "$$$$RETRY_VALUE$$$";
 
-    protected final RetryHandlerV2 retryHandler = new RetryHandlerV2();
+    protected static final String APACHE_DUBBO_CLUSTER_CLASS_NAME = "org.apache.dubbo.rpc.cluster.Cluster";
+
+    protected static final String ALIBABA_DUBBO_CLUSTER_CLASS_NAME = "com.alibaba.dubbo.rpc.cluster.Cluster";
+
+    private static final String REFUSE_REPLACE_INVOKER = "close";
+
+    protected final FlowControlConfig flowControlConfig;
 
     private final ReentrantLock lock = new ReentrantLock();
+
+    private RetryHandlerV2 retryHandler = null;
 
     private DubboService dubboService;
 
     private HttpService httpService;
+
+    protected InterceptorSupporter() {
+        flowControlConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
+    }
+
+    /**
+     * 获取重试处理器
+     *
+     * @return RetryHandlerV2
+     */
+    protected final RetryHandlerV2 getRetryHandler() {
+        if (retryHandler == null) {
+            lock.lock();
+            try {
+                retryHandler = new RetryHandlerV2();
+            } finally {
+                lock.unlock();
+            }
+        }
+        return retryHandler;
+    }
 
     /**
      * 获取选择后的DUBBO服务
@@ -70,8 +99,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
         if (dubboService == null) {
             lock.lock();
             try {
-                final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
-                if (pluginConfig.getFlowFramework() == FlowFramework.SENTINEL) {
+                if (flowControlConfig.getFlowFramework() == FlowFramework.SENTINEL) {
                     dubboService = ServiceManager.getService(DubboSenService.class);
                 } else {
                     dubboService = ServiceManager.getService(DubboRest4jService.class);
@@ -92,8 +120,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
         if (httpService == null) {
             lock.lock();
             try {
-                final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
-                if (pluginConfig.getFlowFramework() == FlowFramework.SENTINEL) {
+                if (flowControlConfig.getFlowFramework() == FlowFramework.SENTINEL) {
                     httpService = ServiceManager.getService(HttpSenService.class);
                 } else {
                     httpService = ServiceManager.getService(HttpRest4jService.class);
@@ -151,26 +178,38 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
 
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
-        if (RetryContext.INSTANCE.isMarkedRetry()) {
-            return context;
+        if (canInvoke()) {
+            return doBefore(context);
         }
-        return doBefore(context);
+        return context;
     }
 
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        if (RetryContext.INSTANCE.isMarkedRetry()) {
-            return context;
+        if (canInvoke()) {
+            return doAfter(context);
         }
-        return doAfter(context);
+        return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-        if (RetryContext.INSTANCE.isMarkedRetry()) {
-            return context;
+        if (canInvoke()) {
+            return doThrow(context);
         }
-        return doThrow(context);
+        return context;
+    }
+
+    /**
+     * 是否可注入dubbo cluster 加载器
+     *
+     * @param className 加载器类型
+     * @return 是否可注入
+     */
+    protected final boolean canInjectClusterInvoker(String className) {
+        boolean isClusterLoader =
+            APACHE_DUBBO_CLUSTER_CLASS_NAME.equals(className) || ALIBABA_DUBBO_CLUSTER_CLASS_NAME.equals(className);
+        return isClusterLoader && !REFUSE_REPLACE_INVOKER.equals(flowControlConfig.getRetryClusterInvoker());
     }
 
     /**
@@ -199,5 +238,14 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
      */
     protected ExecuteContext doThrow(ExecuteContext context) {
         return context;
+    }
+
+    /**
+     * 是否可调用内部方法逻辑
+     *
+     * @return 是否可调用
+     */
+    protected boolean canInvoke() {
+        return !RetryContext.INSTANCE.isMarkedRetry();
     }
 }

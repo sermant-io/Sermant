@@ -20,7 +20,6 @@ import com.huawei.register.context.RegisterContext;
 import com.huawei.register.handler.SingleStateCloseHandler;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import com.alibaba.nacos.client.naming.beat.BeatInfo;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -33,7 +32,7 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-12-13
  */
-public class NacosHealthInterceptor extends SingleStateCloseHandler implements Interceptor {
+public class NacosHealthInterceptor extends SingleStateCloseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @SuppressWarnings("checkstyle:RegexpSingleline")
@@ -53,14 +52,14 @@ public class NacosHealthInterceptor extends SingleStateCloseHandler implements I
     }
 
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
+    public ExecuteContext doBefore(ExecuteContext context) {
         setArguments(context.getArguments());
         setTarget(context.getObject());
         return context;
     }
 
     @Override
-    public ExecuteContext after(ExecuteContext context) {
+    public ExecuteContext doAfter(ExecuteContext context) {
         final Object result = context.getResult();
         if (isValidResult(result)) {
             if (result == null && RegisterContext.INSTANCE.compareAndSet(true, false)) {
@@ -88,11 +87,6 @@ public class NacosHealthInterceptor extends SingleStateCloseHandler implements I
                 return context;
             }
         }
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) {
         return context;
     }
 }

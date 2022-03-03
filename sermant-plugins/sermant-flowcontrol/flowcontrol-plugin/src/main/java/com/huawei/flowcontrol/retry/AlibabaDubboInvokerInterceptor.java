@@ -97,7 +97,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
                 }
                 return result;
             }
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
+        } catch (NoSuchMethodException | IllegalAccessException ex) {
             LOGGER.warning("No such Method ! " + ex.getMessage());
         }
         return ret;
@@ -147,7 +147,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
             // 标记当前线程执行重试
             RetryContext.INSTANCE.markRetry(retry);
             result = invokeRetryMethod(context.getObject(), allArguments, result, false, false);
-            final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
+            final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
                 .getHandlers(convertToAlibabaDubboEntity(invocation));
             if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ((RpcResult) result).getException())) {
                 result = handlers.get(0).executeCheckedSupplier(
@@ -155,7 +155,12 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
                         true));
             }
         } catch (Throwable throwable) {
-            result = new RpcResult(throwable);
+            if (throwable instanceof InvocationTargetException) {
+                InvocationTargetException exception = (InvocationTargetException) throwable;
+                result = new RpcResult(exception);
+            } else {
+                result = new RpcResult(throwable);
+            }
         } finally {
             RetryContext.INSTANCE.removeRetry();
         }

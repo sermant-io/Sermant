@@ -16,9 +16,11 @@
 
 package com.huawei.sermant.core.service.dynamicconfig.kie.client.http;
 
-import com.alibaba.fastjson.JSONObject;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.dynamicconfig.kie.listener.SubscriberManager;
+
+import com.alibaba.fastjson.JSONObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -35,16 +37,27 @@ import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 
 /**
  * HTTP客户端
@@ -60,8 +73,7 @@ public class DefaultHttpClient implements com.huawei.sermant.core.service.dynami
     private static final int DEFAULT_TIMEOUT_MS = 5000;
 
     /**
-     * 最大的连接数
-     * 该值建议 > {@link SubscriberManager}最大线程数MAX_THREAD_SIZE
+     * 最大的连接数 该值建议 > {@link SubscriberManager}最大线程数MAX_THREAD_SIZE
      */
     private static final int MAX_TOTAL = SubscriberManager.MAX_THREAD_SIZE * 2;
 
@@ -74,39 +86,47 @@ public class DefaultHttpClient implements com.huawei.sermant.core.service.dynami
 
     public DefaultHttpClient() {
         httpClient = HttpClientBuilder.create().setDefaultRequestConfig(
-                RequestConfig.custom().setConnectTimeout(DEFAULT_TIMEOUT_MS)
-                        .setSocketTimeout(DEFAULT_TIMEOUT_MS)
-                        .setConnectionRequestTimeout(DEFAULT_TIMEOUT_MS)
-                        .build()
+            RequestConfig.custom().setConnectTimeout(DEFAULT_TIMEOUT_MS)
+                .setSocketTimeout(DEFAULT_TIMEOUT_MS)
+                .setConnectionRequestTimeout(DEFAULT_TIMEOUT_MS)
+                .build()
         ).setConnectionManager(buildConnectionManager()).build();
     }
 
     public DefaultHttpClient(RequestConfig requestConfig) {
         this.httpClient = HttpClientBuilder.create()
-                .setDefaultRequestConfig(requestConfig)
-                .setConnectionManager(buildConnectionManager())
-                .build();
+            .setDefaultRequestConfig(requestConfig)
+            .setConnectionManager(buildConnectionManager())
+            .build();
     }
 
-
     /**
-     * 配置连接池的主要目的是防止在发送请求时连接不够导致无法请求
-     * 特别是针对订阅者
+     * 配置连接池的主要目的是防止在发送请求时连接不够导致无法请求 特别是针对订阅者
      *
      * @return PoolingHttpClientConnectionManager
      */
     private PoolingHttpClientConnectionManager buildConnectionManager() {
         RegistryBuilder<ConnectionSocketFactory> builder = RegistryBuilder.create();
         builder.register("http", PlainConnectionSocketFactory.INSTANCE);
+        registerHttps(builder);
+
         // 如果需配置SSL 在此处注册https
         Registry<ConnectionSocketFactory> connectionSocketFactoryRegistry = builder.build();
-
-        //connection pool management
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(
-                connectionSocketFactoryRegistry);
+            connectionSocketFactoryRegistry);
         connectionManager.setMaxTotal(MAX_TOTAL);
         connectionManager.setDefaultMaxPerRoute(DEFAULT_MAX_PER_ROUTE);
         return connectionManager;
+    }
+
+    private void registerHttps(RegistryBuilder<ConnectionSocketFactory> builder) {
+        try {
+            HostnameVerifier hostnameVerifier = SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+            final SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(new SslTrustStrategy()).build();
+            builder.register("https", new SSLConnectionSocketFactory(sslContext, hostnameVerifier));
+        } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Failed to get SSLContext, reason: %s", ex.getMessage()));
+        }
     }
 
     /**
@@ -128,7 +148,7 @@ public class DefaultHttpClient implements com.huawei.sermant.core.service.dynami
     /**
      * get请求
      *
-     * @param url 请求地址
+     * @param url     请求地址
      * @param headers 请求头
      * @return HttpResult
      */
@@ -150,7 +170,8 @@ public class DefaultHttpClient implements com.huawei.sermant.core.service.dynami
     }
 
     @Override
-    public HttpResult doPost(String url, Map<String, Object> params, RequestConfig requestConfig, Map<String, String> headers) {
+    public HttpResult doPost(String url, Map<String, Object> params, RequestConfig requestConfig,
+        Map<String, String> headers) {
         HttpPost httpPost = new HttpPost(url);
         beforeRequest(httpPost, requestConfig, headers);
         addParams(httpPost, params);
@@ -193,7 +214,7 @@ public class DefaultHttpClient implements com.huawei.sermant.core.service.dynami
             }
             result = EntityUtils.toString(entity, "UTF-8");
         } catch (IOException ex) {
-            LOGGER.warning(String.format("Execute request failed, %s", ex.getMessage()));
+            LOGGER.warning(String.format(Locale.ENGLISH, "Execute request failed, %s", ex.getMessage()));
         } finally {
             consumeEntity(entity);
         }
@@ -207,7 +228,7 @@ public class DefaultHttpClient implements com.huawei.sermant.core.service.dynami
         try {
             EntityUtils.consume(entity);
         } catch (IOException ex) {
-            LOGGER.warning(String.format("Consumed http entity failed, %s", ex.getMessage()));
+            LOGGER.warning(String.format(Locale.ENGLISH, "Consumed http entity failed, %s", ex.getMessage()));
         }
     }
 
@@ -240,5 +261,12 @@ public class DefaultHttpClient implements com.huawei.sermant.core.service.dynami
     private void addDefaultHeaders(HttpRequestBase base) {
         base.addHeader(HttpHeaders.CONTENT_TYPE, "application/json; charset=utf-8");
         base.addHeader(HttpHeaders.USER_AGENT, "sermant/client");
+    }
+
+    static class SslTrustStrategy implements TrustStrategy {
+        @Override
+        public boolean isTrusted(X509Certificate[] chain, String authType) {
+            return true;
+        }
     }
 }
