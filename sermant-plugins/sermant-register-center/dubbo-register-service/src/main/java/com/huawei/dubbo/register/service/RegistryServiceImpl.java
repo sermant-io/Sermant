@@ -34,6 +34,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.servicecomb.foundation.ssl.SSLCustom;
+import org.apache.servicecomb.foundation.ssl.SSLOption;
 import org.apache.servicecomb.http.client.auth.DefaultRequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpConfiguration.SSLProperties;
 import org.apache.servicecomb.service.center.client.AddressManager;
@@ -109,8 +111,7 @@ public class RegistryServiceImpl implements RegistryService {
         }
         config = PluginConfigManager.getPluginConfig(RegisterConfig.class);
         client = new ServiceCenterClient(new AddressManager(config.getProject(), config.getAddressList()),
-            new SSLProperties(), new DefaultRequestAuthHeaderProvider(), DEFAULT_TENANT_NAME,
-            Collections.emptyMap());
+            createSslProperties(), new DefaultRequestAuthHeaderProvider(), DEFAULT_TENANT_NAME, Collections.emptyMap());
         createMicroservice();
         createMicroserviceInstance();
         createServiceCenterRegistration();
@@ -227,6 +228,16 @@ public class RegistryServiceImpl implements RegistryService {
     @Subscribe
     public void onInstanceChangedEvent(InstanceChangedEvent event) {
         notify(event.getAppName(), event.getServiceName(), event.getInstances());
+    }
+
+    private SSLProperties createSslProperties() {
+        SSLProperties sslProperties = new SSLProperties();
+        if (config.isSslEnabled()) {
+            sslProperties.setEnabled(true);
+            sslProperties.setSslOption(SSLOption.DEFAULT_OPTION);
+            sslProperties.setSslCustom(SSLCustom.defaultSSLCustom());
+        }
+        return sslProperties;
     }
 
     private void createMicroservice() {
