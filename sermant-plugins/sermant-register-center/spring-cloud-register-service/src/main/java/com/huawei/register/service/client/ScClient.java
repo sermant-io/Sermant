@@ -24,10 +24,12 @@
 
 package com.huawei.register.service.client;
 
+import com.huawei.register.config.ConfigConstants;
 import com.huawei.register.config.RegisterConfig;
 import com.huawei.register.context.RegisterContext;
 import com.huawei.register.utils.HostUtils;
 import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.sermant.core.plugin.common.PluginConstant;
 import com.huawei.sermant.core.plugin.common.PluginSchemaValidator;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
@@ -44,9 +46,10 @@ import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeat
 import org.apache.servicecomb.service.center.client.RegistrationEvents.MicroserviceRegistrationEvent;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
+import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery.SubscriptionKey;
 import org.apache.servicecomb.service.center.client.ServiceCenterOperation;
 import org.apache.servicecomb.service.center.client.ServiceCenterRegistration;
-import org.apache.servicecomb.service.center.client.exception.OperationException;
+import org.apache.servicecomb.service.center.client.model.DataCenterInfo;
 import org.apache.servicecomb.service.center.client.model.Framework;
 import org.apache.servicecomb.service.center.client.model.HealthCheck;
 import org.apache.servicecomb.service.center.client.model.HealthCheckMode;
@@ -55,9 +58,11 @@ import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstancesResponse;
 import org.apache.servicecomb.service.center.client.model.MicroserviceStatus;
+import org.apache.servicecomb.service.center.client.model.MicroservicesResponse;
 import org.apache.servicecomb.service.center.client.model.ServiceCenterConfiguration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -66,6 +71,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * 基于注册任务注册服务实例
@@ -107,6 +113,8 @@ public class ScClient {
 
     private Microservice microservice;
 
+    private MicroserviceInstance microserviceInstance;
+
     private ServiceCenterDiscovery serviceCenterDiscovery;
 
     /**
@@ -128,18 +136,97 @@ public class ScClient {
     /**
      * 查询所有实例
      *
-     * @param serviceId 服务ID
+     * @param serviceName 服务名
      * @return 实例列表
      */
-    public List<MicroserviceInstance> queryInstancesByServiceId(String serviceId) {
-        MicroserviceInstancesResponse response = null;
-        try {
-            response = serviceCenterClient.getMicroserviceInstanceList(serviceId);
-        } catch (OperationException ex) {
-            LOGGER.warning(String.format(Locale.ENGLISH,
-                "Query service center instance list failed! %s", ex.getMessage()));
+    public List<MicroserviceInstance> queryInstancesByServiceId(String serviceName) {
+        List<MicroserviceInstance> instances;
+        if (registerConfig.isAllowCrossApp()) {
+            instances = queryAllAppInstances(serviceName);
+        } else {
+            instances = getInstanceByCurApp(serviceName);
         }
-        return response == null ? Collections.emptyList() : response.getInstances();
+        if (instances == null) {
+            return Collections.emptyList();
+        }
+        if (registerConfig.isEnableZoneAware()) {
+            return zoneAwareFilter(instances);
+        }
+        return instances;
+    }
+
+    private List<MicroserviceInstance> queryAllAppInstances(String serviceName) {
+        final MicroservicesResponse response = serviceCenterClient.getMicroserviceList();
+        if (response == null || response.getServices() == null) {
+            return Collections.emptyList();
+        }
+        final List<Microservice> allServices = response.getServices();
+        final List<String> allServiceIds = allServices.stream()
+            .filter(service -> StringUtils.equals(service.getServiceName(), serviceName))
+            .map(Microservice::getServiceId)
+            .distinct()
+            .collect(Collectors.toList());
+        List<MicroserviceInstance> microserviceInstances = new ArrayList<>();
+        allServiceIds.forEach(serviceId -> {
+            final MicroserviceInstancesResponse instanceResponse = serviceCenterClient
+                .getMicroserviceInstanceList(serviceId);
+            if (instanceResponse != null && instanceResponse.getInstances() != null) {
+                microserviceInstances.addAll(instanceResponse.getInstances());
+            }
+        });
+        return microserviceInstances;
+    }
+
+    private List<MicroserviceInstance> getInstanceByCurApp(String serviceName) {
+        final SubscriptionKey subscriptionKey = buildSubscriptionKey(serviceName);
+        serviceCenterDiscovery.registerIfNotPresent(subscriptionKey);
+        return serviceCenterDiscovery.getInstanceCache(subscriptionKey);
+    }
+
+    private List<MicroserviceInstance> zoneAwareFilter(List<MicroserviceInstance> instances) {
+        List<MicroserviceInstance> regionAndAzMatchList = new ArrayList<>();
+        List<MicroserviceInstance> regionMatchList = new ArrayList<>();
+        instances.forEach(instance -> {
+            if (regionAndAzMatch(microserviceInstance, instance)) {
+                // 匹配region与zone
+                regionAndAzMatchList.add(instance);
+            } else if (regionMatch(microserviceInstance, instance)) {
+                // 仅匹配region
+                regionMatchList.add(instance);
+            }
+        });
+
+        // 优先使用匹配区域的实例
+        if (!regionAndAzMatchList.isEmpty()) {
+            return regionAndAzMatchList;
+        }
+        if (!regionMatchList.isEmpty()) {
+            return regionMatchList;
+        }
+        return instances;
+    }
+
+    private boolean regionAndAzMatch(MicroserviceInstance myself, MicroserviceInstance target) {
+        if (myself.getDataCenterInfo() != null && target.getDataCenterInfo() != null) {
+            return myself.getDataCenterInfo().getRegion().equals(target.getDataCenterInfo().getRegion())
+                && myself.getDataCenterInfo().getAvailableZone().equals(target.getDataCenterInfo().getAvailableZone());
+        }
+        return false;
+    }
+
+    private boolean regionMatch(MicroserviceInstance myself, MicroserviceInstance target) {
+        if (target.getDataCenterInfo() != null) {
+            return myself.getDataCenterInfo().getRegion().equals(target.getDataCenterInfo().getRegion());
+        }
+        return false;
+    }
+
+    private SubscriptionKey buildSubscriptionKey(String serviceId) {
+        int index = serviceId.indexOf(ConfigConstants.APP_SERVICE_SEPARATOR);
+        if (index == -1) {
+            return new SubscriptionKey(microservice.getAppId(), serviceId);
+        }
+        return new SubscriptionKey(serviceId.substring(0, index), serviceId.substring(index + 1));
     }
 
     /**
@@ -190,7 +277,7 @@ public class ScClient {
             serviceCenterConfiguration, EVENT_BUS);
         EVENT_BUS.register(this);
         serviceCenterRegistration.setMicroservice(buildMicroService());
-        final MicroserviceInstance microserviceInstance = buildMicroServiceInstance();
+        buildMicroServiceInstance();
         serviceCenterRegistration.setHeartBeatInterval(microserviceInstance.getHealthCheck().getInterval());
         serviceCenterRegistration.setMicroserviceInstance(microserviceInstance);
         serviceCenterRegistration.startRegistration();
@@ -216,8 +303,8 @@ public class ScClient {
             RegisterContext.INSTANCE.getClientInfo().getPort()));
     }
 
-    private MicroserviceInstance buildMicroServiceInstance() {
-        final MicroserviceInstance microserviceInstance = new MicroserviceInstance();
+    private void buildMicroServiceInstance() {
+        microserviceInstance = new MicroserviceInstance();
         microserviceInstance.setStatus(MicroserviceInstanceStatus.UP);
         microserviceInstance.setHostName(HostUtils.getHostName());
         microserviceInstance.setEndpoints(buildEndpoints());
@@ -226,10 +313,24 @@ public class ScClient {
         healthCheck.setInterval(registerConfig.getHeartbeatInterval());
         healthCheck.setTimes(registerConfig.getHeartbeatRetryTimes());
         microserviceInstance.setHealthCheck(healthCheck);
+        final String currentTimeMillis = String.valueOf(System.currentTimeMillis());
+        microserviceInstance.setTimestamp(currentTimeMillis);
+        microserviceInstance.setModTimestamp(currentTimeMillis);
         Map<String, String> meta = new HashMap<>(RegisterContext.INSTANCE.getClientInfo().getMeta());
         meta.put(REG_VERSION_KEY, registerConfig.getVersion());
         microserviceInstance.setProperties(meta);
-        return microserviceInstance;
+        if (registerConfig.isEnableZoneAware()) {
+            // 设置数据中心信息
+            fillDataCenterInfo();
+        }
+    }
+
+    private void fillDataCenterInfo() {
+        final DataCenterInfo dataCenterInfo = new DataCenterInfo();
+        dataCenterInfo.setName(registerConfig.getDataCenterName());
+        dataCenterInfo.setAvailableZone(registerConfig.getDataCenterAvailableZone());
+        dataCenterInfo.setRegion(registerConfig.getDataCenterRegion());
+        microserviceInstance.setDataCenterInfo(dataCenterInfo);
     }
 
     private String getVersion() {
@@ -246,7 +347,11 @@ public class ScClient {
 
     private Microservice buildMicroService() {
         microservice = new Microservice();
-        microservice.setAlias(RegisterContext.INSTANCE.getClientInfo().getServiceId());
+        if (registerConfig.isAllowCrossApp()) {
+            microservice.setAlias(
+                registerConfig.getApplication() + ConfigConstants.APP_SERVICE_SEPARATOR + RegisterContext.INSTANCE
+                    .getClientInfo().getServiceId());
+        }
         microservice.setAppId(registerConfig.getApplication());
         microservice.setEnvironment(registerConfig.getEnvironment());
 
@@ -293,7 +398,7 @@ public class ScClient {
         return sslProperties;
     }
 
-    private AddressManager createAddressManager(String project, List<String> kieUrls) {
-        return new AddressManager(project, kieUrls);
+    private AddressManager createAddressManager(String project, List<String> scUrls) {
+        return new AddressManager(project, scUrls);
     }
 }

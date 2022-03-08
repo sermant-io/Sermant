@@ -33,7 +33,7 @@ import org.junit.Test;
  * @since 2022-03-03
  */
 public class OperatorTest {
-    private final String target = "test";
+    private static final String TARGET = "test";
 
     /**
      * 测试数字比较
@@ -55,8 +55,8 @@ public class OperatorTest {
     @Test
     public void testContains() {
         final ContainsOperator containsOperator = new ContainsOperator();
-        Assert.assertTrue(containsOperator.match(target, "es"));
-        Assert.assertTrue(containsOperator.match(target, target));
+        Assert.assertTrue(containsOperator.match(TARGET, "es"));
+        Assert.assertTrue(containsOperator.match(TARGET, TARGET));
     }
 
     /**
@@ -76,9 +76,9 @@ public class OperatorTest {
     @Test
     public void testPrefix() {
         final PrefixOperator prefixOperator = new PrefixOperator();
-        Assert.assertTrue(prefixOperator.match(target, "te"));
-        Assert.assertTrue(prefixOperator.match(target, target));
-        Assert.assertFalse(prefixOperator.match(target, "prefix"));
+        Assert.assertTrue(prefixOperator.match(TARGET, "te"));
+        Assert.assertTrue(prefixOperator.match(TARGET, TARGET));
+        Assert.assertFalse(prefixOperator.match(TARGET, "prefix"));
     }
 
     /**
@@ -87,9 +87,9 @@ public class OperatorTest {
     @Test
     public void testSuffix() {
         final SuffixOperator suffixOperator = new SuffixOperator();
-        Assert.assertTrue(suffixOperator.match(target, "st"));
-        Assert.assertTrue(suffixOperator.match(target, target));
-        Assert.assertTrue(suffixOperator.match(target, ""));
-        Assert.assertFalse(suffixOperator.match(target, "suffix"));
+        Assert.assertTrue(suffixOperator.match(TARGET, "st"));
+        Assert.assertTrue(suffixOperator.match(TARGET, TARGET));
+        Assert.assertTrue(suffixOperator.match(TARGET, ""));
+        Assert.assertFalse(suffixOperator.match(TARGET, "suffix"));
     }
 }

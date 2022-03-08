@@ -20,7 +20,6 @@ package com.huawei.flowcontrol.common.config;
 import com.huawei.flowcontrol.common.enums.FlowFramework;
 import com.huawei.flowcontrol.common.enums.MetricSendWay;
 import com.huawei.sermant.core.config.common.ConfigTypeKey;
-import com.huawei.sermant.core.lubanops.bootstrap.config.IdentityConfigManager;
 import com.huawei.sermant.core.plugin.config.PluginConfig;
 
 /**
@@ -182,7 +181,7 @@ public class FlowControlConfig implements PluginConfig {
     private String configKieAddress = "localhost:30110";
 
     /**
-     * 标签监听的服务名 为空则使用{@link IdentityConfigManager#getAppName()} 否则使用配置的服务名
+     * 标签监听的服务名 为空则使用IdentityConfigManager#getAppName() 否则使用配置的服务名
      */
     private String configServiceName = "sermantService";
 

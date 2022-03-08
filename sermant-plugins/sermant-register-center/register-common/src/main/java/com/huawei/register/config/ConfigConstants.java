@@ -39,6 +39,16 @@ public class ConfigConstants {
      */
     public static final int DEFAULT_HEARTBEAT_INTERVAL = 15;
 
+    /**
+     * APP与Service分隔符
+     */
+    public static final String APP_SERVICE_SEPARATOR = ".";
+
+    /**
+     * 默认值
+     */
+    public static final String COMMON_DEFAULT_VALUE = "default";
+
     private ConfigConstants() {
     }
 }
