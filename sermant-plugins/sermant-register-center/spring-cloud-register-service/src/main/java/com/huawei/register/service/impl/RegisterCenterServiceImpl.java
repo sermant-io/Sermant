@@ -43,12 +43,16 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
 
     @Override
     public void start() {
-        RegisterManager.INSTANCE.start();
+        if (getRegisterConfig().isEnableSpringRegister()) {
+            RegisterManager.INSTANCE.start();
+        }
     }
 
     @Override
     public void stop() {
-        RegisterManager.INSTANCE.stop();
+        if (getRegisterConfig().isEnableSpringRegister()) {
+            RegisterManager.INSTANCE.stop();
+        }
     }
 
     @Override

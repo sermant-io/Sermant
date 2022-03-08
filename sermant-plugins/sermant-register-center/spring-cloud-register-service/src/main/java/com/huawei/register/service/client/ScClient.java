@@ -26,6 +26,7 @@ package com.huawei.register.service.client;
 
 import com.huawei.register.config.RegisterConfig;
 import com.huawei.register.context.RegisterContext;
+import com.huawei.register.utils.HostUtils;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.common.PluginConstant;
 import com.huawei.sermant.core.plugin.common.PluginSchemaValidator;
@@ -35,6 +36,8 @@ import com.huawei.sermant.core.utils.JarFileUtils;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import org.apache.servicecomb.foundation.ssl.SSLCustom;
+import org.apache.servicecomb.foundation.ssl.SSLOption;
 import org.apache.servicecomb.http.client.common.HttpConfiguration;
 import org.apache.servicecomb.service.center.client.AddressManager;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeatEvent;
@@ -209,14 +212,14 @@ public class ScClient {
 
     private List<String> buildEndpoints() {
         return Collections.singletonList(String.format(Locale.ENGLISH, "rest://%s:%d",
-            RegisterContext.INSTANCE.getClientInfo().getHost(),
+            HostUtils.getMachineIp(),
             RegisterContext.INSTANCE.getClientInfo().getPort()));
     }
 
     private MicroserviceInstance buildMicroServiceInstance() {
         final MicroserviceInstance microserviceInstance = new MicroserviceInstance();
         microserviceInstance.setStatus(MicroserviceInstanceStatus.UP);
-        microserviceInstance.setHostName(RegisterContext.INSTANCE.getClientInfo().getHost());
+        microserviceInstance.setHostName(HostUtils.getHostName());
         microserviceInstance.setEndpoints(buildEndpoints());
         HealthCheck healthCheck = new HealthCheck();
         healthCheck.setMode(HealthCheckMode.pull);
@@ -284,6 +287,8 @@ public class ScClient {
 
     private HttpConfiguration.SSLProperties createSslProperties(boolean isEnabled) {
         final HttpConfiguration.SSLProperties sslProperties = new HttpConfiguration.SSLProperties();
+        sslProperties.setSslOption(SSLOption.DEFAULT_OPTION);
+        sslProperties.setSslCustom(SSLCustom.defaultSSLCustom());
         sslProperties.setEnabled(isEnabled);
         return sslProperties;
     }
