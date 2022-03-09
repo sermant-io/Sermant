@@ -34,6 +34,7 @@ import com.huawei.sermant.backend.service.dynamicconfig.service.DynamicConfigura
 import com.huawei.sermant.backend.service.dynamicconfig.utils.LabelGroupUtils;
 import com.huawei.sermant.backend.util.DateUtil;
 import com.huawei.sermant.backend.util.RandomUtil;
+import com.huawei.sermant.backend.util.UuidUtil;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -68,8 +69,6 @@ public class HttpServer {
     @Autowired
     private DynamicConfigurationFactoryServiceImpl dynamicConfigurationFactoryService;
 
-    private final String DEFAULT_AGENT_NAME = "sermant";
-    private final String DEFAULT_PLUGIN_VERSION = "unknown";
     private final String SUCCESS = "success";
     private final String FAILED = "failed";
     private final Integer DEFAULT_IP_INDEX = 0;
@@ -77,23 +76,23 @@ public class HttpServer {
 
     RandomUtil RANDOM_UTIL = new RandomUtil();
     DateUtil DATE_UTIL = new DateUtil();
-    private final Integer MIN = 1;
     private final Integer MAX = 10;
 
-    private final Long random_long = RANDOM_UTIL.getRandomLong(MIN, MAX);
-    private final Integer random_int = RANDOM_UTIL.getRandomInt(MAX);
-    private final String random_str = RANDOM_UTIL.getRandomStr(MAX);
+    private long randomLong = UuidUtil.getId();
+    private final int randomInt = RANDOM_UTIL.getRandomInt(MAX);
+    private final String randomStr = RANDOM_UTIL.getRandomStr(MAX);
 
 
     @PostMapping("/master/v1/register")
     public String invokePost(@RequestBody JSONObject jsonParam) {
+        long instanceId = UuidUtil.getId();
         RegisterResult registerResult = new RegisterResult();
-        registerResult.setAppId(random_long);
-        registerResult.setEnvId(random_long);
-        registerResult.setDomainId(random_int);
-        registerResult.setAgentVersion(random_str);
-        registerResult.setInstanceId(random_long);
-        registerResult.setBusinessId(random_long);
+        registerResult.setAppId(randomLong);
+        registerResult.setEnvId(randomLong);
+        registerResult.setDomainId(randomInt);
+        registerResult.setAgentVersion(randomStr);
+        registerResult.setInstanceId(instanceId);
+        registerResult.setBusinessId(randomLong);
         return JSONObject.toJSONString(registerResult);
     }
 
@@ -103,14 +102,14 @@ public class HttpServer {
         Hashtable<String, String> map = new Hashtable<>();
 
         HeartBeatResult heartBeatResult = new HeartBeatResult();
-        heartBeatResult.setHeartBeatInterval(random_int);
+        heartBeatResult.setHeartBeatInterval(randomInt);
         heartBeatResult.setAttachment(map);
         heartBeatResult.setMonitorItemList(Collections.singletonList(getMonitorItem(map)));
         heartBeatResult.setSystemProperties(map);
         heartBeatResult.setAccessAddressList(Collections.singletonList(getAddress()));
-        heartBeatResult.setInstanceStatus(random_int);
-        heartBeatResult.setBusinessId(random_long);
-        heartBeatResult.setMd5(random_str);
+        heartBeatResult.setInstanceStatus(randomInt);
+        heartBeatResult.setBusinessId(randomLong);
+        heartBeatResult.setMd5(randomStr);
         return JSONObject.toJSONString(heartBeatResult);
     }
 
@@ -140,20 +139,20 @@ public class HttpServer {
 
     public MonitorItem getMonitorItem(Hashtable<String, String> map) {
         MonitorItem monitorItem = new MonitorItem();
-        monitorItem.setCollectorName(random_str);
-        monitorItem.setInterval(random_int);
-        monitorItem.setCollectorId(random_int);
-        monitorItem.setMonitorItemId(random_long);
-        monitorItem.setStatus(random_int);
+        monitorItem.setCollectorName(randomStr);
+        monitorItem.setInterval(randomInt);
+        monitorItem.setCollectorId(randomInt);
+        monitorItem.setMonitorItemId(randomLong);
+        monitorItem.setStatus(randomInt);
         monitorItem.setParameters(map);
         return monitorItem;
     }
 
     public Address getAddress() {
         Address address = new Address();
-        address.setHost(random_str);
-        address.setPort(random_int);
-        address.setSport(random_int);
+        address.setHost(randomStr);
+        address.setPort(randomInt);
+        address.setSport(randomInt);
         address.setType(AddressType.access);
         address.setScope(AddressScope.outer);
         address.setProtocol(Protocol.WS);
@@ -205,24 +204,26 @@ public class HttpServer {
 
     private void setAgentInfo(Map<String, AgentInfo> agentMap, HeartbeatEntity heartbeatEntity) {
         List<String> ips = heartbeatEntity.getIp();
+        String instanceId = heartbeatEntity.getInstanceId();
         if (ips == null || ips.size() == NULL_IP_LENGTH) {
             return;
         }
-        String ip = ips.get(DEFAULT_IP_INDEX);
-        if (agentMap.get(ip) == null) {
+        if (agentMap.get(instanceId) == null) {
+            String ip = ips.get(DEFAULT_IP_INDEX);
             AgentInfo agentInfo = new AgentInfo();
             agentInfo.setIp(ip);
             agentInfo.setVersion(heartbeatEntity.getVersion());
-            agentInfo.setLastHeartbeatTime(DATE_UTIL.getFormatDate(heartbeatEntity.getLastHeartbeat()));
-            agentInfo.setHeartbeatTime(DATE_UTIL.getFormatDate(heartbeatEntity.getHeartbeatVersion()));
             agentInfo.setPluginsMap(new HashMap<String, String>());
-            agentMap.put(ips.get(DEFAULT_IP_INDEX), agentInfo);
+            agentInfo.setInstanceId(instanceId);
+            agentMap.put(instanceId, agentInfo);
         }
-        if (agentMap.get(ip) != null && heartbeatEntity.getPluginName() != null) {
-            AgentInfo agentInfo = agentMap.get(ip);
+        if (agentMap.get(instanceId) != null && heartbeatEntity.getPluginName() != null) {
+            AgentInfo agentInfo = agentMap.get(instanceId);
             Map<String, String> pluginMap = agentInfo.getPluginsMap();
             pluginMap.put(heartbeatEntity.getPluginName(), heartbeatEntity.getPluginVersion());
             agentInfo.setPluginsMap(pluginMap);
+            agentInfo.setLastHeartbeatTime(DATE_UTIL.getFormatDate(heartbeatEntity.getLastHeartbeat()));
+            agentInfo.setHeartbeatTime(DATE_UTIL.getFormatDate(heartbeatEntity.getHeartbeatVersion()));
         }
     }
 }

@@ -5,25 +5,34 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * 心跳请求数据
+ *
+ * @author xuezechao
+ * @since 2022-02-28
+ */
+
 @Getter
 @Setter
 public class HeartbeatEntity {
 
-   private String app;
+    private String app;
 
-   private String hostname;
+    private String hostname;
 
-   private Long heartbeatVersion;
+    private long heartbeatVersion;
 
-   private String pluginVersion;
+    private String pluginVersion;
 
-   private Long lastHeartbeat;
+    private long lastHeartbeat;
 
-   private String pluginName;
+    private String pluginName;
 
-   private String appType;
+    private String appType;
 
-   private List<String> ip;
+    private List<String> ip;
 
-   private String version;
+    private String version;
+
+    private String instanceId;
 }
