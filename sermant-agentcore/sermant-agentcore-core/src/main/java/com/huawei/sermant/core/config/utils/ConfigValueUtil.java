@@ -190,7 +190,7 @@ public class ConfigValueUtil {
      */
     public static String fixValue(String configKey, String configVal, Map<String, Object> argsMap,
             FixedValueProvider provider) {
-        if (configVal != null && configVal.matches("^.*\\$\\{[\\w.:]+}.*$")) {
+        if (configVal != null && configVal.matches("^.*\\$\\{[\\w.]+(:.*)?}.*$")) {
             final int startIndex = configVal.indexOf("${") + 2;
             final int endIndex = configVal.indexOf('}', startIndex);
             final String envKey = configVal.substring(startIndex, endIndex);
