@@ -1,0 +1,139 @@
+/*
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+package com.huawei.register.utils;
+
+import com.huawei.sermant.core.common.LoggerFactory;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.logging.Logger;
+
+/**
+ * host工具类
+ *
+ * @author zhouss
+ * @since 2022-03-08
+ */
+public class HostUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final String WINDOWS_OPERATOR = "windows";
+
+    private static final String LOCAL_IP = "127.0.0.1";
+
+    private static final String LOCAL_HOST = "localhost";
+
+    private HostUtils() {
+    }
+
+    /**
+     * 获取当前机器的IP地址
+     *
+     * @return IP地址
+     */
+    public static String getMachineIp() {
+        if (isWindowsOs()) {
+            return getWindowsIp();
+        }
+        return getLinuxIp();
+    }
+
+    private static boolean isWindowsOs() {
+        String osName = System.getProperty("os.name");
+        if (osName == null) {
+            return false;
+        }
+        return osName.toLowerCase(Locale.ENGLISH).contains(WINDOWS_OPERATOR);
+    }
+
+    private static String getWindowsIp() {
+        final InetAddress localHost = getLocalHost();
+        if (localHost == null) {
+            return LOCAL_IP;
+        }
+        return localHost.getHostAddress();
+    }
+
+    /**
+     * 获取Linux下的IP地址
+     *
+     * @return IP地址
+     */
+    private static String getLinuxIp() {
+        try {
+            for (Enumeration<NetworkInterface> networkInterfaceEnumeration = NetworkInterface.getNetworkInterfaces();
+                networkInterfaceEnumeration.hasMoreElements(); ) {
+                NetworkInterface networkInterface = networkInterfaceEnumeration.nextElement();
+                String name = networkInterface.getName();
+                if (name.contains("docker") || name.contains("lo")) {
+                    continue;
+                }
+                String ip = resolveNetworkIp(networkInterface);
+                if (ip != null) {
+                    return ip;
+                }
+            }
+        } catch (SocketException ex) {
+            return LOCAL_IP;
+        }
+        return null;
+    }
+
+    private static String resolveNetworkIp(NetworkInterface networkInterface) {
+        for (Enumeration<InetAddress> enumIpAddr = networkInterface.getInetAddresses();
+            enumIpAddr.hasMoreElements(); ) {
+            InetAddress inetAddress = enumIpAddr.nextElement();
+            if (!(inetAddress instanceof Inet4Address) || inetAddress.isLoopbackAddress()) {
+                continue;
+            }
+            String ipaddress = inetAddress.getHostAddress();
+            if (!LOCAL_IP.equals(ipaddress) && !LOCAL_HOST.equals(ipaddress)) {
+                // 取第一个符合要求的IP
+                return ipaddress;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取域名
+     *
+     * @return host
+     */
+    public static String getHostName() {
+        final InetAddress localHost = getLocalHost();
+        if (localHost != null) {
+            return localHost.getHostName();
+        }
+        return LOCAL_HOST;
+    }
+
+    private static InetAddress getLocalHost() {
+        try {
+            return InetAddress.getLocalHost();
+        } catch (UnknownHostException ex) {
+            LOGGER.warning("Can not acquire local hostname, it will be replaced by spring register host!");
+            return null;
+        }
+    }
+}
