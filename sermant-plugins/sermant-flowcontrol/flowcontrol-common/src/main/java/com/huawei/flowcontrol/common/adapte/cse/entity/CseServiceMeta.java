@@ -60,7 +60,21 @@ public class CseServiceMeta {
      */
     private String project;
 
+    /**
+     * 是否为dubbo应用
+     */
+    private boolean isDubboService;
+
     private CseServiceMeta() {
+    }
+
+    public boolean isDubboService() {
+        return isDubboService;
+    }
+
+    @SuppressWarnings("checkstyle:RegexpSingleline")
+    public void setDubboService(boolean dubboService) {
+        isDubboService = dubboService;
     }
 
     public static CseServiceMeta getInstance() {

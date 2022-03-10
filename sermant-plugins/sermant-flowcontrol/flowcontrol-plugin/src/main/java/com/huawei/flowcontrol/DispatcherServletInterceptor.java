@@ -22,6 +22,7 @@ import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
             final String headerName = headerNames.nextElement();
             headers.put(headerName, request.getHeader(headerName));
         }
-        return headers;
+        return Collections.unmodifiableMap(headers);
     }
 
     @Override

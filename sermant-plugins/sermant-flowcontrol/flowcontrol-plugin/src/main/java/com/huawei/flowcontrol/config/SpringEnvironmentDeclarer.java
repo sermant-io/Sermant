@@ -47,7 +47,7 @@ public class SpringEnvironmentDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("prepareEnvironment"), INTERCEPT_CLASS)
+            InterceptDeclarer.build(MethodMatcher.nameEquals("callRunners"), INTERCEPT_CLASS)
         };
     }
 }

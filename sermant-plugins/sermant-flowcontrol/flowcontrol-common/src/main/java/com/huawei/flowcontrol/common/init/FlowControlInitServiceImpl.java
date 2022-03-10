@@ -41,8 +41,10 @@ public class FlowControlInitServiceImpl implements PluginService {
 
     private final FlowControlLifeCycle flowControlLifeCycle = new FlowControlLifeCycle();
 
-    @Override
-    public void start() {
+    /**
+     * 启动初始化任务 此处脱离service生命周期，通过拦截点控制，以便获取准确数据
+     */
+    public void doStart() {
         executor.execute(flowControlLifeCycle);
     }
 

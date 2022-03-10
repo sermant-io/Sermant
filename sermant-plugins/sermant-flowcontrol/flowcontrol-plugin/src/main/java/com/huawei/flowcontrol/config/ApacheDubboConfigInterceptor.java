@@ -21,7 +21,7 @@ import com.huawei.flowcontrol.common.adapte.cse.constants.CseConstants;
 import com.huawei.flowcontrol.common.adapte.cse.entity.CseServiceMeta;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 import org.apache.dubbo.common.utils.ConfigUtils;
@@ -32,37 +32,33 @@ import org.apache.dubbo.common.utils.ConfigUtils;
  * @author zhouss
  * @since 2022-01-28
  */
-public class ApacheDubboConfigInterceptor implements Interceptor {
+public class ApacheDubboConfigInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
+        CseServiceMeta.getInstance().setDubboService(true);
         if (!pluginConfig.isUseCseRule() || !pluginConfig.isBaseSdk()) {
             return context;
         }
         CseServiceMeta.getInstance().setVersion(ConfigUtils.getProperty(CseConstants.KEY_DUBBO_VERSION,
-                CseConstants.DEFAULT_DUBBO_VERSION));
+            CseConstants.DEFAULT_DUBBO_VERSION));
         CseServiceMeta.getInstance().setProject(ConfigUtils.getProperty(CseConstants.KEY_DUBBO_KIE_PROJECT,
-                CseConstants.DEFAULT_PROJECT));
+            CseConstants.DEFAULT_PROJECT));
         CseServiceMeta.getInstance().setServiceName(ConfigUtils.getProperty(CseConstants.KEY_DUBBO_SERVICE_NAME,
-                CseConstants.DEFAULT_DUBBO_SERVICE_NAME));
+            CseConstants.DEFAULT_DUBBO_SERVICE_NAME));
         CseServiceMeta.getInstance().setEnvironment(ConfigUtils.getProperty(CseConstants.KEY_DUBBO_ENVIRONMENT,
-                CseConstants.DEFAULT_DUBBO_ENVIRONMENT));
+            CseConstants.DEFAULT_DUBBO_ENVIRONMENT));
         CseServiceMeta.getInstance().setApp(ConfigUtils.getProperty(CseConstants.KEY_DUBBO_APP_NAME,
-                CseConstants.DEFAULT_DUBBO_APP_NAME));
+            CseConstants.DEFAULT_DUBBO_APP_NAME));
         CseServiceMeta.getInstance().setCustomLabel(ConfigUtils.getProperty(CseConstants.KEY_DUBBO_CUSTOM_LABEL,
-                CseConstants.DEFAULT_CUSTOM_LABEL));
+            CseConstants.DEFAULT_CUSTOM_LABEL));
         CseServiceMeta.getInstance().setCustomLabelValue(ConfigUtils.getProperty(
-                CseConstants.KEY_DUBBO_CUSTOM_LABEL_VALUE, CseConstants.DEFAULT_CUSTOM_LABEL_VALUE));
+            CseConstants.KEY_DUBBO_CUSTOM_LABEL_VALUE, CseConstants.DEFAULT_CUSTOM_LABEL_VALUE));
         return context;
     }
 
     @Override
-    public ExecuteContext after(ExecuteContext context) throws Exception {
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+    public ExecuteContext after(ExecuteContext context) {
         return context;
     }
 }

@@ -292,6 +292,19 @@ public class FlowControlConfig implements PluginConfig {
      */
     private boolean isBaseSdk = false;
 
+    /**
+     * dubbo注入的cluster invoker执行器 若该配置为“close”则不适用agent的执行器
+     */
+    private String retryClusterInvoker = "sermant";
+
+    public String getRetryClusterInvoker() {
+        return retryClusterInvoker;
+    }
+
+    public void setRetryClusterInvoker(String retryClusterInvoker) {
+        this.retryClusterInvoker = retryClusterInvoker;
+    }
+
     public boolean isBaseSdk() {
         return isBaseSdk;
     }

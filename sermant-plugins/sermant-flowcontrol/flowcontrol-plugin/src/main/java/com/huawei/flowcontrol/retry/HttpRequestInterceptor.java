@@ -71,7 +71,7 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
         Object result = context.getResult();
         try {
             RetryContext.INSTANCE.markRetry(retry);
-            final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
+            final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
                 .getHandlers(convertToHttpEntity(request));
             if (!handlers.isEmpty() && needRetry(handlers.get(0), result, null)) {
                 // 重试仅有一个策略

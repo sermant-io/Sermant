@@ -31,6 +31,17 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-all</artifactId>
+            <version>${resilience4j.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!--Provider依赖-->
         <dependency>
             <groupId>com.huawei.sermant</groupId>
@@ -72,6 +83,25 @@
             <version>10.0.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-netflix-core</artifactId>
+            <version>1.4.7.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--测试依赖-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -87,6 +117,10 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <configuration>
                     <relocations>
+                        <relocation>
+                            <pattern>net.bytebuddy</pattern>
+                            <shadedPattern>${shade.common.prefix}.net.bytebuddy</shadedPattern>
+                        </relocation>
                         <relocation>
                             <pattern>org.yaml</pattern>
                             <shadedPattern>${shade.common.prefix}.org.yaml</shadedPattern>

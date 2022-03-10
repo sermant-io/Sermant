@@ -20,7 +20,7 @@ package com.huawei.flowcontrol.config;
 import com.huawei.flowcontrol.common.adapte.cse.entity.CseServiceMeta;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 /**
@@ -29,7 +29,7 @@ import com.huawei.sermant.core.plugin.config.PluginConfigManager;
  * @author zhouss
  * @since 2022-01-28
  */
-public class DubboServiceNameInterceptor implements Interceptor {
+public class DubboServiceNameInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         if (!PluginConfigManager.getPluginConfig(FlowControlConfig.class).isUseCseRule()) {
@@ -41,11 +41,6 @@ public class DubboServiceNameInterceptor implements Interceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
         return context;
     }
 }
