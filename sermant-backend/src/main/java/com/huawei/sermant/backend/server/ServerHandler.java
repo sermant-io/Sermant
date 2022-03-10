@@ -106,8 +106,9 @@ public class ServerHandler extends BaseHandler {
             HeartbeatEntity heartbeatEntity = JSON.parseObject(new String(message), HeartbeatEntity.class);
             List<String> ips = heartbeatEntity.getIp();
             if (ips != null && ips.size() != 0 && heartbeatEntity.getPluginName() != null) {
+                String instanceId = heartbeatEntity.getInstanceId();
                 String pluginName = heartbeatEntity.getPluginName();
-                hbMessages.put(pluginName, heartbeatEntity);
+                hbMessages.put(pluginName + instanceId, heartbeatEntity);
             }
         }
     }

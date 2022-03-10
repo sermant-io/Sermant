@@ -43,6 +43,7 @@ public class HeartbeatMessage {
         message.put("heartbeatVersion", String.valueOf(TimeUtil.currentTimeMillis()));
         message.put("lastHeartbeat", String.valueOf(TimeUtil.currentTimeMillis()));
         message.put("version", BootArgsIndexer.getCoreVersion());
+        message.put("instanceId", IdentityConfigManager.getInstanceId());
     }
 
     public HeartbeatMessage registerInformation(String key, String value) {

@@ -1,11 +1,13 @@
 <template>
   <div class="hi">
     <table border="1">
+      <td>instanceId</td>
       <td>ip</td>
       <td>version</td>
       <td>heartbeatTime</td>
       <td>plugin</td>
       <tr v-for='info in pluginsInfo' :key='info'>
+        <td>{{ info.instanceId }}</td>
         <td>{{ info.ip }}</td>
         <td>{{ info.version }}</td>
         <td>{{ info.heartbeatTime }}</td>

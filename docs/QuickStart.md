@@ -47,11 +47,11 @@
   # mac linux
   java -javaagent:agent/sermant-agent.jar=appName=test -jar ../sermant-plugins/sermant-example/demo-register/resttemplate-consumer/target/resttemplate-consumer.jar
   ```
-- 点击[here](http://localhost:8900) 查看框架和启用插件的运行状态。
+- 浏览器访问：[http://localhost:8900](http://localhost:8900) 查看框架和启用插件的运行状态。
 ![pic](binary-docs/backend_sermant_info.png)
-- 点击[here](http://localhost:30103) 查看应用注册状态。
+- 浏览器访问：[http://localhost:30103](http://localhost:30103) 查看应用注册状态。
 ![pic](binary-docs/register-application.PNG)
-- 点击[here](http://localhost:8005/hello) 验证provider和consumer注册和订阅成功。
+- 浏览器访问：[http://localhost:8005/hello](http://localhost:8005/hello) 验证provider和consumer注册和订阅成功。
 
   <img src="binary-docs/check_application.png" width="50%" syt height="50%" />
 
