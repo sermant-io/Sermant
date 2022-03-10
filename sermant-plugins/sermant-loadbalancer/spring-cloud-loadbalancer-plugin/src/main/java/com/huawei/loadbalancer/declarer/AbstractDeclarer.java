@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.declarer;
+package com.huawei.loadbalancer.declarer;
 
 import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
 
@@ -27,29 +28,43 @@ import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @since 2022/1/18
  */
 public abstract class AbstractDeclarer extends AbstractPluginDeclarer {
-    private final String[] enhanceClass;
+    private final String enhanceClass;
+
+    private final String interceptClass;
+
+    private final String methodName;
 
     /**
      * 构造方法
      *
      * @param enhanceClass 增强类
+     * @param interceptClass 拦截类
+     * @param methodName 增强方法
      */
-    public AbstractDeclarer(String[] enhanceClass) {
+    public AbstractDeclarer(String enhanceClass, String interceptClass, String methodName) {
         this.enhanceClass = enhanceClass;
+        this.interceptClass = interceptClass;
+        this.methodName = methodName;
     }
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameContains(enhanceClass);
+        return ClassMatcher.nameEquals(enhanceClass);
+    }
+
+    @Override
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+            InterceptDeclarer.build(getMethodMatcher(), interceptClass)
+        };
     }
 
     /**
-     * 获取静态方法匹配器
+     * 获取方法匹配器
      *
-     * @param methodName 方法名
-     * @return 静态方法匹配器
+     * @return 方法匹配器
      */
-    protected MethodMatcher getStaticMethod(String methodName) {
-        return MethodMatcher.nameEquals(methodName).and(MethodMatcher.isStaticMethod());
+    public MethodMatcher getMethodMatcher() {
+        return MethodMatcher.nameEquals(methodName);
     }
 }

@@ -14,42 +14,35 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.register.declarer;
+package com.huawei.loadbalancer.declarer;
 
 import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 实例增强基类
+ * URL增强类
  *
  * @author provenceee
- * @since 2022/1/18
+ * @since 2022/1/20
  */
-public abstract class AbstractDeclarer extends AbstractPluginDeclarer {
-    private final String[] enhanceClass;
+public class UrlDeclarer extends AbstractPluginDeclarer {
+    private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.common.URL", "com.alibaba.dubbo.common.URL"};
 
-    /**
-     * 构造方法
-     *
-     * @param enhanceClass 增强类
-     */
-    public AbstractDeclarer(String[] enhanceClass) {
-        this.enhanceClass = enhanceClass;
-    }
+    private static final String INTERCEPT_CLASS = "com.huawei.loadbalancer.interceptor.UrlInterceptor";
+
+    private static final String METHOD_NAME = "getMethodParameter";
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameContains(enhanceClass);
+        return ClassMatcher.nameContains(ENHANCE_CLASS);
     }
 
-    /**
-     * 获取静态方法匹配器
-     *
-     * @param methodName 方法名
-     * @return 静态方法匹配器
-     */
-    protected MethodMatcher getStaticMethod(String methodName) {
-        return MethodMatcher.nameEquals(methodName).and(MethodMatcher.isStaticMethod());
+    @Override
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME), INTERCEPT_CLASS)
+        };
     }
 }

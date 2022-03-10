@@ -7,5 +7,6 @@ plugins:
   - server-monitor
   - threadlocal
   - register-center
+  - loadbalancer
 adaptors:
   - lubanops
