@@ -18,14 +18,19 @@
     <!-- 规则3.3 使用空格进行缩进，每次缩进4个空格: 不允许用Tab -->
     <module name="FileTabCharacter"/>
     <!-- 规则1.2 华为版权检查-->
-    <module name="RegexpSingleline">
-        <property name="format" value="^ \* Copyright \(C\) [\d]{4}(\-[\d]{4}) Huawei Technologies Co., Ltd. All rights reserved\.$"/>
+    <!-- module name="RegexpSingleline">
+        <property name="format" value="^ \* Copyright \(c\) Huawei Technologies Co., Ltd. [\d]{4}(\-[\d]{4})\. All rights reserved\.$"/>
         <property name="minimum" value="1"/>
         <property name="maximum" value="1"/>
         <property name="message" value="编程规范-规则2.4: 华为版权缺失或者格式不正确"/>
-        <property name="severity" value="warning"/>
+        <property name="severity" value="error"/>
+    </module-->
+    <module name="RegexpSingleline">
+        <property name="format" value="^\s\*\s@since\s\d{4}-\d{2}-\d{2}$"/>
+        <property name="minimum" value="1"/><property name="maximum" value="1"/>
+        <property name="severity" value="error"/>
+        <property name="message" value="编程规范-规则2.4:顶层public类javadoc缺少@since或格式不正确（正确格式示例：@since 2019-01-22）"/>
     </module>
-    <!-- <module name="RegexpSingleline"><property name="format" value="^\s\*\s@since\s\d{4}-\d{2}-\d{2}$"/><property name="minimum" value="1"/><property name="maximum" value="1"/><property name="severity" value="error"/><property name="message" value="编程规范-规则2.4:顶层public类javadoc缺少@since或格式不正确（正确格式示例：@since 2019-01-22）"/></module>-->
     <!-- 建议1.1 含有集合意义的属性，名称尽量包含复数形式
     <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
@@ -71,14 +76,14 @@
     <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
         <property name="format" value="(boolean|Boolean)\s(\bisNot?|\bmIsNot?)[A-Z](a-zA-Z0-9=;,\s)*"/>
-        <property name="message" value="编程规范-建议1.2 避免使用否定的布尔变量名或方法名"/>
+        <property name="message" value="编程规范-建议1.1 避免使用否定的布尔变量名"/>
     </module>
     <!-- 方法暂时不感知
-	<module name="RegexpSingleline"><property name="format" value="(boolean|Boolean)\s[^iIe][^sSq][^u]?[^a]?[^l]?[^s]?"/><property name="message" value="编程规范-建议1.2 布尔变量名或方法以is开头"/></module>-->
+    <module name="RegexpSingleline"><property name="format" value="(boolean|Boolean)\s[^iIe][^sSq][^u]?[^a]?[^l]?[^s]?"/><property name="message" value="编程规范-建议1.2 布尔变量名或方法以is开头"/></module>-->
     <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
         <property name="format" value="(boolean|Boolean)\s((m[^I])|(mI[^s])|(s[^I])|(sI[^s])|[^msiI]|([iI][^sS]))(?![a-zA-Z0-9=;,\s]*\()"/>
-        <property name="message" value="编程规范-建议1.2 布尔变量名或方法以is开头(Android允许mIs开头)"/>
+        <property name="message" value="编程规范-建议1.2 布尔变量名或方法以is开头(has have does do did will should can may must could等疑问助动词也可以，Android允许m作为疑问助动词前缀)"/>
     </module>
     <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
@@ -111,39 +116,39 @@
     </module>
     <module name="RegexpSingleline">
         <property name="format" value="^\s*//[^\u4e00-\u9fa5]*(\s*;|\{|\})$"/>
-        <property name="message" value="编程规范-规则2.8 : 不用的代码段直接删除，不要注释掉"/>
+        <property name="message" value="编程规范-规则2.7 : 不用的代码段直接删除，不要注释掉"/>
     </module>
     <!-- 建议4.3 基本类型优于包装类型，注意合理使用包装类型 （包装类型只能用于泛型、集合中元素、反射）-->
     <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
         <property name="format" value="\s+(Byte|Short|Integer|Long|Float|Double|Character|Boolean)\s+"/>
-        <property name="message" value="编程规范-建议4.3: 请使用基本类型"/>
+        <property name="message" value="编程规范-建议4.2: 基本类型优于包装类型，注意合理使用包装类型"/>
     </module>
-    <!-- 规则7.8 非仅限于中文区销售产品禁止用中文打印日志 -->
+    <!-- 规则7.7 非仅限于中文区销售产品禁止用中文打印日志 -->
     <module name="RegexpSingleline">
         <property name="format" value="(LOG|LOGGER|log|logger)\.(fatal|error|warn|info|debug).+[\u4e00-\u9fa5]+"/>
-        <property name="message" value="编程规范-规则7.8: 禁止用中文打印日志"/>
+        <property name="message" value="编程规范-规则7.7: 禁止用中文打印日志"/>
     </module>
-    <!--<module name="RegexpSingleline">
+    <module name="RegexpSingleline">
         <property name="format" value="^\s*return null;\s*$"/>
         <property name="message" value="建议不要返回null! 1)编程规范-建议5.5: 集合请返回Collections.emptyXXX() 2)编程规范-建议8.6.2: 其他请使用JAVA 8 Optional特性代替"/>
-    </module>-->
+    </module>
     <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
         <property name="format" value="\s+$"/>
         <property name="message" value="编程规范-建议3.7 行末或空行不能有空格, 请去除多余空格"/>
     </module>
-    <!--<module name="RegexpSingleline">
+    <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
         <property name="format" value="[A-Za-z0-9=+-;:\?\*]\s{2,}[\u4e00-\u9fa5A-Za-z0-9=+-:\?]"/>
         <property name="message" value="编程规范-建议3.8 禁止插入空格水平对齐(包括多余括号)。"/>
-    </module>-->
+    </module>
     <!--
-	HashMap/HashSet/LinkedHashSet:已知元素个数填实际个数，未知填默认值16；
-	StringBuilder/StringBuffer:构造数据填写length方法获得的实际值（默认16个字节）
-	ArrayList：已知元素个数填实际个数（默认值0）
-	ConcurrentHashMap: 已知元素个数填实际个数(分配的是指定的2倍)；
-	-->
+    HashMap/HashSet/LinkedHashSet:已知元素个数填实际个数，未知填默认值16；
+    StringBuilder/StringBuffer:构造数据填写length方法获得的实际值（默认16个字节）
+    ArrayList：已知元素个数填实际个数（默认值0）
+    ConcurrentHashMap: 已知元素个数填实际个数(分配的是指定的2倍)；
+    -->
     <!--建议8.7.2 初始化集合时，给出初始化大小
     <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
@@ -162,16 +167,16 @@
         <property name="message" value="编程规范-规则4.1 :不能使用浮点数做循环变量"/>
     </module>
     <!--
-	<module name="RegexpSingleline"><property name="format" value="^.*for\s+[(](\s*|\w+\s*\w+\s*=\s*0)\s*;.*;(\s*\)|\s*\w+\s*\+\+|\s*\+\+|\s*\w+\s*=(\s*\w+\s*\+\s*(1)|\s*(1)\s*+))"/><property name="message" value="编程规范-规则8.3.1 :无需索引时采用for-each代替传统的for循环"/></module>-->
+    <module name="RegexpSingleline"><property name="format" value="^.*for\s+[(](\s*|\w+\s*\w+\s*=\s*0)\s*;.*;(\s*\)|\s*\w+\s*\+\+|\s*\+\+|\s*\w+\s*=(\s*\w+\s*\+\s*(1)|\s*(1)\s*+))"/><property name="message" value="编程规范-规则8.3.1 :无需索引时采用for-each代替传统的for循环"/></module>-->
     <!-- 确实需要long对象时声明为long并已L结尾，否则使用暂用内存更少的int类型-->
     <module name="RegexpSingleline">
-        <property name="format" value="long\s*\w+\s*=\s*\d+\s*;"/>
+        <property name="format" value="long\s*\w+\s*=\s*\d[\d\*\s]*\s*;"/>
         <property name="message" value="编程规范-规则3.11: 数字字面量以大写字母为后缀(long类型变量请显示填写L，或者改为int类型)"/>
     </module>
     <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
         <property name="format" value="\([a-zA-Z\s,&lt;&gt;\\.]+\.{3}[a-zA-Z\s,&lt;&gt;\\.]*\)"/>
-        <property name="message" value="编程规范-建议5.2 谨慎使用可变数量参数的方法。"/>
+        <property name="message" value="编程规范-建议5.3 谨慎使用可变数量参数的方法。"/>
     </module>
     <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
@@ -188,7 +193,7 @@
         <property name="message" value="编程规范-规则1.2 名字长度不能超过64个字符。"/>
     </module>
     <module name="RegexpSingleline">
-        <property name="format" value="^((?!for).)*(\s[a-z](\s=|;))((?!for).)*$"/>
+        <property name="format" value="\s[a-z](\s|;)"/>
         <property name="message" value="编程规范-规则1.2 名字长度至少2个字符（循环变量、异常变量e当作误报忽略）。"/>
     </module>
     <module name="RegexpSingleline">
@@ -200,23 +205,31 @@
         <property name="message" value="编程规范-规则8.3.1 冗余不简洁"/>
     </module>
     <module name="RegexpSingleline">
+        <property name="format" value="(0|1) [!=]= "/>
+        <property name="message" value="编程规范-建议8.2.3 表达式的比较，应当遵循左侧倾向于变化、右侧倾向于不变的原则。"/>
+    </module>
+    <module name="RegexpSingleline">
         <property name="format" value="^\s*\*\s*@apiNote\s*$"/>
         <property name="message" value="编程规范-规则2.3 推荐使用JDK1.8新的tag:@implSpec,@apiNote和@implNote，如果确实不需要请删除tag"/>
     </module>
-    <!-- 规则7.2 不要通过一个空的catch块忽略异常-->
+    <module name="RegexpSingleline">
+        <property name="format" value="\.toArray\([\s\w]+\[[^0]\]"/>
+        <property name="message" value="编程规范-规则8.7.1 将集合转为数组时使用toArray()方法且不带参数或者参数是类型相同零长度的数组"/>
+    </module>
+    <!-- 规则7.1 不要通过一个空的catch块忽略异常-->
     <module name="RegexpMultiline">
         <property name="format" value="catch\s+[(][^)]*[)]\s+[{]\s+[}]"/>
-        <property name="message" value="编程规范-规则7.2 : 不要通过一个空的catch块忽略异常"/>
+        <property name="message" value="编程规范-规则7.1 : 不要通过一个空的catch块忽略异常"/>
     </module>
-    <!-- 规则7.7 日志应分等级，对info及以下，使用条件形式或者使用占位符的方式 -->
+    <!-- 规则7.6 日志应分等级，对info及以下，使用条件形式或者使用占位符的方式 -->
     <module name="RegexpMultiline">
         <property name="format" value="(LOG|LOGGER|log|logger)\.(fatal|error|warn|info|debug)\((([^&quot;].+)|&quot;.+&quot;[^,])\s*(.*)\+"/>
-        <property name="message" value="编程规范-规则7.7 : 日志应分等级，对info及以下，使用条件形式或者使用占位符的方式"/>
+        <property name="message" value="编程规范-规则7.6 : 日志应分等级，对info及以下，使用条件形式或者使用占位符的方式"/>
     </module>
     <!-- 只能检查整个类被注掉的情况 -->
     <module name="RegexpMultiline">
         <property name="format" value="/[*]+\s+(private|public|protected|static)+[^(]*[(]+[^)]*[)]+\s+[{]+[^\*/]*[\*/]+"/>
-        <property name="message" value="编程规范-规则2.8 : 不用的代码段直接删除，不要注释掉"/>
+        <property name="message" value="编程规范-规则2.7 : 不用的代码段直接删除，不要注释掉"/>
     </module>
     <module name="RegexpMultiline">
         <property name="severity" value="warning"/>
@@ -234,7 +247,7 @@
         <property name="message" value="编程规范-建议3.6 减少不必要的空行，保持代码紧凑(最多一个空行)。"/>
     </module>
     <module name="RegexpMultiline">
-        <property name="format" value="Copyright.*([0-9]{4}).*[\r\n](.*[\r\n])+.*@since\s+\1"/>
+        <property name="format" value="Ltd. ([0-9]{4}).*[\r\n](.*[\r\n])+.*@since\s+\1"/>
         <property name="minimum" value="1"/>
         <property name="maximum" value="1"/>
         <property name="message" value="请检查版权声明中其实年份与@since中年份是否一致"/>
@@ -248,16 +261,15 @@
         <property name="format" value="\*/[\r\n]{3,}(class|interface|enum)\s"/>
         <property name="message" value="编程规范-规则2.2:顶层类（接口或者枚举）头与类（接口或者枚举）首行不应该有空行"/>
     </module>
-    <!-- 块首不需要空行 -->
+    <!-- 块首不需要空行
     <module name="RegexpMultiline">
         <property name="format" value="\{\s*[\r\n]\s*[\r\n]\s*[\r\n]"/>
         <property name="message" value="多余空行"/>
     </module>
-    <!-- 块尾不需要空行 -->
     <module name="RegexpMultiline">
         <property name="format" value="\s*[\r\n]\s*[\r\n]\s*[\r\n]\s*\}"/>
         <property name="message" value="多余空行"/>
-    </module>
+    </module> -->
     <!--规则2.6 注释正文与其下的各个Javadoc tag之间加1个空行-->
     <module name="RegexpMultiline">
         <property name="format" value="^\s+\*\s+[^\*@]+[\r\n]\s+\*\s*\@"/>
@@ -265,23 +277,21 @@
     </module>
     <module name="RegexpMultiline">
         <property name="format" value="(;|\})(\n|\r\n) +// "/>
-        <property name="message" value="编程规范-规则2.6:，注释与上面的代码之间加一个空行，但是如果上面已经是本范围（一般是个大括号），则不用加空行"/>
+        <property name="message" value="编程规范-规则2.6:注释与上面的代码之间加一个空行，但是如果上面已经是本范围（一般是个大括号），则不用加空行"/>
     </module>
     <!-- 构造函数会出现误报，默认不启用。代码自检时启用
-	<module name="RegexpMultiline"><property name="format" value="\{\s*[\r\n]\s*[\r\n]\s*\}"/><property name="message" value="必须有实现逻辑"/></module>-->
+    <module name="RegexpMultiline"><property name="format" value="\{\s*[\r\n]\s*[\r\n]\s*\}"/><property name="message" value="必须有实现逻辑"/></module>-->
     <!-- 检查耗时较长规则，建议拷贝正则表达式IDE中直接搜索。默认注掉不开启 -->
     <!--<module name="RegexpMultiline"><property name="format" value="/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*(([^\u4e00-\u9fa5\s];\s*$)+)([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/"/><property name="message" value="编程规范-规则2.6 : 不用的代码段直接删除，不要注释掉"/></module><module name="RegexpMultiline"><property name="format" value="^(\s*)\}\s*else\s+if.*\{[\r\n](\1\s+.*[\r\n]|\s*[\r\n])+\1\}\s*[\r\n]"/><property name="message" value="编程规范-建议8.3.1 :对于if-else if（后续可能有多个else if）类型的条件判断，最后应该包含一个else分支"/></module><module name="RegexpMultiline"><property name="format" value="(LOG|LOGGER|log|logger)\.(fatal|error|warn|info|debug).*[\r\n]\s+.*[\u4e00-\u9fa5]+"/><property name="message" value="禁止用中文打印日志"/></module> -->
     <!-- 安全编程规范开始 -->
     <!-- 安全编程规范结束 -->
-    <!--Size Violations：长度检查-->
+    <!--checkstyle插件版本8.24及以后不能放到TreeWalker里边-->
     <module name="LineLength">
         <!-- 检查每行，最长120.忽略注释 -->
         <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
         <property name="max" value="120"/>
     </module>
     <module name="TreeWalker">
-        <module name="SuppressionCommentFilter"/>
-        <module name="SuppressWarningsHolder"/>
         <!-- 关于注释：建议代码通过合理的命名、函数短小等方式，让代码有自注释能力，然后配以简要的注释说明，不建议大量的冗余注释 -->
         <module name="JavadocType">
             <!--检查类和接口的javadoc注释，要有描述、@author/@version等内容
@@ -297,16 +307,13 @@
             <!-- 不允许没有@param参数说明 -->
             <property name="allowMissingParamTags" value="false"/>
             <!-- 如果抛出异常不允许没有@throws -->
-            <!--            <property name="allowMissingThrowsTags" value="false"/>-->
+            <property name="validateThrows" value="true"/>
             <!-- 如果有返回值，不允许没有@return -->
             <property name="allowMissingReturnTag" value="false"/>
-            <!-- 允许set/get方法没有javadoc -->
-            <!--            <property name="allowMissingPropertyJavadoc " value="true"/>-->
-            <!-- 不能在javadoc中的@throws中抛出RuntimeExceptions
-                                             注意：在java中，可能在执行方法期间抛出但未被捕获的 RuntimeException 的任何子类都无需在 throws 子句中进行声明 -->
-            <!--            <property name="logLoadErrors" value="true"/>-->
-            <!--  logLoadErrors为true时将发现的问题只放到checkstyle报告-->
-            <!--            <property name="suppressLoadErrors" value="true"/>-->
+        </module>
+        <module name="MissingJavadocMethod">
+            <property name="scope" value="protected"/>
+            <property name="allowMissingPropertyJavadoc" value="true"/>
         </module>
         <module name="JavadocVariable">
             <!--检查变量的javadoc-->
@@ -323,12 +330,11 @@
             <!-- 不检查html标签完整性 -->
         </module>
         <!-- 检查是否缺少@since标签 -->
-        <!--<module name="WriteTag">
+        <module name="WriteTag">
             <property name="tag" value="@since"/>
             <property name="tagFormat" value="^\d{4}-\d{2}-\d{2}$"/>
             <property name="tagSeverity" value="ignore"/>
-        </module>-->
-
+        </module>
         <module name="AnonInnerLength">
             <!-- 检查内部类，最多60行 -->
             <property name="max" value="60"/>
@@ -389,12 +395,12 @@
         </module>
         <module name="RegexpSinglelineJava">
             <property name="format" value="System.out.print.*"/>
-            <property name="message" value="编程规范-规则7.5 : 不允许使用控制台输出"/>
+            <property name="message" value="编程规范-规则7.4 : 不允许使用控制台输出"/>
             <property name="ignoreComments" value="true"/>
         </module>
         <module name="MagicNumber">
             <!-- 魔鬼数字 -->
-            <property name="ignoreNumbers" value="-1, 0, 1, 2"/>
+            <property name="ignoreNumbers" value="0, 1"/>
             <!-- 对-1/0/1不检查 -->
             <property name="ignoreHashCodeMethod" value="true"/>
             <property name="ignoreAnnotation" value="true"/>
@@ -457,7 +463,7 @@
         <!-- 不能有无用的import -->
         <module name="UnusedImports"/>
         <module name="ImportOrder">
-            <property name="groups" value="android,androidx,huawei,com.huawei,com,*,net,org,javacard,/^java\./,javax"/>
+            <property name="groups" value="android,androidx,com.android,huawei,com.huawei,com,*,net,org,javacard,/^java\./,javax"/>
             <property name="ordered" value="true"/>
             <property name="separated" value="true"/>
             <property name="option" value="top"/>
@@ -512,11 +518,7 @@
         <!-- 第一章 命名检查结束-->
         <!-- 第二章 注释检查开始-->
         <!--规则2.1 注释块标签顺序-->
-        <module name="AtclauseOrder">
-            <property name="tagOrder" value="@param, @return, @throws, @deprecated" />
-            <property name="target"
-                      value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF" />
-        </module>
+        <module name="AtclauseOrder"/>
         <!-- 第二章 注释检查结束-->
         <!-- 第三章 排版检查开始-->
         <!-- 采用java风格还是c风格，例如：int[] num是java风格，int num[]是c风格。规则3.7 禁止C风格的数组声明-->
@@ -524,6 +526,7 @@
         <!-- 建议3.10 变量被声明在接近它们首次使用的行-->
         <module name="VariableDeclarationUsageDistance">
             <property name="allowedDistance" value="3"/>
+            <property name="severity" value="warning"/>
         </module>
         <!--建议3.9 应用于类，方法或构造方法的每个注解独占一行-->
         <module name="AnnotationLocation">
@@ -625,18 +628,16 @@
             <property name="max" value="3"/>
         </module>
         <!-- 规则8.6.1 不要使用已标注为@deprecated的方法-->
-        <module name="SuppressWarnings">
-            <property name="format" value="^unused$|^deprecation$|^static-access$|^serial$"/>
-        </module>
-        <!--规则8.7.7 禁止使用主动GC（除非在密码、RMI等方面），尤其是在频繁/周期性的逻辑中 -->
+        <module name="SuppressWarnings"/>
+        <!--规则8.7.5 禁止使用主动GC（除非在密码、RMI等方面），尤其是在频繁/周期性的逻辑中 -->
         <module name="RegexpSinglelineJava">
             <property name="format" value="System\.gc\(\)"/>
-            <property name="message" value="编程规范-规则8.7.7: 禁止使用主动GC"/>
+            <property name="message" value="编程规范-规则8.7.5: 禁止使用主动GC"/>
         </module>
-        <!--规则8.7.8 禁止使用finalize()方法 -->
+        <!--规则8.7.6 禁止使用finalize()方法 -->
         <module name="RegexpSinglelineJava">
             <property name="format" value="finalize\(\)"/>
-            <property name="message" value="编程规范-规则8.7.8 : 禁止使用finalize方法"/>
+            <property name="message" value="编程规范-规则8.7.6 : 禁止使用finalize方法"/>
         </module>
         <!--规则8.8.1 不要在代码中硬编码"\n"和"\r"作为换行符号 -->
         <module name="RegexpSinglelineJava">
