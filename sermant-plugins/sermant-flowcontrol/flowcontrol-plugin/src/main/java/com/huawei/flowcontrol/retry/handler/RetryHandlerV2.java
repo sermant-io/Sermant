@@ -45,7 +45,7 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
         }
         return RetryRegistry.of(
             RetryConfig.custom()
-                .maxAttempts(rule.getMaxAttempts() + 1)
+                .maxAttempts(rule.getMaxAttempts())
                 .retryOnResult(buildRetryResult(retry, rule))
                 .retryExceptions(retry.retryExceptions())
                 .intervalFunction(getIntervalFunction(rule))
