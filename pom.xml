@@ -41,6 +41,7 @@
         <junit.version>4.12</junit.version>
         <junit.jupiter.version>5.8.1</junit.jupiter.version>
         <mockito-core.version>3.9.0</mockito-core.version>
+        <mockito-inline.version>3.9.0</mockito-inline.version>
 
         <clean.plugin.version>2.5</clean.plugin.version>
         <compiler.plugin.version>3.8.1</compiler.plugin.version>
@@ -241,6 +242,12 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito-core.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-inline</artifactId>
+                <version>${mockito-inline.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
