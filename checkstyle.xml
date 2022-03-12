@@ -138,11 +138,11 @@
         <property name="format" value="\s+$"/>
         <property name="message" value="编程规范-建议3.7 行末或空行不能有空格, 请去除多余空格"/>
     </module>
-    <module name="RegexpSingleline">
+    <!--module name="RegexpSingleline">
         <property name="severity" value="warning"/>
         <property name="format" value="[A-Za-z0-9=+-;:\?\*]\s{2,}[\u4e00-\u9fa5A-Za-z0-9=+-:\?]"/>
         <property name="message" value="编程规范-建议3.8 禁止插入空格水平对齐(包括多余括号)。"/>
-    </module>
+    </module>-->
     <!--
     HashMap/HashSet/LinkedHashSet:已知元素个数填实际个数，未知填默认值16；
     StringBuilder/StringBuffer:构造数据填写length方法获得的实际值（默认16个字节）
@@ -193,7 +193,7 @@
         <property name="message" value="编程规范-规则1.2 名字长度不能超过64个字符。"/>
     </module>
     <module name="RegexpSingleline">
-        <property name="format" value="\s[a-z](\s|;)"/>
+        <property name="format" value="^((?!for).)*(\s[a-z](\s=|;))((?!for).)*$"/>
         <property name="message" value="编程规范-规则1.2 名字长度至少2个字符（循环变量、异常变量e当作误报忽略）。"/>
     </module>
     <module name="RegexpSingleline">
@@ -247,7 +247,7 @@
         <property name="message" value="编程规范-建议3.6 减少不必要的空行，保持代码紧凑(最多一个空行)。"/>
     </module>
     <module name="RegexpMultiline">
-        <property name="format" value="Ltd. ([0-9]{4}).*[\r\n](.*[\r\n])+.*@since\s+\1"/>
+        <property name="format" value="Copyright.*([0-9]{4}).*[\r\n](.*[\r\n])+.*@since\s+\1"/>
         <property name="minimum" value="1"/>
         <property name="maximum" value="1"/>
         <property name="message" value="请检查版权声明中其实年份与@since中年份是否一致"/>
