@@ -26,7 +26,6 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,7 +36,7 @@ import org.junit.Test;
  * @since 2022-03-03
  */
 public class Rest4jExceptionUtilsTest {
-    private final String ruleName = "test";
+    private static final String RULE_NAME = "test";
 
     /**
      * 测试异常处理
@@ -46,17 +45,17 @@ public class Rest4jExceptionUtilsTest {
     public void testExceptionHandler() {
         final FlowControlResult flowControlResult = new FlowControlResult();
         Rest4jExceptionUtils
-            .handleException(BulkheadFullException.createBulkheadFullException(Bulkhead.ofDefaults(ruleName)),
+            .handleException(BulkheadFullException.createBulkheadFullException(Bulkhead.ofDefaults(RULE_NAME)),
                 flowControlResult);
         Assert.assertEquals(FlowControlEnum.BULKHEAD_FULL, flowControlResult.getResult());
 
         Rest4jExceptionUtils
-            .handleException(RequestNotPermitted.createRequestNotPermitted(RateLimiter.ofDefaults(ruleName)),
+            .handleException(RequestNotPermitted.createRequestNotPermitted(RateLimiter.ofDefaults(RULE_NAME)),
                 flowControlResult);
         Assert.assertEquals(FlowControlEnum.RATE_LIMITED, flowControlResult.getResult());
 
         Rest4jExceptionUtils.handleException(
-            CallNotPermittedException.createCallNotPermittedException(CircuitBreaker.ofDefaults(ruleName)),
+            CallNotPermittedException.createCallNotPermittedException(CircuitBreaker.ofDefaults(RULE_NAME)),
             flowControlResult);
         Assert.assertEquals(FlowControlEnum.CIRCUIT_BREAKER, flowControlResult.getResult());
     }
@@ -67,10 +66,10 @@ public class Rest4jExceptionUtilsTest {
     @Test
     public void testCheckFlowControlException() {
         Assert.assertTrue(Rest4jExceptionUtils
-            .isNeedReleasePermit(RequestNotPermitted.createRequestNotPermitted(RateLimiter.ofDefaults(ruleName))));
+            .isNeedReleasePermit(RequestNotPermitted.createRequestNotPermitted(RateLimiter.ofDefaults(RULE_NAME))));
         Assert.assertTrue(Rest4jExceptionUtils.isNeedReleasePermit(
-            CallNotPermittedException.createCallNotPermittedException(CircuitBreaker.ofDefaults(ruleName))));
+            CallNotPermittedException.createCallNotPermittedException(CircuitBreaker.ofDefaults(RULE_NAME))));
         Assert.assertFalse(Rest4jExceptionUtils.isNeedReleasePermit(
-            BulkheadFullException.createBulkheadFullException(Bulkhead.ofDefaults(ruleName))));
+            BulkheadFullException.createBulkheadFullException(Bulkhead.ofDefaults(RULE_NAME))));
     }
 }

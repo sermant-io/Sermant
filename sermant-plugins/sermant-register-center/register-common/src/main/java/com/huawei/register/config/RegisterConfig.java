@@ -43,7 +43,7 @@ public class RegisterConfig implements PluginConfig {
     /**
      * kie命名空间
      */
-    private String project = "default";
+    private String project = ConfigConstants.COMMON_DEFAULT_VALUE;
 
     /**
      * 服务实例心跳发送间隔
@@ -108,6 +108,33 @@ public class RegisterConfig implements PluginConfig {
     @SuppressWarnings("checkstyle:RegexpSingleLine")
     private boolean enableSpringRegister = false;
 
+    /**
+     * 是否启用区域发现
+     */
+    @SuppressWarnings("checkstyle:RegexpSingleLine")
+    private boolean enableZoneAware = false;
+
+    /**
+     * 数据中心名称
+     */
+    private String dataCenterName = ConfigConstants.COMMON_DEFAULT_VALUE;
+
+    /**
+     * 数据中心 区域
+     */
+    private String dataCenterRegion = ConfigConstants.COMMON_DEFAULT_VALUE;
+
+    /**
+     * 数据中心 去
+     */
+    private String dataCenterAvailableZone = ConfigConstants.COMMON_DEFAULT_VALUE;
+
+    /**
+     * 是否支持跨app访问实例
+     */
+    @SuppressWarnings("checkstyle:RegexpSingleLine")
+    private boolean allowCrossApp = false;
+
     public RegisterConfig() {
         final ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
         if (serviceMeta == null) {
@@ -117,6 +144,48 @@ public class RegisterConfig implements PluginConfig {
         this.application = serviceMeta.getApplication();
         this.project = serviceMeta.getProject();
         this.version = serviceMeta.getVersion();
+    }
+
+    public boolean isAllowCrossApp() {
+        return allowCrossApp;
+    }
+
+    @SuppressWarnings("checkstyle:RegexpSingleLine")
+    public void setAllowCrossApp(boolean allowCrossApp) {
+        this.allowCrossApp = allowCrossApp;
+    }
+
+    public String getDataCenterName() {
+        return dataCenterName;
+    }
+
+    public void setDataCenterName(String dataCenterName) {
+        this.dataCenterName = dataCenterName;
+    }
+
+    public String getDataCenterRegion() {
+        return dataCenterRegion;
+    }
+
+    public void setDataCenterRegion(String dataCenterRegion) {
+        this.dataCenterRegion = dataCenterRegion;
+    }
+
+    public String getDataCenterAvailableZone() {
+        return dataCenterAvailableZone;
+    }
+
+    public void setDataCenterAvailableZone(String dataCenterAvailableZone) {
+        this.dataCenterAvailableZone = dataCenterAvailableZone;
+    }
+
+    public boolean isEnableZoneAware() {
+        return enableZoneAware;
+    }
+
+    @SuppressWarnings("checkstyle:RegexpSingleLine")
+    public void setEnableZoneAware(boolean enableZoneAware) {
+        this.enableZoneAware = enableZoneAware;
     }
 
     public boolean isEnableSpringRegister() {

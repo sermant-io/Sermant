@@ -25,7 +25,6 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -37,8 +36,6 @@ import java.util.logging.Logger;
 public class HostUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final String WINDOWS_OPERATOR = "windows";
-
     private static final String LOCAL_IP = "127.0.0.1";
 
     private static final String LOCAL_HOST = "localhost";
@@ -47,39 +44,11 @@ public class HostUtils {
     }
 
     /**
-     * 获取当前机器的IP地址
-     *
-     * @return IP地址
-     */
-    public static String getMachineIp() {
-        if (isWindowsOs()) {
-            return getWindowsIp();
-        }
-        return getLinuxIp();
-    }
-
-    private static boolean isWindowsOs() {
-        String osName = System.getProperty("os.name");
-        if (osName == null) {
-            return false;
-        }
-        return osName.toLowerCase(Locale.ENGLISH).contains(WINDOWS_OPERATOR);
-    }
-
-    private static String getWindowsIp() {
-        final InetAddress localHost = getLocalHost();
-        if (localHost == null) {
-            return LOCAL_IP;
-        }
-        return localHost.getHostAddress();
-    }
-
-    /**
      * 获取Linux下的IP地址
      *
      * @return IP地址
      */
-    private static String getLinuxIp() {
+    public static String getMachineIp() {
         try {
             for (Enumeration<NetworkInterface> networkInterfaceEnumeration = NetworkInterface.getNetworkInterfaces();
                 networkInterfaceEnumeration.hasMoreElements(); ) {
@@ -93,10 +62,11 @@ public class HostUtils {
                     return ip;
                 }
             }
-        } catch (SocketException ex) {
-            return LOCAL_IP;
+        } catch (SocketException ignored) {
+            // ignored
         }
-        return null;
+        LOGGER.severe("Can not acquire correct instance ip , it will be replaced by local ip!");
+        return LOCAL_IP;
     }
 
     private static String resolveNetworkIp(NetworkInterface networkInterface) {

@@ -18,10 +18,8 @@ package com.huawei.register.service.register;
 
 import com.huawei.register.service.client.ScClient;
 
-import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
-import org.apache.servicecomb.service.center.client.model.MicroservicesResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,33 +68,11 @@ public class ScRegister implements Register {
         if (serviceName == null) {
             return Collections.emptyList();
         }
-        String serviceId = getScServiceId(serviceName);
-        final List<MicroserviceInstance> microserviceInstances = client.queryInstancesByServiceId(serviceId);
+        final List<MicroserviceInstance> microserviceInstances = client.queryInstancesByServiceId(serviceName);
         if (microserviceInstances == null) {
             return Collections.emptyList();
         }
         microserviceInstances.removeIf(next -> next.getStatus() != MicroserviceInstanceStatus.UP);
         return microserviceInstances;
-    }
-
-    /**
-     * 获取Service Center的service Id
-     *
-     * @param serviceName 服务名, 从其他注册中心获取的servieId均为服务名
-     * @return serviceId
-     */
-    private String getScServiceId(String serviceName) {
-        final MicroservicesResponse response = client.getRawClient().getMicroserviceList();
-        if (response == null || response.getServices() == null) {
-            return null;
-        }
-        final List<Microservice> services = response.getServices();
-        services.sort((o1, o2) -> (int) (Long.parseLong(o2.getModTimestamp()) - Long.parseLong(o1.getModTimestamp())));
-        for (Microservice microservice : response.getServices()) {
-            if (serviceName.equals(microservice.getServiceName())) {
-                return microservice.getServiceId();
-            }
-        }
-        return null;
     }
 }
