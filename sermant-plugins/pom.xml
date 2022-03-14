@@ -31,14 +31,7 @@
             </activation>
             <modules>
                 <module>sermant-flowcontrol</module>
-                <module>sermant-server-monitor</module>
-                <module>sermant-flowrecord</module>
-                <module>sermant-route</module>
-                <module>sermant-threadlocal</module>
-                <module>sermant-online-stresstest</module>
                 <module>sermant-register-center</module>
-                <module>sermant-luban-adaptor</module>
-                <module>sermant-loadbalancer</module>
             </modules>
         </profile>
         <profile>
@@ -55,9 +48,6 @@
             </activation>
             <modules>
                 <module>sermant-flowcontrol</module>
-                <module>sermant-flowrecord</module>
-                <module>sermant-server-monitor</module>
-                <module>sermant-route</module>
             </modules>
         </profile>
         <profile>
