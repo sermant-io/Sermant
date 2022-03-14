@@ -17,15 +17,15 @@
 package com.huawei.sermant.backend.entity;
 
 public enum AddressScope {
-    /*
-    内部地址
+    /**
+     * 内部地址
      */
-    inner,
+    INNER,
 
     /**
      * 对外的地址
      */
-    outer;
+    OUTER;
 
     public static AddressScope getValue(String s) {
         try {

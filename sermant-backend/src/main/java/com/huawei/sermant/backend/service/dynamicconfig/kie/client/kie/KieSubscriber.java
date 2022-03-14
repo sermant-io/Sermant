@@ -82,9 +82,8 @@ public class KieSubscriber {
 
     @Override
     public int hashCode() {
-        int result = ((isLongConnectionRequest == null || !isLongConnectionRequest)  ? 1 : 0);
-        result = 31 * result + (kieRequest != null ? kieRequest.hashCode() : 0);
-        return result;
+        int isLongConnect = (isLongConnectionRequest == null || !isLongConnectionRequest) ? 1 : 0;
+        return 31 * isLongConnect + (kieRequest != null ? kieRequest.hashCode() : 0);
     }
 
     public KieRequest getKieRequest() {

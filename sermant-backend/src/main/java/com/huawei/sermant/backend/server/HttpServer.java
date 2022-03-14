@@ -63,24 +63,25 @@ public class HttpServer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpServer.class);
 
+    private static final String SUCCESS = "success";
+    private static final String FAILED = "failed";
+    private static final int DEFAULT_IP_INDEX = 0;
+    private static final int NULL_IP_LENGTH = 0;
+    private static final int MAX = 10;
+
     @Autowired
     private KafkaConf conf;
 
     @Autowired
     private DynamicConfigurationFactoryServiceImpl dynamicConfigurationFactoryService;
 
-    private final String SUCCESS = "success";
-    private final String FAILED = "failed";
-    private final Integer DEFAULT_IP_INDEX = 0;
-    private final Integer NULL_IP_LENGTH = 0;
 
-    RandomUtil RANDOM_UTIL = new RandomUtil();
-    DateUtil DATE_UTIL = new DateUtil();
-    private final Integer MAX = 10;
+    private final RandomUtil randomUtil = new RandomUtil();
+    private final DateUtil dateUtil = new DateUtil();
 
     private long randomLong = UuidUtil.getId();
-    private final int randomInt = RANDOM_UTIL.getRandomInt(MAX);
-    private final String randomStr = RANDOM_UTIL.getRandomStr(MAX);
+    private final int randomInt = randomUtil.getRandomInt(MAX);
+    private final String randomStr = randomUtil.getRandomStr(MAX);
 
 
     @PostMapping("/master/v1/register")
@@ -153,8 +154,8 @@ public class HttpServer {
         address.setHost(randomStr);
         address.setPort(randomInt);
         address.setSport(randomInt);
-        address.setType(AddressType.access);
-        address.setScope(AddressScope.outer);
+        address.setType(AddressType.ACCESS);
+        address.setScope(AddressScope.OUTER);
         address.setProtocol(Protocol.WS);
         return address;
     }
@@ -190,7 +191,7 @@ public class HttpServer {
     }
 
     private List<AgentInfo> getHeartbeatMessageCache() {
-        HashMap<String, HeartbeatEntity> heartbeatMessages = HeartbeatCache.getHeartbeatMessages();
+        Map<String, HeartbeatEntity> heartbeatMessages = HeartbeatCache.getHeartbeatMessages();
         if (heartbeatMessages != null) {
             Map<String, AgentInfo> agentMap = new HashMap<>();
             for (HeartbeatEntity heartbeatEntity : heartbeatMessages.values()) {
@@ -215,6 +216,7 @@ public class HttpServer {
             agentInfo.setVersion(heartbeatEntity.getVersion());
             agentInfo.setPluginsMap(new HashMap<String, String>());
             agentInfo.setInstanceId(instanceId);
+            agentInfo.setAppName(heartbeatEntity.getApp());
             agentMap.put(instanceId, agentInfo);
         }
         if (agentMap.get(instanceId) != null && heartbeatEntity.getPluginName() != null) {
@@ -222,8 +224,8 @@ public class HttpServer {
             Map<String, String> pluginMap = agentInfo.getPluginsMap();
             pluginMap.put(heartbeatEntity.getPluginName(), heartbeatEntity.getPluginVersion());
             agentInfo.setPluginsMap(pluginMap);
-            agentInfo.setLastHeartbeatTime(DATE_UTIL.getFormatDate(heartbeatEntity.getLastHeartbeat()));
-            agentInfo.setHeartbeatTime(DATE_UTIL.getFormatDate(heartbeatEntity.getHeartbeatVersion()));
+            agentInfo.setLastHeartbeatTime(dateUtil.getFormatDate(heartbeatEntity.getLastHeartbeat()));
+            agentInfo.setHeartbeatTime(dateUtil.getFormatDate(heartbeatEntity.getHeartbeatVersion()));
         }
     }
 }

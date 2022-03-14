@@ -34,7 +34,6 @@ import java.util.Properties;
  * @since 2021-08-07
  */
 public class KafkaProducerManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaProducerManager.class);
 
     private KafkaProducer<String, byte[]> producer;
 

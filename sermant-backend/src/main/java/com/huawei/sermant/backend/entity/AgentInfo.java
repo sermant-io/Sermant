@@ -19,7 +19,6 @@ package com.huawei.sermant.backend.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,4 +43,6 @@ public class AgentInfo {
     private Map<String, String> pluginsMap;
 
     private Object instanceId;
+
+    private Object appName;
 }

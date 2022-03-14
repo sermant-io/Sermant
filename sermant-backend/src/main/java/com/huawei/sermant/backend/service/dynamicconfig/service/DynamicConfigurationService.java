@@ -47,8 +47,13 @@ public interface DynamicConfigurationService extends AutoCloseable {
     String getConfig(String key, String group);
 
 
-    default String getConfig(String key)
-    {
+    /**
+     * 获取配置
+     *
+     * @param key key
+     * @return 配置
+     */
+    default String getConfig(String key) {
         return getConfig(key, getDefaultGroup());
     }
 
@@ -58,7 +63,15 @@ public interface DynamicConfigurationService extends AutoCloseable {
     }
 
 
-    boolean publishConfig(String key, String group, String content) ;
+    /**
+     * 推送配置
+     *
+     * @param key key
+     * @param group group
+     * @param content content
+     * @return 是否成功
+     */
+    boolean publishConfig(String key, String group, String content);
 
 
     String getDefaultGroup();

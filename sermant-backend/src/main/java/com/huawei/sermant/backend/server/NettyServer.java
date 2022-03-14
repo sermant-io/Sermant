@@ -16,6 +16,7 @@
 
 package com.huawei.sermant.backend.server;
 
+import com.huawei.sermant.backend.cache.DeleteTimeoutData;
 import com.huawei.sermant.backend.common.conf.DataTypeTopicMapping;
 import com.huawei.sermant.backend.kafka.KafkaConsumerManager;
 import com.huawei.sermant.backend.pojo.Message;
@@ -45,6 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Timer;
 import javax.annotation.PostConstruct;
 
 /**
@@ -60,6 +62,14 @@ public class NettyServer {
 
     // 最大的连接等待数量
     private static final int CONNECTION_SIZE = 1024;
+
+    // 清理缓存数据延时
+    private static final int DELETE_TIMEOUT_DATA_DELAY_TIME = 5000;
+
+    // 清理缓存数据间隔时间
+    private static final int DELETE_TIMEOUT_DATA_PERIOD_TIME = 3000;
+
+    private static final Timer TIMER = new Timer();
 
     // 读等待时间
     @Value("${netty.wait.time}")
@@ -78,11 +88,15 @@ public class NettyServer {
 
     /**
      * 服务端核心方法
+     *
      * 随tomcat启动被拉起，处理客户端连接和数据
      */
     @PostConstruct
     public void start() {
         LOGGER.info("Starting the netty server...");
+
+        // 清理过期数据
+        TIMER.schedule(new DeleteTimeoutData(), DELETE_TIMEOUT_DATA_DELAY_TIME, DELETE_TIMEOUT_DATA_PERIOD_TIME);
 
         // 处理连接的线程组
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
