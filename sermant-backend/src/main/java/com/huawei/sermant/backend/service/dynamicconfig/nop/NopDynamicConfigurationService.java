@@ -22,6 +22,8 @@ import com.huawei.sermant.backend.service.dynamicconfig.service.DynamicConfigura
 
 /**
  *   This class is for testing purpose only.
+ *
+ * @deprecated 测试类
  */
 @Deprecated
 public class NopDynamicConfigurationService implements DynamicConfigurationService {
@@ -31,10 +33,13 @@ public class NopDynamicConfigurationService implements DynamicConfigurationServi
         // no-op
     }
 
-    public static synchronized NopDynamicConfigurationService getInstance()
-    {
-        if ( serviceInst == null )
-        {
+    /**
+     * 获取nop动态配置服务
+     *
+     * @return nop动态配置服务
+     */
+    public static synchronized NopDynamicConfigurationService getInstance() {
+        if (serviceInst == null) {
             serviceInst = new NopDynamicConfigurationService();
         }
         return serviceInst;

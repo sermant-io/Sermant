@@ -52,12 +52,18 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2021-11-17
  */
 public class SubscriberManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SubscriberManager.class);
+
+    /**
+     * 基础时间
+     */
+    public static final long BASE_MS = 3000L;
 
     /**
      * 最大线程数
      */
     public static final int MAX_THREAD_SIZE = 100;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SubscriberManager.class);
 
     /**
      * 线程数
@@ -279,10 +285,8 @@ public class SubscriberManager {
             } else {
                 if (scheduledExecutorService == null) {
                     synchronized (SubscriberManager.class) {
-                        if (scheduledExecutorService == null) {
                             scheduledExecutorService = new ScheduledThreadPoolExecutor(THREAD_SIZE,
                                     new BackendThreadFactory("kie-subscribe-task"));
-                        }
                     }
                 }
                 scheduledExecutorService.scheduleAtFixedRate(
@@ -450,7 +454,7 @@ public class SubscriberManager {
             if (waitTimeMs != 0) {
                 wait = Math.min(waitTimeMs, maxWaitMs);
             } else {
-                long baseMs = 3000;
+                long baseMs = BASE_MS;
                 wait = Math.min(maxWaitMs, baseMs * failedCount * failedCount);
             }
             try {

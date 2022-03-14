@@ -44,6 +44,19 @@ public class KieListenerWrapper {
 
     private final KvDataHolder kvDataHolder;
 
+    /**
+     * listener封装，关联任务执行器
+     *
+     * @param group group
+     * @param configurationListener listen
+     * @param kvDataHolder  holder
+     */
+    public KieListenerWrapper(String group, ConfigurationListener configurationListener, KvDataHolder kvDataHolder) {
+        this.group = group;
+        this.configurationListener = configurationListener;
+        this.kvDataHolder = kvDataHolder;
+    }
+
     public void notifyListener(KvDataHolder.EventDataHolder eventDataHolder) {
         if (!eventDataHolder.getAdded().isEmpty()) {
             // 新增事件
@@ -69,19 +82,6 @@ public class KieListenerWrapper {
                         entry.getKey(), this.group));
             }
         }
-    }
-
-    public KieListenerWrapper(ConfigurationListener configurationListener, SubscriberManager.Task task,
-                              KvDataHolder kvDataHolder) {
-        this.configurationListener = configurationListener;
-        this.task = task;
-        this.kvDataHolder = kvDataHolder;
-    }
-
-    public KieListenerWrapper(String group, ConfigurationListener configurationListener, KvDataHolder kvDataHolder) {
-        this.group = group;
-        this.configurationListener = configurationListener;
-        this.kvDataHolder = kvDataHolder;
     }
 
     public ConfigurationListener getConfigurationListener() {

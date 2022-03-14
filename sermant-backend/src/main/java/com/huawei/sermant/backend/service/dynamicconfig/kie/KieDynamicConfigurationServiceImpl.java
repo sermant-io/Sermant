@@ -58,7 +58,7 @@ public class KieDynamicConfigurationServiceImpl implements DynamicConfigurationS
     public static synchronized KieDynamicConfigurationServiceImpl getInstance() {
         if (instance == null) {
             instance = new KieDynamicConfigurationServiceImpl();
-            subscriberManager = new SubscriberManager(Config.getInstance().getKie_url());
+            subscriberManager = new SubscriberManager(Config.getInstance().getKieUrl());
         }
         return instance;
     }

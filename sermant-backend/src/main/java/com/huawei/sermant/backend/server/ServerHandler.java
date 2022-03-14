@@ -35,8 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -54,7 +54,7 @@ public class ServerHandler extends BaseHandler {
 
     private final DataTypeTopicMapping topicMapping;
 
-    private final HashMap<String, HeartbeatEntity> hbMessages = HeartbeatCache.getHeartbeatMessages();
+    private final Map<String, HeartbeatEntity> hbMessages = HeartbeatCache.getHeartbeatMessages();
 
     public ServerHandler(KafkaProducer<String, byte[]> producer, KafkaConsumer<String, String> consumer, DataTypeTopicMapping topicMapping) {
         this.producer = producer;

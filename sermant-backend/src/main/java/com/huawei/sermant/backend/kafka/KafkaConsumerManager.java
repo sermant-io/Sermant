@@ -27,8 +27,6 @@ import java.util.Properties;
 
 public class KafkaConsumerManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaProducerManager.class);
-
     private KafkaConsumer<String, String> consumer;
 
     private static KafkaConsumerManager instance;

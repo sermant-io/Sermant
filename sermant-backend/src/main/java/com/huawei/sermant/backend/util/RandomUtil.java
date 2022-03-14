@@ -22,9 +22,10 @@ import java.util.Random;
 
 public class RandomUtil {
 
+    private final Random random = new Random();
+
     public Integer getRandomInt(Integer range) {
-        Random rand = new Random();
-        return rand.nextInt(range) + 1;
+        return random.nextInt(range) + 1;
     }
 
     public String getRandomStr(Integer len) {
@@ -32,6 +33,6 @@ public class RandomUtil {
     }
 
     public Long getRandomLong(Integer min, Integer max) {
-        return min + (((long) (new Random().nextDouble() * (max - min))));
+        return min + (((long) (random.nextDouble() * (max - min))));
     }
 }

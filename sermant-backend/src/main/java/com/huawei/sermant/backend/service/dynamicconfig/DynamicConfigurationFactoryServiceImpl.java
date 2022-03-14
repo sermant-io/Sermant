@@ -35,18 +35,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class DynamicConfigurationFactoryServiceImpl implements DynamicConfigurationFactoryService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DynamicConfigurationFactoryServiceImpl.class);
-
     protected DynamicConfigurationService getDynamicConfigurationService(DynamicConfigType dct) {
 
-        if ( dct == DynamicConfigType.ZOO_KEEPER )
+        if (dct == DynamicConfigType.ZOO_KEEPER) {
             return ZookeeperDynamicConfigurationService.getInstance();
+        }
 
-        if ( dct == DynamicConfigType.KIE )
+        if (dct == DynamicConfigType.KIE) {
             return KieDynamicConfigurationServiceImpl.getInstance();
+        }
 
-        if ( dct == DynamicConfigType.NOP )
+        if (dct == DynamicConfigType.NOP) {
             return NopDynamicConfigurationService.getInstance();
+        }
 
         return null;
     }

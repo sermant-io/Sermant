@@ -51,6 +51,7 @@ import java.util.Map;
  */
 public class DefaultHttpClient implements com.huawei.sermant.backend.service.dynamicconfig.kie.client.http.HttpClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHttpClient.class);
+
     /**
      * 默认超时时间
      */
@@ -98,7 +99,7 @@ public class DefaultHttpClient implements com.huawei.sermant.backend.service.dyn
         // 如果需配置SSL 在此处注册https
         Registry<ConnectionSocketFactory> connectionSocketFactoryRegistry = builder.build();
 
-        //connection pool management
+        // connection pool management
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(
                 connectionSocketFactoryRegistry);
         connectionManager.setMaxTotal(MAX_TOTAL);

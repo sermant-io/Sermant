@@ -19,6 +19,7 @@ package com.huawei.sermant.backend.cache;
 import com.huawei.sermant.backend.entity.HeartbeatEntity;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 心跳数据缓存
@@ -28,12 +29,12 @@ import java.util.HashMap;
  */
 public class HeartbeatCache {
 
-    private static HashMap<String, HeartbeatEntity> heartbeatMessages = new HashMap<>();
+    private static Map<String, HeartbeatEntity> heartbeatMessages = new HashMap<>();
 
     private HeartbeatCache() {
     }
 
-    public static HashMap<String, HeartbeatEntity> getHeartbeatMessages() {
+    public static Map<String, HeartbeatEntity> getHeartbeatMessages() {
         return heartbeatMessages;
     }
 }

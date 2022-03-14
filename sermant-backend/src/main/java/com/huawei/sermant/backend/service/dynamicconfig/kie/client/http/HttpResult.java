@@ -39,7 +39,7 @@ public class HttpResult {
      * SC_OK : 正常返回
      * SC_NOT_MODIFIED : 未做任何修改
      */
-    private final int[] OK_CODES = {HttpStatus.SC_OK, HttpStatus.SC_NOT_MODIFIED};
+    private final int[] okCodes = {HttpStatus.SC_OK, HttpStatus.SC_NOT_MODIFIED};
 
     /**
      * 响应码
@@ -79,7 +79,7 @@ public class HttpResult {
      * @return 是否错误响应
      */
     public boolean isError() {
-        for (int okCode : OK_CODES) {
+        for (int okCode : okCodes) {
             if (okCode == this.code) {
                 return false;
             }

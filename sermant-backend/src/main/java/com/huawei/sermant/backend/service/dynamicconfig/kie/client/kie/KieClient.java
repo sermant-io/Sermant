@@ -34,9 +34,9 @@ import java.util.Map;
  */
 public class KieClient extends AbstractClient {
 
-    private final ResultHandler<KieResponse> defaultHandler = new ResultHandler.DefaultResultHandler();
+    private static final String KIE_API_TEMPLATE = "/v1/%s/kie/kv?";
 
-    private final String kieApiTemplate = "/v1/%s/kie/kv?";
+    private final ResultHandler<KieResponse> defaultHandler = new ResultHandler.DefaultResultHandler();
 
     private String kieApi;
 
@@ -50,11 +50,11 @@ public class KieClient extends AbstractClient {
 
     public KieClient(ClientUrlManager clientUrlManager, HttpClient httpClient, String project) {
         super(clientUrlManager, httpClient);
-        kieApi = String.format(kieApiTemplate, project);
+        kieApi = String.format(KIE_API_TEMPLATE, project);
     }
 
     public void setProject(String project) {
-        this.kieApi = String.format(kieApiTemplate, project);
+        this.kieApi = String.format(KIE_API_TEMPLATE, project);
     }
 
     /**
