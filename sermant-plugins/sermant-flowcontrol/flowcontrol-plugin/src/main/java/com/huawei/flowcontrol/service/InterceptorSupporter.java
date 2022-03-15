@@ -19,6 +19,7 @@ package com.huawei.flowcontrol.service;
 
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.enums.FlowFramework;
+import com.huawei.flowcontrol.common.exception.InvokerWrapperException;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
 import com.huawei.flowcontrol.common.support.ReflectMethodCacheSupport;
 import com.huawei.flowcontrol.retry.handler.RetryHandlerV2;
@@ -137,8 +138,10 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
             method.setAccessible(true);
             try {
                 return method.invoke(obj, allArguments);
-            } catch (IllegalAccessException | InvocationTargetException ignored) {
+            } catch (IllegalAccessException ignored) {
                 // ignored
+            } catch (InvocationTargetException ex) {
+                throw new InvokerWrapperException(ex.getTargetException());
             }
             return result;
         };

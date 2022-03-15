@@ -17,6 +17,8 @@
         <service-center-version>2.5.3</service-center-version>
         <ribbon-loadbalancer-version>2.3.0</ribbon-loadbalancer-version>
         <spring-cloud-version>2.1.0.RELEASE</spring-cloud-version>
+        <guava.version>31.0.1-jre</guava.version>
+        <slf4j.version>1.7.35</slf4j.version>
     </properties>
 
     <dependencies>
@@ -43,12 +45,25 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-core</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-tcnative-boringssl-static</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.33</version>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <!--test 依赖-->

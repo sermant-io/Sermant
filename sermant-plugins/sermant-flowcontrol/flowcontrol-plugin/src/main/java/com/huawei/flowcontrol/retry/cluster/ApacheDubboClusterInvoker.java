@@ -18,6 +18,7 @@
 package com.huawei.flowcontrol.retry.cluster;
 
 import com.huawei.flowcontrol.common.entity.DubboRequestEntity;
+import com.huawei.flowcontrol.common.exception.InvokerException;
 import com.huawei.flowcontrol.common.handler.retry.AbstractRetry;
 import com.huawei.flowcontrol.common.handler.retry.Retry;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
@@ -95,7 +96,7 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
                     "Retry %d times failed for interface %s.%s", retryRule.getRetryConfig().getMaxAttempts() - 1,
                     invocation.getInvoker().getInterface().getName(), invocation.getMethodName()));
             }
-            throw new RuntimeException(ex);
+            throw new InvokerException(ex);
         } finally {
             RetryContext.INSTANCE.removeRetry();
         }

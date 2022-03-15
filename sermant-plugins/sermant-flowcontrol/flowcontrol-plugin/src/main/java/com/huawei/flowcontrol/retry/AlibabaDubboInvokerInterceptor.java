@@ -18,6 +18,7 @@
 package com.huawei.flowcontrol.retry;
 
 import com.huawei.flowcontrol.common.entity.DubboRequestEntity;
+import com.huawei.flowcontrol.common.exception.InvokerWrapperException;
 import com.huawei.flowcontrol.common.handler.retry.AbstractRetry;
 import com.huawei.flowcontrol.common.handler.retry.Retry;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
@@ -66,7 +67,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
 
     @SuppressWarnings("checkstyle:IllegalCatch")
     private Object invokeRetryMethod(Object obj, Object[] allArguments, Object ret, boolean isNeedThrow,
-        boolean isRetry) throws Throwable {
+        boolean isRetry) {
         try {
             if (obj instanceof AbstractClusterInvoker) {
                 final Invocation invocation = (Invocation) allArguments[0];
@@ -93,12 +94,15 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
                 // 执行调用
                 final Result result = invoke.invoke(invocation);
                 if (result.hasException() && isNeedThrow) {
-                    throw result.getException();
+                    throw new InvokerWrapperException(result.getException());
                 }
                 return result;
             }
-        } catch (NoSuchMethodException | IllegalAccessException ex) {
+        } catch (IllegalAccessException ex) {
             LOGGER.warning("No such Method ! " + ex.getMessage());
+        } catch (InvocationTargetException ex) {
+            // 针对该异常，需拿到目标异常（真正的方法异常）
+            throw new InvokerWrapperException(ex.getTargetException());
         }
         return ret;
     }
@@ -155,17 +159,22 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
                         true));
             }
         } catch (Throwable throwable) {
-            if (throwable instanceof InvocationTargetException) {
-                InvocationTargetException exception = (InvocationTargetException) throwable;
-                result = new RpcResult(exception);
-            } else {
-                result = new RpcResult(throwable);
-            }
+            result = buildErrorResponse(throwable);
         } finally {
             RetryContext.INSTANCE.removeRetry();
         }
         context.changeResult(result);
         return context;
+    }
+
+    private Object buildErrorResponse(Throwable throwable) {
+        Object errorResponse;
+        if (throwable instanceof InvokerWrapperException) {
+            errorResponse = new RpcResult(((InvokerWrapperException) throwable).getRealException());
+        } else {
+            errorResponse = new RpcResult(throwable);
+        }
+        return errorResponse;
     }
 
     public static class AlibabaDubboRetry extends AbstractRetry {
