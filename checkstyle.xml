@@ -292,6 +292,8 @@
         <property name="max" value="120"/>
     </module>
     <module name="TreeWalker">
+        <module name="SuppressionCommentFilter"/>
+        <module name="SuppressWarningsHolder"/>
         <!-- 关于注释：建议代码通过合理的命名、函数短小等方式，让代码有自注释能力，然后配以简要的注释说明，不建议大量的冗余注释 -->
         <module name="JavadocType">
             <!--检查类和接口的javadoc注释，要有描述、@author/@version等内容
