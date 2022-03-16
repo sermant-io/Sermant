@@ -19,7 +19,7 @@
         <commons-lang.version>2.6</commons-lang.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-collections.version>4.4</commons-collections.version>
-        <guice.version>4.1.0</guice.version>
+        <guice.version>4.2.3</guice.version>
         <http.client.version>4.5.13</http.client.version>
         <http.core.version>4.4.13</http.core.version>
         <Java-WebSocket.version>1.5.1</Java-WebSocket.version>
@@ -34,8 +34,8 @@
         <lombok.version>1.18.10</lombok.version>
         <asm.version>8.0.1</asm.version>
 
-        <slf4j.version>1.7.30</slf4j.version>
-        <log4j2.version>2.17.0</log4j2.version>
+        <slf4j.version>1.7.35</slf4j.version>
+        <log4j2.version>2.17.1</log4j2.version>
         <logback.version>1.2.9</logback.version>
 
         <junit.version>4.12</junit.version>
