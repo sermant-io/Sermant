@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package com.huawei.sermant.backend.service.dynamicconfig.service;
+package com.huawei.sermant.backend.common.exception;
 
 /**
+ * zookeeper动态配置异常类
  *
- * Core service for the dynamic config service.
- * This factory is used to retrieve the default configuration service.
- *
+ * @author 薛泽超
+ * @since 2022-03-16
  */
-public interface DynamicConfigurationFactoryService {
+public class ZookeeperDynamicConfigurationException extends Exception {
+    private static final long serialVersionUID = -940403875065143157L;
 
     /**
-     * 获取动态配置接口
+     * zookeeper 动态配置异常
      *
-     * @return 动态配置
-     * @throws Exception 异常
+     * @param msg 异常信息
      */
-    DynamicConfigurationService getDynamicConfigurationService() throws Exception;
-
+    public ZookeeperDynamicConfigurationException(String msg) {
+        super(msg);
+    }
 }

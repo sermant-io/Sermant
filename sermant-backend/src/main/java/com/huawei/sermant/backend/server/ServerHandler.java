@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -103,7 +104,8 @@ public class ServerHandler extends BaseHandler {
     private void writeHeartBeatCacheCache(String topic, byte[] message) {
         // 缓存心跳数据
         if (Objects.equals(topic, topicMapping.getTopicOfType(0))) {
-            HeartbeatEntity heartbeatEntity = JSON.parseObject(new String(message), HeartbeatEntity.class);
+            String messageStr = new String(message, StandardCharsets.UTF_8);
+            HeartbeatEntity heartbeatEntity = JSON.parseObject(messageStr, HeartbeatEntity.class);
             List<String> ips = heartbeatEntity.getIp();
             if (ips != null && ips.size() != 0 && heartbeatEntity.getPluginName() != null) {
                 String instanceId = heartbeatEntity.getInstanceId();

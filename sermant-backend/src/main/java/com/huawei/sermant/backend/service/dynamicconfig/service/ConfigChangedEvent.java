@@ -26,12 +26,10 @@ import java.util.Objects;
  */
 public class ConfigChangedEvent extends EventObject {
 
+    private static final long serialVersionUID = -2774678643852195546L;
     private final String key;
-
     private final String group;
-
     private final String content;
-
     private final ConfigChangeType changeType;
 
     public ConfigChangedEvent(String key, String group, String content) {

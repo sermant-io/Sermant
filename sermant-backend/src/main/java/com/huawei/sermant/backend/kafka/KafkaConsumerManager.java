@@ -20,8 +20,6 @@ import com.huawei.sermant.backend.common.conf.KafkaConf;
 import com.huawei.sermant.backend.common.exception.KafkaTopicException;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
