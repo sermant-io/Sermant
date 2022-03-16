@@ -32,6 +32,7 @@
         <profile>
             <id>all</id>
             <modules>
+                <module>demo-register</module>
                 <module>dubbo-register-plugin</module>
                 <module>dubbo-register-service</module>
                 <module>register-common</module>
