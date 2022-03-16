@@ -19,6 +19,7 @@ package com.huawei.flowcontrol.retry.handler;
 
 import com.huawei.flowcontrol.common.adapte.cse.resolver.RetryResolver;
 import com.huawei.flowcontrol.common.adapte.cse.rule.RetryRule;
+import com.huawei.flowcontrol.common.exception.InvokerWrapperException;
 import com.huawei.flowcontrol.common.handler.AbstractRequestHandler;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
 
@@ -27,6 +28,7 @@ import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.function.Predicate;
 
@@ -43,14 +45,33 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
         if (retry == null) {
             return null;
         }
-        return RetryRegistry.of(
-            RetryConfig.custom()
-                .maxAttempts(rule.getMaxAttempts())
-                .retryOnResult(buildRetryResult(retry, rule))
-                .retryExceptions(retry.retryExceptions())
-                .intervalFunction(getIntervalFunction(rule))
-                .build())
-            .retry(businessName);
+        final RetryConfig retryConfig = RetryConfig.custom()
+            .maxAttempts(rule.getMaxAttempts())
+            .retryOnResult(buildRetryResult(retry, rule))
+            .retryOnException(createExceptionPredicate(retry.retryExceptions()))
+            .intervalFunction(getIntervalFunction(rule))
+            .build();
+        return RetryRegistry.of(retryConfig).retry(businessName);
+    }
+
+    private Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable>[] retryExceptions) {
+        return Arrays.stream(retryExceptions).distinct().map(this::createExceptionPredicate).reduce(Predicate::or)
+            .orElseGet(() -> throwable -> true);
+    }
+
+    private Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable> retryClass) {
+        return (Throwable ex) -> retryClass.isAssignableFrom(getRealExceptionClass(ex));
+    }
+
+    private Class<? extends Throwable> getRealExceptionClass(Throwable ex) {
+        if (ex instanceof InvokerWrapperException) {
+            // 判断是否是目标包装异常
+            InvokerWrapperException invokerWrapperException = (InvokerWrapperException) ex;
+            if (invokerWrapperException.getRealException() != null) {
+                return invokerWrapperException.getRealException().getClass();
+            }
+        }
+        return ex.getClass();
     }
 
     private Predicate<Object> buildRetryResult(com.huawei.flowcontrol.common.handler.retry.Retry retry,
