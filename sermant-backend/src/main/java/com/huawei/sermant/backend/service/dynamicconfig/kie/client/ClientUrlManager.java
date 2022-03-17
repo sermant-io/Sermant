@@ -50,7 +50,7 @@ public class ClientUrlManager {
      *
      * @param rawUrls url字符串
      */
-    public void resolveUrls(String rawUrls) {
+    private void resolveUrls(String rawUrls) {
         if (rawUrls == null || rawUrls.trim().length() == 0) {
             return;
         }

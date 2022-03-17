@@ -16,7 +16,6 @@
 
 package com.huawei.sermant.backend.service.dynamicconfig.service;
 
-
 /**
  * Enum for DynamicConfigType,
  * Currently support ZooKeeper, Kie, Nop.

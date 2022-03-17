@@ -16,12 +16,12 @@
 
 package com.huawei.sermant.backend.service.dynamicconfig.zookeeper;
 
+import com.huawei.sermant.backend.common.exception.ZookeeperDynamicConfigurationException;
 import com.huawei.sermant.backend.service.dynamicconfig.Config;
 import com.huawei.sermant.backend.service.dynamicconfig.service.ConfigChangeType;
 import com.huawei.sermant.backend.service.dynamicconfig.service.ConfigChangedEvent;
 import com.huawei.sermant.backend.service.dynamicconfig.service.ConfigurationListener;
 import com.huawei.sermant.backend.service.dynamicconfig.service.DynamicConfigurationService;
-import com.huawei.sermant.backend.service.dynamicconfig.utils.LabelGroupUtils;
 import org.apache.zookeeper.AddWatchMode;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
@@ -39,7 +39,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -67,7 +66,14 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
         return Config.getTimeout_value();
     }
 
-    public static synchronized ZookeeperDynamicConfigurationService getInstance() {
+    /**
+     * zookeeper 动态配置实现
+     *
+     * @return 配置实现
+     * @throws ZookeeperDynamicConfigurationException 异常
+     */
+    public static synchronized ZookeeperDynamicConfigurationService getInstance()
+            throws ZookeeperDynamicConfigurationException {
         if (serviceInst == null) {
             serviceInst = new ZookeeperDynamicConfigurationService();
             URI zkUri;
@@ -76,7 +82,7 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
                 zkUri = new URI(Config.getZookeeperUri());
             } catch (URISyntaxException e) {
                 logger.error(e.getMessage(), e);
-                throw new RuntimeException(e);
+                throw new ZookeeperDynamicConfigurationException(e.getMessage());
             }
 
             String zkConStr = zkUri.getHost();
@@ -93,7 +99,7 @@ public class ZookeeperDynamicConfigurationService implements DynamicConfiguratio
                 });
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);
-                throw new RuntimeException(e);
+                throw new ZookeeperDynamicConfigurationException(e.getMessage());
             }
 
             serviceInst.zkClient = zkInst;

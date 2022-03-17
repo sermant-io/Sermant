@@ -20,7 +20,6 @@ import com.huawei.sermant.backend.service.dynamicconfig.service.DynamicConfigTyp
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Config for this DynamicConfig Module
  *
@@ -62,7 +61,7 @@ public class Config {
      * @return 配置
      */
     public static synchronized Config getInstance() {
-        if ( singleInst == null ) {
+        if (singleInst == null) {
             logger.warn("Config failed to init from configfile. Load config from hardcode.");
             singleInst = new Config();
         }

@@ -285,8 +285,8 @@ public class SubscriberManager {
             } else {
                 if (scheduledExecutorService == null) {
                     synchronized (SubscriberManager.class) {
-                            scheduledExecutorService = new ScheduledThreadPoolExecutor(THREAD_SIZE,
-                                    new BackendThreadFactory("kie-subscribe-task"));
+                        scheduledExecutorService = new ScheduledThreadPoolExecutor(THREAD_SIZE,
+                                new BackendThreadFactory("kie-subscribe-task"));
                     }
                 }
                 scheduledExecutorService.scheduleAtFixedRate(

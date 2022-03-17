@@ -26,6 +26,9 @@ import java.util.Locale;
  * @since 2021-08-07
  */
 public class KafkaTopicException extends RuntimeException {
+
+    private static final long serialVersionUID = 6574606778367040187L;
+
     public static final ErrorMsgParser TOPIC_NOT_EXISTS = args -> String.format(Locale.ROOT,
         "These topics %s don't exist.", args);
 
