@@ -23,7 +23,7 @@ import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
  * MigrationRuleHandler增强类
  *
  * @author provenceee
- * @since 2022/1/26
+ * @since 2022-01-26
  */
 public class MigrationRuleHandlerDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.registry.client.migration.MigrationRuleHandler"};
@@ -33,6 +33,9 @@ public class MigrationRuleHandlerDeclarer extends AbstractDeclarer {
 
     private static final String METHOD_NAME = "doMigrate";
 
+    /**
+     * 构造方法
+     */
     public MigrationRuleHandlerDeclarer() {
         super(ENHANCE_CLASS);
     }

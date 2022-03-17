@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  * 配置监听器
  *
  * @author pengyuyi
- * @since 2022/1/22
+ * @since 2022-01-22
  */
 public class LoadbalancerConfigListener implements DynamicConfigListener {
     private static final Logger LOGGER = LogFactory.getLogger();

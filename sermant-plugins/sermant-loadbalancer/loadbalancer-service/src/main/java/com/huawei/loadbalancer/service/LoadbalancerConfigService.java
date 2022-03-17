@@ -30,7 +30,7 @@ import java.util.concurrent.Executors;
  * 负载均衡基础配置类
  *
  * @author provenceee
- * @since 2022/1/22
+ * @since 2022-01-22
  */
 public class LoadbalancerConfigService implements PluginService {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();

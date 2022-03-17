@@ -32,8 +32,9 @@ import java.lang.reflect.Method;
  * 测试RegistryProtocolInterceptor
  *
  * @author provenceee
- * @since 2022/2/15
+ * @since 2022-02-15
  */
+@SuppressWarnings("checkstyle:all")
 public class RegistryProtocolInterceptorTest {
     private static final int EXPECT_LENGTH = 3;
 
@@ -43,6 +44,9 @@ public class RegistryProtocolInterceptorTest {
 
     private final InterfaceCompatibleRegistryProtocol protocol;
 
+    /**
+     * 构造方法
+     */
     public RegistryProtocolInterceptorTest() throws NoSuchMethodException {
         ApplicationModel.getConfigManager().setApplication(new ApplicationConfig(TestConstant.FOO));
         interceptor = new RegistryProtocolInterceptor();

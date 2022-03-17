@@ -40,13 +40,16 @@ import java.util.Map;
  * Ribbon BaseLoadBalancer负载均衡增强类
  *
  * @author provenceee
- * @since 2022/2/24
+ * @since 2022-02-24
  */
 public class RibbonLoadBalancerInterceptor extends AbstractInterceptor {
     private final Map<RibbonLoadbalancerType, AbstractLoadBalancerRule> map;
 
     private final LoadbalancerConfig config;
 
+    /**
+     * 构造方法
+     */
     public RibbonLoadBalancerInterceptor() {
         map = new EnumMap<>(RibbonLoadbalancerType.class);
         map.put(RibbonLoadbalancerType.RANDOM, new RandomRule());

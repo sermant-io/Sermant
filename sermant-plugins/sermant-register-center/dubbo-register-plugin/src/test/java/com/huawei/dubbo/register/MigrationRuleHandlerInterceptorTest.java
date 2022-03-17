@@ -30,7 +30,7 @@ import org.junit.Test;
  * 测试MigrationRuleHandlerInterceptor
  *
  * @author provenceee
- * @since 2022/2/15
+ * @since 2022-02-15
  */
 public class MigrationRuleHandlerInterceptorTest {
     private static final String INIT = "init";
@@ -39,6 +39,9 @@ public class MigrationRuleHandlerInterceptorTest {
 
     private final Object[] arguments;
 
+    /**
+     * 构造方法
+     */
     public MigrationRuleHandlerInterceptorTest() {
         interceptor = new MigrationRuleHandlerInterceptor();
         arguments = new Object[1];

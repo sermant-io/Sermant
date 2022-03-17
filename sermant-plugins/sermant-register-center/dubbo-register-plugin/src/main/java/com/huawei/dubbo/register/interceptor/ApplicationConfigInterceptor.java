@@ -25,11 +25,14 @@ import com.huawei.sermant.core.service.ServiceManager;
  * 增强ApplicationConfig类的setName方法
  *
  * @author provenceee
- * @since 2021年11月8日
+ * @since 2021-11-08
  */
 public class ApplicationConfigInterceptor extends AbstractInterceptor {
     private final ApplicationConfigService applicationConfigService;
 
+    /**
+     * 构造方法
+     */
     public ApplicationConfigInterceptor() {
         applicationConfigService = ServiceManager.getService(ApplicationConfigService.class);
     }

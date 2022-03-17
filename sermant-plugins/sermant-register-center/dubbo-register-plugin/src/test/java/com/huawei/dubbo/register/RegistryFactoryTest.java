@@ -36,9 +36,13 @@ import java.util.Map;
  * 测试RegistryFactory
  *
  * @author provenceee
- * @since 2022/2/16
+ * @since 2022-02-16
  */
+@SuppressWarnings("checkstyle:all")
 public class RegistryFactoryTest {
+    /**
+     * 构造方法
+     */
     public RegistryFactoryTest() throws NoSuchFieldException, IllegalAccessException {
         Field field = ServiceManager.class.getDeclaredField("SERVICES");
         field.setAccessible(true);

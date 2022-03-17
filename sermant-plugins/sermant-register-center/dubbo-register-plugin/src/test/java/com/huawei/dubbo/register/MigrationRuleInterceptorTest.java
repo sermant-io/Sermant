@@ -31,8 +31,9 @@ import org.junit.Test;
  * 测试MigrationRuleInterceptor
  *
  * @author provenceee
- * @since 2022/2/15
+ * @since 2022-02-15
  */
+@SuppressWarnings("checkstyle:all")
 public class MigrationRuleInterceptorTest {
     private final MigrationRuleInterceptor interceptor;
 
@@ -40,6 +41,9 @@ public class MigrationRuleInterceptorTest {
 
     private final ExecuteContext context;
 
+    /**
+     * 构造方法
+     */
     public MigrationRuleInterceptorTest() throws NoSuchMethodException {
         ApplicationModel.getConfigManager().setApplication(new ApplicationConfig(TestConstant.BAR));
         interceptor = new MigrationRuleInterceptor();

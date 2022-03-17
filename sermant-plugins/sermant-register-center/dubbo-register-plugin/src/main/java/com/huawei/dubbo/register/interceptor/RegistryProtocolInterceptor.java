@@ -26,9 +26,11 @@ import org.apache.dubbo.common.URL;
  * 增强InterfaceCompatibleRegistryProtocol类的getServiceDiscoveryInvoker方法
  *
  * @author provenceee
- * @since 2022/1/26
+ * @since 2022-01-26
  */
 public class RegistryProtocolInterceptor extends AbstractInterceptor {
+    private static final int URL_INDEX = 2;
+
     /**
      * 这个方法是为了让2.7.9不去加载sc ServiceDiscovery
      *
@@ -38,8 +40,8 @@ public class RegistryProtocolInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) {
         Object[] arguments = context.getArguments();
-        if (arguments != null && arguments.length > 2 && arguments[2] instanceof URL) {
-            if (Constant.SC_REGISTRY_PROTOCOL.equals(((URL) arguments[2]).getProtocol())) {
+        if (arguments != null && arguments.length > URL_INDEX && arguments[URL_INDEX] instanceof URL) {
+            if (Constant.SC_REGISTRY_PROTOCOL.equals(((URL) arguments[URL_INDEX]).getProtocol())) {
                 // sc协议的注册，直接return，这样就可以不去加载sc ServiceDiscovery，即屏蔽2.7.9 sc应用级注册
                 context.skip(null);
             }

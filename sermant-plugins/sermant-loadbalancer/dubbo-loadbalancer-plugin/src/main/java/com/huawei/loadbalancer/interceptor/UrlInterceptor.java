@@ -22,18 +22,22 @@ import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * URL增强类
  *
  * @author provenceee
- * @since 2022/1/20
+ * @since 2022-01-20
  */
 public class UrlInterceptor extends AbstractInterceptor {
     private static final String LOAD_BALANCE_KEY = "loadbalance";
 
     private final LoadbalancerConfig config;
 
+    /**
+     * 构造方法
+     */
     public UrlInterceptor() {
         config = PluginConfigManager.getPluginConfig(LoadbalancerConfig.class);
     }
@@ -42,13 +46,9 @@ public class UrlInterceptor extends AbstractInterceptor {
     public ExecuteContext before(ExecuteContext context) {
         Object[] arguments = context.getArguments();
         if (arguments != null && arguments.length > 1 && LOAD_BALANCE_KEY.equals(arguments[1])) {
-            String type = getType();
-
-            // 如果为null，继续执行原方法，即使用宿主的负载均衡策略
-            // 如果不为null，则使用返回的type并跳过原方法
-            if (type != null) {
-                context.skip(type);
-            }
+            // 如果为empty，继续执行原方法，即使用宿主的负载均衡策略
+            // 如果不为empty，则使用返回的type并跳过原方法
+            getType().ifPresent(context::skip);
         }
         return context;
     }
@@ -58,11 +58,11 @@ public class UrlInterceptor extends AbstractInterceptor {
         return context;
     }
 
-    private String getType() {
+    private Optional<String> getType() {
         if (config == null || config.getDubboType() == null) {
-            // 没有配置的情况下return null
-            return null;
+            // 没有配置的情况下return empty
+            return Optional.empty();
         }
-        return config.getDubboType().name().toLowerCase(Locale.ROOT);
+        return Optional.of(config.getDubboType().name().toLowerCase(Locale.ROOT));
     }
 }

@@ -22,7 +22,7 @@ import java.util.Objects;
  * 订阅数据的key
  *
  * @author provenceee
- * @since 2021/12/23
+ * @since 2021-12-23
  */
 public class SubscriptionKey {
     private final String appId;

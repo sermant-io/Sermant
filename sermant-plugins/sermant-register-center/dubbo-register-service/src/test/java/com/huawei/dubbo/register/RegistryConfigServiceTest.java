@@ -34,13 +34,17 @@ import java.lang.reflect.Modifier;
  * 测试RegistryConfigServiceImpl
  *
  * @author provenceee
- * @since 2022/2/14
+ * @since 2022-02-14
  */
+@SuppressWarnings("checkstyle:all")
 public class RegistryConfigServiceTest {
     private final RegistryConfigService service;
 
     private final RegisterConfig registerConfig;
 
+    /**
+     * 构造方法
+     */
     public RegistryConfigServiceTest() throws IllegalAccessException, NoSuchFieldException {
         service = new RegistryConfigServiceImpl();
         registerConfig = new RegisterConfig();

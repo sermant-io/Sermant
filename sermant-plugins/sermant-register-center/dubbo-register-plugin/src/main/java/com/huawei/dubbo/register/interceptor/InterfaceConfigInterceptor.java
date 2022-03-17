@@ -25,11 +25,14 @@ import com.huawei.sermant.core.service.ServiceManager;
  * 增强AbstractInterfaceConfig类的setRegistries/loadRegistriesFromBackwardConfig方法
  *
  * @author provenceee
- * @since 2021年11月8日
+ * @since 2021-11-08
  */
 public class InterfaceConfigInterceptor extends AbstractInterceptor {
     private final RegistryConfigService registryConfigService;
 
+    /**
+     * 构造方法
+     */
     public InterfaceConfigInterceptor() {
         registryConfigService = ServiceManager.getService(RegistryConfigService.class);
     }

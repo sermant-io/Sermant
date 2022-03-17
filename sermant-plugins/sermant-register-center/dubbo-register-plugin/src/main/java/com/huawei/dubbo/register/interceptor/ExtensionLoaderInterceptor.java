@@ -22,12 +22,13 @@ import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 增强ExtensionLoader类的createExtension方法
  *
  * @author provenceee
- * @since 2022/2/10
+ * @since 2022-02-10
  */
 public class ExtensionLoaderInterceptor extends AbstractInterceptor {
     private static final String TYPE_FIELD_NAME = "type";
@@ -57,7 +58,7 @@ public class ExtensionLoaderInterceptor extends AbstractInterceptor {
         }
         Class<?> type = (Class<?>) context.getMemberFieldValue(TYPE_FIELD_NAME);
         String typeName = type.getName();
-        Class<?> factoryClass = null;
+        Optional<Class<?>> factoryClass = Optional.empty();
 
         // 只处理类型为RegistryFactory的spi
         if (APACHE_REGISTRY_FACTORY_CLASS_NAME.equals(typeName)) {
@@ -65,9 +66,9 @@ public class ExtensionLoaderInterceptor extends AbstractInterceptor {
         } else if (ALIBABA_REGISTRY_FACTORY_CLASS_NAME.equals(typeName)) {
             factoryClass = ReflectUtils.defineClass(ALIBABA_SC_REGISTRY_FACTORY_CLASS_NAME);
         }
-        if (factoryClass != null) {
+        if (factoryClass.isPresent()) {
             Map<String, Class<?>> cachedClasses = ReflectUtils.getExtensionClasses(context.getObject());
-            cachedClasses.put(name, factoryClass);
+            cachedClasses.put(name, factoryClass.get());
         }
         return context;
     }

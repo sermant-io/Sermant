@@ -32,13 +32,17 @@ import java.util.Map;
  * @author provenceee
  * @see org.springframework.cloud.loadbalancer.core.RandomLoadBalancer
  * @see org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer
- * @since 2022/3/1
+ * @since 2022-03-01
  */
+@SuppressWarnings("checkstyle:all")
 public class LoadBalancerInterceptorTest {
     private static final String FOO = "foo";
 
     private final LoadBalancerInterceptor interceptor;
 
+    /**
+     * 构造方法
+     */
     public LoadBalancerInterceptorTest() {
         interceptor = new LoadBalancerInterceptor();
     }

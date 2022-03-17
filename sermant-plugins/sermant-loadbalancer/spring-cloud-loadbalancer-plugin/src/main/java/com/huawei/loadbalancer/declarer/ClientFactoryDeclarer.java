@@ -20,7 +20,7 @@ package com.huawei.loadbalancer.declarer;
  * LoadBalancerClientFactory增强类
  *
  * @author provenceee
- * @since 2022/1/20
+ * @since 2022-01-20
  */
 public class ClientFactoryDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS =
@@ -30,6 +30,9 @@ public class ClientFactoryDeclarer extends AbstractDeclarer {
 
     private static final String METHOD_NAME = "getInstance";
 
+    /**
+     * 构造方法
+     */
     public ClientFactoryDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
     }

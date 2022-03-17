@@ -22,7 +22,7 @@ import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
  * 增强MigrationRule类的parse方法
  *
  * @author provenceee
- * @since 2022年1月26日
+ * @since 2022-01-26
  */
 public class MigrationRuleDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.rpc.cluster.support.migration.MigrationRule"};
@@ -31,6 +31,9 @@ public class MigrationRuleDeclarer extends AbstractDeclarer {
 
     private static final String METHOD_NAME = "parse";
 
+    /**
+     * 构造方法
+     */
     public MigrationRuleDeclarer() {
         super(ENHANCE_CLASS);
     }

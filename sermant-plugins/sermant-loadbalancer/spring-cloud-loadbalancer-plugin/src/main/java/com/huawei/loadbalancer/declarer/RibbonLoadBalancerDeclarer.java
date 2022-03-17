@@ -20,7 +20,7 @@ package com.huawei.loadbalancer.declarer;
  * Ribbon BaseLoadBalancer负载均衡增强类
  *
  * @author provenceee
- * @since 2022/2/24
+ * @since 2022-02-24
  */
 public class RibbonLoadBalancerDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "com.netflix.loadbalancer.BaseLoadBalancer";
@@ -29,6 +29,9 @@ public class RibbonLoadBalancerDeclarer extends AbstractDeclarer {
 
     private static final String METHOD_NAME = "chooseServer";
 
+    /**
+     * 构造方法
+     */
     public RibbonLoadBalancerDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
     }

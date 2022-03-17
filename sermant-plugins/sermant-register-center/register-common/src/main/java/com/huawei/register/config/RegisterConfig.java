@@ -135,6 +135,9 @@ public class RegisterConfig implements PluginConfig {
     @SuppressWarnings("checkstyle:RegexpSingleLine")
     private boolean allowCrossApp = false;
 
+    /**
+     * 构造方法
+     */
     public RegisterConfig() {
         final ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
         if (serviceMeta == null) {

@@ -23,7 +23,7 @@ import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
  * AbstractInterfaceConfig增强类
  *
  * @author provenceee
- * @since 2021/11/24
+ * @since 2021-11-24
  */
 public class InterfaceConfigDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.AbstractInterfaceConfig",
@@ -34,6 +34,9 @@ public class InterfaceConfigDeclarer extends AbstractDeclarer {
     // 增强loadRegistriesFromBackwardConfig方法是为了兼容2.7.0-2.7.4.1，其它版本主要是增强setRegistries方法
     private static final String[] METHOD_NAME = {"setRegistries", "loadRegistriesFromBackwardConfig"};
 
+    /**
+     * 构造方法
+     */
     public InterfaceConfigDeclarer() {
         super(ENHANCE_CLASS);
     }

@@ -24,7 +24,7 @@ import net.bytebuddy.matcher.ElementMatchers;
  * RoundRobinLoadBalancer增强类
  *
  * @author provenceee
- * @since 2022/1/20
+ * @since 2022-01-20
  */
 public class RoundRobinDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer";
@@ -33,6 +33,9 @@ public class RoundRobinDeclarer extends AbstractDeclarer {
 
     private static final int ARGS_LENGTH = 3;
 
+    /**
+     * 构造方法
+     */
     public RoundRobinDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, null);
     }

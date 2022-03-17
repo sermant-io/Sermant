@@ -19,42 +19,28 @@ package com.huawei.dubbo.register;
 import com.huawei.dubbo.register.cache.DubboCache;
 import com.huawei.dubbo.register.service.ApplicationConfigService;
 import com.huawei.dubbo.register.service.ApplicationConfigServiceImpl;
-import com.huawei.register.config.RegisterConfig;
 
 import com.alibaba.dubbo.config.ApplicationConfig;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 测试ApplicationConfigServiceImpl
  *
  * @author provenceee
- * @since 2022/2/14
+ * @since 2022-02-14
  */
 public class ApplicationConfigServiceTest {
     private static final String FOO = "foo";
 
-    private static final String VERSION_KEY = "gray.version";
-
     private final ApplicationConfigService service;
 
-    private final RegisterConfig registerConfig;
-
-    public ApplicationConfigServiceTest() throws IllegalAccessException, NoSuchFieldException {
+    /**
+     * 构造方法
+     */
+    public ApplicationConfigServiceTest() {
         service = new ApplicationConfigServiceImpl();
-        registerConfig = new RegisterConfig();
-        Field field = service.getClass().getDeclaredField("config");
-        field.setAccessible(true);
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        field.set(service, registerConfig);
     }
 
     /**
@@ -71,27 +57,11 @@ public class ApplicationConfigServiceTest {
         // 测试无效应用名
         service.getName(alibabaConfig);
         Assert.assertNull(DubboCache.INSTANCE.getServiceName());
-        Assert.assertNull(alibabaConfig.getParameters());
 
-        // 测试有效应用名，parameters为null
+        // 测试有效应用名
         alibabaConfig.setName(FOO);
         service.getName(alibabaConfig);
         Assert.assertEquals(FOO, DubboCache.INSTANCE.getServiceName());
-        Assert.assertNotNull(alibabaConfig.getParameters());
-        Assert.assertEquals(registerConfig.getVersion(), alibabaConfig.getParameters().get(VERSION_KEY));
-
-        // 清空parameters
-        alibabaConfig.setParameters(null);
-        Assert.assertNull(alibabaConfig.getParameters());
-
-        // 测试parameters不为null
-        Map<String, String> map = new HashMap<>();
-        map.put(FOO, "bar");
-        alibabaConfig.setParameters(map);
-        service.getName(alibabaConfig);
-        Assert.assertNotNull(alibabaConfig.getParameters());
-        Assert.assertEquals(2, alibabaConfig.getParameters().size());
-        Assert.assertEquals(registerConfig.getVersion(), alibabaConfig.getParameters().get(VERSION_KEY));
     }
 
     /**
@@ -108,26 +78,10 @@ public class ApplicationConfigServiceTest {
         // 测试无效应用名
         service.getName(apacheConfig);
         Assert.assertNull(DubboCache.INSTANCE.getServiceName());
-        Assert.assertNull(apacheConfig.getParameters());
 
-        // 测试有效应用名，parameters为null
+        // 测试有效应用名
         apacheConfig.setName(FOO);
         service.getName(apacheConfig);
         Assert.assertEquals(FOO, DubboCache.INSTANCE.getServiceName());
-        Assert.assertNotNull(apacheConfig.getParameters());
-        Assert.assertEquals(registerConfig.getVersion(), apacheConfig.getParameters().get(VERSION_KEY));
-
-        // 清空parameters
-        apacheConfig.setParameters(null);
-        Assert.assertNull(apacheConfig.getParameters());
-
-        // 测试parameters不为null
-        Map<String, String> map = new HashMap<>();
-        map.put(FOO, "bar");
-        apacheConfig.setParameters(map);
-        service.getName(apacheConfig);
-        Assert.assertNotNull(apacheConfig.getParameters());
-        Assert.assertEquals(2, apacheConfig.getParameters().size());
-        Assert.assertEquals(registerConfig.getVersion(), apacheConfig.getParameters().get(VERSION_KEY));
     }
 }

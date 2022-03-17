@@ -20,7 +20,7 @@ package com.huawei.dubbo.register.cache;
  * dubbo应用名缓存
  *
  * @author provenceee
- * @since 2021/12/23
+ * @since 2021-12-23
  */
 public enum DubboCache {
     /**

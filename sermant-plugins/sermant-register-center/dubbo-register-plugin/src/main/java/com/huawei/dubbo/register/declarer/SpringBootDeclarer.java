@@ -23,7 +23,7 @@ import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
  * 增强SpringBootApplication类的main方法
  *
  * @author provenceee
- * @since 2022年1月24日
+ * @since 2022-01-24
  */
 public class SpringBootDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.springframework.boot.autoconfigure.SpringBootApplication"};
@@ -32,6 +32,9 @@ public class SpringBootDeclarer extends AbstractDeclarer {
 
     private static final String METHOD_NAME = "main";
 
+    /**
+     * 构造方法
+     */
     public SpringBootDeclarer() {
         super(ENHANCE_CLASS);
     }

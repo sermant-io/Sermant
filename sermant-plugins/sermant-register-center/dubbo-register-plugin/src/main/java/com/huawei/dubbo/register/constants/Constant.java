@@ -20,7 +20,7 @@ package com.huawei.dubbo.register.constants;
  * 常量
  *
  * @author provenceee
- * @since 2022/1/27
+ * @since 2022-01-27
  */
 public class Constant {
     /**

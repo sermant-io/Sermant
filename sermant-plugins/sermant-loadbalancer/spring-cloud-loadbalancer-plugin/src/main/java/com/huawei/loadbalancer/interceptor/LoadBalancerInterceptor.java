@@ -24,7 +24,7 @@ import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
  * LoadBalancer增强类
  *
  * @author provenceee
- * @since 2022/1/20
+ * @since 2022-01-20
  */
 public class LoadBalancerInterceptor extends AbstractInterceptor {
     private static final int EXPECT_LENGTH = 2;

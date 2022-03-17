@@ -20,7 +20,7 @@ package com.huawei.dubbo.register;
  * 测试常量
  *
  * @author provenceee
- * @since 2022/2/16
+ * @since 2022-02-16
  */
 public class TestConstant {
     /**
