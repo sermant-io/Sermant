@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  * 值匹配反序列化器
  *
  * @author provenceee
- * @since 2022/2/18
+ * @since 2022-02-18
  */
 public class ValueMatchDeserializer implements ObjectDeserializer {
     private static final Logger LOGGER = LoggerFactory.getLogger();
@@ -129,7 +129,9 @@ public class ValueMatchDeserializer implements ObjectDeserializer {
 
     /**
      * JSONObject序列化类
+     *
+     * @since 2022-02-18
      */
-    public static class JsonObjectTypeReference extends TypeReference<ArrayList<JSONObject>> {
+    private static class JsonObjectTypeReference extends TypeReference<ArrayList<JSONObject>> {
     }
 }

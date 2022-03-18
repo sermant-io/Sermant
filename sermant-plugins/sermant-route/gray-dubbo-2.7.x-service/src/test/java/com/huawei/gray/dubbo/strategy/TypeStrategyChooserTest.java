@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,10 @@ import java.util.Map;
 /**
  * 规则策略选择器测试
  *
- * @author pengyuyi
- * @date 2021/12/1
+ * @author provenceee
+ * @since 2021-12-01
  */
+@SuppressWarnings("checkstyle:all")
 public class TypeStrategyChooserTest {
     private TypeStrategyChooser chooser;
 
@@ -43,7 +44,7 @@ public class TypeStrategyChooserTest {
      */
     @Before
     public void before() {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put(CommonConstant.LOG_SETTING_FILE_KEY, getClass().getResource("/logback-test.xml").getPath());
         LoggerFactory.init(map);
         chooser = TypeStrategyChooser.INSTANCE;
@@ -56,8 +57,9 @@ public class TypeStrategyChooserTest {
     @Test
     public void testArray() {
         arguments[0] = new String[]{"foo"};
+
         // 正常情况
-        Assert.assertEquals("foo", chooser.getValue("[0]", "args0", arguments));
+        Assert.assertEquals("foo", chooser.getValue("[0]", "args0", arguments).orElse(null));
     }
 
     /**
@@ -66,8 +68,9 @@ public class TypeStrategyChooserTest {
     @Test
     public void testEmpty() {
         arguments[0] = "foo";
+
         // 正常情况
-        Assert.assertEquals("foo", chooser.getValue("", "args0", arguments));
+        Assert.assertEquals("foo", chooser.getValue("", "args0", arguments).orElse(null));
     }
 
     /**
@@ -78,8 +81,9 @@ public class TypeStrategyChooserTest {
         Entity entity = new Entity();
         entity.setEnabled(true);
         arguments[0] = entity;
+
         // 正常情况
-        Assert.assertEquals(Boolean.TRUE.toString(), chooser.getValue(".isEnabled()", "args0", arguments));
+        Assert.assertEquals(Boolean.TRUE.toString(), chooser.getValue(".isEnabled()", "args0", arguments).orElse(null));
     }
 
     /**
@@ -88,8 +92,9 @@ public class TypeStrategyChooserTest {
     @Test
     public void testList() {
         arguments[0] = Collections.singletonList("foo");
+
         // 正常情况
-        Assert.assertEquals("foo", chooser.getValue(".get(0)", "args0", arguments));
+        Assert.assertEquals("foo", chooser.getValue(".get(0)", "args0", arguments).orElse(null));
     }
 
     /**
@@ -98,8 +103,9 @@ public class TypeStrategyChooserTest {
     @Test
     public void testMap() {
         arguments[0] = Collections.singletonMap("foo", "bar");
+
         // 正常情况
-        Assert.assertEquals("bar", chooser.getValue(".get(\"foo\")", "args0", arguments));
+        Assert.assertEquals("bar", chooser.getValue(".get(\"foo\")", "args0", arguments).orElse(null));
     }
 
     /**
@@ -110,8 +116,9 @@ public class TypeStrategyChooserTest {
         Entity entity = new Entity();
         entity.setTest("foo");
         arguments[0] = entity;
+
         // 正常情况
-        Assert.assertEquals("foo", chooser.getValue(".test", "args0", arguments));
+        Assert.assertEquals("foo", chooser.getValue(".test", "args0", arguments).orElse(null));
     }
 
     /**
@@ -120,17 +127,22 @@ public class TypeStrategyChooserTest {
     @Test
     public void testNull() {
         // 参数为null
-        Assert.assertNull(chooser.getValue(".test", "args0", null));
+        Assert.assertNull(chooser.getValue(".test", "args0", null).orElse(null));
+
         // 未命中TypeStrategy
-        Assert.assertNull(chooser.getValue("bar", "args0", arguments));
+        Assert.assertNull(chooser.getValue("bar", "args0", arguments).orElse(null));
+
         // 非数字
-        Assert.assertNull(chooser.getValue(".test", "argsA", arguments));
+        Assert.assertNull(chooser.getValue(".test", "argsA", arguments).orElse(null));
+
         // 索引越界
-        Assert.assertNull(chooser.getValue(".test", "args1", arguments));
+        Assert.assertNull(chooser.getValue(".test", "args1", arguments).orElse(null));
     }
 
     /**
      * 实体
+     *
+     * @since 2021-12-01
      */
     public static class Entity {
         private Boolean enabled;

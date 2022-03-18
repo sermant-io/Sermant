@@ -1,8 +1,0 @@
-#
-# Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
-#
-
-com.huawei.gray.dubbo.definition.apache.ClusterDefinition
-com.huawei.gray.dubbo.definition.apache.InterfaceConfigDefinition
-com.huawei.gray.dubbo.definition.apache.RegistryDirectoryDefinition
-com.huawei.gray.dubbo.definition.servicecomb.RegistrationDefinition

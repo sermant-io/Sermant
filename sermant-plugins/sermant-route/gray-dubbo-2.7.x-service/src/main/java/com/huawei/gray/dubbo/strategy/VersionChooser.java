@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.Map;
  * 版本选择器
  *
  * @author provenceee
- * @since 2021/12/8
+ * @since 2021-12-08
  */
 public enum VersionChooser {
     /**
@@ -38,7 +38,7 @@ public enum VersionChooser {
     private final Map<String, VersionStrategy> map;
 
     VersionChooser() {
-        map = new HashMap<String, VersionStrategy>();
+        map = new HashMap<>();
         map.put(VersionFrom.REGISTER_MSG.name(), new MsgVersionStrategy());
         map.put(VersionFrom.REGISTER_URL.name(), new UrlVersionStrategy());
     }

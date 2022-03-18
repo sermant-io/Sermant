@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,18 @@ package com.huawei.gray.dubbo.strategy.type;
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
 import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 
+import java.util.Optional;
+
 /**
  * 空匹配策略
  *
  * @author provenceee
- * @since 2021/10/13
+ * @since 2021-10-13
  */
 public class EmptyTypeStrategy extends TypeStrategy {
     @Override
-    public String getValue(Object arg, String type) {
-        return arg == null ? null : String.valueOf(arg);
+    public Optional<String> getValue(Object arg, String type) {
+        return arg == null ? Optional.empty() : Optional.of(String.valueOf(arg));
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package com.huawei.gray.dubbo.definition.servicecomb;
-
-import com.huawei.gray.dubbo.definition.AbstractInstDefinition;
+package com.huawei.gray.dubbo.declarer;
 
 /**
  * 增强RegistrationListener类的notify方法
  *
  * @author provenceee
- * @since 2021年11月8日
+ * @since 2021-11-08
  */
-public class RegistrationDefinition extends AbstractInstDefinition {
-    private static final String ENHANCE_CLASS = "com.huaweicloud.dubbo.discovery.RegistrationListener";
+public class RegistrationDeclarer extends AbstractDeclarer {
+    private static final String[] ENHANCE_CLASS = {"com.huaweicloud.dubbo.discovery.RegistrationListener"};
 
-    private static final String INTERCEPT_CLASS
-        = "com.huawei.gray.dubbo.interceptor.servicecomb.RegistrationInterceptor";
+    private static final String INTERCEPT_CLASS = "com.huawei.gray.dubbo.interceptor.RegistrationInterceptor";
 
     private static final String METHOD_NAME = "notify";
 
-    public RegistrationDefinition() {
+    /**
+     * 构造方法
+     */
+    public RegistrationDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
     }
 }

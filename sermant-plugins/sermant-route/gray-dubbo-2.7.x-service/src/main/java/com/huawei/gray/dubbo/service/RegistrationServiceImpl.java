@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,51 +16,39 @@
 
 package com.huawei.gray.dubbo.service;
 
-import com.huawei.gray.dubbo.cache.DubboCache;
-import com.huawei.gray.dubbo.utils.FieldPrivilegedAction;
 import com.huawei.route.common.gray.addr.AddrCache;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;
 
-import org.apache.servicecomb.service.center.client.model.Microservice;
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
-
-import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.util.List;
-
 /**
  * RegistrationInterceptor的service
  *
  * @author provenceee
- * @since 2021/11/24
+ * @since 2021-11-24
  */
 public class RegistrationServiceImpl implements RegistrationService {
     /**
-     * 拦截点前执行
+     * 设置地址-版本缓存
      *
-     * @param obj 增强的类
-     * @param arguments 增强方法的所有参数
+     * @param addr 地址
+     * @param version 版本
      */
     @Override
-    public void getVersion(Object obj, Object[] arguments) throws NoSuchFieldException, IllegalAccessException {
-        if (arguments.length <= 2 || !(arguments[2] instanceof List<?>)) {
-            return;
-        }
-        Field field = obj.getClass().getDeclaredField("microservice");
-        AccessController.doPrivileged(new FieldPrivilegedAction(field));
-        Microservice microservice = (Microservice) field.get(obj);
-        GrayConfiguration grayConfiguration = LabelCache.getLabel(DubboCache.getLabelName());
+    public void setRegisterVersionCache(String addr, String version) {
+        AddrCache.setRegisterVersionCache(addr, version);
+    }
+
+    /**
+     * 设置自身版本缓存
+     *
+     * @param version 版本
+     */
+    @Override
+    public void setRegisterVersion(String version) {
+        GrayConfiguration grayConfiguration = LabelCache.getLabel(GrayConstant.GRAY_LABEL_CACHE_NAME);
         CurrentTag currentTag = grayConfiguration.getCurrentTag();
-        currentTag.setRegisterVersion(microservice.getVersion());
-        List<MicroserviceInstance> instances = (List<MicroserviceInstance>) arguments[2];
-        for (MicroserviceInstance instance : instances) {
-            for (String endpoint : instance.getEndpoints()) {
-                AddrCache.setRegisterVersionCache(endpoint.substring(GrayConstant.DUBBO_PREFIX.length()),
-                    instance.getVersion());
-            }
-        }
+        currentTag.setRegisterVersion(version);
     }
 }

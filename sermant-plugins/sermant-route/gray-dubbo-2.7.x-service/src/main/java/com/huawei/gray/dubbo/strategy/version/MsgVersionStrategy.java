@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,14 @@
 package com.huawei.gray.dubbo.strategy.version;
 
 import com.huawei.gray.dubbo.strategy.VersionStrategy;
+import com.huawei.gray.dubbo.utils.ReflectUtils;
 import com.huawei.route.common.gray.addr.AddrCache;
-
-import org.apache.dubbo.rpc.Invoker;
 
 /**
  * 从注册消息中获取版本
  *
  * @author provenceee
- * @since 2021/12/8
+ * @since 2021-12-08
  */
 public class MsgVersionStrategy implements VersionStrategy {
     /**
@@ -35,7 +34,7 @@ public class MsgVersionStrategy implements VersionStrategy {
      * @return 版本
      */
     @Override
-    public String getVersion(Invoker<?> invoker) {
-        return AddrCache.getRegisterVersionCache(invoker.getUrl().getAddress());
+    public String getVersion(Object invoker) {
+        return AddrCache.getRegisterVersionCache(ReflectUtils.getAddress(ReflectUtils.getUrl(invoker)));
     }
 }

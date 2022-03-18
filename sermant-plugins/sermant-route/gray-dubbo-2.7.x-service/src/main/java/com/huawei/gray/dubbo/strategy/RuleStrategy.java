@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,27 +19,22 @@ package com.huawei.gray.dubbo.strategy;
 import com.huawei.route.common.gray.label.entity.Route;
 import com.huawei.route.common.gray.label.entity.VersionFrom;
 
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-
 import java.util.List;
 
 /**
  * 路由策略
  *
  * @author provenceee
- * @since 2021/10/14
+ * @since 2021-10-14
  */
 public interface RuleStrategy {
     /**
      * 选取灰度应用的invokers
      *
      * @param routes 路由规则
-     * @param invocation dubbo invocation
      * @param invokers dubbo invokers
      * @param versionFrom 版本号来源
      * @return 灰度应用的invokers
      */
-    List<Invoker<?>> getTargetInvoker(List<Route> routes, Invocation invocation, List<Invoker<?>> invokers,
-        VersionFrom versionFrom);
+    List<Object> getTargetInvoker(List<Route> routes, List<Object> invokers, VersionFrom versionFrom);
 }

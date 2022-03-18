@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,10 @@ import java.util.List;
 /**
  * 列表匹配策略测试
  *
- * @author pengyuyi
- * @date 2021/12/1
+ * @author provenceee
+ * @since 2021-12-01
  */
+@SuppressWarnings("checkstyle:all")
 public class ListTypeStrategyTest {
     /**
      * 测试列表策略
@@ -37,18 +38,23 @@ public class ListTypeStrategyTest {
     @Test
     public void testValue() {
         TypeStrategy strategy = new ListTypeStrategy();
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("foo");
         list.add(null);
+
         // 正常情况
-        Assert.assertEquals("foo", strategy.getValue(list, ".get(0)"));
+        Assert.assertEquals("foo", strategy.getValue(list, ".get(0)").orElse(null));
+
         // 测试null
-        Assert.assertNotEquals("foo", strategy.getValue(list, ".get(1)"));
+        Assert.assertNotEquals("foo", strategy.getValue(list, ".get(1)").orElse(null));
+
         // 测试越界
-        Assert.assertNotEquals("foo", strategy.getValue(list, ".get(2)"));
+        Assert.assertNotEquals("foo", strategy.getValue(list, ".get(2)").orElse(null));
+
         // 测试非数组
-        Assert.assertNotEquals("foo", strategy.getValue("bar", ".get(0)"));
+        Assert.assertNotEquals("foo", strategy.getValue("bar", ".get(0)").orElse(null));
+
         // 测试不等于
-        Assert.assertNotEquals("bar", strategy.getValue(list, ".get(0)"));
+        Assert.assertNotEquals("bar", strategy.getValue(list, ".get(0)").orElse(null));
     }
 }

@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package com.huawei.route.common.gray.strategy.match;
-
-import com.huawei.route.common.gray.strategy.ValueMatchStrategy;
-import com.huawei.route.common.utils.CollectionUtils;
-
-import java.util.List;
+package com.huawei.gray.dubbo.declarer;
 
 /**
- * 不小于匹配策略
+ * 增强ApplicationConfig类的setName方法，用来获取应用名
  *
  * @author provenceee
- * @since 2021-10-23
+ * @since 2021-11-08
  */
-public class NoLessValueMatchStrategy implements ValueMatchStrategy {
-    @Override
-    public boolean isMatch(List<String> values, String arg) {
-        try {
-            return !CollectionUtils.isEmpty(values) && Integer.parseInt(arg) >= Integer.parseInt(values.get(0));
-        } catch (NumberFormatException e) {
-            return false;
-        }
+public class ApplicationConfigDeclarer extends AbstractDeclarer {
+    private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.ApplicationConfig",
+        "com.alibaba.dubbo.config.ApplicationConfig"};
+
+    private static final String INTERCEPT_CLASS = "com.huawei.gray.dubbo.interceptor.ApplicationConfigInterceptor";
+
+    private static final String METHOD_NAME = "setName";
+
+    /**
+     * 构造方法
+     */
+    public ApplicationConfigDeclarer() {
+        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
     }
 }

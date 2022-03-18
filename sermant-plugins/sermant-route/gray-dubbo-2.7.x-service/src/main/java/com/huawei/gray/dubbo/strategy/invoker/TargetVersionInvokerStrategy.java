@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,28 +19,26 @@ package com.huawei.gray.dubbo.strategy.invoker;
 import com.huawei.gray.dubbo.strategy.InvokerStrategy;
 import com.huawei.gray.dubbo.strategy.VersionStrategy;
 
-import org.apache.dubbo.rpc.Invoker;
-
 import java.util.Set;
 
 /**
- * 匹配targetVersion中的Invoker
+ * 匹配目标版本号的invoker
  *
  * @author provenceee
- * @since 2021/12/8
+ * @since 2021-12-08
  */
 public class TargetVersionInvokerStrategy implements InvokerStrategy {
     /**
-     * 匹配targetVersion中的Invoker
+     * 匹配目标版本号的invoker
      *
      * @param invoker Invoker
      * @param version 目标版本
      * @param notMatchVersions 没有匹配上的版本
-     * @param versionStrategy 版本测试
+     * @param versionStrategy 版本策略
      * @return 是否匹配
      */
     @Override
-    public boolean isMatch(Invoker<?> invoker, String version, Set<String> notMatchVersions,
+    public boolean isMatch(Object invoker, String version, Set<String> notMatchVersions,
         VersionStrategy versionStrategy) {
         return version.equals(versionStrategy.getVersion(invoker));
     }

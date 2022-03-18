@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +16,55 @@
 
 package com.huawei.gray.dubbo.cache;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * dubbo缓存
  *
  * @author provenceee
- * @since 2021/11/3
+ * @since 2021-11-03
  */
-public class DubboCache {
+public enum DubboCache {
+    /**
+     * 实例
+     */
+    INSTANCE;
+
     // dubbo应用名
-    private static String appName;
+    private String appName;
 
-    // dubbo应用灰度标签缓存名
-    private static final String GRAY_LABEL_CACHE_NAME = "DUBBO_GRAY_LABEL";
+    private final Map<String, String> applicationCache;
 
-    private DubboCache() {
+    DubboCache() {
+        applicationCache = new ConcurrentHashMap<>();
     }
 
-    public static String getAppName() {
+    public String getAppName() {
         return appName;
     }
 
-    public static void setAppName(String appName) {
-        DubboCache.appName = appName;
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     /**
-     * 获取dubbo应用灰度标签缓存名
+     * 缓存接口与服务名的关系
      *
-     * @return dubbo应用灰度标签缓存名
+     * @param interfaceName 接口名
+     * @param application 服务名
      */
-    public static String getLabelName() {
-        return GRAY_LABEL_CACHE_NAME;
+    public void putApplication(String interfaceName, String application) {
+        applicationCache.put(interfaceName, application);
+    }
+
+    /**
+     * 获取应用名
+     *
+     * @param serviceInterface 接口
+     * @return 应用名
+     */
+    public String getApplication(String serviceInterface) {
+        return applicationCache.get(serviceInterface);
     }
 }

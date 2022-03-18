@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 地址缓存
  *
  * @author provenceee
- * @since 2021/10/15
+ * @since 2021-10-15
  */
 public class AddrCache {
     // 需要刷新地址的缓存
@@ -39,6 +39,8 @@ public class AddrCache {
 
     // 注册版本缓存
     private static final Map<String, String> REGISTER_VERSION_CACHE = new ConcurrentHashMap<String, String>();
+
+    private static final int INSTANCE_LENGTH = 2;
 
     private AddrCache() {
     }
@@ -84,13 +86,13 @@ public class AddrCache {
      */
     public static Instances getAddr(String targetService, String ldc, String version, String application) {
         if (ldc == null || version == null) {
-            return null;
+            return new Instances();
         }
         List<Instances> instanceList = getAddrFromCache(targetService);
         if (CollectionUtils.isEmpty(instanceList)) {
-            return null;
+            return new Instances();
         }
-        Instances[] arr = new Instances[2];
+        Instances[] arr = new Instances[INSTANCE_LENGTH];
         for (Instances instance : instanceList) {
             CurrentTag currentTag = instance.getCurrentTag();
             if (currentTag == null) {
@@ -121,27 +123,7 @@ public class AddrCache {
         if (arr[1] != null) {
             return arr[1];
         }
-        return null;
-    }
-
-    /**
-     * 根据应用名，host获取实例
-     *
-     * @param application 应用名
-     * @param host host
-     * @return 实例
-     */
-    public static Instances getInstance(String application, String host) {
-        List<Instances> instanceList = getAddrFromCache(application);
-        if (CollectionUtils.isEmpty(instanceList)) {
-            return null;
-        }
-        for (Instances instance : instanceList) {
-            if ((instance.getIp() + ":" + instance.getPort()).equals(host)) {
-                return instance;
-            }
-        }
-        return null;
+        return new Instances();
     }
 
     private static List<Instances> getAddrFromCache(String application) {

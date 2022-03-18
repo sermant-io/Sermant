@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.Map;
  * Invoker匹配策略选择器
  *
  * @author provenceee
- * @since 2021/12/8
+ * @since 2021-12-08
  */
 public enum InvokerChooser {
     /**
@@ -42,7 +42,7 @@ public enum InvokerChooser {
     private final Map<String, InvokerStrategy> map;
 
     InvokerChooser() {
-        map = new HashMap<String, InvokerStrategy>();
+        map = new HashMap<>();
         map.put(NOT_MATCH_STRATEGY_KEY, new NotMatchVersionsInvokerStrategy());
         map.put(TARGET_STRATEGY_KEY, new TargetVersionInvokerStrategy());
     }

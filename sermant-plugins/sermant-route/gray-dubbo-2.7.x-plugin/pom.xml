@@ -17,12 +17,20 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <package.plugin.type>plugin</package.plugin.type>
         <config.skip.flag>false</config.skip.flag>
+        <servicecomb.version>2.3.6</servicecomb.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.huawei.sermant</groupId>
             <artifactId>sermant-agentcore-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.servicecomb</groupId>
+            <artifactId>service-center-client</artifactId>
+            <version>${servicecomb.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -32,6 +40,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

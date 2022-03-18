@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,10 @@ import org.junit.Test;
 /**
  * 空匹配策略测试
  *
- * @author pengyuyi
- * @date 2021/12/1
+ * @author provenceee
+ * @since 2021-12-01
  */
+@SuppressWarnings("checkstyle:all")
 public class EmptyTypeStrategyTest {
     /**
      * 测试空策略
@@ -34,13 +35,17 @@ public class EmptyTypeStrategyTest {
     @Test
     public void testValue() {
         TypeStrategy strategy = new EmptyTypeStrategy();
+
         // 正常情况
-        Assert.assertEquals("foo", strategy.getValue("foo", ""));
+        Assert.assertEquals("foo", strategy.getValue("foo", "").orElse(null));
+
         // 正常情况
-        Assert.assertEquals("foo", strategy.getValue("foo", null));
+        Assert.assertEquals("foo", strategy.getValue("foo", null).orElse(null));
+
         // 测试不等于
-        Assert.assertNotEquals("foo", strategy.getValue("bar", null));
+        Assert.assertNotEquals("foo", strategy.getValue("bar", null).orElse(null));
+
         // 测试null
-        Assert.assertNotEquals("foo", strategy.getValue(null, null));
+        Assert.assertNotEquals("foo", strategy.getValue(null, null).orElse(null));
     }
 }

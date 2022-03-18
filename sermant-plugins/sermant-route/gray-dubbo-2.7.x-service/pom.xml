@@ -15,8 +15,6 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dubbo.version>2.7.0</dubbo.version>
-        <servicecomb.version>2.3.6</servicecomb.version>
         <package.plugin.type>service</package.plugin.type>
         <config.skip.flag>false</config.skip.flag>
     </properties>
@@ -29,31 +27,16 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo-config-api</artifactId>
-            <version>${dubbo.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.servicecomb</groupId>
-            <artifactId>service-center-client</artifactId>
-            <version>${servicecomb.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- 路由部分公共模块 -->
-        <dependency>
-            <groupId>com.huawei.sermant</groupId>
-            <artifactId>route-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.huawei.sermant</groupId>
             <artifactId>gray-dubbo-2.7.x-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.huawei.sermant</groupId>
+            <artifactId>route-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -68,6 +51,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
