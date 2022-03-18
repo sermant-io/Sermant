@@ -1,17 +1,14 @@
 /*
  * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.huawei.example.demo.service;
@@ -38,9 +35,9 @@ public class DemoTraceService {
      * 主要方法
      */
     public static void trace() {
-        final Map<String, String> message = receive();
+        provider(new HashMap<String, String>());
+        final Map<String, String> message = consumer();
         service(message);
-        send(message);
     }
 
     /**
@@ -48,10 +45,10 @@ public class DemoTraceService {
      *
      * @return 数据集
      */
-    private static Map<String, String> receive() {
+    private static Map<String, String> consumer() {
         final Map<String, String> message = END_POINT.get();
         if (message == null) {
-            return new HashMap<String, String>();
+            return new HashMap<>();
         }
         return message;
     }
@@ -70,7 +67,7 @@ public class DemoTraceService {
      *
      * @param message 数据集
      */
-    private static void send(Map<String, String> message) {
+    private static void provider(Map<String, String> message) {
         END_POINT.set(message);
     }
 }
