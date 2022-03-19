@@ -47,6 +47,7 @@ import java.util.ServiceLoader;
  * @author HapThorin
  * @version 1.0.0
  * @since 2022-01-25
+ * @deprecated 即将废弃使用
  */
 @Deprecated
 public class DeprecatedPluginCollector extends AbstractPluginCollector {

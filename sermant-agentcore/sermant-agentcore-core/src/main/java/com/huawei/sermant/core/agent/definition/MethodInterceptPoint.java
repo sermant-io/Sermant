@@ -29,6 +29,8 @@ import net.bytebuddy.matcher.ElementMatcher;
 
 /**
  * 方法拦截点
+ *
+ * @deprecated 即将废弃使用
  */
 @Deprecated
 public class MethodInterceptPoint {

@@ -100,9 +100,9 @@ public abstract class AbstractInvokerService implements InvokerService, AgentSer
     protected LubanWebSocketClient connectProxy(List<Address> addressList, boolean isSecure, String proxyAddr) {
         InetSocketAddress socksaddr = new InetSocketAddress(proxyAddr, 38335);
         Proxy proxy = new Proxy(Proxy.Type.SOCKS, socksaddr);
-        LubanWebSocketClient client = this.connect(addressList, isSecure);
-        client.setProxy(proxy);
-        return client;
+        LubanWebSocketClient lubanWebSocketClient = this.connect(addressList, isSecure);
+        lubanWebSocketClient.setProxy(proxy);
+        return lubanWebSocketClient;
     }
 
     @Override
@@ -185,9 +185,9 @@ public abstract class AbstractInvokerService implements InvokerService, AgentSer
      */
     protected synchronized void sendRequest(MessageWrapper request) throws ConnectionException, IOException {
         if (ConfigManager.isValidated()) {
-            LubanWebSocketClient client = getConnect();
-            if (client.getOpenResult()) {
-                client.sendAsync(request.generatorMessage());
+            LubanWebSocketClient lubanWebSocketClient = getConnect();
+            if (lubanWebSocketClient.getOpenResult()) {
+                lubanWebSocketClient.sendAsync(request.generatorMessage());
             }
         }
     }
@@ -210,8 +210,8 @@ public abstract class AbstractInvokerService implements InvokerService, AgentSer
             try {
                 inFailBack = true;
                 ++retryCount;
-                LubanWebSocketClient client = getConnect();
-                if (client != null) {
+                LubanWebSocketClient lubanWebSocketClient = getConnect();
+                if (lubanWebSocketClient != null) {
                     AbstractInvokerService.this.failBackConnectTimeout = null;
                 } else {
                     reput();

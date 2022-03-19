@@ -71,9 +71,9 @@ public class TransferInvokerService extends AbstractInvokerService {
         List<Address> tmpOuterAddressList = new ArrayList<Address>();
 
         for (Address address : accessAddressList) {
-            if (AddressScope.inner.equals(address.getScope())) {
+            if (AddressScope.INNER.equals(address.getScope())) {
                 tmpInnerAddressList.add(address);
-            } else if (AddressScope.outer.equals(address.getScope())) {
+            } else if (AddressScope.OUTER.equals(address.getScope())) {
                 tmpOuterAddressList.add(address);
             }
         }
@@ -99,7 +99,7 @@ public class TransferInvokerService extends AbstractInvokerService {
                 address.setPort(port);
                 address.setSport(port);
                 address.setProtocol(Protocol.WS);
-                address.setScope(AddressScope.inner);
+                address.setScope(AddressScope.INNER);
                 result.add(address);
             }
             return result;
@@ -113,7 +113,7 @@ public class TransferInvokerService extends AbstractInvokerService {
     protected LubanWebSocketClient createConnectConfig() throws ConnectionException {
 
         if (innerAddressList == null && outerAddressList == null) {
-            throw new RuntimeException("access地址没有下发");
+            throw new ApmRuntimeException("access地址没有下发");
         }
         IOException ex = null;
         // 优先连内网

@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -85,12 +86,8 @@ public class HttpClientUtil {
                     return true;
                 }
             }).build();
-        } catch (KeyManagementException e) {
-            throw new RuntimeException("failed to get SSLContext", e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("failed to get SSLContext", e);
-        } catch (KeyStoreException e) {
-            throw new RuntimeException("failed to get SSLContext", e);
+        } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
+            throw new ApmRuntimeException("failed to get SSLContext", e);
         }
 
         HostnameVerifier hostnameVerifier = SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;

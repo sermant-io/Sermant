@@ -14,6 +14,8 @@
 package com.huawei.sermant.core.service.tracing.sender;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 链路追踪向后端发送数据的头部（应用信息、节点信息）
@@ -22,6 +24,8 @@ import lombok.Builder;
  * @since 2022-03-07
  */
 @Builder
+@Getter
+@Setter
 public class TracingMessageHeader {
     private String instanceId;
 

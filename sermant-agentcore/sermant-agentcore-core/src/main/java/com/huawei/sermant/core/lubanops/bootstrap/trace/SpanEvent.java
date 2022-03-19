@@ -228,17 +228,12 @@ public class SpanEvent {
     }
 
     public String generateNextSpanId() {
-        String result;
         if (rootSpanEvent != null) {
-            result = rootSpanEvent.generateNextSpanId();
+            setNextSpanId(rootSpanEvent.generateNextSpanId());
+            return rootSpanEvent.generateNextSpanId();
         } else {
-            StringBuilder nextSpanId = new StringBuilder();
-            nextSpanId.append(this.getSpanId()).append("-").append(nextSpanAtomicId.incrementAndGet());
-            result = nextSpanId.toString();
-            return result;
+            return this.getSpanId() + "-" + nextSpanAtomicId.incrementAndGet();
         }
-        setNextSpanId(result);
-        return result;
     }
 
     // ~~ getter and setter
@@ -246,7 +241,7 @@ public class SpanEvent {
         return rootSpanEvent;
     }
 
-    public void setRoot(SpanEvent rootSpanEvent) {
+    private void setRoot(SpanEvent rootSpanEvent) {
         this.rootSpanEvent = rootSpanEvent;
     }
 
@@ -320,7 +315,7 @@ public class SpanEvent {
         return globalPath;
     }
 
-    public void setTraceId(String traceId) {
+    private void setTraceId(String traceId) {
         this.traceId = traceId;
     }
 
@@ -332,7 +327,7 @@ public class SpanEvent {
         return spanId;
     }
 
-    public void setSpanId(String spanId) {
+    private void setSpanId(String spanId) {
         this.spanId = spanId;
     }
 
@@ -340,7 +335,7 @@ public class SpanEvent {
         return eventId;
     }
 
-    public void setEventId(String eventId) {
+    private void setEventId(String eventId) {
         this.eventId = eventId;
     }
 

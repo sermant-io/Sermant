@@ -488,10 +488,9 @@ public abstract class AbstractMasterService implements MasterService, ConfigServ
                 return true;
             }
             int offset = circuitCount;
-            boolean result = offset > 16
-                    ? (offset % 16 == 0 ? true : false)
-                    : (offset >= (int) Math.pow(2, retryHeartbeat) ? true : false);
-            return result;
+            return offset > 16
+                    ? (offset % 16 == 0)
+                    : (offset >= (int) Math.pow(2, retryHeartbeat));
         }
 
         public int getCircuitCount() {

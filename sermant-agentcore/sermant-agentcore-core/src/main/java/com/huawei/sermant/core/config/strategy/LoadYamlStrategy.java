@@ -53,10 +53,12 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
      * 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
     /**
      * Yaml对象
      */
     private final Yaml yaml = new Yaml();
+
     /**
      * 启动参数
      */

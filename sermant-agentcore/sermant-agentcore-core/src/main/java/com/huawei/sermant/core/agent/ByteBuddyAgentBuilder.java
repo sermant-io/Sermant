@@ -35,6 +35,7 @@ import java.lang.instrument.Instrumentation;
  * <p> Copyright 2021
  *
  * @since 2021
+ * @deprecated 即将废弃使用
  */
 @SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 @AboutDelete

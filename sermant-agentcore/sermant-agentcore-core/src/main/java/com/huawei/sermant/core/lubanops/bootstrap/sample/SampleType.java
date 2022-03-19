@@ -23,10 +23,10 @@ package com.huawei.sermant.core.lubanops.bootstrap.sample;
  */
 public enum SampleType {
 
-    all("1"),
-    percentage("2"),
-    frequency("3"),
-    automatic("4");
+    ALL("1"),
+    PERCENTAGE("2"),
+    FREQUENCY("3"),
+    AUTOMATIC("4");
 
     String type;
 

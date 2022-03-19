@@ -16,6 +16,8 @@
 
 package com.huawei.sermant.core.lubanops.integration.utils;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -97,7 +99,7 @@ public class TimeUtil {
 
             return df.parse(s);
         } catch (ParseException e) {
-            throw new RuntimeException("failed to parseWithDefault", e);
+            throw new ApmRuntimeException("failed to parseWithDefault", e);
         }
 
     }
@@ -137,7 +139,6 @@ public class TimeUtil {
 
     /*
      * 将时间trim到一个小时的开始
-
      */
     public long trimToStartOfAnHour(long timeInMillis) {
         return (timeInMillis / HOUR) * HOUR;
@@ -198,7 +199,7 @@ public class TimeUtil {
             sdf.setTimeZone(zone);
             return sdf.parse(s);
         } catch (ParseException e) {
-            throw new RuntimeException("failed to parseWithFormat", e);
+            throw new ApmRuntimeException("failed to parseWithFormat", e);
         }
 
     }

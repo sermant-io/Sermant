@@ -32,6 +32,7 @@ import java.util.Set;
  * <p> Copyright 2021
  *
  * @since 2021
+ * @deprecated 即将废弃使用
  */
 @AboutDelete
 @Deprecated
@@ -42,7 +43,7 @@ public class InterceptorChainManager {
     private static final String INTERCEPTORS_SEPARATOR = ",";
 
     @SuppressWarnings("checkstyle:ConstantName")
-    private static final Map<String, String> aliaAndNameMap = new HashMap<String, String>();
+    private static final Map<String, String> ALIA_AND_NAME_MAP = new HashMap<String, String>();
 
     private final Map<String, InterceptorChain> interceptorChains = new HashMap<String, InterceptorChain>();
 
@@ -60,7 +61,7 @@ public class InterceptorChainManager {
         List<AliaConfig.InterceptorAlia> interceptors = pluginAliaConfig.getInterceptors();
         if (interceptors != null && !interceptors.isEmpty()) {
             for (AliaConfig.InterceptorAlia interceptor : interceptors) {
-                aliaAndNameMap.put(pluginName + "." + interceptor.getAlia(), interceptor.getName());
+                ALIA_AND_NAME_MAP.put(pluginName + "." + interceptor.getAlia(), interceptor.getName());
             }
         }
     }
@@ -90,7 +91,7 @@ public class InterceptorChainManager {
             if (StringUtils.isBlank(interceptorOrAlia)) {
                 continue;
             }
-            String interceptor = InterceptorChainManager.aliaAndNameMap.get(interceptorOrAlia);
+            String interceptor = InterceptorChainManager.ALIA_AND_NAME_MAP.get(interceptorOrAlia);
             if (StringUtils.isBlank(interceptor)) {
                 interceptor = interceptorOrAlia;
             }

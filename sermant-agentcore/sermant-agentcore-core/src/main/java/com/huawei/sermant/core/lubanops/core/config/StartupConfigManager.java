@@ -65,10 +65,6 @@ public class StartupConfigManager {
 
     public String agentPath;
 
-    public StartupConfigManager() {
-
-    }
-
     public static StartupConfigManager parse(String[] args) {
         StartupConfigManager configManager = new StartupConfigManager();
         for (String arg : args) {

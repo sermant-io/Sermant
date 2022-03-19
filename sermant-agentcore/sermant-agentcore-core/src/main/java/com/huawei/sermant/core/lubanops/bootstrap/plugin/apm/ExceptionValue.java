@@ -37,7 +37,7 @@ public class ExceptionValue implements StatsBase {
 
     protected AtomicReference<String> stackTrace = new AtomicReference<String>();
 
-    private long countLast = 0;
+    private long countLast = 0L;
 
     public void onThrowable(Throwable t) {
         count.incrementAndGet();

@@ -21,13 +21,13 @@ package com.huawei.sermant.core.lubanops.bootstrap.trace;
  */
 public enum Tags {
 
-    requestUrl,
-    requestMethod,
-    responseCode,
-    requestHeader,
-    requestBody,
-    responseHeader,
-    responseBody,
-    asyncTimeUsed,
+    REQUEST_URL,
+    REQUEST_METHOD,
+    RESPONSE_CODE,
+    REQUEST_HEADER,
+    REQUEST_BODY,
+    RESPONSE_HEADER,
+    RESPONSE_BODY,
+    ASYNC_TIME_USED,
 
 }

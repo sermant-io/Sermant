@@ -27,22 +27,25 @@ public enum ErrorType {
     /**
      * log.error 产生的异常
      */
-    log,
+    LOG,
+
     /**
      * 方法抛出的异常
      */
-    method,
+    METHOD,
+
     /**
      * 状态码异常
      */
-    statuscode,
+    STATUSCODE,
+    
     /**
      * 业务异常
      */
-    bizcode,
+    BIZCODE,
 
     /**
      * 第三方传递
      */
-    propagate
+    PROPAGATE
 }

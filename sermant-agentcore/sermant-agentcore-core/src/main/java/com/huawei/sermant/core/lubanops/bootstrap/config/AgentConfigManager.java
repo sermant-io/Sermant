@@ -102,7 +102,7 @@ public class AgentConfigManager {
 
     public static void init(String configPath) {
         Properties properties = FileUtils.readFilePropertyByPath(
-                configPath + File.separator + "config"+ File.separator + LubanApmConstants.CONFIG_FILENAME);
+                configPath + File.separator + "config" + File.separator + LubanApmConstants.CONFIG_FILENAME);
         masterAuthAk = properties.getProperty(MASTER_ACCESS_KEY);
         masterAuthSk = properties.getProperty(MASTER_SECRET_KEY);
         masterAddress = properties.getProperty(MASTER_ADDRESS);
@@ -111,8 +111,8 @@ public class AgentConfigManager {
         setAccessAddress(properties.getProperty(ACCESS_ADDRESS));
         setLogLevel(properties.getProperty(LOG_LEVEL));
         setEventThreadCount(StringUtils.string2Int(properties.getProperty(EVENT_THREAD_COUNT), 3));
-        String filterLogMessage = properties.getProperty(FILTER_LOG_MESSAGE);
-        if ("true".equals(filterLogMessage)) {
+        String filterLogConfig = properties.getProperty(FILTER_LOG_MESSAGE);
+        if ("true".equals(filterLogConfig)) {
             AgentConfigManager.filterLogMessage = true;
         }
         checkAgentConfig();
@@ -204,9 +204,9 @@ public class AgentConfigManager {
 
     public static Level getLevel(String levelStr) {
         if (levelStr != null) {
-            if ("error".equals(levelStr.toLowerCase())) {
+            if ("error".equalsIgnoreCase(levelStr)) {
                 return Level.SEVERE;
-            } else if ("debug".equals(levelStr.toLowerCase())) {
+            } else if ("debug".equalsIgnoreCase(levelStr)) {
                 return Level.FINE;
             }
         }

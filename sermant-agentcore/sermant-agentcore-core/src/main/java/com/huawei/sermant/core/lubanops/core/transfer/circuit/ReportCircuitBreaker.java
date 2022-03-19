@@ -44,9 +44,6 @@ public class ReportCircuitBreaker implements CircuitBreaker {
      */
     private AtomicBoolean state = new AtomicBoolean(false);
 
-    public ReportCircuitBreaker() {
-    }
-
     @Override
     public boolean allowRequest() {
         if (isOpen()) {

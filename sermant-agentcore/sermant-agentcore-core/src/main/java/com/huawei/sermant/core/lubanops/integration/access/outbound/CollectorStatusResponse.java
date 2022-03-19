@@ -16,6 +16,7 @@
 
 package com.huawei.sermant.core.lubanops.integration.access.outbound;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
 import com.huawei.sermant.core.lubanops.integration.access.Body;
 import com.huawei.sermant.core.lubanops.integration.access.Header;
 import com.huawei.sermant.core.lubanops.integration.access.Message;
@@ -59,7 +60,7 @@ public class CollectorStatusResponse extends MessageWrapper {
             response.setBody(body);
             return response;
         } catch (Exception e) {
-            throw new RuntimeException("failed to parse msg,msg type:" + message.getType(), e);
+            throw new ApmRuntimeException("failed to parse msg,msg type:" + message.getType(), e);
         }
     }
 

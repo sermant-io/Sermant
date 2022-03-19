@@ -82,7 +82,7 @@ public class TransformerMethod {
         return isConstructor;
     }
 
-    public void setConstructor(boolean isConstructor) {
+    private void setConstructor(boolean isConstructor) {
         this.isConstructor = isConstructor;
     }
 

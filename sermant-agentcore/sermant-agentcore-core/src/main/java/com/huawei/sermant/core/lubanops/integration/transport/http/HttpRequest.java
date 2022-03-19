@@ -16,16 +16,9 @@
 
 package com.huawei.sermant.core.lubanops.integration.transport.http;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
+import com.huawei.sermant.core.lubanops.integration.enums.HttpMethod;
+import com.huawei.sermant.core.lubanops.integration.utils.HttpUtils;
 
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -37,8 +30,17 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 
-import com.huawei.sermant.core.lubanops.integration.enums.HttpMethod;
-import com.huawei.sermant.core.lubanops.integration.utils.HttpUtils;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author
@@ -96,7 +98,7 @@ public class HttpRequest implements Request {
             httpRequest = new HttpOptions(url);
         } else {
             if (!HttpMethod.HEAD.name().equals(method)) {
-                throw new RuntimeException("Unknown HTTP method name: " + method);
+                throw new ApmRuntimeException("Unknown HTTP method name: " + method);
             }
 
             httpRequest = new HttpHead(url);
@@ -104,7 +106,7 @@ public class HttpRequest implements Request {
         Map<String, String> requestHeaders = this.getHeaders();
 
         for (Map.Entry<String, String> entry : requestHeaders.entrySet()) {
-            if (!entry.getKey().equalsIgnoreCase("Content-Length".toString())) {
+            if (!entry.getKey().equalsIgnoreCase("Content-Length")) {
                 String value = requestHeaders.get(entry.getKey());
                 httpRequest.addHeader(entry.getKey(), new String(value.getBytes("UTF-8"), "ISO-8859-1"));
             }
@@ -114,16 +116,16 @@ public class HttpRequest implements Request {
     }
 
     public HttpMethod getMethod() {
-        return HttpMethod.valueOf(this.method.toUpperCase());
+        return HttpMethod.valueOf(this.method.toUpperCase(Locale.getDefault()));
     }
 
     public void setMethod(String method) throws Exception {
         if (null == method) {
-            throw new Exception("method can not be empty");
+            throw new ApmRuntimeException("method can not be empty");
         } else if (!method.equalsIgnoreCase("post") && !method.equalsIgnoreCase("put") && !method.equalsIgnoreCase(
                 "patch") && !method.equalsIgnoreCase("delete") && !method.equalsIgnoreCase("get")
                 && !method.equalsIgnoreCase("options") && !method.equalsIgnoreCase("head")) {
-            throw new Exception("unsupported method");
+            throw new ApmRuntimeException("unsupported method");
         } else {
             this.method = method;
         }
@@ -206,34 +208,34 @@ public class HttpRequest implements Request {
 
             this.url = url;
         } else {
-            throw new Exception("url can not be empty");
+            throw new ApmRuntimeException("url can not be empty");
         }
     }
 
     public String getPath() {
-        String url = this.url;
-        int i = url.indexOf("://");
+        String urlStr = this.url;
+        int i = urlStr.indexOf("://");
         if (i >= 0) {
-            url = url.substring(i + 3);
+            urlStr = urlStr.substring(i + 3);
         }
 
-        i = url.indexOf(47);
-        return i >= 0 ? url.substring(i) : "/";
+        i = urlStr.indexOf(47);
+        return i >= 0 ? urlStr.substring(i) : "/";
     }
 
     public String getHost() {
-        String url = this.url;
-        int i = url.indexOf("://");
+        String urlStr = this.url;
+        int i = urlStr.indexOf("://");
         if (i >= 0) {
-            url = url.substring(i + 3);
+            urlStr = urlStr.substring(i + 3);
         }
 
-        i = url.indexOf(47);
+        i = urlStr.indexOf(47);
         if (i >= 0) {
-            url = url.substring(0, i);
+            urlStr = urlStr.substring(0, i);
         }
 
-        return url;
+        return urlStr;
     }
 
     public void addQueryStringParam(String name, String value) throws UnsupportedEncodingException {
@@ -258,7 +260,7 @@ public class HttpRequest implements Request {
         if (null != fragment && !fragment.trim().isEmpty()) {
             this.fragment = URLEncoder.encode(fragment, "UTF-8");
         } else {
-            throw new Exception("fragment can not be empty");
+            throw new ApmRuntimeException("fragment can not be empty");
         }
     }
 

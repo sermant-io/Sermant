@@ -28,7 +28,10 @@ public class DefaultSqlSectionStats extends DefaultSectionStats {
      */
     private final AtomicLong updatedRowCount = new AtomicLong(0L);
 
-    private final AtomicLong readRowCount = new AtomicLong(0L); /**读取行数*/
+    /**
+     * 读取行数
+     */
+    private final AtomicLong readRowCount = new AtomicLong(0L);
 
     /**
      * 慢SQL

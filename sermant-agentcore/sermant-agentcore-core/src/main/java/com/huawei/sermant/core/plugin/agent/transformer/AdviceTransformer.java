@@ -83,8 +83,7 @@ public class AdviceTransformer implements AgentBuilder.Transformer {
         final int verifiedKey = Objects.hash(classLoader, typeDesc.getActualName());
         DynamicType.Builder<?> newBuilder = builder;
         newBuilder = extendsFromSuperTypes(newBuilder, typeDesc, verifiedKey);
-        newBuilder = enhanceMethods(newBuilder, typeDesc, classLoader, verifiedKey);
-        return newBuilder;
+        return enhanceMethods(newBuilder, typeDesc, classLoader, verifiedKey);
     }
 
     /**

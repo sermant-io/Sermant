@@ -16,6 +16,7 @@
 
 package com.huawei.sermant.core.lubanops.integration.access.inbound;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
 import com.huawei.sermant.core.lubanops.integration.access.Message;
 import com.huawei.sermant.core.lubanops.integration.access.MessageType;
 import com.huawei.sermant.core.lubanops.integration.access.MessageWrapper;
@@ -32,10 +33,6 @@ public class MonitorDataRequest extends MessageWrapper {
     private MonitorDataBody body;
 
     private long messageId;
-
-    public MonitorDataRequest() {
-
-    }
 
     /**
      * 将二进制原始数据反序列化
@@ -56,7 +53,7 @@ public class MonitorDataRequest extends MessageWrapper {
             report.setBody(body);
             return report;
         } catch (Exception e) {
-            throw new RuntimeException("failed to parse msg,msg type:" + msg.getType(), e);
+            throw new ApmRuntimeException("failed to parse msg,msg type:" + msg.getType(), e);
         }
 
     }
@@ -67,8 +64,7 @@ public class MonitorDataRequest extends MessageWrapper {
      * @return
      */
     public static MonitorDataHeader parseHeader(Message msg) {
-        MonitorDataHeader header = JSON.parseObject(msg.getHeader(), MonitorDataHeader.class);
-        return header;
+        return JSON.parseObject(msg.getHeader(), MonitorDataHeader.class);
     }
 
     @Override

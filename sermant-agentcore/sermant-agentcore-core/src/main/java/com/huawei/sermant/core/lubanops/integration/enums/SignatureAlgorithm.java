@@ -22,7 +22,4 @@ package com.huawei.sermant.core.lubanops.integration.enums;
  */
 public enum SignatureAlgorithm {
     HmacSHA256;
-
-    private SignatureAlgorithm() {
-    }
 }

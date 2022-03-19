@@ -24,6 +24,8 @@ package com.huawei.sermant.premain.exception;
  * @since 2021/11/12
  */
 public class InitPremainException extends RuntimeException {
+    private static final long serialVersionUID = 2039195842465339347L;
+
     public InitPremainException(Exception e) {
         super("[" + e.getClass().getSimpleName() + "] " + e.getMessage());
     }

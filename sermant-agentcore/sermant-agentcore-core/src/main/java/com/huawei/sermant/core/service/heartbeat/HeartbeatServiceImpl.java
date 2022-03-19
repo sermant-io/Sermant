@@ -80,15 +80,22 @@ public class HeartbeatServiceImpl implements HeartbeatService {
      */
     private static volatile boolean isRunning = false;
 
+    /**
+     * 共享锁
+     */
+    private static final Object lock = new Object();
+
     @Override
-    public synchronized void start() {
-        isRunning = true;
-        EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
-                execute();
-            }
-        });
+    public void start() {
+        synchronized (lock) {
+            isRunning = true;
+            EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    execute();
+                }
+            });
+        }
     }
 
     /**
@@ -170,14 +177,16 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     }
 
     @Override
-    public synchronized void stop() {
-        if (!isRunning) {
-            LOGGER.warning("HeartbeatService has not started yet. ");
-            return;
+    public void stop() {
+        synchronized (lock) {
+            if (!isRunning) {
+                LOGGER.warning("HeartbeatService has not started yet. ");
+                return;
+            }
+            isRunning = false;
+            EXECUTOR.shutdown();
+            EXT_INFO_MAP.clear();
         }
-        isRunning = false;
-        EXECUTOR.shutdown();
-        EXT_INFO_MAP.clear();
     }
 
     @Override

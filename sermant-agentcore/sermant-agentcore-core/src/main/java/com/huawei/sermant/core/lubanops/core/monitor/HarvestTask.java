@@ -89,8 +89,6 @@ public class HarvestTask implements Runnable {
                         // 发送数据
                         monitorReportService.offer(body);
                     }
-                } else {
-                    // 采集用户自定义监控数据
                 }
             } catch (Exception e) {
                 LOG.log(Level.SEVERE, "failed to harvest:", e);

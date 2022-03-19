@@ -36,14 +36,17 @@ public class ExecuteContext {
      * 被增强的类
      */
     private final Class<?> rawCls;
+
     /**
      * 被增强的构造函数，注意：增强方法时为空
      */
     private final Constructor<?> constructor;
+
     /**
      * 被增强的方法，注意：增强构造函数时为空
      */
     private final Method method;
+
     /**
      * 被增强的对象，注意：
      * <pre>
@@ -52,6 +55,7 @@ public class ExecuteContext {
      * </pre>
      */
     private Object object;
+
     /**
      * 被增强的方法入参
      */

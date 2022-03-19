@@ -104,6 +104,7 @@ public class PathDeclarer {
      * 获取luban的boot目录，该目录已移除，用core替代
      *
      * @return luban的boot目录
+     * @deprecated 即将废弃使用
      */
     @Deprecated
     public static String getLubanBootPath() {
@@ -114,6 +115,7 @@ public class PathDeclarer {
      * 获取luban插件目录
      *
      * @return luban插件目录
+     * @deprecated 即将废弃使用
      */
     @Deprecated
     public static String getLubanPluginsPath() {

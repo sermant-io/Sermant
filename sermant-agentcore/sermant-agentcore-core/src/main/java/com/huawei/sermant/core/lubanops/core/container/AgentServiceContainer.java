@@ -164,8 +164,6 @@ public class AgentServiceContainer implements Container {
         return this.startupTime;
     }
 
-    //~~ inner method
-
     /**
      * Find service modules by service loader.
      *
@@ -180,7 +178,8 @@ public class AgentServiceContainer implements Container {
     }
 
     private void inject2BootstrapBean() {
-        //inject internal service to bootstrap bean.
+
+        // inject internal service to bootstrap bean.
         TraceCollector.setReportService(getService(TraceReportService.class));
     }
 }

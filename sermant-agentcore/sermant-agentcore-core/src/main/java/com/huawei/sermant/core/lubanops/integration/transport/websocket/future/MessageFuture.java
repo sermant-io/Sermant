@@ -16,6 +16,7 @@
 
 package com.huawei.sermant.core.lubanops.integration.transport.websocket.future;
 
+import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -45,9 +46,9 @@ public class MessageFuture {
      */
     private long timestamp = System.currentTimeMillis();
 
-    private long elapse1 = 0;
+    private long elapse1 = 0L;
 
-    private long elapse2 = 0;
+    private long elapse2 = 0L;
 
     private long timeout;
 
@@ -69,7 +70,8 @@ public class MessageFuture {
             elapse1 = now - timestamp;
             if (elapse1 > 200 && LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.log(Level.FINE,
-                        String.format("message finished,id[%d]born[%d]elapse1[%d]", timestamp, messageId, elapse1));
+                        String.format(Locale.ROOT, "message finished,id[%d]born[%d]elapse1[%d]",
+                                timestamp, messageId, elapse1));
             }
             futureManagement.removeFuture(this.messageId);
             return message;
@@ -96,13 +98,15 @@ public class MessageFuture {
         elapse1 = now - timestamp;
         if (elapse1 > 200 && LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE,
-                    String.format("message finished,id[%d]born[%d]elapse1[%d]", timestamp, messageId, elapse1));
+                    String.format(Locale.ROOT, "message finished,id[%d]born[%d]elapse1[%d]",
+                            timestamp, messageId, elapse1));
         }
         latch.countDown();
         elapse2 = System.currentTimeMillis() - now;
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE,
-                String.format("message finished,id[%d]born[%d]elapse1[%d]elapse2[%d]", timestamp, messageId, elapse1,
+                String.format(Locale.ROOT, "message finished,id[%d]born[%d]elapse1[%d]elapse2[%d]",
+                        timestamp, messageId, elapse1,
                         elapse2));
         }
     }

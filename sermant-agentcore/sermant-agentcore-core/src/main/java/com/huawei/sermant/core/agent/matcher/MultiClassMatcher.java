@@ -33,6 +33,8 @@ import java.util.Set;
 
 /**
  * 多个类匹配
+ *
+ * @deprecated 即将废弃使用
  */
 @Deprecated
 public class MultiClassMatcher implements NonNameMatcher {

@@ -65,6 +65,7 @@ public class SchemaException extends RuntimeException {
             return String.format(Locale.ROOT, "External jar %s is not allowed. ", args);
         }
     };
+    private static final long serialVersionUID = 3875379572570581867L;
 
     public SchemaException(MsgParser parser, Object... args) {
         super(parser.parse(args));

@@ -17,6 +17,7 @@
 package com.huawei.sermant.core.lubanops.core.monitor;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.Level;
@@ -102,9 +103,6 @@ public class MonitorReportServiceImpl extends ServiceThread implements MonitorRe
     @Override
     public void run() {
         LOGGER.info("[MONITOR REPORTER]reporter start.");
-        while (!this.isStopped() && doReport()) {
-            // do nothing
-        }
         LOGGER.info("[MONITOR REPORTER]reporter stopped.");
     }
 
@@ -156,7 +154,8 @@ public class MonitorReportServiceImpl extends ServiceThread implements MonitorRe
         boolean success = collectorDataQueue.offer(body);
         if (!success) {
             String bodyStr = body.toString();
-            APMCollector.onDiscard(LubanApmConstants.MONITOR_DATA_TYPE, bodyStr.getBytes().length);
+            APMCollector.onDiscard(LubanApmConstants.MONITOR_DATA_TYPE,
+                    bodyStr.getBytes(Charset.defaultCharset()).length);
             LOGGER.warning("data queue is full,data discarded:" + bodyStr);
         } else {
             APMCollector.onStart(LubanApmConstants.MONITOR_DATA_TYPE, collectorDataQueue.size());
@@ -199,8 +198,8 @@ public class MonitorReportServiceImpl extends ServiceThread implements MonitorRe
     private boolean doReport() {
         MonitorDataRequest request = new MonitorDataRequest();
         MonitorDataBody body = null;
-        long startTime = 0;
-        long length = 0;
+        long startTime = 0L;
+        long length = 0L;
         try {
             request.setHeader(ReportDataBuilder.buildMonitorDataHeader());
             request.setMessageId(MessageIdGenerator.generateMessageId());
@@ -216,7 +215,7 @@ public class MonitorReportServiceImpl extends ServiceThread implements MonitorRe
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.log(Level.FINE, String.format("[debug mode]sending message:[%s]", request));
             }
-            length = bodyStr.getBytes().length;
+            length = bodyStr.getBytes(Charset.defaultCharset()).length;
             if (length > 1000000) {
                 LOGGER.log(Level.SEVERE, "data过大:" + bodyStr);
                 APMCollector.onThrowable(LubanApmConstants.MONITOR_DATA_TYPE, length,
@@ -248,7 +247,8 @@ public class MonitorReportServiceImpl extends ServiceThread implements MonitorRe
                         String.format("[debug mode]sending message success:[%s]", request.getMessageId()));
             }
         } else {
-            APMCollector.onDiscard(LubanApmConstants.MONITOR_DATA_TYPE, bodyStr.getBytes().length);
+            APMCollector.onDiscard(LubanApmConstants.MONITOR_DATA_TYPE,
+                    bodyStr.getBytes(Charset.defaultCharset()).length);
         }
         APMCollector.onSuccess(LubanApmConstants.MONITOR_DATA_TYPE, length);
     }

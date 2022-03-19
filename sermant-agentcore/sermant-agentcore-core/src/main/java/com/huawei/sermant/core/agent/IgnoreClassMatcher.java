@@ -29,6 +29,7 @@ import java.security.ProtectionDomain;
  * Copyright 2021
  *
  * @since 2021
+ * @deprecated 即将废弃使用
  */
 @AboutDelete
 @Deprecated

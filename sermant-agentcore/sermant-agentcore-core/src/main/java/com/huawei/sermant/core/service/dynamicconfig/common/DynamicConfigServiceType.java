@@ -16,7 +16,6 @@
 
 package com.huawei.sermant.core.service.dynamicconfig.common;
 
-
 /**
  *
  * Enum for DynamicConfigType,

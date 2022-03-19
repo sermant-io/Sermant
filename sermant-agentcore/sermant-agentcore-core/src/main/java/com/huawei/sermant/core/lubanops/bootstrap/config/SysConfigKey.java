@@ -27,20 +27,21 @@ public class SysConfigKey {
      * 是否采用加密传输，返回值1是，0就是否
      */
     private static String useSSL = "useSSL";
+
     /**
      * 调用链采集是否打开
      */
-    private static String traceOn = "traceON";
+    private static final String TRACE_ON = "traceON";
 
     /**
      * 监控数据是否打开
      */
-    private static String monitorOn = "monitorOn";
+    private static final String MONITOR_ON = "monitorOn";
 
     /**
      * 子event的最多的个数，如果超过了就省略。默认值100
      */
-    private static String childTraceMax = "childTraceMax";
+    private static final String CHILD_TRACE_MAX = "childTraceMax";
 
     /**
      * 慢请求的阈值，比如800毫秒，或者1秒，由用户自己定义,这个定义是通用的，对于单个url也可以自己定义自己的慢请求的阈值

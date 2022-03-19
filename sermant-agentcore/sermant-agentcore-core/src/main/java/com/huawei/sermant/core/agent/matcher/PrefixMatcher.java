@@ -30,6 +30,8 @@ import net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * 类名前缀匹配器
+ *
+ * @deprecated 即将废弃使用
  */
 @Deprecated
 public class PrefixMatcher implements NonNameMatcher {

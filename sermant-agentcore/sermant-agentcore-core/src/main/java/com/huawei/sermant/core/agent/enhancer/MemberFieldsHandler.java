@@ -30,6 +30,8 @@ import java.util.logging.Logger;
 
 /**
  * 处理成员变量
+ *
+ * @deprecated 即将废弃使用
  */
 @AboutDelete
 @Deprecated

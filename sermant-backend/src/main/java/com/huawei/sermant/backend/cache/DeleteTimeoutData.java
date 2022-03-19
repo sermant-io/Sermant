@@ -30,7 +30,7 @@ import java.util.TimerTask;
  */
 public class DeleteTimeoutData extends TimerTask {
 
-    private static final int MAX_EFFECTIVE_TIME = 3000;
+    private static final int MAX_EFFECTIVE_TIME = 6000;
 
     /**
      * 初始化任务

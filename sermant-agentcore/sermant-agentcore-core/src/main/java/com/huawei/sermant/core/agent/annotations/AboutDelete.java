@@ -25,6 +25,7 @@ import java.lang.annotation.Target;
  * @author HapThorin
  * @version 1.0.0
  * @since 2022-01-25
+ * @deprecated 即将废弃使用
  */
 @Deprecated
 @Target(value = {ElementType.TYPE})

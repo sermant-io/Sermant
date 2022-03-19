@@ -140,15 +140,18 @@ public class AdaptorShader {
          * 源路径
          */
         private final String sourcePath;
+
         /**
          * 目标路径
          */
         private final String targetPath;
         private final boolean isRewriteFileEnable;
+
         /**
          * 自定义Remapper，用于修正全限定名和路径
          */
         private final AdaptorRemapper adaptorRemapper;
+
         /**
          * 默认消费者，修正失败时将执行默认操作
          */
@@ -397,6 +400,7 @@ public class AdaptorShader {
          * 源文件路径
          */
         private final String sourcePath;
+        
         /**
          * 目标文件路径
          */

@@ -36,8 +36,8 @@ public class SessionOpenRequest extends MessageWrapper {
     }
 
     public SessionOpenRequest(String code, String msg, Long instanceId) {
-        SessionOpenHeader header = new SessionOpenHeader(code, msg, instanceId);
-        this.header = header;
+        SessionOpenHeader sessionOpenHeader = new SessionOpenHeader(code, msg, instanceId);
+        this.header = sessionOpenHeader;
 
     }
 
@@ -84,9 +84,9 @@ public class SessionOpenRequest extends MessageWrapper {
      * 头部信息
      */
     public static class SessionOpenHeader extends Header {
-        public static String ok = "0";
+        public static final String OK = "0";
 
-        public static String error = "1";
+        public static final String ERROR = "1";
 
         // 0 代表成功，1 代表失败
         private String code = "0";

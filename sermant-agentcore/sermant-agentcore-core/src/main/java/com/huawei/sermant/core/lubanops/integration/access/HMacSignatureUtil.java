@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
 import com.huawei.sermant.core.lubanops.integration.utils.StringUtil;
 
 /**
@@ -45,7 +46,9 @@ public class HMacSignatureUtil {
 
         try {
             // 根据给定的字节数组构造一个密钥,第二参数指定一个密钥算法的名称
-            SecretKeySpec signinKey = new SecretKeySpec(key.getBytes(), hMacAlgorithm.name());
+            SecretKeySpec signinKey = new SecretKeySpec(key.getBytes(
+                    Charset.defaultCharset()),
+                    hMacAlgorithm.name());
             // 生成一个指定 Mac 算法 的 Mac 对象
             Mac mac = Mac.getInstance(hMacAlgorithm.name());
             // 用给定密钥初始化 Mac 对象
@@ -57,11 +60,11 @@ public class HMacSignatureUtil {
             return StringUtil.bytesToString(rawHmac);
 
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("NoSuchAlgorithmException", e);
+            throw new ApmRuntimeException("NoSuchAlgorithmException", e);
         } catch (InvalidKeyException e) {
-            throw new RuntimeException("InvalidKeyException", e);
+            throw new ApmRuntimeException("InvalidKeyException", e);
         } catch (IllegalStateException e) {
-            throw new RuntimeException("IllegalStateException", e);
+            throw new ApmRuntimeException("IllegalStateException", e);
         }
 
     }

@@ -20,6 +20,14 @@ import java.lang.instrument.Instrumentation;
 
 public class InstrumentationManager {
 
-    public static Instrumentation inst;
+    private static Instrumentation inst;
+
+    public void setInst(Instrumentation instrumentation) {
+        inst = instrumentation;
+    }
+
+    public Instrumentation getInst() {
+        return inst;
+    }
 
 }

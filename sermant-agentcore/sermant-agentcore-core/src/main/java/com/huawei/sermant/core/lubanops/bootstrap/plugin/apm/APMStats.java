@@ -107,13 +107,11 @@ public class APMStats implements StatsBase {
     }
 
     public double getSendCount() {
-        long cSendCount = sendCount.get();
-        return cSendCount;
+        return sendCount.get();
     }
 
     public long getErrorCount() {
-        long cErrorCount = errorCount.get();
-        return cErrorCount;
+        return errorCount.get();
     }
 
     @Override

@@ -16,6 +16,9 @@
 
 package com.huawei.sermant.core.lubanops.bootstrap.utils;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
+import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,13 +27,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.ProtectionDomain;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
 
 public class Util {
 
@@ -46,19 +48,9 @@ public class Util {
      * 将字符串写入文件
      */
     public static void writeToFile(String path, String content) throws IOException {
-        FileOutputStream fileOutputStream = null;
-        BufferedOutputStream bufferedOutputStream = null;
-        try {
-            fileOutputStream = new FileOutputStream(new File(path));
-            bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-            bufferedOutputStream.write(content.getBytes("utf-8"));
-        } finally {
-            if (fileOutputStream != null) {
-                fileOutputStream.close();
-            }
-            if (bufferedOutputStream != null) {
-                bufferedOutputStream.close();
-            }
+        try (FileOutputStream fileOutputStream = new FileOutputStream(new File(path));
+             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream)) {
+            bufferedOutputStream.write(content.getBytes(StandardCharsets.UTF_8));
         }
     }
 
@@ -76,10 +68,10 @@ public class Util {
         }
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("md5");
-            messageDigest.update(value.getBytes("utf8"));
+            messageDigest.update(value.getBytes(StandardCharsets.UTF_8));
             return getFormattedText(messageDigest.digest());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ApmRuntimeException(e);
         }
     }
 
@@ -115,7 +107,7 @@ public class Util {
 
             return sb.toString();
         } catch (Exception e) {
-            throw new RuntimeException("failed to read file:" + fileName, e);
+            throw new ApmRuntimeException("failed to read file:" + fileName, e);
         } finally {
             if (br != null) {
                 try {
@@ -138,9 +130,7 @@ public class Util {
             userDir = System.getProperty("user.dir");
         }
         userDir = filterUserDir(userDir);
-        String instanceName = Util.getMD5String(userDir).substring(0, 3);
-        instanceName = checkInstanceNameByUserDir(userDir, instanceName);
-        return instanceName;
+        return checkInstanceNameByUserDir(userDir, Util.getMD5String(userDir).substring(0, 3));
     }
 
     public static String filterUserDir(String userDir) {
@@ -176,7 +166,7 @@ public class Util {
         try {
             path = protectionDomain.getCodeSource().getLocation().getPath();
         } catch (Exception e) {
-            // ignore
+            throw new ApmRuntimeException(e);
         }
         return path == null ? "unknown" : Util.getJarFileName(path);
     }

@@ -389,8 +389,7 @@ public class TraceCollector {
     public static Map<String, Object> getTraceMapByCseContext(String cseContext) {
         if (cseContext != null) {
             try {
-                HashMap<String, Object> map = APIService.getJsonApi().parseObject(cseContext, HashMap.class);
-                return map;
+                return APIService.getJsonApi().parseObject(cseContext, HashMap.class);
             } catch (Exception e) {
             }
         }

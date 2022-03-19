@@ -17,6 +17,7 @@
 package com.huawei.sermant.core.lubanops.core.trace;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -143,7 +144,7 @@ public class TraceReportServiceImpl implements TraceReportService, AgentService 
         boolean success = SPAN_EVENT_DATA_QUEUE.offer(spanEvent);
         if (!success) {
             String json = APIService.getJsonApi().toJSONString(spanEvent);
-            int length = json.getBytes().length;
+            int length = json.getBytes(Charset.defaultCharset()).length;
             APMCollector.onDiscard(SPAN_EVENT_DATA_TYPE, length);
             LogFactory.getLogger().warning("spanevent data queue is full,data discarded:" + spanEvent.toString());
         } else {
@@ -159,16 +160,13 @@ public class TraceReportServiceImpl implements TraceReportService, AgentService 
         @Override
         public void run() {
             LOGGER.info("[TRACE REPORTER]reporter start.");
-            while (!this.isStopped() && report()) {
-
-            }
             LOGGER.info("[TRACE REPORTER]reporter stop.");
         }
 
         public boolean report() {
             SpanEvent spanEvent = null;
-            long endTime = 0;
-            long startTime = 0;
+            long endTime = 0L;
+            long startTime = 0L;
             String logClassName = null;
             String logMethodName = null;
             try {
@@ -190,7 +188,7 @@ public class TraceReportServiceImpl implements TraceReportService, AgentService 
                     Map<String, String> bodyMap = new HashMap<String, String>();
                     bodyMap.put("msg", "数据超过1M已丢弃");
                     eventDataBody.setTags(bodyMap);
-                    length = eventDataBody.toString().getBytes().length;
+                    length = eventDataBody.toString().getBytes(Charset.defaultCharset()).length;
                 }
                 logClassName = request.getBody().getClassName();
                 logMethodName = request.getBody().getMethod();

@@ -23,6 +23,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -64,7 +66,10 @@ public class ClassLoaderUtils {
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {
         if (classLoader instanceof URLClassLoader) {
             Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            addUrl.setAccessible(true);
+            AccessController.doPrivileged((PrivilegedAction) () -> {
+                addUrl.setAccessible(true);
+                return null;
+            });
             addUrl.invoke(classLoader, jarUrl);
         } else {
             JarFile jarFile = null;
@@ -179,13 +184,18 @@ public class ClassLoaderUtils {
     public static Class<?> defineClass(String className, ClassLoader classLoader, byte[] bytes)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         final Method loadingLock = ClassLoader.class.getDeclaredMethod("getClassLoadingLock", String.class);
-        loadingLock.setAccessible(true);
+        AccessController.doPrivileged((PrivilegedAction) () -> {
+            loadingLock.setAccessible(true);
+            return null;
+        });
         synchronized (loadingLock.invoke(classLoader, className)) {
             final Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class,
                     int.class, int.class);
-            defineClass.setAccessible(true);
+            AccessController.doPrivileged((PrivilegedAction) () -> {
+                defineClass.setAccessible(true);
+                return null;
+            });
             return (Class<?>) defineClass.invoke(classLoader, null, bytes, 0, bytes.length);
         }
-
     }
 }

@@ -26,6 +26,8 @@ import java.util.Locale;
  * @since 2021-11-04
  */
 public class DupConfIndexException extends RuntimeException {
+    private static final long serialVersionUID = -5266141076199244336L;
+
     public DupConfIndexException(String key) {
         super(String.format(Locale.ROOT, "Unable to use [%s] to explain [%s]. ", key, key));
     }

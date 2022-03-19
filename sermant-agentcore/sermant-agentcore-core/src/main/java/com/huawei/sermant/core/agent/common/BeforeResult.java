@@ -24,6 +24,8 @@ package com.huawei.sermant.core.agent.common;
 
 /**
  * 实例和静态方法拦截器前置方法执行结果承载类
+ *
+ * @deprecated 即将废弃使用
  */
 @Deprecated
 public class BeforeResult {

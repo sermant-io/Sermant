@@ -43,6 +43,7 @@ public class BootStrapImpl {
     private static AtomicBoolean started = new AtomicBoolean(false);
     private static AtomicBoolean stopped = new AtomicBoolean(false);
     private AgentServiceContainer serviceContainer;
+    private static final InstrumentationManager instrumentationManager = new InstrumentationManager();
 
     public BootStrapImpl() {
         serviceContainer = new AgentServiceContainer();
@@ -57,7 +58,7 @@ public class BootStrapImpl {
             // 设置身份信息
             IdentityConfigManager.init(argsMap, agentPath.getAgentPath());
             LOGGER.info("----------------------javaagent starting----------------------");
-            InstrumentationManager.inst = instrumentation;
+            instrumentationManager.setInst(instrumentation);
             APIService.setJsonApi(new JSONImpl());
 
             // 设置javaagent启动时间和版本信息

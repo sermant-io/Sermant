@@ -16,6 +16,8 @@
 
 package com.huawei.sermant.core.lubanops.integration.utils;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
@@ -40,9 +42,6 @@ public class HttpUtils {
             .append("|")
             .append(Pattern.quote("%2F"));
         ENCODED_CHARACTERS_PATTERN = Pattern.compile(pattern.toString());
-    }
-
-    public HttpUtils() {
     }
 
     public static String urlEncode(String value, boolean path) {
@@ -72,7 +71,7 @@ public class HttpUtils {
                 matcher.appendTail(buffer);
                 return buffer.toString();
             } catch (UnsupportedEncodingException var6) {
-                throw new RuntimeException(var6);
+                throw new ApmRuntimeException(var6);
             }
         }
     }

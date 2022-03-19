@@ -25,7 +25,7 @@ public enum AddressType {
     /**
      * acess服务器的地址
      */
-    access;
+    ACCESS;
 
     public static AddressType getValue(String s) {
 

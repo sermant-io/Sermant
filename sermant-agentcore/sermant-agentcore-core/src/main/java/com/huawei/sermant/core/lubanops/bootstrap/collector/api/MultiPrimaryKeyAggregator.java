@@ -55,7 +55,7 @@ public abstract class MultiPrimaryKeyAggregator<T extends StatsBase>
     protected T getValue(String... pks) {
         int c = primaryKeyLength();
         if (pks.length != c) {
-            throw new RuntimeException(
+            throw new ApmRuntimeException(
                     "primary key field count must equal with what you defined:" + c + ",actual:" + pks.length);
         }
         PrimaryKey pk = new PrimaryKey(pks);
@@ -69,7 +69,7 @@ public abstract class MultiPrimaryKeyAggregator<T extends StatsBase>
     protected void removeValue(String... pks) {
         int c = primaryKeyLength();
         if (pks.length != c) {
-            throw new RuntimeException(
+            throw new ApmRuntimeException(
                     "primary key field count must equal with what you defined:" + c + ",actual:" + pks.length);
         }
         PrimaryKey pk = new PrimaryKey(pks);

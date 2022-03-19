@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Queue;
 import java.util.Set;
 
@@ -43,12 +44,9 @@ public class DefaultSqlParser implements SqlParser {
     private static final Set SEC_CHAR = new HashSet(
             Arrays.asList('.', '_', '@', ':'));
 
-    public DefaultSqlParser() {
-    }
-
     @Override
     public NormalizedSql normalizedSql(String sql) {
-        sql = sql.toLowerCase().trim();
+        sql = sql.toLowerCase(Locale.getDefault()).trim();
         if (sql == null) {
             return NULL_OBJECT;
         }
@@ -163,7 +161,6 @@ public class DefaultSqlParser implements SqlParser {
             normalized.append("''");
             // no need to add parameter to output as $ is not converted
             i += 2;
-            return i;
         } else {
             normalized.append('?');
             i++;
@@ -182,8 +179,8 @@ public class DefaultSqlParser implements SqlParser {
                 }
                 appendSeparatorCheckOutputParam(parsedParameter, stateCh);
             }
-            return i;
         }
+        return i;
     }
 
     private int processVirgule(String sql, int length, StringBuilder normalized, int i, char ch) {
@@ -203,19 +200,16 @@ public class DefaultSqlParser implements SqlParser {
                 }
                 normalized.append(stateCh);
             }
-            return i;
-            // single line comment
         } else if (lookAhead1Char == '/') {
             normalized.append("//");
             i += 2;
             i = readLine(sql, normalized, i);
-            return i;
 
         } else {
             // unary operator
             normalized.append(ch);
-            return i;
         }
+        return i;
     }
 
     private int readLine(String sql, StringBuilder normalized, int index) {

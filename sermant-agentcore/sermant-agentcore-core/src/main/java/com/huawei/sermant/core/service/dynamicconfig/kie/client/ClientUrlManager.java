@@ -60,7 +60,7 @@ public class ClientUrlManager {
      *
      * @param serverAddress 服务器地址字符串
      */
-    public void resolveUrls(String serverAddress) {
+    private void resolveUrls(String serverAddress) {
         if (serverAddress == null || serverAddress.trim().length() == 0) {
             return;
         }

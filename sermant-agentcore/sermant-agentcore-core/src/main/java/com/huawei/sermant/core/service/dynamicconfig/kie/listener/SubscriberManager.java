@@ -411,10 +411,8 @@ public class SubscriberManager {
             } else {
                 if (scheduledExecutorService == null) {
                     synchronized (SubscriberManager.class) {
-                        if (scheduledExecutorService == null) {
-                            scheduledExecutorService = new ScheduledThreadPoolExecutor(THREAD_SIZE,
-                                    new APMThreadFactory("kie-subscribe-task"));
-                        }
+                        scheduledExecutorService = new ScheduledThreadPoolExecutor(THREAD_SIZE,
+                                new APMThreadFactory("kie-subscribe-task"));
                     }
                 }
                 scheduledExecutorService.scheduleAtFixedRate(
@@ -582,7 +580,7 @@ public class SubscriberManager {
             if (waitTimeMs != 0) {
                 wait = Math.min(waitTimeMs, maxWaitMs);
             } else {
-                long baseMs = 3000;
+                long baseMs = 3000L;
                 wait = Math.min(maxWaitMs, baseMs * failedCount * failedCount);
             }
             try {

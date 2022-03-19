@@ -54,6 +54,7 @@ import java.util.logging.Logger;
  * @author HapThorin
  * @version 1.0.0
  * @since 2021/10/27
+ * @deprecated 即将废弃使用
  */
 @AboutDelete
 @Deprecated

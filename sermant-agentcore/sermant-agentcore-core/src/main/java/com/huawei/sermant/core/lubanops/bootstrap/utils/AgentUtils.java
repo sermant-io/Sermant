@@ -36,7 +36,8 @@ public class AgentUtils {
         if (o == null) {
             return 0;
         }
-        //计算指定对象本身在堆空间的大小，单位字节
+
+        // 计算指定对象本身在堆空间的大小，单位字节
         long byteCount = instrumentation.getObjectSize(o);
         if (byteCount == 0) {
             return 0;

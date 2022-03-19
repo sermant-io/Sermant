@@ -39,6 +39,7 @@ import java.util.logging.Logger;
  * @author HapThorin
  * @version 1.0.0
  * @since 2021/10/27
+ * @deprecated 即将废弃使用
  */
 @SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 @AboutDelete
@@ -53,13 +54,13 @@ public class BootstrapStaticTemplate {
      * luban拦截器
      */
     @SuppressWarnings({"checkstyle:DeclarationOrder", "checkstyle:VisibilityModifier", "checkstyle:StaticVariableName"})
-    public static Interceptor ORIGIN_INTERCEPTOR;
+    public static final Interceptor originInterceptor = null;
 
     /**
      * 拦截器列表
      */
     @SuppressWarnings({"checkstyle:DeclarationOrder", "checkstyle:VisibilityModifier", "checkstyle:StaticVariableName"})
-    public static List<StaticMethodInterceptor> INTERCEPTORS;
+    public static final List<StaticMethodInterceptor> interceptors = null;
 
     /**
      * 方法执行前调用
@@ -142,7 +143,7 @@ public class BootstrapStaticTemplate {
      * @return 静态插件的双向迭代器
      */
     public static ListIterator<StaticMethodInterceptor> getStaticInterceptorItr() {
-        return INTERCEPTORS.listIterator();
+        return interceptors.listIterator();
     }
 
     /**
@@ -173,11 +174,11 @@ public class BootstrapStaticTemplate {
      */
     @SuppressWarnings("checkstyle:IllegalCatch")
     private static Object[] beforeOriginIntercept(Class<?> cls, Method method, Object[] arguments) {
-        if (ORIGIN_INTERCEPTOR == null) {
+        if (originInterceptor == null) {
             return arguments;
         }
         try {
-            final Object[] dynamicArgs = ORIGIN_INTERCEPTOR.onStart(cls, arguments, cls.getName(), method.getName());
+            final Object[] dynamicArgs = originInterceptor.onStart(cls, arguments, cls.getName(), method.getName());
             if (dynamicArgs != null && dynamicArgs.length == arguments.length) {
                 return dynamicArgs;
             }
@@ -249,12 +250,12 @@ public class BootstrapStaticTemplate {
     @SuppressWarnings({"checkstyle:RegexpMultiline", "checkstyle:IllegalCatch"})
     private static void afterOriginIntercept(Class<?> cls, Method method, Object[] arguments, Object result,
             Throwable throwable) {
-        if (ORIGIN_INTERCEPTOR == null) {
+        if (originInterceptor == null) {
             return;
         }
         if (throwable != null) {
             try {
-                ORIGIN_INTERCEPTOR.onError(null, arguments, throwable, cls.getName(), method.getName());
+                originInterceptor.onError(null, arguments, throwable, cls.getName(), method.getName());
             } catch (Throwable t) {
                 LOGGER.severe(String.format(Locale.ROOT,
                         "invoke onError method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",
@@ -262,7 +263,7 @@ public class BootstrapStaticTemplate {
             }
         }
         try {
-            ORIGIN_INTERCEPTOR.onFinally(null, arguments, result, cls.getName(), method.getName());
+            originInterceptor.onFinally(null, arguments, result, cls.getName(), method.getName());
         } catch (Throwable t) {
             LOGGER.severe(String.format(Locale.ROOT,
                     "invoke onFinally method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",

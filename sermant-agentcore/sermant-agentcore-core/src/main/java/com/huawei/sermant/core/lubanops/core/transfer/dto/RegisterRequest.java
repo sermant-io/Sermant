@@ -23,13 +23,16 @@ import com.google.common.base.MoreObjects;
  */
 public class RegisterRequest {
 
-    private String hostName; //主机的名字
+    // 主机的名字
+    private String hostName;
 
-    private String mainIp;       //内部 IP
+    // 内部 IP
+    private String mainIp;
 
     private String instanceName;
 
-    private String ipList;  //ip地址列表
+    // ip地址列表
+    private String ipList;
 
     private String appType;
 
@@ -37,15 +40,18 @@ public class RegisterRequest {
 
     private String subBusiness;
 
-    private String appName;   //应用名称，必填
+    // 应用名称，必填
+    private String appName;
 
     private String envName;
 
-    private String envTag; //环境标签
+    // 环境标签
+    private String envTag;
 
     private String agentVersion;
 
-    private String source; //附属信息
+    // 附属信息
+    private String source;
 
     public String getHostName() {
         return hostName;

@@ -16,6 +16,7 @@
 
 package com.huawei.sermant.core.lubanops.integration.access.inbound;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
 import com.huawei.sermant.core.lubanops.integration.access.Message;
 import com.huawei.sermant.core.lubanops.integration.access.MessageType;
 import com.huawei.sermant.core.lubanops.integration.access.MessageWrapper;
@@ -51,7 +52,7 @@ public class EventDataRequest extends MessageWrapper {
             request.setBody(body);
             return request;
         } catch (Exception e) {
-            throw new RuntimeException("failed to parse msg,msg type:" + message.getType(), e);
+            throw new ApmRuntimeException("failed to parse msg,msg type:" + message.getType(), e);
         }
     }
 

@@ -37,8 +37,7 @@ import com.huawei.sermant.premain.exception.DupPremainException;
 public class AgentPremain {
     private static boolean executeFlag = false;
 
-    //~~ premain method
-
+    // premain method
     public static void premain(String agentArgs, Instrumentation instrumentation) {
         // 执行标记，防止重复运行
         if (executeFlag) {
@@ -64,8 +63,7 @@ public class AgentPremain {
 
     }
 
-    //~~internal methods
-
+    // internal methods
     private static void loadCoreLib(Instrumentation instrumentation) throws IOException {
         final File coreDir = new File(PathDeclarer.getCorePath());
         if (!coreDir.exists() || !coreDir.isDirectory()) {

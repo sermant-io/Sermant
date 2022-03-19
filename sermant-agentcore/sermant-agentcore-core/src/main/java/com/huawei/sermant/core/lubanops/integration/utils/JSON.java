@@ -27,28 +27,23 @@ public class JSON {
     public static final String SECURITY_CODE = "******";
 
     public static String toJSONString(Object obj) {
-        String jsonString = JSONObject.toJSONString(obj);
-        return jsonString;
+        return JSONObject.toJSONString(obj);
     }
 
     public static String toJSONString(Object obj, List<String> excludeKeys) {
-        String jsonString = JSONObject.toJSONString(obj, new SecurityPropertyFilter(excludeKeys));
-        return jsonString;
+        return JSONObject.toJSONString(obj, new SecurityPropertyFilter(excludeKeys));
     }
 
     public static <T> T parseObject(String text, Class<T> type) {
-        T obj = JSONObject.parseObject(text, type);
-        return obj;
+        return JSONObject.parseObject(text, type);
     }
 
     public static <T> T parseObject(String text, TypeReference<T> type) {
-        T obj = JSONObject.parseObject(text, type);
-        return obj;
+        return JSONObject.parseObject(text, type);
     }
 
     public static <T> T parseObject(byte[] text, Class<T> type) {
-        T obj = JSONObject.parseObject(text, type);
-        return obj;
+        return JSONObject.parseObject(text, type);
     }
 
     /**
@@ -60,13 +55,11 @@ public class JSON {
      * @since 2019年11月6日
      */
     public static <T> List<T> parseList(String s, Class<T> type) {
-        List<T> list = JSONObject.parseArray(s, type);
-        return list;
+        return JSONObject.parseArray(s, type);
     }
 
     public static byte[] toJSONBytes(Object object) {
-        byte[] jsonByte = JSONObject.toJSONBytes(object);
-        return jsonByte;
+        return JSONObject.toJSONBytes(object);
     }
 
     public static int[] parseIntArray(String s) {

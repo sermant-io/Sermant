@@ -38,6 +38,7 @@ import java.util.logging.Logger;
  * @author HapThorin
  * @version 1.0.0
  * @since 2021/10/27
+ * @deprecated 即将废弃使用
  */
 @SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 @AboutDelete
@@ -52,13 +53,13 @@ public class BootstrapConstTemplate {
      * luban拦截器
      */
     @SuppressWarnings({"checkstyle:DeclarationOrder", "checkstyle:VisibilityModifier", "checkstyle:StaticVariableName"})
-    public static Interceptor ORIGIN_INTERCEPTOR;
+    public static final Interceptor originInterceptor = null;
 
     /**
      * 拦截器列表
      */
     @SuppressWarnings({"checkstyle:DeclarationOrder", "checkstyle:VisibilityModifier", "checkstyle:StaticVariableName"})
-    public static List<ConstructorInterceptor> INTERCEPTORS;
+    public static final List<ConstructorInterceptor> interceptors = null;
 
     /**
      * 方法执行前调用
@@ -129,7 +130,7 @@ public class BootstrapConstTemplate {
      * @return 构造拦截器双向迭代器
      */
     public static ListIterator<ConstructorInterceptor> getConstInterceptorItr() {
-        return INTERCEPTORS.listIterator();
+        return interceptors.listIterator();
     }
 
     /**
@@ -157,11 +158,11 @@ public class BootstrapConstTemplate {
      */
     @SuppressWarnings({"checkstyle:MultipleStringLiterals", "checkstyle:IllegalCatch"})
     private static Object[] beforeOriginIntercept(Object[] arguments, Constructor<?> constructor) {
-        if (ORIGIN_INTERCEPTOR == null) {
+        if (originInterceptor == null) {
             return arguments;
         }
         try {
-            final Object[] dynamicArgs = ORIGIN_INTERCEPTOR.onStart(
+            final Object[] dynamicArgs = originInterceptor.onStart(
                     constructor.getDeclaringClass(), arguments, constructor.getName(), "constructor");
             if (dynamicArgs != null && dynamicArgs.length == arguments.length) {
                 return dynamicArgs;
@@ -211,11 +212,11 @@ public class BootstrapConstTemplate {
      */
     @SuppressWarnings("checkstyle:IllegalCatch")
     private static void afterOriginIntercept(Object obj, Object[] arguments) {
-        if (ORIGIN_INTERCEPTOR == null) {
+        if (originInterceptor == null) {
             return;
         }
         try {
-            ORIGIN_INTERCEPTOR.onFinally(obj, arguments, null, obj.getClass().getName(), "constructor");
+            originInterceptor.onFinally(obj, arguments, null, obj.getClass().getName(), "constructor");
         } catch (Throwable t) {
             LOGGER.severe(String.format(Locale.ROOT,
                     "invoke onFinally method failed, class name:[{%s}], method name:[{%s}], reason:[{%s}]",

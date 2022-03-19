@@ -66,8 +66,8 @@ public class RegionMasterService extends AbstractMasterService {
         super(RegionMasterService.REGISTER_URL);
         if (!StringUtils.isBlank(AgentConfigManager.getMasterAddress())) {
             String[] masterAddresses = AgentConfigManager.getMasterAddress().split(",");
-            List<String> masterAddressList = Arrays.asList(masterAddresses);
-            this.setMasterAddressList(masterAddressList);
+            List<String> masterAddress = Arrays.asList(masterAddresses);
+            this.setMasterAddressList(masterAddress);
         }
     }
 

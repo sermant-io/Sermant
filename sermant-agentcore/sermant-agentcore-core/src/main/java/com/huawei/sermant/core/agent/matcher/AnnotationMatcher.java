@@ -40,6 +40,8 @@ import java.util.Set;
 
 /**
  * 注解匹配器
+ *
+ * @deprecated 即将废弃使用
  */
 @Deprecated
 public class AnnotationMatcher implements NonNameMatcher {

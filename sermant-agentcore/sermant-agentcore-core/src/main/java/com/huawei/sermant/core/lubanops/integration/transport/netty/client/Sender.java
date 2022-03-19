@@ -50,7 +50,7 @@ public class Sender implements Runnable {
     public void run() {
         List<Message.ServiceData> list;
 
-        //消息队列不为空时，发送消息
+        // 消息队列不为空时，发送消息
         if (queue.size() > 0) {
             list = new ArrayList<>();
             queue.drainTo(list);
@@ -58,7 +58,7 @@ public class Sender implements Runnable {
                     .setMessageType(Message.NettyMessage.MessageType.SERVICE_DATA)
                     .addAllServiceData(list)
                     .build();
-            if(channel==null){
+            if (channel == null) {
                 LOGGER.info("channel is null");
             }
 

@@ -24,6 +24,8 @@ import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListene
 
 /**
  * This class is for testing purpose only.
+ *
+ * @deprecated 即将废弃使用
  */
 @Deprecated
 public class NopDynamicConfigService extends DynamicConfigService {

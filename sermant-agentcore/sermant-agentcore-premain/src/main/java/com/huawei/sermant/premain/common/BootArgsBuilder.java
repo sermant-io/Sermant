@@ -77,17 +77,10 @@ public abstract class BootArgsBuilder {
      */
     private static Properties loadConfig() {
         final Properties properties = new Properties();
-        InputStream configStream = null;
-        try {
-            configStream = new FileInputStream(PathDeclarer.getBootConfigPath());
+        try (InputStream configStream = new FileInputStream(PathDeclarer.getBootConfigPath())) {
             properties.load(configStream);
-        } catch (IOException e) {
-            if (configStream != null) {
-                try {
-                    configStream.close();
-                } catch (IOException ignored) {
-                }
-            }
+        } catch (IOException ignored) {
+
         }
         return properties;
     }
@@ -101,8 +94,7 @@ public abstract class BootArgsBuilder {
      */
     private static String getCommonValue(String key, Properties configMap) {
         String value = configMap.getProperty(FieldUtils.toUnderline(key, '.', false));
-        value = value == null ? System.getProperty(key) : value;
-        return value;
+        return value == null ? System.getProperty(key) : value;
     }
 
     /**

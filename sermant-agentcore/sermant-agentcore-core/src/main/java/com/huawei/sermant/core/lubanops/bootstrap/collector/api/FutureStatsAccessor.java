@@ -16,7 +16,6 @@
 
 package com.huawei.sermant.core.lubanops.bootstrap.collector.api;
 
-
 import com.huawei.sermant.core.lubanops.bootstrap.api.SpanEventAccessor;
 import com.huawei.sermant.core.lubanops.bootstrap.trace.SpanEvent;
 

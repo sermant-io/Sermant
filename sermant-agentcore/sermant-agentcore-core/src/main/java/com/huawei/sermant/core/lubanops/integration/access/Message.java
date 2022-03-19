@@ -23,8 +23,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
 import com.huawei.sermant.core.lubanops.integration.Constants;
 
 /**
@@ -54,11 +56,8 @@ public class Message {
             throw new IllegalArgumentException(
                     "message length exceeds max value:" + Constants.MAX_MESSAGE_LENGTH + ",actual:" + bb.length);
         }
-        ByteArrayInputStream byteArrayInputStream = null;
-        byteArrayInputStream = new ByteArrayInputStream(bb);
-        DataInputStream dataInputStream = null;
-        dataInputStream = new DataInputStream(byteArrayInputStream);
-        try {
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bb);
+             DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream)) {
             short magic = dataInputStream.readShort();
             if (magic != MAGIC_NUMBER) {
                 throw new IllegalArgumentException("magic number error");
@@ -96,9 +95,6 @@ public class Message {
 
         } catch (IOException e) {
             throw new IllegalArgumentException("IOException,message length:" + bb.length);
-        } finally {
-            close(dataInputStream);
-            close(byteArrayInputStream);
         }
     }
 
@@ -163,16 +159,13 @@ public class Message {
                 dataOutputStream.write(body, 0, body.length);
             }
             dataOutputStream.flush();
-            byte[] bb = byteArrayOutputStream.toByteArray();
-            return bb;
+            return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException("failed to to bytes", e);
+            throw new ApmRuntimeException("failed to to bytes", e);
         } finally {
             close(dataOutputStream);
             close(byteArrayOutputStream);
-
         }
-
     }
 
     @Override
@@ -231,8 +224,8 @@ public class Message {
 
         stringBuilder.append("[type:" + this.type);
         stringBuilder.append("\nmessageId:" + this.messageId);
-        stringBuilder.append("\nheader:" + new String(header));
-        stringBuilder.append("\nbody:" + new String(body));
+        stringBuilder.append("\nheader:" + new String(header, Charset.defaultCharset()));
+        stringBuilder.append("\nbody:" + new String(body, Charset.defaultCharset()));
         stringBuilder.append("]");
         return stringBuilder.toString();
     }

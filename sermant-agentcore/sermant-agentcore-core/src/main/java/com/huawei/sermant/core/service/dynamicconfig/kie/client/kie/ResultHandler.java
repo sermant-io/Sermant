@@ -75,6 +75,7 @@ public interface ResultHandler<R> {
             kieResponse.setTotal(data.size());
             return kieResponse;
         }
+
         /**
          * 过滤未开启的kv
          *

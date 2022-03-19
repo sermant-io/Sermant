@@ -26,7 +26,8 @@ public class UrlStats extends DefaultSectionStats {
 
     public volatile boolean has200 = false;
 
-    private AtomicReference<String> maxTimeUsedUrl = new AtomicReference<String>();// httpRequest中原生的url没有经过agent映射的
+    // httpRequest中原生的url没有经过agent映射的
+    private AtomicReference<String> maxTimeUsedUrl = new AtomicReference<String>();
 
     private AtomicInteger sampleCount = new AtomicInteger(0);
 

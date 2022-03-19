@@ -34,7 +34,7 @@ public class ConnectConfig {
     /**
      * 连接超时时间
      */
-    private long connectTimeout = 2000;
+    private long connectTimeout = 2000L;
 
     /**
      * 是否随机连接
@@ -96,8 +96,7 @@ public class ConnectConfig {
         result = 31 * result + (randomConnect ? 1 : 0);
         result = 31 * result + (secureAddressList != null ? secureAddressList.hashCode() : 0);
         result = 31 * result + (unSecureAddressList != null ? unSecureAddressList.hashCode() : 0);
-        result = 31 * result + (isSecure ? 1 : 0);
-        return result;
+        return 31 * result + (isSecure ? 1 : 0);
     }
 
     /**

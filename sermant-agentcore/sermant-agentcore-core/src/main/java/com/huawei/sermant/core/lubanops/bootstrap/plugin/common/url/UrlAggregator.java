@@ -110,9 +110,9 @@ public abstract class UrlAggregator extends MultiPrimaryKeyAggregator<UrlStats> 
         invokeCount.addAndGet(1);
         String type = sampleConfig.getSampleType();
         if (type == null) {
-            type = SampleType.automatic.value();
+            type = SampleType.AUTOMATIC.value();
         }
-        if (SampleType.automatic.value().equals(type)) {
+        if (SampleType.AUTOMATIC.value().equals(type)) {
             if (this.getErrorUrl().contains(url)) {
                 return resolveSampleStat(url, method, errorRequestTraceCounStats);
             } else if (this.getSlowUrl().contains(url)) {
@@ -120,11 +120,11 @@ public abstract class UrlAggregator extends MultiPrimaryKeyAggregator<UrlStats> 
             } else {
                 return resolveSampleStat(url, method, requestTranceCountStats);
             }
-        } else if (SampleType.all.value().equals(type)) {
+        } else if (SampleType.ALL.value().equals(type)) {
             return true;
-        } else if (SampleType.frequency.value().equals(type)) {
+        } else if (SampleType.FREQUENCY.value().equals(type)) {
             return sampleFrequency(url, method, sampleConfig);
-        } else if (SampleType.percentage.value().equals(type)) {
+        } else if (SampleType.PERCENTAGE.value().equals(type)) {
             return samplePercentage(url, method, sampleConfig);
         }
         return false;
@@ -132,9 +132,9 @@ public abstract class UrlAggregator extends MultiPrimaryKeyAggregator<UrlStats> 
 
     /**
      * 判断url根据自动采样规则是否采样
+     * @param url
      * @param method
-     * @param sampleConfig
-     * @param urlStatsAggregator
+     * @param stats
      * @return
      */
     private boolean resolveSampleStat(String url, String method, Stats stats) {
@@ -186,29 +186,29 @@ public abstract class UrlAggregator extends MultiPrimaryKeyAggregator<UrlStats> 
      * @return
      */
     private boolean samplePercentage(String url, String method, SampleConfig sampleConfig) {
-        AtomicInteger sampleCount;
-        long invokeCount;
+        AtomicInteger sampleCountInteger;
+        long invokeCountLong;
         PrimaryKey ppk = method == null ? new PrimaryKey(url) : new PrimaryKey(url, method);
         UrlStats urlst = this.obtainValue(ppk);
         if (urlst != null) {
-            sampleCount = urlst.getSampleCount();
-            invokeCount = urlst.getInvokeCount();
+            sampleCountInteger = urlst.getSampleCount();
+            invokeCountLong = urlst.getInvokeCount();
         } else {
-            sampleCount = this.sampleCount;
-            invokeCount = this.invokeCount.get();
+            sampleCountInteger = this.sampleCount;
+            invokeCountLong = this.invokeCount.get();
         }
-        int count = sampleCount.addAndGet(1);
-        if (invokeCount == 0) {
+        int count = sampleCountInteger.addAndGet(1);
+        if (invokeCountLong == 0) {
             if (sampleConfig.getPercentage() > 0) {
                 return true;
             } else {
-                sampleCount.decrementAndGet();
+                sampleCountInteger.decrementAndGet();
                 return false;
             }
-        } else if (count * 100 / invokeCount < sampleConfig.getPercentage()) {
+        } else if (count * 100 / invokeCountLong < sampleConfig.getPercentage()) {
             return true;
         } else {
-            sampleCount.decrementAndGet();
+            sampleCountInteger.decrementAndGet();
             return false;
         }
     }
@@ -311,21 +311,21 @@ public abstract class UrlAggregator extends MultiPrimaryKeyAggregator<UrlStats> 
     @Override
     public Map<String, List<MonitorDataRow>> afterHarvest(List<MonitorDataRow> collected) {
         if (collected != null) {
-            List<String> slowUrl = new ArrayList<String>();
-            List<String> errorUrl = new ArrayList<String>();
+            List<String> slowUrlList = new ArrayList<String>();
+            List<String> errorUrlList = new ArrayList<String>();
             for (MonitorDataRow monitorDataRow : collected) {
                 String url = (String) monitorDataRow.get(getUrlKey());
                 long errorCount = (Long) monitorDataRow.get("errorCount");
                 long maxTime = (Long) monitorDataRow.get("maxTime");
-                int slowRequestThreshold = getSlowRequestThreshold(url);
+                int threshold = getSlowRequestThreshold(url);
                 if (errorCount > 0) {
-                    errorUrl.add(url);
-                } else if (maxTime > slowRequestThreshold) {
-                    slowUrl.add(url);
+                    errorUrlList.add(url);
+                } else if (maxTime > threshold) {
+                    slowUrlList.add(url);
                 }
             }
-            setSlowUrl(slowUrl);
-            setErrorUrl(errorUrl);
+            setSlowUrl(slowUrlList);
+            setErrorUrl(errorUrlList);
         }
         return null;
     }

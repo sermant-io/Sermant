@@ -24,6 +24,8 @@ package com.huawei.sermant.core.agent.matcher;
 
 /**
  * 类型匹配器接口
+ *
+ * @deprecated 即将废弃使用
  */
 @Deprecated
 public interface ClassMatcher {

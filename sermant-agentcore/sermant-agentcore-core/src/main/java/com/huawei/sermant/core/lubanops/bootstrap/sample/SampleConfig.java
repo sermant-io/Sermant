@@ -26,15 +26,15 @@ public class SampleConfig {
 
     private static final int DEFAULT_PERIOD_COUNT = 1000;
 
-    private String sampleType = SampleType.automatic.value();
+    private String sampleType = SampleType.AUTOMATIC.value();
 
     private Integer percentage = DEFAULT_PERCENTAGE;
 
     private Integer periodCount = DEFAULT_PERIOD_COUNT;
 
     public String getSampleType() {
-        if ((SampleType.frequency.value().equals(sampleType) && periodCount == null)
-                && (SampleType.percentage.value().equals(sampleType) && percentage == null)) {
+        if ((SampleType.FREQUENCY.value().equals(sampleType) && periodCount == null)
+                && (SampleType.PERCENTAGE.value().equals(sampleType) && percentage == null)) {
             return null;
         }
         return sampleType;
@@ -42,7 +42,7 @@ public class SampleConfig {
 
     public void setSampleType(String sampleType) {
         if (sampleType == null) {
-            this.sampleType = SampleType.automatic.value();
+            this.sampleType = SampleType.AUTOMATIC.value();
         } else {
             this.sampleType = sampleType;
         }

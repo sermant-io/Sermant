@@ -36,12 +36,12 @@ public class CollectorStatusRequest extends MessageWrapper {
     private long messageId;
 
     public CollectorStatusRequest(Long instanceId, String collectorName, String metricSetName) {
-        CollectorStatusHeader header = new CollectorStatusHeader();
-        header.setCollectorName(collectorName);
-        header.setInstanceId(instanceId);
-        header.setMetricSetName(metricSetName);
-        header.setNeedResponse(true);
-        this.header = header;
+        CollectorStatusHeader collectorStatusHeader = new CollectorStatusHeader();
+        collectorStatusHeader.setCollectorName(collectorName);
+        collectorStatusHeader.setInstanceId(instanceId);
+        collectorStatusHeader.setMetricSetName(metricSetName);
+        collectorStatusHeader.setNeedResponse(true);
+        this.header = collectorStatusHeader;
         this.messageId = MessageIdGenerator.generateMessageId();
     }
 

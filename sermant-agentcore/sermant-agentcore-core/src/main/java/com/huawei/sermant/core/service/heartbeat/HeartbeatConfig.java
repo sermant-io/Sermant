@@ -31,7 +31,7 @@ public class HeartbeatConfig implements BaseConfig {
     /**
      * 心跳发送间隔
      */
-    private long interval = 3000;
+    private long interval = 3000L;
 
     public long getInterval() {
         return interval;

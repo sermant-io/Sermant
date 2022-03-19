@@ -195,9 +195,9 @@ public abstract class AbstractPrimaryKeyValueAggregator<K, V extends StatsBase> 
             }
             return v;
         } catch (InstantiationException e) {
-            throw new RuntimeException("must have a default construct method!", e);
+            throw new ApmRuntimeException("must have a default construct method!", e);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("IllegalAccessException!", e);
+            throw new ApmRuntimeException("IllegalAccessException!", e);
         }
 
     }

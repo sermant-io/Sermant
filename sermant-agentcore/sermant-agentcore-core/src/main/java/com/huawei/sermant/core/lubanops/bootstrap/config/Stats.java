@@ -57,7 +57,7 @@ public class Stats {
 
     public AtomicInteger sampleCount = new AtomicInteger(0);
 
-    private static double cpuRatio = 0;
+    private static double cpuRatio = 0d;
 
     /**
      * 单个url的最小的采样个数，即使是最高cpu使用的场景
@@ -85,8 +85,7 @@ public class Stats {
         int c = Integer.parseInt(ss[2]);
         int d = Integer.parseInt(ss[3]);
 
-        Stats stats = new Stats(a, b, c, d);
-        return stats;
+        return new Stats(a, b, c, d);
     }
 
     public int getMinPerUrl() {

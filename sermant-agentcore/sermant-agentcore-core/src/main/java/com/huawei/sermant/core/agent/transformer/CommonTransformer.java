@@ -30,6 +30,7 @@ import net.bytebuddy.utility.JavaModule;
  * @author HapThorin
  * @version 1.0.0
  * @since 2021/11/12
+ * @deprecated 即将废弃使用
  */
 @AboutDelete
 @Deprecated

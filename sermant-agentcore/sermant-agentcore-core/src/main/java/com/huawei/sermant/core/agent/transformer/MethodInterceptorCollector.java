@@ -36,6 +36,7 @@ import java.util.Set;
  * @author HapThorin
  * @version 1.0.0
  * @since 2021/10/27
+ * @deprecated 即将废弃使用
  */
 @AboutDelete
 @Deprecated
@@ -44,10 +45,12 @@ public class MethodInterceptorCollector {
      * 被增强类的方法
      */
     protected final MethodDescription.InDefinedShape method;
+
     /**
      * 增强当前方法的拦截器名称
      */
     protected final List<String> interceptorNames;
+
     /**
      * luban插件增强当前方法的拦截器名称
      */
@@ -95,9 +98,10 @@ public class MethodInterceptorCollector {
             return excludeMethods != null && !excludeMethods.contains(method.getName());
         } else {
             // 同为构造函数且参数列表一致、或同为普通方法且方法名和参数列表一致时，通过
-            return ((method.isConstructor() && transformerMethod.isConstructor()) ||
-                    (!method.isConstructor() && !transformerMethod.isConstructor() &&
-                            method.getName().equals(transformerMethod.getMethod()))) &&
+            boolean isConstructor = method.isConstructor() && transformerMethod.isConstructor();
+            boolean notConstructor = !method.isConstructor() && !transformerMethod.isConstructor();
+            boolean isMethodNameEqualTransformerMethod = method.getName().equals(transformerMethod.getMethod());
+            return (isConstructor || (notConstructor && isMethodNameEqualTransformerMethod)) &&
                     (isParamTypeMatch(transformerMethod));
         }
     }
@@ -135,10 +139,11 @@ public class MethodInterceptorCollector {
         for (EnhanceDefinition definition : enhanceDefinitions) {
             for (MethodInterceptPoint point : definition.getMethodInterceptPoints()) {
                 // 方法类型相同且满足匹配条件时通过
-                if (((point.isStaticMethod() && method.isStatic()) ||
-                        (point.isConstructor() && method.isConstructor()) ||
-                        (point.isInstanceMethod() && !method.isStatic() && !method.isConstructor())) &&
-                        (point.getMatcher().matches(method))) {
+                boolean isStatic = point.isStaticMethod() && method.isStatic();
+                boolean isConstructor = point.isConstructor() && method.isConstructor();
+                boolean isInstance = point.isInstanceMethod() && !method.isStatic() && !method.isConstructor();
+                boolean isMatchMethod = point.getMatcher().matches(method);
+                if ((isStatic || isConstructor || isInstance) && isMatchMethod) {
                     interceptorNames.add(point.getInterceptor());
                 }
             }

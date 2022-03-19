@@ -24,6 +24,7 @@ import java.util.Collection;
  * 参数校验工具
  *
  * @since 2021
+ * @deprecated 即将废弃使用
  */
 @SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 @AboutDelete

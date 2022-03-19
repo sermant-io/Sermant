@@ -67,6 +67,7 @@ import javax.net.ssl.SSLContext;
  */
 public class DefaultHttpClient implements com.huawei.sermant.core.service.dynamicconfig.kie.client.http.HttpClient {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
     /**
      * 默认超时时间
      */

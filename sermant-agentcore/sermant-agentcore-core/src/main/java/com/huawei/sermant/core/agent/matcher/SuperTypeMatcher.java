@@ -40,6 +40,8 @@ import java.util.Queue;
 
 /**
  * 父类匹配器
+ *
+ * @deprecated 即将废弃使用
  */
 @Deprecated
 public class SuperTypeMatcher implements NonNameMatcher {

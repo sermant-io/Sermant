@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
 
 public class HashedWheelTimer implements Timer {
@@ -208,8 +209,8 @@ public class HashedWheelTimer implements Timer {
         // Prevent overflow.
         if (this.tickDuration >= Long.MAX_VALUE / wheel.length) {
             throw new IllegalArgumentException(
-                String.format("tickDuration: %d (expected: 0 < tickDuration in nanos < %d", tickDuration,
-                    Long.MAX_VALUE / wheel.length));
+                String.format(Locale.ROOT, "tickDuration: %d (expected: 0 < tickDuration in nanos < %d",
+                        tickDuration, Long.MAX_VALUE / wheel.length));
         }
         workerThread = threadFactory.newThread(worker);
 
@@ -274,7 +275,7 @@ public class HashedWheelTimer implements Timer {
             case WORKER_STATE_SHUTDOWN:
                 throw new IllegalStateException("cannot be started once stopped");
             default:
-                throw new Error("Invalid WorkerState");
+                throw new ApmRuntimeException("Invalid WorkerState");
         }
 
         // Wait until the startTime is initialized by the worker.
@@ -440,9 +441,9 @@ public class HashedWheelTimer implements Timer {
         }
 
         void remove() {
-            HashedWheelBucket bucket = this.bucket;
-            if (bucket != null) {
-                bucket.remove(this);
+            HashedWheelBucket hashedWheelBucket = this.bucket;
+            if (hashedWheelBucket != null) {
+                hashedWheelBucket.remove(this);
             } else {
                 timer.pendingTimeouts.decrementAndGet();
             }
@@ -546,7 +547,8 @@ public class HashedWheelTimer implements Timer {
                     } else {
                         // The timeout was placed into a wrong slot. This should never happen.
                         throw new IllegalStateException(
-                            String.format("timeout.deadline (%d) > deadline (%d)", timeout.deadline, deadline));
+                            String.format(Locale.ROOT, "timeout.deadline (%d) > deadline (%d)",
+                                    timeout.deadline, deadline));
                     }
                 } else if (timeout.isCancelled()) {
                     next = remove(timeout);
@@ -604,11 +606,11 @@ public class HashedWheelTimer implements Timer {
         }
 
         private HashedWheelTimeout pollTimeout() {
-            HashedWheelTimeout head = this.head;
-            if (head == null) {
+            HashedWheelTimeout hashedWheelTimeout = this.head;
+            if (hashedWheelTimeout == null) {
                 return null;
             }
-            HashedWheelTimeout next = head.next;
+            HashedWheelTimeout next = hashedWheelTimeout.next;
             if (next == null) {
                 tail = this.head = null;
             } else {
@@ -617,10 +619,10 @@ public class HashedWheelTimer implements Timer {
             }
 
             // null out prev and next to allow for GC.
-            head.next = null;
-            head.prev = null;
-            head.bucket = null;
-            return head;
+            hashedWheelTimeout.next = null;
+            hashedWheelTimeout.prev = null;
+            hashedWheelTimeout.bucket = null;
+            return hashedWheelTimeout;
         }
     }
 

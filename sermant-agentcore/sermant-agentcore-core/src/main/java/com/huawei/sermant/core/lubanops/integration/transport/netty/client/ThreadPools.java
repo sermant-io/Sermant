@@ -45,7 +45,7 @@ public class ThreadPools {
     private static BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>(queueSize);
 
     // ThreadPoolExecutor线程池对象
-    public static ThreadPoolExecutor exec = new ThreadPoolExecutor(SIZE_CORE_POOL, SIZE_MAX_POOL, ALIVE_TIME,
+    public static final ThreadPoolExecutor exec = new ThreadPoolExecutor(SIZE_CORE_POOL, SIZE_MAX_POOL, ALIVE_TIME,
             TimeUnit.MILLISECONDS, blockingQueue, Thread::new, new ThreadPoolExecutor.AbortPolicy());
 
     public static ThreadPoolExecutor getExecutor() {

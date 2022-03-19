@@ -29,6 +29,7 @@ import java.util.Objects;
  */
 public class DynamicConfigEvent extends EventObject {
 
+    private static final long serialVersionUID = 8199411666187944757L;
     private final String key;
 
     private final String group;

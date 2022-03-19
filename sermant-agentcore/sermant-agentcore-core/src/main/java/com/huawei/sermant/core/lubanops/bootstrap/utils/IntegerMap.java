@@ -16,6 +16,8 @@
 
 package com.huawei.sermant.core.lubanops.bootstrap.utils;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -35,7 +37,7 @@ public class IntegerMap {
 
     public IntegerMap(int max) {
         if (max > 1000) {
-            throw new RuntimeException("exeed the max value:" + 1000);
+            throw new ApmRuntimeException("exeed the max value:" + 1000);
         }
         resources = new String[max];
         this.max = max;

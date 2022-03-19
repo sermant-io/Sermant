@@ -121,12 +121,16 @@ public class CommonConstant {
 
     /**
      * 启动配置中的bootPath
+     *
+     * @deprecated 即将废弃使用
      */
     @Deprecated
     public static final String LUBAN_BOOT_PATH_KEY = LubanApmConstants.BOOT_PATH_COMMONS;
 
     /**
      * 启动配置中的pluginsPath
+     *
+     * @deprecated 即将废弃使用
      */
     @Deprecated
     public static final String LUBAN_PLUGINS_PATH_KEY = LubanApmConstants.PLUGINS_PATH_COMMONS;

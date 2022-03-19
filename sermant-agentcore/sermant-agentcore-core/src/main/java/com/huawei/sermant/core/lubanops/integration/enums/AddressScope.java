@@ -22,15 +22,15 @@ package com.huawei.sermant.core.lubanops.integration.enums;
  * @author
  */
 public enum AddressScope {
-    /*
-    内部地址
+    /**
+     * 内部地址
      */
-    inner,
+    INNER,
 
     /**
      * 对外的地址
      */
-    outer;
+    OUTER;
 
     public static AddressScope getValue(String s) {
         try {

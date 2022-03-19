@@ -16,6 +16,8 @@
 
 package com.huawei.sermant.core.lubanops.bootstrap.collector.api;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
+
 import java.util.Arrays;
 
 /**
@@ -29,7 +31,7 @@ public class PrimaryKey {
     public PrimaryKey(String... pks) {
 
         if (pks == null || pks.length < 1) {
-            throw new RuntimeException("must have at least one");
+            throw new ApmRuntimeException("must have at least one");
         }
         keys = pks;
     }

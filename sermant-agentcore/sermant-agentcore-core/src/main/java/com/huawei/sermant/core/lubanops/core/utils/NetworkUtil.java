@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.huawei.sermant.core.lubanops.bootstrap.exception.ApmRuntimeException;
 import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
 
 public class NetworkUtil {
@@ -47,7 +48,7 @@ public class NetworkUtil {
         try {
             Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
             if (netInterfaces == null) {
-                throw new RuntimeException("netInterfaces is null");
+                throw new ApmRuntimeException("netInterfaces is null");
             }
             InetAddress ip = null;
             while (netInterfaces.hasMoreElements()) {
@@ -78,15 +79,10 @@ public class NetworkUtil {
      * @return
      */
     public static String getHostName() {
-        InetAddress ia;
         try {
-            ia = InetAddress.getLocalHost();
-            String host = ia.getHostName();// 获取计算机主机名
-            return host;
+            return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
             return null;
         }
-
     }
-
 }

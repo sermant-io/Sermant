@@ -18,6 +18,8 @@ package com.huawei.sermant.core.agent.interceptor;
 
 /**
  * 拦截器接口
+ *
+ * @deprecated 即将废弃使用
  */
 @Deprecated
 public interface Interceptor {

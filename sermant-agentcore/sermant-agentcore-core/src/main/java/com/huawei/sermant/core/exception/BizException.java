@@ -25,10 +25,13 @@ import com.huawei.sermant.core.agent.annotations.AboutDelete;
  *
  * @author zhouss
  * @since 2021-11-12
+ * @deprecated 即将废弃使用
  */
 @AboutDelete // 如有需要，可自定义AdviceTemplate，关掉或修改suppress
 @Deprecated
 public class BizException extends RuntimeException {
+
+    private static final long serialVersionUID = -7607385731676794241L;
 
     public BizException(String msg) {
         super(msg);

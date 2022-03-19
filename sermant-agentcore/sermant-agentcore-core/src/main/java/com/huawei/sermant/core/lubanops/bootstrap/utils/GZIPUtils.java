@@ -50,16 +50,13 @@ public class GZIPUtils {
         return out.toByteArray();
     }
 
-    public static byte[] compress(String str, String encoding) {
+    public static byte[] compress(String str, String encoding) throws IOException {
         if (str == null || str.length() == 0) {
             return null;
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        GZIPOutputStream gzip;
-        try {
-            gzip = new GZIPOutputStream(out);
+        try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
             gzip.write(str.getBytes(encoding));
-            gzip.close();
         } catch (IOException e) {
         }
         return out.toByteArray();
