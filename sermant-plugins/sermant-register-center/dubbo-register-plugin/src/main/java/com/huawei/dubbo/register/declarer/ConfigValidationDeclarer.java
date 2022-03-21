@@ -22,7 +22,7 @@ import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
  * 增强ConfigValidationUtils类的extractRegistryType方法
  *
  * @author provenceee
- * @since 2022年1月27日
+ * @since 2022-01-27
  */
 public class ConfigValidationDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.utils.ConfigValidationUtils"};
@@ -31,6 +31,9 @@ public class ConfigValidationDeclarer extends AbstractDeclarer {
 
     private static final String METHOD_NAME = "extractRegistryType";
 
+    /**
+     * 构造方法
+     */
     public ConfigValidationDeclarer() {
         super(ENHANCE_CLASS);
     }

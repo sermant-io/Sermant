@@ -27,7 +27,7 @@ import org.apache.dubbo.common.URL;
  * 增强ConfigValidationUtils类的extractRegistryType方法
  *
  * @author provenceee
- * @since 2022年1月27日
+ * @since 2022-01-27
  */
 public class ConfigValidationInterceptor extends AbstractInterceptor {
     private static final String REGISTRY_TYPE_KEY_1 = "registry-type";

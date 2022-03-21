@@ -20,7 +20,7 @@ package com.huawei.loadbalancer.config;
  * ribbon负载均衡策略
  *
  * @author provenceee
- * @since 2022/1/21
+ * @since 2022-01-21
  */
 public enum RibbonLoadbalancerType {
     /**

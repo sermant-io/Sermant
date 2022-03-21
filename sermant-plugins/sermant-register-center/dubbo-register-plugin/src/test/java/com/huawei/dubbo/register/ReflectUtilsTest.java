@@ -41,8 +41,9 @@ import java.util.Map;
  * 反射测试
  *
  * @author provenceee
- * @since 2022/2/9
+ * @since 2022-02-09
  */
+@SuppressWarnings("checkstyle:all")
 public class ReflectUtilsTest {
     private static final String DUBBO_PROTOCOL = "dubbo";
 
@@ -54,19 +55,23 @@ public class ReflectUtilsTest {
     @Test
     public void testAlibabaDefineClass() {
         // 测试第一次加载ServiceCenterRegistryFactory
-        Class<?> clazz = ReflectUtils.defineClass("com.huawei.dubbo.register.alibaba.ServiceCenterRegistryFactory");
+        Class<?> clazz =
+            ReflectUtils.defineClass("com.huawei.dubbo.register.alibaba.ServiceCenterRegistryFactory").orElse(null);
         Assert.assertEquals(ServiceCenterRegistryFactory.class, clazz);
 
         // 测试第二次加载ServiceCenterRegistryFactory
-        Class<?> clazz1 = ReflectUtils.defineClass("com.huawei.dubbo.register.alibaba.ServiceCenterRegistryFactory");
+        Class<?> clazz1 = ReflectUtils.defineClass("com.huawei.dubbo.register.alibaba.ServiceCenterRegistryFactory")
+            .orElse(null);
         Assert.assertEquals(ServiceCenterRegistryFactory.class, clazz1);
 
         // 测试第一次加载ServiceCenterRegistry
-        Class<?> clazz2 = ReflectUtils.defineClass("com.huawei.dubbo.register.alibaba.ServiceCenterRegistry");
+        Class<?> clazz2 = ReflectUtils.defineClass("com.huawei.dubbo.register.alibaba.ServiceCenterRegistry")
+            .orElse(null);
         Assert.assertEquals(ServiceCenterRegistry.class, clazz2);
 
         // 测试第二次加载ServiceCenterRegistry
-        Class<?> clazz3 = ReflectUtils.defineClass("com.huawei.dubbo.register.alibaba.ServiceCenterRegistry");
+        Class<?> clazz3 = ReflectUtils.defineClass("com.huawei.dubbo.register.alibaba.ServiceCenterRegistry")
+            .orElse(null);
         Assert.assertEquals(ServiceCenterRegistry.class, clazz3);
     }
 
@@ -78,7 +83,7 @@ public class ReflectUtilsTest {
     @Test
     public void testAlibabaRegistryConfig() {
         // 测试构造方法
-        RegistryConfig registryConfig = ReflectUtils.newRegistryConfig(RegistryConfig.class);
+        RegistryConfig registryConfig = ReflectUtils.newRegistryConfig(RegistryConfig.class).orElse(null);
         Assert.assertNotNull(registryConfig);
         Assert.assertEquals(TestConstant.SC_ADDRESS, registryConfig.getAddress());
 
@@ -182,19 +187,23 @@ public class ReflectUtilsTest {
     @Test
     public void testApacheDefineClass() {
         // 测试第一次加载ServiceCenterRegistryFactory
-        Class<?> clazz = ReflectUtils.defineClass("com.huawei.dubbo.register.apache.ServiceCenterRegistryFactory");
+        Class<?> clazz = ReflectUtils.defineClass("com.huawei.dubbo.register.apache.ServiceCenterRegistryFactory")
+            .orElse(null);
         Assert.assertEquals(com.huawei.dubbo.register.apache.ServiceCenterRegistryFactory.class, clazz);
 
         // 测试第二次加载ServiceCenterRegistryFactory
-        Class<?> clazz1 = ReflectUtils.defineClass("com.huawei.dubbo.register.apache.ServiceCenterRegistryFactory");
+        Class<?> clazz1 = ReflectUtils.defineClass("com.huawei.dubbo.register.apache.ServiceCenterRegistryFactory")
+            .orElse(null);
         Assert.assertEquals(com.huawei.dubbo.register.apache.ServiceCenterRegistryFactory.class, clazz1);
 
         // 测试第一次加载ServiceCenterRegistry
-        Class<?> clazz2 = ReflectUtils.defineClass("com.huawei.dubbo.register.apache.ServiceCenterRegistry");
+        Class<?> clazz2 = ReflectUtils.defineClass("com.huawei.dubbo.register.apache.ServiceCenterRegistry")
+            .orElse(null);
         Assert.assertEquals(com.huawei.dubbo.register.apache.ServiceCenterRegistry.class, clazz2);
 
         // 测试第二次加载ServiceCenterRegistry
-        Class<?> clazz3 = ReflectUtils.defineClass("com.huawei.dubbo.register.apache.ServiceCenterRegistry");
+        Class<?> clazz3 = ReflectUtils.defineClass("com.huawei.dubbo.register.apache.ServiceCenterRegistry")
+            .orElse(null);
         Assert.assertEquals(com.huawei.dubbo.register.apache.ServiceCenterRegistry.class, clazz3);
     }
 
@@ -207,7 +216,7 @@ public class ReflectUtilsTest {
     public void testApacheRegistryConfig() {
         // 测试构造方法
         org.apache.dubbo.config.RegistryConfig registryConfig = ReflectUtils
-            .newRegistryConfig(org.apache.dubbo.config.RegistryConfig.class);
+            .newRegistryConfig(org.apache.dubbo.config.RegistryConfig.class).orElse(null);
         Assert.assertNotNull(registryConfig);
         Assert.assertEquals(TestConstant.SC_ADDRESS, registryConfig.getAddress());
 
@@ -339,6 +348,8 @@ public class ReflectUtilsTest {
 
     /**
      * NotifyListener测试类
+     *
+     * @since 2022-02-09
      */
     public static class NotifyListenerTest implements NotifyListener {
         private List<URL> list;
@@ -355,6 +366,8 @@ public class ReflectUtilsTest {
 
     /**
      * NotifyListener测试类
+     *
+     * @since 2022-02-09
      */
     public static class ApacheNotifyListenerTest implements org.apache.dubbo.registry.NotifyListener {
         private List<org.apache.dubbo.common.URL> list;

@@ -30,19 +30,23 @@ import org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
  * LoadBalancerClientFactory增强类
  *
  * @author provenceee
- * @since 2022/1/20
+ * @since 2022-01-20
  */
 public class ClientFactoryInterceptor extends AbstractInterceptor {
     private static final Logger LOGGER = LogFactory.getLogger();
 
     private final LoadbalancerConfig config;
 
+    /**
+     * 构造方法
+     */
     public ClientFactoryInterceptor() {
         config = PluginConfigManager.getPluginConfig(LoadbalancerConfig.class);
     }
@@ -54,32 +58,30 @@ public class ClientFactoryInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        Object loadBalancer = getLoadBalancer((String) context.getArguments()[0]);
-        if (loadBalancer != null) {
-            context.changeResult(loadBalancer);
-        }
+        getLoadBalancer((String) context.getArguments()[0]).ifPresent(context::changeResult);
         return context;
     }
 
-    private Object getLoadBalancer(String serviceId) {
+    private Optional<Object> getLoadBalancer(String serviceId) {
         if (config == null || config.getSpringType() == null) {
             // 没有配置的情况下return null，不影响原方法
-            return null;
+            return Optional.empty();
         }
         Class<?> clazz = getLoadBalancerClass(config.getSpringType());
 
         // 如果原来的负载均衡器跟需要的一样，就不需要new了，直接return null，不影响原方法
         if (LoadbalancerCache.INSTANCE.getOrigin(serviceId).getClass() == clazz) {
-            return null;
+            return Optional.empty();
         }
         return LoadbalancerCache.INSTANCE.getNewCache().computeIfAbsent(serviceId, value -> {
             try {
                 Constructor<?> constructor = clazz.getConstructor(ObjectProvider.class, String.class);
-                return constructor.newInstance(LoadbalancerCache.INSTANCE.getProvider(serviceId), serviceId);
+                return Optional.of(constructor.newInstance(LoadbalancerCache.INSTANCE.getProvider(serviceId),
+                    serviceId));
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
                 | InvocationTargetException e) {
                 LOGGER.warning("Cannot get the loadbalancer.");
-                return null;
+                return Optional.empty();
             }
         });
     }

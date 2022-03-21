@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  * 增强MigrationRuleHandler类的doMigrate方法
  *
  * @author provenceee
- * @since 2022/1/26
+ * @since 2022-01-26
  */
 public class MigrationRuleHandlerInterceptor extends AbstractInterceptor {
     private static final Logger LOGGER = LogFactory.getLogger();
@@ -50,7 +50,7 @@ public class MigrationRuleHandlerInterceptor extends AbstractInterceptor {
                 Field field = handler.getClass().getDeclaredField(MIGRATION_INVOKER_FIELD_NAME);
                 AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
                     field.setAccessible(true);
-                    return null;
+                    return field;
                 });
                 migrationInvoker = (MigrationInvoker<?>) field.get(handler);
             } catch (NoSuchFieldException | IllegalAccessException e) {

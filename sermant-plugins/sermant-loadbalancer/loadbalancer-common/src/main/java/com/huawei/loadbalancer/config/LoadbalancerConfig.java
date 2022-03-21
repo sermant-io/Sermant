@@ -23,7 +23,7 @@ import com.huawei.sermant.core.plugin.config.PluginConfig;
  * 负载均衡配置
  *
  * @author provenceee
- * @since 2022/1/21
+ * @since 2022-01-21
  */
 @ConfigTypeKey("loadbalancer.plugin")
 public class LoadbalancerConfig implements PluginConfig {

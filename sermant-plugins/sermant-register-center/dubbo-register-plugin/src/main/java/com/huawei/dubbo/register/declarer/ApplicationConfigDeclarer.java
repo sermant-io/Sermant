@@ -23,7 +23,7 @@ import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
  * ApplicationConfig增强类
  *
  * @author provenceee
- * @since 2021/11/24
+ * @since 2021-11-24
  */
 public class ApplicationConfigDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.ApplicationConfig",
@@ -33,6 +33,9 @@ public class ApplicationConfigDeclarer extends AbstractDeclarer {
 
     private static final String METHOD_NAME = "setName";
 
+    /**
+     * 构造方法
+     */
     public ApplicationConfigDeclarer() {
         super(ENHANCE_CLASS);
     }

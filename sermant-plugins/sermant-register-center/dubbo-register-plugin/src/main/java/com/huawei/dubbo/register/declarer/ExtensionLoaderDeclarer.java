@@ -23,7 +23,7 @@ import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
  * 增强ExtensionLoader类的createExtension方法
  *
  * @author provenceee
- * @since 2022/2/10
+ * @since 2022-02-10
  */
 public class ExtensionLoaderDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.common.extension.ExtensionLoader",
@@ -33,6 +33,9 @@ public class ExtensionLoaderDeclarer extends AbstractDeclarer {
 
     private static final String METHOD_NAME = "createExtension";
 
+    /**
+     * 构造方法
+     */
     public ExtensionLoaderDeclarer() {
         super(ENHANCE_CLASS);
     }

@@ -22,7 +22,7 @@ import com.huawei.sermant.core.plugin.service.PluginService;
  * 注册服务
  *
  * @author provenceee
- * @since 2021/12/15
+ * @since 2021-12-15
  */
 public interface RegistryService extends PluginService {
     /**

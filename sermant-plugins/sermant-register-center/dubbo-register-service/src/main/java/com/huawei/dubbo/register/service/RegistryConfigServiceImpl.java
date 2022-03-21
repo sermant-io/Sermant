@@ -23,18 +23,22 @@ import com.huawei.register.config.RegisterConfig;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 注册配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
  *
  * @author provenceee
- * @since 2021/12/31
+ * @since 2021-12-31
  */
 public class RegistryConfigServiceImpl implements RegistryConfigService {
     private static final String DUBBO_REGISTRIES_CONFIG_PREFIX = "dubbo.registries.";
 
     private final RegisterConfig config;
 
+    /**
+     * 构造方法
+     */
     public RegistryConfigServiceImpl() {
         config = PluginConfigManager.getPluginConfig(RegisterConfig.class);
     }
@@ -56,13 +60,13 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
             return;
         }
         Class<?> clazz = registries.get(0).getClass();
-        Object registryConfig = ReflectUtils.newRegistryConfig(clazz);
-        if (registryConfig == null) {
+        Optional<?> registryConfig = ReflectUtils.newRegistryConfig(clazz);
+        if (!registryConfig.isPresent()) {
             return;
         }
-        ReflectUtils.setId(registryConfig, Constant.SC_REGISTRY_PROTOCOL);
-        ReflectUtils.setPrefix(registryConfig, DUBBO_REGISTRIES_CONFIG_PREFIX);
-        registries.add(registryConfig);
+        ReflectUtils.setId(registryConfig.get(), Constant.SC_REGISTRY_PROTOCOL);
+        ReflectUtils.setPrefix(registryConfig.get(), DUBBO_REGISTRIES_CONFIG_PREFIX);
+        registries.add(registryConfig.get());
     }
 
     @SuppressWarnings("checkstyle:RegexpSingleline")

@@ -23,7 +23,7 @@ import java.util.Map;
  * 集合工具类
  *
  * @author provenceee
- * @since 2021/11/3
+ * @since 2021-11-03
  */
 public class CollectionUtils {
     private CollectionUtils() {

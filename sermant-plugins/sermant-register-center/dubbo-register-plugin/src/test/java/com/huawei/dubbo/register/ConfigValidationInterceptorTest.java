@@ -27,7 +27,7 @@ import org.junit.Test;
  * 测试ConfigValidationInterceptor
  *
  * @author provenceee
- * @since 2022/2/14
+ * @since 2022-02-14
  */
 public class ConfigValidationInterceptorTest {
     private static final String REGISTRY_TYPE_KEY_1 = "registry-type";
@@ -40,6 +40,9 @@ public class ConfigValidationInterceptorTest {
 
     private final ExecuteContext context;
 
+    /**
+     * 构造方法
+     */
     public ConfigValidationInterceptorTest() {
         interceptor = new ConfigValidationInterceptor();
         arguments = new Object[1];

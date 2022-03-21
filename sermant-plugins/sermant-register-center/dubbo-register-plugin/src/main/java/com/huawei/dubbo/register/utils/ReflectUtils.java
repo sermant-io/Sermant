@@ -29,6 +29,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,7 +37,7 @@ import java.util.logging.Logger;
  * 反射工具类，为了同时兼容alibaba和apache dubbo，所以需要用反射的方法进行类的操作
  *
  * @author provenceee
- * @since 2022/2/7
+ * @since 2022-02-07
  */
 public class ReflectUtils {
     private static final Logger LOGGER = LogFactory.getLogger();
@@ -68,17 +69,17 @@ public class ReflectUtils {
      * @param className 宿主全限定类名
      * @return 宿主类
      */
-    public static Class<?> defineClass(String className) {
+    public static Optional<Class<?>> defineClass(String className) {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            return ClassLoaderUtils.defineClass(className, contextClassLoader,
-                ClassLoaderUtils.getClassResource(ClassLoader.getSystemClassLoader(), className));
+            return Optional.of(ClassLoaderUtils.defineClass(className, contextClassLoader,
+                ClassLoaderUtils.getClassResource(ClassLoader.getSystemClassLoader(), className)));
         } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | IOException e) {
             // 有可能已经加载过了，直接用contextClassLoader.loadClass加载
             try {
-                return contextClassLoader.loadClass(className);
+                return Optional.of(contextClassLoader.loadClass(className));
             } catch (ClassNotFoundException ex) {
-                return null;
+                return Optional.empty();
             }
         }
     }
@@ -92,16 +93,16 @@ public class ReflectUtils {
      * @see com.alibaba.dubbo.config.RegistryConfig
      * @see org.apache.dubbo.config.RegistryConfig
      */
-    public static <T> T newRegistryConfig(Class<T> clazz) {
+    public static <T> Optional<T> newRegistryConfig(Class<T> clazz) {
         try {
             Constructor<T> constructor = clazz.getConstructor(String.class);
 
             // 这个url不重要，重要的是protocol，所以设置成localhost:30100就行
-            return constructor.newInstance(SC_REGISTRY_ADDRESS);
+            return Optional.of(constructor.newInstance(SC_REGISTRY_ADDRESS));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
             | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, "Cannot new the registryConfig.", e);
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -307,7 +308,7 @@ public class ReflectUtils {
      */
     public static Object valueOf(String address) {
         return invoke(new InvokeParameter(DubboCache.INSTANCE.getUrlClass(), null, VALUE_OF_METHOD_NAME, address,
-            String.class));
+            String.class)).orElse(null);
     }
 
     private static String invokeWithNoneParameterAndReturnString(Object obj, String name) {
@@ -317,7 +318,7 @@ public class ReflectUtils {
     private static <T> T invokeWithNoneParameter(Object obj, String name, Class<T> returnClass, boolean isPublic) {
         InvokeParameter invokeParameter = new InvokeParameter(obj.getClass(), obj, name, null, null);
         invokeParameter.isPublic = isPublic;
-        return returnClass.cast(invoke(invokeParameter));
+        return returnClass.cast(invoke(invokeParameter).orElse(null));
     }
 
     private static Object invokeWithStringParameter(Object obj, String name, String parameter) {
@@ -325,20 +326,20 @@ public class ReflectUtils {
     }
 
     private static Object invokeWithParameter(Object obj, String name, Object parameter, Class<?> parameterClass) {
-        return invoke(new InvokeParameter(obj.getClass(), obj, name, parameter, parameterClass));
+        return invoke(new InvokeParameter(obj.getClass(), obj, name, parameter, parameterClass)).orElse(null);
     }
 
-    private static Object invoke(InvokeParameter parameter) {
+    private static Optional<Object> invoke(InvokeParameter parameter) {
         try {
             Method method = getMethod(parameter.invokeClass, parameter.name, parameter.parameterClass,
                 parameter.isPublic);
             if (parameter.parameter == null) {
-                return method.invoke(parameter.obj);
+                return Optional.ofNullable(method.invoke(parameter.obj));
             }
-            return method.invoke(parameter.obj, parameter.parameter);
+            return Optional.ofNullable(method.invoke(parameter.obj, parameter.parameter));
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             // 因版本的原因，有可能会找不到方法，所以可以忽略这些错误
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -366,11 +367,16 @@ public class ReflectUtils {
     private static Method setAccessible(Method method) {
         AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
             method.setAccessible(true);
-            return null;
+            return method;
         });
         return method;
     }
 
+    /**
+     * 反射参数
+     *
+     * @since 2022-02-07
+     */
     private static class InvokeParameter {
         Class<?> invokeClass;
         Object obj;

@@ -66,6 +66,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -80,7 +81,7 @@ import java.util.stream.Collectors;
  * 注册服务类，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
  *
  * @author provenceee
- * @since 2021/12/15
+ * @since 2021-12-15
  */
 public class RegistryServiceImpl implements RegistryService {
     private static final Logger LOGGER = LogFactory.getLogger();
@@ -296,14 +297,14 @@ public class RegistryServiceImpl implements RegistryService {
     private String getUrl(Object url) {
         String protocol = ReflectUtils.getProtocol(url);
         if (StringUtils.isBlank(protocol)) {
-            return null;
+            return "";
         }
         String address = ReflectUtils.getAddress(url);
         if (StringUtils.isBlank(address)) {
-            return null;
+            return "";
         }
         Object endpoint = ReflectUtils.valueOf(protocol + Constant.PROTOCOL_SEPARATION + address);
-        return endpoint == null ? null : endpoint.toString();
+        return endpoint == null ? "" : endpoint.toString();
     }
 
     private void createServiceCenterRegistration() {
@@ -317,16 +318,17 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private List<SchemaInfo> getSchemaInfos() {
-        return registryUrls.stream().map(this::createSchemaInfo).filter(Objects::nonNull).collect(Collectors.toList());
+        return registryUrls.stream().map(url -> createSchemaInfo(url).orElse(null)).filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
-    private SchemaInfo createSchemaInfo(Object url) {
+    private Optional<SchemaInfo> createSchemaInfo(Object url) {
         Object newUrl = ReflectUtils.setHost(url, microservice.getServiceName());
         if (newUrl == null) {
-            return null;
+            return Optional.empty();
         }
         String schema = newUrl.toString();
-        return new SchemaInfo(ReflectUtils.getPath(newUrl), schema, DigestUtils.sha256Hex(schema));
+        return Optional.of(new SchemaInfo(ReflectUtils.getPath(newUrl), schema, DigestUtils.sha256Hex(schema)));
     }
 
     private void subscribe(Subscription subscription) {

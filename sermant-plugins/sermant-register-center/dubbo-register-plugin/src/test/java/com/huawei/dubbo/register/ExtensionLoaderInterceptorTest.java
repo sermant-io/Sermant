@@ -34,13 +34,17 @@ import java.util.Map;
  * 测试ExtensionLoaderInterceptor
  *
  * @author provenceee
- * @since 2022/2/15
+ * @since 2022-02-15
  */
+@SuppressWarnings("checkstyle:all")
 public class ExtensionLoaderInterceptorTest {
     private final ExtensionLoaderInterceptor interceptor;
 
     private final Object[] arguments;
 
+    /**
+     * 构造方法
+     */
     public ExtensionLoaderInterceptorTest() {
         interceptor = new ExtensionLoaderInterceptor();
         arguments = new Object[1];
@@ -145,6 +149,8 @@ public class ExtensionLoaderInterceptorTest {
 
     /**
      * Alibaba Spi
+     *
+     * @since 2022-02-15
      */
     @SPI(TestConstant.FOO)
     public interface AlibabaSpiTest {
@@ -152,6 +158,8 @@ public class ExtensionLoaderInterceptorTest {
 
     /**
      * Apache Spi
+     *
+     * @since 2022-02-15
      */
     @org.apache.dubbo.common.extension.SPI(TestConstant.FOO)
     public interface ApacheSpiTest {

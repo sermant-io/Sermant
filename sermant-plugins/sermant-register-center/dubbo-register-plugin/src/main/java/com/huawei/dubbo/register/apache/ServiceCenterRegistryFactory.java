@@ -24,12 +24,13 @@ import org.apache.dubbo.registry.Registry;
 import org.apache.dubbo.registry.support.AbstractRegistryFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 
 /**
  * sc注册工厂
  *
  * @author provenceee
- * @since 2021/12/15
+ * @since 2021-12-15
  */
 public class ServiceCenterRegistryFactory extends AbstractRegistryFactory {
     private static final String APACHE_REGISTRY_CLASS_NAME = "com.huawei.dubbo.register.apache.ServiceCenterRegistry";
@@ -40,10 +41,10 @@ public class ServiceCenterRegistryFactory extends AbstractRegistryFactory {
         DubboCache.INSTANCE.loadSc();
         DubboCache.INSTANCE.setUrlClass(url.getClass());
         try {
-            Class<?> registryClass = ReflectUtils.defineClass(APACHE_REGISTRY_CLASS_NAME);
-            if (registryClass != null) {
+            Optional<Class<?>> registryClass = ReflectUtils.defineClass(APACHE_REGISTRY_CLASS_NAME);
+            if (registryClass.isPresent()) {
                 // 由于plugin不能直接new宿主的接口实现类，所以只能手动new出来给宿主
-                return (Registry) registryClass.getConstructor(URL.class).newInstance(url);
+                return (Registry) registryClass.get().getConstructor(URL.class).newInstance(url);
             }
             return new com.huawei.dubbo.register.apache.ServiceCenterRegistry(url);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException

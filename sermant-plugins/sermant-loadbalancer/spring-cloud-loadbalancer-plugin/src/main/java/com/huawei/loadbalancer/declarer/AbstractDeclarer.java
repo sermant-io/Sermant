@@ -25,7 +25,7 @@ import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
  * 实例增强基类
  *
  * @author provenceee
- * @since 2022/1/18
+ * @since 2022-01-18
  */
 public abstract class AbstractDeclarer extends AbstractPluginDeclarer {
     private final String enhanceClass;

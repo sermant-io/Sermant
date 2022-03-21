@@ -27,7 +27,7 @@ import org.apache.dubbo.rpc.cluster.support.migration.MigrationStep;
  * 增强MigrationRule类的parse方法
  *
  * @author provenceee
- * @since 2022年1月26日
+ * @since 2022-01-26
  */
 public class MigrationRuleInterceptor extends AbstractInterceptor {
     @Override

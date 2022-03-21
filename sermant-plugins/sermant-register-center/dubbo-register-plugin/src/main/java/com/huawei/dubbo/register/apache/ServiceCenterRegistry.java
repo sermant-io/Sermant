@@ -26,7 +26,7 @@ import org.apache.dubbo.registry.support.FailbackRegistry;
  * sc注册
  *
  * @author provenceee
- * @since 2021/12/15
+ * @since 2021-12-15
  */
 public class ServiceCenterRegistry extends FailbackRegistry {
     private final RegistryService registryService;

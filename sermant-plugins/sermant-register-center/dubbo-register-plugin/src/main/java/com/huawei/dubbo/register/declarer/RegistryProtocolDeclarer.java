@@ -25,7 +25,7 @@ import net.bytebuddy.matcher.ElementMatchers;
  * InterfaceCompatibleRegistryProtocol增强类
  *
  * @author provenceee
- * @since 2022/1/26
+ * @since 2022-01-26
  */
 public class RegistryProtocolDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS
@@ -35,6 +35,9 @@ public class RegistryProtocolDeclarer extends AbstractDeclarer {
 
     private static final String METHOD_NAME = "getServiceDiscoveryInvoker";
 
+    /**
+     * 构造方法
+     */
     public RegistryProtocolDeclarer() {
         super(ENHANCE_CLASS);
     }

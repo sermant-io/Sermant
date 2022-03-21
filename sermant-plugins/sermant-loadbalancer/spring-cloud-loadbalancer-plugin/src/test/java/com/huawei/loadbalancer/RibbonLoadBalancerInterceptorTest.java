@@ -37,8 +37,9 @@ import java.lang.reflect.Modifier;
  *
  * @author provenceee
  * @see com.netflix.loadbalancer.BaseLoadBalancer
- * @since 2022/3/1
+ * @since 2022-03-01
  */
+@SuppressWarnings("checkstyle:all")
 public class RibbonLoadBalancerInterceptorTest {
     private final LoadbalancerConfig config;
 
@@ -48,6 +49,9 @@ public class RibbonLoadBalancerInterceptorTest {
 
     private final BaseLoadBalancer loadBalancer;
 
+    /**
+     * 构造方法
+     */
     public RibbonLoadBalancerInterceptorTest() throws NoSuchFieldException, IllegalAccessException {
         interceptor = new RibbonLoadBalancerInterceptor();
         config = new LoadbalancerConfig();

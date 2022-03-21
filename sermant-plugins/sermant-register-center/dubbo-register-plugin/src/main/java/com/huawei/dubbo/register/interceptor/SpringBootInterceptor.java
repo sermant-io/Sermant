@@ -25,11 +25,14 @@ import com.huawei.sermant.core.service.ServiceManager;
  * 增强SpringBootApplication类的main方法
  *
  * @author provenceee
- * @since 2022年1月24日
+ * @since 2022-01-24
  */
 public class SpringBootInterceptor extends AbstractInterceptor {
     private final RegistryService registryService;
 
+    /**
+     * 构造方法
+     */
     public SpringBootInterceptor() {
         registryService = ServiceManager.getService(RegistryService.class);
     }

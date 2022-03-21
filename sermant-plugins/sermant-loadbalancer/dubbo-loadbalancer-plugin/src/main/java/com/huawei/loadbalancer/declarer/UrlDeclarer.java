@@ -25,7 +25,7 @@ import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
  * URL增强类
  *
  * @author provenceee
- * @since 2022/1/20
+ * @since 2022-01-20
  */
 public class UrlDeclarer extends AbstractPluginDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.common.URL", "com.alibaba.dubbo.common.URL"};

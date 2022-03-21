@@ -22,13 +22,16 @@ import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
  * RandomLoadBalancer增强类
  *
  * @author provenceee
- * @since 2022/1/20
+ * @since 2022-01-20
  */
 public class RandomDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "org.springframework.cloud.loadbalancer.core.RandomLoadBalancer";
 
     private static final String INTERCEPT_CLASS = "com.huawei.loadbalancer.interceptor.LoadBalancerInterceptor";
 
+    /**
+     * 构造方法
+     */
     public RandomDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, null);
     }
