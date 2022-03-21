@@ -58,7 +58,7 @@
     <package.plugin.name>${插件名称}</package.plugin.name>
   </properties>
   ```
-  - 在[默认插件设置文件](../../sermant-agentcore/sermant-agentcore-core/src/main/resources/config/agent/plugins.yaml)和[全数插件设置文件](../../sermant-agentcore/sermant-agentcore-core/src/main/resources/config/all/plugins.yaml)中添加新增的`插件主模块(main)`，完成注册。
+  - 在[默认插件设置文件](../../sermant-agentcore/sermant-agentcore-core/config/plugins.yaml)和[全数插件设置文件](../../sermant-agentcore/sermant-agentcore-core/config/all/plugins.yaml)中添加新增的`插件主模块(main)`，完成注册。
 
 `插件主模块(main)`的子模块开发流程参见一下章节：
 - `插件模块(plugin)`和`服务模块(service)`开发流程参见[插件开发流程](#插件开发流程)
