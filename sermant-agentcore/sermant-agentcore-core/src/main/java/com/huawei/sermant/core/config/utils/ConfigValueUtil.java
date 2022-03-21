@@ -18,6 +18,7 @@ package com.huawei.sermant.core.config.utils;
 
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.exception.DupConfIndexException;
+import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -43,6 +44,19 @@ public class ConfigValueUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
+     * 配置分隔符
+     */
+    private static final String CONFIG_SEPARATOR = ",";
+
+    /**
+     * 环境前缀长度
+     */
+    private static final int ENV_PREFIX_LEN = 2;
+
+    private ConfigValueUtil() {
+    }
+
+    /**
      * 将配置信息字符串转换为数组，需要注意以下内容：
      * <pre>
      *     1.数组的数据类型必须可被{@link #toBaseType}转换
@@ -55,7 +69,7 @@ public class ConfigValueUtil {
      * @return 转换后的数组
      */
     public static Object toArrayType(String configStr, Class<?> type) {
-        final String[] configSlices = configStr.split(",");
+        final String[] configSlices = configStr.split(CONFIG_SEPARATOR);
         final Object result = Array.newInstance(type, configSlices.length);
         for (int i = 0; i < configSlices.length; i++) {
             Array.set(result, i, toBaseType(configSlices[i].trim(), type));
@@ -78,16 +92,19 @@ public class ConfigValueUtil {
      */
     public static <R> List<R> toListType(String configStr, Class<R> type) {
         final List<R> result = new ArrayList<R>();
-        for (String configSlice : configStr.split(",")) {
+        for (String configSlice : configStr.split(CONFIG_SEPARATOR)) {
             final R obj = toBaseType(configSlice.trim(), type);
             if (obj == null) {
-                LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                        "Cannot transform [%s] to [%s].", configSlice, type.getName()));
+                LOGGER.log(Level.WARNING, buildTransformErrMsg(configSlice, type.getName()));
                 continue;
             }
             result.add(obj);
         }
         return Collections.unmodifiableList(result);
+    }
+
+    private static String buildTransformErrMsg(String configSlice, String typeName) {
+        return String.format(Locale.ROOT, "Cannot transform [%s] to [%s].", configSlice, typeName);
     }
 
     /**
@@ -109,7 +126,7 @@ public class ConfigValueUtil {
      */
     public static <K, V> Map<K, V> toMapType(String configStr, Class<K> keyType, Class<V> valueType) {
         final Map<K, V> result = new HashMap<K, V>();
-        for (String kvSlice : configStr.split(",")) {
+        for (String kvSlice : configStr.split(CONFIG_SEPARATOR)) {
             final String[] kvEntry = kvSlice.trim().split(":");
             if (kvEntry.length != 2) {
                 LOGGER.log(Level.WARNING, String.format(Locale.ROOT, "Wrong map type entry [%s].", kvSlice));
@@ -117,14 +134,12 @@ public class ConfigValueUtil {
             }
             final K key = toBaseType(kvEntry[0].trim(), keyType);
             if (key == null) {
-                LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                        "Cannot transform [%s] to [%s].", kvEntry[0], keyType.getName()));
+                LOGGER.log(Level.WARNING, buildTransformErrMsg(kvEntry[0], keyType.getName()));
                 continue;
             }
             final V value = toBaseType(kvEntry[1].trim(), valueType);
             if (value == null) {
-                LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                        "Cannot transform [%s] to [%s].", kvEntry[1], valueType.getName()));
+                LOGGER.log(Level.WARNING, buildTransformErrMsg(kvEntry[1], valueType.getName()));
                 continue;
             }
             result.put(key, value);
@@ -189,9 +204,9 @@ public class ConfigValueUtil {
      * @return 修正后的配置信息字符串
      */
     public static String fixValue(String configKey, String configVal, Map<String, Object> argsMap,
-            FixedValueProvider provider) {
+        FixedValueProvider provider) {
         if (configVal != null && configVal.matches("^.*\\$\\{[\\w.]+(:.*)?}.*$")) {
-            final int startIndex = configVal.indexOf("${") + 2;
+            final int startIndex = configVal.indexOf("${") + ENV_PREFIX_LEN;
             final int endIndex = configVal.indexOf('}', startIndex);
             final String envKey = configVal.substring(startIndex, endIndex);
             final int separatorIndex = envKey.indexOf(':');
@@ -202,8 +217,13 @@ public class ConfigValueUtil {
             final String defaultValue = separatorIndex >= 0 ? envKey.substring(separatorIndex + 1) : "";
             final String value = getFixedValue(key, defaultValue, argsMap, provider);
             return fixValue(configKey,
-                    configVal.substring(0, startIndex - 2) + value + configVal.substring(endIndex + 1),
-                    argsMap, provider);
+                configVal.substring(0, startIndex - ENV_PREFIX_LEN) + value + configVal.substring(endIndex + 1),
+                argsMap, provider);
+        } else if (!StringUtils.isBlank(configKey)) {
+            final String valFromEnv = getValFromEnv(configKey);
+            if (valFromEnv != null) {
+                return valFromEnv;
+            }
         }
         return configVal;
     }
@@ -217,7 +237,7 @@ public class ConfigValueUtil {
      * @return 环境变量或系统变量
      */
     private static String getFixedValue(String key, String defaultVal, Map<String, Object> argsMap,
-            FixedValueProvider provider) {
+        FixedValueProvider provider) {
         final Object arg = argsMap.get(key);
         if (arg != null) {
             return arg.toString();
@@ -226,17 +246,30 @@ public class ConfigValueUtil {
         if (configVal != null) {
             return configVal;
         }
-        final String envVal = System.getenv(key);
-        if (envVal != null) {
-            return envVal;
-        }
-        final String sysVal = System.getProperty(key);
-        if (sysVal != null) {
-            return sysVal;
+        final String valFromEnv = getValFromEnv(key);
+        if (valFromEnv != null) {
+            return valFromEnv;
         }
         return defaultVal;
     }
 
+    /**
+     * 通过环境变量或者系统变量获取 环境变量 > 系统变量
+     *
+     * @param key 配置键
+     * @return 变脸值
+     */
+    private static String getValFromEnv(String key) {
+        final String envVal = System.getenv(key);
+        if (envVal != null) {
+            return envVal;
+        }
+        return System.getProperty(key);
+    }
+
+    /**
+     * 值更正
+     */
     public interface FixedValueProvider {
         String getFixedValue(String key);
     }
