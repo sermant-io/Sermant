@@ -241,20 +241,20 @@
 
 `sermant-example`模块是一个示例功能模块，其中涉及了大部分开发插件时可能碰到的场景，本节将会对该模块的内容进行解读，以帮助读者能尽快上手开发插件功能。
 
-- 增强定义示例，见于[definition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/definition)包：
-  - [DemoAnnotationDefinition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoAnnotationDefinition.java)展示如何通过修饰类的注解定位到被增强的类。
-  - [DemoNameDefinition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoNameDefinition.java)展示如何通过名称定位到被增强的类。
-  - [DemoSuperTypeDefinition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoSuperTypeDefinition.java)展示如何通过超类定位到被增强的类。
+- 增强定义示例，见于[Declarer](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer)包：
+  - [DemoAnnotationDeclarer](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoAnnotationDeclarer.java)展示如何通过修饰类的注解定位到被增强的类。
+  - [DemoNameDeclarer](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoNameDeclarer.java)展示如何通过名称定位到被增强的类。
+  - [DemoSuperTypeDeclarer](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoSuperTypeDeclarer.java)展示如何通过超类定位到被增强的类。
   - 上述三者都可以看出如何声明用于增强构造函数、静态函数和实例函数的拦截器。
-  - 需要添加[EnhanceDefinition](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/definition/EnhanceDefinition.java)的[spi配置文件](../../sermant-plugins/sermant-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.sermant.core.agent.definition.EnhanceDefinition)。
+  - 需要添加[EnhanceDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/agent/declarer/PluginDeclarer.java)的[spi配置文件](../../sermant-plugins/sermant-example/demo-plugin/src/main/resources/META-INF/services/com.huawei.sermant.core.plugin.agent.declarer.PluginDeclarer)。
 - 拦截器示例，见于[interceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor)包：
-  - [DemoConstInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConstInterceptor.java)展示了如何编写一个用于增强构造函数的拦截器。
-  - [DemoStaticInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoStaticInterceptor.java)展示了如何编写一个用于增强静态函数的拦截器。
-  - [DemoInstInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoInstInterceptor.java)展示了如何编写一个用于增强实例函数的拦截器。
+  - [DemoConstInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConstInterceptor.java)展示了如何编写一个用于增强构造方法的拦截器。
+  - [DemoStaticInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoStaticInterceptor.java)展示了如何编写一个用于增强静态方法的拦截器。
+  - [DemoMemberInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoMemberInterceptor.java)展示了如何编写一个用于增强实例方法的拦截器。
 - 日志系统使用示例，如[DemoLogger](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/common/DemoLogger.java)展示了如何在插件中获取日志类。
 - 通过心跳功能添加额外参数示例，如[DemoHeartBeatService](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)服务所示，通常使用自定义服务的方式将额外参数带入。
 - 链路功能使用示例，如[DemoTraceInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceInterceptor.java)所示，通常链路功能应用于拦截器，对宿主应用的方法调用过程进行增强，捕获其相关的数据信息并上报。
-- 增强原生类示例，如[DemoBootstrapDefinition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoBootstrapDefinition.java)所示，与普通类的增强方式无异。但是，考虑到修改原生类是非常危险的且风险扩散的操作，不建议对原生类进行增强。
+- 增强原生类示例，如[DemoBootstrapDefinition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java)所示，与普通类的增强方式无异。但是，考虑到修改原生类是非常危险的且风险扩散的操作，不建议对原生类进行增强。
 - 插件配置示例：插件配置是统一配置系统的特化，遵循统一配置系统的规则。[config.yaml](../../sermant-plugins/sermant-example/config/config.yaml)是示例工程的配置文件，其中包含[DemoConfig](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)和[DemoServiceConfig](../../sermant-plugins/sermant-example/demo-service/src/main/java/com/huawei/example/demo/config/DemoServiceConfig.java)两个配置类对应的配置信息，从配置的定义和调用可以看到：
   - 每个功能的配置文件仅能有1个，即`config.yaml`文件。
   - 插件包的配置类如果有拦截器别名的设定，可以继承[AliaConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/config/AliaConfig.java)类，其他情况都实现[PluginConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/config/PluginConfig.java)接口。

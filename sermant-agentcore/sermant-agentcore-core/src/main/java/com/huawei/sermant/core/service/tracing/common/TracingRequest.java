@@ -61,4 +61,15 @@ public class TracingRequest {
         this.className = className;
         this.method = method;
     }
+
+    /**
+     * 构造函数
+     *
+     * @param className className
+     * @param method method
+     */
+    public TracingRequest(String className, String method) {
+        this.className = className;
+        this.method = method;
+    }
 }
