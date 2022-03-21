@@ -18,13 +18,13 @@
 
 ```properties
 #应用名
-service.meta.application=${sermant.agent.service.meta.application:default}
+service.meta.application=default
 #版本号
-service.meta.version=${sermant.agent.service.meta.version:1.0.0}
+service.meta.version=1.0.0
 #命名空间
-service.meta.project=${sermant.agent.service.meta.project:default}
+service.meta.project=default
 #环境
-service.meta.environment=${sermant.agent.service.meta.environment:development}
+service.meta.environment=development
 ```
 
 ### 修改[插件配置文件](../../../sermant-plugins/sermant-register-center/config/config.yaml)
@@ -105,10 +105,10 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=dubb
 **核心配置文件**与**插件配置文件**均支持环境变量、java -D参数配置），如下所示：
 
 ```properties
-service.meta.application=${sermant.agent.service.meta.application:default}
+service.meta.application=default
 ```
 
-以上配置代表优选读取环境变量或-D参数中sermant.agent.service.meta.application的值作为应用名，如果环境变量或-D参数中找不到这个值，则把default作为应用名。
+以上配置代表优选读取环境变量或-D参数中service.meta.application的值作为应用名，如果环境变量或-D参数中找不到这个值，则把default作为应用名。
 
 ## 更多文档
 

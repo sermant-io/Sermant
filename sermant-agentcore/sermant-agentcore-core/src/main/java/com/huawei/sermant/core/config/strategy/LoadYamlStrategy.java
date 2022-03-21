@@ -23,6 +23,8 @@ import com.huawei.sermant.core.config.common.ConfigFieldKey;
 import com.huawei.sermant.core.config.utils.ConfigKeyUtil;
 import com.huawei.sermant.core.config.utils.ConfigValueUtil;
 
+import com.alibaba.fastjson.util.IOUtils;
+
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedReader;
@@ -32,7 +34,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
@@ -69,8 +70,8 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     }
 
     @Override
-    public Map getConfigHolder(File config, Map<String, Object> argsMap) {
-        this.argsMap = argsMap;
+    public Map getConfigHolder(File config, Map<String, Object> bootstreapArgsMap) {
+        this.argsMap = bootstreapArgsMap;
         return readConfig(config);
     }
 
@@ -101,18 +102,13 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(config),
-                    CommonConstant.DEFAULT_CHARSET));
+                CommonConstant.DEFAULT_CHARSET));
             return yaml.loadAs(reader, Map.class);
         } catch (IOException ignored) {
             LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                    "Missing config file [%s], please check.", config));
+                "Missing config file [%s], please check.", config));
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ignored) {
-                }
-            }
+            IOUtils.close(reader);
         }
         return Collections.emptyMap();
     }
@@ -127,11 +123,12 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
         if (cls == Object.class || Map.class.isAssignableFrom(cls)) {
             return typeMap;
         }
-        typeMap = fixEntry(typeMap, cls.getSuperclass());
+        Map fixedTypeMap = fixEntry(typeMap, cls.getSuperclass());
         for (Field field : cls.getDeclaredFields()) {
             final ConfigFieldKey configFieldKey = field.getAnnotation(ConfigFieldKey.class);
             final String fieldKey = configFieldKey == null ? field.getName() : configFieldKey.value();
-            final Object subTypeVal = configFieldKey == null ? typeMap.get(fieldKey) : typeMap.remove(fieldKey);
+            final Object subTypeVal =
+                configFieldKey == null ? fixedTypeMap.get(fieldKey) : fixedTypeMap.remove(fieldKey);
             if (subTypeVal == null) {
                 continue;
             }
@@ -139,24 +136,29 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
             if (subTypeVal instanceof Map) {
                 fixedVal = fixEntry((Map) subTypeVal, field.getType());
                 if (configFieldKey != null) {
-                    typeMap.put(field.getName(), fixedVal);
+                    fixedTypeMap.put(field.getName(), fixedVal);
                 }
             } else {
-                fixedVal = fixValStr(typeMap, subTypeVal);
-                typeMap.put(field.getName(), fixedVal);
+                fixedVal = fixValStr(formatConfigKey(fieldKey, cls), fixedTypeMap, subTypeVal);
+                fixedTypeMap.put(field.getName(), fixedVal);
             }
         }
-        return typeMap;
+        return fixedTypeMap;
+    }
+
+    private String formatConfigKey(String fieldKey, Class<?> cls) {
+        return String.format(Locale.ENGLISH, "%s.%s", ConfigKeyUtil.getTypeKey(cls), fieldKey);
     }
 
     /**
      * 修正值中形如"${}"的部分
      *
+     * @param configKey  配置键
      * @param typeMap    父Map
      * @param subTypeVal 当前值
      * @return 修正后的值
      */
-    private Object fixValStr(Map typeMap, Object subTypeVal) {
+    private Object fixValStr(String configKey, Map typeMap, Object subTypeVal) {
         final ConfigValueUtil.FixedValueProvider provider = new ConfigValueUtil.FixedValueProvider() {
             @Override
             public String getFixedValue(String key) {
@@ -168,14 +170,12 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
             }
         };
         final Object fixedVal;
-        if (subTypeVal instanceof List) {
-            fixedVal = yaml.loadAs(
-                    ConfigValueUtil.fixValue("", yaml.dump(subTypeVal), argsMap, provider),
-                    List.class);
-        } else if (subTypeVal instanceof String) {
-            fixedVal = ConfigValueUtil.fixValue("", (String) subTypeVal, argsMap, provider);
+        if (subTypeVal instanceof String) {
+            fixedVal = ConfigValueUtil.fixValue(configKey, (String) subTypeVal, argsMap, provider);
         } else {
-            fixedVal = subTypeVal;
+            fixedVal = yaml.loadAs(
+                ConfigValueUtil.fixValue(configKey, yaml.dump(subTypeVal), argsMap, provider),
+                subTypeVal.getClass());
         }
         return fixedVal;
     }
