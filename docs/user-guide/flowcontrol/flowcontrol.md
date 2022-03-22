@@ -4,12 +4,12 @@
 
 ## 功能
 
-流控插件基于[Alibaba Sentinel](https://github.com/alibaba/Sentinel)与[resilience4j](https://github.com/resilience4j)框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**流控**、**熔断**与**隔离仓**能力，并且支持配置中心动态配置规则，实时生效。
+流控插件基于[resilience4j](https://github.com/resilience4j)框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**流控**、**熔断**与**隔离仓**能力，并且支持配置中心动态配置规则，实时生效。
 
 - **流控**：对指定接口限制1S秒内通过的QPS，当1S内流量超过指定阈值，将触发流控，限制请求流量。
 - **熔断**：对指定接口配置熔断策略，可从单位统计时间窗口内的错误率或者慢请求率进行统计，当请求错误率或者慢请求率达到指定比例阈值，即触发熔断，在时间窗口重置前，隔离所有请求。
 - **隔离仓**：针对大规模并发流量，对并发流量进行控制，避免瞬时并发流量过大导致服务崩溃。
-- **重试：**当服务遇到非致命的错误时，可以通过重试的方式避免服务的最终失败。特别注意的是，该能力仅基于[resilience4j](https://github.com/resilience4j)框架才可生效。
+- **重试：**当服务遇到非致命的错误时，可以通过重试的方式避免服务的最终失败。
 
 ## 使用说明
 
@@ -40,24 +40,39 @@ service.meta.environment=development
 
 **说明：**以上配置均可通过环境变量指定，对应的键值即为环境变量键，例如服务app名称可由`-Dservice.meta.application=application`指定, 其他配置文件的所有键均可采用该方式配置。
 
-**（2）配置注册插件**
+**（2）修改配置中心**
 
-修改配置文件`${javaagent路径}/config/register-center/config/config.yaml`， 修正servicecomb注册中心地址
+修改配置文件`${javaagent路径}/config/config.properties`, 修改配置中心类型与地址，如下位置：
+
+```properties
+# 配置中心地址， 根据配置中心地址配置
+dynamic.config.server_address=127.0.0.1:30110
+# 配置中心类型， 支持KIE与ZOOKEEPER
+dynamic.config.dynamic_config_type=KIE
+```
+
+**（3）配置注册插件**
+
+修改配置文件`${javaagent路径}/pluginPackage/register-center/config/config.yaml`， 修正servicecomb注册中心地址
 
 ```yaml
 servicecomb.service:
   address: http://127.0.0.1:30100 #注册中心地址
 ```
 
-**（3）配置流控插件**
+具体配置可参考[注册插件配置](https://github.com/huaweicloud/Sermant/blob/develop/docs/user-guide/register/document.md)
 
-修改配置文件`${javaagent路径}/config/flowcontrol/config/config.yaml`
+**（4）配置流控插件**
+
+修改配置文件`${javaagent路径}/pluginPackage/flowcontrol/config/config.yaml`
 
 ```yaml
 flow.control.plugin:
   useCseRule: true # 是否开启ServiceComb适配
   useAgentConfigCenter: true # 是否使用agent配置中心
 ```
+
+> 此处若设置useCseRule为false，则需用户自己去指定服务名，通过环境变量-Dproject.name=flowControlDemo进行指定，相对的在配置发布的group需设置为service=flowControlDemo
 
 ### 部署应用
 
@@ -76,7 +91,7 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
 
 登录[Service Center](localhost:30103)后台, 查看应用是否正确注册
 
-### 配置流控规则
+### 发布流控规则
 
 如何发布规则请参考[配置中心API]()
 
@@ -102,32 +117,34 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   }
   ```
 
-**content配置项说明**
+  **content配置项说明**
 
   ```yaml
   alias: flowcontrol  # 别名
-  matches: # 匹配器集合，可配置多个
-    - apiPath: # 匹配的api路径， 支持各种比较方式，相等(exact)、包含(contains)等
-        exact: /degrade # 具体匹配路径
-      headers: { }       # 请求头
-      method: # 支持方法类型
-        - GET
-      name: degrade     # 可选，配置名
+    matches: # 匹配器集合，可配置多个
+      - apiPath: # 匹配的api路径， 支持各种比较方式，相等(exact)、包含(contains)等
+          exact: /degrade # 具体匹配路径
+        headers: { }       # 请求头
+        method: # 支持方法类型
+          - GET
+        name: degrade     # 可选，配置名
   ```
 
-**规则解释:**
+  
 
-- 请求路径为`/degrade`且方法类型为`GET`即匹配成功
-- 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
+  **规则解释:**
 
-> 详细配置项可参考[ServiceComb开发文档](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2)流量标记部分
->
->
->
-> **注意事项：**
->
-> - 流控配置首先需配置业务场景，再配置与业务场景绑定的流控规则
-> - `key`必须以`servicecomb.matchGroup.`为前置，`scene`则为业务名称
+  - 请求路径为`/degrade`且方法类型为`GET`即匹配成功
+  - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
+
+  > 详细配置项可参考[ServiceComb开发文档](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2)流量标记部分
+  >
+  > 
+  >
+  > **注意事项：**
+  >
+  > - 流控配置首先需配置业务场景，再配置与业务场景绑定的流控规则
+  > - `key`必须以`servicecomb.matchGroup.`为前置，`scene`则为业务名称
 
 - #### **流控规则配置示例**
 
@@ -138,23 +155,22 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
       "content":"limitRefreshPeriod: \"1000\"\nname: flow\nrate: \"2\"\n"
   }
   ```
+  **流控配置项说明：**
 
-**流控配置项说明：**
+  | 配置项             | 说明                                                         |
+  | ------------------ | ------------------------------------------------------------ |
+  | limitRefreshPeriod | 单位统计时间，单位毫秒, 若需配置秒则可增加单位`S`， 例如`10S` |
+  | rate               | 单位统计时间所能通过的**请求个数**                           |
 
-|       配置项       |                             说明                             |
-| :----------------: | :----------------------------------------------------------: |
-| limitRefreshPeriod | 单位统计时间，单位毫秒, 若需配置秒则可增加单位`S`， 例如`10S` |
-|        rate        |              单位统计时间所能通过的**请求个数**              |
+  **规则解释：**
 
-**规则解释：**
+  - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
 
-- 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
+  - 1秒内超过2个请求，即触发流控效果
 
-- 1秒内超过2个请求，即触发流控效果
-
-> **注意事项：**
->
-> `key`必须以`servicecomb.rateLimiting.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
+  > **注意事项：**
+  >
+  > `key`必须以`servicecomb.rateLimiting.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
 
 - #### **熔断规则配置示例**
 
@@ -165,27 +181,26 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
       "content":"failureRateThreshold: 90\nminimumNumberOfCalls: 3\nname: degrade\nslidingWindowSize: 10S\nslidingWindowType: time\nslowCallDurationThreshold: \"1\"\nslowCallRateThreshold: 80\n"
   }
   ```
+  **熔断配置项说明：**
 
-**熔断配置项说明：**
+  | 配置项                    | 说明                                                         |
+  | ------------------------- | ------------------------------------------------------------ |
+  | failureRateThreshold      | 熔断所需达到的错误率                                         |
+  | minimumNumberOfCalls      | 滑动窗口内的最小请求数                                       |
+  | name                      | 配置项名称，可选参数                                         |
+  | slidingWindowSize         | 滑动统计窗口大小，支持毫秒与秒，例如`1000`为1000毫秒, `10S`代表10秒 |
+  | slidingWindowType         | 滑动窗口类型，目前只支持`time`                               |
+  | slowCallDurationThreshold | 慢请求阈值，单位同滑动窗口配置                               |
+  | slowCallRateThreshold     | 慢请求占比，当慢调用请求数达到该比例触发通断                 |
 
-|          配置项           |                             说明                             |
-| :-----------------------: | :----------------------------------------------------------: |
-|   failureRateThreshold    |                     熔断所需达到的错误率                     |
-|   minimumNumberOfCalls    |                    滑动窗口内的最小请求数                    |
-|           name            |                     配置项名称，可选参数                     |
-|     slidingWindowSize     | 滑动统计窗口大小，支持毫秒与秒，例如`1000`为1000毫秒, `10S`代表10秒 |
-|     slidingWindowType     |                滑动窗口类型，目前只支持`time`                |
-| slowCallDurationThreshold |                慢请求阈值，单位同滑动窗口配置                |
-|   slowCallRateThreshold   |         慢请求占比，当慢调用请求数达到该比例触发通断         |
+  **规则解释:**
 
-**规则解释:**
+  - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
+  - 10秒内，若请求个数超过3个，且错误率超过90%或者慢请求占比超过80%则触发熔断
 
-- 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
-- 10秒内，若请求个数超过3个，且错误率超过90%或者慢请求占比超过80%则触发熔断
-
-> **注意事项：**
->
-> `key`必须以`servicecomb.circuitBreaker.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
+  > **注意事项：**
+  >
+  > `key`必须以`servicecomb.circuitBreaker.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
 
 - #### 隔离仓规则配置示例
 
@@ -210,9 +225,37 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
     - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
     - 若最大并发数超过5，且新的请求等待10S，还未获取资源，则触发隔离仓异常
 
-> **注意事项：**
->
-> `key`必须以`servicecomb.bulkhead.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
+  > **注意事项：**
+  >
+  > `key`必须以`servicecomb.bulkhead.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
+
+- #### 重试规则配置实例
+
+  ```json
+  {
+      "key":"servicecomb.retry.scene",
+      "group":"app=region-A&service=flowControlDemo&environment=testing",
+      "content":"waitDuration: \"2000\"\nretryStrategy: FixedInterval\nmaxAttempts: 2\nretryOnResponseStatus:\n- 500"
+  }
+  ```
+
+  **重试配置项说明：**
+
+  |        配置项         |                             说明                             |
+  | :-------------------: | :----------------------------------------------------------: |
+  |     waitDuration      |          重试等待时间，默认毫秒；支持秒单位，例如2S          |
+  |     retryStrategy     | 重试策略，当前支持两种重试策略：固定时间间隔（FixedInterval）， 指数增长间隔(RandomBackoff) |
+  |      maxAttempts      |                         最大重试次数                         |
+  | retryOnResponseStatus | HTTP状态码，当前仅支持HTTP请求；针对dubbo请求，可通过配置异常类型确定是否需要重试，默认为RpcException |
+
+  **规则解释：**
+
+  - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
+  - 当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数
+
+  > 注意事项：**
+  >
+  > `key`必须以`servicecomb.retry.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
 
 ## 快速开始
 
@@ -276,17 +319,10 @@ java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appNa
 **Spring**应用通过相对路径获取资源名，例如`localhost:8080/flow`,则定义的资源名为`/flow`。
 
 **Dubbo**应用则是通过**请求的接口:接口版本.请求方法**拼凑，例如版本为`1.0.0`的请求接口`com.huawei.demo.TestService.hello`，
-则拿到的最终定义的资源名为`com.huawei.demo.TestService:1.0.0.hello`
+则拿到的最终定义的资源名为`com.huawei.demo.TestService:1.0.0.hello`。特别注意的是，若dubbo应用未配置版本，则对应的资源名为**请求接口.请求方法**
 
 #### 启动时为什么会报HttpHostConnectException异常
 
 答：出现该异常的原因是未启动`Sermant`后台服务`sermant-backhend`, 找到启动类`com.huawei.apm.backend.NettyServerApplication`启动后台服务，并重启应用即可。
-
-## 其他
-
-如果读者**希望不使用配置中心API且不去适配ServiceComb**，可参考下面的文档
-
-- [基于KIE配置中心配置限流规则](./kie-configuration-document.md)
-- [基于ZOOKEEPER配置中心配置限流规则](zk-configuration-document.md)
 
 [返回**Sermant**说明文档](../../README.md)

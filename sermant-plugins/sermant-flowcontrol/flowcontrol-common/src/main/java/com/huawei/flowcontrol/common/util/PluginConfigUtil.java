@@ -74,9 +74,6 @@ public class PluginConfigUtil {
     }
 
     private static void setValueForProperties(FlowControlConfig flowControlConfig) {
-        properties.put(ConfigConst.SENTINEL_VERSION, flowControlConfig.getSentinelVersion());
-        properties.put(ConfigConst.ZOOKEEPER_ADDRESS, flowControlConfig.getZookeeperAddress());
-        properties.put(ConfigConst.ZOOKEEPER_PATH, flowControlConfig.getFlowControlZookeeperPath());
         properties.put(ConfigConst.DEFAULT_HEARTBEAT_INTERVAL, flowControlConfig.getHeartbeatInterval());
         properties.put(ConfigConst.DEFAULT_METRIC_INTERVAL, flowControlConfig.getMetricInterval());
         properties.put(ConfigConst.METRIC_INITIAL_DURATION, flowControlConfig.getMetricInitialDuration());
@@ -97,15 +94,12 @@ public class PluginConfigUtil {
         properties.put(ConfigConst.KAFKA_SASL_MECHANISM_CONST, flowControlConfig.getKafkaSaslMechanism());
         properties.put(ConfigConst.KAFKA_SECURITY_PROTOCOL_CONST, flowControlConfig.getKafkaSecurityProtocol());
         properties.put(ConfigConst.KAFKA_SSL_TRUSTSTORE_LOCATION_CONST,
-                flowControlConfig.getKafkaSslTruststoreLocation());
+            flowControlConfig.getKafkaSslTruststoreLocation());
         properties.put(ConfigConst.KAFKA_SSL_TRUSTSTORE_PASSWORD_CONST,
-                flowControlConfig.getKafkaSslTruststorePassword());
+            flowControlConfig.getKafkaSslTruststorePassword());
         properties.put(ConfigConst.KAFKA_IDENTIFICATION_ALGORITHM_CONST,
-                flowControlConfig.getKafkaIdentificationAlgorithm());
-        properties.put(ConfigConst.CONFIG_ZOOKEEPER_PATH, flowControlConfig.getConfigZookeeperPath());
-        properties.put(ConfigConst.CONFIG_PROFILE_ACTIVE_DEFAULT, flowControlConfig.getConfigProfileActive());
+            flowControlConfig.getKafkaIdentificationAlgorithm());
         properties.put(ConfigConst.CONFIG_KIE_ADDRESS, flowControlConfig.getConfigKieAddress());
-        properties.put(ConfigConst.CONFIG_CENTER_TYPE, flowControlConfig.getConfigCenterType());
         KafkaConnectBySslSwitch.delKey(properties);
     }
 }
