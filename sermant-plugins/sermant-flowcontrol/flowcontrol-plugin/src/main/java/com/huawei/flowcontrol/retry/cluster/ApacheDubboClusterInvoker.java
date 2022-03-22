@@ -67,7 +67,6 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
     @Override
     protected Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadbalance)
         throws RpcException {
-
         RetryContext.INSTANCE.markRetry(retry);
         final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
             .getHandlers(convertToApacheDubboEntity(invocation, invokers.get(0)));

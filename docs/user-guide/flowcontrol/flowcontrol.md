@@ -38,7 +38,7 @@ service.meta.project=default
 service.meta.environment=development
 ```
 
-**说明：**以上配置均可通过环境变量指定，对应的键值即为环境变量键，例如服务app名称可由`-Dservice.meta.application=application`指定, 其他配置文件的所有键均可采用该方式配置。
+**提示**：以上配置均可通过环境变量指定，对应的键值即为环境变量键，例如服务app名称可由`-Dservice.meta.application=application`指定, 其他配置文件的所有键均可采用该方式配置。
 
 **（2）修改配置中心**
 
@@ -324,5 +324,12 @@ java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appNa
 #### 启动时为什么会报HttpHostConnectException异常
 
 答：出现该异常的原因是未启动`Sermant`后台服务`sermant-backhend`, 找到启动类`com.huawei.apm.backend.NettyServerApplication`启动后台服务，并重启应用即可。
+
+## 其他
+
+如果读者**希望不使用配置中心API且不去适配ServiceComb**，可参考下面的文档
+
+- [基于KIE配置中心配置限流规则](./kie-configuration-document.md)
+- [基于ZOOKEEPER配置中心配置限流规则](zk-configuration-document.md)
 
 [返回**Sermant**说明文档](../../README.md)

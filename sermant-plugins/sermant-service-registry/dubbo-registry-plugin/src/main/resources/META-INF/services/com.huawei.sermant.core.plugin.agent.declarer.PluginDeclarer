@@ -1,0 +1,8 @@
+com.huawei.dubbo.registry.declarer.ApplicationConfigDeclarer
+com.huawei.dubbo.registry.declarer.ConfigValidationDeclarer
+com.huawei.dubbo.registry.declarer.ExtensionLoaderDeclarer
+com.huawei.dubbo.registry.declarer.InterfaceConfigDeclarer
+com.huawei.dubbo.registry.declarer.MigrationRuleDeclarer
+com.huawei.dubbo.registry.declarer.MigrationRuleHandlerDeclarer
+com.huawei.dubbo.registry.declarer.RegistryProtocolDeclarer
+com.huawei.dubbo.registry.declarer.SpringBootDeclarer
