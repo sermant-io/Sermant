@@ -1,16 +1,19 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.huawei.sermant</groupId>
         <artifactId>sermant</artifactId>
+        <groupId>com.huawei.sermant</groupId>
         <version>1.0.0</version>
     </parent>
-    <artifactId>sermant-plugins</artifactId>
+    <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
+
+    <artifactId>sermant-example</artifactId>
+
     <properties>
         <sermant.basedir>${pom.basedir}/../..</sermant.basedir>
-
         <package.plugin.name>${project.artifactId}</package.plugin.name>
         <package.plugin.version>${project.version}</package.plugin.version>
         <package.plugin.dir>${package.agent.dir}/pluginPackage</package.plugin.dir>
@@ -23,44 +26,24 @@
         <config.source.dir>../config</config.source.dir>
         <config.output.dir>${package.plugin.dir}/${package.plugin.name}/config</config.output.dir>
     </properties>
+
     <profiles>
-        <profile>
-            <id>agent</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>sermant-flowcontrol</module>
-                <module>sermant-service-registry</module>
-            </modules>
-        </profile>
         <profile>
             <id>example</id>
             <modules>
-                <module>sermant-service-registry</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>ext</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>sermant-flowcontrol</module>
+                <module>demo-plugin</module>
+                <module>demo-service</module>
+                <module>demo-application</module>
+                <module>demo-register</module>
             </modules>
         </profile>
         <profile>
             <id>all</id>
             <modules>
-                <module>sermant-flowcontrol</module>
-                <module>sermant-server-monitor</module>
-                <module>sermant-flowrecord</module>
-                <module>sermant-route</module>
-                <module>sermant-threadlocal</module>
-                <module>sermant-online-stresstest</module>
-                <module>sermant-service-registry</module>
-                <module>sermant-luban-adaptor</module>
-                <module>sermant-loadbalancer</module>
+                <module>demo-plugin</module>
+                <module>demo-service</module>
+                <module>demo-application</module>
+                <module>demo-register</module>
             </modules>
         </profile>
     </profiles>
@@ -109,4 +92,5 @@
             </plugins>
         </pluginManagement>
     </build>
+
 </project>

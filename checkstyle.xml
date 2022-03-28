@@ -520,7 +520,11 @@
         <!-- 第一章 命名检查结束-->
         <!-- 第二章 注释检查开始-->
         <!--规则2.1 注释块标签顺序-->
-        <module name="AtclauseOrder"/>
+        <module name="AtclauseOrder">
+            <property name="tagOrder" value="@param, @return, @throws, @deprecated" />
+            <property name="target"
+                      value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF" />
+        </module>
         <!-- 第二章 注释检查结束-->
         <!-- 第三章 排版检查开始-->
         <!-- 采用java风格还是c风格，例如：int[] num是java风格，int num[]是c风格。规则3.7 禁止C风格的数组声明-->
