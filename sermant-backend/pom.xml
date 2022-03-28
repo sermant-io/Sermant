@@ -14,7 +14,7 @@
         <jdk.version>1.8</jdk.version>
         <spring.boot.version>2.5.3</spring.boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <org.apache.tomcat.embed.version>9.0.38</org.apache.tomcat.embed.version>
+        <org.apache.tomcat.embed.version>9.0.43</org.apache.tomcat.embed.version>
         <io.netty.version>4.1.75.Final</io.netty.version>
         <spring-boot.version>2.5.8</spring-boot.version>
     </properties>
