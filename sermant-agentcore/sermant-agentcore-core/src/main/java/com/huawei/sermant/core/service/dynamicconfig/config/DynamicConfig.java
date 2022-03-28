@@ -21,6 +21,8 @@ import com.huawei.sermant.core.config.common.ConfigFieldKey;
 import com.huawei.sermant.core.config.common.ConfigTypeKey;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigServiceType;
 
+import java.util.Locale;
+
 /**
  * Config for this DynamicConfig Module
  */
@@ -48,7 +50,7 @@ public class DynamicConfig implements BaseConfig {
      * 服务实现类型，取NOP、ZOOKEEPER、KIE
      */
     @ConfigFieldKey("dynamic_config_type")
-    private DynamicConfigServiceType serviceType = DynamicConfigServiceType.NOP;
+    private String serviceType = "NOP";
 
     public int getTimeoutValue() {
         return timeoutValue;
@@ -63,6 +65,6 @@ public class DynamicConfig implements BaseConfig {
     }
 
     public DynamicConfigServiceType getServiceType() {
-        return serviceType;
+        return DynamicConfigServiceType.valueOf(serviceType.toUpperCase(Locale.ROOT));
     }
 }
