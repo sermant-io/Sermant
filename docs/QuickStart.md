@@ -36,16 +36,16 @@
 - 执行以下命令启动注册插件provider示例应用
   ```bash
   # windows
-  java -javaagent:agent\sermant-agent.jar=appName=provider -jar ..\sermant-plugins\sermant-example\demo-register\resttemplate-provider\target\resttemplate-provider.jar
+  java -javaagent:agent\sermant-agent.jar=appName=provider -jar ..\sermant-example\demo-register\resttemplate-provider\target\resttemplate-provider.jar
   # mac linux
-  java -javaagent:agent/sermant-agent.jar=appName=provider -jar ../sermant-plugins/sermant-example/demo-register/resttemplate-provider/target/resttemplate-provider.jar
+  java -javaagent:agent/sermant-agent.jar=appName=provider -jar ../sermant-example/demo-register/resttemplate-provider/target/resttemplate-provider.jar
   ```
 - 执行以下命令启动注册插件consumer示例应用
   ```bash
   # windows
-  java -javaagent:agent\sermant-agent.jar=appName=consumer -jar ..\sermant-plugins\sermant-example\demo-register\resttemplate-consumer\target\resttemplate-consumer.jar
+  java -javaagent:agent\sermant-agent.jar=appName=consumer -jar ..\sermant-example\demo-register\resttemplate-consumer\target\resttemplate-consumer.jar
   # mac linux
-  java -javaagent:agent/sermant-agent.jar=appName=consumer -jar ../sermant-plugins/sermant-example/demo-register/resttemplate-consumer/target/resttemplate-consumer.jar
+  java -javaagent:agent/sermant-agent.jar=appName=consumer -jar ../sermant-example/demo-register/resttemplate-consumer/target/resttemplate-consumer.jar
   ```
 - 浏览器访问：[http://localhost:8900](http://localhost:8900) 查看框架和启用插件的运行状态。
 ![pic](binary-docs/backend_sermant_info.png)
@@ -54,6 +54,9 @@
 - 浏览器访问：[http://localhost:8005/hello](http://localhost:8005/hello) 验证provider和consumer注册和订阅成功。
 
   <img src="binary-docs/check_application.png" width="50%" syt height="50%" />
+
+## 查看日志
+sermant和backned存放目录分别位于`/var/logs/sermant/core`和`/var/logs/sermant/backend`
 
 ## 相关文档
 
