@@ -31,14 +31,14 @@
             </activation>
             <modules>
                 <module>sermant-flowcontrol</module>
-                <module>sermant-register-center</module>
+                <module>sermant-service-registry</module>
             </modules>
         </profile>
         <profile>
             <id>example</id>
             <modules>
                 <module>sermant-example</module>
-                <module>sermant-register-center</module>
+                <module>sermant-service-registry</module>
             </modules>
         </profile>
         <profile>
@@ -60,7 +60,7 @@
                 <module>sermant-route</module>
                 <module>sermant-threadlocal</module>
                 <module>sermant-online-stresstest</module>
-                <module>sermant-register-center</module>
+                <module>sermant-service-registry</module>
                 <module>sermant-luban-adaptor</module>
                 <module>sermant-loadbalancer</module>
             </modules>

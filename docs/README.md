@@ -17,7 +17,7 @@ Sermant 基于Java的字节码增强技术，通过 JavaAgent 对宿主应用进
   - [sermant-agentcore-core](../sermant-agentcore/sermant-agentcore-core): 核心功能模块
   - [sermant-agentcore-premain](../sermant-agentcore/sermant-agentcore-premain): *JavaAgent*入口模块
 - [sermant-backend](../sermant-backend): 消息发送模块服务端
-- [sermant-package](../sermant-package): 打包模块  
+- [sermant-package](../sermant-package): 打包模块
 - [sermant-plugins](../sermant-plugins): 插件根模块，内含各种功能的插件及相关附加件
 
 ## 打包流程
@@ -79,9 +79,8 @@ mvn clean package -Dmaven.test.skip
 |[流量录制回放功能介绍](user-guide/flowrecord/document.md)|使用手册|
 |[全链路压测功能介绍](user-guide/hercules/document.md)|使用手册|
 |[影子库压测功能介绍](user-guide/online-stresstest/document.md)|使用手册|
-|[注册中心功能介绍](user-guide/register/document.md)|使用手册|
+|[服务注册功能介绍](user-guide/registry/document.md)|使用手册|
 |[灰度发布功能介绍](user-guide/route/document.md)|使用手册|
 |[服务监控功能介绍](user-guide/server-monitor/document.md)|使用手册|
 |[线程变量插件功能介绍](user-guide/threadlocal/document.md)|使用手册|
 |[当前插件功能汇总列表](user-guide/feature-list.md)|使用手册|
-
