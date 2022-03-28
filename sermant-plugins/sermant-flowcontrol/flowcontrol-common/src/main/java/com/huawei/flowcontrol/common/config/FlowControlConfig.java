@@ -36,21 +36,6 @@ public class FlowControlConfig implements PluginConfig {
     private String kafkaBootstrapServers = "127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094";
 
     /**
-     * sentinel的版本
-     */
-    private String sentinelVersion = "1.8.0";
-
-    /**
-     * 流控插件zk地址
-     */
-    private String zookeeperAddress = "127.0.0.1:2181";
-
-    /**
-     * 流控相关配置在zk中的node
-     */
-    private String flowControlZookeeperPath = "/sentinel_rule_config";
-
-    /**
      * 心跳发送默认间隔时间，单位毫秒
      */
     private long heartbeatInterval = CommonConst.FLOW_CONTROL_HEARTBEAT_INTERVAL;
@@ -161,21 +146,6 @@ public class FlowControlConfig implements PluginConfig {
     private boolean isKafkaSsl = ConfigConst.IS_KAFKA_SSL;
 
     /**
-     * 开发环境配置文件，默认为dev
-     */
-    private String configProfileActive = "dev";
-
-    /**
-     * 配置流控插件
-     */
-    private String configZookeeperPath = "/flowcontrol_plugin_config";
-
-    /**
-     * 对接的配置中心类型，当前支持zookeeper、servicecomb-kie两种类型 默认为对接zookeeper，对接kie时请改为servicecomb-kie
-     */
-    private String configCenterType = "zookeeper";
-
-    /**
      * servicecomb-kie地址，当配置中心配为servicecomb-kie时需填写正确的kie服务地址
      */
     private String configKieAddress = "localhost:30110";
@@ -184,12 +154,6 @@ public class FlowControlConfig implements PluginConfig {
      * 标签监听的服务名 为空则使用IdentityConfigManager#getAppName() 否则使用配置的服务名
      */
     private String configServiceName = "sermantService";
-
-    /**
-     * 是否使用插件自身的url地址 该配置仅zookeeper生效 默认使用的是配置中心地址
-     */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
-    private boolean needUseSelfUrl = false;
 
     /**
      * 是否开启数据采集 包含心跳、指标
@@ -471,53 +435,12 @@ public class FlowControlConfig implements PluginConfig {
         this.openMetricCollector = openMetricCollector;
     }
 
-    public boolean isUseSelfUrl() {
-        return needUseSelfUrl;
-    }
-
-    @SuppressWarnings("checkstyle:RegexpSingleline")
-    public void setUseSelfUrl(boolean useSelfUrl) {
-        this.needUseSelfUrl = useSelfUrl;
-    }
-
     public String getKafkaBootstrapServers() {
         return kafkaBootstrapServers;
     }
 
     public void setKafkaBootstrapServers(String kafkaBootstrapServers) {
         this.kafkaBootstrapServers = kafkaBootstrapServers;
-    }
-
-    public String getConfigCenterType() {
-        return configCenterType;
-    }
-
-    public void setConfigCenterType(String configCenterType) {
-        this.configCenterType = configCenterType;
-    }
-
-    public String getSentinelVersion() {
-        return sentinelVersion;
-    }
-
-    public void setSentinelVersion(String sentinelVersion) {
-        this.sentinelVersion = sentinelVersion;
-    }
-
-    public String getZookeeperAddress() {
-        return zookeeperAddress;
-    }
-
-    public void setZookeeperAddress(String zookeeperAddress) {
-        this.zookeeperAddress = zookeeperAddress;
-    }
-
-    public String getFlowControlZookeeperPath() {
-        return flowControlZookeeperPath;
-    }
-
-    public void setFlowControlZookeeperPath(String flowControlZookeeperPath) {
-        this.flowControlZookeeperPath = flowControlZookeeperPath;
     }
 
     public long getHeartbeatInterval() {
@@ -695,22 +618,6 @@ public class FlowControlConfig implements PluginConfig {
     @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setKafkaSsl(boolean kafkaSsl) {
         this.isKafkaSsl = kafkaSsl;
-    }
-
-    public String getConfigProfileActive() {
-        return configProfileActive;
-    }
-
-    public void setConfigProfileActive(String configProfileActive) {
-        this.configProfileActive = configProfileActive;
-    }
-
-    public String getConfigZookeeperPath() {
-        return configZookeeperPath;
-    }
-
-    public void setConfigZookeeperPath(String configZookeeperPath) {
-        this.configZookeeperPath = configZookeeperPath;
     }
 
     public String getConfigKieAddress() {
