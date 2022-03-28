@@ -205,10 +205,6 @@
         <property name="message" value="编程规范-规则8.3.1 冗余不简洁"/>
     </module>
     <module name="RegexpSingleline">
-        <property name="format" value="(0|1) [!=]= "/>
-        <property name="message" value="编程规范-建议8.2.3 表达式的比较，应当遵循左侧倾向于变化、右侧倾向于不变的原则。"/>
-    </module>
-    <module name="RegexpSingleline">
         <property name="format" value="^\s*\*\s*@apiNote\s*$"/>
         <property name="message" value="编程规范-规则2.3 推荐使用JDK1.8新的tag:@implSpec,@apiNote和@implNote，如果确实不需要请删除tag"/>
     </module>
@@ -402,7 +398,7 @@
         </module>
         <module name="MagicNumber">
             <!-- 魔鬼数字 -->
-            <property name="ignoreNumbers" value="0, 1"/>
+            <property name="ignoreNumbers" value="0, 1, -1"/>
             <!-- 对-1/0/1不检查 -->
             <property name="ignoreHashCodeMethod" value="true"/>
             <property name="ignoreAnnotation" value="true"/>
