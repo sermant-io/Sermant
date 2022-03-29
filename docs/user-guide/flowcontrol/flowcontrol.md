@@ -53,14 +53,14 @@ dynamic.config.dynamic_config_type=KIE
 
 **（3）配置注册插件**
 
-修改配置文件`${javaagent路径}/pluginPackage/register-center/config/config.yaml`， 修正servicecomb注册中心地址
+修改配置文件`${javaagent路径}/pluginPackage/registry/config/config.yaml`， 修正servicecomb注册中心地址
 
 ```yaml
 servicecomb.service:
   address: http://127.0.0.1:30100 #注册中心地址
 ```
 
-具体配置可参考[注册插件配置](https://github.com/huaweicloud/Sermant/blob/develop/docs/user-guide/register/document.md)
+具体配置可参考[注册插件配置](https://github.com/huaweicloud/Sermant/blob/develop/docs/user-guide/registry/document.md)
 
 **（4）配置流控插件**
 
@@ -130,21 +130,19 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
         name: degrade     # 可选，配置名
   ```
 
-  
+**规则解释:**
 
-  **规则解释:**
+- 请求路径为`/degrade`且方法类型为`GET`即匹配成功
+- 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
 
-  - 请求路径为`/degrade`且方法类型为`GET`即匹配成功
-  - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
-
-  > 详细配置项可参考[ServiceComb开发文档](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2)流量标记部分
-  >
-  > 
-  >
-  > **注意事项：**
-  >
-  > - 流控配置首先需配置业务场景，再配置与业务场景绑定的流控规则
-  > - `key`必须以`servicecomb.matchGroup.`为前置，`scene`则为业务名称
+> 详细配置项可参考[ServiceComb开发文档](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2)流量标记部分
+>
+>
+>
+> **注意事项：**
+>
+> - 流控配置首先需配置业务场景，再配置与业务场景绑定的流控规则
+> - `key`必须以`servicecomb.matchGroup.`为前置，`scene`则为业务名称
 
 - #### **流控规则配置示例**
 
@@ -164,9 +162,9 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
 
   **规则解释：**
 
-  - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
+    - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
 
-  - 1秒内超过2个请求，即触发流控效果
+    - 1秒内超过2个请求，即触发流控效果
 
   > **注意事项：**
   >
@@ -195,8 +193,8 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
 
   **规则解释:**
 
-  - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
-  - 10秒内，若请求个数超过3个，且错误率超过90%或者慢请求占比超过80%则触发熔断
+    - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
+    - 10秒内，若请求个数超过3个，且错误率超过90%或者慢请求占比超过80%则触发熔断
 
   > **注意事项：**
   >
@@ -250,8 +248,8 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
 
   **规则解释：**
 
-  - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
-  - 当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数
+    - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
+    - 当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数
 
   > 注意事项：**
   >
@@ -327,9 +325,8 @@ java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appNa
 
 ## 其他
 
-如果读者**希望不使用配置中心API且不去适配ServiceComb**，可参考下面的文档
+[流控常见问题](./FAQ.md)
 
-- [基于KIE配置中心配置限流规则](./kie-configuration-document.md)
-- [基于ZOOKEEPER配置中心配置限流规则](zk-configuration-document.md)
+
 
 [返回**Sermant**说明文档](../../README.md)
