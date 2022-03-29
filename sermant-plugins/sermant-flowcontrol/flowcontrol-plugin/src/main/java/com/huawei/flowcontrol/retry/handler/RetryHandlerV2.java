@@ -30,6 +30,7 @@ import io.github.resilience4j.retry.RetryRegistry;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -40,10 +41,10 @@ import java.util.function.Predicate;
  */
 public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
     @Override
-    protected Retry createProcessor(String businessName, RetryRule rule) {
+    protected Optional<Retry> createProcessor(String businessName, RetryRule rule) {
         final com.huawei.flowcontrol.common.handler.retry.Retry retry = RetryContext.INSTANCE.getRetry();
         if (retry == null) {
-            return null;
+            return Optional.empty();
         }
         final RetryConfig retryConfig = RetryConfig.custom()
             .maxAttempts(rule.getMaxAttempts())
@@ -51,7 +52,7 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
             .retryOnException(createExceptionPredicate(retry.retryExceptions()))
             .intervalFunction(getIntervalFunction(rule))
             .build();
-        return RetryRegistry.of(retryConfig).retry(businessName);
+        return Optional.of(RetryRegistry.of(retryConfig).retry(businessName));
     }
 
     private Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable>[] retryExceptions) {

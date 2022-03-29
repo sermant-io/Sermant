@@ -50,7 +50,7 @@ public abstract class ConfigManager {
     private static final Map<String, BaseConfig> CONFIG_MAP = new HashMap<String, BaseConfig>();
 
     private static final Iterable<LoadConfigStrategy> LOAD_CONFIG_STRATEGIES =
-            ServiceLoader.load(LoadConfigStrategy.class);
+        ServiceLoader.load(LoadConfigStrategy.class);
 
     private static Map<String, Object> argsMap = null;
 
@@ -62,7 +62,7 @@ public abstract class ConfigManager {
      * @return 配置对象
      */
     public static <R extends BaseConfig> R getConfig(Class<R> cls) {
-        return (R) CONFIG_MAP.get(ConfigKeyUtil.getTypeKey(cls));
+        return (R)CONFIG_MAP.get(ConfigKeyUtil.getTypeKey(cls));
     }
 
     /**
@@ -83,7 +83,7 @@ public abstract class ConfigManager {
      */
     public static synchronized void initialize(Map<String, Object> args) {
         argsMap = args;
-        loadConfig(BootArgsIndexer.getConfigFile(), BaseConfig.class, ClassLoader.getSystemClassLoader(), null);
+        loadConfig(BootArgsIndexer.getConfigFile(), BaseConfig.class, ClassLoader.getSystemClassLoader());
     }
 
     /**
@@ -92,14 +92,12 @@ public abstract class ConfigManager {
      * @param configFile     配置文件
      * @param baseCls        配置对象的基类，该参数决定spi操作的源
      * @param classLoader    类加载器，该参数决定从哪个classLoader中进行api操作
-     * @param otherProcessor 其他配置操作，在封装完参数后进行，作为补充内容
      */
-    protected static void loadConfig(File configFile, Class<? extends BaseConfig> baseCls,
-            ClassLoader classLoader, ConfigConsumer otherProcessor) {
+    protected static void loadConfig(File configFile, Class<? extends BaseConfig> baseCls, ClassLoader classLoader) {
         if (configFile.exists() && configFile.isFile()) {
-            doLoadConfig(configFile, baseCls, classLoader, otherProcessor);
+            doLoadConfig(configFile, baseCls, classLoader);
         } else {
-            loadDefaultConfig(baseCls, classLoader, otherProcessor);
+            loadDefaultConfig(baseCls, classLoader);
         }
     }
 
@@ -108,19 +106,14 @@ public abstract class ConfigManager {
      *
      * @param baseCls        配置对象的基类，该参数决定spi操作的源
      * @param classLoader    类加载器，该参数决定从哪个classLoader中进行api操作
-     * @param otherProcessor 其他配置操作，在封装完参数后进行，作为补充内容
      */
-    private static synchronized void loadDefaultConfig(Class<? extends BaseConfig> baseCls, ClassLoader classLoader,
-            ConfigConsumer otherProcessor) {
+    private static synchronized void loadDefaultConfig(Class<? extends BaseConfig> baseCls, ClassLoader classLoader) {
         foreachConfig(new ConfigConsumer() {
             @Override
             public void accept(BaseConfig config) {
                 final String typeKey = ConfigKeyUtil.getTypeKey(config.getClass());
                 if (!CONFIG_MAP.containsKey(typeKey)) {
                     CONFIG_MAP.put(typeKey, config);
-                    if (otherProcessor != null) {
-                        otherProcessor.accept(config);
-                    }
                 }
             }
         }, baseCls, classLoader);
@@ -132,10 +125,9 @@ public abstract class ConfigManager {
      * @param configFile     配置文件
      * @param baseCls        配置对象的基类，该参数决定spi操作的源
      * @param classLoader    类加载器，该参数决定从哪个classLoader中进行api操作
-     * @param otherProcessor 其他配置操作，在封装完参数后进行，作为补充内容
      */
     private static synchronized void doLoadConfig(File configFile, Class<? extends BaseConfig> baseCls,
-            ClassLoader classLoader, ConfigConsumer otherProcessor) {
+        ClassLoader classLoader) {
         final LoadConfigStrategy<?> loadConfigStrategy = getLoadConfigStrategy(configFile, classLoader);
         final Object holder = loadConfigStrategy.getConfigHolder(configFile, argsMap);
         foreachConfig(new ConfigConsumer() {
@@ -144,16 +136,13 @@ public abstract class ConfigManager {
                 final String typeKey = ConfigKeyUtil.getTypeKey(config.getClass());
                 final BaseConfig retainedConfig = CONFIG_MAP.get(typeKey);
                 if (retainedConfig == null) {
-                    config = ((LoadConfigStrategy) loadConfigStrategy).loadConfig(holder, config);
-                    CONFIG_MAP.put(typeKey, config);
-                    if (otherProcessor != null) {
-                        otherProcessor.accept(config);
-                    }
+                    CONFIG_MAP.put(typeKey, ((LoadConfigStrategy)loadConfigStrategy).loadConfig(holder, config));
                 } else if (retainedConfig.getClass() == config.getClass()) {
-                    LOGGER.fine(String.format("Skip load config [%s] repeatedly. ", config.getClass().getName()));
+                    LOGGER.fine(
+                        String.format(Locale.ROOT, "Skip load config [%s] repeatedly. ", config.getClass().getName()));
                 } else {
-                    LOGGER.warning(String.format("Type key of %s is %s,  same as %s's. ",
-                            config.getClass().getName(), typeKey, retainedConfig.getClass().getName()));
+                    LOGGER.warning(String.format(Locale.ROOT, "Type key of %s is %s,  same as %s's. ",
+                        config.getClass().getName(), typeKey, retainedConfig.getClass().getName()));
                 }
             }
         }, baseCls, classLoader);
@@ -184,7 +173,7 @@ public abstract class ConfigManager {
             }
         }
         LOGGER.log(Level.WARNING, String.format(Locale.ROOT, "Missing implement of [%s], use [%s].",
-                LoadConfigStrategy.class.getName(), LoadConfigStrategy.DefaultLoadConfigStrategy.class.getName()));
+            LoadConfigStrategy.class.getName(), LoadConfigStrategy.DefaultLoadConfigStrategy.class.getName()));
         return new LoadConfigStrategy.DefaultLoadConfigStrategy();
     }
 
@@ -196,7 +185,7 @@ public abstract class ConfigManager {
      * @param configConsumer 配置处理方法
      */
     private static void foreachConfig(ConfigConsumer configConsumer, Class<? extends BaseConfig> baseCls,
-            ClassLoader classLoader) {
+        ClassLoader classLoader) {
         for (BaseConfig config : ServiceLoader.load(baseCls, classLoader)) {
             configConsumer.accept(config);
         }
@@ -204,8 +193,15 @@ public abstract class ConfigManager {
 
     /**
      * 配置对象消费者
+     *
+     * @since 2021-12-31
      */
     public interface ConfigConsumer {
+        /**
+         * 处理BaseConfig
+         *
+         * @param config BaseConfig
+         */
         void accept(BaseConfig config);
     }
 }

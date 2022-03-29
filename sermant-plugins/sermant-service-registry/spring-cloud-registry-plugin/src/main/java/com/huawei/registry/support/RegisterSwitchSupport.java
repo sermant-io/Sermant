@@ -31,6 +31,9 @@ import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 public abstract class RegisterSwitchSupport implements Interceptor {
     private final RegisterConfig registerConfig;
 
+    /**
+     * 注册开关构造器
+     */
     public RegisterSwitchSupport() {
         registerConfig = PluginConfigManager.getPluginConfig(RegisterConfig.class);
     }

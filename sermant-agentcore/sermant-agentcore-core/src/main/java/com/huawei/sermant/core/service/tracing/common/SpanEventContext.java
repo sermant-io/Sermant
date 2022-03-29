@@ -1,14 +1,17 @@
 /*
  * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.huawei.sermant.core.service.tracing.common;
@@ -32,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter
 public class SpanEventContext {
     private static final String SPAN_ID_SEPARATOR = "-";
+
     SpanEvent spanEvent = new SpanEvent();
 
     /**
@@ -82,6 +86,10 @@ public class SpanEventContext {
      */
     public void addChildrenSpan() {
         this.spanEvent = new SpanEvent(this.spanEvent);
+        if (StringUtils.isBlank(this.spanEvent.getSpanIdPrefix())) {
+            this.spanEvent.setSpanId(String.valueOf(this.spanIdCount.getAndIncrement()));
+            return;
+        }
         this.spanEvent
             .setSpanId(this.spanEvent.getSpanIdPrefix() + SPAN_ID_SEPARATOR + this.spanIdCount.getAndIncrement());
     }

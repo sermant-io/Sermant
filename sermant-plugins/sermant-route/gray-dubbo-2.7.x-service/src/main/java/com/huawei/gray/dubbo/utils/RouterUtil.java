@@ -27,7 +27,7 @@ import com.huawei.route.common.gray.label.entity.Route;
 import com.huawei.route.common.gray.label.entity.Rule;
 import com.huawei.route.common.gray.label.entity.ValueMatch;
 import com.huawei.route.common.utils.CollectionUtils;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.sermant.core.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -100,7 +100,7 @@ public class RouterUtil {
             return true;
         }
         String source = match.getSource();
-        if (StringUtils.isNotBlank(source) && !source.equals(DubboCache.INSTANCE.getAppName())) {
+        if (StringUtils.isExist(source) && !source.equals(DubboCache.INSTANCE.getAppName())) {
             return true;
         }
         if (!interfaceName.equals(match.getPath())) {

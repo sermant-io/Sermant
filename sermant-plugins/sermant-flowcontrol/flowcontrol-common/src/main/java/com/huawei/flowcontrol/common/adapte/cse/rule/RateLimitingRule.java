@@ -81,6 +81,11 @@ public class RateLimitingRule extends AbstractRule {
         return timeoutDuration;
     }
 
+    /**
+     * 设置流控超时时间
+     *
+     * @param timeoutDuration 超时时间
+     */
     public void setTimeoutDuration(String timeoutDuration) {
         this.timeoutDuration = timeoutDuration;
         this.parsedTimeoutDuration = parseLongTime(timeoutDuration, DEFAULT_TIMEOUT_DURATION_MS);
@@ -90,6 +95,11 @@ public class RateLimitingRule extends AbstractRule {
         return limitRefreshPeriod;
     }
 
+    /**
+     * 单位时间
+     *
+     * @param limitRefreshPeriod 单位时间
+     */
     public void setLimitRefreshPeriod(String limitRefreshPeriod) {
         this.limitRefreshPeriod = limitRefreshPeriod;
         this.parsedLimitRefreshPeriod = parseLongTime(limitRefreshPeriod, DEFAULT_LIMIT_REFRESH_PERIOD_MS);

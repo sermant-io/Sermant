@@ -34,6 +34,9 @@ public class AlibabaDubboDeclarer extends DubboDeclarer {
      */
     private static final String INTERCEPT_CLASS = AlibabaDubboInterceptor.class.getCanonicalName();
 
+    /**
+     * alibaba dubbo拦截声明
+     */
     public AlibabaDubboDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS);
     }

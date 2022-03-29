@@ -18,7 +18,7 @@ package com.huawei.sermant.core.config.utils;
 
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.exception.DupConfIndexException;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.sermant.core.utils.StringUtils;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

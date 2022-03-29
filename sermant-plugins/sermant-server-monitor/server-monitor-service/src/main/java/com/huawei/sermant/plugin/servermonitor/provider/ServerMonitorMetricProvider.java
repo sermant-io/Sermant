@@ -19,7 +19,7 @@ package com.huawei.sermant.plugin.servermonitor.provider;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.send.GatewayClient;
+import com.huawei.sermant.core.service.send.api.GatewayClient;
 import com.huawei.sermant.plugin.monitor.common.collect.MetricProvider;
 import com.huawei.sermant.plugin.monitor.common.config.ServiceConfig;
 import com.huawei.sermant.plugin.servermonitor.collector.CpuMetricCollector;
@@ -34,6 +34,8 @@ import java.util.logging.Logger;
 
 /**
  * CPU、磁盘、网络、磁盘 Metric Provider
+ *
+ * @since 2021-12-31
  */
 public class ServerMonitorMetricProvider implements MetricProvider<ServerMetric> {
     private static final Logger LOGGER = LoggerFactory.getLogger();
@@ -46,8 +48,13 @@ public class ServerMonitorMetricProvider implements MetricProvider<ServerMetric>
 
     private final GatewayClient gatewayClient;
     private final String service;
-    private  final String serviceInstance;
+    private final String serviceInstance;
 
+    /**
+     * 构造方法
+     *
+     * @param collectInterval collectInterval
+     */
     public ServerMonitorMetricProvider(long collectInterval) {
         ServiceConfig config = PluginConfigManager.getPluginConfig(ServiceConfig.class);
         service = config.getService();

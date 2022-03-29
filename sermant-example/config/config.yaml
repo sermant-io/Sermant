@@ -1,26 +1,4 @@
 demo.test:
-  pluginName: example
-  interceptors:
-    - name: com.huawei.example.demo.interceptor.DemoConfigInterceptor
-      alia: DemoConfigInterceptor
-    - name: com.huawei.example.demo.interceptor.DemoConstInterceptor
-      alia: DemoConstInterceptor
-    - name: com.huawei.example.demo.interceptor.DemoFieldCheckInterceptor
-      alia: DemoFieldCheckInterceptor
-    - name: com.huawei.example.demo.interceptor.DemoFieldSetInterceptor
-      alia: DemoFieldSetInterceptor
-    - name: com.huawei.example.demo.interceptor.DemoInterfaceInterceptor
-      alia: DemoInterfaceInterceptor
-    - name: com.huawei.example.demo.interceptor.DemoMemberInterceptor
-      alia: DemoMemberInterceptor
-    - name: com.huawei.example.demo.interceptor.DemoServiceInterceptor
-      alia: DemoServiceInterceptor
-    - name: com.huawei.example.demo.interceptor.DemoStaticInterceptor
-      alia: DemoStaticInterceptor
-    - name: com.huawei.example.demo.interceptor.DemoTraceReceiveInterceptor
-      alia: DemoTraceReceiveInterceptor
-    - name: com.huawei.example.demo.interceptor.DemoTraceSendInterceptor
-      alia: DemoTraceSendInterceptor
   intField: 123456
   strField: hello world, intField = ${intField}, appName = ${appName}, user.home = ${user.home}
   pojoField:

@@ -20,11 +20,11 @@ package com.huawei.flowcontrol.adapte.cse.test;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.config.common.BaseConfig;
-import com.huawei.sermant.core.lubanops.bootstrap.config.AgentConfigManager;
+import com.huawei.sermant.core.plugin.config.ServiceMeta;
 import com.huawei.sermant.core.service.ServiceManager;
+import com.huawei.sermant.core.service.config.BackendConfig;
 import com.huawei.sermant.core.service.dynamicconfig.config.DynamicConfig;
-import com.huawei.sermant.core.service.heartbeat.HeartbeatConfig;
-import com.huawei.sermant.core.service.meta.ServiceMeta;
+import com.huawei.sermant.core.service.heartbeat.config.HeartbeatConfig;
 
 import org.junit.BeforeClass;
 
@@ -60,11 +60,11 @@ public class BaseTest {
     @BeforeClass
     public static void init() throws Exception {
         currentClassLoader = Thread.currentThread().getContextClassLoader();
-        final Class<?> agentConfigManagerClass = currentClassLoader.loadClass(AgentConfigManager.class.getName());
-        final Field nettyServerPort = agentConfigManagerClass.getDeclaredField("backendPort");
+        final Class<?> agentConfigManagerClass = currentClassLoader.loadClass(BackendConfig.class.getName());
+        final Field nettyServerPort = agentConfigManagerClass.getDeclaredField("port");
         setFieldValue(nettyServerPort, "6888", null);
 
-        final Field nettyServerIp = agentConfigManagerClass.getDeclaredField("backendIp");
+        final Field nettyServerIp = agentConfigManagerClass.getDeclaredField("ip");
         setFieldValue(nettyServerIp, "127.0.0.1", null);
 
         final Class<?> configManagerClass = currentClassLoader.loadClass(ConfigManager.class.getName());

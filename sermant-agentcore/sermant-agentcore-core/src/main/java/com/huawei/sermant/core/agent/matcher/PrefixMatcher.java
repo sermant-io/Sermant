@@ -22,7 +22,7 @@
 
 package com.huawei.sermant.core.agent.matcher;
 
-import com.huawei.sermant.core.utils.Assert;
+import com.huawei.sermant.core.utils.AssertUtils;
 
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
@@ -30,14 +30,21 @@ import net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * 类名前缀匹配器
+ *
+ * @since 2022-01-29
  */
 @Deprecated
 public class PrefixMatcher implements NonNameMatcher {
 
     private final String prefix;
 
+    /**
+     * 前缀匹配
+     *
+     * @param prefix prefix
+     */
     public PrefixMatcher(String prefix) {
-        Assert.hasText(prefix, "Prefix can not be blank.");
+        AssertUtils.hasText(prefix, "Prefix can not be blank.");
         this.prefix = prefix;
     }
 

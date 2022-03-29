@@ -1,24 +1,18 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE
+ * file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file
+ * to You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights
+ * reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0 http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  */
 
@@ -29,11 +23,11 @@ import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.utils.HostUtils;
 import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.sermant.core.plugin.common.PluginConstant;
 import com.huawei.sermant.core.plugin.common.PluginSchemaValidator;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.utils.JarFileUtils;
+import com.huawei.sermant.core.utils.StringUtils;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -105,6 +99,8 @@ public class ScClient {
      */
     private static final String REG_VERSION_KEY = "reg.version";
 
+    private static final int FLAG = -1;
+
     private ServiceCenterConfiguration serviceCenterConfiguration;
 
     private ServiceCenterClient serviceCenterClient;
@@ -161,15 +157,13 @@ public class ScClient {
             return Collections.emptyList();
         }
         final List<Microservice> allServices = response.getServices();
-        final List<String> allServiceIds = allServices.stream()
-            .filter(service -> StringUtils.equals(service.getServiceName(), serviceName))
-            .map(Microservice::getServiceId)
-            .distinct()
-            .collect(Collectors.toList());
+        final List<String> allServiceIds =
+            allServices.stream().filter(service -> StringUtils.equals(service.getServiceName(), serviceName))
+                .map(Microservice::getServiceId).distinct().collect(Collectors.toList());
         List<MicroserviceInstance> microserviceInstances = new ArrayList<>();
         allServiceIds.forEach(serviceId -> {
-            final MicroserviceInstancesResponse instanceResponse = serviceCenterClient
-                .getMicroserviceInstanceList(serviceId);
+            final MicroserviceInstancesResponse instanceResponse =
+                serviceCenterClient.getMicroserviceInstanceList(serviceId);
             if (instanceResponse != null && instanceResponse.getInstances() != null) {
                 microserviceInstances.addAll(instanceResponse.getInstances());
             }
@@ -223,7 +217,7 @@ public class ScClient {
 
     private SubscriptionKey buildSubscriptionKey(String serviceId) {
         int index = serviceId.indexOf(ConfigConstants.APP_SERVICE_SEPARATOR);
-        if (index == -1) {
+        if (index == FLAG) {
             return new SubscriptionKey(microservice.getAppId(), serviceId);
         }
         return new SubscriptionKey(serviceId.substring(0, index), serviceId.substring(index + 1));
@@ -273,8 +267,8 @@ public class ScClient {
         if (serviceCenterClient == null) {
             return;
         }
-        ServiceCenterRegistration serviceCenterRegistration = new ServiceCenterRegistration(serviceCenterClient,
-            serviceCenterConfiguration, EVENT_BUS);
+        ServiceCenterRegistration serviceCenterRegistration =
+            new ServiceCenterRegistration(serviceCenterClient, serviceCenterConfiguration, EVENT_BUS);
         EVENT_BUS.register(this);
         serviceCenterRegistration.setMicroservice(buildMicroService());
         buildMicroServiceInstance();
@@ -289,17 +283,13 @@ public class ScClient {
     }
 
     private void initScClient() {
-        serviceCenterClient = new ServiceCenterClient(
-            createAddressManager(registerConfig.getProject(), getScUrls()),
-            createSslProperties(registerConfig.isSslEnabled()),
-            signRequest -> Collections.emptyMap(),
-            "default",
+        serviceCenterClient = new ServiceCenterClient(createAddressManager(registerConfig.getProject(), getScUrls()),
+            createSslProperties(registerConfig.isSslEnabled()), signRequest -> Collections.emptyMap(), "default",
             Collections.emptyMap());
     }
 
     private List<String> buildEndpoints() {
-        return Collections.singletonList(String.format(Locale.ENGLISH, "rest://%s:%d",
-            HostUtils.getMachineIp(),
+        return Collections.singletonList(String.format(Locale.ENGLISH, "rest://%s:%d", HostUtils.getMachineIp(),
             RegisterContext.INSTANCE.getClientInfo().getPort()));
     }
 
@@ -348,9 +338,8 @@ public class ScClient {
     private Microservice buildMicroService() {
         microservice = new Microservice();
         if (registerConfig.isAllowCrossApp()) {
-            microservice.setAlias(
-                registerConfig.getApplication() + ConfigConstants.APP_SERVICE_SEPARATOR + RegisterContext.INSTANCE
-                    .getClientInfo().getServiceId());
+            microservice.setAlias(registerConfig.getApplication() + ConfigConstants.APP_SERVICE_SEPARATOR
+                + RegisterContext.INSTANCE.getClientInfo().getServiceId());
         }
         microservice.setAppId(registerConfig.getApplication());
         microservice.setEnvironment(registerConfig.getEnvironment());

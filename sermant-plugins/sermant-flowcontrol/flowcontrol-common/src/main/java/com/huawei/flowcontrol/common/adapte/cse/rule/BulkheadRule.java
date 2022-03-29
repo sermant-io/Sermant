@@ -76,6 +76,11 @@ public class BulkheadRule extends AbstractRule {
         return maxWaitDuration;
     }
 
+    /**
+     * 设置最大等待时间
+     *
+     * @param maxWaitDuration 最大等待时间
+     */
     public void setMaxWaitDuration(String maxWaitDuration) {
         this.maxWaitDuration = maxWaitDuration;
         this.parsedMaxWaitDuration = parseLongTime(maxWaitDuration, DEFAULT_MAX_WAIT_DURATION_MS);

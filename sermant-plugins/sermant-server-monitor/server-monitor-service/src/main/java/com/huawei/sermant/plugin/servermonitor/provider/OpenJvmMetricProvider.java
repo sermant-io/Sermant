@@ -25,9 +25,10 @@ package com.huawei.sermant.plugin.servermonitor.provider;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.send.GatewayClient;
+import com.huawei.sermant.core.service.send.api.GatewayClient;
 import com.huawei.sermant.plugin.monitor.common.collect.MetricProvider;
 import com.huawei.sermant.plugin.monitor.common.config.ServiceConfig;
+
 import org.apache.skywalking.apm.agent.core.jvm.cpu.CPUProvider;
 import org.apache.skywalking.apm.agent.core.jvm.gc.GCProvider;
 import org.apache.skywalking.apm.agent.core.jvm.memory.MemoryProvider;
@@ -41,6 +42,8 @@ import java.util.logging.Logger;
 
 /**
  * OpenJdk JVM Metric Provider
+ *
+ * @since 2021-12-31
  */
 public class OpenJvmMetricProvider implements MetricProvider<JVMMetric> {
     private static final Logger LOGGER = LoggerFactory.getLogger();
@@ -65,13 +68,10 @@ public class OpenJvmMetricProvider implements MetricProvider<JVMMetric> {
     @Override
     public JVMMetric collect() {
         final long currentTimeMillis = System.currentTimeMillis();
-        return JVMMetric.newBuilder().setTime(currentTimeMillis)
-            .setCpu(CPUProvider.INSTANCE.getCpuMetric())
+        return JVMMetric.newBuilder().setTime(currentTimeMillis).setCpu(CPUProvider.INSTANCE.getCpuMetric())
             .addAllMemory(MemoryProvider.INSTANCE.getMemoryMetricList())
             .addAllMemoryPool(MemoryPoolProvider.INSTANCE.getMemoryPoolMetricsList())
-            .addAllGc(GCProvider.INSTANCE.getGCList())
-            .setThread(ThreadProvider.INSTANCE.getThreadMetrics())
-            .build();
+            .addAllGc(GCProvider.INSTANCE.getGCList()).setThread(ThreadProvider.INSTANCE.getThreadMetrics()).build();
     }
 
     @Override
@@ -80,11 +80,8 @@ public class OpenJvmMetricProvider implements MetricProvider<JVMMetric> {
             LOGGER.warning("No OpenJdk jvm metric was collected.");
             return;
         }
-        JVMMetricCollection collection = JVMMetricCollection.newBuilder()
-            .setService(service)
-            .setServiceInstance(serviceInstance)
-            .addAllMetrics(metrics)
-            .build();
+        JVMMetricCollection collection = JVMMetricCollection.newBuilder().setService(service)
+            .setServiceInstance(serviceInstance).addAllMetrics(metrics).build();
         gatewayClient.send(collection.toByteArray(), GATEWAY_DATA_TYPE);
     }
 }

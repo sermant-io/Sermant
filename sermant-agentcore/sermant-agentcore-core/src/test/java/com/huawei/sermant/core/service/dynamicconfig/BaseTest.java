@@ -20,11 +20,11 @@ import com.huawei.sermant.core.common.CommonConstant;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.config.common.BaseConfig;
-import com.huawei.sermant.core.lubanops.bootstrap.config.AgentConfigManager;
 import com.huawei.sermant.core.service.ServiceManager;
+import com.huawei.sermant.core.service.send.config.BackendConfig;
 import com.huawei.sermant.core.service.dynamicconfig.config.DynamicConfig;
 import com.huawei.sermant.core.service.dynamicconfig.kie.config.KieDynamicConfig;
-import com.huawei.sermant.core.service.heartbeat.HeartbeatConfig;
+import com.huawei.sermant.core.service.heartbeat.config.HeartbeatConfig;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -49,11 +49,11 @@ public class BaseTest {
     @BeforeClass
     public static void init() throws IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
         currentClassLoader = Thread.currentThread().getContextClassLoader();
-        final Class<?> configManagerClass = currentClassLoader.loadClass(AgentConfigManager.class.getName());
-        final Field backendPort = configManagerClass.getDeclaredField("backendPort");
+        final Class<?> configManagerClass = currentClassLoader.loadClass(BackendConfig.class.getName());
+        final Field backendPort = configManagerClass.getDeclaredField("port");
         setFieldValue(backendPort, "6888", null);
 
-        final Field backendIp = configManagerClass.getDeclaredField("backendIp");
+        final Field backendIp = configManagerClass.getDeclaredField("ip");
         setFieldValue(backendIp, "127.0.0.1", null);
 
         final Class<?> aClass = currentClassLoader.loadClass(ConfigManager.class.getName());

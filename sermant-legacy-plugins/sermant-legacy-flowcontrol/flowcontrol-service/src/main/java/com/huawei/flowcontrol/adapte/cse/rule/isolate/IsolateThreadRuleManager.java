@@ -95,6 +95,11 @@ public class IsolateThreadRuleManager {
         ruleProperty.updateValue(rules);
     }
 
+    /**
+     * 隔离仓配置监听
+     *
+     * @since 2022-01-01
+     */
     static class IsolateThreadRuleListener implements PropertyListener<List<IsolateThreadRule>> {
         @Override
         public void configUpdate(List<IsolateThreadRule> rules) {

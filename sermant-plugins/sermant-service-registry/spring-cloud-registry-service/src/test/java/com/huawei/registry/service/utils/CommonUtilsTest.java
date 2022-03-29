@@ -17,6 +17,7 @@
 package com.huawei.registry.service.utils;
 
 import com.huawei.registry.config.RegisterConfig;
+import com.huawei.registry.utils.CommonUtils;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,14 +38,14 @@ public class CommonUtilsTest {
 
     @Test
     public void testGetIpByEndpoint() {
-        final String ipByEndpoint = CommonUtils.getIpByEndpoint("rest://127.0.0.1:8080");
+        final String ipByEndpoint = CommonUtils.getIpByEndpoint("rest://127.0.0.1:8080").get();
         Assert.assertEquals("127.0.0.1", ipByEndpoint);
     }
 
     @Test
     public void testGetFieldValue() {
         final RegisterConfig registerConfig = new RegisterConfig();
-        final String address = (String) CommonUtils.getFieldValue(registerConfig, "address");
+        final String address = (String) CommonUtils.getFieldValue(registerConfig, "address").get();
         Assert.assertEquals(address, registerConfig.getAddress());
     }
 }

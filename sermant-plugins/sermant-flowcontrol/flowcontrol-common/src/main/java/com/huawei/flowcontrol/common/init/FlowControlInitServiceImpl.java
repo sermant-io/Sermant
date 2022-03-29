@@ -53,6 +53,11 @@ public class FlowControlInitServiceImpl implements PluginService {
         flowControlLifeCycle.stop();
     }
 
+    /**
+     * 流控初始化逻辑生命周期
+     *
+     * @since 2022-03-22
+     */
     static class FlowControlLifeCycle implements Runnable {
         private RuleSyncer ruleSyncer;
 

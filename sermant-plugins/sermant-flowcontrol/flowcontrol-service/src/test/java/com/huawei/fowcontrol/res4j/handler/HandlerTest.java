@@ -24,7 +24,6 @@ import com.huawei.flowcontrol.common.adapte.cse.rule.RateLimitingRule;
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.RateLimiter;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -53,7 +52,7 @@ public class HandlerTest {
         final BulkheadRule bulkheadRule = new BulkheadRule();
         bulkheadRule.setMaxConcurrentCalls(MAX_CALLS);
         bulkheadRule.setMaxWaitDuration(MAX_WAIT_DURATION);
-        final Bulkhead bulkhead = bulkheadHandler.createProcessor(BUSINESS_NAME, bulkheadRule);
+        final Bulkhead bulkhead = bulkheadHandler.createProcessor(BUSINESS_NAME, bulkheadRule).get();
         Assert.assertEquals(bulkhead.getBulkheadConfig().getMaxConcurrentCalls(), MAX_CALLS);
         Assert.assertEquals(bulkhead.getBulkheadConfig().getMaxWaitDuration().toMillis(),
             Long.parseLong(MAX_WAIT_DURATION));
@@ -68,7 +67,7 @@ public class HandlerTest {
         final RateLimitingRule rateLimitingRule = new RateLimitingRule();
         rateLimitingRule.setRate(RATE);
         rateLimitingRule.setLimitRefreshPeriod(LIMIT_PERIOD);
-        final RateLimiter rateLimiter = rateLimitingHandler.createProcessor(BUSINESS_NAME, rateLimitingRule);
+        final RateLimiter rateLimiter = rateLimitingHandler.createProcessor(BUSINESS_NAME, rateLimitingRule).get();
         Assert.assertEquals(rateLimiter.getRateLimiterConfig().getLimitForPeriod(), RATE);
         Assert.assertEquals(rateLimiter.getRateLimiterConfig().getLimitRefreshPeriod().toMillis(),
             Long.parseLong(LIMIT_PERIOD));
@@ -83,7 +82,8 @@ public class HandlerTest {
         final CircuitBreakerRule circuitBreakerRule = new CircuitBreakerRule();
         circuitBreakerRule.setFailureRateThreshold(FAILURE_RATE_THRESHOLD);
         circuitBreakerRule.setMinimumNumberOfCalls(MIN_CALLS);
-        final CircuitBreaker circuitBreaker = circuitBreakerHandler.createProcessor(BUSINESS_NAME, circuitBreakerRule);
+        final CircuitBreaker circuitBreaker = circuitBreakerHandler.createProcessor(BUSINESS_NAME,
+            circuitBreakerRule).get();
         Assert.assertEquals(circuitBreaker.getCircuitBreakerConfig().getFailureRateThreshold(), FAILURE_RATE_THRESHOLD,
             DELTA);
         Assert.assertEquals(circuitBreaker.getCircuitBreakerConfig().getMinimumNumberOfCalls(), MIN_CALLS);

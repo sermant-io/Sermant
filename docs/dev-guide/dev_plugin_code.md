@@ -462,13 +462,13 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         TracingRequest request =
-            new TracingRequest(context.getObject().getClass().getName(), context.getMethod().getName());
+            new TracingRequest(context.getRawCls().getName(), context.getMethod().getName());
         ExtractService<HashMap<String, String>> extractService = (tracingRequest, carrier) -> {
             tracingRequest.setTraceId(carrier.get(TracingHeader.TRACE_ID.getValue()));
             tracingRequest.setParentSpanId(carrier.get(TracingHeader.PARENT_SPAN_ID.getValue()));
             tracingRequest.setSpanIdPrefix(carrier.get(TracingHeader.SPAN_ID_PREFIX.getValue()));
         };
-        tracingService.onProviderSpanStart(request, extractService, (HashMap<String, String>)context.getResult());
+        tracingService.onProviderSpanStart(request, extractService, (HashMap<String, String>)context.getArguments()[0]);
         return context;
     }
 
@@ -496,7 +496,7 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
         TracingRequest request =
-            new TracingRequest(context.getObject().getClass().getName(), context.getMethod().getName());
+            new TracingRequest(context.getRawCls().getName(), context.getMethod().getName());
         InjectService<HashMap<String, String>> injectService = (spanEvent, carrier) -> {
             carrier.put(TracingHeader.TRACE_ID.getValue(), spanEvent.getTraceId());
             carrier.put(TracingHeader.PARENT_SPAN_ID.getValue(), spanEvent.getSpanId());

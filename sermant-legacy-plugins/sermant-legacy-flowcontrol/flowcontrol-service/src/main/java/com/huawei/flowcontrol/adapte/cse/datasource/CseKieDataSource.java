@@ -40,6 +40,11 @@ public class CseKieDataSource<S extends AbstractRule, R extends Rule> extends Ab
 
     private List<S> configData;
 
+    /**
+     * 构造器
+     *
+     * @param parser 转换器
+     */
     public CseKieDataSource(Converter<List<S>, List<R>> parser) {
         super(parser);
     }

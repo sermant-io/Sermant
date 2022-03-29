@@ -76,6 +76,12 @@ public class SentinelRuleUtil {
         }
     }
 
+    /**
+     * 处理流控异常，转换对应提示
+     *
+     * @param blockException 流控异常信息
+     * @param fixedResult 结果修正
+     */
     public static void handleBlockException(BlockException blockException, FlowControlResult fixedResult) {
         if (blockException instanceof FlowException) {
             fixedResult.setResult(FlowControlEnum.RATE_LIMITED);

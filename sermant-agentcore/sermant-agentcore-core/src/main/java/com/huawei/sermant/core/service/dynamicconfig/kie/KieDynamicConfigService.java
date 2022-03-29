@@ -16,7 +16,7 @@
 
 package com.huawei.sermant.core.service.dynamicconfig.kie;
 
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieConfigEntity;
@@ -38,15 +38,25 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-11-22
  */
+@SuppressWarnings({"checkstyle:IllegalCatch","checkstyle:RegexpSingleline","checkstyle:ParameterAssignment"})
 public class KieDynamicConfigService extends DynamicConfigService {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static SubscriberManager subscriberManager;
 
+    /**
+     * KieDynamicConfigService
+     */
     public KieDynamicConfigService() {
         subscriberManager = new SubscriberManager(CONFIG.getServerAddress());
     }
 
+    /**
+     * KieDynamicConfigService
+     *
+     * @param serverAddress serverAddress
+     * @param project project
+     */
     public KieDynamicConfigService(String serverAddress, String project) {
         subscriberManager = new SubscriberManager(serverAddress, project);
     }
@@ -75,8 +85,8 @@ public class KieDynamicConfigService extends DynamicConfigService {
     public boolean addConfigListener(String key, String group, DynamicConfigListener listener, boolean ifNotify) {
         if (!LabelGroupUtils.isLabelGroup(group)) {
             // 增加标签group判断, 对不规则的group进行适配处理
-            group = LabelGroupUtils.createLabelGroup(
-                    Collections.singletonMap(fixSeparator(group, true), fixSeparator(key, false)));
+            group = LabelGroupUtils
+                .createLabelGroup(Collections.singletonMap(fixSeparator(group, true), fixSeparator(key, false)));
         }
         return subscriberManager.addConfigListener(key, group, listener, ifNotify);
     }
@@ -89,8 +99,8 @@ public class KieDynamicConfigService extends DynamicConfigService {
 
     @Override
     protected String doGetConfig(String key, String group) {
-        final KieResponse kieResponse = subscriberManager.queryConfigurations(null,
-                LabelGroupUtils.getLabelCondition(group));
+        final KieResponse kieResponse =
+            subscriberManager.queryConfigurations(null, LabelGroupUtils.getLabelCondition(group));
         if (!isValidResponse(kieResponse)) {
             return null;
         }
@@ -115,8 +125,8 @@ public class KieDynamicConfigService extends DynamicConfigService {
 
     @Override
     protected List<String> doListKeysFromGroup(String group) {
-        final KieResponse kieResponse = subscriberManager.queryConfigurations(null,
-                LabelGroupUtils.getLabelCondition(group));
+        final KieResponse kieResponse =
+            subscriberManager.queryConfigurations(null, LabelGroupUtils.getLabelCondition(group));
         if (isValidResponse(kieResponse)) {
             final List<KieConfigEntity> data = kieResponse.getData();
             final List<String> keys = new ArrayList<String>(data.size());
@@ -142,8 +152,8 @@ public class KieDynamicConfigService extends DynamicConfigService {
      * @param ifNotify     初次添加监听器，是否通知监听的数据
      * @return 更新是否成功
      */
-    private synchronized boolean updateGroupListener(String group, DynamicConfigListener listener,
-                                                     boolean forSubscribe, boolean ifNotify) {
+    private synchronized boolean updateGroupListener(String group, DynamicConfigListener listener, boolean forSubscribe,
+        boolean ifNotify) {
         if (listener == null) {
             LOGGER.warning("Empty listener is not allowed. ");
             return false;

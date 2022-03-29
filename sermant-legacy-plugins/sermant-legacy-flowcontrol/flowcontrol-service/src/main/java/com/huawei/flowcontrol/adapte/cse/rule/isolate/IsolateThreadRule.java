@@ -46,18 +46,41 @@ public class IsolateThreadRule extends AbstractRule {
      */
     private int maxConcurrentCalls;
 
+    /**
+     * 隔离仓规则定义
+     */
     public IsolateThreadRule() {
         this(null);
     }
 
+    /**
+     * 隔离仓规则定义
+     *
+     * @param resource 资源名
+     */
     public IsolateThreadRule(String resource) {
         this(resource, DEFAULT_CONCURRENT_CALLS, DEFAULT_WAIT_TIME_MS);
     }
 
+    /**
+     * 隔离仓规则定义
+     *
+     * @param resource   资源名
+     * @param permitNum  并发许可限制
+     * @param waitTimeMs 最大等待时间
+     */
     public IsolateThreadRule(String resource, int permitNum, long waitTimeMs) {
         this(resource, permitNum, waitTimeMs, true);
     }
 
+    /**
+     * 隔离仓规则定义
+     *
+     * @param resource   资源名
+     * @param permitNum  并发许可限制
+     * @param waitTimeMs 最大等待时间
+     * @param isForUse   是否用于测试
+     */
     public IsolateThreadRule(String resource, int permitNum, long waitTimeMs, boolean isForUse) {
         super();
         super.setResource(resource);
@@ -107,6 +130,12 @@ public class IsolateThreadRule extends AbstractRule {
         return maxWaitDuration;
     }
 
+    /**
+     * 最大等待时间
+     *
+     * @param maxWaitDuration 最大等待时间
+     * @return IsolateThreadRule
+     */
     public IsolateThreadRule setMaxWaitDuration(long maxWaitDuration) {
         this.maxWaitDuration = maxWaitDuration;
         return this;
@@ -120,6 +149,12 @@ public class IsolateThreadRule extends AbstractRule {
         return maxConcurrentCalls;
     }
 
+    /**
+     * 设置最大并发数， 动态更新
+     *
+     * @param maxConcurrentCalls 最大并发数
+     * @return IsolateThreadRule
+     */
     public IsolateThreadRule setMaxConcurrentCalls(int maxConcurrentCalls) {
         // 差值
         final int gap = this.maxConcurrentCalls - maxConcurrentCalls;

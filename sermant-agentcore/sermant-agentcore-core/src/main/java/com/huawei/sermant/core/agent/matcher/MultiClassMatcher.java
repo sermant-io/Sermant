@@ -22,7 +22,7 @@
 
 package com.huawei.sermant.core.agent.matcher;
 
-import com.huawei.sermant.core.utils.Assert;
+import com.huawei.sermant.core.utils.AssertUtils;
 
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
@@ -33,6 +33,8 @@ import java.util.Set;
 
 /**
  * 多个类匹配
+ *
+ * @since 2022-01-29
  */
 @Deprecated
 public class MultiClassMatcher implements NonNameMatcher {
@@ -40,7 +42,7 @@ public class MultiClassMatcher implements NonNameMatcher {
     private final Set<String> classNames;
 
     MultiClassMatcher(String[] classNames) {
-        Assert.notEmpty(classNames, "Class names must not be empty.");
+        AssertUtils.notEmpty(classNames, "Class names must not be empty.");
         this.classNames = new HashSet<String>(Arrays.asList(classNames));
     }
 

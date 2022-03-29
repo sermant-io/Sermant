@@ -16,18 +16,21 @@
 
 package com.huawei.sermant.premain.common;
 
-import java.io.File;
-
 import com.huawei.sermant.core.common.CommonConstant;
+
+import java.io.File;
 
 /**
  * 路径声明器，其中定义agent core中各个组成部分的位置
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/12
+ * @since 2021-11-12
  */
 public class PathDeclarer {
+    private PathDeclarer() {
+    }
+
     /**
      * 获取agent包所在目录
      *
@@ -98,25 +101,5 @@ public class PathDeclarer {
      */
     public static String getLogbackSettingPath() {
         return getConfigDirPath() + File.separatorChar + CommonConstant.LOG_SETTING_FILE_NAME;
-    }
-
-    /**
-     * 获取luban的boot目录，该目录已移除，用core替代
-     *
-     * @return luban的boot目录
-     */
-    @Deprecated
-    public static String getLubanBootPath() {
-        return getCorePath();
-    }
-
-    /**
-     * 获取luban插件目录
-     *
-     * @return luban插件目录
-     */
-    @Deprecated
-    public static String getLubanPluginsPath() {
-        return getPluginPackagePath() + File.separatorChar + "luban";
     }
 }

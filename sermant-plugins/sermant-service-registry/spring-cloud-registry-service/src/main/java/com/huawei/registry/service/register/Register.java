@@ -58,6 +58,11 @@ public interface Register {
      */
     RegisterType registerType();
 
+    /**
+     * 注册中心类型
+     *
+     * @since 2022-01-02
+     */
     enum RegisterType {
         /**
          * sc注册中心

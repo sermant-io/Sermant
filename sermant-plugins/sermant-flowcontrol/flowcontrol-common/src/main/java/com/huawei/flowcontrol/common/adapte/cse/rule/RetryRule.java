@@ -143,6 +143,11 @@ public class RetryRule extends AbstractRule {
         return waitDuration;
     }
 
+    /**
+     * 重试等待间隔
+     *
+     * @param waitDuration 等待间隔
+     */
     public void setWaitDuration(String waitDuration) {
         this.waitDuration = waitDuration;
         this.parsedWaitDuration = parseLongTime(waitDuration, DEFAULT_WAIT_DURATION_MS);
@@ -168,6 +173,11 @@ public class RetryRule extends AbstractRule {
         return initialInterval;
     }
 
+    /**
+     * 基数
+     *
+     * @param initialInterval 基数
+     */
     public void setInitialInterval(String initialInterval) {
         this.initialInterval = initialInterval;
         this.parsedInitialInterval = parseLongTime(initialInterval, DEFAULT_INITIAL_INTERVAL_MS);

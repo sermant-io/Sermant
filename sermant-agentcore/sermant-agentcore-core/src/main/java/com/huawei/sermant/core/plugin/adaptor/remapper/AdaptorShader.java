@@ -1,17 +1,14 @@
 /*
  * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.huawei.sermant.core.plugin.adaptor.remapper;
@@ -49,6 +46,7 @@ import java.util.logging.Logger;
  * @version 1.0.0
  * @since 2021-10-18
  */
+@SuppressWarnings("checkstyle:RegexpSingleline")
 public class AdaptorShader {
     /**
      * 日志
@@ -73,7 +71,7 @@ public class AdaptorShader {
      * @param excludes      无需修正的jar包
      */
     public static void shade(String sourcePath, String targetPath, AdaptorSetting.RewriteStrategy strategy,
-            List<AdaptorSetting.ShadeMappingInfo> shadeMappings, Set<String> excludes) {
+        List<AdaptorSetting.ShadeMappingInfo> shadeMappings, Set<String> excludes) {
         final File sourceFile = new File(sourcePath);
         if (!sourceFile.exists()) {
             return;
@@ -87,8 +85,7 @@ public class AdaptorShader {
         }
         final CopyConsumer copyConsumer = CopyConsumer.build(sourcePath, targetPath, strategy.isRewriteFileEnable());
         final ShadeConsumer shadeConsumer =
-                ShadeConsumer.build(sourcePath, targetPath, strategy.isRewriteFileEnable(), shadeMappings,
-                        copyConsumer);
+            ShadeConsumer.build(sourcePath, targetPath, strategy.isRewriteFileEnable(), shadeMappings, copyConsumer);
         if (copyConsumer == null || shadeConsumer == null) {
             return;
         }
@@ -104,7 +101,7 @@ public class AdaptorShader {
      * @param defaultConsumer 对其他文件或无需修正的jar包进行的操作
      */
     private static void foreachFile(File file, Set<String> excludes, FileConsumer jarConsumer,
-            FileConsumer defaultConsumer) {
+        FileConsumer defaultConsumer) {
         if (file.isFile()) {
             final String fileName = file.getName();
             if (fileName.endsWith(".jar") && (excludes == null || !excludes.contains(fileName))) {
@@ -125,6 +122,8 @@ public class AdaptorShader {
 
     /**
      * 文件消费者，为兼容1.6
+     *
+     * @since 2022-01-29
      */
     private interface FileConsumer {
         void consume(File file);
@@ -132,6 +131,8 @@ public class AdaptorShader {
 
     /**
      * shade操作消费者
+     *
+     * @since 2022-01-29
      */
     private static class ShadeConsumer implements FileConsumer {
         private static final String SERVICE_RESOURCE_DIR = "META-INF/services/";
@@ -155,8 +156,7 @@ public class AdaptorShader {
         private final FileConsumer defaultConsumer;
 
         private ShadeConsumer(String sourcePath, String targetPath, boolean isRewriteFileEnable,
-                AdaptorRemapper adaptorRemapper,
-                FileConsumer defaultConsumer) {
+            AdaptorRemapper adaptorRemapper, FileConsumer defaultConsumer) {
             this.sourcePath = sourcePath;
             this.targetPath = targetPath;
             this.isRewriteFileEnable = isRewriteFileEnable;
@@ -173,13 +173,13 @@ public class AdaptorShader {
          * @param defaultConsumer 默认的文件处理器
          * @return ShadeConsumer对象
          */
+        @SuppressWarnings("checkstyle:RegexpSingleline")
         static ShadeConsumer build(String sourcePath, String targetPath, boolean isRewriteFileEnable,
-                List<AdaptorSetting.ShadeMappingInfo> shadeMappings,
-                FileConsumer defaultConsumer) {
+            List<AdaptorSetting.ShadeMappingInfo> shadeMappings, FileConsumer defaultConsumer) {
             try {
                 return new ShadeConsumer(new File(sourcePath).getCanonicalPath(),
-                        new File(targetPath).getCanonicalPath(), isRewriteFileEnable,
-                        new AdaptorRemapper(shadeMappings), defaultConsumer);
+                    new File(targetPath).getCanonicalPath(), isRewriteFileEnable, new AdaptorRemapper(shadeMappings),
+                    defaultConsumer);
             } catch (IOException ignored) {
                 return null;
             }
@@ -221,7 +221,7 @@ public class AdaptorShader {
             try {
                 jarFile = new JarFile(file);
                 final Set<String> duplicateSet = new HashSet<String>();
-                for (Enumeration<JarEntry> enumeration = jarFile.entries(); enumeration.hasMoreElements(); ) {
+                for (Enumeration<JarEntry> enumeration = jarFile.entries(); enumeration.hasMoreElements();) {
                     JarEntry entry = enumeration.nextElement();
                     if (entry.isDirectory()) {
                         continue;
@@ -253,7 +253,7 @@ public class AdaptorShader {
          * @throws IOException 修正文件失败
          */
         private void shadeEntry(JarEntry entry, InputStream inputStream, JarOutputStream outputStream,
-                Set<String> duplicateSet) throws IOException {
+            Set<String> duplicateSet) throws IOException {
             final String entryPath = entry.getName();
             final long entryTime = entry.getTime();
             final String remappedPath = adaptorRemapper.map(entryPath);
@@ -277,7 +277,7 @@ public class AdaptorShader {
          * @throws IOException 拷贝文件失败
          */
         private void copyEntry(String entryPath, long entryTime, InputStream inputStream, JarOutputStream outputStream)
-                throws IOException {
+            throws IOException {
             final JarEntry newEntry = new JarEntry(entryPath);
             newEntry.setTime(entryTime);
             outputStream.putNextEntry(newEntry);
@@ -296,7 +296,7 @@ public class AdaptorShader {
          * @throws IOException 修正class文件失败
          */
         private void remapClass(String entryPath, String remappedPath, long entryTime, InputStream inputStream,
-                JarOutputStream outputStream) throws IOException {
+            JarOutputStream outputStream) throws IOException {
             final ClassReader classReader = new ClassReader(inputStream);
             final ClassWriter classWriter = new ClassWriter(0);
             final String packagePath = entryPath.substring(0, entryPath.lastIndexOf('/') + 1);
@@ -327,20 +327,20 @@ public class AdaptorShader {
          * @param outputStream 文件的输出流
          * @throws IOException 修正spi配置文件失败
          */
-        private void remapServiceResource(String remappedPath, long entryTime,
-                InputStream inputStream, JarOutputStream outputStream) throws IOException {
+        private void remapServiceResource(String remappedPath, long entryTime, InputStream inputStream,
+            JarOutputStream outputStream) throws IOException {
             final String serviceResourceName = remappedPath.substring(SERVICE_RESOURCE_DIR.length());
             final String remappedName = adaptorRemapper.mapServiceResource(serviceResourceName);
             final JarEntry entry = new JarEntry(SERVICE_RESOURCE_DIR + remappedName);
             entry.setTime(entryTime);
             outputStream.putNextEntry(entry);
             final String separator = System.getProperty("line.separator");
-            final BufferedReader br = new BufferedReader(
-                    new InputStreamReader(inputStream, CommonConstant.DEFAULT_CHARSET));
+            final BufferedReader br =
+                new BufferedReader(new InputStreamReader(inputStream, CommonConstant.DEFAULT_CHARSET));
             String line = br.readLine();
             while (line != null) {
-                outputStream.write((adaptorRemapper.mapServiceResource(line) + separator)
-                        .getBytes(CommonConstant.DEFAULT_CHARSET));
+                outputStream.write(
+                    (adaptorRemapper.mapServiceResource(line) + separator).getBytes(CommonConstant.DEFAULT_CHARSET));
                 line = br.readLine();
             }
         }
@@ -355,7 +355,7 @@ public class AdaptorShader {
          * @throws IOException 创建目录失败
          */
         private void createParentDir(String filePath, long entryTime, JarOutputStream outputStream,
-                Set<String> duplicateSet) throws IOException {
+            Set<String> duplicateSet) throws IOException {
             final int index = filePath.lastIndexOf('/');
             if (index > 0) {
                 final String dir = filePath.substring(0, index);
@@ -375,7 +375,7 @@ public class AdaptorShader {
          * @throws IOException 创建目录失败
          */
         private void mkdirs(String packagePath, long entryTime, JarOutputStream outputStream, Set<String> duplicateSet)
-                throws IOException {
+            throws IOException {
             if (packagePath.lastIndexOf('/') > 0) {
                 final String parent = packagePath.substring(0, packagePath.lastIndexOf('/'));
                 if (!duplicateSet.contains(parent)) {
@@ -391,12 +391,16 @@ public class AdaptorShader {
 
     /**
      * 用于复制文件的处理器
+     *
+     * @since 2022-01-29
      */
     private static class CopyConsumer implements FileConsumer {
         /**
          * 源文件路径
          */
+
         private final String sourcePath;
+
         /**
          * 目标文件路径
          */
@@ -420,10 +424,11 @@ public class AdaptorShader {
          * @param targetPath 目标文件路径
          * @return CopyConsumer对象
          */
+        @SuppressWarnings("checkstyle:RegexpSingleline")
         static CopyConsumer build(String sourcePath, String targetPath, boolean isRewriteFileEnable) {
             try {
                 return new CopyConsumer(new File(sourcePath).getCanonicalPath(),
-                        new File(targetPath).getCanonicalPath(), isRewriteFileEnable);
+                    new File(targetPath).getCanonicalPath(), isRewriteFileEnable);
             } catch (IOException ignored) {
                 return null;
             }

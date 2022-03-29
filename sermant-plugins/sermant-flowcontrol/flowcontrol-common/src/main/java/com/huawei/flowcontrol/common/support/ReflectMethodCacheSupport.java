@@ -19,6 +19,7 @@ package com.huawei.flowcontrol.common.support;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -30,18 +31,30 @@ import java.util.function.Function;
  */
 public class ReflectMethodCacheSupport {
     /**
+     * 占位方法
+     */
+    protected final Method placeHolderMethod = null;
+
+    /**
      * 用于缓存反射获取的方法
      */
     private final Map<String, Method> cacheMethods = new ConcurrentHashMap<>();
 
-    protected final Method getInvokerMethod(String methodName,
-            Function<? super String, ? extends Method> mappingFunction) {
+    /**
+     * 获取调用方法
+     *
+     * @param methodName 方法名称
+     * @param mappingFunction 如何构造方法
+     * @return 方法
+     */
+    protected final Optional<Method> getInvokerMethod(String methodName,
+        Function<? super String, ? extends Method> mappingFunction) {
         if (methodName == null) {
-            return null;
+            return Optional.empty();
         }
         if (mappingFunction == null) {
-            return cacheMethods.get(methodName);
+            return Optional.ofNullable(cacheMethods.get(methodName));
         }
-        return cacheMethods.computeIfAbsent(methodName, mappingFunction);
+        return Optional.ofNullable(cacheMethods.computeIfAbsent(methodName, mappingFunction));
     }
 }

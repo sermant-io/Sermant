@@ -16,14 +16,18 @@
 
 package com.huawei.sermant.plugin.databasepeerparse.service;
 
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.sermant.core.utils.StringUtils;
 import com.huawei.sermant.plugin.monitor.common.service.DatabasePeerParseService;
+
 import org.apache.skywalking.apm.plugin.jdbc.connectionurl.parser.URLParser;
 import org.apache.skywalking.apm.plugin.jdbc.trace.ConnectionInfo;
 
 /**
  * Database peer 解析服务实现类
+ *
+ * @since 2021-12-31
  */
+@SuppressWarnings({"checkstyle:IllegalCatch","checkstyle:RegexpSingleline"})
 public class DatabasePeerParseServiceImpl implements DatabasePeerParseService {
 
     @Override

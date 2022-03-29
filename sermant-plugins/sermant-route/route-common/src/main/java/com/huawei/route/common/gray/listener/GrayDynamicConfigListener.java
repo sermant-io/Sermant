@@ -22,11 +22,11 @@ import com.huawei.route.common.gray.label.entity.GrayConfiguration;
 import com.huawei.route.common.gray.label.entity.Rule;
 import com.huawei.route.common.gray.label.entity.VersionFrom;
 import com.huawei.route.common.utils.CollectionUtils;
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+import com.huawei.sermant.core.utils.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  * @since 2021-11-29
  */
 public class GrayDynamicConfigListener implements DynamicConfigListener {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final String labelName;
 

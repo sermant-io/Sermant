@@ -75,6 +75,11 @@ public class IsolateThreadSlot extends AbstractLinkedProcessorSlot<DefaultNode> 
         curEntry.whenTerminate(new IsolateEntryConsumer(rules, count));
     }
 
+    /**
+     * 许可消费，用于在请求结束阶段释放资源
+     *
+     * @since 2022-01-01
+     */
     static class IsolateEntryConsumer implements BiConsumer<Context, Entry> {
         private final List<IsolateThreadRule> rules;
         private final int count;

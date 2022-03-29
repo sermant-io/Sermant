@@ -18,7 +18,7 @@
 package com.huawei.registry.service.register;
 
 import com.huawei.registry.entity.MicroServiceInstance;
-import com.huawei.registry.service.utils.CommonUtils;
+import com.huawei.registry.utils.CommonUtils;
 
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 
@@ -33,6 +33,11 @@ import java.util.Map;
 public class ServicecombServiceInstance implements MicroServiceInstance {
     private final MicroserviceInstance microserviceInstance;
 
+    /**
+     * 构造器
+     *
+     * @param instance 实例信息
+     */
     public ServicecombServiceInstance(MicroserviceInstance instance) {
         this.microserviceInstance = instance;
     }

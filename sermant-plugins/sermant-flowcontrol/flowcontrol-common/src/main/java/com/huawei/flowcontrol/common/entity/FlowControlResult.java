@@ -40,6 +40,11 @@ public class FlowControlResult {
         return flowControlEnum;
     }
 
+    /**
+     * 流控结果
+     *
+     * @param result 结果
+     */
     public void setResult(FlowControlEnum result) {
         this.flowControlEnum = result;
         this.isSkip = true;

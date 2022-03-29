@@ -27,6 +27,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 
 import java.time.Duration;
+import java.util.Optional;
 
 /**
  * 熔断处理器
@@ -36,20 +37,20 @@ import java.time.Duration;
  */
 public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker, CircuitBreakerRule> {
     @Override
-    protected final CircuitBreaker createProcessor(String businessName, CircuitBreakerRule rule) {
-        return CircuitBreakerRegistry
-                .of(CircuitBreakerConfig
-                        .custom()
-                        .failureRateThreshold(rule.getFailureRateThreshold())
-                        .slowCallRateThreshold(rule.getSlowCallRateThreshold())
-                        .waitDurationInOpenState(Duration.ofMillis(rule.getParsedWaitDurationInOpenState()))
-                        .slowCallDurationThreshold(Duration.ofMillis(rule.getParsedSlowCallDurationThreshold()))
-                        .permittedNumberOfCallsInHalfOpenState(rule.getPermittedNumberOfCallsInHalfOpenState())
-                        .minimumNumberOfCalls(rule.getMinimumNumberOfCalls())
-                        .slidingWindowType(getSlidingWindowType(rule.getSlidingWindowType()))
-                        .slidingWindowSize(Integer.parseInt(rule.getSlidingWindowSize()))
-                        .build())
-                .circuitBreaker(businessName);
+    protected final Optional<CircuitBreaker> createProcessor(String businessName, CircuitBreakerRule rule) {
+        return Optional.of(CircuitBreakerRegistry
+            .of(CircuitBreakerConfig
+                .custom()
+                .failureRateThreshold(rule.getFailureRateThreshold())
+                .slowCallRateThreshold(rule.getSlowCallRateThreshold())
+                .waitDurationInOpenState(Duration.ofMillis(rule.getParsedWaitDurationInOpenState()))
+                .slowCallDurationThreshold(Duration.ofMillis(rule.getParsedSlowCallDurationThreshold()))
+                .permittedNumberOfCallsInHalfOpenState(rule.getPermittedNumberOfCallsInHalfOpenState())
+                .minimumNumberOfCalls(rule.getMinimumNumberOfCalls())
+                .slidingWindowType(getSlidingWindowType(rule.getSlidingWindowType()))
+                .slidingWindowSize(Integer.parseInt(rule.getSlidingWindowSize()))
+                .build())
+            .circuitBreaker(businessName));
     }
 
     private CircuitBreakerConfig.SlidingWindowType getSlidingWindowType(String type) {

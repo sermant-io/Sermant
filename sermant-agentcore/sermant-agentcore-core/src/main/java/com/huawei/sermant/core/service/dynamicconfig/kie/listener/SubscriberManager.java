@@ -23,7 +23,6 @@
 package com.huawei.sermant.core.service.dynamicconfig.kie.listener;
 
 import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.lubanops.integration.utils.APMThreadFactory;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.ClientUrlManager;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieClient;
@@ -35,6 +34,8 @@ import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.KieSubscribe
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.kie.ResultHandler;
 import com.huawei.sermant.core.service.dynamicconfig.kie.constants.KieConstants;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
+import com.huawei.sermant.core.utils.ThreadFactoryUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 
@@ -56,13 +57,14 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-11-17
  */
+@SuppressWarnings({"checkstyle:IllegalCatch","checkstyle:RegexpSingleline"})
 public class SubscriberManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
-
     /**
      * 最大线程数
      */
     public static final int MAX_THREAD_SIZE = 100;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * 线程数
@@ -96,9 +98,10 @@ public class SubscriberManager {
     private final AtomicInteger curLongConnectionRequestCount = new AtomicInteger(0);
 
     /**
-     * map<监听键, 监听该键的监听器列表>  一个group，仅有一个KieListenerWrapper
+     * map< 监听键, 监听该键的监听器列表 >  一个group，仅有一个KieListenerWrapper
      */
-    private final Map<KieRequest, KieListenerWrapper> listenerMap = new ConcurrentHashMap<KieRequest, KieListenerWrapper>();
+    private final Map<KieRequest, KieListenerWrapper> listenerMap =
+        new ConcurrentHashMap<KieRequest, KieListenerWrapper>();
 
     /**
      * kie客户端
@@ -115,19 +118,29 @@ public class SubscriberManager {
      * 最大支持MAX_THREAD_SIZE个任务
      * 由于是长连接请求，必然会占用线程，因此这里不考虑将任务存在队列中
      */
-    private final ThreadPoolExecutor longRequestExecutor = new ThreadPoolExecutor(THREAD_SIZE, MAX_THREAD_SIZE,
-            0, TimeUnit.MILLISECONDS, new SynchronousQueue<Runnable>(),
-            new APMThreadFactory("kie-subscribe-long-task"));
+    private final ThreadPoolExecutor longRequestExecutor = new ThreadPoolExecutor(THREAD_SIZE, MAX_THREAD_SIZE, 0,
+        TimeUnit.MILLISECONDS, new SynchronousQueue<Runnable>(), new ThreadFactoryUtils("kie-subscribe-long-task"));
 
     /**
      * 快速返回的请求
      */
     private ScheduledExecutorService scheduledExecutorService;
 
+    /**
+     * 构造函数
+     *
+     * @param serverAddress serverAddress
+     */
     public SubscriberManager(String serverAddress) {
         kieClient = new KieClient(new ClientUrlManager(serverAddress));
     }
 
+    /**
+     * SubscriberManager
+     *
+     * @param serverAddress serverAddress
+     * @param project project
+     */
     public SubscriberManager(String serverAddress, String project) {
         kieClient = new KieClient(new ClientUrlManager(serverAddress), project);
     }
@@ -142,8 +155,9 @@ public class SubscriberManager {
      */
     public boolean addGroupListener(String group, DynamicConfigListener listener, boolean ifNotify) {
         try {
-            return subscribe(KieConstants.DEFAULT_GROUP_KEY, new KieRequest().setLabelCondition(
-                    LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener, ifNotify);
+            return subscribe(KieConstants.DEFAULT_GROUP_KEY,
+                new KieRequest().setLabelCondition(LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener,
+                ifNotify);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Add group listener failed, %s", ex.getMessage()));
             return false;
@@ -161,8 +175,9 @@ public class SubscriberManager {
      */
     public boolean addConfigListener(String key, String group, DynamicConfigListener listener, boolean ifNotify) {
         try {
-            return subscribe(key, new KieRequest().setLabelCondition(
-                    LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener, ifNotify);
+            return subscribe(key,
+                new KieRequest().setLabelCondition(LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener,
+                ifNotify);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Add group listener failed, %s", ex.getMessage()));
             return false;
@@ -178,8 +193,8 @@ public class SubscriberManager {
      */
     public boolean removeGroupListener(String group, DynamicConfigListener listener) {
         try {
-            return unSubscribe(KieConstants.DEFAULT_GROUP_KEY, new KieRequest().setLabelCondition(
-                    LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener);
+            return unSubscribe(KieConstants.DEFAULT_GROUP_KEY,
+                new KieRequest().setLabelCondition(LabelGroupUtils.getLabelCondition(group)).setWait(WAIT), listener);
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Removed group listener failed, %s", ex.getMessage()));
             return false;
@@ -245,6 +260,7 @@ public class SubscriberManager {
         if (!StringUtils.equals(entity.getKey(), targetKey)) {
             return false;
         }
+
         // 比较标签是否相同
         final Map<String, String> sourceLabels = entity.getLabels();
         if (sourceLabels == null || (sourceLabels.size() != targetLabels.size())) {
@@ -262,11 +278,14 @@ public class SubscriberManager {
     /**
      * 注册监听器
      *
-     * @param kieRequest            请求
+     * @param key key
+     * @param kieRequest 请求
      * @param dynamicConfigListener 监听器
-     * @param ifNotify              是否在第一次添加时，将所有数据查询返回给调用者
+     * @param ifNotify 是否在第一次添加时，将所有数据查询返回给调用者
+     * @return boolean
      */
-    public boolean subscribe(String key, KieRequest kieRequest, DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
+    public boolean subscribe(String key, KieRequest kieRequest, DynamicConfigListener dynamicConfigListener,
+        boolean ifNotify) {
         final KieListenerWrapper oldWrapper = listenerMap.get(kieRequest);
         if (oldWrapper == null) {
             return firstSubscribeForGroup(key, kieRequest, dynamicConfigListener, ifNotify);
@@ -283,21 +302,19 @@ public class SubscriberManager {
         }
     }
 
-    private boolean firstSubscribeForGroup(String key,
-                                           KieRequest kieRequest,
-                                           DynamicConfigListener dynamicConfigListener,
-                                           boolean ifNotify) {
+    private boolean firstSubscribeForGroup(String key, KieRequest kieRequest,
+        DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
         final KieSubscriber kieSubscriber = new KieSubscriber(kieRequest);
         Task task;
-        KieListenerWrapper kieListenerWrapper = new KieListenerWrapper(key,
-                dynamicConfigListener, new KvDataHolder(), kieRequest);
+        KieListenerWrapper kieListenerWrapper =
+            new KieListenerWrapper(key, dynamicConfigListener, new KvDataHolder(), kieRequest);
         if (!kieSubscriber.isLongConnectionRequest()) {
             task = new ShortTimerTask(kieSubscriber, kieListenerWrapper);
         } else {
             if (exceedMaxLongRequestCount()) {
                 LOGGER.warning(String.format(Locale.ENGLISH,
-                        "Exceeded max long connection request subscribers, the max number is %s, it will be discarded!",
-                        curLongConnectionRequestCount.get()));
+                    "Exceeded max long connection request subscribers, the max number is %s, it will be discarded!",
+                    curLongConnectionRequestCount.get()));
                 return false;
             }
             buildRequestConfig(kieRequest);
@@ -367,7 +384,10 @@ public class SubscriberManager {
     /**
      * 取消订阅
      *
-     * @param kieRequest 请求体
+     * @param key key
+     * @param kieRequest kieRequest
+     * @param dynamicConfigListener dynamicConfigListener
+     * @return boolean
      */
     public boolean unSubscribe(String key, KieRequest kieRequest, DynamicConfigListener dynamicConfigListener) {
         for (Map.Entry<KieRequest, KieListenerWrapper> next : listenerMap.entrySet()) {
@@ -388,19 +408,16 @@ public class SubscriberManager {
                 }
             }
         }
-        LOGGER.warning(String.format(Locale.ENGLISH, "The subscriber of group %s not found!",
-                kieRequest.getLabelCondition()));
+        LOGGER.warning(
+            String.format(Locale.ENGLISH, "The subscriber of group %s not found!", kieRequest.getLabelCondition()));
         return false;
     }
 
     private void buildRequestConfig(KieRequest kieRequest) {
         int wait = (Integer.parseInt(kieRequest.getWait()) + 1) * SECONDS_UNIT;
         if (kieRequest.getRequestConfig() == null) {
-            kieRequest.setRequestConfig(RequestConfig.custom()
-                    .setConnectionRequestTimeout(wait)
-                    .setConnectTimeout(wait)
-                    .setSocketTimeout(wait)
-                    .build());
+            kieRequest.setRequestConfig(RequestConfig.custom().setConnectionRequestTimeout(wait).setConnectTimeout(wait)
+                .setSocketTimeout(wait).build());
         }
     }
 
@@ -413,12 +430,12 @@ public class SubscriberManager {
                     synchronized (SubscriberManager.class) {
                         if (scheduledExecutorService == null) {
                             scheduledExecutorService = new ScheduledThreadPoolExecutor(THREAD_SIZE,
-                                    new APMThreadFactory("kie-subscribe-task"));
+                                new ThreadFactoryUtils("kie-subscribe-task"));
                         }
                     }
                 }
-                scheduledExecutorService.scheduleAtFixedRate(
-                        new TaskRunnable(task), 0, SCHEDULE_REQUEST_INTERVAL_MS, TimeUnit.MILLISECONDS);
+                scheduledExecutorService.scheduleAtFixedRate(new TaskRunnable(task), 0, SCHEDULE_REQUEST_INTERVAL_MS,
+                    TimeUnit.MILLISECONDS);
             }
         } catch (RejectedExecutionException ex) {
             LOGGER.warning("Rejected the task " + task.getClass() + " " + ex.getMessage());
@@ -433,6 +450,11 @@ public class SubscriberManager {
         }
     }
 
+    /**
+     * TaskRunnable
+     *
+     * @since 2021-11-17
+     */
     static class TaskRunnable implements Runnable {
         private final Task task;
 
@@ -445,11 +467,17 @@ public class SubscriberManager {
             try {
                 task.execute();
             } catch (Exception ex) {
-                LOGGER.warning(String.format(Locale.ENGLISH, "The error occurred when execute task , %s", ex.getMessage()));
+                LOGGER.warning(
+                    String.format(Locale.ENGLISH, "The error occurred when execute task , %s", ex.getMessage()));
             }
         }
     }
 
+    /**
+     * Task
+     *
+     * @since 2021-11-17
+     */
     public interface Task {
 
         /**
@@ -470,6 +498,11 @@ public class SubscriberManager {
         void stop();
     }
 
+    /**
+     * AbstractTask
+     *
+     * @since 2021-11-17
+     */
     abstract static class AbstractTask implements Task {
         protected volatile boolean isContinue = true;
 
@@ -494,6 +527,8 @@ public class SubscriberManager {
 
     /**
      * 定时短期任务
+     *
+     * @since 2021-11-17
      */
     class ShortTimerTask extends AbstractTask {
 
@@ -521,6 +556,11 @@ public class SubscriberManager {
         }
     }
 
+    /**
+     * LoopPullTask
+     *
+     * @since 2021-11-17
+     */
     class LoopPullTask extends AbstractTask {
         private final KieSubscriber kieSubscriber;
 
@@ -541,12 +581,13 @@ public class SubscriberManager {
                     tryPublishEvent(kieResponse, kieListenerWrapper, false);
                     kieSubscriber.getKieRequest().setRevision(kieResponse.getRevision());
                 }
-                // 间隔一段时间拉取，减轻服务压力;
-                // 如果在间隔时间段内有键变更，服务可以通过传入的revision判断是否需要将最新的数据立刻返回，不会存在键监听不到的问题
+
+                // 间隔一段时间拉取，减轻服务压力;如果在间隔时间段内有键变更，服务可以通过传入的revision判断是否需要将最新的数据立刻返回，不会存在键监听不到的问题
                 this.failCount = 0;
                 SubscriberManager.this.executeTask(new SleepCallBackTask(this, LONG_CONNECTION_REQUEST_INTERVAL_MS));
             } catch (Exception ex) {
-                LOGGER.warning(String.format(Locale.ENGLISH, "pull kie config failed, %s, it will rePull", ex.getMessage()));
+                LOGGER.warning(
+                    String.format(Locale.ENGLISH, "pull kie config failed, %s, it will rePull", ex.getMessage()));
                 ++failCount;
                 SubscriberManager.this.executeTask(new SleepCallBackTask(this, failCount));
             }
@@ -558,32 +599,39 @@ public class SubscriberManager {
         }
     }
 
+    /**
+     * SleepCallBackTask
+     *
+     * @since 2021-11-17
+     */
     class SleepCallBackTask extends AbstractTask {
+        private static final long MAX_WAIT_MS = 60 * 1000 * 60L;
+
+        private static final long BASE_MS = 3000L;
+
         private final Task nextTask;
 
         private int failedCount;
 
         private long waitTimeMs;
 
-        public SleepCallBackTask(Task nextTask, int failedCount) {
+        SleepCallBackTask(Task nextTask, int failedCount) {
             this.nextTask = nextTask;
             this.failedCount = failedCount;
         }
 
-        public SleepCallBackTask(Task nextTask, long waitTimeMs) {
+        SleepCallBackTask(Task nextTask, long waitTimeMs) {
             this.nextTask = nextTask;
             this.waitTimeMs = waitTimeMs;
         }
 
         @Override
         public void executeInner() {
-            long maxWaitMs = 60 * 1000 * 60;
             long wait;
             if (waitTimeMs != 0) {
-                wait = Math.min(waitTimeMs, maxWaitMs);
+                wait = Math.min(waitTimeMs, MAX_WAIT_MS);
             } else {
-                long baseMs = 3000;
-                wait = Math.min(maxWaitMs, baseMs * failedCount * failedCount);
+                wait = Math.min(MAX_WAIT_MS, BASE_MS * failedCount * failedCount);
             }
             try {
                 Thread.sleep(wait);
