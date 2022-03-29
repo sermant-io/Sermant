@@ -51,6 +51,9 @@ public abstract class SingleStateCloseHandler extends RegisterSwitchSupport {
      */
     protected Object[] arguments;
 
+    /**
+     * 构造器
+     */
     public SingleStateCloseHandler() {
         RegisterContext.INSTANCE.registerCloseHandler(this);
     }

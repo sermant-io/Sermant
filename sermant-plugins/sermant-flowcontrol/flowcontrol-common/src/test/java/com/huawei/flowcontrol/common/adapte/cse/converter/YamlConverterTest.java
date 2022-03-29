@@ -33,7 +33,7 @@ public class YamlConverterTest {
     @Test
     public void test() {
         final YamlConverter<String> stringYamlConverter = new YamlConverter<>(String.class);
-        final String test = stringYamlConverter.convert("test");
+        final String test = stringYamlConverter.convert("test").get();
         Assert.assertEquals(test, "test");
     }
 }

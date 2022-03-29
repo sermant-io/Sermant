@@ -167,6 +167,11 @@ public class CircuitBreakerRule extends AbstractRule {
         return waitDurationInOpenState;
     }
 
+    /**
+     * 设置熔断等待时长
+     *
+     * @param waitDurationInOpenState 等待时长，该格式是duration格式
+     */
     public void setWaitDurationInOpenState(String waitDurationInOpenState) {
         this.waitDurationInOpenState = waitDurationInOpenState;
         this.parsedWaitDurationInOpenState = parseLongTime(waitDurationInOpenState,
@@ -177,6 +182,11 @@ public class CircuitBreakerRule extends AbstractRule {
         return slowCallDurationThreshold;
     }
 
+    /**
+     * 设置慢调用阈值
+     *
+     * @param slowCallDurationThreshold 慢调用阈值
+     */
     public void setSlowCallDurationThreshold(String slowCallDurationThreshold) {
         this.slowCallDurationThreshold = slowCallDurationThreshold;
         this.parsedSlowCallDurationThreshold = parseLongTime(slowCallDurationThreshold,
@@ -211,6 +221,11 @@ public class CircuitBreakerRule extends AbstractRule {
         return slidingWindowSize;
     }
 
+    /**
+     * 设置时间窗口
+     *
+     * @param slidingWindowSize 时间窗口值
+     */
     public void setSlidingWindowSize(String slidingWindowSize) {
         if (!StringUtils.isEmpty(slidingWindowSize)) {
             this.slidingWindowSize = slidingWindowSize;

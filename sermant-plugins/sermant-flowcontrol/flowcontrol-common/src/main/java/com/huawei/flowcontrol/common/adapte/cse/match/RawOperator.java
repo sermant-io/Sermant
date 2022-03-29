@@ -16,8 +16,8 @@
  */
 
 /**
- * Based on org/apache/servicecomb/governance/marker/operator/RawOperator.java
- * from the Apache ServiceComb Java Chassis project.
+ * Based on org/apache/servicecomb/governance/marker/operator/RawOperator.java from the Apache ServiceComb Java Chassis
+ * project.
  */
 
 package com.huawei.flowcontrol.common.adapte.cse.match;
@@ -38,10 +38,18 @@ public class RawOperator extends HashMap<String, String> {
     private static final int DEFAULT_CAPACITY = 4;
     private static final long serialVersionUID = 1930797351862384146L;
 
+    /**
+     * 构造器
+     */
     public RawOperator() {
         super(DEFAULT_CAPACITY);
     }
 
+    /**
+     * 构造器
+     *
+     * @param source 数据
+     */
     public RawOperator(Map<String, String> source) {
         super(source);
     }

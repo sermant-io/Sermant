@@ -18,13 +18,12 @@
 package com.huawei.flowcontrol.common.metric;
 
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.send.GatewayClient;
+import com.huawei.sermant.core.service.send.api.GatewayClient;
 
 import java.io.UnsupportedEncodingException;
 
 /**
- * netty指标发送
- * 基于agent core 核心功能 {@link com.huawei.sermant.core.service.send.GatewayClient}
+ * netty指标发送 基于agent core 核心功能 {@link GatewayClient}
  *
  * @author zhouss
  * @since 2021-12-07
@@ -37,6 +36,9 @@ public class NettyMetricSender extends AbstractMetricSender {
 
     private final GatewayClient gatewayClient;
 
+    /**
+     * netty发送器构造
+     */
     public NettyMetricSender() {
         this.gatewayClient = ServiceManager.getService(GatewayClient.class);
     }

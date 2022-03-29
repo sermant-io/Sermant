@@ -1,7 +1,7 @@
 com.huawei.sermant.core.plugin.agent.config.AgentConfig
 com.huawei.sermant.core.plugin.adaptor.config.AdaptorConfig
-com.huawei.sermant.core.agent.interceptor.InterceptorChainConfig
 com.huawei.sermant.core.service.dynamicconfig.config.DynamicConfig
 com.huawei.sermant.core.service.dynamicconfig.kie.config.KieDynamicConfig
-com.huawei.sermant.core.service.heartbeat.HeartbeatConfig
-com.huawei.sermant.core.service.meta.ServiceMeta
+com.huawei.sermant.core.service.heartbeat.config.HeartbeatConfig
+com.huawei.sermant.core.plugin.config.ServiceMeta
+com.huawei.sermant.core.service.send.config.BackendConfig

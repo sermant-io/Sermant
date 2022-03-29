@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,30 @@
 
 package com.huawei.sermant.core.common;
 
-import java.util.Map;
-import java.util.logging.Logger;
-
 import ch.qos.logback.classic.util.ContextInitializer;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import java.util.Map;
+import java.util.logging.Logger;
 
+/**
+ * LoggerFactory
+ *
+ * @author luanwenfei
+ * @version 1.0.0
+ * @since 2022-03-26
+ */
 public class LoggerFactory {
+    private static Logger logger = java.util.logging.Logger.getLogger("sermant");
+
     /**
      * 默认的logback配置文件路径
      */
     private static String defaultLogbackSettingPath;
+
+    private LoggerFactory() {
+    }
 
     /**
      * 从启动参数中获取logback的配置文件路径
@@ -48,12 +58,13 @@ public class LoggerFactory {
      */
     public static void init(Map<String, Object> argsMap) {
         final String logbackSettingPath = getLogbackSettingFile(argsMap);
+
         // 设置slf4j 日志 handle
         defaultLogbackSettingPath = System.getProperty(ContextInitializer.CONFIG_FILE_PROPERTY);
         System.setProperty(ContextInitializer.CONFIG_FILE_PROPERTY, logbackSettingPath);
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
-        LogFactory.setLogger(java.util.logging.Logger.getLogger("sermant"));
+        logger = java.util.logging.Logger.getLogger("sermant");
     }
 
     /**
@@ -73,6 +84,6 @@ public class LoggerFactory {
      * @return jul日志
      */
     public static Logger getLogger() {
-        return LogFactory.getLogger();
+        return logger;
     }
 }

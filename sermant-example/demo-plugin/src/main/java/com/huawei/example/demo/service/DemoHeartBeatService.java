@@ -18,8 +18,8 @@ package com.huawei.example.demo.service;
 
 import com.huawei.sermant.core.plugin.service.PluginService;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.heartbeat.ExtInfoProvider;
-import com.huawei.sermant.core.service.heartbeat.HeartbeatService;
+import com.huawei.sermant.core.service.heartbeat.api.ExtInfoProvider;
+import com.huawei.sermant.core.service.heartbeat.api.HeartbeatService;
 
 import java.util.Collections;
 import java.util.Map;

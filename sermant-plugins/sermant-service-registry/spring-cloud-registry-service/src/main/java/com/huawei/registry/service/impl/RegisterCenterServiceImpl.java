@@ -17,11 +17,9 @@
 package com.huawei.registry.service.impl;
 
 import com.huawei.registry.config.RegisterConfig;
-import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.FixedResult;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.service.register.RegisterManager;
-import com.huawei.registry.service.utils.CommonUtils;
 import com.huawei.registry.services.RegisterCenterService;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
@@ -62,16 +60,6 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
             // 阻止原注册中心注册
             result.setResult(null);
         }
-    }
-
-    @Override
-    public List<MicroServiceInstance> getServerList(Object target) {
-        String serviceId = (String) CommonUtils.getFieldValue(target, "serviceId");
-        if (serviceId == null && RegisterContext.INSTANCE.getClientInfo().getServiceName() != null) {
-            // 若未获取到服务名，则从注册基本信息获取
-            serviceId = RegisterContext.INSTANCE.getClientInfo().getServiceName();
-        }
-        return getServerList(serviceId);
     }
 
     @Override

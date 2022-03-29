@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,18 @@ import java.util.Locale;
 
 /**
  * Config for this DynamicConfig Module
+ *
+ * @since 2022-01-29
  */
 @ConfigTypeKey("dynamic.config")
 public class DynamicConfig implements BaseConfig {
+    private static final int TIME_OUT_VALUE = 30000;
+
     /**
      * 服务器连接超时时间
      */
     @ConfigFieldKey("timeout_value")
-    private int timeoutValue = 30000;
+    private int timeoutValue = TIME_OUT_VALUE;
 
     /**
      * 默认分组
@@ -66,5 +70,21 @@ public class DynamicConfig implements BaseConfig {
 
     public DynamicConfigServiceType getServiceType() {
         return DynamicConfigServiceType.valueOf(serviceType.toUpperCase(Locale.ROOT));
+    }
+
+    public void setTimeoutValue(int timeoutValue) {
+        this.timeoutValue = timeoutValue;
+    }
+
+    public void setDefaultGroup(String defaultGroup) {
+        this.defaultGroup = defaultGroup;
+    }
+
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
     }
 }

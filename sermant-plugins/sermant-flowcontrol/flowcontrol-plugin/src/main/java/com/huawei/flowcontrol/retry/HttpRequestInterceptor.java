@@ -30,6 +30,7 @@ import org.springframework.http.HttpRequest;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -50,12 +51,12 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
      * @param request 请求
      * @return HttpRequestEntity
      */
-    private HttpRequestEntity convertToHttpEntity(HttpRequest request) {
+    private Optional<HttpRequestEntity> convertToHttpEntity(HttpRequest request) {
         if (request == null) {
-            return null;
+            return Optional.empty();
         }
-        return new HttpRequestEntity(request.getURI().getPath(), request.getHeaders().toSingleValueMap(),
-            request.getMethod().name());
+        return Optional.of(new HttpRequestEntity(request.getURI().getPath(), request.getHeaders().toSingleValueMap(),
+            request.getMethod().name()));
     }
 
     @Override
@@ -70,9 +71,13 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
         final HttpRequest request = (HttpRequest) allArguments[0];
         Object result = context.getResult();
         try {
+            final Optional<HttpRequestEntity> httpRequestEntity = convertToHttpEntity(request);
+            if (!httpRequestEntity.isPresent()) {
+                return context;
+            }
             RetryContext.INSTANCE.markRetry(retry);
             final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
-                .getHandlers(convertToHttpEntity(request));
+                .getHandlers(httpRequestEntity.get());
             if (!handlers.isEmpty() && needRetry(handlers.get(0), result, null)) {
                 // 重试仅有一个策略
                 request.getHeaders().add(RETRY_KEY, RETRY_VALUE);
@@ -94,13 +99,18 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
         return context;
     }
 
+    /**
+     * Http请求重试
+     *
+     * @since 2022-02-21
+     */
     public static class HttpRetry extends AbstractRetry {
         private static final String METHOD_KEY = "ClientHttpResponse#getRawStatusCode";
 
         @Override
         @SuppressWarnings("checkstyle:IllegalCatch")
-        protected String getCode(Object result) {
-            final Method getRawStatusCode = getInvokerMethod(METHOD_KEY, fn -> {
+        protected Optional<String> getCode(Object result) {
+            final Optional<Method> getRawStatusCode = getInvokerMethod(METHOD_KEY, fn -> {
                 try {
                     final Method method = result.getClass().getDeclaredMethod("getRawStatusCode");
                     method.setAccessible(true);
@@ -108,16 +118,16 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
                 } catch (NoSuchMethodException ignored) {
                     // ignored
                 }
-                return null;
+                return placeHolderMethod;
             });
-            if (getRawStatusCode == null) {
-                return null;
+            if (!getRawStatusCode.isPresent()) {
+                return Optional.empty();
             }
             try {
-                return String.valueOf(getRawStatusCode.invoke(result));
+                return Optional.of(String.valueOf(getRawStatusCode.get().invoke(result)));
             } catch (Exception ignored) {
                 // ignored
-                return null;
+                return Optional.empty();
             }
         }
 

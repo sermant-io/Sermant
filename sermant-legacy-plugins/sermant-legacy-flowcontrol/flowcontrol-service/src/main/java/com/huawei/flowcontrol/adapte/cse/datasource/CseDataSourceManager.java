@@ -82,6 +82,13 @@ public class CseDataSourceManager implements DataSourceManager {
         }
     }
 
+    /**
+     * 流控配置监听器
+     *
+     * @param <T> 解析规则
+     * @param <S> sentinel规则
+     * @since 2022-01-13
+     */
     static class FlowConfigListener<T extends AbstractRule,
         S extends com.alibaba.csp.sentinel.slots.block.AbstractRule> implements ConfigUpdateListener<T> {
         final CseKieDataSource<T, S> dataSource;
@@ -96,6 +103,11 @@ public class CseDataSourceManager implements DataSourceManager {
         }
     }
 
+    /**
+     * 隔离仓配置监听器
+     *
+     * @since 2022-01-13
+     */
     static class IsolateRuleConverter implements Converter<List<BulkheadRule>, List<IsolateThreadRule>> {
         private final BulkheadRuleConverter bulkheadRuleConverter = new BulkheadRuleConverter();
 
@@ -131,6 +143,11 @@ public class CseDataSourceManager implements DataSourceManager {
         }
     }
 
+    /**
+     * 熔断配置监听器
+     *
+     * @since 2022-01-13
+     */
     static class DegradeRuleConverter implements Converter<List<CircuitBreakerRule>, List<DegradeRule>> {
         final CircuitBreakerRuleConverter circuitBreakerRuleConverter = new CircuitBreakerRuleConverter();
 
@@ -164,6 +181,11 @@ public class CseDataSourceManager implements DataSourceManager {
         }
     }
 
+    /**
+     * 流控转换器
+     *
+     * @since 2022-01-13
+     */
     static class FlowRuleConverter implements Converter<List<RateLimitingRule>, List<FlowRule>> {
         final RateLimitingRuleConverter rateLimitingRuleConverter = new RateLimitingRuleConverter();
 

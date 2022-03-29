@@ -24,6 +24,11 @@ package com.huawei.flowcontrol.common.adapte.cse.constants;
  */
 public class CseConstants {
     /**
+     * 服务版本切割分块数
+     */
+    public static final int SERVICE_VERSION_PARTS = 2;
+
+    /**
      * 服务分隔符
      */
     public static final String SERVICE_SEPARATOR = ",";

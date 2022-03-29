@@ -1,19 +1,25 @@
 /*
  * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.huawei.sermant.core.service.tracing;
 
 import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.service.tracing.api.ExtractService;
+import com.huawei.sermant.core.service.tracing.api.InjectService;
+import com.huawei.sermant.core.service.tracing.api.TracingService;
 import com.huawei.sermant.core.service.tracing.common.SpanEvent;
 import com.huawei.sermant.core.service.tracing.common.SpanEventContext;
 import com.huawei.sermant.core.service.tracing.common.TracingRequest;
@@ -66,6 +72,15 @@ public class TracingServiceImpl implements TracingService {
         this.isTracing = false;
         tracingSender.stop();
         LOGGER.info("TracingService stopped.");
+    }
+
+    @Override
+    public Optional<SpanEventContext> getContext() {
+        SpanEventContext spanEventContext = threadLocal.get();
+        if (spanEventContext == null) {
+            return Optional.empty();
+        }
+        return Optional.of(spanEventContext);
     }
 
     @Override
@@ -185,6 +200,8 @@ public class TracingServiceImpl implements TracingService {
     }
 
     private void sendSpanEvent(SpanEvent spanEvent) {
+        LOGGER.info(String.format(Locale.ROOT, "Add spanEvent to queue , TraceId : [%s] , SpanId [%s] . ",
+            spanEvent.getTraceId(), spanEvent.getSpanId()));
         tracingSender.offerSpanEvent(spanEvent);
     }
 }

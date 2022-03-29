@@ -45,7 +45,7 @@ public class ReflectMethodCacheSupportTest {
                 // ignored
             }
             return null;
-        });
+        }).get();
         Assert.assertNotNull(toString.invoke(reflectMethodCacheSupport));
     }
 }

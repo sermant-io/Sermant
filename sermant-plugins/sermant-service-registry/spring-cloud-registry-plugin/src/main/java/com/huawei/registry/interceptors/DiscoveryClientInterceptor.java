@@ -77,7 +77,8 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
                     Objects.equals(originServiceInstance.getHost(), microServiceInstance.getHost())
                         && originServiceInstance.getPort() == microServiceInstance.getPort());
             }
-            result.add((ServiceInstance) buildInstance(microServiceInstance));
+            buildInstance(microServiceInstance, serviceId)
+                .ifPresent(instance -> result.add((ServiceInstance) instance));
         }
         return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
@@ -106,16 +107,30 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
         return "com.huawei.registry.interceptors.DiscoveryClientInterceptor$DiscoveryServiceInstance";
     }
 
+    /**
+     * 实例信息
+     *
+     * @since 2022-03-01
+     */
     public static class DiscoveryServiceInstance implements ServiceInstance {
         private final MicroServiceInstance microServiceInstance;
 
-        public DiscoveryServiceInstance(final MicroServiceInstance microServiceInstance) {
+        private final String serviceName;
+
+        /**
+         * 构造器
+         *
+         * @param microServiceInstance 实例信息
+         * @param serviceName 服务名
+         */
+        public DiscoveryServiceInstance(final MicroServiceInstance microServiceInstance, String serviceName) {
             this.microServiceInstance = microServiceInstance;
+            this.serviceName = serviceName;
         }
 
         @Override
         public String getServiceId() {
-            return microServiceInstance.getServiceId();
+            return serviceName;
         }
 
         @Override
@@ -135,7 +150,7 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
 
         @Override
         public URI getUri() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override

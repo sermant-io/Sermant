@@ -18,7 +18,7 @@ package com.huawei.dubbo.registry.service;
 
 import com.huawei.dubbo.registry.cache.DubboCache;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.sermant.core.utils.StringUtils;
 
 /**
  * 应用配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo

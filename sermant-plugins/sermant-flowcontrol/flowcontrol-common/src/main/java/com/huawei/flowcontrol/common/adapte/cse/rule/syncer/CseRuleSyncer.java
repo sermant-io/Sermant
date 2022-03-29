@@ -22,11 +22,11 @@ import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+import com.huawei.sermant.core.plugin.config.ServiceMeta;
 import com.huawei.sermant.core.service.ServiceManager;
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huawei.sermant.core.service.dynamicconfig.kie.KieDynamicConfigService;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
-import com.huawei.sermant.core.service.meta.ServiceMeta;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -72,7 +72,7 @@ public class CseRuleSyncer implements RuleSyncer {
                 if (waitTimeMs >= MAX_WAIT_INTERVAL_MS) {
                     // 大于最大等待时间，放弃同步
                     LOGGER.warning("Can not acquire required service meta, "
-                            + "it won't read configuration from config center!");
+                        + "it won't read configuration from config center!");
                     return;
                 }
             } catch (InterruptedException ignored) {
@@ -90,7 +90,7 @@ public class CseRuleSyncer implements RuleSyncer {
             dynamicConfigurationFactoryService = ServiceManager.getService(DynamicConfigService.class);
         } else {
             dynamicConfigurationFactoryService = new KieDynamicConfigService(pluginConfig.getConfigKieAddress(),
-                    pluginConfig.getProject());
+                pluginConfig.getProject());
         }
         fillServiceMeta(pluginConfig);
     }
@@ -105,6 +105,9 @@ public class CseRuleSyncer implements RuleSyncer {
         CseServiceMeta.getInstance().setCustomLabel(pluginConfig.getCustomLabel());
     }
 
+    /**
+     * 初始化请求并创建监听器
+     */
     public void initRequests() {
         buildAppRequest();
         buildServiceRequest();

@@ -53,6 +53,13 @@ public class ZookeeperCoreDataSource<T> extends AbstractDataSource<DynamicConfig
 
     private final String group;
 
+    /**
+     * zk数据源
+     *
+     * @param key 键
+     * @param group 分组
+     * @param ruleClass 规则类型
+     */
     public ZookeeperCoreDataSource(final String key, final String group, final Class<T> ruleClass) {
         super(new Converter<DynamicConfigEvent, List<T>>() {
             @Override
@@ -115,14 +122,11 @@ public class ZookeeperCoreDataSource<T> extends AbstractDataSource<DynamicConfig
         }
     }
 
-    @SuppressWarnings("checkstyle:IllegalCatch")
+    /**
+     * 移除监听器
+     */
     public void removeListener() {
-        try {
-            final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
-            service.removeConfigListener(key, group);
-        } catch (Exception ex) {
-            LOGGER.warning(String.format(Locale.ENGLISH, "Removed listener failed, key : %s, group : %s",
-                key, group));
-        }
+        final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
+        service.removeConfigListener(key, group);
     }
 }

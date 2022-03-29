@@ -20,7 +20,7 @@ import com.huawei.flowcontrol.common.config.ConfigConst;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.metric.provider.MetricProvider;
 import com.huawei.flowcontrol.common.util.PluginConfigUtil;
-import com.huawei.sermant.core.lubanops.bootstrap.config.IdentityConfigManager;
+import com.huawei.sermant.core.common.BootArgsIndexer;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 import com.alibaba.csp.sentinel.Constants;
@@ -59,10 +59,13 @@ public final class DefaultMetricProvider implements MetricProvider {
             Constants.TOTAL_IN_RESOURCE_NAME,
             Constants.SYSTEM_LOAD_RESOURCE_NAME));
 
+    /**
+     * 默认指标采集器
+     */
     public DefaultMetricProvider() {
         String appName = SentinelConfig.getAppName();
         if (appName == null) {
-            appName = IdentityConfigManager.getAppName();
+            appName = BootArgsIndexer.getAppName();
         }
         metricSearcher = new MetricSearcher(MetricWriter.METRIC_BASE_DIR,
             MetricWriter.formMetricFileName(appName, PidUtil.getPid()));

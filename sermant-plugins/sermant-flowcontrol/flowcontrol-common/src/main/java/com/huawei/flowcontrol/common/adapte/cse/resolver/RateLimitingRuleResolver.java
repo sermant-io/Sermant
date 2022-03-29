@@ -30,6 +30,9 @@ public class RateLimitingRuleResolver extends AbstractResolver<RateLimitingRule>
      */
     public static final String CONFIG_KEY = "servicecomb.rateLimiting";
 
+    /**
+     * 限流解析构造器
+     */
     public RateLimitingRuleResolver() {
         super(CONFIG_KEY);
     }

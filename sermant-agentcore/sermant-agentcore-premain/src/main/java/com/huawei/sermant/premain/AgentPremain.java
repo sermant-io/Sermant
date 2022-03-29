@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package com.huawei.sermant.premain;
 
+import com.huawei.sermant.core.AgentCoreEntrance;
+import com.huawei.sermant.premain.common.BootArgsBuilder;
+import com.huawei.sermant.premain.common.PathDeclarer;
+import com.huawei.sermant.premain.exception.DupPremainException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
@@ -29,43 +34,55 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import com.huawei.sermant.core.AgentCoreEntrance;
-import com.huawei.sermant.premain.common.BootArgsBuilder;
-import com.huawei.sermant.premain.common.PathDeclarer;
-import com.huawei.sermant.premain.exception.DupPremainException;
-
+/**
+ * Agent Premain方法
+ *
+ * @author luanwenfei
+ * @since 2022-03-26
+ */
+@SuppressWarnings({"checkstyle:IllegalCatch"})
 public class AgentPremain {
     private static boolean executeFlag = false;
 
-    //~~ premain method
+    // 初始化日志
+    private static final Logger LOGGER = getLogger();
 
+    private AgentPremain() {
+    }
+
+    /**
+     * premain
+     *
+     * @param agentArgs agentArgs
+     * @param instrumentation instrumentation
+     * @throws DupPremainException
+     */
     public static void premain(String agentArgs, Instrumentation instrumentation) {
         // 执行标记，防止重复运行
         if (executeFlag) {
             throw new DupPremainException();
         }
         executeFlag = true;
-        // 初始化日志
-        final Logger logger = getLogger();
+
         try {
             // 添加核心库
-            logger.info("Loading core library... ");
+            LOGGER.info("Loading core library... ");
             loadCoreLib(instrumentation);
+
             // 初始化启动参数
-            logger.info("Building argument map... ");
+            LOGGER.info("Building argument map... ");
             final Map<String, Object> argsMap = BootArgsBuilder.build(agentArgs);
+
             // agent core入口
-            logger.info("Loading sermant agent... ");
+            LOGGER.info("Loading sermant agent... ");
             AgentCoreEntrance.run(argsMap, instrumentation);
         } catch (Exception e) {
-            logger.severe(String.format(Locale.ROOT,
-                    "Loading sermant agent failed, %s: %s. ", e.getClass(), e.getMessage()));
+            LOGGER.severe(
+                String.format(Locale.ROOT, "Loading sermant agent failed, %s: %s. ", e.getClass(), e.getMessage()));
         }
-
     }
 
-    //~~internal methods
-
+    // ~~internal methods
     private static void loadCoreLib(Instrumentation instrumentation) throws IOException {
         final File coreDir = new File(PathDeclarer.getCorePath());
         if (!coreDir.exists() || !coreDir.isDirectory()) {
@@ -90,6 +107,7 @@ public class AgentPremain {
                     try {
                         jarFile.close();
                     } catch (IOException ignored) {
+                        LOGGER.severe(ignored.getMessage());
                     }
                 }
             }

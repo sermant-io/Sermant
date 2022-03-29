@@ -70,6 +70,9 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
 
     private HttpService httpService;
 
+    /**
+     * 构造器
+     */
     protected InterceptorSupporter() {
         flowControlConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
     }
@@ -133,6 +136,15 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
         return httpService;
     }
 
+    /**
+     * 创建重试方法
+     *
+     * @param obj 增强类
+     * @param method 目标方法
+     * @param allArguments 方法参数
+     * @param result 默认结果
+     * @return 方法
+     */
     protected final Supplier<Object> createRetryFunc(Object obj, Method method, Object[] allArguments, Object result) {
         return () -> {
             method.setAccessible(true);

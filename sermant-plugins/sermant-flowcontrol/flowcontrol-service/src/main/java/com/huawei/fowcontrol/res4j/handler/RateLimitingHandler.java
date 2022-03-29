@@ -26,6 +26,7 @@ import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 
 import java.time.Duration;
+import java.util.Optional;
 
 /**
  * 流控处理器
@@ -35,15 +36,14 @@ import java.time.Duration;
  */
 public class RateLimitingHandler extends AbstractRequestHandler<RateLimiter, RateLimitingRule> {
     @Override
-    protected final RateLimiter createProcessor(String businessName, RateLimitingRule rule) {
-        RateLimiterConfig config;
-        config = RateLimiterConfig.custom()
-                .limitForPeriod(rule.getRate())
-                .limitRefreshPeriod(Duration.ofMillis(rule.getParsedLimitRefreshPeriod()))
-                .timeoutDuration(Duration.ofMillis(rule.getParsedTimeoutDuration()))
-                .build();
+    protected final Optional<RateLimiter> createProcessor(String businessName, RateLimitingRule rule) {
+        RateLimiterConfig config = RateLimiterConfig.custom()
+            .limitForPeriod(rule.getRate())
+            .limitRefreshPeriod(Duration.ofMillis(rule.getParsedLimitRefreshPeriod()))
+            .timeoutDuration(Duration.ofMillis(rule.getParsedTimeoutDuration()))
+            .build();
         RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.of(config);
-        return rateLimiterRegistry.rateLimiter(businessName);
+        return Optional.of(rateLimiterRegistry.rateLimiter(businessName));
     }
 
     @Override

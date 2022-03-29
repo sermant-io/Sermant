@@ -48,6 +48,7 @@ public abstract class AbstractRule extends Configurable implements Rule {
      * @param time 时间字符串 1000   -> 1000毫秒 -1000  -> 负1000毫秒 1000S(s) 1000秒   -> 1000000毫秒
      * @param defaultValue 默认值
      * @return 转换值
+     * @throws IllegalArgumentException 参数不合法抛出
      */
     protected long parseLongTime(String time, long defaultValue) {
         if (StringUtils.isEmpty(time)) {

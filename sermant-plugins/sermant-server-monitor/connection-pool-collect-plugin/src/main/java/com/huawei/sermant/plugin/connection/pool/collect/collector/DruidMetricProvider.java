@@ -18,7 +18,7 @@ package com.huawei.sermant.plugin.connection.pool.collect.collector;
 
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.send.GatewayClient;
+import com.huawei.sermant.core.service.send.api.GatewayClient;
 import com.huawei.sermant.plugin.monitor.common.collect.MetricProvider;
 import com.huawei.sermant.plugin.monitor.common.config.ServiceConfig;
 import com.huawei.sermant.plugin.servermonitor.entity.ConnectionPool;
@@ -28,6 +28,8 @@ import java.util.List;
 
 /**
  * Druid Connection Pool Metric Provider
+ *
+ * @since 2021-12-31
  */
 public class DruidMetricProvider implements MetricProvider<ConnectionPool> {
 
@@ -38,6 +40,11 @@ public class DruidMetricProvider implements MetricProvider<ConnectionPool> {
     private final String service;
     private final String serviceInstance;
 
+    /**
+     * 构造函数
+     *
+     * @param collector collector
+     */
     public DruidMetricProvider(DruidMetricCollector collector) {
         ServiceConfig config = PluginConfigManager.getPluginConfig(ServiceConfig.class);
         service = config.getService();

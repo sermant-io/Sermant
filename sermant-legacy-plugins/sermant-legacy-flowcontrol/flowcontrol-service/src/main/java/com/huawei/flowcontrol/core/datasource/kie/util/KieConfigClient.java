@@ -31,6 +31,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -52,7 +53,7 @@ public class KieConfigClient {
      * @param url 配置中心地址
      * @return kie配置响应实体
      */
-    public static KieConfigResponse getConfig(String url) {
+    public static Optional<KieConfigResponse> getConfig(String url) {
         HttpGet httpGet = new HttpGet(url);
         KieConfigResponse kieResponse;
         CloseableHttpResponse response = null;
@@ -62,7 +63,7 @@ public class KieConfigClient {
             if (statusCode != HttpStatus.SC_OK) {
                 LOGGER.warning(String.format(Locale.ROOT, "Get config from ServiceComb-kie failed, status code is %d",
                     statusCode));
-                return null;
+                return Optional.empty();
             }
 
             HttpEntity entity = response.getEntity();
@@ -70,7 +71,7 @@ public class KieConfigClient {
             kieResponse = JSON.parseObject(result, KieConfigResponse.class);
         } catch (IOException e) {
             LOGGER.severe("Get config from ServiceComb-kie failed.");
-            return null;
+            return Optional.empty();
         } finally {
             try {
                 if (response != null) {
@@ -81,6 +82,6 @@ public class KieConfigClient {
             }
         }
 
-        return kieResponse;
+        return Optional.ofNullable(kieResponse);
     }
 }

@@ -26,6 +26,7 @@ import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.bulkhead.BulkheadRegistry;
 
 import java.time.Duration;
+import java.util.Optional;
 
 /**
  * 隔离仓处理器
@@ -35,12 +36,12 @@ import java.time.Duration;
  */
 public class BulkheadHandler extends AbstractRequestHandler<Bulkhead, BulkheadRule> {
     @Override
-    protected final Bulkhead createProcessor(String businessName, BulkheadRule rule) {
+    protected final Optional<Bulkhead> createProcessor(String businessName, BulkheadRule rule) {
         final BulkheadConfig config = BulkheadConfig.custom()
-                .maxConcurrentCalls(rule.getMaxConcurrentCalls())
-                .maxWaitDuration(Duration.ofMillis(rule.getParsedMaxWaitDuration()))
-                .build();
-        return BulkheadRegistry.of(config).bulkhead(businessName);
+            .maxConcurrentCalls(rule.getMaxConcurrentCalls())
+            .maxWaitDuration(Duration.ofMillis(rule.getParsedMaxWaitDuration()))
+            .build();
+        return Optional.of(BulkheadRegistry.of(config).bulkhead(businessName));
     }
 
     @Override

@@ -64,7 +64,7 @@ public class NacosHealthInterceptor extends SingleStateCloseHandler {
         if (isValidResult(result)) {
             if (result == null && RegisterContext.INSTANCE.compareAndSet(true, false)) {
                 doChange(context.getObject(), arguments, true, false);
-                return null;
+                return context;
             }
             long beat;
             if (result instanceof ObjectNode) {

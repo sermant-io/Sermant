@@ -32,15 +32,27 @@ public class FieldAccessAction implements PrivilegedAction<Object> {
 
     private final Supplier<Object> supplier;
 
+    /**
+     * 构造器
+     *
+     * @param field 字段
+     */
     public FieldAccessAction(Field field) {
         this(field, null);
     }
 
+    /**
+     * 构造器
+     *
+     * @param field 字段
+     * @param supplier 拓展值
+     */
     public FieldAccessAction(Field field, Supplier<Object> supplier) {
         this.field = field;
         this.supplier = supplier;
     }
 
+    @SuppressWarnings("checkstyle:RegexpSingleline")
     @Override
     public Object run() {
         if (field != null) {

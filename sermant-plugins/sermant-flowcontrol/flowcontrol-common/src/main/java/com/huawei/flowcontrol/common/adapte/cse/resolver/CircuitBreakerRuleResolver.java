@@ -30,6 +30,9 @@ public class CircuitBreakerRuleResolver extends AbstractResolver<CircuitBreakerR
      */
     public static final String CONFIG_KEY = "servicecomb.circuitBreaker";
 
+    /**
+     * 熔断器构造
+     */
     public CircuitBreakerRuleResolver() {
         super(CONFIG_KEY);
     }

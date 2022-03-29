@@ -16,9 +16,7 @@
 
 package com.huawei.sermant.core.plugin.config;
 
-import com.huawei.sermant.core.agent.interceptor.InterceptorChainManager;
 import com.huawei.sermant.core.config.ConfigManager;
-import com.huawei.sermant.core.config.common.BaseConfig;
 
 import java.io.File;
 
@@ -37,15 +35,7 @@ public class PluginConfigManager extends ConfigManager {
      * @param classLoader 加载插件服务包的类加载器
      */
     public static void loadServiceConfig(File configFile, ClassLoader classLoader) {
-        loadConfig(configFile, PluginConfig.class, classLoader,
-                new ConfigConsumer() {
-                    @Override
-                    public void accept(BaseConfig config) {
-                        if (config instanceof AliaConfig) {
-                            InterceptorChainManager.addAlia((AliaConfig) config);
-                        }
-                    }
-                });
+        loadConfig(configFile, PluginConfig.class, classLoader);
     }
 
     /**

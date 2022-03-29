@@ -21,6 +21,7 @@ import com.huawei.sermant.core.utils.ClassLoaderUtils;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 
 /**
  * 反射工具类
@@ -38,17 +39,17 @@ public class ReflectUtils {
      * @param className 宿主全限定类名
      * @return 宿主类
      */
-    public static Class<?> defineClass(String className) {
+    public static Optional<Class<?>> defineClass(String className) {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            return ClassLoaderUtils.defineClass(className, contextClassLoader,
-                ClassLoaderUtils.getClassResource(ClassLoader.getSystemClassLoader(), className));
+            return Optional.ofNullable(ClassLoaderUtils.defineClass(className, contextClassLoader,
+                ClassLoaderUtils.getClassResource(ClassLoader.getSystemClassLoader(), className)));
         } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | IOException e) {
             // 有可能已经加载过了，直接用contextClassLoader.loadClass加载
             try {
-                return contextClassLoader.loadClass(className);
+                return Optional.ofNullable(contextClassLoader.loadClass(className));
             } catch (ClassNotFoundException ex) {
-                return null;
+                return Optional.empty();
             }
         }
     }

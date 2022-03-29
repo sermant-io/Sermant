@@ -30,6 +30,9 @@ public class RetryResolver extends AbstractResolver<RetryRule> {
      */
     public static final String CONFIG_KEY = "servicecomb.retry";
 
+    /**
+     * 重试解析器构造
+     */
     public RetryResolver() {
         super(CONFIG_KEY);
     }

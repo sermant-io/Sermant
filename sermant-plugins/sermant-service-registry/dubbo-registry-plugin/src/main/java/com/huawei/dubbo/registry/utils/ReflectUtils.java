@@ -18,7 +18,7 @@ package com.huawei.dubbo.registry.utils;
 
 import com.huawei.dubbo.registry.cache.DubboCache;
 import com.huawei.dubbo.registry.constants.Constant;
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.utils.ClassLoaderUtils;
 
 import java.io.IOException;
@@ -39,8 +39,9 @@ import java.util.logging.Logger;
  * @author provenceee
  * @since 2022-02-07
  */
+@SuppressWarnings({"checkstyle:RegexpSingleline"})
 public class ReflectUtils {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private static final String SC_REGISTRY_ADDRESS =
         Constant.SC_REGISTRY_PROTOCOL + Constant.PROTOCOL_SEPARATION + "localhost:30100";
     private static final String GET_PROTOCOL_METHOD_NAME = "getProtocol";

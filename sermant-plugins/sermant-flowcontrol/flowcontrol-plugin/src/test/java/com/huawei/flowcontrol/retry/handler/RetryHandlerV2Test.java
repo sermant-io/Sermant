@@ -23,7 +23,6 @@ import com.huawei.flowcontrol.common.handler.retry.RetryContext;
 import com.huawei.flowcontrol.retry.cluster.AlibabaDubboClusterInvoker.AlibabaDubboRetry;
 
 import io.github.resilience4j.retry.Retry;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,7 +41,7 @@ public class RetryHandlerV2Test extends BaseTest {
         final RetryHandlerV2 retryHandlerV2 = new RetryHandlerV2();
         final AlibabaDubboRetry alibabaDubboRetry = new AlibabaDubboRetry();
         RetryContext.INSTANCE.markRetry(alibabaDubboRetry);
-        final Retry test = retryHandlerV2.createProcessor("test", new RetryRule());
+        final Retry test = retryHandlerV2.createProcessor("test", new RetryRule()).get();
         Assert.assertNotNull(test);
         RetryContext.INSTANCE.removeRetry();
     }

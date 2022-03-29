@@ -16,8 +16,7 @@
  */
 
 /*
- * Based on org/apache/skywalking/apm/agent/core/plugin/match/HierarchyMatch.java
- * from the Apache Skywalking project.
+ * Based on org/apache/skywalking/apm/agent/core/plugin/match/HierarchyMatch.java from the Apache Skywalking project.
  */
 
 package com.huawei.sermant.core.agent.matcher;
@@ -26,7 +25,7 @@ import static net.bytebuddy.matcher.ElementMatchers.hasSuperType;
 import static net.bytebuddy.matcher.ElementMatchers.isInterface;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
-import com.huawei.sermant.core.utils.Assert;
+import com.huawei.sermant.core.utils.AssertUtils;
 
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeList;
@@ -40,22 +39,33 @@ import java.util.Queue;
 
 /**
  * 父类匹配器
+ *
+ * @since 2022-01-29
  */
 @Deprecated
 public class SuperTypeMatcher implements NonNameMatcher {
-
     private final String[] superTypes;
 
+    /**
+     * SuperTypeMatcher
+     *
+     * @param superTypes superTypes
+     */
     public SuperTypeMatcher(Class<?>[] superTypes) {
-        Assert.notEmpty(superTypes, "Super types must not be empty.");
+        AssertUtils.notEmpty(superTypes, "Super types must not be empty.");
         this.superTypes = new String[superTypes.length];
         for (int i = 0; i < superTypes.length; i++) {
             this.superTypes[i] = superTypes[i].getName();
         }
     }
 
+    /**
+     * SuperTypeMatcher
+     *
+     * @param superTypeNames superTypeNames
+     */
     public SuperTypeMatcher(String[] superTypeNames) {
-        Assert.notEmpty(superTypeNames, "Super types must not be empty.");
+        AssertUtils.notEmpty(superTypeNames, "Super types must not be empty.");
         this.superTypes = superTypeNames;
     }
 
@@ -74,9 +84,8 @@ public class SuperTypeMatcher implements NonNameMatcher {
         Queue<TypeDescription.Generic> queue = new LinkedList<TypeDescription.Generic>();
         queue.add(typeDescription.asGenericType());
 
-        for (TypeDescription.Generic current = queue.poll();
-             current != null && !types.isEmpty();
-             current = queue.poll()) {
+        for (TypeDescription.Generic current = queue.poll(); current != null && !types.isEmpty();
+            current = queue.poll()) {
             types.remove(current.asRawType().getActualName());
             TypeList.Generic interfaces = current.getInterfaces();
             if (!interfaces.isEmpty()) {

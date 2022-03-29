@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -44,10 +45,16 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
 
     private RegisterConfig config;
 
+    /**
+     * 方法调用标记
+     */
     protected final void mark() {
         threadLocal.set(Boolean.TRUE);
     }
 
+    /**
+     * 方法标记删除
+     */
     protected final void unMark() {
         threadLocal.remove();
     }
@@ -96,17 +103,18 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
      * 构建实例  由子类自行转换
      *
      * @param microServiceInstance 实例信息
+     * @param serviceName 服务名
      * @return Object
      */
-    protected final Object buildInstance(MicroServiceInstance microServiceInstance) {
+    protected final Optional<Object> buildInstance(MicroServiceInstance microServiceInstance, String serviceName) {
         final Class<?> serverClass = getInstanceClass(getInstanceClassName());
         try {
             Constructor<?> declaredConstructor = serverClass
-                .getDeclaredConstructor(MicroServiceInstance.class);
-            return declaredConstructor.newInstance(microServiceInstance);
+                .getDeclaredConstructor(MicroServiceInstance.class, String.class);
+            return Optional.of(declaredConstructor.newInstance(microServiceInstance, serviceName));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
             | InvocationTargetException ignored) {
-            return null;
+            return Optional.empty();
         }
     }
 

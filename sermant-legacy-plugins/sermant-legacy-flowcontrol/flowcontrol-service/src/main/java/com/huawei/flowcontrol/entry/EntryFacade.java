@@ -109,21 +109,19 @@ public enum EntryFacade {
         dubboEntry.exit();
     }
 
-    public enum DubboType {
-        /**
-         * alibaba dubbo
-         */
-        ALIBABA,
-
-        /**
-         * apache dubbo
-         */
-        APACHE
-    }
-
+    /**
+     * Entry定义
+     *
+     * @since 2022-01-12
+     */
     interface SimpleEntry {
     }
 
+    /**
+     * dubbo Entry定义
+     *
+     * @since 2022-01-12
+     */
     static class DubboEntry implements SimpleEntry {
         /**
          * provider端entry
@@ -220,6 +218,11 @@ public enum EntryFacade {
         }
     }
 
+    /**
+     * Http Entry定义
+     *
+     * @since 2022-01-12
+     */
     class HttpEntry implements SimpleEntry {
         private final ThreadLocal<List<Entry>> threadLocalEntries = new ThreadLocal<List<Entry>>();
 

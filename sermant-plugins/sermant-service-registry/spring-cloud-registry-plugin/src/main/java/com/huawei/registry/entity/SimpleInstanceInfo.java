@@ -34,6 +34,12 @@ public class SimpleInstanceInfo {
      */
     private int port;
 
+    /**
+     * 构造器
+     *
+     * @param host 域名
+     * @param port 端口
+     */
     public SimpleInstanceInfo(String host, int port) {
         this.host = host;
         this.port = port;

@@ -55,6 +55,11 @@ public class RegisterDynamicConfigSyncer implements PluginService {
         service.addConfigListener(REGISTER_KEY, REGISTER_GROUP, new RegisterDynamicListener());
     }
 
+    /**
+     * 配置中心配置监听
+     *
+     * @since 2022-02-11
+     */
     static class RegisterDynamicListener implements DynamicConfigListener {
         @Override
         public void process(DynamicConfigEvent event) {

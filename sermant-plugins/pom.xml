@@ -42,9 +42,6 @@
         </profile>
         <profile>
             <id>ext</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <modules>
                 <module>sermant-flowcontrol</module>
             </modules>

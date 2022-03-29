@@ -42,7 +42,7 @@ public enum RegisterContext {
 
     private final AtomicBoolean isAvailable = new AtomicBoolean(true);
 
-    private final List<SingleStateCloseHandler> closeHandlers = new ArrayList<SingleStateCloseHandler>();
+    private final List<SingleStateCloseHandler> closeHandlers = new ArrayList<>();
 
     private Object discoveryClient;
 
@@ -52,11 +52,23 @@ public enum RegisterContext {
         return clientInfo;
     }
 
+    /**
+     * 设置注册中心可用状态 - 强制
+     *
+     * @param available 是否可用
+     */
     @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setAvailable(boolean available) {
         this.isAvailable.set(available);
     }
 
+    /**
+     * 设置注册中心可用状态
+     *
+     * @param expect 期待值
+     * @param target 目标值
+     * @return 是否配置成功
+     */
     @SuppressWarnings("checkstyle:RegexpSingleline")
     public boolean compareAndSet(boolean expect, boolean target) {
         return this.isAvailable.compareAndSet(expect, target);
@@ -74,6 +86,11 @@ public enum RegisterContext {
         this.registerWatch = registerWatch;
     }
 
+    /**
+     * 注册注册中心关闭处理器
+     *
+     * @param handler 处理器
+     */
     public void registerCloseHandler(SingleStateCloseHandler handler) {
         if (handler == null) {
             return;
@@ -93,6 +110,11 @@ public enum RegisterContext {
         this.discoveryClient = discoveryClient;
     }
 
+    /**
+     * 客户端信息
+     *
+     * @since 2022-03-01
+     */
     public static class ClientInfo {
         /**
          * 服务名 通过拦截获取

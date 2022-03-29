@@ -22,6 +22,7 @@ import com.huawei.flowcontrol.service.InterceptorSupporter;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -63,7 +64,7 @@ public class ExtensionLoaderInterceptor extends InterceptorSupporter {
             if (classes.get(retryClusterInvoker) != null) {
                 return context;
             }
-            final Class<?> retryInvokerClass;
+            final Optional<Class<?>> retryInvokerClass;
             if (APACHE_DUBBO_CLUSTER_CLASS_NAME.equals(type.getName())) {
                 ReflectUtils.defineClass(
                     "com.huawei.flowcontrol.retry.cluster.ApacheDubboClusterInvoker");
@@ -77,7 +78,7 @@ public class ExtensionLoaderInterceptor extends InterceptorSupporter {
             } else {
                 return context;
             }
-            classes.put(retryClusterInvoker, retryInvokerClass);
+            retryInvokerClass.ifPresent(invokerClass -> classes.put(retryClusterInvoker, invokerClass));
         }
         return context;
     }

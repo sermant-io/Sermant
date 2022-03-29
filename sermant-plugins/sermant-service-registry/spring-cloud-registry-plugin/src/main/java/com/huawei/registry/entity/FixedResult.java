@@ -38,6 +38,11 @@ public class FixedResult {
         return result;
     }
 
+    /**
+     * 设置结果
+     *
+     * @param result 结果
+     */
     public void setResult(Object result) {
         this.result = result;
         this.isSkip = true;
