@@ -24,6 +24,9 @@ package com.huawei.sermant.core.agent.common;
 
 /**
  * 实例和静态方法拦截器前置方法执行结果承载类
+ *
+ * @author HapThorin
+ * @since 2022-01-29
  */
 @Deprecated
 public class BeforeResult {
@@ -40,6 +43,11 @@ public class BeforeResult {
         return result;
     }
 
+    /**
+     * 设置结果
+     *
+     * @param result result
+     */
     public void setResult(Object result) {
         this.result = result;
         isContinue = false;

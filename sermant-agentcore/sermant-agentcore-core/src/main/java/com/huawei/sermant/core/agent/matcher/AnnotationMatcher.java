@@ -26,7 +26,7 @@ import static net.bytebuddy.matcher.ElementMatchers.isAnnotatedWith;
 import static net.bytebuddy.matcher.ElementMatchers.isInterface;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
-import com.huawei.sermant.core.utils.Assert;
+import com.huawei.sermant.core.utils.AssertUtils;
 
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.annotation.AnnotationList;
@@ -40,22 +40,34 @@ import java.util.Set;
 
 /**
  * 注解匹配器
+ *
+ * @since 2022-01-29
  */
 @Deprecated
 public class AnnotationMatcher implements NonNameMatcher {
 
     private final String[] annotationNames;
 
+    /**
+     * AnnotationMatcher
+     *
+     * @param annotations annotations
+     */
     public AnnotationMatcher(Class<?>[] annotations) {
-        Assert.notEmpty(annotations, "Annotations must not be empty.");
+        AssertUtils.notEmpty(annotations, "Annotations must not be empty.");
         this.annotationNames = new String[annotations.length];
         for (int i = 0; i < annotations.length; i++) {
             this.annotationNames[i] = annotations[i].getName();
         }
     }
 
+    /**
+     * AnnotationMatcher
+     *
+     * @param annotationNames annotationNames
+     */
     public AnnotationMatcher(String[] annotationNames) {
-        Assert.notEmpty(annotationNames, "Annotation names must not be empty.");
+        AssertUtils.notEmpty(annotationNames, "Annotation names must not be empty.");
         this.annotationNames = annotationNames;
     }
 

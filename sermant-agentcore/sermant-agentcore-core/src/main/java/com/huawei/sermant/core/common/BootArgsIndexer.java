@@ -18,6 +18,7 @@ package com.huawei.sermant.core.common;
 
 import com.huawei.sermant.core.exception.SchemaException;
 import com.huawei.sermant.core.utils.JarFileUtils;
+import com.huawei.sermant.core.utils.UuidUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +27,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 /**
- * 路径索引器
+ * 启动配置索引器
  *
  * @author HapThorin
  * @version 1.0.0
@@ -58,6 +59,12 @@ public class BootArgsIndexer {
      */
     private static File pluginPackageDir;
 
+    private static String appName;
+
+    private static String appType;
+
+    private static long instanceId;
+
     private BootArgsIndexer() {
     }
 
@@ -75,6 +82,18 @@ public class BootArgsIndexer {
 
     public static File getPluginPackageDir() {
         return pluginPackageDir;
+    }
+
+    public static String getAppName() {
+        return appName;
+    }
+
+    public static String getAppType() {
+        return appType;
+    }
+
+    public static long getInstanceId() {
+        return instanceId;
     }
 
     /**
@@ -95,6 +114,13 @@ public class BootArgsIndexer {
         if (!pluginPackageDir.exists() || !pluginPackageDir.isDirectory()) {
             LOGGER.warning("Plugin package directory is not found! ");
         }
+
+        appName = argsMap.get(CommonConstant.APP_NAME_KEY).toString();
+
+        Object object = argsMap.get(CommonConstant.APP_TYPE_KEY);
+        appType = object == null ? "0" : object.toString();
+
+        instanceId = UuidUtil.getId();
     }
 
     static {

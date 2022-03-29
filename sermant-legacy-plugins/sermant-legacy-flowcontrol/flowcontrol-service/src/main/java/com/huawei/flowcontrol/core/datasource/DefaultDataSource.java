@@ -53,6 +53,12 @@ public class DefaultDataSource<T> extends AbstractDataSource<DynamicConfigEvent,
      */
     private DynamicConfigEvent event;
 
+    /**
+     * 默认数据源
+     *
+     * @param ruleClass 规则类型
+     * @param ruleKey 规则名称
+     */
     public DefaultDataSource(final Class<T> ruleClass, String ruleKey) {
         super(new Converter<DynamicConfigEvent, List<T>>() {
             @Override

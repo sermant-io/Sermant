@@ -20,6 +20,7 @@ import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.services.RegisterCenterService;
 import com.huawei.registry.support.InstanceInterceptorSupport;
+import com.huawei.registry.utils.CommonUtils;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huawei.sermant.core.service.ServiceManager;
@@ -32,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -52,11 +54,16 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
         }
         try {
             mark();
+            final Optional<Object> serviceIdOption = CommonUtils.getFieldValue(context.getObject(), "serviceId");
+            if (!serviceIdOption.isPresent()) {
+                return context;
+            }
             final RegisterCenterService service = ServiceManager.getService(RegisterCenterService.class);
-            final List<MicroServiceInstance> serverList = service.getServerList(context.getObject());
+            String serviceName = (String) serviceIdOption.get();
+            final List<MicroServiceInstance> serverList = service.getServerList(serviceName);
             if (!serverList.isEmpty()) {
                 // 单注册中心场景无需合并
-                context.skip(convertAndMerge(context.getObject(), serverList));
+                context.skip(convertAndMerge(context.getObject(), serverList, serviceName));
             }
         } finally {
             unMark();
@@ -71,7 +78,7 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
      * @return 服务列表
      */
     @SuppressWarnings("checkstyle:IllegalCatch")
-    private List<Server> convertAndMerge(Object obj, List<MicroServiceInstance> serviceInstances) {
+    private List<Server> convertAndMerge(Object obj, List<MicroServiceInstance> serviceInstances, String serviceName) {
         List<Server> result = new ArrayList<>(serviceInstances.size());
         if (isOpenMigration() && RegisterContext.INSTANCE.isAvailable()) {
             result.addAll(queryInstances(obj));
@@ -82,7 +89,8 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
                     Objects.equals(originServiceInstance.getHost(), microServiceInstance.getHost())
                         && originServiceInstance.getPort() == microServiceInstance.getPort());
             }
-            result.add((Server) buildInstance(microServiceInstance));
+            buildInstance(microServiceInstance, serviceName)
+                .ifPresent(instance -> result.add((Server) instance));
         }
         return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
@@ -105,14 +113,26 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
         return "com.huawei.registry.interceptors.ServerListInterceptor$ScServer";
     }
 
+    /**
+     * server 信息定义
+     *
+     * @since 2022-02-11
+     */
     public static class ScServer extends Server {
         private final MicroServiceInstance microServiceInstance;
-
+        private final String serviceName;
         private MetaInfo metaInfo;
 
-        public ScServer(final MicroServiceInstance microServiceInstance) {
+        /**
+         * 构造器
+         *
+         * @param microServiceInstance 实例信息
+         * @param serviceName 服务名
+         */
+        public ScServer(final MicroServiceInstance microServiceInstance, String serviceName) {
             super(microServiceInstance.getHost(), microServiceInstance.getPort());
             this.microServiceInstance = microServiceInstance;
+            this.serviceName = serviceName;
         }
 
         @Override
@@ -121,17 +141,17 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
                 this.metaInfo = new Server.MetaInfo() {
                     @Override
                     public String getAppName() {
-                        return microServiceInstance.getServiceId();
+                        return serviceName;
                     }
 
                     @Override
                     public String getServerGroup() {
-                        return null;
+                        throw new UnsupportedOperationException();
                     }
 
                     @Override
                     public String getServiceIdForDiscovery() {
-                        return null;
+                        throw new UnsupportedOperationException();
                     }
 
                     @Override

@@ -21,8 +21,8 @@ import com.huawei.flowcontrol.common.config.ConfigConst;
 import com.huawei.flowcontrol.common.util.PluginConfigUtil;
 import com.huawei.flowcontrol.core.datasource.DataSourceManager;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.heartbeat.ExtInfoProvider;
-import com.huawei.sermant.core.service.heartbeat.HeartbeatService;
+import com.huawei.sermant.core.service.heartbeat.api.ExtInfoProvider;
+import com.huawei.sermant.core.service.heartbeat.api.HeartbeatService;
 
 import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.slots.block.SentinelRpcException;
@@ -139,6 +139,11 @@ public class ZookeeperDatasourceManager implements DataSourceManager {
         return rootPath + CommonConst.SLASH_SIGN + appName;
     }
 
+    /**
+     * 流控心跳额外信息，用于增加端口信息，兼容泛paasUI展示
+     *
+     * @since 2022-01-02
+     */
     static class FlowControlHeartInfoProvider implements ExtInfoProvider {
         @Override
         public Map<String, String> getExtInfo() {

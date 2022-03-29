@@ -19,9 +19,9 @@ package com.huawei.registry.config;
 
 import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.config.common.ConfigTypeKey;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.sermant.core.plugin.config.PluginConfig;
-import com.huawei.sermant.core.service.meta.ServiceMeta;
+import com.huawei.sermant.core.plugin.config.ServiceMeta;
+import com.huawei.sermant.core.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -270,7 +270,7 @@ public class RegisterConfig implements PluginConfig {
      */
     public List<String> getAddressList() {
         if (StringUtils.isBlank(address)) {
-            return Collections.<String>emptyList();
+            return Collections.emptyList();
         }
         return new ArrayList<String>(Arrays.asList(address.split(",")));
     }

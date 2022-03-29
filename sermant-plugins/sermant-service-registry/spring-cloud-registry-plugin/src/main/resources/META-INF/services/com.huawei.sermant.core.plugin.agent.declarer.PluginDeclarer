@@ -25,3 +25,4 @@ com.huawei.registry.declarers.health.NacosHealthDeclarer
 com.huawei.registry.declarers.health.ZookeeperHealthDeclarer
 com.huawei.registry.declarers.health.ConsulHealthDeclarer
 com.huawei.registry.declarers.health.EurekaHealthDeclarer
+com.huawei.registry.declarers.cloud3.x.ZookeeperInstanceSupplierDeclarer

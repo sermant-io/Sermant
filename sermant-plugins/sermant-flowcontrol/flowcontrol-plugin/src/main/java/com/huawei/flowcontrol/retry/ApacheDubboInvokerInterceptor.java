@@ -38,6 +38,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -49,6 +50,8 @@ import java.util.logging.Logger;
  */
 public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final int LOADER_BALANCE_INDEX = 2;
 
     private final Retry retry = new ApacheDubboRetry();
 
@@ -83,9 +86,9 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
             if (obj instanceof AbstractClusterInvoker) {
                 final Invocation invocation = (Invocation) allArguments[0];
                 final List<Invoker<?>> invokers = (List<Invoker<?>>) allArguments[1];
-                final Method checkInvokers = getMethodCheckInvokers();
-                final Method select = getMethodSelect();
-                if (checkInvokers == null || select == null) {
+                final Optional<Method> checkInvokersOption = getMethodCheckInvokers();
+                final Optional<Method> selectOption = getMethodSelect();
+                if (!checkInvokersOption.isPresent() || !selectOption.isPresent()) {
                     LOGGER.warning(String.format(Locale.ENGLISH, "It does not support retry for class %s",
                         obj.getClass().getCanonicalName()));
                     return ret;
@@ -95,11 +98,12 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
                 }
 
                 // 校验invokers
-                checkInvokers.invoke(obj, invokers, invocation);
-                LoadBalance loadBalance = (LoadBalance) allArguments[2];
+                checkInvokersOption.get().invoke(obj, invokers, invocation);
+                LoadBalance loadBalance = (LoadBalance) allArguments[LOADER_BALANCE_INDEX];
 
                 // 选择invoker
-                final Invoker<?> invoke = (Invoker<?>) select.invoke(obj, loadBalance, invocation, invokers, null);
+                final Invoker<?> invoke = (Invoker<?>) selectOption.get()
+                    .invoke(obj, loadBalance, invocation, invokers, null);
 
                 // 执行调用
                 final Result result = invoke.invoke(invocation);
@@ -116,7 +120,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
         return ret;
     }
 
-    private Method getMethodSelect() {
+    private Optional<Method> getMethodSelect() {
         return getInvokerMethod("select", func -> {
             try {
                 final Method method = AbstractClusterInvoker.class
@@ -126,11 +130,11 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
             } catch (NoSuchMethodException ex) {
                 LOGGER.warning("No such Method select! " + ex.getMessage());
             }
-            return null;
+            return placeHolderMethod;
         });
     }
 
-    private Method getMethodCheckInvokers() {
+    private Optional<Method> getMethodCheckInvokers() {
         return getInvokerMethod("checkInvokers", func -> {
             try {
                 final Method method = AbstractClusterInvoker.class
@@ -140,7 +144,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
             } catch (NoSuchMethodException ex) {
                 LOGGER.warning("No such Method checkInvokers! " + ex.getMessage());
             }
-            return null;
+            return placeHolderMethod;
         });
     }
 
@@ -189,6 +193,11 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
         return result;
     }
 
+    /**
+     * apache 重试
+     *
+     * @since 2022-02-23
+     */
     public static class ApacheDubboRetry extends AbstractRetry {
         @Override
         public boolean needRetry(Set<String> statusList, Object result) {

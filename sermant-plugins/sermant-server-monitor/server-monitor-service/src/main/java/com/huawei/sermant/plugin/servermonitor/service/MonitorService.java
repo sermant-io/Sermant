@@ -16,20 +16,20 @@
 
 package com.huawei.sermant.plugin.servermonitor.service;
 
-import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.plugin.service.PluginService;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.send.GatewayClient;
+import com.huawei.sermant.core.service.send.api.GatewayClient;
 import com.huawei.sermant.plugin.monitor.common.collect.CollectTask;
 import com.huawei.sermant.plugin.monitor.common.config.ServiceConfig;
-import com.huawei.sermant.plugin.servermonitor.provider.IbmJvmMetricProvider;
-import com.huawei.sermant.plugin.servermonitor.provider.OpenJvmMetricProvider;
-import com.huawei.sermant.plugin.servermonitor.provider.ServerMonitorMetricProvider;
 import com.huawei.sermant.plugin.servermonitor.config.ServerMonitorConfig;
 import com.huawei.sermant.plugin.servermonitor.entity.AgentRegistration;
 import com.huawei.sermant.plugin.servermonitor.entity.NetworkAddress;
+import com.huawei.sermant.plugin.servermonitor.provider.IbmJvmMetricProvider;
+import com.huawei.sermant.plugin.servermonitor.provider.OpenJvmMetricProvider;
+import com.huawei.sermant.plugin.servermonitor.provider.ServerMonitorMetricProvider;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -43,6 +43,8 @@ import java.util.logging.Logger;
 
 /**
  * 监控采集服务
+ *
+ * @since 2021-12-31
  */
 public class MonitorService implements PluginService {
 
@@ -62,12 +64,10 @@ public class MonitorService implements PluginService {
 
     private void register() {
         ServiceConfig config = PluginConfigManager.getPluginConfig(ServiceConfig.class);
-        AgentRegistration.Builder srBuilder = AgentRegistration.newBuilder()
-                .setService(config.getService())
-                .setServiceInstance(config.getServiceInstance())
-                .setJvmVersion(System.getProperty("java.vm.version"))
-                .setJvmVendor(System.getProperty("java.vm.vendor"))
-                .setRuntimeVersion(System.getProperty("java.runtime.version"));
+        AgentRegistration.Builder srBuilder = AgentRegistration.newBuilder().setService(config.getService())
+            .setServiceInstance(config.getServiceInstance()).setJvmVersion(System.getProperty("java.vm.version"))
+            .setJvmVendor(System.getProperty("java.vm.vendor"))
+            .setRuntimeVersion(System.getProperty("java.runtime.version"));
 
         try {
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
@@ -79,20 +79,16 @@ public class MonitorService implements PluginService {
                     if (inetAddress.isLoopbackAddress()) {
                         continue;
                     }
-                    srBuilder.addNetworkAddresses(NetworkAddress.newBuilder()
-                            .setAddress(inetAddress.getHostAddress())
-                            .setHostname(inetAddress.getHostName()));
+                    srBuilder.addNetworkAddresses(NetworkAddress.newBuilder().setAddress(inetAddress.getHostAddress())
+                        .setHostname(inetAddress.getHostName()));
                 }
             }
         } catch (SocketException e) {
             LOGGER.severe("Failed to get network interfaces.");
-            srBuilder.addAllNetworkAddresses(Collections.singletonList(
-                    NetworkAddress.newBuilder()
-                            .setAddress("unknown")
-                            .setHostname("unknown").build()));
+            srBuilder.addAllNetworkAddresses(Collections
+                .singletonList(NetworkAddress.newBuilder().setAddress("unknown").setHostname("unknown").build()));
         }
-        ServiceManager.getService(GatewayClient.class)
-                .send(srBuilder.build().toByteArray(), AGENT_REG_DATA_TYPE);
+        ServiceManager.getService(GatewayClient.class).send(srBuilder.build().toByteArray(), AGENT_REG_DATA_TYPE);
     }
 
     private void startCollectTasks() {
@@ -101,16 +97,17 @@ public class MonitorService implements PluginService {
         final long consumeInterval = config.getConsumeInterval();
         final TimeUnit timeUnit = TimeUnit.valueOf(config.getTimeunit());
         if (System.getProperty("java.vm.vendor").contains("IBM")) {
-            collectTasks.add(CollectTask.create(IbmJvmMetricProvider.getInstance(),
-                    collectInterval, consumeInterval, timeUnit));
+            collectTasks.add(
+                CollectTask.create(IbmJvmMetricProvider.getInstance(), collectInterval, consumeInterval, timeUnit));
         } else {
-            collectTasks.add(CollectTask.create(OpenJvmMetricProvider.getInstance(),
-                    collectInterval, consumeInterval, timeUnit));
+            collectTasks.add(
+                CollectTask.create(OpenJvmMetricProvider.getInstance(), collectInterval, consumeInterval, timeUnit));
         }
+
         // 此处用白名单比较合适，比如除了Windows外的其他非Linux也是不采集的
         if (!System.getProperty("os.name").contains("Windows")) {
-            collectTasks.add(CollectTask.create(new ServerMonitorMetricProvider(collectInterval),
-                    collectInterval, consumeInterval, timeUnit));
+            collectTasks.add(CollectTask.create(new ServerMonitorMetricProvider(collectInterval), collectInterval,
+                consumeInterval, timeUnit));
         }
 
         for (CollectTask<?> collectTask : collectTasks) {

@@ -35,14 +35,27 @@ public enum RetryContext {
         return retryThreadLocal.get();
     }
 
+    /**
+     * 标记重试
+     *
+     * @param retry 重试器
+     */
     public void markRetry(Retry retry) {
         retryThreadLocal.set(retry);
     }
 
+    /**
+     * 移除线程变量
+     */
     public void removeRetry() {
         retryThreadLocal.remove();
     }
 
+    /**
+     * 是否标记重试
+     *
+     * @return 是否标记重试
+     */
     public boolean isMarkedRetry() {
         return retryThreadLocal.get() != null;
     }

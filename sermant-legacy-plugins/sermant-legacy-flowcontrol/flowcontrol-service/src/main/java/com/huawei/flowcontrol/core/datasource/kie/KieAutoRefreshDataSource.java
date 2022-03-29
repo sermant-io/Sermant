@@ -33,6 +33,7 @@ import com.alibaba.fastjson.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * 数据源kie
@@ -48,15 +49,30 @@ public class KieAutoRefreshDataSource<T> extends AutoRefreshDataSource<String, T
 
     private String lastRules;
 
+    /**
+     * 构造器
+     *
+     * @param configParser 转换器
+     * @param ruleName 规则名
+     * @param defaultRule 默认规则
+     */
     public KieAutoRefreshDataSource(Converter<String, T> configParser, String ruleName, String defaultRule) {
         this(configParser, DEFAULT_REFRESH_MS, ruleName, defaultRule);
     }
 
+    /**
+     * 构造器
+     *
+     * @param configParser 转换器
+     * @param recommendRefreshMs 配置更新间隔
+     * @param ruleName 规则名
+     * @param defaultRule 默认规则
+     */
     public KieAutoRefreshDataSource(Converter<String, T> configParser, long recommendRefreshMs,
-        String ruleKey, String defaultRule) {
+        String ruleName, String defaultRule) {
         super(configParser, recommendRefreshMs);
 
-        this.ruleKey = ruleKey;
+        this.ruleKey = ruleName;
         this.lastRules = defaultRule;
 
         firstLoad();
@@ -80,9 +96,9 @@ public class KieAutoRefreshDataSource<T> extends AutoRefreshDataSource<String, T
             return lastRules;
         }
 
-        KieConfigResponse config = KieConfigClient.getConfig(kieServerAddress + ConfigConst.KIE_RULES_URI);
-        if (config != null) {
-            List<KieConfigItem> data = config.getData();
+        Optional<KieConfigResponse> config = KieConfigClient.getConfig(kieServerAddress + ConfigConst.KIE_RULES_URI);
+        if (config.isPresent()) {
+            List<KieConfigItem> data = config.get().getData();
             if (data == null || data.isEmpty()) {
                 return lastRules;
             }

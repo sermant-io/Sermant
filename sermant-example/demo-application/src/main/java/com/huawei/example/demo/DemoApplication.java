@@ -64,8 +64,6 @@ public class DemoApplication {
 
         // 测试链路监控功能
         DemoTraceService.trace();
-        DemoTraceService.trace();
-        DemoTraceService.trace();
 
         // 测试启动类增强
         Thread.getAllStackTraces();

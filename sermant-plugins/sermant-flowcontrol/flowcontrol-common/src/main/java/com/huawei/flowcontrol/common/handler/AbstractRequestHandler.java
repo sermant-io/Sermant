@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -47,7 +47,7 @@ public abstract class AbstractRequestHandler<H, R extends AbstractRule> {
     /**
      * 处理器缓存 map 业务场景名, 处理器
      */
-    private final Map<String, H> handlers = new ConcurrentHashMap<>();
+    private final Map<String, Optional<H>> handlers = new ConcurrentHashMap<>();
 
     /**
      * 匹配的业务场景缓存
@@ -59,6 +59,9 @@ public abstract class AbstractRequestHandler<H, R extends AbstractRule> {
      */
     private final List<HandlerRequestListener> configListeners = new ArrayList<>();
 
+    /**
+     * 处理器构造方法
+     */
     protected AbstractRequestHandler() {
         registerConfigListener();
     }
@@ -97,15 +100,16 @@ public abstract class AbstractRequestHandler<H, R extends AbstractRule> {
     private List<H> createHandlers(Set<String> businessNames) {
         return businessNames.stream()
             .map(businessName -> handlers.computeIfAbsent(businessName, fn -> create(businessName)))
-            .filter(Objects::nonNull)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
             .collect(Collectors.toList());
     }
 
-    private H create(String businessName) {
+    private Optional<H> create(String businessName) {
         final AbstractResolver<?> resolver = ResolverManager.INSTANCE.getResolver(configKey());
         final R rule = (R) resolver.getRules().get(businessName);
         if (rule == null) {
-            return null;
+            return Optional.empty();
         }
         return createProcessor(businessName, rule);
     }
@@ -117,15 +121,21 @@ public abstract class AbstractRequestHandler<H, R extends AbstractRule> {
      * @param rule         匹配的解析规则
      * @return handler
      */
-    protected abstract H createProcessor(String businessName, R rule);
+    protected abstract Optional<H> createProcessor(String businessName, R rule);
 
     /**
      * 获取配置键
      *
      * @return 配置键， 用于注册配置监听器
+     * @since 2022-03-22
      */
     protected abstract String configKey();
 
+    /**
+     * 处理器监听器
+     *
+     * @since 2022-03-22
+     */
     class HandlerConfigListener implements ConfigUpdateListener<R> {
         private final boolean isMatchGroupListener;
 

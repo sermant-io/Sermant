@@ -29,8 +29,7 @@ public class MetricEntity {
     private String resource;
 
     /**
-     * 资源哈希码
-     * 指标数据需要
+     * 资源哈希码 指标数据需要
      */
     private int resourceCode;
 
@@ -60,8 +59,7 @@ public class MetricEntity {
     private long exceptionQps;
 
     /**
-     * 响应时间
-     * 毫秒
+     * 响应时间 毫秒
      */
     private long rt;
 
@@ -71,8 +69,7 @@ public class MetricEntity {
     private String app;
 
     /**
-     * 分类
-     * SQL / RPC
+     * 分类 SQL / RPC
      */
     private int classification;
 
@@ -80,6 +77,12 @@ public class MetricEntity {
         return resource;
     }
 
+    /**
+     * 设置资源名
+     *
+     * @param resource 资源名
+     * @return MetricEntity
+     */
     public MetricEntity setResource(String resource) {
         this.resource = resource;
         return this;
@@ -89,6 +92,12 @@ public class MetricEntity {
         return timestamp;
     }
 
+    /**
+     * 设置时间戳
+     *
+     * @param timestamp 时间戳
+     * @return MetricEntity
+     */
     public MetricEntity setTimestamp(long timestamp) {
         this.timestamp = timestamp;
         return this;
@@ -98,6 +107,12 @@ public class MetricEntity {
         return passQps;
     }
 
+    /**
+     * 设置通过qps
+     *
+     * @param passQps 通过qps
+     * @return MetricEntity
+     */
     public MetricEntity setPassQps(long passQps) {
         this.passQps = passQps;
         return this;
@@ -107,6 +122,12 @@ public class MetricEntity {
         return blockQps;
     }
 
+    /**
+     * 设置阻塞qps
+     *
+     * @param blockQps 阻塞qps
+     * @return MetricEntity
+     */
     public MetricEntity setBlockQps(long blockQps) {
         this.blockQps = blockQps;
         return this;
@@ -116,6 +137,12 @@ public class MetricEntity {
         return successQps;
     }
 
+    /**
+     * 设置成功qps
+     *
+     * @param successQps 成功qps
+     * @return MetricEntity
+     */
     public MetricEntity setSuccessQps(long successQps) {
         this.successQps = successQps;
         return this;
@@ -125,6 +152,12 @@ public class MetricEntity {
         return exceptionQps;
     }
 
+    /**
+     * 设置异常qps
+     *
+     * @param exceptionQps 异常qps
+     * @return MetricEntity
+     */
     public MetricEntity setExceptionQps(long exceptionQps) {
         this.exceptionQps = exceptionQps;
         return this;
@@ -134,6 +167,12 @@ public class MetricEntity {
         return rt;
     }
 
+    /**
+     * 设置响应时间
+     *
+     * @param rt 响应时间
+     * @return MetricEntity
+     */
     public MetricEntity setRt(long rt) {
         this.rt = rt;
         return this;
@@ -143,6 +182,12 @@ public class MetricEntity {
         return app;
     }
 
+    /**
+     * 设置目标APP
+     *
+     * @param app 目标APP
+     * @return MetricEntity
+     */
     public MetricEntity setApp(String app) {
         this.app = app;
         return this;
@@ -152,6 +197,12 @@ public class MetricEntity {
         return classification;
     }
 
+    /**
+     * 设置分类
+     *
+     * @param classification 分类
+     * @return MetricEntity
+     */
     public MetricEntity setClassification(int classification) {
         this.classification = classification;
         return this;
@@ -161,6 +212,12 @@ public class MetricEntity {
         return resourceCode;
     }
 
+    /**
+     * 设置资源编码 - hash
+     *
+     * @param resourceCode 资源编码
+     * @return MetricEntity
+     */
     public MetricEntity setResourceCode(int resourceCode) {
         this.resourceCode = resourceCode;
         return this;

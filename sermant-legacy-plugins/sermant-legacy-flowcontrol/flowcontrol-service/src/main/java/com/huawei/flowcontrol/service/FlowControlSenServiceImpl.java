@@ -62,6 +62,11 @@ public class FlowControlSenServiceImpl implements PluginService {
             == FlowFramework.SENTINEL;
     }
 
+    /**
+     * 流控初始化任务
+     *
+     * @since 2022-01-12
+     */
     static class FlowControlInitTask implements Runnable {
         @SuppressWarnings("checkstyle:IllegalCatch")
         @Override

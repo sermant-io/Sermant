@@ -16,24 +16,29 @@
 
 package com.huawei.sermant.premain.common;
 
+import com.huawei.sermant.core.common.CommonConstant;
+import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.utils.FieldUtils;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-
-import com.huawei.sermant.core.common.CommonConstant;
-import com.huawei.sermant.core.utils.FieldUtils;
+import java.util.logging.Logger;
 
 /**
  * 启动参数构建器
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/12
+ * @since 2021-11-12
  */
 public abstract class BootArgsBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     /**
      * 构建启动参数
      *
@@ -45,7 +50,6 @@ public abstract class BootArgsBuilder {
         final Map<String, Object> argsMap = toArgsMap(agentArgs);
         addNotNullEntries(argsMap, configMap);
         addNormalEntries(argsMap, configMap);
-        addSpeEntries(argsMap, configMap);
         addPathEntries(argsMap);
         return argsMap;
     }
@@ -85,7 +89,9 @@ public abstract class BootArgsBuilder {
             if (configStream != null) {
                 try {
                     configStream.close();
-                } catch (IOException ignored) {
+                } catch (IOException ioException) {
+                    LOGGER.severe(String.format(Locale.ROOT, "Exception occurs when close config InputStream , %s .",
+                        ioException.getMessage()));
                 }
             }
         }
@@ -106,7 +112,7 @@ public abstract class BootArgsBuilder {
     }
 
     /**
-     * 添加非空的键值对，涉及的参数均不可为空
+     * 添加非空的键值对，涉及的参数均不可为空 appName、instanceName、appType
      *
      * @param argsMap   参数集
      * @param configMap 配置集
@@ -140,38 +146,11 @@ public abstract class BootArgsBuilder {
      * @param configMap 配置集
      */
     private static void addNormalEntries(Map<String, Object> argsMap, Properties configMap) {
-        for (String key : new String[]{
-                CommonConstant.ENV_KEY,
-                CommonConstant.ENV_TAG_KEY,
-                CommonConstant.BIZ_PATH_KEY,
-                CommonConstant.SUB_BUSINESS_KEY,
-                CommonConstant.ENV_SECRET_KEY}) {
-            if (!argsMap.containsKey(key)) {
-                final String value = getCommonValue(key, configMap);
+        for (Object key : configMap.keySet()) {
+            if (!argsMap.containsKey((String)key)) {
+                final String value = configMap.getProperty((String)key);
                 if (value != null) {
-                    argsMap.put(key, value);
-                }
-            }
-        }
-    }
-
-    /**
-     * 添加特殊键值对，参数键风格为'.'连接，而不是小驼峰，为空时不添加
-     *
-     * @param argsMap   参数集
-     * @param configMap 配置集
-     */
-    private static void addSpeEntries(Map<String, Object> argsMap, Properties configMap) {
-        for (String key : new String[]{
-                CommonConstant.MASTER_ACCESS_KEY,
-                CommonConstant.MASTER_SECRET_KEY,
-                CommonConstant.MASTER_ADDRESS_KEY}) {
-            final String camelKey = FieldUtils.toCamel(key, '.', false);
-            if (!argsMap.containsKey(camelKey)) {
-                String value = configMap.getProperty(key);
-                value = value == null ? System.getProperty(camelKey) : value;
-                if (value != null) {
-                    argsMap.put(key, value);
+                    argsMap.put((String)key, value);
                 }
             }
         }
@@ -184,8 +163,6 @@ public abstract class BootArgsBuilder {
      */
     private static void addPathEntries(Map<String, Object> argsMap) {
         argsMap.put(CommonConstant.AGENT_ROOT_DIR_KEY, PathDeclarer.getAgentPath());
-        argsMap.put(CommonConstant.LUBAN_BOOT_PATH_KEY, PathDeclarer.getLubanBootPath());
-        argsMap.put(CommonConstant.LUBAN_PLUGINS_PATH_KEY, PathDeclarer.getLubanPluginsPath());
         argsMap.put(CommonConstant.CORE_CONFIG_FILE_KEY, PathDeclarer.getConfigPath());
         argsMap.put(CommonConstant.PLUGIN_SETTING_FILE_KEY, PathDeclarer.getPluginSettingPath());
         argsMap.put(CommonConstant.PLUGIN_PACKAGE_DIR_KEY, PathDeclarer.getPluginPackagePath());

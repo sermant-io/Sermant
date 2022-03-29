@@ -17,7 +17,7 @@
 package com.huawei.gray.dubbo.strategy;
 
 import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.sermant.core.utils.StringUtils;
 
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -80,7 +80,7 @@ public abstract class TypeStrategy {
      * @return 是否合法
      */
     public boolean checkType(String type) {
-        return StringUtils.isNotBlank(type) && type.startsWith(getBeginFlag()) && type.endsWith(getEndFlag());
+        return StringUtils.isExist(type) && type.startsWith(getBeginFlag()) && type.endsWith(getEndFlag());
     }
 
     /**

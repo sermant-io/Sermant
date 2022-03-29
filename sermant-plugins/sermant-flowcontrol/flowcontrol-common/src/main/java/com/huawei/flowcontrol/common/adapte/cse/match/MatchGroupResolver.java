@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -39,6 +40,9 @@ public class MatchGroupResolver extends AbstractResolver<BusinessMatcher> {
      */
     public static final String CONFIG_KEY = "servicecomb.matchGroup";
 
+    /**
+     * 业务场景解析器构造
+     */
     public MatchGroupResolver() {
         super(CONFIG_KEY, new MatchGroupConverter(BusinessMatcher.class));
     }
@@ -48,9 +52,19 @@ public class MatchGroupResolver extends AbstractResolver<BusinessMatcher> {
         return BusinessMatcher.class;
     }
 
+    /**
+     * 业务场景解析器
+     *
+     * @since 2022-02-22
+     */
     public static class MatchGroupConverter extends YamlConverter<BusinessMatcher> {
         private static final Logger LOGGER = LoggerFactory.getLogger();
 
+        /**
+         * 业务场景解析器构造
+         *
+         * @param businessMatcherClass 解析类
+         */
         public MatchGroupConverter(Class<BusinessMatcher> businessMatcherClass) {
             super(businessMatcherClass);
         }
@@ -63,7 +77,7 @@ public class MatchGroupResolver extends AbstractResolver<BusinessMatcher> {
          */
         @Override
         @SuppressWarnings("checkstyle:IllegalCatch")
-        public BusinessMatcher convert(String source) {
+        public Optional<BusinessMatcher> convert(String source) {
             final ClassLoader appClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 // 此处需使用PluginClassLoader, 需要拿到指定的转换类
@@ -85,13 +99,13 @@ public class MatchGroupResolver extends AbstractResolver<BusinessMatcher> {
                 }
                 businessMatcher.setMatches(requestMatchers);
                 businessMatcher.setServices((String) yamlSource.get("service"));
-                return businessMatcher;
+                return Optional.ofNullable(businessMatcher);
             } catch (Exception ex) {
                 LOGGER.warning(String.format(Locale.ENGLISH,
                     "There were some errors when convert rule, target rule : "
                         + "[%s], source : [%s], error message : [%s]",
                     BusinessMatcher.class.getName(), source, ex.getMessage()));
-                return null;
+                return Optional.empty();
             } finally {
                 Thread.currentThread().setContextClassLoader(appClassLoader);
             }

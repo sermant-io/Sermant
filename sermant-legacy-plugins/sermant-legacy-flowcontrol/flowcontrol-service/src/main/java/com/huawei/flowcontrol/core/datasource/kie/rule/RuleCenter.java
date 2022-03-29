@@ -47,6 +47,9 @@ public class RuleCenter {
      */
     private final Map<String, RuleWrapper> ruleMap = new ConcurrentHashMap<String, RuleWrapper>();
 
+    /**
+     * 规则中心构造
+     */
     public RuleCenter() {
         ruleMap.put(CommonConst.FLOW_RULE_CONFIG_KEY, new FlowRuleWrapper());
         ruleMap.put(CommonConst.BREAKER_RULE_CONFIG_KEY, new DegradeRuleWrapper());
@@ -58,7 +61,7 @@ public class RuleCenter {
     /**
      * 注册规则管理器，将相关规则注册到对应管理器
      *
-     * @param ruleType 规则类型
+     * @param ruleType   规则类型
      * @param dataSource 数据源
      */
     public void registerRuleManager(String ruleType, AbstractDataSource<?, ?> dataSource) {

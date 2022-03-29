@@ -20,8 +20,7 @@ package com.huawei.flowcontrol.common.factory;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * 自定义线程工厂
- * 区分线程
+ * 自定义线程工厂 区分线程
  *
  * @author zhouss
  * @since 2022-01-28
@@ -29,6 +28,11 @@ import java.util.concurrent.ThreadFactory;
 public class FlowControlThreadFactory implements ThreadFactory {
     private final String threadName;
 
+    /**
+     * 流控线程工厂
+     *
+     * @param threadName 线程名称
+     */
     public FlowControlThreadFactory(String threadName) {
         this.threadName = threadName;
     }

@@ -40,6 +40,8 @@ public class HostUtils {
 
     private static final String LOCAL_HOST = "localhost";
 
+    private static final String EMPTY_STR = "";
+
     private HostUtils() {
     }
 
@@ -58,7 +60,7 @@ public class HostUtils {
                     continue;
                 }
                 String ip = resolveNetworkIp(networkInterface);
-                if (ip != null) {
+                if (!EMPTY_STR.equals(ip)) {
                     return ip;
                 }
             }
@@ -82,7 +84,7 @@ public class HostUtils {
                 return ipaddress;
             }
         }
-        return null;
+        return EMPTY_STR;
     }
 
     /**
@@ -91,19 +93,11 @@ public class HostUtils {
      * @return host
      */
     public static String getHostName() {
-        final InetAddress localHost = getLocalHost();
-        if (localHost != null) {
-            return localHost.getHostName();
-        }
-        return LOCAL_HOST;
-    }
-
-    private static InetAddress getLocalHost() {
         try {
-            return InetAddress.getLocalHost();
+            return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
             LOGGER.warning("Can not acquire local hostname, it will be replaced by spring register host!");
-            return null;
+            return LOCAL_HOST;
         }
     }
 }

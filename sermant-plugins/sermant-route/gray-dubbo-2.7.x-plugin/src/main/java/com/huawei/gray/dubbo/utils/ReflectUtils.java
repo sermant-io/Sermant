@@ -16,7 +16,7 @@
 
 package com.huawei.gray.dubbo.utils;
 
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.common.LoggerFactory;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  * @since 2022-02-07
  */
 public class ReflectUtils {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private static final String QUERY_MAP_FIELD_NAME = "queryMap";
     private static final String GET_ADDRESS_METHOD_NAME = "getAddress";
     private static final String GET_NAME_METHOD_NAME = "getName";

@@ -23,12 +23,12 @@ import com.huawei.dubbo.registry.cache.DubboCache;
 import com.huawei.dubbo.registry.constants.Constant;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
 import com.huawei.registry.config.RegisterConfig;
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.common.PluginConstant;
 import com.huawei.sermant.core.plugin.common.PluginSchemaValidator;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.utils.JarFileUtils;
+import com.huawei.sermant.core.utils.StringUtils;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -83,8 +83,9 @@ import java.util.stream.Collectors;
  * @author provenceee
  * @since 2021-12-15
  */
+@SuppressWarnings({"checkstyle:RegexpSingleline"})
 public class RegistryServiceImpl implements RegistryService {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private static final EventBus EVENT_BUS = new EventBus();
     private static final Map<String, Microservice> INTERFACE_MAP = new ConcurrentHashMap<>();
     private static final Map<SubscriptionKey, Object> SUBSCRIPTIONS = new ConcurrentHashMap<>();
@@ -255,7 +256,7 @@ public class RegistryServiceImpl implements RegistryService {
 
     private String getVersion() {
         try (JarFile jarFile = new JarFile(getClass().getProtectionDomain().getCodeSource().getLocation().getPath())) {
-            String pluginName = (String) JarFileUtils.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
+            String pluginName = (String)JarFileUtils.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
             return PluginSchemaValidator.getPluginVersionMap().get(pluginName);
         } catch (IOException e) {
             LOGGER.warning("Cannot not get the version.");
@@ -264,7 +265,7 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private List<String> getSchemas() {
-        return registryUrls.stream().map(ReflectUtils::getPath).filter(StringUtils::isNotBlank).distinct()
+        return registryUrls.stream().map(ReflectUtils::getPath).filter(StringUtils::isExist).distinct()
             .collect(Collectors.toList());
     }
 
@@ -290,7 +291,7 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private List<String> getEndpoints() {
-        return registryUrls.stream().map(this::getUrl).filter(StringUtils::isNotBlank).distinct()
+        return registryUrls.stream().map(this::getUrl).filter(StringUtils::isExist).distinct()
             .collect(Collectors.toList());
     }
 

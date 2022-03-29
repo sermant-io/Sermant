@@ -38,6 +38,14 @@ public class HttpRequestEntity extends AbstractRequestEntity {
 
     private String method;
 
+    /**
+     * http请求构造
+     *
+     * @param pathInfo 路径信息
+     * @param servletPath 请求路径
+     * @param headers 请求头
+     * @param method 方法类型
+     */
     public HttpRequestEntity(String pathInfo, String servletPath, Map<String, String> headers, String method) {
         this.pathInfo = pathInfo;
         this.servletPath = servletPath;
@@ -46,12 +54,22 @@ public class HttpRequestEntity extends AbstractRequestEntity {
         this.apiPath = FilterUtil.filterTarget(pathInfo, servletPath);
     }
 
+    /**
+     * http请求构造
+     *
+     * @param apiPath 请求路径
+     * @param headers 请求头
+     * @param method 方法类型
+     */
     public HttpRequestEntity(String apiPath, Map<String, String> headers, String method) {
         this.headers = headers;
         this.method = method;
         this.apiPath = apiPath;
     }
 
+    /**
+     * 空请求构造
+     */
     public HttpRequestEntity() {
     }
 

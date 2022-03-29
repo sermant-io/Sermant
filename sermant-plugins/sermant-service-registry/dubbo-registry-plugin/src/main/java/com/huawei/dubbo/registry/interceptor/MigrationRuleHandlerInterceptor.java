@@ -17,7 +17,7 @@
 package com.huawei.dubbo.registry.interceptor;
 
 import com.huawei.dubbo.registry.constants.Constant;
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
@@ -36,8 +36,9 @@ import java.util.logging.Logger;
  * @author provenceee
  * @since 2022-01-26
  */
+@SuppressWarnings({"checkstyle:RegexpSingleline"})
 public class MigrationRuleHandlerInterceptor extends AbstractInterceptor {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String MIGRATION_INVOKER_FIELD_NAME = "migrationInvoker";
 

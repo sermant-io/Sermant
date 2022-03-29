@@ -27,12 +27,10 @@ import com.huawei.sermant.core.service.ServiceManager;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -77,7 +75,8 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
                     Objects.equals(originServiceInstance.getHost(), microServiceInstance.getHost())
                         && originServiceInstance.getPort() == microServiceInstance.getPort());
             }
-            result.add((ServiceInstance) buildInstance(microServiceInstance));
+            buildInstance(microServiceInstance, serviceId)
+                .ifPresent(instance -> result.add((ServiceInstance) instance));
         }
         return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
@@ -97,50 +96,12 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
     }
 
     /**
-     * 获取实例类与宿主关联 {@link DiscoveryServiceInstance}
+     * 获取实例类与宿主关联
      *
      * @return 类权限定名
      */
     @Override
     protected String getInstanceClassName() {
-        return "com.huawei.registry.interceptors.DiscoveryClientInterceptor$DiscoveryServiceInstance";
-    }
-
-    public static class DiscoveryServiceInstance implements ServiceInstance {
-        private final MicroServiceInstance microServiceInstance;
-
-        public DiscoveryServiceInstance(final MicroServiceInstance microServiceInstance) {
-            this.microServiceInstance = microServiceInstance;
-        }
-
-        @Override
-        public String getServiceId() {
-            return microServiceInstance.getServiceId();
-        }
-
-        @Override
-        public String getHost() {
-            return microServiceInstance.getHost();
-        }
-
-        @Override
-        public int getPort() {
-            return microServiceInstance.getPort();
-        }
-
-        @Override
-        public boolean isSecure() {
-            return false;
-        }
-
-        @Override
-        public URI getUri() {
-            return null;
-        }
-
-        @Override
-        public Map<String, String> getMetadata() {
-            return microServiceInstance.getMeta();
-        }
+        return "com.huawei.registry.entity.DiscoveryServiceInstance";
     }
 }

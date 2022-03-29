@@ -25,6 +25,7 @@ import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -63,11 +64,8 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
         if (result == null) {
             return false;
         }
-        final String code = getCode(result);
-        if (code == null) {
-            return false;
-        }
-        return statusList.contains(code);
+        final Optional<String> code = getCode(result);
+        return code.filter(statusList::contains).isPresent();
     }
 
     /**
@@ -75,8 +73,9 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
      *
      * @param result 接口响应结果
      * @return 响应状态码
+     * @throws UnsupportedOperationException 不支持操作
      */
-    protected String getCode(Object result) {
+    protected Optional<String> getCode(Object result) {
         throw new UnsupportedOperationException();
     }
 
@@ -84,6 +83,7 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
      * 获取重试异常
      *
      * @return Class<? extends Throwable>[]
+     * @throws IllegalArgumentException 参数不合法抛出
      */
     protected final Class<? extends Throwable>[] getRetryExceptions() {
         if (classes != null) {

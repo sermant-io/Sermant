@@ -39,6 +39,9 @@
         </profile>
         <profile>
             <id>all</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>demo-plugin</module>
                 <module>demo-service</module>

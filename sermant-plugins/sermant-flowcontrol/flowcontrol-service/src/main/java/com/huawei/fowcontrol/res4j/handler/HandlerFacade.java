@@ -69,6 +69,12 @@ public enum HandlerFacade {
         circuitBreakerHandler.registerListener(facadeRequestListener);
     }
 
+    /**
+     * 注入处理器
+     *
+     * @param entity 请求实体
+     * @param isProvider 是否为provider
+     */
     public void injectHandlers(RequestEntity entity, boolean isProvider) {
         if (isProvider) {
             dubboProviderProcessor.injectHandlers(entity);
@@ -77,10 +83,20 @@ public enum HandlerFacade {
         }
     }
 
+    /**
+     * 注入处理器
+     *
+     * @param entity 请求体
+     */
     public void injectHandlers(RequestEntity entity) {
         httpProcessor.injectHandlers(entity);
     }
 
+    /**
+     * 移除处理器
+     *
+     * @param isProvider 是否为provider
+     */
     public void removeHandlers(boolean isProvider) {
         if (isProvider) {
             dubboProviderProcessor.removeHandlers();
@@ -94,37 +110,71 @@ public enum HandlerFacade {
         }
     }
 
+    /**
+     * http移除监听器
+     */
     public void removeHandlers() {
         httpProcessor.removeHandlers();
     }
 
+    /**
+     * dubbo异常处理
+     *
+     * @param throwable 异常信息
+     */
     public void onDubboThrow(Throwable throwable) {
         dubboProviderProcessor.onThrow(throwable);
         dubboConsumerProcessor.onThrow(throwable);
     }
 
+    /**
+     * dubbo结果处理
+     *
+     * @param result 结果
+     */
     public void onDubboResult(Object result) {
         dubboProviderProcessor.onResult(result);
         dubboConsumerProcessor.onResult(result);
     }
 
+    /**
+     * 释放dubbo许可
+     */
     public void releaseDubboPermit() {
         dubboProviderProcessor.releasePermit();
         dubboConsumerProcessor.releasePermit();
     }
 
+    /**
+     * 是否http许可
+     */
     public void releasePermit() {
         httpProcessor.releasePermit();
     }
 
+    /**
+     * 异常处理
+     *
+     * @param throwable 异常信息
+     */
     public void onThrow(Throwable throwable) {
         httpProcessor.onThrow(throwable);
     }
 
+    /**
+     * 结果处理
+     *
+     * @param result 结果
+     */
     public void onResult(Object result) {
         httpProcessor.onResult(result);
     }
 
+    /**
+     * 执行器
+     *
+     * @since 2022-01-11
+     */
     class Processor {
         private final ThreadLocal<HandlerWrapper> handlerThreadLocal = new ThreadLocal<>();
 
@@ -159,10 +209,16 @@ public enum HandlerFacade {
             handlerWrapper.circuitBreakers = circuitBreakerHandler.getHandlers(entity);
         }
 
+        /**
+         * 移除处理器
+         */
         public void removeHandlers() {
             handlerThreadLocal.remove();
         }
 
+        /**
+         * 释放许可
+         */
         public void releasePermit() {
             final HandlerWrapper handlerWrapper = handlerThreadLocal.get();
             if (handlerWrapper == null) {
@@ -171,6 +227,11 @@ public enum HandlerFacade {
             handlerWrapper.releasePermit();
         }
 
+        /**
+         * 异常处理
+         *
+         * @param throwable 异常信息
+         */
         public void onThrow(Throwable throwable) {
             final HandlerWrapper handlerWrapper = handlerThreadLocal.get();
             if (handlerWrapper == null) {
@@ -179,6 +240,11 @@ public enum HandlerFacade {
             handlerWrapper.onThrow(throwable);
         }
 
+        /**
+         * 响应结果处理
+         *
+         * @param result 结果
+         */
         public void onResult(Object result) {
             final HandlerWrapper handlerWrapper = handlerThreadLocal.get();
             if (handlerWrapper == null) {
@@ -188,6 +254,11 @@ public enum HandlerFacade {
         }
     }
 
+    /**
+     * 处理器包装类
+     *
+     * @since 2022-01-22
+     */
     static class HandlerWrapper {
         private final List<RateLimiter> rateLimiters;
 
@@ -251,6 +322,11 @@ public enum HandlerFacade {
         }
     }
 
+    /**
+     * 配置监听器
+     *
+     * @since 2022-02-17
+     */
     class FacadeRequestListener implements HandlerRequestListener {
         @Override
         public void notify(RequestEntity entity, String updateKey) {

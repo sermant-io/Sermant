@@ -59,6 +59,11 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
 
     private final RetryHandlerV2 retryHandler = new RetryHandlerV2();
 
+    /**
+     * apache dubbo 集群调用
+     *
+     * @param directory service
+     */
     public ApacheDubboClusterInvoker(Directory<T> directory) {
         super(directory);
     }
@@ -114,6 +119,11 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
         return new DubboRequestEntity(apiPath, Collections.unmodifiableMap(invocation.getAttachments()));
     }
 
+    /**
+     * apache dubbo重试
+     *
+     * @since 2022-02-21
+     */
     public static class ApacheDubboRetry extends AbstractRetry {
         @Override
         public boolean needRetry(Set<String> statusList, Object result) {

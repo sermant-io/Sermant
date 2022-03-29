@@ -59,6 +59,11 @@ public class AlibabaDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
 
     private final RetryHandlerV2 retryHandler = new RetryHandlerV2();
 
+    /**
+     * alibaba集群调用器构造
+     *
+     * @param directory service
+     */
     public AlibabaDubboClusterInvoker(Directory<T> directory) {
         super(directory);
     }
@@ -114,6 +119,11 @@ public class AlibabaDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
         return new DubboRequestEntity(apiPath, Collections.unmodifiableMap(invocation.getAttachments()));
     }
 
+    /**
+     * 阿里巴巴重试器
+     *
+     * @since 2022-02-22
+     */
     public static class AlibabaDubboRetry extends AbstractRetry {
         @Override
         public boolean needRetry(Set<String> statusList, Object result) {

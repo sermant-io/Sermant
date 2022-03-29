@@ -38,6 +38,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -49,6 +50,8 @@ import java.util.logging.Logger;
  */
 public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final int LOADER_BALANCE_INDEX = 2;
 
     private final Retry retry = new AlibabaDubboRetry();
 
@@ -72,21 +75,23 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
             if (obj instanceof AbstractClusterInvoker) {
                 final Invocation invocation = (Invocation) allArguments[0];
                 final List<Invoker<?>> invokers = (List<Invoker<?>>) allArguments[1];
-                final Method checkInvokers = getMethodCheckInvokers();
-                final Method select = getMethodSelect();
+                final Optional<Method> checkInvokersOption = getMethodCheckInvokers();
+                final Optional<Method> selectOption = getMethodSelect();
 
-                if (checkInvokers == null || select == null) {
+                if (!checkInvokersOption.isPresent() || !selectOption.isPresent()) {
                     LOGGER.warning(String.format(Locale.ENGLISH, "It does not support retry for class %s",
                         obj.getClass().getCanonicalName()));
                     return ret;
                 }
+                final Method checkInvokers = checkInvokersOption.get();
+                final Method select = selectOption.get();
                 if (isRetry) {
                     invocation.getAttachments().put(RETRY_KEY, RETRY_VALUE);
                 }
 
                 // 校验invokers
                 checkInvokers.invoke(obj, invokers, invocation);
-                LoadBalance loadBalance = (LoadBalance) allArguments[2];
+                LoadBalance loadBalance = (LoadBalance) allArguments[LOADER_BALANCE_INDEX];
 
                 // 选择invoker
                 final Invoker<?> invoke = (Invoker<?>) select.invoke(obj, loadBalance, invocation, invokers, null);
@@ -107,7 +112,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
         return ret;
     }
 
-    private Method getMethodSelect() {
+    private Optional<Method> getMethodSelect() {
         return getInvokerMethod("select", func -> {
             try {
                 final Method method = AbstractClusterInvoker.class
@@ -117,11 +122,11 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
             } catch (NoSuchMethodException ex) {
                 LOGGER.warning("No such Method! " + ex.getMessage());
             }
-            return null;
+            return placeHolderMethod;
         });
     }
 
-    private Method getMethodCheckInvokers() {
+    private Optional<Method> getMethodCheckInvokers() {
         return getInvokerMethod("checkInvokers", func -> {
             try {
                 final Method method = AbstractClusterInvoker.class
@@ -131,7 +136,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
             } catch (NoSuchMethodException ex) {
                 LOGGER.warning("No such Method! " + ex.getMessage());
             }
-            return null;
+            return placeHolderMethod;
         });
     }
 
@@ -177,6 +182,11 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
         return errorResponse;
     }
 
+    /**
+     * alibaba重试
+     *
+     * @since 2022-02-22
+     */
     public static class AlibabaDubboRetry extends AbstractRetry {
         @Override
         public boolean needRetry(Set<String> statusList, Object result) {
