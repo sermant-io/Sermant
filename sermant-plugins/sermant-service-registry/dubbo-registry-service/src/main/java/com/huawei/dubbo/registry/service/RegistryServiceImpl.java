@@ -83,7 +83,6 @@ import java.util.stream.Collectors;
  * @author provenceee
  * @since 2021-12-15
  */
-@SuppressWarnings({"checkstyle:RegexpSingleline"})
 public class RegistryServiceImpl implements RegistryService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
     private static final EventBus EVENT_BUS = new EventBus();
@@ -256,7 +255,7 @@ public class RegistryServiceImpl implements RegistryService {
 
     private String getVersion() {
         try (JarFile jarFile = new JarFile(getClass().getProtectionDomain().getCodeSource().getLocation().getPath())) {
-            String pluginName = (String)JarFileUtils.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
+            String pluginName = (String) JarFileUtils.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
             return PluginSchemaValidator.getPluginVersionMap().get(pluginName);
         } catch (IOException e) {
             LOGGER.warning("Cannot not get the version.");
