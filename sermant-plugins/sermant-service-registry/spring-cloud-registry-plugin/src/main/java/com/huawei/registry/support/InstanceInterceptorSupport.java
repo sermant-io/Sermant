@@ -46,23 +46,35 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
     private RegisterConfig config;
 
     /**
-     * 方法调用标记
+     * 标记当前线程方法调用
+     * <p></p>
+     * 默认标记, 确保下游调用不会存在再次mark的场景
      */
     protected final void mark() {
         threadLocal.set(Boolean.TRUE);
     }
 
     /**
-     * 方法标记删除
+     * 默认去除标记
      */
     protected final void unMark() {
         threadLocal.remove();
     }
 
+    /**
+     * 判断是否被标记
+     *
+     * @return 是否被标记
+     */
     protected final boolean isMarked() {
         return threadLocal.get() != null;
     }
 
+    /**
+     * 是否开启注册中心迁移，双注册
+     *
+     * @return 是否开启
+     */
     protected final boolean isOpenMigration() {
         return getRegisterConfig().isOpenMigration();
     }
@@ -103,7 +115,7 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
      * 构建实例  由子类自行转换
      *
      * @param microServiceInstance 实例信息
-     * @param serviceName 服务名
+     * @param serviceName          服务名
      * @return Object
      */
     protected final Optional<Object> buildInstance(MicroServiceInstance microServiceInstance, String serviceName) {
