@@ -72,7 +72,6 @@ public class CseServiceMeta {
         return isDubboService;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setDubboService(boolean dubboService) {
         isDubboService = dubboService;
     }

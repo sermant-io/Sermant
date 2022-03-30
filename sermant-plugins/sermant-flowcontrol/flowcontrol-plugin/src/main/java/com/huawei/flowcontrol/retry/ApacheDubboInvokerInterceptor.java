@@ -79,7 +79,6 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
      * @param isNeedThrow  是否需抛出异常
      * @return 方法调用器
      */
-    @SuppressWarnings("checkstyle:IllegalCatch")
     private Object invokeRetryMethod(Object obj, Object[] allArguments, Object ret, boolean isNeedThrow,
         boolean isRetry) {
         try {
@@ -154,7 +153,6 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
         return context;
     }
 
-    @SuppressWarnings("checkstyle:IllegalCatch")
     @Override
     protected final ExecuteContext doAfter(ExecuteContext context) {
         Object result = context.getResult();
@@ -184,12 +182,14 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
 
     private Object buildErrorResponse(Throwable throwable, Invocation invocation) {
         Object result;
+        Throwable realException = throwable;
         if (throwable instanceof InvokerWrapperException) {
             InvokerWrapperException exception = (InvokerWrapperException) throwable;
-            result = AsyncRpcResult.newDefaultAsyncResult(exception.getRealException(), invocation);
-        } else {
-            result = AsyncRpcResult.newDefaultAsyncResult(throwable, invocation);
+            realException = exception.getRealException();
         }
+        result = AsyncRpcResult.newDefaultAsyncResult(realException, invocation);
+        LOGGER.warning(String.format(Locale.ENGLISH, "Invoking method [%s] failed, reason : %s",
+            invocation.getMethodName(), realException.getMessage()));
         return result;
     }
 

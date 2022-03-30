@@ -32,7 +32,6 @@ public enum RegisterDynamicConfig {
     /**
      * 停用原有的注册中心开关 关联动态配置, 由用户配置下发, 默认不开启
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     private boolean isCloseOriginRegisterCenterEnabled = false;
 
     public boolean isNeedCloseOriginRegisterCenter() {

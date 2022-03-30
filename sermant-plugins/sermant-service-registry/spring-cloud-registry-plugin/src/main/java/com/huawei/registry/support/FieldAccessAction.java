@@ -19,7 +19,6 @@ package com.huawei.registry.support;
 
 import java.lang.reflect.Field;
 import java.security.PrivilegedAction;
-import java.util.function.Supplier;
 
 /**
  * 字段访问器设置
@@ -30,37 +29,20 @@ import java.util.function.Supplier;
 public class FieldAccessAction implements PrivilegedAction<Object> {
     private final Field field;
 
-    private final Supplier<Object> supplier;
-
     /**
      * 构造器
      *
      * @param field 字段
      */
     public FieldAccessAction(Field field) {
-        this(field, null);
-    }
-
-    /**
-     * 构造器
-     *
-     * @param field 字段
-     * @param supplier 拓展值
-     */
-    public FieldAccessAction(Field field, Supplier<Object> supplier) {
         this.field = field;
-        this.supplier = supplier;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     @Override
     public Object run() {
         if (field != null) {
             field.setAccessible(true);
         }
-        if (supplier != null) {
-            return supplier.get();
-        }
-        return null;
+        return field;
     }
 }

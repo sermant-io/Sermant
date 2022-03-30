@@ -27,6 +27,7 @@ import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import feign.Request;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -74,7 +75,6 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
         return context;
     }
 
-    @SuppressWarnings("checkstyle:IllegalCatch")
     @Override
     protected final ExecuteContext doAfter(ExecuteContext context) {
         final Object[] allArguments = context.getArguments();
@@ -114,7 +114,6 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
         private static final String METHOD_KEY = "Response#status";
 
         @Override
-        @SuppressWarnings("checkstyle:IllegalCatch")
         public Optional<String> getCode(Object result) {
             final Optional<Method> status = getInvokerMethod(METHOD_KEY, fn -> {
                 final Method method;
@@ -122,8 +121,9 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
                     method = result.getClass().getDeclaredMethod("status");
                     method.setAccessible(true);
                     return method;
-                } catch (NoSuchMethodException ignored) {
-                    // ignored
+                } catch (NoSuchMethodException ex) {
+                    LOGGER.warning(String.format(Locale.ENGLISH,
+                        "Can not find method status from response class %s", result.getClass().getName()));
                 }
                 return placeHolderMethod;
             });
@@ -132,8 +132,12 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
             }
             try {
                 return Optional.of(String.valueOf(status.get().invoke(result)));
-            } catch (Exception ignored) {
-                // ignored
+            } catch (IllegalAccessException ex) {
+                LOGGER.warning(String.format(Locale.ENGLISH, "Can not find method status from class [%s]!",
+                    result.getClass().getCanonicalName()));
+            } catch (InvocationTargetException ex) {
+                LOGGER.warning(String.format(Locale.ENGLISH, "Invoking method status failed, reason: %s",
+                    ex.getMessage()));
             }
             return Optional.empty();
         }

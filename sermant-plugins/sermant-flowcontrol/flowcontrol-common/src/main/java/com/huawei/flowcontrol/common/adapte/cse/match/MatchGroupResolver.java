@@ -76,7 +76,6 @@ public class MatchGroupResolver extends AbstractResolver<BusinessMatcher> {
          * @return matcher
          */
         @Override
-        @SuppressWarnings("checkstyle:IllegalCatch")
         public Optional<BusinessMatcher> convert(String source) {
             final ClassLoader appClassLoader = Thread.currentThread().getContextClassLoader();
             try {

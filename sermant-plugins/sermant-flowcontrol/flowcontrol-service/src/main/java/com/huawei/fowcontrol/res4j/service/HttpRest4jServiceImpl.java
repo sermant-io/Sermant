@@ -31,7 +31,6 @@ import com.huawei.fowcontrol.res4j.util.Rest4jExceptionUtils;
  */
 public class HttpRest4jServiceImpl extends HttpRest4jService {
     @Override
-    @SuppressWarnings("checkstyle:IllegalCatch")
     public void onBefore(RequestEntity requestEntity, FlowControlResult fixedResult) {
         try {
             HandlerFacade.INSTANCE.injectHandlers(requestEntity);

@@ -75,7 +75,6 @@ public class RegisterDynamicConfigSyncer implements PluginService {
             }
         }
 
-        @SuppressWarnings("checkstyle:IllegalCatch")
         private void tryCloseOriginRegisterCenter() {
             if (RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()) {
                 for (SingleStateCloseHandler handler : RegisterContext.INSTANCE.getCloseHandlers()) {

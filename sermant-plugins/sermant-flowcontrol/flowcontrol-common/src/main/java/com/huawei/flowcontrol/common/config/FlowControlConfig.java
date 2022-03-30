@@ -158,25 +158,21 @@ public class FlowControlConfig implements PluginConfig {
     /**
      * 是否开启数据采集 包含心跳、指标
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     private boolean openMetricCollector = false;
 
     /**
      * 是否使用线上cse配置规则
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     private boolean useCseRule = false;
 
     /**
      * 是否适配源泛PAAS的UI以及前后端zookeeper
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     private boolean adaptPass = false;
 
     /**
      * 是否抛出业务异常 默认 false
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     private boolean needThrowBizException = false;
 
     /**
@@ -212,7 +208,6 @@ public class FlowControlConfig implements PluginConfig {
     /**
      * 是否使用agent自身配置中心 该配置主要在适配cse时，可能需要使用cse的配置中心，而非使用agent自身配置中心
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     private boolean useAgentConfigCenter = false;
 
     /**
@@ -272,7 +267,6 @@ public class FlowControlConfig implements PluginConfig {
         return isBaseSdk;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setBaseSdk(boolean baseSdk) {
         this.isBaseSdk = baseSdk;
     }
@@ -297,7 +291,6 @@ public class FlowControlConfig implements PluginConfig {
         return useAgentConfigCenter;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setUseAgentConfigCenter(boolean useAgentConfigCenter) {
         this.useAgentConfigCenter = useAgentConfigCenter;
     }
@@ -338,7 +331,6 @@ public class FlowControlConfig implements PluginConfig {
         return isSslEnabled;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setSslEnabled(boolean sslEnabled) {
         this.isSslEnabled = sslEnabled;
     }
@@ -379,7 +371,6 @@ public class FlowControlConfig implements PluginConfig {
         return needThrowBizException;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setNeedThrowBizException(boolean needThrowBizException) {
         this.needThrowBizException = needThrowBizException;
     }
@@ -404,7 +395,6 @@ public class FlowControlConfig implements PluginConfig {
         return adaptPass;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setAdaptPass(boolean adaptPass) {
         this.adaptPass = adaptPass;
     }
@@ -413,7 +403,6 @@ public class FlowControlConfig implements PluginConfig {
         return useCseRule;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setUseCseRule(boolean useCseRule) {
         this.useCseRule = useCseRule;
     }
@@ -430,7 +419,6 @@ public class FlowControlConfig implements PluginConfig {
         return openMetricCollector;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setOpenMetricCollector(boolean openMetricCollector) {
         this.openMetricCollector = openMetricCollector;
     }
@@ -615,7 +603,6 @@ public class FlowControlConfig implements PluginConfig {
         return isKafkaSsl;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setKafkaSsl(boolean kafkaSsl) {
         this.isKafkaSsl = kafkaSsl;
     }

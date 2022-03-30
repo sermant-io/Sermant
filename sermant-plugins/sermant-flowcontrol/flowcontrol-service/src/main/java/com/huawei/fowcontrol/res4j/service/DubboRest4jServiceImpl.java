@@ -33,7 +33,6 @@ public class DubboRest4jServiceImpl extends DubboRest4jService {
     private final Exception dubboException = new Exception("dubbo exception");
 
     @Override
-    @SuppressWarnings("checkstyle:IllegalCatch")
     public void onBefore(RequestEntity requestEntity, FlowControlResult fixedResult, boolean isProvider) {
         try {
             HandlerFacade.INSTANCE.injectHandlers(requestEntity, isProvider);
@@ -48,7 +47,6 @@ public class DubboRest4jServiceImpl extends DubboRest4jService {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void onAfter(Object result, boolean isProvider, boolean hasException) {
         HandlerFacade.INSTANCE.onDubboResult(result);
         if (hasException) {

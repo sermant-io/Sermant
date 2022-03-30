@@ -59,7 +59,6 @@ public class YamlConverter<T> implements Converter<String, T> {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:IllegalCatch")
     public Optional<T> convert(String source) {
         if (targetClass == null) {
             return Optional.empty();
