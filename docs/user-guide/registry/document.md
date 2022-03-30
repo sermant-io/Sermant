@@ -116,4 +116,6 @@ service.meta.application=default
 
 - [Dubbo注册中心迁移](dubbo-registry-migiration.md)
 
+- [服务注册常见问题](FAQ.md)
+
 [返回**Sermant**说明文档](../../README.md)
