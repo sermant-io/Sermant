@@ -18,7 +18,7 @@ package com.huawei.gray.dubbo.strategy;
 
 import com.huawei.gray.dubbo.strategy.invoker.NotMatchVersionsInvokerStrategy;
 import com.huawei.gray.dubbo.strategy.invoker.TargetVersionInvokerStrategy;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.sermant.core.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;

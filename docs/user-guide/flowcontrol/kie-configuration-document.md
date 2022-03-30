@@ -37,7 +37,7 @@ dynamicconfig.kie_url=http://127.0.0.1:30110
 ```yaml
 flow.control.plugin:
   flowFramework: SENTINEL
-  useAgentConfigCenter: ${plugin.flowcontrol.use.agent.config_center:true} # 使用agent配置中心
+  useAgentConfigCenter: true # 是否使用agent配置中心
 ```
 
 

@@ -1,0 +1,12 @@
+server:
+  port: 28021
+dubbo:
+  application:
+    name: dubbo-provider
+  protocol:
+    port: 28821
+  registry:
+    # 注册到sc时开启
+    address: sc://127.0.0.1:30100
+    # 注册到nacos或者开启迁移功能时开启
+    #address: nacos://127.0.0.1:8848

@@ -33,6 +33,12 @@ public abstract class DubboDeclarer extends AbstractPluginDeclarer {
 
     private final String interceptorClass;
 
+    /**
+     * dubbo声明器
+     *
+     * @param enhanceClass 增强方法
+     * @param interceptorClass 拦截器权限定名
+     */
     protected DubboDeclarer(String enhanceClass, String interceptorClass) {
         this.enhanceClass = enhanceClass;
         this.interceptorClass = interceptorClass;

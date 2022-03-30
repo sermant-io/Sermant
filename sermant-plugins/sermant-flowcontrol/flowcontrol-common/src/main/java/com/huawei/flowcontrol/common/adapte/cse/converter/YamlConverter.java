@@ -23,6 +23,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -42,6 +43,11 @@ public class YamlConverter<T> implements Converter<String, T> {
      */
     private final Class<T> targetClass;
 
+    /**
+     * yaml转换器构造
+     *
+     * @param targetClass 目标类型
+     */
     public YamlConverter(Class<T> targetClass) {
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(PluginCollectorManager.class.getClassLoader());
@@ -54,15 +60,15 @@ public class YamlConverter<T> implements Converter<String, T> {
 
     @Override
     @SuppressWarnings("checkstyle:IllegalCatch")
-    public T convert(String source) {
+    public Optional<T> convert(String source) {
         if (targetClass == null) {
-            return null;
+            return Optional.empty();
         }
         final ClassLoader appClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             // 此处需使用PluginClassLoader, 需要拿到指定的转换类
             Thread.currentThread().setContextClassLoader(YamlConverter.class.getClassLoader());
-            return yaml.loadAs(source, targetClass);
+            return Optional.ofNullable(yaml.loadAs(source, targetClass));
         } catch (Exception ex) {
             LOGGER.warning(String.format(Locale.ENGLISH,
                 "There were some errors when convert rule, target rule : "
@@ -71,6 +77,6 @@ public class YamlConverter<T> implements Converter<String, T> {
         } finally {
             Thread.currentThread().setContextClassLoader(appClassLoader);
         }
-        return null;
+        return Optional.empty();
     }
 }

@@ -30,6 +30,9 @@ public class BulkheadRuleResolver extends AbstractResolver<BulkheadRule> {
      */
     public static final String CONFIG_KEY = "servicecomb.bulkhead";
 
+    /**
+     * 隔离仓构造器
+     */
     public BulkheadRuleResolver() {
         super(CONFIG_KEY);
     }

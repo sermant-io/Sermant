@@ -49,6 +49,11 @@ public interface Retry {
      */
     RetryFramework retryType();
 
+    /**
+     * 重试框架
+     *
+     * @since 2022-01-22
+     */
     enum RetryFramework {
         /**
          * spring重试

@@ -1,0 +1,6 @@
+servicecomb.service:
+  address: http://localhost:30100 #注册中心地址
+  heartbeatInterval: 15 #服务实例心跳发送间隔（单位：秒）
+  openMigration: false #是否开启迁移功能
+  enableSpringRegister: false #是否开启spring插件注册能力
+  sslEnabled: false # 是否开启ssl

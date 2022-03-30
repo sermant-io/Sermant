@@ -43,108 +43,212 @@
 
 **Sermant**的核心能力是对宿主应用做非侵入式的字节码增强，而这些增强规则则是插件化的。在每个**Sermant**的`插件主模块(main)`中，都可以定义一些增强定义，针对宿主应用的某些特定方法进行字节码增强，从而实现某种功能。因此`插件主模块(main)`如何告知**Sermant**该增强哪些类，是一个重要的课题。
 
-插件的增强定义需要实现[EnhanceDefinition](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/definition/EnhanceDefinition.java)接口，其中包含两个接口方法：
+插件的增强定义需要实现[PluginDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/agent/declarer/PluginDeclarer.java)接口，其中包含两个接口方法：
 
-- `enhanceClass`方法用于获取被增强类的匹配器[ClassMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/matcher/ClassMatcher.java)。
-- `getMethodInterceptPoints`方法用于获取被增强类的拦截点方法，以及嵌入其中的拦截器，他们封装于方法拦截点[MethodInterceptPoint](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/definition/MethodInterceptPoint.java)中。
+- `getClassMatcher`方法用于获取被增强类的匹配器[ClassMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/agent/matcher/ClassMatcher.java)。
+- `getInterceptDeclarers`方法用于获取被增强类的拦截点方法，以及嵌入其中的拦截器，他们封装于方法拦截点[InterceptDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/agent/declarer/InterceptDeclarer.java)中。
+- `getSuperTpeDecarers`方法用于获取插件的超类声明[SuperTypeDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/agent/declarer/SuperTypeDeclarer.java)
 
-对匹配器`ClassMatcher`，在核心模块中提供了以下几种类型：
+对匹配器 [ClassMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/agent/matcher/ClassMatcher.java)，在核心模块中提供了两种类型的匹配器：
 
-- [NameMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/matcher/NameMatcher.java): 完全通过名称匹配，也是最常见的定位方式，通过以下方法获取：
+[ClassTypeMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/agent/matcher/ClassTypeMatcher.java)(类的类型匹配器)
+
+- 完全通过名称匹配，也是最常见的定位方式，通过以下方法获取：
   ```java
-  ClassMatchers.named("${class reference}");
+  ClassMatcher.nameEquals("${class reference}");
   ```
   其中`${class reference}`为被增强类的全限定名。
-- [MultiClassMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/matcher/MultiClassMatcher.java): 通过名称匹配多个类，属于`NameMatcher`的复数版，可通过以下方法获取：
+
+
+- 通过名称匹配多个类，属于`nameEquals`的复数版，可通过以下方法获取：
   ```java
-  ClassMatchers.multiClass("${class reference array}");
+  ClassMatcher.nameContains("${class reference array}");
   ```
   其中`${class reference array}`为被增强类的全限定名可变数组。
-- [AnnotationMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/matcher/AnnotationMatcher.java): 通过注解定位到被该注解修饰的类，可通过以下方法获取：
+
+[ClassFuzzyMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/agent/matcher/ClassFuzzyMatcher.java)（类的模糊匹配器）
+
+- 通过全限定名前缀定位到被增强类，可通过以下方法获取：
   ```java
-  ClassMatchers.annotationWith("${annotation reference array}");
-  ```
-  其中`${annotation reference array}`为注解的全限定名可变数组。
-- [PrefixMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/matcher/PrefixMatcher.java): 通过全限定名前缀定位到被增强类，可通过以下方法获取：
-  ```java
-  ClassMatchers.startWith("${prefix}");
+  ClassMatcher.namePrefixedWith("${prefix}");
   ```
   其中`${prefix}`为全限定名前缀。
-- [SuperTypeMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/matcher/SuperTypeMatcher.java): 通过超类定位到该类的子类，可通过以下方法获取：
-  ```java
-  ClassMatchers.hasSuperTypes("${super class array}");
-  ```
-  其中`${super class array}`为超类数组。考虑到Java的继承规则，该数组只能有一个`Class`，其余必须全为`Interface`。
 
-对于方法拦截点`MethodInterceptPoint`，他依被拦截方法的类型分为以下几种：
 
-- 静态方法拦截点，通过以下方法获取：
+- 通过全限定名后缀定位到被增强类，可以通过一下方法获取：
   ```java
-  MethodInterceptPoint.newStaticMethodInterceptPoint("${interceptor name}", ${method matcher});
+  ClassMatcher.nameSuffixedWith("${suffix}")
   ```
-- 构造函数拦截点，通过以下方法获取：
-  ```java
-  MethodInterceptPoint.newConstructorInterceptPoint("${interceptor name}", ${method matcher});
-  ```
-- 实例方法拦截点，通过以下方法获取：
-  ```java
-  MethodInterceptPoint.newInstMethodInterceptPoint("${interceptor name}", ${method matcher});
-  ```
+  其中`${suffix}`为全限定名后缀。
 
-其中`${interceptor name}`为拦截器名称，这点将在[拦截器](#拦截器)一节介绍；`${method matcher}`为`byte-buddy`的方法匹配器`ElementMatcher<MethodDescription>`，常见的方法匹配方式有：
+
+- 通过全限定名内缀定位到被增强类，可以通过以下方法获取：
+  ```java
+  ClassMatcher.nameinfixedWith("${infix}")
+  ```
+  其中`${infix}`为全限定名内缀。
+
+
+- 通过正则表达式匹配全限定名定位到被增强类，可以通过以下方法获取：
+  ```java
+  ClassMatcher.nameMatches("${pattern}")
+  ```
+  其中`${pattern}`为正则表达式。
+
+
+- 通过注解定位到被该注解修饰的类，可通过以下方法获取：
+  ```java
+  ClassMatcher.isAnnotationWith("${annotation reference array}");
+  ```
+  其中`${annotation reference array}`为注解的全限定名可变数组。
+
+
+- 通过超类定位到该类的子类，可通过以下方法获取：
+  ```java
+  ClassMatcher.isExtendedFrom("${super class array}");
+  ```
+  其中`${super class array}`为超类可变数组。考虑到Java的继承规则，该数组只能有一个`Class`，其余必须全为`Interface`。
+
+
+- 匹配的逻辑操作，匹配器全部不匹配时为真：
+  ```java
+  ClassMatcher.not("${class matcher array}")
+  ```
+  其中`${class matcher array}`为匹配器可变长数组
+
+
+- 匹配的逻辑操作，匹配器全部都匹配时为真：
+  ```java
+  ClassMatcher.and("${class matcher array}")
+  ```
+  其中`${class matcher array}`为匹配器可变长数组
+
+
+- 匹配的逻辑操作，匹配器其中一个匹配时为真：
+  ```java
+  ClassMatcher.or("${class matcher array}")
+  ```
+  其中`${class matcher array}`为匹配器可变长数组
+
+对于方法拦截点[MethodMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/agent/matcher/MethodMatcher.java)，提供了多种匹配方法：
 
 - 全数匹配：
   ```java
-  ElementMatchers.<MethodDescription>any();
+  MethodMatcher.any();
   ```
 - 名称匹配：
   ```java
-  ElementMatchers.<MethodDescription>named("${method name}");
+  MethodMatcher.nameEquals("${method name}");
   ```
   其中`${method name}`为方法名称。
+
+
 - 匹配静态方法：
   ```java
-  ElementMatchers.<MethodDescription>isStatic();
+  MethodMatcher.isStaticMethod();
   ```
 - 匹配构造函数：
   ```java
-  ElementMatchers.<MethodDescription>isConstructor();
+  MethodMatcher.isConstructor();
   ```
-- 单个入参类型匹配：
+- 匹配多个方法：
   ```java
-  ElementMatchers.<MethodDescription>takesArgument(${arg index}, "${arg type}");
+  MethodMatcher.nameContains("${method name array}");
   ```
-  其中`${arg index}`为入参下标，`${arg type}`为入参类型。
-- 入参数量匹配：
+  其中`${method name array}`为方法名称数组。
+
+
+- 根据方法名称前缀匹配：
   ```java
-  ElementMatchers.<MethodDescription>takesArguments(${args count});
+  MethodMatcher.namePrefixedWith("${method name prefix}");
   ```
-  其中`${args count}`为入参数量。
-- 全数入参类型匹配：
+  其中`${method name prefix}`为方法名称前缀。
+
+
+- 根据方法名称后缀匹配：
   ```java
-  ElementMatchers.<MethodDescription>takesArguments("${args type array}");
+  MethodMatcher.nameSuffixedWith("${method name suffix}");
   ```
-  其中`${args type array}`为入参类型数组。
-- 空参匹配：
+  其中`${method name suffix}`为方法名称后缀。
+
+
+- 根据方法名称内缀匹配：
   ```java
-  ElementMatchers.<MethodDescription>takesNoArguments();
+  MethodMatcher.nameinfixedWith("${method name infix}");
   ```
+  其中`${method name infix}`为方法名称内缀。
+
+
+- 根据正则表达式匹配：
+  ```java
+  MethodMatcher.nameMatches("${pattern}");
+  ```
+  其中`${pattern}`为正则表达式。
+
+
+- 匹配被传入注解修饰的方法：
+  ```java
+  MethodMatcher.isAnnotatedWith("${annotations array}");
+  ```
+  其中`${annotations array}`为注解集。
+
+
+- 匹配指定入参数量的方法：
+  ```java
+  MethodMatcher.paramCountEquals("${param count}");
+  ```
+  其中`${param count}`为入参数量。
+
+
+- 匹配指定入参类型的方法：
+  ```java
+  MethodMatcher.paramTypeEquals("${param type array}");
+  ```
+  其中`${param type array}`为入参类型集。
+
+
+- 匹配指定返回值类型的方法：
+  ```java
+  MethodMatcher.resultTypeEquals("${result type}");
+  ```
+  其中`${result type}`返回值类型。
+
+
+- 逻辑操作，方法匹配器集全不匹配时则结果为真
+  ```java
+  MethodMatcher.not("${element matcher array}");
+  ```
+  其中`${element matcher array}`为方法匹配器集。
+
+
+- 逻辑操作，方法匹配器集全匹配时则结果为真
+  ```java
+  MethodMatcher.and("${element matcher array}");
+  ```
+  其中`${element matcher array}`为方法匹配器集。
+
+
+- 逻辑操作，方法匹配器集其中一个匹配时则结果为真
+  ```java
+  MethodMatcher.or("${element matcher array}");
+  ```
+  其中`${element matcher array}`为方法匹配器集。
 
 更多方法匹配方式可以参考[byte-buddy](https://javadoc.io/doc/net.bytebuddy/byte-buddy/latest/net/bytebuddy/matcher/ElementMatchers.html)中含`MethodDescription`泛型的方法。
 
-开发到最后，不要忘记添加`EnhanceDefinition`接口的*SPI*配置文件：
+开发到最后，不要忘记添加`PluginDeclarer`接口的*SPI*配置文件：
 
 - 在资源目录`resources`下添加`META-INF/services`文件夹。
-- 在`META-INF/services`中添加`com.huawei.sermant.core.agent.definition.EnhanceDefinition`配置文件。
-- 在上述文件中，以换行为分隔，键入插件包中所有的增强定义`EnhanceDefinition`实现。
+- 在`META-INF/services`中添加`com.huawei.sermant.core.plugin.agent.declarer.PluginDeclarer`配置文件。
+- 在上述文件中，以换行为分隔，键入插件包中所有的增强定义`PluginDeclarer`实现。
 
-**Sermant**的`示例模块`中包含以下`EnhanceDefinition`接口的实现示例：
+**Sermant**的`示例模块`中包含以下`PluginDeclarer`接口的实现示例：
 
-- [DemoAnnotationDefinition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoAnnotationDefinition.java): 通过注解定位被修饰类的普通增强定义
-- [DemoNameDefinition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoNameDefinition.java): 通过名称定位到被增强类的普通增强定义
-- [DemoSuperTypeDefinition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoSuperTypeDefinition.java): 通过超类定位到被增强子类的普通增强定义
-- [DemoBootstrapDefinition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoBootstrapDefinition.java): 对启动类加载器进行增强的定义，详见[原生类增强](#原生类增强)一节
-- [DemoTraceDefinition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoTraceDefinition.java): 对示例应用使用链路功能的增强定义，详见[链路功能](#链路功能)一节
+- [DemoAnnotationDeclarer](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoAnnotationDeclarer.java): 通过注解定位被修饰类的普通增强定义
+- [DemoNameDeclarer](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoNameDeclarer.java): 通过名称定位到被增强类的普通增强定义
+- [DemoSuperTypeDeclarer](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoSuperTypeDeclarer.java): 通过超类定位到被增强子类的普通增强定义
+- [DemoBootstrapDeclarer](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java): 对启动类加载器进行增强的定义，详见[原生类增强](#原生类增强)一节
+- [DemoTraceDeclarer](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java): 对示例应用使用链路功能的增强定义，详见[链路功能](#链路功能)一节
 
 在各插件开发者在编写插件增强定义的时候，可以以以上示例为参考，开发符合自身需要的增强定义。
 
@@ -164,31 +268,25 @@
 
 综上，[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中提供对*Java*原生类增强的能力，但是，不建议不加限制地对他们进行增强，如果有多个增强点可选，优先考虑增强普通类。
 
-**Sermant**的`示例模块`中，[DemoBootstrapDefinition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoBootstrapDefinition.java)对`java.lang.Thread`做了增强，可以启动示例应用[DemoApplication](../../sermant-plugins/sermant-example/demo-application/src/main/java/com/huawei/example/demo/DemoApplication.java)观察`java.lang.Thread`是否被正常增强。
+**Sermant**的`示例模块`中，[DemoBootstrapDeclarer](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java)对`java.lang.Thread`做了增强，可以启动示例应用[DemoApplication](../../sermant-plugins/sermant-example/demo-application/src/main/java/com/huawei/example/demo/DemoApplication.java)观察`java.lang.Thread`是否被正常增强。
 
 ### 拦截器
 
+新版插件的开发中在拦截器层面不再对静态方法、构造函数和实例方法作区分，降低插件开发的复杂度
 对于方法拦截点`MethodInterceptPoint`，有静态方法、构造函数和实例方法三种获取类型，对应的拦截器也有三种类型：
 
-- [StaticMethodInterceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/interceptor/StaticMethodInterceptor.java): 静态方法拦截器接口，其中包含三个方法：
-  - `before`，前置方法，该方法在拦截点之前执行。参数`arguments`为拦截点入参，可以在此处修改入参内容，以修改被拦截方法的行为。参数`beforeResult`中可以设置`isContinue`值决定是否提前终止前置方法，如果提前终止，则返回`result`值。
+- [InterCeptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/agent/interceptor/Interceptor.java): 拦截器接口，其中包含三个方法：
+  - `before`，前置方法，该方法在拦截点之前执行。ExecuteContext参数为插件执行的上下文，里面封装拦截器运作所需的所有参数，通过skip方法可跳过主要流程，并设置最终方法结果，注意，增强构造函数时，不能跳过主要流程
   - `after`，后置方法，无论被拦截方法是否正常执行，最后都会进入后置方法中。后置方法可以通过返回值覆盖被拦截方法的返回值，因此这里开发者需要注意不要轻易返回null。
   - `onThrow`，处理异常的方法，当被拦截方法执行异常时触发。这里处理异常并不会影响异常的正常抛出。
-- [ConstructorInterceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/interceptor/ConstructorInterceptor.java): 构造函数拦截器接口，其中包含一个方法：
-  - `onConstruct`，该方法在对象构造完毕之后触发，因此修改入参`allArguments`并不会影响对象的构建。
-- [InstanceMethodInterceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/interceptor/InstanceMethodInterceptor.java): 实例方法拦截器接口，和`StaticMethodInterceptor`一样包含`before`、`after`和`onThrow`三个方法，意义相同，这里不做赘述。
-
-拦截器的使用过程中，比较容易犯的毛病是`MethodInterceptPoint`的构建方法类型、拦截器的类型和目标方法类型不一致，这就导致拦截器创建不出来，目标类无法被增强。
 
 **Sermant**的`示例模块`中包含以下拦截器示例：
 
 - [DemoStaticInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoStaticInterceptor.java): 普通的静态方法拦截器
 - [DemoConstInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConstInterceptor.java): 普通的构造函数拦截器
-- [DemoInstInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoInstInterceptor.java): 普通的实例方法拦截器
+- [DemoMemberInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoMemberInterceptor.java): 普通的实例方法拦截器
 - [DemoConfigInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConfigInterceptor.java): 插件配置使用示例拦截器，详见[插件配置](#插件配置)一节
 - [DemoServiceInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoServiceInterceptor.java): 插件服务使用示例拦截器，详见[插件服务](#插件服务)一节
-- [DemoLoggerInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoLoggerInterceptor.java): 日志功能使用示例拦截器，详见[日志功能](#日志功能)一节
-- [DemoTraceInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceInterceptor.java): 链路功能使用示例拦截器，详见[链路功能](#链路功能)一节
 
 在各插件开发者在编写自定义拦截器的时候，可以以以上示例为参考，开发满足自身功能需要的拦截器。
 
@@ -352,79 +450,72 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
 - 在发送数据的时候，在数据包中插入链路所需的`TraceId`和`SpanId`，前者是请求在分布式系统中的整个链路视图，后者代表整个链路中不同服务内部的视图。
 - 在接收数据的时候，解析数据包中嵌入的链路相关内容，形成链路的一环提交到后台服务器中，逐渐形成调用链。
 
-在示例宿主的[DemoTraceService](../../sermant-plugins/sermant-example/demo-application/src/main/java/com/huawei/example/demo/service/DemoTraceService.java)中，`receive`方法和`send`方法模仿服务器接收数据并处理发送数据的流程，而数据包则假定存在一个`ThreadLocal`中，直到下一次调用`receive`方法接收数据。
+在示例宿主的[DemoTraceService](../../sermant-plugins/sermant-example/demo-application/src/main/java/com/huawei/example/demo/service/DemoTraceService.java)中，`counsumer`方法和`provider`方法模仿服务器接收数据并处理发送数据的流程，而数据包则假定存在一个`ThreadLocal`中，直到下一次调用`provider`方法接收数据。
 
-基于上述示例宿主，我们编写[DemoTraceDefinition](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/definition/DemoTraceDefinition.java)增强定义，对`DemoTraceService`的`receive`方法和`send`方法使用[DemoTraceInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceInterceptor.java)拦截器进行增强。
+基于上述示例宿主，我们编写[DemoTraceDeclarer](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java)增强定义
+，对`DemoTraceService`的`provider`方法和`consumer`方法分别使用使用[DemoTraceProviderInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceProviderInterceptor.java)和[DemoTraceConsumerInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceConsumerInterceptor.java)拦截器进行增强。
 
-- 对于发送`send`方法，做如下增强：
+- 对于发送`provider`方法，做如下增强：
   ```java
-  @Override
-  public void before(Class<?> clazz, Method method, Object[] arguments, BeforeResult beforeResult) {
-    // 消息传输载体，这里用Map举例
-    final Map message = (Map) arguments[0];
-    final Object traceId = message.get(Headers.TRACE_ID.getValue());
-    final Object spanId = message.get(Headers.SPAN_ID.getValue());
-    Object gTraceId = null;
-    if (traceId == null || traceId.toString().trim().length() <= 0) {
-      gTraceId = message.get(Headers.GTRACE_ID.getValue());
+    private final TracingService tracingService = ServiceManager.getService(TracingService.class);
+
+    @Override
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        TracingRequest request =
+            new TracingRequest(context.getRawCls().getName(), context.getMethod().getName());
+        ExtractService<HashMap<String, String>> extractService = (tracingRequest, carrier) -> {
+            tracingRequest.setTraceId(carrier.get(TracingHeader.TRACE_ID.getValue()));
+            tracingRequest.setParentSpanId(carrier.get(TracingHeader.PARENT_SPAN_ID.getValue()));
+            tracingRequest.setSpanIdPrefix(carrier.get(TracingHeader.SPAN_ID_PREFIX.getValue()));
+        };
+        tracingService.onProviderSpanStart(request, extractService, (HashMap<String, String>)context.getArguments()[0]);
+        return context;
     }
-    final StartTraceRequest startTraceRequest = new StartTraceRequest(
-      clazz.getName(), method.getName(),
-      traceId == null ? null : traceId.toString(),
-      spanId == null ? null : spanId.toString(),
-      gTraceId == null ? null : gTraceId.toString());
-    startTraceRequest.setDomainId("0");
-    startTraceRequest.setKind("DEMO_SEND");
-    // 添加source等其他资源
-    TraceCollector.onStart(startTraceRequest);
-    // 添加其他tag
-  }
 
-  @Override
-  public Object after(Class<?> clazz, Method method, Object[] arguments, Object result) {
-    TraceCollector.onFinally();
-    return result;
-  }
+    @Override
+    public ExecuteContext after(ExecuteContext context) throws Exception {
+        tracingService.onSpanFinally();
+        return context;
+    }
 
-  @Override
-  public void onThrow(Class<?> clazz, Method method, Object[] arguments, Throwable t) {
-    TraceCollector.onError(t);
-  }
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+        tracingService.onSpanError(context.getThrowable());
+        return context;
+    }
   ```
-- 对于`recieve`方法，做如下增强：
+- 对于`consumer`方法，做如下增强：
   ```java
-  @Override
-  public void before(Class<?> clazz, Method method, Object[] arguments, BeforeResult beforeResult) {
-  }
+    TracingService tracingService = ServiceManager.getService(TracingService.class);
 
-  @Override
-  public Object after(Class<?> clazz, Method method, Object[] arguments, Object result) {
-    final SpanEvent spanEvent = TraceCollector.onStart(clazz.getName(), method.getName(), "DEMO_RECEIVE");
-    if (spanEvent != null) {
-      // 消息传输载体，这里用Map举例
-      final Map message = (Map) result;
-      message.put(Headers.TRACE_ID.getValue(), spanEvent.getTraceId());
-      message.put(Headers.SPAN_ID.getValue(), spanEvent.generateNextSpanId());
-      // 添加其他tag
-    } else {
-      String gTraceId = TraceCollector.getVirtualTraceId();
-      if (gTraceId != null) {
-        ((Map) result).put(Headers.GTRACE_ID.getValue(), gTraceId);
-      }
+    @Override
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        return context;
     }
-    TraceCollector.onFinally();
-    return result;
-  }
 
-  @Override
-  public void onThrow(Class<?> clazz, Method method, Object[] arguments, Throwable t) {
-    TraceCollector.onError(t);
-  }
+    @Override
+    public ExecuteContext after(ExecuteContext context) throws Exception {
+        TracingRequest request =
+            new TracingRequest(context.getRawCls().getName(), context.getMethod().getName());
+        InjectService<HashMap<String, String>> injectService = (spanEvent, carrier) -> {
+            carrier.put(TracingHeader.TRACE_ID.getValue(), spanEvent.getTraceId());
+            carrier.put(TracingHeader.PARENT_SPAN_ID.getValue(), spanEvent.getSpanId());
+            carrier.put(TracingHeader.SPAN_ID_PREFIX.getValue(), spanEvent.getNextSpanIdPrefix());
+        };
+        tracingService.onConsumerSpanStart(request, injectService, (HashMap<String, String>)context.getResult());
+        tracingService.onSpanFinally();
+        return context;
+    }
+
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+        tracingService.onSpanError(context.getThrowable());
+        return context;
+    }
   ```
+  **Sermant**的`示例模块`这里只是简单地抛砖引玉。
+  如果插件开发者需要使用链路功能，参照[DemoTraceInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceInterceptor.java)自行开发。
 
-鉴于`luban`插件中有完整的链路功能实现，诸如*http*、*dubbo*、*alidubbo*、*kafka*等通信组件都有增强实现，无需重复开发，因此**Sermant**的`示例模块`这里只是简单地抛砖引玉。
-
-如果插件开发者需要使用链路功能，优先从`luban`插件中摘取有关的插件，在其基础上进一步开发。如果没有满足需求的插件，再考虑参照[DemoTraceInterceptor](../../sermant-plugins/sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceInterceptor.java)自行开发。
 
 ### 动态配置功能
 

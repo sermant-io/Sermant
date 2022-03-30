@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,61 @@ package com.huawei.sermant.core.utils;
 /**
  * 字符串工具类
  *
- * @author HapThorin
- * @version 1.0.0
- * @since 2021-10-18
+ * @author luanwenfei
+ * @since 2022-03-24
  */
 public class StringUtils {
+    private static final int FLAG = -1;
+
     private StringUtils() {
+    }
+
+    /**
+     * equals
+     *
+     * @param str1 str1
+     * @param str2 str2
+     * @return boolean
+     */
+    public static boolean equals(String str1, String str2) {
+        if (str1 == null && str2 == null) {
+            return true;
+        }
+        if (str1 == null || str2 == null) {
+            return false;
+        }
+        return str1.equals(str2);
+    }
+
+    /**
+     * equalsIgnoreCase
+     *
+     * @param str1 str1
+     * @param str2 str2
+     * @return boolean
+     */
+    public static boolean equalsIgnoreCase(String str1, String str2) {
+        return str1 == null ? str2 == null : str1.equalsIgnoreCase(str2);
+    }
+
+    /**
+     * isBlank
+     *
+     * @param str str
+     * @return boolean
+     */
+    public static boolean isBlank(String str) {
+        return str == null || str.trim().isEmpty();
+    }
+
+    /**
+     * isNotBlank
+     *
+     * @param str str
+     * @return boolean
+     */
+    public static boolean isExist(String str) {
+        return !isBlank(str);
     }
 
     /**
@@ -38,9 +87,9 @@ public class StringUtils {
         final char[] strArr = str.toCharArray();
         final char[] wcArr = wc.toCharArray();
         int wcCursor = 0;
-        for (int strCursor = 0, starIdx = -1, starCursor = 0; strCursor < strArr.length; ) {
-            if (wcCursor < wcArr.length && wcArr[wcCursor] != '*' && (wcArr[wcCursor] == '?'
-                    || strArr[strCursor] == wcArr[wcCursor])) {
+        for (int strCursor = 0, starIdx = FLAG, starCursor = 0; strCursor < strArr.length;) {
+            if (wcCursor < wcArr.length && wcArr[wcCursor] != '*'
+                && (wcArr[wcCursor] == '?' || strArr[strCursor] == wcArr[wcCursor])) {
                 strCursor++;
                 wcCursor++;
             } else if (wcCursor < wcArr.length && wcArr[wcCursor] == '*') {

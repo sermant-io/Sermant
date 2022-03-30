@@ -33,6 +33,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -53,19 +54,19 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
      * @param request 请求
      * @return HttpRequestEntity
      */
-    private HttpRequestEntity convertToHttpEntity(Request request) {
+    private Optional<HttpRequestEntity> convertToHttpEntity(Request request) {
         if (request == null) {
-            return null;
+            return Optional.empty();
         }
         try {
             final URL url = new URL(request.url());
             final HashMap<String, String> headers = new HashMap<>(request.headers().size());
             request.headers().forEach((headerName, headValue) -> headers.put(headerName, headValue.iterator().next()));
-            return new HttpRequestEntity(url.getPath(), headers, request.httpMethod().name());
+            return Optional.of(new HttpRequestEntity(url.getPath(), headers, request.httpMethod().name()));
         } catch (MalformedURLException ignored) {
             // ignored
         }
-        return new HttpRequestEntity();
+        return Optional.of(new HttpRequestEntity());
     }
 
     @Override
@@ -80,9 +81,13 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
         Request request = (Request) allArguments[0];
         Object result = context.getResult();
         try {
+            final Optional<HttpRequestEntity> httpRequestEntity = convertToHttpEntity(request);
+            if (!httpRequestEntity.isPresent()) {
+                return context;
+            }
             RetryContext.INSTANCE.markRetry(retry);
             final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
-                .getHandlers(convertToHttpEntity(request));
+                .getHandlers(httpRequestEntity.get());
             if (!handlers.isEmpty() && needRetry(handlers.get(0), result, null)) {
                 // 重试仅有一个策略
                 final Supplier<Object> retryFunc = createRetryFunc(context.getObject(),
@@ -100,13 +105,18 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
         return context;
     }
 
+    /**
+     * feign重试
+     *
+     * @since 2022-02-11
+     */
     public static class FeignRetry extends AbstractRetry {
         private static final String METHOD_KEY = "Response#status";
 
         @Override
         @SuppressWarnings("checkstyle:IllegalCatch")
-        public String getCode(Object result) {
-            final Method status = getInvokerMethod(METHOD_KEY, fn -> {
+        public Optional<String> getCode(Object result) {
+            final Optional<Method> status = getInvokerMethod(METHOD_KEY, fn -> {
                 final Method method;
                 try {
                     method = result.getClass().getDeclaredMethod("status");
@@ -115,17 +125,17 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
                 } catch (NoSuchMethodException ignored) {
                     // ignored
                 }
-                return null;
+                return placeHolderMethod;
             });
-            if (status == null) {
-                return null;
+            if (!status.isPresent()) {
+                return Optional.empty();
             }
             try {
-                return String.valueOf(status.invoke(result));
+                return Optional.of(String.valueOf(status.get().invoke(result)));
             } catch (Exception ignored) {
                 // ignored
             }
-            return null;
+            return Optional.empty();
         }
 
         @Override

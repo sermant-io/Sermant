@@ -18,7 +18,7 @@
 package com.huawei.flowcontrol.common.metric;
 
 import com.huawei.flowcontrol.common.metric.provider.MetricProvider;
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
+import com.huawei.sermant.core.common.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  * @since 2021-12-07
  */
 public abstract class AbstractMetricSender implements MetricSender {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public void sendMetric(MetricProvider metricProvider) {

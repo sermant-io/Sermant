@@ -19,7 +19,7 @@ package com.huawei.sermant.plugin.servermonitor.provider;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.send.GatewayClient;
+import com.huawei.sermant.core.service.send.api.GatewayClient;
 import com.huawei.sermant.plugin.monitor.common.collect.MetricProvider;
 import com.huawei.sermant.plugin.monitor.common.config.ServiceConfig;
 import com.huawei.sermant.plugin.servermonitor.collector.IbmJvmMetricCollector;
@@ -31,6 +31,8 @@ import java.util.logging.Logger;
 
 /**
  * IBM JVM Metric Provider
+ *
+ * @since 2021-12-31
  */
 public class IbmJvmMetricProvider implements MetricProvider<IbmJvmMetric> {
     private static final Logger LOGGER = LoggerFactory.getLogger();

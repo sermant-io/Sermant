@@ -35,8 +35,9 @@ import java.util.Locale;
  * @author provenceee
  * @see com.alibaba.dubbo.common.URL
  * @see org.apache.dubbo.common.URL
- * @since 2022/3/1
+ * @since 2022-03-01
  */
+@SuppressWarnings("checkstyle:all")
 public class UrlInterceptorTest {
     private final LoadbalancerConfig config;
 
@@ -44,6 +45,9 @@ public class UrlInterceptorTest {
 
     private final Method method;
 
+    /**
+     * 构造方法
+     */
     public UrlInterceptorTest() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException {
         interceptor = new UrlInterceptor();
         config = new LoadbalancerConfig();

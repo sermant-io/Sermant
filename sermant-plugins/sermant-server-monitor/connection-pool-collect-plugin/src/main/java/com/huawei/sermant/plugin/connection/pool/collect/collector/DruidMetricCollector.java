@@ -16,12 +16,13 @@
 
 package com.huawei.sermant.plugin.connection.pool.collect.collector;
 
-import com.alibaba.druid.pool.DruidDataSource;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
 import com.huawei.sermant.core.plugin.service.PluginServiceManager;
+import com.huawei.sermant.core.utils.StringUtils;
 import com.huawei.sermant.plugin.monitor.common.service.DatabasePeerParseService;
 import com.huawei.sermant.plugin.servermonitor.entity.ConnectionPool;
 import com.huawei.sermant.plugin.servermonitor.entity.DataSourceBean;
+
+import com.alibaba.druid.pool.DruidDataSource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +30,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Druid指标采集器
+ *
+ * @since 2021-12-31
  */
+@SuppressWarnings({"checkstyle:RegexpSingleline"})
 public class DruidMetricCollector {
 
     private static final DruidMetricCollector INSTANCE = new DruidMetricCollector();

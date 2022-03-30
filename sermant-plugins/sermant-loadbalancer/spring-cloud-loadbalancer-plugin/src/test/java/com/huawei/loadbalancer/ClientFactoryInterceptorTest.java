@@ -40,8 +40,9 @@ import java.util.Map;
  *
  * @author provenceee
  * @see org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory
- * @since 2022/3/1
+ * @since 2022-03-01
  */
+@SuppressWarnings("checkstyle:all")
 public class ClientFactoryInterceptorTest {
     private static final String FOO = "foo";
 
@@ -51,6 +52,9 @@ public class ClientFactoryInterceptorTest {
 
     private final ExecuteContext context;
 
+    /**
+     * 构造方法
+     */
     public ClientFactoryInterceptorTest() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException {
         interceptor = new ClientFactoryInterceptor();
         config = new LoadbalancerConfig();
@@ -89,7 +93,7 @@ public class ClientFactoryInterceptorTest {
         // 测试负载均衡策略改变
         config.setSpringType(SpringLoadbalancerType.RANDOM);
         interceptor.after(context);
-        Assert.assertEquals(LoadbalancerCache.INSTANCE.getNewCache().get(FOO), context.getResult());
+        Assert.assertEquals(LoadbalancerCache.INSTANCE.getNewCache().get(FOO).orElse(null), context.getResult());
     }
 
     public static class TestServiceInstance implements ServiceInstance {

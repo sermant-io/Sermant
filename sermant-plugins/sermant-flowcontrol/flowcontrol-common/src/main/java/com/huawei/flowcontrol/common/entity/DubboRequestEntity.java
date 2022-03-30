@@ -35,6 +35,12 @@ public class DubboRequestEntity extends AbstractRequestEntity {
 
     private Map<String, String> attachments;
 
+    /**
+     * 构造dubbo请求体
+     *
+     * @param apiPath 请求路径
+     * @param attachments 额外参数
+     */
     public DubboRequestEntity(String apiPath, Map<String, String> attachments) {
         this.apiPath = apiPath;
         this.attachments = attachments;

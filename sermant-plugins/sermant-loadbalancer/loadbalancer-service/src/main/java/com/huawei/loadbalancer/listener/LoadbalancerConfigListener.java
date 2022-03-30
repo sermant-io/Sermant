@@ -20,11 +20,11 @@ import com.huawei.loadbalancer.config.DubboLoadbalancerType;
 import com.huawei.loadbalancer.config.LoadbalancerConfig;
 import com.huawei.loadbalancer.config.RibbonLoadbalancerType;
 import com.huawei.loadbalancer.config.SpringLoadbalancerType;
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
-import com.huawei.sermant.core.lubanops.bootstrap.utils.StringUtils;
+import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+import com.huawei.sermant.core.utils.StringUtils;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -36,10 +36,10 @@ import java.util.logging.Logger;
  * 配置监听器
  *
  * @author pengyuyi
- * @since 2022/1/22
+ * @since 2022-01-22
  */
 public class LoadbalancerConfigListener implements DynamicConfigListener {
-    private static final Logger LOGGER = LogFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String DUBBO_TYPE_KEY = "dubboType";
 
@@ -82,15 +82,15 @@ public class LoadbalancerConfigListener implements DynamicConfigListener {
         }
         Map<String, String> load = new Yaml().load(event.getContent());
         String dubboType = load.get(DUBBO_TYPE_KEY);
-        if (StringUtils.isNotBlank(dubboType)) {
+        if (StringUtils.isExist(dubboType)) {
             config.setDubboType(DubboLoadbalancerType.valueOf(dubboType.toUpperCase(Locale.ROOT)));
         }
         String springType = load.get(SPRING_TYPE_KEY);
-        if (StringUtils.isNotBlank(springType)) {
+        if (StringUtils.isExist(springType)) {
             config.setSpringType(SpringLoadbalancerType.valueOf(springType.toUpperCase(Locale.ROOT)));
         }
         String ribbonType = load.get(RIBBON_TYPE_KEY);
-        if (StringUtils.isNotBlank(ribbonType)) {
+        if (StringUtils.isExist(ribbonType)) {
             config.setRibbonType(RibbonLoadbalancerType.valueOf(ribbonType.toUpperCase(Locale.ROOT)));
         }
         LOGGER.info(String.format(Locale.ROOT, "Config [%s] has been %s ", key, event.getEventType()));

@@ -127,13 +127,20 @@ public enum ResolverManager {
         return resolversMap;
     }
 
+    /**
+     * 根据配置键获取解析器
+     *
+     * @param configKey 配置键
+     * @param <R> 解析类型
+     * @return 解析器
+     */
     public <R extends AbstractResolver<?>> R getResolver(String configKey) {
         return (R) resolversMap.get(AbstractResolver.getConfigKeyPrefix(configKey));
     }
 
     private void loadSpiResolvers() {
         for (AbstractResolver<?> resolver : ServiceLoader.load(AbstractResolver.class,
-                ResolverManager.class.getClassLoader())) {
+            ResolverManager.class.getClassLoader())) {
             final String configKeyPrefix = AbstractResolver.getConfigKeyPrefix(resolver.getConfigKey());
             if (".".equals(configKeyPrefix)) {
                 // 空配置跳过

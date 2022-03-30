@@ -16,8 +16,8 @@
  */
 
 /**
- * Based on org/apache/servicecomb/governance/marker/GovernanceRequest.java
- * from the Apache ServiceComb Java Chassis project.
+ * Based on org/apache/servicecomb/governance/marker/GovernanceRequest.java from the Apache ServiceComb Java Chassis
+ * project.
  */
 
 package com.huawei.flowcontrol.common.adapte.cse.entity;
@@ -37,6 +37,13 @@ public class CseMatchRequest {
 
     private String httpMethod;
 
+    /**
+     * 构造CSE请求
+     *
+     * @param apiPath 请求路径
+     * @param headers 请求头
+     * @param httpMethod 方法类型
+     */
     public CseMatchRequest(String apiPath, Map<String, String> headers, String httpMethod) {
         this.apiPath = apiPath;
         this.headers = headers;

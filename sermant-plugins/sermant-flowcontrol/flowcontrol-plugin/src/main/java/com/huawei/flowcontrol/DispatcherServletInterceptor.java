@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,12 +44,12 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
      * @param request 请求
      * @return HttpRequestEntity
      */
-    private HttpRequestEntity convertToHttpEntity(HttpServletRequest request) {
+    private Optional<HttpRequestEntity> convertToHttpEntity(HttpServletRequest request) {
         if (request == null) {
-            return null;
+            return Optional.empty();
         }
-        return new HttpRequestEntity(request.getPathInfo(), request.getServletPath(),
-            getHeaders(request), request.getMethod());
+        return Optional.of(new HttpRequestEntity(request.getPathInfo(), request.getServletPath(),
+            getHeaders(request), request.getMethod()));
     }
 
     /**
@@ -72,7 +73,11 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
         final Object[] allArguments = context.getArguments();
         final HttpServletRequest argument = (HttpServletRequest) allArguments[0];
         final FlowControlResult result = new FlowControlResult();
-        chooseHttpService().onBefore(convertToHttpEntity(argument), result);
+        final Optional<HttpRequestEntity> httpRequestEntity = convertToHttpEntity(argument);
+        if (!httpRequestEntity.isPresent()) {
+            return context;
+        }
+        chooseHttpService().onBefore(httpRequestEntity.get(), result);
         if (result.isSkip()) {
             context.skip(null);
             final HttpServletResponse response = (HttpServletResponse) allArguments[1];

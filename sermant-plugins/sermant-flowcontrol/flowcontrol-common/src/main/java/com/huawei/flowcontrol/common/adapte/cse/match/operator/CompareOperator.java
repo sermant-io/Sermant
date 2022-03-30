@@ -43,8 +43,16 @@ public class CompareOperator implements Operator {
 
     private static final double DOUBLE_EPSLON = 1e-6d;
 
+    /**
+     * 比较符下标
+     */
+    private static final int OPERATOR_INDEX = 2;
+
     private final Set<Character> operators = new HashSet<Character>();
 
+    /**
+     * 比较器构造
+     */
     public CompareOperator() {
         operators.addAll(Arrays.asList('=', '>', '<', '!'));
     }
@@ -56,7 +64,8 @@ public class CompareOperator implements Operator {
         }
         if (operators.contains(patternValue.charAt(0)) && operators.contains(patternValue.charAt(1))) {
             // 前两个字符为比较符
-            return compare(targetValue, patternValue.substring(0, 2), patternValue.substring(2));
+            return compare(targetValue, patternValue.substring(0, OPERATOR_INDEX),
+                patternValue.substring(OPERATOR_INDEX));
         } else if (operators.contains(patternValue.charAt(0))) {
             // 仅第一个为比较字符
             return compare(targetValue, patternValue.substring(0, 1), patternValue.substring(1));

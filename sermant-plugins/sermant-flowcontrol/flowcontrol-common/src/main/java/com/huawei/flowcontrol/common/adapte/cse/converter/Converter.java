@@ -16,6 +16,8 @@
 
 package com.huawei.flowcontrol.common.adapte.cse.converter;
 
+import java.util.Optional;
+
 /**
  * 转换器 当前用于转换相关规则
  *
@@ -31,5 +33,5 @@ public interface Converter<S, T> {
      * @param source 源数据类型
      * @return 目前数据
      */
-    T convert(S source);
+    Optional<T> convert(S source);
 }

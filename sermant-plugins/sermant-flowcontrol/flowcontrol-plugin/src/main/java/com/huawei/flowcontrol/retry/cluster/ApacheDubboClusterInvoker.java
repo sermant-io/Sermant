@@ -59,6 +59,11 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
 
     private final RetryHandlerV2 retryHandler = new RetryHandlerV2();
 
+    /**
+     * apache dubbo 集群调用
+     *
+     * @param directory service
+     */
     public ApacheDubboClusterInvoker(Directory<T> directory) {
         super(directory);
     }
@@ -67,7 +72,6 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
     @Override
     protected Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadbalance)
         throws RpcException {
-
         RetryContext.INSTANCE.markRetry(retry);
         final List<io.github.resilience4j.retry.Retry> handlers = retryHandler
             .getHandlers(convertToApacheDubboEntity(invocation, invokers.get(0)));
@@ -115,6 +119,11 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
         return new DubboRequestEntity(apiPath, Collections.unmodifiableMap(invocation.getAttachments()));
     }
 
+    /**
+     * apache dubbo重试
+     *
+     * @since 2022-02-21
+     */
     public static class ApacheDubboRetry extends AbstractRetry {
         @Override
         public boolean needRetry(Set<String> statusList, Object result) {

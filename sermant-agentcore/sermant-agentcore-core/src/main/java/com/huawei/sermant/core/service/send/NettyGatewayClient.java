@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,28 @@
 package com.huawei.sermant.core.service.send;
 
 import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.lubanops.bootstrap.config.AgentConfigManager;
-import com.huawei.sermant.core.lubanops.integration.transport.ClientManager;
-import com.huawei.sermant.core.lubanops.integration.transport.netty.client.NettyClient;
+import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.lubanops.integration.transport.netty.pojo.Message;
+import com.huawei.sermant.core.service.send.api.GatewayClient;
+import com.huawei.sermant.core.service.send.config.BackendConfig;
 
 import java.util.logging.Logger;
 
 /**
  * 基于Netty Client的网关发送服务
+ *
+ * @since 2022-03-26
  */
 public class NettyGatewayClient implements GatewayClient {
-
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private NettyClient nettyClient;
 
     @Override
     public void start() {
-        nettyClient = ClientManager.getNettyClientFactory().getNettyClient(
-                AgentConfigManager.getNettyServerIp(),
-                Integer.parseInt(AgentConfigManager.getNettyServerPort()));
+        BackendConfig backendConfig = ConfigManager.getConfig(BackendConfig.class);
+        nettyClient = ClientManager.getNettyClientFactory().getNettyClient(backendConfig.getNettyIp(),
+            backendConfig.getNettyPort());
     }
 
     @Override

@@ -1,0 +1,3 @@
+com.huawei.dubbo.registry.service.ApplicationConfigServiceImpl
+com.huawei.dubbo.registry.service.RegistryConfigServiceImpl
+com.huawei.dubbo.registry.service.RegistryServiceImpl

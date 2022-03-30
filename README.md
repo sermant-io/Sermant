@@ -59,14 +59,14 @@ Start **Sermant** demo project:
 
 ```shell
 # Run under Linux
-java -cp sermant-plugins/sermant-example/demo-application/target/demo-application.jar \
+java -cp sermant-example/demo-application/target/demo-application.jar \
   -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test \
   com.huawei.example.demo.DemoApplication
 ```
 
 ```shell
 # Run under Windows
-java -cp sermant-plugins\sermant-example\demo-application\target\demo-application.jar ^
+java -cp sermant-example\demo-application\target\demo-application.jar ^
   -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test ^
   com.huawei.example.demo.DemoApplication
 ```

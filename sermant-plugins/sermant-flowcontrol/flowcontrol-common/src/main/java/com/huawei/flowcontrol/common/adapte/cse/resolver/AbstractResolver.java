@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -62,10 +63,21 @@ public abstract class AbstractResolver<T extends Configurable> {
      */
     private Converter<String, T> converter;
 
+    /**
+     * 解析器构造器
+     *
+     * @param configKey 解析器配置键
+     */
     public AbstractResolver(String configKey) {
         this(configKey, null);
     }
 
+    /**
+     * 解析器构造器
+     *
+     * @param configKey 解析器配置键
+     * @param converter 配置转换器
+     */
     public AbstractResolver(String configKey, Converter<String, T> converter) {
         this.configKey = configKey;
 
@@ -113,9 +125,9 @@ public abstract class AbstractResolver<T extends Configurable> {
                 continue;
             }
             String businessKey = key.substring(configKeyPrefix.length());
-            final T rule = parseRule(businessKey, ruleEntity.getValue(), false, false);
-            if (rule != null) {
-                rules.put(businessKey, rule);
+            final Optional<T> optionalRule = parseRule(businessKey, ruleEntity.getValue(), false, false);
+            if (optionalRule.isPresent()) {
+                rules.put(businessKey, optionalRule.get());
             } else {
                 rules.remove(businessKey);
             }
@@ -131,19 +143,19 @@ public abstract class AbstractResolver<T extends Configurable> {
      * @param isForDelete 为了删除的场景，则直接移除该业务配置
      * @return 转换后的规则
      */
-    public T parseRule(String businessKey, String value, boolean isOverride, boolean isForDelete) {
+    public Optional<T> parseRule(String businessKey, String value, boolean isOverride, boolean isForDelete) {
         if (StringUtils.isEmpty(businessKey)) {
-            return null;
+            return Optional.empty();
         }
         if (isForDelete) {
             rules.remove(businessKey);
-            return null;
+            return Optional.empty();
         }
 
         // 值为空场景，用户删除了该业务场景名
         if (StringUtils.isEmpty(value) && isOverride) {
             rules.remove(businessKey);
-            return null;
+            return Optional.empty();
         }
 
         // 1、移除旧的配置
@@ -153,25 +165,26 @@ public abstract class AbstractResolver<T extends Configurable> {
         if (converter == null) {
             converter = new YamlConverter<>(getRuleClass());
         }
-        final T rule = converter.convert(value);
-        if (rule == null) {
-            return null;
+        final Optional<T> optionalRule = converter.convert(value);
+        if (!optionalRule.isPresent()) {
+            return optionalRule;
         }
+        final T rule = optionalRule.get();
 
         // 3、设置名称以及服务名
         rule.setName(businessKey);
 
         // 4、判断规则是否合法
         if (rule.isValid()) {
-            return null;
+            return Optional.empty();
         }
         if (!isServicesMatch(rule.getServices())) {
-            return null;
+            return Optional.empty();
         }
         if (isOverride) {
             rules.put(businessKey, rule);
         }
-        return rule;
+        return Optional.of(rule);
     }
 
     /**
@@ -181,6 +194,12 @@ public abstract class AbstractResolver<T extends Configurable> {
      */
     protected abstract Class<T> getRuleClass();
 
+    /**
+     * 获取解析器配置前缀
+     *
+     * @param configKey 解析器配置键
+     * @return 配置前缀
+     */
     public static String getConfigKeyPrefix(String configKey) {
         return configKey + ".";
     }
@@ -205,7 +224,7 @@ public abstract class AbstractResolver<T extends Configurable> {
             }
 
             // 服务加版本匹配
-            if (serviceAndVersion.length == 2 && serviceAndVersion[0]
+            if (serviceAndVersion.length == CseConstants.SERVICE_VERSION_PARTS && serviceAndVersion[0]
                 .equals(CseServiceMeta.getInstance().getServiceName())
                 && serviceAndVersion[1].equals(CseServiceMeta.getInstance().getVersion())) {
                 return true;

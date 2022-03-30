@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
  * 增强SpringBootApplication类的main方法
  *
  * @author provenceee
- * @since 2022年1月24日
+ * @since 2022-01-24
  */
 public class SpringBootDeclarer extends AbstractPluginDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.springframework.boot.autoconfigure.SpringBootApplication"};

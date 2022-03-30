@@ -13,10 +13,11 @@
 
 package com.huawei.sermant.core.service.tracing;
 
-import com.huawei.sermant.core.lubanops.bootstrap.log.LogFactory;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.send.GatewayClient;
 import com.huawei.sermant.core.service.send.NettyGatewayClient;
+import com.huawei.sermant.core.service.send.api.GatewayClient;
+import com.huawei.sermant.core.service.tracing.api.ExtractService;
+import com.huawei.sermant.core.service.tracing.api.InjectService;
 import com.huawei.sermant.core.service.tracing.common.SpanEvent;
 import com.huawei.sermant.core.service.tracing.common.TracingRequest;
 import com.huawei.sermant.core.utils.TracingUtils;
@@ -69,8 +70,6 @@ public class TracingServiceImplTest {
      */
     @Before
     public void setUp() {
-        LogFactory.setLogger(java.util.logging.Logger.getLogger("Test"));
-
         header.put(TRACE_ID, "");
         header.put(PARENT_SPAN_ID, "");
         header.put(SPAN_ID_PREFIX, "");
