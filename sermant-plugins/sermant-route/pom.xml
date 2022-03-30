@@ -30,8 +30,8 @@
             <modules>
                 <module>gray-feign-http-9.x-plugin</module>
                 <module>gray-feign-http-9.x-service</module>
-                <module>gray-dubbo-2.7.x-plugin</module>
-                <module>gray-dubbo-2.7.x-service</module>
+                <module>gray-dubbo-plugin</module>
+                <module>gray-dubbo-service</module>
                 <module>route-common</module>
             </modules>
         </profile>
@@ -48,8 +48,8 @@
             <modules>
                 <module>gray-feign-http-9.x-plugin</module>
                 <module>gray-feign-http-9.x-service</module>
-                <module>gray-dubbo-2.7.x-plugin</module>
-                <module>gray-dubbo-2.7.x-service</module>
+                <module>gray-dubbo-plugin</module>
+                <module>gray-dubbo-service</module>
                 <module>demo-route</module>
                 <module>route-common</module>
             </modules>

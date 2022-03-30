@@ -36,7 +36,6 @@ import java.util.logging.Logger;
  * @author provenceee
  * @since 2022-01-26
  */
-@SuppressWarnings({"checkstyle:RegexpSingleline"})
 public class MigrationRuleHandlerInterceptor extends AbstractInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 

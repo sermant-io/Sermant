@@ -39,7 +39,6 @@ import java.util.logging.Logger;
  * @author provenceee
  * @since 2022-02-07
  */
-@SuppressWarnings({"checkstyle:RegexpSingleline"})
 public class ReflectUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger();
     private static final String SC_REGISTRY_ADDRESS =
