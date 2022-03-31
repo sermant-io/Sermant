@@ -25,7 +25,6 @@ import java.util.Map;
  * @author provenceee
  * @since 2021-10-27
  */
-@SuppressWarnings("checkstyle:RegexpSingleline")
 public class GrayConfiguration {
     /**
      * 是否有效

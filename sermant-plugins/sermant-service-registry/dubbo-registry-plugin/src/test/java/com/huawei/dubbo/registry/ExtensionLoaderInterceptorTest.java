@@ -36,7 +36,6 @@ import java.util.Map;
  * @author provenceee
  * @since 2022-02-15
  */
-@SuppressWarnings("checkstyle:all")
 public class ExtensionLoaderInterceptorTest {
     private final ExtensionLoaderInterceptor interceptor;
 

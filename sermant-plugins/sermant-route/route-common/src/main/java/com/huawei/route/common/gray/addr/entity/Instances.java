@@ -24,7 +24,6 @@ import com.huawei.route.common.gray.label.entity.CurrentTag;
  * @author provenceee
  * @since 2021-10-15
  */
-@SuppressWarnings("checkstyle:RegexpSingleline")
 public class Instances {
     /**
      * ldc

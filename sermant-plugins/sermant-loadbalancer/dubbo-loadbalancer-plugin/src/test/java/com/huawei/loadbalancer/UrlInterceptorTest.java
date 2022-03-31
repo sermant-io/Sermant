@@ -37,7 +37,6 @@ import java.util.Locale;
  * @see org.apache.dubbo.common.URL
  * @since 2022-03-01
  */
-@SuppressWarnings("checkstyle:all")
 public class UrlInterceptorTest {
     private final LoadbalancerConfig config;
 

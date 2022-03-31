@@ -48,14 +48,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 /**
  * 灰度路由插件工具类
  *
  * @author lilai
- * @since 2021/10/30
+ * @since 2021-10-30
  */
 public class RouterUtil {
+    /**
+     * 无效的端口
+     */
+    public static final int INVALID_PORT = -1;
+
     private static final String HTTP = "http";
 
     private static final int HTTP_PORT = 80;
@@ -67,6 +73,8 @@ public class RouterUtil {
     private static final String COOKIE = "Cookie";
 
     private static final String COLON = ":";
+
+    private static final int EXPECT_LENGTH = 2;
 
     private RouterUtil() {
     }
@@ -115,7 +123,7 @@ public class RouterUtil {
             return request;
         }
         String[] arr = host.split(COLON);
-        if (arr.length != 2) {
+        if (arr.length != EXPECT_LENGTH) {
             return request;
         }
         final String newUrl = replaceUrl(request.url(), arr[0], Integer.parseInt(arr[1])).toString();
@@ -146,12 +154,14 @@ public class RouterUtil {
         StringBuilder url = new StringBuilder();
         try {
             URL uri = new URL(originUrl);
-            url.append(uri.getProtocol()).append("://").append(targetServiceIp);
+            String protocol = uri.getProtocol();
+            url.append(protocol).append("://").append(targetServiceIp);
             int targetPort;
-            if (port == -1) {
+            if (port == INVALID_PORT) {
                 // 若无指定端口，则使用默认的443与80端口
-                targetPort = uri.getPort() == -1 ? (StringUtils.equalsIgnoreCase(HTTPS, uri.getProtocol()) ? HTTPS_PORT
-                    : HTTP_PORT) : uri.getPort();
+                int uriPort = uri.getPort();
+                targetPort = uriPort == INVALID_PORT ? (HTTPS.equalsIgnoreCase(protocol) ? HTTPS_PORT : HTTP_PORT)
+                    : uriPort;
             } else {
                 targetPort = port;
             }
@@ -173,11 +183,11 @@ public class RouterUtil {
      * @param instance 实例
      * @return host
      */
-    public static String getTargetHost(Instances instance) {
+    public static Optional<String> getTargetHost(Instances instance) {
         if (instance != null && instance.getIp() != null && instance.getPort() > 0) {
-            return instance.getIp() + COLON + instance.getPort();
+            return Optional.of(instance.getIp() + COLON + instance.getPort());
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -267,7 +277,7 @@ public class RouterUtil {
             return false;
         }
         String[] arr = match.getPath().split(":/");
-        if (arr.length != 2) {
+        if (arr.length != EXPECT_LENGTH) {
             return false;
         }
         String protocol = arr[0];
@@ -364,7 +374,7 @@ public class RouterUtil {
         }
         for (String str : cookieList) {
             String[] kv = str.split("=");
-            if (kv.length != 2) {
+            if (kv.length != EXPECT_LENGTH) {
                 continue;
             }
             cookieMap.put(kv[0], kv[1]);
@@ -452,6 +462,6 @@ public class RouterUtil {
                 return rule.getRoute();
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 }

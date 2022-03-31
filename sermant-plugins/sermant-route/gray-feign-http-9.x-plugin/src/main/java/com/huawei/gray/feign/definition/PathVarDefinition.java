@@ -36,6 +36,9 @@ public class PathVarDefinition extends AbstractInstDefinition {
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.PathVarInterceptor";
 
+    /**
+     * 构造方法
+     */
     public PathVarDefinition() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, "resolve");
     }

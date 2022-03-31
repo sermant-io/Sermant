@@ -22,7 +22,6 @@ package com.huawei.route.common.gray.label.entity;
  * @author provenceee
  * @since 2021-10-27
  */
-@SuppressWarnings("checkstyle:RegexpSingleline")
 public class MatchRule {
     /**
      * 值匹配规则

@@ -39,10 +39,21 @@ public class FeignResolvedUrl {
      */
     private String url;
 
+    /**
+     * 构造方法
+     *
+     * @param originUrl 原始url
+     */
     public FeignResolvedUrl(String originUrl) {
         this.originUrl = originUrl;
     }
 
+    /**
+     * 构造方法
+     *
+     * @param originUrl 原始url
+     * @param url url
+     */
     public FeignResolvedUrl(String originUrl, String url) {
         this.originUrl = originUrl;
         this.url = url;

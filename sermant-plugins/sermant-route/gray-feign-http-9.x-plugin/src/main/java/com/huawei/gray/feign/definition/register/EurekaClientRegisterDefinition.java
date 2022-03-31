@@ -36,6 +36,9 @@ public class EurekaClientRegisterDefinition extends AbstractInstDefinition {
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.EurekaClientRegisterInterceptor";
 
+    /**
+     * 构造方法
+     */
     public EurekaClientRegisterDefinition() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, "register");
     }

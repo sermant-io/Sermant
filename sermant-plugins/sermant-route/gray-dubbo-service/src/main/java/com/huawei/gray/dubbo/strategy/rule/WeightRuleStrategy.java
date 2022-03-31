@@ -51,7 +51,6 @@ public class WeightRuleStrategy implements RuleStrategy {
         int begin = 1;
         int num = new Random().nextInt(ONO_HUNDRED) + 1;
         for (Route route : routes) {
-            @SuppressWarnings("checkstyle:RegexpSingleline")
             Integer weight = route.getWeight();
             if (weight == null) {
                 continue;

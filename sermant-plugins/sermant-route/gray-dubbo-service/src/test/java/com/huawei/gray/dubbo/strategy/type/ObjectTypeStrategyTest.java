@@ -33,7 +33,6 @@ import java.util.Map;
  * @author provenceee
  * @since 2021-12-01
  */
-@SuppressWarnings("checkstyle:all")
 public class ObjectTypeStrategyTest {
     /**
      * 初始化

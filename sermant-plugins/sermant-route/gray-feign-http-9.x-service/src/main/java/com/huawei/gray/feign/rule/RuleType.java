@@ -56,6 +56,6 @@ public enum RuleType {
      */
     public Instances getTargetServiceInstance(List<Route> list, String targetService,
         Map<String, Collection<String>> headers) {
-        return ruleStrategy.getTargetServiceInstance(list, targetService, headers);
+        return ruleStrategy.getTargetServiceInstance(list, targetService, headers).orElse(null);
     }
 }

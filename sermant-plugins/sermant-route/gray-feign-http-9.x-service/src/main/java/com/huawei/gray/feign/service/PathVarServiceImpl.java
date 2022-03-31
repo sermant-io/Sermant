@@ -33,7 +33,7 @@ import java.lang.reflect.Method;
  * PathVarInterceptor的service
  *
  * @author provenceee
- * @since 2021/11/26
+ * @since 2021-11-26
  */
 public class PathVarServiceImpl implements PathVarService {
     static final ThreadLocal<FeignResolvedUrl> URL_CONTEXT = new ThreadLocal<FeignResolvedUrl>();

@@ -47,7 +47,7 @@ import java.util.List;
  * DefaultHttpClientInterceptor的service
  *
  * @author provenceee
- * @since 2021/11/26
+ * @since 2021-11-26
  */
 public class DefaultHttpClientServiceImpl implements DefaultHttpClientService {
     @Override
@@ -82,7 +82,7 @@ public class DefaultHttpClientServiceImpl implements DefaultHttpClientService {
         Instances instance = ruleType.getTargetServiceInstance(routes, targetAppName,
             request.headers());
         if (instance != null) {
-            String targetServiceHost = RouterUtil.getTargetHost(instance);
+            String targetServiceHost = RouterUtil.getTargetHost(instance).orElse(null);
             String version = instance.getCurrentTag().getVersion();
             request = RouterUtil.rebuildUrl(targetServiceHost, version, request);
             arguments[0] = request;

@@ -22,7 +22,6 @@ package com.huawei.gray.dubbo.strategy.type;
  * @author provenceee
  * @since 2022-03-22
  */
-@SuppressWarnings("checkstyle:all")
 public class Entity {
     private Boolean enabled;
 

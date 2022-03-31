@@ -33,6 +33,9 @@ public class ServiceCombRegisterDefinition extends AbstractInstDefinition {
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.ServiceCombRegisterInterceptor";
 
+    /**
+     * 构造方法
+     */
     public ServiceCombRegisterDefinition() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, "register");
     }

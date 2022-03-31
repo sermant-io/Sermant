@@ -30,7 +30,7 @@ import java.util.concurrent.Executors;
  * 配置服务
  *
  * @author fuziye
- * @since 2021/12/29
+ * @since 2021-12-29
  */
 public class ConfigServiceImpl implements PluginService {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();

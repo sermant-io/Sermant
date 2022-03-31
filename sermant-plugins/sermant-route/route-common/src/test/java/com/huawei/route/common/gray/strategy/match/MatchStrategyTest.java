@@ -32,7 +32,6 @@ import java.util.List;
  * @author provenceee
  * @since 2021-12-01
  */
-@SuppressWarnings("checkstyle:all")
 public class MatchStrategyTest {
     private MatchStrategy exact;
 

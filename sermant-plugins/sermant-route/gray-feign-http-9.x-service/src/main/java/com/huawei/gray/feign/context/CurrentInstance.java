@@ -87,6 +87,11 @@ public class CurrentInstance {
         this.port = port;
     }
 
+    /**
+     * 单例
+     *
+     * @since 2021-11-03
+     */
     private static class SingleTon {
         private static final CurrentInstance CURRENT_INSTANCE = new CurrentInstance();
     }
