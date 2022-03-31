@@ -84,3 +84,4 @@ mvn clean package -Dmaven.test.skip
 |[服务监控功能介绍](user-guide/server-monitor/document.md)|使用手册|
 |[线程变量插件功能介绍](user-guide/threadlocal/document.md)|使用手册|
 |[当前插件功能汇总列表](user-guide/feature-list.md)|使用手册|
+|[常见问题说明指导](./FAQ.md)|使用手册|
