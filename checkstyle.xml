@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 <module name="Checker">
+    <module name="BeforeExecutionExclusionFileFilter">
+        <property name="fileNamePattern" value=".*[\\/]src[\\/]test[\\/].*$"/>
+    </module>
     <module name="SuppressWarningsFilter"/>
     <!--规则1.1 源文件编码格式（包括注释）必须是UTF-8，ASCII水平空格字符(0x20，即空格)是唯一允许出现的空白字符，制表符不用于缩进-->
     <property name="charset" value="UTF-8"/>
