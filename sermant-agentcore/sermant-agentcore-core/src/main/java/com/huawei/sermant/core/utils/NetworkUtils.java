@@ -90,7 +90,6 @@ public class NetworkUtils {
      *
      * @return String
      */
-    @SuppressWarnings({"checkstyle:RegexpSingleline"})
     public static String getHostName() {
         InetAddress ia;
         try {

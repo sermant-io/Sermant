@@ -50,7 +50,6 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
      * @param typeName 类全限定名
      * @return 类的类型匹配器
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static ClassTypeMatcher nameEquals(String typeName) {
         return new ClassTypeMatcher() {
             @Override
@@ -161,7 +160,6 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
      * @param annotations 注解集
      * @return 类的模糊匹配器
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static ClassFuzzyMatcher isAnnotatedWith(String... annotations) {
         return new ClassFuzzyMatcher() {
             @Override
@@ -204,7 +202,6 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
      * @param superTypes 超类集
      * @return 类的模糊匹配器
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static ClassFuzzyMatcher isExtendedFrom(String... superTypes) {
         return new ClassFuzzyMatcher() {
             @Override
@@ -284,7 +281,6 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
      * @param matchers 类的匹配器集
      * @return 类的模糊匹配器
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static ClassFuzzyMatcher not(ClassMatcher... matchers) {
         return new ClassFuzzyMatcher() {
             @Override
@@ -305,7 +301,6 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
      * @param matchers 类的匹配器集
      * @return 类的模糊匹配器
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static ClassFuzzyMatcher and(ClassMatcher... matchers) {
         return new ClassFuzzyMatcher() {
             @Override
@@ -326,7 +321,6 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
      * @param matchers 类的匹配器集
      * @return 类的模糊匹配器
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static ClassFuzzyMatcher or(ClassMatcher... matchers) {
         return new ClassFuzzyMatcher() {
             @Override

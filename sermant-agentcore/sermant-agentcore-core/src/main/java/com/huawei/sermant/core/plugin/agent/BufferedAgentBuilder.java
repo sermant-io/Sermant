@@ -208,24 +208,18 @@ public class BufferedAgentBuilder {
         if (!folder.exists() && !folder.mkdirs()) {
             return this;
         }
-        return addAction(new BuilderAction() {
+        return addAction(builder -> builder.with(new AgentBuilder.Listener.Adapter() {
             @Override
-            public AgentBuilder process(AgentBuilder builder) {
-                return builder.with(new AgentBuilder.Listener.Adapter() {
-                    @SuppressWarnings("checkstyle:RegexpSingleline")
-                    @Override
-                    public void onTransformation(TypeDescription typeDescription, ClassLoader classLoader,
-                            JavaModule module, boolean loaded, DynamicType dynamicType) {
-                        try {
-                            dynamicType.saveIn(folder);
-                        } catch (IOException e) {
-                            LOGGER.warning(String.format(
-                                    "Save class [%s] byte code failed. ", typeDescription.getTypeName()));
-                        }
-                    }
-                });
+            public void onTransformation(TypeDescription typeDescription, ClassLoader classLoader,
+                    JavaModule module, boolean loaded, DynamicType dynamicType) {
+                try {
+                    dynamicType.saveIn(folder);
+                } catch (IOException e) {
+                    LOGGER.warning(String.format(
+                            "Save class [%s] byte code failed. ", typeDescription.getTypeName()));
+                }
             }
-        });
+        }));
     }
 
     /**
@@ -274,6 +268,8 @@ public class BufferedAgentBuilder {
 
     /**
      * 构建行为
+     *
+     * @since 2022-01-22
      */
     public interface BuilderAction {
         /**

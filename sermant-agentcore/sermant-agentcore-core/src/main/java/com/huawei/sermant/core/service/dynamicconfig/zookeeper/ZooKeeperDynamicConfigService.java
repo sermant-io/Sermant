@@ -16,18 +16,19 @@
 
 package com.huawei.sermant.core.service.dynamicconfig.zookeeper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.logging.Logger;
-
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
-
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * 动态配置服务，zookeeper实现
@@ -94,9 +95,9 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
     private DynamicConfigEvent transEvent(String key, String group, WatchedEvent watchedEvent) {
         switch (watchedEvent.getType()) {
             case NodeCreated:
-                return DynamicConfigEvent.createEvent(key, group, doGetConfig(key, group));
+                return DynamicConfigEvent.createEvent(key, group, doGetConfig(key, group).orElse(null));
             case NodeDeleted:
-                return DynamicConfigEvent.deleteEvent(key, group, doGetConfig(key, group));
+                return DynamicConfigEvent.deleteEvent(key, group, doGetConfig(key, group).orElse(null));
             case None:
             case NodeDataChanged:
             case DataWatchRemoved:
@@ -104,13 +105,13 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
             case NodeChildrenChanged:
             case PersistentWatchRemoved:
             default:
-                return DynamicConfigEvent.modifyEvent(key, group, doGetConfig(key, group));
+                return DynamicConfigEvent.modifyEvent(key, group, doGetConfig(key, group).orElse(null));
         }
     }
 
     @Override
-    protected String doGetConfig(String key, String group) {
-        return zkClient.getNode(toPath(key, group));
+    protected Optional<String> doGetConfig(String key, String group) {
+        return Optional.ofNullable(zkClient.getNode(toPath(key, group)));
     }
 
     @Override

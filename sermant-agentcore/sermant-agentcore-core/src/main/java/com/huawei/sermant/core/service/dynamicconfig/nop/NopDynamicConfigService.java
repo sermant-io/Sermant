@@ -16,20 +16,23 @@
 
 package com.huawei.sermant.core.service.dynamicconfig.nop;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * This class is for testing purpose only.
+ *
+ * @since 2021-12-31
  */
 @Deprecated
 public class NopDynamicConfigService extends DynamicConfigService {
     @Override
-    protected String doGetConfig(String key, String group) {
-        return "";
+    protected Optional<String> doGetConfig(String key, String group) {
+        return Optional.of("");
     }
 
     @Override

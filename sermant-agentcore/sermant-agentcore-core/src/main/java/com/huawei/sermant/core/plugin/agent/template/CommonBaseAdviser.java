@@ -40,7 +40,6 @@ public class CommonBaseAdviser {
      * @param beforeHandler  before的异常处理器
      * @return 执行上下文
      */
-    @SuppressWarnings("checkstyle:IllegalCatch")
     public static ExecuteContext onMethodEnter(ExecuteContext context, ListIterator<Interceptor> interceptorItr,
             ExceptionHandler beforeHandler) {
         ExecuteContext newContext = context;
@@ -70,7 +69,6 @@ public class CommonBaseAdviser {
      * @param afterHandler   after的的异常处理器
      * @return 执行上下文
      */
-    @SuppressWarnings("checkstyle:IllegalCatch")
     public static ExecuteContext onMethodExit(ExecuteContext context, ListIterator<Interceptor> interceptorItr,
             ExceptionHandler onThrowHandler, ExceptionHandler afterHandler) {
         ExecuteContext newContext = context;

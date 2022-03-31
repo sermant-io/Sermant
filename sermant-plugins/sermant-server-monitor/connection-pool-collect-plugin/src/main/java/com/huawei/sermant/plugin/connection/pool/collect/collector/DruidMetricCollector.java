@@ -26,6 +26,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -33,7 +34,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @since 2021-12-31
  */
-@SuppressWarnings({"checkstyle:RegexpSingleline"})
 public class DruidMetricCollector {
 
     private static final DruidMetricCollector INSTANCE = new DruidMetricCollector();
@@ -92,11 +92,11 @@ public class DruidMetricCollector {
      *
      * @return {@link ConnectionPool}指标
      */
-    public ConnectionPool getConnectionPool() {
+    public Optional<ConnectionPool> getConnectionPool() {
         readLock.lock();
         try {
             if (dataSources.isEmpty()) {
-                return null;
+                return Optional.empty();
             }
             ConnectionPool.Builder builder = ConnectionPool.newBuilder()
                 .setTimestamp(System.currentTimeMillis());
@@ -110,13 +110,13 @@ public class DruidMetricCollector {
                     .setPoolingCount(druidDataSource.getPoolingCount())
                     .setDatabasePeer(entry.getValue()));
             }
-            return builder.build();
+            return Optional.of(builder.build());
         } finally {
             readLock.unlock();
         }
     }
 
     private String getDatabasePeer(DruidDataSource dataSource) {
-        return databasePeerParseService.parse(dataSource.getUrl());
+        return databasePeerParseService.parse(dataSource.getUrl()).orElse(null);
     }
 }

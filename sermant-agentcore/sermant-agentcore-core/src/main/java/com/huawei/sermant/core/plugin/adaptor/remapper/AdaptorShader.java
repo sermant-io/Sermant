@@ -33,6 +33,8 @@ import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -46,7 +48,6 @@ import java.util.logging.Logger;
  * @version 1.0.0
  * @since 2021-10-18
  */
-@SuppressWarnings("checkstyle:RegexpSingleline")
 public class AdaptorShader {
     /**
      * 日志
@@ -83,13 +84,17 @@ public class AdaptorShader {
         if (strategy.isRewriteExecEnvDirEnable()) {
             FileUtils.deleteDirs(targetFile);
         }
-        final CopyConsumer copyConsumer = CopyConsumer.build(sourcePath, targetPath, strategy.isRewriteFileEnable());
-        final ShadeConsumer shadeConsumer =
-            ShadeConsumer.build(sourcePath, targetPath, strategy.isRewriteFileEnable(), shadeMappings, copyConsumer);
-        if (copyConsumer == null || shadeConsumer == null) {
+        final Optional<CopyConsumer> optionalCopyConsumer =
+            CopyConsumer.build(sourcePath, targetPath, strategy.isRewriteFileEnable());
+        if (!optionalCopyConsumer.isPresent()) {
             return;
         }
-        foreachFile(sourceFile, excludes, shadeConsumer, copyConsumer);
+        final Optional<ShadeConsumer> optionalShadeConsumer = ShadeConsumer.build(sourcePath, targetPath,
+            strategy.isRewriteFileEnable(), shadeMappings, optionalCopyConsumer.get());
+        if (!optionalShadeConsumer.isPresent()) {
+            return;
+        }
+        foreachFile(sourceFile, excludes, optionalShadeConsumer.get(), optionalCopyConsumer.get());
     }
 
     /**
@@ -173,15 +178,17 @@ public class AdaptorShader {
          * @param defaultConsumer 默认的文件处理器
          * @return ShadeConsumer对象
          */
-        @SuppressWarnings("checkstyle:RegexpSingleline")
-        static ShadeConsumer build(String sourcePath, String targetPath, boolean isRewriteFileEnable,
+        static Optional<ShadeConsumer> build(String sourcePath, String targetPath, boolean isRewriteFileEnable,
             List<AdaptorSetting.ShadeMappingInfo> shadeMappings, FileConsumer defaultConsumer) {
             try {
-                return new ShadeConsumer(new File(sourcePath).getCanonicalPath(),
+                return Optional.of(new ShadeConsumer(new File(sourcePath).getCanonicalPath(),
                     new File(targetPath).getCanonicalPath(), isRewriteFileEnable, new AdaptorRemapper(shadeMappings),
-                    defaultConsumer);
-            } catch (IOException ignored) {
-                return null;
+                    defaultConsumer));
+            } catch (IOException ioException) {
+                LOGGER.warning(String.format(Locale.ROOT,
+                    "IOException occurred when build ShadeConsumer, SourcePath: [%s], TargetPath: [%s]", sourcePath,
+                    targetPath));
+                return Optional.empty();
             }
         }
 
@@ -424,13 +431,15 @@ public class AdaptorShader {
          * @param targetPath 目标文件路径
          * @return CopyConsumer对象
          */
-        @SuppressWarnings("checkstyle:RegexpSingleline")
-        static CopyConsumer build(String sourcePath, String targetPath, boolean isRewriteFileEnable) {
+        static Optional<CopyConsumer> build(String sourcePath, String targetPath, boolean isRewriteFileEnable) {
             try {
-                return new CopyConsumer(new File(sourcePath).getCanonicalPath(),
-                    new File(targetPath).getCanonicalPath(), isRewriteFileEnable);
-            } catch (IOException ignored) {
-                return null;
+                return Optional.of(new CopyConsumer(new File(sourcePath).getCanonicalPath(),
+                    new File(targetPath).getCanonicalPath(), isRewriteFileEnable));
+            } catch (IOException ioException) {
+                LOGGER.warning(String.format(Locale.ROOT,
+                        "IOException occurred when build CopyConsumer, SourcePath: [%s], TargetPath: [%s]", sourcePath,
+                        targetPath));
+                return Optional.empty();
             }
         }
 

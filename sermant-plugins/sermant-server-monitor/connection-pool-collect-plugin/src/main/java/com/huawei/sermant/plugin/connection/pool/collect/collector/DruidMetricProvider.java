@@ -55,7 +55,7 @@ public class DruidMetricProvider implements MetricProvider<ConnectionPool> {
 
     @Override
     public ConnectionPool collect() {
-        return metricCollector.getConnectionPool();
+        return metricCollector.getConnectionPool().orElse(null);
     }
 
     @Override

@@ -92,7 +92,6 @@ public class ExecuteContext {
      */
     private Map<String, Field> rawFields;
 
-    @SuppressWarnings("checkstyle:ParameterNumber")
     private ExecuteContext(Object object, Class<?> rawCls, Constructor<?> constructor, Method method,
             Object[] arguments, Map<String, Object> extStaticFields, Map<String, Object> extMemberFields) {
         this.object = object;
@@ -398,7 +397,8 @@ public class ExecuteContext {
      * 设置成员属性值，原生成员属性不存在时，写入额外成员属性集中
      *
      * @param fieldName 属性名
-     * @param value     属性值
+     * @param value 属性值
+     * @throws UnsupportedOperationException operation(null) is not supported
      */
     public void setMemberFieldValue(String fieldName, Object value) {
         if (object == null) {
@@ -440,6 +440,7 @@ public class ExecuteContext {
      *
      * @param fieldName 属性名
      * @return 属性值
+     * @throws UnsupportedOperationException operation(null) is not supported
      */
     public Object getMemberFieldValue(String fieldName) {
         if (object == null) {
@@ -501,6 +502,7 @@ public class ExecuteContext {
      *
      * @param fixedResult 修正的方法结果
      * @return 执行上下文
+     * @throws UnsupportedOperationException operation(null) is not supported
      */
     public ExecuteContext skip(Object fixedResult) {
         if (method == null) {
@@ -516,6 +518,7 @@ public class ExecuteContext {
      *
      * @param fixedResult 修正的结果
      * @return 执行上下文
+     * @throws UnsupportedOperationException operation(null) is not supported
      */
     public ExecuteContext changeResult(Object fixedResult) {
         if (method == null) {
