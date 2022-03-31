@@ -112,7 +112,7 @@ public class NettyClient {
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, CONNECT_TIMEOUT).handler(new ChannelInitializer<Channel>() {
                 @Override
                 protected void initChannel(Channel newChannel) {
-                    ChannelPipeline pipeline = channel.pipeline();
+                    ChannelPipeline pipeline = newChannel.pipeline();
                     pipeline.addLast(new IdleStateHandler(0, 0, writeOrReadWaitTime));
                     pipeline.addLast(new ProtobufVarint32FrameDecoder());
                     pipeline.addLast(new ProtobufDecoder(Message.NettyMessage.getDefaultInstance()));

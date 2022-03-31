@@ -56,7 +56,7 @@
   <img src="binary-docs/check_application.png" width="50%" syt height="50%" />
 
 ## 查看日志
-sermant和backned存放目录分别位于`/var/logs/sermant/core`和`/var/logs/sermant/backend`
+sermant和backned存放目录分别位于sermant运行环境下`./logs/sermant/core`和`./logs/sermant/backend`
 
 ## 相关文档
 

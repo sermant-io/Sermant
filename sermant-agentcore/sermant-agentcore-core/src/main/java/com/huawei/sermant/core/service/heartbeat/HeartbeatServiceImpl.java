@@ -16,6 +16,7 @@
 
 package com.huawei.sermant.core.service.heartbeat;
 
+import com.alibaba.fastjson.JSONObject;
 import com.huawei.sermant.core.common.CommonConstant;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.config.ConfigManager;
@@ -32,6 +33,7 @@ import com.huawei.sermant.core.service.send.NettyClientFactory;
 import com.huawei.sermant.core.utils.JarFileUtils;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -98,16 +100,22 @@ public class HeartbeatServiceImpl implements HeartbeatService {
         // 获取插件名和版本集合
         final Map<String, String> pluginVersionMap = PluginSchemaValidator.getPluginVersionMap();
 
+        // 插件心跳集合
+        Map<String, String> pluginHeartbeatMap = new HashMap<>();
+
         // 循环运行
         while (isRunning) {
             try {
                 for (Map.Entry<String, String> entry : pluginVersionMap.entrySet()) {
-                    heartbeat(nettyClient, entry.getKey(), entry.getValue());
+                    pluginHeartbeatMap.put(entry.getKey(), addExtInfo(entry.getKey(), entry.getValue()));
                 }
+                nettyClient.sendData(
+                        JSONObject.toJSONString(pluginHeartbeatMap).getBytes(CommonConstant.DEFAULT_CHARSET),
+                        Message.ServiceData.DataType.SERVICE_HEARTBEAT);
             } catch (Exception e) {
                 LOGGER.warning(String.format(Locale.ROOT,
-                    "Exception [%s] occurs for [%s] when sending heartbeat message, retry next time. ", e.getClass(),
-                    e.getMessage()));
+                    "Exception [%s] occurs for [%s] when sending heartbeat message, retry next time. ",
+                        e.getClass(), e.getMessage()));
             }
             sleep();
         }
@@ -127,39 +135,25 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     }
 
     /**
-     * 发送心跳
-     *
-     * @param nettyClient netty客户端
-     * @param pluginName 插件名称
-     * @param pluginVersion 插件版本
-     */
-    private void heartbeat(NettyClient nettyClient, String pluginName, String pluginVersion) {
-        final HeartbeatMessage message = new HeartbeatMessage().registerInformation(PLUGIN_NAME_KEY, pluginName)
-            .registerInformation(PLUGIN_VERSION_KEY, pluginVersion);
-        addExtInfo(pluginName, message);
-        final String msg = message.generateCurrentMessage();
-        nettyClient.sendData(msg.getBytes(CommonConstant.DEFAULT_CHARSET),
-            Message.ServiceData.DataType.SERVICE_HEARTBEAT);
-    }
-
-    /**
      * 添加心跳额外信息
      *
      * @param pluginName 插件名称
-     * @param message 心跳信息
+     * @param pluginVersion 插件版本
      */
-    private void addExtInfo(String pluginName, HeartbeatMessage message) {
+    private String addExtInfo(String pluginName, String pluginVersion) {
+        final HeartbeatMessage message = new HeartbeatMessage().registerInformation(PLUGIN_NAME_KEY, pluginName)
+                .registerInformation(PLUGIN_VERSION_KEY, pluginVersion);
         final ExtInfoProvider provider = EXT_INFO_MAP.get(pluginName);
         if (provider == null) {
-            return;
+            return message.generateCurrentMessage();
         }
         final Map<String, String> extInfo = provider.getExtInfo();
-        if (extInfo == null) {
-            return;
+        if (extInfo != null) {
+            for (Map.Entry<String, String> entry : extInfo.entrySet()) {
+                message.registerInformation(entry.getKey(), entry.getValue());
+            }
         }
-        for (Map.Entry<String, String> entry : extInfo.entrySet()) {
-            message.registerInformation(entry.getKey(), entry.getValue());
-        }
+        return message.generateCurrentMessage();
     }
 
     @Override
