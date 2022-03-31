@@ -347,6 +347,7 @@
         </module>
         <module name="ParameterNumber">
             <!-- 检查参数个数，最大5 -->
+            <property name="severity" value="warning"/>
             <property name="max" value="5"/>
         </module>
         <!--Whitespace：空格检查-->
@@ -572,7 +573,9 @@
             <property name="max" value="2"/>
         </module>
         <!--规则5.4 不要把方法的入参当做工作变量/临时变量（例外是方法中确实需要修改入参内容） -->
-        <module name="ParameterAssignment"/>
+        <module name="ParameterAssignment">
+            <property name="severity" value="warning"/>
+        </module>
         <!-- 第五章 方法检查结束-->
         <!-- 第六章 类和接口检查开始-->
         <!-- 规则6.1 避免在无关的变量或无关的概念之间重用名字，避免隐藏（hide）、遮蔽（shadow）和遮掩（obscure）-->
@@ -602,9 +605,9 @@
                          java.lang.Throwable,
                          java.lang.RuntimeException,
                          java.lang.NullPointerException"/>
+            <property name="severity" value="warning"/>
         </module>
         <!-- 第七章 异常和日志检查结束-->
-        <!-- -->
         <!-- 第八章 编程实践检查开始-->
         <!--采用Java1.5提供新并发工具代替wait和notify -->
         <module name="RegexpSinglelineJava">
@@ -653,11 +656,7 @@
         <module name="RegexpSinglelineJava">
             <property name="format" value="(\.getBytes\(\))|(\.bodyAsString\(\))|(new Scanner\(new File\([\w]+\)\))|(new Scanner\([\w]+\))"/>
             <property name="message" value="编程规范-规则8.9.2: 不要依赖默认编码格式，请显示指定为UTF-8"/>
-        </module>
-        <!--规则8.9.2 不要依赖平台默认的字符编码方式，使用UTF-8 -->
-        <module name="RegexpSinglelineJava">
-            <property name="format" value="(\.getBytes\(\))|(\.bodyAsString\(\))|(new InputStreamReader\(new [\w\.]+\([\w]+\)\))|(new InputStreamReader\([\w]+\))"/>
-            <property name="message" value="编程规范-规则8.9.2: 不要依赖默认编码格式，请显示指定为UTF-8"/>
+            <property name="severity" value="warning"/>
         </module>
         <!--规则8.9.3 字符串大小写转换、数字格式化为西方数字时，必须加上Locale.ROOT或Locale.ENGLISH -->
         <module name="RegexpSinglelineJava">
