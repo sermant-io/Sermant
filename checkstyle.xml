@@ -409,6 +409,7 @@
         </module>
         <!-- 检查不该抛出的异常，如未声明/Runtime -->
         <module name="IllegalThrows">
+            <property name="severity" value="warning"/>
             <property name="illegalClassNames" value="java.lang.Error,java.lang.RuntimeException"/>
         </module>
         <module name="DeclarationOrder"/>
