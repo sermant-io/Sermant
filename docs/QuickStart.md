@@ -60,5 +60,6 @@ sermant和backned存放目录分别位于`/var/logs/sermant/core`和`/var/logs/s
 
 ## 相关文档
 
-插件开发，请参考 [插件开发相关文档](https://github.com/huaweicloud/Sermant/blob/develop/docs/README.md#%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91)
+插件开发, 请参考 [插件开发相关文档](./README.md)
 
+常见问题说明与解决指导,请参考[FAQ](./FAQ.md)
