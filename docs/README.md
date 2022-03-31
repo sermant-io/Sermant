@@ -63,24 +63,24 @@ mvn clean package -Dmaven.test.skip
 
 ## 相关文档
 
-|文档名称|文档类型|
-|---|---|
-|[第三方版权说明手册](dev-guide/third_party_copyright.md)|开发手册|
-|[版本管理手册](dev-guide/version_manage.md)|开发手册|
-|[插件模块开发手册](dev-guide/dev_plugin_module.md)|开发手册|
-|[插件代码开发手册](dev-guide/dev_plugin_code.md)|开发手册|
-|[动态配置服务介绍](dev-guide/service_dynamicconfig.md)|开发手册|
-|[心跳服务介绍](dev-guide/service_heartbeat.md)|开发手册|
-|[网关服务介绍](dev-guide/service_send.md)|开发手册|
-|[核心模块介绍](user-guide/agentcore.md)|使用手册|
-|[入口模块介绍](user-guide/entrance.md)|使用手册|
-|[后端模块介绍](user-guide/backend.md)|使用手册|
-|[限流降级功能介绍](user-guide/flowcontrol/flowcontrol.md)|使用手册|
-|[流量录制回放功能介绍](user-guide/flowrecord/document.md)|使用手册|
-|[全链路压测功能介绍](user-guide/hercules/document.md)|使用手册|
-|[影子库压测功能介绍](user-guide/online-stresstest/document.md)|使用手册|
-|[服务注册功能介绍](user-guide/registry/document.md)|使用手册|
-|[灰度发布功能介绍](user-guide/route/document.md)|使用手册|
-|[服务监控功能介绍](user-guide/server-monitor/document.md)|使用手册|
-|[线程变量插件功能介绍](user-guide/threadlocal/document.md)|使用手册|
-|[当前插件功能汇总列表](user-guide/feature-list.md)|使用手册|
+|文档名称|文档类型|问题指导|
+|---|---|---|
+|[第三方版权说明手册](dev-guide/third_party_copyright.md)|开发手册|---|
+|[版本管理手册](dev-guide/version_manage.md)|开发手册|---|
+|[插件模块开发手册](dev-guide/dev_plugin_module.md)|开发手册|---|
+|[插件代码开发手册](dev-guide/dev_plugin_code.md)|开发手册|---|
+|[动态配置服务介绍](dev-guide/service_dynamicconfig.md)|开发手册|---|
+|[心跳服务介绍](dev-guide/service_heartbeat.md)|开发手册|---|
+|[网关服务介绍](dev-guide/service_send.md)|开发手册|---|
+|[核心模块介绍](user-guide/agentcore.md)|使用手册|---|
+|[入口模块介绍](user-guide/entrance.md)|使用手册|---|
+|[后端模块介绍](user-guide/backend.md)|使用手册|---|
+|[限流降级功能介绍](user-guide/flowcontrol/flowcontrol.md)|使用手册|[FAQ](user-guide/flowcontrol/FAQ.md)|
+|[流量录制回放功能介绍](user-guide/flowrecord/document.md)|使用手册|---|
+|[全链路压测功能介绍](user-guide/hercules/document.md)|使用手册|---|
+|[影子库压测功能介绍](user-guide/online-stresstest/document.md)|使用手册|---|
+|[服务注册功能介绍](user-guide/registry/document.md)|使用手册|[FAQ](user-guide/registry/FAQ.md)|
+|[灰度发布功能介绍](user-guide/route/document.md)|使用手册|---|
+|[服务监控功能介绍](user-guide/server-monitor/document.md)|使用手册|---|
+|[线程变量插件功能介绍](user-guide/threadlocal/document.md)|使用手册|---|
+|[当前插件功能汇总列表](user-guide/feature-list.md)|使用手册|---|
