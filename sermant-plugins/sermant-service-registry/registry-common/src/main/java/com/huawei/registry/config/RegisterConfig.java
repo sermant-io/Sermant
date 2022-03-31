@@ -94,25 +94,21 @@ public class RegisterConfig implements PluginConfig {
     /**
      * 是否开启sc的加密 作为配置类，使用布尔类型不可使用is开头，否则存在配置无法读取的问题
      */
-    @SuppressWarnings("checkstyle:RegexpSingleLine")
     private boolean sslEnabled = false;
 
     /**
      * 是否开启迁移模式
      */
-    @SuppressWarnings("checkstyle:RegexpSingleLine")
     private boolean openMigration = false;
 
     /**
      * spring注册开关
      */
-    @SuppressWarnings("checkstyle:RegexpSingleLine")
     private boolean enableSpringRegister = false;
 
     /**
      * 是否启用区域发现
      */
-    @SuppressWarnings("checkstyle:RegexpSingleLine")
     private boolean enableZoneAware = false;
 
     /**
@@ -133,7 +129,6 @@ public class RegisterConfig implements PluginConfig {
     /**
      * 是否支持跨app访问实例
      */
-    @SuppressWarnings("checkstyle:RegexpSingleLine")
     private boolean allowCrossApp = false;
 
     /**
@@ -154,7 +149,6 @@ public class RegisterConfig implements PluginConfig {
         return allowCrossApp;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleLine")
     public void setAllowCrossApp(boolean allowCrossApp) {
         this.allowCrossApp = allowCrossApp;
     }
@@ -187,7 +181,6 @@ public class RegisterConfig implements PluginConfig {
         return enableZoneAware;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleLine")
     public void setEnableZoneAware(boolean enableZoneAware) {
         this.enableZoneAware = enableZoneAware;
     }
@@ -196,7 +189,6 @@ public class RegisterConfig implements PluginConfig {
         return enableSpringRegister;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleLine")
     public void setEnableSpringRegister(boolean enableSpringRegister) {
         this.enableSpringRegister = enableSpringRegister;
     }
@@ -205,7 +197,6 @@ public class RegisterConfig implements PluginConfig {
         return openMigration;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleLine")
     public void setOpenMigration(boolean openMigration) {
         this.openMigration = openMigration;
     }
@@ -214,7 +205,6 @@ public class RegisterConfig implements PluginConfig {
         return sslEnabled;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleLine")
     public void setSslEnabled(boolean sslEnabled) {
         this.sslEnabled = sslEnabled;
     }

@@ -36,6 +36,9 @@ public class HttpClientDefinition extends AbstractInstDefinition {
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.DefaultHttpClientInterceptor";
 
+    /**
+     * 构造方法
+     */
     public HttpClientDefinition() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, "execute");
     }

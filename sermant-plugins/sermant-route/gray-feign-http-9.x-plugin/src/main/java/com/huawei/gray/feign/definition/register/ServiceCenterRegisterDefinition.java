@@ -32,6 +32,9 @@ public class ServiceCenterRegisterDefinition extends AbstractInstDefinition {
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.ServiceCenterRegisterInterceptor";
 
+    /**
+     * 构造方法
+     */
     public ServiceCenterRegisterDefinition() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, "createMicroserviceFromConfiguration");
     }

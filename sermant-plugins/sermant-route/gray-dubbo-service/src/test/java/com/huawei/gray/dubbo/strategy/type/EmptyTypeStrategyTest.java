@@ -27,7 +27,6 @@ import org.junit.Test;
  * @author provenceee
  * @since 2021-12-01
  */
-@SuppressWarnings("checkstyle:all")
 public class EmptyTypeStrategyTest {
     /**
      * 测试空策略

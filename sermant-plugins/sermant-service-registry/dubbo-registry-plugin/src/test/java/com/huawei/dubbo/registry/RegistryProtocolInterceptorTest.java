@@ -34,7 +34,6 @@ import java.lang.reflect.Method;
  * @author provenceee
  * @since 2022-02-15
  */
-@SuppressWarnings("checkstyle:all")
 public class RegistryProtocolInterceptorTest {
     private static final int EXPECT_LENGTH = 3;
 

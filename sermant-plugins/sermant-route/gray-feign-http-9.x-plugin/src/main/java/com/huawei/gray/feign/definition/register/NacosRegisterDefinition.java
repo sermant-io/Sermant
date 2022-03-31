@@ -32,6 +32,9 @@ public class NacosRegisterDefinition extends AbstractInstDefinition {
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.NacosRegisterInterceptor";
 
+    /**
+     * 构造方法
+     */
     public NacosRegisterDefinition() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, "register");
     }

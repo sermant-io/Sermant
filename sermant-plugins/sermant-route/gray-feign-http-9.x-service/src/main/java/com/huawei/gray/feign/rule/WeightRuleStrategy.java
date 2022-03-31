@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -38,11 +39,11 @@ public class WeightRuleStrategy implements RuleStrategy {
     private static final int ONO_HUNDRED = 100;
 
     @Override
-    public Instances getTargetServiceInstance(List<Route> list, String targetService,
+    public Optional<Instances> getTargetServiceInstance(List<Route> list, String targetService,
         Map<String, Collection<String>> headers) {
         Map<String, List<Instances>> map = AddrCache.getAddr(targetService, null);
         if (CollectionUtils.isEmpty(map)) {
-            return null;
+            return Optional.empty();
         }
 
         // 剔除不合法的路由规则，和不在地址列表中的版本应用地址
@@ -54,7 +55,7 @@ public class WeightRuleStrategy implements RuleStrategy {
             }
         }
         if (CollectionUtils.isEmpty(map)) {
-            return null;
+            return Optional.empty();
         }
         if (list.get(0).getWeight() == null) {
             // 规定第一个规则不为空，则设置为100
@@ -63,17 +64,16 @@ public class WeightRuleStrategy implements RuleStrategy {
         int begin = 1;
         int num = new Random().nextInt(ONO_HUNDRED) + 1;
         for (Route route : list) {
-            @SuppressWarnings("checkstyle:RegexpSingleline")
             Integer weight = route.getWeight();
             if (weight == null) {
                 continue;
             }
             String tagVersion = route.getTags().getVersion();
             if (num >= begin && num <= begin + weight - 1) {
-                return map.get(tagVersion).get(0);
+                return Optional.of(map.get(tagVersion).get(0));
             }
             begin += weight;
         }
-        return null;
+        return Optional.empty();
     }
 }

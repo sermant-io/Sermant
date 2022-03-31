@@ -43,7 +43,6 @@ import java.util.Map;
  * @author provenceee
  * @since 2022-03-21
  */
-@SuppressWarnings("checkstyle:all")
 public class RegistrationInterceptorTest {
     private final Map<String, String> map;
 

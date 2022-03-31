@@ -42,7 +42,6 @@ import java.util.Map;
  * @see org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory
  * @since 2022-03-01
  */
-@SuppressWarnings("checkstyle:all")
 public class ClientFactoryInterceptorTest {
     private static final String FOO = "foo";
 

@@ -17,6 +17,7 @@
 package com.huawei.gray.feign.service;
 
 import com.huawei.gray.feign.context.CurrentInstance;
+import com.huawei.gray.feign.util.RouterUtil;
 import com.huawei.route.common.gray.config.GrayConfig;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.sermant.core.agent.common.BeforeResult;
@@ -36,7 +37,7 @@ import java.util.Map;
  * 注册通用的service
  *
  * @author provenceee
- * @since 2021/11/26
+ * @since 2021-11-26
  */
 public class RegisterServiceImpl implements RegisterService {
     @Override
@@ -67,7 +68,8 @@ public class RegisterServiceImpl implements RegisterService {
     public void after(Object obj, Method method, Object[] arguments, Object result) {
         if (result instanceof Microservice) {
             Microservice microservice = (Microservice) result;
-            CurrentInstance.newInstance(microservice.getServiceName(), microservice.getInstance().getHostName(), -1);
+            CurrentInstance.newInstance(microservice.getServiceName(), microservice.getInstance().getHostName(),
+                RouterUtil.INVALID_PORT);
         } else if (arguments[0] instanceof ServiceCombRegistration) {
             ServiceCombRegistration serviceCombRegistration = (ServiceCombRegistration) arguments[0];
             CurrentInstance.newInstance(serviceCombRegistration.getServiceId(), serviceCombRegistration.getHost(),

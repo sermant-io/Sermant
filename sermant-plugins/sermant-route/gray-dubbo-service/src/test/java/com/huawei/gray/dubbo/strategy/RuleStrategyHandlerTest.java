@@ -40,7 +40,6 @@ import java.util.List;
  * @author provenceee
  * @since 2022-03-22
  */
-@SuppressWarnings("checkstyle:all")
 public class RuleStrategyHandlerTest {
     private static final URL ALIBABA_URL = URL.valueOf("dubbo://localhost:8080/com.huawei.foo.BarTest?bar=foo");
 

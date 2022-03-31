@@ -38,7 +38,6 @@ import java.util.Map;
  * @author provenceee
  * @since 2022-02-16
  */
-@SuppressWarnings("checkstyle:all")
 public class RegistryFactoryTest {
     /**
      * 构造方法

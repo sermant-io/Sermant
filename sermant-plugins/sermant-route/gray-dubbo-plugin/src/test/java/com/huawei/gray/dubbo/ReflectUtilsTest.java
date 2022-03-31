@@ -42,7 +42,6 @@ import java.util.Map;
  * @author provenceee
  * @since 2022-03-18
  */
-@SuppressWarnings("checkstyle:all")
 public class ReflectUtilsTest {
     private static final URL ALIBABA_URL = URL.valueOf("dubbo://localhost:8080/com.huawei.foo.BarTest?bar=foo");
 

@@ -212,7 +212,6 @@ public class ReflectUtils {
      * @see com.alibaba.dubbo.config.RegistryConfig
      * @see org.apache.dubbo.config.RegistryConfig
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public static boolean isValid(Object obj) {
         Boolean isValid = invokeWithNoneParameter(obj, IS_VALID_METHOD_NAME, Boolean.class, true);
         if (isValid == null) {
@@ -343,7 +342,6 @@ public class ReflectUtils {
         }
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     private static Method getMethod(Class<?> invokeClass, String name, Class<?> parameterClass, boolean isPublic)
         throws NoSuchMethodException {
         boolean hasParameter = parameterClass != null;

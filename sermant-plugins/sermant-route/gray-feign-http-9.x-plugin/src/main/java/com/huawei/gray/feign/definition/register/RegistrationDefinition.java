@@ -37,6 +37,9 @@ public class RegistrationDefinition extends AbstractInstDefinition {
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.RegistrationInterceptor";
 
+    /**
+     * 构造方法
+     */
     public RegistrationDefinition() {
         super(null, INTERCEPT_CLASS, "register");
     }

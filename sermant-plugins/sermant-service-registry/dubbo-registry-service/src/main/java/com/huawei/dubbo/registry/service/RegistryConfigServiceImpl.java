@@ -69,16 +69,15 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
         registries.add(registryConfig.get());
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     private boolean isInValid(List<?> registries) {
         // 是否所有的配置都是无效的
-        boolean allRegistriesAreInvalid = true;
+        boolean isInvalid = true;
         for (Object registry : registries) {
             if (registry == null) {
                 continue;
             }
             if (ReflectUtils.isValid(registry)) {
-                allRegistriesAreInvalid = false;
+                isInvalid = false;
             }
             if (Constant.SC_REGISTRY_PROTOCOL.equals(ReflectUtils.getId(registry))
                 || Constant.SC_REGISTRY_PROTOCOL.equals(ReflectUtils.getProtocol(registry))) {
@@ -88,6 +87,6 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
         }
 
         // 如果所有的配置都是无效的，则为无效配置，不注册到sc
-        return allRegistriesAreInvalid;
+        return isInvalid;
     }
 }

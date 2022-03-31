@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
  * 注册通用的service
  *
  * @author provenceee
- * @since 2021/11/26
+ * @since 2021-11-26
  */
 public interface RegisterService extends PluginService {
     /**

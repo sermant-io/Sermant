@@ -33,6 +33,9 @@ public class ZookeeperRegisterDefinition extends AbstractInstDefinition {
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.ZookeeperRegisterInterceptor";
 
+    /**
+     * 构造方法
+     */
     public ZookeeperRegisterDefinition() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, "register");
     }

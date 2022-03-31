@@ -43,7 +43,6 @@ import java.util.Map;
  * @author provenceee
  * @since 2022-02-09
  */
-@SuppressWarnings("checkstyle:all")
 public class ReflectUtilsTest {
     private static final String DUBBO_PROTOCOL = "dubbo";
 

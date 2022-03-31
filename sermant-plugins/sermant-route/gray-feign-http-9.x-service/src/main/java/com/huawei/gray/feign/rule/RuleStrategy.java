@@ -22,6 +22,7 @@ import com.huawei.route.common.gray.label.entity.Route;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 路由策略
@@ -38,5 +39,6 @@ public interface RuleStrategy {
      * @param headers       http请求头
      * @return 可路由的应用实例
      */
-    Instances getTargetServiceInstance(List<Route> list, String targetService, Map<String, Collection<String>> headers);
+    Optional<Instances> getTargetServiceInstance(List<Route> list, String targetService,
+        Map<String, Collection<String>> headers);
 }

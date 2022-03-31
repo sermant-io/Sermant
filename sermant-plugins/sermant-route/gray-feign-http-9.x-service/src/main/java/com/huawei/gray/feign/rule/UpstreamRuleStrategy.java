@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 上游传递标签匹配
@@ -39,10 +40,10 @@ import java.util.Map;
  */
 public class UpstreamRuleStrategy implements RuleStrategy {
     @Override
-    public Instances getTargetServiceInstance(List<Route> list, String targetService,
+    public Optional<Instances> getTargetServiceInstance(List<Route> list, String targetService,
         Map<String, Collection<String>> headers) {
         if (headers.get(GrayConstant.GRAY_TAG).isEmpty()) {
-            return null;
+            return Optional.empty();
         }
         String tagVersion;
         CurrentTag currentTag = JSONObject
@@ -52,6 +53,6 @@ public class UpstreamRuleStrategy implements RuleStrategy {
         } else {
             tagVersion = GrayConstant.GRAY_DEFAULT_VERSION;
         }
-        return AddrCache.getAddr(targetService, RouterUtil.getLdc(headers), tagVersion, null);
+        return Optional.ofNullable(AddrCache.getAddr(targetService, RouterUtil.getLdc(headers), tagVersion, null));
     }
 }

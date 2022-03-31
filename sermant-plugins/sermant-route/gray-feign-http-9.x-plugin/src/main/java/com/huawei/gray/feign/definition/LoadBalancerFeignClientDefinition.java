@@ -33,6 +33,9 @@ public class LoadBalancerFeignClientDefinition extends AbstractInstDefinition {
      */
     private static final String INTERCEPT_CLASS = "com.huawei.gray.feign.interceptor.LoadBalancerClientInterceptor";
 
+    /**
+     * 构造方法
+     */
     public LoadBalancerFeignClientDefinition() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, "execute");
     }

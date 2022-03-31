@@ -32,6 +32,9 @@ public class ServiceInstanceListSupplierDefinition extends AbstractInstDefinitio
 
     private static final String ENHANCE_METHOD = "get";
 
+    /**
+     * 构造方法
+     */
     public ServiceInstanceListSupplierDefinition() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, ENHANCE_METHOD);
     }

@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
  * 获取当前服务信息
  *
  * @author provenceee
- * @since 2022/2/18
+ * @since 2022-02-18
  */
 public abstract class RegisterInterceptor implements InstanceMethodInterceptor {
     private RegisterService registerService;

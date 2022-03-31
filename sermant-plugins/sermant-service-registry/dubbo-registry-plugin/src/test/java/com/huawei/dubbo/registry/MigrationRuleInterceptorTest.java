@@ -33,7 +33,6 @@ import org.junit.Test;
  * @author provenceee
  * @since 2022-02-15
  */
-@SuppressWarnings("checkstyle:all")
 public class MigrationRuleInterceptorTest {
     private final MigrationRuleInterceptor interceptor;
 

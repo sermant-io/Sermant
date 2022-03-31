@@ -30,7 +30,6 @@ import java.util.List;
  * @author provenceee
  * @since 2021-12-01
  */
-@SuppressWarnings("checkstyle:all")
 public class ListTypeStrategyTest {
     /**
      * 测试列表策略

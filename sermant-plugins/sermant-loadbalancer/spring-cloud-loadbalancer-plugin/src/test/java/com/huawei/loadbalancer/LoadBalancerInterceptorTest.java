@@ -34,7 +34,6 @@ import java.util.Map;
  * @see org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer
  * @since 2022-03-01
  */
-@SuppressWarnings("checkstyle:all")
 public class LoadBalancerInterceptorTest {
     private static final String FOO = "foo";
 

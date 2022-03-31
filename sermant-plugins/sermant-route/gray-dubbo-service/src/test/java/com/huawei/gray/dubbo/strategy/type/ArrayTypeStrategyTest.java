@@ -27,7 +27,6 @@ import org.junit.Test;
  * @author provenceee
  * @since 2021-12-01
  */
-@SuppressWarnings("checkstyle:all")
 public class ArrayTypeStrategyTest {
     /**
      * 测试数组策略

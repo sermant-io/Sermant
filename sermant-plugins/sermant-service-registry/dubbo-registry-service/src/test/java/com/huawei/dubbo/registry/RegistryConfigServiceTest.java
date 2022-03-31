@@ -36,7 +36,6 @@ import java.lang.reflect.Modifier;
  * @author provenceee
  * @since 2022-02-14
  */
-@SuppressWarnings("checkstyle:all")
 public class RegistryConfigServiceTest {
     private final RegistryConfigService service;
 

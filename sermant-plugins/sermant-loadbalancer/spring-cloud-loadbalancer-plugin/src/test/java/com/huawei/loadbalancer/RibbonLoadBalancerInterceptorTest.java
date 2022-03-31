@@ -39,7 +39,6 @@ import java.lang.reflect.Modifier;
  * @see com.netflix.loadbalancer.BaseLoadBalancer
  * @since 2022-03-01
  */
-@SuppressWarnings("checkstyle:all")
 public class RibbonLoadBalancerInterceptorTest {
     private final LoadbalancerConfig config;
 
