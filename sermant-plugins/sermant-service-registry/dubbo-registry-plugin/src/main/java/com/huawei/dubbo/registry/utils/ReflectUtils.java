@@ -45,7 +45,7 @@ public class ReflectUtils {
         Constant.SC_REGISTRY_PROTOCOL + Constant.PROTOCOL_SEPARATION + "localhost:30100";
     private static final String GET_PROTOCOL_METHOD_NAME = "getProtocol";
     private static final String GET_ADDRESS_METHOD_NAME = "getAddress";
-    private static final String GET_PATH_METHOD_NAME = "getPath";
+    private static final String GET_SERVICE_KEY_METHOD_NAME = "getServiceKey";
     private static final String GET_ID_METHOD_NAME = "getId";
     private static final String GET_NAME_METHOD_NAME = "getName";
     private static final String GET_PARAMETERS_METHOD_NAME = "getParameters";
@@ -133,15 +133,15 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取接口
+     * 获取带组和版本号的接口名
      *
      * @param obj URL
      * @return 接口
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
-    public static String getPath(Object obj) {
-        return invokeWithNoneParameterAndReturnString(obj, GET_PATH_METHOD_NAME);
+    public static String getServiceKey(Object obj) {
+        return invokeWithNoneParameterAndReturnString(obj, GET_SERVICE_KEY_METHOD_NAME);
     }
 
     /**

@@ -264,7 +264,7 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private List<String> getSchemas() {
-        return registryUrls.stream().map(ReflectUtils::getPath).filter(StringUtils::isExist).distinct()
+        return registryUrls.stream().map(this::getServiceKey).filter(StringUtils::isExist).distinct()
             .collect(Collectors.toList());
     }
 
@@ -328,25 +328,25 @@ public class RegistryServiceImpl implements RegistryService {
             return Optional.empty();
         }
         String schema = newUrl.toString();
-        return Optional.of(new SchemaInfo(ReflectUtils.getPath(newUrl), schema, DigestUtils.sha256Hex(schema)));
+        return Optional.of(new SchemaInfo(getServiceKey(newUrl), schema, DigestUtils.sha256Hex(schema)));
     }
 
     private void subscribe(Subscription subscription) {
-        String path = ReflectUtils.getPath(subscription.getUrl());
-        Microservice service = INTERFACE_MAP.get(path);
+        String serviceKey = getServiceKey(subscription.getUrl());
+        Microservice service = INTERFACE_MAP.get(serviceKey);
         if (service == null) {
             updateInterfaceMap();
-            service = INTERFACE_MAP.get(path);
+            service = INTERFACE_MAP.get(serviceKey);
         }
         if (service == null) {
-            LOGGER.log(Level.WARNING, "the subscribe url [{}] is not registered.", path);
+            LOGGER.log(Level.WARNING, "the subscribe url [{}] is not registered.", serviceKey);
             PENDING_SUBSCRIBE_EVENT.add(subscription);
             return;
         }
         String appId = service.getAppId();
         String serviceName = service.getServiceName();
         MicroserviceInstancesResponse response = client.getMicroserviceInstanceList(service.getServiceId());
-        SUBSCRIPTIONS.put(new SubscriptionKey(appId, serviceName, path), subscription.getNotifyListener());
+        SUBSCRIPTIONS.put(new SubscriptionKey(appId, serviceName, serviceKey), subscription.getNotifyListener());
         notify(appId, serviceName, response.getInstances());
         serviceCenterDiscovery.registerIfNotPresent(new ServiceCenterDiscovery.SubscriptionKey(appId, serviceName));
     }
@@ -380,8 +380,8 @@ public class RegistryServiceImpl implements RegistryService {
     private void notify(String appId, String serviceName, List<MicroserviceInstance> instances) {
         if (instances != null) {
             Map<String, List<Object>> notifyUrls = instancesToUrls(instances);
-            notifyUrls.forEach((path, urls) -> {
-                SubscriptionKey subscriptionKey = new SubscriptionKey(appId, serviceName, path);
+            notifyUrls.forEach((serviceKey, urls) -> {
+                SubscriptionKey subscriptionKey = new SubscriptionKey(appId, serviceName, serviceKey);
                 Object notifyListener = SUBSCRIPTIONS.get(subscriptionKey);
                 if (notifyListener != null) {
                     ReflectUtils.notify(notifyListener, urls);
@@ -401,7 +401,7 @@ public class RegistryServiceImpl implements RegistryService {
         instance.getEndpoints().forEach(endpoint -> {
             Object url = ReflectUtils.valueOf(endpoint);
             if (schemaInfos.isEmpty()) {
-                urlMap.computeIfAbsent(ReflectUtils.getPath(url), value -> new ArrayList<>()).add(url);
+                urlMap.computeIfAbsent(getServiceKey(url), value -> new ArrayList<>()).add(url);
                 return;
             }
             schemaInfos.forEach(schema -> {
@@ -409,9 +409,14 @@ public class RegistryServiceImpl implements RegistryService {
                 if (!Objects.equals(ReflectUtils.getProtocol(newUrl), ReflectUtils.getProtocol(url))) {
                     return;
                 }
-                urlMap.computeIfAbsent(ReflectUtils.getPath(newUrl), value -> new ArrayList<>())
+                urlMap.computeIfAbsent(getServiceKey(newUrl), value -> new ArrayList<>())
                     .add(ReflectUtils.setAddress(newUrl, ReflectUtils.getAddress(url)));
             });
         });
+    }
+
+    private String getServiceKey(Object url) {
+        // 因为/与:对sc来说是非法字符，所以需要进行替换
+        return ReflectUtils.getServiceKey(url).replace("/", "_").replace(":", "_");
     }
 }

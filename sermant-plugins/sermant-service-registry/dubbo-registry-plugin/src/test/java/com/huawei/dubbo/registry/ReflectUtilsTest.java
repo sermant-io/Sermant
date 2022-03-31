@@ -47,7 +47,7 @@ import java.util.Map;
 public class ReflectUtilsTest {
     private static final String DUBBO_PROTOCOL = "dubbo";
 
-    private static final String URL_PATH = "com.huawei.foo.BarTest";
+    private static final String URL_SERVICE_KEY = "bar/com.huawei.foo.BarTest:0.0.1";
 
     /**
      * 测试加载Alibaba dubbo接口实现类
@@ -109,7 +109,7 @@ public class ReflectUtilsTest {
         // 缓存url class
         DubboCache.INSTANCE.setUrlClass(URL.class);
         Assert.assertEquals(URL.class, DubboCache.INSTANCE.getUrlClass());
-        testUrl("dubbo://localhost:8080/com.huawei.foo.BarTest");
+        testUrl();
     }
 
     /**
@@ -247,7 +247,7 @@ public class ReflectUtilsTest {
         // 缓存url class
         DubboCache.INSTANCE.setUrlClass(org.apache.dubbo.common.URL.class);
         Assert.assertEquals(org.apache.dubbo.common.URL.class, DubboCache.INSTANCE.getUrlClass());
-        testUrl("dubbo://localhost:8080/com.huawei.foo.BarTest");
+        testUrl();
     }
 
     /**
@@ -323,27 +323,27 @@ public class ReflectUtilsTest {
         Assert.assertEquals(list, notifyListener.getList());
     }
 
-    private void testUrl(String address) {
+    private void testUrl() {
         // 测试valueOf方法
-        Object url = ReflectUtils.valueOf(address);
+        Object url = ReflectUtils.valueOf("dubbo://localhost:8080/com.huawei.foo.BarTest?group=bar&version=0.0.1");
         Assert.assertNotNull(url);
         Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
         Assert.assertEquals("localhost:8080", ReflectUtils.getAddress(url));
-        Assert.assertEquals(URL_PATH, ReflectUtils.getPath(url));
+        Assert.assertEquals(URL_SERVICE_KEY, ReflectUtils.getServiceKey(url));
 
         // 测试setHost方法
         url = ReflectUtils.setHost(url, "localhost1");
         Assert.assertNotNull(url);
         Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
         Assert.assertEquals("localhost1:8080", ReflectUtils.getAddress(url));
-        Assert.assertEquals(URL_PATH, ReflectUtils.getPath(url));
+        Assert.assertEquals(URL_SERVICE_KEY, ReflectUtils.getServiceKey(url));
 
         // 测试setAddress方法
         url = ReflectUtils.setAddress(url, "localhost2:8081");
         Assert.assertNotNull(url);
         Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
         Assert.assertEquals("localhost2:8081", ReflectUtils.getAddress(url));
-        Assert.assertEquals(URL_PATH, ReflectUtils.getPath(url));
+        Assert.assertEquals(URL_SERVICE_KEY, ReflectUtils.getServiceKey(url));
     }
 
     /**
