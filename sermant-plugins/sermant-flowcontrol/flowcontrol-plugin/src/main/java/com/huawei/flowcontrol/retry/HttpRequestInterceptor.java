@@ -68,7 +68,7 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
     @Override
     protected final ExecuteContext doAfter(ExecuteContext context) {
         final Object[] allArguments = context.getArguments();
-        final HttpRequest request = (HttpRequest) allArguments[0];
+        final HttpRequest request = (HttpRequest) context.getObject();
         Object result = context.getResult();
         try {
             final Optional<HttpRequestEntity> httpRequestEntity = convertToHttpEntity(request);

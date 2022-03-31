@@ -182,6 +182,11 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
         return errorResponse;
     }
 
+    @Override
+    protected boolean canInvoke() {
+        return true;
+    }
+
     /**
      * alibaba重试
      *

@@ -32,7 +32,7 @@ public class HttpRequestDeclarer extends AbstractPluginDeclarer {
     /**
      * 增强类的全限定名
      */
-    private static final String ENHANCE_CLASS = "org.springframework.http.client.ClientHttpRequestInterceptor";
+    private static final String ENHANCE_CLASS = "org.springframework.http.client.InterceptingClientHttpRequest";
 
     /**
      * 拦截类的全限定名
@@ -41,13 +41,13 @@ public class HttpRequestDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.isExtendedFrom(ENHANCE_CLASS);
+        return ClassMatcher.nameEquals(ENHANCE_CLASS);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("intercept"), INTERCEPT_CLASS)
+            InterceptDeclarer.build(MethodMatcher.nameEquals("executeInternal"), INTERCEPT_CLASS)
         };
     }
 }

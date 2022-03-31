@@ -25,6 +25,21 @@ package com.huawei.flowcontrol.common.config;
  */
 public class CommonConst {
     /**
+     * dubbo客户端
+     */
+    public static final String DUBBO_CONSUMER = "consumer";
+
+    /**
+     * dubbo服务端
+     */
+    public static final String DUBBO_PROVIDER = "provider";
+
+    /**
+     * 区分dubbo调用端 provider 服务端 consumer 客户端
+     */
+    public static final String DUBBO_SIDE = "side";
+
+    /**
      * 流控配置键
      */
     public static final String FLOW_RULE_CONFIG_KEY = "FlowRule";

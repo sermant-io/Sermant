@@ -27,7 +27,6 @@ import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
-import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.RpcResult;
 
@@ -60,14 +59,23 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
         final FlowControlResult result = new FlowControlResult();
         if (allArguments[1] instanceof Invocation) {
             Invocation invocation = (Invocation) allArguments[1];
-            chooseDubboService().onBefore(convertToAlibabaDubboEntity(invocation), result,
-                RpcContext.getContext().isProviderSide());
+            chooseDubboService().onBefore(convertToAlibabaDubboEntity(invocation), result, isProvider(context));
             if (result.isSkip()) {
                 context.skip(new RpcResult(
                     wrapException(invocation, (Invoker<?>) allArguments[0], result.getResult().getMsg())));
             }
         }
         return context;
+    }
+
+    private boolean isProvider(ExecuteContext context) {
+        final Object argument = context.getArguments()[0];
+        if (argument instanceof Invoker) {
+            Invoker<?> invoker = (Invoker<?>) argument;
+            return !CommonConst.DUBBO_CONSUMER.equals(invoker.getUrl().getParameter(CommonConst.DUBBO_SIDE,
+                CommonConst.DUBBO_PROVIDER));
+        }
+        return false;
     }
 
     private RpcException wrapException(Invocation invocation, Invoker<?> invoker, String msg) {
@@ -80,14 +88,19 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
     protected final ExecuteContext doAfter(ExecuteContext context) {
         Result result = (Result) context.getResult();
         if (result != null) {
-            chooseDubboService().onAfter(result, RpcContext.getContext().isProviderSide(), result.hasException());
+            chooseDubboService().onAfter(result, isProvider(context), result.hasException());
         }
         return context;
     }
 
     @Override
     protected final ExecuteContext doThrow(ExecuteContext context) {
-        chooseDubboService().onThrow(context.getThrowable(), RpcContext.getContext().isProviderSide());
+        chooseDubboService().onThrow(context.getThrowable(), isProvider(context));
         return context;
+    }
+
+    @Override
+    protected boolean canInvoke() {
+        return true;
     }
 }
