@@ -16,6 +16,7 @@
 
 package com.huawei.sermant.backend.server;
 
+import com.alibaba.fastjson.JSONObject;
 import com.huawei.sermant.backend.cache.HeartbeatCache;
 import com.huawei.sermant.backend.common.conf.DataTypeTopicMapping;
 import com.huawei.sermant.backend.common.handler.BaseHandler;
@@ -104,13 +105,16 @@ public class ServerHandler extends BaseHandler {
     private void writeHeartBeatCacheCache(String topic, byte[] message) {
         // 缓存心跳数据
         if (Objects.equals(topic, topicMapping.getTopicOfType(0))) {
-            String messageStr = new String(message, StandardCharsets.UTF_8);
-            HeartbeatEntity heartbeatEntity = JSON.parseObject(messageStr, HeartbeatEntity.class);
-            List<String> ips = heartbeatEntity.getIp();
-            if (ips != null && ips.size() != 0 && heartbeatEntity.getPluginName() != null) {
-                String instanceId = heartbeatEntity.getInstanceId();
-                String pluginName = heartbeatEntity.getPluginName();
-                hbMessages.put(pluginName + instanceId, heartbeatEntity);
+            Map<String, String> pluginHeartbeatMap = JSON.parseObject(
+                    new String(message, StandardCharsets.UTF_8), Map.class);
+            for (String messageStr : pluginHeartbeatMap.values()) {
+                HeartbeatEntity heartbeatEntity = JSONObject.parseObject(messageStr, HeartbeatEntity.class);
+                List<String> ips = heartbeatEntity.getIp();
+                if (ips != null && ips.size() != 0 && heartbeatEntity.getPluginName() != null) {
+                    String instanceId = heartbeatEntity.getInstanceId();
+                    String pluginName = heartbeatEntity.getPluginName();
+                    hbMessages.put(pluginName + instanceId, heartbeatEntity);
+                }
             }
         }
     }
