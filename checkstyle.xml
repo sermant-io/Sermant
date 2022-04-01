@@ -126,6 +126,7 @@
         <property name="severity" value="warning"/>
         <property name="format" value="\s+(Byte|Short|Integer|Long|Float|Double|Character|Boolean)\s+"/>
         <property name="message" value="编程规范-建议4.2: 基本类型优于包装类型，注意合理使用包装类型"/>
+        <property name="maximum" value="5"/>
     </module>
     <!-- 规则7.7 非仅限于中文区销售产品禁止用中文打印日志 -->
     <module name="RegexpSingleline">

@@ -46,8 +46,6 @@ import java.util.Map;
 public class ReflectUtilsTest {
     private static final String DUBBO_PROTOCOL = "dubbo";
 
-    private static final String URL_SERVICE_KEY = "bar/com.huawei.foo.BarTest:0.0.1";
-
     /**
      * 测试加载Alibaba dubbo接口实现类
      */
@@ -122,13 +120,6 @@ public class ReflectUtilsTest {
 
         // 测试getName方法
         Assert.assertEquals(TestConstant.FOO, ReflectUtils.getName(applicationConfig));
-
-        // 测试getParameters方法
-        Assert.assertNull(ReflectUtils.getParameters(applicationConfig));
-
-        // 测试setParameters方法
-        ReflectUtils.setParameters(applicationConfig, Collections.singletonMap(TestConstant.FOO, TestConstant.BAR));
-        Assert.assertEquals(TestConstant.BAR, ReflectUtils.getParameters(applicationConfig).get(TestConstant.FOO));
     }
 
     /**
@@ -262,12 +253,6 @@ public class ReflectUtilsTest {
         // 测试getName方法
         Assert.assertEquals(TestConstant.FOO, ReflectUtils.getName(applicationConfig));
 
-        // 测试getParameters方法
-        Assert.assertNull(ReflectUtils.getParameters(applicationConfig));
-
-        // 测试setParameters方法
-        ReflectUtils.setParameters(applicationConfig, Collections.singletonMap(TestConstant.FOO, TestConstant.BAR));
-        Assert.assertEquals(TestConstant.BAR, ReflectUtils.getParameters(applicationConfig).get(TestConstant.FOO));
     }
 
     /**
@@ -328,21 +313,60 @@ public class ReflectUtilsTest {
         Assert.assertNotNull(url);
         Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
         Assert.assertEquals("localhost:8080", ReflectUtils.getAddress(url));
-        Assert.assertEquals(URL_SERVICE_KEY, ReflectUtils.getServiceKey(url));
+        Assert.assertEquals("com.huawei.foo.BarTest", ReflectUtils.getPath(url));
+        Assert.assertEquals(2, ReflectUtils.getParameters(url).size());
+        Assert.assertEquals("bar", ReflectUtils.getParameters(url).get("group"));
+        Assert.assertEquals("0.0.1", ReflectUtils.getParameters(url).get("version"));
 
         // 测试setHost方法
         url = ReflectUtils.setHost(url, "localhost1");
         Assert.assertNotNull(url);
         Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
         Assert.assertEquals("localhost1:8080", ReflectUtils.getAddress(url));
-        Assert.assertEquals(URL_SERVICE_KEY, ReflectUtils.getServiceKey(url));
+        Assert.assertEquals("com.huawei.foo.BarTest", ReflectUtils.getPath(url));
+        Assert.assertEquals(2, ReflectUtils.getParameters(url).size());
+        Assert.assertEquals("bar", ReflectUtils.getParameters(url).get("group"));
+        Assert.assertEquals("0.0.1", ReflectUtils.getParameters(url).get("version"));
 
         // 测试setAddress方法
         url = ReflectUtils.setAddress(url, "localhost2:8081");
         Assert.assertNotNull(url);
         Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
         Assert.assertEquals("localhost2:8081", ReflectUtils.getAddress(url));
-        Assert.assertEquals(URL_SERVICE_KEY, ReflectUtils.getServiceKey(url));
+        Assert.assertEquals("com.huawei.foo.BarTest", ReflectUtils.getPath(url));
+        Assert.assertEquals(2, ReflectUtils.getParameters(url).size());
+        Assert.assertEquals("bar", ReflectUtils.getParameters(url).get("group"));
+        Assert.assertEquals("0.0.1", ReflectUtils.getParameters(url).get("version"));
+
+        // 测试setPath方法
+        url = ReflectUtils.setPath(url, "com.huawei.foo.FooTest");
+        Assert.assertNotNull(url);
+        Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
+        Assert.assertEquals("localhost2:8081", ReflectUtils.getAddress(url));
+        Assert.assertEquals("com.huawei.foo.FooTest", ReflectUtils.getPath(url));
+        Assert.assertEquals(2, ReflectUtils.getParameters(url).size());
+        Assert.assertEquals("bar", ReflectUtils.getParameters(url).get("group"));
+        Assert.assertEquals("0.0.1", ReflectUtils.getParameters(url).get("version"));
+
+        // 测试removeParameters方法
+        url = ReflectUtils.removeParameters(url, Collections.singletonList("group"));
+        Assert.assertNotNull(url);
+        Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
+        Assert.assertEquals("localhost2:8081", ReflectUtils.getAddress(url));
+        Assert.assertEquals("com.huawei.foo.FooTest", ReflectUtils.getPath(url));
+        Assert.assertEquals(1, ReflectUtils.getParameters(url).size());
+        Assert.assertNull(ReflectUtils.getParameters(url).get("group"));
+        Assert.assertEquals("0.0.1", ReflectUtils.getParameters(url).get("version"));
+
+        // 测试addParameters方法
+        url = ReflectUtils.addParameters(url, Collections.singletonMap("group", "foo"));
+        Assert.assertNotNull(url);
+        Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
+        Assert.assertEquals("localhost2:8081", ReflectUtils.getAddress(url));
+        Assert.assertEquals("com.huawei.foo.FooTest", ReflectUtils.getPath(url));
+        Assert.assertEquals(2, ReflectUtils.getParameters(url).size());
+        Assert.assertEquals("foo", ReflectUtils.getParameters(url).get("group"));
+        Assert.assertEquals("0.0.1", ReflectUtils.getParameters(url).get("version"));
     }
 
     /**
