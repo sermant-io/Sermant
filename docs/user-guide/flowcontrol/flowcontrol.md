@@ -4,7 +4,7 @@
 
 ## 功能
 
-流控插件基于[resilience4j](https://github.com/resilience4j)框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**流控**、**熔断**与**隔离仓**能力，并且支持配置中心动态配置规则，实时生效。
+流控插件基于[resilience4j](https://github.com/resilience4j)框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**流控**、**熔断**、**隔离仓**与**重试**能力，并且支持配置中心动态配置规则，实时生效。
 
 - **流控**：对指定接口限制1S秒内通过的QPS，当1S内流量超过指定阈值，将触发流控，限制请求流量。
 - **熔断**：对指定接口配置熔断策略，可从单位统计时间窗口内的错误率或者慢请求率进行统计，当请求错误率或者慢请求率达到指定比例阈值，即触发熔断，在时间窗口重置前，隔离所有请求。
@@ -53,14 +53,14 @@ dynamic.config.dynamic_config_type=KIE
 
 **（3）配置注册插件**
 
-修改配置文件`${javaagent路径}/pluginPackage/registry/config/config.yaml`， 修正servicecomb注册中心地址
+修改配置文件`${javaagent路径}/pluginPackage/service-registry/config/config.yaml`， 修正servicecomb注册中心地址
 
 ```yaml
 servicecomb.service:
   address: http://127.0.0.1:30100 #注册中心地址
 ```
 
-具体配置可参考[注册插件配置](https://github.com/huaweicloud/Sermant/blob/develop/docs/user-guide/registry/document.md)
+具体配置可参考[注册插件配置](../registry/document.md)
 
 **（4）配置流控插件**
 
@@ -156,7 +156,7 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   **流控配置项说明：**
 
   | 配置项             | 说明                                                         |
-  | ------------------ | ------------------------------------------------------------ |
+    | ------------------ | ------------------------------------------------------------ |
   | limitRefreshPeriod | 单位统计时间，单位毫秒, 若需配置秒则可增加单位`S`， 例如`10S` |
   | rate               | 单位统计时间所能通过的**请求个数**                           |
 
@@ -182,7 +182,7 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   **熔断配置项说明：**
 
   | 配置项                    | 说明                                                         |
-  | ------------------------- | ------------------------------------------------------------ |
+    | ------------------------- | ------------------------------------------------------------ |
   | failureRateThreshold      | 熔断所需达到的错误率                                         |
   | minimumNumberOfCalls      | 滑动窗口内的最小请求数                                       |
   | name                      | 配置项名称，可选参数                                         |
@@ -213,7 +213,7 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   **隔离仓配置项说明：**
 
   |       配置项       |                             说明                             |
-  | :----------------: | :----------------------------------------------------------: |
+    | :----------------: | :----------------------------------------------------------: |
   | maxConcurrentCalls |                          最大并发数                          |
   |  maxWaitDuration   | 最大等待时间，若线程超过`maxConcurrentCalls`，会尝试等待，若超出等待时间还未获取资源，则抛出隔离仓异常 |
   |        name        |                        可选，配置名称                        |
@@ -240,7 +240,7 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   **重试配置项说明：**
 
   |        配置项         |                             说明                             |
-  | :-------------------: | :----------------------------------------------------------: |
+    | :-------------------: | :----------------------------------------------------------: |
   |     waitDuration      |          重试等待时间，默认毫秒；支持秒单位，例如2S          |
   |     retryStrategy     | 重试策略，当前支持两种重试策略：固定时间间隔（FixedInterval）， 指数增长间隔(RandomBackoff) |
   |      maxAttempts      |                         最大重试次数                         |
@@ -322,11 +322,5 @@ java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appNa
 #### 启动时为什么会报HttpHostConnectException异常
 
 答：出现该异常的原因是未启动`Sermant`后台服务`sermant-backhend`, 找到启动类`com.huawei.apm.backend.NettyServerApplication`启动后台服务，并重启应用即可。
-
-## 其他
-
-[流控常见问题](./FAQ.md)
-
-
 
 [返回**Sermant**说明文档](../../README.md)
