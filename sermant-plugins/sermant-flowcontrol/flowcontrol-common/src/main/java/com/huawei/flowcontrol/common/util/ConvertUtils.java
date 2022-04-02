@@ -17,6 +17,8 @@
 
 package com.huawei.flowcontrol.common.util;
 
+import com.huawei.flowcontrol.common.config.CommonConst;
+
 /**
  * 转换工具类
  *
@@ -38,11 +40,27 @@ public class ConvertUtils {
     }
 
     /**
+     * 是否为泛化接口 泛化接口
+     * <p></p>
+     * {@link org.apache.dubbo.rpc.service.GenericService}、 {@link com.alibaba.dubbo.rpc.service.GenericService}
+     * 采用包装代理进行调用, 需要比对类全限定名与方法名进行比较
+     *
+     * @param interfaceName 接口名
+     * @param methodName    方法名
+     * @return 是否为泛化接口
+     */
+    public static boolean isGenericService(String interfaceName, String methodName) {
+        return (CommonConst.ALIBABA_DUBBO_GENERIC_SERVICE_CLASS.equals(interfaceName)
+            || CommonConst.APACHE_DUBBO_GENERIC_SERVICE_CLASS.equals(interfaceName))
+            && CommonConst.GENERIC_METHOD_NAME.equals(methodName);
+    }
+
+    /**
      * 构建API路径
      *
      * @param interfaceName 接口名
-     * @param version 版本
-     * @param methodName 方法名
+     * @param version       版本
+     * @param methodName    方法名
      * @return api路径
      */
     public static String buildApiPath(String interfaceName, String version, String methodName) {

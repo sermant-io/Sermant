@@ -16,17 +16,7 @@
 
 package com.huawei.flowcontrol.common.adapte.cse.match;
 
-import com.huawei.flowcontrol.common.adapte.cse.converter.YamlConverter;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.AbstractResolver;
-import com.huawei.sermant.core.common.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * 业务组
@@ -44,70 +34,11 @@ public class MatchGroupResolver extends AbstractResolver<BusinessMatcher> {
      * 业务场景解析器构造
      */
     public MatchGroupResolver() {
-        super(CONFIG_KEY, new MatchGroupConverter(BusinessMatcher.class));
+        super(CONFIG_KEY);
     }
 
     @Override
     protected Class<BusinessMatcher> getRuleClass() {
         return BusinessMatcher.class;
-    }
-
-    /**
-     * 业务场景解析器
-     *
-     * @since 2022-02-22
-     */
-    public static class MatchGroupConverter extends YamlConverter<BusinessMatcher> {
-        private static final Logger LOGGER = LoggerFactory.getLogger();
-
-        /**
-         * 业务场景解析器构造
-         *
-         * @param businessMatcherClass 解析类
-         */
-        public MatchGroupConverter(Class<BusinessMatcher> businessMatcherClass) {
-            super(businessMatcherClass);
-        }
-
-        /**
-         * 由于yaml低版本复杂对象无法直接转换，因此进行手动赋值
-         *
-         * @param source 配置字符串
-         * @return matcher
-         */
-        @Override
-        public Optional<BusinessMatcher> convert(String source) {
-            final ClassLoader appClassLoader = Thread.currentThread().getContextClassLoader();
-            try {
-                // 此处需使用PluginClassLoader, 需要拿到指定的转换类
-                Thread.currentThread().setContextClassLoader(YamlConverter.class.getClassLoader());
-                final Map<Object, Object> yamlSource = yaml.load(source);
-                final BusinessMatcher businessMatcher = new BusinessMatcher();
-                businessMatcher.setName((String) yamlSource.get("name"));
-                final List<LinkedHashMap<Object, Object>> matches = (List<LinkedHashMap<Object, Object>>) yamlSource
-                    .get("matches");
-                final List<RequestMatcher> requestMatchers = new ArrayList<>();
-                for (LinkedHashMap<Object, Object> map : matches) {
-                    final RequestMatcher requestMatcher = new RequestMatcher();
-                    final LinkedHashMap<String, String> pathMap = (LinkedHashMap<String, String>) map.get("apiPath");
-                    requestMatcher.setApiPath(new RawOperator(pathMap));
-                    requestMatcher.setMethod((List<String>) map.get("method"));
-                    requestMatcher.setName((String) map.get("name"));
-                    requestMatcher.setHeaders((Map<String, RawOperator>) map.get("headers"));
-                    requestMatchers.add(requestMatcher);
-                }
-                businessMatcher.setMatches(requestMatchers);
-                businessMatcher.setServices((String) yamlSource.get("service"));
-                return Optional.ofNullable(businessMatcher);
-            } catch (Exception ex) {
-                LOGGER.warning(String.format(Locale.ENGLISH,
-                    "There were some errors when convert rule, target rule : "
-                        + "[%s], source : [%s], error message : [%s]",
-                    BusinessMatcher.class.getName(), source, ex.getMessage()));
-                return Optional.empty();
-            } finally {
-                Thread.currentThread().setContextClassLoader(appClassLoader);
-            }
-        }
     }
 }

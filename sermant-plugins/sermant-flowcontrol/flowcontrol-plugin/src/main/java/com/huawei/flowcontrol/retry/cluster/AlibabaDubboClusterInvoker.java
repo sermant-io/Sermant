@@ -17,6 +17,7 @@
 
 package com.huawei.flowcontrol.retry.cluster;
 
+import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.entity.DubboRequestEntity;
 import com.huawei.flowcontrol.common.exception.InvokerException;
 import com.huawei.flowcontrol.common.handler.retry.AbstractRetry;
@@ -26,6 +27,7 @@ import com.huawei.flowcontrol.common.util.ConvertUtils;
 import com.huawei.flowcontrol.retry.handler.RetryHandlerV2;
 import com.huawei.sermant.core.common.LoggerFactory;
 
+import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
@@ -112,9 +114,22 @@ public class AlibabaDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
      * @return DubboRequestEntity
      */
     private DubboRequestEntity convertToAlibabaDubboEntity(Invocation invocation, Invoker<T> invoker) {
+        String interfaceName = invocation.getInvoker().getInterface().getName();
+        String methodName = invocation.getMethodName();
+        String version = invocation.getAttachment(ConvertUtils.DUBBO_ATTACHMENT_VERSION);
+        if (ConvertUtils.isGenericService(interfaceName, methodName)) {
+            // 针对泛化接口, 实际接口、版本名通过url获取, 方法名基于参数获取, 为请求方法的第一个参数
+            final URL url = invocation.getInvoker().getUrl();
+            interfaceName = url.getParameter(CommonConst.GENERIC_INTERFACE_KEY, interfaceName);
+            final Object[] arguments = invocation.getArguments();
+            if (arguments != null && arguments.length > 0 && arguments[0] instanceof String) {
+                methodName = (String) invocation.getArguments()[0];
+            }
+            version = url.getParameter(CommonConst.URL_VERSION_KEY, version);
+        }
+
         // 高版本使用api invocation.getTargetServiceUniqueName获取路径，此处使用版本加接口，达到的最终结果一致
-        String apiPath = ConvertUtils.buildApiPath(invoker.getInterface().getName(),
-            invocation.getAttachment(ConvertUtils.DUBBO_ATTACHMENT_VERSION), invocation.getMethodName());
+        String apiPath = ConvertUtils.buildApiPath(interfaceName, version, methodName);
         return new DubboRequestEntity(apiPath, Collections.unmodifiableMap(invocation.getAttachments()));
     }
 

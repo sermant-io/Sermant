@@ -26,6 +26,11 @@ import java.util.Locale;
  * @since 2021-11-15
  */
 public class StringUtils {
+    /**
+     * 空串
+     */
+    public static final String EMPTY = "";
+
     private StringUtils() {
     }
 

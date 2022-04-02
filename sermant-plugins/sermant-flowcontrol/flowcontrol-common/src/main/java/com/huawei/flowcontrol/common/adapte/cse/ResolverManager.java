@@ -17,12 +17,19 @@
 
 package com.huawei.flowcontrol.common.adapte.cse;
 
+import com.huawei.flowcontrol.common.adapte.cse.converter.Converter;
+import com.huawei.flowcontrol.common.adapte.cse.converter.YamlConverter;
 import com.huawei.flowcontrol.common.adapte.cse.match.MatchGroupResolver;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.AbstractResolver;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.listener.ConfigUpdateListener;
+import com.huawei.flowcontrol.common.util.StringUtils;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -41,7 +48,12 @@ public enum ResolverManager {
     /**
      * 基于SPI加载所有Resolver
      */
-    private final Map<String, AbstractResolver<?>> resolversMap = new HashMap<String, AbstractResolver<?>>();
+    private final Map<String, AbstractResolver<?>> resolversMap = new HashMap<>();
+
+    /**
+     * 配置解析器 当前只支持yaml格式
+     */
+    private final Converter<String, Map> mapConverter = new YamlConverter<>(Map.class);
 
     ResolverManager() {
         loadSpiResolvers();
@@ -59,21 +71,27 @@ public enum ResolverManager {
     /**
      * 解析配置
      *
-     * @param rulesMap 配置中心获取的规则数据
+     * @param rulesMap    配置中心获取的规则数据
      * @param isForDelete 是否是为了移除场景
      */
     public void resolve(Map<String, String> rulesMap, boolean isForDelete) {
+        final Set<String> configKeyPrefixDic = resolversMap.keySet();
         for (Map.Entry<String, String> ruleEntity : rulesMap.entrySet()) {
             final String key = ruleEntity.getKey();
-            resolve(key, ruleEntity.getValue(), isForDelete);
+            final String value = ruleEntity.getValue();
+            if (isTargetConfig(key, configKeyPrefixDic)) {
+                resolve(key, value, isForDelete);
+            } else {
+                resolve(filterValidConfig(tryResolveWithYaml(value), configKeyPrefixDic), isForDelete);
+            }
         }
     }
 
     /**
      * 单个kv解析
      *
-     * @param key 键
-     * @param value 值
+     * @param key         键
+     * @param value       值
      * @param isForDelete 是否是删除键
      */
     public void resolve(String key, String value, boolean isForDelete) {
@@ -87,6 +105,76 @@ public enum ResolverManager {
             // 匹配以该配置打头的解析器，更新解析器内容
             resolverEntry.getValue().parseRule(businessKey, value, true, isForDelete);
             resolverEntry.getValue().notifyListeners(businessKey);
+        }
+    }
+
+    private boolean isTargetConfig(String key, Set<String> configKeyPrefixDic) {
+        if (StringUtils.isEmpty(key)) {
+            return false;
+        }
+        for (String prefix : configKeyPrefixDic) {
+            if (key.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Map<String, String> filterValidConfig(Map<String, Object> configMap, Set<String> configKeyPrefixDic) {
+        final Map<String, String> result = new HashMap<>();
+        for (Entry<String, Object> entry : configMap.entrySet()) {
+            final Object value = entry.getValue();
+            final String key = entry.getKey();
+            if (!(value instanceof String) || !isTargetConfig(key, configKeyPrefixDic)) {
+                continue;
+            }
+            result.put(key, (String) value);
+        }
+        return result;
+    }
+
+    /**
+     * 基于yaml转换器转换相关流控规则
+     *
+     * @param value 规则
+     * @return 转换后的配置
+     */
+    private Map<String, Object> tryResolveWithYaml(String value) {
+        final Map<String, Object> kvMap = new HashMap<>();
+        final Optional<Map> convert = mapConverter.convert(value);
+        if (convert.isPresent()) {
+            final Map map = convert.get();
+            resolveNestMap(kvMap, map, null);
+        }
+        return kvMap;
+    }
+
+    /**
+     * 解析嵌套map
+     *
+     * @param result 解析后的最终结果
+     * @param config 源配置map
+     * @param prefix 键前缀
+     */
+    public void resolveNestMap(Map<String, Object> result, Map<String, Object> config, String prefix) {
+        if (config == null || config.isEmpty()) {
+            return;
+        }
+        for (Entry<String, Object> entry : config.entrySet()) {
+            String key = entry.getKey();
+            if (!StringUtils.isEmpty(prefix)) {
+                // 键拼凑
+                key = String.format(Locale.ENGLISH, "%s.%s", prefix, key);
+            }
+            final Object value = entry.getValue();
+            if (value instanceof Map) {
+                resolveNestMap(result, (Map<String, Object>) value, key);
+            } else if (value instanceof Collection) {
+                result.put(key, value);
+            } else {
+                // 其他类型均直接处理保留
+                result.put(key, value == null ? StringUtils.EMPTY : value);
+            }
         }
     }
 
@@ -113,7 +201,7 @@ public enum ResolverManager {
      * 注册监听器
      *
      * @param configKey 监听的规则类型
-     * @param listener 监听器
+     * @param listener  监听器
      */
     public void registerListener(String configKey, ConfigUpdateListener listener) {
         String configKeyPrefix = AbstractResolver.getConfigKeyPrefix(configKey);
@@ -131,7 +219,7 @@ public enum ResolverManager {
      * 根据配置键获取解析器
      *
      * @param configKey 配置键
-     * @param <R> 解析类型
+     * @param <R>       解析类型
      * @return 解析器
      */
     public <R extends AbstractResolver<?>> R getResolver(String configKey) {

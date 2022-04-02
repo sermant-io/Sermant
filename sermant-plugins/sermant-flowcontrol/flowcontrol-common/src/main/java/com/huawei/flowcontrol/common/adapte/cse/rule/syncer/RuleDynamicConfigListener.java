@@ -23,6 +23,7 @@ import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,9 +39,9 @@ public class RuleDynamicConfigListener implements DynamicConfigListener {
 
     @Override
     public void process(DynamicConfigEvent event) {
-        ResolverManager.INSTANCE.resolve(event.getKey(), event.getContent(),
-                event.getEventType() == DynamicConfigEventType.DELETE);
+        ResolverManager.INSTANCE.resolve(Collections.singletonMap(event.getKey(), event.getContent()),
+            event.getEventType() == DynamicConfigEventType.DELETE);
         LOGGER.log(Level.INFO, String.format(Locale.ENGLISH, "Config [%s] has been %s ", event.getKey(),
-                event.getEventType()));
+            event.getEventType()));
     }
 }
