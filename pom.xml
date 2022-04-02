@@ -295,6 +295,9 @@
         </profile>
         <profile>
             <id>package</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>sermant-package</module>
             </modules>
