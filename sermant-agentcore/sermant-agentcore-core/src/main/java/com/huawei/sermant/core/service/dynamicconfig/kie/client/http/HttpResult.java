@@ -39,7 +39,7 @@ public class HttpResult {
      * SC_OK : 正常返回
      * SC_NOT_MODIFIED : 未做任何修改
      */
-    private final int[] OK_CODES = {HttpStatus.SC_OK, HttpStatus.SC_NOT_MODIFIED};
+    private static final int[] OK_CODES = {HttpStatus.SC_OK, HttpStatus.SC_NOT_MODIFIED};
 
     /**
      * 响应码

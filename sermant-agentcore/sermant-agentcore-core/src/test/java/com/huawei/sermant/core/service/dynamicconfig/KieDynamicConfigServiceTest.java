@@ -16,23 +16,19 @@
 
 package com.huawei.sermant.core.service.dynamicconfig;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.Locale;
-
-import com.huawei.sermant.core.config.ConfigManager;
+import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.dynamicconfig.config.DynamicConfig;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+import com.huawei.sermant.core.service.dynamicconfig.kie.listener.SubscriberManager;
+import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
+
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-import com.huawei.sermant.core.common.CommonConstant;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huawei.sermant.core.service.dynamicconfig.kie.listener.SubscriberManager;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.logging.Logger;
 
 /**
  * kie配置中心测试
@@ -41,6 +37,7 @@ import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
  * @since 2021-11-22
  */
 public class KieDynamicConfigServiceTest extends BaseTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Test
     public void testListener() {
@@ -50,7 +47,7 @@ public class KieDynamicConfigServiceTest extends BaseTest {
         final DynamicConfigListener dynamicConfigListener = new DynamicConfigListener() {
             @Override
             public void process(DynamicConfigEvent event) {
-                System.out.println(event.getContent());
+                LOGGER.info(event.getContent());
             }
         };
         subscriberManager.addGroupListener(group, dynamicConfigListener, true);
@@ -63,15 +60,15 @@ public class KieDynamicConfigServiceTest extends BaseTest {
         service.addConfigListener("rule", "groupTest=aa", new DynamicConfigListener() {
             @Override
             public void process(DynamicConfigEvent event) {
-                System.out.printf(Locale.ENGLISH, "key notify %s key %s, content: %s%n"
-                , event.getEventType(), event.getKey(), event.getContent());
+                LOGGER.info(String.format(Locale.ENGLISH, "key notify %s key %s, content: %s%n", event.getEventType(),
+                    event.getKey(), event.getContent()));
             }
         });
         service.addGroupListener("service=flowControlDemo", new DynamicConfigListener() {
             @Override
             public void process(DynamicConfigEvent event) {
-                System.out.printf(Locale.ENGLISH, "group notify %s key %s, content: %s%n"
-                        , event.getEventType(), event.getKey(), event.getContent());
+                LOGGER.info(String.format(Locale.ENGLISH, "group notify %s key %s, content: %s%n", event.getEventType(),
+                    event.getKey(), event.getContent()));
             }
         });
     }

@@ -26,6 +26,13 @@ import java.util.Locale;
  * @since 2021-11-17
  */
 public class DupServiceException extends RuntimeException {
+    private static final long serialVersionUID = 126761488232028879L;
+
+    /**
+     * 构造方法
+     *
+     * @param clsName clsName
+     */
     public DupServiceException(String clsName) {
         super(String.format(Locale.ROOT, "Found more than one implement of %s. ", clsName));
     }

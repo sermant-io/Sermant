@@ -131,7 +131,7 @@ public class KieClient extends AbstractClient {
 
     private String buildKeyIdUrl(String keyId) {
         return String.format(Locale.ENGLISH, "%s/%s",
-                clientUrlManager.getUrl() + kieApi.substring(0, kieApi.length() - 1) , keyId);
+            clientUrlManager.getUrl() + kieApi.substring(0, kieApi.length() - 1), keyId);
     }
 
     /**

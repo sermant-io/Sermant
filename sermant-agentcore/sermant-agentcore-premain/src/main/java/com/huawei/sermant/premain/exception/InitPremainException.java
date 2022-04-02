@@ -21,9 +21,16 @@ package com.huawei.sermant.premain.exception;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/12
+ * @since 2021-11-12
  */
 public class InitPremainException extends RuntimeException {
+    private static final long serialVersionUID = 2039195842465339347L;
+
+    /**
+     * 构造方法
+     *
+     * @param e exception
+     */
     public InitPremainException(Exception e) {
         super("[" + e.getClass().getSimpleName() + "] " + e.getMessage());
     }

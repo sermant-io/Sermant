@@ -21,9 +21,14 @@ package com.huawei.sermant.premain.exception;
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2021/11/12
+ * @since 2021-11-12
  */
 public class DupPremainException extends RuntimeException {
+    private static final long serialVersionUID = -7867167604375273742L;
+
+    /**
+     * 构造方法
+     */
     public DupPremainException() {
         super("Unable to execute sermant agent duplicated. ");
     }

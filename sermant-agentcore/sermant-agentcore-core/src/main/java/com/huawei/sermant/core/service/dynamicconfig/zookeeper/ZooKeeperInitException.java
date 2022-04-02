@@ -26,6 +26,8 @@ import java.util.Locale;
  * @since 2021-12-15
  */
 public class ZooKeeperInitException extends RuntimeException {
+    private static final long serialVersionUID = 5111014183835362572L;
+
     /**
      * zookeeper断开连接
      */

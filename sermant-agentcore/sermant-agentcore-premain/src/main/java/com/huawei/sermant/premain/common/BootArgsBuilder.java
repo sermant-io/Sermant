@@ -81,19 +81,11 @@ public abstract class BootArgsBuilder {
      */
     private static Properties loadConfig() {
         final Properties properties = new Properties();
-        InputStream configStream = null;
-        try {
-            configStream = new FileInputStream(PathDeclarer.getBootConfigPath());
+        try (InputStream configStream = new FileInputStream(PathDeclarer.getBootConfigPath())) {
             properties.load(configStream);
-        } catch (IOException e) {
-            if (configStream != null) {
-                try {
-                    configStream.close();
-                } catch (IOException ioException) {
-                    LOGGER.severe(String.format(Locale.ROOT, "Exception occurs when close config InputStream , %s .",
-                        ioException.getMessage()));
-                }
-            }
+        } catch (IOException ioException) {
+            LOGGER.severe(String.format(Locale.ROOT, "Exception occurs when close config InputStream , %s .",
+                ioException.getMessage()));
         }
         return properties;
     }
