@@ -16,7 +16,6 @@
 
 package com.huawei.sermant.core.service.heartbeat;
 
-import com.alibaba.fastjson.JSONObject;
 import com.huawei.sermant.core.common.CommonConstant;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.config.ConfigManager;
@@ -32,6 +31,8 @@ import com.huawei.sermant.core.service.send.NettyClient;
 import com.huawei.sermant.core.service.send.NettyClientFactory;
 import com.huawei.sermant.core.utils.JarFileUtils;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
@@ -39,7 +40,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
@@ -64,13 +64,10 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     /**
      * 执行线程池，单例即可
      */
-    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable runnable) {
-            final Thread daemonThread = new Thread(runnable);
-            daemonThread.setDaemon(true);
-            return daemonThread;
-        }
+    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(runnable -> {
+        final Thread daemonThread = new Thread(runnable);
+        daemonThread.setDaemon(true);
+        return daemonThread;
     });
 
     /**
@@ -78,15 +75,32 @@ public class HeartbeatServiceImpl implements HeartbeatService {
      */
     private static volatile boolean isRunning = false;
 
+    private static final Object LOCK = new Object();
+
     @Override
-    public synchronized void start() {
-        isRunning = true;
-        EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
-                execute();
+    public void start() {
+        synchronized (LOCK) {
+            isRunning = true;
+            EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    execute();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void stop() {
+        synchronized (LOCK) {
+            if (!isRunning) {
+                LOGGER.warning("HeartbeatService has not started yet. ");
+                return;
             }
-        });
+            isRunning = false;
+            EXECUTOR.shutdown();
+            EXT_INFO_MAP.clear();
+        }
     }
 
     /**
@@ -104,18 +118,11 @@ public class HeartbeatServiceImpl implements HeartbeatService {
 
         // 循环运行
         while (isRunning) {
-            try {
-                for (Map.Entry<String, String> entry : pluginVersionMap.entrySet()) {
-                    pluginHeartbeatMap.put(entry.getKey(), addExtInfo(entry.getKey(), entry.getValue()));
-                }
-                nettyClient.sendData(
-                        JSONObject.toJSONString(pluginHeartbeatMap).getBytes(CommonConstant.DEFAULT_CHARSET),
-                        Message.ServiceData.DataType.SERVICE_HEARTBEAT);
-            } catch (Exception e) {
-                LOGGER.warning(String.format(Locale.ROOT,
-                    "Exception [%s] occurs for [%s] when sending heartbeat message, retry next time. ",
-                        e.getClass(), e.getMessage()));
+            for (Map.Entry<String, String> entry : pluginVersionMap.entrySet()) {
+                pluginHeartbeatMap.put(entry.getKey(), addExtInfo(entry.getKey(), entry.getValue()));
             }
+            nettyClient.sendData(JSONObject.toJSONString(pluginHeartbeatMap).getBytes(CommonConstant.DEFAULT_CHARSET),
+                Message.ServiceData.DataType.SERVICE_HEARTBEAT);
             sleep();
         }
     }
@@ -153,17 +160,6 @@ public class HeartbeatServiceImpl implements HeartbeatService {
             }
         }
         return message.generateCurrentMessage();
-    }
-
-    @Override
-    public synchronized void stop() {
-        if (!isRunning) {
-            LOGGER.warning("HeartbeatService has not started yet. ");
-            return;
-        }
-        isRunning = false;
-        EXECUTOR.shutdown();
-        EXT_INFO_MAP.clear();
     }
 
     @Override

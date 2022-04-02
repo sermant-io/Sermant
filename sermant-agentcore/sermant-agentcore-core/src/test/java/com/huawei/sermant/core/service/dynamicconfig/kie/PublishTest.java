@@ -4,8 +4,6 @@
 
 package com.huawei.sermant.core.service.dynamicconfig.kie;
 
-import com.huawei.sermant.core.common.CommonConstant;
-import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.ServiceManager;
 import com.huawei.sermant.core.service.dynamicconfig.BaseTest;
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
@@ -13,8 +11,8 @@ import com.huawei.sermant.core.service.dynamicconfig.kie.client.http.DefaultHttp
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.http.HttpResult;
 import com.huawei.sermant.core.service.dynamicconfig.kie.listener.SubscriberManager;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
+
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;

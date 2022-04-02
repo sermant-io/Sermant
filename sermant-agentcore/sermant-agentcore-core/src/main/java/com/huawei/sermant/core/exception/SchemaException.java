@@ -66,14 +66,30 @@ public class SchemaException extends RuntimeException {
         }
     };
 
+    private static final long serialVersionUID = 3875379572570581867L;
+
+    /**
+     * 构造方法
+     *
+     * @param parser parser
+     * @param args args
+     */
     public SchemaException(MsgParser parser, Object... args) {
         super(parser.parse(args));
     }
 
     /**
      * 信息转换器
+     *
+     * @since 2021-11-04
      */
     public interface MsgParser {
+        /**
+         * parse
+         *
+         * @param args args
+         * @return string
+         */
         String parse(Object... args);
     }
 }
