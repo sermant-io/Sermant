@@ -68,7 +68,6 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
         return new DubboRequestEntity(apiPath, invocation.getAttachments());
     }
 
-    @SuppressWarnings("checkstyle:IllegalCatch")
     private Object invokeRetryMethod(Object obj, Object[] allArguments, Object ret, boolean isNeedThrow,
         boolean isRetry) {
         try {
@@ -146,7 +145,6 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
         return context;
     }
 
-    @SuppressWarnings("checkstyle:IllegalCatch")
     @Override
     protected final ExecuteContext doAfter(ExecuteContext context) {
         final Object[] allArguments = context.getArguments();
@@ -164,7 +162,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
                         true));
             }
         } catch (Throwable throwable) {
-            result = buildErrorResponse(throwable);
+            result = buildErrorResponse(throwable, invocation);
         } finally {
             RetryContext.INSTANCE.removeRetry();
         }
@@ -172,14 +170,14 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
         return context;
     }
 
-    private Object buildErrorResponse(Throwable throwable) {
-        Object errorResponse;
+    private Object buildErrorResponse(Throwable throwable, Invocation invocation) {
+        Throwable realException = throwable;
         if (throwable instanceof InvokerWrapperException) {
-            errorResponse = new RpcResult(((InvokerWrapperException) throwable).getRealException());
-        } else {
-            errorResponse = new RpcResult(throwable);
+            realException = ((InvokerWrapperException) throwable).getRealException();
         }
-        return errorResponse;
+        LOGGER.warning(String.format(Locale.ENGLISH, "Invoking method [%s] failed, reason : %s",
+            invocation.getMethodName(), realException.getMessage()));
+        return new RpcResult(realException);
     }
 
     @Override

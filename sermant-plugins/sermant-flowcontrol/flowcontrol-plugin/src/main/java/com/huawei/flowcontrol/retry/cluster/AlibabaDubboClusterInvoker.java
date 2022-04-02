@@ -68,7 +68,6 @@ public class AlibabaDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
         super(directory);
     }
 
-    @SuppressWarnings("checkstyle:IllegalCatch")
     @Override
     protected Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadbalance)
         throws RpcException {

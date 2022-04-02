@@ -57,7 +57,6 @@ public enum RegisterContext {
      *
      * @param available 是否可用
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setAvailable(boolean available) {
         this.isAvailable.set(available);
     }
@@ -69,7 +68,6 @@ public enum RegisterContext {
      * @param target 目标值
      * @return 是否配置成功
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public boolean compareAndSet(boolean expect, boolean target) {
         return this.isAvailable.compareAndSet(expect, target);
     }

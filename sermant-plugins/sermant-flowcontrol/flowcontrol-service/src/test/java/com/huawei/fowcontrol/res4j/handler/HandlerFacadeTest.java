@@ -35,7 +35,6 @@ public class HandlerFacadeTest {
     /**
      * 测试基本流程
      */
-    @SuppressWarnings("checkstyle:IllegalCatch")
     @Test
     public void test() {
         try {

@@ -35,7 +35,6 @@ import java.util.logging.Logger;
 public class NacosHealthInterceptor extends SingleStateCloseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     private boolean isValidResult(Object result) {
         // 低版本不可用则返回0L, 反之可用
         // 高版本不可用返回空，可用返回ObjectNode, json格式({"clientBeatInterval":5000,"code":10200,"lightBeatEnabled":true}),

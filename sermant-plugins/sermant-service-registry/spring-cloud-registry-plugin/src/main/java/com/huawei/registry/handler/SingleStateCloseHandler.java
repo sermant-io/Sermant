@@ -66,7 +66,6 @@ public abstract class SingleStateCloseHandler extends RegisterSwitchSupport {
      * @param originState  变更前的状态
      * @param newState     变更后的状态
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void doChange(Object obj, Object[] allArguments, boolean originState, boolean newState) {
         if (!newState) {
             tryClose();
@@ -76,7 +75,6 @@ public abstract class SingleStateCloseHandler extends RegisterSwitchSupport {
     /**
      * 关闭注册中心
      */
-    @SuppressWarnings("checkstyle:IllegalCatch")
     public void tryClose() {
         if (needCloseRegisterCenter() && IS_CLOSED.compareAndSet(false, true)) {
             try {

@@ -43,7 +43,6 @@ public interface DubboService {
      * @param isProvider   是否为生产者
      * @param hasException 是否发生调用异常， dubbo场景发生异常会调用after方法
      */
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     void onAfter(Object result, boolean isProvider, boolean hasException);
 
     /**

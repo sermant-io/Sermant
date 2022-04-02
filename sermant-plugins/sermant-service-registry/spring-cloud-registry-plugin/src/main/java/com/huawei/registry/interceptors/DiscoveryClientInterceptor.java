@@ -63,7 +63,6 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
         return context;
     }
 
-    @SuppressWarnings("checkstyle:IllegalCatch")
     private List<ServiceInstance> convertAndMerge(List<MicroServiceInstance> microServiceInstances, String serviceId) {
         List<ServiceInstance> result = new ArrayList<>(microServiceInstances.size());
         if (isOpenMigration() && RegisterContext.INSTANCE.isAvailable()) {
@@ -81,7 +80,6 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
         return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    @SuppressWarnings("checkstyle:IllegalCatch")
     private List<ServiceInstance> queryOriginInstances(String serviceId) {
         final CompositeDiscoveryClient discoveryClient = (CompositeDiscoveryClient) RegisterContext.INSTANCE
             .getDiscoveryClient();

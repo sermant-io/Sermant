@@ -77,7 +77,6 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
      * @param serviceInstances 从迁移后的注册中心查询的实例列表
      * @return 服务列表
      */
-    @SuppressWarnings("checkstyle:IllegalCatch")
     private List<Server> convertAndMerge(Object obj, List<MicroServiceInstance> serviceInstances, String serviceName) {
         List<Server> result = new ArrayList<>(serviceInstances.size());
         if (isOpenMigration() && RegisterContext.INSTANCE.isAvailable()) {
@@ -95,7 +94,6 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
         return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    @SuppressWarnings("checkstyle:IllegalCatch")
     private List<Server> queryInstances(Object obj) {
         ServerList<Server> serverList = (ServerList<Server>) obj;
         try {
@@ -127,7 +125,7 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
          * 构造器
          *
          * @param microServiceInstance 实例信息
-         * @param serviceName 服务名
+         * @param serviceName          服务名
          */
         public ScServer(final MicroServiceInstance microServiceInstance, String serviceName) {
             super(microServiceInstance.getHost(), microServiceInstance.getPort());

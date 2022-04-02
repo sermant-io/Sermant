@@ -27,6 +27,7 @@ import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import org.springframework.http.HttpRequest;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
@@ -64,7 +65,6 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
         return context;
     }
 
-    @SuppressWarnings("checkstyle:IllegalCatch")
     @Override
     protected final ExecuteContext doAfter(ExecuteContext context) {
         final Object[] allArguments = context.getArguments();
@@ -108,15 +108,16 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
         private static final String METHOD_KEY = "ClientHttpResponse#getRawStatusCode";
 
         @Override
-        @SuppressWarnings("checkstyle:IllegalCatch")
         protected Optional<String> getCode(Object result) {
             final Optional<Method> getRawStatusCode = getInvokerMethod(METHOD_KEY, fn -> {
                 try {
                     final Method method = result.getClass().getDeclaredMethod("getRawStatusCode");
                     method.setAccessible(true);
                     return method;
-                } catch (NoSuchMethodException ignored) {
-                    // ignored
+                } catch (NoSuchMethodException ex) {
+                    LOGGER.warning(String.format(Locale.ENGLISH,
+                        "Can not find method getRawStatusCode from response class %s",
+                        result.getClass().getName()));
                 }
                 return placeHolderMethod;
             });
@@ -125,10 +126,15 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
             }
             try {
                 return Optional.of(String.valueOf(getRawStatusCode.get().invoke(result)));
-            } catch (Exception ignored) {
-                // ignored
-                return Optional.empty();
+            } catch (IllegalAccessException ex) {
+                LOGGER.warning(String.format(Locale.ENGLISH,
+                    "Can not find method getRawStatusCode from class [%s]!",
+                    result.getClass().getCanonicalName()));
+            } catch (InvocationTargetException ex) {
+                LOGGER.warning(String.format(Locale.ENGLISH, "Invoking method getRawStatusCode failed, reason: %s",
+                    ex.getMessage()));
             }
+            return Optional.empty();
         }
 
         @Override

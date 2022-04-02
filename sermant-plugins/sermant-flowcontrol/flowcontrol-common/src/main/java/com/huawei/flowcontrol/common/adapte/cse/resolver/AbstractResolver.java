@@ -56,7 +56,7 @@ public abstract class AbstractResolver<T extends Configurable> {
     /**
      * 配置更新监听 进行解析后再通知
      */
-    private final List<ConfigUpdateListener<T>> listeners = new ArrayList<ConfigUpdateListener<T>>();
+    private final List<ConfigUpdateListener<T>> listeners = new ArrayList<>();
 
     /**
      * 转换器
@@ -83,7 +83,7 @@ public abstract class AbstractResolver<T extends Configurable> {
 
         // 线上SC目前治理策略仅支持yaml格式配置
         this.converter = converter;
-        rules = new HashMap<String, T>();
+        rules = new HashMap<>();
     }
 
     /**
@@ -100,7 +100,6 @@ public abstract class AbstractResolver<T extends Configurable> {
      *
      * @param updateKey 更新业务场景名key
      */
-    @SuppressWarnings("checkstyle:IllegalCatch")
     public void notifyListeners(String updateKey) {
         for (ConfigUpdateListener<T> listener : listeners) {
             try {
@@ -138,8 +137,8 @@ public abstract class AbstractResolver<T extends Configurable> {
      * 格式化规则
      *
      * @param businessKey 业务场景名
-     * @param value 业务规则
-     * @param isOverride 是否覆盖规则， 用于单个业务场景更新时
+     * @param value       业务规则
+     * @param isOverride  是否覆盖规则， 用于单个业务场景更新时
      * @param isForDelete 为了删除的场景，则直接移除该业务配置
      * @return 转换后的规则
      */

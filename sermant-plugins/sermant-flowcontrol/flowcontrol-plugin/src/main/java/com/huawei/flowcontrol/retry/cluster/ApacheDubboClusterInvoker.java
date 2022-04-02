@@ -29,7 +29,6 @@ import com.huawei.sermant.core.common.LoggerFactory;
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
 import io.vavr.CheckedFunction0;
-
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
@@ -68,7 +67,6 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
         super(directory);
     }
 
-    @SuppressWarnings("checkstyle:IllegalCatch")
     @Override
     protected Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadbalance)
         throws RpcException {

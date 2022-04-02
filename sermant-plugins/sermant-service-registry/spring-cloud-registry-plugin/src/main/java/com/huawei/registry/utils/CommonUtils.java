@@ -18,10 +18,13 @@
 package com.huawei.registry.utils;
 
 import com.huawei.registry.support.FieldAccessAction;
+import com.huawei.sermant.core.common.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.security.AccessController;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.logging.Level;
 
 /**
  * 公共工具类
@@ -90,13 +93,14 @@ public class CommonUtils {
      * @param fieldName 字段名称
      * @return value
      */
-    @SuppressWarnings("checkstyle:IllegalCatch")
     public static Optional<Object> getFieldValue(Object target, String fieldName) {
         try {
             final Field fieldValue = target.getClass().getDeclaredField(fieldName);
             AccessController.doPrivileged(new FieldAccessAction(fieldValue));
             return Optional.ofNullable(fieldValue.get(target));
         } catch (Exception ex) {
+            LoggerFactory.getLogger().log(Level.WARNING, String.format(Locale.ENGLISH,
+                "Could not acquire the value of field %s", fieldName));
             return Optional.empty();
         }
     }
