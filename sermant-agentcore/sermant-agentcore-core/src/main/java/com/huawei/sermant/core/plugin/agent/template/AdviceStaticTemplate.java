@@ -51,7 +51,6 @@ public class AdviceStaticTemplate {
      * @param context         执行上下文
      * @return 是否跳过主要方法
      */
-    @SuppressWarnings({"checkstyle:ParameterNumber", "checkstyle:ParameterAssignment"})
     @Advice.OnMethodEnter(suppress = Throwable.class, skipOn = Advice.OnNonDefaultValue.class)
     public static boolean onMethodEnter(
             @Advice.Origin Class<?> cls,
@@ -80,7 +79,6 @@ public class AdviceStaticTemplate {
      * @param interceptorItr  拦截器迭代器
      * @param context         执行上下文
      */
-    @SuppressWarnings("checkstyle:ParameterAssignment")
     @Advice.OnMethodExit(suppress = Throwable.class, onThrowable = Throwable.class)
     public static void onMethodExit(
             @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object result,

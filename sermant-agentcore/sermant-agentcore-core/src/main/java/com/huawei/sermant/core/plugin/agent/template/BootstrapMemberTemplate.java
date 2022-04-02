@@ -52,7 +52,6 @@ public class BootstrapMemberTemplate {
      * @return 是否跳过主要方法
      * @throws Exception 执行异常
      */
-    @SuppressWarnings({"checkstyle:ParameterNumber", "checkstyle:ParameterAssignment"})
     @Advice.OnMethodEnter(suppress = Throwable.class, skipOn = Advice.OnNonDefaultValue.class)
     public static boolean onMethodEnter(
             @Advice.This(typing = Assigner.Typing.DYNAMIC) Object obj,
@@ -91,7 +90,6 @@ public class BootstrapMemberTemplate {
      * @param context        执行上下文
      * @throws Exception 执行异常
      */
-    @SuppressWarnings({"checkstyle:ParameterNumber", "checkstyle:ParameterAssignment"})
     @Advice.OnMethodExit(suppress = Throwable.class, onThrowable = Throwable.class)
     public static void onMethodExit(
             @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object result,

@@ -18,6 +18,8 @@ package com.huawei.sermant.plugin.monitor.common.service;
 
 import com.huawei.sermant.core.plugin.service.PluginService;
 
+import java.util.Optional;
+
 /**
  * Database peer 解析服务
  */
@@ -29,5 +31,5 @@ public interface DatabasePeerParseService extends PluginService {
      * @param url database url
      * @return database peer
      */
-    String parse(String url);
+    Optional<String> parse(String url);
 }

@@ -50,7 +50,6 @@ public class AdviceConstTemplate {
      * @param interceptorItr  拦截器迭代器
      * @param context         执行上下文
      */
-    @SuppressWarnings({"checkstyle:ParameterNumber", "checkstyle:ParameterAssignment"})
     @Advice.OnMethodEnter(suppress = Throwable.class)
     public static void onMethodEnter(
             @Advice.Origin Class<?> cls,
@@ -78,7 +77,6 @@ public class AdviceConstTemplate {
      * @param interceptorItr  拦截器迭代器
      * @param context         执行上下文
      */
-    @SuppressWarnings("checkstyle:ParameterAssignment")
     @Advice.OnMethodExit(suppress = Throwable.class)
     public static void onMethodExit(
             @Advice.This(typing = Assigner.Typing.DYNAMIC) Object obj,

@@ -60,7 +60,6 @@ public class AgentConfig implements BaseConfig {
         return isEnhanceBootStrapEnable;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setEnhanceBootStrapEnable(boolean enhanceBootStrapEnable) {
         isEnhanceBootStrapEnable = enhanceBootStrapEnable;
     }
@@ -77,7 +76,6 @@ public class AgentConfig implements BaseConfig {
         return isShowEnhanceLogEnable;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setShowEnhanceLogEnable(boolean showEnhanceLogEnable) {
         isShowEnhanceLogEnable = showEnhanceLogEnable;
     }
@@ -102,6 +100,8 @@ public class AgentConfig implements BaseConfig {
     /**
      * 插件声明器的合并策略
      * <p>通常，以下策略差异不大，没有决定性的影响，一般取{@link #ALL}即可
+     *
+     * @since 2021-01-25
      */
     public enum CombineStrategy {
         /**

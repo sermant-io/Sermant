@@ -26,36 +26,79 @@ package com.huawei.sermant.core.agent.matcher;
  * 匹配器Facade类
  * <p> Copyright 2021
  *
- * @since 2021
+ * @since 2021-12-31
  */
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 @Deprecated
 public class ClassMatchers {
+    private ClassMatchers() {
+    }
 
+    /**
+     * 类名字匹配
+     *
+     * @param name 名字
+     * @return NameMatcher
+     */
     public static NameMatcher named(String name) {
         return new NameMatcher(name);
     }
 
+    /**
+     * 匹配多个类
+     *
+     * @param classNames 类名数组
+     * @return MultiClassMatcher
+     */
     public static MultiClassMatcher multiClass(String... classNames) {
         return new MultiClassMatcher(classNames);
     }
 
+    /**
+     * 注解匹配
+     *
+     * @param annotationNames 注解名
+     * @return AnnotationMatcher
+     */
     public static AnnotationMatcher annotationWith(String... annotationNames) {
         return new AnnotationMatcher(annotationNames);
     }
 
+    /**
+     * 注解匹配
+     *
+     * @param annotations 注解类型
+     * @return AnnotationMatcher
+     */
     public static AnnotationMatcher annotationWith(Class<?>... annotations) {
         return new AnnotationMatcher(annotations);
     }
 
+    /**
+     * 前缀匹配
+     *
+     * @param prefix 前缀
+     * @return PrefixMatcher
+     */
     public static PrefixMatcher startWith(String prefix) {
         return new PrefixMatcher(prefix);
     }
 
+    /**
+     * 超类匹配
+     *
+     * @param superTypeNames 超类名
+     * @return SuperTypeMatcher
+     */
     public static SuperTypeMatcher hasSuperTypes(String... superTypeNames) {
         return new SuperTypeMatcher(superTypeNames);
     }
 
+    /**
+     * 超类匹配
+     *
+     * @param superTypes 超类类型
+     * @return SuperTypeMatcher
+     */
     public static SuperTypeMatcher hasSuperTypes(Class<?>... superTypes) {
         return new SuperTypeMatcher(superTypes);
     }

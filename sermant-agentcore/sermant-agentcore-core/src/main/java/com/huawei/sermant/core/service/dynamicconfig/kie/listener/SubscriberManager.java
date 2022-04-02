@@ -41,6 +41,7 @@ import org.apache.http.client.config.RequestConfig;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -57,7 +58,6 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2021-11-17
  */
-@SuppressWarnings({"checkstyle:IllegalCatch","checkstyle:RegexpSingleline"})
 public class SubscriberManager {
     /**
      * 最大线程数
@@ -210,13 +210,13 @@ public class SubscriberManager {
      * @return 是否发布成功
      */
     public boolean publishConfig(String key, String group, String content) {
-        final String keyId = getKeyId(key, group);
-        if (keyId == null) {
+        final Optional<String> keyIdOptional = getKeyId(key, group);
+        if (!keyIdOptional.isPresent()) {
             // 无该配置 执行新增操作
             final Map<String, String> labels = LabelGroupUtils.resolveGroupLabels(group);
             return kieClient.publishConfig(key, labels, content, true);
         } else {
-            return kieClient.doUpdateConfig(keyId, content, true);
+            return kieClient.doUpdateConfig(keyIdOptional.get(), content, true);
         }
     }
 
@@ -228,11 +228,8 @@ public class SubscriberManager {
      * @return 是否删除成功
      */
     public boolean removeConfig(String key, String group) {
-        final String keyId = getKeyId(key, group);
-        if (keyId == null) {
-            return false;
-        }
-        return kieClient.doDeleteConfig(keyId);
+        final Optional<String> keyIdOptional = getKeyId(key, group);
+        return keyIdOptional.filter(kieClient::doDeleteConfig).isPresent();
     }
 
     /**
@@ -242,18 +239,18 @@ public class SubscriberManager {
      * @param group 组
      * @return key_id, 若不存在则返回null
      */
-    private String getKeyId(String key, String group) {
+    private Optional<String> getKeyId(String key, String group) {
         final KieResponse kieResponse = queryConfigurations(null, LabelGroupUtils.getLabelCondition(group), false);
         if (kieResponse == null || kieResponse.getData() == null) {
-            return null;
+            return Optional.empty();
         }
         final Map<String, String> labels = LabelGroupUtils.resolveGroupLabels(group);
         for (KieConfigEntity entity : kieResponse.getData()) {
             if (isSameKey(entity, key, labels)) {
-                return entity.getId();
+                return Optional.of(entity.getId());
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     private boolean isSameKey(KieConfigEntity entity, String targetKey, Map<String, String> targetLabels) {

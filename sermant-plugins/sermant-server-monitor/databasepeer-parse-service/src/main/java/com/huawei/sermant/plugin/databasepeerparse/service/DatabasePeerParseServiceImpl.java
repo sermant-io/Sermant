@@ -22,26 +22,27 @@ import com.huawei.sermant.plugin.monitor.common.service.DatabasePeerParseService
 import org.apache.skywalking.apm.plugin.jdbc.connectionurl.parser.URLParser;
 import org.apache.skywalking.apm.plugin.jdbc.trace.ConnectionInfo;
 
+import java.util.Optional;
+
 /**
  * Database peer 解析服务实现类
  *
  * @since 2021-12-31
  */
-@SuppressWarnings({"checkstyle:IllegalCatch","checkstyle:RegexpSingleline"})
 public class DatabasePeerParseServiceImpl implements DatabasePeerParseService {
 
     @Override
-    public String parse(String url) {
+    public Optional<String> parse(String url) {
         if (StringUtils.isBlank(url)) {
-            return null;
+            return Optional.empty();
         }
         ConnectionInfo connectionInfo;
         try {
             connectionInfo = URLParser.parser(url);
         } catch (Exception e) {
             // URLParser 有空指针异常BUG
-            return null;
+            return Optional.empty();
         }
-        return connectionInfo == null ? null : connectionInfo.getDatabasePeer();
+        return connectionInfo == null ? Optional.empty() : Optional.ofNullable(connectionInfo.getDatabasePeer());
     }
 }

@@ -40,7 +40,6 @@ import java.util.logging.Logger;
  * @author luanwenfei
  * @since 2022-03-26
  */
-@SuppressWarnings({"checkstyle:IllegalCatch"})
 public class AgentPremain {
     private static boolean executeFlag = false;
 

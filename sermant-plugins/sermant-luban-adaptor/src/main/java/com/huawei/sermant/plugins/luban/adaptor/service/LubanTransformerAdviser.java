@@ -48,7 +48,6 @@ public class LubanTransformerAdviser {
      * @param instrumentation Instrumentation对象
      * @return 跳过主要逻辑，恒为{@code true}
      */
-    @SuppressWarnings("checkstyle:IllegalCatch")
     @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
     public static boolean onMethodEnter(@Advice.Origin Class<?> cls,
             @Advice.Argument(0) Instrumentation instrumentation) {

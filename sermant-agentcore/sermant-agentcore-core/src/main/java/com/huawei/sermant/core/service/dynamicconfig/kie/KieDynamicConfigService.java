@@ -29,16 +29,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
  * kie配置中心实现
- * <p></p>
  *
  * @author zhouss
  * @since 2021-11-22
  */
-@SuppressWarnings({"checkstyle:IllegalCatch","checkstyle:RegexpSingleline","checkstyle:ParameterAssignment"})
 public class KieDynamicConfigService extends DynamicConfigService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
@@ -98,19 +97,19 @@ public class KieDynamicConfigService extends DynamicConfigService {
     }
 
     @Override
-    protected String doGetConfig(String key, String group) {
+    protected Optional<String> doGetConfig(String key, String group) {
         final KieResponse kieResponse =
             subscriberManager.queryConfigurations(null, LabelGroupUtils.getLabelCondition(group));
         if (!isValidResponse(kieResponse)) {
-            return null;
+            return Optional.empty();
         }
         final List<KieConfigEntity> data = kieResponse.getData();
         for (KieConfigEntity entity : data) {
             if (key.equals(entity.getKey())) {
-                return entity.getValue();
+                return Optional.ofNullable(entity.getValue());
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

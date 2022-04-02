@@ -92,7 +92,6 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     /**
      * 执行循环
      */
-    @SuppressWarnings({"checkstyle:IllegalCatch"})
     private void execute() {
         // 创建NettyClient
         final NettyClient nettyClient = NettyClientFactory.getInstance().getDefaultNettyClient();

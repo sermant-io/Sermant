@@ -42,7 +42,6 @@ public class AdaptorConfig implements BaseConfig {
         return isLoadExtAgentEnable;
     }
 
-    @SuppressWarnings("checkstyle:RegexpSingleline")
     public void setLoadExtAgentEnable(boolean loadExtAgentEnable) {
         isLoadExtAgentEnable = loadExtAgentEnable;
     }
