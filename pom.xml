@@ -280,6 +280,9 @@
         </profile>
         <profile>
             <id>backend</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>sermant-backend</module>
             </modules>
