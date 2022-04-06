@@ -1,3 +1,0 @@
-com.huawei.flowcontrol.service.FlowControlSenServiceImpl
-com.huawei.flowcontrol.service.HttpServiceImpl
-com.huawei.flowcontrol.service.DubboServiceImpl
