@@ -47,3 +47,9 @@
 **5、为何重试规则未生效**
 
 答：确保下游应用抛出的异常或者状态码符合重试策略要求，例如默认dubbo会检测下游是否抛出RpcException, Spring应用则可配置指定状态码检测。
+
+
+
+**6、启动时为什么会报HttpHostConnectException异常**
+
+答：出现该异常的原因是未启动`Sermant`后台服务`sermant-backhend`, 找到启动类`com.huawei.apm.backend.NettyServerApplication`启动后台服务，并重启应用即可。

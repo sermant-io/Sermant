@@ -20,9 +20,12 @@ package com.huawei.flowcontrol.common.adapte.cse;
 import com.huawei.flowcontrol.common.adapte.cse.match.MatchGroupResolver;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.AbstractResolver;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.listener.ConfigUpdateListener;
+import com.huawei.sermant.core.common.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -41,7 +44,7 @@ public enum ResolverManager {
     /**
      * 基于SPI加载所有Resolver
      */
-    private final Map<String, AbstractResolver<?>> resolversMap = new HashMap<String, AbstractResolver<?>>();
+    private final Map<String, AbstractResolver<?>> resolversMap = new HashMap<>();
 
     ResolverManager() {
         loadSpiResolvers();
@@ -85,8 +88,12 @@ public enum ResolverManager {
             String businessKey = key.substring(resolverEntry.getKey().length());
 
             // 匹配以该配置打头的解析器，更新解析器内容
-            resolverEntry.getValue().parseRule(businessKey, value, true, isForDelete);
-            resolverEntry.getValue().notifyListeners(businessKey);
+            final Optional<?> rule = resolverEntry.getValue().parseRule(businessKey, value, true, isForDelete);
+            if (rule.isPresent() || isForDelete) {
+                resolverEntry.getValue().notifyListeners(businessKey);
+                LoggerFactory.getLogger().info(String.format(Locale.ENGLISH,
+                    "Config [%s] has been updated or deleted successfully, raw content: [%s]", key, value));
+            }
         }
     }
 

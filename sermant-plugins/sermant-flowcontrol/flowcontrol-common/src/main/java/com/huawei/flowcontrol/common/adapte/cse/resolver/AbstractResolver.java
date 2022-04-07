@@ -112,28 +112,6 @@ public abstract class AbstractResolver<T extends Configurable> {
     }
 
     /**
-     * 转换规则
-     *
-     * @param rulesMap 更新的规则列表
-     */
-    public void parseRules(Map<String, String> rulesMap) {
-        final String configKeyPrefix = getConfigKeyPrefix(configKey);
-        for (Map.Entry<String, String> ruleEntity : rulesMap.entrySet()) {
-            String key = ruleEntity.getKey();
-            if (StringUtils.isEmpty(key) || !key.startsWith(configKeyPrefix)) {
-                continue;
-            }
-            String businessKey = key.substring(configKeyPrefix.length());
-            final Optional<T> optionalRule = parseRule(businessKey, ruleEntity.getValue(), false, false);
-            if (optionalRule.isPresent()) {
-                rules.put(businessKey, optionalRule.get());
-            } else {
-                rules.remove(businessKey);
-            }
-        }
-    }
-
-    /**
      * 格式化规则
      *
      * @param businessKey 业务场景名

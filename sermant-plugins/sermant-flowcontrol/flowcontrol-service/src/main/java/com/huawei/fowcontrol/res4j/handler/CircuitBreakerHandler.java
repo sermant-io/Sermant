@@ -48,13 +48,13 @@ public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker
                 .permittedNumberOfCallsInHalfOpenState(rule.getPermittedNumberOfCallsInHalfOpenState())
                 .minimumNumberOfCalls(rule.getMinimumNumberOfCalls())
                 .slidingWindowType(getSlidingWindowType(rule.getSlidingWindowType()))
-                .slidingWindowSize(Integer.parseInt(rule.getSlidingWindowSize()))
+                .slidingWindowSize((int) rule.getParsedSlidingWindowSize())
                 .build())
             .circuitBreaker(businessName));
     }
 
     private CircuitBreakerConfig.SlidingWindowType getSlidingWindowType(String type) {
-        if (StringUtils.equalIgnoreCase(type, CircuitBreakerConfig.SlidingWindowType.COUNT_BASED.toString())) {
+        if (StringUtils.equalIgnoreCase(type, CircuitBreakerRule.SLIDE_WINDOW_COUNT_TYPE)) {
             return CircuitBreakerConfig.SlidingWindowType.COUNT_BASED;
         }
         return CircuitBreakerConfig.SlidingWindowType.TIME_BASED;

@@ -156,7 +156,7 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   **流控配置项说明：**
 
   | 配置项             | 说明                                                         |
-    | ------------------ | ------------------------------------------------------------ |
+  | ------------------ | ------------------------------------------------------------ |
   | limitRefreshPeriod | 单位统计时间，单位毫秒, 若需配置秒则可增加单位`S`， 例如`10S` |
   | rate               | 单位统计时间所能通过的**请求个数**                           |
 
@@ -176,20 +176,21 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   {
       "key":"servicecomb.circuitBreaker.scene",
       "group":"app=region-A&service=flowControlDemo&environment=testing",
-      "content":"failureRateThreshold: 90\nminimumNumberOfCalls: 3\nname: degrade\nslidingWindowSize: 10S\nslidingWindowType: time\nslowCallDurationThreshold: \"1\"\nslowCallRateThreshold: 80\n"
+      "content":"failureRateThreshold: 90\nminimumNumberOfCalls: 3\nname: degrade\nslidingWindowSize: 10S\nslidingWindowType: time\nslowCallDurationThreshold: \"1\"\nslowCallRateThreshold: 80\nwaitDurationInOpenState: 10s"
   }
   ```
   **熔断配置项说明：**
 
   | 配置项                    | 说明                                                         |
-    | ------------------------- | ------------------------------------------------------------ |
+  | ------------------------- | ------------------------------------------------------------ |
   | failureRateThreshold      | 熔断所需达到的错误率                                         |
-  | minimumNumberOfCalls      | 滑动窗口内的最小请求数                                       |
+  | minimumNumberOfCalls      | 滑动窗口内的最小请求数， 超过最小请求数才开始判断熔断条件    |
   | name                      | 配置项名称，可选参数                                         |
   | slidingWindowSize         | 滑动统计窗口大小，支持毫秒与秒，例如`1000`为1000毫秒, `10S`代表10秒 |
-  | slidingWindowType         | 滑动窗口类型，目前只支持`time`                               |
+  | slidingWindowType         | 滑动窗口类型，目前支持`time`与`count`两种类型，前者基于时间窗口统计，后者基于请求次数 |
   | slowCallDurationThreshold | 慢请求阈值，单位同滑动窗口配置                               |
   | slowCallRateThreshold     | 慢请求占比，当慢调用请求数达到该比例触发通断                 |
+  | waitDurationInOpenState   | 熔断后恢复时间，默认`60S`                                    |
 
   **规则解释:**
 
@@ -213,7 +214,7 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   **隔离仓配置项说明：**
 
   |       配置项       |                             说明                             |
-    | :----------------: | :----------------------------------------------------------: |
+  | :----------------: | :----------------------------------------------------------: |
   | maxConcurrentCalls |                          最大并发数                          |
   |  maxWaitDuration   | 最大等待时间，若线程超过`maxConcurrentCalls`，会尝试等待，若超出等待时间还未获取资源，则抛出隔离仓异常 |
   |        name        |                        可选，配置名称                        |
@@ -240,7 +241,7 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   **重试配置项说明：**
 
   |        配置项         |                             说明                             |
-    | :-------------------: | :----------------------------------------------------------: |
+  | :-------------------: | :----------------------------------------------------------: |
   |     waitDuration      |          重试等待时间，默认毫秒；支持秒单位，例如2S          |
   |     retryStrategy     | 重试策略，当前支持两种重试策略：固定时间间隔（FixedInterval）， 指数增长间隔(RandomBackoff) |
   |      maxAttempts      |                         最大重试次数                         |
@@ -308,19 +309,10 @@ java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appNa
 
 多次请求`localhost:12000/flow`, 若在2秒内请求数超过4个时返回`flow limited`，则触发流控成功
 
-## FAQ
+## 其他
 
-#### 如何确定拦截的资源名是什么？
+若使用过程中遇到问题请先参考[FAQ文档](./FAQ.md)
 
-答：Spring与Dubbo的资源定义名不同：
 
-**Spring**应用通过相对路径获取资源名，例如`localhost:8080/flow`,则定义的资源名为`/flow`。
-
-**Dubbo**应用则是通过**请求的接口:接口版本.请求方法**拼凑，例如版本为`1.0.0`的请求接口`com.huawei.demo.TestService.hello`，
-则拿到的最终定义的资源名为`com.huawei.demo.TestService:1.0.0.hello`。特别注意的是，若dubbo应用未配置版本，则对应的资源名为**请求接口.请求方法**
-
-#### 启动时为什么会报HttpHostConnectException异常
-
-答：出现该异常的原因是未启动`Sermant`后台服务`sermant-backhend`, 找到启动类`com.huawei.apm.backend.NettyServerApplication`启动后台服务，并重启应用即可。
 
 [返回**Sermant**说明文档](../../README.md)

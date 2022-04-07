@@ -17,8 +17,13 @@
 
 package com.huawei.flowcontrol.common.adapte.cse.rule;
 
-import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.util.StringUtils;
+import com.huawei.sermant.core.common.LoggerFactory;
+
+import java.time.DateTimeException;
+import java.time.Duration;
+import java.util.Locale;
+import java.util.Optional;
 
 /**
  * 抽象规则
@@ -33,9 +38,9 @@ public abstract class AbstractRule extends Configurable implements Rule {
     private static final String DIGIT_MATCH = "-?[0-9]{1,10}";
 
     /**
-     * 支持的时间单位
+     * duration转换前缀
      */
-    private static final char[] TIME_UNITS = {'s', 'S', 'm', 'M'};
+    private static final String DURATION_PREFIX = "PT";
 
     @Override
     public boolean isValid() {
@@ -45,7 +50,7 @@ public abstract class AbstractRule extends Configurable implements Rule {
     /**
      * 字符串转long类型毫秒
      *
-     * @param time 时间字符串 1000   -> 1000毫秒 -1000  -> 负1000毫秒 1000S(s) 1000秒   -> 1000000毫秒
+     * @param time         时间字符串 1000   -> 1000毫秒 -1000  -> 负1000毫秒 1000S(s) 1000秒   -> 1000000毫秒
      * @param defaultValue 默认值
      * @return 转换值
      * @throws IllegalArgumentException 参数不合法抛出
@@ -55,45 +60,29 @@ public abstract class AbstractRule extends Configurable implements Rule {
             return defaultValue;
         }
         if (time.matches(DIGIT_MATCH)) {
-            // 没有单位纯数字
+            // 没有单位 纯数字
             long result = Long.parseLong(time);
             if (result < 0) {
                 throw new IllegalArgumentException("The value of time must ge zero!");
             }
             return result;
         }
-        return parseWithUnit(time);
+        return tryParseWithDuration(time).map(Duration::toMillis).orElse(defaultValue);
     }
 
-    private long parseWithUnit(String time) {
-        char unit = time.charAt(time.length() - 1);
-        if (!isValidUnit(unit)) {
-            throw new IllegalArgumentException("The format of time is invalid!");
-        }
-        long result;
+    /**
+     * duration格式转换
+     *
+     * @param time 原始格式
+     * @return duration
+     */
+    private Optional<Duration> tryParseWithDuration(String time) {
         try {
-            result = Long.parseLong(time.substring(0, time.length() - 1));
-        } catch (NumberFormatException ex) {
-            throw new IllegalArgumentException("The format of time is invalid!");
+            return Optional.of(Duration.parse(DURATION_PREFIX + time));
+        } catch (DateTimeException ex) {
+            LoggerFactory.getLogger().warning(String.format(Locale.ENGLISH,
+                "Parsed time [%s] to duration failed!", time));
         }
-        switch (unit) {
-            case 's':
-            case 'S':
-                return result * CommonConst.S_MS_UNIT;
-            case 'm':
-            case 'M':
-                return result * CommonConst.S_MS_UNIT * CommonConst.S_M_UNIT;
-            default:
-                throw new IllegalArgumentException("The unit of time is not supported!");
-        }
-    }
-
-    private boolean isValidUnit(char unit) {
-        for (char ch : TIME_UNITS) {
-            if (ch == unit) {
-                return true;
-            }
-        }
-        return false;
+        return Optional.empty();
     }
 }

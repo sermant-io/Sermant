@@ -38,9 +38,9 @@ public class RuleDynamicConfigListener implements DynamicConfigListener {
 
     @Override
     public void process(DynamicConfigEvent event) {
+        LOGGER.log(Level.INFO, String.format(Locale.ENGLISH, "Config [%s] has been received, operator type: [%s] ",
+            event.getKey(), event.getEventType()));
         ResolverManager.INSTANCE.resolve(event.getKey(), event.getContent(),
-                event.getEventType() == DynamicConfigEventType.DELETE);
-        LOGGER.log(Level.INFO, String.format(Locale.ENGLISH, "Config [%s] has been %s ", event.getKey(),
-                event.getEventType()));
+            event.getEventType() == DynamicConfigEventType.DELETE);
     }
 }
