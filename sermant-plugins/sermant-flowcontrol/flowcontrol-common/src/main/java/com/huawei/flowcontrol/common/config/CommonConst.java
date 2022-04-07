@@ -25,6 +25,31 @@ package com.huawei.flowcontrol.common.config;
  */
 public class CommonConst {
     /**
+     * 从url获取的版本键名
+     */
+    public static final String URL_VERSION_KEY = "version";
+
+    /**
+     * 泛化接口对应的真正接口，通过url获取
+     */
+    public static final String GENERIC_INTERFACE_KEY = "interface";
+
+    /**
+     * 泛化方法名
+     */
+    public static final String GENERIC_METHOD_NAME = "$invoke";
+
+    /**
+     * apache dubbo泛化接口类名
+     */
+    public static final String APACHE_DUBBO_GENERIC_SERVICE_CLASS = "org.apache.dubbo.rpc.service.GenericService";
+
+    /**
+     * alibaba dubbo泛化接口类名
+     */
+    public static final String ALIBABA_DUBBO_GENERIC_SERVICE_CLASS = "com.alibaba.dubbo.rpc.service.GenericService";
+
+    /**
      * dubbo客户端
      */
     public static final String DUBBO_CONSUMER = "consumer";
