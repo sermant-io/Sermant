@@ -1,9 +1,7 @@
-# 执行-Pall参数打包时使用，较agent多了示例工程
+# 执行-P all参数打包时使用，较agent多了示例工程
 plugins:
   - example
   - flowcontrol
-  - flowrecord
-  - online-stresstest
   - route-server
   - server-monitor
   - threadlocal

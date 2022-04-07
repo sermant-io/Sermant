@@ -1,4 +1,0 @@
-com.huawei.flowrecord.AliDubboDefinition
-com.huawei.flowrecord.HttpServerDefinition
-com.huawei.flowrecord.RestletDefinition
-com.huawei.flowrecord.RedissonDefinition
