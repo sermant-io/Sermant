@@ -1,7 +1,3 @@
 # 流控配置
 flow.control.plugin:
   useCseRule: true # 是否使用cse规则配置
-  useAgentConfigCenter: false # 是否使用agent配置中心, 该配置仅当useCseRule=true时生效
-  customLabel: public # 默认标签 useCseRule=true生效
-  customLabelValue: default # 默认标签值
-  configKieAddress: localhost:30110 # 当流控不使用agent配置中心时生效

@@ -6,5 +6,6 @@ plugins:
   - threadlocal
   - service-registry
   - loadbalancer
+  - dynamic-config
 adaptors:
   - lubanops

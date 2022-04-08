@@ -19,7 +19,7 @@
 
 **（2）打包编译Sermant Agent**
 
-​ 参考[Sermant源码编译](../../../QuickStart.md#源码编译)
+​ 参考[Sermant源码编译](../../QuickStart.md#源码编译)
 
 ### 配置agent
 
@@ -36,11 +36,14 @@ service.meta.version=1.0.0
 service.meta.project=default
 # 环境
 service.meta.environment=development
+# 自定义标签，按需配置，用于后续的配置订阅
+service.meta.customLabel=public
+service.meta.customLabelValue=default
 ```
 
 **提示**：以上配置均可通过环境变量指定，对应的键值即为环境变量键，例如服务app名称可由`-Dservice.meta.application=application`指定, 其他配置文件的所有键均可采用该方式配置。
 
-**（2）修改配置中心**
+##### **（2）修改配置中心**
 
 修改配置文件`${javaagent路径}/config/config.properties`, 修改配置中心类型与地址，如下位置：
 
@@ -69,8 +72,9 @@ servicecomb.service:
 ```yaml
 flow.control.plugin:
   useCseRule: true # 是否开启ServiceComb适配
-  useAgentConfigCenter: true # 是否使用agent配置中心
 ```
+
+开启适配后，插件将根据应用配置，服务配置以及自定义标签订阅配置中心配置
 
 > 此处若设置useCseRule为false，则需用户自己去指定服务名，通过环境变量-Dproject.name=flowControlDemo进行指定，相对的在配置发布的group需设置为service=flowControlDemo
 
@@ -93,9 +97,7 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
 
 ### 发布流控规则
 
-如何发布规则请参考[配置中心API]()
-
-限流规则各参数配置项配置说明如下：
+[backend]()服务提供配置发布功能, 通过请求接口`/publishConfig`发布配置，请求参数如下：
 
 | 配置参数 | 说明                                                 |
 | -------- | ---------------------------------------------------- |

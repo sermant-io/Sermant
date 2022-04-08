@@ -15,25 +15,19 @@
  *
  */
 
-package com.huawei.flowcontrol.common.adapte.cse.converter;
-
-import org.junit.Assert;
-import org.junit.Test;
+package com.huawei.sermant.core.plugin.subscribe;
 
 /**
- * yaml转换测试
+ * 配置中心服务订阅
  *
  * @author zhouss
- * @since 2022-03-03
+ * @since 2022-04-13
  */
-public class YamlConverterTest {
+public interface ConfigSubscriber {
     /**
-     * 测试格式转换
+     * 配置订阅
+     *
+     * @return 是否订阅成功
      */
-    @Test
-    public void test() {
-        final YamlConverter<String> stringYamlConverter = new YamlConverter<>(String.class);
-        final String test = stringYamlConverter.convert("test").get();
-        Assert.assertEquals(test, "test");
-    }
+    boolean subscribe();
 }

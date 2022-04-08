@@ -1,0 +1,4 @@
+dynamic.config.plugin:
+  enableCseAdapter: true # 是否开启适配
+  enableDynamicConfig: false # 是否开启动态配置插件
+  forceEnableBootstrap: true # 是否强制开启启动配置

@@ -92,8 +92,7 @@ public class SubscriberManager {
     private static final long LONG_CONNECTION_REQUEST_INTERVAL_MS = 2000L;
 
     /**
-     * 当前长连接请求数
-     * 要求最大连接数必须小于 MAX_THREAD_SIZE
+     * 当前长连接请求数 要求最大连接数必须小于 MAX_THREAD_SIZE
      */
     private final AtomicInteger curLongConnectionRequestCount = new AtomicInteger(0);
 
@@ -101,7 +100,7 @@ public class SubscriberManager {
      * map< 监听键, 监听该键的监听器列表 >  一个group，仅有一个KieListenerWrapper
      */
     private final Map<KieRequest, KieListenerWrapper> listenerMap =
-        new ConcurrentHashMap<KieRequest, KieListenerWrapper>();
+        new ConcurrentHashMap<>();
 
     /**
      * kie客户端
@@ -114,12 +113,10 @@ public class SubscriberManager {
     private final ResultHandler<KieResponse> receiveAllDataHandler = new ResultHandler.DefaultResultHandler(false);
 
     /**
-     * 订阅执行器
-     * 最大支持MAX_THREAD_SIZE个任务
-     * 由于是长连接请求，必然会占用线程，因此这里不考虑将任务存在队列中
+     * 订阅执行器 最大支持MAX_THREAD_SIZE个任务 由于是长连接请求，必然会占用线程，因此这里不考虑将任务存在队列中
      */
     private final ThreadPoolExecutor longRequestExecutor = new ThreadPoolExecutor(THREAD_SIZE, MAX_THREAD_SIZE, 0,
-        TimeUnit.MILLISECONDS, new SynchronousQueue<Runnable>(), new ThreadFactoryUtils("kie-subscribe-long-task"));
+        TimeUnit.MILLISECONDS, new SynchronousQueue<>(), new ThreadFactoryUtils("kie-subscribe-long-task"));
 
     /**
      * 快速返回的请求
@@ -139,7 +136,7 @@ public class SubscriberManager {
      * SubscriberManager
      *
      * @param serverAddress serverAddress
-     * @param project project
+     * @param project       project
      */
     public SubscriberManager(String serverAddress, String project) {
         kieClient = new KieClient(new ClientUrlManager(serverAddress), project);
@@ -275,10 +272,10 @@ public class SubscriberManager {
     /**
      * 注册监听器
      *
-     * @param key key
-     * @param kieRequest 请求
+     * @param key                   key
+     * @param kieRequest            请求
      * @param dynamicConfigListener 监听器
-     * @param ifNotify 是否在第一次添加时，将所有数据查询返回给调用者
+     * @param ifNotify              是否在第一次添加时，将所有数据查询返回给调用者
      * @return boolean
      */
     public boolean subscribe(String key, KieRequest kieRequest, DynamicConfigListener dynamicConfigListener,
@@ -365,8 +362,8 @@ public class SubscriberManager {
     /**
      * 单独查询配置
      *
-     * @param revision 版本
-     * @param label    关联标签组
+     * @param revision    版本
+     * @param label       关联标签组
      * @param onlyEnabled 是否仅可用status=enabled
      * @return kv配置
      */
@@ -381,8 +378,8 @@ public class SubscriberManager {
     /**
      * 取消订阅
      *
-     * @param key key
-     * @param kieRequest kieRequest
+     * @param key                   key
+     * @param kieRequest            kieRequest
      * @param dynamicConfigListener dynamicConfigListener
      * @return boolean
      */
@@ -476,7 +473,6 @@ public class SubscriberManager {
      * @since 2021-11-17
      */
     public interface Task {
-
         /**
          * 任务执行
          */
@@ -528,7 +524,6 @@ public class SubscriberManager {
      * @since 2021-11-17
      */
     class ShortTimerTask extends AbstractTask {
-
         private final KieSubscriber kieSubscriber;
 
         private final KieListenerWrapper kieListenerWrapper;

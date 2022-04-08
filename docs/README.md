@@ -76,6 +76,7 @@ mvn clean package -Dmaven.test.skip
 |[入口模块介绍](user-guide/entrance.md)|使用手册|
 |[后端模块介绍](user-guide/backend.md)|使用手册|
 |[限流降级功能介绍](user-guide/flowcontrol/flowcontrol.md)|使用手册|
+|[动态配置功能介绍](user-guide/dynamic-config/document.md)|使用手册|
 |[流量录制回放功能介绍](user-guide/flowrecord/document.md)|使用手册|
 |[全链路压测功能介绍](user-guide/hercules/document.md)|使用手册|
 |[影子库压测功能介绍](user-guide/online-stresstest/document.md)|使用手册|

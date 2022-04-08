@@ -22,6 +22,7 @@ import com.huawei.sermant.core.service.dynamicconfig.kie.client.ClientUrlManager
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.http.HttpClient;
 import com.huawei.sermant.core.service.dynamicconfig.kie.client.http.HttpResult;
 import com.huawei.sermant.core.service.dynamicconfig.kie.config.KieDynamicConfig;
+
 import org.apache.http.HttpStatus;
 
 import java.util.HashMap;
@@ -35,6 +36,10 @@ import java.util.Map;
  * @since 2021-11-17
  */
 public class KieClient extends AbstractClient {
+    /**
+     * 缺省版本号
+     */
+    private static final String ABSENT_REVISION = "0";
 
     private final ResultHandler<KieResponse> defaultHandler = new ResultHandler.DefaultResultHandler();
 
@@ -42,14 +47,32 @@ public class KieClient extends AbstractClient {
 
     private String kieApi;
 
+    /**
+     * kei客户端构造器
+     *
+     * @param clientUrlManager kie url管理器
+     */
     public KieClient(ClientUrlManager clientUrlManager) {
         this(clientUrlManager, ConfigManager.getConfig(KieDynamicConfig.class).getProject());
     }
 
+    /**
+     * kei客户端构造器
+     *
+     * @param clientUrlManager kie url管理器
+     * @param project          命名空间
+     */
     public KieClient(ClientUrlManager clientUrlManager, String project) {
         this(clientUrlManager, null, project);
     }
 
+    /**
+     * kei客户端构造器
+     *
+     * @param clientUrlManager kie url管理器
+     * @param httpClient       指定请求器
+     * @param project          命名空间
+     */
     public KieClient(ClientUrlManager clientUrlManager, HttpClient httpClient, String project) {
         super(clientUrlManager, httpClient);
         kieApi = String.format(kieApiTemplate, project);
@@ -83,8 +106,8 @@ public class KieClient extends AbstractClient {
         }
         final StringBuilder requestUrl = new StringBuilder().append(clientUrlManager.getUrl()).append(kieApi);
         requestUrl.append(formatNullString(request.getLabelCondition()))
-                .append("&revision=")
-                .append(formatNullString(request.getRevision()));
+            .append("&revision=")
+            .append(formatNullString(request.getRevision()));
         if (request.isAccurateMatchLabel()) {
             requestUrl.append("&match=exact");
         }
@@ -104,7 +127,7 @@ public class KieClient extends AbstractClient {
      * @return 是否发布成功
      */
     public boolean publishConfig(String key, Map<String, String> labels, String content, boolean enabled) {
-        final Map<String, Object> params = new HashMap<String, Object>();
+        final Map<String, Object> params = new HashMap<>();
         params.put("key", key);
         params.put("value", content);
         params.put("labels", labels);
@@ -122,7 +145,7 @@ public class KieClient extends AbstractClient {
      * @return 是否更新成功
      */
     public boolean doUpdateConfig(String keyId, String content, boolean enabled) {
-        final Map<String, Object> params = new HashMap<String, Object>();
+        final Map<String, Object> params = new HashMap<>();
         params.put("value", content);
         params.put("status", enabled ? "enabled" : "disabled");
         final HttpResult httpResult = this.httpClient.doPut(buildKeyIdUrl(keyId), params);
@@ -147,7 +170,8 @@ public class KieClient extends AbstractClient {
 
     private String formatNullString(String val) {
         if (val == null || val.trim().length() == 0) {
-            return "";
+            // 当版本号为空时，默认设置版本号为"0", 当有版本更新的数据会立即返回, 避免阻塞问题
+            return ABSENT_REVISION;
         }
         return val;
     }
