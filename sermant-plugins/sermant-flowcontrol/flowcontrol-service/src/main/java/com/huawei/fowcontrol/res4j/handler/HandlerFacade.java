@@ -260,6 +260,14 @@ public enum HandlerFacade {
      * @since 2022-01-22
      */
     static class HandlerWrapper {
+        /**
+         * 异常标记，该异常标记用于控制流程
+         * <p>补充说明:</p>
+         * <p>调用流程为tryAcquirePermission -> onThrow -> onResult</p>
+         * <p>当调用onThrow方法时, onResult方法不再做记录数据只是否资源</p>
+         */
+        private final ThreadLocal<Boolean> throwFlag = new ThreadLocal<>();
+
         private final List<RateLimiter> rateLimiters;
 
         private List<Bulkhead> bulkheads;
@@ -305,14 +313,17 @@ public enum HandlerFacade {
                 final TimeUnit timestampUnit = circuitBreakers.get(0).getTimestampUnit();
                 circuitBreakers.forEach(circuitBreaker -> circuitBreaker.onError(duration, timestampUnit, throwable));
             }
+            throwFlag.set(Boolean.TRUE);
         }
 
         private void onResult(Object result) {
+            releasePermit();
+            if (throwFlag.get() != null) {
+                throwFlag.remove();
+                return;
+            }
             if (rateLimiters != null) {
                 rateLimiters.forEach(rateLimiter -> rateLimiter.onResult(result));
-            }
-            if (bulkheads != null) {
-                bulkheads.forEach(Bulkhead::onComplete);
             }
             if (circuitBreakers != null && !circuitBreakers.isEmpty()) {
                 long duration = circuitBreakers.get(0).getCurrentTimestamp() - startTime;

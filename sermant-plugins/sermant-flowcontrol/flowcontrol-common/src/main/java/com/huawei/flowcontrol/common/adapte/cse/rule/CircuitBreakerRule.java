@@ -27,6 +27,16 @@ import com.huawei.flowcontrol.common.util.StringUtils;
  */
 public class CircuitBreakerRule extends AbstractRule {
     /**
+     * 基于时间统计的时间窗口类型
+     */
+    public static final String SLIDE_WINDOW_TIME_TYPE = "time";
+
+    /**
+     * 基于请求次数的时间窗口类型
+     */
+    public static final String SLIDE_WINDOW_COUNT_TYPE = "count";
+
+    /**
      * 默认失败错误率阈值
      */
     public static final float DEFAULT_FAILURE_RATE_THRESHOLD = 50f;
@@ -37,12 +47,12 @@ public class CircuitBreakerRule extends AbstractRule {
     public static final float DEFAULT_SLOW_CALL_RATE_THRESHOLD = 100f;
 
     /**
-     * 熔断间隔
+     * 默认熔断间隔 60S
      */
     public static final long DEFAULT_WAIT_DURATION_IN_OPEN_STATUS_MS = 60000L;
 
     /**
-     * 慢调用熔断间隔
+     * 慢调用默认阈值 60S
      */
     public static final long DEFAULT_SLOW_CALL_DURATION_THRESHOLD_MS = 60000L;
 

@@ -23,6 +23,7 @@ import com.huawei.flowcontrol.common.adapte.cse.match.MatchGroupResolver;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.AbstractResolver;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.listener.ConfigUpdateListener;
 import com.huawei.flowcontrol.common.util.StringUtils;
+import com.huawei.sermant.core.common.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -103,8 +104,12 @@ public enum ResolverManager {
             String businessKey = key.substring(resolverEntry.getKey().length());
 
             // 匹配以该配置打头的解析器，更新解析器内容
-            resolverEntry.getValue().parseRule(businessKey, value, true, isForDelete);
-            resolverEntry.getValue().notifyListeners(businessKey);
+            final Optional<?> rule = resolverEntry.getValue().parseRule(businessKey, value, true, isForDelete);
+            if (rule.isPresent() || isForDelete) {
+                resolverEntry.getValue().notifyListeners(businessKey);
+                LoggerFactory.getLogger().info(String.format(Locale.ENGLISH,
+                    "Config [%s] has been updated or deleted successfully, raw content: [%s]", key, value));
+            }
         }
     }
 
@@ -201,7 +206,7 @@ public enum ResolverManager {
      * 注册监听器
      *
      * @param configKey 监听的规则类型
-     * @param listener  监听器
+     * @param listener 监听器
      */
     public void registerListener(String configKey, ConfigUpdateListener listener) {
         String configKeyPrefix = AbstractResolver.getConfigKeyPrefix(configKey);
