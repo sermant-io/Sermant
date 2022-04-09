@@ -40,9 +40,9 @@ public class DemoAnnotationDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                InterceptDeclarer.build(MethodMatcher.nameEquals("staticFunc"), new DemoStaticInterceptor()),
+                InterceptDeclarer.build(MethodMatcher.isStaticMethod(), new DemoStaticInterceptor()),
                 InterceptDeclarer.build(MethodMatcher.isConstructor(), new DemoConstInterceptor()),
-                InterceptDeclarer.build(MethodMatcher.nameEquals("memberFunc"), new DemoMemberInterceptor())
+                InterceptDeclarer.build(MethodMatcher.isMemberMethod(), new DemoMemberInterceptor())
         };
     }
 }

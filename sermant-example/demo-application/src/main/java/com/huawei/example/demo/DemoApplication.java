@@ -21,6 +21,9 @@ import com.huawei.example.demo.service.DemoNameService;
 import com.huawei.example.demo.service.DemoSuperTypeService;
 import com.huawei.example.demo.service.DemoTraceService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 示例应用
  *
@@ -29,44 +32,108 @@ import com.huawei.example.demo.service.DemoTraceService;
  * @since 2021-10-25
  */
 public class DemoApplication {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemoApplication.class);
+
     /**
      * 主要方法
      *
      * @param args 入参
      */
     public static void main(String[] args) {
-        // 测试通过注解修饰的方式增强的功能点
+        annotationAndMethodTypeTest();
+        superTypeAndMethodNameTest();
+        classNameEqualsAndBaseFuncTest();
+        classInfixAndAnnotationTest();
+        classPrefixAndReturnTypeTest();
+        classSuffixAndParamsTest();
+        pluginServiceAndConfigTest();
+        tracingFuncTest();
+    }
+
+    /**
+     * 通过注解匹配类，通过方法类型匹配方法进行增强
+     */
+    private static void annotationAndMethodTypeTest() {
+        LOGGER.info("annotationAndMethodTypeTest");
         DemoAnnotationService.staticFunc();
         new DemoAnnotationService().memberFunc();
+    }
 
-        // 测试命名的方式增强的功能点
-        DemoNameService.staticFunc();
-        new DemoNameService().memberFunc();
+    /**
+     * 通过超类匹配类，通过方法名匹配方法进行增强
+     */
+    private static void superTypeAndMethodNameTest() {
+        LOGGER.info("superTypeAndMethodNameTest");
+        DemoSuperTypeService demoSuperTypeService = new DemoSuperTypeService();
+        demoSuperTypeService.memberFunc();
+        demoSuperTypeService.prefixFunc();
+        demoSuperTypeService.memberInfixFunc();
+        demoSuperTypeService.funcSuffix();
+    }
 
-        // 测试超类的方式增强的功能点
-        DemoSuperTypeService.staticFunc();
-        new DemoSuperTypeService().memberFunc();
-
-        // 测试服务
-        DemoNameService.serviceFunc();
-
-        // 测试统一配置
-        DemoNameService.configFunc();
+    /**
+     * 通过类名精确匹配、字段设置、测试接口
+     */
+    private static void classNameEqualsAndBaseFuncTest() {
+        LOGGER.info("classNameEqualsAndBaseFuncTest");
+        final DemoNameService demoNameService = new DemoNameService();
 
         // 测试字段设置
-        final DemoNameService nameService = new DemoNameService();
-        nameService.fieldFunc();
-        nameService.fieldFunc();
-        new DemoNameService().fieldFunc();
+        demoNameService.fieldFunc();
+        demoNameService.fieldFunc();
 
         // 测试接口
-        nameService.interfaceFunc();
+        DemoNameService.interfaceFunc();
+    }
 
-        // 测试链路监控功能
-        DemoTraceService.trace();
+    /**
+     * 通过类名内缀匹配，通过注解匹配方法进行增强
+     */
+    private static void classInfixAndAnnotationTest() {
+        LOGGER.info("classInfixAndAnnotationTest");
+        DemoNameService.annotationFunc();
+    }
+
+    /**
+     * 通过类名前缀匹配，通过方法返回值类型匹配方法进行增强
+     */
+    private static void classPrefixAndReturnTypeTest() {
+        LOGGER.info("classPrefixAndReturnTypeTest");
+        DemoNameService.returnTypeFunc();
+    }
+
+    /**
+     * 通过类名后缀匹配，通过参数数量&&参数类型匹配方法进行增强
+     */
+    private static void classSuffixAndParamsTest() {
+        LOGGER.info("classSuffixAndParamsTest");
+        DemoNameService.paramsCountAndTypeFunc("A", 0);
+    }
+
+    /**
+     * 启动类增强
+     */
+    private static void bootstrapClassEnhanceTest() {
+        LOGGER.info("bootstrapClassEnhanceTest");
 
         // 测试启动类增强
         Thread.getAllStackTraces();
         new Thread().setName("demo-thread-test");
+    }
+
+    /**
+     * 插件服务测试、插件配置测试
+     */
+    private static void pluginServiceAndConfigTest() {
+        LOGGER.info("pluginServiceAndConfigTest");
+        DemoNameService.serviceFunc();
+    }
+
+    /**
+     * 链路追踪功能
+     */
+    private static void tracingFuncTest() {
+        LOGGER.info("tracingFuncTest");
+        DemoTraceService.trace();
     }
 }

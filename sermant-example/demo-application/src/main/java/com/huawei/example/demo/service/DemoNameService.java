@@ -74,8 +74,36 @@ public class DemoNameService {
     /**
      * 用于测试接口
      */
-    public void interfaceFunc() {
+    public static void interfaceFunc() {
         LOGGER.info("DemoNameService: interfaceFunc");
+    }
+
+    /**
+     * 用于测试通过注解匹配方法
+     */
+    @DemoAnnotation
+    public static void annotationFunc() {
+        LOGGER.info("DemoNameService: annotationFunction");
+    }
+
+    /**
+     * 用于测试通过返回值类型匹配方方法
+     *
+     * @return long
+     */
+    public static long returnTypeFunc() {
+        LOGGER.info("DemoNameService: returnTypeFunc");
+        return 0L;
+    }
+
+    /**
+     * 用于测试参数数量和参数类型匹配
+     *
+     * @param str
+     * @param x
+     */
+    public static void paramsCountAndTypeFunc(String str, int x) {
+        LOGGER.info("DemoNameService: paramsCountAndTypeFunc");
     }
 
     @Override

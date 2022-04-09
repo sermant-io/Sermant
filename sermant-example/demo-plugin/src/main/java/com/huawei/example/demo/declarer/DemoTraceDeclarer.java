@@ -14,6 +14,7 @@
 package com.huawei.example.demo.declarer;
 
 import com.huawei.example.demo.interceptor.DemoTraceConsumerInterceptor;
+import com.huawei.example.demo.interceptor.DemoTraceNormalInterceptor;
 import com.huawei.example.demo.interceptor.DemoTraceProviderInterceptor;
 import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
@@ -37,6 +38,7 @@ public class DemoTraceDeclarer extends AbstractPluginDeclarer {
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[] {
             InterceptDeclarer.build(MethodMatcher.nameEquals("provider"), new DemoTraceProviderInterceptor()),
+            InterceptDeclarer.build(MethodMatcher.nameEquals("normal"), new DemoTraceNormalInterceptor()),
             InterceptDeclarer.build(MethodMatcher.nameEquals("consumer"), new DemoTraceConsumerInterceptor())};
     }
 }

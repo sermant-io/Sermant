@@ -29,6 +29,6 @@ import java.lang.annotation.Target;
  * @since 2021-10-25
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface DemoAnnotation {
 }
