@@ -20,9 +20,10 @@ package com.huawei.registry.entity;
 import com.netflix.loadbalancer.Server;
 
 /**
- * server 信息定义
+ * server 信息定义 {@link com.netflix.loadbalancer.ServerList}
  *
- * @since 2022-02-11
+ * @author zhouss
+ * @since 2022-04-11
  */
 public class ScServer extends Server {
     private final MicroServiceInstance microServiceInstance;
