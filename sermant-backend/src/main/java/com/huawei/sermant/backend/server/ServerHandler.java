@@ -51,6 +51,7 @@ import java.util.Objects;
 public class ServerHandler extends BaseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerHandler.class);
 
+    private static final int HEARTBEAT_TOPIC_INDEX = 0;
     private final KafkaProducer<String, byte[]> producer;
     private KafkaConsumer<String, String> consumer;
 
@@ -76,7 +77,10 @@ public class ServerHandler extends BaseHandler {
             int dataType = serviceData.getDataTypeValue();
             String topic = topicMapping.getTopicOfType(dataType);
             if (StringUtils.hasText(topic)) {
-                writeHeartBeatCacheCache(topic, message);
+                if (Objects.equals(topic, topicMapping.getTopicOfType(HEARTBEAT_TOPIC_INDEX))) {
+                    writeHeartBeatCacheCache(topic, message);
+                    continue;
+                }
                 producer.send(new ProducerRecord<>(topic, message));
             } else {
                 LOGGER.warn("Can not find the corresponding topic of type {}.", dataType);
@@ -104,10 +108,11 @@ public class ServerHandler extends BaseHandler {
 
     private void writeHeartBeatCacheCache(String topic, byte[] message) {
         // 缓存心跳数据
-        if (Objects.equals(topic, topicMapping.getTopicOfType(0))) {
+        if (Objects.equals(topic, topicMapping.getTopicOfType(HEARTBEAT_TOPIC_INDEX))) {
             Map<String, String> pluginHeartbeatMap = JSON.parseObject(
                     new String(message, StandardCharsets.UTF_8), Map.class);
             for (String messageStr : pluginHeartbeatMap.values()) {
+                producer.send(new ProducerRecord<>(topic, messageStr.getBytes(StandardCharsets.UTF_8)));
                 HeartbeatEntity heartbeatEntity = JSONObject.parseObject(messageStr, HeartbeatEntity.class);
                 List<String> ips = heartbeatEntity.getIp();
                 if (ips != null && ips.size() != 0 && heartbeatEntity.getPluginName() != null) {
