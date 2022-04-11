@@ -20,6 +20,8 @@ import com.huawei.example.demo.common.DemoLogger;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
+import java.util.Locale;
+
 /**
  * 构造函数的拦截器示例，本示例将展示如何对构造函数进行增强
  *
@@ -30,13 +32,15 @@ import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 public class DemoConstInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
-        DemoLogger.println(context.getRawCls() + ": [DemoConstInterceptor]-before");
+        DemoLogger.println(String.format(Locale.ROOT, "[DemoConstInterceptor]before, class: %s.",
+            context.getRawCls().getName()));
         return context;
     }
 
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        DemoLogger.println(context.getRawCls() + ": [DemoConstInterceptor]-after");
+        DemoLogger.println(String.format(Locale.ROOT, "[DemoConstInterceptor]after, class: %s.",
+                context.getRawCls().getName()));
         return context;
     }
 }

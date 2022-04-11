@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,11 +41,41 @@ public class DemoTraceService {
      * 主要方法
      */
     public static void trace() {
+        // 链路追踪入口跨度（根跨度场景）
         provider(new HashMap<String, String>());
+        service(END_POINT.get());
+
+        // 调用进程内普通方法
+        normal();
+
+        // 链路追踪出口跨度
         Map<String, String> message = consumer();
-        provider(message);
-        message = consumer();
         service(message);
+
+        // 链路追踪入口跨度（非根跨度场景）
+        provider(message);
+        service(END_POINT.get());
+
+        // 调用进程内的普通方法
+        normal();
+
+        // 链路追踪出口跨度
+        service(consumer());
+    }
+
+    /**
+     * 模拟发送消息，直接写到ThreadLocal中
+     *
+     * @param message 数据集
+     */
+    private static void provider(Map<String, String> message) {
+        END_POINT.set(message);
+    }
+
+    /**
+     * 模拟进程内的普通方法
+     */
+    private static void normal() {
     }
 
     /**
@@ -68,14 +98,5 @@ public class DemoTraceService {
      */
     private static void service(Map<String, String> message) {
         LOGGER.info("DemoTraceService: {}", message);
-    }
-
-    /**
-     * 模拟发送消息，直接写到ThreadLocal中
-     *
-     * @param message 数据集
-     */
-    private static void provider(Map<String, String> message) {
-        END_POINT.set(message);
     }
 }

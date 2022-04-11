@@ -16,15 +16,20 @@
 
 package com.huawei.example.demo.interceptor;
 
+import com.huawei.example.demo.common.DemoLogger;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huawei.sermant.core.service.ServiceManager;
 import com.huawei.sermant.core.service.tracing.api.InjectService;
 import com.huawei.sermant.core.service.tracing.api.TracingService;
+import com.huawei.sermant.core.service.tracing.common.SpanEvent;
+import com.huawei.sermant.core.service.tracing.common.SpanEventContext;
 import com.huawei.sermant.core.service.tracing.common.TracingHeader;
 import com.huawei.sermant.core.service.tracing.common.TracingRequest;
 
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.Optional;
 
 /**
  * 链路监控功能的拦截器示例，本示例将展示如何在插件端使用链路监控功能
@@ -52,6 +57,12 @@ public class DemoTraceConsumerInterceptor extends AbstractInterceptor {
             carrier.put(TracingHeader.SPAN_ID_PREFIX.getValue(), spanEvent.getNextSpanIdPrefix());
         };
         tracingService.onConsumerSpanStart(request, injectService, (HashMap<String, String>)context.getResult());
+        Optional<SpanEventContext> spanEventContextOptional = tracingService.getContext();
+        if (spanEventContextOptional.isPresent()) {
+            SpanEvent spanEvent = spanEventContextOptional.get().getSpanEvent();
+            DemoLogger.println(String.format(Locale.ROOT, "ConsumerSpanEvent TraceId: %s, SpanId: %s.",
+                spanEvent.getTraceId(), spanEvent.getSpanId()));
+        }
         tracingService.onSpanFinally();
         return context;
     }

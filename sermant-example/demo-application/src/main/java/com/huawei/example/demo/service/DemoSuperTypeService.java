@@ -37,17 +37,31 @@ public class DemoSuperTypeService implements DemoInterface {
     }
 
     /**
-     * 被拦截的静态方法
-     */
-    public static void staticFunc() {
-        LOGGER.info("DemoSuperTypeService: staticFunc");
-    }
-
-    /**
      * 被拦截的实例方法
      */
     public void memberFunc() {
         LOGGER.info("DemoSuperTypeService: memberFunc");
+    }
+
+    /**
+     * 测试通过前缀匹配方法
+     */
+    public void prefixFunc() {
+        LOGGER.info("DemoSuperTypeService: prefixFunc");
+    }
+
+    /**
+     * 测试通过后缀匹配方法
+     */
+    public void funcSuffix() {
+        LOGGER.info("DemoSuperTypeService: funcSuffix");
+    }
+
+    /**
+     * 测试通过内缀匹配方法
+     */
+    public void memberInfixFunc() {
+        LOGGER.info("DemoSuperTypeService: memberInfixFunc");
     }
 
     @Override

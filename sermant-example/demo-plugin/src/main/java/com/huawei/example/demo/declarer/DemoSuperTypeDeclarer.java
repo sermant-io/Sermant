@@ -16,9 +16,7 @@
 
 package com.huawei.example.demo.declarer;
 
-import com.huawei.example.demo.interceptor.DemoConstInterceptor;
 import com.huawei.example.demo.interceptor.DemoMemberInterceptor;
-import com.huawei.example.demo.interceptor.DemoStaticInterceptor;
 import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
@@ -39,10 +37,10 @@ public class DemoSuperTypeDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[]{
-                InterceptDeclarer.build(MethodMatcher.nameEquals("staticFunc"), new DemoStaticInterceptor()),
-                InterceptDeclarer.build(MethodMatcher.isConstructor(), new DemoConstInterceptor()),
-                InterceptDeclarer.build(MethodMatcher.nameEquals("memberFunc"), new DemoMemberInterceptor())
-        };
+        return new InterceptDeclarer[] {
+            InterceptDeclarer.build(MethodMatcher.nameEquals("memberFunc"), new DemoMemberInterceptor()),
+            InterceptDeclarer.build(MethodMatcher.nameSuffixedWith("Suffix"), new DemoMemberInterceptor()),
+            InterceptDeclarer.build(MethodMatcher.namePrefixedWith("prefix"), new DemoMemberInterceptor()),
+            InterceptDeclarer.build(MethodMatcher.nameInfixedWith("Infix"), new DemoMemberInterceptor())};
     }
 }

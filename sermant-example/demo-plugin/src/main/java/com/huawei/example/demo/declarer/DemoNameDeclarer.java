@@ -20,13 +20,10 @@ import com.huawei.example.demo.common.DemoBeanPropertyApi;
 import com.huawei.example.demo.common.DemoInterfaceApi;
 import com.huawei.example.demo.common.DemoInterfaceImpl;
 import com.huawei.example.demo.interceptor.DemoConfigInterceptor;
-import com.huawei.example.demo.interceptor.DemoConstInterceptor;
-import com.huawei.example.demo.interceptor.DemoFieldCheckInterceptor;
 import com.huawei.example.demo.interceptor.DemoFieldSetInterceptor;
 import com.huawei.example.demo.interceptor.DemoInterfaceInterceptor;
 import com.huawei.example.demo.interceptor.DemoMemberInterceptor;
 import com.huawei.example.demo.interceptor.DemoServiceInterceptor;
-import com.huawei.example.demo.interceptor.DemoStaticInterceptor;
 import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huawei.sermant.core.plugin.agent.declarer.SuperTypeDeclarer;
@@ -58,13 +55,10 @@ public class DemoNameDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                InterceptDeclarer.build(MethodMatcher.nameEquals("staticFunc"), new DemoStaticInterceptor()),
-                InterceptDeclarer.build(MethodMatcher.isConstructor(), new DemoConstInterceptor()),
-                InterceptDeclarer.build(MethodMatcher.nameEquals("memberFunc"), new DemoMemberInterceptor()),
                 InterceptDeclarer.build(MethodMatcher.nameEquals("serviceFunc"), new DemoServiceInterceptor()),
                 InterceptDeclarer.build(MethodMatcher.nameEquals("configFunc"), new DemoConfigInterceptor()),
                 InterceptDeclarer.build(MethodMatcher.nameEquals("fieldFunc"),
-                        new DemoFieldSetInterceptor(), new DemoFieldCheckInterceptor()),
+                        new DemoFieldSetInterceptor(),new DemoMemberInterceptor()),
                 InterceptDeclarer.build(MethodMatcher.isMemberMethod().and(MethodMatcher.nameEquals("interfaceFunc")),
                         new DemoInterfaceInterceptor())
         };
