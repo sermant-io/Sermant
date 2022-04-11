@@ -16,12 +16,10 @@
 
 package com.huawei.registry.handler;
 
-import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.config.RegisterDynamicConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.support.RegisterSwitchSupport;
 import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -103,8 +101,7 @@ public abstract class SingleStateCloseHandler extends RegisterSwitchSupport {
      * @return 是否可关闭注册中心
      */
     protected boolean needCloseRegisterCenter() {
-        return (RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()
-            || !PluginConfigManager.getPluginConfig(RegisterConfig.class).isOpenMigration())
+        return (RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter() || !registerConfig.isOpenMigration())
             && isEnableSpringRegister();
     }
 

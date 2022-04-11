@@ -81,7 +81,7 @@ public class ZookeeperInstanceSupplierInterceptor extends InstanceInterceptorSup
         if (isOpenMigration() && RegisterContext.INSTANCE.isAvailable()) {
             result.addAll(originServiceInstances);
         }
-        return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        return result.stream().distinct().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     /**

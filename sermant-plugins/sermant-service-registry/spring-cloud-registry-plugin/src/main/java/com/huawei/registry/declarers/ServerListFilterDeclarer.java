@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,47 +14,40 @@
  * limitations under the License.
  */
 
-package com.huawei.registry.declarers.health;
+package com.huawei.registry.declarers;
 
-import com.huawei.registry.interceptors.health.ConsulWatchInterceptor;
-import com.huawei.registry.interceptors.health.ConsulWatchRequestInterceptor;
+import com.huawei.registry.interceptors.ServerListFilterInterceptor;
 import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * consul健康检测增强
+ * 针对ServerList filter增强
  *
  * @author zhouss
- * @since 2021-12-17
+ * @since 2021-12-16
  */
-public class ConsulWatchConDeclarer extends AbstractPluginDeclarer {
+public class ServerListFilterDeclarer extends AbstractPluginDeclarer {
     /**
-     * nacos心跳发送类
+     * 增强类的全限定名
      */
-    private static final String ENHANCE_CLASS = "org.springframework.cloud.consul.discovery.ConsulCatalogWatch";
+    private static final String ENHANCE_CLASS = "com.netflix.loadbalancer.ServerListFilter";
 
     /**
      * 拦截类的全限定名
      */
-    private static final String INTERCEPT_CLASS = ConsulWatchInterceptor.class.getCanonicalName();
-
-    /**
-     * 定时任务请求方法
-     */
-    private static final String HEALTH_REQUEST_INTERCEPT_CLASS = ConsulWatchRequestInterceptor.class.getCanonicalName();
+    private static final String INTERCEPT_CLASS = ServerListFilterInterceptor.class.getCanonicalName();
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameEquals(ENHANCE_CLASS);
+        return ClassMatcher.isExtendedFrom(ENHANCE_CLASS);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.isConstructor(), INTERCEPT_CLASS),
-            InterceptDeclarer.build(MethodMatcher.nameEquals("catalogServicesWatch"), HEALTH_REQUEST_INTERCEPT_CLASS)
+            InterceptDeclarer.build(MethodMatcher.nameEquals("getFilteredListOfServers"), INTERCEPT_CLASS)
         };
     }
 }
