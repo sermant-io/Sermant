@@ -23,6 +23,7 @@ import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import org.springframework.cloud.consul.discovery.ConsulCatalogWatch;
 
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -34,15 +35,32 @@ import java.util.logging.Logger;
 public class ConsulHealthInterceptor extends SingleStateCloseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    /**
+     * 仅在2.x.x以上的版本采用该方式停止
+     * <p></p>
+     * 1.x.x版本直接阻止catalogServicesWatch方逻辑调用 参考类{@link ConsulWatchRequestInterceptor}
+     */
     @Override
     protected void close() {
         // 关闭consul心跳发送
         final Object registerWatch = RegisterContext.INSTANCE.getRegisterWatch();
-        if (registerWatch instanceof ConsulCatalogWatch) {
+        if ((registerWatch instanceof ConsulCatalogWatch) && canStopTask(registerWatch)) {
             ConsulCatalogWatch watch = (ConsulCatalogWatch) registerWatch;
             watch.stop();
             LOGGER.info("Consul heartbeat has been closed.");
         }
+    }
+
+    private boolean canStopTask(Object watch) {
+        try {
+            watch.getClass().getDeclaredMethod("stop");
+            return true;
+        } catch (NoSuchMethodException ex) {
+            LOGGER.info(String.format(Locale.ENGLISH,
+                "Consul register center version is less than 2.x.x, it has not method named stop"
+                    + " it will be replaced by prevent method catalogServicesWatch! %s", ex.getMessage()));
+        }
+        return false;
     }
 
     @Override

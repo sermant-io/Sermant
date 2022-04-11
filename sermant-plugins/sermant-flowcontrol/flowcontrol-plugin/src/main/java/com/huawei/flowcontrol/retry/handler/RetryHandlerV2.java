@@ -19,7 +19,6 @@ package com.huawei.flowcontrol.retry.handler;
 
 import com.huawei.flowcontrol.common.adapte.cse.resolver.RetryResolver;
 import com.huawei.flowcontrol.common.adapte.cse.rule.RetryRule;
-import com.huawei.flowcontrol.common.exception.InvokerWrapperException;
 import com.huawei.flowcontrol.common.handler.AbstractRequestHandler;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
 
@@ -28,10 +27,7 @@ import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 /**
  * 基于resilience4j重试
@@ -40,6 +36,8 @@ import java.util.function.Predicate;
  * @since 2022-02-18
  */
 public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
+    private final RetryPredicateCreator retryPredicateCreator = new DefaultRetryPredicateCreator();
+
     @Override
     protected Optional<Retry> createProcessor(String businessName, RetryRule rule) {
         final com.huawei.flowcontrol.common.handler.retry.Retry retry = RetryContext.INSTANCE.getRetry();
@@ -48,36 +46,16 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
         }
         final RetryConfig retryConfig = RetryConfig.custom()
             .maxAttempts(rule.getMaxAttempts())
-            .retryOnResult(buildRetryResult(retry, rule))
-            .retryOnException(createExceptionPredicate(retry.retryExceptions()))
+            .retryOnResult(retryPredicateCreator.createResultPredicate(retry, rule))
+            .retryOnException(retryPredicateCreator.createExceptionPredicate(retry.retryExceptions()))
             .intervalFunction(getIntervalFunction(rule))
             .build();
         return Optional.of(RetryRegistry.of(retryConfig).retry(businessName));
     }
 
-    private Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable>[] retryExceptions) {
-        return Arrays.stream(retryExceptions).distinct().map(this::createExceptionPredicate).reduce(Predicate::or)
-            .orElseGet(() -> throwable -> true);
-    }
-
-    private Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable> retryClass) {
-        return (Throwable ex) -> retryClass.isAssignableFrom(getRealExceptionClass(ex));
-    }
-
-    private Class<? extends Throwable> getRealExceptionClass(Throwable ex) {
-        if (ex instanceof InvokerWrapperException) {
-            // 判断是否是目标包装异常
-            InvokerWrapperException invokerWrapperException = (InvokerWrapperException) ex;
-            if (invokerWrapperException.getRealException() != null) {
-                return invokerWrapperException.getRealException().getClass();
-            }
-        }
-        return ex.getClass();
-    }
-
-    private Predicate<Object> buildRetryResult(com.huawei.flowcontrol.common.handler.retry.Retry retry,
-        RetryRule rule) {
-        return result -> retry.needRetry(new HashSet<>(rule.getRetryOnResponseStatus()), result);
+    @Override
+    protected String configKey() {
+        return RetryResolver.CONFIG_KEY;
     }
 
     private IntervalFunction getIntervalFunction(RetryRule rule) {
@@ -86,10 +64,5 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
                 rule.getMultiplier(), rule.getRandomizationFactor());
         }
         return IntervalFunction.of(rule.getParsedWaitDuration());
-    }
-
-    @Override
-    protected String configKey() {
-        return RetryResolver.CONFIG_KEY;
     }
 }

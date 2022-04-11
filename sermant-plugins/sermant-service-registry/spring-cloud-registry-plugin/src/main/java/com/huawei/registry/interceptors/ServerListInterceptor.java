@@ -20,11 +20,11 @@ import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.services.RegisterCenterService;
 import com.huawei.registry.support.InstanceInterceptorSupport;
-import com.huawei.registry.utils.CommonUtils;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huawei.sermant.core.service.ServiceManager;
 
+import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
 
@@ -54,12 +54,12 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
         }
         try {
             mark();
-            final Optional<Object> serviceIdOption = CommonUtils.getFieldValue(context.getObject(), "serviceId");
+            Optional<String> serviceIdOption = getServiceName(context);
             if (!serviceIdOption.isPresent()) {
                 return context;
             }
             final RegisterCenterService service = ServiceManager.getService(RegisterCenterService.class);
-            String serviceName = (String) serviceIdOption.get();
+            String serviceName = serviceIdOption.get();
             final List<MicroServiceInstance> serverList = service.getServerList(serviceName);
             if (!serverList.isEmpty()) {
                 // 单注册中心场景无需合并
@@ -69,6 +69,28 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
             unMark();
         }
         return context;
+    }
+
+    /**
+     * 获取下游服务名
+     *
+     * @return 下游服务名称
+     */
+    private Optional<String> getServiceName(ExecuteContext context) {
+        try {
+            Object serviceId = context.getMemberFieldValue("serviceId");
+            if (serviceId == null) {
+                final Object clientConfig = context.getMemberFieldValue("clientConfig");
+                if (clientConfig instanceof IClientConfig) {
+                    serviceId = ((IClientConfig) clientConfig).getClientName();
+                }
+            }
+            return Optional.ofNullable((String) serviceId);
+        } catch (ClassCastException ex) {
+            LOGGER.warning("Can not find down stream service name! "
+                + "The service name that has been found is not right name");
+        }
+        return Optional.empty();
     }
 
     /**
@@ -108,67 +130,6 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
 
     @Override
     protected String getInstanceClassName() {
-        return "com.huawei.registry.interceptors.ServerListInterceptor$ScServer";
-    }
-
-    /**
-     * server 信息定义
-     *
-     * @since 2022-02-11
-     */
-    public static class ScServer extends Server {
-        private final MicroServiceInstance microServiceInstance;
-        private final String serviceName;
-        private MetaInfo metaInfo;
-
-        /**
-         * 构造器
-         *
-         * @param microServiceInstance 实例信息
-         * @param serviceName          服务名
-         */
-        public ScServer(final MicroServiceInstance microServiceInstance, String serviceName) {
-            super(microServiceInstance.getHost(), microServiceInstance.getPort());
-            this.microServiceInstance = microServiceInstance;
-            this.serviceName = serviceName;
-        }
-
-        @Override
-        public MetaInfo getMetaInfo() {
-            if (metaInfo == null) {
-                this.metaInfo = new Server.MetaInfo() {
-                    @Override
-                    public String getAppName() {
-                        return serviceName;
-                    }
-
-                    @Override
-                    public String getServerGroup() {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public String getServiceIdForDiscovery() {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public String getInstanceId() {
-                        return microServiceInstance.getInstanceId();
-                    }
-                };
-            }
-            return this.metaInfo;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return super.equals(obj);
-        }
-
-        @Override
-        public int hashCode() {
-            return super.hashCode();
-        }
+        return "com.huawei.registry.entity.ScServer";
     }
 }

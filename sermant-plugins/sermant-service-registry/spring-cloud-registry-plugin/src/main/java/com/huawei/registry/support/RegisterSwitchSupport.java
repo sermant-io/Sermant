@@ -29,7 +29,7 @@ import com.huawei.sermant.core.plugin.config.PluginConfigManager;
  * @since 2022-03-02
  */
 public abstract class RegisterSwitchSupport implements Interceptor {
-    private final RegisterConfig registerConfig;
+    protected final RegisterConfig registerConfig;
 
     /**
      * 注册开关构造器

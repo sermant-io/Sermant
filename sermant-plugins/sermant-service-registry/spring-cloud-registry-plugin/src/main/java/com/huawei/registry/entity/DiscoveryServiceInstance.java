@@ -22,6 +22,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * ServiceInstance实现
@@ -34,6 +35,8 @@ public class DiscoveryServiceInstance implements ServiceInstance {
 
     private final String serviceId;
 
+    private final String id;
+
     /**
      * 针对springCloud ServiceInstance构造器
      *
@@ -44,6 +47,8 @@ public class DiscoveryServiceInstance implements ServiceInstance {
     public DiscoveryServiceInstance(final MicroServiceInstance microServiceInstance, final String serviceId) {
         this.microServiceInstance = microServiceInstance;
         this.serviceId = serviceId == null ? microServiceInstance.getServiceId() : serviceId;
+        this.id = String.format(Locale.ENGLISH, "%s:%s", microServiceInstance.getHost(),
+            microServiceInstance.getPort());
     }
 
     @Override
@@ -69,6 +74,27 @@ public class DiscoveryServiceInstance implements ServiceInstance {
     @Override
     public URI getUri() {
         return URI.create(String.format(Locale.ENGLISH, "http://%s:%s", getHost(), getPort()));
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object target) {
+        if (this == target) {
+            return true;
+        }
+        if (target == null || getClass() != target.getClass()) {
+            return false;
+        }
+        DiscoveryServiceInstance that = (DiscoveryServiceInstance) target;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
