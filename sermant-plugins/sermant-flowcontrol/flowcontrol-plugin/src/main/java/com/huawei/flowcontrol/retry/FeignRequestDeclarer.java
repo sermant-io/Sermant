@@ -34,6 +34,12 @@ public class FeignRequestDeclarer extends AbstractPluginDeclarer {
      */
     private static final String ENHANCE_CLASS = "org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient";
 
+    private static final String BLOCKING_ENHANCE_CLASS =
+        "org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient";
+
+    private static final String RETRY_BLOCKING_ENHANCE_CLASS =
+        "org.springframework.cloud.openfeign.loadbalancer.RetryableFeignBlockingLoadBalancerClient";
+
     /**
      * 拦截类的全限定名
      */
@@ -41,7 +47,7 @@ public class FeignRequestDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameEquals(ENHANCE_CLASS);
+        return ClassMatcher.nameContains(ENHANCE_CLASS, BLOCKING_ENHANCE_CLASS, RETRY_BLOCKING_ENHANCE_CLASS);
     }
 
     @Override

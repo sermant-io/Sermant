@@ -17,11 +17,16 @@
 
 package com.huawei.flowcontrol.common.util;
 
+import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.utils.ClassLoaderUtils;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 反射工具类
@@ -30,6 +35,11 @@ import java.util.Optional;
  * @since 2022-03-04
  */
 public class ReflectUtils {
+    /**
+     * 反射调用方法缓存
+     */
+    private static final Map<String, Optional<Method>> REFLECT_METHOD_CACHE = new ConcurrentHashMap<>();
+
     private ReflectUtils() {
     }
 
@@ -52,5 +62,44 @@ public class ReflectUtils {
                 return Optional.empty();
             }
         }
+    }
+
+    /**
+     * 反射调用目标方法
+     *
+     * @param target         目标类
+     * @param methodName     方法名
+     * @param parameterTypes 方法参数类型
+     * @param args           方法参数
+     * @return 调用结果
+     */
+    public static Optional<Object> invokeTargetMethod(Object target, String methodName, Class<?>[] parameterTypes,
+        Object[] args) {
+        if (target == null || methodName == null) {
+            return Optional.empty();
+        }
+        final Optional<Method> method = REFLECT_METHOD_CACHE
+            .computeIfAbsent(formatReflectKey(target, methodName), fn -> {
+                try {
+                    return Optional.of(target.getClass().getDeclaredMethod(methodName, parameterTypes));
+                } catch (NoSuchMethodException ex) {
+                    LoggerFactory.getLogger().warning(String.format(Locale.ENGLISH, "No such method [%s] at class [%s]",
+                        methodName, target.getClass().getName()));
+                }
+                return Optional.empty();
+            });
+        if (method.isPresent()) {
+            try {
+                return Optional.ofNullable(method.get().invoke(target, args));
+            } catch (InvocationTargetException | IllegalAccessException ex) {
+                LoggerFactory.getLogger().warning(String.format(Locale.ENGLISH,
+                    "Can not invoker method [%s], reason: %s", methodName, ex.getMessage()));
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static String formatReflectKey(Object target, String methodName) {
+        return String.format(Locale.ENGLISH, "%s_%s", target.getClass().getName(), methodName);
     }
 }

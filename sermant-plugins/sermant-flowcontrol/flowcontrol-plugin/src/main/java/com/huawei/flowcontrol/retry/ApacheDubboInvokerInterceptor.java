@@ -35,6 +35,7 @@ import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.cluster.LoadBalance;
 import org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker;
+import org.apache.dubbo.rpc.service.GenericException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -123,7 +124,14 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
                 // 执行调用
                 final Result result = invoke.invoke(invocation);
                 if (result.hasException() && isNeedThrow) {
-                    throw new InvokerWrapperException(result.getException());
+                    final Throwable exception = result.getException();
+                    if (exception instanceof GenericException) {
+                        throw (GenericException) exception;
+                    } else if (exception instanceof com.alibaba.dubbo.rpc.service.GenericException) {
+                        throw (com.alibaba.dubbo.rpc.service.GenericException) exception;
+                    } else {
+                        throw new InvokerWrapperException(result.getException());
+                    }
                 }
                 return result;
             }
