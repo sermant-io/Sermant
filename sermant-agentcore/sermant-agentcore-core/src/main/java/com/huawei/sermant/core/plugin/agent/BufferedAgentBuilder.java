@@ -263,6 +263,7 @@ public class BufferedAgentBuilder {
         for (BuilderAction action : actions) {
             builder = action.process(builder);
         }
+        builder.disableClassFormatChanges();
         return builder.installOn(instrumentation);
     }
 
