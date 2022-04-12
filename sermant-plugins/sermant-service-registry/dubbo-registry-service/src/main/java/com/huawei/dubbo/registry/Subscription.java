@@ -24,12 +24,13 @@ package com.huawei.dubbo.registry;
  */
 public class Subscription {
     private final Object url;
+
     private final Object notifyListener;
 
     /**
      * 构造方法
      *
-     * @param url            url
+     * @param url url
      * @param notifyListener notifyListener
      */
     public Subscription(Object url, Object notifyListener) {
