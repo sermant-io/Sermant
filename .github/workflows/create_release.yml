@@ -6,7 +6,7 @@ on:
 name: Create Release
 
 env:
-  version: 0.2.0
+  version: '0.2.0'
 
 jobs:
   auto-create-release:
