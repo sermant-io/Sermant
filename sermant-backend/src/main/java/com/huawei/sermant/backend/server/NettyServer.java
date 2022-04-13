@@ -121,7 +121,8 @@ public class NettyServer {
                             pipeline.addLast(new ProtobufDecoder(Message.NettyMessage.getDefaultInstance()));
                             pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
                             pipeline.addLast(new ProtobufEncoder());
-                            pipeline.addLast(new ServerHandler(producer, consumer, topicMapping));
+                            pipeline.addLast(new ServerHandler(producer, consumer, topicMapping,
+                                    conf.getIsHeartbeatCache()));
                         }
                     });
 
