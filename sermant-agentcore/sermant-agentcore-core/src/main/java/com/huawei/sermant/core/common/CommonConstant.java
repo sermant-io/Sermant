@@ -97,6 +97,16 @@ public class CommonConstant {
      */
     public static final String LOG_SETTING_FILE_KEY = "log.setting.file";
 
+    /**
+     * spring 应用名的键
+     */
+    public static final String SPRING_APPLICATION_NAME = "spring.application.name";
+
+    /**
+     * dubbo 应用名的键
+     */
+    public static final String DUBBO_APPLICATION_NAME = "dubbo.application.name";
+
     private CommonConstant() {
     }
 }

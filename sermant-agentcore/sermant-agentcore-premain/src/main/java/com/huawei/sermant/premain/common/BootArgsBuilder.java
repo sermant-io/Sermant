@@ -48,6 +48,7 @@ public abstract class BootArgsBuilder {
     public static Map<String, Object> build(String agentArgs) {
         final Properties configMap = loadConfig();
         final Map<String, Object> argsMap = toArgsMap(agentArgs);
+        setAppName(argsMap);
         addNotNullEntries(argsMap, configMap);
         addNormalEntries(argsMap, configMap);
         addPathEntries(argsMap);
@@ -159,5 +160,23 @@ public abstract class BootArgsBuilder {
         argsMap.put(CommonConstant.PLUGIN_SETTING_FILE_KEY, PathDeclarer.getPluginSettingPath());
         argsMap.put(CommonConstant.PLUGIN_PACKAGE_DIR_KEY, PathDeclarer.getPluginPackagePath());
         argsMap.put(CommonConstant.LOG_SETTING_FILE_KEY, PathDeclarer.getLogbackSettingPath());
+    }
+
+    /**
+     * 读取宿主应用名，若未设置环境变量则应用名为启动参数appName的值
+     *
+     * @param argsMap 参数集
+     */
+    private static void setAppName(Map<String, Object> argsMap) {
+        String dubboApplicationName = System.getProperty(CommonConstant.DUBBO_APPLICATION_NAME, null);
+        if (dubboApplicationName != null) {
+            argsMap.put(CommonConstant.APP_NAME_KEY, dubboApplicationName);
+            return;
+        }
+
+        String springApplicationName = System.getProperty(CommonConstant.SPRING_APPLICATION_NAME, null);
+        if (springApplicationName != null) {
+            argsMap.put(CommonConstant.APP_NAME_KEY, springApplicationName);
+        }
     }
 }
