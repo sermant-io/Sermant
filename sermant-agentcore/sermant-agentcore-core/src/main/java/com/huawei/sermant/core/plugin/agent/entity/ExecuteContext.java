@@ -377,7 +377,7 @@ public class ExecuteContext {
      */
     public void setRawMemberFieldValue(String fieldName, Object value)
             throws NoSuchFieldException, IllegalAccessException {
-        getMemberField(fieldName).set(null, value);
+        getMemberField(fieldName).set(object, value);
     }
 
     /**
