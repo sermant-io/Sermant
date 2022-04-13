@@ -54,15 +54,26 @@ public class ServerHandler extends BaseHandler {
     private static final int HEARTBEAT_TOPIC_INDEX = 0;
     private final KafkaProducer<String, byte[]> producer;
     private KafkaConsumer<String, String> consumer;
+    private boolean isHeartBeatCache;
 
     private final DataTypeTopicMapping topicMapping;
 
     private final Map<String, HeartbeatEntity> hbMessages = HeartbeatCache.getHeartbeatMessages();
 
-    public ServerHandler(KafkaProducer<String, byte[]> producer, KafkaConsumer<String, String> consumer, DataTypeTopicMapping topicMapping) {
+    /**
+     * ServerHandler
+     *
+     * @param producer kafka producer
+     * @param consumer kafka consumer
+     * @param topicMapping kafka topic map
+     * @param isHeartBeatCache is or not open heartbeat cache
+     */
+    public ServerHandler(KafkaProducer<String, byte[]> producer, KafkaConsumer<String, String> consumer,
+                         DataTypeTopicMapping topicMapping, String isHeartBeatCache) {
         this.producer = producer;
         this.consumer = consumer;
         this.topicMapping = topicMapping;
+        this.isHeartBeatCache = Boolean.parseBoolean(isHeartBeatCache);
     }
 
     @Override
@@ -81,7 +92,9 @@ public class ServerHandler extends BaseHandler {
                     writeHeartBeatCacheCache(topic, message);
                     continue;
                 }
-                producer.send(new ProducerRecord<>(topic, message));
+                if (!this.isHeartBeatCache) {
+                    producer.send(new ProducerRecord<>(topic, message));
+                }
             } else {
                 LOGGER.warn("Can not find the corresponding topic of type {}.", dataType);
             }
@@ -112,7 +125,9 @@ public class ServerHandler extends BaseHandler {
             Map<String, String> pluginHeartbeatMap = JSON.parseObject(
                     new String(message, StandardCharsets.UTF_8), Map.class);
             for (String messageStr : pluginHeartbeatMap.values()) {
-                producer.send(new ProducerRecord<>(topic, messageStr.getBytes(StandardCharsets.UTF_8)));
+                if (!this.isHeartBeatCache) {
+                    producer.send(new ProducerRecord<>(topic, messageStr.getBytes(StandardCharsets.UTF_8)));
+                }
                 HeartbeatEntity heartbeatEntity = JSONObject.parseObject(messageStr, HeartbeatEntity.class);
                 List<String> ips = heartbeatEntity.getIp();
                 if (ips != null && ips.size() != 0 && heartbeatEntity.getPluginName() != null) {
