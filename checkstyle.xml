@@ -87,6 +87,7 @@
         <property name="severity" value="warning"/>
         <property name="format" value="(boolean|Boolean)\s((m[^I])|(mI[^s])|(s[^I])|(sI[^s])|[^msiI]|([iI][^sS]))(?![a-zA-Z0-9=;,\s]*\()"/>
         <property name="message" value="编程规范-建议1.2 布尔变量名或方法以is开头(has have does do did will should can may must could等疑问助动词也可以，Android允许m作为疑问助动词前缀)"/>
+        <property name="maximum" value="15"/>
     </module>
     <module name="RegexpSingleline">
         <property name="severity" value="warning"/>

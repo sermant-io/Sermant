@@ -42,8 +42,6 @@ import java.util.logging.Logger;
  */
 public class ReflectUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger();
-    private static final String SC_REGISTRY_ADDRESS =
-        Constant.SC_REGISTRY_PROTOCOL + Constant.PROTOCOL_SEPARATION + "localhost:30100";
     private static final String GET_PROTOCOL_METHOD_NAME = "getProtocol";
     private static final String GET_ADDRESS_METHOD_NAME = "getAddress";
     private static final String GET_PATH_METHOD_NAME = "getPath";
@@ -101,7 +99,7 @@ public class ReflectUtils {
             Constructor<T> constructor = clazz.getConstructor(String.class);
 
             // 这个url不重要，重要的是protocol，所以设置成localhost:30100就行
-            return Optional.of(constructor.newInstance(SC_REGISTRY_ADDRESS));
+            return Optional.of(constructor.newInstance(Constant.SC_REGISTRY_ADDRESS));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
             | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, "Cannot new the registryConfig.", e);

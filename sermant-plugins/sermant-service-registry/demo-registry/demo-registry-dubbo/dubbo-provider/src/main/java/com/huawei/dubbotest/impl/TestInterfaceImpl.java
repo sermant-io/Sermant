@@ -18,7 +18,8 @@ package com.huawei.dubbotest.impl;
 
 import com.huawei.dubbotest.service.TestInterface;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.dubbo.config.RegistryConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -31,8 +32,8 @@ import java.util.Map;
  */
 @Component
 public class TestInterfaceImpl implements TestInterface {
-    @Value("${dubbo.registry.address}")
-    private String address;
+    @Autowired
+    private RegistryConfig registryConfig;
 
     /**
      * 测试接口
@@ -42,7 +43,7 @@ public class TestInterfaceImpl implements TestInterface {
     @Override
     public Map<String, String> test() {
         Map<String, String> map = new HashMap<>();
-        map.put("provider-dubbo-registry-address", address);
+        map.put("provider-dubbo-registry-address", registryConfig.getAddress());
         return map;
     }
 }

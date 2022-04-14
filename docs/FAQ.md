@@ -85,6 +85,50 @@
 
 - 需要在插件配置（${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml）中，开启ssl（servicecomb.service.sslEnabled）。
 
+
+### 报错 - No such extension org.apache.dubbo.metadata.report.MetadataReportFactory by name sc
+
+如下图所示：
+
+  ![No such extension org.apache.dubbo.metadata.report.MetadataReportFactory by name sc](./binary-docs/registry-faq-7.png)
+
+请检查dubbo应用的注册配置，protocol是否存在且不为sc，如下所示：
+
+- 例如dubbo/provider.xml
+
+```xml
+<dubbo:registry address="sc://127.0.0.1:30100" protocol="nacos"/>
+```
+
+- 例如application.yml（或application.properties），以application.yml为例
+```yml
+dubbo:
+  registry:
+    protocol: nacos
+    address: sc://127.0.0.1:30100
+```
+
+如果protocol存在且不为sc，请把protocol的值设置成sc，或者删除protocol配置。
+
+### 报错 - No registry config found or it's not a valid config
+
+如下图所示：
+
+  ![No registry config found or it's not a valid config](./binary-docs/registry-faq-8.png)
+
+需要设置dubbo本身注册中心地址的配置，请参考[服务注册插件文档](./user-guide/registry/document.md#按需修改插件配置文件)中，关于**新开发**dubbo应用的说明。
+
+### 插件配置中，enableSpringRegister/enableDubboRegister与openMigration之间的关系是什么？
+
+enableSpringRegister/enableDubboRegister与openMigration之间的关系如下表所示：
+
+|enableSpringRegister/enableDubboRegister|openMigration|作用|
+|---|---|---|
+|true|true|开启spring cloud/dubbo迁移功能|
+|true|false|开启spring cloud/dubbo sc注册|
+|false|true|关闭注册插件|
+|false|false|关闭注册插件|
+
 [返回**QuickStart**说明文档](./QuickStart.md)
 
 [返回**Sermant**说明文档](./README.md)
