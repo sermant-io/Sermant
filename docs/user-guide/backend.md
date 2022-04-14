@@ -41,6 +41,10 @@
   datatype.topic.mapping.10=topic-druid-monitor
   datatype.topic.mapping.11=topic-flowcontrol-metric
   ```
+- backend不强依赖kafka服务，配置中默认心跳数据写入缓存中，如需要将数据写入kafka，则更改[backend配置文件](../../sermant-backend/src/main/resources/application.properties)中以下配置为`false`即可。
+  ```properties
+  heartbeat.cache=true
+  ```
 
 ## 相关文档
 
