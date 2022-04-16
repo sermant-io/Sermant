@@ -52,7 +52,7 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
      */
     @Override
     public void addRegistryConfig(Object obj) {
-        if (!config.isOpenMigration()) {
+        if (!config.isOpenMigration() || !config.isEnableDubboRegister()) {
             return;
         }
         List<Object> registries = ReflectUtils.getRegistries(obj);

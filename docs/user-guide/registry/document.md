@@ -10,7 +10,7 @@
 
 ## 使用说明
 
-### 修改[核心配置文件](../../../sermant-agentcore/sermant-agentcore-core/config/config.properties)
+### 按需修改[核心配置文件](../../../sermant-agentcore/sermant-agentcore-core/config/config.properties)
 
 文件路径为：${agent_package_path}/agent/config/config.properties，其中${agent_package_path}需要替换为实际的打包路径。
 
@@ -27,7 +27,7 @@ service.meta.project=default
 service.meta.environment=development
 ```
 
-### 修改[插件配置文件](../../../sermant-plugins/sermant-service-registry/config/config.yaml)
+### 按需修改[插件配置文件](../../../sermant-plugins/sermant-service-registry/config/config.yaml)
 
 文件路径为：${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml，其中${agent_package_path}需要替换为实际的打包路径。
 
@@ -39,10 +39,11 @@ servicecomb.service:
   heartbeatInterval: 15 #服务实例心跳发送间隔（单位：秒）
   openMigration: false #是否开启迁移功能
   enableSpringRegister: false #是否开启spring插件注册能力，spring cloud框架需开启，dubbo框架需关闭
+  enableDubboRegister: false #是否开启dubbo插件注册能力，dubbo框架需开启，spring cloud框架需关闭
   sslEnabled: false # 是否开启ssl
 ```
 
-- 对于dubbo应用，在**没有开启迁移功能**的前提下还需要修改dubbo本身注册中心地址的配置。这个配置项一般在dubbo应用的配置文件中，比如“dubbo/provider.xml”文件中：
+- 对于**新开发**的dubbo应用，还需要设置dubbo本身注册中心地址的配置。这个配置项一般在dubbo应用的配置文件中，比如“dubbo/provider.xml”文件中：
 
 ```xml
 <dubbo:registry address="sc://127.0.0.1:30100"/>
@@ -58,7 +59,7 @@ dubbo:
 
 需要强调的是，这个配置项的地址信息**不会使用**，只使用了协议名称sc（即ip地址不重要，只需要**sc://** 开头即可）。
 
-**注意：如果开启了迁移功能，则无需修改原有的注册中心地址，否则将不会同时向2个注册中心（原注册中心+sc）进行注册。**
+- **注意**：对于**存量**dubbo应用（即原本已经设置过dubbo本身注册中心地址的应用）**无需**进行这一步。
 
 ## 结果验证
 
@@ -76,21 +77,23 @@ mvn clean package
 
 ```shell
 # windows
-java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=dubbo-consumer -jar dubbo-consumer.jar
+java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=dubbo-consumer -jar dubbo-consumer.jar
 
 # mac, linux
-java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=dubbo-consumer -jar dubbo-consumer.jar
+java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=dubbo-consumer -jar dubbo-consumer.jar
 ```
 
 - 启动生产者
 
 ```shell
 # windows
-java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=dubbo-provider -jar dubbo-provider.jar
+java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=dubbo-provider -jar dubbo-provider.jar
 
 # mac, linux
-java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=dubbo-provider -jar dubbo-provider.jar
+java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=dubbo-provider -jar dubbo-provider.jar
 ```
+
+注：为了便于测试，这里使用了-Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo注册开关，如果使用了其它的方式打开了dubbo注册开关，则无需添加该参数。
 
 其中${path}需要替换为Sermant工程路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包目录。
 

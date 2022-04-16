@@ -6,7 +6,5 @@ dubbo:
   protocol:
     port: 28820
   registry:
-    # 注册到sc时开启
-    address: sc://127.0.0.1:30100
-    # 注册到nacos或者开启迁移功能时开启
-    #address: nacos://127.0.0.1:8848
+    # 模拟存量dubbo应用注册到nacos的情况，新开发的应用建议配置为 sc://127.0.0.1:30100
+    address: nacos://127.0.0.1:8848

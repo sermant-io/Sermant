@@ -107,6 +107,11 @@ public class RegisterConfig implements PluginConfig {
     private boolean enableSpringRegister = false;
 
     /**
+     * dubbo注册开关
+     */
+    private boolean enableDubboRegister = false;
+
+    /**
      * 是否启用区域发现
      */
     private boolean enableZoneAware = false;
@@ -191,6 +196,14 @@ public class RegisterConfig implements PluginConfig {
 
     public void setEnableSpringRegister(boolean enableSpringRegister) {
         this.enableSpringRegister = enableSpringRegister;
+    }
+
+    public boolean isEnableDubboRegister() {
+        return enableDubboRegister;
+    }
+
+    public void setEnableDubboRegister(boolean enableDubboRegister) {
+        this.enableDubboRegister = enableDubboRegister;
     }
 
     public boolean isOpenMigration() {

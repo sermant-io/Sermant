@@ -65,12 +65,27 @@ public class RegistryConfigServiceTest {
         AbstractInterfaceConfig interfaceConfig = new AbstractInterfaceConfig() {
         };
 
-        // 测试关闭迁移开关
+        // 测试关闭迁移开关与注册开关
+        registerConfig.setOpenMigration(false);
+        registerConfig.setEnableDubboRegister(false);
         service.addRegistryConfig(interfaceConfig);
         Assert.assertNull(interfaceConfig.getRegistries());
 
-        // 开启迁移开关
+        // 测试开启迁移开关，关闭注册开关
         registerConfig.setOpenMigration(true);
+        registerConfig.setEnableDubboRegister(false);
+        service.addRegistryConfig(interfaceConfig);
+        Assert.assertNull(interfaceConfig.getRegistries());
+
+        // 测试关闭迁移开关，开启注册开关
+        registerConfig.setOpenMigration(false);
+        registerConfig.setEnableDubboRegister(true);
+        service.addRegistryConfig(interfaceConfig);
+        Assert.assertNull(interfaceConfig.getRegistries());
+
+        // 开启迁移开关与注册开关
+        registerConfig.setOpenMigration(true);
+        registerConfig.setEnableDubboRegister(true);
 
         // 测试没有注册配置
         service.addRegistryConfig(interfaceConfig);
@@ -102,11 +117,26 @@ public class RegistryConfigServiceTest {
         };
 
         // 测试关闭迁移开关
+        registerConfig.setOpenMigration(false);
+        registerConfig.setEnableDubboRegister(false);
         service.addRegistryConfig(config);
         Assert.assertNull(config.getRegistries());
 
-        // 开启迁移开关
+        // 测试开启迁移开关，关闭注册开关
         registerConfig.setOpenMigration(true);
+        registerConfig.setEnableDubboRegister(false);
+        service.addRegistryConfig(config);
+        Assert.assertNull(config.getRegistries());
+
+        // 测试关闭迁移开关，开启注册开关
+        registerConfig.setOpenMigration(false);
+        registerConfig.setEnableDubboRegister(true);
+        service.addRegistryConfig(config);
+        Assert.assertNull(config.getRegistries());
+
+        // 开启迁移开关与注册开关
+        registerConfig.setOpenMigration(true);
+        registerConfig.setEnableDubboRegister(true);
 
         // 测试没有注册配置
         service.addRegistryConfig(config);
