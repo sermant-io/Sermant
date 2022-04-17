@@ -1,8 +1,8 @@
-## 服务注册常见问题
+# 服务注册常见问题
 
 本文主要介绍[服务注册插件](../../../sermant-plugins/sermant-service-registry)在使用时遇到的常见问题。
 
-**1.常见报错 - No such extension org.apache.dubbo.registry.RegistryFactory by name sc**
+## 报错：No such extension org.apache.dubbo.registry.RegistryFactory by name sc
 
 如下图所示：
 
@@ -24,7 +24,7 @@
 
 - 原因是核心配置文件中，配置中心地址（dynamic.config.server_address）配置错误或者配置中心没有启动或者网络不通，从而导致宿主应用无法加载agent，最后导致No such extension org.apache.dubbo.registry.RegistryFactory by name sc的报错。
 
-**2.常见报错 - sermant - /sermant/master/v1/register error**
+## 报错：/sermant/master/v1/register error
 
 如下图所示：
 
@@ -34,7 +34,7 @@
 
 注：该错误不会影响注册插件的流程，但会有相关报错。
 
-**3.常见报错 - Connection reset**
+## 报错：Connection reset
 
 如下图所示：
 
@@ -42,7 +42,7 @@
 
 请检查插件配置（${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml）中，注册中心地址（servicecomb.service.address）是否正确，协议是否正确（http/https）。
 
-**4.常见报错 - https protocol is not supported**
+## 报错：https protocol is not supported
 
 如下图所示：
 
@@ -50,7 +50,7 @@
 
 需要在插件配置（${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml）中，开启ssl（servicecomb.service.sslEnabled）。
 
-**5.常见报错 - No such extension org.apache.dubbo.metadata.report.MetadataReportFactory by name sc**
+## 报错：No such extension org.apache.dubbo.metadata.report.MetadataReportFactory by name sc
 
 如下图所示：
 
@@ -74,7 +74,7 @@ dubbo:
 
 如果protocol存在且不为sc，请把protocol的值设置成sc，或者删除protocol配置。
 
-**6.常见报错 - No registry config found or it's not a valid config**
+## 报错：No registry config found or it's not a valid config
 
 如下图所示：
 
@@ -82,7 +82,7 @@ dubbo:
 
 需要设置dubbo本身注册中心地址的配置，请参考[服务注册插件文档](./document.md#按需修改插件配置文件)中，关于**新开发**dubbo应用的说明。
 
-**7.插件配置中，enableSpringRegister/enableDubboRegister与openMigration之间的关系是什么？**
+## 插件配置中，enableSpringRegister/enableDubboRegister与openMigration之间的关系是什么？
 
 enableSpringRegister/enableDubboRegister与openMigration之间的关系如下表所示：
 
