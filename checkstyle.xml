@@ -135,6 +135,7 @@
         <property name="message" value="编程规范-规则7.7: 禁止用中文打印日志"/>
     </module>
     <module name="RegexpSingleline">
+        <property name="severity" value="warning"/>
         <property name="format" value="^\s*return null;\s*$"/>
         <property name="message" value="建议不要返回null! 1)编程规范-建议5.5: 集合请返回Collections.emptyXXX() 2)编程规范-建议8.6.2: 其他请使用JAVA 8 Optional特性代替"/>
     </module>
@@ -604,6 +605,7 @@
                          java.lang.Throwable,
                          java.lang.RuntimeException,
                          java.lang.NullPointerException"/>
+            <property name="severity" value="warning"/>
         </module>
         <!-- 第七章 异常和日志检查结束-->
         <!-- 第八章 编程实践检查开始-->
