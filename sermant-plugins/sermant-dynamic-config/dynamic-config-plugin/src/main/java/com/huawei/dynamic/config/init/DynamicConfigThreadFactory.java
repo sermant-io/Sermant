@@ -15,22 +15,30 @@
  *
  */
 
-package com.huawei.flowcontrol.common.adapte.cse.rule.syncer;
+package com.huawei.dynamic.config.init;
+
+import java.util.concurrent.ThreadFactory;
 
 /**
- * 规则同步
+ * 自定义线程工厂 区分线程
  *
  * @author zhouss
- * @since 2022-01-25
+ * @since 2022-01-28
  */
-public interface RuleSyncer {
-    /**
-     * 统一入口初始化
-     */
-    void start();
+public class DynamicConfigThreadFactory implements ThreadFactory {
+    private final String threadName;
 
     /**
-     * 统一入口停止
+     * 动态配置线程工厂
+     *
+     * @param threadName 线程名称
      */
-    void stop();
+    public DynamicConfigThreadFactory(String threadName) {
+        this.threadName = threadName;
+    }
+
+    @Override
+    public Thread newThread(Runnable runnable) {
+        return new Thread(runnable, threadName);
+    }
 }

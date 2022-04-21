@@ -23,7 +23,10 @@ import org.slf4j.LoggerFactory;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -50,6 +53,11 @@ public class LabelGroupUtils {
      */
     private static final String LABEL_PREFIX = "label=";
 
+    /**
+     * 键值对长度
+     */
+    private static final int KV_LEN = 2;
+
     private LabelGroupUtils() {
     }
 
@@ -64,12 +72,15 @@ public class LabelGroupUtils {
             return StringUtils.EMPTY;
         }
         final StringBuilder group = new StringBuilder();
-        for (Map.Entry<String, String> entry : labels.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
+        final List<String> keys = new ArrayList<>(labels.keySet());
+
+        // 防止相同map因排序不同而导致最后的label不一致
+        Collections.sort(keys);
+        for (String key : keys) {
+            String value = labels.get(key);
             if (key == null || value == null) {
                 LOGGER.warn(String.format(Locale.ENGLISH, "Invalid group label, key = %s, value = %s",
-                        key, value));
+                    key, value));
                 continue;
             }
             group.append(key).append(KV_SEPARATOR).append(value).append(GROUP_SEPARATOR);
@@ -78,6 +89,19 @@ public class LabelGroupUtils {
             return StringUtils.EMPTY;
         }
         return group.deleteCharAt(group.length() - 1).toString();
+    }
+
+    /**
+     * 重组group, 防止因多个标签因顺序问题而导致group不同
+     *
+     * @param group 标签组
+     * @return group
+     */
+    public static String rebuildGroup(String group) {
+        if (isLabelGroup(group)) {
+            return createLabelGroup(resolveGroupLabels(group));
+        }
+        return LabelGroupUtils.createLabelGroup(Collections.singletonMap("GROUP", group));
     }
 
     /**
@@ -101,15 +125,17 @@ public class LabelGroupUtils {
         if (group == null) {
             return result;
         }
-        if (!isLabelGroup(group)) {
-            return result;
+        String curGroup = group;
+        if (!isLabelGroup(curGroup)) {
+            // 如果非group标签（ZK配置中心场景适配），则为该group创建标签
+            curGroup = LabelGroupUtils.createLabelGroup(Collections.singletonMap("GROUP", curGroup));
         }
         try {
-            final String decode = URLDecoder.decode(group, "UTF-8");
+            final String decode = URLDecoder.decode(curGroup, "UTF-8");
             final String[] labels = decode.split("&");
             for (String label : labels) {
                 final String[] labelKv = label.split("=");
-                if (labelKv.length != 2) {
+                if (labelKv.length != KV_LEN) {
                     continue;
                 }
                 result.put(labelKv[0], labelKv[1]);
@@ -130,12 +156,13 @@ public class LabelGroupUtils {
         if (StringUtils.isEmpty(group)) {
             return group;
         }
-        final Map<String, String> labels = resolveGroupLabels(group);
+        String curGroup = rebuildGroup(group);
+        final Map<String, String> labels = resolveGroupLabels(curGroup);
         final StringBuilder finalGroup = new StringBuilder();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             finalGroup.append(LABEL_PREFIX)
-                    .append(buildSingleLabel(entry.getKey(), entry.getValue()))
-                    .append(GROUP_SEPARATOR);
+                .append(buildSingleLabel(entry.getKey(), entry.getValue()))
+                .append(GROUP_SEPARATOR);
         }
         return finalGroup.deleteCharAt(finalGroup.length() - 1).toString();
     }

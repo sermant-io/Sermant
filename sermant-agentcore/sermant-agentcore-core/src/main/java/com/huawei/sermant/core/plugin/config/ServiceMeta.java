@@ -47,6 +47,32 @@ public class ServiceMeta implements BaseConfig {
      */
     private String environment = "development";
 
+    /**
+     * 自定义标签值
+     */
+    private String customLabel = "public";
+
+    /**
+     * 自定义标签值
+     */
+    private String customLabelValue = "default";
+
+    public String getCustomLabel() {
+        return customLabel;
+    }
+
+    public void setCustomLabel(String customLabel) {
+        this.customLabel = customLabel;
+    }
+
+    public String getCustomLabelValue() {
+        return customLabelValue;
+    }
+
+    public void setCustomLabelValue(String customLabelValue) {
+        this.customLabelValue = customLabelValue;
+    }
+
     public String getApplication() {
         return application;
     }

@@ -17,13 +17,18 @@
 
 package com.huawei.flowcontrol.common.init;
 
-import com.huawei.flowcontrol.common.adapte.cse.rule.syncer.CseRuleSyncer;
-import com.huawei.flowcontrol.common.adapte.cse.rule.syncer.DefaultRuleSyncer;
-import com.huawei.flowcontrol.common.adapte.cse.rule.syncer.RuleSyncer;
+import com.huawei.flowcontrol.common.adapte.cse.entity.CseServiceMeta;
+import com.huawei.flowcontrol.common.adapte.cse.rule.RuleDynamicConfigListener;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.factory.FlowControlThreadFactory;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.plugin.service.PluginService;
+import com.huawei.sermant.core.plugin.subscribe.ConfigSubscriber;
+import com.huawei.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
+import com.huawei.sermant.core.plugin.subscribe.DefaultGroupConfigSubscriber;
+import com.huawei.sermant.core.service.ServiceManager;
+import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
+import com.huawei.sermant.core.service.dynamicconfig.kie.KieDynamicConfigService;
 
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -48,35 +53,40 @@ public class FlowControlInitServiceImpl implements PluginService {
         executor.execute(flowControlLifeCycle);
     }
 
-    @Override
-    public void stop() {
-        flowControlLifeCycle.stop();
-    }
-
     /**
      * 流控初始化逻辑生命周期
      *
      * @since 2022-03-22
      */
     static class FlowControlLifeCycle implements Runnable {
-        private RuleSyncer ruleSyncer;
+        private ConfigSubscriber configSubscriber;
 
         @Override
         public void run() {
             final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
             if (pluginConfig.isUseCseRule()) {
                 // 适配cse, 开始适配cse的专用配置监听器
-                ruleSyncer = new CseRuleSyncer();
+                configSubscriber = new CseGroupConfigSubscriber(CseServiceMeta.getInstance().getServiceName(),
+                    new RuleDynamicConfigListener(), getDynamicConfigService());
             } else {
-                ruleSyncer = new DefaultRuleSyncer();
+                configSubscriber = new DefaultGroupConfigSubscriber(CseServiceMeta.getInstance().getServiceName(),
+                    new RuleDynamicConfigListener(), getDynamicConfigService());
             }
-            ruleSyncer.start();
+            configSubscriber.subscribe();
         }
 
-        public void stop() {
-            if (ruleSyncer != null) {
-                ruleSyncer.stop();
+        private DynamicConfigService getDynamicConfigService() {
+            final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
+            DynamicConfigService dynamicConfigService;
+
+            // 根据使用需求选择是否使用自身配置中心
+            if (pluginConfig.isUseAgentConfigCenter()) {
+                dynamicConfigService = ServiceManager.getService(DynamicConfigService.class);
+            } else {
+                dynamicConfigService = new KieDynamicConfigService(pluginConfig.getConfigKieAddress(),
+                    pluginConfig.getProject());
             }
+            return dynamicConfigService;
         }
     }
 }

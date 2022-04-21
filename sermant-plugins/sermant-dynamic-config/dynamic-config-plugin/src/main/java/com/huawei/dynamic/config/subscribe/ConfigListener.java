@@ -15,33 +15,28 @@
  *
  */
 
-package com.huawei.flowcontrol.common.adapte.cse.rule.syncer;
+package com.huawei.dynamic.config.subscribe;
 
-import com.huawei.flowcontrol.common.adapte.cse.ResolverManager;
+import com.huawei.dynamic.config.ConfigHolder;
 import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
-import java.util.Collections;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * 规则同步监听器
+ * 配置监听器
  *
  * @author zhouss
- * @since 2022-01-25
+ * @since 2022-04-13
  */
-public class RuleDynamicConfigListener implements DynamicConfigListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
-
+public class ConfigListener implements DynamicConfigListener {
     @Override
     public void process(DynamicConfigEvent event) {
-        LOGGER.log(Level.INFO, String.format(Locale.ENGLISH, "Config [%s] has been received, operator type: [%s] ",
-            event.getKey(), event.getEventType()));
-        ResolverManager.INSTANCE.resolve(Collections.singletonMap(event.getKey(), event.getContent()),
-            event.getEventType() == DynamicConfigEventType.DELETE);
+        ConfigHolder.INSTANCE.resolve(event);
+        LoggerFactory.getLogger().info(String.format(Locale.ENGLISH,
+            "[DynamicConfig] Received source [%s], and [%s] it", event.getKey(), event.getEventType()));
+        LoggerFactory.getLogger().fine(String.format(Locale.ENGLISH,
+            "[DynamicConfig] the value of source is %s", event.getContent()));
     }
 }

@@ -208,7 +208,7 @@ public class FlowControlConfig implements PluginConfig {
     /**
      * 是否使用agent自身配置中心 该配置主要在适配cse时，可能需要使用cse的配置中心，而非使用agent自身配置中心
      */
-    private boolean useAgentConfigCenter = false;
+    private boolean useAgentConfigCenter = true;
 
     /**
      * kie命名空间
@@ -236,16 +236,6 @@ public class FlowControlConfig implements PluginConfig {
     private boolean isSslEnabled = false;
 
     /**
-     * 自定义标签
-     */
-    private String customLabel = "public";
-
-    /**
-     * 自定义标签值
-     */
-    private String customLabelValue = "";
-
-    /**
      * 是否是基于servicecomb sdk开发 通过此确定是否需要采用拦截方式获取服务信息
      */
     private boolean isBaseSdk = false;
@@ -269,22 +259,6 @@ public class FlowControlConfig implements PluginConfig {
 
     public void setBaseSdk(boolean baseSdk) {
         this.isBaseSdk = baseSdk;
-    }
-
-    public String getCustomLabel() {
-        return customLabel;
-    }
-
-    public void setCustomLabel(String customLabel) {
-        this.customLabel = customLabel;
-    }
-
-    public String getCustomLabelValue() {
-        return customLabelValue;
-    }
-
-    public void setCustomLabelValue(String customLabelValue) {
-        this.customLabelValue = customLabelValue;
     }
 
     public boolean isUseAgentConfigCenter() {
