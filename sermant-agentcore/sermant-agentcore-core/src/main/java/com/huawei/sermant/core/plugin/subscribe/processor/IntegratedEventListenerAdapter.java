@@ -15,26 +15,32 @@
  *
  */
 
-package com.huawei.dynamic.config.interceptors;
+package com.huawei.sermant.core.plugin.subscribe.processor;
 
-import com.huawei.dynamic.config.DynamicContext;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+
+import lombok.Builder;
+import lombok.Data;
 
 /**
- * 通过拦截开启启动配置后的调用方法来判断是否开启启动配置, 该逻辑将在{@link SpringEnvironmentInterceptor}逻辑之前执行
+ * 监听器适配, 多个监听器集成到一个processor处理
  *
  * @author zhouss
- * @since 2022-04-13
+ * @since 2022-04-21
  */
-public class BootstrapListenerInterceptor extends DynamicConfigSwitchSupport {
-    @Override
-    public ExecuteContext before(ExecuteContext context) {
-        return context;
-    }
+@Data
+@Builder
+public class IntegratedEventListenerAdapter implements DynamicConfigListener {
+    private ConfigProcessor processor;
+
+    private String rawGroup;
 
     @Override
-    public ExecuteContext doAfter(ExecuteContext context) {
-        DynamicContext.INSTANCE.setEnableBootstrap(true);
-        return context;
+    public void process(DynamicConfigEvent event) {
+        if (processor == null) {
+            return;
+        }
+        processor.process(rawGroup, event);
     }
 }

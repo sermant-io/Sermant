@@ -38,7 +38,15 @@ public class DynamicConfigEvent extends EventObject {
 
     private final DynamicConfigEventType eventType;
 
-    private DynamicConfigEvent(String key, String group, String content, DynamicConfigEventType eventType) {
+    /**
+     * 构造器
+     *
+     * @param key       配置键
+     * @param group     组
+     * @param content   配置内容
+     * @param eventType 事件类型
+     */
+    public DynamicConfigEvent(String key, String group, String content, DynamicConfigEventType eventType) {
         super(key + "," + group);
         this.key = key;
         this.group = group;
@@ -69,14 +77,14 @@ public class DynamicConfigEvent extends EventObject {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object target) {
+        if (this == target) {
             return true;
         }
-        if (!(o instanceof DynamicConfigEvent)) {
+        if (!(target instanceof DynamicConfigEvent)) {
             return false;
         }
-        DynamicConfigEvent that = (DynamicConfigEvent)o;
+        DynamicConfigEvent that = (DynamicConfigEvent) target;
         return Objects.equals(getKey(), that.getKey()) && Objects.equals(getGroup(), that.getGroup())
             && Objects.equals(getContent(), that.getContent()) && getEventType() == that.getEventType();
     }

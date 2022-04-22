@@ -15,6 +15,5 @@
 #
 #
 
-com.huawei.dynamic.config.DynamicConfigSource
 com.huawei.dynamic.config.sources.TestConfigSources
 com.huawei.dynamic.config.sources.TestLowestConfigSources

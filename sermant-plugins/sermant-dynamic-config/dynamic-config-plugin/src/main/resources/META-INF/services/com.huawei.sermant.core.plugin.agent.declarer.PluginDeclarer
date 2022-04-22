@@ -17,4 +17,3 @@
 
 com.huawei.dynamic.config.declarers.SpringFactoriesDeclarer
 com.huawei.dynamic.config.declarers.SpringEnvironmentDeclarer
-com.huawei.dynamic.config.declarers.SpringBootstrapListenerDeclarer

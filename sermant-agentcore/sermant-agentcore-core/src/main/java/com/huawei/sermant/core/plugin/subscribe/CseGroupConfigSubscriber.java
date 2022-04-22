@@ -19,6 +19,10 @@ package com.huawei.sermant.core.plugin.subscribe;
 
 import com.huawei.sermant.core.config.ConfigManager;
 import com.huawei.sermant.core.plugin.config.ServiceMeta;
+import com.huawei.sermant.core.plugin.subscribe.processor.ConfigDataHolder;
+import com.huawei.sermant.core.plugin.subscribe.processor.ConfigOrderIntegratedProcessor;
+import com.huawei.sermant.core.plugin.subscribe.processor.ConfigProcessor;
+import com.huawei.sermant.core.plugin.subscribe.processor.IntegratedEventListenerAdapter;
 import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huawei.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
@@ -37,13 +41,19 @@ import java.util.Map;
 public class CseGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
     private static final int REQUEST_MAP_SIZE = 4;
 
+    private static final int CUSTOM_ORDER = 300;
+
+    private static final int APP_ORDER = 200;
+
+    private static final int SERVICE_ORDER = 100;
+
     private final Map<String, DynamicConfigListener> listenerCache = new HashMap<>(REQUEST_MAP_SIZE);
 
     private final String serviceName;
 
-    private final DynamicConfigListener listener;
-
     private final ServiceMeta config;
+
+    private final ConfigProcessor configOrderIntegratedProcessor;
 
     /**
      * CSE订阅
@@ -66,8 +76,8 @@ public class CseGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
         DynamicConfigService dynamicConfigService) {
         super(dynamicConfigService);
         this.serviceName = serviceName;
-        this.listener = listener;
         this.config = ConfigManager.getConfig(ServiceMeta.class);
+        this.configOrderIntegratedProcessor = new ConfigOrderIntegratedProcessor(listener);
     }
 
     @Override
@@ -83,22 +93,44 @@ public class CseGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
         map.put("app", config.getApplication());
         map.put("service", serviceName);
         map.put("environment", config.getEnvironment());
-        listenerCache.put(LabelGroupUtils.createLabelGroup(map), listener);
+        final String labelGroup = LabelGroupUtils.createLabelGroup(map);
+        listenerCache.put(labelGroup, IntegratedEventListenerAdapter
+            .builder()
+            .processor(configOrderIntegratedProcessor)
+            .rawGroup(labelGroup)
+            .build());
+        configOrderIntegratedProcessor.addHolder(ConfigDataHolder.builder().order(SERVICE_ORDER).group(labelGroup)
+            .build());
     }
 
     private void buildAppRequest() {
         final HashMap<String, String> map = new HashMap<>(REQUEST_MAP_SIZE);
         map.put("app", config.getApplication());
         map.put("environment", config.getEnvironment());
-        listenerCache.put(LabelGroupUtils.createLabelGroup(map), listener);
+        final String labelGroup = LabelGroupUtils.createLabelGroup(map);
+        listenerCache.put(labelGroup, IntegratedEventListenerAdapter
+            .builder()
+            .processor(configOrderIntegratedProcessor)
+            .rawGroup(labelGroup)
+            .build());
+        configOrderIntegratedProcessor.addHolder(ConfigDataHolder.builder().order(APP_ORDER).group(labelGroup)
+            .build());
     }
 
     private void buildCustomRequest() {
-        if (StringUtils.isNoneBlank(config.getCustomLabel(), config.getCustomLabelValue())) {
-            final HashMap<String, String> map = new HashMap<>(REQUEST_MAP_SIZE);
-            map.put(config.getCustomLabel(), config.getCustomLabelValue());
-            listenerCache.put(LabelGroupUtils.createLabelGroup(map), listener);
+        if (StringUtils.isBlank(config.getCustomLabel()) || StringUtils.isBlank(config.getCustomLabelValue())) {
+            return;
         }
+        final HashMap<String, String> map = new HashMap<>(REQUEST_MAP_SIZE);
+        map.put(config.getCustomLabel(), config.getCustomLabelValue());
+        final String labelGroup = LabelGroupUtils.createLabelGroup(map);
+        listenerCache.put(labelGroup, IntegratedEventListenerAdapter
+            .builder()
+            .processor(configOrderIntegratedProcessor)
+            .rawGroup(labelGroup)
+            .build());
+        configOrderIntegratedProcessor.addHolder(ConfigDataHolder.builder().order(CUSTOM_ORDER).group(labelGroup)
+            .build());
     }
 
     @Override

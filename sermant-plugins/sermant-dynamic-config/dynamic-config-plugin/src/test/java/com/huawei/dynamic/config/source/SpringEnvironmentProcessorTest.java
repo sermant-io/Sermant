@@ -17,9 +17,9 @@
 
 package com.huawei.dynamic.config.source;
 
+import com.huawei.dynamic.config.ConfigHolder;
 import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.sources.MockEnvironment;
-import com.huawei.dynamic.config.sources.TestConfigSources;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
@@ -35,13 +35,15 @@ import org.springframework.core.env.PropertySource;
  * @author zhouss
  * @since 2022-04-16
  */
-public class SpringPropertyLocatorTest {
+public class SpringEnvironmentProcessorTest {
     private static final String KEY = "test";
-    private static final String CONTENT = "test: 1";
+    private static final String VALUE = String.valueOf(Integer.MIN_VALUE);
+    private static final String CONTENT = "test: " + VALUE;
+    private DynamicConfigEvent event;
 
     @Before
     public void before() {
-        final DynamicConfigEvent event = Mockito.mock(DynamicConfigEvent.class);
+        event = Mockito.mock(DynamicConfigEvent.class);
         Mockito.when(event.getKey()).thenReturn(KEY);
         Mockito.when(event.getContent()).thenReturn(CONTENT);
         final DynamicConfiguration configuration = Mockito.mock(DynamicConfiguration.class);
@@ -53,9 +55,13 @@ public class SpringPropertyLocatorTest {
 
     @Test
     public void locate() {
-        final SpringPropertyLocator springPropertyLocator = new SpringPropertyLocator();
-        final PropertySource<?> locate = springPropertyLocator.locate(new MockEnvironment());
-        Assert.assertEquals(locate.getName(), "Sermant-Dynamic-Config");
-        Assert.assertEquals(locate.getProperty(KEY), TestConfigSources.ORDER);
+        final SpringEnvironmentProcessor springEnvironmentProcessor = new SpringEnvironmentProcessor();
+        final MockEnvironment mockEnvironment = new MockEnvironment();
+        springEnvironmentProcessor.postProcessEnvironment(mockEnvironment, null);
+        final PropertySource<?> source = mockEnvironment.getPropertySources().get("Sermant-Dynamic-Config");
+        Assert.assertNotNull(source);
+        // 注意此处有进行configSource注入测试, 看查看spi文件，会按照指定顺序排序
+        ConfigHolder.INSTANCE.resolve(event);
+        Assert.assertEquals(mockEnvironment.getProperty(KEY), VALUE);
     }
 }

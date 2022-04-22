@@ -17,13 +17,14 @@
 
 package com.huawei.dynamic.config.interceptors;
 
-import com.huawei.dynamic.config.DynamicContext;
 import com.huawei.dynamic.config.entity.ClientMeta;
 import com.huawei.dynamic.config.init.DynamicConfigInitializer;
 import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huawei.sermant.core.service.ServiceManager;
 
 import org.springframework.core.env.ConfigurableEnvironment;
+
+import java.util.Set;
 
 /**
  * 获取服务名称同时启动配置订阅
@@ -32,6 +33,12 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * @since 2022-04-13
  */
 public class SpringEnvironmentInterceptor extends DynamicConfigSwitchSupport {
+    /**
+     * 标记为bootstrap.run, 该方法当前环境变量未初始化完成, 若有该标记则跳过
+     */
+    private static final String BOOTSTRAP_MARK_CLASS =
+        "org.springframework.cloud.bootstrap.BootstrapImportSelectorConfiguration";
+
     @Override
     public ExecuteContext before(ExecuteContext context) {
         return context;
@@ -39,17 +46,34 @@ public class SpringEnvironmentInterceptor extends DynamicConfigSwitchSupport {
 
     @Override
     public ExecuteContext doAfter(ExecuteContext context) {
-        if (!DynamicContext.INSTANCE.isEnableBootstrap()) {
-            return context;
+        if (canSubscribe(context)) {
+            startSubscribe(context);
         }
+        return context;
+    }
+
+    private boolean canSubscribe(ExecuteContext context) {
+        final Object primarySources = context.getMemberFieldValue("primarySources");
+        if (!(primarySources instanceof Set)) {
+            return false;
+        }
+        Set<Class<?>> primaryClasses = (Set<Class<?>>) primarySources;
+        for (Class<?> clazz : primaryClasses) {
+            if (clazz.getName().equals(BOOTSTRAP_MARK_CLASS)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void startSubscribe(ExecuteContext context) {
         final Object configurableEnvironment = context.getResult();
         if (!(configurableEnvironment instanceof ConfigurableEnvironment)) {
-            return context;
+            return;
         }
         ClientMeta.INSTANCE.setServiceName(getServiceName((ConfigurableEnvironment) configurableEnvironment));
         final DynamicConfigInitializer service = ServiceManager.getService(DynamicConfigInitializer.class);
         service.doStart();
-        return context;
     }
 
     private String getServiceName(ConfigurableEnvironment environment) {

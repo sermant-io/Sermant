@@ -50,19 +50,6 @@ public class DynamicConfiguration implements PluginConfig {
      */
     private long firstRefreshDelayMs = Duration.ofMinutes(1L).toMillis();
 
-    /**
-     * 是否强制开启启动配置
-     */
-    private boolean forceEnableBootstrap = true;
-
-    public boolean isForceEnableBootstrap() {
-        return forceEnableBootstrap;
-    }
-
-    public void setForceEnableBootstrap(boolean forceEnableBootstrap) {
-        this.forceEnableBootstrap = forceEnableBootstrap;
-    }
-
     public long getFirstRefreshDelayMs() {
         return firstRefreshDelayMs;
     }

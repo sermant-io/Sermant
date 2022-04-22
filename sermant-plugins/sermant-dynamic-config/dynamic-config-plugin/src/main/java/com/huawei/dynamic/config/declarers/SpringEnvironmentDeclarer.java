@@ -17,7 +17,6 @@
 
 package com.huawei.dynamic.config.declarers;
 
-import com.huawei.dynamic.config.interceptors.ForceEnableBootstrapInterceptor;
 import com.huawei.dynamic.config.interceptors.SpringEnvironmentInterceptor;
 import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
@@ -40,8 +39,6 @@ public class SpringEnvironmentDeclarer extends AbstractPluginDeclarer {
      * 拦截类的全限定名
      */
     private static final String INTERCEPT_CLASS = SpringEnvironmentInterceptor.class.getCanonicalName();
-    private static final String CONFIGURE_INTERCEPT_CLASS =
-        ForceEnableBootstrapInterceptor.class.getCanonicalName();
 
     @Override
     public ClassMatcher getClassMatcher() {
@@ -51,8 +48,7 @@ public class SpringEnvironmentDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("prepareEnvironment"), INTERCEPT_CLASS),
-            InterceptDeclarer.build(MethodMatcher.nameEquals("configureEnvironment"), CONFIGURE_INTERCEPT_CLASS)
+            InterceptDeclarer.build(MethodMatcher.nameEquals("prepareEnvironment"), INTERCEPT_CLASS)
         };
     }
 }

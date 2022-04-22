@@ -15,27 +15,29 @@
  *
  */
 
-package com.huawei.dynamic.config;
+package com.huawei.dynamic.config.inject;
 
 /**
- * 动态配置上下文
+ * 环境变量配置
  *
  * @author zhouss
- * @since 2022-04-18
+ * @since 2022-04-20
  */
-public enum DynamicContext {
-    /**
-     * 单例
-     */
-    INSTANCE;
-
-    private boolean isEnableBootstrap = false;
-
-    public boolean isEnableBootstrap() {
-        return isEnableBootstrap;
+public class ProcessorClassInjectDefine implements ClassInjectDefine {
+    @Override
+    public String injectClassName() {
+        return "com.huawei.dynamic.config.source.SpringEnvironmentProcessor";
     }
 
-    public void setEnableBootstrap(boolean enableBootstrap) {
-        isEnableBootstrap = enableBootstrap;
+    @Override
+    public String factoryName() {
+        return ClassInjectDefine.ENVIRONMENT_PROCESSOR_FACTOR_NAME;
+    }
+
+    @Override
+    public ClassInjectDefine[] requiredDefines() {
+        return new ClassInjectDefine[]{
+            this.build("com.huawei.dynamic.config.source.DynamicConfigPropertySource", "")
+        };
     }
 }

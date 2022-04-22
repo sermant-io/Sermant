@@ -21,27 +21,30 @@ import com.huawei.dynamic.config.ConfigHolder;
 
 import org.springframework.core.env.EnumerablePropertySource;
 
-import java.util.Map;
-
 /**
- * Spring额外配置源, 将基于配置中心读取配置下发
+ * 动态配置
  *
  * @author zhouss
- * @since 2022-04-08
+ * @since 2022-04-20
  */
-public class SpringPropertySource extends EnumerablePropertySource<Map<String, Object>> {
+public class DynamicConfigPropertySource extends EnumerablePropertySource<ConfigHolder> {
     /**
-     * 配置源
+     * 构造器
      *
-     * @param name 配置源名称
+     * @param name 配置名
      */
-    public SpringPropertySource(String name) {
+    public DynamicConfigPropertySource(String name) {
         super(name);
     }
 
     @Override
     public String[] getPropertyNames() {
         return ConfigHolder.INSTANCE.getConfigNames().toArray(new String[0]);
+    }
+
+    @Override
+    public boolean containsProperty(String name) {
+        return ConfigHolder.INSTANCE.getConfigNames().contains(name);
     }
 
     @Override
