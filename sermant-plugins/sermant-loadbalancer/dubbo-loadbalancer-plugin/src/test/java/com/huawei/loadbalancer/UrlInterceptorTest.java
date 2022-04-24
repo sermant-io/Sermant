@@ -19,7 +19,8 @@ package com.huawei.loadbalancer;
 import com.huawei.loadbalancer.config.DubboLoadbalancerType;
 import com.huawei.loadbalancer.config.LoadbalancerConfig;
 import com.huawei.loadbalancer.interceptor.UrlInterceptor;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import org.junit.Assert;
 import org.junit.Test;

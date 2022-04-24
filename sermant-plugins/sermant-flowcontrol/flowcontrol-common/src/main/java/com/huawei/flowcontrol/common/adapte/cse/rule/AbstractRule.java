@@ -18,7 +18,8 @@
 package com.huawei.flowcontrol.common.adapte.cse.rule;
 
 import com.huawei.flowcontrol.common.util.StringUtils;
-import com.huawei.sermant.core.common.LoggerFactory;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.time.DateTimeException;
 import java.time.Duration;

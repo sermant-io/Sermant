@@ -21,9 +21,10 @@ import com.huawei.flowcontrol.common.adapte.cse.entity.CseServiceMeta;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.listener.ConfigUpdateListener;
 import com.huawei.flowcontrol.common.adapte.cse.rule.Configurable;
 import com.huawei.flowcontrol.common.util.StringUtils;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.converter.Converter;
-import com.huawei.sermant.core.plugin.converter.YamlConverter;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.converter.Converter;
+import com.huaweicloud.sermant.core.plugin.converter.YamlConverter;
 
 import java.util.ArrayList;
 import java.util.HashMap;

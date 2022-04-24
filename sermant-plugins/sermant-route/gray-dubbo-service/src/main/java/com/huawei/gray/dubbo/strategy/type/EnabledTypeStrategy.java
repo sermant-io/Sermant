@@ -18,7 +18,8 @@ package com.huawei.gray.dubbo.strategy.type;
 
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
 import com.huawei.route.common.gray.constants.GrayConstant;
-import com.huawei.sermant.core.common.LoggerFactory;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;

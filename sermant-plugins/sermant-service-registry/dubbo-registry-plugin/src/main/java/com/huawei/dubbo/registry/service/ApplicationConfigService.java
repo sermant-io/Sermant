@@ -16,7 +16,7 @@
 
 package com.huawei.dubbo.registry.service;
 
-import com.huawei.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
  * 接口配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo

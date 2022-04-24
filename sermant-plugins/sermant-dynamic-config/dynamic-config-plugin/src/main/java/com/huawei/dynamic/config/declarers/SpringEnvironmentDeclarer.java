@@ -19,10 +19,11 @@ package com.huawei.dynamic.config.declarers;
 
 import com.huawei.dynamic.config.interceptors.ForceEnableBootstrapInterceptor;
 import com.huawei.dynamic.config.interceptors.SpringEnvironmentInterceptor;
-import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
-import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
-import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
+
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * 拦截springboot启动方法获取环境变量

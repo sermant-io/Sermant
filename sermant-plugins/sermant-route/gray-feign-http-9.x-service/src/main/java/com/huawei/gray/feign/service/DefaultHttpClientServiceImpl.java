@@ -32,8 +32,9 @@ import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;
 import com.huawei.route.common.gray.label.entity.Route;
 import com.huawei.route.common.gray.label.entity.Rule;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
+import com.huaweicloud.sermant.core.agent.common.BeforeResult;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import feign.Request;
 

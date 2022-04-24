@@ -18,9 +18,10 @@ package com.huawei.example.demo.interceptor;
 
 import com.huawei.example.demo.common.DemoLogger;
 import com.huawei.example.demo.config.DemoConfig;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
  * 统一配置功能的拦截器示例，在本示例中，将展示如何在插件端获取统一配置

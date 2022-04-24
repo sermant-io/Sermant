@@ -16,8 +16,10 @@
 
 package com.huawei.sermant.backend.service.dynamicconfig.kie.client.kie;
 
-import com.alibaba.fastjson.JSONObject;
 import com.huawei.sermant.backend.service.dynamicconfig.kie.client.http.HttpResult;
+
+import com.alibaba.fastjson.JSONObject;
+
 import org.apache.http.HttpStatus;
 
 import java.util.Iterator;

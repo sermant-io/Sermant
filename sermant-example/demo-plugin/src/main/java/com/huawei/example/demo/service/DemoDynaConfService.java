@@ -17,11 +17,12 @@
 package com.huawei.example.demo.service;
 
 import com.huawei.example.demo.common.DemoLogger;
-import com.huawei.sermant.core.plugin.service.PluginService;
-import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.DynamicConfigService;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 /**
  * 动态配置示例

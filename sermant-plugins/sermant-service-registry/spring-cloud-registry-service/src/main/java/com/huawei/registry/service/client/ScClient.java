@@ -22,12 +22,13 @@ import com.huawei.registry.config.ConfigConstants;
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.utils.HostUtils;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.common.PluginConstant;
-import com.huawei.sermant.core.plugin.common.PluginSchemaValidator;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.utils.JarFileUtils;
-import com.huawei.sermant.core.utils.StringUtils;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.common.PluginConstant;
+import com.huaweicloud.sermant.core.plugin.common.PluginSchemaValidator;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.utils.JarFileUtils;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;

@@ -17,9 +17,10 @@
 package com.huawei.dubbo.registry.interceptor;
 
 import com.huawei.dubbo.registry.service.RegistryService;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 /**
  * 增强SpringBootApplication类的main方法

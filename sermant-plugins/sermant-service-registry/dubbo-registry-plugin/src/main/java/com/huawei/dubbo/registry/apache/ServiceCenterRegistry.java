@@ -17,7 +17,8 @@
 package com.huawei.dubbo.registry.apache;
 
 import com.huawei.dubbo.registry.service.RegistryService;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import org.apache.dubbo.registry.NotifyListener;
 import org.apache.dubbo.registry.support.FailbackRegistry;

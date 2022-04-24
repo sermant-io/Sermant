@@ -21,14 +21,15 @@ import com.huawei.flowcontrol.common.adapte.cse.entity.CseServiceMeta;
 import com.huawei.flowcontrol.common.adapte.cse.rule.RuleDynamicConfigListener;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.factory.FlowControlThreadFactory;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.plugin.service.PluginService;
-import com.huawei.sermant.core.plugin.subscribe.ConfigSubscriber;
-import com.huawei.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
-import com.huawei.sermant.core.plugin.subscribe.DefaultGroupConfigSubscriber;
-import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
-import com.huawei.sermant.core.service.dynamicconfig.kie.KieDynamicConfigService;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.plugin.subscribe.ConfigSubscriber;
+import com.huaweicloud.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
+import com.huaweicloud.sermant.core.plugin.subscribe.DefaultGroupConfigSubscriber;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.DynamicConfigService;
+import com.huaweicloud.sermant.core.service.dynamicconfig.kie.KieDynamicConfigService;
 
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;

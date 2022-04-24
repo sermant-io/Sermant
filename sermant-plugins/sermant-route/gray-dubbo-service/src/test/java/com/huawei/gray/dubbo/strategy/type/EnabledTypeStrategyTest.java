@@ -17,8 +17,9 @@
 package com.huawei.gray.dubbo.strategy.type;
 
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
-import com.huawei.sermant.core.common.CommonConstant;
-import com.huawei.sermant.core.common.LoggerFactory;
+
+import com.huaweicloud.sermant.core.common.CommonConstant;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;

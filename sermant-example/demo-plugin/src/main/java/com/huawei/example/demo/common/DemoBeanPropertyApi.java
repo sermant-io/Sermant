@@ -16,7 +16,7 @@
 
 package com.huawei.example.demo.common;
 
-import com.huawei.sermant.core.plugin.agent.annotations.BeanPropertyFlag;
+import com.huaweicloud.sermant.core.plugin.agent.annotations.BeanPropertyFlag;
 
 /**
  * 测试为被增强类添加JavaBean接口，增添JavaBean属性并为之设置get，set方法

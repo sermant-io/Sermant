@@ -16,7 +16,7 @@
 
 package com.huawei.gray.dubbo.declarer;
 
-import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
  * 增强AbstractDirectory的子类的doList方法，筛选灰度应用的地址

@@ -17,7 +17,8 @@
 package com.huawei.dubbo.registry;
 
 import com.huawei.dubbo.registry.interceptor.RegistryProtocolInterceptor;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.config.ApplicationConfig;

@@ -16,15 +16,13 @@
 
 package com.huawei.sermant.plugins.luban.adaptor.service;
 
-import com.huawei.sermant.core.plugin.adaptor.service.AdaptorService;
-import com.huawei.sermant.core.plugin.classloader.PluginClassLoader;
-
+import com.huaweicloud.sermant.core.plugin.adaptor.service.AdaptorService;
+import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.ByteBuddy;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.agent.builder.AgentBuilder;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.asm.Advice;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.matcher.ElementMatchers;
 import com.lubanops.apm.premain.AgentPremain;
-
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.agent.builder.AgentBuilder;
-import net.bytebuddy.asm.Advice;
-import net.bytebuddy.matcher.ElementMatchers;
 
 import java.io.File;
 import java.io.IOException;

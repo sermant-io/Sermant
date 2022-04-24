@@ -17,9 +17,10 @@
 package com.huawei.gray.dubbo.interceptor;
 
 import com.huawei.gray.dubbo.service.AbstractDirectoryService;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 /**
  * 增强AbstractDirectory的子类的doList方法，筛选灰度应用的地址

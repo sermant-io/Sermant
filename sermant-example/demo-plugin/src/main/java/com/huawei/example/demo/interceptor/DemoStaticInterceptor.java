@@ -17,8 +17,9 @@
 package com.huawei.example.demo.interceptor;
 
 import com.huawei.example.demo.common.DemoLogger;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 import java.util.Locale;
 

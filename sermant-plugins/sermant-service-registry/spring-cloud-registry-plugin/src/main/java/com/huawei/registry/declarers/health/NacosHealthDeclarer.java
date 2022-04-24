@@ -17,10 +17,11 @@
 package com.huawei.registry.declarers.health;
 
 import com.huawei.registry.interceptors.health.NacosHealthInterceptor;
-import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
-import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
-import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
+
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * nacos健康检测增强

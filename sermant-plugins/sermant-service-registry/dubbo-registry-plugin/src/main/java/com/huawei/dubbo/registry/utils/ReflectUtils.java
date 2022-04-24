@@ -18,8 +18,9 @@ package com.huawei.dubbo.registry.utils;
 
 import com.huawei.dubbo.registry.cache.DubboCache;
 import com.huawei.dubbo.registry.constants.Constant;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.utils.ClassLoaderUtils;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.utils.ClassLoaderUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;

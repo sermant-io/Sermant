@@ -18,9 +18,10 @@
 package com.huawei.flowcontrol.config;
 
 import com.huawei.flowcontrol.common.init.FlowControlInitServiceImpl;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 /**
  * 结束阶段开始初始化流控配置监听

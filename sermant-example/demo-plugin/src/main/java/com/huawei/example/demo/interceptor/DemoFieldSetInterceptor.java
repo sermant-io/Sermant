@@ -17,8 +17,9 @@
 package com.huawei.example.demo.interceptor;
 
 import com.huawei.example.demo.common.DemoLogger;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 /**
  * 用于测试局部变量、成员变量和全局变量的写入和读取

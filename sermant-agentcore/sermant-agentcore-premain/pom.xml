@@ -10,13 +10,33 @@
     <properties>
         <package.output.dir>${package.agent.dir}</package.output.dir>
         <javaagent.package.name>${sermant.name}</javaagent.package.name>
-        <config.file.name>bootstrap.properties</config.file.name>
+        <bootstrap.config.file.name>bootstrap.properties</bootstrap.config.file.name>
         <config.source.dir>config</config.source.dir>
         <config.output.dir>${package.agent.dir}/config</config.output.dir>
+        <agent.core.output.div>${package.agent.dir}/core</agent.core.output.div>
+
+        <profile.id>agent</profile.id>
+        <config.file.name>config.properties</config.file.name>
+        <plugin.setting.name>plugins.yaml</plugin.setting.name>
+        <log.setting.name>logback.xml</log.setting.name>
     </properties>
+    <profiles>
+        <profile>
+            <id>example</id>
+            <properties>
+                <profile.id>example</profile.id>
+            </properties>
+        </profile>
+        <profile>
+            <id>all</id>
+            <properties>
+                <profile.id>all</profile.id>
+            </properties>
+        </profile>
+    </profiles>
     <dependencies>
         <dependency>
-            <groupId>com.huawei.sermant</groupId>
+            <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>sermant-agentcore-core</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -64,7 +84,18 @@
                                 <resource>
                                     <directory>${config.source.dir}</directory>
                                     <includes>
+                                        <include>${bootstrap.config.file.name}</include>
                                         <include>${config.file.name}</include>
+                                        <include>${plugin.setting.name}</include>
+                                        <include>${log.setting.name}</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${config.source.dir}/${profile.id}</directory>
+                                    <includes>
+                                        <include>${config.file.name}</include>
+                                        <include>${plugin.setting.name}</include>
+                                        <include>${log.setting.name}</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -78,6 +109,31 @@
                 <configuration>
                     <source>8</source>
                     <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>com.huaweicloud.sermant</groupId>
+                            <artifactId>sermant-agentcore-core</artifactId>
+                            <type>jar</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${agent.core.output.div}</outputDirectory>
+                        </artifactItem>
+                    </artifactItems>
                 </configuration>
             </plugin>
         </plugins>

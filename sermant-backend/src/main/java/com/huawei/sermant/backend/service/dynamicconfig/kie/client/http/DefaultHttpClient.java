@@ -16,8 +16,10 @@
 
 package com.huawei.sermant.backend.service.dynamicconfig.kie.client.http;
 
-import com.alibaba.fastjson.JSONObject;
 import com.huawei.sermant.backend.service.dynamicconfig.kie.listener.SubscriberManager;
+
+import com.alibaba.fastjson.JSONObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -148,7 +150,8 @@ public class DefaultHttpClient implements com.huawei.sermant.backend.service.dyn
     }
 
     @Override
-    public HttpResult doPost(String url, Map<String, Object> params, RequestConfig requestConfig, Map<String, String> headers) {
+    public HttpResult doPost(String url, Map<String, Object> params, RequestConfig requestConfig,
+        Map<String, String> headers) {
         HttpPost httpPost = new HttpPost(url);
         beforeRequest(httpPost, requestConfig, headers);
         addParams(httpPost, params);

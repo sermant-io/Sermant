@@ -18,10 +18,11 @@
 package com.huawei.flowcontrol.common.adapte.cse.rule;
 
 import com.huawei.flowcontrol.common.adapte.cse.ResolverManager;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 import java.util.Collections;
 import java.util.Locale;

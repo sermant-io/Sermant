@@ -25,7 +25,8 @@ import com.huawei.flowcontrol.common.handler.retry.Retry;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
 import com.huawei.flowcontrol.common.util.ConvertUtils;
 import com.huawei.flowcontrol.retry.handler.RetryHandlerV2;
-import com.huawei.sermant.core.common.LoggerFactory;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;

@@ -19,7 +19,8 @@ package com.huawei.registry.handler;
 import com.huawei.registry.config.RegisterDynamicConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.support.RegisterSwitchSupport;
-import com.huawei.sermant.core.common.LoggerFactory;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;

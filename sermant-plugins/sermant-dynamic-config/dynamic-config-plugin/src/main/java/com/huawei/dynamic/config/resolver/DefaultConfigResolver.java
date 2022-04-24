@@ -17,10 +17,10 @@
 
 package com.huawei.dynamic.config.resolver;
 
-import com.huawei.sermant.core.plugin.converter.Converter;
-import com.huawei.sermant.core.plugin.converter.YamlConverter;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huawei.sermant.core.utils.MapUtils;
+import com.huaweicloud.sermant.core.plugin.converter.Converter;
+import com.huaweicloud.sermant.core.plugin.converter.YamlConverter;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.utils.MapUtils;
 
 import java.util.HashMap;
 import java.util.Map;

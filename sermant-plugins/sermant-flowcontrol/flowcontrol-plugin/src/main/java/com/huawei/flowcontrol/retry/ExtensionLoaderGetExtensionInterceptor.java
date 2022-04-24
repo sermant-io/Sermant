@@ -18,7 +18,8 @@
 package com.huawei.flowcontrol.retry;
 
 import com.huawei.flowcontrol.service.InterceptorSupporter;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
  * ExtensionLoader 拦截器， 用于注入cluster

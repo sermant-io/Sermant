@@ -27,10 +27,11 @@ import com.huawei.flowcontrol.service.rest4j.DubboRest4jService;
 import com.huawei.flowcontrol.service.rest4j.HttpRest4jService;
 import com.huawei.flowcontrol.service.sen.DubboSenService;
 import com.huawei.flowcontrol.service.sen.HttpSenService;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import io.github.resilience4j.retry.RetryConfig;
 

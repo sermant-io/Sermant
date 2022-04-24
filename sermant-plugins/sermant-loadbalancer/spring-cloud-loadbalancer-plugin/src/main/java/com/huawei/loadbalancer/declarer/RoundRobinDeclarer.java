@@ -16,9 +16,9 @@
 
 package com.huawei.loadbalancer.declarer;
 
-import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.matcher.ElementMatchers;
 
-import net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * RoundRobinLoadBalancer增强类

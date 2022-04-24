@@ -25,12 +25,13 @@ import com.huawei.dubbo.registry.constants.Constant;
 import com.huawei.dubbo.registry.utils.CollectionUtils;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
 import com.huawei.registry.config.RegisterConfig;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.common.PluginConstant;
-import com.huawei.sermant.core.plugin.common.PluginSchemaValidator;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.utils.JarFileUtils;
-import com.huawei.sermant.core.utils.StringUtils;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.common.PluginConstant;
+import com.huaweicloud.sermant.core.plugin.common.PluginSchemaValidator;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.utils.JarFileUtils;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.google.common.eventbus.EventBus;

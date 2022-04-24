@@ -22,9 +22,10 @@ import com.huawei.flowcontrol.common.adapte.cse.entity.CseServiceMeta;
 import com.huawei.flowcontrol.common.config.ConfigConst;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.util.StringUtils;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;

@@ -17,7 +17,7 @@
 
 package com.huawei.dynamic.config.resolver;
 
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 /**
  * 配置解析器

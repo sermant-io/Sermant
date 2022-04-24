@@ -16,8 +16,9 @@
 
 package com.huawei.sermant.plugin.databasepeerparse.service;
 
-import com.huawei.sermant.core.utils.StringUtils;
 import com.huawei.sermant.plugin.monitor.common.service.DatabasePeerParseService;
+
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import org.apache.skywalking.apm.plugin.jdbc.connectionurl.parser.URLParser;
 import org.apache.skywalking.apm.plugin.jdbc.trace.ConnectionInfo;

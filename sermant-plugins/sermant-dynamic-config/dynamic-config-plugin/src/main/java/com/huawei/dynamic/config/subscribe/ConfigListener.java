@@ -18,9 +18,10 @@
 package com.huawei.dynamic.config.subscribe;
 
 import com.huawei.dynamic.config.ConfigHolder;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 import java.util.Locale;
 
