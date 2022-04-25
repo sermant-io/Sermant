@@ -22,11 +22,14 @@ import com.huawei.sermant.core.utils.StringUtils;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,6 +55,11 @@ public class ConfigValueUtil {
      * 环境前缀长度
      */
     private static final int ENV_PREFIX_LEN = 2;
+
+    /**
+     * Map kv长度
+     */
+    private static final int MAP_KV_LEN = 2;
 
     private ConfigValueUtil() {
     }
@@ -92,6 +100,30 @@ public class ConfigValueUtil {
      */
     public static <R> List<R> toListType(String configStr, Class<R> type) {
         final List<R> result = new ArrayList<R>();
+        parseConfigToCollection(configStr, type, result);
+        return Collections.unmodifiableList(result);
+    }
+
+    /**
+     * 将配置信息字符串转换为Set，需要注意以下内容：
+     * <pre>
+     *     1.Set的数据类型必须可被{@link #toBaseType}转换，空值跳过
+     *     2.配置信息字符串形如：{@code value,value1,value2}
+     *     3.返回的Set为不可变Set，不要尝试修改配置中Set的内容
+     * </pre>
+     *
+     * @param configStr 配置信息字符串
+     * @param type      Set中数据的类型
+     * @param <R>       Set中数据的泛型
+     * @return 转换后的Set
+     */
+    public static <R> Set<R> toSetType(String configStr, Class<R> type) {
+        final Set<R> result = new HashSet<>();
+        parseConfigToCollection(configStr, type, result);
+        return Collections.unmodifiableSet(result);
+    }
+
+    private static <R> void parseConfigToCollection(String configStr, Class<R> type, Collection<R> result) {
         for (String configSlice : configStr.split(CONFIG_SEPARATOR)) {
             final R obj = toBaseType(configSlice.trim(), type);
             if (obj == null) {
@@ -100,7 +132,6 @@ public class ConfigValueUtil {
             }
             result.add(obj);
         }
-        return Collections.unmodifiableList(result);
     }
 
     private static String buildTransformErrMsg(String configSlice, String typeName) {
@@ -128,7 +159,7 @@ public class ConfigValueUtil {
         final Map<K, V> result = new HashMap<K, V>();
         for (String kvSlice : configStr.split(CONFIG_SEPARATOR)) {
             final String[] kvEntry = kvSlice.trim().split(":");
-            if (kvEntry.length != 2) {
+            if (kvEntry.length != MAP_KV_LEN) {
                 LOGGER.log(Level.WARNING, String.format(Locale.ROOT, "Wrong map type entry [%s].", kvSlice));
                 continue;
             }
@@ -156,10 +187,10 @@ public class ConfigValueUtil {
      * @return 配置信息
      */
     public static <R> R toBaseType(String configStr, Class<R> type) {
+        Object result = null;
         if (configStr == null) {
-            return null;
+            return (R) result;
         }
-        final Object result;
         if (type == int.class) {
             result = Integer.parseInt(configStr);
         } else if (type == Integer.class) {
@@ -202,6 +233,7 @@ public class ConfigValueUtil {
      * @param argsMap   入参
      * @param provider  修正值获取方式
      * @return 修正后的配置信息字符串
+     * @throws DupConfIndexException 配置重复索引异常
      */
     public static String fixValue(String configKey, String configVal, Map<String, Object> argsMap,
         FixedValueProvider provider) {
@@ -269,8 +301,18 @@ public class ConfigValueUtil {
 
     /**
      * 值更正
+     *
+     * @author HapThorin
+     * @version 1.0.0
+     * @since 2021-11-16
      */
     public interface FixedValueProvider {
+        /**
+         * 获取修正的字段
+         *
+         * @param key 键
+         * @return 修正后的字段
+         */
         String getFixedValue(String key);
     }
 }
