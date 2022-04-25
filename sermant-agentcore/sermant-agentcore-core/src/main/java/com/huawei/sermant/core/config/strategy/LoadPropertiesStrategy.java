@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,6 +55,16 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      * 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    /**
+     * Collection参数类型长度
+     */
+    private static final int COLLECTION_ARGUMENT_TYPE_LEN = 1;
+
+    /**
+     * MAP参数类型长度
+     */
+    private static final int MAP_ARGUMENT_TYPE_LEN = 2;
 
     /**
      * 启动参数
@@ -149,10 +160,7 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      */
     private Object getConfig(Properties config, String key, Field field) {
         final String configStr = getConfigStr(config, key);
-        if (configStr == null) {
-            return null;
-        }
-        return transType(configStr, field);
+        return configStr == null ? null : transType(configStr, field);
     }
 
     /**
@@ -193,17 +201,17 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
             return ConfigValueUtil.toArrayType(configStr, fieldType.getComponentType());
         } else if (List.class.equals(fieldType)) {
             final Type[] argumentTypes = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
-            if (argumentTypes.length != 1 || !(argumentTypes[0] instanceof Class)) {
-                return null;
-            }
-            return ConfigValueUtil.toListType(configStr, (Class<?>) argumentTypes[0]);
+            return (argumentTypes.length != COLLECTION_ARGUMENT_TYPE_LEN || !(argumentTypes[0] instanceof Class)) ? null
+                    : ConfigValueUtil.toListType(configStr, (Class<?>) argumentTypes[0]);
         } else if (Map.class.equals(fieldType)) {
             final Type[] argumentTypes = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
-            if (argumentTypes.length != 2 || !(argumentTypes[0] instanceof Class)
-                    || !(argumentTypes[1] instanceof Class)) {
-                return null;
-            }
-            return ConfigValueUtil.toMapType(configStr, (Class<?>) argumentTypes[0], (Class<?>) argumentTypes[1]);
+            return (argumentTypes.length != MAP_ARGUMENT_TYPE_LEN || !(argumentTypes[0] instanceof Class)
+                    || !(argumentTypes[1] instanceof Class)) ? null
+                    : ConfigValueUtil.toMapType(configStr, (Class<?>) argumentTypes[0], (Class<?>) argumentTypes[1]);
+        } else if (Set.class.equals(fieldType)) {
+            final Type[] argumentTypes = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+            return (argumentTypes.length != COLLECTION_ARGUMENT_TYPE_LEN || !(argumentTypes[0] instanceof Class)) ? null
+                    : ConfigValueUtil.toSetType(configStr, (Class<?>) argumentTypes[0]);
         } else {
             return ConfigValueUtil.toBaseType(configStr, fieldType);
         }
