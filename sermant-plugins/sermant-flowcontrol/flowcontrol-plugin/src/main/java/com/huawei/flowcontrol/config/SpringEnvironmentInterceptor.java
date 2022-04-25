@@ -17,6 +17,7 @@
 
 package com.huawei.flowcontrol.config;
 
+import com.huawei.flowcontrol.common.adapte.cse.ResolverManager;
 import com.huawei.flowcontrol.common.adapte.cse.constants.CseConstants;
 import com.huawei.flowcontrol.common.adapte.cse.entity.CseServiceMeta;
 import com.huawei.flowcontrol.common.config.ConfigConst;
@@ -28,7 +29,13 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertySource;
+
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * apache dubbo配置拦截
@@ -37,6 +44,14 @@ import org.springframework.core.env.Environment;
  * @since 2022-01-28
  */
 public class SpringEnvironmentInterceptor extends AbstractInterceptor {
+    /**
+     * 标记为bootstrap.run, 该方法当前环境变量未初始化完成, 若有该标记则跳过
+     */
+    private static final String BOOTSTRAP_MARK_CLASS =
+        "org.springframework.cloud.bootstrap.BootstrapImportSelectorConfiguration";
+
+    private final AtomicBoolean isLoadedRule = new AtomicBoolean();
+
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         return context;
@@ -45,12 +60,15 @@ public class SpringEnvironmentInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext after(ExecuteContext context) {
         final Object applicationContext = context.getArguments()[0];
-        if (!(applicationContext instanceof ConfigurableApplicationContext) || CseServiceMeta.getInstance()
-            .isDubboService()) {
+        if (!(applicationContext instanceof ConfigurableApplicationContext) || !canSubscribe(context)) {
+            return context;
+        }
+        Environment environment = ((ConfigurableApplicationContext) applicationContext).getEnvironment();
+        loadRuleFromEnvironment(environment);
+        if (CseServiceMeta.getInstance().isDubboService()) {
             return context;
         }
         final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
-        Environment environment = ((ConfigurableApplicationContext) applicationContext).getEnvironment();
         if (pluginConfig.isUseCseRule() && pluginConfig.isBaseSdk()) {
             CseServiceMeta.getInstance().setProject(environment.getProperty(CseConstants.KEY_SPRING_KIE_PROJECT,
                 CseConstants.DEFAULT_PROJECT));
@@ -71,5 +89,48 @@ public class SpringEnvironmentInterceptor extends AbstractInterceptor {
             CseServiceMeta.getInstance().setServiceName(serviceName);
         }
         return context;
+    }
+
+    /**
+     * 从spring环境变量读取流控策略
+     *
+     * @param environment 环境变量
+     */
+    private void loadRuleFromEnvironment(Environment environment) {
+        if (!(environment instanceof ConfigurableEnvironment)) {
+            return;
+        }
+        ConfigurableEnvironment configurableEnvironment = (ConfigurableEnvironment) environment;
+        if (isLoadedRule.compareAndSet(false, true)) {
+            for (PropertySource<?> next : configurableEnvironment.getPropertySources()) {
+                if (next instanceof EnumerablePropertySource) {
+                    loadRuleFromSource((EnumerablePropertySource<?>) next);
+                }
+            }
+        }
+    }
+
+    private void loadRuleFromSource(EnumerablePropertySource<?> source) {
+        final String[] propertyNames = source.getPropertyNames();
+        for (String propertyName : propertyNames) {
+            if (!ResolverManager.INSTANCE.isTarget(propertyName)) {
+                continue;
+            }
+            ResolverManager.INSTANCE.resolve(propertyName, String.valueOf(source.getProperty(propertyName)), false);
+        }
+    }
+
+    private boolean canSubscribe(ExecuteContext context) {
+        final Object primarySources = context.getMemberFieldValue("primarySources");
+        if (!(primarySources instanceof Set)) {
+            return false;
+        }
+        Set<Class<?>> primaryClasses = (Set<Class<?>>) primarySources;
+        for (Class<?> clazz : primaryClasses) {
+            if (clazz.getName().equals(BOOTSTRAP_MARK_CLASS)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

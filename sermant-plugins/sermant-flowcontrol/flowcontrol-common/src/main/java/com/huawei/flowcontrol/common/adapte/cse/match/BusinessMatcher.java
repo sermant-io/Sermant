@@ -45,7 +45,7 @@ public class BusinessMatcher extends Configurable implements Matcher {
     private List<RequestMatcher> matches;
 
     @Override
-    public boolean isValid() {
+    public boolean isInValid() {
         return matches == null || matches.isEmpty();
     }
 

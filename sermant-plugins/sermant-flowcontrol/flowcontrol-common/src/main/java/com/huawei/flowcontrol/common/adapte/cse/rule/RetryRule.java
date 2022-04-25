@@ -90,7 +90,7 @@ public class RetryRule extends AbstractRule {
     /**
      * 需要重试的http status, 逗号分隔
      */
-    private List<String> retryOnResponseStatus = new ArrayList<String>();
+    private List<String> retryOnResponseStatus = new ArrayList<>();
 
     /**
      * 重试策略
@@ -118,7 +118,7 @@ public class RetryRule extends AbstractRule {
     private double randomizationFactor = DEFAULT_RANDOMIZATION_FACTOR;
 
     @Override
-    public boolean isValid() {
+    public boolean isInValid() {
         if (maxAttempts < 1) {
             return true;
         }
@@ -128,7 +128,7 @@ public class RetryRule extends AbstractRule {
         if (parsedInitialInterval < MIN_INITIAL_INTERVAL_MS) {
             return true;
         }
-        return super.isValid();
+        return super.isInValid();
     }
 
     public int getMaxAttempts() {

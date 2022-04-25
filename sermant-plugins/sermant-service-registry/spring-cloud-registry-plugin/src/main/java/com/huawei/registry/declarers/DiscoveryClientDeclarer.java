@@ -17,6 +17,7 @@
 package com.huawei.registry.declarers;
 
 import com.huawei.registry.interceptors.DiscoveryClientInterceptor;
+import com.huawei.registry.interceptors.DiscoveryClientServiceInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
@@ -41,6 +42,11 @@ public class DiscoveryClientDeclarer extends AbstractPluginDeclarer {
      */
     private static final String INTERCEPT_CLASS = DiscoveryClientInterceptor.class.getCanonicalName();
 
+    /**
+     * 服务名拦截
+     */
+    private static final String SERVICE_INTERCEPT_CLASS = DiscoveryClientServiceInterceptor.class.getCanonicalName();
+
     @Override
     public ClassMatcher getClassMatcher() {
         return ClassMatcher.nameEquals(ENHANCE_CLASS);
@@ -49,7 +55,8 @@ public class DiscoveryClientDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("getInstances"), INTERCEPT_CLASS)
+            InterceptDeclarer.build(MethodMatcher.nameEquals("getInstances"), INTERCEPT_CLASS),
+            InterceptDeclarer.build(MethodMatcher.nameEquals("getServices"), SERVICE_INTERCEPT_CLASS)
         };
     }
 }

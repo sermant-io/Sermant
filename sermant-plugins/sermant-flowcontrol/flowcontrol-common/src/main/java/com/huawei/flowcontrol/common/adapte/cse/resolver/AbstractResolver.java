@@ -153,7 +153,7 @@ public abstract class AbstractResolver<T extends Configurable> {
         rule.setName(businessKey);
 
         // 4、判断规则是否合法
-        if (rule.isValid()) {
+        if (rule.isInValid()) {
             return Optional.empty();
         }
         if (!isServicesMatch(rule.getServices())) {

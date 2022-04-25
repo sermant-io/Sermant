@@ -45,7 +45,7 @@ public abstract class Configurable {
      *
      * @return 是否合法
      */
-    public abstract boolean isValid();
+    public abstract boolean isInValid();
 
     public String getName() {
         return name;
