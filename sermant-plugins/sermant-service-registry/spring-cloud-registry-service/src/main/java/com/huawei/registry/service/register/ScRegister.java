@@ -16,14 +16,23 @@
 
 package com.huawei.registry.service.register;
 
+import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.service.client.ScClient;
+import com.huawei.sermant.core.common.LoggerFactory;
+import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+import com.huawei.sermant.core.utils.StringUtils;
 
+import org.apache.servicecomb.service.center.client.exception.OperationException;
+import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
+import org.apache.servicecomb.service.center.client.model.MicroservicesResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 /**
  * SC注册实现
@@ -57,6 +66,49 @@ public class ScRegister implements Register {
             serviceInstances.add(new ServicecombServiceInstance(microserviceInstance));
         }
         return serviceInstances;
+    }
+
+    @Override
+    public List<String> getServices() {
+        List<String> serviceList = new ArrayList<>();
+        try {
+            MicroservicesResponse microServiceResponse = client.getRawClient().getMicroserviceList();
+            if (microServiceResponse == null || microServiceResponse.getServices() == null) {
+                return serviceList;
+            }
+            for (Microservice microservice : microServiceResponse.getServices()) {
+                final Optional<String> microserviceName = getMicroserviceName(microservice);
+                microserviceName.ifPresent(serviceList::add);
+            }
+        } catch (OperationException ex) {
+            LoggerFactory.getLogger().severe(String.format(Locale.ENGLISH,
+                "Can not query service list from service center! %s", ex.getMessage()));
+        }
+        return serviceList;
+    }
+
+    private Optional<String> getMicroserviceName(Microservice microservice) {
+        final RegisterConfig pluginConfig = PluginConfigManager.getPluginConfig(RegisterConfig.class);
+        if (!environmentEqual(microservice, pluginConfig)) {
+            return Optional.empty();
+        }
+        if (microservice.getAppId().equals(pluginConfig.getApplication())) {
+            return Optional.of(microservice.getServiceName());
+        } else if (pluginConfig.isAllowCrossApp()) {
+            // 当允许跨app时, 则可采用appId.serviceName别名方式返回
+            return Optional.of(String.format(Locale.ENGLISH, "%s.%s", microservice.getAppId(),
+                microservice.getServiceName()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private boolean environmentEqual(Microservice microservice, RegisterConfig pluginConfig) {
+        // empty is equal.
+        if (StringUtils.isBlank(microservice.getEnvironment()) && StringUtils.isBlank(pluginConfig.getEnvironment())) {
+            return true;
+        }
+        return StringUtils.equals(microservice.getEnvironment(), pluginConfig.getEnvironment());
     }
 
     @Override

@@ -137,7 +137,7 @@ public class CircuitBreakerRule extends AbstractRule {
     private long parsedSlidingWindowSize = DEFAULT_SLIDING_WINDOW_SIZE;
 
     @Override
-    public boolean isValid() {
+    public boolean isInValid() {
         if (failureRateThreshold > MAX_PERCENT || failureRateThreshold <= MIN_PERCENT) {
             return false;
         }
@@ -154,7 +154,7 @@ public class CircuitBreakerRule extends AbstractRule {
             return false;
         }
 
-        return super.isValid();
+        return super.isInValid();
     }
 
     public float getFailureRateThreshold() {

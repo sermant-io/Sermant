@@ -22,8 +22,15 @@ import com.huawei.flowcontrol.common.exception.InvokerWrapperException;
 import com.huawei.flowcontrol.common.handler.retry.Retry;
 import com.huawei.flowcontrol.common.util.ReflectUtils;
 
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.NoRouteToHostException;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -38,9 +45,24 @@ public class DefaultRetryPredicateCreator implements RetryPredicateCreator {
 
     private static final String APACHE_GENERIC_SERVICE = "org.apache.dubbo.rpc.service.GenericService";
 
+    /**
+     * 默认重试状态码
+     */
+    private static final String DEFAULT_RETRY_ON_RESPONSE_STATUS = "502";
+
+    /**
+     * 默认重试异常
+     */
+    private static final List<Class<? extends Throwable>> STRICT_RETRYABLE = Collections.unmodifiableList(
+        Arrays.asList(ConnectException.class, SocketTimeoutException.class, IOException.class,
+            NoRouteToHostException.class)
+    );
+
     @Override
     public Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable>[] retryExceptions) {
-        return Arrays.stream(retryExceptions).distinct().map(this::createExceptionPredicate).reduce(Predicate::or)
+        final List<Class<? extends Throwable>> exceptions = new ArrayList<>(Arrays.asList(retryExceptions));
+        exceptions.addAll(STRICT_RETRYABLE);
+        return exceptions.stream().distinct().map(this::createExceptionPredicate).reduce(Predicate::or)
             .orElseGet(() -> throwable -> true);
     }
 
@@ -91,6 +113,10 @@ public class DefaultRetryPredicateCreator implements RetryPredicateCreator {
 
     @Override
     public Predicate<Object> createResultPredicate(Retry retry, RetryRule rule) {
-        return result -> retry.needRetry(new HashSet<>(rule.getRetryOnResponseStatus()), result);
+        final List<String> retryOnResponseStatus = rule.getRetryOnResponseStatus();
+        if (retryOnResponseStatus.isEmpty()) {
+            retryOnResponseStatus.add(DEFAULT_RETRY_ON_RESPONSE_STATUS);
+        }
+        return result -> retry.needRetry(new HashSet<>(retryOnResponseStatus), result);
     }
 }

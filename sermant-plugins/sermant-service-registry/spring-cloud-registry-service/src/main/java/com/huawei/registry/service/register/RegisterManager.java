@@ -123,4 +123,17 @@ public enum RegisterManager {
         }
         return Collections.emptyList();
     }
+
+    /**
+     * 获取服务名列表
+     *
+     * @return 服务名列表
+     */
+    public List<String> getServices() {
+        final Register register = getRegister();
+        if (register != null) {
+            return register.getServices();
+        }
+        return Collections.emptyList();
+    }
 }

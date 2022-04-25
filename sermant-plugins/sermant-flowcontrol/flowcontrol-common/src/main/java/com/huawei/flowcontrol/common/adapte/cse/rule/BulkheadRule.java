@@ -50,14 +50,14 @@ public class BulkheadRule extends AbstractRule {
     private long parsedMaxWaitDuration = DEFAULT_MAX_WAIT_DURATION_MS;
 
     @Override
-    public boolean isValid() {
+    public boolean isInValid() {
         if (maxConcurrentCalls < 0) {
             return true;
         }
         if (parsedMaxWaitDuration < 0) {
             return true;
         }
-        return super.isValid();
+        return super.isInValid();
     }
 
     public long getParsedMaxWaitDuration() {
