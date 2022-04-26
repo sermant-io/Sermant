@@ -17,11 +17,14 @@
 
 package com.huawei.dubbo.registry.service;
 
-import com.huawei.dubbo.registry.InterfaceData;
-import com.huawei.dubbo.registry.Subscription;
-import com.huawei.dubbo.registry.SubscriptionKey;
 import com.huawei.dubbo.registry.cache.DubboCache;
 import com.huawei.dubbo.registry.constants.Constant;
+import com.huawei.dubbo.registry.entity.GovernanceCache;
+import com.huawei.dubbo.registry.entity.GovernanceData;
+import com.huawei.dubbo.registry.entity.InterfaceData;
+import com.huawei.dubbo.registry.entity.ProviderInfo;
+import com.huawei.dubbo.registry.entity.Subscription;
+import com.huawei.dubbo.registry.entity.SubscriptionKey;
 import com.huawei.dubbo.registry.utils.CollectionUtils;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
 import com.huawei.registry.config.RegisterConfig;
@@ -29,6 +32,7 @@ import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.core.plugin.common.PluginConstant;
 import com.huawei.sermant.core.plugin.common.PluginSchemaValidator;
 import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+import com.huawei.sermant.core.service.ServiceManager;
 import com.huawei.sermant.core.utils.JarFileUtils;
 import com.huawei.sermant.core.utils.StringUtils;
 
@@ -94,8 +98,9 @@ import java.util.stream.Collectors;
 public class RegistryServiceImpl implements RegistryService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
     private static final EventBus EVENT_BUS = new EventBus();
-    private static final Map<String, Microservice> INTERFACE_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, List<Microservice>> INTERFACE_MAP = new ConcurrentHashMap<>();
     private static final Map<SubscriptionKey, Set<Object>> SUBSCRIPTIONS = new ConcurrentHashMap<>();
+    private static final Map<Object, List<Object>> NOTIFIED_URL_MAP = new ConcurrentHashMap<>();
     private static final CountDownLatch FIRST_REGISTRATION_WAITER = new CountDownLatch(1);
     private static final int REGISTRATION_WAITE_TIME = 30;
     private static final List<Subscription> PENDING_SUBSCRIBE_EVENT = new CopyOnWriteArrayList<>();
@@ -117,6 +122,7 @@ public class RegistryServiceImpl implements RegistryService {
     private ServiceCenterDiscovery serviceCenterDiscovery;
     private boolean isRegistrationInProgress = true;
     private RegisterConfig config;
+    private GovernanceService governanceService;
 
     @Override
     public void startRegistration() {
@@ -125,6 +131,7 @@ public class RegistryServiceImpl implements RegistryService {
             return;
         }
         config = PluginConfigManager.getPluginConfig(RegisterConfig.class);
+        governanceService = ServiceManager.getService(GovernanceService.class);
         client = new ServiceCenterClient(new AddressManager(config.getProject(), config.getAddressList()),
             createSslProperties(), new DefaultRequestAuthHeaderProvider(), DEFAULT_TENANT_NAME, Collections.emptyMap());
         createMicroservice();
@@ -186,6 +193,27 @@ public class RegistryServiceImpl implements RegistryService {
         if (!CONSUMER_PROTOCOL_PREFIX.equals(ReflectUtils.getProtocol(url))) {
             registryUrls.add(url);
         }
+    }
+
+    /**
+     * 通知治理url
+     */
+    @Override
+    public void notifyGovernanceUrl() {
+        SUBSCRIPTIONS.values().forEach(notifyListeners -> notifyListeners.forEach(notifyListener -> {
+                List<Object> urls = NOTIFIED_URL_MAP.get(notifyListener);
+                if (CollectionUtils.isEmpty(urls)) {
+                    return;
+                }
+                List<Object> governanceUrls = wrapGovernanceData(urls);
+                if (governanceUrls == urls || (governanceUrls.containsAll(urls) && urls.containsAll(governanceUrls))) {
+                    // 修改前后urls一致，或者修改前后的实例url一致，则不用通知
+                    return;
+                }
+                ReflectUtils.notify(notifyListener, governanceUrls);
+                NOTIFIED_URL_MAP.put(notifyListener, governanceUrls);
+            }
+        ));
     }
 
     /**
@@ -353,7 +381,7 @@ public class RegistryServiceImpl implements RegistryService {
 
     private void createServiceCenterRegistration() {
         ServiceCenterConfiguration serviceCenterConfiguration = new ServiceCenterConfiguration();
-        serviceCenterConfiguration.setIgnoreSwaggerDifferent(false);
+        serviceCenterConfiguration.setIgnoreSwaggerDifferent(config.isIgnoreSwaggerDifferent());
         serviceCenterRegistration = new ServiceCenterRegistration(client, serviceCenterConfiguration, EVENT_BUS);
         serviceCenterRegistration.setMicroservice(microservice);
         serviceCenterRegistration.setMicroserviceInstance(microserviceInstance);
@@ -384,25 +412,34 @@ public class RegistryServiceImpl implements RegistryService {
     private void subscribe(Subscription subscription) {
         Object url = subscription.getUrl();
         String interfaceName = getInterface(url);
-        Microservice service = INTERFACE_MAP.get(interfaceName);
-        if (service == null) {
+        List<Microservice> serviceList = INTERFACE_MAP.get(interfaceName);
+        if (CollectionUtils.isEmpty(serviceList)) {
             updateInterfaceMap();
-            service = INTERFACE_MAP.get(interfaceName);
+            serviceList = INTERFACE_MAP.get(interfaceName);
         }
-        if (service == null) {
+        if (CollectionUtils.isEmpty(serviceList)) {
             LOGGER.warning(String.format(Locale.ROOT, "the subscribe url [%s] is not registered.", interfaceName));
             PENDING_SUBSCRIBE_EVENT.add(subscription);
             return;
         }
-        String appId = service.getAppId();
-        String serviceName = service.getServiceName();
+
+        // 相同interfaceName的serviceList的appId和serviceName相同，所以可以取第一个
+        String appId = serviceList.get(0).getAppId();
+        String serviceName = serviceList.get(0).getServiceName();
         Object notifyListener = subscription.getNotifyListener();
         if (notifyListener != null) {
             SUBSCRIPTIONS.computeIfAbsent(getSubscriptionKey(appId, serviceName, url), value -> new HashSet<>())
                 .add(notifyListener);
         }
-        MicroserviceInstancesResponse response = client.getMicroserviceInstanceList(service.getServiceId());
-        notify(appId, serviceName, response.getInstances());
+        List<MicroserviceInstance> instances = new ArrayList<>();
+        serviceList.forEach(service -> {
+            MicroserviceInstancesResponse response = client.getMicroserviceInstanceList(service.getServiceId());
+            List<MicroserviceInstance> list = response.getInstances();
+            if (!CollectionUtils.isEmpty(list)) {
+                instances.addAll(list);
+            }
+        });
+        notify(appId, serviceName, instances);
         serviceCenterDiscovery.registerIfNotPresent(new ServiceCenterDiscovery.SubscriptionKey(appId, serviceName));
     }
 
@@ -422,7 +459,8 @@ public class RegistryServiceImpl implements RegistryService {
 
     private void updateInterfaceMap(Microservice service) {
         if (microservice.getAppId().equals(service.getAppId())) {
-            service.getSchemas().forEach(schema -> INTERFACE_MAP.put(schema, service));
+            service.getSchemas()
+                .forEach(schema -> INTERFACE_MAP.computeIfAbsent(schema, value -> new ArrayList<>()).add(service));
         }
     }
 
@@ -433,15 +471,63 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private void notify(String appId, String serviceName, List<MicroserviceInstance> instances) {
-        if (instances != null) {
+        if (!CollectionUtils.isEmpty(instances)) {
             Map<SubscriptionKey, List<Object>> notifyUrls = instancesToUrls(appId, serviceName, instances);
             notifyUrls.forEach((subscriptionKey, urls) -> {
                 Set<Object> notifyListeners = SUBSCRIPTIONS.get(subscriptionKey);
-                if (!CollectionUtils.isEmpty(notifyListeners)) {
-                    notifyListeners.forEach(notifyListener -> ReflectUtils.notify(notifyListener, urls));
+                if (CollectionUtils.isEmpty(notifyListeners)) {
+                    return;
                 }
+                notifyListeners.forEach(notifyListener -> {
+                    List<Object> governanceUrls = wrapGovernanceData(urls);
+                    ReflectUtils.notify(notifyListener, governanceUrls);
+                    NOTIFIED_URL_MAP.put(notifyListener, governanceUrls);
+                });
             });
         }
+        governanceService.doStart();
+    }
+
+    private List<Object> wrapGovernanceData(List<Object> urls) {
+        GovernanceData governanceData = GovernanceCache.INSTANCE.getGovernanceData();
+        if (governanceData == null || CollectionUtils.isEmpty(governanceData.getProviderInfos())) {
+            return urls;
+        }
+        Map<com.huawei.dubbo.registry.entity.SchemaInfo, Map<String, String>> map = new HashMap<>();
+        List<ProviderInfo> providerInfos = governanceData.getProviderInfos();
+        providerInfos.forEach(providerInfo -> {
+            List<com.huawei.dubbo.registry.entity.SchemaInfo> schemaInfos = providerInfo.getSchemaInfos();
+            if (CollectionUtils.isEmpty(schemaInfos)) {
+                return;
+            }
+            schemaInfos.forEach(schemaInfo -> map.put(schemaInfo, schemaInfo.getParameters()));
+        });
+        return urls.stream().map(url -> {
+            Map<String, String> parameters = map.get(getSchemaInfo(url));
+            if (CollectionUtils.isEmpty(parameters)) {
+                return url;
+            }
+            Map<String, String> whiteListMap = new HashMap<>();
+            Map<String, String> urlParameters = ReflectUtils.getParameters(url);
+
+            // 参数比较敏感，所以这里使用白名单管理
+            config.getGovernanceParametersWhiteList().forEach(key -> {
+                String value = parameters.get(key);
+                if (parameters.containsKey(key) && !Objects.equals(value, urlParameters.get(key))) {
+                    whiteListMap.put(key, value);
+                }
+            });
+            if (!CollectionUtils.isEmpty(whiteListMap)) {
+                url = ReflectUtils.addParameters(url, whiteListMap);
+            }
+            return url;
+        }).collect(Collectors.toList());
+    }
+
+    private com.huawei.dubbo.registry.entity.SchemaInfo getSchemaInfo(Object url) {
+        Map<String, String> parameters = ReflectUtils.getParameters(url);
+        return new com.huawei.dubbo.registry.entity.SchemaInfo(parameters.get(INTERFACE_KEY), parameters.get(GROUP_KEY),
+            parameters.get(VERSION_KEY));
     }
 
     private Map<SubscriptionKey, List<Object>> instancesToUrls(String appId, String serviceName,

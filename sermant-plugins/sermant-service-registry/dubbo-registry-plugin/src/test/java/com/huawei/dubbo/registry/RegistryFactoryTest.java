@@ -62,6 +62,11 @@ public class RegistryFactoryTest {
             @Override
             public void addRegistryUrls(Object url) {
             }
+
+            @Override
+            public void notifyGovernanceUrl() {
+                
+            }
         });
     }
 

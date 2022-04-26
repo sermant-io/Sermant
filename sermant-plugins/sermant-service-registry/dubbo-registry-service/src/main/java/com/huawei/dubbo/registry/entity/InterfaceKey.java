@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.registry;
+package com.huawei.dubbo.registry.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;

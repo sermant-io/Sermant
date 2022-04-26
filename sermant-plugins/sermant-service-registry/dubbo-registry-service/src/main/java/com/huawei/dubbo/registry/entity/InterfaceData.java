@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.registry;
+package com.huawei.dubbo.registry.entity;
 
 /**
  * dubbo接口注册到注册中心的额外数据
