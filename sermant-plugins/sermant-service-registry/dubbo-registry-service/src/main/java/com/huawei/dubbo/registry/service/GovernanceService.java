@@ -18,10 +18,11 @@ package com.huawei.dubbo.registry.service;
 
 import com.huawei.dubbo.registry.cache.DubboCache;
 import com.huawei.dubbo.registry.listener.GovernanceConfigListener;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.service.PluginService;
-import com.huawei.sermant.core.plugin.subscribe.ConfigSubscriber;
-import com.huawei.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.plugin.subscribe.ConfigSubscriber;
+import com.huaweicloud.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;

@@ -19,10 +19,11 @@ package com.huawei.dubbo.registry.listener;
 import com.huawei.dubbo.registry.entity.GovernanceCache;
 import com.huawei.dubbo.registry.entity.GovernanceData;
 import com.huawei.dubbo.registry.service.RegistryService;
-import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 import com.alibaba.fastjson.JSONObject;
 

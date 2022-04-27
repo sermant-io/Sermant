@@ -20,7 +20,6 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.dependencies.net.bytebuddy.matcher.ElementMatchers;
 
-
 /**
  * InterfaceCompatibleRegistryProtocol增强类
  *
