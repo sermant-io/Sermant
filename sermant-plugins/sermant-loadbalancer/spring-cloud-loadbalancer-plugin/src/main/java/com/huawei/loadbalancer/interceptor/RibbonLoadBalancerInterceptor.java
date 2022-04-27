@@ -18,10 +18,10 @@ package com.huawei.loadbalancer.interceptor;
 
 import com.huawei.loadbalancer.config.LoadbalancerConfig;
 import com.huawei.loadbalancer.config.RibbonLoadbalancerType;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.netflix.loadbalancer.AbstractLoadBalancerRule;
 import com.netflix.loadbalancer.AvailabilityFilteringRule;
 import com.netflix.loadbalancer.BaseLoadBalancer;

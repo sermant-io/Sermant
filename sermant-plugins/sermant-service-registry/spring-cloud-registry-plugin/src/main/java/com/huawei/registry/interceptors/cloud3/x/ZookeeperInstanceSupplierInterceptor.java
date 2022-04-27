@@ -18,7 +18,8 @@ package com.huawei.registry.interceptors.cloud3.x;
 
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.support.InstanceInterceptorSupport;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import org.springframework.cloud.client.ServiceInstance;
 

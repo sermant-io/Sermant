@@ -21,10 +21,6 @@ import com.huawei.flowcontrol.common.adapte.cse.match.MatchGroupResolver;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.AbstractResolver;
 import com.huawei.flowcontrol.common.adapte.cse.resolver.listener.ConfigUpdateListener;
 import com.huawei.flowcontrol.common.util.StringUtils;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.converter.Converter;
-import com.huawei.sermant.core.plugin.converter.YamlConverter;
-import com.huawei.sermant.core.utils.MapUtils;
 
 import java.util.HashMap;
 import java.util.Locale;

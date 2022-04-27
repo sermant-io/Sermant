@@ -16,8 +16,8 @@
 
 package com.huawei.gray.dubbo.strategy;
 
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.util.Optional;
 import java.util.logging.Logger;

@@ -17,11 +17,11 @@
 
 package com.huawei.registry.config;
 
-import com.huawei.sermant.core.config.ConfigManager;
-import com.huawei.sermant.core.config.common.ConfigTypeKey;
-import com.huawei.sermant.core.plugin.config.PluginConfig;
-import com.huawei.sermant.core.plugin.config.ServiceMeta;
-import com.huawei.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
+import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,6 +105,11 @@ public class RegisterConfig implements PluginConfig {
      * spring注册开关
      */
     private boolean enableSpringRegister = false;
+
+    /**
+     * dubbo注册开关
+     */
+    private boolean enableDubboRegister = false;
 
     /**
      * 是否启用区域发现
@@ -191,6 +196,14 @@ public class RegisterConfig implements PluginConfig {
 
     public void setEnableSpringRegister(boolean enableSpringRegister) {
         this.enableSpringRegister = enableSpringRegister;
+    }
+
+    public boolean isEnableDubboRegister() {
+        return enableDubboRegister;
+    }
+
+    public void setEnableDubboRegister(boolean enableDubboRegister) {
+        this.enableDubboRegister = enableDubboRegister;
     }
 
     public boolean isOpenMigration() {

@@ -18,8 +18,9 @@ package com.huawei.dubbo.registry.utils;
 
 import com.huawei.dubbo.registry.cache.DubboCache;
 import com.huawei.dubbo.registry.constants.Constant;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.utils.ClassLoaderUtils;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.utils.ClassLoaderUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -27,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,11 +43,9 @@ import java.util.logging.Logger;
  */
 public class ReflectUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger();
-    private static final String SC_REGISTRY_ADDRESS =
-        Constant.SC_REGISTRY_PROTOCOL + Constant.PROTOCOL_SEPARATION + "localhost:30100";
     private static final String GET_PROTOCOL_METHOD_NAME = "getProtocol";
     private static final String GET_ADDRESS_METHOD_NAME = "getAddress";
-    private static final String GET_SERVICE_KEY_METHOD_NAME = "getServiceKey";
+    private static final String GET_PATH_METHOD_NAME = "getPath";
     private static final String GET_ID_METHOD_NAME = "getId";
     private static final String GET_NAME_METHOD_NAME = "getName";
     private static final String GET_PARAMETERS_METHOD_NAME = "getParameters";
@@ -54,11 +54,13 @@ public class ReflectUtils {
     private static final String IS_VALID_METHOD_NAME = "isValid";
     private static final String SET_HOST_METHOD_NAME = "setHost";
     private static final String SET_ADDRESS_METHOD_NAME = "setAddress";
+    private static final String SET_PATH_METHOD_NAME = "setPath";
     private static final String SET_ID_METHOD_NAME = "setId";
     private static final String SET_PREFIX_METHOD_NAME = "setPrefix";
-    private static final String SET_PARAMETERS_METHOD_NAME = "setParameters";
     private static final String NOTIFY_METHOD_NAME = "notify";
     private static final String VALUE_OF_METHOD_NAME = "valueOf";
+    private static final String REMOVE_PARAMETERS_METHOD_NAME = "removeParameters";
+    private static final String ADD_PARAMETERS_METHOD_NAME = "addParameters";
 
     private ReflectUtils() {
     }
@@ -98,7 +100,7 @@ public class ReflectUtils {
             Constructor<T> constructor = clazz.getConstructor(String.class);
 
             // 这个url不重要，重要的是protocol，所以设置成localhost:30100就行
-            return Optional.of(constructor.newInstance(SC_REGISTRY_ADDRESS));
+            return Optional.of(constructor.newInstance(Constant.SC_REGISTRY_ADDRESS));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
             | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, "Cannot new the registryConfig.", e);
@@ -133,15 +135,15 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取带组和版本号的接口名
+     * 获取路径名，多数情况下与接口名相同，2.6.x, 2.7.0-2.7.7在多实现的场景下，会在接口名后拼一个序号
      *
      * @param obj URL
      * @return 接口
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
-    public static String getServiceKey(Object obj) {
-        return invokeWithNoneParameterAndReturnString(obj, GET_SERVICE_KEY_METHOD_NAME);
+    public static String getPath(Object obj) {
+        return invokeWithNoneParameterAndReturnString(obj, GET_PATH_METHOD_NAME);
     }
 
     /**
@@ -169,12 +171,12 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取应用参数
+     * 获取url参数
      *
-     * @param obj ApplicationConfig
-     * @return 应用参数
-     * @see com.alibaba.dubbo.config.ApplicationConfig
-     * @see org.apache.dubbo.config.ApplicationConfig
+     * @param obj URL
+     * @return url参数
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
      */
     public static Map<String, String> getParameters(Object obj) {
         return invokeWithNoneParameter(obj, GET_PARAMETERS_METHOD_NAME, Map.class, true);
@@ -248,6 +250,19 @@ public class ReflectUtils {
     }
 
     /**
+     * 设置路径
+     *
+     * @param obj URL
+     * @param path 路径
+     * @return URL
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
+     */
+    public static Object setPath(Object obj, String path) {
+        return invokeWithStringParameter(obj, SET_PATH_METHOD_NAME, path);
+    }
+
+    /**
      * 设置id
      *
      * @param obj RegistryConfig
@@ -269,18 +284,6 @@ public class ReflectUtils {
      */
     public static void setPrefix(Object obj, String prefix) {
         invokeWithStringParameter(obj, SET_PREFIX_METHOD_NAME, prefix);
-    }
-
-    /**
-     * 设置注册时的参数
-     *
-     * @param obj ApplicationConfig
-     * @param parameter 注册参数
-     * @see com.alibaba.dubbo.config.ApplicationConfig
-     * @see org.apache.dubbo.config.ApplicationConfig
-     */
-    public static void setParameters(Object obj, Map<String, String> parameter) {
-        invokeWithParameter(obj, SET_PARAMETERS_METHOD_NAME, parameter, Map.class);
     }
 
     /**
@@ -308,6 +311,32 @@ public class ReflectUtils {
     public static Object valueOf(String address) {
         return invoke(new InvokeParameter(DubboCache.INSTANCE.getUrlClass(), null, VALUE_OF_METHOD_NAME, address,
             String.class)).orElse(null);
+    }
+
+    /**
+     * 删除url中的参数
+     *
+     * @param url URL
+     * @param keys 需要删除的参数的key
+     * @return url
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
+     */
+    public static Object removeParameters(Object url, Collection<String> keys) {
+        return invokeWithParameter(url, REMOVE_PARAMETERS_METHOD_NAME, keys, Collection.class);
+    }
+
+    /**
+     * 增加url中的参数
+     *
+     * @param url URL
+     * @param parameters 需要增加的参数
+     * @return url
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
+     */
+    public static Object addParameters(Object url, Map<String, String> parameters) {
+        return invokeWithParameter(url, ADD_PARAMETERS_METHOD_NAME, parameters, Map.class);
     }
 
     private static String invokeWithNoneParameterAndReturnString(Object obj, String name) {

@@ -18,7 +18,8 @@ package com.huawei.registry.interceptors.health;
 
 import com.huawei.registry.config.RegisterDynamicConfig;
 import com.huawei.registry.support.RegisterSwitchSupport;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
  * 针对1.x.x consul版本做的定时任务处理适配

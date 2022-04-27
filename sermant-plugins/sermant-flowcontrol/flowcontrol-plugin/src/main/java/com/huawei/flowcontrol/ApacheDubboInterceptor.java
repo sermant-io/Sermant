@@ -22,7 +22,8 @@ import com.huawei.flowcontrol.common.entity.DubboRequestEntity;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.util.ConvertUtils;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.rpc.AsyncRpcResult;

@@ -5,6 +5,9 @@ on:
 
 name: Create Release
 
+env:
+  version: '0.2.0'
+
 jobs:
   auto-create-release:
     name: Auto Create Release
@@ -21,11 +24,14 @@ jobs:
       - name: Create License Binary Suffix
         run: |
           mvn license:aggregate-add-third-party
+      - name: set version
+        run: |
+          mvn versions:set -DnewVersion='${{ env.version }}'
       - name: Build with Maven
         run: |
           mvn -B package -DskipTests --file pom.xml
           mkdir ${{ github.workspace }}/package
-          cp ${{ github.workspace }}/sermant-agent-*.tar ${{ github.workspace }}/package/sermant-agent.tar
+          cp ${{ github.workspace }}/sermant-agent-*.tar.gz ${{ github.workspace }}/package/sermant-${{ env.version }}.tar.gz
       - name: Create Release # 自动发布release版本
         id: create_release
         uses: actions/create-release@v1.1.4
@@ -43,6 +49,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ github.workspace }}/package/sermant-agent.tar
-          asset_name: sermant-agent.tar
+          asset_path: ${{ github.workspace }}/package/sermant-${{ env.version }}.tar.gz
+          asset_name: sermant-${{ env.version }}.tar.gz
           asset_content_type: application/tar

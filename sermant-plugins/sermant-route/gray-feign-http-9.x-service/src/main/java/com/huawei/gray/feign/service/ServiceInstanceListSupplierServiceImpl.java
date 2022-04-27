@@ -20,7 +20,8 @@ import com.huawei.route.common.gray.addr.AddrCache;
 import com.huawei.route.common.gray.addr.entity.Instances;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
-import com.huawei.sermant.core.agent.common.BeforeResult;
+
+import com.huaweicloud.sermant.core.agent.common.BeforeResult;
 
 import reactor.core.publisher.Flux;
 

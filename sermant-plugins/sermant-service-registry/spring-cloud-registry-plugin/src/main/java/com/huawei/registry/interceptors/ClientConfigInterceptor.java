@@ -18,8 +18,8 @@ package com.huawei.registry.interceptors;
 
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.support.RegisterSwitchSupport;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.netflix.client.config.IClientConfig;
 
 /**

@@ -24,19 +24,35 @@ import java.util.Objects;
  * @author provenceee
  * @since 2021-12-23
  */
-public class SubscriptionKey {
+public class SubscriptionKey extends InterfaceKey {
     private final String appId;
+
     private final String serviceName;
+
     private final String interfaceName;
 
     /**
      * 构造方法
      *
-     * @param appId         appId
-     * @param serviceName   服务名
+     * @param appId appId
+     * @param serviceName 服务名
      * @param interfaceName 接口名
      */
     public SubscriptionKey(String appId, String serviceName, String interfaceName) {
+        this(appId, serviceName, interfaceName, null, null);
+    }
+
+    /**
+     * 构造方法
+     *
+     * @param appId appId
+     * @param serviceName 服务名
+     * @param interfaceName 接口名
+     * @param group 组
+     * @param version 版本
+     */
+    public SubscriptionKey(String appId, String serviceName, String interfaceName, String group, String version) {
+        super(group, version);
         this.appId = appId;
         this.serviceName = serviceName;
         this.interfaceName = interfaceName;
@@ -50,13 +66,13 @@ public class SubscriptionKey {
         if (obj != null && getClass() == obj.getClass()) {
             SubscriptionKey that = (SubscriptionKey) obj;
             return Objects.equals(appId, that.appId) && Objects.equals(serviceName, that.serviceName)
-                && Objects.equals(interfaceName, that.interfaceName);
+                && Objects.equals(interfaceName, that.interfaceName) && super.equals(obj);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(appId, serviceName, interfaceName);
+        return Objects.hash(appId, serviceName, interfaceName, getGroup(), getVersion());
     }
 }

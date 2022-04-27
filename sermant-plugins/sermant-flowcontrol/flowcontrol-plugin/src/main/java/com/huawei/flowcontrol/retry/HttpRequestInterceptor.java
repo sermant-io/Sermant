@@ -22,8 +22,9 @@ import com.huawei.flowcontrol.common.handler.retry.AbstractRetry;
 import com.huawei.flowcontrol.common.handler.retry.Retry;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import org.springframework.http.HttpRequest;
 

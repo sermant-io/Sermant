@@ -16,8 +16,9 @@
 
 package com.huawei.sermant.plugin.monitor.common.collect;
 
-import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.plugin.monitor.common.utils.CommonUtil;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;

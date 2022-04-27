@@ -19,13 +19,14 @@ package com.huawei.registry.config;
 
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.handler.SingleStateCloseHandler;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.service.PluginService;
-import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.DynamicConfigService;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 import java.util.Locale;
 import java.util.logging.Logger;

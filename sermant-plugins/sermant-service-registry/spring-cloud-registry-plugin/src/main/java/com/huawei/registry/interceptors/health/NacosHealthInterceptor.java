@@ -18,8 +18,9 @@ package com.huawei.registry.interceptors.health;
 
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.handler.SingleStateCloseHandler;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import com.alibaba.nacos.client.naming.beat.BeatInfo;
 import com.fasterxml.jackson.databind.node.ObjectNode;

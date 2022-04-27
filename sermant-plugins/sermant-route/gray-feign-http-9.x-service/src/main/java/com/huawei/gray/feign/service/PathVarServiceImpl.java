@@ -23,7 +23,8 @@
 package com.huawei.gray.feign.service;
 
 import com.huawei.gray.feign.context.FeignResolvedUrl;
-import com.huawei.sermant.core.agent.common.BeforeResult;
+
+import com.huaweicloud.sermant.core.agent.common.BeforeResult;
 
 import feign.RequestTemplate;
 

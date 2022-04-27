@@ -18,8 +18,9 @@
 package com.huawei.dynamic.config;
 
 import com.huawei.dynamic.config.init.DynamicConfigThreadFactory;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 import java.util.Collections;
 import java.util.HashSet;

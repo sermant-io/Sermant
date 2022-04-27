@@ -20,7 +20,8 @@ import com.huawei.dubbo.registry.constants.Constant;
 import com.huawei.dubbo.registry.utils.CollectionUtils;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
 import com.huawei.registry.config.RegisterConfig;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +53,7 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
      */
     @Override
     public void addRegistryConfig(Object obj) {
-        if (!config.isOpenMigration()) {
+        if (!config.isOpenMigration() || !config.isEnableDubboRegister()) {
             return;
         }
         List<Object> registries = ReflectUtils.getRegistries(obj);

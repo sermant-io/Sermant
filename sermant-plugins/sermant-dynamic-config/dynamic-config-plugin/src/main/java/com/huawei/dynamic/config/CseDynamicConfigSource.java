@@ -17,9 +17,9 @@
 
 package com.huawei.dynamic.config;
 
-import com.huawei.sermant.core.plugin.subscribe.processor.ConfigOrderIntegratedProcessor.OrderConfigEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huawei.sermant.core.utils.MapUtils;
+import com.huaweicloud.sermant.core.plugin.subscribe.processor.OrderConfigEvent;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.utils.MapUtils;
 
 import java.util.HashMap;
 import java.util.Map;

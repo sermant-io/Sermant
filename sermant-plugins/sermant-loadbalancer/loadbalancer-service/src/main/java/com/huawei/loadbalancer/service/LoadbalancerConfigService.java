@@ -18,10 +18,11 @@ package com.huawei.loadbalancer.service;
 
 import com.huawei.loadbalancer.config.LoadbalancerConfig;
 import com.huawei.loadbalancer.listener.LoadbalancerConfigListener;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.plugin.service.PluginService;
-import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.dynamicconfig.DynamicConfigService;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.DynamicConfigService;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

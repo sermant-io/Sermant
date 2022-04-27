@@ -19,9 +19,10 @@ package com.huawei.dynamic.config.interceptors;
 
 import com.huawei.dynamic.config.inject.ClassInjectDefine;
 import com.huawei.dynamic.config.utils.ClassUtils;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.utils.StringUtils;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import org.springframework.util.MultiValueMap;
 

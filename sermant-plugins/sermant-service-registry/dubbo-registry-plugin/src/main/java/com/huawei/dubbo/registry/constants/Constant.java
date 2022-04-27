@@ -38,6 +38,16 @@ public class Constant {
      */
     public static final String SC_INIT_MIGRATION_RULE = "scInit";
 
+    /**
+     * sc注册地址
+     */
+    public static final String SC_REGISTRY_ADDRESS = SC_REGISTRY_PROTOCOL + PROTOCOL_SEPARATION + "localhost:30100";
+
+    /**
+     * 设置协议方法名
+     */
+    public static final String SET_PROTOCOL_METHOD_NAME = "setProtocol";
+
     private Constant() {
     }
 }

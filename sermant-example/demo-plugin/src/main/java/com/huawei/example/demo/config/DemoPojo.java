@@ -16,7 +16,7 @@
 
 package com.huawei.example.demo.config;
 
-import com.huawei.sermant.core.config.common.ConfigFieldKey;
+import com.huaweicloud.sermant.core.config.common.ConfigFieldKey;
 
 /**
  * 插件配置中的复杂对象示例

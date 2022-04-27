@@ -17,8 +17,8 @@
 
 package com.huawei.flowcontrol.common.metric;
 
-import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.send.api.GatewayClient;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.send.api.GatewayClient;
 
 import java.io.UnsupportedEncodingException;
 

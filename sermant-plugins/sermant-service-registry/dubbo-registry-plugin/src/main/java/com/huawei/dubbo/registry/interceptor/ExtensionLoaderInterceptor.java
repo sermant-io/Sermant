@@ -18,8 +18,9 @@ package com.huawei.dubbo.registry.interceptor;
 
 import com.huawei.dubbo.registry.constants.Constant;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 import java.util.Map;
 import java.util.Optional;

@@ -19,8 +19,9 @@ package com.huawei.dynamic.config.interceptors;
 
 import com.huawei.dynamic.config.entity.ClientMeta;
 import com.huawei.dynamic.config.init.DynamicConfigInitializer;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import org.springframework.core.env.ConfigurableEnvironment;
 

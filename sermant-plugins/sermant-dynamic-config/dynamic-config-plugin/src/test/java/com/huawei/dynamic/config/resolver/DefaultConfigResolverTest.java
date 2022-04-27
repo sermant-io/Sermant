@@ -17,7 +17,7 @@
 
 package com.huawei.dynamic.config.resolver;
 
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 import org.junit.Assert;
 import org.junit.Test;

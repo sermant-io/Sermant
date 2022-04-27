@@ -17,8 +17,8 @@
 
 package com.huawei.dynamic.config.utils;
 
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.utils.ClassLoaderUtils;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.utils.ClassLoaderUtils;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

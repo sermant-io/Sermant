@@ -18,8 +18,9 @@ package com.huawei.example.demo.service;
 
 import com.huawei.example.demo.config.DemoConfig;
 import com.huawei.example.demo.config.DemoServiceConfig;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.plugin.service.PluginServiceManager;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

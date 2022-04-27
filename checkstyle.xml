@@ -87,6 +87,7 @@
         <property name="severity" value="warning"/>
         <property name="format" value="(boolean|Boolean)\s((m[^I])|(mI[^s])|(s[^I])|(sI[^s])|[^msiI]|([iI][^sS]))(?![a-zA-Z0-9=;,\s]*\()"/>
         <property name="message" value="编程规范-建议1.2 布尔变量名或方法以is开头(has have does do did will should can may must could等疑问助动词也可以，Android允许m作为疑问助动词前缀)"/>
+        <property name="maximum" value="15"/>
     </module>
     <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
@@ -126,6 +127,7 @@
         <property name="severity" value="warning"/>
         <property name="format" value="\s+(Byte|Short|Integer|Long|Float|Double|Character|Boolean)\s+"/>
         <property name="message" value="编程规范-建议4.2: 基本类型优于包装类型，注意合理使用包装类型"/>
+        <property name="maximum" value="5"/>
     </module>
     <!-- 规则7.7 非仅限于中文区销售产品禁止用中文打印日志 -->
     <module name="RegexpSingleline">
@@ -464,7 +466,7 @@
         <!-- 不能有无用的import -->
         <module name="UnusedImports"/>
         <module name="ImportOrder">
-            <property name="groups" value="android,androidx,com.android,huawei,com.huawei,com,*,net,org,javacard,/^java\./,javax"/>
+            <property name="groups" value="android,androidx,com.android,huawei,com.huawei,com.huaweicloud,com,*,net,org,javacard,/^java\./,javax"/>
             <property name="ordered" value="true"/>
             <property name="separated" value="true"/>
             <property name="option" value="top"/>
@@ -502,7 +504,7 @@
         </module>
         <module name="PackageName">
             <!-- 包名检查 -->
-            <property name="format" value="^com.huawei(\.[a-z][a-z0-9]*)*$"/>
+            <property name="format" value="(^com.huawei(\.[a-z][a-z0-9]*)*$)|(^com.huaweicloud(\.[a-z][a-z0-9]*)*$)"/>
         </module>
         <module name="ParameterName">
             <!-- 参数检查: -->

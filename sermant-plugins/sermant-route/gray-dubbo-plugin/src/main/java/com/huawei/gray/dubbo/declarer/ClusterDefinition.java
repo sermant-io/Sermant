@@ -16,7 +16,7 @@
 
 package com.huawei.gray.dubbo.declarer;
 
-import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * 增强ClusterUtils类的mergeUrl方法

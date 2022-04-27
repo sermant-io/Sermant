@@ -16,9 +16,8 @@
 
 package com.huawei.sermant.plugins.luban.adaptor.collector;
 
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.agent.template.ImplDelegator;
-
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.agent.template.ImplDelegator;
 import com.lubanops.apm.bootstrap.AttributeAccess;
 
 import java.lang.reflect.Field;

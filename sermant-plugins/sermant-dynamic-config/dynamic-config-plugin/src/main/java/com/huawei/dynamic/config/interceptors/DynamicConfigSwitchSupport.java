@@ -18,9 +18,10 @@
 package com.huawei.dynamic.config.interceptors;
 
 import com.huawei.dynamic.config.DynamicConfiguration;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
  * 动态配置开关控制

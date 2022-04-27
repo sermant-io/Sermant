@@ -18,7 +18,8 @@ package com.huawei.dubbo.registry;
 
 import com.huawei.dubbo.registry.constants.Constant;
 import com.huawei.dubbo.registry.interceptor.MigrationRuleHandlerInterceptor;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.registry.client.migration.MigrationInvoker;

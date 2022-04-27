@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 public class NettyServerTest {
     private KafkaProducer<String, byte[]> producer;
     private KafkaConsumer<String, String> consumer;
+    private String isHeartBeatCache = "false";
 
     private DataTypeTopicMapping topicMapping;
 
@@ -31,7 +32,8 @@ public class NettyServerTest {
      */
     @Test
     public void testWriteInBound() {
-        EmbeddedChannel embeddedChannel = new EmbeddedChannel(new ServerHandler(producer, consumer, topicMapping));
+        EmbeddedChannel embeddedChannel = new EmbeddedChannel(
+                new ServerHandler(producer, consumer, topicMapping, isHeartBeatCache));
         boolean writeInbound = embeddedChannel.writeInbound(Message.ServiceData.newBuilder().build());
         Assert.assertTrue(writeInbound);
         Assert.assertTrue(embeddedChannel.finish());
@@ -45,7 +47,8 @@ public class NettyServerTest {
      */
     @Test
     public void testWriteOutBound() {
-        EmbeddedChannel embeddedChannel = new EmbeddedChannel(new ServerHandler(producer, consumer, topicMapping));
+        EmbeddedChannel embeddedChannel = new EmbeddedChannel(
+                new ServerHandler(producer, consumer, topicMapping, isHeartBeatCache));
         boolean writeOutBound = embeddedChannel.writeOutbound(Message.ServiceData.newBuilder().build());
         Assert.assertTrue(writeOutBound);
         Assert.assertTrue(embeddedChannel.finish());

@@ -18,11 +18,12 @@ package com.huawei.gray.dubbo;
 
 import com.huawei.gray.dubbo.interceptor.RegistrationInterceptor;
 import com.huawei.gray.dubbo.service.RegistrationService;
-import com.huawei.sermant.core.common.CommonConstant;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.service.BaseService;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import com.huaweicloud.sermant.core.common.CommonConstant;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.service.BaseService;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;

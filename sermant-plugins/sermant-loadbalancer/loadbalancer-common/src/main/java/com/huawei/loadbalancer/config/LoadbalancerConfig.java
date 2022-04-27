@@ -16,8 +16,8 @@
 
 package com.huawei.loadbalancer.config;
 
-import com.huawei.sermant.core.config.common.ConfigTypeKey;
-import com.huawei.sermant.core.plugin.config.PluginConfig;
+import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 /**
  * 负载均衡配置

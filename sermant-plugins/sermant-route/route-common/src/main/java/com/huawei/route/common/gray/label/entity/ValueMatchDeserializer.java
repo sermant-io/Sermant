@@ -17,7 +17,8 @@
 package com.huawei.route.common.gray.label.entity;
 
 import com.huawei.route.common.gray.constants.GrayConstant;
-import com.huawei.sermant.core.common.LoggerFactory;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;

@@ -16,16 +16,16 @@
 
 package com.huawei.sermant.plugins.luban.adaptor.declarer;
 
-import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
-import com.huawei.sermant.core.plugin.agent.declarer.PluginDeclarer;
-import com.huawei.sermant.core.plugin.agent.declarer.SuperTypeDeclarer;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
-import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huawei.sermant.plugins.luban.adaptor.collector.AttributeAccessImplTemplate;
 import com.huawei.sermant.plugins.luban.adaptor.collector.BufferedTransformAccess;
 import com.huawei.sermant.plugins.luban.adaptor.matcher.GetterSetterMatcher;
 
+import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.SuperTypeDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.lubanops.apm.bootstrap.AttributeAccess;
 import com.lubanops.apm.bootstrap.Listener;
 import com.lubanops.apm.bootstrap.TransformerMethod;

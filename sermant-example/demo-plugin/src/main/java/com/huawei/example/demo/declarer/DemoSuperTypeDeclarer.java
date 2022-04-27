@@ -17,10 +17,11 @@
 package com.huawei.example.demo.declarer;
 
 import com.huawei.example.demo.interceptor.DemoMemberInterceptor;
-import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
-import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
-import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
+
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * 通过超类方式定位到拦截点的增强定义，本示例将测试构造函数、静态方法和示例方法三种拦截点

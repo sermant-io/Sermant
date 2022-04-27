@@ -17,8 +17,8 @@
 
 package com.huawei.flowcontrol.retry;
 
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import org.junit.Assert;
 import org.junit.Before;
