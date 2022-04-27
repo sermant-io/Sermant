@@ -16,10 +16,11 @@
 
 package com.huawei.sermant.plugin.servermonitor.collector;
 
-import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.plugin.servermonitor.common.CheckIBMParameter;
 import com.huawei.sermant.plugin.servermonitor.entity.IbmPoolMetric;
 import com.huawei.sermant.plugin.servermonitor.entity.IbmPoolType;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;

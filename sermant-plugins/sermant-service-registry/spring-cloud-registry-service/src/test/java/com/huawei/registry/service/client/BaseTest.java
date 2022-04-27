@@ -17,14 +17,15 @@
 package com.huawei.registry.service.client;
 
 import com.huawei.registry.config.RegisterConfig;
-import com.huawei.sermant.core.common.CommonConstant;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.config.ConfigManager;
-import com.huawei.sermant.core.config.common.BaseConfig;
-import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.send.config.BackendConfig;
-import com.huawei.sermant.core.service.dynamicconfig.config.DynamicConfig;
-import com.huawei.sermant.core.service.heartbeat.config.HeartbeatConfig;
+
+import com.huaweicloud.sermant.core.common.CommonConstant;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.config.common.BaseConfig;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.config.DynamicConfig;
+import com.huaweicloud.sermant.core.service.heartbeat.config.HeartbeatConfig;
+import com.huaweicloud.sermant.core.service.send.config.BackendConfig;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;

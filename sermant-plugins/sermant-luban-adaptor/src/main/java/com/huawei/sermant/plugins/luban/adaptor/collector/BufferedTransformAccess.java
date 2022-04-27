@@ -16,8 +16,7 @@
 
 package com.huawei.sermant.plugins.luban.adaptor.collector;
 
-import com.huawei.sermant.core.plugin.agent.annotations.BeanPropertyFlag;
-
+import com.huaweicloud.sermant.core.plugin.agent.annotations.BeanPropertyFlag;
 import com.lubanops.apm.bootstrap.TransformAccess;
 
 /**

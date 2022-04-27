@@ -16,7 +16,7 @@
 
 package com.huawei.dubbo.registry.declarer;
 
-import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 
 /**
  * 增强MigrationRule类的parse方法

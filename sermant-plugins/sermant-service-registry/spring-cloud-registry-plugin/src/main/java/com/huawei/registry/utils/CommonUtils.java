@@ -18,7 +18,8 @@
 package com.huawei.registry.utils;
 
 import com.huawei.registry.support.FieldAccessAction;
-import com.huawei.sermant.core.common.LoggerFactory;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.security.AccessController;

@@ -1,5 +1,5 @@
 syntax = "proto3";
-option java_package = "com.huawei.sermant.core.lubanops.integration.transport.netty.pojo";
+option java_package = "com.huaweicloud.sermant.core.service.send.netty.pojo";
 
 message NettyMessage{
 

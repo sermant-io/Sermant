@@ -1,6 +1,6 @@
 # service name
 
-[服务功能目录](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/serviceName)
+[服务功能目录](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service)
 
 [定位 是什么]: todo
 [功能 做什么]: todo

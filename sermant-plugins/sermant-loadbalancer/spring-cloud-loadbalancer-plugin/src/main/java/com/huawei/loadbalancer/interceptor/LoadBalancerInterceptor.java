@@ -17,8 +17,9 @@
 package com.huawei.loadbalancer.interceptor;
 
 import com.huawei.loadbalancer.cache.LoadbalancerCache;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 /**
  * LoadBalancer增强类

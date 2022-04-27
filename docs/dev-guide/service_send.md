@@ -1,6 +1,6 @@
 # send
 
-本文档主要介绍**核心模块**的[统一网关数据发送服务](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/send)
+本文档主要介绍**核心模块**的[统一网关数据发送服务](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/send)
 
 `GatewayClient`：统一网关（sermant-backend）数据发送服务，简称统一发送服务，用于把Agent数据发往sermant-backend，再由sermant-backend转发给Kafka。
 

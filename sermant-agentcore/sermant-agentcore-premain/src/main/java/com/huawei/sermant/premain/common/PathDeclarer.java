@@ -16,7 +16,7 @@
 
 package com.huawei.sermant.premain.common;
 
-import com.huawei.sermant.core.common.CommonConstant;
+import com.huaweicloud.sermant.core.common.CommonConstant;
 
 import java.io.File;
 

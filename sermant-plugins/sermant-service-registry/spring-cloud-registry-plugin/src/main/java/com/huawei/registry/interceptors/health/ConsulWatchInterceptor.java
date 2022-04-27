@@ -18,7 +18,8 @@ package com.huawei.registry.interceptors.health;
 
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.support.RegisterSwitchSupport;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
  * 拦截ConsulCatalogWatch,用于后续关闭服务

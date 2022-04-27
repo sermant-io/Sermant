@@ -16,7 +16,7 @@
 
 package com.huawei.loadbalancer.declarer;
 
-import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * RandomLoadBalancer增强类

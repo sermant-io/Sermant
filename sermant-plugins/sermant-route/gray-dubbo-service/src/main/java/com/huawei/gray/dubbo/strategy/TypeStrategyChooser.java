@@ -23,7 +23,8 @@ import com.huawei.gray.dubbo.strategy.type.ListTypeStrategy;
 import com.huawei.gray.dubbo.strategy.type.MapTypeStrategy;
 import com.huawei.gray.dubbo.strategy.type.ObjectTypeStrategy;
 import com.huawei.route.common.gray.constants.GrayConstant;
-import com.huawei.sermant.core.common.LoggerFactory;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Optional;

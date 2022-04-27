@@ -19,7 +19,8 @@ package com.huawei.registry.interceptors.health;
 
 import com.huawei.registry.config.RegisterDynamicConfig;
 import com.huawei.registry.support.RegisterSwitchSupport;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
  * Eureka定时器注入入口拦截

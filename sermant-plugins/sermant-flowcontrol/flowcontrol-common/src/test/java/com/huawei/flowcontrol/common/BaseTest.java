@@ -18,13 +18,14 @@
 package com.huawei.flowcontrol.common;
 
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
-import com.huawei.sermant.core.config.ConfigManager;
-import com.huawei.sermant.core.config.common.BaseConfig;
-import com.huawei.sermant.core.plugin.config.ServiceMeta;
-import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.send.config.BackendConfig;
-import com.huawei.sermant.core.service.dynamicconfig.config.DynamicConfig;
-import com.huawei.sermant.core.service.heartbeat.config.HeartbeatConfig;
+
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.config.common.BaseConfig;
+import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.config.DynamicConfig;
+import com.huaweicloud.sermant.core.service.heartbeat.config.HeartbeatConfig;
+import com.huaweicloud.sermant.core.service.send.config.BackendConfig;
 
 import org.junit.BeforeClass;
 

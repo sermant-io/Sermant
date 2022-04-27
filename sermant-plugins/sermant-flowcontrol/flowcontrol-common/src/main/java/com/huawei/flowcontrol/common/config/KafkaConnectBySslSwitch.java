@@ -17,7 +17,7 @@
 
 package com.huawei.flowcontrol.common.config;
 
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.Properties;
 

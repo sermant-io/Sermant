@@ -16,7 +16,7 @@
 
 package com.huawei.gray.dubbo.service;
 
-import com.huawei.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
  * ClusterUtils的service

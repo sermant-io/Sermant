@@ -17,8 +17,9 @@
 package com.huawei.gray.feign.definition.register;
 
 import com.huawei.gray.feign.definition.AbstractInstDefinition;
-import com.huawei.sermant.core.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.agent.matcher.ClassMatchers;
+
+import com.huaweicloud.sermant.core.agent.matcher.ClassMatcher;
+import com.huaweicloud.sermant.core.agent.matcher.ClassMatchers;
 
 /**
  * 注册增强

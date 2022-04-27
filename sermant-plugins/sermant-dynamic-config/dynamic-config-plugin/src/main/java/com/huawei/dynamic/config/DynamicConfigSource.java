@@ -19,9 +19,10 @@ package com.huawei.dynamic.config;
 
 import com.huawei.dynamic.config.resolver.ConfigResolver;
 import com.huawei.dynamic.config.resolver.DefaultConfigResolver;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 
 import java.util.ArrayList;
 import java.util.HashMap;

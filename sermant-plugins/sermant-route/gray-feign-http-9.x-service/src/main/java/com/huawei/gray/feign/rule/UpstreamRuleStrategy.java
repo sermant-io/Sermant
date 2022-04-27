@@ -22,7 +22,8 @@ import com.huawei.route.common.gray.addr.entity.Instances;
 import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
 import com.huawei.route.common.gray.label.entity.Route;
-import com.huawei.sermant.core.utils.StringUtils;
+
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 

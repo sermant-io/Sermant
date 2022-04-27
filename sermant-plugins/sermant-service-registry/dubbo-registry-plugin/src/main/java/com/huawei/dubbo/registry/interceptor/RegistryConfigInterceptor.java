@@ -18,9 +18,10 @@ package com.huawei.dubbo.registry.interceptor;
 
 import com.huawei.dubbo.registry.constants.Constant;
 import com.huawei.registry.config.RegisterConfig;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
  * 增强RegistryConfig类的setProtocol/setAddress方法

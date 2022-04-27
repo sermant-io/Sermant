@@ -16,7 +16,7 @@
 
 package com.huawei.sermant.premain;
 
-import com.huawei.sermant.core.AgentCoreEntrance;
+import com.huaweicloud.sermant.core.AgentCoreEntrance;
 import com.huawei.sermant.premain.common.BootArgsBuilder;
 import com.huawei.sermant.premain.common.PathDeclarer;
 import com.huawei.sermant.premain.exception.DupPremainException;

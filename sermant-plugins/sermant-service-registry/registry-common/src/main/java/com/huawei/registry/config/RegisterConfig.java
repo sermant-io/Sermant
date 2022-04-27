@@ -17,11 +17,11 @@
 
 package com.huawei.registry.config;
 
-import com.huawei.sermant.core.config.ConfigManager;
-import com.huawei.sermant.core.config.common.ConfigTypeKey;
-import com.huawei.sermant.core.plugin.config.PluginConfig;
-import com.huawei.sermant.core.plugin.config.ServiceMeta;
-import com.huawei.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
+import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

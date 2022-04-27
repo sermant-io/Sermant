@@ -17,15 +17,16 @@
 package com.huawei.example.demo.interceptor;
 
 import com.huawei.example.demo.common.DemoLogger;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.tracing.api.ExtractService;
-import com.huawei.sermant.core.service.tracing.api.TracingService;
-import com.huawei.sermant.core.service.tracing.common.SpanEvent;
-import com.huawei.sermant.core.service.tracing.common.SpanEventContext;
-import com.huawei.sermant.core.service.tracing.common.TracingHeader;
-import com.huawei.sermant.core.service.tracing.common.TracingRequest;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.tracing.api.ExtractService;
+import com.huaweicloud.sermant.core.service.tracing.api.TracingService;
+import com.huaweicloud.sermant.core.service.tracing.common.SpanEvent;
+import com.huaweicloud.sermant.core.service.tracing.common.SpanEventContext;
+import com.huaweicloud.sermant.core.service.tracing.common.TracingHeader;
+import com.huaweicloud.sermant.core.service.tracing.common.TracingRequest;
 
 import java.util.HashMap;
 import java.util.Locale;

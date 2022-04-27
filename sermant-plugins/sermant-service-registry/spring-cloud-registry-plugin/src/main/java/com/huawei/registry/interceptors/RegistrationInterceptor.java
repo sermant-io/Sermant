@@ -20,8 +20,9 @@ import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.FixedResult;
 import com.huawei.registry.services.RegisterCenterService;
 import com.huawei.registry.support.RegisterSwitchSupport;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import org.springframework.cloud.client.serviceregistry.Registration;
 

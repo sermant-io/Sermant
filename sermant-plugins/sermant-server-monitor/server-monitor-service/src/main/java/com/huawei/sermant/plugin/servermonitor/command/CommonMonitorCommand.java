@@ -16,7 +16,10 @@
 
 package com.huawei.sermant.plugin.servermonitor.command;
 
-import com.huawei.sermant.core.common.LoggerFactory;
+import static com.huawei.sermant.plugin.monitor.common.utils.CommonUtil.getStackTrace;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -25,8 +28,6 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-
-import static com.huawei.sermant.plugin.monitor.common.utils.CommonUtil.getStackTrace;
 
 /**
  * 使用通用错误处理方式的{@link MonitorCommand}，即通过日志输出错误信息，当错误

@@ -19,8 +19,9 @@ package com.huawei.example.demo.interceptor;
 import com.huawei.example.demo.common.DemoBeanPropertyApi;
 import com.huawei.example.demo.common.DemoInterfaceApi;
 import com.huawei.example.demo.common.DemoLogger;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 /**
  * 用于测试对被增强类的接口实现

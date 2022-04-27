@@ -23,7 +23,8 @@
 package com.huawei.flowcontrol.common.adapte.cse.match.operator;
 
 import com.huawei.flowcontrol.common.util.StringUtils;
-import com.huawei.sermant.core.common.LoggerFactory;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashSet;

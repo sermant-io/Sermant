@@ -16,13 +16,13 @@
 
 package com.huawei.sermant.plugin.servermonitor.command;
 
-import com.huawei.sermant.core.common.LoggerFactory;
+import static com.huawei.sermant.plugin.servermonitor.common.Constant.REGEX_MULTI_SPACES;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.logging.Logger;
-
-import static com.huawei.sermant.plugin.servermonitor.common.Constant.REGEX_MULTI_SPACES;
 
 /**
  * 执行指令：cat /proc/stat

@@ -21,8 +21,9 @@ import com.huawei.registry.entity.FixedResult;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.service.register.RegisterManager;
 import com.huawei.registry.services.RegisterCenterService;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.Collections;
 import java.util.List;

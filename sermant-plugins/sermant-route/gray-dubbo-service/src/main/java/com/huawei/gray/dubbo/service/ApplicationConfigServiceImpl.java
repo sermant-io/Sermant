@@ -23,8 +23,9 @@ import com.huawei.route.common.gray.constants.GrayConstant;
 import com.huawei.route.common.gray.label.LabelCache;
 import com.huawei.route.common.gray.label.entity.CurrentTag;
 import com.huawei.route.common.gray.label.entity.GrayConfiguration;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.utils.StringUtils;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -16,8 +16,8 @@
 
 package com.huawei.gray.feign.service;
 
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.agent.common.BeforeResult;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 import java.lang.reflect.Method;
 

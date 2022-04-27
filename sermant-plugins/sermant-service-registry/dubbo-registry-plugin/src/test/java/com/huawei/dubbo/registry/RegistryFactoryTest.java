@@ -19,10 +19,10 @@ package com.huawei.dubbo.registry;
 import com.huawei.dubbo.registry.alibaba.ServiceCenterRegistry;
 import com.huawei.dubbo.registry.alibaba.ServiceCenterRegistryFactory;
 import com.huawei.dubbo.registry.service.RegistryService;
-import com.huawei.sermant.core.service.BaseService;
-import com.huawei.sermant.core.service.ServiceManager;
 
 import com.alibaba.dubbo.common.URL;
+import com.huaweicloud.sermant.core.service.BaseService;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import org.junit.Assert;
 import org.junit.Test;

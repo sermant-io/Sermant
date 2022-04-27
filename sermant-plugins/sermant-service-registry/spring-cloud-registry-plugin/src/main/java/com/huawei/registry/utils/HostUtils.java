@@ -17,7 +17,7 @@
 
 package com.huawei.registry.utils;
 
-import com.huawei.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;

@@ -20,8 +20,9 @@ package com.huawei.flowcontrol.common.util;
 import com.huawei.flowcontrol.common.config.ConfigConst;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.config.KafkaConnectBySslSwitch;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.Locale;
 import java.util.Map;

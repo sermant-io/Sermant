@@ -18,7 +18,8 @@
 package com.huawei.flowcontrol.common.util;
 
 import com.huawei.flowcontrol.common.enums.KafkaProducerEnum;
-import com.huawei.sermant.core.common.LoggerFactory;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
