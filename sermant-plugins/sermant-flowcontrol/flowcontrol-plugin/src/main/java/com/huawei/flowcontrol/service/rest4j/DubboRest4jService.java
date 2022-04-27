@@ -18,7 +18,8 @@
 package com.huawei.flowcontrol.service.rest4j;
 
 import com.huawei.flowcontrol.service.DubboService;
-import com.huawei.sermant.core.plugin.service.PluginService;
+
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
  * Dubbo 基于resilience4j的拦截实现

@@ -22,12 +22,13 @@
 
 package com.huawei.sermant.plugin.servermonitor.provider;
 
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.send.api.GatewayClient;
 import com.huawei.sermant.plugin.monitor.common.collect.MetricProvider;
 import com.huawei.sermant.plugin.monitor.common.config.ServiceConfig;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.send.api.GatewayClient;
 
 import org.apache.skywalking.apm.agent.core.jvm.cpu.CPUProvider;
 import org.apache.skywalking.apm.agent.core.jvm.gc.GCProvider;

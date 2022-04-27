@@ -1,73 +1,181 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.huawei.sermant</groupId>
-        <artifactId>sermant-agentcore</artifactId>
-        <version>1.0.0</version>
-    </parent>
+
+    <groupId>com.huaweicloud.sermant</groupId>
+    <version>0.2.1</version>
     <artifactId>sermant-agentcore-core</artifactId>
+
+    <name>sermant-agentcore-core</name>
+    <description>The core capability and agent framework of Sermant.</description>
+    <url>https://github.com/huaweicloud/Sermant</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://github.com/huaweicloud/Sermant</url>
+        <connection>scm:git:git://github.com/huaweicloud/Sermant.git</connection>
+        <developerConnection>scm:git:ssh://github.com:huaweicloud/Sermant.git</developerConnection>
+    </scm>
+    <developers>
+        <developer>
+                <name>luanwenfei</name>
+                <id>luanwenfei-venus</id>
+                <email>luanwenfei@outlook.com</email>
+                <roles>
+                    <role>Developer</role>
+                </roles>
+                <timezone>+8</timezone>
+        </developer>
+    </developers>
+
     <properties>
         <jdk.version>1.8</jdk.version>
-        <profile.id>agent</profile.id>
-        <package.output.dir>${package.agent.dir}/core</package.output.dir>
-        <config.file.name>config.properties</config.file.name>
-        <plugin.setting.name>plugins.yaml</plugin.setting.name>
-        <log.setting.name>logback.xml</log.setting.name>
-        <env.cover.skip.flag>true</env.cover.skip.flag>
-        <config.source.dir>config</config.source.dir>
-        <config.output.dir>${package.agent.dir}/config</config.output.dir>
+        <shade.common.prefix>com.huaweicloud.sermant.dependencies</shade.common.prefix>
+
+        <byte.buddy.version>1.10.14</byte.buddy.version>
+        <fastjson.version>1.2.76</fastjson.version>
+        <snake.yaml.version>1.26</snake.yaml.version>
+        <http.client.version>4.5.13</http.client.version>
+        <http.core.version>4.4.13</http.core.version>
+        <junit.version>4.12</junit.version>
+        <commons-collections.version>4.4</commons-collections.version>
+        <Java-WebSocket.version>1.5.1</Java-WebSocket.version>
+        <netty.version>4.1.73.Final</netty.version>
+        <protobuf.version>3.17.3</protobuf.version>
+        <mockito-inline.version>3.9.0</mockito-inline.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <common.io.version>1.3.2</common.io.version>
+        <xml.apis.version>1.4.01</xml.apis.version>
+        <guice.version>4.2.3</guice.version>
+        <slf4j.version>1.7.35</slf4j.version>
+        <zookeeper.version>3.6.0</zookeeper.version>
+        <logback.version>1.2.9</logback.version>
+        <xerces.version>2.12.1</xerces.version>
+        <asm.version>8.0.1</asm.version>
+        <lombok.version>1.18.10</lombok.version>
+        <grpc.version>1.36.1</grpc.version>
+
+        <protubuf.plugin.version>0.5.1</protubuf.plugin.version>
+        <shade.plugin.version>3.2.4</shade.plugin.version>
+        <source.plugin.version>3.0.1</source.plugin.version>
+        <jar.plugin.version>3.2.0</jar.plugin.version>
+        <log4j2.version>2.17.1</log4j2.version>
+        <compiler.plugin.version>3.8.1</compiler.plugin.version>
+        <os.plugin.version>1.5.0.Final</os.plugin.version>
+        <gpg.plugin.version>3.0.1</gpg.plugin.version>
+        <javadoc.plugin.version>3.3.2</javadoc.plugin.version>
+        <nexus.staging.plugin.version>1.6.7</nexus.staging.plugin.version>
     </properties>
+
     <profiles>
         <profile>
-            <id>example</id>
-            <properties>
-                <profile.id>example</profile.id>
-                <env.cover.skip.flag>false</env.cover.skip.flag>
-            </properties>
-        </profile>
-        <profile>
-            <id>all</id>
-            <properties>
-                <profile.id>all</profile.id>
-                <env.cover.skip.flag>false</env.cover.skip.flag>
-            </properties>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${gpg.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.3.2</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <additionalJOption>-Xdoclint:none</additionalJOption>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${nexus.staging.plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
         </profile>
     </profiles>
+
     <dependencies>
-        <!--替换javassist-->
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
+            <version>${byte.buddy.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
+            <version>${snake.yaml.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+            <version>${http.client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
+            <version>${http.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
+            <version>${commons-collections.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.java-websocket</groupId>
             <artifactId>Java-WebSocket</artifactId>
+            <version>${Java-WebSocket.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -78,56 +186,69 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport-native-epoll</artifactId>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
+            <version>${protobuf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
+            <version>${mockito-inline.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-io</artifactId>
+            <version>${common.io.version}</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
+            <version>${xml.apis.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-grapher</artifactId>
+            <version>${guice.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-multibindings</artifactId>
+            <version>${guice.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
+            <version>${zookeeper.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -142,69 +263,62 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-to-slf4j</artifactId>
+            <version>${log4j2.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
+            <version>${xerces.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
+            <version>${asm.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <version>${asm.version}</version>
         </dependency>
     </dependencies>
     <build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>${os.plugin.version}</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>agent-clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
-                            <filesets>
-                                <fileset>
-                                    <directory>${package.temp.dir}</directory>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>${jar.plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
@@ -215,7 +329,25 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler.plugin.version}</version>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <version>${shade.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <relocations>
                         <relocation>
@@ -271,10 +403,6 @@
                             <shadedPattern>${shade.common.prefix}.org.java_websocket</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>org.objectweb.asm</pattern>
-                            <shadedPattern>${shade.common.prefix}.org.objectweb.asm</shadedPattern>
-                        </relocation>
-                        <relocation>
                             <pattern>org.slf4j</pattern>
                             <shadedPattern>${shade.common.prefix}.org.slf4j</shadedPattern>
                         </relocation>
@@ -295,59 +423,44 @@
                             <shadedPattern>${shade.common.prefix}.org.yaml</shadedPattern>
                         </relocation>
                     </relocations>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer"/>
+                    </transformers>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${config.output.dir}</outputDirectory>
-                            <overwrite>true</overwrite>
-                            <resources>
-                                <resource>
-                                    <directory>${config.source.dir}</directory>
-                                    <includes>
-                                        <include>${config.file.name}</include>
-                                        <include>${plugin.setting.name}</include>
-                                        <include>${log.setting.name}</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>cover-by-env</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <skip>${env.cover.skip.flag}</skip>
-                            <outputDirectory>${config.output.dir}</outputDirectory>
-                            <overwrite>true</overwrite>
-                            <resources>
-                                <resource>
-                                    <directory>${config.source.dir}/${profile.id}</directory>
-                                    <includes>
-                                        <include>${config.file.name}</include>
-                                        <include>${plugin.setting.name}</include>
-                                        <include>${log.setting.name}</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
+                <version>${protubuf.plugin.version}</version>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
+                    </protocArtifact>
+                    <pluginId>grpc-java</pluginId>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
+                    </pluginArtifact>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${source.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

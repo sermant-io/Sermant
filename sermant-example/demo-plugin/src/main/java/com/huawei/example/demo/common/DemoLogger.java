@@ -16,7 +16,7 @@
 
 package com.huawei.example.demo.common;
 
-import com.huawei.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.util.logging.Logger;
 

@@ -19,8 +19,9 @@ package com.huawei.registry.support;
 
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.entity.MicroServiceInstance;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.utils.ClassLoaderUtils;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.utils.ClassLoaderUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;

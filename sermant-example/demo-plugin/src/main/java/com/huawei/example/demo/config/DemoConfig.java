@@ -16,9 +16,9 @@
 
 package com.huawei.example.demo.config;
 
-import com.huawei.sermant.core.config.common.ConfigFieldKey;
-import com.huawei.sermant.core.config.common.ConfigTypeKey;
-import com.huawei.sermant.core.plugin.config.PluginConfig;
+import com.huaweicloud.sermant.core.config.common.ConfigFieldKey;
+import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 import java.util.Arrays;
 import java.util.List;

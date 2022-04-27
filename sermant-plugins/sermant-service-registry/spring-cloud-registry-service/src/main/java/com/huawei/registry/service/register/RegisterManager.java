@@ -18,7 +18,8 @@ package com.huawei.registry.service.register;
 
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.entity.MicroServiceInstance;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.Collections;
 import java.util.HashMap;

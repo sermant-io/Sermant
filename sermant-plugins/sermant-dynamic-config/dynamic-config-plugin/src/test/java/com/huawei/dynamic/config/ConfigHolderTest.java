@@ -19,9 +19,10 @@ package com.huawei.dynamic.config;
 
 import com.huawei.dynamic.config.sources.TestConfigSources;
 import com.huawei.dynamic.config.sources.TestLowestConfigSources;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 import org.junit.Assert;
 import org.junit.Before;

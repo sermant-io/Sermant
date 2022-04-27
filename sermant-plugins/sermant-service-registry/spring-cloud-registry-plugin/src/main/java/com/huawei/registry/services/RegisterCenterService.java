@@ -18,7 +18,8 @@ package com.huawei.registry.services;
 
 import com.huawei.registry.entity.FixedResult;
 import com.huawei.registry.entity.MicroServiceInstance;
-import com.huawei.sermant.core.plugin.service.PluginService;
+
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 import java.util.List;
 

@@ -18,7 +18,8 @@
 package com.huawei.flowcontrol.service.sen;
 
 import com.huawei.flowcontrol.service.DubboService;
-import com.huawei.sermant.core.plugin.service.PluginService;
+
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
  * 基于sentinel实现

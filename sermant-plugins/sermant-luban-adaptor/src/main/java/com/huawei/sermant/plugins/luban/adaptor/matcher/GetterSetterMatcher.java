@@ -16,11 +16,11 @@
 
 package com.huawei.sermant.plugins.luban.adaptor.matcher;
 
-import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
 
-import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.description.type.TypeDefinition;
-import net.bytebuddy.matcher.ElementMatchers;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.description.method.MethodDescription;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.description.type.TypeDefinition;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.matcher.ElementMatchers;
 
 import java.util.Locale;
 

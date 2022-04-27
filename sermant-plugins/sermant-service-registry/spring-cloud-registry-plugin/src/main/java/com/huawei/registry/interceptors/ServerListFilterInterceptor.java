@@ -17,8 +17,8 @@
 package com.huawei.registry.interceptors;
 
 import com.huawei.registry.support.InstanceInterceptorSupport;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.netflix.loadbalancer.Server;
 
 import java.util.ArrayList;

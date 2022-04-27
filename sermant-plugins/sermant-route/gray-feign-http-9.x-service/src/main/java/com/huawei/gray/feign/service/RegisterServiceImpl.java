@@ -20,9 +20,9 @@ import com.huawei.gray.feign.context.CurrentInstance;
 import com.huawei.gray.feign.util.RouterUtil;
 import com.huawei.route.common.gray.config.GrayConfig;
 import com.huawei.route.common.gray.constants.GrayConstant;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
 
+import com.huaweicloud.sermant.core.agent.common.BeforeResult;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 import com.netflix.appinfo.InstanceInfo;
 

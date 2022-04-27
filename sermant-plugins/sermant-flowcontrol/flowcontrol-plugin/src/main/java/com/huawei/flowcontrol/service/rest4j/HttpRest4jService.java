@@ -18,7 +18,8 @@
 package com.huawei.flowcontrol.service.rest4j;
 
 import com.huawei.flowcontrol.service.HttpService;
-import com.huawei.sermant.core.plugin.service.PluginService;
+
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
  * Http拦截实现

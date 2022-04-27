@@ -16,10 +16,10 @@
 
 package com.huawei.example.demo.service;
 
-import com.huawei.sermant.core.plugin.service.PluginService;
-import com.huawei.sermant.core.service.ServiceManager;
-import com.huawei.sermant.core.service.heartbeat.api.ExtInfoProvider;
-import com.huawei.sermant.core.service.heartbeat.api.HeartbeatService;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.heartbeat.api.ExtInfoProvider;
+import com.huaweicloud.sermant.core.service.heartbeat.api.HeartbeatService;
 
 import java.util.Collections;
 import java.util.Map;

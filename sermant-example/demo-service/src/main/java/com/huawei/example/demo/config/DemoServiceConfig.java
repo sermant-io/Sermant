@@ -16,7 +16,7 @@
 
 package com.huawei.example.demo.config;
 
-import com.huawei.sermant.core.plugin.config.PluginConfig;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 /**
  * 插件服务包中定义的插件配置示例，该示例较{@link com.huawei.example.demo.config.DemoConfig}较为简单

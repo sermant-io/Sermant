@@ -17,8 +17,9 @@
 package com.huawei.dubbo.registry.declarer;
 
 import com.huawei.dubbo.registry.constants.Constant;
-import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
-import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
+
+import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * RegistryConfig增强类

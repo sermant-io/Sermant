@@ -16,7 +16,7 @@
 
 package com.huawei.gray.dubbo.utils;
 
-import com.huawei.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;

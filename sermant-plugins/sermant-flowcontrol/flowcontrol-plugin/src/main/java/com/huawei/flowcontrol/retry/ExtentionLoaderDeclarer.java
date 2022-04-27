@@ -17,12 +17,11 @@
 
 package com.huawei.flowcontrol.retry;
 
-import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
-import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
-import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
-
-import net.bytebuddy.matcher.ElementMatchers;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * 拦截dubbo extensionLoader注入cluster实现重试

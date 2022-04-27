@@ -16,8 +16,8 @@
 
 package com.huawei.sermant.plugin.monitor.common.config;
 
-import com.huawei.sermant.core.config.common.ConfigTypeKey;
-import com.huawei.sermant.core.plugin.config.PluginConfig;
+import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 @ConfigTypeKey("service.config")
 public class ServiceConfig implements PluginConfig {

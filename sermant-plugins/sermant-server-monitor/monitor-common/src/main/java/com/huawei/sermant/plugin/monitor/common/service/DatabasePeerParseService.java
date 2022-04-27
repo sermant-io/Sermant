@@ -16,7 +16,7 @@
 
 package com.huawei.sermant.plugin.monitor.common.service;
 
-import com.huawei.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 import java.util.Optional;
 

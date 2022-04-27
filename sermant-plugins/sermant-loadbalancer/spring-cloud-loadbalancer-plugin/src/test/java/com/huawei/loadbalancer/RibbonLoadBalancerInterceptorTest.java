@@ -19,8 +19,8 @@ package com.huawei.loadbalancer;
 import com.huawei.loadbalancer.config.LoadbalancerConfig;
 import com.huawei.loadbalancer.config.RibbonLoadbalancerType;
 import com.huawei.loadbalancer.interceptor.RibbonLoadBalancerInterceptor;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
 
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.RandomRule;
 import com.netflix.loadbalancer.RetryRule;

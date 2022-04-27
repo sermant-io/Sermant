@@ -20,10 +20,10 @@ import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.services.RegisterCenterService;
 import com.huawei.registry.support.InstanceInterceptorSupport;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.service.ServiceManager;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;

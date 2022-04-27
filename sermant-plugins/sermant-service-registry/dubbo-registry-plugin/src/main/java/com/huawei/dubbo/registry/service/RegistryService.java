@@ -16,7 +16,7 @@
 
 package com.huawei.dubbo.registry.service;
 
-import com.huawei.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
  * 注册服务

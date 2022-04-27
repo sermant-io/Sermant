@@ -18,7 +18,8 @@
 package com.huawei.dynamic.config.interceptors;
 
 import com.huawei.dynamic.config.DynamicContext;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
  * 通过拦截开启启动配置后的调用方法来判断是否开启启动配置, 该逻辑将在{@link SpringEnvironmentInterceptor}逻辑之前执行

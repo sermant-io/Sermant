@@ -17,7 +17,8 @@
 package com.huawei.gray.dubbo.strategy.type;
 
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
-import com.huawei.sermant.core.utils.StringUtils;
+
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.util.Optional;
 

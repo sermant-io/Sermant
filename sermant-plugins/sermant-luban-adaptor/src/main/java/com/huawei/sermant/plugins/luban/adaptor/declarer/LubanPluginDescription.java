@@ -16,25 +16,24 @@
 
 package com.huawei.sermant.plugins.luban.adaptor.declarer;
 
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
-import com.huawei.sermant.core.plugin.agent.declarer.PluginDescription;
-import com.huawei.sermant.core.plugin.agent.declarer.SuperTypeDeclarer;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
-import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
-import com.huawei.sermant.core.plugin.agent.transformer.AdviceTransformer;
-import com.huawei.sermant.core.plugin.agent.transformer.BootstrapTransformer;
 import com.huawei.sermant.plugins.luban.adaptor.collector.BufferedTransformAccess;
 import com.huawei.sermant.plugins.luban.adaptor.matcher.GetterSetterMatcher;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDescription;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.SuperTypeDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.transformer.AdviceTransformer;
+import com.huaweicloud.sermant.core.plugin.agent.transformer.BootstrapTransformer;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.description.method.MethodDescription;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.description.type.TypeDescription;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.dynamic.ClassFileLocator;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.dynamic.DynamicType;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.matcher.ElementMatchers;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.utility.JavaModule;
 import com.lubanops.apm.bootstrap.NoneNamedListener;
-
-import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.description.type.TypeDescription;
-import net.bytebuddy.dynamic.ClassFileLocator;
-import net.bytebuddy.dynamic.DynamicType;
-import net.bytebuddy.matcher.ElementMatchers;
-import net.bytebuddy.utility.JavaModule;
 
 import java.io.IOException;
 import java.security.ProtectionDomain;
@@ -78,7 +77,7 @@ public class LubanPluginDescription implements PluginDescription {
 
     @Override
     public boolean matches(TypeDescription typeDescription, ClassLoader classLoader, JavaModule module,
-            Class<?> classBeingRedefined, ProtectionDomain protectionDomain) {
+                           Class<?> classBeingRedefined, ProtectionDomain protectionDomain) {
         try {
             final byte[] classfileBuffer = ClassFileLocator.ForClassLoader.of(classLoader)
                     .locate(typeDescription.getActualName()).resolve();
@@ -96,7 +95,7 @@ public class LubanPluginDescription implements PluginDescription {
 
     @Override
     public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,
-            ClassLoader classLoader, JavaModule module) {
+                                            ClassLoader classLoader, JavaModule module) {
         final Interceptor interceptor =
                 InterceptorTransformer.createInterceptor(noneNamedListener.getInterceptor(), pluginClassLoader);
         final List<InterceptDeclarer> interceptDeclarers = new ArrayList<>();

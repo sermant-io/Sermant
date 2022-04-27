@@ -18,9 +18,10 @@ package com.huawei.gray.dubbo.interceptor;
 
 import com.huawei.gray.dubbo.service.RegistrationService;
 import com.huawei.gray.dubbo.utils.ReflectUtils;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;

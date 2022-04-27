@@ -17,10 +17,11 @@
 package com.huawei.route.common.gray.config;
 
 import com.huawei.route.common.gray.constants.GrayConstant;
-import com.huawei.sermant.core.config.ConfigManager;
-import com.huawei.sermant.core.config.common.ConfigTypeKey;
-import com.huawei.sermant.core.plugin.config.PluginConfig;
-import com.huawei.sermant.core.plugin.config.ServiceMeta;
+
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
+import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
 
 import java.util.Map;
 

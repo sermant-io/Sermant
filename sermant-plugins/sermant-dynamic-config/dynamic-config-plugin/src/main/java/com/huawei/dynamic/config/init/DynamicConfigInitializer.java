@@ -20,14 +20,15 @@ package com.huawei.dynamic.config.init;
 import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.entity.ClientMeta;
 import com.huawei.dynamic.config.subscribe.ConfigListener;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.config.ConfigManager;
-import com.huawei.sermant.core.plugin.config.PluginConfigManager;
-import com.huawei.sermant.core.plugin.config.ServiceMeta;
-import com.huawei.sermant.core.plugin.service.PluginService;
-import com.huawei.sermant.core.plugin.subscribe.ConfigSubscriber;
-import com.huawei.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
-import com.huawei.sermant.core.plugin.subscribe.DefaultGroupConfigSubscriber;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.plugin.subscribe.ConfigSubscriber;
+import com.huaweicloud.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
+import com.huaweicloud.sermant.core.plugin.subscribe.DefaultGroupConfigSubscriber;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

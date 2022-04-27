@@ -16,9 +16,9 @@
 
 package com.huawei.sermant.premain.common;
 
-import com.huawei.sermant.core.common.CommonConstant;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.utils.FieldUtils;
+import com.huaweicloud.sermant.core.common.CommonConstant;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.utils.FieldUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;

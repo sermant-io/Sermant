@@ -16,13 +16,12 @@
 
 package com.huawei.gray.feign.definition;
 
-import com.huawei.sermant.core.agent.definition.EnhanceDefinition;
-import com.huawei.sermant.core.agent.definition.MethodInterceptPoint;
-import com.huawei.sermant.core.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.agent.matcher.ClassMatchers;
-
-import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.matcher.ElementMatchers;
+import com.huaweicloud.sermant.core.agent.definition.EnhanceDefinition;
+import com.huaweicloud.sermant.core.agent.definition.MethodInterceptPoint;
+import com.huaweicloud.sermant.core.agent.matcher.ClassMatcher;
+import com.huaweicloud.sermant.core.agent.matcher.ClassMatchers;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.description.method.MethodDescription;
+import com.huaweicloud.sermant.dependencies.net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * 实例增强基类

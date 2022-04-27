@@ -55,15 +55,15 @@ String version = BootArgsIndexer.getCoreVersion();
   - `example/plugins.yaml`文件，*example Profile*的插件设置。
   - `config.properties`文件，统一配置文件。
 - `META-INF/services`目录，*SPI*配置文件目录。
-  - `com.huawei.sermant.core.config.common.BaseConfig`文件，用于声明统一配置类。
-  - `com.huawei.sermant.core.config.strategy.LoadConfigStrategy`文件，用于声明配置的加载策略。
-  - `com.huawei.sermant.core.service.BaseService`文件，用于声明核心服务实现。
+  - `com.huaweicloud.sermant.core.config.common.BaseConfig`文件，用于声明统一配置类。
+  - `com.huaweicloud.sermant.core.config.strategy.LoadConfigStrategy`文件，用于声明配置的加载策略。
+  - `com.huaweicloud.sermant.core.service.BaseService`文件，用于声明核心服务实现。
 
 ## 字节码增强
 
-**Sermant**的**字节码增强**代码见于[agent](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent)目录。
+**Sermant**的**字节码增强**代码见于[agent](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent)目录。
 
-**Sermant**基于`byte-buddy`字节码增强框架做字节码增强，主要采用[**byte-buddy委派**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/transformer/DelegateTransformer.java)的方式进行，对于原生类增强的场景，则使用[**Advice模板类**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/template)配合[**byte-buddy advice**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/transformer/BootstrapTransformer.java)技术进行增强。
+**Sermant**基于`byte-buddy`字节码增强框架做字节码增强，主要采用[**byte-buddy委派**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/transformer/DelegateTransformer.java)的方式进行，对于原生类增强的场景，则使用[**Advice模板类**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/template)配合[**byte-buddy advice**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/transformer/BootstrapTransformer.java)技术进行增强。
 
 `agent`目录下主要包含以下内容：
 
@@ -73,28 +73,28 @@ String version = BootArgsIndexer.getCoreVersion();
 - `interceptor`目录，存放**拦截器接口**、**拦截器链**相关内容和**拦截器加载器**，其中**拦截器接口**是插件开发者需要关注的内容。
 - `matcher`目录，存放**被增强类的匹配器**，是插件开发者需要关注的内容。
 - `template`目录，存放**Advice模板类**。
-- `transformer`目录，字节码转换器，包括委派转换器[DelegateTransformer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/transformer/DelegateTransformer.java)和*Advice*转换器[BootstrapTransformer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/transformer/BootstrapTransformer.java)，他们由通用转换器[CommonTransformer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/transformer/CommonTransformer.java)统一调度。
+- `transformer`目录，字节码转换器，包括委派转换器[DelegateTransformer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/transformer/DelegateTransformer.java)和*Advice*转换器[BootstrapTransformer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/transformer/BootstrapTransformer.java)，他们由通用转换器[CommonTransformer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/transformer/CommonTransformer.java)统一调度。
 - `ByteBuddyAgentBuilder`类，字节码增强的入口。
 
 ### 增强定义
 
-插件开发者在编写**增强定义**时，实现[EnhanceDefinition](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/definition/EnhanceDefinition.java)接口的`enhanceClass`方法和`getMethodInterceptPoints`方法即可，详情可参见[插件代码开发手册中增强定义一节](../dev-guide/dev_plugin_code.md#增强定义)。
+插件开发者在编写**增强定义**时，实现[EnhanceDefinition](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/definition/EnhanceDefinition.java)接口的`enhanceClass`方法和`getMethodInterceptPoints`方法即可，详情可参见[插件代码开发手册中增强定义一节](../dev-guide/dev_plugin_code.md#增强定义)。
 
 注意不要忘记添加`EnhanceDefinition`的*SPI*配置文件。
 
 ### 拦截器
 
-插件开发者在编写**拦截器**时，需要依据被增强方法的类型，实现[interceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/interceptor)目录的不同接口即可：
+插件开发者在编写**拦截器**时，需要依据被增强方法的类型，实现[interceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/interceptor)目录的不同接口即可：
 
-- 增强静态方法时，需要实现[StaticMethodInterceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/interceptor/StaticMethodInterceptor.java)
-- 增强构造函数时，需要实现[ConstructorInterceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/interceptor/ConstructorInterceptor.java)
-- 增强实例方法时，需要实现[InstanceMethodInterceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/agent/interceptor/InstanceMethodInterceptor.java)
+- 增强静态方法时，需要实现[StaticMethodInterceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/interceptor/StaticMethodInterceptor.java)
+- 增强构造函数时，需要实现[ConstructorInterceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/interceptor/ConstructorInterceptor.java)
+- 增强实例方法时，需要实现[InstanceMethodInterceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/interceptor/InstanceMethodInterceptor.java)
 
 具体如何怎么做，可以参见[插件代码开发手册中拦截器一节](../dev-guide/dev_plugin_code.md#拦截器)。
 
 ## 统一配置系统
 
-**Sermant**的**统一配置系统**代码见于[config](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/config)目录。
+**Sermant**的**统一配置系统**代码见于[config](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config)目录。
 
 `config`目录下包含以下内容：
 
@@ -118,14 +118,14 @@ ConfigExample config = ConfigManager.getConfig(ConfigExample.class);
 
 ### 统一配置类
 
-**统一配置系统**是一个加载**静态配置**为**Java Pojo**的管理系统，因此，**统一配置类**必须是一个实现[BaseConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/config/common/BaseConfig.java)接口的**Java Pojo**。这些**统一配置类**的具体要求由`LoadPropertiesStrategy`而定，详见[properties策略详解](#properties策略详解)。至于插件相关的[插件配置](#插件配置系统)，则与`LoadYamlStrategy`的要求有关，详见[yaml策略详解](#yaml策略详解)。
+**统一配置系统**是一个加载**静态配置**为**Java Pojo**的管理系统，因此，**统一配置类**必须是一个实现[BaseConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/BaseConfig.java)接口的**Java Pojo**。这些**统一配置类**的具体要求由`LoadPropertiesStrategy`而定，详见[properties策略详解](#properties策略详解)。至于插件相关的[插件配置](#插件配置系统)，则与`LoadYamlStrategy`的要求有关，详见[yaml策略详解](#yaml策略详解)。
 
 **统一配置类**是一个**Java Pojo**，他的`getter`方法和`setter`方法可以直接使用`lombok`的`Data`注解、`Getter`注解和`Setter`注解生成。
 
-注意，编写完**统一配置类**之后，不要忘记添加[BaseConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/config/common/BaseConfig.java)接口的*SPI*配置文件：
+注意，编写完**统一配置类**之后，不要忘记添加[BaseConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/BaseConfig.java)接口的*SPI*配置文件：
 
 - 在资源目录`resources`下添加`META-INF/services`文件夹。
-- 在`META-INF/services`中添加`com.huawei.sermant.core.config.common.BaseConfig`配置文件。
+- 在`META-INF/services`中添加`com.huaweicloud.sermant.core.config.common.BaseConfig`配置文件。
 - 在上述文件中，以换行为分隔，键入插件包中所有的**统一配置类**。
 
 ### properties策略详解
@@ -357,12 +357,12 @@ plugins:
 
 ## 核心服务系统
 
-**Sermant**的**核心服务系统**代码见于[service](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service)目录。
+**Sermant**的**核心服务系统**代码见于[service](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service)目录。
 
 `service`目录下中主要包括：
 
-- [BaseService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/BaseService.java): [**核心服务类**](#核心服务类)
-- [ServiceManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/ServiceManager.java): [**核心服务管理类**](#核心服务类)
+- [BaseService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/BaseService.java): [**核心服务类**](#核心服务类)
+- [ServiceManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/ServiceManager.java): [**核心服务管理类**](#核心服务类)
 - 核心服务实现目录
 
 ### 核心服务管理类
@@ -374,7 +374,7 @@ ServiceExample service = ServiceManager.getService(ServiceExample.class);
 
 ### 核心服务类
 
-**核心服务系统**是一个将实现[BaseService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/service/BaseService.java)的**核心服务类**加载、管理的系统，其核心就是实现**核心服务类**。
+**核心服务系统**是一个将实现[BaseService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/BaseService.java)的**核心服务类**加载、管理的系统，其核心就是实现**核心服务类**。
 
 我们假定有一个叫`example`的服务，为其编写如下接口：
 ```java
@@ -406,21 +406,21 @@ public class ServiceExampleImpl implements ServiceExample {
 接下来，把`ServiceExampleImpl`添加到`BaseService`的*SPI*配置中即可使用：
 
 - 在资源目录`resources`下添加`META-INF/services`文件夹。
-- 在`META-INF/services`中添加`com.huawei.sermant.core.service.BaseService`配置文件。
+- 在`META-INF/services`中添加`com.huaweicloud.sermant.core.service.BaseService`配置文件。
 - 在上述文件中，以换行为分隔，键入插件包中所有的**核心服务类**实现(`ServiceExampleImpl`)。
 
 这样就能通过`ServiceManager`的`getService`方法获取到**核心服务类**实例了。
 
 ## 插件管理系统
 
-**Sermant**的**插件管理系统**代码见于[plugin](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin)目录。
+**Sermant**的**插件管理系统**代码见于[plugin](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin)目录。
 
 `plugin`目录下主要包括：
 
-- [classloader/PluginClassLoader](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/classloader/PluginClassLoader.java)类，即[插件类加载器](#插件类加载器)。
-- [config](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/config)目录，里面存放着[插件配置系统](#插件配置系统)相关代码。
-- [service](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/service)目录，里面存放着[插件服务系统](#插件服务系统)相关代码。
-- [PluginManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huawei/sermant/core/plugin/PluginManager.java)类，即[插件管理类](#插件管理类)
+- [classloader/PluginClassLoader](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/classloader/PluginClassLoader.java)类，即[插件类加载器](#插件类加载器)。
+- [config](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config)目录，里面存放着[插件配置系统](#插件配置系统)相关代码。
+- [service](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service)目录，里面存放着[插件服务系统](#插件服务系统)相关代码。
+- [PluginManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/PluginManager.java)类，即[插件管理类](#插件管理类)
 
 ### 插件管理类
 

@@ -466,7 +466,7 @@
         <!-- 不能有无用的import -->
         <module name="UnusedImports"/>
         <module name="ImportOrder">
-            <property name="groups" value="android,androidx,com.android,huawei,com.huawei,com,*,net,org,javacard,/^java\./,javax"/>
+            <property name="groups" value="android,androidx,com.android,huawei,com.huawei,com.huaweicloud,com,*,net,org,javacard,/^java\./,javax"/>
             <property name="ordered" value="true"/>
             <property name="separated" value="true"/>
             <property name="option" value="top"/>
@@ -504,7 +504,7 @@
         </module>
         <module name="PackageName">
             <!-- 包名检查 -->
-            <property name="format" value="^com.huawei(\.[a-z][a-z0-9]*)*$"/>
+            <property name="format" value="(^com.huawei(\.[a-z][a-z0-9]*)*$)|(^com.huaweicloud(\.[a-z][a-z0-9]*)*$)"/>
         </module>
         <module name="ParameterName">
             <!-- 参数检查: -->

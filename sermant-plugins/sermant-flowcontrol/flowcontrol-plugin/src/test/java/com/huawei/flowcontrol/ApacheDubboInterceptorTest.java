@@ -21,8 +21,9 @@ import static org.mockito.Mockito.mock;
 
 import com.huawei.flowcontrol.apache.ApacheInvocation;
 import com.huawei.flowcontrol.apache.ApacheInvoker;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.Interceptor;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.monitor.support.MonitorFilter;

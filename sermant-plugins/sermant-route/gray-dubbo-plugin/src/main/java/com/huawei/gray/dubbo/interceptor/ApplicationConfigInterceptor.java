@@ -17,9 +17,10 @@
 package com.huawei.gray.dubbo.interceptor;
 
 import com.huawei.gray.dubbo.service.ApplicationConfigService;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 /**
  * 增强ApplicationConfig类的setName方法，用来获取应用名

@@ -19,8 +19,9 @@ package com.huawei.registry.interceptors.health;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.handler.SingleStateCloseHandler;
 import com.huawei.registry.support.FieldAccessAction;
-import com.huawei.sermant.core.common.LoggerFactory;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;

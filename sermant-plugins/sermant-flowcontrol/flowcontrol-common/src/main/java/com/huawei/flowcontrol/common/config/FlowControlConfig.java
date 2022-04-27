@@ -19,8 +19,9 @@ package com.huawei.flowcontrol.common.config;
 
 import com.huawei.flowcontrol.common.enums.FlowFramework;
 import com.huawei.flowcontrol.common.enums.MetricSendWay;
-import com.huawei.sermant.core.config.common.ConfigTypeKey;
-import com.huawei.sermant.core.plugin.config.PluginConfig;
+
+import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 /**
  * 流控配置类

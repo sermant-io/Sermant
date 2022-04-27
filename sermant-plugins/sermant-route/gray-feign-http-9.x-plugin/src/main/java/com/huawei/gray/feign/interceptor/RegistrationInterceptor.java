@@ -17,9 +17,10 @@
 package com.huawei.gray.feign.interceptor;
 
 import com.huawei.gray.feign.service.RegisterService;
-import com.huawei.sermant.core.agent.common.BeforeResult;
-import com.huawei.sermant.core.agent.interceptor.InstanceMethodInterceptor;
-import com.huawei.sermant.core.service.ServiceManager;
+
+import com.huaweicloud.sermant.core.agent.common.BeforeResult;
+import com.huaweicloud.sermant.core.agent.interceptor.InstanceMethodInterceptor;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import java.lang.reflect.Method;
 

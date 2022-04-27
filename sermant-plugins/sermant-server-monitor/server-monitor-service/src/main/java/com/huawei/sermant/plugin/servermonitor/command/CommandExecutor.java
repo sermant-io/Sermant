@@ -16,9 +16,10 @@
 
 package com.huawei.sermant.plugin.servermonitor.command;
 
-import com.huawei.sermant.core.common.LoggerFactory;
 import com.huawei.sermant.plugin.servermonitor.common.StreamHandler;
 import com.huawei.sermant.plugin.servermonitor.common.VoidStreamHandler;
+
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;

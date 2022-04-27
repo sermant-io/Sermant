@@ -8,15 +8,38 @@
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <artifactId>sermant-agentcore</artifactId>
     <packaging>pom</packaging>
+
     <modules>
-        <module>sermant-agentcore-core</module>
         <module>sermant-agentcore-premain</module>
     </modules>
-
-    <artifactId>sermant-agentcore</artifactId>
 
     <properties>
         <sermant.basedir>${pom.basedir}/../..</sermant.basedir>
     </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>agent-clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${package.temp.dir}</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

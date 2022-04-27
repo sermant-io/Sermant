@@ -16,7 +16,7 @@
 
 package com.huawei.example.demo.service;
 
-import com.huawei.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
  * 复杂服务的接口示例

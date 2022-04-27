@@ -17,8 +17,6 @@
 package com.huawei.gray.dubbo;
 
 import com.huawei.gray.dubbo.utils.ReflectUtils;
-import com.huawei.sermant.core.common.CommonConstant;
-import com.huawei.sermant.core.common.LoggerFactory;
 
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.config.ApplicationConfig;
@@ -26,6 +24,8 @@ import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
 import com.alibaba.dubbo.rpc.RpcException;
+import com.huaweicloud.sermant.core.common.CommonConstant;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;

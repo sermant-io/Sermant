@@ -18,9 +18,9 @@
 package com.huawei.flowcontrol.common.metric;
 
 import com.huawei.flowcontrol.common.metric.provider.MetricProvider;
-import com.huawei.sermant.core.common.LoggerFactory;
 
-import com.alibaba.fastjson.JSONObject;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.dependencies.com.alibaba.fastjson.JSONObject;
 
 import java.util.logging.Logger;
 

@@ -19,7 +19,8 @@ package com.huawei.flowcontrol.retry;
 
 import com.huawei.flowcontrol.common.util.ReflectUtils;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import java.util.Map;
 import java.util.Optional;

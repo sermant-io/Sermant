@@ -28,7 +28,8 @@ import com.huawei.route.common.gray.label.entity.MatchStrategy;
 import com.huawei.route.common.gray.label.entity.Route;
 import com.huawei.route.common.gray.label.entity.Rule;
 import com.huawei.route.common.gray.label.entity.ValueMatch;
-import com.huawei.sermant.core.utils.StringUtils;
+
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 

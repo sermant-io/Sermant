@@ -19,10 +19,11 @@ package com.huawei.example.demo.declarer;
 import com.huawei.example.demo.interceptor.DemoConstInterceptor;
 import com.huawei.example.demo.interceptor.DemoMemberInterceptor;
 import com.huawei.example.demo.interceptor.DemoStaticInterceptor;
-import com.huawei.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
-import com.huawei.sermant.core.plugin.agent.declarer.InterceptDeclarer;
-import com.huawei.sermant.core.plugin.agent.matcher.ClassMatcher;
-import com.huawei.sermant.core.plugin.agent.matcher.MethodMatcher;
+
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * 以Thread为例测试启动类加载器加载的类的增强情况

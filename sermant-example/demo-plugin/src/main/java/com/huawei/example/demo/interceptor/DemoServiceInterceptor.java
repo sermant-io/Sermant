@@ -19,9 +19,10 @@ package com.huawei.example.demo.interceptor;
 import com.huawei.example.demo.common.DemoLogger;
 import com.huawei.example.demo.service.DemoComplexService;
 import com.huawei.example.demo.service.DemoSimpleService;
-import com.huawei.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huawei.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huawei.sermant.core.plugin.service.PluginServiceManager;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 /**
  * 插件服务的拦截器示例，在本示例中，将展示如何在拦截器中使用插件服务

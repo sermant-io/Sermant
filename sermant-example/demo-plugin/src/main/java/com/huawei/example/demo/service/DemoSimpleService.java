@@ -17,8 +17,9 @@
 package com.huawei.example.demo.service;
 
 import com.huawei.example.demo.common.DemoLogger;
-import com.huawei.sermant.core.plugin.service.PluginService;
-import com.huawei.sermant.core.plugin.service.PluginServiceManager;
+
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 /**
  * 示例服务，本示例中将展示如何编写一个插件服务

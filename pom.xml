@@ -29,7 +29,6 @@
         <xml.apis.version>1.4.01</xml.apis.version>
         <xerces.version>2.12.1</xerces.version>
         <snake.yaml.version>1.26</snake.yaml.version>
-        <byte.buddy.version>1.10.14</byte.buddy.version>
         <zookeeper.version>3.6.0</zookeeper.version>
         <lombok.version>1.18.10</lombok.version>
         <asm.version>8.0.1</asm.version>
@@ -49,6 +48,7 @@
         <source.plugin.version>3.0.1</source.plugin.version>
         <jar.plugin.version>3.2.0</jar.plugin.version>
         <resources.plugin.version>3.1.0</resources.plugin.version>
+        <dependency.plugin.version>3.3.0</dependency.plugin.version>
         <shade.plugin.version>3.2.4</shade.plugin.version>
         <assembly.plugin.version>2.5.3</assembly.plugin.version>
         <grpc.version>1.36.1</grpc.version>
@@ -67,7 +67,7 @@
         <package.license.ftl.file>third-party-license.ftl</package.license.ftl.file>
         <package.resources.dir>sermant-package/resources</package.resources.dir>
 
-        <shade.common.prefix>com.huawei.sermant.dependencies</shade.common.prefix>
+        <shade.common.prefix>com.huaweicloud.sermant.dependencies</shade.common.prefix>
         <shade.distinct.prefix>${project.artifactId}</shade.distinct.prefix>
 
         <license.binary.suffix.file>LICENSE-binary-suffix.txt</license.binary.suffix.file>
@@ -75,9 +75,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.huawei.sermant</groupId>
+                <groupId>com.huaweicloud.sermant</groupId>
                 <artifactId>sermant-agentcore-core</artifactId>
-                <version>${project.version}</version>
+                <version>0.2.1</version>
             </dependency>
 
             <dependency>
@@ -164,11 +164,6 @@
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${snake.yaml.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.bytebuddy</groupId>
-                <artifactId>byte-buddy</artifactId>
-                <version>${byte.buddy.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>
@@ -280,9 +275,6 @@
         </profile>
         <profile>
             <id>backend</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <modules>
                 <module>sermant-backend</module>
             </modules>
@@ -295,9 +287,6 @@
         </profile>
         <profile>
             <id>package</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <modules>
                 <module>sermant-package</module>
             </modules>
@@ -367,6 +356,11 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${dependency.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>${shade.plugin.version}</version>
                     <executions>
@@ -380,10 +374,6 @@
                     <configuration>
                         <outputFile>${package.output.dir}/${project.artifactId}-${project.version}.jar</outputFile>
                         <relocations>
-                            <relocation>
-                                <pattern>net.bytebuddy</pattern>
-                                <shadedPattern>${shade.common.prefix}.net.bytebuddy</shadedPattern>
-                            </relocation>
                             <relocation>
                                 <pattern>org.slf4j</pattern>
                                 <shadedPattern>${shade.common.prefix}.org.slf4j</shadedPattern>
