@@ -20,9 +20,10 @@ import com.huawei.dubbo.registry.alibaba.ServiceCenterRegistry;
 import com.huawei.dubbo.registry.alibaba.ServiceCenterRegistryFactory;
 import com.huawei.dubbo.registry.service.RegistryService;
 
-import com.alibaba.dubbo.common.URL;
 import com.huaweicloud.sermant.core.service.BaseService;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+
+import com.alibaba.dubbo.common.URL;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -61,6 +62,11 @@ public class RegistryFactoryTest {
 
             @Override
             public void addRegistryUrls(Object url) {
+            }
+
+            @Override
+            public void notifyGovernanceUrl() {
+
             }
         });
     }

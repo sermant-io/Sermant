@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.dubbo.registry;
+package com.huawei.dubbo.registry.entity;
 
 /**
  * 发现下游服务新增实例的实体
