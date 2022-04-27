@@ -33,7 +33,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <!--                <module>sermant-flowcontrol</module>-->
+                <module>sermant-flowcontrol</module>
                 <module>sermant-service-registry</module>
                 <module>sermant-dynamic-config</module>
             </modules>
