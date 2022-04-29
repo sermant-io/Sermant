@@ -1,9 +1,12 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.huaweicloud.sermant</groupId>
-    <version>0.2.0-SNAPSHOT</version>
+    <parent>
+        <artifactId>sermant-agentcore</artifactId>
+        <groupId>com.huaweicloud.sermant</groupId>
+        <version>1.0.0</version>
+    </parent>
     <artifactId>sermant-agentcore-core</artifactId>
 
     <name>sermant-agentcore-core</name>
@@ -36,6 +39,9 @@
     <properties>
         <jdk.version>1.8</jdk.version>
         <shade.common.prefix>com.huaweicloud.sermant.dependencies</shade.common.prefix>
+
+        <sermant.basedir>${pom.basedir}/../..</sermant.basedir>
+        <package.temp.dir>${sermant.basedir}/${sermant.name}-${project.version}</package.temp.dir>
 
         <byte.buddy.version>1.10.14</byte.buddy.version>
         <fastjson.version>1.2.76</fastjson.version>
@@ -95,7 +101,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.3.2</version>
+                        <version>${javadoc.plugin.version}</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -117,7 +123,7 @@
                         <configuration>
                             <serverId>ossrh</serverId>
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -132,6 +138,48 @@
                     <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </repository>
             </distributionManagement>
+        </profile>
+        <profile>
+            <id>agent</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <configuration>
+                            <outputFile>${package.temp.dir}/agent/core/${project.artifactId}-${project.version}.jar</outputFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>example</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <configuration>
+                            <outputFile>${package.temp.dir}/agent/core/${project.artifactId}-${project.version}.jar</outputFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>all</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <configuration>
+                            <outputFile>${package.temp.dir}/agent/core/${project.artifactId}-${project.version}.jar</outputFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 

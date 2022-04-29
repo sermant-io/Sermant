@@ -55,4 +55,9 @@ public interface RegistryService extends PluginService {
      * @see org.apache.dubbo.common.URL
      */
     void addRegistryUrls(Object url);
+
+    /**
+     * 治理数据变化时重新通知url
+     */
+    void notifyGovernanceUrl();
 }

@@ -1,7 +1,7 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.huawei.sermant</groupId>
+    <groupId>com.huaweicloud.sermant</groupId>
     <artifactId>sermant</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
@@ -58,7 +58,7 @@
         <license.plugin.version>1.19</license.plugin.version>
 
         <sermant.name>sermant-agent</sermant.name>
-        <sermant.basedir>${pom.basedir}/..</sermant.basedir>
+        <sermant.basedir>${pom.basedir}</sermant.basedir>
 
         <package.temp.dir>${sermant.basedir}/${sermant.name}-${project.version}</package.temp.dir>
         <package.agent.dir>${package.temp.dir}/agent</package.agent.dir>
@@ -77,9 +77,8 @@
             <dependency>
                 <groupId>com.huaweicloud.sermant</groupId>
                 <artifactId>sermant-agentcore-core</artifactId>
-                <version>0.2.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
@@ -294,8 +293,8 @@
         <profile>
             <id>all</id>
             <modules>
-                <module>sermant-example</module>
                 <module>sermant-agentcore</module>
+                <module>sermant-example</module>
                 <module>sermant-plugins</module>
                 <module>sermant-backend</module>
                 <module>sermant-package</module>
@@ -375,15 +374,17 @@
                         <outputFile>${package.output.dir}/${project.artifactId}-${project.version}.jar</outputFile>
                         <relocations>
                             <relocation>
+                                <pattern>net.bytebuddy</pattern>
+                                <shadedPattern>${shade.common.prefix}.net.bytebuddy</shadedPattern>
+                            </relocation>
+                            <relocation>
                                 <pattern>org.slf4j</pattern>
                                 <shadedPattern>${shade.common.prefix}.org.slf4j</shadedPattern>
                             </relocation>
                         </relocations>
                         <transformers>
-                            <transformer
-                                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                            <transformer
-                                    implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer"/>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer"/>
                         </transformers>
                     </configuration>
                 </plugin>
@@ -477,6 +478,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>${source.plugin.version}</version>
                 <configuration>
                     <attach>true</attach>
                 </configuration>
@@ -486,6 +488,29 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--     清理打包内容       -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${clean.plugin.version}</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>agent-clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${package.temp.dir}</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

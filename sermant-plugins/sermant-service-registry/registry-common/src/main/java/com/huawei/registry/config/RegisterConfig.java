@@ -137,6 +137,16 @@ public class RegisterConfig implements PluginConfig {
     private boolean allowCrossApp = false;
 
     /**
+     * 是否忽略契约差异
+     */
+    private boolean ignoreSwaggerDifferent = false;
+
+    /**
+     * dubbo参数白名单
+     */
+    private List<String> governanceParametersWhiteList = Collections.singletonList("timeout");
+
+    /**
      * 构造方法
      */
     public RegisterConfig() {
@@ -320,5 +330,21 @@ public class RegisterConfig implements PluginConfig {
 
     public void setEnvironment(String environment) {
         this.environment = environment;
+    }
+
+    public boolean isIgnoreSwaggerDifferent() {
+        return ignoreSwaggerDifferent;
+    }
+
+    public void setIgnoreSwaggerDifferent(boolean ignoreSwaggerDifferent) {
+        this.ignoreSwaggerDifferent = ignoreSwaggerDifferent;
+    }
+
+    public List<String> getGovernanceParametersWhiteList() {
+        return governanceParametersWhiteList;
+    }
+
+    public void setGovernanceParametersWhiteList(List<String> governanceParametersWhiteList) {
+        this.governanceParametersWhiteList = governanceParametersWhiteList;
     }
 }

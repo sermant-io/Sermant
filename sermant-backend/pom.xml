@@ -4,12 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>sermant</artifactId>
-        <groupId>com.huawei.sermant</groupId>
+        <groupId>com.huaweicloud.sermant</groupId>
         <version>1.0.0</version>
     </parent>
     <artifactId>sermant-backend</artifactId>
 
     <properties>
+        <sermant.basedir>${pom.basedir}/..</sermant.basedir>
         <package.output.dir>${package.server.dir}/sermant</package.output.dir>
         <jdk.version>1.8</jdk.version>
         <spring.boot.version>2.5.3</spring.boot.version>
@@ -24,9 +25,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.huawei.sermant</groupId>
+                <groupId>com.huaweicloud.sermant</groupId>
                 <artifactId>sermant</artifactId>
-                <version>${parent.version}</version>
+                <version>${project.parent.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

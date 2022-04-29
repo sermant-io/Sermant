@@ -20,8 +20,9 @@ import com.huawei.dubbo.registry.constants.Constant;
 import com.huawei.dubbo.registry.interceptor.RegistryConfigInterceptor;
 import com.huawei.registry.config.RegisterConfig;
 
-import com.alibaba.dubbo.config.RegistryConfig;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+
+import com.alibaba.dubbo.config.RegistryConfig;
 
 import org.junit.Assert;
 import org.junit.Test;
