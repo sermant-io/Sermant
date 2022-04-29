@@ -22,7 +22,8 @@ import com.huaweicloud.sermant.core.agent.definition.EnhanceDefinition;
 import com.huaweicloud.sermant.core.agent.definition.MethodInterceptPoint;
 import com.huaweicloud.sermant.core.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.agent.matcher.ClassMatchers;
-import com.huaweicloud.sermant.dependencies.net.bytebuddy.matcher.ElementMatchers;
+
+import net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * ScheduledThreadpool 增强

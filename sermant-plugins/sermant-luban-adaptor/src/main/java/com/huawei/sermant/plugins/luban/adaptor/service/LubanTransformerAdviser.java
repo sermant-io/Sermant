@@ -16,8 +16,9 @@
 
 package com.huawei.sermant.plugins.luban.adaptor.service;
 
-import com.huaweicloud.sermant.dependencies.net.bytebuddy.asm.Advice;
 import com.lubanops.apm.core.utils.AgentPath;
+
+import net.bytebuddy.asm.Advice;
 
 import java.lang.instrument.Instrumentation;
 import java.net.URL;
