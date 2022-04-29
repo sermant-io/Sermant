@@ -73,6 +73,11 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
         return RegisterManager.INSTANCE.getServerList(serviceId);
     }
 
+    @Override
+    public List<String> getServices() {
+        return RegisterManager.INSTANCE.getServices();
+    }
+
     private RegisterConfig getRegisterConfig() {
         if (registerConfig == null) {
             registerConfig = PluginConfigManager.getPluginConfig(RegisterConfig.class);

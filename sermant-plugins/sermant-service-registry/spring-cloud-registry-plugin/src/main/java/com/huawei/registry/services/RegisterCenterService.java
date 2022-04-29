@@ -44,4 +44,11 @@ public interface RegisterCenterService extends PluginService {
      * @return 实例列表
      */
     List<MicroServiceInstance> getServerList(String serviceId);
+
+    /**
+     * 获取服务名列表
+     *
+     * @return 服务列表
+     */
+    List<String> getServices();
 }

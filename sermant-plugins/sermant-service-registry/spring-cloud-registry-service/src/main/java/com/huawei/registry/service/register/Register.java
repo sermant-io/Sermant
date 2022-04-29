@@ -52,6 +52,13 @@ public interface Register {
     <T extends MicroServiceInstance> List<T> getInstanceList(String serviceId);
 
     /**
+     * 获取服务名列表
+     *
+     * @return 服务名列表
+     */
+    List<String> getServices();
+
+    /**
      * 注册中心类型
      *
      * @return register type

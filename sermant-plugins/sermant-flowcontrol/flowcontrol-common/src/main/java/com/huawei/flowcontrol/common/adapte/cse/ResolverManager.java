@@ -57,8 +57,23 @@ public enum ResolverManager {
      */
     private final Converter<String, Map<String, Object>> mapConverter = new YamlConverter<>(Map.class);
 
+    /**
+     * 解析器配置前缀集合
+     */
+    private Set<String> resolverConfigPrefix;
+
     ResolverManager() {
         loadSpiResolvers();
+    }
+
+    /**
+     * 判断该键是否为流控规则配置
+     *
+     * @param key 配置键
+     * @return 是否符合要求的配置
+     */
+    public boolean isTarget(String key) {
+        return resolverConfigPrefix.stream().anyMatch(key::startsWith);
     }
 
     /**
@@ -77,7 +92,7 @@ public enum ResolverManager {
      * @param isForDelete 是否是为了移除场景
      */
     public void resolve(Map<String, String> rulesMap, boolean isForDelete) {
-        final Set<String> configKeyPrefixDic = resolversMap.keySet();
+        final Set<String> configKeyPrefixDic = resolverConfigPrefix;
         for (Map.Entry<String, String> ruleEntity : rulesMap.entrySet()) {
             final String key = ruleEntity.getKey();
             final String value = ruleEntity.getValue();
@@ -213,5 +228,6 @@ public enum ResolverManager {
             }
             resolversMap.put(configKeyPrefix, resolver);
         }
+        resolverConfigPrefix = resolversMap.keySet();
     }
 }
