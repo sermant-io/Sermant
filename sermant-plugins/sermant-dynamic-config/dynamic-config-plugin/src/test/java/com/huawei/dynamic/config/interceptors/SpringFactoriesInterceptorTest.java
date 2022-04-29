@@ -18,6 +18,7 @@
 package com.huawei.dynamic.config.interceptors;
 
 import com.huawei.dynamic.config.DynamicConfiguration;
+import com.huawei.dynamic.config.inject.ClassInjectDefine;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -29,6 +30,7 @@ import org.mockito.Mockito;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +62,7 @@ public class SpringFactoriesInterceptorTest {
     @Test
     public void doAfter() throws NoSuchMethodException {
         final SpringFactoriesInterceptor interceptor = new SpringFactoriesInterceptor();
+        beforeTest();
         ExecuteContext executeContext = ExecuteContext.forMemberMethod(this, this.getClass().getMethod("doAfter"),
             null, null, null);
         // 高版本测试
@@ -83,5 +86,37 @@ public class SpringFactoriesInterceptorTest {
             .getResult();
         Assert.assertTrue(lowVersionResult.get(BOOTSTRAP_FACTORY_NAME).contains(PROPERTY_LOCATOR_CLASS)
             && lowVersionResult.get(ENABLE_AUTO_CONFIGURATION_FACTORY_NAME).contains(EVENT_PUBLISHER_CLASS));
+    }
+
+    private void beforeTest() {
+        try {
+            final Field classDefines = SpringFactoriesInterceptor.class.getDeclaredField("CLASS_DEFINES");
+            classDefines.setAccessible(true);
+            final List<ClassInjectDefine> defines = (List<ClassInjectDefine>) classDefines.get(null);
+            defines.add(new ClassInjectDefine() {
+                @Override
+                public String injectClassName() {
+                    return PROPERTY_LOCATOR_CLASS;
+                }
+
+                @Override
+                public String factoryName() {
+                    return BOOTSTRAP_FACTORY_NAME;
+                }
+            });
+            defines.add(new ClassInjectDefine() {
+                @Override
+                public String injectClassName() {
+                    return EVENT_PUBLISHER_CLASS;
+                }
+
+                @Override
+                public String factoryName() {
+                    return ENABLE_AUTO_CONFIGURATION_FACTORY_NAME;
+                }
+            });
+        } catch (NoSuchFieldException | IllegalAccessException ex) {
+            // ignored
+        }
     }
 }

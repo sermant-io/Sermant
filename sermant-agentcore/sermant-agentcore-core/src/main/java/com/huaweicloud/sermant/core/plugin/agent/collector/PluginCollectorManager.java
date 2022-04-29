@@ -116,7 +116,7 @@ public class PluginCollectorManager {
      * @return 合并所得的插件描述器列表
      */
     private static List<PluginDescription> combinePlugins(List<? extends PluginDeclarer> declarers,
-            AgentConfig.CombineStrategy strategy) {
+        AgentConfig.CombineStrategy strategy) {
         final List<PluginDescription> plugins = new ArrayList<>();
         if (!declarers.isEmpty()) {
             switch (strategy) {
@@ -131,7 +131,7 @@ public class PluginCollectorManager {
                     break;
                 default:
                     throw new IllegalArgumentException(String.format(Locale.ROOT,
-                            "Unknown combine strategy %s. ", strategy));
+                        "Unknown combine strategy %s. ", strategy));
             }
         }
         return plugins;
@@ -166,14 +166,14 @@ public class PluginCollectorManager {
 
             @Override
             public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,
-                    ClassLoader classLoader, JavaModule module) {
+                ClassLoader classLoader, JavaModule module) {
                 if (classLoader == null) {
                     return new BootstrapTransformer(
-                            declarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())
+                        declarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())
                     ).transform(builder, typeDescription, null, module);
                 } else {
                     return new AdviceTransformer(
-                            declarer.getInterceptDeclarers(classLoader), declarer.getSuperTypeDeclarers()
+                        declarer.getInterceptDeclarers(classLoader), declarer.getSuperTypeDeclarers()
                     ).transform(builder, typeDescription, classLoader, module);
                 }
             }
@@ -225,7 +225,7 @@ public class PluginCollectorManager {
 
             @Override
             public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,
-                    ClassLoader classLoader, JavaModule module) {
+                ClassLoader classLoader, JavaModule module) {
                 return nameCombinedTransform(builder, typeDescription, classLoader, module, nameCombinedMap);
             }
         };
@@ -266,11 +266,11 @@ public class PluginCollectorManager {
      * @return 插件描述器
      */
     private static PluginDescription createAllCombinedDescription(Map<String, List<PluginDeclarer>> nameCombinedMap,
-            List<PluginDeclarer> combinedList) {
+        List<PluginDeclarer> combinedList) {
         return new AbstractPluginDescription() {
             @Override
             public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,
-                    ClassLoader classLoader, JavaModule module) {
+                ClassLoader classLoader, JavaModule module) {
                 return nameCombinedTransform(builder, typeDescription, classLoader, module, nameCombinedMap);
             }
 
@@ -303,17 +303,17 @@ public class PluginCollectorManager {
      * @return 构建器
      */
     private static DynamicType.Builder<?> nameCombinedTransform(DynamicType.Builder<?> builder,
-            TypeDescription typeDescription, ClassLoader classLoader, JavaModule module,
-            Map<String, List<PluginDeclarer>> nameCombinedMap) {
+        TypeDescription typeDescription, ClassLoader classLoader, JavaModule module,
+        Map<String, List<PluginDeclarer>> nameCombinedMap) {
         final List<PluginDeclarer> pluginDeclarers = nameCombinedMap.remove(typeDescription.getActualName());
         final List<InterceptDeclarer> interceptDeclarers = new ArrayList<>();
         if (classLoader == null) {
             for (PluginDeclarer pluginDeclarer : pluginDeclarers) {
                 interceptDeclarers.addAll(
-                        Arrays.asList(pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
+                    Arrays.asList(pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
             }
             return new BootstrapTransformer(
-                    interceptDeclarers.toArray(new InterceptDeclarer[0])
+                interceptDeclarers.toArray(new InterceptDeclarer[0])
             ).transform(builder, typeDescription, null, module);
         } else {
             final List<SuperTypeDeclarer> superTypeDeclarers = new ArrayList<>();
@@ -322,8 +322,8 @@ public class PluginCollectorManager {
                 superTypeDeclarers.addAll(Arrays.asList(pluginDeclarer.getSuperTypeDeclarers()));
             }
             return new AdviceTransformer(
-                    interceptDeclarers.toArray(new InterceptDeclarer[0]),
-                    superTypeDeclarers.toArray(new SuperTypeDeclarer[0])
+                interceptDeclarers.toArray(new InterceptDeclarer[0]),
+                superTypeDeclarers.toArray(new SuperTypeDeclarer[0])
             ).transform(builder, typeDescription, classLoader, module);
         }
     }

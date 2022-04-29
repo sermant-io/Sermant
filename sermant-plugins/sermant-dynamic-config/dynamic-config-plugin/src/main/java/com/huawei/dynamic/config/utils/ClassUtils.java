@@ -46,23 +46,36 @@ public class ClassUtils {
         if (classLoader == null || className == null) {
             return Optional.empty();
         }
-        Class<?> result = null;
         try {
-            result = ClassLoaderUtils.defineClass(className, classLoader, ClassLoaderUtils
-                .getClassResource(ClassLoader.getSystemClassLoader(), className));
+            return Optional.of(ClassLoaderUtils.defineClass(className, classLoader, ClassLoaderUtils
+                .getClassResource(ClassLoader.getSystemClassLoader(), className)));
         } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | IOException ex) {
             LoggerFactory.getLogger()
                 .warning(String.format(Locale.ENGLISH, "Can not define class [%s], reason: [%s], try to load it!",
                     className, ex.getMessage()));
 
             // 有可能已经加载过了，直接用contextClassLoader.loadClass加载
-            try {
-                result = classLoader.loadClass(className);
-            } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
-                LoggerFactory.getLogger()
-                    .severe(String.format(Locale.ENGLISH, "Can not define and load class [%s]!", className));
-            }
+            return loadClass(className, classLoader);
         }
-        return Optional.ofNullable(result);
+    }
+
+    /**
+     * 加载类
+     *
+     * @param className   类全限定名
+     * @param classLoader 类加载器
+     * @return 已加载的类
+     */
+    public static Optional<Class<?>> loadClass(String className, ClassLoader classLoader) {
+        if (classLoader == null || className == null) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(classLoader.loadClass(className));
+        } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
+            LoggerFactory.getLogger()
+                .warning(String.format(Locale.ENGLISH, "Can not define and load class [%s]!", className));
+        }
+        return Optional.empty();
     }
 }

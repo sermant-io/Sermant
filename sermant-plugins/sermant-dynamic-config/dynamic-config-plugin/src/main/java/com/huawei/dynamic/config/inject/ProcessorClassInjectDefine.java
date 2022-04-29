@@ -15,27 +15,29 @@
  *
  */
 
-package com.huawei.dynamic.config.interceptors;
-
-import com.huawei.dynamic.config.DynamicContext;
-
-import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+package com.huawei.dynamic.config.inject;
 
 /**
- * 通过拦截开启启动配置后的调用方法来判断是否开启启动配置, 该逻辑将在{@link SpringEnvironmentInterceptor}逻辑之前执行
+ * 环境变量配置
  *
  * @author zhouss
- * @since 2022-04-13
+ * @since 2022-04-20
  */
-public class BootstrapListenerInterceptor extends DynamicConfigSwitchSupport {
+public class ProcessorClassInjectDefine implements ClassInjectDefine {
     @Override
-    public ExecuteContext before(ExecuteContext context) {
-        return context;
+    public String injectClassName() {
+        return "com.huawei.dynamic.config.source.SpringEnvironmentProcessor";
     }
 
     @Override
-    public ExecuteContext doAfter(ExecuteContext context) {
-        DynamicContext.INSTANCE.setEnableBootstrap(true);
-        return context;
+    public String factoryName() {
+        return ClassInjectDefine.ENVIRONMENT_PROCESSOR_FACTOR_NAME;
+    }
+
+    @Override
+    public ClassInjectDefine[] requiredDefines() {
+        return new ClassInjectDefine[]{
+            this.build("com.huawei.dynamic.config.source.DynamicConfigPropertySource", "")
+        };
     }
 }

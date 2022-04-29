@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -83,21 +82,17 @@ public enum ConfigHolder {
         executorService.submit(() -> {
             boolean isNeedRefresh = false;
             for (ConfigSource configSource : configSources) {
-                try {
-                    if ((configSource instanceof DynamicConfigSource)
-                        && ((DynamicConfigSource) configSource).accept(event)) {
-                        isNeedRefresh = true;
-                    }
-                } catch (Exception ex) {
-                    LOGGER.warning(String.format(Locale.ENGLISH,
-                        "[DynamicConfig] Config source [%s] resolve event failed! raw event [%s]",
-                        configSource.getClass().getName(), event.toString()));
-                }
+                isNeedRefresh |= doAccept(configSource, event);
             }
             if (isNeedRefresh) {
                 notifier.refresh();
             }
         });
+    }
+
+    private boolean doAccept(ConfigSource configSource, DynamicConfigEvent event) {
+        return (configSource instanceof DynamicConfigSource)
+            && ((DynamicConfigSource) configSource).accept(event);
     }
 
     /**
