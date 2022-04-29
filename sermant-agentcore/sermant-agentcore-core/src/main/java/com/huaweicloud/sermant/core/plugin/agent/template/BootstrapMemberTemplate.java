@@ -66,7 +66,7 @@ public class BootstrapMemberTemplate {
         final ClassLoader loader = ClassLoader.getSystemClassLoader();
         contextCls = loader.loadClass("com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext");
         adviserCls = loader.loadClass("com.huaweicloud.sermant.core.plugin.agent.template.CommonMethodAdviser");
-        final String adviceClsName = "com.huawei.sermant.core.plugin.agent.template.BootstrapMemberTemplate_"
+        final String adviceClsName = "com.huaweicloud.sermant.core.plugin.agent.template.BootstrapMemberTemplate_"
                 + Integer.toHexString(methodKey.hashCode());
         final Class<?> templateCls = loader.loadClass(adviceClsName);
         interceptorItr = ((List<?>) templateCls.getDeclaredField(BootstrapTransformer.INTERCEPTORS_FIELD_NAME)

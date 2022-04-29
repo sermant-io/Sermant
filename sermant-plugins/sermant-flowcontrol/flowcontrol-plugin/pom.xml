@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.huawei.sermant</groupId>
+        <groupId>com.huaweicloud.sermant</groupId>
         <artifactId>sermant-flowcontrol</artifactId>
         <version>1.0.0</version>
     </parent>
@@ -49,7 +49,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.huawei.sermant</groupId>
+            <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>flowcontrol-common</artifactId>
             <version>${project.version}</version>
         </dependency>

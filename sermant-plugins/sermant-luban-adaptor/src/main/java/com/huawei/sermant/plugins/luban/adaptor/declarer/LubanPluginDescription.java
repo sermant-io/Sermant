@@ -27,13 +27,15 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.transformer.AdviceTransformer;
 import com.huaweicloud.sermant.core.plugin.agent.transformer.BootstrapTransformer;
-import com.huaweicloud.sermant.dependencies.net.bytebuddy.description.method.MethodDescription;
-import com.huaweicloud.sermant.dependencies.net.bytebuddy.description.type.TypeDescription;
-import com.huaweicloud.sermant.dependencies.net.bytebuddy.dynamic.ClassFileLocator;
-import com.huaweicloud.sermant.dependencies.net.bytebuddy.dynamic.DynamicType;
-import com.huaweicloud.sermant.dependencies.net.bytebuddy.matcher.ElementMatchers;
-import com.huaweicloud.sermant.dependencies.net.bytebuddy.utility.JavaModule;
+
 import com.lubanops.apm.bootstrap.NoneNamedListener;
+
+import net.bytebuddy.description.method.MethodDescription;
+import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.dynamic.ClassFileLocator;
+import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.matcher.ElementMatchers;
+import net.bytebuddy.utility.JavaModule;
 
 import java.io.IOException;
 import java.security.ProtectionDomain;

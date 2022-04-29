@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>sermant-service-registry</artifactId>
-        <groupId>com.huawei.sermant</groupId>
+        <groupId>com.huaweicloud.sermant</groupId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -29,7 +29,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.huawei.sermant</groupId>
+            <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>spring-cloud-registry-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
