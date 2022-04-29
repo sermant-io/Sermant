@@ -17,10 +17,12 @@
 
 package com.huawei.dynamic.config.interceptors;
 
+import com.huawei.dynamic.config.inject.ClassInjectDefine;
 import com.huawei.dynamic.config.utils.ClassUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import org.springframework.util.MultiValueMap;
 
@@ -29,7 +31,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 
 /**
  * 拦截loadFactories注入自定义配置源
@@ -38,82 +42,76 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 2022-04-08
  */
 public class SpringFactoriesInterceptor extends DynamicConfigSwitchSupport {
-    private static final String PROPERTY_LOCATOR_CLASS = "com.huawei.dynamic.config.source.SpringPropertyLocator";
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final String PROPERTY_SOURCE_CLASS = "com.huawei.dynamic.config.source.SpringPropertySource";
-
-    private static final String EVENT_PUBLISHER_CLASS = "com.huawei.dynamic.config.source.SpringEventPublisher";
-
-    private static final String BOOTSTRAP_FACTORY_NAME = "org.springframework.cloud.bootstrap.BootstrapConfiguration";
-
-    private static final String ENABLE_AUTO_CONFIGURATION_FACTORY_NAME =
-        "org.springframework.boot.autoconfigure.EnableAutoConfiguration";
+    private static final List<ClassInjectDefine> CLASS_DEFINES = new ArrayList<>();
 
     private final AtomicBoolean isInjected = new AtomicBoolean();
+
+    /**
+     * 初始化加载注入定义
+     */
+    public SpringFactoriesInterceptor() {
+        for (ClassInjectDefine define : ServiceLoader.load(ClassInjectDefine.class)) {
+            CLASS_DEFINES.add(define);
+        }
+    }
 
     @Override
     public ExecuteContext doAfter(ExecuteContext context) {
         if (isInjected.compareAndSet(false, true)) {
-            defineInjectClasses();
             injectConfigurations(context.getResult());
         }
         return context;
     }
 
     private void injectConfigurations(Object result) {
-        if (result.getClass().isAssignableFrom(MultiValueMap.class)) {
-            injectWithOldVersion((MultiValueMap<String, String>) result);
-        } else if (result instanceof Map) {
+        if (result instanceof Map) {
             // spring 高版本处理, 针对List其为不可变list，需做一层处理
-            injectWithNewVersion((Map<String, List<String>>) result);
+            CLASS_DEFINES.forEach(
+                classInjectDefine -> injectConfiguration((Map<String, List<String>>) result, classInjectDefine));
         } else {
-            LoggerFactory.getLogger().warning(String.format(Locale.ENGLISH,
-                "Can not inject dynamic configuration! the type of cache is [%s]", result.getClass().getName()));
+            LOGGER.warning(String.format(Locale.ENGLISH,
+                "[DynamicConfig] Can not inject dynamic configuration! the type of cache is [%s]",
+                result.getClass().getName()));
         }
     }
 
-    /**
-     * 针对Spring旧版本注入
-     *
-     * @param cache 各类Factory权限定名缓存
-     */
-    private void injectWithOldVersion(MultiValueMap<String, String> cache) {
-        List<String> bootstrapConfigurations = cache.get(BOOTSTRAP_FACTORY_NAME);
-        if (!bootstrapConfigurations.contains(PROPERTY_LOCATOR_CLASS)) {
-            bootstrapConfigurations.add(PROPERTY_LOCATOR_CLASS);
+    private void injectConfiguration(Map<String, List<String>> cache, ClassInjectDefine classInjectDefine) {
+        final String factoryName = classInjectDefine.factoryName();
+        final String className = classInjectDefine.injectClassName();
+        if (!classInjectDefine.canInject()) {
+            LOGGER.info(String.format(Locale.ENGLISH,
+                "[DynamicConfig] class [%s] with factory name [%s] won't be injected due to its precondition",
+                className, factoryName));
+            return;
         }
-        final List<String> autoConfigurations = cache.get(ENABLE_AUTO_CONFIGURATION_FACTORY_NAME);
-        if (!autoConfigurations.contains(EVENT_PUBLISHER_CLASS)) {
-            autoConfigurations.add(EVENT_PUBLISHER_CLASS);
+        defineInjectClasses(className);
+        final ClassInjectDefine[] requiredDefines = classInjectDefine.requiredDefines();
+        if (requiredDefines != null && requiredDefines.length > 0) {
+            for (ClassInjectDefine define : requiredDefines) {
+                injectConfiguration(cache, define);
+            }
         }
-    }
-
-    /**
-     * 针对Spring新版本注入
-     *
-     * @param cache 各类Factory权限定名缓存
-     */
-    private void injectWithNewVersion(Map<String, List<String>> cache) {
-        injectConfiguration(cache, BOOTSTRAP_FACTORY_NAME, PROPERTY_LOCATOR_CLASS);
-        injectConfiguration(cache, ENABLE_AUTO_CONFIGURATION_FACTORY_NAME, EVENT_PUBLISHER_CLASS);
-    }
-
-    private void injectConfiguration(Map<String, List<String>> cache, String factoryName, String className) {
-        List<String> bootstrapConfigurations = cache.get(factoryName);
-        if (!bootstrapConfigurations.contains(className)) {
-            final List<String> newBootstrapConfigurations = new ArrayList<>(bootstrapConfigurations);
-            newBootstrapConfigurations.add(className);
-            cache.put(factoryName, Collections.unmodifiableList(newBootstrapConfigurations));
+        if (StringUtils.isBlank(factoryName)) {
+            return;
+        }
+        List<String> configurations = cache.get(factoryName);
+        if (configurations != null && !configurations.contains(className)) {
+            LOGGER.info(String.format(Locale.ENGLISH, "[DynamicConfig] Injected class [%s] to factory [%s] success!",
+                className, factoryName));
+            final List<String> newConfigurations = new ArrayList<>(configurations);
+            newConfigurations.add(className);
+            cache.put(factoryName,
+                (cache instanceof MultiValueMap) ? newConfigurations
+                    : Collections.unmodifiableList(newConfigurations));
         }
     }
 
-    /**
-     * 只能调用一次, 定义注入类, 必须排在injectConfigurations之前调用
-     */
-    private void defineInjectClasses() {
+    private void defineInjectClasses(String className) {
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        ClassUtils.defineClass(PROPERTY_SOURCE_CLASS, contextClassLoader);
-        ClassUtils.defineClass(PROPERTY_LOCATOR_CLASS, contextClassLoader);
-        ClassUtils.defineClass(EVENT_PUBLISHER_CLASS, contextClassLoader);
+        ClassUtils.defineClass(className, contextClassLoader);
+        LOGGER.info(String.format(Locale.ENGLISH, "[DynamicConfig] Defines class [%s] for classLoader [%s] success!",
+            className, contextClassLoader));
     }
 }

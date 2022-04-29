@@ -15,27 +15,29 @@
  *
  */
 
-package com.huawei.dynamic.config;
+package com.huaweicloud.sermant.core.plugin.subscribe.processor;
+
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 /**
- * 动态配置上下文
+ * 配置处理
  *
  * @author zhouss
- * @since 2022-04-18
+ * @since 2022-04-22
  */
-public enum DynamicContext {
+public interface ConfigProcessor {
     /**
-     * 单例
+     * 事件处理
+     *
+     * @param rawGroup 原始订阅组
+     * @param event    配置事件
      */
-    INSTANCE;
+    void process(String rawGroup, DynamicConfigEvent event);
 
-    private boolean isEnableBootstrap = false;
-
-    public boolean isEnableBootstrap() {
-        return isEnableBootstrap;
-    }
-
-    public void setEnableBootstrap(boolean enableBootstrap) {
-        isEnableBootstrap = enableBootstrap;
-    }
+    /**
+     * 配置持有器， 该配置与标签相对应
+     *
+     * @param dataHolder 配置持有器
+     */
+    void addHolder(ConfigDataHolder dataHolder);
 }

@@ -25,12 +25,9 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.Set;
@@ -42,7 +39,6 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2022-04-16
  */
-@RunWith(MockitoJUnitRunner.class)
 public class ConfigHolderTest {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
@@ -51,14 +47,12 @@ public class ConfigHolderTest {
 
     private static final int TEST_CONFIG_SOURCES_SIZE = 3;
 
-    @Mock
-    private DynamicConfigEvent event;
+    private static DynamicConfigEvent event;
 
-    @Mock
-    private DynamicConfiguration configuration;
-
-    @Before
-    public void before() {
+    @BeforeClass
+    public static void before() {
+        event = Mockito.mock(DynamicConfigEvent.class);
+        DynamicConfiguration configuration = Mockito.mock(DynamicConfiguration.class);
         Mockito.when(event.getKey()).thenReturn(KEY);
         Mockito.when(event.getContent()).thenReturn(CONTENT);
         Mockito.when(configuration.getFirstRefreshDelayMs()).thenReturn(0L);

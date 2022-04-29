@@ -17,27 +17,25 @@
 
 package com.huawei.dynamic.config.source;
 
-import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
-import org.springframework.core.annotation.Order;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.env.CompositePropertySource;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
- * 动态配置源扩展
+ * 配置源
  *
  * @author zhouss
- * @since 2022-04-08
+ * @since 2022-04-20
  */
-@Order(0)
-public class SpringPropertyLocator implements PropertySourceLocator {
+public class SpringEnvironmentProcessor implements EnvironmentPostProcessor {
     private static final String PROPERTY_NAME = "Sermant-Dynamic-Config";
 
     @Override
-    public PropertySource<?> locate(Environment environment) {
-        final SpringPropertySource springPropertySource = new SpringPropertySource(PROPERTY_NAME);
+    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         final CompositePropertySource compositePropertySource = new CompositePropertySource(PROPERTY_NAME);
-        compositePropertySource.addPropertySource(springPropertySource);
-        return compositePropertySource;
+        compositePropertySource
+            .addPropertySource(new DynamicConfigPropertySource(PROPERTY_NAME));
+        environment.getPropertySources().addFirst(compositePropertySource);
     }
 }
