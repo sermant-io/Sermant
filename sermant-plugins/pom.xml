@@ -1,9 +1,5 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <modules>
-        <module>sermant-dynamic-config</module>
-    </modules>
     <parent>
         <groupId>com.huaweicloud.sermant</groupId>
         <artifactId>sermant</artifactId>
@@ -13,7 +9,6 @@
     <packaging>pom</packaging>
     <properties>
         <sermant.basedir>${pom.basedir}/../..</sermant.basedir>
-
         <package.plugin.name>${project.artifactId}</package.plugin.name>
         <package.plugin.version>${project.version}</package.plugin.version>
         <package.plugin.dir>${package.agent.dir}/pluginPackage</package.plugin.dir>
