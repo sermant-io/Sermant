@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.huawei.sermant</groupId>
+        <groupId>com.huaweicloud.sermant</groupId>
         <artifactId>sermant</artifactId>
         <version>1.0.0</version>
     </parent>
@@ -34,6 +34,7 @@
         </profile>
     </profiles>
     <properties>
+        <sermant.basedir>${pom.basedir}/..</sermant.basedir>
         <script.command/>
         <script.argument/>
         <script.append.source>${sermant.basedir}/${package.resources.dir}/${license.binary.suffix.file}</script.append.source>
