@@ -35,25 +35,25 @@ public class DynamicConfig implements BaseConfig {
     /**
      * 服务器连接超时时间
      */
-    @ConfigFieldKey("timeout_value")
+    @ConfigFieldKey("timeoutValue")
     private int timeoutValue = TIME_OUT_VALUE;
 
     /**
      * 默认分组
      */
-    @ConfigFieldKey("default_group")
+    @ConfigFieldKey("defaultGroup")
     private String defaultGroup = "sermant";
 
     /**
      * 服务器地址，必须形如：{@code host:port[(,host:port)...]}
      */
-    @ConfigFieldKey("server_address")
+    @ConfigFieldKey("serverAddress")
     private String serverAddress = "127.0.0.1:2181";
 
     /**
      * 服务实现类型，取NOP、ZOOKEEPER、KIE
      */
-    @ConfigFieldKey("dynamic_config_type")
+    @ConfigFieldKey("dynamicConfigType")
     private String serviceType = "NOP";
 
     public int getTimeoutValue() {
