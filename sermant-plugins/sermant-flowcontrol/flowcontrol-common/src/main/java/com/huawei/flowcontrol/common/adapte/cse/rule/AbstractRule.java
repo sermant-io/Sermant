@@ -44,7 +44,7 @@ public abstract class AbstractRule extends Configurable implements Rule {
     private static final String DURATION_PREFIX = "PT";
 
     @Override
-    public boolean isValid() {
+    public boolean isInValid() {
         return StringUtils.isEmpty(name);
     }
 

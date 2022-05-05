@@ -65,8 +65,8 @@ public class RateLimitingRule extends AbstractRule {
     private int rate = DEFAULT_RATE;
 
     @Override
-    public boolean isValid() {
-        return parsedTimeoutDuration < 0 || parsedLimitRefreshPeriod <= 0 || rate <= 0 || super.isValid();
+    public boolean isInValid() {
+        return parsedTimeoutDuration < 0 || parsedLimitRefreshPeriod <= 0 || rate <= 0 || super.isInValid();
     }
 
     public long getParsedTimeoutDuration() {

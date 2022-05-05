@@ -159,7 +159,8 @@ public class ScClient {
         }
         final List<Microservice> allServices = response.getServices();
         final List<String> allServiceIds =
-            allServices.stream().filter(service -> StringUtils.equals(service.getServiceName(), serviceName))
+            allServices.stream().filter(service -> StringUtils.equals(service.getServiceName(),
+                getRealServiceName(true, serviceName)))
                 .map(Microservice::getServiceId).distinct().collect(Collectors.toList());
         List<MicroserviceInstance> microserviceInstances = new ArrayList<>();
         allServiceIds.forEach(serviceId -> {
@@ -170,6 +171,18 @@ public class ScClient {
             }
         });
         return microserviceInstances;
+    }
+
+    private String getRealServiceName(boolean isAllowCrossApp, String serviceName) {
+        if (!isAllowCrossApp) {
+            return serviceName;
+        }
+        String curServiceName = serviceName;
+        final int index = serviceName.indexOf(ConfigConstants.APP_SERVICE_SEPARATOR);
+        if (index != -1) {
+            curServiceName = serviceName.substring(index + 1);
+        }
+        return curServiceName;
     }
 
     private List<MicroserviceInstance> getInstanceByCurApp(String serviceName) {
