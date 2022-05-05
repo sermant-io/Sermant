@@ -20,6 +20,7 @@ import com.huawei.dubbo.registry.entity.GovernanceCache;
 import com.huawei.dubbo.registry.entity.GovernanceData;
 import com.huawei.dubbo.registry.service.RegistryService;
 
+import com.huaweicloud.sermant.core.plugin.subscribe.processor.OrderConfigEvent;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
@@ -50,8 +51,14 @@ public class GovernanceConfigListener implements DynamicConfigListener {
         if (!GOVERNANCE_KEY.equals(event.getKey())) {
             return;
         }
-        GovernanceData governanceData = event.getEventType() == DynamicConfigEventType.DELETE ? null
-            : JSONObject.parseObject(event.getContent(), GovernanceData.class);
+        GovernanceData governanceData = null;
+        if (event.getEventType() != DynamicConfigEventType.DELETE) {
+            String content = event.getContent();
+            if (event instanceof OrderConfigEvent) {
+                content = JSONObject.toJSONString(((OrderConfigEvent) event).getAllData());
+            }
+            governanceData = JSONObject.parseObject(content, GovernanceData.class);
+        }
         GovernanceCache.INSTANCE.setGovernanceData(governanceData);
         registryService.notifyGovernanceUrl();
     }
