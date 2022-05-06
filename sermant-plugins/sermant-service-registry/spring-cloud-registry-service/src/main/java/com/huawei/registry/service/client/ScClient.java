@@ -44,6 +44,7 @@ import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery.SubscriptionKey;
 import org.apache.servicecomb.service.center.client.ServiceCenterOperation;
 import org.apache.servicecomb.service.center.client.ServiceCenterRegistration;
+import org.apache.servicecomb.service.center.client.exception.OperationException;
 import org.apache.servicecomb.service.center.client.model.DataCenterInfo;
 import org.apache.servicecomb.service.center.client.model.Framework;
 import org.apache.servicecomb.service.center.client.model.HealthCheck;
@@ -137,11 +138,17 @@ public class ScClient {
      * @return 实例列表
      */
     public List<MicroserviceInstance> queryInstancesByServiceId(String serviceName) {
-        List<MicroserviceInstance> instances;
-        if (registerConfig.isAllowCrossApp()) {
-            instances = queryAllAppInstances(serviceName);
-        } else {
-            instances = getInstanceByCurApp(serviceName);
+        List<MicroserviceInstance> instances = null;
+        try {
+            if (registerConfig.isAllowCrossApp()) {
+                instances = queryAllAppInstances(serviceName);
+            } else {
+                instances = getInstanceByCurApp(serviceName);
+            }
+        } catch (OperationException ex) {
+            LOGGER.severe(String.format(Locale.ENGLISH,
+                "Queried service [%s] instance list from service center failed, reason [%s]", serviceName,
+                ex.getMessage()));
         }
         if (instances == null) {
             return Collections.emptyList();
