@@ -147,6 +147,11 @@ public class RegisterConfig implements PluginConfig {
     private List<String> governanceParametersWhiteList = Collections.singletonList("timeout");
 
     /**
+     * dubbo注册时的接口级参数key
+     */
+    private List<String> interfaceKeys;
+
+    /**
      * 构造方法
      */
     public RegisterConfig() {
@@ -346,5 +351,13 @@ public class RegisterConfig implements PluginConfig {
 
     public void setGovernanceParametersWhiteList(List<String> governanceParametersWhiteList) {
         this.governanceParametersWhiteList = governanceParametersWhiteList;
+    }
+
+    public List<String> getInterfaceKeys() {
+        return interfaceKeys;
+    }
+
+    public void setInterfaceKeys(List<String> interfaceKeys) {
+        this.interfaceKeys = interfaceKeys;
     }
 }

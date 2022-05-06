@@ -113,9 +113,10 @@ public class RegistryServiceImpl implements RegistryService {
     private static final String VERSION_KEY = "version";
     private static final String SERVICE_NAME_KEY = "service.name";
     private static final String INTERFACE_KEY = "interface";
-    private static final List<String> IGNORE_REGISTRY_PARAMETERS = Arrays
-        .asList(GROUP_KEY, VERSION_KEY, SERVICE_NAME_KEY);
+    private static final List<String> IGNORE_REGISTRY_KEYS = Arrays.asList(GROUP_KEY, VERSION_KEY, SERVICE_NAME_KEY);
+    private static final List<String> DEFAULT_INTERFACE_KEYS = Arrays.asList("dubbo.tag", "gray.version");
     private final List<Object> registryUrls = new ArrayList<>();
+    private List<String> ignoreKeys;
     private ServiceCenterClient client;
     private Microservice microservice;
     private MicroserviceInstance microserviceInstance;
@@ -135,6 +136,10 @@ public class RegistryServiceImpl implements RegistryService {
         governanceService = ServiceManager.getService(GovernanceService.class);
         client = new ServiceCenterClient(new AddressManager(config.getProject(), config.getAddressList()),
             createSslProperties(), new DefaultRequestAuthHeaderProvider(), DEFAULT_TENANT_NAME, Collections.emptyMap());
+        ignoreKeys = new ArrayList<>();
+        ignoreKeys.addAll(IGNORE_REGISTRY_KEYS);
+        ignoreKeys.addAll(DEFAULT_INTERFACE_KEYS);
+        Optional.ofNullable(config.getInterfaceKeys()).ifPresent(ignoreKeys::addAll);
         createMicroservice();
         createMicroserviceInstance();
         createServiceCenterRegistration();
@@ -363,8 +368,18 @@ public class RegistryServiceImpl implements RegistryService {
             // 2.6.x, 2.7.0-2.7.7在多实现的场景下，路径名会在接口名后拼一个序号，取出这个序号并保存
             order = Integer.valueOf(path.substring(interfaceName.length()));
         }
+        List<String> keys = new ArrayList<>(DEFAULT_INTERFACE_KEYS);
+        if (!CollectionUtils.isEmpty(config.getInterfaceKeys())) {
+            keys.addAll(config.getInterfaceKeys());
+        }
+        Map<String, String> map = new HashMap<>();
+        keys.forEach(key -> {
+            if (parameters.containsKey(key)) {
+                map.put(key, parameters.get(key));
+            }
+        });
         return new InterfaceData(parameters.get(GROUP_KEY), parameters.get(VERSION_KEY),
-            parameters.get(SERVICE_NAME_KEY), order);
+            parameters.get(SERVICE_NAME_KEY), order, map);
     }
 
     private String getUrl(Object url) {
@@ -402,11 +417,11 @@ public class RegistryServiceImpl implements RegistryService {
         }
         String interfaceName = getInterface(newUrl);
 
-        // schema是以接口名为维度的，IGNORE_REGISTRY_PARAMETERS中的参数主要跟实现相关，所以这里去掉
-        // IGNORE_REGISTRY_PARAMETERS中的参数会存在实例的properties中
+        // schema是以接口名为维度的，ignoreKeys中的参数主要跟实现相关，所以这里去掉
+        // ignoreKeys中的参数会存在实例的properties中
         // 2.6.x, 2.7.0-2.7.7在多实现的场景下，路径名会在接口名后拼一个序号，所以这里把路径名统一设置为接口名
-        String schema = ReflectUtils.setPath(
-            ReflectUtils.removeParameters(newUrl, IGNORE_REGISTRY_PARAMETERS), interfaceName).toString();
+        String schema = ReflectUtils.setPath(ReflectUtils.removeParameters(newUrl, ignoreKeys), interfaceName)
+            .toString();
         return Optional.of(new SchemaInfo(interfaceName, schema, DigestUtils.sha256Hex(schema)));
     }
 
@@ -576,6 +591,10 @@ public class RegistryServiceImpl implements RegistryService {
                     String dubboServiceName = interfaceData.getServiceName();
                     if (StringUtils.isExist(dubboServiceName)) {
                         parameters.put(SERVICE_NAME_KEY, dubboServiceName);
+                    }
+                    Map<String, String> interfaceParameters = interfaceData.getParameters();
+                    if (!CollectionUtils.isEmpty(interfaceParameters)) {
+                        parameters.putAll(interfaceParameters);
                     }
 
                     // 组装所有接口实现的访问地址列表
