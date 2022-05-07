@@ -119,8 +119,11 @@ public class SpringEnvironmentInterceptor extends AbstractInterceptor {
      */
     private List<PropertySource<?>> getPropertySources(MutablePropertySources propertySources) {
         final LinkedList<PropertySource<?>> result = new LinkedList<>();
-        propertySources.stream().filter(propertySource -> propertySource instanceof EnumerablePropertySource)
-                .forEach(result::addFirst);
+        for (PropertySource<?> next : propertySources) {
+            if (next instanceof EnumerablePropertySource) {
+                result.addFirst(next);
+            }
+        }
         return result;
     }
 

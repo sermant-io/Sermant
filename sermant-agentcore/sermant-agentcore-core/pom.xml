@@ -353,6 +353,7 @@
             <artifactId>asm-commons</artifactId>
             <version>${asm.version}</version>
         </dependency>
+
     </dependencies>
     <build>
         <extensions>
@@ -425,6 +426,10 @@
                         <relocation>
                             <pattern>io.netty</pattern>
                             <shadedPattern>${shade.common.prefix}.io.netty</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>javax.ws.rs</pattern>
+                            <shadedPattern>${shade.common.prefix}.javax.ws.rs</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>javax.inject</pattern>
