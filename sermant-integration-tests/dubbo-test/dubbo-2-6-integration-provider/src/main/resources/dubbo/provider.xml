@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="dubbo-integration-provider">
+        <dubbo:parameter key="qos.enable" value="false"/>
+    </dubbo:application>
+
+    <!--模拟存量dubbo应用注册到zookeeper的情况，新开发的应用建议配置为 sc://127.0.0.1:30100-->
+    <dubbo:registry address="zookeeper://127.0.0.1:2181" protocol="zookeeper"/>
+
+    <dubbo:protocol name="dubbo" port="${dubbo.protocol.port}"/>
+
+    <bean id="barServiceImpl" class="com.huaweicloud.integration.service.BarServiceImpl"/>
+    <dubbo:service interface="com.huaweicloud.integration.service.BarService" ref="barServiceImpl"/>
+
+    <bean id="bar2ServiceImpl" class="com.huaweicloud.integration.service.Bar2ServiceImpl"/>
+    <dubbo:service interface="com.huaweicloud.integration.service.BarService" ref="bar2ServiceImpl" group="bar2"/>
+
+    <bean id="fooServiceImpl" class="com.huaweicloud.integration.service.FooServiceImpl"/>
+    <!-- dubbo2.6.6+才支持tag功能 -->
+    <!--<dubbo:service interface="com.huaweicloud.integration.service.FooService" ref="fooServiceImpl" version="0.0.1"
+            tag="app1"/>-->
+    <dubbo:service interface="com.huaweicloud.integration.service.FooService" ref="fooServiceImpl" version="0.0.1"/>
+</beans>
