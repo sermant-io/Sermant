@@ -65,6 +65,12 @@ public class ConsulHealthInterceptor extends SingleStateCloseHandler {
     }
 
     @Override
+    protected ExecuteContext doBefore(ExecuteContext context) {
+        checkState(context, null);
+        return context;
+    }
+
+    @Override
     public ExecuteContext doAfter(ExecuteContext context) {
         final Object result = context.getResult();
         if (result != null) {

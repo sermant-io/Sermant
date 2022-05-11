@@ -52,9 +52,8 @@ public class NacosHealthInterceptor extends SingleStateCloseHandler {
     }
 
     @Override
-    public ExecuteContext doBefore(ExecuteContext context) {
-        setArguments(context.getArguments());
-        setTarget(context.getObject());
+    protected ExecuteContext doBefore(ExecuteContext context) {
+        checkState(context, null);
         return context;
     }
 

@@ -68,8 +68,7 @@ public class ZookeeperHealthInterceptor extends SingleStateCloseHandler {
 
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
-        setArguments(context.getArguments());
-        setTarget(context.getObject());
+        checkState(context, null);
         if (arguments.length > 1 && arguments[1] instanceof TreeCacheEvent) {
             TreeCacheEvent event = (TreeCacheEvent) arguments[1];
             if (!isAvailable(event.getType()) && RegisterContext.INSTANCE.compareAndSet(true, false)) {

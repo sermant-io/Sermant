@@ -21,6 +21,7 @@ package com.huawei.registry.service.client;
 import com.huawei.registry.config.ConfigConstants;
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.context.RegisterContext;
+import com.huawei.registry.service.client.ScDiscovery.SubscriptionKey;
 import com.huawei.registry.utils.HostUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
@@ -40,8 +41,6 @@ import org.apache.servicecomb.service.center.client.AddressManager;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeatEvent;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.MicroserviceRegistrationEvent;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
-import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
-import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery.SubscriptionKey;
 import org.apache.servicecomb.service.center.client.ServiceCenterOperation;
 import org.apache.servicecomb.service.center.client.ServiceCenterRegistration;
 import org.apache.servicecomb.service.center.client.exception.OperationException;
@@ -113,7 +112,7 @@ public class ScClient {
 
     private MicroserviceInstance microserviceInstance;
 
-    private ServiceCenterDiscovery serviceCenterDiscovery;
+    private ScDiscovery serviceCenterDiscovery;
 
     /**
      * 初始化
@@ -274,7 +273,7 @@ public class ScClient {
     public void onMicroserviceRegistrationEvent(MicroserviceRegistrationEvent event) {
         if (event.isSuccess()) {
             if (serviceCenterDiscovery == null) {
-                serviceCenterDiscovery = new ServiceCenterDiscovery(serviceCenterClient, EVENT_BUS);
+                serviceCenterDiscovery = new ScDiscovery(serviceCenterClient, EVENT_BUS);
                 serviceCenterDiscovery.updateMyselfServiceId(microservice.getServiceId());
                 serviceCenterDiscovery.setPollInterval(registerConfig.getPullInterval());
                 serviceCenterDiscovery.startDiscovery();

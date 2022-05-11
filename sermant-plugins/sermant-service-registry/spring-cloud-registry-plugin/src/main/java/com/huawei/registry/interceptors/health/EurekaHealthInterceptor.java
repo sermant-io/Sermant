@@ -49,8 +49,7 @@ public class EurekaHealthInterceptor extends SingleStateCloseHandler {
 
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
-        setArguments(context.getArguments());
-        setTarget(context.getObject());
+        checkState(context, false);
         return context;
     }
 
