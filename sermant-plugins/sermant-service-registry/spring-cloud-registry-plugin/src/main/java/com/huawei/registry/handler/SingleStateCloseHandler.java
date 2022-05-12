@@ -16,11 +16,11 @@
 
 package com.huawei.registry.handler;
 
-import com.huawei.registry.config.RegisterDynamicConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.support.RegisterSwitchSupport;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -74,10 +74,11 @@ public abstract class SingleStateCloseHandler extends RegisterSwitchSupport {
     /**
      * 关闭注册中心
      */
-    public void tryClose() {
+    protected void tryClose() {
         if (IS_CLOSED.compareAndSet(false, true)) {
             try {
                 close();
+                RegisterContext.INSTANCE.setAvailable(false);
             } catch (Exception ex) {
                 // 重置状态
                 resetCloseState();
@@ -88,22 +89,25 @@ public abstract class SingleStateCloseHandler extends RegisterSwitchSupport {
     }
 
     /**
+     * 判断注册中心状态, 若需关闭调用关闭心跳方法, 并用指定结果跳过
+     *
+     * @param context 增强上下文
+     * @param result  指定结果
+     */
+    protected void checkState(ExecuteContext context, Object result) {
+        setArguments(context.getArguments());
+        setTarget(context.getObject());
+        if (needCloseRegisterCenter()) {
+            context.skip(result);
+            tryClose();
+        }
+    }
+
+    /**
      * 重置开关状态 当某个注册中心关闭失败需要重新关闭时可调用
      */
     private void resetCloseState() {
         IS_CLOSED.set(false);
-    }
-
-    /**
-     * 子类实现，默认为配置的注册开关 若需修改，则需重新实现该方法 满足条件:
-     * <li>已开启spring注册</li>
-     * <li>配置中心已下发关闭注册中心指令或者属于单注册的场景</li>
-     *
-     * @return 是否可关闭注册中心
-     */
-    protected boolean needCloseRegisterCenter() {
-        return (RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter() || !registerConfig.isOpenMigration())
-            && isEnableSpringRegister();
     }
 
     /**

@@ -138,6 +138,10 @@ public class SpringEnvironmentInterceptor extends AbstractInterceptor {
     }
 
     private boolean canSubscribe(ExecuteContext context) {
+        return lowVersionCheck(context) || highVersionCheck(context);
+    }
+
+    private boolean highVersionCheck(ExecuteContext context) {
         final Object primarySources = context.getMemberFieldValue("primarySources");
         if (!(primarySources instanceof Set)) {
             return false;
@@ -149,5 +153,15 @@ public class SpringEnvironmentInterceptor extends AbstractInterceptor {
             }
         }
         return true;
+    }
+
+    private boolean lowVersionCheck(ExecuteContext context) {
+        final Object sources = context.getMemberFieldValue("sources");
+        if (!(sources instanceof Set)) {
+            return false;
+        }
+
+        // 仅当source为对应application时, 说明环境变量已完成初始化
+        return ((Set<?>) sources).size() == 1;
     }
 }
