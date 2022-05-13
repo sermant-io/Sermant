@@ -23,6 +23,7 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.util.ConvertUtils;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import com.alibaba.dubbo.common.URL;
@@ -48,13 +49,14 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
      * @param invocation 调用信息
      * @return DubboRequestEntity
      */
-    private DubboRequestEntity convertToAlibabaDubboEntity(com.alibaba.dubbo.rpc.Invocation invocation) {
-        String interfaceName = invocation.getInvoker().getInterface().getName();
+    private DubboRequestEntity convertToAlibabaDubboEntity(Invocation invocation) {
+        final Invoker<?> curInvoker = invocation.getInvoker();
+        String interfaceName = curInvoker.getInterface().getName();
         String methodName = invocation.getMethodName();
         String version = invocation.getAttachment(ConvertUtils.DUBBO_ATTACHMENT_VERSION);
         if (ConvertUtils.isGenericService(interfaceName, methodName)) {
             // 针对泛化接口, 实际接口、版本名通过url获取, 方法名基于参数获取, 为请求方法的第一个参数
-            final URL url = invocation.getInvoker().getUrl();
+            final URL url = curInvoker.getUrl();
             interfaceName = url.getParameter(CommonConst.GENERIC_INTERFACE_KEY, interfaceName);
             final Object[] arguments = invocation.getArguments();
             if (arguments != null && arguments.length > 0 && arguments[0] instanceof String) {
@@ -74,10 +76,15 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
         final FlowControlResult result = new FlowControlResult();
         if (allArguments[1] instanceof Invocation) {
             Invocation invocation = (Invocation) allArguments[1];
-            chooseDubboService().onBefore(convertToAlibabaDubboEntity(invocation), result, isProvider(context));
-            if (result.isSkip()) {
-                context.skip(new RpcResult(
-                    wrapException(invocation, (Invoker<?>) allArguments[0], result.getResult().getMsg())));
+            if (invocation.getInvoker() != null) {
+                chooseDubboService().onBefore(convertToAlibabaDubboEntity(invocation), result,
+                    isProvider(context));
+                if (result.isSkip()) {
+                    context.skip(new RpcResult(
+                        wrapException(invocation, (Invoker<?>) allArguments[0], result.getResult().getMsg())));
+                }
+            } else {
+                LoggerFactory.getLogger().warning("Not found down stream invoker, it will skip flow control check!");
             }
         }
         return context;
@@ -115,7 +122,7 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
     }
 
     @Override
-    protected boolean canInvoke() {
+    protected boolean canInvoke(ExecuteContext context) {
         return true;
     }
 }

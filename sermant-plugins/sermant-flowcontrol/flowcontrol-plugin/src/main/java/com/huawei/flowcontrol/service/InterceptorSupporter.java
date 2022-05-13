@@ -194,7 +194,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
 
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
-        if (canInvoke()) {
+        if (canInvoke(context)) {
             return doBefore(context);
         }
         return context;
@@ -202,7 +202,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
 
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        if (canInvoke()) {
+        if (canInvoke(context)) {
             return doAfter(context);
         }
         return context;
@@ -210,7 +210,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-        if (canInvoke()) {
+        if (canInvoke(context)) {
             return doThrow(context);
         }
         return context;
@@ -259,9 +259,10 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     /**
      * 是否可调用内部方法逻辑
      *
+     * @param context 上下文
      * @return 是否可调用
      */
-    protected boolean canInvoke() {
+    protected boolean canInvoke(ExecuteContext context) {
         return !RetryContext.INSTANCE.isMarkedRetry();
     }
 }

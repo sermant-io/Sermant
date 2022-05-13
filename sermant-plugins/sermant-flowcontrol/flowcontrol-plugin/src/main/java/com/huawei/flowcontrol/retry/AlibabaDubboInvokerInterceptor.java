@@ -67,12 +67,13 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
      * @return DubboRequestEntity
      */
     private DubboRequestEntity convertToAlibabaDubboEntity(Invocation invocation) {
-        String interfaceName = invocation.getInvoker().getInterface().getName();
+        final Invoker<?> invoker = invocation.getInvoker();
+        String interfaceName = invoker.getInterface().getName();
         String methodName = invocation.getMethodName();
         String version = invocation.getAttachment(ConvertUtils.DUBBO_ATTACHMENT_VERSION);
         if (ConvertUtils.isGenericService(interfaceName, methodName)) {
             // 针对泛化接口, 实际接口、版本名通过url获取, 方法名基于参数获取, 为请求方法的第一个参数
-            final URL url = invocation.getInvoker().getUrl();
+            final URL url = invoker.getUrl();
             interfaceName = url.getParameter(CommonConst.GENERIC_INTERFACE_KEY, interfaceName);
             final Object[] arguments = invocation.getArguments();
             if (arguments != null && arguments.length > 0 && arguments[0] instanceof String) {
@@ -176,12 +177,16 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
             // 标记当前线程执行重试
             RetryContext.INSTANCE.markRetry(retry);
             result = invokeRetryMethod(context.getObject(), allArguments, result, false, false);
-            final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
-                .getHandlers(convertToAlibabaDubboEntity(invocation));
-            if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ((RpcResult) result).getException())) {
-                result = handlers.get(0).executeCheckedSupplier(
-                    () -> invokeRetryMethod(context.getObject(), allArguments, context.getResult(), true,
-                        true));
+            if (invocation.getInvoker() != null) {
+                final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
+                    .getHandlers(convertToAlibabaDubboEntity(invocation));
+                if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ((RpcResult) result).getException())) {
+                    result = handlers.get(0).executeCheckedSupplier(
+                        () -> invokeRetryMethod(context.getObject(), allArguments, context.getResult(), true,
+                            true));
+                }
+            } else {
+                LOGGER.warning("Not found down stream invoker, it will skip retry check!");
             }
         } catch (Throwable throwable) {
             result = buildErrorResponse(throwable, invocation);
@@ -203,7 +208,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
     }
 
     @Override
-    protected boolean canInvoke() {
+    protected boolean canInvoke(ExecuteContext context) {
         return true;
     }
 

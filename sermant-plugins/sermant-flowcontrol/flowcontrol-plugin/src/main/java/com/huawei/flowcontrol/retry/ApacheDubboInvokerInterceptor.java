@@ -61,6 +61,12 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
     private final Retry retry = new ApacheDubboRetry();
 
     /**
+     * 黑名单，该名单内的类不拦截
+     */
+    private final List<String> backList = Collections
+        .singletonList("org.apache.dubbo.rpc.cluster.support.registry.ZoneAwareClusterInvoker");
+
+    /**
      * 转换apache dubbo 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
      *
      * @param invocation 调用信息
@@ -170,6 +176,11 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
             }
             return placeHolderMethod;
         });
+    }
+
+    @Override
+    protected boolean canInvoke(ExecuteContext context) {
+        return super.canInvoke(context) && backList.contains(context.getObject().getClass().getName());
     }
 
     @Override
