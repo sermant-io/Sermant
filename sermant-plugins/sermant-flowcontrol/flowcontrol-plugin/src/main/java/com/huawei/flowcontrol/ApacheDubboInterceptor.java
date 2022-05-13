@@ -115,7 +115,7 @@ public class ApacheDubboInterceptor extends InterceptorSupporter {
     }
 
     @Override
-    protected boolean canInvoke() {
+    protected boolean canInvoke(ExecuteContext context) {
         return true;
     }
 }
