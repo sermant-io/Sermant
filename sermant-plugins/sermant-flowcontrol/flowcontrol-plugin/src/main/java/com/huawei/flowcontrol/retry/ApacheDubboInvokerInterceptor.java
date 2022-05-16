@@ -180,7 +180,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
 
     @Override
     protected boolean canInvoke(ExecuteContext context) {
-        return super.canInvoke(context) && backList.contains(context.getObject().getClass().getName());
+        return super.canInvoke(context) && !backList.contains(context.getObject().getClass().getName());
     }
 
     @Override
