@@ -25,7 +25,6 @@ jobs:
         run: |
           java -jar checkstyle.jar -c checkstyle.xml -f xml . | reviewdog -f=checkstyle -name="Checkstyle Check" -reporter=github-pr-check -level=error
 
-
   build:
     runs-on: windows-latest
     name: build

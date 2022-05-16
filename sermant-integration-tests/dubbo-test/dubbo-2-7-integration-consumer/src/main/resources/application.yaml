@@ -1,0 +1,9 @@
+server:
+  port: 28820
+dubbo:
+  application:
+    name: dubbo-integration-consumer
+  registry:
+    # 模拟存量dubbo应用注册到zookeeper的情况，新开发的应用建议配置为 sc://127.0.0.1:30100
+    address: zookeeper://127.0.0.1:2181
+    protocol: zookeeper
