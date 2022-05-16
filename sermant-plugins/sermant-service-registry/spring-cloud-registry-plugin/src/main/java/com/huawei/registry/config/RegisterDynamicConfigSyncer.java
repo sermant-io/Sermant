@@ -17,19 +17,12 @@
 
 package com.huawei.registry.config;
 
-import com.huawei.registry.context.RegisterContext;
-import com.huawei.registry.handler.SingleStateCloseHandler;
-
-import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-
-import java.util.Locale;
-import java.util.logging.Logger;
 
 /**
  * 动态配置类
@@ -38,12 +31,10 @@ import java.util.logging.Logger;
  * @since 2021-12-30
  */
 public class RegisterDynamicConfigSyncer implements PluginService {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
-
     /**
      * 注册中心关闭开关
      */
-    private static final String REGISTER_KEY = "register-close-switch";
+    private static final String REGISTER_KEY = "register_close_switch";
 
     /**
      * 注册中心配置组
@@ -69,23 +60,6 @@ public class RegisterDynamicConfigSyncer implements PluginService {
             } else {
                 RegisterDynamicConfig.INSTANCE
                     .setNeedCloseOriginRegisterCenter(Boolean.parseBoolean(event.getContent()));
-            }
-            if (event.getEventType() != DynamicConfigEventType.INIT) {
-                // 初始化的参数不生效, 仅当后续修改生效, 防止用户因配置问题导致注册中心关闭
-                tryCloseOriginRegisterCenter();
-            }
-        }
-
-        private void tryCloseOriginRegisterCenter() {
-            if (RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()) {
-                for (SingleStateCloseHandler handler : RegisterContext.INSTANCE.getCloseHandlers()) {
-                    try {
-                        handler.tryClose();
-                    } catch (Exception ex) {
-                        LOGGER.warning(String.format(Locale.ENGLISH,
-                            "Origin register center closed failed! %s", ex.getMessage()));
-                    }
-                }
             }
         }
     }

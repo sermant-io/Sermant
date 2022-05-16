@@ -49,7 +49,7 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
         if (request == null) {
             return Optional.empty();
         }
-        return Optional.of(new HttpRequestEntity(request.getPathInfo(), request.getServletPath(),
+        return Optional.of(new HttpRequestEntity(request.getPathInfo(), request.getRequestURI(),
             getHeaders(request), request.getMethod()));
     }
 

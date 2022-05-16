@@ -20,10 +20,14 @@ import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.services.RegisterCenterService;
 import com.huawei.registry.support.InstanceInterceptorSupport;
+import com.huawei.registry.utils.CommonUtils;
+import com.huawei.registry.utils.MarkUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.utils.StringUtils;
+
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
@@ -46,14 +50,20 @@ import java.util.stream.Collectors;
 public class ServerListInterceptor extends InstanceInterceptorSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    /**
+     * 下游字段名,当前由于ServerList实现复杂，基于修饰者模式进行层层调用，且实现形式多，这里罗列可获取下游服务名的字段，待后续优化
+     */
+    private static final String[] DOWN_STREAM_FIELD = {"serviceId", "clientName", "ribbon", "clientConfig", "config"};
+
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
-        if (isMarked()) {
+        // ServerList存在层层调用场景，此处使用外部共享线程变量保证仅在其最外层ServerList实现拦截
+        if (MarkUtils.isMarked()) {
             // 此处针对当前线程， 如果是拦截器内部调用直接pass
             return context;
         }
+        MarkUtils.mark();
         try {
-            mark();
             Optional<String> serviceIdOption = getServiceName(context);
             if (!serviceIdOption.isPresent()) {
                 return context;
@@ -66,7 +76,7 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
                 context.skip(convertAndMerge(context.getObject(), serverList, serviceName));
             }
         } finally {
-            unMark();
+            MarkUtils.unMark();
         }
         return context;
     }
@@ -78,17 +88,30 @@ public class ServerListInterceptor extends InstanceInterceptorSupport {
      */
     private Optional<String> getServiceName(ExecuteContext context) {
         try {
-            Object serviceId = context.getMemberFieldValue("serviceId");
-            if (serviceId == null) {
-                final Object clientConfig = context.getMemberFieldValue("clientConfig");
-                if (clientConfig instanceof IClientConfig) {
-                    serviceId = ((IClientConfig) clientConfig).getClientName();
-                }
-            }
-            return Optional.ofNullable((String) serviceId);
+            final Optional<Object> serviceName = tryGetServiceName(context.getObject());
+            return serviceName.map(service -> (String) service);
         } catch (ClassCastException ex) {
             LOGGER.warning("Can not find down stream service name! "
                 + "The service name that has been found is not right name");
+        }
+        return Optional.empty();
+    }
+
+    private Optional<Object> tryGetServiceName(Object enhanceTarget) {
+        for (String fieldName : DOWN_STREAM_FIELD) {
+            final Optional<Object> targetOptional = CommonUtils.getFieldValue(enhanceTarget, fieldName);
+            if (targetOptional.isPresent()) {
+                final Object target = targetOptional.get();
+                if (target instanceof String) {
+                    // 服务名
+                    return Optional.of(target);
+                } else if (StringUtils.equals("org.springframework.cloud.netflix.ribbon.RibbonProperties",
+                    target.getClass().getName())) {
+                    return tryGetServiceName(target);
+                } else if (target instanceof IClientConfig) {
+                    return Optional.ofNullable(((IClientConfig) target).getClientName());
+                }
+            }
         }
         return Optional.empty();
     }
