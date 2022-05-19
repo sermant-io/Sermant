@@ -22,7 +22,9 @@
 
 package com.huaweicloud.sermant.core.service;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.exception.DupServiceException;
+import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
 import com.huaweicloud.sermant.core.utils.SpiLoadUtils;
 
 import java.util.HashMap;
@@ -44,11 +46,17 @@ public class ServiceManager {
     private static final Map<String, BaseService> SERVICES = new HashMap<String, BaseService>();
 
     /**
+     * agent配置
+     */
+    private static final AgentConfig AGENT_CONFIG = ConfigManager.getConfig(AgentConfig.class);
+
+    /**
      * 初始化所有服务
      */
     public static void initServices() {
         for (final BaseService service : ServiceLoader.load(BaseService.class)) {
-            if (loadService(service, service.getClass(), BaseService.class)) {
+            if (!AGENT_CONFIG.getServiceBlackList().contains(service.getClass().getName())
+                    && loadService(service, service.getClass(), BaseService.class)) {
                 service.start();
             }
         }
