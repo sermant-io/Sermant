@@ -58,6 +58,11 @@ public class AgentConfig implements BaseConfig {
      */
     private CombineStrategy combineStrategy = CombineStrategy.ALL;
 
+    /**
+     * agent服务黑名单
+     */
+    private Set<String> serviceBlackList = Collections.emptySet();
+
     public boolean isEnhanceBootStrapEnable() {
         return isEnhanceBootStrapEnable;
     }
@@ -88,6 +93,14 @@ public class AgentConfig implements BaseConfig {
 
     public void setEnhancedClassOutputPath(String enhancedClassOutputPath) {
         this.enhancedClassOutputPath = enhancedClassOutputPath;
+    }
+
+    public Set<String> getServiceBlackList() {
+        return serviceBlackList;
+    }
+
+    public void setServiceBlackList(Set<String> serviceBlackList) {
+        this.serviceBlackList = serviceBlackList;
     }
 
     public CombineStrategy getCombineStrategy() {
