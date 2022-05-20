@@ -6,7 +6,7 @@ on:
 name: Create Release
 
 env:
-  version: '0.2.0'
+  version: '0.3.0'
 
 jobs:
   auto-create-release:
@@ -32,6 +32,7 @@ jobs:
           mvn -B package -DskipTests --file pom.xml
           mkdir ${{ github.workspace }}/package
           cp ${{ github.workspace }}/sermant-agent-*.tar.gz ${{ github.workspace }}/package/sermant-${{ env.version }}.tar.gz
+          ls ${{ github.workspace }}/package
       - name: Create Release # 自动发布release版本
         id: create_release
         uses: actions/create-release@v1.1.4
