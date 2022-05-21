@@ -11,6 +11,9 @@
 
     <artifactId>flowcontrol-plugin</artifactId>
 
+    <name>flowcontrol-plugin</name>
+    <description>The plugin module of flowcontrol.</description>
+
     <properties>
         <config.skip.flag>false</config.skip.flag>
         <package.plugin.type>plugin</package.plugin.type>

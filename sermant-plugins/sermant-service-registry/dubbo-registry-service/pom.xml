@@ -11,6 +11,9 @@
 
     <artifactId>dubbo-registry-service</artifactId>
 
+    <name>dubbo-registry-service</name>
+    <description>The service module of registry for dubbo.</description>
+
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>

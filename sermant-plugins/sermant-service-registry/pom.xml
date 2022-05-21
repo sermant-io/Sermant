@@ -40,5 +40,15 @@
                 <module>spring-cloud-registry-service</module>
             </modules>
         </profile>
+        <profile>
+            <id>release</id>
+            <modules>
+                <module>registry-common</module>
+                <module>dubbo-registry-plugin</module>
+                <module>dubbo-registry-service</module>
+                <module>spring-cloud-registry-plugin</module>
+                <module>spring-cloud-registry-service</module>
+            </modules>
+        </profile>
     </profiles>
 </project>

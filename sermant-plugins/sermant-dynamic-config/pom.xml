@@ -52,5 +52,11 @@
                 <module>dynamic-config-plugin</module>
             </modules>
         </profile>
+        <profile>
+            <id>release</id>
+            <modules>
+                <module>dynamic-config-plugin</module>
+            </modules>
+        </profile>
     </profiles>
 </project>

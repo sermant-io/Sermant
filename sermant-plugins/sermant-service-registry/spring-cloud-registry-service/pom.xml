@@ -11,6 +11,9 @@
     <packaging>jar</packaging>
     <artifactId>spring-cloud-registry-service</artifactId>
 
+    <name>spring-cloud-registry-plugin</name>
+    <description>The service module of registry for spring-cloud.</description>
+
     <properties>
         <package.plugin.type>service</package.plugin.type>
         <spring-component-version>5.0.13.RELEASE</spring-component-version>

@@ -28,6 +28,9 @@
 
     <artifactId>flowcontrol-service</artifactId>
 
+    <name>flowcontrol-service</name>
+    <description>The service module of flowcontrol.</description>
+
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
@@ -98,5 +101,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

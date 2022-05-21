@@ -11,6 +11,9 @@
 
     <artifactId>dubbo-registry-plugin</artifactId>
 
+    <name>dubbo-registry-plugin</name>
+    <description>The plugin module of registry for dubbo.</description>
+
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>

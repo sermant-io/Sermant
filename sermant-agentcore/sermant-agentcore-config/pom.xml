@@ -79,34 +79,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <artifactItems>
-                        <artifactItem>
-                            <groupId>com.huaweicloud.sermant</groupId>
-                            <artifactId>sermant-agentcore-premain</artifactId>
-                            <version>${project.version}</version>
-                            <type>jar</type>
-                            <overWrite>true</overWrite>
-                            <outputDirectory>${package.agent.dir}</outputDirectory>
-                            <destFileName>${sermant.name}.jar</destFileName>
-                        </artifactItem>
-                    </artifactItems>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>
