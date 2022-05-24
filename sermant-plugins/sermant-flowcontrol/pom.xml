@@ -46,5 +46,13 @@
                 <module>flowcontrol-service</module>
             </modules>
         </profile>
+        <profile>
+            <id>release</id>
+            <modules>
+                <module>flowcontrol-common</module>
+                <module>flowcontrol-plugin</module>
+                <module>flowcontrol-service</module>
+            </modules>
+        </profile>
     </profiles>
 </project>

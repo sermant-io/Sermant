@@ -27,13 +27,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dynamic-config-plugin</artifactId>
-    <packaging>jar</packaging>
+
+    <name>dynamic-config-plugin</name>
+    <description>The plugin module of dynamic-config.</description>
 
     <properties>
         <config.skip.flag>false</config.skip.flag>
         <package.plugin.type>plugin</package.plugin.type>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
         <spring-components.version>5.3.14</spring-components.version>
         <spring-cloud.version>3.0.0</spring-cloud.version>
     </properties>
@@ -99,12 +99,7 @@
                 <artifactId>maven-shade-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
             </plugin>
         </plugins>
     </build>

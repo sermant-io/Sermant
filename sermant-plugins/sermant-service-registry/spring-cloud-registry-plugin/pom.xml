@@ -11,6 +11,9 @@
 
     <artifactId>spring-cloud-registry-plugin</artifactId>
 
+    <name>spring-cloud-registry-plugin</name>
+    <description>The plugin module of registry for spring-cloud.</description>
+
     <properties>
         <config.skip.flag>false</config.skip.flag>
         <package.plugin.type>plugin</package.plugin.type>
@@ -65,8 +68,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
-
     </dependencies>
 
     <build>
