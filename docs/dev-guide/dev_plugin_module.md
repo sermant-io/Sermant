@@ -37,16 +37,15 @@
 目前[Sermant](../../pom.xml)的打包流程中，包含`agent`、`ext`、`example`、`package`和`all`
 6个步骤，其中与[sermant-plugins](../../sermant-plugins/pom.xml)相关的步骤如下：
 
-- `agent`: 对除示例功能[sermant-example](../../sermant-plugins/sermant-example)外所有`插件模块(plugin)`和`服务模块(service)`进行打包，他们将输出到产品`agent/pluginPackage/${功能名称}`目录。
+- `agent`: 对动态配置插件[sermant-dynamic-config](../../sermant-plugins/sermant-dynamic-config)、流控插件[sermant-flowcontrol](../../sermant-plugins/sermant-flowcontrol)、注册插件[sermant-service-registry](../../sermant-plugins/sermant-service-registry)的`插件模块(plugin)`和`服务模块(service)`进行打包，他们将输出到产品`agent/pluginPackage/${功能名称}`目录。
 - `ext`: 对所有附加件进行打包，包括`后端模块(server)`、`前端模块(webapp)`和`其他模块(other)`，其中`后端模块(server)`和`前端模块(webapp)`将输出到产品的`server/${功能名称}`目录，`其他模块(other)`一般为调试用的附加件，没有打包要求。
-- `example`: 对示例功能[sermant-example](../../sermant-plugins/sermant-example)进行打包。
+- `example`: 对示例功能中需要的注册插件注册插件[sermant-service-registry](../../sermant-plugins/sermant-service-registry)进行打包。
 - `all`: 对上述的所有内容进行打包。
 
 ## 添加插件主模块
 
 - 添加`插件主模块(main)`，依据该`插件主模块(main)`中涉及的内容，在[sermant-plugins的pom文件](../../sermant-plugins/pom.xml)中的特定`profile`中添加相应模块：
   - 必须在`id`为`all`的`profile`中添加该模块。
-  - 如果该模块包含`插件模块(plugin)`，那么需要在`id`为`agent`的`profile`中添加该模块。
   - 如果该模块包含其他内容，则需要在`id`为`ext`的`profile`中添加该模块。
 - 在该模块的`pom.xml`中添加以下标签：
   ```xml
@@ -58,7 +57,7 @@
     <package.plugin.name>${插件名称}</package.plugin.name>
   </properties>
   ```
-  - 在[默认插件设置文件](../../sermant-agentcore/sermant-agentcore-core/config/plugins.yaml)和[全数插件设置文件](../../sermant-agentcore/sermant-agentcore-core/config/all/plugins.yaml)中添加新增的`插件主模块(main)`，完成注册。
+  - 在[默认插件设置文件](../../sermant-agentcore/sermant-agentcore-config/config/plugins.yaml)和[全数插件设置文件](../../sermant-agentcore/sermant-agentcore-config/config/all/plugins.yaml)中添加新增的`插件主模块(main)`，完成注册。
 
 `插件主模块(main)`的子模块开发流程参见一下章节：
 - `插件模块(plugin)`和`服务模块(service)`开发流程参见[插件开发流程](#插件开发流程)
@@ -255,7 +254,7 @@
 - 通过心跳功能添加额外参数示例，如[DemoHeartBeatService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)服务所示，通常使用自定义服务的方式将额外参数带入。
 - 链路功能使用示例，如[DemoTraceInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceInterceptor.java)所示，通常链路功能应用于拦截器，对宿主应用的方法调用过程进行增强，捕获其相关的数据信息并上报。
 - 增强原生类示例，如[DemoBootstrapDefinition](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java)所示，与普通类的增强方式无异。但是，考虑到修改原生类是非常危险的且风险扩散的操作，不建议对原生类进行增强。
-- 插件配置示例：插件配置是统一配置系统的特化，遵循统一配置系统的规则。[config.yaml](../../sermant-plugins/sermant-example/config/config.yaml)是示例工程的配置文件，其中包含[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)和[DemoServiceConfig](../../sermant-plugins/sermant-example/demo-service/src/main/java/com/huawei/example/demo/config/DemoServiceConfig.java)两个配置类对应的配置信息，从配置的定义和调用可以看到：
+- 插件配置示例：插件配置是统一配置系统的特化，遵循统一配置系统的规则。[config.yaml](../../sermant-example/config/config.yaml)是示例工程的配置文件，其中包含[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)和[DemoServiceConfig](../../sermant-plugins/sermant-example/demo-service/src/main/java/com/huawei/example/demo/config/DemoServiceConfig.java)两个配置类对应的配置信息，从配置的定义和调用可以看到：
   - 每个功能的配置文件仅能有1个，即`config.yaml`文件。
   - 插件包的配置类如果有拦截器别名的设定，可以继承[AliaConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config/AliaConfig.java)类，其他情况都实现[PluginConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config/PluginConfig.java)接口。
   - 无论继承哪个类，都需要添加[PluginConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config/PluginConfig.java)的[spi配置文件](../../sermant-example/demo-plugin/src/main/resources/META-INF/services/com.huaweicloud.sermant.core.plugin.config.PluginConfig)。
@@ -274,7 +273,7 @@
 - 插件服务示例：插件服务是核心服务系统的特化，遵循核心服务系统的规则。
   - 如[DemoSimpleService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)所示，是一个简单的插件服务，他编写于`插件模块(plugin)`中。鉴于简单的插件服务的定位，他只能使用java原生api以及核心包中自研的api，不能使用任何第三方api(无论核心包是否引入)。
   - [DemoComplexService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)接口是示例`插件模块(plugin)`中定义复杂服务接口，该接口将会在`服务模块(service)`中实现。
-  - [DemoComplexServiceImpl](../../sermant-plugins/sermant-example/demo-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java)是[DemoComplexService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)接口的实现，他编写于`服务模块(service)`中，属于复杂的插件服务，可以按需使用其他第三方依赖(示例中未使用)。
+  - [DemoComplexServiceImpl](../../sermant-example/demo-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java)是[DemoComplexService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)接口的实现，他编写于`服务模块(service)`中，属于复杂的插件服务，可以按需使用其他第三方依赖(示例中未使用)。
   - 简单的插件服务和复杂的插件服务接口都需要继承(实现)[PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java)接口。
   - 需要添加[PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java)的[spi配置文件](../../sermant-example/demo-plugin/src/main/resources/META-INF/services/com.huaweicloud.sermant.core.plugin.service.PluginService)。
   - 通过以下代码可以获取服务对象：
