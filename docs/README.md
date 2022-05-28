@@ -16,6 +16,7 @@ Sermant 基于Java的字节码增强技术，通过 JavaAgent 对宿主应用进
 - [sermant-agentcore](../sermant-agentcore): *JavaAgent*相关内容
   - [sermant-agentcore-core](../sermant-agentcore/sermant-agentcore-core): 核心功能模块
   - [sermant-agentcore-premain](../sermant-agentcore/sermant-agentcore-premain): *JavaAgent*入口模块
+  - [sermant-agentcore-config](../sermant-agentcore/sermant-agentcore-config): 配置模块
 - [sermant-backend](../sermant-backend): 消息发送模块服务端
 - [sermant-package](../sermant-package): 打包模块
 - [sermant-plugins](../sermant-plugins): 插件根模块，内含各种功能的插件及相关附加件
@@ -29,6 +30,7 @@ Sermant 基于Java的字节码增强技术，通过 JavaAgent 对宿主应用进
 - *backend*: 编译、打包**Sermant**后端模块
 - *ext*: 编译、打包插件附带的后端、前端和其他附加件
 - *package*: 将以上的打包结果归档为产品包
+- *release*: 发布构建产物到中央仓库
 - *all*: 执行以上全部步骤(默认不开启)
 
 执行以下*maven*命令，对**Sermant**工程进行默认打包：
