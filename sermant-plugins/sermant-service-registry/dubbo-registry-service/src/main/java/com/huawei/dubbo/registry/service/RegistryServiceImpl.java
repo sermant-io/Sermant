@@ -27,6 +27,7 @@ import com.huawei.dubbo.registry.entity.Subscription;
 import com.huawei.dubbo.registry.entity.SubscriptionKey;
 import com.huawei.dubbo.registry.utils.CollectionUtils;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
+import com.huawei.registry.config.ConfigConstants;
 import com.huawei.registry.config.RegisterConfig;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
@@ -106,7 +107,6 @@ public class RegistryServiceImpl implements RegistryService {
     private static final int REGISTRATION_WAITE_TIME = 30;
     private static final List<Subscription> PENDING_SUBSCRIBE_EVENT = new CopyOnWriteArrayList<>();
     private static final AtomicBoolean SHUTDOWN = new AtomicBoolean();
-    private static final String FRAMEWORK_NAME = "sermant";
     private static final String DEFAULT_TENANT_NAME = "default";
     private static final String CONSUMER_PROTOCOL_PREFIX = "consumer";
     private static final String GROUP_KEY = "group";
@@ -295,7 +295,7 @@ public class RegistryServiceImpl implements RegistryService {
         microservice.setVersion(config.getVersion());
         microservice.setEnvironment(config.getEnvironment());
         Framework framework = new Framework();
-        framework.setName(FRAMEWORK_NAME);
+        framework.setName(ConfigConstants.COMMON_FRAMEWORK);
         framework.setVersion(getVersion());
         microservice.setFramework(framework);
         microservice.setSchemas(getSchemas());

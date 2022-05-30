@@ -366,7 +366,7 @@ public class ScClient {
 
         // agent相关信息
         final Framework framework = new Framework();
-        framework.setName(registerConfig.getFramework());
+        framework.setName(ConfigConstants.COMMON_FRAMEWORK);
         framework.setVersion(getVersion());
         microservice.setFramework(framework);
         microservice.setVersion(registerConfig.getVersion());
