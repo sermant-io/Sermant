@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 
-com.huawei.registry.config.RegisterDynamicConfigSyncer
+com.huawei.registry.config.RegistryConfigSubscribeServiceImpl

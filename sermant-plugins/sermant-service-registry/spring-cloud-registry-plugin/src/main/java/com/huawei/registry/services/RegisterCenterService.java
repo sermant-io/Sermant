@@ -38,6 +38,11 @@ public interface RegisterCenterService extends PluginService {
     void register(FixedResult result);
 
     /**
+     * 停止方法
+     */
+    void unRegister();
+
+    /**
      * 获取实例列表
      *
      * @param serviceId 服务名
@@ -51,4 +56,25 @@ public interface RegisterCenterService extends PluginService {
      * @return 服务列表
      */
     List<String> getServices();
+
+    /**
+     * 获取注册中心状态
+     *
+     * @return UP DOWN
+     */
+    String getRegisterCenterStatus();
+
+    /**
+     * 获取当前实例的状态
+     *
+     * @return 实例状态
+     */
+    String getInstanceStatus();
+
+    /**
+     * 更新实例状态
+     *
+     * @param status 目标状态
+     */
+    void updateInstanceStatus(String status);
 }

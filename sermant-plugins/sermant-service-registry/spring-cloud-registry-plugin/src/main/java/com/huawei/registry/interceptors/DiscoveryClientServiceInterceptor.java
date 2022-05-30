@@ -16,6 +16,7 @@
 
 package com.huawei.registry.interceptors;
 
+import com.huawei.registry.config.RegisterDynamicConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.services.RegisterCenterService;
 import com.huawei.registry.support.InstanceInterceptorSupport;
@@ -23,7 +24,10 @@ import com.huawei.registry.support.InstanceInterceptorSupport;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
+import reactor.core.publisher.Flux;
+
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,16 +49,38 @@ public class DiscoveryClientServiceInterceptor extends InstanceInterceptorSuppor
             mark();
             final RegisterCenterService service = ServiceManager.getService(RegisterCenterService.class);
             final List<String> services = new ArrayList<>(service.getServices());
-            if (isOpenMigration() && RegisterContext.INSTANCE.isAvailable()) {
-                // 合并两个注册中心
-                final DiscoveryClient discoveryClient = (DiscoveryClient) context.getObject();
-                services.addAll(discoveryClient.getServices());
-            }
-            context.skip(services.stream().distinct().collect(Collectors.toList()));
+            final Object target = context.getObject();
+            context.skip(isWebfLux(target) ? getServicesWithFlux(services, target) : getServices(services, target));
         } finally {
             unMark();
         }
         return context;
+    }
+
+    private Flux<String> getServicesWithFlux(List<String> services, Object target) {
+        return Flux.fromIterable(getServices(services, target));
+    }
+
+    private List<String> getServices(List<String> services, Object target) {
+        if (!RegisterContext.INSTANCE.isAvailable()
+                || RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()) {
+            return services;
+        }
+
+        // 合并两个注册中心
+        if (isWebfLux(target)) {
+            ReactiveDiscoveryClient reactiveDiscoveryClient = (ReactiveDiscoveryClient) target;
+            final Flux<String> originServicesFlux = reactiveDiscoveryClient.getServices();
+            final List<String> originServices = originServicesFlux.collectList().block();
+            if (originServices == null) {
+                return services;
+            }
+            services.addAll(originServices);
+        } else {
+            final DiscoveryClient discoveryClient = (DiscoveryClient) target;
+            services.addAll(discoveryClient.getServices());
+        }
+        return services.stream().distinct().collect(Collectors.toList());
     }
 
     @Override

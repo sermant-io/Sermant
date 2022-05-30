@@ -79,7 +79,7 @@ public class RegisterConfig implements PluginConfig {
     /**
      * 注册中心类型
      */
-    private String registerType = "SERVICE_COMB";
+    private RegisterType registerType = RegisterType.SERVICE_COMB;
 
     /**
      * 是否开启sc的加密 作为配置类，使用布尔类型不可使用is开头，否则存在配置无法读取的问题
@@ -127,6 +127,12 @@ public class RegisterConfig implements PluginConfig {
     private boolean allowCrossApp = false;
 
     /**
+     * spring cloud zone
+     * 若未配置默认使用系统环境变量的zone, 即spring.cloud.loadbalancer.zone
+     */
+    private String zone;
+
+    /**
      * 是否忽略契约差异
      */
     private boolean ignoreSwaggerDifferent = false;
@@ -153,6 +159,14 @@ public class RegisterConfig implements PluginConfig {
         this.application = serviceMeta.getApplication();
         this.project = serviceMeta.getProject();
         this.version = serviceMeta.getVersion();
+    }
+
+    public String getZone() {
+        return zone;
+    }
+
+    public void setZone(String zone) {
+        this.zone = zone;
     }
 
     public boolean isAllowCrossApp() {
@@ -227,11 +241,11 @@ public class RegisterConfig implements PluginConfig {
         this.sslEnabled = sslEnabled;
     }
 
-    public String getRegisterType() {
+    public RegisterType getRegisterType() {
         return registerType;
     }
 
-    public void setRegisterType(String registerType) {
+    public void setRegisterType(RegisterType registerType) {
         this.registerType = registerType;
     }
 
@@ -264,7 +278,7 @@ public class RegisterConfig implements PluginConfig {
         if (StringUtils.isBlank(address)) {
             return Collections.emptyList();
         }
-        return new ArrayList<String>(Arrays.asList(address.split(",")));
+        return new ArrayList<>(Arrays.asList(address.split(",")));
     }
 
     public void setAddress(String address) {

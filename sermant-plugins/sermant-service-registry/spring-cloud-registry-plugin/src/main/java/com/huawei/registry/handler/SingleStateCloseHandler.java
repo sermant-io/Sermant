@@ -58,20 +58,6 @@ public abstract class SingleStateCloseHandler extends RegisterSwitchSupport {
     }
 
     /**
-     * 原注册中心状态变更
-     *
-     * @param allArguments 参数
-     * @param obj          增强对象
-     * @param originState  变更前的状态
-     * @param newState     变更后的状态
-     */
-    public void doChange(Object obj, Object[] allArguments, boolean originState, boolean newState) {
-        if (needCloseRegisterCenter() || !newState) {
-            tryClose();
-        }
-    }
-
-    /**
      * 关闭注册中心
      */
     protected void tryClose() {

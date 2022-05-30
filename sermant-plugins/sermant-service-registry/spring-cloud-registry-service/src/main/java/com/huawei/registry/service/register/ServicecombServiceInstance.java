@@ -23,6 +23,7 @@ import com.huawei.registry.utils.CommonUtils;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * service comb服务信息
@@ -53,6 +54,12 @@ public class ServicecombServiceInstance implements MicroServiceInstance {
     }
 
     @Override
+    public String getIp() {
+        final Optional<String> ipByEndpoint = CommonUtils.getIpByEndpoint(microserviceInstance.getEndpoints().get(0));
+        return ipByEndpoint.orElseGet(this::getHost);
+    }
+
+    @Override
     public int getPort() {
         return CommonUtils.getPortByEndpoint(microserviceInstance.getEndpoints().get(0));
     }
@@ -68,7 +75,7 @@ public class ServicecombServiceInstance implements MicroServiceInstance {
     }
 
     @Override
-    public Map<String, String> getMeta() {
+    public Map<String, String> getMetadata() {
         return microserviceInstance.getProperties();
     }
 }

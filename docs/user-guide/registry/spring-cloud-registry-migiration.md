@@ -81,11 +81,11 @@ POST /publishConfig
 
 **请求Body**
 
-| 参数    | 是否必填 | 参数类型 | 描述      | 配置值                  |
-| ------- | -------- | -------- | --------- | ----------------------- |
-| key     | 是       | String   | 配置的key | register-close-switch   |
-| group   | 是       | String   | 配置的组  | register                |
-| content | 是       | String   | 配置文本  | true : 关闭注册中心心跳 |
+| 参数    | 是否必填 | 参数类型 | 描述      | 配置值                                  |
+| ------- | -------- | -------- | --------- | --------------------------------------- |
+| key     | 是       | String   | 配置的key | 任意值                                  |
+| group   | 是       | String   | 配置的组  | service=YourServiceName                 |
+| content | 是       | String   | 配置文本  | origin.\_\_registry\_\_.needClose: true |
 
 若需要关闭请参考表格**配置值**列进行配置下发
 

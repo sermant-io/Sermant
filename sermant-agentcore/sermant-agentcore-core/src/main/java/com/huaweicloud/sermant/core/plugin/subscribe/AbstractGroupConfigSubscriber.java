@@ -35,23 +35,32 @@ public abstract class AbstractGroupConfigSubscriber implements ConfigSubscriber 
     private final DynamicConfigService dynamicConfigService;
 
     /**
-     * 构造器
+     * 订阅的插件名称
      */
-    protected AbstractGroupConfigSubscriber() {
-        this(null);
-    }
+    private final String pluginName;
 
     /**
-     * 自定义配置实现的购房方法
+     * 自定义配置实现的构造方法
      *
      * @param dynamicConfigService 配置中心实现
      */
     protected AbstractGroupConfigSubscriber(DynamicConfigService dynamicConfigService) {
+        this(dynamicConfigService, null);
+    }
+
+    /**
+     * 自定义配置实现的构造方法
+     *
+     * @param dynamicConfigService 配置中心实现
+     * @param pluginName 插件名称
+     */
+    protected AbstractGroupConfigSubscriber(DynamicConfigService dynamicConfigService, String pluginName) {
         if (dynamicConfigService == null) {
             this.dynamicConfigService = ServiceManager.getService(DynamicConfigService.class);
         } else {
             this.dynamicConfigService = dynamicConfigService;
         }
+        this.pluginName = pluginName;
     }
 
     @Override
@@ -64,11 +73,20 @@ public abstract class AbstractGroupConfigSubscriber implements ConfigSubscriber 
         if (subscribers != null && !subscribers.isEmpty()) {
             for (Map.Entry<String, DynamicConfigListener> entry : subscribers.entrySet()) {
                 dynamicConfigService.addGroupListener(entry.getKey(), entry.getValue(), true);
-                LoggerFactory.getLogger().info(String.format(Locale.ENGLISH,
-                    "Success to subscribe group [%s]", entry.getKey()));
+                printSubscribeMsg(entry.getKey());
             }
         }
         return true;
+    }
+
+    private void printSubscribeMsg(String group) {
+        if (pluginName != null) {
+            LoggerFactory.getLogger().info(String.format(Locale.ENGLISH,
+                    "Plugin [%s] has Success to subscribe group [%s]", pluginName, group));
+        } else {
+            LoggerFactory.getLogger().info(String.format(Locale.ENGLISH,
+                    "Success to subscribe group [%s]", group));
+        }
     }
 
     /**

@@ -63,7 +63,7 @@ public class ZookeeperHealthInterceptor extends SingleStateCloseHandler {
 
         // 清空缓存
         cache.set(target, null);
-        LOGGER.info("Zookeeper client has been closed.");
+        LOGGER.warning("Zookeeper client has been closed by user.");
     }
 
     @Override
@@ -71,12 +71,12 @@ public class ZookeeperHealthInterceptor extends SingleStateCloseHandler {
         checkState(context, null);
         if (arguments.length > 1 && arguments[1] instanceof TreeCacheEvent) {
             TreeCacheEvent event = (TreeCacheEvent) arguments[1];
-            if (!isAvailable(event.getType()) && RegisterContext.INSTANCE.compareAndSet(true, false)) {
+            if (!isAvailable(event.getType())) {
                 // 注册中心断开
-                doChange(context.getObject(), arguments, true, false);
-            } else if (isAvailable(event.getType()) && RegisterContext.INSTANCE.compareAndSet(false, true)) {
+                RegisterContext.INSTANCE.compareAndSet(true, false);
+            } else if (isAvailable(event.getType())) {
                 // 注册中心可用
-                doChange(context.getObject(), arguments, false, true);
+                RegisterContext.INSTANCE.compareAndSet(false, true);
             } else {
                 return context;
             }

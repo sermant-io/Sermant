@@ -17,15 +17,11 @@
 
 package com.huawei.registry.utils;
 
-import com.huawei.registry.support.FieldAccessAction;
-
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 
-import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.logging.Level;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 /**
  * 公共工具类
@@ -34,6 +30,16 @@ import java.util.logging.Level;
  * @since 2021-12-16
  */
 public class CommonUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final Consumer<Long> SLEEP = time -> {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException ex) {
+            LOGGER.fine("Sleep has been interrupted!");
+        }
+    };
+
     /**
      * endpoints基于":"分割长度
      */
@@ -55,7 +61,7 @@ public class CommonUtils {
     /**
      * 获取sc endpoint端口
      *
-     * @param endpoint sc endpoint
+     * @param endpoint sc endpoint  rest:
      * @return 端口
      */
     public static int getPortByEndpoint(String endpoint) {
@@ -81,28 +87,31 @@ public class CommonUtils {
         }
         final String[] parts = endpoint.split(":");
         if (parts.length == SERVICECOMB_ENDPOINT_PARTS
-            && parts[ENDPOINTS_IP_PART_INDEX].length() > ENDPOINTS_SEPARATOR_LEN) {
+                && parts[ENDPOINTS_IP_PART_INDEX].length() > ENDPOINTS_SEPARATOR_LEN) {
             return Optional.of(parts[ENDPOINTS_IP_PART_INDEX].substring(ENDPOINTS_SEPARATOR_LEN));
         }
         return Optional.empty();
     }
 
     /**
-     * 通过反射获取字段值
+     * 消费
      *
-     * @param target    目标对象
-     * @param fieldName 字段名称
-     * @return value
+     * @param consumer 消费者
+     * @param target 传入目标对象
+     * @param <T> 目标类型
      */
-    public static Optional<Object> getFieldValue(Object target, String fieldName) {
-        try {
-            final Field fieldValue = target.getClass().getDeclaredField(fieldName);
-            AccessController.doPrivileged(new FieldAccessAction(fieldValue));
-            return Optional.ofNullable(fieldValue.get(target));
-        } catch (Exception ex) {
-            LoggerFactory.getLogger().log(Level.WARNING, String.format(Locale.ENGLISH,
-                "Could not acquire the value of field %s", fieldName));
-            return Optional.empty();
+    public static <T> void accept(Consumer<T> consumer, T target) {
+        if (consumer != null) {
+            consumer.accept(target);
         }
+    }
+
+    /**
+     * 睡眠指定时间
+     *
+     * @param timeMs 睡眠时间
+     */
+    public static void sleep(long timeMs) {
+        accept(SLEEP, timeMs);
     }
 }

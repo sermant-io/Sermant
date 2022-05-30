@@ -16,6 +16,7 @@
 
 package com.huawei.registry.interceptors;
 
+import com.huawei.registry.config.RegisterDynamicConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.services.RegisterCenterService;
@@ -25,7 +26,10 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
+import reactor.core.publisher.Flux;
+
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient;
 import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 
 import java.util.ArrayList;
@@ -55,8 +59,10 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
             String serviceId = (String) context.getArguments()[0];
             final RegisterCenterService service = ServiceManager.getService(RegisterCenterService.class);
             final List<MicroServiceInstance> microServiceInstances = service.getServerList(serviceId);
+            final Object target = context.getObject();
             if (!microServiceInstances.isEmpty()) {
-                context.skip(convertAndMerge(microServiceInstances, serviceId));
+                context.skip(isWebfLux(target) ? convertAndMergeWithFlux(microServiceInstances, serviceId, target)
+                        : convertAndMerge(microServiceInstances, serviceId, target));
             }
         } finally {
             unMark();
@@ -64,34 +70,45 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
         return context;
     }
 
-    private List<ServiceInstance> convertAndMerge(List<MicroServiceInstance> microServiceInstances, String serviceId) {
+    private Flux<ServiceInstance> convertAndMergeWithFlux(List<MicroServiceInstance> microServiceInstances,
+            String serviceId, Object target) {
+        return Flux.fromIterable(convertAndMerge(microServiceInstances, serviceId, target));
+    }
+
+    private List<ServiceInstance> convertAndMerge(List<MicroServiceInstance> microServiceInstances, String serviceId,
+            Object target) {
         List<ServiceInstance> result = new ArrayList<>(microServiceInstances.size());
-        if (isOpenMigration() && RegisterContext.INSTANCE.isAvailable()) {
-            result.addAll(queryOriginInstances(serviceId));
+        if (RegisterContext.INSTANCE.isAvailable()
+                && !RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()) {
+            result.addAll(queryOriginInstances(target, serviceId));
         }
         for (MicroServiceInstance microServiceInstance : microServiceInstances) {
-            if (isOpenMigration()) {
-                result.removeIf(originServiceInstance ->
+            result.removeIf(originServiceInstance ->
                     Objects.equals(originServiceInstance.getHost(), microServiceInstance.getHost())
-                        && originServiceInstance.getPort() == microServiceInstance.getPort());
-            }
+                            && originServiceInstance.getPort() == microServiceInstance.getPort());
             buildInstance(microServiceInstance, serviceId)
-                .ifPresent(instance -> result.add((ServiceInstance) instance));
+                    .ifPresent(instance -> result.add((ServiceInstance) instance));
         }
         return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    private List<ServiceInstance> queryOriginInstances(String serviceId) {
-        final CompositeDiscoveryClient discoveryClient = (CompositeDiscoveryClient) RegisterContext.INSTANCE
-            .getDiscoveryClient();
+    private List<ServiceInstance> queryOriginInstances(Object target, String serviceId) {
         try {
-            return discoveryClient.getInstances(serviceId);
+            if (target instanceof CompositeDiscoveryClient) {
+                final CompositeDiscoveryClient discoveryClient = (CompositeDiscoveryClient) target;
+                return discoveryClient.getInstances(serviceId);
+            }
+            if (isWebfLux(target)) {
+                ReactiveDiscoveryClient reactiveDiscoveryClient = (ReactiveDiscoveryClient) target;
+                final Flux<ServiceInstance> instances = reactiveDiscoveryClient.getInstances(serviceId);
+                return instances.collectList().block();
+            }
         } catch (Exception exception) {
             LOGGER.warning(String.format(Locale.ENGLISH,
-                "Query Instances from origin register center failed, may be it is not available! reason: %s",
-                exception.getMessage()));
-            return Collections.emptyList();
+                    "Query Instances from origin register center failed, may be it is not available! reason: %s",
+                    exception.getMessage()));
         }
+        return Collections.emptyList();
     }
 
     /**

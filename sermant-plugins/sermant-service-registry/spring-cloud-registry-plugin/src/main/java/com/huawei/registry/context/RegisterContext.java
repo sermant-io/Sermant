@@ -48,8 +48,21 @@ public enum RegisterContext {
 
     private final ClientInfo clientInfo = new ClientInfo();
 
+    /**
+     * 定时扫描器
+     */
+    private Object scheduleProcessor;
+
     public ClientInfo getClientInfo() {
         return clientInfo;
+    }
+
+    public Object getScheduleProcessor() {
+        return scheduleProcessor;
+    }
+
+    public void setScheduleProcessor(Object scheduleProcessor) {
+        this.scheduleProcessor = scheduleProcessor;
     }
 
     /**
@@ -125,6 +138,11 @@ public enum RegisterContext {
         private String host;
 
         /**
+         * ip
+         */
+        private String ip;
+
+        /**
          * 端口
          */
         private int port;
@@ -138,6 +156,24 @@ public enum RegisterContext {
          * 服务元信息
          */
         private Map<String, String> meta;
+
+        /**
+         * 区域
+         */
+        private String zone;
+
+        /**
+         * 实例状态 UP DOWN
+         */
+        private String status = "UN_KNOWN";
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
 
         public String getServiceName() {
             return serviceName;
@@ -155,6 +191,14 @@ public enum RegisterContext {
             this.host = host;
         }
 
+        public String getIp() {
+            return ip;
+        }
+
+        public void setIp(String ip) {
+            this.ip = ip;
+        }
+
         public int getPort() {
             return port;
         }
@@ -169,6 +213,14 @@ public enum RegisterContext {
 
         public void setServiceId(String serviceId) {
             this.serviceId = serviceId;
+        }
+
+        public String getZone() {
+            return zone;
+        }
+
+        public void setZone(String zone) {
+            this.zone = zone;
         }
 
         public Map<String, String> getMeta() {

@@ -23,22 +23,25 @@ package com.huawei.registry.config;
  * @author zhouss
  * @since 2021-12-30
  */
-public enum RegisterDynamicConfig {
+public class RegisterDynamicConfig {
     /**
      * 单例
      */
-    INSTANCE;
+    public static final RegisterDynamicConfig INSTANCE = new RegisterDynamicConfig();
 
     /**
      * 停用原有的注册中心开关 关联动态配置, 由用户配置下发, 默认不开启
      */
-    private boolean isCloseOriginRegisterCenterEnabled = false;
+    private boolean needClose = false;
 
-    public boolean isNeedCloseOriginRegisterCenter() {
-        return isCloseOriginRegisterCenterEnabled;
+    RegisterDynamicConfig() {
     }
 
-    public void setNeedCloseOriginRegisterCenter(boolean isNeedCloseOriginRegisterCenter) {
-        this.isCloseOriginRegisterCenterEnabled = isNeedCloseOriginRegisterCenter;
+    public boolean isNeedCloseOriginRegisterCenter() {
+        return needClose;
+    }
+
+    public void setClose(boolean isNeedCloseOriginRegisterCenter) {
+        this.needClose = isNeedCloseOriginRegisterCenter;
     }
 }

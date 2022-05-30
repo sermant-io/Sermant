@@ -41,6 +41,13 @@ public interface MicroServiceInstance {
     String getHost();
 
     /**
+     * 当前实例的IP地址
+     *
+     * @return ip
+     */
+    String getIp();
+
+    /**
      * port
      *
      * @return 端口
@@ -66,5 +73,5 @@ public interface MicroServiceInstance {
      *
      * @return 元数据
      */
-    Map<String, String> getMeta();
+    Map<String, String> getMetadata();
 }

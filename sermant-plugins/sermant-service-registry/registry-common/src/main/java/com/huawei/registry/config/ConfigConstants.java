@@ -50,6 +50,11 @@ public class ConfigConstants {
     public static final String COMMON_DEFAULT_VALUE = "default";
 
     /**
+     * 秒转毫秒单位
+     */
+    public static final long SEC_DELTA = 1000L;
+
+    /**
      * 公共注册框架版本
      */
     public static final String COMMON_FRAMEWORK = "Sermant";
