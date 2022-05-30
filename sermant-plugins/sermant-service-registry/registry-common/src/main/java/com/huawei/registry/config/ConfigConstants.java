@@ -49,6 +49,11 @@ public class ConfigConstants {
      */
     public static final String COMMON_DEFAULT_VALUE = "default";
 
+    /**
+     * 公共注册框架版本
+     */
+    public static final String COMMON_FRAMEWORK = "Sermant";
+
     private ConfigConstants() {
     }
 }

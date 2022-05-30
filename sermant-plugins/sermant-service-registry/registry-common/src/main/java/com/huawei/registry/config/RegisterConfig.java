@@ -72,16 +72,6 @@ public class RegisterConfig implements PluginConfig {
     private String environment = "production";
 
     /**
-     * 默认注册框架类型
-     */
-    private String framework = "SpringCloud";
-
-    /**
-     * 框架版本
-     */
-    private String frameworkVersion = "N/A";
-
-    /**
      * 默认sc版本
      */
     private String version = "1.0.0";
@@ -251,22 +241,6 @@ public class RegisterConfig implements PluginConfig {
 
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public String getFrameworkVersion() {
-        return frameworkVersion;
-    }
-
-    public void setFrameworkVersion(String frameworkVersion) {
-        this.frameworkVersion = frameworkVersion;
-    }
-
-    public String getFramework() {
-        return framework;
-    }
-
-    public void setFramework(String framework) {
-        this.framework = framework;
     }
 
     public String getProject() {
