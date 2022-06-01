@@ -324,7 +324,7 @@ public class RegistryServiceImpl implements RegistryService {
         microserviceInstance = new MicroserviceInstance();
         microserviceInstance.setStatus(MicroserviceInstanceStatus.UP);
         HealthCheck healthCheck = new HealthCheck();
-        healthCheck.setMode(HealthCheckMode.pull);
+        healthCheck.setMode(HealthCheckMode.push);
         healthCheck.setInterval(config.getHeartbeatInterval());
         healthCheck.setTimes(config.getHeartbeatRetryTimes());
         microserviceInstance.setHealthCheck(healthCheck);
