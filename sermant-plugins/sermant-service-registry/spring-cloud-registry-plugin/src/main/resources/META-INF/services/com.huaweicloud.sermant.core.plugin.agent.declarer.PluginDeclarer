@@ -39,7 +39,6 @@ com.huawei.registry.grace.declarers.SpringLoadbalancerWarmUpDeclarer
 com.huawei.registry.grace.declarers.SpringWebHandlerDeclarer
 com.huawei.registry.grace.declarers.SpringRibbonBalancerDeclarer
 com.huawei.registry.grace.declarers.SpringCacheManagerDeclarer
-com.huawei.registry.grace.declarers.SpringApplicationContextDeclarer
 com.huawei.registry.grace.declarers.SpringLoadbalancerFeignResponseDeclarer
 com.huawei.registry.grace.declarers.SpringLoadbalancerRestTemplateResponseDeclarer
 com.huawei.registry.grace.declarers.SpringZuulResponseDeclarer
