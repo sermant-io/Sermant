@@ -11,9 +11,6 @@
     <packaging>jar</packaging>
     <artifactId>spring-cloud-registry-service</artifactId>
 
-    <name>spring-cloud-registry-plugin</name>
-    <description>The service module of registry for spring-cloud.</description>
-
     <properties>
         <package.plugin.type>service</package.plugin.type>
         <spring-component-version>5.0.13.RELEASE</spring-component-version>
@@ -67,6 +64,10 @@
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
         </dependency>
 
         <!--test 依赖-->

@@ -42,9 +42,10 @@ public class DefaultGroupConfigSubscriber extends AbstractGroupConfigSubscriber 
      *
      * @param serviceName 服务名
      * @param listener    监听器
+     * @param pluginName  插件名称
      */
-    public DefaultGroupConfigSubscriber(String serviceName, DynamicConfigListener listener) {
-        this(serviceName, listener, null);
+    public DefaultGroupConfigSubscriber(String serviceName, DynamicConfigListener listener, String pluginName) {
+        this(serviceName, listener, null, pluginName);
     }
 
     /**
@@ -53,10 +54,11 @@ public class DefaultGroupConfigSubscriber extends AbstractGroupConfigSubscriber 
      * @param serviceName          服务名
      * @param listener             监听器
      * @param dynamicConfigService 配置中心实现
+     * @param pluginName           插件名称
      */
     public DefaultGroupConfigSubscriber(String serviceName, DynamicConfigListener listener,
-        DynamicConfigService dynamicConfigService) {
-        super(dynamicConfigService);
+            DynamicConfigService dynamicConfigService, String pluginName) {
+        super(dynamicConfigService, pluginName);
         this.serviceName = serviceName;
         this.listener = listener;
     }

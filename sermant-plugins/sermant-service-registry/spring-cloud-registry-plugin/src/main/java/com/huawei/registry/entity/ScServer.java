@@ -17,7 +17,11 @@
 
 package com.huawei.registry.entity;
 
+import com.huawei.registry.auto.sc.ServiceCombServerMetaInfo;
+
 import com.netflix.loadbalancer.Server;
+
+import java.util.Map;
 
 /**
  * server 信息定义 {@link com.netflix.loadbalancer.ServerList}
@@ -37,7 +41,7 @@ public class ScServer extends Server {
      * @param serviceName          服务名
      */
     public ScServer(final MicroServiceInstance microServiceInstance, String serviceName) {
-        super(microServiceInstance.getHost(), microServiceInstance.getPort());
+        super(microServiceInstance.getIp(), microServiceInstance.getPort());
         this.microServiceInstance = microServiceInstance;
         this.serviceName = serviceName;
     }
@@ -45,27 +49,7 @@ public class ScServer extends Server {
     @Override
     public MetaInfo getMetaInfo() {
         if (metaInfo == null) {
-            this.metaInfo = new MetaInfo() {
-                @Override
-                public String getAppName() {
-                    return serviceName;
-                }
-
-                @Override
-                public String getServerGroup() {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public String getServiceIdForDiscovery() {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public String getInstanceId() {
-                    return microServiceInstance.getInstanceId();
-                }
-            };
+            this.metaInfo = new ServiceCombServerMetaInfo(microServiceInstance.getInstanceId(), serviceName);
         }
         return this.metaInfo;
     }
@@ -78,5 +62,14 @@ public class ScServer extends Server {
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    /**
+     * 获取服务元信息
+     *
+     * @return 服务元信息
+     */
+    public Map<String, String> getMetadata() {
+        return microServiceInstance.getMetadata();
     }
 }

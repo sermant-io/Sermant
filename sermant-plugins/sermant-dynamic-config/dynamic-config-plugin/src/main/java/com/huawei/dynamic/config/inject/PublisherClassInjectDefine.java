@@ -17,7 +17,7 @@
 
 package com.huawei.dynamic.config.inject;
 
-import com.huawei.dynamic.config.utils.ClassUtils;
+import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 /**
  * 配置发布注入类

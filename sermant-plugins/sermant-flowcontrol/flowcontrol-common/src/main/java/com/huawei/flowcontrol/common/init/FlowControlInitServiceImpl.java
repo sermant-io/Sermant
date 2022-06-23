@@ -68,10 +68,10 @@ public class FlowControlInitServiceImpl implements PluginService {
             if (pluginConfig.isUseCseRule()) {
                 // 适配cse, 开始适配cse的专用配置监听器
                 configSubscriber = new CseGroupConfigSubscriber(CseServiceMeta.getInstance().getServiceName(),
-                    new RuleDynamicConfigListener(), getDynamicConfigService());
+                    new RuleDynamicConfigListener(), getDynamicConfigService(), "FlowControl");
             } else {
                 configSubscriber = new DefaultGroupConfigSubscriber(CseServiceMeta.getInstance().getServiceName(),
-                    new RuleDynamicConfigListener(), getDynamicConfigService());
+                    new RuleDynamicConfigListener(), getDynamicConfigService(), "FlowControl");
             }
             configSubscriber.subscribe();
         }

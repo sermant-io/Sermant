@@ -49,7 +49,7 @@ public class GovernanceService implements PluginService {
 
     private void run() {
         ConfigSubscriber subscriber = new CseGroupConfigSubscriber(DubboCache.INSTANCE.getServiceName(),
-            new GovernanceConfigListener());
+            new GovernanceConfigListener(), "DubboRegistry");
         if (subscriber.subscribe()) {
             LOGGER.info("[Dubbo governance data] Subscribe config center successfully!");
         } else {

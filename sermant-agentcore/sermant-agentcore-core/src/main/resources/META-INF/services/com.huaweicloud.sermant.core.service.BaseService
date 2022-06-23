@@ -2,3 +2,4 @@ com.huaweicloud.sermant.core.service.heartbeat.HeartbeatServiceImpl
 com.huaweicloud.sermant.core.service.send.NettyGatewayClient
 com.huaweicloud.sermant.core.service.dynamicconfig.BufferedDynamicConfigService
 com.huaweicloud.sermant.core.service.tracing.TracingServiceImpl
+com.huaweicloud.sermant.core.plugin.inject.InjectServiceImpl

@@ -44,7 +44,7 @@ public class EurekaHealthInterceptor extends SingleStateCloseHandler {
         final Class<?> discoveryClientClass = Thread.currentThread().getContextClassLoader()
             .loadClass("com.netflix.discovery.DiscoveryClient");
         discoveryClientClass.getDeclaredMethod("shutdown").invoke(target);
-        LOGGER.info("Eureka register center has been closed.");
+        LOGGER.warning("Eureka register center has been closed by user.");
     }
 
     @Override
@@ -58,11 +58,10 @@ public class EurekaHealthInterceptor extends SingleStateCloseHandler {
         final Object result = context.getResult();
         if (result instanceof Boolean) {
             final boolean heartbeatResult = (Boolean) result;
-            if (heartbeatResult && RegisterContext.INSTANCE.compareAndSet(false, true)) {
-                doChange(context.getObject(), arguments, false, true);
-            }
-            if (!heartbeatResult && RegisterContext.INSTANCE.compareAndSet(true, false)) {
-                doChange(context.getObject(), arguments, true, false);
+            if (heartbeatResult) {
+                RegisterContext.INSTANCE.compareAndSet(false, true);
+            } else {
+                RegisterContext.INSTANCE.compareAndSet(true, false);
             }
         }
         return context;

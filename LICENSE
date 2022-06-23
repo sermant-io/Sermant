@@ -398,6 +398,30 @@ Apache ServiceComb Java Chassis project is published at https://github.com/apach
 
 ====================================================================================
 
+The following files contain a portion of Apache Dubbo project.
+
+com/huawei/registry/grace/interceptors/SpringRibbonWarmUpInterceptor.java in this product is copied from on org/apache/dubbo/rpc/cluster/loadbalance/ShortestResponseLoadBalance.java of Apache Dubbo project
+
+com/huawei/registry/grace/interceptors/SpringLoadbalancerWarmUpInterceptor.java in this product is copied from on org/apache/dubbo/rpc/cluster/loadbalance/ShortestResponseLoadBalance.java of Apache Dubbo project
+
+com/huawei/registry/grace/interceptors/GraceSwitchInterceptor.java in this product is copied from on
+
+org/apache/dubbo/rpc/cluster/loadbalance/ShortestResponseLoadBalance.java of Apache Dubbo project
+
+org/apache/dubbo/rpc/cluster/loadbalance/ShortestResponseLoadBalance.java in this product is copied from on org/apache/dubbo/remoting/exchange/support/header/HeaderExchangeServer.java of Apache Dubbo project
+
+com/huawei/registry/service/server/ShutdownHttpHandler.java in this product is copied from on org/apache/dubbo/remoting/exchange/support/header/HeaderExchangeServer.java of Apache Dubbo project
+
+com/huawei/registry/service/server/GraceHttpServer.java in this product is copied from on org/apache/dubbo/remoting/exchange/support/header/HeaderExchangeServer.java of Apache Dubbo project
+
+com/huawei/registry/grace/interceptors/SpringApplicationContextInterceptor.java in this product is copied from on org/apache/dubbo/config/DubboShutdownHook.java of Apache Dubbo project
+
+com/huawei/registry/inject/grace/SpringRequestInterceptor.java in this product is copied from on org/apache/dubbo/remoting/exchange/support/header/HeaderExchangeServer.java of Apache Dubbo project
+
+Apache Dubbo project is published at https://github.com/apache/dubbo and its license is Apache License Version 2.0.
+
+====================================================================================
+
 The following files contain a portion of License Maven Plugin project.
 
 sermant-package/resources/third-party-license.ftl in this product is copied from /org/codehaus/mojo/license/third-party-file-groupByMultiLicense.ftl of License Maven Plugin project.

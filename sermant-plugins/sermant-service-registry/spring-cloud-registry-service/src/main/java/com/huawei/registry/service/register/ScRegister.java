@@ -17,6 +17,7 @@
 package com.huawei.registry.service.register;
 
 import com.huawei.registry.config.RegisterConfig;
+import com.huawei.registry.config.RegisterType;
 import com.huawei.registry.service.client.ScClient;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
@@ -52,11 +53,27 @@ public class ScRegister implements Register {
 
     @Override
     public void stop() {
+        client.deRegister();
     }
 
     @Override
     public void register() {
         client.register();
+    }
+
+    @Override
+    public String getRegisterCenterStatus() {
+        return client.getRegisterCenterStatus();
+    }
+
+    @Override
+    public String getInstanceStatus() {
+        return client.getInstanceStatus();
+    }
+
+    @Override
+    public void updateInstanceStatus(String status) {
+        client.updateInstanceStatus(status);
     }
 
     @Override

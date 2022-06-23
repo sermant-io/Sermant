@@ -1,7 +1,18 @@
 servicecomb.service:
-  address: http://localhost:30100 #注册中心地址
-  heartbeatInterval: 15 #服务实例心跳发送间隔（单位：秒）
-  openMigration: false #是否开启迁移功能
-  enableSpringRegister: false #是否开启spring插件注册能力
-  enableDubboRegister: false #是否开启dubbo插件注册能力
+  address: http://localhost:30100 # 注册中心地址
+  heartbeatInterval: 15 # 服务实例心跳发送间隔（单位：秒）
+  openMigration: false # 是否开启迁移功能
+  enableSpringRegister: false # 是否开启spring插件注册能力
+  enableDubboRegister: false #是 否开启dubbo插件注册能力
   sslEnabled: false # 是否开启ssl
+grace.rule:
+  enableSpring: false # springCloud优雅上下线开关
+  startDelayTime: 0  # 优雅上下线启动延迟时间, 单位S
+  enableWarmUp: false # 是否开启预热
+  warmUpTime: 120    # 预热时间, 单位S
+  enableGraceShutdown: false # 是否开启优雅下线
+  shutdownWaitTime: 30  # 关闭前相关流量检测的最大等待时间, 单位S. 需开启enabledGraceShutdown才会生效
+  enableOfflineNotify: false # 是否开启下线主动通知
+  httpServerPort: 16688 # 开启下线主动通知时的httpServer端口
+  upstreamAddressMaxSize: 500 # 缓存上游地址的默认大小
+  upstreamAddressExpiredTime: 60 # 缓存上游地址的过期时间

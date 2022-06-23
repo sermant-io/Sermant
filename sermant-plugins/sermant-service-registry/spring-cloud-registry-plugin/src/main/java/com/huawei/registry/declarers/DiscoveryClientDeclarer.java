@@ -34,8 +34,10 @@ public class DiscoveryClientDeclarer extends AbstractPluginDeclarer {
     /**
      * 增强类的全限定名 该client注入优先级最高，因此只需拦截该client即可
      */
-    private static final String ENHANCE_CLASS =
-        "org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient";
+    private static final String[] ENHANCE_CLASSES = {
+        "org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient",
+        "org.springframework.cloud.client.discovery.composite.reactive.ReactiveCompositeDiscoveryClient"
+    };
 
     /**
      * 拦截类的全限定名
@@ -49,14 +51,14 @@ public class DiscoveryClientDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameEquals(ENHANCE_CLASS);
+        return ClassMatcher.nameContains(ENHANCE_CLASSES);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("getInstances"), INTERCEPT_CLASS),
-            InterceptDeclarer.build(MethodMatcher.nameEquals("getServices"), SERVICE_INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("getInstances"), INTERCEPT_CLASS),
+                InterceptDeclarer.build(MethodMatcher.nameEquals("getServices"), SERVICE_INTERCEPT_CLASS)
         };
     }
 }

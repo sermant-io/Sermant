@@ -48,7 +48,7 @@ public class NacosHealthInterceptor extends SingleStateCloseHandler {
         // 关闭nacos心跳发送
         BeatInfo beatInfo = (BeatInfo) arguments[0];
         beatInfo.setStopped(true);
-        LOGGER.info("Nacos heartbeat has been closed.");
+        LOGGER.warning("Nacos heartbeat has been closed by user.");
     }
 
     @Override
@@ -61,8 +61,8 @@ public class NacosHealthInterceptor extends SingleStateCloseHandler {
     public ExecuteContext doAfter(ExecuteContext context) {
         final Object result = context.getResult();
         if (isValidResult(result)) {
-            if (result == null && RegisterContext.INSTANCE.compareAndSet(true, false)) {
-                doChange(context.getObject(), arguments, true, false);
+            if (result == null) {
+                RegisterContext.INSTANCE.compareAndSet(true, false);
                 return context;
             }
             long beat;
@@ -78,10 +78,10 @@ public class NacosHealthInterceptor extends SingleStateCloseHandler {
             }
 
             // 如果心跳为0L，则当前实例与nacos注册中心不通，针对该实例注册中心已失效
-            if (beat == 0L && RegisterContext.INSTANCE.compareAndSet(true, false)) {
-                doChange(context.getObject(), arguments, true, false);
-            } else if (beat > 0L && RegisterContext.INSTANCE.compareAndSet(false, true)) {
-                doChange(context.getObject(), arguments, false, true);
+            if (beat == 0L) {
+                RegisterContext.INSTANCE.compareAndSet(true, false);
+            } else if (beat > 0L) {
+                RegisterContext.INSTANCE.compareAndSet(false, true);
             } else {
                 return context;
             }

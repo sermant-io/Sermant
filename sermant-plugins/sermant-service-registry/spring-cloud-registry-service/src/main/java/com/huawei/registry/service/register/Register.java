@@ -16,6 +16,7 @@
 
 package com.huawei.registry.service.register;
 
+import com.huawei.registry.config.RegisterType;
 import com.huawei.registry.entity.MicroServiceInstance;
 
 import java.util.List;
@@ -27,6 +28,21 @@ import java.util.List;
  * @since 2021-12-17
  */
 public interface Register {
+    /**
+     * 服务启动状态
+     */
+    String UP = "UP";
+
+    /**
+     * 服务关闭状态
+     */
+    String DOWN = "DOWN";
+
+    /**
+     * 未知状态
+     */
+    String UN_KNOWN = "UN_KNOWN";
+
     /**
      * 注册初始化
      */
@@ -45,7 +61,7 @@ public interface Register {
     /**
      * 替换服务列表 基于DiscoveryClient拦截
      *
-     * @param <T>       实例信息
+     * @param <T> 实例信息
      * @param serviceId 服务ID
      * @return 服务列表
      */
@@ -66,24 +82,23 @@ public interface Register {
     RegisterType registerType();
 
     /**
-     * 注册中心类型
+     * 获取当前注册中心的状态
      *
-     * @since 2022-01-02
+     * @return UP DOWN
      */
-    enum RegisterType {
-        /**
-         * sc注册中心
-         */
-        SERVICE_COMB,
+    String getRegisterCenterStatus();
 
-        /**
-         * zk注册中心
-         */
-        ZOOKEEPER,
+    /**
+     * 获取当前实例的状态
+     *
+     * @return 实例状态
+     */
+    String getInstanceStatus();
 
-        /**
-         * nacos注册中心
-         */
-        NACOS
-    }
+    /**
+     * 更新实例状态
+     *
+     * @param status 目标状态
+     */
+    void updateInstanceStatus(String status);
 }

@@ -48,19 +48,17 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
     }
 
     @Override
-    public void stop() {
-        if (getRegisterConfig().isEnableSpringRegister()) {
-            RegisterManager.INSTANCE.stop();
-        }
-    }
-
-    @Override
     public void register(FixedResult result) {
         RegisterManager.INSTANCE.register();
         if (!getRegisterConfig().isOpenMigration()) {
             // 阻止原注册中心注册
             result.setResult(null);
         }
+    }
+
+    @Override
+    public void unRegister() {
+        RegisterManager.INSTANCE.stop();
     }
 
     @Override
@@ -76,6 +74,21 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
     @Override
     public List<String> getServices() {
         return RegisterManager.INSTANCE.getServices();
+    }
+
+    @Override
+    public String getRegisterCenterStatus() {
+        return RegisterManager.INSTANCE.getRegister().getRegisterCenterStatus();
+    }
+
+    @Override
+    public String getInstanceStatus() {
+        return RegisterManager.INSTANCE.getRegister().getInstanceStatus();
+    }
+
+    @Override
+    public void updateInstanceStatus(String status) {
+        RegisterManager.INSTANCE.getRegister().updateInstanceStatus(status);
     }
 
     private RegisterConfig getRegisterConfig() {

@@ -16,7 +16,9 @@
 
 package com.huawei.registry.service.register;
 
+import com.huawei.registry.config.GraceConfig;
 import com.huawei.registry.config.RegisterConfig;
+import com.huawei.registry.config.RegisterType;
 import com.huawei.registry.entity.MicroServiceInstance;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -26,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 注册管理器
@@ -42,7 +45,9 @@ public enum RegisterManager {
     /**
      * 注册中心类型 基于spi加载 Map -> 注册中心类型, 注册实现
      */
-    private final Map<String, Register> registerMap = new HashMap<>();
+    private final Map<RegisterType, Register> registerMap = new HashMap<>();
+
+    private final AtomicBoolean isRegistered = new AtomicBoolean();
 
     RegisterManager() {
         loadRegisters();
@@ -51,11 +56,11 @@ public enum RegisterManager {
     private void loadRegisters() {
         // 此处需要使用service的类加载器
         for (Register register : ServiceLoader.load(Register.class, RegisterManager.class.getClassLoader())) {
-            final Register.RegisterType registerType = register.registerType();
+            final RegisterType registerType = register.registerType();
             if (registerType == null) {
                 continue;
             }
-            registerMap.put(registerType.name(), register);
+            registerMap.put(registerType, register);
         }
     }
 
@@ -75,8 +80,8 @@ public enum RegisterManager {
      * @param registerType 注册中心类型
      * @return Register
      */
-    public Register getRegister(Register.RegisterType registerType) {
-        return registerMap.get(registerType.name());
+    public Register getRegister(RegisterType registerType) {
+        return registerMap.get(registerType);
     }
 
     /**
@@ -94,7 +99,7 @@ public enum RegisterManager {
      */
     public void stop() {
         final Register register = getRegister();
-        if (register != null) {
+        if (register != null && isRegistered.get()) {
             register.stop();
         }
     }
@@ -104,9 +109,22 @@ public enum RegisterManager {
      */
     public void register() {
         final Register register = getRegister();
-        if (register != null) {
+        if (register != null && isRegistered.compareAndSet(false, true)) {
             register.register();
         }
+    }
+
+    /**
+     * 获取启动延迟时间
+     *
+     * @return 延迟时间, 单位秒
+     */
+    private long getStartDelayTime() {
+        final GraceConfig pluginConfig = PluginConfigManager.getPluginConfig(GraceConfig.class);
+        if (pluginConfig.isEnableSpring()) {
+            return pluginConfig.getStartDelayTime();
+        }
+        return 0L;
     }
 
     /**

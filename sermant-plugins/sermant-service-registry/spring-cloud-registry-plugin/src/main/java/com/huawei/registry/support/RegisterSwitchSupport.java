@@ -41,12 +41,12 @@ public abstract class RegisterSwitchSupport implements Interceptor {
     }
 
     /**
-     * 判断是否开启spring注册
+     * 判断是否符合开启条件
      *
-     * @return 是否开启spring注册
+     * @return 判断是否符合开启条件
      */
-    protected final boolean isEnableSpringRegister() {
-        return registerConfig.isEnableSpringRegister();
+    protected boolean isEnabled() {
+        return registerConfig.isEnableSpringRegister() && registerConfig.isOpenMigration();
     }
 
     /**
@@ -58,12 +58,12 @@ public abstract class RegisterSwitchSupport implements Interceptor {
      */
     protected boolean needCloseRegisterCenter() {
         return (RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter() || !registerConfig.isOpenMigration())
-            && isEnableSpringRegister();
+            && isEnabled();
     }
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        if (isEnableSpringRegister()) {
+        if (isEnabled()) {
             return doBefore(context);
         }
         return context;
@@ -71,7 +71,7 @@ public abstract class RegisterSwitchSupport implements Interceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        if (isEnableSpringRegister()) {
+        if (isEnabled()) {
             return doAfter(context);
         }
         return context;
@@ -79,7 +79,7 @@ public abstract class RegisterSwitchSupport implements Interceptor {
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
-        if (isEnableSpringRegister()) {
+        if (isEnabled()) {
             return doThrow(context);
         }
         return context;

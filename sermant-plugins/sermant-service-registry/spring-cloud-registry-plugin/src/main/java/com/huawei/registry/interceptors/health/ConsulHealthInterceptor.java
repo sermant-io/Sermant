@@ -18,13 +18,22 @@ package com.huawei.registry.interceptors.health;
 
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.handler.SingleStateCloseHandler;
+import com.huawei.registry.utils.ReflectUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
-import org.springframework.cloud.consul.discovery.ConsulCatalogWatch;
+import com.ecwid.consul.v1.Response;
 
+import org.springframework.cloud.consul.discovery.ConsulCatalogWatch;
+import org.springframework.scheduling.config.ScheduledTask;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -48,7 +57,24 @@ public class ConsulHealthInterceptor extends SingleStateCloseHandler {
         if ((registerWatch instanceof ConsulCatalogWatch) && canStopTask(registerWatch)) {
             ConsulCatalogWatch watch = (ConsulCatalogWatch) registerWatch;
             watch.stop();
-            LOGGER.info("Consul heartbeat has been closed.");
+            LOGGER.warning("Consul heartbeat has been closed.");
+        } else {
+            // 通过定时器的方式关闭consul心跳, 仅在1.x.x存在该场景
+            final Object scheduleProcessor = RegisterContext.INSTANCE.getScheduleProcessor();
+            final Optional<Object> scheduledTasks = ReflectUtils.getFieldValue(scheduleProcessor, "scheduledTasks");
+            if (!scheduledTasks.isPresent()) {
+                return;
+            }
+            final Object tasks = scheduledTasks.get();
+            if (tasks instanceof Map) {
+                Map<Object, Set<ScheduledTask>> convertTasks = (Map<Object, Set<ScheduledTask>>) tasks;
+                final Set<ScheduledTask> heartBeatTasks =
+                        convertTasks.remove(RegisterContext.INSTANCE.getRegisterWatch());
+                for (ScheduledTask scheduledTask : heartBeatTasks) {
+                    scheduledTask.cancel();
+                }
+                LOGGER.warning("Consul heartbeat has been closed by stopping scheduled task.");
+            }
         }
     }
 
@@ -59,14 +85,14 @@ public class ConsulHealthInterceptor extends SingleStateCloseHandler {
         } catch (NoSuchMethodException ex) {
             LOGGER.info(String.format(Locale.ENGLISH,
                 "Consul register center version is less than 2.x.x, it has not method named stop"
-                    + " it will be replaced by prevent method catalogServicesWatch! %s", ex.getMessage()));
+                    + " it will be replaced by stop scheduled task of catalogServicesWatch! %s", ex.getMessage()));
         }
         return false;
     }
 
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) {
-        checkState(context, null);
+        checkState(context, new Response<Map<String, List<String>>>(Collections.emptyMap(), null, null, null));
         return context;
     }
 
@@ -75,21 +101,15 @@ public class ConsulHealthInterceptor extends SingleStateCloseHandler {
         final Object result = context.getResult();
         if (result != null) {
             // 原始注册中心恢复
-            if (RegisterContext.INSTANCE.compareAndSet(false, true)) {
-                doChange(context.getObject(), arguments, false, true);
-            }
+            RegisterContext.INSTANCE.compareAndSet(false, true);
         }
         return context;
     }
 
     @Override
     public ExecuteContext doThrow(ExecuteContext context) {
-        final boolean isOriginState = RegisterContext.INSTANCE.isAvailable();
-
-        // 如果心跳为0L，则当前实例与consul注册中心不通，针对该实例注册中心已失效
-        if (RegisterContext.INSTANCE.compareAndSet(true, false)) {
-            doChange(context.getObject(), arguments, isOriginState, false);
-        }
+        // 请求注册中心失败说明注册中心已失联
+        RegisterContext.INSTANCE.compareAndSet(true, false);
         return context;
     }
 }

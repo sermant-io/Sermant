@@ -58,7 +58,7 @@ public class DiscoveryServiceInstance implements ServiceInstance {
 
     @Override
     public String getHost() {
-        return microServiceInstance.getHost();
+        return microServiceInstance.getIp();
     }
 
     @Override
@@ -99,6 +99,6 @@ public class DiscoveryServiceInstance implements ServiceInstance {
 
     @Override
     public Map<String, String> getMetadata() {
-        return microServiceInstance.getMeta();
+        return microServiceInstance.getMetadata();
     }
 }

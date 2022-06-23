@@ -55,10 +55,11 @@ public class DynamicConfigInitializer implements PluginService {
         ConfigSubscriber subscriber;
         if (pluginConfig.isEnableCseAdapter()) {
             fillCseMeta();
-            subscriber = new CseGroupConfigSubscriber(ClientMeta.INSTANCE.getServiceName(), new ConfigListener());
+            subscriber = new CseGroupConfigSubscriber(ClientMeta.INSTANCE.getServiceName(), new ConfigListener(),
+                    "DynamicConfig");
         } else {
             subscriber = new DefaultGroupConfigSubscriber(ClientMeta.INSTANCE.getServiceName(),
-                new ConfigListener());
+                new ConfigListener(), "DynamicConfig");
         }
         if (subscriber.subscribe()) {
             LoggerFactory.getLogger().info("[DynamicConfig] Subscribe config center successfully!");

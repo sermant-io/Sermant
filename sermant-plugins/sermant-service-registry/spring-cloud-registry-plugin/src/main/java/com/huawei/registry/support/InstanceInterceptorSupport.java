@@ -22,6 +22,7 @@ import com.huawei.registry.entity.MicroServiceInstance;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.ClassLoaderUtils;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -129,6 +130,17 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
             | InvocationTargetException ignored) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * 宿主是否为webflux应用
+     *
+     * @param target 增强目标
+     * @return 是返回true
+     */
+    protected boolean isWebfLux(Object target) {
+        return StringUtils.equals("org.springframework.cloud.client.discovery.composite.reactive"
+                + ".ReactiveCompositeDiscoveryClient", target.getClass().getName());
     }
 
     /**

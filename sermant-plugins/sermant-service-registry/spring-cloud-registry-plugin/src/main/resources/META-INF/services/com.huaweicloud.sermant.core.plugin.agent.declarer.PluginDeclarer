@@ -14,17 +14,32 @@
 # limitations under the License.
 #
 #
-
-com.huawei.registry.declarers.ClientConfigDeclarer
+# common
+com.huawei.registry.declarers.SpringFactoriesDeclarer
+# freedom
+com.huawei.registry.declarers.SpringEnvironmentDeclarer
+# common
 com.huawei.registry.declarers.DiscoveryClientConfigurationDeclarer
 com.huawei.registry.declarers.DiscoveryClientDeclarer
+com.huawei.registry.declarers.DynamicServerListLoadbalancerDeclarer
 com.huawei.registry.declarers.RegistrationDeclarer
-com.huawei.registry.declarers.ServerListDeclarer
+com.huawei.registry.declarers.cloud3.x.ZookeeperInstanceSupplierDeclarer
+# health
 com.huawei.registry.declarers.health.ConsulWatchConDeclarer
 com.huawei.registry.declarers.health.NacosHealthDeclarer
 com.huawei.registry.declarers.health.ZookeeperHealthDeclarer
-com.huawei.registry.declarers.health.ZookeeperIndicatorDeclarer
 com.huawei.registry.declarers.health.ConsulHealthDeclarer
+com.huawei.registry.declarers.health.ScheduleProcessorDeclared
 com.huawei.registry.declarers.health.EurekaHealthDeclarer
-com.huawei.registry.declarers.cloud3.x.ZookeeperInstanceSupplierDeclarer
-com.huawei.registry.declarers.ServerListFilterDeclarer
+com.huawei.registry.declarers.health.HealthIndicatorDeclarer
+# grace
+com.huawei.registry.grace.declarers.RegistryDelayDeclarer
+com.huawei.registry.grace.declarers.SpringRibbonWarmUpDeclarer
+com.huawei.registry.grace.declarers.SpringLoadbalancerWarmUpDeclarer
+com.huawei.registry.grace.declarers.SpringWebHandlerDeclarer
+com.huawei.registry.grace.declarers.SpringRibbonBalancerDeclarer
+com.huawei.registry.grace.declarers.SpringCacheManagerDeclarer
+com.huawei.registry.grace.declarers.SpringApplicationContextDeclarer
+com.huawei.registry.grace.declarers.SpringLoadbalancerFeignResponseDeclarer
+com.huawei.registry.grace.declarers.SpringLoadbalancerRestTemplateResponseDeclarer
+com.huawei.registry.grace.declarers.SpringZuulResponseDeclarer
