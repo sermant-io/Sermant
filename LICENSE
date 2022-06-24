@@ -416,7 +416,9 @@ com/huawei/registry/service/server/GraceHttpServer.java in this product is copie
 
 com/huawei/registry/grace/interceptors/SpringApplicationContextInterceptor.java in this product is copied from on org/apache/dubbo/config/DubboShutdownHook.java of Apache Dubbo project
 
-com/huawei/registry/inject/grace/SpringRequestInterceptor.java in this product is copied from on org/apache/dubbo/remoting/exchange/support/header/HeaderExchangeServer.java of Apache Dubbo project
+com/huawei/registry/entity/GraceShutdownBehavior.java in this product is copied from on org/apache/dubbo/config/DubboShutdownHook.java of Apache Dubbo project
+
+com/huawei/registry/entity/GraceShutdownHook.java in this product is copied from on org/apache/dubbo/config/DubboShutdownHook.java of Apache Dubbo project
 
 Apache Dubbo project is published at https://github.com/apache/dubbo and its license is Apache License Version 2.0.
 

@@ -20,40 +20,40 @@
  * from the Apache Dubbo project.
  */
 
-package com.huawei.registry.grace.interceptors;
+package com.huawei.registry.entity;
 
 import com.huawei.registry.config.ConfigConstants;
+import com.huawei.registry.config.GraceConfig;
 import com.huawei.registry.config.grace.GraceContext;
 import com.huawei.registry.utils.CommonUtils;
 
-import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.event.ContextClosedEvent;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.Locale;
+import java.util.logging.Logger;
 
 /**
- * 关闭前的优雅上下线逻辑处理
+ * 优雅关闭行为
  *
  * @author zhouss
- * @since 2022-05-23
+ * @since 2022-06-24
  */
-public class SpringApplicationContextInterceptor extends GraceSwitchInterceptor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpringApplicationContextInterceptor.class);
+public class GraceShutdownBehavior implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private final GraceConfig graceConfig;
+
+    GraceShutdownBehavior() {
+        graceConfig = PluginConfigManager.getPluginConfig(GraceConfig.class);
+    }
 
     @Override
-    protected ExecuteContext doBefore(ExecuteContext context) {
-        final Object[] arguments = context.getArguments();
-        if (!(arguments[0] instanceof ContextClosedEvent)) {
-            return context;
-        }
-        GraceContext.INSTANCE.getGraceShutDownManager().setShutDown(true);
-        if (graceConfig.isEnableGraceShutdown()) {
+    public void run() {
+        if (graceConfig.isEnableSpring() && graceConfig.isEnableGraceShutdown()) {
+            GraceContext.INSTANCE.getGraceShutDownManager().setShutDown(true);
             graceShutDown();
         }
-        return context;
     }
 
     private void graceShutDown() {
@@ -67,9 +67,9 @@ public class SpringApplicationContextInterceptor extends GraceSwitchInterceptor 
         }
         final int requestCount = GraceContext.INSTANCE.getGraceShutDownManager().getRequestCount();
         if (requestCount > 0) {
-            LOGGER.warn(String.format(Locale.ENGLISH, "Request num that does not completed is [%s] ", requestCount));
+            LOGGER.warning(String.format(Locale.ENGLISH, "Request num that does not completed is [%s] ", requestCount));
         } else {
-            LOGGER.debug("Graceful shutdown completed!");
+            LOGGER.fine("Graceful shutdown completed!");
         }
     }
 }

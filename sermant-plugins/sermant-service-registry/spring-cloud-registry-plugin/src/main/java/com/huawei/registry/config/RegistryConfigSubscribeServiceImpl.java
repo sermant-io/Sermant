@@ -17,6 +17,8 @@
 
 package com.huawei.registry.config;
 
+import com.huawei.registry.entity.GraceShutdownHook;
+
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
@@ -53,7 +55,16 @@ public class RegistryConfigSubscribeServiceImpl implements PluginService {
                     "SpringCloudRegistry");
         }
         subscriber.subscribe();
-        PluginConfigManager.getPluginConfig(GraceConfig.class).fixGraceSwitch();
+        fixGrace();
+    }
+
+    private void fixGrace() {
+        // 基于环境变量修正优雅上下线开关, 该配置优先级最高
+        final GraceConfig graceConfig = PluginConfigManager.getPluginConfig(GraceConfig.class);
+        graceConfig.fixGraceSwitch();
+        if (graceConfig.isEnableSpring() && graceConfig.isEnableGraceShutdown()) {
+            Runtime.getRuntime().addShutdownHook(new GraceShutdownHook());
+        }
     }
 
     /**

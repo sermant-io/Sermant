@@ -1,0 +1,13 @@
+server:
+  port: 8005
+grace:
+  openProviderName: nacos-rest-provider
+  closeProviderName: nacos-rest-provider2
+spring:
+  application:
+    name: nacos-rest-consumer
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8852
+#        server-addr: http://mse-4b151770-p.nacos-ans.mse.aliyuncs.com:8848/
