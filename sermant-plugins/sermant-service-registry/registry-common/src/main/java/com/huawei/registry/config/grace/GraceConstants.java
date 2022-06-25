@@ -169,6 +169,16 @@ public class GraceConstants {
      */
     public static final long UPSTREAM_ADDRESS_DEFAULT_EXPIRED_TIME = 60L;
 
+    /**
+     * 最大端口
+     */
+    public static final int MAX_HTTP_SERVER_PORT = 65535;
+
+    /**
+     * 最大下线前等待时间
+     */
+    public static final long MAX_SHUTDOWN_WAIT_TIME = 24 * 3600L;
+
     private GraceConstants() {
     }
 }

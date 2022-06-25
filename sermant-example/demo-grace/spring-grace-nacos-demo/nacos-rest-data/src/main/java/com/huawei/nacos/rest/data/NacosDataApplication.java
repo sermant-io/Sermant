@@ -28,8 +28,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class NacosDataApplication {
-    private NacosDataApplication() {
-    }
 
     /**
      * 启动

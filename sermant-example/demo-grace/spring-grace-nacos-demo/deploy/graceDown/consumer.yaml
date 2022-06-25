@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nacos-rest-consumer 
+  namespace: mesh
+  labels:
+    app: nacos-rest-consumer
+spec:
+  type: NodePort
+  ports:
+  - port: 8005
+    nodePort: 31021
+    name: request
+  - port: 5007
+    nodePort: 31022
+    name: debug
+  selector:
+    app: nacos-rest-consumer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nacos-rest-consumer
+  namespace: mesh
+  labels:
+    app: nacos-rest-consumer 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nacos-rest-consumer 
+  template:
+    metadata:
+      labels:
+        app: nacos-rest-consumer
+        sermant-injection: enabled 
+    spec:
+      containers:
+      - name: nacos-rest-consumer
+        image: consumer:1.0.2
+        ports:
+        - containerPort: 5007 
+        - containerPort: 8005 
+        env:
+        # 注册中心地址
+        - name: "dynamic.config.serverAddress"
+          value: "127.0.0.1:30110"
+        - name: "dynamic.config.dynamicConfigType"
+          value: "KIE"
+        # KIE配置中心地址
+        - name: "servicecomb.service.address"
+          value: "http://127.0.0.1:30100"
+        - name: "servicecomb.service.enableSpringRegister"
+          value: "true"
+        - name: "servicecomb.service.openMigration"
+          value: "false"
+        - name: "grace.rule.enableSpring"
+          value: "true"
+        # 开启优雅下线功能
+        - name: "grace.rule.enableGraceShutdown"
+          value: "true"
+        - name: "grace.rule.enableOfflineNotify"
+          value: "true"
+      imagePullSecrets:
+        - name: default-secret

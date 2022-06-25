@@ -83,7 +83,7 @@ POST /publishConfig
 
 | 参数    | 是否必填 | 参数类型 | 描述      | 配置值                                  |
 | ------- | -------- | -------- | --------- | --------------------------------------- |
-| key     | 是       | String   | 配置的key | 任意值                                  |
+| key     | 是       | String   | 配置的key | sermant.agent.registry                  |
 | group   | 是       | String   | 配置的组  | service=YourServiceName                 |
 | content | 是       | String   | 配置文本  | origin.\_\_registry\_\_.needClose: true |
 

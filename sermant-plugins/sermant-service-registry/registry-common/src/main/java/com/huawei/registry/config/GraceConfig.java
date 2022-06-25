@@ -272,6 +272,16 @@ public class GraceConfig implements PluginConfig, Cloneable {
             LOGGER.warning(String.format(Locale.ENGLISH, "Param warmUpCurve must ga 1, but now is [%s]", warmUpCurve));
             return false;
         }
+        if (httpServerPort <= 0 || httpServerPort > GraceConstants.MAX_HTTP_SERVER_PORT) {
+            LOGGER.warning(String.format(Locale.ENGLISH,
+                    "Param httpServerPort must at interval 0-65535, but now is [%s]", httpServerPort));
+            return false;
+        }
+        if (shutdownWaitTime < 0 || shutdownWaitTime > GraceConstants.MAX_SHUTDOWN_WAIT_TIME) {
+            LOGGER.warning(String.format(Locale.ENGLISH,
+                    "Param shutdownWaitTime must at interval 0-24h, but now is [%s S]", shutdownWaitTime));
+            return false;
+        }
         return true;
     }
 

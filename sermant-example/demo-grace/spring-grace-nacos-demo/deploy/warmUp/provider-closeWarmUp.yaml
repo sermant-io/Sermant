@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nacos-rest-provider-close-warmup 
+  namespace: mesh
+  labels:
+    app: nacos-rest-provider-close-warmup
+spec:
+  type: NodePort
+  ports:
+  - port: 8009
+    nodePort: 31003
+    name: request
+  - port: 5009
+    nodePort: 31004
+    name: debug
+  selector:
+    app: nacos-rest-provider-close-warmup
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nacos-rest-provider-close-warmup
+  namespace: mesh
+  labels:
+    app: nacos-rest-provider-close-warmup 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nacos-rest-provider-close-warmup 
+  template:
+    metadata:
+      labels:
+        app: nacos-rest-provider-close-warmup
+        sermant-injection: enabled 
+    spec:
+      containers:
+      - name: nacos-rest-provider-close-warmup
+        image: provider:1.0.2
+        ports:
+        - containerPort: 5009 
+        - containerPort: 8009 
+        env:
+        - name: "server.port"
+          value: "8009"
+        # 注册中心地址
+        - name: "dynamic.config.serverAddress"
+          value: "127.0.0.1:30110"
+        - name: "dynamic.config.dynamicConfigType"
+          value: "KIE"
+        # KIE配置中心地址
+        - name: "servicecomb.service.address"
+          value: "http://127.0.0.1:30100"
+        - name: "servicecomb.service.enableSpringRegister"
+          value: "true"
+        - name: "servicecomb.service.openMigration"
+          value: "false"
+        - name: "grace.rule.enableSpring"
+          value: "false"
+        # 配置关闭服务预热功能
+        - name: "grace.rule.enableWarmUp"
+          value: "false"
+      imagePullSecrets:
+        - name: default-secret

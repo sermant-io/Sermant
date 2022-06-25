@@ -420,6 +420,12 @@ com/huawei/registry/entity/GraceShutdownBehavior.java in this product is copied 
 
 com/huawei/registry/entity/GraceShutdownHook.java in this product is copied from on org/apache/dubbo/config/DubboShutdownHook.java of Apache Dubbo project
 
+com/huawei/registry/grace/interceptors/SpringZuulResponseInterceptor.java in this product is copied from on org/apache/dubbo/rpc/protocol/dubbo/DubboInvoker.java of Apache Dubbo project
+
+com/huawei/registry/grace/interceptors/SpringLoadbalancerFeignResponseInterceptor.java in this product is copied from on org/apache/dubbo/rpc/protocol/dubbo/DubboInvoker.java of Apache Dubbo project
+
+com/huawei/registry/grace/interceptors/SpringLoadbalancerRestTemplateResponseInterceptor.java in this product is copied from on org/apache/dubbo/rpc/protocol/dubbo/DubboInvoker.java of Apache Dubbo project
+
 Apache Dubbo project is published at https://github.com/apache/dubbo and its license is Apache License Version 2.0.
 
 ====================================================================================
