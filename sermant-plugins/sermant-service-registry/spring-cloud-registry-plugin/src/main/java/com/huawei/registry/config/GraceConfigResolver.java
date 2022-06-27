@@ -19,6 +19,7 @@ package com.huawei.registry.config;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -35,7 +36,12 @@ public class GraceConfigResolver extends RegistryConfigResolver {
     /**
      * 优雅上下线配置前缀
      */
-    private static final String GRACE_CONFIG_PREFIX = "grace.rule.";
+    private static final String GRACE_CONFIG_PREFIX = "rule.";
+
+    /**
+     * 优雅上下线配置KEY
+     */
+    private static final String GRACE_CONFIG_KEY_NAME = "sermant.agent.grace";
 
     private GraceConfig defaultConfig = null;
 
@@ -55,6 +61,11 @@ public class GraceConfigResolver extends RegistryConfigResolver {
     @Override
     protected GraceConfig getOriginConfig() {
         return PluginConfigManager.getPluginConfig(GraceConfig.class);
+    }
+
+    @Override
+    protected boolean isTargetConfig(DynamicConfigEvent event) {
+        return GRACE_CONFIG_KEY_NAME.equals(event.getKey());
     }
 
     @Override

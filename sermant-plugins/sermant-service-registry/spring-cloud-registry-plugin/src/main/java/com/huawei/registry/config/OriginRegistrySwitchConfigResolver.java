@@ -17,6 +17,12 @@
 
 package com.huawei.registry.config;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+
+import java.util.Locale;
+import java.util.logging.Logger;
+
 /**
  * 双注册场景, 原注册中心心跳开关
  *
@@ -24,7 +30,11 @@ package com.huawei.registry.config;
  * @since 2022-05-24
  */
 public class OriginRegistrySwitchConfigResolver extends RegistryConfigResolver {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static final String ORIGIN_REGISTRY_SWITCH_PREFIX = "origin.__registry__.";
+
+    private static final String REGISTRY_SWITCH_KEY = "sermant.agent.registry";
 
     private final RegisterDynamicConfig defaultConfig = new RegisterDynamicConfig();
 
@@ -41,5 +51,17 @@ public class OriginRegistrySwitchConfigResolver extends RegistryConfigResolver {
     @Override
     protected Object getOriginConfig() {
         return RegisterDynamicConfig.INSTANCE;
+    }
+
+    @Override
+    protected boolean isTargetConfig(DynamicConfigEvent event) {
+        return REGISTRY_SWITCH_KEY.equals(event.getKey());
+    }
+
+    @Override
+    protected void afterUpdateConfig() {
+        final RegisterDynamicConfig originConfig = (RegisterDynamicConfig) getOriginConfig();
+        LOGGER.info(String.format(Locale.ENGLISH, "Origin registry switch config update, new value: [needClose: %s]",
+                originConfig.isNeedCloseOriginRegisterCenter()));
     }
 }

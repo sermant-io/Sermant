@@ -27,6 +27,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
@@ -37,6 +38,8 @@ import java.util.logging.Logger;
  */
 public class RegisterCenterServiceImpl implements RegisterCenterService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private final AtomicBoolean isStopped = new AtomicBoolean();
 
     private RegisterConfig registerConfig;
 
@@ -58,7 +61,14 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
 
     @Override
     public void unRegister() {
-        RegisterManager.INSTANCE.stop();
+        stop();
+    }
+
+    @Override
+    public void stop() {
+        if (isStopped.compareAndSet(false, true)) {
+            RegisterManager.INSTANCE.stop();
+        }
     }
 
     @Override

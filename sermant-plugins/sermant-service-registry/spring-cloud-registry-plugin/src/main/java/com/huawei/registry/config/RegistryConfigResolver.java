@@ -48,19 +48,26 @@ public abstract class RegistryConfigResolver {
      * @param event 通知事件
      */
     public void updateConfig(DynamicConfigEvent event) {
+        if (!isTargetConfig(event)) {
+            return;
+        }
+        boolean isUpdated;
         if (event instanceof OrderConfigEvent) {
             final Map<String, Object> allData = ((OrderConfigEvent) event).getAllData();
-            updateConfig(allData, event.getEventType());
+            isUpdated = updateConfig(allData, event.getEventType());
         } else {
-            this.updateWithDefaultMode(event);
+            isUpdated = this.updateWithDefaultMode(event);
         }
-        afterUpdateConfig();
+        if (isUpdated) {
+            afterUpdateConfig();
+        }
     }
 
-    private void updateConfig(Map<String, Object> dic, DynamicConfigEventType eventType) {
+    private boolean updateConfig(Map<String, Object> dic, DynamicConfigEventType eventType) {
         final Object defaultGraceConfig = getDefaultConfig();
         final Object originGraceConfig = getOriginConfig();
         final Field[] declaredFields = originGraceConfig.getClass().getDeclaredFields();
+        boolean isUpdated = false;
         for (Field field : declaredFields) {
             if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
                 continue;
@@ -71,23 +78,29 @@ public abstract class RegistryConfigResolver {
                 // 采用默认值覆盖, 默认值会将会改为修改为第一次从配置和环境变量读取覆盖后的配置值
                 final Optional<Object> fieldValue = ReflectUtils.getFieldValue(defaultGraceConfig, name);
                 fieldValue.ifPresent(value -> ReflectUtils.setFieldValue(originGraceConfig, name, value));
+                isUpdated = true;
                 continue;
             }
+            isUpdated = true;
 
             // 若配置中心有该值, 则进行覆盖处理
             ReflectUtils.setFieldValue(originGraceConfig, name, configValue);
         }
+        return isUpdated;
     }
 
-    private void updateWithDefaultMode(DynamicConfigEvent event) {
+    private boolean updateWithDefaultMode(DynamicConfigEvent event) {
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
-            updateConfig(Collections.emptyMap(), event.getEventType());
+            return updateConfig(Collections.emptyMap(), event.getEventType());
         } else {
-            yamlConverter.convert(event.getContent()).ifPresent(data -> {
+            final Optional<Map<String, Object>> convert = yamlConverter.convert(event.getContent());
+            if (convert.isPresent()) {
+                final Map<String, Object> data = convert.get();
                 final HashMap<String, Object> result = new HashMap<>(data.size());
                 MapUtils.resolveNestMap(result, data, null);
-                this.updateConfig(result, event.getEventType());
-            });
+                return this.updateConfig(result, event.getEventType());
+            }
+            return false;
         }
     }
 
@@ -111,6 +124,14 @@ public abstract class RegistryConfigResolver {
      * @return 原始配置类
      */
     protected abstract Object getOriginConfig();
+
+    /**
+     * 是否为目标配置
+     *
+     * @param event 配置监听事件
+     * @return 如果为目标配置, 则返回true
+     */
+    protected abstract boolean isTargetConfig(DynamicConfigEvent event);
 
     /**
      * 更新配置之后的操作
