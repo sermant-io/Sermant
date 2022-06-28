@@ -17,6 +17,7 @@
 
 package com.huawei.dynamic.config.inject;
 
+import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
 import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 /**
@@ -25,7 +26,7 @@ import com.huaweicloud.sermant.core.utils.ClassUtils;
  * @author zhouss
  * @since 2022-04-20
  */
-public class PublisherClassInjectDefine implements ClassInjectDefine {
+public class PublisherClassInjectDefine extends DynamicClassInjectDefine {
     @Override
     public String injectClassName() {
         return "com.huawei.dynamic.config.source.SpringEventPublisher";

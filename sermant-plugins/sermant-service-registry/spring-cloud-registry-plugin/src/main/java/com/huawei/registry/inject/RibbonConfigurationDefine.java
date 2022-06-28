@@ -52,6 +52,6 @@ public class RibbonConfigurationDefine extends BaseAutoConfigurationDefine imple
     public boolean canInject() {
         return super.canInject() && ClassUtils.loadClass(
                 "org.springframework.cloud.netflix.ribbon.SpringClientFactory",
-                Thread.currentThread().getContextClassLoader()).isPresent();
+                Thread.currentThread().getContextClassLoader(), false).isPresent();
     }
 }

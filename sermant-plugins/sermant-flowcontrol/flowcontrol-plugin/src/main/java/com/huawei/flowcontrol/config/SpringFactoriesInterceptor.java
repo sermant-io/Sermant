@@ -15,10 +15,11 @@
  *
  */
 
-package com.huawei.dynamic.config.interceptors;
+package com.huawei.flowcontrol.config;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine.Plugin;
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectService;
@@ -42,7 +43,7 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2022-04-08
  */
-public class SpringFactoriesInterceptor extends DynamicConfigSwitchSupport {
+public class SpringFactoriesInterceptor extends AbstractInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final List<ClassInjectDefine> CLASS_DEFINES = new ArrayList<>();
@@ -56,14 +57,19 @@ public class SpringFactoriesInterceptor extends DynamicConfigSwitchSupport {
      */
     public SpringFactoriesInterceptor() {
         for (ClassInjectDefine define : ServiceLoader.load(ClassInjectDefine.class)) {
-            if (define.plugin() == Plugin.DYNAMIC_CONFIG_PLUGIN) {
+            if (define.plugin() == Plugin.FLOW_CONTROL_PLUGIN) {
                 CLASS_DEFINES.add(define);
             }
         }
     }
 
     @Override
-    public ExecuteContext doAfter(ExecuteContext context) {
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        return context;
+    }
+
+    @Override
+    public ExecuteContext after(ExecuteContext context) throws Exception {
         if (isHasMethodLoadSpringFactories()) {
             // 仅当在高版本采用LoadSpringFactories的方式注入, 高版本存在缓存会更加高效, 仅需注入一次
             if (IS_INJECTED.compareAndSet(false, true)) {

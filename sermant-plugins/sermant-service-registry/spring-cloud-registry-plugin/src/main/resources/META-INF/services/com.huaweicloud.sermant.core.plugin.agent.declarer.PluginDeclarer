@@ -16,8 +16,6 @@
 #
 # common
 com.huawei.registry.declarers.SpringFactoriesDeclarer
-# freedom
-com.huawei.registry.declarers.SpringEnvironmentDeclarer
 # common
 com.huawei.registry.declarers.DiscoveryClientConfigurationDeclarer
 com.huawei.registry.declarers.DiscoveryClientDeclarer

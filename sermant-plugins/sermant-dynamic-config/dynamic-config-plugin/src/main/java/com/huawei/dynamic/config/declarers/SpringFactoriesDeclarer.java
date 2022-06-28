@@ -43,7 +43,8 @@ public class SpringFactoriesDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[] {
-            InterceptDeclarer.build(MethodMatcher.nameEquals("loadSpringFactories"), INTERCEPTOR_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameContains("loadSpringFactories", "loadFactoryNames"),
+                        INTERCEPTOR_CLASS)
         };
     }
 }

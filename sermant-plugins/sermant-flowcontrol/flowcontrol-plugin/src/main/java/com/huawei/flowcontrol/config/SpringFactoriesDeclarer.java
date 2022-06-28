@@ -15,9 +15,7 @@
  *
  */
 
-package com.huawei.registry.declarers;
-
-import com.huawei.registry.interceptors.SpringEnvironmentInterceptor;
+package com.huawei.flowcontrol.config;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
@@ -25,21 +23,15 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 拦截springboot启动方法获取环境变量
+ * 拦截SpringFactoriesLoader注入自定配置源
  *
  * @author zhouss
- * @since 2022-01-27
+ * @since 2022-04-08
  */
-public class SpringEnvironmentDeclarer extends AbstractPluginDeclarer {
-    /**
-     * 增强类的全限定名
-     */
-    private static final String ENHANCE_CLASS = "org.springframework.boot.SpringApplication";
+public class SpringFactoriesDeclarer extends AbstractPluginDeclarer {
+    private static final String ENHANCE_CLASS = "org.springframework.core.io.support.SpringFactoriesLoader";
 
-    /**
-     * 拦截类的全限定名
-     */
-    private static final String INTERCEPT_CLASS = SpringEnvironmentInterceptor.class.getCanonicalName();
+    private static final String INTERCEPTOR_CLASS = SpringFactoriesInterceptor.class.getCanonicalName();
 
     @Override
     public ClassMatcher getClassMatcher() {
@@ -48,8 +40,9 @@ public class SpringEnvironmentDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("prepareEnvironment"), INTERCEPT_CLASS)
+        return new InterceptDeclarer[] {
+                InterceptDeclarer.build(MethodMatcher.nameContains("loadSpringFactories", "loadFactoryNames"),
+                        INTERCEPTOR_CLASS)
         };
     }
 }

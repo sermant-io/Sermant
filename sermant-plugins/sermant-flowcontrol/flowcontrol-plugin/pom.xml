@@ -92,6 +92,12 @@
             <version>1.4.7.RELEASE</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>1.3.5</version>
+            <scope>provided</scope>
+        </dependency>
         <!--测试依赖-->
         <dependency>
             <groupId>junit</groupId>

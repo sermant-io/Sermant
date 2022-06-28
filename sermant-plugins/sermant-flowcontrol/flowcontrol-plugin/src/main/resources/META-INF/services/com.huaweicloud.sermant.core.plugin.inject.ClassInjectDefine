@@ -14,14 +14,5 @@
 # limitations under the License.
 #
 #
-# grace
-com.huawei.registry.inject.ContextClosedEventListenerInjectDefine
-com.huawei.registry.inject.RequestInterceptorInjectDefine
 
-# registry
-
-com.huawei.registry.inject.OriginRegistrySwitchInjectDefine
-com.huawei.registry.inject.ScConfigurationInjectDefine
-com.huawei.registry.inject.RibbonConfigurationDefine
-com.huawei.registry.inject.ScServerInjectDefine
-com.huawei.registry.inject.RegistrationPropertiesInjectDefine
+com.huawei.flowcontrol.inject.FlowControlSpringConfigurationInjectDefine

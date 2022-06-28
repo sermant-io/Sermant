@@ -152,6 +152,11 @@ public interface ClassInjectDefine {
         SPRING_REGISTRY_PLUGIN,
 
         /**
+         * 流控插件
+         */
+        FLOW_CONTROL_PLUGIN,
+
+        /**
          * 所有插件
          */
         ALL

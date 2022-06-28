@@ -24,6 +24,7 @@ import com.huawei.registry.auto.sc.ServiceCombRegistration;
 import com.huawei.registry.auto.sc.ServiceCombRegistry;
 import com.huawei.registry.auto.sc.ServiceInstanceHolder;
 import com.huawei.registry.config.RegisterConfig;
+import com.huawei.registry.config.RegistrationProperties;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
@@ -48,8 +49,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties
 @AutoConfigureBefore(ServiceRegistryAutoConfiguration.class)
-@AutoConfigureAfter({AutoServiceRegistrationConfiguration.class,
-    AutoServiceRegistrationAutoConfiguration.class})
+@AutoConfigureAfter({AutoServiceRegistrationConfiguration.class, AutoServiceRegistrationAutoConfiguration.class})
 public class ServiceCombAutoDiscoveryConfiguration {
     /**
      * 服务查询注入
@@ -65,13 +65,17 @@ public class ServiceCombAutoDiscoveryConfiguration {
      * 自动注册注入
      *
      * @param autoServiceRegistrationProperties 自动注册配置
+     * @param registrationProperties 注册配置
      * @return 自动注册
      */
     @Bean
     public ServiceCombAutoRegistration serviceCombAutoRegistration(
-            AutoServiceRegistrationProperties autoServiceRegistrationProperties) {
-        return new ServiceCombAutoRegistration(new ServiceCombRegistry(),
-                autoServiceRegistrationProperties, new ServiceCombRegistration(new ServiceInstanceHolder()),
+            AutoServiceRegistrationProperties autoServiceRegistrationProperties,
+            RegistrationProperties registrationProperties) {
+        return new ServiceCombAutoRegistration(
+                new ServiceCombRegistry(),
+                autoServiceRegistrationProperties,
+                new ServiceCombRegistration(new ServiceInstanceHolder(registrationProperties)),
                 PluginConfigManager.getPluginConfig(RegisterConfig.class));
     }
 
