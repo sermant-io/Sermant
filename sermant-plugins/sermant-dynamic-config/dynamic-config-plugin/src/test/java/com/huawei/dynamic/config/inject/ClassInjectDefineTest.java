@@ -17,6 +17,8 @@
 
 package com.huawei.dynamic.config.inject;
 
+import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
+
 import org.junit.Assert;
 import org.junit.Test;
 

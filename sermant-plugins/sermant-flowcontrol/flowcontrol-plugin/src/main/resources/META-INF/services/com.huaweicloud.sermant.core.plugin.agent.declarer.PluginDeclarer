@@ -21,7 +21,7 @@ com.huawei.flowcontrol.ApacheDubboDeclarer
 com.huawei.flowcontrol.config.DubboServiceNameDeclarer
 com.huawei.flowcontrol.config.ApacheDubboConfigDeclarer
 com.huawei.flowcontrol.config.AlibabaDubboConfigDeclarer
-com.huawei.flowcontrol.config.SpringEnvironmentDeclarer
+com.huawei.flowcontrol.config.SpringFactoriesDeclarer
 com.huawei.flowcontrol.config.SpringBootDeclarer
 com.huawei.flowcontrol.retry.AlibabaDubboInvokerDeclarer
 com.huawei.flowcontrol.retry.ApacheDubboInvokerDeclarer

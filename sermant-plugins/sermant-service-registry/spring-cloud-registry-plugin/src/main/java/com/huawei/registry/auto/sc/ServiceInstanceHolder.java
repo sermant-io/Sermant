@@ -17,6 +17,7 @@
 
 package com.huawei.registry.auto.sc;
 
+import com.huawei.registry.config.RegistrationProperties;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.MicroServiceInstance;
 
@@ -44,13 +45,15 @@ public class ServiceInstanceHolder implements MicroServiceInstance {
     /**
      * 构造函数
      * 注册时构造
+     *
+     * @param registrationProperties 注册信息
      */
-    public ServiceInstanceHolder() {
-        this.serviceName = RegisterContext.INSTANCE.getClientInfo().getServiceName();
+    public ServiceInstanceHolder(RegistrationProperties registrationProperties) {
+        this.serviceName = registrationProperties.getServiceName();
+        this.port = registrationProperties.getPort();
         this.host = RegisterContext.INSTANCE.getClientInfo().getHost();
         this.serviceId = RegisterContext.INSTANCE.getClientInfo().getServiceId();
         this.ip = RegisterContext.INSTANCE.getClientInfo().getIp();
-        this.port = RegisterContext.INSTANCE.getClientInfo().getPort();
         this.metadata = RegisterContext.INSTANCE.getClientInfo().getMeta();
     }
 

@@ -17,6 +17,9 @@
 
 package com.huawei.dynamic.config.inject;
 
+import com.huawei.dynamic.config.DynamicConfiguration;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
 
 /**
@@ -25,21 +28,19 @@ import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
  * @author zhouss
  * @since 2022-04-20
  */
-public class ProcessorClassInjectDefine extends DynamicClassInjectDefine {
+public class DynamicPropertiesInjectDefine extends DynamicClassInjectDefine {
     @Override
     public String injectClassName() {
-        return "com.huawei.dynamic.config.source.SpringEnvironmentProcessor";
+        return "com.huawei.dynamic.config.entity.DynamicProperties";
     }
 
     @Override
     public String factoryName() {
-        return ClassInjectDefine.ENVIRONMENT_PROCESSOR_FACTOR_NAME;
+        return ClassInjectDefine.ENABLE_AUTO_CONFIGURATION_FACTORY_NAME;
     }
 
     @Override
-    public ClassInjectDefine[] requiredDefines() {
-        return new ClassInjectDefine[]{
-            this.build("com.huawei.dynamic.config.source.DynamicConfigPropertySource", "")
-        };
+    public boolean canInject() {
+        return PluginConfigManager.getPluginConfig(DynamicConfiguration.class).isEnableDynamicConfig();
     }
 }

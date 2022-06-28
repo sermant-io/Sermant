@@ -97,7 +97,7 @@ public class GraceConstants {
     /**
      * 默认下游Endpoint过期时间, 120S
      */
-    public static final long DEFAULT_ENDPOINT_EXPIRED_TIME = 60L;
+    public static final long DEFAULT_ENDPOINT_EXPIRED_TIME = 120L;
 
     /**
      * 主动通知url路径
@@ -110,11 +110,6 @@ public class GraceConstants {
     public static final String GRACE_SHUTDOWN_URL_PATH = "/$$sermant$$/shutdown";
 
     /**
-     * 健康检查
-     */
-    public static final String GRACE_HEALTH_URL_PATH = "/$$sermant$$/healthCheck";
-
-    /**
      * 成功响应码
      */
     public static final int GRACE_HTTP_SUCCESS_CODE = 200;
@@ -125,19 +120,9 @@ public class GraceConstants {
     public static final int GRACE_HTTP_FAILURE_CODE = 500;
 
     /**
-     * GET方法
-     */
-    public static final String GRACE_HTTP_METHOD_GET = "GET";
-
-    /**
      * POST方法
      */
     public static final String GRACE_HTTP_METHOD_POST = "POST";
-
-    /**
-     * 实例健康状态
-     */
-    public static final String GRACE_HEALTH_OK_MSG = "ok";
 
     /**
      * 成功响应消息
