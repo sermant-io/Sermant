@@ -2,7 +2,7 @@ server:
   port: 8005
 grace:
   openProviderName: nacos-rest-provider
-  closeProviderName: nacos-rest-provider2
+  closeProviderName: nacos-rest-provider-close-grace
 spring:
   application:
     name: nacos-rest-consumer
