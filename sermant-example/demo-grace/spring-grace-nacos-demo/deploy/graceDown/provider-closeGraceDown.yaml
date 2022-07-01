@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nacos-rest-provider-close-gracedown 
+  name: nacos-rest-provider-close-grace 
   namespace: mesh
   labels:
-    app: nacos-rest-provider-close-gracedown
+    app: nacos-rest-provider-close-grace
 spec:
   type: NodePort
   ports:
@@ -15,35 +15,35 @@ spec:
     nodePort: 31004
     name: debug
   selector:
-    app: nacos-rest-provider-close-gracedown
+    app: nacos-rest-provider-close-grace
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nacos-rest-provider-close-gracedown
+  name: nacos-rest-provider-close-grace
   namespace: mesh
   labels:
-    app: nacos-rest-provider-close-gracedown 
+    app: nacos-rest-provider-close-grace 
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: nacos-rest-provider-close-gracedown 
+      app: nacos-rest-provider-close-grace 
   template:
     metadata:
       labels:
-        app: nacos-rest-provider-close-gracedown
+        app: nacos-rest-provider-close-grace
         sermant-injection: enabled 
     spec:
       containers:
-      - name: nacos-rest-provider-close-gracedown
+      - name: nacos-rest-provider-close-grace
         image: provider:1.0.2
         ports:
         - containerPort: 5009 
         - containerPort: 8004 
         env:
         - name: "spring.application.name"
-          value: "nacos-rest-provider-close-gracedown"
+          value: "nacos-rest-provider-close-grace"
         # 注册中心地址
         - name: "dynamic.config.serverAddress"
           value: "127.0.0.1:30110"

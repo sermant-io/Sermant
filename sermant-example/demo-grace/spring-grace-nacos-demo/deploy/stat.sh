@@ -1,3 +1,3 @@
 #!/bin/bash
-source ./config.sh
+endpoint=127.0.0.1:31021
 watch curl ${endpoint}/stat

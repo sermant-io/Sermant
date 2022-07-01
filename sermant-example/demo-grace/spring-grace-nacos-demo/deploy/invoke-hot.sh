@@ -1,5 +1,5 @@
 #!/bin/bash
-. ./config.sh
+endpoint=127.0.0.1:31021
 url=${endpoint}/graceHot
 while true
 do
