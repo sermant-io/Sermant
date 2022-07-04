@@ -61,6 +61,31 @@ public class ConfigValueUtil {
      */
     private static final int MAP_KV_LEN = 2;
 
+    /**
+     * 配置键格式化器, 针对不同环境变量格式读取
+     * <p>若读取环境变量 service.meta.applicationName, 则会尝试从下面的变量进行读取， 否则取默认值</p>
+     * <li>service.meta.applicationName</li>
+     * <li>service_meta_applicationName</li>
+     * <li>service-meta-applicationName</li>
+     * <li>SERVICE.META.APPLICATIONNAME</li>
+     * <li>SERVICE_META_APPLICATIONNAME</li>
+     * <li>SERVICE-META-APPLICATIONNAME</li>
+     * <li>service.meta.applicationname</li>
+     * <li>service_meta_applicationname</li>
+     * <li>service-meta-applicationname</li>
+     */
+    private static final KeyFormatter[] KEY_FORMATTERS = new KeyFormatter[]{
+        key -> key,
+        key -> key.replace('.', '_'),
+        key -> key.replace('.', '-'),
+        key -> key.toUpperCase(Locale.ROOT),
+        key -> key.toUpperCase(Locale.ROOT).replace('.', '_'),
+        key -> key.toUpperCase(Locale.ROOT).replace('.', '-'),
+        key -> key.toLowerCase(Locale.ROOT),
+        key -> key.toLowerCase(Locale.ROOT).replace('.', '_'),
+        key -> key.toLowerCase(Locale.ROOT).replace('.', '-'),
+    };
+
     private ConfigValueUtil() {
     }
 
@@ -73,7 +98,7 @@ public class ConfigValueUtil {
      * </pre>
      *
      * @param configStr 配置信息字符串
-     * @param type      数组的数据类型
+     * @param type 数组的数据类型
      * @return 转换后的数组
      */
     public static Object toArrayType(String configStr, Class<?> type) {
@@ -94,8 +119,8 @@ public class ConfigValueUtil {
      * </pre>
      *
      * @param configStr 配置信息字符串
-     * @param type      List中数据的类型
-     * @param <R>       List中数据的泛型
+     * @param type List中数据的类型
+     * @param <R> List中数据的泛型
      * @return 转换后的List
      */
     public static <R> List<R> toListType(String configStr, Class<R> type) {
@@ -113,8 +138,8 @@ public class ConfigValueUtil {
      * </pre>
      *
      * @param configStr 配置信息字符串
-     * @param type      Set中数据的类型
-     * @param <R>       Set中数据的泛型
+     * @param type Set中数据的类型
+     * @param <R> Set中数据的泛型
      * @return 转换后的Set
      */
     public static <R> Set<R> toSetType(String configStr, Class<R> type) {
@@ -149,10 +174,10 @@ public class ConfigValueUtil {
      * </pre>
      *
      * @param configStr 配置信息字符串
-     * @param keyType   Map的键类型
+     * @param keyType Map的键类型
      * @param valueType Map的值类型
-     * @param <K>       Map的键泛型
-     * @param <V>       Map的值泛型
+     * @param <K> Map的键泛型
+     * @param <V> Map的值泛型
      * @return 转换后的Map
      */
     public static <K, V> Map<K, V> toMapType(String configStr, Class<K> keyType, Class<V> valueType) {
@@ -182,8 +207,8 @@ public class ConfigValueUtil {
      * 将配置信息字符串进行类型转换，支持int、short、long、float、double、枚举、String和Object类型，转换失败时返回null
      *
      * @param configStr 配置信息字符串
-     * @param type      配置对象属性类型
-     * @param <R>       配置对象属性泛型
+     * @param type 配置对象属性类型
+     * @param <R> 配置对象属性泛型
      * @return 配置信息
      */
     public static <R> R toBaseType(String configStr, Class<R> type) {
@@ -230,14 +255,17 @@ public class ConfigValueUtil {
      *
      * @param configKey 配置信息键
      * @param configVal 配置信息字符串
-     * @param argsMap   入参
-     * @param provider  修正值获取方式
+     * @param argsMap 入参
+     * @param provider 修正值获取方式
      * @return 修正后的配置信息字符串
      * @throws DupConfIndexException 配置重复索引异常
      */
     public static String fixValue(String configKey, String configVal, Map<String, Object> argsMap,
-        FixedValueProvider provider) {
-        if (configVal != null && configVal.matches("^.*\\$\\{[\\w.]+(:.*)?}.*$")) {
+            FixedValueProvider provider) {
+        if (configVal == null) {
+            return configVal;
+        }
+        if (configVal.matches("^.*\\$\\{[\\w.]+(:.*)?}.*$")) {
             final int startIndex = configVal.indexOf("${") + ENV_PREFIX_LEN;
             final int endIndex = configVal.indexOf('}', startIndex);
             final String envKey = configVal.substring(startIndex, endIndex);
@@ -247,12 +275,12 @@ public class ConfigValueUtil {
                 throw new DupConfIndexException(key);
             }
             final String defaultValue = separatorIndex >= 0 ? envKey.substring(separatorIndex + 1) : "";
-            final String value = getFixedValue(key, defaultValue, argsMap, provider);
+            final String value = getFormatKeyFixVal(key, defaultValue, argsMap, provider);
             return fixValue(configKey,
-                configVal.substring(0, startIndex - ENV_PREFIX_LEN) + value + configVal.substring(endIndex + 1),
-                argsMap, provider);
-        } else if (!StringUtils.isBlank(configKey)) {
-            final String valFromEnv = getValFromEnv(configKey);
+                    configVal.substring(0, startIndex - ENV_PREFIX_LEN) + value + configVal.substring(endIndex + 1),
+                    argsMap, provider);
+        } else {
+            final String valFromEnv = getFormatKeyFixVal(configKey, configVal, argsMap, provider);
             if (valFromEnv != null) {
                 return valFromEnv;
             }
@@ -261,26 +289,46 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 获取修正的字段，优先级：入参 > 配置 > 环境变量 > 系统变量 > 默认值
+     * 获取修正的字段，优先级：入参 > 环境变量 > 系统变量 > 配置  > 默认值
+     * <p>修正不同配置格式获取值, 含'-','_','.',大写以及小写</p>
      *
-     * @param key        键
+     * @param key 键
      * @param defaultVal 默认值
-     * @param provider   配置信息
+     * @param provider 配置信息
+     * @return 环境变量或系统变量
+     */
+    private static String getFormatKeyFixVal(String key, String defaultVal, Map<String, Object> argsMap,
+            FixedValueProvider provider) {
+        for (KeyFormatter keyFormatter : KEY_FORMATTERS) {
+            final String fixedValue = getFixedValue(keyFormatter.format(key), null, argsMap, provider);
+            if (!StringUtils.isBlank(fixedValue)) {
+                return fixedValue;
+            }
+        }
+        return defaultVal;
+    }
+
+    /**
+     * 获取修正的字段，优先级：入参 > 环境变量 > 系统变量 > 配置 > 默认值
+     *
+     * @param key 键
+     * @param defaultVal 默认值
+     * @param provider 配置信息
      * @return 环境变量或系统变量
      */
     private static String getFixedValue(String key, String defaultVal, Map<String, Object> argsMap,
-        FixedValueProvider provider) {
+            FixedValueProvider provider) {
         final Object arg = argsMap.get(key);
         if (arg != null) {
             return arg.toString();
         }
-        final String configVal = provider == null ? null : provider.getFixedValue(key);
-        if (configVal != null) {
-            return configVal;
-        }
         final String valFromEnv = getValFromEnv(key);
         if (valFromEnv != null) {
             return valFromEnv;
+        }
+        final String configVal = provider == null ? null : provider.getFixedValue(key);
+        if (configVal != null) {
+            return configVal;
         }
         return defaultVal;
     }
@@ -297,6 +345,22 @@ public class ConfigValueUtil {
             return envVal;
         }
         return System.getProperty(key);
+    }
+
+    /**
+     * 配置键格式化器
+     *
+     * @since 2021-11-16
+     */
+    @FunctionalInterface
+    interface KeyFormatter {
+        /**
+         * 配置格式化, 识别不同配置格式, 包含'-','_','.'以及大小写
+         *
+         * @param key 原配置键
+         * @return 格式化之后的key
+         */
+        String format(String key);
     }
 
     /**
