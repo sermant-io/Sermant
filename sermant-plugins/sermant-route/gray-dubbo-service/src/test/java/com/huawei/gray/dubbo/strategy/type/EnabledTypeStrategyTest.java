@@ -40,10 +40,7 @@ public class EnabledTypeStrategyTest {
      */
     @BeforeClass
     public static void init() {
-        Map<String, Object> map = new HashMap<>();
-        map.put(CommonConstant.LOG_SETTING_FILE_KEY,
-            EnabledTypeStrategyTest.class.getResource("/logback-test.xml").getPath());
-        LoggerFactory.init(map);
+        LoggerFactory.init();
     }
 
     /**

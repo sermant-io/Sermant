@@ -23,8 +23,8 @@ import com.huawei.flowcontrol.common.adapte.cse.resolver.listener.ConfigUpdateLi
 import com.huawei.flowcontrol.common.util.StringUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.core.plugin.converter.Converter;
-import com.huaweicloud.sermant.core.plugin.converter.YamlConverter;
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.utils.MapUtils;
 
 import java.util.HashMap;
@@ -55,7 +55,7 @@ public enum ResolverManager {
     /**
      * 配置解析器 当前只支持yaml格式
      */
-    private final Converter<String, Map<String, Object>> mapConverter = new YamlConverter<>(Map.class);
+    private final YamlConverter yamlConverter = OperationManager.getOperation(YamlConverter.class);
 
     /**
      * 解析器配置前缀集合
@@ -162,7 +162,7 @@ public enum ResolverManager {
      */
     private Map<String, Object> tryResolveWithYaml(String value) {
         final Map<String, Object> kvMap = new HashMap<>();
-        final Optional<Map<String, Object>> convert = mapConverter.convert(value);
+        final Optional<Map<String, Object>> convert = yamlConverter.convert(value,Map.class);
         if (convert.isPresent()) {
             final Map<String, Object> map = convert.get();
             MapUtils.resolveNestMap(kvMap, map, null);

@@ -22,6 +22,7 @@
 
 package com.huaweicloud.sermant.core.service;
 
+import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.exception.DupServiceException;
 import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
@@ -54,7 +55,7 @@ public class ServiceManager {
      * 初始化所有服务
      */
     public static void initServices() {
-        for (final BaseService service : ServiceLoader.load(BaseService.class)) {
+        for (final BaseService service : ServiceLoader.load(BaseService.class, ClassLoaderManager.getFrameworkClassLoader())) {
             if (!AGENT_CONFIG.getServiceBlackList().contains(service.getClass().getName())
                     && loadService(service, service.getClass(), BaseService.class)) {
                 service.start();

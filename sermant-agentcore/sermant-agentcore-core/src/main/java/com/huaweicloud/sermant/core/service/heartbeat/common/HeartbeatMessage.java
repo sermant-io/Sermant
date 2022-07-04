@@ -21,12 +21,8 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.utils.NetworkUtils;
 import com.huaweicloud.sermant.core.utils.TimeUtils;
 
-import com.alibaba.fastjson.JSONException;
-import com.alibaba.fastjson.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -65,18 +61,7 @@ public class HeartbeatMessage {
         return this;
     }
 
-    /**
-     * generateCurrentMessage
-     *
-     * @return String
-     */
-    public String generateCurrentMessage() {
-        String msg = null;
-        try {
-            msg = JSONObject.toJSONString(message);
-        } catch (JSONException e) {
-            LOGGER.log(Level.SEVERE, "[HeartbeatMessage] Generate CurrentMessage failed " + e.toString());
-        }
-        return msg;
+    public Map<String, Object> getMessage() {
+        return message;
     }
 }

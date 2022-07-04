@@ -25,9 +25,8 @@ import com.huaweicloud.sermant.core.plugin.subscribe.processor.ConfigProcessor;
 import com.huaweicloud.sermant.core.plugin.subscribe.processor.IntegratedEventListenerAdapter;
 import com.huaweicloud.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import com.huaweicloud.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
-
-import org.apache.commons.lang3.StringUtils;
+import com.huaweicloud.sermant.core.utils.LabelGroupUtils;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;

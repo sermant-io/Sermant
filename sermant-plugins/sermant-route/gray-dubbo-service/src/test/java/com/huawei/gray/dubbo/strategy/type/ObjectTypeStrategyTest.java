@@ -18,15 +18,11 @@ package com.huawei.gray.dubbo.strategy.type;
 
 import com.huawei.gray.dubbo.strategy.TypeStrategy;
 
-import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 实体匹配策略测试
@@ -40,10 +36,7 @@ public class ObjectTypeStrategyTest {
      */
     @BeforeClass
     public static void init() {
-        Map<String, Object> map = new HashMap<>();
-        map.put(CommonConstant.LOG_SETTING_FILE_KEY,
-            ObjectTypeStrategyTest.class.getResource("/logback-test.xml").getPath());
-        LoggerFactory.init(map);
+        LoggerFactory.init();
     }
 
     /**

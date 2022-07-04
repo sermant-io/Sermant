@@ -78,6 +78,11 @@ public class CommonConstant {
     public static final String AGENT_ROOT_DIR_KEY = "agentPath";
 
     /**
+     * Sermant核心功能实现包的键
+     */
+    public static final String CORE_IMPLEMENT_DIR_KEY = "core.implement.dir";
+
+    /**
      * sermant的配置文件名的键
      */
     public static final String CORE_CONFIG_FILE_KEY = "core.config.file";

@@ -45,6 +45,11 @@ public class BootArgsIndexer {
     private static final String CORE_VERSION;
 
     /**
+     * 核心功能实现包所在目录
+     */
+    private static File implementDir;
+
+    /**
      * 配置文件
      */
     private static File configFile;
@@ -70,6 +75,10 @@ public class BootArgsIndexer {
 
     public static String getCoreVersion() {
         return CORE_VERSION;
+    }
+
+    public static File getImplementDir(){
+        return implementDir;
     }
 
     public static File getConfigFile() {
@@ -102,6 +111,10 @@ public class BootArgsIndexer {
      * @param argsMap 启动参数
      */
     public static void build(Map<String, Object> argsMap) {
+        implementDir = new File(argsMap.get(CommonConstant.CORE_IMPLEMENT_DIR_KEY).toString());
+        if (!implementDir.exists() || !implementDir.isFile()) {
+            LOGGER.warning("Implement directory not found! ");
+        }
         configFile = new File(argsMap.get(CommonConstant.CORE_CONFIG_FILE_KEY).toString());
         if (!configFile.exists() || !configFile.isFile()) {
             LOGGER.warning("Config file is not found! ");

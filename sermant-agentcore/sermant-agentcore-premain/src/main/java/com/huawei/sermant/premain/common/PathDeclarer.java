@@ -50,6 +50,15 @@ public class PathDeclarer {
     }
 
     /**
+     * 获取核心功能实现包目录
+     *
+     * @return 核心功能实现包目录
+     */
+    public static String getImplementPath(){
+        return getAgentPath() + File.separatorChar + "implement";
+    }
+
+    /**
      * 获取配置存储目录
      *
      * @return 配置存储目录

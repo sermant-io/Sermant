@@ -85,10 +85,7 @@ public class RegistrationInterceptorTest {
      */
     @BeforeClass
     public static void init() {
-        Map<String, Object> argsMap = new HashMap<>();
-        argsMap.put(CommonConstant.LOG_SETTING_FILE_KEY,
-            RegistrationInterceptorTest.class.getResource("/logback-test.xml").getPath());
-        LoggerFactory.init(argsMap);
+        LoggerFactory.init();
     }
 
     /**

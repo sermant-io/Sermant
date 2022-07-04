@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.core.config;
 
+import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.common.BaseConfig;
@@ -83,7 +84,7 @@ public abstract class ConfigManager {
      */
     public static synchronized void initialize(Map<String, Object> args) {
         argsMap = args;
-        loadConfig(BootArgsIndexer.getConfigFile(), BaseConfig.class, ClassLoader.getSystemClassLoader());
+        loadConfig(BootArgsIndexer.getConfigFile(), BaseConfig.class, ClassLoaderManager.getFrameworkClassLoader());
     }
 
     /**

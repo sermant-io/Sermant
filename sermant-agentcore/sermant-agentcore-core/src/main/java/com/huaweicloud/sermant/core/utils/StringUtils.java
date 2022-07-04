@@ -25,6 +25,8 @@ package com.huaweicloud.sermant.core.utils;
 public class StringUtils {
     private static final int FLAG = -1;
 
+    public static final String EMPTY = "";
+
     private StringUtils() {
     }
 
@@ -57,13 +59,46 @@ public class StringUtils {
     }
 
     /**
-     * isBlank
      *
-     * @param str str
+     * @param charSequence charSequence
      * @return boolean
      */
-    public static boolean isBlank(String str) {
-        return str == null || str.trim().isEmpty();
+    public static boolean isEmpty(final CharSequence charSequence) {
+        return charSequence == null || charSequence.length() == 0;
+    }
+
+    /**
+     * isBlank
+     * @param charSequence charSequence
+     * @return boolean
+     */
+    public static boolean isBlank(final CharSequence charSequence) {
+        int charSequenceLen = charSequence == null ? 0 : charSequence.length();
+        if (charSequenceLen == 0) {
+            return true;
+        }
+        for (int i = 0; i < charSequenceLen; i++) {
+            if (!Character.isWhitespace(charSequence.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isAnyBlank(String... strings) {
+        if (strings.length == 0) {
+            return false;
+        }
+        for (String string : strings) {
+            if (isBlank(string)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isNoneBlank(String... strings) {
+        return !isAnyBlank(strings);
     }
 
     /**

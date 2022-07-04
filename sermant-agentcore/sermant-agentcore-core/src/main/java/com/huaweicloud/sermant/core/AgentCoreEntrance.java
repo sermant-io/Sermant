@@ -16,9 +16,11 @@
 
 package com.huaweicloud.sermant.core;
 
+import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.plugin.PluginSystemEntrance;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
@@ -44,23 +46,25 @@ public class AgentCoreEntrance {
      * @throws Exception agent core执行异常
      */
     public static void run(Map<String, Object> argsMap, Instrumentation instrumentation) throws Exception {
+        // 初始化框架类加载器
+        ClassLoaderManager.init(argsMap);
+
         // 初始化日志
-        LoggerFactory.init(argsMap);
-        try {
-            // 通过启动配置构建路径索引
-            BootArgsIndexer.build(argsMap);
+        LoggerFactory.init();
 
-            // 初始化统一配置
-            ConfigManager.initialize(argsMap);
+        // 通过启动配置构建路径索引
+        BootArgsIndexer.build(argsMap);
 
-            // 启动核心服务
-            ServiceManager.initServices();
+        // 初始化统一配置
+        ConfigManager.initialize(argsMap);
 
-            // 初始化插件
-            PluginSystemEntrance.initialize(instrumentation);
-        } finally {
-            // 回滚日志
-            LoggerFactory.rollback();
-        }
+        // 初始化操作类
+        OperationManager.initOperations();
+
+        // 启动核心服务
+        ServiceManager.initServices();
+
+        // 初始化插件
+        PluginSystemEntrance.initialize(instrumentation);
     }
 }

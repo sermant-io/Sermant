@@ -19,9 +19,8 @@ package com.huaweicloud.sermant.core.plugin.subscribe;
 
 import com.huaweicloud.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import com.huaweicloud.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
-
-import org.apache.commons.lang3.StringUtils;
+import com.huaweicloud.sermant.core.utils.LabelGroupUtils;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.util.Collections;
 import java.util.Map;
@@ -69,6 +68,6 @@ public class DefaultGroupConfigSubscriber extends AbstractGroupConfigSubscriber 
 
     @Override
     protected boolean isReady() {
-        return StringUtils.isNotBlank(serviceName);
+        return !StringUtils.isBlank(serviceName);
     }
 }

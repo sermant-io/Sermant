@@ -18,7 +18,6 @@ package com.huawei.gray.dubbo.strategy;
 
 import com.huawei.gray.dubbo.strategy.type.Entity;
 
-import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import org.junit.Assert;
@@ -26,8 +25,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 规则策略选择器测试
@@ -53,10 +50,7 @@ public class TypeStrategyChooserTest {
      */
     @BeforeClass
     public static void init() {
-        Map<String, Object> map = new HashMap<>();
-        map.put(CommonConstant.LOG_SETTING_FILE_KEY,
-            TypeStrategyChooserTest.class.getResource("/logback-test.xml").getPath());
-        LoggerFactory.init(map);
+        LoggerFactory.init();
     }
 
     /**
