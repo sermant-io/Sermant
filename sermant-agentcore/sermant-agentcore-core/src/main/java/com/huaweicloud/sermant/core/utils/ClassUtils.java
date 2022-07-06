@@ -98,4 +98,27 @@ public class ClassUtils {
         }
         return Optional.empty();
     }
+
+    /**
+     * 反射创建实例
+     *
+     * @param className 目标权限定名
+     * @param classLoader 类加载器
+     * @param paramTypes 参数类型
+     * @return 创建的对象
+     */
+    public static Optional<Object> createInstance(String className, ClassLoader classLoader, Class<?>[] paramTypes) {
+        ClassLoader curClassLoader = classLoader;
+        if (curClassLoader == null) {
+            curClassLoader = Thread.currentThread().getContextClassLoader();
+        }
+        try {
+            final Class<?> clazz = curClassLoader.loadClass(className);
+            return Optional.of(clazz.getDeclaredConstructor(paramTypes));
+        } catch (ClassNotFoundException | NoSuchMethodException exception) {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Can not find class named [%s] for classloader [%s]",
+                    className, classLoader));
+        }
+        return Optional.empty();
+    }
 }
