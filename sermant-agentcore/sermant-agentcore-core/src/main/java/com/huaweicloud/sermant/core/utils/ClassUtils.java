@@ -38,7 +38,7 @@ public class ClassUtils {
     }
 
     /**
-     * 通过指定类加载器加载类
+     * 通过指定类加载器加载类, 若无法定义则尝试加载
      *
      * @param className 类全限定名
      * @param classLoader 被增强类的类加载器
