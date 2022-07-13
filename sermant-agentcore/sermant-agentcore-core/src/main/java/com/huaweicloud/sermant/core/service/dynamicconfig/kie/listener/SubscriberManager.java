@@ -440,7 +440,7 @@ public class SubscriberManager {
         final KvDataHolder kvDataHolder = kieListenerWrapper.getKvDataHolder();
         final KvDataHolder.EventDataHolder eventDataHolder = kvDataHolder.analyzeLatestData(kieResponse, isFirst);
         if (eventDataHolder.isChanged() || isFirst) {
-            kieListenerWrapper.notifyListener(eventDataHolder);
+            kieListenerWrapper.notifyListeners(eventDataHolder, isFirst);
         }
     }
 

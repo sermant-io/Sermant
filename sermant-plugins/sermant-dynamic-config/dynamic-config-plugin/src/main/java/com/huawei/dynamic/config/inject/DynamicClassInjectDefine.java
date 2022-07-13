@@ -17,7 +17,11 @@
 
 package com.huawei.dynamic.config.inject;
 
+import com.huawei.dynamic.config.DynamicConfiguration;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
+import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 /**
  * 动态配置类注入
@@ -26,8 +30,19 @@ import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
  * @since 2022-06-28
  */
 public abstract class DynamicClassInjectDefine implements ClassInjectDefine {
+    /**
+     * 仅当宿主存在该类时, 动态配置才生效
+     */
+    private static final String REFRESH_CLASS = "org.springframework.cloud.endpoint.event.RefreshEventListener";
+
     @Override
     public Plugin plugin() {
         return Plugin.DYNAMIC_CONFIG_PLUGIN;
+    }
+
+    @Override
+    public boolean canInject() {
+        return PluginConfigManager.getPluginConfig(DynamicConfiguration.class).isEnableDynamicConfig()
+                && ClassUtils.loadClass(REFRESH_CLASS, Thread.currentThread().getContextClassLoader()).isPresent();
     }
 }

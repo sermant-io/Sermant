@@ -19,6 +19,9 @@ package com.huawei.dynamic.config.source;
 
 import com.huawei.dynamic.config.ConfigHolder;
 
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+
 import org.springframework.cloud.endpoint.event.RefreshEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -47,7 +50,10 @@ public class SpringEventPublisher implements ApplicationEventPublisherAware {
     /**
      * 发布spring刷新事件{@link org.springframework.cloud.endpoint.event.RefreshEvent}
      */
-    private void publishRefreshEvent() {
+    private void publishRefreshEvent(DynamicConfigEvent event) {
+        if (event.getEventType() == DynamicConfigEventType.INIT) {
+            return;
+        }
         applicationEventPublisher.publishEvent(new RefreshEvent(this, null, "sermant refresh"));
     }
 }

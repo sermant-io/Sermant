@@ -15,7 +15,7 @@
  *
  */
 
-package com.huawei.registry.utils;
+package com.huaweicloud.sermant.core.utils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 

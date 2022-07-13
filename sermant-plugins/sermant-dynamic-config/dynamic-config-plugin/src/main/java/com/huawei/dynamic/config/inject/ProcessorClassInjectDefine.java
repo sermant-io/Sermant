@@ -39,7 +39,13 @@ public class ProcessorClassInjectDefine extends DynamicClassInjectDefine {
     @Override
     public ClassInjectDefine[] requiredDefines() {
         return new ClassInjectDefine[]{
-            this.build("com.huawei.dynamic.config.source.DynamicConfigPropertySource", "")
+            this.build("com.huawei.dynamic.config.source.DynamicConfigPropertySource", ""),
+            this.build("com.huawei.dynamic.config.source.OriginConfigDisableSource", ""),
+            this.build("com.huawei.dynamic.config.closer.ConfigCenterCloser", ""),
+            this.build("com.huawei.dynamic.config.closer.NacosConfigCenterCloser", ""),
+            this.build("com.huawei.dynamic.config.closer.ZkConfigCenterCloser", ""),
+            this.build("com.huawei.dynamic.config.source.OriginConfigCenterDisableListener",
+                    ENABLE_AUTO_CONFIGURATION_FACTORY_NAME)
         };
     }
 }

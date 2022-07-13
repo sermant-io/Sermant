@@ -17,6 +17,11 @@
 
 package com.huawei.dynamic.config.source;
 
+import com.huawei.dynamic.config.DynamicConfiguration;
+import com.huawei.dynamic.config.entity.DynamicConstants;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.env.CompositePropertySource;
@@ -29,13 +34,20 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * @since 2022-04-20
  */
 public class SpringEnvironmentProcessor implements EnvironmentPostProcessor {
-    private static final String PROPERTY_NAME = "Sermant-Dynamic-Config";
-
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        final CompositePropertySource compositePropertySource = new CompositePropertySource(PROPERTY_NAME);
+        final CompositePropertySource compositePropertySource = new CompositePropertySource(
+                DynamicConstants.PROPERTY_NAME);
         compositePropertySource
-            .addPropertySource(new DynamicConfigPropertySource(PROPERTY_NAME));
+                .addPropertySource(new DynamicConfigPropertySource(DynamicConstants.PROPERTY_NAME));
+        tryAddDisableConfigSource(compositePropertySource);
         environment.getPropertySources().addFirst(compositePropertySource);
+    }
+
+    private void tryAddDisableConfigSource(CompositePropertySource compositePropertySource) {
+        if (!PluginConfigManager.getPluginConfig(DynamicConfiguration.class).isEnableOriginConfigCenter()) {
+            compositePropertySource
+                    .addPropertySource(new OriginConfigDisableSource(DynamicConstants.DISABLE_CONFIG_SOURCE_NAME));
+        }
     }
 }

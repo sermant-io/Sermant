@@ -39,20 +39,20 @@ dynamic.config.dynamic_config_type=ZOOKEEPER
 
 ```yaml
 dynamic.config.plugin:
-  enableCseAdapter: true # 是否开启ServiceComb适配
-  enableDynamicConfig: true # 是否开启动态配置插件
-  forceEnableBootstrap: true # 是否强制开启启动配置
+  enableCseAdapter: true # 是否开启适配CSE
+  enableDynamicConfig: false # 是否开启动态配置插件
+  enableOriginConfigCenter: false # 是否开启原配置中心, 默认关闭
   #sourceKeys: sourceKey #针对指定键生效
 ```
 
 配置说明：
 
-| 配置项               | 配置说明                                                     |
-| -------------------- | ------------------------------------------------------------ |
-| enableCseAdapter     | 当配置为true时, 会根据ServiceMeta指定的应用配置，服务配置以及自定义标签配置三种类型进行配置订阅；当为false时，只会根据服务名进行订阅，即对键为`service`, 值为"宿主服务名（即spring.application.name获取）" |
-| enableDynamicConfig  | 动态配置开关，仅当配置为true时，动态配置才会生效             |
-| forceEnableBootstrap | 是否开启spring应用的启动配置, 即bootstrap配置, 动态配置是基于启动配置生效，在spring 2.4.0之后的版本该配置是默认关闭的，这里若开启了强制开启则不需用户手动开启启动配置 |
-| sourceKeys           | 当需要指定的配置键生效时，可配置该值，例如只是想读取application.yaml，否则默认会读取所有的配置；多个键使用`,`隔开。 |
+| 配置项                    | 配置说明                                                     |
+| ------------------------- | ------------------------------------------------------------ |
+| enableCseAdapter          | 当配置为true时, 会根据ServiceMeta指定的应用配置，服务配置以及自定义标签配置三种类型进行配置订阅；当为false时，只会根据服务名进行订阅，即对键为`service`, 值为"宿主服务名（即spring.application.name获取）" |
+| enableDynamicConfig       | 动态配置开关，仅当配置为true时，动态配置才会生效             |
+| enableOriginConfigCenter | 是否开启原配置中心, 默认不开启。当前仅支持Zookeeper与Nacos配置中心（基于SpringCloud Config实现） |
+| sourceKeys                | 当需要指定的配置键生效时，可配置该值，例如只是想读取application.yaml，否则默认会读取所有的配置；多个键使用`,`隔开。 |
 
 ### 发布配置
 

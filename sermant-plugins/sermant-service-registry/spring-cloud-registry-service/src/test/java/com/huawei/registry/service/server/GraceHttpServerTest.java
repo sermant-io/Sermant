@@ -25,7 +25,7 @@ import com.huawei.registry.service.impl.GraceServiceImpl;
 import com.huawei.registry.service.utils.HttpClientResult;
 import com.huawei.registry.service.utils.HttpClientUtils;
 import com.huawei.registry.services.GraceService;
-import com.huawei.registry.utils.ReflectUtils;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
