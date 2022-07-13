@@ -20,7 +20,7 @@ package com.huawei.registry.service.impl;
 import com.huawei.registry.config.GraceConfig;
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.service.cache.AddressCache;
-import com.huawei.registry.utils.ReflectUtils;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 

@@ -20,7 +20,6 @@ package com.huawei.registry.grace.interceptors;
 import com.huawei.registry.config.GraceConfig;
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.entity.MicroServiceInstance;
-import com.huawei.registry.utils.ReflectUtils;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.netflix.loadbalancer.Server;
@@ -33,7 +32,6 @@ import org.springframework.cloud.client.ServiceInstance;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * 预热

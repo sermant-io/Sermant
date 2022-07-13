@@ -17,9 +17,7 @@
 
 package com.huawei.registry.interceptors;
 
-import static org.junit.Assert.*;
-
-import com.huawei.registry.utils.ReflectUtils;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
 

@@ -25,10 +25,10 @@ import com.huawei.registry.service.cache.AddressCache;
 import com.huawei.registry.service.utils.HttpClientUtils;
 import com.huawei.registry.services.GraceService;
 import com.huawei.registry.services.RegisterCenterService;
-import com.huawei.registry.utils.ReflectUtils;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.alibaba.fastjson.JSONObject;
 

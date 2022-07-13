@@ -21,10 +21,10 @@ import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.entity.ScServer;
 import com.huawei.registry.services.RegisterCenterService;
 import com.huawei.registry.support.RegisterSwitchSupport;
-import com.huawei.registry.utils.ReflectUtils;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.netflix.loadbalancer.DynamicServerListLoadBalancer;
 import com.netflix.loadbalancer.Server;

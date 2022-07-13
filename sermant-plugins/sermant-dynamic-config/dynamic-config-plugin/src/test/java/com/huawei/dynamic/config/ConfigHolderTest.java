@@ -63,7 +63,7 @@ public class ConfigHolderTest {
 
     @Test
     public void testResolveAndListener() {
-        ConfigHolder.INSTANCE.addListener(() -> LOGGER.info("refresh success"));
+        ConfigHolder.INSTANCE.addListener(event -> LOGGER.info("refresh success"));
         ConfigHolder.INSTANCE.resolve(event);
         final int test = (Integer) ConfigHolder.INSTANCE.getConfig(KEY);
         Assert.assertEquals(TestConfigSources.ORDER, test);
