@@ -1,6 +1,8 @@
 # Registry Migration - Dubbo
 
-本文主要介绍[服务注册插件](../../../sermant-plugins/sermant-service-registry)基于Dubbo框架注册中心的迁移能力
+本文主要介绍[服务注册插件](../../../sermant-plugins/sermant-service-registry)基于Dubbo框架注册中心的迁移能力。
+
+SpringCloud迁移见[SpringCloud注册中心迁移](spring-cloud-registry-migiration.md)
 
 ## 功能
 
