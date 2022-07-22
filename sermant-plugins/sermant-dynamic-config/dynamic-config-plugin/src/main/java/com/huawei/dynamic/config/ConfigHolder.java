@@ -59,7 +59,6 @@ public enum ConfigHolder {
         "DYNAMIC_CONFIG_REFRESH_THREAD"));
 
     ConfigHolder() {
-        notifier.init();
         loadConfigSources();
     }
 
@@ -85,7 +84,7 @@ public enum ConfigHolder {
                 isNeedRefresh |= doAccept(configSource, event);
             }
             if (isNeedRefresh) {
-                notifier.refresh();
+                notifier.refresh(event);
             }
         });
     }
@@ -100,7 +99,7 @@ public enum ConfigHolder {
      *
      * @param listener 监听器
      */
-    public void addListener(RefreshEventListener listener) {
+    public void addListener(DynamicConfigListener listener) {
         if (listener == null) {
             LOGGER.warning("Dynamic Config listener can not be null!");
             return;

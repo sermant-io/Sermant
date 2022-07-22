@@ -20,8 +20,8 @@ package com.huawei.registry.grace.interceptors;
 import com.huawei.registry.auto.sc.ServiceCombServiceInstance;
 import com.huawei.registry.config.grace.GraceHelper;
 import com.huawei.registry.entity.MicroServiceInstance;
-import com.huawei.registry.entity.ScServer;
-import com.huawei.registry.utils.ReflectUtils;
+
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 

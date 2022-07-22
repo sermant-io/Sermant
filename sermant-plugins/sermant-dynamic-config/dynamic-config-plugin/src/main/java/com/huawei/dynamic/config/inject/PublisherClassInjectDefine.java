@@ -18,7 +18,6 @@
 package com.huawei.dynamic.config.inject;
 
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
-import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 /**
  * 配置发布注入类
@@ -35,12 +34,5 @@ public class PublisherClassInjectDefine extends DynamicClassInjectDefine {
     @Override
     public String factoryName() {
         return ClassInjectDefine.ENABLE_AUTO_CONFIGURATION_FACTORY_NAME;
-    }
-
-    @Override
-    public boolean canInject() {
-        // 仅存在SpringCloud的刷新监听才可注入生效
-        return ClassUtils.loadClass("org.springframework.cloud.endpoint.event.RefreshEventListener",
-            Thread.currentThread().getContextClassLoader()).isPresent();
     }
 }

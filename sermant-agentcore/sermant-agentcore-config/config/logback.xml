@@ -10,6 +10,17 @@
     <property name="log.level" value="info"/>
     <property name="log.maxSize" value="5MB" />
 
+    <!-- 设置日志输出格式 -->
+    <!-- %d{yyyy-MM-dd HH:mm:ss.SSS}日期-->
+    <!-- %C类的完整名称-->
+    <!-- %F文件名-->
+    <!-- %M为method-->
+    <!-- %L为行号-->
+    <!-- %thread线程名称-->
+    <!-- %m或者%msg为信息-->
+    <!-- %n换行-->
+    <property name="log.pattern" value="%white(%d{yyyy-MM-dd HH:mm:ss.SSS}) %highlight(%le) %green(%F %C %M %L [%thread]) %boldMagenta(%m%n)"/>
+
     <!-- ConsoleAppender 控制台输出日志 -->
     <appender name="CONSOLE" class="com.huaweicloud.sermant.dependencies.ch.qos.logback.core.ConsoleAppender">
         <filter class="com.huaweicloud.sermant.dependencies.ch.qos.logback.classic.filter.LevelFilter">
@@ -19,8 +30,7 @@
         </filter>
         <encoder>
             <pattern>
-                <!-- 设置日志输出格式 -->
-                %d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] %logger - %msg%n
+                ${log.pattern}
             </pattern>
         </encoder>
     </appender>
@@ -33,7 +43,7 @@
             <MaxFileSize>${log.maxSize}</MaxFileSize>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %logger - %msg%n</pattern>
+            <pattern>${log.pattern}</pattern>
         </encoder>
     </appender>
 

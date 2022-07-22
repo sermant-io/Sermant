@@ -24,9 +24,9 @@ package com.huawei.registry.grace.interceptors;
 
 import com.huawei.registry.config.grace.GraceContext;
 import com.huawei.registry.config.grace.GraceShutDownManager;
-import com.huawei.registry.utils.ReflectUtils;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import org.springframework.cloud.client.ServiceInstance;

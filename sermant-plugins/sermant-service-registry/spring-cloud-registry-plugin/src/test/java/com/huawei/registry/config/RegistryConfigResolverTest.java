@@ -17,7 +17,7 @@
 
 package com.huawei.registry.config;
 
-import com.huawei.registry.utils.ReflectUtils;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;

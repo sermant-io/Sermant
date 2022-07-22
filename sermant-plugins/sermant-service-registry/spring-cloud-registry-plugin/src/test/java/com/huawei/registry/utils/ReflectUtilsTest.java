@@ -19,13 +19,11 @@ package com.huawei.registry.utils;
 
 import static org.junit.Assert.*;
 
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
+
 import org.junit.Assert;
 import org.junit.Test;
-import org.reflections.Reflections;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Optional;
 
 /**
