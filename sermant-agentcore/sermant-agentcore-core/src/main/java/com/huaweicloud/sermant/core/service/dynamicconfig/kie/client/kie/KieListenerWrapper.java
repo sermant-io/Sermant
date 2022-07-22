@@ -49,26 +49,39 @@ public class KieListenerWrapper {
     private long currentVersion;
 
     /**
-     * map<key, list<listener>>
-     * 单个key映射多个listener， 针对单个key的场景进行监听
+     * key : 键 VersionListenerWrapper: 单个key监听者集合 单个key映射多个listener， 针对单个key的场景进行监听
      */
     private final Map<String, VersionListenerWrapper> keyListenerMap = new HashMap<>();
 
     private SubscriberManager.Task task;
 
+    /**
+     * 包装构建器
+     *
+     * @param key 键
+     * @param dynamicConfigListener 监听器
+     * @param kvDataHolder 数据持有器
+     * @param kieRequest 请求
+     */
     public KieListenerWrapper(String key, DynamicConfigListener dynamicConfigListener,
-                              KvDataHolder kvDataHolder, KieRequest kieRequest) {
+            KvDataHolder kvDataHolder, KieRequest kieRequest) {
         this.group = kieRequest.getLabelCondition();
         this.kvDataHolder = kvDataHolder;
         this.kieRequest = kieRequest;
         addKeyListener(key, dynamicConfigListener);
     }
 
-    public void notifyListener(KvDataHolder.EventDataHolder eventDataHolder) {
+    /**
+     * 通知监听器
+     *
+     * @param eventDataHolder 改事件的数据持有
+     * @param isFirst 是否为第一次通知
+     */
+    public void notifyListeners(KvDataHolder.EventDataHolder eventDataHolder, boolean isFirst) {
         currentVersion = eventDataHolder.getVersion();
         if (!eventDataHolder.getAdded().isEmpty()) {
             // 新增事件
-            notify(eventDataHolder.getAdded(), DynamicConfigEventType.CREATE);
+            notify(eventDataHolder.getAdded(), isFirst ? DynamicConfigEventType.INIT : DynamicConfigEventType.CREATE);
         }
         if (!eventDataHolder.getDeleted().isEmpty()) {
             // 删除事件
@@ -84,29 +97,37 @@ public class KieListenerWrapper {
         for (Map.Entry<String, String> entry : configData.entrySet()) {
             // 通知单个key监听器
             notifyEvent(entry.getKey(), entry.getValue(), dynamicConfigEventType, false);
+
             // 通知该Group的监听器做更新
             notifyEvent(entry.getKey(), entry.getValue(), dynamicConfigEventType, true);
         }
     }
 
     private void notifyEvent(String key, String value, DynamicConfigEventType eventType, boolean isGroup) {
-        final VersionListenerWrapper versionListenerWrapper = keyListenerMap.get(isGroup ? KieConstants.DEFAULT_GROUP_KEY : key);
+        final VersionListenerWrapper versionListenerWrapper = keyListenerMap
+                .get(isGroup ? KieConstants.DEFAULT_GROUP_KEY : key);
         if (versionListenerWrapper == null) {
             return;
         }
+        DynamicConfigEvent event;
         switch (eventType) {
+            case INIT:
+                event = DynamicConfigEvent.initEvent(key, this.group, value);
+                break;
             case CREATE:
-                processAllListeners(DynamicConfigEvent.createEvent(key, this.group, value), versionListenerWrapper);
+                event = DynamicConfigEvent.createEvent(key, this.group, value);
                 break;
             case MODIFY:
-                processAllListeners(DynamicConfigEvent.modifyEvent(key, this.group, value), versionListenerWrapper);
+                event = DynamicConfigEvent.modifyEvent(key, this.group, value);
                 break;
             case DELETE:
-                processAllListeners(DynamicConfigEvent.deleteEvent(key, this.group, value), versionListenerWrapper);
+                event = DynamicConfigEvent.deleteEvent(key, this.group, value);
                 break;
             default:
                 LOGGER.warning(String.format(Locale.ENGLISH, "Event type [%s] is invalid. ", eventType));
+                return;
         }
+        processAllListeners(event, versionListenerWrapper);
     }
 
     private void processAllListeners(DynamicConfigEvent event, VersionListenerWrapper versionListenerWrapper) {
@@ -130,7 +151,7 @@ public class KieListenerWrapper {
     /**
      * 添加key监听器
      *
-     * @param key                   键
+     * @param key 键
      * @param dynamicConfigListener 监听器
      */
     public void addKeyListener(String key, DynamicConfigListener dynamicConfigListener) {
@@ -145,7 +166,7 @@ public class KieListenerWrapper {
     /**
      * 移除key监听器
      *
-     * @param key      键
+     * @param key 键
      * @param listener 监听器
      * @return 是否移除成功
      */
@@ -187,6 +208,11 @@ public class KieListenerWrapper {
         return kieRequest;
     }
 
+    /**
+     * listeners包装器
+     *
+     * @since 2022-01-01
+     */
     static class VersionListenerWrapper {
         Set<VersionListener> listeners;
 
@@ -204,6 +230,11 @@ public class KieListenerWrapper {
         }
     }
 
+    /**
+     * listener包装器, 增加版本号判断
+     *
+     * @since 2022-01-01
+     */
     static class VersionListener {
         DynamicConfigListener listener;
 

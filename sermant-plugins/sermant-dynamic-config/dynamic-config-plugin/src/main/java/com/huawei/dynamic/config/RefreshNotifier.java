@@ -18,11 +18,11 @@
 package com.huawei.dynamic.config;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 /**
@@ -36,47 +36,26 @@ public class RefreshNotifier {
 
     private static final int LISTENER_INIT_SIZE = 4;
 
-    private final List<RefreshEventListener> refreshEventListeners = new ArrayList<>(LISTENER_INIT_SIZE);
-
-    private boolean isInitialized = false;
+    private final List<DynamicConfigListener> dynamicConfigListeners = new ArrayList<>(LISTENER_INIT_SIZE);
 
     /**
      * 添加监听数据
      *
      * @param listener 监听器
      */
-    public void addListener(RefreshEventListener listener) {
-        refreshEventListeners.add(listener);
+    public void addListener(DynamicConfigListener listener) {
+        dynamicConfigListeners.add(listener);
+        dynamicConfigListeners.sort(Comparator.comparingInt(DynamicConfigListener::getOrder));
     }
 
     /**
-     * 通知刷新事件
+     * 通知事件
+     *
+     * @param event 通知事件
      */
-    public void refresh() {
-        if (!isInitialized) {
-            return;
+    public void refresh(DynamicConfigEvent event) {
+        for (DynamicConfigListener listener : dynamicConfigListeners) {
+            listener.configChange(event);
         }
-        for (RefreshEventListener listener : refreshEventListeners) {
-            listener.refresh();
-        }
-    }
-
-    /**
-     * 初始化等待方法
-     */
-    public void init() {
-        final long firstRefreshDelayMs = PluginConfigManager.getPluginConfig(DynamicConfiguration.class)
-            .getFirstRefreshDelayMs();
-        CompletableFuture.runAsync(() -> {
-            try {
-                Thread.sleep(firstRefreshDelayMs);
-            } catch (InterruptedException ex) {
-                LOGGER.info("[DynamicConfig] notify wait thread terminate!");
-            }
-        }).thenApply(unused -> {
-            isInitialized = true;
-            refresh();
-            return unused;
-        });
     }
 }

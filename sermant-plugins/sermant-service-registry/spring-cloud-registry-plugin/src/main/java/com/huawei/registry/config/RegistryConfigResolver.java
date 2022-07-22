@@ -17,7 +17,7 @@
 
 package com.huawei.registry.config;
 
-import com.huawei.registry.utils.ReflectUtils;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.huaweicloud.sermant.core.plugin.converter.Converter;
 import com.huaweicloud.sermant.core.plugin.converter.YamlConverter;

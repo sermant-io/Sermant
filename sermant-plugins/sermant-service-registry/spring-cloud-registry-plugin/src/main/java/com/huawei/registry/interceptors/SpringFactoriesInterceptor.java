@@ -27,7 +27,6 @@ import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine.Plugin;
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectService;
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.util.MultiValueMap;
@@ -102,15 +101,12 @@ public class SpringFactoriesInterceptor extends RegisterSwitchSupport {
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         if (result instanceof List) {
             final List<String> convertedResult = (List<String>) result;
-            CLASS_DEFINES.stream()
-                    .filter(classInjectDefine -> StringUtils.equals(classInjectDefine.factoryName(), factoryName)
-                            || StringUtils.isBlank(classInjectDefine.factoryName()))
-                    .forEach(classInjectDefine -> {
-                        final List<String> injectClasses = service.injectConfiguration(factoryName, null,
-                                classInjectDefine, contextClassLoader);
-                        injectClasses.stream().filter(injectClass -> !convertedResult.contains(injectClass))
-                                .forEach(convertedResult::add);
-                    });
+            CLASS_DEFINES.forEach(classInjectDefine -> {
+                final List<String> injectClasses = service.injectConfiguration(factoryName, null,
+                        classInjectDefine, contextClassLoader);
+                injectClasses.stream().filter(injectClass -> !convertedResult.contains(injectClass))
+                        .forEach(convertedResult::add);
+            });
         }
     }
 

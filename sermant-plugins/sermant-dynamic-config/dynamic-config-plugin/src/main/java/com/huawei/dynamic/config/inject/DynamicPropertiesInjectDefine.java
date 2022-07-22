@@ -17,9 +17,6 @@
 
 package com.huawei.dynamic.config.inject;
 
-import com.huawei.dynamic.config.DynamicConfiguration;
-
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
 
 /**
@@ -37,10 +34,5 @@ public class DynamicPropertiesInjectDefine extends DynamicClassInjectDefine {
     @Override
     public String factoryName() {
         return ClassInjectDefine.ENABLE_AUTO_CONFIGURATION_FACTORY_NAME;
-    }
-
-    @Override
-    public boolean canInject() {
-        return PluginConfigManager.getPluginConfig(DynamicConfiguration.class).isEnableDynamicConfig();
     }
 }
