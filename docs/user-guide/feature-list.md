@@ -1,6 +1,6 @@
 # 当前功能列表
 
-|功能名称|子功能|状态|宿主的必要环境|支持的配置中心|
+|功能名称|子功能|状态|组件支持列表|支持的配置中心|
 |:-:|:-:|:-:|:-|:-:|
 |[限流降级](flowcontrol/flowcontrol.md)|接口限流<br>应用降级<br>隔离仓|稳定|SpringBoot 1.2.x - 2.6.x & SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>ApacheDubbo 2.7.3 - 3.0.x<br>AlibabaDubbo 2.1.x - 2.6.x|Kie<br>ZooKeeper|
 |[流量录制回放](flowrecord/document.md)||实验|||
