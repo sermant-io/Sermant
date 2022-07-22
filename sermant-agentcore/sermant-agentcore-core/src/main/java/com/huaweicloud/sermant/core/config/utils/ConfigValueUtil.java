@@ -22,6 +22,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -85,6 +86,21 @@ public class ConfigValueUtil {
         key -> key.toLowerCase(Locale.ROOT).replace('.', '_'),
         key -> key.toLowerCase(Locale.ROOT).replace('.', '-'),
     };
+
+    /**
+     * 值获取表达式
+     * <p>优先级: 启动配置 > 环境变量 > 启动参数 > 配置文件</p>
+     */
+    private static final List<ValueFixFunction<String, Map<String, Object>, FixedValueProvider, String>>
+            VALUE_FIX_FUNCTIONS = Arrays.asList(
+                (key, argsMap, provider) -> {
+                    final Object config = argsMap.get(key);
+                    return config == null ? null : config.toString();
+                },
+                (key, argsMap, provider) -> System.getenv(key),
+                (key, argsMap, provider) -> System.getProperty(key),
+                (key, argsMap, provider) -> provider == null ? null : provider.getFixedValue(key)
+    );
 
     private ConfigValueUtil() {
     }
@@ -299,36 +315,13 @@ public class ConfigValueUtil {
      */
     private static String getFormatKeyFixVal(String key, String defaultVal, Map<String, Object> argsMap,
             FixedValueProvider provider) {
-        for (KeyFormatter keyFormatter : KEY_FORMATTERS) {
-            final String fixedValue = getFixedValue(keyFormatter.format(key), null, argsMap, provider);
-            if (!StringUtils.isBlank(fixedValue)) {
-                return fixedValue;
+        for (ValueFixFunction<String, Map<String, Object>, FixedValueProvider, String> function : VALUE_FIX_FUNCTIONS) {
+            for (KeyFormatter keyFormatter : KEY_FORMATTERS) {
+                final String fixedValue = function.apply(keyFormatter.format(key), argsMap, provider);
+                if (!StringUtils.isBlank(fixedValue)) {
+                    return fixedValue;
+                }
             }
-        }
-        return defaultVal;
-    }
-
-    /**
-     * 获取修正的字段，优先级：入参 > 环境变量 > 系统变量 > 配置 > 默认值
-     *
-     * @param key 键
-     * @param defaultVal 默认值
-     * @param provider 配置信息
-     * @return 环境变量或系统变量
-     */
-    private static String getFixedValue(String key, String defaultVal, Map<String, Object> argsMap,
-            FixedValueProvider provider) {
-        final Object arg = argsMap.get(key);
-        if (arg != null) {
-            return arg.toString();
-        }
-        final String valFromEnv = getValFromEnv(key);
-        if (valFromEnv != null) {
-            return valFromEnv;
-        }
-        final String configVal = provider == null ? null : provider.getFixedValue(key);
-        if (configVal != null) {
-            return configVal;
         }
         return defaultVal;
     }
@@ -345,6 +338,27 @@ public class ConfigValueUtil {
             return envVal;
         }
         return System.getProperty(key);
+    }
+
+    /**
+     * 值修正, 该类仅用于配置值修正
+     *
+     * @param <K> 键
+     * @param <B> 源数据1
+     * @param <P> 源数据2
+     * @param <R> 结果
+     * @since 2022-07-05
+     */
+    interface ValueFixFunction<K, B, P, R> {
+        /**
+         * 应用修正
+         *
+         * @param key 键
+         * @param bootstrapArgsMap 启动参数Map
+         * @param sourceProvider 配置数据提供
+         * @return 修正后的值
+         */
+        R apply(K key, B bootstrapArgsMap, P sourceProvider);
     }
 
     /**

@@ -32,6 +32,10 @@ import java.util.Set;
  * @since 2022-07-12
  */
 public class OriginConfigDisableSource extends MapPropertySource implements ConfigSource {
+    private static final String NACOS_CONFIG_CENTER_ENABLED = "spring.cloud.nacos.config.enabled";
+
+    private static final String ZK_CONFIG_CENTER_ENABLED = "spring.cloud.zookeeper.config.enabled";
+
     private static final Map<String, Object> SOURCE = new HashMap<>();
 
     /**
@@ -41,8 +45,8 @@ public class OriginConfigDisableSource extends MapPropertySource implements Conf
      */
     public OriginConfigDisableSource(String name) {
         super(name, SOURCE);
-        SOURCE.put("spring.cloud.nacos.config.enabled", false);
-        SOURCE.put("spring.cloud.zookeeper.config.enabled", false);
+        SOURCE.put(NACOS_CONFIG_CENTER_ENABLED, false);
+        SOURCE.put(ZK_CONFIG_CENTER_ENABLED, false);
     }
 
     @Override
