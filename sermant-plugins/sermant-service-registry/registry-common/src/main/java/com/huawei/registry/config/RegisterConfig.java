@@ -71,7 +71,7 @@ public class RegisterConfig implements PluginConfig {
     /**
      * sc 环境配置
      */
-    private String environment = "production";
+    private String environment = "";
 
     /**
      * 默认sc版本
@@ -361,7 +361,7 @@ public class RegisterConfig implements PluginConfig {
      *
      * @return 注册参数
      */
-    public Map<String, String> getParameter() {
+    public Map<String, String> getParameterMap() {
         if (StringUtils.isBlank(parameter)) {
             return Collections.emptyMap();
         }
@@ -374,6 +374,10 @@ public class RegisterConfig implements PluginConfig {
             }
         }
         return map;
+    }
+
+    public String getParameter() {
+        return this.parameter;
     }
 
     public void setParameter(String parameter) {

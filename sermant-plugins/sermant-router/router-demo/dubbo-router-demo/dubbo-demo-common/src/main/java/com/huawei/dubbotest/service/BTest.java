@@ -16,6 +16,8 @@
 
 package com.huawei.dubbotest.service;
 
+import com.huawei.dubbotest.domain.Test;
+
 import java.util.List;
 import java.util.Map;
 

@@ -122,6 +122,6 @@ public class CseGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
 
     @Override
     protected boolean isReady() {
-        return StringUtils.isNoneBlank(serviceName, config.getApplication(), config.getEnvironment());
+        return StringUtils.isNoneBlank(serviceName, config.getApplication());
     }
 }

@@ -47,7 +47,7 @@ public class ServiceMeta implements BaseConfig {
     /**
      * 环境
      */
-    private String environment = "development";
+    private String environment = "";
 
     /**
      * 自定义标签值
@@ -102,7 +102,7 @@ public class ServiceMeta implements BaseConfig {
     }
 
     public String getEnvironment() {
-        return environment;
+        return environment == null ? "" : environment;
     }
 
     public void setEnvironment(String environment) {

@@ -16,6 +16,7 @@
 
 package com.huawei.dubbotest.controller;
 
+import com.huawei.dubbotest.domain.Test;
 import com.huawei.dubbotest.service.BTest;
 
 import org.springframework.web.bind.annotation.GetMapping;
