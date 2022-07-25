@@ -30,8 +30,8 @@
 考虑到后三者随实际业务场景不同有较大变化，因此赋予他们的开发自由度较高，对他们仅有模块目录和输出目录的限制。出于这点考虑，`示例模块`将不对他们做参考案例。`示例模块`中包含以下模块：
 
 - [demo-plugin](../../sermant-example/demo-plugin): 示例插件
-- [demo-service](../../sermant-plugins/sermant-example/demo-service): 示例插件服务
-- [demo-application](../../sermant-plugins/sermant-example/demo-application): 示例宿主应用
+- [demo-service](../../sermant-example/demo-service): 示例插件服务
+- [demo-application](../../sermant-example/demo-application): 示例宿主应用
 
 ## 插件模块
 
