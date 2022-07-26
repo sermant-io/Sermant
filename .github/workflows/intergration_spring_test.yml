@@ -5,7 +5,7 @@ on:
   push:
   pull_request:
     branches:
-      - master
+      - main
       - develop
 jobs:
   test-for-spring-nacos-config:
@@ -22,7 +22,7 @@ jobs:
             springCloudVersion: "Finchley.RELEASE"
           - nacosVersion: "2.1.0.RELEASE"
             springBootVersion: "2.1.0.RELEASE"
-            springCloudVersion: "Finchley.RELEASE"
+            springCloudVersion: "Greenwich.RELEASE"
           - nacosVersion: "2.2.0.RELEASE"
             springBootVersion: "2.2.0.RELEASE"
             springCloudVersion: "Hoxton.RELEASE"
