@@ -19,7 +19,7 @@
     <!-- %thread线程名称-->
     <!-- %m或者%msg为信息-->
     <!-- %n换行-->
-    <property name="log.pattern" value="%white(%d{yyyy-MM-dd HH:mm:ss.SSS}) %highlight(%le) %green(%F %C %M %L [%thread]) %boldMagenta(%m%n)"/>
+    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %le %F %C %M %L [%thread] %m%n"/>
 
     <!-- ConsoleAppender 控制台输出日志 -->
     <appender name="CONSOLE" class="com.huaweicloud.sermant.dependencies.ch.qos.logback.core.ConsoleAppender">
