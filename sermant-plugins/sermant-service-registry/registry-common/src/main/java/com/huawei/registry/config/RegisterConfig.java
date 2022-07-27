@@ -26,7 +26,9 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * spring注册插件配置
@@ -69,7 +71,7 @@ public class RegisterConfig implements PluginConfig {
     /**
      * sc 环境配置
      */
-    private String environment = "production";
+    private String environment = "";
 
     /**
      * 默认sc版本
@@ -146,6 +148,11 @@ public class RegisterConfig implements PluginConfig {
      * dubbo注册时的接口级参数key
      */
     private List<String> interfaceKeys;
+
+    /**
+     * 服务级别参数，形如k1,v1;k2,v2
+     */
+    private String parameters;
 
     /**
      * 构造方法
@@ -347,5 +354,33 @@ public class RegisterConfig implements PluginConfig {
 
     public void setInterfaceKeys(List<String> interfaceKeys) {
         this.interfaceKeys = interfaceKeys;
+    }
+
+    /**
+     * 获取注册参数
+     *
+     * @return 注册参数
+     */
+    public Map<String, String> getParametersMap() {
+        if (StringUtils.isBlank(parameters)) {
+            return Collections.emptyMap();
+        }
+        Map<String, String> map = new HashMap<>();
+        String[] kvs = parameters.trim().split(",");
+        for (String kv : kvs) {
+            String[] arr = kv.trim().split(":");
+            if (arr.length > 0) {
+                map.put(arr[0].trim(), arr.length > 1 ? arr[1].trim() : "");
+            }
+        }
+        return map;
+    }
+
+    public String getParameters() {
+        return this.parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
 }
