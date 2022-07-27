@@ -53,13 +53,13 @@ jobs:
         run: mvn package -DskipTests -Pagent --file pom.xml
       - name: package dubbo 2.6.0 tests
         if: matrix.dubbo-version == '2-6' && matrix.dubbo-versions == '0'
-        run: mvn package -Dalibaba.dubbo.version=2.6.${{ matrix.dubbo-versions }} -DskipTests -P260 --file sermant-integration-tests/pom.xml
+        run: mvn package -Dalibaba.dubbo.version=2.6.${{ matrix.dubbo-versions }} -DskipTests -P260 --file sermant-integration-tests/dubbo-test/pom.xml
       - name: package dubbo 2.6.x tests
         if: matrix.dubbo-version == '2-6' && matrix.dubbo-versions != '0'
-        run: mvn package -Dalibaba.dubbo.version=2.6.${{ matrix.dubbo-versions }} -DskipTests --file sermant-integration-tests/pom.xml
+        run: mvn package -Dalibaba.dubbo.version=2.6.${{ matrix.dubbo-versions }} -DskipTests --file sermant-integration-tests/dubbo-test/pom.xml
       - name: package dubbo 2.7.x tests
         if: matrix.dubbo-version == '2-7'
-        run: mvn package -Ddubbo.version=2.7.${{ matrix.dubbo-versions }} -DskipTests --file sermant-integration-tests/pom.xml
+        run: mvn package -Ddubbo.version=2.7.${{ matrix.dubbo-versions }} -DskipTests --file sermant-integration-tests/dubbo-test/pom.xml
       - name: start provider service
         env:
           dynamic.config.serverAddress: 127.0.0.1:30110
@@ -82,4 +82,4 @@ jobs:
       - name: waiting for services start
         run: sleep 30s
       - name: integration test
-        run: mvn test --file sermant-integration-tests/pom.xml
+        run: mvn test --file sermant-integration-tests/dubbo-test/pom.xml
