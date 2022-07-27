@@ -59,7 +59,7 @@ public class ServiceMeta implements BaseConfig {
      */
     private String customLabelValue = "default";
 
-    private Map<String, String> parameter;
+    private Map<String, String> parameters;
 
     public String getCustomLabel() {
         return customLabel;
@@ -109,11 +109,11 @@ public class ServiceMeta implements BaseConfig {
         this.environment = environment;
     }
 
-    public Map<String, String> getParameter() {
-        return parameter;
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
-    public void setParameter(Map<String, String> parameter) {
-        this.parameter = parameter;
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 }

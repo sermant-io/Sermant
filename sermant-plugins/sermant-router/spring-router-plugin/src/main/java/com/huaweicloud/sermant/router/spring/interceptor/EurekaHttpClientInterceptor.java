@@ -50,7 +50,7 @@ public class EurekaHttpClientInterceptor extends AbstractInterceptor {
             InstanceInfo instanceInfo = (InstanceInfo) argument;
             AppCache.INSTANCE.setAppName(instanceInfo.getAppName());
             instanceInfo.getMetadata().put(RouterConstant.TAG_VERSION_KEY, routerConfig.getRouterVersion());
-            Optional.ofNullable(routerConfig.getParameter()).ifPresent(instanceInfo.getMetadata()::putAll);
+            Optional.ofNullable(routerConfig.getParameters()).ifPresent(instanceInfo.getMetadata()::putAll);
         }
         return context;
     }

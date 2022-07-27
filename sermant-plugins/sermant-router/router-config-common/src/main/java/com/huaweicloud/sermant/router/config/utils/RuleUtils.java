@@ -63,11 +63,15 @@ public class RuleUtils {
             return Collections.emptyList();
         }
         Map<String, List<Rule>> routeRule = configuration.getRouteRule();
-        if (CollectionUtils.isEmpty(routeRule) || CollectionUtils.isEmpty(routeRule.get(targetService))) {
+        if (CollectionUtils.isEmpty(routeRule)) {
+            return Collections.emptyList();
+        }
+        List<Rule> rules = routeRule.get(targetService);
+        if (CollectionUtils.isEmpty(rules)) {
             return Collections.emptyList();
         }
         List<Rule> list = new ArrayList<>();
-        for (Rule rule : routeRule.get(targetService)) {
+        for (Rule rule : rules) {
             if (isTargetRule(rule, path, serviceName)) {
                 list.add(rule);
             }

@@ -25,9 +25,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,14 +54,13 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-        Object obj) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) {
         Map<String, List<String>> header = new HashMap<>();
         Set<String> headerKeys = service.getHeaderKeys();
-        List<String> headerNames = enumeration2List(httpServletRequest.getHeaderNames());
+        Collection<String> headerNames = enumeration2Collection(request.getHeaderNames(), false);
         for (String headerKey : headerKeys) {
             if (headerNames.contains(headerKey)) {
-                header.put(headerKey, enumeration2List(httpServletRequest.getHeaders(headerKey)));
+                header.put(headerKey, (List<String>) enumeration2Collection(request.getHeaders(headerKey), true));
             }
         }
         ThreadLocalUtils.setRequestHeader(new RequestHeader(header));
@@ -67,24 +68,23 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object obj,
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object obj,
         ModelAndView modelAndView) {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-        Object obj, Exception ex) {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object obj, Exception ex) {
         ThreadLocalUtils.removeRequestHeader();
     }
 
-    private List<String> enumeration2List(Enumeration<?> enumeration) {
+    private Collection<String> enumeration2Collection(Enumeration<?> enumeration, boolean isConvertToList) {
         if (enumeration == null) {
             return Collections.emptyList();
         }
-        List<String> list = new ArrayList<>();
+        Collection<String> collection = isConvertToList ? new ArrayList<>() : new HashSet<>();
         while (enumeration.hasMoreElements()) {
-            list.add((String) enumeration.nextElement());
+            collection.add((String) enumeration.nextElement());
         }
-        return list;
+        return collection;
     }
 }

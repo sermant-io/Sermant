@@ -62,7 +62,7 @@ public class ServiceRegistryInterceptor extends AbstractInterceptor {
                 .invoke(serviceRegistration);
             AppCache.INSTANCE.setAppName(registration.getServiceId());
             registration.getMetadata().put(RouterConstant.TAG_VERSION_KEY, routerConfig.getRouterVersion());
-            Optional.ofNullable(routerConfig.getParameter()).ifPresent(registration.getMetadata()::putAll);
+            Optional.ofNullable(routerConfig.getParameters()).ifPresent(registration.getMetadata()::putAll);
         }
         return context;
     }

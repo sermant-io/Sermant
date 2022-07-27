@@ -152,7 +152,7 @@ public class RegisterConfig implements PluginConfig {
     /**
      * 服务级别参数，形如k1,v1;k2,v2
      */
-    private String parameter;
+    private String parameters;
 
     /**
      * 构造方法
@@ -361,12 +361,12 @@ public class RegisterConfig implements PluginConfig {
      *
      * @return 注册参数
      */
-    public Map<String, String> getParameterMap() {
-        if (StringUtils.isBlank(parameter)) {
+    public Map<String, String> getParametersMap() {
+        if (StringUtils.isBlank(parameters)) {
             return Collections.emptyMap();
         }
         Map<String, String> map = new HashMap<>();
-        String[] kvs = parameter.trim().split(",");
+        String[] kvs = parameters.trim().split(",");
         for (String kv : kvs) {
             String[] arr = kv.trim().split(":");
             if (arr.length > 0) {
@@ -376,11 +376,11 @@ public class RegisterConfig implements PluginConfig {
         return map;
     }
 
-    public String getParameter() {
-        return this.parameter;
+    public String getParameters() {
+        return this.parameters;
     }
 
-    public void setParameter(String parameter) {
-        this.parameter = parameter;
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
 }

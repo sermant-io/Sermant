@@ -45,7 +45,7 @@ public class RouterConfig implements PluginConfig {
     /**
      * 其它配置
      */
-    private Map<String, String> parameter;
+    private Map<String, String> parameters;
 
     /**
      * 构造方法
@@ -56,7 +56,7 @@ public class RouterConfig implements PluginConfig {
             return;
         }
         this.routerVersion = serviceMeta.getVersion();
-        this.parameter = serviceMeta.getParameter();
+        this.parameters = serviceMeta.getParameters();
     }
 
     public String getRouterVersion() {
@@ -95,11 +95,11 @@ public class RouterConfig implements PluginConfig {
         this.ldc = ldc;
     }
 
-    public Map<String, String> getParameter() {
-        return parameter;
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
-    public void setParameter(Map<String, String> parameter) {
-        this.parameter = parameter;
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 }

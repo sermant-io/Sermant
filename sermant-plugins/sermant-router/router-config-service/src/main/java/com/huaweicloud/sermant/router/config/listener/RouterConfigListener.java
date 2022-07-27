@@ -53,6 +53,8 @@ public class RouterConfigListener implements DynamicConfigListener {
 
     private final String cacheName;
 
+    private final Yaml yaml;
+
     /**
      * 构造方法
      *
@@ -60,6 +62,7 @@ public class RouterConfigListener implements DynamicConfigListener {
      */
     public RouterConfigListener(String cacheName) {
         this.cacheName = cacheName;
+        this.yaml = new Yaml();
     }
 
     @Override
@@ -70,10 +73,9 @@ public class RouterConfigListener implements DynamicConfigListener {
             return;
         }
         Map<String, String> routeRuleMap = getRouteRuleMap(event);
-        Yaml routeRuleYaml = new Yaml();
         Map<String, List<Rule>> routeRule = new LinkedHashMap<>();
         for (Entry<String, String> entry : routeRuleMap.entrySet()) {
-            List<Map<String, String>> routeRuleList = routeRuleYaml.load(entry.getValue());
+            List<Map<String, String>> routeRuleList = yaml.load(entry.getValue());
             if (CollectionUtils.isEmpty(routeRuleList)) {
                 continue;
             }
@@ -116,7 +118,6 @@ public class RouterConfigListener implements DynamicConfigListener {
             return routeRuleMap;
         }
         String content = event.getContent();
-        Yaml yaml = new Yaml();
         Map<String, Map<String, Map<String, String>>> load = yaml.load(content);
         if (CollectionUtils.isEmpty(load)) {
             return Collections.emptyMap();
