@@ -97,6 +97,10 @@ public class CommonConstant {
      */
     public static final String LOG_SETTING_FILE_KEY = "log.setting.file";
 
+    /**
+     * 插件加载场景键
+     */
+    public static final String PLUGIN_PROFILE = "profile";
     private CommonConstant() {
     }
 }

@@ -330,9 +330,9 @@ public class ConfigValueUtil {
      * 通过环境变量或者系统变量获取 环境变量 > 系统变量
      *
      * @param key 配置键
-     * @return 变脸值
+     * @return 变量值
      */
-    private static String getValFromEnv(String key) {
+    public static String getValFromEnv(String key) {
         final String envVal = System.getenv(key);
         if (envVal != null) {
             return envVal;

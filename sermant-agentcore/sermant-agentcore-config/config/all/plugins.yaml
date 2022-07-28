@@ -9,3 +9,13 @@ plugins:
   - loadbalancer
 adaptors:
   - lubanops
+profiles:
+  cse:
+    - flowcontrol
+    - service-router
+    - service-registry
+    - dynamic-config
+  apm:
+    - flowcontrol
+    - service-router
+profile: cse,apm
