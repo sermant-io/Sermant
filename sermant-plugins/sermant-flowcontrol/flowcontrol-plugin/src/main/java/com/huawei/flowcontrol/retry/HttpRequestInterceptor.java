@@ -26,7 +26,10 @@ import com.huawei.flowcontrol.service.InterceptorSupporter;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpResponse;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -37,6 +40,8 @@ import java.util.Optional;
  */
 public class HttpRequestInterceptor extends InterceptorSupporter {
     private final String className = HttpRequestInterceptor.class.getName();
+
+    private final Exception defaultException = new Exception("request error");
 
     /**
      * http请求数据转换 适应plugin -> service数据传递 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
@@ -78,8 +83,20 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
     }
 
     @Override
-    protected final ExecuteContext doAfter(ExecuteContext context) {
+    protected final ExecuteContext doAfter(ExecuteContext context) throws IOException {
+        if (hasError(context.getResult())) {
+            // 由于基于当前方法拦截，即使有异常也不会抛出, 只会采用错误码方式返回, 也就不会调用doThrow方法, 因此此处通过手动调用触发
+            chooseHttpService().onThrow(className, defaultException);
+        }
         chooseHttpService().onAfter(className, context.getResult());
         return context;
+    }
+
+    private boolean hasError(Object result) throws IOException {
+        if (result instanceof ClientHttpResponse) {
+            ClientHttpResponse response = (ClientHttpResponse) result;
+            return response.getRawStatusCode() >= HttpStatus.INTERNAL_SERVER_ERROR.value();
+        }
+        return false;
     }
 }
