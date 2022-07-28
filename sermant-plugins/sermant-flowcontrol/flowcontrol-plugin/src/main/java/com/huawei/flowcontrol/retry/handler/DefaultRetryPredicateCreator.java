@@ -28,6 +28,7 @@ import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -41,14 +42,14 @@ import java.util.function.Predicate;
  * @since 2022-04-11
  */
 public class DefaultRetryPredicateCreator implements RetryPredicateCreator {
-    private static final String ALIBABA_GENERIC_SERVICE = "com.alibaba.dubbo.rpc.service.GenericException";
+    private static final String ALIBABA_GENERIC_EXCEPTION = "com.alibaba.dubbo.rpc.service.GenericException";
 
-    private static final String APACHE_GENERIC_SERVICE = "org.apache.dubbo.rpc.service.GenericService";
+    private static final String APACHE_GENERIC_EXCEPTION = "org.apache.dubbo.rpc.service.GenericException";
 
     /**
      * 默认重试状态码
      */
-    private static final String DEFAULT_RETRY_ON_RESPONSE_STATUS = "502";
+    private static final Collection<String> DEFAULT_RETRY_ON_RESPONSE_STATUS = Arrays.asList("502", "503");
 
     /**
      * 默认重试异常
@@ -97,7 +98,7 @@ public class DefaultRetryPredicateCreator implements RetryPredicateCreator {
     }
 
     private boolean isGenericException(String className) {
-        return ALIBABA_GENERIC_SERVICE.equals(className) || APACHE_GENERIC_SERVICE.equals(className);
+        return ALIBABA_GENERIC_EXCEPTION.equals(className) || APACHE_GENERIC_EXCEPTION.equals(className);
     }
 
     private Class<? extends Throwable> getRealExceptionClass(Throwable ex) {
@@ -115,7 +116,7 @@ public class DefaultRetryPredicateCreator implements RetryPredicateCreator {
     public Predicate<Object> createResultPredicate(Retry retry, RetryRule rule) {
         final List<String> retryOnResponseStatus = rule.getRetryOnResponseStatus();
         if (retryOnResponseStatus.isEmpty()) {
-            retryOnResponseStatus.add(DEFAULT_RETRY_ON_RESPONSE_STATUS);
+            retryOnResponseStatus.addAll(DEFAULT_RETRY_ON_RESPONSE_STATUS);
         }
         return result -> retry.needRetry(new HashSet<>(retryOnResponseStatus), result);
     }

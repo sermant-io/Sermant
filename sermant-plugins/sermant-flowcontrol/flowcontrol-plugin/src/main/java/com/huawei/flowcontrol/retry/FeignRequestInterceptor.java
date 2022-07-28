@@ -17,7 +17,10 @@
 
 package com.huawei.flowcontrol.retry;
 
+import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
+import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
+import com.huawei.flowcontrol.common.exception.InvokerWrapperException;
 import com.huawei.flowcontrol.common.handler.retry.AbstractRetry;
 import com.huawei.flowcontrol.common.handler.retry.Retry;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
@@ -27,16 +30,22 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import feign.Request;
+import feign.Response;
+
+import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -47,6 +56,8 @@ import java.util.logging.Logger;
  */
 public class FeignRequestInterceptor extends InterceptorSupporter {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private final String className = FeignRequestInterceptor.class.getName();
 
     private final Retry retry = new FeignRetry();
 
@@ -64,7 +75,13 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
             final URL url = new URL(request.url());
             final HashMap<String, String> headers = new HashMap<>(request.headers().size());
             request.headers().forEach((headerName, headValue) -> headers.put(headerName, headValue.iterator().next()));
-            return Optional.of(new HttpRequestEntity(url.getPath(), headers, request.httpMethod().name()));
+            return Optional.of(new HttpRequestEntity.Builder()
+                    .setRequestType(RequestType.CLIENT)
+                    .setApiPath(url.getPath())
+                    .setHeaders(headers)
+                    .setMethod(request.method())
+                    .setServiceName(url.getHost())
+                    .build());
         } catch (MalformedURLException ignored) {
             // ignored
         }
@@ -72,37 +89,92 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
     }
 
     @Override
-    protected final ExecuteContext doBefore(ExecuteContext context) {
+    protected final ExecuteContext doBefore(ExecuteContext context) throws Exception {
+        final FlowControlResult flowControlResult = new FlowControlResult();
+        final Request request = (Request) context.getArguments()[0];
+        final Optional<HttpRequestEntity> httpRequestEntity = convertToHttpEntity(request);
+        if (!httpRequestEntity.isPresent()) {
+            return context;
+        }
+        chooseHttpService().onBefore(className, httpRequestEntity.get(), flowControlResult);
+        if (flowControlResult.isSkip()) {
+            final String responseMsg = flowControlResult.buildResponseMsg();
+            context.skip(Response.builder()
+                    .status(flowControlResult.getResult().getCode())
+                    .body(responseMsg, StandardCharsets.UTF_8)
+                    .headers(Collections.emptyMap())
+                    .reason(responseMsg)
+                    .request(request)
+                    .build());
+        } else {
+            tryExeWithRetry(context);
+        }
+        return context;
+    }
+
+    private void tryExeWithRetry(ExecuteContext context) {
+        final Object[] allArguments = context.getArguments();
+        Request request = (Request) allArguments[0];
+        Object result = context.getResult();
+        Throwable ex = context.getThrowable();
+        final Supplier<Object> retryFunc = createRetryFunc(context.getObject(),
+                context.getMethod(), allArguments, context.getResult());
+        RetryContext.INSTANCE.markRetry(retry);
+        try {
+            // 第一次执行, 接管宿主逻辑
+            result = retryFunc.get();
+        } catch (Throwable throwable) {
+            ex = throwable;
+            log(throwable);
+        }
+        context.afterMethod(result, ex);
+        try {
+            final Optional<HttpRequestEntity> httpRequestEntity = convertToHttpEntity(request);
+            if (!httpRequestEntity.isPresent()) {
+                return;
+            }
+            RetryContext.INSTANCE.buildRetryPolicy(httpRequestEntity.get());
+            final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
+                    .getHandlers(httpRequestEntity.get());
+            if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ex)) {
+                result = handlers.get(0).executeCheckedSupplier(retryFunc::get);
+            }
+        } catch (Throwable throwable) {
+            LOGGER.warning(String.format(Locale.ENGLISH,
+                    "Failed to invoke method:%s for few times, reason:%s",
+                    context.getMethod().getName(), getExMsg(throwable)));
+        } finally {
+            RetryContext.INSTANCE.remove();
+        }
+        context.skip(fixErrorResult(result, request, ex));
+    }
+
+    private Object fixErrorResult(Object result, Request request, Throwable ex) {
+        if (result == null) {
+            return Response.builder().request(request).reason(getExMsg(ex))
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .headers(Collections.emptyMap())
+                    .body(getExMsg(ex), StandardCharsets.UTF_8)
+                    .build();
+        }
+        return result;
+    }
+
+    private void log(Throwable throwable) {
+        LOGGER.log(Level.INFO, "Failed to invoke target", getExMsg(throwable));
+        LOGGER.log(Level.FINE, "Failed to invoke target", (throwable instanceof InvokerWrapperException)
+                ? ((InvokerWrapperException) throwable).getRealException() : throwable);
+    }
+
+    @Override
+    protected ExecuteContext doThrow(ExecuteContext context) {
+        chooseHttpService().onThrow(className, context.getThrowable());
         return context;
     }
 
     @Override
     protected final ExecuteContext doAfter(ExecuteContext context) {
-        final Object[] allArguments = context.getArguments();
-        Request request = (Request) allArguments[0];
-        Object result = context.getResult();
-        try {
-            final Optional<HttpRequestEntity> httpRequestEntity = convertToHttpEntity(request);
-            if (!httpRequestEntity.isPresent()) {
-                return context;
-            }
-            RetryContext.INSTANCE.markRetry(retry);
-            final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
-                .getHandlers(httpRequestEntity.get());
-            if (!handlers.isEmpty() && needRetry(handlers.get(0), result, null)) {
-                // 重试仅有一个策略
-                final Supplier<Object> retryFunc = createRetryFunc(context.getObject(),
-                    context.getMethod(), allArguments, context.getResult());
-                result = handlers.get(0).executeCheckedSupplier(retryFunc::get);
-            }
-        } catch (Throwable throwable) {
-            LOGGER.warning(String.format(Locale.ENGLISH,
-                "Failed to invoke method:%s for few times, reason:%s",
-                context.getMethod().getName(), throwable.getCause()));
-        } finally {
-            RetryContext.INSTANCE.removeRetry();
-        }
-        context.changeResult(result);
+        chooseHttpService().onAfter(className, context.getResult());
         return context;
     }
 
@@ -124,7 +196,7 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
                     return method;
                 } catch (NoSuchMethodException ex) {
                     LOGGER.warning(String.format(Locale.ENGLISH,
-                        "Can not find method status from response class %s", result.getClass().getName()));
+                            "Can not find method status from response class %s", result.getClass().getName()));
                 }
                 return placeHolderMethod;
             });
@@ -135,10 +207,10 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
                 return Optional.of(String.valueOf(status.get().invoke(result)));
             } catch (IllegalAccessException ex) {
                 LOGGER.warning(String.format(Locale.ENGLISH, "Can not find method status from class [%s]!",
-                    result.getClass().getCanonicalName()));
+                        result.getClass().getCanonicalName()));
             } catch (InvocationTargetException ex) {
                 LOGGER.warning(String.format(Locale.ENGLISH, "Invoking method status failed, reason: %s",
-                    ex.getMessage()));
+                        ex.getMessage()));
             }
             return Optional.empty();
         }
