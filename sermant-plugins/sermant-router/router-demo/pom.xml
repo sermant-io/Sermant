@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>dubbo-router-demo</module>
+        <module>spring-router-demo</module>
     </modules>
 
     <properties>

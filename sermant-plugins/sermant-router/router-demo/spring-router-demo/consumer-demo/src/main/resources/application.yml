@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: consumer-demo
+
+server:
+  port: 8161
+
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 10000
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+
+ribbon:
+  ConnectTimeout: 10000
+  ReadTimeout: 10000
