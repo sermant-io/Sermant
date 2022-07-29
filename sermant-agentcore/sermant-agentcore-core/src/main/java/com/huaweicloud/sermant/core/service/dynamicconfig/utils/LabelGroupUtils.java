@@ -141,10 +141,14 @@ public class LabelGroupUtils {
             final String[] labels = decode.split("&");
             for (String label : labels) {
                 final String[] labelKv = label.split("=");
-                if (labelKv.length != KV_LEN) {
-                    continue;
+                if (labelKv.length == KV_LEN) {
+                    result.put(labelKv[0], labelKv[1]);
+                } else if (labelKv.length == 1) {
+                    // 仅配置了KEY的情况, 使用空串代替
+                    result.put(labelKv[0], "");
+                } else {
+                    LOGGER.warning(String.format(Locale.ENGLISH, "Invalid label [%s]", label));
                 }
-                result.put(labelKv[0], labelKv[1]);
             }
         } catch (UnsupportedEncodingException ignored) {
             // ignored
