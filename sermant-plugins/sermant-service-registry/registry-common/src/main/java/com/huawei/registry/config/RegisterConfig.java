@@ -135,6 +135,11 @@ public class RegisterConfig implements PluginConfig {
     private String zone;
 
     /**
+     * 基于hostname访问时, 可由用户选择是否直接使用IP地址进行访问下游
+     */
+    private boolean preferIpAddress = false;
+
+    /**
      * 是否忽略契约差异
      */
     private boolean ignoreSwaggerDifferent = false;
@@ -166,6 +171,14 @@ public class RegisterConfig implements PluginConfig {
         this.application = serviceMeta.getApplication();
         this.project = serviceMeta.getProject();
         this.version = serviceMeta.getVersion();
+    }
+
+    public boolean isPreferIpAddress() {
+        return preferIpAddress;
+    }
+
+    public void setPreferIpAddress(boolean preferIpAddress) {
+        this.preferIpAddress = preferIpAddress;
     }
 
     public String getZone() {

@@ -17,8 +17,11 @@
 
 package com.huawei.registry.service.register;
 
+import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.utils.CommonUtils;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 
@@ -32,7 +35,13 @@ import java.util.Optional;
  * @since 2022-02-17
  */
 public class ServicecombServiceInstance implements MicroServiceInstance {
+    private final RegisterConfig registerConfig;
+
     private final MicroserviceInstance microserviceInstance;
+
+    private String ip;
+
+    private int port;
 
     /**
      * 构造器
@@ -41,6 +50,7 @@ public class ServicecombServiceInstance implements MicroServiceInstance {
      */
     public ServicecombServiceInstance(MicroserviceInstance instance) {
         this.microserviceInstance = instance;
+        this.registerConfig = PluginConfigManager.getPluginConfig(RegisterConfig.class);
     }
 
     @Override
@@ -50,18 +60,25 @@ public class ServicecombServiceInstance implements MicroServiceInstance {
 
     @Override
     public String getHost() {
-        return microserviceInstance.getHostName();
+        return registerConfig.isPreferIpAddress() ? getIp() : microserviceInstance.getHostName();
     }
 
     @Override
     public String getIp() {
-        final Optional<String> ipByEndpoint = CommonUtils.getIpByEndpoint(microserviceInstance.getEndpoints().get(0));
-        return ipByEndpoint.orElseGet(this::getHost);
+        if (ip == null) {
+            final Optional<String> ipByEndpoint = CommonUtils.getIpByEndpoint(microserviceInstance.getEndpoints()
+                    .get(0));
+            ipByEndpoint.ifPresent(filterIp -> ip = filterIp);
+        }
+        return ip;
     }
 
     @Override
     public int getPort() {
-        return CommonUtils.getPortByEndpoint(microserviceInstance.getEndpoints().get(0));
+        if (port == 0) {
+            port = CommonUtils.getPortByEndpoint(microserviceInstance.getEndpoints().get(0));
+        }
+        return port;
     }
 
     @Override
