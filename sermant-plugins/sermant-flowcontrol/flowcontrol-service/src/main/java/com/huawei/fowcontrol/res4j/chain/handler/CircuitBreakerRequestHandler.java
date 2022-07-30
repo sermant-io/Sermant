@@ -65,13 +65,30 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
     public void onBefore(RequestContext context, Set<String> businessNames) {
         final List<CircuitBreaker> circuitBreakers = circuitBreakerHandler.createOrGetHandlers(businessNames);
         if (!circuitBreakers.isEmpty()) {
-            circuitBreakers.forEach(CircuitBreaker::acquirePermission);
+            for (CircuitBreaker circuitBreaker : circuitBreakers) {
+                checkForceOpen(circuitBreaker);
+                circuitBreaker.acquirePermission();
+            }
 
             // 这里使用内置方法获取时间, 列表中的每个熔断器时间均一致，因此取第一个
             context.save(getStartTime(), circuitBreakers.get(0).getCurrentTimestamp());
             context.save(getContextName(), circuitBreakers);
         }
         super.onBefore(context, businessNames);
+    }
+
+    /**
+     * 强制开启状态直接抛出熔断异常
+     *
+     * @param circuitBreaker 熔断器
+     */
+    private void checkForceOpen(CircuitBreaker circuitBreaker) {
+        final String name = circuitBreaker.getName();
+        final String[] parts = name.split(SEPARATOR);
+        if (Boolean.parseBoolean(parts[FORCE_OPEN_LAST_INDEX])) {
+            // 强制开启则直接抛出异常
+            throw CallNotPermittedException.createCallNotPermittedException(circuitBreaker);
+        }
     }
 
     @Override
@@ -108,20 +125,16 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
 
     @Override
     protected boolean isSkip(RequestContext context, Set<String> businessNames) {
-        return checkState(circuitBreakerHandler.createOrGetHandlers(businessNames));
+        return isForceClose(circuitBreakerHandler.createOrGetHandlers(businessNames));
     }
 
-    private boolean checkState(List<CircuitBreaker> circuitBreakers) {
+    private boolean isForceClose(List<CircuitBreaker> circuitBreakers) {
         for (CircuitBreaker circuitBreaker : circuitBreakers) {
             final String name = circuitBreaker.getName();
             final String[] parts = name.split(SEPARATOR);
             if (Boolean.parseBoolean(parts[FORCE_CLOSE_LAST_INDEX])) {
                 // 强制关闭则跳过当前处理器逻辑
                 return true;
-            }
-            if (Boolean.parseBoolean(parts[FORCE_OPEN_LAST_INDEX])) {
-                // 强制开启则直接抛出异常
-                throw CallNotPermittedException.createCallNotPermittedException(circuitBreaker);
             }
         }
         return false;
