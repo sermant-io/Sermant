@@ -62,6 +62,8 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
 
     private final String className = FeignRequestInterceptor.class.getName();
 
+    private final Exception defaultException = new Exception("request error");
+
     private final Retry retry = new FeignRetry();
 
     /**
@@ -188,8 +190,20 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
 
     @Override
     protected final ExecuteContext doAfter(ExecuteContext context) {
+        if (hasError(context)) {
+            chooseHttpService().onThrow(className, defaultException);
+        }
         chooseHttpService().onAfter(className, context.getResult());
         return context;
+    }
+
+    private boolean hasError(ExecuteContext context) {
+        final Object result = context.getResult();
+        if (result instanceof Response) {
+            Response response = (Response) result;
+            return response.status() >= HttpStatus.INTERNAL_SERVER_ERROR.value();
+        }
+        return false;
     }
 
     /**

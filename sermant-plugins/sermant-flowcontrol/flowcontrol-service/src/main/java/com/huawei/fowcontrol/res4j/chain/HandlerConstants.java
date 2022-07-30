@@ -65,11 +65,6 @@ public class HandlerConstants {
     public static final String THREAD_LOCAL_KEY_PREFIX = HandlerConstants.class.getName()
             + "___THREAD_LOCAL_KEY_PREFIX___";
 
-    /**
-     * 空串
-     */
-    public static final String EMPTY_STR = "";
-
     private HandlerConstants() {
     }
 }
