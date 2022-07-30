@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.core.plugin;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.config.utils.ConfigValueUtil;
 import com.huaweicloud.sermant.core.plugin.adaptor.AdaptorManager;
 import com.huaweicloud.sermant.core.plugin.agent.ByteEnhanceManager;
 import com.huaweicloud.sermant.core.plugin.config.PluginSetting;
@@ -30,7 +31,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.instrument.Instrumentation;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * 插件系统入口
@@ -61,7 +67,9 @@ public class PluginSystemEntrance {
      */
     public static void initialize(Instrumentation instrumentation) {
         final PluginSetting pluginSetting = loadSetting();
-        if (PluginManager.initPlugins(pluginSetting.getPlugins(), instrumentation)
+        List<String> plugins = getLoadPlugins(pluginSetting);
+        LOGGER.info(String.format(Locale.ROOT, "load plugins: %s", plugins.toString()));
+        if (PluginManager.initPlugins(plugins, instrumentation)
                 | AdaptorManager.initAdaptors(pluginSetting.getAdaptors(), instrumentation)) {
             ByteEnhanceManager.enhance(instrumentation);
         }
@@ -91,5 +99,30 @@ public class PluginSystemEntrance {
                 }
             }
         }
+    }
+
+    /**
+     * 融合配置文件中的场景，插件，和环境变量中的场景信息
+     *
+     * @param pluginSetting 插件配置信息
+     * @return 需要加载的插件列表
+     */
+    private static List<String> getLoadPlugins(PluginSetting pluginSetting) {
+        Map<String, List<String>> profilesMap = pluginSetting.getProfiles();
+        List<String> plugins = pluginSetting.getPlugins();
+        if (profilesMap == null) {
+            return plugins;
+        }
+        List<String> profiles = Arrays.asList(String.join(",", pluginSetting.getProfile(),
+                ConfigValueUtil.getValFromEnv(CommonConstant.PLUGIN_PROFILE)).split(","));
+        profiles = profiles.stream().distinct().collect(Collectors.toList());
+        profiles.forEach(profile -> {
+            if (profilesMap.containsKey(profile)) {
+                plugins.addAll(profilesMap.get(profile));
+            } else {
+                LOGGER.warning(String.format(Locale.ROOT,"The value of profile: %s is Invalid", profile));
+            }
+        });
+        return plugins.stream().distinct().collect(Collectors.toList());
     }
 }
