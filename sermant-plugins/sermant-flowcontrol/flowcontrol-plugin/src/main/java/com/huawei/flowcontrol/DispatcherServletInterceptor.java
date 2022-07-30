@@ -16,7 +16,7 @@
 
 package com.huawei.flowcontrol;
 
-import com.huawei.flowcontrol.common.adapte.cse.entity.FlowControlServiceMeta;
+import com.huawei.flowcontrol.common.config.ConfigConst;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
@@ -58,7 +58,7 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
                 .setServletPath(request.getRequestURI())
                 .setHeaders(getHeaders(request))
                 .setMethod(request.getMethod())
-                .setServiceName(FlowControlServiceMeta.getInstance().getServiceName())
+                .setServiceName(request.getHeader(ConfigConst.FLOW_REMOTE_SERVICE_NAME_HEADER_KEY))
                 .build());
     }
 

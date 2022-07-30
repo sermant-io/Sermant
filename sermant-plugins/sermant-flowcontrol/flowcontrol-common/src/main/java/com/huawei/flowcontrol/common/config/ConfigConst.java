@@ -254,6 +254,11 @@ public class ConfigConst {
      */
     public static final String REST_TEMPLATE_REQUEST_FACTORY_HTTP = "http";
 
+    /**
+     * 调用传递上游服务名
+     */
+    public static final String FLOW_REMOTE_SERVICE_NAME_HEADER_KEY = "sermant.flowcontrol.header.remote.service.name";
+
     private ConfigConst() {
     }
 }
