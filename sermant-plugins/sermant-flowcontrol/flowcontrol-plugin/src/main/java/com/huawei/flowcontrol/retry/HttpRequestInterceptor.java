@@ -17,6 +17,8 @@
 
 package com.huawei.flowcontrol.retry;
 
+import com.huawei.flowcontrol.common.adapte.cse.entity.FlowControlServiceMeta;
+import com.huawei.flowcontrol.common.config.ConfigConst;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
@@ -30,6 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Optional;
 
 /**
@@ -65,7 +68,10 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
     @Override
     protected final ExecuteContext doBefore(ExecuteContext context) {
         final FlowControlResult flowControlResult = new FlowControlResult();
-        final Optional<HttpRequestEntity> httpRequestEntity = convertToHttpEntity((HttpRequest) context.getObject());
+        final HttpRequest request = (HttpRequest) context.getObject();
+        request.getHeaders().put(ConfigConst.FLOW_REMOTE_SERVICE_NAME_HEADER_KEY,
+                Collections.singletonList(FlowControlServiceMeta.getInstance().getServiceName()));
+        final Optional<HttpRequestEntity> httpRequestEntity = convertToHttpEntity(request);
         if (!httpRequestEntity.isPresent()) {
             return context;
         }

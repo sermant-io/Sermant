@@ -17,6 +17,8 @@
 
 package com.huawei.flowcontrol.retry;
 
+import com.huawei.flowcontrol.common.adapte.cse.entity.FlowControlServiceMeta;
+import com.huawei.flowcontrol.common.config.ConfigConst;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
@@ -39,6 +41,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +94,7 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
     @Override
     protected final ExecuteContext doBefore(ExecuteContext context) throws Exception {
         final FlowControlResult flowControlResult = new FlowControlResult();
-        final Request request = (Request) context.getArguments()[0];
+        final Request request = getRequest(context);
         final Optional<HttpRequestEntity> httpRequestEntity = convertToHttpEntity(request);
         if (!httpRequestEntity.isPresent()) {
             return context;
@@ -110,6 +113,17 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
             tryExeWithRetry(context);
         }
         return context;
+    }
+
+    private Request getRequest(ExecuteContext context) {
+        final Request request = (Request) context.getArguments()[0];
+        final HashMap<String, Collection<String>> headers = new HashMap<>(request.headers());
+        headers.put(ConfigConst.FLOW_REMOTE_SERVICE_NAME_HEADER_KEY,
+                Collections.singletonList(FlowControlServiceMeta.getInstance().getServiceName()));
+        final Request newRequest = Request
+                .create(request.method(), request.url(), headers, request.body(), request.charset());
+        context.getArguments()[0] = newRequest;
+        return newRequest;
     }
 
     private void tryExeWithRetry(ExecuteContext context) {
