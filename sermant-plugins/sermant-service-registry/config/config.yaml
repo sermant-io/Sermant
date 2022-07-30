@@ -5,6 +5,7 @@ servicecomb.service:
   enableSpringRegister: false # 是否开启spring插件注册能力
   enableDubboRegister: false #是 否开启dubbo插件注册能力
   sslEnabled: false # 是否开启ssl
+  preferIpAddress: false # 若为true, 则采用IP地址访问代替域名方法
 grace.rule:
   enableSpring: false # springCloud优雅上下线开关
   startDelayTime: 0  # 优雅上下线启动延迟时间, 单位S
