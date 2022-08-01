@@ -443,7 +443,7 @@
         <!-- 检查代码缩进对齐 -->
         <module name="UncommentedMain">
             <!-- 通过该属性排除进程启动类 -->
-            <property name="excludedClasses" value="\.[a-zA-Z]*Main$"/>
+            <property name="excludedClasses" value="\.[a-zA-Z]*Application$"/>
         </module>
         <!-- 不能有没有用不到的main函数，建议测试代码用junit进行 -->
         <module name="Regexp">

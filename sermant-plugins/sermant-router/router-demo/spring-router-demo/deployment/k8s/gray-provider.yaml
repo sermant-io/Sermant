@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gray-provider-demo
+  labels:
+    app: gray-provider-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gray-provider-demo
+  template:
+    metadata:
+      labels:
+        app: gray-provider-demo
+        sermant-injection: enabled
+    spec:
+      containers:
+        - name: gray-provider-demo
+          image: provider-demo:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: "SERVICE_META_VERSION"
+              value: "1.0.1"
+      imagePullSecrets:
+        - name: default-secret
