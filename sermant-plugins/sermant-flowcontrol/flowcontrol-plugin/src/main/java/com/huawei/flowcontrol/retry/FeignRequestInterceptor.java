@@ -22,7 +22,6 @@ import com.huawei.flowcontrol.common.config.ConfigConst;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
-import com.huawei.flowcontrol.common.exception.InvokerWrapperException;
 import com.huawei.flowcontrol.common.handler.retry.AbstractRetry;
 import com.huawei.flowcontrol.common.handler.retry.Retry;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
@@ -33,7 +32,6 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import feign.Request;
 import feign.Response;
-
 import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.InvocationTargetException;
@@ -48,7 +46,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -176,12 +173,6 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
         return result;
     }
 
-    private void log(Throwable throwable) {
-        LOGGER.log(Level.INFO, "Failed to invoke target", getExMsg(throwable));
-        LOGGER.log(Level.FINE, "Failed to invoke target", (throwable instanceof InvokerWrapperException)
-                ? ((InvokerWrapperException) throwable).getRealException() : throwable);
-    }
-
     @Override
     protected ExecuteContext doThrow(ExecuteContext context) {
         chooseHttpService().onThrow(className, context.getThrowable());
@@ -216,7 +207,7 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
 
         @Override
         public Optional<String> getCode(Object result) {
-            final Optional<Method> status = getInvokerMethod(METHOD_KEY, fn -> {
+            final Optional<Method> status = getInvokerMethod(result.getClass().getName() + METHOD_KEY, fn -> {
                 final Method method;
                 try {
                     method = result.getClass().getDeclaredMethod("status");

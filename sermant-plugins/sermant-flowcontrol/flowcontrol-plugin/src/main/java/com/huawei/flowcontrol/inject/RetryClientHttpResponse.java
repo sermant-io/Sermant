@@ -15,7 +15,7 @@
  *
  */
 
-package com.huawei.flowcontrol.inject.retry;
+package com.huawei.flowcontrol.inject;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.AbstractClientHttpResponse;

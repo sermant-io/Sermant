@@ -66,7 +66,10 @@ public class RuleUtils {
         }
         final List<T> result = new ArrayList<>(businessNames.size());
         for (String businessName : businessNames) {
-            result.add(getRule(businessName, resolverKey, ruleType));
+            final T rule = getRule(businessName, resolverKey, ruleType);
+            if (rule != null) {
+                result.add(rule);
+            }
         }
         return result;
     }

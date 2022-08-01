@@ -16,4 +16,3 @@
 #
 
 com.huawei.flowcontrol.inject.FlowControlSpringConfigurationInjectDefine
-com.huawei.flowcontrol.inject.retry.RetryInjectDefine

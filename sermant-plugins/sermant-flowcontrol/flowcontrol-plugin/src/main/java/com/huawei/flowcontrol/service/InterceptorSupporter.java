@@ -28,6 +28,7 @@ import com.huawei.flowcontrol.service.rest4j.HttpRest4jService;
 import com.huawei.flowcontrol.service.sen.DubboSenService;
 import com.huawei.flowcontrol.service.sen.HttpSenService;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -40,6 +41,8 @@ import java.lang.reflect.Method;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 拦截器功能支持
@@ -60,6 +63,8 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     protected static final String ALIBABA_DUBBO_CLUSTER_CLASS_NAME = "com.alibaba.dubbo.rpc.cluster.Cluster";
 
     private static final String REFUSE_REPLACE_INVOKER = "close";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     protected final FlowControlConfig flowControlConfig;
 
@@ -184,6 +189,17 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
         return isNeedRetry;
     }
 
+    /**
+     * 打印错误日志
+     *
+     * @param throwable 异常
+     */
+    protected void log(Throwable throwable) {
+        LOGGER.log(Level.INFO, "Failed to invoke target", getExMsg(throwable));
+        LOGGER.log(Level.FINE, "Failed to invoke target", (throwable instanceof InvokerWrapperException)
+                ? ((InvokerWrapperException) throwable).getRealException() : throwable);
+    }
+
     private boolean isMatchResult(Object result, Predicate<Object> resultPredicate) {
         return result != null && resultPredicate.test(result);
     }
@@ -235,10 +251,21 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
      * @return msg
      */
     protected String getExMsg(Throwable throwable) {
+        return getRealCause(throwable).toString();
+    }
+
+    /**
+     * 获取真正异常
+     *
+     * @param throwable 异常信息
+     * @return 真正异常
+     */
+    protected Throwable getRealCause(Throwable throwable) {
         if (throwable instanceof InvokerWrapperException) {
-            return ((InvokerWrapperException)throwable).getRealException().toString();
+            final Throwable realException = ((InvokerWrapperException) throwable).getRealException();
+            return realException.getCause() != null ? realException.getCause() : realException;
         }
-        return throwable.getMessage();
+        return throwable;
     }
 
     /**
