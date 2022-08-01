@@ -18,6 +18,7 @@
 package com.huawei.flowcontrol.inject;
 
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
+import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 /**
  * spring相关配置注入
@@ -38,13 +39,20 @@ public class FlowControlSpringConfigurationInjectDefine implements ClassInjectDe
 
     @Override
     public ClassInjectDefine[] requiredDefines() {
-        return new ClassInjectDefine[] {
-                this.build("com.huawei.flowcontrol.inject.DefaultClientHttpResponse", null)
+        return new ClassInjectDefine[]{
+                this.build("com.huawei.flowcontrol.inject.DefaultClientHttpResponse", null,
+                    () -> isLoadedClass("org.springframework.http.client.ClientHttpResponse")),
+                this.build("com.huawei.flowcontrol.inject.RetryClientHttpResponse", null,
+                    () -> isLoadedClass("org.springframework.http.client.AbstractClientHttpResponse"))
         };
     }
 
     @Override
     public Plugin plugin() {
         return Plugin.FLOW_CONTROL_PLUGIN;
+    }
+
+    private boolean isLoadedClass(String className) {
+        return ClassUtils.loadClass(className, Thread.currentThread().getContextClassLoader(), true).isPresent();
     }
 }

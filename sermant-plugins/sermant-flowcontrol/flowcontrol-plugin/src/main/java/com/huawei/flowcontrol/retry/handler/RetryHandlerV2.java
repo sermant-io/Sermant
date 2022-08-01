@@ -22,6 +22,7 @@ import com.huawei.flowcontrol.common.adapte.cse.rule.RetryRule;
 import com.huawei.flowcontrol.common.handler.AbstractRequestHandler;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
 import com.huawei.flowcontrol.retry.FeignRequestInterceptor.FeignRetry;
+import com.huawei.flowcontrol.retry.HttpRequestInterceptor.HttpRetry;
 
 import io.github.resilience4j.core.IntervalFunction;
 import io.github.resilience4j.retry.Retry;
@@ -64,7 +65,7 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
      * @return 最大重试次数
      */
     private int getMaxAttempts(com.huawei.flowcontrol.common.handler.retry.Retry retry, RetryRule rule) {
-        if (retry instanceof FeignRetry) {
+        if (retry instanceof FeignRetry || retry instanceof HttpRetry) {
             return rule.getMaxAttempts();
         }
         return rule.getMaxAttempts() + 1;
