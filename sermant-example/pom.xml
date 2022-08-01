@@ -35,6 +35,8 @@
                 <module>demo-service</module>
                 <module>demo-application</module>
                 <module>demo-register</module>
+                <module>demo-grace/spring-grace-nacos-demo</module>
+                <module>demo-flowcontrol</module>
             </modules>
         </profile>
         <profile>
@@ -47,6 +49,8 @@
                 <module>demo-service</module>
                 <module>demo-application</module>
                 <module>demo-register</module>
+                <module>demo-grace/spring-grace-nacos-demo</module>
+                <module>demo-flowcontrol</module>
             </modules>
         </profile>
     </profiles>
