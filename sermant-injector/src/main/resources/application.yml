@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: sermant-injector
+
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    # ssl证书
+    certificate: /home/config/sermant-injector.pem
+    # ssl证书私钥
+    certificate-private-key: /home/config/sermant-injector.key
+    key-store-password: default
+    key-alias: sermant-injector
+
+sermant-agent:
+  image:
+    # agent镜像地址
+    addr: xxx.huawei.com/sermant-agent:0.0.1
+    # agent镜像拉取策略
+    pullPolicy: IfNotPresent
+  mount:
+    # agent挂载磁盘
+    path: /home/sermant-agent
+  config:
+    # agent配置中心类型: ZOOKEEPER/KIE
+    type: ZOOKEEPER
+    # agent配置中心地址
+    address: http://localhost:30110
+  service:
+    # agent注册中心地址
+    address: http://localhost:30100
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true

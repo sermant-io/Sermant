@@ -1,0 +1,34 @@
+namespace:
+  # injector部署的namespace(注意: 必须和certificate.sh中的namespace保持一致)
+  name: default
+
+injector:
+  # 实例数
+  replicas: 2
+  image:
+    # injector镜像地址(按真实场景配置)
+    addr:
+    # Always(总是拉取 pull) IfNotPresent(默认值,本地有则使用本地镜像,不拉取) Never(只使用本地镜像，从不拉取)
+    pullPolicy: IfNotPresent
+    # 拉取镜像的密钥
+    pullSecrets: default-secret
+  webhooks:
+    # k8s证书，使用以下命令获取
+    # kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}'
+    caBundle:
+
+agent:
+  image:
+    # agent镜像地址(按真实场景配置)
+    addr:
+    # Always(总是拉取 pull) IfNotPresent(默认值,本地有则使用本地镜像,不拉取) Never(只使用本地镜像，从不拉取)
+    pullPolicy: IfNotPresent
+
+config:
+  # 配置中心类型: ZOOKEEPER/KIE
+  type: ZOOKEEPER
+  # 配置中心地址
+  endpoints: http://localhost:30110
+registry:
+  # 注册中心地址
+  endpoints: http://localhost:30100

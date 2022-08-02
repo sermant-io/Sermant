@@ -322,6 +322,13 @@
                 <module>sermant-backend</module>
                 <module>sermant-package</module>
                 <module>sermant-integration-tests</module>
+                <module>sermant-injector</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>injector</id>
+            <modules>
+                <module>sermant-injector</module>
             </modules>
         </profile>
         <profile>
