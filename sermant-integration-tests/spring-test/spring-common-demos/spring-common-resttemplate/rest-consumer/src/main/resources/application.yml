@@ -1,0 +1,10 @@
+server:
+  port: 8005
+down:
+  serviceName: rest-provider
+spring:
+  application:
+    name: rest-consumer
+  cloud:
+    zookeeper:
+      enabled: true

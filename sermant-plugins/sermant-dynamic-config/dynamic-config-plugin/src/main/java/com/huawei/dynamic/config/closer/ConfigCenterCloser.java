@@ -20,6 +20,7 @@ package com.huawei.dynamic.config.closer;
 import com.huawei.dynamic.config.inject.ProcessorClassInjectDefine;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -38,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -60,6 +62,17 @@ public interface ConfigCenterCloser {
      * 启动配置源,在spring高版本新增org.springframework.cloud.bootstrap.config.BootstrapPropertySource
      */
     String BOOTSTRAP_PROPERTY_CLASS = "org.springframework.cloud.bootstrap.config.BootstrapPropertySource";
+
+    /**
+     * Spring配置映射缓存
+     */
+    String SPRING_CONFIGURATION_PROPERTY_SOURCES =
+            "org.springframework.boot.context.properties.source.SpringConfigurationPropertySources";
+
+    /**
+     * 启动配置源名称
+     */
+    String BOOTSTRAP_SOURCE_NAME = "bootstrapProperties";
 
     /**
      * 关闭
@@ -156,20 +169,71 @@ public interface ConfigCenterCloser {
             return false;
         }
         final ConfigurableEnvironment configurableEnvironment = (ConfigurableEnvironment) environment;
+        removeConfigurationPropertySources(configurableEnvironment);
         final PropertySource<?> source = configurableEnvironment.getPropertySources()
-                .get("bootstrapProperties");
-        if (source instanceof CompositePropertySource) {
-            CompositePropertySource compositePropertySource = (CompositePropertySource) source;
-            final Iterator<PropertySource<?>> iterator = compositePropertySource.getPropertySources().iterator();
-            while (iterator.hasNext()) {
-                final PropertySource<?> next = iterator.next();
-                if (propertyName.equals(next.getName())) {
-                    iterator.remove();
-                    return true;
-                }
-            }
+                .get(BOOTSTRAP_SOURCE_NAME);
+        if (removeTargetSource(source, propertyName)) {
+            return true;
         }
         return tryRemoveWithBootstrapProperties(configurableEnvironment);
+    }
+
+    /**
+     * 移除映射配置源, 该配置涉及本身缓存的启动配置源、适配配置源。由于类方法限制, 当前仅可采用反射移除。针对2.0.0.RELEASE版本由于Spring自身存在bug，无法刷新映射，
+     * 因此此处采用该方式处理
+     *
+     * @param configurableEnvironment 环境变量
+     */
+    default void removeConfigurationPropertySources(ConfigurableEnvironment configurableEnvironment) {
+        final PropertySource<?> propertySource = configurableEnvironment.getPropertySources()
+                .get("configurationProperties");
+        if (propertySource == null) {
+            return;
+        }
+        final Object source = propertySource.getSource();
+        if (!SPRING_CONFIGURATION_PROPERTY_SOURCES.equals(source.getClass().getName())) {
+            return;
+        }
+        final Optional<Object> adaptedSources = ReflectUtils.getFieldValue(source, "adaptedSources");
+        if (adaptedSources.isPresent()) {
+            configurableEnvironment.getPropertySources().remove("configurationProperties");
+        }
+    }
+
+    /**
+     * 从CompositePropertySource移除指定配置源
+     *
+     * @param source 配置源
+     * @param propertyName 配置源名称
+     * @return 是否移除成功
+     */
+    default boolean removeTargetSource(PropertySource<?> source, String propertyName) {
+        if (!(source instanceof CompositePropertySource)) {
+            return false;
+        }
+        CompositePropertySource compositePropertySource = (CompositePropertySource) source;
+        for (PropertySource<?> next : compositePropertySource.getPropertySources()) {
+            if (!propertyName.equals(next.getName())) {
+                continue;
+            }
+            if (!(next instanceof CompositePropertySource)) {
+                continue;
+            }
+            final Iterator<PropertySource<?>> innerSourcesIterator =
+                    ((CompositePropertySource) next).getPropertySources().iterator();
+            boolean isRemoved = false;
+            while (innerSourcesIterator.hasNext()) {
+                final PropertySource<?> cur = innerSourcesIterator.next();
+                if (isCurConfigCenterSource(cur)) {
+                    innerSourcesIterator.remove();
+                    isRemoved = true;
+                }
+            }
+            if (isRemoved) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -202,7 +266,17 @@ public interface ConfigCenterCloser {
      * @param propertySource 配置源
      * @return 是否为目标配置中心的配置源
      */
-    boolean isTargetPropertySource(BootstrapPropertySource<?> propertySource);
+    default boolean isTargetPropertySource(BootstrapPropertySource<?> propertySource) {
+        return isCurConfigCenterSource(propertySource.getDelegate());
+    }
+
+    /**
+     * 是否为当前配置中心的配置源
+     *
+     * @param propertySource 配置源
+     * @return 是否是
+     */
+    boolean isCurConfigCenterSource(PropertySource<?> propertySource);
 
     /**
      * 配置中心类型

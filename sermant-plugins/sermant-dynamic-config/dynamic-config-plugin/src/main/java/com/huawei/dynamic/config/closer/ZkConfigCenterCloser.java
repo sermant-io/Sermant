@@ -21,8 +21,8 @@ import com.huaweicloud.sermant.core.utils.ClassUtils;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.cloud.bootstrap.config.BootstrapPropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertySource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +37,8 @@ import java.util.Optional;
  * @since 2022-07-12
  */
 public class ZkConfigCenterCloser implements ConfigCenterCloser {
+    private static final String CONFIG_CENTER_PROPERTY_SOURCE_TYPE =
+            "org.springframework.cloud.zookeeper.config.ZookeeperPropertySource";
     private final List<Object> configWatches = new ArrayList<>();
 
     /**
@@ -83,8 +85,7 @@ public class ZkConfigCenterCloser implements ConfigCenterCloser {
     }
 
     @Override
-    public boolean isTargetPropertySource(BootstrapPropertySource<?> bootstrapPropertySource) {
-        return "org.springframework.cloud.zookeeper.config.ZookeeperPropertySource".equals(
-                bootstrapPropertySource.getDelegate().getClass().getName());
+    public boolean isCurConfigCenterSource(PropertySource<?> propertySource) {
+        return CONFIG_CENTER_PROPERTY_SOURCE_TYPE.equals(propertySource.getClass().getName());
     }
 }

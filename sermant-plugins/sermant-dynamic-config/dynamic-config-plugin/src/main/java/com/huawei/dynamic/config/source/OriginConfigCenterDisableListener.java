@@ -27,7 +27,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -47,7 +47,7 @@ import javax.annotation.PostConstruct;
  * @since 2022-07-12
  */
 @Component
-@AutoConfigureAfter(SpringEventPublisher.class)
+@AutoConfigureBefore(SpringEventPublisher.class)
 public class OriginConfigCenterDisableListener implements BeanFactoryAware {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
