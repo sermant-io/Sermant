@@ -71,6 +71,7 @@ mvn clean package -Dmaven.test.skip
 |[版本管理手册](dev-guide/version_manage.md)|开发手册|
 |[插件模块开发手册](dev-guide/dev_plugin_module.md)|开发手册|
 |[插件代码开发手册](dev-guide/dev_plugin_code.md)|开发手册|
+|[插件去源码开发指导](dev-guide/Sermant去源码插件开发说明.md)|开发手册|
 |[动态配置服务介绍](dev-guide/service_dynamicconfig.md)|开发手册|
 |[心跳服务介绍](dev-guide/service_heartbeat.md)|开发手册|
 |[网关服务介绍](dev-guide/service_send.md)|开发手册|
