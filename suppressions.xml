@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionXpathFilter Experimental Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2_xpath_experimental.dtd">
+
+<suppressions>
+    <!--  Suppress for any classes that contain method named "main"  -->
+    <suppress-xpath checks="HideUtilityClassConstructor"
+                    query="//CLASS_DEF[//METHOD_DEF[./IDENT[@text='main']]]"/>
+
+    <!--  Suppress for any classes that are annotated with "SpringBootApplication"  -->
+    <suppress-xpath checks="HideUtilityClassConstructor"
+                    query="//CLASS_DEF[//MODIFIERS/ANNOTATION[./IDENT[@text='SpringBootApplication']]]"/>
+
+</suppressions>
