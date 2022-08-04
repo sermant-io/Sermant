@@ -7,10 +7,12 @@
 <suppressions>
     <!--  Suppress for any classes that contain method named "main"  -->
     <suppress-xpath checks="HideUtilityClassConstructor"
+                    files=".*Application\.java"
                     query="//CLASS_DEF[//METHOD_DEF[./IDENT[@text='main']]]"/>
 
     <!--  Suppress for any classes that are annotated with "SpringBootApplication"  -->
     <suppress-xpath checks="HideUtilityClassConstructor"
+                    files=".*Application\.java"
                     query="//CLASS_DEF[//MODIFIERS/ANNOTATION[./IDENT[@text='SpringBootApplication']]]"/>
 
 </suppressions>

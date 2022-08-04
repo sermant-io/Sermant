@@ -293,6 +293,11 @@
         <property name="max" value="120"/>
     </module>
     <module name="TreeWalker">
+        <!--SuppressionXpathFilter：跳过main方法&SpringBootApplication注释检查-->
+        <module name="SuppressionXpathFilter">
+            <property name="file" value="suppressions.xml"/>
+            <property name="optional" value="false"/>
+        </module>
         <module name="SuppressionCommentFilter"/>
         <module name="SuppressWarningsHolder"/>
         <!-- 关于注释：建议代码通过合理的命名、函数短小等方式，让代码有自注释能力，然后配以简要的注释说明，不建议大量的冗余注释 -->
@@ -422,11 +427,6 @@
         <module name="VisibilityModifier">
             <property name="packageAllowed" value="true"/>
             <property name="protectedAllowed" value="true"/>
-        </module>
-        <!--SuppressionXpathFilter：跳过main方法&SpringBootApplication注释检查-->
-        <module name="SuppressionXpathFilter">
-            <property name="file" value="suppressions.xml"/>
-            <property name="optional" value="false"/>
         </module>
         <!-- 检查类成员对外可见性，只有Static final的可以是public对外访问-->
         <module name="HideUtilityClassConstructor"/>
