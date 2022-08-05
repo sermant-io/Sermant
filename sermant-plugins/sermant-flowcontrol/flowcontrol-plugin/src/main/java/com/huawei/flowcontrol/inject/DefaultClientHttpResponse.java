@@ -17,6 +17,7 @@
 
 package com.huawei.flowcontrol.inject;
 
+import com.huawei.flowcontrol.common.entity.FlowControlResponse;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -36,43 +38,64 @@ import java.nio.charset.StandardCharsets;
 public class DefaultClientHttpResponse implements ClientHttpResponse {
     private final FlowControlResult flowControlResult;
 
+    private final String contentType;
+
+    private final String msg;
+
+    private InputStream responseStream;
+
     /**
      * 构造器
      *
-     * @param flowControlResult 流控修过
+     * @param flowControlResult 流控修正结果
      */
     public DefaultClientHttpResponse(FlowControlResult flowControlResult) {
         this.flowControlResult = flowControlResult;
+        final FlowControlResponse response = flowControlResult.getResponse();
+        if (response.isReplaceResult()) {
+            this.contentType = "application/json";
+        } else {
+            this.contentType = "application/text";
+        }
+        this.msg = flowControlResult.buildResponseMsg();
     }
 
     @Override
     public HttpStatus getStatusCode() {
-        return HttpStatus.valueOf(flowControlResult.getResult().getCode());
+        return HttpStatus.valueOf(flowControlResult.getResponse().getCode());
     }
 
     @Override
     public int getRawStatusCode() {
-        return flowControlResult.getResult().getCode();
+        return flowControlResult.getResponse().getCode();
     }
 
     @Override
     public String getStatusText() {
-        return flowControlResult.buildResponseMsg();
+        return this.msg;
     }
 
     @Override
     public void close() {
+        if (responseStream != null) {
+            try {
+                responseStream.close();
+            } catch (IOException ignored) {
+                // ignored
+            }
+        }
     }
 
     @Override
     public InputStream getBody() {
-        return new ByteArrayInputStream(flowControlResult.buildResponseMsg().getBytes(StandardCharsets.UTF_8));
+        responseStream = new ByteArrayInputStream(msg.getBytes(StandardCharsets.UTF_8));
+        return responseStream;
     }
 
     @Override
     public HttpHeaders getHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_TYPE, "application/text");
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE, contentType);
         return httpHeaders;
     }
 }

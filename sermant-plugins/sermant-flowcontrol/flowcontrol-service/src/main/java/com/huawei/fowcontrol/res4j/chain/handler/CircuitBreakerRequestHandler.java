@@ -17,7 +17,7 @@
 
 package com.huawei.fowcontrol.res4j.chain.handler;
 
-import com.huawei.flowcontrol.common.adapte.cse.rule.CircuitBreakerRule;
+import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
 import com.huawei.fowcontrol.res4j.chain.HandlerConstants;
 import com.huawei.fowcontrol.res4j.chain.context.RequestContext;
 import com.huawei.fowcontrol.res4j.handler.CircuitBreakerHandler;

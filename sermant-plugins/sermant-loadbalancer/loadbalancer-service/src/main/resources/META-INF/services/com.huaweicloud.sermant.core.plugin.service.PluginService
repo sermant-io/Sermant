@@ -1,1 +1,1 @@
-com.huawei.loadbalancer.service.LoadbalancerConfigService
+com.huaweicloud.loadbalancer.service.LoadbalancerConfigServiceImpl

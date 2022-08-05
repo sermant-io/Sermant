@@ -17,9 +17,9 @@
 
 package com.huawei.flowcontrol.inject;
 
-import com.huawei.flowcontrol.common.adapte.cse.ResolverManager;
-import com.huawei.flowcontrol.common.adapte.cse.constants.CseConstants;
-import com.huawei.flowcontrol.common.adapte.cse.entity.FlowControlServiceMeta;
+import com.huawei.flowcontrol.common.core.ResolverManager;
+import com.huawei.flowcontrol.common.core.constants.CseConstants;
+import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;

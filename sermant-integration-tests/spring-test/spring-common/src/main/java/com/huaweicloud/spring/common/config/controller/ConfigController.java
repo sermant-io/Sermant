@@ -55,6 +55,7 @@ public class ConfigController {
 
     @RequestMapping("check")
     public boolean isEnableOriginConfigCenter() {
+        String s = "1";
         return Boolean.parseBoolean(environment.getProperty("dynamic.config.plugin.enableOriginConfigCenter"));
     }
 }

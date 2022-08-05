@@ -121,6 +121,21 @@ public class CommonConst {
     public static final int INSTANCE_ISOLATION_REQUEST_CODE = 503;
 
     /**
+     * 服务异常
+     */
+    public static final int INTERVAL_SERVER_ERROR = 500;
+
+    /**
+     * 请求正常响应
+     */
+    public static final int HTTP_OK = 200;
+
+    /**
+     * 空串
+     */
+    public static final String EMPTY_STR = "";
+
+    /**
      * 周期性执行线程池名称
      */
     public static final String SENTINEL_SEND_CFC_TASK = "sentinel-send-cfc-task";

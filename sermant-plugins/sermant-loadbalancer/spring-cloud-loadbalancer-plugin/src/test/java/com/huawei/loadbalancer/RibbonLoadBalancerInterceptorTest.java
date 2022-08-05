@@ -16,8 +16,8 @@
 
 package com.huawei.loadbalancer;
 
-import com.huawei.loadbalancer.config.LoadbalancerConfig;
-import com.huawei.loadbalancer.config.RibbonLoadbalancerType;
+import com.huaweicloud.loadbalancer.config.LoadbalancerConfig;
+import com.huaweicloud.loadbalancer.config.RibbonLoadbalancerType;
 import com.huawei.loadbalancer.interceptor.RibbonLoadBalancerInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;

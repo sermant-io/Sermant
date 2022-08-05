@@ -17,9 +17,9 @@
 
 package com.huawei.flowcontrol.retry;
 
-import com.huawei.flowcontrol.common.adapte.cse.entity.FlowControlServiceMeta;
 import com.huawei.flowcontrol.common.config.ConfigConst;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
+import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
 import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 import com.huawei.flowcontrol.common.handler.retry.AbstractRetry;
@@ -32,6 +32,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import feign.Request;
 import feign.Response;
+
 import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.InvocationTargetException;
@@ -102,7 +103,7 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
         if (flowControlResult.isSkip()) {
             final String responseMsg = flowControlResult.buildResponseMsg();
             context.skip(Response.builder()
-                    .status(flowControlResult.getResult().getCode())
+                    .status(flowControlResult.getResponse().getCode())
                     .body(responseMsg, StandardCharsets.UTF_8)
                     .headers(Collections.emptyMap())
                     .reason(responseMsg)

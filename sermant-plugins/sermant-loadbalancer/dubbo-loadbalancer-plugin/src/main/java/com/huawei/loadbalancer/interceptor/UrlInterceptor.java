@@ -16,7 +16,7 @@
 
 package com.huawei.loadbalancer.interceptor;
 
-import com.huawei.loadbalancer.config.LoadbalancerConfig;
+import com.huaweicloud.loadbalancer.config.LoadbalancerConfig;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;

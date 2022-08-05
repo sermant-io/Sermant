@@ -18,7 +18,6 @@
 package com.huawei.flowcontrol.common.entity;
 
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
-import com.huawei.flowcontrol.common.enums.FlowControlEnum;
 
 import java.util.Locale;
 
@@ -30,9 +29,9 @@ import java.util.Locale;
  */
 public class FlowControlResult {
     /**
-     * 流控类型
+     * 流控响应
      */
-    private FlowControlEnum flowControlEnum;
+    private FlowControlResponse response;
 
     /**
      * 是否需要跳过调用
@@ -44,30 +43,21 @@ public class FlowControlResult {
      */
     private RequestType requestType;
 
-    public FlowControlEnum getResult() {
-        return flowControlEnum;
-    }
-
     /**
-     * 流控结果
-     *
-     * @param result 结果
-     */
-    public void setResult(FlowControlEnum result) {
-        this.flowControlEnum = result;
-        this.isSkip = true;
-    }
-
-    /**
-     * 构建响应提示, requestType:flowcontrolEnum
+     * 构建响应提示, requestType
      *
      * @return 响应信息
      */
     public String buildResponseMsg() {
-        if (requestType == null || flowControlEnum == null) {
+        if (requestType == null || response == null) {
             return "";
         }
-        return String.format(Locale.ENGLISH, "%s throw exception: %s", requestType, flowControlEnum.getMsg());
+        if (response.isReplaceResult()) {
+            // 替换场景, 直接使用序列化结果
+            return response.getSerializeResult();
+        } else {
+            return String.format(Locale.ENGLISH, "%s throw exception: %s", requestType, response.getMsg());
+        }
     }
 
     public boolean isSkip() {
@@ -84,5 +74,19 @@ public class FlowControlResult {
 
     public void setRequestType(RequestType requestType) {
         this.requestType = requestType;
+    }
+
+    public FlowControlResponse getResponse() {
+        return response;
+    }
+
+    /**
+     * 更改流控响应结果, 并告知跳过本身方法调用
+     *
+     * @param response 响应
+     */
+    public void setResponse(FlowControlResponse response) {
+        this.response = response;
+        this.isSkip = true;
     }
 }

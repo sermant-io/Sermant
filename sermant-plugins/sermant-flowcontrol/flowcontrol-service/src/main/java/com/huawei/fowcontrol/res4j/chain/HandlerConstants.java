@@ -25,14 +25,19 @@ package com.huawei.fowcontrol.res4j.chain;
  */
 public class HandlerConstants {
     /**
+     * 错误注入优先级
+     */
+    public static final int FAULT_ORDER = 3000;
+
+    /**
      * 限流优先级
      */
-    public static final int RATE_LIMIT_ORDER = 0;
+    public static final int RATE_LIMIT_ORDER = 4000;
 
     /**
      * 隔离仓优先级
      */
-    public static final int BULK_HEAD_ORDER = 1000;
+    public static final int BULK_HEAD_ORDER = 5000;
 
     /**
      * 熔断优先级

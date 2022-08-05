@@ -17,9 +17,9 @@
 
 package com.huawei.flowcontrol.common.handler.retry;
 
-import com.huawei.flowcontrol.common.adapte.cse.RuleUtils;
-import com.huawei.flowcontrol.common.adapte.cse.resolver.RetryResolver;
-import com.huawei.flowcontrol.common.adapte.cse.rule.RetryRule;
+import com.huawei.flowcontrol.common.core.RuleUtils;
+import com.huawei.flowcontrol.common.core.resolver.RetryResolver;
+import com.huawei.flowcontrol.common.core.rule.RetryRule;
 import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
 import com.huawei.flowcontrol.common.handler.retry.policy.RetryOnSamePolicy;
 import com.huawei.flowcontrol.common.handler.retry.policy.RetryPolicy;

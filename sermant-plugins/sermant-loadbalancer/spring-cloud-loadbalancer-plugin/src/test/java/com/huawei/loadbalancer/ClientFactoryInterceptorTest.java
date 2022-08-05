@@ -17,8 +17,8 @@
 package com.huawei.loadbalancer;
 
 import com.huawei.loadbalancer.cache.LoadbalancerCache;
-import com.huawei.loadbalancer.config.LoadbalancerConfig;
-import com.huawei.loadbalancer.config.SpringLoadbalancerType;
+import com.huaweicloud.loadbalancer.config.LoadbalancerConfig;
+import com.huaweicloud.loadbalancer.config.SpringLoadbalancerType;
 import com.huawei.loadbalancer.interceptor.ClientFactoryInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;

@@ -21,6 +21,8 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
+import org.springframework.stereotype.Component;
+
 /**
  * 实例增强基类
  *
