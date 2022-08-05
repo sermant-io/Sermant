@@ -1,0 +1,8 @@
+server:
+  port: 8003
+spring:
+  application:
+    name: rest-provider
+  cloud:
+    zookeeper:
+      enabled: true
