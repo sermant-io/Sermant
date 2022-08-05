@@ -38,8 +38,20 @@
         <processor.version>2.2.0.RELEASE</processor.version>
         <spring.cloud.version>Hoxton.RELEASE</spring.cloud.version>
     </properties>
+    <modules>
+        <module>spring-intergration-test</module>
+    </modules>
 
     <profiles>
+        <profile>
+            <id>spring-test-all</id>
+            <modules>
+                <module>spring-common</module>
+                <module>spring-nacos-config</module>
+                <module>spring-zookeeper-config</module>
+                <module>spring-common-demos</module>
+            </modules>
+        </profile>
         <profile>
             <id>dynamic-config-nacos</id>
             <modules>
@@ -52,6 +64,20 @@
             <modules>
                 <module>spring-common</module>
                 <module>spring-zookeeper-config</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>flowcontrol-test</id>
+            <modules>
+                <module>spring-common</module>
+                <module>spring-common-demos</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>flowcontrol-test-1.5.x</id>
+            <modules>
+                <module>spring-common</module>
+                <module>spring-common-demos</module>
             </modules>
         </profile>
     </profiles>

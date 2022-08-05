@@ -21,8 +21,8 @@ import com.huaweicloud.sermant.core.utils.ClassUtils;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.cloud.bootstrap.config.BootstrapPropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertySource;
 
 import java.util.Collections;
 import java.util.Map;
@@ -36,6 +36,9 @@ import java.util.Optional;
  */
 public class NacosConfigCenterCloser implements ConfigCenterCloser {
     private static final String REFRESHER_NAME = "nacosContextRefresher";
+
+    private static final String CONFIG_CENTER_PROPERTY_SOURCE_TYPE =
+            "com.alibaba.cloud.nacos.client.NacosPropertySource";
 
     private Object nacosContextRefresher;
 
@@ -67,9 +70,8 @@ public class NacosConfigCenterCloser implements ConfigCenterCloser {
     }
 
     @Override
-    public boolean isTargetPropertySource(BootstrapPropertySource<?> bootstrapPropertySource) {
-        return "com.alibaba.cloud.nacos.client.NacosPropertySource".equals(
-                bootstrapPropertySource.getDelegate().getClass().getName());
+    public boolean isCurConfigCenterSource(PropertySource<?> propertySource) {
+        return CONFIG_CENTER_PROPERTY_SOURCE_TYPE.equals(propertySource.getClass().getName());
     }
 
     private boolean removeNacosPropertySource(Environment environment) {

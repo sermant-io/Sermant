@@ -1,0 +1,8 @@
+server:
+  port: 8003
+spring:
+  application:
+    name: feign-provider
+  cloud:
+    zookeeper:
+      enabled: true

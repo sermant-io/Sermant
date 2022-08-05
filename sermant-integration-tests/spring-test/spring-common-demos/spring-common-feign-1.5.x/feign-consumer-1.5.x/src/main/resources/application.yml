@@ -1,0 +1,14 @@
+server:
+  port: 8005
+spring:
+  application:
+    name: feign-consumer
+  cloud:
+    zookeeper:
+      enabled: true
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 3000
+        readTimeout: 6000

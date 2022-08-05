@@ -32,9 +32,12 @@ import java.util.Set;
  * @since 2022-07-12
  */
 public class OriginConfigDisableSource extends MapPropertySource implements ConfigSource {
-    private static final String NACOS_CONFIG_CENTER_ENABLED = "spring.cloud.nacos.config.enabled";
+    /**
+     * zookeeper配置中心开关
+     */
+    public static final String ZK_CONFIG_CENTER_ENABLED = "spring.cloud.zookeeper.config.enabled";
 
-    private static final String ZK_CONFIG_CENTER_ENABLED = "spring.cloud.zookeeper.config.enabled";
+    private static final String NACOS_CONFIG_CENTER_ENABLED = "spring.cloud.nacos.config.enabled";
 
     private static final Map<String, Object> SOURCE = new HashMap<>();
 
