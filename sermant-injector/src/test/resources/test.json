@@ -1,0 +1,181 @@
+{
+  "kind": "AdmissionReview",
+  "apiVersion": "admission.k8s.io/v1beta1",
+  "request": {
+    "uid": "57d4d575-4a5d-444a-8b21-b325d3d11b45",
+    "kind": {
+      "group": "",
+      "version": "v1",
+      "kind": "Pod"
+    },
+    "resource": {
+      "group": "",
+      "version": "v1",
+      "resource": "pods"
+    },
+    "requestKind": {
+      "group": "",
+      "version": "v1",
+      "kind": "Pod"
+    },
+    "requestResource": {
+      "group": "",
+      "version": "v1",
+      "resource": "pods"
+    },
+    "namespace": "mesh",
+    "operation": "CREATE",
+    "userInfo": {
+      "username": "foo",
+      "uid": "f8b49463-63cd-434e-865d-1a2f8679ccec",
+      "groups": [
+        "system:bar",
+        "system:foo",
+        "system:bar"
+      ]
+    },
+    "object": {
+      "kind": "Pod",
+      "apiVersion": "v1",
+      "metadata": {
+        "generateName": "bar-test-f8b49463-",
+        "creationTimestamp": null,
+        "labels": {
+          "app": "bar-test",
+          "pod-template-hash": "f8b49463",
+          "sermant-injection": "enabled"
+        },
+        "annotations": {
+          "kubernetes.io/psp": "psp-global",
+          "registry.servicecomb.io/instance.properties.tag3": "tag3",
+          "registry.servicecomb.io/service-properties.tag4": "tag4"
+        },
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "kind": "ReplicaSet",
+            "name": "bar-test-f8b49463",
+            "uid": "4a28cea0-2a40-4e22-95a5-f61d2a5878bd",
+            "controller": true,
+            "blockOwnerDeletion": true
+          }
+        ]
+      },
+      "spec": {
+        "volumes": [
+          {
+            "name": "foo",
+            "secret": {
+              "secretName": "bar"
+            }
+          }
+        ],
+        "containers": [
+          {
+            "name": "foo-test",
+            "image": "bar-test:1.0.1",
+            "ports": [
+              {
+                "containerPort": 100,
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 101,
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 102,
+                "protocol": "TCP"
+              }
+            ],
+            "env": [
+              {
+                "name": "SERVICECOMB.SERVICE.ENABLEDUBBOREGISTER",
+                "value": "true"
+              },
+              {
+                "name": "SERVICECOMB.SERVICE.ENABLESPRINGREGISTER",
+                "value": "false"
+              },
+              {
+                "name": "SERVICECOMB.SERVICE.SSLENABLED",
+                "value": "false"
+              },
+              {
+                "name": "SERVICECOMB.SERVICE.OPENMIGRATION",
+                "value": "false"
+              },
+              {
+                "name": "DYNAMIC.CONFIG.PLUGIN.ENABLEDYNAMICCONFIG",
+                "value": "false"
+              },
+              {
+                "name": "SERVICECOMB_INSTANCE_PROPS",
+                "value": "tag1:tag1,tag2:tag2"
+              },
+              {
+                "name": "SERVICECOMB_SERVICE_PROPS",
+                "value": "k1:v1,k2:v2"
+              }
+            ],
+            "resources": {},
+            "volumeMounts": [
+              {
+                "name": "bar",
+                "readOnly": true,
+                "mountPath": "foo"
+              }
+            ],
+            "lifecycle": {
+              "preStop": {
+                "exec": {
+                  "command": [
+                    "echo \"1111111111111111111111111111\""
+                  ]
+                }
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "imagePullPolicy": "IfNotPresent"
+          }
+        ],
+        "restartPolicy": "Always",
+        "terminationGracePeriodSeconds": 30,
+        "dnsPolicy": "ClusterFirst",
+        "serviceAccountName": "foo",
+        "serviceAccount": "bar",
+        "securityContext": {},
+        "imagePullSecrets": [
+          {
+            "name": "foo"
+          }
+        ],
+        "schedulerName": "bar",
+        "tolerations": [
+          {
+            "key": "bar",
+            "operator": "Exists",
+            "effect": "NoExecute",
+            "tolerationSeconds": 300
+          },
+          {
+            "key": "foo",
+            "operator": "Exists",
+            "effect": "NoExecute",
+            "tolerationSeconds": 300
+          }
+        ],
+        "priority": 0,
+        "enableServiceLinks": true
+      },
+      "status": {}
+    },
+    "oldObject": null,
+    "dryRun": false,
+    "options": {
+      "kind": "CreateOptions",
+      "apiVersion": "meta.k8s.io/v1"
+    }
+  }
+}

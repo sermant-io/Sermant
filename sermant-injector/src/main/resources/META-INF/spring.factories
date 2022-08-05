@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.huaweicloud.sermant.injection.certificate.CertificateEnvironmentPostProcessor

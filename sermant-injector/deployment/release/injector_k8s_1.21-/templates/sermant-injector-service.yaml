@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sermant-injector
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    app: sermant-injector
+spec:
+  publishNotReadyAddresses: true
+  ports:
+    - port: 443
+      targetPort: 8443
+  selector:
+    app: sermant-injector

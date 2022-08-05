@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sermant-injector
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    app: sermant-injector
+spec:
+  replicas: {{ .Values.injector.replicas }}
+  selector:
+    matchLabels:
+      app: sermant-injector
+  template:
+    metadata:
+      name: sermant-injector
+      labels:
+        app: sermant-injector
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - sermant-injector
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: sermant-injector
+          image: {{ .Values.injector.image.addr }}
+          imagePullPolicy: {{ .Values.injector.image.pullPolicy }}
+          resource:
+            requests:
+              memory: "300Mi"
+              cpu: "200m"
+            limits:
+              memory: "640Mi"
+              cpu: "500m"
+          envFrom:
+            - configMapRef:
+                name: sermant-injector
+          volumeMounts:
+            - name: sermant-certification
+              # agent在容器内的路径
+              mountPath: /home/config
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 30
+            failureThreshold: 3
+            timeoutSeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 30
+            failureThreshold: 3
+            timeoutSeconds: 10
+            periodSeconds: 5
+      volumes:
+        - name: sermant-certification
+          secret:
+            # 证书
+            secretName: sermant-injector-secret
+      imagePullSecrets:
+        - name: {{ .Values.injector.image.pullSecrets }}
