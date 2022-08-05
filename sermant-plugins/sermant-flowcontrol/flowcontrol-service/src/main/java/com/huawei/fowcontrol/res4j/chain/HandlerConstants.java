@@ -25,14 +25,29 @@ package com.huawei.fowcontrol.res4j.chain;
  */
 public class HandlerConstants {
     /**
+     * 错误注入优先级
+     */
+    public static final int BUSINESS_ORDER = -1000;
+
+    /**
+     * 错误注入优先级
+     */
+    public static final int FAULT_ORDER = 3000;
+
+    /**
      * 限流优先级
      */
-    public static final int RATE_LIMIT_ORDER = 0;
+    public static final int RATE_LIMIT_ORDER = 4000;
 
     /**
      * 隔离仓优先级
      */
-    public static final int BULK_HEAD_ORDER = 1000;
+    public static final int BULK_HEAD_ORDER = 5000;
+
+    /**
+     * 实例隔离优先级, 该优先级必须大于熔断优先级
+     */
+    public static final int INSTANCE_ISOLATION_ORDER = 9000;
 
     /**
      * 熔断优先级
@@ -40,17 +55,12 @@ public class HandlerConstants {
     public static final int CIRCUIT_BREAKER_ORDER = 10000;
 
     /**
-     * 实例隔离优先级
-     */
-    public static final int INSTANCE_ISOLATION_ORDER = 11000;
-
-    /**
      * 标记当前线程是否发生流控异常
      */
     public static final String OCCURRED_FLOW_EXCEPTION = "__OCCURRED_FLOW_EXCEPTION__";
 
     /**
-     * 当前请求是否触发异常
+     * 标记当前线程是否触发请求异常
      */
     public static final String OCCURRED_REQUEST_EXCEPTION = "__OCCURRED_REQUEST_EXCEPTION__";
 

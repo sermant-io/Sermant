@@ -37,6 +37,7 @@
         <package.plugin.type>service</package.plugin.type>
         <config.skip.flag>false</config.skip.flag>
         <resilience4j.version>1.7.1</resilience4j.version>
+        <jackson.version>2.13.3</jackson.version>
     </properties>
 
     <dependencies>
@@ -70,7 +71,17 @@
             <artifactId>resilience4j-timelimiter</artifactId>
             <version>${resilience4j.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!--provider依赖-->
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>flowcontrol-plugin</artifactId>

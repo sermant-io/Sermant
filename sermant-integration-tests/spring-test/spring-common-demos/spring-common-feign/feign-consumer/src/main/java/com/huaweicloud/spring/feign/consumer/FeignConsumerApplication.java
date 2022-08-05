@@ -30,7 +30,10 @@ import org.springframework.context.annotation.Bean;
  * @author zhouss
  * @since 2022-07-29
  */
-@SpringBootApplication(scanBasePackages = "com.huaweicloud.spring.feign.consumer.controller")
+@SpringBootApplication(scanBasePackages = {
+    "com.huaweicloud.spring.feign.consumer.controller",
+    "com.huaweicloud.spring.common.loadbalancer.feign"
+})
 @EnableFeignClients(basePackages = "com.huaweicloud.spring.feign.api")
 public class FeignConsumerApplication {
     /**

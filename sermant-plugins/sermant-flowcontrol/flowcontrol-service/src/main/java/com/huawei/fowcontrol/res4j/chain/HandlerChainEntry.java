@@ -21,7 +21,7 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 import com.huawei.fowcontrol.res4j.chain.context.ChainContext;
 import com.huawei.fowcontrol.res4j.chain.context.RequestContext;
-import com.huawei.fowcontrol.res4j.util.Rest4jExceptionUtils;
+import com.huawei.fowcontrol.res4j.util.FlowControlExceptionUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 
@@ -62,7 +62,7 @@ public enum HandlerChainEntry {
             chain.onBefore(threadLocalContext, null);
         } catch (Exception ex) {
             flowControlResult.setRequestType(requestEntity.getRequestType());
-            Rest4jExceptionUtils.handleException(ex, flowControlResult);
+            FlowControlExceptionUtils.handleException(ex, flowControlResult);
             ChainContext.getThreadLocalContext(sourceName).save(HandlerConstants.OCCURRED_FLOW_EXCEPTION, ex);
             LOGGER.log(Level.FINE, ex, ex::getMessage);
         }

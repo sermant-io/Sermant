@@ -17,10 +17,10 @@
 
 package com.huawei.flowcontrol.common.handler;
 
-import com.huawei.flowcontrol.common.adapte.cse.ResolverManager;
-import com.huawei.flowcontrol.common.adapte.cse.match.MatchManager;
-import com.huawei.flowcontrol.common.adapte.cse.resolver.AbstractResolver;
-import com.huawei.flowcontrol.common.adapte.cse.rule.AbstractRule;
+import com.huawei.flowcontrol.common.core.ResolverManager;
+import com.huawei.flowcontrol.common.core.match.MatchManager;
+import com.huawei.flowcontrol.common.core.resolver.AbstractResolver;
+import com.huawei.flowcontrol.common.core.rule.AbstractRule;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 
 import java.util.Collections;

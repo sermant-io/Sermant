@@ -20,6 +20,8 @@ package com.huaweicloud.intergration.flowcontrol;
 import com.huaweicloud.intergration.common.rule.AbstractTestRule;
 import com.huaweicloud.intergration.common.rule.SermantTestType;
 
+import java.util.Set;
+
 /**
  * 流控测试
  *
@@ -28,7 +30,7 @@ import com.huaweicloud.intergration.common.rule.SermantTestType;
  */
 public class FlowControlTestRule extends AbstractTestRule {
     @Override
-    protected boolean isSupport(SermantTestType testType) {
-        return testType == SermantTestType.FLOW_CONTROL;
+    protected boolean isSupport(Set<SermantTestType> types) {
+        return types.contains(SermantTestType.FLOW_CONTROL);
     }
 }

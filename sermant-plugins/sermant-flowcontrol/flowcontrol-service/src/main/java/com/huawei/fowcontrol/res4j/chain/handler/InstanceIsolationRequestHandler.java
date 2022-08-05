@@ -20,11 +20,10 @@ package com.huawei.fowcontrol.res4j.chain.handler;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 import com.huawei.fowcontrol.res4j.chain.HandlerConstants;
 import com.huawei.fowcontrol.res4j.chain.context.RequestContext;
+import com.huawei.fowcontrol.res4j.exceptions.CircuitBreakerException;
 import com.huawei.fowcontrol.res4j.exceptions.InstanceIsolationException;
 import com.huawei.fowcontrol.res4j.handler.CircuitBreakerHandler;
 import com.huawei.fowcontrol.res4j.handler.InstanceIsolationHandler;
-
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 
 import java.util.Set;
 
@@ -43,8 +42,8 @@ public class InstanceIsolationRequestHandler extends CircuitBreakerRequestHandle
     public void onBefore(RequestContext context, Set<String> businessNames) {
         try {
             super.onBefore(context, businessNames);
-        } catch (CallNotPermittedException ex) {
-            throw new InstanceIsolationException(ex.getMessage());
+        } catch (CircuitBreakerException ex) {
+            throw InstanceIsolationException.createException(ex.getCircuitBreaker());
         }
     }
 

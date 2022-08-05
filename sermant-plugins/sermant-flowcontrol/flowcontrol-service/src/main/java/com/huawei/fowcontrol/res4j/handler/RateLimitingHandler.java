@@ -17,8 +17,8 @@
 
 package com.huawei.fowcontrol.res4j.handler;
 
-import com.huawei.flowcontrol.common.adapte.cse.resolver.RateLimitingRuleResolver;
-import com.huawei.flowcontrol.common.adapte.cse.rule.RateLimitingRule;
+import com.huawei.flowcontrol.common.core.resolver.RateLimitingRuleResolver;
+import com.huawei.flowcontrol.common.core.rule.RateLimitingRule;
 import com.huawei.flowcontrol.common.handler.AbstractRequestHandler;
 
 import io.github.resilience4j.ratelimiter.RateLimiter;

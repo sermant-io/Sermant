@@ -21,7 +21,6 @@ import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.entity.DubboRequestEntity;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
-import com.huawei.flowcontrol.common.enums.FlowControlEnum;
 import com.huawei.flowcontrol.common.util.ConvertUtils;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 
@@ -84,19 +83,20 @@ public class ApacheDubboInterceptor extends InterceptorSupporter {
             Invocation invocation = (Invocation) allArguments[1];
             chooseDubboService().onBefore(className, convertToApacheDubboEntity(invocation), result,
                     isProvider(context));
-            if (result.isSkip()) {
-                context.skip(AsyncRpcResult.newDefaultAsyncResult(
-                        wrapException(invocation, (Invoker<?>) allArguments[0], result.getResult()),
-                        invocation));
+            if (!result.isSkip()) {
+                return context;
             }
+            context.skip(AsyncRpcResult.newDefaultAsyncResult(
+                    wrapException(invocation, (Invoker<?>) allArguments[0], result),
+                    invocation));
         }
         return context;
     }
 
-    private RpcException wrapException(Invocation invocation, Invoker<?> invoker, FlowControlEnum flowControlEnum) {
-        return new RpcException(flowControlEnum.getCode(),
+    private RpcException wrapException(Invocation invocation, Invoker<?> invoker, FlowControlResult result) {
+        return new RpcException(result.getResponse().getCode(),
                 String.format(Locale.ENGLISH, "Failed to invoke service %s.%s: %s",
-                        invoker.getInterface().getName(), invocation.getMethodName(), flowControlEnum.getMsg()));
+                        invoker.getInterface().getName(), invocation.getMethodName(), result.buildResponseMsg()));
     }
 
     private boolean isProvider(ExecuteContext context) {

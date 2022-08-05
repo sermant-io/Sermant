@@ -74,4 +74,10 @@ public class FlowControlServiceImpl extends ProviderController implements FlowCo
         }
         throw new Exception("retry!");
     }
+
+    @Override
+    @RequestMapping(value = "ping")
+    public String ping() {
+        return "ok";
+    }
 }

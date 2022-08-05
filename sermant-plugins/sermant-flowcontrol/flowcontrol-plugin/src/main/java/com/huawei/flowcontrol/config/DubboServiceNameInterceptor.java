@@ -17,7 +17,7 @@
 
 package com.huawei.flowcontrol.config;
 
-import com.huawei.flowcontrol.common.adapte.cse.entity.FlowControlServiceMeta;
+import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;

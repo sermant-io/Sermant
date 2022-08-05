@@ -17,9 +17,17 @@
 
 package com.huaweicloud.config.nacos.demo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 启动类
@@ -32,7 +40,12 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
     "com.huaweicloud.spring.common.config"
 })
 @EnableDiscoveryClient
+@Controller
+@RestController
 public class NacosApplication {
+    @Autowired
+    private Environment environment;
+
     /**
      * 启动方法
      *
@@ -40,5 +53,18 @@ public class NacosApplication {
      */
     public static void main(String[] args) {
         SpringApplication.run(NacosApplication.class, args);
+    }
+
+    /**
+     * 获取标签
+     *
+     * @return 标签
+     */
+    @RequestMapping("/labels")
+    public Map<String, String> getLabels() {
+        final HashMap<String, String> labels = new HashMap<>();
+        labels.put("app", environment.getProperty("service.meta.application"));
+        labels.put("environment", environment.getProperty("service.meta.environment"));
+        return labels;
     }
 }

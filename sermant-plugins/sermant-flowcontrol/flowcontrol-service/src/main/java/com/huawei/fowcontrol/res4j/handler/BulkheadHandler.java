@@ -17,8 +17,8 @@
 
 package com.huawei.fowcontrol.res4j.handler;
 
-import com.huawei.flowcontrol.common.adapte.cse.resolver.BulkheadRuleResolver;
-import com.huawei.flowcontrol.common.adapte.cse.rule.BulkheadRule;
+import com.huawei.flowcontrol.common.core.resolver.BulkheadRuleResolver;
+import com.huawei.flowcontrol.common.core.rule.BulkheadRule;
 import com.huawei.flowcontrol.common.handler.AbstractRequestHandler;
 
 import io.github.resilience4j.bulkhead.Bulkhead;

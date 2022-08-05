@@ -29,6 +29,11 @@ public class CommonConstants {
      */
     public static final String TEST_TYPE = "sermant.integration.test.type";
 
+    /**
+     * 测试类型分隔符, 支持多个测试类型
+     */
+    public static final String TEST_TYPE_SEPARATOR = ",";
+
     private CommonConstants() {
     }
 }

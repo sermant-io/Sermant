@@ -17,13 +17,11 @@
 
 package com.huaweicloud.spring.feign.consumer.controller;
 
-import com.huaweicloud.spring.common.flowcontrol.YamlSourceFactory;
 import com.huaweicloud.spring.feign.api.FlowControlService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -40,7 +38,6 @@ import java.util.UUID;
 @Controller
 @ResponseBody
 @RequestMapping("flowcontrol")
-@PropertySource(value = "classpath:rule.yaml", factory = YamlSourceFactory.class)
 public class FlowController {
     private static final Logger LOGGER = LoggerFactory.getLogger(FlowController.class);
 
@@ -162,6 +159,41 @@ public class FlowController {
     @RequestMapping("serviceNameNoMatch")
     public String serviceNameNoMatch() {
         return flowControlService.serviceNameNoMatch();
+    }
+
+    /**
+     * 错误注入测试-返回空
+     *
+     * @return 返回空-由agent实现
+     */
+    @RequestMapping("faultNull")
+    public String faultNull() {
+        return flowControlService.faultNull();
+    }
+
+    /**
+     * 错误注入测试-抛异常
+     *
+     * @return 抛异常-由agent实现
+     */
+    @RequestMapping("faultThrow")
+    public String faultThrow() {
+        try {
+            flowControlService.faultThrow();
+        } catch (Exception ex) {
+            return convertMsg(ex);
+        }
+        return "";
+    }
+
+    /**
+     * 错误注入测试-请求延迟
+     *
+     * @return 请求延迟-由agent实现
+     */
+    @RequestMapping("faultDelay")
+    public String faultDelay() {
+        return flowControlService.faultDelay();
     }
 
     private String convertMsg(Exception ex) {

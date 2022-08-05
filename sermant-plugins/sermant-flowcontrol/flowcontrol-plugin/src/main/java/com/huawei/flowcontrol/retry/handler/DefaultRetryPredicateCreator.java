@@ -17,7 +17,7 @@
 
 package com.huawei.flowcontrol.retry.handler;
 
-import com.huawei.flowcontrol.common.adapte.cse.rule.RetryRule;
+import com.huawei.flowcontrol.common.core.rule.RetryRule;
 import com.huawei.flowcontrol.common.exception.InvokerWrapperException;
 import com.huawei.flowcontrol.common.handler.retry.Retry;
 import com.huawei.flowcontrol.common.util.ReflectUtils;

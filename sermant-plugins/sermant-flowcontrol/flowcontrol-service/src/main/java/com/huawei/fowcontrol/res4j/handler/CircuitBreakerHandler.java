@@ -17,17 +17,17 @@
 
 package com.huawei.fowcontrol.res4j.handler;
 
-import com.huawei.flowcontrol.common.adapte.cse.resolver.CircuitBreakerRuleResolver;
-import com.huawei.flowcontrol.common.adapte.cse.rule.CircuitBreakerRule;
+import com.huawei.flowcontrol.common.core.resolver.CircuitBreakerRuleResolver;
+import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
 import com.huawei.flowcontrol.common.handler.AbstractRequestHandler;
 import com.huawei.flowcontrol.common.util.StringUtils;
+import com.huawei.fowcontrol.res4j.adaptor.CircuitBreakerAdaptor;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 
 import java.time.Duration;
-import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -39,8 +39,7 @@ import java.util.Optional;
 public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker, CircuitBreakerRule> {
     @Override
     protected final Optional<CircuitBreaker> createProcessor(String businessName, CircuitBreakerRule rule) {
-        return Optional.of(CircuitBreakerRegistry
-            .of(CircuitBreakerConfig
+        return Optional.of(new CircuitBreakerAdaptor(CircuitBreakerRegistry.of(CircuitBreakerConfig
                 .custom()
                 .failureRateThreshold(rule.getFailureRateThreshold())
                 .slowCallRateThreshold(rule.getSlowCallRateThreshold())
@@ -51,11 +50,7 @@ public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker
                 .slidingWindowType(getSlidingWindowType(rule.getSlidingWindowType()))
                 .slidingWindowSize((int) rule.getParsedSlidingWindowSize())
                 .build())
-            .circuitBreaker(breakerName(businessName, rule)));
-    }
-
-    private String breakerName(String businessName, CircuitBreakerRule rule) {
-        return String.format(Locale.ENGLISH, "%s|%s|%s", businessName, rule.isForceClosed(), rule.isForceOpen());
+                .circuitBreaker(businessName), rule));
     }
 
     private CircuitBreakerConfig.SlidingWindowType getSlidingWindowType(String type) {

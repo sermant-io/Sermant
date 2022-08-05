@@ -18,7 +18,7 @@
 package com.huawei.flowcontrol.retry.handler;
 
 import com.huawei.flowcontrol.BaseTest;
-import com.huawei.flowcontrol.common.adapte.cse.rule.RetryRule;
+import com.huawei.flowcontrol.common.core.rule.RetryRule;
 import com.huawei.flowcontrol.common.handler.retry.RetryContext;
 import com.huawei.flowcontrol.retry.cluster.AlibabaDubboClusterInvoker.AlibabaDubboRetry;
 

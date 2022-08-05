@@ -4,6 +4,18 @@ sermant:
       target: consumer
 servicecomb:
   matchGroup:
+    demo-fault-null: |
+      matches:
+        - apiPath:
+            exact: "/faultNull"
+    demo-fault-throw: |
+      matches:
+        - apiPath:
+            exact: "/faultThrow"
+    demo-fault-delay: |
+      matches:
+        - apiPath:
+            exact: "/faultDelay"
     demo-instanceIsolation: |
       matches:
         - apiPath:
@@ -103,3 +115,20 @@ servicecomb:
     demo-bulkhead: |
       maxConcurrentCalls: 1
       maxWaitDuration: 10
+  faultInjection:
+    demo-fault-null: |
+      type: abort
+      percentage: 100
+      fallbackType: ReturnNull
+      forceClosed: false
+    demo-fault-throw: |
+      type: abort
+      percentage: 100
+      fallbackType: ThrowException
+      forceClosed: false
+      errorCode: 503
+    demo-fault-delay: |
+      type: delay
+      percentage: 100
+      delayTime: 2000
+      forceClosed: false

@@ -50,6 +50,20 @@
                 <module>spring-common-resttemplate</module>
             </modules>
         </profile>
+        <profile>
+            <id>common-test</id>
+            <modules>
+                <module>spring-common-feign</module>
+                <module>spring-common-resttemplate</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>common-test-1.5.x</id>
+            <modules>
+                <module>spring-common-feign-1.5.x</module>
+                <module>spring-common-resttemplate</module>
+            </modules>
+        </profile>
     </profiles>
 
     <dependencies>

@@ -32,12 +32,12 @@ public class CircuitBreakerServerReqHandler extends CircuitBreakerRequestHandler
 
     @Override
     protected String getContextName() {
-        return START_TIME;
+        return CONTEXT_NAME;
     }
 
     @Override
     protected String getStartTime() {
-        return CONTEXT_NAME;
+        return START_TIME;
     }
 
     @Override

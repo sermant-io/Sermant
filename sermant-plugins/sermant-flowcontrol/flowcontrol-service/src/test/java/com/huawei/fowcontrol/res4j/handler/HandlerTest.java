@@ -17,9 +17,9 @@
 
 package com.huawei.fowcontrol.res4j.handler;
 
-import com.huawei.flowcontrol.common.adapte.cse.rule.BulkheadRule;
-import com.huawei.flowcontrol.common.adapte.cse.rule.CircuitBreakerRule;
-import com.huawei.flowcontrol.common.adapte.cse.rule.RateLimitingRule;
+import com.huawei.flowcontrol.common.core.rule.BulkheadRule;
+import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
+import com.huawei.flowcontrol.common.core.rule.RateLimitingRule;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;

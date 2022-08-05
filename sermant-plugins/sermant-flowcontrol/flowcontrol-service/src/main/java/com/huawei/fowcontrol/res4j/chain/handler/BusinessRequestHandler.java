@@ -17,8 +17,9 @@
 
 package com.huawei.fowcontrol.res4j.chain.handler;
 
-import com.huawei.flowcontrol.common.adapte.cse.match.MatchManager;
+import com.huawei.flowcontrol.common.core.match.MatchManager;
 import com.huawei.fowcontrol.res4j.chain.AbstractChainHandler;
+import com.huawei.fowcontrol.res4j.chain.HandlerConstants;
 import com.huawei.fowcontrol.res4j.chain.context.ChainContext;
 import com.huawei.fowcontrol.res4j.chain.context.RequestContext;
 
@@ -71,6 +72,6 @@ public class BusinessRequestHandler extends AbstractChainHandler {
 
     @Override
     public int getOrder() {
-        return Integer.MIN_VALUE;
+        return HandlerConstants.BUSINESS_ORDER;
     }
 }

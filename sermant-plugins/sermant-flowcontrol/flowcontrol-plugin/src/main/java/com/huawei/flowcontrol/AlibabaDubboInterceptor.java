@@ -21,7 +21,6 @@ import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.entity.DubboRequestEntity;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
-import com.huawei.flowcontrol.common.enums.FlowControlEnum;
 import com.huawei.flowcontrol.common.util.ConvertUtils;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 
@@ -87,10 +86,11 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
             if (invocation.getInvoker() != null) {
                 chooseDubboService().onBefore(className, convertToAlibabaDubboEntity(invocation), result,
                     isProvider(context));
-                if (result.isSkip()) {
-                    context.skip(new RpcResult(
-                        wrapException(invocation, (Invoker<?>) allArguments[0], result.getResult())));
+                if (!result.isSkip()) {
+                    return context;
                 }
+                context.skip(new RpcResult(
+                        wrapException(invocation, (Invoker<?>) allArguments[0], result)));
             } else {
                 LoggerFactory.getLogger().warning("Not found down stream invoker, it will skip flow control check!");
             }
@@ -112,10 +112,10 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
                 CommonConst.DUBBO_PROVIDER));
     }
 
-    private RpcException wrapException(Invocation invocation, Invoker<?> invoker, FlowControlEnum flowControlEnum) {
-        return new RpcException(flowControlEnum.getCode(),
+    private RpcException wrapException(Invocation invocation, Invoker<?> invoker, FlowControlResult result) {
+        return new RpcException(result.getResponse().getCode(),
             String.format(Locale.ENGLISH, "Failed to invoke service %s.%s: %s",
-                invoker.getInterface().getName(), invocation.getMethodName(), flowControlEnum.getMsg()));
+                invoker.getInterface().getName(), invocation.getMethodName(), result.buildResponseMsg()));
     }
 
     @Override

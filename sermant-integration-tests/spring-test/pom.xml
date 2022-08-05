@@ -35,8 +35,9 @@
         <maven.compiler.target>8</maven.compiler.target>
         <spring.boot.version>2.2.0.RELEASE</spring.boot.version>
         <nacos.version>2.2.0.RELEASE</nacos.version>
-        <processor.version>2.2.0.RELEASE</processor.version>
         <spring.cloud.version>Hoxton.RELEASE</spring.cloud.version>
+        <!--不变的版本-->
+        <processor.version>2.2.0.RELEASE</processor.version>
     </properties>
     <modules>
         <module>spring-intergration-test</module>
@@ -75,6 +76,20 @@
         </profile>
         <profile>
             <id>flowcontrol-test-1.5.x</id>
+            <modules>
+                <module>spring-common</module>
+                <module>spring-common-demos</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>common-test</id>
+            <modules>
+                <module>spring-common</module>
+                <module>spring-common-demos</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>common-test-1.5.x</id>
             <modules>
                 <module>spring-common</module>
                 <module>spring-common-demos</module>
