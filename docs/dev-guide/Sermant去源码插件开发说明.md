@@ -238,7 +238,6 @@
                                 <type>jar</type>
                                 <overWrite>false</overWrite>
                                 <outputDirectory>${sermant.basedir}/agent/core</outputDirectory>
-                                <destFileName>sermant-core.jar</destFileName>
                             </artifactItem>
                         </artifactItems>
                     </configuration>
