@@ -20,6 +20,7 @@ Sermant 基于Java的字节码增强技术，通过 JavaAgent 对宿主应用进
 - [sermant-backend](../sermant-backend): 消息发送模块服务端
 - [sermant-package](../sermant-package): 打包模块
 - [sermant-plugins](../sermant-plugins): 插件根模块，内含各种功能的插件及相关附加件
+- [sermant-injector](../sermant-injector): sermant-agent容器化部署Admission Webhook组件
 
 ## 打包流程
 
@@ -57,6 +58,9 @@ mvn clean package -Dmaven.test.skip
   - *sermant-agent.jar*: JavaAgent入口包
 - *server*: 服务器目录，含**Sermant**的服务端，插件的服务端和客户端
 
+## 容器化部署说明
+k8s环境下，Sermant支持通过sermant-injector组件实现宿主应用自动挂载sermant-agent包的快速部署方式。如何部署sermant-injector与宿主应用可以参考[容器化部署指导手册](user-guide/injector.md)
+
 ## 插件开发
 
 如何新增一个插件可以参考[插件模块开发手册](dev-guide/dev_plugin_module.md)，其中涉及添加插件、插件服务及附加件的详细流程。
@@ -78,6 +82,7 @@ mvn clean package -Dmaven.test.skip
 |[核心模块介绍](user-guide/agentcore.md)|使用手册|
 |[入口模块介绍](user-guide/entrance.md)|使用手册|
 |[后端模块介绍](user-guide/backend.md)|使用手册|
+|[容器化部署指导手册](user-guide/injector.md) |使用手册|
 |[限流降级功能介绍](user-guide/flowcontrol/flowcontrol.md)|使用手册|
 |[动态配置功能介绍](user-guide/dynamic-config/document.md)|使用手册|
 |[流量录制回放功能介绍](user-guide/flowrecord/document.md)|使用手册|
