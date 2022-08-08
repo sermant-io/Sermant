@@ -44,8 +44,8 @@ jobs:
           sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign-1.5.x/feign-consumer-1.5.x/target/feign-consumer-1.5.x.jar > feign-consumer.log 2>&1 &
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dserver.port=8003 -jar \
           sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > rest-provider.log 2>&1 &
-          java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dserver.port=8005 -jar \
-          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-consumer/target/rest-consumer.jar
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dserver.port=8005 -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-consumer/target/rest-consumer.jar > rest-consumer.log 2>&1 &
       - name: waiting for services start
         run: |
           ps -ef | grep java
@@ -100,8 +100,8 @@ jobs:
           sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign/feign-consumer/target/feign-consumer.jar > feign-consumer.log 2>&1 &
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dserver.port=8003 -jar \
           sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > rest-provider.log 2>&1 &
-          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dserver.port=8005 -jar \
-          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-consumer/target/rest-consumer.jar > rest-consumer.log 2>&1 &
+          java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dserver.port=8005 -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-consumer/target/rest-consumer.jar
       - name: waiting for services start
         run: |
           ps -ef | grep java
