@@ -34,7 +34,7 @@
                 <module>sermant-service-registry</module>
                 <module>sermant-dynamic-config</module>
                 <module>sermant-router</module>
-                <module>sermant-loadbalancer</module>
+<!--                <module>sermant-loadbalancer</module>-->
             </modules>
             <build>
                 <pluginManagement>
