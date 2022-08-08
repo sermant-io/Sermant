@@ -164,6 +164,31 @@ public class FlowController {
         return flowControlService.serviceNameNoMatch();
     }
 
+    /**
+     * 错误注入测试-返回空
+     *
+     * @return 返回空-由agent实现
+     */
+    @RequestMapping("faultNull")
+    public String faultNull() {
+        return flowControlService.faultNull();
+    }
+
+    /**
+     * 错误注入测试-抛异常
+     *
+     * @return 抛异常-由agent实现
+     */
+    @RequestMapping("faultThrow")
+    public String faultThrow() {
+        try {
+            flowControlService.faultThrow();
+        } catch (Exception ex) {
+            return convertMsg(ex);
+        }
+        return "";
+    }
+
     private String convertMsg(Exception ex) {
         if (ex instanceof UndeclaredThrowableException) {
             return ((UndeclaredThrowableException) ex).getUndeclaredThrowable().getMessage();

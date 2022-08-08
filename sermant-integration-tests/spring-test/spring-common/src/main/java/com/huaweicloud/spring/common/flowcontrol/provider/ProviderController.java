@@ -126,4 +126,24 @@ public class ProviderController {
         }
         return Constants.HTTP_OK;
     }
+
+    /**
+     * 错误注入测试-返回空
+     *
+     * @return 返回空-由agent实现
+     */
+    @RequestMapping("faultNull")
+    public String faultNull() {
+        return Constants.HTTP_OK;
+    }
+
+    /**
+     * 错误注入测试-抛异常
+     *
+     * @return 抛异常-由agent实现
+     */
+    @RequestMapping("faultThrow")
+    public String faultThrow() {
+        return Constants.HTTP_OK;
+    }
 }

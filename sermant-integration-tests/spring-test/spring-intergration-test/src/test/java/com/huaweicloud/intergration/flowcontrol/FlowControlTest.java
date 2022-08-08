@@ -139,6 +139,25 @@ public abstract class FlowControlTest {
         Assert.assertFalse(expected.get());
     }
 
+    /**
+     * 测试错误注入-返回空
+     */
+    @Test
+    public void testFaultReturnNull() {
+        final String result = RequestUtils.get(getRestConsumerUrl() + "/faultNull", Collections.emptyMap(),
+                String.class);
+        Assert.assertNull(result);
+    }
+
+    /**
+     * 测试错误注入-抛异常
+     */
+    @Test
+    public void testFaultThrow() {
+        final String msg = RequestUtils.get(getRestConsumerUrl() + "/faultThrow", Collections.emptyMap(), String.class);
+        Assert.assertTrue(msg != null && msg.contains("Request has been aborted"));
+    }
+
     private void process(String api, String flowControlMsg, int requestCount, AtomicBoolean check) {
         String url = getRestConsumerUrl() + api;
         AtomicBoolean expected = new AtomicBoolean(false);

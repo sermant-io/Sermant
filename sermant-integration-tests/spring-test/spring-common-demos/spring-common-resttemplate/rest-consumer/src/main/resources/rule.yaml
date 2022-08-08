@@ -4,6 +4,14 @@ sermant:
       target: consumer
 servicecomb:
   matchGroup:
+    demo-fault-null: |
+      matches:
+        - apiPath:
+            exact: "/faultNull"
+    demo-fault-throw: |
+      matches:
+        - apiPath:
+            exact: "/faultThrow"
     demo-instanceIsolation: |
       matches:
         - apiPath:
@@ -103,3 +111,15 @@ servicecomb:
     demo-bulkhead: |
       maxConcurrentCalls: 1
       maxWaitDuration: 10
+  faultInjection:
+    demo-fault-null: |
+      type: abort
+      percentage: 100
+      fallbackType: ReturnNull
+      forceClosed: false
+    demo-fault-throw: |
+      type: abort
+      percentage: 100
+      fallbackType: ThrowException
+      forceClosed: false
+      errorCode: 503

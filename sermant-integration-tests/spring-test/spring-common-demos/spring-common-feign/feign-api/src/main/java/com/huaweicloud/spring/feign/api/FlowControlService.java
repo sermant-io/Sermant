@@ -106,4 +106,20 @@ public interface FlowControlService {
      */
     @RequestMapping("retry")
     String retry(@RequestParam("invocationId") String invocationId) throws Exception;
+
+    /**
+     * 错误注入测试-返回空
+     *
+     * @return 返回空-由agent实现
+     */
+    @RequestMapping("faultNull")
+    String faultNull();
+
+    /**
+     * 错误注入测试-抛异常
+     *
+     * @return 抛异常-由agent实现
+     */
+    @RequestMapping("faultThrow")
+    String faultThrow();
 }

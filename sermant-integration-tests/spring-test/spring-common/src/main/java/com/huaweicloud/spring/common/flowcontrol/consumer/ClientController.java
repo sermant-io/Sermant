@@ -87,6 +87,26 @@ public class ClientController {
         return tryCount == null ? 0 : Integer.parseInt(tryCount);
     }
 
+    /**
+     * 错误注入测试-返回空
+     *
+     * @return 返回空-由agent实现
+     */
+    @RequestMapping("faultNull")
+    public String faultNull() {
+        return restTemplate.getForObject(buildUrl("faultNull"), String.class);
+    }
+
+    /**
+     * 错误注入测试-抛异常
+     *
+     * @return 抛异常-由agent实现
+     */
+    @RequestMapping("faultThrow")
+    public String faultThrow() {
+        return restTemplate.getForObject(buildUrl("faultThrow"), String.class);
+    }
+
     private String buildUrl(String api) {
         return String.format(Locale.ENGLISH, "http://%s/%s", downServiceName, api);
     }
