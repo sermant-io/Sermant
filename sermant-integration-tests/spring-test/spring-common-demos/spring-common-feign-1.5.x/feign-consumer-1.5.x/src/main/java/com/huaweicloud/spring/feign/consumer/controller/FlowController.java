@@ -189,6 +189,16 @@ public class FlowController {
         return "";
     }
 
+    /**
+     * 错误注入测试-请求延迟
+     *
+     * @return 请求延迟-由agent实现
+     */
+    @RequestMapping("faultDelay")
+    public String faultDelay() {
+        return flowControlService.faultDelay();
+    }
+
     private String convertMsg(Exception ex) {
         if (ex instanceof UndeclaredThrowableException) {
             return ((UndeclaredThrowableException) ex).getUndeclaredThrowable().getMessage();

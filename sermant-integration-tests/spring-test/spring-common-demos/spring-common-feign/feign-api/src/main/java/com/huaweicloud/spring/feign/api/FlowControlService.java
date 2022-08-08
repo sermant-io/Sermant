@@ -122,4 +122,12 @@ public interface FlowControlService {
      */
     @RequestMapping("faultThrow")
     String faultThrow();
+
+    /**
+     * 错误注入测试-请求延迟
+     *
+     * @return 请求延迟-由agent实现
+     */
+    @RequestMapping("faultDelay")
+    String faultDelay();
 }

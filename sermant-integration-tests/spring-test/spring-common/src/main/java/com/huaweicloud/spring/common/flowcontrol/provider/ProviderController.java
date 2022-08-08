@@ -146,4 +146,14 @@ public class ProviderController {
     public String faultThrow() {
         return Constants.HTTP_OK;
     }
+
+    /**
+     * 错误注入测试-调用延迟
+     *
+     * @return 调用延迟-由agent实现
+     */
+    @RequestMapping("faultDelay")
+    public String faultDelay() {
+        return Constants.HTTP_OK;
+    }
 }

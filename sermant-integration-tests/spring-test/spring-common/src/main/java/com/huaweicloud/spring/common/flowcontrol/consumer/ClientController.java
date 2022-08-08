@@ -107,6 +107,16 @@ public class ClientController {
         return restTemplate.getForObject(buildUrl("faultThrow"), String.class);
     }
 
+    /**
+     * 错误注入测试-请求延迟
+     *
+     * @return 请求延迟-由agent实现
+     */
+    @RequestMapping("faultDelay")
+    public String faultDelay() {
+        return restTemplate.getForObject(buildUrl("faultDelay"), String.class);
+    }
+
     private String buildUrl(String api) {
         return String.format(Locale.ENGLISH, "http://%s/%s", downServiceName, api);
     }

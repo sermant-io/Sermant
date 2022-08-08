@@ -12,6 +12,10 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/faultThrow"
+    demo-fault-delay: |
+      matches:
+        - apiPath:
+            exact: "/faultDelay"
     demo-instanceIsolation: |
       matches:
         - apiPath:
@@ -123,3 +127,8 @@ servicecomb:
       fallbackType: ThrowException
       forceClosed: false
       errorCode: 503
+    demo-fault-delay: |
+      type: delay
+      percentage: 100
+      delayTime: 2000
+      forceClosed: false

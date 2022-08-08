@@ -158,6 +158,17 @@ public abstract class FlowControlTest {
         Assert.assertTrue(msg != null && msg.contains("Request has been aborted"));
     }
 
+    /**
+     * 测试错误注入-请求延迟, 测试规则延迟2秒, 本身方法调用小于100ms
+     */
+    @Test
+    public void testFaultDelay() {
+        long start = System.currentTimeMillis();
+        RequestUtils.get(getRestConsumerUrl() + "/faultDelay", Collections.emptyMap(), String.class);
+        long delay = 2000L;
+        Assert.assertTrue(System.currentTimeMillis() - start > delay);
+    }
+
     private void process(String api, String flowControlMsg, int requestCount, AtomicBoolean check) {
         String url = getRestConsumerUrl() + api;
         AtomicBoolean expected = new AtomicBoolean(false);
