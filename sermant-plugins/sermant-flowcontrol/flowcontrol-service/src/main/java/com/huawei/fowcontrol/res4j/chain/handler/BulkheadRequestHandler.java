@@ -72,7 +72,7 @@ public class BulkheadRequestHandler extends FlowControlHandler<Bulkhead> {
      */
     private boolean isOccurBulkheadLimit(String sourceName) {
         return ChainContext.getThreadLocalContext(sourceName)
-                .get(HandlerConstants.OCCURRED_EXCEPTION, Exception.class) instanceof BulkheadFullException;
+                .get(HandlerConstants.OCCURRED_FLOW_EXCEPTION, Exception.class) instanceof BulkheadFullException;
     }
 
     @Override

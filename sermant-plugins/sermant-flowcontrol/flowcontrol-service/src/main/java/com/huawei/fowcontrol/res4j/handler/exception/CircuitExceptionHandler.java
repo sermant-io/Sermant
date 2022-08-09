@@ -20,9 +20,7 @@ package com.huawei.fowcontrol.res4j.handler.exception;
 import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.entity.FlowControlResponse;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
-
-import io.github.resilience4j.bulkhead.BulkheadFullException;
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import com.huawei.fowcontrol.res4j.exceptions.CircuitBreakerException;
 
 /**
  * 熔断异常处理
@@ -30,15 +28,24 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
  * @author zhouss
  * @since 2022-08-05
  */
-public class CircuitExceptionHandler extends AbstractExceptionHandler<CallNotPermittedException> {
+public class CircuitExceptionHandler extends AbstractExceptionHandler<CircuitBreakerException> {
     @Override
-    protected FlowControlResponse getFlowControlResponse(CallNotPermittedException ex,
+    protected FlowControlResponse getFlowControlResponse(CircuitBreakerException ex,
             FlowControlResult flowControlResult) {
-        return new FlowControlResponse("Degraded and blocked!", CommonConst.TOO_MANY_REQUEST_CODE);
+        return new FlowControlResponse(ex.getMessage(), getCode());
     }
 
     @Override
-    public Class<CallNotPermittedException> targetException() {
-        return CallNotPermittedException.class;
+    public Class<CircuitBreakerException> targetException() {
+        return CircuitBreakerException.class;
+    }
+
+    /**
+     * 获取响应码
+     *
+     * @return code
+     */
+    protected int getCode() {
+        return CommonConst.TOO_MANY_REQUEST_CODE;
     }
 }

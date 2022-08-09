@@ -17,19 +17,36 @@
 
 package com.huawei.fowcontrol.res4j.exceptions;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+
 /**
  * 实例隔离异常
  *
  * @author zhouss
  * @since 2022-07-22
  */
-public class InstanceIsolationException extends RuntimeException {
+public class InstanceIsolationException extends CircuitBreakerException {
+
     /**
-     * 实例隔离异常
+     * 实例异常
      *
-     * @param message 异常信息
+     * @param circuitBreaker 熔断器
+     * @param message 熔断信息
+     * @param writableStackTrace 是否堆栈
      */
-    public InstanceIsolationException(String message) {
-        super(message);
+    public InstanceIsolationException(CircuitBreaker circuitBreaker,
+            String message, boolean writableStackTrace) {
+        super(circuitBreaker, message, writableStackTrace);
+    }
+
+    /**
+     * 构建异常信息
+     *
+     * @param circuitBreaker 熔断配置
+     * @return 异常
+     */
+    public static CircuitBreakerException createException(CircuitBreaker circuitBreaker) {
+        return new InstanceIsolationException(circuitBreaker, createMsg(circuitBreaker),
+                circuitBreaker.getCircuitBreakerConfig().isWritableStackTraceEnabled());
     }
 }

@@ -32,8 +32,7 @@ public class InstanceIsolationExceptionHandler extends AbstractExceptionHandler<
     @Override
     protected FlowControlResponse getFlowControlResponse(InstanceIsolationException ex,
             FlowControlResult flowControlResult) {
-        return new FlowControlResponse("The instance that it invoked has been isolated!",
-                CommonConst.INSTANCE_ISOLATION_REQUEST_CODE);
+        return new FlowControlResponse(ex.getMessage(), CommonConst.INSTANCE_ISOLATION_REQUEST_CODE);
     }
 
     @Override

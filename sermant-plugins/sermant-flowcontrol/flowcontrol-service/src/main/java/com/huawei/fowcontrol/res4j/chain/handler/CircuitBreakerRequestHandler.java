@@ -17,12 +17,12 @@
 
 package com.huawei.fowcontrol.res4j.chain.handler;
 
-import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
+import com.huawei.fowcontrol.res4j.adaptor.CircuitBreakerAdaptor;
 import com.huawei.fowcontrol.res4j.chain.HandlerConstants;
 import com.huawei.fowcontrol.res4j.chain.context.RequestContext;
+import com.huawei.fowcontrol.res4j.exceptions.CircuitBreakerException;
 import com.huawei.fowcontrol.res4j.handler.CircuitBreakerHandler;
 
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 
 import java.util.List;
@@ -40,25 +40,6 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
 
     private static final String START_TIME = CONTEXT_NAME + "_START_TIME";
 
-    private static final String SEPARATOR = "\\|";
-
-    /**
-     * 熔断器标志索引(ForceClose){@link CircuitBreakerRule#isForceClosed()} ()}, 位于name基于SEPARATOR分隔数组的最后一个
-     * 创建位置参考
-     *
-     * @see CircuitBreakerHandler#breakerName(String, CircuitBreakerRule)
-     */
-    private static final int FORCE_CLOSE_LAST_INDEX = 1;
-
-    /**
-     * 熔断器标志索引(ForceOpen){@link CircuitBreakerRule#isForceOpen()}, 位于name基于SEPARATOR
-     * 分隔数组的倒数第二个
-     * 创建位置参考
-     *
-     * @see CircuitBreakerHandler#breakerName(String, CircuitBreakerRule)
-     */
-    private static final int FORCE_OPEN_LAST_INDEX = 2;
-
     private final CircuitBreakerHandler circuitBreakerHandler = getHandler();
 
     @Override
@@ -67,7 +48,7 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
         if (!circuitBreakers.isEmpty()) {
             for (CircuitBreaker circuitBreaker : circuitBreakers) {
                 checkForceOpen(circuitBreaker);
-                circuitBreaker.acquirePermission();
+                checkCircuitBreakerState(circuitBreaker);
             }
 
             // 这里使用内置方法获取时间, 列表中的每个熔断器时间均一致，因此取第一个
@@ -77,17 +58,24 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
         super.onBefore(context, businessNames);
     }
 
+    private void checkCircuitBreakerState(CircuitBreaker circuitBreaker) {
+        final boolean isSuccess = circuitBreaker.tryAcquirePermission();
+        if (!isSuccess) {
+            throw CircuitBreakerException.createException(circuitBreaker);
+        }
+    }
+
     /**
      * 强制开启状态直接抛出熔断异常
      *
      * @param circuitBreaker 熔断器
      */
     private void checkForceOpen(CircuitBreaker circuitBreaker) {
-        final String name = circuitBreaker.getName();
-        final String[] parts = name.split(SEPARATOR);
-        if (Boolean.parseBoolean(parts[FORCE_OPEN_LAST_INDEX])) {
-            // 强制开启则直接抛出异常
-            throw CallNotPermittedException.createCallNotPermittedException(circuitBreaker);
+        if (circuitBreaker instanceof CircuitBreakerAdaptor) {
+            if (((CircuitBreakerAdaptor) circuitBreaker).isForceOpen()) {
+                // 强制开启则直接抛出异常
+                throw CircuitBreakerException.createException(circuitBreaker);
+            }
         }
     }
 
@@ -103,6 +91,7 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
             process(context, null, result, true);
         } finally {
             context.remove(getContextName());
+            context.remove(getStartTime());
         }
         super.onResult(context, businessNames, result);
     }
@@ -118,7 +107,7 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
         if (throwable != null) {
             circuitBreakers.forEach(circuitBreaker -> circuitBreaker.onError(duration, timestampUnit, throwable));
         }
-        if (isResult) {
+        if (isResult && context.get(HandlerConstants.OCCURRED_REQUEST_EXCEPTION, Throwable.class) == null) {
             circuitBreakers.forEach(circuitBreaker -> circuitBreaker.onResult(duration, timestampUnit, result));
         }
     }
@@ -130,9 +119,10 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
 
     private boolean isForceClose(List<CircuitBreaker> circuitBreakers) {
         for (CircuitBreaker circuitBreaker : circuitBreakers) {
-            final String name = circuitBreaker.getName();
-            final String[] parts = name.split(SEPARATOR);
-            if (Boolean.parseBoolean(parts[FORCE_CLOSE_LAST_INDEX])) {
+            if (!(circuitBreaker instanceof CircuitBreakerAdaptor)) {
+                continue;
+            }
+            if (((CircuitBreakerAdaptor) circuitBreaker).isForceClosed()) {
                 // 强制关闭则跳过当前处理器逻辑
                 return true;
             }

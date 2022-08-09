@@ -32,7 +32,7 @@ import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 public class RateLimitingExceptionHandler extends AbstractExceptionHandler<RequestNotPermitted> {
     @Override
     protected FlowControlResponse getFlowControlResponse(RequestNotPermitted ex, FlowControlResult flowControlResult) {
-        return new FlowControlResponse("Flow Limited", CommonConst.TOO_MANY_REQUEST_CODE);
+        return new FlowControlResponse("Rate Limited", CommonConst.TOO_MANY_REQUEST_CODE);
     }
 
     @Override

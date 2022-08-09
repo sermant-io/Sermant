@@ -19,8 +19,6 @@ package com.huawei.flowcontrol.common.entity;
 
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 
-import java.util.Locale;
-
 /**
  * 修正结果, 该结果确定返回数据
  *
@@ -49,14 +47,14 @@ public class FlowControlResult {
      * @return 响应信息
      */
     public String buildResponseMsg() {
-        if (requestType == null || response == null) {
+        if (response == null) {
             return "";
         }
         if (response.isReplaceResult()) {
             // 替换场景, 直接使用序列化结果
             return response.getSerializeResult();
         } else {
-            return String.format(Locale.ENGLISH, "%s throw exception: %s", requestType, response.getMsg());
+            return response.getMsg();
         }
     }
 

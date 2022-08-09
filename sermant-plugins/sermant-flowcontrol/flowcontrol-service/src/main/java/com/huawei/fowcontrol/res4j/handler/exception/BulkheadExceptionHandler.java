@@ -33,7 +33,8 @@ public class BulkheadExceptionHandler extends AbstractExceptionHandler<BulkheadF
     @Override
     protected FlowControlResponse getFlowControlResponse(BulkheadFullException ex,
             FlowControlResult flowControlResult) {
-        return new FlowControlResponse("Exceeded the max concurrent calls!", CommonConst.TOO_MANY_REQUEST_CODE);
+        return new FlowControlResponse("Bulkhead is full and does not permit further calls!",
+                CommonConst.TOO_MANY_REQUEST_CODE);
     }
 
     @Override
