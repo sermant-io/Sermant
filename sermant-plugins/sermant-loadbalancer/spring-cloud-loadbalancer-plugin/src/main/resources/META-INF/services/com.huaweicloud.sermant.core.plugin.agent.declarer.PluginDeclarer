@@ -2,3 +2,4 @@ com.huawei.loadbalancer.declarer.ClientFactoryDeclarer
 com.huawei.loadbalancer.declarer.RandomDeclarer
 com.huawei.loadbalancer.declarer.RibbonLoadBalancerDeclarer
 com.huawei.loadbalancer.declarer.RoundRobinDeclarer
+com.huaweicloud.loadbalancer.declarer.SpringFactoriesDeclarer
