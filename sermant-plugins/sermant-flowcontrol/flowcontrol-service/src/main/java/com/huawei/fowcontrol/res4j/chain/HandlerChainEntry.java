@@ -63,7 +63,7 @@ public enum HandlerChainEntry {
         } catch (Exception ex) {
             flowControlResult.setRequestType(requestEntity.getRequestType());
             Rest4jExceptionUtils.handleException(ex, flowControlResult);
-            ChainContext.getThreadLocalContext(sourceName).save(HandlerConstants.OCCURRED_EXCEPTION, ex);
+            ChainContext.getThreadLocalContext(sourceName).save(HandlerConstants.OCCURRED_FLOW_EXCEPTION, ex);
             LOGGER.log(Level.FINE, ex, ex::getMessage);
         }
     }
@@ -139,7 +139,9 @@ public enum HandlerChainEntry {
      * @param throwable 异常信息
      */
     public void onThrow(String sourceName, Throwable throwable) {
-        chain.onThrow(ChainContext.getThreadLocalContext(sourceName), null, throwable);
+        final RequestContext context = ChainContext.getThreadLocalContext(sourceName);
+        context.save(HandlerConstants.OCCURRED_REQUEST_EXCEPTION, throwable);
+        chain.onThrow(context, null, throwable);
     }
 
     /**

@@ -39,7 +39,8 @@ public enum FlowControlEnum {
     /**
      * 实例隔离异常
      */
-    INSTANCE_ISOLATION("The instance that it invoked has been isolated", CommonConst.INSTANCE_ISOLATION_REQUEST_CODE),
+    INSTANCE_ISOLATION("CircuitBreaker is OPEN and does not permit further calls!",
+            CommonConst.INSTANCE_ISOLATION_REQUEST_CODE),
 
     /**
      * 隔离仓异常
