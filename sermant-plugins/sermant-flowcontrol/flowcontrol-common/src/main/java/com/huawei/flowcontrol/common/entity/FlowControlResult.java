@@ -64,10 +64,10 @@ public class FlowControlResult {
      * @return 响应信息
      */
     public String buildResponseMsg() {
-        if (requestType == null || flowControlEnum == null) {
+        if (flowControlEnum == null) {
             return "";
         }
-        return String.format(Locale.ENGLISH, "%s throw exception: %s", requestType, flowControlEnum.getMsg());
+        return flowControlEnum.getMsg();
     }
 
     public boolean isSkip() {

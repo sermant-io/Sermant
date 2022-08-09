@@ -45,9 +45,14 @@ public class HandlerConstants {
     public static final int INSTANCE_ISOLATION_ORDER = 11000;
 
     /**
-     * 标记当前线程是否发生异常
+     * 标记当前线程是否发生流控异常
      */
-    public static final String OCCURRED_EXCEPTION = "__OCCURRED_EXCEPTION__";
+    public static final String OCCURRED_FLOW_EXCEPTION = "__OCCURRED_FLOW_EXCEPTION__";
+
+    /**
+     * 当前请求是否触发异常
+     */
+    public static final String OCCURRED_REQUEST_EXCEPTION = "__OCCURRED_REQUEST_EXCEPTION__";
 
     /**
      * 线程变量provider端key前缀

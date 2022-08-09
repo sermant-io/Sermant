@@ -103,6 +103,7 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
             process(context, null, result, true);
         } finally {
             context.remove(getContextName());
+            context.remove(getStartTime());
         }
         super.onResult(context, businessNames, result);
     }
@@ -118,7 +119,7 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
         if (throwable != null) {
             circuitBreakers.forEach(circuitBreaker -> circuitBreaker.onError(duration, timestampUnit, throwable));
         }
-        if (isResult) {
+        if (isResult && context.get(HandlerConstants.OCCURRED_REQUEST_EXCEPTION, Throwable.class) == null) {
             circuitBreakers.forEach(circuitBreaker -> circuitBreaker.onResult(duration, timestampUnit, result));
         }
     }
