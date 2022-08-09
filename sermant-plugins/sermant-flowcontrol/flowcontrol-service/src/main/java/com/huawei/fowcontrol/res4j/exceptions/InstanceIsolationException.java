@@ -26,7 +26,6 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
  * @since 2022-07-22
  */
 public class InstanceIsolationException extends CircuitBreakerException {
-
     /**
      * 实例异常
      *
