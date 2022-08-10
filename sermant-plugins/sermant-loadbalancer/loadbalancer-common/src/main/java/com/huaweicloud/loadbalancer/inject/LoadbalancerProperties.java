@@ -18,6 +18,8 @@
 package com.huaweicloud.loadbalancer.inject;
 
 import com.huaweicloud.loadbalancer.config.LbMeta;
+import com.huaweicloud.loadbalancer.service.LoadbalancerConfigServiceImpl;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,5 +40,8 @@ public class LoadbalancerProperties {
     public LoadbalancerProperties(@Value("${dubbo.application.name:${spring.application.name:application}}")
             String serviceName) {
         LbMeta.INSTANCE.setServiceName(serviceName);
+        final LoadbalancerConfigServiceImpl pluginService = PluginServiceManager
+                .getPluginService(LoadbalancerConfigServiceImpl.class);
+        pluginService.subscribe();
     }
 }

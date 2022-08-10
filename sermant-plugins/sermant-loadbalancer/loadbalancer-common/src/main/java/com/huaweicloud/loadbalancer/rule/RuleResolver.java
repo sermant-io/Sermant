@@ -15,35 +15,25 @@
  *
  */
 
-package com.huaweicloud.loadbalancer.config;
+package com.huaweicloud.loadbalancer.rule;
+
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+
+import java.util.Optional;
 
 /**
- * spring cloud loadbalancer负载均衡策略
+ * 规则解析器
  *
- * @author provenceee
- * @since 2022-01-21
+ * @author zhouss
+ * @since 2022-08-09
+ * @param <T> 规则类型
  */
-public enum SpringLoadbalancerType {
+public interface RuleResolver<T> {
     /**
-     * 随机（支持spring cloud loadbalancer 2.2.7+）
+     * 解析规则
+     *
+     * @param event 配置事件
+     * @return 解析后的规则
      */
-    RANDOM("Random"),
-
-    /**
-     * 轮询
-     */
-    ROUND_ROBIN("RoundRobin");
-
-    /**
-     * 实际配置映射名称
-     */
-    private final String mapperName;
-
-    SpringLoadbalancerType(String mapperName) {
-        this.mapperName = mapperName;
-    }
-
-    public String getMapperName() {
-        return mapperName;
-    }
+    Optional<T> resolve(DynamicConfigEvent event);
 }

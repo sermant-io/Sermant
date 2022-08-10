@@ -28,7 +28,7 @@ import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
 public class LoadbalancerPropertiesInjectDefine implements ClassInjectDefine {
     @Override
     public String injectClassName() {
-        return "com.huaweicloud.loadbalancer.config.inject.LoadbalancerProperties";
+        return "com.huaweicloud.loadbalancer.inject.LoadbalancerProperties";
     }
 
     @Override

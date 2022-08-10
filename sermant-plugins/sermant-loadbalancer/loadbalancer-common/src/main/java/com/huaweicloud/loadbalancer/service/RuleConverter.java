@@ -15,35 +15,25 @@
  *
  */
 
-package com.huaweicloud.loadbalancer.config;
+package com.huaweicloud.loadbalancer.service;
+
+import com.huaweicloud.loadbalancer.rule.LoadbalancerRule;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
+
+import java.util.Optional;
 
 /**
- * spring cloud loadbalancer负载均衡策略
+ * 规则转换器
  *
- * @author provenceee
- * @since 2022-01-21
+ * @author zhouss
+ * @since 2022-08-09
  */
-public enum SpringLoadbalancerType {
+public interface RuleConverter extends PluginService {
     /**
-     * 随机（支持spring cloud loadbalancer 2.2.7+）
+     * 转换字符串为负载均衡规则
+     *
+     * @param rawContent 配置内容
+     * @return LoadbalancerRule
      */
-    RANDOM("Random"),
-
-    /**
-     * 轮询
-     */
-    ROUND_ROBIN("RoundRobin");
-
-    /**
-     * 实际配置映射名称
-     */
-    private final String mapperName;
-
-    SpringLoadbalancerType(String mapperName) {
-        this.mapperName = mapperName;
-    }
-
-    public String getMapperName() {
-        return mapperName;
-    }
+    Optional<LoadbalancerRule> convert(String rawContent);
 }

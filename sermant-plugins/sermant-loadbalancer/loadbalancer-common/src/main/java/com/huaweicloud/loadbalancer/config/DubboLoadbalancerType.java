@@ -27,25 +27,38 @@ public enum DubboLoadbalancerType {
     /**
      * 随机
      */
-    RANDOM,
+    RANDOM("Random"),
 
     /**
      * 轮询
      */
-    ROUNDROBIN,
+    ROUND_ROBIN("RoundRobin"),
 
     /**
      * 最少活跃
      */
-    LEASTACTIVE,
+    LEAST_ACTIVE("LeastActive"),
 
     /**
      * 一致性HASH
      */
-    CONSISTENTHASH,
+    CONSIST_ENT_HASH("ConsistEntHash"),
 
     /**
      * 最短响应时间（仅支持dubbo 2.7.7+）
      */
-    SHORTESTRESPONSE
+    SHORTEST_RESPONSE("ShortestResponse");
+
+    /**
+     * 实际配置映射名称
+     */
+    private final String mapperName;
+
+    DubboLoadbalancerType(String mapperName) {
+        this.mapperName = mapperName;
+    }
+
+    public String getMapperName() {
+        return mapperName;
+    }
 }

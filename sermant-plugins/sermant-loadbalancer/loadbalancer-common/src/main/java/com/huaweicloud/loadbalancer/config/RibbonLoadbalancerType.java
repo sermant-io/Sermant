@@ -27,41 +27,54 @@ public enum RibbonLoadbalancerType {
     /**
      * 随机
      */
-    RANDOM,
+    RANDOM("Random"),
 
     /**
      * 轮询
      */
-    ROUND_ROBIN,
+    ROUND_ROBIN("RoundRobin"),
 
     /**
      * 重试策略
      */
-    RETRY,
+    RETRY("Retry"),
 
     /**
      * 最低并发策略
      */
-    BEST_AVAILABLE,
+    BEST_AVAILABLE("BestAvailable"),
 
     /**
      * 可用过滤策略
      */
-    AVAILABILITY_FILTERING,
+    AVAILABILITY_FILTERING("AvailabilityFiltering"),
 
     /**
      * 响应时间加权重策略
      */
     @Deprecated
-    RESPONSE_TIME_WEIGHTED,
+    RESPONSE_TIME_WEIGHTED("ResponseTimeWeighted"),
 
     /**
      * 区域权重策略
      */
-    ZONE_AVOIDANCE,
+    ZONE_AVOIDANCE("ZoneAvoidance"),
 
     /**
      * 响应时间加权重策略
      */
-    WEIGHTED_RESPONSE_TIME
+    WEIGHTED_RESPONSE_TIME("WeightedResponseTime");
+
+    /**
+     * 实际配置映射名称
+     */
+    private final String mapperName;
+
+    RibbonLoadbalancerType(String mapperName) {
+        this.mapperName = mapperName;
+    }
+
+    public String getMapperName() {
+        return mapperName;
+    }
 }

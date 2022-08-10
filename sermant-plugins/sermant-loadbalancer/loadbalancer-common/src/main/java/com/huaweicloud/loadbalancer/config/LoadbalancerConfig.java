@@ -34,11 +34,6 @@ public class LoadbalancerConfig implements PluginConfig {
     private String key = "loadbalancer";
 
     /**
-     * 配置的组
-     */
-    private String group = "public=default";
-
-    /**
      * dubbo负载均衡策略
      */
     private DubboLoadbalancerType dubboType = DubboLoadbalancerType.RANDOM;
@@ -52,6 +47,11 @@ public class LoadbalancerConfig implements PluginConfig {
      * ribbon负载均衡策略
      */
     private RibbonLoadbalancerType ribbonType = RibbonLoadbalancerType.ROUND_ROBIN;
+
+    /**
+     * 负载均衡规则
+     */
+    private String rule;
 
     /**
      * 是否使用cse规则
@@ -74,14 +74,6 @@ public class LoadbalancerConfig implements PluginConfig {
         this.key = key;
     }
 
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
     public DubboLoadbalancerType getDubboType() {
         return dubboType;
     }
@@ -100,6 +92,14 @@ public class LoadbalancerConfig implements PluginConfig {
 
     public RibbonLoadbalancerType getRibbonType() {
         return ribbonType;
+    }
+
+    public String getRule() {
+        return rule;
+    }
+
+    public void setRule(String rule) {
+        this.rule = rule;
     }
 
     public void setRibbonType(RibbonLoadbalancerType ribbonType) {
