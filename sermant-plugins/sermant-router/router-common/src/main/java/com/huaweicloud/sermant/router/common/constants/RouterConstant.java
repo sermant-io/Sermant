@@ -64,6 +64,11 @@ public class RouterConstant {
     public static final String ROUTER_CONFIG_ROUTE_RULE_KEY = "routeRule";
 
     /**
+     * 灰度配置key前缀
+     */
+    public static final String ROUTER_KEY_PREFIX = "servicecomb.routeRule";
+
+    /**
      * dubbo应用灰度标签缓存名
      */
     public static final String DUBBO_CACHE_NAME = "DUBBO_ROUTE";
