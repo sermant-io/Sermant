@@ -46,9 +46,7 @@
           "sermant-injection": "enabled"
         },
         "annotations": {
-          "kubernetes.io/psp": "psp-global",
-          "registry.servicecomb.io/instance.properties.tag3": "tag3",
-          "registry.servicecomb.io/service-properties.tag4": "tag4"
+          "kubernetes.io/psp": "psp-global"
         },
         "ownerReferences": [
           {
@@ -108,14 +106,6 @@
               {
                 "name": "DYNAMIC.CONFIG.PLUGIN.ENABLEDYNAMICCONFIG",
                 "value": "false"
-              },
-              {
-                "name": "SERVICECOMB_INSTANCE_PROPS",
-                "value": "tag1:tag1,tag2:tag2"
-              },
-              {
-                "name": "SERVICECOMB_SERVICE_PROPS",
-                "value": "k1:v1,k2:v2"
               }
             ],
             "resources": {},
