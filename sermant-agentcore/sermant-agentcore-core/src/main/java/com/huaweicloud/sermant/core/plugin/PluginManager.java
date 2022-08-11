@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
@@ -59,7 +60,7 @@ public class PluginManager {
      * @param instrumentation Instrumentation对象
      * @return 是否有加载任何插件
      */
-    public static boolean initPlugins(List<String> pluginNames, Instrumentation instrumentation) {
+    public static boolean initPlugins(Set<String> pluginNames, Instrumentation instrumentation) {
         if (pluginNames == null || pluginNames.isEmpty()) {
             return false;
         }

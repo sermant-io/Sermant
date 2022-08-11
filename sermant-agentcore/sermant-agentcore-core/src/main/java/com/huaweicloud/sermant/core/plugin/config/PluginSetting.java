@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.core.plugin.config;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 插件设定配置
@@ -30,7 +31,7 @@ public class PluginSetting {
     /**
      * 插件名称集
      */
-    private List<String> plugins;
+    private Set<String> plugins;
 
     /**
      * 适配器名称集
@@ -40,18 +41,18 @@ public class PluginSetting {
     /**
      * 场景与插件映射关系
      */
-    private Map<String, List<String>> profiles;
+    private Map<String, Set<String>> profiles;
 
     /**
      * 启动场景名
      */
     private String profile;
 
-    public List<String> getPlugins() {
+    public Set<String> getPlugins() {
         return plugins;
     }
 
-    public void setPlugins(List<String> plugins) {
+    public void setPlugins(Set<String> plugins) {
         this.plugins = plugins;
     }
 
@@ -63,11 +64,11 @@ public class PluginSetting {
         this.adaptors = adaptors;
     }
 
-    public void setProfiles(Map<String, List<String>> profiles) {
+    public void setProfiles(Map<String, Set<String>> profiles) {
         this.profiles = profiles;
     }
 
-    public Map<String, List<String>> getProfiles() {
+    public Map<String, Set<String>> getProfiles() {
         return profiles;
     }
 
