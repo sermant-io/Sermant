@@ -40,7 +40,9 @@ openssl req -new -key ${APP}.key -out ${APP}.csr -config ${APP}.conf
 
 kubectl create ns ${NAMESPACE}
 
-kubectl create -f - <<EOF
+kubectl delete csr ${APP}.${NAMESPACE}.svc
+
+kubectl apply -f - <<EOF
 apiVersion: certificates.k8s.io/v1beta1
 kind: CertificateSigningRequest
 metadata:
@@ -56,7 +58,7 @@ EOF
 
 kubectl certificate approve ${APP}.${NAMESPACE}.svc
 
-kubectl create -f - <<EOF
+kubectl apply -f - <<EOF
 apiVersion: v1
 kind: Secret
 metadata:
