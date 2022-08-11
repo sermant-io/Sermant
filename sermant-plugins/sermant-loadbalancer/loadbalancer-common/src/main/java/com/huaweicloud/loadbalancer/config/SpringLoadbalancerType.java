@@ -17,6 +17,8 @@
 
 package com.huaweicloud.loadbalancer.config;
 
+import java.util.Optional;
+
 /**
  * spring cloud loadbalancer负载均衡策略
  *
@@ -41,6 +43,24 @@ public enum SpringLoadbalancerType {
 
     SpringLoadbalancerType(String mapperName) {
         this.mapperName = mapperName;
+    }
+
+    /**
+     * 匹配负载均衡类型
+     *
+     * @param loadbalancerType 负载均衡
+     * @return 负载均衡类型
+     */
+    public static Optional<SpringLoadbalancerType> matchLoadbalancer(String loadbalancerType) {
+        if (loadbalancerType == null) {
+            return Optional.empty();
+        }
+        for (SpringLoadbalancerType type : values()) {
+            if (type.mapperName.equalsIgnoreCase(loadbalancerType)) {
+                return Optional.of(type);
+            }
+        }
+        return Optional.empty();
     }
 
     public String getMapperName() {

@@ -27,9 +27,9 @@ public class LoadbalancerRule {
     private String serviceName;
 
     /**
-     * 负载均衡类型
+     * 负载均衡规则名称
      */
-    private String loadbalancerType;
+    private String rule;
 
     public String getServiceName() {
         return serviceName;
@@ -39,18 +39,18 @@ public class LoadbalancerRule {
         this.serviceName = serviceName;
     }
 
-    public String getLoadbalancerType() {
-        return loadbalancerType;
+    public String getRule() {
+        return rule;
     }
 
-    public void setLoadbalancerType(String loadbalancerType) {
-        this.loadbalancerType = loadbalancerType;
+    public void setRule(String rule) {
+        this.rule = rule;
     }
 
     @Override
     public String toString() {
         return "LoadbalancerRule{"
                 + "serviceName='" + serviceName + '\''
-                + ", loadbalancerType='" + loadbalancerType + '\'' + '}';
+                + ", rule='" + rule + '\'' + '}';
     }
 }

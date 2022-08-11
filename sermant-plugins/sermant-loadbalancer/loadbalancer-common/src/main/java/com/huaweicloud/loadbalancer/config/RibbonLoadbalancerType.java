@@ -17,6 +17,8 @@
 
 package com.huaweicloud.loadbalancer.config;
 
+import java.util.Optional;
+
 /**
  * ribbon负载均衡策略
  *
@@ -72,6 +74,24 @@ public enum RibbonLoadbalancerType {
 
     RibbonLoadbalancerType(String mapperName) {
         this.mapperName = mapperName;
+    }
+
+    /**
+     * 匹配负载均衡类型
+     *
+     * @param loadbalancerType 负载均衡
+     * @return 负载均衡类型
+     */
+    public static Optional<RibbonLoadbalancerType> matchLoadbalancer(String loadbalancerType) {
+        if (loadbalancerType == null) {
+            return Optional.empty();
+        }
+        for (RibbonLoadbalancerType type : values()) {
+            if (type.mapperName.equalsIgnoreCase(loadbalancerType)) {
+                return Optional.of(type);
+            }
+        }
+        return Optional.empty();
     }
 
     public String getMapperName() {

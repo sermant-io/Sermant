@@ -56,7 +56,7 @@ public class LoadbalancerConfig implements PluginConfig {
     /**
      * 是否使用cse规则
      */
-    private boolean useCseRule;
+    private boolean useCseRule = true;
 
     public boolean isUseCseRule() {
         return useCseRule;

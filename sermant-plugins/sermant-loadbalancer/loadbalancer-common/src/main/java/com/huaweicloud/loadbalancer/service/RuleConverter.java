@@ -17,7 +17,6 @@
 
 package com.huaweicloud.loadbalancer.service;
 
-import com.huaweicloud.loadbalancer.rule.LoadbalancerRule;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 import java.util.Optional;
@@ -33,7 +32,9 @@ public interface RuleConverter extends PluginService {
      * 转换字符串为负载均衡规则
      *
      * @param rawContent 配置内容
+     * @param clazz 目标类型
+     * @param <T> 目标类型
      * @return LoadbalancerRule
      */
-    Optional<LoadbalancerRule> convert(String rawContent);
+    <T> Optional<T> convert(String rawContent, Class<T> clazz);
 }

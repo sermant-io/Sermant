@@ -17,7 +17,6 @@
 
 package com.huaweicloud.loadbalancer;
 
-import com.huaweicloud.loadbalancer.rule.LoadbalancerRule;
 import com.huaweicloud.loadbalancer.service.RuleConverter;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
@@ -38,7 +37,7 @@ import java.util.logging.Logger;
  * @author zhouss
  * @since 2022-08-09
  */
-public class YamlRuleConverter implements RuleConverter {
+public class YamlRuleConverter implements RuleConverter, PluginService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final Yaml yaml;
@@ -53,12 +52,12 @@ public class YamlRuleConverter implements RuleConverter {
     }
 
     @Override
-    public Optional<LoadbalancerRule> convert(String rawContent) {
+    public <T> Optional<T> convert(String rawContent, Class<T> clazz) {
         if (StringUtils.isBlank(rawContent)) {
             return Optional.empty();
         }
         try {
-            return Optional.of(yaml.loadAs(rawContent, LoadbalancerRule.class));
+            return Optional.of(yaml.loadAs(rawContent, clazz));
         } catch (YAMLException ex) {
             LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH, "Can not convert content [%s] to LoadbalancerRule",
                     rawContent), ex);

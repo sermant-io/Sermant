@@ -62,10 +62,10 @@ public class LoadbalancerConfigServiceImpl implements PluginService {
         String pluginName = "loadbalancer-plugin";
         if (config.isUseCseRule()) {
             configSubscriber = new CseGroupConfigSubscriber(LbMeta.INSTANCE.getServiceName(),
-                    new LoadbalancerConfigListener(config), pluginName);
+                    new LoadbalancerConfigListener(), pluginName);
         } else {
             configSubscriber = new DefaultGroupConfigSubscriber(LbMeta.INSTANCE.getServiceName(),
-                    new LoadbalancerConfigListener(config), pluginName);
+                    new LoadbalancerConfigListener(), pluginName);
         }
         configSubscriber.subscribe();
     }

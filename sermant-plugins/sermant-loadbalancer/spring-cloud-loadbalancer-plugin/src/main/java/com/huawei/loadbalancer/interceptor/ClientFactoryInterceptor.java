@@ -17,9 +17,11 @@
 package com.huawei.loadbalancer.interceptor;
 
 import com.huawei.loadbalancer.cache.LoadbalancerCache;
+
 import com.huaweicloud.loadbalancer.config.LoadbalancerConfig;
 import com.huaweicloud.loadbalancer.config.SpringLoadbalancerType;
-
+import com.huaweicloud.loadbalancer.rule.LoadbalancerRule;
+import com.huaweicloud.loadbalancer.rule.RuleManager;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
@@ -35,7 +37,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * LoadBalancerClientFactory增强类
+ * LoadBalancerClientFactory增强类-针对spring loadbalancer
  *
  * @author provenceee
  * @since 2022-01-20
@@ -68,7 +70,11 @@ public class ClientFactoryInterceptor extends AbstractInterceptor {
             // 没有配置的情况下return null，不影响原方法
             return Optional.empty();
         }
-        Class<?> clazz = getLoadBalancerClass(config.getSpringType());
+        final Optional<SpringLoadbalancerType> springLoadbalancerType = matchLoadbalancerType(serviceId);
+        if (!springLoadbalancerType.isPresent()) {
+            return Optional.empty();
+        }
+        Class<?> clazz = getLoadBalancerClass(springLoadbalancerType.get());
 
         // 如果原来的负载均衡器跟需要的一样，就不需要new了，直接return null，不影响原方法
         if (LoadbalancerCache.INSTANCE.getOrigin(serviceId).getClass() == clazz) {
@@ -85,6 +91,15 @@ public class ClientFactoryInterceptor extends AbstractInterceptor {
                 return Optional.empty();
             }
         });
+    }
+
+    private Optional<SpringLoadbalancerType> matchLoadbalancerType(String serviceId) {
+        final Optional<LoadbalancerRule> targetServiceRule = RuleManager.INSTANCE.getTargetServiceRule(serviceId);
+        if (!targetServiceRule.isPresent()) {
+            return Optional.empty();
+        }
+        return SpringLoadbalancerType
+                .matchLoadbalancer(targetServiceRule.get().getRule());
     }
 
     private Class<?> getLoadBalancerClass(SpringLoadbalancerType type) {

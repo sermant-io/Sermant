@@ -24,7 +24,9 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -34,12 +36,14 @@ import java.util.Optional;
  * @since 2022-08-09
  */
 public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> {
-    private static final String LOAD_BALANCER_PREFIX = "servicecomb.loadbalancer";
+    private static final String LOAD_BALANCER_PREFIX = "servicecomb.loadbalance";
+
+    private static final String MATCH_GROUP_PREFIX = "servicecomb.matchGroup";
 
     private final RuleConverter converter;
 
     /**
-     * 规则缓存
+     * 规则缓存 key: 业务场景名称 value: 负载均衡规则
      */
     private final Map<String, LoadbalancerRule> rules = new HashMap<>();
 
@@ -53,19 +57,58 @@ public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> 
     @Override
     public Optional<LoadbalancerRule> resolve(DynamicConfigEvent event) {
         final String key = event.getKey();
-        if (!key.startsWith(LOAD_BALANCER_PREFIX)) {
+        if (key.startsWith(LOAD_BALANCER_PREFIX)) {
+            return handleRule(event);
+        } else if (key.startsWith(MATCH_GROUP_PREFIX)) {
+            return handleMatchGroup(event);
+        } else {
             return Optional.empty();
         }
-        String businessKey = key.substring(LOAD_BALANCER_PREFIX.length() + 1);
+    }
+
+    private Optional<LoadbalancerRule> handleMatchGroup(DynamicConfigEvent event) {
+        final String businessKey = event.getKey().substring(MATCH_GROUP_PREFIX.length() + 1);
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
-            rules.remove(businessKey);
+            return Optional.ofNullable(rules.remove(businessKey));
         }
-        final Optional<LoadbalancerRule> rule = converter.convert(event.getContent());
-        if (rule.isPresent()) {
-            rules.put(businessKey, rule.get());
-            return rule;
+        final Optional<Map> convert = converter.convert(event.getContent(), Map.class);
+        if (!convert.isPresent()) {
+            return Optional.empty();
+        }
+        LoadbalancerRule rule = rules.getOrDefault(businessKey, new LoadbalancerRule());
+        final Map<String, Object> matcher = convert.get();
+        final Optional<String> serviceNameOptional = resolveServiceName(matcher);
+        if (!serviceNameOptional.isPresent()) {
+            return Optional.of(rule);
+        }
+        rule.setServiceName(serviceNameOptional.get());
+        rules.put(businessKey, rule);
+        return Optional.of(rule);
+    }
+
+    private Optional<String> resolveServiceName(Map<String, Object> matcher) {
+        final Object matches = matcher.get("matches");
+        if (matches instanceof List) {
+            final List<Map<String, Object>> list = (List<Map<String, Object>>) matches;
+            if (!list.isEmpty()) {
+                return Optional.ofNullable((String) list.get(0).get("serviceName"));
+            }
         }
         return Optional.empty();
+    }
+
+    private Optional<LoadbalancerRule> handleRule(DynamicConfigEvent event) {
+        String businessKey = event.getKey().substring(LOAD_BALANCER_PREFIX.length() + 1);
+        if (event.getEventType() == DynamicConfigEventType.DELETE) {
+            return Optional.ofNullable(rules.remove(businessKey));
+        }
+        final LoadbalancerRule rule = rules.getOrDefault(businessKey, new LoadbalancerRule());
+        final Optional<LoadbalancerRule> ruleOptional = converter.convert(event.getContent(), LoadbalancerRule.class);
+        if (ruleOptional.isPresent()) {
+            rule.setRule(ruleOptional.get().getRule());
+            rules.put(businessKey, rule);
+        }
+        return Optional.of(rule);
     }
 
     /**
@@ -75,7 +118,16 @@ public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> 
      * @return LoadbalancerRule
      */
     public Optional<LoadbalancerRule> getTargetServiceRule(String serviceName) {
-        return rules.values().stream().filter(rule -> StringUtils.equals(serviceName, rule.getServiceName()))
+        final Optional<LoadbalancerRule> any = rules.values().stream()
+                .filter(rule -> StringUtils.equals(serviceName, rule.getServiceName()))
+                .findAny();
+        if (any.isPresent()) {
+            return any;
+        }
+
+        // 若没有则查看针对所有服务生效的负载均衡, 即serviceName为空的负载均衡规则
+        return rules.values().stream()
+                .filter(rule -> Objects.isNull(rule.getServiceName()) && Objects.nonNull(rule.getRule()))
                 .findAny();
     }
 }
