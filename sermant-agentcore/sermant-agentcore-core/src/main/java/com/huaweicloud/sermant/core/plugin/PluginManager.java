@@ -37,6 +37,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -71,7 +72,12 @@ public class PluginManager {
             return false;
         }
         for (String pluginName : pluginNames) {
-            initPlugin(pluginName, pluginPackage, instrumentation);
+            try {
+                initPlugin(pluginName, pluginPackage, instrumentation);
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
+                        "load plugin failed, plugin name: %s", pluginName), ex);
+            }
         }
         return true;
     }

@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -83,11 +84,16 @@ public class AdaptorManager {
         try {
             pluginPackage = BootArgsIndexer.getPluginPackageDir().getCanonicalPath();
         } catch (IOException ignored) {
-            LOGGER.warning("Resolve plugin package failed. ");
+            LOGGER.warning("Resolve adaptor package failed. ");
             return false;
         }
         for (String adaptorName : adaptorNames) {
-            initAdaptor(adaptorName, pluginPackage, config, instrumentation);
+            try {
+                initAdaptor(adaptorName, pluginPackage, config, instrumentation);
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
+                        "load adaptor failed, adaptor name: %s", adaptorName), ex);
+            }
         }
         addStopHook();
         return true;
