@@ -150,6 +150,7 @@
             <package.plugin.type>undefined</package.plugin.type>
             <package.output.dir>${package.plugin.dir}/${package.plugin.name}/${package.plugin.type}</package.output.dir>
     
+            <package.plugin.version>${project.version}</package.plugin.version>
             <config.source.dir>../config</config.source.dir>
             <config.output.dir>${package.plugin.dir}/${package.plugin.name}/config</config.output.dir>
         </properties>
@@ -246,6 +247,18 @@
             <pluginManagement>
                 <!--      该配置用于将插件配置文件放入最终构建的目录      -->
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <archive>
+                                <manifestEntries>
+                                    <Sermant-Plugin-Name>${package.plugin.name}</Sermant-Plugin-Name>
+                                    <Sermant-Plugin-Version>${package.plugin.version}</Sermant-Plugin-Version>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
