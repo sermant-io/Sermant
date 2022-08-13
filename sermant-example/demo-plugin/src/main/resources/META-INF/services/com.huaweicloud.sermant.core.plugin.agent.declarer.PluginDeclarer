@@ -6,3 +6,4 @@ com.huawei.example.demo.declarer.DemoBootstrapDeclarer
 com.huawei.example.demo.declarer.DemoNameInfixDeclarer
 com.huawei.example.demo.declarer.DemoNamePrefixDeclarer
 com.huawei.example.demo.declarer.DemoNameSuffixDeclarer
+com.huawei.example.demo.declarer.DemoCheckEnableDeclarer
