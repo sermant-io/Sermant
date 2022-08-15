@@ -32,9 +32,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.instrument.Instrumentation;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -67,7 +68,7 @@ public class PluginSystemEntrance {
      */
     public static void initialize(Instrumentation instrumentation) {
         final PluginSetting pluginSetting = loadSetting();
-        List<String> plugins = getLoadPlugins(pluginSetting);
+        Set<String> plugins = getLoadPlugins(pluginSetting);
         LOGGER.info(String.format(Locale.ROOT, "load plugins: %s", plugins.toString()));
         if (PluginManager.initPlugins(plugins, instrumentation)
                 | AdaptorManager.initAdaptors(pluginSetting.getAdaptors(), instrumentation)) {
@@ -103,19 +104,33 @@ public class PluginSystemEntrance {
 
     /**
      * 融合配置文件中的场景，插件，和环境变量中的场景信息
+     * 1. plugins配置的插件在任何场景都会加载
+     * 2. profile定义的场景优先级为: 环境变量 > 系统变量 > 配置文件。策略是优先级高的覆盖优先级低的。
+     * 3. 重复添加的插件名会进行去重处理
      *
      * @param pluginSetting 插件配置信息
      * @return 需要加载的插件列表
      */
-    private static List<String> getLoadPlugins(PluginSetting pluginSetting) {
-        Map<String, List<String>> profilesMap = pluginSetting.getProfiles();
-        List<String> plugins = pluginSetting.getPlugins();
+    private static Set<String> getLoadPlugins(PluginSetting pluginSetting) {
+        Map<String, Set<String>> profilesMap = pluginSetting.getProfiles();
+        Set<String> plugins = pluginSetting.getPlugins();
         if (profilesMap == null) {
             return plugins;
         }
-        List<String> profiles = Arrays.asList(String.join(",", pluginSetting.getProfile(),
-                ConfigValueUtil.getValFromEnv(CommonConstant.PLUGIN_PROFILE)).split(","));
-        profiles = profiles.stream().distinct().collect(Collectors.toList());
+
+        String profileFromConfig = pluginSetting.getProfile();
+        String profileFromEnv = ConfigValueUtil.getValFromEnv(CommonConstant.PLUGIN_PROFILE);
+        Set<String> profiles = new HashSet<>();
+        if (profileFromEnv != null) {
+            profiles = Arrays.stream(profileFromEnv.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toSet());
+        } else if (profileFromConfig != null) {
+            profiles = Arrays.stream(profileFromConfig.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toSet());
+        }
+
         profiles.forEach(profile -> {
             if (profilesMap.containsKey(profile)) {
                 plugins.addAll(profilesMap.get(profile));
@@ -123,6 +138,6 @@ public class PluginSystemEntrance {
                 LOGGER.warning(String.format(Locale.ROOT,"The value of profile: %s is Invalid", profile));
             }
         });
-        return plugins.stream().distinct().collect(Collectors.toList());
+        return plugins;
     }
 }
