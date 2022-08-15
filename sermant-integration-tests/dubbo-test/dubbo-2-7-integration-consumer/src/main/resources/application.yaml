@@ -7,3 +7,28 @@ dubbo:
     # 模拟存量dubbo应用注册到zookeeper的情况，新开发的应用建议配置为 sc://127.0.0.1:30100
     address: zookeeper://127.0.0.1:2181
     protocol: zookeeper
+
+spring:
+  application:
+    name: dubbo-integration-consumer
+
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 10000
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+
+ribbon:
+  ConnectTimeout: 10000
+  ReadTimeout: 10000

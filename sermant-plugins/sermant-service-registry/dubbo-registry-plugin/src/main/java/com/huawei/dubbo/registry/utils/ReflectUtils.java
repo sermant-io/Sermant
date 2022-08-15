@@ -57,6 +57,7 @@ public class ReflectUtils {
     private static final String SET_PATH_METHOD_NAME = "setPath";
     private static final String SET_ID_METHOD_NAME = "setId";
     private static final String SET_PREFIX_METHOD_NAME = "setPrefix";
+    private static final String SET_PROTOCOL_METHOD_NAME = "setProtocol";
     private static final String NOTIFY_METHOD_NAME = "notify";
     private static final String VALUE_OF_METHOD_NAME = "valueOf";
     private static final String REMOVE_PARAMETERS_METHOD_NAME = "removeParameters";
@@ -284,6 +285,19 @@ public class ReflectUtils {
      */
     public static void setPrefix(Object obj, String prefix) {
         invokeWithStringParameter(obj, SET_PREFIX_METHOD_NAME, prefix);
+    }
+
+    /**
+     * 设置协议
+     *
+     * @param obj URL
+     * @param protocol 协议
+     * @return URL
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
+     */
+    public static Object setProtocol(Object obj, String protocol) {
+        return invokeWithStringParameter(obj, SET_PROTOCOL_METHOD_NAME, protocol);
     }
 
     /**

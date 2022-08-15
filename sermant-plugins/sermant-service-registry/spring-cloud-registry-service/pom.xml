@@ -14,10 +14,8 @@
     <properties>
         <package.plugin.type>service</package.plugin.type>
         <spring-component-version>5.0.13.RELEASE</spring-component-version>
-        <service-center-version>2.5.3</service-center-version>
         <ribbon-loadbalancer-version>2.3.0</ribbon-loadbalancer-version>
         <spring-cloud-version>2.1.0.RELEASE</spring-cloud-version>
-        <guava.version>31.0.1-jre</guava.version>
         <slf4j.version>1.7.35</slf4j.version>
     </properties>
 
@@ -39,26 +37,10 @@
         <dependency>
             <groupId>org.apache.servicecomb</groupId>
             <artifactId>service-center-client</artifactId>
-            <version>${service-center-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>netty-tcnative-boringssl-static</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

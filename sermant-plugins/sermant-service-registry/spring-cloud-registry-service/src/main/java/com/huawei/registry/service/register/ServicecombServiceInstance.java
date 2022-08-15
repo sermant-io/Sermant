@@ -66,8 +66,7 @@ public class ServicecombServiceInstance implements MicroServiceInstance {
     @Override
     public String getIp() {
         if (ip == null) {
-            final Optional<String> ipByEndpoint = CommonUtils.getIpByEndpoint(microserviceInstance.getEndpoints()
-                    .get(0));
+            final Optional<String> ipByEndpoint = CommonUtils.getIpByEndpoint(getRestEndpoint());
             ipByEndpoint.ifPresent(filterIp -> ip = filterIp);
         }
         return ip;
@@ -76,9 +75,15 @@ public class ServicecombServiceInstance implements MicroServiceInstance {
     @Override
     public int getPort() {
         if (port == 0) {
-            port = CommonUtils.getPortByEndpoint(microserviceInstance.getEndpoints().get(0));
+            port = CommonUtils.getPortByEndpoint(getRestEndpoint());
         }
         return port;
+    }
+
+    private String getRestEndpoint() {
+        return microserviceInstance.getEndpoints().stream()
+            .filter(endpoint -> endpoint.startsWith("rest://"))
+            .findAny().orElse(null);
     }
 
     @Override

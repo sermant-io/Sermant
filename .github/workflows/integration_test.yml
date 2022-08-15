@@ -60,10 +60,35 @@ jobs:
       - name: package dubbo 2.7.x tests
         if: matrix.dubbo-version == '2-7'
         run: mvn package -Ddubbo.version=2.7.${{ matrix.dubbo-versions }} -DskipTests --file sermant-integration-tests/dubbo-test/pom.xml
+      - name: start spring and dubbo provider service
+        env:
+          servicecomb.service.enableDubboRegister: true
+          servicecomb.service.enableSpringRegister: true
+          servicecomb.service.openMigration: false
+          service.meta.environment: testing
+          server.port: 38020
+          dubbo.protocol.port: 38820
+        run: nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar &
+      - name: start second spring and dubbo provider service
+        env:
+          servicecomb.service.enableDubboRegister: true
+          servicecomb.service.enableSpringRegister: true
+          servicecomb.service.openMigration: false
+          service.meta.environment: testing
+          server.port: 38021
+          dubbo.protocol.port: 38821
+        run: nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar &
+      - name: start spring and dubbo consumer service
+        env:
+          servicecomb.service.enableDubboRegister: true
+          servicecomb.service.enableSpringRegister: true
+          servicecomb.service.openMigration: false
+          service.meta.environment: testing
+          server.port: 38022
+          dubbo.protocol.port: 38822
+        run: nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar &
       - name: start provider service
         env:
-          dynamic.config.serverAddress: 127.0.0.1:30110
-          dynamic.config.dynamicConfigType: KIE
           servicecomb.service.enableDubboRegister: true
           servicecomb.service.openMigration: false
         run: nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar &
@@ -74,12 +99,10 @@ jobs:
         run: nohup java -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar &
       - name: start consumer service
         env:
-          dynamic.config.serverAddress: 127.0.0.1:30110
-          dynamic.config.dynamicConfigType: KIE
           servicecomb.service.enableDubboRegister: true
           servicecomb.service.openMigration: true
         run: nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar &
       - name: waiting for services start
-        run: sleep 30s
+        run: sleep 60s
       - name: integration test
-        run: mvn test --file sermant-integration-tests/dubbo-test/pom.xml
+        run: mvn -Dcontroller.port=38022 test --file sermant-integration-tests/dubbo-test/pom.xml

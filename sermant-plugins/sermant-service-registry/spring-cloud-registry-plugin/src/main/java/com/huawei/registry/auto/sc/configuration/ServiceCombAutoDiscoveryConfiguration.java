@@ -50,6 +50,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties
 @AutoConfigureBefore(ServiceRegistryAutoConfiguration.class)
 @AutoConfigureAfter({AutoServiceRegistrationConfiguration.class, AutoServiceRegistrationAutoConfiguration.class})
+@ConditionalOnClass(name = "org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfiguration")
 public class ServiceCombAutoDiscoveryConfiguration {
     /**
      * 服务查询注入

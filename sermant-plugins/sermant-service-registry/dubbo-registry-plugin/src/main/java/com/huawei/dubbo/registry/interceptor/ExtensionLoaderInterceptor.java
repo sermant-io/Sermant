@@ -59,13 +59,15 @@ public class ExtensionLoaderInterceptor extends AbstractInterceptor {
         }
         Class<?> type = (Class<?>) context.getMemberFieldValue(TYPE_FIELD_NAME);
         String typeName = type.getName();
-        Optional<Class<?>> factoryClass = Optional.empty();
+        Optional<Class<?>> factoryClass;
 
         // 只处理类型为RegistryFactory的spi
         if (APACHE_REGISTRY_FACTORY_CLASS_NAME.equals(typeName)) {
             factoryClass = ReflectUtils.defineClass(APACHE_SC_REGISTRY_FACTORY_CLASS_NAME);
         } else if (ALIBABA_REGISTRY_FACTORY_CLASS_NAME.equals(typeName)) {
             factoryClass = ReflectUtils.defineClass(ALIBABA_SC_REGISTRY_FACTORY_CLASS_NAME);
+        } else {
+            factoryClass = Optional.empty();
         }
         if (factoryClass.isPresent()) {
             Map<String, Class<?>> cachedClasses = ReflectUtils.getExtensionClasses(context.getObject());

@@ -31,14 +31,18 @@ import com.huawei.registry.config.ConfigConstants;
 import com.huawei.registry.config.RegisterConfig;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.common.PluginConstant;
 import com.huaweicloud.sermant.core.plugin.common.PluginSchemaValidator;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.utils.JarFileUtils;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -113,8 +117,13 @@ public class RegistryServiceImpl implements RegistryService {
     private static final String VERSION_KEY = "version";
     private static final String SERVICE_NAME_KEY = "service.name";
     private static final String INTERFACE_KEY = "interface";
+    private static final String INTERFACE_DATA_KEY = "dubbo.interface.data";
+    private static final String WILDCARD = "*";
+    private static final String META_DATA_PREFIX = "service.meta.parameters.";
+    private static final String META_DATA_VERSION_KEY = "service.meta.version";
     private static final List<String> IGNORE_REGISTRY_KEYS = Arrays.asList(GROUP_KEY, VERSION_KEY, SERVICE_NAME_KEY);
-    private static final List<String> DEFAULT_INTERFACE_KEYS = Arrays.asList("dubbo.tag", "tag.version");
+    private static final List<String> DEFAULT_INTERFACE_KEYS = Collections.singletonList("dubbo.tag");
+
     private final List<Object> registryUrls = new ArrayList<>();
     private List<String> ignoreKeys;
     private ServiceCenterClient client;
@@ -125,6 +134,7 @@ public class RegistryServiceImpl implements RegistryService {
     private boolean isRegistrationInProgress = true;
     private RegisterConfig config;
     private GovernanceService governanceService;
+    private ServiceMeta serviceMeta;
 
     @Override
     public void startRegistration() {
@@ -133,8 +143,9 @@ public class RegistryServiceImpl implements RegistryService {
             return;
         }
         config = PluginConfigManager.getPluginConfig(RegisterConfig.class);
+        serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
         governanceService = ServiceManager.getService(GovernanceService.class);
-        client = new ServiceCenterClient(new AddressManager(config.getProject(), config.getAddressList()),
+        client = new ServiceCenterClient(new AddressManager(config.getProject(), config.getAddressList(), EVENT_BUS),
             createSslProperties(), new DefaultRequestAuthHeaderProvider(), DEFAULT_TENANT_NAME, Collections.emptyMap());
         ignoreKeys = new ArrayList<>();
         ignoreKeys.addAll(IGNORE_REGISTRY_KEYS);
@@ -294,6 +305,7 @@ public class RegistryServiceImpl implements RegistryService {
         microservice.setAppId(config.getApplication());
         microservice.setVersion(config.getVersion());
         microservice.setEnvironment(config.getEnvironment());
+        microservice.setProperties(config.getParametersMap());
         Framework framework = new Framework();
         framework.setName(ConfigConstants.COMMON_FRAMEWORK);
         framework.setVersion(getVersion());
@@ -350,16 +362,22 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private Map<String, String> getProperties() {
+        // 接口的协议缓存（适配多协议接口）
+        Map<String, Set<String>> protocolCache = new ConcurrentHashMap<>();
+
         // 把registryUrls按接口名进行分组，组装成InterfaceData，并聚合到HashSet（去重）里面
         Map<String, Set<InterfaceData>> map = registryUrls.stream().collect(Collectors.groupingBy(this::getInterface,
-            Collectors.mapping(this::getInterfaceDate, Collectors.toCollection(HashSet::new))));
+            Collectors.mapping(url -> getInterfaceData(url, protocolCache), Collectors.toCollection(HashSet::new))));
+        Map<String, String> properties = new HashMap<>();
+        properties.put(INTERFACE_DATA_KEY, JSONObject.toJSONString(map));
 
-        // key不变，value转化成json字符串
-        return map.entrySet().stream().collect(Collectors.toMap(Entry::getKey,
-            entry -> JSONArray.toJSONString(entry.getValue()), (k1, k2) -> k1));
+        // 存入实例参数
+        Optional.ofNullable(serviceMeta.getParameters()).ifPresent(properties::putAll);
+        properties.put(VERSION_KEY, config.getVersion());
+        return properties;
     }
 
-    private InterfaceData getInterfaceDate(Object url) {
+    private InterfaceData getInterfaceData(Object url, Map<String, Set<String>> protocolCache) {
         Map<String, String> parameters = ReflectUtils.getParameters(url);
         Integer order = null;
         String path = ReflectUtils.getPath(url);
@@ -378,8 +396,11 @@ public class RegistryServiceImpl implements RegistryService {
                 map.put(key, parameters.get(key));
             }
         });
-        return new InterfaceData(parameters.get(GROUP_KEY), parameters.get(VERSION_KEY),
+        protocolCache.computeIfAbsent(interfaceName, value -> new HashSet<>()).add(ReflectUtils.getProtocol(url));
+        InterfaceData interfaceData = new InterfaceData(parameters.get(GROUP_KEY), parameters.get(VERSION_KEY),
             parameters.get(SERVICE_NAME_KEY), order, map);
+        interfaceData.setProtocol(protocolCache.get(interfaceName));
+        return interfaceData;
     }
 
     private String getUrl(Object url) {
@@ -416,12 +437,20 @@ public class RegistryServiceImpl implements RegistryService {
             return Optional.empty();
         }
         String interfaceName = getInterface(newUrl);
+        Map<String, String> parameters = ReflectUtils.getParameters(url);
+        parameters.keySet().forEach(key -> {
+            // 实例属性，会存到properties中，所以不需要在接口级参数中储存
+            if (key.startsWith(META_DATA_PREFIX) || META_DATA_VERSION_KEY.equals(key)) {
+                ignoreKeys.add(key);
+            }
+        });
 
         // schema是以接口名为维度的，ignoreKeys中的参数主要跟实现相关，所以这里去掉
         // ignoreKeys中的参数会存在实例的properties中
         // 2.6.x, 2.7.0-2.7.7在多实现的场景下，路径名会在接口名后拼一个序号，所以这里把路径名统一设置为接口名
-        String schema = ReflectUtils.setPath(ReflectUtils.removeParameters(newUrl, ignoreKeys), interfaceName)
+        String newUrlString = ReflectUtils.setPath(ReflectUtils.removeParameters(newUrl, ignoreKeys), interfaceName)
             .toString();
+        String schema = newUrlString.substring(newUrlString.indexOf(microservice.getServiceName()));
         return Optional.of(new SchemaInfo(interfaceName, schema, DigestUtils.sha256Hex(schema)));
     }
 
@@ -489,9 +518,9 @@ public class RegistryServiceImpl implements RegistryService {
     private void notify(String appId, String serviceName, List<MicroserviceInstance> instances) {
         if (!CollectionUtils.isEmpty(instances)) {
             Map<SubscriptionKey, List<Object>> notifyUrls = instancesToUrls(appId, serviceName, instances);
-            notifyUrls.forEach((subscriptionKey, urls) -> {
-                Set<Object> notifyListeners = SUBSCRIPTIONS.get(subscriptionKey);
-                if (CollectionUtils.isEmpty(notifyListeners)) {
+            SUBSCRIPTIONS.forEach((subscriptionKey, notifyListeners) -> {
+                List<Object> urls = notifyUrls.get(subscriptionKey);
+                if (CollectionUtils.isEmpty(urls)) {
                     return;
                 }
                 notifyListeners.forEach(notifyListener -> {
@@ -550,13 +579,32 @@ public class RegistryServiceImpl implements RegistryService {
         List<MicroserviceInstance> instances) {
         Map<SubscriptionKey, List<Object>> urlMap = new HashMap<>();
         instances.forEach(instance -> convertToUrlMap(urlMap, appId, serviceName, instance));
+
+        // 拼接*（通配符）的场景
+        urlMap.putAll(getWildcardUrlMap(urlMap));
         return urlMap;
+    }
+
+    private Map<SubscriptionKey, List<Object>> getWildcardUrlMap(Map<SubscriptionKey, List<Object>> urlMap) {
+        Map<SubscriptionKey, List<Object>> map = new HashMap<>();
+        urlMap.forEach((key, urls) -> {
+            map.computeIfAbsent(new SubscriptionKey(key.getAppId(), key.getServiceName(), key.getInterfaceName(),
+                WILDCARD, key.getVersion()), value -> new ArrayList<>()).addAll(urls);
+            map.computeIfAbsent(new SubscriptionKey(key.getAppId(), key.getServiceName(), key.getInterfaceName(),
+                key.getGroup(), WILDCARD), value -> new ArrayList<>()).addAll(urls);
+            map.computeIfAbsent(new SubscriptionKey(key.getAppId(), key.getServiceName(), key.getInterfaceName(),
+                WILDCARD, WILDCARD), value -> new ArrayList<>()).addAll(urls);
+        });
+        return map;
     }
 
     private void convertToUrlMap(Map<SubscriptionKey, List<Object>> urlMap, String appId, String serviceName,
         MicroserviceInstance instance) {
-        Map<String, String> properties = instance.getProperties();
         List<SchemaInfo> schemaInfos = client.getServiceSchemasList(instance.getServiceId(), true);
+        Map<String, String> properties = instance.getProperties();
+        String data = properties.get(INTERFACE_DATA_KEY);
+        Map<String, String> metaData = getMetaData(properties);
+        Map<String, List<InterfaceData>> dataMap = JSONObject.parseObject(data, new JsonObjectTypeReference());
         instance.getEndpoints().forEach(endpoint -> {
             Object url = ReflectUtils.valueOf(endpoint);
             if (schemaInfos.isEmpty()) {
@@ -564,43 +612,28 @@ public class RegistryServiceImpl implements RegistryService {
                     value -> new ArrayList<>()).add(url);
                 return;
             }
+            String protocol = ReflectUtils.getProtocol(url);
             schemaInfos.forEach(schema -> {
                 Object newUrl = ReflectUtils.valueOf(schema.getSchema());
-                if (!Objects.equals(ReflectUtils.getProtocol(newUrl), ReflectUtils.getProtocol(url))) {
-                    return;
-                }
 
                 // 获取对应接口的所有实现的信息，并组装成InterfaceKey
-                String json = properties.get(schema.getSchemaId());
-                List<InterfaceData> list = JSONArray.parseArray(json, InterfaceData.class);
+                List<InterfaceData> list = getInterfaceDataList(dataMap, properties, schema.getSchemaId(), metaData);
                 if (CollectionUtils.isEmpty(list)) {
                     return;
                 }
 
                 // 遍历所有的接口实现
                 list.forEach(interfaceData -> {
-                    Map<String, String> parameters = new HashMap<>();
-                    String group = interfaceData.getGroup();
-                    if (StringUtils.isExist(group)) {
-                        parameters.put(GROUP_KEY, group);
+                    if (!CollectionUtils.isEmpty(interfaceData.getProtocol())
+                        && !interfaceData.getProtocol().contains(protocol)) {
+                        return;
                     }
-                    String version = interfaceData.getVersion();
-                    if (StringUtils.isExist(version)) {
-                        parameters.put(VERSION_KEY, version);
-                    }
-                    String dubboServiceName = interfaceData.getServiceName();
-                    if (StringUtils.isExist(dubboServiceName)) {
-                        parameters.put(SERVICE_NAME_KEY, dubboServiceName);
-                    }
-                    Map<String, String> interfaceParameters = interfaceData.getParameters();
-                    if (!CollectionUtils.isEmpty(interfaceParameters)) {
-                        parameters.putAll(interfaceParameters);
-                    }
+                    Map<String, String> parameters = getParameters(interfaceData);
 
                     // 组装所有接口实现的访问地址列表
                     urlMap.computeIfAbsent(getSubscriptionKey(appId, serviceName, newUrl, interfaceData),
                         value -> new ArrayList<>())
-                        .add(getUrlOnNotifying(newUrl, url, parameters, interfaceData.getOrder()));
+                        .add(getUrlOnNotifying(newUrl, url, parameters, interfaceData.getOrder(), protocol));
                 });
             });
         });
@@ -619,14 +652,87 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private Object getUrlOnNotifying(Object schemaUrl, Object addressUrl, Map<String, String> parameters,
-        Integer order) {
-        Object url = ReflectUtils.setAddress(ReflectUtils.addParameters(schemaUrl, parameters),
-            ReflectUtils.getAddress(addressUrl));
+        Integer order, String protocol) {
+        Object url = ReflectUtils.setProtocol(ReflectUtils.setAddress(ReflectUtils.addParameters(schemaUrl, parameters),
+            ReflectUtils.getAddress(addressUrl)), protocol);
         if (order == null) {
             return url;
         }
 
         // 2.6.x, 2.7.0 - 2.7.7在多实现的场景下，路径名为接口拼一个序号
         return ReflectUtils.setPath(url, ReflectUtils.getPath(schemaUrl) + order);
+    }
+
+    private Map<String, String> getMetaData(Map<String, String> properties) {
+        // 没有接口数据，说明是旧版本，跳过
+        if (StringUtils.isBlank(properties.get(INTERFACE_DATA_KEY))) {
+            return Collections.emptyMap();
+        }
+        Map<String, String> metaData = new HashMap<>();
+        for (Entry<String, String> entry : properties.entrySet()) {
+            String key = entry.getKey();
+
+            // 接口数据不是元数据，跳过
+            if (INTERFACE_DATA_KEY.equals(key)) {
+                continue;
+            }
+            if (VERSION_KEY.equals(key)) {
+                metaData.put(META_DATA_VERSION_KEY, entry.getValue());
+                continue;
+            }
+            metaData.put(META_DATA_PREFIX + key, entry.getValue());
+        }
+        return metaData;
+    }
+
+    private List<InterfaceData> getInterfaceDataList(Map<String, List<InterfaceData>> dataMap,
+        Map<String, String> properties, String schemaId, Map<String, String> metaData) {
+        List<InterfaceData> list;
+        if (CollectionUtils.isEmpty(dataMap)) {
+            // 旧版本获取方式
+            String json = properties.get(schemaId);
+            list = JSONArray.parseArray(json, InterfaceData.class);
+        } else {
+            // 新版本获取方式
+            list = dataMap.get(schemaId);
+            list.forEach(interfaceData -> {
+                Map<String, String> parameters = interfaceData.getParameters();
+                if (parameters == null) {
+                    parameters = new HashMap<>();
+                    interfaceData.setParameters(parameters);
+                }
+                parameters.putAll(metaData);
+            });
+        }
+        return list;
+    }
+
+    private Map<String, String> getParameters(InterfaceData interfaceData) {
+        Map<String, String> parameters = new HashMap<>();
+        String group = interfaceData.getGroup();
+        if (StringUtils.isExist(group)) {
+            parameters.put(GROUP_KEY, group);
+        }
+        String version = interfaceData.getVersion();
+        if (StringUtils.isExist(version)) {
+            parameters.put(VERSION_KEY, version);
+        }
+        String dubboServiceName = interfaceData.getServiceName();
+        if (StringUtils.isExist(dubboServiceName)) {
+            parameters.put(SERVICE_NAME_KEY, dubboServiceName);
+        }
+        Map<String, String> interfaceParameters = interfaceData.getParameters();
+        if (!CollectionUtils.isEmpty(interfaceParameters)) {
+            parameters.putAll(interfaceParameters);
+        }
+        return parameters;
+    }
+
+    /**
+     * JSONObject序列化类
+     *
+     * @since 2022-02-18
+     */
+    private static class JsonObjectTypeReference extends TypeReference<Map<String, List<InterfaceData>>> {
     }
 }

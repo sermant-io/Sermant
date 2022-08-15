@@ -32,6 +32,7 @@ import reactor.core.publisher.Flux;
 import org.springframework.cloud.loadbalancer.core.DiscoveryClientServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,7 +98,9 @@ public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor 
             if (flux.getClass().getName().contains("FluxFirstNonEmptyEmitting")) {
                 return flux.collectList().toProcessor().block();
             }
-            return (List<Object>) flux.next().toProcessor().block();
+
+            // 这种情况不处理，所以返回emptyList
+            return Collections.emptyList();
         }
         return (List<Object>) flux.next().block();
     }

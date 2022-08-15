@@ -58,6 +58,18 @@ public class SubscriptionKey extends InterfaceKey {
         this.interfaceName = interfaceName;
     }
 
+    public String getAppId() {
+        return appId;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public String getInterfaceName() {
+        return interfaceName;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

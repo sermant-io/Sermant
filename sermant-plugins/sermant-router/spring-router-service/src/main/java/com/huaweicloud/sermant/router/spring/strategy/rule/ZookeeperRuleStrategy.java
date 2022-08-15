@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.config.strategy.AbstractRuleStrategy;
 import com.huaweicloud.sermant.router.spring.strategy.instance.MismatchInstanceStrategy;
 import com.huaweicloud.sermant.router.spring.strategy.instance.TargetInstanceStrategy;
-import com.huaweicloud.sermant.router.spring.utils.SpringReflectUtils;
+import com.huaweicloud.sermant.router.spring.utils.SpringRouterUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +40,7 @@ public class ZookeeperRuleStrategy extends AbstractRuleStrategy<Object> {
             obj -> {
                 Object instanceInfo = ReflectUtils.invokeWithNoneParameter(obj, "getInstance");
                 Object payload = ReflectUtils.invokeWithNoneParameter(instanceInfo, "getPayload");
-                return SpringReflectUtils.getMetadata(payload);
+                return SpringRouterUtils.getMetadata(payload);
             });
     }
 

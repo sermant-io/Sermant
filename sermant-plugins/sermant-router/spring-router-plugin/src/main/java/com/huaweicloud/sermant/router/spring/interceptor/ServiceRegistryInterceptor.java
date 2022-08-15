@@ -25,12 +25,12 @@ import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.spring.cache.AppCache;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
+import com.huaweicloud.sermant.router.spring.utils.SpringRouterUtils;
 
 import org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration;
 import org.springframework.cloud.client.serviceregistry.Registration;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
 
 /**
  * AbstractAutoServiceRegistration增强类，spring cloud注册方法
@@ -57,12 +57,10 @@ public class ServiceRegistryInterceptor extends AbstractInterceptor {
         Object object = context.getObject();
         if (object instanceof AbstractAutoServiceRegistration) {
             AbstractAutoServiceRegistration<?> serviceRegistration = (AbstractAutoServiceRegistration<?>) object;
-            Registration registration = (Registration) ReflectUtils
-                .getAccessibleObject(serviceRegistration.getClass().getDeclaredMethod("getRegistration"))
-                .invoke(serviceRegistration);
+            Registration registration = (Registration) ReflectUtils.getAccessibleObject(serviceRegistration.getClass()
+                .getDeclaredMethod("getRegistration")).invoke(serviceRegistration);
             AppCache.INSTANCE.setAppName(registration.getServiceId());
-            registration.getMetadata().put(RouterConstant.TAG_VERSION_KEY, routerConfig.getRouterVersion());
-            Optional.ofNullable(routerConfig.getParameters()).ifPresent(registration.getMetadata()::putAll);
+            SpringRouterUtils.putMetaData(registration.getMetadata(), routerConfig);
         }
         return context;
     }

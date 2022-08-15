@@ -16,9 +16,6 @@
 
 package com.huawei.dubbo.registry.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-
 import java.util.Objects;
 
 /**
@@ -28,11 +25,15 @@ import java.util.Objects;
  * @since 2022-04-06
  */
 public class InterfaceKey {
-    @JSONField(serialzeFeatures = SerializerFeature.WriteMapNullValue)
-    private final String group;
+    private String group;
 
-    @JSONField(serialzeFeatures = SerializerFeature.WriteMapNullValue)
-    private final String version;
+    private String version;
+
+    /**
+     * 构造方法
+     */
+    public InterfaceKey() {
+    }
 
     /**
      * 构造方法
@@ -49,8 +50,16 @@ public class InterfaceKey {
         return group;
     }
 
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
     public String getVersion() {
         return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     @Override

@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.config.strategy.AbstractRuleStrategy;
 import com.huaweicloud.sermant.router.spring.strategy.instance.MismatchInstanceStrategy;
 import com.huaweicloud.sermant.router.spring.strategy.instance.TargetInstanceStrategy;
-import com.huaweicloud.sermant.router.spring.utils.SpringReflectUtils;
+import com.huaweicloud.sermant.router.spring.utils.SpringRouterUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +39,7 @@ public class EurekaRuleStrategy extends AbstractRuleStrategy<Object> {
         super(new TargetInstanceStrategy<>(), new MismatchInstanceStrategy<>(),
             obj -> {
                 Object instanceInfo = ReflectUtils.invokeWithNoneParameter(obj, "getInstanceInfo");
-                return SpringReflectUtils.getMetadata(instanceInfo);
+                return SpringRouterUtils.getMetadata(instanceInfo);
             }
         );
     }

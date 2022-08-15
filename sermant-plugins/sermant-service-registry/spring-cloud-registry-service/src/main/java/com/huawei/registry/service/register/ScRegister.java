@@ -81,9 +81,24 @@ public class ScRegister implements Register {
         final List<MicroserviceInstance> microserviceInstances = getScInstances(serviceId);
         final List<ServicecombServiceInstance> serviceInstances = new ArrayList<>();
         for (final MicroserviceInstance microserviceInstance : microserviceInstances) {
+            if (!isValidInstance(microserviceInstance)) {
+                continue;
+            }
             serviceInstances.add(new ServicecombServiceInstance(microserviceInstance));
         }
         return serviceInstances;
+    }
+
+    private boolean isValidInstance(MicroserviceInstance microserviceInstance) {
+        if (microserviceInstance.getEndpoints() == null || microserviceInstance.getEndpoints().isEmpty()) {
+            return false;
+        }
+        for (String endpoint : microserviceInstance.getEndpoints()) {
+            if (endpoint.startsWith("rest://")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
