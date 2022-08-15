@@ -99,7 +99,7 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
      * 重构事件
      *
      * @param targetHolder 目标数据持有器
-     * @param originEvent  原始事件
+     * @param originEvent 原始事件
      * @return DynamicConfigEvent
      */
     private DynamicConfigEvent rebuildEvent(ConfigDataHolder targetHolder, DynamicConfigEvent originEvent) {
@@ -146,9 +146,14 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
             .getOrDefault(originEvent.getKey(), new HashMap<>(CAP_SIZE));
         olderDataMap.clear();
         if (originEvent.getEventType() != DynamicConfigEventType.DELETE) {
-            Map<String, Object> dataMap;
+            Map<String, Object> dataMap = new HashMap<>();
             try {
-                dataMap = yaml.loadAs(originEvent.getContent(), Map.class);
+                Object data = yaml.load(originEvent.getContent());
+                if (data instanceof Map) {
+                    dataMap.putAll((Map<? extends String, ?>) data);
+                } else {
+                    dataMap.put(originEvent.getKey(), data);
+                }
             } catch (ConstructorException ex) {
                 LoggerFactory.getLogger().warning(String.format(Locale.ENGLISH,
                     "Can not load key [%s], raw data: [%s], reason: [%s]",

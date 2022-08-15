@@ -26,10 +26,12 @@ import com.huaweicloud.sermant.router.config.label.entity.Rule;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
@@ -42,6 +44,8 @@ import java.util.regex.Pattern;
  */
 public class RuleUtils {
     private static final Set<String> HEADER_KEYS = new CopyOnWriteArraySet<>();
+
+    private static final Map<String, Set<String>> SERVICE_HEADER_KEYS = new ConcurrentHashMap<>();
 
     private static final int ONO_HUNDRED = 100;
 
@@ -109,9 +113,6 @@ public class RuleUtils {
             return;
         }
         Map<String, List<Rule>> routeRules = configuration.getRouteRule();
-        if (CollectionUtils.isEmpty(routeRules)) {
-            return;
-        }
         for (List<Rule> rules : routeRules.values()) {
             for (Rule rule : rules) {
                 Match match = rule.getMatch();
@@ -128,12 +129,42 @@ public class RuleUtils {
     }
 
     /**
+     * 更新header key
+     *
+     * @param serviceName 服务名
+     * @param rules 路由规则
+     */
+    public static void updateHeaderKeys(String serviceName, List<Rule> rules) {
+        if (CollectionUtils.isEmpty(rules)) {
+            SERVICE_HEADER_KEYS.remove(serviceName);
+            return;
+        }
+        Set<String> keys = SERVICE_HEADER_KEYS.computeIfAbsent(serviceName, value -> new CopyOnWriteArraySet<>());
+        keys.clear();
+        for (Rule rule : rules) {
+            Match match = rule.getMatch();
+            if (match == null) {
+                continue;
+            }
+            Map<String, List<MatchRule>> headers = match.getHeaders();
+            if (CollectionUtils.isEmpty(headers)) {
+                continue;
+            }
+            keys.addAll(headers.keySet());
+        }
+    }
+
+    /**
      * 获取需要缓存的key
      *
      * @return 缓存的key
      */
     public static Set<String> getHeaderKeys() {
-        return HEADER_KEYS;
+        Set<String> keys = new HashSet<>(HEADER_KEYS);
+        for (Set<String> value : SERVICE_HEADER_KEYS.values()) {
+            keys.addAll(value);
+        }
+        return Collections.unmodifiableSet(keys);
     }
 
     /**

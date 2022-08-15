@@ -16,8 +16,11 @@
 
 package com.huaweicloud.sermant.router.config.label.entity;
 
+import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 路由标签
@@ -27,11 +30,6 @@ import java.util.Map;
  */
 public class RouterConfiguration {
     /**
-     * 是否有效
-     */
-    private boolean valid;
-
-    /**
      * 当前应用标签
      */
     private CurrentTag currentTag;
@@ -39,15 +37,7 @@ public class RouterConfiguration {
     /**
      * 标签规则,key为应用名，value为规则
      */
-    private Map<String, List<Rule>> routeRule;
-
-    public boolean isValid() {
-        return valid;
-    }
-
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
+    private final Map<String, List<Rule>> routeRule = new ConcurrentHashMap<>();
 
     public CurrentTag getCurrentTag() {
         return currentTag;
@@ -61,8 +51,14 @@ public class RouterConfiguration {
         return routeRule;
     }
 
-    public void setRouteRule(Map<String, List<Rule>> routeRule) {
-        this.routeRule = routeRule;
+    /**
+     * 重置路由规则
+     *
+     * @param map 路由规则
+     */
+    public void resetRouteRule(Map<String, List<Rule>> map) {
+        routeRule.clear();
+        routeRule.putAll(map);
     }
 
     /**
@@ -72,6 +68,6 @@ public class RouterConfiguration {
      * @return 是否无效
      */
     public static boolean isInValid(RouterConfiguration configuration) {
-        return configuration == null || !configuration.isValid();
+        return configuration == null || CollectionUtils.isEmpty(configuration.getRouteRule());
     }
 }
