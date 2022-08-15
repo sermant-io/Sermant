@@ -17,17 +17,25 @@
 
 package com.huaweicloud.loadbalancer.rule;
 
+import com.huaweicloud.loadbalancer.config.DubboLoadbalancerType;
+import com.huaweicloud.loadbalancer.config.RibbonLoadbalancerType;
+import com.huaweicloud.loadbalancer.config.SpringLoadbalancerType;
+import com.huaweicloud.loadbalancer.listener.CacheListener;
 import com.huaweicloud.loadbalancer.service.RuleConverter;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * 负载均衡规则解析器
@@ -36,6 +44,8 @@ import java.util.Optional;
  * @since 2022-08-09
  */
 public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static final String LOAD_BALANCER_PREFIX = "servicecomb.loadbalance";
 
     private static final String MATCH_GROUP_PREFIX = "servicecomb.matchGroup";
@@ -48,6 +58,16 @@ public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> 
     private final Map<String, LoadbalancerRule> rules = new HashMap<>();
 
     /**
+     * 服务缓存监听器, 当配置更新时, 同时需要刷新缓存
+     */
+    private final List<CacheListener> cacheListeners = new ArrayList<>();
+
+    /**
+     * 真实规则数量, 由于存在不匹配的matchGroup, 该数据量仅记录servicecomb.loadbalance的数量
+     */
+    private int realRuleSize;
+
+    /**
      * 规则构造器
      */
     public LoadbalancerRuleResolver() {
@@ -56,6 +76,12 @@ public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> 
 
     @Override
     public Optional<LoadbalancerRule> resolve(DynamicConfigEvent event) {
+        final Optional<LoadbalancerRule> loadbalancerRule = handleConfig(event);
+        loadbalancerRule.ifPresent(rule -> this.notifyCache(rule, event));
+        return loadbalancerRule;
+    }
+
+    private Optional<LoadbalancerRule> handleConfig(DynamicConfigEvent event) {
         final String key = event.getKey();
         if (key.startsWith(LOAD_BALANCER_PREFIX)) {
             return handleRule(event);
@@ -100,15 +126,57 @@ public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> 
     private Optional<LoadbalancerRule> handleRule(DynamicConfigEvent event) {
         String businessKey = event.getKey().substring(LOAD_BALANCER_PREFIX.length() + 1);
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
-            return Optional.ofNullable(rules.remove(businessKey));
+            final LoadbalancerRule remove = rules.remove(businessKey);
+            if (remove != null) {
+                realRuleSize--;
+            }
+            return Optional.ofNullable(remove);
         }
         final LoadbalancerRule rule = rules.getOrDefault(businessKey, new LoadbalancerRule());
         final Optional<LoadbalancerRule> ruleOptional = converter.convert(event.getContent(), LoadbalancerRule.class);
         if (ruleOptional.isPresent()) {
-            rule.setRule(ruleOptional.get().getRule());
-            rules.put(businessKey, rule);
+            final String loadbalancerType = ruleOptional.get().getRule();
+            if (isSupport(loadbalancerType)) {
+                rule.setRule(loadbalancerType);
+                rules.put(businessKey, rule);
+                realRuleSize++;
+            } else {
+                LOGGER.warning(String.format(Locale.ENGLISH, "Can not support loadbalancer rule [%s]",
+                        loadbalancerType));
+            }
         }
         return Optional.of(rule);
+    }
+
+    private boolean isSupport(String loadbalancerType) {
+        return DubboLoadbalancerType.matchLoadbalancer(loadbalancerType).isPresent()
+                || SpringLoadbalancerType.matchLoadbalancer(loadbalancerType).isPresent()
+                || RibbonLoadbalancerType.matchLoadbalancer(loadbalancerType).isPresent();
+    }
+
+    /**
+     * 添加缓存监听器
+     *
+     * @param cacheListener 监听器
+     */
+    public void addListener(CacheListener cacheListener) {
+        if (cacheListener == null) {
+            return;
+        }
+        cacheListeners.add(cacheListener);
+    }
+
+    private void notifyCache(LoadbalancerRule rule, DynamicConfigEvent event) {
+        cacheListeners.forEach(cacheListener -> cacheListener.notify(rule, event));
+    }
+
+    /**
+     * 宿主服务是否配置负载均衡策略
+     *
+     * @return true为已配置, 根据实际规则数量判断, 数量大于0则为已配置
+     */
+    public boolean isConfigured() {
+        return realRuleSize > 0;
     }
 
     /**

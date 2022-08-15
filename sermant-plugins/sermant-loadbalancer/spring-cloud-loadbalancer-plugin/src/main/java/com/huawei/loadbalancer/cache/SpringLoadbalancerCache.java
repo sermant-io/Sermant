@@ -16,30 +16,77 @@
 
 package com.huawei.loadbalancer.cache;
 
+import com.huaweicloud.loadbalancer.config.LbContext;
+import com.huaweicloud.loadbalancer.config.SpringLoadbalancerType;
+import com.huaweicloud.loadbalancer.rule.LoadbalancerRule;
+import com.huaweicloud.loadbalancer.rule.RuleManager;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
- * 负载均衡器缓存
+ * spring loadbalancer负载均衡器缓存
  *
  * @author provenceee
  * @since 2022-01-20
  */
-public enum LoadbalancerCache {
+public enum SpringLoadbalancerCache {
     /**
      * 单例
      */
     INSTANCE;
 
-    // 参数缓存
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    /**
+     * 参数缓存
+     *
+     * @see org.springframework.beans.factory.ObjectProvider
+     */
     private final Map<String, Object> providerMap = new ConcurrentHashMap<>();
 
-    // 原来的宿主的负载均衡器的缓存
+    /**
+     * 原来的宿主的负载均衡器的缓存
+     */
     private final Map<String, Object> originCache = new ConcurrentHashMap<>();
 
-    // 新的负载均衡器的缓存
+    /**
+     * 新的负载均衡器的缓存
+     */
     private final Map<String, Optional<Object>> newCache = new ConcurrentHashMap<>();
+
+    SpringLoadbalancerCache() {
+        RuleManager.INSTANCE.addRuleListener(this::updateCache);
+    }
+
+    private void updateCache(LoadbalancerRule rule, DynamicConfigEvent event) {
+        if (rule.getRule() == null || !LbContext.INSTANCE.isTargetLb(LbContext.LOADBALANCER_SPRING)) {
+            return;
+        }
+        final Optional<SpringLoadbalancerType> springLoadbalancerType = SpringLoadbalancerType
+                .matchLoadbalancer(rule.getRule());
+        if (!springLoadbalancerType.isPresent()) {
+            LOGGER.fine(String.format(Locale.ENGLISH, "Can not support spring loadbalancer rule: [%s]",
+                    rule.getRule()));
+            return;
+        }
+        final String serviceName = rule.getServiceName();
+        if (serviceName == null) {
+            newCache.clear();
+            return;
+        }
+        if (event.getEventType() == DynamicConfigEventType.DELETE) {
+            newCache.put(serviceName, Optional.ofNullable(originCache.get(serviceName)));
+        } else {
+            newCache.remove(serviceName);
+        }
+    }
 
     /**
      * 存入provider

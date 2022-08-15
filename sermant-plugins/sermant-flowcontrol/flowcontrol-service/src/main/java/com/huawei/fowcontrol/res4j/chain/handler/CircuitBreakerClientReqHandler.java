@@ -20,7 +20,7 @@ package com.huawei.fowcontrol.res4j.chain.handler;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 
 /**
- * 熔断服务端处理器
+ * 熔断客户端处理器
  *
  * @author zhouss
  * @since 2022-07-23
@@ -32,12 +32,12 @@ public class CircuitBreakerClientReqHandler extends CircuitBreakerRequestHandler
 
     @Override
     protected String getContextName() {
-        return START_TIME;
+        return CONTEXT_NAME;
     }
 
     @Override
     protected String getStartTime() {
-        return CONTEXT_NAME;
+        return START_TIME;
     }
 
     @Override

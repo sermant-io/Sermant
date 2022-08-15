@@ -16,9 +16,11 @@
 
 package com.huawei.loadbalancer.interceptor;
 
-import com.huaweicloud.loadbalancer.config.DubboLoadbalancerType;
-import com.huaweicloud.loadbalancer.config.LoadbalancerConfig;
+import com.huawei.loadbalancer.cache.DubboLoadbalancerCache;
 
+import com.huaweicloud.loadbalancer.config.DubboLoadbalancerType;
+import com.huaweicloud.loadbalancer.config.LbContext;
+import com.huaweicloud.loadbalancer.config.LoadbalancerConfig;
 import com.huaweicloud.loadbalancer.rule.LoadbalancerRule;
 import com.huaweicloud.loadbalancer.rule.RuleManager;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
@@ -58,6 +60,7 @@ public class UrlInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
+        LbContext.INSTANCE.setCurLoadbalancerType(LbContext.LOADBALANCER_DUBBO);
         Object[] arguments = context.getArguments();
         if (arguments != null && arguments.length > 1 && LOAD_BALANCE_KEY.equals(arguments[1])) {
             // 如果为empty，继续执行原方法，即使用宿主的负载均衡策略
@@ -73,7 +76,7 @@ public class UrlInterceptor extends AbstractInterceptor {
     }
 
     private Optional<String> getType(ExecuteContext context) {
-        if (config == null || config.getDubboType() == null) {
+        if (config == null || !RuleManager.INSTANCE.isConfigured()) {
             // 没有配置的情况下return empty
             return Optional.empty();
         }
@@ -82,12 +85,20 @@ public class UrlInterceptor extends AbstractInterceptor {
     }
 
     private Optional<DubboLoadbalancerType> matchLoadbalancerType(String application) {
+        final DubboLoadbalancerType cacheType = DubboLoadbalancerCache.INSTANCE.getNewCache()
+                .get(application);
+        if (cacheType != null) {
+            return Optional.of(cacheType);
+        }
         final Optional<LoadbalancerRule> targetServiceRule = RuleManager.INSTANCE
                 .getTargetServiceRule(application);
         if (!targetServiceRule.isPresent()) {
             return Optional.empty();
         }
-        return DubboLoadbalancerType.matchLoadbalancer(targetServiceRule.get().getRule());
+        final Optional<DubboLoadbalancerType> dubboLoadbalancerType = DubboLoadbalancerType
+                .matchLoadbalancer(targetServiceRule.get().getRule());
+        dubboLoadbalancerType.ifPresent(type -> DubboLoadbalancerCache.INSTANCE.getNewCache().put(application, type));
+        return dubboLoadbalancerType;
     }
 
     private Optional<String> getRemoteApplication(ExecuteContext context) {

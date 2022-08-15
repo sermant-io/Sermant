@@ -29,11 +29,6 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 @ConfigTypeKey("loadbalancer.plugin")
 public class LoadbalancerConfig implements PluginConfig {
     /**
-     * 配置的key
-     */
-    private String key = "loadbalancer";
-
-    /**
      * dubbo负载均衡策略
      */
     private DubboLoadbalancerType dubboType = DubboLoadbalancerType.RANDOM;
@@ -49,9 +44,9 @@ public class LoadbalancerConfig implements PluginConfig {
     private RibbonLoadbalancerType ribbonType = RibbonLoadbalancerType.ROUND_ROBIN;
 
     /**
-     * 负载均衡规则
+     * 默认负载均衡规则
      */
-    private String rule;
+    private String defaultRule;
 
     /**
      * 是否使用cse规则
@@ -64,14 +59,6 @@ public class LoadbalancerConfig implements PluginConfig {
 
     public void setUseCseRule(boolean useCseRule) {
         this.useCseRule = useCseRule;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     public DubboLoadbalancerType getDubboType() {
@@ -94,12 +81,12 @@ public class LoadbalancerConfig implements PluginConfig {
         return ribbonType;
     }
 
-    public String getRule() {
-        return rule;
+    public String getDefaultRule() {
+        return defaultRule;
     }
 
-    public void setRule(String rule) {
-        this.rule = rule;
+    public void setDefaultRule(String defaultRule) {
+        this.defaultRule = defaultRule;
     }
 
     public void setRibbonType(RibbonLoadbalancerType ribbonType) {

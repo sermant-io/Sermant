@@ -16,7 +16,7 @@
 
 package com.huawei.loadbalancer;
 
-import com.huawei.loadbalancer.cache.LoadbalancerCache;
+import com.huawei.loadbalancer.cache.SpringLoadbalancerCache;
 import com.huawei.loadbalancer.interceptor.LoadBalancerInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
@@ -95,8 +95,8 @@ public class LoadBalancerInterceptorTest {
         arguments[0] = args0;
         arguments[1] = FOO;
         interceptor.after(context);
-        Assert.assertEquals(args0, LoadbalancerCache.INSTANCE.getProvider(FOO));
-        Assert.assertEquals(obj, LoadbalancerCache.INSTANCE.getOrigin(FOO));
+        Assert.assertEquals(args0, SpringLoadbalancerCache.INSTANCE.getProvider(FOO));
+        Assert.assertEquals(obj, SpringLoadbalancerCache.INSTANCE.getOrigin(FOO));
 
         // 测试再次调用
         Object newObj = new Object();
@@ -105,8 +105,8 @@ public class LoadBalancerInterceptorTest {
         arguments[1] = FOO;
         context = ExecuteContext.forMemberMethod(newObj, null, arguments, null, null);
         interceptor.after(context);
-        Assert.assertEquals(args0, LoadbalancerCache.INSTANCE.getProvider(FOO));
-        Assert.assertEquals(obj, LoadbalancerCache.INSTANCE.getOrigin(FOO));
+        Assert.assertEquals(args0, SpringLoadbalancerCache.INSTANCE.getProvider(FOO));
+        Assert.assertEquals(obj, SpringLoadbalancerCache.INSTANCE.getOrigin(FOO));
     }
 
     private Map<String, Object> getProviderMap() throws NoSuchFieldException, IllegalAccessException {
@@ -118,8 +118,8 @@ public class LoadBalancerInterceptorTest {
     }
 
     private Map<String, Object> getCacheMap(String fieldName) throws NoSuchFieldException, IllegalAccessException {
-        Field field = LoadbalancerCache.INSTANCE.getClass().getDeclaredField(fieldName);
+        Field field = SpringLoadbalancerCache.INSTANCE.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
-        return (Map<String, Object>) field.get(LoadbalancerCache.INSTANCE);
+        return (Map<String, Object>) field.get(SpringLoadbalancerCache.INSTANCE);
     }
 }

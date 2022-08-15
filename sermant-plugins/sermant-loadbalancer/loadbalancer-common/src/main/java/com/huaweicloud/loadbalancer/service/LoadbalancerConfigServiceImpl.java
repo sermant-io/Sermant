@@ -17,7 +17,7 @@
 
 package com.huaweicloud.loadbalancer.service;
 
-import com.huaweicloud.loadbalancer.config.LbMeta;
+import com.huaweicloud.loadbalancer.config.LbContext;
 import com.huaweicloud.loadbalancer.config.LoadbalancerConfig;
 import com.huaweicloud.loadbalancer.factory.LoadbalancerThreadFactory;
 import com.huaweicloud.loadbalancer.listener.LoadbalancerConfigListener;
@@ -61,10 +61,10 @@ public class LoadbalancerConfigServiceImpl implements PluginService {
         ConfigSubscriber configSubscriber;
         String pluginName = "loadbalancer-plugin";
         if (config.isUseCseRule()) {
-            configSubscriber = new CseGroupConfigSubscriber(LbMeta.INSTANCE.getServiceName(),
+            configSubscriber = new CseGroupConfigSubscriber(LbContext.INSTANCE.getServiceName(),
                     new LoadbalancerConfigListener(), pluginName);
         } else {
-            configSubscriber = new DefaultGroupConfigSubscriber(LbMeta.INSTANCE.getServiceName(),
+            configSubscriber = new DefaultGroupConfigSubscriber(LbContext.INSTANCE.getServiceName(),
                     new LoadbalancerConfigListener(), pluginName);
         }
         configSubscriber.subscribe();

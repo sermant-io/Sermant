@@ -17,6 +17,7 @@
 
 package com.huaweicloud.loadbalancer.rule;
 
+import com.huaweicloud.loadbalancer.listener.CacheListener;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 import java.util.Optional;
@@ -52,5 +53,23 @@ public enum RuleManager {
      */
     public Optional<LoadbalancerRule> getTargetServiceRule(String serviceName) {
         return loadbalancerRuleRuleResolver.getTargetServiceRule(serviceName);
+    }
+
+    /**
+     * 添加缓存监听器
+     *
+     * @param cacheListener 监听器
+     */
+    public void addRuleListener(CacheListener cacheListener) {
+        loadbalancerRuleRuleResolver.addListener(cacheListener);
+    }
+
+    /**
+     * 宿主服务是否配置负载均衡策略
+     *
+     * @return true为已配置
+     */
+    public boolean isConfigured() {
+        return loadbalancerRuleRuleResolver.isConfigured();
     }
 }

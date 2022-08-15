@@ -16,8 +16,9 @@
 
 package com.huawei.loadbalancer.interceptor;
 
-import com.huawei.loadbalancer.cache.LoadbalancerCache;
+import com.huawei.loadbalancer.cache.SpringLoadbalancerCache;
 
+import com.huaweicloud.loadbalancer.config.LbContext;
 import com.huaweicloud.loadbalancer.config.LoadbalancerConfig;
 import com.huaweicloud.loadbalancer.config.SpringLoadbalancerType;
 import com.huaweicloud.loadbalancer.rule.LoadbalancerRule;
@@ -33,6 +34,7 @@ import org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -56,6 +58,7 @@ public class ClientFactoryInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
+        LbContext.INSTANCE.setCurLoadbalancerType(LbContext.LOADBALANCER_SPRING);
         return context;
     }
 
@@ -66,31 +69,53 @@ public class ClientFactoryInterceptor extends AbstractInterceptor {
     }
 
     private Optional<Object> getLoadBalancer(String serviceId) {
-        if (config == null || config.getSpringType() == null) {
-            // 没有配置的情况下return null，不影响原方法
+        if (config == null || !RuleManager.INSTANCE.isConfigured()) {
+            // 没有配置的情况下return null, 不影响原方法
             return Optional.empty();
+        }
+        final Optional<Object> cacheBalancer = SpringLoadbalancerCache.INSTANCE.getNewCache().get(serviceId);
+        if (cacheBalancer != null) {
+            return cacheBalancer;
         }
         final Optional<SpringLoadbalancerType> springLoadbalancerType = matchLoadbalancerType(serviceId);
         if (!springLoadbalancerType.isPresent()) {
-            return Optional.empty();
+            return useDefaultRule(serviceId);
         }
         Class<?> clazz = getLoadBalancerClass(springLoadbalancerType.get());
 
         // 如果原来的负载均衡器跟需要的一样，就不需要new了，直接return null，不影响原方法
-        if (LoadbalancerCache.INSTANCE.getOrigin(serviceId).getClass() == clazz) {
+        if (SpringLoadbalancerCache.INSTANCE.getOrigin(serviceId).getClass() == clazz) {
             return Optional.empty();
         }
-        return LoadbalancerCache.INSTANCE.getNewCache().computeIfAbsent(serviceId, value -> {
-            try {
-                Constructor<?> constructor = clazz.getConstructor(ObjectProvider.class, String.class);
-                return Optional.of(constructor.newInstance(LoadbalancerCache.INSTANCE.getProvider(serviceId),
+        return SpringLoadbalancerCache.INSTANCE.getNewCache().computeIfAbsent(serviceId,
+            value -> createLoadbalancer(springLoadbalancerType.get(), serviceId));
+    }
+
+    private Optional<Object> useDefaultRule(String serviceId) {
+        final String defaultRule = config.getDefaultRule();
+        if (defaultRule == null) {
+            return Optional.empty();
+        }
+        final Optional<SpringLoadbalancerType> springLoadbalancerType = SpringLoadbalancerType
+                .matchLoadbalancer(defaultRule);
+        if (!springLoadbalancerType.isPresent()) {
+            return Optional.empty();
+        }
+        return SpringLoadbalancerCache.INSTANCE.getNewCache().computeIfAbsent(serviceId,
+            value -> createLoadbalancer(springLoadbalancerType.get(), serviceId));
+    }
+
+    private Optional<Object> createLoadbalancer(SpringLoadbalancerType type, String serviceId) {
+        Class<?> clazz = getLoadBalancerClass(type);
+        try {
+            Constructor<?> constructor = clazz.getConstructor(ObjectProvider.class, String.class);
+            return Optional.of(constructor.newInstance(SpringLoadbalancerCache.INSTANCE.getProvider(serviceId),
                     serviceId));
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
                 | InvocationTargetException e) {
-                LOGGER.warning("Cannot get the loadbalancer.");
-                return Optional.empty();
-            }
-        });
+            LOGGER.warning(String.format(Locale.ENGLISH, "Cannot create loadbalancer [%s].", clazz.getName()));
+            return Optional.empty();
+        }
     }
 
     private Optional<SpringLoadbalancerType> matchLoadbalancerType(String serviceId) {

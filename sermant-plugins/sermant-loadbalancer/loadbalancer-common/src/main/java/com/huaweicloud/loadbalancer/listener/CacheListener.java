@@ -15,30 +15,23 @@
  *
  */
 
-package com.huaweicloud.loadbalancer.config;
+package com.huaweicloud.loadbalancer.listener;
+
+import com.huaweicloud.loadbalancer.rule.LoadbalancerRule;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 /**
- * 负载均衡元数据
+ * 缓存监听器
  *
  * @author zhouss
- * @since 2022-08-04
+ * @since 2022-08-12
  */
-public enum LbMeta {
+public interface CacheListener {
     /**
-     * 单例
+     * 通知缓存更新
+     *
+     * @param rule 新的负载均衡规则
+     * @param event 原生事件
      */
-    INSTANCE;
-
-    /**
-     * 当前服务名
-     */
-    private String serviceName;
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
+    void notify(LoadbalancerRule rule, DynamicConfigEvent event);
 }

@@ -16,7 +16,7 @@
 
 package com.huawei.loadbalancer.interceptor;
 
-import com.huawei.loadbalancer.cache.LoadbalancerCache;
+import com.huawei.loadbalancer.cache.SpringLoadbalancerCache;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
@@ -49,7 +49,7 @@ public class LoadBalancerInterceptor extends AbstractInterceptor {
             return;
         }
         String serviceId = (String) arguments[1];
-        LoadbalancerCache.INSTANCE.putProvider(serviceId, arguments[0]);
-        LoadbalancerCache.INSTANCE.putOrigin(serviceId, obj);
+        SpringLoadbalancerCache.INSTANCE.putProvider(serviceId, arguments[0]);
+        SpringLoadbalancerCache.INSTANCE.putOrigin(serviceId, obj);
     }
 }

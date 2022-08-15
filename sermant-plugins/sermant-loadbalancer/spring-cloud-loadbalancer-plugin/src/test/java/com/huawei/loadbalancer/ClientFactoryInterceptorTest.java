@@ -16,7 +16,7 @@
 
 package com.huawei.loadbalancer;
 
-import com.huawei.loadbalancer.cache.LoadbalancerCache;
+import com.huawei.loadbalancer.cache.SpringLoadbalancerCache;
 import com.huaweicloud.loadbalancer.config.LoadbalancerConfig;
 import com.huaweicloud.loadbalancer.config.SpringLoadbalancerType;
 import com.huawei.loadbalancer.interceptor.ClientFactoryInterceptor;
@@ -66,8 +66,8 @@ public class ClientFactoryInterceptorTest {
         field.set(interceptor, config);
         ObjectProvider<ServiceInstanceListSupplier> suppliers = ServiceInstanceListSuppliers
             .toProvider(FOO, new TestServiceInstance());
-        LoadbalancerCache.INSTANCE.putOrigin(FOO, new RoundRobinLoadBalancer(suppliers, FOO));
-        LoadbalancerCache.INSTANCE.putProvider(FOO, suppliers);
+        SpringLoadbalancerCache.INSTANCE.putOrigin(FOO, new RoundRobinLoadBalancer(suppliers, FOO));
+        SpringLoadbalancerCache.INSTANCE.putProvider(FOO, suppliers);
         Object[] arguments = new Object[1];
         arguments[0] = FOO;
         context = ExecuteContext.forMemberMethod(new Object(), String.class.getMethod("trim"), arguments, null, null);
@@ -93,7 +93,7 @@ public class ClientFactoryInterceptorTest {
         // 测试负载均衡策略改变
         config.setSpringType(SpringLoadbalancerType.RANDOM);
         interceptor.after(context);
-        Assert.assertEquals(LoadbalancerCache.INSTANCE.getNewCache().get(FOO).orElse(null), context.getResult());
+        Assert.assertEquals(SpringLoadbalancerCache.INSTANCE.getNewCache().get(FOO).orElse(null), context.getResult());
     }
 
     public static class TestServiceInstance implements ServiceInstance {
