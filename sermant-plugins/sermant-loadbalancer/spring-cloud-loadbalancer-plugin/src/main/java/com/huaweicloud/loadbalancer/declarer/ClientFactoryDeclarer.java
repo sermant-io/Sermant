@@ -15,21 +15,26 @@
  *
  */
 
-package com.huaweicloud.loadbalancer.listener;
-
-import com.huaweicloud.loadbalancer.rule.RuleManager;
-import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+package com.huaweicloud.loadbalancer.declarer;
 
 /**
- * 配置监听器
+ * LoadBalancerClientFactory增强类
  *
- * @author pengyuyi
- * @since 2022-01-22
+ * @author provenceee
+ * @since 2022-01-20
  */
-public class LoadbalancerConfigListener implements DynamicConfigListener {
-    @Override
-    public void process(DynamicConfigEvent event) {
-        RuleManager.INSTANCE.resolve(event);
+public class ClientFactoryDeclarer extends AbstractDeclarer {
+    private static final String ENHANCE_CLASS =
+        "org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory";
+
+    private static final String INTERCEPT_CLASS = "com.huaweicloud.loadbalancer.interceptor.ClientFactoryInterceptor";
+
+    private static final String METHOD_NAME = "getInstance";
+
+    /**
+     * 构造方法
+     */
+    public ClientFactoryDeclarer() {
+        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
     }
 }

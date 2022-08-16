@@ -31,6 +31,23 @@ public class LoadbalancerRule {
      */
     private String rule;
 
+    /**
+     * 构造器
+     */
+    public LoadbalancerRule() {
+    }
+
+    /**
+     * 负载均衡构造器
+     *
+     * @param serviceName 服务名
+     * @param rule 负载均衡类型
+     */
+    public LoadbalancerRule(String serviceName, String rule) {
+        this.serviceName = serviceName;
+        this.rule = rule;
+    }
+
     public String getServiceName() {
         return serviceName;
     }

@@ -53,6 +53,15 @@ public class LoadbalancerConfig implements PluginConfig {
      */
     private boolean useCseRule = true;
 
+    /**
+     * 是否强制使用插件的负载均衡, 当前配置仅对ribbon生效。ribbon可能存在用户自身的负载均衡key, 若用户不想影响自身的负载均衡key, 则可将之设置为false
+     */
+    private boolean forceUseSermantLb = true;
+
+    public boolean isForceUseSermantLb() {
+        return forceUseSermantLb;
+    }
+
     public boolean isUseCseRule() {
         return useCseRule;
     }

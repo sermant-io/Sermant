@@ -17,7 +17,11 @@
 
 package com.huaweicloud.loadbalancer.utils;
 
-import java.util.Optional;
+import com.huaweicloud.loadbalancer.rule.ChangedLoadbalancerRule;
+import com.huaweicloud.loadbalancer.rule.LoadbalancerRule;
+
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * ribbon负载均衡工具类
@@ -31,37 +35,29 @@ public class RibbonUtils {
      */
     public static final String DEFAULT_RIBBON_LOADBALANCER_KEY = "default";
 
-    /**
-     * 负载均衡key前缀, 防止与用户的负载均衡键重合
-     */
-    public static final String RIBBON_LOADBALANCER_KEY_PREFIX = "__SERMANT_LOADBALANCER__";
-
-    private static final char RIBBON_KEY_SEPARATOR = '#';
-
-    /**
-     * 构建负载均衡key
-     *
-     * @param serviceName 服务名
-     * @return key
-     */
-    public static String buildLoadbalancerKey(String serviceName) {
-        return RIBBON_LOADBALANCER_KEY_PREFIX + RIBBON_KEY_SEPARATOR + serviceName;
+    private RibbonUtils() {
     }
 
     /**
-     * 通过负载均衡key解析服务名
+     * 更新缓存, 只针对modify事件
      *
-     * @param loadbalancerKey 负载均衡key
-     * @return serviceName
+     * @param cache 缓存
+     * @param rule 更新的规则
      */
-    public static Optional<String> resolveServiceNameByKey(String loadbalancerKey) {
-        if (loadbalancerKey == null || !loadbalancerKey.startsWith(RIBBON_LOADBALANCER_KEY_PREFIX)) {
-            return Optional.empty();
+    public static boolean updateCache(Map<String, ?> cache, LoadbalancerRule rule) {
+        if (!(rule instanceof ChangedLoadbalancerRule)) {
+            return false;
         }
-        final int index = loadbalancerKey.lastIndexOf(RIBBON_KEY_SEPARATOR);
-        if (index != -1) {
-            return Optional.of(loadbalancerKey.substring(index + 1));
+        ChangedLoadbalancerRule changedLoadbalancerRule = (ChangedLoadbalancerRule) rule;
+        final String oldServiceName = changedLoadbalancerRule.getOldRule().getServiceName();
+        final String newServiceName = changedLoadbalancerRule.getNewRule().getServiceName();
+        if (Objects.isNull(oldServiceName) || Objects.isNull(newServiceName)) {
+            cache.clear();
+            return true;
         }
-        return Optional.empty();
+        cache.remove(oldServiceName);
+        cache.remove(newServiceName);
+        return true;
     }
+
 }

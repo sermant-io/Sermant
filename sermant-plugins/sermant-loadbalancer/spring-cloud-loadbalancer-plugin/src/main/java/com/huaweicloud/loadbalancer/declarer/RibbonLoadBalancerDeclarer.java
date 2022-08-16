@@ -15,21 +15,25 @@
  *
  */
 
-package com.huaweicloud.loadbalancer.listener;
-
-import com.huaweicloud.loadbalancer.rule.RuleManager;
-import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+package com.huaweicloud.loadbalancer.declarer;
 
 /**
- * 配置监听器
+ * Ribbon BaseLoadBalancer负载均衡增强类
  *
- * @author pengyuyi
- * @since 2022-01-22
+ * @author provenceee
+ * @since 2022-02-24
  */
-public class LoadbalancerConfigListener implements DynamicConfigListener {
-    @Override
-    public void process(DynamicConfigEvent event) {
-        RuleManager.INSTANCE.resolve(event);
+public class RibbonLoadBalancerDeclarer extends AbstractDeclarer {
+    private static final String ENHANCE_CLASS = "com.netflix.loadbalancer.BaseLoadBalancer";
+
+    private static final String INTERCEPT_CLASS = "com.huaweicloud.loadbalancer.interceptor.RibbonLoadBalancerInterceptor";
+
+    private static final String METHOD_NAME = "chooseServer";
+
+    /**
+     * 构造方法
+     */
+    public RibbonLoadBalancerDeclarer() {
+        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
     }
 }
