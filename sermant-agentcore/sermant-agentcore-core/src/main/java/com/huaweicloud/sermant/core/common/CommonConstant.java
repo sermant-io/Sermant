@@ -101,6 +101,22 @@ public class CommonConstant {
      * 插件加载场景键
      */
     public static final String PLUGIN_PROFILE = "profile";
+
+    /**
+     * 逗号
+     */
+    public static final String COMMA = ",";
+
+    /**
+     * 点号
+     */
+    public static final String DOT = ".";
+
+    /**
+     * 冒号
+     */
+    public static final String COLON = ":";
+
     private CommonConstant() {
     }
 }
