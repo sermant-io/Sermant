@@ -50,4 +50,13 @@ public interface PluginDeclarer {
      * @return 超类声明集
      */
     SuperTypeDeclarer[] getSuperTypeDeclarers();
+
+    /**
+     * 由插件声明器决定是否需要增强被拦截的方法，默认为true
+     *
+     * @return 加载与否
+     */
+    default boolean isEnabled() {
+        return true;
+    }
 }

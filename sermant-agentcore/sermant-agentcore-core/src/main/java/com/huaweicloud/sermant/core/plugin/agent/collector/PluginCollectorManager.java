@@ -87,7 +87,9 @@ public class PluginCollectorManager {
         final List<PluginDeclarer> declares = new ArrayList<>();
         for (PluginCollector collector : COLLECTORS) {
             for (PluginDeclarer declarer : collector.getDeclarers()) {
-                declares.add(declarer);
+                if (declarer.isEnabled()) {
+                    declares.add(declarer);
+                }
             }
         }
         return declares;

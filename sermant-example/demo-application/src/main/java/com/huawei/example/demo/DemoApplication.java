@@ -17,6 +17,7 @@
 package com.huawei.example.demo;
 
 import com.huawei.example.demo.service.DemoAnnotationService;
+import com.huawei.example.demo.service.DemoCheckEnableService;
 import com.huawei.example.demo.service.DemoNameService;
 import com.huawei.example.demo.service.DemoSuperTypeService;
 import com.huawei.example.demo.service.DemoTraceService;
@@ -48,6 +49,7 @@ public class DemoApplication {
         classSuffixAndParamsTest();
         pluginServiceAndConfigTest();
         tracingFuncTest();
+        checkDeclarerEnableTest();
     }
 
     /**
@@ -135,5 +137,13 @@ public class DemoApplication {
     private static void tracingFuncTest() {
         LOGGER.info("tracingFuncTest");
         DemoTraceService.trace();
+    }
+
+    /**
+     * PluginDeclarer#isEnable()方法测试
+     */
+    private static void checkDeclarerEnableTest() {
+        LOGGER.info("checkDeclarerEnableTest");
+        DemoCheckEnableService.exampleFunc();
     }
 }
