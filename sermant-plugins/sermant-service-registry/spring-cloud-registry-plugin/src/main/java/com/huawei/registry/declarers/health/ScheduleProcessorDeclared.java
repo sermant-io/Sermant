@@ -17,9 +17,9 @@
 
 package com.huawei.registry.declarers.health;
 
+import com.huawei.registry.declarers.AbstractDoubleRegistryDeclarer;
 import com.huawei.registry.interceptors.health.ScheduleProcessorInterceptor;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -31,7 +31,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author zhouss
  * @since 2022-06-13
  */
-public class ScheduleProcessorDeclared extends AbstractPluginDeclarer {
+public class ScheduleProcessorDeclared extends AbstractDoubleRegistryDeclarer {
     /**
      * 定时器自动配置类
      */

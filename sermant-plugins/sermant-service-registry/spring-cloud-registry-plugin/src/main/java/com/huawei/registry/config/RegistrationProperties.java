@@ -24,6 +24,8 @@ import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.commons.util.InetUtils;
+import org.springframework.cloud.commons.util.InetUtils.HostInfo;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
@@ -49,6 +51,9 @@ public class RegistrationProperties {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private InetUtils inetUtils;
+
     /**
      * 初始化
      */
@@ -58,8 +63,9 @@ public class RegistrationProperties {
         RegisterContext.INSTANCE.getClientInfo().setServiceId(serviceName);
         RegisterContext.INSTANCE.getClientInfo().setPort(port);
         RegisterContext.INSTANCE.getClientInfo().setMeta(new HashMap<>());
-        RegisterContext.INSTANCE.getClientInfo().setHost(HostUtils.getHostName());
-        RegisterContext.INSTANCE.getClientInfo().setIp(HostUtils.getMachineIp());
+        final HostInfo hostInfo = inetUtils.findFirstNonLoopbackHostInfo();
+        RegisterContext.INSTANCE.getClientInfo().setHost(hostInfo.getHostname());
+        RegisterContext.INSTANCE.getClientInfo().setIp(hostInfo.getIpAddress());
         RegisterContext.INSTANCE.getClientInfo().setZone(
                 environment.getProperty(SpringRegistryConstants.SPRING_LOAD_BALANCER_ZONE));
 

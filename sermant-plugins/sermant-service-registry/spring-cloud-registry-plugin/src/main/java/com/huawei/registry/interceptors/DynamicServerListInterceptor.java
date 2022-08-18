@@ -21,6 +21,7 @@ import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.entity.ScServer;
 import com.huawei.registry.services.RegisterCenterService;
 import com.huawei.registry.support.RegisterSwitchSupport;
+import com.huawei.registry.utils.HostUtils;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.service.ServiceManager;
@@ -33,7 +34,6 @@ import com.netflix.loadbalancer.ServerListFilter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 针对ribbon serverList拦截, 替换DynamicServerListLoadBalancer定时更新服务的逻辑
@@ -66,8 +66,8 @@ public class DynamicServerListInterceptor extends RegisterSwitchSupport {
         }
         for (MicroServiceInstance microServiceInstance : microServiceInstances) {
             result.removeIf(originServiceInstance ->
-                    Objects.equals(originServiceInstance.getHost(), microServiceInstance.getHost())
-                            && originServiceInstance.getPort() == microServiceInstance.getPort());
+                            HostUtils.isSameInstance(originServiceInstance.getHost(), originServiceInstance.getPort(),
+                                    microServiceInstance.getHost(), microServiceInstance.getPort()));
             result.add(new ScServer(microServiceInstance, serverListLoadBalancer.getName()));
         }
         return result;

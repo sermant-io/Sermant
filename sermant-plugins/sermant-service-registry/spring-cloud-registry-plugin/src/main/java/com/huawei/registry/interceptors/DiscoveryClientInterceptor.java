@@ -21,6 +21,7 @@ import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.services.RegisterCenterService;
 import com.huawei.registry.support.InstanceInterceptorSupport;
+import com.huawei.registry.utils.HostUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
@@ -84,8 +85,8 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
         }
         for (MicroServiceInstance microServiceInstance : microServiceInstances) {
             result.removeIf(originServiceInstance ->
-                    Objects.equals(originServiceInstance.getHost(), microServiceInstance.getHost())
-                            && originServiceInstance.getPort() == microServiceInstance.getPort());
+                    HostUtils.isSameInstance(originServiceInstance.getHost(), originServiceInstance.getPort(),
+                            microServiceInstance.getHost(), microServiceInstance.getPort()));
             buildInstance(microServiceInstance, serviceId)
                     .ifPresent(instance -> result.add((ServiceInstance) instance));
         }

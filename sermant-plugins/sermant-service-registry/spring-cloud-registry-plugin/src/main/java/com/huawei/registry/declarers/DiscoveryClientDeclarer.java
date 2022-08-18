@@ -19,7 +19,6 @@ package com.huawei.registry.declarers;
 import com.huawei.registry.interceptors.DiscoveryClientInterceptor;
 import com.huawei.registry.interceptors.DiscoveryClientServiceInterceptor;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -30,7 +29,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author zhouss
  * @since 2021-12-17
  */
-public class DiscoveryClientDeclarer extends AbstractPluginDeclarer {
+public class DiscoveryClientDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
      * 增强类的全限定名 该client注入优先级最高，因此只需拦截该client即可
      */

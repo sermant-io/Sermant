@@ -16,9 +16,9 @@
 
 package com.huawei.registry.declarers.cloud3.x;
 
+import com.huawei.registry.declarers.AbstractDoubleRegistryDeclarer;
 import com.huawei.registry.interceptors.cloud3.x.ZookeeperInstanceSupplierInterceptor;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -32,7 +32,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author zhouss
  * @since 2022-03-29
  */
-public class ZookeeperInstanceSupplierDeclarer extends AbstractPluginDeclarer {
+public class ZookeeperInstanceSupplierDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
      * 增强类的全限定名
      */

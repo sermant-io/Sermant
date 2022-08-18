@@ -17,9 +17,9 @@
 
 package com.huawei.registry.declarers.health;
 
+import com.huawei.registry.declarers.AbstractDoubleRegistryDeclarer;
 import com.huawei.registry.interceptors.health.HealthIndicatorInterceptor;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -30,7 +30,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author zhouss
  * @since 2022-06-13
  */
-public class HealthIndicatorDeclarer extends AbstractPluginDeclarer {
+public class HealthIndicatorDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
      * 健康检查增强类
      */

@@ -42,6 +42,10 @@ public class HostUtils {
 
     private static final String EMPTY_STR = "";
 
+    private static final int IP_LEN = 4;
+
+    private static final int IP_PARTS_MAX_NUM = 255;
+
     private HostUtils() {
     }
 
@@ -53,7 +57,7 @@ public class HostUtils {
     public static String getMachineIp() {
         try {
             for (Enumeration<NetworkInterface> networkInterfaceEnumeration = NetworkInterface.getNetworkInterfaces();
-                networkInterfaceEnumeration.hasMoreElements(); ) {
+                    networkInterfaceEnumeration.hasMoreElements(); ) {
                 NetworkInterface networkInterface = networkInterfaceEnumeration.nextElement();
                 String name = networkInterface.getName();
                 if (name.contains("docker") || name.contains("lo")) {
@@ -73,7 +77,7 @@ public class HostUtils {
 
     private static String resolveNetworkIp(NetworkInterface networkInterface) {
         for (Enumeration<InetAddress> enumIpAddr = networkInterface.getInetAddresses();
-            enumIpAddr.hasMoreElements(); ) {
+                enumIpAddr.hasMoreElements(); ) {
             InetAddress inetAddress = enumIpAddr.nextElement();
             if (!(inetAddress instanceof Inet4Address) || inetAddress.isLoopbackAddress()) {
                 continue;
@@ -98,6 +102,76 @@ public class HostUtils {
         } catch (UnknownHostException ex) {
             LOGGER.warning("Can not acquire local hostname, it will be replaced by spring register host!");
             return LOCAL_HOST;
+        }
+    }
+
+    /**
+     * 判断是否为同一个实例
+     *
+     * @param sourceHost 源域名或者IP
+     * @param sourcePort 源端口
+     * @param targetHost 源域名或者IP
+     * @param targetPort 源端口
+     * @return 是否为同一个实例
+     */
+    public static boolean isSameInstance(String sourceHost, int sourcePort, String targetHost, int targetPort) {
+        if (sourcePort != targetPort) {
+            return false;
+        }
+        if (sourceHost.equals(targetHost)) {
+            return true;
+        }
+        return isSameMachine(sourceHost, targetHost);
+    }
+
+    /**
+     * 判断两个host是否为同一个机器
+     *
+     * @param host 域名或者IP
+     * @param targetHost 目标域名或者IP
+     * @return 是否属于同一台机器
+     */
+    public static boolean isSameMachine(String host, String targetHost) {
+        final boolean sourceHostIpFlag = isIp(host);
+        final boolean targetHostIpFlag = isIp(targetHost);
+        if (sourceHostIpFlag == targetHostIpFlag) {
+            return host.equals(targetHost);
+        }
+        if (!sourceHostIpFlag) {
+            return compare(targetHost, host);
+        }
+        return compare(host, targetHost);
+    }
+
+    private static boolean compare(String ip, String host) {
+        try {
+            final InetAddress[] allByName = Inet4Address.getAllByName(host);
+            for (InetAddress address : allByName) {
+                if (ip.equals(address.getHostAddress())) {
+                    return true;
+                }
+            }
+        } catch (UnknownHostException ignored) {
+            // ignored 若域名解析失败, 则无需再比较, 说明本身域名（或者网络）存在问题, 无需再做比较
+        }
+        return false;
+    }
+
+    private static boolean isIp(String host) {
+        final String[] parts = host.split("\\.");
+        if (parts.length != IP_LEN) {
+            return false;
+        }
+        return isIpRegion(parts[0]) && isIpRegion(parts[parts.length - 1]);
+    }
+
+    private static boolean isIpRegion(String ipPart) {
+        try {
+            final int parseInt = Integer.parseInt(ipPart);
+            return parseInt >= 0 && parseInt <= IP_PARTS_MAX_NUM;
+        } catch (NumberFormatException ignored) {
+            // ignored 若非数字, 则表明非IP
+            return false;
         }
     }
 }
