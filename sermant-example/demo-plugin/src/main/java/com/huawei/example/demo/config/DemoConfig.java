@@ -36,7 +36,11 @@ public class DemoConfig implements PluginConfig { // 有设置拦截器别名需
 
     /**
      * 基础类型配置(除byte和char)
+     *
+     * <p>添加@ConfigFieldKey("int-field")后，config.yaml中配置demo.test.intField或demo.test.int-field皆可</p>
+     * <p>如果不添加注解，config.yaml中只能配置为demo.test.intField</p>
      */
+    @ConfigFieldKey("int-field")
     private int intField;
 
     /**
