@@ -4,12 +4,13 @@
 
 ## 功能
 
-流控插件基于[resilience4j](https://github.com/resilience4j)框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**流控**、**熔断**、**隔离仓**与**重试**能力，并且支持配置中心动态配置规则，实时生效。
+流控插件基于[resilience4j](https://github.com/resilience4j)框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**流控**、**熔断**、**隔离仓**、**错误注入**与**重试**能力，并且支持配置中心动态配置规则，实时生效。
 
 - **流控**：对指定接口限制1S秒内通过的QPS，当1S内流量超过指定阈值，将触发流控，限制请求流量。
 - **熔断**：对指定接口配置熔断策略，可从单位统计时间窗口内的错误率或者慢请求率进行统计，当请求错误率或者慢请求率达到指定比例阈值，即触发熔断，在时间窗口重置前，隔离所有请求。
 - **隔离仓**：针对大规模并发流量，对并发流量进行控制，避免瞬时并发流量过大导致服务崩溃。
 - **重试：**当服务遇到非致命的错误时，可以通过重试的方式避免服务的最终失败。
+- **错误注入:**  指在服务运行时，给指定服务配置错误注入策略，在客户端访问目标服务前，以指定策略模式返回。该策略多用于减少目标服务的访问负载，可作为降级的一种措施。
 
 ## 使用说明
 
@@ -54,18 +55,7 @@ dynamic.config.server_address=127.0.0.1:30110
 dynamic.config.dynamic_config_type=KIE
 ```
 
-**（3）配置注册插件**
-
-修改配置文件`${javaagent路径}/pluginPackage/service-registry/config/config.yaml`， 修正servicecomb注册中心地址
-
-```yaml
-servicecomb.service:
-  address: http://127.0.0.1:30100 #注册中心地址
-```
-
-具体配置可参考[注册插件配置](../registry/document.md)
-
-**（4）配置流控插件**
+**（3）配置流控插件**
 
 修改配置文件`${javaagent路径}/pluginPackage/flowcontrol/config/config.yaml`
 
@@ -76,7 +66,7 @@ flow.control.plugin:
 
 开启适配后，插件将根据应用配置，服务配置以及自定义标签订阅配置中心配置
 
-> 此处若设置useCseRule为false，则需用户自己去指定服务名，通过环境变量-Dproject.name=flowControlDemo进行指定，相对的在配置发布的group需设置为service=flowControlDemo
+> 此处若设置useCseRule为false，流控插件将基于当前实例的服务名进行配置订阅，例如：用户配置的spring.application.name=flowControlDemo, 则在实际订阅时会根据标签service=flowControlDemo接收配置。
 
 ### 部署应用
 
@@ -230,7 +220,7 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   >
   > `key`必须以`servicecomb.bulkhead.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
 
-- #### 重试规则配置实例
+- #### 重试规则配置示例
 
   ```json
   {
@@ -257,6 +247,26 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   > 注意事项：**
   >
   > `key`必须以`servicecomb.retry.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
+
+- #### 错误注入规则示例
+
+  ```json
+  {
+      "key":"servicecomb.faultInjection.scene",
+      "group":"app=region-A&service=flowControlDemo&environment=testing",
+      "content":"type: abort\npercentage: 100\nfallbackType: ReturnNull\nforceClosed: false\nerrorCode: 503"
+  }
+  ```
+
+  **错误注入配置项说明：**
+
+  | 配置项       | 说明                                                         |
+  | ------------ | ------------------------------------------------------------ |
+  | type         | 错误注入类型, 目前支持abort(请求直接返回)与delay（请求延时） |
+  | percentage   | 错误注入触发概率                                             |
+  | fallbackType | 请求调用返回类型，仅`type=abort`生效。当前支持两种`ReturnNull`:直接返回空内容，状态码200；`ThrowException`: 按照指定错误码返回，关联配置`errorCode` |
+  | errorCode    | 指定错误码返回, 默认500, 仅在`type=abort`且`fallbackType=ThrowException`生效 |
+  | forceClosed  | 是否强制关闭错误注入能力, 当为true时，错误注入将不会生效。默认false |
 
 ## 快速开始
 
