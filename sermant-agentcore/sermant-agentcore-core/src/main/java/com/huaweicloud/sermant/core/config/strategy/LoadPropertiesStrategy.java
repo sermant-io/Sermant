@@ -172,9 +172,12 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      */
     private String getConfigStr(Properties config, String key) {
         Object arg = argsMap.get(key);
-        final String configVal;
+        String configVal;
         if (arg == null) {
             configVal = config.getProperty(key);
+            if (configVal == null) {
+                configVal = readMapOrCollection(configVal, config, key);
+            }
         } else {
             configVal = arg.toString();
         }
@@ -185,6 +188,40 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
                         return config.getProperty(key);
                     }
                 });
+    }
+
+    /**
+     * 匹配Map/List/Set
+     * (1) 支持xxx.mapName.key1=value1配置Map
+     * (2) 支持xxx.xxx.listName[0]=elem1配置List或Set
+     *
+     * @param configVal 配置值
+     * @param config    配置
+     * @param key       配置键
+     * @return 配置值
+     */
+    public String readMapOrCollection(String configVal, Properties config, String key) {
+        String result = configVal;
+        StringBuilder sb = new StringBuilder();
+        for (String propertyName : config.stringPropertyNames()) {
+            if (propertyName.startsWith(key)) {
+                // xxx.xxx.listName[0]=elem1 方式匹配List和Set
+                if (propertyName.matches("(.*)\\[[0-9]*]$")) {
+                    sb.append(config.getProperty(propertyName))
+                            .append(CommonConstant.COMMA);
+                } else {
+                    // xxx.mapName.key1=value1 方式匹配Map
+                    sb.append(propertyName.replace(key + CommonConstant.DOT, ""))
+                            .append(CommonConstant.COLON)
+                            .append(config.getProperty(propertyName))
+                            .append(CommonConstant.COMMA);
+                }
+            }
+        }
+        if (sb.length() > 0) {
+            result = sb.deleteCharAt(sb.length() - 1).toString();
+        }
+        return result;
     }
 
     /**
