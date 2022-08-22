@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -115,6 +116,9 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
         loadConfig(holder, cls.getSuperclass(), config);
         final String typeKey = ConfigKeyUtil.getTypeKey(cls);
         for (Field field : cls.getDeclaredFields()) {
+            if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
             final String key = typeKey + '.' + ConfigKeyUtil.getFieldKey(field);
             final Object value = getConfig(holder, key, field);
             if (value != null) {
