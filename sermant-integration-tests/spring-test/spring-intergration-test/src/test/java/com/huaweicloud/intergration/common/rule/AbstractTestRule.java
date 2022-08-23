@@ -23,7 +23,10 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * 测试规则
@@ -37,27 +40,53 @@ public abstract class AbstractTestRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
+                if (!isEnable()) {
+                    return;
+                }
                 final String type = System.getProperty(CommonConstants.TEST_TYPE);
                 if (type == null) {
                     base.evaluate();
                     return;
                 }
-                final Optional<SermantTestType> of = SermantTestType.of(type);
-                if (!of.isPresent()) {
-                    return;
-                }
-                if (of.get() == SermantTestType.ALL || isSupport(of.get())) {
+                final Set<SermantTestType> types = resolveRawType(type);
+                if (types.contains(SermantTestType.ALL) || isSupport(types)) {
                     base.evaluate();
                 }
             }
         };
     }
 
+    private Set<SermantTestType> resolveRawType(String type) {
+        if (type.contains(CommonConstants.TEST_TYPE_SEPARATOR)) {
+            final String[] split = type.split(CommonConstants.TEST_TYPE_SEPARATOR);
+            final Set<SermantTestType> result = new HashSet<>(split.length);
+            for (String t : split) {
+                final Optional<SermantTestType> of = SermantTestType.of(t);
+                if (!of.isPresent()) {
+                    continue;
+                }
+                result.add(of.get());
+            }
+            return Collections.unmodifiableSet(result);
+        }
+        final Optional<SermantTestType> of = SermantTestType.of(type);
+        return of.map(Collections::singleton).orElse(Collections.emptySet());
+    }
+
     /**
      * 是否支持
      *
-     * @param testType 测试类型
+     * @param types 测试类型集合
      * @return 是否支持
      */
-    protected abstract boolean isSupport(SermantTestType testType);
+    protected abstract boolean isSupport(Set<SermantTestType> types);
+
+    /**
+     * 是否开启
+     *
+     * @return true 开启
+     */
+    protected boolean isEnable() {
+        return true;
+    }
 }

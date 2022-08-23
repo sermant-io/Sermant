@@ -17,8 +17,16 @@
 
 package com.huaweicloud.config.zookeeper;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * zk测试
@@ -26,12 +34,30 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author zhouss
  * @since 2022-07-15
  */
+@Controller
+@RestController
 @SpringBootApplication(scanBasePackages = {
     "com.huaweicloud.config.zookeeper",
     "com.huaweicloud.spring.common.config"
 })
 public class ZkApplication {
+    @Autowired
+    private Environment environment;
+
     public static void main(String[] args) {
         SpringApplication.run(ZkApplication.class, args);
+    }
+
+    /**
+     * 获取标签
+     *
+     * @return 标签
+     */
+    @RequestMapping("/labels")
+    public Map<String, String> getLabels() {
+        final HashMap<String, String> labels = new HashMap<>();
+        labels.put("app", environment.getProperty("service.meta.application"));
+        labels.put("environment", environment.getProperty("service.meta.environment"));
+        return labels;
     }
 }

@@ -31,7 +31,9 @@ import org.springframework.context.annotation.PropertySource;
  */
 @SpringBootApplication(scanBasePackages = {
     "com.huaweicloud.spring.common.flowcontrol.consumer",
-    "com.huaweicloud.spring.rest.consumer"
+    "com.huaweicloud.spring.rest.consumer",
+    "com.huaweicloud.spring.common.loadbalancer.consumer",
+    "com.huaweicloud.spring.common.loadbalancer.common"
 })
 @PropertySource(value = "classpath:rule.yaml", factory = YamlSourceFactory.class)
 public class RestConsumerApplication {

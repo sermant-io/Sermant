@@ -17,25 +17,29 @@
 
 package com.huaweicloud.intergration.config;
 
-import com.huaweicloud.intergration.config.rule.NacosTestRule;
-import com.huaweicloud.intergration.config.supprt.KieClient;
-
 import com.alibaba.nacos.api.config.ConfigType;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.client.config.NacosConfigService;
+import com.huaweicloud.intergration.common.utils.RequestUtils;
+import com.huaweicloud.intergration.config.rule.NacosTestRule;
+import com.huaweicloud.intergration.config.supprt.KieClient;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 /**
  * Nacos配置测试
@@ -47,11 +51,11 @@ public class NacosConfigTest {
     @Rule
     public final TestRule nacosRunCondition = new NacosTestRule();
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(NacosConfigTest.class);
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     private final String nacosUrl = "http://127.0.0.1:8848";
-
-    private final KieClient kieClient = new KieClient(restTemplate);
 
     private final String serverUrl = "http://127.0.0.1:8989";
 
@@ -65,6 +69,8 @@ public class NacosConfigTest {
     private final String keyA = "sermant.param1";
     private final String keyB = "sermant.param2";
 
+    private KieClient kieClient;
+
     /**
      * 初始化nacos配置
      *
@@ -72,6 +78,8 @@ public class NacosConfigTest {
      */
     @Before
     public void publishNacosConfig() throws Exception {
+        kieClient = new KieClient(restTemplate, null, RequestUtils.get(serverUrl + "/labels", Collections.emptyMap(),
+                Map.class));
         final Properties properties = new Properties();
         properties.put("serverAddr", nacosUrl);
         properties.put("enableRemoteSyncConfig", "false");
@@ -82,7 +90,7 @@ public class NacosConfigTest {
     }
 
     private void checkNacos() throws NacosException, IOException {
-        System.out.printf(Locale.ENGLISH, "dataId: %s, group: %s%n", dataId, group);
+        LOGGER.info("dataId: {}, group: {}", dataId, group);
         String config = configService.getConfig(dataId, group, 10000L);
         if (config == null) {
             config = configService.getConfig(dataId, group, 10000L);
@@ -103,15 +111,26 @@ public class NacosConfigTest {
      * 测试启动屏蔽
      */
     @Test
-    public void testBanNacosConfigCenter() throws InterruptedException {
+    public void testBanNacosConfigCenter() {
         final Boolean isOpen = get("/dynamic/config/check", Boolean.class);
         if (isOpen) {
             return;
         }
         publishKieConfig();
         // 睡眠等待刷新， 由于LocalCse无实时通知能力，因此需要等待30S（长连接时间）,保证配置已刷新
-        Thread.sleep(30 * 1000);
-        checkAgentConfig();
+        check(40 * 1000, 2000, this::checkAgentConfig);
+    }
+
+    private void check(long maxWaitTimeMs, long sleepTimeMs, Supplier<Boolean> checkFunc) {
+        final long start = System.currentTimeMillis();
+        while ((start + maxWaitTimeMs >= System.currentTimeMillis()) && !checkFunc.get()) {
+            try {
+                Thread.sleep(sleepTimeMs);
+            } catch (InterruptedException e) {
+                // ignored
+            }
+        }
+        Assert.assertTrue(checkFunc.get());
     }
 
     private boolean checkAgentConfig() {
@@ -139,8 +158,7 @@ public class NacosConfigTest {
         // 发布动态关闭开关
         kieClient.publishConfig("closeOriginConfigCenter", "sermant.origin.config.needClose: true");
         // 睡眠等待刷新， 由于LocalCse无实时通知能力，因此需要等待30S（长连接时间）,保证配置已刷新
-        Thread.sleep(30 * 1000);
-        Assert.assertTrue(checkAgentConfig());
+        check(40 * 1000, 2000, this::checkAgentConfig);
     }
 
     private void publishKieConfig() {

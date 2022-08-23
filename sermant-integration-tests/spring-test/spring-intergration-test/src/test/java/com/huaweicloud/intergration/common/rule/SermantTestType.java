@@ -43,6 +43,11 @@ public enum SermantTestType {
     DYNAMIC_CONFIG_NACOS,
 
     /**
+     * 负载均衡测试
+     */
+    LOAD_BALANCER,
+
+    /**
      * 测试所有类型
      */
     ALL;

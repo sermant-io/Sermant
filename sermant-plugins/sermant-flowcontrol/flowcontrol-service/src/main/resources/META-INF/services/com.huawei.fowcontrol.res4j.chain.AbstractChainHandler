@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 #
+com.huawei.fowcontrol.res4j.chain.handler.BusinessRequestHandler
 com.huawei.fowcontrol.res4j.chain.handler.RateLimitingsClientReqHandler
 com.huawei.fowcontrol.res4j.chain.handler.RateLimitingsServerReqHandler
 com.huawei.fowcontrol.res4j.chain.handler.BulkheadClientReqHandler
@@ -21,3 +22,4 @@ com.huawei.fowcontrol.res4j.chain.handler.BulkheadServerReqHandler
 com.huawei.fowcontrol.res4j.chain.handler.CircuitBreakerClientReqHandler
 com.huawei.fowcontrol.res4j.chain.handler.CircuitBreakerServerReqHandler
 com.huawei.fowcontrol.res4j.chain.handler.InstanceIsolationRequestHandler
+com.huawei.fowcontrol.res4j.chain.handler.FaultRequestHandler

@@ -17,10 +17,10 @@
 
 package com.huawei.flowcontrol.common.init;
 
-import com.huawei.flowcontrol.common.adapte.cse.entity.FlowControlServiceMeta;
-import com.huawei.flowcontrol.common.adapte.cse.match.MatchManager;
-import com.huawei.flowcontrol.common.adapte.cse.rule.RuleDynamicConfigListener;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
+import com.huawei.flowcontrol.common.core.match.MatchManager;
+import com.huawei.flowcontrol.common.core.rule.RuleDynamicConfigListener;
+import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
 import com.huawei.flowcontrol.common.factory.FlowControlThreadFactory;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;

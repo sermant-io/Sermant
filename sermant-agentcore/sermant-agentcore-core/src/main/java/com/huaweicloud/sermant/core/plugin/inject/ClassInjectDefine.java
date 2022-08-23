@@ -157,6 +157,11 @@ public interface ClassInjectDefine {
         FLOW_CONTROL_PLUGIN,
 
         /**
+         * 负载均衡插件
+         */
+        LOAD_BALANCER_PLUGIN,
+
+        /**
          * 所有插件
          */
         ALL

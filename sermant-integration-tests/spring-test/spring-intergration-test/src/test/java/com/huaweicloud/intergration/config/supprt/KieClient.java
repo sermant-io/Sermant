@@ -18,6 +18,9 @@
 package com.huaweicloud.intergration.config.supprt;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huaweicloud.intergration.config.supprt.entity.KieConfigEntity;
+import com.huaweicloud.intergration.config.supprt.entity.KieResponse;
+import com.huaweicloud.intergration.config.supprt.utils.LabelGroupUtils;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -28,7 +31,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,6 +46,8 @@ public class KieClient {
     private final RestTemplate restTemplate;
 
     private final String url;
+
+    private final Map<String, String> labels;
 
     /**
      * 构造函数
@@ -58,8 +65,20 @@ public class KieClient {
      * @param url 地址
      */
     public KieClient(RestTemplate restTemplate, String url) {
+        this(restTemplate, url, null);
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param restTemplate 请求器
+     * @param url 地址
+     * @param labels 标签
+     */
+    public KieClient(RestTemplate restTemplate, String url, Map<String, String> labels) {
         this.restTemplate = restTemplate;
         this.url = url == null ? "http://127.0.0.1:30110/v1/default/kie/kv" : url;
+        this.labels = labels;
     }
 
     /**
@@ -70,12 +89,67 @@ public class KieClient {
      * @return 是否发布成功
      */
     public boolean publishConfig(String key, String value) {
+        final KieConfigEntity configEntity = queryTargetKeyId(key);
+        if (configEntity != null) {
+            // 更新操作
+            return updateKey(configEntity, value);
+        } else {
+            // 新增操作
+            return addKey(key, value);
+        }
+    }
+
+    /**
+     * 更新配置
+     *
+     * @param configEntity 查询的config信息
+     * @param value 新的配置内容
+     * @return 是否更新成功
+     */
+    public boolean updateKey(KieConfigEntity configEntity, String value) {
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
         headers.add("Accept", MediaType.APPLICATION_JSON.toString());
 
-        HttpEntity<String> entity = new HttpEntity<>(JSONObject.toJSONString(new KieRequest(key, value)), headers);
+        HttpEntity<String> entity = new HttpEntity<>(JSONObject.toJSONString(new KieRequest(configEntity.getKey(),
+                value, labels)),
+                headers);
+        String address = this.url + "/" + configEntity.getId();
+        restTemplate.put(address, entity);
+        return true;
+    }
+
+    /**
+     * 根据key删除配置
+     *
+     * @param key 键
+     * @return 是否删除成功
+     */
+    public boolean deleteKey(String key) {
+        final KieConfigEntity configEntity = this.queryTargetKeyId(key);
+        if (configEntity == null) {
+            return false;
+        }
+        String address = this.url + "/" + configEntity.getId();
+        restTemplate.delete(address);
+        return true;
+    }
+
+    /**
+     * 添加新配置
+     *
+     * @param key 键
+     * @param value 值
+     * @return 是否添加成功
+     */
+    public boolean addKey(String key, String value) {
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+
+        HttpEntity<String> entity = new HttpEntity<>(JSONObject.toJSONString(new KieRequest(key, value, labels)), headers);
 
         try {
             ResponseEntity<JSONObject> responseEntity = restTemplate.postForEntity(url, entity, JSONObject.class);
@@ -86,6 +160,39 @@ public class KieClient {
         return false;
     }
 
+    private KieConfigEntity queryTargetKeyId(String key) {
+        final List<KieConfigEntity> query = query(null);
+        return query.stream().filter(kieConfigEntity -> kieConfigEntity.getKey().equals(key))
+                .findFirst().orElse(null);
+    }
+
+    /**
+     * 根据标签查询kie配置
+     *
+     * @param labels 新增标签
+     * @return kie响应
+     */
+    public List<KieConfigEntity> query(Map<String, String> labels) {
+        Map<String, String> curLabels = labels;
+        if (labels == null) {
+            curLabels = this.labels;
+        }
+        if (curLabels == null) {
+            curLabels = new HashMap<>();
+            curLabels.put("app", "default");
+            curLabels.put("environment", "development");
+        }
+        final String labelGroup = LabelGroupUtils.createLabelGroup(curLabels);
+        final String labelCondition = LabelGroupUtils.getLabelCondition(labelGroup);
+        String address = this.url + "?" + labelCondition + "&match=exact&revision=";
+        final ResponseEntity<JSONObject> result = restTemplate.getForEntity(address, JSONObject.class);
+        if (result.getStatusCode().value() == 200) {
+            final KieResponse kieResponse = result.getBody().toJavaObject(KieResponse.class);
+            return kieResponse.getData();
+        }
+        return Collections.emptyList();
+    }
+
     /**
      * kie请求
      *
@@ -94,17 +201,18 @@ public class KieClient {
     static class KieRequest implements Serializable {
         private String key;
         private String value;
-        private Map<String, String> labels = new HashMap<String, String>();
+        private Map<String, String> labels;
         private String status = "enabled";
 
-        {
-            labels.put("app", "default");
-            labels.put("environment", "development");
-        }
-
-        public KieRequest(String key, String value) {
+        public KieRequest(String key, String value, Map<String, String> labels) {
             this.key = key;
             this.value = value;
+            this.labels = labels;
+            if (this.labels == null) {
+                this.labels = new HashMap<>();
+                this.labels.put("app", "default");
+                this.labels.put("environment", "development");
+            }
         }
 
         public String getKey() {

@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -141,8 +142,9 @@ public class KieListenerWrapper {
                     versionListener.listener.process(event);
                     versionListener.version = currentVersion;
                 } catch (Exception ex) {
-                    LOGGER.warning(String.format(Locale.ENGLISH, "Process config data failed, key: [%s], group: [%s]",
-                            event.getKey(), this.group));
+                    LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH,
+                            "Process config data failed, key: [%s], group: [%s]",
+                            event.getKey(), this.group), ex);
                 }
             }
         }

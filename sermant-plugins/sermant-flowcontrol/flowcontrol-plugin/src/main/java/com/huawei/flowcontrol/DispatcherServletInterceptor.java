@@ -92,7 +92,7 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
             context.skip(null);
             final HttpServletResponse response = (HttpServletResponse) allArguments[1];
             if (response != null) {
-                response.setStatus(result.getResult().getCode());
+                response.setStatus(result.getResponse().getCode());
                 response.getWriter().print(result.buildResponseMsg());
             }
         }

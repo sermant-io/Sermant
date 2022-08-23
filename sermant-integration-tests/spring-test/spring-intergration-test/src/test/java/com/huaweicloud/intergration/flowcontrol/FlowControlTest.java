@@ -45,8 +45,8 @@ public abstract class FlowControlTest {
     public final TestRule flowControlCondition = new FlowControlTestRule();
     private static final int RATE_LIMITING_REQUEST_COUNT = 10;
     private static final int BREAKER_REQUEST_COUNT = 10;
-    private static final String BREAKER_MSG = "Degraded and blocked";
-    private static final String RATE_LIMITING_MSG = "Flow Limited";
+    private static final String BREAKER_MSG = "is OPEN and does not permit further calls";
+    private static final String RATE_LIMITING_MSG = "Rate Limited";
 
     /**
      * 测试服务端限流
@@ -102,7 +102,7 @@ public abstract class FlowControlTest {
         for (int i = 0; i < cycle; i ++) {
             threadPoolExecutor.execute(() -> {
                 try {
-                    process("/bulkhead", "Exceeded the max concurrent calls", RATE_LIMITING_REQUEST_COUNT, expected);
+                    process("/bulkhead", "Bulkhead is full and does not permit further calls", RATE_LIMITING_REQUEST_COUNT, expected);
                 } finally {
                     countDownLatch.countDown();
                 }
@@ -137,6 +137,36 @@ public abstract class FlowControlTest {
         final AtomicBoolean expected = new AtomicBoolean();
         process("/serviceNameNoMatch", BREAKER_MSG, RATE_LIMITING_REQUEST_COUNT, expected);
         Assert.assertFalse(expected.get());
+    }
+
+    /**
+     * 测试错误注入-返回空
+     */
+    @Test
+    public void testFaultReturnNull() {
+        final String result = RequestUtils.get(getRestConsumerUrl() + "/faultNull", Collections.emptyMap(),
+                String.class);
+        Assert.assertNull(result);
+    }
+
+    /**
+     * 测试错误注入-抛异常
+     */
+    @Test
+    public void testFaultThrow() {
+        final String msg = RequestUtils.get(getRestConsumerUrl() + "/faultThrow", Collections.emptyMap(), String.class);
+        Assert.assertTrue(msg != null && msg.contains("Request has been aborted"));
+    }
+
+    /**
+     * 测试错误注入-请求延迟, 测试规则延迟2秒, 本身方法调用小于100ms
+     */
+    @Test
+    public void testFaultDelay() {
+        long start = System.currentTimeMillis();
+        RequestUtils.get(getRestConsumerUrl() + "/faultDelay", Collections.emptyMap(), String.class);
+        long delay = 2000L;
+        Assert.assertTrue(System.currentTimeMillis() - start > delay);
     }
 
     private void process(String api, String flowControlMsg, int requestCount, AtomicBoolean check) {

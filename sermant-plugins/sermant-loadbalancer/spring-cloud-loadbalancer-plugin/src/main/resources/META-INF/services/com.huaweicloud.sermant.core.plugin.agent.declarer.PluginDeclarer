@@ -1,4 +1,4 @@
-com.huawei.loadbalancer.declarer.ClientFactoryDeclarer
-com.huawei.loadbalancer.declarer.RandomDeclarer
-com.huawei.loadbalancer.declarer.RibbonLoadBalancerDeclarer
-com.huawei.loadbalancer.declarer.RoundRobinDeclarer
+com.huaweicloud.loadbalancer.declarer.ClientFactoryDeclarer
+com.huaweicloud.loadbalancer.declarer.RandomDeclarer
+com.huaweicloud.loadbalancer.declarer.RibbonLoadBalancerDeclarer
+com.huaweicloud.loadbalancer.declarer.RoundRobinDeclarer

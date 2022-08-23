@@ -17,7 +17,7 @@
 
 package com.huawei.fowcontrol.res4j.handler;
 
-import com.huawei.flowcontrol.common.adapte.cse.resolver.InstanceIsolationRuleResolver;
+import com.huawei.flowcontrol.common.core.resolver.InstanceIsolationRuleResolver;
 
 /**
  * 实例隔离, 客户端层次调用隔离

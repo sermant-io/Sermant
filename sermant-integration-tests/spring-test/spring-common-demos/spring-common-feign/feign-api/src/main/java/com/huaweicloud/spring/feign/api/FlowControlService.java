@@ -17,6 +17,7 @@
 
 package com.huaweicloud.spring.feign.api;
 
+import com.huaweicloud.spring.common.FeignConstants;
 import com.huaweicloud.spring.feign.api.configuration.HeaderMatchConfiguration;
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -29,7 +30,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author zhouss
  * @since 2022-07-29
  */
-@FeignClient(name = "feign-provider", configuration = HeaderMatchConfiguration.class)
+@FeignClient(qualifier = FeignConstants.FEIGN_SERVICE_BEAN_NAME, name = "feign-provider", configuration =
+        HeaderMatchConfiguration.class)
 public interface FlowControlService {
     /**
      * 限流测试
@@ -106,4 +108,36 @@ public interface FlowControlService {
      */
     @RequestMapping("retry")
     String retry(@RequestParam("invocationId") String invocationId) throws Exception;
+
+    /**
+     * 错误注入测试-返回空
+     *
+     * @return 返回空-由agent实现
+     */
+    @RequestMapping("faultNull")
+    String faultNull();
+
+    /**
+     * 错误注入测试-抛异常
+     *
+     * @return 抛异常-由agent实现
+     */
+    @RequestMapping("faultThrow")
+    String faultThrow();
+
+    /**
+     * 错误注入测试-请求延迟
+     *
+     * @return 请求延迟-由agent实现
+     */
+    @RequestMapping("faultDelay")
+    String faultDelay();
+
+    /**
+     * 仅测试联通性
+     *
+     * @return ok
+     */
+    @RequestMapping("/ping")
+    String ping();
 }

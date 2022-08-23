@@ -17,9 +17,9 @@
 
 package com.huawei.flowcontrol.retry;
 
-import com.huawei.flowcontrol.common.adapte.cse.entity.FlowControlServiceMeta;
 import com.huawei.flowcontrol.common.config.ConfigConst;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
+import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
 import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 import com.huawei.flowcontrol.common.handler.retry.AbstractRetry;
@@ -32,7 +32,6 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import io.github.resilience4j.retry.Retry;
-
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;

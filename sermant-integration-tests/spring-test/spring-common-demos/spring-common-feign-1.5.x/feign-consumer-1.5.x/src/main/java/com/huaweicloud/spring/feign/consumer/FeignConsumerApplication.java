@@ -17,12 +17,15 @@
 
 package com.huaweicloud.spring.feign.consumer;
 
+import com.huaweicloud.spring.common.flowcontrol.YamlSourceFactory;
+
 import feign.codec.ErrorDecoder;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 
 /**
  * 启动类
@@ -30,8 +33,12 @@ import org.springframework.context.annotation.Bean;
  * @author zhouss
  * @since 2022-07-29
  */
-@SpringBootApplication(scanBasePackages = "com.huaweicloud.spring.feign.consumer.controller")
+@SpringBootApplication(scanBasePackages = {
+    "com.huaweicloud.spring.feign.consumer.controller",
+    "com.huaweicloud.spring.common.loadbalancer.feign"
+})
 @EnableFeignClients(basePackages = "com.huaweicloud.spring.feign.api")
+@PropertySource(value = "classpath:rule.yaml", factory = YamlSourceFactory.class)
 public class FeignConsumerApplication {
     /**
      * 启动类

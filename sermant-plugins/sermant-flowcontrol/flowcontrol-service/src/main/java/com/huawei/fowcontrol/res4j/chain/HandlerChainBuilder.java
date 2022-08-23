@@ -17,8 +17,6 @@
 
 package com.huawei.fowcontrol.res4j.chain;
 
-import com.huawei.fowcontrol.res4j.chain.handler.BusinessRequestHandler;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +44,6 @@ public enum HandlerChainBuilder {
     public HandlerChain build() {
         final HandlerChain processorChain = new HandlerChain();
         final List<AbstractChainHandler> handlers = new ArrayList<>(HANDLER_SIZE);
-        processorChain.addLastHandler(new BusinessRequestHandler());
         for (AbstractChainHandler handler : ServiceLoader.load(AbstractChainHandler.class, this.getClass()
                 .getClassLoader())) {
             handlers.add(handler);

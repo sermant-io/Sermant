@@ -17,6 +17,8 @@
 
 package com.huaweicloud.intergration.config;
 
+import com.alibaba.fastjson.JSONObject;
+import com.huaweicloud.intergration.common.utils.RequestUtils;
 import com.huaweicloud.intergration.config.rule.ZkTestRule;
 import com.huaweicloud.intergration.config.supprt.KieClient;
 import com.huaweicloud.intergration.config.supprt.ZkClient;
@@ -27,29 +29,38 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * zookeeper动态配置生效测试
  *
  * @author zhouss
- * @since 2022-07-15
+ * @since 2022-08-16
  */
 public class ZookeeperConfigTest {
     @Rule
     public final TestRule nacosRunCondition = new ZkTestRule();
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperConfigTest.class);
 
-    private final KieClient kieClient = new KieClient(restTemplate);
+    private final RestTemplate restTemplate = new RestTemplate();
 
     private final String serverUrl = "http://127.0.0.1:8989";
 
     private final String key1 = "/sermant/test";
     private final String keyA = "/sermant/param1";
     private final String keyB = "/sermant/param2";
+    private final String testConfigKey = "testConfig";
+    private final String closeSwitchKey = "closeOriginConfigCenter";
+
+    private KieClient kieClient;
 
     private ZkClient zkClient;
 
@@ -58,6 +69,8 @@ public class ZookeeperConfigTest {
      */
     @Before
     public void publishZkConfig() {
+        kieClient = new KieClient(restTemplate, null, RequestUtils.get(serverUrl + "/labels", Collections.emptyMap(),
+                Map.class));
         zkClient = new ZkClient(null);
         Assert.assertTrue(zkClient.publishConfig(key1, "1"));
         Assert.assertTrue(zkClient.publishConfig(keyA, "a"));
@@ -85,23 +98,22 @@ public class ZookeeperConfigTest {
      * 测试启动屏蔽
      */
     @Test
-    public void testBanZkConfigCenter() throws InterruptedException {
+    public void testBanZkConfigCenter() {
+        kieClient.deleteKey(testConfigKey);
         final Boolean isOpen = get("/dynamic/config/check", Boolean.class);
         if (isOpen) {
             return;
         }
         publishKieConfig();
-        Thread.sleep(30 * 1000L);
-        Assert.assertTrue(checkAgentConfig());
+        check(40 * 1000, 2000, this::checkAgentConfig);
     }
 
     /**
      * 测试动态配置
      *
-     * @throws Exception 发布配置报错
      */
     @Test
-    public void testDynamicClose() throws Exception {
+    public void testDynamicClose() {
         final Boolean isOpen = get("/dynamic/config/check", Boolean.class);
         if (!isOpen) {
             return;
@@ -109,15 +121,29 @@ public class ZookeeperConfigTest {
         checkZkConfig();
         // 发布动态关闭开关
         publishKieConfig();
-        kieClient.publishConfig("closeOriginConfigCenter", "sermant.origin.config.needClose: true");
+        kieClient.publishConfig(closeSwitchKey, "sermant.origin.config.needClose: true");
         // 睡眠等待刷新， 由于LocalCse无实时通知能力，因此需要等待30S（长连接时间）,保证配置已刷新
-        Thread.sleep(30 * 1000);
-        Assert.assertTrue(checkAgentConfig());
+        check(40 * 1000, 2000, this::checkAgentConfig);
+    }
+
+    private void check(long maxWaitTimeMs, long sleepTimeMs, Supplier<Boolean> checkFunc) {
+        final long start = System.currentTimeMillis();
+        while ((start + maxWaitTimeMs >= System.currentTimeMillis()) && !checkFunc.get()) {
+            try {
+                Thread.sleep(sleepTimeMs);
+            } catch (InterruptedException e) {
+                // ignored
+            }
+        }
+        if (!checkFunc.get()) {
+            LOGGER.error("=======配置中心配置内容: [{}]==================", JSONObject.toJSONString(kieClient.query(null)));
+        }
+        Assert.assertTrue(checkFunc.get());
     }
 
     private void publishKieConfig() {
         // 测试当前的值是否取与KIE配置中心而不是配置中心
-        kieClient.publishConfig("testConfig", "sermant.test: 1k\nsermant"
+        kieClient.publishConfig(testConfigKey, "sermant.test: 1k\nsermant"
                 + ".param1: ak\nsermant.param2: bk");
     }
 
