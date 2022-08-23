@@ -41,6 +41,8 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
 
     private final AtomicBoolean isStopped = new AtomicBoolean();
 
+    private final AtomicBoolean isRegistered = new AtomicBoolean();
+
     private RegisterConfig registerConfig;
 
     @Override
@@ -52,10 +54,12 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
 
     @Override
     public void register(FixedResult result) {
-        RegisterManager.INSTANCE.register();
-        if (!getRegisterConfig().isOpenMigration()) {
-            // 阻止原注册中心注册
-            result.setResult(null);
+        if (isRegistered.compareAndSet(false, true)) {
+            RegisterManager.INSTANCE.register();
+            if (!getRegisterConfig().isOpenMigration()) {
+                // 阻止原注册中心注册
+                result.setResult(null);
+            }
         }
     }
 
@@ -73,6 +77,10 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
 
     @Override
     public List<MicroServiceInstance> getServerList(String serviceId) {
+        if (!isRegistered.get()) {
+            LOGGER.warning("Query instance must be at the stage that finish registry!");
+            return Collections.emptyList();
+        }
         if (serviceId == null) {
             // 无法执行替换
             LOGGER.warning("Can not acquire the name of service, the process to replace instance won't be finished!");
@@ -83,6 +91,10 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
 
     @Override
     public List<String> getServices() {
+        if (!isRegistered.get()) {
+            LOGGER.warning("Query instance must be at the stage that finish registry!");
+            return Collections.emptyList();
+        }
         return RegisterManager.INSTANCE.getServices();
     }
 
