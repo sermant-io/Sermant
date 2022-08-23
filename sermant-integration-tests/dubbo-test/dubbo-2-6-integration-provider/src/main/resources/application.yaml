@@ -3,3 +3,11 @@ server:
 dubbo:
   protocol:
     port: 28821
+
+spring:
+  application:
+    name: dubbo-integration-provider
+
+feign:
+  hystrix:
+    enabled: true

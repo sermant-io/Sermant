@@ -14,29 +14,25 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.router.spring.utils;
+package com.huaweicloud.integration.client;
 
-import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
-
-import java.util.Map;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * 反射工具类
+ * feign client
  *
  * @author provenceee
- * @since 2022-07-19
+ * @since 2022-07-26
  */
-public class SpringReflectUtils {
-    private SpringReflectUtils() {
-    }
-
+@FeignClient(name = "dubbo-integration-provider")
+public interface ProviderClient {
     /**
-     * 获取元数据
+     * 测试接口
      *
-     * @param obj 对象
-     * @return 元数据
+     * @return 测试信息
      */
-    public static Map<String, String> getMetadata(Object obj) {
-        return (Map<String, String>) ReflectUtils.invokeWithNoneParameter(obj, "getMetadata");
-    }
+    @RequestMapping(value = "/hello", method = RequestMethod.GET)
+    String hello();
 }

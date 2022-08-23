@@ -16,11 +16,20 @@
 
 package com.huaweicloud.integration;
 
+import com.huaweicloud.integration.controller.ProviderController;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 启动类
@@ -30,6 +39,8 @@ import org.springframework.context.annotation.ImportResource;
  */
 @SpringBootApplication
 @ImportResource({"classpath:dubbo/consumer.xml"})
+@EnableFeignClients(basePackages = "com.huaweicloud.integration.client")
+@ComponentScan(excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, value = ProviderController.class))
 public class ConsumerApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerApplication.class);
 
@@ -42,5 +53,16 @@ public class ConsumerApplication {
         LOGGER.info("====================start=======================");
         SpringApplication.run(ConsumerApplication.class);
         LOGGER.info("=====================end========================");
+    }
+
+    /**
+     * restTemplate
+     *
+     * @return restTemplate
+     */
+    @Bean
+    @LoadBalanced
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

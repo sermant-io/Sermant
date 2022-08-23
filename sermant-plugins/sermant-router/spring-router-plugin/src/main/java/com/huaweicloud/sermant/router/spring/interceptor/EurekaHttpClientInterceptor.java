@@ -20,12 +20,10 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
-import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.spring.cache.AppCache;
+import com.huaweicloud.sermant.router.spring.utils.SpringRouterUtils;
 
 import com.netflix.appinfo.InstanceInfo;
-
-import java.util.Optional;
 
 /**
  * EurekaHttpClient增强类，eureka注册方法
@@ -49,8 +47,7 @@ public class EurekaHttpClientInterceptor extends AbstractInterceptor {
         if (argument instanceof InstanceInfo) {
             InstanceInfo instanceInfo = (InstanceInfo) argument;
             AppCache.INSTANCE.setAppName(instanceInfo.getAppName());
-            instanceInfo.getMetadata().put(RouterConstant.TAG_VERSION_KEY, routerConfig.getRouterVersion());
-            Optional.ofNullable(routerConfig.getParameters()).ifPresent(instanceInfo.getMetadata()::putAll);
+            SpringRouterUtils.putMetaData(instanceInfo.getMetadata(), routerConfig);
         }
         return context;
     }

@@ -14,4 +14,6 @@
             generic="true"/>
     <dubbo:reference id="fooService" check="false" interface="com.huaweicloud.integration.service.FooService"
             version="0.0.1"/>
+    <dubbo:reference id="fooWildcardService" check="false" interface="com.huaweicloud.integration.service.FooService"
+            version="*"/>
 </beans>

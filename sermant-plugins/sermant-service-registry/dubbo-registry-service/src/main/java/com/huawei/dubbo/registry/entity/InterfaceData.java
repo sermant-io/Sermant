@@ -19,6 +19,7 @@ package com.huawei.dubbo.registry.entity;
 import com.huawei.dubbo.registry.utils.CollectionUtils;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * dubbo接口注册到注册中心的额外数据
@@ -28,13 +29,22 @@ import java.util.Map;
  */
 public class InterfaceData extends InterfaceKey {
     // 2.7.11开始存在该参数
-    private final String serviceName;
+    private String serviceName;
 
     // 接口的序号，适配2.6.x, 2.7.0-2.7.7
-    private final Integer order;
+    private Integer order;
+
+    // 协议
+    private Set<String> protocol;
 
     // 接口级的额外参数
-    private final Map<String, String> parameters;
+    private Map<String, String> parameters;
+
+    /**
+     * 构造方法
+     */
+    public InterfaceData() {
+    }
 
     /**
      * 构造方法
@@ -57,11 +67,31 @@ public class InterfaceData extends InterfaceKey {
         return serviceName;
     }
 
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
     public Integer getOrder() {
         return order;
     }
 
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+
+    public Set<String> getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(Set<String> protocol) {
+        this.protocol = protocol;
+    }
+
     public Map<String, String> getParameters() {
         return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 }

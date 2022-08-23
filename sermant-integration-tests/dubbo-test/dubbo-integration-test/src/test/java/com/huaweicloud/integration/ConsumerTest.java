@@ -45,6 +45,17 @@ public class ConsumerTest {
     }
 
     /**
+     * 测试通配符接口
+     */
+    @Test
+    public void testWildcardInterface() {
+        Assertions.assertEquals("foo:Foo",
+            REST_TEMPLATE.getForObject(BASE_URL + "wildcard/testFoo?str=Foo", String.class));
+        Assertions.assertEquals("foo2:Foo2",
+            REST_TEMPLATE.getForObject(BASE_URL + "wildcard/testFoo2?str=Foo2", String.class));
+    }
+
+    /**
      * 测试有多个实现的接口
      */
     @Test

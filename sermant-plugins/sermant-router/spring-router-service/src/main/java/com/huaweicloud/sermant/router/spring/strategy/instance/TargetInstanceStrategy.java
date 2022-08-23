@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.router.spring.strategy.instance;
 
-import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.strategy.AbstractInstanceStrategy;
 
 import java.util.List;
@@ -46,11 +45,7 @@ public class TargetInstanceStrategy<T> extends AbstractInstanceStrategy<T> {
         Map<String, String> metadata = getMetadata(instance, mapper);
         Map<String, String> targetTag = tags.get(0);
         for (Entry<String, String> entry : targetTag.entrySet()) {
-            String key = entry.getKey();
-            if (VERSION_KEY.equals(entry.getKey())) {
-                key = RouterConstant.TAG_VERSION_KEY;
-            }
-            if (Objects.equals(metadata.get(key), entry.getValue())) {
+            if (Objects.equals(metadata.get(entry.getKey()), entry.getValue())) {
                 return true;
             }
         }

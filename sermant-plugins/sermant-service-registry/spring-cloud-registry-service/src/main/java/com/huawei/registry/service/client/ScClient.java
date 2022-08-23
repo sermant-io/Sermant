@@ -500,6 +500,6 @@ public class ScClient {
     }
 
     private AddressManager createAddressManager(String project, List<String> scUrls) {
-        return new AddressManager(project, scUrls);
+        return new AddressManager(project, scUrls, EVENT_BUS);
     }
 }
