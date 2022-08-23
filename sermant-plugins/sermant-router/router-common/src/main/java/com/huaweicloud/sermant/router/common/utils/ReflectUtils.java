@@ -22,6 +22,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -83,6 +84,17 @@ public class ReflectUtils {
      */
     public static String invokeWithNoneParameterAndReturnString(Object obj, String name) {
         return (String) invokeWithNoneParameter(obj, name);
+    }
+
+    /**
+     * 反射调用无参方法并且返回map
+     *
+     * @param obj
+     * @param name
+     * @return 值
+     */
+    public static Map<String, String> invokeWithNoneParameterAndReturnMap(Object obj, String name) {
+        return (Map<String, String>) invokeWithNoneParameter(obj, name);
     }
 
     /**

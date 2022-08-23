@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.router.config.strategy.RuleStrategy;
 import com.huaweicloud.sermant.router.dubbo.strategy.rule.InvokerRuleStrategy;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 路由策略处理器
@@ -49,5 +50,16 @@ public enum RuleStrategyHandler {
      */
     public List<Object> getTargetInvoker(List<Route> routes, List<Object> invokers) {
         return ruleStrategy.getTargetInstances(routes, invokers);
+    }
+
+    /**
+     * 选取不匹配标签的实例
+     *
+     * @param tags 标签
+     * @param invokers 实例列表
+     * @return 路由过滤后的实例
+     */
+    public List<Object> getMissMatchInstances(List<Map<String, String>> tags, List<Object> invokers) {
+        return ruleStrategy.getMismatchInstances(tags, invokers);
     }
 }

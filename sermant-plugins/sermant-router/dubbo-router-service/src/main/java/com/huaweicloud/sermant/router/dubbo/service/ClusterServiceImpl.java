@@ -53,8 +53,8 @@ public class ClusterServiceImpl implements ClusterService {
         if (arguments[1] instanceof Map<?, ?>) {
             // 本地参数的map，需要把这个map中的灰度参数删除，才能让下游invoker的灰度参数不被本地参数覆盖，即保留下游invoker的灰度参数
             Map<String, String> localMap = new HashMap<>((Map<String, String>) arguments[1]);
-            localMap.remove(RouterConstant.TAG_VERSION_KEY);
-            localMap.remove(RouterConstant.ROUTER_LDC_KEY);
+            localMap.entrySet().removeIf(entry -> entry.getKey().startsWith(RouterConstant.PARAMETERS_KEY_PREFIX)
+                    || RouterConstant.VERSION_KEY.equals(entry.getKey()));
             arguments[1] = localMap;
         }
     }

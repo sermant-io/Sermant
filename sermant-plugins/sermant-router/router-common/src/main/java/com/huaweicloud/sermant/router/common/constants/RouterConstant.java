@@ -29,11 +29,6 @@ public class RouterConstant {
     public static final String DUBBO_SOURCE_TYPE_PREFIX = "args";
 
     /**
-     * 灰度发布默认ldc
-     */
-    public static final String ROUTER_DEFAULT_LDC = "DEFAULT_LDC";
-
-    /**
      * 灰度发布默认版本
      */
     public static final String ROUTER_DEFAULT_VERSION = "0.0.0";
@@ -47,11 +42,6 @@ public class RouterConstant {
      * 注册时灰度版本的key
      */
     public static final String TAG_VERSION_KEY = "tag.version";
-
-    /**
-     * 注册时ldc的key
-     */
-    public static final String ROUTER_LDC_KEY = "ldc";
 
     /**
      * 灰度配置servicecomb的key
@@ -77,6 +67,26 @@ public class RouterConstant {
      * spring应用灰度标签缓存名
      */
     public static final String SPRING_CACHE_NAME = "SPRING_ROUTE";
+
+    /**
+     * dubbo 应用group的key
+     */
+    public static final String DUBBO_GROUP_KEY = "group";
+
+    /**
+     * dubbo 应用version的key
+     */
+    public static final String DUBBO_VERSION_KEY = "version";
+
+    /**
+     * dubbo应用注册标签前缀
+     */
+    public static final String PARAMETERS_KEY_PREFIX = "service.meta.parameters.";
+
+    /**
+     * dubbo应用注册版本的key
+     */
+    public static final String VERSION_KEY = "service.meta.version";
 
     private RouterConstant() {
     }

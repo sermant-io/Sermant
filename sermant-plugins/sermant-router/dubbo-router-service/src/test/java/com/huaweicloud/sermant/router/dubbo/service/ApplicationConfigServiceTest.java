@@ -19,7 +19,6 @@ package com.huaweicloud.sermant.router.dubbo.service;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.label.LabelCache;
-import com.huaweicloud.sermant.router.config.label.entity.CurrentTag;
 import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 
@@ -90,7 +89,6 @@ public class ApplicationConfigServiceTest {
         Map<String, String> parameters = alibabaConfig.getParameters();
         testParameters(parameters);
         Assert.assertEquals(2, parameters.size());
-        testRouterConfiguration();
 
         // 应用名不为null，parameters不为null
         Map<String, String> map = new HashMap<>();
@@ -103,7 +101,6 @@ public class ApplicationConfigServiceTest {
         Assert.assertEquals(FOO, parameters.get(BAR));
         Assert.assertEquals(3, parameters.size());
         Assert.assertEquals(map, parameters);
-        testRouterConfiguration();
     }
 
     /**
@@ -128,7 +125,6 @@ public class ApplicationConfigServiceTest {
         Map<String, String> parameters = apacheConfig.getParameters();
         testParameters(parameters);
         Assert.assertEquals(2, parameters.size());
-        testRouterConfiguration();
 
         // 应用名不为null，parameters不为null
         Map<String, String> map = new HashMap<>();
@@ -141,20 +137,10 @@ public class ApplicationConfigServiceTest {
         Assert.assertEquals(BAR, parameters.get(FOO));
         Assert.assertEquals(3, parameters.size());
         Assert.assertEquals(map, parameters);
-        testRouterConfiguration();
     }
 
     private void testParameters(Map<String, String> parameters) {
         Assert.assertNotNull(parameters);
         Assert.assertEquals(config.getRouterVersion(), parameters.get(RouterConstant.TAG_VERSION_KEY));
-        Assert.assertEquals(config.getLdc(), parameters.get(RouterConstant.ROUTER_LDC_KEY));
-    }
-
-    private void testRouterConfiguration() {
-        RouterConfiguration configuration = LabelCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
-        CurrentTag currentTag = configuration.getCurrentTag();
-        Assert.assertNotNull(currentTag);
-        Assert.assertEquals(config.getRouterVersion(), currentTag.getVersion());
-        Assert.assertEquals(config.getLdc(), currentTag.getLdc());
     }
 }

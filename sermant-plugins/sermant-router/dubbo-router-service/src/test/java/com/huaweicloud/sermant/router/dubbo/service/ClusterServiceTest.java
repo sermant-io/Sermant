@@ -52,7 +52,6 @@ public class ClusterServiceTest {
     public ClusterServiceTest() {
         clusterService = new ClusterServiceImpl();
         map.put(RouterConstant.TAG_VERSION_KEY, "0.0.1");
-        map.put(RouterConstant.ROUTER_LDC_KEY, "ldc1");
     }
 
     /**
@@ -74,7 +73,6 @@ public class ClusterServiceTest {
         arguments[1] = map;
         clusterService.doBefore(arguments);
         Assert.assertNull(((Map<?, ?>) arguments[1]).get(RouterConstant.TAG_VERSION_KEY));
-        Assert.assertNull(((Map<?, ?>) arguments[1]).get(RouterConstant.ROUTER_LDC_KEY));
         Assert.assertEquals("bar", DubboCache.INSTANCE.getApplication("com.huawei.foo.BarTest"));
 
         // arguments[1]为null
@@ -102,7 +100,6 @@ public class ClusterServiceTest {
         arguments[1] = map;
         clusterService.doBefore(arguments);
         Assert.assertNull(((Map<?, ?>) arguments[1]).get(RouterConstant.TAG_VERSION_KEY));
-        Assert.assertNull(((Map<?, ?>) arguments[1]).get(RouterConstant.ROUTER_LDC_KEY));
         Assert.assertEquals("foo", DubboCache.INSTANCE.getApplication("com.huawei.foo.FooTest"));
 
         // arguments[1]为null

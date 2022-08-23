@@ -50,6 +50,12 @@ public class Match {
     private Map<String, List<MatchRule>> args;
 
     /**
+     * dubbo attachents参数
+     */
+    @JSONField(deserializeUsing = ValueMatchDeserializer.class)
+    private Map<String, List<MatchRule>> attachments;
+
+    /**
      * spring http header规则
      */
     @JSONField(deserializeUsing = ValueMatchDeserializer.class)
@@ -97,6 +103,14 @@ public class Match {
 
     public void setArgs(Map<String, List<MatchRule>> args) {
         this.args = args;
+    }
+
+    public void setAttachments(Map<String, List<MatchRule>> attachments) {
+        this.attachments = attachments;
+    }
+
+    public Map<String, List<MatchRule>> getAttachments() {
+        return attachments;
     }
 
     public Map<String, List<MatchRule>> getHeaders() {

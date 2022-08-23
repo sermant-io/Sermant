@@ -41,8 +41,18 @@ public class TargetInstanceStrategy extends AbstractInstanceStrategy<Object> {
     public boolean isMatch(Object invoker, List<Map<String, String>> tags,
         Function<Object, Map<String, String>> mapper) {
         Map<String, String> targetTag = tags.get(0);
-        String invokerVersion = getMetadata(invoker, mapper)
-            .getOrDefault(RouterConstant.TAG_VERSION_KEY, RouterConstant.ROUTER_DEFAULT_VERSION);
-        return targetTag.get(VERSION_KEY).equals(invokerVersion);
+        Map<String, String> metaData = getMetadata(invoker, mapper);
+        for (Map.Entry<String, String> entry : targetTag.entrySet()) {
+            String value = entry.getValue();
+            if (value == null) {
+                continue;
+            }
+            String key = VERSION_KEY.equals(entry.getKey()) ? RouterConstant.VERSION_KEY
+                    : RouterConstant.PARAMETERS_KEY_PREFIX + entry.getKey();
+            if (value.equals(metaData.get(key))) {
+                return true;
+            }
+        }
+        return false;
     }
 }
