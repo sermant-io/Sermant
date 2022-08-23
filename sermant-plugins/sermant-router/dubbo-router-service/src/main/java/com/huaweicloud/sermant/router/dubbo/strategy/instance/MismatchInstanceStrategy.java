@@ -44,14 +44,21 @@ public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object> {
     public boolean isMatch(Object invoker, List<Map<String, String>> tags,
         Function<Object, Map<String, String>> mapper) {
         // 由于由于mismatch里面的标签已经匹配过了且没有匹配上，所以要剔除掉，不能参与负载均衡，否则会导致流量比例不正确（会偏高）
-        String invokerVersion = getMetadata(invoker, mapper)
-            .getOrDefault(RouterConstant.TAG_VERSION_KEY, RouterConstant.ROUTER_DEFAULT_VERSION);
-        Set<String> mismatchVersions = new HashSet<>();
-        for (Map<String, String> tag : tags) {
-            if (StringUtils.isExist(tag.get(VERSION_KEY))) {
-                mismatchVersions.add(tag.get(VERSION_KEY));
+        Map<String, String> metaData = getMetadata(invoker, mapper);
+
+        for (Map<String, String> mismatchTag : tags) {
+            for (Map.Entry<String, String> entry : mismatchTag.entrySet()) {
+                String value = entry.getValue();
+                if (value == null) {
+                    continue;
+                }
+                String key = VERSION_KEY.equals(entry.getKey()) ? RouterConstant.VERSION_KEY
+                        : RouterConstant.PARAMETERS_KEY_PREFIX + entry.getKey();
+                if (value.equals(metaData.get(key))) {
+                    return false;
+                }
             }
         }
-        return !mismatchVersions.contains(invokerVersion);
+        return true;
     }
 }

@@ -38,11 +38,6 @@ public class RouterConfig implements PluginConfig {
     private String routerVersion = RouterConstant.ROUTER_DEFAULT_VERSION;
 
     /**
-     * ldc
-     */
-    private String ldc = RouterConstant.ROUTER_DEFAULT_LDC;
-
-    /**
      * 其它配置
      */
     private Map<String, String> parameters;
@@ -75,24 +70,6 @@ public class RouterConfig implements PluginConfig {
 
     public void setRouterVersion(String routerVersion) {
         this.routerVersion = routerVersion;
-    }
-
-    public String getLdc() {
-        return ldc;
-    }
-
-    /**
-     * 获取灰度ldc
-     *
-     * @param defaultLdc 默认ldc
-     * @return ldc
-     */
-    public String getLdc(String defaultLdc) {
-        return ldc == null || ldc.isEmpty() ? defaultLdc : ldc;
-    }
-
-    public void setLdc(String ldc) {
-        this.ldc = ldc;
     }
 
     public Map<String, String> getParameters() {

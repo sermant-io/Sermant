@@ -58,6 +58,9 @@ public class ServiceConfigHandler extends AbstractConfigHandler {
             // 去掉无效的规则
             RuleUtils.removeInvalidRules(rule.getMatch());
 
+            // 无attachments规则，将headers规则更新到attachments规则
+            RuleUtils.setAttachmentsByHeaders(rule.getMatch());
+
             // 去掉无效的路由
             RuleUtils.removeInvalidRoute(rule.getRoute());
         }
@@ -71,6 +74,10 @@ public class ServiceConfigHandler extends AbstractConfigHandler {
             Map<String, Object> allData = ((OrderConfigEvent) event).getAllData();
             Map<String, List<Map<String, Object>>> routeRuleMap = new HashMap<>();
             for (Entry<String, Object> entry : allData.entrySet()) {
+                String key = entry.getKey();
+                if (!key.startsWith(RouterConstant.ROUTER_KEY_PREFIX + ".")) {
+                    continue;
+                }
                 Object value = entry.getValue();
                 if (value instanceof String) {
                     routeRuleMap.put(entry.getKey(), yaml.loadAs((String) value, List.class));

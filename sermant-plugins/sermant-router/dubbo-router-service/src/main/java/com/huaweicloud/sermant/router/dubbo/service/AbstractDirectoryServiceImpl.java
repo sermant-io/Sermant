@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.router.dubbo.service;
 
+import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.label.LabelCache;
@@ -78,13 +79,40 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
         DubboCache cache = DubboCache.INSTANCE;
         String serviceInterface = queryMap.get(INTERFACE_KEY);
         Object invocation = arguments[0];
-        String interfaceName = serviceInterface + "." + DubboReflectUtils.getMethodName(invocation);
+        String interfaceName = getGroup(queryMap) + "/" + serviceInterface + "."
+                + DubboReflectUtils.getMethodName(invocation) + ":" + getVersion(queryMap);
         String targetService = cache.getApplication(serviceInterface);
-        List<Rule> rules = RuleUtils.getRules(configuration, targetService, interfaceName, cache.getAppName());
-        List<Route> routes = RouteUtils.getRoutes(rules, DubboReflectUtils.getArguments(invocation));
-        if (CollectionUtils.isEmpty(routes)) {
+        if (StringUtils.isBlank(targetService)) {
             return result;
         }
-        return RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, (List<Object>) result);
+        List<Rule> rules = RuleUtils.getRules(configuration, targetService, interfaceName, cache.getAppName());
+        List<Route> routes = RouteUtils.getRoutes(rules, DubboReflectUtils.getArguments(invocation),
+                DubboReflectUtils.getAttachments(invocation));
+        if (!CollectionUtils.isEmpty(routes)) {
+            return RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, (List<Object>) result);
+        }
+        return RuleStrategyHandler.INSTANCE.getMissMatchInstances(RuleUtils.getTags(rules), (List<Object>) result);
+    }
+
+    /**
+     * 获取dubbo应用 group
+     *
+     * @param queryMap queryMap
+     * @return 值
+     */
+    private String getGroup(Map<String, String> queryMap) {
+        String group = queryMap.get(RouterConstant.DUBBO_GROUP_KEY);
+        return group == null ? "" : group;
+    }
+
+    /**
+     * 获取dubbo 应用 version
+     *
+     * @param queryMap queryMap
+     * @return 值
+     */
+    private String getVersion(Map<String, String> queryMap) {
+        String version = queryMap.get(RouterConstant.DUBBO_VERSION_KEY);
+        return version == null ? "" : version;
     }
 }

@@ -20,9 +20,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
-import com.huaweicloud.sermant.router.config.label.LabelCache;
-import com.huaweicloud.sermant.router.config.label.entity.CurrentTag;
-import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
+import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 
@@ -60,23 +58,17 @@ public class ApplicationConfigServiceImpl implements ApplicationConfigService {
         }
         DubboCache.INSTANCE.setAppName(name);
         String version = routerConfig.getRouterVersion(RouterConstant.ROUTER_DEFAULT_VERSION);
-        Map<String, String> versionMap = new HashMap<>();
-        versionMap.put(RouterConstant.TAG_VERSION_KEY, version);
-        String ldc = routerConfig.getLdc(RouterConstant.ROUTER_DEFAULT_LDC);
-        versionMap.put(RouterConstant.ROUTER_LDC_KEY, ldc);
-        Map<String, String> parameters = DubboReflectUtils.getParameters(obj);
-        if (parameters == null) {
-            DubboReflectUtils.setParameters(obj, versionMap);
+        Map<String, String> tagMap = new HashMap<>();
+        tagMap.put(RouterConstant.VERSION_KEY, version);
+        Map<String, String> metaParameters = routerConfig.getParameters();
+        if (!CollectionUtils.isEmpty(metaParameters)) {
+            metaParameters.forEach((key, value) -> tagMap.put(RouterConstant.PARAMETERS_KEY_PREFIX + key, value));
+        }
+        Map<String, String> applicationParameters = DubboReflectUtils.getParameters(obj);
+        if (applicationParameters == null) {
+            DubboReflectUtils.setParameters(obj, tagMap);
         } else {
-            parameters.putAll(versionMap);
+            applicationParameters.putAll(tagMap);
         }
-        RouterConfiguration configuration = LabelCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
-        CurrentTag currentTag = configuration.getCurrentTag();
-        if (currentTag == null) {
-            currentTag = new CurrentTag();
-        }
-        currentTag.setVersion(version);
-        currentTag.setLdc(ldc);
-        configuration.setCurrentTag(currentTag);
     }
 }

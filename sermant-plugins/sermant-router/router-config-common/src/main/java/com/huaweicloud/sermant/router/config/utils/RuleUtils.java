@@ -24,6 +24,7 @@ import com.huaweicloud.sermant.router.config.label.entity.Route;
 import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.label.entity.Rule;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -57,12 +58,12 @@ public class RuleUtils {
      *
      * @param configuration 路由配置
      * @param targetService 目标服务
-     * @param path dubbo接口名/url路径
-     * @param serviceName 本服务服务名
+     * @param path          dubbo接口名/url路径
+     * @param serviceName   本服务服务名
      * @return 目标规则
      */
     public static List<Rule> getRules(RouterConfiguration configuration, String targetService, String path,
-        String serviceName) {
+                                      String serviceName) {
         if (RouterConfiguration.isInValid(configuration)) {
             return Collections.emptyList();
         }
@@ -132,7 +133,7 @@ public class RuleUtils {
      * 更新header key
      *
      * @param serviceName 服务名
-     * @param rules 路由规则
+     * @param rules       路由规则
      */
     public static void updateHeaderKeys(String serviceName, List<Rule> rules) {
         if (CollectionUtils.isEmpty(rules)) {
@@ -207,6 +208,19 @@ public class RuleUtils {
         }
         removeInvalidMatchRule(match.getArgs());
         removeInvalidMatchRule(match.getHeaders());
+        removeInvalidMatchRule(match.getAttachments());
+    }
+
+    /**
+     * 将headers规则写入attachemnts
+     *
+     * @param match headers匹配规则
+     */
+    public static void setAttachmentsByHeaders(Match match) {
+        if (match == null) {
+            return;
+        }
+        match.setAttachments(match.getHeaders());
     }
 
     /**
@@ -238,11 +252,41 @@ public class RuleUtils {
                 return false;
             }
             String matchPath = match.getPath();
-            if (StringUtils.isExist(matchPath) && !Pattern.matches(matchPath, path)) {
-                return false;
+            if (!CollectionUtils.isEmpty(match.getAttachments()) || !CollectionUtils.isEmpty(match.getHeaders())) {
+                if (StringUtils.isExist(matchPath) && !Pattern.matches(matchPath, getInterfaceName(path))) {
+                    return false;
+                }
+            } else if (!CollectionUtils.isEmpty(match.getArgs())) {
+                if (StringUtils.isBlank(matchPath) || !matchPath.equals(path)) {
+                    return false;
+                }
             }
         }
         return !CollectionUtils.isEmpty(rule.getRoute());
+    }
+
+    /**
+     * 在attachment和header规则匹配是，删除接口中的方法名
+     *
+     * @param path path
+     * @return 去除方法名的path
+     */
+    private static String getInterfaceName(String path) {
+        String[] pathList = path.split(":");
+        pathList[0] = delMethodName(pathList[0]);
+        return String.join(":", pathList);
+    }
+
+    /**
+     * 删除方法名
+     *
+     * @param path path
+     * @return 删除方法名的path
+     */
+    private static String delMethodName(String path) {
+        ArrayList<String> list = new ArrayList<>(Arrays.asList(path.split("\\.")));
+        list.remove(list.size() - 1);
+        return String.join(".", list);
     }
 
     private static boolean isInvalidType(Entry<String, List<MatchRule>> entry) {
@@ -251,8 +295,8 @@ public class RuleUtils {
 
     private static boolean isInvalidMatchRule(MatchRule matchRule) {
         return matchRule == null || matchRule.getValueMatch() == null
-            || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
-            || matchRule.getValueMatch().getMatchStrategy() == null;
+                || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
+                || matchRule.getValueMatch().getMatchStrategy() == null;
     }
 
     private static boolean isInvalidRoute(Route route) {
@@ -274,7 +318,7 @@ public class RuleUtils {
          * 构造方法
          *
          * @param match 是否匹配
-         * @param tags 目标路由
+         * @param tags  目标路由
          */
         public RouteResult(boolean match, List<Map<String, String>> tags) {
             this.match = match;

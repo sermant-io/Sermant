@@ -29,23 +29,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2021-10-27
  */
 public class RouterConfiguration {
-    /**
-     * 当前应用标签
-     */
-    private CurrentTag currentTag;
 
     /**
      * 标签规则,key为应用名，value为规则
      */
     private final Map<String, List<Rule>> routeRule = new ConcurrentHashMap<>();
-
-    public CurrentTag getCurrentTag() {
-        return currentTag;
-    }
-
-    public void setCurrentTag(CurrentTag currentTag) {
-        this.currentTag = currentTag;
-    }
 
     public Map<String, List<Rule>> getRouteRule() {
         return routeRule;
