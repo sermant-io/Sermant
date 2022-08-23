@@ -16,10 +16,10 @@
 
 package com.huawei.registry.declarers.health;
 
+import com.huawei.registry.declarers.AbstractDoubleRegistryDeclarer;
 import com.huawei.registry.interceptors.health.EurekaHealthInterceptor;
 import com.huawei.registry.interceptors.health.EurekaRegisterInterceptor;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -30,7 +30,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author zhouss
  * @since 2021-12-17
  */
-public class EurekaHealthDeclarer extends AbstractPluginDeclarer {
+public class EurekaHealthDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
      * 增强类的全限定名 该client注入优先级最高，因此只需拦截该client即可
      */

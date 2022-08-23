@@ -16,9 +16,9 @@
 
 package com.huawei.registry.declarers.health;
 
+import com.huawei.registry.declarers.AbstractDoubleRegistryDeclarer;
 import com.huawei.registry.interceptors.health.NacosHealthInterceptor;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -29,7 +29,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author zhouss
  * @since 2021-12-17
  */
-public class NacosHealthDeclarer extends AbstractPluginDeclarer {
+public class NacosHealthDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
      * nacos心跳发送类
      */

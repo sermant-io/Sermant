@@ -26,15 +26,14 @@ import com.huawei.registry.service.client.ScDiscovery.SubscriptionKey;
 import com.huawei.registry.service.register.Register;
 import com.huawei.registry.utils.HostUtils;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.common.PluginConstant;
 import com.huaweicloud.sermant.core.plugin.common.PluginSchemaValidator;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.JarFileUtils;
 import com.huaweicloud.sermant.core.utils.StringUtils;
-
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 
 import org.apache.servicecomb.foundation.ssl.SSLCustom;
 import org.apache.servicecomb.foundation.ssl.SSLOption;
@@ -409,7 +408,7 @@ public class ScClient {
     private void buildMicroServiceInstance() {
         microserviceInstance = new MicroserviceInstance();
         microserviceInstance.setStatus(MicroserviceInstanceStatus.UP);
-        microserviceInstance.setHostName(HostUtils.getHostName());
+        microserviceInstance.setHostName(RegisterContext.INSTANCE.getClientInfo().getHost());
         microserviceInstance.setEndpoints(buildEndpoints());
         HealthCheck healthCheck = new HealthCheck();
         healthCheck.setMode(HealthCheckMode.push);
