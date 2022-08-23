@@ -43,7 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Spring Web请求前置拦截器
+ * Spring Web请求前置拦截器, 由拦截器动态加入, 每次请求都会添加, {@link com.huawei.registry.grace.interceptors.SpringWebHandlerInterceptor}
  *
  * @author zhouss
  * @since 2022-05-23

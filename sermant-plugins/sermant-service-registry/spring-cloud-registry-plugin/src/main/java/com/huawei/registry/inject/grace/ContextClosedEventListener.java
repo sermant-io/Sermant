@@ -16,8 +16,10 @@
 
 package com.huawei.registry.inject.grace;
 
+import com.huawei.registry.config.GraceConfig;
 import com.huawei.registry.services.GraceService;
 
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import org.springframework.context.event.ContextClosedEvent;
@@ -45,7 +47,16 @@ public class ContextClosedEventListener {
      * ContextClosedEvent事件监听器
      */
     @EventListener(value = ContextClosedEvent.class)
-    public void listen() {
+    public void listener() {
+        if (!isEnableGraceDown()) {
+            return;
+        }
         graceService.shutdown();
+    }
+
+    private boolean isEnableGraceDown() {
+        GraceConfig graceConfig = PluginConfigManager.getPluginConfig(GraceConfig.class);
+        return graceConfig.isEnableSpring() && graceConfig.isEnableGraceShutdown() && graceConfig
+                .isEnableOfflineNotify();
     }
 }

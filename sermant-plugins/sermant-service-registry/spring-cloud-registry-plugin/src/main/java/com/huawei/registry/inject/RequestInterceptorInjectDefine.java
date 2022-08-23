@@ -17,9 +17,6 @@
 
 package com.huawei.registry.inject;
 
-import com.huawei.registry.config.GraceConfig;
-
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
 
 /**
@@ -37,11 +34,6 @@ public class RequestInterceptorInjectDefine implements ClassInjectDefine {
     @Override
     public String factoryName() {
         return "";
-    }
-
-    @Override
-    public boolean canInject() {
-        return PluginConfigManager.getPluginConfig(GraceConfig.class).isEnableSpring();
     }
 
     @Override
