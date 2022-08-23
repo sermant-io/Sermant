@@ -126,9 +126,13 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
         Map fixedTypeMap = fixEntry(typeMap, cls.getSuperclass());
         for (Field field : cls.getDeclaredFields()) {
             final ConfigFieldKey configFieldKey = field.getAnnotation(ConfigFieldKey.class);
-            final String fieldKey = configFieldKey == null ? field.getName() : configFieldKey.value();
-            final Object subTypeVal =
-                configFieldKey == null ? fixedTypeMap.get(fieldKey) : fixedTypeMap.remove(fieldKey);
+            final String fieldKey = field.getName();
+            final Object subTypeVal;
+            if (configFieldKey != null && fixedTypeMap.get(configFieldKey.value()) != null) {
+                subTypeVal = fixedTypeMap.remove(configFieldKey.value());
+            } else {
+                subTypeVal = fixedTypeMap.get(fieldKey);
+            }
             if (subTypeVal == null) {
                 continue;
             }
@@ -136,11 +140,11 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
             if (subTypeVal instanceof Map) {
                 fixedVal = fixEntry((Map) subTypeVal, field.getType());
                 if (configFieldKey != null) {
-                    fixedTypeMap.put(field.getName(), fixedVal);
+                    fixedTypeMap.put(fieldKey, fixedVal);
                 }
             } else {
                 fixedVal = fixValStr(formatConfigKey(fieldKey, cls), fixedTypeMap, subTypeVal);
-                fixedTypeMap.put(field.getName(), fixedVal);
+                fixedTypeMap.put(fieldKey, fixedVal);
             }
         }
         return fixedTypeMap;

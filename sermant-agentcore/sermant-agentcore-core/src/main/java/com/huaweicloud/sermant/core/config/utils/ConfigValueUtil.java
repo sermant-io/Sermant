@@ -30,9 +30,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 对配置中参数值进行处理的工具
@@ -63,6 +66,11 @@ public class ConfigValueUtil {
     private static final int MAP_KV_LEN = 2;
 
     /**
+     * 驼峰匹配pattern
+     */
+    private static final Pattern PATTERN = Pattern.compile("[A-Z]");
+
+    /**
      * 配置键格式化器, 针对不同环境变量格式读取
      * <p>若读取环境变量 service.meta.applicationName, 则会尝试从下面的变量进行读取， 否则取默认值</p>
      * <li>service.meta.applicationName</li>
@@ -86,6 +94,20 @@ public class ConfigValueUtil {
         key -> key.toLowerCase(Locale.ROOT).replace('.', '_'),
         key -> key.toLowerCase(Locale.ROOT).replace('.', '-'),
     };
+
+    /**
+     * 配置参考值获取表达式
+     * <p>优先级: 启动配置 > 环境变量 > 启动参数 > 配置文件</p>
+     */
+    private static final List<ValueReferFunction<String, Map<String, Object>, String>>
+            VALUE_REFER_FUNCTION = Arrays.asList(
+                (key, argsMap) -> {
+                final Object config = argsMap.get(key);
+                return config == null ? null : config.toString();
+                },
+                (key, argsMap) -> System.getenv(key),
+                (key, argsMap) -> System.getProperty(key)
+    );
 
     /**
      * 值获取表达式
@@ -296,7 +318,7 @@ public class ConfigValueUtil {
                     configVal.substring(0, startIndex - ENV_PREFIX_LEN) + value + configVal.substring(endIndex + 1),
                     argsMap, provider);
         } else {
-            final String valFromEnv = getFormatKeyFixVal(configKey, configVal, argsMap, provider);
+            final String valFromEnv = getValByFixedKey(configKey, configVal, argsMap);
             if (valFromEnv != null) {
                 return valFromEnv;
             }
@@ -324,6 +346,84 @@ public class ConfigValueUtil {
             }
         }
         return defaultVal;
+    }
+
+    /**
+     * 获取配置键的参考值，优先级：入参 > 环境变量 > 系统变量 > 配置
+     * <p>修正不同配置格式获取值, 含'-','_','.',大写以及小写</p>
+     *
+     * @param key       键
+     * @param configVal 配置值
+     * @return 最终配置参考值
+     */
+    private static String getValByFixedKey(String key, String configVal, Map<String, Object> argsMap) {
+        // 1. xxx.xxx.appName直接获取 2. xxx.xxx.app-name处理为xxx.xxx.app.name再获取
+        String keyReplaceMiddleLine = transFromMiddleLine(key);
+        Optional<String> fixedValue = getValueByOrder(argsMap, keyReplaceMiddleLine);
+        if (fixedValue.isPresent()) {
+            return fixedValue.get();
+        }
+
+        // 3. xxx.xxx.appName分割为xxx.xxx.app.name
+        String keyWithoutCamel = transFromCamel(keyReplaceMiddleLine);
+        if (!keyReplaceMiddleLine.equals(keyWithoutCamel)) {
+            fixedValue = getValueByOrder(argsMap, keyWithoutCamel);
+            if (fixedValue.isPresent()) {
+                return fixedValue.get();
+            }
+        }
+        return configVal;
+    }
+
+    /**
+     * 由KeyFormatter处理后读取环境变量
+     * 优先级：入参 > 环境变量 > 系统变量 > 配置
+     *
+     * @param key     键
+     * @param argsMap 入参
+     * @return 最终配置参考值
+     */
+    private static Optional<String> getValueByOrder(Map<String, Object> argsMap, String key) {
+        Optional<String> fixedValue;
+        for (ValueReferFunction<String, Map<String, Object>, String> function : VALUE_REFER_FUNCTION) {
+            for (KeyFormatter keyFormatter : KEY_FORMATTERS) {
+                fixedValue = Optional.ofNullable(function.apply(keyFormatter.format(key), argsMap));
+                if (fixedValue.isPresent()) {
+                    return fixedValue;
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 配置键分割驼峰单词
+     * <p>若需读取环境变量，service.meta.applicationName先处理为service.meta.application.name再
+     * 由KeyFormatter处理后读取环境变量</p>
+     *
+     * @param key 需处理的键
+     * @return 处理后的键
+     */
+    private static String transFromCamel(String key) {
+        Matcher matcher = PATTERN.matcher(key);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, "." + matcher.group(0).toLowerCase(Locale.ROOT));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    /**
+     * 配置键中划线格式化
+     * <p>若需读取环境变量 service.meta.application-name, 则先处理为service.meta.application.name再
+     * 由KeyFormatter处理后读取环境变量</p>
+     *
+     * @param key 需处理的键
+     * @return 处理后的键
+     */
+    private static String transFromMiddleLine(String key) {
+        return key.replace("-", ".");
     }
 
     /**
@@ -359,6 +459,25 @@ public class ConfigValueUtil {
          * @return 修正后的值
          */
         R apply(K key, B bootstrapArgsMap, P sourceProvider);
+    }
+
+    /**
+     * 配置值参考, 该类仅用于配置值参考
+     *
+     * @param <K> 键
+     * @param <B> 源数据
+     * @param <R> 结果
+     * @since 2022-08-18
+     */
+    interface ValueReferFunction<K, B, R> {
+        /**
+         * 应用修正
+         *
+         * @param key              键
+         * @param bootstrapArgsMap 启动参数Map
+         * @return 最终参考值
+         */
+        R apply(K key, B bootstrapArgsMap);
     }
 
     /**
