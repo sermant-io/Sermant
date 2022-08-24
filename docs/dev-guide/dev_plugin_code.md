@@ -332,6 +332,28 @@
 - 对于数组、List和Map中涉及的复杂对象，不支持`ConfigFieldKey`修正属性名
 - 对于数组、List和Map中的字符串，不支持`${}`转换，**插件配置类**的字符串属性和复杂类型属性内部的字符串属性支持
 - 仅在字符串做`${}`转换时使用入参，不支持使用入参直接设置属性值
+- 配置类的字段名一般为小驼峰命名，可用[ConfigFieldKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigFieldKey.java)注解修饰为中划线风格定义别名。添加注解后，在*yaml*中即可用中划线或小驼峰皆可解析，参考[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)的intField属性
+- 配置生效的优先级为：启动参数 > 环境变量 > 系统变量(-D参数) > *yaml*文件配置
+- 配置类的属性在按照生效的优先级获取参考值(启动参数，环境变量和系统变量(-D参数))时，小驼峰和中划线都可以被分割成单词来进行查找匹配。例如对于[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)的intField属性，key将被转化为如下多种形式按顺序来查找：
+  - demo.test.intField
+  - demo_test_intField
+  - demo-test-intField
+  - DEMO.TEST.INTFIELD
+  - DEMO_TEST_INTFIELD
+  - DEMO-TEST-INTFIELD
+  - demo.test.intfield
+  - demo_test_intfield
+  - demo-test-intfield
+  - demo.test.int.field
+  - demo_test_int_field
+  - demo-test-int-field
+  - DEMO.TEST.INT.FIELD
+  - DEMO_TEST_INT_FIELD
+  - DEMO-TEST-INT-FIELD
+- 若*yaml*配置中基本数据类型/数组/map/list/set(不支持包含复杂对象)的key未定义，将按照配置生效的优先级：启动参数 > 环境变量 > 系统变量(-D参数) 来获取参考值。从上述数据源获取参考值时，需注意：
+  - 数组/list/set需配置为yaml字符串格式，例如：DEMO_TEST_LIST_NAME=[elem1,elem2]
+  - map需配置为yaml字符串格式，例如：DEMO_TEST_MAP_NAME={key1: value1, key2: value2}
+
 
 [DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)中已经包含了大部分可能的配置场景，插件开发者可以与之参考，编写符合自身业务需求的插件配置类。
 
@@ -458,7 +480,7 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
 - 对于发送`provider`方法，做如下增强：
   ```java
     private final TracingService tracingService = ServiceManager.getService(TracingService.class);
-
+  
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         TracingRequest request =
@@ -471,13 +493,13 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
         tracingService.onProviderSpanStart(request, extractService, (HashMap<String, String>)context.getArguments()[0]);
         return context;
     }
-
+  
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
         tracingService.onSpanFinally();
         return context;
     }
-
+  
     @Override
     public ExecuteContext onThrow(ExecuteContext context) throws Exception {
         tracingService.onSpanError(context.getThrowable());
@@ -487,12 +509,12 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
 - 对于`consumer`方法，做如下增强：
   ```java
     TracingService tracingService = ServiceManager.getService(TracingService.class);
-
+  
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         return context;
     }
-
+  
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
         TracingRequest request =
@@ -506,7 +528,7 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
         tracingService.onSpanFinally();
         return context;
     }
-
+  
     @Override
     public ExecuteContext onThrow(ExecuteContext context) throws Exception {
         tracingService.onSpanError(context.getThrowable());
