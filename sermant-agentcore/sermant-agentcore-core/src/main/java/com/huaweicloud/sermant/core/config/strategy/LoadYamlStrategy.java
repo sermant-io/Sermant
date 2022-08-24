@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -82,6 +83,16 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
         final Object typeVal = holder.get(typeKey);
         if (!(typeVal instanceof Map)) {
             return config;
+        }
+
+        Map configMap = (Map) holder.get(typeKey);
+        for (Field field : config.getClass().getDeclaredFields()) {
+            if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+            if (!configMap.containsKey(field.getName())) {
+                configMap.put(field.getName(), null);
+            }
         }
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -133,9 +144,6 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
             } else {
                 subTypeVal = fixedTypeMap.get(fieldKey);
             }
-            if (subTypeVal == null) {
-                continue;
-            }
             final Object fixedVal;
             if (subTypeVal instanceof Map) {
                 fixedVal = fixEntry((Map) subTypeVal, field.getType());
@@ -143,8 +151,12 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
                     fixedTypeMap.put(fieldKey, fixedVal);
                 }
             } else {
-                fixedVal = fixValStr(formatConfigKey(fieldKey, cls), fixedTypeMap, subTypeVal);
-                fixedTypeMap.put(fieldKey, fixedVal);
+                fixedVal = fixValStr(field, formatConfigKey(fieldKey, cls), fixedTypeMap, subTypeVal);
+                if (fixedVal == null) {
+                    fixedTypeMap.remove(fieldKey);
+                } else {
+                    fixedTypeMap.put(fieldKey, fixedVal);
+                }
             }
         }
         return fixedTypeMap;
@@ -162,7 +174,7 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
      * @param subTypeVal 当前值
      * @return 修正后的值
      */
-    private Object fixValStr(String configKey, Map typeMap, Object subTypeVal) {
+    private Object fixValStr(Field field, String configKey, Map typeMap, Object subTypeVal) {
         final ConfigValueUtil.FixedValueProvider provider = new ConfigValueUtil.FixedValueProvider() {
             @Override
             public String getFixedValue(String key) {
@@ -176,6 +188,13 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
         final Object fixedVal;
         if (subTypeVal instanceof String) {
             fixedVal = ConfigValueUtil.fixValue(configKey, (String) subTypeVal, argsMap, provider);
+        } else if (subTypeVal == null) {
+            String fixedStrValue = ConfigValueUtil.fixValue(configKey, null, argsMap, provider);
+            if (fixedStrValue == null) {
+                fixedVal = null;
+            } else {
+                fixedVal = yaml.loadAs(fixedStrValue, field.getType());
+            }
         } else {
             fixedVal = yaml.loadAs(
                 ConfigValueUtil.fixValue(configKey, yaml.dump(subTypeVal), argsMap, provider),

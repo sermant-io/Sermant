@@ -300,10 +300,7 @@ public class ConfigValueUtil {
      */
     public static String fixValue(String configKey, String configVal, Map<String, Object> argsMap,
             FixedValueProvider provider) {
-        if (configVal == null) {
-            return configVal;
-        }
-        if (configVal.matches("^.*\\$\\{[\\w.]+(:.*)?}.*$")) {
+        if (configVal != null && configVal.matches("^.*\\$\\{[\\w.]+(:.*)?}.*$")) {
             final int startIndex = configVal.indexOf("${") + ENV_PREFIX_LEN;
             final int endIndex = configVal.indexOf('}', startIndex);
             final String envKey = configVal.substring(startIndex, endIndex);
@@ -318,12 +315,8 @@ public class ConfigValueUtil {
                     configVal.substring(0, startIndex - ENV_PREFIX_LEN) + value + configVal.substring(endIndex + 1),
                     argsMap, provider);
         } else {
-            final String valFromEnv = getValByFixedKey(configKey, configVal, argsMap);
-            if (valFromEnv != null) {
-                return valFromEnv;
-            }
+            return getValByFixedKey(configKey, configVal, argsMap);
         }
-        return configVal;
     }
 
     /**
