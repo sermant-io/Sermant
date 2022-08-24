@@ -40,13 +40,6 @@ public class ContextClosedEventListenerInjectDefine implements ClassInjectDefine
     }
 
     @Override
-    public boolean canInject() {
-        GraceConfig graceConfig = PluginConfigManager.getPluginConfig(GraceConfig.class);
-        return graceConfig.isEnableSpring() && graceConfig.isEnableGraceShutdown() && graceConfig
-            .isEnableOfflineNotify();
-    }
-
-    @Override
     public Plugin plugin() {
         return Plugin.SPRING_REGISTRY_PLUGIN;
     }
