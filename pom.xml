@@ -336,6 +336,7 @@
             <id>release</id>
             <modules>
                 <module>sermant-plugins</module>
+                <module>sermant-backend</module>
             </modules>
             <build>
                 <plugins>
