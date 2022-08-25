@@ -22,6 +22,7 @@
 
 package com.huaweicloud.sermant.core.service;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.exception.DupServiceException;
 import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
@@ -29,8 +30,11 @@ import com.huaweicloud.sermant.core.utils.SpiLoadUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 服务管理器
@@ -40,6 +44,11 @@ import java.util.ServiceLoader;
  * @since 2021-10-26
  */
 public class ServiceManager {
+    /**
+     * 日志
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     /**
      * 服务集合
      */
@@ -57,7 +66,13 @@ public class ServiceManager {
         for (final BaseService service : ServiceLoader.load(BaseService.class)) {
             if (!AGENT_CONFIG.getServiceBlackList().contains(service.getClass().getName())
                     && loadService(service, service.getClass(), BaseService.class)) {
-                service.start();
+                try {
+                    service.start();
+                } catch (Exception ex) {
+                    LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
+                            "Error occurs while starting service: %s",
+                            service.getClass().toString()), ex);
+                }
             }
         }
         addStopHook(); // 加载完所有服务再启动服务
@@ -123,7 +138,13 @@ public class ServiceManager {
             @Override
             public void run() {
                 for (BaseService baseService : new HashSet<>(SERVICES.values())) {
-                    baseService.stop();
+                    try {
+                        baseService.stop();
+                    } catch (Exception ex) {
+                        LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
+                                "Error occurs while stopping service: %s",
+                                baseService.getClass().toString()), ex);
+                    }
                 }
             }
         }));
