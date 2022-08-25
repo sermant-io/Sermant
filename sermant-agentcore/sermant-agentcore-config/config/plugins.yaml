@@ -7,6 +7,7 @@ plugins:
   - service-registry
   - loadbalancer
   - dynamic-config
+  - monitor
 adaptors:
   - lubanops
 profiles:
