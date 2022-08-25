@@ -76,6 +76,8 @@
         <gpg.plugin.version>3.0.1</gpg.plugin.version>
         <javadoc.plugin.version>3.3.2</javadoc.plugin.version>
         <nexus.staging.plugin.version>1.6.7</nexus.staging.plugin.version>
+
+        <simpleclient.version>0.16.0</simpleclient.version>
     </properties>
 
     <profiles>
@@ -300,6 +302,11 @@
             <version>${asm.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_httpserver</artifactId>
+            <version>${simpleclient.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <extensions>

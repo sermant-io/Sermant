@@ -283,6 +283,7 @@
             <modules>
                 <module>sermant-agentcore</module>
                 <module>sermant-plugins</module>
+                <module>sermant-backend</module>
             </modules>
         </profile>
         <profile>
