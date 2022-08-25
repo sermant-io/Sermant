@@ -5,7 +5,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,15 @@
 #
 #
 
-com.huawei.dynamic.config.declarers.SpringFactoriesDeclarer
-com.huawei.dynamic.config.declarers.ZookeeperLocatorDeclarer
-com.huawei.dynamic.config.declarers.MutableSourceDeclarer
+#!/bin/bash
+startCse(){
+  if [ -f ${ROOT_PATH}/Local-CSE-2.1.3-linux-amd64.zip ];then
+    echo "==========start cse============"
+    unzip ${ROOT_PATH}/Local-CSE-2.1.3-linux-amd64.zip -d ${ROOT_PATH}/cse
+    sh ${ROOT_PATH}/cse/start.sh &
+  else
+    echo "==========can not find cse software============"
+    exit 2
+  fi
+}
+startCse

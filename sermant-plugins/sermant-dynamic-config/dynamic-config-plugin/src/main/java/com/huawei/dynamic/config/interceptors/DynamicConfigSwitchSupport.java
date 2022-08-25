@@ -17,7 +17,9 @@
 
 package com.huawei.dynamic.config.interceptors;
 
+import com.huawei.dynamic.config.ConfigHolder;
 import com.huawei.dynamic.config.DynamicConfiguration;
+import com.huawei.dynamic.config.source.OriginConfigDisableSource;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
@@ -37,6 +39,19 @@ public class DynamicConfigSwitchSupport implements Interceptor {
      */
     public DynamicConfigSwitchSupport() {
         dynamicConfiguration = PluginConfigManager.getPluginConfig(DynamicConfiguration.class);
+    }
+
+    /**
+     * 原配置中心是否已下发动态关闭
+     *
+     * @return 是否关闭
+     */
+    protected boolean isDynamicClosed() {
+        final Object config = ConfigHolder.INSTANCE.getConfig(OriginConfigDisableSource.ZK_CONFIG_CENTER_ENABLED);
+        if (config == null) {
+            return false;
+        }
+        return !Boolean.parseBoolean(config.toString());
     }
 
     @Override

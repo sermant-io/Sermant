@@ -28,7 +28,9 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -81,7 +83,25 @@ public class OriginConfigCenterDisableListener implements BeanFactoryAware {
                             closer.type()));
                 }
             }
+            tryAddDynamicSourceToFirst(environment);
         });
+    }
+
+    private void tryAddDynamicSourceToFirst(Environment curEnv) {
+        if (!(curEnv instanceof ConfigurableEnvironment)) {
+            return;
+        }
+        ConfigurableEnvironment configurableEnvironment = (ConfigurableEnvironment) curEnv;
+        addToFirst(configurableEnvironment, DynamicConstants.DISABLE_CONFIG_SOURCE_NAME);
+        addToFirst(configurableEnvironment, DynamicConstants.PROPERTY_NAME);
+    }
+
+    private void addToFirst(ConfigurableEnvironment configurableEnvironment, String name) {
+        final PropertySource<?> propertySource = configurableEnvironment.getPropertySources().get(name);
+        if (propertySource != null) {
+            configurableEnvironment.getPropertySources().remove(name);
+            configurableEnvironment.getPropertySources().addFirst(propertySource);
+        }
     }
 
     private void disableConfigCenter() {
