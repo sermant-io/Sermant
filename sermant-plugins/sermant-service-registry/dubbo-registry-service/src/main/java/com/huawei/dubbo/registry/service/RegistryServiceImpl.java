@@ -578,7 +578,10 @@ public class RegistryServiceImpl implements RegistryService {
     private Map<SubscriptionKey, List<Object>> instancesToUrls(String appId, String serviceName,
         List<MicroserviceInstance> instances) {
         Map<SubscriptionKey, List<Object>> urlMap = new HashMap<>();
-        instances.forEach(instance -> convertToUrlMap(urlMap, appId, serviceName, instance));
+
+        // instances中的serviceId都是一样的，所以这里可以取第一个
+        List<SchemaInfo> schemaInfos = client.getServiceSchemasList(instances.get(0).getServiceId(), true);
+        instances.forEach(instance -> convertToUrlMap(urlMap, appId, serviceName, instance, schemaInfos));
 
         // 拼接*（通配符）的场景
         urlMap.putAll(getWildcardUrlMap(urlMap));
@@ -599,15 +602,14 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private void convertToUrlMap(Map<SubscriptionKey, List<Object>> urlMap, String appId, String serviceName,
-        MicroserviceInstance instance) {
-        List<SchemaInfo> schemaInfos = client.getServiceSchemasList(instance.getServiceId(), true);
+        MicroserviceInstance instance, List<SchemaInfo> schemaInfos) {
         Map<String, String> properties = instance.getProperties();
         String data = properties.get(INTERFACE_DATA_KEY);
         Map<String, String> metaData = getMetaData(properties);
         Map<String, List<InterfaceData>> dataMap = JSONObject.parseObject(data, new JsonObjectTypeReference());
         instance.getEndpoints().forEach(endpoint -> {
             Object url = ReflectUtils.valueOf(endpoint);
-            if (schemaInfos.isEmpty()) {
+            if (CollectionUtils.isEmpty(schemaInfos)) {
                 urlMap.computeIfAbsent(new SubscriptionKey(appId, serviceName, getInterface(url)),
                     value -> new ArrayList<>()).add(url);
                 return;
@@ -687,23 +689,24 @@ public class RegistryServiceImpl implements RegistryService {
 
     private List<InterfaceData> getInterfaceDataList(Map<String, List<InterfaceData>> dataMap,
         Map<String, String> properties, String schemaId, Map<String, String> metaData) {
-        List<InterfaceData> list;
         if (CollectionUtils.isEmpty(dataMap)) {
             // 旧版本获取方式
-            String json = properties.get(schemaId);
-            list = JSONArray.parseArray(json, InterfaceData.class);
-        } else {
-            // 新版本获取方式
-            list = dataMap.get(schemaId);
-            list.forEach(interfaceData -> {
-                Map<String, String> parameters = interfaceData.getParameters();
-                if (parameters == null) {
-                    parameters = new HashMap<>();
-                    interfaceData.setParameters(parameters);
-                }
-                parameters.putAll(metaData);
-            });
+            return JSONArray.parseArray(properties.get(schemaId), InterfaceData.class);
         }
+
+        // 新版本获取方式
+        List<InterfaceData> list = dataMap.get(schemaId);
+        if (CollectionUtils.isEmpty(list)) {
+            return Collections.emptyList();
+        }
+        list.forEach(interfaceData -> {
+            Map<String, String> parameters = interfaceData.getParameters();
+            if (parameters == null) {
+                parameters = new HashMap<>();
+                interfaceData.setParameters(parameters);
+            }
+            parameters.putAll(metaData);
+        });
         return list;
     }
 
