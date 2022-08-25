@@ -16,25 +16,28 @@
 #
 
 #!/bin/bash
-tryTimes=3
-cseAddress=https://cse-bucket.obs.cn-north-1.myhuaweicloud.com/LocalCSE/Local-CSE-2.1.3-linux-amd64.zip
-echo "root path: ${ROOT_PATH}"
-for ((i=1; i<=${tryTimes};i++))
-do
-  echo "try download cse at $i time"
-  wget ${cseAddress} -O ${ROOT_PATH}/Local-CSE-2.1.3-linux-amd64.zip
-  if [ $? == 0 ];then
-    break
+downloadCse(){
+  tryTimes=3
+  cseAddress=https://cse-bucket.obs.cn-north-1.myhuaweicloud.com/LocalCSE/Local-CSE-2.1.3-linux-amd64.zip
+  echo "root path: ${ROOT_PATH}"
+  for ((i=1; i<=${tryTimes};i++))
+  do
+    echo "try download cse at $i time"
+    wget ${cseAddress} -O ${ROOT_PATH}/Local-CSE-2.1.3-linux-amd64.zip
+    if [ $? == 0 ];then
+      break
+    fi
+    sleep 3
+  done
+  ls -l
+  if [ -f ${ROOT_PATH}/Local-CSE-2.1.3-linux-amd64.zip ];then
+    echo "download cse success"
+  else
+    exit 1
   fi
-  sleep 3
-done
-ls -l
-if [ -f ${ROOT_PATH}/Local-CSE-2.1.3-linux-amd64.zip ];then
-  echo "download cse success, then start cse"
-  unzip ${ROOT_PATH}/Local-CSE-2.1.3-linux-amd64.zip -d ${ROOT_PATH}/cse
-  sh ${ROOT_PATH}/cse/start.sh &
-else
-  exit 1
-fi
+}
+
+downloadCse
+
 
 

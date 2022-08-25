@@ -17,14 +17,10 @@
 
 package com.huawei.dynamic.config.interceptors;
 
-import com.huawei.dynamic.config.ConfigHolder;
 import com.huawei.dynamic.config.DynamicConfiguration;
-import com.huawei.dynamic.config.source.OriginConfigDisableSource;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-
-import org.springframework.core.env.CompositePropertySource;
 
 /**
  * 拦截loadFactories注入自定义配置源
@@ -45,21 +41,8 @@ public class ZookeeperLocatorInterceptor extends DynamicConfigSwitchSupport {
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
         if (!configuration.isEnableOriginConfigCenter() || isDynamicClosed()) {
-            context.skip(new CompositePropertySource("Empty"));
+            context.skip(null);
         }
         return context;
-    }
-
-    /**
-     * 原配置中心是否已下发动态关闭
-     *
-     * @return 是否关闭
-     */
-    private boolean isDynamicClosed() {
-        final Object config = ConfigHolder.INSTANCE.getConfig(OriginConfigDisableSource.ZK_CONFIG_CENTER_ENABLED);
-        if (config == null) {
-            return false;
-        }
-        return !Boolean.parseBoolean(config.toString());
     }
 }
