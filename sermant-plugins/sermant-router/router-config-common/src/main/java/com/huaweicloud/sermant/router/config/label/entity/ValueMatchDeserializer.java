@@ -111,8 +111,8 @@ public class ValueMatchDeserializer implements ObjectDeserializer {
         MatchStrategy matchStrategy;
         try {
             matchStrategy = MatchStrategy.valueOf(fieldName.toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException e1) {
-            LOGGER.warning("Cannot find the match strategy " + fieldName);
+        } catch (IllegalArgumentException ignored) {
+            // 不存在该策略，忽略
             return;
         }
         List<String> values = new ArrayList<>();
