@@ -3,12 +3,12 @@
 <configuration scan="true">
 
     <!-- 定义日志文件 输出位置 -->
-    <property name="log.home_dir" value="./logs/sermant/core"/>
+    <property name="log.home_dir" value="${sermant_log_dir:-./logs/sermant/core}"/>
     <property name="log.app_name" value="sermant"/>
     <!-- 日志最大的历史 30天 -->
-    <property name="log.maxHistory" value="30"/>
-    <property name="log.level" value="info"/>
-    <property name="log.maxSize" value="5MB" />
+    <property name="log.maxHistory" value="${sermant_log_max_history:-30}"/>
+    <property name="log.level" value="${sermant_log_level:-info}"/>
+    <property name="log.maxSize" value="${sermant_log_max_size:-5MB}" />
 
     <!-- 设置日志输出格式 -->
     <!-- %d{yyyy-MM-dd HH:mm:ss.SSS}日期-->
