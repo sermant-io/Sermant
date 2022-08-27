@@ -25,6 +25,7 @@ import com.huawei.fowcontrol.res4j.adaptor.CircuitBreakerAdaptor;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.SlidingWindowType;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 
 import java.time.Duration;
@@ -39,6 +40,7 @@ import java.util.Optional;
 public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker, CircuitBreakerRule> {
     @Override
     protected final Optional<CircuitBreaker> createProcessor(String businessName, CircuitBreakerRule rule) {
+        final SlidingWindowType slidingWindowType = getSlidingWindowType(rule.getSlidingWindowType());
         return Optional.of(new CircuitBreakerAdaptor(CircuitBreakerRegistry.of(CircuitBreakerConfig
                 .custom()
                 .failureRateThreshold(rule.getFailureRateThreshold())
@@ -47,10 +49,19 @@ public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker
                 .slowCallDurationThreshold(Duration.ofMillis(rule.getParsedSlowCallDurationThreshold()))
                 .permittedNumberOfCallsInHalfOpenState(rule.getPermittedNumberOfCallsInHalfOpenState())
                 .minimumNumberOfCalls(rule.getMinimumNumberOfCalls())
-                .slidingWindowType(getSlidingWindowType(rule.getSlidingWindowType()))
-                .slidingWindowSize((int) rule.getParsedSlidingWindowSize())
+                .slidingWindowType(slidingWindowType)
+                .slidingWindowSize(getWindowSize(slidingWindowType, rule.getParsedSlidingWindowSize()))
                 .build())
                 .circuitBreaker(businessName), rule));
+    }
+
+    private int getWindowSize(SlidingWindowType slidingWindowType, long parsedSlidingWindowSize) {
+        if (slidingWindowType == SlidingWindowType.COUNT_BASED) {
+            return (int) parsedSlidingWindowSize;
+        }
+
+        // rest4j暂且仅支持秒作为时间窗口, 这里 parsedSlidingWindowSize为毫秒, 因此此处需转换成秒
+        return (int) Duration.ofMillis(parsedSlidingWindowSize).getSeconds();
     }
 
     private CircuitBreakerConfig.SlidingWindowType getSlidingWindowType(String type) {
