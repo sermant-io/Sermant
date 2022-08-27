@@ -20,8 +20,13 @@ package com.huawei.registry.config;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.utils.HostUtils;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.core.utils.ClassUtils;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.commons.util.InetUtils;
@@ -31,6 +36,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
 import java.util.HashMap;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 
@@ -41,7 +48,13 @@ import javax.annotation.PostConstruct;
  * @since 2022-06-28
  */
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
-public class RegistrationProperties {
+public class RegistrationProperties implements BeanFactoryAware {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final String INET_UTILS_CLASS = "org.springframework.cloud.commons.util.InetUtils";
+
+    private static final String INET_UTILS_BEAN_NAME = "inetUtils";
+
     @Value("${dubbo.application.name:${spring.application.name:application}}")
     private String serviceName;
 
@@ -51,8 +64,7 @@ public class RegistrationProperties {
     @Autowired
     private Environment environment;
 
-    @Autowired
-    private InetUtils inetUtils;
+    private BeanFactory beanFactory;
 
     /**
      * 初始化
@@ -63,15 +75,58 @@ public class RegistrationProperties {
         RegisterContext.INSTANCE.getClientInfo().setServiceId(serviceName);
         RegisterContext.INSTANCE.getClientInfo().setPort(port);
         RegisterContext.INSTANCE.getClientInfo().setMeta(new HashMap<>());
-        final HostInfo hostInfo = inetUtils.findFirstNonLoopbackHostInfo();
-        RegisterContext.INSTANCE.getClientInfo().setHost(hostInfo.getHostname());
-        RegisterContext.INSTANCE.getClientInfo().setIp(hostInfo.getIpAddress());
         RegisterContext.INSTANCE.getClientInfo().setZone(
                 environment.getProperty(SpringRegistryConstants.SPRING_LOAD_BALANCER_ZONE));
+        configureHostIp();
 
         // 开始订阅配置
         PluginServiceManager.getPluginService(RegistryConfigSubscribeServiceImpl.class)
                 .subscribeRegistryConfig(RegisterContext.INSTANCE.getClientInfo().getServiceName());
+    }
+
+    private void configureHostIp() {
+        final Optional<Object> inetUtilsOptional = tryGetInetUtils();
+        if (inetUtilsOptional.isPresent()) {
+            final Object rawUtils = inetUtilsOptional.get();
+            if (!INET_UTILS_CLASS.equals(rawUtils.getClass().getName())) {
+                configureHostIpByDefault();
+            } else {
+                InetUtils inetUtils = (InetUtils) rawUtils;
+                final HostInfo hostInfo = inetUtils.findFirstNonLoopbackHostInfo();
+                RegisterContext.INSTANCE.getClientInfo().setHost(hostInfo.getHostname());
+                RegisterContext.INSTANCE.getClientInfo().setIp(hostInfo.getIpAddress());
+            }
+        } else {
+            configureHostIpByDefault();
+        }
+    }
+
+    private void configureHostIpByDefault() {
+        RegisterContext.INSTANCE.getClientInfo().setHost(HostUtils.getHostName());
+        RegisterContext.INSTANCE.getClientInfo().setIp(HostUtils.getMachineIp());
+    }
+
+    private Optional<Object> tryGetInetUtils() {
+        try {
+            return Optional.of(beanFactory.getBean(INET_UTILS_BEAN_NAME));
+        } catch (BeansException ex) {
+            LOGGER.fine("Can not find inetUtils by name inetUtils, try find by clazz");
+            return tryGetInetUtilsByClazz();
+        }
+    }
+
+    private Optional<Object> tryGetInetUtilsByClazz() {
+        final Optional<Class<?>> clazz = ClassUtils
+                .loadClass(INET_UTILS_CLASS, Thread.currentThread().getContextClassLoader(), false);
+        if (!clazz.isPresent()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(beanFactory.getBean(InetUtils.class));
+        } catch (BeansException ex) {
+            LOGGER.warning("Can not find inetUtils by clazz!");
+        }
+        return Optional.empty();
     }
 
     public String getServiceName() {
@@ -88,5 +143,10 @@ public class RegistrationProperties {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
     }
 }
