@@ -25,7 +25,6 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 import com.sun.management.OperatingSystemMXBean;
 
-import io.prometheus.client.Collector;
 import io.prometheus.client.GaugeMetricFamily;
 
 import java.lang.management.GarbageCollectorMXBean;
@@ -46,16 +45,12 @@ import java.util.Optional;
  * @version 1.0.0
  * @since 2022-08-02
  */
-public class JvmCollectorService extends Collector implements PluginService {
+public class JvmCollectorService extends SwitchService implements PluginService {
 
-    private static final List<String> NEW_GEN_NAME_LIST = Arrays.asList("PS Scavenge", "PaeNew");
+    private static final List<String> NEW_GEN_NAME_LIST = Arrays.asList("PS Scavenge", "ParNew", "Copy", "G1 Young "
+            + "Generation", "ZGC Cycles");
 
     private static final int PERCENT = 100;
-
-    @Override
-    public void start() {
-        this.register();
-    }
 
     @Override
     public List<MetricFamilySamples> collect() {

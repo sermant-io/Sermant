@@ -29,8 +29,6 @@ import com.huawei.monitor.common.MetricFamilyBuild;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
-import io.prometheus.client.Collector;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -47,7 +45,7 @@ import java.util.logging.Logger;
  * @version 1.0.0
  * @since 2022-08-02
  */
-public class ServerCollectorService extends Collector implements PluginService {
+public class ServerCollectorService extends SwitchService implements PluginService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
@@ -62,11 +60,6 @@ public class ServerCollectorService extends Collector implements PluginService {
     private static final int IO_SPENT_SCALE = 2;
 
     private static final int MILLIS = 1000;
-
-    @Override
-    public void start() {
-        this.register();
-    }
 
     @Override
     public List<MetricFamilySamples> collect() {
@@ -122,8 +115,8 @@ public class ServerCollectorService extends Collector implements PluginService {
         metricList.add(MetricFamilyBuild.buildGaugeMetric(MetricEnum.DISK_WRITE_BYTE_SPEED,
                 totalSectorsWritten * BYTES_PER_SECTOR / INTERVAL));
         long divideNum = INTERVAL * MILLIS * currentStatsList.size();
-        metricList.add(MetricFamilyBuild.buildGaugeMetric(MetricEnum.DISK_IO_SPENT,
-                getPercentage(totalIoSpent, divideNum, IO_SPENT_SCALE).doubleValue()));
+        metricList.add(MetricFamilyBuild.buildGaugeMetric(MetricEnum.DISK_IO_SPENT, getPercentage(totalIoSpent,
+                divideNum, IO_SPENT_SCALE).doubleValue()));
     }
 
     private void collectNetWorkMetric(List<MetricFamilySamples> metricFamilySamplesList,

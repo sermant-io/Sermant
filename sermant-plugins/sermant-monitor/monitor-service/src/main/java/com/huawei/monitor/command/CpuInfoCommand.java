@@ -31,8 +31,6 @@ import java.util.logging.Logger;
  */
 public class CpuInfoCommand extends CommonMonitorCommand<CpuInfoCommand.CpuInfoStat> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger();
-
     private static final String COMMAND = "cat /proc/cpuinfo | grep 'core id' | uniq |  wc -l";
 
     @Override

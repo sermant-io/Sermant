@@ -1,0 +1,2 @@
+monitor.config:
+  enable-start-service: false
