@@ -25,9 +25,11 @@ import com.huaweicloud.loadbalancer.rule.RuleManager;
 import com.huaweicloud.loadbalancer.service.RuleConverter;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.Optional;
@@ -39,14 +41,21 @@ import java.util.Optional;
  * @since 2022-08-16
  */
 public class RibbonLoadbalancerCacheTest {
+    private MockedStatic<ServiceManager> serviceManagerMockedStatic;
+
     /**
      * 配置转换器
      */
-    @BeforeClass
-    public static void setUp() {
-        Mockito.mockStatic(ServiceManager.class)
-                .when(() -> ServiceManager.getService(RuleConverter.class))
+    @Before
+    public void setUp() {
+        serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
+        serviceManagerMockedStatic.when(() -> ServiceManager.getService(RuleConverter.class))
                 .thenReturn(new YamlRuleConverter());
+    }
+
+    @After
+    public void close() {
+        serviceManagerMockedStatic.close();
     }
 
     /**
@@ -74,5 +83,8 @@ public class RibbonLoadbalancerCacheTest {
                 .matchLoadbalancer(targetServiceRule.get().getRule());
         Assert.assertTrue(type.isPresent());
         Assert.assertEquals(type.get(), RibbonLoadbalancerType.AVAILABILITY_FILTERING);
+
+        // 清理规则
+        RuleManagerHelper.deleteRule(targetServiceRule.get().getServiceName(), targetServiceRule.get().getRule());
     }
 }

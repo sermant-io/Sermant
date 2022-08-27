@@ -77,7 +77,7 @@ public enum RibbonLoadbalancerCache {
                 newTypeCache.clear();
                 return;
             }
-            newTypeCache.put(rule.getServiceName(), Optional.of(originType));
+            newTypeCache.put(rule.getServiceName(), Optional.ofNullable(originType));
         } else if (event.getEventType() == DynamicConfigEventType.MODIFY) {
             processModify(rule);
         } else {
@@ -163,7 +163,7 @@ public enum RibbonLoadbalancerCache {
                 matchType = RibbonLoadbalancerType
                         .matchLoadbalancer(targetServiceRule.get().getRule());
             } else {
-                matchType = Optional.of(originType);
+                matchType = Optional.ofNullable(originType);
             }
             newTypeCache.put(serviceName, matchType);
             return matchType;

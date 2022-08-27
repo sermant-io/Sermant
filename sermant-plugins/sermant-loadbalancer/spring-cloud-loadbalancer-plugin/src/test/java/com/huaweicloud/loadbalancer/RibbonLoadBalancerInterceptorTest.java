@@ -29,9 +29,13 @@ import com.netflix.loadbalancer.RandomRule;
 import com.netflix.loadbalancer.RetryRule;
 import com.netflix.loadbalancer.RoundRobinRule;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
@@ -46,6 +50,22 @@ public class RibbonLoadBalancerInterceptorTest {
 
     private final BaseLoadBalancer loadBalancer;
 
+    private MockedStatic<ServiceManager> serviceManagerMockedStatic;
+
+    /**
+     * 配置转换器
+     */
+    @Before
+    public void setUp() {
+        serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
+        serviceManagerMockedStatic.when(() -> ServiceManager.getService(RuleConverter.class))
+                .thenReturn(new YamlRuleConverter());
+    }
+
+    @After
+    public void close() {
+        serviceManagerMockedStatic.close();
+    }
 
     /**
      * 构造方法
@@ -53,16 +73,6 @@ public class RibbonLoadBalancerInterceptorTest {
     public RibbonLoadBalancerInterceptorTest() {
         loadBalancer = new BaseLoadBalancer();
         context = ExecuteContext.forMemberMethod(loadBalancer, null, new Object[] {null}, null, null);
-    }
-
-    /**
-     * 配置转换器
-     */
-    @BeforeClass
-    public static void setUp() {
-        Mockito.mockStatic(ServiceManager.class)
-                .when(() -> ServiceManager.getService(RuleConverter.class))
-                .thenReturn(new YamlRuleConverter());
     }
 
     @Test
@@ -74,27 +84,29 @@ public class RibbonLoadBalancerInterceptorTest {
         Assert.assertEquals(RoundRobinRule.class, ((BaseLoadBalancer) context.getObject()).getRule().getClass());
 
         // 测试未配置负载均衡的场景
-        Mockito.mockStatic(PluginConfigManager.class)
-                .when(() -> PluginConfigManager.getPluginConfig(LoadbalancerConfig.class))
-                .thenReturn(new LoadbalancerConfig());
-        RibbonLoadBalancerInterceptor interceptor = new RibbonLoadBalancerInterceptor();
+        try (final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
+                .mockStatic(PluginConfigManager.class)){
+            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(LoadbalancerConfig.class))
+                    .thenReturn(new LoadbalancerConfig());
+            RibbonLoadBalancerInterceptor interceptor = new RibbonLoadBalancerInterceptor();
 
-        // 无匹配负载均衡场景
-        interceptor.before(context);
-        Assert.assertEquals(loadBalancer, context.getObject());
-        Assert.assertEquals(RoundRobinRule.class, ((BaseLoadBalancer) context.getObject()).getRule().getClass());
+            // 无匹配负载均衡场景
+            interceptor.before(context);
+            Assert.assertEquals(loadBalancer, context.getObject());
+            Assert.assertEquals(RoundRobinRule.class, ((BaseLoadBalancer) context.getObject()).getRule().getClass());
 
-        // 测试负载均衡器类型一致
-        RuleManagerHelper.publishRule(loadBalancer.getName(), RibbonLoadbalancerType.RETRY.getMapperName());
-        loadBalancer.setRule(new RetryRule());
-        interceptor.before(context);
-        Assert.assertEquals(loadBalancer, context.getObject());
-        Assert.assertEquals(RetryRule.class, ((BaseLoadBalancer) context.getObject()).getRule().getClass());
+            // 测试负载均衡器类型一致
+            RuleManagerHelper.publishRule(loadBalancer.getName(), RibbonLoadbalancerType.RETRY.getMapperName());
+            loadBalancer.setRule(new RetryRule());
+            interceptor.before(context);
+            Assert.assertEquals(loadBalancer, context.getObject());
+            Assert.assertEquals(RetryRule.class, ((BaseLoadBalancer) context.getObject()).getRule().getClass());
 
-        // 测试把重试换成随机
-        RuleManagerHelper.publishRule(loadBalancer.getName(), RibbonLoadbalancerType.RANDOM.getMapperName());
-        interceptor.before(context);
-        Assert.assertEquals(loadBalancer, context.getObject());
-        Assert.assertEquals(RandomRule.class, ((BaseLoadBalancer) context.getObject()).getRule().getClass());
+            // 测试把重试换成随机
+            RuleManagerHelper.publishRule(loadBalancer.getName(), RibbonLoadbalancerType.RANDOM.getMapperName());
+            interceptor.before(context);
+            Assert.assertEquals(loadBalancer, context.getObject());
+            Assert.assertEquals(RandomRule.class, ((BaseLoadBalancer) context.getObject()).getRule().getClass());
+        }
     }
 }

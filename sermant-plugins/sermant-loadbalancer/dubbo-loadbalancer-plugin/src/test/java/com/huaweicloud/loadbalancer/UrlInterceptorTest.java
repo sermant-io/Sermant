@@ -29,9 +29,12 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import org.apache.dubbo.common.URL;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.Collections;
@@ -47,14 +50,21 @@ import java.util.Collections;
 public class UrlInterceptorTest {
     private static final String SERVICE_NAME = "test";
 
+    private MockedStatic<ServiceManager> serviceManagerMockedStatic;
+
     /**
      * 配置转换器
      */
-    @BeforeClass
-    public static void setUp() {
-        Mockito.mockStatic(ServiceManager.class)
-                .when(() -> ServiceManager.getService(RuleConverter.class))
+    @Before
+    public void setUp() {
+        serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
+        serviceManagerMockedStatic.when(() -> ServiceManager.getService(RuleConverter.class))
                 .thenReturn(new YamlRuleConverter());
+    }
+
+    @After
+    public void close() {
+        serviceManagerMockedStatic.close();
     }
 
     /**
@@ -103,21 +113,23 @@ public class UrlInterceptorTest {
         Assert.assertFalse(context.isSkip());
         Assert.assertNull(context.getResult());
 
-        Mockito.mockStatic(PluginConfigManager.class)
-                .when(() -> PluginConfigManager.getPluginConfig(LoadbalancerConfig.class))
-                .thenReturn(new LoadbalancerConfig());
-        final UrlInterceptor interceptor = new UrlInterceptor();
-        // 测试负载均衡策略为null
-        interceptor.before(context);
-        Assert.assertFalse(context.isSkip());
-        Assert.assertNull(context.getResult());
+        try (final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
+                .mockStatic(PluginConfigManager.class)){
+            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(LoadbalancerConfig.class))
+                    .thenReturn(new LoadbalancerConfig());
+            final UrlInterceptor interceptor = new UrlInterceptor();
+            // 测试负载均衡策略为null
+            interceptor.before(context);
+            Assert.assertFalse(context.isSkip());
+            Assert.assertNull(context.getResult());
 
-        // 测试正常情况
-        final DubboLoadbalancerCache instance = DubboLoadbalancerCache.INSTANCE;
-        RuleManagerHelper.publishRule(SERVICE_NAME, DubboLoadbalancerType.SHORTESTRESPONSE.getMapperName());
-        interceptor.before(context);
-        Assert.assertNotNull(instance.getNewCache().get(SERVICE_NAME));
-        Assert.assertTrue(context.isSkip());
+            // 测试正常情况
+            final DubboLoadbalancerCache instance = DubboLoadbalancerCache.INSTANCE;
+            RuleManagerHelper.publishRule(SERVICE_NAME, DubboLoadbalancerType.SHORTESTRESPONSE.getMapperName());
+            interceptor.before(context);
+            Assert.assertNotNull(instance.getNewCache().get(SERVICE_NAME));
+            Assert.assertTrue(context.isSkip());
+        }
     }
 
     private ExecuteContext buildContext(Object[] arguments) throws NoSuchMethodException {
