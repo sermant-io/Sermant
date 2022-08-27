@@ -24,8 +24,8 @@ import com.huaweicloud.sermant.router.config.label.entity.Route;
 import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.label.entity.Rule;
 
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -58,12 +58,12 @@ public class RuleUtils {
      *
      * @param configuration 路由配置
      * @param targetService 目标服务
-     * @param path          dubbo接口名/url路径
-     * @param serviceName   本服务服务名
+     * @param path dubbo接口名/url路径
+     * @param serviceName 本服务服务名
      * @return 目标规则
      */
     public static List<Rule> getRules(RouterConfiguration configuration, String targetService, String path,
-                                      String serviceName) {
+        String serviceName) {
         if (RouterConfiguration.isInValid(configuration)) {
             return Collections.emptyList();
         }
@@ -133,7 +133,7 @@ public class RuleUtils {
      * 更新header key
      *
      * @param serviceName 服务名
-     * @param rules       路由规则
+     * @param rules 路由规则
      */
     public static void updateHeaderKeys(String serviceName, List<Rule> rules) {
         if (CollectionUtils.isEmpty(rules)) {
@@ -212,14 +212,16 @@ public class RuleUtils {
     }
 
     /**
-     * 将headers规则写入attachemnts
+     * 将headers规则写入attachments
      *
      * @param match headers匹配规则
      */
     public static void setAttachmentsByHeaders(Match match) {
-        if (match == null) {
+        if (match == null || !CollectionUtils.isEmpty(match.getAttachments())) {
             return;
         }
+
+        // attachments兼容headers
         match.setAttachments(match.getHeaders());
     }
 
@@ -295,8 +297,8 @@ public class RuleUtils {
 
     private static boolean isInvalidMatchRule(MatchRule matchRule) {
         return matchRule == null || matchRule.getValueMatch() == null
-                || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
-                || matchRule.getValueMatch().getMatchStrategy() == null;
+            || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
+            || matchRule.getValueMatch().getMatchStrategy() == null;
     }
 
     private static boolean isInvalidRoute(Route route) {
@@ -318,7 +320,7 @@ public class RuleUtils {
          * 构造方法
          *
          * @param match 是否匹配
-         * @param tags  目标路由
+         * @param tags 目标路由
          */
         public RouteResult(boolean match, List<Map<String, String>> tags) {
             this.match = match;

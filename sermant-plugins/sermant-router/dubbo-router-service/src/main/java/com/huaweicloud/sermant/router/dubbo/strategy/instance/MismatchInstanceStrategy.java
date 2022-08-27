@@ -16,14 +16,11 @@
 
 package com.huaweicloud.sermant.router.dubbo.strategy.instance;
 
-import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.strategy.AbstractInstanceStrategy;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -45,7 +42,6 @@ public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object> {
         Function<Object, Map<String, String>> mapper) {
         // 由于由于mismatch里面的标签已经匹配过了且没有匹配上，所以要剔除掉，不能参与负载均衡，否则会导致流量比例不正确（会偏高）
         Map<String, String> metaData = getMetadata(invoker, mapper);
-
         for (Map<String, String> mismatchTag : tags) {
             for (Map.Entry<String, String> entry : mismatchTag.entrySet()) {
                 String value = entry.getValue();
@@ -53,7 +49,7 @@ public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object> {
                     continue;
                 }
                 String key = VERSION_KEY.equals(entry.getKey()) ? RouterConstant.VERSION_KEY
-                        : RouterConstant.PARAMETERS_KEY_PREFIX + entry.getKey();
+                    : RouterConstant.PARAMETERS_KEY_PREFIX + entry.getKey();
                 if (value.equals(metaData.get(key))) {
                     return false;
                 }

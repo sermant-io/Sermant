@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2021-10-27
  */
 public class RouterConfiguration {
-
     /**
      * 标签规则,key为应用名，value为规则
      */
