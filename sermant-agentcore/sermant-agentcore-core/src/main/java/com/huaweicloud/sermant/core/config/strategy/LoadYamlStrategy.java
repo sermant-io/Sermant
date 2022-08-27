@@ -85,8 +85,8 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
             return config;
         }
 
-        Map configMap = (Map) holder.get(typeKey);
-        for (Field field : config.getClass().getDeclaredFields()) {
+        Map configMap = (Map) typeVal;
+        for (Field field : cls.getDeclaredFields()) {
             if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
@@ -97,7 +97,7 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(cls.getClassLoader());
-            return (R) yaml.loadAs(yaml.dump(fixEntry((Map) typeVal, cls)), cls);
+            return (R) yaml.loadAs(yaml.dump(fixEntry(configMap, cls)), cls);
         } finally {
             Thread.currentThread().setContextClassLoader(classLoader);
         }
@@ -136,6 +136,9 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
         }
         Map fixedTypeMap = fixEntry(typeMap, cls.getSuperclass());
         for (Field field : cls.getDeclaredFields()) {
+            if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
             final ConfigFieldKey configFieldKey = field.getAnnotation(ConfigFieldKey.class);
             final String fieldKey = field.getName();
             final Object subTypeVal;
@@ -193,7 +196,8 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
             if (fixedStrValue == null) {
                 fixedVal = null;
             } else {
-                fixedVal = yaml.loadAs(fixedStrValue, field.getType());
+                Class<?> cls = field.getType().equals(Boolean.TYPE) ? Boolean.class : field.getType();
+                fixedVal = yaml.loadAs(fixedStrValue, cls);
             }
         } else {
             fixedVal = yaml.loadAs(
