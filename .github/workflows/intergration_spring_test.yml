@@ -21,6 +21,7 @@ jobs:
         with:
           name: local-cse
           path: Local-CSE-2.1.3-linux-amd64.zip
+          retention-days: 1
   test-for-spring-1-5-x:
     name: Test for spring 1.5.x
     runs-on: ubuntu-latest
@@ -64,14 +65,20 @@ jobs:
           dynamic.config.dynamicConfigType: KIE
           service.meta.environment: development
         run: |
+          mkdir logs
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8013 -jar \
+          -Dsermant_log_dir=./logs/feign-provider-1.5.x \
           sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign-1.5.x/feign-provider-1.5.x/target/feign-provider-1.5.x.jar > feign-provider.log 2>&1 &
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8015 -jar \
+          -Dsermant_log_dir=./logs/feign-consumer-1.5.x \
           sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign-1.5.x/feign-consumer-1.5.x/target/feign-consumer-1.5.x.jar > feign-consumer.log 2>&1 &
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dservice.meta.application=rest -Dserver.port=8003 -jar \
+          -Dsermant_log_dir=./logs/rest-provider-1.5.x \
           sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > rest-provider.log 2>&1 &
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dservice.meta.application=rest -Dserver.port=8005 -jar \
+          -Dsermant_log_dir=./logs/rest-consumer-1.5.x \
           sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-consumer/target/rest-consumer.jar > rest-consumer.log 2>&1 &
+          ls -l ./logs
       - name: waiting for services start
         run: |
           ps -ef | grep java
@@ -82,6 +89,16 @@ jobs:
         run: mvn test -Dsermant.integration.test.type=FLOW_CONTROL --file sermant-integration-tests/spring-test/pom.xml
       - name: integration test module LOAD_BALANCER
         run: mvn test -Dsermant.integration.test.type=LOAD_BALANCER -Dspring.boot.version=${{ matrix.springBootVersion }} --file sermant-integration-tests/spring-test/pom.xml
+      - name: if failure then upload error log
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: (test-for-spring-1-5-x)-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion }})-logs
+          path: |
+            ./*.log
+            ./logs/**/*.log
+          if-no-files-found: warn
+          retention-days: 5
   test-for-spring:
     name: Test for spring
     runs-on: ubuntu-latest
@@ -145,12 +162,16 @@ jobs:
           service.meta.environment: development
         run: |
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8013 -jar \
+          -Dsermant_log_dir=./logs/feign-provider \
           sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign/feign-provider/target/feign-provider.jar > feign-provider.log 2>&1 &
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8015 -jar \
+          -Dsermant_log_dir=./logs/feign-consumer \
           sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign/feign-consumer/target/feign-consumer.jar > feign-consumer.log 2>&1 &
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dservice.meta.application=rest -Dserver.port=8003 -jar \
+          -Dsermant_log_dir=./logs/rest-provider \
           sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > rest-provider.log 2>&1 &
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dservice.meta.application=rest -Dserver.port=8005 -jar \
+          -Dsermant_log_dir=./logs/rest-consumer \
           sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-consumer/target/rest-consumer.jar > rest-consumer.log 2>&1 &
       - name: waiting for services start
         run: |
@@ -162,6 +183,16 @@ jobs:
         run: mvn test -Dsermant.integration.test.type=FLOW_CONTROL --file sermant-integration-tests/spring-test/pom.xml
       - name: integration test module LOAD_BALANCER
         run: mvn test -Dsermant.integration.test.type=LOAD_BALANCER -Dspring.boot.version=${{ matrix.springBootVersion }} --file sermant-integration-tests/spring-test/pom.xml
+      - name: if failure then upload error log
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: (test-for-spring)-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion }})-logs
+          path: |
+            ./*.log
+            ./logs/**/*.log
+          if-no-files-found: warn
+          retention-days: 5
   test-for-spring-nacos-config:
     name: Test for spring nacos config
     runs-on: ubuntu-latest
@@ -235,7 +266,7 @@ jobs:
           service.meta.application: disable
           service.meta.environment: development
         run: |
-          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dspring.cloud.bootstrap.enabled=true -jar sermant-integration-tests/spring-test/spring-nacos-config/target/nacos-config.jar > nacos-config.log 2>&1 &
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dspring.cloud.bootstrap.enabled=true -jar sermant-integration-tests/spring-test/spring-nacos-config/target/nacos-config.jar >> nacos-config.log 2>&1 &
       - name: waiting for services start
         run: |
           ps -ef | grep java
@@ -253,11 +284,21 @@ jobs:
           service.meta.environment: development
         run: |
           ps -ef | grep nacos-config | head -n 1 | awk '{print $2}' | xargs -n 1 kill -9
-          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dspring.cloud.bootstrap.enabled=true -jar sermant-integration-tests/spring-test/spring-nacos-config/target/nacos-config.jar &
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dspring.cloud.bootstrap.enabled=true -jar sermant-integration-tests/spring-test/spring-nacos-config/target/nacos-config.jar >> nacos-dynamic-config.log 2>&1 &
       - name: wait for ready and test
         run: |
           bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8989/dynamic/config/check 30
           mvn test -Dsermant.integration.test.type=dynamic_config_nacos --file sermant-integration-tests/spring-test/pom.xml
+      - name: if failure then upload error log
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: (test-for-spring-nacos-config)-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion}}-${{ matrix.nacosVersion }})-logs
+          path: |
+            ./*.log
+            ./logs/**/*.log
+          if-no-files-found: warn
+          retention-days: 5
   test-for-spring-zk-config:
     name: Test for spring zk config
     runs-on: ubuntu-latest
@@ -326,7 +367,7 @@ jobs:
           service.meta.application: disable
           service.meta.environment: development
         run: |
-          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dspring.cloud.bootstrap.enabled=true -jar sermant-integration-tests/spring-test/spring-zookeeper-config/target/zookeeper-config.jar > zk.log 2>&1 &
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dspring.cloud.bootstrap.enabled=true -jar sermant-integration-tests/spring-test/spring-zookeeper-config/target/zookeeper-config.jar >> zk.log 2>&1 &
       - name: waiting for services start
         run: |
           ps -ef | grep java
@@ -344,8 +385,18 @@ jobs:
           service.meta.environment: development
         run: |
           ps -ef | grep zookeeper-config | head -n 1 | awk '{print $2}' | xargs -n 1 kill -9
-          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dspring.cloud.bootstrap.enabled=true -jar sermant-integration-tests/spring-test/spring-zookeeper-config/target/zookeeper-config.jar > zk-config.log 2>&1 &
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dspring.cloud.bootstrap.enabled=true -jar sermant-integration-tests/spring-test/spring-zookeeper-config/target/zookeeper-config.jar >> zk-dynamic-config.log 2>&1 &
       - name: wait for ready and test
         run: |
           bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8989/dynamic/config/check 30
           mvn test -Dsermant.integration.test.type=dynamic_config_zk --file sermant-integration-tests/spring-test/pom.xml
+      - name: if failure then upload error log
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: (test-for-spring-zk-config)-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion }})-logs
+          path: |
+            ./*.log
+            ./logs/**/*.log
+          if-no-files-found: warn
+          retention-days: 5
