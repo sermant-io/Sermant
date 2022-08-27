@@ -18,7 +18,6 @@
 package com.huawei.flowcontrol.common.enums;
 
 import com.huawei.flowcontrol.common.metric.MetricSender;
-import com.huawei.flowcontrol.common.metric.NettyMetricSender;
 import com.huawei.flowcontrol.common.metric.SimpleKafkaMetricSender;
 
 /**
@@ -31,12 +30,7 @@ public enum MetricSendWay {
     /**
      * Kafka发送方式
      */
-    KAFKA(new SimpleKafkaMetricSender()),
-
-    /**
-     * Netty发送方式
-     */
-    NETTY(new NettyMetricSender());
+    KAFKA(new SimpleKafkaMetricSender());
 
     private final MetricSender sender;
 

@@ -177,9 +177,9 @@ public class FlowControlConfig implements PluginConfig {
     private boolean needThrowBizException = false;
 
     /**
-     * 指标数据发送方式 默认Netty
+     * 指标数据发送方式 默认KAFKA
      */
-    private MetricSendWay sendWay = MetricSendWay.NETTY;
+    private MetricSendWay sendWay = MetricSendWay.KAFKA;
 
     /**
      * 等待指标数据写入文件的等待时间 单位MS
