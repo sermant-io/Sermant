@@ -49,7 +49,7 @@ public class DiskCommand extends CommonMonitorCommand<List<DiskCommand.DiskStats
     @Override
     public List<DiskStats> parseResult(InputStream inputStream) {
         final List<String> lines = readLines(inputStream);
-        final List<DiskStats> diskStats = new ArrayList<DiskStats>(lines.size());
+        final List<DiskStats> diskStats = new ArrayList<>(lines.size());
         for (String line : lines) {
             String[] diskStatsText = line.split(Constants.REGEX_MULTI_SPACES);
             String deviceName = diskStatsText[DEVICE_NAME_INDEX];

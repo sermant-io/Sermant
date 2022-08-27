@@ -91,7 +91,47 @@ public enum MemoryType {
      * 老年代指标枚举
      */
     OLD_EDEN_SPACE_CMS("CMS Old Gen", MetricEnum.OLD_GEN_INIT, MetricEnum.OLD_GEN_USED, MetricEnum.OLD_GEN_MAX,
-            MetricEnum.OLD_GEN_COMMITTED);
+            MetricEnum.OLD_GEN_COMMITTED),
+
+    /**
+     * SERIAL年轻代Eden指标信息
+     */
+    EDEN_SPACE_SERIAL("Eden Space", MetricEnum.EDEN_INIT, MetricEnum.EDEN_USED, MetricEnum.EDEN_MAX,
+            MetricEnum.EDEN_COMMITTED),
+
+    /**
+     * SERIAL年轻代Survivor指标信息
+     */
+    SURVIVOR_SPACE_SERIAL("Survivor Space", MetricEnum.SURVIVOR_INIT, MetricEnum.SURVIVOR_USED,
+            MetricEnum.SURVIVOR_MAX, MetricEnum.SURVIVOR_COMMITTED),
+
+    /**
+     * SERIAL老年代指标枚举
+     */
+    OLD_EDEN_SPACE_SERIAL("Tenured Gen", MetricEnum.OLD_GEN_INIT, MetricEnum.OLD_GEN_USED, MetricEnum.OLD_GEN_MAX,
+            MetricEnum.OLD_GEN_COMMITTED),
+    /**
+     * SERIAL年轻代Eden指标信息
+     */
+    EDEN_SPACE_G1("G1 Eden Space", MetricEnum.EDEN_INIT, MetricEnum.EDEN_USED, MetricEnum.EDEN_MAX,
+            MetricEnum.EDEN_COMMITTED),
+
+    /**
+     * SERIAL年轻代Survivor指标信息
+     */
+    SURVIVOR_SPACE_G1("G1 Survivor Space", MetricEnum.SURVIVOR_INIT, MetricEnum.SURVIVOR_USED,
+            MetricEnum.SURVIVOR_MAX, MetricEnum.SURVIVOR_COMMITTED),
+
+    /**
+     * SERIAL老年代指标枚举
+     */
+    OLD_EDEN_SPACE_G1("G1 Old Gen", MetricEnum.OLD_GEN_INIT, MetricEnum.OLD_GEN_USED, MetricEnum.OLD_GEN_MAX,
+            MetricEnum.OLD_GEN_COMMITTED),
+    /**
+     * CodeCache内存池
+     */
+    CODE_CACHE_G1("CodeCache", MetricEnum.CODE_CACHE_INIT, MetricEnum.CODE_CACHE_USED, MetricEnum.CODE_CACHE_MAX,
+            MetricEnum.CODE_CACHE_COMMITTED);
 
     /**
      * 类型
