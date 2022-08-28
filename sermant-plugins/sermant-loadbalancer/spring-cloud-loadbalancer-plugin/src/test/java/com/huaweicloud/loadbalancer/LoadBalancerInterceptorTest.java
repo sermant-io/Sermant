@@ -19,14 +19,17 @@ package com.huaweicloud.loadbalancer;
 
 import com.huaweicloud.loadbalancer.cache.SpringLoadbalancerCache;
 import com.huaweicloud.loadbalancer.interceptor.LoadBalancerInterceptor;
-
 import com.huaweicloud.loadbalancer.service.RuleConverter;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.lang.reflect.Field;
@@ -45,6 +48,8 @@ public class LoadBalancerInterceptorTest {
 
     private final LoadBalancerInterceptor interceptor;
 
+    private MockedStatic<ServiceManager> serviceManagerMockedStatic;
+
     /**
      * 构造方法
      */
@@ -55,11 +60,16 @@ public class LoadBalancerInterceptorTest {
     /**
      * 配置转换器
      */
-    @BeforeClass
-    public static void setUp() {
-        Mockito.mockStatic(ServiceManager.class)
-                .when(() -> ServiceManager.getService(RuleConverter.class))
+    @Before
+    public void setUp() {
+        serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
+        serviceManagerMockedStatic.when(() -> ServiceManager.getService(RuleConverter.class))
                 .thenReturn(new YamlRuleConverter());
+    }
+
+    @After
+    public void close() {
+        serviceManagerMockedStatic.close();
     }
 
     /**
@@ -67,6 +77,8 @@ public class LoadBalancerInterceptorTest {
      */
     @Test
     public void test() throws NoSuchFieldException, IllegalAccessException {
+        init();
+
         // 测试obj为null
         ExecuteContext context = ExecuteContext.forStaticMethod(Object.class, null, null, null);
         interceptor.after(context);
@@ -136,5 +148,10 @@ public class LoadBalancerInterceptorTest {
         Field field = SpringLoadbalancerCache.INSTANCE.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         return (Map<String, Object>) field.get(SpringLoadbalancerCache.INSTANCE);
+    }
+
+    private void init() throws NoSuchFieldException, IllegalAccessException {
+        getProviderMap().clear();
+        getOriginCache().clear();
     }
 }

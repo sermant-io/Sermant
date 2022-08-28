@@ -43,6 +43,19 @@ public class RuleManagerHelper {
         RuleManager.INSTANCE.resolve(loadbalancerEvent);
     }
 
+    /**
+     * 删除规则
+     *
+     * @param rule 负载均衡规则
+     * @param serviceName 服务名
+     */
+    public static void deleteRule(String serviceName, String rule) {
+        final DynamicConfigEvent matchGroupEvent = buildDelEvent(MATCH_GROUP_KEY, getMatchGroup(serviceName));
+        RuleManager.INSTANCE.resolve(matchGroupEvent);
+        final DynamicConfigEvent loadbalancerEvent = buildDelEvent(BALANCER_KEY, getLoadbalancer(rule));
+        RuleManager.INSTANCE.resolve(loadbalancerEvent);
+    }
+
     private static String getLoadbalancer(String rule) {
         return "rule: " + rule;
     }
@@ -63,5 +76,9 @@ public class RuleManagerHelper {
 
     private static DynamicConfigEvent buildEvent(String key, String content) {
         return DynamicConfigEvent.createEvent(key, "default", content);
+    }
+
+    private static DynamicConfigEvent buildDelEvent(String key, String content) {
+        return DynamicConfigEvent.deleteEvent(key, "default", content);
     }
 }

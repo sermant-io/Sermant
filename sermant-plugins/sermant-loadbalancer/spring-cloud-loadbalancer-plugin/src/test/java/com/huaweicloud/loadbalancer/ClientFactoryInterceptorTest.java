@@ -26,9 +26,13 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.client.ServiceInstance;
@@ -51,12 +55,14 @@ public class ClientFactoryInterceptorTest {
 
     private final ExecuteContext context;
 
+    private MockedStatic<ServiceManager> serviceManagerMockedStatic;
+
     /**
      * 构造方法
      */
     public ClientFactoryInterceptorTest() throws NoSuchMethodException {
         ObjectProvider<ServiceInstanceListSupplier> suppliers = ServiceInstanceListSuppliers
-            .toProvider(FOO, new TestServiceInstance());
+                .toProvider(FOO, new TestServiceInstance());
         SpringLoadbalancerCache.INSTANCE.putOrigin(FOO, new RoundRobinLoadBalancer(suppliers, FOO));
         SpringLoadbalancerCache.INSTANCE.putProvider(FOO, suppliers);
         Object[] arguments = new Object[1];
@@ -67,11 +73,16 @@ public class ClientFactoryInterceptorTest {
     /**
      * 配置转换器
      */
-    @BeforeClass
-    public static void setUp() {
-        Mockito.mockStatic(ServiceManager.class)
-                .when(() -> ServiceManager.getService(RuleConverter.class))
+    @Before
+    public void setUp() {
+        serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
+        serviceManagerMockedStatic.when(() -> ServiceManager.getService(RuleConverter.class))
                 .thenReturn(new YamlRuleConverter());
+    }
+
+    @After
+    public void close() {
+        serviceManagerMockedStatic.close();
     }
 
     /**
@@ -85,30 +96,36 @@ public class ClientFactoryInterceptorTest {
         Assert.assertNull(context.getResult());
 
         // 测试未配置负载均衡的场景
-        Mockito.mockStatic(PluginConfigManager.class)
-                .when(() -> PluginConfigManager.getPluginConfig(LoadbalancerConfig.class))
-                .thenReturn(new LoadbalancerConfig());
-        final ClientFactoryInterceptor interceptor = new ClientFactoryInterceptor();
-        interceptor.after(context);
-        Assert.assertNull(context.getResult());
+        try (final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
+                .mockStatic(PluginConfigManager.class)) {
+            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(LoadbalancerConfig.class))
+                    .thenReturn(new LoadbalancerConfig());
+            final ClientFactoryInterceptor interceptor = new ClientFactoryInterceptor();
+            interceptor.after(context);
+            Assert.assertNull(context.getResult());
 
-        // 测试已配置负载均衡与原生负载均衡一致
-        RuleManagerHelper.publishRule(FOO, SpringLoadbalancerType.ROUND_ROBIN.getMapperName());
-        interceptor.after(context);
-        Assert.assertNotNull(context.getResult());
+            // 测试已配置负载均衡与原生负载均衡一致
+            RuleManagerHelper.publishRule(FOO, SpringLoadbalancerType.ROUND_ROBIN.getMapperName());
+            interceptor.after(context);
+            Assert.assertNotNull(context.getResult());
 
-        // 测试与原生负载均衡不一致
-        RuleManagerHelper.publishRule(FOO, SpringLoadbalancerType.RANDOM.getMapperName());
-        interceptor.after(context);
-        Assert.assertNotNull(context.getResult());
+            // 测试与原生负载均衡不一致
+            RuleManagerHelper.publishRule(FOO, SpringLoadbalancerType.RANDOM.getMapperName());
+            interceptor.after(context);
+            Assert.assertNotNull(context.getResult());
 
-        // 测试已存在缓存的场景
-        RuleManagerHelper.publishRule(FOO + "__1", SpringLoadbalancerType.RANDOM.getMapperName());
-        interceptor.after(context);
-        Assert.assertNotNull(context.getResult());
+            // 测试已存在缓存的场景
+            RuleManagerHelper.publishRule(FOO + "__1", SpringLoadbalancerType.RANDOM.getMapperName());
+            interceptor.after(context);
+            Assert.assertNotNull(context.getResult());
 
-        // 缓存校验
-        Assert.assertEquals(1, SpringLoadbalancerCache.INSTANCE.getNewCache().size());
+            // 缓存校验
+            Assert.assertEquals(1, SpringLoadbalancerCache.INSTANCE.getNewCache().size());
+
+            // 清理规则
+            RuleManagerHelper.deleteRule(FOO, SpringLoadbalancerType.RANDOM.getMapperName());
+            RuleManagerHelper.deleteRule(FOO + "__1", SpringLoadbalancerType.RANDOM.getMapperName());
+        }
     }
 
     public static class TestServiceInstance implements ServiceInstance {
