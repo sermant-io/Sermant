@@ -17,7 +17,9 @@
 package com.huawei.example.demo.service;
 
 import com.huawei.example.demo.common.DemoLogger;
+import com.huawei.example.demo.config.DemoConfig;
 
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
@@ -29,9 +31,20 @@ import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
  * @since 2021-10-25
  */
 public class DemoSimpleService implements PluginService {
+
+    private final DemoConfig config;
+
+    /**
+     * 构造方法
+     */
+    public DemoSimpleService() {
+        config = PluginConfigManager.getPluginConfig(DemoConfig.class);
+    }
+
     @Override
     public void start() {
         DemoLogger.println("[DemoSimpleService]-start");
+        DemoLogger.println(config.toString());
     }
 
     @Override
