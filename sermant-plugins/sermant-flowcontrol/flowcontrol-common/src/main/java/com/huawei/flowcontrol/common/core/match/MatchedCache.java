@@ -17,13 +17,13 @@
 
 package com.huawei.flowcontrol.common.core.match;
 
-import com.huawei.flowcontrol.common.core.ResolverManager;
-import com.huawei.flowcontrol.common.core.resolver.AbstractResolver;
-import com.huawei.flowcontrol.common.core.resolver.listener.ConfigUpdateListener;
 import com.huawei.flowcontrol.common.cache.Cache;
 import com.huawei.flowcontrol.common.cache.TimedConcurrentMapCache;
 import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
+import com.huawei.flowcontrol.common.core.ResolverManager;
+import com.huawei.flowcontrol.common.core.resolver.AbstractResolver;
+import com.huawei.flowcontrol.common.core.resolver.listener.ConfigUpdateListener;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;

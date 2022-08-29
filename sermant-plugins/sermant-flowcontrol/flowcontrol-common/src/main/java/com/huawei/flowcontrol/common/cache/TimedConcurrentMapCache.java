@@ -76,8 +76,7 @@ public class TimedConcurrentMapCache<K extends Timed, V> extends ConcurrentMapCa
 
     @Override
     public void put(K key, V value) {
-        if (super.size() > maxSize) {
-            scheduledThreadPoolExecutor.submit(this::removeEvictedCache);
+        if (super.size() >= maxSize) {
             if (checkEvict()) {
                 LOGGER.fine(String.format(Locale.ENGLISH,
                         "[TimedConcurrentMapCache] can not put key, because capacity has been max (%s)", maxSize));

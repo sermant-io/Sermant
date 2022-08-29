@@ -23,6 +23,8 @@ import com.huaweicloud.sermant.core.utils.ClassLoaderUtils;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -81,7 +83,12 @@ public class ReflectUtils {
         final Optional<Method> method = REFLECT_METHOD_CACHE
             .computeIfAbsent(formatReflectKey(target, methodName), fn -> {
                 try {
-                    return Optional.of(target.getClass().getDeclaredMethod(methodName, parameterTypes));
+                    final Method declaredMethod = target.getClass().getDeclaredMethod(methodName, parameterTypes);
+                    AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                        declaredMethod.setAccessible(true);
+                        return Boolean.TRUE;
+                    });
+                    return Optional.of(declaredMethod);
                 } catch (NoSuchMethodException ex) {
                     LoggerFactory.getLogger().warning(String.format(Locale.ENGLISH, "No such method [%s] at class [%s]",
                         methodName, target.getClass().getName()));
