@@ -24,9 +24,11 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.List;
@@ -49,16 +51,23 @@ public class ConfigHolderTest {
 
     private static DynamicConfigEvent event;
 
-    @BeforeClass
-    public static void before() {
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    @Before
+    public void setUp() {
         event = Mockito.mock(DynamicConfigEvent.class);
         DynamicConfiguration configuration = Mockito.mock(DynamicConfiguration.class);
         Mockito.when(event.getKey()).thenReturn(KEY);
         Mockito.when(event.getContent()).thenReturn(CONTENT);
         Mockito.when(configuration.getFirstRefreshDelayMs()).thenReturn(0L);
-        Mockito.mockStatic(PluginConfigManager.class)
-            .when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
-            .thenReturn(configuration);
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
+                .thenReturn(configuration);
+    }
+
+    @After
+    public void tearDown() {
+        pluginConfigManagerMockedStatic.close();
     }
 
     @Test

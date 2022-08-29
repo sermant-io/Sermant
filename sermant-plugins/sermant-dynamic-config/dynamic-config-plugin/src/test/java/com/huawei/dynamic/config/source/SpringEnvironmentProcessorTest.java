@@ -24,9 +24,11 @@ import com.huawei.dynamic.config.sources.MockEnvironment;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.core.env.PropertySource;
 
@@ -41,17 +43,23 @@ public class SpringEnvironmentProcessorTest {
     private static final String VALUE = String.valueOf(Integer.MIN_VALUE);
     private static final String CONTENT = "test: " + VALUE;
     private DynamicConfigEvent event;
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     @Before
-    public void before() {
+    public void setUp() {
         event = Mockito.mock(DynamicConfigEvent.class);
         Mockito.when(event.getKey()).thenReturn(KEY);
         Mockito.when(event.getContent()).thenReturn(CONTENT);
         final DynamicConfiguration configuration = Mockito.mock(DynamicConfiguration.class);
         Mockito.when(configuration.getFirstRefreshDelayMs()).thenReturn(0L);
-        Mockito.mockStatic(PluginConfigManager.class)
-            .when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
-            .thenReturn(configuration);
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
+                .thenReturn(configuration);
+    }
+
+    @After
+    public void tearDown() {
+        pluginConfigManagerMockedStatic.close();
     }
 
     @Test
