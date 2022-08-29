@@ -16,11 +16,8 @@
 
 package com.huawei.monitor.command;
 
-import com.huaweicloud.sermant.core.common.LoggerFactory;
-
 import java.io.InputStream;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * CPU信息命令
@@ -31,7 +28,7 @@ import java.util.logging.Logger;
  */
 public class CpuInfoCommand extends CommonMonitorCommand<CpuInfoCommand.CpuInfoStat> {
 
-    private static final String COMMAND = "cat /proc/cpuinfo | grep 'core id' | uniq |  wc -l";
+    private static final String COMMAND = "lscpu | grep 'Socket(s)' | uniq |  wc -l";
 
     @Override
     public String getCommand() {
