@@ -22,13 +22,16 @@ import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
+import com.huaweicloud.sermant.core.plugin.inject.ClassInjectService;
+import com.huaweicloud.sermant.core.plugin.inject.InjectServiceImpl;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -50,21 +53,40 @@ public class SpringFactoriesInterceptorTest {
     private static final String BOOTSTRAP_FACTORY_NAME = "org.springframework.cloud.bootstrap.BootstrapConfiguration";
 
     private static final String ENABLE_AUTO_CONFIGURATION_FACTORY_NAME =
-        "org.springframework.boot.autoconfigure.EnableAutoConfiguration";
+            "org.springframework.boot.autoconfigure.EnableAutoConfiguration";
+
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    private MockedStatic<ServiceManager> serviceManagerMockedStatic;
+
+    private Field hasMethodLoadSpringFactoriesFiled;
 
     @Before
-    public void init() {
-        Mockito.mockStatic(PluginConfigManager.class)
-            .when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class
-            )).thenReturn(new DynamicConfiguration());
+    public void setUp() throws NoSuchMethodException, NoSuchFieldException {
+        beforeTest();
+        hasMethodLoadSpringFactoriesFiled = SpringFactoriesInterceptor.class
+                .getDeclaredField("hasMethodLoadSpringFactories");
+        hasMethodLoadSpringFactoriesFiled.setAccessible(true);
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class
+        )).thenReturn(new DynamicConfiguration());
+        serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
+        serviceManagerMockedStatic.when(() -> ServiceManager.getService(ClassInjectService.class
+        )).thenReturn(new InjectServiceImpl());
+    }
+
+    @After
+    public void tearDown() {
+        pluginConfigManagerMockedStatic.close();
+        serviceManagerMockedStatic.close();
     }
 
     @Test
-    public void doAfter() throws NoSuchMethodException {
+    public void doAfterHighVersion() throws NoSuchMethodException, IllegalAccessException {
         final SpringFactoriesInterceptor interceptor = new SpringFactoriesInterceptor();
-        beforeTest();
+        hasMethodLoadSpringFactoriesFiled.set(interceptor, Boolean.TRUE);
         ExecuteContext executeContext = ExecuteContext.forMemberMethod(this, this.getClass().getMethod("doAfter"),
-            null, null, null);
+                null, null, null);
         // 高版本测试
         final Map<String, List<String>> cache = new HashMap<>();
         cache.put(BOOTSTRAP_FACTORY_NAME, new ArrayList<>());
@@ -73,19 +95,25 @@ public class SpringFactoriesInterceptorTest {
         executeContext = interceptor.doAfter(executeContext);
         final Map<String, List<String>> result = (Map<String, List<String>>) executeContext.getResult();
         Assert.assertTrue(result.get(BOOTSTRAP_FACTORY_NAME).contains(PROPERTY_LOCATOR_CLASS)
-            && result.get(ENABLE_AUTO_CONFIGURATION_FACTORY_NAME).contains(EVENT_PUBLISHER_CLASS));
+                && result.get(ENABLE_AUTO_CONFIGURATION_FACTORY_NAME).contains(EVENT_PUBLISHER_CLASS));
+    }
 
+    @Test
+    public void doAfterLowVersion() throws NoSuchMethodException, IllegalAccessException {
         // 低版本测试
         final SpringFactoriesInterceptor lowVersionInterceptor = new SpringFactoriesInterceptor();
-        final MultiValueMap<String, String> lowVersionCache = new LinkedMultiValueMap<>();
-        lowVersionCache.put(BOOTSTRAP_FACTORY_NAME, new ArrayList<>());
-        lowVersionCache.put(ENABLE_AUTO_CONFIGURATION_FACTORY_NAME, new ArrayList<>());
-        executeContext.changeResult(lowVersionCache);
+        hasMethodLoadSpringFactoriesFiled.set(lowVersionInterceptor, Boolean.FALSE);
+        ExecuteContext executeContext = ExecuteContext.forMemberMethod(this, this.getClass().getMethod("doAfter"),
+                new Object[]{org.springframework.boot.autoconfigure.EnableAutoConfiguration.class
+                }, null, null);
+        final List<String> lowResult = new ArrayList<>();
+        executeContext.changeResult(lowResult);
         executeContext = lowVersionInterceptor.doAfter(executeContext);
-        final MultiValueMap<String, String> lowVersionResult = (MultiValueMap<String, String>) executeContext
-            .getResult();
-        Assert.assertTrue(lowVersionResult.get(BOOTSTRAP_FACTORY_NAME).contains(PROPERTY_LOCATOR_CLASS)
-            && lowVersionResult.get(ENABLE_AUTO_CONFIGURATION_FACTORY_NAME).contains(EVENT_PUBLISHER_CLASS));
+        executeContext.changeArgs(new Object[]{org.springframework.cloud.bootstrap.BootstrapConfiguration.class
+        });
+        executeContext = lowVersionInterceptor.doAfter(executeContext);
+        final List<String> injectResult = (List<String>) executeContext.getResult();
+        Assert.assertTrue(injectResult.contains(PROPERTY_LOCATOR_CLASS) && injectResult.contains(EVENT_PUBLISHER_CLASS));
     }
 
     private void beforeTest() {
