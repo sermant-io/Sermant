@@ -1,0 +1,55 @@
+name: Bug Report
+description: Report a bug encountered while using sermant
+labels: kind/bug
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: |
+        Please provide as much info as possible. Not doing so may result in your bug not being addressed in a timely manner.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: How can we reproduce it (as minimally and precisely as possible)?
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Anything else we need to know?
+
+  - type: textarea
+    id: sermantVersion
+    attributes:
+      label: Sermant version
+      value: |
+        <details>
+
+        </details>
+    validations:
+      required: true
+
+  - type: textarea
+    id: osVersion
+    attributes:
+      label: OS version
+      value: |
+        <details>
+
+        ```console
+        # On Linux:
+        $ cat /etc/os-release
+        # paste output here
+        $ uname -a
+        # paste output here
+
+        # On Windows:
+        C:\> wmic os get Caption, Version, BuildNumber, OSArchitecture
+        # paste output here
+        ```
+        </details>

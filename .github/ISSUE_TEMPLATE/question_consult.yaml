@@ -1,0 +1,12 @@
+name: Question consulting
+description: Provide detailed problem information
+labels: kind/question
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: What do you want to ask?
+      description: |
+        I want to consult xxx.
+    validations:
+      required: true
