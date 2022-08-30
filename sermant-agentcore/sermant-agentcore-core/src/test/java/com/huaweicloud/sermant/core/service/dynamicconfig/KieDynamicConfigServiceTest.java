@@ -17,14 +17,19 @@
 package com.huaweicloud.sermant.core.service.dynamicconfig;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+import com.huaweicloud.sermant.core.service.dynamicconfig.kie.KieDynamicConfigService;
+import com.huaweicloud.sermant.core.service.dynamicconfig.kie.config.KieDynamicConfig;
 import com.huaweicloud.sermant.core.service.dynamicconfig.kie.listener.SubscriberManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.utils.LabelGroupUtils;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -39,8 +44,14 @@ import java.util.logging.Logger;
 public class KieDynamicConfigServiceTest extends BaseTest {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private MockedStatic<ConfigManager> configManagerMockedStatic;
+
+    private MockedStatic<ServiceManager> serviceManagerMockedStatic;
+
     @Test
     public void testListener() {
+        configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
+        configManagerMockedStatic.when(() -> ConfigManager.getConfig(KieDynamicConfig.class)).thenReturn(new KieDynamicConfig());
         // 初始化日志
         final SubscriberManager subscriberManager = new SubscriberManager("http://127.0.0.1:30110");
         final String group = LabelGroupUtils.createLabelGroup(Collections.singletonMap("version", "1.0"));
@@ -52,30 +63,37 @@ public class KieDynamicConfigServiceTest extends BaseTest {
         };
         subscriberManager.addGroupListener(group, dynamicConfigListener, true);
         Assert.assertTrue(subscriberManager.removeGroupListener(group, dynamicConfigListener));
+        configManagerMockedStatic.close();
     }
 
     @Test
     public void testAddListener() {
+        serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
+        serviceManagerMockedStatic.when(() -> ServiceManager.getService(DynamicConfigService.class)).thenReturn(new KieDynamicConfigService());
         final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
         service.addConfigListener("rule", "groupTest=aa", new DynamicConfigListener() {
             @Override
             public void process(DynamicConfigEvent event) {
                 LOGGER.info(String.format(Locale.ENGLISH, "key notify %s key %s, content: %s%n", event.getEventType(),
-                    event.getKey(), event.getContent()));
+                        event.getKey(), event.getContent()));
             }
         });
         service.addGroupListener("service=flowControlDemo", new DynamicConfigListener() {
             @Override
             public void process(DynamicConfigEvent event) {
                 LOGGER.info(String.format(Locale.ENGLISH, "group notify %s key %s, content: %s%n", event.getEventType(),
-                    event.getKey(), event.getContent()));
+                        event.getKey(), event.getContent()));
             }
         });
+        serviceManagerMockedStatic.close();
     }
 
     @Test
     public void testRemoveConfig() {
+        serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
+        serviceManagerMockedStatic.when(() -> ServiceManager.getService(DynamicConfigService.class)).thenReturn(new KieDynamicConfigService());
         final DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
         service.removeConfig("rule3", "e=f&a=b&c=d");
+        serviceManagerMockedStatic.close();
     }
 }

@@ -22,9 +22,11 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.kie.client.http.HttpCl
 import com.huaweicloud.sermant.core.service.dynamicconfig.kie.client.http.HttpResult;
 import com.huaweicloud.sermant.core.service.monitor.config.MonitorConfig;
 
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
@@ -54,17 +56,25 @@ public class MetricServiceTest {
 
     private static MonitorConfig monitorConfig = new MonitorConfig();
 
+    private MockedStatic<ConfigManager> configManagerMockedStatic;
+
     /**
      * 配置转换器
      */
-    @BeforeClass
-    public static void setUp() {
+    @Before
+    public void setUp() {
         monitorConfig.setAddress(ADDRESS);
         monitorConfig.setPort(PORT);
         monitorConfig.setStartMonitor(true);
-        Mockito.mockStatic(ConfigManager.class)
+        configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
+        configManagerMockedStatic
                 .when(() -> ConfigManager.getConfig(MonitorConfig.class))
                 .thenReturn(monitorConfig);
+    }
+
+    @After
+    public void tearDown() {
+        configManagerMockedStatic.close();
     }
 
     /**
