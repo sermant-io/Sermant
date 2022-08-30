@@ -18,7 +18,6 @@
 package com.huawei.flowcontrol.common.config;
 
 import com.huawei.flowcontrol.common.enums.FlowFramework;
-import com.huawei.flowcontrol.common.enums.MetricSendWay;
 
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
@@ -175,11 +174,6 @@ public class FlowControlConfig implements PluginConfig {
      * 是否抛出业务异常 默认 false
      */
     private boolean needThrowBizException = false;
-
-    /**
-     * 指标数据发送方式 默认KAFKA
-     */
-    private MetricSendWay sendWay = MetricSendWay.KAFKA;
 
     /**
      * 等待指标数据写入文件的等待时间 单位MS
@@ -434,14 +428,6 @@ public class FlowControlConfig implements PluginConfig {
 
     public void setMetricSleepTimeMs(long metricSleepTimeMs) {
         this.metricSleepTimeMs = metricSleepTimeMs;
-    }
-
-    public MetricSendWay getSendWay() {
-        return sendWay;
-    }
-
-    public void setSendWay(MetricSendWay sendWay) {
-        this.sendWay = sendWay;
     }
 
     public boolean isAdaptPass() {

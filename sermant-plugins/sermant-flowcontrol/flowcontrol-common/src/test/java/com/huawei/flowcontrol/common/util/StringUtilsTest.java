@@ -34,7 +34,7 @@ public class StringUtilsTest {
     public void testEqual() {
         String key = "test";
         Assert.assertTrue(StringUtils.equal(key, key));
-        Assert.assertTrue(StringUtils.equalIgnoreCase(key, "com.huawei.sermant.core.Test"));
+        Assert.assertTrue(StringUtils.equalIgnoreCase(key, "Test"));
         Assert.assertTrue(StringUtils.equalIgnoreCase(key, "teST"));
         Assert.assertTrue(StringUtils.isEmpty(""));
         Assert.assertTrue(StringUtils.contains(key, "tes"));

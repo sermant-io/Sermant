@@ -15,37 +15,38 @@
  *
  */
 
-package com.huawei.flowcontrol.common.core.resolver;
+package com.huawei.flowcontrol.common.cache;
+
+import static org.junit.Assert.*;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
- * 规则解析测试
+ * 缓存测试
  *
  * @author zhouss
- * @since 2022-03-03
+ * @since 2022-08-29
  */
-public class RuleResolverTest {
+public class ConcurrentMapCacheTest {
     /**
-     * 测试规则解析配置通知
+     * 缓存测试
      */
     @Test
     public void test() {
-        testResolver(new RateLimitingRuleResolver());
-        testResolver(new BulkheadRuleResolver());
-        testResolver(new CircuitBreakerRuleResolver());
-        testResolver(new RetryResolver());
-        testResolver(new FaultRuleResolver());
-        testResolver(new InstanceIsolationRuleResolver());
-    }
-
-    private void testResolver(AbstractResolver<?> resolver) {
         String key = "test";
-        resolver.registerListener((updateKey, rules) -> {
-            Assert.assertEquals(updateKey, key);
-            Assert.assertTrue(rules.isEmpty());
-        });
-        resolver.notifyListeners(key);
+        String value = "val";
+        final ConcurrentMapCache<String, String> cache = new ConcurrentMapCache<>();
+        cache.put(key, value);
+        assertEquals(cache.get(key), value);
+        cache.evict(key);
+        assertNull(cache.get(key));
+        cache.put(key, value);
+        assertEquals(1, cache.size());
+        cache.release();
+        assertEquals(0, cache.size());
+        assertTrue(cache.getCacheTarget() instanceof ConcurrentHashMap);
     }
 }

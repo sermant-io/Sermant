@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,24 +15,28 @@
  *
  */
 
-package com.huawei.flowcontrol.common.init;
+package com.huawei.flowcontrol.common.util;
 
+import static org.junit.Assert.*;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 初始化测试
+ * 路径格式化测试
  *
  * @author zhouss
- * @since 2022-03-03
+ * @since 2022-08-29
  */
-public class FlowControlInitServiceImplTest {
+public class FilterUtilTest {
     /**
-     * 测试初始化流程
+     * 测试
      */
     @Test
     public void test() {
-        final FlowControlInitServiceImpl flowControlInitService = new FlowControlInitServiceImpl();
-        flowControlInitService.start();
-        flowControlInitService.stop();
+        String context = "/context";
+        String path = "/api";
+        final String url = FilterUtil.filterTarget("\\/api", "\\/context");
+        Assert.assertEquals(url, context + path);
     }
 }

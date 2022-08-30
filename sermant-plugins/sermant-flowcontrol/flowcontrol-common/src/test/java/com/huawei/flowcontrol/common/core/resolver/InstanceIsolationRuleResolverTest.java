@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,24 +15,26 @@
  *
  */
 
-package com.huawei.flowcontrol.common.init;
+package com.huawei.flowcontrol.common.core.resolver;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
+
+import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
 
 /**
- * 初始化测试
+ * 隔离仓测试
  *
  * @author zhouss
- * @since 2022-03-03
+ * @since 2022-08-29
  */
-public class FlowControlInitServiceImplTest {
-    /**
-     * 测试初始化流程
-     */
-    @Test
-    public void test() {
-        final FlowControlInitServiceImpl flowControlInitService = new FlowControlInitServiceImpl();
-        flowControlInitService.start();
-        flowControlInitService.stop();
+public class InstanceIsolationRuleResolverTest extends CircuitBreakerRuleResolverTest {
+    @Override
+    public String getConfigKey() {
+        return InstanceIsolationRuleResolver.CONFIG_KEY;
+    }
+
+    @Override
+    public AbstractResolver<CircuitBreakerRule> getResolver() {
+        return new InstanceIsolationRuleResolver();
     }
 }
