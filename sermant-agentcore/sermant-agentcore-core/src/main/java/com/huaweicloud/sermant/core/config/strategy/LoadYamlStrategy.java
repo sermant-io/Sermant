@@ -26,6 +26,7 @@ import com.huaweicloud.sermant.core.config.utils.ConfigValueUtil;
 import com.alibaba.fastjson.util.IOUtils;
 
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.ConstructorException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,6 +36,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
@@ -55,6 +57,18 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
      * 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final Map<Class<?>, Class<?>> BASE_TYPE_TRANSFER_MAP = new HashMap<Class<?>, Class<?>>() {{
+            put(int.class, Integer.class);
+            put(short.class, Short.class);
+            put(long.class, Long.class);
+            put(char.class, Character.class);
+            put(byte.class, Byte.class);
+            put(float.class, Float.class);
+            put(double.class, Double.class);
+            put(boolean.class, Boolean.class);
+        }};
+
     /**
      * Yaml对象
      */
@@ -113,11 +127,11 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(config),
-                CommonConstant.DEFAULT_CHARSET));
+                    CommonConstant.DEFAULT_CHARSET));
             return yaml.loadAs(reader, Map.class);
         } catch (IOException ignored) {
             LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                "Missing config file [%s], please check.", config));
+                    "Missing config file [%s], please check.", config));
         } finally {
             IOUtils.close(reader);
         }
@@ -188,22 +202,27 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
                 return null;
             }
         };
-        final Object fixedVal;
-        if (subTypeVal instanceof String) {
-            fixedVal = ConfigValueUtil.fixValue(configKey, (String) subTypeVal, argsMap, provider);
-        } else if (subTypeVal == null) {
-            String fixedStrValue = ConfigValueUtil.fixValue(configKey, null, argsMap, provider);
-            if (fixedStrValue == null) {
-                fixedVal = null;
+
+        Object fixedVal = null;
+        try {
+            if (subTypeVal instanceof String) {
+                fixedVal = ConfigValueUtil.fixValue(configKey, (String) subTypeVal, argsMap, provider);
+            } else if (subTypeVal == null) {
+                String fixedStrValue = ConfigValueUtil.fixValue(configKey, null, argsMap, provider);
+                if (fixedStrValue == null) {
+                    fixedVal = null;
+                } else {
+                    fixedVal = yaml.loadAs(fixedStrValue, BASE_TYPE_TRANSFER_MAP.getOrDefault(field.getType(),
+                            field.getType()));
+                }
             } else {
-                Class<?> cls = field.getType().equals(Boolean.TYPE) ? Boolean.class : field.getType();
-                fixedVal = yaml.loadAs(fixedStrValue, cls);
+                fixedVal = yaml.loadAs(ConfigValueUtil.fixValue(configKey, yaml.dump(subTypeVal), argsMap, provider),
+                        subTypeVal.getClass());
             }
-        } else {
-            fixedVal = yaml.loadAs(
-                ConfigValueUtil.fixValue(configKey, yaml.dump(subTypeVal), argsMap, provider),
-                subTypeVal.getClass());
+        } catch (ConstructorException exception) {
+            LOGGER.severe(String.format(Locale.ENGLISH,"Error occurs while parsing configKey: %s", configKey));
         }
+
         return fixedVal;
     }
 }
