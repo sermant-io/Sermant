@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,25 +15,18 @@
  *
  */
 
-package com.huawei.flowcontrol.retry;
+package com.huawei.flowcontrol;
 
+import com.huawei.flowcontrol.common.config.ConfigConst;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 import com.huawei.flowcontrol.service.rest4j.HttpRest4jService;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
-import feign.Client;
-import feign.Request;
-import feign.Request.HttpMethod;
-import feign.Request.Options;
-import feign.Response;
-
-import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,20 +34,19 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Enumeration;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * feign重试测试
+ * 测试http请求拦截
  *
  * @author zhouss
- * @since 2022-03-03
+ * @since 2022-08-30
  */
-public class FeignRequestInterceptorTest {
-    private ExecuteContext context;
-
-    private Interceptor interceptor;
+public class DispatcherServletInterceptorTest {
+    private final FlowControlConfig flowControlConfig = new FlowControlConfig();
 
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
@@ -66,56 +58,45 @@ public class FeignRequestInterceptorTest {
         serviceManagerMockedStatic.close();
     }
 
-
-    /**
-     * 前置初始化
-     *
-     * @throws Exception 初始化失败抛出
-     */
     @Before
-    public void before() throws Exception {
-        pluginConfigManagerMockedStatic = Mockito
-                .mockStatic(PluginConfigManager.class);
+    public void setUp() {
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
-                .thenReturn(new FlowControlConfig());
+                .thenReturn(flowControlConfig);
         serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
         serviceManagerMockedStatic.when(() -> ServiceManager.getService(HttpRest4jService.class))
                 .thenReturn(createRestService());
-        interceptor = new FeignRequestInterceptor();
-        final Client proxy = (request, options) -> createResponse();
-        final Object[] allArguments = new Object[2];
-        allArguments[0] = createRequest();
-        allArguments[1] = new Request.Options();
-        context = ExecuteContext.forMemberMethod(
-            proxy,
-            Client.class.getDeclaredMethod("execute", Request.class, Options.class),
-            allArguments,
-            Collections.emptyMap(),
-            Collections.emptyMap());
     }
 
-    /**
-     * 测试流程
-     *
-     * @throws Exception 执行失败抛出
-     */
     @Test
     public void test() throws Exception {
-        interceptor.before(context);
-        context.changeResult(createResponse());
-        final ExecuteContext after = interceptor.after(context);
-        Assert.assertNotNull(after.getResult());
-        interceptor.onThrow(context);
+        final DispatcherServletInterceptor interceptor = new DispatcherServletInterceptor();
+        final ExecuteContext executeContext = buildContext();
+        interceptor.doBefore(executeContext);
+        Assert.assertTrue(executeContext.isSkip());
+        interceptor.onThrow(executeContext);
+        interceptor.doThrow(executeContext);
     }
 
-    private Response createResponse() {
-        return Response.builder().request(createRequest()).status(HttpStatus.SC_OK).headers(Collections.emptyMap())
-            .build();
-    }
+    private ExecuteContext buildContext() throws NoSuchMethodException {
+        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        Mockito.when(request.getPathInfo()).thenReturn("/api");
+        Mockito.when(request.getRequestURI()).thenReturn("/context");
+        Mockito.when(request.getMethod()).thenReturn("POST");
+        Mockito.when(request.getHeaderNames()).thenReturn(new Enumeration<String>() {
+            @Override
+            public boolean hasMoreElements() {
+                return false;
+            }
 
-    private Request createRequest() {
-        return Request.create(HttpMethod.GET, "localhost:8080", new HashMap<>(), "test".getBytes(
-            StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+            @Override
+            public String nextElement() {
+                return null;
+            }
+        });
+        Mockito.when(request.getHeader(ConfigConst.FLOW_REMOTE_SERVICE_NAME_HEADER_KEY)).thenReturn("serviceName");
+        return ExecuteContext.forMemberMethod(this, String.class.getMethod("trim"), new Object[] {request, null},
+                Collections.emptyMap(), Collections.emptyMap());
     }
 
     private HttpRest4jService createRestService() {
@@ -123,7 +104,7 @@ public class FeignRequestInterceptorTest {
             @Override
             public void onBefore(String sourceName, RequestEntity requestEntity,
                     FlowControlResult fixedResult) {
-
+                fixedResult.setSkip(true);
             }
 
             @Override

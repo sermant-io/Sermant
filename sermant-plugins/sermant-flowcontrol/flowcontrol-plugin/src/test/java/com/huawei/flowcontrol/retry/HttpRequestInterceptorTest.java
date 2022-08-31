@@ -17,24 +17,30 @@
 
 package com.huawei.flowcontrol.retry;
 
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
+import com.huawei.flowcontrol.common.entity.FlowControlResult;
+import com.huawei.flowcontrol.common.entity.RequestEntity;
+import com.huawei.flowcontrol.service.rest4j.HttpRest4jService;
+
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.AbstractClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 /**
@@ -44,7 +50,11 @@ import java.util.Collections;
  * @since 2022-03-03
  */
 public class HttpRequestInterceptorTest {
-    private static final int ARGUMENT_LEN = 3;
+    private static final int ARGUMENT_LEN = 1;
+
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    private MockedStatic<ServiceManager> serviceManagerMockedStatic;
 
     private ExecuteContext context;
 
@@ -57,20 +67,32 @@ public class HttpRequestInterceptorTest {
      */
     @Before
     public void before() throws Exception {
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
+                .thenReturn(new FlowControlConfig());
+        serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
+        serviceManagerMockedStatic.when(() -> ServiceManager.getService(HttpRest4jService.class))
+                .thenReturn(createRestService());
         interceptor = new HttpRequestInterceptor();
         Object[] allArguments = new Object[ARGUMENT_LEN];
-        allArguments[0] = createHttpRequest();
-        allArguments[1] = "test".getBytes(StandardCharsets.UTF_8);
-        allArguments[2] = createExecutor();
-        Object proxy = (ClientHttpRequestInterceptor) (request, body, execution) -> Mockito
-            .mock(ClientHttpResponse.class);
+        AbstractClientHttpRequest proxy = Mockito.mock(AbstractClientHttpRequest.class);
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        allArguments[0] = httpHeaders;
+        Mockito.when(proxy.getHeaders()).thenReturn(httpHeaders);
+        Mockito.when(proxy.getMethod()).thenReturn(HttpMethod.GET);
+        Mockito.when(proxy.getURI()).thenReturn(URI.create("http://rest-provider/api"));
         context = ExecuteContext.forMemberMethod(
             proxy,
-            proxy.getClass().getDeclaredMethod("intercept", HttpRequest.class, byte[].class,
-                ClientHttpRequestExecution.class),
+            proxy.getClass().getDeclaredMethod("executeInternal", HttpHeaders.class),
             allArguments,
             Collections.emptyMap(),
             Collections.emptyMap());
+    }
+
+    @After
+    public void after() {
+        pluginConfigManagerMockedStatic.close();
+        serviceManagerMockedStatic.close();
     }
 
     /**
@@ -87,8 +109,24 @@ public class HttpRequestInterceptorTest {
         interceptor.onThrow(context);
     }
 
-    private ClientHttpRequestExecution createExecutor() {
-        return (request, body) -> createClientResponse();
+    private HttpRest4jService createRestService() {
+        return new HttpRest4jService() {
+            @Override
+            public void onBefore(String sourceName, RequestEntity requestEntity,
+                    FlowControlResult fixedResult) {
+
+            }
+
+            @Override
+            public void onAfter(String sourceName, Object result) {
+
+            }
+
+            @Override
+            public void onThrow(String sourceName, Throwable throwable) {
+
+            }
+        };
     }
 
     private ClientHttpResponse createClientResponse() {
@@ -115,25 +153,6 @@ public class HttpRequestInterceptorTest {
             @Override
             public InputStream getBody() {
                 return null;
-            }
-
-            @Override
-            public HttpHeaders getHeaders() {
-                return new HttpHeaders();
-            }
-        };
-    }
-
-    private HttpRequest createHttpRequest() {
-        return new HttpRequest() {
-            @Override
-            public HttpMethod getMethod() {
-                return HttpMethod.GET;
-            }
-
-            @Override
-            public URI getURI() {
-                return URI.create("http://localhost:9999");
             }
 
             @Override

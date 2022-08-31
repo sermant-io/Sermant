@@ -17,15 +17,23 @@
 
 package com.huawei.fowcontrol.res4j.handler;
 
+import com.huawei.flowcontrol.common.core.constants.RuleConstants;
 import com.huawei.flowcontrol.common.core.rule.BulkheadRule;
 import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
 import com.huawei.flowcontrol.common.core.rule.RateLimitingRule;
+import com.huawei.flowcontrol.common.core.rule.fault.Fault;
+import com.huawei.flowcontrol.common.core.rule.fault.FaultRule;
+
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.time.Duration;
+import java.util.Optional;
 
 /**
  * 处理器测试
@@ -42,6 +50,10 @@ public class HandlerTest {
     private static final float FAILURE_RATE_THRESHOLD = 100f;
     private static final int MIN_CALLS = 10;
     private static final double DELTA = 1e-6d;
+    private static final String WINDOW_SIZE = "10000";
+    private static final String DELAY_TIME = "10000";
+    private static final int ERROR_CODE = 503;
+    private static final int PERCENTAGE = 1;
 
     /**
      * 测试隔离仓
@@ -78,15 +90,53 @@ public class HandlerTest {
      */
     @Test
     public void testCircuitBreaker() {
-        final CircuitBreakerHandler circuitBreakerHandler = new CircuitBreakerHandler();
+        testCirHandler(new CircuitBreakerHandler());
+    }
+
+    /**
+     * 测试实例隔离
+     */
+    @Test
+    public void testInstanceIsolation() {
+        testCirHandler(new InstanceIsolationHandler());
+    }
+
+    @Test
+    public void testFault() {
+        final FaultHandler faultHandler = new FaultHandler();
+        final FaultRule faultRule = new FaultRule();
+        faultRule.setDelayTime(DELAY_TIME);
+        faultRule.setErrorCode(ERROR_CODE);
+        faultRule.setFallbackType(RuleConstants.FAULT_RULE_FALLBACK_THROW_TYPE);
+        faultRule.setType(RuleConstants.FAULT_RULE_ABORT_TYPE);
+        faultRule.setForceClosed(true);
+        faultRule.setPercentage(PERCENTAGE);
+        final Optional<Fault> processor = faultHandler.createProcessor(BUSINESS_NAME, faultRule);
+        Assert.assertTrue(processor.isPresent());
+        final Fault fault = processor.get();
+        final Optional<Object> rule = ReflectUtils.getFieldValue(fault, "rule");
+        Assert.assertTrue(rule.isPresent() && rule.get() instanceof FaultRule);
+        FaultRule realRule = (FaultRule) rule.get();
+        Assert.assertEquals(Long.parseLong(DELAY_TIME), realRule.getParsedDelayTime());
+        Assert.assertEquals(ERROR_CODE, realRule.getErrorCode());
+        Assert.assertEquals(RuleConstants.FAULT_RULE_FALLBACK_THROW_TYPE, realRule.getFallbackType());
+        Assert.assertEquals(RuleConstants.FAULT_RULE_ABORT_TYPE, realRule.getType());
+        Assert.assertEquals(PERCENTAGE, realRule.getPercentage());
+        Assert.assertTrue(realRule.isForceClosed());
+    }
+
+    private void testCirHandler(CircuitBreakerHandler handler) {
         final CircuitBreakerRule circuitBreakerRule = new CircuitBreakerRule();
         circuitBreakerRule.setFailureRateThreshold(FAILURE_RATE_THRESHOLD);
         circuitBreakerRule.setMinimumNumberOfCalls(MIN_CALLS);
-        final CircuitBreaker circuitBreaker = circuitBreakerHandler.createProcessor(BUSINESS_NAME,
-            circuitBreakerRule).get();
+        circuitBreakerRule.setSlidingWindowSize(WINDOW_SIZE);
+        final CircuitBreaker circuitBreaker = handler.createProcessor(BUSINESS_NAME,
+                circuitBreakerRule).get();
         Assert.assertEquals(circuitBreaker.getCircuitBreakerConfig().getFailureRateThreshold(), FAILURE_RATE_THRESHOLD,
-            DELTA);
+                DELTA);
         Assert.assertEquals(circuitBreaker.getCircuitBreakerConfig().getMinimumNumberOfCalls(), MIN_CALLS);
+        Assert.assertEquals(circuitBreaker.getCircuitBreakerConfig().getSlidingWindowSize(),
+                Duration.ofMillis(Integer.parseInt(WINDOW_SIZE)).getSeconds());
     }
 
 }
