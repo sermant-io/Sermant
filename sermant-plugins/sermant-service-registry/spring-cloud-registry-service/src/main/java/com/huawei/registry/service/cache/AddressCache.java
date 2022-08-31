@@ -42,9 +42,9 @@ public enum AddressCache {
     AddressCache() {
         GraceConfig pluginConfig = PluginConfigManager.getPluginConfig(GraceConfig.class);
         cache = CacheBuilder.newBuilder()
-            .maximumSize(pluginConfig.getUpstreamAddressMaxSize()) // 设置缓存的最大容量
-            .expireAfterWrite(pluginConfig.getUpstreamAddressExpiredTime(), TimeUnit.SECONDS) // 设置缓存失效时间
-            .build();
+                .maximumSize(pluginConfig.getUpstreamAddressMaxSize()) // 设置缓存的最大容量
+                .expireAfterWrite(pluginConfig.getUpstreamAddressExpiredTime(), TimeUnit.SECONDS) // 设置缓存失效时间
+                .build();
     }
 
     /**
@@ -58,5 +58,12 @@ public enum AddressCache {
 
     public Set<String> getAddressSet() {
         return cache.asMap().keySet();
+    }
+
+    /**
+     * 清除所有缓存
+     */
+    public void cleanCache() {
+        cache.invalidateAll();
     }
 }

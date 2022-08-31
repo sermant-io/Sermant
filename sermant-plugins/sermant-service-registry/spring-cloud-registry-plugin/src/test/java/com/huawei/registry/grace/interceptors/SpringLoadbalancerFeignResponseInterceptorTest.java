@@ -25,6 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import feign.Request;
 import feign.Request.HttpMethod;
 import feign.Response;
+
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,11 +42,11 @@ import java.util.Collections;
 public class SpringLoadbalancerFeignResponseInterceptorTest extends ResponseTest {
     /**
      * 测试请求流程
+     *
      * @throws NoSuchMethodException 不会抛出
      */
     @Test
     public void testRequest() throws NoSuchMethodException {
-        init();
         final Request request = Request
                 .create(HttpMethod.GET, "http://provider:8888", Collections.emptyMap(), new byte[0],
                         StandardCharsets.UTF_8);
@@ -54,14 +55,14 @@ public class SpringLoadbalancerFeignResponseInterceptorTest extends ResponseTest
                         Collections.singletonList(SHUTDOWN_ENDPOINT)))
                 .status(HttpStatus.SC_OK)
                 .request(request).build();
-        Object[] arguments = new Object[] {request};
+        Object[] arguments = new Object[]{request};
         final SpringLoadbalancerFeignResponseInterceptor interceptor = new SpringLoadbalancerFeignResponseInterceptor();
         final ExecuteContext executeContext = ExecuteContext.forMemberMethod(this,
                 this.getClass().getDeclaredMethod("testRequest"), arguments, null, null);
         interceptor.before(executeContext);
         executeContext.changeResult(response);
         interceptor.after(executeContext);
-        Assert.assertTrue(((Request)arguments[0]).headers().size() > 0);
+        Assert.assertTrue(((Request) arguments[0]).headers().size() > 0);
         Assert.assertTrue(GraceContext.INSTANCE.getGraceShutDownManager().isMarkedOffline(SHUTDOWN_ENDPOINT));
     }
 }

@@ -23,7 +23,10 @@ import com.huawei.registry.config.GraceConfig;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
@@ -36,13 +39,28 @@ public class AddressCacheTest {
     private static final int SIZE = 3;
 
     /**
+     * PluginConfigManager mock对象
+     */
+    public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
+                .thenReturn(new GraceConfig());
+    }
+
+    @After
+    public void tearDown() {
+        pluginConfigManagerMockedStatic.close();
+        AddressCache.INSTANCE.cleanCache();
+    }
+
+    /**
      * 测试地址缓存
      */
     @Test
     public void testAddress() {
-        Mockito.mockStatic(PluginConfigManager.class)
-                .when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
-                .thenReturn(new GraceConfig());
         AddressCache.INSTANCE.addAddress("localhost:1200");
         AddressCache.INSTANCE.addAddress("localhost:1300");
         AddressCache.INSTANCE.addAddress("localhost:1400");

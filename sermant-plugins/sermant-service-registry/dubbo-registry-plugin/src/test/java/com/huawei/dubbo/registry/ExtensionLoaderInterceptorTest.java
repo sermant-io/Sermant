@@ -16,15 +16,15 @@
 
 package com.huawei.dubbo.registry;
 
+import com.huawei.dubbo.registry.alibaba.ServiceCenterRegistryFactory;
 import com.huawei.dubbo.registry.constants.Constant;
 import com.huawei.dubbo.registry.interceptor.ExtensionLoaderInterceptor;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
 
-import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.extension.SPI;
 import com.alibaba.dubbo.registry.RegistryFactory;
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -72,6 +72,7 @@ public class ExtensionLoaderInterceptorTest {
         ExtensionLoader<RegistryFactory> alibabaLoader = ExtensionLoader.getExtensionLoader(RegistryFactory.class);
         ExecuteContext context = ExecuteContext.forMemberMethod(alibabaLoader, null, arguments, null, null);
         Map<String, Class<?>> cachedClasses = ReflectUtils.getExtensionClasses(context.getObject());
+        cachedClasses.remove("sc", ServiceCenterRegistryFactory.class);
 
         // spi名为null
         interceptor.before(context);
@@ -96,7 +97,7 @@ public class ExtensionLoaderInterceptorTest {
     @Test
     public void testInvalidApacheExtensionLoader() {
         org.apache.dubbo.common.extension.ExtensionLoader<ApacheSpiTest> apacheLoader =
-            org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoader(ApacheSpiTest.class);
+                org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoader(ApacheSpiTest.class);
         ExecuteContext context = ExecuteContext.forMemberMethod(apacheLoader, null, arguments, null, null);
         testExtensionLoader(context);
     }
@@ -109,10 +110,11 @@ public class ExtensionLoaderInterceptorTest {
     @Test
     public void testApacheExtensionLoader() {
         org.apache.dubbo.common.extension.ExtensionLoader<org.apache.dubbo.registry.RegistryFactory> apacheLoader =
-            org.apache.dubbo.common.extension.ExtensionLoader
-                .getExtensionLoader(org.apache.dubbo.registry.RegistryFactory.class);
+                org.apache.dubbo.common.extension.ExtensionLoader
+                        .getExtensionLoader(org.apache.dubbo.registry.RegistryFactory.class);
         ExecuteContext context = ExecuteContext.forMemberMethod(apacheLoader, null, arguments, null, null);
         Map<String, Class<?>> cachedClasses = ReflectUtils.getExtensionClasses(context.getObject());
+        cachedClasses.remove("sc", com.huawei.dubbo.registry.apache.ServiceCenterRegistryFactory.class);
 
         // spi名为null
         interceptor.before(context);

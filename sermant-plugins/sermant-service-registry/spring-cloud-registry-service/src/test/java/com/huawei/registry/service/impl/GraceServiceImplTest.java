@@ -20,11 +20,13 @@ package com.huawei.registry.service.impl;
 import com.huawei.registry.config.GraceConfig;
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.service.cache.AddressCache;
-import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -40,16 +42,30 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class GraceServiceImplTest {
     /**
-     * 测试关闭逻辑以及加载handler逻辑
+     * PluginConfigManager mock对象
      */
-    @Test
-    public void testShutDown() {
-        final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
-                .mockStatic(PluginConfigManager.class);
+    public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
                 .thenReturn(new GraceConfig());
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
                 .thenReturn(new RegisterConfig());
+    }
+
+    @After
+    public void tearDown() {
+        pluginConfigManagerMockedStatic.close();
+        AddressCache.INSTANCE.cleanCache();
+    }
+
+    /**
+     * 测试关闭逻辑以及加载handler逻辑
+     */
+    @Test
+    public void testShutDown() {
         final GraceServiceImpl spy = Mockito.spy(new GraceServiceImpl());
         spy.shutdown();
         spy.addAddress("test");
@@ -59,6 +75,6 @@ public class GraceServiceImplTest {
         Assert.assertFalse(AddressCache.INSTANCE.getAddressSet().isEmpty());
         final Optional<Object> shutdown = ReflectUtils.getFieldValue(spy, "SHUTDOWN");
         Assert.assertTrue(shutdown.isPresent() && shutdown.get() instanceof AtomicBoolean);
-        Assert.assertTrue(((AtomicBoolean)shutdown.get()).get());
+        Assert.assertTrue(((AtomicBoolean) shutdown.get()).get());
     }
 }

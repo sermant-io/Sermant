@@ -44,7 +44,6 @@ public class SpringZuulResponseInterceptorTest extends ResponseTest {
      */
     @Test
     public void testZuul() throws NoSuchMethodException {
-        init();
         final RequestContext requestContext = new RequestContext();
         RequestContext.testSetCurrentContext(requestContext);
         final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);

@@ -21,9 +21,8 @@ import com.huawei.registry.auto.sc.ServiceCombServiceInstance;
 import com.huawei.registry.config.grace.GraceHelper;
 import com.huawei.registry.entity.MicroServiceInstance;
 
-import com.huaweicloud.sermant.core.utils.ReflectUtils;
-
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -49,12 +48,11 @@ public class SpringLoadbalancerWarmUpInterceptorTest extends WarmUpTest {
      */
     @Test
     public void testWarmUp() throws NoSuchMethodException {
-        before();
         final SpringLoadbalancerWarmUpInterceptor springRibbonWarmUpInterceptor = new SpringLoadbalancerWarmUpInterceptor();
         final List<ServiceCombServiceInstance> serviceInstances = buildServiceInstances();
         final ExecuteContext executeContext = ExecuteContext.forMemberMethod(springRibbonWarmUpInterceptor,
                 SpringRibbonWarmUpInterceptor.class.getDeclaredMethod("doAfter", ExecuteContext.class),
-                new Object[] {serviceInstances}
+                new Object[]{serviceInstances}
                 , null,
                 null);
         executeContext.changeResult(new DefaultResponse(serviceInstances.get(0)));
@@ -64,14 +62,14 @@ public class SpringLoadbalancerWarmUpInterceptorTest extends WarmUpTest {
     /**
      * 执行操作
      *
-     * @param interceptor 拦截器
+     * @param interceptor    拦截器
      * @param executeContext 上下文
-     * @param argument 参数
+     * @param argument       参数
      */
     private void process(GraceSwitchInterceptor interceptor, ExecuteContext executeContext, Object argument) {
         final HashMap<String, Integer> statResult = new HashMap<>();
         for (int i = 0; i < REQUEST_COUNT; i++) {
-            ReflectUtils.setFieldValue(executeContext, "arguments", new Object[] {argument});
+            ReflectUtils.setFieldValue(executeContext, "arguments", new Object[]{argument});
             interceptor.before(executeContext);
             interceptor.after(executeContext);
             final Object result = executeContext.getResult();

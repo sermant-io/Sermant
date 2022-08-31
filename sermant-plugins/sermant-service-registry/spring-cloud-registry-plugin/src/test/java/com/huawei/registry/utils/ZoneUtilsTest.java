@@ -24,6 +24,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.Collections;
@@ -41,17 +42,20 @@ public class ZoneUtilsTest {
      */
     @Test
     public void testSetZone() {
-        final HashMap<String, String> meta = new HashMap<>(
-                Collections.singletonMap(SpringRegistryConstants.LOAD_BALANCER_ZONE_META_KEY, "test"));
-        ZoneUtils.setZone(meta);
-        Assert.assertEquals(meta.get(SpringRegistryConstants.LOAD_BALANCER_ZONE_META_KEY), "test");
-        final RegisterConfig registerConfig = new RegisterConfig();
-        String zone = "registerZone";
-        registerConfig.setZone(zone);
-        Mockito.mockStatic(PluginConfigManager.class).when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
-                .thenReturn(registerConfig);
-        final HashMap<String, String> map = new HashMap<>();
-        ZoneUtils.setZone(map);
-        Assert.assertEquals(map.get(SpringRegistryConstants.LOAD_BALANCER_ZONE_META_KEY), zone);
+        try (MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class)) {
+            final HashMap<String, String> meta = new HashMap<>(
+                    Collections.singletonMap(SpringRegistryConstants.LOAD_BALANCER_ZONE_META_KEY, "test"));
+            ZoneUtils.setZone(meta);
+            Assert.assertEquals(meta.get(SpringRegistryConstants.LOAD_BALANCER_ZONE_META_KEY), "test");
+            final RegisterConfig registerConfig = new RegisterConfig();
+            String zone = "registerZone";
+            registerConfig.setZone(zone);
+
+            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
+                    .thenReturn(registerConfig);
+            final HashMap<String, String> map = new HashMap<>();
+            ZoneUtils.setZone(map);
+            Assert.assertEquals(map.get(SpringRegistryConstants.LOAD_BALANCER_ZONE_META_KEY), zone);
+        }
     }
 }

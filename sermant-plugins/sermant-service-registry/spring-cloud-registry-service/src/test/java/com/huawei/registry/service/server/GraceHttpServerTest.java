@@ -25,13 +25,15 @@ import com.huawei.registry.service.impl.GraceServiceImpl;
 import com.huawei.registry.service.utils.HttpClientResult;
 import com.huawei.registry.service.utils.HttpClientUtils;
 import com.huawei.registry.services.GraceService;
-import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -48,6 +50,28 @@ import java.util.Optional;
  */
 public class GraceHttpServerTest {
     /**
+     * PluginConfigManager mock对象
+     */
+    public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    /**
+     * PluginConfigManager mock对象
+     */
+    public MockedStatic<PluginServiceManager> pluginServiceManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginServiceManagerMockedStatic = Mockito.mockStatic(PluginServiceManager.class);
+    }
+
+    @After
+    public void tearDown() {
+        pluginConfigManagerMockedStatic.close();
+        pluginServiceManagerMockedStatic.close();
+    }
+
+    /**
      * 测试HttpServer有效性
      */
     @Test
@@ -55,20 +79,15 @@ public class GraceHttpServerTest {
         final GraceConfig graceConfig = new GraceConfig();
         graceConfig.setEnableSpring(true);
         graceConfig.setEnableGraceShutdown(true);
-        final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
-                .mockStatic(PluginConfigManager.class);
-        pluginConfigManagerMockedStatic
-                .when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
                 .thenReturn(new RegisterConfig());
-        pluginConfigManagerMockedStatic
-                .when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
                 .thenReturn(graceConfig);
-        Mockito.mockStatic(PluginServiceManager.class)
-                .when(() -> PluginServiceManager.getPluginService(GraceService.class))
+        pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(GraceService.class))
                 .thenReturn(new GraceServiceImpl());
         final GraceHttpServer graceHttpServer = new GraceHttpServer();
         graceHttpServer.start();
-        try{
+        try {
             checkHandlers(graceHttpServer);
             final HashMap<String, String> notifyHeaders = new HashMap<>();
             notifyHeaders.put(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT, "localhost:28181");
@@ -76,7 +95,7 @@ public class GraceHttpServerTest {
             final GraceContext instance = GraceContext.INSTANCE;
             final HttpClientResult notifyResult = HttpClientUtils.INSTANCE
                     .doPost("http://127.0.0.1:16688" + GraceConstants.GRACE_NOTIFY_URL_PATH,
-                            JSONObject.toJSONString(new Object()),notifyHeaders);
+                            JSONObject.toJSONString(new Object()), notifyHeaders);
             Assert.assertTrue(instance.getGraceShutDownManager().isMarkedOffline("localhost:28181"));
             Assert.assertEquals(notifyResult.getCode(), GraceConstants.GRACE_HTTP_SUCCESS_CODE);
         } finally {
