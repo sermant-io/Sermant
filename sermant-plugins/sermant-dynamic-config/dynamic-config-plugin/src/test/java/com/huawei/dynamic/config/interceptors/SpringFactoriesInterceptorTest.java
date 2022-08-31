@@ -85,7 +85,7 @@ public class SpringFactoriesInterceptorTest {
     public void doAfterHighVersion() throws NoSuchMethodException, IllegalAccessException {
         final SpringFactoriesInterceptor interceptor = new SpringFactoriesInterceptor();
         hasMethodLoadSpringFactoriesFiled.set(interceptor, Boolean.TRUE);
-        ExecuteContext executeContext = ExecuteContext.forMemberMethod(this, this.getClass().getMethod("doAfter"),
+        ExecuteContext executeContext = ExecuteContext.forMemberMethod(this, this.getClass().getMethod("doAfterHighVersion"),
                 null, null, null);
         // 高版本测试
         final Map<String, List<String>> cache = new HashMap<>();
@@ -103,7 +103,7 @@ public class SpringFactoriesInterceptorTest {
         // 低版本测试
         final SpringFactoriesInterceptor lowVersionInterceptor = new SpringFactoriesInterceptor();
         hasMethodLoadSpringFactoriesFiled.set(lowVersionInterceptor, Boolean.FALSE);
-        ExecuteContext executeContext = ExecuteContext.forMemberMethod(this, this.getClass().getMethod("doAfter"),
+        ExecuteContext executeContext = ExecuteContext.forMemberMethod(this, this.getClass().getMethod("doAfterLowVersion"),
                 new Object[]{org.springframework.boot.autoconfigure.EnableAutoConfiguration.class
                 }, null, null);
         final List<String> lowResult = new ArrayList<>();

@@ -23,9 +23,12 @@ import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 测试环境变量读取
@@ -42,12 +45,12 @@ public class ConfigValueUtilTest {
     /**
      * 测试读取不同格式的环境变量
      *
-     * @throws NoSuchFieldException 不会抛出
+     * @throws NoSuchFieldException     不会抛出
      * @throws IllegalArgumentException 不会抛出
-     * @throws ClassNotFoundException 不会抛出
+     * @throws ClassNotFoundException   不会抛出
      */
     @Test
-    public void testReadEnv() throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
+    public void testReadEnv() throws Exception {
         testKey(CONFIG_KEY);
         testKey(CONFIG_KEY.replace('.', '_'));
         testKey(CONFIG_KEY.replace('.', '-'));
@@ -57,31 +60,72 @@ public class ConfigValueUtilTest {
         testKey(CONFIG_KEY.toUpperCase(Locale.ROOT).replace('.', '-'));
         testKey(CONFIG_KEY.toUpperCase(Locale.ROOT).replace('.', '_'));
         testKey(CONFIG_KEY.toUpperCase(Locale.ROOT));
+        testKey(transFromCamel(CONFIG_KEY));
+        testKey(transFromCamel(CONFIG_KEY).replace('.', '_'));
+        testKey(transFromCamel(CONFIG_KEY).replace('.', '-'));
+        testKey(transFromCamel(CONFIG_KEY).toUpperCase(Locale.ROOT));
+        testKey(transFromCamel(CONFIG_KEY).toUpperCase(Locale.ROOT).replace('.', '_'));
+        testKey(transFromCamel(CONFIG_KEY).toUpperCase(Locale.ROOT).replace('.', '-'));
     }
 
-    private Map<String, String> getEnvMap()
-            throws NoSuchFieldException, ClassNotFoundException, IllegalAccessException {
-        if (rawEnvMap == null) {
-            final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-            final Class<?> aClass = contextClassLoader.loadClass("java.lang.ProcessEnvironment");
-            final Field theEnvironment = aClass.getDeclaredField("theCaseInsensitiveEnvironment");
-            theEnvironment.setAccessible(true);
-            rawEnvMap = (Map<String, String>) theEnvironment.get(null);
+    /**
+     * 设置环境变量(win/linux/macos)
+     *
+     * @param envMap
+     * @throws Exception
+     */
+    private static void setEnv(Map envMap) throws NoSuchFieldException, IllegalAccessException {
+        try {
+            // win系统
+            Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
+            Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
+            theEnvironmentField.setAccessible(true);
+            Map env = (Map) theEnvironmentField.get(null);
+            env.putAll(envMap);
+
+            // linux/macos系统
+            Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
+            theCaseInsensitiveEnvironmentField.setAccessible(true);
+            Map cienv = (Map) theCaseInsensitiveEnvironmentField.get(null);
+            cienv.putAll(envMap);
+        } catch (NoSuchFieldException | ClassNotFoundException | IllegalAccessException e) {
+            Class[] classes = Collections.class.getDeclaredClasses();
+            Map env = System.getenv();
+            for (Class cl : classes) {
+                if ("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
+                    Field field = cl.getDeclaredField("m");
+                    field.setAccessible(true);
+                    Object obj = field.get(env);
+                    Map map = (Map) obj;
+                    map.clear();
+                    map.putAll(envMap);
+                }
+            }
         }
-        return rawEnvMap;
     }
 
-    private void testKey(String key) throws NoSuchFieldException, ClassNotFoundException, IllegalAccessException {
+    private void testKey(String key) throws Exception {
         final Properties properties = System.getProperties();
         properties.put(key, ConfigValueUtilTest.CONFIG_DEFAULT_VALUE);
-        final String test = ConfigValueUtil.fixValue(key, "test", Collections.emptyMap(), null);
+        final String test = ConfigValueUtil.fixValue(CONFIG_KEY, "test", Collections.emptyMap(), null);
         assertEquals(ConfigValueUtilTest.CONFIG_DEFAULT_VALUE, test);
         properties.remove(key);
 
-        final Map<String, String> envMap = getEnvMap();
+        final Map<String, String> envMap = new HashMap<>();
         envMap.put(key, ConfigValueUtilTest.CONFIG_DEFAULT_VALUE);
-        final String value = ConfigValueUtil.fixValue(key, "test", Collections.emptyMap(), null);
+        setEnv(envMap);
+        final String value = ConfigValueUtil.fixValue(CONFIG_KEY, "test", Collections.emptyMap(), null);
         assertEquals(ConfigValueUtilTest.CONFIG_DEFAULT_VALUE, value);
         envMap.remove(key);
+    }
+
+    private String transFromCamel(String key) {
+        Matcher matcher = Pattern.compile("[A-Z]").matcher(key);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, "." + matcher.group(0).toLowerCase(Locale.ROOT));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
     }
 }
