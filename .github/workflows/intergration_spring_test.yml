@@ -62,7 +62,7 @@ jobs:
           tar -zxf apache-zookeeper-3.6.3-bin.tar.gz
           bash apache-zookeeper-3.6.3-bin/bin/zkServer.sh start apache-zookeeper-3.6.3-bin/conf/zoo_sample.cfg
       - name: package agent
-        run: mvn package -DskipTests -Pagent --file pom.xml
+        run: sed -i '/sermant-backend/d' pom.xml & mvn package -DskipTests -Pagent --file pom.xml
       - name: package common demos
         run: |
           sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml
@@ -161,7 +161,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: package agent
-        run: mvn package -DskipTests -Pagent --file pom.xml
+        run: sed -i '/sermant-backend/d' pom.xml & mvn package -DskipTests -Pagent --file pom.xml
       - name: package common demos
         run: |
           sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml
@@ -265,7 +265,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: package agent
-        run: mvn package -DskipTests -Pagent --file pom.xml
+        run: sed -i '/sermant-backend/d' pom.xml & mvn package -DskipTests -Pagent --file pom.xml
       - name: package spring nacos config
         run: |
           sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml
@@ -369,7 +369,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: package agent
-        run: mvn package -DskipTests -Pagent --file pom.xml
+        run: sed -i '/sermant-backend/d' pom.xml & mvn package -DskipTests -Pagent --file pom.xml
       - name: package spring zk config
         run: |
           sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml

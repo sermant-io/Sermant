@@ -94,6 +94,7 @@ public class TimedConcurrentMapCache<K extends Timed, V> extends ConcurrentMapCa
 
         // 移除最后一个最老的键
         evict(lastOldestKey);
+        lastOldestKey = null;
         return super.size() <= maxSize;
     }
 
