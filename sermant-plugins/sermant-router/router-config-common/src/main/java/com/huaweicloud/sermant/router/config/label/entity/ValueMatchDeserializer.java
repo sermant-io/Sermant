@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.router.config.label.entity;
 
-import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 
 import com.alibaba.fastjson.JSONArray;
@@ -35,7 +34,6 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 /**
  * 值匹配反序列化器
@@ -44,8 +42,6 @@ import java.util.logging.Logger;
  * @since 2022-02-18
  */
 public class ValueMatchDeserializer implements ObjectDeserializer {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
-
     @Override
     public Map<String, List<MatchRule>> deserialze(DefaultJSONParser parser, Type type, Object fieldName) {
         JSONObject args = parser.parseObject();
@@ -119,7 +115,7 @@ public class ValueMatchDeserializer implements ObjectDeserializer {
         if (MatchStrategy.IN.name().equalsIgnoreCase(fieldName)) {
             values.addAll(((JSONArray) value).toJavaList(String.class));
         } else {
-            values.add((String) value);
+            values.add(String.valueOf(value));
         }
         valueMatch.setMatchStrategy(matchStrategy);
         valueMatch.setValues(values);
