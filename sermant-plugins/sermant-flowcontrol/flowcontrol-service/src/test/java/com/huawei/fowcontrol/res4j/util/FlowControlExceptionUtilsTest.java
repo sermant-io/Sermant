@@ -18,9 +18,13 @@
 package com.huawei.fowcontrol.res4j.util;
 
 import com.huawei.flowcontrol.common.config.CommonConst;
+import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
 import com.huawei.flowcontrol.common.core.rule.fault.FaultException;
 import com.huawei.flowcontrol.common.core.rule.fault.FaultRule;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
+import com.huawei.fowcontrol.res4j.adaptor.CircuitBreakerAdaptor;
+import com.huawei.fowcontrol.res4j.exceptions.CircuitBreakerException;
+import com.huawei.fowcontrol.res4j.exceptions.InstanceIsolationException;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -47,24 +51,44 @@ public class FlowControlExceptionUtilsTest {
     public void testExceptionHandler() {
         final FlowControlResult flowControlResult = new FlowControlResult();
         FlowControlExceptionUtils
-            .handleException(BulkheadFullException.createBulkheadFullException(Bulkhead.ofDefaults(RULE_NAME)),
-                flowControlResult);
-        Assert.assertEquals("Exceeded the max concurrent calls!", flowControlResult.getResponse().getMsg());
+                .handleException(BulkheadFullException.createBulkheadFullException(Bulkhead.ofDefaults(RULE_NAME)),
+                        flowControlResult);
+        Assert.assertEquals("Bulkhead is full and does not permit further calls!",
+                flowControlResult.getResponse().getMsg());
 
         FlowControlExceptionUtils
-            .handleException(RequestNotPermitted.createRequestNotPermitted(RateLimiter.ofDefaults(RULE_NAME)),
-                flowControlResult);
-        Assert.assertEquals("Flow Limited", flowControlResult.getResponse().getMsg());
+                .handleException(RequestNotPermitted.createRequestNotPermitted(RateLimiter.ofDefaults(RULE_NAME)),
+                        flowControlResult);
+        Assert.assertEquals("Rate Limited", flowControlResult.getResponse().getMsg());
 
         FlowControlExceptionUtils.handleException(
-            CallNotPermittedException.createCallNotPermittedException(CircuitBreaker.ofDefaults(RULE_NAME)),
-            flowControlResult);
-        Assert.assertEquals("Degraded and blocked", flowControlResult.getResponse().getMsg());
+                CircuitBreakerException.createException(CircuitBreaker.ofDefaults(RULE_NAME)),
+                flowControlResult);
+        Assert.assertTrue(flowControlResult.getResponse().getMsg().contains("and does not permit further calls"));
+
+        final CircuitBreakerRule circuitBreakerRule = new CircuitBreakerRule();
+        circuitBreakerRule.setForceOpen(true);
+        FlowControlExceptionUtils.handleException(
+                CircuitBreakerException.createException(new CircuitBreakerAdaptor(CircuitBreaker.ofDefaults(RULE_NAME),
+                        circuitBreakerRule)), flowControlResult);
+        Assert.assertTrue(flowControlResult.getResponse().getMsg().contains("has forced open and deny any requests"));
 
         FlowControlExceptionUtils.handleException(
                 new FaultException(CommonConst.INTERVAL_SERVER_ERROR, "aborted by fault", new FaultRule()),
                 flowControlResult);
         Assert.assertEquals("aborted by fault", flowControlResult.getResponse().getMsg());
+
+        FlowControlExceptionUtils.handleException(
+                InstanceIsolationException.createException(CircuitBreaker.ofDefaults(RULE_NAME)),
+                flowControlResult);
+        Assert.assertTrue(flowControlResult.getResponse().getMsg().contains("and does not permit further calls"));
+
+        final CircuitBreakerRule instanceRule = new CircuitBreakerRule();
+        instanceRule.setForceOpen(true);
+        FlowControlExceptionUtils.handleException(
+                InstanceIsolationException.createException(new CircuitBreakerAdaptor(CircuitBreaker.ofDefaults(RULE_NAME),
+                        instanceRule)), flowControlResult);
+        Assert.assertTrue(flowControlResult.getResponse().getMsg().contains("has forced open and deny any requests"));
     }
 
     /**
@@ -73,10 +97,10 @@ public class FlowControlExceptionUtilsTest {
     @Test
     public void testCheckFlowControlException() {
         Assert.assertTrue(FlowControlExceptionUtils
-            .isNeedReleasePermit(RequestNotPermitted.createRequestNotPermitted(RateLimiter.ofDefaults(RULE_NAME))));
+                .isNeedReleasePermit(RequestNotPermitted.createRequestNotPermitted(RateLimiter.ofDefaults(RULE_NAME))));
         Assert.assertTrue(FlowControlExceptionUtils.isNeedReleasePermit(
-            CallNotPermittedException.createCallNotPermittedException(CircuitBreaker.ofDefaults(RULE_NAME))));
+                CallNotPermittedException.createCallNotPermittedException(CircuitBreaker.ofDefaults(RULE_NAME))));
         Assert.assertFalse(FlowControlExceptionUtils.isNeedReleasePermit(
-            BulkheadFullException.createBulkheadFullException(Bulkhead.ofDefaults(RULE_NAME))));
+                BulkheadFullException.createBulkheadFullException(Bulkhead.ofDefaults(RULE_NAME))));
     }
 }

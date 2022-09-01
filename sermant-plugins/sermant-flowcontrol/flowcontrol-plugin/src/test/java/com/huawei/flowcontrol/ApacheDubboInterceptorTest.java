@@ -41,7 +41,7 @@ import java.util.Collections;
  * @author zhouss
  * @since 2022-03-03
  */
-public class ApacheDubboInterceptorTest extends BaseTest {
+public class ApacheDubboInterceptorTest {
     private ExecuteContext context;
 
     private Interceptor interceptor;

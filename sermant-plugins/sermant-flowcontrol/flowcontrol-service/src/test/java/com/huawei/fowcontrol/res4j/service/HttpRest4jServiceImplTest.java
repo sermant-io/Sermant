@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,43 +15,34 @@
  *
  */
 
-package com.huawei.flowcontrol.retry.handler;
+package com.huawei.fowcontrol.res4j.service;
 
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
-import com.huawei.flowcontrol.common.core.rule.RetryRule;
-import com.huawei.flowcontrol.common.handler.retry.RetryContext;
-import com.huawei.flowcontrol.retry.cluster.AlibabaDubboClusterInvoker.AlibabaDubboRetry;
+import com.huawei.flowcontrol.common.entity.FlowControlResult;
+import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
-import io.github.resilience4j.retry.Retry;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 重试处理器测试
+ * http请求测试
  *
  * @author zhouss
- * @since 2022-03-03
+ * @since 2022-08-30
  */
-public class RetryHandlerV2Test {
+public class HttpRest4jServiceImplTest {
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     @Before
     public void setUp() {
-        pluginConfigManagerMockedStatic = Mockito
-                .mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                 .thenReturn(new FlowControlConfig());
-    }
-
-    @After
-    public void tearDown() {
-        pluginConfigManagerMockedStatic.close();
     }
 
     /**
@@ -59,11 +50,16 @@ public class RetryHandlerV2Test {
      */
     @Test
     public void test() {
-        final RetryHandlerV2 retryHandlerV2 = new RetryHandlerV2();
-        final AlibabaDubboRetry alibabaDubboRetry = new AlibabaDubboRetry();
-        RetryContext.INSTANCE.markRetry(alibabaDubboRetry);
-        final Retry test = retryHandlerV2.createProcessor("test", new RetryRule()).get();
-        Assert.assertNotNull(test);
-        RetryContext.INSTANCE.remove();
+        final HttpRest4jServiceImpl httpRest4jService = new HttpRest4jServiceImpl();
+        String sourceName = this.getClass().getName();
+        final FlowControlResult flowControlResult = new FlowControlResult();
+        httpRest4jService.onBefore(sourceName, new HttpRequestEntity(), flowControlResult);
+        httpRest4jService.onThrow(sourceName, new Exception("error"));
+        httpRest4jService.onAfter(sourceName, new Object());
+    }
+
+    @After
+    public void clear() {
+        pluginConfigManagerMockedStatic.close();
     }
 }

@@ -20,10 +20,14 @@ package com.huawei.fowcontrol.res4j.handler.exception;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.fowcontrol.res4j.chain.AbstractChainHandler;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 错误处理器
@@ -32,6 +36,8 @@ import java.util.ServiceLoader;
  * @since 2022-08-08
  */
 public class ExceptionHandlerManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private Map<Class<?>, ExceptionHandler<?>> handlers;
 
     /**
@@ -49,6 +55,10 @@ public class ExceptionHandlerManager {
      */
     public void apply(Throwable ex, FlowControlResult result) {
         final ExceptionHandler handler = handlers.get(ex.getClass());
+        if (handler == null) {
+            LOGGER.log(Level.WARNING, "Can not handler flow control exception!", ex);
+            return;
+        }
         handler.accept(ex, result);
     }
 
