@@ -42,8 +42,10 @@ public class RuleUtilsTest {
 
     @Before
     public void before() {
-        String json = "[{\"precedence\":3,\"match\":{\"headers\":{\"region\":{\"parameterName\":\"region\","
-            + "\"exact\":\"foo\",\"operationMark\":\"~\",\"caseInsensitive\":false}}},\"route\":[{\"name\":\"foo\","
+        String json = "[{\"precedence\":3,\"match\":{\"headers\":{\"region\":{\"parameterName\":\"region\",\"exact\":1,"
+            + "\"operationMark\":\"~\",\"caseInsensitive\":false},\"id\":{\"parameterName\":\"region\",\"regex\":\"*\","
+            + "\"operationMark\":\"~\",\"caseInsensitive\":false},\"name\":{\"parameterName\":\"region\","
+            + "\"exact\":\"test\",\"operationMark\":\"~\",\"caseInsensitive\":false}}},\"route\":[{\"name\":\"foo\","
             + "\"weight\":100,\"tags\":{\"version\":\"1.0.1\"}}]},{\"precedence\":2,\"route\":[{\"name\":\"bar\","
             + "\"weight\":100,\"tags\":{\"version\":\"1.0.0\"}}]}]";
         list = Collections.unmodifiableList(JSONArray.parseArray(json, Rule.class));
