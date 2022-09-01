@@ -42,7 +42,6 @@ public class SpringRibbonWarmUpInterceptorTest extends WarmUpTest {
      */
     @Test
     public void testWarmUp() throws NoSuchMethodException {
-        before();
         final SpringRibbonWarmUpInterceptor springRibbonWarmUpInterceptor = new SpringRibbonWarmUpInterceptor();
         final ExecuteContext executeContext = ExecuteContext.forMemberMethod(springRibbonWarmUpInterceptor,
                 SpringRibbonWarmUpInterceptor.class.getDeclaredMethod("doAfter", ExecuteContext.class), null, null, null);
@@ -53,9 +52,9 @@ public class SpringRibbonWarmUpInterceptorTest extends WarmUpTest {
     /**
      * 执行操作
      *
-     * @param interceptor 拦截器
+     * @param interceptor    拦截器
      * @param executeContext 上下文
-     * @param result 结果
+     * @param result         结果
      */
     private void process(GraceSwitchInterceptor interceptor, ExecuteContext executeContext, Object result) {
         final HashMap<String, Integer> statResult = new HashMap<>();

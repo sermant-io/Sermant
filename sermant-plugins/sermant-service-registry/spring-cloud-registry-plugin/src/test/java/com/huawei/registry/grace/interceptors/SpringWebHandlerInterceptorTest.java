@@ -17,8 +17,6 @@
 
 package com.huawei.registry.grace.interceptors;
 
-import static org.junit.Assert.*;
-
 import com.huawei.registry.config.GraceConfig;
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.services.GraceService;
@@ -27,6 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,12 +45,17 @@ public class SpringWebHandlerInterceptorTest {
     private final GraceConfig graceConfig = new GraceConfig();
 
     /**
+     * PluginConfigManager mock对象
+     */
+    public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    /**
      * 初始化
      */
     @Before
     public void init() {
         graceConfig.setEnableSpring(true);
-        final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
+        pluginConfigManagerMockedStatic = Mockito
                 .mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
                 .thenReturn(graceConfig);
@@ -70,6 +74,11 @@ public class SpringWebHandlerInterceptorTest {
 
                     }
                 });
+    }
+
+    @After
+    public void tearDown() {
+        pluginConfigManagerMockedStatic.close();
     }
 
     /**

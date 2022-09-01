@@ -146,8 +146,9 @@ public class ReflectUtilsTest {
     public void testAlibabaExtensionLoader() {
         ExtensionLoader<RegistryFactory> loader = ExtensionLoader.getExtensionLoader(RegistryFactory.class);
 
-        // 初始化
+        // 初始化, 其他UT可能已经加载，先移除ServiceCenterRegistryFactory
         Map<String, Class<?>> cachedClasses = ReflectUtils.getExtensionClasses(loader);
+        cachedClasses.remove("sc", ServiceCenterRegistryFactory.class);
         Assert.assertEquals(0, cachedClasses.size());
 
         // 加载ServiceCenterRegistryFactory
@@ -281,8 +282,9 @@ public class ReflectUtilsTest {
             org.apache.dubbo.common.extension.ExtensionLoader
                 .getExtensionLoader(org.apache.dubbo.registry.RegistryFactory.class);
 
-        // 初始化
+        // 初始化, 其他UT可能已经加载，先移除ServiceCenterRegistryFactory
         Map<String, Class<?>> cachedClasses = ReflectUtils.getExtensionClasses(loader);
+        cachedClasses.remove("sc", com.huawei.dubbo.registry.apache.ServiceCenterRegistryFactory.class);
         Assert.assertEquals(1, cachedClasses.size());
 
         // 加载ServiceCenterRegistryFactory

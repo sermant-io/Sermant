@@ -46,7 +46,6 @@ public class SpringLoadbalancerRestTemplateResponseInterceptorTest extends Respo
      */
     @Test
     public void testRestTemplate() throws NoSuchMethodException {
-        init();
         final HttpRequest request = buildRequest();
         final Object[] arguments = {request};
         final ExecuteContext executeContext = ExecuteContext
@@ -68,6 +67,7 @@ public class SpringLoadbalancerRestTemplateResponseInterceptorTest extends Respo
     private HttpRequest buildRequest() {
         return new HttpRequest() {
             private final HttpHeaders headers = new HttpHeaders();
+
             @Override
             public String getMethodValue() {
                 return "test";

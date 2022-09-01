@@ -17,13 +17,13 @@
 
 package com.huawei.registry.config;
 
-import com.huaweicloud.sermant.core.utils.ReflectUtils;
-
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.Optional;
@@ -48,39 +48,41 @@ public class RegistryConfigResolverTest {
      */
     @Test
     public void testUpdateGraceConfig() {
-        Mockito.mockStatic(PluginConfigManager.class).when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
-                .thenReturn(new GraceConfig());
-        RegistryConfigResolver configResolver = new GraceConfigResolver();
-        final DynamicConfigEvent event = Mockito.mock(DynamicConfigEvent.class);
-        Mockito.when(event.getContent()).thenReturn("rule:\n"
-                + "  enableSpring: true # springCloud优雅上下线开关\n"
-                + "  startDelayTime: 20  # 优雅上下线启动延迟时间, 单位S\n"
-                + "  enableWarmUp: true # 是否开启预热\n"
-                + "  warmUpTime: 1200    # 预热时间, 单位S\n"
-                + "  enableGraceShutdown: false # 是否开启优雅下线\n"
-                + "  shutdownWaitTime: 300  # 关闭前相关流量检测的最大等待时间, 单位S. 需开启enabledGraceShutdown才会生效\n"
-                + "  enableOfflineNotify: true # 是否开启下线主动通知\n"
-                + "  httpServerPort: 26688 # 开启下线主动通知时的httpServer端口\n"
-                + "  upstreamAddressMaxSize: 5000 # 缓存上游地址的默认大小\n"
-                + "  upstreamAddressExpiredTime: 600 # 缓存上游地址的过期时间");
-        Mockito.when(event.getKey()).thenReturn("sermant.agent.grace");
-        configResolver.updateConfig(event);
-        final GraceConfig graceConfig = config(configResolver, GraceConfig.class);
-        Assert.assertTrue(graceConfig.isEnableSpring());
-        Assert.assertEquals(graceConfig.getStartDelayTime(), TEST_START_DELAY_TIME);
-        Assert.assertTrue(graceConfig.isEnableWarmUp());
-        Assert.assertEquals(graceConfig.getWarmUpTime(), TEST_WARM_UP_TIME);
-        Assert.assertFalse(graceConfig.isEnableGraceShutdown());
-        Assert.assertEquals(graceConfig.getShutdownWaitTime(), TEST_SHUTDOWN_WAIT_TIME);
-        Assert.assertTrue(graceConfig.isEnableOfflineNotify());
-        Assert.assertEquals(graceConfig.getHttpServerPort(), TEST_HTTP_SERVER_PORT);
-        Assert.assertEquals(graceConfig.getUpstreamAddressMaxSize(), TEST_UPSTREAM_ADDRESS_MAXSIZE);
-        Assert.assertEquals(graceConfig.getUpstreamAddressExpiredTime(), TEST_UPSTREAM_ADDRESS_EXPIRED_TIME);
-        Mockito.when(event.getContent()).thenReturn("rule:\n"
-                + "  enableSpring: true # springCloud优雅上下线开关");
-        configResolver.updateConfig(event);
-        final GraceConfig config = config(configResolver, GraceConfig.class);
-        Assert.assertEquals(config.getShutdownWaitTime(), TEST_DEFAULT_SHUTDOWN_WAIT_TIME);
+        try (MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class)) {
+            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
+                    .thenReturn(new GraceConfig());
+            RegistryConfigResolver configResolver = new GraceConfigResolver();
+            final DynamicConfigEvent event = Mockito.mock(DynamicConfigEvent.class);
+            Mockito.when(event.getContent()).thenReturn("rule:\n"
+                    + "  enableSpring: true # springCloud优雅上下线开关\n"
+                    + "  startDelayTime: 20  # 优雅上下线启动延迟时间, 单位S\n"
+                    + "  enableWarmUp: true # 是否开启预热\n"
+                    + "  warmUpTime: 1200    # 预热时间, 单位S\n"
+                    + "  enableGraceShutdown: false # 是否开启优雅下线\n"
+                    + "  shutdownWaitTime: 300  # 关闭前相关流量检测的最大等待时间, 单位S. 需开启enabledGraceShutdown才会生效\n"
+                    + "  enableOfflineNotify: true # 是否开启下线主动通知\n"
+                    + "  httpServerPort: 26688 # 开启下线主动通知时的httpServer端口\n"
+                    + "  upstreamAddressMaxSize: 5000 # 缓存上游地址的默认大小\n"
+                    + "  upstreamAddressExpiredTime: 600 # 缓存上游地址的过期时间");
+            Mockito.when(event.getKey()).thenReturn("sermant.agent.grace");
+            configResolver.updateConfig(event);
+            final GraceConfig graceConfig = config(configResolver, GraceConfig.class);
+            Assert.assertTrue(graceConfig.isEnableSpring());
+            Assert.assertEquals(graceConfig.getStartDelayTime(), TEST_START_DELAY_TIME);
+            Assert.assertTrue(graceConfig.isEnableWarmUp());
+            Assert.assertEquals(graceConfig.getWarmUpTime(), TEST_WARM_UP_TIME);
+            Assert.assertFalse(graceConfig.isEnableGraceShutdown());
+            Assert.assertEquals(graceConfig.getShutdownWaitTime(), TEST_SHUTDOWN_WAIT_TIME);
+            Assert.assertTrue(graceConfig.isEnableOfflineNotify());
+            Assert.assertEquals(graceConfig.getHttpServerPort(), TEST_HTTP_SERVER_PORT);
+            Assert.assertEquals(graceConfig.getUpstreamAddressMaxSize(), TEST_UPSTREAM_ADDRESS_MAXSIZE);
+            Assert.assertEquals(graceConfig.getUpstreamAddressExpiredTime(), TEST_UPSTREAM_ADDRESS_EXPIRED_TIME);
+            Mockito.when(event.getContent()).thenReturn("rule:\n"
+                    + "  enableSpring: true # springCloud优雅上下线开关");
+            configResolver.updateConfig(event);
+            final GraceConfig config = config(configResolver, GraceConfig.class);
+            Assert.assertEquals(config.getShutdownWaitTime(), TEST_DEFAULT_SHUTDOWN_WAIT_TIME);
+        }
     }
 
     private <T> T config(RegistryConfigResolver configResolver, Class<T> clazz) {

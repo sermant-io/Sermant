@@ -23,6 +23,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -58,7 +59,7 @@ public class ScClientTest extends BaseTest {
      * @throws IllegalAccessException    无法拿到目标对象抛出
      */
     @Test
-    public void buildMicro() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void buildMicro() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
         scClient.init();
         final ServiceCenterOperation rawClient = scClient.getRawClient();
         Assert.assertNotNull(rawClient);
@@ -67,10 +68,11 @@ public class ScClientTest extends BaseTest {
         final Object serviceResult = buildMicroService.invoke(scClient);
         Assert.assertNotNull(serviceResult);
         final Method buildMicroServiceInstance = scClient.getClass()
-            .getDeclaredMethod("buildMicroServiceInstance", String.class);
+                .getDeclaredMethod("buildMicroServiceInstance");
         buildMicroServiceInstance.setAccessible(true);
-        final Object instanceResult = buildMicroServiceInstance
-            .invoke(scClient, RegisterContext.INSTANCE.getClientInfo().getServiceId());
-        Assert.assertNotNull(instanceResult);
+        buildMicroServiceInstance.invoke(scClient);
+        final Field microserviceInstanceField = scClient.getClass().getDeclaredField("microserviceInstance");
+        microserviceInstanceField.setAccessible(true);
+        Assert.assertNotNull(microserviceInstanceField.get(scClient));
     }
 }

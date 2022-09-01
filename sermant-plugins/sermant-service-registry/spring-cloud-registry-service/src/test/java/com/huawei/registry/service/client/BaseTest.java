@@ -22,10 +22,6 @@ import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.config.common.BaseConfig;
-import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.core.service.dynamicconfig.config.DynamicConfig;
-import com.huaweicloud.sermant.core.service.heartbeat.config.HeartbeatConfig;
-import com.huaweicloud.sermant.core.service.send.config.BackendConfig;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -50,29 +46,18 @@ public class BaseTest {
     @BeforeClass
     public static void init() throws IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
         currentClassLoader = Thread.currentThread().getContextClassLoader();
-        final Class<?> configManagerClass = currentClassLoader.loadClass(BackendConfig.class.getName());
-        final Field nettyServerPort = configManagerClass.getDeclaredField("port");
-        setFieldValue(nettyServerPort, "6888", null);
-
-        final Field nettyServerIp = configManagerClass.getDeclaredField("ip");
-        setFieldValue(nettyServerIp, "127.0.0.1", null);
-
         final Class<?> aClass = currentClassLoader.loadClass(ConfigManager.class.getName());
         final Field configMap = aClass.getDeclaredField("CONFIG_MAP");
         configMap.setAccessible(true);
         removeFinalModify(configMap);
 
         configManagerMap = (Map<String, BaseConfig>) configMap.get(null);
-        configManagerMap.put("heartbeat", new HeartbeatConfig());
-        configManagerMap.put("dynamic.config", new DynamicConfig());
         configManagerMap.put("servicecomb.service", new RegisterConfig());
-        configMap.set(null, configManagerMap);
-        ServiceManager.initServices();
 
         final URL logbackSettingURL = BaseTest.class.getResource("/logback-test.xml");
         Assert.assertNotNull(logbackSettingURL);
-        LoggerFactory.init(
-            Collections.<String, Object>singletonMap(CommonConstant.LOG_SETTING_FILE_KEY, logbackSettingURL.getPath()));
+        LoggerFactory.init(Collections.<String, Object>singletonMap(CommonConstant.LOG_SETTING_FILE_KEY,
+                logbackSettingURL.getPath()));
     }
 
     /**
@@ -86,18 +71,5 @@ public class BaseTest {
         Field modifiersField = Field.class.getDeclaredField("modifiers");
         modifiersField.setAccessible(true);
         modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-    }
-
-    /**
-     * 反射设置字段值
-     *
-     * @param field  字段
-     * @param value  值
-     * @param target 目前类  静态属性为null
-     * @throws IllegalAccessException 找不到抛出异常
-     */
-    protected static void setFieldValue(Field field, Object value, Object target) throws IllegalAccessException {
-        field.setAccessible(true);
-        field.set(target, value);
     }
 }

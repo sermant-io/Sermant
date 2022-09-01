@@ -24,6 +24,7 @@ import com.huawei.registry.config.grace.GraceContext;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,16 +46,25 @@ public class RegistryDelayInterceptorTest {
     private final GraceConfig graceConfig = new GraceConfig();
 
     /**
+     * PluginConfigManager mock对象
+     */
+    public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    /**
      * 初始化
      */
     @Before
     public void init() {
-        final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
-                .mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
                 .thenReturn(graceConfig);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
                 .thenReturn(new RegisterConfig());
+    }
+
+    @After
+    public void tearDown() {
+        pluginConfigManagerMockedStatic.close();
     }
 
     /**
