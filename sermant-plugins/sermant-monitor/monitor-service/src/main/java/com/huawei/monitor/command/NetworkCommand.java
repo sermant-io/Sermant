@@ -70,7 +70,7 @@ public class NetworkCommand extends CommonMonitorCommand<NetworkCommand.NetDev> 
                 transmitPackets += Long.parseLong(netDev[TRANSMIT_PACKETS_INDEX]);
             }
         }
-        return new NetDev(receiveBytes, transmitBytes, receivePackets, transmitPackets);
+        return new NetDev(receiveBytes, receivePackets, transmitBytes, transmitPackets);
     }
 
     /**
@@ -86,12 +86,12 @@ public class NetworkCommand extends CommonMonitorCommand<NetworkCommand.NetDev> 
         private final long receiveBytes;
 
         /**
-         * 写速度
+         * 读包速度
          */
         private final long receivePackets;
 
         /**
-         * 读包速度
+         * 写速度
          */
         private final long transmitBytes;
 
