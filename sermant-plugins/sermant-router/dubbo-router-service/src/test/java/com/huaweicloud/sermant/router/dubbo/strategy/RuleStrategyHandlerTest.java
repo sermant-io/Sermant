@@ -148,7 +148,7 @@ public class RuleStrategyHandlerTest {
          * @param version 版本
          */
         public AlibabaInvoker(int port, String version) {
-            this.url = ALIBABA_URL.addParameter(RouterConstant.TAG_VERSION_KEY, version).setPort(port);
+            this.url = ALIBABA_URL.addParameter(RouterConstant.VERSION_KEY, version).setPort(port);
         }
 
         @Override
@@ -191,7 +191,7 @@ public class RuleStrategyHandlerTest {
          * @param version 版本
          */
         public ApacheInvoker(int port, String version) {
-            this.url = APACHE_URL.addParameter(RouterConstant.TAG_VERSION_KEY, version).setPort(port);
+            this.url = APACHE_URL.addParameter(RouterConstant.VERSION_KEY, version).setPort(port);
         }
 
         @Override
