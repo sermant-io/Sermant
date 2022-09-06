@@ -1,0 +1,57 @@
+name: Workflow for Jacoco
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java_version: [1.8]
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Set up JDK ${{ matrix.java_version }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java_version }}
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build with Maven
+        run: mvn -B install --file pom.xml
+      - name: config codecov
+        run: |
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov
+      - name: JaCoCo Code Coverage Report
+      uses: PavanMudigonda/jacoco-reporter@v4.6
+      with:
+        coverage_results_path: 'sermant-agentcore/sermant-agentcore-core/target/jacoco-report/jacoco.xml'
+        coverage_report_name: Coverage
+        coverage_report_title: JaCoCo
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        skip_check_run: false
+        minimum_coverage: 80
+        fail_below_threshold: false
+        publish_only_summary: false
+      - name: Add Coverage Job Summary
+        run: echo "${{ steps.jacoco_reporter.outputs.coverageSummary }}" >> $GITHUB_STEP_SUMMARY
+      - name: Upload Code Coverage Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: code-coverage-report-markdown
+        path: '*/coverage-results.md'
+        retention-days: 1
+#      - name: Publish test coverage results
+#        uses: PavanMudigonda/jacoco-reporter@v4.5
+#        with:
+#          coverage_results_path: 'sermant-agentcore/sermant-agentcore-core/target/jacoco-report/jacoco.xml'
+#          coverage_report_title: 'Test coverage results'
+#          coverage_report_name: 'Test coverage results'
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
