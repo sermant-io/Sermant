@@ -60,9 +60,9 @@ public enum RibbonLoadbalancerCache {
     private final Map<String, Optional<RibbonLoadbalancerType>> newTypeCache = new ConcurrentHashMap<>();
 
     /**
-     * 原始负载均衡;Ribbon负载均衡不会关联服务名, 若用户为配置负载均衡key, 则全局仅一个。若用户已使用自身的负载均衡key, 则不会支持
+     * 原始负载均衡缓存key: 服务名, value: 负载均衡类型
      */
-    private RibbonLoadbalancerType originType;
+    private final Map<String, RibbonLoadbalancerType> originTypeCache = new ConcurrentHashMap<>();
 
     RibbonLoadbalancerCache() {
         RuleManager.INSTANCE.addRuleListener(this::updateCache);
@@ -77,7 +77,7 @@ public enum RibbonLoadbalancerCache {
                 newTypeCache.clear();
                 return;
             }
-            newTypeCache.put(rule.getServiceName(), Optional.ofNullable(originType));
+            newTypeCache.put(rule.getServiceName(), Optional.ofNullable(originTypeCache.get(rule.getServiceName())));
         } else if (event.getEventType() == DynamicConfigEventType.MODIFY) {
             processModify(rule);
         } else {
@@ -120,6 +120,7 @@ public enum RibbonLoadbalancerCache {
         if (newLoadbalancer.isPresent()) {
             newTypeCache.put(rule.getServiceName(), newLoadbalancer);
         } else {
+            final RibbonLoadbalancerType originType = originTypeCache.get(rule.getServiceName());
             LOGGER.warning(String.format(Locale.ENGLISH,
                     "Do not support ribbon loadbalancer type: [%s], "
                             + "loadbalancer type will change to origin type [%s]",
@@ -132,7 +133,7 @@ public enum RibbonLoadbalancerCache {
         final String oldServiceName = rule.getServiceName();
         if (oldServiceName != null) {
             // 恢复
-            newTypeCache.put(oldServiceName, Optional.ofNullable(originType));
+            newTypeCache.put(oldServiceName, Optional.ofNullable(originTypeCache.get(oldServiceName)));
         }
     }
 
@@ -163,7 +164,7 @@ public enum RibbonLoadbalancerCache {
                 matchType = RibbonLoadbalancerType
                         .matchLoadbalancer(targetServiceRule.get().getRule());
             } else {
-                matchType = Optional.ofNullable(originType);
+                matchType = Optional.ofNullable(originTypeCache.get(serviceName));
             }
             newTypeCache.put(serviceName, matchType);
             return matchType;
@@ -171,7 +172,13 @@ public enum RibbonLoadbalancerCache {
         return ribbonLoadbalancerType;
     }
 
-    public void setOriginType(RibbonLoadbalancerType originType) {
-        this.originType = originType;
+    /**
+     * 备份原始类型
+     *
+     * @param serviceName 服务名
+     * @param targetOriginType 原始类型
+     */
+    public void backUpOriginType(String serviceName, RibbonLoadbalancerType targetOriginType) {
+        this.originTypeCache.put(serviceName, targetOriginType);
     }
 }

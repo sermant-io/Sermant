@@ -75,10 +75,7 @@ public class RuleUtilsTest {
         configuration.resetRouteRule(map);
         RuleUtils.initHeaderKeys(configuration);
         Set<String> keys = RuleUtils.getHeaderKeys();
-        Assert.assertEquals(1, keys.size());
-        for (String key : keys) {
-            Assert.assertEquals("region", key);
-        }
+        Assert.assertEquals(3, keys.size());
     }
 
     /**
@@ -89,7 +86,7 @@ public class RuleUtilsTest {
         Assert.assertTrue(RuleUtils.getHeaderKeys().isEmpty());
         RuleUtils.updateHeaderKeys("test", list);
         Set<String> keys = RuleUtils.getHeaderKeys();
-        Assert.assertEquals(1, keys.size());
+        Assert.assertEquals(3, keys.size());
         RuleUtils.updateHeaderKeys("test", Collections.emptyList());
         Assert.assertTrue(RuleUtils.getHeaderKeys().isEmpty());
     }

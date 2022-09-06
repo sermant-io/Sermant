@@ -17,13 +17,11 @@
 
 package com.huawei.dynamic.config;
 
-import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * 配置刷新通知器
@@ -32,8 +30,6 @@ import java.util.logging.Logger;
  * @since 2022-04-13
  */
 public class RefreshNotifier {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
-
     private static final int LISTENER_INIT_SIZE = 4;
 
     private final List<DynamicConfigListener> dynamicConfigListeners = new ArrayList<>(LISTENER_INIT_SIZE);
