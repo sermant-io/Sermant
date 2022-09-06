@@ -97,6 +97,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.8</version>
+            </dependency>
+            <dependency>
                 <groupId>com.huaweicloud.sermant</groupId>
                 <artifactId>sermant-agentcore-core</artifactId>
                 <version>${project.version}</version>
@@ -282,9 +287,56 @@
             </activation>
             <modules>
                 <module>sermant-agentcore</module>
-                <module>sermant-plugins</module>
-                <module>sermant-backend</module>
+<!--                <module>sermant-plugins</module>-->
+<!--                <module>sermant-backend</module>-->
             </modules>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.8</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+
+                                <configuration>
+                                    <!--定义输出的文件夹-->
+                                    <outputDirectory>target/jacoco-report</outputDirectory>
+                                    <!--执行数据的文件-->
+                                    <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+                                    <!--要从报告中排除的类文件列表，支持通配符(*和?)。如果未指定则不会排除任何内容-->
+                                    <excludes>**/test/*.class</excludes>
+                                    <!--包含生成报告的文件列表，支持通配符(*和?)。如果未指定则包含所有内容-->
+                                    <includes></includes>
+                                    <!--HTML 报告页面中使用的页脚文本。-->
+                                    <footer></footer>
+                                    <!--生成报告的文件类型，HTML(默认)、XML、CSV-->
+                                    <formats>XML</formats>
+                                    <!--生成报告的编码格式，默认UTF-8-->
+                                    <outputEncoding>UTF-8</outputEncoding>
+                                    <!--抑制执行的标签-->
+                                    <skip></skip>
+                                    <!--源文件编码-->
+                                    <sourceEncoding>UTF-8</sourceEncoding>
+                                    <!--HTML报告的标题-->
+                                    <title>${project.name}</title>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>example</id>
