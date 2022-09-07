@@ -51,7 +51,7 @@ import java.util.Map;
  * @since 2022-03-01
  */
 public class ClientFactoryInterceptorTest {
-    private static final String FOO = "foo";
+    private static final String FOO = "clientFactoryFoo";
 
     private final ExecuteContext context;
 
@@ -61,10 +61,6 @@ public class ClientFactoryInterceptorTest {
      * 构造方法
      */
     public ClientFactoryInterceptorTest() throws NoSuchMethodException {
-        ObjectProvider<ServiceInstanceListSupplier> suppliers = ServiceInstanceListSuppliers
-                .toProvider(FOO, new TestServiceInstance());
-        SpringLoadbalancerCache.INSTANCE.putOrigin(FOO, new RoundRobinLoadBalancer(suppliers, FOO));
-        SpringLoadbalancerCache.INSTANCE.putProvider(FOO, suppliers);
         Object[] arguments = new Object[1];
         arguments[0] = FOO;
         context = ExecuteContext.forMemberMethod(new Object(), String.class.getMethod("trim"), arguments, null, null);
@@ -78,6 +74,10 @@ public class ClientFactoryInterceptorTest {
         serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
         serviceManagerMockedStatic.when(() -> ServiceManager.getService(RuleConverter.class))
                 .thenReturn(new YamlRuleConverter());
+        ObjectProvider<ServiceInstanceListSupplier> suppliers = ServiceInstanceListSuppliers
+                .toProvider(FOO, new TestServiceInstance());
+        SpringLoadbalancerCache.INSTANCE.putOrigin(FOO, new RoundRobinLoadBalancer(suppliers, FOO));
+        SpringLoadbalancerCache.INSTANCE.putProvider(FOO, suppliers);
     }
 
     @After

@@ -17,11 +17,19 @@
 
 package com.huawei.dynamic.config.inject;
 
+import com.huawei.dynamic.config.DynamicConfiguration;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
+import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine.Plugin;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ServiceLoader;
 
 /**
@@ -33,7 +41,25 @@ import java.util.ServiceLoader;
 public class ClassInjectDefineTest {
     @Test
     public void testSpi() {
-        final ServiceLoader<ClassInjectDefine> load = ServiceLoader.load(ClassInjectDefine.class);
-        Assert.assertTrue(load.iterator().hasNext());
+        try (final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
+                .mockStatic(PluginConfigManager.class)) {
+            final DynamicConfiguration configuration = new DynamicConfiguration();
+            configuration.setEnableDynamicConfig(true);
+            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
+                    .thenReturn(configuration);
+            final List<ClassInjectDefine> defines = new ArrayList<>();
+            for (ClassInjectDefine classInjectDefine : ServiceLoader.load(ClassInjectDefine.class)) {
+                if (classInjectDefine.plugin() == Plugin.DYNAMIC_CONFIG_PLUGIN) {
+                    defines.add(classInjectDefine);
+                }
+            }
+            Assert.assertTrue(contains(DynamicPropertiesInjectDefine.class, defines));
+            Assert.assertTrue(contains(ProcessorClassInjectDefine.class, defines));
+            Assert.assertTrue(contains(PublisherClassInjectDefine.class, defines));
+        }
+    }
+
+    private boolean contains(Class<? extends ClassInjectDefine> clazz, List<ClassInjectDefine> defines) {
+        return defines.stream().anyMatch(define -> define.getClass() == clazz);
     }
 }

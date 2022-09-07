@@ -29,51 +29,57 @@ public enum RibbonLoadbalancerType {
     /**
      * 随机
      */
-    RANDOM("Random"),
+    RANDOM("Random", "com.netflix.loadbalancer.RandomRule"),
 
     /**
      * 轮询
      */
-    ROUND_ROBIN("RoundRobin"),
+    ROUND_ROBIN("RoundRobin", "com.netflix.loadbalancer.RoundRobinRule"),
 
     /**
      * 重试策略
      */
-    RETRY("Retry"),
+    RETRY("Retry", "com.netflix.loadbalancer.RetryRule"),
 
     /**
      * 最低并发策略
      */
-    BEST_AVAILABLE("BestAvailable"),
+    BEST_AVAILABLE("BestAvailable", "com.netflix.loadbalancer.BestAvailableRule"),
 
     /**
      * 可用过滤策略
      */
-    AVAILABILITY_FILTERING("AvailabilityFiltering"),
+    AVAILABILITY_FILTERING("AvailabilityFiltering", "com.netflix.loadbalancer.AvailabilityFilteringRule"),
 
     /**
      * 响应时间加权重策略
      */
     @Deprecated
-    RESPONSE_TIME_WEIGHTED("ResponseTimeWeighted"),
+    RESPONSE_TIME_WEIGHTED("ResponseTimeWeighted", "com.netflix.loadbalancer.ResponseTimeWeightedRule"),
 
     /**
      * 区域权重策略
      */
-    ZONE_AVOIDANCE("ZoneAvoidance"),
+    ZONE_AVOIDANCE("ZoneAvoidance", "com.netflix.loadbalancer.ZoneAvoidanceRule"),
 
     /**
      * 响应时间加权重策略
      */
-    WEIGHTED_RESPONSE_TIME("WeightedResponseTime");
+    WEIGHTED_RESPONSE_TIME("WeightedResponseTime", "com.netflix.loadbalancer.WeightedResponseTimeRule");
 
     /**
      * 实际配置映射名称
      */
     private final String mapperName;
 
-    RibbonLoadbalancerType(String mapperName) {
+    /**
+     * 规则类名
+     */
+    private final String clazzName;
+
+    RibbonLoadbalancerType(String mapperName, String clazzName) {
         this.mapperName = mapperName;
+        this.clazzName = clazzName;
     }
 
     /**
@@ -92,6 +98,28 @@ public enum RibbonLoadbalancerType {
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * 匹配负载均衡类型
+     *
+     * @param clazzName 负载均衡规则类名
+     * @return 负载均衡类型
+     */
+    public static Optional<RibbonLoadbalancerType> matchLoadbalancerByClazz(String clazzName) {
+        if (clazzName == null) {
+            return Optional.empty();
+        }
+        for (RibbonLoadbalancerType type : values()) {
+            if (type.clazzName.equalsIgnoreCase(clazzName)) {
+                return Optional.of(type);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public String getClazzName() {
+        return clazzName;
     }
 
     public String getMapperName() {
