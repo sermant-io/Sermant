@@ -49,7 +49,7 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
     private static final String CONSUMER_VALUE = "consumer";
 
     /**
-     * 筛选灰度invoker
+     * 筛选标签invoker
      *
      * @param obj RegistryDirectory
      * @param arguments 参数

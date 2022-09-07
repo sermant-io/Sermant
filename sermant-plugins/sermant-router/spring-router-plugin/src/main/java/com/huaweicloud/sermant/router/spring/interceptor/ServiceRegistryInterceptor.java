@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.router.spring.interceptor;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -31,6 +32,8 @@ import org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegis
 import org.springframework.cloud.client.serviceregistry.Registration;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * AbstractAutoServiceRegistration增强类，spring cloud注册方法
@@ -39,6 +42,8 @@ import java.lang.reflect.InvocationTargetException;
  * @since 2022-07-12
  */
 public class ServiceRegistryInterceptor extends AbstractInterceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private final SpringConfigService configService;
 
     private final RouterConfig routerConfig;
@@ -52,15 +57,18 @@ public class ServiceRegistryInterceptor extends AbstractInterceptor {
     }
 
     @Override
-    public ExecuteContext before(ExecuteContext context)
-        throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+    public ExecuteContext before(ExecuteContext context) {
         Object object = context.getObject();
         if (object instanceof AbstractAutoServiceRegistration) {
             AbstractAutoServiceRegistration<?> serviceRegistration = (AbstractAutoServiceRegistration<?>) object;
-            Registration registration = (Registration) ReflectUtils.getAccessibleObject(serviceRegistration.getClass()
-                .getDeclaredMethod("getRegistration")).invoke(serviceRegistration);
-            AppCache.INSTANCE.setAppName(registration.getServiceId());
-            SpringRouterUtils.putMetaData(registration.getMetadata(), routerConfig);
+            try {
+                Registration registration = (Registration) ReflectUtils.getAccessibleObject(
+                    serviceRegistration.getClass().getDeclaredMethod("getRegistration")).invoke(serviceRegistration);
+                AppCache.INSTANCE.setAppName(registration.getServiceId());
+                SpringRouterUtils.putMetaData(registration.getMetadata(), routerConfig);
+            } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException ex) {
+                LOGGER.log(Level.WARNING, "Can not get the registration.", ex);
+            }
         }
         return context;
     }

@@ -18,6 +18,7 @@
         <config.skip.flag>false</config.skip.flag>
         <dubbo.version>2.7.15</dubbo.version>
         <alibaba.dubbo.version>2.6.12</alibaba.dubbo.version>
+        <spring.cloud.version>2.2.5.RELEASE</spring.cloud.version>
     </properties>
 
     <dependencies>
@@ -42,6 +43,17 @@
             <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>router-config-common</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons</artifactId>
+            <version>${spring.cloud.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

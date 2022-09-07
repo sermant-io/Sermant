@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
  */
 public interface AbstractDirectoryService extends PluginService {
     /**
-     * 筛选灰度invoker
+     * 筛选标签invoker
      *
      * @param obj RegistryDirectory
      * @param arguments 参数

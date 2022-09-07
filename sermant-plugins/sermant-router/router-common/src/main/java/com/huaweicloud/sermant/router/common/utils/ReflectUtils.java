@@ -89,8 +89,8 @@ public class ReflectUtils {
     /**
      * 反射调用无参方法并且返回map
      *
-     * @param obj
-     * @param name
+     * @param obj 对象
+     * @param name 方法名
      * @return 值
      */
     public static Map<String, String> invokeWithNoneParameterAndReturnMap(Object obj, String name) {

@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.router.dubbo.strategy;
 
-import com.huaweicloud.sermant.router.common.addr.AddrCache;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.label.entity.Route;
 
@@ -35,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 流量灰度策略测试
+ * 标签路由策略测试
  *
  * @author provenceee
  * @since 2022-03-22
@@ -65,8 +64,6 @@ public class RuleStrategyHandlerTest {
         route2.setTags(tags2);
         route2.setWeight(100);
         routes.add(route2);
-        AddrCache.setRegisterVersionCache("localhost:8081", "0.0.1");
-        AddrCache.setRegisterVersionCache("localhost:8082", "0.0.2");
     }
 
     /**
@@ -96,9 +93,18 @@ public class RuleStrategyHandlerTest {
         AlibabaInvoker<Object> invoker2 = new AlibabaInvoker<>(8082, "0.0.2");
         invokers.add(invoker2);
         routes.get(0).setWeight(0);
+
+        // 测试匹配上路由，没有随机到实例的情况
         List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, invokers);
         Assert.assertEquals(1, targetInvoker.size());
         Assert.assertEquals(invoker2, targetInvoker.get(0));
+
+        // 测试没有匹配上路由，选取不匹配标签的实例的情况
+        List<Map<String, String>> tags = new ArrayList<>();
+        tags.add(routes.get(0).getTags());
+        List<Object> missMatchInvoker = RuleStrategyHandler.INSTANCE.getMissMatchInstances(tags, invokers);
+        Assert.assertEquals(1, missMatchInvoker.size());
+        Assert.assertEquals(invoker2, missMatchInvoker.get(0));
     }
 
     /**
@@ -128,9 +134,18 @@ public class RuleStrategyHandlerTest {
         ApacheInvoker<Object> invoker2 = new ApacheInvoker<>(8082, "0.0.2");
         invokers.add(invoker2);
         routes.get(0).setWeight(0);
+
+        // 测试匹配上路由，没有随机到实例的情况
         List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, invokers);
         Assert.assertEquals(1, targetInvoker.size());
         Assert.assertEquals(invoker2, targetInvoker.get(0));
+
+        // 测试没有匹配上路由，选取不匹配标签的实例的情况
+        List<Map<String, String>> tags = new ArrayList<>();
+        tags.add(routes.get(0).getTags());
+        List<Object> missMatchInvoker = RuleStrategyHandler.INSTANCE.getMissMatchInstances(tags, invokers);
+        Assert.assertEquals(1, missMatchInvoker.size());
+        Assert.assertEquals(invoker2, missMatchInvoker.get(0));
     }
 
     /**

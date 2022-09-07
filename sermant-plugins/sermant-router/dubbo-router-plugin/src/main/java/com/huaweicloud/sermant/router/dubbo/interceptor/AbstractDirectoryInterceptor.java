@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.dubbo.service.AbstractDirectoryService;
 
 /**
- * 增强AbstractDirectory的子类的doList方法，筛选灰度应用的地址
+ * 增强AbstractDirectory的子类的doList方法，筛选标签应用的地址
  *
  * @author provenceee
  * @since 2021-06-28

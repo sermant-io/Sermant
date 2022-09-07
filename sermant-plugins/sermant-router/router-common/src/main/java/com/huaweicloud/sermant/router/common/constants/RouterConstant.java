@@ -29,7 +29,7 @@ public class RouterConstant {
     public static final String DUBBO_SOURCE_TYPE_PREFIX = "args";
 
     /**
-     * 灰度发布默认版本
+     * 标签路由默认版本
      */
     public static final String ROUTER_DEFAULT_VERSION = "0.0.0";
 
@@ -39,32 +39,27 @@ public class RouterConstant {
     public static final String ENABLED_METHOD_NAME = ".isEnabled()";
 
     /**
-     * 注册时灰度版本的key
-     */
-    public static final String TAG_VERSION_KEY = "tag.version";
-
-    /**
-     * 灰度配置servicecomb的key
+     * 标签路由servicecomb的key
      */
     public static final String ROUTER_CONFIG_SERVICECOMB_KEY = "servicecomb";
 
     /**
-     * 灰度配置routeRule的key
+     * 标签路由routeRule的key
      */
     public static final String ROUTER_CONFIG_ROUTE_RULE_KEY = "routeRule";
 
     /**
-     * 灰度配置key前缀
+     * 标签路由key前缀
      */
     public static final String ROUTER_KEY_PREFIX = "servicecomb.routeRule";
 
     /**
-     * dubbo应用灰度标签缓存名
+     * dubbo路由规则缓存名
      */
     public static final String DUBBO_CACHE_NAME = "DUBBO_ROUTE";
 
     /**
-     * spring应用灰度标签缓存名
+     * spring路由规则缓存名
      */
     public static final String SPRING_CACHE_NAME = "SPRING_ROUTE";
 

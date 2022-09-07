@@ -2,7 +2,7 @@ server:
   port: 28021
 dubbo:
   protocol:
-    port: 28821
+    port: ${DUBBO_PROTOCOL_PORT:28821}
 
 spring:
   application:
