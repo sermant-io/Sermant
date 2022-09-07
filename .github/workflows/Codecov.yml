@@ -1,0 +1,36 @@
+name: Workflow for Jacoco
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java_version: [1.8]
+        os: [ubuntu-latest]
+    permissions:
+      checks: write
+      contents: write
+      pull-requests: write
+      statuses: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Set up JDK ${{ matrix.java_version }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java_version }}
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build with Maven
+        run: mvn test
+      - name: Generate code coverage report
+        uses: codecov/codecov-action@v3
+        with:
+          files: '**/target/jacoco-report/jacoco.xml'
+          flags: unittests
+          fail_ci_if_error: true # optional (default = false)
