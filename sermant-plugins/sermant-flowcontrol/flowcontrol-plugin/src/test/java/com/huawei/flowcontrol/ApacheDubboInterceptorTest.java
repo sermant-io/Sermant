@@ -17,21 +17,28 @@
 
 package com.huawei.flowcontrol;
 
-import static org.mockito.Mockito.mock;
-
 import com.huawei.flowcontrol.apache.ApacheInvocation;
 import com.huawei.flowcontrol.apache.ApacheInvoker;
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
+import com.huawei.flowcontrol.common.entity.FlowControlResult;
+import com.huawei.flowcontrol.common.entity.RequestEntity;
+import com.huawei.flowcontrol.service.rest4j.DubboRest4jService;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.monitor.support.MonitorFilter;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.cluster.directory.StaticDirectory;
 import org.apache.dubbo.rpc.cluster.support.FailoverClusterInvoker;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.Collections;
 
@@ -46,9 +53,31 @@ public class ApacheDubboInterceptorTest {
 
     private Interceptor interceptor;
 
+    private final FlowControlConfig flowControlConfig = new FlowControlConfig();
+
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    private MockedStatic<ServiceManager> serviceManagerMockedStatic;
+
+    @After
+    public void tearDown() {
+        pluginConfigManagerMockedStatic.close();
+        serviceManagerMockedStatic.close();
+    }
+
     @Before
+    public void setUp() {
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
+                .thenReturn(flowControlConfig);
+        serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
+        serviceManagerMockedStatic.when(() -> ServiceManager.getService(DubboRest4jService.class))
+                .thenReturn(createRestService());
+        before();
+    }
+
     public void before() {
-        interceptor = mock(ApacheDubboInterceptor.class);
+        interceptor = new ApacheDubboInterceptor();
         Object proxy = new MonitorFilter();
         Object[] allArguments = new Object[2];
         allArguments[0] = new FailoverClusterInvoker<>(new StaticDirectory<>(URL.valueOf("dubbo://localhost:8080"),
@@ -63,5 +92,26 @@ public class ApacheDubboInterceptorTest {
         interceptor.before(context);
         interceptor.after(context);
         interceptor.onThrow(context);
+    }
+
+    private DubboRest4jService createRestService() {
+        return new DubboRest4jService() {
+
+            @Override
+            public void onBefore(String sourceName, RequestEntity requestEntity, FlowControlResult fixedResult,
+                    boolean isProvider) {
+
+            }
+
+            @Override
+            public void onAfter(String sourceName, Object result, boolean isProvider, boolean hasException) {
+
+            }
+
+            @Override
+            public boolean onThrow(String sourceName, Throwable throwable, boolean isProvider) {
+                return false;
+            }
+        };
     }
 }
