@@ -18,6 +18,7 @@
 package com.huawei.flowcontrol.retry;
 
 import com.huawei.flowcontrol.common.util.ReflectUtils;
+import com.huawei.flowcontrol.retry.cluster.ClusterInvokerCreator;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
@@ -80,6 +81,7 @@ public class ExtensionLoaderInterceptor extends InterceptorSupporter {
                 return context;
             }
             retryInvokerClass.ifPresent(invokerClass -> classes.put(retryClusterInvoker, invokerClass));
+            ClusterInvokerCreator.INSTANCE.getClusterInvokerMap().putAll(classes);
         }
         return context;
     }

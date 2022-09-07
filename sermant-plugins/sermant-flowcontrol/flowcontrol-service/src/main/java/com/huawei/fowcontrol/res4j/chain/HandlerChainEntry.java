@@ -25,6 +25,7 @@ import com.huawei.fowcontrol.res4j.util.FlowControlExceptionUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,8 +79,15 @@ public enum HandlerChainEntry {
      */
     public void onDubboBefore(String sourceName, RequestEntity requestEntity, FlowControlResult flowControlResult,
             boolean isProvider) {
-        configPrefix(sourceName, isProvider);
-        onBefore(sourceName, requestEntity, flowControlResult);
+        String formatSourceName = formatSourceName(sourceName, isProvider);
+        configPrefix(formatSourceName, isProvider);
+        onBefore(formatSourceName, requestEntity, flowControlResult);
+    }
+
+    private String formatSourceName(String sourceName, boolean isProvider) {
+        return String.format(Locale.ENGLISH, "%s%s",
+                isProvider ? HandlerConstants.THREAD_LOCAL_DUBBO_PROVIDER_PREFIX
+                        : HandlerConstants.THREAD_LOCAL_DUBBO_CONSUMER_PREFIX, sourceName);
     }
 
     /**
@@ -92,24 +100,8 @@ public enum HandlerChainEntry {
         try {
             chain.onResult(ChainContext.getThreadLocalContext(sourceName), null, result);
         } finally {
-            if (isNeedRemoveCache(sourceName)) {
-                ChainContext.remove(sourceName);
-            }
+            ChainContext.remove(sourceName);
         }
-    }
-
-    /**
-     * 两种场景移除线程变量缓存
-     * <li>http拦截, 该场景仅一次进出</li>
-     * <li>dubbo拦截, 该场景单个线程会存在provider与consumer，两次均会进入, 且顺序为onBefore(Provider) -> onBefore(Consumer) -> onAfter
-     * (Consumer) -> onAfter(Provider)</li>
-     *
-     * @return 是否需要移除缓存
-     */
-    private boolean isNeedRemoveCache(String sourceName) {
-        final Optional<String> keyPrefix = ChainContext.getKeyPrefix(sourceName);
-        return !keyPrefix.isPresent()
-                || HandlerConstants.THREAD_LOCAL_DUBBO_PROVIDER_PREFIX.equals(keyPrefix.get());
     }
 
     private void configPrefix(String sourceName, boolean isProvider) {
@@ -128,8 +120,9 @@ public enum HandlerChainEntry {
      * @param isProvider 是否为生产端
      */
     public void onDubboResult(String sourceName, Object result, boolean isProvider) {
-        configPrefix(sourceName, isProvider);
-        onResult(sourceName, result);
+        final String formatSourceName = formatSourceName(sourceName, isProvider);
+        configPrefix(formatSourceName, isProvider);
+        onResult(formatSourceName, result);
     }
 
     /**
@@ -152,7 +145,8 @@ public enum HandlerChainEntry {
      * @param isProvider 是否为生产端
      */
     public void onDubboThrow(String sourceName, Throwable throwable, boolean isProvider) {
-        configPrefix(sourceName, isProvider);
-        onThrow(sourceName, throwable);
+        final String formatSourceName = formatSourceName(sourceName, isProvider);
+        configPrefix(formatSourceName, isProvider);
+        onThrow(formatSourceName, throwable);
     }
 }

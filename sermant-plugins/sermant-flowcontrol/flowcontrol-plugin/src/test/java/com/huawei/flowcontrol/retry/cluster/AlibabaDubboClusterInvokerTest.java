@@ -20,17 +20,16 @@ import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.util.ConvertUtils;
 
+import com.alibaba.dubbo.common.URL;
+import com.alibaba.dubbo.rpc.Invocation;
+import com.alibaba.dubbo.rpc.Invoker;
+import com.alibaba.dubbo.rpc.Result;
+import com.alibaba.dubbo.rpc.RpcResult;
+import com.alibaba.dubbo.rpc.cluster.Directory;
+import com.alibaba.dubbo.rpc.cluster.loadbalance.RoundRobinLoadBalance;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
-import org.apache.dubbo.common.URL;
-import org.apache.dubbo.rpc.AsyncRpcResult;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.cluster.Directory;
-import org.apache.dubbo.rpc.cluster.loadbalance.RoundRobinLoadBalance;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,12 +40,12 @@ import org.mockito.Mockito;
 import java.util.Arrays;
 
 /**
- * Apache duubo 集群调用测试
+ * alibaba dubbo invoker 测试
  *
  * @author zhouss
  * @since 2022-09-14
  */
-public class ApacheDubboClusterInvokerTest {
+public class AlibabaDubboClusterInvokerTest {
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     private MockedStatic<ServiceManager> serviceManagerMockedStatic;
@@ -74,8 +73,8 @@ public class ApacheDubboClusterInvokerTest {
     @Test
     public void doInvoke() {
         final Directory<Result> directory = Mockito.mock(Directory.class);
-        Mockito.when(directory.getUrl()).thenReturn(new URL("dubbo", "localhost", 8080));
-        final ApacheDubboClusterInvoker<Result> clusterInvoker = new ApacheDubboClusterInvoker<>(directory);
+        Mockito.when(directory.getUrl()).thenReturn(URL.valueOf("dubbo://localhost:8080"));
+        final AlibabaDubboClusterInvoker<Result> clusterInvoker = new AlibabaDubboClusterInvoker<>(directory);
         final RoundRobinLoadBalance roundRobinLoadBalance = new RoundRobinLoadBalance();
         final Invocation invocation = Mockito.mock(Invocation.class);
         String interfaceName = this.getClass().getName();
@@ -92,18 +91,9 @@ public class ApacheDubboClusterInvokerTest {
         Mockito.when(invoker.getUrl()).thenReturn(url);
         Mockito.when(invocation.getInvoker()).thenReturn(invoker);
         Mockito.when(directory.getUrl()).thenReturn(url);
-        final AsyncRpcResult asyncRpcResult = AsyncRpcResult.newDefaultAsyncResult(new Object(), invocation);
-        Mockito.when(invoker.invoke(invocation)).thenReturn(asyncRpcResult);
+        final RpcResult rpcResult = new RpcResult(new Object());
+        Mockito.when(invoker.invoke(invocation)).thenReturn(rpcResult);
         final Result result = clusterInvoker.doInvoke(invocation, Arrays.asList(invoker), roundRobinLoadBalance);
-        Assert.assertEquals(result, asyncRpcResult);
-        // 测试抛出异常
-        Mockito.when(invoker.invoke(invocation)).thenThrow(new RpcException("test error"));
-        boolean isEx = false;
-        try {
-            clusterInvoker.doInvoke(invocation, Arrays.asList(invoker), roundRobinLoadBalance);
-        } catch (RpcException ex) {
-            isEx = true;
-        }
-        Assert.assertTrue(isEx);
+        Assert.assertEquals(result, rpcResult);
     }
 }

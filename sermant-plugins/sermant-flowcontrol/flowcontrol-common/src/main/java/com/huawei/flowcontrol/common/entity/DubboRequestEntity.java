@@ -37,6 +37,11 @@ public class DubboRequestEntity extends AbstractRequestEntity {
     private Map<String, String> attachments;
 
     /**
+     * 是否为dubbo泛化接口
+     */
+    private final boolean isGeneric;
+
+    /**
      * 构造dubbo请求体
      *
      * @param apiPath 请求路径
@@ -46,10 +51,29 @@ public class DubboRequestEntity extends AbstractRequestEntity {
      */
     public DubboRequestEntity(String apiPath, Map<String, String> attachments, RequestType requestType,
             String serviceName) {
+        this(apiPath, attachments, requestType, serviceName, false);
+    }
+
+    /**
+     * 构造dubbo请求体
+     *
+     * @param apiPath 请求路径
+     * @param attachments 额外参数
+     * @param requestType 请求类型
+     * @param serviceName 服务名
+     * @param isGeneric 是否为泛化接口
+     */
+    public DubboRequestEntity(String apiPath, Map<String, String> attachments, RequestType requestType,
+            String serviceName, boolean isGeneric) {
         this.apiPath = apiPath;
         this.attachments = Collections.unmodifiableMap(attachments);
+        this.isGeneric = isGeneric;
         setRequestType(requestType);
         setServiceName(serviceName);
+    }
+
+    public boolean isGeneric() {
+        return isGeneric;
     }
 
     @Override

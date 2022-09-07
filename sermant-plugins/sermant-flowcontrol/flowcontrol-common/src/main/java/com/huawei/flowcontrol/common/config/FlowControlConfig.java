@@ -196,7 +196,7 @@ public class FlowControlConfig implements PluginConfig {
     private String[] alibabaDubboRetryExceptions = {"com.alibaba.dubbo.rpc.RpcException"};
 
     /**
-     * 针对alibaba dubbo重试异常
+     * 针对spring默认重试异常
      */
     private String[] springRetryExceptions = {"org.springframework.web.client.HttpServerErrorException"};
 
@@ -269,6 +269,21 @@ public class FlowControlConfig implements PluginConfig {
      * rest template-请求协议, 默认okHttp， 若宿主没有则使用Connection模式
      */
     private String restTemplateRequestFactory = "okHttp";
+
+    /**
+     * 是否替换原生的ClusterInvoker, 只针对dubbo应用;
+     * <p>若为true, 则在调用时, 调用逻辑依然会走原dubbo cluster invoker逻辑, 重试仅最外层包装</p>
+     * <p>若为false, 则在调用时, 则直接其cluster invoker替换为由插件重试的自定义重试Invoker, 默认为false</p>
+     */
+    private boolean useOriginInvoker = false;
+
+    public boolean isUseOriginInvoker() {
+        return useOriginInvoker;
+    }
+
+    public void setUseOriginInvoker(boolean useOriginInvoker) {
+        this.useOriginInvoker = useOriginInvoker;
+    }
 
     public String getRestTemplateRequestFactory() {
         return restTemplateRequestFactory;

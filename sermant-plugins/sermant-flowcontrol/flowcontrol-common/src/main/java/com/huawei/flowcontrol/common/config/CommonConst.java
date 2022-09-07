@@ -41,6 +41,11 @@ public class CommonConst {
     public static final String DUBBO_APPLICATION = "application";
 
     /**
+     * dubbo接口
+     */
+    public static final String DUBBO_INTERFACE = "interface";
+
+    /**
      * 从url获取的版本键名
      */
     public static final String URL_VERSION_KEY = "version";

@@ -47,7 +47,7 @@ public class BulkheadRequestHandlerTest extends BaseEntityTest implements Reques
         this.sourceName = sourceName;
         final CountDownLatch countDownLatch = new CountDownLatch(300);
         AtomicBoolean check = new AtomicBoolean();
-        final Thread[] threads = createThread(4, countDownLatch, check);
+        final Thread[] threads = createThread(10, countDownLatch, check);
         for (Thread thread : threads) {
             thread.start();
         }

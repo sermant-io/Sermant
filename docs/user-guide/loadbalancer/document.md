@@ -10,11 +10,11 @@
 
 | 框架类型                    | 策略名                       | 配置值 / 负载均衡策略                          | 版本支持                                                     |
 | --------------------------- | ---------------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
-| dubbo                       | 随机（dubbo默认）            | Random / RANDOM                                | 后续支持（2.6.x, 2.7.x）                                     |
-| dubbo                       | 轮询                         | RoundRobin / ROUNDROBIN                        | 后续支持（2.6.x, 2.7.x）                                     |
-| dubbo                       | 最少活跃                     | leastActive / LEASTACTIVE                      | 后续支持（2.6.x, 2.7.x）                                     |
-| dubbo                       | 一致性HASH                   | consistentHash / CONSISTENTHASH                | 后续支持（2.6.x, 2.7.x）                                     |
-| dubbo                       | 最短响应时间                 | shortestResponse / SHORTESTRESPONSE            | 后续支持（2.7.7+）                                           |
+| dubbo                       | 随机（dubbo默认）            | Random / RANDOM                                | 2.6.x, 2.7.x                                                 |
+| dubbo                       | 轮询                         | RoundRobin / ROUNDROBIN                        | 2.6.x, 2.7.x                                                 |
+| dubbo                       | 最少活跃                     | leastActive / LEASTACTIVE                      | 2.6.x, 2.7.x                                                 |
+| dubbo                       | 一致性HASH                   | consistentHash / CONSISTENTHASH                | 2.6.x, 2.7.x                                                 |
+| dubbo                       | 最短响应时间                 | shortestResponse / SHORTESTRESPONSE            | 2.7.7+                                                       |
 | spring-cloud-netflix-ribbon | 区域权重（ribbon默认）       | zoneAvoidance / ZONE_AVOIDANCE                 | ZONE_AVOIDANCEspring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
 | spring-cloud-netflix-ribbon | 随机                         | Random / RANDOM                                | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |
 | spring-cloud-netflix-ribbon | 轮询                         | RoundRobin / ROUND_ROBIN                       | spring cloud Edgware.x, spring cloud Finchley.x, spring cloud Greenwich.x, spring cloud Hoxton.x |

@@ -17,20 +17,27 @@
 
 package com.huaweicloud.loadbalancer.interceptor;
 
+import com.huaweicloud.loadbalancer.cache.DubboApplicationCache;
 import com.huaweicloud.loadbalancer.cache.DubboLoadbalancerCache;
 import com.huaweicloud.loadbalancer.config.DubboLoadbalancerType;
 import com.huaweicloud.loadbalancer.config.LbContext;
 import com.huaweicloud.loadbalancer.config.LoadbalancerConfig;
+import com.huaweicloud.loadbalancer.constants.DubboUrlParamsConstants;
 import com.huaweicloud.loadbalancer.rule.LoadbalancerRule;
 import com.huaweicloud.loadbalancer.rule.RuleManager;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.utils.ClassUtils;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -41,15 +48,15 @@ import java.util.logging.Logger;
  */
 public class UrlInterceptor extends AbstractInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
-
-    private static final String LOAD_BALANCE_KEY = "loadbalance";
-
-    /**
-     * 下游服务名参数
-     */
-    private static final String REMOTE_APPLICATION = "remote.application";
-
+    private static final String ALIBABA_LOADER = "com.alibaba.dubbo.common.extension.ExtensionLoader";
+    private static final String ALIBABA_LB = "com.alibaba.dubbo.rpc.cluster.LoadBalance";
+    private static final String APACHE_LOADER = "org.apache.dubbo.common.extension.ExtensionLoader";
+    private static final String APACHE_LB = "org.apache.dubbo.rpc.cluster.LoadBalance";
+    private static final String LOAD_METHOD = "loadExtensionClasses";
+    private static final String GET_LOADER_METHOD = "getExtensionLoader";
     private final LoadbalancerConfig config;
+
+    private Set<String> supportRules;
 
     /**
      * 构造方法
@@ -62,12 +69,69 @@ public class UrlInterceptor extends AbstractInterceptor {
     public ExecuteContext before(ExecuteContext context) {
         LbContext.INSTANCE.setCurLoadbalancerType(LbContext.LOADBALANCER_DUBBO);
         Object[] arguments = context.getArguments();
-        if (arguments != null && arguments.length > 1 && LOAD_BALANCE_KEY.equals(arguments[1])) {
+        if (arguments != null && arguments.length > 1
+                && DubboUrlParamsConstants.DUBBO_LOAD_BALANCER_KEY.equals(arguments[1])) {
             // 如果为empty，继续执行原方法，即使用宿主的负载均衡策略
             // 如果不为empty，则使用返回的type并跳过原方法
-            getType(context).ifPresent(context::skip);
+            checkRules();
+            getType(context).filter(this::isSupport).ifPresent(context::skip);
         }
         return context;
+    }
+
+    private boolean isSupport(String ruleName) {
+        if (supportRules.isEmpty()) {
+            LOGGER.fine("Supported dubbo lb rule dose not loaded, may be current version is not support!");
+            return true;
+        }
+        if (supportRules.contains(ruleName)) {
+            return true;
+        }
+        LOGGER.fine(String.format(Locale.ENGLISH, "Can not support rule [%s]", ruleName));
+        return false;
+    }
+
+    private void checkRules() {
+        if (supportRules != null) {
+            return;
+        }
+        synchronized (this) {
+            if (isAlibaba()) {
+                fillSupportRules(ALIBABA_LOADER, ALIBABA_LB);
+            } else {
+                fillSupportRules(APACHE_LOADER, APACHE_LB);
+            }
+        }
+    }
+
+    private void fillSupportRules(String extensionLoaderClazz, String lbClassName) {
+        supportRules = new HashSet<>();
+        final Optional<Class<?>> lbClazz = ClassUtils
+                .loadClass(lbClassName, Thread.currentThread().getContextClassLoader(), true);
+        if (!lbClazz.isPresent()) {
+            return;
+        }
+
+        // 获取指定的ExtensionLoader
+        final Optional<Object> loader = ReflectUtils.invokeMethod(extensionLoaderClazz, GET_LOADER_METHOD,
+                new Class[] {Class.class},
+                new Object[] {lbClazz.get()});
+        if (!loader.isPresent()) {
+            return;
+        }
+
+        // 调用ExtensionLoader#getLoadedExtensions获取所有lb键, 即规则名
+        final Optional<Object> rules = ReflectUtils.invokeMethod(loader.get(), LOAD_METHOD, null, null);
+        if (rules.isPresent() && rules.get() instanceof Map) {
+            supportRules.addAll((Collection<? extends String>) ((Map<?, ?>) rules.get()).keySet());
+        } else {
+            LOGGER.warning("Can get loaded lb extensions!");
+        }
+    }
+
+    private boolean isAlibaba() {
+        return ClassUtils.loadClass(ALIBABA_LOADER, Thread.currentThread().getContextClassLoader(), false)
+                .isPresent();
     }
 
     @Override
@@ -81,7 +145,7 @@ public class UrlInterceptor extends AbstractInterceptor {
             return Optional.empty();
         }
         return getRemoteApplication(context).flatMap(application -> matchLoadbalancerType(application)
-                .map(loadbalancerType -> loadbalancerType.name().toUpperCase(Locale.ROOT)));
+                .map(loadbalancerType -> loadbalancerType.name().toLowerCase(Locale.ROOT)));
     }
 
     private Optional<DubboLoadbalancerType> matchLoadbalancerType(String application) {
@@ -102,10 +166,33 @@ public class UrlInterceptor extends AbstractInterceptor {
     }
 
     private Optional<String> getRemoteApplication(ExecuteContext context) {
-        final Object object = context.getObject();
-        final Optional<Object> getParameter = ReflectUtils
-                .invokeMethod(object, "getParameter", new Class[]{String.class},
-                        new Object[]{REMOTE_APPLICATION});
+        final Object target = context.getObject();
+        final Optional<String> applicationFromCache = getApplicationFromCache(target);
+        if (applicationFromCache.isPresent()) {
+            return applicationFromCache;
+        }
+        return getApplicationFromUrl(target);
+    }
+
+    private Optional<Object> invokeGetParameter(Object target, String key) {
+        return ReflectUtils.invokeMethod(target, "getParameter", new Class[]{String.class},
+                new Object[]{key});
+    }
+
+    private Optional<String> getApplicationFromUrl(Object target) {
+        final Optional<Object> getParameter = invokeGetParameter(target,
+                DubboUrlParamsConstants.DUBBO_REMOTE_APPLICATION);
         return getParameter.map(result -> (String) result);
+    }
+
+    private Optional<String> getApplicationFromCache(Object target) {
+        final Optional<Object> interfaceName = invokeGetParameter(target, DubboUrlParamsConstants.DUBBO_INTERFACE);
+        if (interfaceName.isPresent() && interfaceName.get() instanceof String) {
+            final String application = DubboApplicationCache.INSTANCE.getApplicationCache().get(interfaceName.get());
+            if (application != null) {
+                return Optional.of(application);
+            }
+        }
+        return Optional.empty();
     }
 }
