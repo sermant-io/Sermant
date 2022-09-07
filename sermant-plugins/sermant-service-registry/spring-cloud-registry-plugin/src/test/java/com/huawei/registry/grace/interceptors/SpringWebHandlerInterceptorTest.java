@@ -49,20 +49,21 @@ public class SpringWebHandlerInterceptorTest {
      */
     public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
+    private MockedStatic<PluginServiceManager> pluginServiceManagerMockedStatic;
+
     /**
      * 初始化
      */
     @Before
     public void init() {
         graceConfig.setEnableSpring(true);
-        pluginConfigManagerMockedStatic = Mockito
-                .mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
                 .thenReturn(graceConfig);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
                 .thenReturn(new RegisterConfig());
-        Mockito.mockStatic(PluginServiceManager.class)
-                .when(() -> PluginServiceManager.getPluginService(GraceService.class))
+        pluginServiceManagerMockedStatic = Mockito.mockStatic(PluginServiceManager.class);
+        pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(GraceService.class))
                 .thenReturn(new GraceService() {
                     @Override
                     public void shutdown() {
@@ -79,6 +80,7 @@ public class SpringWebHandlerInterceptorTest {
     @After
     public void tearDown() {
         pluginConfigManagerMockedStatic.close();
+        pluginServiceManagerMockedStatic.close();
     }
 
     /**
