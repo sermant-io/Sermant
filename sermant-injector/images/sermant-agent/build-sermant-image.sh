@@ -9,7 +9,7 @@ name=${imageName}:${imageVersion}
 
 echo "=====================rename sermant-agent package=================================="
 
-if [ -f "sermant-agen-${sermantVersion}.tar.gz" ]; then
+if [ -f "sermant-agent-${sermantVersion}.tar.gz" ]; then
   cp -f sermant-agent-${sermantVersion}.tar.gz sermant-agent.tar.gz
 else
   echo "sermant-agent-${sermantVersion}.tar.gz doesn't exist"

@@ -36,6 +36,8 @@
         <package.plugin.type>plugin</package.plugin.type>
         <spring-components.version>5.3.14</spring-components.version>
         <spring-cloud.version>3.0.0</spring-cloud.version>
+        <zk-config.version>3.0.0</zk-config.version>
+        <nacos-config.version>2.2.0.RELEASE</nacos-config.version>
     </properties>
 
     <dependencies>
@@ -90,6 +92,18 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
             <version>${mockito-inline.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-zookeeper-config</artifactId>
+            <version>${zk-config.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>${nacos-config.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

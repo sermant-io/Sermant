@@ -58,7 +58,7 @@ public class RegistrationProperties implements BeanFactoryAware {
     @Value("${dubbo.application.name:${spring.application.name:application}}")
     private String serviceName;
 
-    @Value("${server.port}")
+    @Value("${server.port:8080}")
     private int port;
 
     @Autowired
