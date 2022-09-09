@@ -64,3 +64,7 @@ jobs:
 
           # 每次运行处理issue和PR条数，如果待处理的数量过多，可修改该值
           operations-per-run: 100
+      - name: Closes issues related to a merged pull request.
+        uses: ldez/gha-mjolnir@v1.0.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
