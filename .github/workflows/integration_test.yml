@@ -96,7 +96,13 @@ jobs:
         run: |
           nohup java -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > dubbo-zk-provider.log 2>&1 &
       - name: waiting for providers start
-        run: sleep 60s
+        run: |
+          ps -ef | grep java
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:48021/ping 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:28021/ping 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:38021/ping 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:38020/ping 120
+          ps -ef | grep java
       - name: start spring and dubbo consumer service
         env:
           servicecomb.service.enableDubboRegister: true
@@ -116,7 +122,11 @@ jobs:
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar \
           sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar > dubbo-consumer.log 2>&1 &
       - name: waiting for consumers start
-        run: sleep 60s
+        run: |
+          ps -ef | grep java
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:38022/ping 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:28820/ping 120
+          ps -ef | grep java
       - name: integration test
         run: mvn -Dcontroller.port=38022 test --file sermant-integration-tests/dubbo-test/pom.xml
       - name: if failure then upload error log

@@ -57,6 +57,9 @@ public class ApplicationConfigServiceTest {
         apacheConfig = new org.apache.dubbo.config.ApplicationConfig();
         service = new ApplicationConfigServiceImpl();
         config = new RouterConfig();
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(FOO, "foo1");
+        config.setParameters(parameters);
         Field field = service.getClass().getDeclaredField("routerConfig");
         field.setAccessible(true);
         Field modifiersField = Field.class.getDeclaredField("modifiers");
@@ -86,7 +89,7 @@ public class ApplicationConfigServiceTest {
         Assert.assertEquals(BAR, DubboCache.INSTANCE.getAppName());
         Map<String, String> parameters = alibabaConfig.getParameters();
         testParameters(parameters);
-        Assert.assertEquals(1, parameters.size());
+        Assert.assertEquals(2, parameters.size());
 
         // 应用名不为null，parameters不为null
         Map<String, String> map = new HashMap<>();
@@ -97,7 +100,7 @@ public class ApplicationConfigServiceTest {
         parameters = alibabaConfig.getParameters();
         testParameters(parameters);
         Assert.assertEquals(FOO, parameters.get(BAR));
-        Assert.assertEquals(2, parameters.size());
+        Assert.assertEquals(3, parameters.size());
         Assert.assertEquals(map, parameters);
     }
 
@@ -122,7 +125,7 @@ public class ApplicationConfigServiceTest {
         Assert.assertEquals(FOO, DubboCache.INSTANCE.getAppName());
         Map<String, String> parameters = apacheConfig.getParameters();
         testParameters(parameters);
-        Assert.assertEquals(1, parameters.size());
+        Assert.assertEquals(2, parameters.size());
 
         // 应用名不为null，parameters不为null
         Map<String, String> map = new HashMap<>();
@@ -133,12 +136,14 @@ public class ApplicationConfigServiceTest {
         parameters = apacheConfig.getParameters();
         testParameters(parameters);
         Assert.assertEquals(BAR, parameters.get(FOO));
-        Assert.assertEquals(2, parameters.size());
+        Assert.assertEquals(3, parameters.size());
         Assert.assertEquals(map, parameters);
     }
 
     private void testParameters(Map<String, String> parameters) {
         Assert.assertNotNull(parameters);
         Assert.assertEquals(config.getRouterVersion(), parameters.get(RouterConstant.VERSION_KEY));
+        Assert.assertEquals(config.getParameters().get(FOO),
+            parameters.get(RouterConstant.PARAMETERS_KEY_PREFIX + FOO));
     }
 }

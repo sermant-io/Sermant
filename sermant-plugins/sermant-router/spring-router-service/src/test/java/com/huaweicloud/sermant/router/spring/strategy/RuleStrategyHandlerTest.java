@@ -17,10 +17,10 @@
 package com.huaweicloud.sermant.router.spring.strategy;
 
 import com.huaweicloud.sermant.router.config.label.entity.Route;
+import com.huaweicloud.sermant.router.spring.TestDefaultServiceInstance;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 
 import java.util.ArrayList;
@@ -62,13 +62,9 @@ public class RuleStrategyHandlerTest {
     @Test
     public void testDefaultV1() {
         List<Object> instances = new ArrayList<>();
-        Map<String, String> meta1 = new HashMap<>();
-        meta1.put("version", "0.0.1");
-        ServiceInstance instance1 = new TestDefaultServiceInstance(meta1);
+        ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.1");
         instances.add(instance1);
-        Map<String, String> meta2 = new HashMap<>();
-        meta2.put("version", "0.0.2");
-        ServiceInstance instance2 = new TestDefaultServiceInstance(meta2);
+        ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.2");
         instances.add(instance2);
         List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInstances(routes, instances);
         Assert.assertEquals(100, routes.get(0).getWeight().intValue());
@@ -82,13 +78,9 @@ public class RuleStrategyHandlerTest {
     @Test
     public void testDefaultMismatch() {
         List<Object> instances = new ArrayList<>();
-        Map<String, String> meta1 = new HashMap<>();
-        meta1.put("version", "0.0.1");
-        ServiceInstance instance1 = new TestDefaultServiceInstance(meta1);
+        ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.1");
         instances.add(instance1);
-        Map<String, String> meta2 = new HashMap<>();
-        meta2.put("version", "0.0.2");
-        ServiceInstance instance2 = new TestDefaultServiceInstance(meta2);
+        ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.2");
         instances.add(instance2);
         routes.get(0).setWeight(0);
 
@@ -100,14 +92,8 @@ public class RuleStrategyHandlerTest {
         // 测试没有匹配上路由，选取不匹配标签的实例的情况
         List<Map<String, String>> tags = new ArrayList<>();
         tags.add(routes.get(0).getTags());
-        List<Object> missMatchInvoker = RuleStrategyHandler.INSTANCE.getMismatchInstances(tags, instances);
-        Assert.assertEquals(1, missMatchInvoker.size());
-        Assert.assertEquals(instance2, missMatchInvoker.get(0));
-    }
-
-    public static class TestDefaultServiceInstance extends DefaultServiceInstance {
-        public TestDefaultServiceInstance(Map<String, String> metadata) {
-            super("foo", "bar", "bar", 8080, false, metadata);
-        }
+        List<Object> mismatchInvoker = RuleStrategyHandler.INSTANCE.getMismatchInstances(tags, instances);
+        Assert.assertEquals(1, mismatchInvoker.size());
+        Assert.assertEquals(instance2, mismatchInvoker.get(0));
     }
 }
