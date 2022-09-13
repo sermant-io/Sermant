@@ -35,8 +35,7 @@ public class RegisterContextTest {
             protected void close() {
             }
         });
-        // 自身注册， 加上主动注册
-        Assert.assertEquals(2, RegisterContext.INSTANCE.getCloseHandlers().size());
+        Assert.assertFalse(RegisterContext.INSTANCE.getCloseHandlers().isEmpty());
     }
 
     @Test

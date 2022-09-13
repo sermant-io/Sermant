@@ -16,7 +16,6 @@
 
 package com.huawei.registry.service.register;
 
-import com.huawei.registry.config.GraceConfig;
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.config.RegisterType;
 import com.huawei.registry.entity.MicroServiceInstance;
@@ -112,19 +111,6 @@ public enum RegisterManager {
         if (register != null && isRegistered.compareAndSet(false, true)) {
             register.register();
         }
-    }
-
-    /**
-     * 获取启动延迟时间
-     *
-     * @return 延迟时间, 单位秒
-     */
-    private long getStartDelayTime() {
-        final GraceConfig pluginConfig = PluginConfigManager.getPluginConfig(GraceConfig.class);
-        if (pluginConfig.isEnableSpring()) {
-            return pluginConfig.getStartDelayTime();
-        }
-        return 0L;
     }
 
     /**

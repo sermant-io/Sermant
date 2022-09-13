@@ -70,6 +70,9 @@ public class ConsulHealthInterceptor extends SingleStateCloseHandler {
                 Map<Object, Set<ScheduledTask>> convertTasks = (Map<Object, Set<ScheduledTask>>) tasks;
                 final Set<ScheduledTask> heartBeatTasks =
                         convertTasks.remove(RegisterContext.INSTANCE.getRegisterWatch());
+                if (heartBeatTasks == null) {
+                    return;
+                }
                 for (ScheduledTask scheduledTask : heartBeatTasks) {
                     scheduledTask.cancel();
                 }
