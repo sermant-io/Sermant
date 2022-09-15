@@ -16,15 +16,10 @@
 
 package com.huaweicloud.sermant.router.dubbo.strategy;
 
-import com.huaweicloud.sermant.router.common.addr.AddrCache;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.label.entity.Route;
-
-import com.alibaba.dubbo.common.URL;
-import com.alibaba.dubbo.rpc.Invocation;
-import com.alibaba.dubbo.rpc.Invoker;
-import com.alibaba.dubbo.rpc.Result;
-import com.alibaba.dubbo.rpc.RpcException;
+import com.huaweicloud.sermant.router.dubbo.AlibabaInvoker;
+import com.huaweicloud.sermant.router.dubbo.ApacheInvoker;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,17 +30,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 流量灰度策略测试
+ * 标签路由策略测试
  *
  * @author provenceee
  * @since 2022-03-22
  */
 public class RuleStrategyHandlerTest {
-    private static final URL ALIBABA_URL = URL.valueOf("dubbo://localhost:8080/com.huawei.foo.BarTest?bar=foo");
-
-    private static final org.apache.dubbo.common.URL APACHE_URL = org.apache.dubbo.common.URL
-        .valueOf("dubbo://localhost:8080/com.huawei.foo.FooTest?foo=bar");
-
     private final List<Route> routes;
 
     /**
@@ -54,19 +44,17 @@ public class RuleStrategyHandlerTest {
     public RuleStrategyHandlerTest() {
         routes = new ArrayList<>();
         Map<String, String> tags1 = new HashMap<>();
-        tags1.put("version", "0.0.1");
+        tags1.put(RouterConstant.DUBBO_VERSION_KEY, "0.0.1");
         Route route1 = new Route();
         route1.setTags(tags1);
         route1.setWeight(100);
         routes.add(route1);
         Map<String, String> tags2 = new HashMap<>();
-        tags2.put("version", "0.0.2");
+        tags2.put(RouterConstant.DUBBO_VERSION_KEY, "0.0.2");
         Route route2 = new Route();
         route2.setTags(tags2);
         route2.setWeight(100);
         routes.add(route2);
-        AddrCache.setRegisterVersionCache("localhost:8081", "0.0.1");
-        AddrCache.setRegisterVersionCache("localhost:8082", "0.0.2");
     }
 
     /**
@@ -75,9 +63,9 @@ public class RuleStrategyHandlerTest {
     @Test
     public void testAlibabaV1() {
         List<Object> invokers = new ArrayList<>();
-        AlibabaInvoker<Object> invoker1 = new AlibabaInvoker<>(8081, "0.0.1");
+        AlibabaInvoker<Object> invoker1 = new AlibabaInvoker<>("0.0.1");
         invokers.add(invoker1);
-        AlibabaInvoker<Object> invoker2 = new AlibabaInvoker<>(8082, "0.0.2");
+        AlibabaInvoker<Object> invoker2 = new AlibabaInvoker<>("0.0.2");
         invokers.add(invoker2);
         List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, invokers);
         Assert.assertEquals(100, routes.get(0).getWeight().intValue());
@@ -91,14 +79,23 @@ public class RuleStrategyHandlerTest {
     @Test
     public void testAlibabaMismatch() {
         List<Object> invokers = new ArrayList<>();
-        AlibabaInvoker<Object> invoker1 = new AlibabaInvoker<>(8081, "0.0.1");
+        AlibabaInvoker<Object> invoker1 = new AlibabaInvoker<>("0.0.1");
         invokers.add(invoker1);
-        AlibabaInvoker<Object> invoker2 = new AlibabaInvoker<>(8082, "0.0.2");
+        AlibabaInvoker<Object> invoker2 = new AlibabaInvoker<>("0.0.2");
         invokers.add(invoker2);
         routes.get(0).setWeight(0);
+
+        // 测试匹配上路由，没有随机到实例的情况
         List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, invokers);
         Assert.assertEquals(1, targetInvoker.size());
         Assert.assertEquals(invoker2, targetInvoker.get(0));
+
+        // 测试没有匹配上路由，选取不匹配标签的实例的情况
+        List<Map<String, String>> tags = new ArrayList<>();
+        tags.add(routes.get(0).getTags());
+        List<Object> missMatchInvoker = RuleStrategyHandler.INSTANCE.getMissMatchInstances(tags, invokers);
+        Assert.assertEquals(1, missMatchInvoker.size());
+        Assert.assertEquals(invoker2, missMatchInvoker.get(0));
     }
 
     /**
@@ -107,9 +104,9 @@ public class RuleStrategyHandlerTest {
     @Test
     public void testApacheV1() {
         List<Object> invokers = new ArrayList<>();
-        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>(8081, "0.0.1");
+        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("0.0.1");
         invokers.add(invoker1);
-        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>(8082, "0.0.2");
+        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("0.0.2");
         invokers.add(invoker2);
         List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, invokers);
         Assert.assertEquals(100, routes.get(0).getWeight().intValue());
@@ -123,100 +120,22 @@ public class RuleStrategyHandlerTest {
     @Test
     public void testApacheMismatch() {
         List<Object> invokers = new ArrayList<>();
-        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>(8081, "0.0.1");
+        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("0.0.1");
         invokers.add(invoker1);
-        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>(8082, "0.0.2");
+        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("0.0.2");
         invokers.add(invoker2);
         routes.get(0).setWeight(0);
+
+        // 测试匹配上路由，没有随机到实例的情况
         List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, invokers);
         Assert.assertEquals(1, targetInvoker.size());
         Assert.assertEquals(invoker2, targetInvoker.get(0));
-    }
 
-    /**
-     * 测试类
-     *
-     * @since 2022-03-18
-     */
-    public static class AlibabaInvoker<T> implements Invoker<T> {
-        private final URL url;
-
-        /**
-         * 构造方法
-         *
-         * @param port 端口
-         * @param version 版本
-         */
-        public AlibabaInvoker(int port, String version) {
-            this.url = ALIBABA_URL.addParameter(RouterConstant.VERSION_KEY, version).setPort(port);
-        }
-
-        @Override
-        public Class<T> getInterface() {
-            return null;
-        }
-
-        @Override
-        public Result invoke(Invocation invocation) throws RpcException {
-            return null;
-        }
-
-        @Override
-        public URL getUrl() {
-            return url;
-        }
-
-        @Override
-        public boolean isAvailable() {
-            return false;
-        }
-
-        @Override
-        public void destroy() {
-        }
-    }
-
-    /**
-     * 测试类
-     *
-     * @since 2022-03-18
-     */
-    public static class ApacheInvoker<T> implements org.apache.dubbo.rpc.Invoker<T> {
-        private final org.apache.dubbo.common.URL url;
-
-        /**
-         * 构造方法
-         *
-         * @param port 端口
-         * @param version 版本
-         */
-        public ApacheInvoker(int port, String version) {
-            this.url = APACHE_URL.addParameter(RouterConstant.VERSION_KEY, version).setPort(port);
-        }
-
-        @Override
-        public Class<T> getInterface() {
-            return null;
-        }
-
-        @Override
-        public org.apache.dubbo.rpc.Result invoke(org.apache.dubbo.rpc.Invocation invocation)
-            throws org.apache.dubbo.rpc.RpcException {
-            return null;
-        }
-
-        @Override
-        public org.apache.dubbo.common.URL getUrl() {
-            return url;
-        }
-
-        @Override
-        public boolean isAvailable() {
-            return false;
-        }
-
-        @Override
-        public void destroy() {
-        }
+        // 测试没有匹配上路由，选取不匹配标签的实例的情况
+        List<Map<String, String>> tags = new ArrayList<>();
+        tags.add(routes.get(0).getTags());
+        List<Object> missMatchInvoker = RuleStrategyHandler.INSTANCE.getMissMatchInstances(tags, invokers);
+        Assert.assertEquals(1, missMatchInvoker.size());
+        Assert.assertEquals(invoker2, missMatchInvoker.get(0));
     }
 }

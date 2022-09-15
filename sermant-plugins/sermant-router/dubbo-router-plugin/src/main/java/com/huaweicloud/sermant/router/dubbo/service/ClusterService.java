@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
  */
 public interface ClusterService extends PluginService {
     /**
-     * 从url中缓存接口与下游服务名的映射关系，从map中删除灰度发布相关的参数
+     * 从url中缓存接口与下游服务名的映射关系，从map中删除标签相关的参数
      *
      * @param arguments 请求参数
      */

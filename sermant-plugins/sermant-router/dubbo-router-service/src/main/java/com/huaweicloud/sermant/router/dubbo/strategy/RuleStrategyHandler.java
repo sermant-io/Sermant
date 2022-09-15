@@ -42,11 +42,11 @@ public enum RuleStrategyHandler {
     }
 
     /**
-     * 选取灰度应用的invokers
+     * 选取标签应用的invokers
      *
      * @param routes 路由规则
      * @param invokers dubbo invokers
-     * @return 灰度应用的invokers
+     * @return 标签应用的invokers
      */
     public List<Object> getTargetInvoker(List<Route> routes, List<Object> invokers) {
         return ruleStrategy.getTargetInstances(routes, invokers);

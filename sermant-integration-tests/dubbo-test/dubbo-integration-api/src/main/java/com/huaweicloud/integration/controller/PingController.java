@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.router.dubbo.service;
+package com.huaweicloud.integration.controller;
 
-import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
- * ApplicationConfig的service
+ * PingController
  *
  * @author provenceee
- * @since 2021-11-24
+ * @since 2022-09-13
  */
-public interface ApplicationConfigService extends PluginService {
+@RestController
+@Lazy
+public class PingController {
     /**
-     * 获取dubbo服务名，并设置标签
+     * 测试方法
      *
-     * @param obj 增强的类
-     * @see com.alibaba.dubbo.config.ApplicationConfig
-     * @see org.apache.dubbo.config.ApplicationConfig
+     * @return msg
      */
-    void getName(Object obj);
+    @GetMapping("ping")
+    public String ping() {
+        return "ok";
+    }
 }

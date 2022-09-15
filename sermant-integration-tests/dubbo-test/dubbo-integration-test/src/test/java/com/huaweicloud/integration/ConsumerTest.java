@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 测试dubbo接口
@@ -87,7 +88,7 @@ public class ConsumerTest {
      * 测试多注册中心
      */
     @Test
-    public void testMultipleRegistry() {
+    public void testMultipleRegistry() throws InterruptedException {
         // 因为多注册中心是随机选择一个注册中心的节点进行访问，所以这里访问100次，这个用例失败并不一定真的失败，需要详细分析
         Set<String> set = new HashSet<>();
         for (int i = 0; i <= 100; i++) {
@@ -95,6 +96,7 @@ public class ConsumerTest {
             if (set.size() >= 2) {
                 break;
             }
+            TimeUnit.SECONDS.sleep(1);
         }
         Assertions.assertTrue(set.size() >= 2);
     }

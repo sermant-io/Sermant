@@ -44,7 +44,7 @@ public class ApplicationConfigServiceImpl implements ApplicationConfigService {
     }
 
     /**
-     * 获取dubbo服务名，并设置灰度参数
+     * 获取dubbo服务名，并设置标签
      *
      * @param obj 增强的类
      * @see com.alibaba.dubbo.config.ApplicationConfig

@@ -49,9 +49,9 @@ public class RouterConfiguration {
     }
 
     /**
-     * 灰度标签是否无效
+     * 路由规则是否无效
      *
-     * @param configuration 灰度标签
+     * @param configuration 路由规则
      * @return 是否无效
      */
     public static boolean isInValid(RouterConfiguration configuration) {

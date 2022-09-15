@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.router.dubbo;
 
 import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 
@@ -26,8 +27,10 @@ import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.RpcException;
 
+import org.apache.dubbo.common.utils.MapUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,10 +47,11 @@ import java.util.Map;
  * @since 2022-03-18
  */
 public class DubboReflectUtilsTest {
-    private static final URL ALIBABA_URL = URL.valueOf("dubbo://localhost:8080/com.huawei.foo.BarTest?bar=foo");
+    private static final URL ALIBABA_URL = URL
+        .valueOf("dubbo://localhost:8080/com.huaweicloud.foo.BarTest?bar=foo&version=0.0.1");
 
     private static final org.apache.dubbo.common.URL APACHE_URL = org.apache.dubbo.common.URL
-        .valueOf("dubbo://localhost:8081/com.huawei.foo.FooTest?foo=bar");
+        .valueOf("dubbo://localhost:8081/com.huaweicloud.foo.FooTest?foo=bar&version=0.0.1");
 
     private static final String BAR = "bar";
 
@@ -172,8 +176,8 @@ public class DubboReflectUtilsTest {
      */
     @Test
     public void testGetServiceInterface() {
-        Assert.assertEquals("com.huawei.foo.BarTest", DubboReflectUtils.getServiceInterface(ALIBABA_URL));
-        Assert.assertEquals("com.huawei.foo.FooTest", DubboReflectUtils.getServiceInterface(APACHE_URL));
+        Assert.assertEquals("com.huaweicloud.foo.BarTest", DubboReflectUtils.getServiceInterface(ALIBABA_URL));
+        Assert.assertEquals("com.huaweicloud.foo.FooTest", DubboReflectUtils.getServiceInterface(APACHE_URL));
     }
 
     /**
@@ -218,6 +222,34 @@ public class DubboReflectUtilsTest {
         // 由于注册时已经调用过ReflectUtils.setParameters方法，所以这里只要验证值就行
         Assert.assertEquals(FOO, alibabaConfig.getParameters().get(BAR));
         Assert.assertEquals(BAR, apacheConfig.getParameters().get(FOO));
+    }
+
+    /**
+     * 从Invocation获取attachments
+     *
+     * @see com.alibaba.dubbo.rpc.Invocation
+     * @see org.apache.dubbo.rpc.Invocation
+     */
+    @Test
+    public void testGetAttachmentsWithInvocation() {
+        AlibabaInvocation alibabaInvocation = new AlibabaInvocation();
+        alibabaInvocation.getAttachments().put(BAR, FOO);
+        Assert.assertEquals(FOO, DubboReflectUtils.getAttachments(alibabaInvocation).get(BAR));
+
+        ApacheInvocation apacheInvocation = new ApacheInvocation();
+        apacheInvocation.getObjectAttachments().put(FOO, BAR);
+        Assert.assertEquals(BAR, DubboReflectUtils.getAttachments(apacheInvocation).get(FOO));
+    }
+
+    /**
+     * 从RpcContext获取attachments
+     *
+     * @see com.alibaba.dubbo.rpc.RpcContext
+     */
+    @Test
+    public void testGetAttachmentsWithRpcContext() {
+        RpcContext.getContext().getAttachments().put(BAR, FOO);
+        Assert.assertEquals(FOO, DubboReflectUtils.getAttachments(new AlibabaInvocation()).get(BAR));
     }
 
     /**
@@ -319,6 +351,8 @@ public class DubboReflectUtilsTest {
      * @since 2022-03-18
      */
     public static class AlibabaInvocation implements Invocation {
+        private final Map<String, String> attachments = new HashMap<>();
+
         @Override
         public String getMethodName() {
             return "BarTest";
@@ -326,7 +360,7 @@ public class DubboReflectUtilsTest {
 
         @Override
         public Class<?>[] getParameterTypes() {
-            return new Class[0];
+            return new Class[]{String.class, String.class};
         }
 
         @Override
@@ -336,17 +370,17 @@ public class DubboReflectUtilsTest {
 
         @Override
         public Map<String, String> getAttachments() {
-            return Collections.emptyMap();
+            return attachments;
         }
 
         @Override
-        public String getAttachment(String str) {
-            return "";
+        public String getAttachment(String key) {
+            return attachments.get(key);
         }
 
         @Override
-        public String getAttachment(String str, String str1) {
-            return "";
+        public String getAttachment(String key, String defaultValue) {
+            return attachments.getOrDefault(key, defaultValue);
         }
 
         @Override
@@ -376,6 +410,8 @@ public class DubboReflectUtilsTest {
      * @since 2022-03-18
      */
     public static class ApacheInvocation implements org.apache.dubbo.rpc.Invocation {
+        private final Map<String, Object> attachments = new HashMap<>();
+
         @Override
         public String getTargetServiceUniqueName() {
             return "";
@@ -398,7 +434,7 @@ public class DubboReflectUtilsTest {
 
         @Override
         public Class<?>[] getParameterTypes() {
-            return new Class[0];
+            return new Class[]{String.class, String.class};
         }
 
         @Override
@@ -408,56 +444,68 @@ public class DubboReflectUtilsTest {
 
         @Override
         public Map<String, String> getAttachments() {
-            return Collections.emptyMap();
+            return MapUtils.objectToStringMap(attachments);
         }
 
         @Override
         public Map<String, Object> getObjectAttachments() {
-            return Collections.emptyMap();
+            return attachments;
         }
 
         @Override
         public void setAttachment(String key, String value) {
+            attachments.put(key, value);
         }
 
         @Override
         public void setAttachment(String key, Object value) {
+            attachments.put(key, value);
         }
 
         @Override
         public void setObjectAttachment(String key, Object value) {
+            attachments.put(key, value);
         }
 
         @Override
         public void setAttachmentIfAbsent(String key, String value) {
+            attachments.putIfAbsent(key, value);
         }
 
         @Override
         public void setAttachmentIfAbsent(String key, Object value) {
+            attachments.putIfAbsent(key, value);
         }
 
         @Override
         public void setObjectAttachmentIfAbsent(String key, Object value) {
+            attachments.putIfAbsent(key, value);
         }
 
         @Override
         public String getAttachment(String key) {
-            return "";
+            Object value = attachments.get(key);
+            return value instanceof String ? (String) value : null;
         }
 
         @Override
         public String getAttachment(String key, String defaultValue) {
-            return "";
+            Object value = attachments.get(key);
+            if (value instanceof String) {
+                String strValue = (String) value;
+                return StringUtils.isBlank(strValue) ? defaultValue : strValue;
+            }
+            return defaultValue;
         }
 
         @Override
         public Object getObjectAttachment(String key) {
-            return new Object();
+            return attachments.get(key);
         }
 
         @Override
         public Object getObjectAttachment(String key, Object defaultValue) {
-            return "";
+            return attachments.getOrDefault(key, defaultValue);
         }
 
         @Override

@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dubbo-version: [ '2-6','2-7' ]
-        dubbo-versions: [ '0','1','3','5','6','7','8','9','10','11','12' ]
+        dubbo-version: ['2-6','2-7']
+        dubbo-versions: ['0','1','3','5','6','7','8','9','10','11','12']
         include:
           - dubbo-version: '2-6'
             dubbo-versions: '2'
@@ -50,7 +50,7 @@ jobs:
           tar -zxf apache-zookeeper-3.8.0-bin.tar.gz
           bash apache-zookeeper-3.8.0-bin/bin/zkServer.sh start apache-zookeeper-3.8.0-bin/conf/zoo_sample.cfg
       - name: package agent
-        run: mvn package -DskipTests -Pagent --file pom.xml
+        run: sed -i '/sermant-backend/d' pom.xml & mvn package -DskipTests -Pagent --file pom.xml
       - name: package dubbo 2.6.0 tests
         if: matrix.dubbo-version == '2-6' && matrix.dubbo-versions == '0'
         run: mvn package -Dalibaba.dubbo.version=2.6.${{ matrix.dubbo-versions }} -DskipTests -P260 --file sermant-integration-tests/dubbo-test/pom.xml
@@ -65,44 +65,77 @@ jobs:
           servicecomb.service.enableDubboRegister: true
           servicecomb.service.enableSpringRegister: true
           servicecomb.service.openMigration: false
-          service.meta.environment: testing
-          server.port: 38020
-          dubbo.protocol.port: 38820
-        run: nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar &
+          SERVICE_META_ENVIRONMENT: testing
+          SERVER_PORT: 38020
+          DUBBO_PROTOCOL_PORT: 38820
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar \
+          sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > spring-and-dubbo-provider.log 2>&1 &
       - name: start second spring and dubbo provider service
         env:
           servicecomb.service.enableDubboRegister: true
           servicecomb.service.enableSpringRegister: true
           servicecomb.service.openMigration: false
-          service.meta.environment: testing
-          server.port: 38021
-          dubbo.protocol.port: 38821
-        run: nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar &
+          SERVICE_META_ENVIRONMENT: testing
+          SERVER_PORT: 38021
+          DUBBO_PROTOCOL_PORT: 38821
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar \
+          sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > spring-and-dubbo-provider2.log 2>&1 &
+      - name: start provider service
+        env:
+          servicecomb.service.enableDubboRegister: true
+          servicecomb.service.openMigration: false
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar \
+          sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > dubbo-provider.log 2>&1 &
+      - name: start zookeeper provider service
+        env:
+          SERVER_PORT: 48021
+          DUBBO_PROTOCOL_PORT: 48821
+        run: |
+          nohup java -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > dubbo-zk-provider.log 2>&1 &
+      - name: waiting for providers start
+        run: |
+          ps -ef | grep java
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:48021/ping 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:28021/ping 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:38021/ping 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:38020/ping 120
+          ps -ef | grep java
       - name: start spring and dubbo consumer service
         env:
           servicecomb.service.enableDubboRegister: true
           servicecomb.service.enableSpringRegister: true
           servicecomb.service.openMigration: false
-          service.meta.environment: testing
-          server.port: 38022
-          dubbo.protocol.port: 38822
-        run: nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar &
-      - name: start provider service
-        env:
-          servicecomb.service.enableDubboRegister: true
-          servicecomb.service.openMigration: false
-        run: nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar &
-      - name: start zookeeper provider service
-        env:
-          server.port: 48021
-          dubbo.protocol.port: 48821
-        run: nohup java -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar &
+          SERVICE_META_ENVIRONMENT: testing
+          SERVER_PORT: 38022
+          DUBBO_PROTOCOL_PORT: 38822
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar \
+          sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar > spring-and-dubbo-consumer.log 2>&1 &
       - name: start consumer service
         env:
           servicecomb.service.enableDubboRegister: true
           servicecomb.service.openMigration: true
-        run: nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar &
-      - name: waiting for services start
-        run: sleep 60s
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar \
+          sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar > dubbo-consumer.log 2>&1 &
+      - name: waiting for consumers start
+        run: |
+          ps -ef | grep java
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:38022/ping 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:28820/ping 120
+          ps -ef | grep java
       - name: integration test
         run: mvn -Dcontroller.port=38022 test --file sermant-integration-tests/dubbo-test/pom.xml
+      - name: if failure then upload error log
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: (test-for-dubbo)-(${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }})-logs
+          path: |
+            ./*.log
+            ./logs/**/*.log
+          if-no-files-found: warn
+          retention-days: 5

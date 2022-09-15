@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.router.dubbo.service;
+package com.huaweicloud.sermant.router.spring.interceptor;
 
-import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
+
+import java.util.List;
+import java.util.Map;
 
 /**
- * ApplicationConfig的service
+ * 测试负载均衡服务
  *
  * @author provenceee
- * @since 2021-11-24
+ * @since 2022-09-08
  */
-public interface ApplicationConfigService extends PluginService {
-    /**
-     * 获取dubbo服务名，并设置标签
-     *
-     * @param obj 增强的类
-     * @see com.alibaba.dubbo.config.ApplicationConfig
-     * @see org.apache.dubbo.config.ApplicationConfig
-     */
-    void getName(Object obj);
+public class TestLoadBalancerService implements LoadBalancerService {
+    @Override
+    public List<Object> getTargetInstances(String targetName, List<Object> serverList, String path,
+        Map<String, List<String>> header) {
+        serverList.remove(0);
+        return serverList;
+    }
 }

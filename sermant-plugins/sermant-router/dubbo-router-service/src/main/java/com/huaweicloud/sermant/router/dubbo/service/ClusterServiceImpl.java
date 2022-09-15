@@ -35,7 +35,7 @@ public class ClusterServiceImpl implements ClusterService {
     private static final int EXPECT_LENGTH = 2;
 
     /**
-     * 从url中缓存接口与下游服务名的映射关系，从map中删除灰度发布相关的参数
+     * 从url中缓存接口与下游服务名的映射关系，从map中删除标签相关的参数
      *
      * @param arguments 请求参数
      * @see com.alibaba.dubbo.common.URL
@@ -51,7 +51,7 @@ public class ClusterServiceImpl implements ClusterService {
         DubboCache.INSTANCE.putApplication(DubboReflectUtils.getServiceInterface(arguments[0]),
             DubboReflectUtils.getParameter(arguments[0], APPLICATION_KEY));
         if (arguments[1] instanceof Map<?, ?>) {
-            // 本地参数的map，需要把这个map中的灰度参数删除，才能让下游invoker的灰度参数不被本地参数覆盖，即保留下游invoker的灰度参数
+            // 本地参数的map，需要把这个map中的标签删除，才能让下游invoker的标签不被本地参数覆盖，即保留下游invoker的标签
             Map<String, String> localMap = new HashMap<>((Map<String, String>) arguments[1]);
             localMap.entrySet().removeIf(entry -> entry.getKey().startsWith(RouterConstant.PARAMETERS_KEY_PREFIX)
                     || RouterConstant.VERSION_KEY.equals(entry.getKey()));
