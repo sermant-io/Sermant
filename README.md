@@ -1,11 +1,19 @@
-<img src="docs/binary-docs/sermant-logo.png" width="25%" syt height="25%" />
+<div align="center">
+<p></p><p></p>
+<p>
+    <img  src="docs/binary-docs/sermant-logo.png" width="50%" syt height="50%">
+</p>
+<h1>A Proxyless Service Mesh Solution Based on Java Agent</h1>
 
-### A proxyless service mesh solution based on Java Agent
+[简体中文](README-zh.md) | [English](README.md) 
 
 [![Gitter](https://badges.gitter.im/SermantUsers/community.svg)](https://gitter.im/SermantUsers/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![CI/IT Tests](https://github.com/huaweicloud/Sermant/workflows/Java%20CI%20with%20Maven/badge.svg?branch=develop)](https://github.com/huaweicloud/Sermant/actions?query=workflow:Java%20CI%20with%20Maven%20event:push%20branch:develop)
-## What is Sermant
+
+</div>
+
+## What is Sermant?
 
 **Sermant** (also known as Java-mesh) is a proxyless **ser**vice **m**esh technology based on J**a**va Age**nt** . It leverages the [Java Agent](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html) to instrument the host application with enhanced service governance function, in order to solve the service governance problem, in the massive micro-service architecture.
 
