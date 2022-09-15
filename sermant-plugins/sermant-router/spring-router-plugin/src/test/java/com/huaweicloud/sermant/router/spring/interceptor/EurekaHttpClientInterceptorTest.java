@@ -67,6 +67,9 @@ public class EurekaHttpClientInterceptorTest {
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
     }
 
+    /**
+     * 测试before方法
+     */
     @Test
     public void testBefore() {
         interceptor.before(context);

@@ -91,6 +91,9 @@ public class ServiceInstanceListSupplierInterceptorTest {
         context = ExecuteContext.forMemberMethod(supplier, String.class.getMethod("trim"), null, null, null);
     }
 
+    /**
+     * 重置测试数据
+     */
     @Before
     public void reset() {
         ThreadLocalUtils.removeRequestHeader();

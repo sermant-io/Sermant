@@ -52,6 +52,9 @@ public class LoadBalancerServiceTest {
         init();
     }
 
+    /**
+     * 测试getTargetInstances方法
+     */
     @Test
     public void testGetTargetInstances() {
         List<Object> instances = new ArrayList<>();
@@ -66,6 +69,9 @@ public class LoadBalancerServiceTest {
         Assert.assertEquals(instance2, targetInstances.get(0));
     }
 
+    /**
+     * 测试getMismatchInstances方法
+     */
     @Test
     public void testGetMismatchInstances() {
         List<Object> instances = new ArrayList<>();

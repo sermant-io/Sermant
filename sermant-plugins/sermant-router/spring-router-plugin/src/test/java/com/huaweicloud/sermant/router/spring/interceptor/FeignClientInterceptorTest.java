@@ -59,12 +59,18 @@ public class FeignClientInterceptorTest {
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
     }
 
+    /**
+     * 重置测试数据
+     */
     @Before
     public void clear() {
         ThreadLocalUtils.removeRequestHeader();
         ThreadLocalUtils.removeRequestData();
     }
 
+    /**
+     * 测试从ThreadLocal中获取header
+     */
     @Test
     public void testBeforeWithThreadLocal() {
         Map<String, List<String>> header = new HashMap<>();
@@ -84,6 +90,9 @@ public class FeignClientInterceptorTest {
         Assert.assertEquals("foo3", headerData.get("foo3").get(0));
     }
 
+    /**
+     * 测试从Hystrix中获取header
+     */
     @Test
     public void testBeforeWithHystrix() {
         Map<String, List<String>> header = new HashMap<>();
@@ -105,6 +114,9 @@ public class FeignClientInterceptorTest {
         Assert.assertEquals("foo3", headerData.get("foo3").get(0));
     }
 
+    /**
+     * 测试从Hystrix中获取header
+     */
     @Test
     public void testBeforeWithoutHystrix() {
         interceptor.before(context);
@@ -118,6 +130,9 @@ public class FeignClientInterceptorTest {
         Assert.assertEquals("foo1", headerData.get("foo").get(0));
     }
 
+    /**
+     * 测试Hystrix中没有header时
+     */
     @Test
     public void testBeforeWithoutRequestHeader() {
         HystrixRequestContext.initializeContext();
@@ -134,6 +149,9 @@ public class FeignClientInterceptorTest {
         Assert.assertEquals("foo1", headerData.get("foo").get(0));
     }
 
+    /**
+     * 测试after方法
+     */
     @Test
     public void testAfter() {
         ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));
@@ -141,6 +159,9 @@ public class FeignClientInterceptorTest {
         Assert.assertNull(ThreadLocalUtils.getRequestData());
     }
 
+    /**
+     * 测试onThrow方法
+     */
     @Test
     public void testOnThrow() {
         ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));

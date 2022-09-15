@@ -32,3 +32,9 @@ hystrix:
 ribbon:
   ConnectTimeout: 10000
   ReadTimeout: 10000
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
