@@ -1,140 +1,131 @@
-# 核心模块介绍
+# Sermant-agentcore-core
 
-本文档主要介绍[**Sermant核心模块**](../../sermant-agentcore/sermant-agentcore-core)，该模块提供处理字节码增强、统一配置、核心服务、插件管理等能力重要内核。
+[简体中文](agentcore-zh.md) | [English](agentcore.md)
 
-- [核心包版本](#核心包版本)
-- [目录结构](#目录结构)
-- [字节码增强](#字节码增强)
-- [统一配置系统](#统一配置系统)
-  - [统一配置管理类](#统一配置管理类)
-  - [统一配置类](#统一配置类)
-  - [properties策略详解](#properties策略详解)
-  - [yaml策略详解](#yaml策略详解)
-  - [插件设定配置](#插件设定配置)
-- [核心服务系统](#核心服务系统)
-  - [核心服务管理类](#核心服务管理类)
-  - [核心服务类](#核心服务类)
-- [插件管理系统](#插件管理系统)
-  - [插件管理类](#插件管理类)
-  - [插件类加载器](#插件类加载器)
-  - [插件配置系统](#插件配置系统)
-  - [插件服务系统](#插件服务系统)
-- [LubanAgent](#LubanAgent)
-- [相关文档](#相关文档)
+This document focuses on [**sermant-agentcore-core**](../../sermant-agentcore/sermant-agentcore-core), which provides important kernels for handling bytecode enhancements, unified configuration, core services, plugin management, etc.
 
-本文更多地只是简单介绍[**Sermant核心模块**](../../sermant-agentcore/sermant-agentcore-core)中各个目录的意义，仅做抛砖引玉的作用，如果开发者想要更为细致的了解代码中业务逻辑，请移步至相关的目录或类查看。
+- [Version of Agentcore-core](#Version-of-Sermant-agentcore-core)
+- [Directory Structure](#Directory-Structure)
+- [Bytecode Enhancement](#Bytecode-Enhancement)
+- [Unified Configuration System](#Unified-Configuration-System)
+  - [Unified Configuration Management Class](#Unified-Configuration-Management-Class)
+  - [Unified Configuration Classes](#Unified-Configuration-Classes)
+  - [Detailed Description for Properties Strategy](#Detailed-Description-for-Properties-Strategy)
+  - [Detailed Description for Yaml Strategy](#Detailed-Description-for-Yaml-Strategy)
+  - [Plugin Setup Configuration](#Plugin-Setup-Configuration)
+- [Core Service System](#Core-Service-System)
+  - [Core Service Management Class](#Core-Service-Management-Class)
+  - [Core Service Class](#Core-Service-Class)
+- [Plugin Management System](#Plugin-Management-System)
+  - [Plugin Management Class](#Plugin-Management-Class)
+  - [Plugin Classloader](#Plugin-Classloader)
+  - [Plugin Configuration System](#Plugin-Configuration-System)
+  - [Plugin Service System](#Plugin-Service-System)
+- [Related Documents](#Related-Documents)
 
-## 核心包版本
+This article is just a brief introduction to [**sermant-agentcore-core**](../../sermant-agentcore/sermant-agentcore-core) in the meaning of each directory. If the developers want a more detailed understanding of the code's service logic, please move to the related directory or class.
 
-核心包的版本，属于核心包的内禀属性，因此我们将版本的定义封装到`manifest`文件中，作为`jar`包的元信息存在。核心包版本信息封装于`manifest`文件的`Sermant-Version`参数中，默认取值为`project.version`。在代码中，可以通过以下方法获取核心包版本：
+## Version of Sermant-agentcore-core
+
+The package version of sermant-agentcore-core (also called core package version) is an intrinsic property of the package, so we encapsulate the version definition in the `manifest` file as meta-information for the JAR package. Core package Version information is encapsulated in the `sermant-version` parameter of the`manifest` file, which defaults to `project.version`. In the code, you can get the core package version by:
 ```java
 String version = BootArgsIndexer.getCoreVersion();
 ```
 
-如果需要修改核心包的版本，可以直接修改`project.version`的值。
+If you need to change the core package version, you can change the value of `project.version` directly.
 
-## 目录结构
+## Directory Structure
 
-[**Sermant核心模块**](../../sermant-agentcore/sermant-agentcore-core)的代码包含以下目录结构：
+[**Sermant-agentcore-core**](../../sermant-agentcore/sermant-agentcore-core) contains the following directories：
 
-- `agent`目录，存放[字节码增强](#字节码增强)相关代码。
-- `common`目录，存放一些公共的代码。
-- `config`目录，存放[统一配置系统](#统一配置系统)相关代码。
-- `exception`目录，存放自定义异常。
-- `lubanops`目录，存放`luban`旧代码，主要含`bootstrap`模块和`core`模块。
-- `plugin`目录，存放[插件管理系统](#插件管理系统)相关代码。
-- `service`目录，存放[核心服务系统](#核心服务系统)相关代码。
-- `util`目录，存放公用工具类。
-- `AgentCoreEntrance`类，系[**Sermant核心模块**](../../sermant-agentcore/sermant-agentcore-core)的入口，调用`run`方法、传入**启动参数**和*Instrumentation*对象带起。
+- `agent`, contains the deprecated code related to bytecode enhancement.
+- `common`, contains the common code.
+- `config`, contains the code related to [Unified Configuration System](#Unified-Configuration-System).
+- `exception`, contains custom exceptions.
+- `plugin`, contains the code related to [Plugin Management System](#Plugin-Management-System) and [Bytecode Enhancement](#Bytecode-Enhancement).
+- `service`, contains the code related to [Core Service System](#Core-Service-System).
+- `util`, contains the code of common utility classes.
+- `AgentCoreEntrance`, is the entrance of [**Sermant-agentcore-core**](../../sermant-agentcore/sermant-agentcore-core)，which calls the `run` method and transfers **startup parameters** and *Instrumentation* object.
 
-[**Sermant核心模块**](../../sermant-agentcore/sermant-agentcore-core)中还包含以下资源：
+The following resources are also included in [**Sermant-agentcore-core**](../../sermant-agentcore/sermant-agentcore-core):
 
-- `config`目录，配置文件目录。
-  - `agent/plugins.yaml`文件，默认*Profile*的插件设置。
-  - `all/plugins.yaml`文件，*all Profile*的插件设置。
-  - `example/plugins.yaml`文件，*example Profile*的插件设置。
-  - `config.properties`文件，统一配置文件。
-- `META-INF/services`目录，*SPI*配置文件目录。
-  - `com.huaweicloud.sermant.core.config.common.BaseConfig`文件，用于声明统一配置类。
-  - `com.huaweicloud.sermant.core.config.strategy.LoadConfigStrategy`文件，用于声明配置的加载策略。
-  - `com.huaweicloud.sermant.core.service.BaseService`文件，用于声明核心服务实现。
+- `META-INF/services`, *SPI* configuration file directory.
+  - `com.huaweicloud.sermant.core.config.common.BaseConfig`, declares unified configuration classes.
+  - `com.huaweicloud.sermant.core.config.strategy.LoadConfigStrategy`, declares the configration loading policy.
+  - `com.huaweicloud.sermant.core.service.BaseService`, declares implementations of core service.
 
-## 字节码增强
+## Bytecode Enhancement
 
-**Sermant**的**字节码增强**代码见于[agent](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent)目录。
+The **Bytecode Enhancement** code for **Sermant** could be found in [agent](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent).
 
-**Sermant**基于`byte-buddy`字节码增强框架做字节码增强，主要采用[**byte-buddy委派**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/transformer/DelegateTransformer.java)的方式进行，对于原生类增强的场景，则使用[**Advice模板类**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/template)配合[**byte-buddy advice**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/transformer/BootstrapTransformer.java)技术进行增强。
+**Sermant** implements bytecode enhancements based on the `Byte-Buddy` framework. It mainly utilizes [**byte-buddy delegate**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/transformer/AdviceTransformer.java) to enhance classes. For the scene of native class enhancement, [**Advice template classes**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/template) with [**byte-buddy advice**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/transformer/BootstrapTransformer.java) technology play a role.
 
-`agent`目录下主要包含以下内容：
+The main content of `plugin/agent` directory show as following items：
 
-- `common`目录，存放字节码增强相关的一些公共内容。
-- `definition`目录，存放**增强定义接口**，是插件开发者需要关注的内容。
-- `enhancer`目录，存放**委派增强器**。
-- `interceptor`目录，存放**拦截器接口**、**拦截器链**相关内容和**拦截器加载器**，其中**拦截器接口**是插件开发者需要关注的内容。
-- `matcher`目录，存放**被增强类的匹配器**，是插件开发者需要关注的内容。
-- `template`目录，存放**Advice模板类**。
-- `transformer`目录，字节码转换器，包括委派转换器[DelegateTransformer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/transformer/DelegateTransformer.java)和*Advice*转换器[BootstrapTransformer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/transformer/BootstrapTransformer.java)，他们由通用转换器[CommonTransformer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/transformer/CommonTransformer.java)统一调度。
-- `ByteBuddyAgentBuilder`类，字节码增强的入口。
+- `declarer`, contains **enhancement definition interfaces** is something that plugin developers need to focus on.
+- `interceptor`, contains the **interceptor interfaces**, which plugin developers need to focus on.
+- `matcher`, contains the **matchers of enhanced classes**, which plugin developers need to focus on.
+- `template`, contains the **Advice template class**.
+- `transformer`, contains the **Bytecode Transformer**.
+- `BufferedAgentBuilder`, entrance of bytecode enhancement.
 
-### 增强定义
+### Enhancement Definition 
 
-插件开发者在编写**增强定义**时，实现[EnhanceDefinition](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/definition/EnhanceDefinition.java)接口的`enhanceClass`方法和`getMethodInterceptPoints`方法即可，详情可参见[插件代码开发手册中增强定义一节](../dev-guide/dev_plugin_code.md#增强定义)。
+When coding **enhancement definitions**, plugin developers should implement `getClassMatcher` and `getInterceptDeclarers` of [PluginDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/PluginDeclarer.java) , as detailed in the [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md).
 
-注意不要忘记添加`EnhanceDefinition`的*SPI*配置文件。
+ Don't forget to add the *SPI* configuration file for `PluginDeclarer`.
 
-### 拦截器
+### Interceptor
 
-插件开发者在编写**拦截器**时，需要依据被增强方法的类型，实现[interceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/interceptor)目录的不同接口即可：
+When coding an **interceptor**, developers just need to implement `interceptor` of [interceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/interceptor) directory
 
-- 增强静态方法时，需要实现[StaticMethodInterceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/interceptor/StaticMethodInterceptor.java)
-- 增强构造函数时，需要实现[ConstructorInterceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/interceptor/ConstructorInterceptor.java)
-- 增强实例方法时，需要实现[InstanceMethodInterceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/interceptor/InstanceMethodInterceptor.java)
+For details, refer to [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md).
 
-具体如何怎么做，可以参见[插件代码开发手册中拦截器一节](../dev-guide/dev_plugin_code.md#拦截器)。
+## Unified Configuration System
 
-## 统一配置系统
+The **Unified Configuration System** for **Sermant** can be found in [config](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config) directory.
 
-**Sermant**的**统一配置系统**代码见于[config](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config)目录。
+`config` contains following contents:
 
-`config`目录下包含以下内容：
+- `common`，contains common code.
+  - `BaseConfig`, common interface of **Unified Configuration Classes** .
+  - `ConfigFieldKey`，used for setting alias of fields for **Unified Configuration Classes**.
+  - `ConfigTypeKey`, used for setting alias for **Unified Configuration Classes**.
+- `strategy`, contains the code of configuration loading strategy.
+  - `LoadConfigStrategy`, interface of the configuration loading strategy.
+  - `LoadPropertiesStrategy`, strategy that used to load the `properties` format configuration file, which is mainly applied to load the Unified configuration file `config.properties`.
+  - `LoadYamlStrategy`，, strategy that used to load the `yaml` format configuration file, which is mainly applied to load the plugin setup configuration and plugin configuration, detailed in [Plugin Configuration System](#Plugin-Configuration-System).
+- `utils`，contains utility classes used by the Unified Configuration Cystem.
+- `ConfigManager`，Unified Configuration Management Class, which provides methods for loading and fetching unified configuration.
 
-- `common`目录，存放公用内容。
-  - `BaseConfig`类，**统一配置类**通用接口。
-  - `ConfigFieldKey`注解，用于为**统一配置类**的字段器别名。
-  - `ConfigTypeKey`注解，用于为**统一配置类**起别名。
-- `strategy`目录，存放加载配置策略的相关内容。
-  - `LoadConfigStrategy`接口，为配置加载策略接口，为加载不同格式的配置文件提供规范方法。
-  - `LoadPropertiesStrategy`类，用于加载`properties`格式配置文件的策略，该策略主要用于加载统一配置文件`config.properties`。
-  - `LoadYamlStrategy`类，用于加载`yaml`格式配置文件的策略，该策略主要用于加载插件设置和插件配置，详见于[插件配置系统](#插件配置系统)。
-- `utils`目录，存放一些统一配置系统使用到的工具类。
-- `ConfigManager`类，统一配置管理类，提供加载和获取统一配置的方法。
+### Unified Configuration Management Class
 
-### 统一配置管理类
+In `ConfigManager`, which is called Unified Configuration Management Class, developers can get the instance of **Unified Configuration Classes** via the `getConfig` method:
 
-**统一配置管理类**`ConfigManager`中，使用者可以通过`getConfig`方法获取**统一配置类**实例：
 ```java
 ConfigExample config = ConfigManager.getConfig(ConfigExample.class);
 ```
 
-### 统一配置类
+### Unified Configuration Classes
 
-**统一配置系统**是一个加载**静态配置**为**Java Pojo**的管理系统，因此，**统一配置类**必须是一个实现[BaseConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/BaseConfig.java)接口的**Java Pojo**。这些**统一配置类**的具体要求由`LoadPropertiesStrategy`而定，详见[properties策略详解](#properties策略详解)。至于插件相关的[插件配置](#插件配置系统)，则与`LoadYamlStrategy`的要求有关，详见[yaml策略详解](#yaml策略详解)。
+**Unified Configuration System** is a management system that loads **static configuration** as **Java Pojo**. Therefore, an **Unified Configuration Class** must be a **Java Pojo** that implement [BaseConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/BaseConfig.java) interface. The exact requirements for these **Unified Configuration Classes** are dictated by `LoadPropertiesStrategy`, as described in the [Detailed Description for Properties Strategy](#Detailed-Description-for-Properties-Strategy). As for plugin-related [plugin configuration](#Plugin-Configuration-System), this is related to the requirements of `LoadYamlStrategy`.See details in [Detailed Description for Yaml Strategy](#Detailed-Description-for-Yaml-Strategy).
 
-**统一配置类**是一个**Java Pojo**，他的`getter`方法和`setter`方法可以直接使用`lombok`的`Data`注解、`Getter`注解和`Setter`注解生成。
+An **Unified Configuration Class** is a **Java Pojo**, whose `getter`and `setter` methods can be directly generated using Lombok's `Data`, `getter`, and `setter` annotations.
 
-注意，编写完**统一配置类**之后，不要忘记添加[BaseConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/BaseConfig.java)接口的*SPI*配置文件：
+Note that after coding the **Unified Configuration Class**, don't forget to add SPI configuration file of [BaseConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/BaseConfig.java) interface:
 
-- 在资源目录`resources`下添加`META-INF/services`文件夹。
-- 在`META-INF/services`中添加`com.huaweicloud.sermant.core.config.common.BaseConfig`配置文件。
-- 在上述文件中，以换行为分隔，键入插件包中所有的**统一配置类**。
+- Add `META-INF/services` folder under `resources`
+- add configuration file `com.huaweicloud.sermant.core.config.common.BaseConfig` under `META-INF/services`.
+- In the above file, type all the **Unified Configuration Classes** in the plugin package and split them with **LF**.
 
-### properties策略详解
+### Detailed Description for Properties Strategy 
 
-`LoadPropertiesStrategy`加载策略用于对*properties*格式的配置文件进行加载，现在主要用于加载统一配置文件`config.properties`。
+The `LoadPropertiesStrategy` is used to load configuration files in the *properties* format, which is now mainly used to load the unified configuration file `config.properties`.
 
-`LoadPropertiesStrategy`的思路简单来说就是，以**统一配置类**的全限定名或别名为前缀，以**统一配置类**的属性名或别名为后缀，拼接成*properties*格式的键，获取相应值之后，转化为对应属性的类型并赋值。
+The idea of `LoadPropertiesStrategy` could be simply described as: take the FQCN or alias of the **Unified Configuration Class** as the prefix and the property name or alias of the **Unified Configuration Class** as the suffix, and concatenate into the key in the **properties** format, then convert to the type of the corresponding property and assign the value after getting the corresponding value. 
 
-假设有以下**统一配置类**：
+Suppose there is a following **Unified Configuration Class**:
+
 ```java
 package com.huawei.example;
 public class ConfigExample implements BaseConfig {
@@ -144,43 +135,68 @@ public class ConfigExample implements BaseConfig {
 }
 ```
 
-则对应的配置可能形如：
+The corresponding configuration might look like this:
+
 ```properties
-# 全限定名.属性名=属性值
+# formant: FQCN.propertyName=propertyValue
 com.huawei.example.ConfigExample.string=value
 com.huawei.example.ConfigExample.intField=123456
 ```
 
-#### 属性类型
+#### Property Type
 
-`LoadPropertiesStrategy`支持的属性类型包括：
+The property types that `LoadPropertiesStrategy`supports includes：
 
-- 布尔、数值类的基础类型及包装类型
-- 字符串类型
-- 枚举类型
-- 上述类型构成的数组
-- 前三种类型构成的*List*
-- 前三种类型构成的*Map*
+- Primitive and wrapper types for Boolean and numeric classes
+- String
+- Enum
+- Array that consist of the above types
+- *List* that consist of the first three types
+- *Map* that consist of the first three types
 
-其中`数组`和`List`都是将字符串用`','`分割后，再将各部分转换成相应的类型，即他们的配置形如：
+There are two ways to config `array` and `List`, one is to split the string with `,`:
 ```properties
-# 数组配置
+# Array
 com.huawei.example.ConfigExample.stringArr=value1,value2,value3
-# List列表配置
+# List
 com.huawei.example.ConfigExample.intList=100,200,300
 ```
 
-而`Map`的解析方式，则是通过`','`分割键值对，然后通过`':'`分割键值，配置形如：
+Another way is to use index:
+
 ```properties
-# Map字典配置
+# Array
+com.huawei.example.ConfigExample.stringArr[0]=value1
+com.huawei.example.ConfigExample.stringArr[1]=value2
+com.huawei.example.ConfigExample.stringArr[2]=value3
+# List
+com.huawei.example.ConfigExample.intList[0]=100
+com.huawei.example.ConfigExample.intList[1]=200
+com.huawei.example.ConfigExample.intList[2]=300
+```
+
+There are two ways to config `Map`, one is to split the key/value pairs with `,` and split the key and value with `':'` :
+
+```properties
+# Map
 com.huawei.example.ConfigExample.string2IntMap=key1:value1,key2:value2,key3:value3
 ```
 
-需要注意的是，`LoadPropertiesStrategy`不支持复杂类型属性。
+Another way is to add the key at the end of propertyName:
 
-#### 起别名
+```properties
+# Map
+com.huawei.example.ConfigExample.string2IntMap.key1=value1
+com.huawei.example.ConfigExample.string2IntMap.key2=value2
+com.huawei.example.ConfigExample.string2IntMap.key3=value3
+```
 
-`LoadPropertiesStrategy`支持使用`ConfigTypeKey`注解和`ConfigFieldKey`注解为全限定名和属性名起别名，假定上述`ConfigExample`类修改如下：
+Note that `LoadPropertiesStrategy` does not support complex type properties.
+
+#### Alias
+
+`LoadPropertiesStrategy` supports setting alias for FQCN and property names using the `ConfigTypeKey` annotation and the `ConfigFieldKey` annotation. Assume the above `ConfigExample` class is modified as follows：
+
 ```java
 @ConfigTypeKey("config.example")
 public class ConfigExample implements BaseConfig {
@@ -191,55 +207,56 @@ public class ConfigExample implements BaseConfig {
 }
 ```
 
-则对应的配置如：
+Then the configuration file should be like this：
 ```properties
-# 全限定名别名.属性名别名=属性值
+# alias for FQCN.alias for property=propertyValue
 config.example.stringField=value
 config.example.intField=123456
 ```
 
-#### 值内省
+#### Value of Introspection
 
-`LoadPropertiesStrategy`中的属性值支持内省，可以使用`${}`去映射当前配置、系统变量、启动参数等元素。比如`ConfigExample`的配置可以设置为：
+The property values in `LoadPropertiesStrategy'`support introspection. `${}` can be used to map the current configuration, system variables, startup parameters and other elements. For example, the `ConfigExample` configuration can be set to:
+
 ```properties
-# appName映射启动参数，user.home映射系统变量，com.huawei.example.ConfigExample.intField映射当前配置内容
+# appName linked to startup parameters ，user.home linked to system variable，com.huawei.example.ConfigExample.intField linked to current configuration
 com.huawei.example.ConfigExample.string=value, ${appName:test}, ${user.home}, ${com.huawei.example.ConfigExample.intField}
 com.huawei.example.ConfigExample.intField=123456
 ```
 
-以`${appName:test}`为例，`appName`为内省的检索键，`test`则是内省失败后的默认取值。内省的检索优先级如下：
+Take `${appName:test}` for example ，`appName` is the index key for introspection and `test` is the default value. The retrieval priority for introspection is as follows：
 
-- 启动参数(入参和启动配置)
-- 当前配置文件(即`config.properties`)
-- 环境变量
-- 系统变量
-- 默认值(即`':'`后内容)
+- Startup parameters
+- Current configuration file(`config.properties`)
+- Environment variable
+- System variable
+- Default value(content at the right of `':'`)
 
-启动参数中包含的内容可参见[入口模块介绍](entrance.md#启动参数)
+The contents contained in the startup parameters can be found in [Introduction to Entrance Module](entrance.md).
 
-#### 特殊键值对
+#### Special Key/Value pairs
 
-`LoadPropertiesStrategy`支持优先使用启动参数中的键值对，启动参数中不存在时，才会使用配置文件中的配置。
+`LoadPropertiesStrategy` allows you to use the key/value pairs in the startup parameter first. Otherwise it will use the config from the configuration file if the startup parameter does not exist.
 
-假定有以下配置类：
+Suppose there is a configuration class like this:
 ```java
 @ConfigTypeKey("env")
 public class ConfigExample implements BaseConfig {
   private String tag;
   private String secret;
   // getter and setter
-}
+
 ```
 
-则`tag`和`secret`两个属性优先使用启动配置`bootstrap.config`中的`env.tag`值和`env.secret`值。
+The `tag` and `secret` properties take precedence over the `env.tag` and `env.secret` values in the `bootstrap.config`.
 
-### yaml策略详解
+### Detailed Description for Yaml Strategy
 
-`LoadYamlStrategy`加载策略用于对*yaml*格式的配置文件进行加载，现在主要用于加载插件设定`plugins.yaml`和插件配置`config.yaml`。鉴于插件设定较为简单，后面我们仅对**插件配置类**做介绍。
+The `LoadYamlStrategy` is used to load configuration files in the *YAML* format, which is currently mainly used to load plugin setup configuration `plugins.yaml` and plugin configuration `config.yaml`. Since plugin setup configuration is relatively simple, we will only cover the **Plugin Configuration Class**.
 
-**插件配置类**和**统一配置类**一样，是个**Java Pojo**，只不过后者实现`BaseConfig`接口，前者实现`PluginConfig`接口或继承`AliaConfig`抽象类，详情可查阅[插件代码开发手册的插件配置一节](../dev-guide/dev_plugin_code.md#插件配置)，我们这里用`PluginConfig`接口举例。
+The **Plugin Configuration Class** is a **Java Pojo** just like the **Unified Configuration Class**, except that the latter implements the `BaseConfig` interface, while the former implements the `PluginConfig` interface. Refer to [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md) for more information. We will take the `PluginConfig` interface as an example.
 
-假设有以下**插件配置类**：
+Suppose there is a following **Plugin Configuration Class** :
 ```java
 package com.huawei.example;
 public class ConfigExample implements PluginConfig {
@@ -249,28 +266,30 @@ public class ConfigExample implements PluginConfig {
 }
 ```
 
-则对应的配置可能形如：
+The corresponding configuration might look like this:
+
 ```yaml
 com.huawei.example.ConfigExample:
   string: value
   intField: 123456
 ```
 
-#### 属性类型
+#### Property Type
 
-`LoadYamlStrategy`支持的属性类型包括：
+The property types that `LoadYamlStrategy`supports includes：
 
-- 布尔、数值类的基础类型及包装类型
-- 字符串类型
-- 枚举类型
-- 复杂对象类型
-- 上述类型构成的数组
-- 前四种类型构成的*List*
-- 前四种类型构成的*Map*
+- Primitive and wrapper types for Boolean and numeric classes
+- String
+- Enum
+- Complex Object
+- Array that consist of the above types
+- *List* that consist of the first four types
+- *Map* that consist of the first four types
 
-#### 起别名
+#### Alias
 
-`LoadYamlStrategy`支持使用`ConfigTypeKey`注解和`ConfigFieldKey`注解为全限定名和属性名起别名，假定上述`ConfigExample`类修改如下：
+`LoadYamlStrategy` supports setting alias for FQCN and property names using the `ConfigTypeKey` annotation and the `ConfigFieldKey` annotation. Assume the above `ConfigExample` class is modified as follows：
+
 ```java
 @ConfigTypeKey("config.example")
 public class ConfigExample implements PluginConfig {
@@ -281,35 +300,36 @@ public class ConfigExample implements PluginConfig {
 }
 ```
 
-则对应的配置如：
+Then the configuration file should be like this：：
 ```yaml
 config.example:
   stringField: value
   intField: 123456
 ```
 
-需要注意的是，对于数组、List和Map中涉及的复杂对象，不支持`ConfigFieldKey`修正属性名。换言之，`ConfigFieldKey`仅对**插件配置类**的属性，及其复杂对象类型属性的属性有效。
+Note that fixing property names by `ConfigFieldKey` is not supported for complex objects involved in arrays, lists, and maps. In other words, `ConfigFieldKey` only applies to properties of the **Plugin Configuration Class** and its complex object type properties.
 
-#### 值内省
+#### Value of Introspection
 
-`LoadYamlStrategy`中的属性值支持内省，可以使用`${}`去映射当前集合、系统变量、启动参数等元素。比如`ConfigExample`的配置可以设置为：
+The property values in `LoadYamlStrategy'`support introspection. `${}` can be used to map the current configuration, system variables, startup parameters and other elements. For example, the `ConfigExample` configuration can be set to:
+
 ```yaml
 com.huawei.example.ConfigExample:
   string: value, ${appName:test}, ${user.home}, ${intField}
   intField: 123456
 ```
 
-以`${appName:test}`为例，`appName`为内省的检索键，`test`则是内省失败后的默认取值。内省的检索优先级如下：
+Take `${appName:test}` for example ，`appName` is the index key for introspection and `test` is the default value. The retrieval priority for introspection is as follows:
 
-- 启动参数(入参和启动配置)
-- 当前集合(如案例中的`ConfigExample`类)
-- 环境变量
-- 系统变量
-- 默认值(即`':'`后内容)
+- Startup parameters
+- Current configuration file
+- Environment variable
+- System variable
+- Default value(content at the right of `':'`)
 
-需要注意的是，`LoadPropertiesStrategy`可以映射到整个配置文件，`LoadYamlStrategy`由于配置格式的限制，只能映射当前的`Map`或**复杂对象**。
+Note that `LoadPropertiesStrategy` can map to the entire configuration file, and `LoadYamlStrategy` can only map to the current `Map` or **complex object** due to the configuration format.
 
-如果映射当前集合(**复杂对象**)的**公共属性**时，如果**公共属性**使用了`ConfigFieldKey`做别名修正，那么能否正确映射和属性定义顺序有关，比如下面的**插件配置类**：
+while mapping the **public properties** of the current collection (**complex objects**) and the **public properties** are aliasing with `ConfigFieldKey`, the correct mapping will depend on the order in which the properties are defined, like **Plugin Configuration Classes** below：
 ```java
 @ConfigTypeKey("config.example")
 public class ConfigExample implements PluginConfig {
@@ -321,7 +341,7 @@ public class ConfigExample implements PluginConfig {
 }
 ```
 
-如果`field1`和`field3`需要使用`field2`则对应的配置如：
+If `field1` and `field3` need to use `field2`, the corresponding configuration would look like this:
 ```yaml
 config.example:
   field1: value1, ${stringField}
@@ -329,23 +349,24 @@ config.example:
   field3: value3, ${field2}
 ```
 
-基于上述情况，建议开发者不要对**公共属性**起别名修正。如果实在需要其别名，那么建议将这些**公共属性**统一放在**插件配置类**的开头或结尾。
+Based on the above, it is recommended that developers do not set aliases for **public properties**. If you really need an alias, it is recommended to place these **public properties** at the beginning or end of the **Plugin Configuration Class**. 
 
-启动参数中包含的内容可参见[入口模块说明](../sermant-agentcore-premain/README.md#启动参数)。
+The contents contained in the startup parameters can be found in [Introduction to Entrance Module](entrance.md).
 
-#### 特殊键值对
+#### Special Key/Value pairs
 
-`LoadYamlStrategy`不支持使用启动参数中的键值对对**插件配置类**的属性赋值。
+`LoadYamlStrategy` does not support assigning properties to the **Plugin Configuration Class** using key/value pairs in the startup parameter.
 
-### 插件设定配置
+### Plugin Setup Configuration
 
-**插件设定配置**即`plugins.yaml`文件，在[**Sermant核心模块**](../../sermant-agentcore/sermant-agentcore-core)中存在三个这样的文件：
+**Plugin Setup Configuration** is `plugins.yaml`. There are three such files in [**sermant-agentcore-core**](../../sermant-agentcore/sermant-agentcore-core)：
 
-- [agent/plugins.yaml](../../sermant-agentcore/sermant-agentcore-core/src/main/resources/config/agent/plugins.yaml): 默认编译场景下的**插件设定配置**，不含示例工程。
-- [all/plugins.yaml](../../sermant-agentcore/sermant-agentcore-core/src/main/resources/config/all/plugins.yaml): 执行-Pall参数打包时的**插件设定配置**，较`agent`多了示例工程
-- [example/plugins.yaml](../../sermant-agentcore/sermant-agentcore-core/src/main/resources/config/example/plugins.yaml): 执行-Pexample参数打包时的**插件设定配置**，仅含示例工程
+- [plugins.yaml](../../sermant-agentcore/sermant-agentcore-config/config/plugins.yaml): **Plugin Setup Configuration** for the default build scenario, without the example project.
+- [all/plugins.yaml](../../sermant-agentcore/sermant-agentcore-config/config/all/plugins.yaml): **Plugin Setup Configuration ** when executing the -Pall to package, with extra example project than `agent`.
+- [example/plugins.yaml](../../sermant-agentcore/sermant-agentcore-config/config/example/plugins.yaml): **Plugin Setup Configuration** when executing the -Pexample to package, including only the example project.
 
-`plugins.yaml`中，配置了**Sermant**启动后需要加载的插件目录，形如：
+In `plugins.yaml`, the plugins is configured to be loaded when **Sermant** starts, like this:
+
 ```yaml
 plugins:
   - plugin1
@@ -353,37 +374,57 @@ plugins:
   - plugin3
 ```
 
-这些配置的插件目录将对应到`pluginPackage`目录下的内容。
+These configured plugins correspond to the contents of the `pluginPackage` directory.
 
-## 核心服务系统
+In addition, developers can use `profile` to define the plugins that need to be loaded for different scenarios. Such as:
 
-**Sermant**的**核心服务系统**代码见于[service](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service)目录。
+```yaml
+profiles:
+  scene1:
+    - plugin1
+    - plugin2
+  scene2:
+    - plugin3
+    - plugin4
+  scene3:
+    - plugin5
+    - plugin6
+profile: scene1, scene2
+```
 
-`service`目录下中主要包括：
+In `Profiles` you can customize the plugin loading configuration for different scenarios, and in' profiles' you can configure which scenarios will take effect after the application launches.
 
-- [BaseService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/BaseService.java): [**核心服务类**](#核心服务类)
-- [ServiceManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/ServiceManager.java): [**核心服务管理类**](#核心服务类)
-- 核心服务实现目录
+## Core Service System
 
-### 核心服务管理类
+The **Core Service System** code for **Sermant** could be found in [service](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service).
 
-**核心服务管理类**`ServiceManager`中，使用者可以通过`getService`方法获取**核心服务类**实例：
+`service`includes：
+
+- [BaseService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/BaseService.java): [**Core Service Class**](#Core-Service-Class)
+- [ServiceManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/ServiceManager.java): [**Core Service Management Class**](#Core-Service-Management-Class)
+- Core service implementation directory
+
+### Core Service Management Class
+
+In the **Core Service Management Class** `ServiceManager`, developers can obtain the **core service class** instance via the `getService` method:
+
 ```java
 ServiceExample service = ServiceManager.getService(ServiceExample.class);
 ```
 
-### 核心服务类
+### Core Service Class
 
-**核心服务系统**是一个将实现[BaseService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/BaseService.java)的**核心服务类**加载、管理的系统，其核心就是实现**核心服务类**。
+The **Core Service System** is a system that loads and manages the services that implement the [BaseService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/BaseService.java) **Core Service Class**. Its core is the implementation of **Core Service Class**.：
 
-我们假定有一个叫`example`的服务，为其编写如下接口：
+Suppose there is a service called example and write an interface for this service:
+
 ```java
 public interface ServiceExample extends BaseService {
   void foo();
 }
 ```
 
-这样就定义了带有`foo`行为的`example`服务接口，他可能有如下实现：
+This defines the `Example` service interface with the `foo` method, which might be implemented as follows:
 ```java
 public class ServiceExampleImpl implements ServiceExample {
   @Override
@@ -403,63 +444,60 @@ public class ServiceExampleImpl implements ServiceExample {
 }
 ```
 
-接下来，把`ServiceExampleImpl`添加到`BaseService`的*SPI*配置中即可使用：
+Next, add `ServiceExampleImpl` to the *SPI* configuration of `BaseService`:
 
-- 在资源目录`resources`下添加`META-INF/services`文件夹。
-- 在`META-INF/services`中添加`com.huaweicloud.sermant.core.service.BaseService`配置文件。
-- 在上述文件中，以换行为分隔，键入插件包中所有的**核心服务类**实现(`ServiceExampleImpl`)。
+- Add `META-INF/services` folder under `resources`.
+- add configuration file `com.huaweicloud.sermant.core.service.BaseService` under `META-INF/services`.
+- In the above file, type all the **Core Service Classes**(`ServiceExampleImpl`) in the plugin package and split them with **LF**.
 
-这样就能通过`ServiceManager`的`getService`方法获取到**核心服务类**实例了。
+In this way you can fetch the instances of **Core Service Classes** via the `getService` method of the `ServiceManager`.
 
-## 插件管理系统
+## Plugin Management System
 
-**Sermant**的**插件管理系统**代码见于[plugin](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin)目录。
+The **Plugin Management system** code for **Sermant** can be found in [plugin](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin).
 
-`plugin`目录下主要包括：
+`plugin` includes:
 
-- [classloader/PluginClassLoader](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/classloader/PluginClassLoader.java)类，即[插件类加载器](#插件类加载器)。
-- [config](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config)目录，里面存放着[插件配置系统](#插件配置系统)相关代码。
-- [service](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service)目录，里面存放着[插件服务系统](#插件服务系统)相关代码。
-- [PluginManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/PluginManager.java)类，即[插件管理类](#插件管理类)
+- [classloader/PluginClassLoader](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/classloader/PluginClassLoader.java), describes in [Plugin Classloader](#Plugin-Classloader).
+- [config](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config), contains the code related to [Plugin Configuration System](#Plugin-Configuration-System).
+- [service](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service), contains the code related to [Plugin Service System](#Plugin-Service-System).
+- [PluginManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/PluginManager.java)，describes in [Plugin Management Class](#Plugin-Management-Class).
 
-### 插件管理类
+### Plugin Management Class
 
-在**插件管理类**类中，主要对插件设定文件`plugins.yaml`中配置的插件目录进行遍历，对每个插件目录来说：
+In the **Plugin Management Class**, we mainly traverse the plugin directories configured in the plugin configuration file `plugins.yaml`. For each plugin directory:
 
-- 加载其所有**插件包**至系统类加载器`AppClassLoader`。
-- 自定义[插件类加载器](#插件类加载器)加载所有**插件服务包**。
-- 加载所有相关的[插件配置](#插件配置系统)。
-- 加载所有相关的[插件服务](#插件服务系统)。
+- Load all its **plugin packages** into the system class loader `AppClassLoader`.
+- Custom [Plugin Classloader](#Plugin-Classloader) loads all plugin packages.
+- Load all related [Plugin Configuration](#Plugin-Configuration-System).
+- Load all related [Plugin Service](#Plugin-Service-System).
 
-### 插件类加载器
+### Plugin Classloader
 
-**插件类加载器**即`PluginClassLoader`类。`PluginClassLoader`是一个特殊的`URLClassLoader`，他将持有单个功能的所有插件服务包的*URL*。`PluginClassLoader`破坏了双亲委派机制，在加载*Class*的时候，优先使用自己的*Class*，在调用父类原生的加载方法，具体执行逻辑如下：
+**Plugin Classloader** is exactly `PluginClassLoader`. `PluginClassLoader` is a special `URLClassLoader`. It will hold all the *URL* of plugin service packages for a single feature. `PluginClassLoader` breaks the parent delegation mechanism. When loading a *Class*, it preferentially uses its own *Class*, and then calls the native loading method of its parent class if it can't find：
 
-- 尝试获取自身已加载过的*Class*。
-- 尝试加载自身持有*URL*的*Class*，并将其缓存。
-- 无法从自身获取*Class*时，再调用父类原生的加载方法。
+- Try to get the *Class* that it has already loaded.
+- Try to load the *Class* that itself holds the *URL* and cache it.
+- When it can't get the *Class* from itself, it will call the native loading method of the parent class.
 
-### 插件配置系统
+### Plugin Configuration System
 
-**插件配置系统**是[**统一配置系统**](#统一配置系统)的特例，主要用于读取插件配置文件`config.yaml`，因此遵循[yaml格式加载策略](#yaml策略详解)的规则，这里不做赘述。
+**Plugin Configuration System** is a special case of [**Unified Configuration System**](#Unified-Configuration-System). It is mainly used to read the plugin configuration file `config.yaml`, so it follows the rules of the [YAML format loading strategy](#Detailed-Description-for-Yaml-Strategy).
 
-更多**插件配置系统**相关内容，可以参见[插件代码开发手册的插件配置一节](../dev-guide/dev_plugin_code.md#插件配置)。
+For more information on the **Plugin Configuration System**, refer to the [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md).
 
-### 插件服务系统
+### Plugin Service System
 
-**插件服务系统**是[**核心服务系统**](#核心服务系统)的特例，主要用于加载插件服务`PluginService`，因此他遵循**核心服务系统**的规则，这里不做赘述。
+**Plugin Service System** is a special case of [**Core Service System**](#Core-Service-System), which is mainly used to load the PluginService `PluginService`. So it follows the rules of **Core Service System**.
 
-更多**插件服务系统**相关内容，可以参见[插件代码开发手册的插件服务一节](../dev-guide/dev_plugin_code.md#插件服务)。
+For more information on the **Plugin Service System**, refer to the [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md).
 
-## LubanAgent
+## Related Documents
 
-**LubanAgent**指的是`lubanops`目录下的代码，其中主要包含消息发送、心跳、链路追踪等功能的实现。
-
-## 相关文档
-
-|文档名称|
+|Documents|
 |:-|
-|[入口模块介绍](entrance.md)|
-|[后端模块介绍](backend.md)|
+|[Introduction to Entrance Module](entrance.md)|
+|[Introduction to Backend Module](backend.md)|
 
-[返回**Sermant**说明文档](../README.md)
+[Back to README of **Sermant** ](../README.md).
+

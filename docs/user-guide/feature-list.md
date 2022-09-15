@@ -1,12 +1,14 @@
-# 当前功能列表
+# Summary List of Current Plugin Features
 
-|功能名称|状态|微服务框架组件支持列表|配置中心支持列表|注册中心支持列表|注意事项|
+[简体中文](feature-list-zh.md) | [English](feature-list.md)
+
+|Feature|Status|Microservice Framework Supported|Configuration Center Supported|Registration Center Supported|Notice|
 |:-:|:-:|:-----|:--|:--|:--|
-|[限流降级](flowcontrol/flowcontrol.md)|实验|SpringBoot 1.2.x - 2.6.x <br> SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>|servicecomb-kie<br>ZooKeeper|N/A|-|
-|[服务注册](registry/document.md)|GA|SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|servicecomb-service-center|-|
-|[服务双注册迁移](registry/spring-cloud-registry-migiration.md)|实验|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|**目标注册中心**支持：servicecomb-service-center<br/>**SpringCloud原注册中心**支持：Eureka、Nacos、Zookeeper、Consul<br/>**Dubbo原注册中心**支持：Nacos、Zookeeper|-|
-|[负载均衡](loadbalancer/document.md)|开发中|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-kie<br/>ZooKeeper|N/A|不同的版本所支持的负载均衡策略不同，具体请参考[负载均衡策略支持](loadbalancer/document.md#负载均衡策略支持一览)<br/>当前暂不支持网关应用|
-|[标签路由](router/document.md)|实验|SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x|servicecomb-kie|servicecomb-service-center|不支持异步调用<br>不支持混合框架（Dubbo调SpringCloud或者SpringCloud调Dubbo）做路由|
-|[优雅上下线]()|实验|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-kie<br/>ZooKeeper|N/A|该功能基于SpringCloud默认负载均衡实现，若实现自定义负载均衡，该能力将失效|
-|[动态配置](dynamic-config/document.md)|开发中|SpringBoot 1.5.x - 2.6.2<br>spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+<br>spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+|servicecomb-kie<br/>ZooKeeper|-||
-|[服务监控](server-monitor/document.md)|开发中|ALL|N/A|N/A|-|
+|[FlowControl](flowcontrol/flowcontrol.md)|Experimental Stage|SpringBoot 1.2.x - 2.6.x <br> SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>|servicecomb-kie<br>ZooKeeper|N/A|-|
+|[Service Registration](registry/document.md)|GA|SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|servicecomb-service-center|-|
+|[Service Dual Registration and Migration](registry/spring-cloud-registry-migiration.md)|Experimental Stage|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x|N/A|**Target Registration Center** supported：servicecomb-service-center<br/>**Original Registration Center of SpringCloud** supported：Eureka、Nacos、Zookeeper、Consul<br/>**Original Registration Center of Dubbo** supported：Nacos、Zookeeper|-|
+|[Loadbalancer](loadbalancer/document.md)|In Development|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-kie<br/>ZooKeeper|N/A|Different versions support different load balancing policies. For details, refer to [Policies Supported in Loadbalance](loadbalancer/document.md#负载均衡策略支持一览)<br/> Gateway applications are not supported at present.|
+|[Router](router/document.md)|Experimental Stage|SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x|servicecomb-kie|servicecomb-service-center|Asynchronous invocation is not supported. <br />Hybrid frameworks (SpringCloud or Dubbo) are not supported for routing|
+|[Graceful On-line and Off-line]()|Experimental Stage|SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0|servicecomb-kie<br/>ZooKeeper|N/A|This function is implemented based on the default loadbalance of SpringCloud. If user-defined loadbalance is implemented, this function won't work.|
+|[Dynamic Configuration](dynamic-config/document.md)|In Development|SpringBoot 1.5.x - 2.6.2<br>spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+<br>spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+|servicecomb-kie<br/>ZooKeeper|-||
+|[Server Monitor](server-monitor/document.md)|In Development|ALL|N/A|N/A|-|

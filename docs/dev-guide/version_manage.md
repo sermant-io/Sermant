@@ -1,36 +1,41 @@
-# 版本管理手册
+# Version Management
 
-本文档主要对**Sermant**的代码版本管理做介绍。
+[简体中文](version_manage-zh.md) | [English](version_manage.md)
 
-**Sermant**直接使用[versions-maven-plugin](https://github.com/mojohaus/versions-maven-plugin)做版本管理，常用的命令如下：
+This document is about **Version Management of Sermant**.
 
-- 更新版本号为`${version}`：
+**Sermant** manages versions via [versions-maven-plugin](https://github.com/mojohaus/versions-maven-plugin). Common commands are as follows:
+
+- Update current version to `${version}`：
   ```shell
   mvn versions:set -DnewVersion=${version}
   ```
-  该命令默认保留原`pom`文件备份。
-- 回滚版本号：
+  This command keeps the original `pom` file backup by default.
+  
+- Rollback the version:
   ```shell
   mvn versions:revert
   ```
-- 提交新版本号更新，即删除原`pom`文件备份：
+  
+- Commit the new version updated (delete the original `pom` file backup):
   ```shell
   mvn versions:commit
   ```
-- 更新版本号为`${version}`并提交：
+  
+- Update current version to `${version}` and commit:
   ```shell
   mvn versions:set -DnewVersion=${version} -DgenerateBackupPoms=false
   ```
-  该命令不会备份原`pom`文件，使用时要注意版本号别写错。
+  This command will not back up the original `pom` file, be careful not to write the wrong version number when executing it.
 
-以上更新版本的命令中，只会修改项目中与顶级模块的版本相同的模块，如果需要单独对某个模块进行更新，可以使用`-pl`参数指定，比如：
+After executing the above update commands, only the modules with the same version as the top-level module in the project will be modified. If you need to update a module separately, you can specify it with `-pl`, for example:
 ```shell
 mvn versions:set -DnewVersion=${version} -DgenerateBackupPoms=false -pl ${module}
 ```
-其中`${module}`可以传递`${groupId}:${artifactId}`，也可以传递相对路径。多个模块的情况下，使用`','`号连接。
+Where `${module}` can be `${groupId}:${artifactId}`. Or you can input relative path of the module. In the case of multiple modules, please use `','`.
 
-关于设置版本命令`versions:set`的更多信息可以查看[Versions Maven Plugin versions:set](http://www.mojohaus.org/versions-maven-plugin/set-mojo.html)。
+For more information on setting versions with the `versions:set` command, refer to [Versions Maven Plugin versions:set](http://www.mojohaus.org/versions-maven-plugin/set-mojo.html).
 
-更多`versions-maven-plugin`的命令可以查看[Versions Maven Plugin Introduction](http://www.mojohaus.org/versions-maven-plugin/index.html)。
+Refer to [Versions Maven Plugin Introduction](http://www.mojohaus.org/versions-maven-plugin/index.html) for more `versions-maven-plugin` commands.
 
-[返回**Sermant**说明文档](../README.md)
+[Back to README of **Sermant** ](../README.md)
