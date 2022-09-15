@@ -24,6 +24,7 @@ import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
+import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.RpcResult;
 import com.alibaba.dubbo.rpc.cluster.Directory;
 import com.alibaba.dubbo.rpc.cluster.loadbalance.RoundRobinLoadBalance;
@@ -95,5 +96,14 @@ public class AlibabaDubboClusterInvokerTest {
         Mockito.when(invoker.invoke(invocation)).thenReturn(rpcResult);
         final Result result = clusterInvoker.doInvoke(invocation, Arrays.asList(invoker), roundRobinLoadBalance);
         Assert.assertEquals(result, rpcResult);
+        // 测试抛出异常
+        Mockito.when(invoker.invoke(invocation)).thenThrow(new RpcException("test error"));
+        boolean isEx = false;
+        try {
+            clusterInvoker.doInvoke(invocation, Arrays.asList(invoker), roundRobinLoadBalance);
+        } catch (RpcException ex) {
+            isEx = true;
+        }
+        Assert.assertTrue(isEx);
     }
 }
