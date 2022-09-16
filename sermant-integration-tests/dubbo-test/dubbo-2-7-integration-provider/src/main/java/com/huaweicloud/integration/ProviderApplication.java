@@ -17,6 +17,7 @@
 package com.huaweicloud.integration;
 
 import com.huaweicloud.integration.controller.ConsumerController;
+import com.huaweicloud.integration.controller.FlowController;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,8 @@ import org.springframework.context.annotation.ImportResource;
  */
 @SpringBootApplication
 @ImportResource({"classpath:dubbo/provider.xml"})
-@ComponentScan(excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, value = ConsumerController.class))
+@ComponentScan(excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, value = {ConsumerController.class,
+    FlowController.class}))
 public class ProviderApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProviderApplication.class);
 

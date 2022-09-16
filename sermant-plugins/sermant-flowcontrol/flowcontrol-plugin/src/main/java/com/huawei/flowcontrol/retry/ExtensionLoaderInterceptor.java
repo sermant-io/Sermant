@@ -17,11 +17,11 @@
 
 package com.huawei.flowcontrol.retry;
 
-import com.huawei.flowcontrol.common.util.ReflectUtils;
 import com.huawei.flowcontrol.retry.cluster.ClusterInvokerCreator;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 import java.util.Map;
 import java.util.Optional;
@@ -67,16 +67,17 @@ public class ExtensionLoaderInterceptor extends InterceptorSupporter {
                 return context;
             }
             final Optional<Class<?>> retryInvokerClass;
+            final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
             if (APACHE_DUBBO_CLUSTER_CLASS_NAME.equals(type.getName())) {
-                ReflectUtils.defineClass(
-                    "com.huawei.flowcontrol.retry.cluster.ApacheDubboClusterInvoker");
-                retryInvokerClass = ReflectUtils.defineClass(
-                    "com.huawei.flowcontrol.retry.cluster.ApacheDubboCluster");
+                ClassUtils.defineClass(
+                    "com.huawei.flowcontrol.retry.cluster.ApacheDubboClusterInvoker", contextClassLoader);
+                retryInvokerClass = ClassUtils.defineClass(
+                    "com.huawei.flowcontrol.retry.cluster.ApacheDubboCluster", contextClassLoader);
             } else if (ALIBABA_DUBBO_CLUSTER_CLASS_NAME.equals(type.getName())) {
-                ReflectUtils.defineClass(
-                    "com.huawei.flowcontrol.retry.cluster.AlibabaDubboClusterInvoker");
-                retryInvokerClass = ReflectUtils.defineClass(
-                    "com.huawei.flowcontrol.retry.cluster.AlibabaDubboCluster");
+                ClassUtils.defineClass(
+                    "com.huawei.flowcontrol.retry.cluster.AlibabaDubboClusterInvoker", contextClassLoader);
+                retryInvokerClass = ClassUtils.defineClass(
+                    "com.huawei.flowcontrol.retry.cluster.AlibabaDubboCluster", contextClassLoader);
             } else {
                 return context;
             }

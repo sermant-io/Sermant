@@ -165,9 +165,34 @@ public class ReflectUtilsTest {
         final Optional<Object> fieldCache = ReflectUtils.getFieldValue(reflectUtils.get(), "FIELD_CACHE");
         Assert.assertTrue(fieldCache.isPresent() && fieldCache.get() instanceof Map);
         Assert.assertFalse(((Map<?, ?>) fieldCache.get()).isEmpty());
+        final Optional<Object> fieldValue = ReflectUtils.getFieldValue(null, null);
+        Assert.assertFalse(fieldValue.isPresent());
+    }
+
+    @Test
+    public void getStaticFieldValue() {
+        final Optional<Object> staticField = ReflectUtils.getFieldValueByClazz(TestReflect.class, null, "staticField");
+        Assert.assertTrue(staticField.isPresent());
+        Assert.assertEquals(staticField.get(), TestReflect.staticField);
+        final Optional<Object> fieldValue = ReflectUtils.getFieldValueByClazz(TestReflect.class, null, null);
+        Assert.assertFalse(fieldValue.isPresent());
+        final Optional<Object> fieldValue2 = ReflectUtils.getFieldValueByClazz(null, null, "test");
+        Assert.assertFalse(fieldValue2.isPresent());
+        final Optional<Object> test = ReflectUtils.getFieldValueByClazz(null, new TestReflect(), "test");
+        Assert.assertFalse(test.isPresent());
+    }
+
+    @Test
+    public void getClazzFieldValue() {
+        final Optional<Object> staticField = ReflectUtils.getFieldValue(TestReflect.class.getName(), null, "staticField");
+        Assert.assertTrue(staticField.isPresent());
+        Assert.assertEquals(staticField.get(), TestReflect.staticField);
+        final Optional<Object> fieldValue = ReflectUtils.getFieldValue("com.test", null, null);
+        Assert.assertFalse(fieldValue.isPresent());
     }
 
     static class TestReflect {
+        private static final String staticField = "staticField";
         private final String finalField = "test";
         int x;
         int y;

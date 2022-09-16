@@ -100,15 +100,11 @@ public class ReflectUtils {
      */
     public static Optional<Object> invokeMethod(String className, String methodName, Class<?>[] paramsType,
             Object[] params) {
-        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        final Class<?> clazz;
-        try {
-            clazz = contextClassLoader.loadClass(className);
-        } catch (ClassNotFoundException ignored) {
-            // 找不到类直接返回
+        final Optional<Class<?>> clazz = loadClass(className);
+        if (!clazz.isPresent()) {
             return Optional.empty();
         }
-        return invokeMethod(clazz, methodName, paramsType, params);
+        return invokeMethod(clazz.get(), methodName, paramsType, params);
     }
 
     /**
@@ -150,6 +146,19 @@ public class ReflectUtils {
                     ex.getMessage()));
         }
         return Optional.empty();
+    }
+
+    private static Optional<Class<?>> loadClass(String className) {
+        if (className == null) {
+            return Optional.empty();
+        }
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            return Optional.ofNullable(contextClassLoader.loadClass(className));
+        } catch (ClassNotFoundException ignored) {
+            // 找不到类直接返回
+            return Optional.empty();
+        }
     }
 
     /**
@@ -323,15 +332,54 @@ public class ReflectUtils {
      * @return value
      */
     public static Optional<Object> getFieldValue(Object target, String fieldName) {
-        if (target == null || fieldName == null) {
+        if (target == null) {
+            return Optional.empty();
+        }
+        return getFieldValueByClazz(target.getClass(), target, fieldName);
+    }
+
+    /**
+     * 通过反射获取字段值
+     *
+     * @param className 目标类权限定名
+     * @param target 目标对象
+     * @param fieldName 字段名称
+     * @return value
+     */
+    public static Optional<Object> getFieldValue(String className, Object target, String fieldName) {
+        final Optional<Class<?>> clazz = loadClass(className);
+        if (clazz.isPresent()) {
+            return getFieldValueByClazz(clazz.get(), target, fieldName);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 通过反射获取字段值
+     *
+     * @param clazz 目标类
+     * @param target 目标对象
+     * @param fieldName 字段名称
+     * @return value
+     */
+    public static Optional<Object> getFieldValueByClazz(Class<?> clazz, Object target, String fieldName) {
+        if (fieldName == null) {
+            return Optional.empty();
+        }
+        if (clazz == null && target == null) {
+            return Optional.empty();
+        }
+        Class<?> curClazz = clazz;
+        if (curClazz == null) {
+            curClazz = target.getClass();
+        }
+        final Field field = getField(curClazz, fieldName);
+        if (field == null) {
             return Optional.empty();
         }
         try {
-            final Optional<Field> field = getField(target, fieldName);
-            if (field.isPresent()) {
-                return Optional.ofNullable(field.get().get(target));
-            }
-        } catch (IllegalAccessException ex) {
+            return Optional.ofNullable(field.get(target));
+        } catch (IllegalAccessException e) {
             LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH,
                     "Could not acquire the value of field %s", fieldName));
         }

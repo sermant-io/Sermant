@@ -136,7 +136,7 @@ public class RequestMatcher implements Matcher {
 
         // 匹配请求头
         for (Map.Entry<String, RawOperator> entry : this.headers.entrySet()) {
-            final String headerValue = requestHeaders.get(entry.getKey());
+            final String headerValue = String.valueOf(requestHeaders.get(entry.getKey()));
             if (headerValue == null) {
                 return false;
             }
@@ -171,7 +171,7 @@ public class RequestMatcher implements Matcher {
                 // 无相关匹配器，数据错误！
                 return false;
             }
-            if (!matchOperator.match(target, entry.getValue())) {
+            if (!matchOperator.match(target, String.valueOf(entry.getValue()))) {
                 // 条件全部匹配
                 return false;
             }

@@ -23,4 +23,10 @@
             version="0.0.1"/>
     <dubbo:reference id="fooWildcardService" check="false" interface="com.huaweicloud.integration.service.FooService"
             version="*"/>
+
+    <dubbo:reference id="flowControlService" check="false"
+            interface="com.huaweicloud.integration.service.FlowControlService" group="flow"/>
+
+    <dubbo:reference id="flowControlVersionService" check="false" version="1.0.0"
+            interface="com.huaweicloud.integration.service.FlowControlVersionService" group="flow"/>
 </beans>
