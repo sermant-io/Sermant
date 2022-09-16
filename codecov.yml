@@ -1,0 +1,13 @@
+codecov:
+  # 不处理过期报告
+  max_report_age: off
+
+coverage:
+  status:
+    patch:
+      default:
+        target: auto
+        base: auto
+        only_pulls: false
+        flags:
+          - "unit"
