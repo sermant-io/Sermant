@@ -1,32 +1,33 @@
 # Frequently Asked Questions
-## Sermant 框架功能
 
-#### [启动参数appName是什么参数?](./user-guide/FAQ.md#启动参数appName是什么参数?)
-#### [Sermant 提供哪些方面的服务治理插件?](./user-guide/FAQ.md#Sermant提供哪些方面的服务治理插件?)
+[简体中文](FAQ-zh.md) | [English](FAQ.md)
 
-## 插件
+## About Sermant Framework
 
-### 限流降级
+#### [What does the input parameter “appName” mean？](./user-guide/FAQ.md#启动参数appName是什么参数?)
+#### [What kind of service governance plugins does Sermant provide?](./user-guide/FAQ.md#Sermant提供哪些方面的服务治理插件?)
 
-#### [关于业务场景的apiPath是如何定义的?](./user-guide/flowcontrol/FAQ.md#关于业务场景的apiPath是如何定义的)
-#### [如何确定配置规则生效](./user-guide/flowcontrol/FAQ.md#如何确定配置规则生效)
-#### [熔断策略未生效的可能原因](./user-guide/flowcontrol/FAQ.md#熔断策略未生效的可能原因)
-#### [隔离仓规则未生效的可能原因](./user-guide/flowcontrol/FAQ.md#隔离仓规则未生效的可能原因)
-#### [重试规则未生效的可能原因](./user-guide/flowcontrol/FAQ.md#重试规则未生效的可能原因)
-#### [启动报HttpHostConnectException异常的可能原因](./user-guide/flowcontrol/FAQ.md#启动报HttpHostConnectException异常的可能原因)
+## About Sermant Plugins
 
-### 服务注册
+### Flow Control and Degradation
 
-#### [报错：No such extension org.apache.dubbo.registry.RegistryFactory by name sc](./user-guide/registry/FAQ.md#报错No-such-extension-orgapachedubboregistryRegistryFactory-by-name-sc)
-#### [报错：/sermant/master/v1/register error](./user-guide/registry/FAQ.md#报错sermantmasterv1register-error)
-#### [报错：Connection reset](./user-guide/registry/FAQ.md#报错Connection-reset)
-#### [报错：https protocol is not supported](./user-guide/registry/FAQ.md#报错https-protocol-is-not-supported)
-#### [报错：No such extension org.apache.dubbo.metadata.report.MetadataReportFactory by name sc](./user-guide/registry/FAQ.md#报错No-such-extension-orgapachedubbometadatareportMetadataReportFactory-by-name-sc)
-#### [报错：No registry config found or it's not a valid config](./user-guide/registry/FAQ.md#报错No-registry-config-found-or-its-not-a-valid-config)
-#### [插件配置中，enableSpringRegister/enableDubboRegister与openMigration之间的关系是什么？](./user-guide/registry/FAQ.md#插件配置中enableSpringRegisterenableDubboRegister与openMigration之间的关系是什么)
+#### [How to define "apiPath" for a business scenario?](./user-guide/flowcontrol/FAQ.md#关于业务场景的apiPath是如何定义的)
+#### [How to ensure that a configuration rule takes effect？](./user-guide/flowcontrol/FAQ.md#如何确定配置规则生效)
+#### [Possible reasons for why the circuit breaker policy did not taken effect.](./user-guide/flowcontrol/FAQ.md#熔断策略未生效的可能原因)
+#### [Possible reasons for why isolation cabin rules did not take effect.](./user-guide/flowcontrol/FAQ.md#隔离仓规则未生效的可能原因)
+#### [Possible reasons for why the retry rules did not work.](./user-guide/flowcontrol/FAQ.md#重试规则未生效的可能原因)
+#### [Possible causes of HttpHostConnectException on startup.](./user-guide/flowcontrol/FAQ.md#启动报HttpHostConnectException异常的可能原因)
 
-##
+### Service Registration
 
-[返回**QuickStart**说明文档](./QuickStart.md)
+#### [Error: No such extension org.apache.dubbo.registry.RegistryFactory by name sc](./user-guide/registry/FAQ.md#报错No-such-extension-orgapachedubboregistryRegistryFactory-by-name-sc)
+#### [Error: /sermant/master/v1/register error](./user-guide/registry/FAQ.md#报错sermantmasterv1register-error)
+#### [Error: Connection reset](./user-guide/registry/FAQ.md#报错Connection-reset)
+#### [Error: https protocol is not supported](./user-guide/registry/FAQ.md#报错https-protocol-is-not-supported)
+#### [Error: No such extension org.apache.dubbo.metadata.report.MetadataReportFactory by name sc](./user-guide/registry/FAQ.md#报错No-such-extension-orgapachedubbometadatareportMetadataReportFactory-by-name-sc)
+#### [Error: No registry config found or it's not a valid config](./user-guide/registry/FAQ.md#报错No-registry-config-found-or-its-not-a-valid-config)
+#### [What is the relationship between "enableSpringRegister"/"enableDubboRegister" and "openMigration" in the plugin configuration?](./user-guide/registry/FAQ.md#插件配置中enableSpringRegisterenableDubboRegister与openMigration之间的关系是什么)
 
-[返回**Sermant**说明文档](./README.md)
+[Back to **QuickStart**](./QuickStart.md)
+
+[Back to README of **Sermant**](./README.md)

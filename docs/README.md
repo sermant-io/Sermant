@@ -1,93 +1,96 @@
-# Sermant 开发和使用介绍
+# Introduction to Sermant Development and Usage
 
-Sermant 基于Java的字节码增强技术，通过 JavaAgent 对宿主应用进行非侵入式增强，以解决Java应用的微服务治理问题。Sermant的初衷是建立一个面向微服务治理的对开发态无侵入的解决方案生态，降低服务治理开发和使用的难度，通过抽象接口、功能整合、插件隔离等手段，达到简化开发、功能即插即用的效果。
+[简体中文](README-zh.md) | [English](README.md) 
 
-本文档对如何开发和使用 Sermant 做详细介绍。
+Sermant is a bytecode enhancement technology based on Java Agent. It uses Java Agent to enhance the host application in a non-intrusive way to solve the microservice governance problem of Java applications. The original intention of Sermant is to establish a solution ecosystem for micro-service governance that is non-intrusive to the development state, reduce the difficulty of service governance development and use, and achieve the effect of simplified development and plug-and-play by means of abstract interface, function integration and plugin isolation.
 
-## 运行环境
+This document describes how to develop and use Sermant in detail.
+
+## Runtime Environment
 
 - [HuaweiJDK 1.8](https://gitee.com/openeuler/bishengjdk-8) / [OpenJDK 1.8](https://github.com/openjdk/jdk) / [OracleJDK 1.8](https://www.oracle.com/java/technologies/downloads/)
 - [Apache Maven 3](https://maven.apache.org/download.cgi)
 
-## 模块说明
+## Project Modules
 
-**Sermant**包含以下模块：
+**Sermant** contains the following modules:
 
-- [sermant-agentcore](../sermant-agentcore): *JavaAgent*相关内容
-  - [sermant-agentcore-core](../sermant-agentcore/sermant-agentcore-core): 核心功能模块
-  - [sermant-agentcore-premain](../sermant-agentcore/sermant-agentcore-premain): *JavaAgent*入口模块
-  - [sermant-agentcore-config](../sermant-agentcore/sermant-agentcore-config): 配置模块
-- [sermant-backend](../sermant-backend): 消息发送模块服务端
-- [sermant-package](../sermant-package): 打包模块
-- [sermant-plugins](../sermant-plugins): 插件根模块，内含各种功能的插件及相关附加件
-- [sermant-injector](../sermant-injector): sermant-agent容器化部署Admission Webhook组件
+- [sermant-agentcore](../sermant-agentcore): *Java Agent* related content
+  - [sermant-agentcore-core](../sermant-agentcore/sermant-agentcore-core): Core functional module of the framework
+  - [sermant-agentcore-premain](../sermant-agentcore/sermant-agentcore-premain): *Java Agent* entry module
+  - [sermant-agentcore-config](../sermant-agentcore/sermant-agentcore-config): Configuration module of the framework
+- [sermant-backend](../sermant-backend): Server side of message sending module 
+- [sermant-package](../sermant-package): Packaging module
+- [sermant-plugins](../sermant-plugins):  Root module of plugins, contains a variety of functional plugins and related add-ons
+- [sermant-injector](../sermant-injector): Admission webhook module for deployment of sermant-agent via containers 
 
-## 打包流程
+## Packaging Steps
 
-**Sermant**的打包流程大致分为以下步骤：
+The packaging process of **Sermant** is roughly divided into the following steps:
 
-- *agent*: 编译、打包核心功能和插件
-- *example*: 编译、打包核心功能和示例模块(默认不开启)
-- *backend*: 编译、打包**Sermant**后端模块
-- *ext*: 编译、打包插件附带的后端、前端和其他附加件
-- *package*: 将以上的打包结果归档为产品包
-- *release*: 发布构建产物到中央仓库
-- *all*: 执行以上全部步骤(默认不开启)
+- *agent*: Compile or package core function and plugins
+- *example*: Compile or package core function and demo modules(disabled by default)
+- *backend*: Compile or package **Sermant** backend module
+- *ext*: Compile and package the backend, frontend, and other add-ons that come with plugins
+- *package*: Archive the above packaging results as a product package
+- *release*: Publish built artifacts to Maven Central Repository
+- *all*: Perform all the preceding steps (disabled by default)
 
-执行以下*maven*命令，对**Sermant**工程进行默认打包：
+Execute the following *maven* command  package the **Sermant** project by default：
 
 ```shell
 mvn clean package -Dmaven.test.skip
 ```
 
-命令执行完毕后，工程目录下将生成一个形如`sermant-agent-x.x.x`的文件夹和形如`sermant-agent-x.x.x.tar`的压缩文件，后者为**Sermant**的产品包，前者则为产品包解压后的内容。
+After the command is executed, a folder such as `sermant-agent-x.x.x` and a compressed file such as `sermant-agent-x.x.x.tar.gz` will be generated in the project directory. The latter is the product package of **sermant** and the former is the decompressed content of the product package.
 
-## 产品目录说明
+## Product Directory
 
-- *agent*: JavaAgent相关内容
-  - *config*: 配置文件目录
-    - *bootstrap.properties*: 启动配置
-    - *config.properties*: 核心功能配置
-    - *plugins.yaml*: 插件配置，配置着需要被加载的插件功能
-  - *core/sermant-agentcore-core-x.x.x.jar*: **Sermant**的核心功能包
-  - *pluginPackage*: 插件包目录，插件按功能名称分类
-    - *xxx*: 任意插件功能
-      - *config/config.yaml*: 插件配置文件
-      - *plugin*: 插件包目录
-      - *service*: 插件服务包目录
-  - *sermant-agent.jar*: JavaAgent入口包
-- *server*: 服务器目录，含**Sermant**的服务端，插件的服务端和客户端
+- *agent*: Java Agent related product
+  - *config*: Configuration file directory
+    - *bootstrap.properties*: Startup configuration
+    - *config.properties*: Core function configuration
+    - *plugins.yaml*: Plugin configuration, which config the plugin functionality that needs to be loaded
+  - *core/sermant-agentcore-core-x.x.x.jar*: Core package of **Sermant** framework
+  - *pluginPackage*: Plugin package directory, where plugins are classified by feature name
+    - *xxx*: Any plugin functionality
+      - *config/config.yaml*: Plugin configuration file
+      - *plugin*: Plugin package directory
+      - *service*: plugin service's package directory
+  - *sermant-agent.jar*: Java Agent entry package
+- *server*: Server directory, which contains server with **Sermant**, plugin server and client
 
-## 容器化部署说明
-k8s环境下，Sermant支持通过sermant-injector组件实现宿主应用自动挂载sermant-agent包的快速部署方式。如何部署sermant-injector与宿主应用可以参考[容器化部署指导手册](user-guide/injector.md)
+## Containerized Deployment
+In K8S environment, Sermant supports quickly deployment by using Sermant-Injector module to automatically mount Sermant-Agent package for host application. To know more about deploying Sermant-Injector and host applications, you can refer to [Containerized Deployment Guide](user-guide/injector.md).
 
-## 插件开发
+## Plugin Development
 
-如何新增一个插件可以参考[插件模块开发手册](dev-guide/dev_plugin_module.md)，其中涉及添加插件、插件服务及附加件的详细流程。
+How to develop a new plugin module？You can refer to the [Plugin Module Development Guide](dev-guide/dev_plugin_module.md) for details on adding plugins, plugin services, and add-ons.
 
-如何编写一个插件的内容可以参考[插件代码开发手册](dev-guide/dev_plugin_code.md)，其中涉及大部分开发插件过程中可能遇到场景。
+How to write a plugin can be found in the [Plugin Code Development Guide](dev-guide/dev_plugin_code.md), which covers most of the possible scenarios in developing a plugin.
 
-## 相关文档
+## Other Related Documents
 
-|文档名称|文档类型|
+|Document Name|Type of Document|
 |---|---|
-|[第三方版权说明手册](dev-guide/third_party_copyright.md)|开发手册|
-|[版本管理手册](dev-guide/version_manage.md)|开发手册|
-|[插件模块开发手册](dev-guide/dev_plugin_module.md)|开发手册|
-|[插件代码开发手册](dev-guide/dev_plugin_code.md)|开发手册|
-|[插件去源码开发指导](dev-guide/Sermant去源码插件开发说明.md)|开发手册|
-|[动态配置服务介绍](dev-guide/service_dynamicconfig.md)|开发手册|
-|[心跳服务介绍](dev-guide/service_heartbeat.md)|开发手册|
-|[网关服务介绍](dev-guide/service_send.md)|开发手册|
-|[核心模块介绍](user-guide/agentcore.md)|使用手册|
-|[入口模块介绍](user-guide/entrance.md)|使用手册|
-|[后端模块介绍](user-guide/backend.md)|使用手册|
-|[容器化部署指导手册](user-guide/injector.md) |使用手册|
-|[限流降级功能介绍](user-guide/flowcontrol/flowcontrol.md)|使用手册|
-|[动态配置功能介绍](user-guide/dynamic-config/document.md)|使用手册|
-|[服务注册功能介绍](user-guide/registry/document.md)|使用手册|
-|[灰度发布功能介绍](user-guide/router/document.md)|使用手册|
-|[服务监控功能介绍](user-guide/server-monitor/document.md)|使用手册|
-|[线程变量插件功能介绍](user-guide/threadlocal/document.md)|使用手册|
-|[当前插件功能汇总列表](user-guide/feature-list.md)|使用手册|
-|[常见问题说明指导](./FAQ.md)|使用手册|
+|[Third Party Copyright Declaration](dev-guide/third_party_copyright.md)|Development Guide|
+|[Version Management Guide](dev-guide/version_manage.md)|Development Guide|
+|[Plugin Module Development Guide](dev-guide/dev_plugin_module.md)|Development Guide|
+|[Plugin Code Development Guide](dev-guide/dev_plugin_code.md)|Development Guide|
+|[Plugin without Source Code Development Guide](dev-guide/Sermant去源码插件开发说明.md)|Development Guide|
+|[Introduction to Dynamic Configuration Service](dev-guide/service_dynamicconfig.md)|Development Guide|
+|[Introduction to Heartbeat Service](dev-guide/service_heartbeat.md)|Development Guide|
+|[Introduction to Gateway Service](dev-guide/service_send.md)|Development Guide|
+|[Introduction to Core Modules](user-guide/agentcore.md)|User Guide|
+|[Introduction to Sermant Entrance Module](user-guide/entrance.md)|User Guide|
+|[Introduction to Backend Module](user-guide/backend.md)|User Guide|
+|[Containerized Deployment Guide](user-guide/injector.md) |User Guide|
+|[Introduction to Flow Control and Degradation](user-guide/flowcontrol/flowcontrol.md)|User Guide|
+|[Introduction to Dynamic Configuration](user-guide/dynamic-config/document.md)|User Guide|
+|[Introduction to Servcie Registration](user-guide/registry/document.md)|User Guide|
+|[Introduction to Grayscale Release](user-guide/router/document.md)|User Guide|
+|[Introduction to Server Monitor](user-guide/server-monitor/document.md)|User Guide|
+|[Introduction to Plugin for Threadlocal](user-guide/threadlocal/document.md)|User Guide|
+|[Summary List of Current Plugin Features](user-guide/feature-list.md)|User Guide|
+|[FAQ](./FAQ.md)|User Guide|
+
