@@ -1,90 +1,94 @@
-# 第三方版权说明手册
+# Third Party Copyright Guide
 
-本文档针对开发过程中涉及的**第三方**源码或二进制包的版权作相关说明。
+[简体中文](third_party_copyright-zh.md) | [English](third_party_copyright.md)
 
-## 源码引用
+This document focus on the **copyright** of **third party** source code or binary packages involved in the development process.
 
-如果在代码中，存在以下情况，视为对**第三方**源码的 **引用**：
+## Source Code Reference
 
-- 整体拷贝：直接拷贝**第三方**源码中的文件，在其基础上进行修改。
-- 局部拷贝：拷贝**第三方**源码中部分方法或内部类，将其用于自研代码中。
-- 设计参考：开发者在进行架构设计时，若参考**第三方**的架构，且两种架构中存在定位相同的内容，也视为 **引用**。
+If the following situation exists in the code, it is considered as a **reference** to **third party** source code:
 
-以上三种情况中，需要开发者对涉及的文件做如下操作：
+- **Copy Overall**: Copy files directly from **third party** source code and make changes based on them.
+- **Partial Copy**: Copy some methods or inner classes in **third party** source code and use them in the self-developed code.
+- **Reference Design**: If developers refer to the architecture of a **third party** when designing the architecture, and there is the same content in the two architectures, it is also considered as **reference**.
 
-- 在`LICENSE`文件中添加对**第三方**源码的拷贝说明，形如：
+In all three cases, developers are required to complete the following work with the files involved:
+
+- Add instructions for copying **third party** source code to your `LICENSE` file, like this:
   ```txt
   The following files contain a portion of ${THIRD PARTY PROJECT NAME} project.
-
+  
   ${RELATED FILE A} in this product is copied from ${THIRD PARTY FILE A} of ${THIRD PARTY PROJECT NAME} project.
-
+  
   ${RELATED FILE B} in this product is copied from ${THIRD PARTY FILE B} of ${THIRD PARTY PROJECT NAME} project.
-
+  
   ...
-
+  
   ${THIRD PARTY PROJECT NAME} project is published at ${THIRD PARTY PROJECT CODEBASES URL} and its license is ${THIRD PARTY PROJECT LICENSE NAME}.
   ```
-  其中：
-  - `THIRD PARTY PROJECT NAME`表示**第三方**工程的名称。
-  - `RELATED FILE`为本项目的**涉事文件**：为类时，键入全限定名路径；否则，键入项目相对路径。
-  - `THIRD PARTY FILE`表示**第三方**的**被拷贝文件**：为类时，键入全限定名路径；否则，键入项目相对路径；如果**第三方**项目是单模块项目，也可键入source目录相对路径。
-  - `THIRD PARTY PROJECT CODEBASES URL`表示**第三方**工程源码仓的地址；如果找不到源码仓地址，可以改为官方网站地址或源码下载地址，总之原则就是要做到可溯源。
-  - `THIRD PARTY PROJECT LICENSE NAME`表示**第三方**工程的`LICENSE`名称，通常可以参考其`pom`文件中的`licenses`标签，如果存在多个`LICENSE`，则改为复数形式：
+  Note:
+  - `THIRD PARTY PROJECT NAME` represents the name of the **third party** project.
+  - `RELATED FILE` is the **related file** for this project: if it is a class, type the path of FQCN; Otherwise, type the project relative path.
+  - `THIRD PARTY FILE` represents the **copied file** of the **third party**: if it is a class, type the path of FQCN; Otherwise, type the project relative path. If the **third party** project is a single module project, you can also type the relative path to the source directory.
+  - `THIRD PARTY PROJECT CODEBASES URL` represents the address of the **third party** project repository; If you can't find the address of source code, you can change it to the official website address or source code download address. In short, the principle is to be traceable.
+  - `THIRD PARTY PROJECT LICENSE NAME` represents to the `LICENSE` name of the **third party** project, which is usually referred to the `licenses` label in the `pom` file, or pluralized if multiple `LICENSE` exist:
+    
     ```txt
     ...
     and its licenses are ${LICENSE A}, ${LICENSE B}, ..., and ${LICENSE C}.
     ```
-  - 如果已经存在目标**第三方**工程的条目，则掐头去尾将中间的拷贝信息填入即可。
-- 在**涉事文件**中键入**被拷贝文件**的头信息(如果有)，并添加拷贝源信息，形如：
+  - If there is already an entry for the target **third party** project, just cut back and fill in the copy information in the middle.
+- Type the header of the **copied file** (if exists) in the **file in question** and add the copy source information, like this:
   ```txt
   Based on ${THIRD PARTY FILE} from the ${THIRD PARTY PROJECT NAME} project.
   ```
-- 如果**第三方**工程中含有`NOTICE`文件，则将其追加到本工程的`NOTICE`文件结尾。如果已经包含，无需重复追加多次。
+- If a **third party** project contains a `NOTICE` file, append it to the end of the `NOTICE` file of current project. If it is already included, there is no need to append it more than once.
 
-## 带依赖jar包
+## Jar Package with Dependencies
 
-如果开发者：
+If developers:
 
-- 没有修改`resources`标签的内容
-- 开发的模块中`sermant.basedir`参数正确指向顶层目录
-- 不打带依赖`jar`包，或使用`shade`插件打带依赖`jar`包，且没有修改`transformers`标签
+- have not modified the content of the `resources` label.
+- develop the module of where the `sermant.basedir` parameter correctly points to the top-level directory.
+- package the project without jar packages with dependencies or package the jar packages with dependencies via `shade` and have not modified `transformers` label.
 
-那么无需对输出的`jar`包作任何调整，否则请详细阅读下面的说明，并按实际情况处理。
+There is no need to make any adjustments to the output `jar` package, otherwise please read the instructions below and take it as it is.
 
-在默认打包过程中，需要将本工程默认的`LICENSE`文件和`NOTICE`文件打入。这两个文件存放于`sermant-package`模块的`resources/META-INF`目录下，由`resources`标签特别地指向。
+In the default packaging process, the current project's default `LICENSE` file and `NOTICE` file need to be inserted. These two files are stored in the `resources/META-INF` directory of the `sermant-package` module and are specifically pointed to by the `resources` label.
 
-一般情况下，只要保证打包的模块(`packaging`标签的值不为`pom`)中`sermant.basedir`参数指向本工程的顶层目录，就会默认添加这两个文件，无需特别关心。
+In general, as long as the `sermant.basedir` parameter in the packaged module (the `packaging` label is not `pom`) points to the top-level directory of the project, these files will be added by default and don't need to be concerned.
 
-在打包流程中，使用`shade`插件、`assembly`插件或`spring`打包插件打带依赖`jar`包时，如果打入的**第三方**`jar`包中含有`NOTICE`文件，最好将他们与本工程默认的`NOTICE`文件合并。`shade`插件的`ApacheNoticeResourceTransformer`正好可以做到这一点。这一点在顶层工程的`pom`文件中有配置，除非有修改`Transformer`的需要，否则不建议覆盖顶层工程的`shade`插件设置。
+When using the `shade` `assembly` or `spring` package plugin to package a jar package with dependencies, if the `NOTICE` file is included in the **third-party ** `jar` package, it is best to merge it with the default `NOTICE ` file of current project. `ApacheNoticeResourceTransformer` of ` shade ` plugin just can do this. This is configured in the top-level project's `pom` file. And it is not recommended to override the top-level project's settings of `shade` plugin unless you need to modify the `Transformer`.
 
-注意：本节所提到的默认的`LICENSE`文件和`NOTICE`文件，指的是仅包含本工程相关信息的文件。在项目顶层目录中存放的`LICENSE`文件和`NOTICE`文件，系整理过源码拷贝信息后的文件，包含本工程相关信息和被拷贝的**第三方**工程信息。
+Note: The default `LICENSE` file and `NOTICE` file mentioned in this section refer to files that only contain information about current project. The `LICENSE` file and `NOTICE` file stored in the top-level directory of the project are the files after sorting out the source code copy information, containing information related to current project and the copied **third party** project information.
 
-## RELEASE产品包
+## RELEASE Package
 
-`RELEASE`产品包中需要将工程源码的`LICENSE`文件和`NOTICE`文件带上，前者还需要添加`RELEASE`产品包中所有涉及的**第三方**`jar`包的`LICENSE`信息。`RELEASE`产品包还需要将与本工程`LICENSE`不同的**第三方**`LICENSE`存放于`licenses`目录中带上，该目录存放于`sermant-package`模块的`resources`目录中。
+The `RELEASE` package needs to include the `LICENSE` file of the project source code and the `NOTICE` file. The former also needs to add the `LICENSE` information of all the **third party** `jar` packages included in the `RELEASE` package. The `RELEASE` package also requires **third party** `LICENSE`, which are different from the project's `LICENSE`, to be placed in the `licenses` directory. The directory is located in the `resources` directory of the `sermant-package` module.
 
-综上，`RELEASE`产品包内部结构形如：
-- `agent`目录: 核心增强逻辑
-- `server`目录: 增强逻辑配套的服务端
-- `licenses`目录: 与本工程`LICENSE`不同的**第三方开源依赖项目**`LICENSE`存放目录
-- `LICENSE`文件: 本工程`LICENSE`文件，附加拷贝**第三方开源**源码的LICENSE声明，以及`RELEASE`产品包中涉及的所有**第三方开源依赖项目**`jar`包的`LICENSE`说明
-- `NOTICE`文件: 本工程`NOTICE`文件，追加拷贝**第三方开源**源码的`NOTICE`文件。
+To summarize, the internal structure of the `RELEASE` package looks like this:
+- `agent` directory: core enhancement logic.
+- `server` directory: supporting server sides.
+- `licenses ` directory: where `LICENSE` of **third-party-open-source dependencies** that are different from the project's `LICENSE` locates in.
+- `LICENSE` file: the project's `LICENSE` file, which appends a copy of the LICENSE statement of source code of **third-party-open-source** project, and the `LICENSE` description of all `jar` packages of **third-party open-source dependencies** included in the `RELEASE` package.
+- `NOTICE` file: the `NOTICE` file of this project, appends the `NOTICE` file of source code of **third-party-open source** project.
 
-本工程通过以下方式生成`RELEASE`产品包的`LICENSE`文件、`NOTICE`文件和`licenses`目录：
-- 通过`license-maven-plugin`插件生成项目中所有涉及的第三方`jar`包的`LICENSE`信息：
+This project generates a `LICENSE` file, a `NOTICE` file, and a `licenses` directory for the `RELEASE`package as follows:
+- Generate the `LICENSE` information for all third-party `jar` packages involved in the project via the `license-maven-plugin`:
   ```shell
   mvn license:aggregate-add-third-party
   ```
-  生成的文件`LICENSE-binary-suffix.txt`存放于`sermant-package`模块的`resources`目录。该过程初次执行时间较久，请耐心等待。
-- 工程各组件打包，输出到临时目录下。
-- 在`sermant-package`模块打包时：
-  - 将工程源码的`LICENSE`文件、`NOTICE`文件和`licenses`目录拷贝到临时目录中。
-  - 调用脚本将`LICENSE-binary-suffix.txt`文件追加到临时目录的`LICENSE`文件。
-  - 将临时目录压缩为`RELEASE`产品包。
+  The resulting file, `LICENSE-binary-suffix.txt`, is stored in the `resources` directory of the `sermant-package` module. This process takes a long time to execute for the first time, so be patient.
+- Project components are packaged and exported to a temporary directory.
+- When`sermant-package`module is packaging, it will：
+  - copy the `LICENSE` file, `NOTICE` file, and `licenses` directory of source code of current project into a temporary directory.
+  - run a script to append the `LICENSE-binary-suffix.txt` file to the `LICENSE` file in the temporary directory.
+  - compress the temporary directory to a 'RELEASE' package.
 
-综上，开发者可以通过以下命令编译并发布`RELEASE`产品包：
+To sum up, developers can compile and release the `RELEASE` package with the following command:
 ```shell
 mvn license:aggregate-add-third-party clean package -Dmaven.test.skip
 ```
 
-[返回**Sermant**说明文档](../README.md)
+[Back to README of **Sermant** ](../README.md)
+

@@ -1,115 +1,126 @@
-# 容器化部署指导手册
-k8s环境下，Sermant支持通过sermant-injector组件实现宿主应用自动挂载sermant-agent包的快速部署方式。本文档主要介绍sermant-injector模块以及上述部署方式的具体流程。
+# Containerized Deployment Guide
 
-## sermant-injector模块介绍
-sermant-injector是基于Kubernetes准入控制器（Admission Controllers）特性开发而来。准入控制器位于k8s API Server中，能够拦截对API Server的请求，完成身份验证、授权、变更等操作。
-serment-injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在创建容器资源前对请求进行拦截和修改。serment-injector部署在k8s后，只需在宿主应用部署的YAML文件中`spec > template > metadata> labels`层级加入`sermant-injection: enabled`即可实现自动挂载sermant-agent。
+[简体中文](injector-zh.md) | [English](injector.md)
 
-### 组成部分
-`sermant-injector`文件夹下
+In Kubernetes environment, Sermant supports quickly deployment by using **sermant-injector** module to automatically mount sermant-agent package for host application. This document describes the **sermant-injector** module and how to deploy **sermant-injector** and **host application with sermant-agent** in k8s environment.
 
-- `deployment` 部署sermant-injector应用的helm包文件
+## Sermant-injector
+Sermant-injector is based on the **Kubernetes Admission Controllers.** The admission controller is located in the K8s API Server and is able to intercept requests to the API Server to complete operations such as authentication, authorization, and mutation.
+
+Serment-injector is a MutatingAdmissionWebhook that can intercept and modify requests before creating container resources. After serment-injector is deployed on K8s, just add `sermant-injection:Enabled` to the YAML file of the host application deployment configuration at the `spec > Template > metadata> labels` ' then the host application can automatically mount the sermant-agent package.
+
+### Components
+`sermant-injector` contains:
+
+- `deployment`, contains helm package file for deploying the sermant-injector application.
   - `release`
-    - `injector_k8s_1.19+` helm包，支持k8s 1.19版本及以上环境部署
-    - `injector_k8s_1.21-` helm包，支持k8s 1.21版本及以下环境部署
+    - `injector_k8s_1.19+` contains helm package file for K8S 1.19+.
+    - `injector_k8s_1.21-` contains helm package file for K8S 1.21-.
 - `images`
-  - `injector` sermant-injector Dockerfile及镜像构建脚本
-  - `sermant-agent` sermant-agent Dockerfile及镜像构建脚本
-- `scripts` 包含证书生成脚本等
-- `src` 项目代码
+  - `injector`, contains dockerfile and image build script of **sermant-injector**.
+  - `sermant-agent`, contains dockerfile and image build script of **sermant-agent**.
+- `scripts`, contains certificate generation scripts, etc.
+- `src`, contains source code.
 
-## 容器化部署流程
+## Containerized Deployment Steps
 
-### 运行环境
+### **Runtime Environment**
 [Kubernetes 1.19+](https://kubernetes.io/)
 
 [Helm v3](https://helm.sh/)
 
-### 生成证书
-Kubernetes webhook只能通过HTTPS(SSL/TLS)调用，因此需要为sermant-injector生成ssl key和证书。
+### Generate a Certificate for Sermant-injector
 
-按照当前环境使用的k8s的版本，在k8s任一节点上任一目录下执行scripts下的`certificate.sh`脚本。(k8s 1.19-1.21版本两者皆可)
+The Kubernetes webhook can only be invoked over HTTPS(SSL/TLS), so the SSL key and certificate need to be generated for the sermant-injector.
 
-> 注意：脚本中NAMESPACE参数必须和`deployment/release`下的`values.yaml`中的`namespace.name`保持一致。其他参数无需修改
+Execute the `certificate.sh` script under `scripts` in any directory of any K8s node, according to the version of K8s used in the current environment. (K8s version in 1.19-1.21 suits both)
 
-### 构建镜像
+> NOTE：The parameter `NAMESPACE` must be set as the same value as `namespace.name` in `values.yaml` under `deployment/release`. No need to modify other parameters.
 
-在部署sermant-injector前需要先构建sermant-agent镜像以及sermant-injector镜像。
+### Build Images
 
-#### sermant-agent镜像
+Before deploying **sermant-injector**, you need to build the **sermant-agent** image and the **sermant-injector** image.
 
-##### 下载release包
+#### Image of Sermant-agent
 
-点击 [here](https://github.com/huaweicloud/Sermant/releases)下载release包
+##### Download release package
 
-##### 制作镜像
+Click [here](https://github.com/huaweicloud/Sermant/releases) to download latest release package `sermant-agent-x.x.x.tar.gz`.
 
-修改文件夹 `images/sermant-agent`下`build-sermant-image.sh` 脚本中`sermantVersion`,`imageName`和`imageVerison`的值：
+Or you can get above package by executing the following command in the project.
 
-> 1. sermantVersion为release包的版本
+```shell
+mvn clean package -Dmaven.test.skip
+```
+
+##### Build Image
+
+Modify the values of `sermantVersion`, `imageName` and `imageVerison` in the `build-sermant-image.sh` under `images/sermant-agent` folder:
+
+> 1. `sermantVersion` is the version of the release package.
 >
-> 2. imageName为构建的sermant-agent镜像名称
+> 2. `imageName` is the name of the built sermant-agent image.
 >
-> 3. imageVerison为构建的sermant-agent镜像版本
+> 3. `imageVerison` is the version for the built sermant-agent image.
 
-在k8s节点下，将`build-sermant-image.sh`和`Sermant.Dockerfile`置于release包`sermant-agent-xxx.tar.gz`同一目录下，执行`build-sermant-image.sh`脚本，完成sermant-agent镜像制作。
+Move `build-sermant-image.sh` and `Sermant.dockerfile` to the same directory as the release package `sermant-agent-xxx.tar.gz` in one of K8s nodes. Run `build-sermant-image.sh` to build the sermant-agent image.
 
 ```shell
 sh build-sermant-image.sh
 ```
 
-#### sermant-injector镜像
+#### Image of Sermant-injector
 
-##### sermant-injector打包
+##### Package Sermant-injector
 
-在sermant-injector项目下执行`mvn clean package`命令，在项目目录下生成`sermant-injector.jar`文件
+Execute the `mvn clean package` command to generate the `sermant-injector.jar` file in the directory of sermant-injector project.
 
-##### 制作镜像
+##### Build Image
 
-修改文件夹 `images/injector`下`build-injector-image.sh` 脚本中`imageName`和`imageVerison`的值：
+Modify the values of `imageName` and `imageVerison` in the `build-injector-image.sh` script under `images/injector` folder:
 
-> 1. imageName为构建的sermant-injector镜像名称
-> 2. imageVerison为构建的sermant-injector镜像版本
+> 1. `imageName` is the name of the built image of sermant-injector.
+> 2. `imageVerison` is the version of the built image of sermant-injector.
 
-在k8s节点下，将`build-injector-image.sh`、`start.sh`和`Injector.Dockerfile`置于sermant-injector包`sermant-injector.jar`同一目录下，执行`build-injector-image.sh`脚本，完成sermant-injector镜像制作。
+Move `build-injector-image.sh`, `start.sh` and `Injector.Dockerfile` to the same directory as the package `sermant-injector.jar`. Run `build-injector-image.sh` to create the sermant-injector image.
 
 ```shell
 sh build-injector-image.sh
 ```
 
-### 部署sermant-injector实例
+### Deploy Workload of Sermant-injector 
 
-在宿主应用容器化部署前，需要先部署sermant-injector实例。本项目采用Helm进行Kubernetes包管理。
+Before the host application can be containerized, the workload of sermant-injector needs to be deployed. This project adopts Helm for Kubernetes package management.
 
-按照当前环境使用的k8s的版本，选择`deploment/release`下的`injector_k8s_1.19+`或者`injector_k8s_1.21-`Chart模版(k8s 1.19-1.21版本两者皆可)。
+Choose either Chart template in`injector_k8s_1.19+` or `injector_k8s_1.21-` under `deploment/release`, according to the version of K8s used in the current environment (K8s version in 1.19-1.21 suits both).
 
-按实际环境修改`values.yaml`中的模版变量：
+Modify the template variable in `values.yaml` according to the actual environment:
 
-> 1. `namespace.name`变量与`certificate.sh`中的NAMESPACE参数必须保持一致
+> 1. The value of `namespace.name` must be identical to the `NAMESPACE` in `certificate.sh`
 >
-> 2. `agent.image.addr`和`injector.image.addr`变量与构建镜像时的镜像地址保持一致
+> 2. The values of `agent.image.addr` and `injector.image.addr` are the same as the image address when the images are built
 >
-> 3. `injector.webhook.caBundle`变量为k8s证书，可在k8s节点执行以下命令获取：
+> 3. `injector.webhook.caBundle` is the K8s certificate, which can be obtained from the K8s node by executing the following command：
 >
 >    ```shell
 >    kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}'
 >    ```
 
-完成后，执行helm install命令在k8s中部署sermant-injector实例，以injector_k8s_1.19+ Chart 为例，最后一个参数为Chart模版文件夹路径:
+Once this is done, execute `helm install` to deploy the sermant-injector workload in K8s, taking the Chart of injector_k8s_1.19+ as an example, with the Chart folder path as the last argument:
 
 ```shell
 helm install sermant-injector ../injector_k8s_1.19+
 ```
 
-检查sermant-injector部署pod状态为running。
+Check that the status of the deployed pod of sermant-injector is running.
 
-至此，宿主应用部署前的环境配置工作完成。
+At this point, the environment configuration of the host application before deployment is complete.
 
-### 部署宿主应用
+### Deploy Host Application 
 
-#### 部署
+#### Deployment
 
-在完成上述sermant-injector部署后，用户根据实际应用编写YAML部署K8s Deployment资源，只需在`spec > template > metadata> labels`层级加入"sermant-injection: enabled"即可实现自动挂载sermant-agent。(如后续不希望挂载，删除后重新启动应用即可)
+After the deployment of above sermant-injector, developers should write YAML file to deploy K8s Deployment resources according to the actual application. Simply add `sermant-injection: enabled` at the `spec > Template > Metadata > Labels` to automatically mount the sermant-agent. (If you do not want to mount it later, just delete it and restart the application)
 
 ```yaml
 apiVersion: v1
@@ -134,31 +145,30 @@ spec:
       targetPort: 8443
 ```
 
-若pod无法创建，请检查sermant-injector是否正确部署以及sermant-agent镜像是否正确构建。
+If the pod cannot be created, check that the sermant-injector is deployed correctly and that the sermant-agent image is built correctly.
 
-#### 验证
+#### Verification
 
-pod创建成功后，执行如下命令，其中${pod_name}为用户应用的pod名称
+Once the pod is created, execute the following command, where `${pod_name}` is the pod name of host application.
 
 ```shell
 kubectl get po/${pod_name} -o yaml
 ```
 
-1. 查看上述命令输出内容`spec > containers > - env`下是否包含环境变量：name为`JAVA_TOOL_OPTIONS`，value为 `‘ -javaagent:/home/sermant-agent/agent/sermant-agent.jar=appName=default ’`。
+1. Check if the output contains the environment variable whose name is `JAVA_TOOL_OPTIONS`and value is `-javaagent:/home/sermant-agent/agent/sermant-agent.jar=appName=default` in `spec > containers > - env`.
 
-2. 查看上述命令输出内容`spec > containers > initContainers > image` 的值是否为构建sermant-agent镜像时的镜像地址。
+2. Check if the value of `spec > containers > initContainers > image` is the image address used to build the sermant-agent image.
 
-执行如下命令，其中${pod_name}为用户应用的pod名称，${namespace}为用户部署应用的namespace名称
+Execute the following command, where `${pod_name}` is the pod name of host application and `${namespace}` is the namespace name of deployed host application.
 
 ```shell
 kubectl logs ${pod_name} -n ${namespace}
 ```
 
-3. 查看上述命令输出内容pod日志开头部分是否包含
+3. Check if the beginning of the pod log in the output of the above command contains:
 
 ```
 [INFO] Loading sermant agent...
 ```
 
-如果上述信息无误，则表明sermant-agent已成功挂载至用户应用中。
-
+If the above information is correct, the sermant-agent has been successfully mounted into the host application.

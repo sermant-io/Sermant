@@ -1,65 +1,68 @@
-# 心跳服务介绍
+# Heartbeat Service
 
-本文档主要介绍**核心模块**的[心跳服务](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/heartbeat)。
+[简体中文](service_heartbeat-zh.md) | [English](service_heartbeat.md)
 
-## 功能定位
+This document focuses on [Heartbeat Service](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/heartbeat) of the **sermant-agentcore-core**.
 
-**心跳服务**指的是**核心模块**定期向**后端模块**发送心跳包的服务，起到告知当前`Sermant`应用存活的作用。**心跳服务**主要针对所有插件，对每个`插件主模块(main)`，**心跳服务**都会为其定制一个心跳数据包并定期发送，这些定制化数据将在**后端模块**的后续流程中发挥作用。
+## Function Orientation
 
-## 实现方式
+The **Heartbeat Service** is a service that periodically sends heartbeat messages from **sermant-agentcore-core** to the **Backend Module** to inform the current `Sermant` that the application is alive. The **Heartbeat Service** mainly targets all plugins. For each `main` of plugin, **Heartbeat Service** will customize a heartbeat message for it and send it regularly. These customized data will be used in the subsequent flow of the **Backend Module**.
 
-**心跳服务**以**核心服务系统**为基础，集成`luban`的心跳系统功能开发的一套用于`告知存活`和`定制数据`的服务。
+## Implementation
 
-**核心服务系统**相关内容详见[核心模块介绍](../user-guide/agentcore.md#核心服务系统)，这里不做赘述。
+**Heartbeat Service** is built based on the **sermant-agentcore-core** for `informing survival` and `customizing data`.
 
-`luban`心跳系统的常见使用方式如下：
+Details of **Sermant-agentcore-core** could be found [introduction to sermant-agentcore-core](../user-guide/agentcore.md#核心服务系统).
+
+The common usage of heartbeat system is as follows:
+
 ```java
-// 创建netty客户端
+// create netty client
 NettyClient nettyClient = ClientManager.getNettyClientFactory().getNettyClient(
     AgentConfigManager.getNettyServerIp(), 
     Integer.parseInt(AgentConfigManager.getNettyServerPort()));
-// 创建心跳数据包，其中包含一些默认数据，下面会介绍
+// create heartbeat message
 HeartbeatMessage message = new HeartbeatMessage();
-// 定制心跳数据包中的其他数据
+// customize additional data in heartbeat message
 message.registerInformation("${key}", "${value}");
-// 构建心跳数据包信息
+// build message
 String msg = message.generateCurrentMessage();
-// 序列化心跳数据包，并通过netty客户端发送，数据类型标注为心跳
+// Serialization, and send through the Netty client with the data type annotated as heartbeat
 nettyClient.sendData(msg.getBytes(Charset.forName("UTF-8")), Message.ServiceData.DataType.SERVICE_HEARTBEAT);
 ```
 
-其中`HeartbeatMessage`中默认包含的数据如下：
+The `HeartbeatMessage` contains the following data by default:
 
-- `hostname`：发送客户端的主机名
-- `ip`：发送客户端的IP地址
-- `app`：应用名称，即启动参数中的`appName`
-- `appType`：应用类型，即启动参数中的`appType`
-- `heartbeatVersion`：上一次心跳发送时间
-- `lastHeartbeat`：上一次心跳发送时间
-- `version`：核心包的版本
+- `hostname`: hostname of the sending client
+- `ip`：ip of the sending client
+- `app`：application name (`appName` at startup)
+- `appType`：application type, (`appType` at startup)
+- `heartbeatVersion`：time of last heartbeat
+- `lastHeartbeat`：time of last heartbeat
+- `version`：version of sermant-agentcore-core
 
-### 初始化插件心跳
+### Initialize Heartbeat of Plugin 
 
-**心跳服务**在初始化的时候，将从**插件管理器**中获取插件的名称和版本号：
+The **Heartbeat Service** gets the name and version of the plugin from the **Plugin Manager** when it is initialized:
 ```java
-// 键为插件名称，值为插件版本
+// key is the name of plugin, value is the version of plugin
 Map<String, String> pluginVersionMap = PluginManager.getPluginVersionMap();
 ```
 
-每隔一段时间，就会对每个`插件主模块(main)`构建一个心跳数据包并使用`luban`心跳系统发送，间隔时间配置于核心配置文件`config.properties`中：
+Every once in a while, a heartbeat message is built for each `main` of plugin module and sent using heartbeat system. The interval is configured in the core configuration file `config.properties`:
 ```properties
-# 单位：ms
+# unit：ms
 heartbeat.interval=3000
 ```
 
-发送的心跳数据包中，除了上述`luban`心跳系统固定发送的信息外，将额外增加两个参数：
+Besides the information that heartbeat system sends regularly, two additional parameters will be added to the heartbeat message:
 
-- `pluginName`：插件名称
-- `pluginVersion`：插件版本号
+- `pluginName`：the name of plugin
+- `pluginVersion`：the version of plugin
 
-### 添加定制数据
+### Custom Data
 
-**心跳服务**允许插件开发者定制化地为插件的心跳数据包添加额外动态参数：
+The **Heartbeat Service** allows plugin developers to customize the plugin's heartbeat message with additional dynamic parameters:
 ```java
 final HeartbeatService service = ServiceManager.getService(HeartbeatService.class);
 service.setExtInfo(new ExtInfoProvider() {
@@ -70,14 +73,14 @@ service.setExtInfo(new ExtInfoProvider() {
 });
 ```
 
-`setExtInfo`方法在执行的时候，将通过自定义`ExtInfoProvider`实现找到所在的插件或插件服务`jar`包，获取其`manifest`文件`Sermant-Plugin-Name`的值，即插件名称。获取到插件名称之后，**心跳服务**才能正确地将动态参数绑定到相应的心跳数据包中。
+When the `setExtInfo` method is executed, it will find the `jar` package of plugin or plugin service through the custom `ExtInfoProvider` implementation and get the value of `sermant-plugin-name ` of its `manifest` file. Once the plugin name is obtained, the **Heartbeat Service** can correctly bind dynamic parameters to the corresponding heartbeat message.
 
-`ExtInfoProvider`接口定义了`getExtInfo`方法，**心跳服务**每次构建心跳数据包时，将通过该方法获取动态获取额外参数。
+The `ExtInfoProvider` interface defines `getExtInfo` method, through which the **Heartbeat Service** will dynamically fetch additional parameters each time a heartbeat message is built.
 
-## 使用方式
+## How to Use
 
-一般情况下，对于插件开发者来说，**心跳服务**是无需关心的内容。只有当插件`后端模块(backend)`需要从**后端模块**的kafka心跳主题中捞特定数据时，才有必要为心跳数据包定制数据。插件为其心跳数据包定制数据时，通常可以[自定义插件服务](dev_plugin_code.md#插件服务)，在`start`方法中[添加定制数据](#添加定制数据)即可。
+In general, the **Heartbeat Service** is a no-concern for plugin developers. Customizing data for heartbeat messages is only necessary if the plugin `backend` needs to fetch specific data from the Kafka heartbeat topic of the **Backend Module**. When plugins need to customize data for their heartbeat messages, usually you can develop a [custom plugin service](dev_plugin_code.md) by [adding custom data](#Custom-Data) in the `start` method.
 
-可以参考示例工程的[DemoHeartBeatService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)进行开发。
+You can refer to [DemoHeartBeatService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java) for your development.
 
-[返回**Sermant**说明文档](../README.md)
+[Back to README of **Sermant** ](../README.md)

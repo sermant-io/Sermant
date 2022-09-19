@@ -1,169 +1,183 @@
-# 动态配置服务介绍
+# Dynamic Configuration Service
 
-本文档主要介绍**核心模块**的[动态配置服务](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig)。
+[简体中文](service_dynamicconfig-zh.md) | [English](service_dynamicconfig.md)
 
-- [功能定位](#功能定位)
-- [Api解析](#Api解析)
-- [ZooKeeper实现](#ZooKeeper实现)
-- [Kie实现](#Kie实现)
-- [实现包装](#实现包装)
-- [使用方式](#使用方式)
+This document is about the [Dynamic Configuration Service](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig) in **sermant-agentcore**.
 
-## 功能定位
+- [Function Orientation](#Function-Orientation)
+- [API](#API)
+- [Implementation for ZooKeeper](#Implementation-for-ZooKeeper)
+- [Implementation  for Kie](#Implementation-for-Kie)
+- [Wrapper](#Wrapper)
+- [How to Use](#How-to-Use)
 
-**动态配置服务**是一个允许使用者动态从服务器拉取配置的服务，它作为[统一配置系统](../user-guide/agentcore.md#统一配置系统)的动态补充，其核心述求在于解决后者提供的配置不可改变的问题。
+## Function Orientation
 
-## Api解析
+**Dynamic Configuration Service** is a service that allows developers to dynamically pull configuration from servers, acting as a [Unified Configuration System](../user-guide/agentcore.md#Unified-Configuration-System). Its core purpose is to solve the problem that the configuration provided by the latter can not be changed.
 
-**动态配置服务**的服务功能`API`由[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)抽象类提供，其实现三个接口，见于[api](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api)目录中，具体接口如下所示：
+## API
 
-|接口|方法|解析|
+The functionality `API` of **Dynamic Configuration Service** is provided by the abstract class [DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) , which implements three interfaces, as seen in [api](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api) directory, The concrete interface is as follows:：
+
+|Interface|Method|Explanation|
 |:-|:-|:-|
-|[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|String getConfig(String)|获取某个键的配置值(默认组)|
-|[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|boolean publishConfig(String, String)|设置某个键的配置值(默认组)|
-|[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|boolean removeConfig(String)|移除某个键的配置值(默认组)|
-|[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|List\<String> listKeys()|获取所有键(默认组)|
-|[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|boolean addConfigListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java))|为某个键添加监听器(默认组)|
-|[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|boolean removeConfigListener(String)|移除某个键的监听器(默认组)|
-|[KeyGroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|String getConfig(String, String)|获取组下某个键的配置值|
-|[KeyGroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|boolean publishConfig(String, String, String)|设置组下某个键的配置值|
-|[KeyGroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|boolean removeConfig(String, String)|移除组下某个键的配置值|
-|[KeyGroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|boolean addConfigListener(String, String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java))|为组下某个键添加监听器|
-|[KeyGroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|boolean removeConfigListener(String, String)|移除组下某个键的监听器|
-|[GroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/GroupService.java)|List\<String> listKeysFromGroup(String)|获取组中所有键|
-|[GroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/GroupService.java)|boolean addGroupListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java))|为组下所有的键添加监听器|
-|[GroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/GroupService.java)|boolean removeGroupListener(String)|移除组下所有键的监听器|
-|[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)|boolean addConfigListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean)|为某个键添加监听器(默认组)，根据入参决定是否触发初始化事件|
-|[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)|boolean addConfigListener(String, String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean)|为组下某个键添加监听器，根据入参决定是否触发初始化事件|
-|[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)|boolean addGroupListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean)|为组下所有的键添加监听器，根据入参决定是否触发初始化事件|
+|[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|String getConfig(String)|Get the configured value for a key (default group).|
+|[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|boolean publishConfig(String, String)|Set value for a key (default group) .|
+|[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|boolean removeConfig(String)|Remove a configured value for a key (default group).|
+|[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|List\<String> listKeys()|Get all keys (default group).|
+|[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|boolean addConfigListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java))|Add a listener for a key (default group).|
+|[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)|boolean removeConfigListener(String)|Remove a listener for a key (default group).|
+|[KeyGroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|String getConfig(String, String)|Get the configured value for a key in the group.|
+|[KeyGroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|boolean publishConfig(String, String, String)|Set value for a key in the group.|
+|[KeyGroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|boolean removeConfig(String, String)|Remove the configured value for a key in the group.|
+|[KeyGroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|boolean addConfigListener(String, String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java))|Add a listener for a key in the group.|
+|[KeyGroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)|boolean removeConfigListener(String, String)|Remove a listener for a key in the group.|
+|[GroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/GroupService.java)|List\<String> listKeysFromGroup(String)|Get all keys in the group.|
+|[GroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/GroupService.java)|boolean addGroupListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java))|Add listeners for all keys in the group.|
+|[GroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/GroupService.java)|boolean removeGroupListener(String)|Remove listeners for all keys in the group.|
+|[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)|boolean addConfigListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean)|Add a listener for a key(default group). Whether to trigger the initialization event depends on the input parameters|
+|[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)|boolean addConfigListener(String, String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean)|Add a listener for a key in the group. Whether to trigger the initialization event depends on the input parameters.|
+|[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)|boolean addGroupListener(String, [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), boolean)|Add listeners for all keys in the group. Whether to trigger the initialization event depends on the input parameters.|
 
-以上，需要明确两个概念：
+Above all, two concepts need to be clear:
 
-- `Key`，单指某个动态配置的键
-- `Group`，指一系列动态配置的分组，通常用于区分使用者
+- `Key`, a single reference to a dynamical configuration key
+- `Group`, a dynamical configuration set of groups, often used to distinguish between users
 
-通过观察可以发现，以上的`API`主要分为数据的增删查改操作，以及监听器的[DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)增删操作，其中后者的事件回调是**动态配置服务**得以实现功能中至关重要的一环，也是插件中使用**动态配置服务**的主要功能。
+As you can see, the above `API` is mainly divided into data adding, deleting, querying and modifying operations, and add/remove operations of the listener's [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java). The latter event callback is a crucial part of the functionality of the **Dynamic Configuration Service**, which is the main feature of the plugin using **Dynamic Configuration Service**.
 
-另外，在[KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java)接口中定义的所有`API`都是不带`Group`的`API`，它们在[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)中其实都会使用默认`Group`修正为[KeyGroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java)的`API`，这点需要注意。默认`Group`可以通过**统一配置文件**`config.properties`的`dynamic.config.default_group`修改。
+Also, in the [KeyService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyService.java) interface, all the `API` defined are `API` without `Group`. They will actually use the default `Group` and be fixed to `API` of [KeyGroupService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/api/KeyGroupService.java) in [DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java). The default `Group` can be modified via `dynamic.config.default_group` in the **unified configuration file** `config.properties`.
 
-最后，除了以上的服务接口以外，使用者还需要关注一些其他接口、配置或实体：
+Finally, besides the above service interfaces, there are a few other interfaces, configurations, or entities that developers need to pay attention to:
 
-- **动态配置服务**的静态配置[DynamicConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/config/DynamicConfig.java)，其中涉及一下配置：
-  |类型|属性|统一配置值|解析|
+- Static configuration [DynamicConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/config/DynamicConfig.java) for **Dynamic Configuration Service**, which involves the following configuration:
+  |Type|Property|Key in Unified Configuration File|Explanation|
   |:-|:-|:-|:-|
-  |int|timeoutValue|dynamic.config.timeout_value|服务器连接超时时间，单位：ms|
-  |String|defaultGroup|dynamic.config.default_group|默认分组|
-  |String|serverAddress|dynamic.config.server_address|服务器地址，必须形如：{@code host:port[(,host:port)...]}|
-  |[DynamicConfigServiceType](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java)|serviceType|dynamic.config.dynamic_config_type|服务实现类型，取NOP、ZOOKEEPER、KIE|
-- **动态配置服务**实现类型[DynamicConfigServiceType](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java)，含一下几种类型：
-  |枚举值|解析|
+  |int|timeoutValue|dynamic.config.timeout_value|Timeout for server connection, unit: ms|
+  |String|defaultGroup|dynamic.config.default_group|Default group|
+  |String|serverAddress|dynamic.config.server_address|Server address, must be of the form: {@code host:port[(,host:port)...]}|
+  |[DynamicConfigServiceType](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java)|serviceType|dynamic.config.dynamic_config_type|Service implementation type, take NOP, ZOOKEEPER, KIE|
+  
+- **Dynamic configuration service implementation type**[DynamicConfigServiceType](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigServiceType.java), contains:
+  
+  |Enum|Explanation|
   |:-|:-|
-  |ZOOKEEPER|ZooKeeper实现|
-  |KIE|ServiceComb Kie实现|
-  |NOP|无实现|
-- 动态配置监听器[DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)，其中包含的接口方法如下：
-  |方法|解析|
+  |ZOOKEEPER|ZooKeeper|
+  |KIE|ServiceComb Kie|
+  |NOP|No implementation|
+  
+- **Dynamic configuration listener** [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), which contains the following interface methods:
+  
+  |Method|Explanation|
   |:-|:-|
-  |void process([DynamicConfigChangeEvent](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigChangeEvent.java))|处理配置改变事件的回调接口|
-- 动态配置改变事件[DynamicConfigChangeEvent](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigChangeEvent.java)，其成员属性如下：
-  |类型|属性|解析|
+  |void process([DynamicConfigEvent](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEvent.java))|Callback interface for handling change events of configuration|
+  
+- **Change events of dynamic configuration** [DynamicConfigEvent](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEvent.java), whose member properties are as follows:
+  
+  |Type|Property|Explanation|
   |:-|:-|:-|
-  |String|key|配置键|
-  |String|group|配置分组|
-  |String|content|配置信息|
-  |[DynamicConfigEventType](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)|changeType|事件类型|
-- 动态配置改变事件类型[DynamicConfigEventType](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)，含以下四种：
-  |枚举值|解析|
+  |String|key|Key of configuration|
+  |String|group|Group of configuration|
+  |String|content|Content of configuration|
+  |[DynamicConfigEventType](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java)|changeType|Type of configuration change event|
+  
+- **Type of change events of dynamic configuration** [DynamicConfigEventType](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigEventType.java), which contains following four kinds:
+  
+  |Enum|Explanation|
   |:-|:-|
-  |INIT|添加监听器时的初始化响应|
-  |CREATE|配置新增事件|
-  |MODIFY|配置信息修改事件|
-  |DELETE|配置删除事件|
+  |INIT|Initial response when adding a listener|
+  |CREATE|Event of adding new configuration|
+  |MODIFY|Event of modifying configuration|
+  |DELETE|Event of deleting configuration|
 
-## ZooKeeper实现
+## Implementation for ZooKeeper
 
-对于`ZooKeeper`服务器来说，所谓的动态配置就是`ZooKeeper`节点的值，至于`Key`和`Group`应当作为构建**节点路径**的元素。考虑到`Group`包含区别使用者的信息，应当作为**节点路径**的前缀，这样`Key`值则作为后半部分存在：
+For `ZooKeeper` servers, the dynamic configuration is the value of the ZooKeeper node. The `Key` and `Group` should be used as elements to build the **node path**. Since `Group` contains user-specific information, it should be the prefix string for the **node path** so that the `Key` value exists as the second half:
 ```txt
 /${group}/${key} -> ${value}
 ```
 
-至于监听器[DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java)，则需要转换为`ZooKeeper`的`Watcher`。
+As for [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java), we convert it to a `Watcher` of `ZooKeeper`.
 
-`ZooKeeper`实现见于[zookeeper](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/zookeeper)包，主要包含[ZooKeeperDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/zookeeper/ZooKeeperDynamicConfigService.java)和[ZooKeeperBufferedClient](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/zookeeper/ZooKeeperBufferedClient.java)两个类：
+The implementation of `Zookeeper` could be found in [zookeeper](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/zookeeper). It mainly contains [ZooKeeperDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/zookeeper/ZooKeeperDynamicConfigService.java) and [ZooKeeperBufferedClient](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/zookeeper/ZooKeeperBufferedClient.java).
 
-- [ZooKeeperDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/zookeeper/ZooKeeperDynamicConfigService.java)是[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)的`ZooKeeper`实现类，主要职责是完成上述的参数转换：
-  - `Key`和`Group` -> `ZooKeeper`节点路径
-  - [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java) -> `ZooKeeper`的`Watcher`。
-
-  将他们解析完毕之后，交由[ZooKeeperBufferedClient](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/zookeeper/ZooKeeperBufferedClient.java)做业务操作。
-- [ZooKeeperBufferedClient](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/zookeeper/ZooKeeperBufferedClient.java)，其主要功能是对原生`ZooKeeper`客户端进行包装，封装其原生的功能，提供更为高阶的`API`：
-  |方法|解析|
+- [ZooKeeperDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/zookeeper/ZooKeeperDynamicConfigService.java) is an implementation of [DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) for `ZooKeeper`, whose main duty is to complete the following parameter conversions:
+  
+  - `Key` and `Group` -> `ZooKeeper` node path
+  - [DynamicConfigListener](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/common/DynamicConfigListener.java) -> `Watcher` of `ZooKeeper`。
+  
+  After they are parsed, [ZooKeeperBufferedClient](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/zookeeper/ZooKeeperBufferedClient.java) will do the business operation.
+- [ZooKeeperBufferedClient](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/zookeeper/ZooKeeperBufferedClient.java), its main function is to wrap the native `ZooKeeper` client to provide higher-level `API`:
+  
+  |Method|Explanation|
   |:-|:-|
-  |boolean ifNodeExist(String)|判断节点是否存在|
-  |String getNode(String)|查询节点内容|
-  |boolean createParent(String)|创建节点的前置节点|
-  |boolean updateNode(String, String)|更新节点内容，不存在时自动创建|
-  |boolean removeNode(String)|移除节点|
-  |List\<String> listAllNodes(String)|查询节点下所有子孙节点的路径集合|
-  |boolean addDataLoopWatch(String, Watcher, BreakHandler)|添加循环的临时数据监听器，该监听器将在触发后重新注册，直到接收到移除监听器事件<p>注意，当同一节点的其他监听器被精准移除时，由于该监听器无法鉴别到底是不是移除自身，因此会选择放弃循环注册|
-  |boolean addPersistentRecursiveWatches(String, Watcher)|添加持久递归的监听器，对子孙节点有效|
-  |boolean removeDataWatches(String)|移除数据监听器|
-  |boolean removeAllWatches(String)|移除节点下所有的监听器，含子孙节点|
-  |void close()|关闭`ZooKeeper`客户端|
+  |boolean ifNodeExist(String)|Check whether the node exists.|
+  |String getNode(String)|Query node information.|
+  |boolean createParent(String)|Create the parent node of a node.|
+  |boolean updateNode(String, String)|Update the content of a node. If the node does not exist, it will be automatically created.|
+  |boolean removeNode(String)|Remove a node|
+  |List\<String> listAllNodes(String)|Query the path set of all descendant nodes under a node|
+  |boolean addDataLoopWatch(String, Watcher, BreakHandler)|Add a temporary data watcher for a loop. This watcher will be re-registered after triggering until it receives a watcher remove event <p> Note that when other watchers on the same node are accurately removed, the watcher will choose to abandon the loop registration because it cannot identify whether it has been removed.|
+  |boolean addPersistentRecursiveWatches(String, Watcher)|Add a watches for persistent recursion, valid for descendant nodes|
+  |boolean removeDataWatches(String)|Remove data watchers|
+  |boolean removeAllWatches(String)|Remove all watchers under a node, including descendant nodes|
+  |void close()|Close `ZooKeeper` client|
 
-## Kie实现
+## Implementation for Kie
 
-对于`Kie`服务来说，所谓动态配置就是`Kie`配置的键值，`Kie`是基于标签去查询关联配置， 至于`Key`与`Group`则是关联配置的元素。`Key`即配置的键的名称，而`Group`则是关联`Key`的标签， 每一个`Key`都可配置一个或者多个标签，其格式往往如下:
+For the `Kie` service, the so-called dynamic configuration is the value of the `Kie'` configuration. `Kie` queries the associated configuration based on the label. `Key` and `Group` are the elements of the associated configuration. `Key` is the name of the configured Key, and `Group` is the label of the associated Key. Each `Key` can be configured with one or more labels. The format is usually as follows:
 
 ```properties
 {
-	"key": "keyName",                # 配置键
-	"value": "value",                # 配置值
+	"key": "keyName",                # key
+	"value": "value",                # value
 	"labels": {
-		"service": "serviceName"     #标签，kv形式，支持一个或者多个
+		"service": "serviceName"     #label，support one or more
 	},
 	"status": "enabled"
 }
 ```
 
-相对于`Zookeeper`, `Kie`更专注于`Group`, 其传值格式也有所不同，`Kie`的传值格式如下:
+Compared with `Zookeeper`, `Kie` is more focused on `Group` and its value transfer format is different. The value transfer format of `Kie` is as follows:
 
 ```properties
-groupKey1=groupValue1[&groupKey2=groupVaue2...]
+groupKey1=groupValue1[&groupKey2=groupValue2...]
 ```
 
-> 其中`groupKey`为标签键， `groupValue`则为标签值，多个标签使用`&`拼接；生成`Group`可通过[LabelGroupUtils#createLabelGroup](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/utils/LabelGroupUtils.java)生成
+> `groupKey` is the key of label, `groupValue` is the value of label. Multiple labels are spliced by `&`. `Group` could be  generated by [LabelGroupUtils#createLabelGroup](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/utils/LabelGroupUtils.java).
 >
-> **特别说明：**
+> **NOTE：**
 >
-> ​	若传入的`Group`非以上格式，则会默认添加标签`GROUP=传入Group`
+> ​	If the input `Group` is not in the above format, the label `Group=input Group` will be added by default.
 
-`Kie`的实现见于包[kie](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie), 主要包含[KieDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie/KieDynamicConfigService.java)、[LabelGroupUtils](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/utils/LabelGroupUtils.java)与[SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java)三个类：
+The implementation of `Kie` could be found in [kie](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie), which contains [KieDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie/KieDynamicConfigService.java), [LabelGroupUtils](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/utils/LabelGroupUtils.java) and [SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java):
 
-- [KieDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie/KieDynamicConfigService.java)是[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)的`Kie`实现类， 主要职责是封装[SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java)的订阅API以及`Group`的`Key`管理
+- [KieDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie/KieDynamicConfigService.java) is an implementation of [DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) for `Kie`. Its main duty is to wrap the subscription API of [SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java) and the `Key` management of `Group`.
 
-- [LabelGroupUtils](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/utils/LabelGroupUtils.java)则是负责`Group`转换，主要包含以下API：
+- [LabelGroupUtils](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/utils/LabelGroupUtils.java) is used for conversion of `Group`, which contains following APIs：
 
-  | 方法                        | 解析                             |
-  | --------------------------- | -------------------------------- |
-  | createLabelGroup（Map）     | 创建标签，多个标签使用KV形式传入 |
-  | getLabelCondition（String） | 将Group转换为请求的条件          |
-  | isLabelGroup（String）      | 判断是否为Kie的标签              |
+  | Method                      | Explanation                                         |
+  | --------------------------- | --------------------------------------------------- |
+  | createLabelGroup（Map）     | Create labels and transfer multiple labels in KV    |
+  | getLabelCondition（String） | Converts the `Group` to the condition for a request |
+  | isLabelGroup（String）      | Check whether it is a label of `Kie`                |
 
-- [SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java)主要职责是管理`Group`的所有订阅者以及进行数据更新通知；其会根据订阅的Group，即标签组，与`Kie`建立连接请求任务，动态监听数据更新变化；该类主要包含以下API：
+- The main responsibility of [SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java) is to manage all the `Group` subscribers and to provide data update notifications. It will establish a connection request task with `Kie` according to the subscribed Group, namely the Label Group, and dynamically monitor data update changes. This class contains the following APIs:
 
-  | 方法                                                         | 解析                                                         |
+  | Method                                                       | Explanation                                                  |
   | ------------------------------------------------------------ | ------------------------------------------------------------ |
-  | boolean addGroupListener(String, DynamicConfigListener, boolean) | 订阅标签监听，由[SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java)管理，建立监听任务，并提供首次订阅通知能力 |
-  | boolean removeGroupListener(String, DynamicConfigListener)   | 移除标签监听                                                 |
-  | boolean publishConfig(String, String, String)                | 发布Kie配置                                                  |
+  | boolean addGroupListener(String, DynamicConfigListener, boolean) | And a listener for a label group , which is managed by [SubscriberManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/kie/listener/SubscriberManager.java). Listening task will be established and the ability to notify the first subscription is provided. |
+  | boolean removeGroupListener(String, DynamicConfigListener)   | Remove a label group listener.                               |
+  | boolean publishConfig(String, String, String)                | Publish configuration of Kie                                 |
 
-## 实现包装
+## Wrapper
 
-从[核心模块介绍](../user-guide/agentcore.md#插件服务系统)可知，**插件服务系统**是基于`SPI`实现的，而[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)对应的`SPI`实现配置为[BufferedDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/BufferedDynamicConfigService.java)，后者为前者所有具体实现类的包装。它在初始化的过程中读取[DynamicConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/config/DynamicConfig.java)配置，通过`dynamic.config.dynamic_config_type`配置选择具体的服务实现，并将所有`API`委派给这些具体的服务实现完成。
+You can learn from [Sermant-agentcore-core](../user-guide/agentcore.md#Plugin-Service-System) that **Plugin Service System** is based on `SPI`.
 
-## 使用方式
+The corresponding ` SPI ` implementation of [DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java) is [BufferedDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/BufferedDynamicConfigService.java). The latter is the wrapper of all the methods of the former. It reads [DynamicConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/config/DynamicConfig.java) configuration at startup, selects concrete service implementation and delegates all `API` to these concrete service implementations via `dynamic.config. dynamic_config_type`.
 
-**动态配置服务**主要应用于插件的拦截器或插件服务中，具体使用方式可以参见[插件代码开发手册的动态配置功能一节](dev_plugin_code.md#动态配置功能)，使用过程中较为关键的当属`Key`和`Group`的构建，具体内容可参见前文中几种实现中对这两个值的要求，这里不做赘述。
+## How to Use
 
-[返回**Sermant**说明文档](../README.md)
+**Dynamic Configuration Service** is mainly used in plugin interceptors or plugin services. The specific way can be found [Plugin Code Development Guide](dev_plugin_code.md). The important thing is the construction of `Key` and `Group`. For details, see the requirements for these two values in the previous implementations.
+
+[Back to README of **Sermant** ](../README.md)
