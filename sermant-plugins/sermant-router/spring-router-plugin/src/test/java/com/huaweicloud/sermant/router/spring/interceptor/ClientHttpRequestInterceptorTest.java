@@ -53,12 +53,18 @@ public class ClientHttpRequestInterceptorTest {
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
     }
 
+    /**
+     * 重置测试数据
+     */
     @Before
     public void clear() {
         ThreadLocalUtils.removeRequestHeader();
         ThreadLocalUtils.removeRequestData();
     }
 
+    /**
+     * 测试before方法
+     */
     @Test
     public void testBefore() {
         Map<String, List<String>> header = new HashMap<>();
@@ -79,6 +85,9 @@ public class ClientHttpRequestInterceptorTest {
 
     }
 
+    /**
+     * 测试after方法
+     */
     @Test
     public void testAfter() {
         ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));
@@ -86,6 +95,9 @@ public class ClientHttpRequestInterceptorTest {
         Assert.assertNull(ThreadLocalUtils.getRequestData());
     }
 
+    /**
+     * 测试onThrow方法
+     */
     @Test
     public void testOnThrow() {
         ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));

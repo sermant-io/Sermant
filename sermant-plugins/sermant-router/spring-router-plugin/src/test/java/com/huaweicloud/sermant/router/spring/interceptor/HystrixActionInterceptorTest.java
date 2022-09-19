@@ -52,6 +52,9 @@ public class HystrixActionInterceptorTest {
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
     }
 
+    /**
+     * 测试before方法
+     */
     @Test
     public void testBefore() {
         Map<String, List<String>> header = new HashMap<>();

@@ -92,6 +92,9 @@ public class BaseLoadBalancerInterceptorTest {
             null);
     }
 
+    /**
+     * 重置测试数据
+     */
     @Before
     public void reset() {
         ThreadLocalUtils.removeRequestHeader();

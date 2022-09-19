@@ -98,6 +98,9 @@ public class ServiceRegistryInterceptorTest {
         context = ExecuteContext.forMemberMethod(serviceRegistration, null, null, null, null);
     }
 
+    /**
+     * 测试before方法
+     */
     @Test
     public void testBefore() {
         interceptor.before(context);
@@ -109,6 +112,9 @@ public class ServiceRegistryInterceptorTest {
         Assert.assertEquals("foo2", metadata.get("foo"));
     }
 
+    /**
+     * 测试after方法
+     */
     @Test
     public void testAfter() {
         AppCache.INSTANCE.setAppName("foo");

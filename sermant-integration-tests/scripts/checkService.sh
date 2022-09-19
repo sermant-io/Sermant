@@ -27,11 +27,11 @@ tryTimes=${maxWaitTime}
 for ((i=1; i<=${tryTimes};i++))
 do
   echo "try curl ${serviceUrl} at ${i} times"
-  curl ${serviceUrl} > /dev/null
-  if [ $? == 0 ];then
+  code=`curl -I -o /dev/null -s -w %{http_code} ${serviceUrl}`
+  echo "http code is ${code}."
+  if [ "${code}" == 200 ];then
     echo "Curl service url is success"
     break
   fi
   sleep 1
 done
-

@@ -62,7 +62,6 @@ public class RouteHandlerInterceptorTest {
                 keys.add("foo");
                 return keys;
             });
-
     }
 
     /**
@@ -77,6 +76,9 @@ public class RouteHandlerInterceptorTest {
         interceptor = new RouteHandlerInterceptor();
     }
 
+    /**
+     * 重置测试数据
+     */
     @Before
     public void clear() {
         ThreadLocalUtils.removeRequestHeader();

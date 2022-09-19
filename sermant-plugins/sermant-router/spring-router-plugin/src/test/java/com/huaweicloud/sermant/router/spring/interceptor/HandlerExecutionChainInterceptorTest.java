@@ -66,6 +66,9 @@ public class HandlerExecutionChainInterceptorTest {
         context = ExecuteContext.forMemberMethod(new HandlerExecutionChain(new Object()), null, null, null, null);
     }
 
+    /**
+     * 测试before方法
+     */
     @Test
     public void testBefore() {
         interceptor.before(context);

@@ -114,6 +114,9 @@ public class AbstractDirectoryServiceTest {
         Assert.assertEquals(2, targetInvokers.size());
     }
 
+    /**
+     * 测试命中路由时
+     */
     @Test
     public void testGetTargetInvoker() {
         // 初始化路由规则
@@ -139,6 +142,9 @@ public class AbstractDirectoryServiceTest {
         Assert.assertEquals(invoker2, targetInvokers.get(0));
     }
 
+    /**
+     * 测试没有命中路由时
+     */
     @Test
     public void testGetMissMatchInstances() {
         // 初始化路由规则
@@ -195,6 +201,9 @@ public class AbstractDirectoryServiceTest {
         configuration.resetRouteRule(map);
     }
 
+    /**
+     * 测试对象
+     */
     public static class TestObject {
         private final Map<String, String> queryMap;
 
