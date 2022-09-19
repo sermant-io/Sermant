@@ -1,0 +1,2 @@
+com.huaweicloud.sermant.implement.config.LoadPropertiesStrategy
+com.huaweicloud.sermant.implement.config.LoadYamlStrategy

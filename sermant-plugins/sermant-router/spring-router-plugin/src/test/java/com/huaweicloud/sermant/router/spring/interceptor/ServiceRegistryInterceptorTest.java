@@ -62,10 +62,6 @@ public class ServiceRegistryInterceptorTest {
      */
     @BeforeClass
     public static void before() {
-        Map<String, Object> map = new HashMap<>();
-        map.put(CommonConstant.LOG_SETTING_FILE_KEY,
-            ServiceRegistryInterceptorTest.class.getResource("/logback-test.xml").getPath());
-        LoggerFactory.init(map);
         configService = new TestSpringConfigService();
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class)).thenReturn(configService);

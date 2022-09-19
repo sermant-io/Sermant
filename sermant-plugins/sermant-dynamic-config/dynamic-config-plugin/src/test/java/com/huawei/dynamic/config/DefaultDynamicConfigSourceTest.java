@@ -17,6 +17,15 @@
 
 package com.huawei.dynamic.config;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
+
+import org.junit.After;
+import org.junit.Before;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
 /**
  * 默认配置
  *
@@ -24,6 +33,19 @@ package com.huawei.dynamic.config;
  * @since 2022-09-05
  */
 public class DefaultDynamicConfigSourceTest extends CseDynamicConfigSourceTest {
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+    }
+
+    @After
+    public void tearDown() {
+        operationManagerMockedStatic.close();
+    }
+
     @Override
     protected DynamicConfigSource getSource() {
         return new DefaultDynamicConfigSource();

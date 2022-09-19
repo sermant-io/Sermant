@@ -24,7 +24,10 @@ import com.huawei.flowcontrol.common.entity.HttpRequestEntity.Builder;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
 import org.junit.After;
 import org.junit.Before;
@@ -60,6 +63,8 @@ public class HandlerChainEntryTest {
 
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
     /**
      * mock配置
      */
@@ -69,6 +74,8 @@ public class HandlerChainEntryTest {
         pluginConfigManagerMockedStatic
                 .when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                 .thenReturn(new FlowControlConfig());
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
     }
 
     /**
@@ -77,6 +84,7 @@ public class HandlerChainEntryTest {
     @After
     public void close() {
         pluginConfigManagerMockedStatic.close();
+        operationManagerMockedStatic.close();
     }
 
     /**

@@ -17,11 +17,16 @@
 
 package com.huawei.registry.config;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -42,6 +47,19 @@ public class RegistryConfigResolverTest {
     private static final long TEST_HTTP_SERVER_PORT = 26688L;
     private static final long TEST_UPSTREAM_ADDRESS_MAXSIZE = 5000L;
     private static final long TEST_UPSTREAM_ADDRESS_EXPIRED_TIME = 600L;
+
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        operationManagerMockedStatic.close();
+    }
 
     /**
      * 测试优雅上下线配置解析

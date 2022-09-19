@@ -17,7 +17,8 @@
 
 package com.huawei.registry.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
@@ -27,7 +28,7 @@ import org.junit.Test;
 import java.util.Optional;
 
 /**
- * TODO 描述这个类
+ * 测试ReflectUtils工具类
  *
  * @author zhouss
  * @since 2022-06-29

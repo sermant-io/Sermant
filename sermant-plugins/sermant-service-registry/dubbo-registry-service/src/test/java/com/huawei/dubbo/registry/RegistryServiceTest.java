@@ -24,12 +24,15 @@ import com.huawei.dubbo.registry.service.RegistryServiceImpl;
 import com.huawei.registry.config.RegisterConfig;
 
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.registry.NotifyListener;
@@ -104,6 +107,10 @@ public class RegistryServiceTest {
         MockedStatic<ConfigManager> mockConfigManager = Mockito.mockStatic(ConfigManager.class);
         mockConfigManager.when(() -> ConfigManager.getConfig(ServiceMeta.class)).thenReturn(new ServiceMeta());
         MOCKED_STATICS.add(mockConfigManager);
+        MockedStatic<OperationManager> operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
+            .thenReturn(new YamlConverterImpl());
+        MOCKED_STATICS.add(operationManagerMockedStatic);
     }
 
     /**

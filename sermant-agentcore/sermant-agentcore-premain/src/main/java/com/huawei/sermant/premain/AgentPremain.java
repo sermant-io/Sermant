@@ -43,7 +43,6 @@ import java.util.logging.Logger;
 public class AgentPremain {
     private static boolean executeFlag = false;
 
-    // 初始化日志
     private static final Logger LOGGER = getLogger();
 
     private AgentPremain() {
@@ -65,7 +64,7 @@ public class AgentPremain {
 
         try {
             // 添加核心库
-            LOGGER.info("Loading core library... ");
+            LOGGER.info(String.format(Locale.ROOT, "Loading core library from [%s].", PathDeclarer.getCorePath()));
             loadCoreLib(instrumentation);
 
             // 初始化启动参数
@@ -77,11 +76,10 @@ public class AgentPremain {
             AgentCoreEntrance.run(argsMap, instrumentation);
         } catch (Exception e) {
             LOGGER.severe(
-                String.format(Locale.ROOT, "Loading sermant agent failed, %s: %s. ", e.getClass(), e.getMessage()));
+                String.format(Locale.ROOT, "Loading sermant agent failed, %s. ", e));
         }
     }
 
-    // ~~internal methods
     private static void loadCoreLib(Instrumentation instrumentation) throws IOException {
         final File coreDir = new File(PathDeclarer.getCorePath());
         if (!coreDir.exists() || !coreDir.isDirectory()) {

@@ -21,8 +21,11 @@ import com.huawei.dynamic.config.ConfigHolder;
 import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.sources.MockEnvironment;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -45,6 +48,8 @@ public class SpringEnvironmentProcessorTest {
     private DynamicConfigEvent event;
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
     @Before
     public void setUp() {
         event = Mockito.mock(DynamicConfigEvent.class);
@@ -54,12 +59,16 @@ public class SpringEnvironmentProcessorTest {
         Mockito.when(configuration.getFirstRefreshDelayMs()).thenReturn(0L);
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
-                .thenReturn(configuration);
+            .thenReturn(configuration);
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
+            .thenReturn(new YamlConverterImpl());
     }
 
     @After
     public void tearDown() {
         pluginConfigManagerMockedStatic.close();
+        operationManagerMockedStatic.close();
     }
 
     @Test

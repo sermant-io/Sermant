@@ -22,6 +22,7 @@
 
 package com.huaweicloud.sermant.core.service;
 
+import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.exception.DupServiceException;
@@ -60,18 +61,24 @@ public class ServiceManager {
     private static final AgentConfig AGENT_CONFIG = ConfigManager.getConfig(AgentConfig.class);
 
     /**
+     * Constructor.
+     */
+    protected ServiceManager() {
+    }
+
+    /**
      * 初始化所有服务
      */
     public static void initServices() {
-        for (final BaseService service : ServiceLoader.load(BaseService.class)) {
+        for (final BaseService service : ServiceLoader.load(BaseService.class,
+            ClassLoaderManager.getFrameworkClassLoader())) {
             if (!AGENT_CONFIG.getServiceBlackList().contains(service.getClass().getName())
-                    && loadService(service, service.getClass(), BaseService.class)) {
+                && loadService(service, service.getClass(), BaseService.class)) {
                 try {
                     service.start();
                 } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
-                            "Error occurs while starting service: %s",
-                            service.getClass().toString()), ex);
+                    LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "Error occurs while starting service: %s",
+                            service.getClass()), ex);
                 }
             }
         }
@@ -88,7 +95,7 @@ public class ServiceManager {
     public static <T extends BaseService> T getService(Class<T> serviceClass) {
         final BaseService baseService = SERVICES.get(serviceClass.getName());
         if (baseService != null && serviceClass.isAssignableFrom(baseService.getClass())) {
-            return (T) baseService;
+            return (T)baseService;
         }
         throw new IllegalArgumentException("Service instance of [" + serviceClass + "] is not found. ");
     }
@@ -102,7 +109,7 @@ public class ServiceManager {
      * @return 是否加载成功
      */
     protected static boolean loadService(BaseService service, Class<?> serviceCls,
-            Class<? extends BaseService> baseCls) {
+        Class<? extends BaseService> baseCls) {
         if (serviceCls == null || serviceCls == baseCls || !baseCls.isAssignableFrom(serviceCls)) {
             return false;
         }
@@ -112,13 +119,13 @@ public class ServiceManager {
             return false;
         }
         boolean isLoadSucceed = false;
-        final BaseService betterService = SpiLoadUtils.getBetter(oldService, service,
-                new SpiLoadUtils.WeightEqualHandler<BaseService>() {
-                    @Override
-                    public BaseService handle(BaseService source, BaseService target) {
-                        throw new DupServiceException(serviceName);
-                    }
-                });
+        final BaseService betterService =
+            SpiLoadUtils.getBetter(oldService, service, new SpiLoadUtils.WeightEqualHandler<BaseService>() {
+                @Override
+                public BaseService handle(BaseService source, BaseService target) {
+                    throw new DupServiceException(serviceName);
+                }
+            });
         if (betterService != oldService) {
             SERVICES.put(serviceName, service);
             isLoadSucceed = true;
@@ -142,8 +149,7 @@ public class ServiceManager {
                         baseService.stop();
                     } catch (Exception ex) {
                         LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
-                                "Error occurs while stopping service: %s",
-                                baseService.getClass().toString()), ex);
+                            "Error occurs while stopping service: %s", baseService.getClass().toString()), ex);
                     }
                 }
             }

@@ -24,8 +24,8 @@ import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
 import com.huawei.flowcontrol.common.util.StringUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.core.plugin.converter.Converter;
-import com.huaweicloud.sermant.core.plugin.converter.YamlConverter;
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,9 +61,9 @@ public abstract class AbstractResolver<T extends Configurable> {
     private final List<ConfigUpdateListener<T>> listeners = new ArrayList<>();
 
     /**
-     * 转换器
+     * Yaml转换器
      */
-    private Converter<String, T> converter;
+    private YamlConverter yamlConverter = OperationManager.getOperation(YamlConverter.class);
 
     /**
      * 解析器构造器
@@ -71,20 +71,7 @@ public abstract class AbstractResolver<T extends Configurable> {
      * @param configKey 解析器配置键
      */
     public AbstractResolver(String configKey) {
-        this(configKey, null);
-    }
-
-    /**
-     * 解析器构造器
-     *
-     * @param configKey 解析器配置键
-     * @param converter 配置转换器
-     */
-    public AbstractResolver(String configKey, Converter<String, T> converter) {
         this.configKey = configKey;
-
-        // 线上SC目前治理策略仅支持yaml格式配置
-        this.converter = converter;
         rules = new HashMap<>();
     }
 
@@ -141,10 +128,7 @@ public abstract class AbstractResolver<T extends Configurable> {
         rules.remove(businessKey);
 
         // 2、转换配置
-        if (converter == null) {
-            converter = new YamlConverter<>(getRuleClass());
-        }
-        final Optional<T> optionalRule = converter.convert(value);
+        final Optional<T> optionalRule = yamlConverter.convert(value,getRuleClass());
         if (!optionalRule.isPresent()) {
             return optionalRule;
         }

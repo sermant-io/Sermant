@@ -21,6 +21,7 @@ import com.huawei.sermant.backend.service.dynamicconfig.kie.client.AbstractClien
 import com.huawei.sermant.backend.service.dynamicconfig.kie.client.ClientUrlManager;
 import com.huawei.sermant.backend.service.dynamicconfig.kie.client.http.HttpClient;
 import com.huawei.sermant.backend.service.dynamicconfig.kie.client.http.HttpResult;
+
 import org.apache.http.HttpStatus;
 
 import java.util.HashMap;
@@ -40,14 +41,32 @@ public class KieClient extends AbstractClient {
 
     private String kieApi;
 
+    /**
+     * Constructor.
+     *
+     * @param clientUrlManager clientUrlManager
+     */
     public KieClient(ClientUrlManager clientUrlManager) {
         this(clientUrlManager, Config.getInstance().getProject());
     }
 
+    /**
+     * Constructor.
+     *
+     * @param clientUrlManager clientUrlManager
+     * @param project project
+     */
     public KieClient(ClientUrlManager clientUrlManager, String project) {
         this(clientUrlManager, null, project);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param clientUrlManager clientUrlManager
+     * @param httpClient httpClient
+     * @param project project
+     */
     public KieClient(ClientUrlManager clientUrlManager, HttpClient httpClient, String project) {
         super(clientUrlManager, httpClient);
         kieApi = String.format(KIE_API_TEMPLATE, project);
@@ -99,6 +118,7 @@ public class KieClient extends AbstractClient {
      * @param key 请求键
      * @param labels 标签
      * @param content 配置
+     * @param enabled 状态
      * @return 是否发布成功
      */
     public boolean publishConfig(String key, Map<String, String> labels, String content, boolean enabled) {

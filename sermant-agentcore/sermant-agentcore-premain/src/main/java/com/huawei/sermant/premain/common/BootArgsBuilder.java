@@ -155,6 +155,7 @@ public abstract class BootArgsBuilder {
      */
     private static void addPathEntries(Map<String, Object> argsMap) {
         argsMap.put(CommonConstant.AGENT_ROOT_DIR_KEY, PathDeclarer.getAgentPath());
+        argsMap.put(CommonConstant.CORE_IMPLEMENT_DIR_KEY,PathDeclarer.getImplementPath());
         argsMap.put(CommonConstant.CORE_CONFIG_FILE_KEY, PathDeclarer.getConfigPath());
         argsMap.put(CommonConstant.PLUGIN_SETTING_FILE_KEY, PathDeclarer.getPluginSettingPath());
         argsMap.put(CommonConstant.PLUGIN_PACKAGE_DIR_KEY, PathDeclarer.getPluginPackagePath());

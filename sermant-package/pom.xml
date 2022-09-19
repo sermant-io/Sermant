@@ -88,7 +88,6 @@
                                         <include>NOTICE</include>
                                     </includes>
                                 </resource>
-                                <!-- todo 需要整理非apache license 2.0的第三方包的license -->
                                 <resource>
                                     <directory>${sermant.basedir}/${package.resources.dir}</directory>
                                     <includes>

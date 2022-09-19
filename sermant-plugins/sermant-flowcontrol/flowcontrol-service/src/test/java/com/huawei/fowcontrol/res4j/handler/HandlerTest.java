@@ -24,13 +24,21 @@ import com.huawei.flowcontrol.common.core.rule.RateLimitingRule;
 import com.huawei.flowcontrol.common.core.rule.fault.Fault;
 import com.huawei.flowcontrol.common.core.rule.fault.FaultRule;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.RateLimiter;
+
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -54,6 +62,20 @@ public class HandlerTest {
     private static final String DELAY_TIME = "10000";
     private static final int ERROR_CODE = 503;
     private static final int PERCENTAGE = 1;
+
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+    }
+
+    // mock 静态方法用完后需要关闭
+    @After
+    public void tearDown() throws Exception {
+        operationManagerMockedStatic.close();
+    }
 
     /**
      * 测试隔离仓

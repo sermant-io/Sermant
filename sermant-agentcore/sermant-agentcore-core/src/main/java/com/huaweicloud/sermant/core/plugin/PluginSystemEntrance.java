@@ -20,11 +20,11 @@ import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.utils.ConfigValueUtil;
-import com.huaweicloud.sermant.core.plugin.adaptor.AdaptorManager;
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.adaptor.api.AdaptorManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.agent.ByteEnhanceManager;
 import com.huaweicloud.sermant.core.plugin.config.PluginSetting;
-
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -58,6 +59,8 @@ public class PluginSystemEntrance {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private static final YamlConverter YAML_CONVERTER = OperationManager.getOperation(YamlConverter.class);
+
     private PluginSystemEntrance() {
     }
 
@@ -70,8 +73,8 @@ public class PluginSystemEntrance {
         final PluginSetting pluginSetting = loadSetting();
         Set<String> plugins = getLoadPlugins(pluginSetting);
         LOGGER.info(String.format(Locale.ROOT, "load plugins: %s", plugins.toString()));
-        if (PluginManager.initPlugins(plugins, instrumentation)
-                | AdaptorManager.initAdaptors(pluginSetting.getAdaptors(), instrumentation)) {
+        if (PluginManager.initPlugins(plugins, instrumentation) | OperationManager.getOperation(AdaptorManager.class)
+            .initAdaptors(pluginSetting.getAdaptors(), instrumentation)) {
             ByteEnhanceManager.enhance(instrumentation);
         }
     }
@@ -82,12 +85,12 @@ public class PluginSystemEntrance {
      * @return 插件设定配置
      */
     private static PluginSetting loadSetting() {
-        final Yaml yaml = new Yaml();
         Reader reader = null;
         try {
             reader = new InputStreamReader(new FileInputStream(BootArgsIndexer.getPluginSettingFile()),
-                    CommonConstant.DEFAULT_CHARSET);
-            return yaml.loadAs(reader, PluginSetting.class);
+                CommonConstant.DEFAULT_CHARSET);
+            Optional<PluginSetting> pluginSettingOptional = YAML_CONVERTER.convert(reader, PluginSetting.class);
+            return pluginSettingOptional.orElse(null);
         } catch (IOException ignored) {
             LOGGER.warning("Plugin setting file is not found. ");
             return new PluginSetting();

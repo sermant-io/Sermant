@@ -16,11 +16,11 @@
 
 package com.huaweicloud.sermant.core.common;
 
-import ch.qos.logback.classic.util.ContextInitializer;
+import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
+import com.huaweicloud.sermant.core.classloader.FrameworkClassLoader;
 
-import org.slf4j.bridge.SLF4JBridgeHandler;
-
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
 /**
@@ -33,49 +33,25 @@ import java.util.logging.Logger;
 public class LoggerFactory {
     private static Logger logger = java.util.logging.Logger.getLogger("sermant");
 
-    /**
-     * 默认的logback配置文件路径
-     */
-    private static String defaultLogbackSettingPath;
-
     private LoggerFactory() {
-    }
-
-    /**
-     * 从启动参数中获取logback的配置文件路径
-     *
-     * @param argsMap 启动参数
-     * @return logback的配置文件路径
-     */
-    private static String getLogbackSettingFile(Map<String, Object> argsMap) {
-        return argsMap.get(CommonConstant.LOG_SETTING_FILE_KEY).toString();
     }
 
     /**
      * 初始化logback配置文件路径
      *
-     * @param argsMap 启动参数
+     * @throws RuntimeException RuntimeException
      */
-    public static void init(Map<String, Object> argsMap) {
-        final String logbackSettingPath = getLogbackSettingFile(argsMap);
-
-        // 设置slf4j 日志 handle
-        defaultLogbackSettingPath = System.getProperty(ContextInitializer.CONFIG_FILE_PROPERTY);
-        System.setProperty(ContextInitializer.CONFIG_FILE_PROPERTY, logbackSettingPath);
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
-        logger = java.util.logging.Logger.getLogger("sermant");
-    }
-
-    /**
-     * 回滚默认的logback配置文件路径
-     */
-    public static void rollback() {
-        if (defaultLogbackSettingPath != null) {
-            System.setProperty(ContextInitializer.CONFIG_FILE_PROPERTY, defaultLogbackSettingPath);
-        } else {
-            System.clearProperty(ContextInitializer.CONFIG_FILE_PROPERTY);
+    public static void init() {
+        FrameworkClassLoader frameworkClassLoader = ClassLoaderManager.getFrameworkClassLoader();
+        try {
+            Method initMethod = frameworkClassLoader
+                    .loadClass("com.huaweicloud.sermant.implement.LoggerFactoryImpl").getMethod("init");
+            initMethod.invoke(null);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
+                 | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
+        logger = java.util.logging.Logger.getLogger("sermant");
     }
 
     /**

@@ -19,8 +19,16 @@ package com.huawei.flowcontrol.common.core.resolver;
 
 import com.huawei.flowcontrol.common.core.rule.AbstractRule;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
+
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.Optional;
 
@@ -31,6 +39,19 @@ import java.util.Optional;
  * @since 2022-08-29
  */
 public abstract class AbstractRuleResolverTest<T extends AbstractRule> {
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        operationManagerMockedStatic.close();
+    }
+
     @Test
     public void test() {
         final AbstractResolver<T> resolver = getResolver();

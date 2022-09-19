@@ -23,6 +23,8 @@ import com.huawei.flowcontrol.common.core.rule.RuleDynamicConfigListener;
 import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
 import com.huawei.flowcontrol.common.factory.FlowControlThreadFactory;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.initializer.DynamicConfigServiceInitializer;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import com.huaweicloud.sermant.core.plugin.subscribe.ConfigSubscriber;
@@ -30,7 +32,6 @@ import com.huaweicloud.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
 import com.huaweicloud.sermant.core.plugin.subscribe.DefaultGroupConfigSubscriber;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.DynamicConfigService;
-import com.huaweicloud.sermant.core.service.dynamicconfig.kie.KieDynamicConfigService;
 
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -92,8 +93,8 @@ public class FlowControlInitServiceImpl implements PluginService {
             if (pluginConfig.isUseAgentConfigCenter()) {
                 dynamicConfigService = ServiceManager.getService(DynamicConfigService.class);
             } else {
-                dynamicConfigService = new KieDynamicConfigService(pluginConfig.getConfigKieAddress(),
-                    pluginConfig.getProject());
+                dynamicConfigService = OperationManager.getOperation(DynamicConfigServiceInitializer.class)
+                    .initKieDynamicConfigService(pluginConfig.getConfigKieAddress(), pluginConfig.getProject());
             }
             return dynamicConfigService;
         }

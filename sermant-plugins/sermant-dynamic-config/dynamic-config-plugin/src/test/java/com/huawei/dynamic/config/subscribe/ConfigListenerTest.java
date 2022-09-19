@@ -22,11 +22,16 @@ import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.sources.TestConfigSources;
 import com.huawei.dynamic.config.sources.TestLowestConfigSources;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.subscribe.processor.OrderConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -40,21 +45,38 @@ import java.util.Collections;
  * @since 2022-09-05
  */
 public class ConfigListenerTest {
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
+            .thenReturn(new YamlConverterImpl());
+
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
+            .thenReturn(new DynamicConfiguration());
+    }
+
+    @After
+    public void tearDown() {
+        operationManagerMockedStatic.close();
+        pluginConfigManagerMockedStatic.close();
+    }
+
     @Test
     public void test() {
-        try (final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
-                .mockStatic(PluginConfigManager.class);) {
-            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
-                    .thenReturn(new DynamicConfiguration());
-            final ConfigListener configListener = new ConfigListener();
-            ConfigHolder.INSTANCE.getConfigSources()
-                    .removeIf(configSource -> configSource.getClass() == TestConfigSources.class
-                            || configSource.getClass() == TestLowestConfigSources.class);
-            configListener.process(new OrderConfigEvent("id", "group", "test: 1", DynamicConfigEventType.CREATE,
-                    Collections.singletonMap("test", 1)));
-            Assert.assertEquals(ConfigHolder.INSTANCE.getConfig("test"), 1);
-            ConfigHolder.INSTANCE.getConfigSources().add(new TestConfigSources());
-            ConfigHolder.INSTANCE.getConfigSources().add(new TestLowestConfigSources());
-        }
+        final ConfigListener configListener = new ConfigListener();
+        ConfigHolder.INSTANCE.getConfigSources()
+            .removeIf(configSource -> configSource.getClass() == TestConfigSources.class
+                || configSource.getClass() == TestLowestConfigSources.class);
+        configListener.process(new OrderConfigEvent("id", "group", "test: 1", DynamicConfigEventType.CREATE,
+            Collections.singletonMap("test", 1)));
+        Assert.assertEquals(ConfigHolder.INSTANCE.getConfig("test"), 1);
+        ConfigHolder.INSTANCE.getConfigSources().add(new TestConfigSources());
+        ConfigHolder.INSTANCE.getConfigSources().add(new TestLowestConfigSources());
+        Collections.sort(ConfigHolder.INSTANCE.getConfigSources());
     }
 }

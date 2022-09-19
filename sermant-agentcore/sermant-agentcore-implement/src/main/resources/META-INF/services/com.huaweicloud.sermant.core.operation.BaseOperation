@@ -1,0 +1,3 @@
+com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl
+com.huaweicloud.sermant.implement.operation.adaptor.AdaptorManagerImpl
+com.huaweicloud.sermant.implement.operation.initializer.DynamicConfigServiceInitializerImpl

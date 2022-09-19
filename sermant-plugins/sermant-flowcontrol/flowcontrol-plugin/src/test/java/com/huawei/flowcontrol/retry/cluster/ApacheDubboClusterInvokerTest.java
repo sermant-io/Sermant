@@ -20,8 +20,11 @@ import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.util.ConvertUtils;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.rpc.AsyncRpcResult;
@@ -51,10 +54,13 @@ public class ApacheDubboClusterInvokerTest {
 
     private MockedStatic<ServiceManager> serviceManagerMockedStatic;
 
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
     @After
     public void tearDown() {
         pluginConfigManagerMockedStatic.close();
         serviceManagerMockedStatic.close();
+        operationManagerMockedStatic.close();
     }
 
     /**
@@ -68,6 +74,8 @@ public class ApacheDubboClusterInvokerTest {
                 .mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                 .thenReturn(new FlowControlConfig());
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
         serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
     }
 

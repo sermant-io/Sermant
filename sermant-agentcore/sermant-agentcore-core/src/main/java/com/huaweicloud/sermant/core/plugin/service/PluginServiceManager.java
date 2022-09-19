@@ -28,6 +28,10 @@ import java.util.ServiceLoader;
  * @since 2021-11-12
  */
 public class PluginServiceManager extends ServiceManager {
+    private PluginServiceManager() {
+        super();
+    }
+
     /**
      * 初始化插件服务
      *

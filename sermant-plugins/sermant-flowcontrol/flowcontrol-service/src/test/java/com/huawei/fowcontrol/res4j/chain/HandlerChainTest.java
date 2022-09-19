@@ -28,7 +28,14 @@ import com.huawei.fowcontrol.res4j.chain.handler.BulkheadRequestHandler;
 import com.huawei.fowcontrol.res4j.chain.handler.CircuitBreakerRequestHandler;
 import com.huawei.fowcontrol.res4j.chain.handler.FaultRequestHandler;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.Collections;
@@ -41,6 +48,20 @@ import java.util.Set;
  * @since 2022-08-30
  */
 public class HandlerChainTest {
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+    }
+
+    // mock 静态方法用完后需要关闭
+    @After
+    public void tearDown() throws Exception {
+        operationManagerMockedStatic.close();
+    }
+
     /**
      * 测试链路拼接与调用
      */

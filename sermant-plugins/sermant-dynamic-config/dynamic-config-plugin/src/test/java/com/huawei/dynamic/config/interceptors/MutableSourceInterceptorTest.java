@@ -22,10 +22,15 @@ import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.closer.ConfigCenterCloserTest;
 import com.huawei.dynamic.config.source.OriginConfigDisableSource;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -42,6 +47,19 @@ import java.util.Collections;
  * @since 2022-09-05
  */
 public class MutableSourceInterceptorTest {
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        operationManagerMockedStatic.close();
+    }
+
     @Test
     public void test() {
         try (final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
@@ -63,6 +81,7 @@ public class MutableSourceInterceptorTest {
         } finally {
             ConfigHolder.INSTANCE.getConfigSources()
                     .removeIf(configSource -> configSource.getClass() == OriginConfigDisableSource.class);
+            Collections.sort(ConfigHolder.INSTANCE.getConfigSources());
         }
     }
 

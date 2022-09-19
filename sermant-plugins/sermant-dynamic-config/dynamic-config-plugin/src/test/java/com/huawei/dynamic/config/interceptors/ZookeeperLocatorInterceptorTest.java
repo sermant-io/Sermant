@@ -21,13 +21,20 @@ import com.huawei.dynamic.config.ConfigHolder;
 import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.source.OriginConfigDisableSource;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+
+import java.util.Collections;
 
 /**
  * 测试zk拦截
@@ -36,25 +43,41 @@ import org.mockito.Mockito;
  * @since 2022-09-05
  */
 public class ZookeeperLocatorInterceptorTest {
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
+                .thenReturn(new DynamicConfiguration());
+    }
+
+    @After
+    public void tearDown() {
+        operationManagerMockedStatic.close();
+        pluginConfigManagerMockedStatic.close();
+    }
+
     @Test
     public void test() {
-        try (final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
-                .mockStatic(PluginConfigManager.class)) {
-            final DynamicConfiguration configuration = new DynamicConfiguration();
-            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
-                    .thenReturn(configuration);
+        try {
             final ZookeeperLocatorInterceptor zookeeperLocatorInterceptor = new ZookeeperLocatorInterceptor();
             final ExecuteContext context = zookeeperLocatorInterceptor.doBefore(buildContext());
             Assert.assertFalse(context.isSkip());
             ConfigHolder.INSTANCE.getConfigSources().add(new OriginConfigDisableSource("test"));
             final ExecuteContext closeContext = zookeeperLocatorInterceptor.doBefore(buildContext());
             Assert.assertTrue(closeContext.isSkip());
-            configuration.setEnableDynamicConfig(true);
         } catch (NoSuchMethodException e) {
             // ignored
         } finally {
             ConfigHolder.INSTANCE.getConfigSources()
                     .removeIf(configSource -> configSource.getClass() == OriginConfigDisableSource.class);
+            Collections.sort(ConfigHolder.INSTANCE.getConfigSources());
         }
     }
 

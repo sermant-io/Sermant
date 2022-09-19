@@ -17,8 +17,6 @@
 
 package com.huawei.flowcontrol.common.core;
 
-import static org.junit.Assert.*;
-
 import com.huawei.flowcontrol.common.core.resolver.AbstractResolver;
 import com.huawei.flowcontrol.common.core.resolver.AbstractRuleResolverTest;
 import com.huawei.flowcontrol.common.core.resolver.BulkheadRuleResolver;
@@ -34,11 +32,17 @@ import com.huawei.flowcontrol.common.core.resolver.RateLimitingRuleResolverTest;
 import com.huawei.flowcontrol.common.core.resolver.RetryResolver;
 import com.huawei.flowcontrol.common.core.resolver.RetryResolverTest;
 import com.huawei.flowcontrol.common.core.rule.AbstractRule;
-import com.huawei.flowcontrol.common.core.rule.BulkheadRule;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
+
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.Map;
 
@@ -49,10 +53,16 @@ import java.util.Map;
  * @since 2022-08-29
  */
 public class ResolverManagerTest {
-    private final ResolverManager instance = ResolverManager.INSTANCE;
+    private ResolverManager instance;
+
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
 
     @Before
     public void init() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+
+        instance = ResolverManager.INSTANCE;
         final Map<String, AbstractResolver<?>> resolversMap = instance.getResolversMap();
         resolversMap.put(BulkheadRuleResolver.CONFIG_KEY + ".", new BulkheadRuleResolver());
         resolversMap.put(CircuitBreakerRuleResolver.CONFIG_KEY + ".", new CircuitBreakerRuleResolver());
@@ -60,6 +70,11 @@ public class ResolverManagerTest {
         resolversMap.put(FaultRuleResolver.CONFIG_KEY + ".", new FaultRuleResolver());
         resolversMap.put(RateLimitingRuleResolver.CONFIG_KEY + ".", new RateLimitingRuleResolver());
         resolversMap.put(RetryResolver.CONFIG_KEY + ".", new RetryResolver());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        operationManagerMockedStatic.close();
     }
 
     @Test
