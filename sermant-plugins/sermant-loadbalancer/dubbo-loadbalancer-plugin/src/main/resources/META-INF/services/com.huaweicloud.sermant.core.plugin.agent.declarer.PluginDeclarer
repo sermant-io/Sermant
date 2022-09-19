@@ -1,1 +1,2 @@
-#com.huaweicloud.loadbalancer.declarer.UrlDeclarer
+com.huaweicloud.loadbalancer.declarer.UrlDeclarer
+com.huaweicloud.loadbalancer.declarer.ClusterDeclarer
