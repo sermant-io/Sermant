@@ -1,55 +1,56 @@
 # Service-Registry
 
-本文主要介绍[服务注册插件](../../../sermant-plugins/sermant-service-registry)以及该插件的使用方法。
+[简体中文](document-zh.md) | [English](document.md)
 
-## 功能
+This document describes the [service registration plugin](../../../sermant-plugins/sermant-service-registry) and how to use the plugin.
 
-服务注册插件提供代码无侵入方式，让线上应用快速接入[Service Center](https://github.com/apache/servicecomb-service-center)，支持Dubbo与SpringCloud框架。
-对于SpringCloud框架而言，可让原本注册于Eureka，Nacos，Zookeeper等主流注册中心的微服务，无侵入地注册到Service Center上。
-对于Dubbo框架而言，只要引入基础dubbo依赖包，即可无侵入地注册到Service Center。
+## Function
 
-## 使用说明
+The service registration plug-in allows microservices that have been registered with popular registration centers, such as Eureka, Nacos, ZooKeeper, and Consul, to be registered with [Service Center](https://github.com/apache/servicecomb-service-center) in a non-intrusive manner. It also supports Dubbo and SpringCloud frameworks.
 
-### 按需修改[核心配置文件](../../../sermant-agentcore/sermant-agentcore-core/config/config.properties)
+## Usage
 
-文件路径为：${agent_package_path}/agent/config/config.properties，其中${agent_package_path}需要替换为实际的打包路径。
+### Modify [Core Configuration File](../../../sermant-agentcore/sermant-agentcore-config/config/config.properties) On Demand
 
-配置项说明如下:
+
+The file path is `${agent_package_path}/agent/config/config.properties`. Please replace `${agent_package_path}` with the actual package path.
+
+The configuration items are described as follows:
 
 ```properties
-#应用名
+#application name
 service.meta.application=default
-#版本号
+#service version
 service.meta.version=1.0.0
-#命名空间
+#namespace, just keep default
 service.meta.project=default
-#环境
+#you environment, currently, testing/development/production are supported
 service.meta.environment=development
 ```
 
-### 按需修改[插件配置文件](../../../sermant-plugins/sermant-service-registry/config/config.yaml)
+### Modify The [Plugin Configuration File](../../../sermant-plugins/sermant-service-registry/config/config.yaml) On Demand
 
-文件路径为：${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml，其中${agent_package_path}需要替换为实际的打包路径。
+The file path is `${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml`. Please replace `${agent_package_path}` with the actual package path.
 
-配置项说明如下:
+The configuration items are described as follows:
 
 ```yaml
 servicecomb.service:
-  address: http://127.0.0.1:30100 #注册中心地址，多个注册中心地址使用逗号分隔
-  heartbeatInterval: 15 #服务实例心跳发送间隔（单位：秒）
-  openMigration: false #是否开启迁移功能
-  enableSpringRegister: false #是否开启spring插件注册能力，spring cloud框架需开启，dubbo框架需关闭
-  enableDubboRegister: false #是否开启dubbo插件注册能力，dubbo框架需开启，spring cloud框架需关闭
-  sslEnabled: false # 是否开启ssl
+  address: http://127.0.0.1:30100 # Registration center address. Use commas (,) to separate multiple registration center addresses.
+  heartbeatInterval: 15 # Interval at which service instance heartbeats are sent (unit: second)
+  openMigration: false # Whether to enable the migration function.
+  enableSpringRegister: false # Whether to enable the Spring plug-in registration capability. This capability must be enabled for the Spring Cloud framework and disabled for the Dubbo framework.
+  enableDubboRegister: false # Whether to enable the dubbo plug-in registration capability. This capability must be enabled for the dubbo framework and disabled for the spring cloud framework.
+  sslEnabled: false # Whether to enable SSL.
 ```
 
-- 对于**新开发**的dubbo应用，还需要设置dubbo本身注册中心地址的配置。这个配置项一般在dubbo应用的配置文件中，比如“dubbo/provider.xml”文件中：
+- For **newly developed dubbo applications**, you also need to configure the address of the dubbo registration center. This configuration item is generally in the configuration file of the dubbo application, for example, in the dubbo/provider.xml file.
 
 ```xml
 <dubbo:registry address="sc://127.0.0.1:30100"/>
 ```
 
-也可能在application.yml（或application.properties）中，以application.yml为例：
+Alternatively, in application.yml (or application.properties), application.yml is used as an example.
 
 ```yml
 dubbo:
@@ -57,23 +58,21 @@ dubbo:
     address: sc://127.0.0.1:30100
 ```
 
-需要强调的是，这个配置项的地址信息**不会使用**，只使用了协议名称sc（即ip地址不重要，只需要**sc://** 开头即可）。
+Note that the address information of **this configuration item is not used**. Only the protocol name sc is used. (That is, the IP address is not important. **You only need to start with sc://**.)
 
-- **注意**：对于**存量**dubbo应用（即原本已经设置过dubbo本身注册中心地址的应用）**无需**进行这一步。
+- **Note**: For **existing dubbo applications**, (Applications which hava already set up it's own registry address) **This step is not required**.
 
-## 结果验证
+## Verification
 
-- 前提条件[正确打包Sermant](../../README.md)
-
-- 启动Service Center，下载、使用说明和启动流程详见[官网](https://github.com/apache/servicecomb-service-center)
-
-- 编译[demo应用](../../../sermant-plugins/sermant-service-registry/demo-registry/demo-registry-dubbo)
+- Prerequisites: [Sermant is packaged correctly](../../README.md#Packaging-Steps).
+- Start the Service Center. For details about how to download, use, and start the Service Center, see the [official website](https://github.com/apache/servicecomb-service-center).
+- Compile [demo application](../../../sermant-plugins/sermant-service-registry/demo-registry/demo-registry-dubbo)
 
 ```shell
 mvn clean package
 ```
 
-- 启动消费者
+- Start Consumer
 
 ```shell
 # windows
@@ -83,7 +82,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}\sermant-a
 java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=dubbo-consumer -jar dubbo-consumer.jar
 ```
 
-- 启动生产者
+- Start Provider
 
 ```shell
 # windows
@@ -93,32 +92,32 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}\sermant-a
 java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=dubbo-provider -jar dubbo-provider.jar
 ```
 
-注：为了便于测试，这里使用了-Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo注册开关，如果使用了其它的方式打开了dubbo注册开关，则无需添加该参数。
+Note: To facilitate the test, the DUBBO registration function is enabled in -Dservicecomb.service.enableDubboRegister=true mode. If the DUBBO registration function is enabled in other modes, you do not need to add this parameter.
 
-其中${path}需要替换为Sermant工程路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包目录。
+Replace `${path}` with the Sermant project path, replace x.x.x with the actual Sermant version number, and appName with the application name in the agent startup parameter, which is irrelevant to registration parameters. The directory for running commands must be the JAR package directory of the demo application.
 
-启动参数的具体意义见[入口模块](../entrance.md#启动参数)。
+Refer to the [entry module](../entrance.md#Startup-Parameters) for the specific meaning of the startup parameters.
 
-- 测试
+- Test
 
-当启动以上2个应用后，登录[Service Center](http://127.0.0.1:30103/)后台，查看相关服务实例是否已注册，并且访问应用接口<http://localhost:28020/test>，确认接口是否正常返回，若接口成功返回，则说明注册成功。
+After the preceding two applications are started, log in to the [Service Center](http://127.0.0.1:30103/) background and check whether related service instances have been registered. Access the application interface http://localhost:28020/test to check whether the interface returns a normal response. If the interface returns a successful response, the registration is successful.
 
-## 配置说明
+## Configuration 
 
-**核心配置文件**与**插件配置文件**均支持环境变量、java -D参数配置），如下所示：
+Both the **core configuration file and plugin configuration file** support the configuration of environment variables and java -D parameters, as shown in the following figure.
 
 ```properties
 service.meta.application=default
 ```
 
-以上配置代表优选读取环境变量或-D参数中service.meta.application的值作为应用名，如果环境变量或-D参数中找不到这个值，则把default作为应用名。
+The preceding configuration indicates that the value of service.meta.application in the environment variable or -D parameter is preferred as the application name. If the value cannot be found in the environment variable or -D parameter, default is used as the application name.
 
-## 更多文档
+## More Documents
 
-- [SpringCloud注册中心迁移](spring-cloud-registry-migiration.md)
+- [SpringCloud Registry Migration](spring-cloud-registry-migiration.md)
 
-- [Dubbo注册中心迁移](dubbo-registry-migiration.md)
+- [Dubbo Registry Migration](dubbo-registry-migiration.md)
 
-- [服务注册常见问题](FAQ.md)
+- [Registry Migration FAQ](FAQ.md)
 
-[返回**Sermant**说明文档](../../README.md)
+[Back to README of **Sermant** ](../../README.md)

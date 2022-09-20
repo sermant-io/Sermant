@@ -1,21 +1,23 @@
 # Registry Migration - Spring Cloud
 
-本文主要介绍[服务注册插件](../../../sermant-plugins/sermant-service-registry)基于Spring Cloud框架注册中心的迁移能力。
+[简体中文](./spring-cloud-registry-migiration-zh.md) | [English](./spring-cloud-registry-migiration.md)
 
-Dubbo迁移见[Dubbo注册中心迁移](dubbo-registry-migiration.md)
+This document describes the migration capability of the [service registration plugin](../../../sermant-plugins/sermant-service-registry) based on the Spring Cloud framework registration center.
 
-## 功能
+Dubbo migration  referring [Dubbo Registry Migration](dubbo-registry-migiration.md)
 
-提供代码无侵入方式，基于双注册的模式让线上应用在线上业务不停机的前提下将注册中心快速迁移到[Service Center](https://github.com/apache/servicecomb-service-center)的能力。支持注册中心如下：
+## Function
 
-| 注册中心  | 是否支持 |
-| --------- | -------- |
-| Eureka    | ✅        |
-| Consul    | ✅        |
-| Nacos     | ✅        |
-| Zookeeper | ✅        |
+Provides the capability of quickly migrating the registration center to the [Service Center](https://github.com/apache/servicecomb-service-center) based on the dual-registration mode without interrupting online services business. The following registration centers are supported:
 
-**支持版本**
+| Registration Center | Supported or Not |
+| ------------------- | ---------------- |
+| Eureka              | ✅                |
+| Consul              | ✅                |
+| Nacos               | ✅                |
+| Zookeeper           | ✅                |
+
+**Support Versions**
 
 | Spring Cloud Version | Spring Boot Version | Zookeeper Discovery Version | Nacos Discovery Version     | Consul Discovery Version     | Eureka Client Version                                 |
 | -------------------- | ------------------- | --------------------------- | --------------------------- | ---------------------------- | ----------------------------------------------------- |
@@ -25,74 +27,76 @@ Dubbo迁移见[Dubbo注册中心迁移](dubbo-registry-migiration.md)
 | 2020.0.x             | 2.4.x, 2.5.x        | 3.0.0 - 3.1.0               | 2.x.x, 2020.0.RC1,   2021.1 | 3.0.0   - 3.1.0              | 2.1.x, 2.2.x, 3.0.0 -   3.1.0                         |
 | 2021.0.0             | 2.6.x               | 3.0.0 - 3.1.0               | 2.x.x, 2020.0.RC1, 2021.1   | 3.0.0   - 3.1.0              | 3.0.0 - 3.1.0                                         |
 
-**搬迁示意图**
+**Schematic diagram of migration**
 
-![agent注册中心迁移-迁移示意图](../../binary-docs/sermant-register-migration.png)
+![agent注册中心迁移-迁移示意图](../../binary-docs/sermant-register-migration-en.png)
 
-## 使用说明
+## Usage
 
-### 修改[配置文件](../../../sermant-plugins/sermant-service-registry/config/config.yaml)
+#### Modify [Configuration File](../../../sermant-plugins/sermant-service-registry/config/config.yaml)
 
-配置说明见[服务注册插件文档](./document.md#按需修改插件配置文件)
+For details about the configuration, see the [service registration plugin document](./document.md#Modify-the-plugin-configuration-file-on-demand).
 
-基于以上配置，**新增迁移配置**，并开启Spring注册插件配置内容如下：
+Based on the preceding configuration, **the migration configuration is added and the Spring registration plugin is enabled**. The configuration content is as follows:
 
 ```yaml
 servicecomb.service:
-  openMigration: true #是否开启迁移功能 若进行注册中心迁移，则需将该值设置为true
-  enableSpringRegister: true #开启spring注册插件
+  openMigration: true #Specifies whether to enable the migration function. To migrate the registration center, set this parameter to true.
+  enableSpringRegister: true #Enabling the spring registration plugin
 ```
 
-### 启动Service Center
+### Startup Service Center
 
-Service Center启动流程详见[官网](https://github.com/apache/servicecomb-service-center)
+For details about the Service Center startup process, see the [official website](https://github.com/apache/servicecomb-service-center).
 
-### 进行双注册迁移模拟
+### Registration Migration Simulation
 
-（1）首先不带agent启动应用，例如有provider与consumer两个实例，启动后确保应用已成功注册到原注册中心且可正常访问
+（1）Start the application without the agent. For example, start separately one instance for provider and consumer, ensure that the application has been registered with the original registration center and can be requested normally.
 
-（2）启动一个新的provider，附加以下JVM参数，带agent一起启动
+（2）Start a new provider, add the following JVM parameters, and start the provider with the agent.
 
 ```shell
 java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=appName
 ```
 
-其中path需要替换为Sermant实际打包路径，x.x.x需要替换为Sermant实际版本号，appName为agent的启动参数，与注册参数无关。
+**Replace path with the actual Sermant package path**, x.x.x is the actual Sermant version number, and appName with the agent startup parameter, which is irrelevant to registration parameters.
 
-（3）启动成功后，新的provider实例会同时注册到Service Center与原注册中心，且consumer可以成功访问
+（3）After the service is started, the new provider instance will register to the service center and the original registration center both, and the consumer can request provider.
 
-（4）关闭旧的provider， 再按照（2）的方式启动新的consumer实例，同样确认新和旧的consumer都可以访问到provider，再停止旧的consumer即可
+（4）Stop the old provider and start the new consumer instance in step 2. Ensure that both the old and new consumers can request the provider normally, then stop the old consumer.
 
-（5）最后再停止旧的注册中心
+（5）Finally, stop the old register center.
 
-> ***提示：***
+> ***Notices：***
 >
-> *关闭原注册中心，由于大部分注册中心存在心跳检查机制，实例可能会不断刷错误日志，但不影响应用的正常调用。*
+> Stop the original register center. Because most of the registry centers have the heartbeat check mechanism, the instance may continuously update error logs, but the application invoking is not affected.
 >
-> *若需要停止此类错误日志，参考节**注册中心心跳配置下发***
+> To stop such error logs, see [**Delivering Heartbeat Configurations**](#Delivering-Heartbeat-Configurations).
 
-## **注册中心心跳配置下发**
+## Delivering Heartbeat Configurations
 
-注册中心迁移插件提供基于动态配置中心下发关闭原注册中心心跳机制的方法，以避免源源不断的错误日志输出
+The registration center migration plugin provides the method of disabling the heartbeat mechanism of the original registration center based on the dynamic configuration center to prevent continuous error log output.
 
-**后台提供配置下发接口进行动态配置下发：**
+**The [backend service](../backend.md) provides the configuration delivery interface for dynamic configuration delivery:**
 
 URL
 
 POST /publishConfig
 
-**请求Body**
+**Request Body**
 
-| 参数    | 是否必填 | 参数类型 | 描述      | 配置值                                  |
-| ------- | -------- | -------- | --------- | --------------------------------------- |
-| key     | 是       | String   | 配置的key | sermant.agent.registry                  |
-| group   | 是       | String   | 配置的组  | service=YourServiceName                 |
-| content | 是       | String   | 配置文本  | origin.\_\_registry\_\_.needClose: true |
+| Params  | Mandatory Or Not | Param Type | Description           | Configuration Value                     |
+| ------- | ---------------- | ---------- | --------------------- | --------------------------------------- |
+| key     | Y                | String     | configuration key     | sermant.agent.registry                  |
+| group   | Y                | String     | configuration group   | service=YourServiceName                 |
+| content | Y                | String     | configuration.content | origin.\_\_registry\_\_.needClose: true |
 
-若需要关闭请参考表格**配置值**列进行配置下发
+If you need to disable this function, deliver the configuration by referring to the Configuration Value column in the table.
 
-> ***注意 :***
+> ***Notices :***
 >
-> *该操作为一次性操作，关闭注册中心心跳后，将无法开启，仅当应用实例重启才可恢复。*
+> This operation is a one-off operation. After the registration center heartbeat function is disabled, the heartbeat function cannot be enabled. It can be restored only after the application instance is restarted.
 
-[返回**Sermant**说明文档](../../README.md)
+[Back to **Service Registration**](./document.md)
+
+[Back to README of **Sermant** ](../../README.md)

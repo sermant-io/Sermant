@@ -1,70 +1,72 @@
-# 服务注册常见问题
+# Service Registration FAQ
 
-本文主要介绍[服务注册插件](../../../sermant-plugins/sermant-service-registry)在使用时遇到的常见问题。
+[简体中文](FAQ-zh.md) | [English](FAQ.md)
 
-## 报错：No such extension org.apache.dubbo.registry.RegistryFactory by name sc
+This document describes frequently asked questions (FAQs) about using the [service registration plugin](../../../sermant-plugins/sermant-service-registry).
 
-如下图所示：
+## Exception：No Such Extension org.apache.dubbo.registry.RegistryFactory by name sc
+
+As shown in the following figure:
 
 ![No such extension org.apache.dubbo.registry.RegistryFactory by name sc](../../binary-docs/registry-faq-1.png)
 
-该错误原因有以下3种：
+The possible causes are as follows:
 
-1.1 宿主没有带agent启动。因为原生dubbo并不支持往sc注册，所以如果没带agent启动且配置的注册地址的协议为sc时，就会产生以上报错。
+1.1 The application is not started with the agent. The native dubbo does not support registration with the SC. Therefore, if the application started without agent and the protocol of the registration address is SC, the preceding error is reported.
 
-1.2 核心配置文件（${agent_package_path}/agent/config/config.properties）配置问题。仔细观察启动日志，会发现伴有类似以下的错误：
+1.2 The core configuration file (${agent_package_path}/agent/config/config.properties) is incorrectly configured. Check the startup log carefully and you will find an error similar to the following:
 
 ![核心配置文件错误](../../binary-docs/registry-faq-2.png)
 
-- 原因是核心配置文件中，配置中心类型（dynamic.config.dynamic_config_type）的值（需要为KIE/ZOOKEEPER）配置错误，从而导致宿主应用无法加载agent，最后导致No such extension org.apache.dubbo.registry.RegistryFactory by name sc的报错。
+- The value of the configuration center type (dynamic.config.dynamic_config_type) in the core configuration file is incorrect. As a result, the host application cannot load the agent and the No such extension org.apache.dubbo.registry.RegistryFactory by name sc reports an error.
 
-1.3 核心配置文件（${agent_package_path}/agent/config/config.properties）配置问题。仔细观察启动日志，会发现伴有类似以下错误：
+1.3 The core configuration file (${agent_package_path}/agent/config/config.properties) is incorrectly configured. Check the startup log carefully. The error information similar to the following is displayed:
 
 ![核心配置文件错误](../../binary-docs/registry-faq-3.png)
 
-- 原因是核心配置文件中，配置中心地址（dynamic.config.server_address）配置错误或者配置中心没有启动或者网络不通，从而导致宿主应用无法加载agent，最后导致No such extension org.apache.dubbo.registry.RegistryFactory by name sc的报错。
+- The configuration center address (dynamic.config.server_address) is incorrectly configured in the core configuration file, the configuration center is not started, or the network is disconnected. As a result, the host application fails to load the agent, and the No such extension org.apache.dubbo.registry.RegistryFactory by name sc reports an error.
 
-## 报错：/sermant/master/v1/register error
+## Exception：/sermant/master/v1/register error
 
-如下图所示：
+As shown in the following figure:
 
 ![register error](../../binary-docs/registry-faq-4.png)
 
-原因是backend未启动或者配置地址不正确，请启动backend或正确配置地址。backend相关信息请见[backend文档](../backend.md)。
+The cause is that the backend is not started or the configured address is incorrect. Start the backend or configure the address correctly. For details about the backend, see the [backend document](../backend.md).
 
-注：该错误不会影响注册插件的流程，但会有相关报错。
+Note: This error does not affect the plugin registration process, but related errors may be reported.
 
-## 报错：Connection reset
+## Exception：Connection reset
 
-如下图所示：
+As shown in the following figure:
 
 ![Connection reset](../../binary-docs/registry-faq-5.png)
 
-请检查插件配置（${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml）中，注册中心地址（servicecomb.service.address）是否正确，协议是否正确（http/https）。
+Check whether the registration center address (servicecomb.service.address) and protocol (HTTP/HTTPS) in the plugin configuration (${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml) are correct.
 
-## 报错：https protocol is not supported
+## Exception：https protocol is not supported
 
-如下图所示：
+As shown in the following figure:
 
 ![https protocol is not supported](../../binary-docs/registry-faq-6.png)
 
-需要在插件配置（${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml）中，开启ssl（servicecomb.service.sslEnabled）。
+You need to enable ssl (servicecomb.service.sslEnabled) in the plugin configuration (${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml).
 
-## 报错：No such extension org.apache.dubbo.metadata.report.MetadataReportFactory by name sc
+## Exception：No such extension org.apache.dubbo.metadata.report.MetadataReportFactory by name sc
 
-如下图所示：
+As shown in the following figure:
 
 ![No such extension org.apache.dubbo.metadata.report.MetadataReportFactory by name sc](../../binary-docs/registry-faq-7.png)
 
-请检查dubbo应用的注册配置，protocol是否存在且不为sc，如下所示：
+Check the registration configuration of the dubbo application. Check whether protocol exists and is not sc.
 
-- 例如dubbo/provider.xml
+- Example for dubbo/provider.xml
 
 ```xml
 <dubbo:registry address="sc://127.0.0.1:30100" protocol="nacos"/>
 ```
 
-- 例如application.yml（或application.properties），以application.yml为例
+- For example, application.yml (or application.properties). The following uses application.yml as an example.
 ```yml
 dubbo:
   registry:
@@ -72,23 +74,29 @@ dubbo:
     address: sc://127.0.0.1:30100
 ```
 
-如果protocol存在且不为sc，请把protocol的值设置成sc，或者删除protocol配置。
+If protocol exists and is not set to sc, set protocol to sc or delete the protocol configuration.
 
-## 报错：No registry config found or it's not a valid config
+## Exception：No registry config found or it's not a valid config
 
-如下图所示：
+As shown in the following figure:
 
 ![No registry config found or it's not a valid config](../../binary-docs/registry-faq-8.png)
 
-需要设置dubbo本身注册中心地址的配置，请参考[服务注册插件文档](./document.md#按需修改插件配置文件)中，关于**新开发**dubbo应用的说明。
+For details about how to set the address of the DUBBO registration center, see the description of newly developed DUBBO applications in the [service registration plugin](./document.md#Modify-the-plugin-configuration-file-on-demand) document.
 
-## 插件配置中，enableSpringRegister/enableDubboRegister与openMigration之间的关系是什么？
+## What Is The Relationship Between Plugin Configuration, enableSpringRegister/enableDubboRegister, And openMigration?
 
-enableSpringRegister/enableDubboRegister与openMigration之间的关系如下表所示：
+The following table describes the relationship between enableSpringRegister/enableDubboRegister and openMigration.
 
-|enableSpringRegister/enableDubboRegister|openMigration|作用|
+|enableSpringRegister/enableDubboRegister|openMigration|effect|
 |---|---|---|
-|true|true|开启spring cloud/dubbo迁移功能|
-|true|false|开启spring cloud/dubbo sc注册|
-|false|true|关闭注册插件|
-|false|false|关闭注册插件|
+|true|true|Enabling the Spring Cloud/Dubbo Migration Function|
+|true|false|Enable Spring cloud/Dubbo With SC Registration|
+|false|true|Disabling the Registration Plugin|
+|false|false|Disabling the Registration Plugin|
+
+
+
+[Back to **Service Registration**](./document.md)
+
+[Back to README of **Sermant** ](../../README.md)

@@ -1,35 +1,41 @@
-# 流控常见问题
+# Flow Control FAQs
 
-本文档主要说明在使用流控插件时遇到的常见问题
+[简体中文](FAQ-zh.md) | [English](FAQ.md)
 
-## 关于业务场景的apiPath是如何定义的
+This document describes the common problems encountered when the flow control plug-in is used.
 
-- `apiPath`指需要作用的接口，针对不同框架定义会有所不同，当前支持http与dubbo协议请求：
-    - `http协议`： 指请求的路径，例如存在接口http://localhost:8080/test, 则其`apiPath`为`/test`；
-    - `dubbo协议`：由`"请求接口：接口版本.方法"`组成，如果无接口版本或者版本为0.0.0，则`apiPath`为`"请求接口.方法"`。
+## How Is The APIPath Defined In The Service Scenario?
 
-## 如何确定配置规则生效
+- `apiPath` indicates the interface to be used. The definition varies according to the framework. Currently, HTTP and Dubbo requests are supported:
+    - `http procotol`： Indicates the request path. For example, if the interface http://localhost:8080/test exists, the apiPath of the interface is `/test`.
+    - `dubbo procotol`：Request interface: `interface:version. Method`. If there is no interface version or the version is 0.0.0, the value of apiPath is Request `interface.Method`.
 
-- 首先需在配置中心上正确配置相关业务场景与治理策略，配置后可观察agent日志，一般在jar包启动路径的logs文件夹下，查看sermant-x.log文件， 搜索`has been`或者配置的键名， 若搜索到的日志与当前时间匹配，则说明规则已生效。
+## How Do I Determine Whether a Configuration Rule Takes Effect?
 
-## 熔断策略未生效的可能原因
+- Configure service scenarios and governance policies correctly in the configuration center. After the configuration, you can view the agent logs. Generally, in the logs folder in the startup path of the JAR package, view the sermant-x.log file and search for `has been` or the configured key name. If the found logs match the current time, the rule has taken effect.
 
-- 熔断生效有一定的前提，通常熔断从两个指标来判定：
-    - `异常比例`：即接口请求发生异常时所占比例，在规定时间内发生异常的比例大于配置的即会触发熔断；
-    - `慢调用比例`：即接口请求发生慢调用所占比例，设置熔断策略时需设置慢调用的阈值，例如100ms，则必须接口调用耗时超出100ms且超过配置的慢调用比例才可触发；
-- 因此针对以上两项指标，首先排查应用接口是否满足以上其中一个条件，且规则时间内调用超过最小调用数（minimumNumberOfCalls配置）才可触发。
+## Possible Causes For The Failure Of The Circuit Breaker Policy To Take Effect
 
-## 隔离仓规则未生效的可能原因
+- A circuit breaker takes effect only after the following conditions are met:
+    - `Error Rate`：The percentage of error interface requests. If the percentage of error interface requests within a specified period is greater than the configured value, the circuit breaker is triggered.
+    - `Slow Invoking Ratio`：The percentage of slow invoking requests. When setting the circuit breaker policy, you need to set the slow invoking threshold. For example, if the time required for invoking the interface exceeds 100 ms and exceeds the configured slow invoking ratio, the circuit breaker can be triggered only when the time required for invoking the interface exceeds 100 ms.
+- Therefore, for the preceding two indicators, check whether the application interface meets either of the preceding conditions and whether the number of invoking requests within the rule period exceeds the minimum number specified by minimumNumberOfCalls.
 
-- 隔离仓规则需满足以下条件：
-    - `调用满足并发数`（maxConcurrentCalls配置）要求，例如配置的阈值为2，则确保并发数需大于2；
-    - `最大等待时间`（maxWaitDuration配置），即在达到最大并发数时，线程等待最大时间，超过该时间未拿到许可便会触发；
-- 因此在实际测试时，若模拟该规则，建议确保业务接口耗时大于最大等待时间，并且并发数大于配置值。
+## Possible Reasons Why The Quarantine Rule Does Not Take Effect
 
-## 重试规则未生效的可能原因
+- The quarantine rules must meet the following conditions:
+    - `The number of concurrent calls meets the requirement` (configured by maxConcurrentCalls). For example, if the threshold is set to 2, ensure that the number of concurrent calls is greater than 2.
+    - `Maximum waiting time` (configured by maxWaitDuration), that is, the maximum waiting time of a thread when the number of concurrent connections reaches the maximum. If no permission is obtained after the maximum waiting time expires, the thread is triggered.
+- Therefore, you are advised to ensure that the service interface duration is greater than the maximum waiting time and the number of concurrent requests is greater than the configured value.
 
-- 确保下游应用抛出的异常或者状态码符合重试策略要求，例如默认dubbo会检测下游是否抛出RpcException，Spring应用则可配置指定状态码检测。
+## Possible Causes For The Retry Rule Does Not Take Effect
 
-## 启动报HttpHostConnectException异常的可能原因
+- Ensure that exceptions or status codes thrown by downstream applications meet the retry policy requirements. For example, by default, dubbo checks whether the downstream applications throw RpcException, and a specified status code can be configured for Spring applications.
 
-- 出现该异常的原因是未启动`Sermant`后台服务`sermant-backhend`, 找到启动类`com.huawei.apm.backend.NettyServerApplication`启动后台服务，并重启应用即可。
+## Possible Causes Of The HttpHostConnectException Error Reported During Startup
+
+- The cause is that the Sermant background service sermant-backhend is not started. Find the startup class com.huawei.apm.backend.NettyServerApplication to start the background service and restart the application.
+
+
+
+[Back to README of **Sermant** ](../../README.md)
