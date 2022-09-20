@@ -12,7 +12,7 @@
 
 **心跳服务**以**核心服务系统**为基础开发的一套用于`告知存活`和`定制数据`的服务。
 
-**核心服务系统**相关内容详见[核心模块介绍](../user-guide/agentcore.md#核心服务系统)，这里不做赘述。
+**核心服务系统**相关内容详见[核心模块介绍](../user-guide/agentcore-zh.md#核心服务系统)，这里不做赘述。
 
 心跳系统的常见使用方式如下：
 ```java
@@ -78,8 +78,8 @@ service.setExtInfo(new ExtInfoProvider() {
 
 ## 使用方式
 
-一般情况下，对于插件开发者来说，**心跳服务**是无需关心的内容。只有当插件`后端模块(backend)`需要从**后端模块**的kafka心跳主题中捞特定数据时，才有必要为心跳数据包定制数据。插件为其心跳数据包定制数据时，通常可以[自定义插件服务](dev_plugin_code.md#插件服务)，在`start`方法中[添加定制数据](#添加定制数据)即可。
+一般情况下，对于插件开发者来说，**心跳服务**是无需关心的内容。只有当插件`后端模块(backend)`需要从**后端模块**的kafka心跳主题中捞特定数据时，才有必要为心跳数据包定制数据。插件为其心跳数据包定制数据时，通常可以[自定义插件服务](dev_plugin_code-zh.md#插件服务)，在`start`方法中[添加定制数据](#添加定制数据)即可。
 
 可以参考示例工程的[DemoHeartBeatService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)进行开发。
 
-[返回**Sermant**说明文档](../README.md)
+[返回**Sermant**说明文档](../README-zh.md)

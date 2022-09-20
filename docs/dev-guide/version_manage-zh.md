@@ -35,4 +35,4 @@ mvn versions:set -DnewVersion=${version} -DgenerateBackupPoms=false -pl ${module
 
 更多`versions-maven-plugin`的命令可以查看[Versions Maven Plugin Introduction](http://www.mojohaus.org/versions-maven-plugin/index.html)。
 
-[返回**Sermant**说明文档](../README.md)
+[返回**Sermant**说明文档](../README-zh.md)

@@ -50,7 +50,7 @@ The **Entrance of Sermant** serves as the entry point to the **Sermant**, which 
 
 - Prevent **Sermant** from being fetched more than once by the host application (*Java Agent* command is added more than one **Sermant** entrance package).
 - Load the packages of **core functionality**, using the system class loader.
-- Encapsulate `agentArgs` and the bootstrap configuration [bootstrap.properties](.. /.. / sermant - agentcore/sermant - agentcore - premain/SRC/main/resources/config/bootstrap. ` Map ` properties) as startup parameter `Map`.
+- Encapsulate `agentArgs` and the bootstrap configuration [bootstrap.properties](../../sermant-agentcore/sermant-agentcore-config/config/bootstrap.properties)as startup parameter `Map`.
 - Invoke the entrance of **core functionality** [AgentCoreEntrance](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/AgentCoreEntrance.java) to bring up the core functionality.
 - Note that **path-related parameters** are transferred to bring the **core functionality**. These **path-related parameters** are encapsulated in the startup parameters `Map`. This also means that **Sermant AgentCore Premain** needs to be able to control the directory and file location.
 

@@ -12,7 +12,7 @@ The **Heartbeat Service** is a service that periodically sends heartbeat message
 
 **Heartbeat Service** is built based on the **sermant-agentcore-core** for `informing survival` and `customizing data`.
 
-Details of **Sermant-agentcore-core** could be found [introduction to sermant-agentcore-core](../user-guide/agentcore.md#核心服务系统).
+Details of **Sermant-agentcore-core** could be found [introduction to sermant-agentcore-core](../user-guide/agentcore.md#Core-Service-System).
 
 The common usage of heartbeat system is as follows:
 
@@ -79,7 +79,7 @@ The `ExtInfoProvider` interface defines `getExtInfo` method, through which the *
 
 ## How to Use
 
-In general, the **Heartbeat Service** is a no-concern for plugin developers. Customizing data for heartbeat messages is only necessary if the plugin `backend` needs to fetch specific data from the Kafka heartbeat topic of the **Backend Module**. When plugins need to customize data for their heartbeat messages, usually you can develop a [custom plugin service](dev_plugin_code.md) by [adding custom data](#Custom-Data) in the `start` method.
+In general, the **Heartbeat Service** is a no-concern for plugin developers. Customizing data for heartbeat messages is only necessary if the plugin `backend` needs to fetch specific data from the Kafka heartbeat topic of the **Backend Module**. When plugins need to customize data for their heartbeat messages, usually you can develop a [custom plugin service](dev_plugin_code.md#Plugin-Service) by [adding custom data](#Custom-Data) in the `start` method.
 
 You can refer to [DemoHeartBeatService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java) for your development.
 

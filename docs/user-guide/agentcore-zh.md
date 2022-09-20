@@ -72,7 +72,7 @@ String version = BootArgsIndexer.getCoreVersion();
 
 ### 增强定义
 
-插件开发者在编写**增强定义**时，实现[PluginDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/PluginDeclarer.java)接口的`getClassMatcher`方法和`getInterceptDeclarers`方法即可，详情可参见[插件代码开发手册中增强定义一节](../dev-guide/dev_plugin_code.md)。
+插件开发者在编写**增强定义**时，实现[PluginDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/PluginDeclarer.java)接口的`getClassMatcher`方法和`getInterceptDeclarers`方法即可，详情可参见[插件代码开发手册中增强定义一节](../dev-guide/dev_plugin_code-zh.md#增强定义)。
 
 注意不要忘记添加`PluginDeclarer`的*SPI*配置文件。
 
@@ -80,7 +80,7 @@ String version = BootArgsIndexer.getCoreVersion();
 
 插件开发者在编写**拦截器**时，只需实现[interceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/interceptor)目录的`Interceptor`接口即可。
 
-具体如何怎么做，可以参见[插件代码开发手册中拦截器一节](../dev-guide/dev_plugin_code.md)。
+具体如何怎么做，可以参见[插件代码开发手册中拦截器一节](../dev-guide/dev_plugin_code-zh.md#拦截器)。
 
 ## 统一配置系统
 
@@ -231,7 +231,7 @@ com.huawei.example.ConfigExample.intField=123456
 - 系统变量
 - 默认值(即`':'`后内容)
 
-启动参数中包含的内容可参见[入口模块介绍](entrance.md)
+启动参数中包含的内容可参见[入口模块介绍](entrance-zh.md)
 
 #### 特殊键值对
 
@@ -253,7 +253,7 @@ public class ConfigExample implements BaseConfig {
 
 `LoadYamlStrategy`加载策略用于对*yaml*格式的配置文件进行加载，现在主要用于加载插件设定`plugins.yaml`和插件配置`config.yaml`。鉴于插件设定较为简单，后面我们仅对**插件配置类**做介绍。
 
-**插件配置类**和**统一配置类**一样，是个**Java Pojo**，只不过后者实现`BaseConfig`接口，前者实现`PluginConfig`接口，详情可查阅[插件代码开发手册的插件配置一节](../dev-guide/dev_plugin_code.md)，我们这里用`PluginConfig`接口举例。
+**插件配置类**和**统一配置类**一样，是个**Java Pojo**，只不过后者实现`BaseConfig`接口，前者实现`PluginConfig`接口，详情可查阅[插件代码开发手册的插件配置一节](../dev-guide/dev_plugin_code-zh.md#插件配置)，我们这里用`PluginConfig`接口举例。
 
 假设有以下**插件配置类**：
 ```java
@@ -347,7 +347,7 @@ config.example:
 
 基于上述情况，建议开发者不要对**公共属性**起别名修正。如果实在需要其别名，那么建议将这些**公共属性**统一放在**插件配置类**的开头或结尾。
 
-启动参数中包含的内容可参见[入口模块说明](../sermant-agentcore-premain/README.md#启动参数)。
+启动参数中包含的内容可参见[入口模块说明](entrance-zh.md#启动参数)。
 
 #### 特殊键值对
 
@@ -478,19 +478,19 @@ public class ServiceExampleImpl implements ServiceExample {
 
 **插件配置系统**是[**统一配置系统**](#统一配置系统)的特例，主要用于读取插件配置文件`config.yaml`，因此遵循[yaml格式加载策略](#yaml策略详解)的规则，这里不做赘述。
 
-更多**插件配置系统**相关内容，可以参见[插件代码开发手册的插件配置一节](../dev-guide/dev_plugin_code.md)。
+更多**插件配置系统**相关内容，可以参见[插件代码开发手册的插件配置一节](../dev-guide/dev_plugin_code-zh.md#插件配置)。
 
 ### 插件服务系统
 
 **插件服务系统**是[**核心服务系统**](#核心服务系统)的特例，主要用于加载插件服务`PluginService`，因此他遵循**核心服务系统**的规则，这里不做赘述。
 
-更多**插件服务系统**相关内容，可以参见[插件代码开发手册的插件服务一节](../dev-guide/dev_plugin_code.md)。
+更多**插件服务系统**相关内容，可以参见[插件代码开发手册的插件服务一节](../dev-guide/dev_plugin_code-zh.md#插件服务)。
 
 ## 相关文档
 
 |文档名称|
 |:-|
-|[入口模块介绍](entrance.md)|
-|[后端模块介绍](backend.md)|
+|[入口模块介绍](entrance-zh.md)|
+|[后端模块介绍](backend-zh.md)|
 
-[返回**Sermant**说明文档](../README.md)
+[返回**Sermant**说明文档](../README-zh.md)

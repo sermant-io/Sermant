@@ -53,7 +53,7 @@
 
 |文档名称|
 |:-|
-|[核心模块介绍](agentcore.md)|
-|[入口模块介绍](entrance.md)|
+|[核心模块介绍](agentcore-zh.md)|
+|[入口模块介绍](entrance-zh.md)|
 
-[返回**Sermant**说明文档](../README.md)
+[返回**Sermant**说明文档](../README-zh.md)

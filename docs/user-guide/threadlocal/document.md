@@ -1,14 +1,13 @@
-# threadlocal
+# Threadlocal
 
-# online-stresstest
+[简体中文](document-zh.md) | [English](document.md) 
 
-本文档主要介绍[线程变量插件](../../../sermant-plugins/sermant-threadlocal)以及该插件的使用方法
+This document focuses on the [Threadlocal Plugin](../../../sermant-plugins/sermant-threadlocal) and how to use it.
 
-## 功能
-线程变量插件主要用于线程间的本地变量传递。当线程在向线程池提交任务时，保证每次提交任务时都能将最新的线程变量刷新到具体执行该任务的线程上。
+## Function
+Threadlocal plugin is mainly used to transfer threadlocals between threads. When a thread submits a task to the thread pool, it is guaranteed to refresh the latest thread variable to the specific thread executing the task each time it submits a task.
 
-## 使用说明
-该插件开箱即用，不需要再做任何修改。
+## Instruction
+The plugin works out of the box and does not require any further modifications.
 
-[返回**Sermant**说明文档](../../README.md)
-
+[[Back to README of **Sermant**](../README.md)](../../README.md)

@@ -7,7 +7,7 @@ In Kubernetes environment, Sermant supports quickly deployment by using **serman
 ## Sermant-injector
 Sermant-injector is based on the **Kubernetes Admission Controllers.** The admission controller is located in the K8s API Server and is able to intercept requests to the API Server to complete operations such as authentication, authorization, and mutation.
 
-Serment-injector is a MutatingAdmissionWebhook that can intercept and modify requests before creating container resources. After serment-injector is deployed on K8s, just add `sermant-injection:Enabled` to the YAML file of the host application deployment configuration at the `spec > Template > metadata> labels` ' then the host application can automatically mount the sermant-agent package.
+Sermant-injector is a MutatingAdmissionWebhook that can intercept and modify requests before creating container resources. After sermant-injector is deployed on K8s, just add `sermant-injection:Enabled` to the YAML file of the host application deployment configuration at the `spec > Template > metadata> labels` ' then the host application can automatically mount the sermant-agent package.
 
 ### Components
 `sermant-injector` contains:

@@ -4,7 +4,7 @@ Welcome to Sermant! This document is a guideline about how to contribute to Serm
 
 If you find something incorrect or missing, please leave comments / suggestions.
 
-## Before you get started
+## Before You Get Started
 
 ### Code of Conduct
 
@@ -19,7 +19,7 @@ Sermant welcome new participants of any role, including user, contributor, commi
 
 We encourage new comers actively join in Sermant projects and involving from user role to committer role, and even PMC role. In order to accomplish this, new comers needs to actively contribute in Sermant project. The following paragraph introduce how to contribute in Sermant way.
 
-#### Open / pickup an issue for preparation
+#### Open / Pickup An Issue for Preparation
 
 If you find a typo in document, find a bug in code, or want new features, or want to give suggestions, you can [open an issue on GitHub](https://github.com/huaweicloud/Sermant/issues/new) to report it.
 
@@ -34,7 +34,7 @@ We strongly value documentation and integration with other projects such as Spri
 
 Please note that any PR must be associated with a valid issue. Otherwise the PR will be rejected.
 
-#### Begin your contribute
+#### Begin Your Contribute
 
 Now if you want to contribute, please create a new pull request.
 
@@ -78,7 +78,7 @@ When creating pull request:
 
 If your PR contains large changes, e.g. component refactor or new components, please write detailed documents about its design and usage.
 
-### Code review guidance
+### Code Review Guidance
 
 Committers will rotate reviewing the code to make sure all the PR will be reviewed timely and by at least one committer before merge. If we aren't doing our job (sometimes we drop things). And as always, we welcome volunteers for code review.
 
@@ -93,7 +93,7 @@ Some principles:
 -   Maintainability - to be done.
     
 
-### Now how about try become a committer?
+### Now How About Try Become A Committer?
 
 Generally speaking, contribute 8 non-trivial patches and get at least three different people to review them (you'll need three people to support you). Then ask someone to nominate you. You're demonstrating your:
 
