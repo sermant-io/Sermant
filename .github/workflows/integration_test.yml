@@ -97,10 +97,10 @@ jobs:
           DUBBO_PROTOCOL_PORT: 48821
         run: |
           nohup java -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > dubbo-zk-provider.log 2>&1 &
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:48021/actuator/health 120
       - name: waiting for providers start
         run: |
           ps -ef | grep java
-          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:48021/actuator/health 120
           bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:28021/actuator/health 120
           bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:18021/actuator/health 120
           bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:18020/actuator/health 120

@@ -24,8 +24,8 @@ import com.huawei.registry.config.RegisterConfig;
 import com.alibaba.dubbo.config.AbstractInterfaceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -69,19 +69,19 @@ public class RegistryConfigServiceTest {
         registerConfig.setOpenMigration(false);
         registerConfig.setEnableDubboRegister(false);
         service.addRegistryConfig(interfaceConfig);
-        Assert.assertNull(interfaceConfig.getRegistries());
+        Assertions.assertNull(interfaceConfig.getRegistries());
 
         // 测试开启迁移开关，关闭注册开关
         registerConfig.setOpenMigration(true);
         registerConfig.setEnableDubboRegister(false);
         service.addRegistryConfig(interfaceConfig);
-        Assert.assertNull(interfaceConfig.getRegistries());
+        Assertions.assertNull(interfaceConfig.getRegistries());
 
         // 测试关闭迁移开关，开启注册开关
         registerConfig.setOpenMigration(false);
         registerConfig.setEnableDubboRegister(true);
         service.addRegistryConfig(interfaceConfig);
-        Assert.assertNull(interfaceConfig.getRegistries());
+        Assertions.assertNull(interfaceConfig.getRegistries());
 
         // 开启迁移开关与注册开关
         registerConfig.setOpenMigration(true);
@@ -89,21 +89,21 @@ public class RegistryConfigServiceTest {
 
         // 测试没有注册配置
         service.addRegistryConfig(interfaceConfig);
-        Assert.assertNull(interfaceConfig.getRegistries());
+        Assertions.assertNull(interfaceConfig.getRegistries());
 
         // 测试存在sc注册配置
         RegistryConfig registryConfig = new RegistryConfig("sc://localhost:30100");
         registryConfig.setId(Constant.SC_REGISTRY_PROTOCOL);
         interfaceConfig.setRegistry(registryConfig);
         service.addRegistryConfig(interfaceConfig);
-        Assert.assertNotNull(interfaceConfig.getRegistries());
-        Assert.assertEquals(1, interfaceConfig.getRegistries().size());
+        Assertions.assertNotNull(interfaceConfig.getRegistries());
+        Assertions.assertEquals(1, interfaceConfig.getRegistries().size());
 
         // 测试存在非sc注册配置
         interfaceConfig.setRegistry(new RegistryConfig("bar://localhost:8080"));
         service.addRegistryConfig(interfaceConfig);
-        Assert.assertNotNull(interfaceConfig.getRegistries());
-        Assert.assertEquals(2, interfaceConfig.getRegistries().size());
+        Assertions.assertNotNull(interfaceConfig.getRegistries());
+        Assertions.assertEquals(2, interfaceConfig.getRegistries().size());
     }
 
     /**
@@ -120,19 +120,19 @@ public class RegistryConfigServiceTest {
         registerConfig.setOpenMigration(false);
         registerConfig.setEnableDubboRegister(false);
         service.addRegistryConfig(config);
-        Assert.assertNull(config.getRegistries());
+        Assertions.assertNull(config.getRegistries());
 
         // 测试开启迁移开关，关闭注册开关
         registerConfig.setOpenMigration(true);
         registerConfig.setEnableDubboRegister(false);
         service.addRegistryConfig(config);
-        Assert.assertNull(config.getRegistries());
+        Assertions.assertNull(config.getRegistries());
 
         // 测试关闭迁移开关，开启注册开关
         registerConfig.setOpenMigration(false);
         registerConfig.setEnableDubboRegister(true);
         service.addRegistryConfig(config);
-        Assert.assertNull(config.getRegistries());
+        Assertions.assertNull(config.getRegistries());
 
         // 开启迁移开关与注册开关
         registerConfig.setOpenMigration(true);
@@ -140,20 +140,20 @@ public class RegistryConfigServiceTest {
 
         // 测试没有注册配置
         service.addRegistryConfig(config);
-        Assert.assertNull(config.getRegistries());
+        Assertions.assertNull(config.getRegistries());
 
         // 测试存在sc注册配置
         org.apache.dubbo.config.RegistryConfig registryConfig = new org.apache.dubbo.config.RegistryConfig();
         registryConfig.setAddress("sc://localhost:30100");
         config.setRegistry(registryConfig);
         service.addRegistryConfig(config);
-        Assert.assertNotNull(config.getRegistries());
-        Assert.assertEquals(1, config.getRegistries().size());
+        Assertions.assertNotNull(config.getRegistries());
+        Assertions.assertEquals(1, config.getRegistries().size());
 
         // 测试存在非sc注册配置
         config.setRegistry(new org.apache.dubbo.config.RegistryConfig("bar://localhost:8080"));
         service.addRegistryConfig(config);
-        Assert.assertNotNull(config.getRegistries());
-        Assert.assertEquals(2, config.getRegistries().size());
+        Assertions.assertNotNull(config.getRegistries());
+        Assertions.assertEquals(2, config.getRegistries().size());
     }
 }
