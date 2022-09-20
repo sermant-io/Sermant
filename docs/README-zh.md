@@ -77,7 +77,7 @@ k8s环境下，Sermant支持通过sermant-injector组件实现宿主应用自动
 |[版本管理手册](dev-guide/version_manage.md)|开发手册|
 |[插件模块开发手册](dev-guide/dev_plugin_module.md)|开发手册|
 |[插件代码开发手册](dev-guide/dev_plugin_code.md)|开发手册|
-|[插件去源码开发指导](dev-guide/Sermant去源码插件开发说明.md)|开发手册|
+|[插件去源码开发指导](dev-guide/dev_plugin_introduce-zh.md)|开发手册|
 |[动态配置服务介绍](dev-guide/service_dynamicconfig.md)|开发手册|
 |[心跳服务介绍](dev-guide/service_heartbeat.md)|开发手册|
 |[网关服务介绍](dev-guide/service_send.md)|开发手册|
@@ -89,7 +89,7 @@ k8s环境下，Sermant支持通过sermant-injector组件实现宿主应用自动
 |[动态配置功能介绍](user-guide/dynamic-config/document.md)|使用手册|
 |[服务注册功能介绍](user-guide/registry/document.md)|使用手册|
 |[灰度发布功能介绍](user-guide/router/document.md)|使用手册|
-|[服务监控功能介绍](user-guide/server-monitor/document.md)|使用手册|
+|[服务监控功能介绍](user-guide/server-monitor/document-zh.md)|使用手册|
 |[线程变量插件功能介绍](user-guide/threadlocal/document.md)|使用手册|
 |[当前插件功能汇总列表](user-guide/feature-list.md)|使用手册|
 |[常见问题说明指导](./FAQ.md)|使用手册|

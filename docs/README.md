@@ -77,7 +77,7 @@ How to write a plugin can be found in the [Plugin Code Development Guide](dev-gu
 |[Version Management Guide](dev-guide/version_manage.md)|Development Guide|
 |[Plugin Module Development Guide](dev-guide/dev_plugin_module.md)|Development Guide|
 |[Plugin Code Development Guide](dev-guide/dev_plugin_code.md)|Development Guide|
-|[Plugin without Source Code Development Guide](dev-guide/Sermant去源码插件开发说明.md)|Development Guide|
+|[Plugin without Source Code Development Guide](dev-guide/dev_plugin_introduce.md)|Development Guide|
 |[Introduction to Dynamic Configuration Service](dev-guide/service_dynamicconfig.md)|Development Guide|
 |[Introduction to Heartbeat Service](dev-guide/service_heartbeat.md)|Development Guide|
 |[Introduction to Gateway Service](dev-guide/service_send.md)|Development Guide|

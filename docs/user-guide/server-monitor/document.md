@@ -1,80 +1,94 @@
-# resource-monitor
+# Resource Monitor
 
-本文档针对[resource-monitor模块](../../../sermant-plugins/sermant-server-monitor)作介绍
+[简体中文](document-zh.md) | [English](document.md)
 
- 资源监控模块用于监控宿主应用所在服务器的CPU、内存、磁盘IO和网络IO等硬件资源的使用情况，以及宿主应用Java虚拟机和其所使用Druid数据库连接池的使用情况。资源监控模块会启动若干个监控线程，按照[配置文件](../../../sermant-plugins/sermant-server-monitor/config/config.yaml)所指定的采集时间间隔去采集监控数据，再按指定的发送间隔时间发往后台，配置文件内容参照[配置文件说明](#配置文件内容说明)
+This document introduces [resource-monitor](../../../sermant-plugins/sermant-server-monitor)
 
-## 目录说明
+The resource monitoring module is used to monitor the usage of hardware resources such as CPU, memory, disk IO and network IO of the server where the host application is located, as well as the usage of the host application Java virtual machine and the Druid database connection pool used by it. The resource monitoring module will start several monitoring threads, according to the [configuration file](../../../sermant-plugins/sermant-server-monitor/config/config.yaml)  
+Collect monitoring data at the specified collection time interval, and then send it to the background at the specified sending interval. For the content of the configuration file, refer to [Configuration file description](#Configuration file content description)
 
-- `config`: 配置文件目录
-- `connection-pool-collect-plugin`: Druid数据库连接池采集插件
-- `databasepeer-parse-service`: Database peer解析服务，用于把数据库连接URL解析成IP:PORT格式的database peer
-- `metric-server`: 指标服务器，接收Agent采集的监控数据持久化到InfluxDB时序数据库中，并提供用于查询已持久化指标数据的Restful接口。
-- `monitor-common`: 监控服务和插件依赖的公共类库
-- `protocol`: protobuf协议文件定义模块
-- `server-monitor-service`: 服务器硬件资源和JVM监控采集服务
+## Directory Description
 
-## 配置文件内容说明
+- `config`: config file directory
+- `connection-pool-collect-plugin`: Druid database connection pool collection plugin
+- `databasepeer-parse-service`: Database peer parsing service, used to parse database connection URLs into database
+  peers in IP:PORT format
+- `metric-server`: The indicator server receives the monitoring data collected by the Agent and persists it to the
+  InfluxDB time series database, and provides a Restful interface for querying the persisted indicator data.
+- `monitor-common`: Common library for monitoring service and plugin dependencies
+- `protocol`: protobuf protocol file definition module
+- `server-monitor-service`: Server hardware resources and JVM monitoring and collection services
+
+## Configuration File Content Description
+
 ```yaml
-service.config:                            #宿主应用服务配置
-  service: your-service                    #服务名
-  serviceInstance: your-service-instance   #服务实例名
-server.monitor:                            #服务器监控配置
-  collectInterval: 1                       #监控数据采集间隔
-  consumeInterval: 60                      #监控数据发送间隔
-  timeunit: SECONDS                        #采集和发送间隔时间单位
-druid.monitor:                             #Druid数据库连接池监控配置
-  collectInterval: 1                       #监控数据采集间隔
-  consumeInterval: 10                      #监控数据发送间隔
-  timeunit: SECONDS                        #采集和发送间隔时间单位
+service.config: #Host Application Service Configuration
+  service: your-service                    #service name
+  serviceInstance: your-service-instance   #service instance
+server.monitor: #Server monitoring configuration
+  collectInterval: 1                       #Monitoring data collection interval
+  consumeInterval: 60                      #Monitoring data sending interval
+  timeunit: SECONDS                        #Acquisition and transmission interval time unit
+druid.monitor: #Druid database connection pool monitoring configuration
+  collectInterval: 1                       #Monitoring data collection interval
+  consumeInterval: 10                      #Monitoring data sending interval
+  timeunit: SECONDS                        #Acquisition and transmission interval time unit
 ```
 
-## connection-pool-collect-plugin插件说明
+## Connection-Pool-Collect-Plugin Description
 
-*使用背景*
+*use background*
 
-该插件需要宿主应用使用Druid数据库连接池。
+This plugin requires the host application to use the Druid database connection pool.
 
-*功能说明*
+*function Description*
 
-插件拦截com.alibaba.druid.stat.DruidDataSourceStatManager#addDataSource方法，拿到方法参数com.alibaba.druid.pool.DruidDataSource实例
-存到内存当中。然后由采集线程定时采集所有com.alibaba.druid.pool.DruidDataSource的数据息发往metric-server。
+The plugin intercepts the com.alibaba.druid.stat.DruidDataSourceStatManager#addDataSource method and gets the method
+parameter com.alibaba.druid.pool.DruidDataSource instance stored in memory. Then, the collection thread periodically
+collects all data information of com.alibaba.druid.pool.DruidDataSource and sends it to the metric-server.
 
-采集内容
+*collected content*
 
 ```
-string name; // 数据源名称
+string name; // data source name
 int32 activeCount;
 int32 initialSize;
 int32 maxActive;
 int32 poolingCount;
-string databasePeer; // 从url中提取的database peer信息
+string databasePeer; // database peer information extracted from url
 
 ```
 
-## databasepeer-parse-service Database服务说明
+## Databasepeer-Parse-Service Database Service Description
 
-*使用背景*
+*use background*
 
-为connection-pool-collect-plugin插件赋能。
+Enables the connection-pool-collect-plugin plugin.
 
-*功能说明*
+*function Description*
 
-使用了[apm-jdbc-commons](https://mvnrepository.com/artifact/org.apache.skywalking/apm-jdbc-commons)包的org.apache.skywalking.apm.plugin.jdbc.connectionurl.parser.URLParser把DruidDataSource的url解析成database peer。
+org.apache.skywalking.apm.plugin.jdbc.connectionurl.parser using
+the [apm-jdbc-commons](https://mvnrepository.com/artifact/org.apache.skywalking/apm-jdbc-commons) package. URLParser
+parses the url of DruidDataSource into database peer.
 
-## server-monitor-service服务说明
+## Server-Monitor-Service Service Description
 
-*使用背景*
+*use background*
 
-本服务包含三个监控采集子功能，分别为Linux资源监控采集、IBM JDK JVM 内存监控采集和OpenJDK JVM 内存监控采集，其中：
+This service includes three monitoring and collection sub-functions, namely, Linux resource monitoring and collection,
+IBM JDK JVM memory monitoring and collection, and OpenJDK JVM memory monitoring and collection, among which:
 
-- Linux资源监控采集功能需要宿主应用部署在Linux环境。
-- IBM JDK JVM 内存监控采集功能需要宿主应用使用IBM JDK。
-- OpenJDK JVM 内存监控采集功能需要宿主应用使用OpenJDK或者基于OpenJDK的JDK版本。
+- The Linux resource monitoring and collection function requires the host application to be deployed in the Linux
+  environment.
+- IBM JDK JVM memory monitoring and collection function requires the host application to use IBM JDK.
+- The OpenJDK JVM memory monitoring and collection function requires the host application to use OpenJDK or an
+  OpenJDK-based JDK version.
 
-*功能说明*
+*function Description*
 
-- **Linux资源监控采集**：定时采集由执行Linux指令获取的Linux系统CPU、内存、磁盘IO、网络IO资源使用情况数据，发往metric-server，其中被执行的指令如下表所示。
+- **Linux resource monitoring and collection**: Periodically collect CPU, memory, disk IO, and network IO resource usage
+  data obtained by executing Linux commands and send them to metric-server. The executed commands are shown in the
+  following table.
   ```shell
   #CPU
   cat /proc/stat
@@ -86,53 +100,54 @@ string databasePeer; // 从url中提取的database peer信息
   cat /proc/net/dev
   ```
 
-  采集内容
+  Collect content
 
   ```
   CPU
-  int32 idlePercentage; // idle时间百分占比，精度0
-  int32 ioWaitPercentage; // io wait时间百分占比，精度0
-  int32 sysPercentage;  // sys时间百分占比，精度0
-  int32 userPercentage; // user和nice时间百分占比，精度0
-  ```
-  
-  ```
-  内存使用情况  
-  int64 memoryTotal; // 总内存大小
-  int64 swapCached; // 对应cat /proc/meminfo指令的SwapCached
-  int64 cached; // 对应cat /proc/meminfo指令的Cached
-  int64 buffers; // 对应cat /proc/meminfo指令的Buffers
-  int64 memoryUsed; // 已使用的内存大小
+  int32 idlePercentage; // Percentage of idle time, the precision is 0
+  int32 ioWaitPercentage; // The percentage of io wait time, the precision is 0
+  int32 sysPercentage;  // Sys time percentage, the precision is 0
+  int32 userPercentage; // Percentage of user and nice time, the precision is 0
   ```
 
   ```
-  磁盘IO
-  string deviceName; // 设备名称
-  int64 readBytesPerSec; // 采集周期内的每秒读字节数
-  int64 writeBytesPerSec; // 采集周期内的每秒写字节数
-  double ioSpentPercentage; // 采集周期内，IO花费的时间百分占比，精度2
+  memory usage  
+  int64 memoryTotal; // total memory size
+  int64 swapCached; // SwapCached corresponding to the cat /proc/meminfo command
+  int64 cached; // Cached corresponding to the cat /proc/meminfo command
+  int64 buffers; // Buffers corresponding to the cat /proc/meminfo command
+  int64 memoryUsed; // used memory size
   ```
 
   ```
-  网络IO  
-  int64 readBytesPerSec; // 采集周期内的每秒读字节数
-  int64 writeBytesPerSec; // 采集周期内的每秒写字节数
-  int64 readPackagesPerSec; // 采集周期内的每秒读包数
-  int64 writePackagesPerSec; // 采集周期内的每秒写包数
+  Disk IO
+  string deviceName; // Device name
+  int64 readBytesPerSec; // Bytes read per second during the acquisition period
+  int64 writeBytesPerSec; // Bytes written per second during the acquisition period
+  double ioSpentPercentage; // Percentage of time spent in IO during the collection period, the precision is 2
   ```
 
-- **IBM JDK JVM 内存监控采集**：定时从java.lang.management.MemoryPoolMXBean获取JVM各内存区域的使用情况数据发往metric-server。
+  ```
+  network IO  
+  int64 readBytesPerSec; // Bytes read per second during the acquisition period
+  int64 writeBytesPerSec; // Bytes written per second during the acquisition period
+  int64 readPackagesPerSec; // The number of packets read per second during the acquisition period
+  int64 writePackagesPerSec; // The number of packets written per second during the acquisition period
+  ```
 
-  采集内容
+- **IBM JDK JVM memory monitoring and collection**: Obtain the usage data of each memory area of JVM from
+  java.lang.management.MemoryPoolMXBean regularly and send it to metric-server.
+
+  Collect content
 
   ```
-  各类型MemoryPoolMXBean采集的MemoryUsage数据：
+  MemoryUsage data collected by various types of MemoryPoolMXBean:
   int64 init; // the initial amount of memory in bytes that the Java virtual machine allocates
   int64 max; // the maximum amount of memory in bytes that can be used
   int64 used; // the amount of used memory in bytes
   int64 committed; // the amount of committed memory in bytes
 
-  类型包含：
+  Types include:
   tenured-SOA
   tenured-LOA
   nursery-allocate
@@ -143,18 +158,24 @@ string databasePeer; // 从url中提取的database peer信息
   JIT data cache
   ```
 
-- **OpenJDK JVM 内存监控采集**：使用[apm-agent-core](https://mvnrepository.com/artifact/org.apache.skywalking/apm-agent-core)包的类org.apache.skywalking.apm.agent.core.jvm.cpu.CPUProvider定时采集CPU数据，org.apache.skywalking.apm.agent.core.jvm.memory.MemoryProvider采集内存数据，org.apache.skywalking.apm.agent.core.jvm.memorypool.MemoryPoolProvider采集JVM各区域数据，org.apache.skywalking.apm.agent.core.jvm.gc.GCProvider采集GC数据，org.apache.skywalking.apm.agent.core.jvm.thread.ThreadProvider采集线程数据。
+- **OpenJDK JVM memory monitoring collection**
+  ：Class org.apache.skywalking.apm.agent.core.jvm.cpu using
+  the [apm-agent-core](https://mvnrepository.com/artifact/org.apache.skywalking/apm-agent-core) package. CPUProvider
+  collects CPU data regularly, org.apache.skywalking.apm.agent.core.jvm.memory.MemoryProvider collects memory data,
+  org.apache.skywalking.apm.agent.core.jvm.memorypool.MemoryPoolProvider collects data in each area of JVM,
+  org.apache.skywalking.apm.agent.core.jvm.gc.GCProvider collects GC data, and
+  org.apache.skywalking.apm.agent.core.jvm.thread.ThreadProvider collects thread data.
 
-  采集内容
-  
+  Collect content
+
   ```
   CPU
-  double usagePercent； // 使用百分比
+  double usagePercent； // use percentage
   ```
 
   ```
-  内存
-  bool isHeap; // 是否为堆内存
+  Memory
+  bool isHeap; // Whether it is heap memory
   int64 init;
   int64 max;
   int64 used;
@@ -163,13 +184,13 @@ string databasePeer; // 从url中提取的database peer信息
 
   ```
   Memory Pool
-  PoolType type; // 类型
+  PoolType type; // type
   int64 init;
   int64 max;
   int64 used;
   int64 committed; 
 
-  类型包含：
+  Types include:
   CODE_CACHE_USAGE;
   NEWGEN_USAGE;
   OLDGEN_USAGE;
@@ -180,39 +201,43 @@ string databasePeer; // 从url中提取的database peer信息
 
   ```
   GC
-  GCPhrase phrase; // GC阶段：NEW或OLD
-  int64 count; // GC次数
-  int64 time; //GC耗时
+  GCPhrase phrase; // GC stage：NEW or OLD
+  int64 count; // GC times
+  int64 time; //GC time consuming
   ```
 
   ```
-  线程
+  thread
   int64 liveCount;
   int64 daemonCount;
   int64 peakCount;
   ```
 
+## Metric-Server Background Description
 
-## metric-server后台说明
+### Background Startup Method:
 
-### 后台启动方式：
+After the project is packaged, open the `server/server-monitor` directory, then open the console and execute the
+following command to start the background.
 
-项目打包完成后，打开 `项目输出目录/server/server-monitor` 目录，然后打开控制台执行以下命令启动后台。
 ```shell
 java -jar metric-server-x.x.x.jar
 ```
 
-### 启动后台前准备事项：
+### Preparation Before Starting The Background:
 
-- 启动InfluxDB数据库(2.x版本)。有关InfluxDB数据库，请查阅[InfluxDB官方文档](https://docs.influxdata.com/influxdb/v2.1/)。
-- 启动zookeeper和kafka。
-- 启动sermant-backend。
-- 正确配置后台信息，包括InfluxDB和kafka连接信息。
+- Start the InfluxDB database (version 2.x). For the InfluxDB database, please refer
+  to [InfluxDB official documentation](https://docs.influxdata.com/influxdb/v2.1/).
+- Start zookeeper and kafka.
+- Start sermant-backend.
+- Correctly configure background information, including InfluxDB and kafka connection information.
 
-### 后台配置文件：
-配置文件application.yml在metric-server-x.x.x.jar包的BOOT-INF/classes目录下
+### Background Configuration File:
+
+The configuration file application.yml is in the BOOT-INF/classes directory of the metric-server-x.x.x.jar package
+
 ```yaml
-#Kafka配置
+#Kafka config
 spring:
   kafka:
     consumer:
@@ -221,10 +246,10 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
       max-poll-records: 1000
       auto-offset-reset: latest
-#指标Rest查询接口配置
+#Metric Rest Query Interface Configuration
 server:
-  port: 9998 #端口号
-#InfluxDB配置
+  port: 9998 #port
+#InfluxDB config
 influx:
   token: yourTocken
   bucket: yourBucket
@@ -232,4 +257,4 @@ influx:
   org: yourOrg
 ```
 
-[返回**Sermant**说明文档](../../README.md)
+[return **Sermant** Documentation](../../README.md)
