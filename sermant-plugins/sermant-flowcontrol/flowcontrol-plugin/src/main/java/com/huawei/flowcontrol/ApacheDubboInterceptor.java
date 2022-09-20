@@ -23,6 +23,7 @@ import com.huawei.flowcontrol.common.entity.DubboRequestEntity;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 import com.huawei.flowcontrol.common.util.ConvertUtils;
+import com.huawei.flowcontrol.common.util.DubboAttachmentsHelper;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
@@ -36,7 +37,6 @@ import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcException;
 
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -88,7 +88,7 @@ public class ApacheDubboInterceptor extends InterceptorSupporter {
         // 高版本使用api invocation.getTargetServiceUniqueName获取路径，此处使用版本加接口，达到的最终结果一致
         String apiPath = ConvertUtils.buildApiPath(interfaceName, version, methodName);
         final boolean isProvider = isProvider(curInvoker);
-        return new DubboRequestEntity(apiPath, Collections.unmodifiableMap(invocation.getAttachments()),
+        return new DubboRequestEntity(apiPath, DubboAttachmentsHelper.resolveAttachments(invocation, true),
                 isProvider ? RequestType.SERVER : RequestType.CLIENT,
                 getApplication(url, interfaceName, isProvider), isGeneric);
     }

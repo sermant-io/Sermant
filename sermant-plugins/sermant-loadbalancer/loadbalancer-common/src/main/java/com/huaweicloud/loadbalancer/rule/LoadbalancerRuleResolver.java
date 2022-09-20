@@ -47,11 +47,17 @@ import java.util.logging.Logger;
  * @since 2022-08-09
  */
 public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> {
+    /**
+     * lb配置前缀
+     */
+    public static final String LOAD_BALANCER_PREFIX = "servicecomb.loadbalance.";
+
+    /**
+     * 流量标记前缀
+     */
+    public static final String MATCH_GROUP_PREFIX = "servicecomb.matchGroup.";
+
     private static final Logger LOGGER = LoggerFactory.getLogger();
-
-    private static final String LOAD_BALANCER_PREFIX = "servicecomb.loadbalance.";
-
-    private static final String MATCH_GROUP_PREFIX = "servicecomb.matchGroup.";
 
     private static final String EMPTY_STR = "";
 

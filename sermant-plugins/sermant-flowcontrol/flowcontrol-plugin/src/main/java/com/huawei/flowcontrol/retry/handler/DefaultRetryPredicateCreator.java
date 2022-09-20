@@ -20,7 +20,8 @@ package com.huawei.flowcontrol.retry.handler;
 import com.huawei.flowcontrol.common.core.rule.RetryRule;
 import com.huawei.flowcontrol.common.exception.InvokerWrapperException;
 import com.huawei.flowcontrol.common.handler.retry.Retry;
-import com.huawei.flowcontrol.common.util.ReflectUtils;
+
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -89,7 +90,7 @@ public class DefaultRetryPredicateCreator implements RetryPredicateCreator {
         String mayBeRealClassName = null;
         if (isGenericException(ex.getClass().getName())) {
             final Optional<Object> getExceptionClass = ReflectUtils
-                .invokeTargetMethod(ex, "getExceptionClass", null, null);
+                .invokeMethod(ex, "getExceptionClass", null, null);
             if (getExceptionClass.isPresent()) {
                 mayBeRealClassName = (String) getExceptionClass.get();
             }
