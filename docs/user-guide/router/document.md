@@ -1,61 +1,59 @@
-# 标签路由
+# Tag Router
 
-[插件目录](../../../sermant-plugins/sermant-router)
+[简体中文](document-zh.md) | [English](document.md)
 
-## 定位:
+This document is used to introduce the usage of [tag router](../../../sermant-plugins/sermant-router)
 
-在微服务存在多个版本、多个实例的情况下，通过配置路由规则管理服务之间的路由，达到无损升级、应用拨测等业务目的。
+## Function
 
-## 功能:
+In the case of multiple versions and instances of microservices, the routing between services is managed by configuring routing rules to achieve business purposes such as lossless upgrade and application dial test.
 
-使用标签路由可以实现版本的零中断升级等。例如，用户准备将生产的应用版本由V1升级到V2，用户首先配置一个路由规则，将30%的流量请求到V2，然后部署标签应用，即V2，通过插件选择30%流量到V2版本，待V2版本完全测试无问题后，将全部流量切换到V2，并停止V1版本服务。
+## Usage
 
-## 使用说明
+- Configure Routing Rules
 
-- 配置路由规则
-
-Sermant backend提供api的方式发布配置, 使用前需启动backend后台应用，如下为配置发布接口：
+Sermant backend provides api way to publish the configuration, you need to start the backend application before use, the configuration publishing interface is as follows: 
 
 **URL**
 
 POST /publishConfig
 
-**请求Body**
+**Request Body**
 
-|参数|是否必填|参数类型|描述
+|Params|Mandatory or not|Param type|Description
 |---|---|---|---|
-|key|是|String|配置的key|
-|group|是|String|配置的组|
-|content|是|String|配置文本|
+|key|√|String|configuration key|
+|group|√|String|Configuration group, which is used to configure subscriptions|
+|content|√|String|Configuration text, that is, specific routing rules|
 
-其中key值为servicecomb.routeRule.${yourServiceName}，其中${yourServiceName}为目标应用的微服务名称。
+The key value needs to be servicecomb.routeRule.${yourServiceName}, ${yourServiceName} is the microservice name of the target application.
 
-group需要配置为应用级别，即app=${yourApp}&&environment=${yourEnvironment}，其中app默认为default，environment默认为空。
+The group needs to be configured to application level, i.e. app=${yourApp}&&environment=${yourEnvironment}, app defaults to default, environment defaults to empty.
 
-content为具体的路由规则。
+The content is the specific routing rule.
 
-### 标签路由规则示例及说明如下：
+### Examples of tag routing rules and descriptions are as follows
 
 ```yaml
 ---
-- precedence: 2 # 优先级，数字越大，优先级越高。
-  match: # 请求匹配规则。0..N个，不配置表示匹配。每条匹配规则只允许存在一个attachments/headers/args。
-    attachments: # dubbo attachment匹配。如果是http header匹配，需要配置为headers
-      id: # 如果配置了多个key，那么所有的key规则都必须和请求匹配
-        exact: '1' # 配置策略，等于1，详细配置策略参考配置策略表
-        caseInsensitive: false # false:不区分大小写（默认）,true:区分大小写。配置为false时，将统一转为大写进行比较
-    args: # dubbo参数匹配
-      args0: # dubbo接口的第0个参数
-        type: .id # 取值类型，dubbo应用特有字段，第0个参数为实体，获取其id的属性值，如果参数类型为int，String等普通类型，则无需填写该值，所有的取值类型见取值类型列表
-        exact: '2' # 配置策略，等于2，所有的匹配策略见配置策略列表
-        caseInsensitive: false # 是否区分大小写，默认为false，区分大小写
-  route: # 路由规则
-    - weight: 20 # 权重值
+- precedence: 2 # Priority, the higher the number, the higher the priority.
+  match: # Request match rule. 0..N, not configured to indicate a match. Only one attachments/headers/args are allowed per match rule.
+    attachments: # dubbo attachment matches. If it is an http header match, you need to configure it as headers.
+      id: # If multiple keys are configured, then all key rules must match the request.
+        exact: '1' # Configuration policy, equal to 1, detailed configuration policy refer to the configuration policy table.
+        caseInsensitive: false # false: case-insensitive (default), true: case-sensitive. When configured to false, it will be converted to uppercase uniformly for comparison.
+    args: # dubbo parameter matches
+      args0: # The 0th parameter of the dubbo interface
+        type: .id # Take the value type, dubbo application-specific field, the 0th parameter is an entity, get its id property value, if the parameter type is int, String and other common types, it is not necessary to fill in the value, all the value types see the table of value types.
+        exact: '2' # Configuration policy, equal to 2, detailed configuration policy refer to the configuration policy table.
+        caseInsensitive: false # Whether to be case-sensitive, default is false, case-sensitive.
+  route: # Routing Rules
+    - weight: 20 # Weight
       tags:
-        version: 1.0.0 # 实例标记。满足标记条件的实例放到这一组。
-    - weight: 80 # 权重值
+        version: 1.0.0 # Instance tagging. Instances that meet the tagging criteria are placed in this group.
+    - weight: 80 # Weight
       tags:
-        version: 1.0.1 # 实例标记。满足标记条件的实例放到这一组。
+        version: 1.0.1 # Instance tagging. Instances that meet the tagging criteria are placed in this group.
 - precedence: 1
   route:
     - weight: 20
@@ -66,54 +64,54 @@ content为具体的路由规则。
         group: green
 ```
 
-**注意：新增配置时，请去掉注释，否则会导致新增失败。**
+**Note: When adding a new configuration, please remove the comment, otherwise it will cause the addition to fail.**
 
-### 配置策略列表
+### Configuration Policy Table
 
-|策略名|策略值|匹配规则|
+|Strategy Name|Strategy Value|Matching Rules|
 |---|---|---|
-|精确匹配|exact|参数值等于配置值|
-|正则|regex|参数值匹配正则表达式，由于部分正则表达式（如\w与\W等）区分大小写，所以使用正则策略时，请谨慎选择caseInsensitive（是否区分大小写）|
-|不等于|noEqu|参数值不等于配置值|
-|大于等于|noLess|参数值大于等于配置值|
-|小于等于|noGreater|参数值小于等于配置值|
-|大于|greater|参数值大于配置值|
-|小于|less|参数值小于配置值|
+|Exact Match|exact|The parameter value is equal to the configured value|
+|Regex Match|regex|Parameter values match regex expressions, Since some regex expressions (such as \w and \W, etc.) are case-sensitive, please choose caseInsensitive (case-sensitive or not) carefully when using regex match|
+|Not Equal Match|noEqu|The parameter value is not equal to the configuration value|
+|Not Less Match|noLess|The parameter value is not less than the configured value|
+|Not Greater Match|noGreater|The parameter value is not greater than the configured value|
+|Greater Match|greater|The parameter value is greater than the configured value|
+|Less Match|less|The parameter value is less than the configured value|
 
-### 取值类型列表
+### Value Types Table
 
-|类型|取值方式|适用参数类型|
+|Type|Fetch Method|Parameter types|
 |---|---|---|
-|留空|表示直接取当前参数的值|适用普通参数类型，例如String、int、long等|
-|.name|表示取参数的name属性，相当于ARG0.getName()|适用于对象类型|
-|.isEnabled()|表示取参数的enabled属性，相当于ARG0.isEnabled()|适用于对象类型|
-|[0]|取数组的第一个值，相当于ARG0[0]|适用于普通类型的数组，例如String[]、int[]|
-|.get(0)|取List的第一个值，相当于ARG0.get(0)|适用于普通类型的列表，例如List\<String>、List\<Integer>|
-|.get("key")|获取key对应的值，相当于ARG0.get("key")|适用于普通类型的map，例如Map<String, String>|
+|Empty/Null|Indicates that the value of the current parameter is obtained directly|Applicable to common parameter types, such as String, int, long, etc.|
+|.name|Denotes the name attribute of the fetch parameter, equivalent to ARG0.getName()|Applicable to object types|
+|.isEnabled()|Denotes the enabled attribute of the fetch parameter, equivalent to ARG0.isEnabled()|Applicable to object types|
+|[0]|Takes the first value of the array, equivalent to ARG0[0]|For arrays of common types, such as String[], int[]|
+|.get(0)|Takes the first value of the list, equivalent to ARG0.get(0)|For list of common types, such as List\<String>, List\<Integer>|
+|.get("key")|Get the value corresponding to the key, equivalent to ARG0.get("key")|For map of common types, such as Map<String, String>|
 
-- 启动标签应用
+- Start the tag application
 
-在附带agent启动时，按需加上以下参数：
+Add the following parameters as required at the start of the attached agent: 
 
 ```
 -Dservice_meta_version=${VERSION} -Dservice_meta_parameters=${PARAMETERS}
 ```
 
-参数说明如下：
+The parameters are described as follows: 
 
-- ${VERSION}需替换为服务注册时的版本号（形如a.b.c的格式，其中a,b,c均为数字，默认为1.0.0），标签应用需要修改为不同于正常应用的版本号。
-- ${PARAMETERS}需替换为服务注册时的自定义标签（形如tag1:value1,tag2:value2），即标签名与标签值以英文冒号分隔，多个标签之间以英文逗号分隔。
-- 一般地，如果用版本号进行路由，则只需配置service_meta_version，如果用自定义标签进行路由，则只需配置service_meta_parameters。
+- ${VERSION} needs to be replaced with the version number at the time of service registration (The format of a.b.c, where a,b,c are numbers and the default is 1.0.0). The tag application needs to be modified to a different version number than the normal application.
+- ${PARAMETERS} needs to be replaced with the custom tag from the service registration (Such as tag1:value1, tag2:value2). That is, tag keys and tag values are separated by colons, and multiple tags are separated by commas.
+- In general, only service_meta_version needs to be configured if routing by version number, or service_meta_parameters if routing by custom tag.
 
-## 结果验证
+## Result Verification
 
-- 前提条件[正确打包Sermant](../../README.md)
+- Prerequisites [correctly packed Sermant](../../README.md)
 
-- 注册中心使用华为CSE，下载[Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html) ，解压后按照文档说明进行启动
+- Registration center using Huawei CSE, download [Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html) ，解压后按照文档说明进行启动
 
-- 配置路由规则
+- Configuring Routing Rules
 
-调用接口`localhost:8900/publishConfig`, 请求参数如下:
+Calling the interface `localhost:8900/publishConfig`, with the following request parameters:
 
 ```json
 {
@@ -123,40 +121,40 @@ content为具体的路由规则。
 }
 ```
 
-- 编译[demo应用](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo)
+- Compile [demo application](https://github.com/huaweicloud/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo)
 
 ```shell
 mvn clean package
 ```
 
-- 启动zuul网关
+- Start the zuul gateway
 
 ```shell
 java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-zuul.jar
 ```
 
-- 启动消费者
+- Start the consumer
 
 ```shell
 java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-consumer.jar
 ```
 
-- 启动生产者
+- Start the provider
 
 ```shell
 java -Dservicecomb_service_enableSpringRegister=true -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
 ```
 
-- 启动标签生产者（版本为1.0.1，标签为group:gray）
+- Start the provider with tag (version is 1.0.1, tag is group:gray.)
 
 ```shell
 java -Dservicecomb_service_enableSpringRegister=true -Dservice_meta_version=1.0.1 -Dservice_meta_parameters=group:gray -Dserver.port=8163 -javaagent:${path}\agent\sermant-agent.jar=appName=default -jar spring-cloud-router-provider.jar
 ```
 
-其中path需要替换为Sermant实际安装路径。
+${path} needs to be replaced with the actual Sermant installation path.
 
-- 测试
+- Testing
 
-当启动以上4个应用并正确配置路由规则后，通过http客户端工具访问<http://127.0.0.1:8170/consumer/hello/rest>，可以发现，当请求头为id: 1或者id: 2时，会路由到版本为1.0.1的provider，当不满足以上条件时，会访问到版本为1.0.0的provider
+After starting the above 4 applications and configuring the routing rules correctly, when accessing <http://127.0.0.1:8170/consumer/hello/rest> through the http client tool, we can find that when the request header is id: 1 or id: 2, it will be routed to the provider of version 1.0.1, and when the above conditions are not met When the above condition is not met, it will visit the provider with version 1.0.0.
 
-[返回**Sermant**说明文档](../../README.md)
+[Back to README of **Sermant** ](../../README.md)
