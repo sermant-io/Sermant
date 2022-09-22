@@ -22,8 +22,8 @@ import com.huawei.dubbo.registry.service.ApplicationConfigServiceImpl;
 
 import com.alibaba.dubbo.config.ApplicationConfig;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * 测试ApplicationConfigServiceImpl
@@ -56,12 +56,12 @@ public class ApplicationConfigServiceTest {
 
         // 测试无效应用名
         service.getName(alibabaConfig);
-        Assert.assertNull(DubboCache.INSTANCE.getServiceName());
+        Assertions.assertNull(DubboCache.INSTANCE.getServiceName());
 
         // 测试有效应用名
         alibabaConfig.setName(FOO);
         service.getName(alibabaConfig);
-        Assert.assertEquals(FOO, DubboCache.INSTANCE.getServiceName());
+        Assertions.assertEquals(FOO, DubboCache.INSTANCE.getServiceName());
     }
 
     /**
@@ -77,11 +77,11 @@ public class ApplicationConfigServiceTest {
 
         // 测试无效应用名
         service.getName(apacheConfig);
-        Assert.assertNull(DubboCache.INSTANCE.getServiceName());
+        Assertions.assertNull(DubboCache.INSTANCE.getServiceName());
 
         // 测试有效应用名
         apacheConfig.setName(FOO);
         service.getName(apacheConfig);
-        Assert.assertEquals(FOO, DubboCache.INSTANCE.getServiceName());
+        Assertions.assertEquals(FOO, DubboCache.INSTANCE.getServiceName());
     }
 }
