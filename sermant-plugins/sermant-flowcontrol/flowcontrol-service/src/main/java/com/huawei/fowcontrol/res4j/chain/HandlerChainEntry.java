@@ -26,7 +26,6 @@ import com.huawei.fowcontrol.res4j.util.FlowControlExceptionUtils;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.util.Locale;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

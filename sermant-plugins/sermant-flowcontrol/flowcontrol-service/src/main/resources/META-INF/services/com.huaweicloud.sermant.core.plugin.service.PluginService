@@ -17,4 +17,5 @@
 
 com.huawei.fowcontrol.res4j.service.HttpRest4jServiceImpl
 com.huawei.fowcontrol.res4j.service.DubboRest4jServiceImpl
+com.huawei.fowcontrol.res4j.service.ServiceCollectorService
 

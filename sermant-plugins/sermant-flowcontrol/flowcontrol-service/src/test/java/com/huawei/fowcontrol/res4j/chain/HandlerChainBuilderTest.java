@@ -17,8 +17,15 @@
 
 package com.huawei.fowcontrol.res4j.chain;
 
+import com.huawei.fowcontrol.res4j.chain.handler.MonitorHandler;
+import com.huawei.fowcontrol.res4j.service.ServiceCollectorService;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
+
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 链构建测试
@@ -27,6 +34,8 @@ import org.junit.Test;
  * @since 2022-08-30
  */
 public class HandlerChainBuilderTest {
+    private static final String FIELD_NAME = "HANDLERS";
+
     /**
      * 构建链，确定handler数量
      */
@@ -40,5 +49,33 @@ public class HandlerChainBuilderTest {
             minHandlerNum--;
         }
         Assert.assertTrue(minHandlerNum < 0);
+    }
+
+    /**
+     * 获取构建的Handler实例对象
+     */
+    @Test
+    public void testGetHandler() {
+        Optional<AbstractChainHandler> optional = HandlerChainBuilder.getHandler(MonitorHandler.class.getName());
+        Assert.assertNotNull(optional);
+        Assert.assertTrue(optional.isPresent());
+        Optional<AbstractChainHandler> notExistOptional =
+                HandlerChainBuilder.getHandler(ServiceCollectorService.class.getName());
+        Assert.assertNotNull(notExistOptional);
+        Assert.assertFalse(notExistOptional.isPresent());
+    }
+
+    /**
+     * 测试静态方法执行情况
+     */
+    @Test
+    public void testStatic() {
+        Optional<Object> optional = ReflectUtils.getStaticFieldValue(HandlerChainBuilder.class, FIELD_NAME);
+        Assert.assertNotNull(optional);
+        Assert.assertTrue(optional.isPresent());
+        boolean castFlag = optional.get() instanceof List;
+        Assert.assertTrue(castFlag);
+        List<?> handlerList = (List<?>) optional.get();
+        Assert.assertTrue(handlerList.size() > 0);
     }
 }

@@ -380,4 +380,29 @@ public class ReflectUtils {
         });
         return object;
     }
+
+    /**
+     * 通过反射获取字段值
+     *
+     * @param clazz 目标类
+     * @param fieldName 字段名称
+     * @return value 字段值
+     */
+    public static Optional<Object> getStaticFieldValue(Class<?> clazz, String fieldName) {
+        if (clazz == null || StringUtils.isBlank(fieldName)) {
+            return Optional.empty();
+        }
+        try {
+            final Field field = getField(clazz, fieldName);
+            if (field != null && Modifier.isStatic(field.getModifiers())) {
+                return Optional.ofNullable(field.get(null));
+            } else {
+                return Optional.empty();
+            }
+        } catch (IllegalAccessException ex) {
+            LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH,
+                    "Could not acquire the value of field %s", fieldName));
+        }
+        return Optional.empty();
+    }
 }

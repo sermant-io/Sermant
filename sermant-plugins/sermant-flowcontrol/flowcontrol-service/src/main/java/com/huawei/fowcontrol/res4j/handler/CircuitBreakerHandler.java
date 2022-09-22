@@ -19,9 +19,13 @@ package com.huawei.fowcontrol.res4j.handler;
 
 import com.huawei.flowcontrol.common.core.resolver.CircuitBreakerRuleResolver;
 import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
+import com.huawei.flowcontrol.common.entity.MetricEntity;
 import com.huawei.flowcontrol.common.handler.AbstractRequestHandler;
 import com.huawei.flowcontrol.common.util.StringUtils;
 import com.huawei.fowcontrol.res4j.adaptor.CircuitBreakerAdaptor;
+import com.huawei.fowcontrol.res4j.chain.handler.MonitorHandler;
+import com.huawei.fowcontrol.res4j.service.ServiceCollectorService;
+import com.huawei.fowcontrol.res4j.util.MonitorUtils;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -29,6 +33,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.SlidingWindowT
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -41,18 +46,46 @@ public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker
     @Override
     protected final Optional<CircuitBreaker> createProcessor(String businessName, CircuitBreakerRule rule) {
         final SlidingWindowType slidingWindowType = getSlidingWindowType(rule.getSlidingWindowType());
-        return Optional.of(new CircuitBreakerAdaptor(CircuitBreakerRegistry.of(CircuitBreakerConfig
-                .custom()
-                .failureRateThreshold(rule.getFailureRateThreshold())
-                .slowCallRateThreshold(rule.getSlowCallRateThreshold())
-                .waitDurationInOpenState(Duration.ofMillis(rule.getParsedWaitDurationInOpenState()))
-                .slowCallDurationThreshold(Duration.ofMillis(rule.getParsedSlowCallDurationThreshold()))
-                .permittedNumberOfCallsInHalfOpenState(rule.getPermittedNumberOfCallsInHalfOpenState())
-                .minimumNumberOfCalls(rule.getMinimumNumberOfCalls())
-                .slidingWindowType(slidingWindowType)
-                .slidingWindowSize(getWindowSize(slidingWindowType, rule.getParsedSlidingWindowSize()))
-                .build())
-                .circuitBreaker(businessName), rule));
+        CircuitBreaker circuitBreaker = CircuitBreakerRegistry.of(CircuitBreakerConfig.custom()
+                        .failureRateThreshold(rule.getFailureRateThreshold())
+                        .slowCallRateThreshold(rule.getSlowCallRateThreshold())
+                        .waitDurationInOpenState(Duration.ofMillis(rule.getParsedWaitDurationInOpenState()))
+                        .slowCallDurationThreshold(Duration.ofMillis(rule.getParsedSlowCallDurationThreshold()))
+                        .permittedNumberOfCallsInHalfOpenState(rule.getPermittedNumberOfCallsInHalfOpenState())
+                        .minimumNumberOfCalls(rule.getMinimumNumberOfCalls()).slidingWindowType(slidingWindowType)
+                        .slidingWindowSize(getWindowSize(slidingWindowType, rule.getParsedSlidingWindowSize())).build())
+                .circuitBreaker(businessName);
+        if (MonitorUtils.isStartMonitor()) {
+            addEventConsumers(circuitBreaker);
+            ServiceCollectorService.CIRCUIT_BREAKER_MAP.putIfAbsent(businessName, circuitBreaker);
+        }
+        return Optional.of(new CircuitBreakerAdaptor(circuitBreaker, rule));
+    }
+
+    /**
+     * 增加事件消费处理
+     *
+     * @param circuitBreaker 熔断器
+     */
+    private static void addEventConsumers(CircuitBreaker circuitBreaker) {
+        Map<String, MetricEntity> monitors = MonitorHandler.MONITORS;
+        MetricEntity metricEntity = monitors.computeIfAbsent(circuitBreaker.getName(), s -> new MetricEntity());
+        metricEntity.setName(circuitBreaker.getName());
+        circuitBreaker.getEventPublisher().onError(event -> {
+            metricEntity.getFailedFuseRequest().getAndIncrement();
+            metricEntity.getFuseRequest().getAndIncrement();
+            metricEntity.getFuseTime().getAndAdd(event.getElapsedDuration().toMillis());
+        }).onSuccess(event -> {
+            metricEntity.getFuseRequest().getAndIncrement();
+            metricEntity.getSuccessFulFuseRequest().getAndIncrement();
+            metricEntity.getFuseTime().getAndAdd(event.getElapsedDuration().toMillis());
+        }).onCallNotPermitted(event -> {
+            metricEntity.getPermittedFulFuseRequest().getAndIncrement();
+        }).onIgnoredError(event -> {
+            metricEntity.getIgnoreFulFuseRequest().getAndIncrement();
+            metricEntity.getFuseRequest().getAndIncrement();
+            metricEntity.getFuseTime().getAndAdd(event.getElapsedDuration().toMillis());
+        }).onSlowCallRateExceeded(event -> metricEntity.getSlowFuseRequest().getAndIncrement());
     }
 
     private int getWindowSize(SlidingWindowType slidingWindowType, long parsedSlidingWindowSize) {
