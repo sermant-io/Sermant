@@ -26,6 +26,16 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: download sc
+        run: |
+          curl -o apache-servicecomb-service-center-2.1.0-linux-amd64.tar.gz -L https://github.com/apache/servicecomb-service-center/releases/download/v2.1.0/apache-servicecomb-service-center-2.1.0-linux-amd64.tar.gz
+          tar -zxf apache-servicecomb-service-center-2.1.0-linux-amd64.tar.gz
+          sh apache-servicecomb-service-center-2.1.0-linux-amd64/start-service-center.sh
+      - name: download zookeeper
+        run: |
+          curl -o apache-zookeeper-3.8.0-bin.tar.gz -L https://dlcdn.apache.org/zookeeper/zookeeper-3.8.0/apache-zookeeper-3.8.0-bin.tar.gz
+          tar -zxf apache-zookeeper-3.8.0-bin.tar.gz
+          bash apache-zookeeper-3.8.0-bin/bin/zkServer.sh start apache-zookeeper-3.8.0-bin/conf/zoo_sample.cfg
       - name: Build with Maven
         run: mvn test
       - name: Generate code coverage report
