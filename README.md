@@ -1,4 +1,4 @@
-    <div align="center">
+<div align="center">
 <p></p><p></p>
 <p>
     <img  src="docs/binary-docs/sermant-logo.png" width="50%" syt height="50%">
