@@ -206,7 +206,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
      * @param group 组
      * @return 配置值
      */
-    protected abstract Optional<String> doGetConfig(String key, String group);
+    public abstract Optional<String> doGetConfig(String key, String group);
 
     /**
      * 设置组下某个键的配置值
@@ -216,7 +216,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
      * @param content 配置值
      * @return 是否操作成功
      */
-    protected abstract boolean doPublishConfig(String key, String group, String content);
+    public abstract boolean doPublishConfig(String key, String group, String content);
 
     /**
      * 移除组下某个键的配置值
@@ -225,7 +225,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
      * @param group 组
      * @return 是否操作成功
      */
-    protected abstract boolean doRemoveConfig(String key, String group);
+    public abstract boolean doRemoveConfig(String key, String group);
 
     /**
      * 为组下某个键添加监听器
@@ -235,7 +235,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
      * @param listener 监听器
      * @return 是否操作成功
      */
-    protected abstract boolean doAddConfigListener(String key, String group, DynamicConfigListener listener);
+    public abstract boolean doAddConfigListener(String key, String group, DynamicConfigListener listener);
 
     /**
      * 移除组下所有键的监听器
@@ -243,7 +243,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
      * @param group 组名
      * @return 是否全部移除成功
      */
-    protected abstract boolean doRemoveGroupListener(String group);
+    public abstract boolean doRemoveGroupListener(String group);
 
     /**
      * 移除组下某个键的监听器
@@ -252,7 +252,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
      * @param group 组
      * @return 是否操作成功
      */
-    protected abstract boolean doRemoveConfigListener(String key, String group);
+    public abstract boolean doRemoveConfigListener(String key, String group);
 
     /**
      * 获取组中所有键
@@ -260,7 +260,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
      * @param group 组名
      * @return 键集合
      */
-    protected abstract List<String> doListKeysFromGroup(String group);
+    public abstract List<String> doListKeysFromGroup(String group);
 
     /**
      * 为组下所有的键添加监听器
@@ -269,7 +269,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
      * @param listener 监听器
      * @return 是否添加成功
      */
-    protected abstract boolean doAddGroupListener(String group, DynamicConfigListener listener);
+    public abstract boolean doAddGroupListener(String group, DynamicConfigListener listener);
 
     private boolean checkKey(String key) {
         if (key == null || key.length() <= 0) {

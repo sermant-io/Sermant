@@ -20,10 +20,10 @@ package com.huawei.flowcontrol.config;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
-import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine.Plugin;
-import com.huaweicloud.sermant.core.plugin.inject.ClassInjectService;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
+import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine.Plugin;
+import com.huaweicloud.sermant.core.service.inject.ClassInjectService;
 
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.util.MultiValueMap;

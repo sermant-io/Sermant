@@ -17,14 +17,13 @@
 
 package com.huawei.registry.config;
 
-import com.huaweicloud.sermant.core.utils.ReflectUtils;
-
-import com.huaweicloud.sermant.core.plugin.converter.Converter;
-import com.huaweicloud.sermant.core.plugin.converter.YamlConverter;
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.subscribe.processor.OrderConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.utils.MapUtils;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -40,7 +39,7 @@ import java.util.Optional;
  * @since 2022-05-24
  */
 public abstract class RegistryConfigResolver {
-    private final Converter<String, Map<String, Object>> yamlConverter = new YamlConverter<>(Map.class);
+    private final YamlConverter yamlConverter = OperationManager.getOperation(YamlConverter.class);
 
     /**
      * 更新优雅上下线配置
@@ -93,7 +92,7 @@ public abstract class RegistryConfigResolver {
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
             return updateConfig(Collections.emptyMap(), event.getEventType());
         } else {
-            final Optional<Map<String, Object>> convert = yamlConverter.convert(event.getContent());
+            final Optional<Map<String, Object>> convert = yamlConverter.convert(event.getContent(), Map.class);
             if (convert.isPresent()) {
                 final Map<String, Object> data = convert.get();
                 final HashMap<String, Object> result = new HashMap<>(data.size());

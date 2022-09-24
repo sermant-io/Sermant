@@ -17,7 +17,7 @@
 
 package com.huawei.registry.inject;
 
-import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
+import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 /**

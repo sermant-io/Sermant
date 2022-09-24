@@ -17,8 +17,8 @@
 
 package com.huawei.dynamic.config.resolver;
 
-import com.huaweicloud.sermant.core.plugin.converter.Converter;
-import com.huaweicloud.sermant.core.plugin.converter.YamlConverter;
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.utils.MapUtils;
 
@@ -33,12 +33,12 @@ import java.util.Optional;
  * @since 2022-04-13
  */
 public class DefaultConfigResolver implements ConfigResolver<Map<String, Object>> {
-    private final Converter<String, Map<String, Object>> converter = new YamlConverter<>(Map.class);
+    private final YamlConverter yamlConverter = OperationManager.getOperation(YamlConverter.class);
 
     @Override
     public Map<String, Object> resolve(DynamicConfigEvent event) {
         final Map<String, Object> result = new HashMap<>();
-        final Optional<Map<String, Object>> convert = converter.convert(event.getContent());
+        final Optional<Map<String, Object>> convert = yamlConverter.convert(event.getContent(), Map.class);
         convert.ifPresent(stringObjectMap -> MapUtils.resolveNestMap(result, stringObjectMap, null));
         return result;
     }

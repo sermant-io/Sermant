@@ -21,8 +21,11 @@ import com.huawei.dynamic.config.sources.TestConfigSources;
 import com.huawei.dynamic.config.sources.TestLowestConfigSources;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -31,6 +34,7 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -53,8 +57,12 @@ public class ConfigHolderTest {
 
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
     @Before
     public void setUp() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
         event = Mockito.mock(DynamicConfigEvent.class);
         DynamicConfiguration configuration = Mockito.mock(DynamicConfiguration.class);
         Mockito.when(event.getKey()).thenReturn(KEY);
@@ -63,11 +71,13 @@ public class ConfigHolderTest {
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
                 .thenReturn(configuration);
+        Collections.sort(ConfigHolder.INSTANCE.getConfigSources());
     }
 
     @After
     public void tearDown() {
         pluginConfigManagerMockedStatic.close();
+        operationManagerMockedStatic.close();
     }
 
     @Test

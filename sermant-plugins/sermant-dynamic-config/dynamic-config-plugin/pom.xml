@@ -106,6 +106,12 @@
             <version>${nacos-config.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>sermant-agentcore-implement</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -21,7 +21,8 @@ import com.huawei.monitor.service.JvmCollectorService;
 import com.huawei.monitor.service.ServerCollectorService;
 import com.huawei.monitor.util.CollectionUtil;
 
-import io.netty.util.internal.StringUtil;
+import com.huaweicloud.sermant.core.utils.StringUtils;
+
 import io.prometheus.client.Collector;
 
 import org.junit.Assert;
@@ -62,7 +63,7 @@ public class CollectorServiceTest {
             });
         });
         String osName = System.getProperty(OS_NAME_CODE);
-        if (!StringUtil.isNullOrEmpty(osName) && osName.startsWith(LINUX__OS_NAME)) {
+        if (!StringUtils.isEmpty(osName) && osName.startsWith(LINUX__OS_NAME)) {
             serverCollectorService = new ServerCollectorService();
             List<Collector.MetricFamilySamples> serverMetricFamilySamples = serverCollectorService.collect();
             Assert.assertFalse(CollectionUtil.isEmpty(serverMetricFamilySamples));

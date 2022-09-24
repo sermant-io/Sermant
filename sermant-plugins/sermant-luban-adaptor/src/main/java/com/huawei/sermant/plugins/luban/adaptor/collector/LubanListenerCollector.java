@@ -19,7 +19,7 @@ package com.huawei.sermant.plugins.luban.adaptor.collector;
 import com.huawei.sermant.plugins.luban.adaptor.declarer.LubanPluginDeclarer;
 import com.huawei.sermant.plugins.luban.adaptor.declarer.LubanPluginDescription;
 
-import com.huaweicloud.sermant.core.plugin.adaptor.collector.AdaptorCollector;
+import com.huaweicloud.sermant.core.plugin.agent.collector.AdaptorCollector;
 import com.huaweicloud.sermant.core.plugin.agent.collector.AbstractPluginCollector;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDescription;

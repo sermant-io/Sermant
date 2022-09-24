@@ -22,15 +22,19 @@ import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.util.ConvertUtils;
 import com.huawei.flowcontrol.retry.cluster.AlibabaDubboClusterInvoker;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
+
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.RpcResult;
 import com.alibaba.dubbo.rpc.cluster.Directory;
 import com.alibaba.dubbo.rpc.cluster.LoadBalance;
-import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -52,10 +56,13 @@ public class AlibabaDubboInvokerInterceptorTest {
 
     private MockedStatic<ServiceManager> serviceManagerMockedStatic;
 
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
     @After
     public void tearDown() {
         pluginConfigManagerMockedStatic.close();
         serviceManagerMockedStatic.close();
+        operationManagerMockedStatic.close();
     }
 
     /**
@@ -70,6 +77,8 @@ public class AlibabaDubboInvokerInterceptorTest {
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                 .thenReturn(new FlowControlConfig());
         serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
     }
 
     @Test

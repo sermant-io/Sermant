@@ -17,10 +17,7 @@
 
 package com.huawei.registry.inject;
 
-import com.huawei.registry.config.GraceConfig;
-
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
+import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 
 /**
  * 关闭时间监听器注入

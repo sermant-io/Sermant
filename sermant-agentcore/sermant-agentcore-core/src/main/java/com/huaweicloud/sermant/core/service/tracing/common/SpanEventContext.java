@@ -16,9 +16,8 @@
 
 package com.huaweicloud.sermant.core.service.tracing.common;
 
+import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.core.utils.TracingUtils;
-
-import org.apache.commons.lang.StringUtils;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

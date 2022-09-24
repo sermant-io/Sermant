@@ -18,18 +18,13 @@ package com.huawei.registry.service.client;
 
 import com.huawei.registry.config.RegisterConfig;
 
-import com.huaweicloud.sermant.core.common.CommonConstant;
-import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.config.common.BaseConfig;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -53,11 +48,6 @@ public class BaseTest {
 
         configManagerMap = (Map<String, BaseConfig>) configMap.get(null);
         configManagerMap.put("servicecomb.service", new RegisterConfig());
-
-        final URL logbackSettingURL = BaseTest.class.getResource("/logback-test.xml");
-        Assert.assertNotNull(logbackSettingURL);
-        LoggerFactory.init(Collections.<String, Object>singletonMap(CommonConstant.LOG_SETTING_FILE_KEY,
-                logbackSettingURL.getPath()));
     }
 
     /**

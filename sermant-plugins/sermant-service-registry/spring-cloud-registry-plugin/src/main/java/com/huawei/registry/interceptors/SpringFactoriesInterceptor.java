@@ -23,9 +23,9 @@ import com.huawei.registry.support.RegisterSwitchSupport;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
-import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine.Plugin;
-import com.huaweicloud.sermant.core.plugin.inject.ClassInjectService;
+import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
+import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine.Plugin;
+import com.huaweicloud.sermant.core.service.inject.ClassInjectService;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import org.springframework.core.io.support.SpringFactoriesLoader;

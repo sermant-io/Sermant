@@ -23,6 +23,11 @@ package com.huaweicloud.sermant.core.utils;
  * @since 2022-03-24
  */
 public class StringUtils {
+    /**
+     * Empty string.
+     */
+    public static final String EMPTY = "";
+
     private static final int FLAG = -1;
 
     private StringUtils() {
@@ -57,13 +62,60 @@ public class StringUtils {
     }
 
     /**
-     * isBlank
+     * isEmpty
      *
-     * @param str str
+     * @param charSequence charSequence
      * @return boolean
      */
-    public static boolean isBlank(String str) {
-        return str == null || str.trim().isEmpty();
+    public static boolean isEmpty(final CharSequence charSequence) {
+        return charSequence == null || charSequence.length() == 0;
+    }
+
+    /**
+     * isBlank
+     *
+     * @param charSequence charSequence
+     * @return boolean
+     */
+    public static boolean isBlank(final CharSequence charSequence) {
+        int charSequenceLen = charSequence == null ? 0 : charSequence.length();
+        if (charSequenceLen == 0) {
+            return true;
+        }
+        for (int i = 0; i < charSequenceLen; i++) {
+            if (!Character.isWhitespace(charSequence.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Any string is blank.
+     *
+     * @param strings string list
+     * @return boolean
+     */
+    public static boolean isAnyBlank(String... strings) {
+        if (strings.length == 0) {
+            return false;
+        }
+        for (String string : strings) {
+            if (isBlank(string)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * none blank
+     *
+     * @param strings string list
+     * @return boolean
+     */
+    public static boolean isNoneBlank(String... strings) {
+        return !isAnyBlank(strings);
     }
 
     /**

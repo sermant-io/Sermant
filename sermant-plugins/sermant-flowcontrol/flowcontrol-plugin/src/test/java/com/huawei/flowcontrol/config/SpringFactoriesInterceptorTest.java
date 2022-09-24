@@ -21,10 +21,10 @@ import com.huawei.flowcontrol.common.config.FlowControlConfig;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.core.plugin.inject.ClassInjectDefine;
-import com.huaweicloud.sermant.core.plugin.inject.ClassInjectService;
-import com.huaweicloud.sermant.core.plugin.inject.InjectServiceImpl;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
+import com.huaweicloud.sermant.core.service.inject.ClassInjectService;
+import com.huaweicloud.sermant.implement.service.inject.InjectServiceImpl;
 
 import org.junit.After;
 import org.junit.Assert;

@@ -17,22 +17,18 @@
 
 package com.huaweicloud.sermant.core.plugin.subscribe.processor;
 
-import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huaweicloud.sermant.core.utils.MapUtils;
-
-import org.apache.commons.lang3.StringUtils;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.ConstructorException;
-import org.yaml.snakeyaml.representer.Representer;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -48,8 +44,6 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
      */
     private static final int CAP_SIZE = 8;
 
-    private final Yaml yaml;
-
     /**
      * 原监听器
      */
@@ -60,6 +54,8 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
      */
     private List<ConfigDataHolder> dataHolders;
 
+    private final YamlConverter yamlConverter = OperationManager.getOperation(YamlConverter.class);
+
     /**
      * 构造器
      *
@@ -67,9 +63,6 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
      */
     public ConfigOrderIntegratedProcessor(DynamicConfigListener listener) {
         this.originListener = listener;
-        Representer representer = new Representer();
-        representer.getPropertyUtils().setSkipMissingProperties(true);
-        this.yaml = new Yaml(representer);
     }
 
     /**
@@ -90,8 +83,7 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
     public final void process(String rawGroup, DynamicConfigEvent event) {
         final Optional<ConfigDataHolder> targetHolder = findTargetHolder(rawGroup);
         synchronized (this) {
-            originListener.process(targetHolder.map(dataHolder -> rebuildEvent(dataHolder, event))
-                .orElse(event));
+            originListener.process(targetHolder.map(dataHolder -> rebuildEvent(dataHolder, event)).orElse(event));
         }
     }
 
@@ -105,7 +97,7 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
     private DynamicConfigEvent rebuildEvent(ConfigDataHolder targetHolder, DynamicConfigEvent originEvent) {
         if (updateHolder(targetHolder, originEvent)) {
             return new OrderConfigEvent(originEvent.getKey(), originEvent.getGroup(),
-                yaml.dump(buildOrderData(originEvent)), originEvent.getEventType(), buildOrderData());
+                yamlConverter.dump(buildOrderData(originEvent)), originEvent.getEventType(), buildOrderData());
         }
         return originEvent;
     }
@@ -142,32 +134,21 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
     }
 
     private boolean updateHolder(ConfigDataHolder targetHolder, DynamicConfigEvent originEvent) {
-        final Map<String, Object> olderDataMap = targetHolder.getHolder()
-            .getOrDefault(originEvent.getKey(), new HashMap<>(CAP_SIZE));
+        final Map<String, Object> olderDataMap =
+            targetHolder.getHolder().getOrDefault(originEvent.getKey(), new HashMap<>(CAP_SIZE));
         olderDataMap.clear();
         if (originEvent.getEventType() != DynamicConfigEventType.DELETE) {
-            Map<String, Object> dataMap = new HashMap<>();
-            try {
-                Object data = yaml.load(originEvent.getContent());
-                if (data instanceof Map) {
-                    dataMap.putAll((Map<? extends String, ?>) data);
-                } else {
-                    dataMap.put(originEvent.getKey(), data);
-                }
-            } catch (ConstructorException ex) {
-                LoggerFactory.getLogger().warning(String.format(Locale.ENGLISH,
-                    "Can not load key [%s], raw data: [%s], reason: [%s]",
-                    originEvent.getKey(), originEvent.getContent(), ex.getMessage()));
+            Optional<Map<String, Object>> dataMap = yamlConverter.convert(originEvent.getContent(), Map.class);
+            if (!dataMap.isPresent()) {
                 return false;
             }
-            olderDataMap.putAll(dataMap);
+            olderDataMap.putAll(dataMap.get());
         }
         targetHolder.getHolder().put(originEvent.getKey(), olderDataMap);
         return true;
     }
 
     private Optional<ConfigDataHolder> findTargetHolder(String group) {
-        return dataHolders.stream().filter(dataHolder -> StringUtils.equals(dataHolder.getGroup(), group))
-            .findAny();
+        return dataHolders.stream().filter(dataHolder -> StringUtils.equals(dataHolder.getGroup(), group)).findAny();
     }
 }

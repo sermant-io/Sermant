@@ -16,16 +16,10 @@
 
 package com.huaweicloud.sermant.router.dubbo.strategy.type;
 
-import com.huaweicloud.sermant.core.common.CommonConstant;
-import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.router.dubbo.strategy.TypeStrategy;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * enabled匹配策略测试
@@ -34,17 +28,6 @@ import java.util.Map;
  * @since 2021-12-01
  */
 public class EnabledTypeStrategyTest {
-    /**
-     * 初始化
-     */
-    @BeforeClass
-    public static void init() {
-        Map<String, Object> map = new HashMap<>();
-        map.put(CommonConstant.LOG_SETTING_FILE_KEY,
-            EnabledTypeStrategyTest.class.getResource("/logback-test.xml").getPath());
-        LoggerFactory.init(map);
-    }
-
     /**
      * 测试enabled策略
      */

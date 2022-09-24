@@ -16,7 +16,7 @@
 
 package com.huawei.sermant.plugins.luban.adaptor.service;
 
-import com.huaweicloud.sermant.core.plugin.adaptor.service.AdaptorService;
+import com.huaweicloud.sermant.core.plugin.service.AdaptorService;
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
 
 import com.lubanops.apm.premain.AgentPremain;

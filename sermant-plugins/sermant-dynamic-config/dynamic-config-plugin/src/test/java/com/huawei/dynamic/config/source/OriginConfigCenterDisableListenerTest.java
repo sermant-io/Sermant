@@ -26,12 +26,17 @@ import com.huawei.dynamic.config.RefreshNotifier;
 import com.huawei.dynamic.config.closer.ConfigCenterCloser;
 import com.huawei.dynamic.config.entity.DynamicConstants;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -54,6 +59,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class OriginConfigCenterDisableListenerTest {
     private List<DynamicConfigListener> listeners;
+
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+    }
+
+    @After
+    public void tearDown() {
+        operationManagerMockedStatic.close();
+    }
+
     /**
      * 测试通知流程
      */

@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.core.config;
 
+import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.common.BaseConfig;
@@ -50,7 +51,7 @@ public abstract class ConfigManager {
     private static final Map<String, BaseConfig> CONFIG_MAP = new HashMap<String, BaseConfig>();
 
     private static final Iterable<LoadConfigStrategy> LOAD_CONFIG_STRATEGIES =
-        ServiceLoader.load(LoadConfigStrategy.class);
+        ServiceLoader.load(LoadConfigStrategy.class, ClassLoaderManager.getFrameworkClassLoader());
 
     private static Map<String, Object> argsMap = null;
 
@@ -124,11 +125,13 @@ public abstract class ConfigManager {
      *
      * @param configFile     配置文件
      * @param baseCls        配置对象的基类，该参数决定spi操作的源
-     * @param classLoader    类加载器，该参数决定从哪个classLoader中进行api操作
+     * @param classLoader    类加载器，当前配置加载策略api在agentcore-implement包中，所以使用FrameworkClassLoader加载
      */
     private static synchronized void doLoadConfig(File configFile, Class<? extends BaseConfig> baseCls,
         ClassLoader classLoader) {
-        final LoadConfigStrategy<?> loadConfigStrategy = getLoadConfigStrategy(configFile, classLoader);
+        // 通过FrameworkClassLoader 获取配置加载策略
+        final LoadConfigStrategy<?> loadConfigStrategy =
+            getLoadConfigStrategy(configFile, ClassLoaderManager.getFrameworkClassLoader());
         final Object holder = loadConfigStrategy.getConfigHolder(configFile, argsMap);
         foreachConfig(new ConfigConsumer() {
             @Override

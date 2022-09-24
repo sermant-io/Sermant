@@ -16,8 +16,6 @@
 
 package com.huaweicloud.sermant.router.dubbo;
 
-import com.huaweicloud.sermant.core.common.CommonConstant;
-import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
@@ -32,7 +30,6 @@ import com.alibaba.dubbo.rpc.RpcException;
 
 import org.apache.dubbo.common.utils.MapUtils;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -69,17 +66,6 @@ public class DubboReflectUtilsTest {
         DubboReflectUtils.setParameters(alibabaConfig, Collections.singletonMap(BAR, FOO));
         apacheConfig = new org.apache.dubbo.config.ApplicationConfig(FOO);
         DubboReflectUtils.setParameters(apacheConfig, Collections.singletonMap(FOO, BAR));
-    }
-
-    /**
-     * 初始化
-     */
-    @BeforeClass
-    public static void init() {
-        Map<String, Object> map = new HashMap<>();
-        map.put(CommonConstant.LOG_SETTING_FILE_KEY,
-            DubboReflectUtilsTest.class.getResource("/logback-test.xml").getPath());
-        LoggerFactory.init(map);
     }
 
     /**
