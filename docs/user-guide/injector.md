@@ -140,6 +140,13 @@ spec:
       labels:
         app: demo-test
         sermant-injection: enabled
+    spec:
+      containers:
+      - name: image
+        # Please replace it with own image
+        image: image:1.0.0
+        ports: 
+        - containerPort: 8080
   ports:
     - port: 443
       targetPort: 8443

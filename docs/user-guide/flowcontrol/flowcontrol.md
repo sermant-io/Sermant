@@ -1,105 +1,268 @@
 # FlowControl
 
-本文档主要介绍[流控插件](../../../sermant-plugins/sermant-flowcontrol)以及该插件的使用方法
+[简体中文](flowcontrol-zh.md) | [English](flowcontrol.md)
 
-## 功能
+This document is used to introduce the usage of [Flow Control Plugin](../../../sermant-plugins/sermant-flowcontrol)
 
-流控插件基于[resilience4j](https://github.com/resilience4j)框架，以"流量"切入点，实现"无侵入式"流量控制；当前支持**流控**、**熔断**、**隔离仓**、**错误注入**与**重试**能力，并且支持配置中心动态配置规则，实时生效。
+## Functions
 
-- **流控**：对指定接口限制1S秒内通过的QPS，当1S内流量超过指定阈值，将触发流控，限制请求流量。
-- **熔断**：对指定接口配置熔断策略，可从单位统计时间窗口内的错误率或者慢请求率进行统计，当请求错误率或者慢请求率达到指定比例阈值，即触发熔断，在时间窗口重置前，隔离所有请求。
-- **隔离仓**：针对大规模并发流量，对并发流量进行控制，避免瞬时并发流量过大导致服务崩溃。
-- **重试：**当服务遇到非致命的错误时，可以通过重试的方式避免服务的最终失败。
-- **错误注入:**  指在服务运行时，给指定服务配置错误注入策略，在客户端访问目标服务前，以指定策略模式返回。该策略多用于减少目标服务的访问负载，可作为降级的一种措施。
+The flow control plugin is based on the [resilience4j]((https://github.com/resilience4j)) framework and implements non-intrusive flow control based on the "traffic" entry point. Currently, **Traffic Limiting, Circuit Breaker, Bulkhead, Error Injection, and Retry** are supported. In addition, rules can be dynamically configured in the configuration center and take effect in real time.
 
-## 使用说明
+- **Traffic Limiting**：The number of QPS that pass through a specified interface within 1s is limited. When the traffic within 1s exceeds the specified threshold, flow control is triggered to limit the requested traffic.
+- **Circuit Breaker**：Configure a circuit breaker policy for a specified interface to collect statistics on the error rate or slow request rate in a specified time window. When the error rate or slow request rate reaches a specified threshold, the circuit breaker is triggered. Before the time window is reset, all requests are isolated.
+- **Bulkhead**：Controls concurrent traffic for a large number of concurrent traffic to prevent service breakdown caused by excessive instantaneous concurrent traffic.
+- **Retry**：If a service encounters a non-fatal error, you can retry the service to prevent the service failure.
+- **Error Injection:**  An error injection policy is configured for a specified service when the service is running. Before the client accesses the target service, the error injection policy is used. This policy is mainly used to reduce the access load of the target service and can be used as a measure of downgrading the target service.
 
-### 环境准备
+## Usage
 
-**（1）部署ServiceCenter环境与Kie环境**
+### Environment Preparation
 
-**（2）打包编译Sermant Agent**
+**（1）Deploying the ServiceCenter and Kie environments**
 
-​ 参考[Sermant源码编译](../../QuickStart.md#源码编译)
+**（2）Package and compile Sermant Agent**
 
-### 配置agent
+The way that compile Sermant Agent referring [this article](../../QuickStart.md#Get-Compiled-Products)
 
-**（1）修改服务注册信息**
+Compile by referring to the Sermant source code.
 
-找到[config.properties]()文件，修改如下配置
+### Configure Agent
+
+**（1）Modify Service Registration Information**
+
+Find the `${javaagent path}/agent/config/config.properties`  and modify the content comply following configuration:
 
 ```properties
-# 服务app名称
+# application name, you can keep default
 service.meta.application=default
-# 服务版本
+# service version
 service.meta.version=1.0.0
-# serviceComb 命名空间
+# serviceComb namespace, keep default
 service.meta.project=default
-# 环境
+# environment, it only support development/testing/production
 service.meta.environment=development
-# 自定义标签，按需配置，用于后续的配置订阅
+# custom label, it use to subscribe the config of config center
 service.meta.customLabel=public
 service.meta.customLabelValue=default
 ```
 
-**提示**：以上配置均可通过环境变量指定，对应的键值即为环境变量键，例如服务app名称可由`-Dservice.meta.application=application`指定, 其他配置文件的所有键均可采用该方式配置。
+**Notice**：The preceding configurations can be specified using environment variables. The corresponding key value is the environment variable key. For example, the service app name can be specified by `-Dservice.meta.application=application`. All keys in other configuration files can be configured using this method.
 
-##### **（2）修改配置中心**
+##### **（2）Modify the Configuration Center**
 
-修改配置文件`${javaagent路径}/config/config.properties`, 修改配置中心类型与地址，如下位置：
+Modify the configuration file ${javaagent path}/config/config.properties and modify the configuration center type and address as follows:
 
 ```properties
-# 配置中心地址， 根据配置中心地址配置
+# IP address of the configuration center. Set this parameter based on the IP address of the configuration center.
 dynamic.config.server_address=127.0.0.1:30110
-# 配置中心类型， 支持KIE与ZOOKEEPER
+# Configuration center type. The options are KIE and ZOOKEEPER.
 dynamic.config.dynamic_config_type=KIE
 ```
 
-**（3）配置流控插件**
+**（3）Configure the Flow Control Plugin**
 
-修改配置文件`${javaagent路径}/pluginPackage/flowcontrol/config/config.yaml`
+Modify the Configuration File`${javaagent path}/pluginPackage/flowcontrol/config/config.yaml`
 
 ```yaml
 flow.control.plugin:
-  useCseRule: true # 是否开启ServiceComb适配
+  useCseRule: true 
 ```
 
-开启适配后，插件将根据应用配置，服务配置以及自定义标签订阅配置中心配置
+If adaptation is enabled, the plugin subscribes to the configuration center based on the application configuration, service configuration, and customized tag configuration.
 
-> 此处若设置useCseRule为false，流控插件将基于当前实例的服务名进行配置订阅，例如：用户配置的spring.application.name=flowControlDemo, 则在实际订阅时会根据标签service=flowControlDemo接收配置。
+> If useCseRule is set to false, the flow control plugin configures subscription based on the service name of the current instance. For example, if spring.application.name is set to flowControlDemo, the flow control plugin receives configuration based on the service=flowControlDemo tag during actual subscription.
 
-### 部署应用
+### Deploying Applications
 
-执行以下命令启动应用
+Run the following command to start the application:
 
 ```shell
-# 其中agent路径指打包后的路径
-# serviceName值应用名
-# applicationName即对应app名称
-# environment即对应环境名称
-# xxx.jar值打包后应用jar包
-java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservice.meta.application=${applicationName} -Dservice.meta.environment=${environment}  -jar xxx.jar
+# agent path indicates the package path.
+# serviceName indicates the name of your service
+# applicationName indicates the app name
+# environment indicates the environment of your service, support testing/producation/developing
+# xxx.jar indicates the application packages of your service
+java -javaagent:${agent path}/sermant-agent.jar=appName=${serviceName} -Dservice.meta.application=${applicationName} -Dservice.meta.environment=${environment}  -jar xxx.jar
 ```
 
-### 验证应用部署
+### Verify Application Deployment
 
-登录[Service Center](localhost:30103)后台, 查看应用是否正确注册
+Login to the [Service Center](localhost:30103) background and check whether the application is correctly registered.
 
-### 发布流控规则
+### Flow Control Rules Specification
 
-[backend]()服务提供配置发布功能, 通过请求接口`/publishConfig`发布配置，请求参数如下：
+Traffic governance uses traffic marking and flow control rules to control specified traffic. Traffic marking refers to request information, such as the interface path, interface method type, request header, and downstream service name. Whether a flow control rule takes effect depends on the traffic flag. A flow control rule takes effect only when the traffic flag matches the request. The mapping between traffic marks and specific rules depends on the service scenario name. Generally, a specified prefix must be configured for traffic marks and traffic control rules. For example, the key of traffic marks must be prefixed with `servicecomb.MatchGroup`. The traffic limiting rule is prefixed with `servicecomb.rateLimiting`. The following is an example:
 
-| 配置参数 | 说明                                                 |
-| -------- | ---------------------------------------------------- |
-| key      | 配置键                                               |
-| group    | 配置的标签组                                         |
-| content  | 配置内容，即具体的规则配置，其格式均为**`yaml`**格式 |
+The traffic marking configuration key：`servicecomb.MatchGroup.flow`
 
-> 其中**group**的配置格式为k1=v1, 多个值使用"&"分隔，例如k1=v1&k2=v2, 代表该key绑定的标签组
+The key for configuring the traffic limiting rule：`servicecomb.rateLimiting.flow`
 
-**以下配置以`app=region-A`,` serviceName=flowControlDemo`, `environment=testing`举例**
+In the preceding information, `flow `is the service scenario name. The traffic limiting rule takes effect only when the two service scenario names are the same and the request matches a traffic flag.
 
-- #### 流量标记配置示例
+The following describes the related configurations:
+
+- **Traffic Marking**
+
+  ```yaml
+  matches:            # Matcher set. Multiple matchers can be configured.
+  - apiPath:          # Matched API path. Various comparison modes are supported, such as exact and contain.
+      exact: /degrade # Specific Matching Path
+    headers:          # Request header
+      key: 
+        exact: value  # Request header value. The value is key=value. The comparison method is the same as that of apiPath.
+    method:           # Supported Method Types
+    - GET
+    name: degrade     # Configuration name, which is optional.
+  ```
+
+  **what traffic marking above can match  :**
+
+  - If the request path is `/degrade`, the method type is `GET`, and the request header contains `key=value`, the matching is successful.
+
+  
+
+  > For details about the configuration items, see the traffic marking section in the [ServiceComb development document](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2).
+
+  **Traffic marking request path (apiPath) configuration description**
+
+  The request path for traffic marking varies according to the request protocol configuration. Currently, HTTP (Spring) and RPC (Dubbo) protocols are used. The following describes how to configure the two request protocols:
+
+  - **Http protocol**
+
+    This protocol performs matching based on the request path. For example, if the request path is `localhost:8080/test/flow`, the actual path is `/test/flow`. Therefore, if you need to set a matching rule, you need to configure the matching rule based on the path.
+
+    It should be noted that if the contextPath configured by the user is valid only after the contextPath prefix is added.
+
+  - **Rpc protocol(Dubbo)**
+
+    The protocol invoking needs to be based on an interface+method. For example, if the requested interface is `com.demo.test`, and the method is `flow`, a corresponding request path is `com.demo.test.flow`. Specially, if a user configures an interface version, for example, a specified version is `1.0.0`, The request path is `com.demo.test:1.0.0.flow`. In addition, set the request method to `POST`. The RPC protocol supports only POST.
+
+- **Traffic Limiting**
+
+  | Configuration      | Description                                                  |
+  | ------------------ | ------------------------------------------------------------ |
+  | limitRefreshPeriod | Unit of statistics time, in milliseconds. If you need to set this parameter, the unit can be set to `S`, for example, `10s`. |
+  | rate               | Number of requests that can be processed in the unit of statistical time. |
+
+- **Circuit Breaker**
+
+  | Configuration             | Description                                                  |
+  | ------------------------- | ------------------------------------------------------------ |
+  | failureRateThreshold      | Error rate required for fuse                                 |
+  | minimumNumberOfCalls      | Minimum number of requests in the sliding window. The fuse condition is determined only when the minimum number of requests is exceeded. |
+  | name                      | Specifies the name of a configuration item. This parameter is optional. |
+  | slidingWindowSize         | Size of the sliding statistics window. The value can be milliseconds or seconds. For example, 1000 indicates 1000 milliseconds, and 10s indicates 10 seconds. |
+  | slidingWindowType         | Sliding window type. Currently, `time` and `count` are supported. The former is based on the time window and the latter is based on the number of requests. |
+  | slowCallDurationThreshold | Slow request threshold. The unit is the same as that of the sliding window. |
+  | slowCallRateThreshold     | Percentage of slow invoking requests. When the number of slow invoking requests reaches this percentage, connectivity is triggered. |
+  | waitDurationInOpenState   | Recovery time after a circuit breaker. The default value is `60s`. |
+
+- **Bulkhead**
+
+  | Configuration      | Description                                                  |
+  | ------------------ | ------------------------------------------------------------ |
+  | maxConcurrentCalls | Maximum number of concurrent calls                           |
+  | maxWaitDuration    | Maximum waiting time. If the thread exceeds maxConcurrentCalls, the thread attempts to wait. If the thread does not obtain resources after the waiting time expires, an isolation warehouse exception is thrown. |
+  | name               | name of configuration, which is optional.                    |
+
+- **Retry**
+
+  | Configuration         | Description                                                  |
+  | --------------------- | ------------------------------------------------------------ |
+  | waitDuration          | Retry wait time. The default value is milliseconds. The unit is second, for example, 2s. |
+  | retryStrategy         | Retry policy. Currently, two retry policies are supported: fixed interval (FixedInterval) and exponential increase interval (RandomBackoff). |
+  | maxAttempts           | Maximum number of retries                                    |
+  | retryOnResponseStatus | HTTP status code. Currently, only HTTP requests are supported. For dubbo requests, you can configure the exception type to determine whether to retry. The default value is RpcException. |
+
+- **Error Injection**
+
+  | Configuration | Description                                                  |
+  | ------------- | ------------------------------------------------------------ |
+  | type          | Error injection type. Currently, `abort (request response)` and `delay (request delay)` are supported. |
+  | percentage    | Error Injection triggering probability                       |
+  | fallbackType  | Return type of the request invoking. This parameter is valid only when `type is set to abort`. Currently, two types are supported, `ReturnNull`: empty content is directly returned and the status code is 200. `ThrowException`: The error code is returned based on the specified error code.` |
+  | errorCode     | Specifies the returned error code. The default value is 500. This parameter is valid only `when type is abort and fallbackType is ThrowException`. |
+  | forceClosed   | Indicates whether to forcibly disable the error injection capability. If this parameter is set to true, error injection does not take effect. The default value is false. |
+
+### Configuring Flow Control Rule
+
+#### Configuring Flow Control Rules Based On The Configuration File
+
+If your application is not a SpringBoot application, this method is not applicable.
+
+When an application is started, the flow control plugin attempts to read the flow control rules and corresponding traffic flags from the configuration source loaded by SpringBoot. You need to configure the flow control rules before starting the application. The following is a configuration example. The example configuration is based on the `application.yml` file.
+
+```yaml
+servicecomb:
+  matchGroup:
+    demo-fault-null: |
+      matches:
+        - apiPath:
+            exact: "/flow"
+    demo-retry: |
+      matches:
+        - apiPath:
+            prefix: "/retry"
+          serviceName: rest-provider
+          method:
+          - GET
+    demo-rateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/flow"
+    demo-circuitBreaker-exception: |
+      matches:
+        - apiPath:
+            exact: "/exceptionBreaker"
+    demo-bulkhead: |
+      matches:
+        - apiPath:
+            exact: "/flowcontrol/bulkhead"
+  rateLimiting:
+    demo-rateLimiting: |
+      rate: 1
+  retry:
+    demo-retry: |
+      maxAttempts: 3
+      retryOnResponseStatus:
+      - 500
+  circuitBreaker:
+    demo-circuitBreaker-exception: |
+      failureRateThreshold: 44
+      minimumNumberOfCalls: 2
+      name: circuit breaker
+      slidingWindowSize: 10000
+      slidingWindowType: time
+      waitDurationInOpenState: 5s
+  bulkhead:
+    demo-bulkhead: |
+      maxConcurrentCalls: 1
+      maxWaitDuration: 10
+  faultInjection:
+    demo-fault-null: |
+      type: abort
+      percentage: 100
+      fallbackType: ReturnNull
+      forceClosed: false
+```
+
+The preceding configurations are used to configure the supported flow control rules. Change the configuration items based on the site requirements.。
+
+#### Configuring Interface Advertisement Rules Based on Sermant Backend
+
+The backend service provides the function of publishing configurations through the /publishConfig request interface. The request parameters are as follows:
+
+| Configuration | Description                                                  |
+| ------------- | ------------------------------------------------------------ |
+| key           | Configuration key                                            |
+| group         | Configured tag group                                         |
+| content       | Configuration content, that is, specific rule configuration, is in YAML format. |
+
+> The format of group is k1=v1, and multiple values are separated by ampersands (&). For example, k1=v1&k2=v2, indicating the label group bound to the key.
+
+**The following uses `app=region-A,serviceName=flowControlDemo, environment=testing` as an example.**
+
+- #### The Example Configuration For Traffic Marking Rule
 
   ```json
   {
@@ -109,34 +272,20 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   }
   ```
 
-  **content配置项说明**
 
-  ```yaml
-  alias: flowcontrol  # 别名
-    matches: # 匹配器集合，可配置多个
-      - apiPath: # 匹配的api路径， 支持各种比较方式，相等(exact)、包含(contains)等
-          exact: /degrade # 具体匹配路径
-        headers: { }       # 请求头
-        method: # 支持方法类型
-          - GET
-        name: degrade     # 可选，配置名
-  ```
+**Rule Interpretation:**
 
-**规则解释:**
+- If the request path is `/flow` and the method type is `GET`, the matching is successful.
+- This parameter takes effect for the service instance whose app is `region-A`, service name is `flowControlDemo`, and environment is `testing`.
 
-- 请求路径为`/degrade`且方法类型为`GET`即匹配成功
-- 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
 
-> 详细配置项可参考[ServiceComb开发文档](http://servicecomb.gitee.io/servicecomb-java-chassis-doc/java-chassis/zh_CN/references-handlers/governance.html#_2)流量标记部分
+
+> **Notices：**
 >
->
->
-> **注意事项：**
->
-> - 流控配置首先需配置业务场景，再配置与业务场景绑定的流控规则
-> - `key`必须以`servicecomb.matchGroup.`为前置，`scene`则为业务名称
+> - To configure flow control, you need to configure the service scenario and then configure the flow control rule bound to the service scenario.
+> - The `key` must be preceded by `servicecomb.matchGroup`. and the scene indicates the service name.
 
-- #### **流控规则配置示例**
+- #### The Example Configuration For Traffic Limiting Rule
 
   ```json
   {
@@ -145,24 +294,18 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
       "content":"limitRefreshPeriod: \"1000\"\nname: flow\nrate: \"2\"\n"
   }
   ```
-  **流控配置项说明：**
+  **Rule Interpretation：**
 
-  | 配置项             | 说明                                                         |
-  | ------------------ | ------------------------------------------------------------ |
-  | limitRefreshPeriod | 单位统计时间，单位毫秒, 若需配置秒则可增加单位`S`， 例如`10S` |
-  | rate               | 单位统计时间所能通过的**请求个数**                           |
+    - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
+    - If more than two requests are received within one second, flow control is triggered.
 
-  **规则解释：**
+  
 
-    - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
-
-    - 1秒内超过2个请求，即触发流控效果
-
-  > **注意事项：**
+  > **Notices：**
   >
-  > `key`必须以`servicecomb.rateLimiting.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
+  > The `key` must be preceded by `servicecomb.rateLimiting`. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
 
-- #### **熔断规则配置示例**
+- #### The Example Configuration For Circuit Breaker Rule
 
   ```json
   {
@@ -171,56 +314,39 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
       "content":"failureRateThreshold: 90\nminimumNumberOfCalls: 3\nname: degrade\nslidingWindowSize: 10S\nslidingWindowType: time\nslowCallDurationThreshold: \"1\"\nslowCallRateThreshold: 80\nwaitDurationInOpenState: 10s"
   }
   ```
-  **熔断配置项说明：**
+  **Rule Interpretation:**
 
-  | 配置项                    | 说明                                                         |
-  | ------------------------- | ------------------------------------------------------------ |
-  | failureRateThreshold      | 熔断所需达到的错误率                                         |
-  | minimumNumberOfCalls      | 滑动窗口内的最小请求数， 超过最小请求数才开始判断熔断条件    |
-  | name                      | 配置项名称，可选参数                                         |
-  | slidingWindowSize         | 滑动统计窗口大小，支持毫秒与秒，例如`1000`为1000毫秒, `10S`代表10秒 |
-  | slidingWindowType         | 滑动窗口类型，目前支持`time`与`count`两种类型，前者基于时间窗口统计，后者基于请求次数 |
-  | slowCallDurationThreshold | 慢请求阈值，单位同滑动窗口配置                               |
-  | slowCallRateThreshold     | 慢请求占比，当慢调用请求数达到该比例触发通断                 |
-  | waitDurationInOpenState   | 熔断后恢复时间，默认`60S`                                    |
+    - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
+    - If the number of interface or flow requests exceeds three within 10 seconds and the error rate exceeds 90% or the percentage of slow requests exceeds 80%, the circuit breaker is triggered.
 
-  **规则解释:**
+  
 
-    - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
-    - 10秒内，若请求个数超过3个，且错误率超过90%或者慢请求占比超过80%则触发熔断
-
-  > **注意事项：**
+  > **Notices：**
   >
-  > `key`必须以`servicecomb.circuitBreaker.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
+  > The key must be preceded by servicecomb.circuitBreaker. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
 
-- #### 隔离仓规则配置示例
+- #### The Example Configuration For Bulkhead Rule
 
   ```json
   {
       "key":"servicecomb.bulkhead.scene",
       "group":"app=region-A&service=flowControlDemo&environment=testing",
-      "content":"maxConcurrentCalls: \"5\"\nmaxWaitDuration: \"10S\"\nname: \"隔离仓\"\n"
+      "content":"maxConcurrentCalls: \"5\"\nmaxWaitDuration: \"10S\"\nname: \"bulkhead\"\n"
   }
   ```
 
-  **隔离仓配置项说明：**
+  **Rule Interpretation:**
 
-  |       配置项       |                             说明                             |
-  | :----------------: | :----------------------------------------------------------: |
-  | maxConcurrentCalls |                          最大并发数                          |
-  |  maxWaitDuration   | 最大等待时间，若线程超过`maxConcurrentCalls`，会尝试等待，若超出等待时间还未获取资源，则抛出隔离仓异常 |
-  |        name        |                        可选，配置名称                        |
+    - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
+    - For an interface `/flow`, if the maximum number of concurrent requests exceeds 5 and a new request waits for 10 seconds and resources are not obtained, an exception occurs in the isolation repository.
 
-  **规则解释:**
+  
 
-    - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
-    - 若最大并发数超过5，且新的请求等待10S，还未获取资源，则触发隔离仓异常
-
-  > **注意事项：**
+  > **Notices：**
   >
-  > `key`必须以`servicecomb.bulkhead.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
+  > The key must be preceded by servicecomb.bulkhead. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
 
-- #### 重试规则配置示例
+- #### The Example Configuration For Retry Rule
 
   ```json
   {
@@ -230,25 +356,20 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   }
   ```
 
-  **重试配置项说明：**
+  **Rule Interpretation：**
 
-  |        配置项         |                             说明                             |
-  | :-------------------: | :----------------------------------------------------------: |
-  |     waitDuration      |          重试等待时间，默认毫秒；支持秒单位，例如2S          |
-  |     retryStrategy     | 重试策略，当前支持两种重试策略：固定时间间隔（FixedInterval）， 指数增长间隔(RandomBackoff) |
-  |      maxAttempts      |                         最大重试次数                         |
-  | retryOnResponseStatus | HTTP状态码，当前仅支持HTTP请求；针对dubbo请求，可通过配置异常类型确定是否需要重试，默认为RpcException |
+    - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
+    - For an interface `/flow`, when the 500 exception is thrown, the request is retried until the retry succeeds or the maximum number of retry times is reached.
 
-  **规则解释：**
+  
 
-    - 针对app为region-A，服务名为flowControlDemo且环境为testing的服务实例生效
-    - 当请求抛出500异常时进行重试，直到重试成功或者达到最大重试次数
-
-  > 注意事项：**
+  > **Notices**：
   >
-  > `key`必须以`servicecomb.retry.`为前置，`scene`则为业务名称，确保与流量标记的业务场景名称一致
+  > The key must be preceded by servicecomb.retry. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
 
-- #### 错误注入规则示例
+  **Notices**: For Dubbo retry, the flow control plugin will replace the original ClusterInvoker. The request logic is invoked by the ClusterInvoker implemented by the flow control plugin, and the original ClusterInvoker will become invalid (for example: Default FailoverClusterInvoker for dubbo. If you need to use original ClusterInvoker, you can add the environment variable `-Dflow.control.plugin.useOriginInvoker=true`. However, this method may cause a small performance loss.
+
+- #### The Example Configuration For Error Injection Rule
 
   ```json
   {
@@ -258,46 +379,40 @@ java -javaagent:${agent路径}/sermant-agent.jar=appName=${serviceName} -Dservic
   }
   ```
 
-  **错误注入配置项说明：**
+  **Rule Interpretation：**
 
-  | 配置项       | 说明                                                         |
-  | ------------ | ------------------------------------------------------------ |
-  | type         | 错误注入类型, 目前支持abort(请求直接返回)与delay（请求延时） |
-  | percentage   | 错误注入触发概率                                             |
-  | fallbackType | 请求调用返回类型，仅`type=abort`生效。当前支持两种`ReturnNull`:直接返回空内容，状态码200；`ThrowException`: 按照指定错误码返回，关联配置`errorCode` |
-  | errorCode    | 指定错误码返回, 默认500, 仅在`type=abort`且`fallbackType=ThrowException`生效 |
-  | forceClosed  | 是否强制关闭错误注入能力, 当为true时，错误注入将不会生效。默认false |
+  - This parameter takes effect for the service instance whose app is region-A, service name is flowControlDemo, and environment is testing.
+  - When the interface /flow is requested, 100% returns null.
 
-## 快速开始
+  
 
-### 1、编译打包
+  > **Notices**：
+  >
+  > The key must be preceded by servicecomb.faultInjection. and scene indicates the service name. Ensure that the value is the same as the service scenario name of the traffic tag.
 
-通过[此处](https://github.com/huaweicloud/Sermant/releases)下载agent源码包,
-并下载[Demo应用](../../../sermant-plugins/sermant-flowcontrol/flowcontrol-demos/flowcontrol-demo)
+## Quick Start
 
-执行以下maven命令对agent进行打包
+### 1、Compile And Package
 
-```shell
-mvn clean package -Dmaven.test.skip -Pagent
-```
+Download the [sermant release package](https://github.com/huaweicloud/Sermant/releases) and [demo source code](../../../sermant-plugins/sermant-flowcontrol/flowcontrol-demos/flowcontrol-demo).
 
-执行以下maven命令对Demo应用执行打包
+Run the following maven command to package the demo application:
 
 ```shell
 mvn clean package
 ```
 
-### 2、启动应用
+### 2、Start Application
 
 ```shell
-java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=FlowControlDemo -Dservice.meta.application=region-A -Dservice.meta.environment=testing -Dspring.application.name=FlowControlDemo -jar FlowControlDemo.jar
+java -javaagent:${agent path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=FlowControlDemo -Dservice.meta.application=region-A -Dservice.meta.environment=testing -Dspring.application.name=FlowControlDemo -jar FlowControlDemo.jar
 ```
 
-### 3、配置规则
+### 3、Configure The Rule
 
-参考[配置流控规则](#配置流控规则)配置**流量标记**与**流控规则**
+Configure traffic marking and traffic limiting rules by referring to [Configuring Flow Control Rules](#Configuring-Flow-Control-Rule).
 
-**流量标记:**
+**Traffic Marking:**
 
 ```json
 {
@@ -307,7 +422,7 @@ java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appNa
 }
 ```
 
-**流控规则：**
+**Traffic Limiting Rule：**
 
 ```json
 {
@@ -317,14 +432,14 @@ java -javaagent:${agent路径}\sermant-agent-x.x.x\agent\sermant-agent.jar=appNa
 }
 ```
 
-### 4、验证结果
+### 4、Verify Result
 
-多次请求`localhost:12000/flow`, 若在2秒内请求数超过4个时返回`flow limited`，则触发流控成功
+Request `localhost:12000/flow` for multiple times. If `rate limited` is returned when the number of requests exceeds 4 within 2 seconds, flow control is triggered successfully.
 
-## 其他
+## Others
 
-若使用过程中遇到问题请先参考[FAQ文档](./FAQ.md)
+If you encounter any problems, refer to the [FAQ document](./FAQ.md).
 
 
 
-[返回**Sermant**说明文档](../../README.md)
+[Back to README of **Sermant** ](../../README.md)

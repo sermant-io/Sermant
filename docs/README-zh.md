@@ -85,9 +85,11 @@ k8s环境下，Sermant支持通过sermant-injector组件实现宿主应用自动
 |[入口模块介绍](user-guide/entrance-zh.md)|使用手册|
 |[后端模块介绍](user-guide/backend-zh.md)|使用手册|
 |[容器化部署指导手册](user-guide/injector-zh.md) |使用手册|
-|[限流降级功能介绍](user-guide/flowcontrol/flowcontrol.md)|使用手册|
-|[动态配置功能介绍](user-guide/dynamic-config/document.md)|使用手册|
-|[服务注册功能介绍](user-guide/registry/document.md)|使用手册|
+|[限流降级功能介绍](user-guide/flowcontrol/flowcontrol-zh.md)|使用手册|
+|[负载均衡功能介绍](user-guide/loadbalancer/document-zh.md)|使用手册|
+|[动态配置功能介绍](user-guide/dynamic-config/document-zh.md)|使用手册|
+|[服务注册功能介绍](user-guide/registry/document-zh.md)|使用手册|
+|[优雅上下线功能介绍](user-guide/graceful/document-zh.md)|使用手册|
 |[标签路由功能介绍](user-guide/router/document-zh.md)|使用手册|
 |[服务监控功能介绍](user-guide/server-monitor/document-zh.md)|使用手册|
 |[线程变量插件功能介绍](user-guide/threadlocal/document-zh.md)|使用手册|

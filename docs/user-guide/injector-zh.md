@@ -139,6 +139,13 @@ spec:
       labels:
         app: demo-test
         sermant-injection: enabled
+    spec:
+      containers:
+      - name: image
+        # 请替换成您的应用镜像
+        image: image:1.0.0
+        ports: 
+        - containerPort: 8080
   ports:
     - port: 443
       targetPort: 8443

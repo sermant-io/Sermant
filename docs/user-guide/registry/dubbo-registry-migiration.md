@@ -1,65 +1,63 @@
 # Registry Migration - Dubbo
 
-本文主要介绍[服务注册插件](../../../sermant-plugins/sermant-service-registry)基于Dubbo框架注册中心的迁移能力。
+[简体中文](dubbo-registry-migiration-zh.md) | [English](dubbo-registry-migiration.md)
 
-SpringCloud迁移见[SpringCloud注册中心迁移](spring-cloud-registry-migiration.md)
+This document describes the migration capability of the [service registration plugin](../../../sermant-plugins/sermant-service-registry) based on the Dubbo framework registration center.
 
-## 功能
+For details about SpringCloud migration, see [SpringCloud Registration Center Migration](spring-cloud-registry-migiration.md).
 
-提供代码无侵入方式，基于双注册的模式让线上应用在线上业务不停机的前提下将注册中心快速迁移到[Service Center](https://github.com/apache/servicecomb-service-center)的能力。支持注册中心如下：
+## Function
 
-| 注册中心   | 是否支持 |
+Provides the capability of quickly migrating the registration center to the [Service Center](https://github.com/apache/servicecomb-service-center) based on the dual-registration mode without interrupting online services business. The following registration centers are supported:
+
+| Registration Center | Support |
 | --------- | -------- |
 | Nacos     | ✅        |
 | Zookeeper | ✅        |
 
-**支持版本**
+## Support Versions
 
 Dubbo 2.6.x, 2.7.x
 
-**搬迁示意图**
+**Schematic diagram of migration**
 
-![agent注册中心迁移-迁移示意图](../../binary-docs/sermant-register-migration.png)
+![agent注册中心迁移-迁移示意图](../../binary-docs/sermant-register-migration-en.png)
 
-## 使用说明
+## Usage
 
-### 修改[插件配置文件](../../../sermant-plugins/sermant-service-registry/config/config.yaml)
+### Modify [Plugin Configuration File](../../../sermant-plugins/sermant-service-registry/config/config.yaml)
 
-文件路径为：${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml，其中${agent_package_path}需要替换为实际的打包路径。
+The file path is `${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml`. Please replace `${agent_package_path}` with the actual package path.
 
-将servicecomb.service.openMigration与servicecomb.service.enableDubboRegister的值设置为true，如下所示：
+Set servicecomb.service.openMigration and servicecomb.service.enableDubboRegister to true as follows:
 
 ```yaml
 servicecomb.service:
-  openMigration: true #开启迁移功能
-  enableDubboRegister: true #开启dubbo插件注册
+  openMigration: true #Enable the migration function
+  enableDubboRegister: true #Enabling Dubbo plugin registration
 ```
 
-详细配置说明见[服务注册插件文档](./document.md#按需修改插件配置文件)
+For details, see the [service registration plugin document](./document.md#Modify-the-plugin-configuration-file-on-demand).
 
-**注意：如果开启了迁移功能，则无需修改原有的注册中心地址，否则将不会同时向2个注册中心（原注册中心+sc）进行注册。**
+**Notices**: If the migration function is enabled, you do not need to change the address of the original registration center. Otherwise, the registration will not be performed at the same time with two registration centers (original registration center + SC).
 
-### 启动Service Center
+### Startup Service Center
 
-Service Center启动流程详见[官网](https://github.com/apache/servicecomb-service-center)
+For details about the Service Center startup process, see the [official website](https://github.com/apache/servicecomb-service-center).
 
-## 结果验证
+## Verification
 
-- 说明：此处以原注册中心为Nacos进行举例。
-
-- 前提条件[正确打包Sermant](../../README.md)。
-
-- 启动Service Center，下载、使用说明和启动流程详见[官网](https://github.com/apache/servicecomb-service-center)。
-
-- 启动Nacos，下载、使用说明和启动流程详见[官网](https://nacos.io/zh-cn/docs/quick-start.html)。
-
-- 编译[demo应用](../../../sermant-plugins/sermant-service-registry/demo-registry/demo-registry-dubbo)。
+- Notice：In this example, the original registration center is Nacos.
+- Prerequisites: [The Sermant is packaged correctly](../../README.md).
+- Start Service Center. For details about how to download, use, and start Service Center, see the [official website](https://github.com/apache/servicecomb-service-center).
+- Start the Nacos. For details about how to download, use, and start the Nacos, see the [official website](https://nacos.io/zh-cn/docs/quick-start.html).
+- Compile [demo application](../../../sermant-plugins/sermant-service-registry/demo-registry/demo-registry-dubbo)
 
 ```shell
 mvn clean package
 ```
 
-- 启动双注册消费者
+- Start up dual registration consumer
 
 ```shell
 # windows
@@ -69,9 +67,9 @@ java -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableDubboR
 java -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=dubbo-consumer -jar dubbo-consumer.jar
 ```
 
-注：为了便于测试，这里使用了-Dservicecomb.service.openMigration=true -Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo迁移功能，如果使用了其它的方式打开了dubbo迁移开关，则无需添加该参数。
+Notices: To facilitate the test, the dubbo migration function is enabled in -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableDubboRegister=true mode. If the dubbo migration function is enabled in other modes, you do not need to add this parameter.
 
-- 启动原生产者（注册到Nacos中）
+- Start the original producer (registered with the Nacos).
 
 ```shell
 # windows
@@ -81,7 +79,7 @@ java -jar dubbo-provider.jar
 java -jar dubbo-provider.jar
 ```
 
-- 启动新生产者（注册到SC中）
+- Starting a New Producer (Registering to the SC)
 
 ```shell
 # windows
@@ -91,14 +89,16 @@ java -Dservicecomb.service.enableDubboRegister=true -Dserver.port=48021 -Ddubbo.
 java -Dservicecomb.service.enableDubboRegister=true -Dserver.port=48021 -Ddubbo.protocol.port=48821 -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar=appName=dubbo-provider -jar dubbo-provider.jar
 ```
 
-注：为了便于测试，这里使用了-Dservicecomb.service.enableDubboRegister=true的方式打开了dubbo注册开关，如果使用了其它的方式打开了dubbo注册开关，则无需添加该参数；另外为了解决同一台服务器启动2个provider遇到的端口冲突问题，需要增加-Dserver.port=48021 -Ddubbo.protocol.port=48821参数，如果测试时2个provider在不同的服务器，则无需添加该参数。
+Notice: To facilitate the test, the Dubbo registration function is enabled in -Dservicecomb.service.enableDubboRegister=true mode. If the Dubbo registration function is enabled in other modes, you do not need to add this parameter. In addition, to solve the port conflict problem when two providers are started on the same server, you need to add the -Dserver.port=48021 -Ddubbo.protocol.port=48821 parameter. If the two providers are on different servers, you do not need to add this parameter.
 
-其中${path}需要替换为Sermant工程路径，x.x.x需要替换为Sermant实际版本号，appName为agent启动参数中的应用名，与注册参数无关，执行命令的目录需要为demo应用的jar包所在的目录。
+Please replace `${path}` with the Sermant project path, replace x.x.x with the actual Sermant version number, and appName with the application name in the agent startup parameter, which is irrelevant to the registration parameter. The directory for running the command must be the directory where the JAR package of the demo application is located.
 
-启动参数的具体意义见[入口模块](../entrance.md#启动参数)。
+Startup parameters can referring to the [entry module](../entrance.md#Startup-Parameters).
 
-- 测试
+- Test
 
-当启动以上3个应用后，登录[Service Center](http://127.0.0.1:30103/)后台和[Nacos](http://127.0.0.1:8848/nacos/index.html#/serviceManagement)后台，均可查看到consumer和provider应用，并且多次访问应用接口<http://localhost:28020/test>，确认接口是否正常返回，若接口成功返回并可访问2个注册中心的生产者实例，则说明注册并迁移成功。
+After the preceding three applications are started, log in to the [Service Center](http://127.0.0.1:30103/) background and [Nacos background](http://127.0.0.1:8848/nacos/index.html#/serviceManagement) to view the consumer and provider applications. Access the application interface http://localhost:28020/test for multiple times and check whether the interface returns a normal response. If the interface successfully returns a response and the producer instances of the two registration centers can be accessed, indiactes that the registration and migration are successful.
 
-[返回**服务注册插件**说明文档](./document.md)
+[Back to **Service Registration**](./document.md)
+
+[Back to README of **Sermant** ](../../README.md)
