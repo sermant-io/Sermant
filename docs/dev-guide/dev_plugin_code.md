@@ -1,340 +1,343 @@
-# 插件代码开发手册
+# Plugin Code Development Guide
 
-本文档主要针对**Sermant**的[示例模块](../../sermant-plugins/sermant-example)，介绍插件开发过程中常见的一些场景。
+[简体中文](dev_plugin_code-zh.md) | [English](dev_plugin_code.md) 
 
-- [组成部分](#组成部分)
-- [插件模块](#插件模块)
-  - [增强定义](#增强定义)
-    - [原生类增强](#原生类增强)
-  - [拦截器](#拦截器)
-  - [插件配置](#插件配置)
-  - [插件服务](#插件服务)
-    - [简单插件服务](#简单插件服务)
-    - [复杂插件服务](#复杂插件服务)
-    - [日志功能](#日志功能)
-    - [心跳功能](#心跳功能)
-    - [链路功能](#链路功能)
-    - [动态配置功能](#动态配置功能)
-- [插件服务模块](#插件服务模块)
+This document focuses on **Sermant**'s [example module](../../sermant-example), which describes some common scenarios during plug-in development.
 
-## 组成部分
+- [Components](#Components)
+- [Plugin Module](#Plugin-Module)
+  - [Enhancement Definition](#Enhancement-Definition)
+    - [Enhancement for Native Class](#Enhancement-for-Native-Class)
+  - [Interceptor](#Interceptor)
+  - [Plugin Configuration](#Plugin-Configuration)
+  - [Plugin Service](#Plugin-Service)
+    - [Simple Plugin Service](#Simple-Plugin-Service)
+    - [Complex Plugin Service](#Complex-Plugin-Service)
+    - [Log](#Log)
+    - [Heartbeat](#Heartbeat)
+    - [Trace Tracking](#Trace-Tracking)
+    - [Dynamic Configuration](#Dynamic-Configuration)
+- [Plugin Service Module](#Plugin-Service-Module)
 
-由[插件模块开发手册](dev_plugin_module.md)可知，一个`插件主模块(main)`中可能包含以下5种内容：
+## Components
 
-- `插件模块(plugin)`，该模块主要用于声明对宿主应用的增强逻辑
-- `服务模块(service)`，用于为插件包提供服务实现
-- `后端模块(server)`，用于接收插件数据的服务端
-- `前端模块(webapp)`，用于对服务端数据作前端展示
-- `其他模块(other)`，特殊附加件，一般用作调试
+According to the [Plugin Module Development Guide](dev_plugin_module.md), a `main` plugin module contains the following five things:
 
-考虑到后三者随实际业务场景不同有较大变化，因此赋予他们的开发自由度较高，对他们仅有模块目录和输出目录的限制。出于这点考虑，`示例模块`将不对他们做参考案例。`示例模块`中包含以下模块：
+- The `plugin` module, which is mainly used to declare enhancements to the host application.
+- The `service` module, which provides the service implementation for the plugin package.
+- The `backend` module (server), which receives the data from plugin.
+- The `frontend` module (webapp), which is used to display the server-side data
+- The `other` module (special add-on), which is usually used for debugging.
 
-- [demo-plugin](../../sermant-example/demo-plugin): 示例插件
-- [demo-service](../../sermant-example/demo-service): 示例插件服务
-- [demo-application](../../sermant-example/demo-application): 示例宿主应用
+Considering that the latter three have great changes with the actual business scenarios, they are given a high degree of development freedom, and they are only limited by the module directory and the output directory. For this reason, the `example module` will not be a reference case for them. The `example module` contains the following modules:
 
-## 插件模块
+- [demo-plugin](../../sermant-example/demo-plugin): the example for plugin
+- [demo-service](../../sermant-example/demo-service): the example for plugin service
+- [demo-application](../../sermant-example/demo-application): the example for host application
 
-示例插件模块`demo-plugin`中，主要用于向插件开发者展示在插件开发过程中可能遇到的一些场景以及可能使用到的一些功能。
+## Plugin Module
 
-开始之前，必须约定的就是，`插件模块(plugin)`中，开发者只能使用*Java*原生API和[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中的API，不能依赖或使用任何`byte-buddy`与`slf4j`以外的第三方依赖。如果应业务要求，需要使用其他第三方依赖的话，只能在`插件模块(plugin)`中定义接口，在`服务模块(service)`中编写实现。更多相关内容详见[插件模块开发手册](dev_plugin_module.md#添加插件模块)。
+The example plugin module `demo-plugin` is mainly used to show plugin developers some scenarios that may be encountered in the development process of plugins and some functions that may be used.
 
-### 增强定义
+Before we start, it's important to agree that in `plugin` modules, developers can only use the *Java* native API and the [**Sermant** core module](../../sermant-agentcore/sermant-agentcore-core) and cannot rely on or use any third-party dependencies other than `byte-buddy` and `slf4j`. If the business needs to use other third-party dependencies, you can only define the interface in the `plugin` module and write the implementation in the `service` module. Refer to the [Plugin Module Development Guide](dev_plugin_module.md#Add-Plugin-Module) for more information.
 
-**Sermant**的核心能力是对宿主应用做非侵入式的字节码增强，而这些增强规则则是插件化的。在每个**Sermant**的`插件主模块(main)`中，都可以定义一些增强定义，针对宿主应用的某些特定方法进行字节码增强，从而实现某种功能。因此`插件主模块(main)`如何告知**Sermant**该增强哪些类，是一个重要的课题。
+### Enhancement Definition
 
-插件的增强定义需要实现[PluginDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/PluginDeclarer.java)接口，其中包含两个接口方法：
+The core capability of **Sermant** is to make non-intrusive bytecode enhancements to the host application, and these enhancement rules are base on plugins. In the `main` module of each **Sermant** plugin, enhancement definitions can be defined to enhance the bytecode of specific methods of the host application to achieve certain functionality. So how the `main` module tells the **Sermant** which classes to augment is an important topic.
 
-- `getClassMatcher`方法用于获取被增强类的匹配器[ClassMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/ClassMatcher.java)。
-- `getInterceptDeclarers`方法用于获取被增强类的拦截点方法，以及嵌入其中的拦截器，他们封装于方法拦截点[InterceptDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/InterceptDeclarer.java)中。
-- `getSuperTpeDecarers`方法用于获取插件的超类声明[SuperTypeDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/SuperTypeDeclarer.java)
+The Enhancement definition of plugins requires the implementation of [PluginDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/PluginDeclarer.java) interface, which contains two methods:
 
-对匹配器 [ClassMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/ClassMatcher.java)，在核心模块中提供了两种类型的匹配器：
+- `getClassMatcher` is used to get the matcher [ClassMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/ClassMatcher.java) of the enhanced class.
+- `getInterceptDeclarers` is used to obtain the method of interceptor point of the enhanced class, as well as the interceptors embedded in it, encapsulated in the method interceptor point [InterceptDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/InterceptDeclarer.java).
+- `getSuperTpeDecarers` gets the plugin's superclass declaration [SuperTypeDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/SuperTypeDeclarer.java).
 
-[ClassTypeMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/ClassTypeMatcher.java)(类的类型匹配器)
+The matcher [ClassMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/ClassMatcher.java), which provides two types of matchers in the core module:
 
-- 完全通过名称匹配，也是最常见的定位方式，通过以下方法获取：
+[ClassTypeMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/ClassTypeMatcher.java)(the matcher for class name)
+
+- The most common way to do this is purely by name matching, which is obtained by:
   ```java
   ClassMatcher.nameEquals("${class reference}");
   ```
-  其中`${class reference}`为被增强类的全限定名。
+  Where `${class reference}` is the full qualified class name of the enhanced class.
 
 
-- 通过名称匹配多个类，属于`nameEquals`的复数版，可通过以下方法获取：
+- Matching multiple classes by name, which is the plural version of `nameEquals`, can be obtained with the following method:
   ```java
   ClassMatcher.nameContains("${class reference array}");
   ```
-  其中`${class reference array}`为被增强类的全限定名可变数组。
+  Where `${class reference array}` is a full qualified class name mutable array of the enhanced class.
 
-[ClassFuzzyMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/ClassFuzzyMatcher.java)（类的模糊匹配器）
+[ClassFuzzyMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/ClassFuzzyMatcher.java)（the fuzzy matcher of class name）
 
-- 通过全限定名前缀定位到被增强类，可通过以下方法获取：
+- The enhanced class is located by the prefix of full qualified class name, which can be obtained by:
   ```java
   ClassMatcher.namePrefixedWith("${prefix}");
   ```
-  其中`${prefix}`为全限定名前缀。
+  Where `${prefix}` is the prefix of full qualified class name.
 
 
-- 通过全限定名后缀定位到被增强类，可以通过一下方法获取：
+- The enhanced class is located by the suffix of full qualified class name, which can be retrieved as follows:
   ```java
   ClassMatcher.nameSuffixedWith("${suffix}")
   ```
-  其中`${suffix}`为全限定名后缀。
+  Where `${suffix}` is the suffix of full qualified class name.
 
 
-- 通过全限定名内缀定位到被增强类，可以通过以下方法获取：
+- The enhanced class is located by the infix of full qualified class name, which can be obtained as follows:
   ```java
   ClassMatcher.nameinfixedWith("${infix}")
   ```
-  其中`${infix}`为全限定名内缀。
+  Where `${infix}` is the infix of full qualified class name.
 
 
-- 通过正则表达式匹配全限定名定位到被增强类，可以通过以下方法获取：
+- The enhanced class is located by matching the full qualified class name with a regular expression, which can be obtained as follows:
   ```java
   ClassMatcher.nameMatches("${pattern}")
   ```
-  其中`${pattern}`为正则表达式。
+  Where `${pattern}` is a regular expression.
 
 
-- 通过注解定位到被该注解修饰的类，可通过以下方法获取：
+- The enhanced class is located by annotation decorated, which can be obtained as follows:
+
   ```java
   ClassMatcher.isAnnotationWith("${annotation reference array}");
   ```
-  其中`${annotation reference array}`为注解的全限定名可变数组。
+  Where `${annotation reference array}` is a full qualified class name array of annotations.
 
 
-- 通过超类定位到该类的子类，可通过以下方法获取：
+- Locating a subclass by means of a superclass can be obtained using the following methods:
   ```java
   ClassMatcher.isExtendedFrom("${super class array}");
   ```
-  其中`${super class array}`为超类可变数组。考虑到Java的继承规则，该数组只能有一个`Class`，其余必须全为`Interface`。
+  Where `${super class array}` is a superclass mutable array. Due to Java inheritance rules, the array can only have one `class`, the rest must be `interface`.
 
 
-- 匹配的逻辑操作，匹配器全部不匹配时为真：
+- A matching logical operation, which is true when all matchers do not match:
   ```java
   ClassMatcher.not("${class matcher array}")
   ```
-  其中`${class matcher array}`为匹配器可变长数组
+  Where `${class matcher array}` is a variable-length array of matcher.
 
 
-- 匹配的逻辑操作，匹配器全部都匹配时为真：
+- A matching logical operation, which is true if the matcher matches all of them:
   ```java
   ClassMatcher.and("${class matcher array}")
   ```
-  其中`${class matcher array}`为匹配器可变长数组
+  Where `${class matcher array}` is a variable-length array of matcher.
 
 
-- 匹配的逻辑操作，匹配器其中一个匹配时为真：
+- A matching logical operation, which is true if one of the matcher matches:
   ```java
   ClassMatcher.or("${class matcher array}")
   ```
-  其中`${class matcher array}`为匹配器可变长数组
+  Where `${class matcher array}` is a variable-length array of matcher.
 
-对于方法拦截点[MethodMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/MethodMatcher.java)，提供了多种匹配方法：
+For method interception points [MethodMatcher](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/matcher/MethodMatcher.java), we provide a variety of matching methods:
 
-- 全数匹配：
+- Match any method:
   ```java
   MethodMatcher.any();
   ```
-- 名称匹配：
+- Match by method name:
   ```java
   MethodMatcher.nameEquals("${method name}");
   ```
-  其中`${method name}`为方法名称。
+  Where `${method name}` is the method name.
 
 
-- 匹配静态方法：
+- Match static method:
   ```java
   MethodMatcher.isStaticMethod();
   ```
-- 匹配构造函数：
+- Match constructor:
   ```java
   MethodMatcher.isConstructor();
   ```
-- 匹配多个方法：
+- Match multiple methods:
   ```java
   MethodMatcher.nameContains("${method name array}");
   ```
-  其中`${method name array}`为方法名称数组。
+  Where `${method name array}` is an array of method names.
 
 
-- 根据方法名称前缀匹配：
+- Match by prefix of method name:
   ```java
   MethodMatcher.namePrefixedWith("${method name prefix}");
   ```
-  其中`${method name prefix}`为方法名称前缀。
+  Where `${method name prefix}` is the prefix of method name .
 
 
-- 根据方法名称后缀匹配：
+- Match by suffix of method name:
   ```java
   MethodMatcher.nameSuffixedWith("${method name suffix}");
   ```
-  其中`${method name suffix}`为方法名称后缀。
+  Where `${method name suffix}` is the suffix of method name.
 
 
-- 根据方法名称内缀匹配：
+- Match by infix of method name：
   ```java
   MethodMatcher.nameinfixedWith("${method name infix}");
   ```
-  其中`${method name infix}`为方法名称内缀。
+  Where `${method name infix}` is the infix of method name.
 
 
-- 根据正则表达式匹配：
+- Match by regular expression:
   ```java
   MethodMatcher.nameMatches("${pattern}");
   ```
-  其中`${pattern}`为正则表达式。
+  Where `${pattern}` is a regular expression.
 
 
-- 匹配被传入注解修饰的方法：
+- Matches by annotation:
   ```java
   MethodMatcher.isAnnotatedWith("${annotations array}");
   ```
-  其中`${annotations array}`为注解集。
+  Where `${annotations array}` is the annotation set.
 
 
-- 匹配指定入参数量的方法：
+- Match by specified number of arguments:
   ```java
   MethodMatcher.paramCountEquals("${param count}");
   ```
-  其中`${param count}`为入参数量。
+  Where `${param count}` is the number of input parameters.
 
 
-- 匹配指定入参类型的方法：
+- Match by the specific type of argument:
   ```java
   MethodMatcher.paramTypeEquals("${param type array}");
   ```
-  其中`${param type array}`为入参类型集。
+  Where `${param type array}` is the set of input types.
 
 
-- 匹配指定返回值类型的方法：
+- Match by return type
   ```java
   MethodMatcher.resultTypeEquals("${result type}");
   ```
-  其中`${result type}`返回值类型。
+  Where `${result type}` is the return type.
 
 
-- 逻辑操作，方法匹配器集全不匹配时则结果为真
+- Logical operation, where the result is true if the method matcher set does not match at all.
   ```java
   MethodMatcher.not("${element matcher array}");
   ```
-  其中`${element matcher array}`为方法匹配器集。
+  Where `${element matcher array}` is the set of method matcher.
 
 
-- 逻辑操作，方法匹配器集全匹配时则结果为真
+- Logical operation, where the result is true if the method matcher set fully matches.
   ```java
   MethodMatcher.and("${element matcher array}");
   ```
-  其中`${element matcher array}`为方法匹配器集。
+  Where `${element matcher array}` is the set of method matcher.
 
 
-- 逻辑操作，方法匹配器集其中一个匹配时则结果为真
+- Logical operation, where the result is true if method matcher set matches one of the result.
   ```java
   MethodMatcher.or("${element matcher array}");
   ```
-  其中`${element matcher array}`为方法匹配器集。
+  Where `${element matcher array}` is the set of method matcher.
 
-更多方法匹配方式可以参考[byte-buddy](https://javadoc.io/doc/net.bytebuddy/byte-buddy/latest/net/bytebuddy/matcher/ElementMatchers.html)中含`MethodDescription`泛型的方法。
+For more methods matching method, refer to [byte-buddy](https://javadoc.io/doc/net.bytebuddy/byte-buddy/latest/net/bytebuddy/matcher/ElementMatchers.html) methods with a generic type of `MethodDescription` .
 
-开发到最后，不要忘记添加`PluginDeclarer`接口的*SPI*配置文件：
+Don't forget to add the *SPI* configuration file for the `PluginDeclarer` interface:
 
-- 在资源目录`resources`下添加`META-INF/services`文件夹。
-- 在`META-INF/services`中添加`com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer`配置文件。
-- 在上述文件中，以换行为分隔，键入插件包中所有的增强定义`PluginDeclarer`实现。
+- Add `META-INF/services` folder under `resources`.
+- Add `com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer` under `META-INF/services` .
+- In the above file, type all the enhancements definitions of `PluginDeclarer` in the plugin package separated with LF.
 
-**Sermant**的`示例模块`中包含以下`PluginDeclarer`接口的实现示例：
+The `example module` of **Sermant** contains the following example implementation of the `PluginDeclarer` interface:
 
-- [DemoAnnotationDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoAnnotationDeclarer.java): 通过注解定位被修饰类的普通增强定义
-- [DemoNameDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoNameDeclarer.java): 通过名称定位到被增强类的普通增强定义
-- [DemoSuperTypeDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoSuperTypeDeclarer.java): 通过超类定位到被增强子类的普通增强定义
-- [DemoBootstrapDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java): 对启动类加载器进行增强的定义，详见[原生类增强](#原生类增强)一节
-- [DemoTraceDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java): 对示例应用使用链路功能的增强定义，详见[链路功能](#链路功能)一节
+- [DemoAnnotationDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoAnnotationDeclarer.java): Locate enhanced class by annotation in the decorated class.
+- [DemoNameDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoNameDeclarer.java): Locate enhanced class by name.
+- [DemoSuperTypeDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoSuperTypeDeclarer.java): Locate enhanced class by superclass.
+- [DemoBootstrapDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java): Enhancement definition for the boot classloader, refer to [Enhancement for Native Class](#Enhancement-for-Native-Class) for details.
+- [DemoTraceDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java): Enhancement definition for the usage of trace tracking, refer to [Trace Tracking](#Trace-Tracking) for details.
 
-在各插件开发者在编写插件增强定义的时候，可以以以上示例为参考，开发符合自身需要的增强定义。
+When the plugin developers write the plugin enhancement definition, you can use the above examples as a reference to develop the enhancement definition that meets their own needs.
 
-#### 原生类增强
+#### Enhancement for Native Class
 
-对于`java.lang.Thread`等*Java*原生类，他们由启动类加载器`BootStrapClassLoader`加载，对他们进行增强的话，主要会面临两个困难：
+For *Java* native classes such as `java.lang.Thread`, which are loaded by the `BootStrapClassLoader`, there are two main difficulties in enhancing them:
 
-- 原生类被启动类加载器加载，那么如果对他们做增强的话，就需要将被增强后的字节码重新覆盖回启动类加载器中。考虑到增强后的嵌入代码主要是在**拦截器**中编写的，而这些内容主要由系统类加载器`AppClassLoader`加载，启动类加载器无法访问。得益于[**Advice模板类**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/template)中使用反射调用拦截器的方法，使得原生类在增强时，编写的拦截器不受拘束。
+- Native classes are loaded by the BootStrapClassLoader, so if we want to enhance them, we need to overwrite the enhanced bytecode back into the BootStrapClassLoader. Considering that the enhanced embedded code is mostly written in **interceptors**, this content is mainly loaded by the system class loader `AppClassLoader`, which is not accessible by BootStrapClassLoader. Since [**Advice template class**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/template) invokes the interceptors by reflection, it is allowed to write interceptors without restrictions for enhancement of native classes.
 
-- 鉴于*Java*重定义*Class*的限制，我们无法修改这些原生类的元信息，那么就无法使用[**byte-buddy委派**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/transformer/DelegateTransformer.java)的方式对他们进行增强(原理是添加委派属性和静态代码块)。所幸我们可以使用[**Advice模板类**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/template)配合[**byte-buddy advice**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/transformer/BootstrapTransformer.java)技术进行增强，而现在**核心模块**就是这么做的。两种风格统合之后，前者用于处理系统类加载器加载的普通类，后者用于处理启动类加载器的原生类。
+- Due to *Java* redefining *Class* restrictions, we can't modify the metadata of these native classes, so we can't use byte-buddy delegation to enhance them (by adding delegation properties and static code blocks). Fortunately, we can use [**Advice template class**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/template) with [**byte-buddy advice**](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/transformer/BootstrapTransformer.java) technology to enhance. That's what **core module** is doing. 
 
-结合上述内容，其实增强原生类和增强普通类在增强定义和拦截器编写上没有什么区别，但是还是希望插件开发者尽量少地对原生类进行增强，原因有三：
+Combined with the above, there is no difference between native classes and regular classes in terms of enhancement definition and writing interceptors. However, it is desirable for plugin developers to minimize enhancement to native classes for three reasons:
 
-- 对原生类的增强往往是发散的，对他们增强很可能会对其他插件或宿主功能造成影响。
-- 对原生类的增强逻辑，将使用反射的方式调用系统类加载器中的拦截器方法。由于*Java*重定义*Class*的限制，每次调用被增强方法的时候，都会进行反射处理的逻辑，这将极大限制该方法的*TPS*上限。
-- 对原生类的增强过程中，涉及到使用**Advice模板类**生成动态拦截类。对于每个被增强的原生类方法，都会动态生成一个，他们将被系统类加载器加载。如果不加限制的增强原生类，加载动态类也会成为启动过程中不小的负担。
+- Enhancements to native classes tend to be divergent. And enhancements to them are likely to impact other plugins or host functionality.
+- The native class enhancement logic will use reflection to invoke interceptor methods in the system classloader. Due to the *Java* redefinition of the *Class*, every time an enhanced method is called, the reflection logic is processed, which significantly limits the *TPS* of the method.
+- The enhancements to the native classes involved using the **Advice template class** to generate a dynamic interceptor class. For each enhanced native class method, one will be generated dynamically and they will be loaded by the system classloader. If native classes are enhanced without restriction, loading dynamic classes can also become a significant burden during startup.
 
-综上，[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中提供对*Java*原生类增强的能力，但是，不建议不加限制地对他们进行增强，如果有多个增强点可选，优先考虑增强普通类。
+In summary, [**Sermant** core module](../../sermant-agentcore/sermant-agentcore-core) provides the ability to augment *Java* native classes. However, it is not recommended to enhance them without restrictions. If there are multiple enhancement points to choose from, you'd better choose enhancing regular classes.
 
-**Sermant**的`示例模块`中，[DemoBootstrapDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java)对`java.lang.Thread`做了增强，可以启动示例应用[DemoApplication](../../sermant-plugins/sermant-example/demo-application/src/main/java/com/huawei/example/demo/DemoApplication.java)观察`java.lang.Thread`是否被正常增强。
+In **Sermant** `example module`, [DemoBootstrapDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java) enhances `java.lang.Thread`. You can launch the example application [DemoApplication](../../sermant-example/demo-application/src/main/java/com/huawei/example/demo/DemoApplication.java) to see if `java.lang.Thread` is enhanced properly.
 
-### 拦截器
+### Interceptor
 
-新版插件的开发中在拦截器层面不再对静态方法、构造函数和实例方法作区分，降低插件开发的复杂度
-对于方法拦截点`MethodInterceptPoint`，有静态方法、构造函数和实例方法三种获取类型，对应的拦截器也有三种类型：
+In the development of the new version of the plugin, the distinction between static methods, constructors and instance methods is no longer made at the interceptor level, which reduces the complexity of plugin development.
+For `MethodInterceptPoint`, there are three acquisition types: static method, constructor, and instance method. There are also three types of interceptors:
 
-- [InterCeptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/interceptor/Interceptor.java): 拦截器接口，其中包含三个方法：
-  - `before`，前置方法，该方法在拦截点之前执行。ExecuteContext参数为插件执行的上下文，里面封装拦截器运作所需的所有参数，通过skip方法可跳过主要流程，并设置最终方法结果，注意，增强构造函数时，不能跳过主要流程
-  - `after`，后置方法，无论被拦截方法是否正常执行，最后都会进入后置方法中。后置方法可以通过返回值覆盖被拦截方法的返回值，因此这里开发者需要注意不要轻易返回null。
-  - `onThrow`，处理异常的方法，当被拦截方法执行异常时触发。这里处理异常并不会影响异常的正常抛出。
+- [interceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/interceptor/Interceptor.java): the interceptor interface, which contains three methods:
+  - `before`, the preceding method, which is executed before the interception point. The ExecuteContext parameter is the context of the plugin execution, which encapsulates all the parameters required for the interceptor to operate. Through the skip method, the main process can be skipped and the final method result can be set. Note that the main process cannot be skipped when the constructor is enhanced .
+  - `after`, the post-method, ends up in the post-method whether or not the intercepted method executes normally. Postmethods can override the return value of the intercepted method with their return value, so developers need to be careful not to return null easily here.
+  - `onThrow`, an exception handling method that is triggered when the intercepted method executes an exception. Handling the exception here does not affect the normal throwing of the exception.
 
-**Sermant**的`示例模块`中包含以下拦截器示例：
+The `example module` of **Sermant** contains the following example interceptor:
 
-- [DemoStaticInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoStaticInterceptor.java): 普通的静态方法拦截器
-- [DemoConstInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConstInterceptor.java): 普通的构造函数拦截器
-- [DemoMemberInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoMemberInterceptor.java): 普通的实例方法拦截器
-- [DemoConfigInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConfigInterceptor.java): 插件配置使用示例拦截器，详见[插件配置](#插件配置)一节
-- [DemoServiceInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoServiceInterceptor.java): 插件服务使用示例拦截器，详见[插件服务](#插件服务)一节
+- [DemoStaticInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoStaticInterceptor.java): an ordinary static method interceptor
+- [DemoConstInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConstInterceptor.java): an ordinary constructor interceptor
+- [DemoMemberInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoMemberInterceptor.java): an ordinary instance method interceptor
+- [DemoConfigInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConfigInterceptor.java): an example interceptor for the plugin configuration acquisition, as described in the [Plugin Configuration](#Plugin-Configuration) section.
+- [DemoServiceInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoServiceInterceptor.java): an example interceptor for the usage of plugin service, as described in the [Plugin Service](#Plugin-Service) section.
 
-在各插件开发者在编写自定义拦截器的时候，可以以以上示例为参考，开发满足自身功能需要的拦截器。
+When writing custom interceptors, plugin developers can use the above example as a reference to develop interceptors that meet their own functional needs.
 
-### 插件配置
+### Plugin Configuration
 
-**插件配置**指的是在插件包和插件服务包使用的配置系统，主要由三部分组成：
+**Plugin Configuration** refers to the configuration system used in plugin packages and plugin service packages. It consists of three main parts:
 
-- [PluginConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config/PluginConfig.java)插件配置接口: 所有普通的插件配置都要实现该接口。
-- [AliaConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config/AliaConfig.java)别名插件配置抽象类: 在插件配置`PluginConfig`的基础上，如果需要设定拦截器别名，则改为继承该抽象类。
-- [PluginConfigManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config/PluginConfigManager.java)插件配置管理器: 提供获取插件配置`PluginConfig`的接口：
+- [PluginConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config/PluginConfig.java) plugin configuration interface: All normal plugin configurations must implement this interface.
+
+- [PluginConfigManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config/PluginConfigManager.java) plugin configuration manager: provides a method to get the plugin configuration `PluginConfig` :
+  
   ```java
-  // ${plugin config class}为插件配置的Class
+  // ${plugin config class} is the plugin configuration class
   PluginConfigManager.getPluginConfig(${plugin config class});
   ```
-  `PluginConfigManager`是统一配置管理器[ConfigManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/ConfigManager.java)的特例，插件端可以直接使用后者的接口获取插件配置和统一配置：
+  `PluginConfigManager` is the unified configuration manager [ConfigManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/ConfigManager.java), The plugin side can directly use the interface of the latter to obtain plugin configuration and unified configuration：
+  
   ```java
-  // ${base config class}为统一配置或插件配置的Class
+  // ${base config class}is the plugin configuration class or unified configuration class
   ConfigManager.getConfig(${base config class});
   ```
 
-从**Sermant**的`示例模块`的插件配置文件[config.yaml](../../sermant-plugins/sermant-example/config/config.yaml)可以看出，该配置文件是一个*yaml*文件，一个`插件主模块(main)`的`插件模块(plugin)`和`服务模块(service)`中的插件配置对应的配置信息都封装在这唯一的`config.yaml`中。
+From the **Sermant** `example module` plugin configuration file [config.yaml](../../sermant-example/config/config.yaml) can be seen that the configuration file is a *yaml file*. The `plugin` and `service` configurations of a `main` plugin module are encapsulated in a single `config.yaml`.
 
-相较于传统的*yaml*格式配置文件对应一个*Java Pojo*对象，这里的`config.yaml`可以封装多个*Java Pojo*，他们由全限定名或别名进行区分，形成类似*Map*的结构，其中`demo.test`键对应的是**示例插件包**中的[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)对象，`com.huawei.example.demo.config.DemoServiceConfig`键对应的是**示例插件服务包**中的[DemoServiceConfig](../../sermant-plugins/sermant-example/demo-service/src/main/java/com/huawei/example/demo/config/DemoServiceConfig.java)对象。
+Instead of a traditional *YAML* format configuration file for a single *Java Pojo* object, here `config.yaml` can encapsulate multiple *Java Pojos*, which are distinguished by fully qualified names or aliases, forming a *Map-like* structure. The key `demo.test` corresponds to the [DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java) object in the **example plugin package** and `com.huawei.example.demo.config.DemoServiceConfig` key corresponds to [DemoServiceConfig](../../sermant-example/demo-service/src/main/java/com/huawei/example/demo/config/DemoServiceConfig.java) object in the **example plugin service pack**.
 
-[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)相较于`DemoServiceConfig`，前者被[ConfigTypeKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigTypeKey.java)注解修饰，因此设定了`demo.test`的别名。如果没有被`ConfigTypeKey`注解修饰，则直接使用全限定名做索引。
+Compared to `DemoServiceConfig`, [DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java) is decorated with the [ConfigTypeKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigTypeKey.java) annotation, so the `demo.test` alias is set. If it is not annotated with the `ConfigTypeKey` annotation, the full qualified class name is used as the index.
 
-[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)继承了[AliaConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/config/AliaConfig.java)，因此他自动继承了`pluginName`和`interceptors`两个属性，有对拦截器起别名的能力，这些配置在[config.yaml](../../sermant-plugins/sermant-example/config/config.yaml)中清晰可见，不做赘述。
+The `map` property in [DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java) is annotated with [ConfigFieldKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigFieldKey.java), changing its property name to `str2DemoSimplePojoMap`. However, it is important to note that the semantics of the **Java Pojo** using this annotation is invalid if it is wrapped by an array, a *List* or a *Map*. Therefore, for now, this annotation can only be used to modify the current **plugin configuration class** or directly used **Java Pojo**.
 
-[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)中的`map`属性被[ConfigFieldKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigFieldKey.java)注解修饰，将其属性名修改为`str2DemoSimplePojoMap`。不过需要注意的是，使用该注解的**Java Pojo**如果被数组、*List*或*Map*包装了一层，该注解的语义无效，因此，目前该注解只能用于修饰当前**插件配置类**或直接使用的**Java Pojo**。
+As [DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java) shows, plugin configuration now supports data types include:
 
-从[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)中可以看出，插件配置现在支持的数据类型包括：
+- Primitive and wrapper types for Boolean and numeric classes
+- String
+- Enum
+- Complex object
+- Array of the above types
+- List of the first four types
+- Map of the first four types
 
-- 布尔、数值类的基础类型及包装类型
-- 字符串类型
-- 枚举类型
-- 复杂对象类型
-- 上述类型构成的数组
-- 前四种类型构成的*List*
-- 前四种类型构成的*Map*
+*YAML* format configuration files currently have a few other rules:
 
-*yaml*格式配置文件目前还有一些其他规则：
-
-- 对于数组、List和Map中涉及的复杂对象，不支持`ConfigFieldKey`修正属性名
-- 对于数组、List和Map中的字符串，不支持`${}`转换，**插件配置类**的字符串属性和复杂类型属性内部的字符串属性支持
-- 仅在字符串做`${}`转换时使用入参，不支持使用入参直接设置属性值
-- 配置类的字段名一般为小驼峰命名，可用[ConfigFieldKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigFieldKey.java)注解修饰为中划线风格定义别名。添加注解后，在*yaml*中即可用中划线或小驼峰皆可解析，参考[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)的intField属性
-- 配置生效的优先级为：启动参数 > 环境变量 > 系统变量(-D参数) > *yaml*文件配置
-- 配置类的属性在按照生效的优先级获取参考值(启动参数，环境变量和系统变量(-D参数))时，小驼峰和中划线都可以被分割成单词来进行查找匹配。例如对于[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)的intField属性，key将被转化为如下多种形式按顺序来查找：
+- For complex objects involved in arrays, lists, and maps, using `ConfigFieldKey` to fix property names is not supported.
+- For strings in arrays, lists, and maps, there is no support for `${}` conversions, **plugin configuration class** string properties and string properties inside complex type properties are supported.
+- Parameters are only used for string `${}` conversions. Direct setting property values using parameters is not supported.
+- The field names of configuration classes are usually small camels.You can use [ConfigFieldKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigFieldKey.java) to define aliases for the transverse-line style. After the annotation is added, it can be parsed in *YAML* using either transverse-line or small camel style. Refer to the `intField` of [DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java).
+- The priority of the configuration is: startup parameters > environment variables > system variables (-d parameter) > *YAML* file configuration
+- The camel style and transverse line can be used to split words to look for matches when the configuration class properties fetch reference values according to the priority(startup parameters, environment variables, and system variables (-d parameter)) in effect. For example, for `intField` of [DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java), the key will be transformed into one of the following forms and searched in order:
   - demo.test.intField
   - demo_test_intField
   - demo-test-intField
@@ -350,78 +353,80 @@
   - DEMO.TEST.INT.FIELD
   - DEMO_TEST_INT_FIELD
   - DEMO-TEST-INT-FIELD
-- 若*yaml*配置中基本数据类型/数组/map/list/set(不支持包含复杂对象)的key未定义，将按照配置生效的优先级：启动参数 > 环境变量 > 系统变量(-D参数) 来获取参考值。从上述数据源获取参考值时，需注意：
-  - 数组/list/set需配置为yaml字符串格式，例如：DEMO_TEST_LIST_NAME=[elem1,elem2]
-  - map需配置为yaml字符串格式，例如：DEMO_TEST_MAP_NAME={key1: value1, key2: value2}
+- If the key of the basic data type/array /map/list/set(which does not support complex objects) is not defined in the *YAML* configuration, the reference value will be obtained according to the priority of the configuration effect: startup parameters > environment variables > system variables (-d parameter). When retrieving reference values from the above data sources, note that:
+  - The array /list/set should be configured in `YAML` string format. For example: DEMO_TEST_LIST_NAME=[elem1,elem2]
+  - The map needs to be configured as a `YAML` string format. For example: DEMO_TEST_MAP_NAME={key1: value1, key2: value2}
 
+Most of the possible configuration scenarios are covered in [DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java), plugin developers can reference and write plugin configuration classes that meet your business needs.
 
-[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)中已经包含了大部分可能的配置场景，插件开发者可以与之参考，编写符合自身业务需求的插件配置类。
+Finally, don't forget to add the *SPI* configuration file for the plugin configuration:
 
-最后，不要忘记添加插件配置的*SPI*配置文件：
+- Add `META-INF/services` folder under `resources`.
+- Add `com.huaweicloud.sermant.core.plugin.config.PluginConfig` configuration file under `META-INF/services`.
+- In the above file, type the `PluginConfig` implementation for all plugin configurations in the plugin package and separate them by LF.
 
-- 在资源目录`resources`下添加`META-INF/services`文件夹。
-- 在`META-INF/services`中添加`com.huaweicloud.sermant.core.plugin.config.PluginConfig`配置文件。
-- 在上述文件中，以换行为分隔，键入插件包中所有的插件配置`PluginConfig`或`AliaConfig`实现。
+### Plugin Service
 
-### 插件服务
+**Plugin service** refers to the service system used in plugin package and plugin service package. It mainly consists of two parts:
 
-**插件服务**指的是在插件包和插件服务包使用的服务系统，主要由两部分组成：
-
-- [PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java)插件服务接口。
-- [PluginServiceManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginServiceManager.java)插件服务管理器，其中提供获取`PluginService`的接口：
+- [PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java), the plugin service interface.
+- [PluginServiceManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginServiceManager.java), the plugin service manager, which provides an interface to get `PluginService` :
+  
   ```java
-  // ${plugin service class}为插件服务的Class
+  // ${plugin service class} is the plugin service class
   PluginServiceManager.getPluginService(${plugin service class});
   ```
-  `PluginServiceManager`其实只是[ServiceManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/ServiceManager.java)的一个特例，可以直接使用后者的接口获取核心服务和插件服务：
+  `PluginServiceManager` is a particular case of [ServiceManager](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/ServiceManager.java). The latter interface can be used directly to access the core and plugin services:
+  
   ```java
-  // ${base service class}为核心服务或插件服务的Class
+  // ${base service class}is the core service class or plugin service class
   ServiceManager.getService(${base service class});
   ```
 
-  从[插件模块开发手册](dev_plugin_module.md#添加插件模块)可知，插件有**简单插件**和**复杂插件**之分，这主要和他们所定义服务的复杂程度有关：
+  Learned form [Plugin Module Development Guide](dev_plugin_module.md#Add-Plugin-Module), plugins can be categorized as **simple plugins** and **complex plugins**, depending on the complexity of the service they define:
+  
+  - Services defined in **simple plugins** can only use *Java* native *APIs*, self-developed *APIs* (start with `com.huawei`) in [**Sermant** core module](../../sermant-agentcore/sermant-agentcore-core) , and *APIs* of `byte-buddy` and `slf4j`.
+  - In addition to the above *API*, the services in **complex plugins** have the right to use other *APIs* that third parties rely on. These services need to be separated into the **plugin service interface** and the **plugin service implementation**: the former is written in the `plugin` module for the interceptor to invoke. The latter is written in the `service` module and loaded by a custom *ClassLoader* to achieve classloader-level dependency isolation.
 
-  - **简单插件**中定义的服务只能使用*Java*原生*API*、[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中自研的*API*(`com.huawei`开头)，以及`byte-buddy`和`slf4j`的*API*。
-  - **复杂插件**中的服务除了能使用上述*API*，还有权使用其他第三方依赖的*API*。这些服务需要分离出**插件服务接口**和**插件服务实现**：前者编写于`插件模块(plugin)`中，供拦截器调用；后者编写于`服务模块(service)`中，由自定义*ClassLoader*加载，以实现类加载器级别的依赖隔离。
+#### Simple Plugin Service
 
-#### 简单插件服务
-
-对于**简单插件服务**，实现[PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java)接口即可，如[DemoSimpleService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)示例，在实现`start`方法和`stop`方法的基础上，可以添加其他所需的方法，如`activeFunc`方法，通过以下代码获得`DemoSimpleService`的示例并调用`activeFunc`方法：
+As for **simple plugin service**, you can just implement [PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java), such as [DemoSimpleService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java). Based on the implementation of the `start` and `stop` methods, you can add other required methods such as the `activeFunc` method. Get an instance of the `DemoSimpleService` and invoke the `activeFunc` method with the following code:
 ```java
 DemoSimpleService simpleService = PluginServiceManager.getPluginService(DemoSimpleService.class);
 simpleService.activeFunc();
 ```
 
-对于**简单插件服务**来说，唯一的限制就是只能使用*Java*原生*API*，[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中自研的*API*(`com.huawei`开头)，以及`byte-buddy`和`slf4j`的*API*。
+For **simple plugin service**, the only restriction is to use only the *Java* native *API*, [**Sermant** core module](../../sermant-agentcore/sermant-agentcore-core) self-developed *APIs* (starting with `com.huawei`) and *APIs* in `byte-buddy` and `slf4j`.
 
-插件开发者可以参照[DemoSimpleService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)，按需编写自身业务所需的**简单插件服务**。
+Plugin developers can refer to [DemoSimpleService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java) to write **simple plugin services** for your business on demand.
 
-最后不要忘记添加[PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java)的*SPI*配置文件：
+Finally, don't forget to add the *SPI* configuration file for [PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java):
 
-- 在资源目录`resources`下添加`META-INF/services`文件夹。
-- 在`META-INF/services`中添加`com.huaweicloud.sermant.core.plugin.service.PluginService`配置文件。
-- 在上述文件中，以换行为分隔，键入插件包中所有的插件服务`PluginService`实现。
+- Add `META-INF/services` folder under `resources`.
+- Add `com.huaweicloud.sermant.core.plugin.service.PluginService` configuration file under `META-INF/services`.
+- In the above file, type the `PluginService` implementation for all plugin services in the plugin package and separate them by LF.
 
-特别需要注意的是，不要尝试在`PluginService`的`start`方法中获取其他**插件服务**的实例，由于**插件服务**仍在初始化当中，可能无法正确获取这些**插件服务**实例。
+In particular, do not try to get instances of other **plugin services** in the `start` method of `PluginService`, since **plugin services** are still being initialized and it may not be possible to get these **plugin services** correctly.
 
-#### 复杂插件服务
+#### Complex Plugin Service
 
-**复杂插件服务**比起**简单插件服务**，只有两点区别：
+There are only two differences between **complex plugin service** and **simple plugin service**:
 
-- **复杂插件服务**在`插件模块(plugin)`中编写接口，在[`服务模块(service)`](#插件服务模块)中编写实现，而**简单插件服务**不需要编写接口，直接在`插件模块(plugin)`中实现。
-- **复杂插件服务**的实现可以按需使用任意第三方依赖。
+- **Complex plugin services** write their interface in the `plugin` module and their implementation in the [Plugin Service Module](#Plugin-Service-Module), while **simple plugin services** do not need to write the interface and are implemented directly in the `plugin` module.
+- The implementation of a **complex plugin service** can use any third-party dependency on demand.
 
-[DemoComplexService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)是**复杂插件服务**示例接口，其中可以按需添加接口，如`activeFunc`方法，[DemoComplexServiceImpl](../../sermant-plugins/sermant-example/demo-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java)是对应的实现。我们可以通过以下代码调用`activeFunc`方法：
+[DemoComplexService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java) is a **complex plugin service** sample interface. Methods can be added on demand, such as the `activeFunc` method. [DemoComplexServiceImpl](../../sermant-example/demo-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java) is the corresponding implementation. We can invoke the `activeFunc` method with the following code:
+
 ```java
 DemoComplexService complexService = PluginServiceManager.getPluginService(DemoComplexService.class);
 complexService.activeFunc();
 ```
 
-添加*SPI*配置及其他注意事项和**简单插件服务**没有区别，这里不做赘述。开发者可以参照`DemoComplexService`接口和`DemoComplexServiceImpl`实现编写符合自身业务要求的**复杂插件服务**。
+Adding *SPI* configuration and other considerations is no different than **simple plugin service**. Developers can refer the `DemoComplexService` interface and `DemoComplexServiceImpl` implementation to write **complex plugin services** that meet business requirements.
 
-#### 日志功能
+#### Log
 
-考虑到依赖隔离的问题，[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)提供给`插件模块(plugin)`和`服务模块(service)`使用的日志只能是**jul**日志，通过以下方法获取**jul**日志实例：
+Considering dependency isolation, [**Sermant** core module](../../sermant-agentcore/sermant-agentcore-core) provides the `plugin` and `service` to use only **jul** log. Get the **jul** log instance by:
 
 ```java
 
@@ -429,30 +434,30 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 Logger logger=LoggerFactory.getLogger();
 ```
 
-插件开发者如果需要输出日志信息，可以参考[DemoLogger](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/common/DemoLogger.java)示例开发。
+Plugin developers who need to output log information can refer to [DemoLogger](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/common/DemoLogger.java) sample development.
 
-#### 心跳功能
+#### Heartbeat
 
-心跳功能是[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)的核心服务之一，通过以下代码获取实例：
+Heartbeat is one of the core services in [**Sermant** core module](../../sermant-agentcore/sermant-agentcore-core). An instance of heartbeatService is obtained by:
 ```java
 HeartbeatService heartbeatService = ServiceManager.getService(HeartbeatService.class);
 ```
 
-心跳功能在初始化的时候就会启动执行，定期将每个插件的名称、版本等信息发送至后端服务器。目前来说，插件的心跳上报的信息包括：
+The heartbeat service starts execution when it is initialized, and periodically sends the name, version and other information of each plugin to the backend server. Currently, plugin heartbeats report information like:
 
-- `hostname`：发送客户端的主机名
-- `ip`：发送客户端的IP地址
-- `app`：应用名称，即启动参数中的`appName`
-- `appType`：应用类型，即启动参数中的`appType`
-- `heartbeatVersion`：上一次心跳发送时间
-- `lastHeartbeat`：上一次心跳发送时间
-- `version`：核心包的版本，即核心包`manifest`文件的`Sermant-Version`值
-- `pluginName`：插件名称，通过插件设定文件确定
-- `pluginVersion`：插件版本号，取插件jar包中`manifest`文件的`Sermant-Plugin-Version`值
+- `hostname`: the hostname of the sending client
+- `ip`: the ip of the sending client
+- `app`: application name, as well as `appName` in startup parameters
+- `appType`: application type，as well as `appType` in startup parameters
+- `heartbeatVersion`: time of last heartbeat
+- `lastHeartbeat`: time of last heartbeat
+- `version`: the version of the core package, as well as the `sermant-version` value of the core package `manifest` file
+- `pluginName`: plugin name
+- `pluginVersion`：plugin version, which is the `Sermant-plugin-version` value of the `manifest` file in the plugin jar
 
-如果希望在插件上报的数据中增加额外的内容，可以调用以下api：
+If you want to add additional content to the data reported by the plugin, you can call the following API:
 ```java
-// 通过自定义ExtInfoProvider提供额外内容集合
+// use ExtInfoProvider to add additional content
 heartbeatService.setExtInfo(new ExtInfoProvider() {
   @Override
   public Map<String, String> getExtInfo() {
@@ -461,23 +466,22 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
 });
 ```
 
-插件开发者如果需要往心跳功能发送的数据包中增加额外内容，可以参考[DemoHeartBeatService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)示例开发。
+Plugin developers who need to add additional content to the packets sent by the heartbeat function can refer to [DemoHeartBeatService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java) sample development.
 
-更多心跳服务相关内容可参见[心跳服务介绍](service_heartbeat.md)。
+For more information about heartbeat services, see [Heartbeat Service](service_heartbeat.md).
 
-#### 链路功能
+#### Trace Tracking
 
-**链路功能**是一个继消息发送能力建立的一个上层功能，该功能简单来说就是从宿主端的调用链之间嵌入以下逻辑：
+The **Trace Tracking** is an upper layer function established by message sending capability, which simply means embedding the following logic between the invoke chains of the host side:
 
-- 在发送数据的时候，在数据包中插入链路所需的`TraceId`和`SpanId`，前者是请求在分布式系统中的整个链路视图，后者代表整个链路中不同服务内部的视图。
-- 在接收数据的时候，解析数据包中嵌入的链路相关内容，形成链路的一环提交到后台服务器中，逐渐形成调用链。
+- When sending data, the `TraceId` and `SpanId` required by the trace are inserted in the data packet. The former is the view of the whole trace in the distributed system, and the later represents the view inside the different services in the whole trace.
+- When receiving data, it parses the trace-related content embedded in the data packet, forms a trace and submits it to the backend server, and gradually forms a invoke chain.
 
-在示例宿主的[DemoTraceService](../../sermant-plugins/sermant-example/demo-application/src/main/java/com/huawei/example/demo/service/DemoTraceService.java)中，`counsumer`方法和`provider`方法模仿服务器接收数据并处理发送数据的流程，而数据包则假定存在一个`ThreadLocal`中，直到下一次调用`provider`方法接收数据。
+In the [DemoTraceService](../../sermant-example/demo-application/src/main/java/com/huawei/example/demo/service/DemoTraceService.java), the `counsumer` and `provider` methods mimic how the server receives data and handles sending it, while the packet is assumed to exist in a `ThreadLocal` until the next invocation to the `provider` method receives the data.
 
-基于上述示例宿主，我们编写[DemoTraceDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java)增强定义
-，对`DemoTraceService`的`provider`方法和`consumer`方法分别使用使用[DemoTraceProviderInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceProviderInterceptor.java)和[DemoTraceConsumerInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceConsumerInterceptor.java)拦截器进行增强。
+Based on the above example host application, we write enhancement definition [DemoTraceDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java) and enhance `provider` and `consumer` of `DemoTraceService` by [DemoTraceProviderInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceProviderInterceptor.java) and [DemoTraceConsumerInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceConsumerInterceptor.java) respectively
 
-- 对于发送`provider`方法，做如下增强：
+- For the sending `provider` method, the following enhancements are made：
   ```java
     private final TracingService tracingService = ServiceManager.getService(TracingService.class);
   
@@ -506,7 +510,8 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
         return context;
     }
   ```
-- 对于`consumer`方法，做如下增强：
+  
+- For the `consumer` method, the following enhancements are made：
   ```java
     TracingService tracingService = ServiceManager.getService(TracingService.class);
   
@@ -535,21 +540,20 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
         return context;
     }
   ```
-  **Sermant**的`示例模块`这里只是简单地抛砖引玉。
-  如果插件开发者需要使用链路功能，参照[DemoTraceInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceInterceptor.java)自行开发。
+  If the plugin developers need to use the trace tracking function, refer to [DemoTraceNormalInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceNormalInterceptor.java) for further development.
 
 
-### 动态配置功能
+### Dynamic Configuration
 
-动态配置功能是[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)的核心服务之一，通过以下代码获取实例：
+Dynamic configuration is one of the core services in [**Sermant** core module](../../sermant-agentcore/sermant-agentcore-core). An instance is obtained by:
 ```java
 DynamicConfigService service = ServiceManager.getService(DynamicConfigService.class);
 ```
 
-调用以下方法注册一个监听器：
+Invoke the following method to register a listener:
 ```java
-// ${group}为用户分组，${key}为监听的键，对zookeeper来说，监听的路径相当于: / + ${group} + ${key}
-// 如果不传${group}，则会默认设置为统一配置中dynamicconfig.default_group对应的值
+// ${group} is user group，${key} is the key listened. For zookeeper, the path is: / + ${group} + ${key}
+// if ${group} do not exist，it will set the value by dynamicconfig.default_group in unified configuration
 service.addConfigListener("${key}", "${group}", new DynamicConfigListener() {
   @Override
   public void process(ConfigChangedEvent event) {
@@ -558,22 +562,22 @@ service.addConfigListener("${key}", "${group}", new DynamicConfigListener() {
 });
 ```
 
-注册监听器之后，当服务器对应节点发生创建、删除、修改、添加子节点等事件时，就会触发`process`函数。
+Once the listener is registered, the `process` method will be triggered when the server creates, deletes, modifies, or adds child nodes.
 
-插件开发者如果需要使用动态配置，可以参考[DemoDynaConfService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoDynaConfService.java)示例开发。
+Plugin developers who need to use dynamic configuration can refer to [DemoDynaConfService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoDynaConfService.java) sample development.
 
-更多动态配置服务相关内容可参见[动态配置服务介绍](service_dynamicconfig.md)。
+For more information on dynamic configuration service, refer to [Dynamic Configuration Service](service_dynamicconfig.md).
 
 
-## 插件服务模块
+## Plugin Service Module
 
-**插件服务模块**较**插件模块**相比：
+Compared to **plugin module**, **plugin service module** :
 
-- 只能编写**插件配置**和**插件服务接口**的实现，不能编写**增强定义**、**拦截器**和**插件服务接口**
-- 允许自由添加需要的第三方依赖，打包的时候，需要提供输出依赖的方式，可以用`shade`插件或`assembly`插件打带依赖*jar*包，也可以直接使用`dependency`插件输出依赖包。
+- can only write a **plugin configuration** and **plugin service interface** implementation, and cannot write **enhancement definition ** **interceptor** and **plugins service interface**.
+- allow the freedom to add third-party dependencies as needed. When packaging, you need to provide a way to export dependencies, you can use the `shade` plugin or `assembly` plugin to export the dependency *jar* package, or you can directly use the `dependency` plugin to export the dependency package.
 
-注意：由于`byte-buddy`和`slf4j`包的限制，还是建议直接使用`shade`插件打包，相关的规则已在[插件根模块](../../sermant-plugins)中定义完毕，直接引入插件即可，详见[插件模块开发手册](dev_plugin_module.md#添加插件服务模块)。
+Note: Due to the limitations of the `byte-buddy` and `slf4j` packages, it is still recommended to use the `shade` plugin package directly. The relevant rules are defined in the [main module of plugins](../../sermant-plugins). You can directly import the plugin. Refer to [Plugin Module Development Guide](dev_plugin_module.md#Add-Plugin-Service-Module) for details.
 
-**插件服务模块**中通常涉及[插件配置](#插件配置)和[插件服务](#插件服务)的编写，其中**插件服务**主要是指[复杂插件服务](#复杂插件服务)的实现。以上相关内容前文已有介绍，这里不做赘述。
+The **plugin service module** usually involves writing [plugin configuration](#Plugin-Configuration) and [plugin service](#Plugin-Service), where **plugin service** mainly refers to the implementation of [complex plugin service](#Complex-Plugin-Service). 
 
-[返回**Sermant**说明文档](../README.md)
+[Back to README of **Sermant**](../README.md)

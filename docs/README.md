@@ -88,7 +88,7 @@ How to write a plugin can be found in the [Plugin Code Development Guide](dev-gu
 |[Introduction to Flow Control and Degradation](user-guide/flowcontrol/flowcontrol.md)|User Guide|
 |[Introduction to Loadbalancer](user-guide/loadbalancer/document.md)|User Guide|
 |[Introduction to Dynamic Configuration](user-guide/dynamic-config/document.md)|User Guide|
-|[Introduction to Servcie Registration](user-guide/registry/document.md)|User Guide|
+|[Introduction to Service Registration](user-guide/registry/document.md)|User Guide|
 |[Introduction to Tag Router](user-guide/router/document.md)|User Guide|
 |[Introduction to Graceful online/offline](user-guide/graceful/document.md)|User Guide|
 |[Introduction to Server Monitor](user-guide/server-monitor/document.md)|User Guide|

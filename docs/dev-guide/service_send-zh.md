@@ -34,4 +34,4 @@ datatype.topic.mapping.1=topic-one
 datatype.topic.mapping.n=topic-n
 ```
 
-[返回**Sermant**说明文档](../README.md)
+[返回**Sermant**说明文档](../README-zh.md)

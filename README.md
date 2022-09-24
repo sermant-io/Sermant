@@ -1,4 +1,4 @@
-<div align="center">
+    <div align="center">
 <p></p><p></p>
 <p>
     <img  src="docs/binary-docs/sermant-logo.png" width="50%" syt height="50%">
@@ -37,9 +37,9 @@ A microservice architecture using Sermant has the following three components, wh
 - Dynamic configuration center: Providing the instructions by dynamically update the config to the listening Java Agent. Dynamic configuration center is not directly provided by Sermant project. The projects currently support servicecomb-kie, etc.
 
 
-## Quick start
+## Quick Start
 
-### Download or compile
+### Download or Compile
 
 Click [here](https://github.com/huaweicloud/Sermant/releases) to download **Sermant** binary package. If you will to compile the project yourself, please follow the following steps.
 
@@ -84,7 +84,7 @@ Check running status of Sermant. In this example, open the browser and navigate 
 
 #### Please refer to the  [Service Register & Discovery Plugin QuickStart](docs/QuickStart.md) for details.
 
-## More documents to follow
+## More Documents to Follow
 
 Please refer to the  [Development Guide](docs/README.md)
 
@@ -92,9 +92,9 @@ Please refer to the  [Development Guide](docs/README.md)
 
 Sermant adopts [Apache 2.0 License.](/LICENSE)
 
-## How to contribute
+## How to Contribute
 
-Please read  [Contribute Guide](CONTRIBUTING.md) to refer how to jion the contribution.
+Please read  [Contribute Guide](CONTRIBUTING.md) to refer how to join the contribution.
 
 ## Declaration
 

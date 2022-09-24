@@ -13,7 +13,7 @@
 
 #### [How to define "apiPath" for a business scenario?](./user-guide/flowcontrol/FAQ.md#关于业务场景的apiPath是如何定义的)
 #### [How to ensure that a configuration rule takes effect？](./user-guide/flowcontrol/FAQ.md#如何确定配置规则生效)
-#### [Possible reasons for why the circuit breaker policy did not taken effect.](./user-guide/flowcontrol/FAQ.md#熔断策略未生效的可能原因)
+#### [Possible reasons for why the circuit breaker policy did not take effect.](./user-guide/flowcontrol/FAQ.md#熔断策略未生效的可能原因)
 #### [Possible reasons for why isolation cabin rules did not take effect.](./user-guide/flowcontrol/FAQ.md#隔离仓规则未生效的可能原因)
 #### [Possible reasons for why the retry rules did not work.](./user-guide/flowcontrol/FAQ.md#重试规则未生效的可能原因)
 #### [Possible causes of HttpHostConnectException on startup.](./user-guide/flowcontrol/FAQ.md#启动报HttpHostConnectException异常的可能原因)

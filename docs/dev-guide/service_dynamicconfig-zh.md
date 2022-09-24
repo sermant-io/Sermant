@@ -13,7 +13,7 @@
 
 ## 功能定位
 
-**动态配置服务**是一个允许使用者动态从服务器拉取配置的服务，它作为[统一配置系统](../user-guide/agentcore.md#统一配置系统)的动态补充，其核心述求在于解决后者提供的配置不可改变的问题。
+**动态配置服务**是一个允许使用者动态从服务器拉取配置的服务，它作为[统一配置系统](../user-guide/agentcore-zh.md#统一配置系统)的动态补充，其核心述求在于解决后者提供的配置不可改变的问题。
 
 ## Api解析
 
@@ -163,10 +163,10 @@ groupKey1=groupValue1[&groupKey2=groupVaue2...]
 
 ## 实现包装
 
-从[核心模块介绍](../user-guide/agentcore.md#插件服务系统)可知，**插件服务系统**是基于`SPI`实现的，而[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)对应的`SPI`实现配置为[BufferedDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/BufferedDynamicConfigService.java)，后者为前者所有具体实现类的包装。它在初始化的过程中读取[DynamicConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/config/DynamicConfig.java)配置，通过`dynamic.config.dynamic_config_type`配置选择具体的服务实现，并将所有`API`委派给这些具体的服务实现完成。
+从[核心模块介绍](../user-guide/agentcore-zh.md#插件服务系统)可知，**插件服务系统**是基于`SPI`实现的，而[DynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/DynamicConfigService.java)对应的`SPI`实现配置为[BufferedDynamicConfigService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/BufferedDynamicConfigService.java)，后者为前者所有具体实现类的包装。它在初始化的过程中读取[DynamicConfig](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/service/dynamicconfig/config/DynamicConfig.java)配置，通过`dynamic.config.dynamic_config_type`配置选择具体的服务实现，并将所有`API`委派给这些具体的服务实现完成。
 
 ## 使用方式
 
 **动态配置服务**主要应用于插件的拦截器或插件服务中，具体使用方式可以参见[插件代码开发手册的动态配置功能一节](dev_plugin_code.md#动态配置功能)，使用过程中较为关键的当属`Key`和`Group`的构建，具体内容可参见前文中几种实现中对这两个值的要求，这里不做赘述。
 
-[返回**Sermant**说明文档](../README.md)
+[返回**Sermant**说明文档](../README-zh.md)

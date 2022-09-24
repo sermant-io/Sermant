@@ -3,7 +3,7 @@
 [简体中文](QuickStart-zh.md) | [English](QuickStart.md) 
 
 本文档基于宿主应用更改注册中心的场景，我们将使用Sermant框架的注册插件，完整的展示了如何使用Sermant插件非侵入式地扩展宿主应用的功能。
-另外，更新的插件功能请参见[插件列表](user-guide/feature-list.md)后自行选择。
+另外，更新的插件功能请参见[插件列表](user-guide/feature-list-zh.md)后自行选择。
 
 ## 使用Sermant前
 如下图所示: 文档中演示使用的应用示例在未使用Sermant时, 会将应用注册到Zookeeper中。
@@ -28,7 +28,7 @@
 # 启动
 - 运行环境需要具备[ServiceCenter](https://github.com/apache/servicecomb-service-center/releases) ,[zookeeper](https://zookeeper.apache.org/releases.html) 分别作为注册中心和配置中心。
 - 进入编译后可执行文件根目录(例如:**sermant-agent-1.0.0**)
-- 执行以下命令启动backend，详细的后端模块介绍以及更多的配置修改，请参考[backend模块](user-guide/backend.md)
+- 执行以下命令启动backend，详细的后端模块介绍以及更多的配置修改，请参考[backend模块](user-guide/backend-zh.md)
   ```bash
   # windows
   java -jar server\sermant\sermant-backend-x.x.x.jar
@@ -63,6 +63,6 @@ Sermant和Backend日志的存放目录分别位于sermant运行环境下`./logs/
 
 ## 相关文档
 
-插件开发, 请参考 [插件开发相关文档](./README.md)。
+插件开发, 请参考 [插件开发相关文档](./README-zh.md)。
 
-常见问题说明与解决指导,请参考[FAQ](./FAQ.md)。
+常见问题说明与解决指导,请参考[FAQ](./FAQ-zh.md)。

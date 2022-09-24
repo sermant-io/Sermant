@@ -4,8 +4,8 @@
 
 ## Sermant 框架功能
 
-#### [启动参数appName是什么参数?](./user-guide/FAQ.md#启动参数appName是什么参数?)
-#### [Sermant 提供哪些方面的服务治理插件?](./user-guide/FAQ.md#Sermant提供哪些方面的服务治理插件?)
+#### [启动参数appName是什么参数?](./user-guide/FAQ-zh.md#启动参数appName是什么参数?)
+#### [Sermant 提供哪些方面的服务治理插件?](./user-guide/FAQ-zh.md#Sermant提供哪些方面的服务治理插件?)
 
 ## 插件
 
@@ -28,6 +28,6 @@
 #### [报错：No registry config found or it's not a valid config](./user-guide/registry/FAQ.md#报错No-registry-config-found-or-its-not-a-valid-config)
 #### [插件配置中，enableSpringRegister/enableDubboRegister与openMigration之间的关系是什么？](./user-guide/registry/FAQ.md#插件配置中enableSpringRegisterenableDubboRegister与openMigration之间的关系是什么)
 
-[返回**QuickStart**说明文档](./QuickStart.md)
+[返回**QuickStart**说明文档](./QuickStart-zh.md)
 
-[返回**Sermant**说明文档](./README.md)
+[返回**Sermant**说明文档](./README-zh.md)

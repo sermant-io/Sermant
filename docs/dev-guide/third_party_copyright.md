@@ -28,8 +28,8 @@ In all three cases, developers are required to complete the following work with 
   ```
   Note:
   - `THIRD PARTY PROJECT NAME` represents the name of the **third party** project.
-  - `RELATED FILE` is the **related file** for this project: if it is a class, type the path of FQCN; Otherwise, type the project relative path.
-  - `THIRD PARTY FILE` represents the **copied file** of the **third party**: if it is a class, type the path of FQCN; Otherwise, type the project relative path. If the **third party** project is a single module project, you can also type the relative path to the source directory.
+  - `RELATED FILE` is the **related file** for this project: if it is a class, type the path of full qualified class name; Otherwise, type the project relative path.
+  - `THIRD PARTY FILE` represents the **copied file** of the **third party**: if it is a class, type the path of full qualified class name; Otherwise, type the project relative path. If the **third party** project is a single module project, you can also type the relative path to the source directory.
   - `THIRD PARTY PROJECT CODEBASES URL` represents the address of the **third party** project repository; If you can't find the address of source code, you can change it to the official website address or source code download address. In short, the principle is to be traceable.
   - `THIRD PARTY PROJECT LICENSE NAME` represents to the `LICENSE` name of the **third party** project, which is usually referred to the `licenses` label in the `pom` file, or pluralized if multiple `LICENSE` exist:
     

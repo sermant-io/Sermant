@@ -89,4 +89,4 @@
 mvn license:aggregate-add-third-party clean package -Dmaven.test.skip
 ```
 
-[返回**Sermant**说明文档](../README.md)
+[返回**Sermant**说明文档](../README-zh.md)

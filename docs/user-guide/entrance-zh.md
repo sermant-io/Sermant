@@ -50,7 +50,7 @@ public static void premain(String agentArgs, Instrumentation inst);
 
 - 防止**Sermant**被宿主多次带起（*JavaAgent*命令中添加了复数的**Sermant**入口包）。
 - 加载**核心功能**包，这里使用系统类加载器加载。
-- 将`agentArgs`和启动配置[bootstrap.properties](../../sermant-agentcore/sermant-agentcore-premain/src/main/resources/config/bootstrap.properties)封装为启动参数`Map`。
+- 将`agentArgs`和启动配置[bootstrap.properties](../../sermant-agentcore/sermant-agentcore-config/config/bootstrap.properties)封装为启动参数`Map`。
 - 调用**核心功能**入口[AgentCoreEntrance](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/AgentCoreEntrance.java)带起**核心功能**。
 - 注意，带起**核心功能**时需要将**路径相关参数**传递进去，这里将这些**路径相关参数**封装到启动参数`Map`中。这也说明**Sermant AgentCore Premain**需要做到对目录、文件位置的把控。
 
@@ -79,13 +79,13 @@ public static void premain(String agentArgs, Instrumentation inst);
 |/|/|sermant.plugin.package.dir|插件包目录|插件包目录|是|无需配置|
 |/|/|sermant.log.setting.file|日志配置文件|日志配置文件|是|无需配置|
 
-入参`agentArgs`中可以为**启动参数**配置更多地值，他们可能会在[统一配置系统](agentcore.md#统一配置系统)中使用到。
+入参`agentArgs`中可以为**启动参数**配置更多地值，他们可能会在[统一配置系统](agentcore-zh.md#统一配置系统)中使用到。
 
 ## 相关文档
 
 |文档名称|
 |:-|
-|[核心模块介绍](agentcore.md)|
-|[后端模块介绍](backend.md)|
+|[核心模块介绍](agentcore-zh.md)|
+|[后端模块介绍](backend-zh.md)|
 
-[返回**Sermant**说明文档](../README.md)
+[返回**Sermant**说明文档](../README-zh.md)

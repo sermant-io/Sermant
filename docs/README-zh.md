@@ -61,37 +61,37 @@ mvn clean package -Dmaven.test.skip
 - *server*: 服务器目录，含**Sermant**的服务端，插件的服务端和客户端
 
 ## 容器化部署说明
-k8s环境下，Sermant支持通过sermant-injector组件实现宿主应用自动挂载sermant-agent包的快速部署方式。如何部署sermant-injector与宿主应用可以参考[容器化部署指导手册](user-guide/injector.md)
+k8s环境下，Sermant支持通过sermant-injector组件实现宿主应用自动挂载sermant-agent包的快速部署方式。如何部署sermant-injector与宿主应用可以参考[容器化部署指导手册](user-guide/injector-zh.md)
 
 ## 插件开发
 
-如何新增一个插件可以参考[插件模块开发手册](dev-guide/dev_plugin_module.md)，其中涉及添加插件、插件服务及附加件的详细流程。
+如何新增一个插件可以参考[插件模块开发手册](dev-guide/dev_plugin_module-zh.md)，其中涉及添加插件、插件服务及附加件的详细流程。
 
-如何编写一个插件的内容可以参考[插件代码开发手册](dev-guide/dev_plugin_code.md)，其中涉及大部分开发插件过程中可能遇到场景。
+如何编写一个插件的内容可以参考[插件代码开发手册](dev-guide/dev_plugin_code-zh.md)，其中涉及大部分开发插件过程中可能遇到场景。
 
 ## 相关文档
 
 |文档名称|文档类型|
 |---|---|
-|[第三方版权说明手册](dev-guide/third_party_copyright.md)|开发手册|
-|[版本管理手册](dev-guide/version_manage.md)|开发手册|
-|[插件模块开发手册](dev-guide/dev_plugin_module.md)|开发手册|
-|[插件代码开发手册](dev-guide/dev_plugin_code.md)|开发手册|
+|[第三方版权说明手册](dev-guide/third_party_copyright-zh.md)|开发手册|
+|[版本管理手册](dev-guide/version_manage-zh.md)|开发手册|
+|[插件模块开发手册](dev-guide/dev_plugin_module-zh.md)|开发手册|
+|[插件代码开发手册](dev-guide/dev_plugin_code-zh.md)|开发手册|
 |[插件去源码开发指导](dev-guide/dev_plugin_introduce-zh.md)|开发手册|
-|[动态配置服务介绍](dev-guide/service_dynamicconfig.md)|开发手册|
-|[心跳服务介绍](dev-guide/service_heartbeat.md)|开发手册|
-|[网关服务介绍](dev-guide/service_send.md)|开发手册|
-|[核心模块介绍](user-guide/agentcore.md)|使用手册|
-|[入口模块介绍](user-guide/entrance.md)|使用手册|
-|[后端模块介绍](user-guide/backend.md)|使用手册|
-|[容器化部署指导手册](user-guide/injector.md) |使用手册|
+|[动态配置服务介绍](dev-guide/service_dynamicconfig-zh.md)|开发手册|
+|[心跳服务介绍](dev-guide/service_heartbeat-zh.md)|开发手册|
+|[网关服务介绍](dev-guide/service_send-zh.md)|开发手册|
+|[核心模块介绍](user-guide/agentcore-zh.md)|使用手册|
+|[入口模块介绍](user-guide/entrance-zh.md)|使用手册|
+|[后端模块介绍](user-guide/backend-zh.md)|使用手册|
+|[容器化部署指导手册](user-guide/injector-zh.md) |使用手册|
 |[限流降级功能介绍](user-guide/flowcontrol/flowcontrol-zh.md)|使用手册|
 |[负载均衡功能介绍](user-guide/loadbalancer/document-zh.md)|使用手册|
 |[动态配置功能介绍](user-guide/dynamic-config/document-zh.md)|使用手册|
 |[服务注册功能介绍](user-guide/registry/document-zh.md)|使用手册|
 |[优雅上下线功能介绍](user-guide/graceful/document-zh.md)|使用手册|
 |[标签路由功能介绍](user-guide/router/document-zh.md)|使用手册|
-|[服务监控功能介绍](user-guide/server-monitor/document.md)|使用手册|
-|[线程变量插件功能介绍](user-guide/threadlocal/document.md)|使用手册|
+|[服务监控功能介绍](user-guide/server-monitor/document-zh.md)|使用手册|
+|[线程变量插件功能介绍](user-guide/threadlocal/document-zh.md)|使用手册|
 |[当前插件功能汇总列表](user-guide/feature-list-zh.md)|使用手册|
-|[常见问题说明指导](./FAQ.md)|使用手册|
+|[常见问题说明指导](./FAQ-zh.md)|使用手册|

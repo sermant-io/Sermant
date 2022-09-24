@@ -71,7 +71,7 @@ The main content of `plugin/agent` directory show as following items：
 
 ### Enhancement Definition 
 
-When coding **enhancement definitions**, plugin developers should implement `getClassMatcher` and `getInterceptDeclarers` of [PluginDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/PluginDeclarer.java) , as detailed in the [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md).
+When coding **enhancement definitions**, plugin developers should implement `getClassMatcher` and `getInterceptDeclarers` of [PluginDeclarer](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/agent/declarer/PluginDeclarer.java) , as detailed in the [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md#Enhancement Definition).
 
  Don't forget to add the *SPI* configuration file for `PluginDeclarer`.
 
@@ -79,7 +79,7 @@ When coding **enhancement definitions**, plugin developers should implement `get
 
 When coding an **interceptor**, developers just need to implement `interceptor` of [interceptor](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/agent/interceptor) directory
 
-For details, refer to [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md).
+For details, refer to [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md#Interceptor).
 
 ## Unified Configuration System
 
@@ -95,7 +95,7 @@ The **Unified Configuration System** for **Sermant** can be found in [config](..
   - `LoadConfigStrategy`, interface of the configuration loading strategy.
   - `LoadPropertiesStrategy`, strategy that used to load the `properties` format configuration file, which is mainly applied to load the Unified configuration file `config.properties`.
   - `LoadYamlStrategy`，, strategy that used to load the `yaml` format configuration file, which is mainly applied to load the plugin setup configuration and plugin configuration, detailed in [Plugin Configuration System](#Plugin-Configuration-System).
-- `utils`，contains utility classes used by the Unified Configuration Cystem.
+- `utils`，contains utility classes used by the Unified Configuration System.
 - `ConfigManager`，Unified Configuration Management Class, which provides methods for loading and fetching unified configuration.
 
 ### Unified Configuration Management Class
@@ -122,7 +122,7 @@ Note that after coding the **Unified Configuration Class**, don't forget to add 
 
 The `LoadPropertiesStrategy` is used to load configuration files in the *properties* format, which is now mainly used to load the unified configuration file `config.properties`.
 
-The idea of `LoadPropertiesStrategy` could be simply described as: take the FQCN or alias of the **Unified Configuration Class** as the prefix and the property name or alias of the **Unified Configuration Class** as the suffix, and concatenate into the key in the **properties** format, then convert to the type of the corresponding property and assign the value after getting the corresponding value. 
+The idea of `LoadPropertiesStrategy` could be simply described as: take the full qualified class name or alias of the **Unified Configuration Class** as the prefix and the property name or alias of the **Unified Configuration Class** as the suffix, and concatenate into the key in the **properties** format, then convert to the type of the corresponding property and assign the value after getting the corresponding value. 
 
 Suppose there is a following **Unified Configuration Class**:
 
@@ -138,7 +138,7 @@ public class ConfigExample implements BaseConfig {
 The corresponding configuration might look like this:
 
 ```properties
-# formant: FQCN.propertyName=propertyValue
+# formant: full-qualified-class-name.propertyName=propertyValue
 com.huawei.example.ConfigExample.string=value
 com.huawei.example.ConfigExample.intField=123456
 ```
@@ -195,7 +195,7 @@ Note that `LoadPropertiesStrategy` does not support complex type properties.
 
 #### Alias
 
-`LoadPropertiesStrategy` supports setting alias for FQCN and property names using the `ConfigTypeKey` annotation and the `ConfigFieldKey` annotation. Assume the above `ConfigExample` class is modified as follows：
+`LoadPropertiesStrategy` supports setting alias for full qualified class name and property names using the `ConfigTypeKey` annotation and the `ConfigFieldKey` annotation. Assume the above `ConfigExample` class is modified as follows：
 
 ```java
 @ConfigTypeKey("config.example")
@@ -209,7 +209,7 @@ public class ConfigExample implements BaseConfig {
 
 Then the configuration file should be like this：
 ```properties
-# alias for FQCN.alias for property=propertyValue
+# alias for full-qualified-class-name.property=propertyValue
 config.example.stringField=value
 config.example.intField=123456
 ```
@@ -254,7 +254,7 @@ The `tag` and `secret` properties take precedence over the `env.tag` and `env.se
 
 The `LoadYamlStrategy` is used to load configuration files in the *YAML* format, which is currently mainly used to load plugin setup configuration `plugins.yaml` and plugin configuration `config.yaml`. Since plugin setup configuration is relatively simple, we will only cover the **Plugin Configuration Class**.
 
-The **Plugin Configuration Class** is a **Java Pojo** just like the **Unified Configuration Class**, except that the latter implements the `BaseConfig` interface, while the former implements the `PluginConfig` interface. Refer to [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md) for more information. We will take the `PluginConfig` interface as an example.
+The **Plugin Configuration Class** is a **Java Pojo** just like the **Unified Configuration Class**, except that the latter implements the `BaseConfig` interface, while the former implements the `PluginConfig` interface. Refer to [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md#Plugin-Configuration) for more information. We will take the `PluginConfig` interface as an example.
 
 Suppose there is a following **Plugin Configuration Class** :
 ```java
@@ -288,7 +288,7 @@ The property types that `LoadYamlStrategy`supports includes：
 
 #### Alias
 
-`LoadYamlStrategy` supports setting alias for FQCN and property names using the `ConfigTypeKey` annotation and the `ConfigFieldKey` annotation. Assume the above `ConfigExample` class is modified as follows：
+`LoadYamlStrategy` supports setting alias for full qualified class name and property names using the `ConfigTypeKey` annotation and the `ConfigFieldKey` annotation. Assume the above `ConfigExample` class is modified as follows：
 
 ```java
 @ConfigTypeKey("config.example")
@@ -351,7 +351,7 @@ config.example:
 
 Based on the above, it is recommended that developers do not set aliases for **public properties**. If you really need an alias, it is recommended to place these **public properties** at the beginning or end of the **Plugin Configuration Class**. 
 
-The contents contained in the startup parameters can be found in [Introduction to Entrance Module](entrance.md).
+The contents contained in the startup parameters can be found in [Introduction to Entrance Module](entrance.md#Startup-Parameters).
 
 #### Special Key/Value pairs
 
@@ -484,13 +484,13 @@ In the **Plugin Management Class**, we mainly traverse the plugin directories co
 
 **Plugin Configuration System** is a special case of [**Unified Configuration System**](#Unified-Configuration-System). It is mainly used to read the plugin configuration file `config.yaml`, so it follows the rules of the [YAML format loading strategy](#Detailed-Description-for-Yaml-Strategy).
 
-For more information on the **Plugin Configuration System**, refer to the [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md).
+For more information on the **Plugin Configuration System**, refer to the [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md#Plugin-Configuration).
 
 ### Plugin Service System
 
 **Plugin Service System** is a special case of [**Core Service System**](#Core-Service-System), which is mainly used to load the PluginService `PluginService`. So it follows the rules of **Core Service System**.
 
-For more information on the **Plugin Service System**, refer to the [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md).
+For more information on the **Plugin Service System**, refer to the [Plugin Code Development Guide](../dev-guide/dev_plugin_code.md#Plugin-Service).
 
 ## Related Documents
 

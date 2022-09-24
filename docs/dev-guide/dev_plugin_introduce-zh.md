@@ -29,7 +29,7 @@ Version: 0.0.1
 
 ## 3. 新建插件项目
 
-本部分仅说明插件去源码开发文件配置情况，具体插件开发参考[插件模块开发手册](dev_plugin_module.md)和[插件代码开发手册](dev_plugin_code.md)。
+本部分仅说明插件去源码开发文件配置情况，具体插件开发参考[插件模块开发手册](dev_plugin_module-zh.md)和[插件代码开发手册](dev_plugin_code-zh.md)。
 
 ### 3.1 IDEA创建maven工程(本文档创建的工程名为**sermant-test**)
 
