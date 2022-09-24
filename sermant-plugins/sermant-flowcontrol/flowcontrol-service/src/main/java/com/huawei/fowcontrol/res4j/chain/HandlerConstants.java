@@ -25,7 +25,12 @@ package com.huawei.fowcontrol.res4j.chain;
  */
 public class HandlerConstants {
     /**
-     * 错误注入优先级
+     * 监控优先级
+     */
+    public static final int MONITOR_ORDER = -2000;
+
+    /**
+     * 业务处理优先级
      */
     public static final int BUSINESS_ORDER = -1000;
 

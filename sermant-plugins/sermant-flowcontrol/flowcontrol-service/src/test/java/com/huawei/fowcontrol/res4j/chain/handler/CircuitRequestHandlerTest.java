@@ -17,13 +17,31 @@
 
 package com.huawei.fowcontrol.res4j.chain.handler;
 
+import com.huawei.flowcontrol.common.config.MetricConfig;
 import com.huawei.flowcontrol.common.core.ResolverManager;
 import com.huawei.flowcontrol.common.core.resolver.CircuitBreakerRuleResolver;
+import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
+import com.huawei.flowcontrol.common.entity.MetricEntity;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 import com.huawei.fowcontrol.res4j.chain.HandlerChainEntry;
+import com.huawei.fowcontrol.res4j.handler.CircuitBreakerHandler;
+
+import com.huawei.fowcontrol.res4j.handler.InstanceIsolationHandler;
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.service.monitor.config.MonitorConfig;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
+
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 
 import org.junit.Assert;
+import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 熔断测试
@@ -35,6 +53,12 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
     private static final int MIN_CALL = 2;
     protected HandlerChainEntry entry;
     protected String sourceName;
+
+    private static final String METHOD_NAME = "createProcessor";
+
+    private static final long NANO_TIMES = 1000000000;
+
+    private static final String BUSINESS_NAME = "testPublishEvent";
 
     @Override
     public void test(HandlerChainEntry entry, String sourceName) {
@@ -78,7 +102,7 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
      * 测试dubbo
      *
      * @param requestEntity 请求体
-     * @param isProvider 是否为生产端
+     * @param isProvider    是否为生产端
      * @return 响应结果
      */
     protected FlowControlResult checkDubbo(RequestEntity requestEntity, boolean isProvider) {
@@ -115,5 +139,59 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
                 + "slowCallDurationThreshold: \"100\"\n"
                 + "slowCallRateThreshold: 60\n"
                 + "waitDurationInOpenState: 10s";
+    }
+
+    /**
+     * 测试事件处理
+     */
+    @Test
+    public void testAddPublishEvent() {
+        MonitorConfig monitorConfig = new MonitorConfig();
+        monitorConfig.setStartMonitor(true);
+        MetricConfig metricConfig = new MetricConfig();
+        metricConfig.setEnableStartMonitor(true);
+        try (MockedStatic<ConfigManager> configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
+             MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic =
+                     Mockito.mockStatic(PluginConfigManager.class)) {
+            configManagerMockedStatic
+                    .when(() -> ConfigManager.getConfig(MonitorConfig.class))
+                    .thenReturn(monitorConfig);
+            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(MetricConfig.class))
+                    .thenReturn(metricConfig);
+            testEventConsume();
+        }
+    }
+
+    /**
+     * 测试事件消费
+     */
+    private static void testEventConsume() {
+        CircuitBreakerRule rule = new CircuitBreakerRule();
+        rule.setFailureRateThreshold(80);
+        rule.setMinimumNumberOfCalls(2);
+        rule.setName("熔断指标测试");
+        rule.setSlidingWindowSize("10000");
+        rule.setSlidingWindowType("time");
+        rule.setSlowCallDurationThreshold("100");
+        rule.setSlowCallRateThreshold(60);
+        rule.setWaitDurationInOpenState("10s");
+        Optional<Object> optional = ReflectUtils.invokeMethod(new InstanceIsolationHandler(), METHOD_NAME,
+                new Class[]{String.class, CircuitBreakerRule.class}, new Object[]{BUSINESS_NAME, rule});
+        if (optional.isPresent() && optional.get() instanceof Optional) {
+            Optional<?> circuitBreakerOptional = (Optional<?>) optional.get();
+            if (circuitBreakerOptional.isPresent() && circuitBreakerOptional.get() instanceof CircuitBreaker) {
+                CircuitBreaker circuitBreaker = (CircuitBreaker) circuitBreakerOptional.get();
+                circuitBreaker.onSuccess(NANO_TIMES, circuitBreaker.getTimestampUnit());
+            }
+        }
+        Map<String, MetricEntity> monitors = MonitorHandler.MONITORS;
+        Assert.assertNotNull(monitors);
+        MetricEntity metricEntity = monitors.get(BUSINESS_NAME);
+        Assert.assertNotNull(metricEntity);
+        Assert.assertNotNull(metricEntity.getFuseRequest());
+        Assert.assertTrue(metricEntity.getFuseRequest().longValue() > 0);
+        long total = metricEntity.getFailedFuseRequest().get() + metricEntity.getIgnoreFulFuseRequest().get()
+                + metricEntity.getSuccessFulFuseRequest().get();
+        Assert.assertEquals(total, metricEntity.getFuseRequest().longValue());
     }
 }

@@ -26,7 +26,7 @@ import com.huawei.fowcontrol.res4j.chain.context.RequestContext;
 import java.util.Set;
 
 /**
- * 业务匹配处理器,优先级最高
+ * 业务匹配处理器,优先级最高（除了监控之外）
  *
  * @author zhouss
  * @since 2022-07-05

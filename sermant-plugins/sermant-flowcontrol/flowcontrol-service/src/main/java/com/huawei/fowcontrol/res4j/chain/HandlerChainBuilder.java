@@ -17,9 +17,12 @@
 
 package com.huawei.fowcontrol.res4j.chain;
 
+import com.huawei.flowcontrol.common.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 /**
@@ -36,6 +39,15 @@ public enum HandlerChainBuilder {
 
     private static final int HANDLER_SIZE = 4;
 
+    private static final List<AbstractChainHandler> HANDLERS = new ArrayList<>(HANDLER_SIZE);
+
+    static {
+        for (AbstractChainHandler handler : ServiceLoader.load(AbstractChainHandler.class, HandlerChainBuilder.class
+                .getClassLoader())) {
+            HANDLERS.add(handler);
+        }
+    }
+
     /**
      * 构建链
      *
@@ -43,13 +55,23 @@ public enum HandlerChainBuilder {
      */
     public HandlerChain build() {
         final HandlerChain processorChain = new HandlerChain();
-        final List<AbstractChainHandler> handlers = new ArrayList<>(HANDLER_SIZE);
-        for (AbstractChainHandler handler : ServiceLoader.load(AbstractChainHandler.class, this.getClass()
-                .getClassLoader())) {
-            handlers.add(handler);
-        }
-        Collections.sort(handlers);
-        handlers.forEach(processorChain::addLastHandler);
+        Collections.sort(HANDLERS);
+        HANDLERS.forEach(processorChain::addLastHandler);
         return processorChain;
+    }
+
+    /**
+     * 获取处理链
+     *
+     * @param name 名称
+     * @return 处理链
+     */
+    public static Optional<AbstractChainHandler> getHandler(String name) {
+        for (AbstractChainHandler abstractChainHandler : HANDLERS) {
+            if (StringUtils.equal(abstractChainHandler.getClass().getName(), name)) {
+                return Optional.of(abstractChainHandler);
+            }
+        }
+        return Optional.empty();
     }
 }
