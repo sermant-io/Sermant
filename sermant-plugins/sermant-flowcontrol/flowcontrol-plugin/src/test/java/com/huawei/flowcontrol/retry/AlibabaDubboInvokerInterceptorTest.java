@@ -39,6 +39,7 @@ import com.alibaba.dubbo.rpc.cluster.LoadBalance;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -71,14 +72,15 @@ public class AlibabaDubboInvokerInterceptorTest {
      * @throws Exception 初始化失败抛出
      */
     @Before
+    @Ignore
     public void before() throws Exception {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
         pluginConfigManagerMockedStatic = Mockito
                 .mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                 .thenReturn(new FlowControlConfig());
         serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
-        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
-        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
     }
 
     @Test
