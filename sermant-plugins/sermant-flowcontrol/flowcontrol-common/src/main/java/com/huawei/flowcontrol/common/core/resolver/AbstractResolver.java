@@ -61,11 +61,6 @@ public abstract class AbstractResolver<T extends Configurable> {
     private final List<ConfigUpdateListener<T>> listeners = new ArrayList<>();
 
     /**
-     * Yaml转换器
-     */
-    private YamlConverter yamlConverter = OperationManager.getOperation(YamlConverter.class);
-
-    /**
      * 解析器构造器
      *
      * @param configKey 解析器配置键
@@ -128,7 +123,8 @@ public abstract class AbstractResolver<T extends Configurable> {
         rules.remove(businessKey);
 
         // 2、转换配置
-        final Optional<T> optionalRule = yamlConverter.convert(value,getRuleClass());
+        final Optional<T> optionalRule = OperationManager.getOperation(YamlConverter.class)
+                .convert(value,getRuleClass());
         if (!optionalRule.isPresent()) {
             return optionalRule;
         }

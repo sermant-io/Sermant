@@ -28,9 +28,12 @@ import io.prometheus.client.GaugeMetricFamily;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 监控测试类
@@ -46,6 +49,12 @@ public class MonitorTest {
     private static final String NAME = "default";
 
     private static final String COLLECT_FUSE_METRIC_NAME = "collectFuseMetric";
+
+    private static final String COPY_METHOD_NAME = "copy";
+
+    private static final String COPY_VALUE_METHOD_NAME = "copyValue";
+
+    private static final String CURRENT_MAP_METHOD_NAME = "getCurrentMap";
 
     @Test
     public void testCollect() {
@@ -85,5 +94,37 @@ public class MonitorTest {
                 Assert.assertEquals(0.0, sample.value, 0.0);
             });
         });
+    }
+
+    @Test
+    public void testCopy() {
+        MetricEntity metricEntity = new MetricEntity();
+        MetricEntity sourceMetric = new MetricEntity();
+        sourceMetric.getServerRequest().set(DEFAULT_VALUE);
+        ReflectUtils.invokeMethod(new ServiceCollectorService(), COPY_METHOD_NAME, new Class[]{MetricEntity.class,
+                MetricEntity.class}, new Object[]{metricEntity, sourceMetric});
+        Assert.assertEquals(metricEntity.getServerRequest().get(), sourceMetric.getServerRequest().get());
+        AtomicLong atomicLong = new AtomicLong();
+        AtomicLong sourceAtomic = new AtomicLong(DEFAULT_VALUE);
+        ReflectUtils.invokeMethod(new ServiceCollectorService(), COPY_VALUE_METHOD_NAME, new Class[]{AtomicLong.class,
+                AtomicLong.class}, new Object[]{atomicLong, sourceAtomic});
+        Assert.assertEquals(atomicLong.get(), sourceAtomic.get());
+    }
+
+    @Test
+    public void testGetCurrent() {
+        MetricEntity metricEntity = new MetricEntity();
+        metricEntity.getServerRequest().set(DEFAULT_VALUE);
+        Map<String, MetricEntity> entityMap = new HashMap<>();
+        entityMap.put(NAME, metricEntity);
+        Optional<Object> optional = ReflectUtils.invokeMethod(new ServiceCollectorService(), CURRENT_MAP_METHOD_NAME,
+                new Class[]{Map.class},
+                new Object[]{entityMap});
+        Assert.assertTrue(optional.isPresent());
+        Assert.assertTrue(optional.get() instanceof Map);
+        Map<String, MetricEntity> targetMap = (Map<String, MetricEntity>) optional.get();
+        MetricEntity entity = targetMap.get(NAME);
+        Assert.assertNotNull(entity);
+        Assert.assertEquals(entity.getServerRequest().get(), metricEntity.getServerRequest().get());
     }
 }

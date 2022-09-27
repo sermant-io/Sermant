@@ -38,6 +38,7 @@
         <config.skip.flag>false</config.skip.flag>
         <resilience4j.version>1.7.1</resilience4j.version>
         <jackson.version>2.13.3</jackson.version>
+        <prometheus.version>0.16.0</prometheus.version>
     </properties>
 
     <dependencies>
@@ -87,6 +88,11 @@
             <artifactId>flowcontrol-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient</artifactId>
+            <version>${prometheus.version}</version>
         </dependency>
         <!--测试依赖-->
         <dependency>

@@ -23,6 +23,7 @@ import com.huawei.fowcontrol.res4j.chain.HandlerConstants;
 import com.huawei.fowcontrol.res4j.chain.context.RequestContext;
 import com.huawei.fowcontrol.res4j.util.MonitorUtils;
 
+import com.huaweicloud.sermant.core.utils.StringUtils;
 import io.prometheus.client.Summary;
 
 import java.util.Map;
@@ -73,12 +74,14 @@ public class MonitorHandler extends AbstractChainHandler {
     @Override
     public void onBefore(RequestContext context, Set<String> businessNames) {
         context.save(START_TIME, System.currentTimeMillis());
-        String name = context.getRequestEntity().getApiPath();
-        MetricEntity metricEntity = MONITORS.computeIfAbsent(name, s -> new MetricEntity());
-        if (context.getRequestEntity().getRequestType() == RequestEntity.RequestType.CLIENT) {
-            metricEntity.getClientRequest().getAndIncrement();
-        } else {
-            metricEntity.getServerRequest().getAndIncrement();
+        if (context.getRequestEntity() != null && !StringUtils.isEmpty(context.getRequestEntity().getApiPath())) {
+            String name = context.getRequestEntity().getApiPath();
+            MetricEntity metricEntity = MONITORS.computeIfAbsent(name, s -> new MetricEntity());
+            if (context.getRequestEntity().getRequestType() == RequestEntity.RequestType.CLIENT) {
+                metricEntity.getClientRequest().getAndIncrement();
+            } else {
+                metricEntity.getServerRequest().getAndIncrement();
+            }
         }
         super.onBefore(context, businessNames);
     }
@@ -86,17 +89,17 @@ public class MonitorHandler extends AbstractChainHandler {
     @Override
     public void onThrow(RequestContext context, Set<String> businessNames, Throwable throwable) {
         super.onThrow(context, businessNames, throwable);
-        String name = context.getRequestEntity().getApiPath();
-        MetricEntity metricEntity = MONITORS.computeIfAbsent(name, s -> new MetricEntity());
-        if (context.getRequestEntity().getRequestType() == RequestEntity.RequestType.CLIENT) {
-            metricEntity.getFailedClientRequest().getAndIncrement();
-        } else {
-            metricEntity.getFailedServerRequest().getAndIncrement();
-        }
-        if (requestLatency != null) {
-            long consumeTime;
-            if (context.get(START_TIME, Long.class) != null) {
-                consumeTime = System.currentTimeMillis() - context.get(START_TIME, Long.class);
+        if (context.getRequestEntity() != null && !StringUtils.isEmpty(context.getRequestEntity().getApiPath())) {
+            String name = context.getRequestEntity().getApiPath();
+            MetricEntity metricEntity = MONITORS.computeIfAbsent(name, s -> new MetricEntity());
+            if (context.getRequestEntity().getRequestType() == RequestEntity.RequestType.CLIENT) {
+                metricEntity.getFailedClientRequest().getAndIncrement();
+            } else {
+                metricEntity.getFailedServerRequest().getAndIncrement();
+            }
+            if (requestLatency != null && context.get(START_TIME, Long.class) != null && !StringUtils.isEmpty(name)
+                    && context.getRequestEntity().getRequestType() != null) {
+                long consumeTime = System.currentTimeMillis() - context.get(START_TIME, Long.class);
                 requestLatency.labels(name, context.getRequestEntity().getRequestType().name(),
                         Boolean.FALSE.toString()).observe(consumeTime);
             }
@@ -107,22 +110,24 @@ public class MonitorHandler extends AbstractChainHandler {
     @Override
     public void onResult(RequestContext context, Set<String> businessNames, Object result) {
         super.onResult(context, businessNames, result);
-        long consumeTime = 0L;
-        if (context.get(START_TIME, Long.class) != null) {
-            consumeTime = System.currentTimeMillis() - context.get(START_TIME, Long.class);
-        }
-        String name = context.getRequestEntity().getApiPath();
-        MetricEntity metricEntity = MONITORS.computeIfAbsent(name, s -> new MetricEntity());
-        if (context.getRequestEntity().getRequestType() == RequestEntity.RequestType.CLIENT) {
-            metricEntity.getSuccessServerRequest().getAndIncrement();
-            metricEntity.getConsumeClientTime().getAndAdd(consumeTime);
-        } else {
-            metricEntity.getSuccessClientRequest().getAndIncrement();
-            metricEntity.getConsumeServerTime().getAndAdd(consumeTime);
-        }
-        if (requestLatency != null && consumeTime != 0) {
-            requestLatency.labels(name, context.getRequestEntity().getRequestType().name(), Boolean.TRUE.toString())
-                    .observe(consumeTime);
+        if (context.getRequestEntity() != null && !StringUtils.isEmpty(context.getRequestEntity().getApiPath())) {
+            String name = context.getRequestEntity().getApiPath();
+            long consumeTime = 0L;
+            if (context.get(START_TIME, Long.class) != null) {
+                consumeTime = System.currentTimeMillis() - context.get(START_TIME, Long.class);
+            }
+            MetricEntity metricEntity = MONITORS.computeIfAbsent(name, s -> new MetricEntity());
+            if (context.getRequestEntity().getRequestType() == RequestEntity.RequestType.CLIENT) {
+                metricEntity.getSuccessServerRequest().getAndIncrement();
+                metricEntity.getConsumeClientTime().getAndAdd(consumeTime);
+            } else {
+                metricEntity.getSuccessClientRequest().getAndIncrement();
+                metricEntity.getConsumeServerTime().getAndAdd(consumeTime);
+            }
+            if (requestLatency != null && consumeTime != 0 && context.getRequestEntity().getRequestType() != null) {
+                requestLatency.labels(name, context.getRequestEntity().getRequestType().name(), Boolean.TRUE.toString())
+                        .observe(consumeTime);
+            }
         }
         context.remove(START_TIME);
     }
