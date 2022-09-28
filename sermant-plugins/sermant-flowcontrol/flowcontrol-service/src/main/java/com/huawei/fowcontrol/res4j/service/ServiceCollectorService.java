@@ -24,8 +24,6 @@ import com.huawei.fowcontrol.res4j.util.MonitorUtils;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
-import com.alibaba.fastjson.JSONObject;
-
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.prometheus.client.Collector;
 import io.prometheus.client.GaugeMetricFamily;
@@ -36,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 服务指标监控
@@ -257,10 +256,54 @@ public class ServiceCollectorService extends Collector implements PluginService 
         Map<String, MetricEntity> target = new ConcurrentHashMap<>();
         if (source != null && !source.isEmpty()) {
             for (Map.Entry<String, MetricEntity> entry : source.entrySet()) {
-                target.put(entry.getKey(), JSONObject.parseObject(JSONObject.toJSONString(entry.getValue()),
-                        MetricEntity.class));
+                MetricEntity metricEntity = new MetricEntity();
+                MetricEntity sourceMetric = entry.getValue();
+                copy(metricEntity, sourceMetric);
+                target.put(entry.getKey(), metricEntity);
             }
         }
         return target;
+    }
+
+    /**
+     * 数据copy
+     *
+     * @param metricEntity 待拷贝数据
+     * @param sourceMetric 元数据
+     */
+    private void copy(MetricEntity metricEntity, MetricEntity sourceMetric) {
+        if (sourceMetric == null) {
+            return;
+        }
+        metricEntity.setName(sourceMetric.getName());
+        copyValue(sourceMetric.getServerRequest(), metricEntity.getServerRequest());
+        copyValue(sourceMetric.getClientRequest(), metricEntity.getClientRequest());
+        copyValue(sourceMetric.getConsumeClientTime(), metricEntity.getConsumeClientTime());
+        copyValue(sourceMetric.getConsumeServerTime(), metricEntity.getConsumeServerTime());
+        copyValue(sourceMetric.getSuccessServerRequest(), metricEntity.getSuccessServerRequest());
+        copyValue(sourceMetric.getSuccessClientRequest(), metricEntity.getSuccessClientRequest());
+        copyValue(sourceMetric.getFailedServerRequest(), metricEntity.getFailedServerRequest());
+        copyValue(sourceMetric.getFailedClientRequest(), metricEntity.getFailedClientRequest());
+        copyValue(sourceMetric.getLastTime(), metricEntity.getLastTime());
+        copyValue(sourceMetric.getFuseTime(), metricEntity.getFuseTime());
+        copyValue(sourceMetric.getFailedFuseRequest(), metricEntity.getFailedFuseRequest());
+        copyValue(sourceMetric.getSuccessFulFuseRequest(), metricEntity.getSuccessFulFuseRequest());
+        copyValue(sourceMetric.getPermittedFulFuseRequest(), metricEntity.getPermittedFulFuseRequest());
+        copyValue(sourceMetric.getIgnoreFulFuseRequest(), metricEntity.getIgnoreFulFuseRequest());
+        copyValue(sourceMetric.getSlowFuseRequest(), metricEntity.getSlowFuseRequest());
+        copyValue(sourceMetric.getFuseRequest(), metricEntity.getFuseRequest());
+        metricEntity.setReportTime(sourceMetric.getReportTime());
+    }
+
+    /**
+     * 值拷贝
+     *
+     * @param source 来源
+     * @param target 赋值的对象
+     */
+    private void copyValue(AtomicLong source, AtomicLong target) {
+        if (source != null) {
+            target.set(source.get());
+        }
     }
 }

@@ -53,11 +53,6 @@ public enum ResolverManager {
     private final Map<String, AbstractResolver<?>> resolversMap = new HashMap<>();
 
     /**
-     * 配置解析器 当前只支持yaml格式
-     */
-    private final YamlConverter yamlConverter = OperationManager.getOperation(YamlConverter.class);
-
-    /**
      * 解析器配置前缀集合
      */
     private Set<String> resolverConfigPrefix;
@@ -162,7 +157,8 @@ public enum ResolverManager {
      */
     private Map<String, Object> tryResolveWithYaml(String value) {
         final Map<String, Object> kvMap = new HashMap<>();
-        final Optional<Map<String, Object>> convert = yamlConverter.convert(value,Map.class);
+        final Optional<Map<String, Object>> convert = OperationManager.getOperation(YamlConverter.class)
+                .convert(value,Map.class);
         if (convert.isPresent()) {
             final Map<String, Object> map = convert.get();
             MapUtils.resolveNestMap(kvMap, map, null);
