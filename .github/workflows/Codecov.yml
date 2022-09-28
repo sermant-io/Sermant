@@ -8,6 +8,13 @@ jobs:
       matrix:
         java_version: [1.8]
         os: [ubuntu-latest]
+        sermant_module: [
+            sermant-agentcore-core,sermant-agentcore-implement,
+            dynamic-config-plugin,
+            flowcontrol-common,flowcontrol-plugin,flowcontrol-service,
+            dubbo-loadbalancer-plugin,loadbalancer-common,loadbalancer-service,spring-cloud-loadbalancer-plugin,
+            dubbo-router-plugin,dubbo-router-service,router-config-common,spring-router-plugin,spring-router-service,
+            dubbo-registry-plugin,dubbo-registry-service,spring-cloud-registry-plugin,spring-cloud-registry-service]
     permissions:
       checks: write
       contents: write
@@ -37,7 +44,8 @@ jobs:
           tar -zxf apache-zookeeper-3.8.0-bin.tar.gz
           bash apache-zookeeper-3.8.0-bin/bin/zkServer.sh start apache-zookeeper-3.8.0-bin/conf/zoo_sample.cfg
       - name: Build with Maven
-        run: mvn test
+        run: |
+          mvn test -pl com.huaweicloud.sermant:${{ matrix.sermant_module }}
       - name: Generate code coverage report
         uses: codecov/codecov-action@v3
         with:
