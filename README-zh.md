@@ -10,6 +10,7 @@
 [![Gitter](https://badges.gitter.im/SermantUsers/community.svg)](https://gitter.im/SermantUsers/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![CI/IT Tests](https://github.com/huaweicloud/Sermant/workflows/Java%20CI%20with%20Maven/badge.svg?branch=develop)](https://github.com/huaweicloud/Sermant/actions?query=workflow:Java%20CI%20with%20Maven%20event:push%20branch:develop)
+[![codecov](https://codecov.io/gh/huaweicloud/Sermant/develop/graph/badge.svg)](https://codecov.io/gh/huaweicloud/Sermant)
 
 </div>
 
@@ -83,6 +84,18 @@ java -cp sermant-example\demo-application\target\demo-application.jar ^
 ![pic](docs/binary-docs/backend_sermant_info.png)
 
 #### 有关详细信息，请参阅 [服务注册和发现快速开始说明](docs/QuickStart.md)。
+
+## 插件功能列表
+| 功能名称 | 阶段 | 微服务框架组件支持列表 |
+|:-----|:-----|:-----|
+| [限流降级](docs/user-guide/flowcontrol/flowcontrol-zh.md) | Beta | SpringBoot 1.2.x - 2.6.x <br> SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>Dubbo 2.6.x-2.7.x |
+| [服务注册](docs/user-guide/registry/document-zh.md) | GC | SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x |
+| [服务双注册迁移](docs/user-guide/registry/spring-cloud-registry-migiration-zh.md) | GC | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x |
+| [负载均衡](docs/user-guide/loadbalancer/document-zh.md) | Beta | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0 |
+| [标签路由](docs/user-guide/router/document-zh.md) | Beta | SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x |
+| [优雅上下线](docs/user-guide/graceful/document-zh.md) | Beta | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0 |
+| [动态配置](docs/user-guide/dynamic-config/document-zh.md) | Beta | SpringBoot 1.5.x - 2.6.2<br>spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+<br>spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+ |
+| [服务监控](docs/user-guide/server-monitor/document-zh.md) | Alpha | All |
 
 ## 更多文档
 
