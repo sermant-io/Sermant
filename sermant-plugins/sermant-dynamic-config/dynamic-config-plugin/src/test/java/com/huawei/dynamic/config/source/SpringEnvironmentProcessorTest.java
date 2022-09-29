@@ -84,6 +84,7 @@ public class SpringEnvironmentProcessorTest {
         Assert.assertNotNull(source);
         // 注意此处有进行configSource注入测试, 看查看spi文件，会按照指定顺序排序
         ConfigHolder.INSTANCE.resolve(event);
+        System.out.println("==========="+ConfigHolder.INSTANCE.getConfigSources());
         // 由于此处为异步执行, 因此这里等待异步执行完成
         Thread.sleep(1000);
         Assert.assertEquals(mockEnvironment.getProperty(KEY), VALUE);
