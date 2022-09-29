@@ -20,6 +20,8 @@ package com.huawei.dynamic.config.source;
 import com.huawei.dynamic.config.ConfigHolder;
 import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.sources.MockEnvironment;
+import com.huawei.dynamic.config.sources.TestConfigSources;
+import com.huawei.dynamic.config.sources.TestLowestConfigSources;
 
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
@@ -63,6 +65,8 @@ public class SpringEnvironmentProcessorTest {
         operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
         operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
             .thenReturn(new YamlConverterImpl());
+        ConfigHolder.INSTANCE.getConfigSources().removeIf(configSource -> configSource.getClass() == TestConfigSources.class
+                || configSource.getClass() == TestLowestConfigSources.class);
     }
 
     @After
@@ -72,7 +76,7 @@ public class SpringEnvironmentProcessorTest {
     }
 
     @Test
-    public void locate() {
+    public void locate() throws InterruptedException {
         final SpringEnvironmentProcessor springEnvironmentProcessor = new SpringEnvironmentProcessor();
         final MockEnvironment mockEnvironment = new MockEnvironment();
         springEnvironmentProcessor.postProcessEnvironment(mockEnvironment, null);
@@ -80,6 +84,8 @@ public class SpringEnvironmentProcessorTest {
         Assert.assertNotNull(source);
         // 注意此处有进行configSource注入测试, 看查看spi文件，会按照指定顺序排序
         ConfigHolder.INSTANCE.resolve(event);
+        // 由于此处为异步执行, 因此这里等待异步执行完成
+        Thread.sleep(1000);
         Assert.assertEquals(mockEnvironment.getProperty(KEY), VALUE);
     }
 }

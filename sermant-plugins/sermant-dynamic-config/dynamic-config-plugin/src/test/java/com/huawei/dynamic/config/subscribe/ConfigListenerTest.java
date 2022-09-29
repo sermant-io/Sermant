@@ -58,6 +58,8 @@ public class ConfigListenerTest {
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
             .thenReturn(new DynamicConfiguration());
+        ConfigHolder.INSTANCE.getConfigSources().removeIf(configSource -> configSource.getClass() == TestConfigSources.class
+                || configSource.getClass() == TestLowestConfigSources.class);
     }
 
     @After
@@ -69,14 +71,8 @@ public class ConfigListenerTest {
     @Test
     public void test() {
         final ConfigListener configListener = new ConfigListener();
-        ConfigHolder.INSTANCE.getConfigSources()
-            .removeIf(configSource -> configSource.getClass() == TestConfigSources.class
-                || configSource.getClass() == TestLowestConfigSources.class);
         configListener.process(new OrderConfigEvent("id", "group", "test: 1", DynamicConfigEventType.CREATE,
             Collections.singletonMap("test", 1)));
         Assert.assertEquals(ConfigHolder.INSTANCE.getConfig("test"), 1);
-        ConfigHolder.INSTANCE.getConfigSources().add(new TestConfigSources());
-        ConfigHolder.INSTANCE.getConfigSources().add(new TestLowestConfigSources());
-        Collections.sort(ConfigHolder.INSTANCE.getConfigSources());
     }
 }

@@ -71,6 +71,10 @@ public class ConfigHolderTest {
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
                 .thenReturn(configuration);
+        ConfigHolder.INSTANCE.getConfigSources().removeIf(configSource -> configSource.getClass() == TestConfigSources.class
+                || configSource.getClass() == TestLowestConfigSources.class);
+        ConfigHolder.INSTANCE.getConfigSources().add(new TestConfigSources());
+        ConfigHolder.INSTANCE.getConfigSources().add(new TestLowestConfigSources());
         Collections.sort(ConfigHolder.INSTANCE.getConfigSources());
     }
 
@@ -78,6 +82,8 @@ public class ConfigHolderTest {
     public void tearDown() {
         pluginConfigManagerMockedStatic.close();
         operationManagerMockedStatic.close();
+        ConfigHolder.INSTANCE.getConfigSources().removeIf(configSource -> configSource.getClass() == TestConfigSources.class
+                        || configSource.getClass() == TestLowestConfigSources.class);
     }
 
     @Test

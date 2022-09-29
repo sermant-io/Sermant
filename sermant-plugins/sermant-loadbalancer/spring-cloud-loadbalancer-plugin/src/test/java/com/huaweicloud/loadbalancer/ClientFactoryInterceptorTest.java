@@ -104,7 +104,7 @@ public class ClientFactoryInterceptorTest {
 
             // TEST一起跑的时候会失败
             interceptor.after(context);
-//            Assert.assertNull(context.getResult());
+            Assert.assertNull(context.getResult());
 
             // 测试已配置负载均衡与原生负载均衡一致
             RuleManagerHelper.publishRule(FOO, SpringLoadbalancerType.ROUND_ROBIN.getMapperName());
