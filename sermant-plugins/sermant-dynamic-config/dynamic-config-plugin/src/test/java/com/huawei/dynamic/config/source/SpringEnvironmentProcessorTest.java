@@ -18,6 +18,7 @@
 package com.huawei.dynamic.config.source;
 
 import com.huawei.dynamic.config.ConfigHolder;
+import com.huawei.dynamic.config.CseDynamicConfigSource;
 import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.sources.MockEnvironment;
 import com.huawei.dynamic.config.sources.TestConfigSources;
@@ -59,6 +60,7 @@ public class SpringEnvironmentProcessorTest {
         Mockito.when(event.getContent()).thenReturn(CONTENT);
         final DynamicConfiguration configuration = Mockito.mock(DynamicConfiguration.class);
         Mockito.when(configuration.getFirstRefreshDelayMs()).thenReturn(0L);
+        Mockito.when(configuration.isEnableCseAdapter()).thenReturn(true);
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
             .thenReturn(configuration);
@@ -83,8 +85,8 @@ public class SpringEnvironmentProcessorTest {
         final PropertySource<?> source = mockEnvironment.getPropertySources().get("Sermant-Dynamic-Config");
         Assert.assertNotNull(source);
         // 注意此处有进行configSource注入测试, 看查看spi文件，会按照指定顺序排序
+        ConfigHolder.INSTANCE.getConfigSources().clear();
         ConfigHolder.INSTANCE.resolve(event);
-        System.out.println("==========="+ConfigHolder.INSTANCE.getConfigSources());
         // 由于此处为异步执行, 因此这里等待异步执行完成
         Thread.sleep(1000);
         Assert.assertEquals(mockEnvironment.getProperty(KEY), VALUE);
