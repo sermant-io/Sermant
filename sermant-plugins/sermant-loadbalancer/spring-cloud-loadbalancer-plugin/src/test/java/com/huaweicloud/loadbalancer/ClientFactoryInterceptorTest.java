@@ -25,6 +25,7 @@ import com.huaweicloud.loadbalancer.service.RuleConverter;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -42,6 +43,7 @@ import org.springframework.cloud.loadbalancer.support.ServiceInstanceListSupplie
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 测试LoadBalancerClientFactory getInstance方法的拦截点
@@ -94,7 +96,7 @@ public class ClientFactoryInterceptorTest {
         ClientFactoryInterceptor nullConfigInterceptor = new ClientFactoryInterceptor();
         nullConfigInterceptor.after(context);
         Assert.assertNull(context.getResult());
-
+        cleanCache();
         // 测试未配置负载均衡的场景
         try (final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
                 .mockStatic(PluginConfigManager.class)) {
@@ -104,7 +106,7 @@ public class ClientFactoryInterceptorTest {
 
             // TEST一起跑的时候会失败
             interceptor.after(context);
-//            Assert.assertNull(context.getResult());
+            Assert.assertNull(context.getResult());
 
             // 测试已配置负载均衡与原生负载均衡一致
             RuleManagerHelper.publishRule(FOO, SpringLoadbalancerType.ROUND_ROBIN.getMapperName());
@@ -128,6 +130,14 @@ public class ClientFactoryInterceptorTest {
             RuleManagerHelper.deleteRule(FOO, SpringLoadbalancerType.RANDOM.getMapperName());
             RuleManagerHelper.deleteRule(FOO + "__1", SpringLoadbalancerType.RANDOM.getMapperName());
         }
+    }
+
+    private void cleanCache() {
+        SpringLoadbalancerCache.INSTANCE.getNewCache().clear();
+        final Optional<Object> originCache = ReflectUtils
+                .getFieldValue(SpringLoadbalancerCache.INSTANCE, "originCache");
+        Assert.assertTrue(originCache.isPresent() && originCache.get() instanceof Map);
+        ((Map<?, ?>) originCache.get()).clear();
     }
 
     public static class TestServiceInstance implements ServiceInstance {

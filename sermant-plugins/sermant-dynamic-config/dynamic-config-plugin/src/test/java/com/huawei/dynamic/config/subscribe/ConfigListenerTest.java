@@ -18,6 +18,7 @@
 package com.huawei.dynamic.config.subscribe;
 
 import com.huawei.dynamic.config.ConfigHolder;
+import com.huawei.dynamic.config.CseDynamicConfigSource;
 import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.sources.TestConfigSources;
 import com.huawei.dynamic.config.sources.TestLowestConfigSources;
@@ -56,8 +57,12 @@ public class ConfigListenerTest {
             .thenReturn(new YamlConverterImpl());
 
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        final DynamicConfiguration configuration = new DynamicConfiguration();
+        configuration.setEnableCseAdapter(true);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
-            .thenReturn(new DynamicConfiguration());
+            .thenReturn(configuration);
+        ConfigHolder.INSTANCE.getConfigSources().removeIf(configSource -> configSource.getClass() == TestConfigSources.class
+                || configSource.getClass() == TestLowestConfigSources.class);
     }
 
     @After
@@ -69,14 +74,10 @@ public class ConfigListenerTest {
     @Test
     public void test() {
         final ConfigListener configListener = new ConfigListener();
-        ConfigHolder.INSTANCE.getConfigSources()
-            .removeIf(configSource -> configSource.getClass() == TestConfigSources.class
-                || configSource.getClass() == TestLowestConfigSources.class);
+        ConfigHolder.INSTANCE.getConfigSources().clear();
+        ConfigHolder.INSTANCE.getConfigSources().add(new CseDynamicConfigSource());
         configListener.process(new OrderConfigEvent("id", "group", "test: 1", DynamicConfigEventType.CREATE,
             Collections.singletonMap("test", 1)));
         Assert.assertEquals(ConfigHolder.INSTANCE.getConfig("test"), 1);
-        ConfigHolder.INSTANCE.getConfigSources().add(new TestConfigSources());
-        ConfigHolder.INSTANCE.getConfigSources().add(new TestLowestConfigSources());
-        Collections.sort(ConfigHolder.INSTANCE.getConfigSources());
     }
 }

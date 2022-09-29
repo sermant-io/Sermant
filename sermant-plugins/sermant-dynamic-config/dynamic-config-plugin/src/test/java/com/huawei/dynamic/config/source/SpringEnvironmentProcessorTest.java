@@ -18,12 +18,16 @@
 package com.huawei.dynamic.config.source;
 
 import com.huawei.dynamic.config.ConfigHolder;
+import com.huawei.dynamic.config.CseDynamicConfigSource;
 import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.sources.MockEnvironment;
+import com.huawei.dynamic.config.sources.TestConfigSources;
+import com.huawei.dynamic.config.sources.TestLowestConfigSources;
 
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.plugin.subscribe.processor.OrderConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
@@ -35,6 +39,8 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.core.env.PropertySource;
 
+import java.util.Collections;
+
 /**
  * 配置源测试
  *
@@ -45,24 +51,28 @@ public class SpringEnvironmentProcessorTest {
     private static final String KEY = "test";
     private static final String VALUE = String.valueOf(Integer.MIN_VALUE);
     private static final String CONTENT = "test: " + VALUE;
-    private DynamicConfigEvent event;
+    private OrderConfigEvent event;
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     private MockedStatic<OperationManager> operationManagerMockedStatic;
 
     @Before
     public void setUp() {
-        event = Mockito.mock(DynamicConfigEvent.class);
+        event = Mockito.mock(OrderConfigEvent.class);
         Mockito.when(event.getKey()).thenReturn(KEY);
         Mockito.when(event.getContent()).thenReturn(CONTENT);
+        Mockito.when(event.getAllData()).thenReturn(Collections.singletonMap(KEY, VALUE));
         final DynamicConfiguration configuration = Mockito.mock(DynamicConfiguration.class);
         Mockito.when(configuration.getFirstRefreshDelayMs()).thenReturn(0L);
+        Mockito.when(configuration.isEnableCseAdapter()).thenReturn(true);
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
             .thenReturn(configuration);
         operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
         operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
             .thenReturn(new YamlConverterImpl());
+        ConfigHolder.INSTANCE.getConfigSources().removeIf(configSource -> configSource.getClass() == TestConfigSources.class
+                || configSource.getClass() == TestLowestConfigSources.class);
     }
 
     @After
@@ -72,7 +82,7 @@ public class SpringEnvironmentProcessorTest {
     }
 
     @Test
-    public void locate() {
+    public void locate() throws InterruptedException {
         final SpringEnvironmentProcessor springEnvironmentProcessor = new SpringEnvironmentProcessor();
         final MockEnvironment mockEnvironment = new MockEnvironment();
         springEnvironmentProcessor.postProcessEnvironment(mockEnvironment, null);
@@ -80,6 +90,8 @@ public class SpringEnvironmentProcessorTest {
         Assert.assertNotNull(source);
         // 注意此处有进行configSource注入测试, 看查看spi文件，会按照指定顺序排序
         ConfigHolder.INSTANCE.resolve(event);
+        // 由于此处为异步执行, 因此这里等待异步执行完成
+        Thread.sleep(1000);
         Assert.assertEquals(mockEnvironment.getProperty(KEY), VALUE);
     }
 }
