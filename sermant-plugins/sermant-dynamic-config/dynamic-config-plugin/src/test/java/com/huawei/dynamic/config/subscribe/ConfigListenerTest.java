@@ -30,6 +30,7 @@ import com.huaweicloud.sermant.core.plugin.subscribe.processor.OrderConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 
 import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,15 +55,16 @@ public class ConfigListenerTest {
     public void setUp() {
         operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
         operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
-            .thenReturn(new YamlConverterImpl());
+                .thenReturn(new YamlConverterImpl());
 
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         final DynamicConfiguration configuration = new DynamicConfiguration();
         configuration.setEnableCseAdapter(true);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
-            .thenReturn(configuration);
-        ConfigHolder.INSTANCE.getConfigSources().removeIf(configSource -> configSource.getClass() == TestConfigSources.class
-                || configSource.getClass() == TestLowestConfigSources.class);
+                .thenReturn(configuration);
+        ConfigHolder.INSTANCE.getConfigSources()
+                .removeIf(configSource -> configSource.getClass() == TestConfigSources.class
+                        || configSource.getClass() == TestLowestConfigSources.class);
     }
 
     @After
@@ -72,12 +74,14 @@ public class ConfigListenerTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws InterruptedException {
         final ConfigListener configListener = new ConfigListener();
         ConfigHolder.INSTANCE.getConfigSources().clear();
         ConfigHolder.INSTANCE.getConfigSources().add(new CseDynamicConfigSource());
         configListener.process(new OrderConfigEvent("id", "group", "test: 1", DynamicConfigEventType.CREATE,
-            Collections.singletonMap("test", 1)));
+                Collections.singletonMap("test", 1)));
+        // 由于此处为异步执行, 因此这里等待异步执行完成
+        Thread.sleep(1000);
         Assert.assertEquals(ConfigHolder.INSTANCE.getConfig("test"), 1);
     }
 }

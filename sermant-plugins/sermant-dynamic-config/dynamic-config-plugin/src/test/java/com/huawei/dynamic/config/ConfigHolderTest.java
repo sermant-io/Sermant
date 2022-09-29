@@ -87,9 +87,11 @@ public class ConfigHolderTest {
     }
 
     @Test
-    public void testResolveAndListener() {
+    public void testResolveAndListener() throws InterruptedException {
         ConfigHolder.INSTANCE.addListener(event -> LOGGER.info("refresh success"));
         ConfigHolder.INSTANCE.resolve(event);
+        // 由于此处为异步执行, 因此这里等待异步执行完成
+        Thread.sleep(1000);
         final int test = (Integer) ConfigHolder.INSTANCE.getConfig(KEY);
         Assert.assertEquals(TestConfigSources.ORDER, test);
         final Set<String> configNames = ConfigHolder.INSTANCE.getConfigNames();
