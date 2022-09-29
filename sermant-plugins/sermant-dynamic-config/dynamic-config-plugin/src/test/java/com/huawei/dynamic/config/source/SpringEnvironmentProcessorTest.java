@@ -85,7 +85,6 @@ public class SpringEnvironmentProcessorTest {
         final PropertySource<?> source = mockEnvironment.getPropertySources().get("Sermant-Dynamic-Config");
         Assert.assertNotNull(source);
         // 注意此处有进行configSource注入测试, 看查看spi文件，会按照指定顺序排序
-        ConfigHolder.INSTANCE.getConfigSources().clear();
         ConfigHolder.INSTANCE.resolve(event);
         // 由于此处为异步执行, 因此这里等待异步执行完成
         Thread.sleep(1000);
