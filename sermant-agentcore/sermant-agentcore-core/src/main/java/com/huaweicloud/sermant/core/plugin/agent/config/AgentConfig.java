@@ -63,6 +63,11 @@ public class AgentConfig implements BaseConfig {
      */
     private Set<String> serviceBlackList = Collections.emptySet();
 
+    /**
+     * 拦截插件服务名单
+     */
+    private Set<String> serviceInjectList = Collections.emptySet();
+
     public boolean isEnhanceBootStrapEnable() {
         return isEnhanceBootStrapEnable;
     }
@@ -101,6 +106,14 @@ public class AgentConfig implements BaseConfig {
 
     public void setServiceBlackList(Set<String> serviceBlackList) {
         this.serviceBlackList = serviceBlackList;
+    }
+
+    public Set<String> getServiceInjectList() {
+        return serviceInjectList;
+    }
+
+    public void setServiceInjectList(Set<String> serviceInjectList) {
+        this.serviceInjectList = serviceInjectList;
     }
 
     public CombineStrategy getCombineStrategy() {

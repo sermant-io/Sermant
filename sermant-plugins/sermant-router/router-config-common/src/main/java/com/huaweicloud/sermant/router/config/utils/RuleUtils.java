@@ -18,11 +18,11 @@ package com.huaweicloud.sermant.router.config.utils;
 
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
-import com.huaweicloud.sermant.router.config.label.entity.Match;
-import com.huaweicloud.sermant.router.config.label.entity.MatchRule;
-import com.huaweicloud.sermant.router.config.label.entity.Route;
-import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.label.entity.Rule;
+import com.huaweicloud.sermant.router.config.entity.Match;
+import com.huaweicloud.sermant.router.config.entity.MatchRule;
+import com.huaweicloud.sermant.router.config.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
+import com.huaweicloud.sermant.router.config.entity.Rule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,9 +44,9 @@ import java.util.regex.Pattern;
  * @since 2022-07-11
  */
 public class RuleUtils {
-    private static final Set<String> HEADER_KEYS = new CopyOnWriteArraySet<>();
+    private static final Set<String> MATCH_KEYS = new CopyOnWriteArraySet<>();
 
-    private static final Map<String, Set<String>> SERVICE_HEADER_KEYS = new ConcurrentHashMap<>();
+    private static final Map<String, Set<String>> SERVICE_MATCH_KEYS = new ConcurrentHashMap<>();
 
     private static final int ONO_HUNDRED = 100;
 
@@ -108,24 +108,14 @@ public class RuleUtils {
      *
      * @param configuration 路由配置
      */
-    public static void initHeaderKeys(RouterConfiguration configuration) {
-        HEADER_KEYS.clear();
+    public static void initMatchKeys(RouterConfiguration configuration) {
+        MATCH_KEYS.clear();
         if (RouterConfiguration.isInValid(configuration)) {
             return;
         }
         Map<String, List<Rule>> routeRules = configuration.getRouteRule();
         for (List<Rule> rules : routeRules.values()) {
-            for (Rule rule : rules) {
-                Match match = rule.getMatch();
-                if (match == null) {
-                    continue;
-                }
-                Map<String, List<MatchRule>> headers = match.getHeaders();
-                if (CollectionUtils.isEmpty(headers)) {
-                    continue;
-                }
-                HEADER_KEYS.addAll(headers.keySet());
-            }
+            addKeys(rules, MATCH_KEYS);
         }
     }
 
@@ -135,24 +125,14 @@ public class RuleUtils {
      * @param serviceName 服务名
      * @param rules 路由规则
      */
-    public static void updateHeaderKeys(String serviceName, List<Rule> rules) {
+    public static void updateMatchKeys(String serviceName, List<Rule> rules) {
         if (CollectionUtils.isEmpty(rules)) {
-            SERVICE_HEADER_KEYS.remove(serviceName);
+            SERVICE_MATCH_KEYS.remove(serviceName);
             return;
         }
-        Set<String> keys = SERVICE_HEADER_KEYS.computeIfAbsent(serviceName, value -> new CopyOnWriteArraySet<>());
+        Set<String> keys = SERVICE_MATCH_KEYS.computeIfAbsent(serviceName, value -> new CopyOnWriteArraySet<>());
         keys.clear();
-        for (Rule rule : rules) {
-            Match match = rule.getMatch();
-            if (match == null) {
-                continue;
-            }
-            Map<String, List<MatchRule>> headers = match.getHeaders();
-            if (CollectionUtils.isEmpty(headers)) {
-                continue;
-            }
-            keys.addAll(headers.keySet());
-        }
+        addKeys(rules, keys);
     }
 
     /**
@@ -160,9 +140,9 @@ public class RuleUtils {
      *
      * @return 缓存的key
      */
-    public static Set<String> getHeaderKeys() {
-        Set<String> keys = new HashSet<>(HEADER_KEYS);
-        for (Set<String> value : SERVICE_HEADER_KEYS.values()) {
+    public static Set<String> getMatchKeys() {
+        Set<String> keys = new HashSet<>(MATCH_KEYS);
+        for (Set<String> value : SERVICE_MATCH_KEYS.values()) {
             keys.addAll(value);
         }
         return Collections.unmodifiableSet(keys);
@@ -174,11 +154,10 @@ public class RuleUtils {
      * @param routes 路由规则
      * @return 目标路由
      */
-    public static RouteResult getTargetTags(List<Route> routes) {
+    public static RouteResult<?> getTargetTags(List<Route> routes) {
         List<Map<String, String>> tags = new ArrayList<>();
         int begin = 1;
         int num = ThreadLocalRandom.current().nextInt(ONO_HUNDRED) + 1;
-        boolean isMatch = false;
         for (Route route : routes) {
             Integer weight = route.getWeight();
             if (weight == null) {
@@ -186,15 +165,12 @@ public class RuleUtils {
             }
             Map<String, String> currentTag = route.getTags();
             if (num >= begin && num <= begin + weight - 1) {
-                tags.clear();
-                tags.add(currentTag);
-                isMatch = true;
-                break;
+                return new RouteResult<>(true, currentTag);
             }
             begin += weight;
             tags.add(currentTag);
         }
-        return new RouteResult(isMatch, tags);
+        return new RouteResult<>(false, tags);
     }
 
     /**
@@ -305,16 +281,35 @@ public class RuleUtils {
         return route == null || CollectionUtils.isEmpty(route.getTags());
     }
 
+    private static void addKeys(List<Rule> rules, Set<String> keys) {
+        for (Rule rule : rules) {
+            Match match = rule.getMatch();
+            if (match == null) {
+                continue;
+            }
+            addKeys(keys, match.getHeaders());
+            addKeys(keys, match.getAttachments());
+        }
+    }
+
+    private static void addKeys(Set<String> keys, Map<String, List<MatchRule>> matchRule) {
+        if (CollectionUtils.isEmpty(matchRule)) {
+            return;
+        }
+        keys.addAll(matchRule.keySet());
+    }
+
     /**
      * 匹配结果
      *
+     * @param <T> 泛型
      * @author provenceee
      * @since 2022-07-17
      */
-    public static class RouteResult {
+    public static class RouteResult<T> {
         private final boolean match;
 
-        private final List<Map<String, String>> tags;
+        private final T tags;
 
         /**
          * 构造方法
@@ -322,7 +317,7 @@ public class RuleUtils {
          * @param match 是否匹配
          * @param tags 目标路由
          */
-        public RouteResult(boolean match, List<Map<String, String>> tags) {
+        public RouteResult(boolean match, T tags) {
             this.match = match;
             this.tags = tags;
         }
@@ -331,7 +326,7 @@ public class RuleUtils {
             return match;
         }
 
-        public List<Map<String, String>> getTags() {
+        public T getTags() {
             return tags;
         }
     }

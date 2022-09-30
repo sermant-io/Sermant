@@ -20,6 +20,7 @@ import com.huaweicloud.integration.utils.RequestUtils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import java.util.Collections;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -29,13 +30,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- *流控测试
+ * 流控测试
  *
  * @author zhouss
  * @since 2022-09-16
  */
+@EnabledIfEnvironmentVariable(named = "TEST_TYPE", matches = "common")
 public class FlowControlTest {
-    private static final String BASE_URL = "http://127.0.0.1:28820/consumer/flow/";
+    private static final String BASE_URL = "http://127.0.0.1:28020/consumer/flow/";
     private static final int RATE_LIMITING_REQUEST_COUNT = 10;
     private static final int BREAKER_REQUEST_COUNT = 10;
     private static final String BREAKER_MSG = "is OPEN and does not permit further calls";
@@ -65,8 +67,7 @@ public class FlowControlTest {
         rateTest("rateLimitingWithHeader?key=key&value=attachement&key2=key2&value2=999");
         final AtomicBoolean check = new AtomicBoolean();
         process("rateLimitingWithHeader?key=key&value=val&key2=key2&value2=998", RATE_LIMITING_MSG,
-                RATE_LIMITING_REQUEST_COUNT,
-                check);
+            RATE_LIMITING_REQUEST_COUNT, check);
         Assertions.assertFalse(check.get());
     }
 
@@ -136,14 +137,15 @@ public class FlowControlTest {
     @Test
     public void bulkHead() throws InterruptedException {
         final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5, 5, 0, TimeUnit.MILLISECONDS,
-                new ArrayBlockingQueue<>(100));
+            new ArrayBlockingQueue<>(100));
         int cycle = 5;
         final CountDownLatch countDownLatch = new CountDownLatch(cycle);
         final AtomicBoolean expected = new AtomicBoolean();
-        for (int i = 0; i < cycle; i ++) {
+        for (int i = 0; i < cycle; i++) {
             threadPoolExecutor.execute(() -> {
                 try {
-                    process("/bulkhead", "Bulkhead is full and does not permit further calls", RATE_LIMITING_REQUEST_COUNT, expected);
+                    process("/bulkhead", "Bulkhead is full and does not permit further calls",
+                        RATE_LIMITING_REQUEST_COUNT, expected);
                 } finally {
                     countDownLatch.countDown();
                 }
@@ -195,12 +197,12 @@ public class FlowControlTest {
         for (int i = 0; i < requestCount; i++) {
             try {
                 RequestUtils.get(url, Collections.emptyMap(), String.class,
-                        (clientHttpResponse, result) -> {
-                            if (result.contains(flowControlMsg)) {
-                                check.set(true);
-                            }
-                            return result;
-                        });
+                    (clientHttpResponse, result) -> {
+                        if (result.contains(flowControlMsg)) {
+                            check.set(true);
+                        }
+                        return result;
+                    });
             } catch (Exception ex) {
                 if (ex.getMessage().contains(flowControlMsg)) {
                     check.set(true);

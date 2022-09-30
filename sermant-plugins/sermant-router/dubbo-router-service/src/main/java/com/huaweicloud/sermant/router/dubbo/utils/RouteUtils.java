@@ -18,18 +18,19 @@ package com.huaweicloud.sermant.router.dubbo.utils;
 
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
-import com.huaweicloud.sermant.router.config.label.entity.Match;
-import com.huaweicloud.sermant.router.config.label.entity.MatchRule;
-import com.huaweicloud.sermant.router.config.label.entity.MatchStrategy;
-import com.huaweicloud.sermant.router.config.label.entity.Route;
-import com.huaweicloud.sermant.router.config.label.entity.Rule;
-import com.huaweicloud.sermant.router.config.label.entity.ValueMatch;
+import com.huaweicloud.sermant.router.config.entity.Match;
+import com.huaweicloud.sermant.router.config.entity.MatchRule;
+import com.huaweicloud.sermant.router.config.entity.MatchStrategy;
+import com.huaweicloud.sermant.router.config.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.Rule;
+import com.huaweicloud.sermant.router.config.entity.ValueMatch;
 import com.huaweicloud.sermant.router.dubbo.strategy.TypeStrategyChooser;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 /**
  * 路由插件工具类
@@ -49,17 +50,19 @@ public class RouteUtils {
      * @param attachments dubbo的attachments参数
      * @return 匹配的路由
      */
-    public static List<Route> getRoutes(List<Rule> list, Object[] arguments, Map<String, String> attachments) {
+    public static List<Route> getRoutes(List<Rule> list, Object[] arguments, Map<String, Object> attachments) {
         for (Rule rule : list) {
             Match match = rule.getMatch();
             if (match == null) {
                 return rule.getRoute();
             }
-            List<Route> routeList = Collections.emptyList();
+            List<Route> routeList;
             if (!CollectionUtils.isEmpty(match.getAttachments()) && !CollectionUtils.isEmpty(attachments)) {
                 routeList = getRoutesByAttachments(attachments, rule);
             } else if (!CollectionUtils.isEmpty(match.getArgs()) && arguments != null && arguments.length > 0) {
                 routeList = getRoutesByArguments(arguments, rule);
+            } else {
+                routeList = Collections.emptyList();
             }
             if (!CollectionUtils.isEmpty(routeList)) {
                 return routeList;
@@ -116,7 +119,7 @@ public class RouteUtils {
      * @param rule 规则
      * @return 匹配的路由
      */
-    private static List<Route> getRoutesByAttachments(Map<String, String> attachments, Rule rule) {
+    private static List<Route> getRoutesByAttachments(Map<String, Object> attachments, Rule rule) {
         Match match = rule.getMatch();
         if (match == null) {
             return rule.getRoute();
@@ -133,7 +136,7 @@ public class RouteUtils {
                 ValueMatch valueMatch = matchRule.getValueMatch();
                 List<String> values = valueMatch.getValues();
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
-                String arg = attachments.get(key);
+                String arg = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);
                 if (!isFullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
                     // 如果不是全匹配，且匹配了一个，直接返回
                     return rule.getRoute();

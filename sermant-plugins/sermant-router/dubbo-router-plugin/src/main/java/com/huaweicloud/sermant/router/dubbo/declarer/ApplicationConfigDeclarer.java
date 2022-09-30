@@ -16,6 +16,8 @@
 
 package com.huaweicloud.sermant.router.dubbo.declarer;
 
+import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
+
 /**
  * 增强ApplicationConfig类的setName方法，用来获取应用名
  *
@@ -29,12 +31,22 @@ public class ApplicationConfigDeclarer extends AbstractDeclarer {
     private static final String INTERCEPT_CLASS
         = "com.huaweicloud.sermant.router.dubbo.interceptor.ApplicationConfigInterceptor";
 
-    private static final String METHOD_NAME = "setName";
+    private static final String[] METHOD_NAME = {"setName", "setParameters"};
 
     /**
      * 构造方法
      */
     public ApplicationConfigDeclarer() {
-        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
+        super(ENHANCE_CLASS, INTERCEPT_CLASS, null);
+    }
+
+    /**
+     * 获取方法匹配器
+     *
+     * @return 方法匹配器
+     */
+    @Override
+    public MethodMatcher getMethodMatcher() {
+        return MethodMatcher.nameContains(METHOD_NAME);
     }
 }

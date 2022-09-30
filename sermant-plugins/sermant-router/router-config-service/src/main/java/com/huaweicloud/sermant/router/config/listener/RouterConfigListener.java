@@ -19,14 +19,14 @@ package com.huaweicloud.sermant.router.config.listener;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.handler.AbstractConfigHandler;
+import com.huaweicloud.sermant.router.config.handler.EnabledStrategyHandler;
 import com.huaweicloud.sermant.router.config.handler.RouterConfigHandler;
 import com.huaweicloud.sermant.router.config.handler.ServiceConfigHandler;
-import com.huaweicloud.sermant.router.config.label.LabelCache;
-import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
 
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -38,11 +38,9 @@ import java.util.logging.Logger;
 public class RouterConfigListener implements DynamicConfigListener {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private final AbstractConfigHandler routerConfigHandler;
-
-    private final AbstractConfigHandler serviceConfigHandler;
-
     private final String cacheName;
+
+    private final Set<AbstractConfigHandler> handlers;
 
     /**
      * 构造方法
@@ -51,20 +49,20 @@ public class RouterConfigListener implements DynamicConfigListener {
      */
     public RouterConfigListener(String cacheName) {
         this.cacheName = cacheName;
-        this.routerConfigHandler = new RouterConfigHandler();
-        this.serviceConfigHandler = new ServiceConfigHandler();
+        this.handlers = new HashSet<>();
+        this.handlers.add(new RouterConfigHandler());
+        this.handlers.add(new ServiceConfigHandler());
+        this.handlers.add(new EnabledStrategyHandler());
     }
 
     @Override
     public void process(DynamicConfigEvent event) {
         String key = event.getKey();
-        RouterConfiguration configuration = LabelCache.getLabel(cacheName);
-        if (key.startsWith(RouterConstant.ROUTER_KEY_PREFIX + ".")) {
-            serviceConfigHandler.handle(event, configuration);
-            LOGGER.info(String.format(Locale.ROOT, "Config [%s] has been %s ", key, event.getEventType()));
-        } else if (key.equals(RouterConstant.ROUTER_KEY_PREFIX)) {
-            routerConfigHandler.handle(event, configuration);
-            LOGGER.info(String.format(Locale.ROOT, "Config [%s] has been %s ", key, event.getEventType()));
-        }
+        handlers.forEach(handler -> {
+            if (handler.shouldHandle(key)) {
+                handler.handle(event, cacheName);
+            }
+        });
+        LOGGER.info(String.format(Locale.ROOT, "Config [%s] has been %s ", key, event.getEventType()));
     }
 }

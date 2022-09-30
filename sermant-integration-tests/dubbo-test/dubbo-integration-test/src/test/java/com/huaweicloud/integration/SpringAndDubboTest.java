@@ -18,6 +18,7 @@ package com.huaweicloud.integration;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,6 +31,7 @@ import java.util.Set;
  * @author provenceee
  * @since 2022-05-05
  */
+@EnabledIfEnvironmentVariable(named = "TEST_TYPE", matches = "common")
 public class SpringAndDubboTest {
     private static final RestTemplate REST_TEMPLATE = new RestTemplate();
 
@@ -39,7 +41,7 @@ public class SpringAndDubboTest {
      * 构造方法
      */
     public SpringAndDubboTest() {
-        baseUrl = "http://127.0.0.1:" + System.getProperty("controller.port", "28820") + "/consumer/";
+        baseUrl = "http://127.0.0.1:" + System.getProperty("controller.port", "28020") + "/consumer/";
     }
 
     /**

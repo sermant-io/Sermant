@@ -45,4 +45,12 @@ public interface FooService {
      * @return 注册协议
      */
     String getRegistryProtocol();
+
+    /**
+     * 获取区域
+     *
+     * @param exit 是否退出
+     * @return 区域
+     */
+    String getZone(boolean exit);
 }

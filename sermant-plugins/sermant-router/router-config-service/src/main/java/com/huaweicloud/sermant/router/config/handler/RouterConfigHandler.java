@@ -21,8 +21,9 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
-import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.label.entity.Rule;
+import com.huaweicloud.sermant.router.config.cache.ConfigCache;
+import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
+import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 
 import com.alibaba.fastjson.JSONArray;
@@ -42,10 +43,11 @@ import java.util.Map.Entry;
  */
 public class RouterConfigHandler extends AbstractConfigHandler {
     @Override
-    public void handle(DynamicConfigEvent event, RouterConfiguration configuration) {
+    public void handle(DynamicConfigEvent event, String cacheName) {
+        RouterConfiguration configuration = ConfigCache.getLabel(cacheName);
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
             configuration.resetRouteRule(Collections.emptyMap());
-            RuleUtils.initHeaderKeys(configuration);
+            RuleUtils.initMatchKeys(configuration);
             return;
         }
         Map<String, String> routeRuleMap = getRouteRuleMap(event);
@@ -70,7 +72,12 @@ public class RouterConfigHandler extends AbstractConfigHandler {
             routeRule.put(entry.getKey(), list);
         }
         configuration.resetRouteRule(routeRule);
-        RuleUtils.initHeaderKeys(configuration);
+        RuleUtils.initMatchKeys(configuration);
+    }
+
+    @Override
+    public boolean shouldHandle(String key) {
+        return RouterConstant.ROUTER_KEY_PREFIX.equals(key);
     }
 
     private Map<String, String> getRouteRuleMap(DynamicConfigEvent event) {

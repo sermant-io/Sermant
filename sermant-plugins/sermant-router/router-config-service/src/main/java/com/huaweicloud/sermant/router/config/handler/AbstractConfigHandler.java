@@ -17,7 +17,6 @@
 package com.huaweicloud.sermant.router.config.handler;
 
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -44,7 +43,15 @@ public abstract class AbstractConfigHandler {
      * 路由配置处理
      *
      * @param event 配置监听事件
-     * @param configuration 路由配置
+     * @param cacheName 缓存名
      */
-    public abstract void handle(DynamicConfigEvent event, RouterConfiguration configuration);
+    public abstract void handle(DynamicConfigEvent event, String cacheName);
+
+    /**
+     * 是否需要处理
+     *
+     * @param key 配置key
+     * @return 是否需要处理
+     */
+    public abstract boolean shouldHandle(String key);
 }

@@ -34,8 +34,13 @@ public class TestDefaultServiceInstance extends DefaultServiceInstance {
     }
 
     public static TestDefaultServiceInstance getTestDefaultServiceInstance(String version) {
+        return getTestDefaultServiceInstance(version, null);
+    }
+
+    public static TestDefaultServiceInstance getTestDefaultServiceInstance(String version, String zone) {
         Map<String, String> metadata = new HashMap<>();
         metadata.put("version", version);
+        metadata.put("zone", zone);
         return new TestDefaultServiceInstance(metadata);
     }
 }

@@ -16,12 +16,13 @@
 
 package com.huaweicloud.sermant.router.spring.strategy;
 
-import com.huaweicloud.sermant.router.config.label.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.Route;
 import com.huaweicloud.sermant.router.config.strategy.AbstractRuleStrategy;
-import com.huaweicloud.sermant.router.config.strategy.RuleStrategy;
-import com.huaweicloud.sermant.router.spring.strategy.rule.DefaultRuleStrategy;
-import com.huaweicloud.sermant.router.spring.strategy.rule.EurekaRuleStrategy;
-import com.huaweicloud.sermant.router.spring.strategy.rule.ZookeeperRuleStrategy;
+import com.huaweicloud.sermant.router.spring.strategy.mapper.AbstractMetadataMapper;
+import com.huaweicloud.sermant.router.spring.strategy.mapper.DefaultMetadataMapper;
+import com.huaweicloud.sermant.router.spring.strategy.mapper.EurekaMetadataMapper;
+import com.huaweicloud.sermant.router.spring.strategy.mapper.ZookeeperMetadataMapper;
+import com.huaweicloud.sermant.router.spring.strategy.rule.InstanceRuleStrategy;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,46 +40,74 @@ public enum RuleStrategyHandler {
      */
     INSTANCE();
 
-    private final Map<String, RuleStrategy<Object>> map;
+    private final Map<String, AbstractMetadataMapper<Object>> map;
 
-    private final RuleStrategy<Object> defaultStrategy;
+    private final DefaultMetadataMapper defaultMetadataMapper;
+
+    private volatile AbstractRuleStrategy<Object> ruleStrategy;
 
     RuleStrategyHandler() {
         map = new HashMap<>();
-        defaultStrategy = new DefaultRuleStrategy();
-        init(new EurekaRuleStrategy());
-        init(new ZookeeperRuleStrategy());
+        defaultMetadataMapper = new DefaultMetadataMapper();
+        init(new EurekaMetadataMapper());
+        init(new ZookeeperMetadataMapper());
     }
 
-    private void init(AbstractRuleStrategy<Object> ruleStrategy) {
-        for (String name : ruleStrategy.getName()) {
-            map.put(name, ruleStrategy);
+    private void init(AbstractMetadataMapper<Object> mapper) {
+        for (String name : mapper.getName()) {
+            map.put(name, mapper);
         }
     }
 
     /**
      * 选取路由匹配的实例
      *
-     * @param routes 路由规则
+     * @param serviceName 服务名
      * @param instances 实例列表
+     * @param routes 路由规则
      * @return 路由匹配的实例
      */
-    public List<Object> getTargetInstances(List<Route> routes, List<Object> instances) {
-        return choose(instances.get(0)).getTargetInstances(routes, instances);
+    public List<Object> getMatchInstances(String serviceName, List<Object> instances, List<Route> routes) {
+        return getRuleStrategy(instances).getMatchInstances(serviceName, instances, routes);
     }
 
     /**
      * 选取不匹配标签的实例
      *
-     * @param tags 标签
+     * @param serviceName 服务名
      * @param instances 实例列表
+     * @param tags 标签
      * @return 路由过滤后的实例
      */
-    public List<Object> getMismatchInstances(List<Map<String, String>> tags, List<Object> instances) {
-        return choose(instances.get(0)).getMismatchInstances(tags, instances);
+    public List<Object> getMismatchInstances(String serviceName, List<Object> instances,
+        List<Map<String, String>> tags) {
+        return getRuleStrategy(instances).getMismatchInstances(serviceName, instances, tags);
     }
 
-    private RuleStrategy<Object> choose(Object obj) {
-        return map.getOrDefault(obj.getClass().getCanonicalName(), defaultStrategy);
+    /**
+     * 选取同区域的实例
+     *
+     * @param serviceName 服务名
+     * @param instances 实例列表
+     * @param zone 区域
+     * @return 路由过滤后的实例
+     */
+    public List<Object> getZoneInstances(String serviceName, List<Object> instances, String zone) {
+        return getRuleStrategy(instances).getZoneInstances(serviceName, instances, zone);
+    }
+
+    private AbstractRuleStrategy<Object> getRuleStrategy(List<Object> instances) {
+        if (ruleStrategy == null) {
+            synchronized (RuleStrategyHandler.class) {
+                if (ruleStrategy == null) {
+                    ruleStrategy = new InstanceRuleStrategy<>(getMetadataMapper(instances.get(0)));
+                }
+            }
+        }
+        return ruleStrategy;
+    }
+
+    private AbstractMetadataMapper<Object> getMetadataMapper(Object obj) {
+        return map.getOrDefault(obj.getClass().getCanonicalName(), defaultMetadataMapper);
     }
 }

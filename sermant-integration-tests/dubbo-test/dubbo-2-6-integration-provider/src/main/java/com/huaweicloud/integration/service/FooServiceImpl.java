@@ -19,6 +19,7 @@ package com.huaweicloud.integration.service;
 import com.alibaba.dubbo.config.RegistryConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 测试接口
@@ -29,6 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class FooServiceImpl implements FooService {
     @Autowired
     private RegistryConfig registryConfig;
+
+    @Value("${service_meta_zone:${SERVICE_META_ZONE:${service.meta.zone:bar}}}")
+    private String zone;
 
     @Override
     public String foo(String str) {
@@ -43,5 +47,13 @@ public class FooServiceImpl implements FooService {
     @Override
     public String getRegistryProtocol() {
         return registryConfig.getProtocol();
+    }
+
+    @Override
+    public String getZone(boolean exit) {
+        if (exit) {
+            System.exit(0);
+        }
+        return zone;
     }
 }

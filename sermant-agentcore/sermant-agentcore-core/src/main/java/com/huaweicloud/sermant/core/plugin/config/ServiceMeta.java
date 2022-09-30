@@ -40,6 +40,11 @@ public class ServiceMeta implements BaseConfig {
     private String version = "0.0.0";
 
     /**
+     * 区域
+     */
+    private String zone;
+
+    /**
      * 命名空间
      */
     private String project = "default";
@@ -101,6 +106,14 @@ public class ServiceMeta implements BaseConfig {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getZone() {
+        return zone;
+    }
+
+    public void setZone(String zone) {
+        this.zone = zone;
     }
 
     public String getProject() {

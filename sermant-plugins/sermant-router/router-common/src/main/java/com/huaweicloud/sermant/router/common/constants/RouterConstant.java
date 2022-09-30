@@ -83,6 +83,11 @@ public class RouterConstant {
      */
     public static final String VERSION_KEY = "service.meta.version";
 
+    /**
+     * dubbo应用注册区域的key
+     */
+    public static final String ZONE_KEY = "service.meta.zone";
+
     private RouterConstant() {
     }
 }

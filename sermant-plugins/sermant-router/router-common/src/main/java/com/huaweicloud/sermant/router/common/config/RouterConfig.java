@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.router.common.config;
 
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.config.common.ConfigFieldKey;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
@@ -38,6 +39,29 @@ public class RouterConfig implements PluginConfig {
     private String routerVersion = RouterConstant.ROUTER_DEFAULT_VERSION;
 
     /**
+     * 区域
+     */
+    private String zone;
+
+    /**
+     * 是否开启dubbo区域路由
+     */
+    @ConfigFieldKey("enabled-dubbo-zone-router")
+    private boolean enabledDubboZoneRouter;
+
+    /**
+     * 是否开启spring cloud区域路由
+     */
+    @ConfigFieldKey("enabled-spring-zone-router")
+    private boolean enabledSpringZoneRouter;
+
+    /**
+     * 是否开启服务注册发现插件区域路由
+     */
+    @ConfigFieldKey("enabled-discovery-zone-router")
+    private boolean enabledDiscoveryZoneRouter;
+
+    /**
      * 其它配置
      */
     private Map<String, String> parameters;
@@ -51,6 +75,7 @@ public class RouterConfig implements PluginConfig {
             return;
         }
         this.routerVersion = serviceMeta.getVersion();
+        this.zone = serviceMeta.getZone();
         this.parameters = serviceMeta.getParameters();
     }
 
@@ -58,18 +83,40 @@ public class RouterConfig implements PluginConfig {
         return routerVersion;
     }
 
-    /**
-     * 获取版本
-     *
-     * @param defaultVersion 默认版本
-     * @return 版本
-     */
-    public String getRouterVersion(String defaultVersion) {
-        return routerVersion == null || routerVersion.isEmpty() ? defaultVersion : routerVersion;
-    }
-
     public void setRouterVersion(String routerVersion) {
         this.routerVersion = routerVersion;
+    }
+
+    public String getZone() {
+        return zone;
+    }
+
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
+
+    public boolean isEnabledDubboZoneRouter() {
+        return enabledDubboZoneRouter;
+    }
+
+    public void setEnabledDubboZoneRouter(boolean enabledDubboZoneRouter) {
+        this.enabledDubboZoneRouter = enabledDubboZoneRouter;
+    }
+
+    public boolean isEnabledSpringZoneRouter() {
+        return enabledSpringZoneRouter;
+    }
+
+    public void setEnabledSpringZoneRouter(boolean enabledSpringZoneRouter) {
+        this.enabledSpringZoneRouter = enabledSpringZoneRouter;
+    }
+
+    public boolean isEnabledDiscoveryZoneRouter() {
+        return enabledDiscoveryZoneRouter;
+    }
+
+    public void setEnabledDiscoveryZoneRouter(boolean enabledDiscoveryZoneRouter) {
+        this.enabledDiscoveryZoneRouter = enabledDiscoveryZoneRouter;
     }
 
     public Map<String, String> getParameters() {
