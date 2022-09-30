@@ -16,8 +16,6 @@
 
 package com.huaweicloud.sermant.router.spring.interceptor;
 
-import com.huaweicloud.sermant.core.common.CommonConstant;
-import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;

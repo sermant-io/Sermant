@@ -115,12 +115,14 @@ public class RegistryServiceImpl implements RegistryService {
     private static final String CONSUMER_PROTOCOL_PREFIX = "consumer";
     private static final String GROUP_KEY = "group";
     private static final String VERSION_KEY = "version";
+    private static final String ZONE_KEY = "zone";
     private static final String SERVICE_NAME_KEY = "service.name";
     private static final String INTERFACE_KEY = "interface";
     private static final String INTERFACE_DATA_KEY = "dubbo.interface.data";
     private static final String WILDCARD = "*";
     private static final String META_DATA_PREFIX = "service.meta.parameters.";
     private static final String META_DATA_VERSION_KEY = "service.meta.version";
+    private static final String META_DATA_ZONE_KEY = "service.meta.zone";
     private static final List<String> IGNORE_REGISTRY_KEYS = Arrays.asList(GROUP_KEY, VERSION_KEY, SERVICE_NAME_KEY);
     private static final List<String> DEFAULT_INTERFACE_KEYS = Collections.singletonList("dubbo.tag");
 
@@ -374,6 +376,7 @@ public class RegistryServiceImpl implements RegistryService {
         // 存入实例参数
         Optional.ofNullable(serviceMeta.getParameters()).ifPresent(properties::putAll);
         properties.put(VERSION_KEY, config.getVersion());
+        properties.put(ZONE_KEY, serviceMeta.getZone());
         return properties;
     }
 
@@ -440,7 +443,8 @@ public class RegistryServiceImpl implements RegistryService {
         Map<String, String> parameters = ReflectUtils.getParameters(url);
         parameters.keySet().forEach(key -> {
             // 实例属性，会存到properties中，所以不需要在接口级参数中储存
-            if (key.startsWith(META_DATA_PREFIX) || META_DATA_VERSION_KEY.equals(key)) {
+            if (key.startsWith(META_DATA_PREFIX) || META_DATA_VERSION_KEY.equals(key) || META_DATA_ZONE_KEY
+                .equals(key)) {
                 ignoreKeys.add(key);
             }
         });
@@ -680,6 +684,10 @@ public class RegistryServiceImpl implements RegistryService {
             }
             if (VERSION_KEY.equals(key)) {
                 metaData.put(META_DATA_VERSION_KEY, entry.getValue());
+                continue;
+            }
+            if (ZONE_KEY.equals(key)) {
+                metaData.put(META_DATA_ZONE_KEY, entry.getValue());
                 continue;
             }
             metaData.put(META_DATA_PREFIX + key, entry.getValue());

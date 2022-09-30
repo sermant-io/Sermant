@@ -17,15 +17,18 @@
 package com.huaweicloud.sermant.router.dubbo.service;
 
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
-import com.huaweicloud.sermant.router.config.label.LabelCache;
-import com.huaweicloud.sermant.router.config.label.entity.Match;
-import com.huaweicloud.sermant.router.config.label.entity.MatchRule;
-import com.huaweicloud.sermant.router.config.label.entity.MatchStrategy;
-import com.huaweicloud.sermant.router.config.label.entity.Route;
-import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.label.entity.Rule;
-import com.huaweicloud.sermant.router.config.label.entity.ValueMatch;
+import com.huaweicloud.sermant.router.config.cache.ConfigCache;
+import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
+import com.huaweicloud.sermant.router.config.entity.Match;
+import com.huaweicloud.sermant.router.config.entity.MatchRule;
+import com.huaweicloud.sermant.router.config.entity.MatchStrategy;
+import com.huaweicloud.sermant.router.config.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
+import com.huaweicloud.sermant.router.config.entity.Rule;
+import com.huaweicloud.sermant.router.config.entity.Strategy;
+import com.huaweicloud.sermant.router.config.entity.ValueMatch;
 import com.huaweicloud.sermant.router.dubbo.ApacheInvoker;
 import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 
@@ -36,6 +39,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,14 +56,26 @@ import java.util.Map;
 public class AbstractDirectoryServiceTest {
     private final AbstractDirectoryService service;
 
-    public AbstractDirectoryServiceTest() {
+    private final RouterConfig config;
+
+    public AbstractDirectoryServiceTest() throws NoSuchFieldException, IllegalAccessException {
         service = new AbstractDirectoryServiceImpl();
+        config = new RouterConfig();
+        config.setZone("foo");
+        Field field = service.getClass().getDeclaredField("routerConfig");
+        field.setAccessible(true);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        field.set(service, config);
+        EnabledStrategy strategy = ConfigCache.getEnabledStrategy(RouterConstant.DUBBO_CACHE_NAME);
+        strategy.reset(Strategy.ALL, Collections.emptyList());
     }
 
     @Before
     public void clear() {
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "");
-        LabelCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
+        ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }
 
     /**
@@ -66,6 +83,7 @@ public class AbstractDirectoryServiceTest {
      */
     @Test
     public void testSelectInvokersWhenInvalid() {
+        config.setEnabledDubboZoneRouter(false);
         List<Object> invokers = new ArrayList<>();
         ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0");
         invokers.add(invoker1);
@@ -93,7 +111,7 @@ public class AbstractDirectoryServiceTest {
         Assert.assertEquals(2, targetInvokers.size());
 
         // 初始化路由规则
-        init();
+        initRule();
 
         // 测试queryMap为空
         targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
@@ -120,8 +138,8 @@ public class AbstractDirectoryServiceTest {
     @Test
     public void testGetTargetInvoker() {
         // 初始化路由规则
-        init();
-
+        initRule();
+        config.setEnabledDubboZoneRouter(false);
         List<Object> invokers = new ArrayList<>();
         ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0");
         invokers.add(invoker1);
@@ -148,8 +166,8 @@ public class AbstractDirectoryServiceTest {
     @Test
     public void testGetMissMatchInstances() {
         // 初始化路由规则
-        init();
-
+        initRule();
+        config.setEnabledDubboZoneRouter(false);
         List<Object> invokers = new ArrayList<>();
         ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0");
         invokers.add(invoker1);
@@ -170,7 +188,35 @@ public class AbstractDirectoryServiceTest {
         Assert.assertEquals(invoker1, targetInvokers.get(0));
     }
 
-    private void init() {
+    /**
+     * 测试没有命中路由时
+     */
+    @Test
+    public void testGetZoneInvokers() {
+        // 初始化路由规则
+        initRule();
+        config.setEnabledDubboZoneRouter(true);
+        List<Object> invokers = new ArrayList<>();
+        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0", "bar");
+        invokers.add(invoker1);
+        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("1.0.1", "foo");
+        invokers.add(invoker2);
+        TestObject testObject = new TestObject();
+        Invocation invocation = new ApacheInvocation();
+        invocation.setAttachment("bar", "bar2");
+        Object[] arguments = new Object[]{invocation};
+        Map<String, String> queryMap = testObject.getQueryMap();
+        queryMap.put("side", "consumer");
+        queryMap.put("group", "fooGroup");
+        queryMap.put("version", "0.0.1");
+        queryMap.put("interface", "com.huaweicloud.foo.FooTest");
+        DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
+        List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
+        Assert.assertEquals(1, targetInvokers.size());
+        Assert.assertEquals(invoker2, targetInvokers.get(0));
+    }
+
+    private void initRule() {
         ValueMatch valueMatch = new ValueMatch();
         valueMatch.setMatchStrategy(MatchStrategy.EXACT);
         valueMatch.setValues(Collections.singletonList("bar1"));
@@ -197,7 +243,7 @@ public class AbstractDirectoryServiceTest {
         ruleList.add(rule);
         Map<String, List<Rule>> map = new HashMap<>();
         map.put("foo", ruleList);
-        RouterConfiguration configuration = LabelCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
+        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
         configuration.resetRouteRule(map);
     }
 

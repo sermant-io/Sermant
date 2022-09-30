@@ -19,10 +19,10 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.router.common.request.RequestData;
+import com.huaweicloud.sermant.router.common.request.RequestHeader;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
-import com.huaweicloud.sermant.router.spring.cache.RequestData;
-import com.huaweicloud.sermant.router.spring.cache.RequestHeader;
-import com.huaweicloud.sermant.router.spring.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableDefault;

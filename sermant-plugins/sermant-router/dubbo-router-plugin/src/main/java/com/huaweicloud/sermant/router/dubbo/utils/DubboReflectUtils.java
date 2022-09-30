@@ -16,15 +16,11 @@
 
 package com.huaweicloud.sermant.router.dubbo.utils;
 
-import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * 反射工具类，为了同时兼容alibaba和apache dubbo，所以需要用反射的方法进行类的操作
@@ -33,10 +29,7 @@ import java.util.logging.Logger;
  * @since 2022-02-07
  */
 public class DubboReflectUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
     private static final String QUERY_MAP_FIELD_NAME = "queryMap";
-    private static final String GET_ADDRESS_METHOD_NAME = "getAddress";
-    private static final String GET_NAME_METHOD_NAME = "getName";
     private static final String GET_PARAMETER_METHOD_NAME = "getParameter";
     private static final String GET_PARAMETERS_METHOD_NAME = "getParameters";
     private static final String GET_URL_METHOD_NAME = "getUrl";
@@ -44,10 +37,10 @@ public class DubboReflectUtils {
     private static final String GET_METHOD_NAME_METHOD_NAME = "getMethodName";
     private static final String GET_ARGUMENTS_METHOD_NAME = "getArguments";
     private static final String SET_PARAMETERS_METHOD_NAME = "setParameters";
-    private static final String GET_ATTACHMENTS_METHOD_NAME = "getAttachments";
-    private static final String GET_OBJECT_ATTACHMENTS_METHOD_NAME = "getObjectAttachments";
     private static final String GET_CONTEXT_METHOD_NAME = "getContext";
     private static final String ALIBABA_RPC_CONTEXT_CLASS_NAME = "com.alibaba.dubbo.rpc.RpcContext";
+    private static final String APACHE_RPC_CONTEXT_CLASS_NAME = "org.apache.dubbo.rpc.RpcContext";
+    private static final String ATTACHMENTS_FIELD = "attachments";
 
     private DubboReflectUtils() {
     }
@@ -62,45 +55,6 @@ public class DubboReflectUtils {
      */
     public static Map<String, String> getQueryMap(Object obj) {
         return (Map<String, String>) ReflectUtils.getFieldValue(obj, QUERY_MAP_FIELD_NAME).orElse(null);
-    }
-
-    /**
-     * 获取应用地址
-     *
-     * @param obj URL
-     * @return 应用地址
-     * @see com.alibaba.dubbo.common.URL
-     * @see org.apache.dubbo.common.URL
-     */
-    public static String getAddress(Object obj) {
-        return ReflectUtils.invokeWithNoneParameterAndReturnString(obj, GET_ADDRESS_METHOD_NAME);
-    }
-
-    /**
-     * 获取dubbo应用名
-     *
-     * @param obj ApplicationConfig
-     * @return 应用名
-     * @see com.alibaba.dubbo.config.ApplicationConfig
-     * @see org.apache.dubbo.config.ApplicationConfig
-     */
-    public static String getName(Object obj) {
-        return ReflectUtils.invokeWithNoneParameterAndReturnString(obj, GET_NAME_METHOD_NAME);
-    }
-
-    /**
-     * 获取参数
-     *
-     * @param obj url
-     * @param key 键
-     * @param defaultValue 默认值
-     * @return 参数
-     * @see com.alibaba.dubbo.common.URL
-     * @see org.apache.dubbo.common.URL
-     */
-    public static String getParameter(Object obj, String key, String defaultValue) {
-        String value = getParameter(obj, key);
-        return value == null ? defaultValue : value;
     }
 
     /**
@@ -193,28 +147,42 @@ public class DubboReflectUtils {
      *
      * @param obj invocation
      * @return dubbo attachments参数
+     * @see com.alibaba.dubbo.rpc.Invocation
+     * @see org.apache.dubbo.rpc.Invocation
+     * @see com.alibaba.dubbo.rpc.RpcContext
+     * @see org.apache.dubbo.rpc.RpcContext
      */
-    public static Map<String, String> getAttachments(Object obj) {
-        Map<String, String> attachments = ReflectUtils.invokeWithNoneParameterAndReturnMap(
-                obj, GET_ATTACHMENTS_METHOD_NAME);
-        if (!CollectionUtils.isEmpty(attachments)) {
-            return attachments;
+    public static Map<String, Object> getAttachments(Object obj) {
+        if (obj == null) {
+            return Collections.emptyMap();
         }
-        Map<String, String> objectAttachments = ReflectUtils.invokeWithNoneParameterAndReturnMap(
-                obj, GET_OBJECT_ATTACHMENTS_METHOD_NAME);
-        if (!CollectionUtils.isEmpty(objectAttachments)) {
-            return objectAttachments;
+        String className = obj.getClass().getCanonicalName().startsWith("com.alibaba.dubbo")
+            ? ALIBABA_RPC_CONTEXT_CLASS_NAME : APACHE_RPC_CONTEXT_CLASS_NAME;
+        Map<String, Object> attachments = new HashMap<>(getAttachmentsFromContext(className));
+        attachments.putAll(getAttachmentsByInvocation(obj));
+        return Collections.unmodifiableMap(attachments);
+    }
+
+    /**
+     * 获取dubbo Invocation中的attachments参数
+     *
+     * @param obj invocation
+     * @return dubbo attachments参数
+     * @see com.alibaba.dubbo.rpc.Invocation
+     * @see org.apache.dubbo.rpc.Invocation
+     */
+    public static Map<String, Object> getAttachmentsByInvocation(Object obj) {
+        if (obj == null) {
+            return Collections.emptyMap();
         }
-        try {
-            Class<?> rpcContextClazz = Class.forName(ALIBABA_RPC_CONTEXT_CLASS_NAME);
-            Method getContextMethod = rpcContextClazz.getDeclaredMethod(GET_CONTEXT_METHOD_NAME);
-            return ReflectUtils.invokeWithNoneParameterAndReturnMap(
-                    getContextMethod.invoke(rpcContextClazz), GET_ATTACHMENTS_METHOD_NAME);
-        } catch (NoSuchMethodException | ClassNotFoundException
-                | InvocationTargetException | IllegalAccessException e) {
-            // 因版本原因，可能会找不到方法
-            LOGGER.warning(e.getMessage());
-        }
-        return Collections.emptyMap();
+        return ReflectUtils.getFieldValue(obj, ATTACHMENTS_FIELD).map(map -> (Map<String, Object>) map)
+            .orElse(Collections.emptyMap());
+    }
+
+    private static Map<String, Object> getAttachmentsFromContext(String contextClazz) {
+        return com.huaweicloud.sermant.core.utils.ReflectUtils
+            .invokeMethod(contextClazz, GET_CONTEXT_METHOD_NAME, null, null)
+            .map(context -> ReflectUtils.getFieldValue(context, ATTACHMENTS_FIELD)
+                .map(map -> (Map<String, Object>) map).orElse(Collections.emptyMap())).orElse(Collections.emptyMap());
     }
 }

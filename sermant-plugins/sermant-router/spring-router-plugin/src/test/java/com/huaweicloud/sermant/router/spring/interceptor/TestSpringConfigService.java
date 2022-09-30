@@ -18,6 +18,9 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * 测试配置服务
  *
@@ -44,6 +47,11 @@ public class TestSpringConfigService implements SpringConfigService {
     @Override
     public boolean isInValid(String cacheName) {
         return invalid;
+    }
+
+    @Override
+    public Set<String> getMatchKeys() {
+        return Collections.emptySet();
     }
 
     public String getCacheName() {

@@ -24,6 +24,9 @@ import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 测试类
  *
@@ -41,7 +44,20 @@ public class ApacheInvoker<T> implements Invoker<T> {
      * @param version 版本
      */
     public ApacheInvoker(String version) {
-        this.url = APACHE_URL.addParameter(RouterConstant.VERSION_KEY, version).setPort(8080);
+        this(version, null);
+    }
+
+    /**
+     * 构造方法
+     *
+     * @param version 版本
+     * @param zone 区域
+     */
+    public ApacheInvoker(String version, String zone) {
+        Map<String, String> map = new HashMap<>();
+        map.put(RouterConstant.VERSION_KEY, version);
+        map.put(RouterConstant.ZONE_KEY, zone);
+        this.url = APACHE_URL.addParameters(map).setPort(8080);
     }
 
     @Override

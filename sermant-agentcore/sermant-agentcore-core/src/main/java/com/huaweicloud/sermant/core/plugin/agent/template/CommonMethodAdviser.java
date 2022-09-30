@@ -22,6 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -49,9 +50,9 @@ public class CommonMethodAdviser {
      * @param throwable   错误对象
      */
     private static void logError(String scene, ExecuteContext context, Interceptor interceptor, Throwable throwable) {
-        LOGGER.severe(String.format(Locale.ROOT, "An error occurred %s [%s] in interceptor [%s]: [%s].",
-                scene, MethodKeyCreator.getMethodKey(context.getMethod()), interceptor.getClass().getName(),
-                throwable.getMessage()));
+        LOGGER.log(Level.SEVERE, String.format(Locale.ROOT, "An error occurred %s [%s] in interceptor [%s]: ",
+                scene, MethodKeyCreator.getMethodKey(context.getMethod()), interceptor.getClass().getName()),
+            throwable);
     }
 
     /**

@@ -16,12 +16,15 @@
 
 package com.huaweicloud.sermant.router.spring.service;
 
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
-import com.huaweicloud.sermant.router.config.label.LabelCache;
-import com.huaweicloud.sermant.router.config.label.entity.Route;
-import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.label.entity.Rule;
+import com.huaweicloud.sermant.router.config.cache.ConfigCache;
+import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
+import com.huaweicloud.sermant.router.config.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
+import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 import com.huaweicloud.sermant.router.spring.cache.AppCache;
 import com.huaweicloud.sermant.router.spring.strategy.RuleStrategyHandler;
@@ -37,15 +40,42 @@ import java.util.Map;
  * @since 2022-07-20
  */
 public class LoadBalancerServiceImpl implements LoadBalancerService {
+    private final RouterConfig routerConfig;
+
+    /**
+     * 构造方法
+     */
+    public LoadBalancerServiceImpl() {
+        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+    }
+
     @Override
-    public List<Object> getTargetInstances(String targetName, List<Object> serverList, String path,
+    public List<Object> getTargetInstances(String targetName, List<Object> instances, String path,
         Map<String, List<String>> header) {
-        RouterConfiguration configuration = LabelCache.getLabel(RouterConstant.SPRING_CACHE_NAME);
+        if (!shouldHandle(instances)) {
+            return instances;
+        }
+        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME);
         List<Rule> rules = RuleUtils.getRules(configuration, targetName, path, AppCache.INSTANCE.getAppName());
         List<Route> routes = RouteUtils.getRoutes(rules, header);
         if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getTargetInstances(routes, serverList);
+            return RuleStrategyHandler.INSTANCE.getMatchInstances(targetName, instances, routes);
         }
-        return RuleStrategyHandler.INSTANCE.getMismatchInstances(RuleUtils.getTags(rules), serverList);
+        return RuleStrategyHandler.INSTANCE.getMismatchInstances(targetName, instances, RuleUtils.getTags(rules));
+    }
+
+    @Override
+    public List<Object> getZoneInstances(String targetName, List<Object> instances, boolean enabledZoneRouter) {
+        EnabledStrategy strategy = ConfigCache.getEnabledStrategy(RouterConstant.SPRING_CACHE_NAME);
+        if (shouldHandle(instances) && enabledZoneRouter && strategy.getStrategy()
+            .isMatch(strategy.getValue(), targetName)) {
+            return RuleStrategyHandler.INSTANCE.getZoneInstances(targetName, instances, routerConfig.getZone());
+        }
+        return instances;
+    }
+
+    private boolean shouldHandle(List<Object> instances) {
+        // 实例数大于1才能路由
+        return instances != null && instances.size() > 1;
     }
 }

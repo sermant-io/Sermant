@@ -32,11 +32,21 @@ public interface LoadBalancerService extends PluginService {
      * 获取目标实例
      *
      * @param targetName 目标服务
-     * @param serverList 实例
+     * @param instances 实例
      * @param path 请求路径
      * @param header 请求头
      * @return 目标实例
      */
-    List<Object> getTargetInstances(String targetName, List<Object> serverList, String path,
+    List<Object> getTargetInstances(String targetName, List<Object> instances, String path,
         Map<String, List<String>> header);
+
+    /**
+     * 获取相同区域实例
+     *
+     * @param targetName 目标服务
+     * @param instances 实例
+     * @param enabledZoneRouter 是否开启区域路由
+     * @return 相同区域实例
+     */
+    List<Object> getZoneInstances(String targetName, List<Object> instances, boolean enabledZoneRouter);
 }

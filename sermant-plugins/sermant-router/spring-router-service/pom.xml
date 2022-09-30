@@ -19,6 +19,8 @@
         <dubbo.version>2.7.15</dubbo.version>
         <alibaba.dubbo.version>2.6.12</alibaba.dubbo.version>
         <spring.cloud.version>2.2.5.RELEASE</spring.cloud.version>
+        <ribbon.version>2.2.5</ribbon.version>
+        <curator.version>4.0.1</curator.version>
     </properties>
 
     <dependencies>
@@ -53,6 +55,35 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-commons</artifactId>
             <version>${spring.cloud.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-zookeeper-discovery</artifactId>
+            <version>${spring.cloud.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-x-discovery</artifactId>
+            <version>${curator.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.ribbon</groupId>
+            <artifactId>ribbon-loadbalancer</artifactId>
+            <version>${ribbon.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>${spring.cloud.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

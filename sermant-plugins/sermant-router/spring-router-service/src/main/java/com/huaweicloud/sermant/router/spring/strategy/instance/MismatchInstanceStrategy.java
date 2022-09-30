@@ -27,11 +27,11 @@ import java.util.function.Function;
 /**
  * 匹配不在mismatch中的实例
  *
- * @param <T> 泛型
+ * @param <I> 实例泛型
  * @author provenceee
  * @since 2021-12-08
  */
-public class MismatchInstanceStrategy<T> extends AbstractInstanceStrategy<T> {
+public class MismatchInstanceStrategy<I> extends AbstractInstanceStrategy<I, List<Map<String, String>>> {
     /**
      * 匹配不在mismatch中的实例
      *
@@ -41,7 +41,7 @@ public class MismatchInstanceStrategy<T> extends AbstractInstanceStrategy<T> {
      * @return 是否匹配
      */
     @Override
-    public boolean isMatch(T instance, List<Map<String, String>> tags, Function<T, Map<String, String>> mapper) {
+    public boolean isMatch(I instance, List<Map<String, String>> tags, Function<I, Map<String, String>> mapper) {
         // 由于mismatch里面的标签已经匹配过了且没有匹配上，所以要剔除掉，不能参与负载均衡，否则会导致流量比例不正确（会偏高）
         Map<String, String> metadata = getMetadata(instance, mapper);
         for (Map<String, String> mismatchTag : tags) {

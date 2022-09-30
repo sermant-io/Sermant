@@ -18,6 +18,8 @@ package com.huaweicloud.sermant.router.dubbo.service;
 
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
+import java.util.Set;
+
 /**
  * 配置服务
  *
@@ -32,4 +34,11 @@ public interface DubboConfigService extends PluginService {
      * @param serviceName 服务名
      */
     void init(String cacheName, String serviceName);
+
+    /**
+     * 获取规则key
+     *
+     * @return 规则key
+     */
+    Set<String> getMatchKeys();
 }

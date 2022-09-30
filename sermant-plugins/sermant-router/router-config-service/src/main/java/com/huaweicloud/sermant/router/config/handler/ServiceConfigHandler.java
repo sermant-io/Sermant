@@ -21,8 +21,9 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
-import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.label.entity.Rule;
+import com.huaweicloud.sermant.router.config.cache.ConfigCache;
+import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
+import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 
 import com.alibaba.fastjson.JSONArray;
@@ -41,12 +42,15 @@ import java.util.Map.Entry;
  * @since 2022-08-09
  */
 public class ServiceConfigHandler extends AbstractConfigHandler {
+    private static final String POINT = ".";
+
     @Override
-    public void handle(DynamicConfigEvent event, RouterConfiguration configuration) {
+    public void handle(DynamicConfigEvent event, String cacheName) {
+        RouterConfiguration configuration = ConfigCache.getLabel(cacheName);
         String serviceName = event.getKey().substring(RouterConstant.ROUTER_KEY_PREFIX.length() + 1);
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
             configuration.getRouteRule().remove(serviceName);
-            RuleUtils.updateHeaderKeys(serviceName, Collections.emptyList());
+            RuleUtils.updateMatchKeys(serviceName, Collections.emptyList());
             return;
         }
         List<Rule> list = JSONArray.parseArray(JSONObject.toJSONString(getRule(event, serviceName)), Rule.class);
@@ -66,7 +70,12 @@ public class ServiceConfigHandler extends AbstractConfigHandler {
         }
         list.sort((o1, o2) -> o2.getPrecedence() - o1.getPrecedence());
         configuration.getRouteRule().put(serviceName, list);
-        RuleUtils.updateHeaderKeys(serviceName, list);
+        RuleUtils.updateMatchKeys(serviceName, list);
+    }
+
+    @Override
+    public boolean shouldHandle(String key) {
+        return key.startsWith(RouterConstant.ROUTER_KEY_PREFIX + POINT);
     }
 
     private List<Map<String, Object>> getRule(DynamicConfigEvent event, String serviceName) {
@@ -75,7 +84,7 @@ public class ServiceConfigHandler extends AbstractConfigHandler {
             Map<String, List<Map<String, Object>>> routeRuleMap = new HashMap<>();
             for (Entry<String, Object> entry : allData.entrySet()) {
                 String key = entry.getKey();
-                if (!key.startsWith(RouterConstant.ROUTER_KEY_PREFIX + ".")) {
+                if (!key.startsWith(RouterConstant.ROUTER_KEY_PREFIX + POINT)) {
                     continue;
                 }
                 Object value = entry.getValue();
@@ -85,7 +94,7 @@ public class ServiceConfigHandler extends AbstractConfigHandler {
                     routeRuleMap.put(entry.getKey(), (List<Map<String, Object>>) value);
                 }
             }
-            return routeRuleMap.get(RouterConstant.ROUTER_KEY_PREFIX + "." + serviceName);
+            return routeRuleMap.get(RouterConstant.ROUTER_KEY_PREFIX + POINT + serviceName);
         }
         return yaml.loadAs(event.getContent(), List.class);
     }

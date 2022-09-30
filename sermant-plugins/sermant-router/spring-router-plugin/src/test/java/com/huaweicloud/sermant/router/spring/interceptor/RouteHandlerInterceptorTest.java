@@ -17,10 +17,10 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.router.spring.cache.RequestData;
-import com.huaweicloud.sermant.router.spring.cache.RequestHeader;
-import com.huaweicloud.sermant.router.spring.service.RouteHandlerService;
-import com.huaweicloud.sermant.router.spring.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.common.request.RequestData;
+import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -55,12 +55,24 @@ public class RouteHandlerInterceptorTest {
     @BeforeClass
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
-        mockServiceManager.when(() -> ServiceManager.getService(RouteHandlerService.class))
-            .thenReturn((RouteHandlerService) () -> {
-                Set<String> keys = new HashSet<>();
-                keys.add("bar");
-                keys.add("foo");
-                return keys;
+        mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class))
+            .thenReturn(new SpringConfigService() {
+                @Override
+                public void init(String cacheName, String serviceName) {
+                }
+
+                @Override
+                public boolean isInValid(String cacheName) {
+                    return false;
+                }
+
+                @Override
+                public Set<String> getMatchKeys() {
+                    Set<String> keys = new HashSet<>();
+                    keys.add("bar");
+                    keys.add("foo");
+                    return keys;
+                }
             });
     }
 
