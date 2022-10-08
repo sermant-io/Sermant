@@ -51,8 +51,11 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
 
-        <!--test 依赖-->
         <!--测试依赖-->
         <dependency>
             <groupId>junit</groupId>
