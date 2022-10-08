@@ -50,6 +50,10 @@
             <artifactId>fastjson</artifactId>
         </dependency>
         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-config-api</artifactId>
             <version>${dubbo.version}</version>
