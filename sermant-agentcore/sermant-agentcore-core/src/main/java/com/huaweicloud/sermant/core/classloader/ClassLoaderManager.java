@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.core.classloader;
 
 import com.huaweicloud.sermant.core.common.CommonConstant;
+import com.huaweicloud.sermant.core.utils.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -65,7 +66,7 @@ public class ClassLoaderManager {
 
     private static URL[] listCoreImplementUrls(String coreImplementPath)
         throws FileNotFoundException, MalformedURLException {
-        File coreImplementDir = new File(coreImplementPath);
+        File coreImplementDir = new File(FileUtils.validatePath(coreImplementPath));
         if (!coreImplementDir.exists() || !coreImplementDir.isDirectory()) {
             throw new FileNotFoundException(coreImplementPath + " not found.");
         }
