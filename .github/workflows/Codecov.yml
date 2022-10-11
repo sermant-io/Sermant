@@ -41,6 +41,6 @@ jobs:
       - name: Generate code coverage report
         uses: codecov/codecov-action@v3
         with:
-          files: '**/target/jacoco-report/jacoco.xml'
+          files: ${{ github.workspace }}/report/target/jacoco/jacoco.xml
           flags: unittests
           fail_ci_if_error: true # optional (default = false)
