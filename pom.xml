@@ -42,12 +42,12 @@
         <http.client.version>4.5.13</http.client.version>
         <http.core.version>4.4.13</http.core.version>
         <Java-WebSocket.version>1.5.1</Java-WebSocket.version>
-        <netty.version>4.1.73.Final</netty.version>
+        <netty.version>4.1.77.Final</netty.version>
         <protobuf.version>3.17.3</protobuf.version>
         <fastjson.version>1.2.83</fastjson.version>
         <xml.apis.version>1.4.01</xml.apis.version>
         <xerces.version>2.12.1</xerces.version>
-        <snake.yaml.version>1.26</snake.yaml.version>
+        <snake.yaml.version>1.32</snake.yaml.version>
         <zookeeper.version>3.6.0</zookeeper.version>
         <lombok.version>1.18.10</lombok.version>
         <asm.version>8.0.1</asm.version>
