@@ -22,6 +22,7 @@ import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDescription;
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
+import com.huaweicloud.sermant.core.utils.FileUtils;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
@@ -204,7 +205,7 @@ public class BufferedAgentBuilder {
         if (outputPath == null || outputPath.length() <= 0) {
             return this;
         }
-        final File folder = new File(outputPath);
+        final File folder = new File(FileUtils.validatePath(outputPath));
         if (!folder.exists() && !folder.mkdirs()) {
             return this;
         }

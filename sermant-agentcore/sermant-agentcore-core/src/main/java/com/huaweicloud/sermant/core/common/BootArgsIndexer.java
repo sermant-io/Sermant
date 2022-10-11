@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.core.common;
 
 import com.huaweicloud.sermant.core.exception.SchemaException;
+import com.huaweicloud.sermant.core.utils.FileUtils;
 import com.huaweicloud.sermant.core.utils.JarFileUtils;
 import com.huaweicloud.sermant.core.utils.UuidUtil;
 
@@ -111,19 +112,21 @@ public class BootArgsIndexer {
      * @param argsMap 启动参数
      */
     public static void build(Map<String, Object> argsMap) {
-        implementDir = new File(argsMap.get(CommonConstant.CORE_IMPLEMENT_DIR_KEY).toString());
+        implementDir = new File(FileUtils.validatePath(argsMap.get(CommonConstant.CORE_IMPLEMENT_DIR_KEY).toString()));
         if (!implementDir.exists() || !implementDir.isDirectory()) {
             LOGGER.warning("Implement directory not found! ");
         }
-        configFile = new File(argsMap.get(CommonConstant.CORE_CONFIG_FILE_KEY).toString());
+        configFile = new File(FileUtils.validatePath(argsMap.get(CommonConstant.CORE_CONFIG_FILE_KEY).toString()));
         if (!configFile.exists() || !configFile.isFile()) {
             LOGGER.warning("Config file is not found! ");
         }
-        pluginSettingFile = new File(argsMap.get(CommonConstant.PLUGIN_SETTING_FILE_KEY).toString());
+        pluginSettingFile = new File(FileUtils.validatePath(argsMap.get(CommonConstant.PLUGIN_SETTING_FILE_KEY)
+                .toString()));
         if (!pluginSettingFile.exists() || !pluginSettingFile.isFile()) {
             LOGGER.warning("Plugin setting file is not found! ");
         }
-        pluginPackageDir = new File(argsMap.get(CommonConstant.PLUGIN_PACKAGE_DIR_KEY).toString());
+        pluginPackageDir = new File(FileUtils.validatePath(argsMap.get(CommonConstant.PLUGIN_PACKAGE_DIR_KEY)
+                .toString()));
         if (!pluginPackageDir.exists() || !pluginPackageDir.isDirectory()) {
             LOGGER.warning("Plugin package directory is not found! ");
         }

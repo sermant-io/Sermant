@@ -38,12 +38,35 @@ public class FileUtils {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private static final String[] INVALID_SYMBOL = {"../", "..\\"};
+
+    private static final String AGENT_PATH = new File(new File(FileUtils.class.getProtectionDomain().getCodeSource()
+            .getLocation().getPath()).getParent()).getParent();
+
     /**
      * 缓冲区大小
      */
     private static final int BUFFER_SIZE = 1024 * 16;
 
     private FileUtils() {
+    }
+
+    /**
+     * 检验文件路径
+     *
+     * @param path 输入路径
+     * @return 校验后路径
+     */
+    public static String validatePath(String path) {
+        if (!path.startsWith(AGENT_PATH)) {
+            return "";
+        }
+
+        String fixPath = path;
+        for (String symbol : INVALID_SYMBOL) {
+            fixPath = fixPath.replace(symbol, "");
+        }
+        return fixPath;
     }
 
     /**
