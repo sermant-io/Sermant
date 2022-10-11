@@ -37,7 +37,7 @@
         <package.plugin.type>service</package.plugin.type>
         <config.skip.flag>false</config.skip.flag>
         <resilience4j.version>1.7.1</resilience4j.version>
-        <jackson.version>2.13.3</jackson.version>
+        <jackson.version>2.11.0</jackson.version>
         <prometheus.version>0.16.0</prometheus.version>
     </properties>
 
