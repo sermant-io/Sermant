@@ -8,6 +8,7 @@ plugins:
   - loadbalancer
   - dynamic-config
   - monitor
+  - springboot-registry
 adaptors:
   - lubanops
 profiles:

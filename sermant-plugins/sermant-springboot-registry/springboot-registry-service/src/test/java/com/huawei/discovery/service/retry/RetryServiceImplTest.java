@@ -1,0 +1,186 @@
+/*
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.huawei.discovery.service.retry;
+
+import com.huawei.discovery.entity.ServiceInstance;
+import com.huawei.discovery.retry.InvokerContext;
+import com.huawei.discovery.retry.RetryConfig;
+import com.huawei.discovery.service.lb.DiscoveryManager;
+import com.huawei.discovery.service.lb.discovery.zk.ZkService34;
+import com.huawei.discovery.service.lb.rule.BaseTest;
+import com.huawei.discovery.service.lb.utils.CommonUtils;
+
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.NoRouteToHostException;
+import java.net.SocketTimeoutException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+
+/**
+ * 重试调用测试
+ *
+ * @author zhouss
+ * @since 2022-10-10
+ */
+public class RetryServiceImplTest extends BaseTest {
+    @Mock
+    private ZkService34 zkService34;
+
+    private final String serviceName = "discovery";
+
+    private RetryServiceImpl retryService;
+
+    @Override
+    public void setUp() {
+        super.setUp();
+        MockitoAnnotations.openMocks(this);
+        pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(ZkService34.class))
+                .thenReturn(zkService34);
+        lbConfig.setMaxRetryConfigCache(1);
+        retryService = new RetryServiceImpl();
+        init();
+
+    }
+
+    @Override
+    public void tearDown() {
+        super.tearDown();
+        // 重置状态
+        final Optional<Object> isStarted = ReflectUtils.getFieldValue(DiscoveryManager.INSTANCE, "isStarted");
+        Assert.assertTrue(isStarted.isPresent() && isStarted.get() instanceof AtomicBoolean);
+        ((AtomicBoolean) isStarted.get()).set(false);
+        Mockito.reset(zkService34);
+    }
+
+    private void init() {
+        DiscoveryManager.INSTANCE.start();
+        Mockito.verify(zkService34, Mockito.times(1)).init();
+        retryService.start();
+    }
+
+    @Test
+    public void start() {
+        retryService.start();
+        final Optional<Object> defaultRetry = ReflectUtils.getFieldValue(retryService, "defaultRetry");
+        Assert.assertTrue(defaultRetry.isPresent());
+    }
+
+    private void mockInstances() {
+        final ServiceInstance selectedInstance = CommonUtils.buildInstance(serviceName, 8989);
+        final ServiceInstance nextInstance = CommonUtils.buildInstance(serviceName, 8888);
+        final List<ServiceInstance> serviceInstances = Arrays.asList(selectedInstance, nextInstance);
+        try {
+            Mockito.when(zkService34.getInstances(serviceName)).thenReturn(serviceInstances);
+        } catch (com.huawei.discovery.service.ex.QueryInstanceException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void invokeWithNoInstances() {
+        Object exResult = new Object();
+        final Function<InvokerContext, Object> invokerFunc = invokerContext -> null;
+        final Function<Exception, Object> exFunc = ex -> exResult;
+        Optional<Object> invoke = retryService.invoke(invokerFunc, exFunc, serviceName);
+        Assert.assertTrue(invoke.isPresent());
+        Assert.assertEquals(invoke.get(), exResult);
+    }
+
+    @Test
+    public void invoke() {
+        mockInstances();
+        // 正常调用
+        testNormalInvoke(null);
+        // 异常调用
+        testErrorInvoke(null);
+    }
+
+    @Test
+    public void testRetryCache() {
+        ReflectUtils.setFieldValue(retryService, "MAX_SIZE", 0);
+        mockInstances();
+        testNormalInvoke(buildRetryConfig("test"));
+    }
+
+    private RetryConfig buildRetryConfig(String name) {
+        List<Class<? extends Throwable>> retryEx = Arrays.asList(
+                ConnectException.class,
+                SocketTimeoutException.class,
+                NoRouteToHostException.class,
+                IOException.class);
+        return new RetryConfig(
+                retryEx,
+                result -> false,
+                name,
+                lbConfig.getRetryWaitMs(),
+                lbConfig.getMaxRetry());
+    }
+
+    private void testErrorInvoke(RetryConfig retryConfig) {
+        Object exResult = new Object();
+        final Function<InvokerContext, Object> invokerFunc = invokerContext -> {
+            invokerContext.setEx(new Exception("error"));
+            return null;
+        };
+        final Function<Exception, Object> exFunc = ex -> exResult;
+        Optional<Object> invoke;
+        if (retryConfig == null) {
+            invoke = retryService.invoke(invokerFunc, exFunc, serviceName);
+        } else {
+            invoke = retryService.invoke(invokerFunc, exFunc, serviceName, retryConfig);
+        }
+        Assert.assertTrue(invoke.isPresent());
+        Assert.assertEquals(invoke.get(), exResult);
+    }
+
+    private void testNormalInvoke(RetryConfig retryConfig) {
+        Object result = new Object();
+        Object exResult = new Object();
+        final Function<InvokerContext, Object> invokerFunc = invokerContext -> result;
+        final Function<Exception, Object> exFunc = ex -> exResult;
+        Optional<Object> invoke;
+        if (retryConfig == null) {
+            invoke = retryService.invoke(invokerFunc, exFunc, serviceName);
+        } else {
+            invoke = retryService.invoke(invokerFunc, exFunc, serviceName, retryConfig);
+        }
+        Assert.assertTrue(invoke.isPresent());
+        Assert.assertEquals(invoke.get(), result);
+    }
+
+    @Test
+    public void testInvoke() {
+        mockInstances();
+        // 正常调用
+        testNormalInvoke(buildRetryConfig("normal"));
+        // 异常调用
+        testErrorInvoke(buildRetryConfig("error"));
+    }
+}

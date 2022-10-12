@@ -61,6 +61,16 @@ public class ServiceMeta implements BaseConfig {
 
     private Map<String, String> parameters;
 
+    private String zone = "default";
+
+    public String getZone() {
+        return zone;
+    }
+
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
+
     public String getCustomLabel() {
         return customLabel;
     }
