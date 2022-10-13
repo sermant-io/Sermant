@@ -1,5 +1,5 @@
 # consul发现配置
-sermant.discovery.ctrl:
+sermant.springboot.registry:
   realmName: gateway.t3go.com.cn
 
 sermant.springboot.registry.lb:

@@ -96,7 +96,7 @@ public class OkHttp3ClientInterceptorTest extends BaseTest {
         Optional<Object> dynamicConfig = ReflectUtils.getFieldValue(PlugEffectStategyCache.INSTANCE, "caches");
         Assert.assertTrue(dynamicConfig.isPresent() && dynamicConfig.get() instanceof Map);
         ((Map) dynamicConfig.get()).put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY, strategy);
-        ((Map) dynamicConfig.get()).put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG__VALUE, serviceName);
+        ((Map) dynamicConfig.get()).put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE, serviceName);
 
     }
 

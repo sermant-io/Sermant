@@ -30,6 +30,7 @@ import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.apache.http.HttpHost;
@@ -92,7 +93,7 @@ public class HttpClient4xInterceptorTest {
         final HttpClient4xInterceptor interceptor = new HttpClient4xInterceptor();
         interceptor.ready();
         final ExecuteContext context = buildContext();
-        PlugEffectStategyCache.INSTANCE.resolve("");
+        PlugEffectStategyCache.INSTANCE.resolve(DynamicConfigEventType.CREATE, "");
         interceptor.doBefore(context);
         interceptor.onThrow(context);
         interceptor.after(context);

@@ -16,30 +16,28 @@
 
 package com.huawei.discovery.interceptors;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
-
-import org.apache.http.HttpStatus;
-
-import com.huawei.discovery.entity.Recorder;
-import com.huawei.discovery.entity.SimpleRequestRecorder;
 import com.huawei.discovery.retry.InvokerContext;
 import com.huawei.discovery.service.InvokerService;
 import com.huawei.discovery.utils.HttpConstants;
 import com.huawei.discovery.utils.PlugEffectWhiteBlackUtils;
 import com.huawei.discovery.utils.RequestInterceptorUtils;
+
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import feign.Request;
 import feign.Response;
 
+import org.apache.http.HttpStatus;
+
+import java.util.Map;
+import java.util.function.Function;
+
 /**
  * 拦截获取服务列表
  *
  * @author chengyouling
- * @since 2022-9-27
+ * @since 2022-09-27
  */
 public class FeignInvokeInterceptor extends MarkInterceptor {
 
@@ -48,7 +46,8 @@ public class FeignInvokeInterceptor extends MarkInterceptor {
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
         Request request = (Request)context.getArguments()[0];
         Map<String, String> urlInfo = RequestInterceptorUtils.recovertUrl(request.url());
-        if (PlugEffectWhiteBlackUtils.isNotAllowRun(request.url(), urlInfo.get(HttpConstants.HTTP_URI_HOST), false)) {
+        if (!PlugEffectWhiteBlackUtils.isAllowRun(request.url(), urlInfo.get(HttpConstants.HTTP_URI_HOST),
+            false)) {
             return context;
         }
         RequestInterceptorUtils.printRequestLog("feign", urlInfo);
@@ -60,10 +59,12 @@ public class FeignInvokeInterceptor extends MarkInterceptor {
         return context;
     }
 
-    private Function<InvokerContext, Object> buildInvokerFunc(ExecuteContext context, Request request, Map<String, String> urlInfo) {
+    private Function<InvokerContext, Object> buildInvokerFunc(ExecuteContext context, Request request,
+        Map<String, String> urlInfo) {
         return invokerContext -> {
             context.getArguments()[0] = Request.create(request.httpMethod(),
-                    RequestInterceptorUtils.buildUrl(urlInfo, invokerContext.getServiceInstance()), request.headers(), request.requestBody());
+                RequestInterceptorUtils.buildUrl(urlInfo, invokerContext.getServiceInstance()),
+                request.headers(), request.requestBody());
             return RequestInterceptorUtils.buildFunc(context, invokerContext).get();
         };
     }
@@ -74,8 +75,9 @@ public class FeignInvokeInterceptor extends MarkInterceptor {
 
     /**
      * 构建feign响应
+     *
      * @param ex
-     * @return
+     * @return 响应
      */
     private Response buildErrorResponse(Exception ex, Request request) {
         Response.Builder builder = Response.builder();

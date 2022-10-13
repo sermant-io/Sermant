@@ -137,8 +137,8 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
     private boolean isConfigEnable() {
         final String originHostName = HttpAsyncUtils.getOrCreateContext().getOriginHostName();
         final Map<String, String> hostAndPath = HttpAsyncUtils.getOrCreateContext().getHostAndPath();
-        return !PlugEffectWhiteBlackUtils
-                .isNotAllowRun(originHostName, hostAndPath.get(HttpConstants.HTTP_URI_HOST), true);
+        return PlugEffectWhiteBlackUtils
+                .isAllowRun(originHostName, hostAndPath.get(HttpConstants.HTTP_URI_HOST), true);
     }
 
     private void acquireHostPath(ExecuteContext context) throws Exception {

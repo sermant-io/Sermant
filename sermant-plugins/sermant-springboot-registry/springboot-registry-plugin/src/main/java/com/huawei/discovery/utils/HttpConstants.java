@@ -28,6 +28,11 @@ import java.util.Date;
 public class HttpConstants {
 
     /**
+     * get请求
+     */
+    public static final String HTTP_GET = "GET";
+
+    /**
      * 主机名
      */
     public static final String HTTP_URI_HOST = "host";
@@ -36,11 +41,6 @@ public class HttpConstants {
      * 路径
      */
     public static final String HTTP_URI_PATH = "path";
-
-    /**
-     * get请求
-     */
-    public static final String HTTP_GET = "GET";
 
     /**
      * 双斜杠
@@ -70,13 +70,19 @@ public class HttpConstants {
     /**
      * 时间格式
      */
-    public static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private HttpConstants() {
+
+    }
 
     /**
+     *
      * 获取当前时间
-     * @return
+     *
+     * @return 时间
      */
     public static String currentTime() {
-        return simpleDateFormat.format(new Date());
+        return SIMPLE_DATE_FORMAT.format(new Date());
     }
 }

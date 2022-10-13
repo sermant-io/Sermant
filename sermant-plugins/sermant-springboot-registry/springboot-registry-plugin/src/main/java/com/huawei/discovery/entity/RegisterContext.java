@@ -33,7 +33,8 @@ public enum RegisterContext {
 
     /**
      * 获取服务实例
-     * @return
+     *
+     * @return 服务实例
      */
     public DefaultServiceInstance getServiceInstance() {
         return this.serviceInstance;

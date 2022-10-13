@@ -16,6 +16,20 @@
 
 package com.huawei.discovery.interceptors;
 
+import com.huawei.discovery.retry.InvokerContext;
+import com.huawei.discovery.service.InvokerService;
+import com.huawei.discovery.utils.HttpConstants;
+import com.huawei.discovery.utils.PlugEffectWhiteBlackUtils;
+import com.huawei.discovery.utils.RequestInterceptorUtils;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpResponse;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -23,28 +37,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.logging.Logger;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpResponse;
-
-import com.huawei.discovery.entity.Recorder;
-import com.huawei.discovery.entity.SimpleRequestRecorder;
-import com.huawei.discovery.retry.InvokerContext;
-import com.huawei.discovery.service.InvokerService;
-import com.huawei.discovery.utils.HttpConstants;
-import com.huawei.discovery.utils.PlugEffectWhiteBlackUtils;
-import com.huawei.discovery.utils.RequestInterceptorUtils;
-import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 /**
  * 拦截获取服务列表
  *
  * @author chengyouling
- * @since 2022-9-27
+ * @since 2022-09-27
  */
 public class RestTemplateInterceptor extends MarkInterceptor {
 
@@ -54,10 +52,11 @@ public class RestTemplateInterceptor extends MarkInterceptor {
         URI uri = (URI)context.getArguments()[0];
         HttpMethod httpMethod = (HttpMethod)context.getArguments()[1];
         Map<String, String> hostAndPath = RequestInterceptorUtils.recoverHostAndPath(uri.getPath());
-        if (PlugEffectWhiteBlackUtils.isNotAllowRun(uri.getHost(), hostAndPath.get(HttpConstants.HTTP_URI_HOST), true)) {
+        if (!PlugEffectWhiteBlackUtils.isAllowRun(uri.getHost(), hostAndPath.get(HttpConstants.HTTP_URI_HOST),
+            true)) {
             return context;
         }
-        RequestInterceptorUtils.printRequestLog("OkHttp", hostAndPath);
+        RequestInterceptorUtils.printRequestLog("restTemplate", hostAndPath);
         invokerService.invoke(
                 buildInvokerFunc(uri, hostAndPath, context, httpMethod),
                 this::buildErrorResponse,
@@ -86,7 +85,8 @@ public class RestTemplateInterceptor extends MarkInterceptor {
         return Optional.of(uri.resolve(url));
     }
 
-    private Function<InvokerContext, Object> buildInvokerFunc(URI uri, Map<String, String> hostAndPath, ExecuteContext context, HttpMethod httpMethod) {
+    private Function<InvokerContext, Object> buildInvokerFunc(URI uri, Map<String, String> hostAndPath,
+        ExecuteContext context, HttpMethod httpMethod) {
         return invokerContext -> {
             String url = RequestInterceptorUtils.buildUrlWithIp(uri, invokerContext.getServiceInstance(),
                     hostAndPath.get(HttpConstants.HTTP_URI_PATH), httpMethod.name());
@@ -97,20 +97,26 @@ public class RestTemplateInterceptor extends MarkInterceptor {
 
     /**
      * 构建restTemplete响应
+     *
      * @param ex
-     * @return
+     * @return 响应
      */
     private ClientHttpResponse buildErrorResponse(Exception ex) {
         return new ClientHttpResponse() {
 
             @Override
             public HttpHeaders getHeaders() {
-                return null;
+                return new HttpHeaders();
             }
 
             @Override
             public InputStream getBody() throws IOException {
-                return null;
+                return new InputStream() {
+                    @Override
+                    public int read() throws IOException {
+                        return 0;
+                    }
+                };
             }
 
             @Override
@@ -125,7 +131,7 @@ public class RestTemplateInterceptor extends MarkInterceptor {
 
             @Override
             public String getStatusText() throws IOException {
-                return null;
+                return "";
             }
 
             @Override

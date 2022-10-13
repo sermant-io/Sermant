@@ -16,14 +16,17 @@
 
 package com.huawei.discovery.utils;
 
-import java.net.URI;
-import java.util.Map;
-
 import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.config.PlugEffectWhiteBlackConstants;
 import com.huawei.discovery.entity.PlugEffectStategyCache;
+
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 插件生效、日志打印动态配置相关工具类
@@ -35,35 +38,51 @@ public class PlugEffectWhiteBlackUtils {
 
     private static DiscoveryPluginConfig config = PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class);
 
+    private static final String COMMA = ",";
+
+    private PlugEffectWhiteBlackUtils() {
+
+    }
+
     /**
      * 判断对应服务插件是否执行
+     *
      * @param serviceName
-     * @return
+     * @return 是否生效
      */
     public static boolean isPlugEffect(String serviceName) {
-        String strategy = PlugEffectStategyCache.INSTANCE.getConfigContent(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY);
-        String value = PlugEffectStategyCache.INSTANCE.getConfigContent(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG__VALUE);
-        //全部生效
+        String strategy = PlugEffectStategyCache.INSTANCE.getConfigContent(
+                PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY);
+        String value = PlugEffectStategyCache.INSTANCE.getConfigContent(
+                PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE);
+
+        // 全部生效
         if (StringUtils.equalsIgnoreCase(PlugEffectWhiteBlackConstants.STRATEGY_ALL, strategy)) {
             return true;
         }
-        //全部不生效
+
+        // 全部不生效
         if (StringUtils.equalsIgnoreCase(PlugEffectWhiteBlackConstants.STRATEGY_NONE, strategy)) {
             return false;
         }
-        //白名单-插件生效
+        List<String> serviceNames = Optional.ofNullable(value).map(str -> Arrays.asList(str.split(COMMA)))
+                .orElseGet(Collections::emptyList);
+
+        // 白名单-插件生效
         if (StringUtils.equalsIgnoreCase(PlugEffectWhiteBlackConstants.STRATEGY_WHITE, strategy)) {
-            if (value.contains(serviceName)) {
-                return true;
-            } else {
-                return false;
-            }
+            return checkServiceName(serviceName, serviceNames);
         }
-        //黑名单-插件不生效
+
+        // 黑名单-插件不生效
         if (StringUtils.equalsIgnoreCase(PlugEffectWhiteBlackConstants.STRATEGY_BLACK, strategy)) {
-            if (value.contains(serviceName)) {
-                return false;
-            } else {
+            return !checkServiceName(serviceName, serviceNames);
+        }
+        return false;
+    }
+
+    private static boolean checkServiceName(String serviceName, List<String> serviceNames) {
+        for (String name : serviceNames) {
+            if (StringUtils.equalsIgnoreCase(serviceName, name)) {
                 return true;
             }
         }
@@ -72,16 +91,17 @@ public class PlugEffectWhiteBlackUtils {
 
     /**
      * 判断url是否包含指定域名
+     *
      * @param url
-     * @return
+     * @return 是否包含域名
      */
     public static boolean isUrlContainsRealmName(String url) {
         String realmName = config.getRealmName();
         if (StringUtils.isBlank(realmName)) {
             return false;
         }
-        if (realmName.contains(",")) {
-            String[] names = realmName.split(",");
+        if (realmName.contains(COMMA)) {
+            String[] names = realmName.split(COMMA);
             for (String name : names) {
                 if (url.contains(name)) {
                     return true;
@@ -94,16 +114,17 @@ public class PlugEffectWhiteBlackUtils {
 
     /**
      * 判断主机名称是否为设置的域名
+     *
      * @param host
-     * @return
+     * @return 是否等于域名
      */
     public static boolean isHostEqualRealmName(String host) {
         String realmName = config.getRealmName();
         if (StringUtils.isBlank(realmName)) {
             return false;
         }
-        if (realmName.contains(",")) {
-            String[] names = realmName.split(",");
+        if (realmName.contains(COMMA)) {
+            String[] names = realmName.split(COMMA);
             for (String name : names) {
                 if (StringUtils.equalsIgnoreCase(host, name)) {
                     return true;
@@ -116,21 +137,22 @@ public class PlugEffectWhiteBlackUtils {
 
     /**
      * 判断是否允许请求通过插件
+     *
      * @param realmStr
      * @param serviceName
      * @param isByEqual
-     * @return
+     * @return 是否允许执行
      */
-    public static boolean isNotAllowRun(String realmStr, String serviceName, boolean isByEqual) {
+    public static boolean isAllowRun(String realmStr, String serviceName, boolean isByEqual) {
         if (isByEqual) {
-            if (!PlugEffectWhiteBlackUtils.isHostEqualRealmName(realmStr)) {
+            if (PlugEffectWhiteBlackUtils.isHostEqualRealmName(realmStr)) {
                 return true;
             }
         } else {
-            if (!PlugEffectWhiteBlackUtils.isUrlContainsRealmName(realmStr)) {
+            if (PlugEffectWhiteBlackUtils.isUrlContainsRealmName(realmStr)) {
                 return true;
             }
         }
-        return !PlugEffectWhiteBlackUtils.isPlugEffect(serviceName);
+        return PlugEffectWhiteBlackUtils.isPlugEffect(serviceName);
     }
 }

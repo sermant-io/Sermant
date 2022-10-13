@@ -16,13 +16,14 @@
 
 package com.huawei.discovery.service;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.huawei.discovery.config.EffectStategyDynamicConfigListener;
+
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import com.huaweicloud.sermant.core.plugin.subscribe.ConfigSubscriber;
 import com.huaweicloud.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
 import com.huaweicloud.sermant.core.utils.StringUtils;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 插件生效动态配置服务
@@ -36,6 +37,7 @@ public class ConfigCenterService implements PluginService {
 
     /**
      * 实例化动态配置监听
+     *
      * @param serviceName
      */
     public void init(String serviceName) {
@@ -44,7 +46,7 @@ public class ConfigCenterService implements PluginService {
         }
         if (isRun.compareAndSet(false, true)) {
             ConfigSubscriber configSubscriber = new CseGroupConfigSubscriber(
-                    serviceName, new EffectStategyDynamicConfigListener(), "serment-discovery");
+                    serviceName, new EffectStategyDynamicConfigListener(), "serment-springboot-registry");
             configSubscriber.subscribe();
         }
     }

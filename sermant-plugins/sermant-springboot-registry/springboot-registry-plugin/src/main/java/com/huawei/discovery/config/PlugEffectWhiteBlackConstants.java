@@ -20,14 +20,14 @@ package com.huawei.discovery.config;
  * 插件生效、日志打印动态配置相关常量
  *
  * @author chengyouling
- * @since 2022-10-9
+ * @since 2022-10-10
  */
 public class PlugEffectWhiteBlackConstants {
 
     /**
      * 监听配置key
      */
-    public static final String DYNAMIC_CONFIG_LISTENER_KEY = "sermant.plugin.discovery";
+    public static final String DYNAMIC_CONFIG_LISTENER_KEY = "sermant.plugin.registry";
 
     /**
      * 插件生效--策略
@@ -37,7 +37,7 @@ public class PlugEffectWhiteBlackConstants {
     /**
      * 插件生效--服务名白名单value
      */
-    public static final String DYNAMIC_CONFIG__VALUE = "value";
+    public static final String DYNAMIC_CONFIG_VALUE = "value";
 
     /**
      * 策略-所有服务生效
@@ -59,4 +59,7 @@ public class PlugEffectWhiteBlackConstants {
      */
     public static final String STRATEGY_BLACK = "black";
 
+    private PlugEffectWhiteBlackConstants() {
+
+    }
 }

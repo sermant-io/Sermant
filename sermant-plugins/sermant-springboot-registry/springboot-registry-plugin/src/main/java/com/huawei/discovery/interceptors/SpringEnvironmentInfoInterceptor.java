@@ -76,8 +76,8 @@ public class SpringEnvironmentInfoInterceptor implements Interceptor {
         RegisterContext.INSTANCE.getServiceInstance().setId(RegisterContext.INSTANCE.getServiceInstance().getIp()
                 + ":" + RegisterContext.INSTANCE.getServiceInstance().getPort());
         RegisterContext.INSTANCE.getServiceInstance().setStatus(Status.UP.name());
-        if (null == RegisterContext.INSTANCE.getServiceInstance().getMetadata()) {
-            Map<String, String> metadata = new HashMap<String, String>(8);
+        if (RegisterContext.INSTANCE.getServiceInstance().getMetadata() == null) {
+            Map<String, String> metadata = new HashMap<String, String>();
             ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
             metadata.put("zone", serviceMeta.getZone());
             RegisterContext.INSTANCE.getServiceInstance().setMetadata(metadata);

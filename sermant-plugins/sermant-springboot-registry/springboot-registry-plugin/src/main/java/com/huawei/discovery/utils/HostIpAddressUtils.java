@@ -16,13 +16,14 @@
 
 package com.huawei.discovery.utils;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.logging.Logger;
-
-import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 /**
  * 获取当前主机ip地址
@@ -36,9 +37,14 @@ public class HostIpAddressUtils {
 
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
 
+    private HostIpAddressUtils() {
+
+    }
+
     /**
      * 获取本机ip
-     * @return
+     *
+     * @return 主机ip
      * @throws SocketException
      */
     public static String getHostAddress() throws SocketException {
@@ -49,9 +55,10 @@ public class HostIpAddressUtils {
                 NetworkInterface ni = networkInterface.nextElement();
                 for (Enumeration<InetAddress> inetAdd = ni.getInetAddresses(); inetAdd.hasMoreElements();) {
                     InetAddress inetAddress = inetAdd.nextElement();
-                    //判断是不是回环地址
+
+                    // 判断是不是回环地址
                     if (!inetAddress.isLoopbackAddress()) {
-                        //如果是site-local地址，直接返回
+                        // 如果是site-local地址，直接返回
                         if (inetAddress.isSiteLocalAddress()) {
                             return inetAddress.getHostAddress();
                         }
@@ -61,9 +68,11 @@ public class HostIpAddressUtils {
                     }
                 }
             }
+
             // 如果出去loopback回环地之外无其它地址了，那就InetAddress直接获取
-            return candidateAddress == null ? InetAddress.getLocalHost().getHostAddress() : candidateAddress.getHostAddress();
-        } catch (Exception e) {
+            return candidateAddress == null ? InetAddress.getLocalHost().getHostAddress()
+                    : candidateAddress.getHostAddress();
+        } catch (UnknownHostException e) {
             LOGGER.warning("get host address error");
         }
         return DEFAULT_ADDRESS;

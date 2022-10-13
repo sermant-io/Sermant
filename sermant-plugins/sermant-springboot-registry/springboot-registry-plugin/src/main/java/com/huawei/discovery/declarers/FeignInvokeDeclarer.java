@@ -17,6 +17,7 @@
 package com.huawei.discovery.declarers;
 
 import com.huawei.discovery.interceptors.FeignInvokeInterceptor;
+
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
@@ -29,11 +30,6 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @since 2022-09-27
  */
 public class FeignInvokeDeclarer extends AbstractPluginDeclarer {
-
-    private static final String[] ENHANCE_CLASS = {"feign.Client$Default",
-            "org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient",
-            "org.springframework.cloud.openfeign.loadbalancer.RetryableFeignBlockingLoadBalancerClient",
-            "org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient"};
 
     private static final String INTERCEPT_CLASS = FeignInvokeInterceptor.class.getCanonicalName();
 

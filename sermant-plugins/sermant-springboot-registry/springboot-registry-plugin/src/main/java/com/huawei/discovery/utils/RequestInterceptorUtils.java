@@ -47,24 +47,33 @@ public class RequestInterceptorUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private RequestInterceptorUtils() {
+
+    }
+
     /**
      * 解析url参数信息 http://gateway.com.cn/serviceName/sayHell?name=1
      *
      * @param url
-     * @return
+     * @return url解析后的主机名、路径
      */
     public static Map<String, String> recovertUrl(String url) {
         if (StringUtils.isEmpty(url)) {
-            return null;
+            return new HashMap<>();
         }
         Map<String, String> result = new HashMap<>();
         String scheme = url.substring(0, url.indexOf(HttpConstants.HTTP_URL_DOUBLIE_SLASH));
-        String temp = url.substring(url.indexOf(HttpConstants.HTTP_URL_DOUBLIE_SLASH) + 3);
-        //剔除域名之后的path
-        temp = temp.substring(temp.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH) + 1);
-        //服务名
+        String temp = url.substring(url.indexOf(HttpConstants.HTTP_URL_DOUBLIE_SLASH)
+                + HttpConstants.HTTP_URL_DOUBLIE_SLASH.length());
+        int slashLen = 1;
+
+        // 剔除域名之后的path
+        temp = temp.substring(temp.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH) + slashLen);
+
+        // 服务名
         String host = temp.substring(0, temp.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH));
-        //请求路径
+
+        // 请求路径
         String path = temp.substring(temp.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH));
         result.put(HttpConstants.HTTP_URI_HOST, host);
         result.put(HttpConstants.HTTP_URL_SCHEME, scheme);
@@ -131,7 +140,7 @@ public class RequestInterceptorUtils {
                 LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "invoke method [%s] failed",
                         context.getMethod().getName()), e);
             }
-            return null;
+            return Optional.empty();
         };
     }
 
@@ -140,7 +149,7 @@ public class RequestInterceptorUtils {
      *
      * @param urlIfo
      * @param serviceInstance
-     * @return
+     * @return url
      */
     public static String buildUrl(Map<String, String> urlIfo, ServiceInstance serviceInstance) {
         StringBuilder urlBuild = new StringBuilder();
@@ -157,7 +166,7 @@ public class RequestInterceptorUtils {
      * 解析host、path信息
      *
      * @param path
-     * @return
+     * @return host、path信息集合
      */
     public static Map<String, String> recoverHostAndPath(String path) {
         Map<String, String> result = new HashMap<>();
@@ -186,7 +195,7 @@ public class RequestInterceptorUtils {
      * @param serviceInstance
      * @param path
      * @param method
-     * @return
+     * @return ip:port构建的url
      */
     public static String buildUrlWithIp(URI uri, ServiceInstance serviceInstance, String path, String method) {
         StringBuilder urlBuild = new StringBuilder();

@@ -17,6 +17,7 @@
 package com.huawei.discovery.declarers;
 
 import com.huawei.discovery.interceptors.OkHttp3ClientInterceptor;
+
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
@@ -33,7 +34,7 @@ public class OkHttp3ClientDeclarer extends AbstractPluginDeclarer {
      * 增强类的全限定名 okhttp请求
      */
     private static final String[] ENHANCE_CLASSES = {
-            "okhttp3.RealCall"
+        "okhttp3.RealCall"
     };
 
     /**

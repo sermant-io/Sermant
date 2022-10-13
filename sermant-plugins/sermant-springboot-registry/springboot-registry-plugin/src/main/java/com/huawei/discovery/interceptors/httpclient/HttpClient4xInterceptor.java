@@ -129,7 +129,7 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
     }
 
     private boolean isConfigEnable(Map<String, String> hostAndPath, String hostName) {
-        return !PlugEffectWhiteBlackUtils.isNotAllowRun(hostName, hostAndPath.get(HttpConstants.HTTP_URI_HOST), true);
+        return PlugEffectWhiteBlackUtils.isAllowRun(hostName, hostAndPath.get(HttpConstants.HTTP_URI_HOST), true);
     }
 
     @Override

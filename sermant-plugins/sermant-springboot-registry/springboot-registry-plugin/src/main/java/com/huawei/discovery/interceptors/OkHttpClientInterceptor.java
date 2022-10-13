@@ -16,30 +16,30 @@
 
 package com.huawei.discovery.interceptors;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
-import java.util.logging.Logger;
-
-import org.apache.http.HttpStatus;
-
-import com.huawei.discovery.entity.Recorder;
 import com.huawei.discovery.entity.ServiceInstance;
-import com.huawei.discovery.entity.SimpleRequestRecorder;
 import com.huawei.discovery.retry.InvokerContext;
 import com.huawei.discovery.service.InvokerService;
 import com.huawei.discovery.utils.HttpConstants;
 import com.huawei.discovery.utils.PlugEffectWhiteBlackUtils;
 import com.huawei.discovery.utils.RequestInterceptorUtils;
+
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.Protocol;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.Response.Builder;
+
+import org.apache.http.HttpStatus;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.logging.Logger;
 
 /**
  * 针对okHttp3.1以下版本拦截
@@ -51,23 +51,25 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private static final String FIELD_NAME = "originalRequest";
+
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) throws Exception {
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
-        if (context.getRawMemberFieldValue("originalRequest") == null) {
+        if (context.getRawMemberFieldValue(FIELD_NAME) == null) {
             return context;
         }
-        Request request = (Request)context.getRawMemberFieldValue("originalRequest");
+        Request request = (Request)context.getRawMemberFieldValue(FIELD_NAME);
         URI uri = request.uri();
-        final String method = request.method();
         Map<String, String> hostAndPath = RequestInterceptorUtils.recoverHostAndPath(uri.getPath());
-        if (PlugEffectWhiteBlackUtils.isNotAllowRun(uri.getHost(), hostAndPath.get(HttpConstants.HTTP_URI_HOST), true)) {
+        if (!PlugEffectWhiteBlackUtils.isAllowRun(uri.getHost(), hostAndPath.get(HttpConstants.HTTP_URI_HOST),
+            true)) {
             return context;
         }
         RequestInterceptorUtils.printRequestLog("OkHttp", hostAndPath);
         AtomicReference<Request> rebuildRequest = new AtomicReference<>();
         invokerService.invoke(
-                buildInvokerFunc(uri, hostAndPath, request, method, rebuildRequest, context),
+                buildInvokerFunc(uri, hostAndPath, request, rebuildRequest, context),
                 buildExFunc(rebuildRequest),
                 hostAndPath.get(HttpConstants.HTTP_URI_HOST))
                 .ifPresent(context::skip);
@@ -78,14 +80,18 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
         return ex -> buildErrorResponse(ex, rebuildRequest.get());
     }
 
-    private Function<InvokerContext, Object> buildInvokerFunc(URI uri, Map<String, String> hostAndPath, Request request,
-            String method, AtomicReference<Request> rebuildRequest, ExecuteContext context){
+    private Function<InvokerContext, Object> buildInvokerFunc(URI uri, Map<String, String> hostAndPath,
+        Request request, AtomicReference<Request> rebuildRequest, ExecuteContext context) {
         return invokerContext -> {
+            final String method = request.method();
             Request newRequest = covertRequest(uri, hostAndPath, request, method, invokerContext.getServiceInstance());
             rebuildRequest.set(newRequest);
             try {
-                context.setRawMemberFieldValue("originalRequest", newRequest);
-            } catch (Exception e) {
+                context.setRawMemberFieldValue(FIELD_NAME, newRequest);
+            } catch (NoSuchFieldException e) {
+                LOGGER.warning("setRawMemberFieldValue originalRequest failed");
+                return context;
+            } catch (IllegalAccessException e) {
                 LOGGER.warning("setRawMemberFieldValue originalRequest failed");
                 return context;
             }
@@ -106,11 +112,12 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
 
     /**
      * 构建okHttp响应
+     *
      * @param ex
-     * @return
+     * @return 响应
      */
     private Response buildErrorResponse(Exception ex, Request request) {
-        Response.Builder builder = new Builder();
+        Builder builder = new Builder();
         builder.code(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         builder.message(ex.getMessage());
         builder.protocol(Protocol.HTTP_1_1);

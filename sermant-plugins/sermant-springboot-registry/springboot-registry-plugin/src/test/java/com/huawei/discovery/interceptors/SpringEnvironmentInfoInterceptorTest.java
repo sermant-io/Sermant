@@ -25,6 +25,7 @@ import com.huawei.discovery.entity.RegisterContext;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 public class SpringEnvironmentInfoInterceptorTest extends BaseTest {
+
     private SpringEnvironmentInfoInterceptor interceptor;
 
     private final Object[] arguments;
@@ -44,14 +45,12 @@ public class SpringEnvironmentInfoInterceptorTest extends BaseTest {
 
     @Test
     public void testSpringEnvironmentInfoInterceptor() throws Exception {
-        ExecuteContext context = ExecuteContext.forMemberMethod(new Object(), String.class.getDeclaredMethod("trim"),
-                arguments, null, null);
+        ExecuteContext context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
         final ConfigurableEnvironment environment = Mockito.mock(ConfigurableEnvironment.class);
-        Mockito.when(environment.getProperty("server.address")).thenReturn("127.0.0.1");
+        Mockito.when(environment.getProperty("server.address")).thenReturn("192.168.0.157");
         Mockito.when(environment.getProperty("server.port")).thenReturn("8010");
         Mockito.when(environment.getProperty("spring.application.name")).thenReturn("zookeeper-provider-demo");
-        arguments[0] = environment;
-        context.changeResult(environment);
+        context.afterMethod(environment, null);
         interceptor.after(context);
         Assert.assertEquals(RegisterContext.INSTANCE.getServiceInstance().getServiceName(), "zookeeper-provider-demo");
     }

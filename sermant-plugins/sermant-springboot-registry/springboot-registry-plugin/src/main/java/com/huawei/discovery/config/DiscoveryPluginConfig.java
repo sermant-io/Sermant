@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
  * @author chengyouling
  * @since 2022-10-10
  */
-@ConfigTypeKey("sermant.discovery.ctrl")
+@ConfigTypeKey("sermant.springboot.registry")
 public class DiscoveryPluginConfig implements PluginConfig {
 
     /**

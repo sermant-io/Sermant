@@ -28,6 +28,7 @@ import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.apache.http.HttpException;
@@ -97,7 +98,7 @@ public class HttpAsyncClient4xInterceptorTest {
     public void test() throws Exception {
         final HttpAsyncClient4xInterceptor interceptor = new HttpAsyncClient4xInterceptor();
         final ExecuteContext context = buildContext();
-        PlugEffectStategyCache.INSTANCE.resolve("");
+        PlugEffectStategyCache.INSTANCE.resolve(DynamicConfigEventType.CREATE, "");
         interceptor.before(context);
         interceptor.onThrow(context);
         interceptor.after(context);

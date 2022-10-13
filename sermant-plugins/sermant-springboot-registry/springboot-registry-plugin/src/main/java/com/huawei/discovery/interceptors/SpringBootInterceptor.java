@@ -19,6 +19,7 @@ package com.huawei.discovery.interceptors;
 import com.huawei.discovery.entity.RegisterContext;
 import com.huawei.discovery.service.ConfigCenterService;
 import com.huawei.discovery.service.RegistryService;
+
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.service.ServiceManager;
@@ -35,6 +36,9 @@ public class SpringBootInterceptor extends AbstractInterceptor {
 
     private final ConfigCenterService configCenterService;
 
+    /**
+     * 构造方法
+     */
     public SpringBootInterceptor() {
         registryService = ServiceManager.getService(RegistryService.class);
         configCenterService = ServiceManager.getService(ConfigCenterService.class);

@@ -16,12 +16,16 @@
 
 package com.huawei.discovery.entity;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import com.huawei.discovery.config.PlugEffectWhiteBlackConstants;
 
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+import com.huaweicloud.sermant.core.utils.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 插件生效策略缓存
@@ -36,25 +40,47 @@ public enum PlugEffectStategyCache {
      */
     INSTANCE;
 
-    private Map<String, String> caches = new HashMap<String, String>();
+    private Map<String, String> caches = new HashMap<>();
 
     private final YamlConverter yamlConverter = OperationManager.getOperation(YamlConverter.class);
 
     /**
      * 将动态配置放入缓存中
+     *
+     * @param eventType
      * @param content
      */
-    public void resolve(String content) {
+    public void resolve(DynamicConfigEventType eventType, String content) {
         final Optional<Map<String, String>> dataMap = yamlConverter.convert(content, Map.class);
-        if (dataMap.isPresent()) {
-            caches = dataMap.get();
+        if (eventType == DynamicConfigEventType.DELETE) {
+            caches.clear();
+        } else {
+            if (dataMap.isPresent()) {
+                Map<String, String> map = dataMap.get();
+                if (checkStrategy(map.get(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY))) {
+                    caches.put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY,
+                            map.get(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY));
+                }
+                caches.put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE,
+                        map.get(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE));
+            } else {
+                caches.clear();
+            }
         }
+    }
+
+    private boolean checkStrategy(String strategy) {
+        return StringUtils.equalsIgnoreCase(strategy, PlugEffectWhiteBlackConstants.STRATEGY_ALL)
+                || StringUtils.equalsIgnoreCase(strategy, PlugEffectWhiteBlackConstants.STRATEGY_NONE)
+                || StringUtils.equalsIgnoreCase(strategy, PlugEffectWhiteBlackConstants.STRATEGY_WHITE)
+                || StringUtils.equalsIgnoreCase(strategy, PlugEffectWhiteBlackConstants.STRATEGY_BLACK);
     }
 
     /**
      * 获取对应key的配置
+     *
      * @param key
-     * @return
+     * @return 动态配置值
      */
     public String getConfigContent(String key) {
         return caches.get(key);
