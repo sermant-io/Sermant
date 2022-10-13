@@ -95,9 +95,19 @@ public class LbConfig implements PluginConfig {
     private long retryWaitMs = LbConstants.DEFAULT_RETRY_WAIT_MS;
 
     /**
-     * 实例缓存过期时间
+     * 实例缓存过期时间, 若该值小于0, 则永远不会过期
      */
-    private long instanceCacheExpireTime = LbConstants.DEFAULT_CACHE_EXPIRE_MIN;
+    private long instanceCacheExpireTime = LbConstants.DEFAULT_CACHE_EXPIRE_SEC;
+
+    /**
+     * 实例全量刷新间隔, 单位秒, 若为0, 且过期时间不为0, 则会取缓存过期的4/5作为刷新间隔；例如instanceCacheExpireTime=30S, 则instanceRefreshInterval=25S
+     */
+    private long instanceRefreshInterval = 0L;
+
+    /**
+     * 定时器执行间隔, 单位秒, 一定要小于instanceCacheExpireTime
+     */
+    private long refreshTimerInterval = LbConstants.DEFAULT_REFRESH_TIMER_INTERVAL_SEC;
 
     /**
      * 缓存并发度, 影响从缓存获取实例的效率
@@ -128,6 +138,22 @@ public class LbConfig implements PluginConfig {
      * 统计并发数的时间窗口, 默认10分钟, 并发数仅在时间窗口内统计生效, 超出则清0
      */
     private long activeRequestTimeoutWindowMs = LbConstants.DEFAULT_ACTIVE_REQUEST_COUNT_WINDOW_MS;
+
+    public long getRefreshTimerInterval() {
+        return refreshTimerInterval;
+    }
+
+    public void setRefreshTimerInterval(long refreshTimerInterval) {
+        this.refreshTimerInterval = refreshTimerInterval;
+    }
+
+    public long getInstanceRefreshInterval() {
+        return instanceRefreshInterval;
+    }
+
+    public void setInstanceRefreshInterval(long instanceRefreshInterval) {
+        this.instanceRefreshInterval = instanceRefreshInterval;
+    }
 
     public boolean isOnlyCurRegisterInstances() {
         return onlyCurRegisterInstances;

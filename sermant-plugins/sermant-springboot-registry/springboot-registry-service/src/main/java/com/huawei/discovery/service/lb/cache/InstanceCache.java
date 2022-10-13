@@ -32,6 +32,11 @@ public class InstanceCache {
     private List<ServiceInstance> instances;
 
     /**
+     * 更新时间
+     */
+    private long updateTimestamp;
+
+    /**
      * 实例缓存
      *
      * @param serviceName 目标服务名
@@ -40,6 +45,7 @@ public class InstanceCache {
     public InstanceCache(String serviceName, List<ServiceInstance> instances) {
         this.serviceName = serviceName;
         this.instances = instances;
+        this.updateTimestamp = System.currentTimeMillis();
     }
 
     public String getServiceName() {
@@ -56,5 +62,13 @@ public class InstanceCache {
 
     public void setInstances(List<ServiceInstance> instances) {
         this.instances = instances;
+    }
+
+    public long getUpdateTimestamp() {
+        return updateTimestamp;
+    }
+
+    public void setUpdateTimestamp(long updateTimestamp) {
+        this.updateTimestamp = updateTimestamp;
     }
 }

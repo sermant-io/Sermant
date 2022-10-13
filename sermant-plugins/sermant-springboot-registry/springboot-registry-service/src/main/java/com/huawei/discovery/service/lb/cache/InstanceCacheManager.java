@@ -18,6 +18,7 @@ package com.huawei.discovery.service.lb.cache;
 
 import com.huawei.discovery.config.LbConfig;
 import com.huawei.discovery.entity.ServiceInstance;
+import com.huawei.discovery.factory.RealmServiceThreadFactory;
 import com.huawei.discovery.service.ex.QueryInstanceException;
 import com.huawei.discovery.service.lb.LbConstants;
 import com.huawei.discovery.service.lb.discovery.InstanceChangeListener;
@@ -27,18 +28,15 @@ import com.huawei.discovery.service.lb.discovery.ServiceDiscoveryClient;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.cache.RemovalListener;
-
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -55,11 +53,15 @@ public class InstanceCacheManager {
 
     private final Map<String, InstanceCache> oldInstancesCache = new ConcurrentHashMap<>();
 
-    private final LoadingCache<String, InstanceCache> cache;
+    private final Map<String, InstanceCache> instanceCaches = new ConcurrentHashMap<>();
+
+    private final LbConfig lbConfig;
 
     private final ServiceDiscoveryClient discoveryClient;
 
     private final InstanceListenable instanceListenable;
+
+    private ScheduledThreadPoolExecutor instanceUpdater;
 
     /**
      * 构造器
@@ -71,22 +73,60 @@ public class InstanceCacheManager {
             InstanceListenable instanceListenable) {
         this.discoveryClient = discoveryClient;
         this.instanceListenable = instanceListenable;
-        final LbConfig lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
-        this.cache = CacheBuilder.newBuilder()
-                .refreshAfterWrite(lbConfig.getInstanceCacheExpireTime(), TimeUnit.MINUTES)
-                .expireAfterWrite(lbConfig.getInstanceCacheExpireTime(), TimeUnit.MINUTES)
-                .removalListener((RemovalListener<String, InstanceCache>) notification -> {
-                    if (lbConfig.isKeepOldInstancesWhenErr()) {
-                        oldInstancesCache.put(notification.getKey(), notification.getValue());
-                    }
-                })
-                .concurrencyLevel(lbConfig.getCacheConcurrencyLevel())
-                .build(new CacheLoader<String, InstanceCache>() {
-                    @Override
-                    public InstanceCache load(String serviceName) {
-                        return createCache(serviceName);
-                    }
-                });
+        this.lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
+        initUpdater();
+    }
+
+    private void initUpdater() {
+        final long instanceCacheExpireTime = lbConfig.getInstanceCacheExpireTime();
+        if (instanceCacheExpireTime <= 0) {
+            return;
+        }
+        checkParams(instanceCacheExpireTime);
+        startUpdater();
+    }
+
+    private void checkParams(long instanceCacheExpireTime) {
+        final long instanceRefreshInterval = lbConfig.getInstanceRefreshInterval();
+        if (instanceCacheExpireTime < instanceRefreshInterval) {
+            throw new IllegalArgumentException(String.format(Locale.ENGLISH,
+                    "instanceCacheExpireTime(%s sec) must gt instanceRefreshInterval(%s sec)",
+                    instanceCacheExpireTime, instanceRefreshInterval));
+        }
+        final long refreshTimerInterval = lbConfig.getRefreshTimerInterval();
+        if (refreshTimerInterval <= 0) {
+            throw new IllegalArgumentException(String.format(Locale.ENGLISH,
+                    "Invalid refreshTimerInterval: %s", refreshTimerInterval));
+        }
+        if (instanceCacheExpireTime < refreshTimerInterval) {
+            throw new IllegalArgumentException(String.format(Locale.ENGLISH,
+                    "instanceCacheExpireTime(%s sec) must gt refreshTimerInterval(%s sec)",
+                    instanceCacheExpireTime, refreshTimerInterval));
+        }
+        if (refreshTimerInterval > instanceRefreshInterval) {
+            LOGGER.info(String.format(Locale.ENGLISH,
+                    "refreshTimerInterval(%s) is gt instanceRefreshInterval(%s), set it to %s",
+                    refreshTimerInterval, instanceRefreshInterval, instanceCaches));
+            lbConfig.setRefreshTimerInterval(instanceRefreshInterval);
+        }
+    }
+
+    private void startUpdater() {
+        this.instanceUpdater = new ScheduledThreadPoolExecutor(1,
+                new RealmServiceThreadFactory("springboot-registry-instance-update-thread"));
+        this.instanceUpdater.scheduleAtFixedRate(new InstanceRefresher(
+                lbConfig.getInstanceCacheExpireTime() * LbConstants.SEC_TO_MS,
+                lbConfig.getInstanceRefreshInterval() * LbConstants.SEC_TO_MS), 0,
+                lbConfig.getRefreshTimerInterval(), TimeUnit.SECONDS);
+    }
+
+    /**
+     * 停止方法
+     */
+    public void stop() {
+        if (this.instanceUpdater != null) {
+            this.instanceUpdater.shutdown();
+        }
     }
 
     /**
@@ -98,18 +138,14 @@ public class InstanceCacheManager {
     public List<ServiceInstance> getInstances(String serviceName) {
         final List<ServiceInstance> instances = getInstanceCache(serviceName).getInstances();
         if (instances == null || instances.isEmpty()) {
-            return tryUpdateInstances(serviceName);
+            return Collections.emptyList();
         }
         return new ArrayList<>(instances);
     }
 
     private InstanceCache getInstanceCache(String serviceName) {
-        try {
-            tryAddListen(serviceName);
-            return cache.get(serviceName);
-        } catch (ExecutionException e) {
-            return createCache(serviceName);
-        }
+        tryAddListen(serviceName);
+        return instanceCaches.getOrDefault(serviceName, createCache(serviceName));
     }
 
     private void tryAddListen(String serviceName) {
@@ -118,19 +154,15 @@ public class InstanceCacheManager {
         }
     }
 
-    private List<ServiceInstance> tryUpdateInstances(String serviceName) {
-        cache.refresh(serviceName);
-        return new ArrayList<>(getInstanceCache(serviceName).getInstances());
-    }
-
     private InstanceCache createCache(String serviceName) {
         Collection<ServiceInstance> instances = null;
         try {
             instances = discoveryClient.getInstances(serviceName);
         } catch (QueryInstanceException ex) {
-            // 注册中心可能出现问题, 此时使用旧实例替换
+            // 注册中心可能出现问题, 返回空, 定时器将会更新实例
             final InstanceCache instanceCache = oldInstancesCache.get(serviceName);
             if (instanceCache != null) {
+                instanceCache.setUpdateTimestamp(System.currentTimeMillis());
                 return instanceCache;
             }
         }
@@ -138,6 +170,56 @@ public class InstanceCacheManager {
             return new InstanceCache(serviceName, new ArrayList<>(instances));
         }
         return new InstanceCache(serviceName, new ArrayList<>());
+    }
+
+    /**
+     * 实例刷新器, 需定时执行
+     *
+     * @since 2022-10-13
+     */
+    class InstanceRefresher implements Runnable {
+        private final long instanceCacheExpireTimeMs;
+        private long instanceRefreshIntervalMs;
+
+        InstanceRefresher(long instanceCacheExpireTimeMs, long instanceRefreshIntervalMs) {
+            this.instanceCacheExpireTimeMs = instanceCacheExpireTimeMs;
+            this.instanceRefreshIntervalMs = instanceRefreshIntervalMs;
+            reCalculateRefreshIntervalMs();
+        }
+
+        private void reCalculateRefreshIntervalMs() {
+            if (this.instanceRefreshIntervalMs > 0) {
+                return;
+            }
+            if (this.instanceCacheExpireTimeMs >= LbConstants.MIN_GAP_MS_BEFORE_EXPIRE_MS) {
+                this.instanceRefreshIntervalMs = this.instanceCacheExpireTimeMs - LbConstants.GAP_MS_BEFORE_EXPIRE_MS;
+            } else {
+                this.instanceRefreshIntervalMs =
+                        (long) (this.instanceCacheExpireTimeMs * (1 - LbConstants.GAP_MS_BEFORE_EXPIRE_DELTA));
+            }
+        }
+
+        @Override
+        public void run() {
+            final long currentTimeMillis = System.currentTimeMillis();
+            final Map<String, InstanceCache> updateCaches = new HashMap<>();
+            instanceCaches.values().forEach(instanceCache -> {
+                final long createTimestamp = instanceCache.getUpdateTimestamp();
+                if (currentTimeMillis - createTimestamp >= this.instanceRefreshIntervalMs) {
+                    // 缓存过期, 刷新缓存
+                    final String serviceName = instanceCache.getServiceName();
+                    final InstanceCache cache = createCache(serviceName);
+                    if (!cache.getInstances().isEmpty()) {
+                        updateCaches.put(serviceName, cache);
+                        oldInstancesCache.put(serviceName, cache);
+                    } else {
+                        // 注册中心可能有问题, 此时不刷新实例, 同时更新时间戳
+                        instanceCache.setUpdateTimestamp(currentTimeMillis);
+                    }
+                }
+            });
+            instanceCaches.putAll(updateCaches);
+        }
     }
 
     /**
@@ -167,7 +249,7 @@ public class InstanceCacheManager {
                 instances.add(serviceInstance);
             }
             printLog(eventType, serviceInstance);
-            cache.put(serviceName, instanceCache);
+            instanceCaches.put(serviceName, instanceCache);
         }
 
         private void printLog(EventType eventType, ServiceInstance serviceInstance) {

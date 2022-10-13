@@ -164,6 +164,9 @@ public enum DiscoveryManager {
         if (instanceListenable != null) {
             instanceListenable.close();
         }
+        if (this.cacheManager != null) {
+            this.cacheManager.stop();
+        }
     }
 
     /**

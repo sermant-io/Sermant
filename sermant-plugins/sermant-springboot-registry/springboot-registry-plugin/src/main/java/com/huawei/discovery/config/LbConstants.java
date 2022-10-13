@@ -39,9 +39,14 @@ public class LbConstants {
     public static final int DEFAULT_RETRY_INTERVAL_MS = 3000;
 
     /**
-     * 缓存获取时间, 单位分钟
+     * 缓存获取时间, 单位秒, 默认0, 表示永远不过期
      */
-    public static final long DEFAULT_CACHE_EXPIRE_MIN = 5L;
+    public static final long DEFAULT_CACHE_EXPIRE_SEC = 0L;
+
+    /**
+     * 定时器执行间隔, 默认5秒
+     */
+    public static final long DEFAULT_REFRESH_TIMER_INTERVAL_SEC = 5L;
 
     /**
      * 缓存并发度, 影响从缓存获取实例的效率

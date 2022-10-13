@@ -93,6 +93,7 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
 
     @Override
     public boolean registry(ServiceInstance serviceInstance) {
+        checkState("registry to zookeeper");
         final String id = UUID.randomUUID().toString();
         final HashMap<String, String> metadata = new HashMap<>(serviceInstance.getMetadata());
         metadata.put(LbConstants.SERMANT_DISCOVERY, "zk-" + id);
@@ -149,6 +150,7 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
 
     @Override
     public Collection<String> getServices() {
+        checkState("get services from zookeeper");
         try {
             return serviceDiscovery.queryForNames();
         } catch (Exception exception) {
@@ -159,6 +161,7 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
 
     @Override
     public boolean unRegistry() {
+        checkState("un registry from zookeeper");
         if (instance != null) {
             try {
                 this.serviceDiscovery.unregisterService(instance);
@@ -265,9 +268,16 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
         }
     }
 
+    private void checkState(String msg) {
+        if (!isStateOk()) {
+            throw new IllegalStateException("Zookeeper state is not valid when " + msg);
+        }
+    }
+
     private boolean isStateOk() {
         final ConnectionState connectionState = zkState.get();
-        return !(connectionState == ConnectionState.LOST || connectionState == ConnectionState.SUSPENDED);
+        return !(connectionState == ConnectionState.LOST || connectionState == ConnectionState.SUSPENDED
+                || connectionState == null);
     }
 
     /**
