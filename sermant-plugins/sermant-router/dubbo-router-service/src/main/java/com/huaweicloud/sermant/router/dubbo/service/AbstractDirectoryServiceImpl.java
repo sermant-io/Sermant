@@ -16,13 +16,18 @@
 
 package com.huaweicloud.sermant.router.dubbo.service;
 
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.router.common.request.RequestHeader;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
-import com.huaweicloud.sermant.router.config.label.LabelCache;
-import com.huaweicloud.sermant.router.config.label.entity.Route;
-import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.label.entity.Rule;
+import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.config.cache.ConfigCache;
+import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
+import com.huaweicloud.sermant.router.config.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
+import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.strategy.RuleStrategyHandler;
@@ -48,6 +53,15 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
     // dubbo请求参数中是否为consumer的value值
     private static final String CONSUMER_VALUE = "consumer";
 
+    private final RouterConfig routerConfig;
+
+    /**
+     * 构造方法
+     */
+    public AbstractDirectoryServiceImpl() {
+        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+    }
+
     /**
      * 筛选标签invoker
      *
@@ -65,10 +79,8 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
         if (arguments == null || arguments.length == 0) {
             return result;
         }
-        RouterConfiguration configuration = LabelCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
-        if (RouterConfiguration.isInValid(configuration)) {
-            return result;
-        }
+        Object invocation = arguments[0];
+        putAttachment(invocation);
         Map<String, String> queryMap = DubboReflectUtils.getQueryMap(obj);
         if (CollectionUtils.isEmpty(queryMap)) {
             return result;
@@ -78,20 +90,27 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
         }
         DubboCache cache = DubboCache.INSTANCE;
         String serviceInterface = queryMap.get(INTERFACE_KEY);
-        Object invocation = arguments[0];
-        String interfaceName = getGroup(queryMap) + "/" + serviceInterface + "."
-                + DubboReflectUtils.getMethodName(invocation) + ":" + getVersion(queryMap);
         String targetService = cache.getApplication(serviceInterface);
         if (StringUtils.isBlank(targetService)) {
             return result;
         }
+        List<Object> list = getZoneInvokers(result, targetService);
+        if (!shouldHandle(list)) {
+            return list;
+        }
+        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
+        if (RouterConfiguration.isInValid(configuration)) {
+            return list;
+        }
+        String interfaceName = getGroup(queryMap) + "/" + serviceInterface + "."
+            + DubboReflectUtils.getMethodName(invocation) + ":" + getVersion(queryMap);
         List<Rule> rules = RuleUtils.getRules(configuration, targetService, interfaceName, cache.getAppName());
         List<Route> routes = RouteUtils.getRoutes(rules, DubboReflectUtils.getArguments(invocation),
-                DubboReflectUtils.getAttachments(invocation));
+            DubboReflectUtils.getAttachments(invocation));
         if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, (List<Object>) result);
+            return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, list, routes);
         }
-        return RuleStrategyHandler.INSTANCE.getMissMatchInstances(RuleUtils.getTags(rules), (List<Object>) result);
+        return RuleStrategyHandler.INSTANCE.getMismatchInvokers(targetService, list, RuleUtils.getTags(rules));
     }
 
     /**
@@ -114,5 +133,30 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
     private String getVersion(Map<String, String> queryMap) {
         String version = queryMap.get(RouterConstant.DUBBO_VERSION_KEY);
         return version == null ? "" : version;
+    }
+
+    private List<Object> getZoneInvokers(Object obj, String targetService) {
+        List<Object> invokers = (List<Object>) obj;
+        EnabledStrategy strategy = ConfigCache.getEnabledStrategy(RouterConstant.DUBBO_CACHE_NAME);
+        if (shouldHandle(invokers) && routerConfig.isEnabledDubboZoneRouter() && strategy.getStrategy()
+            .isMatch(strategy.getValue(), targetService)) {
+            return RuleStrategyHandler.INSTANCE.getZoneInvokers(targetService, invokers, routerConfig.getZone());
+        }
+        return invokers;
+    }
+
+    private boolean shouldHandle(List<Object> invokers) {
+        // 实例数大于1才能路由
+        return invokers != null && invokers.size() > 1;
+    }
+
+    private void putAttachment(Object invocation) {
+        Map<String, Object> attachments = DubboReflectUtils.getAttachmentsByInvocation(invocation);
+        if (attachments != null) {
+            RequestHeader requestHeader = ThreadLocalUtils.getRequestHeader();
+            if (requestHeader != null) {
+                requestHeader.getHeader().forEach((key, value) -> attachments.putIfAbsent(key, value.get(0)));
+            }
+        }
     }
 }

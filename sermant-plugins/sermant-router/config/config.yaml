@@ -1,0 +1,7 @@
+router.plugin:
+  # 是否开启dubbo区域路由
+  enabled-dubbo-zone-router: false
+  # 是否开启spring cloud区域路由
+  enabled-spring-zone-router: false
+  # 是否开启发现插件区域路由
+  enabled-discovery-zone-router: false

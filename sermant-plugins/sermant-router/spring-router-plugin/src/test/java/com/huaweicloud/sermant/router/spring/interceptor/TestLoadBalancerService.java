@@ -29,9 +29,19 @@ import java.util.Map;
  */
 public class TestLoadBalancerService implements LoadBalancerService {
     @Override
-    public List<Object> getTargetInstances(String targetName, List<Object> serverList, String path,
+    public List<Object> getTargetInstances(String targetName, List<Object> instances, String path,
         Map<String, List<String>> header) {
-        serverList.remove(0);
-        return serverList;
+        if (instances.size() > 1) {
+            instances.remove(0);
+        }
+        return instances;
+    }
+
+    @Override
+    public List<Object> getZoneInstances(String targetName, List<Object> instances, boolean enabledZoneRouter) {
+        if (enabledZoneRouter && instances.size() > 1) {
+            instances.remove(0);
+        }
+        return instances;
     }
 }

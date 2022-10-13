@@ -16,18 +16,18 @@
 
 package com.huaweicloud.sermant.router.config.strategy;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 /**
- * 判断实例是否匹配的策略
+ * 判断实例是否匹配的标签路由策略
  *
- * @param <T> 泛型
+ * @param <I> 实例泛型
+ * @param <T> 标签泛型
  * @author provenceee
  * @since 2021-12-08
  */
-public interface InstanceStrategy<T> {
+public interface InstanceStrategy<I, T> {
     /**
      * 判断实例是否匹配
      *
@@ -36,5 +36,5 @@ public interface InstanceStrategy<T> {
      * @param mapper 获取metadata的方法
      * @return 是否匹配
      */
-    boolean isMatch(T instance, List<Map<String, String>> tags, Function<T, Map<String, String>> mapper);
+    boolean isMatch(I instance, T tags, Function<I, Map<String, String>> mapper);
 }

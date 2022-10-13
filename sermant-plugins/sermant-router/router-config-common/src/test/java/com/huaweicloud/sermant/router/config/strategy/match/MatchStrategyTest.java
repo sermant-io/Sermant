@@ -16,7 +16,7 @@
 
 package com.huaweicloud.sermant.router.config.strategy.match;
 
-import com.huaweicloud.sermant.router.config.label.entity.MatchStrategy;
+import com.huaweicloud.sermant.router.config.entity.MatchStrategy;
 
 import org.junit.Assert;
 import org.junit.Before;

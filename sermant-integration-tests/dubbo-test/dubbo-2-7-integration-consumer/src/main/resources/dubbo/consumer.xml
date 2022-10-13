@@ -7,6 +7,8 @@
        http://code.alibabatech.com/schema/dubbo
        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
+    <dubbo:consumer timeout="10000"/>
+
     <dubbo:reference id="barService" check="false" interface="com.huaweicloud.integration.service.BarService"/>
     <dubbo:reference id="bar2Service" check="false" interface="com.huaweicloud.integration.service.BarService"
             group="bar2"/>

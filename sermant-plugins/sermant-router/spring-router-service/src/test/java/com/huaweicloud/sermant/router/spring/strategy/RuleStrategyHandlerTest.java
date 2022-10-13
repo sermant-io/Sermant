@@ -16,7 +16,7 @@
 
 package com.huaweicloud.sermant.router.spring.strategy;
 
-import com.huaweicloud.sermant.router.config.label.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.Route;
 import com.huaweicloud.sermant.router.spring.TestDefaultServiceInstance;
 
 import org.junit.Assert;
@@ -60,23 +60,23 @@ public class RuleStrategyHandlerTest {
      * 测试命中0.0.1版本实例的情况
      */
     @Test
-    public void testDefaultV1() {
+    public void testMatchV1() {
         List<Object> instances = new ArrayList<>();
         ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.1");
         instances.add(instance1);
         ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.2");
         instances.add(instance2);
-        List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInstances(routes, instances);
+        List<Object> matchInvoker = RuleStrategyHandler.INSTANCE.getMatchInstances("foo", instances, routes);
         Assert.assertEquals(100, routes.get(0).getWeight().intValue());
-        Assert.assertEquals(1, targetInvoker.size());
-        Assert.assertEquals(instance1, targetInvoker.get(0));
+        Assert.assertEquals(1, matchInvoker.size());
+        Assert.assertEquals(instance1, matchInvoker.get(0));
     }
 
     /**
      * 测试未命中0.0.1版本实例的情况
      */
     @Test
-    public void testDefaultMismatch() {
+    public void testMismatchV1() {
         List<Object> instances = new ArrayList<>();
         ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.1");
         instances.add(instance1);
@@ -85,15 +85,37 @@ public class RuleStrategyHandlerTest {
         routes.get(0).setWeight(0);
 
         // 测试匹配上路由，没有随机到实例的情况
-        List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInstances(routes, instances);
-        Assert.assertEquals(1, targetInvoker.size());
-        Assert.assertEquals(instance2, targetInvoker.get(0));
+        List<Object> matchInstances = RuleStrategyHandler.INSTANCE.getMatchInstances("foo", instances, routes);
+        Assert.assertEquals(1, matchInstances.size());
+        Assert.assertEquals(instance2, matchInstances.get(0));
 
         // 测试没有匹配上路由，选取不匹配标签的实例的情况
         List<Map<String, String>> tags = new ArrayList<>();
         tags.add(routes.get(0).getTags());
-        List<Object> mismatchInvoker = RuleStrategyHandler.INSTANCE.getMismatchInstances(tags, instances);
-        Assert.assertEquals(1, mismatchInvoker.size());
-        Assert.assertEquals(instance2, mismatchInvoker.get(0));
+        List<Object> mismatchInstances = RuleStrategyHandler.INSTANCE.getMismatchInstances("foo", instances, tags);
+        Assert.assertEquals(1, mismatchInstances.size());
+        Assert.assertEquals(instance2, mismatchInstances.get(0));
+    }
+
+    /**
+     * 测试区域路由
+     */
+    @Test
+    public void testZoneFoo() {
+        List<Object> instances = new ArrayList<>();
+        ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.1", "foo");
+        instances.add(instance1);
+        ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.2", "bar");
+        instances.add(instance2);
+
+        // 测试区域路由
+        List<Object> matchInstances = RuleStrategyHandler.INSTANCE.getZoneInstances("foo", instances, "foo");
+        Assert.assertEquals(1, matchInstances.size());
+        Assert.assertEquals(instance1, matchInstances.get(0));
+
+        // 测试不匹配区域路由
+        List<Object> mismatchInstances = RuleStrategyHandler.INSTANCE.getZoneInstances("foo", instances, "foo1");
+        Assert.assertEquals(2, mismatchInstances.size());
+        Assert.assertEquals(instances, mismatchInstances);
     }
 }

@@ -16,8 +16,8 @@
 
 package com.huaweicloud.sermant.router.config.utils;
 
-import com.huaweicloud.sermant.router.config.label.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.label.entity.Rule;
+import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
+import com.huaweicloud.sermant.router.config.entity.Rule;
 
 import com.alibaba.fastjson.JSONArray;
 
@@ -68,13 +68,13 @@ public class RuleUtilsTest {
     @Test
     public void testInitHeaderKeys() {
         RouterConfiguration configuration = new RouterConfiguration();
-        RuleUtils.initHeaderKeys(configuration);
-        Assert.assertTrue(RuleUtils.getHeaderKeys().isEmpty());
+        RuleUtils.initMatchKeys(configuration);
+        Assert.assertTrue(RuleUtils.getMatchKeys().isEmpty());
         Map<String, List<Rule>> map = new HashMap<>();
         map.put("test", list);
         configuration.resetRouteRule(map);
-        RuleUtils.initHeaderKeys(configuration);
-        Set<String> keys = RuleUtils.getHeaderKeys();
+        RuleUtils.initMatchKeys(configuration);
+        Set<String> keys = RuleUtils.getMatchKeys();
         Assert.assertEquals(3, keys.size());
     }
 
@@ -83,11 +83,11 @@ public class RuleUtilsTest {
      */
     @Test
     public void testUpdateHeaderKeys() {
-        Assert.assertTrue(RuleUtils.getHeaderKeys().isEmpty());
-        RuleUtils.updateHeaderKeys("test", list);
-        Set<String> keys = RuleUtils.getHeaderKeys();
+        Assert.assertTrue(RuleUtils.getMatchKeys().isEmpty());
+        RuleUtils.updateMatchKeys("test", list);
+        Set<String> keys = RuleUtils.getMatchKeys();
         Assert.assertEquals(3, keys.size());
-        RuleUtils.updateHeaderKeys("test", Collections.emptyList());
-        Assert.assertTrue(RuleUtils.getHeaderKeys().isEmpty());
+        RuleUtils.updateMatchKeys("test", Collections.emptyList());
+        Assert.assertTrue(RuleUtils.getMatchKeys().isEmpty());
     }
 }

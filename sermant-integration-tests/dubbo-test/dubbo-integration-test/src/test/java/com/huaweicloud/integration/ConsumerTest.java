@@ -18,6 +18,7 @@ package com.huaweicloud.integration;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,10 +32,11 @@ import java.util.concurrent.TimeUnit;
  * @author provenceee
  * @since 2022-05-05
  */
+@EnabledIfEnvironmentVariable(named = "TEST_TYPE", matches = "common")
 public class ConsumerTest {
     private static final RestTemplate REST_TEMPLATE = new RestTemplate();
 
-    private static final String BASE_URL = "http://127.0.0.1:28820/consumer/";
+    private static final String BASE_URL = "http://127.0.0.1:28020/consumer/";
 
     private final String dubboVersion;
 

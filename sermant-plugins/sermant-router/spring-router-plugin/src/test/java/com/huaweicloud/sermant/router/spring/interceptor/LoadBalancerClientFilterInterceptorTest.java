@@ -17,8 +17,8 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.router.spring.cache.RequestData;
-import com.huaweicloud.sermant.router.spring.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.common.request.RequestData;
+import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
 import org.junit.Assert;
 import org.junit.Before;

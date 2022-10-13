@@ -18,8 +18,17 @@ package com.huaweicloud.sermant.router.dubbo.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.router.dubbo.service.ApplicationConfigService;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
+import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
+import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 增强ApplicationConfig类的setName方法，用来获取应用名
@@ -28,29 +37,55 @@ import com.huaweicloud.sermant.router.dubbo.service.ApplicationConfigService;
  * @since 2021-11-08
  */
 public class ApplicationConfigInterceptor extends AbstractInterceptor {
-    private final ApplicationConfigService applicationConfigService;
+    private final RouterConfig routerConfig;
 
     /**
      * 构造方法
      */
     public ApplicationConfigInterceptor() {
-        applicationConfigService = ServiceManager.getService(ApplicationConfigService.class);
+        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
     }
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
+        String name = context.getMethod().getName();
+        if (context.getArguments() == null || context.getArguments().length == 0) {
+            return context;
+        }
+        Object argument = context.getArguments()[0];
+        if ("setName".equals(name)) {
+            if (argument == null || argument instanceof String) {
+                setAppNameAndPutParameters(context.getObject(), (String) argument);
+            }
+        } else {
+            if (argument == null || argument instanceof Map<?, ?>) {
+                context.getArguments()[0] = putParameters((Map<String, String>) argument);
+            }
+        }
         return context;
     }
 
-    /**
-     * Dubbo启动时，获取并缓存应用名
-     *
-     * @param context 执行上下文
-     * @return 执行上下文
-     */
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        applicationConfigService.getName(context.getObject());
         return context;
+    }
+
+    private void setAppNameAndPutParameters(Object config, String name) {
+        if (StringUtils.isBlank(name)) {
+            return;
+        }
+        DubboCache.INSTANCE.setAppName(name);
+        DubboReflectUtils.setParameters(config, new HashMap<>());
+    }
+
+    private Map<String, String> putParameters(Map<String, String> parameters) {
+        Map<String, String> map = Optional.ofNullable(parameters).orElseGet(HashMap::new);
+        map.put(RouterConstant.VERSION_KEY, routerConfig.getRouterVersion());
+        Optional.ofNullable(routerConfig.getZone()).ifPresent(zone -> map.put(RouterConstant.ZONE_KEY, zone));
+        Map<String, String> metaParameters = routerConfig.getParameters();
+        if (!CollectionUtils.isEmpty(metaParameters)) {
+            metaParameters.forEach((key, value) -> map.put(RouterConstant.PARAMETERS_KEY_PREFIX + key, value));
+        }
+        return map;
     }
 }
