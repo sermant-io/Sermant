@@ -18,16 +18,14 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.router.spring.cache.RequestData;
-import com.huaweicloud.sermant.router.spring.cache.RequestHeader;
-import com.huaweicloud.sermant.router.spring.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.common.request.RequestData;
+import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,7 +44,6 @@ public class LoadBalancerClientFilterInterceptor extends AbstractInterceptor {
             ServerWebExchange exchange = (ServerWebExchange) argument;
             HttpRequest request = exchange.getRequest();
             HttpHeaders headers = request.getHeaders();
-            putIfAbsent(headers);
             String path = request.getURI().getPath();
             ThreadLocalUtils.setRequestData(new RequestData(getHeader(headers), path, request.getMethod().name()));
         }
@@ -63,17 +60,6 @@ public class LoadBalancerClientFilterInterceptor extends AbstractInterceptor {
     public ExecuteContext onThrow(ExecuteContext context) {
         ThreadLocalUtils.removeRequestData();
         return context;
-    }
-
-    private void putIfAbsent(HttpHeaders headers) {
-        RequestHeader requestHeader = ThreadLocalUtils.getRequestHeader();
-        if (requestHeader != null) {
-            Map<String, List<String>> header = requestHeader.getHeader();
-            for (Entry<String, List<String>> entry : header.entrySet()) {
-                // 使用上游传递的header
-                headers.putIfAbsent(entry.getKey(), new LinkedList<>(entry.getValue()));
-            }
-        }
     }
 
     private Map<String, List<String>> getHeader(HttpHeaders headers) {

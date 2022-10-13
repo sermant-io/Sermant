@@ -3,5 +3,4 @@
 #
 
 com.huaweicloud.sermant.router.dubbo.service.AbstractDirectoryServiceImpl
-com.huaweicloud.sermant.router.dubbo.service.ApplicationConfigServiceImpl
-com.huaweicloud.sermant.router.dubbo.service.ClusterServiceImpl
+com.huaweicloud.sermant.router.dubbo.service.ClusterUtilsServiceImpl

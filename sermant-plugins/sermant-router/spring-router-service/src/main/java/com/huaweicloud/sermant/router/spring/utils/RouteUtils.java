@@ -17,12 +17,12 @@
 package com.huaweicloud.sermant.router.spring.utils;
 
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
-import com.huaweicloud.sermant.router.config.label.entity.Match;
-import com.huaweicloud.sermant.router.config.label.entity.MatchRule;
-import com.huaweicloud.sermant.router.config.label.entity.MatchStrategy;
-import com.huaweicloud.sermant.router.config.label.entity.Route;
-import com.huaweicloud.sermant.router.config.label.entity.Rule;
-import com.huaweicloud.sermant.router.config.label.entity.ValueMatch;
+import com.huaweicloud.sermant.router.config.entity.Match;
+import com.huaweicloud.sermant.router.config.entity.MatchRule;
+import com.huaweicloud.sermant.router.config.entity.MatchStrategy;
+import com.huaweicloud.sermant.router.config.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.Rule;
+import com.huaweicloud.sermant.router.config.entity.ValueMatch;
 
 import java.util.Collections;
 import java.util.List;

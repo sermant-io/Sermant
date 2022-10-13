@@ -2,4 +2,3 @@
 # Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
 #
 com.huaweicloud.sermant.router.spring.service.LoadBalancerServiceImpl
-com.huaweicloud.sermant.router.spring.service.RouteHandlerServiceImpl

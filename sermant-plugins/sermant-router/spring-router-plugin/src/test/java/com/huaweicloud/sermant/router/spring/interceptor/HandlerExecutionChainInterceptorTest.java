@@ -18,7 +18,7 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.router.spring.service.RouteHandlerService;
+import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -29,6 +29,7 @@ import org.mockito.Mockito;
 import org.springframework.web.servlet.HandlerExecutionChain;
 
 import java.util.Collections;
+import java.util.Set;
 
 /**
  * 测试HandlerExecutionChainInterceptor
@@ -49,8 +50,22 @@ public class HandlerExecutionChainInterceptorTest {
     @BeforeClass
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
-        mockServiceManager.when(() -> ServiceManager.getService(RouteHandlerService.class)).thenReturn(
-            (RouteHandlerService) Collections::emptySet);
+        mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class)).thenReturn(
+            new SpringConfigService() {
+                @Override
+                public void init(String cacheName, String serviceName) {
+                }
+
+                @Override
+                public boolean isInValid(String cacheName) {
+                    return false;
+                }
+
+                @Override
+                public Set<String> getMatchKeys() {
+                    return Collections.emptySet();
+                }
+            });
     }
 
     /**

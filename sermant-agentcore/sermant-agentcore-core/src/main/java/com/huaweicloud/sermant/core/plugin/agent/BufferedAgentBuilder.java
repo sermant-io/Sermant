@@ -130,13 +130,16 @@ public class BufferedAgentBuilder {
                     @Override
                     public boolean matches(TypeDescription typeDesc, ClassLoader classLoader, JavaModule module,
                             Class<?> classBeingRedefined, ProtectionDomain protectionDomain) {
-                        if (typeDesc.isArray() || typeDesc.isPrimitive() || classLoader instanceof PluginClassLoader) {
+                        if (typeDesc.isArray() || typeDesc.isPrimitive()) {
                             return true;
+                        }
+                        final String typeName = typeDesc.getTypeName();
+                        if (classLoader instanceof PluginClassLoader) {
+                            return !config.getServiceInjectList().contains(typeName);
                         }
                         if (ignoredPrefixes.isEmpty()) {
                             return false;
                         }
-                        final String typeName = typeDesc.getTypeName();
                         for (String ignoredPrefix : ignoredPrefixes) {
                             if (typeName.startsWith(ignoredPrefix)) {
                                 return true;

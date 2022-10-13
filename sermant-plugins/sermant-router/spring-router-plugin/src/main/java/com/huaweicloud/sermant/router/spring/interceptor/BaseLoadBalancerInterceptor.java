@@ -18,14 +18,16 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
-import com.huaweicloud.sermant.router.spring.cache.RequestData;
+import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
-import com.huaweicloud.sermant.router.spring.utils.ThreadLocalUtils;
 
 import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.zuul.context.RequestContext;
@@ -51,23 +53,19 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
 
     private final LoadBalancerService loadBalancerService;
 
+    private final RouterConfig routerConfig;
+
     /**
      * 构造方法
      */
     public BaseLoadBalancerInterceptor() {
         configService = ServiceManager.getService(SpringConfigService.class);
         loadBalancerService = ServiceManager.getService(LoadBalancerService.class);
+        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
     }
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        if (configService.isInValid(RouterConstant.SPRING_CACHE_NAME)) {
-            return context;
-        }
-        RequestData requestData = getRequestData().orElse(null);
-        if (requestData == null) {
-            return context;
-        }
         Object object = context.getObject();
         if (object instanceof BaseLoadBalancer) {
             List<Object> serverList = getServerList(context.getMethod().getName(), object);
@@ -76,7 +74,16 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
             }
             BaseLoadBalancer loadBalancer = (BaseLoadBalancer) object;
             String name = loadBalancer.getName();
-            context.skip(Collections.unmodifiableList(loadBalancerService.getTargetInstances(name, serverList,
+            List<Object> zoneInstances = loadBalancerService
+                .getZoneInstances(name, serverList, routerConfig.isEnabledSpringZoneRouter());
+            if (configService.isInValid(RouterConstant.SPRING_CACHE_NAME)) {
+                return context.skip(Collections.unmodifiableList(zoneInstances));
+            }
+            RequestData requestData = getRequestData().orElse(null);
+            if (requestData == null) {
+                return context.skip(Collections.unmodifiableList(zoneInstances));
+            }
+            context.skip(Collections.unmodifiableList(loadBalancerService.getTargetInstances(name, zoneInstances,
                 requestData.getPath(), requestData.getHeader())));
         }
         return context;

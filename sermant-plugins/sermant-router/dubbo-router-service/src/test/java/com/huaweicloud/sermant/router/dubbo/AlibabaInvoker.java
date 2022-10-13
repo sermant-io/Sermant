@@ -24,6 +24,9 @@ import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
 import com.alibaba.dubbo.rpc.RpcException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 测试类
  *
@@ -40,7 +43,20 @@ public class AlibabaInvoker<T> implements Invoker<T> {
      * @param version 版本
      */
     public AlibabaInvoker(String version) {
-        this.url = ALIBABA_URL.addParameter(RouterConstant.VERSION_KEY, version).setPort(8080);
+        this(version, null);
+    }
+
+    /**
+     * 构造方法
+     *
+     * @param version 版本
+     * @param zone 区域
+     */
+    public AlibabaInvoker(String version, String zone) {
+        Map<String, String> map = new HashMap<>();
+        map.put(RouterConstant.VERSION_KEY, version);
+        map.put(RouterConstant.ZONE_KEY, zone);
+        this.url = ALIBABA_URL.addParameters(map).setPort(8080);
     }
 
     @Override

@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.router.dubbo.strategy;
 
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
-import com.huaweicloud.sermant.router.config.label.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.Route;
 import com.huaweicloud.sermant.router.dubbo.AlibabaInvoker;
 import com.huaweicloud.sermant.router.dubbo.ApacheInvoker;
 
@@ -67,10 +67,10 @@ public class RuleStrategyHandlerTest {
         invokers.add(invoker1);
         AlibabaInvoker<Object> invoker2 = new AlibabaInvoker<>("0.0.2");
         invokers.add(invoker2);
-        List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, invokers);
+        List<Object> matchInvokers = RuleStrategyHandler.INSTANCE.getMatchInvokers("foo", invokers, routes);
         Assert.assertEquals(100, routes.get(0).getWeight().intValue());
-        Assert.assertEquals(1, targetInvoker.size());
-        Assert.assertEquals(invoker1, targetInvoker.get(0));
+        Assert.assertEquals(1, matchInvokers.size());
+        Assert.assertEquals(invoker1, matchInvokers.get(0));
     }
 
     /**
@@ -86,16 +86,38 @@ public class RuleStrategyHandlerTest {
         routes.get(0).setWeight(0);
 
         // 测试匹配上路由，没有随机到实例的情况
-        List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, invokers);
-        Assert.assertEquals(1, targetInvoker.size());
-        Assert.assertEquals(invoker2, targetInvoker.get(0));
+        List<Object> matchInvokers = RuleStrategyHandler.INSTANCE.getMatchInvokers("foo", invokers, routes);
+        Assert.assertEquals(1, matchInvokers.size());
+        Assert.assertEquals(invoker2, matchInvokers.get(0));
 
         // 测试没有匹配上路由，选取不匹配标签的实例的情况
         List<Map<String, String>> tags = new ArrayList<>();
         tags.add(routes.get(0).getTags());
-        List<Object> missMatchInvoker = RuleStrategyHandler.INSTANCE.getMissMatchInstances(tags, invokers);
-        Assert.assertEquals(1, missMatchInvoker.size());
-        Assert.assertEquals(invoker2, missMatchInvoker.get(0));
+        List<Object> mismatchInvokers = RuleStrategyHandler.INSTANCE.getMismatchInvokers("foo", invokers, tags);
+        Assert.assertEquals(1, mismatchInvokers.size());
+        Assert.assertEquals(invoker2, mismatchInvokers.get(0));
+    }
+
+    /**
+     * 测试alibaba invoker区域路由
+     */
+    @Test
+    public void testAlibabaZone() {
+        List<Object> invokers = new ArrayList<>();
+        AlibabaInvoker<Object> invoker1 = new AlibabaInvoker<>("0.0.1", "bar");
+        invokers.add(invoker1);
+        AlibabaInvoker<Object> invoker2 = new AlibabaInvoker<>("0.0.2", "foo");
+        invokers.add(invoker2);
+
+        // 测试区域路由
+        List<Object> matchInvoker = RuleStrategyHandler.INSTANCE.getZoneInvokers("foo", invokers, "foo");
+        Assert.assertEquals(1, matchInvoker.size());
+        Assert.assertEquals(invoker2, matchInvoker.get(0));
+
+        // 测试不匹配区域路由
+        List<Object> mismatchInvoker = RuleStrategyHandler.INSTANCE.getZoneInvokers("foo", invokers, "foo1");
+        Assert.assertEquals(2, mismatchInvoker.size());
+        Assert.assertEquals(invokers, mismatchInvoker);
     }
 
     /**
@@ -108,10 +130,10 @@ public class RuleStrategyHandlerTest {
         invokers.add(invoker1);
         ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("0.0.2");
         invokers.add(invoker2);
-        List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, invokers);
+        List<Object> matchInvokers = RuleStrategyHandler.INSTANCE.getMatchInvokers("foo", invokers, routes);
         Assert.assertEquals(100, routes.get(0).getWeight().intValue());
-        Assert.assertEquals(1, targetInvoker.size());
-        Assert.assertEquals(invoker1, targetInvoker.get(0));
+        Assert.assertEquals(1, matchInvokers.size());
+        Assert.assertEquals(invoker1, matchInvokers.get(0));
     }
 
     /**
@@ -127,15 +149,37 @@ public class RuleStrategyHandlerTest {
         routes.get(0).setWeight(0);
 
         // 测试匹配上路由，没有随机到实例的情况
-        List<Object> targetInvoker = RuleStrategyHandler.INSTANCE.getTargetInvoker(routes, invokers);
-        Assert.assertEquals(1, targetInvoker.size());
-        Assert.assertEquals(invoker2, targetInvoker.get(0));
+        List<Object> matchInvokers = RuleStrategyHandler.INSTANCE.getMatchInvokers("foo", invokers, routes);
+        Assert.assertEquals(1, matchInvokers.size());
+        Assert.assertEquals(invoker2, matchInvokers.get(0));
 
         // 测试没有匹配上路由，选取不匹配标签的实例的情况
         List<Map<String, String>> tags = new ArrayList<>();
         tags.add(routes.get(0).getTags());
-        List<Object> missMatchInvoker = RuleStrategyHandler.INSTANCE.getMissMatchInstances(tags, invokers);
-        Assert.assertEquals(1, missMatchInvoker.size());
-        Assert.assertEquals(invoker2, missMatchInvoker.get(0));
+        List<Object> mismatchInvoker = RuleStrategyHandler.INSTANCE.getMismatchInvokers("foo", invokers, tags);
+        Assert.assertEquals(1, mismatchInvoker.size());
+        Assert.assertEquals(invoker2, mismatchInvoker.get(0));
+    }
+
+    /**
+     * 测试apache invoker区域路由
+     */
+    @Test
+    public void testApacheZone() {
+        List<Object> invokers = new ArrayList<>();
+        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("0.0.1", "bar");
+        invokers.add(invoker1);
+        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("0.0.2", "foo");
+        invokers.add(invoker2);
+
+        // 测试区域路由
+        List<Object> matchInvoker = RuleStrategyHandler.INSTANCE.getZoneInvokers("foo", invokers, "foo");
+        Assert.assertEquals(1, matchInvoker.size());
+        Assert.assertEquals(invoker2, matchInvoker.get(0));
+
+        // 测试不匹配区域路由
+        List<Object> mismatchInvoker = RuleStrategyHandler.INSTANCE.getZoneInvokers("foo", invokers, "foo1");
+        Assert.assertEquals(2, mismatchInvoker.size());
+        Assert.assertEquals(invokers, mismatchInvoker);
     }
 }

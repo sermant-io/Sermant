@@ -96,4 +96,16 @@ public class ConsumerFooController {
         RpcContext.getContext().setAttachment(TAG_KEY, TAG);
         return fooService.getRegistryProtocol();
     }
+
+    /**
+     * 获取区域
+     *
+     * @param exit 是否退出
+     * @return 区域
+     */
+    @GetMapping("/getZone")
+    public String getZone(boolean exit) {
+        RpcContext.getContext().setAttachment(TAG_KEY, TAG);
+        return fooService.getZone(exit);
+    }
 }

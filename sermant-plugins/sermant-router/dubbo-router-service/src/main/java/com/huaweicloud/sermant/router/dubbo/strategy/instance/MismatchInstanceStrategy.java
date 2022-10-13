@@ -29,18 +29,19 @@ import java.util.function.Function;
  * @author provenceee
  * @since 2021-12-08
  */
-public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object> {
+public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object, List<Map<String, String>>> {
     /**
      * 匹配不在mismatch中的invoker
      *
      * @param invoker Invoker
      * @param tags 没有匹配上的标签
+     * @param mapper 获取metadata的方法
      * @return 是否匹配
      */
     @Override
     public boolean isMatch(Object invoker, List<Map<String, String>> tags,
         Function<Object, Map<String, String>> mapper) {
-        // 由于由于mismatch里面的标签已经匹配过了且没有匹配上，所以要剔除掉，不能参与负载均衡，否则会导致流量比例不正确（会偏高）
+        // 由于mismatch里面的标签已经匹配过了且没有匹配上，所以要剔除掉，不能参与负载均衡，否则会导致流量比例不正确（会偏高）
         Map<String, String> metaData = getMetadata(invoker, mapper);
         for (Map<String, String> mismatchTag : tags) {
             for (Map.Entry<String, String> entry : mismatchTag.entrySet()) {
@@ -48,13 +49,18 @@ public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object> {
                 if (value == null) {
                     continue;
                 }
-                String key = VERSION_KEY.equals(entry.getKey()) ? RouterConstant.VERSION_KEY
-                    : RouterConstant.PARAMETERS_KEY_PREFIX + entry.getKey();
-                if (value.equals(metaData.get(key))) {
+                if (value.equals(metaData.get(getKey(entry.getKey())))) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    private String getKey(String tag) {
+        if (VERSION_KEY.equals(tag)) {
+            return RouterConstant.VERSION_KEY;
+        }
+        return RouterConstant.PARAMETERS_KEY_PREFIX + tag;
     }
 }

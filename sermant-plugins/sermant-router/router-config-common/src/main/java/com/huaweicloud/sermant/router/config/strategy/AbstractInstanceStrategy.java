@@ -23,15 +23,21 @@ import java.util.function.Function;
 /**
  * 匹配不在mismatch中的实例
  *
- * @param <T> 泛型
+ * @param <I> 实例泛型
+ * @param <T> 标签泛型
  * @author provenceee
  * @since 2021-12-08
  */
-public abstract class AbstractInstanceStrategy<T> implements InstanceStrategy<T> {
+public abstract class AbstractInstanceStrategy<I, T> implements InstanceStrategy<I, T> {
     /**
      * 版本key
      */
     protected static final String VERSION_KEY = "version";
+
+    /**
+     * 区域key
+     */
+    protected static final String ZONE_KEY = "zone";
 
     /**
      * 获取metadata
@@ -40,7 +46,7 @@ public abstract class AbstractInstanceStrategy<T> implements InstanceStrategy<T>
      * @param mapper 获取metadata的方法
      * @return metadata
      */
-    public Map<String, String> getMetadata(T instance, Function<T, Map<String, String>> mapper) {
+    protected Map<String, String> getMetadata(I instance, Function<I, Map<String, String>> mapper) {
         if (mapper == null || instance == null) {
             return Collections.emptyMap();
         }

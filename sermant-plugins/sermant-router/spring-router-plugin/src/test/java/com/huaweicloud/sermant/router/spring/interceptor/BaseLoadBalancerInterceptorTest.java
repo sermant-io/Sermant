@@ -16,14 +16,14 @@
 
 package com.huaweicloud.sermant.router.spring.interceptor;
 
-import com.huaweicloud.sermant.core.common.CommonConstant;
-import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.router.spring.cache.RequestData;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
+import com.huaweicloud.sermant.router.common.request.RequestData;
+import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
-import com.huaweicloud.sermant.router.spring.utils.ThreadLocalUtils;
 
 import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.Server;
@@ -40,9 +40,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 测试BaseLoadBalancerInterceptor
@@ -61,6 +59,8 @@ public class BaseLoadBalancerInterceptorTest {
 
     private static MockedStatic<ServiceManager> mockServiceManager;
 
+    private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
+
     /**
      * UT执行前进行mock
      */
@@ -71,6 +71,10 @@ public class BaseLoadBalancerInterceptorTest {
         mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class)).thenReturn(configService);
         mockServiceManager.when(() -> ServiceManager.getService(LoadBalancerService.class))
             .thenReturn(new TestLoadBalancerService());
+
+        mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
+            .thenReturn(new RouterConfig());
     }
 
     /**
@@ -79,6 +83,7 @@ public class BaseLoadBalancerInterceptorTest {
     @AfterClass
     public static void after() {
         mockServiceManager.close();
+        mockPluginConfigManager.close();
     }
 
     public BaseLoadBalancerInterceptorTest() throws NoSuchMethodException {

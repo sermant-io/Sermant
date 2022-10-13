@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 反射工具类
@@ -30,6 +31,8 @@ import java.util.Map;
  */
 public class SpringRouterUtils {
     private static final String VERSION_KEY = "version";
+
+    private static final String ZONE_KEY = "zone";
 
     private SpringRouterUtils() {
     }
@@ -55,6 +58,7 @@ public class SpringRouterUtils {
             return;
         }
         metadata.putIfAbsent(VERSION_KEY, routerConfig.getRouterVersion());
+        Optional.ofNullable(routerConfig.getZone()).ifPresent(zone -> metadata.putIfAbsent(ZONE_KEY, zone));
         Map<String, String> parameters = routerConfig.getParameters();
         if (!CollectionUtils.isEmpty(parameters)) {
             parameters.forEach(metadata::putIfAbsent);
