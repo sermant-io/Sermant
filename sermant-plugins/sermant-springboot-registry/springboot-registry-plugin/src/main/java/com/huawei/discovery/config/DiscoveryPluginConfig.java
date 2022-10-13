@@ -27,7 +27,6 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
  */
 @ConfigTypeKey("sermant.springboot.registry")
 public class DiscoveryPluginConfig implements PluginConfig {
-
     /**
      * 拦截的域名
      */
@@ -36,7 +35,7 @@ public class DiscoveryPluginConfig implements PluginConfig {
     /**
      * 是否打印统计日志
      */
-    private boolean loggerFlag = false;
+    private boolean enableRequestCount = false;
 
     public String getRealmName() {
         return realmName;
@@ -46,11 +45,11 @@ public class DiscoveryPluginConfig implements PluginConfig {
         this.realmName = realmName;
     }
 
-    public boolean isLoggerFlag() {
-        return loggerFlag;
+    public boolean isEnableRequestCount() {
+        return enableRequestCount;
     }
 
-    public void setLoggerFlag(boolean loggerFlag) {
-        this.loggerFlag = loggerFlag;
+    public void setEnableRequestCount(boolean enableRequestCount) {
+        this.enableRequestCount = enableRequestCount;
     }
 }

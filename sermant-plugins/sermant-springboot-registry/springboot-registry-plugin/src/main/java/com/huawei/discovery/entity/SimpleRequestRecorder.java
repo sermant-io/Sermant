@@ -24,7 +24,6 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -54,8 +53,8 @@ public class SimpleRequestRecorder implements Recorder {
             allRequestCount.set(0);
             LOGGER.info("SimpleRequestRecorder has over the max num of long, it has been reset to 0!");
         }
-        if (discoveryPluginConfig.isLoggerFlag()) {
-            LOGGER.log(Level.INFO, String.format(Locale.ENGLISH,
+        if (discoveryPluginConfig.isEnableRequestCount()) {
+            LOGGER.info(String.format(Locale.ENGLISH,
                             "currentTime: %s httpClientInterceptor effect count: %s",
                     HttpConstants.currentTime(), allRequest));
         }

@@ -50,6 +50,7 @@ public class ZkServiceManager {
      * 选择指定版本的服务
      *
      * @return ZkService
+     * @throws IllegalArgumentException 无法获取zk service抛出
      */
     public ZkService chooseService() {
         if (zkService != null) {

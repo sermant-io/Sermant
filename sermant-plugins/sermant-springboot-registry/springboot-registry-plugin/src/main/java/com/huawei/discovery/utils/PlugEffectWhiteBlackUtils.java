@@ -144,15 +144,16 @@ public class PlugEffectWhiteBlackUtils {
      * @return 是否允许执行
      */
     public static boolean isAllowRun(String realmStr, String serviceName, boolean isByEqual) {
+        boolean isRealNameOk = false;
         if (isByEqual) {
             if (PlugEffectWhiteBlackUtils.isHostEqualRealmName(realmStr)) {
-                return true;
+                isRealNameOk = true;
             }
         } else {
             if (PlugEffectWhiteBlackUtils.isUrlContainsRealmName(realmStr)) {
-                return true;
+                isRealNameOk = true;
             }
         }
-        return PlugEffectWhiteBlackUtils.isPlugEffect(serviceName);
+        return isRealNameOk && PlugEffectWhiteBlackUtils.isPlugEffect(serviceName);
     }
 }

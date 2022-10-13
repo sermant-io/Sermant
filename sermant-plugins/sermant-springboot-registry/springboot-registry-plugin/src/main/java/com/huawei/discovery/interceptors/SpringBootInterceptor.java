@@ -51,8 +51,8 @@ public class SpringBootInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        configCenterService.init(RegisterContext.INSTANCE.getServiceInstance().getServiceName());
         registryService.registry(RegisterContext.INSTANCE.getServiceInstance());
+        configCenterService.init(RegisterContext.INSTANCE.getServiceInstance().getServiceName());
         return context;
     }
 }

@@ -69,7 +69,7 @@ public class SimpleRequestRecorderTest {
         Assert.assertEquals(((AtomicLong) allRequestCount.get()).get(), 0);
 
         // 打印日志
-        discoveryPluginConfig.setLoggerFlag(true);
+        discoveryPluginConfig.setEnableRequestCount(true);
         final SimpleRequestRecorder simpleRequestRecorder1 = new SimpleRequestRecorder();
         simpleRequestRecorder1.beforeRequest();
     }

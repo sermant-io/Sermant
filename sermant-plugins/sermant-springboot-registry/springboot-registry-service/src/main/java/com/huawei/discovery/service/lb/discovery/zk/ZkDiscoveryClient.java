@@ -47,6 +47,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,6 +62,16 @@ import java.util.stream.Collectors;
  */
 public class ZkDiscoveryClient implements ServiceDiscoveryClient {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    /**
+     * 当zk状态存在问题时, 使用异步尝试重试, 此处为重试时间间隔
+     */
+    private static final long WAIT_REGISTRY_INTERVAL_MS = 1000L;
+
+    /**
+     * 当zk状态存在问题时, 使用异步尝试重试, 此处为最大从事次数
+     */
+    private static final int MAX_RETRY_NUM = 60;
 
     private final AtomicReference<ConnectionState> zkState = new AtomicReference<>();
 
@@ -93,7 +105,13 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
 
     @Override
     public boolean registry(ServiceInstance serviceInstance) {
-        checkState("registry to zookeeper");
+        if (isStateOk()) {
+            return registrySync(serviceInstance);
+        }
+        return registryAsync(serviceInstance);
+    }
+
+    private boolean registrySync(ServiceInstance serviceInstance) {
         final String id = UUID.randomUUID().toString();
         final HashMap<String, String> metadata = new HashMap<>(serviceInstance.getMetadata());
         metadata.put(LbConstants.SERMANT_DISCOVERY, "zk-" + id);
@@ -112,6 +130,30 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
         } catch (Exception exception) {
             LOGGER.log(Level.SEVERE, "Can not register service to zookeeper", exception);
         }
+        return false;
+    }
+
+    private boolean registryAsync(ServiceInstance serviceInstance) {
+        final AtomicBoolean isRegistrySuccess = new AtomicBoolean();
+        CompletableFuture.runAsync(() -> {
+            int tryNum = 0;
+            while (tryNum++ <= MAX_RETRY_NUM) {
+                if (isStateOk()) {
+                    isRegistrySuccess.set(registrySync(serviceInstance));
+                    LOGGER.info("Registry instance to zookeeper registry center success!");
+                    break;
+                }
+                try {
+                    Thread.sleep(WAIT_REGISTRY_INTERVAL_MS);
+                } catch (InterruptedException e) {
+                    // ignored
+                }
+            }
+        }).whenComplete((unused, throwable) -> {
+            if (!isRegistrySuccess.get()) {
+                LOGGER.info("Registry instance to zookeeper registry center failed!");
+            }
+        });
         return false;
     }
 

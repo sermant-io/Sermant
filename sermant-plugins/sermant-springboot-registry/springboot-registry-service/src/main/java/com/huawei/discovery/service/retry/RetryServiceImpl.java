@@ -36,12 +36,11 @@ import com.huawei.discovery.service.retry.policy.RoundRobinRetryPolicy;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
-import java.io.IOException;
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
-import java.net.SocketTimeoutException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -66,9 +65,9 @@ public class RetryServiceImpl implements InvokerService {
 
     private final List<Class<? extends Throwable>> retryEx = Arrays.asList(
             ConnectException.class,
-            SocketTimeoutException.class,
-            NoRouteToHostException.class,
-            IOException.class);
+            NoRouteToHostException.class);
+
+    private final List<String> rawRetryEx = Collections.singletonList("org.apache.http.conn.ConnectTimeoutException");
 
     private final Map<String, Retry> retryCache = new ConcurrentHashMap<>();
 
@@ -85,6 +84,7 @@ public class RetryServiceImpl implements InvokerService {
         maxSize = lbConfig.getMaxRetryConfigCache();
         defaultRetry = Retry.create(new RetryConfig(
             retryEx,
+            rawRetryEx,
             result -> false,
             NAME,
             lbConfig.getRetryWaitMs(),
@@ -182,7 +182,7 @@ public class RetryServiceImpl implements InvokerService {
     private Optional<ServiceInstance> choose(String serviceName, boolean isRetry, ServiceInstance serviceInstance) {
         if (isRetry) {
             final Optional<ServiceInstance> select = retryPolicy.select(serviceName, serviceInstance);
-            select.ifPresent(instance -> LOGGER.fine(String.format(Locale.ENGLISH,
+            select.ifPresent(instance -> LOGGER.info(String.format(Locale.ENGLISH,
                     "Start retry for invoking instance [id: %s] of service [%s] at time %s",
                     instance.getMetadata().get(LbConstants.SERMANT_DISCOVERY), serviceName, LocalDateTime.now())));
             return select;

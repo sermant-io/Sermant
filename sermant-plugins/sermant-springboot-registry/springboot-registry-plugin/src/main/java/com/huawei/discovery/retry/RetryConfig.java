@@ -56,7 +56,7 @@ public class RetryConfig {
      * 构造器
      *
      * @param retryEx 重试异常集合
-     * @param resultPredicate  结果判断
+     * @param resultPredicate 结果判断
      * @param name 配置名
      */
     public RetryConfig(List<Class<? extends Throwable>> retryEx,
@@ -68,15 +68,30 @@ public class RetryConfig {
      * 构造器
      *
      * @param retryEx 重试异常集合
-     * @param resultPredicate  结果判断
+     * @param resultPredicate 结果判断
      * @param retryWaitMs 重试等待时间
      * @param maxRetry 最大重试次数
      * @param name 配置名
      */
     public RetryConfig(List<Class<? extends Throwable>> retryEx,
             Predicate<Object> resultPredicate, String name, long retryWaitMs, int maxRetry) {
+        this(retryEx, null, resultPredicate, name, retryWaitMs, maxRetry);
+    }
+
+    /**
+     * 构造器
+     *
+     * @param retryEx 重试异常集合
+     * @param rawRetryEx 异常权限定名
+     * @param resultPredicate 结果判断
+     * @param retryWaitMs 重试等待时间
+     * @param maxRetry 最大重试次数
+     * @param name 配置名
+     */
+    public RetryConfig(List<Class<? extends Throwable>> retryEx, List<String> rawRetryEx,
+            Predicate<Object> resultPredicate, String name, long retryWaitMs, int maxRetry) {
         this.maxRetry = maxRetry;
-        this.throwablePredicate = buildThrowPredicate(retryEx);
+        this.throwablePredicate = buildThrowPredicate(retryEx, rawRetryEx);
         this.resultPredicate = resultPredicate;
         this.retryRetryWaitMs = retryWaitMs;
         this.name = name;
@@ -86,7 +101,7 @@ public class RetryConfig {
      * 构造器
      *
      * @param throwablePredicate 异常判断
-     * @param resultPredicate  结果判断
+     * @param resultPredicate 结果判断
      * @param name 配置名
      */
     public RetryConfig(Predicate<Throwable> throwablePredicate,
@@ -98,7 +113,7 @@ public class RetryConfig {
      * 构造器
      *
      * @param throwablePredicate 异常判断
-     * @param resultPredicate  结果判断
+     * @param resultPredicate 结果判断
      * @param retryWaitMs 重试等待时间
      * @param maxRetry 最大重试次数
      * @param name 配置名
@@ -112,8 +127,9 @@ public class RetryConfig {
         this.name = name;
     }
 
-    private Predicate<Throwable> buildThrowPredicate(List<Class<? extends Throwable>> retryEx) {
-        return ex -> {
+    private Predicate<Throwable> buildThrowPredicate(List<Class<? extends Throwable>> retryEx,
+            List<String> rawRetryEx) {
+        final Predicate<Throwable> assignableEx = ex -> {
             if (ex == null) {
                 return false;
             }
@@ -121,9 +137,42 @@ public class RetryConfig {
                 if (cur.isAssignableFrom(ex.getClass())) {
                     return true;
                 }
+                if (ex.getCause() != null && cur.isAssignableFrom(ex.getCause().getClass())) {
+                    return true;
+                }
             }
             return false;
         };
+        final Predicate<Throwable> rawEx = ex -> {
+            if (ex == null) {
+                return false;
+            }
+            if (rawRetryEx == null) {
+                return false;
+            }
+            return rawRetryEx.stream().anyMatch(clazz -> isAssignableFrom(clazz, ex.getClass()));
+        };
+        return assignableEx.or(rawEx);
+    }
+
+    private boolean isAssignableFrom(String clazz, Class<?> ex) {
+        if (clazz.equals(ex.getName())) {
+            return true;
+        }
+        final Class<?> superclass = ex.getSuperclass();
+        if (superclass == null || superclass == Object.class) {
+            return false;
+        }
+        if (isAssignableFrom(clazz, superclass)) {
+            return true;
+        }
+        final Class<?>[] interfaces = ex.getInterfaces();
+        for (Class<?> interfaceClazz : interfaces) {
+            if (isAssignableFrom(clazz, interfaceClazz)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getName() {

@@ -100,7 +100,8 @@ public class ZkInstanceListenable implements InstanceListenable {
     }
 
     private Optional<PathChildrenCache> createCache(String serviceName, InstanceChangeListener listener) {
-        final PathChildrenCache pathChildrenCache = new PathChildrenCache(curatorFramework, buildPath(serviceName), true);
+        final PathChildrenCache pathChildrenCache = new PathChildrenCache(curatorFramework, buildPath(serviceName),
+                true);
         try {
             pathChildrenCache.start(StartMode.POST_INITIALIZED_EVENT);
         } catch (Exception exception) {

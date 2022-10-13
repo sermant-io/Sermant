@@ -18,8 +18,6 @@ package com.huawei.discovery.service.lb.discovery.zk;
 
 import com.huawei.discovery.service.lb.discovery.ServiceDiscoveryClient;
 
-import com.huaweicloud.sermant.core.plugin.service.PluginService;
-
 /**
  * zk服务
  *

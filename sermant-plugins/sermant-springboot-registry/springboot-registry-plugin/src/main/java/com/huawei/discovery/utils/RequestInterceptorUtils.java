@@ -52,9 +52,9 @@ public class RequestInterceptorUtils {
     }
 
     /**
-     * 解析url参数信息 http://gateway.com.cn/serviceName/sayHell?name=1
+     * 解析url参数信息 http://www.domain.com/serviceName/sayHello?name=1
      *
-     * @param url
+     * @param url url地址
      * @return url解析后的主机名、路径
      */
     public static Map<String, String> recovertUrl(String url) {
@@ -158,7 +158,7 @@ public class RequestInterceptorUtils {
                 .append(serviceInstance.getIp())
                 .append(HttpConstants.HTTP_URL_COLON)
                 .append(serviceInstance.getPort())
-                .append(HttpConstants.HTTP_URI_PATH);
+                .append(urlIfo.get(HttpConstants.HTTP_URI_PATH));
         return urlBuild.toString();
     }
 

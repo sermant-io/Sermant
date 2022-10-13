@@ -21,6 +21,10 @@
         <spring-boot.version>2.3.4.RELEASE</spring-boot.version>
         <spring-cloud.version>2.2.1.RELEASE</spring-cloud.version>
         <http.client.async.verion>4.1.5</http.client.async.verion>
+        <okhttp.version>4.1.0</okhttp.version>
+        <okhttp.sq.version>2.7.5</okhttp.sq.version>
+        <httpclient.version>4.5.12</httpclient.version>
+        <feign.version>10.2.3</feign.version>
     </properties>
 
     <dependencies>
@@ -69,25 +73,25 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.1.0</version>
+            <version>${okhttp.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp</groupId>
             <artifactId>okhttp</artifactId>
-            <version>2.7.5</version>
+            <version>${okhttp.sq.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.12</version>
+            <version>${httpclient.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-core</artifactId>
-            <version>10.2.3</version>
+            <version>${feign.version}</version>
             <scope>provided</scope>
         </dependency>
         <!--测试依赖-->
