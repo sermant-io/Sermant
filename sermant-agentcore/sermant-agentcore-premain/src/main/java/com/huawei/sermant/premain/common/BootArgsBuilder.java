@@ -113,11 +113,7 @@ public abstract class BootArgsBuilder {
         String key = CommonConstant.APP_NAME_KEY;
         if (!argsMap.containsKey(key)) {
             final String value = getCommonValue(key, configMap);
-            if (value == null) {
-                throw new IllegalArgumentException(CommonConstant.APP_NAME_KEY + " not found. ");
-            } else {
-                argsMap.put(key, value);
-            }
+            argsMap.put(key, value == null ? "default" : value);
         }
         key = CommonConstant.INSTANCE_NAME_KEY;
         if (!argsMap.containsKey(key)) {

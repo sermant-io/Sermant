@@ -56,13 +56,13 @@ public class AgentPremain {
      * @throws DupPremainException
      */
     public static void premain(String agentArgs, Instrumentation instrumentation) {
-        // 执行标记，防止重复运行
-        if (executeFlag) {
-            throw new DupPremainException();
-        }
-        executeFlag = true;
-
         try {
+            // 执行标记，防止重复运行
+            if (executeFlag) {
+                throw new DupPremainException();
+            }
+            executeFlag = true;
+
             // 添加核心库
             LOGGER.info(String.format(Locale.ROOT, "Loading core library from [%s].", PathDeclarer.getCorePath()));
             loadCoreLib(instrumentation);

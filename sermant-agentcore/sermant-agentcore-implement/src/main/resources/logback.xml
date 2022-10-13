@@ -3,12 +3,24 @@
 <configuration scan="true">
 
     <!-- 定义日志文件 输出位置 -->
-    <property name="log.home_dir" value="./logs/sermant/core"/>
-    <property name="log.app_name" value="sermant"/>
+    <property name="log.home_dir" value="${sermant_log_dir:-./logs/sermant/core}"/>
+    <property name="log.app_name" value="${sermant_app_name:-sermant}"/>
     <!-- 日志最大的历史 30天 -->
-    <property name="log.maxHistory" value="30"/>
-    <property name="log.level" value="info"/>
-    <property name="log.maxSize" value="5MB" />
+    <property name="log.maxHistory" value="${sermant_log_max_history:-30}"/>
+    <property name="log.level" value="${sermant_log_level:-info}"/>
+    <property name="log.maxSize" value="${sermant_log_max_size:-5MB}" />
+    <property name="log.totalSize" value="${sermant_log_total_size:-20GB}"/>
+
+    <!-- 设置日志输出格式 -->
+    <!-- %d{yyyy-MM-dd HH:mm:ss.SSS}日期-->
+    <!-- %C类的完整名称-->
+    <!-- %F文件名-->
+    <!-- %M为method-->
+    <!-- %L为行号-->
+    <!-- %thread线程名称-->
+    <!-- %m或者%msg为信息-->
+    <!-- %n换行-->
+    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%le] [%C] [%M:%L] [%thread] %m%n"/>
 
     <!-- ConsoleAppender 控制台输出日志 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -19,8 +31,7 @@
         </filter>
         <encoder>
             <pattern>
-                <!-- 设置日志输出格式 -->
-                %d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] %logger - %msg%n
+                ${log.pattern}
             </pattern>
         </encoder>
     </appender>
@@ -31,17 +42,19 @@
             <fileNamePattern>${log.home_dir}/app/%d{yyyy-MM-dd}/${log.app_name}-%i.log</fileNamePattern>
             <maxHistory>${log.maxHistory}</maxHistory>
             <MaxFileSize>${log.maxSize}</MaxFileSize>
+            <totalSizeCap>${log.totalSize}</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %logger - %msg%n</pattern>
+            <pattern>
+                ${log.pattern}
+            </pattern>
         </encoder>
     </appender>
 
-    <!-- root级别   DEBUG -->
     <root>
         <!-- 打印debug级别日志及以上级别日志 -->
         <level value="${log.level}"/>
-        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="app" />
     </root>
 
