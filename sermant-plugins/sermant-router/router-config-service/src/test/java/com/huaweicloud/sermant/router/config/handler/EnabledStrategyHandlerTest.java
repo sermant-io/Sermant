@@ -118,6 +118,20 @@ public class EnabledStrategyHandlerTest {
     }
 
     /**
+     * 测试handle方法
+     */
+    @Test
+    public void testHandleWithNullContent() {
+        EnabledStrategy strategy = ConfigCache.getEnabledStrategy("testHandleWithNullContent");
+        strategy.reset(Strategy.NONE, Collections.emptyList());
+        DynamicConfigEvent event = new DynamicConfigEvent("sermant.plugin.router", "foo", null,
+            DynamicConfigEventType.MODIFY);
+        handler.handle(event, "testHandleWithNullContent");
+        Assert.assertEquals(Strategy.NONE, strategy.getStrategy());
+        Assert.assertEquals(0, strategy.getValue().size());
+    }
+
+    /**
      * 测试shouldHandle方法
      */
     @Test

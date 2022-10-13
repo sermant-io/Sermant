@@ -16,14 +16,17 @@
 
 package com.huaweicloud.sermant.router.config.service;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.subscribe.ConfigSubscriber;
 import com.huaweicloud.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.config.listener.RouterConfigListener;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 
 /**
  * 配置服务
@@ -32,6 +35,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 2022-07-14
  */
 public abstract class ConfigService {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private final AtomicBoolean init = new AtomicBoolean();
 
     /**
@@ -42,6 +47,8 @@ public abstract class ConfigService {
      */
     public void init(String cacheName, String serviceName) {
         if (StringUtils.isBlank(cacheName) || StringUtils.isBlank(serviceName)) {
+            LOGGER.warning(
+                String.format(Locale.ROOT, "CacheName[%s] or serviceName[%s] is empty.", cacheName, serviceName));
             return;
         }
         if (init.compareAndSet(false, true)) {
