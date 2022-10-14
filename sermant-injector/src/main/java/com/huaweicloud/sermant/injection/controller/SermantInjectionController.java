@@ -187,10 +187,10 @@ public class SermantInjectionController {
     @Value("${sermant-agent.configMap:}")
     private String envFrom;
 
-    @Value("${sermant-agent.config.type:ZOOKEEPER")
+    @Value("${sermant-agent.config.type:ZOOKEEPER}")
     private String configType;
 
-    @Value("${sermant-agent.config.address:http://localhost:30110}")
+    @Value("${sermant-agent.config.address:http://localhost:2181}")
     private String configAddress;
 
     @Value("${sermant-agent.service.address:http://localhost:30100}")

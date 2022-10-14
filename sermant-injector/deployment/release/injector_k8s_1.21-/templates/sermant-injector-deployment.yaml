@@ -30,7 +30,7 @@ spec:
         - name: sermant-injector
           image: {{ .Values.injector.image.addr }}
           imagePullPolicy: {{ .Values.injector.image.pullPolicy }}
-          resource:
+          resources:
             requests:
               memory: "300Mi"
               cpu: "200m"
