@@ -1,3 +1,0 @@
-deny.consume.plugin:
-  useRabbitmq: false
-  useKafka: false

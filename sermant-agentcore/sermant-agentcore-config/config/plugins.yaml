@@ -8,7 +8,7 @@ plugins:
   - loadbalancer
   - dynamic-config
   - monitor
-  - deny-consume
+  - mq-consume-deny
 adaptors:
   - lubanops
 profiles:

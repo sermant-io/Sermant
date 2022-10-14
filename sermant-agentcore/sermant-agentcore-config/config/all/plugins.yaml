@@ -7,6 +7,7 @@ plugins:
   - threadlocal
   - service-registry
   - loadbalancer
+  - mq-consume-deny
 adaptors:
   - lubanops
 profiles:

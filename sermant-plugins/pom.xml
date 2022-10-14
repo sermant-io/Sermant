@@ -35,7 +35,7 @@
                 <module>sermant-dynamic-config</module>
                 <module>sermant-router</module>
                 <module>sermant-loadbalancer</module>
-                <module>sermant-message</module>
+                <module>sermant-mq-consume-deny</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -107,7 +107,7 @@
                 <module>sermant-loadbalancer</module>
                 <module>sermant-dynamic-config</module>
                 <module>sermant-monitor</module>
-                <module>sermant-message</module>
+                <module>sermant-mq-consume-deny</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -134,7 +134,7 @@
                 <module>sermant-router</module>
                 <module>sermant-loadbalancer</module>
                 <module>sermant-monitor</module>
-                <module>sermant-message</module>
+                <module>sermant-mq-consume-deny</module>
             </modules>
         </profile>
     </profiles>
