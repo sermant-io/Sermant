@@ -18,6 +18,8 @@ package com.huaweicloud.sermant.implement.service.dynamicconfig.zookeeper;
 
 import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.config.DynamicConfig;
 
 import org.apache.zookeeper.AddWatchMode;
 import org.apache.zookeeper.CreateMode;
@@ -43,6 +45,11 @@ import java.util.logging.Logger;
  */
 public class ZooKeeperBufferedClient implements Closeable {
     /**
+     * 动态配置信息
+     */
+    private static final DynamicConfig CONFIG = ConfigManager.getConfig(DynamicConfig.class);
+
+    /**
      * zk路径分隔符
      */
     public static final char ZK_PATH_SEPARATOR = '/';
@@ -62,6 +69,7 @@ public class ZooKeeperBufferedClient implements Closeable {
      *
      * @param connectString  连接字符串，必须形如：{@code host:port[(,host:port)...]}
      * @param sessionTimeout 会话超时时间
+     * @throws ZooKeeperInitException 依赖动态配置情况下，zookeeper初始化失败，需要中断Sermant
      */
     public ZooKeeperBufferedClient(String connectString, int sessionTimeout) {
         zkClient = newZkClient(connectString, sessionTimeout, new Watcher() {
@@ -73,6 +81,20 @@ public class ZooKeeperBufferedClient implements Closeable {
                 }
             }
         });
+        int tryNum = 0;
+
+        // 阻塞zookeeper连接过程，防止连接状态中导致依赖该服务的插件服务初始化失败
+        while (zkClient.getState() == ZooKeeper.States.CONNECTING && tryNum++ <= CONFIG.getConnectRetryTimes()) {
+            try {
+                Thread.sleep(CONFIG.getConnectTimeout());
+            } catch (InterruptedException e) {
+                // ignored
+            }
+        }
+        if (zkClient.getState() != ZooKeeper.States.CONNECTED
+            && zkClient.getState() != ZooKeeper.States.CONNECTEDREADONLY) {
+            throw new ZooKeeperInitException();
+        }
     }
 
     /**
