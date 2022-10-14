@@ -61,6 +61,11 @@ public class BootArgsIndexer {
     private static File pluginSettingFile;
 
     /**
+     * 日志配置
+     */
+    private static File logSettingFile;
+
+    /**
      * pluginPackage插件包
      */
     private static File pluginPackageDir;
@@ -94,6 +99,10 @@ public class BootArgsIndexer {
         return pluginPackageDir;
     }
 
+    public static File getLogSettingFile() {
+        return logSettingFile;
+    }
+
     public static String getAppName() {
         return appName;
     }
@@ -124,6 +133,11 @@ public class BootArgsIndexer {
                 .toString()));
         if (!pluginSettingFile.exists() || !pluginSettingFile.isFile()) {
             LOGGER.warning("Plugin setting file is not found! ");
+        }
+        logSettingFile = new File(FileUtils.validatePath(argsMap.get(CommonConstant.LOG_SETTING_FILE_KEY)
+                .toString()));
+        if (!logSettingFile.exists() || !logSettingFile.isFile()) {
+            LOGGER.warning("Log setting file is not found! Using default log setting file in resources.");
         }
         pluginPackageDir = new File(FileUtils.validatePath(argsMap.get(CommonConstant.PLUGIN_PACKAGE_DIR_KEY)
                 .toString()));

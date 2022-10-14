@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.core.classloader.FrameworkClassLoader;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -52,6 +53,7 @@ public class LoggerFactory {
             throw new RuntimeException(e);
         }
         logger = java.util.logging.Logger.getLogger("sermant");
+        logger.setLevel(Level.ALL);
     }
 
     /**
