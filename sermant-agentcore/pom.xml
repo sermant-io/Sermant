@@ -75,6 +75,7 @@
             <modules>
                 <module>sermant-agentcore-core</module>
                 <module>sermant-agentcore-premain</module>
+                <module>sermant-agentcore-implement</module>
             </modules>
             <build>
                 <plugins>

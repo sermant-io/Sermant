@@ -36,6 +36,7 @@
                 <module>sermant-router</module>
                 <module>sermant-loadbalancer</module>
                 <module>sermant-springboot-registry</module>
+                <module>sermant-mq-consume-deny</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -108,6 +109,7 @@
                 <module>sermant-dynamic-config</module>
                 <module>sermant-monitor</module>
                 <module>sermant-springboot-registry</module>
+                <module>sermant-mq-consume-deny</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -135,6 +137,7 @@
                 <module>sermant-loadbalancer</module>
                 <module>sermant-monitor</module>
                 <module>sermant-springboot-registry</module>
+                <module>sermant-mq-consume-deny</module>
             </modules>
         </profile>
     </profiles>

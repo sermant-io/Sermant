@@ -16,8 +16,11 @@
 
 package com.huaweicloud.sermant.core.classloader;
 
+import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.CommonConstant;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -80,7 +83,16 @@ public class FrameworkClassLoader extends URLClassLoader {
 
         // 针对日志配置文件，定制化getResource方法，获取FrameworkClassloader下资源文件中的logback.xml
         if (CommonConstant.LOG_SETTING_FILE_NAME.equals(name)) {
-            url = findResource(name);
+            File logSettingFile = BootArgsIndexer.getLogSettingFile();
+            if (logSettingFile.exists() && logSettingFile.isFile()) {
+                try {
+                    url = logSettingFile.toURI().toURL();
+                } catch (MalformedURLException e) {
+                    url = findResource(name);
+                }
+            } else {
+                url = findResource(name);
+            }
         }
         if (url == null) {
             url = super.getResource(name);

@@ -1,6 +1,7 @@
 com.huaweicloud.sermant.router.spring.declarer.AbstractHandlerMappingDeclarer
 com.huaweicloud.sermant.router.spring.declarer.BaseLoadBalancerDeclarer
 com.huaweicloud.sermant.router.spring.declarer.ClientHttpRequestDeclarer
+com.huaweicloud.sermant.router.spring.declarer.DiscoveryManagerDeclarer
 com.huaweicloud.sermant.router.spring.declarer.EurekaHttpClientDeclarer
 com.huaweicloud.sermant.router.spring.declarer.FeignClientDeclarer
 com.huaweicloud.sermant.router.spring.declarer.HandlerExecutionChainDeclarer

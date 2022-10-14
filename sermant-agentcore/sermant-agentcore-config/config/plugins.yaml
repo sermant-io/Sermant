@@ -9,6 +9,7 @@ plugins:
   - dynamic-config
   - monitor
   - springboot-registry
+  - mq-consume-deny
 adaptors:
   - lubanops
 profiles:
