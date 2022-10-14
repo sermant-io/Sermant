@@ -17,9 +17,9 @@
 package com.huaweicloud.sermant.router.config.handler;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.core.plugin.subscribe.processor.OrderConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
@@ -27,11 +27,9 @@ import com.huaweicloud.sermant.router.config.entity.Strategy;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -67,6 +65,7 @@ public class EnabledStrategyHandler extends AbstractConfigHandler {
             newStrategy = Strategy.valueOf(strategyValue.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException ignored) {
             // 不存在该策略，忽略
+            LOGGER.warning(String.format(Locale.ROOT, "Enabled strategy[%s] is invalid.", strategyValue));
             return;
         }
         String value = map.get("value");
@@ -83,14 +82,10 @@ public class EnabledStrategyHandler extends AbstractConfigHandler {
     }
 
     private Map<String, String> getEnabledStrategy(DynamicConfigEvent event) {
-        Map<String, String> map = new HashMap<>();
-        if (event instanceof OrderConfigEvent) {
-            Map<String, Object> allData = ((OrderConfigEvent) event).getAllData();
-            for (Entry<String, Object> entry : allData.entrySet()) {
-                map.put(entry.getKey(), String.valueOf(entry.getValue()));
-            }
-            return map;
+        String content = event.getContent();
+        if (StringUtils.isBlank(content)) {
+            return Collections.emptyMap();
         }
-        return yaml.load(event.getContent());
+        return yaml.load(content);
     }
 }
