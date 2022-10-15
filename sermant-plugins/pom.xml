@@ -55,6 +55,14 @@
             </build>
         </profile>
         <profile>
+            <id>test</id>
+            <modules>
+                <module>sermant-springboot-registry</module>
+                <module>sermant-router</module>
+                <module>sermant-mq-consume-deny</module>
+            </modules>
+        </profile>
+        <profile>
             <id>example</id>
             <modules>
                 <module>sermant-service-registry</module>

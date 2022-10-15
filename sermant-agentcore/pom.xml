@@ -53,6 +53,15 @@
             </modules>
         </profile>
         <profile>
+            <id>test</id>
+            <modules>
+                <module>sermant-agentcore-core</module>
+                <module>sermant-agentcore-premain</module>
+                <module>sermant-agentcore-config</module>
+                <module>sermant-agentcore-implement</module>
+            </modules>
+        </profile>
+        <profile>
             <id>example</id>
             <modules>
                 <module>sermant-agentcore-core</module>

@@ -342,6 +342,13 @@
             </build>
         </profile>
         <profile>
+            <id>test</id>
+            <modules>
+                <module>sermant-agentcore</module>
+                <module>sermant-plugins</module>
+            </modules>
+        </profile>
+        <profile>
             <id>example</id>
             <modules>
                 <module>sermant-agentcore</module>
