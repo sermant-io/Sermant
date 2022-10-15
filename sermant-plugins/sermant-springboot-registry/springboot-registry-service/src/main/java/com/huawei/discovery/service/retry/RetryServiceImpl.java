@@ -40,6 +40,7 @@ import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -66,9 +67,8 @@ public class RetryServiceImpl implements InvokerService {
             ConnectException.class,
             NoRouteToHostException.class);
 
-    private final List<String> rawRetryEx = Arrays.asList(
-            "org.apache.http.conn.ConnectTimeoutException",
-            "org.apache.http.NoHttpResponseException");
+    private final List<String> rawRetryEx = Collections.singletonList(
+            "org.apache.http.conn.ConnectTimeoutException");
 
     private final Map<String, Retry> retryCache = new ConcurrentHashMap<>();
 
