@@ -135,10 +135,10 @@ public class RetryServiceImpl implements InvokerService {
             throws Exception {
         final RetryContext<Recorder> context = retry.context();
         final InvokerContext invokerContext = new InvokerContext();
-        boolean isRetry = false;
+        boolean isInRetry = false;
         do {
             final long start = System.currentTimeMillis();
-            final Optional<ServiceInstance> instance = choose(serviceName, isRetry,
+            final Optional<ServiceInstance> instance = choose(serviceName, isInRetry,
                     invokerContext.getServiceInstance());
             if (!instance.isPresent()) {
                 throw new ProviderException("Can not found provider service named: " + serviceName);
@@ -149,7 +149,7 @@ public class RetryServiceImpl implements InvokerService {
             long consumeTimeMs;
             try {
                 final Object result = invokeFunc.apply(invokerContext);
-                isRetry = true;
+                isInRetry = true;
                 consumeTimeMs = System.currentTimeMillis() - start;
                 if (invokerContext.getEx() != null) {
                     // 此处调用器, 若调用出现异常, 则以异常结果返回
@@ -163,7 +163,7 @@ public class RetryServiceImpl implements InvokerService {
                     return Optional.ofNullable(result);
                 }
             } catch (Exception ex) {
-                isRetry = true;
+                isInRetry = true;
                 handleEx(ex, context, stats, System.currentTimeMillis() - start);
             }
         } while (true);

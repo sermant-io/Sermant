@@ -127,10 +127,17 @@ public class RetryConfig {
         this.name = name;
     }
 
-    private Predicate<Throwable> buildThrowPredicate(List<Class<? extends Throwable>> retryEx,
+    /**
+     * 构建异常判断器
+     *
+     * @param retryEx 类型判断
+     * @param rawRetryEx 类全限定名判断
+     * @return Predicate
+     */
+    public static Predicate<Throwable> buildThrowPredicate(List<Class<? extends Throwable>> retryEx,
             List<String> rawRetryEx) {
         final Predicate<Throwable> assignableEx = ex -> {
-            if (ex == null) {
+            if (ex == null || retryEx == null) {
                 return false;
             }
             for (Class<? extends Throwable> cur : retryEx) {
@@ -144,10 +151,7 @@ public class RetryConfig {
             return false;
         };
         final Predicate<Throwable> rawEx = ex -> {
-            if (ex == null) {
-                return false;
-            }
-            if (rawRetryEx == null) {
+            if (ex == null || rawRetryEx == null) {
                 return false;
             }
             return rawRetryEx.stream().anyMatch(clazz -> isAssignableFrom(clazz, ex.getClass()));
@@ -155,7 +159,7 @@ public class RetryConfig {
         return assignableEx.or(rawEx);
     }
 
-    private boolean isAssignableFrom(String clazz, Class<?> ex) {
+    private static boolean isAssignableFrom(String clazz, Class<?> ex) {
         if (clazz.equals(ex.getName())) {
             return true;
         }

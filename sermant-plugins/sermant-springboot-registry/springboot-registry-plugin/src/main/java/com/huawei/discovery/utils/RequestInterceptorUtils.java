@@ -142,7 +142,7 @@ public class RequestInterceptorUtils {
             } catch (InvocationTargetException e) {
                 invokerContext.setEx(e.getTargetException());
                 LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "invoke method [%s] failed",
-                        context.getMethod().getName()), e);
+                        context.getMethod().getName()), e.getTargetException());
             }
             return Optional.empty();
         };
