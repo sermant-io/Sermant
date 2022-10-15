@@ -113,7 +113,7 @@ public class PluginManager {
     private static void initPlugin(String pluginName, String pluginPackage, Instrumentation instrumentation) {
         final String pluginPath = pluginPackage + File.separatorChar + pluginName;
         if (!new File(pluginPath).exists()) {
-            LOGGER.warning(String.format(Locale.ROOT,
+            LOGGER.severe(String.format(Locale.ROOT,
                     "Plugin directory %s does not exist, so skip initializing %s. ", pluginPath, pluginName));
             return;
         }

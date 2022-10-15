@@ -22,21 +22,19 @@ import com.huawei.discovery.utils.HttpConstants;
 import com.huawei.discovery.utils.PlugEffectWhiteBlackUtils;
 import com.huawei.discovery.utils.RequestInterceptorUtils;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpResponse;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 拦截获取服务列表
@@ -45,23 +43,31 @@ import java.util.function.Function;
  * @since 2022-09-27
  */
 public class RestTemplateInterceptor extends MarkInterceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) throws Exception {
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
-        URI uri = (URI)context.getArguments()[0];
-        HttpMethod httpMethod = (HttpMethod)context.getArguments()[1];
+        URI uri = (URI) context.getArguments()[0];
+        HttpMethod httpMethod = (HttpMethod) context.getArguments()[1];
         Map<String, String> hostAndPath = RequestInterceptorUtils.recoverHostAndPath(uri.getPath());
         if (!PlugEffectWhiteBlackUtils.isAllowRun(uri.getHost(), hostAndPath.get(HttpConstants.HTTP_URI_HOST),
             true)) {
             return context;
         }
         RequestInterceptorUtils.printRequestLog("restTemplate", hostAndPath);
-        invokerService.invoke(
-                buildInvokerFunc(uri, hostAndPath, context, httpMethod),
-                this::buildErrorResponse,
-                hostAndPath.get(HttpConstants.HTTP_URI_HOST))
-                .ifPresent(context::skip);
+        Optional<Object> result = invokerService.invoke(
+            buildInvokerFunc(uri, hostAndPath, context, httpMethod),
+            this::buildErrorResponse,
+            hostAndPath.get(HttpConstants.HTTP_URI_HOST));
+        if (result.isPresent()) {
+            Object obj = result.get();
+            if (obj instanceof Exception) {
+                LOGGER.log(Level.SEVERE, "request is error, uri is " + uri, (Exception) obj);
+                return context;
+            }
+            context.skip(obj);
+        }
         return context;
     }
 
@@ -89,7 +95,7 @@ public class RestTemplateInterceptor extends MarkInterceptor {
         ExecuteContext context, HttpMethod httpMethod) {
         return invokerContext -> {
             String url = RequestInterceptorUtils.buildUrlWithIp(uri, invokerContext.getServiceInstance(),
-                    hostAndPath.get(HttpConstants.HTTP_URI_PATH), httpMethod.name());
+                hostAndPath.get(HttpConstants.HTTP_URI_PATH), httpMethod.name());
             context.getArguments()[0] = rebuildUri(url, uri);
             return RequestInterceptorUtils.buildFunc(context, invokerContext).get();
         };
@@ -101,44 +107,8 @@ public class RestTemplateInterceptor extends MarkInterceptor {
      * @param ex
      * @return 响应
      */
-    private ClientHttpResponse buildErrorResponse(Exception ex) {
-        return new ClientHttpResponse() {
-
-            @Override
-            public HttpHeaders getHeaders() {
-                return new HttpHeaders();
-            }
-
-            @Override
-            public InputStream getBody() throws IOException {
-                return new InputStream() {
-                    @Override
-                    public int read() throws IOException {
-                        return 0;
-                    }
-                };
-            }
-
-            @Override
-            public HttpStatus getStatusCode() throws IOException {
-                return HttpStatus.INTERNAL_SERVER_ERROR;
-            }
-
-            @Override
-            public int getRawStatusCode() throws IOException {
-                return HttpStatus.INTERNAL_SERVER_ERROR.value();
-            }
-
-            @Override
-            public String getStatusText() throws IOException {
-                return "";
-            }
-
-            @Override
-            public void close() {
-
-            }
-        };
+    private Exception buildErrorResponse(Exception ex) {
+        return ex;
     }
 
     @Override

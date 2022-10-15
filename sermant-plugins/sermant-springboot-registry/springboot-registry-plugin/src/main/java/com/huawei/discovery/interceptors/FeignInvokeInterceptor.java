@@ -64,7 +64,7 @@ public class FeignInvokeInterceptor extends MarkInterceptor {
         return invokerContext -> {
             context.getArguments()[0] = Request.create(request.httpMethod(),
                 RequestInterceptorUtils.buildUrl(urlInfo, invokerContext.getServiceInstance()),
-                request.headers(), request.requestBody());
+                request.headers(), request.body(), request.charset());
             return RequestInterceptorUtils.buildFunc(context, invokerContext).get();
         };
     }
