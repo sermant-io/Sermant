@@ -219,6 +219,9 @@ public enum DiscoveryManager {
     private Loadbalancer getLoadbalancer(String serviceName) {
         checkStats();
         return serviceLbCache.computeIfAbsent(serviceName, curService -> {
+            LOGGER.info(String.format(Locale.ENGLISH,
+                    "Use the loadbalancer [%s], if the lb does not support, it will replace by RoundRobin",
+                    lbConfig.getLbType()));
             final Class<? extends AbstractLoadbalancer> lbClazz = lbCache
                     .getOrDefault(lbConfig.getLbType(), RoundRobinLoadbalancer.class);
             return createLb(lbClazz).orElse(null);

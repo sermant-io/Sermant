@@ -74,6 +74,8 @@ public class AgentPremain {
             // agent core入口
             LOGGER.info("Loading sermant agent... ");
             AgentCoreEntrance.run(argsMap, instrumentation);
+
+            LOGGER.info("Load sermant done. ");
         } catch (Exception e) {
             LOGGER.severe(
                 String.format(Locale.ROOT, "Loading sermant agent failed, %s. ", e));

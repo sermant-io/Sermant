@@ -16,7 +16,6 @@
 
 package com.huawei.discovery.interceptors.httpclient;
 
-import com.huawei.discovery.entity.SimpleRequestRecorder;
 import com.huawei.discovery.interceptors.MarkInterceptor;
 import com.huawei.discovery.retry.InvokerContext;
 import com.huawei.discovery.service.InvokerService;
@@ -60,8 +59,6 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
 
     private final AtomicBoolean isLoaded = new AtomicBoolean();
 
-    private final SimpleRequestRecorder requestRecorder = new SimpleRequestRecorder();
-
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
@@ -77,7 +74,6 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
             return context;
         }
         RequestInterceptorUtils.printRequestLog("HttpClient", hostAndPath);
-        requestRecorder.beforeRequest();
         invokerService.invoke(
                 buildInvokerFunc(hostAndPath, uri, httpRequest, context),
                 buildExFunc(httpRequest),
