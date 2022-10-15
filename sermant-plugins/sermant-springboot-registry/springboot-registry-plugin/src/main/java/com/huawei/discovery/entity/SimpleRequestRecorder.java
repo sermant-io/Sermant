@@ -55,7 +55,7 @@ public class SimpleRequestRecorder implements Recorder {
         }
         if (discoveryPluginConfig.isEnableRequestCount()) {
             LOGGER.info(String.format(Locale.ENGLISH,
-                            "currentTime: %s httpClientInterceptor effect count: %s",
+                            "currentTime: %s request count handle by plugin is: %s",
                     HttpConstants.currentTime(), allRequest));
         }
     }

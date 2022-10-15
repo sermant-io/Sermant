@@ -53,24 +53,25 @@ public class InstanceStats implements Recorder {
     /**
      * 时间窗口
      */
-    private final long activeRequestTimeoutWindowMs;
+    private final long instanceStateTimeWindowMs;
 
     /**
-     * 上一次记录并发数的时间戳
+     * 上一次时间窗口更新时间, 作为时间窗口的左边界
      */
-    private volatile long lastActiveRequestTimestamp;
+    private volatile long lastLeftWindowTime;
 
     /**
-     * 平均响应时间
+     * 时间窗口内的平均响应时间
      */
-    private double responseAvgTime = 0d;
+    private volatile double responseAvgTime;
 
     /**
      * 构造器
      */
     public InstanceStats() {
-        this.activeRequestTimeoutWindowMs =
-                PluginConfigManager.getPluginConfig(LbConfig.class).getActiveRequestTimeoutWindowMs();
+        this.instanceStateTimeWindowMs =
+                PluginConfigManager.getPluginConfig(LbConfig.class).getInstanceStatTimeWindowMs();
+        lastLeftWindowTime = System.currentTimeMillis();
     }
 
     /**
@@ -80,7 +81,6 @@ public class InstanceStats implements Recorder {
     public void beforeRequest() {
         activeRequests.incrementAndGet();
         allRequestCount.incrementAndGet();
-        lastActiveRequestTimestamp = System.currentTimeMillis();
     }
 
     /**
@@ -102,13 +102,24 @@ public class InstanceStats implements Recorder {
         baseStats(consumeTimeMs);
     }
 
+    private void calculateResponseAvgTime() {
+        final long allConsumeTime = allRequestConsumeTime.get();
+        final long currentTimeMillis = System.currentTimeMillis();
+        if (currentTimeMillis - lastLeftWindowTime >= this.instanceStateTimeWindowMs) {
+            lastLeftWindowTime = currentTimeMillis;
+            allRequestCount.set(0);
+            allRequestConsumeTime.set(0);
+        }
+        this.responseAvgTime = allRequestCount.get() == 0 ? 0 : (allConsumeTime * 1d / allRequestCount.get());
+    }
+
     private void baseStats(long consumeTimeMs) {
         final long request = activeRequests.decrementAndGet();
         if (request < 0) {
             activeRequests.set(0);
         }
-        final long responseTime = allRequestConsumeTime.addAndGet(consumeTimeMs);
-        responseAvgTime = allRequestCount.get() == 0 ? 0 : (responseTime * 1d / allRequestCount.get());
+        allRequestConsumeTime.addAndGet(consumeTimeMs);
+        this.calculateResponseAvgTime();
     }
 
     /**
@@ -134,7 +145,8 @@ public class InstanceStats implements Recorder {
     public long getActiveRequests() {
         final long activeCount = activeRequests.get();
         final long currentTimeMillis = System.currentTimeMillis();
-        if (currentTimeMillis - lastActiveRequestTimestamp >= this.activeRequestTimeoutWindowMs) {
+        if (currentTimeMillis - lastLeftWindowTime >= this.instanceStateTimeWindowMs) {
+            lastLeftWindowTime = currentTimeMillis;
             this.activeRequests.set(0);
             return 0;
         }
@@ -145,6 +157,11 @@ public class InstanceStats implements Recorder {
         return failRequestCount;
     }
 
+    /**
+     * 获取平均响应时间
+     *
+     * @return responseAvgTime
+     */
     public double getResponseAvgTime() {
         return responseAvgTime;
     }
