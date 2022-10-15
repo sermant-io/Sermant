@@ -40,7 +40,6 @@ import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -67,7 +66,9 @@ public class RetryServiceImpl implements InvokerService {
             ConnectException.class,
             NoRouteToHostException.class);
 
-    private final List<String> rawRetryEx = Collections.singletonList("org.apache.http.conn.ConnectTimeoutException");
+    private final List<String> rawRetryEx = Arrays.asList(
+            "org.apache.http.conn.ConnectTimeoutException",
+            "org.apache.http.NoHttpResponseException");
 
     private final Map<String, Retry> retryCache = new ConcurrentHashMap<>();
 
@@ -108,9 +109,6 @@ public class RetryServiceImpl implements InvokerService {
         try {
             return invokeWithEx(invokeFunc, serviceName, retry);
         } catch (RetryException ex) {
-            // 走异常处理流程
-            LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH, "Retry failed with %s times",
-                    retry.config().getMaxRetry()), ex);
             return Optional.ofNullable(exFunc.apply(ex.getRealEx()));
         } catch (Exception ex) {
             // 重试最终失败抛出异常, 需对异常进行封装, 返回给上游, 或者作为当前调用返回调用方

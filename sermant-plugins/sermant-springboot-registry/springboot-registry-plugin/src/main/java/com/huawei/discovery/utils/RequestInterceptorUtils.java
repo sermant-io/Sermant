@@ -16,7 +16,9 @@
 
 package com.huawei.discovery.utils;
 
+import com.huawei.discovery.entity.Recorder;
 import com.huawei.discovery.entity.ServiceInstance;
+import com.huawei.discovery.entity.SimpleRequestRecorder;
 import com.huawei.discovery.retry.InvokerContext;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
@@ -44,8 +46,9 @@ import java.util.logging.Logger;
  * @since 2022-10-09
  */
 public class RequestInterceptorUtils {
-
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final Recorder RECORDER = new SimpleRequestRecorder();
 
     private RequestInterceptorUtils() {
 
@@ -91,6 +94,7 @@ public class RequestInterceptorUtils {
         String path = String.format(Locale.ENGLISH, "/%s%s", hostAndPath.get(HttpConstants.HTTP_URI_HOST),
                 hostAndPath.get(HttpConstants.HTTP_URI_PATH));
         LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "[%s] request [%s] has been intercepted!", source, path));
+        RECORDER.beforeRequest();
     }
 
     /**

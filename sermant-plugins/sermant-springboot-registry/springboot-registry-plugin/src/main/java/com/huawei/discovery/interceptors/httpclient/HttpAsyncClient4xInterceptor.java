@@ -18,9 +18,7 @@ package com.huawei.discovery.interceptors.httpclient;
 
 import com.huawei.discovery.entity.FutureDecorator;
 import com.huawei.discovery.entity.HttpAsyncContext;
-import com.huawei.discovery.entity.Recorder;
 import com.huawei.discovery.entity.ServiceInstance;
-import com.huawei.discovery.entity.SimpleRequestRecorder;
 import com.huawei.discovery.retry.InvokerContext;
 import com.huawei.discovery.service.InvokerService;
 import com.huawei.discovery.utils.HttpAsyncUtils;
@@ -69,8 +67,6 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
 
     private final AtomicBoolean isLoaded = new AtomicBoolean();
 
-    private final Recorder recorder = new SimpleRequestRecorder();
-
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         ready();
@@ -108,7 +104,6 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
             }
             RequestInterceptorUtils.printRequestLog("HttpAsyncClient", HttpAsyncUtils.getOrCreateContext()
                     .getHostAndPath());
-            recorder.beforeRequest();
             final Object result = context.getResult();
             if (!(result instanceof Future)) {
                 return context;

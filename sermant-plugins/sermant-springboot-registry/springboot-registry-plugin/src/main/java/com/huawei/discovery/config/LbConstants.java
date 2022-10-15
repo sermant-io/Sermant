@@ -64,9 +64,9 @@ public class LbConstants {
     public static final long DEFAULT_LB_STATS_REFRESH_INTERVAL_MS = 30000L;
 
     /**
-     * 统计并发数的时间窗口, 默认10分钟
+     * 实例状态统计时间窗口, 默认10分钟, 每一个时间窗口的开始, 统计都会清0
      */
-    public static final long DEFAULT_ACTIVE_REQUEST_COUNT_WINDOW_MS = 600000L;
+    public static final long DEFAULT_INSTANCE_STATE_TIME_WINDOW_MS = 600000L;
 
     /**
      * 服务超时后最大重试次数

@@ -135,9 +135,9 @@ public class LbConfig implements PluginConfig {
     private boolean preferIpAddress = false;
 
     /**
-     * 统计并发数的时间窗口, 默认10分钟, 并发数仅在时间窗口内统计生效, 超出则清0
+     * 实例状态统计时间窗口, 默认10分钟, 每一个时间窗口的开始, 统计都会清0
      */
-    private long activeRequestTimeoutWindowMs = LbConstants.DEFAULT_ACTIVE_REQUEST_COUNT_WINDOW_MS;
+    private long instanceStatTimeWindowMs = LbConstants.DEFAULT_INSTANCE_STATE_TIME_WINDOW_MS;
 
     public long getRefreshTimerInterval() {
         return refreshTimerInterval;
@@ -187,8 +187,8 @@ public class LbConfig implements PluginConfig {
         this.zkServerVersion = version;
     }
 
-    public long getActiveRequestTimeoutWindowMs() {
-        return activeRequestTimeoutWindowMs;
+    public long getInstanceStatTimeWindowMs() {
+        return instanceStatTimeWindowMs;
     }
 
     public int getMaxRetryConfigCache() {
@@ -199,8 +199,8 @@ public class LbConfig implements PluginConfig {
         this.maxRetryConfigCache = maxRetryConfigCache;
     }
 
-    public void setActiveRequestTimeoutWindowMs(long activeRequestTimeoutWindowMs) {
-        this.activeRequestTimeoutWindowMs = activeRequestTimeoutWindowMs;
+    public void setInstanceStatTimeWindowMs(long instanceStatTimeWindowMs) {
+        this.instanceStatTimeWindowMs = instanceStatTimeWindowMs;
     }
 
     public String getZkUriSpec() {

@@ -26,6 +26,7 @@ import com.huawei.discovery.utils.RequestInterceptorUtils;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import okhttp3.HttpUrl;
 import okhttp3.Protocol;
@@ -37,6 +38,7 @@ import org.apache.http.HttpStatus;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -48,7 +50,6 @@ import java.util.logging.Logger;
  * @since 2022-09-14
  */
 public class OkHttp3ClientInterceptor extends MarkInterceptor {
-
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String FIELD_NAME = "originalRequest";
@@ -56,10 +57,11 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) throws Exception {
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
-        if (context.getRawMemberFieldValue(FIELD_NAME) == null) {
+        final Optional<Request> rawRequest = getRequest(context);
+        if (!rawRequest.isPresent()) {
             return context;
         }
-        Request request = (Request)context.getRawMemberFieldValue(FIELD_NAME);
+        Request request = rawRequest.get();
         URI uri = request.url().uri();
         Map<String, String> hostAndPath = RequestInterceptorUtils.recoverHostAndPath(uri.getPath());
         if (!PlugEffectWhiteBlackUtils.isAllowRun(uri.getHost(), hostAndPath.get(HttpConstants.HTTP_URI_HOST),
@@ -68,12 +70,21 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
         }
         RequestInterceptorUtils.printRequestLog("OkHttp3", hostAndPath);
         AtomicReference<Request> rebuildRequest = new AtomicReference<>();
+        rebuildRequest.set(request);
         invokerService.invoke(
                 buildInvokerFunc(uri, hostAndPath, request, rebuildRequest, context),
                 buildExFunc(rebuildRequest),
                 hostAndPath.get(HttpConstants.HTTP_URI_HOST))
                 .ifPresent(context::skip);
         return context;
+    }
+
+    private Optional<Request> getRequest(ExecuteContext context) {
+        final Optional<Object> originalRequest = ReflectUtils.getFieldValue(context.getObject(), FIELD_NAME);
+        if (originalRequest.isPresent() && originalRequest.get() instanceof Request) {
+            return Optional.of((Request) originalRequest.get());
+        }
+        return Optional.empty();
     }
 
     private Function<Exception, Object> buildExFunc(AtomicReference<Request> rebuildRequest) {

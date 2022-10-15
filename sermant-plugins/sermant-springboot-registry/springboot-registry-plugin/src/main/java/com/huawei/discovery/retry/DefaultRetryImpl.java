@@ -18,8 +18,13 @@ package com.huawei.discovery.retry;
 
 import com.huawei.discovery.entity.Recorder;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 默认重试器
@@ -28,6 +33,8 @@ import java.util.function.Predicate;
  * @since 2022-09-28
  */
 public class DefaultRetryImpl implements Retry {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private final RetryConfig retryConfig;
 
     private final String name;
@@ -106,7 +113,13 @@ public class DefaultRetryImpl implements Retry {
             }
 
             // 抛出异常
-            throw new RetryException(ex);
+            if (invokeCount.get() > 0) {
+                LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH, "Retry failed with %s times",
+                        invokeCount.get()), ex);
+            }
+            final RetryException retryException = new RetryException(ex);
+            retryException.setStackTrace(ex.getStackTrace());
+            throw retryException;
         }
 
         @Override

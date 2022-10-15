@@ -68,7 +68,7 @@ public class InstanceStatsTest extends BaseTest {
 
     @Test
     public void testActiveRequest() throws InterruptedException {
-        lbConfig.setActiveRequestTimeoutWindowMs(1L);
+        lbConfig.setInstanceStatTimeWindowMs(1L);
         final InstanceStats stats = new InstanceStats();
         stats.beforeRequest();
         Thread.sleep(10);
