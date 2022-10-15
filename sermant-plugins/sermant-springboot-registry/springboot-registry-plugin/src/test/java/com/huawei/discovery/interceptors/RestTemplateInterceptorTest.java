@@ -16,11 +16,13 @@
 
 package com.huawei.discovery.interceptors;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Map;
-import java.util.Optional;
+import com.huawei.discovery.config.PlugEffectWhiteBlackConstants;
+import com.huawei.discovery.entity.PlugEffectStategyCache;
+import com.huawei.discovery.service.InvokerService;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,15 +30,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpResponse;
 
-import com.huawei.discovery.config.PlugEffectWhiteBlackConstants;
-import com.huawei.discovery.entity.PlugEffectStategyCache;
-import com.huawei.discovery.service.InvokerService;
-import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
-import com.huaweicloud.sermant.core.utils.ReflectUtils;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * RestTemplate调用测试
@@ -74,10 +73,10 @@ public class RestTemplateInterceptorTest extends BaseTest {
         interceptor = new RestTemplateInterceptor();
         MockitoAnnotations.openMocks(this);
         pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(InvokerService.class))
-                .thenReturn(invokerService);
+            .thenReturn(invokerService);
     }
 
-    private URI createURI(String url){
+    private URI createURI(String url) {
         return URI.create(url);
     }
 
@@ -99,27 +98,27 @@ public class RestTemplateInterceptorTest extends BaseTest {
         //含域名，设置多个域名，未设置黑白名单
         discoveryPluginConfig.setRealmName(realmNames);
         interceptor.doBefore(context);
-        URI uriNew = (URI)context.getArguments()[0];
+        URI uriNew = (URI) context.getArguments()[0];
         Assert.assertEquals(url, uriNew.toString());
 
         discoveryPluginConfig.setRealmName(realmName);
         //含域名，设置全部通过策略
         initStrategy(PlugEffectWhiteBlackConstants.STRATEGY_ALL, "zookeeper-provider-demo");
         Mockito.when(invokerService.invoke(null, null, "zookeeper-provider-demo"))
-                .thenReturn(Optional.ofNullable(new Object()));
+            .thenReturn(Optional.ofNullable(new Object()));
         interceptor.doBefore(context);
-        uriNew = (URI)context.getArguments()[0];
+        uriNew = (URI) context.getArguments()[0];
         Assert.assertEquals(url, uriNew.toString());
     }
 
     @Test
     public void rebuildUriTest() {
         Optional<Method> method = ReflectUtils.findMethod(RestTemplateInterceptor.class, "rebuildUri",
-                new Class[] {String.class, URI.class});
+            new Class[]{String.class, URI.class});
         URI uri = createURI(url);
         if (method.isPresent()) {
             Optional<Object> uriNew = ReflectUtils
-                    .invokeMethod(interceptor, method.get(), new Object[] {convertUrl, uri});
+                .invokeMethod(interceptor, method.get(), new Object[]{convertUrl, uri});
             Assert.assertEquals(convertUrl, uriNew.get().toString());
         }
     }
@@ -127,12 +126,12 @@ public class RestTemplateInterceptorTest extends BaseTest {
     @Test
     public void buildErrorResponseTest() throws IOException {
         Optional<Method> method = ReflectUtils.findMethod(RestTemplateInterceptor.class, "buildErrorResponse",
-                new Class[] {Exception.class});
+            new Class[]{Exception.class});
         Exception ex = new Exception();
         if (method.isPresent()) {
             Optional<Object> exception = ReflectUtils
-                    .invokeMethod(interceptor, method.get(), new Object[] {ex});
-            Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ((ClientHttpResponse)exception.get()).getStatusCode());
+                .invokeMethod(interceptor, method.get(), new Object[]{ex});
+            Assert.assertEquals(ex, exception.get());
         }
     }
 }
