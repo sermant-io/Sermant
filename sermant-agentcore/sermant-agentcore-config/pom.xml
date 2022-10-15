@@ -25,6 +25,12 @@
                 <profile.id>all</profile.id>
             </properties>
         </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <profile.id>test</profile.id>
+            </properties>
+        </profile>
     </profiles>
 
     <properties>
