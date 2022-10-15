@@ -21,6 +21,7 @@
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>sermant-agentcore-core</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

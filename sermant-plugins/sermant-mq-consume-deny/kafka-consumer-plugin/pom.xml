@@ -36,6 +36,11 @@
             <version>${kafka.client.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>sermant-agentcore-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
