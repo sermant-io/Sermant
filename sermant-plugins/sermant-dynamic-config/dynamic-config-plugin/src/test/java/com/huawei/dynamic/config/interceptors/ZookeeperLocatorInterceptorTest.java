@@ -21,10 +21,12 @@ import com.huawei.dynamic.config.ConfigHolder;
 import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.source.OriginConfigDisableSource;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.service.dynamicconfig.config.DynamicConfig;
 import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
 import org.junit.After;
@@ -47,14 +49,21 @@ public class ZookeeperLocatorInterceptorTest {
 
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
+    private MockedStatic<ConfigManager> configManagerMockedStatic;
+
     @Before
     public void setUp() {
         operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
-        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
+            .thenReturn(new YamlConverterImpl());
 
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
-                .thenReturn(new DynamicConfiguration());
+            .thenReturn(new DynamicConfiguration());
+
+        configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
+        configManagerMockedStatic.when(() -> ConfigManager.getConfig(DynamicConfig.class))
+            .thenReturn(new DynamicConfig());
     }
 
     @After

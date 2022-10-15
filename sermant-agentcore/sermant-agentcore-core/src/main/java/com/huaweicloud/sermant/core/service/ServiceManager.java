@@ -74,12 +74,7 @@ public class ServiceManager {
             ClassLoaderManager.getFrameworkClassLoader())) {
             if (!AGENT_CONFIG.getServiceBlackList().contains(service.getClass().getName())
                 && loadService(service, service.getClass(), BaseService.class)) {
-                try {
-                    service.start();
-                } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "Error occurs while starting service: %s",
-                            service.getClass()), ex);
-                }
+                service.start();
             }
         }
         addStopHook(); // 加载完所有服务再启动服务

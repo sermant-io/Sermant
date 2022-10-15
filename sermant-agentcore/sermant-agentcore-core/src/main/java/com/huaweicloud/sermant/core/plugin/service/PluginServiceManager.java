@@ -16,9 +16,13 @@
 
 package com.huaweicloud.sermant.core.plugin.service;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
+import java.util.Locale;
 import java.util.ServiceLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 插件服务管理器，核心服务管理器{@link ServiceManager}的特化，专门用来初始化{@link PluginService}
@@ -28,6 +32,8 @@ import java.util.ServiceLoader;
  * @since 2021-11-12
  */
 public class PluginServiceManager extends ServiceManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private PluginServiceManager() {
         super();
     }
@@ -40,7 +46,12 @@ public class PluginServiceManager extends ServiceManager {
     public static void initPluginService(ClassLoader classLoader) {
         for (PluginService service : ServiceLoader.load(PluginService.class, classLoader)) {
             if (loadService(service, service.getClass(), PluginService.class)) {
-                service.start();
+                try {
+                    service.start();
+                } catch (Exception ex) {
+                    LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "Error occurs while starting plugin service: %s",
+                            service.getClass()), ex);
+                }
             }
         }
     }
