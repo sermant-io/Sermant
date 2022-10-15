@@ -61,6 +61,21 @@
                 <module>sermant-router</module>
                 <module>sermant-mq-consume-deny</module>
             </modules>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-shade-plugin</artifactId>
+                            <configuration>
+                                <outputFile>
+                                    ${package.output.dir}/${project.artifactId}-${project.version}.jar
+                                </outputFile>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
         </profile>
         <profile>
             <id>example</id>
