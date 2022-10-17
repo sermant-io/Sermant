@@ -31,6 +31,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -62,23 +63,27 @@ public class RequestInterceptorUtils {
      */
     public static Map<String, String> recovertUrl(String url) {
         if (StringUtils.isEmpty(url)) {
-            return new HashMap<>();
+            return Collections.emptyMap();
         }
-        Map<String, String> result = new HashMap<>();
-        String scheme = url.substring(0, url.indexOf(HttpConstants.HTTP_URL_DOUBLIE_SLASH));
         String temp = url.substring(url.indexOf(HttpConstants.HTTP_URL_DOUBLIE_SLASH)
-                + HttpConstants.HTTP_URL_DOUBLIE_SLASH.length());
+            + HttpConstants.HTTP_URL_DOUBLIE_SLASH.length());
         int slashLen = 1;
 
         // 剔除域名之后的path
         temp = temp.substring(temp.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH) + slashLen);
 
         // 服务名
-        String host = temp.substring(0, temp.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH));
+        int index = temp.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH);
+        if (index == -1) {
+            return Collections.emptyMap();
+        }
+        String host = temp.substring(0, index);
 
         // 请求路径
         String path = temp.substring(temp.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH));
+        Map<String, String> result = new HashMap<>();
         result.put(HttpConstants.HTTP_URI_HOST, host);
+        String scheme = url.substring(0, url.indexOf(HttpConstants.HTTP_URL_DOUBLIE_SLASH));
         result.put(HttpConstants.HTTP_URL_SCHEME, scheme);
         result.put(HttpConstants.HTTP_URI_PATH, path);
         return result;
@@ -92,7 +97,7 @@ public class RequestInterceptorUtils {
      */
     public static void printRequestLog(String source, Map<String, String> hostAndPath) {
         String path = String.format(Locale.ENGLISH, "/%s%s", hostAndPath.get(HttpConstants.HTTP_URI_HOST),
-                hostAndPath.get(HttpConstants.HTTP_URI_PATH));
+            hostAndPath.get(HttpConstants.HTTP_URI_PATH));
         LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "[%s] request [%s] has been intercepted!", source, path));
         RECORDER.beforeRequest();
     }
@@ -171,11 +176,11 @@ public class RequestInterceptorUtils {
     public static String buildUrl(Map<String, String> urlIfo, ServiceInstance serviceInstance) {
         StringBuilder urlBuild = new StringBuilder();
         urlBuild.append(urlIfo.get(HttpConstants.HTTP_URL_SCHEME))
-                .append(HttpConstants.HTTP_URL_DOUBLIE_SLASH)
-                .append(serviceInstance.getIp())
-                .append(HttpConstants.HTTP_URL_COLON)
-                .append(serviceInstance.getPort())
-                .append(urlIfo.get(HttpConstants.HTTP_URI_PATH));
+            .append(HttpConstants.HTTP_URL_DOUBLIE_SLASH)
+            .append(serviceInstance.getIp())
+            .append(HttpConstants.HTTP_URL_COLON)
+            .append(serviceInstance.getPort())
+            .append(urlIfo.get(HttpConstants.HTTP_URI_PATH));
         return urlBuild.toString();
     }
 
@@ -199,9 +204,9 @@ public class RequestInterceptorUtils {
             return result;
         }
         result.put(HttpConstants.HTTP_URI_HOST,
-                tempPath.substring(0, tempPath.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH)));
+            tempPath.substring(0, tempPath.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH)));
         result.put(HttpConstants.HTTP_URI_PATH,
-                tempPath.substring(tempPath.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH)));
+            tempPath.substring(tempPath.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH)));
         return result;
     }
 
@@ -217,14 +222,14 @@ public class RequestInterceptorUtils {
     public static String buildUrlWithIp(URI uri, ServiceInstance serviceInstance, String path, String method) {
         StringBuilder urlBuild = new StringBuilder();
         urlBuild.append(uri.getScheme())
-                .append(HttpConstants.HTTP_URL_DOUBLIE_SLASH)
-                .append(serviceInstance.getIp())
-                .append(HttpConstants.HTTP_URL_COLON)
-                .append(serviceInstance.getPort())
-                .append(path);
+            .append(HttpConstants.HTTP_URL_DOUBLIE_SLASH)
+            .append(serviceInstance.getIp())
+            .append(HttpConstants.HTTP_URL_COLON)
+            .append(serviceInstance.getPort())
+            .append(path);
         if (method.equals(HttpConstants.HTTP_GET)) {
             urlBuild.append(HttpConstants.HTTP_URL_UNKNOWN)
-                    .append(uri.getQuery());
+                .append(uri.getQuery());
         }
         return urlBuild.toString();
     }
