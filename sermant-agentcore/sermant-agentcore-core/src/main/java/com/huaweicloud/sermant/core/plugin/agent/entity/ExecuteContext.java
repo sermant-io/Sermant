@@ -73,6 +73,11 @@ public class ExecuteContext {
     private Throwable throwable;
 
     /**
+     * 抛出给宿主的异常
+     */
+    private Throwable throwableOut;
+
+    /**
      * 额外的静态属性
      */
     private Map<String, Object> extStaticFields;
@@ -206,6 +211,10 @@ public class ExecuteContext {
 
     public Throwable getThrowable() {
         return throwable;
+    }
+
+    public Throwable getThrowableOut() {
+        return throwableOut;
     }
 
     public Map<String, Object> getExtStaticFields() {
@@ -525,6 +534,17 @@ public class ExecuteContext {
             throw new UnsupportedOperationException("Change result method is not support when enhancing constructor. ");
         }
         this.result = fixedResult;
+        return this;
+    }
+
+    /**
+     * 给宿主抛出异常
+     *
+     * @param throwableOut 抛出给宿主的异常
+     * @return 执行上下文
+     */
+    public ExecuteContext setThrowableOut(Throwable throwableOut) {
+        this.throwableOut = throwableOut;
         return this;
     }
 
