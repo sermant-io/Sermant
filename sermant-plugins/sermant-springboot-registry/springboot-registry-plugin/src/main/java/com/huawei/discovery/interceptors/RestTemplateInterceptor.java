@@ -58,12 +58,13 @@ public class RestTemplateInterceptor extends MarkInterceptor {
         RequestInterceptorUtils.printRequestLog("restTemplate", hostAndPath);
         Optional<Object> result = invokerService.invoke(
             buildInvokerFunc(uri, hostAndPath, context, httpMethod),
-            this::buildErrorResponse,
+            ex -> ex,
             hostAndPath.get(HttpConstants.HTTP_URI_HOST));
         if (result.isPresent()) {
             Object obj = result.get();
             if (obj instanceof Exception) {
                 LOGGER.log(Level.SEVERE, "request is error, uri is " + uri, (Exception) obj);
+                context.setThrowableOut((Exception) obj);
                 return context;
             }
             context.skip(obj);
@@ -99,16 +100,6 @@ public class RestTemplateInterceptor extends MarkInterceptor {
             context.getArguments()[0] = rebuildUri(url, uri);
             return RequestInterceptorUtils.buildFunc(context, invokerContext).get();
         };
-    }
-
-    /**
-     * 构建restTemplete响应
-     *
-     * @param ex
-     * @return 响应
-     */
-    private Exception buildErrorResponse(Exception ex) {
-        return ex;
     }
 
     @Override

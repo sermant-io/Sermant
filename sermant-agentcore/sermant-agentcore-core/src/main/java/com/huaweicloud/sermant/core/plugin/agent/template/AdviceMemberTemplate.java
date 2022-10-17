@@ -51,6 +51,7 @@ public class AdviceMemberTemplate {
      * @param interceptorItr  拦截器迭代器
      * @param context         执行上下文
      * @return 是否跳过主要方法
+     * @throws Throwable      抛给宿主的异常
      */
     @Advice.OnMethodEnter(suppress = Throwable.class, skipOn = Advice.OnNonDefaultValue.class)
     public static boolean onMethodEnter(
@@ -64,7 +65,7 @@ public class AdviceMemberTemplate {
             @Advice.FieldValue(value = "_EXT_MEMBER_FIELDS_$SERMANT",
                     readOnly = false, typing = Assigner.Typing.DYNAMIC) Map<String, Object> extMemberFields,
             @Advice.Local(value = "_INTERCEPTOR_ITR_$SERMANT_LOCAL") ListIterator<Interceptor> interceptorItr,
-            @Advice.Local(value = "_EXECUTE_CONTEXT_$SERMANT_LOCAL") ExecuteContext context) {
+            @Advice.Local(value = "_EXECUTE_CONTEXT_$SERMANT_LOCAL") ExecuteContext context) throws Throwable {
         interceptorItr = interceptorMap.get(methodKey).listIterator();
         context = ExecuteContext.forMemberMethod(obj, method, arguments, extStaticFields, extMemberFields);
         context = CommonMethodAdviser.onMethodEnter(context, interceptorItr);
@@ -83,6 +84,7 @@ public class AdviceMemberTemplate {
      * @param extMemberFields 额外成员属性集
      * @param interceptorItr  拦截器迭代器
      * @param context         执行上下文
+     * @throws Throwable      抛给宿主的异常
      */
     @Advice.OnMethodExit(suppress = Throwable.class, onThrowable = Throwable.class)
     public static void onMethodExit(
@@ -93,7 +95,7 @@ public class AdviceMemberTemplate {
             @Advice.FieldValue(value = "_EXT_MEMBER_FIELDS_$SERMANT",
                     readOnly = false, typing = Assigner.Typing.DYNAMIC) Map<String, Object> extMemberFields,
             @Advice.Local(value = "_INTERCEPTOR_ITR_$SERMANT_LOCAL") ListIterator<Interceptor> interceptorItr,
-            @Advice.Local(value = "_EXECUTE_CONTEXT_$SERMANT_LOCAL") ExecuteContext context) {
+            @Advice.Local(value = "_EXECUTE_CONTEXT_$SERMANT_LOCAL") ExecuteContext context) throws Throwable {
         context = context.isSkip() ? context : context.afterMethod(result, throwable);
         context = CommonMethodAdviser.onMethodExit(context, interceptorItr);
         result = context.getResult();

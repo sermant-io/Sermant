@@ -61,8 +61,10 @@ public class CommonMethodAdviser {
      * @param context        执行上下文
      * @param interceptorItr 拦截器双向迭代器
      * @return 执行上下文
+     * @throws Throwable     抛给宿主的异常
      */
-    public static ExecuteContext onMethodEnter(ExecuteContext context, ListIterator<Interceptor> interceptorItr) {
+    public static ExecuteContext onMethodEnter(ExecuteContext context, ListIterator<Interceptor> interceptorItr)
+        throws Throwable {
         return CommonBaseAdviser.onMethodEnter(context, interceptorItr,
                 new CommonBaseAdviser.ExceptionHandler() {
                     @Override
@@ -78,8 +80,10 @@ public class CommonMethodAdviser {
      * @param context        执行上下文
      * @param interceptorItr 拦截器双向迭代器
      * @return 执行上下文
+     * @throws Throwable     抛给宿主的异常
      */
-    public static ExecuteContext onMethodExit(ExecuteContext context, ListIterator<Interceptor> interceptorItr) {
+    public static ExecuteContext onMethodExit(ExecuteContext context, ListIterator<Interceptor> interceptorItr)
+        throws Throwable {
         return CommonBaseAdviser.onMethodExit(context, interceptorItr,
                 new CommonBaseAdviser.ExceptionHandler() {
                     @Override

@@ -49,6 +49,7 @@ public class AdviceConstTemplate {
      * @param extStaticFields 额外静态属性集
      * @param interceptorItr  拦截器迭代器
      * @param context         执行上下文
+     * @throws Throwable      抛给宿主的异常
      */
     @Advice.OnMethodEnter(suppress = Throwable.class)
     public static void onMethodEnter(
@@ -60,7 +61,7 @@ public class AdviceConstTemplate {
             @Advice.FieldValue(value = "_EXT_STATIC_FIELDS_$SERMANT",
                     readOnly = false, typing = Assigner.Typing.DYNAMIC) Map<String, Object> extStaticFields,
             @Advice.Local(value = "_INTERCEPTOR_ITR_$SERMANT_LOCAL") ListIterator<Interceptor> interceptorItr,
-            @Advice.Local(value = "_EXECUTE_CONTEXT_$SERMANT_LOCAL") ExecuteContext context) {
+            @Advice.Local(value = "_EXECUTE_CONTEXT_$SERMANT_LOCAL") ExecuteContext context) throws Throwable {
         interceptorItr = interceptorMap.get(methodKey).listIterator();
         context = ExecuteContext.forConstructor(cls, constructor, arguments, extStaticFields);
         context = CommonConstAdviser.onMethodEnter(context, interceptorItr);
@@ -76,6 +77,7 @@ public class AdviceConstTemplate {
      * @param extMemberFields 额外成员属性集
      * @param interceptorItr  拦截器迭代器
      * @param context         执行上下文
+     * @throws Throwable      抛给宿主的异常
      */
     @Advice.OnMethodExit(suppress = Throwable.class)
     public static void onMethodExit(
@@ -85,7 +87,7 @@ public class AdviceConstTemplate {
             @Advice.FieldValue(value = "_EXT_MEMBER_FIELDS_$SERMANT",
                     readOnly = false, typing = Assigner.Typing.DYNAMIC) Map<String, Object> extMemberFields,
             @Advice.Local(value = "_INTERCEPTOR_ITR_$SERMANT_LOCAL") ListIterator<Interceptor> interceptorItr,
-            @Advice.Local(value = "_EXECUTE_CONTEXT_$SERMANT_LOCAL") ExecuteContext context) {
+            @Advice.Local(value = "_EXECUTE_CONTEXT_$SERMANT_LOCAL") ExecuteContext context) throws Throwable {
         context = CommonConstAdviser.onMethodExit(context.afterConstructor(obj, extMemberFields), interceptorItr);
         extStaticFields = context.getExtStaticFields();
         extMemberFields = context.getExtMemberFields();

@@ -22,16 +22,17 @@ import com.huawei.discovery.utils.HttpConstants;
 import com.huawei.discovery.utils.PlugEffectWhiteBlackUtils;
 import com.huawei.discovery.utils.RequestInterceptorUtils;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import feign.Request;
-import feign.Response;
-
-import org.apache.http.HttpStatus;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 拦截获取服务列表
@@ -40,22 +41,31 @@ import java.util.function.Function;
  * @since 2022-09-27
  */
 public class FeignInvokeInterceptor extends MarkInterceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) throws Exception {
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
-        Request request = (Request)context.getArguments()[0];
+        Request request = (Request) context.getArguments()[0];
         Map<String, String> urlInfo = RequestInterceptorUtils.recovertUrl(request.url());
         if (!PlugEffectWhiteBlackUtils.isAllowRun(request.url(), urlInfo.get(HttpConstants.HTTP_URI_HOST),
             false)) {
             return context;
         }
         RequestInterceptorUtils.printRequestLog("feign", urlInfo);
-        invokerService.invoke(
-                buildInvokerFunc(context, request, urlInfo),
-                buildExFunc(request),
-                urlInfo.get(HttpConstants.HTTP_URI_HOST))
-                .ifPresent(context::skip);
+        Optional<Object> result = invokerService.invoke(
+            buildInvokerFunc(context, request, urlInfo),
+            ex -> ex,
+            urlInfo.get(HttpConstants.HTTP_URI_HOST));
+        if (result.isPresent()) {
+            Object obj = result.get();
+            if (obj instanceof Exception) {
+                LOGGER.log(Level.SEVERE, "request is error, uri is " + request.url(), (Exception) obj);
+                context.setThrowableOut((Exception) obj);
+                return context;
+            }
+            context.skip(obj);
+        }
         return context;
     }
 
@@ -67,24 +77,6 @@ public class FeignInvokeInterceptor extends MarkInterceptor {
                 request.headers(), request.body(), request.charset());
             return RequestInterceptorUtils.buildFunc(context, invokerContext).get();
         };
-    }
-
-    private Function<Exception, Object> buildExFunc(Request request) {
-        return ex -> buildErrorResponse(ex, request);
-    }
-
-    /**
-     * 构建feign响应
-     *
-     * @param ex
-     * @return 响应
-     */
-    private Response buildErrorResponse(Exception ex, Request request) {
-        Response.Builder builder = Response.builder();
-        builder.status(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        builder.reason(ex.getMessage());
-        builder.request(request);
-        return builder.build();
     }
 
     @Override

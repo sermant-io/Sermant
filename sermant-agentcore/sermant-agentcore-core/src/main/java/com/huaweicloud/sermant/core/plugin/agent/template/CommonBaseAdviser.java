@@ -39,9 +39,10 @@ public class CommonBaseAdviser {
      * @param interceptorItr 拦截器双向迭代器
      * @param beforeHandler  before的异常处理器
      * @return 执行上下文
+     * @throws Throwable     抛给宿主的异常
      */
     public static ExecuteContext onMethodEnter(ExecuteContext context, ListIterator<Interceptor> interceptorItr,
-            ExceptionHandler beforeHandler) {
+            ExceptionHandler beforeHandler) throws Throwable {
         ExecuteContext newContext = context;
         while (interceptorItr.hasNext()) {
             final Interceptor interceptor = interceptorItr.next();
@@ -56,6 +57,9 @@ public class CommonBaseAdviser {
             } catch (Throwable t) {
                 beforeHandler.handle(context, interceptor, t);
             }
+            if (newContext.getThrowableOut() != null) {
+                throw newContext.getThrowableOut();
+            }
         }
         return newContext;
     }
@@ -68,9 +72,10 @@ public class CommonBaseAdviser {
      * @param onThrowHandler onThrow的异常处理器
      * @param afterHandler   after的的异常处理器
      * @return 执行上下文
+     * @throws Throwable     抛给宿主的异常
      */
     public static ExecuteContext onMethodExit(ExecuteContext context, ListIterator<Interceptor> interceptorItr,
-            ExceptionHandler onThrowHandler, ExceptionHandler afterHandler) {
+            ExceptionHandler onThrowHandler, ExceptionHandler afterHandler) throws Throwable {
         ExecuteContext newContext = context;
         while (interceptorItr.hasPrevious()) {
             final Interceptor interceptor = interceptorItr.previous();
@@ -83,6 +88,9 @@ public class CommonBaseAdviser {
                 } catch (Throwable t) {
                     onThrowHandler.handle(newContext, interceptor, t);
                 }
+                if (newContext.getThrowableOut() != null) {
+                    throw newContext.getThrowableOut();
+                }
             }
             try {
                 final ExecuteContext tempContext = interceptor.after(newContext);
@@ -91,6 +99,9 @@ public class CommonBaseAdviser {
                 }
             } catch (Throwable t) {
                 afterHandler.handle(newContext, interceptor, t);
+            }
+            if (newContext.getThrowableOut() != null) {
+                throw newContext.getThrowableOut();
             }
         }
         return newContext;
