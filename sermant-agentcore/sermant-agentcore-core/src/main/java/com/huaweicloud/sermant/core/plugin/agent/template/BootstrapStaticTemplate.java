@@ -52,7 +52,7 @@ public class BootstrapStaticTemplate {
      * @return 是否跳过主要方法
      * @throws Exception 执行异常
      */
-    @Advice.OnMethodEnter(suppress = Throwable.class, skipOn = Advice.OnNonDefaultValue.class)
+    @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
     public static boolean onMethodEnter(
             @Advice.Origin Class<?> cls,
             @Advice.Origin Method method,
@@ -90,7 +90,7 @@ public class BootstrapStaticTemplate {
      * @param context        执行上下文
      * @throws Exception 执行异常
      */
-    @Advice.OnMethodExit(suppress = Throwable.class, onThrowable = Throwable.class)
+    @Advice.OnMethodExit(onThrowable = Throwable.class)
     public static void onMethodExit(
             @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object result,
             @Advice.Thrown Throwable throwable,

@@ -53,7 +53,7 @@ public class AdviceMemberTemplate {
      * @return 是否跳过主要方法
      * @throws Throwable      抛给宿主的异常
      */
-    @Advice.OnMethodEnter(suppress = Throwable.class, skipOn = Advice.OnNonDefaultValue.class)
+    @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
     public static boolean onMethodEnter(
             @Advice.This(typing = Assigner.Typing.DYNAMIC) Object obj,
             @Advice.Origin Method method,
@@ -86,7 +86,7 @@ public class AdviceMemberTemplate {
      * @param context         执行上下文
      * @throws Throwable      抛给宿主的异常
      */
-    @Advice.OnMethodExit(suppress = Throwable.class, onThrowable = Throwable.class)
+    @Advice.OnMethodExit(onThrowable = Throwable.class)
     public static void onMethodExit(
             @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object result,
             @Advice.Thrown Throwable throwable,

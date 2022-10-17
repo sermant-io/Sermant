@@ -51,7 +51,7 @@ public class AdviceConstTemplate {
      * @param context         执行上下文
      * @throws Throwable      抛给宿主的异常
      */
-    @Advice.OnMethodEnter(suppress = Throwable.class)
+    @Advice.OnMethodEnter
     public static void onMethodEnter(
             @Advice.Origin Class<?> cls,
             @Advice.Origin Constructor<?> constructor,
@@ -79,7 +79,7 @@ public class AdviceConstTemplate {
      * @param context         执行上下文
      * @throws Throwable      抛给宿主的异常
      */
-    @Advice.OnMethodExit(suppress = Throwable.class)
+    @Advice.OnMethodExit
     public static void onMethodExit(
             @Advice.This(typing = Assigner.Typing.DYNAMIC) Object obj,
             @Advice.FieldValue(value = "_EXT_STATIC_FIELDS_$SERMANT",
