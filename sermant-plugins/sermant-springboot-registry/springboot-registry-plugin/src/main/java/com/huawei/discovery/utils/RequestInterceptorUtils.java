@@ -133,21 +133,34 @@ public class RequestInterceptorUtils {
      * @return 调用器
      */
     public static Supplier<Object> buildFunc(ExecuteContext context, InvokerContext invokerContext) {
+        return buildFunc(context.getObject(), context.getMethod(), context.getArguments(), invokerContext);
+    }
+
+    /**
+     * 构建invoke回调方法函数
+     *
+     * @param target 目标
+     * @param arguments 参数
+     * @param method 方法
+     * @param invokerContext 调用上下文
+     * @return 调用器
+     */
+    public static Supplier<Object> buildFunc(Object target, Method method, Object[] arguments,
+            InvokerContext invokerContext) {
         return () -> {
             try {
-                final Method method = context.getMethod();
                 AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
                     method.setAccessible(true);
                     return method;
                 });
-                return method.invoke(context.getObject(), context.getArguments());
+                return method.invoke(target, arguments);
             } catch (IllegalAccessException e) {
                 LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "Can not invoke method [%s]",
-                    context.getMethod().getName()), e);
+                        method.getName()), e);
             } catch (InvocationTargetException e) {
                 invokerContext.setEx(e.getTargetException());
                 LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "invoke method [%s] failed",
-                    context.getMethod().getName()), e);
+                        method.getName()), e.getTargetException());
             }
             return Optional.empty();
         };

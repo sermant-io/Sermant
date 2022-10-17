@@ -29,6 +29,7 @@ import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.squareup.okhttp.HttpUrl;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Protocol;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -36,11 +37,14 @@ import com.squareup.okhttp.Response.Builder;
 
 import org.apache.http.HttpStatus;
 
+import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -50,7 +54,6 @@ import java.util.logging.Logger;
  * @since 2022-09-14
  */
 public class OkHttpClientInterceptor extends MarkInterceptor {
-
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String FIELD_NAME = "originalRequest";
@@ -72,12 +75,28 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
         RequestInterceptorUtils.printRequestLog("OkHttp", hostAndPath);
         AtomicReference<Request> rebuildRequest = new AtomicReference<>();
         rebuildRequest.set(request);
-        invokerService.invoke(
+        final Optional<Object> invoke = invokerService.invoke(
                 buildInvokerFunc(uri, hostAndPath, request, rebuildRequest, context),
                 buildExFunc(rebuildRequest),
-                hostAndPath.get(HttpConstants.HTTP_URI_HOST))
-                .ifPresent(context::skip);
+                hostAndPath.get(HttpConstants.HTTP_URI_HOST));
+        if (!invoke.isPresent() && isNoneReturnMethod(context.getMethod())) {
+            context.skip(null);
+        }
+        invoke.ifPresent(o -> setResultOrThrow(context, o, uri.getPath()));
         return context;
+    }
+
+    private void setResultOrThrow(ExecuteContext context, Object result, String url) {
+        if (result instanceof IOException) {
+            LOGGER.log(Level.SEVERE, "Ok http client request error, uri is " + url, (Exception) result);
+            context.setThrowableOut((Exception) result);
+            return;
+        }
+        context.skip(result);
+    }
+
+    private boolean isNoneReturnMethod(Method method) {
+        return method.getReturnType() == void.class || method.getReturnType() == Void.class;
     }
 
     private Optional<Request> getRequest(ExecuteContext context) {
@@ -98,17 +117,19 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
             final String method = request.method();
             Request newRequest = covertRequest(uri, hostAndPath, request, method, invokerContext.getServiceInstance());
             rebuildRequest.set(newRequest);
-            try {
-                context.setRawMemberFieldValue(FIELD_NAME, newRequest);
-            } catch (NoSuchFieldException e) {
-                LOGGER.warning("setRawMemberFieldValue originalRequest failed");
-                return context;
-            } catch (IllegalAccessException e) {
-                LOGGER.warning("setRawMemberFieldValue originalRequest failed");
-                return context;
-            }
-            return RequestInterceptorUtils.buildFunc(context, invokerContext).get();
+            final Object newCall = copyNewCall(context, newRequest);
+            return RequestInterceptorUtils.buildFunc(newCall, context.getMethod(), context.getArguments(),
+                    invokerContext).get();
         };
+    }
+
+    private Object copyNewCall(ExecuteContext executeContext, Request newRequest) {
+        final Optional<Object> client = ReflectUtils.getFieldValue(executeContext.getObject(), "client");
+        if (!client.isPresent()) {
+            return executeContext.getObject();
+        }
+        final OkHttpClient okHttpClient = (OkHttpClient) client.get();
+        return okHttpClient.newCall(newRequest);
     }
 
     private Request covertRequest(URI uri, Map<String, String> hostAndPath, Request request, String method,
@@ -125,10 +146,13 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
     /**
      * 构建okHttp响应
      *
-     * @param ex
+     * @param ex 指定异常
      * @return 响应
      */
-    private Response buildErrorResponse(Exception ex, Request request) {
+    private Object buildErrorResponse(Exception ex, Request request) {
+        if (ex instanceof IOException) {
+            return ex;
+        }
         Builder builder = new Builder();
         builder.code(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         builder.message(ex.getMessage());

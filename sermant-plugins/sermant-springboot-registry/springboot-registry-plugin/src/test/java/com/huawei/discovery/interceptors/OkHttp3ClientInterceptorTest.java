@@ -104,7 +104,9 @@ public class OkHttp3ClientInterceptorTest extends BaseTest {
     public void testRestTemplateInterceptor() throws Exception {
         OkHttpClient client = new OkHttpClient();
         Request request = createRequest(url);
-        ExecuteContext context = ExecuteContext.forMemberMethod(client.newCall(request), null, arguments, null, null);
+        ExecuteContext context = ExecuteContext.forMemberMethod(client.newCall(request),
+                String.class.getDeclaredMethod("trim"), arguments, null,
+                null);
         discoveryPluginConfig.setRealmName(realmName);
         initStrategy(PlugEffectWhiteBlackConstants.STRATEGY_ALL, "zookeeper-provider-demo");
         interceptor.doBefore(context);
