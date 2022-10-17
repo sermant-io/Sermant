@@ -90,6 +90,7 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
         if (result instanceof IOException) {
             LOGGER.log(Level.SEVERE, "Ok http client request error, uri is " + url, (Exception) result);
             context.setThrowableOut((Exception) result);
+            return;
         }
         context.skip(result);
     }

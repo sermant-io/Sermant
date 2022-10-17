@@ -88,6 +88,7 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
         if (result instanceof IOException) {
             LOGGER.log(Level.SEVERE, "Http client request failed, uri is " + url, (Exception) result);
             context.setThrowableOut((Exception) result);
+            return;
         }
         context.skip(result);
     }
