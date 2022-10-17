@@ -36,12 +36,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIUtils;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -78,8 +80,16 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
                 buildInvokerFunc(hostAndPath, uri, httpRequest, context),
                 buildExFunc(httpRequest),
                 hostAndPath.get(HttpConstants.HTTP_URI_HOST))
-                .ifPresent(context::skip);
+                .ifPresent(result -> this.setResultOrThrow(context, result, uri.getPath()));
         return context;
+    }
+
+    private void setResultOrThrow(ExecuteContext context, Object result, String url) {
+        if (result instanceof IOException) {
+            LOGGER.log(Level.SEVERE, "Http client request failed, uri is " + url, (Exception) result);
+            context.setThrowableOut((Exception) result);
+        }
+        context.skip(result);
     }
 
     private Function<InvokerContext, Object> buildInvokerFunc(Map<String, String> hostAndPath, URI uri,
@@ -110,6 +120,9 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
     private Function<Exception, Object> buildExFunc(HttpRequest httpRequest) {
         final ClassLoader appClassloader = Thread.currentThread().getContextClassLoader();
         return ex -> {
+            if (ex instanceof IOException) {
+                return ex;
+            }
             final ClassLoader pluginClassloader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(appClassloader);
             try {
