@@ -16,11 +16,19 @@
 
 package com.huawei.discovery.retry;
 
-import static org.junit.Assert.*;
+import com.huawei.discovery.config.LbConfig;
+import com.huawei.discovery.retry.config.DefaultRetryConfig;
+import com.huawei.discovery.retry.config.RetryConfig;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import org.apache.http.conn.ConnectTimeoutException;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
@@ -34,23 +42,29 @@ import java.util.List;
  * @author zhouss
  * @since 2022-10-14
  */
-public class RetryConfigTest {
-    private final List<Class<? extends Throwable>> retryEx = Arrays.asList(
-            ConnectException.class,
-            NoRouteToHostException.class);
+public class DefaultRetryConfigTest {
+    private final LbConfig lbConfig = new LbConfig();
 
-    private final List<String> rawRetryEx = Arrays.asList("org.apache.http.conn.ConnectTimeoutException",
-            "com.huawei.discovery.retry.RetryConfigTest$Ex");
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    @Before
+    public void setUp() throws Exception {
+        pluginConfigManagerMockedStatic = Mockito
+                .mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(LbConfig.class))
+                .thenReturn(lbConfig);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        pluginConfigManagerMockedStatic.close();
+    }
 
     @Test
     public void testExPredicate() {
-        final RetryConfig retryConfig = new RetryConfig(
-                retryEx,
-                rawRetryEx,
-                result -> false,
-                "test",
-                1,
-                1);
+        lbConfig.setSpecificExceptionsForRetry(
+                Collections.singletonList("com.huawei.discovery.retry.DefaultRetryConfigTest$Ex"));
+        final RetryConfig retryConfig = DefaultRetryConfig.create();
         Assert.assertTrue(retryConfig.getThrowablePredicate().test(new ConnectTimeoutException()));
         // 子类
         Assert.assertTrue(retryConfig.getThrowablePredicate().test(new MyEx()));

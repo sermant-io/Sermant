@@ -22,8 +22,9 @@ import com.huawei.discovery.entity.ServiceInstance;
 import com.huawei.discovery.retry.InvokerContext;
 import com.huawei.discovery.retry.Retry;
 import com.huawei.discovery.retry.Retry.RetryContext;
-import com.huawei.discovery.retry.RetryConfig;
 import com.huawei.discovery.retry.RetryException;
+import com.huawei.discovery.retry.config.DefaultRetryConfig;
+import com.huawei.discovery.retry.config.RetryConfig;
 import com.huawei.discovery.service.InvokerService;
 import com.huawei.discovery.service.ex.ProviderException;
 import com.huawei.discovery.service.lb.DiscoveryManager;
@@ -36,12 +37,7 @@ import com.huawei.discovery.service.retry.policy.RoundRobinRetryPolicy;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
-import java.net.ConnectException;
-import java.net.NoRouteToHostException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -59,16 +55,7 @@ import java.util.logging.Logger;
 public class RetryServiceImpl implements InvokerService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final String NAME = "SERMANT_DEFAULT_RETRY";
-
     private final RetryPolicy retryPolicy = new RoundRobinRetryPolicy();
-
-    private final List<Class<? extends Throwable>> retryEx = Arrays.asList(
-            ConnectException.class,
-            NoRouteToHostException.class);
-
-    private final List<String> rawRetryEx = Collections.singletonList(
-            "org.apache.http.conn.ConnectTimeoutException");
 
     private final Map<String, Retry> retryCache = new ConcurrentHashMap<>();
 
@@ -83,13 +70,7 @@ public class RetryServiceImpl implements InvokerService {
     public void start() {
         final LbConfig lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
         maxSize = lbConfig.getMaxRetryConfigCache();
-        defaultRetry = Retry.create(new RetryConfig(
-            retryEx,
-            rawRetryEx,
-            result -> false,
-            NAME,
-            lbConfig.getRetryWaitMs(),
-            lbConfig.getMaxRetry()));
+        defaultRetry = Retry.create(DefaultRetryConfig.create());
     }
 
     @Override
@@ -141,7 +122,8 @@ public class RetryServiceImpl implements InvokerService {
             final Optional<ServiceInstance> instance = choose(serviceName, isInRetry,
                     invokerContext.getServiceInstance());
             if (!instance.isPresent()) {
-                throw new ProviderException("Can not found provider service named: " + serviceName);
+                LOGGER.warning("Can not find provider service named : " + serviceName);
+                return Optional.empty();
             }
             invokerContext.setServiceInstance(instance.get());
             final InstanceStats stats = ServiceStatsManager.INSTANCE.getInstanceStats(instance.get());

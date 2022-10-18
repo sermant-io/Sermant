@@ -17,6 +17,7 @@
 package com.huawei.discovery.retry;
 
 import com.huawei.discovery.entity.Recorder;
+import com.huawei.discovery.retry.config.RetryConfig;
 
 /**
  * 重试器

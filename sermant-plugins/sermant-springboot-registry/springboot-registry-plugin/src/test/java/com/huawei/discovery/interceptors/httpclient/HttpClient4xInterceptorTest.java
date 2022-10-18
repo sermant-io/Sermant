@@ -22,7 +22,7 @@ import com.huawei.discovery.config.PlugEffectWhiteBlackConstants;
 import com.huawei.discovery.entity.DefaultServiceInstance;
 import com.huawei.discovery.entity.PlugEffectStategyCache;
 import com.huawei.discovery.retry.InvokerContext;
-import com.huawei.discovery.retry.RetryConfig;
+import com.huawei.discovery.retry.config.RetryConfig;
 import com.huawei.discovery.service.InvokerService;
 
 import com.huaweicloud.sermant.core.operation.OperationManager;
@@ -31,13 +31,11 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
-import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.RequestLine;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;

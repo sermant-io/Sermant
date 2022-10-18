@@ -32,7 +32,6 @@ import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Protocol;
 import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 import com.squareup.okhttp.Response.Builder;
 
 import org.apache.http.HttpStatus;
@@ -75,14 +74,11 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
         RequestInterceptorUtils.printRequestLog("OkHttp", hostAndPath);
         AtomicReference<Request> rebuildRequest = new AtomicReference<>();
         rebuildRequest.set(request);
-        final Optional<Object> invoke = invokerService.invoke(
+        invokerService.invoke(
                 buildInvokerFunc(uri, hostAndPath, request, rebuildRequest, context),
                 buildExFunc(rebuildRequest),
-                hostAndPath.get(HttpConstants.HTTP_URI_HOST));
-        if (!invoke.isPresent() && isNoneReturnMethod(context.getMethod())) {
-            context.skip(null);
-        }
-        invoke.ifPresent(o -> setResultOrThrow(context, o, uri.getPath()));
+                hostAndPath.get(HttpConstants.HTTP_URI_HOST))
+                .ifPresent(o -> setResultOrThrow(context, o, uri.getPath()));
         return context;
     }
 

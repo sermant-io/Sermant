@@ -38,7 +38,6 @@ import java.util.Map;
  * @since 2022-10-09
  */
 public class SpringEnvironmentInfoInterceptor implements Interceptor {
-
     private static final int DEFAULT_PORT = 8080;
 
     private static final String DEFAULT_APPLICATION_NAME = "default-application";
@@ -79,7 +78,9 @@ public class SpringEnvironmentInfoInterceptor implements Interceptor {
         if (RegisterContext.INSTANCE.getServiceInstance().getMetadata() == null) {
             Map<String, String> metadata = new HashMap<String, String>();
             ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
-            metadata.put("zone", serviceMeta.getZone());
+            if (StringUtils.isExist(serviceMeta.getZone())) {
+                metadata.put("zone", serviceMeta.getZone());
+            }
             RegisterContext.INSTANCE.getServiceInstance().setMetadata(metadata);
         }
     }

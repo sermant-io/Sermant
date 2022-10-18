@@ -16,19 +16,25 @@
 
 package com.huawei.discovery.retry;
 
+import com.huawei.discovery.config.LbConfig;
 import com.huawei.discovery.entity.Recorder;
 import com.huawei.discovery.retry.Retry.RetryContext;
+import com.huawei.discovery.retry.config.DefaultRetryConfig;
+import com.huawei.discovery.retry.config.RetryConfig;
 
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
+
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.net.NoRouteToHostException;
-import java.net.SocketTimeoutException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * 默认重试测试
@@ -37,11 +43,22 @@ import java.util.List;
  * @since 2022-10-12
  */
 public class DefaultRetryImplTest {
-    private final List<Class<? extends Throwable>> retryEx = Arrays.asList(
-            ConnectException.class,
-            SocketTimeoutException.class,
-            NoRouteToHostException.class,
-            IOException.class);
+    private final LbConfig lbConfig = new LbConfig();
+
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    @Before
+    public void setUp() throws Exception {
+        pluginConfigManagerMockedStatic = Mockito
+                .mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(LbConfig.class))
+                .thenReturn(lbConfig);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        pluginConfigManagerMockedStatic.close();
+    }
 
     @Test
     public void baseTest() {
@@ -60,7 +77,7 @@ public class DefaultRetryImplTest {
         context.onBefore(recorder);
         Mockito.verify(recorder, Mockito.times(1)).beforeRequest();
         long consumeTimeMs = 100L;
-        final IOException ioError = new IOException("io error");
+        final IOException ioError = new ConnectException("io error");
         context.onError(recorder, ioError, consumeTimeMs);
         Mockito.verify(recorder, Mockito.times(1)).errorRequest(ioError, consumeTimeMs);
         boolean isRight = false;
@@ -87,12 +104,15 @@ public class DefaultRetryImplTest {
     }
 
     private RetryConfig build(String name, boolean check) {
-        return new RetryConfig(
-                retryEx,
-                result -> check,
-                name,
-                1,
-                1);
+        final RetryConfig retryConfig = DefaultRetryConfig.create();
+        ReflectUtils.setFieldValue(retryConfig, "name", name);
+        ReflectUtils.setFieldValue(retryConfig, "resultPredicate", new Predicate<Object>() {
+            @Override
+            public boolean test(Object o) {
+                return check;
+            }
+        });
+        return retryConfig;
     }
 
 }

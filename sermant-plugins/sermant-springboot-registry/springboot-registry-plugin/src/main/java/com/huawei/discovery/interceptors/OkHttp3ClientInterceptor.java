@@ -31,13 +31,11 @@ import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.Response.Builder;
 
 import org.apache.http.HttpStatus;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
@@ -74,14 +72,11 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
         RequestInterceptorUtils.printRequestLog("OkHttp3", hostAndPath);
         AtomicReference<Request> rebuildRequest = new AtomicReference<>();
         rebuildRequest.set(request);
-        final Optional<Object> invoke = invokerService.invoke(
+        invokerService.invoke(
                 buildInvokerFunc(uri, hostAndPath, request, rebuildRequest, context),
                 buildExFunc(rebuildRequest),
-                hostAndPath.get(HttpConstants.HTTP_URI_HOST));
-        if (!invoke.isPresent() && isNoneReturnMethod(context.getMethod())) {
-            context.skip(null);
-        }
-        invoke.ifPresent(o -> setResultOrThrow(context, o, uri.getPath()));
+                hostAndPath.get(HttpConstants.HTTP_URI_HOST))
+                .ifPresent(o -> setResultOrThrow(context, o, uri.getPath()));
         return context;
     }
 
@@ -92,10 +87,6 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
             return;
         }
         context.skip(result);
-    }
-
-    private boolean isNoneReturnMethod(Method method) {
-        return method.getReturnType() == void.class || method.getReturnType() == Void.class;
     }
 
     private Optional<Request> getRequest(ExecuteContext context) {
