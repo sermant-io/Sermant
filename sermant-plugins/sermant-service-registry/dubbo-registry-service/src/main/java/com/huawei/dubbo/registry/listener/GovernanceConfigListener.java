@@ -20,11 +20,11 @@ import com.huawei.dubbo.registry.entity.GovernanceCache;
 import com.huawei.dubbo.registry.entity.GovernanceData;
 import com.huawei.dubbo.registry.service.RegistryService;
 
-import com.huaweicloud.sermant.core.plugin.subscribe.processor.OrderConfigEvent;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -54,8 +54,8 @@ public class GovernanceConfigListener implements DynamicConfigListener {
         GovernanceData governanceData = null;
         if (event.getEventType() != DynamicConfigEventType.DELETE) {
             String content = event.getContent();
-            if (event instanceof OrderConfigEvent) {
-                content = JSONObject.toJSONString(((OrderConfigEvent) event).getAllData());
+            if (StringUtils.isBlank(content)) {
+                return;
             }
             governanceData = JSONObject.parseObject(content, GovernanceData.class);
         }
