@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.router.config.handler;
 
-import com.huaweicloud.sermant.core.plugin.subscribe.processor.OrderConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
@@ -81,24 +80,6 @@ public class RouterConfigHandler extends AbstractConfigHandler {
     }
 
     private Map<String, String> getRouteRuleMap(DynamicConfigEvent event) {
-        if (event instanceof OrderConfigEvent) {
-            Map<String, Object> allData = ((OrderConfigEvent) event).getAllData();
-            String prefix =
-                RouterConstant.ROUTER_CONFIG_SERVICECOMB_KEY + "." + RouterConstant.ROUTER_CONFIG_ROUTE_RULE_KEY + ".";
-            Map<String, String> routeRuleMap = new HashMap<>();
-            for (Entry<String, Object> entry : allData.entrySet()) {
-                if (!entry.getKey().startsWith(prefix)) {
-                    continue;
-                }
-                Object value = entry.getValue();
-                if (value instanceof String) {
-                    routeRuleMap.put(entry.getKey().substring(prefix.length()), (String) value);
-                } else {
-                    routeRuleMap.put(entry.getKey().substring(prefix.length()), yaml.dump(value));
-                }
-            }
-            return routeRuleMap;
-        }
         String content = event.getContent();
         Map<String, Map<String, Map<String, String>>> load = yaml.load(content);
         if (CollectionUtils.isEmpty(load)) {

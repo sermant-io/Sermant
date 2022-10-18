@@ -138,11 +138,16 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
             targetHolder.getHolder().getOrDefault(originEvent.getKey(), new HashMap<>(CAP_SIZE));
         olderDataMap.clear();
         if (originEvent.getEventType() != DynamicConfigEventType.DELETE) {
-            Optional<Map<String, Object>> dataMap = yamlConverter.convert(originEvent.getContent(), Map.class);
-            if (!dataMap.isPresent()) {
+            Optional<Object> convert = yamlConverter.convert(originEvent.getContent(), Object.class);
+            if (!convert.isPresent()) {
                 return false;
             }
-            olderDataMap.putAll(dataMap.get());
+            Object obj = convert.get();
+            if (obj instanceof Map) {
+                olderDataMap.putAll((Map<String, Object>) obj);
+            } else {
+                olderDataMap.put(originEvent.getKey(), obj);
+            }
         }
         targetHolder.getHolder().put(originEvent.getKey(), olderDataMap);
         return true;

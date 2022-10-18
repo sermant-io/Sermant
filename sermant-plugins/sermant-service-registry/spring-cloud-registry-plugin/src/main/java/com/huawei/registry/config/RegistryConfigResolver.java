@@ -19,7 +19,6 @@ package com.huawei.registry.config;
 
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
-import com.huaweicloud.sermant.core.plugin.subscribe.processor.OrderConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.utils.MapUtils;
@@ -50,14 +49,7 @@ public abstract class RegistryConfigResolver {
         if (!isTargetConfig(event)) {
             return;
         }
-        boolean isUpdated;
-        if (event instanceof OrderConfigEvent) {
-            final Map<String, Object> allData = ((OrderConfigEvent) event).getAllData();
-            isUpdated = updateConfig(allData, event.getEventType());
-        } else {
-            isUpdated = this.updateWithDefaultMode(event);
-        }
-        if (isUpdated) {
+        if (updateWithDefaultMode(event)) {
             afterUpdateConfig();
         }
     }

@@ -16,9 +16,9 @@
 
 package com.huaweicloud.sermant.router.config.handler;
 
-import com.huaweicloud.sermant.core.plugin.subscribe.processor.OrderConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
@@ -30,10 +30,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * 路由配置处理器（服务维度）
@@ -79,23 +77,11 @@ public class ServiceConfigHandler extends AbstractConfigHandler {
     }
 
     private List<Map<String, Object>> getRule(DynamicConfigEvent event, String serviceName) {
-        if (event instanceof OrderConfigEvent) {
-            Map<String, Object> allData = ((OrderConfigEvent) event).getAllData();
-            Map<String, List<Map<String, Object>>> routeRuleMap = new HashMap<>();
-            for (Entry<String, Object> entry : allData.entrySet()) {
-                String key = entry.getKey();
-                if (!key.startsWith(RouterConstant.ROUTER_KEY_PREFIX + POINT)) {
-                    continue;
-                }
-                Object value = entry.getValue();
-                if (value instanceof String) {
-                    routeRuleMap.put(entry.getKey(), yaml.loadAs((String) value, List.class));
-                } else {
-                    routeRuleMap.put(entry.getKey(), (List<Map<String, Object>>) value);
-                }
-            }
-            return routeRuleMap.get(RouterConstant.ROUTER_KEY_PREFIX + POINT + serviceName);
+        String content = event.getContent();
+        if (StringUtils.isBlank(content)) {
+            return Collections.emptyList();
         }
-        return yaml.loadAs(event.getContent(), List.class);
+        Map<String, List<Map<String, Object>>> map = yaml.load(content);
+        return map.get(RouterConstant.ROUTER_KEY_PREFIX + POINT + serviceName);
     }
 }
