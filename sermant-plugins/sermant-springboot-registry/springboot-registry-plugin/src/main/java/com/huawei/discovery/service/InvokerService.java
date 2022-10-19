@@ -17,7 +17,7 @@
 package com.huawei.discovery.service;
 
 import com.huawei.discovery.retry.InvokerContext;
-import com.huawei.discovery.retry.RetryConfig;
+import com.huawei.discovery.retry.config.RetryConfig;
 
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 

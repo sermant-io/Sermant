@@ -81,7 +81,9 @@ public class ApplicationConfigInterceptor extends AbstractInterceptor {
     private Map<String, String> putParameters(Map<String, String> parameters) {
         Map<String, String> map = Optional.ofNullable(parameters).orElseGet(HashMap::new);
         map.put(RouterConstant.VERSION_KEY, routerConfig.getRouterVersion());
-        Optional.ofNullable(routerConfig.getZone()).ifPresent(zone -> map.put(RouterConstant.ZONE_KEY, zone));
+        if (StringUtils.isExist(routerConfig.getZone())) {
+            map.putIfAbsent(RouterConstant.ZONE_KEY, routerConfig.getZone());
+        }
         Map<String, String> metaParameters = routerConfig.getParameters();
         if (!CollectionUtils.isEmpty(metaParameters)) {
             metaParameters.forEach((key, value) -> map.put(RouterConstant.PARAMETERS_KEY_PREFIX + key, value));

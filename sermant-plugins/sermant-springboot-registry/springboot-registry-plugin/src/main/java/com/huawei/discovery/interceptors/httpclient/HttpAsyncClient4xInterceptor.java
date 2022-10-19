@@ -38,6 +38,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIUtils;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 
 import java.net.URI;
@@ -180,16 +181,32 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
                 final Optional<Object> invokerResult = invokerService
                         .invoke(buildInvokerFunc(timeout, timeUnit, context, asyncContext), ex -> ex, serviceName);
                 if (invokerResult.isPresent()) {
+                    notify(asyncContext, invokerResult.get());
                     return invokerResult.get();
                 }
-
-                return futureInvoke(future, timeout, timeUnit);
+                final HttpResponse response = futureInvoke(future, timeout, timeUnit);
+                notify(asyncContext, response);
+                return response;
             } catch (ExecutionException | InterruptedException | TimeoutException ex) {
+                notify(asyncContext, ex);
                 return ex;
             } finally {
                 HttpAsyncUtils.remove();
             }
         };
+    }
+
+    private void notify(HttpAsyncContext asyncContext, Object response) {
+        final Object callback = asyncContext.getCallback();
+        if (callback == null) {
+            return;
+        }
+        FutureCallback<HttpResponse> cur = (FutureCallback<HttpResponse>) callback;
+        if (response instanceof Throwable) {
+            cur.failed((Exception) response);
+        } else {
+            cur.completed((HttpResponse) response);
+        }
     }
 
     private void cleanCallback() {
@@ -211,11 +228,9 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
         return invokerContext -> {
             try {
                 resetResponseConsumer(context);
-                fillCallBack(context);
                 copyToCurThread(asyncContext, invokerContext.getServiceInstance());
                 final Supplier<Object> supplier = RequestInterceptorUtils.buildFunc(context, invokerContext);
                 final Object future = supplier.get();
-                fillFutureCallBack(future, asyncContext.getCallback());
                 try {
                     return futureInvoke((Future<HttpResponse>) future, timeout, timeUnit);
                 } catch (ExecutionException ex) {
@@ -240,15 +255,6 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
         HttpAsyncUtils.getOrCreateContext().setUri(asyncContext.getUri());
         HttpAsyncUtils.getOrCreateContext().setMethod(asyncContext.getMethod());
         HttpAsyncUtils.getOrCreateContext().setOriginHostName(asyncContext.getOriginHostName());
-    }
-
-    private void fillFutureCallBack(Object future, Object callback) {
-        final Optional<Object> resultFuture = ReflectUtils.getFieldValue(future, "future");
-        resultFuture.ifPresent(o -> ReflectUtils.setFieldValue(o, "callback", callback));
-    }
-
-    private void fillCallBack(ExecuteContext context) {
-        context.getArguments()[HttpAsyncContext.CALL_BACK_INDEX] = HttpAsyncUtils.getOrCreateContext().getCallback();
     }
 
     private void resetResponseConsumer(ExecuteContext context) {

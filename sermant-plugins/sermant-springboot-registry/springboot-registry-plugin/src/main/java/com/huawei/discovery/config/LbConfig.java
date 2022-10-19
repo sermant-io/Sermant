@@ -19,6 +19,9 @@ package com.huawei.discovery.config;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * 负载均衡配置
  *
@@ -95,6 +98,26 @@ public class LbConfig implements PluginConfig {
     private long retryWaitMs = LbConstants.DEFAULT_RETRY_WAIT_MS;
 
     /**
+     * 重试场景, 针对{@link java.net.SocketTimeoutException}: connect timed out是否需要重试, 默认开启
+     */
+    private boolean enableSocketConnectTimeoutRetry = true;
+
+    /**
+     * 重试场景, 针对{@link java.net.SocketTimeoutException}: read timed out是否需要重试, 默认开启
+     */
+    private boolean enableSocketReadTimeoutRetry = true;
+
+    /**
+     * 重试场景, 针对{@link java.util.concurrent.TimeoutException}, 是否需要重试, 默认开启, 该超时多用于异步场景, 例如Future, MinimalHttpAsyncClient
+     */
+    private boolean enableTimeoutExRetry = true;
+
+    /**
+     * 针对额外指定异常进行重试, 请填写类的全限定名, 目前仅支持jdk异常, 且是否触发该异常由拦截点而定, 若类加载器无法加载则无法生效
+     */
+    private List<String> specificExceptionsForRetry = Collections.emptyList();
+
+    /**
      * 实例缓存过期时间, 若该值小于0, 则永远不会过期
      */
     private long instanceCacheExpireTime = LbConstants.DEFAULT_CACHE_EXPIRE_SEC;
@@ -138,6 +161,38 @@ public class LbConfig implements PluginConfig {
      * 实例状态统计时间窗口, 默认10分钟, 每一个时间窗口的开始, 统计都会清0
      */
     private long instanceStatTimeWindowMs = LbConstants.DEFAULT_INSTANCE_STATE_TIME_WINDOW_MS;
+
+    public boolean isEnableSocketReadTimeoutRetry() {
+        return enableSocketReadTimeoutRetry;
+    }
+
+    public void setEnableSocketReadTimeoutRetry(boolean enableSocketReadTimeoutRetry) {
+        this.enableSocketReadTimeoutRetry = enableSocketReadTimeoutRetry;
+    }
+
+    public boolean isEnableTimeoutExRetry() {
+        return enableTimeoutExRetry;
+    }
+
+    public void setEnableTimeoutExRetry(boolean enableTimeoutExRetry) {
+        this.enableTimeoutExRetry = enableTimeoutExRetry;
+    }
+
+    public List<String> getSpecificExceptionsForRetry() {
+        return specificExceptionsForRetry;
+    }
+
+    public void setSpecificExceptionsForRetry(List<String> specificExceptionsForRetry) {
+        this.specificExceptionsForRetry = specificExceptionsForRetry;
+    }
+
+    public boolean isEnableSocketConnectTimeoutRetry() {
+        return enableSocketConnectTimeoutRetry;
+    }
+
+    public void setEnableSocketConnectTimeoutRetry(boolean enableSocketConnectTimeoutRetry) {
+        this.enableSocketConnectTimeoutRetry = enableSocketConnectTimeoutRetry;
+    }
 
     public long getRefreshTimerInterval() {
         return refreshTimerInterval;
