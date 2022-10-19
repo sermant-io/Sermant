@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.config.DynamicConfig;
+import com.huaweicloud.sermant.core.utils.AesUtil;
 
 import org.apache.zookeeper.AddWatchMode;
 import org.apache.zookeeper.CreateMode;
@@ -45,19 +46,26 @@ import java.util.logging.Logger;
  */
 public class ZooKeeperBufferedClient implements Closeable {
     /**
-     * 动态配置信息
-     */
-    private static final DynamicConfig CONFIG = ConfigManager.getConfig(DynamicConfig.class);
-
-    /**
      * zk路径分隔符
      */
     public static final char ZK_PATH_SEPARATOR = '/';
 
     /**
+     * zk授权分隔符
+     */
+    public static final char ZK_AUTH_SEPARATOR = ':';
+
+    /**
+     * 动态配置信息
+     */
+    private static final DynamicConfig CONFIG = ConfigManager.getConfig(DynamicConfig.class);
+
+    /**
      * 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final String SCHEME = "digest";
 
     /**
      * zk客户端对象
@@ -81,6 +89,53 @@ public class ZooKeeperBufferedClient implements Closeable {
                 }
             }
         });
+        checkConnect();
+    }
+
+    /**
+     * 新建ZooKeeperBufferedClient，初始化zk客户端，并提供过期重连机制
+     *
+     * @param connectString 链接地址
+     * @param sessionTimeout 超市时间
+     * @param userName 用户名
+     * @param password 用户密码
+     * @param key 用户密钥
+     */
+    public ZooKeeperBufferedClient(String connectString, int sessionTimeout, String userName,
+                                   String password, String key) {
+        String authInfo = userName + ZK_AUTH_SEPARATOR + AesUtil.decrypt(key, password).orElse(null);
+        zkClient = newZkClient(connectString, sessionTimeout, new Watcher() {
+            @Override
+            public void process(WatchedEvent event) {
+                // 连接过期重连
+                if (event.getState() == Event.KeeperState.Expired) {
+                    zkClient = newZkClient(connectString, sessionTimeout, this);
+                    waitConnect();
+                    zkClient.addAuthInfo(SCHEME, authInfo.getBytes(CommonConstant.DEFAULT_CHARSET));
+                }
+            }
+        });
+        checkConnect();
+        zkClient.addAuthInfo(SCHEME, authInfo.getBytes(CommonConstant.DEFAULT_CHARSET));
+    }
+
+    /**
+     * 检验链接情况
+     *
+     * @throws ZooKeeperInitException zk初始化异常
+     */
+    private void checkConnect() {
+        waitConnect();
+        if (zkClient.getState() != ZooKeeper.States.CONNECTED
+                && zkClient.getState() != ZooKeeper.States.CONNECTEDREADONLY) {
+            throw new ZooKeeperInitException();
+        }
+    }
+
+    /**
+     * 链接等待
+     */
+    private void waitConnect() {
         int tryNum = 0;
 
         // 阻塞zookeeper连接过程，防止连接状态中导致依赖该服务的插件服务初始化失败
@@ -91,10 +146,6 @@ public class ZooKeeperBufferedClient implements Closeable {
                 // ignored
             }
         }
-        if (zkClient.getState() != ZooKeeper.States.CONNECTED
-            && zkClient.getState() != ZooKeeper.States.CONNECTEDREADONLY) {
-            throw new ZooKeeperInitException();
-        }
     }
 
     /**
@@ -104,6 +155,7 @@ public class ZooKeeperBufferedClient implements Closeable {
      * @param sessionTimeout 会话超时时间
      * @param watcher        默认观察器
      * @return zk客户端
+     * @throws ZooKeeperInitException zk初始化异常
      */
     private ZooKeeper newZkClient(String connectString, int sessionTimeout, Watcher watcher) {
         try {
@@ -117,6 +169,7 @@ public class ZooKeeperBufferedClient implements Closeable {
      * 获取zk客户端，若客户端断开，则抛出异常
      *
      * @return zk客户端
+     * @throws ZooKeeperInitException zk初始化异常
      */
     private ZooKeeper getZkClient() {
         final ZooKeeper.States state = zkClient.getState();

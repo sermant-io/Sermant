@@ -55,7 +55,12 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
 
     @Override
     public void start() {
-        zkClient = new ZooKeeperBufferedClient(CONFIG.getServerAddress(), CONFIG.getTimeoutValue());
+        if (CONFIG.isEnableAuth()) {
+            zkClient = new ZooKeeperBufferedClient(CONFIG.getServerAddress(), CONFIG.getTimeoutValue(),
+                    CONFIG.getUserName(), CONFIG.getPassword(), CONFIG.getPrivateKey());
+        } else {
+            zkClient = new ZooKeeperBufferedClient(CONFIG.getServerAddress(), CONFIG.getTimeoutValue());
+        }
     }
 
     @Override

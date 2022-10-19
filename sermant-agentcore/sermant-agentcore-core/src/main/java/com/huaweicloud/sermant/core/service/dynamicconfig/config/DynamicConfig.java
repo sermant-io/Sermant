@@ -72,6 +72,14 @@ public class DynamicConfig implements BaseConfig {
     @ConfigFieldKey("dynamicConfigType")
     private String serviceType = "NOP";
 
+    private String userName;
+
+    private String password;
+
+    private String privateKey;
+
+    private boolean enableAuth = false;
+
     public int getTimeoutValue() {
         return timeoutValue;
     }
@@ -118,5 +126,37 @@ public class DynamicConfig implements BaseConfig {
 
     public void setConnectRetryTimes(int connectRetryTimes) {
         this.connectRetryTimes = connectRetryTimes;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
+    }
+
+    public boolean isEnableAuth() {
+        return enableAuth;
+    }
+
+    public void setEnableAuth(boolean enableAuth) {
+        this.enableAuth = enableAuth;
     }
 }
