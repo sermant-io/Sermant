@@ -63,11 +63,11 @@ public class Sender implements Runnable {
             Message.NettyMessage message = Message.NettyMessage.newBuilder()
                 .setMessageType(Message.NettyMessage.MessageType.SERVICE_DATA).addAllServiceData(list).build();
             if (channel == null) {
-                LOGGER.info("channel is null");
+                LOGGER.warn("channel is null");
+            } else {
+                channel.writeAndFlush(message);
+                LOGGER.info("The message is sent to the gateway successfully. Number of messages: {}", list.size());
             }
-
-            channel.writeAndFlush(message);
-            LOGGER.info("The message is sent to the gateway successfully. Number of messages: {}", list.size());
         }
     }
 }
