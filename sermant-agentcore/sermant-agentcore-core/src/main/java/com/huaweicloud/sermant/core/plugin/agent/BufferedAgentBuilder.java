@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.core.plugin.agent;
 
+import com.huaweicloud.sermant.core.classloader.FrameworkClassLoader;
 import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
@@ -115,7 +116,7 @@ public class BufferedAgentBuilder {
 
     /**
      * 设置扫描的过滤规则
-     * <p>注意，数组类型，8中基础类型，以及{@link PluginClassLoader}加载的类默认不增强，直接被过滤
+     * <p>注意，数组类型，8中基础类型，以及{@link PluginClassLoader},{@link FrameworkClassLoader}加载的类默认不增强，直接被过滤
      * <p>其他类若符合配置中{@link AgentConfig#getIgnoredPrefixes}指定的前缀之一，则被过滤
      *
      * @return BufferedAgentBuilder本身
@@ -130,7 +131,8 @@ public class BufferedAgentBuilder {
                     @Override
                     public boolean matches(TypeDescription typeDesc, ClassLoader classLoader, JavaModule module,
                             Class<?> classBeingRedefined, ProtectionDomain protectionDomain) {
-                        if (typeDesc.isArray() || typeDesc.isPrimitive()) {
+                        if (typeDesc.isArray() || typeDesc.isPrimitive()
+                            || classLoader instanceof FrameworkClassLoader) {
                             return true;
                         }
                         final String typeName = typeDesc.getTypeName();
