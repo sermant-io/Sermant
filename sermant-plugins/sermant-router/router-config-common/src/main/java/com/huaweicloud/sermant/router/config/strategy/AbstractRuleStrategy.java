@@ -50,17 +50,21 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
 
     private final Function<I, Map<String, String>> mapper;
 
+    private final String source;
+
     /**
      * 构造方法
      *
+     * @param source 来源
      * @param matchInstanceStrategy 匹配上的策略
      * @param mismatchInstanceStrategy 匹配不上的策略
      * @param zoneInstanceStrategy 区域路由策略
      * @param mapper 获取metadata的方法
      */
-    public AbstractRuleStrategy(InstanceStrategy<I, Map<String, String>> matchInstanceStrategy,
+    public AbstractRuleStrategy(String source, InstanceStrategy<I, Map<String, String>> matchInstanceStrategy,
         InstanceStrategy<I, List<Map<String, String>>> mismatchInstanceStrategy,
         InstanceStrategy<I, String> zoneInstanceStrategy, Function<I, Map<String, String>> mapper) {
+        this.source = source;
         this.matchInstanceStrategy = matchInstanceStrategy;
         this.mismatchInstanceStrategy = mismatchInstanceStrategy;
         this.zoneInstanceStrategy = zoneInstanceStrategy;
@@ -104,10 +108,11 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
         boolean mismatch = CollectionUtils.isEmpty(resultList);
         if (mismatch) {
             LOGGER.warning(String.format(Locale.ROOT,
-                "Cannot match instances, will return all instances, serviceName is %s, tags is %s.",
+                "Cannot match instances, will return all instances, %s serviceName is %s, tags is %s.", source,
                 serviceName, JSONObject.toJSONString(tags)));
         } else {
-            LOGGER.fine("Match instances.");
+            LOGGER.fine(String.format(Locale.ROOT, "Match instances, %s serviceName is %s, tags is %s.", source,
+                serviceName, JSONObject.toJSONString(tags)));
         }
         return mismatch ? instances : resultList;
     }

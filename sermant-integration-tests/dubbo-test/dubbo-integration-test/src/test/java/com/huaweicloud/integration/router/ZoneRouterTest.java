@@ -56,7 +56,9 @@ public class ZoneRouterTest {
     public void testZoneRouter() throws InterruptedException {
         // 调用相同区域实例30次
         for (int i = 0; i < TIMES; i++) {
-            Assertions.assertEquals(zone, REST_TEMPLATE.getForObject(BASE_URL + "getZone?exit=false", String.class));
+            String result = REST_TEMPLATE.getForObject(BASE_URL + "getZone?exit=false", String.class);
+            Assertions.assertNotNull(result);
+            Assertions.assertTrue(result.contains(zone));
         }
 
         // 停掉相同区域实例
@@ -66,7 +68,9 @@ public class ZoneRouterTest {
         // 等待实例下线
         for (int i = 0; i < WAIT_SECONDS; i++) {
             try {
-                if (!zone.equals(REST_TEMPLATE.getForObject(BASE_URL + "getZone?exit=false", String.class))) {
+                String result = REST_TEMPLATE.getForObject(BASE_URL + "getZone?exit=false", String.class);
+                Assertions.assertNotNull(result);
+                if (!result.contains(zone)) {
                     // 下游实例已下线
                     break;
                 }
@@ -78,7 +82,9 @@ public class ZoneRouterTest {
 
         // 调用不同区域实例30次
         for (int i = 0; i < TIMES; i++) {
-            Assertions.assertNotEquals(zone, REST_TEMPLATE.getForObject(BASE_URL + "getZone?exit=false", String.class));
+            String result = REST_TEMPLATE.getForObject(BASE_URL + "getZone?exit=false", String.class);
+            Assertions.assertNotNull(result);
+            Assertions.assertFalse(result.contains(zone));
         }
     }
 }

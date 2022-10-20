@@ -2,7 +2,7 @@
 
 [简体中文](FAQ-zh.md) | [English](FAQ.md)
 
-## **What does the input parameter “appName” mean**
+## **What does the input parameter "appName" mean**
 
 - The `appName` represents the name of the host application. Multiple instances can have the same `appName` and different `instanceName`.
 

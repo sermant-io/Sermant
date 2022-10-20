@@ -4,7 +4,7 @@
 
 This document describes the migration capability of the [service registration plugin](../../../sermant-plugins/sermant-service-registry) based on the Spring Cloud framework registration center.
 
-Dubbo migration  referring [Dubbo Registry Migration](dubbo-registry-migiration.md)
+Dubbo migration referring [Dubbo Registry Migration](dubbo-registry-migiration.md)
 
 ## Function
 

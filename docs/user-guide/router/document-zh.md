@@ -2,7 +2,9 @@
 
 [简体中文](document-zh.md) | [English](document.md)
 
-本文档主要介绍[标签路由插件](../../../sermant-plugins/sermant-router)的使用方法
+本文档主要介绍[标签路由插件](../../../sermant-plugins/sermant-router)的使用方法。
+
+区域路由见[区域路由](zone-router-zh.md)。
 
 ## 功能
 

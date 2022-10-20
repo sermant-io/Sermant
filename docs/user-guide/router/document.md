@@ -4,6 +4,8 @@
 
 This document is used to introduce the usage of [tag router](../../../sermant-plugins/sermant-router)
 
+Zone Router referring [Zone Router](zone-router.md).
+
 ## Function
 
 In the case of multiple versions and instances of microservices, the routing between services is managed by configuring routing rules to achieve business purposes such as lossless upgrade and application dial test.
@@ -107,7 +109,7 @@ The parameters are described as follows:
 
 - Prerequisites [correctly packed Sermant](../../README.md)
 
-- Registration center using Huawei CSE, download [Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html) ，解压后按照文档说明进行启动
+- Registration center using Huawei CSE, download [Local-CSE](https://support.huaweicloud.com/devg-cse/cse_devg_0036.html), unzip and follow the documentation to start.
 
 - Configuring Routing Rules
 
