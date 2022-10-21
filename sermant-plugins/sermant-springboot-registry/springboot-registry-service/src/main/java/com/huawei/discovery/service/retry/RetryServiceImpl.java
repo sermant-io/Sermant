@@ -26,11 +26,11 @@ import com.huawei.discovery.retry.RetryException;
 import com.huawei.discovery.retry.config.DefaultRetryConfig;
 import com.huawei.discovery.retry.config.RetryConfig;
 import com.huawei.discovery.service.InvokerService;
-import com.huawei.discovery.service.ex.ProviderException;
 import com.huawei.discovery.service.lb.DiscoveryManager;
 import com.huawei.discovery.service.lb.LbConstants;
 import com.huawei.discovery.service.lb.stats.InstanceStats;
 import com.huawei.discovery.service.lb.stats.ServiceStatsManager;
+import com.huawei.discovery.service.retry.policy.PolicyContext;
 import com.huawei.discovery.service.retry.policy.RetryPolicy;
 import com.huawei.discovery.service.retry.policy.RoundRobinRetryPolicy;
 
@@ -41,6 +41,7 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -55,9 +56,9 @@ import java.util.logging.Logger;
 public class RetryServiceImpl implements InvokerService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private final RetryPolicy retryPolicy = new RoundRobinRetryPolicy();
-
     private final Map<String, Retry> retryCache = new ConcurrentHashMap<>();
+
+    private RetryPolicy retryPolicy;
 
     /**
      * 最大配置数量
@@ -71,6 +72,22 @@ public class RetryServiceImpl implements InvokerService {
         final LbConfig lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
         maxSize = lbConfig.getMaxRetryConfigCache();
         defaultRetry = Retry.create(DefaultRetryConfig.create());
+        initRetryPolicy(lbConfig);
+    }
+
+    private void initRetryPolicy(LbConfig lbConfig) {
+        for (RetryPolicy policy : ServiceLoader.load(RetryPolicy.class, this.getClass().getClassLoader())) {
+            if (policy.name().equalsIgnoreCase(lbConfig.getRetryPolicy())) {
+                LOGGER.warning(String.format(Locale.ENGLISH, "Use retry policy %s!", lbConfig.getRetryPolicy()));
+                retryPolicy = policy;
+                break;
+            }
+        }
+        if (retryPolicy == null) {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Can not match retry policy %s, replace by RoundRobin",
+                    lbConfig.getRetryPolicy()));
+            retryPolicy = new RoundRobinRetryPolicy();
+        }
     }
 
     @Override
@@ -116,11 +133,12 @@ public class RetryServiceImpl implements InvokerService {
             throws Exception {
         final RetryContext<Recorder> context = retry.context();
         final InvokerContext invokerContext = new InvokerContext();
+        final PolicyContext policyContext = new PolicyContext();
         boolean isInRetry = false;
         do {
             final long start = System.currentTimeMillis();
-            final Optional<ServiceInstance> instance = choose(serviceName, isInRetry,
-                    invokerContext.getServiceInstance());
+            policyContext.setServiceInstance(invokerContext.getServiceInstance());
+            final Optional<ServiceInstance> instance = choose(serviceName, isInRetry, policyContext);
             if (!instance.isPresent()) {
                 LOGGER.warning("Can not find provider service named : " + serviceName);
                 return Optional.empty();
@@ -159,9 +177,9 @@ public class RetryServiceImpl implements InvokerService {
         context.onError(stats, ex, consumeTimeMs);
     }
 
-    private Optional<ServiceInstance> choose(String serviceName, boolean isRetry, ServiceInstance serviceInstance) {
-        if (isRetry) {
-            final Optional<ServiceInstance> select = retryPolicy.select(serviceName, serviceInstance);
+    private Optional<ServiceInstance> choose(String serviceName, boolean isInRetry, PolicyContext policyContext) {
+        if (isInRetry) {
+            final Optional<ServiceInstance> select = retryPolicy.select(serviceName, policyContext);
             select.ifPresent(instance -> LOGGER.info(String.format(Locale.ENGLISH,
                     "Start retry for invoking instance [id: %s] of service [%s] at time %s",
                     instance.getMetadata().get(LbConstants.SERMANT_DISCOVERY), serviceName, LocalDateTime.now())));

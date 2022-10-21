@@ -74,6 +74,11 @@ public class LbConstants {
     public static final int DEFAULT_MAX_RETRY = 3;
 
     /**
+     * 最大相同实例的重试次数
+     */
+    public static final int DEFAULT_MAX_SAME_RETRY = 3;
+
+    /**
      * 重试等待时间, 默认一秒
      */
     public static final long DEFAULT_RETRY_WAIT_MS = 1000L;

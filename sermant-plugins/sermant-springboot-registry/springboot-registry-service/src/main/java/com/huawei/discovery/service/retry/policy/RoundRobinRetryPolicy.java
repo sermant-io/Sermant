@@ -34,7 +34,8 @@ public class RoundRobinRetryPolicy implements RetryPolicy {
     private final Map<String, RoundRobinLoadbalancer> lbCache = new ConcurrentHashMap<>();
 
     @Override
-    public Optional<ServiceInstance> select(String serviceName, ServiceInstance lastInstance) {
+    public Optional<ServiceInstance> select(String serviceName, PolicyContext policyContext) {
+        final ServiceInstance lastInstance = policyContext.getServiceInstance();
         return DiscoveryManager.INSTANCE.choose(serviceName, lbCache.computeIfAbsent(serviceName,
             name -> new RoundRobinLoadbalancer()), (serviceName1, serviceInstances) -> {
                 if (serviceInstances == null || serviceInstances.size() <= 1) {
@@ -43,5 +44,10 @@ public class RoundRobinRetryPolicy implements RetryPolicy {
                 serviceInstances.removeIf(instance -> instance.equals(lastInstance));
                 return serviceInstances;
             });
+    }
+
+    @Override
+    public String name() {
+        return "RoundRobin";
     }
 }

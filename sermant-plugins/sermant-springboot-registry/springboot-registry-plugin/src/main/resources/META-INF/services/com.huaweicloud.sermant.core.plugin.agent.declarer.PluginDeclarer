@@ -23,4 +23,6 @@ com.huawei.discovery.declarers.FeignInvokeDeclarer
 com.huawei.discovery.declarers.OkHttp3ClientDeclarer
 com.huawei.discovery.declarers.SpringEnvironmentInfoDeclarer
 com.huawei.discovery.declarers.SpringBootDeclarer
+com.huawei.discovery.declarers.httpconnection.HttpUrlConnectionConnectDeclarer
+com.huawei.discovery.declarers.httpconnection.HttpUrlConnectionResponseCodeDeclarer
 

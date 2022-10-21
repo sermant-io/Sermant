@@ -54,8 +54,10 @@ public class ZookeeperLocatorInterceptorTest {
             .thenReturn(new YamlConverterImpl());
 
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        final DynamicConfiguration configuration = new DynamicConfiguration();
+        configuration.setEnableOriginConfigCenter(false);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
-            .thenReturn(new DynamicConfiguration());
+            .thenReturn(configuration);
 
         ConfigHolder.INSTANCE.getConfigSources()
             .removeIf(configSource -> configSource.getClass() == OriginConfigDisableSource.class);
@@ -72,7 +74,7 @@ public class ZookeeperLocatorInterceptorTest {
         try {
             final ZookeeperLocatorInterceptor zookeeperLocatorInterceptor = new ZookeeperLocatorInterceptor();
             final ExecuteContext context = zookeeperLocatorInterceptor.doBefore(buildContext());
-            Assert.assertFalse(context.isSkip());
+            Assert.assertTrue(context.isSkip());
             ConfigHolder.INSTANCE.getConfigSources().add(new OriginConfigDisableSource("test"));
             final ExecuteContext closeContext = zookeeperLocatorInterceptor.doBefore(buildContext());
             Assert.assertTrue(closeContext.isSkip());

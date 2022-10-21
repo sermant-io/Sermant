@@ -31,8 +31,15 @@ public interface RetryPolicy {
      * 选择服务, 基于重试策略选择重试逻辑
      *
      * @param serviceName 服务名
-     * @param lastInstance 上一个选择实例
+     * @param policyContext 重试上下文
      * @return 选择的实例
      */
-    Optional<ServiceInstance> select(String serviceName, ServiceInstance lastInstance);
+    Optional<ServiceInstance> select(String serviceName, PolicyContext policyContext);
+
+    /**
+     * 重试策略名称
+     *
+     * @return retryPolicy
+     */
+    String name();
 }

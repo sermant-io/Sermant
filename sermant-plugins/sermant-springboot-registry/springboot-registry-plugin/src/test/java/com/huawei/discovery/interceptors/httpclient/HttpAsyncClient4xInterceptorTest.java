@@ -22,6 +22,7 @@ import com.huawei.discovery.entity.PlugEffectStategyCache;
 import com.huawei.discovery.interceptors.httpclient.HttpClient4xInterceptorTest.Strategy;
 import com.huawei.discovery.interceptors.httpclient.HttpClient4xInterceptorTest.TestInvokerService;
 import com.huawei.discovery.service.InvokerService;
+import com.huawei.discovery.utils.HttpAsyncUtils;
 
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
@@ -96,6 +97,7 @@ public class HttpAsyncClient4xInterceptorTest {
 
     @Test
     public void test() throws Exception {
+        HttpAsyncUtils.remove();
         final HttpAsyncClient4xInterceptor interceptor = new HttpAsyncClient4xInterceptor();
         final ExecuteContext context = buildContext();
         PlugEffectStategyCache.INSTANCE.resolve(DynamicConfigEventType.CREATE, "");
