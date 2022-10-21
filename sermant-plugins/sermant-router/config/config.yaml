@@ -3,5 +3,5 @@ router.plugin:
   enabled-dubbo-zone-router: false
   # 是否开启spring cloud区域路由
   enabled-spring-zone-router: false
-  # 是否开启发现插件区域路由
-  enabled-discovery-zone-router: false
+  # 是否开启注册插件（sermant-springboot-registry）区域路由
+  enabled-registry-zone-router: false

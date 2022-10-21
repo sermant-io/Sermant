@@ -36,7 +36,7 @@ public class InstanceRuleStrategy<I> extends AbstractRuleStrategy<I> {
      * @param mapper metadata获取方法
      */
     public InstanceRuleStrategy(AbstractMetadataMapper<I> mapper) {
-        super(new MatchInstanceStrategy<>(), new MismatchInstanceStrategy<>(), new ZoneInstanceStrategy<>(),
+        super("spring", new MatchInstanceStrategy<>(), new MismatchInstanceStrategy<>(), new ZoneInstanceStrategy<>(),
             mapper);
     }
 }

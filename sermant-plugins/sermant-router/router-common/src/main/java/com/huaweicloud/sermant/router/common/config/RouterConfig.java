@@ -58,8 +58,8 @@ public class RouterConfig implements PluginConfig {
     /**
      * 是否开启服务注册发现插件区域路由
      */
-    @ConfigFieldKey("enabled-discovery-zone-router")
-    private boolean enabledDiscoveryZoneRouter;
+    @ConfigFieldKey("enabled-registry-zone-router")
+    private boolean enabledRegistryZoneRouter;
 
     /**
      * 其它配置
@@ -111,12 +111,12 @@ public class RouterConfig implements PluginConfig {
         this.enabledSpringZoneRouter = enabledSpringZoneRouter;
     }
 
-    public boolean isEnabledDiscoveryZoneRouter() {
-        return enabledDiscoveryZoneRouter;
+    public boolean isEnabledRegistryZoneRouter() {
+        return enabledRegistryZoneRouter;
     }
 
-    public void setEnabledDiscoveryZoneRouter(boolean enabledDiscoveryZoneRouter) {
-        this.enabledDiscoveryZoneRouter = enabledDiscoveryZoneRouter;
+    public void setEnabledRegistryZoneRouter(boolean enabledRegistryZoneRouter) {
+        this.enabledRegistryZoneRouter = enabledRegistryZoneRouter;
     }
 
     public Map<String, String> getParameters() {

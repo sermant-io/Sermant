@@ -4,7 +4,7 @@
 
 This document describes frequently asked questions (FAQs) about using the [service registration plugin](../../../sermant-plugins/sermant-service-registry).
 
-## Exception：No Such Extension org.apache.dubbo.registry.RegistryFactory by name sc
+## Exception: No Such Extension org.apache.dubbo.registry.RegistryFactory by name sc
 
 As shown in the following figure:
 
@@ -26,7 +26,7 @@ The possible causes are as follows:
 
 - The configuration center address (dynamic.config.server_address) is incorrectly configured in the core configuration file, the configuration center is not started, or the network is disconnected. As a result, the host application fails to load the agent, and the No such extension org.apache.dubbo.registry.RegistryFactory by name sc reports an error.
 
-## Exception：/sermant/master/v1/register error
+## Exception: /sermant/master/v1/register error
 
 As shown in the following figure:
 
@@ -36,7 +36,7 @@ The cause is that the backend is not started or the configured address is incorr
 
 Note: This error does not affect the plugin registration process, but related errors may be reported.
 
-## Exception：Connection reset
+## Exception: Connection reset
 
 As shown in the following figure:
 
@@ -44,7 +44,7 @@ As shown in the following figure:
 
 Check whether the registration center address (servicecomb.service.address) and protocol (HTTP/HTTPS) in the plugin configuration (${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml) are correct.
 
-## Exception：https protocol is not supported
+## Exception: https protocol is not supported
 
 As shown in the following figure:
 
@@ -52,7 +52,7 @@ As shown in the following figure:
 
 You need to enable ssl (servicecomb.service.sslEnabled) in the plugin configuration (${agent_package_path}/agent/pluginPackage/service-registry/config/config.yaml).
 
-## Exception：No such extension org.apache.dubbo.metadata.report.MetadataReportFactory by name sc
+## Exception: No such extension org.apache.dubbo.metadata.report.MetadataReportFactory by name sc
 
 As shown in the following figure:
 
@@ -76,7 +76,7 @@ dubbo:
 
 If protocol exists and is not set to sc, set protocol to sc or delete the protocol configuration.
 
-## Exception：No registry config found or it's not a valid config
+## Exception: No registry config found or it's not a valid config
 
 As shown in the following figure:
 

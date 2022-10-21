@@ -33,6 +33,7 @@ import org.junit.Test;
 public class HttpAsyncClient4xHandlerInterceptorTest {
     @Test
     public void after() throws Exception {
+        HttpAsyncUtils.remove();
         final HttpAsyncClient4xHandlerInterceptor interceptor = new HttpAsyncClient4xHandlerInterceptor();
         final Object target = new Object();
         final ExecuteContext executeContext = buildContext(target);
@@ -51,6 +52,6 @@ public class HttpAsyncClient4xHandlerInterceptorTest {
 
     private ExecuteContext buildContext(Object target) throws NoSuchMethodException {
         return ExecuteContext.forMemberMethod(target, String.class.getDeclaredMethod("trim"), null,
-                null, null);
+            null, null);
     }
 }

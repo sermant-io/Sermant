@@ -90,7 +90,7 @@ public class NopInstanceFilterInterceptorTest {
      */
     @Test
     public void testBefore() {
-        config.setEnabledDiscoveryZoneRouter(true);
+        config.setEnabledRegistryZoneRouter(true);
         List<ServiceInstance> list = new ArrayList<>();
         DefaultServiceInstance instance1 = new DefaultServiceInstance("foo1", "foo", "foo", 8080, false);
         list.add(instance1);

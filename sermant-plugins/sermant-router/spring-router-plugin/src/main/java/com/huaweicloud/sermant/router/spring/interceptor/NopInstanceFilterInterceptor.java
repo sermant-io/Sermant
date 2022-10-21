@@ -50,7 +50,7 @@ public class NopInstanceFilterInterceptor extends AbstractInterceptor {
         String serviceName = (String) arguments[0];
         List<Object> instances = (List<Object>) arguments[1];
         context.skip(
-            loadBalancerService.getZoneInstances(serviceName, instances, routerConfig.isEnabledDiscoveryZoneRouter()));
+            loadBalancerService.getZoneInstances(serviceName, instances, routerConfig.isEnabledRegistryZoneRouter()));
         return context;
     }
 
