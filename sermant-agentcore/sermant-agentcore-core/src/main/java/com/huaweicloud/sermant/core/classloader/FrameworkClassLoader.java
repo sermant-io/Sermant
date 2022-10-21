@@ -20,9 +20,11 @@ import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.CommonConstant;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,5 +100,14 @@ public class FrameworkClassLoader extends URLClassLoader {
             url = super.getResource(name);
         }
         return url;
+    }
+
+    @Override
+    public Enumeration<URL> getResources(String name) throws IOException {
+        // 由于类隔离的原因针对StaticLoggerBinder不再通过父类加载器获取重复资源，只返回加载器内的资源
+        if ("org/slf4j/impl/StaticLoggerBinder.class".equals(name)) {
+            return findResources(name);
+        }
+        return super.getResources(name);
     }
 }
