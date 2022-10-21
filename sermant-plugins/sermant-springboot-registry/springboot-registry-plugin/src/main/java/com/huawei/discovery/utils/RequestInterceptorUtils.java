@@ -27,8 +27,10 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Collections;
@@ -87,6 +89,27 @@ public class RequestInterceptorUtils {
         result.put(HttpConstants.HTTP_URL_SCHEME, scheme);
         result.put(HttpConstants.HTTP_URI_PATH, path);
         return result;
+    }
+
+    /**
+     * 针对HttpUrlConnection进行地址重构
+     *
+     * @param originUrl 原地址
+     * @param instance 选择的实例
+     * @param path 路径
+     * @return URL
+     */
+    public static Optional<URL> rebuildUrlForHttpConnection(URL originUrl, ServiceInstance instance, String path) {
+        final String protocol = originUrl.getProtocol();
+        String newUrl = String.format(Locale.ENGLISH, "%s://%s:%s%s", protocol, instance.getIp(), instance.getPort(),
+                path);
+        try {
+            LOGGER.fine(String.format(Locale.ENGLISH, "[HttpUrlConnection] rebuild url %s", newUrl));
+            return Optional.of(new URL(newUrl));
+        } catch (MalformedURLException e) {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Can not parse url %s to URL", newUrl));
+        }
+        return Optional.empty();
     }
 
     /**

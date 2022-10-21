@@ -81,7 +81,9 @@ public class RoundRobinRetryPolicyTest extends BaseTest {
             e.printStackTrace();
         }
         final RoundRobinRetryPolicy roundRobinRetryPolicy = new RoundRobinRetryPolicy();
-        final Optional<ServiceInstance> select = roundRobinRetryPolicy.select(serviceName, selectedInstance);
+        final PolicyContext policyContext = new PolicyContext();
+        policyContext.setServiceInstance(selectedInstance);
+        final Optional<ServiceInstance> select = roundRobinRetryPolicy.select(serviceName, policyContext);
         Assert.assertTrue(select.isPresent());
         Assert.assertEquals(select.get(), nextInstance);
     }

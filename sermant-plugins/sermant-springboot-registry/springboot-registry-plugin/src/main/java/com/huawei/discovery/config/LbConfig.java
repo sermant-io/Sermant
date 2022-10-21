@@ -93,9 +93,19 @@ public class LbConfig implements PluginConfig {
     private int maxRetry = LbConstants.DEFAULT_MAX_RETRY;
 
     /**
+     * 最大相同实例的重试次数
+     */
+    private int maxSameRetry = LbConstants.DEFAULT_MAX_SAME_RETRY;
+
+    /**
      * 重试等待时间, 默认一秒
      */
     private long retryWaitMs = LbConstants.DEFAULT_RETRY_WAIT_MS;
+
+    /**
+     * 重试策略, 当前支持两种"轮询(RoundRobin)"与"先重试上一次失败的实例(SameInstance){@link LbConfig#maxSameRetry}"
+     */
+    private String retryPolicy = "RoundRobin";
 
     /**
      * 重试场景, 针对{@link java.net.SocketTimeoutException}: connect timed out是否需要重试, 默认开启
@@ -161,6 +171,22 @@ public class LbConfig implements PluginConfig {
      * 实例状态统计时间窗口, 默认10分钟, 每一个时间窗口的开始, 统计都会清0
      */
     private long instanceStatTimeWindowMs = LbConstants.DEFAULT_INSTANCE_STATE_TIME_WINDOW_MS;
+
+    public String getRetryPolicy() {
+        return retryPolicy;
+    }
+
+    public void setRetryPolicy(String retryPolicy) {
+        this.retryPolicy = retryPolicy;
+    }
+
+    public int getMaxSameRetry() {
+        return maxSameRetry;
+    }
+
+    public void setMaxSameRetry(int maxSameRetry) {
+        this.maxSameRetry = maxSameRetry;
+    }
 
     public boolean isEnableSocketReadTimeoutRetry() {
         return enableSocketReadTimeoutRetry;

@@ -40,7 +40,7 @@ import java.util.function.Predicate;
 public class DefaultRetryConfig implements RetryConfig {
     private static final String SOCKET_CONNECT_TIMEOUT = "connect timed out";
 
-    private static final String SOCKET_READ_TIMEOUT = "read timed out";
+    private static final String SOCKET_READ_TIMEOUT = "Read timed out";
 
     private static final String NAME = "SERMANT_DEFAULT_RETRY";
 
@@ -159,11 +159,12 @@ public class DefaultRetryConfig implements RetryConfig {
      */
     private boolean isConfigDisable(Throwable ex) {
         if (ex instanceof SocketTimeoutException) {
-            if (SOCKET_CONNECT_TIMEOUT.equals(ex.getMessage()) && !lbConfig.isEnableSocketConnectTimeoutRetry()) {
+            if (SOCKET_CONNECT_TIMEOUT.equalsIgnoreCase(ex.getMessage())
+                    && !lbConfig.isEnableSocketConnectTimeoutRetry()) {
                 // 连接超时
                 return true;
             }
-            if (SOCKET_READ_TIMEOUT.equals(ex.getMessage()) && !lbConfig.isEnableSocketReadTimeoutRetry()) {
+            if (SOCKET_READ_TIMEOUT.equalsIgnoreCase(ex.getMessage()) && !lbConfig.isEnableSocketReadTimeoutRetry()) {
                 // 响应超时
                 return true;
             }
