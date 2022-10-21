@@ -16,7 +16,7 @@
 
 package com.huawei.discovery.declarers.httpconnection;
 
-import com.huawei.discovery.interceptors.httpconnection.HttpUrlConnectionResponseCodeInterceptor;
+import com.huawei.discovery.interceptors.httpconnection.HttpUrlConnectionResponseStreamInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
@@ -29,14 +29,14 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author zhouss
  * @since 2022-10-20
  */
-public class HttpUrlConnectionResponseCodeDeclarer extends AbstractPluginDeclarer {
-    private static final String INTERCEPT_CLASS = HttpUrlConnectionResponseCodeInterceptor.class.getCanonicalName();
+public class HttpUrlConnectionResponseStreamDeclarer extends AbstractPluginDeclarer {
+    private static final String INTERCEPT_CLASS = HttpUrlConnectionResponseStreamInterceptor.class.getCanonicalName();
 
-    private static final String METHOD_NAME = "getResponseCode";
+    private static final String METHOD_NAME = "getInputStream";
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameEquals("java.net.HttpURLConnection");
+        return ClassMatcher.isExtendedFrom("java.net.HttpURLConnection");
     }
 
     @Override

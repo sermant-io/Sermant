@@ -34,24 +34,27 @@ import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import sun.net.www.http.HttpClient;
 import sun.net.www.protocol.http.HttpURLConnection;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 拦截HttpUrlConnection#getResponseCode方法, 该拦截主要使之可检测到readTimeOut异常, connect timed out 见connect方法拦截点
+ * 拦截HttpUrlConnection#getInputSteam方法, 该拦截主要使之可检测到readTimeOut异常, connect timed out 见connect方法拦截点
  *
  * @author zhouss
  * @since 2022-10-20
  */
-public class HttpUrlConnectionResponseCodeInterceptor implements Interceptor {
+public class HttpUrlConnectionResponseStreamInterceptor implements Interceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final LbConfig lbConfig;
@@ -59,7 +62,7 @@ public class HttpUrlConnectionResponseCodeInterceptor implements Interceptor {
     /**
      * 构造器, 初始化配置
      */
-    public HttpUrlConnectionResponseCodeInterceptor() {
+    public HttpUrlConnectionResponseStreamInterceptor() {
         this.lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
     }
 
@@ -75,11 +78,13 @@ public class HttpUrlConnectionResponseCodeInterceptor implements Interceptor {
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
         final Function<InvokerContext, Object> invokerContextObjectFunction = buildInvokerFunc(context, url, urlInfo);
         final InvokerContext invokerContext = new InvokerContext();
-        final Object firstInvokeResult = invokerContextObjectFunction.apply(invokerContext);
+        final Object rawInputStream = invokerContextObjectFunction.apply(invokerContext);
         if (!isNeedRetry(invokerContext.getEx())) {
-            setResult(context, firstInvokeResult);
             return context;
         }
+        tryCloseOldInputStream(rawInputStream);
+        LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "invoke method [%s] failed",
+                context.getMethod().getName()), invokerContext.getEx());
         Optional<Object> result = invokerService.invoke(
             invokerContextObjectFunction,
             ex -> ex,
@@ -91,11 +96,19 @@ public class HttpUrlConnectionResponseCodeInterceptor implements Interceptor {
                 context.setThrowableOut((Exception) obj);
                 return context;
             }
-
-            // 此处无需调用, 仅直接替换结果即可
-            setResult(context, obj);
         }
         return context;
+    }
+
+    private void tryCloseOldInputStream(Object rawInputStream) {
+        if (rawInputStream instanceof Closeable) {
+            // 针对旧的输入流进行关闭处理
+            try {
+                ((Closeable) rawInputStream).close();
+            } catch (IOException e) {
+                LOGGER.warning("Close old input stream failed when invoke");
+            }
+        }
     }
 
     private boolean isNeedRetry(Throwable ex) {
@@ -107,24 +120,18 @@ public class HttpUrlConnectionResponseCodeInterceptor implements Interceptor {
         return false;
     }
 
-    private void setResult(ExecuteContext context, Object result) {
-        ReflectUtils.setFieldValue(context.getObject(), "responseCode", result);
-    }
-
-    private void resetResponseCode(ExecuteContext context) {
-        setResult(context, -1);
-    }
-
     private void resetStats(ExecuteContext context) {
-        resetResponseCode(context);
         ReflectUtils.setFieldValue(context.getObject(), "rememberedException", null);
         ReflectUtils.setFieldValue(context.getObject(), "failedOnce", false);
+        ReflectUtils.setFieldValue(context.getObject(), "responseCode", -1);
     }
 
     private Function<InvokerContext, Object> buildInvokerFunc(ExecuteContext context, URL url,
             Map<String, String> urlInfo) {
         final AtomicBoolean isFirstInvoke = new AtomicBoolean();
+        final AtomicReference<Object> lastResult = new AtomicReference<>();
         return invokerContext -> {
+            tryCloseOldInputStream(lastResult.get());
             if (!isFirstInvoke.get()) {
                 isFirstInvoke.set(true);
             } else {
@@ -135,7 +142,9 @@ public class HttpUrlConnectionResponseCodeInterceptor implements Interceptor {
                 newUrl.ifPresent(value -> ReflectUtils.setFieldValue(context.getObject(), "url", value));
                 newUrl.ifPresent(value -> resetHttpClient(context.getObject(), value));
             }
-            return RequestInterceptorUtils.buildFunc(context, invokerContext).get();
+            final Object result = RequestInterceptorUtils.buildFunc(context, invokerContext).get();
+            lastResult.set(result);
+            return result;
         };
     }
 
