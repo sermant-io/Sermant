@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<configuration scan="true">
+<configuration scan="true" debug="false">
+    <!--  无操作事件监听器  -->
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
     <!-- 定义日志文件 输出位置 -->
     <property name="log.home_dir" value="${sermant_log_dir:-./logs/sermant/core}"/>

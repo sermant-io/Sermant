@@ -64,7 +64,7 @@ public class AgentPremain {
             executeFlag = true;
 
             // 添加核心库
-            LOGGER.info(String.format(Locale.ROOT, "Loading core library from [%s].", PathDeclarer.getCorePath()));
+            LOGGER.info("Loading core library... ");
             loadCoreLib(instrumentation);
 
             // 初始化启动参数
