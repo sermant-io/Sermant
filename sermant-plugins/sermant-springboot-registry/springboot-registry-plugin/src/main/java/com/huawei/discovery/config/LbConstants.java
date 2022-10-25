@@ -88,6 +88,16 @@ public class LbConstants {
      */
     public static final int DEFAULT_MAX_RETRY_CONFIG_CACHE = 9999;
 
+    /**
+     * 当zk状态存在问题时, 使用异步尝试重试, 此处为重试时间间隔
+     */
+    public static final long DEFAULT_WAIT_REGISTRY_INTERVAL_MS = 1000L;
+
+    /**
+     * 当zk状态存在问题时, 使用异步尝试重试, 此处为最大从事次数
+     */
+    public static final int DEFAULT_REGISTRY_MAX_RETRY_NUM = 60;
+
     private LbConstants() {
     }
 }

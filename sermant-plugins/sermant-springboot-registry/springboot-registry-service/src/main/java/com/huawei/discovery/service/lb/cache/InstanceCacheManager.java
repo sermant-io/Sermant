@@ -144,8 +144,17 @@ public class InstanceCacheManager {
     }
 
     private InstanceCache getInstanceCache(String serviceName) {
-        tryAddListen(serviceName);
-        return instanceCaches.getOrDefault(serviceName, createCache(serviceName));
+        final InstanceCache instanceCache = instanceCaches.computeIfAbsent(serviceName, this::createCache);
+        if (instanceCache.getInstances().isEmpty()) {
+            // 为兼容到性能问题, 此处不加锁, 多个并发更新不会影响最终结果
+            return tryUpdateCache(serviceName);
+        }
+        return instanceCache;
+    }
+
+    private InstanceCache tryUpdateCache(String serviceName) {
+        final InstanceCache newCache = this.createCache(serviceName);
+        return instanceCaches.put(serviceName, newCache);
     }
 
     private void tryAddListen(String serviceName) {
@@ -155,6 +164,7 @@ public class InstanceCacheManager {
     }
 
     private InstanceCache createCache(String serviceName) {
+        tryAddListen(serviceName);
         Collection<ServiceInstance> instances = null;
         try {
             instances = discoveryClient.getInstances(serviceName);

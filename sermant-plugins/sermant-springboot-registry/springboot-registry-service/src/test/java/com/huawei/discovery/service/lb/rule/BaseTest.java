@@ -17,15 +17,22 @@
 package com.huawei.discovery.service.lb.rule;
 
 import com.huawei.discovery.config.LbConfig;
+import com.huawei.discovery.service.lb.discovery.zk.ZkClient;
 import com.huawei.discovery.service.lb.utils.CommonUtils;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
+import org.apache.curator.framework.state.ConnectionState;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 基础测试
@@ -55,5 +62,19 @@ public class BaseTest {
         CommonUtils.cleanServiceStats();
         pluginConfigManagerMockedStatic.close();
         pluginServiceManagerMockedStatic.close();
+    }
+
+    /**
+     * 获取已mock的zkclient
+     *
+     * @return ZkClient
+     */
+    protected ZkClient getClient() {
+        final ZkClient zkClient = new ZkClient();
+        zkClient.start();
+        final Optional<Object> zkState = ReflectUtils.getFieldValue(zkClient, "zkState");
+        Assert.assertTrue(zkState.isPresent() && zkState.get() instanceof AtomicReference);
+        ((AtomicReference<ConnectionState>) zkState.get()).set(ConnectionState.CONNECTED);
+        return zkClient;
     }
 }

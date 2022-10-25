@@ -20,27 +20,25 @@ import com.huawei.discovery.config.LbConfig;
 import com.huawei.discovery.service.lb.discovery.InstanceChangeListener;
 import com.huawei.discovery.service.lb.discovery.InstanceChangeListener.EventType;
 import com.huawei.discovery.service.lb.discovery.InstanceListenable;
+import com.huawei.discovery.service.lb.discovery.zk.ZkClient;
 import com.huawei.discovery.service.lb.discovery.zk.ZkDiscoveryClient;
 import com.huawei.discovery.service.lb.discovery.zk.ZkDiscoveryClient.ZkInstanceSerializer;
 import com.huawei.discovery.service.lb.discovery.zk.ZkInstanceHelper;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.ChildData;
-import org.apache.curator.framework.recipes.cache.PathChildrenCache;
-import org.apache.curator.framework.recipes.cache.PathChildrenCache.StartMode;
-import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent.Type;
-import org.apache.curator.retry.RetryForever;
+import org.apache.curator.framework.recipes.cache.TreeCache;
+import org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,18 +52,27 @@ import java.util.logging.Logger;
 public class ZkInstanceListenable implements InstanceListenable {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private final Map<String, InstanceChangeListener> listenerCache = new ConcurrentHashMap<>();
+    /**
+     * 当服务更新时, 去除{@link LbConfig#getZkBasePath()},随后路径由"/"切割, 仅当分为4部分才是正确的服务实例信息节点路径
+     */
+    private static final int VALID_LEN = 2;
 
-    private final Map<String, PathChildrenCache> pathChildrenCacheMap = new ConcurrentHashMap<>();
+    private static final String SEPARATOR = "/";
+
+    private final Map<String, InstanceChangeListener> listenerCache = new ConcurrentHashMap<>();
 
     private final ZkInstanceSerializer<ZookeeperInstance> serializer =
             new ZkInstanceSerializer<>(ZookeeperInstance.class);
+
+    private final AtomicBoolean isInitialized = new AtomicBoolean();
+
+    private ZkClient zkClient;
 
     private final LbConfig lbConfig;
 
     private final Predicate<ServiceInstance<ZookeeperInstance>> predicate;
 
-    private CuratorFramework curatorFramework;
+    private TreeCache childrenCache;
 
     /**
      * 构造器
@@ -77,52 +84,85 @@ public class ZkInstanceListenable implements InstanceListenable {
 
     @Override
     public void init() {
-        this.curatorFramework = buildClient();
-        this.curatorFramework.start();
     }
 
-    private CuratorFramework buildClient() {
-        return CuratorFrameworkFactory.newClient(lbConfig.getRegistryAddress(), lbConfig.getReadTimeoutMs(),
-                lbConfig.getConnectionTimeoutMs(), new RetryForever(lbConfig.getRetryIntervalMs()));
+    private ZkClient getZkClient() {
+        if (zkClient != null) {
+            return zkClient;
+        }
+        zkClient = PluginServiceManager.getPluginService(ZkClient.class);
+        return zkClient;
     }
 
     @Override
     public void tryAdd(String serviceName, InstanceChangeListener listener) {
-        if (listenerCache.get(serviceName) != null) {
-            return;
-        }
-        listenerCache.put(serviceName, listener);
-        if (pathChildrenCacheMap.get(serviceName) != null) {
-            return;
-        }
-        createCache(serviceName, listener).ifPresent(pathChildrenCache ->
-                pathChildrenCacheMap.put(serviceName, pathChildrenCache));
+        checkState();
+        listenerCache.putIfAbsent(serviceName, listener);
     }
 
-    private Optional<PathChildrenCache> createCache(String serviceName, InstanceChangeListener listener) {
-        final PathChildrenCache pathChildrenCache = new PathChildrenCache(curatorFramework, buildPath(serviceName),
-                true);
-        try {
-            pathChildrenCache.start(StartMode.POST_INITIALIZED_EVENT);
-        } catch (Exception exception) {
-            LOGGER.log(Level.WARNING, "Can not start path cache!", exception);
-            return Optional.empty();
+    private void checkState() {
+        if (isInitialized.compareAndSet(false, true)) {
+            this.initPathCache();
         }
-        pathChildrenCache.getListenable().addListener((client, event) -> {
+    }
+
+    private void initPathCache() {
+        final TreeCache pathCache = getPathCache();
+        pathCache.getListenable().addListener((client, event) -> {
             final Type type = event.getType();
-            if (!isTargetEvent(type)) {
+            if (!isTargetEvent(type) || event.getData() == null) {
+                return;
+            }
+            final String path = event.getData().getPath();
+            final Optional<String> serviceName = resolveServiceName(path);
+            if (!serviceName.isPresent()) {
+                return;
+            }
+            final InstanceChangeListener listener = listenerCache.get(serviceName.get());
+            if (listener == null) {
                 return;
             }
             final Optional<com.huawei.discovery.entity.ServiceInstance> deserialize = deserialize(event.getData());
             deserialize.ifPresent(serviceInstance -> listener.notify(formatEventType(type), serviceInstance));
         });
-        return Optional.of(pathChildrenCache);
+    }
+
+    private Optional<String> resolveServiceName(String path) {
+        if (path == null || path.length() <= lbConfig.getZkBasePath().length()) {
+            return Optional.empty();
+        }
+        String serviceNodePath = path.substring(lbConfig.getZkBasePath().length());
+        if (serviceNodePath.startsWith(SEPARATOR)) {
+            serviceNodePath = serviceNodePath.substring(SEPARATOR.length());
+        }
+        final String[] parts = serviceNodePath.split(SEPARATOR);
+        if (parts.length != VALID_LEN) {
+            return Optional.empty();
+        }
+        return Optional.of(parts[0]);
+    }
+
+    private TreeCache getPathCache() {
+        if (childrenCache != null) {
+            return childrenCache;
+        }
+        synchronized (this) {
+            if (childrenCache == null) {
+                childrenCache = new TreeCache(getZkClient().getClient(), lbConfig.getZkBasePath());
+                try {
+                    childrenCache.start();
+                } catch (Exception exception) {
+                    LOGGER.log(Level.WARNING, "Can not start path cache!", exception);
+                }
+            }
+        }
+        return childrenCache;
     }
 
     private EventType formatEventType(Type type) {
-        if (type == Type.CHILD_REMOVED) {
+        if (type == Type.NODE_REMOVED) {
             return EventType.DELETED;
-        } else if (type == Type.CHILD_UPDATED) {
+        } else if (type == Type.NODE_UPDATED) {
             return EventType.UPDATED;
         } else {
             return EventType.ADDED;
@@ -148,22 +188,14 @@ public class ZkInstanceListenable implements InstanceListenable {
     }
 
     private boolean isTargetEvent(Type type) {
-        return type == Type.CHILD_ADDED || type == Type.CHILD_REMOVED || type == Type.CHILD_UPDATED;
-    }
-
-    private String buildPath(String serviceName) {
-        return lbConfig.getZkBasePath() + "/" + serviceName;
+        return type == Type.NODE_ADDED || type == Type.NODE_REMOVED || type == Type.NODE_UPDATED;
     }
 
     @Override
     public void close() {
-        pathChildrenCacheMap.values().forEach(pathChildrenCache -> {
-            try {
-                pathChildrenCache.close();
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "Can not close zk path children cache!", ex);
-            }
-        });
+        if (this.childrenCache != null) {
+            this.childrenCache.close();
+        }
         listenerCache.clear();
     }
 

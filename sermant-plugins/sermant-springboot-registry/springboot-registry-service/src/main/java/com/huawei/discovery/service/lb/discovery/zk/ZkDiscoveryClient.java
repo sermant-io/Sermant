@@ -24,17 +24,13 @@ import com.huawei.discovery.service.lb.discovery.ServiceDiscoveryClient;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.framework.state.ConnectionState;
-import org.apache.curator.framework.state.ConnectionStateListener;
-import org.apache.curator.retry.RetryForever;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceType;
@@ -49,7 +45,6 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -63,21 +58,21 @@ import java.util.stream.Collectors;
 public class ZkDiscoveryClient implements ServiceDiscoveryClient {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private final AtomicBoolean isStarted = new AtomicBoolean();
+
+    private final LbConfig lbConfig;
+
     /**
      * 当zk状态存在问题时, 使用异步尝试重试, 此处为重试时间间隔
      */
-    private static final long WAIT_REGISTRY_INTERVAL_MS = 1000L;
+    private final long registryRetryInterval;
 
     /**
      * 当zk状态存在问题时, 使用异步尝试重试, 此处为最大从事次数
      */
-    private static final int MAX_RETRY_NUM = 60;
+    private final int registryMaxRetry;
 
-    private final AtomicReference<ConnectionState> zkState = new AtomicReference<>();
-
-    private final LbConfig lbConfig;
-
-    private CuratorFramework curatorFramework;
+    private ZkClient zkClient;
 
     private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 
@@ -88,24 +83,18 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
      */
     public ZkDiscoveryClient() {
         this.lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
+        this.registryRetryInterval = this.lbConfig.getRegistryRetryInterval();
+        this.registryMaxRetry = this.lbConfig.getRegistryMaxRetry();
     }
 
     @Override
     public void init() {
-        this.curatorFramework = buildClient();
-        this.curatorFramework.getConnectionStateListenable().addListener(new ConnectStateListener());
-        this.curatorFramework.start();
-        this.serviceDiscovery = build();
-        try {
-            this.serviceDiscovery.start();
-        } catch (Exception exception) {
-            LOGGER.log(Level.SEVERE, "Can not start zookeeper discovery client!", exception);
-        }
     }
 
     @Override
     public boolean registry(ServiceInstance serviceInstance) {
-        if (isStateOk()) {
+        checkDiscoveryState();
+        if (getZkClient().isStateOk()) {
             return registrySync(serviceInstance);
         }
         return registryAsync(serviceInstance);
@@ -137,16 +126,16 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
         final AtomicBoolean isRegistrySuccess = new AtomicBoolean();
         CompletableFuture.runAsync(() -> {
             int tryNum = 0;
-            while (tryNum++ <= MAX_RETRY_NUM) {
-                if (isStateOk()) {
+            while (tryNum++ <= registryMaxRetry) {
+                if (getZkClient().isStateOk()) {
                     isRegistrySuccess.set(registrySync(serviceInstance));
                     LOGGER.info("Registry instance to zookeeper registry center success!");
                     break;
                 }
                 try {
-                    Thread.sleep(WAIT_REGISTRY_INTERVAL_MS);
+                    Thread.sleep(registryRetryInterval);
                 } catch (InterruptedException e) {
-                    // ignored
+                    // ignored, 不可能会被打断
                 }
             }
         }).whenComplete((unused, throwable) -> {
@@ -163,9 +152,10 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
 
     @Override
     public Collection<ServiceInstance> getInstances(String serviceId) throws QueryInstanceException {
-        if (!isStateOk()) {
+        if (!getZkClient().isStateOk()) {
             throw new QueryInstanceException("zk state is not valid!");
         }
+        checkDiscoveryState();
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(ZkDiscoveryClient.class.getClassLoader());
@@ -192,7 +182,7 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
 
     @Override
     public Collection<String> getServices() {
-        checkState("get services from zookeeper");
+        check("get services from zookeeper");
         try {
             return serviceDiscovery.queryForNames();
         } catch (Exception exception) {
@@ -203,7 +193,7 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
 
     @Override
     public boolean unRegistry() {
-        checkState("un registry from zookeeper");
+        check("un registry from zookeeper");
         if (instance != null) {
             try {
                 this.serviceDiscovery.unregisterService(instance);
@@ -222,21 +212,49 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
 
     private ServiceDiscovery<ZookeeperInstance> build() {
         return ServiceDiscoveryBuilder.builder(ZookeeperInstance.class)
-                .client(this.curatorFramework)
+                .client(getZkClient().getClient())
                 .basePath(lbConfig.getZkBasePath())
                 .serializer(new ZkInstanceSerializer<>(ZookeeperInstance.class))
                 .watchInstances(false)
                 .build();
     }
 
-    private CuratorFramework buildClient() {
-        return CuratorFrameworkFactory.newClient(lbConfig.getRegistryAddress(), lbConfig.getReadTimeoutMs(),
-                lbConfig.getConnectionTimeoutMs(), new RetryForever(lbConfig.getRetryIntervalMs()));
+    private void check(String msg) {
+        checkClientState(msg);
+        checkDiscoveryState();
+    }
+
+    private void checkClientState(String msg) {
+        if (!getZkClient().isStateOk()) {
+            throw new IllegalStateException("Zookeeper state is not valid when " + msg);
+        }
+    }
+
+    private void checkDiscoveryState() {
+        if (isStarted.compareAndSet(false, true)) {
+            // 初始化
+            this.serviceDiscovery = build();
+            try {
+                this.serviceDiscovery.start();
+            } catch (Exception exception) {
+                LOGGER.log(Level.SEVERE, "Can not start zookeeper discovery client!", exception);
+            }
+        }
+    }
+
+    private ZkClient getZkClient() {
+        if (zkClient != null) {
+            return zkClient;
+        }
+        zkClient = PluginServiceManager.getPluginService(ZkClient.class);
+        return zkClient;
     }
 
     @Override
     public void close() {
-        curatorFramework.close();
+        if (this.serviceDiscovery == null) {
+            return;
+        }
         try {
             this.serviceDiscovery.close();
         } catch (IOException ex) {
@@ -307,34 +325,6 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
         @JsonTypeInfo(use = Id.CLASS, defaultImpl = Object.class)
         public T getPayload() {
             return super.getPayload();
-        }
-    }
-
-    private void checkState(String msg) {
-        if (!isStateOk()) {
-            throw new IllegalStateException("Zookeeper state is not valid when " + msg);
-        }
-    }
-
-    private boolean isStateOk() {
-        final ConnectionState connectionState = zkState.get();
-        return !(connectionState == ConnectionState.LOST || connectionState == ConnectionState.SUSPENDED
-                || connectionState == null);
-    }
-
-    /**
-     * zookeeper状态监听器
-     *
-     * @since 2022-10-13
-     */
-    class ConnectStateListener implements ConnectionStateListener {
-        private ConnectionState oldState;
-
-        @Override
-        public void stateChanged(CuratorFramework client, ConnectionState newState) {
-            if (zkState.compareAndSet(oldState, newState)) {
-                this.oldState = newState;
-            }
         }
     }
 }

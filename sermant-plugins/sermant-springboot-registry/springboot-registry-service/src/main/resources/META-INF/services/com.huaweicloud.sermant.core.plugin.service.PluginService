@@ -18,3 +18,4 @@ com.huawei.discovery.service.lb.LbServiceImpl
 com.huawei.discovery.service.registry.RegistryImpl
 com.huawei.discovery.service.retry.RetryServiceImpl
 com.huawei.discovery.service.lb.discovery.zk.ZkService34Impl
+com.huawei.discovery.service.lb.discovery.zk.ZkClient

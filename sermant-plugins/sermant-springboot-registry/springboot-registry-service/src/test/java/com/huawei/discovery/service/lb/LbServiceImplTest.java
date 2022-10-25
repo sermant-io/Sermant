@@ -18,6 +18,7 @@ package com.huawei.discovery.service.lb;
 
 import com.huawei.discovery.entity.ServiceInstance;
 import com.huawei.discovery.service.LbService;
+import com.huawei.discovery.service.lb.discovery.zk.ZkClient;
 import com.huawei.discovery.service.lb.discovery.zk.ZkService34;
 import com.huawei.discovery.service.lb.rule.BaseTest;
 import com.huawei.discovery.service.lb.utils.CommonUtils;
@@ -25,6 +26,7 @@ import com.huawei.discovery.service.lb.utils.CommonUtils;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
+import org.apache.curator.framework.state.ConnectionState;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -35,6 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 负载均衡测试
@@ -53,9 +56,12 @@ public class LbServiceImplTest extends BaseTest {
     @Override
     public void setUp() {
         super.setUp();
+        final ZkClient client = getClient();
         MockitoAnnotations.openMocks(this);
         pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(ZkService34.class))
                 .thenReturn(zkService34);
+        pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(ZkClient.class))
+                .thenReturn(client);
         start();
     }
 

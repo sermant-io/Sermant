@@ -83,6 +83,16 @@ public class LbConfig implements PluginConfig {
     private boolean keepOldInstancesWhenErr = true;
 
     /**
+     * 注册失败时, 最大重试次数, 每次会等待1秒(registryRetryInterval)重新发起注册
+     */
+    private int registryMaxRetry = LbConstants.DEFAULT_REGISTRY_MAX_RETRY_NUM;
+
+    /**
+     * 注册重试等待时间
+     */
+    private long registryRetryInterval = LbConstants.DEFAULT_WAIT_REGISTRY_INTERVAL_MS;
+
+    /**
      * 最大的重试配置缓存数
      */
     private int maxRetryConfigCache = LbConstants.DEFAULT_MAX_RETRY_CONFIG_CACHE;
@@ -171,6 +181,22 @@ public class LbConfig implements PluginConfig {
      * 实例状态统计时间窗口, 默认10分钟, 每一个时间窗口的开始, 统计都会清0
      */
     private long instanceStatTimeWindowMs = LbConstants.DEFAULT_INSTANCE_STATE_TIME_WINDOW_MS;
+
+    public int getRegistryMaxRetry() {
+        return registryMaxRetry;
+    }
+
+    public void setRegistryMaxRetry(int registryMaxRetry) {
+        this.registryMaxRetry = registryMaxRetry;
+    }
+
+    public long getRegistryRetryInterval() {
+        return registryRetryInterval;
+    }
+
+    public void setRegistryRetryInterval(long registryRetryInterval) {
+        this.registryRetryInterval = registryRetryInterval;
+    }
 
     public String getRetryPolicy() {
         return retryPolicy;
