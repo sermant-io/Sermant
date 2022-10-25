@@ -18,6 +18,7 @@ package com.huawei.discovery.service.retry.policy;
 
 import com.huawei.discovery.entity.ServiceInstance;
 import com.huawei.discovery.service.lb.DiscoveryManager;
+import com.huawei.discovery.service.lb.discovery.zk.ZkClient;
 import com.huawei.discovery.service.lb.discovery.zk.ZkService34;
 import com.huawei.discovery.service.lb.rule.BaseTest;
 import com.huawei.discovery.service.lb.utils.CommonUtils;
@@ -49,9 +50,12 @@ public class RoundRobinRetryPolicyTest extends BaseTest {
     @Override
     public void setUp() {
         super.setUp();
+        final ZkClient client = getClient();
         MockitoAnnotations.openMocks(this);
         pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(ZkService34.class))
                 .thenReturn(zkService34);
+        pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(ZkClient.class))
+                .thenReturn(client);
         start();
     }
 

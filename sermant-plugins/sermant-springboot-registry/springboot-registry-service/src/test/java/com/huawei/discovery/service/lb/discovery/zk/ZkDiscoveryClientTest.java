@@ -44,6 +44,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -89,9 +90,15 @@ public class ZkDiscoveryClientTest {
     }
 
     private void mockState() {
-        final Optional<Object> zkState = ReflectUtils.getFieldValue(zkDiscoveryClient, "zkState");
+        final ZkClient zkClient = new ZkClient();
+        zkClient.start();
+        final Optional<Object> zkState = ReflectUtils.getFieldValue(zkClient, "zkState");
         Assert.assertTrue(zkState.isPresent() && zkState.get() instanceof AtomicReference);
-        ((AtomicReference<Object>) zkState.get()).set(ConnectionState.CONNECTED);
+        ((AtomicReference<ConnectionState>) zkState.get()).set(ConnectionState.CONNECTED);
+        ReflectUtils.setFieldValue(zkDiscoveryClient, "zkClient", zkClient);
+        final Optional<Object> isStarted = ReflectUtils.getFieldValue(zkDiscoveryClient, "isStarted");
+        Assert.assertTrue(isStarted.isPresent() && isStarted.get() instanceof AtomicBoolean);
+        ((AtomicBoolean) isStarted.get()).set(true);
     }
 
     @After
