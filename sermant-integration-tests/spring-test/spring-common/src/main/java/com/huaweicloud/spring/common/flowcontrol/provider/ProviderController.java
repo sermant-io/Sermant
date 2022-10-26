@@ -19,8 +19,10 @@ package com.huaweicloud.spring.common.flowcontrol.provider;
 
 import com.huaweicloud.spring.common.flowcontrol.Constants;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -33,6 +35,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ResponseBody
 @RequestMapping
 public class ProviderController {
+    @Value("${server.port:8099}")
+    private int port;
+
     /**
      * 限流测试
      *
@@ -155,5 +160,25 @@ public class ProviderController {
     @RequestMapping("faultDelay")
     public String faultDelay() {
         return Constants.HTTP_OK;
+    }
+
+    /**
+     * 测试feign调用
+     *
+     * @return ok
+     */
+    @RequestMapping("feignRegistry")
+    public String feignRegistry() {
+        return Constants.HTTP_OK + ", port is " + port;
+    }
+
+    /**
+     * 测试feign调用
+     *
+     * @return ok
+     */
+    @RequestMapping(value = "feignRegistryPost", method = RequestMethod.POST)
+    public String feignRegistryPost() {
+        return Constants.HTTP_OK + ", port is " + port;
     }
 }

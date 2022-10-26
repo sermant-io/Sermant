@@ -34,7 +34,8 @@ public class OkHttp3ClientDeclarer extends AbstractPluginDeclarer {
      * 增强类的全限定名 okhttp请求
      */
     private static final String[] ENHANCE_CLASSES = {
-        "okhttp3.RealCall"
+        "okhttp3.RealCall",
+        "okhttp3.internal.connection.RealCall"
     };
 
     /**

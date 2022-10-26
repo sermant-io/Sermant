@@ -16,29 +16,13 @@
 
 package com.huawei.discovery.interceptors;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.http.HttpStatus;
-import org.junit.Assert;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.client.ClientHttpResponse;
-
 import com.huawei.discovery.config.PlugEffectWhiteBlackConstants;
 import com.huawei.discovery.entity.DefaultServiceInstance;
 import com.huawei.discovery.entity.PlugEffectStategyCache;
 import com.huawei.discovery.entity.ServiceInstance;
 import com.huawei.discovery.service.InvokerService;
 import com.huawei.discovery.utils.HttpConstants;
+
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
@@ -47,6 +31,18 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.http.HttpStatus;
+import org.junit.Assert;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * OkHttp3调用测试
@@ -63,9 +59,9 @@ public class OkHttp3ClientInterceptorTest extends BaseTest {
     @Mock
     private InvokerService invokerService;
 
-    private final String realmName = "gateway.t3go.com.cn";
+    private final String realmName = "www.domain.com";
 
-    private final static String url = "http://gateway.t3go.com.cn/zookeeper-provider-demo/sayHello?name=123";
+    private final static String url = "http://www.domain.com/zookeeper-provider-demo/sayHello?name=123";
 
     private final static String convertUrl = "http://127.0.0.1:8010/sayHello?name=123";
 

@@ -65,7 +65,7 @@ public class ProviderClientController {
 
         int retry = counterMap.get(invocationId);
 
-        if (retry >= Constants.RETRY_TIMES) {
+        if (retry >= 1) {
             return String.valueOf(retry);
         }
         throw new Exception("retry!");

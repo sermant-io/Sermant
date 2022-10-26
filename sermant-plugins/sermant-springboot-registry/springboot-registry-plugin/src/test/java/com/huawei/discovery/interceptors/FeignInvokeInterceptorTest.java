@@ -16,23 +16,10 @@
 
 package com.huawei.discovery.interceptors;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import org.apache.http.HttpStatus;
-import org.junit.Assert;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
 import com.huawei.discovery.config.PlugEffectWhiteBlackConstants;
 import com.huawei.discovery.entity.PlugEffectStategyCache;
 import com.huawei.discovery.service.InvokerService;
+
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
@@ -40,6 +27,19 @@ import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import feign.Request;
 import feign.Request.HttpMethod;
 import feign.Response;
+import org.apache.http.HttpStatus;
+import org.junit.Assert;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * feign调用测试
@@ -56,11 +56,11 @@ public class FeignInvokeInterceptorTest extends BaseTest {
     @Mock
     private InvokerService invokerService;
 
-    private final String realmName = "gateway.t3go.com.cn";
+    private final String realmName = "www.domain.com";
 
-    private final String realmNames = "gateway.t3go.com.cn,domain.t3go.com.cn";
+    private final String realmNames = "www.domain.com,www.domain2.com";
 
-    private final static String url = "http://gateway.t3go.com.cn/zookeeper-provider-demo/sayHello?name=123";
+    private final static String url = "http://www.domain.com/zookeeper-provider-demo/sayHello?name=123";
 
     /**
      * 构造方法

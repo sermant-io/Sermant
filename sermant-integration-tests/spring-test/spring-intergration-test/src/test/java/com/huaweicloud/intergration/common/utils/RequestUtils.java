@@ -51,7 +51,20 @@ public class RequestUtils {
      * @return 响应结果
      */
     public static <T> T get(String url, Map<String, Object> params, Class<T> responseClass) {
-        return get(url, params, responseClass, (ResponseExtractor<T>) DEFAULT);
+        return get(url, params, responseClass, (ResponseExtractor<T>) DEFAULT, HttpMethod.GET);
+    }
+
+    /**
+     * get请求
+     *
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param responseClass 响应类型
+     * @param <T> 响应类型
+     * @return 响应结果
+     */
+    public static <T> T post(String url, Map<String, Object> params, Class<T> responseClass) {
+        return get(url, params, responseClass, (ResponseExtractor<T>) DEFAULT, HttpMethod.POST);
     }
 
     /**
@@ -65,12 +78,12 @@ public class RequestUtils {
      * @return 响应结果
      */
     public static <T> T get(String url, Map<String, Object> params, Class<T> responseClass,
-            ResponseExtractor<T> responseExtractor) {
+            ResponseExtractor<T> responseExtractor, HttpMethod httpMethod) {
         ResponseExtractor<T> cur = responseExtractor;
         if (cur == DEFAULT || cur == null) {
             cur = new HttpMessageConverterExtractor<T>(responseClass, REST_TEMPLATE.getMessageConverters());
         }
-        return REST_TEMPLATE.execute(url, HttpMethod.GET, null, cur, params);
+        return REST_TEMPLATE.execute(url, httpMethod, null, cur, params);
     }
 
     /**
@@ -93,7 +106,7 @@ public class RequestUtils {
                 return responseCallback.apply(response, result);
             }
         };
-        return get(url, params, responseClass, httpMessageConverterExtractor);
+        return get(url, params, responseClass, httpMessageConverterExtractor, HttpMethod.GET);
     }
 
 }

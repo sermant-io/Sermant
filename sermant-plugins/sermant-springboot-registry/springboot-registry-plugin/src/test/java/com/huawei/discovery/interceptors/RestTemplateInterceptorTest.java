@@ -52,11 +52,11 @@ public class RestTemplateInterceptorTest extends BaseTest {
     @Mock
     private InvokerService invokerService;
 
-    private final String realmName = "gateway.t3go.com.cn";
+    private final String realmName = "www.domain.com";
 
-    private final String realmNames = "gateway.t3go.com.cn,domain.t3go.com.cn";
+    private final String realmNames = "www.domain.com,www.domain2.com";
 
-    private final static String url = "http://gateway.t3go.com.cn/zookeeper-provider-demo/sayHello?name=123";
+    private final static String url = "http://www.domain.com/zookeeper-provider-demo/sayHello?name=123";
 
     private final static String convertUrl = "http://127.0.0.1:8010/sayHello?name=123";
 
