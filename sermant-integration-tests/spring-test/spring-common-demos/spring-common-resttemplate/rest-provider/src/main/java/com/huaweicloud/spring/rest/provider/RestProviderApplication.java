@@ -29,7 +29,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(scanBasePackages = {
     "com.huaweicloud.spring.common.flowcontrol.provider",
     "com.huaweicloud.spring.rest.provider",
-    "com.huaweicloud.spring.common.loadbalancer.provider"
+    "com.huaweicloud.spring.common.loadbalancer.provider",
+    "com.huaweicloud.spring.common.registry.provider"
 })
 public class RestProviderApplication {
     /**

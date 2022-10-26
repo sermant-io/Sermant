@@ -69,7 +69,7 @@ public class FlowControlServiceImpl extends ProviderController implements FlowCo
 
         int retry = counterMap.get(invocationId);
 
-        if (retry >= Constants.RETRY_TIMES) {
+        if (retry > 1) {
             return retry;
         }
         throw new Exception("retry!");
