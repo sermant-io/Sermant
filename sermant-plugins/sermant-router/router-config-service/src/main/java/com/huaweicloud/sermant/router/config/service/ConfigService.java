@@ -17,12 +17,15 @@
 package com.huaweicloud.sermant.router.config.service;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.subscribe.ConfigSubscriber;
 import com.huaweicloud.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.config.listener.RouterConfigListener;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,6 +41,15 @@ public abstract class ConfigService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final AtomicBoolean init = new AtomicBoolean();
+
+    private final RouterConfig routerConfig;
+
+    /**
+     * 构造方法
+     */
+    public ConfigService() {
+        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+    }
 
     /**
      * 初始化通知
@@ -64,6 +76,7 @@ public abstract class ConfigService {
      * @return 规则key
      */
     public Set<String> getMatchKeys() {
-        return RuleUtils.getMatchKeys();
+        return routerConfig.isUseRequestRouter() ? new HashSet<>(routerConfig.getRequestTags())
+            : RuleUtils.getMatchKeys();
     }
 }

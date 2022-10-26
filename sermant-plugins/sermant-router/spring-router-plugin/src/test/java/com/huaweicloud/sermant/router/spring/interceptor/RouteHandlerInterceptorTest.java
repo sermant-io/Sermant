@@ -62,11 +62,6 @@ public class RouteHandlerInterceptorTest {
                 }
 
                 @Override
-                public boolean isInValid(String cacheName) {
-                    return false;
-                }
-
-                @Override
                 public Set<String> getMatchKeys() {
                     Set<String> keys = new HashSet<>();
                     keys.add("bar");

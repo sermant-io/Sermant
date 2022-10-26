@@ -20,6 +20,8 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
+import com.huaweicloud.sermant.router.common.request.RequestData;
+import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
 
 import org.junit.AfterClass;
@@ -32,6 +34,7 @@ import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,9 +65,8 @@ public class NopInstanceFilterInterceptorTest {
         mockServiceManager.when(() -> ServiceManager.getService(LoadBalancerService.class))
             .thenReturn(new TestLoadBalancerService());
 
-        mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
-
         config = new RouterConfig();
+        mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
             .thenReturn(config);
     }
@@ -86,11 +88,32 @@ public class NopInstanceFilterInterceptorTest {
     }
 
     /**
-     * 测试before方法
+     * 测试getZoneInstances方法
      */
     @Test
-    public void testBefore() {
+    public void testGetZoneInstances() {
         config.setEnabledRegistryZoneRouter(true);
+        ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));
+        List<ServiceInstance> list = new ArrayList<>();
+        DefaultServiceInstance instance1 = new DefaultServiceInstance("foo1", "foo", "foo", 8080, false);
+        list.add(instance1);
+        DefaultServiceInstance instance2 = new DefaultServiceInstance("bar2", "foo", "bar", 8081, false);
+        list.add(instance2);
+        arguments[0] = "foo";
+        arguments[1] = list;
+        List<?> result = (List<?>) interceptor.before(context).getResult();
+        Assert.assertEquals(1, result.size());
+        Assert.assertEquals(instance2, result.get(0));
+        ThreadLocalUtils.removeRequestData();
+    }
+
+    /**
+     * 测试getTargetInstances方法
+     */
+    @Test
+    public void testGetTargetInstances() {
+        config.setEnabledRegistryZoneRouter(true);
+        ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));
         List<ServiceInstance> list = new ArrayList<>();
         DefaultServiceInstance instance1 = new DefaultServiceInstance("foo1", "foo", "foo", 8080, false);
         list.add(instance1);

@@ -23,6 +23,9 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -60,6 +63,18 @@ public class RouterConfig implements PluginConfig {
      */
     @ConfigFieldKey("enabled-registry-zone-router")
     private boolean enabledRegistryZoneRouter;
+
+    /**
+     * 是否使用请求信息做路由
+     */
+    @ConfigFieldKey("use-request-router")
+    private boolean useRequestRouter;
+
+    /**
+     * 使用请求信息做路由时的tags
+     */
+    @ConfigFieldKey("request-tags")
+    private List<String> requestTags;
 
     /**
      * 其它配置
@@ -117,6 +132,32 @@ public class RouterConfig implements PluginConfig {
 
     public void setEnabledRegistryZoneRouter(boolean enabledRegistryZoneRouter) {
         this.enabledRegistryZoneRouter = enabledRegistryZoneRouter;
+    }
+
+    public boolean isUseRequestRouter() {
+        return useRequestRouter;
+    }
+
+    public void setUseRequestRouter(boolean useRequestRouter) {
+        this.useRequestRouter = useRequestRouter;
+    }
+
+    public List<String> getRequestTags() {
+        return requestTags == null ? Collections.emptyList() : requestTags;
+    }
+
+    /**
+     * 请求头在http请求中，会统一转成小写
+     *
+     * @param requestTags 使用请求信息做路由时的tags
+     */
+    public void setRequestTags(List<String> requestTags) {
+        if (requestTags != null) {
+            requestTags.replaceAll(tag -> tag.toLowerCase(Locale.ROOT));
+            this.requestTags = requestTags;
+        } else {
+            this.requestTags = null;
+        }
     }
 
     public Map<String, String> getParameters() {

@@ -17,7 +17,9 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.spring.cache.AppCache;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
@@ -28,6 +30,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 测试DiscoveryManagerInterceptor
@@ -44,6 +49,10 @@ public class DiscoveryManagerInterceptorTest {
 
     private static MockedStatic<ServiceManager> mockServiceManager;
 
+    private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
+
+    private static RouterConfig routerConfig;
+
     /**
      * UT执行前进行mock
      */
@@ -52,6 +61,15 @@ public class DiscoveryManagerInterceptorTest {
         configService = new TestSpringConfigService();
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class)).thenReturn(configService);
+
+        routerConfig = new RouterConfig();
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("foo", "foo1");
+        parameters.put("bar", "bar1");
+        routerConfig.setParameters(parameters);
+        mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
+            .thenReturn(routerConfig);
     }
 
     /**
@@ -60,6 +78,7 @@ public class DiscoveryManagerInterceptorTest {
     @AfterClass
     public static void after() {
         mockServiceManager.close();
+        mockPluginConfigManager.close();
     }
 
     public DiscoveryManagerInterceptorTest() {
@@ -76,6 +95,10 @@ public class DiscoveryManagerInterceptorTest {
     public void testBefore() {
         interceptor.before(context);
         Assert.assertEquals("foo", AppCache.INSTANCE.getAppName());
+        Map<String, String> metadata = ((TestObject) context.getArguments()[0]).getMetadata();
+        Assert.assertEquals("bar1", metadata.get("bar"));
+        Assert.assertEquals("foo1", metadata.get("foo"));
+        Assert.assertEquals(routerConfig.getRouterVersion(), metadata.get("version"));
 
         context.getArguments()[0] = new TestObject(null);
         interceptor.before(context);
@@ -93,8 +116,10 @@ public class DiscoveryManagerInterceptorTest {
         Assert.assertEquals("foo", configService.getServiceName());
     }
 
-    private static class TestObject {
+    public static class TestObject {
         private final String serviceName;
+
+        private final Map<String, String> metadata;
 
         /**
          * 构造方法
@@ -103,10 +128,15 @@ public class DiscoveryManagerInterceptorTest {
          */
         public TestObject(String serviceName) {
             this.serviceName = serviceName;
+            this.metadata = new HashMap<>();
         }
 
         public String getServiceName() {
             return serviceName;
+        }
+
+        public Map<String, String> getMetadata() {
+            return metadata;
         }
     }
 }

@@ -23,7 +23,6 @@ import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
-import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.Server;
@@ -55,7 +54,7 @@ public class BaseLoadBalancerInterceptorTest {
 
     private final BaseLoadBalancer loadBalancer;
 
-    private static TestSpringConfigService configService;
+    //    private static TestSpringConfigService configService;
 
     private static MockedStatic<ServiceManager> mockServiceManager;
 
@@ -66,9 +65,8 @@ public class BaseLoadBalancerInterceptorTest {
      */
     @BeforeClass
     public static void before() {
-        configService = new TestSpringConfigService();
+        //        configService = new TestSpringConfigService();
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
-        mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class)).thenReturn(configService);
         mockServiceManager.when(() -> ServiceManager.getService(LoadBalancerService.class))
             .thenReturn(new TestLoadBalancerService());
 
@@ -100,7 +98,7 @@ public class BaseLoadBalancerInterceptorTest {
     public void reset() {
         ThreadLocalUtils.removeRequestHeader();
         ThreadLocalUtils.removeRequestData();
-        configService.setInvalid(false);
+        //        configService.setInvalid(false);
         List<Server> servers = new ArrayList<>();
         servers.add(new Server("bar", 8080));
         servers.add(new Server("foo", 8081));
@@ -112,7 +110,7 @@ public class BaseLoadBalancerInterceptorTest {
      */
     @Test
     public void testBeforeWhenInvalid() {
-        configService.setInvalid(true);
+        //        configService.setInvalid(true);
         interceptor.before(context);
         BaseLoadBalancer loadBalancer = (BaseLoadBalancer) context.getObject();
         List<Server> servers = loadBalancer.getAllServers();

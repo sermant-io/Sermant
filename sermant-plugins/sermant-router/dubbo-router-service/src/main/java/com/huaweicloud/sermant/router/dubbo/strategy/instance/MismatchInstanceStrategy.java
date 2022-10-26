@@ -46,10 +46,15 @@ public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object, L
         for (Map<String, String> mismatchTag : tags) {
             for (Map.Entry<String, String> entry : mismatchTag.entrySet()) {
                 String value = entry.getValue();
+                String key = getKey(entry.getKey());
                 if (value == null) {
-                    continue;
+                    if (metaData.containsKey(key)) {
+                        return false;
+                    } else {
+                        continue;
+                    }
                 }
-                if (value.equals(metaData.get(getKey(entry.getKey())))) {
+                if (value.equals(metaData.get(key))) {
                     return false;
                 }
             }
@@ -61,6 +66,8 @@ public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object, L
         if (VERSION_KEY.equals(tag)) {
             return RouterConstant.VERSION_KEY;
         }
-        return RouterConstant.PARAMETERS_KEY_PREFIX + tag;
+
+        // dubbo会把key中的"-"替换成"."
+        return RouterConstant.PARAMETERS_KEY_PREFIX + tag.replace("-", ".");
     }
 }
