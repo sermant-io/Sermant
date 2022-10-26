@@ -22,6 +22,7 @@ import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.request.RequestHeader;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+import com.huaweicloud.sermant.router.common.utils.FlowContextUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
@@ -123,6 +124,17 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
     }
 
     /**
+     * 解析下dubbo的附件信息
+     *
+     * @param invocation dubbo的invocation
+     * @return {@link Map}<{@link String}, {@link Object}>
+     */
+    private Map<String, Object> parseAttachments(Object invocation) {
+        Map<String, Object> attachments = DubboReflectUtils.getAttachments(invocation);
+        return FlowContextUtils.decodeAttachments(attachments);
+    }
+
+    /**
      * 获取dubbo应用 group
      *
      * @param queryMap queryMap
@@ -179,7 +191,7 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
         List<Rule> rules = RuleUtils
             .getRules(configuration, targetService, interfaceName, DubboCache.INSTANCE.getAppName());
         List<Route> routes = RouteUtils.getRoutes(rules, DubboReflectUtils.getArguments(invocation),
-            DubboReflectUtils.getAttachments(invocation));
+            parseAttachments(invocation));
         if (!CollectionUtils.isEmpty(routes)) {
             return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, routes);
         } else {
@@ -189,7 +201,7 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
     }
 
     private List<Object> getTargetInvokersByRequest(String targetName, List<Object> invokers, Object invocation) {
-        Map<String, Object> attachments = DubboReflectUtils.getAttachments(invocation);
+        Map<String, Object> attachments = parseAttachments(invocation);
         List<String> requestTags = routerConfig.getRequestTags();
         if (CollectionUtils.isEmpty(requestTags)) {
             return invokers;

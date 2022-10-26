@@ -16,7 +16,9 @@
 
 package com.huaweicloud.sermant.router.common.utils;
 
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -35,12 +38,13 @@ import java.util.Map;
 public class FlowContextUtils {
     private static final Base64.Decoder DECODER = Base64.getDecoder();
     private static final int TAG_PART_NUM = 2;
+    private static volatile RouterConfig routerConfig;
 
     private FlowContextUtils() {
     }
 
     /**
-     * sw8-correlation流量标识解码.
+     * 解析base64加密信息成明文信息
      *
      * @param encodeTagsString encodeTagsString
      * @return 解密后的流量标识
@@ -58,8 +62,62 @@ public class FlowContextUtils {
             }
             List<String> list = new ArrayList<>();
             list.add(new String(DECODER.decode(parts[1]), StandardCharsets.UTF_8));
-            tagMapping.put(new String(DECODER.decode(parts[0]), StandardCharsets.UTF_8), list);
+            tagMapping.put(decode(parts[0]).toLowerCase(Locale.ENGLISH), list);
         }
         return tagMapping;
+    }
+
+    /**
+     * 解码附件
+     *
+     * @param attachments 附件信息
+     * @return {@link Map}<{@link String}, {@link Object}>
+     */
+    public static Map<String, Object> decodeAttachments(Map<String, Object> attachments) {
+        if (attachments == null || attachments.isEmpty() || StringUtils.isBlank(getTagName())) {
+            return attachments;
+        }
+        Object encode = attachments.get(getTagName());
+        if (encode == null) {
+            return attachments;
+        }
+        String encodeTags = String.valueOf(encode);
+        Map<String, Object> allAttachments = new HashMap<>(attachments);
+        String[] tags = encodeTags.split(",");
+        for (String tag : tags) {
+            final String[] parts = tag.split(":");
+            if (parts.length != TAG_PART_NUM) {
+                continue;
+            }
+            allAttachments.put(decode(parts[0]).toLowerCase(Locale.ENGLISH), decode(parts[1]));
+        }
+        return Collections.unmodifiableMap(allAttachments);
+    }
+
+    /**
+     * 解码
+     *
+     * @param encodeString 编码的字符串
+     * @return {@link String}
+     */
+    private static String decode(String encodeString) {
+        return new String(DECODER.decode(encodeString), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 获取请求头中需要解析的tag
+     *
+     * @return {@link String}
+     */
+    public static String getTagName() {
+        if (routerConfig == null) {
+            synchronized (FlowContextUtils.class) {
+                if (routerConfig == null) {
+                    routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+                    return routerConfig.getParseHeaderTag();
+                }
+            }
+        }
+        return routerConfig.getParseHeaderTag();
     }
 }

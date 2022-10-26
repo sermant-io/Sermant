@@ -13,3 +13,6 @@ com.huaweicloud.sermant.router.spring.declarer.ServiceRegistryDeclarer
 com.huaweicloud.sermant.router.spring.declarer.OkHttp3ClientDeclarer
 com.huaweicloud.sermant.router.spring.declarer.OkHttpClientDeclarer
 com.huaweicloud.sermant.router.spring.declarer.HttpClient4xDeclarer
+com.huaweicloud.sermant.router.spring.declarer.HttpUrlConnectionConnectDeclarer
+com.huaweicloud.sermant.router.spring.declarer.RestTemplateDeclarer
+com.huaweicloud.sermant.router.spring.declarer.SpringBootLoadClassDeclarer

@@ -9,3 +9,5 @@ router.plugin:
   use-request-router: false
   # 使用请求信息做路由时的tags
   request-tags: []
+  # 需要解析的请求头的tag
+  parse-header-tag: ''
