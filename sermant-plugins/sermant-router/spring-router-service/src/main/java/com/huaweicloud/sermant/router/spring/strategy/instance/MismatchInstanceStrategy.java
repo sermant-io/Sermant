@@ -46,7 +46,18 @@ public class MismatchInstanceStrategy<I> extends AbstractInstanceStrategy<I, Lis
         Map<String, String> metadata = getMetadata(instance, mapper);
         for (Map<String, String> mismatchTag : tags) {
             for (Entry<String, String> entry : mismatchTag.entrySet()) {
-                if (Objects.equals(metadata.get(entry.getKey()), entry.getValue())) {
+                String value = entry.getValue();
+                String key = entry.getKey();
+
+                // value为null时，要把含有该标签的全都过滤掉
+                if (value == null) {
+                    if (metadata.containsKey(key)) {
+                        return false;
+                    } else {
+                        continue;
+                    }
+                }
+                if (Objects.equals(metadata.get(key), value)) {
                     return false;
                 }
             }

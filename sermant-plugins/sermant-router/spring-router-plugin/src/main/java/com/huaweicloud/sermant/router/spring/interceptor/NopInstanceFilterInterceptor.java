@@ -21,6 +21,8 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
+import com.huaweicloud.sermant.router.common.request.RequestData;
+import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
 
 import java.util.List;
@@ -49,8 +51,15 @@ public class NopInstanceFilterInterceptor extends AbstractInterceptor {
         Object[] arguments = context.getArguments();
         String serviceName = (String) arguments[0];
         List<Object> instances = (List<Object>) arguments[1];
-        context.skip(
-            loadBalancerService.getZoneInstances(serviceName, instances, routerConfig.isEnabledRegistryZoneRouter()));
+        RequestData requestData = ThreadLocalUtils.getRequestData();
+        if (requestData == null) {
+            return context.skip(loadBalancerService.getZoneInstances(serviceName, instances,
+                routerConfig.isEnabledRegistryZoneRouter()));
+        }
+        List<Object> targetInstances = loadBalancerService
+            .getTargetInstances(serviceName, instances, requestData.getPath(), requestData.getHeader());
+        context.skip(loadBalancerService
+            .getZoneInstances(serviceName, targetInstances, routerConfig.isEnabledRegistryZoneRouter()));
         return context;
     }
 

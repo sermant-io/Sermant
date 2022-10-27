@@ -22,12 +22,10 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
-import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
-import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 import reactor.core.publisher.Flux;
 
@@ -45,8 +43,6 @@ import java.util.Optional;
  * @since 2022-07-12
  */
 public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor {
-    private final SpringConfigService configService;
-
     private final LoadBalancerService loadBalancerService;
 
     private final RouterConfig routerConfig;
@@ -55,7 +51,6 @@ public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor 
      * 构造方法
      */
     public ServiceInstanceListSupplierInterceptor() {
-        configService = ServiceManager.getService(SpringConfigService.class);
         loadBalancerService = ServiceManager.getService(LoadBalancerService.class);
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
     }
@@ -73,20 +68,16 @@ public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor 
             if (CollectionUtils.isEmpty(instances)) {
                 return context;
             }
-            List<Object> zoneInstances = loadBalancerService
-                .getZoneInstances(serviceId, instances, routerConfig.isEnabledSpringZoneRouter());
-            if (configService.isInValid(RouterConstant.SPRING_CACHE_NAME)) {
-                context.skip(Flux.just(zoneInstances));
-                return context;
-            }
             RequestData requestData = ThreadLocalUtils.getRequestData();
             if (requestData == null) {
-                context.skip(Flux.just(zoneInstances));
+                context.skip(Flux.just(loadBalancerService
+                    .getZoneInstances(serviceId, instances, routerConfig.isEnabledSpringZoneRouter())));
                 return context;
             }
-            List<Object> list = loadBalancerService.getTargetInstances(serviceId, zoneInstances, requestData.getPath(),
+            List<Object> list = loadBalancerService.getTargetInstances(serviceId, instances, requestData.getPath(),
                 requestData.getHeader());
-            context.skip(Flux.just(list));
+            context.skip(Flux.just(
+                loadBalancerService.getZoneInstances(serviceId, list, routerConfig.isEnabledSpringZoneRouter())));
         }
         return context;
     }

@@ -26,6 +26,7 @@ import com.huaweicloud.sermant.router.config.utils.RuleUtils.RouteResult;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -74,12 +75,21 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
     @Override
     public List<I> getMatchInstances(String serviceName, List<I> instances, List<Route> routes) {
         RouteResult<?> result = RuleUtils.getTargetTags(routes);
-        return getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName, instances);
+        return getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName, instances, true);
     }
 
     @Override
-    public List<I> getMismatchInstances(String serviceName, List<I> instances, List<Map<String, String>> tags) {
-        return getInstances(mismatchInstanceStrategy, tags, serviceName, instances);
+    public List<I> getMatchInstancesByRequest(String serviceName, List<I> instances, Map<String, String> tags) {
+        if (CollectionUtils.isEmpty(tags)) {
+            return Collections.emptyList();
+        }
+        return getInstances(matchInstanceStrategy, tags, serviceName, instances, false);
+    }
+
+    @Override
+    public List<I> getMismatchInstances(String serviceName, List<I> instances, List<Map<String, String>> tags,
+        boolean isReturnAllInstancesWhenMismatch) {
+        return getInstances(mismatchInstanceStrategy, tags, serviceName, instances, isReturnAllInstancesWhenMismatch);
     }
 
     /**
@@ -94,11 +104,11 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
         if (StringUtils.isBlank(zone)) {
             return instances;
         }
-        return getInstances(zoneInstanceStrategy, zone, serviceName, instances);
+        return getInstances(zoneInstanceStrategy, zone, serviceName, instances, true);
     }
 
     private <T> List<I> getInstances(InstanceStrategy<I, T> instanceStrategy, T tags, String serviceName,
-        List<I> instances) {
+        List<I> instances, boolean isReturnAllInstancesWhenMismatch) {
         List<I> resultList = new ArrayList<>();
         for (I instance : instances) {
             if (instanceStrategy.isMatch(instance, tags, mapper)) {
@@ -106,15 +116,19 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
             }
         }
         boolean mismatch = CollectionUtils.isEmpty(resultList);
-        if (mismatch) {
+        if (!mismatch) {
+            LOGGER.fine(String.format(Locale.ROOT, "Match instances, %s serviceName is %s, tags is %s.", source,
+                serviceName, JSONObject.toJSONString(tags)));
+        } else if (isReturnAllInstancesWhenMismatch) {
             LOGGER.warning(String.format(Locale.ROOT,
                 "Cannot match instances, will return all instances, %s serviceName is %s, tags is %s.", source,
                 serviceName, JSONObject.toJSONString(tags)));
         } else {
-            LOGGER.fine(String.format(Locale.ROOT, "Match instances, %s serviceName is %s, tags is %s.", source,
+            LOGGER.warning(String.format(Locale.ROOT,
+                "Cannot match instances, will return empty instances, %s serviceName is %s, tags is %s.", source,
                 serviceName, JSONObject.toJSONString(tags)));
         }
-        return mismatch ? instances : resultList;
+        return isReturnAllInstancesWhenMismatch && mismatch ? instances : resultList;
     }
 
     private <T> InstanceStrategy<I, T> getStrategy(boolean isMatch) {

@@ -44,7 +44,7 @@ public class ApacheInvoker<T> implements Invoker<T> {
      * @param version 版本
      */
     public ApacheInvoker(String version) {
-        this(version, null);
+        this(version, (String) null);
     }
 
     /**
@@ -58,6 +58,18 @@ public class ApacheInvoker<T> implements Invoker<T> {
         map.put(RouterConstant.VERSION_KEY, version);
         map.put(RouterConstant.ZONE_KEY, zone);
         this.url = APACHE_URL.addParameters(map).setPort(8080);
+    }
+
+    /**
+     * 构造方法
+     *
+     * @param version 版本
+     * @param map map
+     */
+    public ApacheInvoker(String version, Map<String, String> map) {
+        Map<String, String> parameters = new HashMap<>(map);
+        parameters.put(RouterConstant.VERSION_KEY, version);
+        this.url = APACHE_URL.addParameters(parameters).setPort(8080);
     }
 
     @Override

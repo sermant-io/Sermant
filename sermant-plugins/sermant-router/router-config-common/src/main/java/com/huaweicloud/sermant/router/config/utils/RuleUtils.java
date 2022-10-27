@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -296,7 +297,10 @@ public class RuleUtils {
         if (CollectionUtils.isEmpty(matchRule)) {
             return;
         }
-        keys.addAll(matchRule.keySet());
+        for (String key : matchRule.keySet()) {
+            // 请求头在http请求中，会统一转成小写
+            keys.add(key.toLowerCase(Locale.ROOT));
+        }
     }
 
     /**

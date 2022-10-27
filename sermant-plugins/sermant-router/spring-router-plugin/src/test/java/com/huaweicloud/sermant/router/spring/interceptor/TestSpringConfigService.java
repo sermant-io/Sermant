@@ -45,11 +45,6 @@ public class TestSpringConfigService implements SpringConfigService {
     }
 
     @Override
-    public boolean isInValid(String cacheName) {
-        return invalid;
-    }
-
-    @Override
     public Set<String> getMatchKeys() {
         return Collections.emptySet();
     }

@@ -16,8 +16,6 @@
 
 package com.huaweicloud.sermant.router.config.service;
 
-import com.huaweicloud.sermant.router.config.cache.ConfigCache;
-import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 /**
@@ -27,15 +25,4 @@ import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
  * @since 2022-07-20
  */
 public class SpringConfigServiceImpl extends ConfigService implements SpringConfigService {
-    /**
-     * 配置是否无效
-     *
-     * @param cacheName 缓存名
-     * @return 是否无效
-     */
-    @Override
-    public boolean isInValid(String cacheName) {
-        RouterConfiguration configuration = ConfigCache.getLabel(cacheName);
-        return RouterConfiguration.isInValid(configuration);
-    }
 }

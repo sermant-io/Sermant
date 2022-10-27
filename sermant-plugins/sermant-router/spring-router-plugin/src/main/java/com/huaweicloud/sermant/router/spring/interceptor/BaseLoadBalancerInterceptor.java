@@ -21,13 +21,11 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
-import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
-import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.zuul.context.RequestContext;
@@ -49,8 +47,6 @@ import javax.servlet.http.HttpServletRequest;
  * @since 2022-07-12
  */
 public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
-    private final SpringConfigService configService;
-
     private final LoadBalancerService loadBalancerService;
 
     private final RouterConfig routerConfig;
@@ -59,7 +55,6 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
      * 构造方法
      */
     public BaseLoadBalancerInterceptor() {
-        configService = ServiceManager.getService(SpringConfigService.class);
         loadBalancerService = ServiceManager.getService(LoadBalancerService.class);
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
     }
@@ -74,17 +69,15 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
             }
             BaseLoadBalancer loadBalancer = (BaseLoadBalancer) object;
             String name = loadBalancer.getName();
-            List<Object> zoneInstances = loadBalancerService
-                .getZoneInstances(name, serverList, routerConfig.isEnabledSpringZoneRouter());
-            if (configService.isInValid(RouterConstant.SPRING_CACHE_NAME)) {
-                return context.skip(Collections.unmodifiableList(zoneInstances));
-            }
             RequestData requestData = getRequestData().orElse(null);
             if (requestData == null) {
-                return context.skip(Collections.unmodifiableList(zoneInstances));
+                return context.skip(Collections.unmodifiableList(loadBalancerService
+                    .getZoneInstances(name, serverList, routerConfig.isEnabledSpringZoneRouter())));
             }
-            context.skip(Collections.unmodifiableList(loadBalancerService.getTargetInstances(name, zoneInstances,
-                requestData.getPath(), requestData.getHeader())));
+            List<Object> targetInstances = loadBalancerService
+                .getTargetInstances(name, serverList, requestData.getPath(), requestData.getHeader());
+            context.skip(Collections.unmodifiableList(
+                loadBalancerService.getZoneInstances(name, targetInstances, routerConfig.isEnabledSpringZoneRouter())));
         }
         return context;
     }
@@ -109,7 +102,7 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
             return Optional.empty();
         }
         RequestContext context = RequestContext.getCurrentContext();
-        if (context == null) {
+        if (context == null || context.getRequest() == null) {
             return Optional.empty();
         }
         Map<String, List<String>> header = new HashMap<>();

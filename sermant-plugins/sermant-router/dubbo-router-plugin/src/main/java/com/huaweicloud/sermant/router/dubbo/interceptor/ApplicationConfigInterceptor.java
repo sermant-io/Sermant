@@ -27,6 +27,7 @@ import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -86,7 +87,9 @@ public class ApplicationConfigInterceptor extends AbstractInterceptor {
         }
         Map<String, String> metaParameters = routerConfig.getParameters();
         if (!CollectionUtils.isEmpty(metaParameters)) {
-            metaParameters.forEach((key, value) -> map.put(RouterConstant.PARAMETERS_KEY_PREFIX + key, value));
+            metaParameters.forEach(
+                // 请求头在http请求中，会统一转成小写
+                (key, value) -> map.put(RouterConstant.PARAMETERS_KEY_PREFIX + key.toLowerCase(Locale.ROOT), value));
         }
         return map;
     }

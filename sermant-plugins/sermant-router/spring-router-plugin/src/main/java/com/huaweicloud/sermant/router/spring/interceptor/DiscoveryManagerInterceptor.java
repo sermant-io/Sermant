@@ -19,11 +19,14 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.spring.cache.AppCache;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
+import com.huaweicloud.sermant.router.spring.utils.SpringRouterUtils;
 
 import java.util.logging.Logger;
 
@@ -38,11 +41,14 @@ public class DiscoveryManagerInterceptor extends AbstractInterceptor {
 
     private final SpringConfigService configService;
 
+    private final RouterConfig routerConfig;
+
     /**
      * 构造方法
      */
     public DiscoveryManagerInterceptor() {
         configService = ServiceManager.getService(SpringConfigService.class);
+        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
     }
 
     @Override
@@ -56,6 +62,7 @@ public class DiscoveryManagerInterceptor extends AbstractInterceptor {
             } else {
                 LOGGER.warning("Service name is null or not instanceof string.");
             }
+            SpringRouterUtils.putMetaData(SpringRouterUtils.getMetadata(obj), routerConfig);
         }
         return context;
     }

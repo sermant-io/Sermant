@@ -36,14 +36,6 @@ public interface SpringConfigService extends PluginService {
     void init(String cacheName, String serviceName);
 
     /**
-     * 配置是否无效
-     *
-     * @param cacheName 缓存名
-     * @return 是否无效
-     */
-    boolean isInValid(String cacheName);
-
-    /**
      * 获取规则key
      *
      * @return 规则key

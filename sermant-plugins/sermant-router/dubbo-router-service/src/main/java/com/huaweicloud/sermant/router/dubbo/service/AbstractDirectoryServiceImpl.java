@@ -34,8 +34,11 @@ import com.huaweicloud.sermant.router.dubbo.strategy.RuleStrategyHandler;
 import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 import com.huaweicloud.sermant.router.dubbo.utils.RouteUtils;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * AbstractDirectory的service
@@ -55,17 +58,27 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
 
     private final RouterConfig routerConfig;
 
+    // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
+    private final Map<String, String> allMismatchTags;
+
     /**
      * 构造方法
      */
     public AbstractDirectoryServiceImpl() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+        allMismatchTags = new HashMap<>();
+        for (String requestTag : routerConfig.getRequestTags()) {
+            allMismatchTags.put(requestTag, null);
+        }
+
+        // 所有实例都含有version，所以不能存入null值
+        allMismatchTags.remove(RouterConstant.DUBBO_VERSION_KEY);
     }
 
     /**
      * 筛选标签invoker
      *
-     * @param obj RegistryDirectory
+     * @param registryDirectory RegistryDirectory
      * @param arguments 参数
      * @param result invokers
      * @return invokers
@@ -75,42 +88,38 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
      * @see org.apache.dubbo.rpc.Invoker
      */
     @Override
-    public Object selectInvokers(Object obj, Object[] arguments, Object result) {
+    public Object selectInvokers(Object registryDirectory, Object[] arguments, Object result) {
         if (arguments == null || arguments.length == 0) {
+            return result;
+        }
+        if (!(result instanceof List<?>)) {
             return result;
         }
         Object invocation = arguments[0];
         putAttachment(invocation);
-        Map<String, String> queryMap = DubboReflectUtils.getQueryMap(obj);
+        List<Object> invokers = (List<Object>) result;
+        Map<String, String> queryMap = DubboReflectUtils.getQueryMap(registryDirectory);
         if (CollectionUtils.isEmpty(queryMap)) {
-            return result;
+            return invokers;
         }
         if (!CONSUMER_VALUE.equals(queryMap.get(CONSUMER_KEY))) {
-            return result;
+            return invokers;
         }
-        DubboCache cache = DubboCache.INSTANCE;
         String serviceInterface = queryMap.get(INTERFACE_KEY);
-        String targetService = cache.getApplication(serviceInterface);
+        String targetService = DubboCache.INSTANCE.getApplication(serviceInterface);
         if (StringUtils.isBlank(targetService)) {
-            return result;
+            return invokers;
         }
-        List<Object> list = getZoneInvokers(result, targetService);
-        if (!shouldHandle(list)) {
-            return list;
+        if (!shouldHandle(invokers)) {
+            return invokers;
         }
-        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
-        if (RouterConfiguration.isInValid(configuration)) {
-            return list;
+        List<Object> targetInvokers;
+        if (routerConfig.isUseRequestRouter()) {
+            targetInvokers = getTargetInvokersByRequest(targetService, invokers, invocation);
+        } else {
+            targetInvokers = getTargetInvokersByRules(invokers, invocation, queryMap, targetService, serviceInterface);
         }
-        String interfaceName = getGroup(queryMap) + "/" + serviceInterface + "."
-            + DubboReflectUtils.getMethodName(invocation) + ":" + getVersion(queryMap);
-        List<Rule> rules = RuleUtils.getRules(configuration, targetService, interfaceName, cache.getAppName());
-        List<Route> routes = RouteUtils.getRoutes(rules, DubboReflectUtils.getArguments(invocation),
-            DubboReflectUtils.getAttachments(invocation));
-        if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, list, routes);
-        }
-        return RuleStrategyHandler.INSTANCE.getMismatchInvokers(targetService, list, RuleUtils.getTags(rules));
+        return getZoneInvokers(targetService, targetInvokers);
     }
 
     /**
@@ -135,8 +144,7 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
         return version == null ? "" : version;
     }
 
-    private List<Object> getZoneInvokers(Object obj, String targetService) {
-        List<Object> invokers = (List<Object>) obj;
+    private List<Object> getZoneInvokers(String targetService, List<Object> invokers) {
         EnabledStrategy strategy = ConfigCache.getEnabledStrategy(RouterConstant.DUBBO_CACHE_NAME);
         if (shouldHandle(invokers) && routerConfig.isEnabledDubboZoneRouter() && strategy.getStrategy()
             .isMatch(strategy.getValue(), targetService)) {
@@ -158,5 +166,66 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
                 requestHeader.getHeader().forEach((key, value) -> attachments.putIfAbsent(key, value.get(0)));
             }
         }
+    }
+
+    private List<Object> getTargetInvokersByRules(List<Object> invokers, Object invocation,
+        Map<String, String> queryMap, String targetService, String serviceInterface) {
+        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
+        if (RouterConfiguration.isInValid(configuration)) {
+            return invokers;
+        }
+        String interfaceName = getGroup(queryMap) + "/" + serviceInterface + "."
+            + DubboReflectUtils.getMethodName(invocation) + ":" + getVersion(queryMap);
+        List<Rule> rules = RuleUtils
+            .getRules(configuration, targetService, interfaceName, DubboCache.INSTANCE.getAppName());
+        List<Route> routes = RouteUtils.getRoutes(rules, DubboReflectUtils.getArguments(invocation),
+            DubboReflectUtils.getAttachments(invocation));
+        if (!CollectionUtils.isEmpty(routes)) {
+            return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, routes);
+        } else {
+            return RuleStrategyHandler.INSTANCE
+                .getMismatchInvokers(targetService, invokers, RuleUtils.getTags(rules), true);
+        }
+    }
+
+    private List<Object> getTargetInvokersByRequest(String targetName, List<Object> invokers, Object invocation) {
+        Map<String, Object> attachments = DubboReflectUtils.getAttachments(invocation);
+        List<String> requestTags = routerConfig.getRequestTags();
+        if (CollectionUtils.isEmpty(requestTags)) {
+            return invokers;
+        }
+
+        // 用于匹配实例的tags集合
+        Map<String, String> tags = new HashMap<>();
+
+        // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
+        Map<String, String> mismatchTags = new HashMap<>();
+        for (String key : attachments.keySet()) {
+            if (!requestTags.contains(key)) {
+                continue;
+            }
+            mismatchTags.put(key, null);
+            String value = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);
+            if (StringUtils.isExist(value)) {
+                tags.put(key, value);
+            }
+        }
+        if (StringUtils.isExist(tags.get(RouterConstant.DUBBO_VERSION_KEY))) {
+            mismatchTags.put(RouterConstant.DUBBO_VERSION_KEY, tags.get(RouterConstant.DUBBO_VERSION_KEY));
+        } else {
+            // 所有实例都含有version，所以不能存入null值
+            mismatchTags.remove(RouterConstant.DUBBO_VERSION_KEY);
+        }
+        boolean isReturnAllInstancesWhenMismatch = false;
+        if (CollectionUtils.isEmpty(mismatchTags)) {
+            mismatchTags = allMismatchTags;
+            isReturnAllInstancesWhenMismatch = true;
+        }
+        List<Object> result = RuleStrategyHandler.INSTANCE.getMatchInvokersByRequest(targetName, invokers, tags);
+        if (CollectionUtils.isEmpty(result)) {
+            result = RuleStrategyHandler.INSTANCE.getMismatchInvokers(targetName, invokers,
+                Collections.singletonList(mismatchTags), isReturnAllInstancesWhenMismatch);
+        }
+        return result;
     }
 }

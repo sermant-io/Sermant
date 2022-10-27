@@ -54,15 +54,30 @@ public enum RuleStrategyHandler {
     }
 
     /**
+     * 选取路由匹配的实例
+     *
+     * @param serviceName 服务名
+     * @param instances 实例列表
+     * @param tags 标签
+     * @return 路由匹配的实例
+     */
+    public List<Object> getMatchInvokersByRequest(String serviceName, List<Object> instances,
+        Map<String, String> tags) {
+        return ruleStrategy.getMatchInstancesByRequest(serviceName, instances, tags);
+    }
+
+    /**
      * 选取不匹配标签的实例
      *
      * @param serviceName 服务名
      * @param invokers 实例列表
      * @param tags 标签
+     * @param isReturnAllInstancesWhenMismatch 无匹配时，是否返回全部实例
      * @return 路由过滤后的实例
      */
-    public List<Object> getMismatchInvokers(String serviceName, List<Object> invokers, List<Map<String, String>> tags) {
-        return ruleStrategy.getMismatchInstances(serviceName, invokers, tags);
+    public List<Object> getMismatchInvokers(String serviceName, List<Object> invokers, List<Map<String, String>> tags,
+        boolean isReturnAllInstancesWhenMismatch) {
+        return ruleStrategy.getMismatchInstances(serviceName, invokers, tags, isReturnAllInstancesWhenMismatch);
     }
 
     /**

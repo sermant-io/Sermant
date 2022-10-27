@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.router.spring.service;
 
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
@@ -31,13 +32,17 @@ import com.huaweicloud.sermant.router.config.entity.ValueMatch;
 import com.huaweicloud.sermant.router.spring.TestDefaultServiceInstance;
 import com.huaweicloud.sermant.router.spring.cache.AppCache;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.cloud.client.ServiceInstance;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -50,28 +55,54 @@ import java.util.Map;
  * @since 2022-09-13
  */
 public class LoadBalancerServiceTest {
-    private final LoadBalancerService loadBalancerService;
+    private static LoadBalancerService loadBalancerService;
 
-    public LoadBalancerServiceTest() throws NoSuchFieldException, IllegalAccessException {
-        loadBalancerService = new LoadBalancerServiceImpl();
-        RouterConfig config = new RouterConfig();
+    private static RouterConfig config;
+
+    private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
+
+    /**
+     * UT执行前进行mock
+     */
+    @BeforeClass
+    public static void before() {
+        config = new RouterConfig();
         config.setZone("foo");
-        Field field = loadBalancerService.getClass().getDeclaredField("routerConfig");
-        field.setAccessible(true);
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        field.set(loadBalancerService, config);
+        config.setRequestTags(Arrays.asList("foo", "bar", "version"));
+        mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
+            .thenReturn(config);
+        loadBalancerService = new LoadBalancerServiceImpl();
+    }
+
+    /**
+     * UT执行后释放mock对象
+     */
+    @AfterClass
+    public static void after() {
+        mockPluginConfigManager.close();
+    }
+
+    public LoadBalancerServiceTest() {
         initRule();
         EnabledStrategy strategy = ConfigCache.getEnabledStrategy(RouterConstant.SPRING_CACHE_NAME);
         strategy.reset(Strategy.ALL, Collections.emptyList());
     }
 
     /**
-     * 测试getTargetInstances方法
+     * 重置
+     */
+    @Before
+    public void reset() {
+        config.setUseRequestRouter(false);
+        config.setRequestTags(null);
+    }
+
+    /**
+     * 测试getTargetInstancesByRules方法
      */
     @Test
-    public void testGetTargetInstances() {
+    public void testGetTargetInstancesByRules() {
         List<Object> instances = new ArrayList<>();
         ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0");
         instances.add(instance1);
@@ -82,6 +113,101 @@ public class LoadBalancerServiceTest {
         List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
+    }
+
+    /**
+     * 测试getTargetInstancesByRequest方法
+     */
+    @Test
+    public void testGetTargetInstancesByRequest() {
+        config.setUseRequestRouter(true);
+        List<Object> instances = new ArrayList<>();
+        ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0",
+            Collections.singletonMap("bar", "bar1"));
+        instances.add(instance1);
+        ServiceInstance instance2 = TestDefaultServiceInstance
+            .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("foo", "bar2"));
+        instances.add(instance2);
+        ServiceInstance instance3 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.1");
+        instances.add(instance3);
+        Map<String, List<String>> header = new HashMap<>();
+
+        // 测试无tags时
+        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        Assert.assertEquals(instances, targetInstances);
+
+        // 设置tags
+        config.setRequestTags(Arrays.asList("foo", "bar", "version"));
+
+        // 匹配foo: bar2实例
+        header.clear();
+        header.put("foo", Collections.singletonList("bar2"));
+        header.put("foo1", Collections.singletonList("bar2"));
+        targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        Assert.assertEquals(1, targetInstances.size());
+        Assert.assertEquals(instance2, targetInstances.get(0));
+
+        // 匹配1.0.0版本实例
+        header.clear();
+        header.put("version", Collections.singletonList("1.0.0"));
+        targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        Assert.assertEquals(1, targetInstances.size());
+        Assert.assertEquals(instance1, targetInstances.get(0));
+    }
+
+    /**
+     * 测试getTargetInstancesByRequest方法不匹配时
+     */
+    @Test
+    public void testGetTargetInstancesByRequestWithMismatch() {
+        config.setUseRequestRouter(true);
+        config.setRequestTags(Arrays.asList("foo", "bar", "version"));
+        List<Object> instances = new ArrayList<>();
+        ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0",
+            Collections.singletonMap("foo", "bar1"));
+        instances.add(instance1);
+        ServiceInstance instance2 = TestDefaultServiceInstance
+            .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("bar", "bar2"));
+        instances.add(instance2);
+        ServiceInstance instance3 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.2");
+        instances.add(instance3);
+
+        // 不匹配bar: bar1实例时，匹配没有bar标签的实例
+        Map<String, List<String>> header = new HashMap<>();
+        header.put("bar", Collections.singletonList("bar1"));
+        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        Assert.assertEquals(2, targetInstances.size());
+        Assert.assertFalse(targetInstances.contains(instance2));
+
+        // 不匹配bar: bar1实例时，优先匹配没有bar标签的实例，如果没有无bar标签的实例，则返回空列表
+        List<Object> sameInstances = new ArrayList<>();
+        ServiceInstance sameInstance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0",
+            Collections.singletonMap("bar", "bar3"));
+        sameInstances.add(sameInstance1);
+        ServiceInstance sameInstance2 = TestDefaultServiceInstance
+            .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("bar", "bar2"));
+        sameInstances.add(sameInstance2);
+        header.clear();
+        header.put("bar", Collections.singletonList("bar1"));
+        targetInstances = loadBalancerService.getTargetInstances("foo", sameInstances, null, header);
+        Assert.assertEquals(0, targetInstances.size());
+
+        // 不匹配version: 1.0.3实例时，返回所有版本的实例
+        header.clear();
+        header.put("version", Collections.singletonList("1.0.3"));
+        targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        Assert.assertEquals(3, targetInstances.size());
+
+        // 不传入header时，匹配无标签实例
+        header.clear();
+        targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        Assert.assertEquals(1, targetInstances.size());
+        Assert.assertEquals(instance3, targetInstances.get(0));
+
+        // 不传入header时，优先匹配无标签实例，没有无标签实例时，返回全部实例
+        header.clear();
+        targetInstances = loadBalancerService.getTargetInstances("foo", sameInstances, null, header);
+        Assert.assertEquals(sameInstances, targetInstances);
     }
 
     /**

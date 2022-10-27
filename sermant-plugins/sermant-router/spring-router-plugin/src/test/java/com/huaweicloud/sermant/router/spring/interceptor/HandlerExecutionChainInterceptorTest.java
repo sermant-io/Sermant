@@ -57,11 +57,6 @@ public class HandlerExecutionChainInterceptorTest {
                 }
 
                 @Override
-                public boolean isInValid(String cacheName) {
-                    return false;
-                }
-
-                @Override
                 public Set<String> getMatchKeys() {
                     return Collections.emptySet();
                 }
