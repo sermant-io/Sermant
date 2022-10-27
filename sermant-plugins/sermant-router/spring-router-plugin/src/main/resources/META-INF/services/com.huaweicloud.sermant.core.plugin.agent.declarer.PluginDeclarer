@@ -10,3 +10,6 @@ com.huaweicloud.sermant.router.spring.declarer.LoadBalancerClientFilterDeclarer
 com.huaweicloud.sermant.router.spring.declarer.NopInstanceFilterDeclarer
 com.huaweicloud.sermant.router.spring.declarer.ServiceInstanceListSupplierDeclarer
 com.huaweicloud.sermant.router.spring.declarer.ServiceRegistryDeclarer
+com.huaweicloud.sermant.router.spring.declarer.OkHttp3ClientDeclarer
+com.huaweicloud.sermant.router.spring.declarer.OkHttpClientDeclarer
+com.huaweicloud.sermant.router.spring.declarer.HttpClient4xDeclarer
