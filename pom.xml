@@ -296,7 +296,7 @@
             <modules>
                 <module>sermant-agentcore</module>
                 <module>sermant-plugins</module>
-                <module>sermant-backend</module>
+                <module>sermant-backend-lite</module>
                 <module>report</module>
             </modules>
             <build>
@@ -351,6 +351,7 @@
             <id>test</id>
             <modules>
                 <module>sermant-agentcore</module>
+                <module>sermant-backend-lite</module>
                 <module>sermant-plugins</module>
             </modules>
         </profile>
@@ -359,7 +360,7 @@
             <modules>
                 <module>sermant-agentcore</module>
                 <module>sermant-plugins</module>
-                <module>sermant-backend</module>
+                <module>sermant-backend-lite</module>
                 <module>sermant-example</module>
                 <module>sermant-integration-tests</module>
             </modules>
