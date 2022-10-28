@@ -25,6 +25,7 @@ import com.huaweicloud.sermant.core.service.heartbeat.api.ExtInfoProvider;
 import com.huaweicloud.sermant.core.service.heartbeat.api.HeartbeatService;
 import com.huaweicloud.sermant.core.service.heartbeat.common.HeartbeatConstant;
 import com.huaweicloud.sermant.core.service.heartbeat.common.HeartbeatMessage;
+import com.huaweicloud.sermant.core.service.heartbeat.common.PluginInfo;
 import com.huaweicloud.sermant.core.service.heartbeat.config.HeartbeatConfig;
 import com.huaweicloud.sermant.core.utils.JarFileUtils;
 import com.huaweicloud.sermant.implement.service.send.NettyClient;
@@ -34,7 +35,6 @@ import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -110,18 +110,21 @@ public class HeartbeatServiceImpl implements HeartbeatService {
         // 创建NettyClient
         final NettyClient nettyClient = NettyClientFactory.getInstance().getDefaultNettyClient();
 
-        // 获取插件名和版本集合
-        final Map<String, String> pluginVersionMap = PluginSchemaValidator.getPluginVersionMap();
+        // 初始化心跳数据常量
+        HeartbeatMessage heartbeatMessage = new HeartbeatMessage();
 
-        // 插件心跳集合
-        Map<String, String> pluginHeartbeatMap = new HashMap<>();
+        Map<String, PluginInfo> pluginInfoMap = heartbeatMessage.getPluginInfoMap();
 
         // 循环运行
         while (isRunning) {
+            // 获取插件名和版本集合
+            final Map<String, String> pluginVersionMap = PluginSchemaValidator.getPluginVersionMap();
             for (Map.Entry<String, String> entry : pluginVersionMap.entrySet()) {
-                pluginHeartbeatMap.put(entry.getKey(), addExtInfo(entry.getKey(), entry.getValue()));
+                pluginInfoMap.putIfAbsent(entry.getKey(), new PluginInfo(entry.getKey(), entry.getValue()));
+                addExtInfo(entry.getKey(), pluginInfoMap.get(entry.getKey()));
             }
-            nettyClient.sendData(JSONObject.toJSONString(pluginHeartbeatMap).getBytes(CommonConstant.DEFAULT_CHARSET),
+            heartbeatMessage.updateHeartbeatVersion();
+            nettyClient.sendData(JSONObject.toJSONString(heartbeatMessage).getBytes(CommonConstant.DEFAULT_CHARSET),
                 Message.ServiceData.DataType.SERVICE_HEARTBEAT);
             sleep();
         }
@@ -144,22 +147,17 @@ public class HeartbeatServiceImpl implements HeartbeatService {
      * 添加心跳额外信息
      *
      * @param pluginName 插件名称
-     * @param pluginVersion 插件版本
+     * @param pluginInfo 插件信息
      */
-    private String addExtInfo(String pluginName, String pluginVersion) {
-        final HeartbeatMessage message = new HeartbeatMessage().registerInformation(PLUGIN_NAME_KEY, pluginName)
-                .registerInformation(PLUGIN_VERSION_KEY, pluginVersion);
+    private void addExtInfo(String pluginName, PluginInfo pluginInfo) {
         final ExtInfoProvider provider = EXT_INFO_MAP.get(pluginName);
         if (provider == null) {
-            return JSONObject.toJSONString(message.getMessage());
+            return;
         }
         final Map<String, String> extInfo = provider.getExtInfo();
         if (extInfo != null) {
-            for (Map.Entry<String, String> entry : extInfo.entrySet()) {
-                message.registerInformation(entry.getKey(), entry.getValue());
-            }
+            pluginInfo.setExtInfo(extInfo);
         }
-        return JSONObject.toJSONString(message.getMessage());
     }
 
     @Override

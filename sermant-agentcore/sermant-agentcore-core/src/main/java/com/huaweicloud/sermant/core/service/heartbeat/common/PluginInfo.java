@@ -16,23 +16,45 @@
 
 package com.huaweicloud.sermant.core.service.heartbeat.common;
 
+import java.util.Map;
+
 /**
- * 心跳发送服务涉及到的常量
+ * 插件信息
  *
  * @author luanwenfei
- * @since 2022-03-28
+ * @since 2022-10-28
  */
-public class HeartbeatConstant {
-    /**
-     * 心跳间隔
-     */
-    public static final long INTERVAL = 3000L;
+public class PluginInfo {
+    private String name;
+
+    private String version;
+
+    private Map<String, String> extInfo;
 
     /**
-     * 最小心跳间隔
+     * constructor
+     *
+     * @param name plugin name
+     * @param version plugin version
      */
-    public static final long HEARTBEAT_MINIMAL_INTERVAL = 3000L;
+    public PluginInfo(String name, String version) {
+        this.name = name;
+        this.version = version;
+    }
 
-    private HeartbeatConstant() {
+    public String getName() {
+        return name;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setExtInfo(Map<String, String> extInfo) {
+        this.extInfo = extInfo;
+    }
+
+    public Map<String, String> getExtInfo() {
+        return extInfo;
     }
 }
