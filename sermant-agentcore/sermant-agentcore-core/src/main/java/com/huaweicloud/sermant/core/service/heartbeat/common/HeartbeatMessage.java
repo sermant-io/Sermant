@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.core.utils.NetworkUtils;
 import com.huaweicloud.sermant.core.utils.TimeUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,35 +31,81 @@ import java.util.Map;
  * @since 2022-03-19
  */
 public class HeartbeatMessage {
-    private final Map<String, Object> message = new HashMap<>();
+    private String hostName;
+
+    private List<String> ip;
+
+    private final String appName;
+
+    private final String appType;
+
+    private long heartbeatTime;
+
+    private long lastHeartbeatTime;
+
+    private final String version;
+
+    private final long instanceId;
+
+    private final Map<String, PluginInfo> pluginInfoMap = new HashMap<>();
 
     /**
      * 构造函数
      */
     public HeartbeatMessage() {
-        message.put("hostname", NetworkUtils.getHostName());
-        message.put("ip", NetworkUtils.getAllNetworkIp());
-        message.put("app", BootArgsIndexer.getAppName());
-        message.put("appType", BootArgsIndexer.getAppType());
-        message.put("heartbeatVersion", String.valueOf(TimeUtils.currentTimeMillis()));
-        message.put("lastHeartbeat", String.valueOf(TimeUtils.currentTimeMillis()));
-        message.put("version", BootArgsIndexer.getCoreVersion());
-        message.put("instanceId", BootArgsIndexer.getInstanceId());
+        this.hostName = NetworkUtils.getHostName();
+        this.ip = NetworkUtils.getAllNetworkIp();
+        this.appName = BootArgsIndexer.getAppName();
+        this.appType = BootArgsIndexer.getAppType();
+        this.heartbeatTime = TimeUtils.currentTimeMillis();
+        this.lastHeartbeatTime = TimeUtils.currentTimeMillis();
+        this.version = BootArgsIndexer.getCoreVersion();
+        this.instanceId = BootArgsIndexer.getInstanceId();
     }
 
     /**
-     * registerInformation
-     *
-     * @param key key
-     * @param value value
-     * @return HeartbeatMessage
+     * 更新心跳数据
      */
-    public HeartbeatMessage registerInformation(String key, String value) {
-        message.put(key, value);
-        return this;
+    public void updateHeartbeatVersion() {
+        this.lastHeartbeatTime = this.heartbeatTime;
+        this.heartbeatTime = TimeUtils.currentTimeMillis();
+        this.hostName = NetworkUtils.getHostName();
+        this.ip = NetworkUtils.getAllNetworkIp();
     }
 
-    public Map<String, Object> getMessage() {
-        return message;
+    public Map<String, PluginInfo> getPluginInfoMap() {
+        return pluginInfoMap;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public List<String> getIp() {
+        return ip;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public String getAppType() {
+        return appType;
+    }
+
+    public long getHeartbeatTime() {
+        return heartbeatTime;
+    }
+
+    public long getLastHeartbeatTime() {
+        return lastHeartbeatTime;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public long getInstanceId() {
+        return instanceId;
     }
 }
