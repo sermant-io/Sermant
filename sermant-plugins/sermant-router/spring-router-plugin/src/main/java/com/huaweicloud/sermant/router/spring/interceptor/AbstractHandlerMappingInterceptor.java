@@ -50,9 +50,8 @@ public class AbstractHandlerMappingInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        Object argument = context.getArguments()[0];
-        if ((argument instanceof ServerWebExchange) && context.getObject() instanceof RequestMappingHandlerMapping) {
-            ServerWebExchange exchange = (ServerWebExchange) argument;
+        if (shouldHandle(context)) {
+            ServerWebExchange exchange = (ServerWebExchange) context.getArguments()[0];
             HttpHeaders headers = exchange.getRequest().getHeaders();
             ThreadLocalUtils.setRequestHeader(new RequestHeader(getHeader(headers)));
         }
@@ -61,13 +60,15 @@ public class AbstractHandlerMappingInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        ThreadLocalUtils.removeRequestHeader();
+        // 方法会在controller方法之前结束，所以不能在这里释放线程变量，线程变量会在ControllerInterceptor进行释放
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
-        ThreadLocalUtils.removeRequestHeader();
+        if (shouldHandle(context)) {
+            ThreadLocalUtils.removeRequestHeader();
+        }
         return context;
     }
 
@@ -80,5 +81,11 @@ public class AbstractHandlerMappingInterceptor extends AbstractInterceptor {
             }
         }
         return map;
+    }
+
+    private boolean shouldHandle(ExecuteContext context) {
+        Object[] arguments = context.getArguments();
+        return arguments.length > 0 && arguments[0] instanceof ServerWebExchange
+            && context.getObject() instanceof RequestMappingHandlerMapping;
     }
 }

@@ -123,16 +123,16 @@ public class AbstractHandlerMappingInterceptorTest {
     public void testAfter() {
         ThreadLocalUtils.setRequestHeader(new RequestHeader(Collections.emptyMap()));
 
-        // 测试after方法,验证是否释放线程变量
+        // 测试after方法,不释放线程变量
         interceptor.after(context);
-        Assert.assertNull(ThreadLocalUtils.getRequestHeader());
+        Assert.assertNotNull(ThreadLocalUtils.getRequestHeader());
     }
 
     /**
      * 测试onThrow方法,验证是否释放线程变量
      */
     @Test
-    public void testAfterCompletion() {
+    public void testOnThrow() {
         ThreadLocalUtils.setRequestHeader(new RequestHeader(Collections.emptyMap()));
 
         // 测试onThrow方法,验证是否释放线程变量
