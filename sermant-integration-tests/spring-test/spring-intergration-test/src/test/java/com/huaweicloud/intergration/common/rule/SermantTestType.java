@@ -48,6 +48,11 @@ public enum SermantTestType {
     LOAD_BALANCER,
 
     /**
+     * springboot注册发现测试
+     */
+    BOOT_REGISTRY,
+
+    /**
      * 测试所有类型
      */
     ALL;
