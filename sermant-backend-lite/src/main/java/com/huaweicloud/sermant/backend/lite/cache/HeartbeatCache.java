@@ -14,34 +14,26 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.core.utils;
+package com.huaweicloud.sermant.backend.lite.cache;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.atomic.AtomicLong;
+import com.huaweicloud.sermant.backend.lite.entity.HeartbeatMessage;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * uuid
+ * 心跳数据缓存
  *
- * @author xuezechao
- * @since 2022-02-28
+ * @author luanwenfei
+ * @since 2022-10-27
  */
-public class UuidUtil {
+public class HeartbeatCache {
+    private static final Map<String, HeartbeatMessage> HEARTBEAT_MESSAGE_MAP = new ConcurrentHashMap<>();
 
-    private UuidUtil() {
+    private HeartbeatCache() {
     }
 
-    /**
-     * 生成Long 类型唯一ID
-     *
-     * @return uuid
-     */
-    public static long getId() {
-        long nowTime = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()));
-        AtomicLong instanceId = new AtomicLong(nowTime);
-        if (instanceId.get() < 0) {
-            return -instanceId.get();
-        }
-        return instanceId.get();
+    public static Map<String, HeartbeatMessage> getHeartbeatMessageMap() {
+        return HEARTBEAT_MESSAGE_MAP;
     }
 }
