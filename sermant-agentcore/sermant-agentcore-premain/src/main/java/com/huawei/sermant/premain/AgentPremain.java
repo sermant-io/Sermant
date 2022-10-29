@@ -16,24 +16,32 @@
 
 package com.huawei.sermant.premain;
 
-import com.huaweicloud.sermant.core.AgentCoreEntrance;
 import com.huawei.sermant.premain.common.BootArgsBuilder;
 import com.huawei.sermant.premain.common.PathDeclarer;
 import com.huawei.sermant.premain.exception.DupPremainException;
+
+import com.huaweicloud.sermant.core.AgentCoreEntrance;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
+import java.net.BindException;
+import java.security.acl.NotOwnerException;
+import java.sql.SQLException;
+import java.util.ConcurrentModificationException;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.jar.JarException;
 import java.util.jar.JarFile;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import javax.naming.InsufficientResourcesException;
 /**
  * Agent Premain方法
  *
@@ -76,6 +84,10 @@ public class AgentPremain {
             AgentCoreEntrance.run(argsMap, instrumentation);
 
             LOGGER.info("Load sermant done. ");
+        } catch (FileNotFoundException | OutOfMemoryError | StackOverflowError | MissingResourceException
+                 | NotOwnerException | JarException | ConcurrentModificationException | BindException
+                 | InsufficientResourcesException | SQLException e) {
+            LOGGER.severe("Loading sermant agent failed. ");
         } catch (Exception e) {
             LOGGER.severe(
                 String.format(Locale.ROOT, "Loading sermant agent failed, %s. ", e));
@@ -85,7 +97,7 @@ public class AgentPremain {
     private static void loadCoreLib(Instrumentation instrumentation) throws IOException {
         final File coreDir = new File(PathDeclarer.getCorePath());
         if (!coreDir.exists() || !coreDir.isDirectory()) {
-            throw new FileNotFoundException(PathDeclarer.getCorePath() + " not found. ");
+            throw new RuntimeException("core directory is not exist or is not directory.");
         }
         final File[] jars = coreDir.listFiles(new FilenameFilter() {
             @Override
@@ -94,7 +106,7 @@ public class AgentPremain {
             }
         });
         if (jars == null || jars.length <= 0) {
-            throw new FileNotFoundException(PathDeclarer.getCorePath() + " has no core lib. ");
+            throw new RuntimeException("core directory is empty");
         }
         for (File jar : jars) {
             JarFile jarFile = null;

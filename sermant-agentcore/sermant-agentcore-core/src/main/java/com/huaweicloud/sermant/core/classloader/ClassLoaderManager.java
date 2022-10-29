@@ -20,7 +20,6 @@ import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.utils.FileUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -43,10 +42,9 @@ public class ClassLoaderManager {
      * Init custom classloaders.
      *
      * @param argsMap arguments map
-     * @throws FileNotFoundException FileNotFoundException
      * @throws MalformedURLException MalformedURLException
      */
-    public static void init(Map<String, Object> argsMap) throws FileNotFoundException, MalformedURLException {
+    public static void init(Map<String, Object> argsMap) throws MalformedURLException {
         URL[] coreImplementUrls = listCoreImplementUrls(argsMap.get(CommonConstant.CORE_IMPLEMENT_DIR_KEY).toString());
         initFrameworkClassLoader(coreImplementUrls);
     }
@@ -64,15 +62,14 @@ public class ClassLoaderManager {
         frameworkClassLoader = new FrameworkClassLoader(urls);
     }
 
-    private static URL[] listCoreImplementUrls(String coreImplementPath)
-        throws FileNotFoundException, MalformedURLException {
+    private static URL[] listCoreImplementUrls(String coreImplementPath) throws MalformedURLException {
         File coreImplementDir = new File(FileUtils.validatePath(coreImplementPath));
         if (!coreImplementDir.exists() || !coreImplementDir.isDirectory()) {
-            throw new FileNotFoundException(coreImplementPath + " not found.");
+            throw new RuntimeException("core implement directory is not exist or is not directory.");
         }
         File[] jars = coreImplementDir.listFiles((file, name) -> name.endsWith(".jar"));
         if (jars == null || jars.length <= 0) {
-            throw new FileNotFoundException("Can not find core implement jar.");
+            throw new RuntimeException("core implement directory is empty");
         }
         List<URL> urlList = new ArrayList<>();
         for (File jar : jars) {
