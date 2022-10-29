@@ -45,7 +45,7 @@ public class HeartbeatMessage {
 
     private final String version;
 
-    private final long instanceId;
+    private final String instanceId;
 
     private final Map<String, PluginInfo> pluginInfoMap = new HashMap<>();
 
@@ -105,7 +105,7 @@ public class HeartbeatMessage {
         return version;
     }
 
-    public long getInstanceId() {
+    public String getInstanceId() {
         return instanceId;
     }
 }

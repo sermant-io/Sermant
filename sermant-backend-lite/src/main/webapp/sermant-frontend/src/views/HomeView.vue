@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { reactive } from '@vue/reactivity';
-import axios from 'axios';
-import { Search } from '@element-plus/icons-vue';
-import { onMounted } from '@vue/runtime-core';
+import { reactive } from "@vue/reactivity";
+import axios from "axios";
+import { Search } from "@element-plus/icons-vue";
+import { onMounted } from "@vue/runtime-core";
 interface TableData {
   appName: string;
   heartbeatTime: string;
@@ -12,13 +12,14 @@ interface TableData {
   pluginInfoMap: any[];
   version: string;
   health: boolean;
+  ipAddress: string;
 }
 
 interface InnerData {
   appName: string;
   heartbeatTime: string;
   instanceId: string;
-  ip: string;
+  ip: string[];
   lastHeartbeatTime: string;
   pluginInfoMap: any;
   version: string;
@@ -36,18 +37,18 @@ const state: {
   loading: boolean;
   currentPage: number;
   normalCount: number;
-  abnormalCount:number;
+  abnormalCount: number;
   pageSize: number;
 } = reactive({
   total: 0,
-  ipAddress: '',
-  version: '',
-  appName: '',
+  ipAddress: "",
+  version: "",
+  appName: "",
   tableData: [],
   loading: false,
   currentPage: 1,
   normalCount: 0,
-  abnormalCount:0,
+  abnormalCount: 0,
   pageSize: 10,
 });
 
@@ -62,13 +63,13 @@ async function getTableData() {
     innerData.forEach((item) => {
       if (item.health) {
         state.normalCount++;
-      }else{
+      } else {
         state.abnormalCount++;
       }
     });
     showData = JSON.parse(JSON.stringify(res.data));
     state.total = showData.length;
-    const result = showData.slice(0, state.pageSize);
+    const result = JSON.parse(JSON.stringify(showData.slice(0, state.pageSize)));
     state.tableData = handle(result);
   } catch (err) {
   } finally {
@@ -78,9 +79,11 @@ async function getTableData() {
 function handle(result: any[]) {
   result.forEach((item: any) => {
     if (item.ip instanceof Array) {
-      item.ip = item.ip.join(',');
+      // item.ip = item.ip.join(",");
+      item.ipAddress=item.ip.join(',');
     }
-    item.heartbeatTime = new Date(item.heartbeatTime).toString();
+    const heartbeatDate=new Date(item.heartbeatTime);
+    item.heartbeatTime = `${heartbeatDate.getFullYear()}-${(heartbeatDate.getMonth()+1)}-${heartbeatDate.getDate()} ${heartbeatDate.getHours()}:${heartbeatDate.getMinutes()}:${heartbeatDate.getSeconds()}`
   });
   return result;
 }
@@ -88,10 +91,14 @@ function handle(result: any[]) {
 function pageChange(page: number) {
   state.currentPage = page;
   if (page * state.pageSize <= showData.length) {
-    const result = showData.slice((page - 1) * state.pageSize, page * state.pageSize);
+    const result = JSON.parse(
+      JSON.stringify(showData.slice((page - 1) * state.pageSize, page * state.pageSize))
+    );
     state.tableData = handle(result);
-  }else {
-     const result = showData.slice((page - 1) * state.pageSize);
+  } else {
+    const result = JSON.parse(
+      JSON.stringify(showData.slice((page - 1) * state.pageSize))
+    );
     state.tableData = handle(result);
   }
 }
@@ -105,7 +112,7 @@ function search() {
     innerData.forEach((item) => {
       const isMatch =
         item.appName.toLowerCase().indexOf(state.appName.toLowerCase()) !== -1 &&
-        item.ip.toLowerCase().indexOf(state.ipAddress.toLowerCase()) !== -1 &&
+        item.ip.join(",").toLowerCase().indexOf(state.ipAddress.toLowerCase()) !== -1 &&
         item.version.toLowerCase().indexOf(state.version.toLowerCase()) !== -1;
       if (isMatch) {
         showData.push(item);
@@ -116,16 +123,40 @@ function search() {
   pageChange(1);
   state.loading = false;
 }
+
+function searchHealth(health:string){
+  state.loading=true;
+  showData=[];
+if(health==='normal'){
+  innerData.forEach((item)=>{
+    if(item.health){
+      showData.push(item);
+    }
+  })
+}else{
+  innerData.forEach((item)=>{
+    if(!item.health){
+      showData.push(item)
+    }
+  })
+}
+state.total=showData.length;
+pageChange(1);
+state.loading=false
+}
 </script>
 
 <template>
   <main>
+  <div class="logo-box">
+  <img src="../assets/img/sermant-logo.png"/>
+  </div>
     <div class="header">
       <div class="left-area">
-        <el-card class="normal">
+        <el-card class="normal" @click="searchHealth('normal')">
           {{ state.normalCount }}
         </el-card>
-        <el-card class="abnormal">
+        <el-card class="abnormal" @click="searchHealth('abnormal')">
           {{ state.abnormalCount }}
         </el-card>
       </div>
@@ -158,19 +189,33 @@ function search() {
       </div>
     </div>
     <div class="center">
-      <el-table :data="state.tableData" style="width: 100%" :border="true" v-loading="state.loading" stripe>
-        <el-table-column type="expand">
+      <el-table
+        :data="state.tableData"
+        style="width: 100%"
+        :border="true"
+        v-loading="state.loading"
+        stripe
+      >
+        <el-table-column prop="health" width="50">
+          <template #default="scope">
+            <div class="dot normal-dot" v-if="scope.row.health"></div>
+            <div class="dot abnormal-dot" v-if="!scope.row.health"></div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="appName" label="应用名" width="100"> </el-table-column>
+        <el-table-column prop="instanceId" label="实例ID" width="320"> </el-table-column>
+        <el-table-column prop="version" label="版本" width="100"> </el-table-column>
+        <el-table-column prop="ipAddress" label="IP" width="180"> </el-table-column>
+        <el-table-column prop="heartbeatTime" label="心跳时间" width="180"> </el-table-column>
+        <el-table-column label="插件">
           <template #default="props">
             <div class="plugin-box">
-              <el-tag v-for="(plugin, index) in props.row.pluginInfoMap" :key="index">{{ plugin.name }}:{{ plugin.version }}</el-tag>
+              <el-tag v-for="(plugin, index) in props.row.pluginInfoMap" :key="index"
+                >{{ plugin.name }}:{{ plugin.version }}</el-tag
+              >
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="appName" label="应用名" width="180"> </el-table-column>
-        <el-table-column prop="instanceId" label="实例ID"> </el-table-column>
-        <el-table-column prop="version" label="版本"> </el-table-column>
-        <el-table-column prop="ip" label="IP"> </el-table-column>
-        <el-table-column prop="heartbeatTime" label="心跳时间"> </el-table-column>
       </el-table>
       <el-pagination
         layout="prev, pager, next"
@@ -180,6 +225,9 @@ function search() {
       >
       </el-pagination>
     </div>
+    <div class="footer-box">
+    <p></p>
+    </div>
   </main>
 </template>
 <style lang="less" scoped>
@@ -188,10 +236,21 @@ main {
   height: 100%;
   margin: 0 auto;
   border: 1px solid #e7e7e7;
-  padding: 50px;
+  // padding: 50px;
   background-color: #f5f5f573;
   border-radius: 3px;
   box-sizing: border-box;
+
+  .logo-box{
+    width:100%;
+    height:60px;
+    background-color:#ffffff;
+   margin-bottom:20px;
+    img{
+      height:40px;
+      margin-top:10px;
+    }
+  }
   .header {
     height: 400px;
     width: 100%;
@@ -208,7 +267,7 @@ main {
     }
 
     .abnormal {
-      color: red;
+      color: grey;
     }
 
     .el-card {
@@ -218,10 +277,11 @@ main {
       font-weight: bold;
       text-align: center;
       line-height: 160px;
+      cursor:pointer;
     }
   }
   .search-area {
-    flex-grow: 1;
+    width:50%;
 
     .input-item {
       display: flex;
@@ -229,11 +289,11 @@ main {
 
       div {
         margin-right: 10px;
-        width: 100px;
+        width: 80px;
       }
 
       .el-input {
-        width: 400px;
+        width: calc(100% - 80px);
       }
     }
 
@@ -253,10 +313,36 @@ main {
     }
   }
   .plugin-box {
-    margin-left: 50px;
-    p {
+    // margin-left: 50px;
+    .el-tag {
       margin-left: 20px;
     }
+  }
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin:0 auto;
+}
+
+.normal-dot {
+  background-color: green;
+}
+
+.abnormal-dot {
+  background-color: grey;
+}
+
+.footer-box{
+  width:100%;
+  height:60px;
+  border-top:1px solid #e7e7e7;
+  margin-top:20px;
+  p{
+    margin:20px auto;
+    text-align:center;
   }
 }
 </style>

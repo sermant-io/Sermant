@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.implement.service.send;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.implement.service.send.common.ThreadPools;
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
 import com.huaweicloud.sermant.implement.utils.GzipUtils;
@@ -38,14 +39,13 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * 网关客户端
@@ -56,10 +56,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class NettyClient {
     // 运行日志
-    private static final Logger LOGGER = LoggerFactory.getLogger(NettyClient.class);
-
-    // 消息队列用于缓存来自用户的消息
-    private static BlockingQueue<Message.ServiceData> queue = new LinkedBlockingQueue<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final int CONNECT_TIMEOUT = 9000;
 
@@ -68,6 +65,9 @@ public class NettyClient {
     private static final int SEND_INTERNAL_MILLISECOND = 10000;
 
     private static final int RECONNECT_INTERVAL_SECOND = 10;
+
+    // 消息队列用于缓存来自用户的消息
+    private final BlockingQueue<Message.ServiceData> queue = new LinkedBlockingQueue<>(10);
 
     // 客户端读写闲置时间
     private int writeOrReadWaitTime;
@@ -82,7 +82,7 @@ public class NettyClient {
     private int sendInterval;
 
     // 尝试重连服务器间隔时间
-    private int reconectInterval;
+    private int reconnectInterval;
 
     private Bootstrap bootstrap;
 
@@ -101,7 +101,7 @@ public class NettyClient {
         port = serverPort;
         writeOrReadWaitTime = WAIT_TIME;
         sendInterval = SEND_INTERNAL_MILLISECOND;
-        reconectInterval = RECONNECT_INTERVAL_SECOND;
+        reconnectInterval = RECONNECT_INTERVAL_SECOND;
         bind();
     }
 
@@ -150,8 +150,9 @@ public class NettyClient {
                 }
             } else {
                 // 失败则在X秒后重试连接
-                LOGGER.info("Failed to connect,try reconnecting after {} seconds...", reconectInterval);
-                channelFuture.channel().eventLoop().schedule(this::doConnect, reconectInterval, TimeUnit.SECONDS);
+                LOGGER.info(String.format(Locale.ROOT, "Failed to connect,try reconnecting after %s seconds ",
+                        reconnectInterval));
+                channelFuture.channel().eventLoop().schedule(this::doConnect, reconnectInterval, TimeUnit.SECONDS);
             }
         });
     }
@@ -164,7 +165,7 @@ public class NettyClient {
      */
     public void sendData(byte[] msg, Message.ServiceData.DataType dataType) {
         if (msg == null) {
-            LOGGER.warn("Message is null.");
+            LOGGER.warning("Message is null.");
             return;
         }
         byte[] compressMsg = GzipUtils.compress(msg);
@@ -174,7 +175,7 @@ public class NettyClient {
             try {
                 queue.put(serviceData);
             } catch (InterruptedException e) {
-                LOGGER.error("Exception occurs when put data to message queue. Exception info: {}", e);
+                LOGGER.severe("Exception occurs when put data to message queue.");
             }
         });
     }

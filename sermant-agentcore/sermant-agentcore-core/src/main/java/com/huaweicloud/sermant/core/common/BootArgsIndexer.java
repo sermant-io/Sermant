@@ -19,11 +19,11 @@ package com.huaweicloud.sermant.core.common;
 import com.huaweicloud.sermant.core.exception.SchemaException;
 import com.huaweicloud.sermant.core.utils.FileUtils;
 import com.huaweicloud.sermant.core.utils.JarFileUtils;
-import com.huaweicloud.sermant.core.utils.UuidUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
@@ -74,7 +74,7 @@ public class BootArgsIndexer {
 
     private static String appType;
 
-    private static long instanceId;
+    private static String instanceId;
 
     private BootArgsIndexer() {
     }
@@ -111,7 +111,7 @@ public class BootArgsIndexer {
         return appType;
     }
 
-    public static long getInstanceId() {
+    public static String getInstanceId() {
         return instanceId;
     }
 
@@ -150,7 +150,7 @@ public class BootArgsIndexer {
         Object object = argsMap.get(CommonConstant.APP_TYPE_KEY);
         appType = object == null ? "0" : object.toString();
 
-        instanceId = UuidUtil.getId();
+        instanceId = UUID.randomUUID().toString();
     }
 
     static {

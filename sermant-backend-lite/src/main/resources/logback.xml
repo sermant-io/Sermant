@@ -56,6 +56,7 @@
         <!-- 打印debug级别日志及以上级别日志 -->
         <level value="${log.level}"/>
         <appender-ref ref="app" />
+        <appender-ref ref="CONSOLE"/>
     </root>
 
 </configuration>
