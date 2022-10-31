@@ -21,7 +21,6 @@ import com.huaweicloud.sermant.core.classloader.FrameworkClassLoader;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -47,13 +46,11 @@ public class LoggerFactory {
         try {
             Method initMethod = frameworkClassLoader
                     .loadClass("com.huaweicloud.sermant.implement.LoggerFactoryImpl").getMethod("init");
-            initMethod.invoke(null);
+            logger = (Logger) initMethod.invoke(null);
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
                  | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-        logger = java.util.logging.Logger.getLogger("sermant");
-        logger.setLevel(Level.ALL);
     }
 
     /**
