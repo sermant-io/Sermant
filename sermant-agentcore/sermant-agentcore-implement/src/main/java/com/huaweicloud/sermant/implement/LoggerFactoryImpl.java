@@ -18,6 +18,9 @@ package com.huaweicloud.sermant.implement;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * 日志初始化的实现类
  *
@@ -30,9 +33,14 @@ public class LoggerFactoryImpl {
 
     /**
      * init
+     *
+     * @return logger logger for sermant
      */
-    public static void init() {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
+    public static Logger init() {
+        Logger logger = java.util.logging.Logger.getLogger("sermant");
+        logger.addHandler(new SLF4JBridgeHandler());
+        logger.setUseParentHandlers(false);
+        logger.setLevel(Level.ALL);
+        return logger;
     }
 }
