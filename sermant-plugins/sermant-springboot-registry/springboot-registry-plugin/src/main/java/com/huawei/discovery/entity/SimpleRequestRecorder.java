@@ -48,16 +48,17 @@ public class SimpleRequestRecorder implements Recorder {
 
     @Override
     public void beforeRequest() {
+        if (!discoveryPluginConfig.isEnableRequestCount()) {
+            return;
+        }
         final long allRequest = allRequestCount.incrementAndGet();
         if (allRequest <= 0) {
             allRequestCount.set(0);
             LOGGER.info("SimpleRequestRecorder has over the max num of long, it has been reset to 0!");
         }
-        if (discoveryPluginConfig.isEnableRequestCount()) {
-            LOGGER.info(String.format(Locale.ENGLISH,
-                            "currentTime: %s request count handle by plugin is: %s",
-                    HttpConstants.currentTime(), allRequest));
-        }
+        LOGGER.info(String.format(Locale.ENGLISH,
+                "currentTime: %s request count handle by plugin is: %s",
+                HttpConstants.currentTime(), allRequest));
     }
 
     @Override
