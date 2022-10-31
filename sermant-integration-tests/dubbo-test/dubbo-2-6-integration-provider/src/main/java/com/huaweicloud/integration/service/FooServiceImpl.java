@@ -34,6 +34,12 @@ public class FooServiceImpl implements FooService {
     @Value("${service_meta_zone:${SERVICE_META_ZONE:${service.meta.zone:bar}}}")
     private String zone;
 
+    @Value("${spring.application.name}")
+    private String name;
+
+    @Value("${service_meta_parameters:${SERVICE_META_PARAMETERS:${service.meta.parameters:}}}")
+    private String parameters;
+
     @Override
     public String foo(String str) {
         return "foo:" + str;
@@ -54,6 +60,6 @@ public class FooServiceImpl implements FooService {
         if (exit) {
             System.exit(0);
         }
-        return zone;
+        return "I'm " + name + ", my zone is " + zone + ", my parameters is [" + parameters + "].";
     }
 }
