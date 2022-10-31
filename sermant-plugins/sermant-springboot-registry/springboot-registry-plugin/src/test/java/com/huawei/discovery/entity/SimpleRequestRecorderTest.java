@@ -46,6 +46,7 @@ public class SimpleRequestRecorderTest {
     public void setUp() throws Exception {
         pluginConfigManagerMockedStatic = Mockito
                 .mockStatic(PluginConfigManager.class);
+        discoveryPluginConfig.setEnableRequestCount(true);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class))
                 .thenReturn(discoveryPluginConfig);
     }
