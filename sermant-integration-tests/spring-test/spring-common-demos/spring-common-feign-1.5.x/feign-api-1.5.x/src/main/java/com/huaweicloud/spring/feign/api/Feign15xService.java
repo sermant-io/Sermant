@@ -21,6 +21,7 @@ import com.huaweicloud.spring.common.FeignConstants;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -31,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @FeignClient(qualifier = FeignConstants.FEIGN_SERVICE_BEAN_NAME, name = "feign-provider", configuration =
         HeaderMatchConfiguration.class)
-public interface FlowControlService {
+public interface Feign15xService {
     /**
      * 限流测试
      *
@@ -139,4 +140,12 @@ public interface FlowControlService {
      */
     @RequestMapping("/ping")
     String ping();
+
+    /**
+     * 测试SpringCloud注册调用
+     *
+     * @return 返回端口信息
+     */
+    @RequestMapping(value = "testCloudRegistry", method = RequestMethod.GET)
+    String testCloudRegistry();
 }

@@ -17,7 +17,7 @@
 
 package com.huaweicloud.spring.feign.consumer.controller;
 
-import com.huaweicloud.spring.feign.api.FlowControlService;
+import com.huaweicloud.spring.feign.api.Feign15xService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class FlowController {
     private static final Logger LOGGER = LoggerFactory.getLogger(FlowController.class);
 
     @Autowired
-    private FlowControlService flowControlService;
+    private Feign15xService feign15xService;
 
     /**
      * 实例隔离接口测试
@@ -52,7 +52,7 @@ public class FlowController {
     @RequestMapping("instanceIsolation")
     public String instanceIsolation() {
         try {
-            return flowControlService.instanceIsolation();
+            return feign15xService.instanceIsolation();
         } catch (Exception ex) {
             return convertMsg(ex);
         }
@@ -67,7 +67,7 @@ public class FlowController {
     public int retry() {
         Integer tryCount = null;
         try {
-            tryCount = flowControlService.retry(UUID.randomUUID().toString());
+            tryCount = feign15xService.retry(UUID.randomUUID().toString());
         } catch (Exception ex) {
             LOGGER.error("Retry {} times", tryCount);
             LOGGER.error(ex.getMessage(), ex);
@@ -82,7 +82,7 @@ public class FlowController {
      */
     @RequestMapping("rateLimiting")
     public String rateLimiting() {
-        return flowControlService.rateLimiting();
+        return feign15xService.rateLimiting();
     }
 
     /**
@@ -93,7 +93,7 @@ public class FlowController {
     @RequestMapping("timedBreaker")
     public String timedBreaker() {
         try {
-            return flowControlService.timedBreaker();
+            return feign15xService.timedBreaker();
         } catch (Exception ex) {
             return convertMsg(ex);
         }
@@ -107,7 +107,7 @@ public class FlowController {
     @RequestMapping("exceptionBreaker")
     public String exceptionBreaker() {
         try {
-            return flowControlService.exceptionBreaker();
+            return feign15xService.exceptionBreaker();
         } catch (Exception ex) {
             return convertMsg(ex);
         }
@@ -120,7 +120,7 @@ public class FlowController {
      */
     @RequestMapping("bulkhead")
     public String bulkhead() {
-        return flowControlService.bulkhead();
+        return feign15xService.bulkhead();
     }
 
     /**
@@ -131,7 +131,7 @@ public class FlowController {
     @RequestMapping("header")
     public String header() {
         try {
-            return flowControlService.header();
+            return feign15xService.header();
         } catch (Exception ex) {
             return convertMsg(ex);
         }
@@ -145,7 +145,7 @@ public class FlowController {
     @RequestMapping("serviceNameMatch")
     public String serviceNameMatch() {
         try {
-            return flowControlService.serviceNameMatch();
+            return feign15xService.serviceNameMatch();
         } catch (Exception ex) {
             return convertMsg(ex);
         }
@@ -158,7 +158,7 @@ public class FlowController {
      */
     @RequestMapping("serviceNameNoMatch")
     public String serviceNameNoMatch() {
-        return flowControlService.serviceNameNoMatch();
+        return feign15xService.serviceNameNoMatch();
     }
 
     /**
@@ -168,7 +168,7 @@ public class FlowController {
      */
     @RequestMapping("faultNull")
     public String faultNull() {
-        return flowControlService.faultNull();
+        return feign15xService.faultNull();
     }
 
     /**
@@ -179,7 +179,7 @@ public class FlowController {
     @RequestMapping("faultThrow")
     public String faultThrow() {
         try {
-            flowControlService.faultThrow();
+            feign15xService.faultThrow();
         } catch (Exception ex) {
             return convertMsg(ex);
         }
@@ -193,7 +193,7 @@ public class FlowController {
      */
     @RequestMapping("faultDelay")
     public String faultDelay() {
-        return flowControlService.faultDelay();
+        return feign15xService.faultDelay();
     }
 
     private String convertMsg(Exception ex) {

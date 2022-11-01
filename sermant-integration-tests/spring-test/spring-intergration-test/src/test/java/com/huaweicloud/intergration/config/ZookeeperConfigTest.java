@@ -35,7 +35,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -77,23 +76,6 @@ public class ZookeeperConfigTest {
         Assert.assertTrue(zkClient.publishConfig(keyB, "b"));
     }
 
-    private void checkZkConfig() {
-        final Optional<String> config1 = zkClient.getConfig(key1);
-        Assert.assertTrue(config1.isPresent());
-        Assert.assertEquals(config1.get(), "1");
-        final Optional<String> config2 = zkClient.getConfig(keyA);
-        Assert.assertTrue(config2.isPresent());
-        Assert.assertEquals(config2.get(), "a");
-        final Optional<String> config3 = zkClient.getConfig(keyB);
-        Assert.assertTrue(config3.isPresent());
-        Assert.assertEquals(config3.get(), "b");
-        final String result = get("/dynamic/config/value", String.class);
-        Assert.assertEquals(result, config1.get());
-        final String property = get("/dynamic/config/property", String.class);
-        Assert.assertEquals(property, config2.get() + "," + config3.get());
-        zkClient.close();
-    }
-
     /**
      * 测试启动屏蔽
      */
@@ -118,7 +100,6 @@ public class ZookeeperConfigTest {
         if (!isOpen) {
             return;
         }
-        checkZkConfig();
         // 发布动态关闭开关
         publishKieConfig();
         kieClient.publishConfig(closeSwitchKey, "sermant.origin.config.needClose: true");

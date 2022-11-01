@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.intergration.registry;
+package com.huaweicloud.intergration.registry.boot;
 
 import com.huaweicloud.intergration.common.rule.AbstractTestRule;
 import com.huaweicloud.intergration.common.rule.SermantTestType;

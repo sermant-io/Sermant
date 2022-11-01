@@ -14,33 +14,31 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.intergration.registry;
+package com.huaweicloud.intergration.registry.boot;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.springframework.http.HttpMethod;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * RestTemplate测试
+ * 全局配置发布状态
  *
  * @author zhouss
  * @since 2022-10-26
  */
-public class RestBootRegistryTest extends BootRegistryTest {
-    @Rule(order = 201)
-    public final BootRegistryRule bootRegistryRule = new BootRegistryRule();
-
+public enum ConfigGlobalStatus {
     /**
-     * 测试rest
+     * 单例
      */
-    @Test
-    public void testRest() {
-        check("restRegistryPost", HttpMethod.GET);
-        check("restRegistry", HttpMethod.GET);
+    INSTANCE;
+
+    private final Map<String, Boolean> statsCache = new ConcurrentHashMap<>();
+
+    public void saveOpenSate(String type) {
+        statsCache.put(type, Boolean.TRUE);
     }
 
-    @Override
-    protected String getUrl() {
-        return "http://localhost:8005/bootRegistry";
+    public boolean isOpen(String type) {
+        return statsCache.get(type) != null;
     }
 }

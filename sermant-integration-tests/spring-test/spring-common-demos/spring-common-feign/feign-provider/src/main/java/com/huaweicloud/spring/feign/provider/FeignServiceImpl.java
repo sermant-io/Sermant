@@ -19,7 +19,7 @@ package com.huaweicloud.spring.feign.provider;
 
 import com.huaweicloud.spring.common.flowcontrol.Constants;
 import com.huaweicloud.spring.common.flowcontrol.provider.ProviderController;
-import com.huaweicloud.spring.feign.api.FlowControlService;
+import com.huaweicloud.spring.feign.api.FeignService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,14 +31,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 流控测试
+ * feign测试
  *
  * @author zhouss
  * @since 2022-07-29
  */
 @Controller
 @ResponseBody
-public class FlowControlServiceImpl extends ProviderController implements FlowControlService {
+public class FeignServiceImpl extends ProviderController implements FeignService {
     private final Map<String, Integer> counterMap = new ConcurrentHashMap<>();
 
     /**
@@ -63,14 +63,14 @@ public class FlowControlServiceImpl extends ProviderController implements FlowCo
      */
     @Override
     @RequestMapping(value = "retry", method = RequestMethod.GET)
-    public int retry(@RequestParam("invocationId") String invocationId) throws Exception {
+    public String retry(@RequestParam("invocationId") String invocationId) throws Exception {
         counterMap.putIfAbsent(invocationId, 0);
         counterMap.put(invocationId, counterMap.get(invocationId) + 1);
 
         int retry = counterMap.get(invocationId);
 
-        if (retry > 1) {
-            return retry;
+        if (retry >= 1) {
+            return String.valueOf(retry);
         }
         throw new Exception("retry!");
     }

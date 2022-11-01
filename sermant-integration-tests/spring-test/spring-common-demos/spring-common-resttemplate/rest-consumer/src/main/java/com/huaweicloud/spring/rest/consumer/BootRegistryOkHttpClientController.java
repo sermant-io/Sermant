@@ -25,10 +25,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
 import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,8 +48,6 @@ import java.util.concurrent.atomic.AtomicReference;
 @ResponseBody
 @RequestMapping(RegistryConstants.REGISTRY_REQUEST_PREFIX)
 public class BootRegistryOkHttpClientController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BootRegistryOkHttpClientController.class);
-
     @Value("${config.domain:www.domain.com}")
     private String domain;
 
