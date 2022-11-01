@@ -28,6 +28,7 @@ import com.alibaba.fastjson.util.IOUtils;
 
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.ConstructorException;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -73,11 +74,20 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     /**
      * Yaml对象
      */
-    private final Yaml yaml = new Yaml();
+    private final Yaml yaml;
     /**
      * 启动参数
      */
     private Map<String, Object> argsMap;
+
+    /**
+     * 构造函数
+     */
+    public LoadYamlStrategy() {
+        Representer representer = new Representer();
+        representer.getPropertyUtils().setSkipMissingProperties(true);
+        this.yaml = new Yaml(representer);
+    }
 
     @Override
     public boolean canLoad(File file) {
