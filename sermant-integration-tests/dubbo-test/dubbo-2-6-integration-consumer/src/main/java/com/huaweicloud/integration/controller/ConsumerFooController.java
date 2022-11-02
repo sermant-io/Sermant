@@ -103,9 +103,9 @@ public class ConsumerFooController {
      * @param exit 是否退出
      * @return 区域
      */
-    @GetMapping("/getZone")
-    public String getZone(boolean exit) {
+    @GetMapping("/getMetadata")
+    public String getMetadata(boolean exit) {
         RpcContext.getContext().setAttachment(TAG_KEY, TAG);
-        return fooService.getZone(exit);
+        return fooService.getMetadata(exit);
     }
 }

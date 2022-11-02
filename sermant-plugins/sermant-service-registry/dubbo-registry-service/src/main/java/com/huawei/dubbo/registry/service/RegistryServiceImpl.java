@@ -257,14 +257,7 @@ public class RegistryServiceImpl implements RegistryService {
     public void onMicroserviceRegistrationEvent(MicroserviceRegistrationEvent event) {
         isRegistrationInProgress = true;
         if (event.isSuccess()) {
-            if (serviceCenterDiscovery == null) {
-                serviceCenterDiscovery = new ServiceCenterDiscovery(client, EVENT_BUS);
-                serviceCenterDiscovery.updateMyselfServiceId(microservice.getServiceId());
-                serviceCenterDiscovery.setPollInterval(config.getPullInterval());
-                serviceCenterDiscovery.startDiscovery();
-            } else {
-                serviceCenterDiscovery.updateMyselfServiceId(microservice.getServiceId());
-            }
+            initServiceCenterDiscovery();
         }
     }
 
@@ -277,6 +270,7 @@ public class RegistryServiceImpl implements RegistryService {
     public void onMicroserviceInstanceRegistrationEvent(MicroserviceInstanceRegistrationEvent event) {
         isRegistrationInProgress = true;
         if (event.isSuccess()) {
+            initServiceCenterDiscovery();
             updateInterfaceMap();
             FIRST_REGISTRATION_WAITER.countDown();
         }
@@ -290,6 +284,17 @@ public class RegistryServiceImpl implements RegistryService {
     @Subscribe
     public void onInstanceChangedEvent(InstanceChangedEvent event) {
         notify(event.getAppName(), event.getServiceName(), event.getInstances());
+    }
+
+    private void initServiceCenterDiscovery() {
+        if (serviceCenterDiscovery == null) {
+            serviceCenterDiscovery = new ServiceCenterDiscovery(client, EVENT_BUS);
+            serviceCenterDiscovery.updateMyselfServiceId(microservice.getServiceId());
+            serviceCenterDiscovery.setPollInterval(config.getPullInterval());
+            serviceCenterDiscovery.startDiscovery();
+        } else {
+            serviceCenterDiscovery.updateMyselfServiceId(microservice.getServiceId());
+        }
     }
 
     private SSLProperties createSslProperties() {
@@ -374,7 +379,12 @@ public class RegistryServiceImpl implements RegistryService {
         properties.put(INTERFACE_DATA_KEY, JSONObject.toJSONString(map));
 
         // 存入实例参数
-        Optional.ofNullable(serviceMeta.getParameters()).ifPresent(properties::putAll);
+        if (!CollectionUtils.isEmpty(serviceMeta.getParameters())) {
+            // 由于http header的key不区分大小写，所以使用metadata做路由时，统一把key转为小写
+            // 由于dubbo注册时，会把'-'替换成'.'，所以保持一致
+            serviceMeta.getParameters()
+                .forEach((key, value) -> properties.put(key.replace("-", ".").toLowerCase(Locale.ROOT), value));
+        }
         properties.put(VERSION_KEY, config.getVersion());
         properties.put(ZONE_KEY, serviceMeta.getZone());
         return properties;

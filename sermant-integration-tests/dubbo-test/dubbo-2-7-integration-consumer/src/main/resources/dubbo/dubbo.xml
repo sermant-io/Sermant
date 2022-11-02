@@ -15,7 +15,7 @@
     <dubbo:reference id="barGenericService" check="false" interface="com.huaweicloud.integration.service.BarService"
             generic="true"/>
     <dubbo:reference id="fooService" check="false" interface="com.huaweicloud.integration.service.FooService"
-            version="0.0.1"/>
+            version="0.0.1" timeout="10000"/>
     <dubbo:reference id="fooWildcardService" check="false" interface="com.huaweicloud.integration.service.FooService"
             version="*"/>
 
@@ -24,4 +24,7 @@
 
     <dubbo:reference id="flowControlVersionService" check="false" version="1.0.0"
             interface="com.huaweicloud.integration.service.FlowControlVersionService" group="flow"/>
+
+    <bean id="metadataServiceImpl" class="com.huaweicloud.integration.service.MetadataServiceImpl"/>
+    <dubbo:service interface="com.huaweicloud.integration.service.MetadataService" ref="metadataServiceImpl"/>
 </beans>

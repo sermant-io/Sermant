@@ -21,7 +21,9 @@ import com.huaweicloud.spring.common.flowcontrol.Constants;
 import com.huaweicloud.spring.common.flowcontrol.provider.ProviderController;
 import com.huaweicloud.spring.feign.api.Feign15xService;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,6 +42,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @ResponseBody
 public class Feign15xServiceImpl extends ProviderController implements Feign15xService {
     private final Map<String, Integer> counterMap = new ConcurrentHashMap<>();
+
+    @Value("${service_meta_zone:${SERVICE_META_ZONE:${service.meta.zone:bar}}}")
+    private String zone;
+
+    @Value("${spring.application.name}")
+    private String name;
+
+    @Value("${service_meta_parameters:${SERVICE_META_PARAMETERS:${service.meta.parameters:}}}")
+    private String parameters;
 
     /**
      * 实例隔离接口测试
@@ -79,5 +90,20 @@ public class Feign15xServiceImpl extends ProviderController implements Feign15xS
     @RequestMapping(value = "ping")
     public String ping() {
         return "ok";
+    }
+
+    /**
+     * 获取区域
+     *
+     * @param exit 是否退出
+     * @return 区域
+     */
+    @Override
+    @GetMapping("/router/metadata")
+    public String getMetadata(@RequestParam("exit") boolean exit) {
+        if (exit) {
+            System.exit(0);
+        }
+        return "I'm " + name + ", my zone is " + zone + ", my parameters is [" + parameters + "].";
     }
 }
