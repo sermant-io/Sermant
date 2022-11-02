@@ -19,10 +19,14 @@ package com.huaweicloud.sermant.router.common.utils;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
@@ -33,6 +37,12 @@ import java.util.logging.Logger;
  */
 public class ReflectUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final Map<String, AccessibleObject> ACCESSIBLE_OBJECT_MAP = new ConcurrentHashMap<>();
+
+    private static final Map<String, Optional<Field>> FIELD_MAP = new ConcurrentHashMap<>();
+
+    private static final Map<String, Optional<Method>> METHOD_MAP = new ConcurrentHashMap<>();
 
     private ReflectUtils() {
     }
@@ -45,15 +55,22 @@ public class ReflectUtils {
      * @return 私有字段值
      */
     public static Optional<Object> getFieldValue(Object obj, String fieldName) {
-        Class<?> currClass = obj.getClass();
-        while (currClass != Object.class) {
+        Optional<Field> field = FIELD_MAP.computeIfAbsent(obj.getClass().getCanonicalName() + "." + fieldName, key -> {
+            Class<?> currClass = obj.getClass();
+            while (currClass != Object.class) {
+                try {
+                    return Optional.ofNullable(getAccessibleObject(currClass.getDeclaredField(fieldName)));
+                } catch (NoSuchFieldException e) {
+                    currClass = currClass.getSuperclass();
+                }
+            }
+            return Optional.empty();
+        });
+        if (field.isPresent()) {
             try {
-                return Optional.ofNullable(getAccessibleObject(currClass.getDeclaredField(fieldName)).get(obj));
-            } catch (NoSuchFieldException e) {
-                currClass = currClass.getSuperclass();
-            } catch (IllegalAccessException e) {
-                LOGGER.warning("Cannot get the field, fieldName is " + fieldName);
-                return Optional.empty();
+                return Optional.ofNullable(field.get().get(obj));
+            } catch (IllegalAccessException ignored) {
+                // 忽略
             }
         }
         LOGGER.warning("Cannot get the field, fieldName is " + fieldName);
@@ -68,10 +85,11 @@ public class ReflectUtils {
      * @return 返回setAccessible(true)之后的对象
      */
     public static <T extends AccessibleObject> T getAccessibleObject(T object) {
-        return AccessController.doPrivileged((PrivilegedAction<T>) () -> {
-            object.setAccessible(true);
-            return object;
-        });
+        return (T) ACCESSIBLE_OBJECT_MAP.computeIfAbsent(object.toString(), key ->
+            AccessController.doPrivileged((PrivilegedAction<T>) () -> {
+                object.setAccessible(true);
+                return object;
+            }));
     }
 
     /**
@@ -111,14 +129,38 @@ public class ReflectUtils {
 
     private static Optional<Object> invoke(Class<?> invokeClass, Object obj, String name, Object parameter,
         Class<?> parameterClass) {
-        try {
-            if (parameterClass == null) {
-                return Optional.ofNullable(invokeClass.getMethod(name).invoke(obj));
+        Optional<Method> method = METHOD_MAP.computeIfAbsent(buildMethodKey(invokeClass, name, parameterClass), key -> {
+            try {
+                if (parameterClass == null) {
+                    return Optional.of(invokeClass.getMethod(name));
+                }
+                return Optional.of(invokeClass.getMethod(name, parameterClass));
+            } catch (NoSuchMethodException ignored) {
+                // 因版本的原因，有可能会找不到方法，所以可以忽略这些错误
             }
-            return Optional.ofNullable(invokeClass.getMethod(name, parameterClass).invoke(obj, parameter));
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            // 因版本的原因，有可能会找不到方法，所以可以忽略这些错误
+            return Optional.empty();
+        });
+        if (method.isPresent()) {
+            try {
+                if (parameterClass == null) {
+                    return Optional.ofNullable(method.get().invoke(obj));
+                } else {
+                    return Optional.ofNullable(method.get().invoke(obj, parameter));
+                }
+            } catch (IllegalAccessException | InvocationTargetException ignored) {
+                // 因版本的原因，有可能会找不到方法，所以可以忽略这些错误
+            }
         }
         return Optional.empty();
+    }
+
+    private static String buildMethodKey(Class<?> clazz, String methodName, Class<?> parameterClass) {
+        final String name = clazz.getName();
+        final StringBuilder sb = new StringBuilder(name);
+        sb.append("#").append(methodName).append("(");
+        if (parameterClass != null) {
+            sb.append(parameterClass.getName());
+        }
+        return sb.append(")").toString();
     }
 }

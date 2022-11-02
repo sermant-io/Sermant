@@ -31,7 +31,6 @@ import feign.Request;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,15 +53,16 @@ public class FeignClientInterceptor extends AbstractInterceptor {
 
     private static final String MODIFIERS_FIELD_NAME = "modifiers";
 
+    private static final int EXPECT_LENGTH = 4;
+
     @Override
     public ExecuteContext before(ExecuteContext context) {
         Object argument = context.getArguments()[0];
         if (argument instanceof Request) {
             Request request = (Request) argument;
-            String path = URI.create(request.url()).getPath();
             Map<String, List<String>> headers = getHeaders(request.headers());
             setHeaders(request, headers);
-            ThreadLocalUtils.setRequestData(new RequestData(headers, path, request.method()));
+            ThreadLocalUtils.setRequestData(new RequestData(headers, getPath(request.url()), request.method()));
         }
         return context;
     }
@@ -77,6 +77,19 @@ public class FeignClientInterceptor extends AbstractInterceptor {
     public ExecuteContext onThrow(ExecuteContext context) {
         ThreadLocalUtils.removeRequestData();
         return context;
+    }
+
+    private String getPath(String url) {
+        String[] split = url.split("/", EXPECT_LENGTH);
+        if (split.length < EXPECT_LENGTH) {
+            return "";
+        }
+        String path = split[EXPECT_LENGTH - 1];
+        int index = path.indexOf('?');
+        if (index >= 0) {
+            path = path.substring(0, index);
+        }
+        return "/" + path;
     }
 
     private Map<String, List<String>> getHeaders(Map<String, Collection<String>> headers) {
