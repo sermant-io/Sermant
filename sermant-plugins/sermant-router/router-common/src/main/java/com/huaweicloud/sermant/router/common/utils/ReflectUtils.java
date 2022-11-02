@@ -144,9 +144,8 @@ public class ReflectUtils {
             try {
                 if (parameterClass == null) {
                     return Optional.ofNullable(method.get().invoke(obj));
-                } else {
-                    return Optional.ofNullable(method.get().invoke(obj, parameter));
                 }
+                return Optional.ofNullable(method.get().invoke(obj, parameter));
             } catch (IllegalAccessException | InvocationTargetException ignored) {
                 // 因版本的原因，有可能会找不到方法，所以可以忽略这些错误
             }
@@ -155,8 +154,7 @@ public class ReflectUtils {
     }
 
     private static String buildMethodKey(Class<?> clazz, String methodName, Class<?> parameterClass) {
-        final String name = clazz.getName();
-        final StringBuilder sb = new StringBuilder(name);
+        StringBuilder sb = new StringBuilder(clazz.getName());
         sb.append("#").append(methodName).append("(");
         if (parameterClass != null) {
             sb.append(parameterClass.getName());
