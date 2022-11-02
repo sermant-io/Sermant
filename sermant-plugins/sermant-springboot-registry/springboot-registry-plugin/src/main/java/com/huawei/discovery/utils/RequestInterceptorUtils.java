@@ -16,7 +16,6 @@
 
 package com.huawei.discovery.utils;
 
-import com.huawei.discovery.entity.Recorder;
 import com.huawei.discovery.entity.ServiceInstance;
 import com.huawei.discovery.entity.SimpleRequestRecorder;
 import com.huawei.discovery.retry.InvokerContext;
@@ -51,10 +50,9 @@ import java.util.logging.Logger;
 public class RequestInterceptorUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final Recorder RECORDER = new SimpleRequestRecorder();
+    private static final SimpleRequestRecorder RECORDER = new SimpleRequestRecorder();
 
     private RequestInterceptorUtils() {
-
     }
 
     /**
@@ -119,6 +117,9 @@ public class RequestInterceptorUtils {
      * @param source 请求原， 例如httpclient/http async client
      */
     public static void printRequestLog(String source, Map<String, String> hostAndPath) {
+        if (!RECORDER.isEnable()) {
+            return;
+        }
         String path = String.format(Locale.ENGLISH, "/%s%s", hostAndPath.get(HttpConstants.HTTP_URI_HOST),
             hostAndPath.get(HttpConstants.HTTP_URI_PATH));
         LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "[%s] request [%s] has been intercepted!", source, path));
@@ -172,10 +173,12 @@ public class RequestInterceptorUtils {
             InvokerContext invokerContext) {
         return () -> {
             try {
-                AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
-                    method.setAccessible(true);
-                    return method;
-                });
+                if (!method.isAccessible()) {
+                    AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                        method.setAccessible(true);
+                        return method;
+                    });
+                }
                 return method.invoke(target, arguments);
             } catch (IllegalAccessException e) {
                 LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "Can not invoke method [%s]",
