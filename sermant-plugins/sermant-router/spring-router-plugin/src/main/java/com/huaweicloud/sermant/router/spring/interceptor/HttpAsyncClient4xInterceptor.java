@@ -21,24 +21,22 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.utils.FlowContextUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
-import com.huaweicloud.sermant.router.spring.utils.RequestInterceptorUtils;
 
-import org.apache.http.Header;
 import org.apache.http.HttpRequest;
+import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
+import org.apache.http.protocol.HttpContext;
 
-import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * 仅针对4.x版本得http拦截
  *
  * @author yangrh
- * @since 2022-10-25
+ * @since 2022-10-31
  */
-public class HttpClient4xInterceptor extends MarkInterceptor {
+public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
+    private static final int HTTPCONTEXT_INDEX = 2;
     /**
      * 前置触发点
      *
@@ -46,38 +44,42 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
      * @return 执行上下文
      * @throws Exception 执行异常
      */
+
     @Override
     public ExecuteContext doBefore(ExecuteContext context) throws Exception {
-        Object httpRequestObject = context.getArguments()[1];
-        if (httpRequestObject instanceof HttpRequest) {
-            final HttpRequest httpRequest = (HttpRequest) httpRequestObject;
-            final Optional<URI> optionalUri = RequestInterceptorUtils.formatUri(httpRequest.getRequestLine().getUri());
-            if (!optionalUri.isPresent()) {
-                return context;
-            }
-            URI uri = optionalUri.get();
-            if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
-                return context;
-            }
-            Header[] headers = httpRequest.getHeaders(FlowContextUtils.getTagName());
-            Map<String, List<String>> flowTags = new HashMap<>();
-            if (headers != null && headers.length > 0) {
-                for (Header header : headers) {
-                    String headerValue = header.getValue();
-                    Map<String, List<String>> stringListMap = FlowContextUtils.decodeTags(headerValue);
-                    flowTags.putAll(stringListMap);
+        Object httpAsyncRequestProducerArgument = context.getArguments()[0];
+        if (httpAsyncRequestProducerArgument instanceof HttpAsyncRequestProducer) {
+            HttpAsyncRequestProducer httpAsyncRequestProducer
+                    = (HttpAsyncRequestProducer)httpAsyncRequestProducerArgument;
+            HttpRequest httpRequest = httpAsyncRequestProducer.generateRequest();
+            Object argument = context.getArguments()[HTTPCONTEXT_INDEX];
+            if (argument instanceof HttpContext) {
+                HttpContext httpContext = (HttpContext)argument;
+                if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
+                    return context;
                 }
-            }
-            if (flowTags.size() > 0) {
-                ThreadLocalUtils.setRequestData(new RequestData(
-                        flowTags, uri.getPath(), httpRequest.getRequestLine().getMethod()));
+                parseTags(httpContext, httpRequest);
             }
         }
         return context;
     }
 
+    private void parseTags(HttpContext httpContext, HttpRequest httpRequest) {
+        Object attribute = httpContext.getAttribute(FlowContextUtils.getTagName());
+        if (attribute != null) {
+            Map<String, List<String>> map = FlowContextUtils.decodeTags(String.valueOf(attribute));
+            if (map != null && map.size() > 0) {
+                ThreadLocalUtils.setRequestData(new RequestData(
+                        map, httpRequest.getRequestLine().getUri(), httpRequest.getRequestLine().getMethod()));
+            }
+        }
+    }
+
     /**
      * 后置触发点
+     * 说明：该方法后置拦截点不移除线程变量，为了在 NopInstanceFilterInterceptor前置拦截点获取线程变量做流量路由，
+     * 在 NopInstanceFilterInterceptor后置拦截点移除线程变量.
+     * 使用注意事项：httpasyncclient使用必须有同步线程的future.get()逻辑，否则线程变量无法remove有问题
      *
      * @param context 执行上下文
      * @return 执行上下文
@@ -85,7 +87,6 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
      */
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        ThreadLocalUtils.removeRequestData();
         return context;
     }
 
