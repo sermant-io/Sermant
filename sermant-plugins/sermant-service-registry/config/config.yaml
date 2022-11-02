@@ -6,6 +6,7 @@ servicecomb.service:
   enableDubboRegister: false #是 否开启dubbo插件注册能力
   sslEnabled: false # 是否开启ssl
   preferIpAddress: false # 若为true, 则采用IP地址访问代替域名方法
+#  registerType: NACOS
 grace.rule:
   enableSpring: false # springCloud优雅上下线开关
   startDelayTime: 0  # 优雅上下线启动延迟时间, 单位S
@@ -17,3 +18,8 @@ grace.rule:
   httpServerPort: 16688 # 开启下线主动通知时的httpServer端口
   upstreamAddressMaxSize: 500 # 缓存上游地址的默认大小
   upstreamAddressExpiredTime: 60 # 缓存上游地址的过期时间
+nacos.service:
+  serverAddr: 127.0.0.1:8848
+  namespace: public
+  username: nacos
+  password: nacos
