@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.utils.FlowContextUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
@@ -56,7 +57,10 @@ public class HttpClient4xInterceptor extends AbstractInterceptor {
                 return context;
             }
             URI uri = optionalUri.get();
-            Header[] headers = httpRequest.getHeaders("sw8-correlation");
+            if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
+                return context;
+            }
+            Header[] headers = httpRequest.getHeaders(FlowContextUtils.getTagName());
             Map<String, List<String>> flowTags = new HashMap<>();
             if (headers != null && headers.length > 0) {
                 for (Header header : headers) {

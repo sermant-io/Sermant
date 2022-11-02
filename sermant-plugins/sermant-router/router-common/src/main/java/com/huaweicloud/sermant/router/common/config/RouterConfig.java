@@ -82,6 +82,12 @@ public class RouterConfig implements PluginConfig {
     private Map<String, String> parameters;
 
     /**
+     * 需要解析的请求头的tag
+     */
+    @ConfigFieldKey("parse-header-tag")
+    private String parseHeaderTag;
+
+    /**
      * 构造方法
      */
     public RouterConfig() {
@@ -166,5 +172,13 @@ public class RouterConfig implements PluginConfig {
 
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
+    }
+
+    public String getParseHeaderTag() {
+        return parseHeaderTag;
+    }
+
+    public void setParseHeaderTag(String parseHeaderTag) {
+        this.parseHeaderTag = parseHeaderTag;
     }
 }

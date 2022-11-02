@@ -17,6 +17,8 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.request.RequestHeader;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
@@ -26,9 +28,13 @@ import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableDefault;
 
 import feign.Request;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.http.HttpMethod;
 
 import java.nio.charset.StandardCharsets;
@@ -49,6 +55,8 @@ public class FeignClientInterceptorTest {
 
     private final ExecuteContext context;
 
+    private static MockedStatic<PluginConfigManager> mockStatic;
+
     public FeignClientInterceptorTest() {
         interceptor = new FeignClientInterceptor();
         Object[] arguments = new Object[1];
@@ -58,6 +66,18 @@ public class FeignClientInterceptorTest {
         arguments[0] = Request.create("GET", "http://www.domain.com/path?a=b", headers, new byte[]{},
             StandardCharsets.UTF_8);
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
+    }
+
+    @BeforeClass
+    public static void before() {
+        mockStatic = Mockito.mockStatic(PluginConfigManager.class);
+        RouterConfig config = new RouterConfig();
+        mockStatic.when(() -> PluginConfigManager.getPluginConfig(Mockito.any())).thenReturn(config);
+    }
+
+    @AfterClass
+    public static void after() {
+        mockStatic.close();
     }
 
     /**

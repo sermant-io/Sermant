@@ -19,8 +19,10 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.utils.FlowContextUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
@@ -62,7 +64,7 @@ public class FeignClientInterceptor extends AbstractInterceptor {
             Request request = (Request) argument;
             Map<String, List<String>> headers = getHeaders(request.headers());
             setHeaders(request, headers);
-            ThreadLocalUtils.setRequestData(new RequestData(headers, getPath(request.url()), request.method()));
+            ThreadLocalUtils.setRequestData(new RequestData(decodeTags(headers), getPath(request.url()), request.method()));
         }
         return context;
     }
@@ -141,5 +143,22 @@ public class FeignClientInterceptor extends AbstractInterceptor {
             }
         }
         return Optional.empty();
+    }
+
+    private Map<String, List<String>> decodeTags(Map<String, List<String>> headers) {
+        if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
+            return headers;
+        }
+        Map<String, List<String>> newHeaders = new HashMap<>(headers);
+        if (headers != null && headers.size() > 0) {
+            List<String> list = headers.get(FlowContextUtils.getTagName());
+            if (list != null && list.size() > 0) {
+                String tagStr = list.get(0);
+                Map<String, List<String>> stringListMap = FlowContextUtils.decodeTags(tagStr);
+                newHeaders.putAll(stringListMap);
+                return Collections.unmodifiableMap(newHeaders);
+            }
+        }
+        return headers;
     }
 }

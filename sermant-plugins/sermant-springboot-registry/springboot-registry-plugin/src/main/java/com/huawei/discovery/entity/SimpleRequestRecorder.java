@@ -48,7 +48,7 @@ public class SimpleRequestRecorder implements Recorder {
 
     @Override
     public void beforeRequest() {
-        if (!discoveryPluginConfig.isEnableRequestCount()) {
+        if (!isEnable()) {
             return;
         }
         final long allRequest = allRequestCount.incrementAndGet();
@@ -61,18 +61,24 @@ public class SimpleRequestRecorder implements Recorder {
                 HttpConstants.currentTime(), allRequest));
     }
 
+    /**
+     * 是否开启记录
+     *
+     * @return 是否开启记录
+     */
+    public boolean isEnable() {
+        return this.discoveryPluginConfig.isEnableRequestCount();
+    }
+
     @Override
     public void errorRequest(Throwable ex, long consumeTimeMs) {
-
     }
 
     @Override
     public void afterRequest(long consumeTimeMs) {
-
     }
 
     @Override
     public void completeRequest() {
-
     }
 }
