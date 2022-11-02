@@ -15,3 +15,4 @@
 #
 
 com.huawei.registry.service.register.ScRegister
+com.huawei.registry.service.register.NacosRegister
