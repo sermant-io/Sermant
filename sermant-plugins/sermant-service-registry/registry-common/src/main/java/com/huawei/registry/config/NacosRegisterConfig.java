@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
-
 /**
  * nacos注册插件配置
  *
@@ -63,7 +62,7 @@ public class NacosRegisterConfig implements PluginConfig {
     /**
      * nacos服务发现地址
      */
-    private String serverAddr = "127.0.0.1:8848";
+    private String address = "127.0.0.1:8848";
 
     /**
      * nacos认证账户
@@ -181,12 +180,12 @@ public class NacosRegisterConfig implements PluginConfig {
         this.secure = secure;
     }
 
-    public String getServerAddr() {
-        return serverAddr;
+    public String getAddress() {
+        return address;
     }
 
-    public void setServerAddr(String serverAddr) {
-        this.serverAddr = serverAddr;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getUsername() {
@@ -356,7 +355,7 @@ public class NacosRegisterConfig implements PluginConfig {
      */
     public Properties getNacosProperties() {
         Properties properties = new Properties();
-        properties.put(PropertyKeyConst.SERVER_ADDR, serverAddr);
+        properties.put(PropertyKeyConst.SERVER_ADDR, address);
         properties.put(PropertyKeyConst.USERNAME, Objects.toString(username, ""));
         properties.put(PropertyKeyConst.PASSWORD, Objects.toString(password, ""));
         properties.put(PropertyKeyConst.NAMESPACE, Objects.toString(namespace, ""));
