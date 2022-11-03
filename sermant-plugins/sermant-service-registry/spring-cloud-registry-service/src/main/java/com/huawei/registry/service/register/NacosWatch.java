@@ -112,7 +112,6 @@ public class NacosWatch implements ApplicationEventPublisherAware, SmartLifecycl
         callback.run();
     }
 
-
     @Override
     public void stop() {
         if (this.running.compareAndSet(true, false)) {
@@ -180,7 +179,6 @@ public class NacosWatch implements ApplicationEventPublisherAware, SmartLifecycl
     public void destroy() {
         this.stop();
     }
-
 
     private String buildKey() {
         return String.join(":", currentServiceId, config.getGroup());

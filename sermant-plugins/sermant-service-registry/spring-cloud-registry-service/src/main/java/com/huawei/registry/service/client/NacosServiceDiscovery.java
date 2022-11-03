@@ -16,7 +16,6 @@
 
 package com.huawei.registry.service.client;
 
-
 import com.huawei.registry.config.NacosRegisterConfig;
 import com.huawei.registry.service.register.NacosServiceInstance;
 import com.huawei.registry.service.register.NacosServiceManager;
@@ -35,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
-
 
 /**
  * nacos注册实现客户端
@@ -61,7 +59,6 @@ public class NacosServiceDiscovery {
         this.nacosServiceManager = nacosServiceManager;
         nacosRegisterConfig = PluginConfigManager.getPluginConfig(NacosRegisterConfig.class);
     }
-
 
     /**
      * 设置自身服务id

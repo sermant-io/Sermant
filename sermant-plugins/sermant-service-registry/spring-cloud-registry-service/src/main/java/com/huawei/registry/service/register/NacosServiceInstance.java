@@ -20,8 +20,6 @@ import com.huawei.registry.entity.MicroServiceInstance;
 
 import java.util.Map;
 
-
-
 /**
  * nacos服务信息
  *

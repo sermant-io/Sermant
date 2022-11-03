@@ -29,7 +29,6 @@ import com.alibaba.nacos.client.naming.NacosNamingService;
 import java.util.Objects;
 import java.util.Properties;
 
-
 /**
  * nacos注册服务管理器
  *
