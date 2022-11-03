@@ -63,7 +63,8 @@ public class FeignClientInterceptorTest {
         Map<String, Collection<String>> headers = new HashMap<>();
         headers.put("bar", Collections.singletonList("bar1"));
         headers.put("foo", Collections.singletonList("foo1"));
-        arguments[0] = Request.create("GET", "/", headers, new byte[]{}, StandardCharsets.UTF_8);
+        arguments[0] = Request.create("GET", "http://www.domain.com/path?a=b", headers, new byte[]{},
+            StandardCharsets.UTF_8);
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
     }
 
@@ -102,7 +103,7 @@ public class FeignClientInterceptorTest {
         RequestData requestData = ThreadLocalUtils.getRequestData();
         Assert.assertNotNull(requestData);
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
-        Assert.assertEquals("/", requestData.getPath());
+        Assert.assertEquals("/path", requestData.getPath());
         Map<String, List<String>> headerData = requestData.getHeader();
         Assert.assertEquals(3, headerData.size());
         Assert.assertEquals("bar1", headerData.get("bar").get(0));
@@ -126,7 +127,7 @@ public class FeignClientInterceptorTest {
         RequestData requestData = ThreadLocalUtils.getRequestData();
         Assert.assertNotNull(requestData);
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
-        Assert.assertEquals("/", requestData.getPath());
+        Assert.assertEquals("/path", requestData.getPath());
         Map<String, List<String>> headerData = requestData.getHeader();
         Assert.assertEquals(3, headerData.size());
         Assert.assertEquals("bar1", headerData.get("bar").get(0));
@@ -143,7 +144,7 @@ public class FeignClientInterceptorTest {
         RequestData requestData = ThreadLocalUtils.getRequestData();
         Assert.assertNotNull(requestData);
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
-        Assert.assertEquals("/", requestData.getPath());
+        Assert.assertEquals("/path", requestData.getPath());
         Map<String, List<String>> headerData = requestData.getHeader();
         Assert.assertEquals(2, headerData.size());
         Assert.assertEquals("bar1", headerData.get("bar").get(0));
@@ -162,7 +163,7 @@ public class FeignClientInterceptorTest {
         RequestData requestData = ThreadLocalUtils.getRequestData();
         Assert.assertNotNull(requestData);
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
-        Assert.assertEquals("/", requestData.getPath());
+        Assert.assertEquals("/path", requestData.getPath());
         Map<String, List<String>> headerData = requestData.getHeader();
         Assert.assertEquals(2, headerData.size());
         Assert.assertEquals("bar1", headerData.get("bar").get(0));

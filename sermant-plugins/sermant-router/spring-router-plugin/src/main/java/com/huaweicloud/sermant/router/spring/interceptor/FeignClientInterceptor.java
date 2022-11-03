@@ -22,6 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.FlowContextUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
@@ -33,7 +34,6 @@ import feign.Request;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,15 +56,17 @@ public class FeignClientInterceptor extends AbstractInterceptor {
 
     private static final String MODIFIERS_FIELD_NAME = "modifiers";
 
+    private static final int EXPECT_LENGTH = 4;
+
     @Override
     public ExecuteContext before(ExecuteContext context) {
         Object argument = context.getArguments()[0];
         if (argument instanceof Request) {
             Request request = (Request) argument;
-            String path = URI.create(request.url()).getPath();
             Map<String, List<String>> headers = getHeaders(request.headers());
             setHeaders(request, headers);
-            ThreadLocalUtils.setRequestData(new RequestData(decodeTags(headers), path, request.method()));
+            ThreadLocalUtils.setRequestData(new RequestData(decodeTags(headers), getPath(request.url()),
+                request.method()));
         }
         return context;
     }
@@ -79,6 +81,21 @@ public class FeignClientInterceptor extends AbstractInterceptor {
     public ExecuteContext onThrow(ExecuteContext context) {
         ThreadLocalUtils.removeRequestData();
         return context;
+    }
+
+    private String getPath(String url) {
+        // url形如：http://www.url.com/a/b?parameter=1，其中path为/a/b，?后面的参数非必须且不属于path
+        // 以/切分时，只需要切分为4份，即["http:", "", "www.url.com", "a/b?parameter=1"]，然后去掉arr[3]中参数即可
+        String[] arr = url.split("/", EXPECT_LENGTH);
+        if (arr.length < EXPECT_LENGTH) {
+            return "";
+        }
+        String path = arr[EXPECT_LENGTH - 1];
+        int index = path.indexOf('?');
+        if (index >= 0) {
+            path = path.substring(0, index);
+        }
+        return "/" + path;
     }
 
     private Map<String, List<String>> getHeaders(Map<String, Collection<String>> headers) {
@@ -133,18 +150,16 @@ public class FeignClientInterceptor extends AbstractInterceptor {
     }
 
     private Map<String, List<String>> decodeTags(Map<String, List<String>> headers) {
-        if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
+        if (StringUtils.isBlank(FlowContextUtils.getTagName()) || CollectionUtils.isEmpty(headers)) {
             return headers;
         }
         Map<String, List<String>> newHeaders = new HashMap<>(headers);
-        if (headers != null && headers.size() > 0) {
-            List<String> list = headers.get(FlowContextUtils.getTagName());
-            if (list != null && list.size() > 0) {
-                String tagStr = list.get(0);
-                Map<String, List<String>> stringListMap = FlowContextUtils.decodeTags(tagStr);
-                newHeaders.putAll(stringListMap);
-                return Collections.unmodifiableMap(newHeaders);
-            }
+        List<String> list = headers.get(FlowContextUtils.getTagName());
+        if (CollectionUtils.isEmpty(list)) {
+            String tagStr = list.get(0);
+            Map<String, List<String>> stringListMap = FlowContextUtils.decodeTags(tagStr);
+            newHeaders.putAll(stringListMap);
+            return Collections.unmodifiableMap(newHeaders);
         }
         return headers;
     }
