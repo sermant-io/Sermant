@@ -17,7 +17,7 @@
 package com.huawei.discovery.interceptors;
 
 import com.huawei.discovery.config.PlugEffectWhiteBlackConstants;
-import com.huawei.discovery.entity.PlugEffectStategyCache;
+import com.huawei.discovery.entity.PlugEffectStrategyCache;
 import com.huawei.discovery.service.InvokerService;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
@@ -83,7 +83,7 @@ public class FeignInvokeInterceptorTest extends BaseTest {
     }
 
     private void initStrategy(String strategy, String serviceName) {
-        Optional<Object> dynamicConfig = ReflectUtils.getFieldValue(PlugEffectStategyCache.INSTANCE, "caches");
+        Optional<Object> dynamicConfig = ReflectUtils.getFieldValue(PlugEffectStrategyCache.INSTANCE, "caches");
         Assert.assertTrue(dynamicConfig.isPresent() && dynamicConfig.get() instanceof Map);
         ((Map) dynamicConfig.get()).put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY, strategy);
         ((Map) dynamicConfig.get()).put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE, serviceName);

@@ -16,6 +16,7 @@
 
 package com.huawei.discovery.service.lb.discovery.zk;
 
+import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.config.LbConfig;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -51,6 +52,9 @@ public class ZkClient implements PluginService {
 
     @Override
     public void start() {
+        if (!PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class).isEnableRegistry()) {
+            return;
+        }
         this.client = this.buildClient();
         this.client.getConnectionStateListenable().addListener(new ConnectStateListener());
         this.client.start();

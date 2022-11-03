@@ -16,10 +16,10 @@
 
 package com.huawei.discovery.declarers.httpconnection;
 
+import com.huawei.discovery.declarers.BaseDeclarer;
 import com.huawei.discovery.interceptors.httpconnection.HttpUrlConnectionConnectInterceptor;
 import com.huawei.discovery.interceptors.httpconnection.HttpUrlConnectionDisconnectCodeInterceptor;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -30,7 +30,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author zhouss
  * @since 2022-10-20
  */
-public class HttpUrlConnectionConnectDeclarer extends AbstractPluginDeclarer {
+public class HttpUrlConnectionConnectDeclarer extends BaseDeclarer {
     private static final String INTERCEPT_CLASS = HttpUrlConnectionConnectInterceptor.class.getCanonicalName();
 
     private static final String INTERCEPT_DISCONNECT_CLASS =

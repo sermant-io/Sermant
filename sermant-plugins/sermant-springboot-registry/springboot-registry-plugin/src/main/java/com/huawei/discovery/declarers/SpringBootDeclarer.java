@@ -18,7 +18,6 @@ package com.huawei.discovery.declarers;
 
 import com.huawei.discovery.interceptors.SpringBootInterceptor;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -29,7 +28,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author chengyouling
  * @since 2022-10-10
  */
-public class SpringBootDeclarer extends AbstractPluginDeclarer {
+public class SpringBootDeclarer extends BaseDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.springframework.boot.autoconfigure.SpringBootApplication"};
 
     private static final String INTERCEPT_CLASS = SpringBootInterceptor.class.getCanonicalName();

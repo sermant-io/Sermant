@@ -18,7 +18,6 @@ package com.huawei.discovery.declarers;
 
 import com.huawei.discovery.interceptors.RestTemplateInterceptor;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -29,8 +28,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author chengyouling
  * @since 2022-09-27
  */
-public class RestTemplateDeclarer extends AbstractPluginDeclarer {
-
+public class RestTemplateDeclarer extends BaseDeclarer {
     /**
      * 增强类的全限定名
      */
