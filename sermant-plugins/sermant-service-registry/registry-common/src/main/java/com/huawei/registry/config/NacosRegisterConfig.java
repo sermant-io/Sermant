@@ -147,7 +147,7 @@ public class NacosRegisterConfig implements PluginConfig {
     /**
      * 服务名分隔符
      */
-    private String serviceNameseparator = ":";
+    private String serviceNameSeparator = ":";
 
     /**
      * 数据页大小
@@ -324,12 +324,12 @@ public class NacosRegisterConfig implements PluginConfig {
         this.watchEnabled = watchEnabled;
     }
 
-    public String getServiceNameseparator() {
-        return serviceNameseparator;
+    public String getServiceNameSeparator() {
+        return serviceNameSeparator;
     }
 
-    public void setServiceNameseparator(String serviceNameseparator) {
-        this.serviceNameseparator = serviceNameseparator;
+    public void setServiceNameSeparator(String serviceNameSeparator) {
+        this.serviceNameSeparator = serviceNameSeparator;
     }
 
     public int getPaginationSize() {
