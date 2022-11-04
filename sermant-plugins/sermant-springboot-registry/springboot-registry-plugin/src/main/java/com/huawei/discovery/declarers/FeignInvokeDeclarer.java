@@ -30,14 +30,16 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @since 2022-09-27
  */
 public class FeignInvokeDeclarer extends AbstractPluginDeclarer {
-
     private static final String INTERCEPT_CLASS = FeignInvokeInterceptor.class.getCanonicalName();
 
     private static final String METHOD_NAME = "execute";
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.isExtendedFrom("feign.Client");
+        return ClassMatcher.nameContains(
+                "feign.Client$Default",
+                "feign.httpclient.ApacheHttpClient",
+                "feign.okhttp.OkHttpClient");
     }
 
     @Override

@@ -30,7 +30,6 @@ import com.huawei.discovery.service.lb.utils.CommonUtils;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
-import org.apache.curator.framework.state.ConnectionState;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -46,7 +45,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -116,7 +114,7 @@ public class RetryServiceImplTest extends BaseTest {
     public void invokeWithNoInstances() {
         Object exResult = new Object();
         final Function<InvokerContext, Object> invokerFunc = invokerContext -> null;
-        final Function<Exception, Object> exFunc = ex -> exResult;
+        final Function<Throwable, Object> exFunc = ex -> exResult;
         Optional<Object> invoke = retryService.invoke(invokerFunc, exFunc, serviceName);
         Assert.assertFalse(invoke.isPresent());
     }
@@ -196,7 +194,7 @@ public class RetryServiceImplTest extends BaseTest {
             invokerContext.setEx(new Exception("error"));
             return null;
         };
-        final Function<Exception, Object> exFunc = ex -> exResult;
+        final Function<Throwable, Object> exFunc = ex -> exResult;
         Optional<Object> invoke;
         if (retryConfig == null) {
             invoke = retryService.invoke(invokerFunc, exFunc, serviceName);
@@ -211,7 +209,7 @@ public class RetryServiceImplTest extends BaseTest {
         Object result = new Object();
         Object exResult = new Object();
         final Function<InvokerContext, Object> invokerFunc = invokerContext -> result;
-        final Function<Exception, Object> exFunc = ex -> exResult;
+        final Function<Throwable, Object> exFunc = ex -> exResult;
         Optional<Object> invoke;
         if (retryConfig == null) {
             invoke = retryService.invoke(invokerFunc, exFunc, serviceName);

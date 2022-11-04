@@ -103,7 +103,7 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
         return Optional.empty();
     }
 
-    private Function<Exception, Object> buildExFunc(AtomicReference<Request> rebuildRequest) {
+    private Function<Throwable, Object> buildExFunc(AtomicReference<Request> rebuildRequest) {
         return ex -> buildErrorResponse(ex, rebuildRequest.get());
     }
 
@@ -145,7 +145,7 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
      * @param ex 指定异常
      * @return 响应
      */
-    private Object buildErrorResponse(Exception ex, Request request) {
+    private Object buildErrorResponse(Throwable ex, Request request) {
         if (ex instanceof IOException) {
             return ex;
         }

@@ -102,7 +102,7 @@ public class DefaultRetryImpl implements Retry {
         }
 
         @Override
-        public void onError(Recorder serviceInstanceStats, Exception ex, long consumeTimeMs) throws Exception {
+        public void onError(Recorder serviceInstanceStats, Throwable ex, long consumeTimeMs) throws Exception {
             serviceInstanceStats.errorRequest(ex, consumeTimeMs);
             final Predicate<Throwable> throwablePredicate = config().getThrowablePredicate();
             if (throwablePredicate != null && throwablePredicate.test(ex)) {
