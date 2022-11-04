@@ -118,7 +118,7 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
         };
     }
 
-    private Function<Exception, Object> buildExFunc(HttpRequest httpRequest) {
+    private Function<Throwable, Object> buildExFunc(HttpRequest httpRequest) {
         final ClassLoader appClassloader = Thread.currentThread().getContextClassLoader();
         return ex -> {
             if (ex instanceof IOException) {

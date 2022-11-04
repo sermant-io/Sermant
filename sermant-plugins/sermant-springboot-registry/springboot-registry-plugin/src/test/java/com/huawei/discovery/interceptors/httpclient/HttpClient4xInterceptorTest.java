@@ -119,7 +119,7 @@ public class HttpClient4xInterceptorTest {
     public static class TestInvokerService implements InvokerService {
 
         @Override
-        public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Exception, Object> exFunc,
+        public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
                 String serviceName) {
             String host = "localhost";
             String ip = "127.0.0.1";
@@ -135,7 +135,7 @@ public class HttpClient4xInterceptorTest {
         }
 
         @Override
-        public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Exception, Object> exFunc,
+        public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
                 String serviceName, RetryConfig retryConfig) {
             return Optional.empty();
         }

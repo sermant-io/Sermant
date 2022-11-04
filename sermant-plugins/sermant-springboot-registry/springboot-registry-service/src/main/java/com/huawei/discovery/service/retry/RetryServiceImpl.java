@@ -91,18 +91,18 @@ public class RetryServiceImpl implements InvokerService {
     }
 
     @Override
-    public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Exception, Object> exFunc,
+    public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
             String serviceName) {
         return invoke(invokeFunc, exFunc, serviceName, getRetry(null));
     }
 
     @Override
-    public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Exception, Object> exFunc,
+    public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
             String serviceName, RetryConfig retryConfig) {
         return invoke(invokeFunc, exFunc, serviceName, getRetry(retryConfig));
     }
 
-    private Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Exception, Object> exFunc,
+    private Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
             String serviceName, Retry retry) {
         try {
             return invokeWithEx(invokeFunc, serviceName, retry);
@@ -153,7 +153,7 @@ public class RetryServiceImpl implements InvokerService {
                 consumeTimeMs = System.currentTimeMillis() - start;
                 if (invokerContext.getEx() != null) {
                     // 此处调用器, 若调用出现异常, 则以异常结果返回
-                    context.onError(stats, (Exception) invokerContext.getEx(), consumeTimeMs);
+                    context.onError(stats, invokerContext.getEx(), consumeTimeMs);
                     invokerContext.setEx(null);
                     continue;
                 }

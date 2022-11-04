@@ -23,19 +23,19 @@ package com.huawei.discovery.retry;
  * @since 2022-09-28
  */
 public class RetryException extends Exception {
-    private final Exception realEx;
+    private final Throwable realEx;
 
     /**
      * 重试异常
      *
      * @param realEx 实际需抛出的异常
      */
-    public RetryException(Exception realEx) {
+    public RetryException(Throwable realEx) {
         super(realEx.getMessage());
         this.realEx = realEx;
     }
 
-    public Exception getRealEx() {
+    public Throwable getRealEx() {
         return realEx;
     }
 }
