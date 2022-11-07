@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.intergration.registry;
+package com.huaweicloud.intergration.registry.boot;
 
 import com.huaweicloud.intergration.common.utils.RequestUtils;
 import com.huaweicloud.intergration.config.supprt.KieClient;
@@ -48,7 +48,7 @@ public class BootRegistryTest {
             return;
         }
         publishGrayStrategy();
-        Thread.sleep(30000);
+        Thread.sleep(3000);
         ConfigGlobalStatus.INSTANCE.saveOpenSate(getType());
     }
 

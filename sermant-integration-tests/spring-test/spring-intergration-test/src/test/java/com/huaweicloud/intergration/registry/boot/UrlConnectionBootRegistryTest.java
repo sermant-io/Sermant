@@ -14,49 +14,49 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.intergration.registry;
+package com.huaweicloud.intergration.registry.boot;
 
+import com.huaweicloud.intergration.common.utils.EnvUtils;
+
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * feign测试
+ * HttpURLConnection测试
  *
  * @author zhouss
  * @since 2022-10-26
  */
-public class FeignBootRegistryTest extends BootRegistryTest {
-    @Rule(order = 200)
+public class UrlConnectionBootRegistryTest extends BootRegistryTest {
+    @Rule(order = 202)
     public final BootRegistryRule bootRegistryRule = new BootRegistryRule();
-    
-    /**
-     * 此处将模拟请求两次, 基于轮询负载均衡将拿到两个不同结果
-     */
+
     @Test
-    public void testFeign() {
-        check("feignRegistryPost", HttpMethod.GET);
-        check("feignRegistry", HttpMethod.GET);
+    public void testUrlConnection() {
+        if (!canTestSync()) {
+            return;
+        }
+        check("urlConnectionGet", HttpMethod.GET);
+        check("urlConnectionPostNoEntity", HttpMethod.GET);
+    }
+
+    @Test
+    public void testRetry() {
+        if (!canTestSync()) {
+            return;
+        }
+        final String urlConnectionRetry = req("urlConnectionRetry", HttpMethod.GET);
+        Assert.assertNotNull(urlConnectionRetry);
+    }
+
+    private boolean canTestSync() {
+        return !"1.5.x".equals(EnvUtils.getEnv("app.version", null));
     }
 
     @Override
     protected String getUrl() {
-        return "http://localhost:8015/bootRegistry";
-    }
-
-    @Override
-    protected Map<String, String> getLabels() {
-        final Map<String, String> labels = new HashMap<>();
-        labels.put("app", getType());
-        labels.put("environment", "development");
-        return labels;
-    }
-
-    @Override
-    protected String getType() {
-        return "feign";
+        return "http://localhost:8005/bootRegistry";
     }
 }

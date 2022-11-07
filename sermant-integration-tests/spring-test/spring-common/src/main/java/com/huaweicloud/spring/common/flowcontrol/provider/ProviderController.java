@@ -181,4 +181,14 @@ public class ProviderController {
     public String feignRegistryPost() {
         return Constants.HTTP_OK + ", port is " + port;
     }
+
+    /**
+     * 测试Cloud注册调用
+     *
+     * @return ok
+     */
+    @RequestMapping(value = "testCloudRegistry", method = RequestMethod.GET)
+    public String testCloudRegistry() {
+        return String.valueOf(port);
+    }
 }

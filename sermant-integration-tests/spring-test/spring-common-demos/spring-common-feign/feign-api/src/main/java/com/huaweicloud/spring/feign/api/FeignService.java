@@ -22,17 +22,18 @@ import com.huaweicloud.spring.feign.api.configuration.HeaderMatchConfiguration;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * 服务端流控测试
+ * feign测试
  *
  * @author zhouss
  * @since 2022-07-29
  */
 @FeignClient(qualifier = FeignConstants.FEIGN_SERVICE_BEAN_NAME, name = "feign-provider", configuration =
         HeaderMatchConfiguration.class)
-public interface FlowControlService {
+public interface FeignService {
     /**
      * 限流测试
      *
@@ -140,4 +141,12 @@ public interface FlowControlService {
      */
     @RequestMapping("/ping")
     String ping();
+
+    /**
+     * 测试SpringCloud注册调用
+     *
+     * @return 返回端口信息
+     */
+    @RequestMapping(value = "testCloudRegistry", method = RequestMethod.GET)
+    String testCloudRegistry();
 }

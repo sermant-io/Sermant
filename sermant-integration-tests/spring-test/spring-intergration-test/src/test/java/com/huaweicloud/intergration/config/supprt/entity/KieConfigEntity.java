@@ -81,4 +81,16 @@ public class KieConfigEntity {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "KieConfigEntity{" +
+                "id='" + id + '\'' +
+                ", key='" + key + '\'' +
+                ", labels=" + labels +
+                ", value='" + value + '\'' +
+                ", valueType='" + valueType + '\'' +
+                ", status='" + status + '\'' +
+                '}';
+    }
 }

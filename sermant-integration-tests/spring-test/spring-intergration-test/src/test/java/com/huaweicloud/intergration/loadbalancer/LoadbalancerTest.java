@@ -22,6 +22,7 @@ import com.huaweicloud.intergration.common.rule.DisableRule;
 import com.huaweicloud.intergration.common.utils.EnvUtils;
 import com.huaweicloud.intergration.config.supprt.KieClient;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -77,6 +78,11 @@ public class LoadbalancerTest {
         this.springBootVersion = property;
     }
 
+    @After
+    public void tearDown() {
+        reset();
+    }
+
     private void initRibbon() {
         ribbonLbRules.put("Random", "com.netflix.loadbalancer.RandomRule");
         ribbonLbRules.put("RoundRobin", "com.netflix.loadbalancer.RoundRobinRule");
@@ -95,13 +101,16 @@ public class LoadbalancerTest {
 
     @Test
     public void test() {
-        kieClient.deleteKey(lbKey);
-        kieClient.deleteKey(lbMatchGroup);
+        reset();
         if (isValidForRibbon()) {
             testRandomRule("getRibbonLb", ribbonLbRules);
         } else {
             testRandomRule("getSpringLb", springLbRules);
         }
+    }
+    private void reset() {
+        kieClient.deleteKey(lbKey);
+        kieClient.deleteKey(lbMatchGroup);
     }
 
     private void testRandomRule(String api, Map<String, String> rules) {

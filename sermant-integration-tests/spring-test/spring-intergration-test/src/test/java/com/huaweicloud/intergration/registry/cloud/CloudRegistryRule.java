@@ -14,30 +14,22 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.spring.common.registry.common;
+package com.huaweicloud.intergration.registry.cloud;
+
+import com.huaweicloud.intergration.common.rule.AbstractTestRule;
+import com.huaweicloud.intergration.common.rule.SermantTestType;
+
+import java.util.Set;
 
 /**
- * 注册常量
+ * SpringCloud注册发现测试
  *
  * @author zhouss
- * @since 2022-10-25
+ * @since 2022-10-26
  */
-public class RegistryConstants {
-    /**
-     * 请求前缀
-     */
-    public static final String REGISTRY_REQUEST_PREFIX = "bootRegistry";
-
-    /**
-     * SpringCloud请求测试前缀
-     */
-    public static final String CLOUD_REGISTRY_REQUEST_PREFIX = "cloudRegistry";
-
-    /**
-     * 注册测试用域名
-     */
-    public static final String TEST_DOMAIN = "www.domain.com";
-
-    private RegistryConstants() {
+public class CloudRegistryRule extends AbstractTestRule {
+    @Override
+    protected boolean isSupport(Set<SermantTestType> types) {
+        return types.contains(SermantTestType.CLOUD_REGISTRY);
     }
 }
