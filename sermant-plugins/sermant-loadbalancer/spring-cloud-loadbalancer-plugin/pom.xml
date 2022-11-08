@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <package.plugin.type>plugin</package.plugin.type>
         <spring.cloud.version>2.2.7.RELEASE</spring.cloud.version>
-        <ribbon.version>2.3.0</ribbon.version>
+        <ribbon.version>2.7.18</ribbon.version>
     </properties>
 
     <dependencies>
