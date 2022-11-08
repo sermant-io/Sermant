@@ -36,10 +36,10 @@ public class FeignInvokeDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameContains(
+        return ClassMatcher.build(ClassMatcher.nameContains(
                 "feign.Client$Default",
                 "feign.httpclient.ApacheHttpClient",
-                "feign.okhttp.OkHttpClient");
+                "feign.okhttp.OkHttpClient"));
     }
 
     @Override

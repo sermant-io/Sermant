@@ -17,7 +17,6 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.request.RequestData;
@@ -38,7 +37,7 @@ import java.util.Optional;
  * @author yangrh
  * @since 2022-10-25
  */
-public class OkHttp3ClientInterceptor extends AbstractInterceptor {
+public class OkHttp3ClientInterceptor extends MarkInterceptor {
     private static final String FIELD_NAME = "originalRequest";
 
     /**
@@ -49,7 +48,7 @@ public class OkHttp3ClientInterceptor extends AbstractInterceptor {
      * @throws Exception 执行异常
      */
     @Override
-    public ExecuteContext before(ExecuteContext context) throws Exception {
+    public ExecuteContext doBefore(ExecuteContext context) throws Exception {
         final Optional<Request> rawRequest = getRequest(context);
         if (!rawRequest.isPresent() || StringUtils.isBlank(FlowContextUtils.getTagName())) {
             return context;
