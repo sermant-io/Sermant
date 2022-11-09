@@ -1,4 +1,4 @@
-apiVersion: admissionregistration.k8s.io/v1beta1
+apiVersion: admissionregistration.k8s.io/v1{{ if not (.Capabilities.APIVersions.Has "admissionregistration.k8s.io/v1") }}beta1{{ end }}
 kind: MutatingWebhookConfiguration
 metadata:
   name: sermant-injector
@@ -7,6 +7,9 @@ metadata:
     app: sermant-injector
 webhooks:
   - name: sermant-injector.{{ .Values.namespace.name }}.svc.cluster.local
+    {{- if .Capabilities.APIVersions.Has "admissionregistration.k8s.io/v1" }}
+    admissionReviewVersions: ["v1beta1", "v1"]
+    {{- end }}
     clientConfig:
       caBundle: {{ .Values.injector.webhooks.caBundle }}
       service:

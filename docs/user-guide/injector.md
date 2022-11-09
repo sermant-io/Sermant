@@ -14,8 +14,7 @@ Sermant-injector is a MutatingAdmissionWebhook that can intercept and modify req
 
 - `deployment`, contains helm package file for deploying the sermant-injector application.
   - `release`
-    - `injector_k8s_1.19+` contains helm package file for K8S 1.19+.
-    - `injector_k8s_1.21-` contains helm package file for K8S 1.21-.
+    - `injector` contains helm package file for K8S 1.15+.
 - `images`
   - `injector`, contains dockerfile and image build script of **sermant-injector**.
   - `sermant-agent`, contains dockerfile and image build script of **sermant-agent**.
@@ -25,7 +24,7 @@ Sermant-injector is a MutatingAdmissionWebhook that can intercept and modify req
 ## Containerized Deployment Steps
 
 ### **Runtime Environment**
-[Kubernetes 1.19+](https://kubernetes.io/)
+[Kubernetes 1.15+](https://kubernetes.io/)
 
 [Helm v3](https://helm.sh/)
 
@@ -33,7 +32,7 @@ Sermant-injector is a MutatingAdmissionWebhook that can intercept and modify req
 
 The Kubernetes webhook can only be invoked over HTTPS(SSL/TLS), so the SSL key and certificate need to be generated for the sermant-injector.
 
-Execute the `certificate.sh` script under `scripts` in any directory of any K8s node, according to the version of K8s used in the current environment. (K8s version in 1.19-1.21 suits both)
+Execute the `certificate.sh` script under `scripts` in any directory of any K8s node.
 
 > NOTE：The parameter `NAMESPACE` must be set as the same value as `namespace.name` in `values.yaml` under `deployment/release`. No need to modify other parameters.
 
@@ -92,7 +91,7 @@ sh build-injector-image.sh
 
 Before the host application can be containerized, the workload of sermant-injector needs to be deployed. This project adopts Helm for Kubernetes package management.
 
-Choose either Chart template in`injector_k8s_1.19+` or `injector_k8s_1.21-` under `deploment/release`, according to the version of K8s used in the current environment (K8s version in 1.19-1.21 suits both).
+Use Chart template in`injector` under `deploment/release`.
 
 Modify the template variable in `values.yaml` according to the actual environment:
 
@@ -106,10 +105,10 @@ Modify the template variable in `values.yaml` according to the actual environmen
 >    kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}'
 >    ```
 
-Once this is done, execute `helm install` to deploy the sermant-injector workload in K8s, taking the Chart of injector_k8s_1.19+ as an example, with the Chart folder path as the last argument:
+Once this is done, execute `helm install` to deploy the sermant-injector workload in K8s:
 
 ```shell
-helm install sermant-injector ../injector_k8s_1.19+
+helm install sermant-injector ../injector
 ```
 
 Check that the status of the deployed pod of sermant-injector is running.
