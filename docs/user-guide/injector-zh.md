@@ -14,8 +14,7 @@ sermant-injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在
 
 - `deployment`，部署sermant-injector应用的helm包文件
   - `release`
-    - `injector_k8s_1.19+` helm包，支持k8s 1.19版本及以上环境部署
-    - `injector_k8s_1.21-` helm包，支持k8s 1.21版本及以下环境部署
+    - `injector` helm包，支持k8s 1.15版本及以上环境部署
 - `images`
   - `injector` sermant-injector Dockerfile及镜像构建脚本
   - `sermant-agent` sermant-agent Dockerfile及镜像构建脚本
@@ -25,14 +24,14 @@ sermant-injector属于变更准入控制器(MutatingAdmissionWebhook), 能够在
 ## 容器化部署流程
 
 ### 运行环境
-[Kubernetes 1.19+](https://kubernetes.io/)
+[Kubernetes 1.15+](https://kubernetes.io/)
 
 [Helm v3](https://helm.sh/)
 
 ### 生成证书
 Kubernetes webhook只能通过HTTPS(SSL/TLS)调用，因此需要为sermant-injector生成ssl key和证书。
 
-按照当前环境使用的k8s的版本，在k8s任一节点上任一目录下执行`scripts`下的`certificate.sh`脚本。(k8s 1.19-1.21版本两者皆可)
+在k8s任一节点上任一目录下执行`scripts`下的`certificate.sh`脚本。
 
 > 注意：脚本中`NAMESPACE`参数必须和`deployment/release`下的`values.yaml`中的`namespace.name`保持一致。其他参数无需修改
 
@@ -91,7 +90,7 @@ sh build-injector-image.sh
 
 在宿主应用容器化部署前，需要先部署sermant-injector实例。本项目采用Helm进行Kubernetes包管理。
 
-按照当前环境使用的k8s的版本，选择`deploment/release`下的`injector_k8s_1.19+`或者`injector_k8s_1.21-`Chart模版(k8s 1.19-1.21版本两者皆可)。
+使用`deploment/release`下的`injector`Chart模版。
 
 按实际环境修改`values.yaml`中的模版变量：
 
@@ -105,10 +104,10 @@ sh build-injector-image.sh
 >    kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}'
 >    ```
 
-完成后，执行`helm install`命令在k8s中部署sermant-injector实例，以injector_k8s_1.19+ Chart 为例，最后一个参数为Chart模版文件夹路径:
+完成后，执行`helm install`命令在k8s中部署sermant-injector实例:
 
 ```shell
-helm install sermant-injector ../injector_k8s_1.19+
+helm install sermant-injector ../injector
 ```
 
 检查sermant-injector部署pod状态为running。
