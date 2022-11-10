@@ -23,9 +23,12 @@ import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 插件生效策略缓存
@@ -33,22 +36,26 @@ import java.util.Optional;
  * @author chengyouling
  * @since 2022-10-08
  */
-public enum PlugEffectStategyCache {
-
+public enum PlugEffectStrategyCache {
     /**
      * 实例
      */
     INSTANCE;
 
-    private Map<String, String> caches = new HashMap<>();
+    private final Map<String, String> caches = new ConcurrentHashMap<>();
 
     private final YamlConverter yamlConverter = OperationManager.getOperation(YamlConverter.class);
 
     /**
+     * 当前value对应的服务名集合
+     */
+    private Set<String> curServices = new HashSet<>();
+
+    /**
      * 将动态配置放入缓存中
      *
-     * @param eventType
-     * @param content
+     * @param eventType 事件类型
+     * @param content 事件内容
      */
     public void resolve(DynamicConfigEventType eventType, String content) {
         final Optional<Map<String, String>> dataMap = yamlConverter.convert(content, Map.class);
@@ -57,16 +64,43 @@ public enum PlugEffectStategyCache {
         } else {
             if (dataMap.isPresent()) {
                 Map<String, String> map = dataMap.get();
-                if (checkStrategy(map.get(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY))) {
-                    caches.put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY,
-                            map.get(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY));
+                final String strategy = map.get(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY);
+                if (strategy != null && checkStrategy(map.get(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY))) {
+                    caches.put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY, strategy);
                 }
-                caches.put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE,
-                        map.get(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE));
+                final String value = map.get(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE);
+                if (value != null) {
+                    caches.put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE,
+                            map.get(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE));
+                }
             } else {
                 caches.clear();
             }
         }
+        resolveServices();
+    }
+
+    /**
+     * 解析服务名
+     */
+    private void resolveServices() {
+        final String value = caches.get(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE);
+        if (value == null) {
+            curServices = Collections.emptySet();
+            return;
+        }
+        final String[] parts = value.split(",");
+        final HashSet<String> services = new HashSet<>();
+        for (String part : parts) {
+            if (part != null) {
+                services.add(part.trim());
+            }
+        }
+        curServices = services;
+    }
+
+    public Set<String> getCurServices() {
+        return curServices;
     }
 
     private boolean checkStrategy(String strategy) {
@@ -79,7 +113,7 @@ public enum PlugEffectStategyCache {
     /**
      * 获取对应key的配置
      *
-     * @param key
+     * @param key 键
      * @return 动态配置值
      */
     public String getConfigContent(String key) {

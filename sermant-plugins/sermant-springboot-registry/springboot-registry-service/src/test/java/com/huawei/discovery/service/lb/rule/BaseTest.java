@@ -16,6 +16,7 @@
 
 package com.huawei.discovery.service.lb.rule;
 
+import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.config.LbConfig;
 import com.huawei.discovery.service.lb.discovery.zk.ZkClient;
 import com.huawei.discovery.service.lb.utils.CommonUtils;
@@ -53,6 +54,8 @@ public class BaseTest {
                 .mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(LbConfig.class))
                 .thenReturn(lbConfig);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class))
+                .thenReturn(new DiscoveryPluginConfig());
         pluginServiceManagerMockedStatic = Mockito
                 .mockStatic(PluginServiceManager.class);
     }

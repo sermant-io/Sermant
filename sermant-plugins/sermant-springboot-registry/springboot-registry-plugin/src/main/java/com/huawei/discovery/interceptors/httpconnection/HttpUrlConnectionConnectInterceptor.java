@@ -16,6 +16,7 @@
 
 package com.huawei.discovery.interceptors.httpconnection;
 
+import com.huawei.discovery.config.LbConfig;
 import com.huawei.discovery.interceptors.MarkInterceptor;
 import com.huawei.discovery.retry.InvokerContext;
 import com.huawei.discovery.service.InvokerService;
@@ -27,12 +28,17 @@ import com.huawei.discovery.utils.RequestInterceptorUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +52,27 @@ import java.util.logging.Logger;
 public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    /**
+     * 代理缓存, 针对用户使用代理的情况
+     * key: host
+     * value: Proxy
+     */
+    private final Map<String, Proxy> proxyCache;
+
+    private final LbConfig lbConfig;
+
+    /**
+     * 构造器
+     */
+    public HttpUrlConnectionConnectInterceptor() {
+        this.lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
+        if (this.lbConfig.isEnableCacheProxy()) {
+            proxyCache = new ConcurrentHashMap<>();
+        } else {
+            proxyCache = null;
+        }
+    }
+
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) throws Exception {
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
@@ -55,7 +82,7 @@ public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
         }
         final URL url = rawUrl.get();
         final String fullUrl = url.toString();
-        Map<String, String> urlInfo = RequestInterceptorUtils.recovertUrl(fullUrl);
+        Map<String, String> urlInfo = RequestInterceptorUtils.recoverUrl(url);
         if (!PlugEffectWhiteBlackUtils.isAllowRun(url.getHost(), urlInfo.get(HttpConstants.HTTP_URI_HOST),
             false)) {
             return context;
@@ -92,9 +119,40 @@ public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
             final String path = urlInfo.get(HttpConstants.HTTP_URI_PATH);
             final Optional<URL> newUrl = RequestInterceptorUtils.rebuildUrlForHttpConnection(url,
                     invokerContext.getServiceInstance(), path);
-            newUrl.ifPresent(value -> ReflectUtils.setFieldValue(context.getObject(), "url", value));
+            newUrl.ifPresent(value -> {
+                ReflectUtils.setFieldValue(context.getObject(), "url", value);
+                tryResetProxy(value, context);
+            });
             return RequestInterceptorUtils.buildFunc(context, invokerContext).get();
         };
+    }
+
+    /**
+     * 针对指定代理的场景下, 需将代理的地址替换为实际下游地址, 否则将出现404
+     */
+    private void tryResetProxy(URL newUrl, ExecuteContext context) {
+        final Optional<Object> instProxy = ReflectUtils.getFieldValue(context.getObject(), "instProxy");
+        if (!instProxy.isPresent() || !(instProxy.get() instanceof Proxy)) {
+            return;
+        }
+        final Proxy proxy = (Proxy) instProxy.get();
+        if (proxy.type() != Type.HTTP) {
+            return;
+        }
+
+        // 用户使用了自己的Proxy, 替换解析后的下游地址
+        ReflectUtils.setFieldValue(context.getObject(), "instProxy", getProxy(newUrl));
+    }
+
+    private Proxy getProxy(URL newUrl) {
+        if (lbConfig.isEnableCacheProxy()) {
+            return proxyCache.computeIfAbsent(newUrl.getHost(), host -> createProxy(newUrl));
+        }
+        return createProxy(newUrl);
+    }
+
+    private Proxy createProxy(URL newUrl) {
+        return new Proxy(Type.HTTP, InetSocketAddress.createUnresolved(newUrl.getHost(), newUrl.getPort()));
     }
 
     private void tryReleaseConnection(Object target) {

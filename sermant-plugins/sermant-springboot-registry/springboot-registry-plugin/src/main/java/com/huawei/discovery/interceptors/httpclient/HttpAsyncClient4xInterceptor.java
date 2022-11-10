@@ -18,6 +18,7 @@ package com.huawei.discovery.interceptors.httpclient;
 
 import com.huawei.discovery.entity.FutureDecorator;
 import com.huawei.discovery.entity.HttpAsyncContext;
+import com.huawei.discovery.entity.HttpAsyncInvokerResult;
 import com.huawei.discovery.entity.ServiceInstance;
 import com.huawei.discovery.retry.InvokerContext;
 import com.huawei.discovery.service.InvokerService;
@@ -35,13 +36,21 @@ import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.ProtocolVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.EnglishReasonPhraseCatalog;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.BasicStatusLine;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 
 import java.net.URI;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -79,16 +88,10 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
         final ServiceInstance selectedInstance = HttpAsyncUtils.getOrCreateContext().getSelectedInstance();
         if (selectedInstance == null) {
             // 置空回调, 阻止第一次因url问题导致回调给与用户错误结果
+            context.skip(null);
             HttpAsyncUtils.getOrCreateContext().setCallback(context.getArguments()[HttpAsyncContext.CALL_BACK_INDEX]);
             context.getArguments()[HttpAsyncContext.CALL_BACK_INDEX] = null;
             return context;
-        }
-        final ClassLoader appClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(HttpClient.class.getClassLoader());
-            context.getArguments()[0] = rebuildProducer(context, selectedInstance);
-        } finally {
-            Thread.currentThread().setContextClassLoader(appClassLoader);
         }
         return context;
     }
@@ -105,24 +108,19 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
             }
             RequestInterceptorUtils.printRequestLog("HttpAsyncClient", HttpAsyncUtils.getOrCreateContext()
                     .getHostAndPath());
-            final Object result = context.getResult();
-            if (!(result instanceof Future)) {
-                return context;
-            }
             final Map<String, String> hostAndPath = HttpAsyncUtils.getOrCreateContext().getHostAndPath();
             if (hostAndPath == null) {
                 return context;
             }
             final String serviceName = hostAndPath.get(HttpConstants.HTTP_URI_HOST);
-            Future<HttpResponse> future = (Future<HttpResponse>) context.getResult();
             cleanCallback();
             final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
             final HttpAsyncContext asyncContext = HttpAsyncUtils.getOrCreateContext();
             Thread.currentThread().setContextClassLoader(HttpClient.class.getClassLoader());
 
             // 对future进行修饰, 增加异常重试逻辑
-            context.changeResult(new FutureDecorator(future,
-                    buildInvokerBiFunc(asyncContext, invokerService, serviceName, context, future)));
+            context.changeResult(new FutureDecorator(buildInvokerBiFunc(asyncContext, invokerService, serviceName,
+                    context)));
             return context;
         } finally {
             HttpAsyncUtils.remove();
@@ -133,6 +131,9 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
     private boolean isConfigEnable() {
         final String originHostName = HttpAsyncUtils.getOrCreateContext().getOriginHostName();
         final Map<String, String> hostAndPath = HttpAsyncUtils.getOrCreateContext().getHostAndPath();
+        if (originHostName == null || hostAndPath == null) {
+            return false;
+        }
         return PlugEffectWhiteBlackUtils
                 .isAllowRun(originHostName, hostAndPath.get(HttpConstants.HTTP_URI_HOST), true);
     }
@@ -174,26 +175,42 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
         return result.map(o -> (HttpAsyncRequestProducer) o).orElse(producer);
     }
 
-    private BiFunction<Long, TimeUnit, Object> buildInvokerBiFunc(HttpAsyncContext asyncContext,
-            InvokerService invokerService, String serviceName, ExecuteContext context, Future<HttpResponse> future) {
+    private BiFunction<Long, TimeUnit, HttpAsyncInvokerResult> buildInvokerBiFunc(HttpAsyncContext asyncContext,
+            InvokerService invokerService, String serviceName, ExecuteContext context) {
         return (timeout, timeUnit) -> {
             try {
                 final Optional<Object> invokerResult = invokerService
                         .invoke(buildInvokerFunc(timeout, timeUnit, context, asyncContext), ex -> ex, serviceName);
                 if (invokerResult.isPresent()) {
-                    notify(asyncContext, invokerResult.get());
-                    return invokerResult.get();
+                    final HttpAsyncInvokerResult result = formatResult(invokerResult.get());
+                    notify(asyncContext, result.getResult());
+                    return result;
                 }
-                final HttpResponse response = futureInvoke(future, timeout, timeUnit);
-                notify(asyncContext, response);
-                return response;
-            } catch (ExecutionException | InterruptedException | TimeoutException ex) {
-                notify(asyncContext, ex);
-                return ex;
+
+                // 该场景仅当无实例才会触发, 此处模拟未拦截触发的异常, 即404
+                final HttpAsyncInvokerResult result = mockErrorResult();
+                notify(asyncContext, result.getResult());
+                return result;
             } finally {
                 HttpAsyncUtils.remove();
             }
         };
+    }
+
+    private HttpAsyncInvokerResult mockErrorResult() {
+        String msg = "Not Found";
+        final BasicHttpResponse basicHttpResponse = new BasicHttpResponse(new BasicStatusLine(
+                new ProtocolVersion("HTTP", 1, 1), HttpStatus.SC_NOT_FOUND, msg),
+                EnglishReasonPhraseCatalog.INSTANCE, Locale.SIMPLIFIED_CHINESE);
+        basicHttpResponse.setEntity(new StringEntity(msg, ContentType.TEXT_HTML));
+        return new HttpAsyncInvokerResult(null, basicHttpResponse);
+    }
+
+    private HttpAsyncInvokerResult formatResult(Object result) {
+        if (result instanceof HttpAsyncInvokerResult) {
+            return (HttpAsyncInvokerResult) result;
+        }
+        return new HttpAsyncInvokerResult(null, result);
     }
 
     private void notify(HttpAsyncContext asyncContext, Object response) {
@@ -226,24 +243,28 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
     private Function<InvokerContext, Object> buildInvokerFunc(long timeout, TimeUnit timeUnit, ExecuteContext context,
             HttpAsyncContext asyncContext) {
         return invokerContext -> {
+            Object finalResult;
+            Object finalFuture = null;
             try {
                 resetResponseConsumer(context);
                 copyToCurThread(asyncContext, invokerContext.getServiceInstance());
+                context.getArguments()[0] = rebuildProducer(context, invokerContext.getServiceInstance());
                 final Supplier<Object> supplier = RequestInterceptorUtils.buildFunc(context, invokerContext);
-                final Object future = supplier.get();
+                finalFuture = supplier.get();
                 try {
-                    return futureInvoke((Future<HttpResponse>) future, timeout, timeUnit);
+                    finalResult = futureInvoke((Future<HttpResponse>) finalFuture, timeout, timeUnit);
                 } catch (ExecutionException ex) {
                     invokerContext.setEx(ex.getCause());
-                    return ex;
+                    finalResult = ex;
                 } catch (InterruptedException | TimeoutException ex) {
                     invokerContext.setEx(ex);
-                    return ex;
+                    finalResult = ex;
                 }
             } catch (Exception exception) {
                 invokerContext.setEx(exception);
-                return exception;
+                finalResult = exception;
             }
+            return new HttpAsyncInvokerResult(finalFuture, finalResult);
         };
     }
 

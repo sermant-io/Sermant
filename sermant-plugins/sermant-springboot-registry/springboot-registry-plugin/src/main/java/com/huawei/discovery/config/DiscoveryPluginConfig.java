@@ -37,6 +37,19 @@ public class DiscoveryPluginConfig implements PluginConfig {
      */
     private boolean enableRequestCount = false;
 
+    /**
+     * 是否开启boot注册
+     */
+    private boolean enableRegistry = true;
+
+    public boolean isEnableRegistry() {
+        return enableRegistry;
+    }
+
+    public void setEnableRegistry(boolean enableRegistry) {
+        this.enableRegistry = enableRegistry;
+    }
+
     public String getRealmName() {
         return realmName;
     }

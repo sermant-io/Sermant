@@ -83,8 +83,10 @@ public class HttpUrlConnectionResponseStreamInterceptor implements Interceptor {
             return context;
         }
         tryCloseOldInputStream(rawInputStream);
-        LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "invoke method [%s] failed",
-                context.getMethod().getName()), invokerContext.getEx());
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "invoke method [%s] failed",
+                    context.getMethod().getName()), invokerContext.getEx());
+        }
         Optional<Object> result = invokerService.invoke(
             invokerContextObjectFunction,
             ex -> ex,

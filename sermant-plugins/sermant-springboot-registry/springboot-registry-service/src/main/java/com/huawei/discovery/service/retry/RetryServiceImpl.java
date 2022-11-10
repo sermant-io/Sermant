@@ -16,6 +16,7 @@
 
 package com.huawei.discovery.service.retry;
 
+import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.config.LbConfig;
 import com.huawei.discovery.entity.Recorder;
 import com.huawei.discovery.entity.ServiceInstance;
@@ -69,6 +70,9 @@ public class RetryServiceImpl implements InvokerService {
 
     @Override
     public void start() {
+        if (!PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class).isEnableRegistry()) {
+            return;
+        }
         final LbConfig lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
         maxSize = lbConfig.getMaxRetryConfigCache();
         defaultRetry = Retry.create(DefaultRetryConfig.create());
@@ -149,8 +153,8 @@ public class RetryServiceImpl implements InvokerService {
             long consumeTimeMs;
             try {
                 final Object result = invokeFunc.apply(invokerContext);
-                isInRetry = true;
                 consumeTimeMs = System.currentTimeMillis() - start;
+                isInRetry = true;
                 if (invokerContext.getEx() != null) {
                     // 此处调用器, 若调用出现异常, 则以异常结果返回
                     context.onError(stats, invokerContext.getEx(), consumeTimeMs);
@@ -163,7 +167,6 @@ public class RetryServiceImpl implements InvokerService {
                     return Optional.ofNullable(result);
                 }
             } catch (Exception ex) {
-                isInRetry = true;
                 handleEx(ex, context, stats, System.currentTimeMillis() - start);
             }
         } while (true);

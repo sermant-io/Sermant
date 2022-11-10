@@ -72,6 +72,7 @@ jobs:
           dynamic.config.serverAddress: 127.0.0.1:30110
           dynamic.config.dynamicConfigType: KIE
           service.meta.environment: development
+          sermant.springboot.registry.enableRegistry: true
         run: |
           mkdir logs
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8013 -jar \
@@ -190,6 +191,7 @@ jobs:
           dynamic.config.serverAddress: 127.0.0.1:30110
           dynamic.config.dynamicConfigType: KIE
           service.meta.environment: development
+          sermant.springboot.registry.enableRegistry: true
         run: |
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8013 -jar \
           -Dsermant_log_dir=./logs/feign-provider \

@@ -16,10 +16,12 @@
 
 package com.huawei.discovery.service.lb;
 
+import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.entity.ServiceInstance;
 import com.huawei.discovery.service.LbService;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -42,6 +44,9 @@ public class LbServiceImpl implements LbService {
 
     @Override
     public void stop() {
+        if (!PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class).isEnableRegistry()) {
+            return;
+        }
         try {
             DiscoveryManager.INSTANCE.stop();
         } catch (IOException ex) {

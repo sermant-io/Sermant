@@ -26,7 +26,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import com.huawei.discovery.config.DiscoveryPluginConfig;
-import com.huawei.discovery.entity.PlugEffectStategyCache;
+import com.huawei.discovery.entity.PlugEffectStrategyCache;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
@@ -85,7 +85,7 @@ public class BaseTest {
     }
 
     private void clearCache() {
-        final Optional<Object> dynamicConfig = ReflectUtils.getFieldValue(PlugEffectStategyCache.INSTANCE, "caches");
+        final Optional<Object> dynamicConfig = ReflectUtils.getFieldValue(PlugEffectStrategyCache.INSTANCE, "caches");
         Assert.assertTrue(dynamicConfig.isPresent() && dynamicConfig.get() instanceof Map);
         ((Map) dynamicConfig.get()).clear();
     }

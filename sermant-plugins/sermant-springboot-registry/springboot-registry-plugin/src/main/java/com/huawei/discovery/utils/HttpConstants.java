@@ -45,7 +45,7 @@ public class HttpConstants {
     /**
      * 双斜杠
      */
-    public static final String HTTP_URL_DOUBLIE_SLASH = "://";
+    public static final String HTTP_URL_DOUBLE_SLASH = "://";
 
     /**
      * 冒号
@@ -61,6 +61,11 @@ public class HttpConstants {
      * 单斜杠
      */
     public static final char HTTP_URL_SINGLE_SLASH = '/';
+
+    /**
+     * 协议
+     */
+    public static final String EMPTY_STR = "";
 
     /**
      * 协议

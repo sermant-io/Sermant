@@ -29,13 +29,13 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
  * @author chengyouling
  * @since 2022-10-12
  */
-public class PlugEffectStategyCacheTest extends BaseTest {
+public class PlugEffectStrategyCacheTest extends BaseTest {
     @Test
     public void testResolve() {
         JSONObject jobject = new JSONObject();
         jobject.put("strategy", "all");
         jobject.put("value", "service1");
-        PlugEffectStategyCache.INSTANCE.resolve(DynamicConfigEventType.MODIFY, jobject.toJSONString());
-        Assert.assertEquals(PlugEffectStategyCache.INSTANCE.getConfigContent("strategy"), "all");
+        PlugEffectStrategyCache.INSTANCE.resolve(DynamicConfigEventType.MODIFY, jobject.toJSONString());
+        Assert.assertEquals(PlugEffectStrategyCache.INSTANCE.getConfigContent("strategy"), "all");
     }
 }
