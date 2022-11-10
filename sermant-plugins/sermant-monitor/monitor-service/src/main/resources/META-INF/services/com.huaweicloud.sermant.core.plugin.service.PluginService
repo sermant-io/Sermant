@@ -16,3 +16,4 @@
 
 com.huawei.monitor.service.JvmCollectorService
 com.huawei.monitor.service.ServerCollectorService
+com.huawei.monitor.service.MetricServiceImpl

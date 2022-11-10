@@ -36,11 +36,37 @@ public class MonitorServiceConfig implements PluginConfig {
     @ConfigFieldKey("enable-start-service")
     private boolean enableStartService;
 
+    /**
+     * 性能监控地址
+     */
+    private String address;
+
+    /**
+     * 性能监控端口
+     */
+    private int port;
+
     public boolean isEnableStartService() {
         return enableStartService;
     }
 
     public void setEnableStartService(boolean enableStartService) {
         this.enableStartService = enableStartService;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 }

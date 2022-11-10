@@ -18,9 +18,7 @@ package com.huawei.monitor.service;
 
 import com.huawei.monitor.config.MonitorServiceConfig;
 
-import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.core.service.monitor.config.MonitorConfig;
 
 import io.prometheus.client.Collector;
 
@@ -37,10 +35,8 @@ public abstract class SwitchService extends Collector {
      * 默认启动服务方法
      */
     public void start() {
-        MonitorConfig monitorConfig = ConfigManager.getConfig(MonitorConfig.class);
         MonitorServiceConfig monitorServiceConfig = PluginConfigManager.getConfig(MonitorServiceConfig.class);
-        if (monitorConfig != null && monitorConfig.isStartMonitor() && monitorServiceConfig != null
-                && monitorServiceConfig.isEnableStartService()) {
+        if (monitorServiceConfig != null && monitorServiceConfig.isEnableStartService()) {
             this.register();
         }
     }
