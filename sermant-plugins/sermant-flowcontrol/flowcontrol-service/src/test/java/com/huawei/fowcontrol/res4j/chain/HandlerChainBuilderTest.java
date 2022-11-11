@@ -17,7 +17,6 @@
 
 package com.huawei.fowcontrol.res4j.chain;
 
-import com.huawei.fowcontrol.res4j.chain.handler.MonitorHandler;
 import com.huawei.fowcontrol.res4j.service.ServiceCollectorService;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
@@ -56,9 +55,6 @@ public class HandlerChainBuilderTest {
      */
     @Test
     public void testGetHandler() {
-        Optional<AbstractChainHandler> optional = HandlerChainBuilder.getHandler(MonitorHandler.class.getName());
-        Assert.assertNotNull(optional);
-        Assert.assertTrue(optional.isPresent());
         Optional<AbstractChainHandler> notExistOptional =
                 HandlerChainBuilder.getHandler(ServiceCollectorService.class.getName());
         Assert.assertNotNull(notExistOptional);

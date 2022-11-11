@@ -115,11 +115,9 @@ public class MonitorTest {
     public void testGetCurrent() {
         MetricEntity metricEntity = new MetricEntity();
         metricEntity.getServerRequest().set(DEFAULT_VALUE);
-        Map<String, MetricEntity> entityMap = new HashMap<>();
-        entityMap.put(NAME, metricEntity);
+        ServiceCollectorService.MONITORS.put(NAME, metricEntity);
         Optional<Object> optional = ReflectUtils.invokeMethod(new ServiceCollectorService(), CURRENT_MAP_METHOD_NAME,
-                new Class[]{Map.class},
-                new Object[]{entityMap});
+                null, null);
         Assert.assertTrue(optional.isPresent());
         Assert.assertTrue(optional.get() instanceof Map);
         Map<String, MetricEntity> targetMap = (Map<String, MetricEntity>) optional.get();

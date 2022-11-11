@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.core.service.monitor.config;
+package com.huawei.monitor.config;
 
-import com.huaweicloud.sermant.core.config.common.BaseConfig;
+import com.huaweicloud.sermant.core.config.common.ConfigFieldKey;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 /**
- * 监控插件配置类
+ * 配置类
  *
  * @author zhp
  * @version 1.0.0
  * @since 2022-08-02
  */
-@ConfigTypeKey(value = "monitor.service")
-public class MonitorConfig implements BaseConfig {
-
+@ConfigTypeKey(value = "monitor.config")
+public class MonitorServiceConfig implements PluginConfig {
     /**
-     * 性能监控开关
+     * 服务开关
      */
-    private boolean isStartMonitor = false;
+    @ConfigFieldKey("enable-start-service")
+    private boolean enableStartService;
 
     /**
      * 性能监控地址
@@ -44,12 +45,17 @@ public class MonitorConfig implements BaseConfig {
      */
     private int port;
 
-    public boolean isStartMonitor() {
-        return isStartMonitor;
+    /**
+     * 上报类型
+     */
+    private String reportType;
+
+    public boolean isEnableStartService() {
+        return enableStartService;
     }
 
-    public void setStartMonitor(boolean startMonitor) {
-        isStartMonitor = startMonitor;
+    public void setEnableStartService(boolean enableStartService) {
+        this.enableStartService = enableStartService;
     }
 
     public String getAddress() {
@@ -66,5 +72,13 @@ public class MonitorConfig implements BaseConfig {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public String getReportType() {
+        return reportType;
+    }
+
+    public void setReportType(String reportType) {
+        this.reportType = reportType;
     }
 }

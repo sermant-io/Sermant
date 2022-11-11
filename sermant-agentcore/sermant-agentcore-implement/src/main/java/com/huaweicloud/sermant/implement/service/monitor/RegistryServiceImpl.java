@@ -14,29 +14,36 @@
  * limitations under the License.
  */
 
-package com.huawei.monitor.util;
+package com.huaweicloud.sermant.implement.service.monitor;
 
+import com.huaweicloud.sermant.core.service.monitor.RegistryService;
+
+import com.sun.net.httpserver.HttpHandler;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * 集合工具类
+ * 注册信息获取
  *
  * @author zhp
  * @version 1.0.0
- * @since 2022-08-02
+ * @since 2022-11-02
  */
-public class CollectionUtil {
+public class RegistryServiceImpl implements RegistryService {
+    private Map<String, HttpHandler> handlerMap = new HashMap<>();
 
-    private CollectionUtil() {
+    private List<Object> registryList = new ArrayList<>();
+
+    @Override
+    public Map<String, HttpHandler> getHandlers() {
+        return handlerMap;
     }
 
-    /**
-     * 是否为空
-     *
-     * @param list 集合
-     * @return 判断结果
-     */
-    public static boolean isEmpty(List list) {
-        return list == null || list.isEmpty();
+    @Override
+    public void addHandler(String name, HttpHandler httpHandler) {
+        handlerMap.put(name, httpHandler);
     }
 }

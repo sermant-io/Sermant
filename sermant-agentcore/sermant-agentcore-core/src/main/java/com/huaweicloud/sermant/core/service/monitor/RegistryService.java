@@ -14,19 +14,34 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.core.service.monitor.api;
+package com.huaweicloud.sermant.core.service.monitor;
 
 import com.huaweicloud.sermant.core.service.BaseService;
 
+import com.sun.net.httpserver.HttpHandler;
+
+import java.util.Map;
+
 /**
- * 监控插件配置服务接口
+ * 注册信息获取
  *
- * @author luanwenfei
- * @since 2022-09-15
+ * @author zhp
+ * @version 1.0.0
+ * @since 2022-11-02
  */
-public interface MetricService extends BaseService {
+public interface RegistryService extends BaseService {
     /**
-     * 初始化监控服务
+     * Handler获取
+     *
+     * @return Handler信息
      */
-    void initMonitorServer();
+    Map<String, HttpHandler> getHandlers();
+
+    /**
+     * Handler信息添加
+     *
+     * @param httpHandler Handler信息
+     * @param name Handler名称
+     */
+    void addHandler(String name, HttpHandler httpHandler);
 }

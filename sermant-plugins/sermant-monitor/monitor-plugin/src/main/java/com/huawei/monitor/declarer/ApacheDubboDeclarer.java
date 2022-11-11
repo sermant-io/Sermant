@@ -14,33 +14,27 @@
  * limitations under the License.
  */
 
-package com.huawei.monitor.config;
+package com.huawei.monitor.declarer;
 
-import com.huaweicloud.sermant.core.config.common.ConfigFieldKey;
-import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
+import com.huawei.monitor.interceptor.ApacheDubboInterceptor;
 
 /**
- * 配置类
+ * Dubbo拦截器
  *
  * @author zhp
- * @version 1.0.0
- * @since 2022-08-02
+ * @since 2022-11-01
  */
-@ConfigTypeKey(value = "monitor.config")
-public class MonitorServiceConfig implements PluginConfig {
+public class ApacheDubboDeclarer extends AbstractDeclarer {
+    private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.monitor.support.MonitorFilter"};
+
+    private static final String INTERCEPT_CLASS = ApacheDubboInterceptor.class.getCanonicalName();
+
+    private static final String METHOD_NAME = "invoke";
 
     /**
-     * 服务开关
+     * 构造方法
      */
-    @ConfigFieldKey("enable-start-service")
-    private boolean enableStartService;
-
-    public boolean isEnableStartService() {
-        return enableStartService;
-    }
-
-    public void setEnableStartService(boolean enableStartService) {
-        this.enableStartService = enableStartService;
+    public ApacheDubboDeclarer() {
+        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
     }
 }

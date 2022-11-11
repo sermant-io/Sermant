@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.monitor.service;
+package com.huawei.monitor.service.collector;
 
 import com.huawei.monitor.command.Command;
 import com.huawei.monitor.command.CommandExecutor;
@@ -46,7 +46,6 @@ import java.util.logging.Logger;
  * @since 2022-08-02
  */
 public class ServerCollectorService extends SwitchService implements PluginService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final BigDecimal HUNDRED = new BigDecimal("100");
@@ -88,7 +87,7 @@ public class ServerCollectorService extends SwitchService implements PluginServi
     private void collectDiskMetric(List<MetricFamilySamples> metricList,
                                    Optional<List<DiskCommand.DiskStats>> statsListOptional) {
         Optional<List<DiskCommand.DiskStats>> currentStatsListOptional = CommandExecutor.execute(Command.DISK);
-        if (!statsListOptional.isPresent() || (!currentStatsListOptional.isPresent())) {
+        if (!statsListOptional.isPresent() || !currentStatsListOptional.isPresent()) {
             return;
         }
         List<DiskCommand.DiskStats> statsList = statsListOptional.get();
@@ -122,7 +121,7 @@ public class ServerCollectorService extends SwitchService implements PluginServi
     private void collectNetWorkMetric(List<MetricFamilySamples> metricFamilySamplesList,
                                       Optional<NetworkCommand.NetDev> netDevOptional) {
         Optional<NetworkCommand.NetDev> currentNetDevOptional = CommandExecutor.execute(Command.NETWORK);
-        if (!netDevOptional.isPresent() || (!currentNetDevOptional.isPresent())) {
+        if (!netDevOptional.isPresent() || !currentNetDevOptional.isPresent()) {
             return;
         }
         NetworkCommand.NetDev currentNetDev = currentNetDevOptional.get();
@@ -167,7 +166,7 @@ public class ServerCollectorService extends SwitchService implements PluginServi
                                   Optional<CpuCommand.CpuStat> cpuStatOptional) {
         sleep();
         Optional<CpuCommand.CpuStat> currentCpuStatOptional = CommandExecutor.execute(Command.CPU);
-        if (!cpuStatOptional.isPresent() || (!currentCpuStatOptional.isPresent())) {
+        if (!cpuStatOptional.isPresent() || !currentCpuStatOptional.isPresent()) {
             return;
         }
         CpuCommand.CpuStat currentCpuStat = currentCpuStatOptional.get();

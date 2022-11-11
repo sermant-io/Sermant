@@ -26,6 +26,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>monitor-plugin</module>
                 <module>monitor-service</module>
             </modules>
         </profile>
@@ -35,12 +36,14 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>monitor-plugin</module>
                 <module>monitor-service</module>
             </modules>
         </profile>
         <profile>
             <id>all</id>
             <modules>
+                <module>monitor-plugin</module>
                 <module>monitor-service</module>
             </modules>
         </profile>
