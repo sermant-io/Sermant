@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.router.config.handler;
 
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
+import com.huaweicloud.sermant.router.config.common.SafeConstructor;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -36,7 +37,7 @@ public abstract class AbstractConfigHandler {
      * 构造方法
      */
     public AbstractConfigHandler() {
-        this.yaml = new Yaml();
+        this.yaml = new Yaml(new SafeConstructor(null));
     }
 
     /**
