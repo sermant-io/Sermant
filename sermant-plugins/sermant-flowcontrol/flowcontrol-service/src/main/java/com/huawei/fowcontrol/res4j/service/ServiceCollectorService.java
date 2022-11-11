@@ -15,18 +15,20 @@
 
 package com.huawei.fowcontrol.res4j.service;
 
-import com.huawei.flowcontrol.common.entity.MetricCalEntity;
 import com.huawei.flowcontrol.common.entity.MetricEntity;
 import com.huawei.flowcontrol.common.enums.MetricType;
-import com.huawei.fowcontrol.res4j.chain.handler.MonitorHandler;
 import com.huawei.fowcontrol.res4j.util.MonitorUtils;
 
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.monitor.RegistryService;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.prometheus.client.Collector;
+import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.GaugeMetricFamily;
+import io.prometheus.client.exporter.HTTPServer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,7 +50,10 @@ public class ServiceCollectorService extends Collector implements PluginService 
      */
     public static final Map<String, CircuitBreaker> CIRCUIT_BREAKER_MAP = new ConcurrentHashMap<>();
 
-    private static Map<String, MetricEntity> monitors;
+    /**
+     * 请求数据
+     */
+    public static final Map<String, MetricEntity> MONITORS = new ConcurrentHashMap<>();
 
     private static final List<String> DEFAULT_LABEL_NAME = Collections.singletonList("name");
 
@@ -63,8 +68,10 @@ public class ServiceCollectorService extends Collector implements PluginService 
         if (!MonitorUtils.isStartMonitor()) {
             return;
         }
-        monitors = MonitorHandler.MONITORS;
         this.register();
+        RegistryService registryService = ServiceManager.getService(RegistryService.class);
+        registryService.addHandler("flowControl",
+                new HTTPServer.HTTPMetricHandler(CollectorRegistry.defaultRegistry, null));
     }
 
     @Override
@@ -72,66 +79,21 @@ public class ServiceCollectorService extends Collector implements PluginService 
         Map<String, GaugeMetricFamily> metricMap = new HashMap<>();
         collectCircuitBreakerMetric(metricMap);
         List<MetricFamilySamples> samples = new ArrayList<>();
-        if (monitors == null || monitors.isEmpty()) {
-            buildDefaultMetric(samples);
+        if (MONITORS.isEmpty()) {
             samples.addAll(metricMap.values());
             return samples;
         }
-        Map<String, MetricEntity> currentMap = getCurrentMap(monitors);
+        Map<String, MetricEntity> currentMap = getCurrentMap();
         currentMap.forEach((k, v) -> {
             if (v == null || StringUtils.isBlank(v.getName())) {
                 return;
             }
             collectFuseMetric(metricMap, k, v);
         });
-        long currentTime = System.currentTimeMillis();
-        collectThroughPutMetric(samples, currentTime, currentMap);
-        lastStartTime = currentTime;
+        lastStartTime = System.currentTimeMillis();
         lastMetricMap = currentMap;
         samples.addAll(metricMap.values());
         return samples;
-    }
-
-    /**
-     * 采集吞吐量指标信息
-     *
-     * @param samples     指标集
-     * @param currentTime 当前时间
-     * @param currentMap  当前指标信息
-     */
-    private void collectThroughPutMetric(List<MetricFamilySamples> samples, long currentTime, Map<String,
-            MetricEntity> currentMap) {
-        MetricCalEntity metricCalEntity = fillMetricInfo(currentMap);
-        MetricCalEntity lastCalEntity = fillMetricInfo(lastMetricMap);
-        double consumeTime = metricCalEntity.getConsumeServerReqTimeSum() - lastCalEntity.getConsumeServerReqTimeSum();
-        double serverRequestNum = metricCalEntity.getServerReqSum() - lastCalEntity.getServerReqSum();
-        double failedServerRequestNum = metricCalEntity.getFailedServerReqSum() - lastCalEntity.getFailedServerReqSum();
-        double serverFinishRequestNum = metricCalEntity.getSuccessFulServerReqSum()
-                - lastCalEntity.getSuccessFulServerReqSum() + failedServerRequestNum;
-        if (lastStartTime == null || serverRequestNum == 0L || consumeTime == 0) {
-            buildDefaultMetric(samples);
-        } else {
-            long interval = currentTime - lastStartTime;
-            double qps = serverFinishRequestNum * PROPORTION / interval;
-            double responseTime = consumeTime / serverFinishRequestNum;
-            double tps = qps * PROPORTION / responseTime;
-            samples.add(new GaugeMetricFamily(MetricType.QPS.getName(), MetricType.QPS.getDesc(), qps));
-            samples.add(new GaugeMetricFamily(MetricType.TPS.getName(), MetricType.TPS.getDesc(), tps));
-            samples.add(new GaugeMetricFamily(MetricType.AVG_RESPONSE_TIME.getName(),
-                    MetricType.AVG_RESPONSE_TIME.getDesc(), responseTime));
-        }
-    }
-
-    /**
-     * 构造默认返回信息
-     *
-     * @param samples 指标实例
-     */
-    private static void buildDefaultMetric(List<MetricFamilySamples> samples) {
-        samples.add(new GaugeMetricFamily(MetricType.QPS.getName(), MetricType.QPS.getDesc(), 0));
-        samples.add(new GaugeMetricFamily(MetricType.TPS.getName(), MetricType.TPS.getDesc(), 0));
-        samples.add(new GaugeMetricFamily(MetricType.AVG_RESPONSE_TIME.getName(),
-                MetricType.AVG_RESPONSE_TIME.getDesc(), 0));
     }
 
     /**
@@ -155,46 +117,23 @@ public class ServiceCollectorService extends Collector implements PluginService 
         addMetric(metricMap, MetricType.FAILURE_FUSE_REQUEST, failure + ignore, k);
         double failRate = total == 0 ? 0 : (failure + ignore) / (double) total;
         addMetric(metricMap, MetricType.FAILURE_RATE_FUSE_REQUEST, failRate, k);
-        if (lastStartTime == null) {
-            addMetric(metricMap, MetricType.QPS, 0, k);
-        } else {
-            long interval = System.currentTimeMillis() - lastStartTime;
-            double qps = interval == 0 ? 0 : total * PROPORTION / (double) interval;
-            addMetric(metricMap, MetricType.QPS, qps, k);
-        }
         long fuseTime = v.getFuseTime().get() - lastMetric.getFuseTime().get();
         double avgResponseTime = total == 0 ? 0 : fuseTime / (double) total;
         addMetric(metricMap, MetricType.AVG_RESPONSE_TIME, avgResponseTime, k);
+        if (lastStartTime == null) {
+            addMetric(metricMap, MetricType.QPS, 0, k);
+            addMetric(metricMap, MetricType.TPS, 0, k);
+        } else {
+            long interval = System.currentTimeMillis() - lastStartTime;
+            double qps = interval == 0 ? 0 : total * PROPORTION / (double) interval;
+            double tps = avgResponseTime == 0 ? 0 : qps * PROPORTION / avgResponseTime;
+            addMetric(metricMap, MetricType.QPS, qps, k);
+            addMetric(metricMap, MetricType.TPS, tps, k);
+        }
         long slowNum = v.getSlowFuseRequest().get() - lastMetric.getSlowFuseRequest().get();
         addMetric(metricMap, MetricType.SLOW_CALL_NUMBER, slowNum, k);
         long permitted = v.getPermittedFulFuseRequest().get() - lastMetric.getPermittedFulFuseRequest().get();
         addMetric(metricMap, MetricType.PERMITTED_FUSE_REQUEST, permitted, k);
-    }
-
-    /**
-     * 填充指标计算信息
-     *
-     * @param metricEntityMap 指标信息集
-     * @return 指标计算信息
-     */
-    private MetricCalEntity fillMetricInfo(Map<String, MetricEntity> metricEntityMap) {
-        MetricCalEntity metricCalEntity = new MetricCalEntity();
-        if (metricEntityMap == null || metricEntityMap.isEmpty()) {
-            return metricCalEntity;
-        }
-        metricEntityMap.forEach((k, v) -> {
-            if (v == null) {
-                return;
-            }
-            metricCalEntity.setServerReqSum(metricCalEntity.getServerReqSum() + v.getServerRequest().get());
-            metricCalEntity.setSuccessFulServerReqSum(metricCalEntity.getSuccessFulServerReqSum()
-                    + v.getSuccessServerRequest().get());
-            metricCalEntity.setFailedServerReqSum(metricCalEntity.getFailedServerReqSum()
-                    + v.getFailedServerRequest().get());
-            metricCalEntity.setConsumeServerReqTimeSum(metricCalEntity.getConsumeServerReqTimeSum()
-                    + v.getConsumeServerTime().get());
-        });
-        return metricCalEntity;
     }
 
     /**
@@ -227,6 +166,7 @@ public class ServiceCollectorService extends Collector implements PluginService 
     /**
      * 构造指标收集器
      *
+     * @param metricType 指标类型
      * @return 收集器
      */
     private GaugeMetricFamily buildGaugeMetric(MetricType metricType) {
@@ -244,18 +184,18 @@ public class ServiceCollectorService extends Collector implements PluginService 
      */
     private void addMetric(Map<String, GaugeMetricFamily> metricMap, MetricType type, double value, String labelValue) {
         GaugeMetricFamily metric = metricMap.computeIfAbsent(type.getName(), s -> buildGaugeMetric(type));
-        metric.addMetric(Collections.singletonList(labelValue), value);
+        metric.addMetric(Collections.singletonList(labelValue), value < 0 ? 0 : value);
     }
 
     /**
      * 暂存当前数据，防止数据在后续收集指标过程中被更新
      *
-     * @param source 数据来源
+     * @return 当前指标信息
      */
-    private Map<String, MetricEntity> getCurrentMap(Map<String, MetricEntity> source) {
+    private Map<String, MetricEntity> getCurrentMap() {
         Map<String, MetricEntity> target = new ConcurrentHashMap<>();
-        if (source != null && !source.isEmpty()) {
-            for (Map.Entry<String, MetricEntity> entry : source.entrySet()) {
+        if (!MONITORS.isEmpty()) {
+            for (Map.Entry<String, MetricEntity> entry : MONITORS.entrySet()) {
                 MetricEntity metricEntity = new MetricEntity();
                 MetricEntity sourceMetric = entry.getValue();
                 copy(metricEntity, sourceMetric);

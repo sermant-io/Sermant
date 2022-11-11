@@ -17,7 +17,7 @@
 
 package com.huawei.fowcontrol.res4j.chain.handler;
 
-import com.huawei.flowcontrol.common.config.MetricConfig;
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.core.ResolverManager;
 import com.huawei.flowcontrol.common.core.resolver.CircuitBreakerRuleResolver;
 import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
@@ -27,11 +27,10 @@ import com.huawei.flowcontrol.common.entity.RequestEntity;
 import com.huawei.fowcontrol.res4j.chain.HandlerChainEntry;
 
 import com.huawei.fowcontrol.res4j.handler.InstanceIsolationHandler;
-import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huawei.fowcontrol.res4j.service.ServiceCollectorService;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.core.service.monitor.config.MonitorConfig;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
@@ -148,18 +147,12 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
      */
     @Test
     public void testAddPublishEvent() {
-        MonitorConfig monitorConfig = new MonitorConfig();
-        monitorConfig.setStartMonitor(true);
-        MetricConfig metricConfig = new MetricConfig();
+        FlowControlConfig metricConfig = new FlowControlConfig();
         metricConfig.setEnableStartMonitor(true);
-        try (MockedStatic<ConfigManager> configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
-             MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic =
+        try (MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic =
                      Mockito.mockStatic(PluginConfigManager.class);
              MockedStatic<OperationManager> operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class)) {
-            configManagerMockedStatic
-                    .when(() -> ConfigManager.getConfig(MonitorConfig.class))
-                    .thenReturn(monitorConfig);
-            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(MetricConfig.class))
+            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                     .thenReturn(metricConfig);
             operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
                     .thenReturn(new YamlConverterImpl());
@@ -189,7 +182,7 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
                 circuitBreaker.onSuccess(NANO_TIMES, circuitBreaker.getTimestampUnit());
             }
         }
-        Map<String, MetricEntity> monitors = MonitorHandler.MONITORS;
+        Map<String, MetricEntity> monitors = ServiceCollectorService.MONITORS;
         Assert.assertNotNull(monitors);
         MetricEntity metricEntity = monitors.get(BUSINESS_NAME);
         Assert.assertNotNull(metricEntity);

@@ -1,2 +1,5 @@
 monitor.config:
   enable-start-service: false
+  address: 127.0.0.1
+  port: 12345
+  reportType: PROMETHEUS

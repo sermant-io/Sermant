@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.monitor.service;
+package com.huawei.monitor.service.collector;
 
 import com.huawei.monitor.common.MemoryType;
 import com.huawei.monitor.common.MetricEnum;
@@ -46,7 +46,6 @@ import java.util.Optional;
  * @since 2022-08-02
  */
 public class JvmCollectorService extends SwitchService implements PluginService {
-
     private static final List<String> NEW_GEN_NAME_LIST = Arrays.asList("PS Scavenge", "ParNew", "Copy", "G1 Young "
             + "Generation", "ZGC Cycles");
 
