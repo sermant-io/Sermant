@@ -33,7 +33,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <spring.boot.version>2.2.0.RELEASE</spring.boot.version>
+        <spring.boot.version>2.7.5</spring.boot.version>
         <nacos.version>2.2.0.RELEASE</nacos.version>
         <spring.cloud.version>Hoxton.RELEASE</spring.cloud.version>
         <httpclient.async.version>4.1.4</httpclient.async.version>
