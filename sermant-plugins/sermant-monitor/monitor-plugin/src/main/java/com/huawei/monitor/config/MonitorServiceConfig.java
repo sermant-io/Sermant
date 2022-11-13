@@ -50,6 +50,21 @@ public class MonitorServiceConfig implements PluginConfig {
      */
     private String reportType;
 
+    /**
+     * 用户名
+     */
+    private String userName;
+
+    /**
+     * 密码
+     */
+    private String password;
+
+    /**
+     * 密钥
+     */
+    private String key;
+
     public boolean isEnableStartService() {
         return enableStartService;
     }
@@ -80,5 +95,29 @@ public class MonitorServiceConfig implements PluginConfig {
 
     public void setReportType(String reportType) {
         this.reportType = reportType;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

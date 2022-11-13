@@ -23,8 +23,10 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.monitor.RegistryService;
+import com.huaweicloud.sermant.core.utils.AesUtil;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
+import com.sun.net.httpserver.BasicAuthenticator;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
@@ -34,6 +36,7 @@ import io.prometheus.client.exporter.HTTPServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -69,7 +72,19 @@ public class PrometheusMetricServiceImpl implements MetricReportService {
                     server.createContext("/" + entry.getKey(), entry.getValue());
                 }
             }
-            httpServer = new HTTPServer(server, CollectorRegistry.defaultRegistry, true);
+            HTTPServer.Builder builder = new HTTPServer.Builder().withHttpServer(server)
+                    .withRegistry(CollectorRegistry.defaultRegistry).withDaemonThreads(true);
+            String key = monitorServiceConfig.getKey();
+            if (StringUtils.isNoneBlank(key) && StringUtils.isNoneBlank(monitorServiceConfig.getUserName())
+                    && StringUtils.isNoneBlank(monitorServiceConfig.getPassword())) {
+                Optional<String> userNameOptional = AesUtil.decrypt(key, monitorServiceConfig.getUserName());
+                Optional<String> passwordOptional = AesUtil.decrypt(key, monitorServiceConfig.getPassword());
+                if (userNameOptional.isPresent() && passwordOptional.isPresent()) {
+                    builder.withAuthenticator(new MonitorAuthenticator("", userNameOptional.get(),
+                            passwordOptional.get()));
+                }
+            }
+            httpServer = builder.build();
         } catch (IOException exception) {
             LOGGER.warning("could not create httpServer for prometheus");
         }
@@ -81,6 +96,29 @@ public class PrometheusMetricServiceImpl implements MetricReportService {
     public void stopMonitorServer() {
         if (httpServer != null) {
             httpServer.close();
+        }
+    }
+
+    /**
+     * 授权认证
+     *
+     * @author zhp
+     * @since 2022-11-11
+     */
+    static class MonitorAuthenticator extends BasicAuthenticator {
+        private final String userName;
+
+        private final String password;
+
+        MonitorAuthenticator(String realm, String userName, String password) {
+            super(realm);
+            this.userName = userName;
+            this.password = password;
+        }
+
+        @Override
+        public boolean checkCredentials(String username, String key) {
+            return StringUtils.equals(this.userName, username) && StringUtils.equals(this.password, key);
         }
     }
 }
