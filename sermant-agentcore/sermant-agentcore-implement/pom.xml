@@ -174,7 +174,7 @@
             </build>
         </profile>
         <profile>
-            <id>all</id>
+            <id>test</id>
             <build>
                 <plugins>
                     <plugin>

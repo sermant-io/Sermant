@@ -38,15 +38,19 @@
             </modules>
         </profile>
         <profile>
-            <id>ext</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>test</id>
             <modules>
+                <module>dubbo-router-plugin</module>
+                <module>dubbo-router-service</module>
+                <module>router-common</module>
+                <module>router-config-common</module>
+                <module>router-config-service</module>
+                <module>spring-router-plugin</module>
+                <module>spring-router-service</module>
             </modules>
         </profile>
         <profile>
-            <id>all</id>
+            <id>release</id>
             <modules>
                 <module>dubbo-router-plugin</module>
                 <module>dubbo-router-service</module>

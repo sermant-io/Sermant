@@ -30,16 +30,7 @@
             </modules>
         </profile>
         <profile>
-            <id>ext</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>flowcontrol-demos</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>all</id>
+            <id>test</id>
             <modules>
                 <module>flowcontrol-common</module>
                 <module>flowcontrol-plugin</module>

@@ -47,7 +47,7 @@
             </modules>
         </profile>
         <profile>
-            <id>all</id>
+            <id>test</id>
             <modules>
                 <module>dynamic-config-plugin</module>
             </modules>

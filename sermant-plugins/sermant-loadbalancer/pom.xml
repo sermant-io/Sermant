@@ -29,7 +29,16 @@
             </modules>
         </profile>
         <profile>
-            <id>all</id>
+            <id>test</id>
+            <modules>
+                <module>dubbo-loadbalancer-plugin</module>
+                <module>loadbalancer-common</module>
+                <module>loadbalancer-service</module>
+                <module>spring-cloud-loadbalancer-plugin</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release</id>
             <modules>
                 <module>dubbo-loadbalancer-plugin</module>
                 <module>loadbalancer-common</module>

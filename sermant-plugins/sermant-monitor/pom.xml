@@ -31,17 +31,14 @@
             </modules>
         </profile>
         <profile>
-            <id>ext</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>test</id>
             <modules>
                 <module>monitor-plugin</module>
                 <module>monitor-service</module>
             </modules>
         </profile>
         <profile>
-            <id>all</id>
+            <id>release</id>
             <modules>
                 <module>monitor-plugin</module>
                 <module>monitor-service</module>
