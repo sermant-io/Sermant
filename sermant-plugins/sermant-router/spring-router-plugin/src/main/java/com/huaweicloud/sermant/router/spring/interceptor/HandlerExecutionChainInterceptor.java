@@ -33,7 +33,7 @@ public class HandlerExecutionChainInterceptor extends AbstractInterceptor {
     private static final String ROUTE_HANDLER_CLASS_NAME
         = "com.huaweicloud.sermant.router.spring.interceptor.RouteHandlerInterceptor";
 
-    private HandlerInterceptor handlerInterceptor;
+    private volatile HandlerInterceptor handlerInterceptor;
 
     @Override
     public ExecuteContext before(ExecuteContext context) {

@@ -33,6 +33,9 @@ public class FooServiceImpl implements FooService {
     @Value("${service_meta_zone:${SERVICE_META_ZONE:${service.meta.zone:bar}}}")
     private String zone;
 
+    @Value("${service_meta_version:${SERVICE_META_VERSION:${service.meta.version:1.0.0}}}")
+    private String version;
+
     @Value("${dubbo.application.name}")
     private String name;
 
@@ -55,10 +58,11 @@ public class FooServiceImpl implements FooService {
     }
 
     @Override
-    public String getZone(boolean exit) {
+    public String getMetadata(boolean exit) {
         if (exit) {
             System.exit(0);
         }
-        return "I'm " + name + ", my zone is " + zone + ", my parameters is [" + parameters + "].";
+        return "I'm " + name + ", my version is " + version + ", my zone is " + zone + ", my parameters is ["
+            + parameters + "].";
     }
 }

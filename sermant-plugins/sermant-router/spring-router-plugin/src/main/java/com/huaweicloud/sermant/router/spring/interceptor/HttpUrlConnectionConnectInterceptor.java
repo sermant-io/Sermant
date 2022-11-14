@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.request.RequestData;
+import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.FlowContextUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
@@ -40,17 +41,23 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractInterceptor {
     public ExecuteContext before(ExecuteContext context) {
         if (context.getObject() instanceof HttpURLConnection) {
             HttpURLConnection connection = (HttpURLConnection) context.getObject();
-            if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
+            Map<String, List<String>> headers = connection.getRequestProperties();
+            String method = connection.getRequestMethod();
+            if (StringUtils.isBlank(FlowContextUtils.getTagName()) || CollectionUtils
+                .isEmpty(headers.get(FlowContextUtils.getTagName()))) {
+                ThreadLocalUtils.setRequestData(new RequestData(headers, getPath(connection), method));
                 return context;
             }
-            String encodeTag = connection.getRequestProperty(FlowContextUtils.getTagName());
+            String encodeTag = headers.get(FlowContextUtils.getTagName()).get(0);
             if (StringUtils.isBlank(encodeTag)) {
+                ThreadLocalUtils.setRequestData(new RequestData(headers, getPath(connection), method));
                 return context;
             }
             Map<String, List<String>> tags = FlowContextUtils.decodeTags(encodeTag);
             if (!tags.isEmpty()) {
-                RequestData requestData = new RequestData(tags, getPath(connection), connection.getRequestMethod());
-                ThreadLocalUtils.setRequestData(requestData);
+                ThreadLocalUtils.setRequestData(new RequestData(tags, getPath(connection), method));
+            } else {
+                ThreadLocalUtils.setRequestData(new RequestData(headers, getPath(connection), method));
             }
         }
         return context;

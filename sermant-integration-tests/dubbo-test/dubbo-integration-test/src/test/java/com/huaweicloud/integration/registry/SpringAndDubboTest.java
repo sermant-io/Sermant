@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.integration;
+package com.huaweicloud.integration.registry;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

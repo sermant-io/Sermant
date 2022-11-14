@@ -52,5 +52,5 @@ public interface FooService {
      * @param exit 是否退出
      * @return 区域
      */
-    String getZone(boolean exit);
+    String getMetadata(boolean exit);
 }

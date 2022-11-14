@@ -153,12 +153,10 @@ public class FeignClientInterceptor extends AbstractInterceptor {
         if (StringUtils.isBlank(FlowContextUtils.getTagName()) || CollectionUtils.isEmpty(headers)) {
             return headers;
         }
-        Map<String, List<String>> newHeaders = new HashMap<>(headers);
         List<String> list = headers.get(FlowContextUtils.getTagName());
-        if (CollectionUtils.isEmpty(list)) {
-            String tagStr = list.get(0);
-            Map<String, List<String>> stringListMap = FlowContextUtils.decodeTags(tagStr);
-            newHeaders.putAll(stringListMap);
+        if (!CollectionUtils.isEmpty(list)) {
+            Map<String, List<String>> newHeaders = new HashMap<>(headers);
+            newHeaders.putAll(FlowContextUtils.decodeTags(list.get(0)));
             return Collections.unmodifiableMap(newHeaders);
         }
         return headers;

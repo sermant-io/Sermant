@@ -32,8 +32,10 @@
 
     <modules>
         <module>dubbo-2-6-integration-consumer</module>
+        <module>dubbo-2-6-integration-controller</module>
         <module>dubbo-2-6-integration-provider</module>
         <module>dubbo-2-7-integration-consumer</module>
+        <module>dubbo-2-7-integration-controller</module>
         <module>dubbo-2-7-integration-provider</module>
         <module>dubbo-integration-api</module>
         <module>dubbo-integration-test</module>

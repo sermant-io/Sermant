@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="dubbo-integration-controller">
+        <dubbo:parameter key="qos.enable" value="false"/>
+    </dubbo:application>
+
+    <dubbo:consumer timeout="10000"/>
+
+    <!--模拟存量dubbo应用注册到zookeeper的情况，新开发的应用建议配置为 sc://127.0.0.1:30100-->
+    <dubbo:registry address="zookeeper://127.0.0.1:2181" protocol="zookeeper"/>
+
+    <dubbo:reference id="metadataService" check="false"
+            interface="com.huaweicloud.integration.service.MetadataService" timeout="10000"/>
+</beans>

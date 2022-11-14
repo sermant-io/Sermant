@@ -16,13 +16,15 @@
     <!--模拟存量dubbo应用注册到zookeeper的情况，新开发的应用建议配置为 sc://127.0.0.1:30100-->
     <dubbo:registry address="zookeeper://127.0.0.1:2181" protocol="zookeeper"/>
 
+    <dubbo:protocol name="dubbo" port="${dubbo.protocol.port}"/>
+
     <dubbo:reference id="barService" check="false" interface="com.huaweicloud.integration.service.BarService"/>
     <dubbo:reference id="bar2Service" check="false" interface="com.huaweicloud.integration.service.BarService"
             group="bar2"/>
     <dubbo:reference id="barGenericService" check="false" interface="com.huaweicloud.integration.service.BarService"
             generic="true"/>
     <dubbo:reference id="fooService" check="false" interface="com.huaweicloud.integration.service.FooService"
-            version="0.0.1"/>
+            version="0.0.1" timeout="10000"/>
     <dubbo:reference id="fooWildcardService" check="false" interface="com.huaweicloud.integration.service.FooService"
             version="*"/>
 
@@ -31,4 +33,7 @@
 
     <dubbo:reference id="flowControlVersionService" check="false" version="1.0.0"
             interface="com.huaweicloud.integration.service.FlowControlVersionService" group="flow"/>
+
+    <bean id="metadataServiceImpl" class="com.huaweicloud.integration.service.MetadataServiceImpl"/>
+    <dubbo:service interface="com.huaweicloud.integration.service.MetadataService" ref="metadataServiceImpl"/>
 </beans>

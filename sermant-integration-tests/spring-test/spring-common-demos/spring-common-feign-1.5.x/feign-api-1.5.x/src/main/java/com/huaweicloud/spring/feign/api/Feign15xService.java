@@ -20,6 +20,7 @@ package com.huaweicloud.spring.feign.api;
 import com.huaweicloud.spring.common.FeignConstants;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -148,4 +149,13 @@ public interface Feign15xService {
      */
     @RequestMapping(value = "testCloudRegistry", method = RequestMethod.GET)
     String testCloudRegistry();
+
+    /**
+     * 获取区域
+     *
+     * @param exit 是否退出
+     * @return 区域
+     */
+    @GetMapping(value = "/router/metadata")
+    String getMetadata(@RequestParam("exit") boolean exit);
 }
