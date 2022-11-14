@@ -36,16 +36,7 @@
             </modules>
         </profile>
         <profile>
-            <id>ext</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>metric-server</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>all</id>
+            <id>test</id>
             <modules>
                 <module>protocol</module>
                 <module>monitor-common</module>

@@ -1,5 +1,25 @@
 # 默认编译场景使用，不含示例工程
 plugins:
+  - flowcontrol
   - service-router
+  - server-monitor
+  - threadlocal
+  - service-registry
+  - loadbalancer
+  - dynamic-config
+  - monitor
   - springboot-registry
   - mq-consume-deny
+  - example
+adaptors:
+  - lubanops
+profiles:
+  cse:
+    - flowcontrol
+    - service-router
+    - service-registry
+    - dynamic-config
+  apm:
+    - flowcontrol
+    - service-router
+profile: cse,apm

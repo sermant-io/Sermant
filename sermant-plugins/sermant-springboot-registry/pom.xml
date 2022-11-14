@@ -30,14 +30,7 @@
             </modules>
         </profile>
         <profile>
-            <id>ext</id>
-            <modules>
-                <module>springboot-registry-plugin</module>
-                <module>springboot-registry-service</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>all</id>
+            <id>test</id>
             <modules>
                 <module>springboot-registry-plugin</module>
                 <module>springboot-registry-service</module>
