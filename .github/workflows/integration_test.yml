@@ -49,7 +49,7 @@ jobs:
           path: sermant-agent-*/
           key: ${{ runner.os }}-agent-${{ github.run_id }}
       - name: package agent
-        run: sed -i '/sermant-backend/d' pom.xml & mvn package -DskipTests -Pagent --file pom.xml
+        run: sed -i '/sermant-backend/d' pom.xml & sed -i '/sermant-backend-lite/d' pom.xml & sed -i '/sermant-integration-tests/d' pom.xml & mvn package -DskipTests -Ptest --file pom.xml
   test-for-dubbo:
     name: Test for dubbo
     runs-on: ubuntu-latest

@@ -32,9 +32,8 @@
             </modules>
         </profile>
         <profile>
-            <id>all</id>
+            <id>test</id>
             <modules>
-                <module>demo-registry</module>
                 <module>registry-common</module>
                 <module>dubbo-registry-plugin</module>
                 <module>dubbo-registry-service</module>

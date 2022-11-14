@@ -27,7 +27,7 @@
             </modules>
         </profile>
         <profile>
-            <id>all</id>
+            <id>test</id>
             <modules>
                 <module>threadlocal-plugin</module>
             </modules>

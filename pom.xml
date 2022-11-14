@@ -296,6 +296,7 @@
             <modules>
                 <module>sermant-agentcore</module>
                 <module>sermant-plugins</module>
+                <module>sermant-backend</module>
                 <module>sermant-backend-lite</module>
                 <module>report</module>
             </modules>
@@ -348,56 +349,24 @@
             </build>
         </profile>
         <profile>
-            <id>test</id>
-            <modules>
-                <module>sermant-agentcore</module>
-                <module>sermant-backend-lite</module>
-                <module>sermant-plugins</module>
-            </modules>
-        </profile>
-        <profile>
             <id>example</id>
             <modules>
                 <module>sermant-agentcore</module>
                 <module>sermant-plugins</module>
                 <module>sermant-backend-lite</module>
                 <module>sermant-example</module>
-                <module>sermant-integration-tests</module>
             </modules>
         </profile>
         <profile>
-            <id>backend</id>
-            <modules>
-                <module>sermant-backend</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>ext</id>
-            <modules>
-                <module>sermant-plugins</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>package</id>
-            <modules>
-                <module>sermant-package</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>all</id>
+            <id>test</id>
             <modules>
                 <module>sermant-agentcore</module>
                 <module>sermant-example</module>
                 <module>sermant-plugins</module>
                 <module>sermant-backend</module>
+                <module>sermant-backend-lite</module>
                 <module>sermant-package</module>
                 <module>sermant-integration-tests</module>
-                <module>sermant-injector</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>injector</id>
-            <modules>
                 <module>sermant-injector</module>
             </modules>
         </profile>
@@ -405,7 +374,6 @@
             <id>release</id>
             <modules>
                 <module>sermant-plugins</module>
-                <module>sermant-backend</module>
             </modules>
             <build>
                 <plugins>
@@ -475,66 +443,6 @@
                         </plugin>
                     </plugins>
                 </pluginManagement>
-            </build>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-                <repository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-            </distributionManagement>
-        </profile>
-        <profile>
-            <id>parent-release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${gpg.plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${javadoc.plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                                <configuration>
-                                    <additionalJOption>-Xdoclint:none</additionalJOption>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>${nexus.staging.plugin.version}</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                </plugins>
             </build>
             <distributionManagement>
                 <snapshotRepository>
