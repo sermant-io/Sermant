@@ -59,7 +59,7 @@ public class RouterTest {
     private static final int WAIT_SECONDS = 300;
 
     @Rule
-    public final RouterRule bootRegistryRule = new RouterRule();
+    public final RouterRule routerRule = new RouterRule();
 
     private final String zone;
 
@@ -143,14 +143,14 @@ public class RouterTest {
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(FEIGN_BOOT_BASE_PATH + false, HttpMethod.GET, entity, String.class);
             String body = Objects.requireNonNull(exchange.getBody());
-            // 优先选取同az实例
 
+            // 优先选取同az实例
             Assert.assertTrue(body.contains("Test-Env") && body.contains(zone));
 
             exchange = REST_TEMPLATE.exchange(FEIGN_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            // 优先选取同az实例
 
+            // 优先选取同az实例
             Assert.assertTrue(body.contains("Test-Env") && body.contains(zone));
         }
 
@@ -236,6 +236,7 @@ public class RouterTest {
         Assert.assertThrows(Exception.class, () -> REST_TEMPLATE
             .exchange(REST_CLOUD_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
                 String.class));
+
         // 等待无路由标签的实例下线
         headers.clear();
         entity = new HttpEntity<>(null, headers);
@@ -259,8 +260,8 @@ public class RouterTest {
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
             String body = Objects.requireNonNull(exchange.getBody());
-            // 优先选取同az实例
 
+            // 优先选取同az实例
             Assert.assertTrue(body.contains("Test-Env") && body.contains(zone));
         }
 
