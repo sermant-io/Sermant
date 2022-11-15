@@ -20,7 +20,7 @@ import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.config.LbConfig;
 import com.huawei.discovery.config.PlugEffectWhiteBlackConstants;
 import com.huawei.discovery.entity.DefaultServiceInstance;
-import com.huawei.discovery.entity.PlugEffectStategyCache;
+import com.huawei.discovery.entity.PlugEffectStrategyCache;
 import com.huawei.discovery.retry.InvokerContext;
 import com.huawei.discovery.retry.config.RetryConfig;
 import com.huawei.discovery.service.InvokerService;
@@ -91,7 +91,7 @@ public class HttpClient4xInterceptorTest {
         final HttpClient4xInterceptor interceptor = new HttpClient4xInterceptor();
         interceptor.ready();
         final ExecuteContext context = buildContext();
-        PlugEffectStategyCache.INSTANCE.resolve(DynamicConfigEventType.CREATE, "");
+        PlugEffectStrategyCache.INSTANCE.resolve(DynamicConfigEventType.CREATE, "");
         interceptor.doBefore(context);
         interceptor.onThrow(context);
         interceptor.after(context);

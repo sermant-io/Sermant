@@ -58,6 +58,11 @@ public enum SermantTestType {
     CLOUD_REGISTRY,
 
     /**
+     * 路由测试
+     */
+    ROUTER,
+
+    /**
      * 测试所有类型
      */
     ALL;

@@ -17,8 +17,8 @@
 
 package com.huawei.monitor;
 
-import com.huawei.monitor.service.JvmCollectorService;
-import com.huawei.monitor.service.ServerCollectorService;
+import com.huawei.monitor.service.collector.JvmCollectorService;
+import com.huawei.monitor.service.collector.ServerCollectorService;
 import com.huawei.monitor.util.CollectionUtil;
 
 import com.huaweicloud.sermant.core.utils.StringUtils;
@@ -38,10 +38,6 @@ import java.util.List;
  */
 public class CollectorServiceTest {
 
-    private static JvmCollectorService jvmCollectorService;
-
-    private static ServerCollectorService serverCollectorService;
-
     private static final String OS_NAME_CODE = "os.name";
 
     private static final String LINUX__OS_NAME = "Linux";
@@ -51,29 +47,23 @@ public class CollectorServiceTest {
      */
     @Test
     public void testJvm() {
-        jvmCollectorService = new JvmCollectorService();
+        JvmCollectorService jvmCollectorService = new JvmCollectorService();
         List<Collector.MetricFamilySamples> metricFamilySamplesList = jvmCollectorService.collect();
         Assert.assertFalse(CollectionUtil.isEmpty(metricFamilySamplesList));
         metricFamilySamplesList.forEach(samplesList -> {
             Assert.assertNotNull(samplesList);
             Assert.assertFalse(CollectionUtil.isEmpty(samplesList.samples));
-            samplesList.samples.forEach(sample -> {
-                Assert.assertNotNull(sample.name);
-                Assert.assertNotNull(sample.value);
-            });
+            samplesList.samples.forEach(sample -> Assert.assertNotNull(sample.name));
         });
         String osName = System.getProperty(OS_NAME_CODE);
         if (!StringUtils.isEmpty(osName) && osName.startsWith(LINUX__OS_NAME)) {
-            serverCollectorService = new ServerCollectorService();
+            ServerCollectorService serverCollectorService = new ServerCollectorService();
             List<Collector.MetricFamilySamples> serverMetricFamilySamples = serverCollectorService.collect();
             Assert.assertFalse(CollectionUtil.isEmpty(serverMetricFamilySamples));
             serverMetricFamilySamples.forEach(samplesList -> {
                 Assert.assertNotNull(samplesList);
                 Assert.assertFalse(CollectionUtil.isEmpty(samplesList.samples));
-                samplesList.samples.forEach(sample -> {
-                    Assert.assertNotNull(sample.name);
-                    Assert.assertNotNull(sample.value);
-                });
+                samplesList.samples.forEach(sample -> Assert.assertNotNull(sample.name));
             });
         }
     }

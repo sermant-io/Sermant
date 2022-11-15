@@ -47,11 +47,15 @@ public class RouterTest {
 
     private final String zone;
 
+    private final String testTagRouterBaseUrl;
+
     /**
      * 构造方法
      */
     public RouterTest() {
         zone = Optional.ofNullable(System.getenv("SERVICE_META_ZONE")).orElse("bar");
+        testTagRouterBaseUrl =
+            "http://127.0.0.1:" + System.getProperty("controller.port", "28019") + "/controller/getMetadataBy";
     }
 
     /**
@@ -66,7 +70,8 @@ public class RouterTest {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
-            exchange = REST_TEMPLATE.exchange(BASE_URL + "getZone?exit=false", HttpMethod.GET, entity, String.class);
+            exchange = REST_TEMPLATE
+                .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
             Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:env-001"));
         }
 
@@ -75,7 +80,8 @@ public class RouterTest {
         headers.add("Test-Env", "env-005");
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
-            exchange = REST_TEMPLATE.exchange(BASE_URL + "getZone?exit=false", HttpMethod.GET, entity, String.class);
+            exchange = REST_TEMPLATE
+                .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
             Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:"));
         }
 
@@ -83,13 +89,14 @@ public class RouterTest {
         headers.clear();
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
-            exchange = REST_TEMPLATE.exchange(BASE_URL + "getZone?exit=false", HttpMethod.GET, entity, String.class);
+            exchange = REST_TEMPLATE
+                .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
             Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env"));
         }
 
         // 停掉无路由标签的实例
         Assertions.assertThrows(Exception.class, () -> REST_TEMPLATE
-            .exchange(BASE_URL + "getZone?exit=true", HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
+            .exchange(BASE_URL + "getMetadata?exit=true", HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
                 String.class));
 
         // 等待无路由标签的实例下线
@@ -98,7 +105,7 @@ public class RouterTest {
         for (int i = 0; i < WAIT_SECONDS; i++) {
             try {
                 exchange = REST_TEMPLATE
-                    .exchange(BASE_URL + "getZone?exit=false", HttpMethod.GET, entity, String.class);
+                    .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
                 if (Objects.requireNonNull(exchange.getBody()).contains("Test-Env")) {
                     // 下游实例已下线
                     break;
@@ -113,7 +120,8 @@ public class RouterTest {
         headers.clear();
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
-            exchange = REST_TEMPLATE.exchange(BASE_URL + "getZone?exit=false", HttpMethod.GET, entity, String.class);
+            exchange = REST_TEMPLATE
+                .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
             String body = Objects.requireNonNull(exchange.getBody());
             // 优先选取同az实例
             Assertions.assertTrue(body.contains("Test-Env") && body.contains(zone));
@@ -121,7 +129,7 @@ public class RouterTest {
 
         // 停掉az为bar的带有标签实例
         Assertions.assertThrows(Exception.class, () -> REST_TEMPLATE
-            .exchange(BASE_URL + "getZone?exit=true", HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
+            .exchange(BASE_URL + "getMetadata?exit=true", HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
                 String.class));
 
         // 等待az为bar的带有标签实例下线
@@ -130,7 +138,7 @@ public class RouterTest {
         for (int i = 0; i < WAIT_SECONDS; i++) {
             try {
                 exchange = REST_TEMPLATE
-                    .exchange(BASE_URL + "getZone?exit=false", HttpMethod.GET, entity, String.class);
+                    .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
                 String body = Objects.requireNonNull(exchange.getBody());
                 if (body.contains("Test-Env") && !body.contains(zone)) {
                     // 下游实例已下线
@@ -146,15 +154,91 @@ public class RouterTest {
         headers.clear();
         headers.add("Test-Env", "env-005");
         Assertions.assertThrows(Exception.class, () -> REST_TEMPLATE
-            .exchange(BASE_URL + "getZone?exit=true", HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders(headers)),
+            .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET,
+                new HttpEntity<>(null, new HttpHeaders(headers)),
                 String.class));
 
         // 测试同az实例下线时，切换至其它az实例
         headers.clear();
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
-            exchange = REST_TEMPLATE.exchange(BASE_URL + "getZone?exit=false", HttpMethod.GET, entity, String.class);
+            exchange = REST_TEMPLATE
+                .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
             Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains(zone));
+        }
+    }
+
+    /**
+     * 测试标签路由
+     */
+    @Test
+    public void testTagRouter() {
+        HttpHeaders headers = new HttpHeaders();
+
+        // 测试命中group:gray的实例
+        headers.add("id", "1");
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+        }
+
+        // 测试命中version:1.0.1的实例
+        headers.clear();
+        headers.add("name", "BAr");
+        entity = new HttpEntity<>(null, headers);
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.1"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.1"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.1"));
+        }
+
+        // 测试没有命中version:1.0.1的实例
+        headers.clear();
+        headers.add("name", "foo");
+        entity = new HttpEntity<>(null, headers);
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            String body = Objects.requireNonNull(exchange.getBody());
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            body = Objects.requireNonNull(exchange.getBody());
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            body = Objects.requireNonNull(exchange.getBody());
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+        }
+
+        // 测试没有命中version:1.0.1的实例
+        headers.clear();
+        entity = new HttpEntity<>(null, headers);
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            String body = Objects.requireNonNull(exchange.getBody());
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+
+            body = Objects.requireNonNull(exchange.getBody());
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            body = Objects.requireNonNull(exchange.getBody());
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
         }
     }
 }

@@ -43,7 +43,6 @@ import org.apache.servicecomb.service.center.client.RegistrationEvents.Microserv
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
 import org.apache.servicecomb.service.center.client.ServiceCenterRegistration;
-import org.apache.servicecomb.service.center.client.exception.OperationException;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstancesResponse;
@@ -149,14 +148,14 @@ public class RegistryServiceTest {
         Assertions.assertNotNull(registryUrls);
         Assertions.assertEquals(1, registryUrls.size());
 
+        // 测试加载sc时
+        DubboCache.INSTANCE.setServiceName("dubbo-provider");
+        service.startRegistration();
+
         // 取消注册等待时间
         mockServiceCenterClient(service);
         service.onMicroserviceInstanceRegistrationEvent(new MicroserviceInstanceRegistrationEvent(true));
         Assertions.assertTrue((Boolean) ReflectUtils.getFieldValue(service, "isRegistrationInProgress").orElse(false));
-
-        // 测试加载sc时
-        DubboCache.INSTANCE.setServiceName("dubbo-provider");
-        service.startRegistration();
 
         // 测试onMicroserviceRegistrationEvent方法
         service.onMicroserviceRegistrationEvent(new MicroserviceRegistrationEvent(true));
@@ -175,7 +174,7 @@ public class RegistryServiceTest {
         Assertions.assertNotNull(serviceCenterRegistration);
 
         // 测试shutdown
-        Assertions.assertThrows(OperationException.class, service::shutdown);
+        Assertions.assertDoesNotThrow(service::shutdown);
 
         // 测试再次shutdown
         Assertions.assertDoesNotThrow(service::shutdown);

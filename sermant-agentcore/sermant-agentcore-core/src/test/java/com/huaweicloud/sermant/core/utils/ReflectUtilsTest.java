@@ -39,8 +39,6 @@ public class ReflectUtilsTest {
 
     private static final String NOT_EXIST_FIELD_NAME = "notExistField";
 
-    private final String notStaticFiled = "notStatic";
-
     private static final String NOT_STATIC_FILED_NAME = "notStaticFiled";
 
     @Test
@@ -161,7 +159,6 @@ public class ReflectUtilsTest {
         final Field finalField = TestReflect.class.getDeclaredField("finalField");
         Assert.assertTrue(Modifier.isFinal(finalField.getModifiers()));
         ReflectUtils.updateFinalModifierField(finalField);
-//        Assert.assertFalse(Modifier.isFinal(finalField.getModifiers()));
     }
 
     @Test
@@ -223,6 +220,18 @@ public class ReflectUtilsTest {
                 NOT_STATIC_FILED_NAME);
         Assert.assertNotNull(testNotStaticOptional);
         Assert.assertFalse(testNotStaticOptional.isPresent());
+        final Optional<Object> parentField = ReflectUtils.getFieldValue(new Child(), "parentField");
+        Assert.assertTrue(parentField.isPresent() && parentField.get() instanceof Integer);
+        Assert.assertEquals(new Parent().parentField, parentField.get());
+        ReflectUtils.getFieldValue(new Child(), "parentField");
+    }
+
+    static class Parent {
+        private final Integer parentField = 999;
+    }
+
+    static class Child extends Parent {
+
     }
 
     static class TestReflect {

@@ -1,6 +1,7 @@
 # consul发现配置
 sermant.springboot.registry:
-  realmName: www.domain.com
+  enableRegistry: false             # 是否开启boot注册能力
+  realmName: www.domain.com        # 匹配域名, 当前版本仅针对url为http://${realmName}/serviceName/api/xx场景生效
   enableRequestCount: false        # 是否开启流量统计, 开启后每次进入插件的流量将都会打印
 
 sermant.springboot.registry.lb:

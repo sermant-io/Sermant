@@ -14,5 +14,7 @@
 # limitations under the License.
 #
 
-com.huawei.monitor.service.JvmCollectorService
-com.huawei.monitor.service.ServerCollectorService
+com.huawei.monitor.service.collector.JvmCollectorService
+com.huawei.monitor.service.collector.ServerCollectorService
+com.huawei.monitor.service.collector.ServiceCollectorService
+com.huawei.monitor.service.report.MetricServiceImpl

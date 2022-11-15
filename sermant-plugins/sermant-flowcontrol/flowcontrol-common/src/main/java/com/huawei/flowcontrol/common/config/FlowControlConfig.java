@@ -19,6 +19,7 @@ package com.huawei.flowcontrol.common.config;
 
 import com.huawei.flowcontrol.common.enums.FlowFramework;
 
+import com.huaweicloud.sermant.core.config.common.ConfigFieldKey;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
@@ -276,6 +277,12 @@ public class FlowControlConfig implements PluginConfig {
      * <p>若为false, 则在调用时, 则直接其cluster invoker替换为由插件重试的自定义重试Invoker, 默认为false</p>
      */
     private boolean useOriginInvoker = false;
+
+    /**
+     * 监控启动开关
+     */
+    @ConfigFieldKey("enable-start-monitor")
+    private boolean enableStartMonitor;
 
     public boolean isUseOriginInvoker() {
         return useOriginInvoker;
@@ -667,5 +674,13 @@ public class FlowControlConfig implements PluginConfig {
 
     public void setConfigKieAddress(String configKieAddress) {
         this.configKieAddress = configKieAddress;
+    }
+
+    public boolean isEnableStartMonitor() {
+        return enableStartMonitor;
+    }
+
+    public void setEnableStartMonitor(boolean enableStartMonitor) {
+        this.enableStartMonitor = enableStartMonitor;
     }
 }

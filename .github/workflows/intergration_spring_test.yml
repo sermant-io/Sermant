@@ -72,6 +72,7 @@ jobs:
           dynamic.config.serverAddress: 127.0.0.1:30110
           dynamic.config.dynamicConfigType: KIE
           service.meta.environment: development
+          sermant.springboot.registry.enableRegistry: true
         run: |
           mkdir logs
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8013 -jar \
@@ -190,6 +191,7 @@ jobs:
           dynamic.config.serverAddress: 127.0.0.1:30110
           dynamic.config.dynamicConfigType: KIE
           service.meta.environment: development
+          sermant.springboot.registry.enableRegistry: true
         run: |
           nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8013 -jar \
           -Dsermant_log_dir=./logs/feign-provider \
@@ -438,6 +440,442 @@ jobs:
         run: |
           bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8989/dynamic/config/check 30
           mvn test -Dsermant.integration.test.type=dynamic_config_zk --file sermant-integration-tests/spring-test/pom.xml
+      - name: if failure then upload error log
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: (${{ github.job }})-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion }})-logs
+          path: |
+            ./*.log
+            ./logs/**/*.log
+          if-no-files-found: warn
+          retention-days: 5
+  test-for-spring-router:
+    name: Test for spring router
+    runs-on: ubuntu-latest
+    needs: [download-cse-and-cache]
+    strategy:
+      matrix:
+        include:
+          - springBootVersion: "2.0.2.RELEASE"
+            springCloudVersion: "Finchley.RELEASE"
+            httpClientVersion: "4.1.3"
+          - springBootVersion: "2.1.0.RELEASE"
+            springCloudVersion: "Greenwich.RELEASE"
+            httpClientVersion: "4.2.6"
+          - springBootVersion: "2.2.0.RELEASE"
+            springCloudVersion: "Hoxton.RELEASE"
+            httpClientVersion: "4.3.6"
+          - springBootVersion: "2.3.0.RELEASE"
+            springCloudVersion: "Hoxton.RELEASE"
+            httpClientVersion: "4.4.1"
+          - springBootVersion: "2.4.0"
+            springCloudVersion: "2020.0.0"
+            httpClientVersion: "4.5.6"
+          - springBootVersion: "2.6.2"
+            springCloudVersion: "2021.0.0"
+            httpClientVersion: "4.5.10"
+          - springBootVersion: "2.7.2"
+            springCloudVersion: "2021.0.3"
+            httpClientVersion: "4.5.13"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+          cache: maven
+      - name: download local cse
+        uses: actions/cache@v3
+        with:
+          path: Local-CSE-2.1.3-linux-amd64.zip
+          key: ${{ runner.os }}-local-cse
+          restore-keys: |
+            ${{ runner.os }}-local-cse
+      - name: start cse
+        run: |
+          export ROOT_PATH=$(pwd)
+          bash ./sermant-integration-tests/scripts/startCse.sh
+      - name: download zookeeper and run
+        run: |
+          curl -o apache-zookeeper-3.6.3-bin.tar.gz -L https://dlcdn.apache.org/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz
+          tar -zxf apache-zookeeper-3.6.3-bin.tar.gz
+          bash apache-zookeeper-3.6.3-bin/bin/zkServer.sh start apache-zookeeper-3.6.3-bin/conf/zoo_sample.cfg
+      - name: cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: package agent
+        run: sed -i '/sermant-backend/d' pom.xml & mvn package -DskipTests -Pagent --file pom.xml
+      - name: package common demos
+        run: |
+          sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml
+          mvn package -Dspring.cloud.version=${{ matrix.springCloudVersion }} -Dhttp.client.version=${{ matrix.httpClientVersion }} -Dspring.boot.version=${{ matrix.springBootVersion }} -DskipTests -P common-test --file sermant-integration-tests/spring-test/pom.xml
+      - name: post config
+        run: bash ./sermant-integration-tests/scripts/createStrategy.sh all
+      - name: start feign provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: foo
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVICE_META_PARAMETERS: Test-Env:env-001
+          SERVER_PORT: 8013
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign/feign-provider/target/feign-provider.jar > feign-provider.log 2>&1 &
+      - name: start second feign provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: foo
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVICE_META_PARAMETERS: Test-Env:env-002
+          SERVER_PORT: 8014
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign/feign-provider/target/feign-provider.jar > feign-provider2.log 2>&1 &
+      - name: start third feign provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: bar
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVICE_META_PARAMETERS: Test-Env1:env-002
+          SERVER_PORT: 8015
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign/feign-provider/target/feign-provider.jar > feign-provider3.log 2>&1 &
+      - name: start fourth feign provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: bar
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVER_PORT: 8016
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign/feign-provider/target/feign-provider.jar > feign-provider4.log 2>&1 &
+      - name: start feign consumer service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: bar
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVER_PORT: 8017
+          SERMANT_SPRINGBOOT_REGISTRY_LB_MAXRETRY: 0
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign/feign-consumer/target/feign-consumer.jar > feign-consumer.log 2>&1 &
+      - name: start resttemplate provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: foo
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVICE_META_PARAMETERS: Test-Env:env-001
+          SERVER_PORT: 8018
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > rest-provider.log 2>&1 &
+      - name: start second resttemplate provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: foo
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVICE_META_PARAMETERS: Test-Env:env-002
+          SERVER_PORT: 8019
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > rest-provider2.log 2>&1 &
+      - name: start third resttemplate provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: bar
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVICE_META_PARAMETERS: Test-Env1:env-002
+          SERVER_PORT: 8020
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > rest-provider3.log 2>&1 &
+      - name: start fourth resttemplate provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: bar
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVER_PORT: 8021
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > rest-provider4.log 2>&1 &
+      - name: start resttemplate consumer service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: bar
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVER_PORT: 8022
+          SERMANT_SPRINGBOOT_REGISTRY_LB_MAXRETRY: 0
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-consumer/target/rest-consumer.jar > rest-consumer.log 2>&1 &
+      - name: waiting for services start
+        run: |
+          ps -ef | grep java
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8013/actuator/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8014/actuator/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8015/actuator/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8016/actuator/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8017/actuator/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8018/actuator/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8019/actuator/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8020/actuator/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8021/actuator/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8022/actuator/health 120
+      - name: integration test module ROUTER
+        run: mvn test -Dsermant.integration.test.type=ROUTER --file sermant-integration-tests/spring-test/pom.xml
+      - name: if failure then upload error log
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: (${{ github.job }})-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion }})-logs
+          path: |
+            ./*.log
+            ./logs/**/*.log
+          if-no-files-found: warn
+          retention-days: 5
+  test-for-spring-1-5-x-router:
+    name: Test for spring 1.5.x router
+    runs-on: ubuntu-latest
+    needs: [download-cse-and-cache]
+    strategy:
+      matrix:
+        include:
+          - springBootVersion: "1.5.0.RELEASE"
+            springCloudVersion: "Edgware.SR2"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+          cache: maven
+      - name: download local cse
+        uses: actions/cache@v3
+        with:
+          path: Local-CSE-2.1.3-linux-amd64.zip
+          key: ${{ runner.os }}-local-cse
+          restore-keys: |
+            ${{ runner.os }}-local-cse
+      - name: start cse
+        run: |
+          export ROOT_PATH=$(pwd)
+          bash ./sermant-integration-tests/scripts/startCse.sh
+      - name: download zookeeper and run
+        run: |
+          curl -o apache-zookeeper-3.6.3-bin.tar.gz -L https://dlcdn.apache.org/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz
+          tar -zxf apache-zookeeper-3.6.3-bin.tar.gz
+          bash apache-zookeeper-3.6.3-bin/bin/zkServer.sh start apache-zookeeper-3.6.3-bin/conf/zoo_sample.cfg
+      - name: package agent
+        run: sed -i '/sermant-backend/d' pom.xml & mvn package -DskipTests -Pagent --file pom.xml
+      - name: package common demos
+        run: |
+          sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml
+          mvn package -Dspring.cloud.version=${{ matrix.springCloudVersion }} -Dspring.boot.version=${{ matrix.springBootVersion }} -DskipTests -P common-test-1.5.x --file sermant-integration-tests/spring-test/pom.xml
+      - name: post config
+        run: bash ./sermant-integration-tests/scripts/createStrategy.sh all
+      - name: start feign provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: foo
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVICE_META_PARAMETERS: Test-Env:env-001
+          SERVER_PORT: 8013
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign-1.5.x/feign-provider-1.5.x/target/feign-provider-1.5.x.jar > feign-provider.log 2>&1 &
+      - name: start second feign provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: foo
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVICE_META_PARAMETERS: Test-Env:env-002
+          SERVER_PORT: 8014
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign-1.5.x/feign-provider-1.5.x/target/feign-provider-1.5.x.jar > feign-provider2.log 2>&1 &
+      - name: start third feign provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: bar
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVICE_META_PARAMETERS: Test-Env1:env-002
+          SERVER_PORT: 8015
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign-1.5.x/feign-provider-1.5.x/target/feign-provider-1.5.x.jar > feign-provider3.log 2>&1 &
+      - name: start fourth feign provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: bar
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVER_PORT: 8016
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign-1.5.x/feign-provider-1.5.x/target/feign-provider-1.5.x.jar > feign-provider4.log 2>&1 &
+      - name: start feign consumer service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: bar
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVER_PORT: 8017
+          SERMANT_SPRINGBOOT_REGISTRY_LB_MAXRETRY: 0
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign-1.5.x/feign-consumer-1.5.x/target/feign-consumer-1.5.x.jar > feign-consumer.log 2>&1 &
+      - name: start resttemplate provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: foo
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVICE_META_PARAMETERS: Test-Env:env-001
+          SERVER_PORT: 8018
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > rest-provider.log 2>&1 &
+      - name: start second resttemplate provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: foo
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVICE_META_PARAMETERS: Test-Env:env-002
+          SERVER_PORT: 8019
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > rest-provider2.log 2>&1 &
+      - name: start third resttemplate provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: bar
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVICE_META_PARAMETERS: Test-Env1:env-002
+          SERVER_PORT: 8020
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > rest-provider3.log 2>&1 &
+      - name: start fourth resttemplate provider service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: bar
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVER_PORT: 8021
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > rest-provider4.log 2>&1 &
+      - name: start resttemplate consumer service
+        env:
+          sermant.springboot.registry.enableRegistry: true
+          SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+          SERVICE_META_ZONE: bar
+          ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: true
+          ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: true
+          ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
+          ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
+          SERVER_PORT: 8022
+          SERMANT_SPRINGBOOT_REGISTRY_LB_MAXRETRY: 0
+        run: |
+          nohup java -javaagent:sermant-agent-1.0.0/agent/sermant-agent.jar=appName=default -jar \
+          sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-consumer/target/rest-consumer.jar > rest-consumer.log 2>&1 &
+      - name: waiting for services start
+        run: |
+          ps -ef | grep java
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8013/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8014/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8015/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8016/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8017/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8018/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8019/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8020/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8021/health 120
+          bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8022/health 120
+      - name: integration test module ROUTER
+        run: mvn test -Dsermant.integration.test.type=ROUTER --file sermant-integration-tests/spring-test/pom.xml
       - name: if failure then upload error log
         uses: actions/upload-artifact@v3
         if: failure()

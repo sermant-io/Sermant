@@ -23,7 +23,6 @@ import com.huawei.flowcontrol.common.entity.MetricEntity;
 import com.huawei.flowcontrol.common.handler.AbstractRequestHandler;
 import com.huawei.flowcontrol.common.util.StringUtils;
 import com.huawei.fowcontrol.res4j.adaptor.CircuitBreakerAdaptor;
-import com.huawei.fowcontrol.res4j.chain.handler.MonitorHandler;
 import com.huawei.fowcontrol.res4j.service.ServiceCollectorService;
 import com.huawei.fowcontrol.res4j.util.MonitorUtils;
 
@@ -68,7 +67,7 @@ public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker
      * @param circuitBreaker 熔断器
      */
     private static void addEventConsumers(CircuitBreaker circuitBreaker) {
-        Map<String, MetricEntity> monitors = MonitorHandler.MONITORS;
+        Map<String, MetricEntity> monitors = ServiceCollectorService.MONITORS;
         MetricEntity metricEntity = monitors.computeIfAbsent(circuitBreaker.getName(), s -> new MetricEntity());
         metricEntity.setName(circuitBreaker.getName());
         circuitBreaker.getEventPublisher().onError(event -> {

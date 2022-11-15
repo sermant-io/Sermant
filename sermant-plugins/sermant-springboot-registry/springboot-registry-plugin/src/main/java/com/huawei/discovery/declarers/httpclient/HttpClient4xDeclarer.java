@@ -16,9 +16,9 @@
 
 package com.huawei.discovery.declarers.httpclient;
 
+import com.huawei.discovery.declarers.BaseDeclarer;
 import com.huawei.discovery.interceptors.httpclient.HttpClient4xInterceptor;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -29,7 +29,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author chengyouling
  * @since 2022-09-14
  */
-public class HttpClient4xDeclarer extends AbstractPluginDeclarer {
+public class HttpClient4xDeclarer extends BaseDeclarer {
     /**
      * 增强类的全限定名 http请求
      */

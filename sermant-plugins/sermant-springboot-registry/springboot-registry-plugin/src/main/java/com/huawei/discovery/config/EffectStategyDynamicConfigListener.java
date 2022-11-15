@@ -16,7 +16,7 @@
 
 package com.huawei.discovery.config;
 
-import com.huawei.discovery.entity.PlugEffectStategyCache;
+import com.huawei.discovery.entity.PlugEffectStrategyCache;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
@@ -42,7 +42,7 @@ public class EffectStategyDynamicConfigListener implements DynamicConfigListener
         LOGGER.log(Level.INFO, String.format(Locale.ENGLISH, "Config [%s] has been received, operator type: "
                 + "[%s], " + "content [%s] ",event.getKey(), event.getEventType(), event.getContent()));
         if (StringUtils.equalsIgnoreCase(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_LISTENER_KEY, event.getKey())) {
-            PlugEffectStategyCache.INSTANCE.resolve(event.getEventType(), event.getContent());
+            PlugEffectStrategyCache.INSTANCE.resolve(event.getEventType(), event.getContent());
         }
     }
 }

@@ -44,11 +44,14 @@ public abstract class ConfigService {
 
     private final RouterConfig routerConfig;
 
+    private final Set<String> requestTags;
+
     /**
      * 构造方法
      */
     public ConfigService() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+        requestTags = new HashSet<>(routerConfig.getRequestTags());
     }
 
     /**
@@ -76,7 +79,6 @@ public abstract class ConfigService {
      * @return 规则key
      */
     public Set<String> getMatchKeys() {
-        return routerConfig.isUseRequestRouter() ? new HashSet<>(routerConfig.getRequestTags())
-            : RuleUtils.getMatchKeys();
+        return routerConfig.isUseRequestRouter() ? requestTags : RuleUtils.getMatchKeys();
     }
 }

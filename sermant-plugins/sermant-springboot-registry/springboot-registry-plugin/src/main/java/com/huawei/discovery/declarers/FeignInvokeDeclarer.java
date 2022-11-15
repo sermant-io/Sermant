@@ -18,7 +18,6 @@ package com.huawei.discovery.declarers;
 
 import com.huawei.discovery.interceptors.FeignInvokeInterceptor;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -29,7 +28,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author chengyouling
  * @since 2022-09-27
  */
-public class FeignInvokeDeclarer extends AbstractPluginDeclarer {
+public class FeignInvokeDeclarer extends BaseDeclarer {
     private static final String INTERCEPT_CLASS = FeignInvokeInterceptor.class.getCanonicalName();
 
     private static final String METHOD_NAME = "execute";

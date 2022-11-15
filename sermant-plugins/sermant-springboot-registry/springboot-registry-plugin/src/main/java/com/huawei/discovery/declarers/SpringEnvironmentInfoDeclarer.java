@@ -18,7 +18,6 @@ package com.huawei.discovery.declarers;
 
 import com.huawei.discovery.interceptors.SpringEnvironmentInfoInterceptor;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -29,7 +28,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author chengyouling
  * @since 2022-10-10
  */
-public class SpringEnvironmentInfoDeclarer extends AbstractPluginDeclarer {
+public class SpringEnvironmentInfoDeclarer extends BaseDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.springframework.boot.SpringApplication"};
 
     private static final String INTERCEPT_CLASS = SpringEnvironmentInfoInterceptor.class.getCanonicalName();

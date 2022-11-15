@@ -14,3 +14,9 @@ feign:
       default:
         connectTimeout: 3000
         readTimeout: 6000
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true

@@ -45,6 +45,8 @@ servicecomb.service:
   enableSpringRegister: true #Enabling the spring registration plugin
 ```
 
+If migration target is NACOS, see the [configuration items described](./document.md#Modify-the-plugin-configuration-file-on-demand), modify registration center type (registerType) as NACOS.
+
 ### Startup Service Center
 
 For details about the Service Center startup process, see the [official website](https://github.com/apache/servicecomb-service-center).

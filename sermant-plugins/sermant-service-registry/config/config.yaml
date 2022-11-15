@@ -17,3 +17,5 @@ grace.rule:
   httpServerPort: 16688 # 开启下线主动通知时的httpServer端口
   upstreamAddressMaxSize: 500 # 缓存上游地址的默认大小
   upstreamAddressExpiredTime: 60 # 缓存上游地址的过期时间
+nacos.service:
+  address: 127.0.0.1:8848 # nacos注册中心地址和端口号

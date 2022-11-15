@@ -21,6 +21,7 @@ import com.huaweicloud.spring.common.FeignConstants;
 import com.huaweicloud.spring.feign.api.configuration.HeaderMatchConfiguration;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since 2022-07-29
  */
 @FeignClient(qualifier = FeignConstants.FEIGN_SERVICE_BEAN_NAME, name = "feign-provider", configuration =
-        HeaderMatchConfiguration.class)
+    HeaderMatchConfiguration.class)
 public interface FeignService {
     /**
      * 限流测试
@@ -149,4 +150,13 @@ public interface FeignService {
      */
     @RequestMapping(value = "testCloudRegistry", method = RequestMethod.GET)
     String testCloudRegistry();
+
+    /**
+     * 获取区域
+     *
+     * @param exit 是否退出
+     * @return 区域
+     */
+    @GetMapping(value = "/router/metadata")
+    String getMetadata(@RequestParam("exit") boolean exit);
 }

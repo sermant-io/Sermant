@@ -194,10 +194,9 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
             parseAttachments(invocation));
         if (!CollectionUtils.isEmpty(routes)) {
             return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, routes);
-        } else {
-            return RuleStrategyHandler.INSTANCE
-                .getMismatchInvokers(targetService, invokers, RuleUtils.getTags(rules), true);
         }
+        return RuleStrategyHandler.INSTANCE
+            .getMismatchInvokers(targetService, invokers, RuleUtils.getTags(rules), true);
     }
 
     private List<Object> getTargetInvokersByRequest(String targetName, List<Object> invokers, Object invocation) {

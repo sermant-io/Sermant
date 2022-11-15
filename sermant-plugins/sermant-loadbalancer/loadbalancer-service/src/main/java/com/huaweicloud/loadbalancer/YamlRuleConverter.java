@@ -17,6 +17,8 @@
 
 package com.huaweicloud.loadbalancer;
 
+import com.huaweicloud.loadbalancer.common.SafeConstructor;
+import com.huaweicloud.loadbalancer.rule.LoadbalancerRule;
 import com.huaweicloud.loadbalancer.service.RuleConverter;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
@@ -26,6 +28,8 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -48,7 +52,9 @@ public class YamlRuleConverter implements RuleConverter, PluginService {
     public YamlRuleConverter() {
         Representer representer = new Representer();
         representer.getPropertyUtils().setSkipMissingProperties(true);
-        yaml = new Yaml(representer);
+        List<String> whiteList = new ArrayList<>();
+        whiteList.add(LoadbalancerRule.class.getCanonicalName());
+        yaml = new Yaml(new SafeConstructor(whiteList), representer);
     }
 
     @Override

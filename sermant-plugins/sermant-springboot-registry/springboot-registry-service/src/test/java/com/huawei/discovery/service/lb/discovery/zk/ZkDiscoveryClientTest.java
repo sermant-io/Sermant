@@ -16,6 +16,7 @@
 
 package com.huawei.discovery.service.lb.discovery.zk;
 
+import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.config.LbConfig;
 import com.huawei.discovery.entity.DefaultServiceInstance;
 import com.huawei.discovery.service.ex.QueryInstanceException;
@@ -74,6 +75,8 @@ public class ZkDiscoveryClientTest {
                 .mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(LbConfig.class))
                 .thenReturn(lbConfig);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class))
+                .thenReturn(new DiscoveryPluginConfig());
         pluginServiceManagerMockedStatic = Mockito
                 .mockStatic(PluginServiceManager.class);
         instance = new org.apache.curator.x.discovery.ServiceInstance<>(serviceName, UUID.randomUUID().toString()
