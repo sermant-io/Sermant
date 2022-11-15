@@ -886,3 +886,33 @@ jobs:
             ./logs/**/*.log
           if-no-files-found: warn
           retention-days: 5
+  test-for-spring-graceful:
+    name: Test for spring graceful
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - springBootVersion: "1.5.0.RELEASE"
+            springCloudVersion: "Edgware.SR2"
+          - springBootVersion: "2.0.2.RELEASE"
+            springCloudVersion: "Finchley.RELEASE"
+          - springBootVersion: "2.1.0.RELEASE"
+            springCloudVersion: "Greenwich.RELEASE"
+          - springBootVersion: "2.2.0.RELEASE"
+            springCloudVersion: "Hoxton.RELEASE"
+          - springBootVersion: "2.3.0.RELEASE"
+            springCloudVersion: "Hoxton.RELEASE"
+          - springBootVersion: "2.4.0"
+            springCloudVersion: "2020.0.0"
+          - springBootVersion: "2.6.2"
+            springCloudVersion: "2021.0.0"
+          - springBootVersion: "2.7.2"
+            springCloudVersion: "2021.0.3"
+      fail-fast: false
+    env:
+      springBootVersion: ${{ matrix.springBootVersion }}
+      springCloudVersion: ${{ matrix.springCloudVersion }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: test for version springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
+        uses: ./.github/actions/scenarios/graceful

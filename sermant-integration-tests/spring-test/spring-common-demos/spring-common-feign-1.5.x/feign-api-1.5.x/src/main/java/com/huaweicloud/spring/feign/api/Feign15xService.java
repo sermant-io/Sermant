@@ -158,4 +158,12 @@ public interface Feign15xService {
      */
     @GetMapping(value = "/router/metadata")
     String getMetadata(@RequestParam("exit") boolean exit);
+
+    /**
+     * 测试优雅上下线
+     *
+     * @return port
+     */
+    @RequestMapping(value = "testGraceful", method = RequestMethod.GET)
+    String testGraceful();
 }
