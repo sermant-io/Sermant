@@ -16,3 +16,5 @@
 
 com.huawei.registry.config.RegisterConfig
 com.huawei.registry.config.GraceConfig
+com.huawei.registry.config.NacosRegisterConfig
+com.huawei.registry.config.RegisterServiceCommonConfig

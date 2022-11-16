@@ -19,6 +19,7 @@ package com.huawei.registry.service.impl;
 import static org.junit.Assert.*;
 
 import com.huawei.registry.config.RegisterConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huawei.registry.config.RegisterType;
 import com.huawei.registry.entity.FixedResult;
 import com.huawei.registry.service.register.Register;
@@ -50,6 +51,8 @@ public class RegisterCenterServiceImplTest {
 
     private final RegisterConfig registerConfig = new RegisterConfig();
 
+    private final RegisterServiceCommonConfig registerServiceCommonConfig = new RegisterServiceCommonConfig();
+
     private Map<RegisterType, Register> backUp;
 
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
@@ -60,6 +63,10 @@ public class RegisterCenterServiceImplTest {
                 .mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
                 .thenReturn(registerConfig);
+
+        pluginConfigManagerMockedStatic.when(()
+                -> PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class))
+                .thenReturn(registerServiceCommonConfig);
 
         // 防止注册内部逻辑影响, 先清理注册器测试完恢复
         final RegisterManager instance = RegisterManager.INSTANCE;

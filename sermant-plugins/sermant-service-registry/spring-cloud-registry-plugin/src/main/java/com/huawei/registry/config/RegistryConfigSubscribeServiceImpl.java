@@ -46,9 +46,13 @@ public class RegistryConfigSubscribeServiceImpl implements PluginService {
     public void subscribeRegistryConfig(String serviceName) {
         ConfigSubscriber subscriber;
         final RegisterConfig registerConfig = PluginConfigManager.getPluginConfig(RegisterConfig.class);
-        if (registerConfig.getRegisterType() == RegisterType.SERVICE_COMB && registerConfig.isEnableSpringRegister()) {
+        final RegisterServiceCommonConfig registerCommonConfig =
+            PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
+        if (registerCommonConfig.getRegisterType() == RegisterType.SERVICE_COMB
+            && registerConfig.isEnableSpringRegister()) {
             // 使用了CSE
-            subscriber = new CseGroupConfigSubscriber(serviceName, new RegistryConfigListener(), "SpringCloudRegistry");
+            subscriber = new CseGroupConfigSubscriber(serviceName, new RegistryConfigListener(),
+                "SpringCloudRegistry");
         } else {
             // 其他场景
             subscriber = new DefaultGroupConfigSubscriber(serviceName, new RegistryConfigListener(),
