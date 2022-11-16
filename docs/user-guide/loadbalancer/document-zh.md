@@ -110,7 +110,7 @@ POST /publishConfig
 
 ## 结果验证
 
-1. 前提条件[已下载Sermant RELEASE包](https://github.com/huaweicloud/Sermant/releases), [已下载demo源码](https://github.com/huaweicloud/Sermant/tree/develop/sermant-example/demo-register)，[已下载zookeeper](https://zookeeper.apache.org/releases.html#download)
+1. 前提条件[已下载Sermant RELEASE包](https://github.com/huaweicloud/Sermant/releases), [已下载demo源码](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register)，[已下载zookeeper](https://zookeeper.apache.org/releases.html#download)
 
 2. 启动zookeeper
 

@@ -81,6 +81,6 @@ The `ExtInfoProvider` interface defines `getExtInfo` method, through which the *
 
 In general, the **Heartbeat Service** is a no-concern for plugin developers. Customizing data for heartbeat messages is only necessary if the plugin `backend` needs to fetch specific data from the Kafka heartbeat topic of the **Backend Module**. When plugins need to customize data for their heartbeat messages, usually you can develop a [custom plugin service](dev_plugin_code.md#Plugin-Service) by [adding custom data](#Custom-Data) in the `start` method.
 
-You can refer to [DemoHeartBeatService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java) for your development.
+You can refer to [DemoHeartBeatService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java) for your development.
 
 [Back to README of **Sermant** ](../README.md)

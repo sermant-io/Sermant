@@ -124,7 +124,7 @@ The following uses a simple demo to demonstrate how to verify graceful online/of
 
    （2）Download the latest Sermant release package. Click [here](https://github.com/huaweicloud/Sermant/releases) to download it.
 
-   （3）Download the [Demo Source Code](https://github.com/huaweicloud/Sermant/tree/develop/sermant-example/demo-grace/spring-grace-nacos-demo)
+   （3）Download the [Demo Source Code](https://github.com/huaweicloud/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo)
 
    （4）Compile Demo
 
@@ -134,7 +134,7 @@ The following uses a simple demo to demonstrate how to verify graceful online/of
 
    （5）Download nacos and start
 
-   （6）Download and start the ZooKeeper ( the sermant configuration center).
+   （6）Download and start the ZooKeeper (the sermant configuration center).
 
 2. Deploy
 

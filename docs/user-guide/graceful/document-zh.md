@@ -124,7 +124,7 @@ spec:
 
    （2）下载最新Sermant release包，点击[此处](https://github.com/huaweicloud/Sermant/releases)下载
 
-   （3）下载[Demo 源码](https://github.com/huaweicloud/Sermant/tree/develop/sermant-example/demo-grace/spring-grace-nacos-demo)
+   （3）下载[Demo 源码](https://github.com/huaweicloud/Sermant-examples/tree/main/grace-demo/spring-grace-nacos-demo)
 
    （4）编译Demo
 

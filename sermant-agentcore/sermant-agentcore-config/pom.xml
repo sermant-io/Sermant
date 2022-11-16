@@ -14,12 +14,6 @@
 
     <profiles>
         <profile>
-            <id>example</id>
-            <properties>
-                <profile.id>example</profile.id>
-            </properties>
-        </profile>
-        <profile>
             <id>test</id>
             <properties>
                 <profile.id>test</profile.id>

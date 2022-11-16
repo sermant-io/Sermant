@@ -41,7 +41,7 @@ Version: 0.0.1
 
 ### 3.2 在主项目**sermant-test**下config目录增加以下文件：
 
-- bootstrap.properties(启动配置文件，该配置为Sermant实例指定启动信息)
+- [bootstrap.properties](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-config/config/bootstrap.properties)(启动配置文件，该配置为Sermant实例指定启动信息)
 
 ```properties
 appName=default
@@ -49,60 +49,73 @@ appType=0
 instanceName=default
 ```
 
-- config.properties(核心配置文件，该配置为Sermant启动的核心配置集，指定了Sermant的一些运行机制和服务的运行逻辑)
+- [config.properties](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-config/config/config.properties)(核心配置文件，该配置为Sermant启动的核心配置集，指定了Sermant的一些运行机制和服务的运行逻辑)
 
 ```properties
 # agent config
 agent.config.isEnhanceBootStrapEnable=false
 agent.config.ignoredPrefixes=com.huawei.sermant,com.huaweicloud.sermant
 agent.config.combineStrategy=ALL
-agent.config.serviceBlackList=com.huaweicloud.sermant.core.service.heartbeat.HeartbeatServiceImpl,com.huaweicloud.sermant.core.service.send.NettyGatewayClient,com.huaweicloud.sermant.core.service.tracing.TracingServiceImpl
+agent.config.serviceBlackList=com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl,com.huaweicloud.sermant.implement.service.send.NettyGatewayClient,com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl
+agent.config.serviceInjectList=com.huawei.discovery.service.lb.filter.NopInstanceFilter,com.huawei.discovery.service.lb.DiscoveryManager
+
 # adaptor config
 adaptor.config.isLoadExtAgentEnable=false
+
 # dynamic config
 dynamic.config.timeoutValue=30000
 dynamic.config.defaultGroup=sermant
 dynamic.config.serverAddress=127.0.0.1:2181
 dynamic.config.dynamicConfigType=ZOOKEEPER
+dynamic.config.connectRetryTimes=5
+dynamic.config.connectTimeout=1000
+dynamic.config.userName=
+dynamic.config.password=
+dynamic.config.privateKey=
+dynamic.config.enableAuth=false
+
 # heartbeat config
-heartbeat.interval=3000
+heartbeat.interval=30000
+
 #backend config
 backend.nettyIp=127.0.0.1
 backend.nettyPort=6888
 backend.httpIp=127.0.0.1
 backend.httpPort=8900
+
 # service meta config
 service.meta.application=default
 service.meta.version=1.0.0
 service.meta.project=default
 service.meta.environment=
-#monitor config
-monitor.service.address=127.0.0.1
-monitor.service.port=12345
-monitor.service.isStartMonitor=false
+service.meta.zone=
+
 ```
 
-- plugins.yaml(插件配置文件，该配置指定Sermant启动时加载的插件和适配器，名称为开发插件时在pom中配置的<package.plugin.name>)
+- [plugins.yaml](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-config/config/plugins.yaml)(插件配置文件，该配置指定Sermant启动时加载的插件和适配器，名称为开发插件时在pom中配置的<package.plugin.name>)
 
 ```yaml
 plugins:
   - pluginName
 ```
 
-- logback.xml(日志配置文件，该配置为日志配置，指定了日志的输出规则，在sermant-agentcore-core中对日志依赖进行了shade，所以此处的Appender不可做修改，需按照如下配置进行操作)
+- [logback.xml](https://github.com/huaweicloud/Sermant/blob/develop/sermant-agentcore/sermant-agentcore-config/config/logback.xml)(日志配置文件，该配置为日志配置，指定了日志的输出规则，在sermant-agentcore-core中对日志依赖进行了shade，所以此处的Appender不可做修改，需按照如下配置进行操作)
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 
-<configuration scan="true">
+<configuration scan="true" debug="false">
+    <!--  无操作事件监听器  -->
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
     <!-- 定义日志文件 输出位置 -->
     <property name="log.home_dir" value="${sermant_log_dir:-./logs/sermant/core}"/>
-    <property name="log.app_name" value="sermant"/>
+    <property name="log.app_name" value="${sermant_app_name:-sermant}"/>
     <!-- 日志最大的历史 30天 -->
     <property name="log.maxHistory" value="${sermant_log_max_history:-30}"/>
     <property name="log.level" value="${sermant_log_level:-info}"/>
-    <property name="log.maxSize" value="${sermant_log_max_size:-5MB}"/>
+    <property name="log.maxSize" value="${sermant_log_max_size:-5MB}" />
+    <property name="log.totalSize" value="${sermant_log_total_size:-20GB}"/>
 
     <!-- 设置日志输出格式 -->
     <!-- %d{yyyy-MM-dd HH:mm:ss.SSS}日期-->
@@ -113,11 +126,11 @@ plugins:
     <!-- %thread线程名称-->
     <!-- %m或者%msg为信息-->
     <!-- %n换行-->
-    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %le %F %C %M %L [%thread] %m%n"/>
+    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%le] [%C] [%M:%L] [%thread] %m%n"/>
 
     <!-- ConsoleAppender 控制台输出日志 -->
-    <appender name="CONSOLE" class="com.huaweicloud.sermant.dependencies.ch.qos.logback.core.ConsoleAppender">
-        <filter class="com.huaweicloud.sermant.dependencies.ch.qos.logback.classic.filter.LevelFilter">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
@@ -130,24 +143,25 @@ plugins:
     </appender>
 
     <!--设置一个向上传递的appender,所有级别的日志都会输出-->
-    <appender name="app" class="com.huaweicloud.sermant.dependencies.ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy
-                class="com.huaweicloud.sermant.dependencies.ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+    <appender name="app" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${log.home_dir}/app/%d{yyyy-MM-dd}/${log.app_name}-%i.log</fileNamePattern>
             <maxHistory>${log.maxHistory}</maxHistory>
             <MaxFileSize>${log.maxSize}</MaxFileSize>
+            <totalSizeCap>${log.totalSize}</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
         <encoder>
-            <pattern>${log.pattern}</pattern>
+            <pattern>
+                ${log.pattern}
+            </pattern>
         </encoder>
     </appender>
 
-    <!-- root级别   DEBUG -->
     <root>
         <!-- 打印debug级别日志及以上级别日志 -->
         <level value="${log.level}"/>
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="app"/>
+        <appender-ref ref="app" />
     </root>
 
 </configuration>
@@ -255,7 +269,7 @@ plugins:
                     <artifactItem>
                         <groupId>com.huaweicloud.sermant</groupId>
                         <artifactId>sermant-agentcore-premain</artifactId>
-                        <version>0.4.0</version>
+                        <version>0.7.0</version>
                         <type>jar</type>
                         <overWrite>false</overWrite>
                         <outputDirectory>${sermant.basedir}/agent</outputDirectory>
@@ -264,10 +278,18 @@ plugins:
                     <artifactItem>
                         <groupId>com.huaweicloud.sermant</groupId>
                         <artifactId>sermant-agentcore-core</artifactId>
-                        <version>0.4.0</version>
+                        <version>0.7.0</version>
                         <type>jar</type>
                         <overWrite>false</overWrite>
                         <outputDirectory>${sermant.basedir}/agent/core</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                        <groupId>com.huaweicloud.sermant</groupId>
+                        <artifactId>sermant-agentcore-implement</artifactId>
+                        <version>0.7.0</version>
+                        <type>jar</type>
+                        <overWrite>false</overWrite>
+                        <outputDirectory>${sermant.basedir}/agent/implement</outputDirectory>
                     </artifactItem>
                 </artifactItems>
             </configuration>
@@ -330,10 +352,6 @@ plugins:
                         <relocation>
                             <pattern>net.bytebuddy</pattern>
                             <shadedPattern>${shade.common.prefix}.net.bytebuddy</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.slf4j</pattern>
-                            <shadedPattern>${shade.common.prefix}.org.slf4j</shadedPattern>
                         </relocation>
                     </relocations>
                     <transformers>

@@ -2,7 +2,7 @@
 
 [简体中文](dev_plugin_code-zh.md) | [English](dev_plugin_code.md) 
 
-本文档主要针对**Sermant**的[示例模块](../../sermant-example)，介绍插件开发过程中常见的一些场景。
+本文档主要针对**Sermant**的[示例模块](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template)，介绍插件开发过程中常见的一些场景。
 
 - [组成部分](#组成部分)
 - [插件模块](#插件模块)
@@ -31,13 +31,13 @@
 
 考虑到后三者随实际业务场景不同有较大变化，因此赋予他们的开发自由度较高，对他们仅有模块目录和输出目录的限制。出于这点考虑，`示例模块`将不对他们做参考案例。`示例模块`中包含以下模块：
 
-- [demo-plugin](../../sermant-example/demo-plugin): 示例插件
-- [demo-service](../../sermant-example/demo-service): 示例插件服务
-- [demo-application](../../sermant-example/demo-application): 示例宿主应用
+- [template-plugin](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin): 示例插件
+- [template-service](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-service): 示例插件服务
+- [demo-application](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application): 示例宿主应用
 
 ## 插件模块
 
-示例插件模块`demo-plugin`中，主要用于向插件开发者展示在插件开发过程中可能遇到的一些场景以及可能使用到的一些功能。
+示例插件模块`template-plugin`中，主要用于向插件开发者展示在插件开发过程中可能遇到的一些场景以及可能使用到的一些功能。
 
 开始之前，必须约定的就是，`插件模块(plugin)`中，开发者只能使用*Java*原生API和[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中的API，不能依赖或使用任何`byte-buddy`与`slf4j`以外的第三方依赖。如果应业务要求，需要使用其他第三方依赖的话，只能在`插件模块(plugin)`中定义接口，在`服务模块(service)`中编写实现。更多相关内容详见[插件模块开发手册](dev_plugin_module-zh.md#添加插件模块)。
 
@@ -246,11 +246,11 @@
 
 **Sermant**的`示例模块`中包含以下`PluginDeclarer`接口的实现示例：
 
-- [DemoAnnotationDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoAnnotationDeclarer.java): 通过注解定位被修饰类的普通增强定义
-- [DemoNameDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoNameDeclarer.java): 通过名称定位到被增强类的普通增强定义
-- [DemoSuperTypeDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoSuperTypeDeclarer.java): 通过超类定位到被增强子类的普通增强定义
-- [DemoBootstrapDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java): 对启动类加载器进行增强的定义，详见[原生类增强](#原生类增强)一节
-- [DemoTraceDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java): 对示例应用使用链路功能的增强定义，详见[链路功能](#链路功能)一节
+- [DemoAnnotationDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoAnnotationDeclarer.java): 通过注解定位被修饰类的普通增强定义
+- [DemoNameDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoNameDeclarer.java): 通过名称定位到被增强类的普通增强定义
+- [DemoSuperTypeDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoSuperTypeDeclarer.java): 通过超类定位到被增强子类的普通增强定义
+- [DemoBootstrapDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java): 对启动类加载器进行增强的定义，详见[原生类增强](#原生类增强)一节
+- [DemoTraceDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java): 对示例应用使用链路功能的增强定义，详见[链路功能](#链路功能)一节
 
 在各插件开发者在编写插件增强定义的时候，可以以以上示例为参考，开发符合自身需要的增强定义。
 
@@ -270,7 +270,7 @@
 
 综上，[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中提供对*Java*原生类增强的能力，但是，不建议不加限制地对他们进行增强，如果有多个增强点可选，优先考虑增强普通类。
 
-**Sermant**的`示例模块`中，[DemoBootstrapDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java)对`java.lang.Thread`做了增强，可以启动示例应用[DemoApplication](../../sermant-example/demo-application/src/main/java/com/huawei/example/demo/DemoApplication.java)观察`java.lang.Thread`是否被正常增强。
+**Sermant**的`示例模块`中，[DemoBootstrapDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoBootstrapDeclarer.java)对`java.lang.Thread`做了增强，可以启动示例应用[DemoApplication](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application/src/main/java/com/huawei/example/demo/DemoApplication.java)观察`java.lang.Thread`是否被正常增强。
 
 ### 拦截器
 
@@ -284,11 +284,11 @@
 
 **Sermant**的`示例模块`中包含以下拦截器示例：
 
-- [DemoStaticInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoStaticInterceptor.java): 普通的静态方法拦截器
-- [DemoConstInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConstInterceptor.java): 普通的构造函数拦截器
-- [DemoMemberInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoMemberInterceptor.java): 普通的实例方法拦截器
-- [DemoConfigInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConfigInterceptor.java): 插件配置使用示例拦截器，详见[插件配置](#插件配置)一节
-- [DemoServiceInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoServiceInterceptor.java): 插件服务使用示例拦截器，详见[插件服务](#插件服务)一节
+- [DemoStaticInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoStaticInterceptor.java): 普通的静态方法拦截器
+- [DemoConstInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConstInterceptor.java): 普通的构造函数拦截器
+- [DemoMemberInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoMemberInterceptor.java): 普通的实例方法拦截器
+- [DemoConfigInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoConfigInterceptor.java): 插件配置使用示例拦截器，详见[插件配置](#插件配置)一节
+- [DemoServiceInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoServiceInterceptor.java): 插件服务使用示例拦截器，详见[插件服务](#插件服务)一节
 
 在各插件开发者在编写自定义拦截器的时候，可以以以上示例为参考，开发满足自身功能需要的拦截器。
 
@@ -311,15 +311,15 @@
   ConfigManager.getConfig(${base config class});
   ```
 
-从**Sermant**的`示例模块`的插件配置文件[config.yaml](../../sermant-example/config/config.yaml)可以看出，该配置文件是一个*yaml*文件，一个`插件主模块(main)`的`插件模块(plugin)`和`服务模块(service)`中的插件配置对应的配置信息都封装在这唯一的`config.yaml`中。
+从**Sermant**的`示例模块`的插件配置文件[config.yaml](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/config/config.yaml)可以看出，该配置文件是一个*yaml*文件，一个`插件主模块(main)`的`插件模块(plugin)`和`服务模块(service)`中的插件配置对应的配置信息都封装在这唯一的`config.yaml`中。
 
-相较于传统的*yaml*格式配置文件对应一个*Java Pojo*对象，这里的`config.yaml`可以封装多个*Java Pojo*，他们由全限定名或别名进行区分，形成类似*Map*的结构，其中`demo.test`键对应的是**示例插件包**中的[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)对象，`com.huawei.example.demo.config.DemoServiceConfig`键对应的是**示例插件服务包**中的[DemoServiceConfig](../../sermant-plugins/sermant-example/demo-service/src/main/java/com/huawei/example/demo/config/DemoServiceConfig.java)对象。
+相较于传统的*yaml*格式配置文件对应一个*Java Pojo*对象，这里的`config.yaml`可以封装多个*Java Pojo*，他们由全限定名或别名进行区分，形成类似*Map*的结构，其中`demo.test`键对应的是**示例插件包**中的[DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)对象，`com.huawei.example.demo.config.DemoServiceConfig`键对应的是**示例插件服务包**中的[DemoServiceConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-service/src/main/java/com/huawei/example/demo/config/DemoServiceConfig.java)对象。
 
-[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)相较于`DemoServiceConfig`，前者被[ConfigTypeKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigTypeKey.java)注解修饰，因此设定了`demo.test`的别名。如果没有被`ConfigTypeKey`注解修饰，则直接使用全限定名做索引。
+[DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)相较于`DemoServiceConfig`，前者被[ConfigTypeKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigTypeKey.java)注解修饰，因此设定了`demo.test`的别名。如果没有被`ConfigTypeKey`注解修饰，则直接使用全限定名做索引。
 
-[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)中的`map`属性被[ConfigFieldKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigFieldKey.java)注解修饰，将其属性名修改为`str2DemoSimplePojoMap`。不过需要注意的是，使用该注解的**Java Pojo**如果被数组、*List*或*Map*包装了一层，该注解的语义无效，因此，目前该注解只能用于修饰当前**插件配置类**或直接使用的**Java Pojo**。
+[DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)中的`map`属性被[ConfigFieldKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigFieldKey.java)注解修饰，将其属性名修改为`str2DemoSimplePojoMap`。不过需要注意的是，使用该注解的**Java Pojo**如果被数组、*List*或*Map*包装了一层，该注解的语义无效，因此，目前该注解只能用于修饰当前**插件配置类**或直接使用的**Java Pojo**。
 
-从[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)中可以看出，插件配置现在支持的数据类型包括：
+从[DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)中可以看出，插件配置现在支持的数据类型包括：
 
 - 布尔、数值类的基础类型及包装类型
 - 字符串类型
@@ -334,9 +334,9 @@
 - 对于数组、List和Map中涉及的复杂对象，不支持`ConfigFieldKey`修正属性名
 - 对于数组、List和Map中的字符串，不支持`${}`转换，**插件配置类**的字符串属性和复杂类型属性内部的字符串属性支持
 - 仅在字符串做`${}`转换时使用入参，不支持使用入参直接设置属性值
-- 配置类的字段名一般为小驼峰命名，可用[ConfigFieldKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigFieldKey.java)注解修饰为中划线风格定义别名。添加注解后，在*yaml*中即可用中划线或小驼峰皆可解析，参考[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)的`intField`属性
+- 配置类的字段名一般为小驼峰命名，可用[ConfigFieldKey](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/config/common/ConfigFieldKey.java)注解修饰为中划线风格定义别名。添加注解后，在*yaml*中即可用中划线或小驼峰皆可解析，参考[DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)的`intField`属性
 - 配置生效的优先级为：启动参数 > 环境变量 > 系统变量(-D参数) > *yaml*文件配置
-- 配置类的属性在按照生效的优先级获取参考值(启动参数，环境变量和系统变量(-D参数))时，小驼峰和中划线都可以被分割成单词来进行查找匹配。例如对于[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)的`intField`属性，key将被转化为如下多种形式按顺序来查找：
+- 配置类的属性在按照生效的优先级获取参考值(启动参数，环境变量和系统变量(-D参数))时，小驼峰和中划线都可以被分割成单词来进行查找匹配。例如对于[DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)的`intField`属性，key将被转化为如下多种形式按顺序来查找：
   - demo.test.intField
   - demo_test_intField
   - demo-test-intField
@@ -356,7 +356,7 @@
   - 数组/list/set需配置为`yaml`字符串格式，例如：DEMO_TEST_LIST_NAME=[elem1,elem2]
   - map需配置为`yaml`字符串格式，例如：DEMO_TEST_MAP_NAME={key1: value1, key2: value2}
 
-[DemoConfig](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)中已经包含了大部分可能的配置场景，插件开发者可以参考并编写符合自身业务需求的插件配置类。
+[DemoConfig](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/config/DemoConfig.java)中已经包含了大部分可能的配置场景，插件开发者可以参考并编写符合自身业务需求的插件配置类。
 
 最后，不要忘记添加插件配置的*SPI*配置文件：
 
@@ -388,7 +388,7 @@
 
 #### 简单插件服务
 
-对于**简单插件服务**，实现[PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java)接口即可，如[DemoSimpleService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)示例，在实现`start`方法和`stop`方法的基础上，可以添加其他所需的方法，如`activeFunc`方法，通过以下代码获得`DemoSimpleService`的示例并调用`activeFunc`方法：
+对于**简单插件服务**，实现[PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java)接口即可，如[DemoSimpleService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)示例，在实现`start`方法和`stop`方法的基础上，可以添加其他所需的方法，如`activeFunc`方法，通过以下代码获得`DemoSimpleService`的示例并调用`activeFunc`方法：
 ```java
 DemoSimpleService simpleService = PluginServiceManager.getPluginService(DemoSimpleService.class);
 simpleService.activeFunc();
@@ -396,7 +396,7 @@ simpleService.activeFunc();
 
 对于**简单插件服务**来说，唯一的限制就是只能使用*Java*原生*API*，[**Sermant**核心功能模块](../../sermant-agentcore/sermant-agentcore-core)中自研的*API*(`com.huawei`开头)，以及`byte-buddy`和`slf4j`的*API*。
 
-插件开发者可以参照[DemoSimpleService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)，按需编写自身业务所需的**简单插件服务**。
+插件开发者可以参照[DemoSimpleService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoSimpleService.java)，按需编写自身业务所需的**简单插件服务**。
 
 最后不要忘记添加[PluginService](../../sermant-agentcore/sermant-agentcore-core/src/main/java/com/huaweicloud/sermant/core/plugin/service/PluginService.java)的*SPI*配置文件：
 
@@ -413,7 +413,7 @@ simpleService.activeFunc();
 - **复杂插件服务**在`插件模块(plugin)`中编写接口，在[`服务模块(service)`](#插件服务模块)中编写实现，而**简单插件服务**不需要编写接口，直接在`插件模块(plugin)`中实现。
 - **复杂插件服务**的实现可以按需使用任意第三方依赖。
 
-[DemoComplexService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)是**复杂插件服务**示例接口，其中可以按需添加接口，如`activeFunc`方法，[DemoComplexServiceImpl](../../sermant-plugins/sermant-example/demo-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java)是对应的实现。我们可以通过以下代码调用`activeFunc`方法：
+[DemoComplexService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoComplexService.java)是**复杂插件服务**示例接口，其中可以按需添加接口，如`activeFunc`方法，[DemoComplexServiceImpl](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-service/src/main/java/com/huawei/example/demo/service/DemoComplexServiceImpl.java)是对应的实现。我们可以通过以下代码调用`activeFunc`方法：
 
 ```java
 DemoComplexService complexService = PluginServiceManager.getPluginService(DemoComplexService.class);
@@ -432,7 +432,7 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 Logger logger=LoggerFactory.getLogger();
 ```
 
-插件开发者如果需要输出日志信息，可以参考[DemoLogger](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/common/DemoLogger.java)示例开发。
+插件开发者如果需要输出日志信息，可以参考[DemoLogger](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/common/DemoLogger.java)示例开发。
 
 #### 心跳功能
 
@@ -464,7 +464,7 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
 });
 ```
 
-插件开发者如果需要往心跳功能发送的数据包中增加额外内容，可以参考[DemoHeartBeatService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)示例开发。
+插件开发者如果需要往心跳功能发送的数据包中增加额外内容，可以参考[DemoHeartBeatService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)示例开发。
 
 更多心跳服务相关内容可参见[心跳服务介绍](service_heartbeat-zh.md)。
 
@@ -475,10 +475,10 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
 - 在发送数据的时候，在数据包中插入链路所需的`TraceId`和`SpanId`，前者是请求在分布式系统中的整个链路视图，后者代表整个链路中不同服务内部的视图。
 - 在接收数据的时候，解析数据包中嵌入的链路相关内容，形成链路的一环提交到后台服务器中，逐渐形成调用链。
 
-在示例宿主的[DemoTraceService](../../sermant-example/demo-application/src/main/java/com/huawei/example/demo/service/DemoTraceService.java)中，`counsumer`方法和`provider`方法模仿服务器接收数据并处理发送数据的流程，而数据包则假定存在一个`ThreadLocal`中，直到下一次调用`provider`方法接收数据。
+在示例宿主的[DemoTraceService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-application/src/main/java/com/huawei/example/demo/service/DemoTraceService.java)中，`counsumer`方法和`provider`方法模仿服务器接收数据并处理发送数据的流程，而数据包则假定存在一个`ThreadLocal`中，直到下一次调用`provider`方法接收数据。
 
-基于上述示例宿主，我们编写[DemoTraceDeclarer](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java)增强定义
-，对`DemoTraceService`的`provider`方法和`consumer`方法分别使用使用[DemoTraceProviderInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceProviderInterceptor.java)和[DemoTraceConsumerInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceConsumerInterceptor.java)拦截器进行增强。
+基于上述示例宿主，我们编写[DemoTraceDeclarer](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/declarer/DemoTraceDeclarer.java)增强定义
+，对`DemoTraceService`的`provider`方法和`consumer`方法分别使用使用[DemoTraceProviderInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceProviderInterceptor.java)和[DemoTraceConsumerInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceConsumerInterceptor.java)拦截器进行增强。
 
 - 对于发送`provider`方法，做如下增强：
   ```java
@@ -539,7 +539,7 @@ heartbeatService.setExtInfo(new ExtInfoProvider() {
     }
   ```
   **Sermant**的`示例模块`这里只是简单地抛砖引玉。
-  如果插件开发者需要使用链路功能，参照[DemoTraceNormalInterceptor](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceNormalInterceptor.java)自行开发。
+  如果插件开发者需要使用链路功能，参照[DemoTraceNormalInterceptor](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/interceptor/DemoTraceNormalInterceptor.java)自行开发。
 
 
 ### 动态配置功能
@@ -563,7 +563,7 @@ service.addConfigListener("${key}", "${group}", new DynamicConfigListener() {
 
 注册监听器之后，当服务器对应节点发生创建、删除、修改、添加子节点等事件时，就会触发`process`函数。
 
-插件开发者如果需要使用动态配置，可以参考[DemoDynaConfService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoDynaConfService.java)示例开发。
+插件开发者如果需要使用动态配置，可以参考[DemoDynaConfService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoDynaConfService.java)示例开发。
 
 更多动态配置服务相关内容可参见[动态配置服务介绍](service_dynamicconfig-zh.md)。
 

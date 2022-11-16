@@ -1,8 +1,0 @@
-server:
-  port: 8005
-spring:
-  application:
-    name: rest-consumer
-  cloud:
-    zookeeper:
-      enabled: true

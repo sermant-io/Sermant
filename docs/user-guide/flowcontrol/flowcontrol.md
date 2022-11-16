@@ -394,7 +394,7 @@ The backend service provides the function of publishing configurations through t
 
 ### 1、Compile And Package
 
-Download the [sermant release package](https://github.com/huaweicloud/Sermant/releases) and [demo source code](../../../sermant-plugins/sermant-flowcontrol/flowcontrol-demos/flowcontrol-demo).
+Download the [sermant release package](https://github.com/huaweicloud/Sermant/releases) and [demo source code](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider).
 
 Run the following maven command to package the demo application:
 
@@ -405,7 +405,7 @@ mvn clean package
 ### 2、Start Application
 
 ```shell
-java -javaagent:${agent path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=FlowControlDemo -Dservice.meta.application=region-A -Dservice.meta.environment=testing -Dspring.application.name=FlowControlDemo -jar FlowControlDemo.jar
+java -javaagent:${agent path}\sermant-agent-x.x.x\agent\sermant-agent.jar=appName=spring-flow-provider -Dservice.meta.application=region-A -Dservice.meta.environment=testing -Dspring.application.name=spring-flow-provider -jar spring-provider.jar
 ```
 
 ### 3、Configure The Rule
@@ -417,7 +417,7 @@ Configure traffic marking and traffic limiting rules by referring to [Configurin
 ```json
 {
   "key": "servicecomb.matchGroup.sceneFlow",
-  "group": "app=sc&service=flowControlDemo&environment=testing",
+  "group": "app=sc&service=spring-flow-provider&environment=testing",
   "content": "alias: scene\nmatches:\n- apiPath:\n    exact: /flow\n  headers: {}\n  method:\n  - POST\n  name: flow\n"
 }
 ```
@@ -427,14 +427,14 @@ Configure traffic marking and traffic limiting rules by referring to [Configurin
 ```json
 {
   "key": "servicecomb.rateLimiting.scene",
-  "group": "app=region-A&service=flowControlDemo&environment=testing",
+  "group": "app=region-A&service=spring-flow-provider&environment=testing",
   "content": "limitRefreshPeriod: \"2S\"\nname: flow\nrate: \"4\"\n"
 }
 ```
 
 ### 4、Verify Result
 
-Request `localhost:12000/flow` for multiple times. If `rate limited` is returned when the number of requests exceeds 4 within 2 seconds, flow control is triggered successfully.
+Request `localhost:8003/flow` for multiple times. If `rate limited` is returned when the number of requests exceeds 4 within 2 seconds, flow control is triggered successfully.
 
 ## Others
 

@@ -80,6 +80,6 @@ service.setExtInfo(new ExtInfoProvider() {
 
 一般情况下，对于插件开发者来说，**心跳服务**是无需关心的内容。只有当插件`后端模块(backend)`需要从**后端模块**的kafka心跳主题中捞特定数据时，才有必要为心跳数据包定制数据。插件为其心跳数据包定制数据时，通常可以[自定义插件服务](dev_plugin_code-zh.md#插件服务)，在`start`方法中[添加定制数据](#添加定制数据)即可。
 
-可以参考示例工程的[DemoHeartBeatService](../../sermant-example/demo-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)进行开发。
+可以参考示例工程的[DemoHeartBeatService](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/template/template-plugin/src/main/java/com/huawei/example/demo/service/DemoHeartBeatService.java)进行开发。
 
 [返回**Sermant**说明文档](../README-zh.md)

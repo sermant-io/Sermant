@@ -349,15 +349,6 @@
             </build>
         </profile>
         <profile>
-            <id>example</id>
-            <modules>
-                <module>sermant-agentcore</module>
-                <module>sermant-plugins</module>
-                <module>sermant-backend-lite</module>
-                <module>sermant-example</module>
-            </modules>
-        </profile>
-        <profile>
             <id>package</id>
             <modules>
                 <module>sermant-package</module>
