@@ -63,6 +63,11 @@ public enum SermantTestType {
     ROUTER,
 
     /**
+     * 优雅上下线测试
+     */
+    GRACEFUL,
+
+    /**
      * 测试所有类型
      */
     ALL;
