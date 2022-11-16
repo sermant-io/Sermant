@@ -18,7 +18,7 @@ runs:
         bash apache-zookeeper-3.6.3-bin/bin/zkServer.sh start apache-zookeeper-3.6.3-bin/conf/zoo_sample.cfg
     - name: package agent
       shell: bash
-      run: sed -i '/sermant-backend/d' pom.xml & mvn package -DskipTests -Pagent --file pom.xml
+      run: sed -i '/sermant-backend/d' pom.xml & mvn package -DskipTests -Ptest --file pom.xml
     - name: 1.5.x config
       if: matrix.springBootVersion == '1.5.0.RELEASE' && matrix.springCloudVersion == 'Edgware.SR2'
       shell: bash
