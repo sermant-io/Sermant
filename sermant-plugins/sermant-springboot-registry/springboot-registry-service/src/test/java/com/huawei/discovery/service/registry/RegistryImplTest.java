@@ -17,6 +17,7 @@
 package com.huawei.discovery.service.registry;
 
 import com.huawei.discovery.entity.ServiceInstance;
+import com.huawei.discovery.service.RegistryService;
 import com.huawei.discovery.service.lb.DiscoveryManager;
 import com.huawei.discovery.service.lb.discovery.zk.ZkService34;
 import com.huawei.discovery.service.lb.rule.BaseTest;
@@ -74,5 +75,13 @@ public class RegistryImplTest extends BaseTest {
         final ServiceInstance serviceInstance = CommonUtils.buildInstance(serviceName, 8989);
         DiscoveryManager.INSTANCE.registry(serviceInstance);
         Mockito.verify(zkService34, Mockito.times(1)).registry(serviceInstance);
+    }
+
+    @Test
+    public void registryLifeTest() {
+        final RegistryService registry = new RegistryImpl();
+        registry.start();
+        registry.stop();
+        Mockito.verify(zkService34, Mockito.times(1)).unRegistry();
     }
 }

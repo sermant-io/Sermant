@@ -26,7 +26,6 @@ import com.huawei.discovery.service.lb.utils.CommonUtils;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
-import org.apache.curator.framework.state.ConnectionState;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -37,7 +36,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 负载均衡测试
@@ -80,7 +78,7 @@ public class LbServiceImplTest extends BaseTest {
         try {
             Mockito.when(zkService34.getInstances(serviceName)).thenReturn(serviceInstances);
         } catch (com.huawei.discovery.service.ex.QueryInstanceException e) {
-            e.printStackTrace();
+            // ignored
         }
         return serviceInstances;
     }
@@ -96,11 +94,5 @@ public class LbServiceImplTest extends BaseTest {
         final Optional<ServiceInstance> choose = lbService.choose(serviceName);
         Assert.assertTrue(choose.isPresent());
         Assert.assertTrue(serviceInstances.contains(choose.get()));
-    }
-
-    @Test
-    public void stop() {
-        lbService.stop();
-        Mockito.verify(zkService34, Mockito.times(1)).unRegistry();
     }
 }

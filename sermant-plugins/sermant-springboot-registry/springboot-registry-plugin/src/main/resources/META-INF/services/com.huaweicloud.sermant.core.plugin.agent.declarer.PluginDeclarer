@@ -25,4 +25,5 @@ com.huawei.discovery.declarers.SpringEnvironmentInfoDeclarer
 com.huawei.discovery.declarers.SpringBootDeclarer
 com.huawei.discovery.declarers.httpconnection.HttpUrlConnectionConnectDeclarer
 com.huawei.discovery.declarers.httpconnection.HttpUrlConnectionResponseStreamDeclarer
+com.huawei.discovery.declarers.SpringContextDeclarer
 

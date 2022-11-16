@@ -16,17 +16,10 @@
 
 package com.huawei.discovery.service.lb;
 
-import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.entity.ServiceInstance;
 import com.huawei.discovery.service.LbService;
 
-import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-
-import java.io.IOException;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * 负载均衡服务
@@ -35,22 +28,8 @@ import java.util.logging.Logger;
  * @since 2022-09-26
  */
 public class LbServiceImpl implements LbService {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
-
     @Override
     public Optional<ServiceInstance> choose(String serviceName) {
         return DiscoveryManager.INSTANCE.choose(serviceName);
-    }
-
-    @Override
-    public void stop() {
-        if (!PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class).isEnableRegistry()) {
-            return;
-        }
-        try {
-            DiscoveryManager.INSTANCE.stop();
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Stop lb service failed!", ex);
-        }
     }
 }
