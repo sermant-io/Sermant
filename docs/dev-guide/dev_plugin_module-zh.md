@@ -36,19 +36,17 @@
 
 ## 打包流程
 
-目前[Sermant](../../pom.xml)的打包流程中，包含`agent`、`ext`、`example`、`package`和`all`等
+目前[Sermant](../../pom.xml)的打包流程中，包含`agent`、`test`和`release`等
 6个步骤，其中与[sermant-plugins](../../sermant-plugins/pom.xml)相关的步骤如下：
 
-- `agent`: 对动态配置插件[sermant-dynamic-config](../../sermant-plugins/sermant-dynamic-config)、流控插件[sermant-flowcontrol](../../sermant-plugins/sermant-flowcontrol)、注册插件[sermant-service-registry](../../sermant-plugins/sermant-service-registry)的`插件模块(plugin)`和`服务模块(service)`进行打包，他们将输出到产品`agent/pluginPackage/${功能名称}`目录。
-- `ext`: 对所有附加件进行打包，包括`后端模块(server)`、`前端模块(webapp)`和`其他模块(other)`，其中`后端模块(server)`和`前端模块(webapp)`将输出到产品的`server/${功能名称}`目录，`其他模块(other)`一般为调试用的附加件，没有打包要求。
-- `example`: 对示例功能中需要的注册插件[sermant-service-registry](../../sermant-plugins/sermant-service-registry)进行打包。
-- `all`: 对上述的所有内容进行打包。
+- `agent`: 对所有Sermant中包含的稳定版本的`插件模块(plugin)`和`服务模块(service)`进行打包，他们将输出到产品`agent/pluginPackage/${功能名称}`目录; 对所有稳定版本的附加件进行打包，包括`后端模块(server)`、`前端模块(webapp)`和`其他模块(other)`，其中`后端模块(server)`和`前端模块(webapp)`将输出到产品的`server/${功能名称}`目录，`其他模块(other)`一般为调试用的附加件，没有打包要求。
+- `test`: 对Sermant项目下所有的`插件模块(plugin)`、`服务模块(service)`和附加件进行打包。
+- `release`: 对需发布至maven中心仓的稳定版本的模块进行打包。
 
 ## 添加插件主模块
 
 - 添加`插件主模块(main)`，依据该`插件主模块(main)`中涉及的内容，在[sermant-plugins的pom文件](../../sermant-plugins/pom.xml)中的特定`profile`中添加相应模块：
-  - 必须在`id`为`all`的`profile`中添加该模块。
-  - 如果该模块包含其他内容，则需要在`id`为`ext`的`profile`中添加该模块。
+  - 必须在`id`为`test`的`profile`中添加该模块。
 - 在该模块的`pom.xml`中添加以下标签：
   ```xml
   <packaging>pom</packaging>
@@ -59,7 +57,7 @@
     <package.plugin.name>${插件名称}</package.plugin.name>
   </properties>
   ```
-  - 在[默认插件设置文件](../../sermant-agentcore/sermant-agentcore-config/config/plugins.yaml)和[全数插件设置文件](../../sermant-agentcore/sermant-agentcore-config/config/all/plugins.yaml)中添加新增的`插件主模块(main)`，完成注册。
+  - 在[默认插件设置文件](../../sermant-agentcore/sermant-agentcore-config/config/plugins.yaml)和[全数插件设置文件](../../sermant-agentcore/sermant-agentcore-config/config/test/plugins.yaml)中添加新增的`插件主模块(main)`，完成注册。
 
 `插件主模块(main)`的子模块开发流程参见一下章节：
 - `插件模块(plugin)`和`服务模块(service)`开发流程参见[插件开发流程](#插件开发流程)
@@ -108,7 +106,7 @@
 
 ### 添加插件模块
 
-结合[打包流程](#打包流程)中介绍的步骤，与插件开发相关的步骤有`agent`和`all`两个`profile`。如果需要为`插件主模块(main)`添加`插件模块(plugin)`子模块：
+结合[打包流程](#打包流程)中介绍的步骤，与插件开发相关的步骤有`agent`、`test`和`release`三个`profile`。其中`agent`用于社区release出包，`release`用于maven中心仓库出包，`test`用于开发测试，前期开发使用`test`即可，插件经测试验证稳定后需发布则添加至`agent`或`release`。如果需要为`插件主模块(main)`添加`插件模块(plugin)`子模块：
 
 - 在`插件主模块(main)`的`pom.xml`文件的以下`profile`中添加`module`：
   ```xml
@@ -123,7 +121,13 @@
       </modules>
     </profile>
     <profile>
-      <id>all</id>
+      <id>test</id>
+      <modules>
+        <module>${插件模块名}</module>
+      </modules>
+    </profile>
+      <profile>
+      <id>release</id>
       <modules>
         <module>${插件模块名}</module>
       </modules>
@@ -176,7 +180,13 @@
       </modules>
     </profile>
     <profile>
-      <id>all</id>
+      <id>test</id>
+      <modules>
+        <module>${插件服务模块名}</module>
+      </modules>
+    </profile>
+      <profile>
+      <id>test</id>
       <modules>
         <module>${插件服务模块名}</module>
       </modules>
@@ -332,13 +342,13 @@
 
 本节将介绍`后端模块(server)`和`前端模块(webapp)`两种附加件的开发流程，由于这两部分是`功能function`中相对独立的内容，因此没有太多开发上的限制。
 
-结合[打包流程](#打包流程)中介绍的步骤，与附加件开发相关的步骤有`ext`和`all`两个`profile`。如果需要为`插件主模块(main)`添加`后端模块(server)`或`前端模块(webapp)`子模块：
+结合[打包流程](#打包流程)中介绍的步骤，与附加件开发相关的步骤有`agent`和`test`两个`profile`， 附加件一般不添加至`release`。如果需要为`插件主模块(main)`添加`后端模块(server)`或`前端模块(webapp)`子模块：
 
 - 在`插件主模块(main)`的`pom.xml`文件的以下`profile`中添加`module`：
   ```xml
   <profiles>
     <profile>
-      <id>ext</id>
+      <id>agent</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -349,7 +359,7 @@
       </modules>
     </profile>
     <profile>
-      <id>all</id>
+      <id>test</id>
       <modules>
         <module>${后端模块名(如果有)}</module>
         <module>${前端模块名(如果有)}</module>

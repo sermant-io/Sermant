@@ -10,11 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sermant-mq-consume-deny</artifactId>
     <name>sermant-mq-consume-deny</name>
-    <modules>
-        <module>kafka-consumer-plugin</module>
-        <module>rabbitmq-consumer-plugin</module>
-        <module>message-common</module>
-    </modules>
     <packaging>pom</packaging>
 
     <properties>
@@ -45,7 +40,7 @@
             </modules>
         </profile>
         <profile>
-            <id>all</id>
+            <id>test</id>
             <modules>
                 <module>kafka-consumer-plugin</module>
                 <module>rabbitmq-consumer-plugin</module>

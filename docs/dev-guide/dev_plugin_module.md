@@ -36,18 +36,16 @@ The `root module of plugins` of **Sermant** is divided into sub-modules based on
 
 ## Packaging
 
-There six steps of packaging in current [Sermant](../../pom.xml), including `agent`, `ext`, `example`, `package`, and `all`. among which the ones related to [sermant-plugins](../../sermant-plugins/pom.xml) are as follows:
+There six steps of packaging in current [Sermant](../../pom.xml), including `agent`, `test`, and `release`. among which the ones related to [sermant-plugins](../../sermant-plugins/pom.xml) are as follows:
 
-- `agent`: Package `plugin module` and `service module` in [sermant-dynamic-config](../../sermant-plugins/sermant-dynamic-config), [sermant-flowcontrol](../../sermant-plugins/sermant-flowcontrol), [sermant-service-registry](../../sermant-plugins/sermant-service-registry), and export them to the `agent/pluginPackage/${feature name}` directory.
-- `ext`: Package all add-ons, including `backend module(server)`, `frontend module(webApp)` and `other`. And`backend module (server)` and `frontend module (WebApp)` will be exported to the product's `server/${feature name}` directory. `Other` modules are generally add-ons for debugging purposes and have no packaging requirements.
-- `example` : Package the plugin [sermant-service-registry](../../sermant-plugins/sermant-service-registry).
-- `all` : Package everything above.
+- `agent`: Package all the stable version `plugin module` and `service module`,and export them to the `agent/pluginPackage/${feature name}` directory; package all the stable version add-ons, including `backend module(server)`, `frontend module(webApp)` and `other`. And`backend module (server)` and `frontend module (WebApp)` will be exported to the product's `server/${feature name}` directory. `Other` modules are generally add-ons for debugging purposes and have no packaging requirements.
+- `test`: Package all `plugin module`, `service module` and add-ons in Sermant.
+- `release` : Package the stable version modules in Sermant which should be published to maven central repository.
 
 ## Add Main Module of Plugin
 
 - Add the `main` module to the [pom.xml of sermant-plugins](../../sermant-plugins/pom.xml). According to the contents of the `main` module, add this module in specific `profile` of `pom.xml` .
-  - This module must be added to `profile` whose `id` is `all`.
-  - If this module contains something else, you need to add this module to `profile` whose `id` is `ext`.
+  - This module must be added to `profile` whose `id` is `test`.
 - Add the following label to the module's `pom.xml`：
   ```xml
   <packaging>pom</packaging>
@@ -58,7 +56,7 @@ There six steps of packaging in current [Sermant](../../pom.xml), including `age
     <package.plugin.name>${plugin name}</package.plugin.name>
   </properties>
   ```
-  - Add the new `main` module to [default plugin setup file](../../sermant-agentcore/sermant-agentcore-config/config/plugins.yaml) and [all plugin setup file](../../sermant-agentcore/sermant-agentcore-config/config/all/plugins.yaml) to complete registration.
+  - Add the new `main` module to [default plugin setup file](../../sermant-agentcore/sermant-agentcore-config/config/plugins.yaml) and [all plugin setup file](../../sermant-agentcore/sermant-agentcore-config/config/test/plugins.yaml) to complete registration.
 
 The sub-module development process of the `main` module of plugin is described in the following chapter:
 
@@ -108,7 +106,7 @@ That's why plugin and service packages have to fix the full qualified class name
 
 ### Add Plugin Module
 
-Combined with the steps introduced in the [Packaging](# Packaging), there are two `profiles` related to plugin development: `agent` and `all`. If you need to add a `plugin` submodule to the `main` module:
+Combined with the steps introduced in the [Packaging](# Packaging), there are three `profiles` related to plugin development: `agent`, `test` and `release`. `agent` is used to publish release package in github. `release` is used to publish modules to maven central repository. `test` is used for developing code and testing. If you need to add a `plugin` submodule to the `main` module:
 
 - Add the `module` to the following `profile` in the `pom.xml` file of the `main` module:
   ```xml
@@ -123,7 +121,13 @@ Combined with the steps introduced in the [Packaging](# Packaging), there are tw
       </modules>
     </profile>
     <profile>
-      <id>all</id>
+      <id>test</id>
+      <modules>
+        <module>${plugin module name}</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>release</id>
       <modules>
         <module>${plugin module name}</module>
       </modules>
@@ -179,7 +183,13 @@ Similar to the `plugin` module, here's how to add a `service` module:
       </modules>
     </profile>
     <profile>
-      <id>all</id>
+      <id>test</id>
+      <modules>
+        <module>${plugin service module name}</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>release</id>
       <modules>
         <module>${plugin service module name}</module>
       </modules>
@@ -352,13 +362,13 @@ In this section, we'll list some of the most error-prone areas of plugin develop
 
 This section will describe the development process of two add-ons: `backend module (server)` and `frontend module (webapp)`. Since these two parts are relatively independent parts of the `function`, there are not many development restrictions.
 
-Combined with the steps covered in the [Packaging](# Packaging), there are two `profiles` related to add-on development: `ext` and `all`. If you need to add a `backend module (server)` or `frontend module (webapp)` submodule to the `main` plugin module:
+Combined with the steps covered in the [Packaging](# Packaging), there are two `profiles` related to add-on development: `agent` and `test`. It's not recommended adding add-ons to `release`. If you need to add a `backend module (server)` or `frontend module (webapp)` submodule to the `main` plugin module:
 
 - Add the `module` to the following `profile` in the `pom.xml` file of the `main` plugin module：
   ```xml
   <profiles>
     <profile>
-      <id>ext</id>
+      <id>agent</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -369,7 +379,7 @@ Combined with the steps covered in the [Packaging](# Packaging), there are two `
       </modules>
     </profile>
     <profile>
-      <id>all</id>
+      <id>test</id>
       <modules>
         <module>${backend module name(if exists)}</module>
         <module>${frontend module name(if exists)}</module>
