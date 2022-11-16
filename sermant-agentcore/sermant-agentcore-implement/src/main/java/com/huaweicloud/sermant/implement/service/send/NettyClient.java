@@ -17,7 +17,6 @@
 package com.huaweicloud.sermant.implement.service.send;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.implement.service.send.common.ThreadPools;
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
 import com.huaweicloud.sermant.implement.utils.GzipUtils;
 
@@ -40,9 +39,9 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 
 import java.util.Locale;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -67,7 +66,7 @@ public class NettyClient {
     private static final int RECONNECT_INTERVAL_SECOND = 10;
 
     // 消息队列用于缓存来自用户的消息
-    private final BlockingQueue<Message.ServiceData> queue = new LinkedBlockingQueue<>(10);
+    private final BlockingQueue<Message.ServiceData> queue = new ArrayBlockingQueue<>(100);
 
     // 客户端读写闲置时间
     private int writeOrReadWaitTime;
@@ -171,12 +170,8 @@ public class NettyClient {
         byte[] compressMsg = GzipUtils.compress(msg);
         Message.ServiceData serviceData =
             Message.ServiceData.newBuilder().setDataType(dataType).setData(ByteString.copyFrom(compressMsg)).build();
-        ThreadPools.getExecutor().execute(() -> {
-            try {
-                queue.put(serviceData);
-            } catch (InterruptedException e) {
-                LOGGER.severe("Exception occurs when put data to message queue.");
-            }
-        });
+        if (!queue.offer(serviceData)) {
+            LOGGER.info(String.format(Locale.ROOT, "Message queue is full, add %s failed.", serviceData.getDataType()));
+        }
     }
 }
