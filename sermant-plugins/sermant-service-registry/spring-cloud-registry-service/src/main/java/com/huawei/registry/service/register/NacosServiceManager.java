@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,7 +36,6 @@ import java.util.Properties;
  * @since 2022-10-20
  */
 public class NacosServiceManager {
-
     private volatile NamingService namingService;
 
     private volatile NamingMaintainService namingMaintainService;
@@ -46,7 +45,7 @@ public class NacosServiceManager {
     /**
      * 构造方法
      *
-     * @param nacosRegisterConfig
+     * @param nacosRegisterConfig nacos配置信息
      */
     public NacosServiceManager(NacosRegisterConfig nacosRegisterConfig) {
         this.nacosRegisterConfig = nacosRegisterConfig;
@@ -76,7 +75,7 @@ public class NacosServiceManager {
         return namingMaintainService;
     }
 
-    private NamingMaintainService buildNamingMaintainService(Properties properties) {
+    private void buildNamingMaintainService(Properties properties) {
         if (Objects.isNull(namingMaintainService)) {
             synchronized (NacosServiceManager.class) {
                 if (Objects.isNull(namingMaintainService)) {
@@ -84,10 +83,9 @@ public class NacosServiceManager {
                 }
             }
         }
-        return namingMaintainService;
     }
 
-    private NamingService buildNamingService(Properties properties) {
+    private void buildNamingService(Properties properties) {
         if (Objects.isNull(namingService)) {
             synchronized (NacosServiceManager.class) {
                 if (Objects.isNull(namingService)) {
@@ -95,7 +93,6 @@ public class NacosServiceManager {
                 }
             }
         }
-        return namingService;
     }
 
     private NamingService createNewNamingService(Properties properties) {
@@ -115,29 +112,13 @@ public class NacosServiceManager {
     }
 
     /**
-     * nacos服务关闭
-     *
-     * @throws NacosException
-     */
-    public void nacosServiceShutDown() throws NacosException {
-        if (Objects.nonNull(this.namingService)) {
-            this.namingService.shutDown();
-            this.namingService = null;
-        }
-        if (Objects.nonNull(this.namingMaintainService)) {
-            this.namingMaintainService.shutDown();
-            this.namingMaintainService = null;
-        }
-    }
-
-    /**
      * 构建nacos注册实例
      *
      * @return 实例
      */
     public Instance buildNacosInstanceFromRegistration() {
         Instance instance = new Instance();
-        instance.setIp(RegisterContext.INSTANCE.getClientInfo().getHost());
+        instance.setIp(RegisterContext.INSTANCE.getClientInfo().getIp());
         instance.setPort(RegisterContext.INSTANCE.getClientInfo().getPort());
         instance.setWeight(nacosRegisterConfig.getWeight());
         instance.setClusterName(nacosRegisterConfig.getClusterName());
@@ -147,5 +128,4 @@ public class NacosServiceManager {
         nacosRegisterConfig.setMetadata(RegisterContext.INSTANCE.getClientInfo().getMeta());
         return instance;
     }
-
 }

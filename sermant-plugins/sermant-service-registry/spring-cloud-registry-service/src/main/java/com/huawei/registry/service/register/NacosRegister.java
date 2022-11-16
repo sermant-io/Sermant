@@ -37,7 +37,7 @@ public class NacosRegister implements Register {
 
     @Override
     public void stop() {
-        client.deRegister();
+        client.deregister();
     }
 
     @Override

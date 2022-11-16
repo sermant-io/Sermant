@@ -1,6 +1,4 @@
 # 流控配置
 flow.control.plugin:
   useCseRule: true # 是否使用cse规则配置
-# 指标监控配置
-metric.server.config:
   enable-start-monitor: false # 是否启动指标监控

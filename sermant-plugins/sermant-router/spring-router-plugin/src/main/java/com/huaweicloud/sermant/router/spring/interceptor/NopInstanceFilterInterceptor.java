@@ -65,6 +65,13 @@ public class NopInstanceFilterInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
+        ThreadLocalUtils.removeRequestData();
+        return context;
+    }
+
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) {
+        ThreadLocalUtils.removeRequestData();
         return context;
     }
 }

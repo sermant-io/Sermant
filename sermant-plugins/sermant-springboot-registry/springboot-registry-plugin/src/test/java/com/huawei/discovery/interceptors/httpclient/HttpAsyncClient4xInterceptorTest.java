@@ -18,7 +18,7 @@ package com.huawei.discovery.interceptors.httpclient;
 
 import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.config.LbConfig;
-import com.huawei.discovery.entity.PlugEffectStategyCache;
+import com.huawei.discovery.entity.PlugEffectStrategyCache;
 import com.huawei.discovery.interceptors.httpclient.HttpClient4xInterceptorTest.Strategy;
 import com.huawei.discovery.interceptors.httpclient.HttpClient4xInterceptorTest.TestInvokerService;
 import com.huawei.discovery.service.InvokerService;
@@ -30,7 +30,6 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
-import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
@@ -49,8 +48,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -100,7 +97,7 @@ public class HttpAsyncClient4xInterceptorTest {
         HttpAsyncUtils.remove();
         final HttpAsyncClient4xInterceptor interceptor = new HttpAsyncClient4xInterceptor();
         final ExecuteContext context = buildContext();
-        PlugEffectStategyCache.INSTANCE.resolve(DynamicConfigEventType.CREATE, "");
+        PlugEffectStrategyCache.INSTANCE.resolve(DynamicConfigEventType.CREATE, "");
         interceptor.before(context);
         interceptor.onThrow(context);
         interceptor.after(context);

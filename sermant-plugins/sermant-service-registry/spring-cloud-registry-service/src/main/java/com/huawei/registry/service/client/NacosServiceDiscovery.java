@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,6 @@ import com.huawei.registry.config.NacosRegisterConfig;
 import com.huawei.registry.service.register.NacosServiceInstance;
 import com.huawei.registry.service.register.NacosServiceManager;
 
-import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import com.alibaba.nacos.api.exception.NacosException;
@@ -33,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * nacos注册实现客户端
@@ -42,18 +40,18 @@ import java.util.logging.Logger;
  * @since 2022-10-20
  */
 public class NacosServiceDiscovery {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
+    private static final int DEFAULT_CAPACITY = 16;
+
+    private static final String SECURE_KEY = "secure";
 
     private final NacosRegisterConfig nacosRegisterConfig;
 
     private final NacosServiceManager nacosServiceManager;
 
-    private String myselfServiceId;
-
     /**
      * 构造方法
      *
-     * @param nacosServiceManager
+     * @param nacosServiceManager naming服务管理
      */
     public NacosServiceDiscovery(NacosServiceManager nacosServiceManager) {
         this.nacosServiceManager = nacosServiceManager;
@@ -61,42 +59,31 @@ public class NacosServiceDiscovery {
     }
 
     /**
-     * 设置自身服务id
-     *
-     * @param serviceId
-     */
-    public void updateMyselfServiceId(String serviceId) {
-        this.myselfServiceId = serviceId;
-    }
-
-    /**
      * 获取对应服务名微服务实例信息
      *
-     * @param serviceId
+     * @param serviceId 服务id
      * @return 服务信息
-     * @throws NacosException
+     * @throws NacosException nacos异常
      */
     public List<NacosServiceInstance> getInstances(String serviceId) throws NacosException {
         String group = nacosRegisterConfig.getGroup();
         NamingService namingService = nacosServiceManager.getNamingService();
         List<Instance> instances = namingService.selectInstances(serviceId, group, true);
-        return hostToServiceInstanceList(instances, serviceId);
+        return convertServiceInstanceList(instances, serviceId);
     }
 
     /**
      * 实例集合信息转换
      *
-     * @param instances
-     * @param serviceId
+     * @param instances 实例集合
+     * @param serviceId 服务id
      * @return 转换后实例集合信息
      */
-    public List<NacosServiceInstance> hostToServiceInstanceList(List<Instance> instances, String serviceId) {
+    public List<NacosServiceInstance> convertServiceInstanceList(List<Instance> instances, String serviceId) {
         List<NacosServiceInstance> result = new ArrayList<>(instances.size());
         for (Instance instance : instances) {
-            Optional<NacosServiceInstance> optional = hostToServiceInstance(instance, serviceId);
-            if (optional.isPresent()) {
-                result.add(optional.get());
-            }
+            Optional<NacosServiceInstance> optional = convertServiceInstance(instance, serviceId);
+            optional.ifPresent(result::add);
         }
         return result;
     }
@@ -104,11 +91,11 @@ public class NacosServiceDiscovery {
     /**
      * 实例信息转换
      *
-     * @param instance
-     * @param serviceId
+     * @param instance 服务实例
+     * @param serviceId 服务id
      * @return 转换后实例信息
      */
-    public Optional<NacosServiceInstance> hostToServiceInstance(Instance instance, String serviceId) {
+    public Optional<NacosServiceInstance> convertServiceInstance(Instance instance, String serviceId) {
         if (instance == null || !instance.isEnabled() || !instance.isHealthy()) {
             return Optional.empty();
         }
@@ -118,7 +105,7 @@ public class NacosServiceDiscovery {
         nacosServiceInstance.setServiceId(serviceId);
         nacosServiceInstance.setInstanceId(instance.getInstanceId());
 
-        Map<String, String> metadata = new HashMap<>();
+        Map<String, String> metadata = new HashMap<>(DEFAULT_CAPACITY);
         metadata.put("nacos.instanceId", instance.getInstanceId());
         metadata.put("nacos.weight", instance.getWeight() + "");
         metadata.put("nacos.healthy", instance.isHealthy() + "");
@@ -129,8 +116,8 @@ public class NacosServiceDiscovery {
         metadata.put("nacos.ephemeral", String.valueOf(instance.isEphemeral()));
         nacosServiceInstance.setMetadata(metadata);
 
-        if (metadata.containsKey("secure")) {
-            boolean secure = Boolean.parseBoolean(metadata.get("secure"));
+        if (metadata.containsKey(SECURE_KEY)) {
+            boolean secure = Boolean.parseBoolean(metadata.get(SECURE_KEY));
             nacosServiceInstance.setSecure(secure);
         }
         return Optional.of(nacosServiceInstance);
@@ -140,7 +127,7 @@ public class NacosServiceDiscovery {
      * 获取所有服务名称
      *
      * @return 服务名称集合
-     * @throws NacosException
+     * @throws NacosException nacos异常
      */
     public List<String> getServices() throws NacosException {
         String group = nacosRegisterConfig.getGroup();

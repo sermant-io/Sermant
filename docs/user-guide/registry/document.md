@@ -44,6 +44,21 @@ servicecomb.service:
   sslEnabled: false # Whether to enable SSL.
 ```
 
+- For using **NACOS** registry，also need setting nacos registration center configurations，currently only support springCloud
+
+```yaml
+nacos.service:
+  address: 127.0.0.1:8848 #Registration center address
+  username: "" # nacos check username
+  password: "" # nacos check password
+  namespace: "" # namespace, nacos setting the id of namespace
+  weight: 1 # service instance weight
+  clusterName: DEFAULT # cluster name
+  ephemeral: true # Whether to enable ephemeral endpoint, true for yes，false for no
+```
+
+Notice: group of nacos can setting by core config application.
+
 - For **newly developed dubbo applications**, you also need to configure the address of the dubbo registration center. This configuration item is generally in the configuration file of the dubbo application, for example, in the dubbo/provider.xml file.
 
 ```xml

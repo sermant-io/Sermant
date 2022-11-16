@@ -53,6 +53,16 @@ public enum SermantTestType {
     BOOT_REGISTRY,
 
     /**
+     * SpringCloud注册发现测试
+     */
+    CLOUD_REGISTRY,
+
+    /**
+     * 路由测试
+     */
+    ROUTER,
+
+    /**
      * 测试所有类型
      */
     ALL;

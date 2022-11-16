@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -117,8 +118,10 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
         }
         boolean mismatch = CollectionUtils.isEmpty(resultList);
         if (!mismatch) {
-            LOGGER.fine(String.format(Locale.ROOT, "Match instances, %s serviceName is %s, tags is %s.", source,
-                serviceName, JSONObject.toJSONString(tags)));
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format(Locale.ROOT, "Match instances, %s serviceName is %s, tags is %s.", source,
+                    serviceName, JSONObject.toJSONString(tags)));
+            }
         } else if (isReturnAllInstancesWhenMismatch) {
             LOGGER.warning(String.format(Locale.ROOT,
                 "Cannot match instances, will return all instances, %s serviceName is %s, tags is %s.", source,

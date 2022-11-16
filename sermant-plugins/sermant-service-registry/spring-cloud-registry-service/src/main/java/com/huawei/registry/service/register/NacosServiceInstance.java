@@ -27,7 +27,6 @@ import java.util.Map;
  * @since 2022-10-24
  */
 public class NacosServiceInstance implements MicroServiceInstance {
-
     private String serviceId;
 
     private String instanceId;
@@ -93,6 +92,10 @@ public class NacosServiceInstance implements MicroServiceInstance {
 
     public void setSecure(boolean secure) {
         this.secure = secure;
+    }
+
+    public boolean isSecure() {
+        return secure;
     }
 
     public void setMetadata(Map<String, String> metadata) {

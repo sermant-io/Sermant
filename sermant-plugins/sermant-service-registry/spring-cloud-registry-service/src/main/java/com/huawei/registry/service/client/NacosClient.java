@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,10 +18,9 @@ package com.huawei.registry.service.client;
 
 import com.huawei.registry.config.NacosRegisterConfig;
 import com.huawei.registry.context.RegisterContext;
+import com.huawei.registry.service.cache.ServiceCache;
 import com.huawei.registry.service.register.NacosServiceInstance;
 import com.huawei.registry.service.register.NacosServiceManager;
-import com.huawei.registry.service.register.NacosWatch;
-import com.huawei.registry.service.register.ServiceCache;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -42,7 +41,7 @@ import java.util.logging.Logger;
  * nacos注册实现客户端
  *
  * @author chengyouling
- * @since 2022-10-20
+ * @since 2022-11-10
  */
 public class NacosClient {
     private static final String STATUS_UP = "UP";
@@ -55,7 +54,7 @@ public class NacosClient {
 
     private final NacosRegisterConfig nacosRegisterConfig;
 
-    private NacosServiceDiscovery nacosServiceDiscovery;
+    private final NacosServiceDiscovery nacosServiceDiscovery;
 
     /**
      * 构造方法
@@ -64,35 +63,28 @@ public class NacosClient {
         nacosRegisterConfig = PluginConfigManager.getPluginConfig(NacosRegisterConfig.class);
         nacosServiceManager = new NacosServiceManager(nacosRegisterConfig);
         nacosServiceDiscovery = new NacosServiceDiscovery(nacosServiceManager);
-        if (nacosRegisterConfig.isWatchEnabled()) {
-            new NacosWatch(nacosServiceManager, nacosRegisterConfig,
-                    RegisterContext.INSTANCE.getClientInfo().getServiceId());
-        }
     }
 
     /**
      * 微服务注册
      */
     public void register() {
-
         if (StringUtils.isEmpty(RegisterContext.INSTANCE.getClientInfo().getServiceId())) {
             LOGGER.warning("No service to register for nacos client...");
             return;
         }
-
         NamingService namingService = nacosServiceManager.getNamingService();
         String serviceId = RegisterContext.INSTANCE.getClientInfo().getServiceId();
         String group = nacosRegisterConfig.getGroup();
-
         Instance instance = nacosServiceManager.buildNacosInstanceFromRegistration();
-
         try {
             namingService.registerInstance(serviceId, group, instance);
-            LOGGER.log(Level.INFO,String.format("nacos registry, {} {} {}:{} register finished", group, serviceId,
-                    instance.getIp(), instance.getPort()));
+            LOGGER.log(Level.INFO,String.format(Locale.ENGLISH, "registry success, group={%s},serviceId={%s},"
+                + "instanceIp={%s},instancePort={%s} register finished", group, serviceId, instance.getIp(),
+                    instance.getPort()));
         } catch (NacosException e) {
-            LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "nacos registry, "
-                    + "{} register failed...", serviceId), e);
+            LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "registry failed，serviceId={%s}",
+                serviceId), e);
         }
     }
 
@@ -100,10 +92,8 @@ public class NacosClient {
      * 下线处理
      */
     public void deRegister() {
-        LOGGER.log(Level.INFO,"De-registering from Nacos Server now...");
-
         if (StringUtils.isEmpty(RegisterContext.INSTANCE.getClientInfo().getServiceId())) {
-            LOGGER.warning("No dom to de-register for nacos client...");
+            LOGGER.warning("No service to de-register for nacos client...");
             return;
         }
         NamingService namingService = nacosServiceManager.getNamingService();
@@ -111,12 +101,11 @@ public class NacosClient {
         String group = nacosRegisterConfig.getGroup();
         try {
             namingService.deregisterInstance(serviceId, group, RegisterContext.INSTANCE.getClientInfo().getIp(),
-                    RegisterContext.INSTANCE.getClientInfo().getPort(), nacosRegisterConfig.getClusterName());
+                RegisterContext.INSTANCE.getClientInfo().getPort(), nacosRegisterConfig.getClusterName());
         } catch (NacosException e) {
-            LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "ERR_NACOS_DEREGISTER, "
-                    + "{} de-register failed...", serviceId), e);
+            LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "deRegister failed，serviceId={%s}",
+                    serviceId), e);
         }
-        LOGGER.log(Level.INFO,"De-registration finished.");
     }
 
     /**
@@ -132,32 +121,23 @@ public class NacosClient {
     /**
      * 更新微服务实例状态
      *
-     * @param status
+     * @param status 服务状态
      */
     public void updateInstanceStatus(String status) {
-        if (!STATUS_UP.equalsIgnoreCase(status)
-                && !STATUS_DOWN.equalsIgnoreCase(status)) {
-            LOGGER.warning(String.format(Locale.ENGLISH,"can't support status {},please choose UP or DOWN", status));
+        if (!STATUS_UP.equalsIgnoreCase(status) && !STATUS_DOWN.equalsIgnoreCase(status)) {
+            LOGGER.warning(String.format(Locale.ENGLISH,"can't support status={%s},"
+                + "please choose UP or DOWN", status));
             return;
         }
-
         String serviceId = RegisterContext.INSTANCE.getClientInfo().getServiceId();
         String group = nacosRegisterConfig.getGroup();
-
         Instance instance = nacosServiceManager.buildNacosInstanceFromRegistration();
-
-        if (STATUS_DOWN.equalsIgnoreCase(status)) {
-            instance.setEnabled(false);
-        }
-        else {
-            instance.setEnabled(true);
-        }
-
+        instance.setEnabled(!STATUS_DOWN.equalsIgnoreCase(status));
         try {
             nacosServiceManager.getNamingMaintainService().updateInstance(serviceId, group, instance);
         } catch (NacosException e) {
-            LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "{} update nacos instance status fail...",
-                    serviceId), e);
+            LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "update nacos instance status failed,"
+                + "serviceId={%s}", serviceId), e);
         }
     }
 
@@ -179,8 +159,8 @@ public class NacosClient {
                 }
             }
         } catch (NacosException e) {
-            LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "get all instance of {} error...",
-                    serviceId), e);
+            LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "getInstanceStatus failed,serviceId={%s}",
+                serviceId), e);
         }
         return "";
     }
@@ -188,7 +168,7 @@ public class NacosClient {
     /**
      * 根据服务id获取服务实例集合
      *
-     * @param serviceId
+     * @param serviceId 服务id
      * @return 服务实例列表
      */
     public List<NacosServiceInstance> getInstances(String serviceId) {
@@ -199,9 +179,9 @@ public class NacosClient {
                         return instances;
                     }).get();
         } catch (NacosException e) {
-            LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "Can not get hosts from nacos server. "
-                            + "serviceId： {}，isFailureToleranceEnabled：{}", serviceId,
-                    nacosRegisterConfig.isFailureToleranceEnabled()), e);
+            LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "getInstances failed from nacos，"
+                + "serviceId={%s}，isFailureToleranceEnabled={%s}", serviceId,
+                nacosRegisterConfig.isFailureToleranceEnabled()), e);
             if (nacosRegisterConfig.isFailureToleranceEnabled()) {
                 return ServiceCache.getInstances(serviceId);
             }
@@ -221,8 +201,8 @@ public class NacosClient {
                 return services;
             }).get();
         } catch (NacosException e) {
-            LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "get service name from nacos server failed. "
-                    + "isFailureToleranceEnabled：{}", nacosRegisterConfig.isFailureToleranceEnabled()), e);
+            LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "getServices failed，"
+                + "isFailureToleranceEnabled={%s}", nacosRegisterConfig.isFailureToleranceEnabled()), e);
             return nacosRegisterConfig.isFailureToleranceEnabled() ? ServiceCache.getServiceIds()
                     : Collections.emptyList();
         }

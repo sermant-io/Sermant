@@ -15,11 +15,9 @@
 
 package com.huawei.fowcontrol.res4j.util;
 
-import com.huawei.flowcontrol.common.config.MetricConfig;
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
 
-import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.core.service.monitor.config.MonitorConfig;
 
 /**
  * 监控工具类
@@ -28,9 +26,7 @@ import com.huaweicloud.sermant.core.service.monitor.config.MonitorConfig;
  * @since 2022-09-16
  */
 public class MonitorUtils {
-    private static MonitorConfig monitorConfig;
-
-    private static MetricConfig metricConfig;
+    private static final FlowControlConfig CONFIG = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
 
     private MonitorUtils() {
     }
@@ -41,13 +37,6 @@ public class MonitorUtils {
      * @return 开关
      */
     public static boolean isStartMonitor() {
-        if (monitorConfig == null) {
-            monitorConfig = ConfigManager.getConfig(MonitorConfig.class);
-        }
-        if (metricConfig == null) {
-            metricConfig = PluginConfigManager.getPluginConfig(MetricConfig.class);
-        }
-        return monitorConfig != null && monitorConfig.isStartMonitor() && metricConfig != null
-                && metricConfig.isEnableStartMonitor();
+        return CONFIG.isEnableStartMonitor();
     }
 }

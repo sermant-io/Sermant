@@ -314,7 +314,22 @@ public enum MetricEnum {
     /**
      * 磁盘繁忙情况
      */
-    DISK_IO_SPENT("disk_ioSpentPercentage", "the number is used of memory");
+    DISK_IO_SPENT("disk_ioSpentPercentage", "the number is used of memory"),
+
+    /**
+     * 每秒请求数
+     */
+    QPS("qps", "the number is request number of per second"),
+
+    /**
+     * 每秒处理事务数
+     */
+    TPS("tps", "the number is number of transactions processed per second"),
+
+    /**
+     * 平均响应时间
+     */
+    AVG_RESPONSE_TIME("avg_response_time", "the number is  number of response time");
 
     /**
      * 名称

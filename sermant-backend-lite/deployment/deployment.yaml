@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sermant-backend-lite-service
+  labels:
+    app: sermant-backend-lite
+spec:
+  type: NodePort
+  ports:
+  - port: 8900
+    nodePort: 30001
+    name: sermant-backend-lite-service-http
+  - port: 6888
+    nodePort: 30002
+    name: sermant-backend-lite-service-netty
+  selector:
+    app: sermant-backend-lite
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sermant-backend-lite-deployment
+  labels:
+    app: sermant-backend-lite
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sermant-backend-lite
+  template:
+    metadata:
+      labels:
+        app: sermant-backend-lite
+    spec:
+      containers:
+      - name: sermant-backend-lite-deployment
+        image: { image.address }
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "4096Mi"
+            cpu: "2"
+          limits:
+            memory: "4096Mi"
+            cpu: "2"
+        ports:
+        - containerPort: 8900
+        - containerPort: 6888
+      imagePullSecrets:
+        - name: default-secret

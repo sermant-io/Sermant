@@ -40,4 +40,15 @@ public class FlowcontrolConiguration {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
+    /**
+     * 注入请求器
+     *
+     * @return RestTemplate
+     */
+    @LoadBalanced
+    @Bean("routerRestTemplate")
+    public RestTemplate routerRestTemplate() {
+        return new RestTemplate();
+    }
 }

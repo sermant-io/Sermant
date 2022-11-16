@@ -16,8 +16,10 @@
 
 package com.huawei.registry.config;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
+import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,22 +34,6 @@ import java.util.Properties;
  */
 @ConfigTypeKey(value = "nacos.service")
 public class NacosRegisterConfig implements PluginConfig {
-
-    /**
-     * 默认拉取间隔时间
-     */
-    private static final long DEFAULT_WATCH_DELAY = 30000L;
-
-    /**
-     * 默认监控时间
-     */
-    private static final long DEFAULT_LOOKUP_INTERVAL = 30L;
-
-    /**
-     * 默认数据页大小
-     */
-    private static final int DEFAULT_PAGINATION_SIZE = 100;
-
     /**
      * spring cloud zone
      * 若未配置默认使用系统环境变量的zone, 即spring.cloud.loadbalancer.zone
@@ -150,19 +136,16 @@ public class NacosRegisterConfig implements PluginConfig {
     private String serviceNameSeparator = ":";
 
     /**
-     * 数据页大小
+     * 构造方法
      */
-    private int paginationSize = DEFAULT_PAGINATION_SIZE;
-
-    /**
-     * 监控时间
-     */
-    private long lookupInterval = DEFAULT_LOOKUP_INTERVAL;
-
-    /**
-     * 监控延时时间
-     */
-    private long watchDelay = DEFAULT_WATCH_DELAY;
+    public NacosRegisterConfig() {
+        final ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
+        if (serviceMeta == null) {
+            return;
+        }
+        zone = serviceMeta.getZone();
+        group = serviceMeta.getApplication();
+    }
 
     public String getZone() {
         return zone;
@@ -178,10 +161,6 @@ public class NacosRegisterConfig implements PluginConfig {
 
     public void setSecure(boolean secure) {
         this.secure = secure;
-    }
-
-    public String getAddress() {
-        return address;
     }
 
     public void setAddress(String address) {
@@ -300,14 +279,6 @@ public class NacosRegisterConfig implements PluginConfig {
         this.metadata = metadata;
     }
 
-    public long getWatchDelay() {
-        return watchDelay;
-    }
-
-    public void setWatchDelay(long watchDelay) {
-        this.watchDelay = watchDelay;
-    }
-
     public boolean isFailureToleranceEnabled() {
         return failureToleranceEnabled;
     }
@@ -332,22 +303,6 @@ public class NacosRegisterConfig implements PluginConfig {
         this.serviceNameSeparator = serviceNameSeparator;
     }
 
-    public int getPaginationSize() {
-        return paginationSize;
-    }
-
-    public void setPaginationSize(int paginationSize) {
-        this.paginationSize = paginationSize;
-    }
-
-    public long getLookupInterval() {
-        return lookupInterval;
-    }
-
-    public void setLookupInterval(long lookupInterval) {
-        this.lookupInterval = lookupInterval;
-    }
-
     /**
      * 获取配置参数
      *
@@ -364,8 +319,7 @@ public class NacosRegisterConfig implements PluginConfig {
             int index = endpoint.indexOf(PropertyKeyConst.HTTP_URL_COLON);
             properties.put(PropertyKeyConst.ENDPOINT, endpoint.substring(0, index));
             properties.put(PropertyKeyConst.ENDPOINT_PORT, endpoint.substring(index + 1));
-        }
-        else {
+        } else {
             properties.put(PropertyKeyConst.ENDPOINT, endpoint);
         }
         properties.put(PropertyKeyConst.ACCESS_KEY, Objects.toString(accessKey, ""));
@@ -374,5 +328,4 @@ public class NacosRegisterConfig implements PluginConfig {
         properties.put(PropertyKeyConst.NAMING_LOAD_CACHE_AT_START, namingLoadCacheAtStart);
         return properties;
     }
-
 }

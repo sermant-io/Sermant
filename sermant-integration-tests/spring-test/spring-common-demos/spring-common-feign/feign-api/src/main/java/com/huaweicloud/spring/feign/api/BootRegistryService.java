@@ -19,8 +19,10 @@ package com.huaweicloud.spring.feign.api;
 import com.huaweicloud.spring.common.registry.common.RegistryConstants;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 用于测试springboot-registry插件的调用能力-feign组件
@@ -45,4 +47,13 @@ public interface BootRegistryService {
      */
     @RequestMapping(value = "/feignRegistryPost", method = RequestMethod.POST)
     String feignRegistryPost();
+
+    /**
+     * 获取区域
+     *
+     * @param exit 是否退出
+     * @return 区域
+     */
+    @GetMapping(value = "/router/metadata")
+    String getMetadata(@RequestParam boolean exit);
 }

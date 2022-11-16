@@ -40,7 +40,7 @@ public interface InvokerService extends PluginService {
      * @return 最终响应结果
      */
     Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc,
-            Function<Exception, Object> exFunc, String serviceName);
+            Function<Throwable, Object> exFunc, String serviceName);
 
     /**
      * 基于自定义重试器进行调用
@@ -52,5 +52,5 @@ public interface InvokerService extends PluginService {
      * @return 最终响应结果
      */
     Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc,
-            Function<Exception, Object> exFunc, String serviceName, RetryConfig retryConfig);
+            Function<Throwable, Object> exFunc, String serviceName, RetryConfig retryConfig);
 }

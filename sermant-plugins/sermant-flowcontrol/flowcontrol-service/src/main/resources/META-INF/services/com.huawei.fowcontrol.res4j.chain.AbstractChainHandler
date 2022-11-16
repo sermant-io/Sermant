@@ -23,4 +23,3 @@ com.huawei.fowcontrol.res4j.chain.handler.CircuitBreakerClientReqHandler
 com.huawei.fowcontrol.res4j.chain.handler.CircuitBreakerServerReqHandler
 com.huawei.fowcontrol.res4j.chain.handler.InstanceIsolationRequestHandler
 com.huawei.fowcontrol.res4j.chain.handler.FaultRequestHandler
-com.huawei.fowcontrol.res4j.chain.handler.MonitorHandler

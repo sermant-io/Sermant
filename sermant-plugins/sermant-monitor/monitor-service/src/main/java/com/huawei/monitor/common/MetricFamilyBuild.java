@@ -18,6 +18,8 @@ package com.huawei.monitor.common;
 
 import io.prometheus.client.GaugeMetricFamily;
 
+import java.util.Collections;
+
 /**
  * MetricFamily 构造类
  *
@@ -42,5 +44,21 @@ public class MetricFamilyBuild {
      */
     public static GaugeMetricFamily buildGaugeMetric(MetricEnum metricEnum, double value) {
         return new GaugeMetricFamily(metricEnum.getName(), metricEnum.getDisc(), value);
+    }
+
+    /**
+     * 构造 GaugeMetric
+     *
+     * @param metricEnum 指标枚举信息
+     * @param value 指标值
+     * @param labelName 标签名称
+     * @param labelValue 标签值
+     * @return 创建的收集指标
+     */
+    public static GaugeMetricFamily buildGaugeMetric(MetricEnum metricEnum, double value, String labelName,
+                                                     String labelValue) {
+        GaugeMetricFamily gaugeMetricFamily = new GaugeMetricFamily(metricEnum.getName(), metricEnum.getDisc(),
+                Collections.singletonList(labelName));
+        return gaugeMetricFamily.addMetric(Collections.singletonList(labelValue), value);
     }
 }

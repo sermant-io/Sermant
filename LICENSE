@@ -350,6 +350,20 @@ Alibaba Sentinel project is published at https://github.com/alibaba/Sentinel and
 
 ====================================================================================
 
+The following files contain a portion of Alibaba spring-cloud-alibaba project.
+
+com/huawei/registry/service/client/NacosClient.java in this product is copied from com/alibaba/cloud/nacos/registry/NacosServiceRegistry.java Alibaba spring-cloud-alibaba project.
+
+com/huawei/registry/service/cache/ServiceCache.java in this product is copied from com/alibaba/cloud/nacos/discovery/ServiceCache.java Alibaba spring-cloud-alibaba project.
+
+com/huawei/registry/service/client/NacosServiceDiscovery.java in this product is copied from com/alibaba/cloud/nacos/discovery/NacosServiceDiscovery.java Alibaba spring-cloud-alibaba project.
+
+com/huawei/registry/service/register/NacosServiceManager.java in this product is copied from com/alibaba/cloud/nacos/NacosServiceManager.java Alibaba spring-cloud-alibaba project.
+
+Alibaba Sentinel project is published at https://github.com/alibaba/spring-cloud-alibaba and its license is Apache License Version 2.0.
+
+====================================================================================
+
 The following files contain a portion of Apache ServiceComb Java Chassis project.
 
 com/huawei/flowcontrol/adapte/cse/entity/CseMatchRequest.java in this product is copied from org/apache/servicecomb/governance/marker/GovernanceRequest.java of Apache ServiceComb Java Chassis project.

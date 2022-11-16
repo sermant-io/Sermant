@@ -92,8 +92,9 @@ public class DefaultRetryImpl implements Retry {
             serviceInstanceStats.afterRequest(consumeTimeMs);
             final Predicate<Object> resultPredicate = config().getResultPredicate();
             if (resultPredicate != null && resultPredicate.test(result)) {
-                final int num = invokeCount.incrementAndGet();
-                if (num <= config().getMaxRetry()) {
+                final int num = invokeCount.get();
+                if (num < config().getMaxRetry()) {
+                    invokeCount.incrementAndGet();
                     waitToRetry();
                     return true;
                 }
@@ -102,12 +103,13 @@ public class DefaultRetryImpl implements Retry {
         }
 
         @Override
-        public void onError(Recorder serviceInstanceStats, Exception ex, long consumeTimeMs) throws Exception {
+        public void onError(Recorder serviceInstanceStats, Throwable ex, long consumeTimeMs) throws Exception {
             serviceInstanceStats.errorRequest(ex, consumeTimeMs);
             final Predicate<Throwable> throwablePredicate = config().getThrowablePredicate();
             if (throwablePredicate != null && throwablePredicate.test(ex)) {
-                final int num = invokeCount.incrementAndGet();
-                if (num <= config().getMaxRetry()) {
+                final int num = invokeCount.get();
+                if (num < config().getMaxRetry()) {
+                    invokeCount.incrementAndGet();
                     waitToRetry();
                     return;
                 }
@@ -118,9 +120,7 @@ public class DefaultRetryImpl implements Retry {
                 LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH, "Retry failed with %s times",
                         invokeCount.get()), ex);
             }
-            final RetryException retryException = new RetryException(ex);
-            retryException.setStackTrace(ex.getStackTrace());
-            throw retryException;
+            throw new RetryException(ex);
         }
 
         @Override

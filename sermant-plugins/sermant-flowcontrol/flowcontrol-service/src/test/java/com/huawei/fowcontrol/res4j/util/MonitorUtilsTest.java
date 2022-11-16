@@ -15,11 +15,9 @@
 
 package com.huawei.fowcontrol.res4j.util;
 
-import com.huawei.flowcontrol.common.config.MetricConfig;
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
 
-import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.core.service.monitor.config.MonitorConfig;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,16 +33,11 @@ import org.mockito.Mockito;
 public class MonitorUtilsTest {
     @Test
     public void testSwitch() {
-        MonitorConfig monitorConfig = new MonitorConfig();
-        MetricConfig metricConfig = new MetricConfig();
-        monitorConfig.setStartMonitor(true);
+        FlowControlConfig metricConfig = new FlowControlConfig();
         metricConfig.setEnableStartMonitor(true);
-        try (MockedStatic<ConfigManager> configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
-             MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic =
+        try (MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic =
                      Mockito.mockStatic(PluginConfigManager.class)) {
-            configManagerMockedStatic.when(() -> ConfigManager.getConfig(MonitorConfig.class))
-                    .thenReturn(monitorConfig);
-            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(MetricConfig.class))
+            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                     .thenReturn(metricConfig);
             Assert.assertTrue(MonitorUtils.isStartMonitor());
         }

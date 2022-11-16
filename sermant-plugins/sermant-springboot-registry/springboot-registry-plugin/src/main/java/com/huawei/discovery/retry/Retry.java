@@ -90,7 +90,7 @@ public interface Retry {
          * @param consumeTimeMs 调用的消耗时间
          * @throws Exception 不满足异常重试条件时抛出异常
          */
-        void onError(T serviceInstanceStats, Exception ex, long consumeTimeMs) throws Exception;
+        void onError(T serviceInstanceStats, Throwable ex, long consumeTimeMs) throws Exception;
 
         /**
          * 最终结束, 在重试彻底结束后调用该方法

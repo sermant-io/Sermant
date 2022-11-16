@@ -31,59 +31,83 @@ import java.util.function.BiFunction;
  * @since 2022-10-11
  */
 public class FutureDecorator implements Future<HttpResponse> {
-    private final Future<HttpResponse> delegate;
-    private final BiFunction<Long, TimeUnit, Object> retryFunc;
+    private final BiFunction<Long, TimeUnit, HttpAsyncInvokerResult> retryFunc;
+
+    private volatile boolean isDone = false;
+
+    private volatile boolean isCancel = false;
+
+    private Future<HttpResponse> delegate;
 
     /**
      * 修饰器
      *
-     * @param delegate 代理
      * @param retryFunc 重试器
      */
-    public FutureDecorator(Future<HttpResponse> delegate,
-            BiFunction<Long, TimeUnit, Object> retryFunc) {
-        this.delegate = delegate;
+    public FutureDecorator(BiFunction<Long, TimeUnit, HttpAsyncInvokerResult> retryFunc) {
         this.retryFunc = retryFunc;
     }
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
+        if (delegate == null) {
+            isCancel = true;
+            return true;
+        }
         return delegate.cancel(mayInterruptIfRunning);
     }
 
     @Override
     public boolean isCancelled() {
+        if (delegate == null) {
+            return isCancel;
+        }
         return delegate.isCancelled();
     }
 
     @Override
     public boolean isDone() {
+        if (delegate == null) {
+            return isDone;
+        }
         return delegate.isDone();
     }
 
     @Override
     public HttpResponse get() throws InterruptedException, ExecutionException {
-        final Object result = process(0, null);
-        if (result instanceof Throwable) {
-            throw new ExecutionException((Throwable) result);
+        try {
+            final Object result = process(0, null);
+            if (result instanceof Throwable) {
+                throw new ExecutionException((Throwable) result);
+            }
+            return (HttpResponse) result;
+        } finally {
+            isDone = true;
         }
-        return (HttpResponse) result;
     }
 
     @Override
     public HttpResponse get(long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException {
-        final Object result = process(timeout, unit);
-        if (result instanceof TimeoutException) {
-            throw (TimeoutException) result;
-        } else if (result instanceof Throwable) {
-            throw new ExecutionException((Throwable) result);
+        try {
+            final Object result = process(timeout, unit);
+            if (result instanceof TimeoutException) {
+                throw (TimeoutException) result;
+            } else if (result instanceof Throwable) {
+                throw new ExecutionException((Throwable) result);
+            }
+            return (HttpResponse) result;
+        } finally {
+            isDone = true;
         }
-        return (HttpResponse) result;
     }
 
     private Object process(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException {
-        final Object result = retryFunc.apply(timeout, unit);
+        final HttpAsyncInvokerResult invokerResult = retryFunc.apply(timeout, unit);
+        if (this.delegate == null) {
+            this.delegate = (Future<HttpResponse>) invokerResult.getFuture();
+        }
+        final Object result = invokerResult.getResult();
         if (result instanceof InterruptedException) {
             throw (InterruptedException) result;
         } else if (result instanceof ExecutionException) {

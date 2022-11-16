@@ -42,7 +42,7 @@ import java.util.Locale;
  * @since 2022-10-10
  */
 public class ErrorCloseableHttpResponse implements CloseableHttpResponse {
-    private final Exception ex;
+    private final Throwable ex;
 
     private final ProtocolVersion protocolVersion;
 
@@ -52,7 +52,7 @@ public class ErrorCloseableHttpResponse implements CloseableHttpResponse {
      * @param ex 响应异常
      * @param protocolVersion 请求协议版本
      */
-    public ErrorCloseableHttpResponse(Exception ex, ProtocolVersion protocolVersion) {
+    public ErrorCloseableHttpResponse(Throwable ex, ProtocolVersion protocolVersion) {
         this.ex = ex;
         this.protocolVersion = protocolVersion;
     }

@@ -1,5 +1,8 @@
 server:
   port: 28020
+dubbo:
+  protocol:
+    port: ${DUBBO_PROTOCOL_PORT:28820}
 
 spring:
   application:

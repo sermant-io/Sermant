@@ -16,6 +16,8 @@
 
 package com.huawei.discovery.entity;
 
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.junit.Assert;
@@ -38,7 +40,8 @@ public class FutureDecoratorTest {
     @Test
     public void cancel() {
         final Future<HttpResponse> delegate = Mockito.mock(Future.class);
-        FutureDecorator decorator = new FutureDecorator(delegate, null);
+        FutureDecorator decorator = new FutureDecorator(null);
+        ReflectUtils.setFieldValue(decorator, "delegate", delegate);
         decorator.cancel(Mockito.anyBoolean());
         Mockito.verify(delegate, Mockito.times(1)).cancel(Mockito.anyBoolean());
     }
@@ -46,7 +49,8 @@ public class FutureDecoratorTest {
     @Test
     public void isCancelled() {
         final Future<HttpResponse> delegate = Mockito.mock(Future.class);
-        FutureDecorator decorator = new FutureDecorator(delegate, null);
+        FutureDecorator decorator = new FutureDecorator(null);
+        ReflectUtils.setFieldValue(decorator, "delegate", delegate);
         decorator.isCancelled();
         Mockito.verify(delegate, Mockito.times(1)).isCancelled();
     }
@@ -54,7 +58,8 @@ public class FutureDecoratorTest {
     @Test
     public void isDone() {
         final Future<HttpResponse> delegate = Mockito.mock(Future.class);
-        FutureDecorator decorator = new FutureDecorator(delegate, null);
+        FutureDecorator decorator = new FutureDecorator(null);
+        ReflectUtils.setFieldValue(decorator, "delegate", delegate);
         decorator.isDone();
         Mockito.verify(delegate, Mockito.times(1)).isDone();
     }
@@ -70,12 +75,14 @@ public class FutureDecoratorTest {
         final AtomicBoolean executed = new AtomicBoolean();
         final HttpResponse result = new ErrorCloseableHttpResponse(new Exception("wrong"),
                 new ProtocolVersion("HTTP", 1, 1));
-        FutureDecorator decorator = new FutureDecorator(delegate, (timeout, timeUnit) -> {
+        final HttpAsyncInvokerResult realResult = new HttpAsyncInvokerResult(delegate, result);
+        FutureDecorator decorator = new FutureDecorator((timeout, timeUnit) -> {
             if (timeUnit != null) {
                 executed.set(true);
             }
-            return result;
+            return realResult;
         });
+        ReflectUtils.setFieldValue(decorator, "delegate", delegate);
         final HttpResponse response = decorator.get(1, TimeUnit.SECONDS);
         Assert.assertTrue(executed.get());
         Assert.assertEquals(response, result);
@@ -86,9 +93,10 @@ public class FutureDecoratorTest {
         final AtomicBoolean executed = new AtomicBoolean();
         final HttpResponse result = new ErrorCloseableHttpResponse(new Exception("wrong"),
                 new ProtocolVersion("HTTP", 1, 1));
-        FutureDecorator decorator = new FutureDecorator(delegate, (timeout, timeUnit) -> {
+        final HttpAsyncInvokerResult realResult = new HttpAsyncInvokerResult(delegate, result);
+        FutureDecorator decorator = new FutureDecorator((timeout, timeUnit) -> {
             executed.set(true);
-            return result;
+            return realResult;
         });
         final HttpResponse response = decorator.get();
         Assert.assertTrue(executed.get());
@@ -151,9 +159,10 @@ public class FutureDecoratorTest {
     private void get(Throwable ex, boolean isTime) throws ExecutionException, InterruptedException, TimeoutException {
         final Future<HttpResponse> delegate = Mockito.mock(Future.class);
         final AtomicBoolean executed = new AtomicBoolean();
-        FutureDecorator decorator = new FutureDecorator(delegate, (timeout, timeUnit) -> {
+        final HttpAsyncInvokerResult result = new HttpAsyncInvokerResult(delegate, ex);
+        FutureDecorator decorator = new FutureDecorator((timeout, timeUnit) -> {
             executed.set(true);
-            return ex;
+            return result;
         });
         if (isTime) {
             decorator.get(1, TimeUnit.SECONDS);

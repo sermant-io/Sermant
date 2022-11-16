@@ -41,7 +41,23 @@ servicecomb.service:
   enableSpringRegister: false #是否开启spring插件注册能力，spring cloud框架需开启，dubbo框架需关闭
   enableDubboRegister: false #是否开启dubbo插件注册能力，dubbo框架需开启，spring cloud框架需关闭
   sslEnabled: false # 是否开启ssl
+  registerType: SERVICE_COMB # 注册中心类型 支持NACOS/SERVICE_COMB
 ```
+
+- 对于使用**NACOS**中心，还需要设置NACOS本身的注册中心相关配置，当前只支持springCloud
+
+```yaml
+nacos.service:
+  address: 127.0.0.1:8848 # 注册中心地址
+  username: "" # nacos验证账户
+  password: "" # nacos的验证密码
+  namespace: "" # 命名空间，nacos配置创建命名空间的id值
+  weight: 1 # 服务实例权重值
+  clusterName: DEFAULT # 集群名称
+  ephemeral: true # 是否是临时节点，true为是，false为否
+```
+
+注意：nacos的group通过核心配置文件的application设置
 
 - 对于**新开发**的dubbo应用，还需要设置dubbo本身注册中心地址的配置。这个配置项一般在dubbo应用的配置文件中，比如“dubbo/provider.xml”文件中：
 

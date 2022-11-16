@@ -19,6 +19,7 @@ package com.huawei.discovery.config;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,8 +32,7 @@ import java.util.List;
 @ConfigTypeKey("sermant.springboot.registry.lb")
 public class LbConfig implements PluginConfig {
     /**
-     * ===============Zookeeper注册中心专属配置================
-     * ZK连接超时时间
+     * ===============Zookeeper注册中心专属配置================ ZK连接超时时间
      */
     private int connectionTimeoutMs = LbConstants.DEFAULT_CONNECTION_TIMEOUT_MS;
 
@@ -57,8 +57,7 @@ public class LbConfig implements PluginConfig {
     private String zkServerVersion = "3.4.x";
 
     /**
-     * zookeeper保存数据的根路径, 注意不要与zk原生路径一致(/services), 否则可能存在兼容性问题
-     * ===============Zookeeper注册中心专属配置结束================
+     * zookeeper保存数据的根路径, 注意不要与zk原生路径一致(/services), 否则可能存在兼容性问题 ===============Zookeeper注册中心专属配置结束================
      */
     private String zkBasePath = "/sermant/services";
 
@@ -81,6 +80,13 @@ public class LbConfig implements PluginConfig {
      * 若注册中心失联，是否使用旧的实例而不会刷新, 注意, 开启此选项内存中将会增加旧实例的缓存
      */
     private boolean keepOldInstancesWhenErr = true;
+
+    /**
+     * 是否开启缓存代理, 针对{@link java.net.HttpURLConnection} 拦截该类, 针对每个host将生成一个代理缓存到map中, 见{@link
+     * com.huawei.discovery.interceptors.httpconnection.HttpUrlConnectionConnectInterceptor#getProxy(URL)} 开启此开关,
+     * 增加内存消耗, 但可避免频繁创建Proxy
+     */
+    private boolean enableCacheProxy = false;
 
     /**
      * 注册失败时, 最大重试次数, 每次会等待1秒(registryRetryInterval)重新发起注册
@@ -128,7 +134,8 @@ public class LbConfig implements PluginConfig {
     private boolean enableSocketReadTimeoutRetry = true;
 
     /**
-     * 重试场景, 针对{@link java.util.concurrent.TimeoutException}, 是否需要重试, 默认开启, 该超时多用于异步场景, 例如Future, MinimalHttpAsyncClient
+     * 重试场景, 针对{@link java.util.concurrent.TimeoutException}, 是否需要重试, 默认开启, 该超时多用于异步场景, 例如Future,
+     * MinimalHttpAsyncClient
      */
     private boolean enableTimeoutExRetry = true;
 
@@ -184,6 +191,14 @@ public class LbConfig implements PluginConfig {
 
     public int getRegistryMaxRetry() {
         return registryMaxRetry;
+    }
+
+    public boolean isEnableCacheProxy() {
+        return enableCacheProxy;
+    }
+
+    public void setEnableCacheProxy(boolean enableCacheProxy) {
+        this.enableCacheProxy = enableCacheProxy;
     }
 
     public void setRegistryMaxRetry(int registryMaxRetry) {

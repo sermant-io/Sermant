@@ -29,6 +29,11 @@ public class RegistryConstants {
     public static final String REGISTRY_REQUEST_PREFIX = "bootRegistry";
 
     /**
+     * SpringCloud请求测试前缀
+     */
+    public static final String CLOUD_REGISTRY_REQUEST_PREFIX = "cloudRegistry";
+
+    /**
      * 注册测试用域名
      */
     public static final String TEST_DOMAIN = "www.domain.com";

@@ -17,3 +17,4 @@ com.huaweicloud.sermant.router.spring.declarer.HttpClient4xDeclarer
 com.huaweicloud.sermant.router.spring.declarer.HttpUrlConnectionConnectDeclarer
 com.huaweicloud.sermant.router.spring.declarer.RestTemplateDeclarer
 com.huaweicloud.sermant.router.spring.declarer.SpringBootLoadClassDeclarer
+com.huaweicloud.sermant.router.spring.declarer.HttpAsyncClient4xDeclarer

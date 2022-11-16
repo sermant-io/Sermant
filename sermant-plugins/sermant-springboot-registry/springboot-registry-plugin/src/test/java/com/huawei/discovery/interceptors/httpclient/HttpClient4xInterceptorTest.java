@@ -20,7 +20,7 @@ import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.config.LbConfig;
 import com.huawei.discovery.config.PlugEffectWhiteBlackConstants;
 import com.huawei.discovery.entity.DefaultServiceInstance;
-import com.huawei.discovery.entity.PlugEffectStategyCache;
+import com.huawei.discovery.entity.PlugEffectStrategyCache;
 import com.huawei.discovery.retry.InvokerContext;
 import com.huawei.discovery.retry.config.RetryConfig;
 import com.huawei.discovery.service.InvokerService;
@@ -91,7 +91,7 @@ public class HttpClient4xInterceptorTest {
         final HttpClient4xInterceptor interceptor = new HttpClient4xInterceptor();
         interceptor.ready();
         final ExecuteContext context = buildContext();
-        PlugEffectStategyCache.INSTANCE.resolve(DynamicConfigEventType.CREATE, "");
+        PlugEffectStrategyCache.INSTANCE.resolve(DynamicConfigEventType.CREATE, "");
         interceptor.doBefore(context);
         interceptor.onThrow(context);
         interceptor.after(context);
@@ -119,7 +119,7 @@ public class HttpClient4xInterceptorTest {
     public static class TestInvokerService implements InvokerService {
 
         @Override
-        public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Exception, Object> exFunc,
+        public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
                 String serviceName) {
             String host = "localhost";
             String ip = "127.0.0.1";
@@ -135,7 +135,7 @@ public class HttpClient4xInterceptorTest {
         }
 
         @Override
-        public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Exception, Object> exFunc,
+        public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
                 String serviceName, RetryConfig retryConfig) {
             return Optional.empty();
         }

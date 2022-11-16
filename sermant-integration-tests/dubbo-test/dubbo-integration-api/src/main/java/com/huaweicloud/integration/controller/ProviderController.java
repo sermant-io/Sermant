@@ -34,6 +34,15 @@ public class ProviderController {
     @Value("${service_meta_version:${SERVICE_META_VERSION:${service.meta.version:1.0.0}}}")
     private String version;
 
+    @Value("${service_meta_parameters:${SERVICE_META_PARAMETERS:${service.meta.parameters:}}}")
+    private String parameters;
+
+    @Value("${spring.application.name}")
+    private String name;
+
+    @Value("${service_meta_zone:${SERVICE_META_ZONE:${service.meta.zone:bar}}}")
+    private String zone;
+
     /**
      * 测试方法
      *
@@ -41,6 +50,7 @@ public class ProviderController {
      */
     @GetMapping("hello")
     public String hello() {
-        return "Hello world! My port is " + port + ", my version is " + version + ".";
+        return "Hello world! I'm " + name + ", my port is " + port + ", my version is " + version + ", my zone is "
+            + zone + ", my parameters is [" + parameters + "].";
     }
 }

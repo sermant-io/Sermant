@@ -54,6 +54,11 @@ public class ReflectUtils {
      */
     private static final Map<String, Method> METHOD_CACHE = new ConcurrentHashMap<>();
 
+    /**
+     * 针对单个类缓存的Field的初始化容量
+     */
+    private static final int INIT_CLASS_FILED_CACHE_SIZE = 4;
+
     private ReflectUtils() {
     }
 
@@ -401,7 +406,12 @@ public class ReflectUtils {
     }
 
     private static Field getField(Class<?> clazz, String fieldName) {
-        final Map<String, Field> cache = FIELD_CACHE.getOrDefault(clazz, new ConcurrentHashMap<>());
+        final Optional<Field> fieldFromCache = getFieldFromCache(clazz, fieldName);
+        if (fieldFromCache.isPresent()) {
+            return fieldFromCache.get();
+        }
+        final Map<String, Field> cache = FIELD_CACHE.getOrDefault(clazz,
+                new ConcurrentHashMap<>(INIT_CLASS_FILED_CACHE_SIZE));
         Field field = cache.get(fieldName);
         try {
             if (field == null) {
@@ -419,6 +429,28 @@ public class ReflectUtils {
             FIELD_CACHE.put(clazz, cache);
         }
         return field;
+    }
+
+    /**
+     * 从缓存获取field, 该方法会从已有缓存中遍历所有父类拿到缓存, 若无则直接采用反射拿
+     *
+     * @param clazz 类对象
+     * @param fieldName 字段名
+     * @return Field
+     */
+    private static Optional<Field> getFieldFromCache(Class<?> clazz, String fieldName) {
+        Class<?> curClazz = clazz;
+        while (curClazz != Object.class) {
+            final Map<String, Field> cache = FIELD_CACHE.get(curClazz);
+            if (cache != null && !cache.isEmpty()) {
+                Field field = cache.get(fieldName);
+                if (field != null) {
+                    return Optional.of(field);
+                }
+            }
+            curClazz = curClazz.getSuperclass();
+        }
+        return Optional.empty();
     }
 
     private static <T extends AccessibleObject> T setAccessible(T object) {
