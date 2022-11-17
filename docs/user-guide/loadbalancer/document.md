@@ -110,7 +110,7 @@ The loadbalance plugin has three subscription tags by default.：
 
 ## Verify Result
 
-1. Prerequisites: [sermant has been downloaded](https://github.com/huaweicloud/Sermant/releases), [the demo source code is downloaded](https://github.com/huaweicloud/Sermant/tree/develop/sermant-example/demo-register), and [the ZooKeeper is downloaded](https://zookeeper.apache.org/releases.html#download).
+1. Prerequisites: [sermant has been downloaded](https://github.com/huaweicloud/Sermant/releases), [the demo source code is downloaded](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register), and [the ZooKeeper is downloaded](https://zookeeper.apache.org/releases.html#download).
 
 2. start zookeeper
 

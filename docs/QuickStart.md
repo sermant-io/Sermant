@@ -22,9 +22,9 @@ Click [here](https://github.com/huaweicloud/Sermant/releases) to download the re
 
 ## Compile Source Code
 - Prepare [git](https://git-scm.com/downloads) , [jdk 8 or 11](https://www.oracle.com/java/technologies/downloads/) , [maven](https://maven.apache.org/download.cgi) for your machine
-- execute `git clone -b develop https://github.com/huaweicloud/Sermant.git` to clone the source code
-- execute `cd Sermant`to entry into Sermant directory
-- execute `mvn clean package -Dmaven.test.skip -Pexample` to compile source code of Sermant
+- execute `git clone -b main https://github.com/huaweicloud/Sermant-examples.git` to clone the source code
+- execute `cd sermant-template`to entry into Sermant directory
+- execute `mvn clean package` to compile source code of Sermant, which genetates `agent` in `sermant-template` that contains example package.
 
 # Startup
 - Runtime environment requires [ServiceCenter](https://github.com/apache/servicecomb-service-center/releases), and [zookeeper](https://zookeeper.apache.org/releases.html) as the registration center and configuration center respectively.
@@ -40,20 +40,20 @@ Click [here](https://github.com/huaweicloud/Sermant/releases) to download the re
   java -jar server/sermant/sermant-backend-x.x.x.jar
   ```
   
-- Execute the following command to launch the sample provider application that mounts the register plugin.
+- Execute the following command to launch the sample provider application that mounts the register plugin.(Download [source code of demo](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register/resttemplate-provider))
   ```bash
   # windows
-  java -javaagent:agent\sermant-agent.jar=appName=provider -jar ..\sermant-example\demo-register\resttemplate-provider\target\resttemplate-provider.jar
+  java -javaagent:agent\sermant-agent.jar=appName=provider -jar resttemplate-provider.jar
   # mac linux
-  java -javaagent:agent/sermant-agent.jar=appName=provider -jar ../sermant-example/demo-register/resttemplate-provider/target/resttemplate-provider.jar
+  java -javaagent:agent/sermant-agent.jar=appName=provider -jar resttemplate-provider.jar
   ```
   
-- Execute the following command to launch the sample consumer application that mounts the register plugin.
+- Execute the following command to launch the sample consumer application that mounts the register plugin.(Download [source code of demo](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register/resttemplate-consumer))
   ```bash
   # windows
-  java -javaagent:agent\sermant-agent.jar=appName=consumer -jar ..\sermant-example\demo-register\resttemplate-consumer\target\resttemplate-consumer.jar
+  java -javaagent:agent\sermant-agent.jar=appName=consumer -jar resttemplate-consumer.jar
   # mac linux
-  java -javaagent:agent/sermant-agent.jar=appName=consumer -jar ../sermant-example/demo-register/resttemplate-consumer/target/resttemplate-consumer.jar
+  java -javaagent:agent/sermant-agent.jar=appName=consumer -jar resttemplate-consumer.jar
   ```
   
 - Open a browser to access: http://localhost:8900 to check the running state of Sermant and the enabled plugin.

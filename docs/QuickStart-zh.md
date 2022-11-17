@@ -21,13 +21,15 @@
 
 ## 源码编译
 - 编译机器需具备[git](https://git-scm.com/downloads) , [jdk 8或11](https://www.oracle.com/java/technologies/downloads/) , [maven](https://maven.apache.org/download.cgi) 环境
-- 执行`git clone -b develop https://github.com/huaweicloud/Sermant.git` 克隆最新源码
-- 执行`cd Sermant`进入源码目录
-- 执行`mvn clean package -Dmaven.test.skip -Pexample` 编译示例项目
+- 执行`git clone -b main https://github.com/huaweicloud/Sermant-examples.git` 克隆最新源码
+- 执行`cd sermant-template`进入源码目录
+- 执行`mvn clean package` 编译示例项目, 将在`sermant-template`目录下生成`agent`文件夹，包含sermant示例组件
 
 # 启动
 - 运行环境需要具备[ServiceCenter](https://github.com/apache/servicecomb-service-center/releases) ,[zookeeper](https://zookeeper.apache.org/releases.html) 分别作为注册中心和配置中心。
+
 - 进入编译后可执行文件根目录(例如:**sermant-agent-1.0.0**)
+
 - 执行以下命令启动backend，详细的后端模块介绍以及更多的配置修改，请参考[backend模块](user-guide/backend-zh.md)
   ```bash
   # windows
@@ -36,24 +38,30 @@
   # mac, linux
   java -jar server/sermant/sermant-backend-x.x.x.jar
   ```
-- 执行以下命令启动注册插件provider示例应用
+  
+- 执行以下命令启动注册插件provider示例应用(请自行下载[示例应用源码](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register/resttemplate-provider))
+  
   ```bash
   # windows
-  java -javaagent:agent\sermant-agent.jar=appName=provider -jar ..\sermant-example\demo-register\resttemplate-provider\target\resttemplate-provider.jar
+  java -javaagent:agent\sermant-agent.jar=appName=provider -jar resttemplate-provider.jar
   # mac linux
-  java -javaagent:agent/sermant-agent.jar=appName=provider -jar ../sermant-example/demo-register/resttemplate-provider/target/resttemplate-provider.jar
+  java -javaagent:agent/sermant-agent.jar=appName=provider -jar resttemplate-provider.jar
   ```
-- 执行以下命令启动注册插件consumer示例应用
+  
+- 执行以下命令启动注册插件consumer示例应用(请自行下载[示例应用源码](https://github.com/huaweicloud/Sermant-examples/tree/main/sermant-template/demo-register/resttemplate-consumer))
   ```bash
   # windows
-  java -javaagent:agent\sermant-agent.jar=appName=consumer -jar ..\sermant-example\demo-register\resttemplate-consumer\target\resttemplate-consumer.jar
+  java -javaagent:agent\sermant-agent.jar=appName=consumer -jar resttemplate-consumer.jar
   # mac linux
-  java -javaagent:agent/sermant-agent.jar=appName=consumer -jar ../sermant-example/demo-register/resttemplate-consumer/target/resttemplate-consumer.jar
+  java -javaagent:agent/sermant-agent.jar=appName=consumer -jar resttemplate-consumer.jar
   ```
+  
 - 浏览器访问：[http://localhost:8900](http://localhost:8900) 查看框架和启用插件的运行状态。
-![pic](binary-docs/backend_sermant_info.png)
+  ![pic](binary-docs/backend_sermant_info.png)
+
 - 浏览器访问：[http://localhost:30103](http://localhost:30103) 查看应用注册状态。
-![pic](binary-docs/register-application.PNG)
+  ![pic](binary-docs/register-application.PNG)
+
 - 浏览器访问：[http://localhost:8005/hello](http://localhost:8005/hello) 验证provider和consumer注册和订阅成功。
 
   <img src="binary-docs/check_application.png" width="50%" syt height="50%" />

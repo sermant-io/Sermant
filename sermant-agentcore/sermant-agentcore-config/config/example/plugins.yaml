@@ -1,4 +1,0 @@
-# 执行-P example参数打包时使用，仅含示例工程
-plugins:
-  - example
-  - service-registry

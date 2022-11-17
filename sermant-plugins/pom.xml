@@ -56,27 +56,6 @@
             </build>
         </profile>
         <profile>
-            <id>example</id>
-            <modules>
-                <module>sermant-service-registry</module>
-            </modules>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-shade-plugin</artifactId>
-                            <configuration>
-                                <outputFile>
-                                    ${package.output.dir}/${project.artifactId}-${project.version}.jar
-                                </outputFile>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-        <profile>
             <id>test</id>
             <modules>
                 <module>sermant-flowcontrol</module>

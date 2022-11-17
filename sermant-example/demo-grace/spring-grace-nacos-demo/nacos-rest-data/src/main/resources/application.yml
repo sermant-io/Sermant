@@ -1,9 +1,0 @@
-server:
-  port: 8008
-spring:
-  application:
-    name: nacos-rest-data
-  cloud:
-    nacos:
-      discovery:
-        server-addr: localhost:8852
