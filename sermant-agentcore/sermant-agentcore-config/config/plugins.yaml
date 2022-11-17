@@ -2,8 +2,6 @@
 plugins:
   - flowcontrol
   - service-router
-  - server-monitor
-  - threadlocal
   - service-registry
   - loadbalancer
   - dynamic-config

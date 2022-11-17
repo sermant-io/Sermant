@@ -2,15 +2,12 @@
 plugins:
   - flowcontrol
   - service-router
-  - server-monitor
-  - threadlocal
   - service-registry
   - loadbalancer
   - dynamic-config
   - monitor
   - springboot-registry
   - mq-consume-deny
-  - example
 adaptors:
   - lubanops
 profiles:

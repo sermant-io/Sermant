@@ -91,8 +91,6 @@ How to write a plugin can be found in the [Plugin Code Development Guide](dev-gu
 |[Introduction to Service Registration](user-guide/registry/document.md)|User Guide|
 |[Introduction to Tag Router](user-guide/router/document.md)|User Guide|
 |[Introduction to Graceful online/offline](user-guide/graceful/document.md)|User Guide|
-|[Introduction to Server Monitor](user-guide/server-monitor/document.md)|User Guide|
-|[Introduction to Plugin for Threadlocal](user-guide/threadlocal/document.md)|User Guide|
 |[Summary List of Current Plugin Features](user-guide/feature-list.md)|User Guide|
 |[FAQ](./FAQ.md)|User Guide|
 

@@ -91,7 +91,5 @@ k8s环境下，Sermant支持通过sermant-injector组件实现宿主应用自动
 |[服务注册功能介绍](user-guide/registry/document-zh.md)|使用手册|
 |[优雅上下线功能介绍](user-guide/graceful/document-zh.md)|使用手册|
 |[标签路由功能介绍](user-guide/router/document-zh.md)|使用手册|
-|[服务监控功能介绍](user-guide/server-monitor/document-zh.md)|使用手册|
-|[线程变量插件功能介绍](user-guide/threadlocal/document-zh.md)|使用手册|
 |[当前插件功能汇总列表](user-guide/feature-list-zh.md)|使用手册|
 |[常见问题说明指导](./FAQ-zh.md)|使用手册|
