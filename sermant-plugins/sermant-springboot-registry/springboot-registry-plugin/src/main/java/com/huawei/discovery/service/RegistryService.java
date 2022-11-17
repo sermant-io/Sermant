@@ -33,4 +33,9 @@ public interface RegistryService extends PluginService {
      * @param serviceInstance 实例信息
      */
     void registry(ServiceInstance serviceInstance);
+
+    /**
+     * 关闭服务发现, 从注册中心下线
+     */
+    void shutdown();
 }
