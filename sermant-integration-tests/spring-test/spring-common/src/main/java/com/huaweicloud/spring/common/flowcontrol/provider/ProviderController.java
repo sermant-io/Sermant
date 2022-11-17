@@ -191,4 +191,14 @@ public class ProviderController {
     public String testCloudRegistry() {
         return String.valueOf(port);
     }
+
+    /**
+     * 测试优雅上下线
+     *
+     * @return ok
+     */
+    @RequestMapping(value = "testGraceful", method = RequestMethod.GET)
+    public String testGraceful() {
+        return String.valueOf(port);
+    }
 }
