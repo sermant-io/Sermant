@@ -1,3 +1,2 @@
 com.huaweicloud.sermant.core.plugin.agent.collector.DefaultPluginCollector
-com.huaweicloud.sermant.core.plugin.agent.collector.DeprecatedPluginCollector
 com.huaweicloud.sermant.core.plugin.agent.collector.AdaptorCollectorManager$AdaptorPluginCollector

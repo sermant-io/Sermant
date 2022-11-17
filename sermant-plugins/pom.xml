@@ -80,9 +80,7 @@
             <id>test</id>
             <modules>
                 <module>sermant-flowcontrol</module>
-                <module>sermant-server-monitor</module>
                 <module>sermant-router</module>
-                <module>sermant-threadlocal</module>
                 <module>sermant-service-registry</module>
                 <module>sermant-luban-adaptor</module>
                 <module>sermant-loadbalancer</module>
