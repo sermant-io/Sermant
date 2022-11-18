@@ -81,10 +81,12 @@ public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
             return context;
         }
         final URL url = rawUrl.get();
+        if (!PlugEffectWhiteBlackUtils.isHostEqualRealmName(url.getHost())) {
+            return context;
+        }
         final String fullUrl = url.toString();
         Map<String, String> urlInfo = RequestInterceptorUtils.recoverUrl(url);
-        if (!PlugEffectWhiteBlackUtils.isAllowRun(url.getHost(), urlInfo.get(HttpConstants.HTTP_URI_HOST),
-            false)) {
+        if (!PlugEffectWhiteBlackUtils.isPlugEffect(urlInfo.get(HttpConstants.HTTP_URI_HOST))) {
             return context;
         }
         HttpConnectionUtils.save(new HttpConnectionContext(urlInfo, url));

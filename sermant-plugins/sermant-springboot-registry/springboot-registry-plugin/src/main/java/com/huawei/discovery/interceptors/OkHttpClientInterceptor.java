@@ -66,9 +66,11 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
         }
         Request request = rawRequest.get();
         URI uri = request.uri();
+        if (!PlugEffectWhiteBlackUtils.isHostEqualRealmName(uri.getHost())) {
+            return context;
+        }
         Map<String, String> hostAndPath = RequestInterceptorUtils.recoverHostAndPath(uri.getPath());
-        if (!PlugEffectWhiteBlackUtils.isAllowRun(uri.getHost(), hostAndPath.get(HttpConstants.HTTP_URI_HOST),
-            true)) {
+        if (!PlugEffectWhiteBlackUtils.isPlugEffect(hostAndPath.get(HttpConstants.HTTP_URI_HOST))) {
             return context;
         }
         RequestInterceptorUtils.printRequestLog("OkHttp", hostAndPath);

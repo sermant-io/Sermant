@@ -135,14 +135,10 @@ public class PlugEffectWhiteBlackUtils {
      *
      * @param realmStr 拦截获取的域名
      * @param serviceName 下游服务名
-     * @param isByEqual 是否基于等于比较
      * @return 是否允许执行
      */
-    public static boolean isAllowRun(String realmStr, String serviceName, boolean isByEqual) {
-        if (isByEqual && !PlugEffectWhiteBlackUtils.isHostEqualRealmName(realmStr)) {
-            return false;
-        }
-        if (!isByEqual && !PlugEffectWhiteBlackUtils.isUrlContainsRealmName(realmStr)) {
+    public static boolean isAllowRun(String realmStr, String serviceName) {
+        if (!PlugEffectWhiteBlackUtils.isHostEqualRealmName(realmStr)) {
             return false;
         }
         return PlugEffectWhiteBlackUtils.isPlugEffect(serviceName);

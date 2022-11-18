@@ -48,8 +48,7 @@ public class FeignInvokeInterceptor extends MarkInterceptor {
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
         Request request = (Request) context.getArguments()[0];
         Map<String, String> urlInfo = RequestInterceptorUtils.recoverUrl(request.url());
-        if (!PlugEffectWhiteBlackUtils.isAllowRun(request.url(), urlInfo.get(HttpConstants.HTTP_URI_HOST),
-            false)) {
+        if (!PlugEffectWhiteBlackUtils.isAllowRun(request.url(), urlInfo.get(HttpConstants.HTTP_URI_HOST))) {
             return context;
         }
         RequestInterceptorUtils.printRequestLog("feign", urlInfo);

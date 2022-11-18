@@ -55,6 +55,17 @@ public class RequestInterceptorUtils {
 
     private static final int URL_INFO_INIT_SIZE = 8;
 
+    /**
+     * 解析url时，分隔的最小长度, 其path必须为/serviceName/api/xxx, 否则将不是目标请求 {@link RequestInterceptorUtils#recoverUrl(URL)}
+     */
+    private static final int MIN_LEN_FOR_VALID_PATH = 2;
+
+    /**
+     * 解析url时，分隔的最小长度, 其url必须为http:/www.domain.com/serviceName/api/xxx, 否则将不是目标请求
+     * {@link RequestInterceptorUtils#recoverUrl(String)}
+     */
+    private static final int MIN_LEN_FOR_VALID_URL = 4;
+
     private RequestInterceptorUtils() {
     }
 
@@ -75,14 +86,17 @@ public class RequestInterceptorUtils {
         if (url == null) {
             return Collections.emptyMap();
         }
-        final Map<String, String> result = new HashMap<>(URL_INFO_INIT_SIZE);
         final String protocol = url.getProtocol();
 
         // /serviceName/sayHello?name=1, 已切分为serviceName, sayHello?name=1
-        final StringTokenizer tokenizer = new StringTokenizer(url.getPath());
+        String delim = String.valueOf(HttpConstants.HTTP_URL_SINGLE_SLASH);
+        final StringTokenizer tokenizer = new StringTokenizer(url.getPath(), delim);
+        if (tokenizer.countTokens() < MIN_LEN_FOR_VALID_PATH) {
+            return Collections.emptyMap();
+        }
+        final Map<String, String> result = new HashMap<>(URL_INFO_INIT_SIZE);
         result.put(HttpConstants.HTTP_URL_SCHEME, protocol);
-        result.put(HttpConstants.HTTP_URI_HOST,
-                tokenizer.nextToken(String.valueOf(HttpConstants.HTTP_URL_SINGLE_SLASH)));
+        result.put(HttpConstants.HTTP_URI_HOST, tokenizer.nextToken(delim));
         result.put(HttpConstants.HTTP_URI_PATH,
                 formatPath(tokenizer.nextToken(HttpConstants.EMPTY_STR), url.getQuery()));
         return result;
@@ -98,8 +112,11 @@ public class RequestInterceptorUtils {
         if (StringUtils.isEmpty(url) || !isValidUrl(url)) {
             return Collections.emptyMap();
         }
-        final StringTokenizer urlTokens = new StringTokenizer(url);
         String baseSlash = String.valueOf(HttpConstants.HTTP_URL_SINGLE_SLASH);
+        final StringTokenizer urlTokens = new StringTokenizer(url, baseSlash);
+        if (urlTokens.countTokens() < MIN_LEN_FOR_VALID_URL) {
+            return Collections.emptyMap();
+        }
 
         // http(s):.subString(0, len - 1)
         final String rawScheme = urlTokens.nextToken(baseSlash);
