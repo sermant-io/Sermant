@@ -64,6 +64,18 @@
                 <module>spring-common-resttemplate</module>
             </modules>
         </profile>
+        <profile>
+            <id>zuul</id>
+            <modules>
+                <module>spring-common-zuul</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>gateway</id>
+            <modules>
+                <module>spring-common-gateway</module>
+            </modules>
+        </profile>
     </profiles>
 
     <dependencies>

@@ -11,19 +11,19 @@ NAMESPACE="default"
 IS_BETA=0
 
 checkIsBeta() {
-	if [ $(kubectl api-versions | grep -x "certificates.k8s.io/v1" | wc -l) == 0 ];then
-		IS_BETA=1
-	fi
+  if [ $(kubectl api-versions | grep -x "certificates.k8s.io/v1" | wc -l) == 0 ];then
+    IS_BETA=1
+  fi
 }
 
 checkNsAndCsr() {
-	if [ $(kubectl get ns | grep -w ${NAMESPACE} | wc -l) == 0 ];then
-		kubectl create ns ${NAMESPACE}
-	fi
+  if [ $(kubectl get ns | grep -w ${NAMESPACE} | wc -l) == 0 ];then
+    kubectl create ns ${NAMESPACE}
+  fi
 
-	if [ $(kubectl get csr -o name | grep -x "certificatesigningrequest.certificates.k8s.io/${APP}.${NAMESPACE}.svc" | wc -l) != 0 ];then
-		kubectl delete csr ${APP}.${NAMESPACE}.svc
-	fi
+  if [ $(kubectl get csr -o name | grep -x "certificatesigningrequest.certificates.k8s.io/${APP}.${NAMESPACE}.svc" | wc -l) != 0 ];then
+    kubectl delete csr ${APP}.${NAMESPACE}.svc
+  fi
 }
 
 generateCsr() {
@@ -58,8 +58,8 @@ extendedKeyUsage=serverAuth,clientAuth
 subjectAltName=@alt_names
 EOF
 
-	openssl genrsa -out ${APP}.key 2048
-	openssl req -new -key ${APP}.key -out ${APP}.csr -config ${APP}.conf
+  openssl genrsa -out ${APP}.key 2048
+  openssl req -new -key ${APP}.key -out ${APP}.csr -config ${APP}.conf
 }
 
 createAndApproveCsr() {
@@ -78,7 +78,7 @@ spec:
   - server auth
 EOF
 
-	kubectl certificate approve ${APP}.${NAMESPACE}.svc
+  kubectl certificate approve ${APP}.${NAMESPACE}.svc
 }
 
 createAndApproveCsrForBeta() {
@@ -96,7 +96,7 @@ spec:
   - server auth
 EOF
 
-	kubectl certificate approve ${APP}.${NAMESPACE}.svc
+  kubectl certificate approve ${APP}.${NAMESPACE}.svc
 }
 
 createSecret() {
@@ -113,18 +113,18 @@ EOF
 }
 
 clearResource() {
-	rm -f ${APP}.conf
-	rm -f ${APP}.key
-	rm -f ${APP}.csr
+  rm -f ${APP}.conf
+  rm -f ${APP}.key
+  rm -f ${APP}.csr
 }
 
 checkIsBeta
 checkNsAndCsr
 generateCsr
 if [ $IS_BETA == 0 ];then
-	createAndApproveCsr
+  createAndApproveCsr
 else
-	createAndApproveCsrForBeta
+  createAndApproveCsrForBeta
 fi
 createSecret
 clearResource

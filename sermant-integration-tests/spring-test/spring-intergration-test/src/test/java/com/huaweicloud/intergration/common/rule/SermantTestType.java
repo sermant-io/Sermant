@@ -63,6 +63,16 @@ public enum SermantTestType {
     ROUTER,
 
     /**
+     * 标签路由配置
+     */
+    TAG_ROUTER_CONFIG,
+
+    /**
+     * 标签路由测试
+     */
+    TAG_ROUTER,
+
+    /**
      * 优雅上下线测试
      */
     GRACEFUL,

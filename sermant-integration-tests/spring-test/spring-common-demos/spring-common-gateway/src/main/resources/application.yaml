@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: spring-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: rest
+          uri: lb://rest-consumer
+          predicates:
+            - Path=/rest/**
+        - id: feign
+          uri: lb://feign-consumer
+          predicates:
+            - Path=/feign/**
+      discovery:
+        locator:
+          enable: true
+          lowerCaseServiceIdd: true
+      default-filters:
+        - StripPrefix=1
+
+server:
+  port: 8001

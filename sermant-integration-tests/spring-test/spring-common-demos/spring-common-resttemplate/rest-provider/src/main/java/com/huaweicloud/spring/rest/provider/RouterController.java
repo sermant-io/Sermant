@@ -37,6 +37,9 @@ public class RouterController {
     @Value("${service_meta_parameters:${SERVICE_META_PARAMETERS:${service.meta.parameters:}}}")
     private String parameters;
 
+    @Value("${service_meta_version:${SERVICE_META_VERSION:${service.meta.version:1.0.0}}}")
+    private String version;
+
     /**
      * 获取区域
      *
@@ -48,6 +51,7 @@ public class RouterController {
         if (exit) {
             System.exit(0);
         }
-        return "I'm " + name + ", my zone is " + zone + ", my parameters is [" + parameters + "].";
+        return "I'm " + name + ", my version is " + version + ", my zone is " + zone + ", my parameters is ["
+            + parameters + "].";
     }
 }
