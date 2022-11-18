@@ -50,9 +50,11 @@ public class RestTemplateInterceptor extends MarkInterceptor {
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
         URI uri = (URI) context.getArguments()[0];
         HttpMethod httpMethod = (HttpMethod) context.getArguments()[1];
+        if (!PlugEffectWhiteBlackUtils.isHostEqualRealmName(uri.getHost())) {
+            return context;
+        }
         Map<String, String> hostAndPath = RequestInterceptorUtils.recoverHostAndPath(uri.getPath());
-        if (!PlugEffectWhiteBlackUtils.isAllowRun(uri.getHost(), hostAndPath.get(HttpConstants.HTTP_URI_HOST),
-            true)) {
+        if (!PlugEffectWhiteBlackUtils.isPlugEffect(hostAndPath.get(HttpConstants.HTTP_URI_HOST))) {
             return context;
         }
         RequestInterceptorUtils.printRequestLog("restTemplate", hostAndPath);

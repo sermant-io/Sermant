@@ -67,12 +67,15 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
         HttpHost httpHost = (HttpHost) context.getArguments()[0];
         final HttpRequest httpRequest = (HttpRequest) context.getArguments()[1];
+        if (!PlugEffectWhiteBlackUtils.isHostEqualRealmName(httpHost.getHostName())) {
+            return context;
+        }
         final Map<String, String> hostAndPath = RequestInterceptorUtils.recoverUrl(httpRequest.getRequestLine()
                 .getUri());
         if (hostAndPath.isEmpty()) {
             return context;
         }
-        if (!isConfigEnable(hostAndPath, httpHost.getHostName())) {
+        if (!PlugEffectWhiteBlackUtils.isPlugEffect(hostAndPath.get(HttpConstants.HTTP_URI_HOST))) {
             return context;
         }
         RequestInterceptorUtils.printRequestLog("HttpClient", hostAndPath);
@@ -152,10 +155,6 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
                 Thread.currentThread().setContextClassLoader(pluginClassloader);
             }
         };
-    }
-
-    private boolean isConfigEnable(Map<String, String> hostAndPath, String hostName) {
-        return PlugEffectWhiteBlackUtils.isAllowRun(hostName, hostAndPath.get(HttpConstants.HTTP_URI_HOST), true);
     }
 
     @Override

@@ -80,7 +80,11 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         ready();
-        acquireHostPath(context);
+        HttpAsyncRequestProducer httpAsyncRequestProducer = (HttpAsyncRequestProducer) context.getArguments()[0];
+        if (!PlugEffectWhiteBlackUtils.isHostEqualRealmName(httpAsyncRequestProducer.getTarget().getHostName())) {
+            return context;
+        }
+        acquireHostPath(httpAsyncRequestProducer);
         if (!isConfigEnable()) {
             // 配置不允许则直接返回
             return context;
@@ -99,6 +103,7 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
         if (!isConfigEnable()) {
+            HttpAsyncUtils.remove();
             return context;
         }
         final ClassLoader appClassloader = Thread.currentThread().getContextClassLoader();
@@ -134,12 +139,10 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
         if (originHostName == null || hostAndPath == null) {
             return false;
         }
-        return PlugEffectWhiteBlackUtils
-                .isAllowRun(originHostName, hostAndPath.get(HttpConstants.HTTP_URI_HOST), true);
+        return PlugEffectWhiteBlackUtils.isAllowRun(originHostName, hostAndPath.get(HttpConstants.HTTP_URI_HOST));
     }
 
-    private void acquireHostPath(ExecuteContext context) throws Exception {
-        HttpAsyncRequestProducer httpAsyncRequestProducer = (HttpAsyncRequestProducer) context.getArguments()[0];
+    private void acquireHostPath(HttpAsyncRequestProducer httpAsyncRequestProducer) throws Exception {
         final HttpHost httpHost = httpAsyncRequestProducer.getTarget();
         final HttpRequest httpRequest = httpAsyncRequestProducer.generateRequest();
         final Optional<URI> optionalUri = RequestInterceptorUtils.formatUri(httpRequest.getRequestLine().getUri());
