@@ -29,6 +29,7 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.agent.builder.ResettableClassFileTransformer;
 import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.description.type.TypeList.Generic;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.utility.JavaModule;
 
@@ -125,31 +126,7 @@ public class BufferedAgentBuilder {
         return addAction(new BuilderAction() {
             @Override
             public AgentBuilder process(AgentBuilder builder) {
-                return builder.ignore(new AgentBuilder.RawMatcher() {
-                    private final Set<String> ignoredPrefixes = config.getIgnoredPrefixes();
-
-                    @Override
-                    public boolean matches(TypeDescription typeDesc, ClassLoader classLoader, JavaModule module,
-                            Class<?> classBeingRedefined, ProtectionDomain protectionDomain) {
-                        if (typeDesc.isArray() || typeDesc.isPrimitive()
-                            || classLoader instanceof FrameworkClassLoader) {
-                            return true;
-                        }
-                        final String typeName = typeDesc.getTypeName();
-                        if (classLoader instanceof PluginClassLoader) {
-                            return !config.getServiceInjectList().contains(typeName);
-                        }
-                        if (ignoredPrefixes.isEmpty()) {
-                            return false;
-                        }
-                        for (String ignoredPrefix : ignoredPrefixes) {
-                            if (typeName.startsWith(ignoredPrefix)) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                });
+                return builder.ignore(new IgnoredMatcher(config));
             }
         });
     }
@@ -271,6 +248,75 @@ public class BufferedAgentBuilder {
         }
         builder.disableClassFormatChanges();
         return builder.installOn(instrumentation);
+    }
+
+    /**
+     * 忽略匹配器
+     *
+     * @author provenceee
+     * @since 2022-11-17
+     */
+    private static class IgnoredMatcher implements AgentBuilder.RawMatcher {
+        private final Set<String> ignoredPrefixes;
+
+        private final Set<String> serviceInjectList;
+
+        private final Set<String> ignoredInterfaces;
+
+        IgnoredMatcher(AgentConfig config) {
+            ignoredPrefixes = config.getIgnoredPrefixes();
+            serviceInjectList = config.getServiceInjectList();
+            ignoredInterfaces = config.getIgnoredInterfaces();
+        }
+
+        @Override
+        public boolean matches(TypeDescription typeDesc, ClassLoader classLoader, JavaModule javaModule,
+            Class<?> classBeingRedefined, ProtectionDomain protectionDomain) {
+            return isArrayOrPrimitive(typeDesc) || checkClassLoader(typeDesc, classLoader)
+                || isIgnoredPrefixes(typeDesc) || isIgnoredInterfaces(typeDesc);
+        }
+
+        private boolean isArrayOrPrimitive(TypeDescription typeDesc) {
+            return typeDesc.isArray() || typeDesc.isPrimitive();
+        }
+
+        private boolean checkClassLoader(TypeDescription typeDesc, ClassLoader classLoader) {
+            if (classLoader instanceof FrameworkClassLoader) {
+                return true;
+            }
+            if (classLoader instanceof PluginClassLoader) {
+                return !serviceInjectList.contains(typeDesc.getTypeName());
+            }
+            return false;
+        }
+
+        private boolean isIgnoredPrefixes(TypeDescription typeDesc) {
+            if (ignoredPrefixes.isEmpty()) {
+                return false;
+            }
+            for (String ignoredPrefix : ignoredPrefixes) {
+                if (typeDesc.getTypeName().startsWith(ignoredPrefix)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private boolean isIgnoredInterfaces(TypeDescription typeDesc) {
+            if (ignoredInterfaces == null || ignoredInterfaces.isEmpty()) {
+                return false;
+            }
+            Generic interfaces = typeDesc.getInterfaces();
+            if (interfaces == null || interfaces.isEmpty()) {
+                return false;
+            }
+            for (TypeDescription.Generic interfaceClass : interfaces) {
+                if (ignoredInterfaces.contains(interfaceClass.getTypeName())) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     /**
