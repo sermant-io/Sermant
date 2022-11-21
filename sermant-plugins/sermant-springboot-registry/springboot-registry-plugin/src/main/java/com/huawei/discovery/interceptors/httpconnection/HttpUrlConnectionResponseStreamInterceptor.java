@@ -90,7 +90,7 @@ public class HttpUrlConnectionResponseStreamInterceptor implements Interceptor {
         Optional<Object> result = invokerService.invoke(
             invokerContextObjectFunction,
             ex -> ex,
-            urlInfo.get(HttpConstants.HTTP_URI_HOST));
+            urlInfo.get(HttpConstants.HTTP_URI_SERVICE));
         if (result.isPresent()) {
             Object obj = result.get();
             if (obj instanceof Exception) {
@@ -117,9 +117,13 @@ public class HttpUrlConnectionResponseStreamInterceptor implements Interceptor {
         if (ex instanceof SocketTimeoutException) {
             // 此处仅SocketTimeoutException: Read timed out进行重试
             final String message = ex.getMessage();
-            return "Read timed out".equalsIgnoreCase(message) && this.lbConfig.isEnableSocketReadTimeoutRetry();
+            return "Read timed out".equalsIgnoreCase(message) && isEnableRetry();
         }
         return false;
+    }
+
+    private boolean isEnableRetry() {
+        return this.lbConfig.isEnableSocketReadTimeoutRetry() && this.lbConfig.getMaxRetry() > 0;
     }
 
     private void resetStats(ExecuteContext context) {

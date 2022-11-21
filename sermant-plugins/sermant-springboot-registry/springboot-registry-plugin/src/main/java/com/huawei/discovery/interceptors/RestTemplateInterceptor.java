@@ -54,14 +54,14 @@ public class RestTemplateInterceptor extends MarkInterceptor {
             return context;
         }
         Map<String, String> hostAndPath = RequestInterceptorUtils.recoverHostAndPath(uri.getPath());
-        if (!PlugEffectWhiteBlackUtils.isPlugEffect(hostAndPath.get(HttpConstants.HTTP_URI_HOST))) {
+        if (!PlugEffectWhiteBlackUtils.isPlugEffect(hostAndPath.get(HttpConstants.HTTP_URI_SERVICE))) {
             return context;
         }
         RequestInterceptorUtils.printRequestLog("restTemplate", hostAndPath);
         Optional<Object> result = invokerService.invoke(
             buildInvokerFunc(uri, hostAndPath, context, httpMethod),
             ex -> ex,
-            hostAndPath.get(HttpConstants.HTTP_URI_HOST));
+            hostAndPath.get(HttpConstants.HTTP_URI_SERVICE));
         if (result.isPresent()) {
             Object obj = result.get();
             if (obj instanceof Exception) {

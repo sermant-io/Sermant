@@ -86,7 +86,7 @@ public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
         }
         final String fullUrl = url.toString();
         Map<String, String> urlInfo = RequestInterceptorUtils.recoverUrl(url);
-        if (!PlugEffectWhiteBlackUtils.isPlugEffect(urlInfo.get(HttpConstants.HTTP_URI_HOST))) {
+        if (!PlugEffectWhiteBlackUtils.isPlugEffect(urlInfo.get(HttpConstants.HTTP_URI_SERVICE))) {
             return context;
         }
         HttpConnectionUtils.save(new HttpConnectionContext(urlInfo, url));
@@ -94,7 +94,7 @@ public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
         invokerService.invoke(
             buildInvokerFunc(context, url, urlInfo),
             ex -> ex,
-            urlInfo.get(HttpConstants.HTTP_URI_HOST))
+            urlInfo.get(HttpConstants.HTTP_URI_SERVICE))
                 .ifPresent(obj -> {
                     if (obj instanceof Exception) {
                         LOGGER.log(Level.SEVERE, "request is error, uri is " + fullUrl, (Exception) obj);
