@@ -1,5 +1,8 @@
 name: Unit test and code coverage
 on: [push, pull_request]
+concurrency:
+  group: Unit test and code coverage-${{ github.head_ref }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest

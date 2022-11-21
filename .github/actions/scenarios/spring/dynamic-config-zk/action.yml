@@ -1,0 +1,74 @@
+name: "Dynamic config test for zookeeper config center"
+description: "Auto test for zookeeper config center which achieved in sermant-dynamic-config"
+runs:
+  using: "composite"
+  steps:
+    - name: package spring zk config
+      shell: bash
+      run: |
+        sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml
+        mvn package -Dspring.cloud.version=${{ matrix.springCloudVersion }} -Dspring.boot.version=${{ matrix.springBootVersion }} -DskipTests -P dynamic-config-zk --file sermant-integration-tests/spring-test/pom.xml
+    - name: create log dir
+      shell: bash
+      run: |
+        log_dir=./logs/dynamic-config-zk
+        mkdir -p ${log_dir}
+        echo "logDir=${log_dir}" >> $GITHUB_ENV
+    - name: start service with disable origin config center
+      shell: bash
+      env:
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.plugin.enableOriginConfigCenter: false
+        dynamic.config.plugin.enableDynamicConfig: true
+        server.port: 8989
+        service.meta.application: disable
+        service.meta.environment: development
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default \
+        -Dspring.cloud.bootstrap.enabled=true -jar \
+        sermant-integration-tests/spring-test/spring-zookeeper-config/target/zookeeper-config.jar > ${{ env.logDir }}/zk-disable.log \
+        2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8989/dynamic/config/check 120
+    - name: integration test
+      shell: bash
+      run: mvn test -Dsermant.integration.test.type=dynamic_config_zk --file sermant-integration-tests/spring-test/pom.xml
+    - name: start service with enable origin config center
+      shell: bash
+      env:
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.plugin.enableOriginConfigCenter: true
+        dynamic.config.plugin.enableDynamicConfig: true
+        server.port: 8989
+        service.meta.application: dynamic
+        service.meta.environment: development
+      run: |
+        jps -l | grep -E "zookeeper-config" | awk '{print $1}' | xargs -n 1 kill -9
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default \
+        -Dspring.cloud.bootstrap.enabled=true -jar \
+        sermant-integration-tests/spring-test/spring-zookeeper-config/target/zookeeper-config.jar > ${{ env.logDir }}/zk-enable.log 2>&1 &
+    - name: wait for ready and test
+      shell: bash
+      run: |
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8989/dynamic/config/check 120
+        mvn test -Dsermant.integration.test.type=dynamic_config_zk --file sermant-integration-tests/spring-test/pom.xml
+    - name: reset
+      shell: bash
+      run: |
+        jps -l | grep -E "zookeeper-config" | awk '{print $1}' | xargs -n 1 kill -9
+        echo "logDir=" >> $GITHUB_ENV
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: failure() || cancelled()
+      with:
+        name: (${{ github.job }})-dynamic-config-nacos-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion}})-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

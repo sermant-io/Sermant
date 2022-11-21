@@ -1,0 +1,207 @@
+name: "Spring Router Test"
+description: "Auto test for spring route for plugin sermant-router"
+runs:
+  using: "composite"
+  steps:
+    - name: 1.5.x config
+      if: matrix.springBootVersion == '1.5.0.RELEASE' && matrix.springCloudVersion == 'Edgware.SR2'
+      shell: bash
+      run: |
+        echo "tailVersion=-1.5.x" >> $GITHUB_ENV
+        echo "healthApi=health" >> $GITHUB_ENV
+    - name: 2.x config
+      if: matrix.springBootVersion != '1.5.0.RELEASE'
+      shell: bash
+      run: |
+        echo "healthApi=actuator/health" >> $GITHUB_ENV
+    - name: package common demos
+      shell: bash
+      run: |
+        sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml
+        mvn package -Dspring.cloud.version=${{ matrix.springCloudVersion }} -Dhttp.client.version=${{ matrix.httpClientVersion }} -Dspring.boot.version=${{ matrix.springBootVersion }} -DskipTests -P common-test${{ env.tailVersion }} --file sermant-integration-tests/spring-test/pom.xml
+    - name: package zuul demo
+      shell: bash
+      if: matrix.springCloudVersion == 'Edgware.SR2' || matrix.springCloudVersion == 'Finchley.RELEASE' || matrix.springCloudVersion == 'Greenwich.RELEASE' || matrix.springCloudVersion == 'Hoxton.RELEASE'
+      run: |
+        sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml
+        mvn package -Dspring.cloud.version=${{ matrix.springCloudVersion }} -Dhttp.client.version=${{ matrix.httpClientVersion }} -Dspring.boot.version=${{ matrix.springBootVersion }} -DskipTests -P zuul --file sermant-integration-tests/spring-test/spring-common-demos/pom.xml
+    - name: package gateway demo
+      shell: bash
+      if: matrix.springCloudVersion != 'Edgware.SR2'
+      run: |
+        sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml
+        mvn package -Dspring.cloud.version=${{ matrix.springCloudVersion }} -Dhttp.client.version=${{ matrix.httpClientVersion }} -Dspring.boot.version=${{ matrix.springBootVersion }} -DskipTests -P gateway --file sermant-integration-tests/spring-test/spring-common-demos/pom.xml
+    - name: post config
+      shell: bash
+      run: bash ./sermant-integration-tests/scripts/createStrategy.sh all
+    - name: post config to local-cse
+      shell: bash
+      run: mvn test -Dsermant.integration.test.type=TAG_ROUTER_CONFIG --file sermant-integration-tests/spring-test/pom.xml
+    - name: create log dir
+      shell: bash
+      run: |
+        log_dir=./logs/tag-router
+        mkdir -p ${log_dir}
+        echo "logDir=${log_dir}" >> $GITHUB_ENV
+    - name: start cse feign provider service
+      shell: bash
+      env:
+        sermant.springboot.registry.enableRegistry: true
+        SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
+        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
+        ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVICE_META_VERSION: 1.0.0
+        SERVER_PORT: 8007
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-provider${{ env.tailVersion }}/target/feign-provider${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-provider.log 2>&1 &
+    - name: start cse second feign provider service
+      shell: bash
+      env:
+        sermant.springboot.registry.enableRegistry: true
+        SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
+        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
+        ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVICE_META_PARAMETERS: group:gray
+        SERVICE_META_VERSION: 1.0.1
+        SERVER_PORT: 8006
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-provider${{ env.tailVersion }}/target/feign-provider${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-provider2.log 2>&1 &
+    - name: start cse feign consumer service
+      shell: bash
+      env:
+        sermant.springboot.registry.enableRegistry: true
+        SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
+        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
+        ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVER_PORT: 8005
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-consumer${{ env.tailVersion }}/target/feign-consumer${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-consumer.log 2>&1 &
+    - name: start cse resttemplate provider service
+      shell: bash
+      env:
+        sermant.springboot.registry.enableRegistry: true
+        SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
+        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
+        ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVICE_META_VERSION: 1.0.0
+        SERVER_PORT: 8004
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > ${{ env.logDir }}/rest-provider.log 2>&1 &
+    - name: start second resttemplate provider service
+      shell: bash
+      env:
+        sermant.springboot.registry.enableRegistry: true
+        SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
+        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
+        ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVICE_META_PARAMETERS: group:gray
+        SERVICE_META_VERSION: 1.0.1
+        SERVER_PORT: 8003
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > ${{ env.logDir }}/rest-provider2.log 2>&1 &
+    - name: start cse resttemplate consumer service
+      shell: bash
+      env:
+        sermant.springboot.registry.enableRegistry: true
+        SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
+        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
+        ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVER_PORT: 8002
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-consumer/target/rest-consumer.jar > ${{ env.logDir }}/rest-consumer.log 2>&1 &
+    - name: start cse gateway
+      shell: bash
+      if: matrix.springCloudVersion != 'Edgware.SR2'
+      env:
+        sermant.springboot.registry.enableRegistry: true
+        SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
+        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
+        ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVER_PORT: 8001
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-gateway/target/spring-common-gateway.jar > ${{ env.logDir }}/spring-common-gateway.log 2>&1 &
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8001/actuator/health 120
+    - name: start cse zuul
+      shell: bash
+      if: matrix.springCloudVersion == 'Edgware.SR2' || matrix.springCloudVersion == 'Finchley.RELEASE' || matrix.springCloudVersion == 'Greenwich.RELEASE' || matrix.springCloudVersion == 'Hoxton.RELEASE'
+      env:
+        sermant.springboot.registry.enableRegistry: true
+        SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
+        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
+        ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVER_PORT: 8000
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-zuul/target/spring-common-zuul.jar > ${{ env.logDir }}/spring-common-zuul.log 2>&1 &
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8000/${{ env.healthApi }} 120
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8002/${{ env.healthApi }} 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8003/${{ env.healthApi }} 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8004/${{ env.healthApi }} 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8005/${{ env.healthApi }} 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8006/${{ env.healthApi }} 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8007/${{ env.healthApi }} 120
+    - name: integration test module TAG_ROUTER
+      shell: bash
+      env:
+        SPRING_CLOUD_VERSION: ${{ matrix.springCloudVersion }}
+      run: mvn test -Dsermant.integration.test.type=TAG_ROUTER --file sermant-integration-tests/spring-test/pom.xml
+    - name: reset
+      shell: bash
+      run: |
+        echo "tailVersion=" >> $GITHUB_ENV
+        echo "healthApi=" >> $GITHUB_ENV
+        echo "logDir=" >> $GITHUB_ENV
+        jps -l | grep -E "feign|rest|zuul|gateway" | awk '{print $1}' | xargs -n 1 kill -9
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: failure() || cancelled()
+      with:
+        name: (${{ github.job }})-tag-router-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion }})-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

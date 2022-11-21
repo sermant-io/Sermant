@@ -40,6 +40,7 @@ import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
+import org.apache.http.protocol.HttpContext;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,8 +51,6 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import javax.xml.ws.spi.http.HttpContext;
 
 /**
  * 异步httpclient测试
