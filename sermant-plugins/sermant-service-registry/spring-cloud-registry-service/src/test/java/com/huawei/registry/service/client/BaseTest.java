@@ -18,6 +18,7 @@ package com.huawei.registry.service.client;
 
 import com.huawei.registry.config.RegisterConfig;
 
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.config.common.BaseConfig;
 
@@ -48,6 +49,7 @@ public class BaseTest {
 
         configManagerMap = (Map<String, BaseConfig>) configMap.get(null);
         configManagerMap.put("servicecomb.service", new RegisterConfig());
+        configManagerMap.put("register.service", new RegisterServiceCommonConfig());
     }
 
     /**

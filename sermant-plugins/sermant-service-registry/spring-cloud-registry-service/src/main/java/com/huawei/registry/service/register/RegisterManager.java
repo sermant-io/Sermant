@@ -16,7 +16,7 @@
 
 package com.huawei.registry.service.register;
 
-import com.huawei.registry.config.RegisterConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huawei.registry.config.RegisterType;
 import com.huawei.registry.entity.MicroServiceInstance;
 
@@ -69,7 +69,8 @@ public enum RegisterManager {
      * @return Register
      */
     public Register getRegister() {
-        final RegisterConfig pluginConfig = PluginConfigManager.getPluginConfig(RegisterConfig.class);
+        final RegisterServiceCommonConfig pluginConfig =
+            PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
         return registerMap.get(pluginConfig.getRegisterType());
     }
 

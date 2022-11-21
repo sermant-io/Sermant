@@ -45,6 +45,8 @@ servicecomb.service:
   enableSpringRegister: true #开启spring注册插件
 ```
 
+如果迁移目标是NACOS，相关配置参考[配置项说明](./document-zh.md#按需修改插件配置文件)，修改注册中心类型（registerType）为NACOS
+
 ### 启动Service Center
 
 Service Center启动流程详见[官网](https://github.com/apache/servicecomb-service-center)

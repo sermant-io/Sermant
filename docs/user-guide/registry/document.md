@@ -35,6 +35,11 @@ The file path is `${agent_package_path}/agent/pluginPackage/service-registry/con
 The configuration items are described as follows:
 
 ```yaml
+register.service:
+  registerType: SERVICE_COMB # 注册中心类型 支持NACOS/SERVICE_COMB
+```
+
+```yaml
 servicecomb.service:
   address: http://127.0.0.1:30100 # Registration center address. Use commas (,) to separate multiple registration center addresses.
   heartbeatInterval: 15 # Interval at which service instance heartbeats are sent (unit: second)
@@ -43,6 +48,23 @@ servicecomb.service:
   enableDubboRegister: false # Whether to enable the dubbo plug-in registration capability. This capability must be enabled for the dubbo framework and disabled for the spring cloud framework.
   sslEnabled: false # Whether to enable SSL.
 ```
+
+- For using **NACOS** registry，also need setting nacos registration center configurations，currently only support springCloud
+
+```yaml
+nacos.service:
+  address: 127.0.0.1:8848 #Registration center address
+  username: "" # nacos check username
+  password: "" # nacos check password
+  namespace: "" # namespace, nacos setting the id of namespace
+  weight: 1 # service instance weight
+  clusterName: DEFAULT # cluster name
+  ephemeral: true # Whether to enable ephemeral endpoint, true for yes，false for no
+```
+
+Notice: 
+1. group of nacos can setting by core config service.meta.application.
+2. nacos configs current only show normal use type, others see [NACOS config file](../../../sermant-plugins/sermant-service-registry/registry-common/src/main/java/NacosRegisterConfig.java)
 
 - For **newly developed dubbo applications**, you also need to configure the address of the dubbo registration center. This configuration item is generally in the configuration file of the dubbo application, for example, in the dubbo/provider.xml file.
 

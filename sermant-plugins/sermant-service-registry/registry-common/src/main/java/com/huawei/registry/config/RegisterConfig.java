@@ -79,11 +79,6 @@ public class RegisterConfig implements PluginConfig {
     private String version = "1.0.0";
 
     /**
-     * 注册中心类型
-     */
-    private RegisterType registerType = RegisterType.SERVICE_COMB;
-
-    /**
      * 是否开启sc的加密 作为配置类，使用布尔类型不可使用is开头，否则存在配置无法读取的问题
      */
     private boolean sslEnabled = false;
@@ -259,14 +254,6 @@ public class RegisterConfig implements PluginConfig {
 
     public void setSslEnabled(boolean sslEnabled) {
         this.sslEnabled = sslEnabled;
-    }
-
-    public RegisterType getRegisterType() {
-        return registerType;
-    }
-
-    public void setRegisterType(RegisterType registerType) {
-        this.registerType = registerType;
     }
 
     public String getVersion() {

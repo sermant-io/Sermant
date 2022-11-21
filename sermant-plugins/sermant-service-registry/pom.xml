@@ -16,6 +16,7 @@
         <package.plugin.name>service-registry</package.plugin.name>
         <service-center-version>2.7.6</service-center-version>
         <guava.version>31.0.1-jre</guava.version>
+        <nacos.version>2.0.4</nacos.version>
     </properties>
     <profiles>
         <profile>
@@ -77,6 +78,11 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.nacos</groupId>
+                <artifactId>nacos-client</artifactId>
+                <version>${nacos.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
