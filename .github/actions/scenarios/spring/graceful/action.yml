@@ -1,0 +1,86 @@
+name: "Graceful Test"
+description: "Auto test for graceful"
+runs:
+  using: "composite"
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/graceful
+    - name: 1.5.x config
+      if: matrix.springBootVersion == '1.5.0.RELEASE' && matrix.springCloudVersion == 'Edgware.SR2'
+      shell: bash
+      run: |
+        echo "tailVersion=-1.5.x" >> $GITHUB_ENV
+    - name: package common demos
+      shell: bash
+      run: |
+        sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml
+        mvn package -Dspring.cloud.version=${{ matrix.springCloudVersion }} -Dspring.boot.version=${{ matrix.springBootVersion }} -DskipTests -P common-test${{ env.tailVersion }} --file sermant-integration-tests/spring-test/pom.xml
+    - name: start provider that has closed graceful ability
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8014 \
+        -Dsermant_log_dir=${{ env.logDir }}/feign-provider-8014${{ env.tailVersion }} -jar \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-provider${{ env.tailVersion }}/target/feign-provider${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-provider-8014.log 2>&1 &
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=rest -Dserver.port=8004 -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/rest-provider${{ env.tailVersion }} \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > ${{ env.logDir }}/rest-provider-8004.log 2>&1 &
+    - name: start applications that has opened graceful ability
+      shell: bash
+      env:
+        grace.rule.enableSpring: true
+        grace.rule.enableWarmUp: true
+        grace.rule.enableGraceShutdown: true
+        grace.rule.enableOfflineNotify: true
+        grace.rule.warmUpTime: 600
+      run: |
+        cp sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-provider${{ env.tailVersion }}/target/feign-provider${{ env.tailVersion }}.jar graceful-feign-provider${{ env.tailVersion }}.jar
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8013 -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/feign-provider${{ env.tailVersion }} -Dgrace.rule.httpServerPort=16777 \
+        graceful-feign-provider${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-provider.log 2>&1 &
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8015 -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/feign-consumer${{ env.tailVersion }} -Dgrace.rule.httpServerPort=16778 \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-consumer${{ env.tailVersion }}/target/feign-consumer${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-consumer.log 2>&1 &
+
+        cp sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar graceful-rest-provider.jar
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=rest -Dserver.port=8003 -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/rest-provider${{ env.tailVersion }} -Dgrace.rule.httpServerPort=16779 \
+        graceful-rest-provider.jar > ${{ env.logDir }}/rest-provider.log 2>&1 &
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=rest -Dserver.port=8005 -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/rest-consumer${{ env.tailVersion }} -Dgrace.rule.httpServerPort=16780 \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-consumer/target/rest-consumer.jar > ${{ env.logDir }}/rest-consumer.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8015/graceful/testGraceful 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8005/graceful/testGraceful 60
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8004/testGraceful 60
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8014/testGraceful 60
+    - name: test graceful up
+      shell: bash
+      run: mvn test -Dsermant.integration.test.type=GRACEFUL -Dgraceful.test.type=up --file sermant-integration-tests/spring-test/pom.xml
+    - name: test graceful down
+      shell: bash
+      run: |
+        jps -l | grep graceful-feign-provider | awk '{print $1}' | xargs -n 1 kill
+        jps -l | grep graceful-rest-provider | awk '{print $1}' | xargs -n 1 kill
+        echo "========start test graceful======="
+        jps -l
+        mvn test -Dsermant.integration.test.type=GRACEFUL -Dgraceful.test.type=down --file sermant-integration-tests/spring-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: feign|rest
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-graceful-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion }})-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

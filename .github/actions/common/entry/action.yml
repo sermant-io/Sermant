@@ -1,0 +1,20 @@
+name: "Entrance operations"
+description: "do something entrance operations for all test"
+inputs:
+  log-dir:
+    description: 'Log path for cur workflow'
+    required: true
+    default: './logs/default'
+runs:
+  using: "composite"
+  steps:
+    - name: create log dir
+      shell: bash
+      run: |
+        log_dir=${{ inputs.log-dir }}
+        mkdir -p ${log_dir}
+        echo "logDir=${log_dir}" >> $GITHUB_ENV
+        echo "=======check log dir======"
+        ls -l ${log_dir}
+
+

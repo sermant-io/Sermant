@@ -1,0 +1,26 @@
+name: "Exit operations"
+description: "do something exit operations for all test"
+inputs:
+  processor-keyword:
+    description: 'The keyword associate to processor that you want to kill, if you have one more key word, you can
+    separate with |,such as rest|feign'
+    required: false
+    default: ''
+runs:
+  using: "composite"
+  steps:
+    - name: reset
+      shell: bash
+      run: |
+        echo "tailVersion=" >> $GITHUB_ENV
+        echo "healthApi=" >> $GITHUB_ENV
+        echo "logDir=" >> $GITHUB_ENV
+        keyword='${{ inputs.processor-keyword }}'
+        if [ $keyword != '' ];then
+          jps -l | grep -E "${keyword}" | awk '{print $1}' | xargs -n 1 kill -9
+          echo "========check process========"
+          jps -l
+        fi
+
+
+

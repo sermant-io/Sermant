@@ -1,0 +1,135 @@
+name: "Plugin change check"
+description: "check file change for all plugins"
+runs:
+  using: "composite"
+  steps:
+    - uses: marceloprado/has-changed-path@v1
+      id: changed-sermant-agentcore
+      with:
+        paths: sermant-agentcore
+    - name: env sermant-agentcore
+      shell: bash
+      run: |
+        echo "sermantAgentCoreChanged=${{ steps.changed-sermant-agentcore.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1
+      id: changed-sermant-router
+      with:
+        paths: sermant-plugins/sermant-router
+    - name: env sermant-router
+      shell: bash
+      run: |
+        echo "sermantRouterChanged=${{ steps.changed-sermant-router.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1
+      id: changed-sermant-flowcontrol
+      with:
+        paths: sermant-plugins/sermant-flowcontrol
+    - name: env sermant-flowcontrol
+      shell: bash
+      run: |
+        echo "sermantFlowcontrolChanged=${{ steps.changed-sermant-flowcontrol.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1
+      id: changed-sermant-dynamic-config
+      with:
+        paths: sermant-plugins/sermant-dynamic-config
+    - name: env sermant-sermant-dynamic-config
+      shell: bash
+      run: |
+        echo "sermantDynamicConfigChanged=${{ steps.changed-sermant-dynamic-config.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1
+      id: changed-sermant-loadbalancer
+      with:
+        paths: sermant-plugins/sermant-loadbalancer
+    - name: env sermant-sermant-loadbalancer
+      shell: bash
+      run: |
+        echo "sermantLoadbalancerChanged=${{ steps.changed-sermant-loadbalancer.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1
+      id: changed-sermant-monitor
+      with:
+        paths: sermant-plugins/sermant-monitor
+    - name: env sermant-sermant-monitor
+      shell: bash
+      run: |
+        echo "sermantMonitorChanged=${{ steps.changed-sermant-monitor.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1
+      id: changed-sermant-service-registry
+      with:
+        paths: sermant-plugins/sermant-service-registry
+    - name: env sermant-sermant-service-registry
+      shell: bash
+      run: |
+        echo "sermantServiceRegistryChanged=${{ steps.changed-sermant-service-registry.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1
+      id: changed-sermant-springboot-registry
+      with:
+        paths: sermant-plugins/sermant-springboot-registry
+    - name: env sermant-sermant-springboot-registry
+      shell: bash
+      run: |
+        echo "sermantSpringbootRegistryChanged=${{ steps.changed-sermant-springboot-registry.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1
+      id: changed-sermant-mq-consumer-deny
+      with:
+        paths: sermant-plugins/sermant-mq-consumer-deny
+    - name: env sermant-sermant-mq-consumer-deny
+      shell: bash
+      run: |
+        echo "sermantMqConsumerDenyChanged=${{ steps.changed-sermant-mq-consumer-deny.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1
+      id: changed-workflow-or-test
+      with:
+        paths: ./.github/actions ./.github/workflows sermant-integration-tests
+    - name: statistic scenarios change env
+      shell: bash
+      run: |
+        # *****************dubbo_integration_test.yml*****************
+        # ==========dubbo router is needed to test?==========
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantRouterChanged }} == 'true' ];then
+          echo "enableDubboRouter=true" >> $GITHUB_ENV
+        fi
+        # ==========dubbo common is needed to test?==========
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o \
+            ${{ env.sermantFlowcontrolChanged }} == 'true' -o \
+            ${{ env.sermantSpringbootRegistryChanged }} == 'true' -o \
+            ${{ env.sermantServiceRegistryChanged }} == 'true' -o \
+            ${{ env.sermantRouterChanged }} == 'true' ];then
+          echo "enableDubboCommon=true" >> $GITHUB_ENV
+        fi
+        # *****************spring_integration_test_1.yml*****************
+        # ==========graceful is needed to test?==========
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
+          echo "enableGraceful=true" >> $GITHUB_ENV
+        fi
+        # ==========spring common is needed to test?==========
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o \
+            ${{ env.sermantFlowcontrolChanged }} == 'true' -o \
+            ${{ env.sermantSpringbootRegistryChanged }} == 'true' -o \
+            ${{ env.sermantServiceRegistryChanged }} == 'true' -o \
+            ${{ env.sermantRouterChanged }} == 'true' ];then
+          echo "enableSpringCommon=true" >> $GITHUB_ENV
+        fi
+        # ==========dynamic config is needed to test?==========
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantDynamicConfigChanged }} == 'true' ];then
+          echo "enableDynamicConfig=true" >> $GITHUB_ENV
+        fi
+
+        # *****************spring_integration_test_2.yml*****************
+        # ==========spring router is needed to test?==========
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantRouterChanged }} == 'true' -o \
+            ${{ env.sermantSpringbootRegistryChanged }} == 'true' ];then
+          echo "enableSpringRouter=true" >> $GITHUB_ENV
+        fi
+        # ==========spring tag router is needed to test?==========
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantRouterChanged }} == 'true' ];then
+          echo "enableSpringTagRouter=true" >> $GITHUB_ENV
+        fi
+        # all workflow will trigger while workflow changed
+        if [ ${{ steps.changed-workflow-or-test.outputs.changed }} == 'true' ];then
+          echo "enableDubboRouter=true" >> $GITHUB_ENV
+          echo "enableDubboCommon=true" >> $GITHUB_ENV
+          echo "enableSpringRouter=true" >> $GITHUB_ENV
+          echo "enableSpringTagRouter=true" >> $GITHUB_ENV
+          echo "enableDynamicConfig=true" >> $GITHUB_ENV
+          echo "enableGraceful=true" >> $GITHUB_ENV
+        fi
+
