@@ -33,7 +33,12 @@ public class HttpConstants {
     public static final String HTTP_GET = "GET";
 
     /**
-     * 主机名
+     * 从url解析的服务名
+     */
+    public static final String HTTP_URI_SERVICE = "serviceName";
+
+    /**
+     * 域名
      */
     public static final String HTTP_URI_HOST = "host";
 

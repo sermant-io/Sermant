@@ -75,14 +75,14 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
         if (hostAndPath.isEmpty()) {
             return context;
         }
-        if (!PlugEffectWhiteBlackUtils.isPlugEffect(hostAndPath.get(HttpConstants.HTTP_URI_HOST))) {
+        if (!PlugEffectWhiteBlackUtils.isPlugEffect(hostAndPath.get(HttpConstants.HTTP_URI_SERVICE))) {
             return context;
         }
         RequestInterceptorUtils.printRequestLog("HttpClient", hostAndPath);
         invokerService.invoke(
                 buildInvokerFunc(hostAndPath, httpRequest, context),
                 buildExFunc(httpRequest, Thread.currentThread().getContextClassLoader()),
-                hostAndPath.get(HttpConstants.HTTP_URI_HOST))
+                hostAndPath.get(HttpConstants.HTTP_URI_SERVICE))
                 .ifPresent(result -> this.setResultOrThrow(context, result,
                         hostAndPath.get(HttpConstants.HTTP_URI_PATH)));
         return context;

@@ -68,7 +68,7 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
             return context;
         }
         Map<String, String> hostAndPath = RequestInterceptorUtils.recoverHostAndPath(uri.getPath());
-        if (!PlugEffectWhiteBlackUtils.isPlugEffect(hostAndPath.get(HttpConstants.HTTP_URI_HOST))) {
+        if (!PlugEffectWhiteBlackUtils.isPlugEffect(hostAndPath.get(HttpConstants.HTTP_URI_SERVICE))) {
             return context;
         }
         RequestInterceptorUtils.printRequestLog("OkHttp3", hostAndPath);
@@ -77,7 +77,7 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
         invokerService.invoke(
                 buildInvokerFunc(uri, hostAndPath, request, rebuildRequest, context),
                 buildExFunc(rebuildRequest),
-                hostAndPath.get(HttpConstants.HTTP_URI_HOST))
+                hostAndPath.get(HttpConstants.HTTP_URI_SERVICE))
                 .ifPresent(o -> setResultOrThrow(context, o, uri.getPath()));
         return context;
     }

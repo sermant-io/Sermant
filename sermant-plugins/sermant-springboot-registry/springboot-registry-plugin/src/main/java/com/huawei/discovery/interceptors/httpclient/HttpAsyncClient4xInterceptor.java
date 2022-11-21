@@ -117,7 +117,7 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
             if (hostAndPath == null) {
                 return context;
             }
-            final String serviceName = hostAndPath.get(HttpConstants.HTTP_URI_HOST);
+            final String serviceName = hostAndPath.get(HttpConstants.HTTP_URI_SERVICE);
             cleanCallback();
             final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
             final HttpAsyncContext asyncContext = HttpAsyncUtils.getOrCreateContext();
@@ -139,7 +139,7 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
         if (originHostName == null || hostAndPath == null) {
             return false;
         }
-        return PlugEffectWhiteBlackUtils.isAllowRun(originHostName, hostAndPath.get(HttpConstants.HTTP_URI_HOST));
+        return PlugEffectWhiteBlackUtils.isAllowRun(originHostName, hostAndPath.get(HttpConstants.HTTP_URI_SERVICE));
     }
 
     private void acquireHostPath(HttpAsyncRequestProducer httpAsyncRequestProducer) throws Exception {

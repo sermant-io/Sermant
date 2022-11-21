@@ -96,7 +96,7 @@ public class RequestInterceptorUtils {
         }
         final Map<String, String> result = new HashMap<>(URL_INFO_INIT_SIZE);
         result.put(HttpConstants.HTTP_URL_SCHEME, protocol);
-        result.put(HttpConstants.HTTP_URI_HOST, tokenizer.nextToken(delim));
+        result.put(HttpConstants.HTTP_URI_SERVICE, tokenizer.nextToken(delim));
         result.put(HttpConstants.HTTP_URI_PATH,
                 formatPath(tokenizer.nextToken(HttpConstants.EMPTY_STR), url.getQuery()));
         return result;
@@ -123,11 +123,11 @@ public class RequestInterceptorUtils {
         String scheme = rawScheme.substring(0, rawScheme.length() - 1);
 
         // domain 域名
-        urlTokens.nextToken(baseSlash);
+        Map<String, String> result = new HashMap<>(URL_INFO_INIT_SIZE);
+        result.put(HttpConstants.HTTP_URI_HOST, urlTokens.nextToken(baseSlash));
         final String serviceName = urlTokens.nextToken(baseSlash);
         final String path = urlTokens.nextToken(HttpConstants.EMPTY_STR);
-        Map<String, String> result = new HashMap<>(URL_INFO_INIT_SIZE);
-        result.put(HttpConstants.HTTP_URI_HOST, serviceName);
+        result.put(HttpConstants.HTTP_URI_SERVICE, serviceName);
         result.put(HttpConstants.HTTP_URL_SCHEME, scheme);
         result.put(HttpConstants.HTTP_URI_PATH, path);
         return result;
@@ -175,7 +175,7 @@ public class RequestInterceptorUtils {
         if (!RECORDER.isEnable()) {
             return;
         }
-        String path = String.format(Locale.ENGLISH, "/%s%s", hostAndPath.get(HttpConstants.HTTP_URI_HOST),
+        String path = String.format(Locale.ENGLISH, "/%s%s", hostAndPath.get(HttpConstants.HTTP_URI_SERVICE),
             hostAndPath.get(HttpConstants.HTTP_URI_PATH));
         LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "[%s] request [%s] has been intercepted!", source, path));
         RECORDER.beforeRequest();
@@ -284,7 +284,7 @@ public class RequestInterceptorUtils {
         if (tempPath.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH) <= 0) {
             return result;
         }
-        result.put(HttpConstants.HTTP_URI_HOST,
+        result.put(HttpConstants.HTTP_URI_SERVICE,
             tempPath.substring(0, tempPath.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH)));
         result.put(HttpConstants.HTTP_URI_PATH,
             tempPath.substring(tempPath.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH)));
