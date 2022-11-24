@@ -9,6 +9,7 @@ on:
       - develop
     paths:
       - 'sermant-agentcore/**'
+      - 'sermant-integration-tests/**'
       - 'sermant-plugins/sermant-dynamic-config/**'
       - 'sermant-plugins/sermant-flowcontrol/**'
       - 'sermant-plugins/sermant-loadbalancer/**'

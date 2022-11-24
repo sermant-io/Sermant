@@ -20,6 +20,7 @@ package com.huawei.fowcontrol.res4j.service;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.HttpRequestEntity;
+import com.huawei.fowcontrol.res4j.chain.context.ChainContext;
 
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
@@ -74,5 +75,6 @@ public class DubboRest4jServiceImplTest {
     public void clear() {
         pluginConfigManagerMockedStatic.close();
         operationManagerMockedStatic.close();
+        ChainContext.remove();
     }
 }

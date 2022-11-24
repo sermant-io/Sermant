@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChainContext {
     private static final ThreadLocal<Map<String, RequestContext>> THREAD_LOCAL_CONTEXT_MAP = new ThreadLocal<>();
 
-    private static final int MAX_SIZE = 4;
+    private static final int MAX_SIZE = 8;
 
     private ChainContext() {
     }

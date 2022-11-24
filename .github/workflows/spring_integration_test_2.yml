@@ -10,6 +10,7 @@ on:
       - develop
     paths:
       - 'sermant-agentcore/**'
+      - 'sermant-integration-tests/**'
       - 'sermant-plugins/sermant-router/**'
       - 'sermant-plugins/sermant-springboot-registry/**'
       - '.github/workflows/spring_integration*.yaml'

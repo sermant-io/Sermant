@@ -23,6 +23,7 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.HttpRequestEntity.Builder;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
+import com.huawei.fowcontrol.res4j.chain.context.ChainContext;
 
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
@@ -85,6 +86,7 @@ public class HandlerChainEntryTest {
     public void close() {
         pluginConfigManagerMockedStatic.close();
         operationManagerMockedStatic.close();
+        ChainContext.remove();
     }
 
     /**
