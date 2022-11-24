@@ -1,0 +1,73 @@
+name: "Dynamic config test for nacos config center"
+description: "Auto test for nacos config center which achieved in sermant-dynamic-config"
+runs:
+  using: "composite"
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/dynamic-config-nacos
+    - name: package spring nacos config
+      shell: bash
+      run: |
+        sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml
+        mvn package -Dspring.cloud.version=${{ matrix.springCloudVersion }} -Dspring.boot.version=${{ matrix.springBootVersion }} -Dnacos.version=${{ matrix.nacosVersion }} -DskipTests -P dynamic-config-nacos --file sermant-integration-tests/spring-test/pom.xml
+    - name: start service with disable origin config center
+      shell: bash
+      env:
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.plugin.enableOriginConfigCenter: false
+        dynamic.config.plugin.enableDynamicConfig: true
+        server.port: 8989
+        service.meta.application: disable
+        service.meta.environment: development
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default \
+        -Dspring.cloud.bootstrap.enabled=true \
+        -jar sermant-integration-tests/spring-test/spring-nacos-config/target/nacos-config.jar >> \
+        ${{ env.logDir }}/nacos-config-disable.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8989/dynamic/config/check 120
+    - name: integration test
+      shell: bash
+      run: mvn test -Dsermant.integration.test.type=dynamic_config_nacos --file sermant-integration-tests/spring-test/pom.xml
+    - name: start service with enable origin config center
+      shell: bash
+      env:
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.plugin.enableOriginConfigCenter: true
+        dynamic.config.plugin.enableDynamicConfig: true
+        server.port: 8989
+        service.meta.application: dynamic
+        service.meta.environment: development
+      run: |
+        jps -l | grep -E "nacos-config" | awk '{print $1}' | xargs -n 1 kill -9
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default \
+        -Dspring.cloud.bootstrap.enabled=true \
+        -jar sermant-integration-tests/spring-test/spring-nacos-config/target/nacos-config.jar >> \
+        ${{ env.logDir }}/nacos-dynamic-config-enable.log 2>&1 &
+    - name: wait for ready and test
+      shell: bash
+      run: |
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8989/dynamic/config/check 120
+        mvn test -Dsermant.integration.test.type=dynamic_config_nacos --file sermant-integration-tests/spring-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: nacos-config
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-dynamic-config-nacos-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion}})-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

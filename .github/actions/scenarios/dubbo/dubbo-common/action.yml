@@ -1,0 +1,118 @@
+name: "Dubbo Common Test"
+description: "Auto test for dubbo common"
+runs:
+  using: "composite"
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/dubbo-common
+    - name: package dubbo 2.6.0 tests
+      shell: bash
+      if: matrix.dubbo-version == '2-6' && matrix.dubbo-versions == '0'
+      run: mvn package -Dalibaba.dubbo.version=2.6.${{ matrix.dubbo-versions }} -DskipTests -P260 --file sermant-integration-tests/dubbo-test/pom.xml
+    - name: package dubbo 2.6.x tests
+      shell: bash
+      if: matrix.dubbo-version == '2-6' && matrix.dubbo-versions != '0'
+      run: mvn package -Dalibaba.dubbo.version=2.6.${{ matrix.dubbo-versions }} -DskipTests --file sermant-integration-tests/dubbo-test/pom.xml
+    - name: package dubbo 2.7.x tests
+      shell: bash
+      if: matrix.dubbo-version == '2-7'
+      run: mvn package -Ddubbo.version=2.7.${{ matrix.dubbo-versions }} -DskipTests --file sermant-integration-tests/dubbo-test/pom.xml
+    - name: start spring and dubbo provider service
+      shell: bash
+      env:
+        servicecomb.service.enableDubboRegister: true
+        servicecomb.service.enableSpringRegister: true
+        servicecomb.service.openMigration: false
+        SERVICE_META_ENVIRONMENT: testing
+        SERVER_PORT: 28024
+        DUBBO_PROTOCOL_PORT: 28824
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar \
+        sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > ${{ env.logDir }}/spring-and-dubbo-provider.log 2>&1 &
+    - name: start second spring and dubbo provider service
+      shell: bash
+      env:
+        servicecomb.service.enableDubboRegister: true
+        servicecomb.service.enableSpringRegister: true
+        servicecomb.service.openMigration: false
+        SERVICE_META_ENVIRONMENT: testing
+        SERVER_PORT: 28023
+        DUBBO_PROTOCOL_PORT: 28823
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar \
+        sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > ${{ env.logDir }}/spring-and-dubbo-provider2.log 2>&1 &
+    - name: start provider service
+      shell: bash
+      env:
+        servicecomb.service.enableDubboRegister: true
+        servicecomb.service.openMigration: false
+        SERVER_PORT: 28022
+        DUBBO_PROTOCOL_PORT: 28822
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar \
+        sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > ${{ env.logDir }}/dubbo-provider.log 2>&1 &
+    - name: start zookeeper provider service
+      shell: bash
+      # dubbo2.7.1和2.7.3在流水环境下，注册到zk时，偶尔启动慢，导致集成测试用例失败，所以跳过
+      if: matrix.dubbo-version == '2-6' || (matrix.dubbo-versions != '1' && matrix.dubbo-versions != '3')
+      env:
+        SERVER_PORT: 28021
+        DUBBO_PROTOCOL_PORT: 28821
+      run: |
+        nohup java -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > ${{ env.logDir }}/dubbo-zk-provider.log 2>&1 &
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:28021/actuator/health 120
+    - name: waiting for providers start
+      shell: bash
+      run: |
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:28022/actuator/health 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:28023/actuator/health 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:28024/actuator/health 120
+    - name: start spring and dubbo consumer service
+      shell: bash
+      env:
+        servicecomb.service.enableDubboRegister: true
+        servicecomb.service.enableSpringRegister: true
+        servicecomb.service.openMigration: false
+        SERVICE_META_ENVIRONMENT: testing
+        SERVER_PORT: 18020
+        DUBBO_PROTOCOL_PORT: 18820
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar \
+        sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar > ${{ env.logDir }}/spring-and-dubbo-consumer.log 2>&1 &
+    - name: start consumer service
+      shell: bash
+      env:
+        servicecomb.service.enableDubboRegister: true
+        servicecomb.service.openMigration: true
+        SERVER_PORT: 28020
+        DUBBO_PROTOCOL_PORT: 28820
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar \
+        sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar > ${{ env.logDir }}/dubbo-consumer.log 2>&1 &
+    - name: waiting for consumers start
+      shell: bash
+      run: |
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:28020/actuator/health 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:18020/actuator/health 120
+    - name: integration test
+      shell: bash
+      env:
+        TEST_TYPE: common
+      run: mvn -Dcontroller.port=18020 -Ddubbo.running.version=${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }} test --file sermant-integration-tests/dubbo-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: dubbo
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (test-for-dubbo)-(${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }})-logs
+        path: |
+          ./*.log
+          ./logs/**/*.log
+        if-no-files-found: warn
+        retention-days: 2

@@ -1,0 +1,86 @@
+name: "Spring Common Test"
+description: "Auto test for spring common, include flowcontrol, loadbalancer, boot-registry, cloud-registry"
+runs:
+  using: "composite"
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/spring-common
+    - name: 1.5.x config
+      if: matrix.springBootVersion == '1.5.0.RELEASE' && matrix.springCloudVersion == 'Edgware.SR2'
+      shell: bash
+      run: |
+        echo "tailVersion=-1.5.x" >> $GITHUB_ENV
+    - name: package common demos
+      shell: bash
+      run: |
+        sed -i 's|<version>${{ env.projectSpringBootVersion }}</version>|<version>${{ matrix.springBootVersion }}</version>|g' sermant-integration-tests/spring-test/pom.xml
+        mvn package -Dspring.cloud.version=${{ matrix.springCloudVersion }} -Dspring.boot.version=${{ matrix.springBootVersion }} -DskipTests -P common-test${{ env.tailVersion }} --file sermant-integration-tests/spring-test/pom.xml
+    - name: start applications
+      shell: bash
+      env:
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        dynamic.config.dynamicConfigType: KIE
+        service.meta.environment: development
+        sermant.springboot.registry.enableRegistry: true
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8013 -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/feign-provider${{ env.tailVersion }} -Dconfig.retry.sleepMs=20 \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-provider${{ env.tailVersion }}/target/feign-provider${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-provider.log 2>&1 &
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8014 \
+        -Dsermant_log_dir=${{ env.logDir }}/feign-provider-8014${{ env.tailVersion }} -Dservicecomb.service.enableSpringRegister=true -jar \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-provider${{ env.tailVersion }}/target/feign-provider${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-provider-8014.log 2>&1 &
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8015 -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/feign-consumer${{ env.tailVersion }} -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-consumer${{ env.tailVersion }}/target/feign-consumer${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-consumer.log 2>&1 &
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=rest -Dserver.port=8003 -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/rest-provider${{ env.tailVersion }} \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > ${{ env.logDir }}/rest-provider.log 2>&1 &
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=rest -Dserver.port=8004 -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/rest-provider${{ env.tailVersion }} -Dservicecomb.service.enableSpringRegister=true -Dconfig.retry.sleepMs=20 \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > ${{ env.logDir }}/rest-provider-8004.log 2>&1 &
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=rest -Dserver.port=8005 -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/rest-consumer${{ env.tailVersion }} -Dconfig.retry.sleepMs=20 -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-consumer/target/rest-consumer.jar > ${{ env.logDir }}/rest-consumer.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8015/flowcontrol/rateLimiting 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8005/flowcontrol/rateLimiting 60
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8005/lb/ping 60
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8004/rateLimiting 60
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8014/rateLimiting 60
+    - name: integration test module FLOW_CONTROL
+      shell: bash
+      run: mvn test -Dsermant.integration.test.type=FLOW_CONTROL --file sermant-integration-tests/spring-test/pom.xml
+    - name: integration test module LOAD_BALANCER
+      shell: bash
+      run: mvn test -Dsermant.integration.test.type=LOAD_BALANCER -Dspring.boot.version=${{ matrix.springBootVersion }} --file sermant-integration-tests/spring-test/pom.xml
+    - name: integration test module BOOT_REGISTRY
+      shell: bash
+      if: matrix.springBootVersion == '1.5.0.RELEASE' && matrix.springCloudVersion == 'Edgware.SR2'
+      run: mvn test -Dsermant.integration.test.type=BOOT_REGISTRY -Dapp.version=1.5.x -Dspring.boot.version=${{ matrix.springBootVersion }} --file sermant-integration-tests/spring-test/pom.xml
+    - name: integration test module BOOT_REGISTRY
+      shell: bash
+      if: matrix.springBootVersion != '1.5.0.RELEASE' && matrix.springCloudVersion != 'Edgware.SR2'
+      run: mvn test -Dsermant.integration.test.type=BOOT_REGISTRY -Dspring.boot.version=${{ matrix.springBootVersion }} -Dhttp.client.version=${{ matrix.httpClientVersion }} --file sermant-integration-tests/spring-test/pom.xml
+    - name: integration test module CLOUD_REGISTRY
+      shell: bash
+      run: mvn test -Dsermant.integration.test.type=CLOUD_REGISTRY --file sermant-integration-tests/spring-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: feign|rest
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-spring-common-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion }})-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2
