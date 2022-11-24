@@ -84,6 +84,8 @@ public class OriginConfigCenterDisableListenerTest {
             pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
                     .thenReturn(configuration);
             final OriginConfigCenterDisableListener originConfigCenterDisableListener = new OriginConfigCenterDisableListener();
+            ReflectUtils.setFieldValue(originConfigCenterDisableListener, "springEventPublisher",
+                    Mockito.mock(SpringEventPublisher.class));
             final BeanFactory beanFactory = Mockito.mock(BeanFactory.class);
             originConfigCenterDisableListener.setBeanFactory(beanFactory);
             originConfigCenterDisableListener.addListener();

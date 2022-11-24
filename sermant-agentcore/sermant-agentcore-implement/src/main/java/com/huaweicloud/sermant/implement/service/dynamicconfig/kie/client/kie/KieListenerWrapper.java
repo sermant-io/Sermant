@@ -63,13 +63,14 @@ public class KieListenerWrapper {
      * @param dynamicConfigListener 监听器
      * @param kvDataHolder 数据持有器
      * @param kieRequest 请求
+     * @param ifNotify 是否需要初始化通知
      */
     public KieListenerWrapper(String key, DynamicConfigListener dynamicConfigListener,
-            KvDataHolder kvDataHolder, KieRequest kieRequest) {
+            KvDataHolder kvDataHolder, KieRequest kieRequest, boolean ifNotify) {
         this.group = kieRequest.getLabelCondition();
         this.kvDataHolder = kvDataHolder;
         this.kieRequest = kieRequest;
-        addKeyListener(key, dynamicConfigListener);
+        addKeyListener(key, dynamicConfigListener, ifNotify);
     }
 
     /**
@@ -82,34 +83,49 @@ public class KieListenerWrapper {
         currentVersion = eventDataHolder.getVersion();
         if (!eventDataHolder.getAdded().isEmpty()) {
             // 新增事件
-            notify(eventDataHolder.getAdded(), isFirst ? DynamicConfigEventType.INIT : DynamicConfigEventType.CREATE);
+            notifyAdded(eventDataHolder.getAdded(), eventDataHolder.getLatestData(), isFirst);
         }
         if (!eventDataHolder.getDeleted().isEmpty()) {
             // 删除事件
-            notify(eventDataHolder.getDeleted(), DynamicConfigEventType.DELETE);
+            notify(eventDataHolder.getDeleted(), DynamicConfigEventType.DELETE, null);
         }
         if (!eventDataHolder.getModified().isEmpty()) {
             // 修改事件
-            notify(eventDataHolder.getModified(), DynamicConfigEventType.MODIFY);
+            notify(eventDataHolder.getModified(), DynamicConfigEventType.MODIFY, null);
         }
     }
 
-    private void notify(Map<String, String> configData, DynamicConfigEventType dynamicConfigEventType) {
+    private void notifyAdded(Map<String, String> addedData, Map<String, String> latestData, boolean isFirst) {
+        if (!isFirst) {
+            notify(addedData, DynamicConfigEventType.CREATE, null);
+            return;
+        }
+        notify(addedData, DynamicConfigEventType.CREATE, latestData);
+    }
+
+    private void notify(Map<String, String> configData, DynamicConfigEventType dynamicConfigEventType,
+            Map<String, String> latestData) {
         for (Map.Entry<String, String> entry : configData.entrySet()) {
             // 通知单个key监听器
-            notifyEvent(entry.getKey(), entry.getValue(), dynamicConfigEventType, false);
+            notifyEvent(entry.getKey(), entry.getValue(), dynamicConfigEventType, false, latestData);
 
             // 通知该Group的监听器做更新
-            notifyEvent(entry.getKey(), entry.getValue(), dynamicConfigEventType, true);
+            notifyEvent(entry.getKey(), entry.getValue(), dynamicConfigEventType, true, latestData);
         }
     }
 
-    private void notifyEvent(String key, String value, DynamicConfigEventType eventType, boolean isGroup) {
+    private void notifyEvent(String key, String value, DynamicConfigEventType eventType, boolean isGroup,
+            Map<String, String> latestData) {
         final VersionListenerWrapper versionListenerWrapper = keyListenerMap
                 .get(isGroup ? KieConstants.DEFAULT_GROUP_KEY : key);
         if (versionListenerWrapper == null) {
             return;
         }
+        notifyEvent(key, value, eventType, versionListenerWrapper, latestData);
+    }
+
+    private void notifyEvent(String key, String value, DynamicConfigEventType eventType, VersionListenerWrapper wrapper,
+            Map<String, String> latestData) {
         DynamicConfigEvent event;
         switch (eventType) {
             case INIT:
@@ -128,24 +144,49 @@ public class KieListenerWrapper {
                 LOGGER.warning(String.format(Locale.ENGLISH, "Event type [%s] is invalid. ", eventType));
                 return;
         }
-        processAllListeners(event, versionListenerWrapper);
+        processAllListeners(event, wrapper, latestData);
     }
 
-    private void processAllListeners(DynamicConfigEvent event, VersionListenerWrapper versionListenerWrapper) {
-        if (versionListenerWrapper.listeners != null) {
-            for (VersionListener versionListener : versionListenerWrapper.listeners) {
-                try {
-                    if (versionListener.version > currentVersion) {
-                        // 已通知的listener不再通知, 避免针对同一个group的多个不同key进行多次重复通知
-                        return;
-                    }
-                    versionListener.listener.process(event);
-                    versionListener.version = currentVersion;
-                } catch (Exception ex) {
-                    LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH,
-                            "Process config data failed, key: [%s], group: [%s]",
-                            event.getKey(), this.group), ex);
+    private void processAllListeners(DynamicConfigEvent event, VersionListenerWrapper versionListenerWrapper,
+            Map<String, String> latestData) {
+        if (versionListenerWrapper.listeners == null) {
+            return;
+        }
+        for (VersionListener versionListener : versionListenerWrapper.listeners) {
+            try {
+                if (versionListener.version > currentVersion) {
+                    // 已通知的listener不再通知, 避免针对同一个group的多个不同key进行多次重复通知
+                    continue;
                 }
+                if (event.getEventType() == DynamicConfigEventType.INIT) {
+                    processInit(latestData, versionListener, event);
+                } else {
+                    versionListener.listener.process(event);
+                }
+                versionListener.version = currentVersion;
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH,
+                        "Process config data failed, key: [%s], group: [%s]",
+                        event.getKey(), this.group), ex);
+            }
+        }
+    }
+
+    private void processInit(Map<String, String> latestData, VersionListener versionListener,
+            DynamicConfigEvent event) {
+        if (versionListener.isNeedInit && !versionListener.isInitializer && latestData != null) {
+            // 需要初始化, 但是未初始化, 全量数据通知
+            for (Map.Entry<String, String> entry : latestData.entrySet()) {
+                versionListener.listener
+                        .process(DynamicConfigEvent.initEvent(entry.getKey(), event.getGroup(), entry.getValue()));
+            }
+            versionListener.isInitializer = true;
+            versionListener.initVersion = currentVersion;
+        } else {
+            if (versionListener.initVersion != 0 && versionListener.initVersion != currentVersion) {
+                // 其他已经通知过或者不需要通知的采用add事件, 通知前判断其初始化通知的版本是否为当前版本, 若为当前版本则表示已经全量通知过, 无需再次通知
+                versionListener.listener.process(DynamicConfigEvent.createEvent(event.getKey(), event.getGroup(),
+                        event.getContent()));
             }
         }
     }
@@ -155,13 +196,14 @@ public class KieListenerWrapper {
      *
      * @param key 键
      * @param dynamicConfigListener 监听器
+     * @param ifNotify 是否初始化通知
      */
-    public void addKeyListener(String key, DynamicConfigListener dynamicConfigListener) {
+    public void addKeyListener(String key, DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
         VersionListenerWrapper versionListenerWrapper = keyListenerMap.get(key);
         if (versionListenerWrapper == null) {
             versionListenerWrapper = new VersionListenerWrapper();
         }
-        versionListenerWrapper.addListener(dynamicConfigListener);
+        versionListenerWrapper.addListener(dynamicConfigListener, ifNotify);
         keyListenerMap.put(key, versionListenerWrapper);
     }
 
@@ -222,13 +264,13 @@ public class KieListenerWrapper {
             listeners = new HashSet<>();
         }
 
-        void addListener(DynamicConfigListener listener) {
-            listeners.add(new VersionListener(-1L, listener));
+        void addListener(DynamicConfigListener listener, boolean ifNotify) {
+            listeners.add(new VersionListener(-1L, listener, ifNotify));
         }
 
         boolean removeListener(DynamicConfigListener listener) {
             // VersionListener基于listener移除
-            return listeners.remove(new VersionListener(-1L, listener));
+            return listeners.remove(new VersionListener(-1L, listener, false));
         }
     }
 
@@ -245,9 +287,25 @@ public class KieListenerWrapper {
          */
         long version;
 
-        VersionListener(long version, DynamicConfigListener listener) {
+        /**
+         * 是否被INIT事件通知, 该事件仅通知一次
+         */
+        boolean isInitializer = false;
+
+        /**
+         * 是否需要首次通知
+         */
+        boolean isNeedInit;
+
+        /**
+         * 被初始化的版本
+         */
+        long initVersion;
+
+        VersionListener(long version, DynamicConfigListener listener, boolean isNeedInit) {
             this.listener = listener;
             this.version = version;
+            this.isNeedInit = isNeedInit;
         }
 
         @Override

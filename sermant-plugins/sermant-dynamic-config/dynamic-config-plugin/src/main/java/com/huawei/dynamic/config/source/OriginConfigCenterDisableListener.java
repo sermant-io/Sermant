@@ -22,6 +22,7 @@ import com.huawei.dynamic.config.closer.ConfigCenterCloser;
 import com.huawei.dynamic.config.entity.DynamicConstants;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -61,6 +62,9 @@ public class OriginConfigCenterDisableListener implements BeanFactoryAware {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private SpringEventPublisher springEventPublisher;
+
     private BeanFactory beanFactory;
 
     /**
@@ -84,6 +88,10 @@ public class OriginConfigCenterDisableListener implements BeanFactoryAware {
                 }
             }
             tryAddDynamicSourceToFirst(environment);
+
+            // 发布刷新事件补偿, 及时刷新禁用后的数据
+            springEventPublisher.publishRefreshEvent(DynamicConfigEvent.modifyEvent(event.getKey(), event.getGroup(),
+                    event.getContent()));
         });
     }
 
