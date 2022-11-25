@@ -17,16 +17,13 @@
 
 package com.huawei.flowcontrol.config;
 
-import static org.junit.Assert.*;
-
-import com.huawei.flowcontrol.TestHelper;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.init.FlowControlInitServiceImpl;
 
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
-import org.checkerframework.checker.units.qual.A;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,6 +31,7 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -42,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author zhouss
  * @since 2022-08-30
  */
-public class SpringBootInterceptorTest {
+public class SpringApplicationInterceptorTest {
     private final FlowControlConfig flowControlConfig = new FlowControlConfig();
 
     private final AtomicBoolean executed = new AtomicBoolean();
@@ -78,9 +76,22 @@ public class SpringBootInterceptorTest {
      */
     @Test
     public void testStart() throws Exception {
-        final SpringBootInterceptor springBootInterceptor = new SpringBootInterceptor();
-        springBootInterceptor.after(TestHelper.buildDefaultContext());
+        final SpringApplicationInterceptor springApplicationInterceptor = new SpringApplicationInterceptor();
+        springApplicationInterceptor.after(buildContext());
         Assert.assertTrue(executed.get());
     }
 
+    private ExecuteContext buildContext() throws NoSuchMethodException {
+        return ExecuteContext.forMemberMethod(
+            new TestObject(),
+            String.class.getMethod("trim"),
+            new Object[0],
+            Collections.emptyMap(),
+            Collections.emptyMap()
+        );
+    }
+
+    private static class TestObject {
+        private final boolean logStartupInfo = true;
+    }
 }

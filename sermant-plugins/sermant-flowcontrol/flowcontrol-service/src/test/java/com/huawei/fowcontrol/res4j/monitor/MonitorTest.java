@@ -28,7 +28,6 @@ import io.prometheus.client.GaugeMetricFamily;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,8 +41,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * @since 2022-09-15
  */
 public class MonitorTest {
-    private static final String FILED_NAME = "monitors";
-
     private static final long DEFAULT_VALUE = 1000L;
 
     private static final String NAME = "default";
@@ -71,11 +68,13 @@ public class MonitorTest {
         MetricEntity metricEntity = new MetricEntity();
         metricEntity.getFuseRequest().getAndAdd(DEFAULT_VALUE);
         monitors.put(NAME, metricEntity);
-        ReflectUtils.setFieldValue(service, FILED_NAME, monitors);
+        ServiceCollectorService.MONITORS.clear();
+        ServiceCollectorService.MONITORS.putAll(monitors);
         Assert.assertNotNull(metricFamilySamplesList);
+        metricFamilySamplesList = service.collect();
         metricFamilySamplesList.forEach(metricFamilySamples -> metricFamilySamples.samples.forEach(sample -> {
             if (StringUtils.equal(sample.name, MetricType.FUSED_REQUEST.getName())) {
-                Assert.assertEquals(sample.value, DEFAULT_VALUE);
+                Assert.assertEquals(sample.value, DEFAULT_VALUE, 0.0);
             }
         }));
     }

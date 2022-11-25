@@ -16,37 +16,31 @@
 
 package com.huaweicloud.sermant.router.dubbo.declarer;
 
-import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 增强SpringBootApplication类的main方法
+ * 增强SpringApplication类的run方法
  *
  * @author provenceee
  * @since 2022-01-24
  */
-public class SpringBootDeclarer extends AbstractDeclarer {
-    private static final String[] ENHANCE_CLASS = {"org.springframework.boot.autoconfigure.SpringBootApplication"};
+public class SpringApplicationDeclarer extends AbstractDeclarer {
+    private static final String[] ENHANCE_CLASS = {"org.springframework.boot.SpringApplication"};
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.dubbo.interceptor.SpringBootInterceptor";
+        = "com.huaweicloud.sermant.router.dubbo.interceptor.SpringApplicationInterceptor";
 
-    private static final String METHOD_NAME = "main";
+    private static final String METHOD_NAME = "run";
 
     /**
      * 构造方法
      */
-    public SpringBootDeclarer() {
+    public SpringApplicationDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
     }
 
     @Override
-    public ClassMatcher getClassMatcher() {
-        return ClassMatcher.isAnnotatedWith(ENHANCE_CLASS);
-    }
-
-    @Override
     public MethodMatcher getMethodMatcher() {
-        return super.getMethodMatcher().and(MethodMatcher.isStaticMethod());
+        return super.getMethodMatcher().and(MethodMatcher.isMemberMethod());
     }
 }

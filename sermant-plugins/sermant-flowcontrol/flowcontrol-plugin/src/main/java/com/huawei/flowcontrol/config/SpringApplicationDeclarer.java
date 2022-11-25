@@ -23,27 +23,27 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 增强SpringBootApplication类的main方法
+ * 增强SpringApplication类的run方法
  *
  * @author provenceee
  * @since 2022-01-24
  */
-public class SpringBootDeclarer extends AbstractPluginDeclarer {
-    private static final String[] ENHANCE_CLASS = {"org.springframework.boot.autoconfigure.SpringBootApplication"};
+public class SpringApplicationDeclarer extends AbstractPluginDeclarer {
+    private static final String ENHANCE_CLASS = "org.springframework.boot.SpringApplication";
 
-    private static final String INTERCEPT_CLASS = SpringBootInterceptor.class.getCanonicalName();
+    private static final String INTERCEPT_CLASS = SpringApplicationInterceptor.class.getCanonicalName();
 
-    private static final String METHOD_NAME = "main";
+    private static final String METHOD_NAME = "run";
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.isAnnotatedWith(ENHANCE_CLASS);
+        return ClassMatcher.nameEquals(ENHANCE_CLASS);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME).and(MethodMatcher.isStaticMethod()),
+            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME).and(MethodMatcher.isMemberMethod()),
                 INTERCEPT_CLASS)
         };
     }
