@@ -17,12 +17,14 @@
 
 package com.huaweicloud.intergration.config;
 
-import com.alibaba.nacos.api.config.ConfigType;
-import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.client.config.NacosConfigService;
 import com.huaweicloud.intergration.common.utils.RequestUtils;
 import com.huaweicloud.intergration.config.rule.NacosTestRule;
 import com.huaweicloud.intergration.config.supprt.KieClient;
+
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.nacos.api.config.ConfigType;
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.client.config.NacosConfigService;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -129,6 +131,9 @@ public class NacosConfigTest {
             } catch (InterruptedException e) {
                 // ignored
             }
+        }
+        if (!checkFunc.get()) {
+            LOGGER.error("=======配置中心配置内容: [{}]==================", JSONObject.toJSONString(kieClient.query(null)));
         }
         Assert.assertTrue(checkFunc.get());
     }

@@ -23,13 +23,17 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * 结束阶段开始初始化流控配置监听
  *
  * @author zhouss
  * @since 2022-01-28
  */
-public class SpringBootInterceptor extends AbstractInterceptor {
+public class SpringApplicationInterceptor extends AbstractInterceptor {
+    private static final AtomicBoolean INIT = new AtomicBoolean();
+
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         return context;
@@ -37,8 +41,11 @@ public class SpringBootInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        final FlowControlInitServiceImpl service = ServiceManager.getService(FlowControlInitServiceImpl.class);
-        service.doStart();
+        Object logStartupInfo = context.getMemberFieldValue("logStartupInfo");
+        if ((logStartupInfo instanceof Boolean) && (Boolean) logStartupInfo && INIT.compareAndSet(false, true)) {
+            final FlowControlInitServiceImpl service = ServiceManager.getService(FlowControlInitServiceImpl.class);
+            service.doStart();
+        }
         return context;
     }
 }

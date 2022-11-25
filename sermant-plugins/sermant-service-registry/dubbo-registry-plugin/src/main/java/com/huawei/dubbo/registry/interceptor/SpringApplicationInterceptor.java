@@ -14,29 +14,32 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.router.dubbo.interceptor;
+package com.huawei.dubbo.registry.interceptor;
+
+import com.huawei.dubbo.registry.service.RegistryService;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.router.common.constants.RouterConstant;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
-import com.huaweicloud.sermant.router.dubbo.service.DubboConfigService;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 增强SpringBootApplication类的main方法
+ * 增强SpringApplication类的run方法
  *
  * @author provenceee
  * @since 2022-01-24
  */
-public class SpringBootInterceptor extends AbstractInterceptor {
-    private final DubboConfigService configService;
+public class SpringApplicationInterceptor extends AbstractInterceptor {
+    private static final AtomicBoolean INIT = new AtomicBoolean();
+
+    private final RegistryService registryService;
 
     /**
      * 构造方法
      */
-    public SpringBootInterceptor() {
-        configService = ServiceManager.getService(DubboConfigService.class);
+    public SpringApplicationInterceptor() {
+        registryService = ServiceManager.getService(RegistryService.class);
     }
 
     @Override
@@ -46,7 +49,10 @@ public class SpringBootInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        configService.init(RouterConstant.DUBBO_CACHE_NAME, DubboCache.INSTANCE.getAppName());
+        Object logStartupInfo = context.getMemberFieldValue("logStartupInfo");
+        if ((logStartupInfo instanceof Boolean) && (Boolean) logStartupInfo && INIT.compareAndSet(false, true)) {
+            registryService.startRegistration();
+        }
         return context;
     }
 }
