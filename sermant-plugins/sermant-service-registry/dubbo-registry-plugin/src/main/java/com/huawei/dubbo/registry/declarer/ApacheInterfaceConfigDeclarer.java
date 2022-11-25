@@ -25,11 +25,11 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author provenceee
  * @since 2021-11-24
  */
-public class InterfaceConfigDeclarer extends AbstractDeclarer {
-    private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.AbstractInterfaceConfig",
-        "com.alibaba.dubbo.config.AbstractInterfaceConfig"};
+public class ApacheInterfaceConfigDeclarer extends AbstractDeclarer {
+    private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.AbstractInterfaceConfig"};
 
-    private static final String INTERCEPT_CLASS = "com.huawei.dubbo.registry.interceptor.InterfaceConfigInterceptor";
+    private static final String INTERCEPT_CLASS
+        = "com.huawei.dubbo.registry.interceptor.ApacheInterfaceConfigInterceptor";
 
     // 增强loadRegistriesFromBackwardConfig方法是为了兼容2.7.0-2.7.4.1，其它版本主要是增强setRegistries方法
     private static final String[] METHOD_NAME = {"setRegistries", "loadRegistriesFromBackwardConfig"};
@@ -37,7 +37,7 @@ public class InterfaceConfigDeclarer extends AbstractDeclarer {
     /**
      * 构造方法
      */
-    public InterfaceConfigDeclarer() {
+    public ApacheInterfaceConfigDeclarer() {
         super(ENHANCE_CLASS);
     }
 

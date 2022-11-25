@@ -16,35 +16,34 @@
 
 package com.huawei.dubbo.registry.declarer;
 
-import com.huawei.dubbo.registry.constants.Constant;
-
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * RegistryConfig增强类
+ * AbstractInterfaceConfig增强类
  *
  * @author provenceee
- * @since 2022-04-13
+ * @since 2022-11-24
  */
-public class RegistryConfigDeclarer extends AbstractDeclarer {
-    private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.RegistryConfig"};
+public class AlibabaInterfaceConfigDeclarer extends AbstractDeclarer {
+    private static final String[] ENHANCE_CLASS = {"com.alibaba.dubbo.config.AbstractInterfaceConfig"};
 
-    private static final String INTERCEPT_CLASS = "com.huawei.dubbo.registry.interceptor.RegistryConfigInterceptor";
+    private static final String INTERCEPT_CLASS
+        = "com.huawei.dubbo.registry.interceptor.AlibabaInterfaceConfigInterceptor";
 
-    private static final String[] METHOD_NAME = {Constant.SET_PROTOCOL_METHOD_NAME, "setAddress"};
+    private static final String METHOD_NAME = "loadRegistries";
 
     /**
      * 构造方法
      */
-    public RegistryConfigDeclarer() {
+    public AlibabaInterfaceConfigDeclarer() {
         super(ENHANCE_CLASS);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameContains(METHOD_NAME), INTERCEPT_CLASS)
+            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME), INTERCEPT_CLASS)
         };
     }
 }

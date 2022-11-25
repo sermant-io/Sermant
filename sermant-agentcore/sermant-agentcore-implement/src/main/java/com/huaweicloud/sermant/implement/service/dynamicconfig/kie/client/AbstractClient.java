@@ -26,6 +26,11 @@ import com.huaweicloud.sermant.implement.service.dynamicconfig.kie.client.http.H
  * @since 2021-11-17
  */
 public abstract class AbstractClient implements Client {
+    /**
+     * 默认超时时间
+     */
+    private static final int DEFAULT_TIMEOUT_MS = 60000;
+
     protected final ClientUrlManager clientUrlManager;
 
     protected HttpClient httpClient;
@@ -37,7 +42,7 @@ public abstract class AbstractClient implements Client {
      */
     protected AbstractClient(ClientUrlManager clientUrlManager) {
         this.clientUrlManager = clientUrlManager;
-        initDefaultClient();
+        initDefaultClient(DEFAULT_TIMEOUT_MS);
     }
 
     /**
@@ -45,17 +50,18 @@ public abstract class AbstractClient implements Client {
      *
      * @param clientUrlManager clientUrlManager
      * @param httpClient httpClient
+     * @param timeout 超时时间
      */
-    protected AbstractClient(ClientUrlManager clientUrlManager, HttpClient httpClient) {
+    protected AbstractClient(ClientUrlManager clientUrlManager, HttpClient httpClient, int timeout) {
         this.clientUrlManager = clientUrlManager;
         if (httpClient != null) {
             this.httpClient = httpClient;
         } else {
-            initDefaultClient();
+            initDefaultClient(timeout);
         }
     }
 
-    private void initDefaultClient() {
-        this.httpClient = new DefaultHttpClient();
+    private void initDefaultClient(int timeout) {
+        this.httpClient = new DefaultHttpClient(timeout);
     }
 }

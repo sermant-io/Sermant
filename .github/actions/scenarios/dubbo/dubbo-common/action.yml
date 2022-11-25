@@ -7,6 +7,13 @@ runs:
       uses: ./.github/actions/common/entry
       with:
         log-dir: ./logs/dubbo-common
+    - name: delete dubbo.registry.address in configuration file to test dubbo registry address with system property
+      shell: bash
+      run: |
+        sed -i '/dubbo:registry/d' sermant-integration-tests/dubbo-test/dubbo-2-6-integration-consumer/src/main/resources/dubbo/dubbo.xml
+        sed -i '/registry:/d' sermant-integration-tests/dubbo-test/dubbo-2-7-integration-consumer/src/main/resources/application.yaml
+        sed -i '/address:/d' sermant-integration-tests/dubbo-test/dubbo-2-7-integration-consumer/src/main/resources/application.yaml
+        sed -i '/protocol: zookeeper/d' sermant-integration-tests/dubbo-test/dubbo-2-7-integration-consumer/src/main/resources/application.yaml
     - name: package dubbo 2.6.0 tests
       shell: bash
       if: matrix.dubbo-version == '2-6' && matrix.dubbo-versions == '0'
@@ -79,7 +86,7 @@ runs:
         SERVER_PORT: 18020
         DUBBO_PROTOCOL_PORT: 18820
       run: |
-        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar \
+        nohup java -Ddubbo.registry.address=zookeeper://127.0.0.1:2181 -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar \
         sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar > ${{ env.logDir }}/spring-and-dubbo-consumer.log 2>&1 &
     - name: start consumer service
       shell: bash
@@ -89,7 +96,7 @@ runs:
         SERVER_PORT: 28020
         DUBBO_PROTOCOL_PORT: 28820
       run: |
-        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar \
+        nohup java -Ddubbo.registry.address=zookeeper://127.0.0.1:2181 -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar \
         sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar > ${{ env.logDir }}/dubbo-consumer.log 2>&1 &
     - name: waiting for consumers start
       shell: bash

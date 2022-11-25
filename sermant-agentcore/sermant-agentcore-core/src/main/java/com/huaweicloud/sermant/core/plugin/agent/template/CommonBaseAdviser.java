@@ -16,10 +16,14 @@
 
 package com.huaweicloud.sermant.core.plugin.agent.template;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import java.util.ListIterator;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 通用的基础Adviser
@@ -29,6 +33,8 @@ import java.util.ListIterator;
  * @since 2022-01-24
  */
 public class CommonBaseAdviser {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private CommonBaseAdviser() {
     }
 
@@ -46,6 +52,10 @@ public class CommonBaseAdviser {
         ExecuteContext newContext = context;
         while (interceptorItr.hasNext()) {
             final Interceptor interceptor = interceptorItr.next();
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.log(Level.FINE, String.format(Locale.ROOT, "Method[%s] had been entered, interceptor is [%s].",
+                    MethodKeyCreator.getMethodKey(context.getMethod()), interceptor.getClass().getName()));
+            }
             try {
                 final ExecuteContext tempContext = interceptor.before(newContext);
                 if (tempContext != null) {
@@ -79,6 +89,10 @@ public class CommonBaseAdviser {
         ExecuteContext newContext = context;
         while (interceptorItr.hasPrevious()) {
             final Interceptor interceptor = interceptorItr.previous();
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.log(Level.FINE, String.format(Locale.ROOT, "Method[%s] had been exited, interceptor is [%s].",
+                    MethodKeyCreator.getMethodKey(context.getMethod()), interceptor.getClass().getName()));
+            }
             if (newContext.getThrowable() != null && onThrowHandler != null) {
                 try {
                     final ExecuteContext tempContext = interceptor.onThrow(newContext);
