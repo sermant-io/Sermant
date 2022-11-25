@@ -39,7 +39,7 @@
         <httpclient.async.version>4.1.4</httpclient.async.version>
         <httpclient.version>4.5.13</httpclient.version>
         <!--不变的版本-->
-        <processor.version>2.2.0.RELEASE</processor.version>
+        <processor.version>2.7.5</processor.version>
     </properties>
     <modules>
         <module>spring-intergration-test</module>
