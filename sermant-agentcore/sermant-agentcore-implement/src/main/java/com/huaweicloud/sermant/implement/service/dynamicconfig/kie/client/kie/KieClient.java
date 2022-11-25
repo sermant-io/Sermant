@@ -51,9 +51,10 @@ public class KieClient extends AbstractClient {
      * kei客户端构造器
      *
      * @param clientUrlManager kie url管理器
+     * @param timeout          超时时间
      */
-    public KieClient(ClientUrlManager clientUrlManager) {
-        this(clientUrlManager, ConfigManager.getConfig(KieDynamicConfig.class).getProject());
+    public KieClient(ClientUrlManager clientUrlManager, int timeout) {
+        this(clientUrlManager, ConfigManager.getConfig(KieDynamicConfig.class).getProject(), timeout);
     }
 
     /**
@@ -61,9 +62,10 @@ public class KieClient extends AbstractClient {
      *
      * @param clientUrlManager kie url管理器
      * @param project          命名空间
+     * @param timeout          超时时间
      */
-    public KieClient(ClientUrlManager clientUrlManager, String project) {
-        this(clientUrlManager, null, project);
+    public KieClient(ClientUrlManager clientUrlManager, String project, int timeout) {
+        this(clientUrlManager, null, project, timeout);
     }
 
     /**
@@ -72,9 +74,10 @@ public class KieClient extends AbstractClient {
      * @param clientUrlManager kie url管理器
      * @param httpClient       指定请求器
      * @param project          命名空间
+     * @param timeout          超时时间
      */
-    public KieClient(ClientUrlManager clientUrlManager, HttpClient httpClient, String project) {
-        super(clientUrlManager, httpClient);
+    public KieClient(ClientUrlManager clientUrlManager, HttpClient httpClient, String project, int timeout) {
+        super(clientUrlManager, httpClient, timeout);
         kieApi = String.format(kieApiTemplate, project);
     }
 

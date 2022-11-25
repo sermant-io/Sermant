@@ -18,11 +18,14 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.FlowContextUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
+
+import sun.net.www.MessageHeader;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -41,7 +44,11 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractInterceptor {
     public ExecuteContext before(ExecuteContext context) {
         if (context.getObject() instanceof HttpURLConnection) {
             HttpURLConnection connection = (HttpURLConnection) context.getObject();
-            Map<String, List<String>> headers = connection.getRequestProperties();
+            Optional<Object> requests = ReflectUtils.getFieldValue(connection, "requests");
+            if (!requests.isPresent()) {
+                return context;
+            }
+            Map<String, List<String>> headers = ((MessageHeader) requests.get()).getHeaders(null);
             String method = connection.getRequestMethod();
             if (StringUtils.isBlank(FlowContextUtils.getTagName()) || CollectionUtils
                 .isEmpty(headers.get(FlowContextUtils.getTagName()))) {

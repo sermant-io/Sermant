@@ -16,10 +16,12 @@
 
 package com.huaweicloud.integration.service;
 
-import com.alibaba.dubbo.config.RegistryConfig;
+import com.alibaba.dubbo.common.extension.ExtensionLoader;
+import com.alibaba.dubbo.registry.RegistryFactory;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.util.ArrayList;
 
 /**
  * 测试接口
@@ -28,9 +30,6 @@ import org.springframework.beans.factory.annotation.Value;
  * @since 2022-04-28
  */
 public class FooServiceImpl implements FooService {
-    @Autowired
-    private RegistryConfig registryConfig;
-
     @Value("${service_meta_zone:${SERVICE_META_ZONE:${service.meta.zone:bar}}}")
     private String zone;
 
@@ -55,7 +54,7 @@ public class FooServiceImpl implements FooService {
 
     @Override
     public String getRegistryProtocol() {
-        return registryConfig.getProtocol();
+        return new ArrayList<>(ExtensionLoader.getExtensionLoader(RegistryFactory.class).getLoadedExtensions()).get(0);
     }
 
     @Override

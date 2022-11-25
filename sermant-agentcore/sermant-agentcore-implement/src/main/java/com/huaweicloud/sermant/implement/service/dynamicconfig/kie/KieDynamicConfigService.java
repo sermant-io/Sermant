@@ -47,7 +47,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
      * KieDynamicConfigService
      */
     public KieDynamicConfigService() {
-        subscriberManager = new SubscriberManager(CONFIG.getServerAddress());
+        subscriberManager = new SubscriberManager(CONFIG.getServerAddress(), CONFIG.getTimeoutValue());
     }
 
     /**
@@ -57,7 +57,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
      * @param project project
      */
     public KieDynamicConfigService(String serverAddress, String project) {
-        subscriberManager = new SubscriberManager(serverAddress, project);
+        subscriberManager = new SubscriberManager(serverAddress, project, CONFIG.getTimeoutValue());
     }
 
     @Override

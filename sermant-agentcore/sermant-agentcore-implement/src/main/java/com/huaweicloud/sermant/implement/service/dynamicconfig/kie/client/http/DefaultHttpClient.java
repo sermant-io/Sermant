@@ -52,8 +52,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.net.ssl.HostnameVerifier;
@@ -68,10 +68,6 @@ import javax.net.ssl.SSLContext;
 public class DefaultHttpClient
     implements com.huaweicloud.sermant.implement.service.dynamicconfig.kie.client.http.HttpClient {
     private static final Logger LOGGER = LoggerFactory.getLogger();
-    /**
-     * 默认超时时间
-     */
-    private static final int DEFAULT_TIMEOUT_MS = 5000;
 
     /**
      * 最大的连接数 该值建议 > {@link SubscriberManager}最大线程数MAX_THREAD_SIZE
@@ -85,15 +81,25 @@ public class DefaultHttpClient
 
     private final HttpClient httpClient;
 
-    public DefaultHttpClient() {
+    /**
+     * 构造方法
+     *
+     * @param timeout 超时时间
+     */
+    public DefaultHttpClient(int timeout) {
         httpClient = HttpClientBuilder.create().setDefaultRequestConfig(
-            RequestConfig.custom().setConnectTimeout(DEFAULT_TIMEOUT_MS)
-                .setSocketTimeout(DEFAULT_TIMEOUT_MS)
-                .setConnectionRequestTimeout(DEFAULT_TIMEOUT_MS)
+            RequestConfig.custom().setConnectTimeout(timeout)
+                .setSocketTimeout(timeout)
+                .setConnectionRequestTimeout(timeout)
                 .build()
         ).setConnectionManager(buildConnectionManager()).build();
     }
 
+    /**
+     * 构造方法
+     *
+     * @param requestConfig 配置
+     */
     public DefaultHttpClient(RequestConfig requestConfig) {
         this.httpClient = HttpClientBuilder.create()
             .setDefaultRequestConfig(requestConfig)
@@ -126,7 +132,7 @@ public class DefaultHttpClient
             final SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(new SslTrustStrategy()).build();
             builder.register("https", new SSLConnectionSocketFactory(sslContext, hostnameVerifier));
         } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
-            LOGGER.warning(String.format(Locale.ENGLISH, "Failed to get SSLContext, reason: %s", ex.getMessage()));
+            LOGGER.log(Level.WARNING, "Failed to get SSLContext, reason: ", ex);
         }
     }
 
@@ -215,7 +221,7 @@ public class DefaultHttpClient
             }
             result = EntityUtils.toString(entity, "UTF-8");
         } catch (IOException ex) {
-            LOGGER.warning(String.format(Locale.ENGLISH, "Execute request failed, %s", ex.getMessage()));
+            LOGGER.log(Level.WARNING, "Execute request failed.", ex);
         } finally {
             consumeEntity(entity);
         }
@@ -229,7 +235,7 @@ public class DefaultHttpClient
         try {
             EntityUtils.consume(entity);
         } catch (IOException ex) {
-            LOGGER.warning(String.format(Locale.ENGLISH, "Consumed http entity failed, %s", ex.getMessage()));
+            LOGGER.log(Level.WARNING, "Consumed http entity failed.", ex);
         }
     }
 

@@ -127,9 +127,10 @@ public class SubscriberManager {
      * 构造函数
      *
      * @param serverAddress serverAddress
+     * @param timeout       超时时间
      */
-    public SubscriberManager(String serverAddress) {
-        kieClient = new KieClient(new ClientUrlManager(serverAddress));
+    public SubscriberManager(String serverAddress, int timeout) {
+        kieClient = new KieClient(new ClientUrlManager(serverAddress), timeout);
     }
 
     /**
@@ -137,9 +138,10 @@ public class SubscriberManager {
      *
      * @param serverAddress serverAddress
      * @param project       project
+     * @param timeout       超时时间
      */
-    public SubscriberManager(String serverAddress, String project) {
-        kieClient = new KieClient(new ClientUrlManager(serverAddress), project);
+    public SubscriberManager(String serverAddress, String project, int timeout) {
+        kieClient = new KieClient(new ClientUrlManager(serverAddress), project, timeout);
     }
 
     /**

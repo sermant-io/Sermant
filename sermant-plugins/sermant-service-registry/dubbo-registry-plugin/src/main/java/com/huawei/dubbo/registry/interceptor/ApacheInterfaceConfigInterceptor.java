@@ -28,13 +28,13 @@ import com.huaweicloud.sermant.core.service.ServiceManager;
  * @author provenceee
  * @since 2021-11-08
  */
-public class InterfaceConfigInterceptor extends AbstractInterceptor {
+public class ApacheInterfaceConfigInterceptor extends AbstractInterceptor {
     private final RegistryConfigService registryConfigService;
 
     /**
      * 构造方法
      */
-    public InterfaceConfigInterceptor() {
+    public ApacheInterfaceConfigInterceptor() {
         registryConfigService = ServiceManager.getService(RegistryConfigService.class);
     }
 

@@ -61,6 +61,9 @@ public class MethodKeyCreator {
      * @return 方法键
      */
     public static String getMethodKey(Method method) {
+        if (method == null) {
+            return "#<init>()";
+        }
         final StringBuilder sb = new StringBuilder()
                 .append(method.getDeclaringClass().getName())
                 .append('#')
