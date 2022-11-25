@@ -47,7 +47,7 @@ public class KvDataHolder {
             clear();
         }
         final Map<String, String> latestData = formatKieResponse(response);
-        final EventDataHolder eventDataHolder = new EventDataHolder(formatRevision(response.getRevision()));
+        final EventDataHolder eventDataHolder = new EventDataHolder(formatRevision(response.getRevision()), latestData);
         if (currentData != null) {
             if (latestData.isEmpty()) {
                 eventDataHolder.deleted.putAll(currentData);
@@ -119,6 +119,11 @@ public class KvDataHolder {
         private final long version;
 
         /**
+         * 最新的全量数据
+         */
+        private final Map<String, String> latestData;
+
+        /**
          * 修改的key
          */
         private Map<String, String> modified;
@@ -137,12 +142,18 @@ public class KvDataHolder {
          * Constructor.
          *
          * @param version version
+         * @param latestData 最新全量数据
          */
-        public EventDataHolder(long version) {
+        public EventDataHolder(long version, Map<String, String> latestData) {
             modified = new HashMap<String, String>();
             deleted = new HashMap<String, String>();
             added = new HashMap<String, String>();
             this.version = version;
+            this.latestData = latestData;
+        }
+
+        public Map<String, String> getLatestData() {
+            return latestData;
         }
 
         public Map<String, String> getModified() {

@@ -49,8 +49,10 @@ public class SpringEventPublisher implements ApplicationEventPublisherAware {
 
     /**
      * 发布spring刷新事件{@link org.springframework.cloud.endpoint.event.RefreshEvent}
+     *
+     * @param event 事件
      */
-    private void publishRefreshEvent(DynamicConfigEvent event) {
+    public void publishRefreshEvent(DynamicConfigEvent event) {
         if (event.getEventType() == DynamicConfigEventType.INIT) {
             return;
         }

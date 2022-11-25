@@ -284,7 +284,7 @@ public class SubscriberManager {
         if (oldWrapper == null) {
             return firstSubscribeForGroup(key, kieRequest, dynamicConfigListener, ifNotify);
         } else {
-            oldWrapper.addKeyListener(key, dynamicConfigListener);
+            oldWrapper.addKeyListener(key, dynamicConfigListener, ifNotify);
             tryNotify(oldWrapper.getKieRequest(), oldWrapper, ifNotify);
             return true;
         }
@@ -301,7 +301,7 @@ public class SubscriberManager {
         final KieSubscriber kieSubscriber = new KieSubscriber(kieRequest);
         Task task;
         KieListenerWrapper kieListenerWrapper =
-            new KieListenerWrapper(key, dynamicConfigListener, new KvDataHolder(), kieRequest);
+            new KieListenerWrapper(key, dynamicConfigListener, new KvDataHolder(), kieRequest, ifNotify);
         if (!kieSubscriber.isLongConnectionRequest()) {
             task = new ShortTimerTask(kieSubscriber, kieListenerWrapper);
         } else {
