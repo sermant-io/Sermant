@@ -44,7 +44,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <dubbo.version>2.7.15</dubbo.version>
+        <dubbo.version>2.7.18</dubbo.version>
         <alibaba.dubbo.version>2.6.12</alibaba.dubbo.version>
         <curator.version>4.0.1</curator.version>
         <zkclient.version>0.2</zkclient.version>
