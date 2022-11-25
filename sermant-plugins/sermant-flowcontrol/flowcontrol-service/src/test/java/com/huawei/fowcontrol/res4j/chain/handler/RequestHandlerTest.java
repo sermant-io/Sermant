@@ -21,6 +21,7 @@ import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.core.ResolverManager;
 import com.huawei.flowcontrol.common.core.match.MatchGroupResolver;
 import com.huawei.fowcontrol.res4j.chain.HandlerChainEntry;
+import com.huawei.fowcontrol.res4j.chain.context.ChainContext;
 
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
@@ -88,6 +89,7 @@ public class RequestHandlerTest {
     public void close() {
         pluginConfigManagerMockedStatic.close();
         operationManagerMockedStatic.close();
+        ChainContext.remove();
     }
 
     /**
