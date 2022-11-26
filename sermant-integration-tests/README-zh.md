@@ -285,17 +285,27 @@ runs:
       id: changed-workflow-or-test
       with:
         paths: ./.github/actions ./.github/workflows sermant-integration-tests
+    # 3. 判断是否为push事件
+    - name: check push event
+      shell: bash
+      run: |
+        eventName=${{ github.event_name }}
+        if [ $eventName == 'push' ];then
+          echo "triggerPushEvent=true" >> $GITHUB_ENV
+        else
+          echo "triggerPushEvent=false" >> $GITHUB_ENV
+        fi
     - name: statistic scenarios change env
       shell: bash
       run: |
         # ==========graceful is needed to test?==========
         if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
-          # 3. 如果agentcore或者graceful插件的文件有变更, 则将环境变量enableGraceful塞入环境变量中
+          # 4. 如果agentcore或者graceful插件的文件有变更, 则将环境变量enableGraceful塞入环境变量中
           echo "enableGraceful=true" >> $GITHUB_ENV
         fi
         # all workflow will trigger while workflow changed
-        if [ ${{ steps.changed-workflow-or-test.outputs.changed }} == 'true' ];then
-          # 4. 若工作流有变更，同样将之塞入环境变量中
+        if [ ${{ steps.changed-workflow-or-test.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
+          # 5. 若工作流有变更，同样将之塞入环境变量中
           echo "enableGraceful=true" >> $GITHUB_ENV
         fi
 ```
@@ -309,6 +319,33 @@ runs:
 ```
 
 仅`env.enableGraceful`为true时，`graceful`测试用例才予以执行。
+
+**注意：**
+
+除以上路径判断，还存在整个工作流的路径判断，针对`pull_request`生效，存在如下配置：
+
+```shell
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'sermant-agentcore/**'
+      - 'sermant-integration-tests/**'
+      - 'sermant-plugins/sermant-dynamic-config/**'
+      - 'sermant-plugins/sermant-flowcontrol/**'
+      - 'sermant-plugins/sermant-loadbalancer/**'
+      - 'sermant-plugins/sermant-service-registry/**'
+      - 'sermant-plugins/sermant-springboot-registry/**'
+      - '.github/workflows/spring_integration*.yaml'
+      - '.github/actions/**'
+```
+
+可以看到`paths`配置对应的集合，若使该工作流生效运行，则提交的代码路径需包含在内。
+
+**因此若新增插件或者目录，务必在`paths`增加对应的目录！**
 
 ## 编写具体的测试场景
 
@@ -494,7 +531,7 @@ env:
 
 ```yaml
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref || github.event.pull_request.number }}-${{ github.head_ref }}
   cancel-in-progress: true
 ```
 
@@ -504,7 +541,49 @@ concurrency:
 
 `${{ github.head_ref }}`为pull request的源分支
 
+`${{ github.event.pull_request.number }}`为pull request的编号
+
 `${{ github.ref }}`为pull request的目标分支
 
 若相同的两个任务的group相同，后者将会使前者取消工作流
+
+### 关于工作流的触发条件
+
+触发具体action（具体测试场景）依赖于workflow（工作流）的触发，工作流的触发则依赖于`push`与`pull_request`事件。因此自动化测试workflow主要依赖于前面的两种事件，同时workflow触发一定优先与action触发，仅触发了workflow，才有action这一层测试触发。下面基于优先级依次说明workflow的触发与action的触发。
+
+**（1）Workflow触发**
+
+- `push`事件，即commit操作，该事件默认会触发所有的工作流，不区分分支，路径
+
+- `pull_request`, 即提PR操作，该事件会具体考量到分支名称与代码路径。举个栗子，如下：
+
+  ```yaml
+  on:
+    pull_request:
+      branches:
+        - main
+        - develop
+      paths:
+        - 'sermant-agentcore/**'
+        - 'sermant-integration-tests/**'
+        - 'sermant-plugins/sermant-dynamic-config/**'
+  ```
+
+  如上触发条件则是：
+
+  1. 合并的分支是`main`或者`develop`分支
+  2. 提交的代码路径必须在`sermant-agentcore,sermant-integration-tests,sermant-plugins/sermant-dynamic-config`中
+
+  以上两个条件都满足才会生效。
+
+  **因此呢，若新增插件测试，务必得添加新的目录到`paths`下。**
+
+**（2）Action（特指具体测试场景的action，非公共的action）触发**
+
+​	action的触发是在workflow触发之后，仅workflow触发，action才有可能触发。
+
+​	action的触发更考量的是代码路径，但特定的路径或者事件则会开启全量的自动化测试。下面也以具体事件进行说明。
+
+- `push`事件，该事件默认将开启所有action测试，我们可以找到路径判断的action文件，参考章节[代码目录变更检查](#代码目录变更检查)， 若为该事件，则所有的action开关都将开启。
+- `pull_request`事件，该事件则是具体判断代码变更路径，参考章节[代码目录变更检查](#代码目录变更检查)；这里将根据不同的路径确定不同的测试场景，例如`sermant-plugins/sermant-router`存在文件变更，那我则认为关联路由的场景均可开启测试，同时在自动化测试入口添加对应开关，控制自动化测试的执行。
 

@@ -79,6 +79,15 @@ runs:
       id: changed-workflow-or-test
       with:
         paths: ./.github/actions ./.github/workflows sermant-integration-tests
+    - name: check push event
+      shell: bash
+      run: |
+        eventName=${{ github.event_name }}
+        if [ $eventName == 'push' ];then
+          echo "triggerPushEvent=true" >> $GITHUB_ENV
+        else
+          echo "triggerPushEvent=false" >> $GITHUB_ENV
+        fi
     - name: statistic scenarios change env
       shell: bash
       run: |
@@ -124,12 +133,13 @@ runs:
           echo "enableSpringTagRouter=true" >> $GITHUB_ENV
         fi
         # all workflow will trigger while workflow changed
-        if [ ${{ steps.changed-workflow-or-test.outputs.changed }} == 'true' ];then
+        if [ ${{ steps.changed-workflow-or-test.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
           echo "enableDubboRouter=true" >> $GITHUB_ENV
           echo "enableDubboCommon=true" >> $GITHUB_ENV
           echo "enableSpringRouter=true" >> $GITHUB_ENV
           echo "enableSpringTagRouter=true" >> $GITHUB_ENV
           echo "enableDynamicConfig=true" >> $GITHUB_ENV
           echo "enableGraceful=true" >> $GITHUB_ENV
+          echo "enableSpringCommon=true" >> $GITHUB_ENV
         fi
 
