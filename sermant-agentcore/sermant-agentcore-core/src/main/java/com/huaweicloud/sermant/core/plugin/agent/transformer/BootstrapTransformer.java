@@ -18,10 +18,12 @@ package com.huaweicloud.sermant.core.plugin.agent.transformer;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.template.BootstrapConstTemplate;
 import com.huaweicloud.sermant.core.plugin.agent.template.BootstrapMemberTemplate;
 import com.huaweicloud.sermant.core.plugin.agent.template.BootstrapStaticTemplate;
+import com.huaweicloud.sermant.core.plugin.agent.template.CommonMethodAdviser;
 import com.huaweicloud.sermant.core.plugin.agent.template.MethodKeyCreator;
 import com.huaweicloud.sermant.core.utils.ClassLoaderUtils;
 
@@ -38,11 +40,14 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -56,9 +61,43 @@ import java.util.logging.Logger;
  */
 public class BootstrapTransformer implements AgentBuilder.Transformer {
     /**
-     * bootstrap模板的字段名称
+     * bootstrap模板的拦截器列表字段名称
      */
     public static final String INTERCEPTORS_FIELD_NAME = "_INTERCEPTORS_$SERMANT";
+
+    /**
+     * bootstrap模板的拦截器列表字段名称
+     */
+    public static final String METHODS_MAP_NAME = "_METHODS_MAP_$SERMANT";
+
+    /**
+     * 用来缓存用于系统类增强的反射方法的Map
+     */
+    private static final HashMap<String, Method> METHODS_HASH_MAP = new HashMap<>();
+
+    static {
+        try {
+            METHODS_HASH_MAP.put("forMemberMethod", ExecuteContext.class.getDeclaredMethod("forMemberMethod",
+                Object.class, Method.class, Object[].class, Map.class, Map.class));
+            METHODS_HASH_MAP.put("forConstructor", ExecuteContext.class.getDeclaredMethod("forConstructor", Class.class,
+                Constructor.class, Object[].class, Map.class));
+            METHODS_HASH_MAP.put("forStaticMethod", ExecuteContext.class.getDeclaredMethod("forStaticMethod",
+                Class.class, Method.class, Object[].class, Map.class));
+            METHODS_HASH_MAP.put("onMethodEnter",
+                CommonMethodAdviser.class.getDeclaredMethod("onMethodEnter", ExecuteContext.class, ListIterator.class));
+            METHODS_HASH_MAP.put("onMethodExit",
+                CommonMethodAdviser.class.getDeclaredMethod("onMethodExit", ExecuteContext.class, ListIterator.class));
+            METHODS_HASH_MAP.put("isSkip", ExecuteContext.class.getDeclaredMethod("isSkip"));
+            METHODS_HASH_MAP.put("getArguments", ExecuteContext.class.getDeclaredMethod("getArguments"));
+            METHODS_HASH_MAP.put("afterMethod",
+                ExecuteContext.class.getDeclaredMethod("afterMethod", Object.class, Throwable.class));
+            METHODS_HASH_MAP.put("getResult", ExecuteContext.class.getDeclaredMethod("getResult"));
+            METHODS_HASH_MAP.put("afterConstructor",
+                ExecuteContext.class.getDeclaredMethod("afterConstructor", Object.class, Map.class));
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * 日志
@@ -224,6 +263,7 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
         return new ByteBuddy().redefine(templateCls)
                 .name(adviceClsName)
                 .defineField(INTERCEPTORS_FIELD_NAME, List.class, Visibility.PUBLIC, Ownership.STATIC)
+                .defineField(METHODS_MAP_NAME,Map.class,Visibility.PUBLIC, Ownership.STATIC)
                 .make()
                 .getBytes();
     }
@@ -255,6 +295,7 @@ public class BootstrapTransformer implements AgentBuilder.Transformer {
     private void prepareAdviceClass(Class<?> adviceCls, List<Interceptor> interceptors)
             throws NoSuchFieldException, IllegalAccessException {
         adviceCls.getDeclaredField(INTERCEPTORS_FIELD_NAME).set(null, interceptors);
+        adviceCls.getDeclaredField(METHODS_MAP_NAME).set(null, METHODS_HASH_MAP);
     }
 
     /**
