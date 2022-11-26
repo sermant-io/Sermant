@@ -19,7 +19,7 @@ on:
       - '.github/workflows/dubbo_integration*.yaml'
       - '.github/actions/**'
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref || github.event.pull_request.number }}-${{ github.head_ref }}
   cancel-in-progress: true
 jobs:
   download-midwares-and-cache:

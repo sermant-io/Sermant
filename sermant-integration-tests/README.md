@@ -285,17 +285,27 @@ runs:
       id: changed-workflow-or-test
       with:
         paths: ./.github/actions ./.github/workflows sermant-integration-tests
+    # 3. Check whether the event that triggered is push
+    - name: check push event
+      shell: bash
+      run: |
+        eventName=${{ github.event_name }}
+        if [ $eventName == 'push' ];then
+          echo "triggerPushEvent=true" >> $GITHUB_ENV
+        else
+          echo "triggerPushEvent=false" >> $GITHUB_ENV
+        fi
     - name: statistic scenarios change env
       shell: bash
       run: |
         # ==========graceful is needed to test?==========
         if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
-          # 3. If the file of the agentcore or graceful plugin changes, add the environment variable enableGraceful to the environment variable.
+          # 4. If the file of the agentcore or graceful plugin changes, add the environment variable enableGraceful to the environment variable.
           echo "enableGraceful=true" >> $GITHUB_ENV
         fi
         # all workflow will trigger while workflow changed
         if [ ${{ steps.changed-workflow-or-test.outputs.changed }} == 'true' ];then
-          # 4. If the workflow changes, add it to the environment variable.
+          # 5. If the workflow changes, add it to the environment variable.
           echo "enableGraceful=true" >> $GITHUB_ENV
         fi
 ```
@@ -309,6 +319,33 @@ In the preceding command, `paths` indicates the specified change path. After the
 ```
 
 The `graceful` test case is executed only when `env.enableGraceful` is true.
+
+**Notices:**
+
+In addition to the preceding path judgment, the entire workflow path judgment takes effect for  event `pull_request`. The configuration is as follows:
+
+```shell
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'sermant-agentcore/**'
+      - 'sermant-integration-tests/**'
+      - 'sermant-plugins/sermant-dynamic-config/**'
+      - 'sermant-plugins/sermant-flowcontrol/**'
+      - 'sermant-plugins/sermant-loadbalancer/**'
+      - 'sermant-plugins/sermant-service-registry/**'
+      - 'sermant-plugins/sermant-springboot-registry/**'
+      - '.github/workflows/spring_integration*.yaml'
+      - '.github/actions/**'
+```
+
+You can find the set corresponding to the `paths` configuration. If the workflow takes effect, the submitted code path must be included.
+
+**Therefore, if a plugin or directory is added, you must add the corresponding directory in `paths`.**
 
 ##  Create Specific Test Scenarios.
 
@@ -494,7 +531,7 @@ Currently, a concurrent group is defined for each working inbound interface. The
 
 ```yaml
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref || github.event.pull_request.number }}-${{ github.head_ref }}
   cancel-in-progress: true
 ```
 
@@ -502,7 +539,48 @@ concurrency:
 
 `${{ github.head_ref }}`indicates  source branch of the pull request
 
+`${{ github.event.pull_request.number }}`indicates the ID of the pull request
+
 `${{ github.ref }}` indicates the target branch of the pull request.
 
 If two tasks have the same group, the former will cancel the workflow.
 
+### Conditions To Trigger Workflow
+
+The triggering of a specific action (specific test scenario) depends on the triggering of a workflow. The triggering of a workflow depends on the `push` and `pull_request` events. Therefore, the automatic test workflow mainly depends on the preceding two events. In addition, the workflow triggering and action triggering must be preferred. Only when the workflow is triggered, the action layer can be triggered. The following describes workflow triggering and action triggering based on priorities.
+
+**(1) Trigger Workflow** 
+
+- `push` event, the commits. This event triggers all workflows by default, regardless of branches and paths.
+
+- `pull_request`,  the PR. This event takes into account the branch name and code path. Take chestnuts, as follows:
+
+  ```yaml
+  on:
+    pull_request:
+      branches:
+        - main
+        - develop
+      paths:
+        - 'sermant-agentcore/**'
+        - 'sermant-integration-tests/**'
+        - 'sermant-plugins/sermant-dynamic-config/**'
+  ```
+
+  The preceding trigger conditions are as follows:
+
+- 1. The merged branch is the `main` or `develop` branch.
+  2. The submitted code path must be in one of the `sermant-agentcore,sermant-integration-tests,sermant-plugins/sermant-dynamic-config`.
+
+  It will take effect only when both of the preceding conditions are met.
+
+  **Therefore, if you add a plugin test, you must add a new directory to `paths`.**
+
+**（2）Trigger Action（Actions in specific test scenarios and non-public actions)**
+
+​	An action can be triggered only after a workflow is triggered.
+
+​	The triggering of an action is more about the code path, but a specific path or event will enable full automated testing. The following will describe by using a specific event.
+
+- `push` event. This event enables all action tests by default. You can find the action file for path judgment , refer to [Code Directory Change Check](#Code-Directory-Change-Check). If the event is `push`event, all action switches are enabled.
+- `pull_request` event is used to determine the code change path. For details, see [Code Directory Change Check](#Code-Directory-Change-Check). Different test scenarios are determined based on different paths. For example, if the `sermant-plugins/sermant-router` file is changed, the test can be enabled for all associated route scenarios. In addition, the corresponding switch is added to the automatic test entry to control the execution of the automatic test.
