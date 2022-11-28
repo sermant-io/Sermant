@@ -59,8 +59,10 @@ public class PrometheusMetricServiceImpl implements MetricReportService {
     public void startMonitorServer() {
         MonitorServiceConfig monitorServiceConfig = ConfigManager.getConfig(MonitorServiceConfig.class);
         if (StringUtils.isBlank(monitorServiceConfig.getAddress()) || monitorServiceConfig.getPort() == 0) {
+            LOGGER.info("monitor config missing address or port");
             return;
         }
+        LOGGER.info("the monitor inspection is passed and the service starts");
         InetSocketAddress socketAddress =
                 new InetSocketAddress(monitorServiceConfig.getAddress(), monitorServiceConfig.getPort());
         try {
@@ -71,6 +73,7 @@ public class PrometheusMetricServiceImpl implements MetricReportService {
                 for (Map.Entry<String, HttpHandler> entry : handlerMap.entrySet()) {
                     server.createContext("/" + entry.getKey(), entry.getValue());
                 }
+                LOGGER.info("add other plugin metric collector");
             }
             HTTPServer.Builder builder = new HTTPServer.Builder().withHttpServer(server)
                     .withRegistry(CollectorRegistry.defaultRegistry).withDaemonThreads(true);
