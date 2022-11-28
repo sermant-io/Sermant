@@ -531,7 +531,7 @@ env:
 
 ```yaml
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.event.pull_request.number }}-${{ github.head_ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
   cancel-in-progress: true
 ```
 
@@ -539,11 +539,11 @@ concurrency:
 
 `${{ github.workflow }}` 为当前工作流的名称
 
-`${{ github.head_ref }}`为pull request的源分支
-
 `${{ github.event.pull_request.number }}`为pull request的编号
 
-`${{ github.ref }}`为pull request的目标分支
+`${{ github.ref }}`为pull request的目标分支；当为push事件时， 其值为当前分支
+
+`${{ github.head_ref }}`为pull request的源分支；当为push事件时，其值为空
 
 若相同的两个任务的group相同，后者将会使前者取消工作流
 

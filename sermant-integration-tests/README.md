@@ -531,17 +531,17 @@ Currently, a concurrent group is defined for each working inbound interface. The
 
 ```yaml
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.event.pull_request.number }}-${{ github.head_ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
   cancel-in-progress: true
 ```
 
-`${{ github.workflow }}`indicates  the name of the current workflow
+`${{ github.workflow }}` indicates  the name of the current workflow
 
-`${{ github.head_ref }}`indicates  source branch of the pull request
+`${{ github.event.pull_request.number }}` indicates the ID of the pull request
 
-`${{ github.event.pull_request.number }}`indicates the ID of the pull request
+`${{ github.ref }}` indicates the target branch of the pull request; When the event is a push event, the value is the current branch
 
-`${{ github.ref }}` indicates the target branch of the pull request.
+`${{ github.head_ref }}` indicates the source branch of the pull request; When the event is a push event, the value is null.
 
 If two tasks have the same group, the former will cancel the workflow.
 
