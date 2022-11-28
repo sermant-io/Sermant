@@ -10,6 +10,8 @@ runs:
     - name: delete dubbo.registry.address in configuration file to test dubbo registry address with system property
       shell: bash
       run: |
+        cp sermant-integration-tests/dubbo-test/dubbo-2-6-integration-consumer/src/main/resources/dubbo/dubbo.xml sermant-integration-tests/dubbo-test/dubbo-2-6-integration-consumer/src/main/resources/dubbo/dubbo-backup.xml
+        cp sermant-integration-tests/dubbo-test/dubbo-2-7-integration-consumer/src/main/resources/application.yaml sermant-integration-tests/dubbo-test/dubbo-2-7-integration-consumer/src/main/resources/application-backup.yaml
         sed -i '/dubbo:registry/d' sermant-integration-tests/dubbo-test/dubbo-2-6-integration-consumer/src/main/resources/dubbo/dubbo.xml
         sed -i '/registry:/d' sermant-integration-tests/dubbo-test/dubbo-2-7-integration-consumer/src/main/resources/application.yaml
         sed -i '/address:/d' sermant-integration-tests/dubbo-test/dubbo-2-7-integration-consumer/src/main/resources/application.yaml
@@ -108,6 +110,11 @@ runs:
       env:
         TEST_TYPE: common
       run: mvn -Dcontroller.port=18020 -Ddubbo.running.version=${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }} test --file sermant-integration-tests/dubbo-test/pom.xml
+    - name: reset configuration file
+      shell: bash
+      run: |
+        mv -f sermant-integration-tests/dubbo-test/dubbo-2-6-integration-consumer/src/main/resources/dubbo/dubbo-backup.xml sermant-integration-tests/dubbo-test/dubbo-2-6-integration-consumer/src/main/resources/dubbo/dubbo.xml
+        mv -f sermant-integration-tests/dubbo-test/dubbo-2-7-integration-consumer/src/main/resources/application-backup.yaml sermant-integration-tests/dubbo-test/dubbo-2-7-integration-consumer/src/main/resources/application.yaml
     - name: exit
       if: always()
       uses: ./.github/actions/common/exit

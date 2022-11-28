@@ -95,7 +95,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 100
-      - name: dubbo test common
+      - name: common operations
         uses: ./.github/actions/common/dubbo
       - name: (dubbo router) test for ${{ matrix.dubbo-version }}
         if: env.enableDubboRouter == 'true'
