@@ -16,6 +16,7 @@ on:
       - 'sermant-plugins/sermant-router/**'
       - 'sermant-plugins/sermant-service-registry/**'
       - 'sermant-plugins/sermant-springboot-registry/**'
+      - 'sermant-plugins/sermant-monitor/**'
       - '.github/workflows/dubbo_integration*.yaml'
       - '.github/actions/**'
 concurrency:
@@ -100,6 +101,9 @@ jobs:
       - name: (dubbo router) test for ${{ matrix.dubbo-version }}
         if: env.enableDubboRouter == 'true'
         uses: ./.github/actions/scenarios/dubbo/router
+      - name: monitor test for ${{ matrix.dubbo-version }}
+        if: env.enableMonitor == 'true'
+        uses: ./.github/actions/scenarios/dubbo/monitor
       - name: (dubbo common) test for ${{ matrix.dubbo-version }}
         if: env.enableDubboCommon == 'true'
         uses: ./.github/actions/scenarios/dubbo/dubbo-common

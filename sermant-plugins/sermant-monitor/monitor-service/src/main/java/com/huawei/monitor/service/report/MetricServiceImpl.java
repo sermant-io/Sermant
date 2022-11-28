@@ -20,11 +20,13 @@ import com.huawei.monitor.common.MetricReportType;
 import com.huawei.monitor.config.MonitorServiceConfig;
 import com.huawei.monitor.service.MetricReportService;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * 监控插件配置服务接口实现
@@ -33,12 +35,16 @@ import java.util.Optional;
  * @since 2022-09-15
  */
 public class MetricServiceImpl implements PluginService {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static MetricReportService metricReportService;
 
     @Override
     public void start() {
+        LOGGER.info("start monitor service");
         MonitorServiceConfig config = ConfigManager.getConfig(MonitorServiceConfig.class);
-        if (config == null || StringUtils.isEmpty(config.getReportType())) {
+        if (config == null || StringUtils.isEmpty(config.getReportType()) || !config.isEnableStartService()) {
+            LOGGER.info("monitor switch is close, not start monitor");
             return;
         }
         Optional<MetricReportType> optional = MetricReportType.getMetricReportType(config.getReportType());

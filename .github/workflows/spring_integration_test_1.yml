@@ -13,6 +13,7 @@ on:
       - 'sermant-integration-tests/**'
       - 'sermant-plugins/sermant-dynamic-config/**'
       - 'sermant-plugins/sermant-flowcontrol/**'
+      - 'sermant-plugins/sermant-monitor/**'
       - 'sermant-plugins/sermant-loadbalancer/**'
       - 'sermant-plugins/sermant-service-registry/**'
       - 'sermant-plugins/sermant-springboot-registry/**'
@@ -139,3 +140,6 @@ jobs:
       - name: (zk dynamic config) test for springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
         if: env.enableDynamicConfig == 'true'
         uses: ./.github/actions/scenarios/spring/dynamic-config-zk
+      - name: monitor test for springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
+        if: env.enableMonitor == 'true'
+        uses: ./.github/actions/scenarios/spring/monitor

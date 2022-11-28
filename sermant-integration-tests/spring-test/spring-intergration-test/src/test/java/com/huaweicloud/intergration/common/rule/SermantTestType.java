@@ -78,6 +78,11 @@ public enum SermantTestType {
     GRACEFUL,
 
     /**
+     * 监控测试
+     */
+    MONITOR,
+
+    /**
      * 测试所有类型
      */
     ALL;

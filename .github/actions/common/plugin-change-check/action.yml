@@ -103,6 +103,12 @@ runs:
             ${{ env.sermantServiceRegistryChanged }} == 'true' -o \
             ${{ env.sermantRouterChanged }} == 'true' ];then
           echo "enableDubboCommon=true" >> $GITHUB_ENV
+        fi       
+        # ==========monitor is needed to test?==========
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o \
+            ${{ env.sermantFlowcontrolChanged }} == 'true' -o \
+            ${{ env.sermantMonitorChanged }} == 'true' ];then
+          echo "enableMonitor=true" >> $GITHUB_ENV
         fi
         # *****************spring_integration_test_1.yml*****************
         # ==========graceful is needed to test?==========
@@ -140,6 +146,7 @@ runs:
           echo "enableSpringTagRouter=true" >> $GITHUB_ENV
           echo "enableDynamicConfig=true" >> $GITHUB_ENV
           echo "enableGraceful=true" >> $GITHUB_ENV
+          echo "enableMonitor=true" >> $GITHUB_ENV
           echo "enableSpringCommon=true" >> $GITHUB_ENV
         fi
 
