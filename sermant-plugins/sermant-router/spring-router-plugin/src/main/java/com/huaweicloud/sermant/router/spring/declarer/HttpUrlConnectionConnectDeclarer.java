@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.router.spring.declarer;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -27,7 +26,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author yuzl 俞真龙
  * @since 2022-10-25
  */
-public class HttpUrlConnectionConnectDeclarer extends AbstractPluginDeclarer {
+public class HttpUrlConnectionConnectDeclarer extends BaseRegistryPluginAdaptationDeclarer {
     private static final String METHOD_NAME = "connect";
 
     private static final String INTERCEPTOR_CLASS =

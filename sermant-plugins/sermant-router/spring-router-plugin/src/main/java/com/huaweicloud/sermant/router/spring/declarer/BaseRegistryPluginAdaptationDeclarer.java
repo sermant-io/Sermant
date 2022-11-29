@@ -16,37 +16,24 @@
 
 package com.huaweicloud.sermant.router.spring.declarer;
 
-import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 
 /**
- * 注册插件拦截点
+ * 适配注册插件拦截点基类
  *
  * @author provenceee
- * @since 2022-10-08
+ * @since 2022-11-28
  */
-public class NopInstanceFilterDeclarer extends AbstractDeclarer {
-    private static final String ENHANCE_CLASS = "com.huawei.discovery.service.lb.filter.NopInstanceFilter";
-
-    private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.NopInstanceFilterInterceptor";
-
-    private static final String METHOD_NAME = "filter";
-
+public abstract class BaseRegistryPluginAdaptationDeclarer extends AbstractPluginDeclarer {
     private final RouterConfig routerConfig;
 
     /**
      * 构造方法
      */
-    public NopInstanceFilterDeclarer() {
-        super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
+    public BaseRegistryPluginAdaptationDeclarer() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
-    }
-
-    @Override
-    public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameEquals(ENHANCE_CLASS);
     }
 
     @Override
