@@ -64,7 +64,7 @@ nacos.service:
 
 Notice: 
 1. group of nacos can setting by core config service.meta.application.
-2. nacos configs current only show normal use type, others see [NACOS config file](../../../sermant-plugins/sermant-service-registry/registry-common/src/main/java/NacosRegisterConfig.java)
+2. nacos configs current only show normal use type, others see [NACOS config file](../../../sermant-plugins/sermant-service-registry/registry-common/src/main/java/com/huawei/registry/config/NacosRegisterConfig.java)
 
 - For **newly developed dubbo applications**, you also need to configure the address of the dubbo registration center. This configuration item is generally in the configuration file of the dubbo application, for example, in the dubbo/provider.xml file.
 
@@ -88,7 +88,7 @@ Note that the address information of **this configuration item is not used**. On
 
 - Prerequisites: [Sermant is packaged correctly](../../README.md#Packaging-Steps).
 - Start the Service Center. For details about how to download, use, and start the Service Center, see the [official website](https://github.com/apache/servicecomb-service-center).
-- Compile [demo application](../../../sermant-plugins/sermant-service-registry/demo-registry/demo-registry-dubbo)
+- Compile [demo application](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/dubbo-registry-demo)
 
 ```shell
 mvn clean package
@@ -122,7 +122,7 @@ Refer to the [entry module](../entrance.md#Startup-Parameters) for the specific 
 
 - Test
 
-After the preceding two applications are started, log in to the [Service Center](http://127.0.0.1:30103/) background and check whether related service instances have been registered. Access the application interface http://localhost:28020/test to check whether the interface returns a normal response. If the interface returns a successful response, the registration is successful.
+After the preceding two applications are started, log in to the [Service Center](http://127.0.0.1:30103/) background and check whether related service instances have been registered. Access the application interface http://localhost:28820/hello to check whether the interface returns a normal response. If the interface returns a successful response, the registration is successful.
 
 ## Configuration 
 
