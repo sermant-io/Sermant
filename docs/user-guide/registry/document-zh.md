@@ -63,7 +63,7 @@ nacos.service:
 
 注意：
 1、nacos的group通过核心配置文件的service.meta.application设置
-2、nacos参数目前仅展示常用参数，其他参数项见[NACOS配置文件](../../../sermant-plugins/sermant-service-registry/registry-common/src/main/java/NacosRegisterConfig.java)
+2、nacos参数目前仅展示常用参数，其他参数项见[NACOS配置文件](../../../sermant-plugins/sermant-service-registry/registry-common/src/main/java/com/huawei/registry/config/NacosRegisterConfig.java)
 
 - 对于**新开发**的dubbo应用，还需要设置dubbo本身注册中心地址的配置。这个配置项一般在dubbo应用的配置文件中，比如“dubbo/provider.xml”文件中：
 
@@ -89,7 +89,7 @@ dubbo:
 
 - 启动Service Center，下载、使用说明和启动流程详见[官网](https://github.com/apache/servicecomb-service-center)
 
-- 编译[demo应用](../../../sermant-plugins/sermant-service-registry/demo-registry/demo-registry-dubbo)
+- 编译[demo应用](https://github.com/huaweicloud/Sermant-examples/tree/main/registry-demo/dubbo-registry-demo)
 
 ```shell
 mvn clean package
@@ -123,7 +123,7 @@ java -Dservicecomb.service.enableDubboRegister=true -javaagent:${path}/sermant-a
 
 - 测试
 
-当启动以上2个应用后，登录[Service Center](http://127.0.0.1:30103/)后台，查看相关服务实例是否已注册，并且访问应用接口<http://localhost:28020/test>，确认接口是否正常返回，若接口成功返回，则说明注册成功。
+当启动以上2个应用后，登录[Service Center](http://127.0.0.1:30103/)后台，查看相关服务实例是否已注册，并且访问应用接口<http://localhost:28820/hello>，确认接口是否正常返回，若接口成功返回，则说明注册成功。
 
 ## 配置说明
 

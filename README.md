@@ -43,7 +43,7 @@ A microservice architecture using Sermant has the following three components, wh
 
 Click [here](https://github.com/huaweicloud/Sermant/releases) to download **Sermant** binary package. If you will to compile the project yourself, please follow the following steps.
 
-Execute *maven* command to package the **Sermant** project's [demo module](sermant-example).
+Execute *maven* command to package the **Sermant** project's [demo module](https://github.com/huaweicloud/Sermant-examples).
 
 ```shell
 mvn clean package -Dmaven.test.skip -Pexample
