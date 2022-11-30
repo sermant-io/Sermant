@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.router.spring.declarer;
 
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -26,7 +27,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author yuzl 俞真龙
  * @since 2022-10-27
  */
-public class RestTemplateDeclarer extends BaseRegistryPluginAdaptationDeclarer {
+public class RestTemplateDeclarer extends AbstractPluginDeclarer {
     private static final String ENHANCE_CLASS = "org.springframework.web.client.RestTemplate";
     private static final String ENHANCE_METHOD = "doExecute";
     private static final String INTERCEPTOR_CLASS =
