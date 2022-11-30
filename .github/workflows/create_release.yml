@@ -6,13 +6,18 @@ on:
 name: Create Release
 
 env:
-  version: '0.7.0'
+  tag: ${{ github.ref }}
 
 jobs:
   auto-create-release:
     name: Auto Create Release
     runs-on: windows-latest
     steps:
+      - name: save env version
+        shell: bash
+        run: |
+          str=${{env.tag}}
+          echo "version=${str##*v}" >> $GITHUB_ENV
       - name: Checkout Source # 检出代码
         uses: actions/checkout@v2
       - name: Set up JDK 8 # 构建jdk运行环境
