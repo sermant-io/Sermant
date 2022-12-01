@@ -38,6 +38,11 @@ public class TestConstant {
      */
     public static final String SC_ADDRESS = "sc://localhost:30100";
 
+    /**
+     * nacos协议的注册地址
+     */
+    public static final String NACOS_ADDRESS = "nacos://127.0.0.1:8848";
+
     private TestConstant() {
     }
 }

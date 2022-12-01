@@ -29,6 +29,11 @@ public class Constant {
     public static final String SC_REGISTRY_PROTOCOL = "sc";
 
     /**
+     * nacos注册协议名
+     */
+    public static final String NACOS_REGISTRY_PROTOCOL = "nacos";
+
+    /**
      * sc注册ip
      */
     public static final String SC_REGISTRY_IP = "localhost:30100";

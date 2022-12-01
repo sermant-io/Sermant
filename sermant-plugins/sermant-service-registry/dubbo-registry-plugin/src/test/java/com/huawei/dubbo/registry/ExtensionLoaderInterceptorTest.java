@@ -24,11 +24,13 @@ import com.huawei.dubbo.registry.utils.ReflectUtils;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.extension.SPI;
 import com.alibaba.dubbo.registry.RegistryFactory;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
@@ -42,12 +44,18 @@ public class ExtensionLoaderInterceptorTest {
 
     private final Object[] arguments;
 
+    private final RegisterServiceCommonConfig commonConfig;
+
     /**
      * 构造方法
      */
-    public ExtensionLoaderInterceptorTest() {
+    public ExtensionLoaderInterceptorTest() throws NoSuchFieldException, IllegalAccessException {
         interceptor = new ExtensionLoaderInterceptor();
         arguments = new Object[1];
+        commonConfig = new RegisterServiceCommonConfig();
+        Field commonConfigField = interceptor.getClass().getDeclaredField("commonConfig");
+        commonConfigField.setAccessible(true);
+        commonConfigField.set(interceptor, commonConfig);
     }
 
     /**

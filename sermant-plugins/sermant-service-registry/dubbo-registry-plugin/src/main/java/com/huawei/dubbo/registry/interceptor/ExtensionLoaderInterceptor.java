@@ -18,10 +18,14 @@ package com.huawei.dubbo.registry.interceptor;
 
 import com.huawei.dubbo.registry.constants.Constant;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
+import com.huawei.registry.config.RegisterType;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,15 +38,25 @@ import java.util.Optional;
 public class ExtensionLoaderInterceptor extends AbstractInterceptor {
     private static final String TYPE_FIELD_NAME = "type";
 
-    private static final String APACHE_REGISTRY_FACTORY_CLASS_NAME = "org.apache.dubbo.registry.RegistryFactory";
+    private static final String APACHE_PREFIX = "apache-";
 
-    private static final String APACHE_SC_REGISTRY_FACTORY_CLASS_NAME
-        = "com.huawei.dubbo.registry.apache.ServiceCenterRegistryFactory";
+    private static final String ALIBABA_PREFIX = "alibaba-";
+
+    private static final String APACHE_REGISTRY_FACTORY_CLASS_NAME = "org.apache.dubbo.registry.RegistryFactory";
 
     private static final String ALIBABA_REGISTRY_FACTORY_CLASS_NAME = "com.alibaba.dubbo.registry.RegistryFactory";
 
-    private static final String ALIBABA_SC_REGISTRY_FACTORY_CLASS_NAME
-        = "com.huawei.dubbo.registry.alibaba.ServiceCenterRegistryFactory";
+    private static final Map<String, String> REGISTRY_CLASS_NAME = new HashMap<>();
+
+    private static RegisterServiceCommonConfig commonConfig =
+        PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
+
+    static {
+        REGISTRY_CLASS_NAME.put("apache-sc", "com.huawei.dubbo.registry.apache.ServiceCenterRegistryFactory");
+        REGISTRY_CLASS_NAME.put("alibaba-sc", "com.huawei.dubbo.registry.alibaba.ServiceCenterRegistryFactory");
+        REGISTRY_CLASS_NAME.put("apache-nacos", "com.huawei.dubbo.registry.apache.NacosRegistryFactory");
+        REGISTRY_CLASS_NAME.put("alibaba-nacos", "com.huawei.dubbo.registry.alibaba.NacosRegistryFactory");
+    }
 
     /**
      * 由于plugin不能直接new宿主的spi实现类，所以只能拦截宿主加载spi的方法，手动new出来给宿主
@@ -54,7 +68,7 @@ public class ExtensionLoaderInterceptor extends AbstractInterceptor {
     public ExecuteContext before(ExecuteContext context) {
         String name = (String) context.getArguments()[0];
         if (!Constant.SC_REGISTRY_PROTOCOL.equals(name)) {
-            // 如果不是sc的spi，直接return
+            // 如果不是sc/nacos的spi，直接return
             return context;
         }
         Class<?> type = (Class<?>) context.getMemberFieldValue(TYPE_FIELD_NAME);
@@ -63,9 +77,9 @@ public class ExtensionLoaderInterceptor extends AbstractInterceptor {
 
         // 只处理类型为RegistryFactory的spi
         if (APACHE_REGISTRY_FACTORY_CLASS_NAME.equals(typeName)) {
-            factoryClass = ReflectUtils.defineClass(APACHE_SC_REGISTRY_FACTORY_CLASS_NAME);
+            factoryClass = ReflectUtils.defineClass(REGISTRY_CLASS_NAME.get(buildKey(APACHE_PREFIX, name)));
         } else if (ALIBABA_REGISTRY_FACTORY_CLASS_NAME.equals(typeName)) {
-            factoryClass = ReflectUtils.defineClass(ALIBABA_SC_REGISTRY_FACTORY_CLASS_NAME);
+            factoryClass = ReflectUtils.defineClass(REGISTRY_CLASS_NAME.get(buildKey(ALIBABA_PREFIX, name)));
         } else {
             factoryClass = Optional.empty();
         }
@@ -74,6 +88,13 @@ public class ExtensionLoaderInterceptor extends AbstractInterceptor {
             cachedClasses.put(name, factoryClass.get());
         }
         return context;
+    }
+
+    private String buildKey(String prefix, String name) {
+        if (RegisterType.NACOS.equals(commonConfig.getRegisterType())) {
+            return prefix + Constant.NACOS_REGISTRY_PROTOCOL;
+        }
+        return prefix + name;
     }
 
     @Override
