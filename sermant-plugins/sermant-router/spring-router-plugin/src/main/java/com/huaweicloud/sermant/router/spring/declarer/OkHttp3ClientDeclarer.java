@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.router.spring.declarer;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -28,7 +27,7 @@ import com.huaweicloud.sermant.router.spring.interceptor.OkHttp3ClientIntercepto
  * @author yangrh
  * @since 2022-10-25
  */
-public class OkHttp3ClientDeclarer extends AbstractPluginDeclarer {
+public class OkHttp3ClientDeclarer extends BaseRegistryPluginAdaptationDeclarer {
     /**
      * 增强类的全限定名 okhttp请求
      */

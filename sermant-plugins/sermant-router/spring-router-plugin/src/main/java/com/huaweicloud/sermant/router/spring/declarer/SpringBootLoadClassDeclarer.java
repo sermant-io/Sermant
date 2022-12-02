@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.router.spring.declarer;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -28,7 +27,7 @@ import com.huaweicloud.sermant.router.spring.interceptor.SpringBootLoadClassInte
  * @author yuzl 俞真龙
  * @since 2022-10-28
  */
-public class SpringBootLoadClassDeclarer extends AbstractPluginDeclarer {
+public class SpringBootLoadClassDeclarer extends BaseRegistryPluginAdaptationDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.springframework.boot.autoconfigure.SpringBootApplication"};
 
     private static final String INTERCEPT_CLASS = SpringBootLoadClassInterceptor.class.getCanonicalName();

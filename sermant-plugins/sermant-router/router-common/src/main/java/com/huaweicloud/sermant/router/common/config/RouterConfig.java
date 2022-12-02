@@ -65,6 +65,12 @@ public class RouterConfig implements PluginConfig {
     private boolean enabledRegistryZoneRouter;
 
     /**
+     * 是否适配注册插件
+     */
+    @ConfigFieldKey("enabled-registry-plugin-adaptation")
+    private boolean enabledRegistryPluginAdaptation;
+
+    /**
      * 是否使用请求信息做路由
      */
     @ConfigFieldKey("use-request-router")
@@ -138,6 +144,14 @@ public class RouterConfig implements PluginConfig {
 
     public void setEnabledRegistryZoneRouter(boolean enabledRegistryZoneRouter) {
         this.enabledRegistryZoneRouter = enabledRegistryZoneRouter;
+    }
+
+    public boolean isEnabledRegistryPluginAdaptation() {
+        return enabledRegistryPluginAdaptation;
+    }
+
+    public void setEnabledRegistryPluginAdaptation(boolean enabledRegistryPluginAdaptation) {
+        this.enabledRegistryPluginAdaptation = enabledRegistryPluginAdaptation;
     }
 
     public boolean isUseRequestRouter() {

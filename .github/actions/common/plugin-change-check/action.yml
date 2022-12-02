@@ -93,7 +93,8 @@ runs:
       run: |
         # *****************dubbo_integration_test.yml*****************
         # ==========dubbo router is needed to test?==========
-        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantRouterChanged }} == 'true' ];then
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantRouterChanged }} == 'true' -o \
+            ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
           echo "enableDubboRouter=true" >> $GITHUB_ENV
         fi
         # ==========dubbo common is needed to test?==========
@@ -131,11 +132,12 @@ runs:
         # *****************spring_integration_test_2.yml*****************
         # ==========spring router is needed to test?==========
         if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantRouterChanged }} == 'true' -o \
-            ${{ env.sermantSpringbootRegistryChanged }} == 'true' ];then
+            ${{ env.sermantSpringbootRegistryChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
           echo "enableSpringRouter=true" >> $GITHUB_ENV
         fi
         # ==========spring tag router is needed to test?==========
-        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantRouterChanged }} == 'true' ];then
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantRouterChanged }} == 'true' -o \
+            ${{ env.sermantSpringbootRegistryChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
           echo "enableSpringTagRouter=true" >> $GITHUB_ENV
         fi
         # all workflow will trigger while workflow changed
