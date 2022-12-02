@@ -59,6 +59,15 @@ public class PathDeclarer {
     }
 
     /**
+     * 获取公共第三方依赖目录
+     *
+     * @return 核心功能实现包目录
+     */
+    public static String getCommonLibPath() {
+        return getAgentPath() + File.separatorChar + "lib";
+    }
+
+    /**
      * 获取配置存储目录
      *
      * @return 配置存储目录

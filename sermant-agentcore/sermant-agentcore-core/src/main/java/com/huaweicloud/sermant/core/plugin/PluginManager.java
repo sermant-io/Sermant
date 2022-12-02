@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.core.plugin;
 
+import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.exception.SchemaException;
@@ -208,7 +209,7 @@ public class PluginManager {
     private static ClassLoader loadServices(String pluginName, File serviceDir) {
         final URL[] urls = toUrls(pluginName, listJars(serviceDir));
         if (urls.length > 0) {
-            return new PluginClassLoader(urls);
+            return new PluginClassLoader(urls, ClassLoaderManager.getCommonClassLoader());
         }
         return ClassLoader.getSystemClassLoader();
     }
