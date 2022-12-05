@@ -43,10 +43,11 @@ public class FrameworkClassLoader extends URLClassLoader {
     /**
      * Constructor.
      *
-     * @param urls Url of sermant-agentcore-implement
+     * @param urls   Url of sermant-agentcore-implement
+     * @param parent parent classloader
      */
-    public FrameworkClassLoader(URL[] urls) {
-        super(urls);
+    public FrameworkClassLoader(URL[] urls, ClassLoader parent) {
+        super(urls, parent);
     }
 
     private Class<?> findFrameworkClass(String name) {
@@ -61,6 +62,11 @@ public class FrameworkClassLoader extends URLClassLoader {
     }
 
     @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return this.loadClass(name, false);
+    }
+
+    @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         synchronized (getClassLoadingLock(name)) {
             Class<?> clazz = null;
@@ -71,7 +77,13 @@ public class FrameworkClassLoader extends URLClassLoader {
             }
             if (clazz == null) {
                 clazz = super.loadClass(name, resolve);
+
+                // 通过FrameworkClassLoader的super.loadClass方法把从自身加载的类放入缓存
+                if (clazz != null && clazz.getClassLoader() == this) {
+                    frameworkClassMap.put(name, clazz);
+                }
             }
+
             if (resolve) {
                 resolveClass(clazz);
             }

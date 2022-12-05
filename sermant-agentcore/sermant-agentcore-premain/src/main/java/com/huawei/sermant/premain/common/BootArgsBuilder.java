@@ -183,5 +183,6 @@ public abstract class BootArgsBuilder {
         argsMap.put(CommonConstant.PLUGIN_SETTING_FILE_KEY, PathDeclarer.getPluginSettingPath());
         argsMap.put(CommonConstant.PLUGIN_PACKAGE_DIR_KEY, PathDeclarer.getPluginPackagePath());
         argsMap.put(CommonConstant.LOG_SETTING_FILE_KEY, PathDeclarer.getLogbackSettingPath());
+        argsMap.put(CommonConstant.COMMON_DEPENDENCY_DIR_KEY, PathDeclarer.getCommonLibPath());
     }
 }

@@ -43,8 +43,14 @@ public class PluginClassLoader extends URLClassLoader {
      */
     private final Map<String, Class<?>> pluginClassMap = new HashMap<>();
 
-    public PluginClassLoader(URL[] urls) {
-        super(urls);
+    /**
+     * Constructor.
+     *
+     * @param urls   Url of plugin package
+     * @param parent parent classloader
+     */
+    public PluginClassLoader(URL[] urls, ClassLoader parent) {
+        super(urls, parent);
     }
 
     /**
@@ -74,6 +80,11 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return this.loadClass(name, false);
+    }
+
+    @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         synchronized (getClassLoadingLock(name)) {
             Class<?> clazz = null;
@@ -82,6 +93,11 @@ public class PluginClassLoader extends URLClassLoader {
             }
             if (clazz == null) {
                 clazz = super.loadClass(name, resolve);
+
+                // 通过PluginClassLoader的super.loadClass方法把从自身加载的类放入缓存
+                if (clazz != null && clazz.getClassLoader() == this) {
+                    pluginClassMap.put(name, clazz);
+                }
             }
             if (resolve) {
                 resolveClass(clazz);

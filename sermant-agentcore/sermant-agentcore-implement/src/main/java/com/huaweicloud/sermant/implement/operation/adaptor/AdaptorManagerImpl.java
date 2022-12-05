@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.implement.operation.adaptor;
 
+import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
@@ -239,7 +240,7 @@ public class AdaptorManagerImpl implements AdaptorManager {
                 return ClassLoader.getSystemClassLoader();
             case STAND_ALONE:
                 checkSchema(adaptorName, adaptors, null);
-                return new PluginClassLoader(toUrls(adaptors));
+                return new PluginClassLoader(toUrls(adaptors), ClassLoaderManager.getCommonClassLoader());
             default:
                 throw new UnsupportedOperationException(String.format(Locale.ROOT,
                     "Unknown adaptor type %s in setting [%s]. ", setting.getAdaptorLoadType(), setting));

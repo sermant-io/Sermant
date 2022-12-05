@@ -296,6 +296,7 @@
             <modules>
                 <module>sermant-agentcore</module>
                 <module>sermant-plugins</module>
+                <module>sermant-common-dependency</module>
                 <module>sermant-backend</module>
                 <module>sermant-backend-lite</module>
                 <module>report</module>
@@ -359,6 +360,7 @@
             <modules>
                 <module>sermant-agentcore</module>
                 <module>sermant-plugins</module>
+                <module>sermant-common-dependency</module>
                 <module>sermant-backend</module>
                 <module>sermant-backend-lite</module>
                 <module>sermant-package</module>
