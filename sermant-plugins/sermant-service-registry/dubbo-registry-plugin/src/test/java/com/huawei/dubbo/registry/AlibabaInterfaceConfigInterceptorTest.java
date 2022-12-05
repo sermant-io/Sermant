@@ -19,6 +19,7 @@ package com.huawei.dubbo.registry;
 import com.huawei.dubbo.registry.interceptor.AlibabaInterfaceConfigInterceptor;
 import com.huawei.registry.config.RegisterConfig;
 
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import com.alibaba.dubbo.common.URL;

@@ -34,6 +34,22 @@ import java.util.Properties;
  */
 @ConfigTypeKey(value = "nacos.service")
 public class NacosRegisterConfig implements PluginConfig {
+
+    /**
+     * 默认拉取间隔时间
+     */
+    private static final long DEFAULT_NOTIFY_DELAY = 5000L;
+
+    /**
+     * 默认监控时间
+     */
+    private static final long DEFAULT_LOOKUP_INTERVAL = 30L;
+
+    /**
+     * 默认数据页大小
+     */
+    private static final int DEFAULT_PAGINATION_SIZE = 100;
+
     /**
      * spring cloud zone
      * 若未配置默认使用系统环境变量的zone, 即spring.cloud.loadbalancer.zone
@@ -131,6 +147,21 @@ public class NacosRegisterConfig implements PluginConfig {
     private String serviceNameSeparator = ":";
 
     /**
+     * 数据页大小
+     */
+    private int paginationSize = DEFAULT_PAGINATION_SIZE;
+
+    /**
+     * 监控时间
+     */
+    private long lookupInterval = DEFAULT_LOOKUP_INTERVAL;
+
+    /**
+     * 唤醒延时时间
+     */
+    private long notifyDelay = DEFAULT_NOTIFY_DELAY;
+
+    /**
      * 构造方法
      */
     public NacosRegisterConfig() {
@@ -156,6 +187,10 @@ public class NacosRegisterConfig implements PluginConfig {
 
     public void setSecure(boolean secure) {
         this.secure = secure;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     public void setAddress(String address) {
@@ -288,6 +323,30 @@ public class NacosRegisterConfig implements PluginConfig {
 
     public void setServiceNameSeparator(String serviceNameSeparator) {
         this.serviceNameSeparator = serviceNameSeparator;
+    }
+
+    public int getPaginationSize() {
+        return paginationSize;
+    }
+
+    public void setPaginationSize(int paginationSize) {
+        this.paginationSize = paginationSize;
+    }
+
+    public long getLookupInterval() {
+        return lookupInterval;
+    }
+
+    public void setLookupInterval(long lookupInterval) {
+        this.lookupInterval = lookupInterval;
+    }
+
+    public long getNotifyDelay() {
+        return notifyDelay;
+    }
+
+    public void setNotifyDelay(long notifyDelay) {
+        this.notifyDelay = notifyDelay;
     }
 
     /**
