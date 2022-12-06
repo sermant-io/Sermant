@@ -85,7 +85,7 @@ public class CommonConstant {
     /**
      * Sermant公共第三方依赖目录
      */
-    public static final String COMMON_DEPENDENCY_DIR_KEY = "common.dependency.dir";
+    public static final String COMMON_DEPENDENCY_DIR_KEY = "common.dir";
 
     /**
      * sermant的配置文件名的键

@@ -191,6 +191,7 @@ plugins:
 
 <properties>
     <sermant.basedir>${pom.basedir}/..</sermant.basedir>
+    <sermant.version>x.x.x</sermant.version>
     <package.plugin.name>template</package.plugin.name>
     <shade.common.prefix>com.huaweicloud.sermant.dependencies</shade.common.prefix>
     <package.plugin.dir>${sermant.basedir}/agent/pluginPackage</package.plugin.dir>
@@ -278,7 +279,7 @@ plugins:
                     <artifactItem>
                         <groupId>com.huaweicloud.sermant</groupId>
                         <artifactId>sermant-agentcore-premain</artifactId>
-                        <version>0.4.0</version>
+                        <version>${sermant.version}</version>
                         <type>jar</type>
                         <overWrite>false</overWrite>
                         <outputDirectory>${sermant.basedir}/agent</outputDirectory>
@@ -287,7 +288,7 @@ plugins:
                     <artifactItem>
                         <groupId>com.huaweicloud.sermant</groupId>
                         <artifactId>sermant-agentcore-core</artifactId>
-                        <version>0.4.0</version>
+                        <version>${sermant.version}</version>
                         <type>jar</type>
                         <overWrite>false</overWrite>
                         <outputDirectory>${sermant.basedir}/agent/core</outputDirectory>
@@ -295,11 +296,19 @@ plugins:
                     <artifactItem>
                         <groupId>com.huaweicloud.sermant</groupId>
                         <artifactId>sermant-agentcore-implement</artifactId>
-                        <version>0.7.0</version>
+                        <version>${sermant.version}</version>
                         <type>jar</type>
                         <overWrite>false</overWrite>
                         <outputDirectory>${sermant.basedir}/agent/implement</outputDirectory>
                     </artifactItem>
+                    <artifactItem>
+                        <groupId>com.huaweicloud.sermant</groupId>
+                        <artifactId>sermant-common</artifactId>
+                        <version>${sermant.version}</version>
+                        <type>jar</type>
+                        <overWrite>false</overWrite>
+                        <outputDirectory>${sermant.basedir}/agent/common</outputDirectory>
+                     </artifactItem>
                 </artifactItems>
             </configuration>
         </plugin>

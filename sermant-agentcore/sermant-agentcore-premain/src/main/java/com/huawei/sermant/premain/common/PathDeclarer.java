@@ -64,7 +64,7 @@ public class PathDeclarer {
      * @return 核心功能实现包目录
      */
     public static String getCommonLibPath() {
-        return getAgentPath() + File.separatorChar + "lib";
+        return getAgentPath() + File.separatorChar + "common";
     }
 
     /**
