@@ -61,7 +61,6 @@
                 <module>sermant-flowcontrol</module>
                 <module>sermant-router</module>
                 <module>sermant-service-registry</module>
-                <module>sermant-luban-adaptor</module>
                 <module>sermant-loadbalancer</module>
                 <module>sermant-dynamic-config</module>
                 <module>sermant-monitor</module>

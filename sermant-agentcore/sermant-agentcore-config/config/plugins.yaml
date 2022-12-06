@@ -8,8 +8,6 @@ plugins:
   - monitor
   - springboot-registry
   - mq-consume-deny
-adaptors:
-  - lubanops
 profiles:
   cse:
     - flowcontrol
