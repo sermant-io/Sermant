@@ -308,9 +308,8 @@ public class RequestInterceptorUtils {
             .append(HttpConstants.HTTP_URL_COLON)
             .append(serviceInstance.getPort())
             .append(path);
-        if (uri.getRawQuery() != null && method.equals(HttpConstants.HTTP_GET)) {
-            urlBuild.append(HttpConstants.HTTP_URL_UNKNOWN)
-                .append(uri.getRawQuery());
+        if (uri.getRawQuery() != null) {
+            urlBuild.append(HttpConstants.HTTP_URL_UNKNOWN).append(uri.getRawQuery());
         }
         return urlBuild.toString();
     }

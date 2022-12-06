@@ -67,10 +67,11 @@ public class UrlInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        LbContext.INSTANCE.setCurLoadbalancerType(LbContext.LOADBALANCER_DUBBO);
         Object[] arguments = context.getArguments();
         if (arguments != null && arguments.length > 1
                 && DubboUrlParamsConstants.DUBBO_LOAD_BALANCER_KEY.equals(arguments[1])) {
+            LbContext.INSTANCE.setCurLoadbalancerType(LbContext.LOADBALANCER_DUBBO);
+
             // 如果为empty，继续执行原方法，即使用宿主的负载均衡策略
             // 如果不为empty，则使用返回的type并跳过原方法
             checkRules();

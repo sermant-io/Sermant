@@ -43,7 +43,8 @@ public class UrlDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME), INTERCEPT_CLASS)
+            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME)
+                    .and(MethodMatcher.paramTypesEqual("java.lang.String", "java.lang.String")), INTERCEPT_CLASS)
         };
     }
 }
