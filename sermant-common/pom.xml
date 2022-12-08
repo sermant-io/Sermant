@@ -70,11 +70,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
-                        <configuration>
-                            <outputFile>
-                                ${package.agent.dir}/common/${project.artifactId}-${project.version}.jar
-                            </outputFile>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
