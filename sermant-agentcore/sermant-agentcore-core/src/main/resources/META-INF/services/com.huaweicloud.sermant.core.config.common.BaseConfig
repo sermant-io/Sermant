@@ -1,5 +1,4 @@
 com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig
-com.huaweicloud.sermant.core.operation.adaptor.config.AdaptorConfig
 com.huaweicloud.sermant.core.service.dynamicconfig.config.DynamicConfig
 com.huaweicloud.sermant.core.service.dynamicconfig.config.KieDynamicConfig
 com.huaweicloud.sermant.core.service.heartbeat.config.HeartbeatConfig

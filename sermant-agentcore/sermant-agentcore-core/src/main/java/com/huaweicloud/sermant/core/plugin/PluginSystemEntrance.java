@@ -21,7 +21,6 @@ import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.utils.ConfigValueUtil;
 import com.huaweicloud.sermant.core.operation.OperationManager;
-import com.huaweicloud.sermant.core.operation.adaptor.api.AdaptorManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.agent.ByteEnhanceManager;
 import com.huaweicloud.sermant.core.plugin.config.PluginSetting;
@@ -45,8 +44,7 @@ import java.util.stream.Collectors;
  * <p>这里将依据插件设定文件：
  * <pre>
  *     1.调用{@link PluginManager}初始化插件包
- *     2.调用{@link AdaptorManager}初始化适配器
- *     3.调用{@link ByteEnhanceManager}做字节码增强
+ *     2.调用{@link ByteEnhanceManager}做字节码增强
  * </pre>
  *
  * @author HapThorin
@@ -73,8 +71,7 @@ public class PluginSystemEntrance {
         final PluginSetting pluginSetting = loadSetting();
         Set<String> plugins = getLoadPlugins(pluginSetting);
         LOGGER.info(String.format(Locale.ROOT, "load plugins: %s", plugins.toString()));
-        if (PluginManager.initPlugins(plugins, instrumentation) | OperationManager.getOperation(AdaptorManager.class)
-            .initAdaptors(pluginSetting.getAdaptors(), instrumentation)) {
+        if (PluginManager.initPlugins(plugins, instrumentation)) {
             ByteEnhanceManager.enhance(instrumentation);
         }
     }
