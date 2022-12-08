@@ -196,12 +196,14 @@ Similar to the `plugin` module, here's how to add a `service` module:
     </profile>
   </profiles>
   ```
+  
 - Add the following parameters to the `service` submodule:
   ```xml
   <properties>
     <package.plugin.type>service</package.plugin.type>
   </properties>
   ```
+  
 - Add the core package and related plugin dependency to the `service` submodule:
   ```xml
   <dependencies>
@@ -218,8 +220,23 @@ Similar to the `plugin` module, here's how to add a `service` module:
     </dependency>
   </dependencies>
   ```
-  The `service` module allows you to add third-party dependencies if needed!
+  
+- Add third-party dependencies to the `service` module
+
+  - Add directly
+
+    The `service` module allows you to add third-party dependencies on demand, directly in `pom.xml` via ` <scope>compile</scope>`. The third-party dependencies introduced by this method are loaded by the PluginClassloader of each plugin independently. There is a class isolation between the plugin and the host application or between the plugins 
+
+  - Add public third-party dependencies indirectly by importing`sermant-common`
+
+    Sermant provides a CommonClassLoader mechanism, and plugins can extract common dependencies into `sermant-common` on demand to share common dependencies between plugins.
+
+    `service` module can import `sermant-common` via `<scope>provided</scope>`, where third-party dependencies are loaded by the CommonClassLoader and there is no class isolation between plugins.
+
+    If the `service` module imports `sermant-common` and needs to use a different version of the third-party dependency from the one imported in `sermant-common`, it needs to import the specific dependency via`<scope>compile</scope>` in this module. Third-party dependencies imported by this approach are loaded by the PluginClassLoader of the current plugin, isolated from the CommonClassLoader.
+
 - Add the `shade` plugin to the `service` submodule:
+  
   ```xml
   <build>
     <plugins>

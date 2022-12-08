@@ -185,20 +185,22 @@
         <module>${插件服务模块名}</module>
       </modules>
     </profile>
-      <profile>
-      <id>test</id>
+    <profile>
+      <id>release</id>
       <modules>
         <module>${插件服务模块名}</module>
       </modules>
     </profile>
   </profiles>
   ```
+  
 - 为`服务模块(service)`子模块添加以下参数：
   ```xml
   <properties>
     <package.plugin.type>service</package.plugin.type>
   </properties>
   ```
+  
 - 为`服务模块(service)`子模块添加核心包和相关插件包的依赖：
   ```xml
   <dependencies>
@@ -215,7 +217,21 @@
     </dependency>
   </dependencies>
   ```
-  `服务模块(service)`中允许按需添加第三方依赖！
+  
+- 为`服务模块(service)`中添加第三方依赖或公共依赖
+
+  - 直接添加
+
+    `服务模块(service)`中允许按需添加第三方依赖，在`pom.xml`直接以`<scope>compile</scope>`的方式添加即可。该方式引入的第三方依赖是由各个插件独立的插件类加载器进行加载，插件和宿主应用之间、插件与插件之间都是类隔离的。
+
+  - 通过引入`sermant-common`间接添加公共第三方依赖
+
+    Sermant提供了公共类加载机制，各插件的可按需提取公共依赖至`sermant-common`中，以实现插件之间的公共依赖的共享。
+
+    `服务模块(service)`可通过`<scope>provided</scope>`的方式引入`sermant-common`，该方式的第三方依赖将由公共类加载器进行加载，各插件不存在类隔离。
+
+    若插件服务模块引入`sermant-common`的同时，需使用与`sermant-common`中引入的第三方依赖的不同版本，则需在本模块以`<scope>compile</scope>`方式引入该版本依赖。改方式引入的第三方依赖是由当前插件的插件类加载器进行加载，与公共类加载器是隔离的。
+
 - 为`服务模块(service)`子模块添加`shade`插件打包：
   ```xml
   <build>

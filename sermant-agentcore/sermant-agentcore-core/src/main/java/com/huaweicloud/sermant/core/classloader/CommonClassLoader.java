@@ -37,7 +37,7 @@ public class CommonClassLoader extends URLClassLoader {
     /**
      * 构造方法，CommonClassLoader默认以AppClassloader为父类加载器
      *
-     * @param urls Url of sermant-common-dependency
+     * @param urls Url of sermant-common
      */
     public CommonClassLoader(URL[] urls) {
         super(urls);
