@@ -17,6 +17,7 @@
 
 package com.huawei.fowcontrol.res4j.handler;
 
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.core.constants.RuleConstants;
 import com.huawei.flowcontrol.common.core.rule.BulkheadRule;
 import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
@@ -26,6 +27,7 @@ import com.huawei.flowcontrol.common.core.rule.fault.FaultRule;
 
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
@@ -65,16 +67,24 @@ public class HandlerTest {
 
     private MockedStatic<OperationManager> operationManagerMockedStatic;
 
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
     @Before
     public void setUp() {
         operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
         operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+        FlowControlConfig flowControlConfig = new FlowControlConfig();
+        flowControlConfig.setEnableStartMonitor(true);
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(()->PluginConfigManager.getPluginConfig(FlowControlConfig.class))
+                .thenReturn(flowControlConfig);
     }
 
     // mock 静态方法用完后需要关闭
     @After
     public void tearDown() throws Exception {
         operationManagerMockedStatic.close();
+        pluginConfigManagerMockedStatic.close();
     }
 
     /**
