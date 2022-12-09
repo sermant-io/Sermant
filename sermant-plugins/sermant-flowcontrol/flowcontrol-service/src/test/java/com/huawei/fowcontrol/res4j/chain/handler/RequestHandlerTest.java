@@ -63,9 +63,11 @@ public class RequestHandlerTest {
         operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
         operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        FlowControlConfig flowControlConfig = new FlowControlConfig();
+        flowControlConfig.setEnableStartMonitor(true);
         pluginConfigManagerMockedStatic
                 .when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
-                .thenReturn(new FlowControlConfig());
+                .thenReturn(flowControlConfig);
         publishMatchGroup();
         loadTests();
         entry = HandlerChainEntry.INSTANCE;
