@@ -115,3 +115,8 @@ Sermant 采用 [Apache 2.0 License.](/LICENSE)
 - [Apache/Servicecomb-kie](https://github.com/apache/servicecomb-kie): Sermant使用servicecomb-kie作为默认的动态配置中心。
 - [Apache/SkyWalking](https://skywalking.apache.org/): 本项目中的插件架构参考了Apache Skywalking。Sermant中的部分框架代码是基于Apache Skywalking项目构建的。
 - [Alibaba/Sentinel](https://github.com/alibaba/Sentinel): Sermant的流量控制插件是基于阿里巴巴Sentinel项目构建的。
+
+## 联系我们
+
+* [Gitter](https://gitter.im/SermantUsers/community)：Sermant社区的聊天室。
+* QQ群：454094511。
