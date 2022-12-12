@@ -119,6 +119,6 @@ Sermant 采用 [Apache 2.0 License.](/LICENSE)
 ## 联系我们
 
 * [Gitter](https://gitter.im/SermantUsers/community)：Sermant社区的聊天室。
-* 微信号：申请加好友时请备注公司+职务，谢谢。
+* 微信交流群：请先申请Sermant小二为好友，通过后会拉您进群，申请时请备注公司+职务，谢谢。
 
 ![pic](docs/binary-docs/contact-wechat.png)
