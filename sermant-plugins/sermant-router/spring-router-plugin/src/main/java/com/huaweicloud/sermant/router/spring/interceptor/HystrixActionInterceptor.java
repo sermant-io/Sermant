@@ -25,6 +25,8 @@ import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableDefault;
 
+import java.util.Collections;
+
 /**
  * HystrixContexSchedulerAction增强类，设置线程参数
  *
@@ -32,6 +34,8 @@ import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableDefault;
  * @since 2022-07-12
  */
 public class HystrixActionInterceptor extends AbstractInterceptor {
+    private static final RequestHeader EMPTY_REQUEST_HEADER = new RequestHeader(Collections.emptyMap());
+
     @Override
     public ExecuteContext before(ExecuteContext context) {
         Object[] arguments = context.getArguments();
@@ -40,7 +44,10 @@ public class HystrixActionInterceptor extends AbstractInterceptor {
                 HystrixRequestContext.initializeContext();
             }
             HystrixRequestVariableDefault<RequestHeader> hystrixRequest = new HystrixRequestVariableDefault<>();
-            hystrixRequest.set(ThreadLocalUtils.getRequestHeader());
+            RequestHeader requestHeader = ThreadLocalUtils.getRequestHeader();
+
+            // 禁止存入null，否则会有严重的性能问题
+            hystrixRequest.set(requestHeader == null ? EMPTY_REQUEST_HEADER : requestHeader);
         }
         return context;
     }

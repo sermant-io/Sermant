@@ -156,7 +156,7 @@ public class DubboReflectUtils {
         if (obj == null) {
             return Collections.emptyMap();
         }
-        String className = obj.getClass().getCanonicalName().startsWith("com.alibaba.dubbo")
+        String className = obj.getClass().getName().startsWith("com.alibaba.dubbo")
             ? ALIBABA_RPC_CONTEXT_CLASS_NAME : APACHE_RPC_CONTEXT_CLASS_NAME;
         Map<String, Object> attachments = new HashMap<>(getAttachmentsFromContext(className));
         attachments.putAll(getAttachmentsByInvocation(obj));

@@ -54,10 +54,14 @@ public class ReflectUtils {
      */
     private static final Map<String, Method> METHOD_CACHE = new ConcurrentHashMap<>();
 
+    private static final Map<String, Optional<Class<?>>> CLASS_CACHE = new ConcurrentHashMap<>();
+
     /**
      * 针对单个类缓存的Field的初始化容量
      */
     private static final int INIT_CLASS_FILED_CACHE_SIZE = 4;
+
+    private static final int EXTRA_LENGTH_FOR_METHOD_KEY = 3;
 
     private ReflectUtils() {
     }
@@ -139,7 +143,6 @@ public class ReflectUtils {
      * @return 结果
      */
     public static Optional<Object> invokeMethod(Object target, Method method, Object[] params) {
-        setAccessible(method);
         try {
             if (params == null) {
                 return Optional.ofNullable(method.invoke(target));
@@ -157,13 +160,15 @@ public class ReflectUtils {
         if (className == null) {
             return Optional.empty();
         }
-        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            return Optional.ofNullable(contextClassLoader.loadClass(className));
-        } catch (ClassNotFoundException ignored) {
-            // 找不到类直接返回
-            return Optional.empty();
-        }
+        return CLASS_CACHE.computeIfAbsent(className, value -> {
+            final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                return Optional.ofNullable(contextClassLoader.loadClass(className));
+            } catch (ClassNotFoundException ignored) {
+                // 找不到类直接返回
+                return Optional.empty();
+            }
+        });
     }
 
     /**
@@ -184,7 +189,7 @@ public class ReflectUtils {
             if (method != null) {
                 return Optional.of(method);
             }
-            method = clazz.getDeclaredMethod(methodName, paramsType);
+            method = setAccessible(clazz.getDeclaredMethod(methodName, paramsType));
             METHOD_CACHE.put(methodKey, method);
             return Optional.of(method);
         } catch (NoSuchMethodException ex) {
@@ -273,8 +278,8 @@ public class ReflectUtils {
 
     private static String buildMethodKey(Class<?> clazz, String methodName, Class<?>[] paramsType) {
         final String name = clazz.getName();
-        final StringBuilder sb = new StringBuilder(name);
-        sb.append("#").append(methodName).append("(");
+        final StringBuilder sb = new StringBuilder(name.length() + methodName.length() + EXTRA_LENGTH_FOR_METHOD_KEY);
+        sb.append(name).append("#").append(methodName).append("(");
         if (paramsType != null) {
             for (Class<?> paramType : paramsType) {
                 sb.append(paramType.getName()).append(",");
@@ -299,15 +304,12 @@ public class ReflectUtils {
         if (isFinalField(field)) {
             updateFinalModifierField(field);
         }
-        AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
-            try {
-                field.set(target, value);
-            } catch (IllegalAccessException ex) {
-                LOGGER.warning(String.format(Locale.ENGLISH, "Set value for field [%s] failed! %s", fieldName,
-                        ex.getMessage()));
-            }
-            return value;
-        });
+        try {
+            field.set(target, value);
+        } catch (IllegalAccessException ex) {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Set value for field [%s] failed! %s", fieldName,
+                ex.getMessage()));
+        }
     }
 
     /**
@@ -318,8 +320,6 @@ public class ReflectUtils {
     public static void updateFinalModifierField(Field field) {
         final Field modifiersField = getField(Field.class, "modifiers");
         if (modifiersField != null) {
-            setAccessible(field);
-            setAccessible(modifiersField);
             try {
                 modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
             } catch (IllegalAccessException ex) {
@@ -415,8 +415,8 @@ public class ReflectUtils {
         Field field = cache.get(fieldName);
         try {
             if (field == null) {
-                field = clazz.getDeclaredField(fieldName);
-                cache.putIfAbsent(fieldName, setAccessible(field));
+                field = setAccessible(clazz.getDeclaredField(fieldName));
+                cache.putIfAbsent(fieldName, field);
             }
         } catch (IllegalArgumentException | NoSuchFieldException ex) {
             if (clazz.getSuperclass() != null) {

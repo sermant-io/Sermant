@@ -57,6 +57,10 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
     // dubbo请求参数中是否为consumer的value值
     private static final String CONSUMER_VALUE = "consumer";
 
+    private static final String DASH = "-";
+
+    private static final String POINT = ".";
+
     private final RouterConfig routerConfig;
 
     // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
@@ -69,7 +73,8 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
         allMismatchTags = new HashMap<>();
         for (String requestTag : routerConfig.getRequestTags()) {
-            allMismatchTags.put(requestTag, null);
+            // dubbo会把key中的"-"替换成"."
+            allMismatchTags.put(requestTag.replace(DASH, POINT), null);
         }
 
         // 所有实例都含有version，所以不能存入null值
@@ -186,7 +191,7 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
         if (RouterConfiguration.isInValid(configuration)) {
             return invokers;
         }
-        String interfaceName = getGroup(queryMap) + "/" + serviceInterface + "."
+        String interfaceName = getGroup(queryMap) + "/" + serviceInterface + POINT
             + DubboReflectUtils.getMethodName(invocation) + ":" + getVersion(queryMap);
         List<Rule> rules = RuleUtils
             .getRules(configuration, targetService, interfaceName, DubboCache.INSTANCE.getAppName());
@@ -196,7 +201,7 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
             return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, routes);
         }
         return RuleStrategyHandler.INSTANCE
-            .getMismatchInvokers(targetService, invokers, RuleUtils.getTags(rules), true);
+            .getMismatchInvokers(targetService, invokers, RuleUtils.getTags(rules, true), true);
     }
 
     private List<Object> getTargetInvokersByRequest(String targetName, List<Object> invokers, Object invocation) {
@@ -215,10 +220,15 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
             if (!requestTags.contains(key)) {
                 continue;
             }
-            mismatchTags.put(key, null);
+            String replaceDashKey = key;
+            if (replaceDashKey.contains(DASH)) {
+                // dubbo会把key中的"-"替换成"."
+                replaceDashKey = replaceDashKey.replace(DASH, POINT);
+            }
+            mismatchTags.put(replaceDashKey, null);
             String value = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);
             if (StringUtils.isExist(value)) {
-                tags.put(key, value);
+                tags.put(replaceDashKey, value);
             }
         }
         if (StringUtils.isExist(tags.get(RouterConstant.DUBBO_VERSION_KEY))) {

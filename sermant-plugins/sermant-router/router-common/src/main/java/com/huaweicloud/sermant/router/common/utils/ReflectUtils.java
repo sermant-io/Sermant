@@ -44,6 +44,8 @@ public class ReflectUtils {
 
     private static final Map<String, Optional<Method>> METHOD_MAP = new ConcurrentHashMap<>();
 
+    private static final int EXTRA_LENGTH_FOR_METHOD_KEY = 3;
+
     private ReflectUtils() {
     }
 
@@ -55,17 +57,7 @@ public class ReflectUtils {
      * @return 私有字段值
      */
     public static Optional<Object> getFieldValue(Object obj, String fieldName) {
-        Optional<Field> field = FIELD_MAP.computeIfAbsent(obj.getClass().getCanonicalName() + "." + fieldName, key -> {
-            Class<?> currClass = obj.getClass();
-            while (currClass != Object.class) {
-                try {
-                    return Optional.ofNullable(getAccessibleObject(currClass.getDeclaredField(fieldName)));
-                } catch (NoSuchFieldException e) {
-                    currClass = currClass.getSuperclass();
-                }
-            }
-            return Optional.empty();
-        });
+        Optional<Field> field = getField(obj, fieldName);
         if (field.isPresent()) {
             try {
                 return Optional.ofNullable(field.get().get(obj));
@@ -153,12 +145,39 @@ public class ReflectUtils {
         return Optional.empty();
     }
 
+    private static Optional<Field> getField(Object obj, String fieldName) {
+        return FIELD_MAP.computeIfAbsent(buildFieldKey(obj, fieldName), key -> {
+            Class<?> currClass = obj.getClass();
+            while (currClass != Object.class) {
+                try {
+                    return Optional.ofNullable(getAccessibleObject(currClass.getDeclaredField(fieldName)));
+                } catch (NoSuchFieldException e) {
+                    currClass = currClass.getSuperclass();
+                }
+            }
+            return Optional.empty();
+        });
+    }
+
     private static String buildMethodKey(Class<?> clazz, String methodName, Class<?> parameterClass) {
-        StringBuilder sb = new StringBuilder(clazz.getName());
-        sb.append("#").append(methodName).append("(");
+        String parameterClassName = "";
         if (parameterClass != null) {
-            sb.append(parameterClass.getName());
+            parameterClassName = parameterClass.getName();
         }
-        return sb.append(")").toString();
+        String className = clazz.getName();
+
+        // 初始化StringBuilder的长度是为了性能
+        StringBuilder sb = new StringBuilder(
+            className.length() + methodName.length() + parameterClassName.length() + EXTRA_LENGTH_FOR_METHOD_KEY);
+        sb.append(className).append("#").append(methodName).append("(").append(parameterClassName).append(")");
+        return sb.toString();
+    }
+
+    private static String buildFieldKey(Object obj, String fieldName) {
+        // 初始化StringBuilder的长度是为了性能
+        String className = obj.getClass().getName();
+        StringBuilder sb = new StringBuilder(className.length() + fieldName.length() + 1);
+        sb.append(className).append(".").append(fieldName);
+        return sb.toString();
     }
 }

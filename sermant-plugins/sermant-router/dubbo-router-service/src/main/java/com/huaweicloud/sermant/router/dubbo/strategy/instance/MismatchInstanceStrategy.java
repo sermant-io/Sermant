@@ -66,8 +66,6 @@ public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object, L
         if (VERSION_KEY.equals(tag)) {
             return RouterConstant.VERSION_KEY;
         }
-
-        // dubbo会把key中的"-"替换成"."
-        return RouterConstant.PARAMETERS_KEY_PREFIX + tag.replace("-", ".");
+        return RouterConstant.PARAMETERS_KEY_PREFIX + tag;
     }
 }

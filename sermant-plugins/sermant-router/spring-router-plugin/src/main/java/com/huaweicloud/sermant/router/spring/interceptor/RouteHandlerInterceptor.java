@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
@@ -55,9 +56,12 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) {
-        Map<String, List<String>> header = new HashMap<>();
         Set<String> matchKeys = configService.getMatchKeys();
+        if (CollectionUtils.isEmpty(matchKeys)) {
+            return true;
+        }
         Collection<String> headerNames = enumeration2Collection(request.getHeaderNames(), false);
+        Map<String, List<String>> header = new HashMap<>();
         for (String headerKey : matchKeys) {
             if (headerNames.contains(headerKey)) {
                 header.put(headerKey, (List<String>) enumeration2Collection(request.getHeaders(headerKey), true));
