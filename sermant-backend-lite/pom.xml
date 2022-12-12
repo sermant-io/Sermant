@@ -21,8 +21,7 @@
         <webapp.path>${project.basedir}/src/main/webapp/sermant-frontend</webapp.path>
 
         <spring.boot.version>2.5.3</spring.boot.version>
-        <spring.boot.starter.web.version>2.7.1</spring.boot.starter.web.version>
-        <spring.webmvc.version>5.3.21</spring.webmvc.version>
+        <spring.boot.starter.web.version>2.7.4</spring.boot.starter.web.version>
         <maven.clen.plugin.version>3.1.0</maven.clen.plugin.version>
     </properties>
 
@@ -31,11 +30,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring.boot.starter.web.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.webmvc.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -196,5 +190,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>
