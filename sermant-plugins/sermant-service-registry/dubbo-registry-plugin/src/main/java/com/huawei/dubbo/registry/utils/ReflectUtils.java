@@ -62,6 +62,10 @@ public class ReflectUtils {
     private static final String VALUE_OF_METHOD_NAME = "valueOf";
     private static final String REMOVE_PARAMETERS_METHOD_NAME = "removeParameters";
     private static final String ADD_PARAMETERS_METHOD_NAME = "addParameters";
+    private static final String GET_PARAMETER_METHOD_NAME = "getParameter";
+    private static final String GET_HOST_METHOD_NAME = "getHost";
+    private static final String GET_PORT_METHOD_NAME = "getPort";
+    private static final String GET_SERVICE_INTERFACE_METHOD_NAME = "getServiceInterface";
 
     private ReflectUtils() {
     }
@@ -169,6 +173,55 @@ public class ReflectUtils {
      */
     public static String getName(Object obj) {
         return invokeWithNoneParameterAndReturnString(obj, GET_NAME_METHOD_NAME);
+    }
+
+    /**
+     * 获取应用接口名
+     *
+     * @param obj URL
+     * @return 应用接口名
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
+     */
+    public static String getServiceInterface(Object obj) {
+        return invokeWithNoneParameterAndReturnString(obj, GET_SERVICE_INTERFACE_METHOD_NAME);
+    }
+
+    /**
+     * 获取应用主机
+     *
+     * @param obj URL
+     * @return 应用主机
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
+     */
+    public static String getHost(Object obj) {
+        return invokeWithNoneParameterAndReturnString(obj, GET_HOST_METHOD_NAME);
+    }
+
+    /**
+     * 获取应用端口
+     *
+     * @param obj URL
+     * @return 应用端口
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
+     */
+    public static int getPort(Object obj) {
+        return invokeWithNoneParameterAndReturnInteger(obj, GET_PORT_METHOD_NAME);
+    }
+
+    /**
+     * 获取url参数
+     *
+     * @param obj ApplicationConfig
+     * @param key key
+     * @return 应用名
+     * @see com.alibaba.dubbo.config.ApplicationConfig
+     * @see org.apache.dubbo.config.ApplicationConfig
+     */
+    public static String getParameter(Object obj, String key) {
+        return invokeWithStringParameter(obj, GET_PARAMETER_METHOD_NAME, key, String.class);
     }
 
     /**
@@ -357,9 +410,19 @@ public class ReflectUtils {
         return invokeWithNoneParameter(obj, name, String.class, true);
     }
 
+    private static int invokeWithNoneParameterAndReturnInteger(Object obj, String name) {
+        return invokeWithNoneParameter(obj, name, Integer.class, true);
+    }
+
     private static <T> T invokeWithNoneParameter(Object obj, String name, Class<T> returnClass, boolean isPublic) {
         InvokeParameter invokeParameter = new InvokeParameter(obj.getClass(), obj, name, null, null);
         invokeParameter.isPublic = isPublic;
+        return returnClass.cast(invoke(invokeParameter).orElse(null));
+    }
+
+    private static <T> T invokeWithStringParameter(Object obj, String name, String parameter, Class<T> returnClass) {
+        InvokeParameter invokeParameter = new InvokeParameter(obj.getClass(), obj, name, parameter, String.class);
+        invokeParameter.isPublic = true;
         return returnClass.cast(invoke(invokeParameter).orElse(null));
     }
 

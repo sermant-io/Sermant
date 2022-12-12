@@ -422,6 +422,20 @@ com/huawei/registry/grace/interceptors/SpringLoadbalancerFeignResponseIntercepto
 
 com/huawei/registry/grace/interceptors/SpringLoadbalancerRestTemplateResponseInterceptor.java in this product is copied from on org/apache/dubbo/rpc/protocol/dubbo/DubboInvoker.java of Apache Dubbo project
 
+com/huawei/dubbo/registry/utils/NacosInstanceManageUtil.java in this product is copied from on org/apache/dubbo/registry/nacos/util/NacosInstanceManageUtil.java of Apache Dubbo project
+
+com/huawei/dubbo/registry/utils/NamingServiceUtils.java in this product is copied from on org/apache/dubbo/registry/nacos/util/NacosNamingServiceUtils.java of Apache Dubbo project
+
+com/huawei/dubbo/registry/listener/NacosAggregateListener.java in this product is copied from on org/apache/dubbo/registry/nacos/NacosAggregateListener.java of Apache Dubbo project
+
+com/huawei/dubbo/registry/entity/NacosServiceName.java in this product is copied from on org/apache/dubbo/registry/nacos/NacosServiceName.java of Apache Dubbo project
+
+com/huawei/dubbo/registry/service/NacosServiceNotify.java in this product is copied from on org/apache/dubbo/registry/support/AbstractRegistry.java of Apache Dubbo project
+
+com/huawei/dubbo/registry/service/RegistryNotifier.java in this product is copied from on org/apache/dubbo/registry/RegistryNotifier.java of Apache Dubbo project
+
+com/huawei/dubbo/registry/service/NacosRegistryServiceImpl.java in this product is copied from on org/apache/dubbo/registry/nacos/NacosRegistry.java of Apache Dubbo project
+
 Apache Dubbo project is published at https://github.com/apache/dubbo and its license is Apache License Version 2.0.
 
 ====================================================================================
