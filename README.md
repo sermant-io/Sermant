@@ -119,7 +119,7 @@ Please read  [Contribute Guide](CONTRIBUTING.md) to refer how to join the contri
 ## Contact Us
 
 * [Gitter](https://gitter.im/SermantUsers/community): Sermant's chat room for community messaging, collaboration and discovery.
-* WeChat: If you want to apply to add a friend, please add the company and position in the note, thank you.
+* WeChat Group: Please apply for Sermant Xiao Er as a friend first, and will pull you into the group after passing, please note the company + position when applying, thank you.
 
 ![sermant](docs/binary-docs/contact-wechat.png)
 
