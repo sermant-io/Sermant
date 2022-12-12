@@ -5,7 +5,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,8 @@
 #
 #
 
-com.huawei.flowcontrol.res4j.service.HttpRest4jServiceImpl
-com.huawei.flowcontrol.res4j.service.DubboRest4jServiceImpl
-com.huawei.flowcontrol.res4j.service.ServiceCollectorService
-
+com.huawei.flowcontrol.res4j.handler.exception.FaultExceptionHandler
+com.huawei.flowcontrol.res4j.handler.exception.BulkheadExceptionHandler
+com.huawei.flowcontrol.res4j.handler.exception.CircuitExceptionHandler
+com.huawei.flowcontrol.res4j.handler.exception.InstanceIsolationExceptionHandler
+com.huawei.flowcontrol.res4j.handler.exception.RateLimitingExceptionHandler
