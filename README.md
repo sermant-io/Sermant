@@ -116,8 +116,10 @@ Please read  [Contribute Guide](CONTRIBUTING.md) to refer how to join the contri
 - [Apache/SkyWalking](https://skywalking.apache.org/): The plugin architecture in this project is refered to Apache Skywalking. Part of the framework code in Sermant is built based on Apache Skywalking project as well.
 - [Alibaba/Sentinel](https://github.com/alibaba/Sentinel): Sermant's flow-control plugin is built based on Alibaba Sentinel project. 
 
-## Contact
+## Contact Us
 
 * [Gitter](https://gitter.im/SermantUsers/community): Sermant's chat room for community messaging, collaboration and discovery.
-* QQ Group: 454094511.
+* WeChat: If you want to apply to add a friend, please add the company and position in the note, thank you.
+
+![sermant](docs/binary-docs/contact-wechat.png)
 
