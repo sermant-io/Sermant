@@ -17,6 +17,8 @@
 
 package com.huawei.fowcontrol.res4j.chain.handler;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.core.ResolverManager;
 import com.huawei.flowcontrol.common.core.resolver.CircuitBreakerRuleResolver;
@@ -25,18 +27,15 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.MetricEntity;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 import com.huawei.fowcontrol.res4j.chain.HandlerChainEntry;
-
 import com.huawei.fowcontrol.res4j.handler.InstanceIsolationHandler;
 import com.huawei.fowcontrol.res4j.service.ServiceCollectorService;
-import com.huaweicloud.sermant.core.operation.OperationManager;
-import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
+
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
-import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -60,6 +59,23 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
     private static final long NANO_TIMES = 1000000000;
 
     private static final String BUSINESS_NAME = "testPublishEvent";
+
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        FlowControlConfig flowControlConfig = new FlowControlConfig();
+        flowControlConfig.setEnableStartMonitor(true);
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(()->PluginConfigManager.getPluginConfig(FlowControlConfig.class))
+                .thenReturn(flowControlConfig);
+    }
+
+    // mock 静态方法用完后需要关闭
+    @After
+    public void tearDown() throws Exception {
+        pluginConfigManagerMockedStatic.close();
+    }
 
     @Override
     public void test(HandlerChainEntry entry, String sourceName) {
@@ -147,17 +163,7 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
      */
     @Test
     public void testAddPublishEvent() {
-        FlowControlConfig metricConfig = new FlowControlConfig();
-        metricConfig.setEnableStartMonitor(true);
-        try (MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic =
-                     Mockito.mockStatic(PluginConfigManager.class);
-             MockedStatic<OperationManager> operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class)) {
-            pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
-                    .thenReturn(metricConfig);
-            operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
-                    .thenReturn(new YamlConverterImpl());
-            testEventConsume();
-        }
+        testEventConsume();
     }
 
     /**
