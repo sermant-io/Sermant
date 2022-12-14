@@ -24,13 +24,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.huaweicloud.sermant</groupId>
-                <artifactId>sermant</artifactId>
-                <version>${project.parent.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Spring Boot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
