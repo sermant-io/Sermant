@@ -53,8 +53,8 @@ import java.util.stream.Stream;
  * @since 2022-07-29
  */
 @RestController
-public class SermantInjectionController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SermantInjectionController.class);
+public class SermantInjectorController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SermantInjectorController.class);
 
     private static final String UID_PATH = "uid";
 
