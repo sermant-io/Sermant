@@ -28,6 +28,8 @@ sermant-agent:
     # agent配置中心地址
     address: http://localhost:2181
   service:
+    # agent注册中心类型: SERVICE_COMB/NACOS
+    type: SERVICE_COMB
     # agent注册中心地址
     address: http://localhost:30100
 

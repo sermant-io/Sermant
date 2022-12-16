@@ -170,7 +170,9 @@ public class SermantInjectorController {
 
     private static final String SERMANT_CONFIG_TYPE_KEY = "DYNAMIC_CONFIG_DYNAMICCONFIGTYPE";
 
-    private static final String SERMANT_SERVICE_CENTER_KEY = "SERVICECOMB_SERVICE_ADDRESS";
+    private static final String SERMANT_SERVICE_CENTER_KEY = "REGISTER_SERVICE_ADDRESS";
+
+    private static final String SERMANT_SERVICE_CENTER_TYPE_KEY = "REGISTER_SERVICE_REGISTERTYPE";
 
     @Autowired
     private ObjectMapper om;
@@ -198,6 +200,9 @@ public class SermantInjectorController {
 
     @Value("${sermant-agent.health.check.port:16688}")
     private int healthCheckPort;
+
+    @Value("${sermant-agent.service.type:SERVICE_COMB}")
+    private String serviceType;
 
     /**
      * 准入控制器接口
@@ -447,6 +452,9 @@ public class SermantInjectorController {
         }
         if (!StringUtils.hasText(env.get(SERMANT_SERVICE_CENTER_KEY))) {
             addEnv(envArray, SERMANT_SERVICE_CENTER_KEY, serviceAddress);
+        }
+        if (!StringUtils.hasText(env.get(SERMANT_SERVICE_CENTER_TYPE_KEY))) {
+            addEnv(envArray, SERMANT_SERVICE_CENTER_TYPE_KEY, serviceType);
         }
     }
 
