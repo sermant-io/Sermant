@@ -17,14 +17,19 @@
 package com.huaweicloud.intergration.registry.cloud;
 
 import com.huaweicloud.intergration.common.utils.RequestUtils;
+import com.huaweicloud.intergration.config.supprt.KieClient;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * SpringCloud注册测试
@@ -36,22 +41,46 @@ public class CloudRegistryTest {
     @Rule(order = 300)
     public final TestRule rule = new CloudRegistryRule();
 
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    private final KieClient kieClient = new KieClient(restTemplate, null, getLabels());
+
     /**
      * 核对测试结果
      */
     @Test
     public void check() {
-        test(AppType.FEIGN);
-        test(AppType.REST);
+        test(AppType.FEIGN, 2);
+        test(AppType.REST, 2);
     }
 
-    private void test(AppType appType) {
+    /**
+     * 测试动态关闭原注册中心
+     */
+    @Test
+    public void testDynamicClose() throws InterruptedException {
+        kieClient.publishConfig("sermant.agent.registry", "origin.__registry__.needClose: true");
+
+        // 等待配置刷新 + 实例刷新
+        Thread.sleep(42 * 1000);
+
+        // 旧的provider将不再调用, 仅调用新注册中心的provider
+        test(AppType.FEIGN, 1);
+        test(AppType.REST, 1);
+    }
+
+    @After
+    public void tearDown() {
+        kieClient.deleteKey("sermant.agent.registry");
+    }
+
+    private void test(AppType appType, int threshold) {
         final HashSet<String> ports = new HashSet<>();
         for (int i = 0; i < 2; i++) {
             ports.add(RequestUtils
                     .get(buildUrl(appType), Collections.emptyMap(), String.class));
         }
-        Assert.assertTrue(ports.size() > 1);
+        Assert.assertEquals(ports.size(), threshold);
     }
 
     private String buildUrl(AppType appType) {
@@ -69,5 +98,16 @@ public class CloudRegistryTest {
     enum AppType {
         FEIGN,
         REST
+    }
+
+    /**
+     * 获取kie订阅标签
+     *
+     * @return 订阅标签
+     */
+    protected Map<String, String> getLabels() {
+        final Map<String, String> labels = new HashMap<>();
+        labels.put("public", "default");
+        return labels;
     }
 }

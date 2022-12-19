@@ -16,6 +16,7 @@
 
 package com.huawei.registry.interceptors;
 
+import com.huawei.registry.config.RegisterDynamicConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.entity.ScServer;
@@ -61,7 +62,8 @@ public class DynamicServerListInterceptor extends RegisterSwitchSupport {
     private List<Server> convertAndMerge(DynamicServerListLoadBalancer<Server> serverListLoadBalancer,
             List<MicroServiceInstance> microServiceInstances) {
         final List<Server> result = new ArrayList<>(microServiceInstances.size());
-        if (RegisterContext.INSTANCE.isAvailable()) {
+        if (RegisterContext.INSTANCE.isAvailable()
+                && !RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()) {
             result.addAll(queryOriginServers(serverListLoadBalancer));
         }
         for (MicroServiceInstance microServiceInstance : microServiceInstances) {

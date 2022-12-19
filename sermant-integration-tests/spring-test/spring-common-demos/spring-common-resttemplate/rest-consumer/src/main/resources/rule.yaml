@@ -31,13 +31,53 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/flowcontrol/rateLimiting"
+    demo-rateLimiting-prefix: |
+      matches:
+        - apiPath:
+            prefix: "/flowcontrol/prefixRate"
+    demo-rateLimiting-suffix: |
+      matches:
+        - apiPath:
+            suffix: "Suffix"
+    demo-rateLimiting-contains: |
+      matches:
+        - apiPath:
+            contains: "Contains"
     demo-header: |
       matches:
         - apiPath:
             exact: "/header"
           headers:
             key:
-              prefix: header
+              exact: flowControlExact
+    demo-header-prefix: |
+      matches:
+        - apiPath:
+            exact: "/header"
+          headers:
+            key:
+              prefix: flowControlPrefix
+    demo-header-suffix: |
+      matches:
+        - apiPath:
+            exact: "/header"
+          headers:
+            key:
+              suffix: flowControlSuffix
+    demo-header-contains: |
+      matches:
+        - apiPath:
+            exact: "/header"
+          headers:
+            key:
+              contains: flowControlContains
+    demo-header-compare: |
+      matches:
+        - apiPath:
+            exact: "/header"
+          headers:
+            key:
+              compare: ">100"
     demo-circuitBreaker-serviceName-match: |
       matches:
         - apiPath:
@@ -62,7 +102,21 @@ servicecomb:
   rateLimiting:
     demo-rateLimiting: |
       rate: 1
+    demo-rateLimiting-prefix: |
+      rate: 1
+    demo-rateLimiting-suffix: |
+      rate: 1
+    demo-rateLimiting-contains: |
+      rate: 1
     demo-header: |
+      rate: 1
+    demo-header-prefix: |
+      rate: 1
+    demo-header-suffix: |
+      rate: 1
+    demo-header-contains: |
+      rate: 1
+    demo-header-compare: |
       rate: 1
   retry:
     demo-retry: |

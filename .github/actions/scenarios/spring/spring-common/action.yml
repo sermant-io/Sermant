@@ -52,6 +52,8 @@ runs:
         bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8005/lb/ping 60
         bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8004/rateLimiting 60
         bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8014/rateLimiting 60
+        echo "==========check processor========"
+        jps -l
     - name: integration test module FLOW_CONTROL
       shell: bash
       run: mvn test -Dsermant.integration.test.type=FLOW_CONTROL --file sermant-integration-tests/spring-test/pom.xml

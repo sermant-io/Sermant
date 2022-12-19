@@ -37,6 +37,27 @@ public interface FlowControlService {
      *
      * @return 结果
      */
+    String rateLimitingPrefix();
+
+    /**
+     * 限流测试
+     *
+     * @return 结果
+     */
+    String rateLimitingSuffix();
+
+    /**
+     * 限流测试
+     *
+     * @return 结果
+     */
+    String rateLimitingContains();
+
+    /**
+     * 限流测试
+     *
+     * @return 结果
+     */
     String rateLimitingWithApplication();
 
     /**

@@ -27,8 +27,23 @@ import feign.RequestTemplate;
  * @since 2022-07-29
  */
 public class HeaderMatchConfiguration implements RequestInterceptor {
+    private static final String KEY = "key";
+
     @Override
     public void apply(RequestTemplate template) {
-        template.header("key", "header2");
+        final String url = template.url();
+        if (url.contains("headerExact")) {
+            template.header(KEY, "flowControlExact");
+        } else if (url.contains("headerPrefix")) {
+            template.header(KEY, "flowControlPrefix");
+        } else if (url.contains("headerSuffix")) {
+            template.header(KEY, "flowControlSuffix");
+        } else if (url.contains("headerContains")) {
+            template.header(KEY, "flowControlContains");
+        } else if (url.contains("headerCompareMatch")) {
+            template.header(KEY, "102");
+        } else if (url.contains("headerCompareNotMatch")) {
+            template.header(KEY, "100");
+        }
     }
 }

@@ -44,6 +44,21 @@ public abstract class FlowControlServiceImpl implements FlowControlService {
     }
 
     @Override
+    public String rateLimitingPrefix() {
+        return OK;
+    }
+
+    @Override
+    public String rateLimitingSuffix() {
+        return OK;
+    }
+
+    @Override
+    public String rateLimitingContains() {
+        return OK;
+    }
+
+    @Override
     public String rateLimitingWithApplication() {
         return rateLimiting();
     }

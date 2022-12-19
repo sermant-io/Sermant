@@ -58,6 +58,36 @@ public class FlowController {
      *
      * @return 测试信息
      */
+    @GetMapping("/rateLimitingPrefix")
+    public String rateLimitingPrefix() {
+        return flowControlService.rateLimitingPrefix();
+    }
+
+    /**
+     * 测试限流
+     *
+     * @return 测试信息
+     */
+    @GetMapping("/rateLimitingSuffix")
+    public String rateLimitingSuffix() {
+        return flowControlService.rateLimitingSuffix();
+    }
+
+    /**
+     * 测试限流
+     *
+     * @return 测试信息
+     */
+    @GetMapping("/rateLimitingContains")
+    public String rateLimitingContains() {
+        return flowControlService.rateLimitingContains();
+    }
+
+    /**
+     * 测试限流
+     *
+     * @return 测试信息
+     */
     @GetMapping("/rateLimitingWithApplication")
     public String rateLimitingWithApplication() {
         return flowControlService.rateLimitingWithApplication();
