@@ -16,9 +16,13 @@
 
 package com.huaweicloud.intergration.router;
 
+import com.huaweicloud.intergration.config.supprt.KieClient;
+
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -32,16 +36,24 @@ import java.util.Optional;
 
 /**
  * 标签路由测试
+ * testTagRouterByZuu()和testTagRouterByGateway()执行是否成功依赖下发的配置，请勿更改两者代码顺序
  *
  * @author provenceee
  * @since 2022-11-14
  */
+@FixMethodOrder(MethodSorters.JVM)
 public class TagRouterTest {
     private static final RestTemplate REST_TEMPLATE = new RestTemplate();
+
+    private static final KieClient KIE_CLIENT = new KieClient(REST_TEMPLATE);
 
     private static final int ZUUL_PORT = 8000;
 
     private static final int GATEWAY_PORT = 8001;
+
+    private static final String REST_KEY = "servicecomb.routeRule.rest-provider";
+
+    private static final String FEIGN_KEY = "servicecomb.routeRule.feign-provider";
 
     private static final String IP = "http://127.0.0.1:";
 
@@ -166,7 +178,7 @@ public class TagRouterTest {
      * 测试标签路由
      */
     @Test
-    public void testTagRouterByGateway() {
+    public void testTagRouterByGateway() throws InterruptedException {
         // SPRING_CLOUD_VERSIONS_FOR_GATEWAY中的版本，才带有gateway的依赖
         if (!SPRING_CLOUD_VERSIONS_FOR_GATEWAY.contains(springCloudVersion)) {
             return;
@@ -236,6 +248,312 @@ public class TagRouterTest {
             exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
             Assert.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+
         }
+
+        // 测试标签匹配策略、大小写匹配、路由权重等功能
+        configMatchTest(headers);
+    }
+
+    /**
+     * 测试不等于匹配
+     */
+    private void noEquConfigTest(HttpHeaders headers) throws InterruptedException {
+        headers.clear();
+        String CONTENT = "---\n"
+                + "- precedence: 1\n"
+                + "  match:\n"
+                + "    headers:\n"
+                + "        id:\n"
+                + "          noEqu: '1'\n"
+                + "          caseInsensitive: false\n"
+                + "  route:\n"
+                + "    - tags:\n"
+                + "        group: gray\n"
+                + "      weight: 100\n";
+
+        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Thread.sleep(3000);
+        // 不等于匹配测试，命中group:gray的实例
+        headers.add("id", "2");
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(GATEWAY_REST_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_BOOT_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+        }
+    }
+
+    /**
+     * 测试大于等于匹配
+     */
+    private void noLessConfigTest(HttpHeaders headers) throws InterruptedException {
+        headers.clear();
+        String CONTENT = "---\n"
+                + "- precedence: 1\n"
+                + "  match:\n"
+                + "    headers:\n"
+                + "        id:\n"
+                + "          noLess: '1'\n"
+                + "          caseInsensitive: false\n"
+                + "  route:\n"
+                + "    - tags:\n"
+                + "        group: gray\n"
+                + "      weight: 100\n";
+
+        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Thread.sleep(3000);
+        // 大于等于匹配测试，命中group:gray的实例
+        headers.add("id", "1");
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(GATEWAY_REST_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_BOOT_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+        }
+    }
+
+    /**
+     * 测试小于等于匹配
+     */
+    private void noGreaterConfigTest(HttpHeaders headers) throws InterruptedException {
+        headers.clear();
+        String CONTENT = "---\n"
+                + "- precedence: 1\n"
+                + "  match:\n"
+                + "    headers:\n"
+                + "        id:\n"
+                + "          noGreater: '1'\n"
+                + "          caseInsensitive: false\n"
+                + "  route:\n"
+                + "    - tags:\n"
+                + "        group: gray\n"
+                + "      weight: 100\n";
+
+        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Thread.sleep(3000);
+        // 小于等于匹配测试，命中group:gray的实例
+        headers.add("id", "1");
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(GATEWAY_REST_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_BOOT_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+        }
+    }
+
+    /**
+     * 测试大于匹配
+     */
+    private void greaterConfigTest(HttpHeaders headers) throws InterruptedException {
+        headers.clear();
+        String CONTENT = "---\n"
+                + "- precedence: 1\n"
+                + "  match:\n"
+                + "    headers:\n"
+                + "        id:\n"
+                + "          greater: '1'\n"
+                + "          caseInsensitive: false\n"
+                + "  route:\n"
+                + "    - tags:\n"
+                + "        group: gray\n"
+                + "      weight: 100\n";
+
+        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Thread.sleep(3000);
+        // 大于匹配测试，命中group:gray的实例
+        headers.add("id", "2");
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(GATEWAY_REST_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_BOOT_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+        }
+    }
+
+    /**
+     * 测试小于匹配
+     */
+    private void lessConfigTest(HttpHeaders headers) throws InterruptedException {
+        headers.clear();
+        String CONTENT = "---\n"
+                + "- precedence: 1\n"
+                + "  match:\n"
+                + "    headers:\n"
+                + "        id:\n"
+                + "          less: '1'\n"
+                + "          caseInsensitive: false\n"
+                + "  route:\n"
+                + "    - tags:\n"
+                + "        group: gray\n"
+                + "      weight: 100\n";
+
+        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Thread.sleep(3000);
+        // 小于匹配测试，命中group:gray的实例
+        headers.add("id", "0");
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(GATEWAY_REST_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_BOOT_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+        }
+    }
+
+    /**
+     * 测试正则表达式匹配
+     */
+    private void regexConfigTest(HttpHeaders headers) throws InterruptedException {
+        headers.clear();
+        String CONTENT = "---\n"
+                + "- precedence: 1\n"
+                + "  match:\n"
+                + "    headers:\n"
+                + "        id:\n"
+                + "          regex: '^[0-9]*$'\n"
+                + "          caseInsensitive: false\n"
+                + "  route:\n"
+                + "    - tags:\n"
+                + "        group: gray\n"
+                + "      weight: 100\n";
+
+        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Thread.sleep(3000);
+        // 正则匹配测试，命中group:gray的实例
+        headers.add("id", "5");
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(GATEWAY_REST_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_BOOT_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+        }
+    }
+
+    /**
+     * 测试大小写敏感匹配
+     */
+    private void caseInsensitiveConfigTest(HttpHeaders headers) throws InterruptedException {
+        headers.clear();
+        String CONTENT = "---\n"
+                + "- precedence: 1\n"
+                + "  match:\n"
+                + "    headers:\n"
+                + "        name:\n"
+                + "          exact: 'abc'\n"
+                + "          caseInsensitive: true\n"
+                + "  route:\n"
+                + "    - tags:\n"
+                + "        group: gray\n"
+                + "      weight: 100\n";
+
+        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Thread.sleep(3000);
+        // 大小写敏感测试，未命中group:gray的实例
+        headers.add("name", "ABC");
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(GATEWAY_REST_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_BOOT_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+        }
+    }
+
+    /**
+     * 测试权重匹配
+     */
+    private void weightConfigTest(HttpHeaders headers) throws InterruptedException {
+        headers.clear();
+        String CONTENT = "---\n"
+                + "- precedence: 1\n"
+                + "  match:\n"
+                + "    headers:\n"
+                + "        id:\n"
+                + "          exact: '1'\n"
+                + "          caseInsensitive: false\n"
+                + "  route:\n"
+                + "    - tags:\n"
+                + "        group: gray\n"
+                + "      weight: 0\n";
+
+        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Thread.sleep(3000);
+        // 0权重路由测试，未命中group:gray的实例
+        headers.add("id", "1");
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(GATEWAY_REST_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_BOOT_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+
+            exchange = REST_TEMPLATE.exchange(GATEWAY_FEIGN_CLOUD_BASE_PATH, HttpMethod.GET, entity, String.class);
+            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+        }
+    }
+
+    /**
+     * 测试标签匹配策略、大小写匹配、路由权重等功能
+     */
+    private void configMatchTest(HttpHeaders headers) throws InterruptedException {
+        noEquConfigTest(headers);
+        noGreaterConfigTest(headers);
+        noLessConfigTest(headers);
+        greaterConfigTest(headers);
+        lessConfigTest(headers);
+        regexConfigTest(headers);
+        caseInsensitiveConfigTest(headers);
+        weightConfigTest(headers);
     }
 }
