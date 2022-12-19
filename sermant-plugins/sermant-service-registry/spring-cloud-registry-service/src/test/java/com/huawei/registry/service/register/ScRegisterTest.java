@@ -17,6 +17,7 @@
 package com.huawei.registry.service.register;
 
 import com.huawei.registry.config.RegisterConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huawei.registry.service.client.ScClient;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -58,6 +59,8 @@ public class ScRegisterTest {
 
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
+    private final RegisterServiceCommonConfig commonConfig = new RegisterServiceCommonConfig();
+
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -65,6 +68,8 @@ public class ScRegisterTest {
                 .mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
                 .thenReturn(registerConfig);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager
+                .getPluginConfig(RegisterServiceCommonConfig.class)).thenReturn(commonConfig);
         ReflectUtils.setFieldValue(scRegister, "client", scClient);
         Mockito.when(scClient.getInstanceStatus()).thenReturn(status);
         Mockito.when(scClient.getRegisterCenterStatus()).thenReturn(status);

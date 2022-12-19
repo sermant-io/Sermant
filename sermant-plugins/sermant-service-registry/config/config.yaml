@@ -1,7 +1,8 @@
 register.service:
   registerType: SERVICE_COMB # 注册服务类型，支持SERVICE_COMB/NACOS
+  # 注册服务地址，service_comb：http://localhost:30100；nacos：127.0.0.1:8848
+  address: http://localhost:30100
 servicecomb.service:
-  address: http://localhost:30100 # 注册中心地址
   heartbeatInterval: 15 # 服务实例心跳发送间隔（单位：秒）
   openMigration: false # 是否开启迁移功能
   enableSpringRegister: false # 是否开启spring插件注册能力
@@ -20,7 +21,6 @@ grace.rule:
   upstreamAddressMaxSize: 500 # 缓存上游地址的默认大小
   upstreamAddressExpiredTime: 60 # 缓存上游地址的过期时间
 nacos.service:
-  address: 127.0.0.1:8848 # nacos注册中心地址和端口号
   username: "" # nacos验证账户
   password: "" # nacos的验证密码
   namespace: "" # 命名空间，nacos配置创建命名空间的id值

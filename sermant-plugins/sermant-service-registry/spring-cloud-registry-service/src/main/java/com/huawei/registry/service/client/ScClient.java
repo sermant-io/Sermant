@@ -20,6 +20,7 @@ package com.huawei.registry.service.client;
 
 import com.huawei.registry.config.ConfigConstants;
 import com.huawei.registry.config.RegisterConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huawei.registry.config.grace.GraceContext;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.service.client.ScDiscovery.SubscriptionKey;
@@ -116,11 +117,14 @@ public class ScClient {
 
     private ServiceCenterRegistration serviceCenterRegistration;
 
+    private RegisterServiceCommonConfig commonConfig;
+
     /**
      * 初始化
      */
     public void init() {
         registerConfig = PluginConfigManager.getPluginConfig(RegisterConfig.class);
+        commonConfig = PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
         initScClientAndWatch();
         initServiceCenterConfiguration();
     }
@@ -473,7 +477,7 @@ public class ScClient {
     }
 
     private List<String> getScUrls() {
-        final List<String> urlList = registerConfig.getAddressList();
+        final List<String> urlList = commonConfig.getAddressList();
         if (urlList == null || urlList.isEmpty()) {
             throw new IllegalArgumentException("Kie url must not be empty!");
         }

@@ -36,11 +36,11 @@ service.meta.environment=development
 ```yaml
 register.service:
   registerType: SERVICE_COMB # 注册中心类型 支持NACOS/SERVICE_COMB
+  address: http://127.0.0.1:30100 #注册服务地址，service_comb：http://localhost:30100；nacos：127.0.0.1:8848
 ```
 
 ```yaml
 servicecomb.service:
-  address: http://127.0.0.1:30100 #注册中心地址，多个注册中心地址使用逗号分隔
   heartbeatInterval: 15 #服务实例心跳发送间隔（单位：秒）
   openMigration: false #是否开启迁移功能
   enableSpringRegister: false #是否开启spring插件注册能力，spring cloud框架需开启，dubbo框架需关闭
@@ -52,7 +52,6 @@ servicecomb.service:
 
 ```yaml
 nacos.service:
-  address: 127.0.0.1:8848 # 注册中心地址
   username: "" # nacos验证账户
   password: "" # nacos的验证密码
   namespace: "" # 命名空间，nacos配置创建命名空间的id值

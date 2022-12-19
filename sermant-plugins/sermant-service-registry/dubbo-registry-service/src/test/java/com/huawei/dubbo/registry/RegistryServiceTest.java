@@ -23,6 +23,7 @@ import com.huawei.dubbo.registry.service.RegistryService;
 import com.huawei.dubbo.registry.service.RegistryServiceImpl;
 import com.huawei.registry.config.RegisterConfig;
 
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
@@ -101,6 +102,10 @@ public class RegistryServiceTest {
         MockedStatic<PluginConfigManager> mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
             .thenReturn(registerConfig);
+
+        RegisterServiceCommonConfig commonConfig = new RegisterServiceCommonConfig();
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class))
+                .thenReturn(commonConfig);
         MOCKED_STATICS.add(mockPluginConfigManager);
 
         MockedStatic<ConfigManager> mockConfigManager = Mockito.mockStatic(ConfigManager.class);

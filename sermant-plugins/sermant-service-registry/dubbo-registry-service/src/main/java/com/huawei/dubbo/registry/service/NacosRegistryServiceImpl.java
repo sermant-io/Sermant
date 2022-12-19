@@ -24,6 +24,7 @@ import com.huawei.dubbo.registry.utils.NacosInstanceManageUtil;
 import com.huawei.dubbo.registry.utils.NamingServiceUtils;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
 import com.huawei.registry.config.NacosRegisterConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
@@ -90,6 +91,7 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
     private NacosRegisterConfig nacosRegisterConfig;
     private Instance registryInstance;
     private final NacosServiceNotify nacosServiceNotify = new NacosServiceNotify();
+    private RegisterServiceCommonConfig commonConfig;
 
     @Override
     public void doRegister(Object url) {
@@ -182,7 +184,8 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
     @Override
     public void buildNamingService(Map<String, String> parameters) {
         nacosRegisterConfig = PluginConfigManager.getPluginConfig(NacosRegisterConfig.class);
-        this.namingService = NamingServiceUtils.buildNamingService(parameters, nacosRegisterConfig);
+        commonConfig = PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
+        this.namingService = NamingServiceUtils.buildNamingService(parameters, nacosRegisterConfig, commonConfig);
     }
 
     @Override

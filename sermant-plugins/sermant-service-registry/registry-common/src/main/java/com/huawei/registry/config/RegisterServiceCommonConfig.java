@@ -18,6 +18,11 @@ package com.huawei.registry.config;
 
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
+import com.huaweicloud.sermant.core.utils.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 注册服务公共参数
@@ -32,11 +37,43 @@ public class RegisterServiceCommonConfig implements PluginConfig {
      */
     private RegisterType registerType = RegisterType.SERVICE_COMB;
 
+    /**
+     * SERVICE_COMB注册中心地址，多个地址使用逗号隔开 / NACOS注册中心ip:port
+     */
+    private String address = "http://127.0.0.1:30100";
+
     public RegisterType getRegisterType() {
         return registerType;
     }
 
     public void setRegisterType(RegisterType registerType) {
         this.registerType = registerType;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    /**
+     * 获取逗号分隔后的地址列表
+     *
+     * @return 地址列表
+     */
+    public List<String> getAddressList() {
+        if (StringUtils.isBlank(address)) {
+            return Collections.emptyList();
+        }
+        List<String> addressList = new ArrayList<>();
+        String[] addressArr = address.split(",");
+        for (String item : addressArr) {
+            if (!StringUtils.isBlank(item)) {
+                addressList.add(item.trim());
+            }
+        }
+        return addressList;
     }
 }

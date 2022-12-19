@@ -29,6 +29,7 @@ import com.huawei.dubbo.registry.utils.CollectionUtils;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
 import com.huawei.registry.config.ConfigConstants;
 import com.huawei.registry.config.RegisterConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
@@ -137,6 +138,7 @@ public class RegistryServiceImpl implements RegistryService {
     private RegisterConfig config;
     private GovernanceService governanceService;
     private ServiceMeta serviceMeta;
+    private RegisterServiceCommonConfig commonConfig;
 
     @Override
     public void startRegistration() {
@@ -145,10 +147,12 @@ public class RegistryServiceImpl implements RegistryService {
             return;
         }
         config = PluginConfigManager.getPluginConfig(RegisterConfig.class);
+        commonConfig = PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
         serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
         governanceService = ServiceManager.getService(GovernanceService.class);
-        client = new ServiceCenterClient(new AddressManager(config.getProject(), config.getAddressList(), EVENT_BUS),
-            createSslProperties(), new DefaultRequestAuthHeaderProvider(), DEFAULT_TENANT_NAME, Collections.emptyMap());
+        client = new ServiceCenterClient(new AddressManager(config.getProject(), commonConfig.getAddressList(),
+            EVENT_BUS), createSslProperties(), new DefaultRequestAuthHeaderProvider(), DEFAULT_TENANT_NAME,
+            Collections.emptyMap());
         ignoreKeys = new ArrayList<>();
         ignoreKeys.addAll(IGNORE_REGISTRY_KEYS);
         ignoreKeys.addAll(DEFAULT_INTERFACE_KEYS);
