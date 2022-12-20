@@ -31,6 +31,7 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.client.naming.NacosNamingMaintainService;
 import com.alibaba.nacos.client.naming.NacosNamingService;
 import com.huawei.registry.config.NacosRegisterConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
@@ -42,9 +43,8 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
  */
 public class NacosServiceManagerTest {
     private final NacosRegisterConfig registerConfig = new NacosRegisterConfig();
-
+    private final RegisterServiceCommonConfig commonConfig = new RegisterServiceCommonConfig();
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
-
     final NacosServiceManager nacosServiceManager = new NacosServiceManager(registerConfig);
 
     @Before
@@ -52,9 +52,9 @@ public class NacosServiceManagerTest {
         MockitoAnnotations.openMocks(this);
         pluginConfigManagerMockedStatic = Mockito
                 .mockStatic(PluginConfigManager.class);
-        registerConfig.setAddress("127.0.0.1:8848");
-        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(NacosRegisterConfig.class))
-                .thenReturn(registerConfig);
+        commonConfig.setAddress("127.0.0.1:8848");
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager
+                .getPluginConfig(RegisterServiceCommonConfig.class)).thenReturn(commonConfig);
         RegisterContext.INSTANCE.getClientInfo().setServiceName("test");
         RegisterContext.INSTANCE.getClientInfo().setIp("127.0.0.1");
         RegisterContext.INSTANCE.getClientInfo().setServiceId("test");

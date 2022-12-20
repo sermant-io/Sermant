@@ -40,6 +40,7 @@ import com.huawei.dubbo.registry.cache.DubboCache;
 import com.huawei.dubbo.registry.service.NacosRegistryServiceImpl;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
 import com.huawei.registry.config.NacosRegisterConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
@@ -51,6 +52,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 public class NacosRegistryServiceImplTest {
     private NacosRegistryServiceImpl registryService = new NacosRegistryServiceImpl();
     private NacosRegisterConfig registerConfig = new NacosRegisterConfig();
+    private final RegisterServiceCommonConfig commonConfig = new RegisterServiceCommonConfig();
     NamingService namingService = Mockito.mock(NamingService.class);
 
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
@@ -58,12 +60,13 @@ public class NacosRegistryServiceImplTest {
     @BeforeEach
     public void setUp() throws NoSuchFieldException, IllegalAccessException, NacosException {
         MockitoAnnotations.openMocks(this);
-        pluginConfigManagerMockedStatic = Mockito
-                .mockStatic(PluginConfigManager.class);
-        registerConfig.setAddress("127.0.0.1:8848");
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        commonConfig.setAddress("127.0.0.1:8848");
         registerConfig.setGroup("default");
         registerConfig.setUsername("nacos");
         registerConfig.setPassword("nacos");
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(NacosRegisterConfig.class))
+                .thenReturn(registerConfig);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(NacosRegisterConfig.class))
                 .thenReturn(registerConfig);
         Field field = registryService.getClass().getDeclaredField("nacosRegisterConfig");

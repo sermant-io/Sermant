@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import com.huawei.dubbo.registry.utils.NamingServiceUtils;
 import com.huawei.registry.config.NacosRegisterConfig;
 import com.huawei.registry.config.PropertyKeyConst;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 
 /**
  * 测试NamingServiceUtils
@@ -48,17 +49,19 @@ public class NamingServiceUtilsTest {
     @Test
     public void testBuildNacosProperties() throws NoSuchMethodException, InvocationTargetException,
             IllegalAccessException {
+        RegisterServiceCommonConfig commonConfig= new RegisterServiceCommonConfig();
+        commonConfig.setAddress("127.0.0.1:8848");
         NacosRegisterConfig registerConfig = new NacosRegisterConfig();
-        registerConfig.setAddress("127.0.0.1:8848");
         registerConfig.setGroup("DEFAULT_GROUP");
         registerConfig.setUsername("nacos");
         registerConfig.setPassword("nacos");
         Map<String, String> parameters = new HashMap<>();
         parameters.put("interface", "interface");
         Method method = NamingServiceUtils.class.getDeclaredMethod("buildNacosProperties", Map.class,
-            NacosRegisterConfig.class);
+            NacosRegisterConfig.class, RegisterServiceCommonConfig.class);
         method.setAccessible(true);
-        Properties properties = (Properties)method.invoke(NamingServiceUtils.class, parameters, registerConfig);
+        Properties properties = (Properties)method.invoke(NamingServiceUtils.class, parameters, registerConfig,
+                commonConfig);
         Assertions.assertEquals(properties.getProperty(PropertyKeyConst.SERVER_ADDR), ADDRESS);
     }
 

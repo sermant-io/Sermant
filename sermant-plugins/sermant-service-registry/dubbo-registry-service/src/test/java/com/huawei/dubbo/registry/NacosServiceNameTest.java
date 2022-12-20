@@ -27,6 +27,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.huawei.dubbo.registry.entity.NacosServiceName;
 import com.huawei.registry.config.NacosRegisterConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
@@ -37,6 +38,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
  */
 public class NacosServiceNameTest {
     private final NacosRegisterConfig registerConfig = new NacosRegisterConfig();
+    private final RegisterServiceCommonConfig commonConfig = new RegisterServiceCommonConfig();
     public static final String HOST = "127.0.0.1";
     public static final int PORT = 8848;
     public static final String PROTOCOL_KEY = "dubbo";
@@ -47,14 +49,15 @@ public class NacosServiceNameTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        pluginConfigManagerMockedStatic = Mockito
-                .mockStatic(PluginConfigManager.class);
-        registerConfig.setAddress("127.0.0.1:8848");
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        commonConfig.setAddress("127.0.0.1:8848");
         registerConfig.setGroup("DEFAULT_GROUP");
         registerConfig.setUsername("nacos");
         registerConfig.setPassword("nacos");
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(NacosRegisterConfig.class))
                 .thenReturn(registerConfig);
+        pluginConfigManagerMockedStatic.when(() ->
+            PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class)).thenReturn(registerConfig);
     }
 
     @AfterEach

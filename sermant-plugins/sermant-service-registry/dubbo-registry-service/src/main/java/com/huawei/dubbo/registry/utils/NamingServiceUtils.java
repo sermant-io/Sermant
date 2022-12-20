@@ -19,6 +19,7 @@ package com.huawei.dubbo.registry.utils;
 
 import com.huawei.registry.config.NacosRegisterConfig;
 import com.huawei.registry.config.PropertyKeyConst;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.utils.StringUtils;
@@ -50,11 +51,13 @@ public class NamingServiceUtils {
      *
      * @param parameters url
      * @param registerConfig registerConfig
+     * @param commonConfig 公共配置
      * @return naming服务
      * @throws IllegalStateException 创建namingService异常
      */
-    public static NamingService buildNamingService(Map<String, String> parameters, NacosRegisterConfig registerConfig) {
-        Properties nacosProperties = buildNacosProperties(parameters, registerConfig);
+    public static NamingService buildNamingService(Map<String, String> parameters, NacosRegisterConfig registerConfig,
+        RegisterServiceCommonConfig commonConfig) {
+        Properties nacosProperties = buildNacosProperties(parameters, registerConfig, commonConfig);
         try {
             return NacosFactory.createNamingService(nacosProperties);
         } catch (NacosException e) {
@@ -64,16 +67,17 @@ public class NamingServiceUtils {
         }
     }
 
-    private static Properties buildNacosProperties(Map<String, String> parameters, NacosRegisterConfig registerConfig) {
+    private static Properties buildNacosProperties(Map<String, String> parameters, NacosRegisterConfig registerConfig,
+        RegisterServiceCommonConfig commonConfig) {
         Properties properties = new Properties();
-        setServerAddr(parameters.get(BACKUP_KEY), properties, registerConfig);
+        setServerAddr(parameters.get(BACKUP_KEY), properties, commonConfig);
         setProperties(parameters, properties, registerConfig);
         return properties;
     }
 
-    private static void setServerAddr(String backup, Properties properties, NacosRegisterConfig registerConfig) {
+    private static void setServerAddr(String backup, Properties properties, RegisterServiceCommonConfig commonConfig) {
         StringBuilder serverAddrBuilder = new StringBuilder();
-        serverAddrBuilder.append(registerConfig.getAddress());
+        serverAddrBuilder.append(commonConfig.getAddress());
         if (!StringUtils.isEmpty(backup)) {
             serverAddrBuilder.append(',').append(backup);
         }

@@ -19,6 +19,7 @@ package com.huawei.registry.config;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
 
 import java.util.HashMap;
@@ -34,7 +35,6 @@ import java.util.Properties;
  */
 @ConfigTypeKey(value = "nacos.service")
 public class NacosRegisterConfig implements PluginConfig {
-
     /**
      * 默认拉取间隔时间
      */
@@ -60,11 +60,6 @@ public class NacosRegisterConfig implements PluginConfig {
      * 是否加密
      */
     private boolean secure = false;
-
-    /**
-     * nacos服务发现地址
-     */
-    private String address = "127.0.0.1:8848";
 
     /**
      * nacos认证账户
@@ -187,14 +182,6 @@ public class NacosRegisterConfig implements PluginConfig {
 
     public void setSecure(boolean secure) {
         this.secure = secure;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getUsername() {
@@ -355,8 +342,10 @@ public class NacosRegisterConfig implements PluginConfig {
      * @return 配置
      */
     public Properties getNacosProperties() {
+        RegisterServiceCommonConfig commonConfig =
+                PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
         Properties properties = new Properties();
-        properties.put(PropertyKeyConst.SERVER_ADDR, address);
+        properties.put(PropertyKeyConst.SERVER_ADDR, commonConfig.getAddress());
         properties.put(PropertyKeyConst.USERNAME, Objects.toString(username, ""));
         properties.put(PropertyKeyConst.PASSWORD, Objects.toString(password, ""));
         properties.put(PropertyKeyConst.NAMESPACE, Objects.toString(namespace, ""));

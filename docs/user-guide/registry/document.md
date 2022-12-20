@@ -36,12 +36,12 @@ The configuration items are described as follows:
 
 ```yaml
 register.service:
-  registerType: SERVICE_COMB # 注册中心类型 支持NACOS/SERVICE_COMB
+  registerType: SERVICE_COMB # Registration center type, surpport NACOS/SERVICE_COMB
+  address: http://127.0.0.1:30100 # Registration center address. service_comb：http://localhost:30100；nacos：127.0.0.1:8848
 ```
 
 ```yaml
 servicecomb.service:
-  address: http://127.0.0.1:30100 # Registration center address. Use commas (,) to separate multiple registration center addresses.
   heartbeatInterval: 15 # Interval at which service instance heartbeats are sent (unit: second)
   openMigration: false # Whether to enable the migration function.
   enableSpringRegister: false # Whether to enable the Spring plug-in registration capability. This capability must be enabled for the Spring Cloud framework and disabled for the Dubbo framework.
@@ -53,7 +53,6 @@ servicecomb.service:
 
 ```yaml
 nacos.service:
-  address: 127.0.0.1:8848 #Registration center address
   username: "" # nacos check username
   password: "" # nacos check password
   namespace: "" # namespace, nacos setting the id of namespace
