@@ -186,7 +186,7 @@ public class SermantInjectorController {
     @Value("${sermant-agent.mount.path:/home/sermant-agent}")
     private String mountPath;
 
-    @Value("${sermant-agent.configMap:}")
+    @Value("${sermant-agent.configMap:sermant-agent-env}")
     private String envFrom;
 
     @Value("${sermant-agent.config.type:ZOOKEEPER}")

@@ -32,6 +32,8 @@ sermant-agent:
     type: SERVICE_COMB
     # agent注册中心地址
     address: http://localhost:30100
+  # sermant-agent 配置环境变量的configMap的名字
+  configMap: sermant-agent-env
 
 management:
   endpoint:
