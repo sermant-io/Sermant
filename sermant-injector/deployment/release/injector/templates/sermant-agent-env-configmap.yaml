@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sermant-agent-env
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    app: sermant-agent-env
+data:
+  {{- range $key,$value := .Values.env }}
+  {{ $key }}: "{{ $value }}"
+  {{- end }}

@@ -32,3 +32,9 @@ config:
 registry:
   # 注册中心地址
   endpoints: http://localhost:30100
+
+# 支持配置Sermant的环境变量(key相同的情况下该处配置的优先级低于yaml中env的配置), 配置方式如下:
+# env:
+#   TEST_ENV1: abc
+#   TEST_ENV2: 123456
+env:
