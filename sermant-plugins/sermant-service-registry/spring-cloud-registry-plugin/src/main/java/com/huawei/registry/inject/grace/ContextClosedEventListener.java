@@ -19,12 +19,15 @@ package com.huawei.registry.inject.grace;
 import com.huawei.registry.config.GraceConfig;
 import com.huawei.registry.services.GraceService;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
+import java.util.logging.Logger;
 
 /**
  * spring关闭时间监听器
@@ -34,13 +37,20 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ContextClosedEventListener {
-    private final GraceService graceService;
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private GraceService graceService;
 
     /**
      * 构造方法
      */
     public ContextClosedEventListener() {
-        graceService = PluginServiceManager.getPluginService(GraceService.class);
+        try {
+            graceService = PluginServiceManager.getPluginService(GraceService.class);
+        } catch (IllegalArgumentException exception) {
+            LOGGER.severe("graceService is not enabled");
+            graceService = null;
+        }
     }
 
     /**
@@ -48,7 +58,7 @@ public class ContextClosedEventListener {
      */
     @EventListener(value = ContextClosedEvent.class)
     public void listener() {
-        if (!isEnableGraceDown()) {
+        if (!isEnableGraceDown() || graceService == null) {
             return;
         }
         graceService.shutdown();

@@ -23,6 +23,7 @@ import com.huawei.flowcontrol.common.core.rule.RuleDynamicConfigListener;
 import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
 import com.huawei.flowcontrol.common.factory.FlowControlThreadFactory;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.initializer.DynamicConfigServiceInitializer;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -36,6 +37,7 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.DynamicConfigService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * 流控插件 公共能力 统一初始化入口
@@ -44,8 +46,10 @@ import java.util.concurrent.TimeUnit;
  * @since 2022-01-25
  */
 public class FlowControlInitServiceImpl implements PluginService {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0,
-        TimeUnit.SECONDS, new SynchronousQueue<>(), new FlowControlThreadFactory("FLOW_CONTROL_INIT_THREAD"));
+            TimeUnit.SECONDS, new SynchronousQueue<>(), new FlowControlThreadFactory("FLOW_CONTROL_INIT_THREAD"));
 
     private final FlowControlLifeCycle flowControlLifeCycle = new FlowControlLifeCycle();
 
@@ -70,16 +74,22 @@ public class FlowControlInitServiceImpl implements PluginService {
 
         @Override
         public void run() {
+            DynamicConfigService dynamicConfigService = getDynamicConfigService();
+            if (dynamicConfigService == null) {
+                LOGGER.severe("dynamicConfigService is null, fail to init FlowControlLifeCycle!");
+                return;
+            }
+
             ConfigSubscriber configSubscriber;
             final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
             if (pluginConfig.isUseCseRule()) {
                 // 适配cse, 开始适配cse的专用配置监听器
                 configSubscriber = new CseGroupConfigSubscriber(FlowControlServiceMeta.getInstance().getServiceName(),
-                    new RuleDynamicConfigListener(), getDynamicConfigService(), "FlowControl");
+                    new RuleDynamicConfigListener(), dynamicConfigService, "FlowControl");
             } else {
                 configSubscriber = new DefaultGroupConfigSubscriber(
                         FlowControlServiceMeta.getInstance().getServiceName(),
-                    new RuleDynamicConfigListener(), getDynamicConfigService(),
+                    new RuleDynamicConfigListener(), dynamicConfigService,
                         "FlowControl");
             }
             configSubscriber.subscribe();
@@ -89,13 +99,19 @@ public class FlowControlInitServiceImpl implements PluginService {
             final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
             DynamicConfigService dynamicConfigService;
 
-            // 根据使用需求选择是否使用自身配置中心
-            if (pluginConfig.isUseAgentConfigCenter()) {
-                dynamicConfigService = ServiceManager.getService(DynamicConfigService.class);
-            } else {
-                dynamicConfigService = OperationManager.getOperation(DynamicConfigServiceInitializer.class)
-                    .initKieDynamicConfigService(pluginConfig.getConfigKieAddress(), pluginConfig.getProject());
+            try {
+                // 根据使用需求选择是否使用自身配置中心
+                if (pluginConfig.isUseAgentConfigCenter()) {
+                    dynamicConfigService = ServiceManager.getService(DynamicConfigService.class);
+                } else {
+                    dynamicConfigService = OperationManager.getOperation(DynamicConfigServiceInitializer.class)
+                            .initKieDynamicConfigService(pluginConfig.getConfigKieAddress(), pluginConfig.getProject());
+                }
+            } catch (IllegalArgumentException e) {
+                LOGGER.severe("dynamicConfigService is not enabled!");
+                dynamicConfigService = null;
             }
+
             return dynamicConfigService;
         }
     }

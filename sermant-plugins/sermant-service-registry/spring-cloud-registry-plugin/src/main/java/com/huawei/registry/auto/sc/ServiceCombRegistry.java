@@ -50,12 +50,22 @@ public class ServiceCombRegistry implements ServiceRegistry<ServiceCombRegistrat
         GraceHelper.configWarmUpParams(registration.getMetadata(),
                 PluginConfigManager.getPluginConfig(GraceConfig.class));
         ZoneUtils.setZone(registration.getMetadata());
-        getRegisterCenterService().register(new FixedResult());
+        RegisterCenterService registerService = getRegisterCenterService();
+        if (registerService == null) {
+            LOGGER.severe("registerCenterService is null, fail to register!");
+            return;
+        }
+        registerService.register(new FixedResult());
     }
 
     @Override
     public void deregister(ServiceCombRegistration registration) {
-        getRegisterCenterService().unRegister();
+        RegisterCenterService registerService = getRegisterCenterService();
+        if (registerService == null) {
+            LOGGER.severe("registerCenterService is null, fail to unRegister!");
+            return;
+        }
+        registerService.unRegister();
     }
 
     @Override
@@ -65,7 +75,12 @@ public class ServiceCombRegistry implements ServiceRegistry<ServiceCombRegistrat
 
     @Override
     public void setStatus(ServiceCombRegistration registration, String status) {
-        getRegisterCenterService().updateInstanceStatus(status);
+        RegisterCenterService registerService = getRegisterCenterService();
+        if (registerService == null) {
+            LOGGER.severe("registerCenterService is null, fail to update instance status!");
+            return;
+        }
+        registerService.updateInstanceStatus(status);
     }
 
     @Override
@@ -75,7 +90,11 @@ public class ServiceCombRegistry implements ServiceRegistry<ServiceCombRegistrat
 
     private RegisterCenterService getRegisterCenterService() {
         if (registerCenterService == null) {
-            registerCenterService = PluginServiceManager.getPluginService(RegisterCenterService.class);
+            try {
+                registerCenterService = PluginServiceManager.getPluginService(RegisterCenterService.class);
+            } catch (IllegalArgumentException e) {
+                LOGGER.severe("registerCenterService is not enabled!");
+            }
         }
         return registerCenterService;
     }
