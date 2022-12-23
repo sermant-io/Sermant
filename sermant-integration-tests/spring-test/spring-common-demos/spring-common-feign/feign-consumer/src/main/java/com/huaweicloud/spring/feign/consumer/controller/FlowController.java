@@ -89,6 +89,36 @@ public class FlowController {
     }
 
     /**
+     * 限流测试
+     *
+     * @return ok
+     */
+    @RequestMapping("prefixRateLimiting")
+    public String rateLimitingPrefix() {
+        return rateLimiting();
+    }
+
+    /**
+     * 限流测试
+     *
+     * @return ok
+     */
+    @RequestMapping("rateLimitingContains")
+    public String rateLimitingContains() {
+        return rateLimiting();
+    }
+
+    /**
+     * 限流测试
+     *
+     * @return ok
+     */
+    @RequestMapping("rateLimitingSuffix")
+    public String rateLimitingSuffix() {
+        return rateLimiting();
+    }
+
+    /**
      * 慢调用熔断测试
      *
      * @return ok
@@ -134,7 +164,77 @@ public class FlowController {
     @RequestMapping("header")
     public String header() {
         try {
-            return feignService.header();
+            return feignService.headerExact();
+        } catch (Exception ex) {
+            return convertMsg(ex);
+        }
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerPrefix")
+    public String headerPrefix() {
+        try {
+            return feignService.headerPrefix();
+        } catch (Exception ex) {
+            return convertMsg(ex);
+        }
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerSuffix")
+    public String headerSuffix() {
+        try {
+            return feignService.headerSuffix();
+        } catch (Exception ex) {
+            return convertMsg(ex);
+        }
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerContains")
+    public String headerContains() {
+        try {
+            return feignService.headerContains();
+        } catch (Exception ex) {
+            return convertMsg(ex);
+        }
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerCompareMatch")
+    public String headerCompareMatch() {
+        try {
+            return feignService.headerCompareMatch();
+        } catch (Exception ex) {
+            return convertMsg(ex);
+        }
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerCompareNotMatch")
+    public String headerCompareNotMatch() {
+        try {
+            return feignService.headerCompareNotMatch();
         } catch (Exception ex) {
             return convertMsg(ex);
         }

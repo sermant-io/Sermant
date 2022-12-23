@@ -103,6 +103,66 @@ public class ProviderController {
     }
 
     /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerExact")
+    public String headerExact() {
+        return Constants.HTTP_OK;
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerPrefix")
+    public String headerPrefix() {
+        return Constants.HTTP_OK;
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerSuffix")
+    public String headerSuffix() {
+        return Constants.HTTP_OK;
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerContains")
+    public String headerContains() {
+        return Constants.HTTP_OK;
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerCompareMatch")
+    public String headerCompareMatch() {
+        return Constants.HTTP_OK;
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerCompareNotMatch")
+    public String headerCompareNotMatch() {
+        return Constants.HTTP_OK;
+    }
+
+    /**
      * 匹配服务名
      *
      * @return ok

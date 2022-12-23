@@ -54,6 +54,9 @@ public abstract class FlowControlTest {
     @Test
     public void testServerRateLimiting() {
         process("/rateLimiting", RATE_LIMITING_MSG, RATE_LIMITING_REQUEST_COUNT, null);
+        process("/prefixRateLimiting", RATE_LIMITING_MSG, RATE_LIMITING_REQUEST_COUNT, null);
+        process("/rateLimitingContains", RATE_LIMITING_MSG, RATE_LIMITING_REQUEST_COUNT, null);
+        process("/rateLimitingSuffix", RATE_LIMITING_MSG, RATE_LIMITING_REQUEST_COUNT, null);
     }
 
     /**
@@ -127,6 +130,16 @@ public abstract class FlowControlTest {
     @Test
     public void testMatchHeader() {
         process("/header", RATE_LIMITING_MSG, RATE_LIMITING_REQUEST_COUNT, null);
+        process("/headerPrefix", RATE_LIMITING_MSG, RATE_LIMITING_REQUEST_COUNT, null);
+        process("/headerSuffix", RATE_LIMITING_MSG, RATE_LIMITING_REQUEST_COUNT, null);
+        process("/headerContains", RATE_LIMITING_MSG, RATE_LIMITING_REQUEST_COUNT, null);
+        process("/headerCompareMatch", RATE_LIMITING_MSG, RATE_LIMITING_REQUEST_COUNT, null);
+
+        final AtomicBoolean checkNotMatch = new AtomicBoolean();
+        process("/headerCompareNotMatch", RATE_LIMITING_MSG, RATE_LIMITING_REQUEST_COUNT, checkNotMatch);
+        if (checkNotMatch.get()) {
+            Assert.fail();
+        }
     }
 
     /**

@@ -26,6 +26,18 @@ servicecomb:
       matches:
         - apiPath:
             exact: "com.huaweicloud.integration.service.FlowControlService.rateLimiting"
+    demo-rateLimiting-prefix: |
+      matches:
+        - apiPath:
+            prefix: "com.huaweicloud.integration.service.FlowControlService.rateLimitingPref"
+    demo-rateLimiting-suffix: |
+      matches:
+        - apiPath:
+            suffix: "rateLimitingSuffix"
+    demo-rateLimiting-contains: |
+      matches:
+        - apiPath:
+            contains: "rateLimitingContains"
     demo-rateLimiting-version: |
       matches:
         - apiPath:
@@ -42,7 +54,47 @@ servicecomb:
           serviceName: dubbo-integration-provider
           headers:
             key:
-              prefix: attachement
+              prefix: attachment
+    demo-rateLimiting-match-attachement-exact: |
+      matches:
+        - apiPath:
+            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimitingWithHeader"
+          serviceName: dubbo-integration-provider
+          headers:
+            key:
+              exact: flowControlExact
+    demo-rateLimiting-match-attachement-prefix: |
+      matches:
+        - apiPath:
+            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimitingWithHeader"
+          serviceName: dubbo-integration-provider
+          headers:
+            key:
+              prefix: flowControlPr
+    demo-rateLimiting-match-attachement-suffix: |
+      matches:
+        - apiPath:
+            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimitingWithHeader"
+          serviceName: dubbo-integration-provider
+          headers:
+            key:
+              suffix: Suffix
+    demo-rateLimiting-match-attachement-contains: |
+      matches:
+        - apiPath:
+            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimitingWithHeader"
+          serviceName: dubbo-integration-provider
+          headers:
+            key:
+              contains: Contains
+    demo-rateLimiting-match-attachement-compare: |
+      matches:
+        - apiPath:
+            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimitingWithHeader"
+          serviceName: dubbo-integration-provider
+          headers:
+            key:
+              compare: ">100"
     demo-circuitBreaker-timed: |
       matches:
         - apiPath:
@@ -66,11 +118,27 @@ servicecomb:
   rateLimiting:
     demo-rateLimiting: |
       rate: 1
+    demo-rateLimiting-prefix: |
+      rate: 1
+    demo-rateLimiting-suffix: |
+      rate: 1
+    demo-rateLimiting-contains: |
+      rate: 1
     demo-rateLimiting-version: |
       rate: 1
     demo-rateLimiting-match-application: |
       rate: 1
     demo-rateLimiting-match-attachement: |
+      rate: 1
+    demo-rateLimiting-match-attachement-exact: |
+      rate: 1
+    demo-rateLimiting-match-attachement-prefix: |
+      rate: 1
+    demo-rateLimiting-match-attachement-suffix: |
+      rate: 1
+    demo-rateLimiting-match-attachement-contains: |
+      rate: 1
+    demo-rateLimiting-match-attachement-compare: |
       rate: 1
   retry:
     demo-retry: |

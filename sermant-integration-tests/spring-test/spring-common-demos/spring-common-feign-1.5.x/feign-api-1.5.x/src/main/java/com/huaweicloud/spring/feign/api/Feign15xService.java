@@ -76,6 +76,54 @@ public interface Feign15xService {
     String header();
 
     /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerExact")
+    String headerExact();
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerPrefix")
+    String headerPrefix();
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerSuffix")
+    String headerSuffix();
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerContains")
+    String headerContains();
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerCompareMatch")
+    String headerCompareMatch();
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerCompareNotMatch")
+    String headerCompareNotMatch();
+
+    /**
      * 匹配服务名测试-匹配前提, 触发流控
      *
      * @return ok

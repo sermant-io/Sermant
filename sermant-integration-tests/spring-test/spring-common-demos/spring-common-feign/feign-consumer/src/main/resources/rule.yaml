@@ -31,13 +31,60 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/flowcontrol/rateLimiting"
+    demo-rateLimiting-prefix: |
+      matches:
+        - apiPath:
+            prefix: "/flowcontrol/prefixRate"
+    demo-rateLimiting-suffix: |
+      matches:
+        - apiPath:
+            suffix: "Suffix"
+    demo-rateLimiting-contains: |
+      matches:
+        - apiPath:
+            contains: "Contains"
     demo-header: |
       matches:
         - apiPath:
-            exact: "/header"
+            exact: "/headerExact"
           headers:
             key:
-              prefix: header
+              exact: flowControlExact
+    demo-header-prefix: |
+      matches:
+        - apiPath:
+            exact: "/headerPrefix"
+          headers:
+            key:
+              prefix: flowControlPrefix
+    demo-header-suffix: |
+      matches:
+        - apiPath:
+            exact: "/headerSuffix"
+          headers:
+            key:
+              suffix: flowControlSuffix
+    demo-header-contains: |
+      matches:
+        - apiPath:
+            exact: "/headerContains"
+          headers:
+            key:
+              contains: flowControlContains
+    demo-header-compare: |
+      matches:
+        - apiPath:
+            exact: "/headerCompareMatch"
+          headers:
+            key:
+              compare: ">100"
+    demo-header-compare-not-match: |
+      matches:
+        - apiPath:
+            exact: "/headerCompareNotMatch"
+          headers:
+            key:
+              compare: ">100"
     demo-circuitBreaker-serviceName-match: |
       matches:
         - apiPath:
@@ -62,7 +109,23 @@ servicecomb:
   rateLimiting:
     demo-rateLimiting: |
       rate: 1
+    demo-rateLimiting-prefix: |
+      rate: 1
+    demo-rateLimiting-suffix: |
+      rate: 1
+    demo-rateLimiting-contains: |
+      rate: 1
     demo-header: |
+      rate: 1
+    demo-header-prefix: |
+      rate: 1
+    demo-header-suffix: |
+      rate: 1
+    demo-header-contains: |
+      rate: 1
+    demo-header-compare: |
+      rate: 1
+    demo-header-compare-not-match: |
       rate: 1
   retry:
     demo-retry: |

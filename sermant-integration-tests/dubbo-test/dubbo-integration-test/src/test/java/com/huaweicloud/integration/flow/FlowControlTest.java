@@ -49,6 +49,9 @@ public class FlowControlTest {
     @Test
     public void testRateLimiting() {
         rateTest("rateLimiting");
+        rateTest("rateLimitingPrefix");
+        rateTest("rateLimitingSuffix");
+        rateTest("rateLimitingContains");
     }
 
     /**
@@ -64,7 +67,12 @@ public class FlowControlTest {
      */
     @Test
     public void testRateLimitingWithHeader() {
-        rateTest("rateLimitingWithHeader?key=key&value=attachement&key2=key2&value2=999");
+        rateTest("rateLimitingWithHeader?key=key&value=attachment&key2=key2&value2=999");
+        rateTest("rateLimitingWithHeader?key=key&value=flowControlExact&key2=key2&value2=999");
+        rateTest("rateLimitingWithHeader?key=key&value=flowControlPrefix&key2=key2&value2=999");
+        rateTest("rateLimitingWithHeader?key=key&value=flowControlSuffix&key2=key2&value2=999");
+        rateTest("rateLimitingWithHeader?key=key&value=flowControlContains&key2=key2&value2=999");
+        rateTest("rateLimitingWithHeader?key=key&value=101&key2=key2&value2=999");
         final AtomicBoolean check = new AtomicBoolean();
         process("rateLimitingWithHeader?key=key&value=val&key2=key2&value2=998", RATE_LIMITING_MSG,
             RATE_LIMITING_REQUEST_COUNT, check);

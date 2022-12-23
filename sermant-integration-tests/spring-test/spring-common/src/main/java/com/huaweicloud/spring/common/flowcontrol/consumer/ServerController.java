@@ -45,6 +45,9 @@ import javax.annotation.PostConstruct;
 @ResponseBody
 @RequestMapping("/flowcontrol")
 public class ServerController {
+    private static final String RATE_LIMITING_API = "rateLimiting";
+    private static final String HEADER_API = "header";
+
     @Value("${down.serviceName}")
     private String downServiceName;
 
@@ -66,7 +69,37 @@ public class ServerController {
      */
     @RequestMapping("rateLimiting")
     public String rateLimiting() {
-        return restTemplate.getForObject(buildUrl("rateLimiting"), String.class);
+        return restTemplate.getForObject(buildUrl(RATE_LIMITING_API), String.class);
+    }
+
+    /**
+     * 限流测试
+     *
+     * @return ok
+     */
+    @RequestMapping("prefixRateLimiting")
+    public String rateLimitingPrefix() {
+        return restTemplate.getForObject(buildUrl(RATE_LIMITING_API), String.class);
+    }
+
+    /**
+     * 限流测试
+     *
+     * @return ok
+     */
+    @RequestMapping("rateLimitingContains")
+    public String rateLimitingContains() {
+        return restTemplate.getForObject(buildUrl(RATE_LIMITING_API), String.class);
+    }
+
+    /**
+     * 限流测试
+     *
+     * @return ok
+     */
+    @RequestMapping("rateLimitingSuffix")
+    public String rateLimitingSuffix() {
+        return restTemplate.getForObject(buildUrl(RATE_LIMITING_API), String.class);
     }
 
     /**
@@ -106,12 +139,66 @@ public class ServerController {
      */
     @RequestMapping("header")
     public String header() {
+        return reqHeader("flowControlExact");
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerPrefix")
+    public String headerPrefix() {
+        return reqHeader("flowControlPrefix");
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerSuffix")
+    public String headerSuffix() {
+        return reqHeader("flowControlSuffix");
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerContains")
+    public String headerContains() {
+        return reqHeader("flowControlContains");
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerCompareMatch")
+    public String headerCompareMatch() {
+        return reqHeader("101");
+    }
+
+    /**
+     * 请求头匹配测试
+     *
+     * @return ok
+     */
+    @RequestMapping("headerCompareNotMatch")
+    public String headerCompareNotMatch() {
+        return reqHeader("100");
+    }
+
+    private String reqHeader(String value) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("key", "header1");
+        headers.set("key", value);
         headers.set("contentType", "application/json;charset=UTF-8");
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity(null, headers);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(buildUrl("header"));
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(buildUrl(HEADER_API));
         return restTemplate.exchange(builder.build().toString(), HttpMethod.GET, request, String.class).getBody();
     }
 
