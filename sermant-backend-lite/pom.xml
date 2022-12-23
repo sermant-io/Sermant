@@ -20,8 +20,8 @@
         <package.output.dir>${package.server.dir}/sermant</package.output.dir>
         <webapp.path>${project.basedir}/src/main/webapp/sermant-frontend</webapp.path>
 
-        <spring.boot.version>2.5.3</spring.boot.version>
-        <spring.boot.starter.web.version>2.7.4</spring.boot.starter.web.version>
+        <spring.boot.version>2.7.5</spring.boot.version>
+        <spring.boot.starter.web.version>2.7.5</spring.boot.starter.web.version>
         <maven.clen.plugin.version>3.1.0</maven.clen.plugin.version>
     </properties>
 
