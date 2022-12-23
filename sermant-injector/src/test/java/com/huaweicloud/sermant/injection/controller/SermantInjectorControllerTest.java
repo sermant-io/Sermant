@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Iterator;
 
 /**
  * controller单元测试
@@ -33,5 +36,25 @@ public class SermantInjectorControllerTest {
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getResponse());
         Assertions.assertTrue(response.getResponse().isAllowed());
+
+        // Test Annotations environment feature.
+        byte[] decodedBytes = Base64.getDecoder().decode(response.getResponse().getPatch());
+        String decodedString = new String(decodedBytes);
+        JsonNode rs = mapper.readTree(decodedString);
+        Iterator<JsonNode> iter = rs.elements();
+        while ( iter.hasNext() )
+        {
+            JsonNode node = iter.next();
+            if (node.get("path").asText().equals("/spec/containers/0/env"))
+            {
+                JsonNode jn = node.findValue("value");
+                Assertions.assertTrue(jn.toString().indexOf("key1") > 0);
+                break;
+            }
+            if ( iter.hasNext() == false )
+            {
+                Assertions.fail("should not get here");
+            }
+        }
     }
 }

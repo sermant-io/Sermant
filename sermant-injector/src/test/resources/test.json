@@ -46,7 +46,9 @@
           "sermant-injection": "enabled"
         },
         "annotations": {
-          "kubernetes.io/psp": "psp-global"
+          "kubernetes.io/psp": "psp-global",
+          "env.sermant.io/key1": "value1",
+          "env.sermant.io/key2": "value2"
         },
         "ownerReferences": [
           {
