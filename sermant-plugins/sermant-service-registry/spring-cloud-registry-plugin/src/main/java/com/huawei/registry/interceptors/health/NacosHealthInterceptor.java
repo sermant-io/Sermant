@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.logging.Logger;
 
 /**
- * 注册中心健康状态变更
+ * 注册中心健康状态变更, 针对nacos1.x, nacos2.x http协议
  *
  * @author zhouss
  * @since 2021-12-13

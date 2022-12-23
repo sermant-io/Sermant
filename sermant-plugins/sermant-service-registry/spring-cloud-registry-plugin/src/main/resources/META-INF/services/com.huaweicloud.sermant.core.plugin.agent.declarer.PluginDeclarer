@@ -25,6 +25,8 @@ com.huawei.registry.declarers.cloud3.x.ZookeeperInstanceSupplierDeclarer
 # health
 com.huawei.registry.declarers.health.ConsulWatchConDeclarer
 com.huawei.registry.declarers.health.NacosHealthDeclarer
+com.huawei.registry.declarers.health.NacosRpcClientHealthDeclarer
+com.huawei.registry.declarers.health.NacosGrpcProxyDeregisterDeclarer
 com.huawei.registry.declarers.health.ZookeeperHealthDeclarer
 com.huawei.registry.declarers.health.ConsulHealthDeclarer
 com.huawei.registry.declarers.health.ScheduleProcessorDeclared

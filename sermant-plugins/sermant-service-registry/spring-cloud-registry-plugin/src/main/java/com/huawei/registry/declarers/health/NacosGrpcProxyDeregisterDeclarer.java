@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,31 +17,32 @@
 package com.huawei.registry.declarers.health;
 
 import com.huawei.registry.declarers.AbstractDoubleRegistryDeclarer;
-import com.huawei.registry.interceptors.health.NacosHealthInterceptor;
+import com.huawei.registry.interceptors.health.NacosGrpcDeRegisterInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * nacos健康检测增强  NamingProxy 1.x版本, NamingHttpClientProxy 2.x版本
+ * nacos 2.x
+ * 拦截反注册方法, 在反注册之前，判断RpcClient是否可用; 因为此处当双注册下发关闭原注册中心配置时，会将RpcClient关闭掉,
+ * 若关闭了，则无需进行反注册, 因为此时当前客户端已经主动从注册中心下线了，且若处于Shutdown调用, 会直接抛出异常，因此做前置判断
  *
  * @author zhouss
- * @since 2021-12-17
+ * @since 2022-12-20
  */
-public class NacosHealthDeclarer extends AbstractDoubleRegistryDeclarer {
+public class NacosGrpcProxyDeregisterDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
      * nacos心跳发送类
      */
     private static final String[] ENHANCE_CLASSES = new String[] {
-        "com.alibaba.nacos.client.naming.net.NamingProxy",
-        "com.alibaba.nacos.client.naming.remote.http.NamingHttpClientProxy"
+        "com.alibaba.nacos.client.naming.remote.gprc.NamingGrpcClientProxy"
     };
 
     /**
      * 拦截类的全限定名
      */
-    private static final String INTERCEPT_CLASS = NacosHealthInterceptor.class.getCanonicalName();
+    private static final String INTERCEPT_CLASS = NacosGrpcDeRegisterInterceptor.class.getCanonicalName();
 
     @Override
     public ClassMatcher getClassMatcher() {
@@ -51,7 +52,7 @@ public class NacosHealthDeclarer extends AbstractDoubleRegistryDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("sendBeat"), INTERCEPT_CLASS)
+            InterceptDeclarer.build(MethodMatcher.nameEquals("deregisterService"), INTERCEPT_CLASS)
         };
     }
 }
