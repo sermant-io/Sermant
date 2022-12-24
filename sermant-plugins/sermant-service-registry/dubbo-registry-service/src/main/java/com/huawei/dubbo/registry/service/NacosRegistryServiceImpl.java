@@ -20,6 +20,7 @@ package com.huawei.dubbo.registry.service;
 import com.huawei.dubbo.registry.entity.NacosServiceName;
 import com.huawei.dubbo.registry.listener.NacosAggregateListener;
 import com.huawei.dubbo.registry.service.nacos.NacosRegistryService;
+import com.huawei.dubbo.registry.utils.CollectionUtils;
 import com.huawei.dubbo.registry.utils.NacosInstanceManageUtil;
 import com.huawei.dubbo.registry.utils.NamingServiceUtils;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
@@ -260,6 +261,9 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
         if (serviceMeta != null) {
             metaData.put(SERVICE_META_VERSION, serviceMeta.getVersion());
             metaData.put(SERVICE_META_ZONE, serviceMeta.getZone());
+            if (!CollectionUtils.isEmpty(serviceMeta.getParameters())) {
+                metaData.putAll(serviceMeta.getParameters());
+            }
         }
         Instance instance = new Instance();
         instance.setIp(ReflectUtils.getHost(url));
