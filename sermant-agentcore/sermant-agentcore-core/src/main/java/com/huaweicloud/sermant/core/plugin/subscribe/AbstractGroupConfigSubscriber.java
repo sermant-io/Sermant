@@ -24,6 +24,7 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigLi
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * 配置订阅
@@ -32,7 +33,9 @@ import java.util.Map;
  * @since 2022-04-13
  */
 public abstract class AbstractGroupConfigSubscriber implements ConfigSubscriber {
-    private final DynamicConfigService dynamicConfigService;
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private DynamicConfigService dynamicConfigService;
 
     /**
      * 订阅的插件名称
@@ -56,7 +59,13 @@ public abstract class AbstractGroupConfigSubscriber implements ConfigSubscriber 
      */
     protected AbstractGroupConfigSubscriber(DynamicConfigService dynamicConfigService, String pluginName) {
         if (dynamicConfigService == null) {
-            this.dynamicConfigService = ServiceManager.getService(DynamicConfigService.class);
+            try {
+                this.dynamicConfigService = ServiceManager.getService(DynamicConfigService.class);
+            } catch (IllegalArgumentException e) {
+                LOGGER.severe("dynamicConfigService is not enabled!");
+                this.dynamicConfigService = null;
+            }
+
         } else {
             this.dynamicConfigService = dynamicConfigService;
         }
@@ -65,6 +74,10 @@ public abstract class AbstractGroupConfigSubscriber implements ConfigSubscriber 
 
     @Override
     public boolean subscribe() {
+        if (dynamicConfigService == null) {
+            LOGGER.severe("dynamicConfigService is null, fail to subscribe!");
+            return false;
+        }
         if (!isReady()) {
             LoggerFactory.getLogger().warning("The group subscriber is not ready, may be service name is null");
             return false;
