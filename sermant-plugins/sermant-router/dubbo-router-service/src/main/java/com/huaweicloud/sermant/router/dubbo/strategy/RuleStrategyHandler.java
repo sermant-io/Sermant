@@ -50,7 +50,7 @@ public enum RuleStrategyHandler {
      * @return 标签应用的invokers
      */
     public List<Object> getMatchInvokers(String serviceName, List<Object> invokers, List<Route> routes) {
-        return ruleStrategy.getMatchInstances(serviceName, invokers, routes);
+        return ruleStrategy.getMatchInstances(serviceName, invokers, routes, true);
     }
 
     /**

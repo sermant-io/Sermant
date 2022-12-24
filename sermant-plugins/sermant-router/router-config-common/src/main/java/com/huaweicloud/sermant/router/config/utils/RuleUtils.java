@@ -27,6 +27,7 @@ import com.huaweicloud.sermant.router.config.entity.Rule;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -89,16 +90,17 @@ public class RuleUtils {
      * 获取所有标签
      *
      * @param rules 路由规则
+     * @param isReplaceDash 是否需要替换破折号为点号（dubbo需要）
      * @return 标签
      */
-    public static List<Map<String, String>> getTags(List<Rule> rules) {
+    public static List<Map<String, String>> getTags(List<Rule> rules, boolean isReplaceDash) {
         if (CollectionUtils.isEmpty(rules)) {
             return Collections.emptyList();
         }
         List<Map<String, String>> tags = new ArrayList<>();
         for (Rule rule : rules) {
             for (Route route : rule.getRoute()) {
-                tags.add(route.getTags());
+                tags.add(replaceDash(route.getTags(), isReplaceDash));
             }
         }
         return tags;
@@ -153,9 +155,10 @@ public class RuleUtils {
      * 选取路由
      *
      * @param routes 路由规则
+     * @param isReplaceDash 是否需要替换破折号为点号（dubbo需要）
      * @return 目标路由
      */
-    public static RouteResult<?> getTargetTags(List<Route> routes) {
+    public static RouteResult<?> getTargetTags(List<Route> routes, boolean isReplaceDash) {
         List<Map<String, String>> tags = new ArrayList<>();
         int begin = 1;
         int num = ThreadLocalRandom.current().nextInt(ONO_HUNDRED) + 1;
@@ -164,7 +167,7 @@ public class RuleUtils {
             if (weight == null) {
                 continue;
             }
-            Map<String, String> currentTag = route.getTags();
+            Map<String, String> currentTag = replaceDash(route.getTags(), isReplaceDash);
             if (num >= begin && num <= begin + weight - 1) {
                 return new RouteResult<>(true, currentTag);
             }
@@ -301,6 +304,22 @@ public class RuleUtils {
             // 请求头在http请求中，会统一转成小写
             keys.add(key.toLowerCase(Locale.ROOT));
         }
+    }
+
+    private static Map<String, String> replaceDash(Map<String, String> tags, boolean isReplaceDash) {
+        if (!isReplaceDash) {
+            return tags;
+        }
+        Map<String, String> map = new HashMap<>();
+        tags.forEach((key, value) -> {
+            if (key != null && key.contains("-")) {
+                // dubbo会把key中的"-"替换成"."
+                map.put(key.replace("-", "."), value);
+            } else {
+                map.put(key, value);
+            }
+        });
+        return map;
     }
 
     /**

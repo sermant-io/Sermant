@@ -25,7 +25,6 @@ import com.huawei.flowcontrol.res4j.util.FlowControlExceptionUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -84,9 +83,13 @@ public enum HandlerChainEntry {
     }
 
     private String formatSourceName(String sourceName, boolean isProvider) {
-        return String.format(Locale.ENGLISH, "%s%s",
-                isProvider ? HandlerConstants.THREAD_LOCAL_DUBBO_PROVIDER_PREFIX
-                        : HandlerConstants.THREAD_LOCAL_DUBBO_CONSUMER_PREFIX, sourceName);
+        String prefix = isProvider ? HandlerConstants.THREAD_LOCAL_DUBBO_PROVIDER_PREFIX
+            : HandlerConstants.THREAD_LOCAL_DUBBO_CONSUMER_PREFIX;
+
+        // 初始化StringBuilder的长度是为了性能
+        StringBuilder sb = new StringBuilder(prefix.length() + sourceName.length());
+        sb.append(prefix).append(sourceName);
+        return sb.toString();
     }
 
     /**

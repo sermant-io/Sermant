@@ -68,7 +68,7 @@ public enum RuleStrategyHandler {
      * @return 路由匹配的实例
      */
     public List<Object> getMatchInstances(String serviceName, List<Object> instances, List<Route> routes) {
-        return getRuleStrategy(instances).getMatchInstances(serviceName, instances, routes);
+        return getRuleStrategy(instances).getMatchInstances(serviceName, instances, routes, false);
     }
 
     /**
@@ -123,6 +123,6 @@ public enum RuleStrategyHandler {
     }
 
     private AbstractMetadataMapper<Object> getMetadataMapper(Object obj) {
-        return map.getOrDefault(obj.getClass().getCanonicalName(), defaultMetadataMapper);
+        return map.getOrDefault(obj.getClass().getName(), defaultMetadataMapper);
     }
 }

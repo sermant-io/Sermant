@@ -56,7 +56,7 @@ public class RuleUtilsTest {
      */
     @Test
     public void testGetTags() {
-        List<Map<String, String>> tags = RuleUtils.getTags(list);
+        List<Map<String, String>> tags = RuleUtils.getTags(list, false);
         Assert.assertEquals(2, tags.size());
         Assert.assertEquals("1.0.1", tags.get(0).get("version"));
         Assert.assertEquals("1.0.0", tags.get(1).get("version"));

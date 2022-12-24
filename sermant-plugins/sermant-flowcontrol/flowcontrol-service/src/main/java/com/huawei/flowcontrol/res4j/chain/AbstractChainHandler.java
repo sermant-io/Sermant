@@ -20,7 +20,6 @@ package com.huawei.flowcontrol.res4j.chain;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 import com.huawei.flowcontrol.res4j.chain.context.RequestContext;
 
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -31,6 +30,8 @@ import java.util.Set;
  * @since 2022-07-11
  */
 public abstract class AbstractChainHandler implements RequestHandler, Comparable<AbstractChainHandler> {
+    private static final int EXTRA_LENGTH_FOR_METHOD_CACHE_KEY = 11;
+
     private AbstractChainHandler next;
 
     @Override
@@ -83,7 +84,14 @@ public abstract class AbstractChainHandler implements RequestHandler, Comparable
     }
 
     private String skipCacheKey(AbstractChainHandler tmp) {
-        return String.format(Locale.ENGLISH, "%s_%s_skip_flag", tmp.direct(), tmp.getClass().getName());
+        String className = tmp.getClass().getName();
+        RequestType direct = tmp.direct();
+
+        // 初始化StringBuilder的长度是为了性能
+        StringBuilder sb =
+            new StringBuilder(className.length() + direct.name().length() + EXTRA_LENGTH_FOR_METHOD_CACHE_KEY);
+        sb.append(direct).append("_").append(className).append("_skip_flag");
+        return sb.toString();
     }
 
     /**

@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.dubbo.service.DubboConfigService;
 import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
@@ -49,9 +50,12 @@ public class ContextFilterInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
+        Set<String> matchKeys = configService.getMatchKeys();
+        if (CollectionUtils.isEmpty(matchKeys)) {
+            return context;
+        }
         Map<String, Object> attachments = DubboReflectUtils.getAttachments(context.getArguments()[1]);
         Map<String, List<String>> header = new HashMap<>();
-        Set<String> matchKeys = configService.getMatchKeys();
         matchKeys.forEach(key -> {
             if (attachments.containsKey(key)) {
                 String value = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);

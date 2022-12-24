@@ -100,7 +100,8 @@ public class LoadBalancerServiceImpl implements LoadBalancerService {
         if (!CollectionUtils.isEmpty(routes)) {
             return RuleStrategyHandler.INSTANCE.getMatchInstances(targetName, instances, routes);
         }
-        return RuleStrategyHandler.INSTANCE.getMismatchInstances(targetName, instances, RuleUtils.getTags(rules), true);
+        return RuleStrategyHandler.INSTANCE
+            .getMismatchInstances(targetName, instances, RuleUtils.getTags(rules, false), true);
     }
 
     private List<Object> getTargetInstancesByRequest(String targetName, List<Object> instances,

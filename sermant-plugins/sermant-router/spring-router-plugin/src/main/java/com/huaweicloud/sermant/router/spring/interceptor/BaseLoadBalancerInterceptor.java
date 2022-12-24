@@ -51,12 +51,15 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
 
     private final RouterConfig routerConfig;
 
+    private final boolean canLoadZuul;
+
     /**
      * 构造方法
      */
     public BaseLoadBalancerInterceptor() {
         loadBalancerService = ServiceManager.getService(LoadBalancerService.class);
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+        canLoadZuul = canLoadZuul();
     }
 
     @Override
@@ -98,7 +101,7 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
         if (requestData != null) {
             return Optional.of(requestData);
         }
-        if (!canLoadZuul()) {
+        if (!canLoadZuul) {
             return Optional.empty();
         }
         RequestContext context = RequestContext.getCurrentContext();
