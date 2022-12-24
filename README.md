@@ -51,19 +51,7 @@ mvn clean package -Dmaven.test.skip -Pexample
 
 ### Start Sermant
 
-Start **Sermant** backend, **Prepare zookeeper**.
-
-```shell
-# Run under Linux
-java -jar sermant-agent-x.x.x/server/sermant/sermant-backend-x.x.x.jar
-```
-
-```shell
-# Run under Windows
-java -jar sermant-agent-x.x.x\server\sermant\sermant-backend-x.x.x.jar
-```
-
-Start **Sermant** demo project: 
+Prepare and start zookeeper, start **Sermant** demo project:
 
 ```shell
 # Run under Linux
@@ -82,24 +70,9 @@ Check running status of Sermant. In this example, open the browser and navigate 
 
 ![pic](docs/binary-docs/backend_sermant_info.png)
 
-#### Please refer to the  [Service Register & Discovery Plugin QuickStart](docs/QuickStart.md) for details.
-
-## Plugin Features
-
-| Feature | Phase | Microservice Framework Supported |
-|:---- | :---- |:----|
-| [FlowControl](docs/user-guide/flowcontrol/flowcontrol.md) | Beta | SpringBoot 1.2.x - 2.6.x <br> SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>Dubbo 2.6.x-2.7.x |
-| [Service Registration](docs/user-guide/registry/document.md) | GC | SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x |
-| [Service Dual Registration and Migration](docs/user-guide/registry/spring-cloud-registry-migiration.md) | GC | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x |
-| [Loadbalancer](docs/user-guide/loadbalancer/document.md) | Beta | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0 |
-| [Tag Router](docs/user-guide/router/document.md) | Beta | SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x |
-| [Graceful Online/Offline](docs/user-guide/graceful/document.md) | Beta  | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0 |
-| [Dynamic Configuration](docs/user-guide/dynamic-config/document.md) | Beta | SpringBoot 1.5.x - 2.6.2<br>spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+<br>spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+ |
-| [Server Monitor](docs/user-guide/server-monitor/document.md) | Alpha | All |
-
 ## More Documents to Follow
 
-Please refer to the  [Development Guide](docs/README.md)
+Please refer to the  [Sermant Document](https://sermant.io/en/document/)
 
 ## License
 
@@ -107,7 +80,7 @@ Sermant adopts [Apache 2.0 License.](/LICENSE)
 
 ## How to Contribute
 
-Please read  [Contribute Guide](CONTRIBUTING.md) to refer how to join the contribution.
+Please read  [Contribute Guide](https://sermant.io/en/document/CONTRIBUTING.html) to refer how to join the contribution.
 
 ## Declaration
 

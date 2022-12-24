@@ -51,19 +51,7 @@ mvn clean package -Dmaven.test.skip -Pexample
 
 ### 启动Sermant
 
-启动 **Sermant** backend, **准备zookeeper**。
-
-```shell
-# Run under Linux
-java -jar sermant-agent-x.x.x/server/sermant/sermant-backend-x.x.x.jar
-```
-
-```shell
-# Run under Windows
-java -jar sermant-agent-x.x.x\server\sermant\sermant-backend-x.x.x.jar
-```
-
-启动 **Sermant** demo 应用：
+准备和启动zookeeper，启动 **Sermant** demo 应用：
 
 ```shell
 # Run under Linux
@@ -83,23 +71,9 @@ java -cp sermant-example\demo-application\target\demo-application.jar ^
 
 ![pic](docs/binary-docs/backend_sermant_info.png)
 
-#### 有关详细信息，请参阅 [服务注册和发现快速开始说明](docs/QuickStart.md)。
-
-## 插件功能列表
-| 功能名称 | 阶段 | 微服务框架组件支持列表 |
-|:-----|:-----|:-----|
-| [限流降级](docs/user-guide/flowcontrol/flowcontrol-zh.md) | Beta | SpringBoot 1.2.x - 2.6.x <br> SpringWebMvc 4.1.3.RELEASE - 5.3.x<br>Dubbo 2.6.x-2.7.x |
-| [服务注册](docs/user-guide/registry/document-zh.md) | GC | SpringBoot 1.5.x - 2.6.2 <br> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x |
-| [服务双注册迁移](docs/user-guide/registry/spring-cloud-registry-migiration-zh.md) | GC | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0<br>Dubbo 2.6.x-2.7.x |
-| [负载均衡](docs/user-guide/loadbalancer/document-zh.md) | Beta | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0 |
-| [标签路由](docs/user-guide/router/document-zh.md) | Beta | SpringBoot 1.5.x - 2.6.2 <br/>SpringCloud Edgware.SR2 - 2021.0.0<br/>Dubbo 2.6.x-2.7.x |
-| [优雅上下线](docs/user-guide/graceful/document-zh.md) | Beta | SpringBoot 1.5.x - 2.6.2 <br/> SpringCloud Edgware.SR2 - 2021.0.0 |
-| [动态配置](docs/user-guide/dynamic-config/document-zh.md) | Beta | SpringBoot 1.5.x - 2.6.2<br>spring-cloud-starter-alibaba-nacos-config 1.5.0.RELEASE+<br>spring-cloud-starter-zookeeper-config 1.2.0.RELEASE+ |
-| [服务监控](docs/user-guide/server-monitor/document-zh.md) | Alpha | All |
-
 ## 更多文档
 
-请参阅 [Sermant 开发和使用介绍](docs/README.md)
+请参阅 [Sermant文档](https://sermant.io/zh/document/)
 
 ## License
 
@@ -107,7 +81,7 @@ Sermant 采用 [Apache 2.0 License.](/LICENSE)
 
 ## 贡献指南
 
-请阅读[贡献指南](CONTRIBUTING.md)以了解如何贡献项目。
+请阅读[贡献指南](https://sermant.io/zh/document/CONTRIBUTING.html)以了解如何贡献项目。
 
 ## 声明
 
