@@ -81,14 +81,10 @@ public class RouterConfigHandler extends AbstractConfigHandler {
 
     private Map<String, String> getRouteRuleMap(DynamicConfigEvent event) {
         String content = event.getContent();
-        Map<String, Map<String, Map<String, String>>> load = yaml.load(content);
-        if (CollectionUtils.isEmpty(load)) {
+        Map<String, String> routeRuleMap = yaml.load(content);
+        if (CollectionUtils.isEmpty(routeRuleMap)) {
             return Collections.emptyMap();
         }
-        Map<String, Map<String, String>> servicecomb = load.get(RouterConstant.ROUTER_CONFIG_SERVICECOMB_KEY);
-        if (CollectionUtils.isEmpty(servicecomb)) {
-            return Collections.emptyMap();
-        }
-        return servicecomb.get(RouterConstant.ROUTER_CONFIG_ROUTE_RULE_KEY);
+        return routeRuleMap;
     }
 }
