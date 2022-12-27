@@ -1,0 +1,8 @@
+{{- if not (lookup "v1" "Namespace" "" .Values.namespace.name) }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    "helm.sh/resource-policy": keep
+  name: {{ .Values.namespace.name }}
+{{- end }}

@@ -12,10 +12,6 @@ injector:
     pullPolicy: IfNotPresent
     # 拉取镜像的密钥
     pullSecrets: default-secret
-  webhooks:
-    # k8s证书，使用以下命令获取
-    # kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}'
-    caBundle:
 
 agent:
   image:
