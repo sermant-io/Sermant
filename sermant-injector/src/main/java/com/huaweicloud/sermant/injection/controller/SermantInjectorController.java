@@ -70,6 +70,10 @@ public class SermantInjectorController {
 
     private static final String VOLUMES_PATH = "volumes";
 
+    private static final String METADATA_PATH = "metadata";
+
+    private static final String ANNOTATION_PATH = "annotations";
+
     private static final String VOLUMES_INJECT_PATH = PATH_SEPARATOR + SPEC_PATH + PATH_SEPARATOR + VOLUMES_PATH;
 
     private static final String REQUEST_PATH = "request";
@@ -174,6 +178,8 @@ public class SermantInjectorController {
 
     private static final String SERMANT_SERVICE_CENTER_TYPE_KEY = "REGISTER_SERVICE_REGISTERTYPE";
 
+    private static final String SERMANT_ENV_PREFIX = "env.sermant.io/";
+
     @Autowired
     private ObjectMapper om;
 
@@ -240,6 +246,11 @@ public class SermantInjectorController {
         // 缓存容器的env
         setEnv(containersNode, containerEnv);
 
+        // 根据labels计算需要新增env
+        Map<String, String> annotationEnv = new HashMap<>();
+        JsonNode annotationNode = body.path(REQUEST_PATH).path(OBJECT_PATH).path(METADATA_PATH).path(ANNOTATION_PATH);
+        setEnvByMap(annotationNode, annotationEnv);
+
         // 建一个json节点
         ArrayNode arrayNode = om.createArrayNode();
 
@@ -265,13 +276,34 @@ public class SermantInjectorController {
             injectEnvFrom(arrayNode, env, containerNode, containerPath);
 
             // 向容器新增env节点
-            injectEnv(arrayNode, env, containerNode, containerPath);
+            injectEnv(arrayNode, env, containerNode, containerPath, annotationEnv);
 
             // 向容器新增volumeMounts节点
             injectVolumeMounts(arrayNode, env, containerNode, containerPath);
         });
         LOGGER.info("arrayNode is: {}.", arrayNode.toString());
         return Optional.of(arrayNode.toString());
+    }
+
+    /**
+     *    根据labels/annotations计算需要增加的环境变量,如下以labels为例：
+     *     labels:
+     *       env.sermant.io/[key1]：[value1]
+     *       env.sermant.io/[key2]：[value2]
+     *    则在环境变量map中添加 key1:value1 和 key2:value2，共两个环境变量
+     *    本函数本真不强制是否使用labels还是annotations，只需要srcMap代表label/annotations下的map即可。
+      */
+    private void setEnvByMap(JsonNode srcMap, Map<String, String> tgtEnv) {
+        Iterator<String> labelIter = srcMap.fieldNames();
+        int prefixLength = SERMANT_ENV_PREFIX.length();
+        while (labelIter.hasNext()) {
+            String labelName = labelIter.next();
+            if (labelName.startsWith(SERMANT_ENV_PREFIX)) {
+                String envKey = labelName.substring(prefixLength);
+                String envValue = srcMap.findValue(labelName).textValue();
+                tgtEnv.put(envKey, envValue);
+            }
+        }
     }
 
     private void setEnv(JsonNode containersPath, Map<Integer, Map<String, String>> containerEnv) {
@@ -416,7 +448,8 @@ public class SermantInjectorController {
         configMapRefNode.put(NAME_KEY, configMap);
     }
 
-    private void injectEnv(ArrayNode arrayNode, Map<String, String> env, JsonNode containerNode, String containerPath) {
+    private void injectEnv(ArrayNode arrayNode, Map<String, String> env, JsonNode containerNode, String containerPath,
+                           Map<String, String> annotationEnv) {
         // 覆盖容器的env节点
         ObjectNode envNode = arrayNode.addObject();
         envNode.put(JSON_OPERATION_KEY, JSON_OPERATION_ADD);
@@ -455,6 +488,12 @@ public class SermantInjectorController {
         }
         if (!StringUtils.hasText(env.get(SERMANT_SERVICE_CENTER_TYPE_KEY))) {
             addEnv(envArray, SERMANT_SERVICE_CENTER_TYPE_KEY, serviceType);
+        }
+
+        // 增加通过在 /metadata/annotations 上指定的env
+        // 这里默认，如果annotations中有新的设置，则覆盖原有的env设置。
+        for (Map.Entry<String, String> entry : annotationEnv.entrySet()) {
+            addEnv(envArray, entry.getKey(), entry.getValue());
         }
     }
 
