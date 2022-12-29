@@ -42,7 +42,7 @@
             <groupId>com.alibaba</groupId>
             <artifactId>dubbo-config-api</artifactId>
             <version>${alibaba.dubbo.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

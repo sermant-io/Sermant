@@ -20,7 +20,6 @@ package com.huawei.dubbo.registry.service;
 import com.huawei.dubbo.registry.entity.NacosServiceName;
 import com.huawei.dubbo.registry.listener.NacosAggregateListener;
 import com.huawei.dubbo.registry.service.nacos.NacosRegistryService;
-import com.huawei.dubbo.registry.utils.CollectionUtils;
 import com.huawei.dubbo.registry.utils.NacosInstanceManageUtil;
 import com.huawei.dubbo.registry.utils.NamingServiceUtils;
 import com.huawei.dubbo.registry.utils.ReflectUtils;
@@ -28,9 +27,7 @@ import com.huawei.registry.config.NacosRegisterConfig;
 import com.huawei.registry.config.RegisterServiceCommonConfig;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.alibaba.nacos.api.exception.NacosException;
@@ -73,9 +70,6 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
     private static final String DEFAULT_CATEGORY = "providers";
     private static final String SIDE_KEY = "side";
     private static final String CHECK_KEY = "check";
-    private static final String APPLICATION_KEY = "application";
-    private static final String SERVICE_META_VERSION = "service.meta.version";
-    private static final String SERVICE_META_ZONE = "service.meta.zone";
     private static final String STATUS_UP = "UP";
     private static final Logger LOGGER = LoggerFactory.getLogger();
     /**
@@ -256,19 +250,11 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
         metaData.put(CATEGORY_KEY, category == null ? DEFAULT_CATEGORY : category);
         metaData.put(PROTOCOL_KEY, ReflectUtils.getProtocol(url));
         metaData.put(PATH_KEY, ReflectUtils.getPath(url));
-        metaData.put(APPLICATION_KEY, ReflectUtils.getParameter(url, APPLICATION_KEY));
-        final ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
-        if (serviceMeta != null) {
-            metaData.put(SERVICE_META_VERSION, serviceMeta.getVersion());
-            metaData.put(SERVICE_META_ZONE, serviceMeta.getZone());
-            if (!CollectionUtils.isEmpty(serviceMeta.getParameters())) {
-                metaData.putAll(serviceMeta.getParameters());
-            }
-        }
+        Object newUrl = ReflectUtils.addParameters(url, metaData);
         Instance instance = new Instance();
         instance.setIp(ReflectUtils.getHost(url));
         instance.setPort(ReflectUtils.getPort(url));
-        instance.setMetadata(metaData);
+        instance.setMetadata(ReflectUtils.getParameters(newUrl));
         return instance;
     }
 
