@@ -7,3 +7,4 @@ com.huaweicloud.sermant.router.dubbo.declarer.ApplicationConfigDeclarer
 com.huaweicloud.sermant.router.dubbo.declarer.ClusterUtilsDeclarer
 com.huaweicloud.sermant.router.dubbo.declarer.ContextFilterDeclarer
 com.huaweicloud.sermant.router.dubbo.declarer.SpringApplicationDeclarer
+com.huaweicloud.sermant.router.dubbo.declarer.AbstractConfigDeclarer
