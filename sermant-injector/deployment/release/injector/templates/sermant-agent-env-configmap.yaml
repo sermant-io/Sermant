@@ -1,11 +1,16 @@
+{{- if and .Values.configMap.enabled .Values.configMap.namespaces }}
+{{- range .Values.configMap.namespaces }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: sermant-agent-env
-  namespace: {{ .Values.namespace.name }}
+  namespace: {{ . }}
   labels:
     app: sermant-agent-env
 data:
-  {{- range $key,$value := .Values.env }}
+  {{- range $key,$value := $.Values.configMap.env }}
   {{ $key }}: "{{ $value }}"
   {{- end }}
+---
+{{- end }}
+{{- end }}
