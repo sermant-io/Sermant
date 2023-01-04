@@ -20,3 +20,4 @@ com.huawei.flowcontrol.res4j.handler.exception.BulkheadExceptionHandler
 com.huawei.flowcontrol.res4j.handler.exception.CircuitExceptionHandler
 com.huawei.flowcontrol.res4j.handler.exception.InstanceIsolationExceptionHandler
 com.huawei.flowcontrol.res4j.handler.exception.RateLimitingExceptionHandler
+com.huawei.flowcontrol.res4j.handler.exception.SystemRuleExceptionHandler

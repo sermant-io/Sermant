@@ -31,6 +31,8 @@ import com.huawei.flowcontrol.common.core.resolver.RateLimitingRuleResolver;
 import com.huawei.flowcontrol.common.core.resolver.RateLimitingRuleResolverTest;
 import com.huawei.flowcontrol.common.core.resolver.RetryResolver;
 import com.huawei.flowcontrol.common.core.resolver.RetryResolverTest;
+import com.huawei.flowcontrol.common.core.resolver.SystemRuleResolver;
+import com.huawei.flowcontrol.common.core.resolver.SystemRuleResolverTest;
 import com.huawei.flowcontrol.common.core.rule.AbstractRule;
 import com.huawei.flowcontrol.common.core.rule.BulkheadRule;
 
@@ -71,6 +73,7 @@ public class RuleUtilsTest {
         resolversMap.put(FaultRuleResolver.CONFIG_KEY + ".", new FaultRuleResolver());
         resolversMap.put(RateLimitingRuleResolver.CONFIG_KEY + ".", new RateLimitingRuleResolver());
         resolversMap.put(RetryResolver.CONFIG_KEY + ".", new RetryResolver());
+        resolversMap.put(SystemRuleResolver.CONFIG_KEY + "." , new SystemRuleResolver());
     }
 
     @After
@@ -99,6 +102,7 @@ public class RuleUtilsTest {
         testTargetResolver(new FaultRuleResolverTest());
         testTargetResolver(new RetryResolverTest());
         testTargetResolver(new RateLimitingRuleResolverTest());
+        testTargetResolver(new SystemRuleResolverTest());
     }
 
     private <T extends AbstractRule> void testTargetResolver(AbstractRuleResolverTest<T> resolverTest) {

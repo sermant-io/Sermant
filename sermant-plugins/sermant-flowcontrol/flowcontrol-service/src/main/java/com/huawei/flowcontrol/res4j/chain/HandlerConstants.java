@@ -60,6 +60,11 @@ public class HandlerConstants {
     public static final int CIRCUIT_BREAKER_ORDER = 10000;
 
     /**
+     * 系统规则流控优先级
+     */
+    public static final int SYSTEM_RULE_FLOW_CONTROL = 11000;
+
+    /**
      * 标记当前线程是否发生流控异常
      */
     public static final String OCCURRED_FLOW_EXCEPTION = "__OCCURRED_FLOW_EXCEPTION__";

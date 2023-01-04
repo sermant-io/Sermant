@@ -284,6 +284,18 @@ public class FlowControlConfig implements PluginConfig {
     @ConfigFieldKey("enable-start-monitor")
     private boolean enableStartMonitor;
 
+    /**
+     * 系统自适应流控开关
+     */
+    @ConfigFieldKey("enable-system-adaptive")
+    private boolean enableSystemAdaptive;
+
+    /**
+     * 系统规则流控开关
+     */
+    @ConfigFieldKey("enable-system-rule")
+    private boolean enableSystemRule;
+
     public boolean isUseOriginInvoker() {
         return useOriginInvoker;
     }
@@ -682,5 +694,21 @@ public class FlowControlConfig implements PluginConfig {
 
     public void setEnableStartMonitor(boolean enableStartMonitor) {
         this.enableStartMonitor = enableStartMonitor;
+    }
+
+    public void setEnableSystemAdaptive(boolean isSystemAdaptive) {
+        this.enableSystemAdaptive = isSystemAdaptive;
+    }
+
+    public boolean isEnableSystemAdaptive() {
+        return enableSystemAdaptive;
+    }
+
+    public void setEnableSystemRule(boolean isSystemRule) {
+        this.enableSystemRule = isSystemRule;
+    }
+
+    public boolean isEnableSystemRule() {
+        return enableSystemRule;
     }
 }

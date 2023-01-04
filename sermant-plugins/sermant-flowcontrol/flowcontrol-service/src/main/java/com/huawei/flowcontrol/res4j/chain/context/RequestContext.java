@@ -47,7 +47,7 @@ public class RequestContext {
      * 构造函数
      *
      * @param threadLocal 线程变量
-     * @param sourceName 源名称
+     * @param sourceName  源名称
      */
     public RequestContext(ThreadLocal<Map<String, RequestContext>> threadLocal, String sourceName) {
         this.threadLocal = threadLocal;
@@ -57,7 +57,7 @@ public class RequestContext {
     /**
      * 保存线程变量
      *
-     * @param name 变量名称
+     * @param name   变量名称
      * @param target 保存对象
      */
     public void save(String name, Object target) {
@@ -71,8 +71,8 @@ public class RequestContext {
     /**
      * 获取线程变量
      *
-     * @param name 名称
-     * @param <T>  返回类型
+     * @param name  名称
+     * @param <T>   返回类型
      * @param clazz 指定类型
      * @return 结果
      */
@@ -124,5 +124,15 @@ public class RequestContext {
 
     public String getSourceName() {
         return sourceName;
+    }
+
+    /**
+     * 线程变量中是否存在指定key
+     *
+     * @param key 线程变量key
+     * @return 是否存在
+     */
+    public boolean hasKey(String key) {
+        return localMap.containsKey(key);
     }
 }
