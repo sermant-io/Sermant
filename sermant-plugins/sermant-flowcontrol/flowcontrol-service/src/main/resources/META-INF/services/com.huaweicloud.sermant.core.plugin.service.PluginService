@@ -18,4 +18,5 @@
 com.huawei.flowcontrol.res4j.service.HttpRest4jServiceImpl
 com.huawei.flowcontrol.res4j.service.DubboRest4jServiceImpl
 com.huawei.flowcontrol.res4j.service.ServiceCollectorService
+com.huawei.flowcontrol.res4j.service.SystemStatusSlidingWindow
 

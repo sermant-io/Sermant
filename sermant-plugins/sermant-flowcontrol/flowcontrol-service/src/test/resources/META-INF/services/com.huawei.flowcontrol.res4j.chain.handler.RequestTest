@@ -20,3 +20,4 @@ com.huawei.flowcontrol.res4j.chain.handler.FaultRequestHandlerTest
 com.huawei.flowcontrol.res4j.chain.handler.CircuitRequestHandlerTest
 com.huawei.flowcontrol.res4j.chain.handler.InstanceIsolationRequestHandlerTest
 com.huawei.flowcontrol.res4j.chain.handler.BulkheadRequestHandlerTest
+com.huawei.flowcontrol.res4j.chain.handler.SystemRuleRequestHandlerTest

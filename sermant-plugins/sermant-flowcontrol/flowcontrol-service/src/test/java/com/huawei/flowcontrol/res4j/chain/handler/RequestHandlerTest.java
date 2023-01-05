@@ -22,12 +22,11 @@ import com.huawei.flowcontrol.common.core.ResolverManager;
 import com.huawei.flowcontrol.common.core.match.MatchGroupResolver;
 import com.huawei.flowcontrol.res4j.chain.HandlerChainEntry;
 import com.huawei.flowcontrol.res4j.chain.context.ChainContext;
-
+import com.huawei.flowcontrol.res4j.windows.WindowsArray;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +48,8 @@ public class RequestHandlerTest {
 
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
+    private WindowsArray windowsArray;
+
     private final String sourceName = this.getClass().getName();
 
     private final List<RequestTest> testList = new ArrayList<>();
@@ -65,12 +66,19 @@ public class RequestHandlerTest {
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         FlowControlConfig flowControlConfig = new FlowControlConfig();
         flowControlConfig.setEnableStartMonitor(true);
+        flowControlConfig.setEnableSystemAdaptive(true);
+        flowControlConfig.setEnableSystemRule(true);
         pluginConfigManagerMockedStatic
                 .when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                 .thenReturn(flowControlConfig);
         publishMatchGroup();
         loadTests();
         entry = HandlerChainEntry.INSTANCE;
+        setUpSystemRule();
+    }
+
+    private void setUpSystemRule() {
+        WindowsArray.INSTANCE.initWindowsArray();
     }
 
     private void loadTests() {

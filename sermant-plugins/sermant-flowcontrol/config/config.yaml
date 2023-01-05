@@ -2,3 +2,5 @@
 flow.control.plugin:
   useCseRule: true # 是否使用cse规则配置
   enable-start-monitor: false # 是否启动指标监控
+  enable-system-adaptive: false # 是否开启系统自适应流控
+  enable-system-rule: false # 是否开启系统规则流控

@@ -22,3 +22,4 @@ com.huawei.flowcontrol.common.core.resolver.InstanceIsolationRuleResolver
 com.huawei.flowcontrol.common.core.resolver.RateLimitingRuleResolver
 com.huawei.flowcontrol.common.core.resolver.RetryResolver
 com.huawei.flowcontrol.common.core.resolver.FaultRuleResolver
+com.huawei.flowcontrol.common.core.resolver.SystemRuleResolver

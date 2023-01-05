@@ -23,3 +23,4 @@ com.huawei.flowcontrol.res4j.chain.handler.CircuitBreakerClientReqHandler
 com.huawei.flowcontrol.res4j.chain.handler.CircuitBreakerServerReqHandler
 com.huawei.flowcontrol.res4j.chain.handler.InstanceIsolationRequestHandler
 com.huawei.flowcontrol.res4j.chain.handler.FaultRequestHandler
+com.huawei.flowcontrol.res4j.chain.handler.SystemServerReqHandler

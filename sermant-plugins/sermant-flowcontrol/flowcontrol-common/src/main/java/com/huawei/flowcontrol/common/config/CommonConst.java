@@ -260,6 +260,11 @@ public class CommonConst {
      */
     public static final double RATE_DIV_POINT = 1000.0d;
 
+    /**
+     * 记录请求时间key
+     */
+    public static final String REQUEST_START_TIME = "requestStartTime";
+
     private CommonConst() {
     }
 }
