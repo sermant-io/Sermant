@@ -59,6 +59,11 @@ public class ConfigConstants {
      */
     public static final String COMMON_FRAMEWORK = "Sermant";
 
+    /**
+     * 服务是否加密公共参数
+     */
+    public static final String SECURE = "secure";
+
     private ConfigConstants() {
     }
 }

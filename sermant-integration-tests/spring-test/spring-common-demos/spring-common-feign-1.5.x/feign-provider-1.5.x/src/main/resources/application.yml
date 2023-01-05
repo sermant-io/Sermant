@@ -1,5 +1,11 @@
 server:
   port: 8003
+  ssl:
+    enabled: false
+    key-store: classpath:private.pkcs12
+    key-store-password: 123456
+    key-store-type: pkcs12
+
 spring:
   application:
     name: feign-provider

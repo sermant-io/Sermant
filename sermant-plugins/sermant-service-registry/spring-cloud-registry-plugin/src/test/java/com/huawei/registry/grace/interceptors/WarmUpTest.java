@@ -175,6 +175,11 @@ public class WarmUpTest {
             public Map<String, String> getMetadata() {
                 return meta;
             }
+
+            @Override
+            public boolean isSecure() {
+                return false;
+            }
         };
     }
 }

@@ -159,6 +159,11 @@ public class ZookeeperInstanceSupplierInterceptorTest {
             public Map<String, String> getMetadata() {
                 return new HashMap<>();
             }
+
+            @Override
+            public boolean isSecure() {
+                return false;
+            }
         };
     }
 }

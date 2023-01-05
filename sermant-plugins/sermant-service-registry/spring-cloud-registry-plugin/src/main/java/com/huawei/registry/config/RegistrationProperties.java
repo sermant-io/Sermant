@@ -18,9 +18,11 @@
 package com.huawei.registry.config;
 
 import com.huawei.registry.context.RegisterContext;
+import com.huawei.registry.utils.CommonUtils;
 import com.huawei.registry.utils.HostUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ClassUtils;
 
@@ -74,7 +76,8 @@ public class RegistrationProperties implements BeanFactoryAware {
         RegisterContext.INSTANCE.getClientInfo().setServiceName(serviceName);
         RegisterContext.INSTANCE.getClientInfo().setServiceId(serviceName);
         RegisterContext.INSTANCE.getClientInfo().setPort(port);
-        RegisterContext.INSTANCE.getClientInfo().setMeta(new HashMap<>());
+        RegisterServiceCommonConfig config = PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
+        RegisterContext.INSTANCE.getClientInfo().setMeta(CommonUtils.putSecureToMetaData(new HashMap<>(), config));
         RegisterContext.INSTANCE.getClientInfo().setZone(
                 environment.getProperty(SpringRegistryConstants.SPRING_LOAD_BALANCER_ZONE));
         configureHostIp();

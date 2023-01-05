@@ -17,6 +17,7 @@
 
 package com.huawei.registry.service.register;
 
+import com.huawei.registry.config.ConfigConstants;
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.utils.CommonUtils;
@@ -99,5 +100,11 @@ public class ServicecombServiceInstance implements MicroServiceInstance {
     @Override
     public Map<String, String> getMetadata() {
         return microserviceInstance.getProperties();
+    }
+
+    @Override
+    public boolean isSecure() {
+        Map<String, String> properties = microserviceInstance.getProperties();
+        return Boolean.valueOf(properties.get(ConfigConstants.SECURE));
     }
 }

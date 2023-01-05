@@ -17,6 +17,7 @@
 package com.huawei.registry.auto.sc;
 
 import com.huawei.registry.config.RegisterConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.context.RegisterContext.ClientInfo;
 import com.huawei.registry.entity.FixedResult;
@@ -68,6 +69,8 @@ public class ServiceCombRegistryTest {
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
                 .thenReturn(new RegisterConfig());
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(
+                RegisterServiceCommonConfig.class)).thenReturn(new RegisterServiceCommonConfig());
     }
 
     @After

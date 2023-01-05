@@ -16,8 +16,12 @@
 
 package com.huawei.registry.service.register;
 
+import com.huawei.registry.config.ConfigConstants;
 import com.huawei.registry.config.NacosRegisterConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huawei.registry.context.RegisterContext;
+
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingMaintainService;
@@ -26,6 +30,7 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.client.naming.NacosNamingMaintainService;
 import com.alibaba.nacos.client.naming.NacosNamingService;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -35,19 +40,22 @@ import java.util.Properties;
  * @since 2022-10-20
  */
 public class NacosServiceManager {
+    private static final String SECURE_KEY = "secure";
+
     private volatile NamingService namingService;
 
     private volatile NamingMaintainService namingMaintainService;
 
     private final NacosRegisterConfig nacosRegisterConfig;
 
+    private final RegisterServiceCommonConfig commonConfig;
+
     /**
      * 构造方法
-     *
-     * @param nacosRegisterConfig nacos配置信息
      */
-    public NacosServiceManager(NacosRegisterConfig nacosRegisterConfig) {
-        this.nacosRegisterConfig = nacosRegisterConfig;
+    public NacosServiceManager() {
+        nacosRegisterConfig = PluginConfigManager.getPluginConfig(NacosRegisterConfig.class);
+        commonConfig = PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
     }
 
     /**
@@ -116,9 +124,12 @@ public class NacosServiceManager {
         instance.setWeight(nacosRegisterConfig.getWeight());
         instance.setClusterName(nacosRegisterConfig.getClusterName());
         instance.setEnabled(nacosRegisterConfig.isInstanceEnabled());
-        instance.setMetadata(RegisterContext.INSTANCE.getClientInfo().getMeta());
+        Map<String, String> metadata = RegisterContext.INSTANCE.getClientInfo().getMeta();
+        if (!metadata.containsKey(ConfigConstants.SECURE)) {
+            metadata.put(ConfigConstants.SECURE, String.valueOf(commonConfig.isSecure()));
+        }
+        instance.setMetadata(metadata);
         instance.setEphemeral(nacosRegisterConfig.isEphemeral());
-        nacosRegisterConfig.setMetadata(RegisterContext.INSTANCE.getClientInfo().getMeta());
         return instance;
     }
 }
