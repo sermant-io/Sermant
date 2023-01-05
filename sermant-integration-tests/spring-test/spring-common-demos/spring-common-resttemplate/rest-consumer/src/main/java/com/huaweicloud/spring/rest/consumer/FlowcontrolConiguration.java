@@ -17,10 +17,27 @@
 
 package com.huaweicloud.spring.rest.consumer;
 
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContexts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.net.ssl.SSLContext;
 
 /**
  * 流控配置类
@@ -30,6 +47,9 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration
 public class FlowcontrolConiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlowcontrolConiguration.class);
+    private static final int TIME_OUT = 5 * 60 * 1000;
+
     /**
      * 注入请求器
      *
@@ -60,6 +80,35 @@ public class FlowcontrolConiguration {
     @LoadBalanced
     @Bean("gracefulRestTemplate")
     public RestTemplate gracefulRestTemplate() {
-        return new RestTemplate();
+        return buildRestTemplate();
+    }
+
+    private RestTemplate buildRestTemplate() {
+        RestTemplate restTemplate = null;
+        try {
+            restTemplate = new RestTemplate(buildHttpRequestFactory());
+        } catch (KeyStoreException | NoSuchAlgorithmException | KeyManagementException e) {
+            LOGGER.error("build SSL restTemplate failed!");
+        }
+        return restTemplate;
+    }
+
+    private HttpComponentsClientHttpRequestFactory buildHttpRequestFactory()
+            throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        TrustStrategy strategy = (x509Certificates, authType) -> true;
+        SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, strategy).build();
+        SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier());
+        RequestConfig requestConfig = RequestConfig.custom()
+            .setSocketTimeout(TIME_OUT)
+            .setConnectTimeout(TIME_OUT)
+            .setConnectionRequestTimeout(TIME_OUT)
+            .build();
+        HttpClientBuilder httpClientBuilder = HttpClients.custom();
+        httpClientBuilder.setDefaultRequestConfig(requestConfig);
+        httpClientBuilder.setSSLSocketFactory(factory);
+        CloseableHttpClient httpClient = httpClientBuilder.build();
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setHttpClient(httpClient);
+        return requestFactory;
     }
 }

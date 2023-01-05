@@ -87,7 +87,6 @@ public class RegistrationInterceptorTest extends BaseRegistryTest<RegistrationIn
 
                     }
                 });
-
     }
 
     @Test

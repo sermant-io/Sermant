@@ -17,6 +17,8 @@
 
 package com.huawei.registry.auto.sc;
 
+import com.huawei.registry.config.ConfigConstants;
+
 import com.netflix.loadbalancer.Server;
 
 import org.springframework.cloud.netflix.ribbon.DefaultServerIntrospector;
@@ -36,5 +38,14 @@ public class ServiceCombServerIntrospector extends DefaultServerIntrospector {
             return ((ServiceCombServer) server).getMetadata();
         }
         return super.getMetadata(server);
+    }
+
+    @Override
+    public boolean isSecure(Server server) {
+        if (server instanceof ServiceCombServer) {
+            Map<String, String> metadata = getMetadata(server);
+            return metadata != null && "true".equalsIgnoreCase(metadata.get(ConfigConstants.SECURE));
+        }
+        return super.isSecure(server);
     }
 }

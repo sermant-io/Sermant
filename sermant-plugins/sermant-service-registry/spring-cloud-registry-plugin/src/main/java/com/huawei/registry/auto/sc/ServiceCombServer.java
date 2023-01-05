@@ -40,7 +40,8 @@ public class ServiceCombServer extends Server {
      * @param microServiceInstance 实例信息
      */
     public ServiceCombServer(MicroServiceInstance microServiceInstance) {
-        super(microServiceInstance.getIp(), microServiceInstance.getPort());
+        super(microServiceInstance.isSecure() ? "https" : "http", microServiceInstance.getIp(),
+            microServiceInstance.getPort());
         this.microServiceInstance = microServiceInstance;
     }
 

@@ -17,6 +17,7 @@
 
 package com.huawei.registry.auto.sc;
 
+import com.huawei.registry.config.ConfigConstants;
 import com.huawei.registry.config.RegistrationProperties;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.MicroServiceInstance;
@@ -90,5 +91,10 @@ public class ServiceInstanceHolder implements MicroServiceInstance {
     @Override
     public Map<String, String> getMetadata() {
         return this.metadata;
+    }
+
+    @Override
+    public boolean isSecure() {
+        return Boolean.valueOf(metadata.get(ConfigConstants.SECURE));
     }
 }
