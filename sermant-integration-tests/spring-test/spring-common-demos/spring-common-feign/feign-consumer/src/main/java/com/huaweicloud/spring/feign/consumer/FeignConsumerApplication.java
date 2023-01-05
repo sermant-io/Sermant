@@ -32,7 +32,8 @@ import org.springframework.context.annotation.Bean;
  */
 @SpringBootApplication(scanBasePackages = {
     "com.huaweicloud.spring.feign.consumer.controller",
-    "com.huaweicloud.spring.common.loadbalancer.feign"
+    "com.huaweicloud.spring.common.loadbalancer.feign",
+    "com.huaweicloud.spring.feign.api.configuration"
 })
 @EnableFeignClients(basePackages = "com.huaweicloud.spring.feign.api")
 public class FeignConsumerApplication {

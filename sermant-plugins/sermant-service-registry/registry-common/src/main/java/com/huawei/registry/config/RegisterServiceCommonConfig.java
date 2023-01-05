@@ -42,6 +42,11 @@ public class RegisterServiceCommonConfig implements PluginConfig {
      */
     private String address = "http://127.0.0.1:30100";
 
+    /**
+     * 是否加密
+     */
+    private boolean secure;
+
     public RegisterType getRegisterType() {
         return registerType;
     }
@@ -75,5 +80,13 @@ public class RegisterServiceCommonConfig implements PluginConfig {
             }
         }
         return addressList;
+    }
+
+    public boolean isSecure() {
+        return secure;
+    }
+
+    public void setSecure(boolean secure) {
+        this.secure = secure;
     }
 }

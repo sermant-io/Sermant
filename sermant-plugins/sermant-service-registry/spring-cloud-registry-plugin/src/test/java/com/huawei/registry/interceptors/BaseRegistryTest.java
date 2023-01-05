@@ -18,6 +18,7 @@ package com.huawei.registry.interceptors;
 
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.config.RegisterDynamicConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huawei.registry.context.RegisterContext;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
@@ -40,6 +41,8 @@ import org.mockito.Mockito;
 public abstract class BaseRegistryTest<T extends Interceptor> {
     protected static final RegisterConfig REGISTER_CONFIG = new RegisterConfig();
 
+    protected static final RegisterServiceCommonConfig COMMON_CONFIG = new RegisterServiceCommonConfig();
+
     protected static MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     protected static MockedStatic<PluginServiceManager> pluginServiceManagerMockedStatic;
@@ -57,6 +60,8 @@ public abstract class BaseRegistryTest<T extends Interceptor> {
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
                 .thenReturn(REGISTER_CONFIG);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(
+                RegisterServiceCommonConfig.class)).thenReturn(COMMON_CONFIG);
         pluginServiceManagerMockedStatic = Mockito.mockStatic(PluginServiceManager.class);
         serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
 

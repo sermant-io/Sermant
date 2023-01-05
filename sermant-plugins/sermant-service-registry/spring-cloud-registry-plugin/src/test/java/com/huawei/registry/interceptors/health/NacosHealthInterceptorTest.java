@@ -24,7 +24,6 @@ import com.alibaba.nacos.client.naming.beat.BeatInfo;
 import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,6 +49,7 @@ public class NacosHealthInterceptorTest extends BaseRegistryTest<NacosHealthInte
     public void doBefore() throws Exception {
         REGISTER_CONFIG.setEnableSpringRegister(true);
         REGISTER_CONFIG.setOpenMigration(true);
+        RegisterDynamicConfig.INSTANCE.setClose(false);
         final ExecuteContext context = interceptor.before(buildContext());
         Assert.assertFalse(context.isSkip());
         RegisterDynamicConfig.INSTANCE.setClose(true);

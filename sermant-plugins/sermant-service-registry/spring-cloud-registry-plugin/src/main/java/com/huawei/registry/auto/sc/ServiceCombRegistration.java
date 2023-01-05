@@ -60,12 +60,16 @@ public class ServiceCombRegistration implements Registration {
 
     @Override
     public boolean isSecure() {
-        return false;
+        return microServiceInstance.isSecure();
     }
 
     @Override
     public URI getUri() {
-        return URI.create(String.format(Locale.ENGLISH, "http://%s:%s", getHost(), getPort()));
+        String format = "http://%s:%s";
+        if (microServiceInstance.isSecure()) {
+            format = "https://%s:%s";
+        }
+        return URI.create(String.format(Locale.ENGLISH, format, getHost(), getPort()));
     }
 
     @Override

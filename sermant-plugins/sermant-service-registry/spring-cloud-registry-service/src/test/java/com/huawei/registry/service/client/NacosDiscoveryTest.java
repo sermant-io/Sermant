@@ -67,7 +67,7 @@ public class NacosDiscoveryTest {
      */
     @Test
     public void testhostToServiceInstanceList() {
-        NacosServiceDiscovery discovery = new NacosServiceDiscovery(new NacosServiceManager(registerConfig));
+        NacosServiceDiscovery discovery = new NacosServiceDiscovery(new NacosServiceManager());
         List<NacosServiceInstance> list = discovery.convertServiceInstanceList(instanceList, "test");
         Assert.assertEquals(list.size(), instanceList.size());
 
