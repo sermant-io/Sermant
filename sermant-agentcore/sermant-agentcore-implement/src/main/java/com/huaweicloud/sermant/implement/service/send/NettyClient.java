@@ -17,6 +17,8 @@
 package com.huaweicloud.sermant.implement.service.send;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.visibility.api.VisibilityService;
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
 import com.huaweicloud.sermant.implement.utils.GzipUtils;
 
@@ -89,10 +91,12 @@ public class NettyClient {
 
     private ScheduledExecutorService pool;
 
+    private final VisibilityService service = ServiceManager.getService(VisibilityService.class);
+
     /**
      * 构造函数
      *
-     * @param serverIp serverIp
+     * @param serverIp   serverIp
      * @param serverPort serverPort
      */
     public NettyClient(String serverIp, int serverPort) {
@@ -137,7 +141,7 @@ public class NettyClient {
         ChannelFuture connect = bootstrap.connect(ip, port);
 
         // 添加连接监听
-        connect.addListener((ChannelFutureListener)channelFuture -> {
+        connect.addListener((ChannelFutureListener) channelFuture -> {
             // 如果连接成功，启动发送线程，循环发送消息队列中的内容
             if (channelFuture.isSuccess()) {
                 channel = channelFuture.channel();
@@ -147,6 +151,7 @@ public class NettyClient {
                     pool = Executors.newScheduledThreadPool(1);
                     pool.scheduleAtFixedRate(sender, 0, sendInterval, TimeUnit.MILLISECONDS);
                 }
+                service.reconnectHandler();
             } else {
                 // 失败则在X秒后重试连接
                 LOGGER.info(String.format(Locale.ROOT, "Failed to connect,try reconnecting after %s seconds ",

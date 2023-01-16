@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "-": "^0.0.1",
+    "element-ui": "^2.15.12",
     "http": "^0.0.1-security",
     "js": "^0.1.0",
     "parser": "^0.1.4",

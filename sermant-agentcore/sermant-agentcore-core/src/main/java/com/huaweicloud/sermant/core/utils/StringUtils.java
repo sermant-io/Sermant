@@ -163,4 +163,14 @@ public class StringUtils {
         }
         return true;
     }
+
+    /**
+     * 获取对象的toString信息
+     *
+     * @param object 对象信息
+     * @return 字符串信息
+     */
+    public static String getString(Object object) {
+        return object == null ? "" : object.toString();
+    }
 }

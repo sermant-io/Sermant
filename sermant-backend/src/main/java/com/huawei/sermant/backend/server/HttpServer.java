@@ -81,7 +81,6 @@ public class HttpServer {
 
 
     private final RandomUtil randomUtil = new RandomUtil();
-    private final DateUtil dateUtil = new DateUtil();
 
     private long randomLong = UuidUtil.getId();
     private final int randomInt = randomUtil.getRandomInt(MAX);
@@ -228,8 +227,8 @@ public class HttpServer {
             Map<String, String> pluginMap = agentInfo.getPluginsMap();
             pluginMap.put(heartbeatEntity.getPluginName(), heartbeatEntity.getPluginVersion());
             agentInfo.setPluginsMap(pluginMap);
-            agentInfo.setLastHeartbeatTime(dateUtil.getFormatDate(heartbeatEntity.getLastHeartbeat()));
-            agentInfo.setHeartbeatTime(dateUtil.getFormatDate(heartbeatEntity.getHeartbeatVersion()));
+            agentInfo.setLastHeartbeatTime(DateUtil.getFormatDate(heartbeatEntity.getLastHeartbeat()));
+            agentInfo.setHeartbeatTime(DateUtil.getFormatDate(heartbeatEntity.getHeartbeatVersion()));
         }
     }
 }

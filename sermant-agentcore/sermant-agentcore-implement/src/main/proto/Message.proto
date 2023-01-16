@@ -32,6 +32,7 @@ message ServiceData{
     AGENT_SPAN_EVENT = 9;
     DRUID_MONITOR = 10;
     FLOW_CONTROL_METRIC = 11;
+    VISIBILITY_INFO = 12;
   }
   DataType dataType = 1;
   bytes data = 2;

@@ -18,11 +18,12 @@ package com.huawei.sermant.backend.server;
 
 import com.huawei.sermant.backend.cache.DeleteTimeoutData;
 import com.huawei.sermant.backend.common.conf.DataTypeTopicMapping;
-import com.huawei.sermant.backend.kafka.KafkaConsumerManager;
-import com.huawei.sermant.backend.pojo.Message;
 import com.huawei.sermant.backend.common.conf.KafkaConf;
+import com.huawei.sermant.backend.common.conf.VisibilityConfig;
 import com.huawei.sermant.backend.common.exception.KafkaTopicException;
+import com.huawei.sermant.backend.kafka.KafkaConsumerManager;
 import com.huawei.sermant.backend.kafka.KafkaProducerManager;
+import com.huawei.sermant.backend.pojo.Message;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -47,6 +48,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Timer;
+
 import javax.annotation.PostConstruct;
 
 /**
@@ -84,11 +86,13 @@ public class NettyServer {
     private KafkaConf conf;
 
     @Autowired
+    private VisibilityConfig visibilityConfig;
+
+    @Autowired
     private DataTypeTopicMapping topicMapping;
 
     /**
      * 服务端核心方法
-     *
      * 随tomcat启动被拉起，处理客户端连接和数据
      */
     @PostConstruct
@@ -96,7 +100,8 @@ public class NettyServer {
         LOGGER.info("Starting the netty server...");
 
         // 清理过期数据
-        TIMER.schedule(new DeleteTimeoutData(), DELETE_TIMEOUT_DATA_DELAY_TIME, DELETE_TIMEOUT_DATA_PERIOD_TIME);
+        TIMER.schedule(new DeleteTimeoutData(visibilityConfig), DELETE_TIMEOUT_DATA_DELAY_TIME,
+                DELETE_TIMEOUT_DATA_PERIOD_TIME);
 
         // 处理连接的线程组
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
