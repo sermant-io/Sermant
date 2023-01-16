@@ -17,6 +17,7 @@ on:
       - 'sermant-plugins/sermant-loadbalancer/**'
       - 'sermant-plugins/sermant-service-registry/**'
       - 'sermant-plugins/sermant-springboot-registry/**'
+      - 'sermant-plugins/sermant-service-visibility/**'
       - '.github/workflows/spring_integration*.yaml'
       - '.github/actions/**'
 concurrency:
@@ -79,7 +80,6 @@ jobs:
           key: ${{ runner.os }}-agent-${{ github.run_id }}
       - name: package agent
         run: |
-          sed -i '/sermant-backend/d' pom.xml
           sed -i '/sermant-backend-lite/d' pom.xml
           sed -i '/sermant-integration-tests/d' pom.xml
           sed -i '/sermant-injector/d' pom.xml
@@ -143,3 +143,6 @@ jobs:
       - name: monitor test for springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
         if: env.enableMonitor == 'true'
         uses: ./.github/actions/scenarios/spring/monitor
+      - name: visibility test for springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
+        if: env.enableVisibility == 'true'
+        uses: ./.github/actions/scenarios/spring/visibility

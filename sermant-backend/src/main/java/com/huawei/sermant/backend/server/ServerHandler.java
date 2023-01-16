@@ -16,15 +16,18 @@
 
 package com.huawei.sermant.backend.server;
 
-import com.alibaba.fastjson.JSONObject;
+import com.huawei.sermant.backend.cache.CollectorCache;
 import com.huawei.sermant.backend.cache.HeartbeatCache;
 import com.huawei.sermant.backend.common.conf.DataTypeTopicMapping;
 import com.huawei.sermant.backend.common.handler.BaseHandler;
 import com.huawei.sermant.backend.common.util.GzipUtils;
 import com.huawei.sermant.backend.entity.HeartbeatEntity;
+import com.huawei.sermant.backend.entity.OperateType;
+import com.huawei.sermant.backend.entity.ServerInfo;
 import com.huawei.sermant.backend.pojo.Message;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.protobuf.ByteString;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -37,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,6 +56,8 @@ public class ServerHandler extends BaseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerHandler.class);
 
     private static final int HEARTBEAT_TOPIC_INDEX = 0;
+
+    private static final int VISIBILITY_TOPIC_INDEX = 12;
     private final KafkaProducer<String, byte[]> producer;
     private KafkaConsumer<String, String> consumer;
     private boolean isHeartBeatCache;
@@ -60,12 +66,14 @@ public class ServerHandler extends BaseHandler {
 
     private final Map<String, HeartbeatEntity> hbMessages = HeartbeatCache.getHeartbeatMessages();
 
+    private final Map<String, ServerInfo> lastHeartBeatDate = HeartbeatCache.getHeartbeatDate();
+
     /**
      * ServerHandler
      *
-     * @param producer kafka producer
-     * @param consumer kafka consumer
-     * @param topicMapping kafka topic map
+     * @param producer         kafka producer
+     * @param consumer         kafka consumer
+     * @param topicMapping     kafka topic map
      * @param isHeartBeatCache is or not open heartbeat cache
      */
     public ServerHandler(KafkaProducer<String, byte[]> producer, KafkaConsumer<String, String> consumer,
@@ -91,6 +99,9 @@ public class ServerHandler extends BaseHandler {
                 if (Objects.equals(topic, topicMapping.getTopicOfType(HEARTBEAT_TOPIC_INDEX))) {
                     writeHeartBeatCacheCache(topic, message);
                     continue;
+                }
+                if (Objects.equals(topic, topicMapping.getTopicOfType(VISIBILITY_TOPIC_INDEX))) {
+                    handlerServiceVisibility(message);
                 }
                 if (!this.isHeartBeatCache) {
                     producer.send(new ProducerRecord<>(topic, message));
@@ -122,20 +133,36 @@ public class ServerHandler extends BaseHandler {
     private void writeHeartBeatCacheCache(String topic, byte[] message) {
         // 缓存心跳数据
         if (Objects.equals(topic, topicMapping.getTopicOfType(HEARTBEAT_TOPIC_INDEX))) {
-            Map<String, String> pluginHeartbeatMap = JSON.parseObject(
-                    new String(message, StandardCharsets.UTF_8), Map.class);
-            for (String messageStr : pluginHeartbeatMap.values()) {
-                if (!this.isHeartBeatCache) {
-                    producer.send(new ProducerRecord<>(topic, messageStr.getBytes(StandardCharsets.UTF_8)));
-                }
-                HeartbeatEntity heartbeatEntity = JSONObject.parseObject(messageStr, HeartbeatEntity.class);
-                List<String> ips = heartbeatEntity.getIp();
-                if (ips != null && ips.size() != 0 && heartbeatEntity.getPluginName() != null) {
-                    String instanceId = heartbeatEntity.getInstanceId();
-                    String pluginName = heartbeatEntity.getPluginName();
-                    hbMessages.put(pluginName + instanceId, heartbeatEntity);
-                }
+            String messageStr = new String(message, StandardCharsets.UTF_8);
+            if (!this.isHeartBeatCache) {
+                producer.send(new ProducerRecord<>(topic, message));
             }
+            HeartbeatEntity heartbeatEntity = JSONObject.parseObject(messageStr, HeartbeatEntity.class);
+            List<String> ips = heartbeatEntity.getIp();
+            if (ips != null && ips.size() != 0 && heartbeatEntity.getPluginName() != null) {
+                String instanceId = heartbeatEntity.getInstanceId();
+                String pluginName = heartbeatEntity.getPluginName();
+                hbMessages.put(pluginName + instanceId, heartbeatEntity);
+            }
+            ServerInfo serverInfo = new ServerInfo();
+            serverInfo.setInstanceId(heartbeatEntity.getInstanceId());
+            serverInfo.setValidateDate(new Date());
+            lastHeartBeatDate.put(heartbeatEntity.getInstanceId(), serverInfo);
+        }
+    }
+
+    /**
+     * 处理服务可见性信息
+     *
+     * @param message 消息内容
+     */
+    private void handlerServiceVisibility(byte[] message) {
+        String messageStr = new String(message, StandardCharsets.UTF_8);
+        ServerInfo visibilityInfo = JSON.parseObject(messageStr, ServerInfo.class);
+        if (OperateType.ADD.getType().equals(visibilityInfo.getOperateType())) {
+            CollectorCache.saveInfo(visibilityInfo);
+        } else {
+            CollectorCache.removeServer(visibilityInfo);
         }
     }
 }

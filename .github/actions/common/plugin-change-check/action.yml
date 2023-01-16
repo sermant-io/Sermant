@@ -52,6 +52,14 @@ runs:
       run: |
         echo "sermantMonitorChanged=${{ steps.changed-sermant-monitor.outputs.changed }}" >> $GITHUB_ENV
     - uses: marceloprado/has-changed-path@v1
+      id: changed-sermant-service-visibility
+      with:
+        paths: sermant-plugins/sermant-service-visibility
+    - name: env sermant-service-visibility
+      shell: bash
+      run: |
+        echo "sermantServiceVisibility=${{ steps.changed-sermant-service-visibility.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1
       id: changed-sermant-service-registry
       with:
         paths: sermant-plugins/sermant-service-registry
@@ -111,6 +119,11 @@ runs:
             ${{ env.sermantMonitorChanged }} == 'true' ];then
           echo "enableMonitor=true" >> $GITHUB_ENV
         fi
+        # ==========visibility is needed to test?==========
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o \
+            ${{ env.sermantServiceVisibilityChanged }} == 'true' ];then
+          echo "enableVisibility=true" >> $GITHUB_ENV
+        fi
         # *****************spring_integration_test_1.yml*****************
         # ==========graceful is needed to test?==========
         if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
@@ -150,5 +163,6 @@ runs:
           echo "enableGraceful=true" >> $GITHUB_ENV
           echo "enableMonitor=true" >> $GITHUB_ENV
           echo "enableSpringCommon=true" >> $GITHUB_ENV
+          echo "enableVisibility=true" >> $GITHUB_ENV
         fi
 

@@ -17,9 +17,10 @@
 package com.huawei.sermant.backend.cache;
 
 import com.huawei.sermant.backend.entity.HeartbeatEntity;
+import com.huawei.sermant.backend.entity.ServerInfo;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 心跳数据缓存
@@ -28,13 +29,18 @@ import java.util.Map;
  * @since 2022-02-15
  */
 public class HeartbeatCache {
+    private static Map<String, HeartbeatEntity> heartbeatMessages = new ConcurrentHashMap<>();
 
-    private static Map<String, HeartbeatEntity> heartbeatMessages = new HashMap<>();
+    private static Map<String, ServerInfo> lastHeartBeatDate = new ConcurrentHashMap<>();
 
     private HeartbeatCache() {
     }
 
     public static Map<String, HeartbeatEntity> getHeartbeatMessages() {
         return heartbeatMessages;
+    }
+
+    public static Map<String, ServerInfo> getHeartbeatDate() {
+        return lastHeartBeatDate;
     }
 }

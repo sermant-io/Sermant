@@ -26,13 +26,16 @@ import java.text.SimpleDateFormat;
  */
 public class DateUtil {
 
+    private DateUtil() {
+    }
+
     /**
      * 格式化日期
      *
      * @param times
      * @return 格式化后日期
      */
-    public String getFormatDate(Long times) {
+    public static String getFormatDate(Long times) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return formatter.format(times);
     }

@@ -17,6 +17,7 @@ on:
       - 'sermant-plugins/sermant-service-registry/**'
       - 'sermant-plugins/sermant-springboot-registry/**'
       - 'sermant-plugins/sermant-monitor/**'
+      - 'sermant-plugins/sermant-service-visibility/**'
       - '.github/workflows/dubbo_integration*.yaml'
       - '.github/actions/**'
 concurrency:
@@ -59,7 +60,6 @@ jobs:
           key: ${{ runner.os }}-agent-${{ github.run_id }}
       - name: package agent
         run: |
-          sed -i '/sermant-backend/d' pom.xml
           sed -i '/sermant-backend-lite/d' pom.xml
           sed -i '/sermant-integration-tests/d' pom.xml
           sed -i '/sermant-injector/d' pom.xml
@@ -104,6 +104,9 @@ jobs:
       - name: monitor test for ${{ matrix.dubbo-version }}
         if: env.enableMonitor == 'true'
         uses: ./.github/actions/scenarios/dubbo/monitor
+      - name: visibility test for ${{ matrix.dubbo-version }}
+        if: env.enableVisibility == 'true'
+        uses: ./.github/actions/scenarios/dubbo/visibility
       - name: (dubbo common) test for ${{ matrix.dubbo-version }}
         if: env.enableDubboCommon == 'true'
         uses: ./.github/actions/scenarios/dubbo/dubbo-common

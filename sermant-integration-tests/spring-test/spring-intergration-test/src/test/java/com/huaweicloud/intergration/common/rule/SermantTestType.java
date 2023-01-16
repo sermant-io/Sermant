@@ -83,6 +83,11 @@ public enum SermantTestType {
     MONITOR,
 
     /**
+     * 服务可见性测试
+     */
+    VISIBILITY,
+
+    /**
      * 测试所有类型
      */
     ALL;

@@ -1,3 +1,4 @@
+com.huaweicloud.sermant.implement.service.visibility.VisibilityServiceImpl
 com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl
 com.huaweicloud.sermant.implement.service.send.NettyGatewayClient
 com.huaweicloud.sermant.implement.service.dynamicconfig.BufferedDynamicConfigService

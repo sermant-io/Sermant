@@ -8,6 +8,7 @@ plugins:
   - monitor
   - springboot-registry
   - mq-consume-deny
+  - service-visibility
 profiles:
   cse:
     - flowcontrol
