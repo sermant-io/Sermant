@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.router.config.utils;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.entity.Match;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -37,6 +39,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -46,6 +49,8 @@ import java.util.regex.Pattern;
  * @since 2022-07-11
  */
 public class RuleUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static final Set<String> MATCH_KEYS = new CopyOnWriteArraySet<>();
 
     private static final Map<String, Set<String>> SERVICE_MATCH_KEYS = new ConcurrentHashMap<>();
@@ -180,9 +185,41 @@ public class RuleUtils {
     /**
      * 去掉无效的规则
      *
+     * @param list 路由规则
+     */
+    public static void removeInvalidRules(List<Rule> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
+        Iterator<Rule> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            Rule rule = iterator.next();
+            List<Route> routes = rule.getRoute();
+
+            // 去掉没有配置路由的规则
+            if (CollectionUtils.isEmpty(routes)) {
+                LOGGER.warning("Routes are empty, rule will be removed.");
+                iterator.remove();
+                continue;
+            }
+
+            // 去掉无效的规则
+            removeInvalidMatch(rule.getMatch());
+
+            // 无attachments规则，将headers规则更新到attachments规则
+            setAttachmentsByHeaders(rule.getMatch());
+
+            // 去掉无效的路由
+            removeInvalidRoute(routes);
+        }
+    }
+
+    /**
+     * 去掉无效的规则
+     *
      * @param match 匹配规则
      */
-    public static void removeInvalidRules(Match match) {
+    private static void removeInvalidMatch(Match match) {
         if (match == null) {
             return;
         }
@@ -196,7 +233,7 @@ public class RuleUtils {
      *
      * @param match headers匹配规则
      */
-    public static void setAttachmentsByHeaders(Match match) {
+    private static void setAttachmentsByHeaders(Match match) {
         if (match == null || !CollectionUtils.isEmpty(match.getAttachments())) {
             return;
         }
@@ -210,8 +247,11 @@ public class RuleUtils {
      *
      * @param routeList 路由
      */
-    public static void removeInvalidRoute(List<Route> routeList) {
-        routeList.removeIf(RuleUtils::isInvalidRoute);
+    private static void removeInvalidRoute(List<Route> routeList) {
+        boolean removed = routeList.removeIf(RuleUtils::isInvalidRoute);
+        if (removed) {
+            LOGGER.warning("Some invalid routes had been removed, please check your router configuration.");
+        }
     }
 
     private static void removeInvalidMatchRule(Map<String, List<MatchRule>> matchRuleMap) {
