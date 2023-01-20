@@ -57,18 +57,11 @@ public class RouterConfigHandler extends AbstractConfigHandler {
                 continue;
             }
             List<Rule> list = JSONArray.parseArray(JSONObject.toJSONString(routeRuleList), Rule.class);
-            if (CollectionUtils.isEmpty(list)) {
-                continue;
+            RuleUtils.removeInvalidRules(list);
+            if (!CollectionUtils.isEmpty(list)) {
+                list.sort((o1, o2) -> o2.getPrecedence() - o1.getPrecedence());
+                routeRule.put(entry.getKey(), list);
             }
-            for (Rule rule : list) {
-                // 去掉无效的规则
-                RuleUtils.removeInvalidRules(rule.getMatch());
-
-                // 去掉无效的路由
-                RuleUtils.removeInvalidRoute(rule.getRoute());
-            }
-            list.sort((o1, o2) -> o2.getPrecedence() - o1.getPrecedence());
-            routeRule.put(entry.getKey(), list);
         }
         configuration.resetRouteRule(routeRule);
         RuleUtils.initMatchKeys(configuration);
