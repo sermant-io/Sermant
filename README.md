@@ -39,34 +39,64 @@ A microservice architecture using Sermant has the following three components, wh
 
 ## Quick Start
 
-### Download or Compile
+Below is a simple demo that guides new users to use Sermant in just 4 steps.
 
-Click [here](https://github.com/huaweicloud/Sermant/releases) to download **Sermant** binary package. If you will to compile the project yourself, please follow the following steps.
+### Preparation
 
-Execute *maven* command to package the **Sermant** project's [demo module](https://github.com/huaweicloud/Sermant-examples).
+- [Download](https://github.com/huaweicloud/Sermant/releases) Sermant package
+- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo application
+- [Download](https://zookeeper.apache.org/releases#download) and start zookeeper
 
-```shell
-mvn clean package -Dmaven.test.skip -Pexample
-```
+### Compile demo application
 
-### Start Sermant
-
-Prepare and start zookeeper, start **Sermant** demo project:
+Execute the following command in the `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/` directory:
 
 ```shell
-# Run under Linux
-java -cp sermant-example/demo-application/target/demo-application.jar \
-  -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test \
-  com.huawei.example.demo.DemoApplication
+# windows linux mac
+mvn clean package
 ```
 
-```shell
-# Run under Windows
-java -cp sermant-example\demo-application\target\demo-application.jar ^
-  -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test ^
-  com.huawei.example.demo.DemoApplication
+After successful packaging，GET `spring-provider.jar` in `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`
+
+> Note: path is the path where the demo application is downloaded
+
+### Modify the Sermant configuration
+
+Modify the `agent.config.serviceBlackList` configuration in the `${path}/sermant-agent-x.x.x/agent/config/config.properties` file to be empty, as shown below:
+
+```properties
+agent.config.serviceBlackList=
 ```
-Check running status of Sermant. In this example, open the browser and navigate to the URL "http://localhost:8900".
+
+> Note: path is the path where the Sermant package is downloaded
+
+### Start Backend
+
+Execute the following command in the `${path}/sermant-agent-x.x.x/server/sermant` directory:
+
+```shell
+java -jar sermant-backend-lite.jar
+```
+
+> Note: path is the path where the Sermant package is downloaded
+
+### Start demo application
+
+Execute the following command in the `${path}/Sermant-examples/sermant-template/demo-application/target`directory：
+
+```shell
+# linux mac
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -jar spring-provider.jar
+
+# windows
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-provider.jar
+```
+
+> Note: path is the path where the Sermant package is downloaded
+
+### Verification
+
+Check running status of Sermant. In this example, open the browser and navigate to the URL `http://localhost:8900`.
 
 ![pic](docs/binary-docs/backend_sermant_info.png)
 
