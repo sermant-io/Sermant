@@ -82,7 +82,7 @@ public class SystemStatusTask extends TimerTask {
      * 更新最小响应时间 最大线程数
      */
     private void updateMinRtAndMaxThreadNum() {
-        WindowsBucket windowsBucket = WindowsArray.INSTANCE.getCurrentWindow();
+        WindowsBucket windowsBucket = WindowsArray.INSTANCE.getPreviousWindow();
 
         // 调用成功总数
         long successNum = windowsBucket.success.sum();
@@ -90,12 +90,10 @@ public class SystemStatusTask extends TimerTask {
         // 响应时间总数
         double rt = windowsBucket.rt.sum();
 
-        // 现存线程数
-        double threadNum = windowsBucket.threadNum.sum();
         if (0 != successNum) {
             systemStatus.setMinRt(Math.min(systemStatus.getMinRt(), rt / successNum));
         }
-        systemStatus.setMaxThreadNum((long) Math.max(systemStatus.getMaxThreadNum(), threadNum + successNum));
+        systemStatus.setMaxThreadNum((long) Math.max(systemStatus.getMaxThreadNum(), successNum));
     }
 
     /**

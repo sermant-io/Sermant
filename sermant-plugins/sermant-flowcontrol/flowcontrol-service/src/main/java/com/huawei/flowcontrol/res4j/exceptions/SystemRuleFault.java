@@ -77,7 +77,7 @@ public class SystemRuleFault implements Fault {
      */
     private boolean checkHistoryData() {
         long threadNum = SystemRuleUtils.getThreadNum();
-        if (threadNum > 1 && threadNum > SystemRuleUtils.getMaxThreadNum()
+        if (threadNum > 1 && threadNum > SystemRuleUtils.getQps()
                 * SystemRuleUtils.getMinRt() / CommonConst.S_MS_UNIT) {
             return true;
         }
