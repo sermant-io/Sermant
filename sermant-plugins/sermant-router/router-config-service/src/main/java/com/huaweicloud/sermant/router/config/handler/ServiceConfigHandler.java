@@ -52,22 +52,13 @@ public class ServiceConfigHandler extends AbstractConfigHandler {
             return;
         }
         List<Rule> list = JSONArray.parseArray(JSONObject.toJSONString(getRule(event, serviceName)), Rule.class);
+        RuleUtils.removeInvalidRules(list);
         if (CollectionUtils.isEmpty(list)) {
             configuration.getRouteRule().remove(serviceName);
-            return;
+        } else {
+            list.sort((o1, o2) -> o2.getPrecedence() - o1.getPrecedence());
+            configuration.getRouteRule().put(serviceName, list);
         }
-        for (Rule rule : list) {
-            // 去掉无效的规则
-            RuleUtils.removeInvalidRules(rule.getMatch());
-
-            // 无attachments规则，将headers规则更新到attachments规则
-            RuleUtils.setAttachmentsByHeaders(rule.getMatch());
-
-            // 去掉无效的路由
-            RuleUtils.removeInvalidRoute(rule.getRoute());
-        }
-        list.sort((o1, o2) -> o2.getPrecedence() - o1.getPrecedence());
-        configuration.getRouteRule().put(serviceName, list);
         RuleUtils.updateMatchKeys(serviceName, list);
     }
 
