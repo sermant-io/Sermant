@@ -5,8 +5,7 @@ on:
   push:
   pull_request:
     branches:
-      - master
-      - develop
+      - '*'
     paths:
       - 'sermant-agentcore/**'
       - 'sermant-integration-tests/**'
@@ -18,7 +17,7 @@ on:
       - 'sermant-plugins/sermant-springboot-registry/**'
       - 'sermant-plugins/sermant-monitor/**'
       - 'sermant-plugins/sermant-service-visibility/**'
-      - '.github/workflows/dubbo_integration*.yaml'
+      - '.github/workflows/dubbo_integration*.yml'
       - '.github/actions/**'
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
