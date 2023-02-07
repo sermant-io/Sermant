@@ -6,14 +6,13 @@ on:
   push:
   pull_request:
     branches:
-      - main
-      - develop
+      - '*'
     paths:
       - 'sermant-agentcore/**'
       - 'sermant-integration-tests/**'
       - 'sermant-plugins/sermant-router/**'
       - 'sermant-plugins/sermant-springboot-registry/**'
-      - '.github/workflows/spring_integration*.yaml'
+      - '.github/workflows/spring_integration*.yml'
       - '.github/actions/**'
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
