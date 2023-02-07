@@ -5,8 +5,7 @@ on:
   push:
   pull_request:
     branches:
-      - master
-      - develop
+      - '*'
     paths:
       - 'sermant-agentcore/**'
       - 'sermant-integration-tests/**'

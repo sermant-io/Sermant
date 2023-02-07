@@ -16,7 +16,6 @@
 
 package com.huawei.monitor.config;
 
-import com.huaweicloud.sermant.core.config.common.ConfigFieldKey;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
@@ -32,7 +31,6 @@ public class MonitorServiceConfig implements PluginConfig {
     /**
      * 服务开关
      */
-    @ConfigFieldKey("enable-start-service")
     private boolean enableStartService;
 
     /**

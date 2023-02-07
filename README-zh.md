@@ -39,35 +39,65 @@ Sermant中的Java Agent广泛采用类隔离技术，以消除框架代码、插
 
 ## 快速开始
 
-### 下载或编译
+下面是一个简单的演示，新用户只需4个步骤即可使用Sermant
 
-点击[此处](https://github.com/huaweicloud/Sermant/releases)下载**Sermant**二进制包。如果您想自己编译项目，请遵循以下步骤。
+### 准备工作
 
-执行*maven*命令来打包**Sermant**项目的 [demo module](sermant-example)。
+- [下载](https://github.com/huaweicloud/Sermant/releases) Sermant包
+- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo应用
+- [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
 
-```shell
-mvn clean package -Dmaven.test.skip -Pexample
-```
+### 编译打包demo应用
 
-### 启动Sermant
-
-准备和启动zookeeper，启动 **Sermant** demo 应用：
+在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/`目录执行以下命令：
 
 ```shell
-# Run under Linux
-java -cp sermant-example/demo-application/target/demo-application.jar \
-  -javaagent:sermant-agent-x.x.x/agent/sermant-agent.jar=appName=test \
-  com.huawei.example.demo.DemoApplication
+# windows linux mac
+mvn clean package
 ```
+
+打包成功后，在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`得到`spring-provider.jar`
+
+> 说明：path为demo应用下载所在路径
+
+### 修改Sermant配置
+
+修改`${path}/sermant-agent-x.x.x/agent/config/config.properties`文件中`agent.config.serviceBlackList`配置为空，如下所示：
+
+```properties
+agent.config.serviceBlackList=
+```
+
+> 说明：path为Sermant包下载所在路径
+
+### 启动backend
+
+在`${path}/sermant-agent-x.x.x/server/sermant`目录执行以下命令：
 
 ```shell
-# Run under Windows
-java -cp sermant-example\demo-application\target\demo-application.jar ^
-  -javaagent:sermant-agent-x.x.x\agent\sermant-agent.jar=appName=test ^
-  com.huawei.example.demo.DemoApplication
+java -jar sermant-backend-lite.jar
 ```
 
-检查**Sermant**的运行状态。在本例中，打开浏览器并导航到URL“http://localhost:8900".
+> 说明：path为Sermant包下载所在路径
+
+### 启动demo应用
+
+在`${path}/Sermant-examples/sermant-template/demo-application/target`目录执行以下命令：
+
+```shell
+# linux mac
+java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -jar spring-provider.jar
+
+# windows
+java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-provider.jar
+```
+
+> 说明：path为Sermant包下载所在路径
+
+### 验证
+
+打开浏览器并导航到URL`http://localhost:8900`,如下图所示：
+
 
 ![pic](docs/binary-docs/backend_sermant_info.png)
 

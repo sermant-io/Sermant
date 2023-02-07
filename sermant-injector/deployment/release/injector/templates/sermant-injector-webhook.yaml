@@ -1,3 +1,11 @@
+{{- $ca := genCA (printf "%s.%s.%s" "sermant-injector" .Values.namespace.name "svc") 3650 }}
+{{- $dns1 := "sermant-injector" }}
+{{- $dns2 := printf "%s.%s" "sermant-injector" .Values.namespace.name }}
+{{- $dns3 := printf "%s.%s.%s" "sermant-injector" .Values.namespace.name "svc" }}
+{{- $dns4 := printf "%s.%s.%s.%s" "sermant-injector" .Values.namespace.name "svc" "cluster" }}
+{{- $dns5 := printf "%s.%s.%s.%s.%s" "sermant-injector" .Values.namespace.name "svc" "cluster" "local" }}
+{{- $cert := genSignedCert "system:node:sermant-injector-node" nil (list $dns1 $dns2 $dns3 $dns4 $dns5) 3650 $ca }}
+
 apiVersion: admissionregistration.k8s.io/v1{{ if not (.Capabilities.APIVersions.Has "admissionregistration.k8s.io/v1") }}beta1{{ end }}
 kind: MutatingWebhookConfiguration
 metadata:
@@ -11,7 +19,7 @@ webhooks:
     admissionReviewVersions: ["v1beta1", "v1"]
     {{- end }}
     clientConfig:
-      caBundle: {{ .Values.injector.webhooks.caBundle }}
+      caBundle: {{ b64enc $ca.Cert }}
       service:
         name: sermant-injector
         namespace: {{ .Values.namespace.name }}
@@ -29,3 +37,12 @@ webhooks:
     objectSelector:
       matchLabels:
         sermant-injection: enabled
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sermant-injector-secret
+  namespace: {{ .Values.namespace.name }}
+data:
+  sermant-injector.key: {{ b64enc $cert.Key }}
+  sermant-injector.pem: {{ b64enc $cert.Cert }}

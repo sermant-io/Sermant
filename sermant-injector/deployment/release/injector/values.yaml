@@ -12,10 +12,6 @@ injector:
     pullPolicy: IfNotPresent
     # 拉取镜像的密钥
     pullSecrets: default-secret
-  webhooks:
-    # k8s证书，使用以下命令获取
-    # kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}'
-    caBundle:
 
 agent:
   image:
@@ -33,8 +29,14 @@ registry:
   # 注册中心地址
   endpoints: http://localhost:30100
 
-# 支持配置Sermant的环境变量(key相同的情况下该处配置的优先级低于yaml中env的配置), 配置方式如下:
-# env:
-#   TEST_ENV1: abc
-#   TEST_ENV2: 123456
-env:
+# 支持配置业务应用通用的环境变量(key相同的情况下该处配置的优先级低于yaml中env的配置)
+configMap:
+  # 是否开启注入configMap
+  enabled: false
+  # 注入configMap的namespace，需要与业务应用的namespace保持一致
+  namespaces: [default]
+  # 配置方式如下:
+  # env:
+  #   TEST_ENV1: abc
+  #   TEST_ENV2: 123456
+  env:
