@@ -21,7 +21,6 @@ runs:
       shell: bash
       env:
         servicecomb.service.enableSpringRegister: true
-        servicecomb.service.preferIpAddress: true
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8014 \
         -Dsermant_log_dir=${{ env.logDir }}/feign-provider-8014${{ env.tailVersion }} -jar \
@@ -38,7 +37,6 @@ runs:
         grace.rule.enableOfflineNotify: true
         grace.rule.warmUpTime: 600
         servicecomb.service.enableSpringRegister: true
-        servicecomb.service.preferIpAddress: true
       # graceful-rest-provider service port 8443 do not change, it special for springCloud Edgware.SR2 test ssl feature.
       run: |
         cp sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-provider${{ env.tailVersion }}/target/feign-provider${{ env.tailVersion }}.jar graceful-feign-provider${{ env.tailVersion }}.jar
@@ -46,7 +44,7 @@ runs:
         -Dsermant_log_dir=${{ env.logDir }}/feign-provider${{ env.tailVersion }} -Dgrace.rule.httpServerPort=16777 \
         graceful-feign-provider${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-provider.log 2>&1 &
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8015 -jar \
-        -Dsermant_log_dir=${{ env.logDir }}/feign-consumer${{ env.tailVersion }} -Dgrace.rule.httpServerPort=16778 \
+        -Dsermant_log_dir=${{ env.logDir }}/feign-consumer${{ env.tailVersion }} -Dgrace.rule.httpServerPort=16778 -Dservicecomb.service.preferIpAddress=true \
         sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-consumer${{ env.tailVersion }}/target/feign-consumer${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-consumer.log 2>&1 &
 
         cp sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar graceful-rest-provider.jar

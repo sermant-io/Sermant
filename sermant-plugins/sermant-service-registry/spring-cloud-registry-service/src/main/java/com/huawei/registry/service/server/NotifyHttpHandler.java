@@ -70,6 +70,6 @@ public class NotifyHttpHandler implements HttpHandler {
 
     private void addMarkShutdownEndpoint(Headers headers) {
         GraceContext.INSTANCE.getGraceShutDownManager()
-                .addShutdownEndpoint(headers.getFirst(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT));
+                .addShutdownEndpoints(headers.get(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT));
     }
 }

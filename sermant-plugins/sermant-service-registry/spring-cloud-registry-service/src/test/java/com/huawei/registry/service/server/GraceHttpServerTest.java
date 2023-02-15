@@ -26,10 +26,11 @@ import com.huawei.registry.service.utils.HttpClientResult;
 import com.huawei.registry.service.utils.HttpClientUtils;
 import com.huawei.registry.services.GraceService;
 
-import com.alibaba.fastjson.JSONObject;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
+
+import com.alibaba.fastjson.JSONObject;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -38,6 +39,8 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -89,13 +92,14 @@ public class GraceHttpServerTest {
         graceHttpServer.start();
         try {
             checkHandlers(graceHttpServer);
-            final HashMap<String, String> notifyHeaders = new HashMap<>();
-            notifyHeaders.put(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT, "localhost:28181");
-            notifyHeaders.put(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME, "test");
+            final HashMap<String, Collection<String>> notifyHeaders = new HashMap<>();
+            notifyHeaders
+                .put(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT, Collections.singletonList("localhost:28181"));
+            notifyHeaders.put(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME, Collections.singletonList("test"));
             final GraceContext instance = GraceContext.INSTANCE;
             final HttpClientResult notifyResult = HttpClientUtils.INSTANCE
-                    .doPost("http://127.0.0.1:16688" + GraceConstants.GRACE_NOTIFY_URL_PATH,
-                            JSONObject.toJSONString(new Object()), notifyHeaders);
+                .doPost("http://127.0.0.1:16688" + GraceConstants.GRACE_NOTIFY_URL_PATH,
+                    JSONObject.toJSONString(new Object()), notifyHeaders);
             Assert.assertTrue(instance.getGraceShutDownManager().isMarkedOffline("localhost:28181"));
             Assert.assertEquals(notifyResult.getCode(), GraceConstants.GRACE_HTTP_SUCCESS_CODE);
         } finally {
