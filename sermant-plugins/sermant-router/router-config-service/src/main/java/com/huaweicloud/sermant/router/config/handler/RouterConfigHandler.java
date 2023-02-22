@@ -21,8 +21,8 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
+import com.huaweicloud.sermant.router.config.entity.EntireRule;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 
 import com.alibaba.fastjson.JSONArray;
@@ -50,16 +50,18 @@ public class RouterConfigHandler extends AbstractConfigHandler {
             return;
         }
         Map<String, String> routeRuleMap = getRouteRuleMap(event);
-        Map<String, List<Rule>> routeRule = new HashMap<>();
+        Map<String, List<EntireRule>> routeRule = new HashMap<>();
         for (Entry<String, String> entry : routeRuleMap.entrySet()) {
             List<Map<String, String>> routeRuleList = yaml.load(entry.getValue());
             if (CollectionUtils.isEmpty(routeRuleList)) {
                 continue;
             }
-            List<Rule> list = JSONArray.parseArray(JSONObject.toJSONString(routeRuleList), Rule.class);
+            List<EntireRule> list = JSONArray.parseArray(JSONObject.toJSONString(routeRuleList), EntireRule.class);
             RuleUtils.removeInvalidRules(list);
             if (!CollectionUtils.isEmpty(list)) {
-                list.sort((o1, o2) -> o2.getPrecedence() - o1.getPrecedence());
+                for (EntireRule rule : list) {
+                    rule.getRules().sort((o1, o2) -> o2.getPrecedence() - o1.getPrecedence());
+                }
                 routeRule.put(entry.getKey(), list);
             }
         }

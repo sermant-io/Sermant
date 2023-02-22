@@ -73,6 +73,12 @@ public class Match {
     @JSONField(deserializeUsing = ValueMatchDeserializer.class)
     private Map<String, List<MatchRule>> cookie;
 
+    /**
+     * consumer的tag匹配规则
+     */
+    @JSONField(deserializeUsing = ValueMatchDeserializer.class)
+    private Map<String, List<MatchRule>> tags;
+
     public String getSource() {
         return source;
     }
@@ -135,5 +141,13 @@ public class Match {
 
     public void setCookie(Map<String, List<MatchRule>> cookie) {
         this.cookie = cookie;
+    }
+
+    public Map<String, List<MatchRule>> getTags() {
+        return tags;
+    }
+
+    public void setTags(Map<String, List<MatchRule>> tags) {
+        this.tags = tags;
     }
 }

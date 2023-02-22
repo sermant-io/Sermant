@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huaweicloud.sermant.router.config.handler.AbstractConfigHandler;
 import com.huaweicloud.sermant.router.config.handler.EnabledStrategyHandler;
+import com.huaweicloud.sermant.router.config.handler.GlobalConfigHandler;
 import com.huaweicloud.sermant.router.config.handler.RouterConfigHandler;
 import com.huaweicloud.sermant.router.config.handler.ServiceConfigHandler;
 
@@ -50,6 +51,7 @@ public class RouterConfigListener implements DynamicConfigListener {
     public RouterConfigListener(String cacheName) {
         this.cacheName = cacheName;
         this.handlers = new HashSet<>();
+        this.handlers.add(new GlobalConfigHandler());
         this.handlers.add(new RouterConfigHandler());
         this.handlers.add(new ServiceConfigHandler());
         this.handlers.add(new EnabledStrategyHandler());

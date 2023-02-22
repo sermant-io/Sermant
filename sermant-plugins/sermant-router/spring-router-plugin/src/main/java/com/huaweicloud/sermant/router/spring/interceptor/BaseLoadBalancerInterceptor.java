@@ -73,14 +73,9 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
             BaseLoadBalancer loadBalancer = (BaseLoadBalancer) object;
             String name = loadBalancer.getName();
             RequestData requestData = getRequestData().orElse(null);
-            if (requestData == null) {
-                return context.skip(Collections.unmodifiableList(loadBalancerService
-                    .getZoneInstances(name, serverList, routerConfig.isEnabledSpringZoneRouter())));
-            }
             List<Object> targetInstances = loadBalancerService
-                .getTargetInstances(name, serverList, requestData.getPath(), requestData.getHeader());
-            context.skip(Collections.unmodifiableList(
-                loadBalancerService.getZoneInstances(name, targetInstances, routerConfig.isEnabledSpringZoneRouter())));
+                    .getTargetInstances(name, serverList, requestData);
+            context.skip(Collections.unmodifiableList(targetInstances));
         }
         return context;
     }
@@ -93,7 +88,7 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
     private List<Object> getServerList(String methodName, Object obj) {
         String fieldName = "getAllServers".equals(methodName) ? "allServerList" : "upServerList";
         return ReflectUtils.getFieldValue(obj, fieldName).map(value -> (List<Object>) value)
-            .orElse(Collections.emptyList());
+                .orElse(Collections.emptyList());
     }
 
     private Optional<RequestData> getRequestData() {

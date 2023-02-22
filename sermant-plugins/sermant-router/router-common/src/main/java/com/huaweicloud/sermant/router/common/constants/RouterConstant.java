@@ -16,6 +16,9 @@
 
 package com.huaweicloud.sermant.router.common.constants;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 常量
  *
@@ -54,6 +57,11 @@ public class RouterConstant {
     public static final String ROUTER_KEY_PREFIX = "servicecomb.routeRule";
 
     /**
+     * 标签路由全局规则key
+     */
+    public static final String GLOBAL_ROUTER_KEY = "servicecomb.globalRouteRule";
+
+    /**
      * dubbo路由规则缓存名
      */
     public static final String DUBBO_CACHE_NAME = "DUBBO_ROUTE";
@@ -87,6 +95,36 @@ public class RouterConstant {
      * dubbo应用注册区域的key
      */
     public static final String ZONE_KEY = "service.meta.zone";
+
+    /**
+     * 根据流量进行匹配路由的类型
+     */
+    public static final String FLOW_MATCH_KIND = "routematcher.sermant.io/flow";
+
+    /**
+     * 根据tag进行匹配路由的类型
+     */
+    public static final String TAG_MATCH_KIND = "routematcher.sermant.io/tag";
+
+    /**
+     * 同标签优先匹配的保留字段(用于同AZ优先路由等场景)
+     */
+    public static final String CONSUMER_TAG = "CONSUMER_TAG";
+
+    /**
+     * 路由匹配方式支持的类型列表
+     */
+    public static final List<String> MATCH_KIND_LIST = Arrays.asList(FLOW_MATCH_KIND, TAG_MATCH_KIND);
+
+    /**
+     * 流量匹配方式在处理器责任链中的顺序
+     */
+    public static final int FLOW_HANDLER_ORDER = 1;
+
+    /**
+     * tag匹配方式在处理器责任链中的顺序
+     */
+    public static final int TAG_HANDLER_ORDER = 2;
 
     private RouterConstant() {
     }

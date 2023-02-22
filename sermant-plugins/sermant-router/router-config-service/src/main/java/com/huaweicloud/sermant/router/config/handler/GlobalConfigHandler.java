@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,48 +34,45 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 路由配置处理器（服务维度）
+ * 路由配置处理器(全局维度)
  *
- * @author provenceee
- * @since 2022-08-09
+ * @author lilai
+ * @since 2023-02-18
  */
-public class ServiceConfigHandler extends AbstractConfigHandler {
-    private static final String POINT = ".";
+public class GlobalConfigHandler extends AbstractConfigHandler {
 
     @Override
     public void handle(DynamicConfigEvent event, String cacheName) {
         RouterConfiguration configuration = ConfigCache.getLabel(cacheName);
-        String serviceName = event.getKey().substring(RouterConstant.ROUTER_KEY_PREFIX.length() + 1);
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
-            configuration.removeServiceRule(serviceName);
-            RuleUtils.updateMatchKeys(serviceName, Collections.emptyList());
+            configuration.resetGlobalRule(Collections.emptyList());
+            RuleUtils.initGlobalKeys(configuration);
             return;
         }
-        List<EntireRule> list = JSONArray.parseArray(JSONObject.toJSONString(getRule(event, serviceName)),
-                EntireRule.class);
+        List<EntireRule> list = JSONArray.parseArray(JSONObject.toJSONString(getRule(event)), EntireRule.class);
         RuleUtils.removeInvalidRules(list);
         if (CollectionUtils.isEmpty(list)) {
-            configuration.removeServiceRule(serviceName);
+            configuration.resetGlobalRule(Collections.emptyList());
         } else {
             for (EntireRule rule : list) {
                 rule.getRules().sort((o1, o2) -> o2.getPrecedence() - o1.getPrecedence());
             }
-            configuration.updateServiceRule(serviceName, list);
+            configuration.resetGlobalRule(list);
         }
-        RuleUtils.updateMatchKeys(serviceName, list);
+        RuleUtils.initGlobalKeys(configuration);
     }
 
     @Override
     public boolean shouldHandle(String key) {
-        return key.startsWith(RouterConstant.ROUTER_KEY_PREFIX + POINT);
+        return RouterConstant.GLOBAL_ROUTER_KEY.equals(key);
     }
 
-    private List<Map<String, Object>> getRule(DynamicConfigEvent event, String serviceName) {
+    private List<Map<String, Object>> getRule(DynamicConfigEvent event) {
         String content = event.getContent();
         if (StringUtils.isBlank(content)) {
             return Collections.emptyList();
         }
         Map<String, List<Map<String, Object>>> map = yaml.load(content);
-        return map.get(RouterConstant.ROUTER_KEY_PREFIX + POINT + serviceName);
+        return map.get(RouterConstant.GLOBAL_ROUTER_KEY);
     }
 }

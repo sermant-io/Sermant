@@ -29,6 +29,7 @@ import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
 import com.huaweicloud.sermant.router.config.entity.Route;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.entity.Rule;
+import com.huaweicloud.sermant.router.config.utils.FlowRuleUtils;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.strategy.RuleStrategyHandler;
@@ -193,8 +194,8 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
         }
         String interfaceName = getGroup(queryMap) + "/" + serviceInterface + POINT
             + DubboReflectUtils.getMethodName(invocation) + ":" + getVersion(queryMap);
-        List<Rule> rules = RuleUtils
-            .getRules(configuration, targetService, interfaceName, DubboCache.INSTANCE.getAppName());
+        List<Rule> rules = FlowRuleUtils
+            .getFlowRules(configuration, targetService, interfaceName, DubboCache.INSTANCE.getAppName());
         List<Route> routes = RouteUtils.getRoutes(rules, DubboReflectUtils.getArguments(invocation),
             parseAttachments(invocation));
         if (!CollectionUtils.isEmpty(routes)) {

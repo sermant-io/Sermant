@@ -69,15 +69,9 @@ public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor 
                 return context;
             }
             RequestData requestData = ThreadLocalUtils.getRequestData();
-            if (requestData == null) {
-                context.skip(Flux.just(loadBalancerService
-                    .getZoneInstances(serviceId, instances, routerConfig.isEnabledSpringZoneRouter())));
-                return context;
-            }
-            List<Object> list = loadBalancerService.getTargetInstances(serviceId, instances, requestData.getPath(),
-                requestData.getHeader());
-            context.skip(Flux.just(
-                loadBalancerService.getZoneInstances(serviceId, list, routerConfig.isEnabledSpringZoneRouter())));
+            List<Object> targetInstances = loadBalancerService
+                    .getTargetInstances(serviceId, instances, requestData);
+            context.skip(Flux.just(Collections.unmodifiableList(targetInstances)));
         }
         return context;
     }
