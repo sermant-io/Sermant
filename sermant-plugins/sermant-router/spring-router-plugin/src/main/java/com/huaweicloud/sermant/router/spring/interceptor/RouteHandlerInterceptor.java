@@ -17,20 +17,23 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.handler.Handler;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.spring.handler.AbstractInterceptorHandler;
+import com.huaweicloud.sermant.router.spring.handler.AbstractInterceptorHandler.Keys;
+import com.huaweicloud.sermant.router.spring.handler.LaneInterceptorHandler;
+import com.huaweicloud.sermant.router.spring.handler.RouteInterceptorHandler;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +48,8 @@ import javax.servlet.http.HttpServletResponse;
  * @since 2022-07-12
  */
 public class RouteHandlerInterceptor implements HandlerInterceptor {
+    private final List<AbstractInterceptorHandler> handlers;
+
     private final SpringConfigService configService;
 
     /**
@@ -52,22 +57,26 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
      */
     public RouteHandlerInterceptor() {
         configService = ServiceManager.getService(SpringConfigService.class);
+        handlers = new ArrayList<>();
+        handlers.add(new LaneInterceptorHandler());
+        handlers.add(new RouteInterceptorHandler());
+        handlers.sort(Comparator.comparingInt(Handler::getOrder));
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) {
         Set<String> matchKeys = configService.getMatchKeys();
-        if (CollectionUtils.isEmpty(matchKeys)) {
+        Set<String> matchTags = configService.getMatchTags();
+        if (CollectionUtils.isEmpty(matchKeys) && CollectionUtils.isEmpty(matchTags)) {
+            // 染色标记为空，代表没有染色规则，直接return
             return true;
         }
-        Collection<String> headerNames = enumeration2Collection(request.getHeaderNames(), false);
-        Map<String, List<String>> header = new HashMap<>();
-        for (String headerKey : matchKeys) {
-            if (headerNames.contains(headerKey)) {
-                header.put(headerKey, (List<String>) enumeration2Collection(request.getHeaders(headerKey), true));
-            }
-        }
-        ThreadLocalUtils.setRequestHeader(new RequestHeader(header));
+        Map<String, List<String>> headers = getHeaders(request);
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+        handlers.forEach(handler -> ThreadLocalUtils
+            .addRequestTag(handler.getRequestTag(path, method, headers, parameterMap, new Keys(matchKeys, matchTags))));
         return true;
     }
 
@@ -78,14 +87,24 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object obj, Exception ex) {
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
     }
 
-    private Collection<String> enumeration2Collection(Enumeration<?> enumeration, boolean isConvertToList) {
+    private Map<String, List<String>> getHeaders(HttpServletRequest request) {
+        Map<String, List<String>> headers = new HashMap<>();
+        Enumeration<?> enumeration = request.getHeaderNames();
+        while (enumeration.hasMoreElements()) {
+            String key = (String) enumeration.nextElement();
+            headers.put(key, enumeration2List(request.getHeaders(key)));
+        }
+        return headers;
+    }
+
+    private List<String> enumeration2List(Enumeration<?> enumeration) {
         if (enumeration == null) {
             return Collections.emptyList();
         }
-        Collection<String> collection = isConvertToList ? new ArrayList<>() : new HashSet<>();
+        List<String> collection = new ArrayList<>();
         while (enumeration.hasMoreElements()) {
             collection.add((String) enumeration.nextElement());
         }

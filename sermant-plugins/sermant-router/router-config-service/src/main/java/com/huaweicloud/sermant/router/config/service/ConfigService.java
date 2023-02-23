@@ -81,4 +81,13 @@ public abstract class ConfigService {
     public Set<String> getMatchKeys() {
         return routerConfig.isUseRequestRouter() ? requestTags : RuleUtils.getMatchKeys();
     }
+
+    /**
+     * 获取染色的key
+     *
+     * @return 染色的key
+     */
+    public Set<String> getMatchTags() {
+        return RuleUtils.getMatchTags();
+    }
 }

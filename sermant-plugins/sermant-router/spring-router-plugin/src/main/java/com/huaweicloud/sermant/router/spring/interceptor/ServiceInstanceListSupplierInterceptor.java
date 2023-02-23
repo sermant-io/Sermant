@@ -18,10 +18,8 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
-import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
@@ -45,14 +43,11 @@ import java.util.Optional;
 public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor {
     private final LoadBalancerService loadBalancerService;
 
-    private final RouterConfig routerConfig;
-
     /**
      * 构造方法
      */
     public ServiceInstanceListSupplierInterceptor() {
         loadBalancerService = ServiceManager.getService(LoadBalancerService.class);
-        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
     }
 
     @Override
@@ -69,9 +64,8 @@ public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor 
                 return context;
             }
             RequestData requestData = ThreadLocalUtils.getRequestData();
-            List<Object> targetInstances = loadBalancerService
-                    .getTargetInstances(serviceId, instances, requestData);
-            context.skip(Flux.just(Collections.unmodifiableList(targetInstances)));
+            List<Object> targetInstances = loadBalancerService.getTargetInstances(serviceId, instances, requestData);
+            context.skip(Flux.just(targetInstances));
         }
         return context;
     }
@@ -97,6 +91,6 @@ public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor 
             // 这种情况不处理，所以返回emptyList
             return Collections.emptyList();
         }
-        return (List<Object>) flux.next().block();
+        return (List<Object>) flux.next().toProcessor().block();
     }
 }

@@ -77,8 +77,8 @@ public class FlowRouteHandler extends AbstractRouteHandler {
             return instances;
         }
         List<Object> result = routerConfig.isUseRequestRouter()
-                ? getTargetInstancesByRequest(targetName, instances, requestData.getHeader())
-                : getTargetInstancesByRules(targetName, instances, requestData.getPath(), requestData.getHeader());
+                ? getTargetInstancesByRequest(targetName, instances, requestData.getTag())
+                : getTargetInstancesByRules(targetName, instances, requestData.getPath(), requestData.getTag());
         return super.handle(targetName, result, requestData);
     }
 

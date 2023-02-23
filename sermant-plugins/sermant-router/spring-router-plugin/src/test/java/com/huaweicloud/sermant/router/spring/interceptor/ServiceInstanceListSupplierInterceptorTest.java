@@ -92,7 +92,7 @@ public class ServiceInstanceListSupplierInterceptorTest {
      */
     @Before
     public void reset() {
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
         ThreadLocalUtils.removeRequestData();
         List<ServiceInstance> list = new ArrayList<>();
         list.add(new DefaultServiceInstance("foo1", "foo", "foo", 8080, false));

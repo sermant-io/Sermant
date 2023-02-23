@@ -55,14 +55,26 @@ public class RouterConfiguration {
      * @param entireRules 配置中心下发的路由规则列表
      */
     public void updateServiceRule(String serviceName, List<EntireRule> entireRules) {
-        Map<String, List<Rule>> flowRules = rules.get(RouterConstant.FLOW_MATCH_KIND);
-        Map<String, List<Rule>> tagRules = rules.get(RouterConstant.TAG_MATCH_KIND);
+        Map<String, List<Rule>> flowRules = rules.computeIfAbsent(RouterConstant.FLOW_MATCH_KIND,
+            key -> new ConcurrentHashMap<>());
+        flowRules.remove(serviceName);
+        Map<String, List<Rule>> tagRules = rules.computeIfAbsent(RouterConstant.TAG_MATCH_KIND,
+            key -> new ConcurrentHashMap<>());
+        tagRules.remove(serviceName);
+        Map<String, List<Rule>> laneRules = rules.computeIfAbsent(RouterConstant.LANE_MATCH_KIND,
+            key -> new ConcurrentHashMap<>());
+        laneRules.remove(serviceName);
         for (EntireRule entireRule : entireRules) {
             if (RouterConstant.FLOW_MATCH_KIND.equals(entireRule.getKind())) {
                 flowRules.putIfAbsent(serviceName, entireRule.getRules());
+                continue;
             }
             if (RouterConstant.TAG_MATCH_KIND.equals(entireRule.getKind())) {
                 tagRules.putIfAbsent(serviceName, entireRule.getRules());
+                continue;
+            }
+            if (RouterConstant.LANE_MATCH_KIND.equals(entireRule.getKind())) {
+                laneRules.putIfAbsent(serviceName, entireRule.getRules());
             }
         }
     }
@@ -74,9 +86,17 @@ public class RouterConfiguration {
      */
     public void removeServiceRule(String serviceName) {
         Map<String, List<Rule>> flowRules = rules.get(RouterConstant.FLOW_MATCH_KIND);
+        if (!CollectionUtils.isEmpty(flowRules)) {
+            flowRules.remove(serviceName);
+        }
         Map<String, List<Rule>> tagRules = rules.get(RouterConstant.TAG_MATCH_KIND);
-        flowRules.remove(serviceName);
-        tagRules.remove(serviceName);
+        if (!CollectionUtils.isEmpty(tagRules)) {
+            tagRules.remove(serviceName);
+        }
+        Map<String, List<Rule>> laneRules = rules.get(RouterConstant.LANE_MATCH_KIND);
+        if (!CollectionUtils.isEmpty(laneRules)) {
+            laneRules.remove(serviceName);
+        }
     }
 
     /**

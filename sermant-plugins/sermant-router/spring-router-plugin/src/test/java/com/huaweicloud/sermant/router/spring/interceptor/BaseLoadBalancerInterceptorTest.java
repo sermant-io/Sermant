@@ -96,7 +96,7 @@ public class BaseLoadBalancerInterceptorTest {
      */
     @Before
     public void reset() {
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
         ThreadLocalUtils.removeRequestData();
         //        configService.setInvalid(false);
         List<Server> servers = new ArrayList<>();

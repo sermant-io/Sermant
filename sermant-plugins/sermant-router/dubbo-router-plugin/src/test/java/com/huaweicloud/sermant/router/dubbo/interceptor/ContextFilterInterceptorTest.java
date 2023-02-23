@@ -18,8 +18,9 @@ package com.huaweicloud.sermant.router.dubbo.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.dubbo.TestDubboConfigService;
 import com.huaweicloud.sermant.router.dubbo.service.DubboConfigService;
 
 import org.apache.dubbo.rpc.RpcInvocation;
@@ -32,10 +33,8 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 测试ContextFilterInterceptor
@@ -56,20 +55,10 @@ public class ContextFilterInterceptorTest {
     @BeforeClass
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
+        TestDubboConfigService testDubboConfigService = new TestDubboConfigService();
+        testDubboConfigService.setReturnEmptyWhenGetMatchTags(true);
         mockServiceManager.when(() -> ServiceManager.getService(DubboConfigService.class))
-            .thenReturn(new DubboConfigService() {
-                @Override
-                public void init(String cacheName, String serviceName) {
-                }
-
-                @Override
-                public Set<String> getMatchKeys() {
-                    Set<String> keys = new HashSet<>();
-                    keys.add("bar");
-                    keys.add("foo");
-                    return keys;
-                }
-            });
+            .thenReturn(testDubboConfigService);
     }
 
     /**
@@ -96,7 +85,7 @@ public class ContextFilterInterceptorTest {
      */
     @Before
     public void clear() {
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
     }
 
     /**
@@ -106,8 +95,8 @@ public class ContextFilterInterceptorTest {
     public void testBefore() {
         // 测试before方法
         interceptor.before(context);
-        RequestHeader requestHeader = ThreadLocalUtils.getRequestHeader();
-        Map<String, List<String>> header = requestHeader.getHeader();
+        RequestTag requestTag = ThreadLocalUtils.getRequestTag();
+        Map<String, List<String>> header = requestTag.getTag();
         Assert.assertNotNull(header);
         Assert.assertEquals(2, header.size());
         Assert.assertEquals("bar1", header.get("bar").get(0));
@@ -119,12 +108,12 @@ public class ContextFilterInterceptorTest {
      */
     @Test
     public void testAfter() {
-        ThreadLocalUtils.setRequestHeader(new RequestHeader(Collections.emptyMap()));
-        Assert.assertNotNull(ThreadLocalUtils.getRequestHeader());
+        ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar", Collections.singletonList("foo")));
+        Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
 
         // 测试after方法,验证是否释放线程变量
         interceptor.after(context);
-        Assert.assertNull(ThreadLocalUtils.getRequestHeader());
+        Assert.assertNull(ThreadLocalUtils.getRequestTag());
     }
 
     /**
@@ -132,11 +121,11 @@ public class ContextFilterInterceptorTest {
      */
     @Test
     public void testOnThrow() {
-        ThreadLocalUtils.setRequestHeader(new RequestHeader(Collections.emptyMap()));
-        Assert.assertNotNull(ThreadLocalUtils.getRequestHeader());
+        ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar", Collections.singletonList("foo")));
+        Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
 
         // 测试onThrow方法,验证是否释放线程变量
         interceptor.onThrow(context);
-        Assert.assertNull(ThreadLocalUtils.getRequestHeader());
+        Assert.assertNull(ThreadLocalUtils.getRequestTag());
     }
 }

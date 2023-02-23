@@ -72,6 +72,74 @@ public class RouteUtils {
     }
 
     /**
+     * 获取匹配的泳道
+     *
+     * @param list 有效的规则
+     * @param attachments dubbo的attachments参数
+     * @param arguments dubbo的arguments参数
+     * @return 匹配的泳道标记
+     */
+    public static List<Route> getLaneRoutes(List<Rule> list, Map<String, Object> attachments, Object[] arguments) {
+        for (Rule rule : list) {
+            Match match = rule.getMatch();
+            if (match == null) {
+                return rule.getRoute();
+            }
+            if (isMatchByAttachments(match.getAttachments(), attachments) && isMatchByArgs(match.getArgs(),
+                arguments)) {
+                return rule.getRoute();
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    private static boolean isMatchByAttachments(Map<String, List<MatchRule>> matchAttachments,
+        Map<String, Object> attachments) {
+        if (CollectionUtils.isEmpty(matchAttachments)) {
+            return true;
+        }
+        for (Entry<String, List<MatchRule>> entry : matchAttachments.entrySet()) {
+            String key = entry.getKey();
+            List<MatchRule> matchRuleList = entry.getValue();
+            for (MatchRule matchRule : matchRuleList) {
+                ValueMatch valueMatch = matchRule.getValueMatch();
+                List<String> values = valueMatch.getValues();
+                MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
+                String arg = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);
+                if (!matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                    // 只要一个匹配不上，那就是不匹配
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean isMatchByArgs(Map<String, List<MatchRule>> matchArgs, Object[] arguments) {
+        if (CollectionUtils.isEmpty(matchArgs)) {
+            return true;
+        }
+        for (Entry<String, List<MatchRule>> entry : matchArgs.entrySet()) {
+            String key = entry.getKey();
+            if (!key.startsWith(RouterConstant.DUBBO_SOURCE_TYPE_PREFIX)) {
+                continue;
+            }
+            List<MatchRule> matchRuleList = entry.getValue();
+            for (MatchRule matchRule : matchRuleList) {
+                ValueMatch valueMatch = matchRule.getValueMatch();
+                List<String> values = valueMatch.getValues();
+                MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
+                String arg = TypeStrategyChooser.INSTANCE.getValue(matchRule.getType(), key, arguments).orElse(null);
+                if (!matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                    // 只要一个匹配不上，那就是不匹配
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * 根据arguments参数获取匹配的路由
      *
      * @param arguments dubbo的arguments参数

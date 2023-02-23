@@ -18,7 +18,7 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
@@ -34,7 +34,7 @@ import java.util.Collections;
  * @since 2022-07-12
  */
 public class HystrixActionInterceptor extends AbstractInterceptor {
-    private static final RequestHeader EMPTY_REQUEST_HEADER = new RequestHeader(Collections.emptyMap());
+    private static final RequestTag EMPTY_REQUEST_HEADER = new RequestTag(Collections.emptyMap());
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
@@ -43,11 +43,11 @@ public class HystrixActionInterceptor extends AbstractInterceptor {
             if (!HystrixRequestContext.isCurrentThreadInitialized()) {
                 HystrixRequestContext.initializeContext();
             }
-            HystrixRequestVariableDefault<RequestHeader> hystrixRequest = new HystrixRequestVariableDefault<>();
-            RequestHeader requestHeader = ThreadLocalUtils.getRequestHeader();
+            HystrixRequestVariableDefault<RequestTag> hystrixRequest = new HystrixRequestVariableDefault<>();
+            RequestTag requestTag = ThreadLocalUtils.getRequestTag();
 
             // 禁止存入null，否则会有严重的性能问题
-            hystrixRequest.set(requestHeader == null ? EMPTY_REQUEST_HEADER : requestHeader);
+            hystrixRequest.set(requestTag == null ? EMPTY_REQUEST_HEADER : requestTag);
         }
         return context;
     }

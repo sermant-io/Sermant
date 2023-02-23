@@ -16,6 +16,8 @@
 
 package com.huaweicloud.sermant.router.config.utils;
 
+import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.router.config.entity.EntireRule;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.entity.Rule;
 
@@ -70,8 +72,11 @@ public class RuleUtilsTest {
         RouterConfiguration configuration = new RouterConfiguration();
         RuleUtils.initMatchKeys(configuration);
         Assert.assertTrue(RuleUtils.getMatchKeys().isEmpty());
-        Map<String, List<Rule>> map = new HashMap<>();
-        map.put("test", list);
+        Map<String, List<EntireRule>> map = new HashMap<>();
+        EntireRule entireRule = new EntireRule();
+        entireRule.setRules(list);
+        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        map.put("test", Collections.singletonList(entireRule));
         configuration.resetRouteRule(map);
         RuleUtils.initMatchKeys(configuration);
         Set<String> keys = RuleUtils.getMatchKeys();
@@ -84,7 +89,10 @@ public class RuleUtilsTest {
     @Test
     public void testUpdateHeaderKeys() {
         Assert.assertTrue(RuleUtils.getMatchKeys().isEmpty());
-        RuleUtils.updateMatchKeys("test", list);
+        EntireRule entireRule = new EntireRule();
+        entireRule.setRules(list);
+        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        RuleUtils.updateMatchKeys("test", Collections.singletonList(entireRule));
         Set<String> keys = RuleUtils.getMatchKeys();
         Assert.assertEquals(3, keys.size());
         RuleUtils.updateMatchKeys("test", Collections.emptyList());

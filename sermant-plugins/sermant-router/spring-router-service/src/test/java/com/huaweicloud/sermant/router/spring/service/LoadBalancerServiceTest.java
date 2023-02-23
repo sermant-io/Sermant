@@ -19,8 +19,10 @@ package com.huaweicloud.sermant.router.spring.service;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
+import com.huaweicloud.sermant.router.config.entity.EntireRule;
 import com.huaweicloud.sermant.router.config.entity.Match;
 import com.huaweicloud.sermant.router.config.entity.MatchRule;
 import com.huaweicloud.sermant.router.config.entity.MatchStrategy;
@@ -110,7 +112,8 @@ public class LoadBalancerServiceTest {
         instances.add(instance2);
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar1"));
-        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances,
+            new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
     }
@@ -133,7 +136,7 @@ public class LoadBalancerServiceTest {
         Map<String, List<String>> header = new HashMap<>();
 
         // 测试无tags时
-        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
         Assert.assertEquals(instances, targetInstances);
 
         // 设置tags
@@ -143,14 +146,14 @@ public class LoadBalancerServiceTest {
         header.clear();
         header.put("foo", Collections.singletonList("bar2"));
         header.put("foo1", Collections.singletonList("bar2"));
-        targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
 
         // 匹配1.0.0版本实例
         header.clear();
         header.put("version", Collections.singletonList("1.0.0"));
-        targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance1, targetInstances.get(0));
     }
@@ -175,7 +178,7 @@ public class LoadBalancerServiceTest {
         // 不匹配bar: bar1实例时，匹配没有bar标签的实例
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar1"));
-        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
         Assert.assertEquals(2, targetInstances.size());
         Assert.assertFalse(targetInstances.contains(instance2));
 
@@ -189,24 +192,24 @@ public class LoadBalancerServiceTest {
         sameInstances.add(sameInstance2);
         header.clear();
         header.put("bar", Collections.singletonList("bar1"));
-        targetInstances = loadBalancerService.getTargetInstances("foo", sameInstances, null, header);
+        targetInstances = loadBalancerService.getTargetInstances("foo", sameInstances, new RequestData(header, null, null));
         Assert.assertEquals(0, targetInstances.size());
 
         // 不匹配version: 1.0.3实例时，返回所有版本的实例
         header.clear();
         header.put("version", Collections.singletonList("1.0.3"));
-        targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
         Assert.assertEquals(3, targetInstances.size());
 
         // 不传入header时，匹配无标签实例
         header.clear();
-        targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance3, targetInstances.get(0));
 
         // 不传入header时，优先匹配无标签实例，没有无标签实例时，返回全部实例
         header.clear();
-        targetInstances = loadBalancerService.getTargetInstances("foo", sameInstances, null, header);
+        targetInstances = loadBalancerService.getTargetInstances("foo", sameInstances, new RequestData(header, null, null));
         Assert.assertEquals(sameInstances, targetInstances);
     }
 
@@ -220,7 +223,7 @@ public class LoadBalancerServiceTest {
         instances.add(instance1);
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar1"));
-        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instances, targetInstances);
     }
@@ -238,7 +241,7 @@ public class LoadBalancerServiceTest {
 
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar2"));
-        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, null, header);
+        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance1, targetInstances.get(0));
     }
@@ -289,8 +292,11 @@ public class LoadBalancerServiceTest {
         rule.setRoute(routeList);
         List<Rule> ruleList = new ArrayList<>();
         ruleList.add(rule);
-        Map<String, List<Rule>> map = new HashMap<>();
-        map.put("foo", ruleList);
+        Map<String, List<EntireRule>> map = new HashMap<>();
+        EntireRule entireRule = new EntireRule();
+        entireRule.setRules(ruleList);
+        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        map.put("foo", Collections.singletonList(entireRule));
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME);
         configuration.resetRouteRule(map);
         AppCache.INSTANCE.setAppName("foo");

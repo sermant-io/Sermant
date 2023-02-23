@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.request.RequestData;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.FlowContextUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
@@ -48,6 +48,15 @@ import java.util.Optional;
  */
 public class FeignClientInterceptor extends AbstractInterceptor {
     private static final int EXPECT_LENGTH = 4;
+
+    private final boolean canLoadHystrix;
+
+    /**
+     * 构造方法
+     */
+    public FeignClientInterceptor() {
+        canLoadHystrix = canLoadHystrix();
+    }
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
@@ -96,7 +105,7 @@ public class FeignClientInterceptor extends AbstractInterceptor {
             headers.forEach((key, value) -> newHeaders.put(key, new ArrayList<>(value)));
         }
         getRequestHeader().ifPresent(requestHeader -> {
-            Map<String, List<String>> header = requestHeader.getHeader();
+            Map<String, List<String>> header = requestHeader.getTag();
             for (Entry<String, List<String>> entry : header.entrySet()) {
                 // 使用上游传递的header
                 newHeaders.putIfAbsent(entry.getKey(), entry.getValue());
@@ -109,10 +118,13 @@ public class FeignClientInterceptor extends AbstractInterceptor {
         com.huaweicloud.sermant.core.utils.ReflectUtils.setFieldValue(request, "headers", headers);
     }
 
-    private Optional<RequestHeader> getRequestHeader() {
-        RequestHeader header = ThreadLocalUtils.getRequestHeader();
+    private Optional<RequestTag> getRequestHeader() {
+        RequestTag header = ThreadLocalUtils.getRequestTag();
         if (header != null) {
             return Optional.of(header);
+        }
+        if (!canLoadHystrix) {
+            return Optional.empty();
         }
         HystrixRequestContext context = HystrixRequestContext.getContextForCurrentThread();
         if (context == null) {
@@ -123,9 +135,9 @@ public class FeignClientInterceptor extends AbstractInterceptor {
         for (Entry<HystrixRequestVariableDefault<?>, ?> entry : state.entrySet()) {
             Object lazyInitializer = entry.getValue();
             Object obj = ReflectUtils.getFieldValue(lazyInitializer, "value").orElse(null);
-            if (obj instanceof RequestHeader) {
+            if (obj instanceof RequestTag) {
                 entry.getKey().remove();
-                return Optional.of((RequestHeader) obj);
+                return Optional.of((RequestTag) obj);
             }
         }
         return Optional.empty();
@@ -142,5 +154,14 @@ public class FeignClientInterceptor extends AbstractInterceptor {
             return Collections.unmodifiableMap(newHeaders);
         }
         return headers;
+    }
+
+    private boolean canLoadHystrix() {
+        try {
+            Class.forName(HystrixRequestContext.class.getCanonicalName());
+        } catch (NoClassDefFoundError | ClassNotFoundException error) {
+            return false;
+        }
+        return true;
     }
 }

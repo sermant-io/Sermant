@@ -41,4 +41,11 @@ public interface DubboConfigService extends PluginService {
      * @return 规则key
      */
     Set<String> getMatchKeys();
+
+    /**
+     * 获取染色的key
+     *
+     * @return 染色的key
+     */
+    Set<String> getMatchTags();
 }

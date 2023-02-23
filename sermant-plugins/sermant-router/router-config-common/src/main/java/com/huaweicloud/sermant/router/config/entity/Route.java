@@ -16,6 +16,8 @@
 
 package com.huaweicloud.sermant.router.config.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Map;
 
 /**
@@ -35,6 +37,12 @@ public class Route {
      */
     private Map<String, String> tags;
 
+    /**
+     * 路由标签
+     */
+    @JSONField(name = "tag-inject")
+    private Map<String, String> injectTags;
+
     public void setWeight(Integer weight) {
         this.weight = weight;
     }
@@ -49,5 +57,13 @@ public class Route {
 
     public Map<String, String> getTags() {
         return this.tags;
+    }
+
+    public Map<String, String> getInjectTags() {
+        return injectTags;
+    }
+
+    public void setInjectTags(Map<String, String> injectTags) {
+        this.injectTags = injectTags;
     }
 }

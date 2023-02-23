@@ -57,7 +57,7 @@ public class LoadBalancerClientFilterInterceptorTest {
      */
     @Before
     public void clear() {
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
         ThreadLocalUtils.removeRequestData();
     }
 
@@ -71,7 +71,7 @@ public class LoadBalancerClientFilterInterceptorTest {
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
         Assert.assertEquals("", requestData.getPath());
         Assert.assertNotNull(requestData);
-        Map<String, List<String>> headerData = requestData.getHeader();
+        Map<String, List<String>> headerData = requestData.getTag();
         Assert.assertEquals(2, headerData.size());
         Assert.assertEquals("bar1", headerData.get("bar").get(0));
         Assert.assertEquals("foo1", headerData.get("foo").get(0));

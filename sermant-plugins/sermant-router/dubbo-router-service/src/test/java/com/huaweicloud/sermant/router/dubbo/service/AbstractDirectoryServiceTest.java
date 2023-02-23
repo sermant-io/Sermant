@@ -20,10 +20,10 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
+import com.huaweicloud.sermant.router.config.entity.EntireRule;
 import com.huaweicloud.sermant.router.config.entity.Match;
 import com.huaweicloud.sermant.router.config.entity.MatchRule;
 import com.huaweicloud.sermant.router.config.entity.MatchStrategy;
@@ -132,13 +132,12 @@ public class AbstractDirectoryServiceTest {
         initRule();
 
         // 测试传递attachment与queryMap为空
-        ThreadLocalUtils
-            .setRequestHeader(new RequestHeader(Collections.singletonMap("foo", Collections.singletonList("foo1"))));
+        ThreadLocalUtils.addRequestTag(Collections.singletonMap("foo", Collections.singletonList("foo1")));
         targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
         Assert.assertEquals(invokers, targetInvokers);
         Assert.assertEquals(2, targetInvokers.size());
         Assert.assertEquals("foo1", invocation.getAttachment("foo"));
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
 
         // side不为consumer
         testObject.getQueryMap().put("side", "");
@@ -391,8 +390,11 @@ public class AbstractDirectoryServiceTest {
         rule.setRoute(routeList);
         List<Rule> ruleList = new ArrayList<>();
         ruleList.add(rule);
-        Map<String, List<Rule>> map = new HashMap<>();
-        map.put("foo", ruleList);
+        EntireRule entireRule = new EntireRule();
+        entireRule.setRules(ruleList);
+        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        Map<String, List<EntireRule>> map = new HashMap<>();
+        map.put("foo",Collections.singletonList(entireRule));
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
         configuration.resetRouteRule(map);
     }

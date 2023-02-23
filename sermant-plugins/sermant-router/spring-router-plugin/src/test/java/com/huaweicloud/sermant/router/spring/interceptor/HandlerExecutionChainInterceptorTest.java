@@ -60,6 +60,11 @@ public class HandlerExecutionChainInterceptorTest {
                 public Set<String> getMatchKeys() {
                     return Collections.emptySet();
                 }
+
+                @Override
+                public Set<String> getMatchTags() {
+                    return Collections.emptySet();
+                }
             });
     }
 

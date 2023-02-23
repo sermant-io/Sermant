@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.dubbo.strategy.type.ArrayTypeStrategy;
 import com.huaweicloud.sermant.router.dubbo.strategy.type.EmptyTypeStrategy;
-import com.huaweicloud.sermant.router.dubbo.strategy.type.EnabledTypeStrategy;
+import com.huaweicloud.sermant.router.dubbo.strategy.type.IsMethodTypeStrategy;
 import com.huaweicloud.sermant.router.dubbo.strategy.type.ListTypeStrategy;
 import com.huaweicloud.sermant.router.dubbo.strategy.type.MapTypeStrategy;
 import com.huaweicloud.sermant.router.dubbo.strategy.type.ObjectTypeStrategy;
@@ -56,7 +56,7 @@ public enum TypeStrategyChooser {
      */
     private void init() {
         registerTypeStrategy(new ArrayTypeStrategy());
-        registerTypeStrategy(new EnabledTypeStrategy());
+        registerTypeStrategy(new IsMethodTypeStrategy());
         registerTypeStrategy(new ListTypeStrategy());
         registerTypeStrategy(new MapTypeStrategy());
         registerTypeStrategy(new EmptyTypeStrategy());

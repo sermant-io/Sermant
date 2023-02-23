@@ -96,19 +96,19 @@ public class MatchStrategyTest {
     @Test
     public void testExact() {
         // 正常情况，不区分大小写
-        Assert.assertTrue(exact.isMatch(strValues, "FoO", false));
+        Assert.assertTrue(exact.isMatch(new ArrayList<>(strValues), "FoO", false));
 
         // 正常情况，区分大小写
-        Assert.assertTrue(exact.isMatch(strValues, "foo", true));
+        Assert.assertTrue(exact.isMatch(new ArrayList<>(strValues), "foo", true));
 
         // 测试大小写不一致
-        Assert.assertFalse(exact.isMatch(strValues, "foO", true));
+        Assert.assertFalse(exact.isMatch(new ArrayList<>(strValues), "foO", true));
 
         // 测试null arg
-        Assert.assertFalse(exact.isMatch(strValues, null, false));
+        Assert.assertFalse(exact.isMatch(new ArrayList<>(strValues), null, false));
 
         // 测试null arg
-        Assert.assertFalse(exact.isMatch(strValues, null, true));
+        Assert.assertFalse(exact.isMatch(new ArrayList<>(strValues), null, true));
 
         // 测试null values
         Assert.assertFalse(exact.isMatch(null, "FoO", false));
@@ -135,22 +135,22 @@ public class MatchStrategyTest {
     @Test
     public void testRegex() {
         // 正常情况，不区分大小写
-        Assert.assertTrue(regex.isMatch(regexValues, "BaR", false));
+        Assert.assertTrue(regex.isMatch(new ArrayList<>(regexValues), "BaR", false));
 
         // 正常情况，区分大小写
-        Assert.assertTrue(regex.isMatch(regexValues, "bar", true));
+        Assert.assertTrue(regex.isMatch(new ArrayList<>(regexValues), "bar", true));
 
         // 测试大小写不一致
-        Assert.assertFalse(regex.isMatch(regexValues, "Bar", true));
+        Assert.assertFalse(regex.isMatch(new ArrayList<>(regexValues), "Bar", true));
 
         // 测试null arg
-        Assert.assertFalse(regex.isMatch(regexValues, null, false));
+        Assert.assertFalse(regex.isMatch(new ArrayList<>(regexValues), null, false));
 
         // 测试null arg
-        Assert.assertFalse(regex.isMatch(regexValues, null, true));
+        Assert.assertFalse(regex.isMatch(new ArrayList<>(regexValues), null, true));
 
         // 测试无效正则
-        Assert.assertFalse(regex.isMatch(invalidRegexValues, "a", false));
+        Assert.assertFalse(regex.isMatch(new ArrayList<>(invalidRegexValues), "a", false));
 
         // 测试null values
         Assert.assertFalse(regex.isMatch(null, "BaR", false));
@@ -177,22 +177,22 @@ public class MatchStrategyTest {
     @Test
     public void testNoEqu() {
         // 正常情况，不区分大小写
-        Assert.assertFalse(noEqu.isMatch(strValues, "FoO", false));
+        Assert.assertFalse(noEqu.isMatch(new ArrayList<>(strValues), "FoO", false));
 
         // 正常情况，不区分大小写
-        Assert.assertTrue(noEqu.isMatch(strValues, "BaR", false));
+        Assert.assertTrue(noEqu.isMatch(new ArrayList<>(strValues), "BaR", false));
 
         // 正常情况，区分大小写
-        Assert.assertFalse(noEqu.isMatch(strValues, "foo", true));
+        Assert.assertFalse(noEqu.isMatch(new ArrayList<>(strValues), "foo", true));
 
         // 测试大小写不一致
-        Assert.assertTrue(noEqu.isMatch(strValues, "Foo", true));
+        Assert.assertTrue(noEqu.isMatch(new ArrayList<>(strValues), "Foo", true));
 
         // 测试null arg
-        Assert.assertFalse(noEqu.isMatch(strValues, null, false));
+        Assert.assertFalse(noEqu.isMatch(new ArrayList<>(strValues), null, false));
 
         // 测试null arg
-        Assert.assertFalse(noEqu.isMatch(strValues, null, true));
+        Assert.assertFalse(noEqu.isMatch(new ArrayList<>(strValues), null, true));
 
         // 测试null values
         Assert.assertFalse(noEqu.isMatch(null, "FoO", false));
@@ -219,34 +219,34 @@ public class MatchStrategyTest {
     @Test
     public void testNoLess() {
         // 正常情况，等于，不区分大小写
-        Assert.assertTrue(noLess.isMatch(intValues, "10", false));
+        Assert.assertTrue(noLess.isMatch(new ArrayList<>(intValues), "10", false));
 
         // 正常情况，等于，区分大小写
-        Assert.assertTrue(noLess.isMatch(intValues, "10", true));
+        Assert.assertTrue(noLess.isMatch(new ArrayList<>(intValues), "10", true));
 
         // 正常情况，大于，不区分大小写
-        Assert.assertTrue(noLess.isMatch(intValues, "11", false));
+        Assert.assertTrue(noLess.isMatch(new ArrayList<>(intValues), "11", false));
 
         // 正常情况，大于，区分大小写
-        Assert.assertTrue(noLess.isMatch(intValues, "11", true));
+        Assert.assertTrue(noLess.isMatch(new ArrayList<>(intValues), "11", true));
 
         // 测试小于，不区分大小写
-        Assert.assertFalse(noLess.isMatch(intValues, "9", false));
+        Assert.assertFalse(noLess.isMatch(new ArrayList<>(intValues), "9", false));
 
         // 测试小于，区分大小写
-        Assert.assertFalse(noLess.isMatch(intValues, "9", true));
+        Assert.assertFalse(noLess.isMatch(new ArrayList<>(intValues), "9", true));
 
         // 测试非数字
-        Assert.assertFalse(noLess.isMatch(intValues, "foo", false));
+        Assert.assertFalse(noLess.isMatch(new ArrayList<>(intValues), "foo", false));
 
         // 测试非数字
-        Assert.assertFalse(noLess.isMatch(intValues, "foo", true));
+        Assert.assertFalse(noLess.isMatch(new ArrayList<>(intValues), "foo", true));
 
         // 测试null arg
-        Assert.assertFalse(noLess.isMatch(intValues, null, false));
+        Assert.assertFalse(noLess.isMatch(new ArrayList<>(intValues), null, false));
 
         // 测试null arg
-        Assert.assertFalse(noLess.isMatch(intValues, null, true));
+        Assert.assertFalse(noLess.isMatch(new ArrayList<>(intValues), null, true));
 
         // 测试null values
         Assert.assertFalse(noLess.isMatch(null, "10", false));
@@ -273,34 +273,34 @@ public class MatchStrategyTest {
     @Test
     public void testNoGreater() {
         // 正常情况，等于，不区分大小写
-        Assert.assertTrue(noGreater.isMatch(intValues, "10", false));
+        Assert.assertTrue(noGreater.isMatch(new ArrayList<>(intValues), "10", false));
 
         // 正常情况，等于，区分大小写
-        Assert.assertTrue(noGreater.isMatch(intValues, "10", true));
+        Assert.assertTrue(noGreater.isMatch(new ArrayList<>(intValues), "10", true));
 
         // 正常情况，小于，不区分大小写
-        Assert.assertTrue(noGreater.isMatch(intValues, "9", false));
+        Assert.assertTrue(noGreater.isMatch(new ArrayList<>(intValues), "9", false));
 
         // 正常情况，小于，区分大小写
-        Assert.assertTrue(noGreater.isMatch(intValues, "9", true));
+        Assert.assertTrue(noGreater.isMatch(new ArrayList<>(intValues), "9", true));
 
         // 测试大于，不区分大小写
-        Assert.assertFalse(noGreater.isMatch(intValues, "11", false));
+        Assert.assertFalse(noGreater.isMatch(new ArrayList<>(intValues), "11", false));
 
         // 测试大于，区分大小写
-        Assert.assertFalse(noGreater.isMatch(intValues, "11", true));
+        Assert.assertFalse(noGreater.isMatch(new ArrayList<>(intValues), "11", true));
 
         // 测试非数字
-        Assert.assertFalse(noGreater.isMatch(intValues, "foo", false));
+        Assert.assertFalse(noGreater.isMatch(new ArrayList<>(intValues), "foo", false));
 
         // 测试非数字
-        Assert.assertFalse(noGreater.isMatch(intValues, "foo", true));
+        Assert.assertFalse(noGreater.isMatch(new ArrayList<>(intValues), "foo", true));
 
         // 测试null arg
-        Assert.assertFalse(noGreater.isMatch(intValues, null, false));
+        Assert.assertFalse(noGreater.isMatch(new ArrayList<>(intValues), null, false));
 
         // 测试null arg
-        Assert.assertFalse(noGreater.isMatch(intValues, null, true));
+        Assert.assertFalse(noGreater.isMatch(new ArrayList<>(intValues), null, true));
 
         // 测试null values
         Assert.assertFalse(noGreater.isMatch(null, "10", false));
@@ -327,34 +327,34 @@ public class MatchStrategyTest {
     @Test
     public void testGreater() {
         // 正常情况，大于，不区分大小写
-        Assert.assertTrue(greater.isMatch(intValues, "11", false));
+        Assert.assertTrue(greater.isMatch(new ArrayList<>(intValues), "11", false));
 
         // 正常情况，大于，区分大小写
-        Assert.assertTrue(greater.isMatch(intValues, "11", true));
+        Assert.assertTrue(greater.isMatch(new ArrayList<>(intValues), "11", true));
 
         // 测试等于，不区分大小写
-        Assert.assertFalse(greater.isMatch(intValues, "10", false));
+        Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), "10", false));
 
         // 测试等于，小于，区分大小写
-        Assert.assertFalse(greater.isMatch(intValues, "10", true));
+        Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), "10", true));
 
         // 测试小于，不区分大小写
-        Assert.assertFalse(greater.isMatch(intValues, "9", false));
+        Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), "9", false));
 
         // 测试小于，区分大小写
-        Assert.assertFalse(greater.isMatch(intValues, "9", true));
+        Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), "9", true));
 
         // 测试非数字
-        Assert.assertFalse(greater.isMatch(intValues, "foo", false));
+        Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), "foo", false));
 
         // 测试非数字
-        Assert.assertFalse(greater.isMatch(intValues, "foo", true));
+        Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), "foo", true));
 
         // 测试null arg
-        Assert.assertFalse(greater.isMatch(intValues, null, false));
+        Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), null, false));
 
         // 测试null arg
-        Assert.assertFalse(greater.isMatch(intValues, null, true));
+        Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), null, true));
 
         // 测试null values
         Assert.assertFalse(greater.isMatch(null, "11", false));
@@ -381,34 +381,34 @@ public class MatchStrategyTest {
     @Test
     public void testLess() {
         // 正常情况，小于，不区分大小写
-        Assert.assertTrue(less.isMatch(intValues, "9", false));
+        Assert.assertTrue(less.isMatch(new ArrayList<>(intValues), "9", false));
 
         // 正常情况，小于，区分大小写
-        Assert.assertTrue(less.isMatch(intValues, "9", true));
+        Assert.assertTrue(less.isMatch(new ArrayList<>(intValues), "9", true));
 
         // 测试等于，不区分大小写
-        Assert.assertFalse(less.isMatch(intValues, "10", false));
+        Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), "10", false));
 
         // 测试等于，小于，区分大小写
-        Assert.assertFalse(less.isMatch(intValues, "10", true));
+        Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), "10", true));
 
         // 测试大于，不区分大小写
-        Assert.assertFalse(less.isMatch(intValues, "11", false));
+        Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), "11", false));
 
         // 测试大于，区分大小写
-        Assert.assertFalse(less.isMatch(intValues, "11", true));
+        Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), "11", true));
 
         // 测试非数字
-        Assert.assertFalse(less.isMatch(intValues, "foo", false));
+        Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), "foo", false));
 
         // 测试非数字
-        Assert.assertFalse(less.isMatch(intValues, "foo", true));
+        Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), "foo", true));
 
         // 测试null arg
-        Assert.assertFalse(less.isMatch(intValues, null, false));
+        Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), null, false));
 
         // 测试null arg
-        Assert.assertFalse(less.isMatch(intValues, null, true));
+        Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), null, true));
 
         // 测试null values
         Assert.assertFalse(less.isMatch(null, "9", false));
@@ -435,19 +435,19 @@ public class MatchStrategyTest {
     @Test
     public void testIn() {
         // 正常情况，不区分大小写
-        Assert.assertTrue(in.isMatch(strValues, "BaR", false));
+        Assert.assertTrue(in.isMatch(new ArrayList<>(strValues), "BaR", false));
 
         // 正常情况，区分大小写
-        Assert.assertTrue(in.isMatch(strValues, "foo", true));
+        Assert.assertTrue(in.isMatch(new ArrayList<>(strValues), "foo", true));
 
         // 测试大小写不一致
-        Assert.assertFalse(in.isMatch(strValues, "foO", true));
+        Assert.assertFalse(in.isMatch(new ArrayList<>(strValues), "foO", true));
 
         // 测试null arg
-        Assert.assertFalse(in.isMatch(strValues, null, false));
+        Assert.assertFalse(in.isMatch(new ArrayList<>(strValues), null, false));
 
         // 测试null arg
-        Assert.assertFalse(in.isMatch(strValues, null, true));
+        Assert.assertFalse(in.isMatch(new ArrayList<>(strValues), null, true));
 
         // 测试null values
         Assert.assertFalse(in.isMatch(null, "BaR", false));
@@ -474,19 +474,19 @@ public class MatchStrategyTest {
     @Test
     public void testPrefix() {
         // 正常情况，不区分大小写
-        Assert.assertTrue(prefix.isMatch(strValues, "FoOBar", false));
+        Assert.assertTrue(prefix.isMatch(new ArrayList<>(strValues), "FoOBar", false));
 
         // 正常情况，区分大小写
-        Assert.assertTrue(prefix.isMatch(strValues, "fooBar", true));
+        Assert.assertTrue(prefix.isMatch(new ArrayList<>(strValues), "fooBar", true));
 
         // 测试大小写不一致
-        Assert.assertFalse(prefix.isMatch(strValues, "foOBar", true));
+        Assert.assertFalse(prefix.isMatch(new ArrayList<>(strValues), "foOBar", true));
 
         // 测试null arg
-        Assert.assertFalse(prefix.isMatch(strValues, null, false));
+        Assert.assertFalse(prefix.isMatch(new ArrayList<>(strValues), null, false));
 
         // 测试null arg
-        Assert.assertFalse(prefix.isMatch(strValues, null, true));
+        Assert.assertFalse(prefix.isMatch(new ArrayList<>(strValues), null, true));
 
         // 测试null values
         Assert.assertFalse(prefix.isMatch(null, "FoOBar", false));

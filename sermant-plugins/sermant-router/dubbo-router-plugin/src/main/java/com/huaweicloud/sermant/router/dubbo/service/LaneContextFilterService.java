@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,29 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.router.common.request;
+package com.huaweicloud.sermant.router.dubbo.service;
 
-import java.util.Collections;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
- * 请求
+ * ContextFilter的service
  *
  * @author provenceee
- * @since 2022-07-12
+ * @since 2023-02-16
  */
-public class RequestHeader {
-    private final Map<String, List<String>> header;
-
+public interface LaneContextFilterService extends PluginService {
     /**
-     * 构造方法
+     * 获取泳道标记
      *
-     * @param header 请求头/attachment
+     * @param interfaceName 接口名
+     * @param methodName 方法名
+     * @param attachments attachments
+     * @param args 接口参数
+     * @return 泳道标记
      */
-    public RequestHeader(Map<String, List<String>> header) {
-        this.header = header;
-    }
-
-    public Map<String, List<String>> getHeader() {
-        return Optional.ofNullable(header).orElse(Collections.emptyMap());
-    }
+    Map<String, List<String>> getLane(String interfaceName, String methodName, Map<String, Object> attachments,
+        Object[] args);
 }

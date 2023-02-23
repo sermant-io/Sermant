@@ -34,6 +34,7 @@ public class DubboReflectUtils {
     private static final String GET_PARAMETERS_METHOD_NAME = "getParameters";
     private static final String GET_URL_METHOD_NAME = "getUrl";
     private static final String GET_SERVICE_INTERFACE_METHOD_NAME = "getServiceInterface";
+    private static final String GET_SERVICE_KEY_METHOD_NAME = "getServiceKey";
     private static final String GET_METHOD_NAME_METHOD_NAME = "getMethodName";
     private static final String GET_ARGUMENTS_METHOD_NAME = "getArguments";
     private static final String SET_PARAMETERS_METHOD_NAME = "setParameters";
@@ -104,6 +105,18 @@ public class DubboReflectUtils {
      */
     public static String getServiceInterface(Object obj) {
         return ReflectUtils.invokeWithNoneParameterAndReturnString(obj, GET_SERVICE_INTERFACE_METHOD_NAME);
+    }
+
+    /**
+     * 获取服务接口名
+     *
+     * @param obj url
+     * @return 服务接口名
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
+     */
+    public static String getServiceKey(Object obj) {
+        return ReflectUtils.invokeWithNoneParameterAndReturnString(obj, GET_SERVICE_KEY_METHOD_NAME);
     }
 
     /**

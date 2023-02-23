@@ -34,9 +34,19 @@ public class Match {
     private String source;
 
     /**
+     * http请求方法/dubbo接口方法
+     */
+    private String method;
+
+    /**
      * dubbo为接口名，spring为url路径
      */
     private String path;
+
+    /**
+     * 协议：http/dubbo
+     */
+    private Protocol protocol;
 
     /**
      * 是否全匹配
@@ -85,6 +95,22 @@ public class Match {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public Protocol getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(Protocol protocol) {
+        this.protocol = protocol;
     }
 
     public String getPath() {

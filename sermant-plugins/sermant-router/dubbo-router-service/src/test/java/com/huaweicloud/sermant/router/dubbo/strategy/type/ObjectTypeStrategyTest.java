@@ -43,8 +43,12 @@ public class ObjectTypeStrategyTest {
         // 测试null
         Assert.assertNotEquals("bar", strategy.getValue(new Entity(), ".test").orElse(null));
 
-        // 测试找不到字段
+        // 测试找不到方法
         Assert.assertNull(strategy.getValue(new Entity(), ".foo").orElse(null));
+
+        Assert.assertNull(strategy.getValue(new Entity(), ".Foo").orElse(null));
+
+        Assert.assertNull(strategy.getValue(new Entity(), ".$oo").orElse(null));
 
         // 测试不等于
         entity.setTest("foo");

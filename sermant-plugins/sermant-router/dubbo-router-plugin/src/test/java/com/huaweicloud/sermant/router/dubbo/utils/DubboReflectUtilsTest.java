@@ -140,6 +140,18 @@ public class DubboReflectUtilsTest {
     }
 
     /**
+     * 获取服务接口名
+     *
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
+     */
+    @Test
+    public void testGetServiceKey() {
+        Assert.assertEquals("com.huaweicloud.foo.BarTest:0.0.1", DubboReflectUtils.getServiceKey(ALIBABA_URL));
+        Assert.assertEquals("com.huaweicloud.foo.FooTest:0.0.1", DubboReflectUtils.getServiceKey(APACHE_URL));
+    }
+
+    /**
      * 获取dubbo请求方法名
      *
      * @see com.alibaba.dubbo.rpc.Invocation

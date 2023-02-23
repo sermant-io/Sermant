@@ -18,9 +18,7 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
@@ -49,8 +47,6 @@ import javax.servlet.http.HttpServletRequest;
 public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
     private final LoadBalancerService loadBalancerService;
 
-    private final RouterConfig routerConfig;
-
     private final boolean canLoadZuul;
 
     /**
@@ -58,7 +54,6 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
      */
     public BaseLoadBalancerInterceptor() {
         loadBalancerService = ServiceManager.getService(LoadBalancerService.class);
-        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
         canLoadZuul = canLoadZuul();
     }
 
@@ -73,8 +68,7 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
             BaseLoadBalancer loadBalancer = (BaseLoadBalancer) object;
             String name = loadBalancer.getName();
             RequestData requestData = getRequestData().orElse(null);
-            List<Object> targetInstances = loadBalancerService
-                    .getTargetInstances(name, serverList, requestData);
+            List<Object> targetInstances = loadBalancerService.getTargetInstances(name, serverList, requestData);
             context.skip(Collections.unmodifiableList(targetInstances));
         }
         return context;

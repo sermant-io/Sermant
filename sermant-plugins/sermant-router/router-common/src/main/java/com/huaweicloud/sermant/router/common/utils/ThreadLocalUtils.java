@@ -17,7 +17,10 @@
 package com.huaweicloud.sermant.router.common.utils;
 
 import com.huaweicloud.sermant.router.common.request.RequestData;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.request.RequestTag;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 线程变量
@@ -26,7 +29,7 @@ import com.huaweicloud.sermant.router.common.request.RequestHeader;
  * @since 2022-07-08
  */
 public class ThreadLocalUtils {
-    private static final ThreadLocal<RequestHeader> HEADER = new ThreadLocal<>();
+    private static final ThreadLocal<RequestTag> TAG = new ThreadLocal<>();
 
     private static final ThreadLocal<RequestData> DATA = new ThreadLocal<>();
 
@@ -47,8 +50,8 @@ public class ThreadLocalUtils {
      *
      * @return 线程变量
      */
-    public static RequestHeader getRequestHeader() {
-        return HEADER.get();
+    public static RequestTag getRequestTag() {
+        return TAG.get();
     }
 
     /**
@@ -61,12 +64,20 @@ public class ThreadLocalUtils {
     }
 
     /**
-     * 存入线程变量
+     * 增加线程中的请求标记
      *
-     * @param value 线程变量
+     * @param tag 请求标记
      */
-    public static void setRequestHeader(RequestHeader value) {
-        HEADER.set(value);
+    public static void addRequestTag(Map<String, List<String>> tag) {
+        if (CollectionUtils.isEmpty(tag)) {
+            return;
+        }
+        RequestTag requestTag = TAG.get();
+        if (requestTag == null) {
+            TAG.set(new RequestTag(tag));
+            return;
+        }
+        requestTag.addTag(tag);
     }
 
     /**
@@ -79,7 +90,7 @@ public class ThreadLocalUtils {
     /**
      * 删除线程变量
      */
-    public static void removeRequestHeader() {
-        HEADER.remove();
+    public static void removeRequestTag() {
+        TAG.remove();
     }
 }

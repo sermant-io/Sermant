@@ -18,6 +18,8 @@ package com.huaweicloud.sermant.router.config.service;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
+import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.router.config.entity.EntireRule;
 import com.huaweicloud.sermant.router.config.entity.Match;
 import com.huaweicloud.sermant.router.config.entity.MatchRule;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
@@ -76,7 +78,10 @@ public class ConfigServiceTest {
         match.setHeaders(Collections.singletonMap("bar", Collections.singletonList(new MatchRule())));
         Rule rule = new Rule();
         rule.setMatch(match);
-        RuleUtils.updateMatchKeys("bar", Collections.singletonList(rule));
+        EntireRule entireRule = new EntireRule();
+        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        entireRule.setRules( Collections.singletonList(rule));
+        RuleUtils.updateMatchKeys("bar", Collections.singletonList(entireRule));
         DubboConfigServiceImpl dubboConfigService = new DubboConfigServiceImpl();
         Set<String> headerKeys = dubboConfigService.getMatchKeys();
         Assert.assertEquals(1, headerKeys.size());
@@ -84,7 +89,7 @@ public class ConfigServiceTest {
         // 清除缓存
         RuleUtils.initMatchKeys(new RouterConfiguration());
 
-        RuleUtils.updateMatchKeys("bar", Collections.singletonList(rule));
+        RuleUtils.updateMatchKeys("bar", Collections.singletonList(entireRule));
         SpringConfigServiceImpl springConfigService = new SpringConfigServiceImpl();
         headerKeys = springConfigService.getMatchKeys();
         Assert.assertEquals(1, headerKeys.size());
@@ -101,7 +106,10 @@ public class ConfigServiceTest {
         match.setHeaders(Collections.singletonMap("bar", Collections.singletonList(new MatchRule())));
         Rule rule = new Rule();
         rule.setMatch(match);
-        RuleUtils.updateMatchKeys("bar", Collections.singletonList(rule));
+        EntireRule entireRule = new EntireRule();
+        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        entireRule.setRules( Collections.singletonList(rule));
+        RuleUtils.updateMatchKeys("bar", Collections.singletonList(entireRule));
         DubboConfigServiceImpl dubboConfigService = new DubboConfigServiceImpl();
         Set<String> headerKeys = dubboConfigService.getMatchKeys();
         Assert.assertEquals(3, headerKeys.size());
@@ -109,7 +117,7 @@ public class ConfigServiceTest {
         // 清除缓存
         RuleUtils.initMatchKeys(new RouterConfiguration());
 
-        RuleUtils.updateMatchKeys("bar", Collections.singletonList(rule));
+        RuleUtils.updateMatchKeys("bar", Collections.singletonList(entireRule));
         SpringConfigServiceImpl springConfigService = new SpringConfigServiceImpl();
         headerKeys = springConfigService.getMatchKeys();
         Assert.assertEquals(3, headerKeys.size());

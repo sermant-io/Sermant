@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.FlowContextUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
@@ -179,9 +179,9 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
     private void putAttachment(Object invocation) {
         Map<String, Object> attachments = DubboReflectUtils.getAttachmentsByInvocation(invocation);
         if (attachments != null) {
-            RequestHeader requestHeader = ThreadLocalUtils.getRequestHeader();
-            if (requestHeader != null) {
-                requestHeader.getHeader().forEach((key, value) -> attachments.putIfAbsent(key, value.get(0)));
+            RequestTag requestTag = ThreadLocalUtils.getRequestTag();
+            if (requestTag != null) {
+                requestTag.getTag().forEach((key, value) -> attachments.putIfAbsent(key, value.get(0)));
             }
         }
     }
