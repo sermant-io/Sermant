@@ -108,10 +108,9 @@ public class RouterConfiguration {
         rules.clear();
         for (String serviceName : map.keySet()) {
             for (EntireRule entireRule : map.get(serviceName)) {
-                Map<String, List<Rule>> serviceRuleMap = rules.getOrDefault(entireRule.getKind(),
-                        new ConcurrentHashMap<>());
+                Map<String, List<Rule>> serviceRuleMap = rules.computeIfAbsent(entireRule.getKind(),
+                    key -> new ConcurrentHashMap<>());
                 serviceRuleMap.putIfAbsent(serviceName, entireRule.getRules());
-                rules.put(entireRule.getKind(), serviceRuleMap);
             }
         }
     }
@@ -135,6 +134,7 @@ public class RouterConfiguration {
      * @return 是否无效
      */
     public static boolean isInValid(RouterConfiguration configuration) {
-        return configuration == null || CollectionUtils.isEmpty(configuration.getRouteRule());
+        return configuration == null || (CollectionUtils.isEmpty(configuration.getRouteRule())
+            && CollectionUtils.isEmpty(configuration.getGlobalRule()));
     }
 }

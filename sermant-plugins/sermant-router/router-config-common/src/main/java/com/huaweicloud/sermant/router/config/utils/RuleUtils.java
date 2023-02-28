@@ -68,10 +68,13 @@ public class RuleUtils {
 
     private static final int ONO_HUNDRED = 100;
 
-    private static final RouterConfig routerConfig = PluginConfigManager.getConfig(RouterConfig.class);
+    private static final String VERSION = "version";
 
-    public RuleUtils() {
+    private static final String ZONE = "zone";
 
+    private static final RouterConfig ROUTER_CONFIG = PluginConfigManager.getConfig(RouterConfig.class);
+
+    private RuleUtils() {
     }
 
     /**
@@ -130,7 +133,9 @@ public class RuleUtils {
             return;
         }
         List<Rule> rules = configuration.getGlobalRule().get(RouterConstant.FLOW_MATCH_KIND);
-        addKeys(rules, GLOBAL_MATCH_KEYS);
+        if (!CollectionUtils.isEmpty(rules)) {
+            addKeys(rules, GLOBAL_MATCH_KEYS);
+        }
     }
 
     /**
@@ -331,14 +336,14 @@ public class RuleUtils {
      * 获取目标规则
      *
      * @param configuration 路由配置
-     * @param method 方法名
-     * @param path dubbo接口名/url路径
-     * @param serviceName 本服务服务名
-     * @param protocol 获取哪种协议的规则
+     * @param method        方法名
+     * @param path          dubbo接口名/url路径
+     * @param serviceName   本服务服务名
+     * @param protocol      获取哪种协议的规则
      * @return 目标规则
      */
     public static List<Rule> getLaneRules(RouterConfiguration configuration, String method, String path,
-        String serviceName, Protocol protocol) {
+                                          String serviceName, Protocol protocol) {
         if (RouterConfiguration.isInValid(configuration)) {
             return Collections.emptyList();
         }
@@ -483,8 +488,8 @@ public class RuleUtils {
 
     private static boolean isInvalidMatchRule(MatchRule matchRule) {
         return matchRule == null || matchRule.getValueMatch() == null
-                || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
-                || matchRule.getValueMatch().getMatchStrategy() == null;
+            || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
+            || matchRule.getValueMatch().getMatchStrategy() == null;
     }
 
     private static boolean isInvalidRoute(Route route, String kind) {
@@ -495,17 +500,33 @@ public class RuleUtils {
             return route.getWeight() == null || CollectionUtils.isEmpty(route.getInjectTags());
         }
 
-        // 修正配置为保留字段CONSUMER_TAG的规则
+        // 修正tag配置为保留字段CONSUMER_TAG的规则, 并将其权重设置为100
         Map<String, String> tags = route.getTags();
-        if (route.getWeight() == null) {
-            for (String key : tags.keySet()) {
-                if (!RouterConstant.CONSUMER_TAG.equals(tags.get(key))) {
-                    return true;
-                }
-                tags.put(key, routerConfig.getParameters().get(key));
+        if (CollectionUtils.isEmpty(tags)) {
+            return true;
+        }
+        for (String key : tags.keySet()) {
+            if (!RouterConstant.CONSUMER_TAG.equals(tags.get(key))) {
+                continue;
             }
-            route.setWeight(ONO_HUNDRED);
-            return false;
+            if (VERSION.equals(key)) {
+                tags.put(key, ROUTER_CONFIG.getRouterVersion());
+                route.setWeight(ONO_HUNDRED);
+                continue;
+            }
+            if (ZONE.equals(key)) {
+                tags.put(key, ROUTER_CONFIG.getZone());
+                route.setWeight(ONO_HUNDRED);
+                continue;
+            }
+            Map<String, String> parameters = ROUTER_CONFIG.getParameters();
+            if (!CollectionUtils.isEmpty(parameters)) {
+                tags.put(key, parameters.get(key));
+                route.setWeight(ONO_HUNDRED);
+            }
+        }
+        if (route.getWeight() == null) {
+            return true;
         }
         return false;
     }

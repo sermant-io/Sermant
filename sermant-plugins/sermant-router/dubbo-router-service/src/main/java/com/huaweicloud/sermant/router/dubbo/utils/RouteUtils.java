@@ -43,35 +43,6 @@ public class RouteUtils {
     }
 
     /**
-     * 获取匹配的路由
-     *
-     * @param list 有效的规则
-     * @param arguments dubbo的arguments参数
-     * @param attachments dubbo的attachments参数
-     * @return 匹配的路由
-     */
-    public static List<Route> getRoutes(List<Rule> list, Object[] arguments, Map<String, Object> attachments) {
-        for (Rule rule : list) {
-            Match match = rule.getMatch();
-            if (match == null) {
-                return rule.getRoute();
-            }
-            List<Route> routeList;
-            if (!CollectionUtils.isEmpty(match.getAttachments()) && !CollectionUtils.isEmpty(attachments)) {
-                routeList = getRoutesByAttachments(attachments, rule);
-            } else if (!CollectionUtils.isEmpty(match.getArgs()) && arguments != null && arguments.length > 0) {
-                routeList = getRoutesByArguments(arguments, rule);
-            } else {
-                routeList = Collections.emptyList();
-            }
-            if (!CollectionUtils.isEmpty(routeList)) {
-                return routeList;
-            }
-        }
-        return Collections.emptyList();
-    }
-
-    /**
      * 获取匹配的泳道
      *
      * @param list 有效的规则
@@ -137,90 +108,5 @@ public class RouteUtils {
             }
         }
         return true;
-    }
-
-    /**
-     * 根据arguments参数获取匹配的路由
-     *
-     * @param arguments dubbo的arguments参数
-     * @param rule 规则
-     * @return 匹配的路由
-     */
-    private static List<Route> getRoutesByArguments(Object[] arguments, Rule rule) {
-        Match match = rule.getMatch();
-        boolean isFullMatch = match.isFullMatch();
-        Map<String, List<MatchRule>> args = match.getArgs();
-        for (Entry<String, List<MatchRule>> entry : args.entrySet()) {
-            String key = entry.getKey();
-            if (!key.startsWith(RouterConstant.DUBBO_SOURCE_TYPE_PREFIX)) {
-                continue;
-            }
-            List<MatchRule> matchRuleList = entry.getValue();
-            for (MatchRule matchRule : matchRuleList) {
-                ValueMatch valueMatch = matchRule.getValueMatch();
-                List<String> values = valueMatch.getValues();
-                MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
-                String arg = TypeStrategyChooser.INSTANCE.getValue(matchRule.getType(), key, arguments).orElse(null);
-                if (!isFullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 如果不是全匹配，且匹配了一个，那么直接return
-                    return rule.getRoute();
-                }
-                if (isFullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 如果是全匹配，且有一个不匹配，则继续下一个规则
-                    return Collections.emptyList();
-                }
-            }
-        }
-        if (isFullMatch) {
-            // 如果是全匹配，走到这里，说明没有不匹配的，直接return
-            return rule.getRoute();
-        }
-
-        // 如果不是全匹配，走到这里，说明没有一个规则能够匹配上，则继续下一个规则
-        return Collections.emptyList();
-    }
-
-    /**
-     * 根据attachments参数获取匹配的路由
-     *
-     * @param attachments dubbo的attachments参数
-     * @param rule 规则
-     * @return 匹配的路由
-     */
-    private static List<Route> getRoutesByAttachments(Map<String, Object> attachments, Rule rule) {
-        Match match = rule.getMatch();
-        if (match == null) {
-            return rule.getRoute();
-        }
-        boolean isFullMatch = match.isFullMatch();
-        Map<String, List<MatchRule>> attachmentsRule = match.getAttachments();
-        if (CollectionUtils.isEmpty(attachmentsRule)) {
-            return rule.getRoute();
-        }
-        for (Entry<String, List<MatchRule>> entry : attachmentsRule.entrySet()) {
-            String key = entry.getKey();
-            List<MatchRule> matchRuleList = entry.getValue();
-            for (MatchRule matchRule : matchRuleList) {
-                ValueMatch valueMatch = matchRule.getValueMatch();
-                List<String> values = valueMatch.getValues();
-                MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
-                String arg = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);
-                if (!isFullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 如果不是全匹配，且匹配了一个，直接返回
-                    return rule.getRoute();
-                }
-                if (isFullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 如果是全匹配，且又一个不匹配，继续下一个规则
-                    return Collections.emptyList();
-                }
-            }
-        }
-        if (isFullMatch) {
-            // 如果是全匹配，走到这里说明全部匹配，直接返回
-            return rule.getRoute();
-        }
-
-        // 如果不是全匹配，走到这里，说明没有一个规则能够匹配，继续下一个规则
-        return Collections.emptyList();
     }
 }

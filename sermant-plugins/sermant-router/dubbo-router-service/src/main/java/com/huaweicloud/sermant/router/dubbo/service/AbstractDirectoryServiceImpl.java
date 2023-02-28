@@ -16,31 +16,16 @@
 
 package com.huaweicloud.sermant.router.dubbo.service;
 
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
-import com.huaweicloud.sermant.router.common.config.RouterConfig;
-import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
-import com.huaweicloud.sermant.router.common.utils.FlowContextUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
-import com.huaweicloud.sermant.router.config.cache.ConfigCache;
-import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
-import com.huaweicloud.sermant.router.config.entity.Route;
-import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.entity.Rule;
-import com.huaweicloud.sermant.router.config.utils.FlowRuleUtils;
-import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
-import com.huaweicloud.sermant.router.dubbo.strategy.RuleStrategyHandler;
+import com.huaweicloud.sermant.router.dubbo.handler.HandlerChainEntry;
 import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
-import com.huaweicloud.sermant.router.dubbo.utils.RouteUtils;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * AbstractDirectory的service
@@ -58,36 +43,18 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
     // dubbo请求参数中是否为consumer的value值
     private static final String CONSUMER_VALUE = "consumer";
 
-    private static final String DASH = "-";
-
-    private static final String POINT = ".";
-
-    private final RouterConfig routerConfig;
-
-    // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
-    private final Map<String, String> allMismatchTags;
-
     /**
      * 构造方法
      */
     public AbstractDirectoryServiceImpl() {
-        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
-        allMismatchTags = new HashMap<>();
-        for (String requestTag : routerConfig.getRequestTags()) {
-            // dubbo会把key中的"-"替换成"."
-            allMismatchTags.put(requestTag.replace(DASH, POINT), null);
-        }
-
-        // 所有实例都含有version，所以不能存入null值
-        allMismatchTags.remove(RouterConstant.DUBBO_VERSION_KEY);
     }
 
     /**
      * 筛选标签invoker
      *
      * @param registryDirectory RegistryDirectory
-     * @param arguments 参数
-     * @param result invokers
+     * @param arguments         参数
+     * @param result            invokers
      * @return invokers
      * @see com.alibaba.dubbo.registry.integration.RegistryDirectory
      * @see org.apache.dubbo.registry.integration.RegistryDirectory
@@ -117,63 +84,8 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
         if (StringUtils.isBlank(targetService)) {
             return invokers;
         }
-        if (!shouldHandle(invokers)) {
-            return invokers;
-        }
-        List<Object> targetInvokers;
-        if (routerConfig.isUseRequestRouter()) {
-            targetInvokers = getTargetInvokersByRequest(targetService, invokers, invocation);
-        } else {
-            targetInvokers = getTargetInvokersByRules(invokers, invocation, queryMap, targetService, serviceInterface);
-        }
-        return getZoneInvokers(targetService, targetInvokers);
-    }
 
-    /**
-     * 解析下dubbo的附件信息
-     *
-     * @param invocation dubbo的invocation
-     * @return {@link Map}<{@link String}, {@link Object}>
-     */
-    private Map<String, Object> parseAttachments(Object invocation) {
-        Map<String, Object> attachments = DubboReflectUtils.getAttachments(invocation);
-        return FlowContextUtils.decodeAttachments(attachments);
-    }
-
-    /**
-     * 获取dubbo应用 group
-     *
-     * @param queryMap queryMap
-     * @return 值
-     */
-    private String getGroup(Map<String, String> queryMap) {
-        String group = queryMap.get(RouterConstant.DUBBO_GROUP_KEY);
-        return group == null ? "" : group;
-    }
-
-    /**
-     * 获取dubbo 应用 version
-     *
-     * @param queryMap queryMap
-     * @return 值
-     */
-    private String getVersion(Map<String, String> queryMap) {
-        String version = queryMap.get(RouterConstant.DUBBO_VERSION_KEY);
-        return version == null ? "" : version;
-    }
-
-    private List<Object> getZoneInvokers(String targetService, List<Object> invokers) {
-        EnabledStrategy strategy = ConfigCache.getEnabledStrategy(RouterConstant.DUBBO_CACHE_NAME);
-        if (shouldHandle(invokers) && routerConfig.isEnabledDubboZoneRouter() && strategy.getStrategy()
-            .isMatch(strategy.getValue(), targetService)) {
-            return RuleStrategyHandler.INSTANCE.getZoneInvokers(targetService, invokers, routerConfig.getZone());
-        }
-        return invokers;
-    }
-
-    private boolean shouldHandle(List<Object> invokers) {
-        // 实例数大于1才能路由
-        return invokers != null && invokers.size() > 1;
+        return HandlerChainEntry.INSTANCE.process(targetService, invokers, invocation, queryMap, serviceInterface);
     }
 
     private void putAttachment(Object invocation) {
@@ -184,70 +96,5 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
                 requestTag.getTag().forEach((key, value) -> attachments.putIfAbsent(key, value.get(0)));
             }
         }
-    }
-
-    private List<Object> getTargetInvokersByRules(List<Object> invokers, Object invocation,
-        Map<String, String> queryMap, String targetService, String serviceInterface) {
-        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
-        if (RouterConfiguration.isInValid(configuration)) {
-            return invokers;
-        }
-        String interfaceName = getGroup(queryMap) + "/" + serviceInterface + POINT
-            + DubboReflectUtils.getMethodName(invocation) + ":" + getVersion(queryMap);
-        List<Rule> rules = FlowRuleUtils
-            .getFlowRules(configuration, targetService, interfaceName, DubboCache.INSTANCE.getAppName());
-        List<Route> routes = RouteUtils.getRoutes(rules, DubboReflectUtils.getArguments(invocation),
-            parseAttachments(invocation));
-        if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, routes);
-        }
-        return RuleStrategyHandler.INSTANCE
-            .getMismatchInvokers(targetService, invokers, RuleUtils.getTags(rules, true), true);
-    }
-
-    private List<Object> getTargetInvokersByRequest(String targetName, List<Object> invokers, Object invocation) {
-        Map<String, Object> attachments = parseAttachments(invocation);
-        List<String> requestTags = routerConfig.getRequestTags();
-        if (CollectionUtils.isEmpty(requestTags)) {
-            return invokers;
-        }
-
-        // 用于匹配实例的tags集合
-        Map<String, String> tags = new HashMap<>();
-
-        // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
-        Map<String, String> mismatchTags = new HashMap<>();
-        for (String key : attachments.keySet()) {
-            if (!requestTags.contains(key)) {
-                continue;
-            }
-            String replaceDashKey = key;
-            if (replaceDashKey.contains(DASH)) {
-                // dubbo会把key中的"-"替换成"."
-                replaceDashKey = replaceDashKey.replace(DASH, POINT);
-            }
-            mismatchTags.put(replaceDashKey, null);
-            String value = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);
-            if (StringUtils.isExist(value)) {
-                tags.put(replaceDashKey, value);
-            }
-        }
-        if (StringUtils.isExist(tags.get(RouterConstant.DUBBO_VERSION_KEY))) {
-            mismatchTags.put(RouterConstant.DUBBO_VERSION_KEY, tags.get(RouterConstant.DUBBO_VERSION_KEY));
-        } else {
-            // 所有实例都含有version，所以不能存入null值
-            mismatchTags.remove(RouterConstant.DUBBO_VERSION_KEY);
-        }
-        boolean isReturnAllInstancesWhenMismatch = false;
-        if (CollectionUtils.isEmpty(mismatchTags)) {
-            mismatchTags = allMismatchTags;
-            isReturnAllInstancesWhenMismatch = true;
-        }
-        List<Object> result = RuleStrategyHandler.INSTANCE.getMatchInvokersByRequest(targetName, invokers, tags);
-        if (CollectionUtils.isEmpty(result)) {
-            result = RuleStrategyHandler.INSTANCE.getMismatchInvokers(targetName, invokers,
-                Collections.singletonList(mismatchTags), isReturnAllInstancesWhenMismatch);
-        }
-        return result;
     }
 }

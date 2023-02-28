@@ -65,7 +65,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
         }
 
         // 所有实例都含有version，所以不能存入null值
-        allMismatchTags.remove(RouterConstant.DUBBO_VERSION_KEY);
+        allMismatchTags.remove(VERSION_KEY);
     }
 
     @Override
@@ -136,6 +136,9 @@ public class FlowRouteHandler extends AbstractRouteHandler {
             return instances;
         }
         List<Rule> rules = FlowRuleUtils.getFlowRules(configuration, targetName, path, AppCache.INSTANCE.getAppName());
+        if (CollectionUtils.isEmpty(rules)) {
+            return instances;
+        }
         List<Route> routes = getRoutes(rules, header);
         if (!CollectionUtils.isEmpty(routes)) {
             return RuleStrategyHandler.INSTANCE.getMatchInstances(targetName, instances, routes);
@@ -198,5 +201,4 @@ public class FlowRouteHandler extends AbstractRouteHandler {
         // 如果不是全匹配，走到这里，说明没有一个规则能够匹配上，则继续下一个规则
         return Collections.emptyList();
     }
-
 }

@@ -21,16 +21,7 @@ import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
-import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
-import com.huaweicloud.sermant.router.config.entity.EntireRule;
-import com.huaweicloud.sermant.router.config.entity.Match;
-import com.huaweicloud.sermant.router.config.entity.MatchRule;
-import com.huaweicloud.sermant.router.config.entity.MatchStrategy;
-import com.huaweicloud.sermant.router.config.entity.Route;
-import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.entity.Rule;
-import com.huaweicloud.sermant.router.config.entity.Strategy;
-import com.huaweicloud.sermant.router.config.entity.ValueMatch;
+import com.huaweicloud.sermant.router.spring.RuleInitializationUtils;
 import com.huaweicloud.sermant.router.spring.TestDefaultServiceInstance;
 import com.huaweicloud.sermant.router.spring.cache.AppCache;
 
@@ -85,26 +76,20 @@ public class LoadBalancerServiceTest {
         mockPluginConfigManager.close();
     }
 
-    public LoadBalancerServiceTest() {
-        initRule();
-        EnabledStrategy strategy = ConfigCache.getEnabledStrategy(RouterConstant.SPRING_CACHE_NAME);
-        strategy.reset(Strategy.ALL, Collections.emptyList());
-    }
-
     /**
      * 重置
      */
     @Before
     public void reset() {
         config.setUseRequestRouter(false);
-        config.setRequestTags(null);
     }
 
     /**
-     * 测试getTargetInstancesByRules方法
+     * 测试getGetTargetInstances方法(flow匹配规则)
      */
     @Test
-    public void testGetTargetInstancesByRules() {
+    public void testGetGetTargetInstancesByFlowMatchRules() {
+        RuleInitializationUtils.initFlowMatchRule();
         List<Object> instances = new ArrayList<>();
         ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0");
         instances.add(instance1);
@@ -116,189 +101,54 @@ public class LoadBalancerServiceTest {
             new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
+        ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }
 
     /**
-     * 测试getTargetInstancesByRequest方法
+     * 测试getGetTargetInstances方法(tag匹配规则)
      */
     @Test
-    public void testGetTargetInstancesByRequest() {
-        config.setUseRequestRouter(true);
-        List<Object> instances = new ArrayList<>();
-        ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0",
-            Collections.singletonMap("bar", "bar1"));
-        instances.add(instance1);
-        ServiceInstance instance2 = TestDefaultServiceInstance
-            .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("foo", "bar2"));
-        instances.add(instance2);
-        ServiceInstance instance3 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.1");
-        instances.add(instance3);
-        Map<String, List<String>> header = new HashMap<>();
-
-        // 测试无tags时
-        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
-        Assert.assertEquals(instances, targetInstances);
-
-        // 设置tags
-        config.setRequestTags(Arrays.asList("foo", "bar", "version"));
-
-        // 匹配foo: bar2实例
-        header.clear();
-        header.put("foo", Collections.singletonList("bar2"));
-        header.put("foo1", Collections.singletonList("bar2"));
-        targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
-        Assert.assertEquals(1, targetInstances.size());
-        Assert.assertEquals(instance2, targetInstances.get(0));
-
-        // 匹配1.0.0版本实例
-        header.clear();
-        header.put("version", Collections.singletonList("1.0.0"));
-        targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
-        Assert.assertEquals(1, targetInstances.size());
-        Assert.assertEquals(instance1, targetInstances.get(0));
-    }
-
-    /**
-     * 测试getTargetInstancesByRequest方法不匹配时
-     */
-    @Test
-    public void testGetTargetInstancesByRequestWithMismatch() {
-        config.setUseRequestRouter(true);
-        config.setRequestTags(Arrays.asList("foo", "bar", "version"));
-        List<Object> instances = new ArrayList<>();
-        ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0",
-            Collections.singletonMap("foo", "bar1"));
-        instances.add(instance1);
-        ServiceInstance instance2 = TestDefaultServiceInstance
-            .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("bar", "bar2"));
-        instances.add(instance2);
-        ServiceInstance instance3 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.2");
-        instances.add(instance3);
-
-        // 不匹配bar: bar1实例时，匹配没有bar标签的实例
-        Map<String, List<String>> header = new HashMap<>();
-        header.put("bar", Collections.singletonList("bar1"));
-        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
-        Assert.assertEquals(2, targetInstances.size());
-        Assert.assertFalse(targetInstances.contains(instance2));
-
-        // 不匹配bar: bar1实例时，优先匹配没有bar标签的实例，如果没有无bar标签的实例，则返回空列表
-        List<Object> sameInstances = new ArrayList<>();
-        ServiceInstance sameInstance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0",
-            Collections.singletonMap("bar", "bar3"));
-        sameInstances.add(sameInstance1);
-        ServiceInstance sameInstance2 = TestDefaultServiceInstance
-            .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("bar", "bar2"));
-        sameInstances.add(sameInstance2);
-        header.clear();
-        header.put("bar", Collections.singletonList("bar1"));
-        targetInstances = loadBalancerService.getTargetInstances("foo", sameInstances, new RequestData(header, null, null));
-        Assert.assertEquals(0, targetInstances.size());
-
-        // 不匹配version: 1.0.3实例时，返回所有版本的实例
-        header.clear();
-        header.put("version", Collections.singletonList("1.0.3"));
-        targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
-        Assert.assertEquals(3, targetInstances.size());
-
-        // 不传入header时，匹配无标签实例
-        header.clear();
-        targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
-        Assert.assertEquals(1, targetInstances.size());
-        Assert.assertEquals(instance3, targetInstances.get(0));
-
-        // 不传入header时，优先匹配无标签实例，没有无标签实例时，返回全部实例
-        header.clear();
-        targetInstances = loadBalancerService.getTargetInstances("foo", sameInstances, new RequestData(header, null, null));
-        Assert.assertEquals(sameInstances, targetInstances);
-    }
-
-    /**
-     * 测试getTargetInstances方法只有一个下游时
-     */
-    @Test
-    public void testGetTargetInstancesWithOneInstance() {
-        List<Object> instances = new ArrayList<>();
-        ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0");
-        instances.add(instance1);
-        Map<String, List<String>> header = new HashMap<>();
-        header.put("bar", Collections.singletonList("bar1"));
-        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
-        Assert.assertEquals(1, targetInstances.size());
-        Assert.assertEquals(instances, targetInstances);
-    }
-
-    /**
-     * 测试getMismatchInstances方法
-     */
-    @Test
-    public void testGetMismatchInstances() {
+    public void testGetTargetInstancesByTagMatchRules() {
+        RuleInitializationUtils.initTagMatchRule();
         List<Object> instances = new ArrayList<>();
         ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0");
         instances.add(instance1);
         ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.1");
         instances.add(instance2);
-
-        Map<String, List<String>> header = new HashMap<>();
-        header.put("bar", Collections.singletonList("bar2"));
-        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances, new RequestData(header, null, null));
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("group", "red");
+        AppCache.INSTANCE.setMetadata(metadata);
+        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances,
+            new RequestData(null, null, null));
         Assert.assertEquals(1, targetInstances.size());
-        Assert.assertEquals(instance1, targetInstances.get(0));
+        Assert.assertEquals(instance2, targetInstances.get(0));
+        ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }
 
     /**
-     * 测试getZoneInstances方法
+     * 测试getGetTargetInstances方法(同时下发flow和tag匹配规则)
      */
     @Test
-    public void testGetZoneInstances() {
+    public void testGetTargetInstancesByAllRules() {
+        RuleInitializationUtils.initAllRules();
         List<Object> instances = new ArrayList<>();
-        ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "bar");
+        Map<String, String> metadata1 = new HashMap<>();
+        metadata1.put("group", "red");
+        Map<String, String> metadata2 = new HashMap<>();
+        metadata2.put("group", "green");
+        ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", metadata1);
         instances.add(instance1);
-        ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.1", "foo");
+        ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.1", metadata1);
         instances.add(instance2);
-
-        List<Object> targetInstances = loadBalancerService.getZoneInstances("foo", instances, true);
+        ServiceInstance instance3 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.1", metadata2);
+        instances.add(instance3);
+        AppCache.INSTANCE.setMetadata(metadata1);
+        Map<String, List<String>> header = new HashMap<>();
+        header.put("bar", Collections.singletonList("bar1"));
+        List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances,
+            new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
-
-        // 测试关闭开关
-        targetInstances = loadBalancerService.getZoneInstances("foo", instances, false);
-        Assert.assertEquals(2, targetInstances.size());
-        Assert.assertEquals(instances, targetInstances);
-    }
-
-    private void initRule() {
-        ValueMatch valueMatch = new ValueMatch();
-        valueMatch.setMatchStrategy(MatchStrategy.EXACT);
-        valueMatch.setValues(Collections.singletonList("bar1"));
-        MatchRule matchRule = new MatchRule();
-        matchRule.setValueMatch(valueMatch);
-        List<MatchRule> matchRuleList = new ArrayList<>();
-        matchRuleList.add(matchRule);
-        Map<String, List<MatchRule>> headers = new HashMap<>();
-        headers.put("bar", matchRuleList);
-        Match match = new Match();
-        match.setHeaders(headers);
-        Rule rule = new Rule();
-        rule.setPrecedence(2);
-        rule.setMatch(match);
-        Route route = new Route();
-        route.setWeight(100);
-        Map<String, String> tags = new HashMap<>();
-        tags.put("version", "1.0.1");
-        route.setTags(tags);
-        List<Route> routeList = new ArrayList<>();
-        routeList.add(route);
-        rule.setRoute(routeList);
-        List<Rule> ruleList = new ArrayList<>();
-        ruleList.add(rule);
-        Map<String, List<EntireRule>> map = new HashMap<>();
-        EntireRule entireRule = new EntireRule();
-        entireRule.setRules(ruleList);
-        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
-        map.put("foo", Collections.singletonList(entireRule));
-        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME);
-        configuration.resetRouteRule(map);
-        AppCache.INSTANCE.setAppName("foo");
+        ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }
 }

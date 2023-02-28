@@ -34,7 +34,11 @@ import java.util.Optional;
  * @author lilai
  * @since 2023-02-21
  */
-public class TagRuleUtils extends RuleUtils {
+public class TagRuleUtils {
+
+    private TagRuleUtils() {
+    }
+
     /**
      * 获取目标规则
      *
@@ -50,17 +54,17 @@ public class TagRuleUtils extends RuleUtils {
         }
 
         List<Rule> rules = Optional.ofNullable(
-                        Optional.ofNullable(
-                                        Optional.ofNullable(configuration.getRouteRule())
-                                                .orElseGet(Collections::emptyMap)
-                                                .get(RouterConstant.TAG_MATCH_KIND))
-                                .orElseGet(Collections::emptyMap)
-                                .get(targetService))
-                .orElseGet(Collections::emptyList);
+                Optional.ofNullable(
+                        Optional.ofNullable(configuration.getRouteRule())
+                            .orElseGet(Collections::emptyMap)
+                            .get(RouterConstant.TAG_MATCH_KIND))
+                    .orElseGet(Collections::emptyMap)
+                    .get(targetService))
+            .orElseGet(Collections::emptyList);
         if (CollectionUtils.isEmpty(rules)) {
             rules = Optional.ofNullable(
-                    Optional.ofNullable(configuration.getGlobalRule()).orElseGet(Collections::emptyMap)
-                            .get(RouterConstant.TAG_MATCH_KIND)).orElseGet(Collections::emptyList);
+                Optional.ofNullable(configuration.getGlobalRule()).orElseGet(Collections::emptyMap)
+                    .get(RouterConstant.TAG_MATCH_KIND)).orElseGet(Collections::emptyList);
         }
 
         if (CollectionUtils.isEmpty(rules)) {

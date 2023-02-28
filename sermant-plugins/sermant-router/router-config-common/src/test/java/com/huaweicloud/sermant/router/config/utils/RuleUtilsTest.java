@@ -75,7 +75,7 @@ public class RuleUtilsTest {
         Map<String, List<EntireRule>> map = new HashMap<>();
         EntireRule entireRule = new EntireRule();
         entireRule.setRules(list);
-        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        entireRule.setKind(RouterConstant.FLOW_MATCH_KIND);
         map.put("test", Collections.singletonList(entireRule));
         configuration.resetRouteRule(map);
         RuleUtils.initMatchKeys(configuration);
@@ -91,7 +91,7 @@ public class RuleUtilsTest {
         Assert.assertTrue(RuleUtils.getMatchKeys().isEmpty());
         EntireRule entireRule = new EntireRule();
         entireRule.setRules(list);
-        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        entireRule.setKind(RouterConstant.FLOW_MATCH_KIND);
         RuleUtils.updateMatchKeys("test", Collections.singletonList(entireRule));
         Set<String> keys = RuleUtils.getMatchKeys();
         Assert.assertEquals(3, keys.size());

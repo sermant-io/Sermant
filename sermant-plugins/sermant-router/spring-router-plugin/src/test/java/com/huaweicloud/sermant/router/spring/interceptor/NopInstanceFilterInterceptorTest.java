@@ -88,31 +88,10 @@ public class NopInstanceFilterInterceptorTest {
     }
 
     /**
-     * 测试getZoneInstances方法
-     */
-    @Test
-    public void testGetZoneInstances() {
-        config.setEnabledRegistryZoneRouter(true);
-        ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));
-        List<ServiceInstance> list = new ArrayList<>();
-        DefaultServiceInstance instance1 = new DefaultServiceInstance("foo1", "foo", "foo", 8080, false);
-        list.add(instance1);
-        DefaultServiceInstance instance2 = new DefaultServiceInstance("bar2", "foo", "bar", 8081, false);
-        list.add(instance2);
-        arguments[0] = "foo";
-        arguments[1] = list;
-        List<?> result = (List<?>) interceptor.before(context).getResult();
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals(instance2, result.get(0));
-        ThreadLocalUtils.removeRequestData();
-    }
-
-    /**
      * 测试getTargetInstances方法
      */
     @Test
     public void testGetTargetInstances() {
-        config.setEnabledRegistryZoneRouter(true);
         ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));
         List<ServiceInstance> list = new ArrayList<>();
         DefaultServiceInstance instance1 = new DefaultServiceInstance("foo1", "foo", "foo", 8080, false);

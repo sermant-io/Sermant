@@ -31,7 +31,6 @@ runs:
       shell: bash
       env:
         SERVICE_META_ZONE: foo
-        ROUTER_PLUGIN_ENABLED_DUBBO_ZONE_ROUTER: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
         ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
         SERVICE_META_PARAMETERS: Test-Env:env-001
@@ -44,7 +43,6 @@ runs:
       shell: bash
       env:
         SERVICE_META_ZONE: foo
-        ROUTER_PLUGIN_ENABLED_DUBBO_ZONE_ROUTER: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
         ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
         SERVICE_META_PARAMETERS: Test-Env:env-002
@@ -57,7 +55,6 @@ runs:
       shell: bash
       env:
         SERVICE_META_ZONE: bar
-        ROUTER_PLUGIN_ENABLED_DUBBO_ZONE_ROUTER: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
         ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
         SERVICE_META_PARAMETERS: Test-Env1:env-002
@@ -70,7 +67,6 @@ runs:
       shell: bash
       env:
         SERVICE_META_ZONE: bar
-        ROUTER_PLUGIN_ENABLED_DUBBO_ZONE_ROUTER: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
         ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
         SERVER_PORT: 28024
@@ -82,7 +78,6 @@ runs:
       shell: bash
       env:
         SERVICE_META_ZONE: bar
-        ROUTER_PLUGIN_ENABLED_DUBBO_ZONE_ROUTER: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: true
         ROUTER_PLUGIN_REQUEST_TAGS: "[Test-Env,Test-Env1]"
         SERVER_PORT: 28020
@@ -106,7 +101,6 @@ runs:
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
-        ROUTER_PLUGIN_ENABLED_DUBBO_ZONE_ROUTER: false
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVICE_META_VERSION: 1.0.0
         SERVER_PORT: 18021
@@ -122,7 +116,6 @@ runs:
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
-        ROUTER_PLUGIN_ENABLED_DUBBO_ZONE_ROUTER: false
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVICE_META_PARAMETERS: group:gray
         SERVICE_META_VERSION: 1.0.1
@@ -131,6 +124,22 @@ runs:
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar \
         sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > ${{ env.logDir }}/dubbo-cse-provider2.log 2>&1 &
+    - name: start third cse provider service
+      shell: bash
+      env:
+        servicecomb.service.enableDubboRegister: true
+        servicecomb.service.enableSpringRegister: true
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVICE_META_PARAMETERS: group:red
+        SERVICE_META_VERSION: 1.0.1
+        SERVER_PORT: 18023
+        DUBBO_PROTOCOL_PORT: 18823
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-provider -jar \
+        sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > ${{ env.logDir }}/dubbo-cse-provider3.log 2>&1 &
     - name: waiting for cse providers start
       shell: bash
       run: |
@@ -144,8 +153,8 @@ runs:
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
-        ROUTER_PLUGIN_ENABLED_DUBBO_ZONE_ROUTER: false
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVICE_META_PARAMETERS: group:gray
         SERVER_PORT: 18020
         DUBBO_PROTOCOL_PORT: 18820
       run: |
@@ -163,7 +172,6 @@ runs:
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
-        ROUTER_PLUGIN_ENABLED_DUBBO_ZONE_ROUTER: false
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVER_PORT: 18019
       run: |

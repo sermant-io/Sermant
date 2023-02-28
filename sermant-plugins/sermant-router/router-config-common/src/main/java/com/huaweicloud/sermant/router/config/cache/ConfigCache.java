@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.router.config.cache;
 
-import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 
 import java.util.Map;
@@ -30,8 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ConfigCache {
     private static final Map<String, RouterConfiguration> LABEL_CACHE = new ConcurrentHashMap<>();
-
-    private static final Map<String, EnabledStrategy> STRATEGY_CACHE = new ConcurrentHashMap<>();
 
     private ConfigCache() {
     }
@@ -54,25 +51,5 @@ public class ConfigCache {
             }
         }
         return configuration;
-    }
-
-    /**
-     * 获取指定策略
-     *
-     * @param cacheName 缓存的策略名
-     * @return 策略
-     */
-    public static EnabledStrategy getEnabledStrategy(String cacheName) {
-        EnabledStrategy strategy = STRATEGY_CACHE.get(cacheName);
-        if (strategy == null) {
-            synchronized (ConfigCache.class) {
-                strategy = STRATEGY_CACHE.get(cacheName);
-                if (strategy == null) {
-                    STRATEGY_CACHE.put(cacheName, new EnabledStrategy());
-                    strategy = STRATEGY_CACHE.get(cacheName);
-                }
-            }
-        }
-        return strategy;
     }
 }

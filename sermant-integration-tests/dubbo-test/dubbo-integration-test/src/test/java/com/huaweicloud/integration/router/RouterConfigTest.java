@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,26 +38,29 @@ public class RouterConfigTest {
     private static final String KEY = "servicecomb.routeRule.dubbo-integration-provider";
 
     private static final String CONTENT = "---\n"
-        + "- precedence: 1\n"
-        + "  match:\n"
-        + "    headers:\n"
-        + "        id:\n"
-        + "          exact: '1'\n"
-        + "          caseInsensitive: false\n"
-        + "  route:\n"
-        + "    - tags:\n"
-        + "        group: gray\n"
-        + "      weight: 100\n"
-        + "- precedence: 2\n"
-        + "  match:\n"
-        + "    headers:\n"
-        + "        name:\n"
-        + "          exact: 'bar'\n"
-        + "          caseInsensitive: false\n"
-        + "  route:\n"
-        + "    - tags:\n"
-        + "        version: 1.0.1\n"
-        + "      weight: 100";
+            + "- kind: routematcher.sermant.io/flow\n"
+            + "  description: flow-rule-test\n"
+            + "  rules:\n"
+            + "    - precedence: 1\n"
+            + "      match:\n"
+            + "        headers:\n"
+            + "          id:\n"
+            + "            exact: '1'\n"
+            + "            caseInsensitive: false\n"
+            + "      route:\n"
+            + "        - tags:\n"
+            + "            group: gray\n"
+            + "          weight: 100\n"
+            + "    - precedence: 2\n"
+            + "      match:\n"
+            + "        headers:\n"
+            + "          name:\n"
+            + "            exact: 'bar'\n"
+            + "            caseInsensitive: false\n"
+            + "      route:\n"
+            + "        - tags:\n"
+            + "            version: 1.0.1\n"
+            + "          weight: 100";
 
     @Test
     public void addRouterConfig() {

@@ -79,7 +79,7 @@ public class ConfigServiceTest {
         Rule rule = new Rule();
         rule.setMatch(match);
         EntireRule entireRule = new EntireRule();
-        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        entireRule.setKind(RouterConstant.FLOW_MATCH_KIND);
         entireRule.setRules( Collections.singletonList(rule));
         RuleUtils.updateMatchKeys("bar", Collections.singletonList(entireRule));
         DubboConfigServiceImpl dubboConfigService = new DubboConfigServiceImpl();
@@ -107,7 +107,7 @@ public class ConfigServiceTest {
         Rule rule = new Rule();
         rule.setMatch(match);
         EntireRule entireRule = new EntireRule();
-        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        entireRule.setKind(RouterConstant.FLOW_MATCH_KIND);
         entireRule.setRules( Collections.singletonList(rule));
         RuleUtils.updateMatchKeys("bar", Collections.singletonList(entireRule));
         DubboConfigServiceImpl dubboConfigService = new DubboConfigServiceImpl();

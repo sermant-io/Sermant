@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -55,6 +56,7 @@ public class ParametersUtils {
                 // 请求头在http请求中，会统一转成小写
                 (key, value) -> map.put(RouterConstant.PARAMETERS_KEY_PREFIX + key.toLowerCase(Locale.ROOT), value));
         }
+        DubboCache.INSTANCE.setParameters(map);
         return map;
     }
 }

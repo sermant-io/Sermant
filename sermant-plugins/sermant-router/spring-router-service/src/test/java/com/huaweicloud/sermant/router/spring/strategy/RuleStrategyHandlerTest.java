@@ -114,26 +114,4 @@ public class RuleStrategyHandlerTest {
         Assert.assertEquals(1, mismatchInstances.size());
         Assert.assertEquals(instance2, mismatchInstances.get(0));
     }
-
-    /**
-     * 测试区域路由
-     */
-    @Test
-    public void testZoneFoo() {
-        List<Object> instances = new ArrayList<>();
-        ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.1", "foo");
-        instances.add(instance1);
-        ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.2", "bar");
-        instances.add(instance2);
-
-        // 测试区域路由
-        List<Object> matchInstances = RuleStrategyHandler.INSTANCE.getZoneInstances("foo", instances, "foo");
-        Assert.assertEquals(1, matchInstances.size());
-        Assert.assertEquals(instance1, matchInstances.get(0));
-
-        // 测试不匹配区域路由
-        List<Object> mismatchInstances = RuleStrategyHandler.INSTANCE.getZoneInstances("foo", instances, "foo1");
-        Assert.assertEquals(2, mismatchInstances.size());
-        Assert.assertEquals(instances, mismatchInstances);
-    }
 }

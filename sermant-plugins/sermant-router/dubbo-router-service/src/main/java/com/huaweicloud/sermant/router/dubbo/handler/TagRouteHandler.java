@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.router.spring.handler;
+package com.huaweicloud.sermant.router.dubbo.handler;
 
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
-import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.config.entity.Match;
@@ -28,8 +27,8 @@ import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.entity.ValueMatch;
 import com.huaweicloud.sermant.router.config.utils.TagRuleUtils;
-import com.huaweicloud.sermant.router.spring.cache.AppCache;
-import com.huaweicloud.sermant.router.spring.strategy.RuleStrategyHandler;
+import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
+import com.huaweicloud.sermant.router.dubbo.strategy.RuleStrategyHandler;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +38,7 @@ import java.util.Map;
  * tag匹配方式的路由处理器
  *
  * @author lilai
- * @since 2023-02-21
+ * @since 2023-02-24
  */
 public class TagRouteHandler extends AbstractRouteHandler {
 
@@ -50,13 +49,14 @@ public class TagRouteHandler extends AbstractRouteHandler {
     }
 
     @Override
-    public List<Object> handle(String targetName, List<Object> instances, RequestData requestData) {
-        if (!shouldHandle(instances)) {
-            return instances;
+    public Object handle(String targetService, List<Object> invokers, Object invocation, Map<String, String> queryMap,
+                         String serviceInterface) {
+        if (!shouldHandle(invokers)) {
+            return invokers;
         }
 
-        List<Object> result = getTargetInstancesByRules(targetName, instances);
-        return super.handle(targetName, result, requestData);
+        List<Object> result = getTargetInvokersByRules(invokers, targetService);
+        return super.handle(targetService, result, invocation, queryMap, serviceInterface);
     }
 
     @Override
@@ -64,17 +64,17 @@ public class TagRouteHandler extends AbstractRouteHandler {
         return RouterConstant.TAG_HANDLER_ORDER;
     }
 
-    private List<Object> getTargetInstancesByRules(String targetName, List<Object> instances) {
-        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME);
+    private List<Object> getTargetInvokersByRules(List<Object> invokers, String targetService) {
+        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
         if (RouterConfiguration.isInValid(configuration)) {
-            return instances;
+            return invokers;
         }
-        List<Rule> rules = TagRuleUtils.getTagRules(configuration, targetName, AppCache.INSTANCE.getAppName());
+        List<Rule> rules = TagRuleUtils.getTagRules(configuration, targetService, DubboCache.INSTANCE.getAppName());
         List<Route> routes = getRoutes(rules);
         if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getMatchInstances(targetName, instances, routes);
+            return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, routes);
         }
-        return instances;
+        return invokers;
     }
 
     /**
@@ -110,11 +110,11 @@ public class TagRouteHandler extends AbstractRouteHandler {
                 ValueMatch valueMatch = matchRule.getValueMatch();
                 List<String> values = valueMatch.getValues();
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
-                Map<String, String> metadata = AppCache.INSTANCE.getMetadata();
-                if (metadata == null) {
+                Map<String, String> parameters = DubboCache.INSTANCE.getParameters();
+                if (parameters == null) {
                     return Collections.emptyList();
                 }
-                String tagValue = metadata.get(key);
+                String tagValue = parameters.get(RouterConstant.PARAMETERS_KEY_PREFIX + key);
                 if (!isFullMatch && matchStrategy.isMatch(values, tagValue, matchRule.isCaseInsensitive())) {
                     // 如果不是全匹配，且匹配了一个，那么直接return
                     return rule.getRoute();

@@ -79,16 +79,4 @@ public enum RuleStrategyHandler {
         boolean isReturnAllInstancesWhenMismatch) {
         return ruleStrategy.getMismatchInstances(serviceName, invokers, tags, isReturnAllInstancesWhenMismatch);
     }
-
-    /**
-     * 选取同区域的实例
-     *
-     * @param serviceName 服务名
-     * @param invokers 实例列表
-     * @param zone 区域
-     * @return 路由过滤后的实例
-     */
-    public List<Object> getZoneInvokers(String serviceName, List<Object> invokers, String zone) {
-        return ruleStrategy.getZoneInstances(serviceName, invokers, zone);
-    }
 }

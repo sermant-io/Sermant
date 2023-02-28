@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
+import com.huaweicloud.sermant.router.spring.cache.AppCache;
 
 import java.util.Locale;
 import java.util.Map;
@@ -67,5 +68,6 @@ public class SpringRouterUtils {
             // 请求头在http请求中，会统一转成小写
             parameters.forEach((key, value) -> metadata.putIfAbsent(key.toLowerCase(Locale.ROOT), value));
         }
+        AppCache.INSTANCE.setMetadata(metadata);
     }
 }

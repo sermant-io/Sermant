@@ -85,7 +85,7 @@ public class RuleStrategyHandlerTest {
         AlibabaInvoker<Object> invoker2 = new AlibabaInvoker<>("0.0.2");
         invokers.add(invoker2);
         List<Object> matchInvokers = RuleStrategyHandler.INSTANCE.getMatchInvokersByRequest("foo", invokers,
-            Collections.singletonMap("version", "0.0.1"));
+                Collections.singletonMap("version", "0.0.1"));
         Assert.assertEquals(1, matchInvokers.size());
         Assert.assertEquals(invoker1, matchInvokers.get(0));
     }
@@ -116,28 +116,6 @@ public class RuleStrategyHandlerTest {
     }
 
     /**
-     * 测试alibaba invoker区域路由
-     */
-    @Test
-    public void testAlibabaZone() {
-        List<Object> invokers = new ArrayList<>();
-        AlibabaInvoker<Object> invoker1 = new AlibabaInvoker<>("0.0.1", "bar");
-        invokers.add(invoker1);
-        AlibabaInvoker<Object> invoker2 = new AlibabaInvoker<>("0.0.2", "foo");
-        invokers.add(invoker2);
-
-        // 测试区域路由
-        List<Object> matchInvoker = RuleStrategyHandler.INSTANCE.getZoneInvokers("foo", invokers, "foo");
-        Assert.assertEquals(1, matchInvoker.size());
-        Assert.assertEquals(invoker2, matchInvoker.get(0));
-
-        // 测试不匹配区域路由
-        List<Object> mismatchInvoker = RuleStrategyHandler.INSTANCE.getZoneInvokers("foo", invokers, "foo1");
-        Assert.assertEquals(2, mismatchInvoker.size());
-        Assert.assertEquals(invokers, mismatchInvoker);
-    }
-
-    /**
      * 测试apache invoker命中0.0.1版本实例的情况
      */
     @Test
@@ -164,7 +142,7 @@ public class RuleStrategyHandlerTest {
         ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("0.0.2");
         invokers.add(invoker2);
         List<Object> matchInvokers = RuleStrategyHandler.INSTANCE
-            .getMatchInvokersByRequest("foo", invokers, Collections.singletonMap("version", "0.0.1"));
+                .getMatchInvokersByRequest("foo", invokers, Collections.singletonMap("version", "0.0.1"));
         Assert.assertEquals(100, routes.get(0).getWeight().intValue());
         Assert.assertEquals(1, matchInvokers.size());
         Assert.assertEquals(invoker1, matchInvokers.get(0));
@@ -193,27 +171,5 @@ public class RuleStrategyHandlerTest {
         List<Object> mismatchInvoker = RuleStrategyHandler.INSTANCE.getMismatchInvokers("foo", invokers, tags, true);
         Assert.assertEquals(1, mismatchInvoker.size());
         Assert.assertEquals(invoker2, mismatchInvoker.get(0));
-    }
-
-    /**
-     * 测试apache invoker区域路由
-     */
-    @Test
-    public void testApacheZone() {
-        List<Object> invokers = new ArrayList<>();
-        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("0.0.1", "bar");
-        invokers.add(invoker1);
-        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("0.0.2", "foo");
-        invokers.add(invoker2);
-
-        // 测试区域路由
-        List<Object> matchInvoker = RuleStrategyHandler.INSTANCE.getZoneInvokers("foo", invokers, "foo");
-        Assert.assertEquals(1, matchInvoker.size());
-        Assert.assertEquals(invoker2, matchInvoker.get(0));
-
-        // 测试不匹配区域路由
-        List<Object> mismatchInvoker = RuleStrategyHandler.INSTANCE.getZoneInvokers("foo", invokers, "foo1");
-        Assert.assertEquals(2, mismatchInvoker.size());
-        Assert.assertEquals(invokers, mismatchInvoker);
     }
 }
