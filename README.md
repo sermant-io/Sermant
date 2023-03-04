@@ -3,86 +3,86 @@
 <p>
     <img  src="docs/binary-docs/sermant-logo.png" width="50%" syt height="50%">
 </p>
-<h1>A Proxyless Service Mesh Solution Based on Java Agent</h1>
+<h1>基于Java Agent的无代理服务网格解决方案</h1>
 
-[简体中文](README-zh.md) | [English](README.md) 
+[简体中文](README.md) | [English](README-en.md)
 
 [![Gitter](https://badges.gitter.im/SermantUsers/community.svg)](https://gitter.im/SermantUsers/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![CI/IT Tests](https://github.com/huaweicloud/Sermant/workflows/Java%20CI%20with%20Maven/badge.svg?branch=develop)](https://github.com/huaweicloud/Sermant/actions?query=workflow:Java%20CI%20with%20Maven%20event:push%20branch:develop)
 [![codecov](https://codecov.io/gh/huaweicloud/Sermant/develop/graph/badge.svg)](https://codecov.io/gh/huaweicloud/Sermant)
+
 </div>
 
-## What is Sermant?
+## Sermant
 
-**Sermant** (also known as Java-mesh) is a proxyless **ser**vice **m**esh technology based on J**a**va Age**nt** . It leverages the [Java Agent](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html) to instrument the host application with enhanced service governance function, in order to solve the service governance problem, in the massive micro-service architecture.
+**Sermant**(也称之为Java-mesh)是基于Java Agent无代理的服务网格技术。其利用JavaAgent为宿主应用程序提供增强的服务治理功能，以解决大规模微服务体系结构中的服务治理问题。
 
-Sermant's purpose also includes building a plugin-development ecosystem to help developers develop the service governance function more easily while not interfering the business code. The Sermant architecture is depicted as follows.
+Sermant的愿景还包括构建插件开发生态系统，以帮助开发人员更容易地开发服务治理功能，同时不干扰业务代码。Sermant架构描述如下。
 
 ![pic](docs/binary-docs/sermant-product-arch.png)
 
-As described above, Sermant's Java Agent has two layers of functions.
+根据上图，Sermant中Java Agent包含两层功能。
 
-- Framework core layer. The core layer provides Sermant's basic framework capability, in order to ease the plugin development. The function of this layer includes heart beat, data transmit, dynamic configuration, etc.
-- Plugin service layer. The plugin provides actual governance service for the application. The developer can either develop simple plugin by directly leveraging framework core service, or can develop complex plugin by developing plugin's own complex service-governance function.
+- 框架核心层。核心层提供Sermant的基本框架功能，以简化插件开发。该层的功能包括心跳、数据传输、动态配置等。
+- 插件服务层。插件为宿主应用提供实际的治理服务。开发者可以直接利用框架核心服务开发简单插件，也可以开发插件自身的复杂服务治理功能来开发复杂插件。
 
-Sermant's Java Agent widely adopts class isolation technology in order to eliminate the class load conflicts between framework code, plugin code, and application code.
+Sermant中的Java Agent广泛采用类隔离技术，以消除框架代码、插件代码和宿主应用程序代码之间的类加载冲突。
 
-A microservice architecture using Sermant has the following three components, which is depicted in the following diagram.
+使用Sermant的微服务架构具有以下三个组件，如下图所示。
 
 ![pic](docs/binary-docs/sermant-rt-arch.png)
 
-- Sermant Java Agent: dynamically instrument the application for the service governance capability.
-- Sermant Backend: provide the connection and the pre-processing service for the Java Agents' all uploaded-data.
-- Dynamic configuration center: Providing the instructions by dynamically update the config to the listening Java Agent. Dynamic configuration center is not directly provided by Sermant project. The projects currently support servicecomb-kie, etc.
+- Sermant Java Agent：动态地为宿主应用程序提供服务治理能力。
+- Sermant Backend：为Java Agent的上传数据提供连接和预处理服务。
+- Dynamic configuration center：通过动态更新监听的Java Agent的配置来提供指令。Sermant项目不直接提供动态配置中心。这些项目目前支持servicecomb-kie等。
 
+## 快速开始
 
-## Quick Start
+下面是一个简单的演示，新用户只需4个步骤即可使用Sermant
 
-Below is a simple demo that guides new users to use Sermant in just 4 steps.
+### 准备工作
 
-### Preparation
+- [下载](https://github.com/huaweicloud/Sermant/releases) Sermant包
+- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo应用
+- [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
 
-- [Download](https://github.com/huaweicloud/Sermant/releases) Sermant package
-- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo application
-- [Download](https://zookeeper.apache.org/releases#download) and start zookeeper
+### 编译打包demo应用
 
-### Compile demo application
-
-Execute the following command in the `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/` directory:
+在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/`目录执行以下命令：
 
 ```shell
 # windows linux mac
 mvn clean package
 ```
 
-After successful packaging，GET `spring-provider.jar` in `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`
+打包成功后，在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`得到`spring-provider.jar`
 
-> Note: path is the path where the demo application is downloaded
+> 说明：path为demo应用下载所在路径
 
-### Modify the Sermant configuration
+### 修改Sermant配置
 
-Modify the `agent.config.serviceBlackList` configuration in the `${path}/sermant-agent-x.x.x/agent/config/config.properties` file to be empty, as shown below:
+修改`${path}/sermant-agent-x.x.x/agent/config/config.properties`文件中`agent.config.serviceBlackList`配置为空，如下所示：
 
 ```properties
 agent.config.serviceBlackList=
 ```
 
-> Note: path is the path where the Sermant package is downloaded
+> 说明：path为Sermant包下载所在路径
 
-### Start Backend
+### 启动backend
 
-Execute the following command in the `${path}/sermant-agent-x.x.x/server/sermant` directory:
+在`${path}/sermant-agent-x.x.x/server/sermant`目录执行以下命令：
 
 ```shell
 java -jar sermant-backend-lite.jar
 ```
 
-> Note: path is the path where the Sermant package is downloaded
+> 说明：path为Sermant包下载所在路径
 
-### Start demo application
+### 启动demo应用
 
-Execute the following command in the `${path}/Sermant-examples/sermant-template/demo-application/target`directory：
+在`${path}/Sermant-examples/sermant-template/demo-application/target`目录执行以下命令：
 
 ```shell
 # linux mac
@@ -92,37 +92,37 @@ java -javaagent:${path}/sermant-agent-x.x.x/agent/sermant-agent.jar -jar spring-
 java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-provider.jar
 ```
 
-> Note: path is the path where the Sermant package is downloaded
+> 说明：path为Sermant包下载所在路径
 
-### Verification
+### 验证
 
-Check running status of Sermant. In this example, open the browser and navigate to the URL `http://localhost:8900`.
+打开浏览器并导航到URL`http://localhost:8900`,如下图所示：
+
 
 ![pic](docs/binary-docs/backend_sermant_info.png)
 
-## More Documents to Follow
+## 更多文档
 
-Please refer to the  [Sermant Document](https://sermant.io/en/document/)
+请参阅 [Sermant文档](https://sermant.io/zh/document/)
 
 ## License
 
-Sermant adopts [Apache 2.0 License.](/LICENSE)
+Sermant 采用 [Apache 2.0 License.](/LICENSE)
 
-## How to Contribute
+## 贡献指南
 
-Please read  [Contribute Guide](https://sermant.io/en/document/CONTRIBUTING.html) to refer how to join the contribution.
+请阅读[贡献指南](https://sermant.io/zh/document/CONTRIBUTING.html)以了解如何贡献项目。
 
-## Declaration
+## 声明
 
-- [Apache/Servicecomb-java-chassis](https://github.com/apache/servicecomb-java-chassis): Sermant refer the service governance algorithm from Apache Servicecomb project.
-- [Apache/Servicecomb-kie](https://github.com/apache/servicecomb-kie): Sermant uses servicecomb-kie as the default dynamic configuration center.
-- [Apache/SkyWalking](https://skywalking.apache.org/): The plugin architecture in this project is refered to Apache Skywalking. Part of the framework code in Sermant is built based on Apache Skywalking project as well.
-- [Alibaba/Sentinel](https://github.com/alibaba/Sentinel): Sermant's flow-control plugin is built based on Alibaba Sentinel project. 
+- [Apache/Servicecomb-java-chassis](https://github.com/apache/servicecomb-java-chassis)：Sermant引用了Apache Servicecomb项目中的服务治理算法。
+- [Apache/Servicecomb-kie](https://github.com/apache/servicecomb-kie): Sermant使用servicecomb-kie作为默认的动态配置中心。
+- [Apache/SkyWalking](https://skywalking.apache.org/): 本项目中的插件架构参考了Apache Skywalking。Sermant中的部分框架代码是基于Apache Skywalking项目构建的。
+- [Alibaba/Sentinel](https://github.com/alibaba/Sentinel): Sermant的流量控制插件是基于阿里巴巴Sentinel项目构建的。
 
-## Contact Us
+## 联系我们
 
-* [Gitter](https://gitter.im/SermantUsers/community): Sermant's chat room for community messaging, collaboration and discovery.
-* WeChat Group: Please apply for Sermant Xiao Er as a friend first, and will pull you into the group after passing, please note the company + position when applying, thank you.
+* [Gitter](https://gitter.im/SermantUsers/community)：Sermant社区的聊天室。
+* 微信交流群：请先申请Sermant小二为好友，通过后会拉您进群，申请时请备注公司+职务，谢谢。
 
-![sermant](docs/binary-docs/contact-wechat.png)
-
+![pic](docs/binary-docs/contact-wechat.png)
