@@ -217,7 +217,7 @@
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <version>${spring.boot.version}</version>
                         <configuration>
-                            <mainClass>com.huawei.sermant.backend.NettyServerApplication</mainClass>
+                            <mainClass>com.huaweicloud.sermant.backend.NettyServerApplication</mainClass>
                             <outputDirectory>${package.output.dir}</outputDirectory>
                         </configuration>
                         <executions>
@@ -240,7 +240,7 @@
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <version>${spring.boot.version}</version>
                         <configuration>
-                            <mainClass>com.huawei.sermant.backend.NettyServerApplication</mainClass>
+                            <mainClass>com.huaweicloud.sermant.backend.NettyServerApplication</mainClass>
                             <outputDirectory>${package.output.dir}</outputDirectory>
                         </configuration>
                         <executions>
