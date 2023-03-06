@@ -126,6 +126,11 @@
             <artifactId>spring-cloud-registry-service</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>sermant-backend</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
