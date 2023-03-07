@@ -39,9 +39,9 @@ import java.util.Map.Entry;
 public class ClientHttpRequestInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        Object argument = context.getArguments()[0];
-        if (argument instanceof HttpRequest) {
-            HttpRequest request = (HttpRequest) argument;
+        Object obj = context.getObject();
+        if (obj instanceof HttpRequest) {
+            HttpRequest request = (HttpRequest) obj;
             HttpHeaders headers = request.getHeaders();
             putIfAbsent(headers);
             String path = request.getURI().getPath();

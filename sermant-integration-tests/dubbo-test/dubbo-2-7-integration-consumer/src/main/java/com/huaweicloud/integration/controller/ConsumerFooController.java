@@ -16,6 +16,7 @@
 
 package com.huaweicloud.integration.controller;
 
+import com.huaweicloud.integration.constants.Constant;
 import com.huaweicloud.integration.service.FooService;
 
 import org.apache.dubbo.rpc.RpcContext;
@@ -35,10 +36,6 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/consumer")
 public class ConsumerFooController {
-    private static final String TAG = "app1";
-
-    private static final String TAG_KEY = "dubbo.tag";
-
     @Resource(name = "fooService")
     private FooService fooService;
 
@@ -50,7 +47,7 @@ public class ConsumerFooController {
      */
     @GetMapping("/testFoo")
     public String testFoo(@RequestParam String str) {
-        RpcContext.getContext().setAttachment(TAG_KEY, TAG);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
         return fooService.foo(str);
     }
 
@@ -62,7 +59,7 @@ public class ConsumerFooController {
      */
     @GetMapping("/testFoo2")
     public String testFoo2(@RequestParam String str) {
-        RpcContext.getContext().setAttachment(TAG_KEY, TAG);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
         return fooService.foo2(str);
     }
 
@@ -74,7 +71,7 @@ public class ConsumerFooController {
      */
     @GetMapping("/testTag")
     public String testTag(@RequestParam String tag) {
-        RpcContext.getContext().setAttachment(TAG_KEY, tag);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, tag);
         return fooService.foo2(tag);
     }
 
@@ -85,7 +82,7 @@ public class ConsumerFooController {
      */
     @GetMapping("/getRegistryProtocol")
     public String getRegistryProtocol() {
-        RpcContext.getContext().setAttachment(TAG_KEY, TAG);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
         return fooService.getRegistryProtocol();
     }
 
@@ -97,7 +94,7 @@ public class ConsumerFooController {
      */
     @GetMapping("/getMetadata")
     public String getMetadata(boolean exit) {
-        RpcContext.getContext().setAttachment(TAG_KEY, TAG);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
         return fooService.getMetadata(exit);
     }
 }

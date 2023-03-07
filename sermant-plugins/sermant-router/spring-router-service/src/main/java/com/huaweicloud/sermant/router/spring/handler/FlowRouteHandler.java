@@ -144,7 +144,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
             return RuleStrategyHandler.INSTANCE.getMatchInstances(targetName, instances, routes);
         }
         return RuleStrategyHandler.INSTANCE
-                .getMismatchInstances(targetName, instances, RuleUtils.getTags(rules, false), true);
+                .getMismatchInstances(targetName, instances, RuleUtils.getTags(rules), true);
     }
 
     /**

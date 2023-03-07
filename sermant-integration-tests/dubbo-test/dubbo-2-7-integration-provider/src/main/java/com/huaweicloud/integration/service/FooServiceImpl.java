@@ -17,8 +17,18 @@
 package com.huaweicloud.integration.service;
 
 import org.apache.dubbo.config.RegistryConfig;
+import org.apache.dubbo.rpc.RpcContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 测试接口
@@ -27,6 +37,8 @@ import org.springframework.beans.factory.annotation.Value;
  * @since 2022-04-28
  */
 public class FooServiceImpl implements FooService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FooServiceImpl.class);
+
     @Autowired
     private RegistryConfig registryConfig;
 
@@ -64,5 +76,34 @@ public class FooServiceImpl implements FooService {
         }
         return "I'm " + name + ", my version is " + version + ", my zone is " + zone + ", my parameters is ["
             + parameters + "].";
+    }
+
+    @Override
+    public Map<String, Object> getAttachments() {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(getAttachmentsByReflect());
+        map.put("version", version);
+        result.put(name, map);
+        return result;
+    }
+
+    /**
+     * 版本兼容问题，只能用反射获取
+     *
+     * @return attachments
+     */
+    private Map<String, Object> getAttachmentsByReflect() {
+        RpcContext context = RpcContext.getContext();
+        try {
+            Field field = context.getClass().getDeclaredField("attachments");
+            Object obj = AccessController.doPrivileged((PrivilegedAction<Field>) () -> {
+                field.setAccessible(true);
+                return field;
+            }).get(context);
+            return (Map<String, Object>) obj;
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            LOGGER.error("Cannot get attachments.", e);
+        }
+        return Collections.emptyMap();
     }
 }

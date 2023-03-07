@@ -124,6 +124,12 @@ runs:
             ${{ env.sermantServiceVisibilityChanged }} == 'true' ];then
           echo "enableVisibility=true" >> $GITHUB_ENV
         fi
+        # ==========dubbo lane is needed to test?==========
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantRouterChanged }} == 'true' -o \
+            ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
+          echo "enableDubboLane=true" >> $GITHUB_ENV
+        fi
+
         # *****************spring_integration_test_1.yml*****************
         # ==========graceful is needed to test?==========
         if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
@@ -153,6 +159,12 @@ runs:
             ${{ env.sermantSpringbootRegistryChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
           echo "enableSpringTagRouter=true" >> $GITHUB_ENV
         fi
+        # ==========spring lane is needed to test?==========
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantRouterChanged }} == 'true' -o \
+            ${{ env.sermantSpringbootRegistryChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
+          echo "enableSpringLane=true" >> $GITHUB_ENV
+        fi
+
         # all workflow will trigger while workflow changed
         if [ ${{ steps.changed-workflow-or-test.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
           echo "enableDubboRouter=true" >> $GITHUB_ENV
@@ -164,5 +176,7 @@ runs:
           echo "enableMonitor=true" >> $GITHUB_ENV
           echo "enableSpringCommon=true" >> $GITHUB_ENV
           echo "enableVisibility=true" >> $GITHUB_ENV
+          echo "enableSpringLane=true" >> $GITHUB_ENV
+          echo "enableDubboLane=true" >> $GITHUB_ENV
         fi
 

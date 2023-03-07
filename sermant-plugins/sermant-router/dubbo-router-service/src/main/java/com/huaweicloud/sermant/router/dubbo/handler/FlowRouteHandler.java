@@ -50,10 +50,6 @@ import java.util.Optional;
  * @since 2023-02-24
  */
 public class FlowRouteHandler extends AbstractRouteHandler {
-    private static final String DASH = "-";
-
-    private static final String POINT = ".";
-
     private final RouterConfig routerConfig;
 
     // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
@@ -67,7 +63,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
         allMismatchTags = new HashMap<>();
         for (String requestTag : routerConfig.getRequestTags()) {
             // dubbo会把key中的"-"替换成"."
-            allMismatchTags.put(requestTag.replace(DASH, POINT), null);
+            allMismatchTags.put(requestTag.replace(RouterConstant.DASH, RouterConstant.POINT), null);
         }
 
         // 所有实例都含有version，所以不能存入null值
@@ -101,7 +97,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
         if (RouterConfiguration.isInValid(configuration)) {
             return invokers;
         }
-        String interfaceName = getGroup(queryMap) + "/" + serviceInterface + POINT
+        String interfaceName = getGroup(queryMap) + "/" + serviceInterface + RouterConstant.POINT
                 + DubboReflectUtils.getMethodName(invocation) + ":" + getVersion(queryMap);
         List<Rule> rules = FlowRuleUtils
                 .getFlowRules(configuration, targetService, interfaceName, DubboCache.INSTANCE.getAppName());
@@ -114,7 +110,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
             return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, routes);
         }
         return RuleStrategyHandler.INSTANCE
-                .getMismatchInvokers(targetService, invokers, RuleUtils.getTags(rules, true), true);
+                .getMismatchInvokers(targetService, invokers, RuleUtils.getTags(rules), true);
     }
 
     private List<Object> getTargetInvokersByRequest(String targetName, List<Object> invokers, Object invocation) {
@@ -134,9 +130,9 @@ public class FlowRouteHandler extends AbstractRouteHandler {
                 continue;
             }
             String replaceDashKey = key;
-            if (replaceDashKey.contains(DASH)) {
+            if (replaceDashKey.contains(RouterConstant.DASH)) {
                 // dubbo会把key中的"-"替换成"."
-                replaceDashKey = replaceDashKey.replace(DASH, POINT);
+                replaceDashKey = replaceDashKey.replace(RouterConstant.DASH, RouterConstant.POINT);
             }
             mismatchTags.put(replaceDashKey, null);
             String value = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);

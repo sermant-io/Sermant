@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.request.RequestData;
+import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
@@ -82,7 +83,7 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
     private List<Object> getServerList(String methodName, Object obj) {
         String fieldName = "getAllServers".equals(methodName) ? "allServerList" : "upServerList";
         return ReflectUtils.getFieldValue(obj, fieldName).map(value -> (List<Object>) value)
-                .orElse(Collections.emptyList());
+            .orElse(Collections.emptyList());
     }
 
     private Optional<RequestData> getRequestData() {
@@ -98,6 +99,10 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
             return Optional.empty();
         }
         Map<String, List<String>> header = new HashMap<>();
+        RequestTag requestTag = ThreadLocalUtils.getRequestTag();
+        if (requestTag != null) {
+            header.putAll(requestTag.getTag());
+        }
         HttpServletRequest request = context.getRequest();
         Enumeration<?> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {

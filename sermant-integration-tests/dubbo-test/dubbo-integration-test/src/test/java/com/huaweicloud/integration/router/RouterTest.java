@@ -191,7 +191,7 @@ public class RouterTest {
                 + "            caseInsensitive: false\n"
                 + "      route:\n"
                 + "        - tags:\n"
-                + "            group: yellow\n"
+                + "            group-test: yellow\n"
                 + "          weight: 100\n"
                 + "    - precedence: 2\n"
                 + "      match:\n"
@@ -242,17 +242,17 @@ public class RouterTest {
                 + "    - precedence: 1\n"
                 + "      match:\n"
                 + "        tags:\n"
-                + "          group:\n"
+                + "          group-test:\n"
                 + "            exact: 'red'\n"
                 + "            caseInsensitive: false\n"
                 + "      route:\n"
                 + "        - tags:\n"
-                + "            group: gray\n"
+                + "            group-test: gray\n"
                 + "          weight: 100\n"
                 + "    - precedence: 2\n"
                 + "      match:\n"
                 + "        tags:\n"
-                + "          group:\n"
+                + "          group-test:\n"
                 + "            exact: 'gray'\n"
                 + "            caseInsensitive: false\n"
                 + "      route:\n"
@@ -302,7 +302,7 @@ public class RouterTest {
                 + "            caseInsensitive: false\n"
                 + "      route:\n"
                 + "        - tags:\n"
-                + "            group: gray\n"
+                + "            group-test: gray\n"
                 + "          weight: 100\n"
                 + "    - precedence: 2\n"
                 + "      match:\n"
@@ -320,19 +320,19 @@ public class RouterTest {
 
         HttpHeaders headers = new HttpHeaders();
 
-        // 测试命中group:gray的实例
+        // 测试命中group-test:gray的实例
         headers.add("id", "1");
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
-            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
-            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
-            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group-test:gray"));
         }
 
         // 测试命中version:1.0.1的实例
@@ -357,15 +357,15 @@ public class RouterTest {
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
             String body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group-test:gray"));
         }
 
         // 测试没有命中version:1.0.1的实例
@@ -374,16 +374,16 @@ public class RouterTest {
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
             String body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
 
             body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group-test:gray"));
         }
     }
 
@@ -399,17 +399,17 @@ public class RouterTest {
                 + "    - precedence: 1\n"
                 + "      match:\n"
                 + "        tags:\n"
-                + "          group:\n"
+                + "          group-test:\n"
                 + "            exact: 'red'\n"
                 + "            caseInsensitive: false\n"
                 + "      route:\n"
                 + "        - tags:\n"
-                + "            group: gray\n"
+                + "            group-test: gray\n"
                 + "          weight: 100\n"
                 + "    - precedence: 2\n"
                 + "      match:\n"
                 + "        tags:\n"
-                + "          group:\n"
+                + "          group-test:\n"
                 + "            exact: 'gray'\n"
                 + "            caseInsensitive: false\n"
                 + "      route:\n"
@@ -420,7 +420,7 @@ public class RouterTest {
         Assertions.assertTrue(KIE_CLIENT.publishConfig(configKey, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
-        // 测试命中version:1.0.0的实例(consumer自身group:gray)
+        // 测试命中version:1.0.0的实例(consumer自身group-test:gray)
         HttpEntity<String> entity = new HttpEntity<>(null, new HttpHeaders());
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
@@ -442,17 +442,17 @@ public class RouterTest {
                 + "    - precedence: 1\n"
                 + "      match:\n"
                 + "        tags:\n"
-                + "          group:\n"
+                + "          group-test:\n"
                 + "            exact: 'gray'\n"
                 + "            caseInsensitive: false\n"
                 + "      route:\n"
                 + "        - tags:\n"
-                + "            group: gray\n"
+                + "            group-test: gray\n"
                 + "          weight: 100\n"
                 + "    - precedence: 2\n"
                 + "      match:\n"
                 + "        tags:\n"
-                + "          group:\n"
+                + "          group-test:\n"
                 + "            exact: 'red'\n"
                 + "            caseInsensitive: false\n"
                 + "      route:\n"
@@ -463,17 +463,17 @@ public class RouterTest {
         Assertions.assertTrue(KIE_CLIENT.publishConfig(configKey, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
-        // 测试命中group:gray的实例(consumer自身group:gray)
+        // 测试命中group-test:gray的实例(consumer自身group-test:gray)
         entity = new HttpEntity<>(null, new HttpHeaders());
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
-            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
-            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
-            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group-test:gray"));
         }
     }
 
@@ -494,7 +494,7 @@ public class RouterTest {
                 + "            caseInsensitive: false\n"
                 + "      route:\n"
                 + "        - tags:\n"
-                + "            group: red\n"
+                + "            group-test: red\n"
                 + "          weight: 100\n"
                 + "    - precedence: 2\n"
                 + "      match:\n"
@@ -512,17 +512,17 @@ public class RouterTest {
                 + "    - precedence: 1\n"
                 + "      match:\n"
                 + "        tags:\n"
-                + "          group:\n"
+                + "          group-test:\n"
                 + "            exact: 'gray'\n"
                 + "            caseInsensitive: false\n"
                 + "      route:\n"
                 + "        - tags:\n"
-                + "            group: gray\n"
+                + "            group-test: gray\n"
                 + "          weight: 100\n"
                 + "    - precedence: 2\n"
                 + "      match:\n"
                 + "        tags:\n"
-                + "          group:\n"
+                + "          group-test:\n"
                 + "            exact: 'red'\n"
                 + "            caseInsensitive: false\n"
                 + "      route:\n"
@@ -533,7 +533,7 @@ public class RouterTest {
         Assertions.assertTrue(KIE_CLIENT.publishConfig(SERVICE_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
-        // 测试命中标签为version:1.0.1和group:gray标签的实例
+        // 测试命中标签为version:1.0.1和group-test:gray标签的实例
         HttpHeaders headers = new HttpHeaders();
         headers.add("name", "BAr");
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
@@ -541,15 +541,15 @@ public class RouterTest {
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
             String body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(body.contains("1.0.1") && body.contains("group:gray"));
+            Assertions.assertTrue(body.contains("1.0.1") && body.contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(body.contains("1.0.1") && body.contains("group:gray"));
+            Assertions.assertTrue(body.contains("1.0.1") && body.contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(body.contains("1.0.1") && body.contains("group:gray"));
+            Assertions.assertTrue(body.contains("1.0.1") && body.contains("group-test:gray"));
         }
     }
 
@@ -565,19 +565,19 @@ public class RouterTest {
                 + "    - precedence: 1\n"
                 + "      match:\n"
                 + "        tags:\n"
-                + "          group:\n"
+                + "          group-test:\n"
                 + "            exact: 'gray'\n"
                 + "            caseInsensitive: false\n"
                 + "      route:\n"
                 + "        - tags:\n"
-                + "            group: CONSUMER_TAG\n";
+                + "            group-test: CONSUMER_TAG\n";
 
         Assertions.assertTrue(KIE_CLIENT.publishConfig(SERVICE_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
         HttpHeaders headers = new HttpHeaders();
 
-        // 测试命中group:CONSUMER_TAG的实例(consumer自身group:gray)
+        // 测试命中group-test:CONSUMER_TAG的实例(consumer自身group-test:gray)
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {

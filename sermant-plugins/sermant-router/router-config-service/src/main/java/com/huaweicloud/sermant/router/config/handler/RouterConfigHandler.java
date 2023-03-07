@@ -57,7 +57,7 @@ public class RouterConfigHandler extends AbstractConfigHandler {
                 continue;
             }
             List<EntireRule> list = JSONArray.parseArray(JSONObject.toJSONString(routeRuleList), EntireRule.class);
-            RuleUtils.removeInvalidRules(list);
+            RuleUtils.removeInvalidRules(list, RouterConstant.DUBBO_CACHE_NAME.equals(cacheName));
             if (!CollectionUtils.isEmpty(list)) {
                 for (EntireRule rule : list) {
                     rule.getRules().sort((o1, o2) -> o2.getPrecedence() - o1.getPrecedence());

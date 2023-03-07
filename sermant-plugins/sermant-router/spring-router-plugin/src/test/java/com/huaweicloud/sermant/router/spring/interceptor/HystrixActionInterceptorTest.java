@@ -26,6 +26,7 @@ import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableDefault;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -50,6 +51,15 @@ public class HystrixActionInterceptorTest {
         Object[] arguments = new Object[1];
         arguments[0] = HystrixConcurrencyStrategyDefault.getInstance();
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
+    }
+
+    /**
+     * 重置测试数据
+     */
+    @Before
+    public void clear() {
+        ThreadLocalUtils.removeRequestTag();
+        ThreadLocalUtils.removeRequestData();
     }
 
     /**

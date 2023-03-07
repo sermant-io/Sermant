@@ -136,6 +136,16 @@ public class RouterConstant {
      */
     public static final int ROUTER_HANDLER_ORDER = 200;
 
+    /**
+     * -
+     */
+    public static final String DASH = "-";
+
+    /**
+     * .
+     */
+    public static final String POINT = ".";
+
     private RouterConstant() {
     }
 }

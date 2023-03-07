@@ -40,7 +40,6 @@ import java.util.Map;
  * @since 2023-02-18
  */
 public class GlobalConfigHandler extends AbstractConfigHandler {
-
     @Override
     public void handle(DynamicConfigEvent event, String cacheName) {
         RouterConfiguration configuration = ConfigCache.getLabel(cacheName);
@@ -50,7 +49,7 @@ public class GlobalConfigHandler extends AbstractConfigHandler {
             return;
         }
         List<EntireRule> list = JSONArray.parseArray(JSONObject.toJSONString(getRule(event)), EntireRule.class);
-        RuleUtils.removeInvalidRules(list);
+        RuleUtils.removeInvalidRules(list, RouterConstant.DUBBO_CACHE_NAME.equals(cacheName));
         if (CollectionUtils.isEmpty(list)) {
             configuration.resetGlobalRule(Collections.emptyList());
         } else {

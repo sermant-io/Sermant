@@ -81,17 +81,16 @@ public class RuleUtils {
      * 获取所有标签
      *
      * @param rules         路由规则
-     * @param isReplaceDash 是否需要替换破折号为点号（dubbo需要）
      * @return 标签
      */
-    public static List<Map<String, String>> getTags(List<Rule> rules, boolean isReplaceDash) {
+    public static List<Map<String, String>> getTags(List<Rule> rules) {
         if (CollectionUtils.isEmpty(rules)) {
             return Collections.emptyList();
         }
         List<Map<String, String>> tags = new ArrayList<>();
         for (Rule rule : rules) {
             for (Route route : rule.getRoute()) {
-                tags.add(replaceDash(route.getTags(), isReplaceDash));
+                tags.add(route.getTags());
             }
         }
         return tags;
@@ -212,10 +211,9 @@ public class RuleUtils {
      * 选取路由
      *
      * @param routes        路由规则
-     * @param isReplaceDash 是否需要替换破折号为点号（dubbo需要）
      * @return 目标路由
      */
-    public static RouteResult<?> getTargetTags(List<Route> routes, boolean isReplaceDash) {
+    public static RouteResult<?> getTargetTags(List<Route> routes) {
         List<Map<String, String>> tags = new ArrayList<>();
         int begin = 1;
         int num = ThreadLocalRandom.current().nextInt(ONO_HUNDRED) + 1;
@@ -224,7 +222,7 @@ public class RuleUtils {
             if (weight == null) {
                 continue;
             }
-            Map<String, String> currentTag = replaceDash(route.getTags(), isReplaceDash);
+            Map<String, String> currentTag = route.getTags();
             if (num >= begin && num <= begin + weight - 1) {
                 return new RouteResult<>(true, currentTag);
             }
@@ -241,6 +239,9 @@ public class RuleUtils {
      * @return 泳道标记
      */
     public static Map<String, List<String>> getTargetLaneTags(List<Route> routes) {
+        if (CollectionUtils.isEmpty(routes)) {
+            return Collections.emptyMap();
+        }
         int begin = 1;
         int num = ThreadLocalRandom.current().nextInt(ONO_HUNDRED) + 1;
         for (Route route : routes) {
@@ -266,8 +267,9 @@ public class RuleUtils {
      * 去掉无效的规则
      *
      * @param list 路由规则
+     * @param isReplaceDash 是否需要把"-"替换成"."
      */
-    public static void removeInvalidRules(List<EntireRule> list) {
+    public static void removeInvalidRules(List<EntireRule> list, boolean isReplaceDash) {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
@@ -295,7 +297,7 @@ public class RuleUtils {
                 }
 
                 // 去掉无效的路由和修复同标签规则的路由
-                removeInvalidRoute(routes, kind);
+                removeInvalidRoute(routes, kind, isReplaceDash);
 
                 // 去掉全是无效路由的规则
                 if (CollectionUtils.isEmpty(routes)) {
@@ -466,8 +468,8 @@ public class RuleUtils {
      *
      * @param routeList 路由
      */
-    private static void removeInvalidRoute(List<Route> routeList, String kind) {
-        boolean removed = routeList.removeIf(route -> isInvalidRoute(route, kind));
+    private static void removeInvalidRoute(List<Route> routeList, String kind, boolean isReplaceDash) {
+        boolean removed = routeList.removeIf(route -> isInvalidRoute(route, kind, isReplaceDash));
         if (removed) {
             LOGGER.warning("Some invalid routes had been removed, please check your router configuration.");
         }
@@ -492,7 +494,7 @@ public class RuleUtils {
             || matchRule.getValueMatch().getMatchStrategy() == null;
     }
 
-    private static boolean isInvalidRoute(Route route, String kind) {
+    private static boolean isInvalidRoute(Route route, String kind, boolean isReplaceDash) {
         if (route == null) {
             return true;
         }
@@ -525,10 +527,8 @@ public class RuleUtils {
                 route.setWeight(ONO_HUNDRED);
             }
         }
-        if (route.getWeight() == null) {
-            return true;
-        }
-        return false;
+        route.setTags(replaceDash(tags, isReplaceDash));
+        return route.getWeight() == null;
     }
 
     private static void addKeys(List<Rule> rules, Set<String> keys) {
@@ -573,9 +573,9 @@ public class RuleUtils {
         }
         Map<String, String> map = new HashMap<>();
         tags.forEach((key, value) -> {
-            if (key != null && key.contains("-")) {
+            if (key != null && key.contains(RouterConstant.DASH)) {
                 // dubbo会把key中的"-"替换成"."
-                map.put(key.replace("-", "."), value);
+                map.put(key.replace(RouterConstant.DASH, RouterConstant.POINT), value);
             } else {
                 map.put(key, value);
             }

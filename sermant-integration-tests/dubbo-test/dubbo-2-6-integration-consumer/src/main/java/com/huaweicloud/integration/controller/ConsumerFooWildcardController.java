@@ -16,6 +16,7 @@
 
 package com.huaweicloud.integration.controller;
 
+import com.huaweicloud.integration.constants.Constant;
 import com.huaweicloud.integration.service.FooService;
 
 import com.alibaba.dubbo.rpc.RpcContext;
@@ -36,10 +37,6 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/consumer/wildcard")
 public class ConsumerFooWildcardController {
-    private static final String TAG = "app1";
-
-    private static final String TAG_KEY = "dubbo.tag";
-
     @Resource(name = "fooWildcardService")
     private FooService fooWildcardService;
 
@@ -51,7 +48,7 @@ public class ConsumerFooWildcardController {
      */
     @GetMapping("/testFoo")
     public String testFoo(@RequestParam String str) {
-        RpcContext.getContext().setAttachment(TAG_KEY, TAG);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
         return fooWildcardService.foo(str);
     }
 
@@ -63,7 +60,7 @@ public class ConsumerFooWildcardController {
      */
     @GetMapping("/testFoo2")
     public String testFoo2(@RequestParam String str) {
-        RpcContext.getContext().setAttachment(TAG_KEY, TAG);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
         return fooWildcardService.foo2(str);
     }
 }

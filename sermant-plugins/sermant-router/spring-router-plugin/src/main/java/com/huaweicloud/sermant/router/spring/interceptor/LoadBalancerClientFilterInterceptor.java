@@ -18,13 +18,19 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequest.Builder;
 import org.springframework.web.server.ServerWebExchange;
+
+import java.lang.reflect.Method;
+import java.util.Optional;
+import java.util.function.BiFunction;
 
 /**
  * spring cloud gateway LoadBalancerClientFilter增强类，获取请求数据
@@ -33,16 +39,27 @@ import org.springframework.web.server.ServerWebExchange;
  * @since 2022-07-12
  */
 public class LoadBalancerClientFilterInterceptor extends AbstractInterceptor {
+    private final BiFunction<ServerWebExchange, RequestTag, ServerWebExchange> function;
+
+    /**
+     * 构造方法
+     */
+    public LoadBalancerClientFilterInterceptor() {
+        Optional<Method> method = ReflectUtils
+            .findMethod(HttpHeaders.class, "writableHttpHeaders", new Class[]{HttpHeaders.class});
+        if (method.isPresent()) {
+            function = this::putHeaders;
+        } else {
+            function = this::putHeadersByLowerVersionMethod;
+        }
+    }
+
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        Object argument = context.getArguments()[0];
-        if (argument instanceof ServerWebExchange) {
-            ServerWebExchange exchange = (ServerWebExchange) argument;
-            HttpRequest request = exchange.getRequest();
-            HttpHeaders headers = request.getHeaders();
-            putHeaders(headers);
+        if (context.getArguments()[0] instanceof ServerWebExchange) {
+            ServerHttpRequest request = getExchangeAfterPutHeaders(context).getRequest();
             String path = request.getURI().getPath();
-            ThreadLocalUtils.setRequestData(new RequestData(headers, path, request.getMethod().name()));
+            ThreadLocalUtils.setRequestData(new RequestData(request.getHeaders(), path, request.getMethod().name()));
         }
         return context;
     }
@@ -61,11 +78,34 @@ public class LoadBalancerClientFilterInterceptor extends AbstractInterceptor {
         return context;
     }
 
-    private void putHeaders(HttpHeaders readOnlyHttpHeaders) {
-        HttpHeaders httpHeaders = HttpHeaders.writableHttpHeaders(readOnlyHttpHeaders);
+    private ServerWebExchange getExchangeAfterPutHeaders(ExecuteContext context) {
+        ServerWebExchange exchange = (ServerWebExchange) context.getArguments()[0];
         RequestTag requestTag = ThreadLocalUtils.getRequestTag();
-        if (requestTag != null) {
-            requestTag.getTag().forEach(httpHeaders::putIfAbsent);
+        if (requestTag == null) {
+            return exchange;
         }
+        ServerWebExchange newExchange = function.apply(exchange, requestTag);
+        context.getArguments()[0] = newExchange;
+        return newExchange;
+    }
+
+    private ServerWebExchange putHeaders(ServerWebExchange exchange, RequestTag requestTag) {
+        HttpHeaders httpHeaders = HttpHeaders.writableHttpHeaders(exchange.getRequest().getHeaders());
+        requestTag.getTag().forEach(httpHeaders::putIfAbsent);
+        return exchange;
+    }
+
+    private ServerWebExchange putHeadersByLowerVersionMethod(ServerWebExchange exchange, RequestTag requestTag) {
+        ServerHttpRequest httpRequest = exchange.getRequest();
+        HttpHeaders readOnlyHttpHeaders = httpRequest.getHeaders();
+        Builder builder = httpRequest.mutate();
+        requestTag.getTag().forEach((key, value) -> {
+            if (!readOnlyHttpHeaders.containsKey(key)) {
+                // 使用反射兼容Spring Cloud Finchley.RELEASE
+                ReflectUtils.invokeMethod(builder, "header", new Class[]{String.class, String.class},
+                    new Object[]{key, value.get(0)});
+            }
+        });
+        return exchange.mutate().request(builder.build()).build();
     }
 }

@@ -20,6 +20,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.Map;
+
 /**
  * feign client
  *
@@ -35,4 +37,12 @@ public interface ProviderClient {
      */
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
     String hello();
+
+    /**
+     * 测试接口
+     *
+     * @return 测试信息
+     */
+    @RequestMapping(value = "/lane", method = RequestMethod.GET)
+    Map<String, Object> getLane();
 }

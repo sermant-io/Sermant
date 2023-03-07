@@ -88,6 +88,16 @@ public enum SermantTestType {
     VISIBILITY,
 
     /**
+     * 泳道测试
+     */
+    LANE,
+
+    /**
+     * 泳道配置
+     */
+    LANE_CONFIG,
+
+    /**
      * 测试所有类型
      */
     ALL;

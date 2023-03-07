@@ -66,6 +66,7 @@ public class LoadBalancerClientFilterInterceptorTest {
      */
     @Test
     public void testBefore() {
+        // RequestTag为null时
         interceptor.before(context);
         RequestData requestData = ThreadLocalUtils.getRequestData();
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
@@ -75,6 +76,19 @@ public class LoadBalancerClientFilterInterceptorTest {
         Assert.assertEquals(2, headerData.size());
         Assert.assertEquals("bar1", headerData.get("bar").get(0));
         Assert.assertEquals("foo1", headerData.get("foo").get(0));
+
+        // RequestTag不为null时
+        ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar-foo", Collections.singletonList("foo2")));
+        interceptor.before(context);
+        requestData = ThreadLocalUtils.getRequestData();
+        Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
+        Assert.assertEquals("", requestData.getPath());
+        Assert.assertNotNull(requestData);
+        headerData = requestData.getTag();
+        Assert.assertEquals(3, headerData.size());
+        Assert.assertEquals("bar1", headerData.get("bar").get(0));
+        Assert.assertEquals("foo1", headerData.get("foo").get(0));
+        Assert.assertEquals("foo2", headerData.get("bar-foo").get(0));
     }
 
     /**

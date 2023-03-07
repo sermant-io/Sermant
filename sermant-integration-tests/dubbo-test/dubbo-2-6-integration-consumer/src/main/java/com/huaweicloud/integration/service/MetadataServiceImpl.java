@@ -17,6 +17,7 @@
 package com.huaweicloud.integration.service;
 
 import com.huaweicloud.integration.client.ProviderClient;
+import com.huaweicloud.integration.constants.Constant;
 
 import com.alibaba.dubbo.rpc.RpcContext;
 
@@ -35,10 +36,6 @@ import javax.annotation.Resource;
 public class MetadataServiceImpl implements MetadataService {
     private static final String PROVIDER_URL = "http://dubbo-integration-provider/hello";
 
-    private static final String TAG = "app1";
-
-    private static final String TAG_KEY = "dubbo.tag";
-
     @Resource(name = "fooService")
     private FooService fooService;
 
@@ -52,7 +49,7 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     public String getMetadataByDubbo() {
-        RpcContext.getContext().setAttachment(TAG_KEY, TAG);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
         return fooService.getMetadata(false);
     }
 

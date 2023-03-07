@@ -16,6 +16,8 @@
 
 package com.huaweicloud.integration.service;
 
+import java.util.Map;
+
 /**
  * 测试接口
  *
@@ -53,4 +55,11 @@ public interface FooService {
      * @return 区域
      */
     String getMetadata(boolean exit);
+
+    /**
+     * 获取attachments
+     *
+     * @return attachments
+     */
+    Map<String, Object> getAttachments();
 }

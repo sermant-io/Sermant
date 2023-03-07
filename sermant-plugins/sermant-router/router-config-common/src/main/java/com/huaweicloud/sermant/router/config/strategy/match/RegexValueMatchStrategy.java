@@ -20,6 +20,9 @@ import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.strategy.ValueMatchStrategy;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -30,14 +33,22 @@ import java.util.regex.PatternSyntaxException;
  * @since 2021-10-23
  */
 public class RegexValueMatchStrategy implements ValueMatchStrategy {
+    private static final Map<String, Pattern> PATTERN_MAP = new ConcurrentHashMap<>();
+
     @Override
     public boolean isMatch(List<String> values, String arg) {
         try {
             return !CollectionUtils.isEmpty(values) && values.get(0) != null && arg != null
-                && Pattern.matches(values.get(0), arg);
+                && isMatches(values.get(0), arg);
         } catch (PatternSyntaxException ignored) {
             // 正则表达式不符合，返回false
             return false;
         }
+    }
+
+    private boolean isMatches(String regex, String value) {
+        Pattern pattern = PATTERN_MAP.computeIfAbsent(regex, Pattern::compile);
+        Matcher matcher = pattern.matcher(value);
+        return matcher.matches();
     }
 }

@@ -53,7 +53,7 @@ public class ServiceConfigHandler extends AbstractConfigHandler {
         }
         List<EntireRule> list = JSONArray.parseArray(JSONObject.toJSONString(getRule(event, serviceName)),
                 EntireRule.class);
-        RuleUtils.removeInvalidRules(list);
+        RuleUtils.removeInvalidRules(list, RouterConstant.DUBBO_CACHE_NAME.equals(cacheName));
         if (CollectionUtils.isEmpty(list)) {
             configuration.removeServiceRule(serviceName);
         } else {

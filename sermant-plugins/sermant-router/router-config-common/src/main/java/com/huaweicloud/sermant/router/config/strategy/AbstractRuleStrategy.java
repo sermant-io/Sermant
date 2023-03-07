@@ -69,8 +69,8 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
     }
 
     @Override
-    public List<I> getMatchInstances(String serviceName, List<I> instances, List<Route> routes, boolean isReplaceDash) {
-        RouteResult<?> result = RuleUtils.getTargetTags(routes, isReplaceDash);
+    public List<I> getMatchInstances(String serviceName, List<I> instances, List<Route> routes) {
+        RouteResult<?> result = RuleUtils.getTargetTags(routes);
         return getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName, instances, true);
     }
 

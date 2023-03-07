@@ -16,6 +16,7 @@
 
 package com.huaweicloud.integration.controller;
 
+import com.huaweicloud.integration.constants.Constant;
 import com.huaweicloud.integration.service.FooService;
 
 import com.alibaba.dubbo.rpc.RpcContext;
@@ -38,10 +39,6 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/consumer")
 public class ConsumerFooController {
-    private static final String TAG = "app1";
-
-    private static final String TAG_KEY = "dubbo.tag";
-
     @Resource(name = "fooService")
     private FooService fooService;
 
@@ -53,7 +50,7 @@ public class ConsumerFooController {
      */
     @GetMapping("/testFoo")
     public String testFoo(@RequestParam String str) {
-        RpcContext.getContext().setAttachment(TAG_KEY, TAG);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
         return fooService.foo(str);
     }
 
@@ -65,7 +62,7 @@ public class ConsumerFooController {
      */
     @GetMapping("/testFoo2")
     public String testFoo2(@RequestParam String str) {
-        RpcContext.getContext().setAttachment(TAG_KEY, TAG);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
         return fooService.foo2(str);
     }
 
@@ -79,10 +76,10 @@ public class ConsumerFooController {
     @GetMapping("/testTag")
     public String testTag(@RequestParam String tag) {
         // dubbo2.6.6+才支持tag功能，跑流水时暂时以代码的方式模拟报错，手动测试时可以屏蔽这段报错的逻辑
-        if (!TAG.equals(tag)) {
+        if (!Constant.TAG.equals(tag)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        RpcContext.getContext().setAttachment(TAG_KEY, tag);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, tag);
         return fooService.foo2(tag);
     }
 
@@ -93,7 +90,7 @@ public class ConsumerFooController {
      */
     @GetMapping("/getRegistryProtocol")
     public String getRegistryProtocol() {
-        RpcContext.getContext().setAttachment(TAG_KEY, TAG);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
         return fooService.getRegistryProtocol();
     }
 
@@ -105,7 +102,7 @@ public class ConsumerFooController {
      */
     @GetMapping("/getMetadata")
     public String getMetadata(boolean exit) {
-        RpcContext.getContext().setAttachment(TAG_KEY, TAG);
+        RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
         return fooService.getMetadata(exit);
     }
 }

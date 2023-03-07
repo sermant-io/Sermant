@@ -18,7 +18,18 @@ package com.huaweicloud.spring.rest.provider;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 测试接口
@@ -27,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2022-11-02
  */
 @RestController
+@RequestMapping("/router")
 public class RouterController {
     @Value("${service_meta_zone:${SERVICE_META_ZONE:${service.meta.zone:bar}}}")
     private String zone;
@@ -46,12 +58,41 @@ public class RouterController {
      * @param exit 是否退出
      * @return 区域
      */
-    @GetMapping("/router/metadata")
+    @GetMapping("/metadata")
     public String getMetadata(boolean exit) {
         if (exit) {
             System.exit(0);
         }
         return "I'm " + name + ", my version is " + version + ", my zone is " + zone + ", my parameters is ["
             + parameters + "].";
+    }
+
+    /**
+     * 获取泳道信息
+     *
+     * @return msg
+     */
+    @GetMapping("/lane")
+    public Map<String, Object> getLane() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+            .getRequest();
+        Map<String, String> map = new HashMap<>();
+        Enumeration<?> enumeration = request.getHeaderNames();
+        while (enumeration.hasMoreElements()) {
+            String key = (String) enumeration.nextElement();
+            map.put(key, enumeration2List(request.getHeaders(key)).get(0));
+        }
+        map.put("version", version);
+        Map<String, Object> result = new HashMap<>();
+        result.put(name, map);
+        return result;
+    }
+
+    private List<String> enumeration2List(Enumeration<?> enumeration) {
+        List<String> collection = new ArrayList<>();
+        while (enumeration.hasMoreElements()) {
+            collection.add((String) enumeration.nextElement());
+        }
+        return collection;
     }
 }
