@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.backend.common.util.GzipUtils;
 import com.huaweicloud.sermant.backend.entity.HeartbeatEntity;
 import com.huaweicloud.sermant.backend.entity.OperateType;
 import com.huaweicloud.sermant.backend.entity.ServerInfo;
-import com.huawei.sermant.backend.pojo.Message;
+import com.huaweicloud.sermant.backend.pojo.Message;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

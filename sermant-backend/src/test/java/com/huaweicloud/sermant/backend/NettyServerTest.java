@@ -3,7 +3,7 @@ package com.huaweicloud.sermant.backend;
 import static org.mockito.Mockito.mock;
 
 import com.huaweicloud.sermant.backend.common.conf.DataTypeTopicMapping;
-import com.huawei.sermant.backend.pojo.Message;
+import com.huaweicloud.sermant.backend.pojo.Message;
 import com.huaweicloud.sermant.backend.server.ServerHandler;
 
 import io.netty.channel.embedded.EmbeddedChannel;

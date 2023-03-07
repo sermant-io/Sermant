@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.backend.common.conf.VisibilityConfig;
 import com.huaweicloud.sermant.backend.common.exception.KafkaTopicException;
 import com.huaweicloud.sermant.backend.kafka.KafkaConsumerManager;
 import com.huaweicloud.sermant.backend.kafka.KafkaProducerManager;
-import com.huawei.sermant.backend.pojo.Message;
+import com.huaweicloud.sermant.backend.pojo.Message;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;

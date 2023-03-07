@@ -16,7 +16,7 @@
 
 package com.huaweicloud.sermant.backend.common.handler;
 
-import com.huawei.sermant.backend.pojo.Message;
+import com.huaweicloud.sermant.backend.pojo.Message;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
