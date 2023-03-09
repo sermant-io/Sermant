@@ -39,6 +39,13 @@ public enum FeiShuMessageType {
      */
     INTERACTIVE("interactive");
 
-    FeiShuMessageType(String str) {
+    private String type;
+
+    FeiShuMessageType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
     }
 }

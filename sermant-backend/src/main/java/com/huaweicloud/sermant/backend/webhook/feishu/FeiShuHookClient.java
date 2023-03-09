@@ -66,7 +66,7 @@ public class FeiShuHookClient implements WebHookClient {
     public boolean doNotify(List<EventInfoEntity> eventEntities) {
 
         FeiShuEntity feiShuEntity = new FeiShuEntity();
-        feiShuEntity.setMsgType(FeiShuMessageType.TEXT.toString());
+        feiShuEntity.setMsgType(FeiShuMessageType.TEXT.getType());
         feiShuEntity.setContent(new HashMap<String, String>() {
             {
                 put(FeiShuMessageType.TEXT.toString(), JSONObject.toJSONString(eventEntities));

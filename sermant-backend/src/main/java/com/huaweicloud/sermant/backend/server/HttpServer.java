@@ -24,7 +24,6 @@ import com.huaweicloud.sermant.backend.entity.Address;
 import com.huaweicloud.sermant.backend.entity.AddressScope;
 import com.huaweicloud.sermant.backend.entity.AddressType;
 import com.huaweicloud.sermant.backend.entity.AgentInfo;
-import com.huaweicloud.sermant.backend.entity.EventInfoEntity;
 import com.huaweicloud.sermant.backend.entity.EventLevel;
 import com.huaweicloud.sermant.backend.entity.EventsRequestEntity;
 import com.huaweicloud.sermant.backend.entity.EventsResponseEntity;
@@ -33,6 +32,7 @@ import com.huaweicloud.sermant.backend.entity.HeartbeatEntity;
 import com.huaweicloud.sermant.backend.entity.MonitorItem;
 import com.huaweicloud.sermant.backend.entity.Protocol;
 import com.huaweicloud.sermant.backend.entity.PublishConfigEntity;
+import com.huaweicloud.sermant.backend.entity.QueryResultEventInfoEntity;
 import com.huaweicloud.sermant.backend.entity.RegisterResult;
 import com.huaweicloud.sermant.backend.entity.WebhooksIdRequestEntity;
 import com.huaweicloud.sermant.backend.entity.WebhooksResponseEntity;
@@ -91,6 +91,7 @@ public class HttpServer {
     @Autowired
     private DynamicConfigurationFactoryServiceImpl dynamicConfigurationFactoryService;
 
+    private EventPushHandler eventPushHandler = new EventPushHandler();
 
     private final RandomUtil randomUtil = new RandomUtil();
 
@@ -150,10 +151,10 @@ public class HttpServer {
     @PostMapping("/event/events")
     public EventsResponseEntity queryEvent(@RequestBody(required = false) EventsRequestEntity eventsRequestEntity) {
         EventsResponseEntity eventsResponseEntity = new EventsResponseEntity();
-        List<EventInfoEntity> queryResult = eventService.queryEvent(eventsRequestEntity);
+        List<QueryResultEventInfoEntity> queryResult = eventService.queryEvent(eventsRequestEntity);
         setEventCount(eventsResponseEntity, queryResult);
         eventsResponseEntity.setTotal(queryResult.size());
-        eventsResponseEntity.setEventEntities(queryResult);
+        eventsResponseEntity.setQueryResultEventInfoEntities(queryResult);
         eventsResponseEntity.setPageSize(CommonConst.DEFAULT_PAGE_SIZE);
         eventsResponseEntity.setPageNum(queryResult.size() / CommonConst.DEFAULT_PAGE_SIZE + 1);
         return eventsResponseEntity;
@@ -167,7 +168,6 @@ public class HttpServer {
     @GetMapping("/event/webhooks")
     public WebhooksResponseEntity getWebhooks() {
         WebhooksResponseEntity webhooksResponseEntity = new WebhooksResponseEntity();
-        EventPushHandler eventPushHandler = new EventPushHandler();
         List<WebHookClient> webHookClients = eventPushHandler.getWebHookClients();
         webhooksResponseEntity.setTotal(webHookClients.size());
         List<WebHookConfig> webHookConfigs = new ArrayList<>();
@@ -188,7 +188,6 @@ public class HttpServer {
     @PostMapping("/event/webhooks/{id}")
     public boolean setWebhook(@RequestBody(required = false) WebhooksIdRequestEntity webhooksIdRequestEntity,
                               @PathVariable String id) {
-        EventPushHandler eventPushHandler = new EventPushHandler();
         List<WebHookClient> webHookClients = eventPushHandler.getWebHookClients();
         for (WebHookClient webHookClient : webHookClients) {
             WebHookConfig config = webHookClient.getConfig();
@@ -200,16 +199,16 @@ public class HttpServer {
         return true;
     }
 
-    private void setEventCount(EventsResponseEntity eventsResponseEntity, List<EventInfoEntity> queryResult) {
+    private void setEventCount(EventsResponseEntity eventsResponseEntity, List<QueryResultEventInfoEntity> queryResult) {
         int emergencyNum = 0;
         int importantNum = 0;
         int normalNum = 0;
-        for (EventInfoEntity eventInfoEntity : queryResult) {
-            if (eventInfoEntity.getLevel().equals(EventLevel.EMERGENCY)) {
+        for (QueryResultEventInfoEntity q : queryResult) {
+            if (q.getEventInfoEntity().getLevel().equals(EventLevel.EMERGENCY)) {
                 emergencyNum += 1;
                 continue;
             }
-            if (eventInfoEntity.getLevel().equals(EventLevel.IMPORTANT)) {
+            if (q.getEventInfoEntity().getLevel().equals(EventLevel.IMPORTANT)) {
                 importantNum += 1;
                 continue;
             }

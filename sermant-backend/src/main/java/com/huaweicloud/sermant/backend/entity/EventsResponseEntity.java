@@ -32,7 +32,7 @@ import java.util.List;
 public class EventsResponseEntity {
 
     private int total;
-    private List<EventInfoEntity> eventEntities;
+    private List<QueryResultEventInfoEntity> queryResultEventInfoEntities;
     private int pageNum;
     private int pageSize;
     private int emergency;

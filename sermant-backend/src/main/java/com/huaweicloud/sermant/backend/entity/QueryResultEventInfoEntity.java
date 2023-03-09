@@ -16,23 +16,19 @@
 
 package com.huaweicloud.sermant.backend.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashMap;
-
 /**
- * 飞书推送事件实体
+ * 查询事件结果实体
  *
- * @since 2023-03-02
  * @author xuezechao
+ * @since 2023-03-02
  */
 @Getter
 @Setter
-public class FeiShuEntity {
-    @JSONField(name = "msg_type")
-    private String msgType;
-    private HashMap<String, String> content;
+public class QueryResultEventInfoEntity {
+    EventInfoEntity eventInfoEntity;
+    String appName;
+    String ip;
 }

@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.backend.dao;
 import com.huaweicloud.sermant.backend.entity.EventInfoEntity;
 import com.huaweicloud.sermant.backend.entity.EventsRequestEntity;
 import com.huaweicloud.sermant.backend.entity.InstanceMeta;
+import com.huaweicloud.sermant.backend.entity.QueryResultEventInfoEntity;
 
 import java.util.List;
 
@@ -68,5 +69,5 @@ public interface EventDao {
      * @param eventsRequestEntity 查询条件
      * @return 查询结果
      */
-    List<EventInfoEntity> queryEvent(EventsRequestEntity eventsRequestEntity);
+    List<QueryResultEventInfoEntity> queryEvent(EventsRequestEntity eventsRequestEntity);
 }

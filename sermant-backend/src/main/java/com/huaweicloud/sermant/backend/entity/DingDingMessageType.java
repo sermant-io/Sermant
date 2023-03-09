@@ -39,6 +39,13 @@ public enum DingDingMessageType {
      */
     MARKDOWN("markdown");
 
-    DingDingMessageType(String str) {
+    private final String type;
+
+    DingDingMessageType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
     }
 }

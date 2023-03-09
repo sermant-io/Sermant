@@ -23,6 +23,7 @@ import com.huaweicloud.sermant.backend.dao.EventDao;
 import com.huaweicloud.sermant.backend.entity.EventInfoEntity;
 import com.huaweicloud.sermant.backend.entity.EventsRequestEntity;
 import com.huaweicloud.sermant.backend.entity.InstanceMeta;
+import com.huaweicloud.sermant.backend.entity.QueryResultEventInfoEntity;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -176,8 +177,8 @@ public class EventDaoForRedis implements EventDao {
      * @return 查询结果
      */
     @Override
-    public List<EventInfoEntity> queryEvent(EventsRequestEntity eventsRequestEntity) {
-        List<EventInfoEntity> eventEntities = new ArrayList<>();
+    public List<QueryResultEventInfoEntity> queryEvent(EventsRequestEntity eventsRequestEntity) {
+        List<QueryResultEventInfoEntity> queryResultEventInfoEntities = new ArrayList<>();
 
         // 查询符合时间条件的事件
         List<String> queryResultByTime = jedis.zrangeByScore(
@@ -191,16 +192,16 @@ public class EventDaoForRedis implements EventDao {
                 String.valueOf(0),
                 new ScanParams().match(getPattern(eventsRequestEntity)));
         int cursor = Integer.parseInt(firstScanResult.getCursor());
-        aggregationQueryResult(eventEntities, firstScanResult.getResult(), queryResultByTime);
+        aggregationQueryResult(queryResultEventInfoEntities, firstScanResult.getResult(), queryResultByTime);
         while (cursor > 0) {
             ScanResult<Map.Entry<String, String>> scanResult = jedis.hscan(
                     CommonConst.REDIS_EVENT_KEY,
                     String.valueOf(cursor),
                     new ScanParams().match(getPattern(eventsRequestEntity)));
             cursor = Integer.parseInt(scanResult.getCursor());
-            aggregationQueryResult(eventEntities, scanResult.getResult(), queryResultByTime);
+            aggregationQueryResult(queryResultEventInfoEntities, scanResult.getResult(), queryResultByTime);
         }
-        return eventEntities;
+        return queryResultEventInfoEntities;
     }
 
     /**
@@ -263,12 +264,17 @@ public class EventDaoForRedis implements EventDao {
      * @param aggregationData 需要聚合的数据
      * @param timeFilter      时间过滤列表
      */
-    private void aggregationQueryResult(List<EventInfoEntity> result,
+    private void aggregationQueryResult(List<QueryResultEventInfoEntity> result,
                                         List<Map.Entry<String, String>> aggregationData,
                                         List<String> timeFilter) {
         for (Map.Entry<String, String> entry : aggregationData) {
             if (timeFilter.contains(entry.getKey())) {
-                result.add(JSONObject.parseObject(entry.getValue(), EventInfoEntity.class));
+                QueryResultEventInfoEntity q = new QueryResultEventInfoEntity();
+                q.setEventInfoEntity(JSONObject.parseObject(entry.getValue(), EventInfoEntity.class));
+                String[] s = entry.getKey().split("_");
+                q.setAppName(s[1]);
+                q.setIp(s[2]);
+                result.add(q);
             }
         }
     }

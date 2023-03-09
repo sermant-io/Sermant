@@ -69,7 +69,7 @@ public class DingDingHookClient implements WebHookClient {
     public boolean doNotify(List<EventInfoEntity> eventEntities) {
 
         DingDingEntity dingDingEntity = new DingDingEntity();
-        dingDingEntity.setMsgType(DingDingMessageType.Text.toString());
+        dingDingEntity.setMsgtype(DingDingMessageType.Text.getType());
         dingDingEntity.setText(new HashMap<String, String>() {
             {
                 put("content", JSONObject.toJSONString(eventEntities));

@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.backend.dao.redis.EventDaoForRedis;
 import com.huaweicloud.sermant.backend.entity.EventInfoEntity;
 import com.huaweicloud.sermant.backend.entity.EventsRequestEntity;
 import com.huaweicloud.sermant.backend.entity.InstanceMeta;
+import com.huaweicloud.sermant.backend.entity.QueryResultEventInfoEntity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,7 +118,7 @@ public class EventService {
      * @param eventsRequestEntity 查询条件
      * @return 查询结果
      */
-    public List<EventInfoEntity> queryEvent(EventsRequestEntity eventsRequestEntity) {
+    public List<QueryResultEventInfoEntity> queryEvent(EventsRequestEntity eventsRequestEntity) {
         return daoService.queryEvent(eventsRequestEntity);
     }
 }
