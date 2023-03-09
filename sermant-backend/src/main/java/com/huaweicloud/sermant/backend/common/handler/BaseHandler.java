@@ -16,9 +16,8 @@
 
 package com.huaweicloud.sermant.backend.common.handler;
 
-import com.huawei.sermant.backend.pojo.Message;
+import com.huaweicloud.sermant.backend.pojo.Message;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleStateEvent;
@@ -42,15 +41,6 @@ public abstract class BaseHandler extends SimpleChannelInboundHandler<Message.Ne
         // 获取收到的消息类型
         int type = msg.getMessageTypeValue();
         switch (type) {
-            // 如果收到消息类型为心跳PING，直接发送心跳PONG
-            case Message.NettyMessage.MessageType.HEARTBEAT_PING_VALUE:
-                sendPongMsg(ctx, msg);
-                break;
-
-            // 如果收到消息为PONG，证明对方状态正常，连接正常
-            case Message.NettyMessage.MessageType.HEARTBEAT_PONG_VALUE:
-                break;
-
             // 如果为业务数据进行各自的处理
             case Message.NettyMessage.MessageType.SERVICE_DATA_VALUE:
                 handlerData(ctx, msg);
@@ -68,18 +58,9 @@ public abstract class BaseHandler extends SimpleChannelInboundHandler<Message.Ne
      */
     protected abstract void handlerData(ChannelHandlerContext ctx, Message.NettyMessage msg);
 
-    private void sendPongMsg(ChannelHandlerContext ctx, Message.NettyMessage msg) {
-        Message.NettyMessage message = msg.newBuilderForType()
-            .setMessageType(Message.NettyMessage.MessageType.HEARTBEAT_PONG)
-            .setHeartBeat(Message.HeartBeat.newBuilder().build())
-            .build();
-        Channel channel = ctx.channel();
-        channel.writeAndFlush(message);
-    }
-
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
-        IdleStateEvent stateEvent = (IdleStateEvent) evt;
+        IdleStateEvent stateEvent = (IdleStateEvent)evt;
         switch (stateEvent.state()) {
             case READER_IDLE:
                 handlerReaderIdle(ctx);

@@ -14,26 +14,44 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.cache;
-
-import com.huaweicloud.sermant.backend.entity.heartbeat.HeartbeatMessage;
+package com.huaweicloud.sermant.backend.entity.heartbeat;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 心跳数据缓存
+ * 插件信息
  *
  * @author luanwenfei
- * @since 2022-10-27
+ * @since 2022-10-28
  */
-public class HeartbeatCache {
-    private static final Map<String, HeartbeatMessage> HEARTBEAT_MESSAGE_MAP = new ConcurrentHashMap<>();
+public class PluginInfo {
+    private String name;
 
-    private HeartbeatCache() {
+    private String version;
+
+    private Map<String, String> extInfo;
+
+    public String getName() {
+        return name;
     }
 
-    public static Map<String, HeartbeatMessage> getHeartbeatMessageMap() {
-        return HEARTBEAT_MESSAGE_MAP;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public void setExtInfo(Map<String, String> extInfo) {
+        this.extInfo = extInfo;
+    }
+
+    public Map<String, String> getExtInfo() {
+        return extInfo;
     }
 }
