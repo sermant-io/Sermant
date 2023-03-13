@@ -16,37 +16,39 @@
 
 package com.huaweicloud.sermant.backend.controller;
 
-import com.huaweicloud.sermant.backend.cache.CollectorCache;
-import com.huaweicloud.sermant.backend.entity.visibility.ServerInfo;
+import com.huaweicloud.sermant.backend.cache.HeartbeatCache;
+import com.huaweicloud.sermant.backend.entity.heartbeat.HeartbeatMessage;
 
+import com.alibaba.fastjson.JSONObject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
- * 服务可见性API
+ * 心跳信息Controller
  *
- * @author zhp
- * @since 2022-12-10
+ * @author luanwenfei
+ * @since 2022-10-27
  */
 @RestController
-@RequestMapping("visibility")
-public class VisibilityController {
+@RequestMapping("/sermant")
+public class HeartBeatInfoController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HeartBeatInfoController.class);
 
-    /**
-     * 查询服务采集信息
-     *
-     * @return 服务采集信息
-     */
-    @GetMapping("/getCollectorInfo")
-    public List<ServerInfo> getCollectorInfo() {
-        if (CollectorCache.SERVER_MAP.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-        return CollectorCache.SERVER_MAP.values().stream().collect(Collectors.toList());
+    @GetMapping("/getPluginsInfo")
+    public String getPluginsInfo() {
+        return JSONObject.toJSONString(getHeartbeatMessageCache());
+    }
+
+    private List<HeartbeatMessage> getHeartbeatMessageCache() {
+        Map<String, HeartbeatMessage> heartbeatMessages = HeartbeatCache.getHeartbeatMessageMap();
+        return new ArrayList<>(heartbeatMessages.values());
     }
 }

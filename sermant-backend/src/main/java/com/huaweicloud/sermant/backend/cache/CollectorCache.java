@@ -17,10 +17,10 @@
 
 package com.huaweicloud.sermant.backend.cache;
 
-import com.huaweicloud.sermant.backend.entity.Consanguinity;
-import com.huaweicloud.sermant.backend.entity.Contract;
-import com.huaweicloud.sermant.backend.entity.ServerInfo;
-import com.huaweicloud.sermant.backend.entity.ServiceType;
+import com.huaweicloud.sermant.backend.entity.visibility.Consanguinity;
+import com.huaweicloud.sermant.backend.entity.visibility.Contract;
+import com.huaweicloud.sermant.backend.entity.visibility.ServerInfo;
+import com.huaweicloud.sermant.backend.entity.visibility.ServiceType;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -45,6 +45,11 @@ public class CollectorCache {
      * 服务信息
      */
     public static final Map<String, ServerInfo> SERVER_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * 服务有消息
+     */
+    public static final Map<String, ServerInfo> SERVER_VALIDITY_PERIOD_MAP = new ConcurrentHashMap<>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectorCache.class);
 

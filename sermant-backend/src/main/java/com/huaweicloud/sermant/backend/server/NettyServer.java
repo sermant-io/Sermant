@@ -16,14 +16,9 @@
 
 package com.huaweicloud.sermant.backend.server;
 
-import com.huaweicloud.sermant.backend.cache.DeleteTimeoutData;
-import com.huaweicloud.sermant.backend.common.conf.DataTypeTopicMapping;
-import com.huaweicloud.sermant.backend.common.conf.KafkaConf;
 import com.huaweicloud.sermant.backend.common.conf.VisibilityConfig;
-import com.huaweicloud.sermant.backend.common.exception.KafkaTopicException;
-import com.huaweicloud.sermant.backend.kafka.KafkaConsumerManager;
-import com.huaweicloud.sermant.backend.kafka.KafkaProducerManager;
-import com.huawei.sermant.backend.pojo.Message;
+import com.huaweicloud.sermant.backend.pojo.Message;
+import com.huaweicloud.sermant.backend.timer.DeleteTimeoutDataTask;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -39,8 +34,6 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,21 +68,22 @@ public class NettyServer {
 
     // 读等待时间
     @Value("${netty.wait.time}")
-    private int readWaitTime = 60;
+    private int readWaitTime;
 
     // 网关端口
     @Value("${netty.port}")
     private int port;
 
-    // kafka配置文件加载
-    @Autowired
-    private KafkaConf conf;
+    // 心跳有效时间
+    @Value("${max.effective.time:60000}")
+    private long maxEffectiveTime;
+
+    // 心跳缓存时间
+    @Value("${max.cache.time:600000}")
+    private long maxCacheTime;
 
     @Autowired
     private VisibilityConfig visibilityConfig;
-
-    @Autowired
-    private DataTypeTopicMapping topicMapping;
 
     /**
      * 服务端核心方法
@@ -97,11 +91,11 @@ public class NettyServer {
      */
     @PostConstruct
     public void start() {
-        LOGGER.info("Starting the netty server...");
+        LOGGER.info("Start netty server...");
 
         // 清理过期数据
-        TIMER.schedule(new DeleteTimeoutData(visibilityConfig), DELETE_TIMEOUT_DATA_DELAY_TIME,
-                DELETE_TIMEOUT_DATA_PERIOD_TIME);
+        TIMER.schedule(new DeleteTimeoutDataTask(maxEffectiveTime, maxCacheTime, visibilityConfig),
+            DELETE_TIMEOUT_DATA_DELAY_TIME, DELETE_TIMEOUT_DATA_PERIOD_TIME);
 
         // 处理连接的线程组
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
@@ -110,32 +104,27 @@ public class NettyServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
-            KafkaProducer<String, byte[]> producer = KafkaProducerManager.getInstance(conf).getProducer();
-            KafkaConsumer<String, String> consumer = KafkaConsumerManager.getInstance(conf).getConsumer();
-            serverBootstrap.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .option(ChannelOption.SO_BACKLOG, CONNECTION_SIZE)
-                    .childHandler(new ChannelInitializer<Channel>() {
-                        @Override
-                        protected void initChannel(Channel channel) {
-                            ChannelPipeline pipeline = channel.pipeline();
+            serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+                .option(ChannelOption.SO_BACKLOG, CONNECTION_SIZE).childHandler(new ChannelInitializer<Channel>() {
+                    @Override
+                    protected void initChannel(Channel channel) {
+                        ChannelPipeline pipeline = channel.pipeline();
 
-                            // 如果超过读等待时间还是没有收到对应客户端，触发读等待事件
-                            pipeline.addLast(new IdleStateHandler(readWaitTime, 0, 0));
-                            pipeline.addLast(new ProtobufVarint32FrameDecoder());
-                            pipeline.addLast(new ProtobufDecoder(Message.NettyMessage.getDefaultInstance()));
-                            pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
-                            pipeline.addLast(new ProtobufEncoder());
-                            pipeline.addLast(new ServerHandler(producer, consumer, topicMapping,
-                                    conf.getIsHeartbeatCache()));
-                        }
-                    });
+                        // 如果超过读等待时间还是没有收到对应客户端，触发读等待事件
+                        pipeline.addLast(new IdleStateHandler(readWaitTime, 0, 0));
+                        pipeline.addLast(new ProtobufVarint32FrameDecoder());
+                        pipeline.addLast(new ProtobufDecoder(Message.NettyMessage.getDefaultInstance()));
+                        pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
+                        pipeline.addLast(new ProtobufEncoder());
+                        pipeline.addLast(new ServerHandler());
+                    }
+                });
 
             // 同步阻塞等待服务启动
             serverBootstrap.bind(port).sync();
-            LOGGER.info("Netty server start, port is {}", port);
-        } catch (InterruptedException | KafkaTopicException e) {
-            LOGGER.error("Exception occurs when start netty server, exception message : {}", e);
+            LOGGER.info("Netty server started, port is {}", port);
+        } catch (InterruptedException e) {
+            LOGGER.error("Exception occurs when start netty server, exception message : {}", e.getMessage());
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,37 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.cache;
-
-import com.huaweicloud.sermant.backend.entity.heartbeat.HeartbeatMessage;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+package com.huaweicloud.sermant.backend.entity.event;
 
 /**
- * 心跳数据缓存
+ * 事件等级
  *
  * @author luanwenfei
- * @since 2022-10-27
+ * @since 2023-03-04
  */
-public class HeartbeatCache {
-    private static final Map<String, HeartbeatMessage> HEARTBEAT_MESSAGE_MAP = new ConcurrentHashMap<>();
+public enum EventLevel {
+    /**
+     * 紧急
+     */
+    EMERGENCY(300),
 
-    private HeartbeatCache() {
+    /**
+     * 重要
+     */
+    IMPORTANT(200),
+
+    /**
+     * 一般
+     */
+    NORMAL(100);
+
+    private final int levelThreshold;
+
+    EventLevel(int levelThreshold) {
+        this.levelThreshold = levelThreshold;
     }
 
-    public static Map<String, HeartbeatMessage> getHeartbeatMessageMap() {
-        return HEARTBEAT_MESSAGE_MAP;
+    public int getLevelThreshold() {
+        return levelThreshold;
     }
 }
