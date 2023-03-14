@@ -24,6 +24,7 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.ThreadFactoryUtils;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class GraceShutDownManager {
     /**
      * 最大缓存关闭endpoint数量
      */
-    private static final int MAX_SHUTDOWN_ENDPOINT_CACHE = 1000;
+    private static final int MAX_SHUTDOWN_ENDPOINT_CACHE = 2000;
 
     private static final ScheduledThreadPoolExecutor CLEAN_UP_TASK = new ScheduledThreadPoolExecutor(1,
             new ThreadFactoryUtils("ENDPOINT_CLEAN_UP_TASK"));
@@ -151,9 +152,16 @@ public class GraceShutDownManager {
     /**
      * 添加要关闭的下游ip地址
      *
-     * @param endpoint 地址，host:port
+     * @param endpoints 地址，host:port
      */
-    public void addShutdownEndpoint(String endpoint) {
+    public void addShutdownEndpoints(Collection<String> endpoints) {
+        if (endpoints == null || endpoints.isEmpty()) {
+            return;
+        }
+        endpoints.forEach(this::addShutdownEndpoint);
+    }
+
+    private void addShutdownEndpoint(String endpoint) {
         if (markShutDownEndpoints.size() < MAX_SHUTDOWN_ENDPOINT_CACHE) {
             markShutDownEndpoints.put(endpoint, System.currentTimeMillis());
             LOGGER.fine(String.format(Locale.ENGLISH, "Marked endpoint [%s] will be shutdown!", endpoint));

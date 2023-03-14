@@ -36,9 +36,9 @@ jobs:
           sh apache-servicecomb-service-center-2.1.0-linux-amd64/start-service-center.sh
       - name: download zookeeper
         run: |
-          curl -o apache-zookeeper-3.8.0-bin.tar.gz -L https://dlcdn.apache.org/zookeeper/zookeeper-3.8.0/apache-zookeeper-3.8.0-bin.tar.gz
-          tar -zxf apache-zookeeper-3.8.0-bin.tar.gz
-          bash apache-zookeeper-3.8.0-bin/bin/zkServer.sh start apache-zookeeper-3.8.0-bin/conf/zoo_sample.cfg
+          curl -o apache-zookeeper-3.6.3-bin.tar.gz -L https://archive.apache.org/dist/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz
+          tar -zxf apache-zookeeper-3.6.3-bin.tar.gz
+          bash apache-zookeeper-3.6.3-bin/bin/zkServer.sh start apache-zookeeper-3.6.3-bin/conf/zoo_sample.cfg
       - name: Build with Maven
         run: mvn test
       - name: Generate code coverage report
