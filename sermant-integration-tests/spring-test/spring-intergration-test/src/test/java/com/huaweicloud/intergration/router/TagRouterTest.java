@@ -109,7 +109,6 @@ public class TagRouterTest {
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
         if (SPRING_CLOUD_VERSIONS_FOR_ZUUL.contains(springCloudVersion)) {
             testFlowMatchRule(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_BOOT_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH, SERVICE_CONFIG);
-            return;
         }
 
         // 测试gateway场景：SPRING_CLOUD_VERSIONS_FOR_GATEWAY中的版本，才带有gateway的依赖
@@ -127,7 +126,6 @@ public class TagRouterTest {
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
         if (SPRING_CLOUD_VERSIONS_FOR_ZUUL.contains(springCloudVersion)) {
             testFlowMatchRule(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_BOOT_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH, GLOBAL_CONFIG);
-            return;
         }
 
         // 测试gateway场景：SPRING_CLOUD_VERSIONS_FOR_GATEWAY中的版本，才带有gateway的依赖
@@ -174,7 +172,6 @@ public class TagRouterTest {
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
         if (SPRING_CLOUD_VERSIONS_FOR_ZUUL.contains(springCloudVersion)) {
             testFlowMatchRule(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_BOOT_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH, SERVICE_CONFIG);
-            return;
         }
 
         // 测试gateway场景：SPRING_CLOUD_VERSIONS_FOR_GATEWAY中的版本，才带有gateway的依赖
@@ -192,7 +189,6 @@ public class TagRouterTest {
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
         if (SPRING_CLOUD_VERSIONS_FOR_ZUUL.contains(springCloudVersion)) {
             testTagMatchRule(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_BOOT_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH, SERVICE_CONFIG);
-            return;
         }
 
         // 测试gateway场景：SPRING_CLOUD_VERSIONS_FOR_GATEWAY中的版本，才带有gateway的依赖
@@ -210,7 +206,6 @@ public class TagRouterTest {
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
         if (SPRING_CLOUD_VERSIONS_FOR_ZUUL.contains(springCloudVersion)) {
             testTagMatchRule(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_BOOT_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH, GLOBAL_CONFIG);
-            return;
         }
 
         // 测试gateway场景：SPRING_CLOUD_VERSIONS_FOR_GATEWAY中的版本，才带有gateway的依赖
@@ -257,7 +252,6 @@ public class TagRouterTest {
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
         if (SPRING_CLOUD_VERSIONS_FOR_ZUUL.contains(springCloudVersion)) {
             testTagMatchRule(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_BOOT_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH, GLOBAL_CONFIG);
-            return;
         }
 
         // 测试gateway场景：SPRING_CLOUD_VERSIONS_FOR_GATEWAY中的版本，才带有gateway的依赖
@@ -275,7 +269,6 @@ public class TagRouterTest {
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
         if (SPRING_CLOUD_VERSIONS_FOR_ZUUL.contains(springCloudVersion)) {
             testFlowAndTagMatchRule(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_BOOT_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH);
-            return;
         }
 
         // 测试gateway场景：SPRING_CLOUD_VERSIONS_FOR_GATEWAY中的版本，才带有gateway的依赖
@@ -293,7 +286,6 @@ public class TagRouterTest {
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
         if (SPRING_CLOUD_VERSIONS_FOR_ZUUL.contains(springCloudVersion)) {
             testConsumerTagRule(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_BOOT_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH);
-            return;
         }
 
         // 测试gateway场景：SPRING_CLOUD_VERSIONS_FOR_GATEWAY中的版本，才带有gateway的依赖
@@ -311,7 +303,6 @@ public class TagRouterTest {
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
         if (SPRING_CLOUD_VERSIONS_FOR_ZUUL.contains(springCloudVersion)) {
             testConfigMatch(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_BOOT_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH);
-            return;
         }
 
         // 测试gateway场景：SPRING_CLOUD_VERSIONS_FOR_GATEWAY中的版本，才带有gateway的依赖

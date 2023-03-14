@@ -16,12 +16,17 @@
 
 package com.huaweicloud.sermant.router.config.entity;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
  * 路由标签
@@ -30,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2021-10-27
  */
 public class RouterConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     /**
      * 服务的标签规则,外层key为标签规则类型kind，内层key为服务名，内层value为该类型标签路由的具体规则
      */
@@ -67,14 +73,20 @@ public class RouterConfiguration {
         for (EntireRule entireRule : entireRules) {
             if (RouterConstant.FLOW_MATCH_KIND.equals(entireRule.getKind())) {
                 flowRules.putIfAbsent(serviceName, entireRule.getRules());
+                LOGGER.info(String.format(Locale.ROOT, "Flow match rule for %s has been updated: %s ", serviceName,
+                    JSONObject.toJSONString(entireRule.getRules())));
                 continue;
             }
             if (RouterConstant.TAG_MATCH_KIND.equals(entireRule.getKind())) {
                 tagRules.putIfAbsent(serviceName, entireRule.getRules());
+                LOGGER.info(String.format(Locale.ROOT, "Tag match rule for %s has been updated: %s ", serviceName,
+                    JSONObject.toJSONString(entireRule.getRules())));
                 continue;
             }
             if (RouterConstant.LANE_MATCH_KIND.equals(entireRule.getKind())) {
                 laneRules.putIfAbsent(serviceName, entireRule.getRules());
+                LOGGER.info(String.format(Locale.ROOT, "Lane match rule for %s has been updated: %s ", serviceName,
+                    JSONObject.toJSONString(entireRule.getRules())));
             }
         }
     }
@@ -97,6 +109,7 @@ public class RouterConfiguration {
         if (!CollectionUtils.isEmpty(laneRules)) {
             laneRules.remove(serviceName);
         }
+        LOGGER.info(String.format(Locale.ROOT, "All rules for %s have been removed! ", serviceName));
     }
 
     /**
@@ -125,6 +138,8 @@ public class RouterConfiguration {
         for (EntireRule entireRule : list) {
             globalRules.put(entireRule.getKind(), entireRule.getRules());
         }
+        LOGGER.info(String.format(Locale.ROOT, "Global rules have been updated: %s",
+            JSONObject.toJSONString(list)));
     }
 
     /**
