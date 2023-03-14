@@ -16,6 +16,7 @@
 
 package com.huawei.registry.interceptors;
 
+import com.huawei.registry.config.RegisterDynamicConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.interceptors.cloud3.x.ZookeeperInstanceSupplierInterceptorTest;
@@ -23,6 +24,7 @@ import com.huawei.registry.services.RegisterCenterService;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+
 import com.netflix.loadbalancer.DynamicServerListLoadBalancer;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
@@ -78,11 +80,13 @@ public class DynamicServerListInterceptorTest extends BaseRegistryTest<DynamicSe
 
     @Test
     public void doBefore() throws NoSuchMethodException {
+        RegisterDynamicConfig.INSTANCE.setClose(false);
         RegisterContext.INSTANCE.setAvailable(true);
         final ExecuteContext context = interceptor.doBefore(buildContext(serverListLoadBalancer, null));
         Assert.assertTrue(context.isSkip());
         Mockito.verify(serverList, Mockito.times(1)).getUpdatedListOfServers();
         RegisterContext.INSTANCE.setAvailable(false);
+        RegisterDynamicConfig.INSTANCE.setClose(true);
     }
 
     @Override
