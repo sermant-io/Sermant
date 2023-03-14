@@ -74,4 +74,11 @@ public interface MicroServiceInstance {
      * @return 元数据
      */
     Map<String, String> getMetadata();
+
+    /**
+     * 是否加密
+     *
+     * @return 是否加密
+     */
+    boolean isSecure();
 }

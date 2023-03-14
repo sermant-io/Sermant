@@ -17,8 +17,13 @@
 
 package com.huawei.registry.utils;
 
-import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huawei.registry.config.ConfigConstants;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.utils.StringUtils;
+
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -113,5 +118,20 @@ public class CommonUtils {
      */
     public static void sleep(long timeMs) {
         accept(SLEEP, timeMs);
+    }
+
+    /**
+     * meta数据中增加secure配置参数
+     *
+     * @param meta meta数据
+     * @param config 公共注册配置
+     * @return meta数据
+     */
+    public static Map<String, String> putSecureToMetaData(Map<String, String> meta,
+        RegisterServiceCommonConfig config) {
+        if (StringUtils.isEmpty(meta.get(ConfigConstants.SECURE))) {
+            meta.put(ConfigConstants.SECURE, String.valueOf(config.isSecure()));
+        }
+        return meta;
     }
 }

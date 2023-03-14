@@ -64,7 +64,7 @@ public class NacosClient {
      */
     public NacosClient() {
         nacosRegisterConfig = PluginConfigManager.getPluginConfig(NacosRegisterConfig.class);
-        nacosServiceManager = new NacosServiceManager(nacosRegisterConfig);
+        nacosServiceManager = new NacosServiceManager();
         nacosServiceDiscovery = new NacosServiceDiscovery(nacosServiceManager);
     }
 

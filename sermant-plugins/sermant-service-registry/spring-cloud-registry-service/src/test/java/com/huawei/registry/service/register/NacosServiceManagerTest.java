@@ -45,7 +45,7 @@ public class NacosServiceManagerTest {
     private final NacosRegisterConfig registerConfig = new NacosRegisterConfig();
     private final RegisterServiceCommonConfig commonConfig = new RegisterServiceCommonConfig();
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
-    final NacosServiceManager nacosServiceManager = new NacosServiceManager(registerConfig);
+    private NacosServiceManager nacosServiceManager;
 
     @Before
     public void setUp() {
@@ -55,12 +55,15 @@ public class NacosServiceManagerTest {
         commonConfig.setAddress("127.0.0.1:8848");
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager
                 .getPluginConfig(RegisterServiceCommonConfig.class)).thenReturn(commonConfig);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager
+                .getPluginConfig(NacosRegisterConfig.class)).thenReturn(registerConfig);
         RegisterContext.INSTANCE.getClientInfo().setServiceName("test");
         RegisterContext.INSTANCE.getClientInfo().setIp("127.0.0.1");
         RegisterContext.INSTANCE.getClientInfo().setServiceId("test");
         RegisterContext.INSTANCE.getClientInfo().setHost("localhost");
         RegisterContext.INSTANCE.getClientInfo().setPort(8001);
         RegisterContext.INSTANCE.getClientInfo().setMeta(new HashMap<>());
+        nacosServiceManager = new NacosServiceManager();
     }
 
     @After

@@ -16,6 +16,7 @@
 
 package com.huawei.registry.interceptors;
 
+import com.huawei.registry.config.RegisterDynamicConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.interceptors.cloud3.x.ZookeeperInstanceSupplierInterceptorTest;
@@ -80,6 +81,7 @@ public class DiscoveryClientInterceptorTest extends BaseRegistryTest<DiscoveryCl
         RegisterContext.INSTANCE.setAvailable(true);
         REGISTER_CONFIG.setEnableSpringRegister(true);
         REGISTER_CONFIG.setOpenMigration(true);
+        RegisterDynamicConfig.INSTANCE.setClose(false);
         final ExecuteContext context = interceptor.doBefore(buildContext(client, new Object[]{serviceName}));
         Assert.assertTrue(context.isSkip());
         Assert.assertTrue(context.getResult() instanceof List);
