@@ -44,12 +44,10 @@ public class ClientHttpRequestInterceptorTest {
 
     public ClientHttpRequestInterceptorTest() {
         interceptor = new ClientHttpRequestInterceptor();
-        Object[] arguments = new Object[1];
         MockClientHttpRequest request = new MockClientHttpRequest();
         request.getHeaders().add("bar", "bar2");
         request.getHeaders().add("bar3", "bar3");
-        arguments[0] = request;
-        context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
+        context = ExecuteContext.forMemberMethod(request, null, null, null, null);
     }
 
     /**

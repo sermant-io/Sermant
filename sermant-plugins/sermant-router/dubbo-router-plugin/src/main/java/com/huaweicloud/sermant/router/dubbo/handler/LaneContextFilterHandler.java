@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.router.dubbo.handler;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
@@ -26,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 泳道处理器
@@ -34,6 +37,8 @@ import java.util.Set;
  * @since 2023-02-21
  */
 public class LaneContextFilterHandler extends AbstractContextFilterHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private final LaneContextFilterService laneContextFilterService;
 
     /**
@@ -48,6 +53,7 @@ public class LaneContextFilterHandler extends AbstractContextFilterHandler {
         Set<String> matchTags = configService.getMatchTags();
         if (CollectionUtils.isEmpty(matchTags)) {
             // 染色标记为空，代表没有染色规则，直接return
+            LOGGER.fine("Lane tags are empty.");
             return Collections.emptyMap();
         }
 
@@ -62,11 +68,15 @@ public class LaneContextFilterHandler extends AbstractContextFilterHandler {
         Map<String, List<String>> laneTag = laneContextFilterService
             .getLane(interfaceName, methodName, attachments, args);
         if (CollectionUtils.isEmpty(laneTag)) {
+            LOGGER.fine("Lane is empty.");
             return requestTag;
         }
 
         // 如果上游传来的标记中，存在与本次染色相同的标记，以上游传递的为准
         laneTag.forEach(requestTag::putIfAbsent);
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("Lane is " + requestTag);
+        }
         return requestTag;
     }
 
