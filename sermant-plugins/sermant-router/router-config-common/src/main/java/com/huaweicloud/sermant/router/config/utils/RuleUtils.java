@@ -80,7 +80,7 @@ public class RuleUtils {
     /**
      * 获取所有标签
      *
-     * @param rules         路由规则
+     * @param rules 路由规则
      * @return 标签
      */
     public static List<Map<String, String>> getTags(List<Rule> rules) {
@@ -94,6 +94,48 @@ public class RuleUtils {
             }
         }
         return tags;
+    }
+
+    /**
+     * 获取具体规则
+     *
+     * @param configuration 路由标签缓存
+     * @param targetService 目标服务
+     * @param kind 规则类型
+     * @return 规则列表
+     */
+    public static List<Rule> getRules(RouterConfiguration configuration, String targetService, String kind) {
+        Map<String, Map<String, List<Rule>>> serviceRouteRule = configuration.getRouteRule();
+        if (CollectionUtils.isEmpty(serviceRouteRule)) {
+            return getGlobalRule(configuration, kind);
+        }
+
+        Map<String, List<Rule>> serviceRuleMap = serviceRouteRule.get(kind);
+        if (CollectionUtils.isEmpty(serviceRuleMap)) {
+            return getGlobalRule(configuration, kind);
+        }
+
+        List<Rule> rules = serviceRuleMap.get(targetService);
+        if (CollectionUtils.isEmpty(rules)) {
+            return getGlobalRule(configuration, kind);
+        }
+        return rules;
+    }
+
+    /**
+     * 获取全局规则
+     *
+     * @param configuration 路由标签缓存
+     * @param kind 规则类型
+     * @return 规则列表
+     */
+    public static List<Rule> getGlobalRule(RouterConfiguration configuration, String kind) {
+        Map<String, List<Rule>> globalRule = configuration.getGlobalRule();
+        if (CollectionUtils.isEmpty(globalRule)) {
+            return Collections.emptyList();
+        }
+
+        return globalRule.getOrDefault(kind, Collections.emptyList());
     }
 
     /**
@@ -210,7 +252,7 @@ public class RuleUtils {
     /**
      * 选取路由
      *
-     * @param routes        路由规则
+     * @param routes 路由规则
      * @return 目标路由
      */
     public static RouteResult<?> getTargetTags(List<Route> routes) {
@@ -338,14 +380,14 @@ public class RuleUtils {
      * 获取目标规则
      *
      * @param configuration 路由配置
-     * @param method        方法名
-     * @param path          dubbo接口名/url路径
-     * @param serviceName   本服务服务名
-     * @param protocol      获取哪种协议的规则
+     * @param method 方法名
+     * @param path dubbo接口名/url路径
+     * @param serviceName 本服务服务名
+     * @param protocol 获取哪种协议的规则
      * @return 目标规则
      */
     public static List<Rule> getLaneRules(RouterConfiguration configuration, String method, String path,
-                                          String serviceName, Protocol protocol) {
+            String serviceName, Protocol protocol) {
         if (RouterConfiguration.isInValid(configuration)) {
             return Collections.emptyList();
         }
@@ -490,8 +532,8 @@ public class RuleUtils {
 
     private static boolean isInvalidMatchRule(MatchRule matchRule) {
         return matchRule == null || matchRule.getValueMatch() == null
-            || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
-            || matchRule.getValueMatch().getMatchStrategy() == null;
+                || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
+                || matchRule.getValueMatch().getMatchStrategy() == null;
     }
 
     private static boolean isInvalidRoute(Route route, String kind, boolean isReplaceDash) {
@@ -599,7 +641,7 @@ public class RuleUtils {
          * 构造方法
          *
          * @param match 是否匹配
-         * @param tags  目标路由
+         * @param tags 目标路由
          */
         public RouteResult(boolean match, T tags) {
             this.match = match;

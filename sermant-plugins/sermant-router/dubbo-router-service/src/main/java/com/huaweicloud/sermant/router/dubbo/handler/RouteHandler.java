@@ -16,6 +16,8 @@
 
 package com.huaweicloud.sermant.router.dubbo.handler;
 
+import com.huaweicloud.sermant.router.common.handler.Handler;
+
 import java.util.List;
 import java.util.Map;
 
@@ -25,15 +27,14 @@ import java.util.Map;
  * @author lilai
  * @since 2023-02-24
  */
-public interface RouteHandler {
-
+public interface RouteHandler extends Handler {
     /**
      * 调用路由处理器链
      *
-     * @param targetService    目标服务
-     * @param invokers         invokers
-     * @param invocation       invocation
-     * @param queryMap         RegistryDirectory的queryMap
+     * @param targetService 目标服务
+     * @param invokers invokers
+     * @param invocation invocation
+     * @param queryMap RegistryDirectory的queryMap
      * @param serviceInterface 接口名
      * @return invokers
      * @see org.apache.dubbo.registry.integration.RegistryDirectory
@@ -41,12 +42,5 @@ public interface RouteHandler {
      * @see org.apache.dubbo.rpc.Invocation
      */
     Object handle(String targetService, List<Object> invokers, Object invocation, Map<String, String> queryMap,
-                  String serviceInterface);
-
-    /**
-     * 处理器的优先级
-     *
-     * @return 优先级序号
-     */
-    int getOrder();
+            String serviceInterface);
 }

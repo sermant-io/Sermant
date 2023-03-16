@@ -44,17 +44,11 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
     private static final String CONSUMER_VALUE = "consumer";
 
     /**
-     * 构造方法
-     */
-    public AbstractDirectoryServiceImpl() {
-    }
-
-    /**
      * 筛选标签invoker
      *
      * @param registryDirectory RegistryDirectory
-     * @param arguments         参数
-     * @param result            invokers
+     * @param arguments 参数
+     * @param result invokers
      * @return invokers
      * @see com.alibaba.dubbo.registry.integration.RegistryDirectory
      * @see org.apache.dubbo.registry.integration.RegistryDirectory

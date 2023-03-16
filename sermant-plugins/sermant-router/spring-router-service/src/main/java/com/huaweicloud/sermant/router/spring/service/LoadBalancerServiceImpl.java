@@ -28,13 +28,6 @@ import java.util.List;
  * @since 2022-07-20
  */
 public class LoadBalancerServiceImpl implements LoadBalancerService {
-
-    /**
-     * 构造方法
-     */
-    public LoadBalancerServiceImpl() {
-    }
-
     @Override
     public List<Object> getTargetInstances(String targetName, List<Object> instances, RequestData requestData) {
         return HandlerChainEntry.INSTANCE.process(targetName, instances, requestData);

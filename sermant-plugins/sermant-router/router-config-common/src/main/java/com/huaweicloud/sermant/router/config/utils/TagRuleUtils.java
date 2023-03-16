@@ -26,7 +26,6 @@ import com.huaweicloud.sermant.router.config.entity.Rule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * tag匹配方式的路由工具类
@@ -35,7 +34,6 @@ import java.util.Optional;
  * @since 2023-02-21
  */
 public class TagRuleUtils {
-
     private TagRuleUtils() {
     }
 
@@ -44,28 +42,16 @@ public class TagRuleUtils {
      *
      * @param configuration 路由配置
      * @param targetService 目标服务
-     * @param serviceName   本服务服务名
+     * @param serviceName 本服务服务名
      * @return 目标规则
      */
     public static List<Rule> getTagRules(RouterConfiguration configuration, String targetService,
-                                         String serviceName) {
+            String serviceName) {
         if (RouterConfiguration.isInValid(configuration)) {
             return Collections.emptyList();
         }
 
-        List<Rule> rules = Optional.ofNullable(
-                Optional.ofNullable(
-                        Optional.ofNullable(configuration.getRouteRule())
-                            .orElseGet(Collections::emptyMap)
-                            .get(RouterConstant.TAG_MATCH_KIND))
-                    .orElseGet(Collections::emptyMap)
-                    .get(targetService))
-            .orElseGet(Collections::emptyList);
-        if (CollectionUtils.isEmpty(rules)) {
-            rules = Optional.ofNullable(
-                Optional.ofNullable(configuration.getGlobalRule()).orElseGet(Collections::emptyMap)
-                    .get(RouterConstant.TAG_MATCH_KIND)).orElseGet(Collections::emptyList);
-        }
+        List<Rule> rules = RuleUtils.getRules(configuration, targetService, RouterConstant.TAG_MATCH_KIND);
 
         if (CollectionUtils.isEmpty(rules)) {
             return Collections.emptyList();
@@ -83,7 +69,7 @@ public class TagRuleUtils {
     /**
      * 获取目标规则
      *
-     * @param rule        路由规则
+     * @param rule 路由规则
      * @param serviceName 本服务服务名
      * @return 是否是目标规则
      */

@@ -41,16 +41,9 @@ import java.util.Map;
  * @since 2023-02-24
  */
 public class TagRouteHandler extends AbstractRouteHandler {
-
-    /**
-     * 构造方法
-     */
-    public TagRouteHandler() {
-    }
-
     @Override
     public Object handle(String targetService, List<Object> invokers, Object invocation, Map<String, String> queryMap,
-                         String serviceInterface) {
+            String serviceInterface) {
         if (!shouldHandle(invokers)) {
             return invokers;
         }
@@ -84,6 +77,9 @@ public class TagRouteHandler extends AbstractRouteHandler {
      * @return 匹配的路由
      */
     private List<Route> getRoutes(List<Rule> list) {
+        if (DubboCache.INSTANCE.getParameters() == null) {
+            return Collections.emptyList();
+        }
         for (Rule rule : list) {
             List<Route> routeList = getRoutes(rule);
             if (!CollectionUtils.isEmpty(routeList)) {
@@ -110,11 +106,7 @@ public class TagRouteHandler extends AbstractRouteHandler {
                 ValueMatch valueMatch = matchRule.getValueMatch();
                 List<String> values = valueMatch.getValues();
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
-                Map<String, String> parameters = DubboCache.INSTANCE.getParameters();
-                if (parameters == null) {
-                    return Collections.emptyList();
-                }
-                String tagValue = parameters.get(RouterConstant.PARAMETERS_KEY_PREFIX + key);
+                String tagValue = DubboCache.INSTANCE.getParameters().get(RouterConstant.PARAMETERS_KEY_PREFIX + key);
                 if (!isFullMatch && matchStrategy.isMatch(values, tagValue, matchRule.isCaseInsensitive())) {
                     // 如果不是全匹配，且匹配了一个，那么直接return
                     return rule.getRoute();

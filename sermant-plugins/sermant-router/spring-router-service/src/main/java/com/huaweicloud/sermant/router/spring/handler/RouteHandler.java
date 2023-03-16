@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.router.spring.handler;
 
+import com.huaweicloud.sermant.router.common.handler.Handler;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
  * @author lilai
  * @since 2023-02-21
  */
-public interface RouteHandler {
+public interface RouteHandler extends Handler {
 
     /**
      * 调用路由处理器链
@@ -37,11 +38,4 @@ public interface RouteHandler {
      * @return 筛选后的实例列表
      */
     List<Object> handle(String targetName, List<Object> instances, RequestData requestData);
-
-    /**
-     * 处理器的优先级
-     *
-     * @return 优先级序号
-     */
-    int getOrder();
 }

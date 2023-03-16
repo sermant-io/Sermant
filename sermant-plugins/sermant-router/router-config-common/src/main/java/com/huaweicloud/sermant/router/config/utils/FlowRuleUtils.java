@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -56,19 +55,7 @@ public class FlowRuleUtils {
             return Collections.emptyList();
         }
 
-        List<Rule> rules = Optional.ofNullable(
-                Optional.ofNullable(
-                        Optional.ofNullable(configuration.getRouteRule())
-                            .orElseGet(Collections::emptyMap)
-                            .get(RouterConstant.FLOW_MATCH_KIND))
-                    .orElseGet(Collections::emptyMap)
-                    .get(targetService))
-            .orElseGet(Collections::emptyList);
-        if (CollectionUtils.isEmpty(rules)) {
-            rules = Optional.ofNullable(
-                Optional.ofNullable(configuration.getGlobalRule()).orElseGet(Collections::emptyMap)
-                    .get(RouterConstant.FLOW_MATCH_KIND)).orElseGet(Collections::emptyList);
-        }
+        List<Rule> rules = RuleUtils.getRules(configuration, targetService, RouterConstant.FLOW_MATCH_KIND);
 
         if (CollectionUtils.isEmpty(rules)) {
             return Collections.emptyList();
