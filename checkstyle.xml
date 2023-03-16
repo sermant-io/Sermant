@@ -146,11 +146,11 @@
         <property name="format" value="\s+$"/>
         <property name="message" value="编程规范-建议3.7 行末或空行不能有空格, 请去除多余空格"/>
     </module>
-    <!--module name="RegexpSingleline">
+    <module name="RegexpSingleline">
         <property name="severity" value="warning"/>
-        <property name="format" value="[A-Za-z0-9=+-;:\?\*]\s{2,}[\u4e00-\u9fa5A-Za-z0-9=+-:\?]"/>
+        <property name="format" value="[A-Za-z0-9=+-;:\?]\s{2,}[\u4e00-\u9fa5A-Za-z0-9=+-:\?]"/>
         <property name="message" value="编程规范-建议3.8 禁止插入空格水平对齐(包括多余括号)。"/>
-    </module>-->
+    </module>
     <!--
     HashMap/HashSet/LinkedHashSet:已知元素个数填实际个数，未知填默认值16；
     StringBuilder/StringBuffer:构造数据填写length方法获得的实际值（默认16个字节）
@@ -442,7 +442,15 @@
         <!--Miscellaneous：杂项安全检查-->
         <module name="UpperEll"/>
         <!-- 定义使用long数据类型时用大写的L -->
-        <module name="Indentation"/>
+        <module name="Indentation">
+            <property name="basicOffset" value="4"/>
+            <property name="braceAdjustment" value="0"/>
+            <property name="caseIndent" value="4"/>
+            <property name="throwsIndent" value="4"/>
+            <property name="lineWrappingIndentation" value="8"/>
+            <property name="arrayInitIndent" value="4"/>
+            <property name="forceStrictCondition" value="true"/>
+        </module>
         <!-- 检查代码缩进对齐 -->
         <module name="UncommentedMain">
             <!-- 通过该属性排除进程启动类 -->
