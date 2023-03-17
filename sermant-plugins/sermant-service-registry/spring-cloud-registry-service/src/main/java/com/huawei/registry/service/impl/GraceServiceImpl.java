@@ -32,6 +32,9 @@ import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -66,19 +69,21 @@ public class GraceServiceImpl implements GraceService {
             checkAndCloseSc();
             GraceContext.INSTANCE.getGraceShutDownManager().setShutDown(true);
             ClientInfo clientInfo = RegisterContext.INSTANCE.getClientInfo();
-            Map<String, String> header = new HashMap<>();
-            header.put(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME, clientInfo.getServiceName());
-            header.put(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT, clientInfo.getIp() + ":"
-                    + clientInfo.getPort());
+            Map<String, Collection<String>> header = new HashMap<>();
+            header.put(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME,
+                Collections.singletonList(clientInfo.getServiceName()));
+            header.put(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT,
+                Arrays.asList(clientInfo.getIp() + ":" + clientInfo.getPort(),
+                    clientInfo.getHost() + ":" + clientInfo.getPort()));
             AddressCache.INSTANCE.getAddressSet().forEach(address -> notifyToGraceHttpServer(address, header));
         }
     }
 
-    private void notifyToGraceHttpServer(String address, Map<String, String> header) {
+    private void notifyToGraceHttpServer(String address, Map<String, Collection<String>> header) {
         EXECUTOR.execute(() -> execute(address, header));
     }
 
-    private void execute(String address, Map<String, String> header) {
+    private void execute(String address, Map<String, Collection<String>> header) {
         HttpClientUtils.INSTANCE.doPost(GRACE_HTTP_SERVER_PROTOCOL + address + GraceConstants.GRACE_NOTIFY_URL_PATH,
                 REQUEST_BODY, header);
     }

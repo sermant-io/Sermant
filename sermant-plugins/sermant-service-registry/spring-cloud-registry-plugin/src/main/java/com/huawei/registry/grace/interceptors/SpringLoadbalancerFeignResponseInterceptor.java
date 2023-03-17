@@ -64,16 +64,12 @@ public class SpringLoadbalancerFeignResponseInterceptor extends GraceSwitchInter
         if (response.headers() == null || response.headers().size() == 0) {
             return context;
         }
-        final Collection<String> endpoints = response.headers().get(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT);
-        if (endpoints == null || endpoints.isEmpty()) {
-            return context;
-        }
-        final String shutdownEndpoint = endpoints.iterator().next();
-        GraceContext.INSTANCE.getGraceShutDownManager().addShutdownEndpoint(shutdownEndpoint);
+        GraceContext.INSTANCE.getGraceShutDownManager()
+            .addShutdownEndpoints(response.headers().get(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT));
         Request request = (Request) requestArgument;
         final Optional<String> serviceNameFromReqUrl = GraceHelper.getServiceNameFromReqUrl(request.url());
         RefreshUtils.refreshTargetServiceInstances(serviceNameFromReqUrl.orElse(null),
-                response.headers().get(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME));
+            response.headers().get(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME));
         return context;
     }
 

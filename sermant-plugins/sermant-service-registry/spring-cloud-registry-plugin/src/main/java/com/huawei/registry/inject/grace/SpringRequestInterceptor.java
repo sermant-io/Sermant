@@ -37,8 +37,6 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Locale;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -74,6 +72,8 @@ public class SpringRequestInterceptor implements HandlerInterceptor {
             final ClientInfo clientInfo = RegisterContext.INSTANCE.getClientInfo();
             response.addHeader(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT,
                 buildEndpoint(clientInfo.getIp(), clientInfo.getPort()));
+            response.addHeader(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT,
+                buildEndpoint(clientInfo.getHost(), clientInfo.getPort()));
             response.addHeader(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME, clientInfo.getServiceName());
         }
         return true;
@@ -91,7 +91,7 @@ public class SpringRequestInterceptor implements HandlerInterceptor {
     }
 
     private String buildEndpoint(String host, int port) {
-        return String.format(Locale.ENGLISH, "%s:%s", host, port);
+        return host + ":" + port;
     }
 
     private void addGraceAddress(HttpServletRequest request) {

@@ -32,8 +32,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 
-import java.util.List;
-
 /**
  * 针对RestTemplate拦截
  *
@@ -57,15 +55,12 @@ public class SpringLoadbalancerRestTemplateResponseInterceptor extends GraceSwit
             return context;
         }
         ClientHttpResponse response = (ClientHttpResponse) result;
-        final List<String> endpoints = response.getHeaders().get(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT);
-        if (endpoints == null || endpoints.isEmpty()) {
-            return context;
-        }
-        GraceContext.INSTANCE.getGraceShutDownManager().addShutdownEndpoint(endpoints.get(0));
+        GraceContext.INSTANCE.getGraceShutDownManager()
+            .addShutdownEndpoints(response.getHeaders().get(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT));
         HttpRequest request = (HttpRequest) argument;
         final String host = request.getURI().getHost();
         RefreshUtils.refreshTargetServiceInstances(host,
-                response.getHeaders().get(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME));
+            response.getHeaders().get(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME));
         return context;
     }
 
