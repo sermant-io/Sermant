@@ -1,0 +1,21 @@
+// import dark theme
+@use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+
+body {
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}
+
+a {
+  color: var(--ep-color-primary);
+}
+
+code {
+  border-radius: 2px;
+  padding: 2px 4px;
+  background-color: var(--ep-color-primary-light-9);
+  color: var(--ep-color-primary);
+}
