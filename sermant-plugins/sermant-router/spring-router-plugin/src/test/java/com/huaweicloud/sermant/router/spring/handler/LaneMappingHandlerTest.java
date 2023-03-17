@@ -56,10 +56,10 @@ public class LaneMappingHandlerTest {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         laneService = new TestLaneService();
         mockServiceManager.when(() -> ServiceManager.getService(LaneService.class))
-            .thenReturn(laneService);
+                .thenReturn(laneService);
         configService = new TestSpringConfigService();
         mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class))
-            .thenReturn(configService);
+                .thenReturn(configService);
     }
 
     /**

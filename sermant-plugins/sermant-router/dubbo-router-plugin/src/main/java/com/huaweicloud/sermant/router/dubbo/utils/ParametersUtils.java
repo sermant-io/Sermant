@@ -56,15 +56,15 @@ public class ParametersUtils {
         Map<String, String> metaParameters = routerConfig.getParameters();
         if (!CollectionUtils.isEmpty(metaParameters)) {
             metaParameters.forEach(
-                (key, value) -> {
-                    // 请求头在http请求中，会统一转成小写
-                    String lowerCaseKey = key.toLowerCase(Locale.ROOT);
+                    (key, value) -> {
+                        // 请求头在http请求中，会统一转成小写
+                        String lowerCaseKey = key.toLowerCase(Locale.ROOT);
 
-                    // "-"替换成"."是为了流量路由兼容2.5.0 - 2.5.6
-                    map.put(RouterConstant.PARAMETERS_KEY_PREFIX + lowerCaseKey
-                        .replace(RouterConstant.DASH, RouterConstant.POINT), value);
-                    cacheMap.put(RouterConstant.PARAMETERS_KEY_PREFIX + lowerCaseKey, value);
-                });
+                        // "-"替换成"."是为了流量路由兼容2.5.0 - 2.5.6
+                        map.put(RouterConstant.PARAMETERS_KEY_PREFIX + lowerCaseKey
+                                .replace(RouterConstant.DASH, RouterConstant.POINT), value);
+                        cacheMap.put(RouterConstant.PARAMETERS_KEY_PREFIX + lowerCaseKey, value);
+                    });
         }
         DubboCache.INSTANCE.setParameters(cacheMap);
         return map;

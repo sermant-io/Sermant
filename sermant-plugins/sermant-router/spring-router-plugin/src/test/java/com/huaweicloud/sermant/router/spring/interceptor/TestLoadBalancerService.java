@@ -30,7 +30,7 @@ import java.util.List;
 public class TestLoadBalancerService implements LoadBalancerService {
     @Override
     public List<Object> getTargetInstances(String targetName, List<Object> instances, RequestData requestData) {
-        if(requestData == null) {
+        if (requestData == null) {
             return instances;
         }
         if (instances.size() > 1) {

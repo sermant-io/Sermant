@@ -31,6 +31,6 @@ public class PrefixValueMatchStrategy implements ValueMatchStrategy {
     @Override
     public boolean isMatch(List<String> values, String arg) {
         return !CollectionUtils.isEmpty(values) && values.get(0) != null && arg != null
-            && arg.startsWith(values.get(0));
+                && arg.startsWith(values.get(0));
     }
 }

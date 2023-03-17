@@ -63,12 +63,12 @@ public class NopInstanceFilterInterceptorTest {
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         mockServiceManager.when(() -> ServiceManager.getService(LoadBalancerService.class))
-            .thenReturn(new TestLoadBalancerService());
+                .thenReturn(new TestLoadBalancerService());
 
         config = new RouterConfig();
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-            .thenReturn(config);
+                .thenReturn(config);
     }
 
     /**
@@ -84,7 +84,7 @@ public class NopInstanceFilterInterceptorTest {
         interceptor = new NopInstanceFilterInterceptor();
         arguments = new Object[2];
         context = ExecuteContext.forMemberMethod(new Object(), String.class.getMethod("trim"), arguments, null,
-            null);
+                null);
     }
 
     /**

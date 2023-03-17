@@ -50,7 +50,7 @@ public class ClusterUtilsServiceImpl implements ClusterUtilsService {
 
         // 保存接口与服务名之间的映射
         DubboCache.INSTANCE.putApplication(DubboReflectUtils.getServiceInterface(arguments[0]),
-            DubboReflectUtils.getParameter(arguments[0], APPLICATION_KEY));
+                DubboReflectUtils.getParameter(arguments[0], APPLICATION_KEY));
         if (arguments[1] instanceof Map<?, ?>) {
             // 本地参数的map，需要把这个map中的标签删除，才能让下游invoker的标签不被本地参数覆盖，即保留下游invoker的标签
             Map<String, String> localMap = new HashMap<>((Map<String, String>) arguments[1]);

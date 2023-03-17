@@ -78,7 +78,6 @@ public class ClientHttpRequestInterceptorTest {
         Assert.assertEquals("bar2", headerData.get("bar").get(0));
         Assert.assertEquals("foo1", headerData.get("foo").get(0));
         Assert.assertEquals("bar3", headerData.get("bar3").get(0));
-
     }
 
     /**

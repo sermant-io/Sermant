@@ -70,7 +70,7 @@ public class DiscoveryManagerInterceptorTest {
         routerConfig.setParameters(parameters);
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-            .thenReturn(routerConfig);
+                .thenReturn(routerConfig);
     }
 
     /**

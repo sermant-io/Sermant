@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public class ApacheInvoker<T> implements Invoker<T> {
     private static final URL APACHE_URL = URL
-        .valueOf("dubbo://localhost:8080/com.huaweicloud.foo.FooTest?foo=bar&version=0.0.1");
+            .valueOf("dubbo://localhost:8080/com.huaweicloud.foo.FooTest?foo=bar&version=0.0.1");
 
     private final URL url;
 

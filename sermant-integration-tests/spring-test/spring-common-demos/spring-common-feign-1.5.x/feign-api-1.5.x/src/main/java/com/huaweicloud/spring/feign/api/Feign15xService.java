@@ -34,7 +34,7 @@ import java.util.Map;
  * @since 2022-07-29
  */
 @FeignClient(qualifier = FeignConstants.FEIGN_SERVICE_BEAN_NAME, name = "feign-provider", configuration =
-    HeaderMatchConfiguration.class)
+        HeaderMatchConfiguration.class)
 public interface Feign15xService {
     /**
      * 限流测试

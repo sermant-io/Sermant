@@ -30,7 +30,6 @@ import java.util.ServiceLoader;
  * @since 2023-02-21
  */
 public enum HandlerChainEntry {
-
     /**
      * 单例
      */

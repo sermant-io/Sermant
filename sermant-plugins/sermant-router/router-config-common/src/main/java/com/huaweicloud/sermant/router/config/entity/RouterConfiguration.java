@@ -36,6 +36,7 @@ import java.util.logging.Logger;
  */
 public class RouterConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
     /**
      * 服务的标签规则,外层key为标签规则类型kind，内层key为服务名，内层value为该类型标签路由的具体规则
      */
@@ -62,31 +63,31 @@ public class RouterConfiguration {
      */
     public void updateServiceRule(String serviceName, List<EntireRule> entireRules) {
         Map<String, List<Rule>> flowRules = rules.computeIfAbsent(RouterConstant.FLOW_MATCH_KIND,
-            key -> new ConcurrentHashMap<>());
+                key -> new ConcurrentHashMap<>());
         flowRules.remove(serviceName);
         Map<String, List<Rule>> tagRules = rules.computeIfAbsent(RouterConstant.TAG_MATCH_KIND,
-            key -> new ConcurrentHashMap<>());
+                key -> new ConcurrentHashMap<>());
         tagRules.remove(serviceName);
         Map<String, List<Rule>> laneRules = rules.computeIfAbsent(RouterConstant.LANE_MATCH_KIND,
-            key -> new ConcurrentHashMap<>());
+                key -> new ConcurrentHashMap<>());
         laneRules.remove(serviceName);
         for (EntireRule entireRule : entireRules) {
             if (RouterConstant.FLOW_MATCH_KIND.equals(entireRule.getKind())) {
                 flowRules.putIfAbsent(serviceName, entireRule.getRules());
                 LOGGER.info(String.format(Locale.ROOT, "Flow match rule for %s has been updated: %s ", serviceName,
-                    JSONObject.toJSONString(entireRule.getRules())));
+                        JSONObject.toJSONString(entireRule.getRules())));
                 continue;
             }
             if (RouterConstant.TAG_MATCH_KIND.equals(entireRule.getKind())) {
                 tagRules.putIfAbsent(serviceName, entireRule.getRules());
                 LOGGER.info(String.format(Locale.ROOT, "Tag match rule for %s has been updated: %s ", serviceName,
-                    JSONObject.toJSONString(entireRule.getRules())));
+                        JSONObject.toJSONString(entireRule.getRules())));
                 continue;
             }
             if (RouterConstant.LANE_MATCH_KIND.equals(entireRule.getKind())) {
                 laneRules.putIfAbsent(serviceName, entireRule.getRules());
                 LOGGER.info(String.format(Locale.ROOT, "Lane match rule for %s has been updated: %s ", serviceName,
-                    JSONObject.toJSONString(entireRule.getRules())));
+                        JSONObject.toJSONString(entireRule.getRules())));
             }
         }
     }
@@ -122,7 +123,7 @@ public class RouterConfiguration {
         for (String serviceName : map.keySet()) {
             for (EntireRule entireRule : map.get(serviceName)) {
                 Map<String, List<Rule>> serviceRuleMap = rules.computeIfAbsent(entireRule.getKind(),
-                    key -> new ConcurrentHashMap<>());
+                        key -> new ConcurrentHashMap<>());
                 serviceRuleMap.putIfAbsent(serviceName, entireRule.getRules());
             }
         }
@@ -139,7 +140,7 @@ public class RouterConfiguration {
             globalRules.put(entireRule.getKind(), entireRule.getRules());
         }
         LOGGER.info(String.format(Locale.ROOT, "Global rules have been updated: %s",
-            JSONObject.toJSONString(list)));
+                JSONObject.toJSONString(list)));
     }
 
     /**
@@ -150,6 +151,6 @@ public class RouterConfiguration {
      */
     public static boolean isInValid(RouterConfiguration configuration) {
         return configuration == null || (CollectionUtils.isEmpty(configuration.getRouteRule())
-            && CollectionUtils.isEmpty(configuration.getGlobalRule()));
+                && CollectionUtils.isEmpty(configuration.getGlobalRule()));
     }
 }

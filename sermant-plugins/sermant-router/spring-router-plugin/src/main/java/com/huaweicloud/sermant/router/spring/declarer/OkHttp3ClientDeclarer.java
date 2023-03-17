@@ -32,7 +32,7 @@ public class OkHttp3ClientDeclarer extends BaseRegistryPluginAdaptationDeclarer 
      * 增强类的全限定名 okhttp请求
      */
     private static final String[] ENHANCE_CLASSES = {
-        "okhttp3.RealCall"
+            "okhttp3.RealCall"
     };
 
     /**
@@ -47,7 +47,7 @@ public class OkHttp3ClientDeclarer extends BaseRegistryPluginAdaptationDeclarer 
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[] {
+        return new InterceptDeclarer[]{
                 InterceptDeclarer.build(MethodMatcher.nameContains("execute", "getResponseWithInterceptorChain"),
                         INTERCEPT_CLASS)
         };

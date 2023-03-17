@@ -88,7 +88,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
     }
 
     private List<Object> getTargetInstancesByRequest(String targetName, List<Object> instances,
-                                                     Map<String, List<String>> header) {
+            Map<String, List<String>> header) {
         List<String> requestTags = routerConfig.getRequestTags();
         if (CollectionUtils.isEmpty(requestTags)) {
             return instances;
@@ -130,7 +130,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
     }
 
     private List<Object> getTargetInstancesByRules(String targetName, List<Object> instances, String path,
-                                                   Map<String, List<String>> header) {
+            Map<String, List<String>> header) {
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME);
         if (RouterConfiguration.isInValid(configuration)) {
             return instances;
@@ -150,7 +150,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
     /**
      * 获取匹配的路由
      *
-     * @param list   有效的规则
+     * @param list 有效的规则
      * @param header header
      * @return 匹配的路由
      */

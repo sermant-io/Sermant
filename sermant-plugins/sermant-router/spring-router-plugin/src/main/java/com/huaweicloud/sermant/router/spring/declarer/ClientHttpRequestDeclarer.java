@@ -26,7 +26,7 @@ public class ClientHttpRequestDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "org.springframework.http.client.ClientHttpRequest";
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.ClientHttpRequestInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.ClientHttpRequestInterceptor";
 
     private static final String METHOD_NAME = "execute";
 

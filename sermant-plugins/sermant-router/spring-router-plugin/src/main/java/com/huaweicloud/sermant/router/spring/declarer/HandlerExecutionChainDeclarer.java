@@ -28,7 +28,7 @@ public class HandlerExecutionChainDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "org.springframework.web.servlet.HandlerExecutionChain";
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.HandlerExecutionChainInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.HandlerExecutionChainInterceptor";
 
     private static final String METHOD_NAME = "applyPreHandle";
 

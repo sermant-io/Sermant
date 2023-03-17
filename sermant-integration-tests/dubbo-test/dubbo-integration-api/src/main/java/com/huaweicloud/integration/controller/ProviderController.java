@@ -61,7 +61,7 @@ public class ProviderController {
     @GetMapping("hello")
     public String hello() {
         return "Hello world! I'm " + name + ", my port is " + port + ", my version is " + version + ", my zone is "
-            + zone + ", my parameters is [" + parameters + "].";
+                + zone + ", my parameters is [" + parameters + "].";
     }
 
     /**
@@ -72,7 +72,7 @@ public class ProviderController {
     @GetMapping("lane")
     public Map<String, Object> getLane() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-            .getRequest();
+                .getRequest();
         Map<String, String> map = new HashMap<>();
         Enumeration<?> enumeration = request.getHeaderNames();
         while (enumeration.hasMoreElements()) {

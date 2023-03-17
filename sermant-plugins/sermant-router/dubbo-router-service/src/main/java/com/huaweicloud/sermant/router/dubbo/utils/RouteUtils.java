@@ -57,7 +57,7 @@ public class RouteUtils {
                 return rule.getRoute();
             }
             if (isMatchByAttachments(match.getAttachments(), attachments) && isMatchByArgs(match.getArgs(),
-                arguments)) {
+                    arguments)) {
                 return rule.getRoute();
             }
         }
@@ -65,7 +65,7 @@ public class RouteUtils {
     }
 
     private static boolean isMatchByAttachments(Map<String, List<MatchRule>> matchAttachments,
-        Map<String, Object> attachments) {
+            Map<String, Object> attachments) {
         if (CollectionUtils.isEmpty(matchAttachments)) {
             return true;
         }

@@ -36,7 +36,6 @@ import java.util.regex.Pattern;
  * @since 2023-02-21
  */
 public class FlowRuleUtils {
-
     private FlowRuleUtils() {
     }
 
@@ -45,12 +44,12 @@ public class FlowRuleUtils {
      *
      * @param configuration 路由配置
      * @param targetService 目标服务
-     * @param path          dubbo接口名/url路径
-     * @param serviceName   本服务服务名
+     * @param path dubbo接口名/url路径
+     * @param serviceName 本服务服务名
      * @return 目标规则
      */
     public static List<Rule> getFlowRules(RouterConfiguration configuration, String targetService, String path,
-                                          String serviceName) {
+            String serviceName) {
         if (RouterConfiguration.isInValid(configuration)) {
             return Collections.emptyList();
         }
@@ -73,8 +72,8 @@ public class FlowRuleUtils {
     /**
      * 获取目标规则
      *
-     * @param rule        路由规则
-     * @param path        dubbo接口名/url路径
+     * @param rule 路由规则
+     * @param path dubbo接口名/url路径
      * @param serviceName 本服务服务名
      * @return 是否是目标规则
      */

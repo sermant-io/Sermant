@@ -67,7 +67,7 @@ public class AbstractDirectoryServiceTest {
         config.setRequestTags(Arrays.asList("foo", "bar", "version"));
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-            .thenReturn(config);
+                .thenReturn(config);
         service = new AbstractDirectoryServiceImpl();
     }
 
@@ -145,7 +145,7 @@ public class AbstractDirectoryServiceTest {
         testObject.getQueryMap().put("side", "consumer");
         testObject.getQueryMap().put("interface", "com.huaweicloud.foo.FooTest");
         targetInvokers = (List<Object>) service
-            .selectInvokers(testObject, arguments, Collections.singletonList(invoker1));
+                .selectInvokers(testObject, arguments, Collections.singletonList(invoker1));
         Assert.assertEquals(1, targetInvokers.size());
         Assert.assertEquals(invoker1, targetInvokers.get(0));
 

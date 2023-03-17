@@ -26,11 +26,11 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
  */
 public class ServiceInstanceListSupplierDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS =
-        {"org.springframework.cloud.loadbalancer.core.CachingServiceInstanceListSupplier",
-            "org.springframework.cloud.loadbalancer.core.DiscoveryClientServiceInstanceListSupplier"};
+            {"org.springframework.cloud.loadbalancer.core.CachingServiceInstanceListSupplier",
+                    "org.springframework.cloud.loadbalancer.core.DiscoveryClientServiceInstanceListSupplier"};
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.ServiceInstanceListSupplierInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.ServiceInstanceListSupplierInterceptor";
 
     private static final String METHOD_NAME = "get";
 

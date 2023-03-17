@@ -57,7 +57,7 @@ public class RouteHandlerInterceptorTest {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         configService = new TestSpringConfigService();
         mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class))
-            .thenReturn(configService);
+                .thenReturn(configService);
     }
 
     /**

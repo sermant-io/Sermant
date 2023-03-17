@@ -59,5 +59,5 @@ public interface RuleStrategy<I> {
      * @return 路由过滤后的实例
      */
     List<I> getMismatchInstances(String serviceName, List<I> instances, List<Map<String, String>> tags,
-        boolean isReturnAllInstancesWhenMismatch);
+            boolean isReturnAllInstancesWhenMismatch);
 }

@@ -45,10 +45,10 @@ import java.util.Map;
  */
 public class DubboReflectUtilsTest {
     private static final URL ALIBABA_URL = URL
-        .valueOf("dubbo://localhost:8080/com.huaweicloud.foo.BarTest?bar=foo&version=0.0.1");
+            .valueOf("dubbo://localhost:8080/com.huaweicloud.foo.BarTest?bar=foo&version=0.0.1");
 
     private static final org.apache.dubbo.common.URL APACHE_URL = org.apache.dubbo.common.URL
-        .valueOf("dubbo://localhost:8081/com.huaweicloud.foo.FooTest?foo=bar&version=0.0.1");
+            .valueOf("dubbo://localhost:8081/com.huaweicloud.foo.FooTest?foo=bar&version=0.0.1");
 
     private static final String BAR = "bar";
 
@@ -84,7 +84,7 @@ public class DubboReflectUtilsTest {
     @Test
     public void testGetFieldValue() {
         Map<String, String> queryMap = (Map<String, String>) ReflectUtils.getFieldValue(new Entity(), "queryMap")
-            .orElse(null);
+                .orElse(null);
         Assert.assertNotNull(queryMap);
         Assert.assertEquals(BAR, queryMap.get(FOO));
 
@@ -308,7 +308,7 @@ public class DubboReflectUtilsTest {
 
         @Override
         public org.apache.dubbo.rpc.Result invoke(org.apache.dubbo.rpc.Invocation invocation)
-            throws org.apache.dubbo.rpc.RpcException {
+                throws org.apache.dubbo.rpc.RpcException {
             return null;
         }
 

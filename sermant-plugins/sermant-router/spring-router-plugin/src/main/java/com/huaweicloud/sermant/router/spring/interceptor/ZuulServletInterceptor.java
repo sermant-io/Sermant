@@ -35,7 +35,7 @@ public class ZuulServletInterceptor extends AbstractInterceptor {
         RequestTag requestTag = ThreadLocalUtils.getRequestTag();
         if (requestTag != null) {
             requestTag.getTag().forEach((key, value) ->
-                RequestContext.getCurrentContext().addZuulRequestHeader(key, value.get(0)));
+                    RequestContext.getCurrentContext().addZuulRequestHeader(key, value.get(0)));
         }
         return context;
     }

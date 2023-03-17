@@ -116,7 +116,7 @@ public class FeignServiceImpl extends ProviderController implements FeignService
             System.exit(0);
         }
         return "I'm " + name + ", my version is " + version + ", my zone is " + zone + ", my parameters is ["
-            + parameters + "].";
+                + parameters + "].";
     }
 
     /**
@@ -128,7 +128,7 @@ public class FeignServiceImpl extends ProviderController implements FeignService
     @GetMapping("/lane")
     public Map<String, Object> getLane() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-            .getRequest();
+                .getRequest();
         Map<String, String> map = new HashMap<>();
         Enumeration<?> enumeration = request.getHeaderNames();
         while (enumeration.hasMoreElements()) {

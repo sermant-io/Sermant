@@ -30,7 +30,7 @@ import java.util.Set;
  * @author provenceee
  * @since 2023-02-21
  */
-public class RouteInterceptorHandler extends AbstractInterceptorHandler {
+public class RouteRequestTagHandler extends AbstractRequestTagHandler {
     /**
      * 获取透传的标记
      *
@@ -38,7 +38,7 @@ public class RouteInterceptorHandler extends AbstractInterceptorHandler {
      */
     @Override
     public Map<String, List<String>> getRequestTag(String path, String methodName, Map<String, List<String>> headers,
-        Map<String, String[]> parameters, Keys keys) {
+            Map<String, String[]> parameters, Keys keys) {
         Set<String> matchKeys = keys.getMatchKeys();
         if (CollectionUtils.isEmpty(matchKeys)) {
             return Collections.emptyMap();

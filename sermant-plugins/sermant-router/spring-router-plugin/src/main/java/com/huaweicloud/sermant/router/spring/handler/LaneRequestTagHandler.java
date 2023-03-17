@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  * @author provenceee
  * @since 2023-02-21
  */
-public class LaneInterceptorHandler extends AbstractInterceptorHandler {
+public class LaneRequestTagHandler extends AbstractRequestTagHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final LaneService laneService;
@@ -43,7 +43,7 @@ public class LaneInterceptorHandler extends AbstractInterceptorHandler {
     /**
      * 构造方法
      */
-    public LaneInterceptorHandler() {
+    public LaneRequestTagHandler() {
         laneService = ServiceManager.getService(LaneService.class);
     }
 
@@ -54,7 +54,7 @@ public class LaneInterceptorHandler extends AbstractInterceptorHandler {
      */
     @Override
     public Map<String, List<String>> getRequestTag(String path, String methodName, Map<String, List<String>> headers,
-        Map<String, String[]> parameters, Keys keys) {
+            Map<String, String[]> parameters, Keys keys) {
         Set<String> matchTags = keys.getMatchTags();
         if (CollectionUtils.isEmpty(matchTags)) {
             // 染色标记为空，代表没有染色规则，直接return

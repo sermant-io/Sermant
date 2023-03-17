@@ -83,7 +83,7 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
     private List<Object> getServerList(String methodName, Object obj) {
         String fieldName = "getAllServers".equals(methodName) ? "allServerList" : "upServerList";
         return ReflectUtils.getFieldValue(obj, fieldName).map(value -> (List<Object>) value)
-            .orElse(Collections.emptyList());
+                .orElse(Collections.emptyList());
     }
 
     private Optional<RequestData> getRequestData() {

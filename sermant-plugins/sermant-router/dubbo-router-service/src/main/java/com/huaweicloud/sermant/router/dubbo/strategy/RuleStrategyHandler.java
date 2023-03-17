@@ -62,7 +62,7 @@ public enum RuleStrategyHandler {
      * @return 路由匹配的实例
      */
     public List<Object> getMatchInvokersByRequest(String serviceName, List<Object> instances,
-        Map<String, String> tags) {
+            Map<String, String> tags) {
         return ruleStrategy.getMatchInstancesByRequest(serviceName, instances, tags);
     }
 
@@ -76,7 +76,7 @@ public enum RuleStrategyHandler {
      * @return 路由过滤后的实例
      */
     public List<Object> getMismatchInvokers(String serviceName, List<Object> invokers, List<Map<String, String>> tags,
-        boolean isReturnAllInstancesWhenMismatch) {
+            boolean isReturnAllInstancesWhenMismatch) {
         return ruleStrategy.getMismatchInstances(serviceName, invokers, tags, isReturnAllInstancesWhenMismatch);
     }
 }

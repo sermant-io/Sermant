@@ -39,7 +39,7 @@ public interface LaneService {
      * @return map
      */
     Map<String, Object> getLaneByDubbo(String name, LaneTestEntity laneTestEntity, String[] arr, List<Integer> list,
-        Map<String, Object> map);
+            Map<String, Object> map);
 
     /**
      * 泳道测试

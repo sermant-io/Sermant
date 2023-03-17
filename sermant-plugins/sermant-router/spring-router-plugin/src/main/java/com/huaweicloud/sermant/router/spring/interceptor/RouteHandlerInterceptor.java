@@ -20,10 +20,10 @@ import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.handler.Handler;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
-import com.huaweicloud.sermant.router.spring.handler.AbstractInterceptorHandler;
-import com.huaweicloud.sermant.router.spring.handler.AbstractInterceptorHandler.Keys;
-import com.huaweicloud.sermant.router.spring.handler.LaneInterceptorHandler;
-import com.huaweicloud.sermant.router.spring.handler.RouteInterceptorHandler;
+import com.huaweicloud.sermant.router.spring.handler.AbstractRequestTagHandler;
+import com.huaweicloud.sermant.router.spring.handler.AbstractRequestTagHandler.Keys;
+import com.huaweicloud.sermant.router.spring.handler.LaneRequestTagHandler;
+import com.huaweicloud.sermant.router.spring.handler.RouteRequestTagHandler;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -48,7 +48,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 2022-07-12
  */
 public class RouteHandlerInterceptor implements HandlerInterceptor {
-    private final List<AbstractInterceptorHandler> handlers;
+    private final List<AbstractRequestTagHandler> handlers;
 
     private final SpringConfigService configService;
 
@@ -58,8 +58,8 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
     public RouteHandlerInterceptor() {
         configService = ServiceManager.getService(SpringConfigService.class);
         handlers = new ArrayList<>();
-        handlers.add(new LaneInterceptorHandler());
-        handlers.add(new RouteInterceptorHandler());
+        handlers.add(new LaneRequestTagHandler());
+        handlers.add(new RouteRequestTagHandler());
         handlers.sort(Comparator.comparingInt(Handler::getOrder));
     }
 
@@ -75,14 +75,14 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
         Map<String, String[]> parameterMap = request.getParameterMap();
         String path = request.getRequestURI();
         String method = request.getMethod();
-        handlers.forEach(handler -> ThreadLocalUtils
-            .addRequestTag(handler.getRequestTag(path, method, headers, parameterMap, new Keys(matchKeys, matchTags))));
+        handlers.forEach(handler -> ThreadLocalUtils.addRequestTag(
+                handler.getRequestTag(path, method, headers, parameterMap, new Keys(matchKeys, matchTags))));
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object obj,
-        ModelAndView modelAndView) {
+            ModelAndView modelAndView) {
     }
 
     @Override

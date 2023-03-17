@@ -31,7 +31,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  */
 public class HandlerExecutionChainInterceptor extends AbstractInterceptor {
     private static final String ROUTE_HANDLER_CLASS_NAME
-        = "com.huaweicloud.sermant.router.spring.interceptor.RouteHandlerInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.RouteHandlerInterceptor";
 
     private volatile HandlerInterceptor handlerInterceptor;
 

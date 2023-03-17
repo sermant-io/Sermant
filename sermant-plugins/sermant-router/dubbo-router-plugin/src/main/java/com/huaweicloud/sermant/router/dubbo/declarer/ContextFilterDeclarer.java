@@ -24,10 +24,10 @@ package com.huaweicloud.sermant.router.dubbo.declarer;
  */
 public class ContextFilterDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.rpc.filter.ContextFilter",
-        "com.alibaba.dubbo.rpc.filter.ContextFilter"};
+            "com.alibaba.dubbo.rpc.filter.ContextFilter"};
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.dubbo.interceptor.ContextFilterInterceptor";
+            = "com.huaweicloud.sermant.router.dubbo.interceptor.ContextFilterInterceptor";
 
     private static final String METHOD_NAME = "invoke";
 

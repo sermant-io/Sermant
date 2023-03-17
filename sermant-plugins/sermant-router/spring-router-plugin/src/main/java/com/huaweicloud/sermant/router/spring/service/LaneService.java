@@ -28,7 +28,6 @@ import java.util.Map;
  * @since 2023-02-20
  */
 public interface LaneService extends PluginService {
-
     /**
      * 获取泳道标记
      *
@@ -39,7 +38,7 @@ public interface LaneService extends PluginService {
      * @return 泳道标记
      */
     Map<String, List<String>> getLaneByParameterArray(String path, String methodName, Map<String, List<String>> headers,
-        Map<String, String[]> parameters);
+            Map<String, String[]> parameters);
 
     /**
      * 获取泳道标记
@@ -51,5 +50,5 @@ public interface LaneService extends PluginService {
      * @return 泳道标记
      */
     Map<String, List<String>> getLaneByParameterList(String path, String methodName, Map<String, List<String>> headers,
-        Map<String, List<String>> parameters);
+            Map<String, List<String>> parameters);
 }

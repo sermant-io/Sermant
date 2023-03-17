@@ -61,9 +61,9 @@ public class LaneContextFilterHandlerTest {
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         mockServiceManager.when(() -> ServiceManager.getService(DubboConfigService.class))
-            .thenReturn(DUBBO_CONFIG_SERVICE);
+                .thenReturn(DUBBO_CONFIG_SERVICE);
         mockServiceManager.when(() -> ServiceManager.getService(LaneContextFilterService.class))
-            .thenReturn(LANE_CONTEXT_FILTER_SERVICE);
+                .thenReturn(LANE_CONTEXT_FILTER_SERVICE);
     }
 
     /**
@@ -115,7 +115,7 @@ public class LaneContextFilterHandlerTest {
 
         @Override
         public Map<String, List<String>> getLane(String interfaceName, String methodName,
-            Map<String, Object> attachments, Object[] args) {
+                Map<String, Object> attachments, Object[] args) {
             if (returnEmpty) {
                 return Collections.emptyMap();
             }

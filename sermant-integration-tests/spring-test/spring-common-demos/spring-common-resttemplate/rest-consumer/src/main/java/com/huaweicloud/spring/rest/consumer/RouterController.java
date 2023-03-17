@@ -66,7 +66,8 @@ public class RouterController {
     @GetMapping("/boot/getMetadata")
     public String getMetadataByBoot(boolean exit) {
         return localRestTemplate
-            .getForObject(URL_PREFIX + domain + "/" + downServiceName + "/router/metadata?exit=" + exit, String.class);
+                .getForObject(URL_PREFIX + domain + "/" + downServiceName + "/router/metadata?exit=" + exit,
+                        String.class);
     }
 
     /**
@@ -90,8 +91,8 @@ public class RouterController {
      */
     @GetMapping("/cloud/getLane")
     public Map<String, Object> getLaneByCloud(@RequestParam(value = "name", defaultValue = "") String name,
-        @RequestParam(value = "id", defaultValue = "0") int id,
-        @RequestParam(value = "enabled", defaultValue = "false") boolean enabled) {
+            @RequestParam(value = "id", defaultValue = "0") int id,
+            @RequestParam(value = "enabled", defaultValue = "false") boolean enabled) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> map = restTemplate.getForObject(URL_PREFIX + downServiceName + "/router/lane", Map.class);
         if (map != null) {

@@ -51,7 +51,7 @@ public class ContextFilterInterceptor extends AbstractInterceptor {
     public ExecuteContext before(ExecuteContext context) {
         Object[] arguments = context.getArguments();
         handlers.forEach(handler -> ThreadLocalUtils
-            .addRequestTag(handler.getRequestTag(arguments[0], arguments[1])));
+                .addRequestTag(handler.getRequestTag(arguments[0], arguments[1])));
         return context;
     }
 

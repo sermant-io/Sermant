@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.router.spring.handler;
 
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.router.spring.handler.AbstractInterceptorHandler.Keys;
+import com.huaweicloud.sermant.router.spring.handler.AbstractRequestTagHandler.Keys;
 import com.huaweicloud.sermant.router.spring.service.LaneService;
 
 import org.junit.AfterClass;
@@ -40,12 +40,12 @@ import java.util.Set;
  * @author provenceee
  * @since 2023-02-28
  */
-public class LaneInterceptorHandlerTest {
+public class LaneRequestTagHandlerTest {
     private static MockedStatic<ServiceManager> mockServiceManager;
 
     private static TestLaneService laneService;
 
-    private final LaneInterceptorHandler handler;
+    private final LaneRequestTagHandler handler;
 
     /**
      * UT执行前进行mock
@@ -55,7 +55,7 @@ public class LaneInterceptorHandlerTest {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         laneService = new TestLaneService();
         mockServiceManager.when(() -> ServiceManager.getService(LaneService.class))
-            .thenReturn(laneService);
+                .thenReturn(laneService);
     }
 
     /**
@@ -66,8 +66,8 @@ public class LaneInterceptorHandlerTest {
         mockServiceManager.close();
     }
 
-    public LaneInterceptorHandlerTest() {
-        handler = new LaneInterceptorHandler();
+    public LaneRequestTagHandlerTest() {
+        handler = new LaneRequestTagHandler();
     }
 
     /**

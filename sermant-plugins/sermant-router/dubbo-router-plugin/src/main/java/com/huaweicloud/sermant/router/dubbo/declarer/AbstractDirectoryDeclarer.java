@@ -30,7 +30,7 @@ public class AbstractDirectoryDeclarer extends AbstractDeclarer {
     private static final String ALIBABA_ENHANCE_CLASS = "com.alibaba.dubbo.rpc.cluster.directory.AbstractDirectory";
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.dubbo.interceptor.AbstractDirectoryInterceptor";
+            = "com.huaweicloud.sermant.router.dubbo.interceptor.AbstractDirectoryInterceptor";
 
     private static final String METHOD_NAME = "doList";
 

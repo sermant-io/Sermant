@@ -37,6 +37,7 @@ import java.util.Map;
  */
 public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
     private static final int HTTPCONTEXT_INDEX = 2;
+
     /**
      * 前置触发点
      *
@@ -44,17 +45,16 @@ public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
      * @return 执行上下文
      * @throws Exception 执行异常
      */
-
     @Override
     public ExecuteContext doBefore(ExecuteContext context) throws Exception {
         Object httpAsyncRequestProducerArgument = context.getArguments()[0];
         if (httpAsyncRequestProducerArgument instanceof HttpAsyncRequestProducer) {
             HttpAsyncRequestProducer httpAsyncRequestProducer
-                    = (HttpAsyncRequestProducer)httpAsyncRequestProducerArgument;
+                    = (HttpAsyncRequestProducer) httpAsyncRequestProducerArgument;
             HttpRequest httpRequest = httpAsyncRequestProducer.generateRequest();
             Object argument = context.getArguments()[HTTPCONTEXT_INDEX];
             if (argument instanceof HttpContext) {
-                HttpContext httpContext = (HttpContext)argument;
+                HttpContext httpContext = (HttpContext) argument;
                 if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
                     return context;
                 }
@@ -76,10 +76,8 @@ public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
     }
 
     /**
-     * 后置触发点
-     * 说明：该方法后置拦截点不移除线程变量，为了在 NopInstanceFilterInterceptor前置拦截点获取线程变量做流量路由，
-     * 在 NopInstanceFilterInterceptor后置拦截点移除线程变量.
-     * 使用注意事项：httpasyncclient使用必须有同步线程的future.get()逻辑，否则线程变量无法remove有问题
+     * 后置触发点 说明：该方法后置拦截点不移除线程变量，为了在 NopInstanceFilterInterceptor前置拦截点获取线程变量做流量路由， 在
+     * NopInstanceFilterInterceptor后置拦截点移除线程变量. 使用注意事项：httpasyncclient使用必须有同步线程的future.get()逻辑，否则线程变量无法remove有问题
      *
      * @param context 执行上下文
      * @return 执行上下文

@@ -48,14 +48,14 @@ public class RouteUtils {
      * @return 匹配的泳道标记
      */
     public static List<Route> getLaneRoutesByParameterArray(List<Rule> list, Map<String, List<String>> headers,
-        Map<String, String[]> parameters) {
+            Map<String, String[]> parameters) {
         for (Rule rule : list) {
             Match match = rule.getMatch();
             if (match == null) {
                 return rule.getRoute();
             }
             if (isMatchByHeaders(match.getHeaders(), headers) && isMatchByParameterArray(match.getParameters(),
-                parameters)) {
+                    parameters)) {
                 return rule.getRoute();
             }
         }
@@ -71,14 +71,14 @@ public class RouteUtils {
      * @return 匹配的泳道标记
      */
     public static List<Route> getLaneRoutesByParameterList(List<Rule> list, Map<String, List<String>> headers,
-        Map<String, List<String>> parameters) {
+            Map<String, List<String>> parameters) {
         for (Rule rule : list) {
             Match match = rule.getMatch();
             if (match == null) {
                 return rule.getRoute();
             }
             if (isMatchByHeaders(match.getHeaders(), headers) && isMatchByParameterList(match.getParameters(),
-                parameters)) {
+                    parameters)) {
                 return rule.getRoute();
             }
         }
@@ -86,7 +86,7 @@ public class RouteUtils {
     }
 
     private static boolean isMatchByHeaders(Map<String, List<MatchRule>> matchHeaders,
-        Map<String, List<String>> headers) {
+            Map<String, List<String>> headers) {
         if (CollectionUtils.isEmpty(matchHeaders)) {
             return true;
         }
@@ -109,7 +109,7 @@ public class RouteUtils {
     }
 
     private static boolean isMatchByParameterArray(Map<String, List<MatchRule>> matchParameters,
-        Map<String, String[]> parameters) {
+            Map<String, String[]> parameters) {
         if (CollectionUtils.isEmpty(matchParameters)) {
             return true;
         }
@@ -132,7 +132,7 @@ public class RouteUtils {
     }
 
     private static boolean isMatchByParameterList(Map<String, List<MatchRule>> matchParameters,
-        Map<String, List<String>> parameters) {
+            Map<String, List<String>> parameters) {
         if (CollectionUtils.isEmpty(matchParameters)) {
             return true;
         }

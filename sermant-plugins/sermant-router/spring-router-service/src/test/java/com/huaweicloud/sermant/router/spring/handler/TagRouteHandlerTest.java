@@ -66,7 +66,7 @@ public class TagRouteHandlerTest {
         metadata.put("group", "red");
         AppCache.INSTANCE.setMetadata(metadata);
         List<Object> targetInstances = tagRouteHandler.handle("foo", instances,
-            new RequestData(null, null, null));
+                new RequestData(null, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
         ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());
@@ -89,7 +89,7 @@ public class TagRouteHandlerTest {
         instances.add(instance2);
         AppCache.INSTANCE.setMetadata(metadata1);
         List<Object> targetInstances = tagRouteHandler.handle("foo", instances,
-            new RequestData(null, null, null));
+                new RequestData(null, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance1, targetInstances.get(0));
         ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());
@@ -110,7 +110,7 @@ public class TagRouteHandlerTest {
         metadata.put("group", "red");
         AppCache.INSTANCE.setMetadata(metadata);
         List<Object> targetInstances = tagRouteHandler.handle("foo", instances,
-            new RequestData(null, null, null));
+                new RequestData(null, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
         ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());
@@ -132,7 +132,7 @@ public class TagRouteHandlerTest {
         metadata.put("group", "red");
         AppCache.INSTANCE.setMetadata(metadata);
         List<Object> targetInstances = tagRouteHandler.handle("foo", instances,
-            new RequestData(null, null, null));
+                new RequestData(null, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
         ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetGlobalRule(Collections.emptyList());

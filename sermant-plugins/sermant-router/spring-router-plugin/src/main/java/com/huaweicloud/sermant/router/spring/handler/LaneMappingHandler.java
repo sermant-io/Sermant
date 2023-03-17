@@ -58,7 +58,7 @@ public class LaneMappingHandler extends AbstractMappingHandler {
      */
     @Override
     public Map<String, List<String>> getRequestTag(String path, String methodName, Map<String, List<String>> headers,
-        Map<String, List<String>> parameters) {
+            Map<String, List<String>> parameters) {
         Set<String> matchTags = configService.getMatchTags();
         if (CollectionUtils.isEmpty(matchTags)) {
             // 染色标记为空，代表没有染色规则，直接return

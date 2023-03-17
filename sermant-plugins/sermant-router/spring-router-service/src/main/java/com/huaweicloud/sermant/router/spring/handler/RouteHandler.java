@@ -28,7 +28,6 @@ import java.util.List;
  * @since 2023-02-21
  */
 public interface RouteHandler extends Handler {
-
     /**
      * 调用路由处理器链
      *

@@ -48,5 +48,5 @@ public abstract class AbstractMappingHandler extends AbstractHandler {
      * @return 透传的标记
      */
     public abstract Map<String, List<String>> getRequestTag(String path, String methodName,
-        Map<String, List<String>> headers, Map<String, List<String>> parameters);
+            Map<String, List<String>> headers, Map<String, List<String>> parameters);
 }

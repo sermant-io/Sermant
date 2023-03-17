@@ -63,7 +63,7 @@ public class FlowRouteHandlerTest {
         config.setRequestTags(Arrays.asList("foo", "bar", "version"));
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-            .thenReturn(config);
+                .thenReturn(config);
         flowRouteHandler = new FlowRouteHandler();
     }
 
@@ -97,7 +97,7 @@ public class FlowRouteHandlerTest {
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar1"));
         List<Object> targetInstances = flowRouteHandler.handle("foo", instances,
-            new RequestData(header, null, null));
+                new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
         ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());
@@ -112,10 +112,10 @@ public class FlowRouteHandlerTest {
         config.setRequestTags(null);
         List<Object> instances = new ArrayList<>();
         ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0",
-            Collections.singletonMap("bar", "bar1"));
+                Collections.singletonMap("bar", "bar1"));
         instances.add(instance1);
         ServiceInstance instance2 = TestDefaultServiceInstance
-            .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("foo", "bar2"));
+                .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("foo", "bar2"));
         instances.add(instance2);
         ServiceInstance instance3 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.1");
         instances.add(instance3);
@@ -135,10 +135,10 @@ public class FlowRouteHandlerTest {
         config.setRequestTags(Arrays.asList("foo", "bar", "version"));
         List<Object> instances = new ArrayList<>();
         ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0",
-            Collections.singletonMap("bar", "bar1"));
+                Collections.singletonMap("bar", "bar1"));
         instances.add(instance1);
         ServiceInstance instance2 = TestDefaultServiceInstance
-            .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("foo", "bar2"));
+                .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("foo", "bar2"));
         instances.add(instance2);
         ServiceInstance instance3 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.1");
         instances.add(instance3);
@@ -169,10 +169,10 @@ public class FlowRouteHandlerTest {
         config.setRequestTags(Arrays.asList("foo", "bar", "version"));
         List<Object> instances = new ArrayList<>();
         ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0",
-            Collections.singletonMap("foo", "bar1"));
+                Collections.singletonMap("foo", "bar1"));
         instances.add(instance1);
         ServiceInstance instance2 = TestDefaultServiceInstance
-            .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("bar", "bar2"));
+                .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("bar", "bar2"));
         instances.add(instance2);
         ServiceInstance instance3 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.2");
         instances.add(instance3);
@@ -187,10 +187,10 @@ public class FlowRouteHandlerTest {
         // 不匹配bar: bar1实例时，优先匹配没有bar标签的实例，如果没有无bar标签的实例，则返回空列表
         List<Object> sameInstances = new ArrayList<>();
         ServiceInstance sameInstance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0",
-            Collections.singletonMap("bar", "bar3"));
+                Collections.singletonMap("bar", "bar3"));
         sameInstances.add(sameInstance1);
         ServiceInstance sameInstance2 = TestDefaultServiceInstance
-            .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("bar", "bar2"));
+                .getTestDefaultServiceInstance("1.0.1", Collections.singletonMap("bar", "bar2"));
         sameInstances.add(sameInstance2);
         header.clear();
         header.put("bar", Collections.singletonList("bar1"));
@@ -264,7 +264,7 @@ public class FlowRouteHandlerTest {
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar1"));
         List<Object> targetInstances = flowRouteHandler.handle("foo", instances,
-            new RequestData(header, null, null));
+                new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
         ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());
@@ -285,7 +285,7 @@ public class FlowRouteHandlerTest {
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar1"));
         List<Object> targetInstances = flowRouteHandler.handle("foo", instances,
-            new RequestData(header, null, null));
+                new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
         ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetGlobalRule(Collections.emptyList());

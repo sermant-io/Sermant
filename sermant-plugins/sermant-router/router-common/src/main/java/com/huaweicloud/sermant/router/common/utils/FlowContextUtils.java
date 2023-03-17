@@ -37,7 +37,9 @@ import java.util.Map;
  */
 public class FlowContextUtils {
     private static final Base64.Decoder DECODER = Base64.getDecoder();
+
     private static final int TAG_PART_NUM = 2;
+
     private static volatile RouterConfig routerConfig;
 
     private FlowContextUtils() {

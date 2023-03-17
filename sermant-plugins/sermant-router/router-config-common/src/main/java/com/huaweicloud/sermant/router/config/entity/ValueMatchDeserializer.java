@@ -126,7 +126,7 @@ public class ValueMatchDeserializer implements ObjectDeserializer {
 
     private boolean isIsMethod(String type) {
         return StringUtils.isExist(type) && type.startsWith(RouterConstant.IS_METHOD_PREFIX) && type
-            .endsWith(RouterConstant.IS_METHOD_SUFFIX);
+                .endsWith(RouterConstant.IS_METHOD_SUFFIX);
     }
 
     /**

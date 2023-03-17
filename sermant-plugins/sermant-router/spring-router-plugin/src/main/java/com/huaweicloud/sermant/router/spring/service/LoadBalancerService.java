@@ -31,8 +31,8 @@ public interface LoadBalancerService extends PluginService {
     /**
      * 获取目标实例
      *
-     * @param targetName  目标服务
-     * @param instances   实例
+     * @param targetName 目标服务
+     * @param instances 实例
      * @param requestData 请求数据
      * @return 目标实例
      */

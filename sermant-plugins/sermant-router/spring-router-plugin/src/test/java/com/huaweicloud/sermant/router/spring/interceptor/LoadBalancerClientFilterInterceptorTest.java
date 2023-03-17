@@ -46,7 +46,7 @@ public class LoadBalancerClientFilterInterceptorTest {
         interceptor = new LoadBalancerClientFilterInterceptor();
         Object[] arguments = new Object[1];
         MockServerHttpRequest request = MockServerHttpRequest.get("")
-            .header("bar", "bar1").header("foo", "foo1").build();
+                .header("bar", "bar1").header("foo", "foo1").build();
         MockServerWebExchange exchange = MockServerWebExchange.from(request);
         arguments[0] = exchange;
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);

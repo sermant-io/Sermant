@@ -26,7 +26,7 @@ public class EurekaHttpClientDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "com.netflix.discovery.shared.transport.EurekaHttpClient";
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.EurekaHttpClientInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.EurekaHttpClientInterceptor";
 
     private static final String METHOD_NAME = "register";
 

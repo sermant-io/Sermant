@@ -75,7 +75,7 @@ public class HystrixActionInterceptorTest {
         HystrixRequestContext context = HystrixRequestContext.getContextForCurrentThread();
         Assert.assertNotNull(context);
         Map<HystrixRequestVariableDefault<?>, ?> state = ReflectUtils.getFieldValue(context, "state")
-            .map(value -> (Map<HystrixRequestVariableDefault<?>, ?>) value).orElse(Collections.emptyMap());
+                .map(value -> (Map<HystrixRequestVariableDefault<?>, ?>) value).orElse(Collections.emptyMap());
         for (Entry<HystrixRequestVariableDefault<?>, ?> entry : state.entrySet()) {
             Object lazyInitializer = entry.getValue();
             Object obj = ReflectUtils.getFieldValue(lazyInitializer, "value").orElse(null);

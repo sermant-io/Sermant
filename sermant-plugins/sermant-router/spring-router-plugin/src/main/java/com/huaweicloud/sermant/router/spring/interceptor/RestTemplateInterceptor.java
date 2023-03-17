@@ -47,7 +47,7 @@ public class RestTemplateInterceptor extends MarkInterceptor {
         if (arguments != null && arguments.length > CALLBACK_ARG_LENGTH) {
             Object argument = arguments[CALLBACK_ARG_POSITION];
             if (argument instanceof RequestCallbackWrapper) {
-                RequestCallbackWrapper callback = (RequestCallbackWrapper)argument;
+                RequestCallbackWrapper callback = (RequestCallbackWrapper) argument;
                 parseTags(callback, arguments[0], arguments[1]);
             }
         }

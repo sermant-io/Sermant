@@ -63,8 +63,8 @@ public class LaneController {
         RpcContext.getContext().setAttachments(getLaneFlag());
         RpcContext.getContext().setAttachment(Constant.LANE_TEST_USER_ID, String.valueOf(entity.getId()));
         return laneService.getLaneByDubbo(entity.getName(), new LaneTestEntity(entity.getLaneId(), entity.isEnabled()),
-            new String[]{entity.getArrName()}, Collections.singletonList(entity.getListId()),
-            Collections.singletonMap("name", entity.getMapName()));
+                new String[]{entity.getArrName()}, Collections.singletonList(entity.getListId()),
+                Collections.singletonMap("name", entity.getMapName()));
     }
 
     /**
@@ -77,8 +77,8 @@ public class LaneController {
      */
     @GetMapping("/getLaneByFeign")
     public Map<String, Object> getLaneByFeign(@RequestParam(value = "name", defaultValue = "") String name,
-        @RequestParam(value = "id", defaultValue = "0") int id,
-        @RequestParam(value = "enabled", defaultValue = "false") boolean enabled) {
+            @RequestParam(value = "id", defaultValue = "0") int id,
+            @RequestParam(value = "enabled", defaultValue = "false") boolean enabled) {
         RpcContext.getContext().setAttachments(getLaneFlag());
         RpcContext.getContext().setAttachment(Constant.LANE_TEST_USER_ID, String.valueOf(id));
         return laneService.getLaneByFeign(name, new LaneTestEntity(id, enabled));
@@ -94,8 +94,8 @@ public class LaneController {
      */
     @GetMapping("/getLaneByRest")
     public Map<String, Object> getLaneByRest(@RequestParam(value = "name", defaultValue = "") String name,
-        @RequestParam(value = "id", defaultValue = "0") int id,
-        @RequestParam(value = "enabled", defaultValue = "false") boolean enabled) {
+            @RequestParam(value = "id", defaultValue = "0") int id,
+            @RequestParam(value = "enabled", defaultValue = "false") boolean enabled) {
         RpcContext.getContext().setAttachments(getLaneFlag());
         RpcContext.getContext().setAttachment(Constant.LANE_TEST_USER_ID, String.valueOf(id));
         return laneService.getLaneByRest(name, new LaneTestEntity(id, enabled));
@@ -103,7 +103,7 @@ public class LaneController {
 
     private Map<String, String> getLaneFlag() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-            .getRequest();
+                .getRequest();
         Map<String, String> headers = new HashMap<>();
         Enumeration<?> enumeration = request.getHeaderNames();
         while (enumeration.hasMoreElements()) {

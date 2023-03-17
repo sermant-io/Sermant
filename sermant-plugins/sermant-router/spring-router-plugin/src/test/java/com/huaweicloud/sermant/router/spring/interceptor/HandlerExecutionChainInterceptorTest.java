@@ -51,21 +51,21 @@ public class HandlerExecutionChainInterceptorTest {
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class)).thenReturn(
-            new SpringConfigService() {
-                @Override
-                public void init(String cacheName, String serviceName) {
-                }
+                new SpringConfigService() {
+                    @Override
+                    public void init(String cacheName, String serviceName) {
+                    }
 
-                @Override
-                public Set<String> getMatchKeys() {
-                    return Collections.emptySet();
-                }
+                    @Override
+                    public Set<String> getMatchKeys() {
+                        return Collections.emptySet();
+                    }
 
-                @Override
-                public Set<String> getMatchTags() {
-                    return Collections.emptySet();
-                }
-            });
+                    @Override
+                    public Set<String> getMatchTags() {
+                        return Collections.emptySet();
+                    }
+                });
     }
 
     /**

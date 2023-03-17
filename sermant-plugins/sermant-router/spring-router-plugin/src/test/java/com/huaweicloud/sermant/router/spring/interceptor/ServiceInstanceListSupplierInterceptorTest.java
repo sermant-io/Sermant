@@ -65,11 +65,11 @@ public class ServiceInstanceListSupplierInterceptorTest {
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         mockServiceManager.when(() -> ServiceManager.getService(LoadBalancerService.class))
-            .thenReturn(new TestLoadBalancerService());
+                .thenReturn(new TestLoadBalancerService());
 
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-            .thenReturn(new RouterConfig());
+                .thenReturn(new RouterConfig());
     }
 
     /**

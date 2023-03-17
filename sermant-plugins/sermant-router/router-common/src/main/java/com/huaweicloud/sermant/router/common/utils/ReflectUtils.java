@@ -78,12 +78,12 @@ public class ReflectUtils {
      */
     public static <T extends AccessibleObject> T getAccessibleObject(T object) {
         return (T) ACCESSIBLE_OBJECT_MAP.computeIfAbsent(object.toString(), key ->
-            AccessController.doPrivileged((PrivilegedAction<T>) () -> {
-                if (!object.isAccessible()) {
-                    object.setAccessible(true);
-                }
-                return object;
-            }));
+                AccessController.doPrivileged((PrivilegedAction<T>) () -> {
+                    if (!object.isAccessible()) {
+                        object.setAccessible(true);
+                    }
+                    return object;
+                }));
     }
 
     /**
@@ -123,7 +123,7 @@ public class ReflectUtils {
     }
 
     private static Optional<Object> invoke(Class<?> invokeClass, Object obj, String name, Object parameter,
-        Class<?> parameterClass) {
+            Class<?> parameterClass) {
         Optional<Method> method = METHOD_MAP.computeIfAbsent(buildMethodKey(invokeClass, name, parameterClass), key -> {
             try {
                 if (parameterClass == null) {
@@ -171,7 +171,7 @@ public class ReflectUtils {
 
         // 初始化StringBuilder的长度是为了性能
         StringBuilder sb = new StringBuilder(
-            className.length() + methodName.length() + parameterClassName.length() + EXTRA_LENGTH_FOR_METHOD_KEY);
+                className.length() + methodName.length() + parameterClassName.length() + EXTRA_LENGTH_FOR_METHOD_KEY);
         sb.append(className).append("#").append(methodName).append("(").append(parameterClassName).append(")");
         return sb.toString();
     }

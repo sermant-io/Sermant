@@ -94,7 +94,7 @@ public class LaneContextFilterServiceTest {
     public void testGetLane() {
         initRules();
         Map<String, List<String>> lane = service
-            .getLane("com.foo.test", "test", Collections.singletonMap("bar", "bar1"), new Object[]{"foo1"});
+                .getLane("com.foo.test", "test", Collections.singletonMap("bar", "bar1"), new Object[]{"foo1"});
         Assert.assertEquals(1, lane.size());
         Assert.assertEquals("flag1", lane.get("sermant-flag").get(0));
     }

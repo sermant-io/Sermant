@@ -82,8 +82,8 @@ public class RouterController {
      */
     @GetMapping("/cloud/getLane")
     public Map<String, Object> getLaneByCloud(@RequestParam(value = "name", defaultValue = "") String name,
-        @RequestParam(value = "id", defaultValue = "0") int id,
-        @RequestParam(value = "enabled", defaultValue = "false") boolean enabled) {
+            @RequestParam(value = "id", defaultValue = "0") int id,
+            @RequestParam(value = "enabled", defaultValue = "false") boolean enabled) {
         Map<String, Object> result = new HashMap<>(feignService.getLane());
         result.put(applicationName, getMetadata());
         return result;

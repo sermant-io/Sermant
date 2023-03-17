@@ -54,14 +54,14 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
     /**
      * 构造方法
      *
-     * @param source                   来源
-     * @param matchInstanceStrategy    匹配上的策略
+     * @param source 来源
+     * @param matchInstanceStrategy 匹配上的策略
      * @param mismatchInstanceStrategy 匹配不上的策略
-     * @param mapper                   获取metadata的方法
+     * @param mapper 获取metadata的方法
      */
     public AbstractRuleStrategy(String source, InstanceStrategy<I, Map<String, String>> matchInstanceStrategy,
-                                InstanceStrategy<I, List<Map<String, String>>> mismatchInstanceStrategy, Function<I,
-        Map<String, String>> mapper) {
+            InstanceStrategy<I, List<Map<String, String>>> mismatchInstanceStrategy, Function<I,
+            Map<String, String>> mapper) {
         this.source = source;
         this.matchInstanceStrategy = matchInstanceStrategy;
         this.mismatchInstanceStrategy = mismatchInstanceStrategy;
@@ -84,12 +84,12 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
 
     @Override
     public List<I> getMismatchInstances(String serviceName, List<I> instances, List<Map<String, String>> tags,
-                                        boolean isReturnAllInstancesWhenMismatch) {
+            boolean isReturnAllInstancesWhenMismatch) {
         return getInstances(mismatchInstanceStrategy, tags, serviceName, instances, isReturnAllInstancesWhenMismatch);
     }
 
     private <T> List<I> getInstances(InstanceStrategy<I, T> instanceStrategy, T tags, String serviceName,
-                                     List<I> instances, boolean isReturnAllInstancesWhenMismatch) {
+            List<I> instances, boolean isReturnAllInstancesWhenMismatch) {
         List<I> resultList = new ArrayList<>();
         for (I instance : instances) {
             if (instanceStrategy.isMatch(instance, tags, mapper)) {
@@ -100,22 +100,22 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
         if (!mismatch) {
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine(String.format(Locale.ROOT, "Match instances, %s serviceName is %s, tags is %s.", source,
-                    serviceName, JSONObject.toJSONString(tags)));
+                        serviceName, JSONObject.toJSONString(tags)));
             }
         } else if (isReturnAllInstancesWhenMismatch) {
             LOGGER.warning(String.format(Locale.ROOT,
-                "Cannot match instances, will return all instances, %s serviceName is %s, tags is %s.", source,
-                serviceName, JSONObject.toJSONString(tags)));
+                    "Cannot match instances, will return all instances, %s serviceName is %s, tags is %s.", source,
+                    serviceName, JSONObject.toJSONString(tags)));
         } else {
             LOGGER.warning(String.format(Locale.ROOT,
-                "Cannot match instances, will return empty instances, %s serviceName is %s, tags is %s.", source,
-                serviceName, JSONObject.toJSONString(tags)));
+                    "Cannot match instances, will return empty instances, %s serviceName is %s, tags is %s.", source,
+                    serviceName, JSONObject.toJSONString(tags)));
         }
         return isReturnAllInstancesWhenMismatch && mismatch ? instances : resultList;
     }
 
     private <T> InstanceStrategy<I, T> getStrategy(boolean isMatch) {
         return isMatch ? (InstanceStrategy<I, T>) matchInstanceStrategy
-            : (InstanceStrategy<I, T>) mismatchInstanceStrategy;
+                : (InstanceStrategy<I, T>) mismatchInstanceStrategy;
     }
 }

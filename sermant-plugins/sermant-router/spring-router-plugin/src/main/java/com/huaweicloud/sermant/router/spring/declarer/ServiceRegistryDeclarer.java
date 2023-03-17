@@ -26,10 +26,10 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
  */
 public class ServiceRegistryDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS =
-        "org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration";
+            "org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration";
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.ServiceRegistryInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.ServiceRegistryInterceptor";
 
     private static final String METHOD_NAME = "register";
 

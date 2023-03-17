@@ -84,7 +84,7 @@ public class RuleStrategyHandlerTest {
         ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.2");
         instances.add(instance2);
         List<Object> matchInvoker = RuleStrategyHandler.INSTANCE.getMatchInstancesByRequest("foo", instances,
-            Collections.singletonMap("version", "0.0.1"));
+                Collections.singletonMap("version", "0.0.1"));
         Assert.assertEquals(1, matchInvoker.size());
         Assert.assertEquals(instance1, matchInvoker.get(0));
     }
@@ -110,7 +110,7 @@ public class RuleStrategyHandlerTest {
         List<Map<String, String>> tags = new ArrayList<>();
         tags.add(routes.get(0).getTags());
         List<Object> mismatchInstances = RuleStrategyHandler.INSTANCE
-            .getMismatchInstances("foo", instances, tags, true);
+                .getMismatchInstances("foo", instances, tags, true);
         Assert.assertEquals(1, mismatchInstances.size());
         Assert.assertEquals(instance2, mismatchInstances.get(0));
     }

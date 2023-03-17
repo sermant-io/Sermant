@@ -26,7 +26,7 @@ public class FeignClientDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "feign.Client";
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.FeignClientInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.FeignClientInterceptor";
 
     private static final String METHOD_NAME = "execute";
 

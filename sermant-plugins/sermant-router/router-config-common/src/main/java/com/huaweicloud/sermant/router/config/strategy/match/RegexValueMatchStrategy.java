@@ -39,7 +39,7 @@ public class RegexValueMatchStrategy implements ValueMatchStrategy {
     public boolean isMatch(List<String> values, String arg) {
         try {
             return !CollectionUtils.isEmpty(values) && values.get(0) != null && arg != null
-                && isMatches(values.get(0), arg);
+                    && isMatches(values.get(0), arg);
         } catch (PatternSyntaxException ignored) {
             // 正则表达式不符合，返回false
             return false;

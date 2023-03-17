@@ -60,8 +60,7 @@ public class LaneServiceImpl implements LaneService {
 
     @Override
     public Map<String, Object> getLaneByDubbo(String name, LaneTestEntity laneTestEntity, String[] arr,
-        List<Integer> list,
-        Map<String, Object> map) {
+            List<Integer> list, Map<String, Object> map) {
         RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
         Map<String, Object> result = new HashMap<>(fooService.getAttachments());
         result.put(applicationName, getMetadata());

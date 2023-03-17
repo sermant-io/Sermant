@@ -39,6 +39,10 @@ import java.util.function.BiFunction;
  * @since 2022-07-12
  */
 public class LoadBalancerClientFilterInterceptor extends AbstractInterceptor {
+    private static final String WRITABLE_HTTP_HEADERS_METHOD_NAME = "writableHttpHeaders";
+
+    private static final String HEADER_FIELD_NAME = "header";
+
     private final BiFunction<ServerWebExchange, RequestTag, ServerWebExchange> function;
 
     /**
@@ -46,7 +50,7 @@ public class LoadBalancerClientFilterInterceptor extends AbstractInterceptor {
      */
     public LoadBalancerClientFilterInterceptor() {
         Optional<Method> method = ReflectUtils
-            .findMethod(HttpHeaders.class, "writableHttpHeaders", new Class[]{HttpHeaders.class});
+                .findMethod(HttpHeaders.class, WRITABLE_HTTP_HEADERS_METHOD_NAME, new Class[]{HttpHeaders.class});
         if (method.isPresent()) {
             function = this::putHeaders;
         } else {
@@ -102,8 +106,8 @@ public class LoadBalancerClientFilterInterceptor extends AbstractInterceptor {
         requestTag.getTag().forEach((key, value) -> {
             if (!readOnlyHttpHeaders.containsKey(key)) {
                 // 使用反射兼容Spring Cloud Finchley.RELEASE
-                ReflectUtils.invokeMethod(builder, "header", new Class[]{String.class, String.class},
-                    new Object[]{key, value.get(0)});
+                ReflectUtils.invokeMethod(builder, HEADER_FIELD_NAME, new Class[]{String.class, String.class},
+                        new Object[]{key, value.get(0)});
             }
         });
         return exchange.mutate().request(builder.build()).build();

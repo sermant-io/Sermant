@@ -66,7 +66,7 @@ public class FeignClientInterceptor extends AbstractInterceptor {
             Map<String, List<String>> headers = getHeaders(request.headers());
             setHeaders(request, headers);
             ThreadLocalUtils.setRequestData(new RequestData(decodeTags(headers), getPath(request.url()),
-                request.method()));
+                    request.method()));
         }
         return context;
     }
@@ -131,7 +131,7 @@ public class FeignClientInterceptor extends AbstractInterceptor {
             return Optional.empty();
         }
         Map<HystrixRequestVariableDefault<?>, ?> state = ReflectUtils.getFieldValue(context, "state")
-            .map(value -> (Map<HystrixRequestVariableDefault<?>, ?>) value).orElse(Collections.emptyMap());
+                .map(value -> (Map<HystrixRequestVariableDefault<?>, ?>) value).orElse(Collections.emptyMap());
         for (Entry<HystrixRequestVariableDefault<?>, ?> entry : state.entrySet()) {
             Object lazyInitializer = entry.getValue();
             Object obj = ReflectUtils.getFieldValue(lazyInitializer, "value").orElse(null);

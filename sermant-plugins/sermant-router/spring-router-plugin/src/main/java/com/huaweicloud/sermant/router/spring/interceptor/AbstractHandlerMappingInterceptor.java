@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public class AbstractHandlerMappingInterceptor extends AbstractInterceptor {
     private static final String EXCEPT_CLASS_NAME
-        = "org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping";
+            = "org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping";
 
     private final List<AbstractMappingHandler> handlers;
 
@@ -65,7 +65,7 @@ public class AbstractHandlerMappingInterceptor extends AbstractInterceptor {
             String methodName = request.getMethod().name();
             Map<String, List<String>> queryParams = request.getQueryParams();
             handlers.forEach(handler -> ThreadLocalUtils
-                .addRequestTag(handler.getRequestTag(path, methodName, headers, queryParams)));
+                    .addRequestTag(handler.getRequestTag(path, methodName, headers, queryParams)));
         }
         return context;
     }
@@ -87,6 +87,6 @@ public class AbstractHandlerMappingInterceptor extends AbstractInterceptor {
     private boolean shouldHandle(ExecuteContext context) {
         Object[] arguments = context.getArguments();
         return arguments.length > 0 && arguments[0] instanceof ServerWebExchange
-            && EXCEPT_CLASS_NAME.equals(context.getObject().getClass().getName());
+                && EXCEPT_CLASS_NAME.equals(context.getObject().getClass().getName());
     }
 }

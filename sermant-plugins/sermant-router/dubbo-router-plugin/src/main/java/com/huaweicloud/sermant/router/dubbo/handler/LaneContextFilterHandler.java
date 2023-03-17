@@ -66,7 +66,7 @@ public class LaneContextFilterHandler extends AbstractContextFilterHandler {
         String methodName = DubboReflectUtils.getMethodName(invocation);
         Object[] args = DubboReflectUtils.getArguments(invocation);
         Map<String, List<String>> laneTag = laneContextFilterService
-            .getLane(interfaceName, methodName, attachments, args);
+                .getLane(interfaceName, methodName, attachments, args);
         if (CollectionUtils.isEmpty(laneTag)) {
             LOGGER.fine("Lane is empty.");
             return requestTag;

@@ -31,7 +31,7 @@ public class HystrixActionDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "com.netflix.hystrix.strategy.concurrency.HystrixContexSchedulerAction";
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.HystrixActionInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.HystrixActionInterceptor";
 
     private static final int ARGS_LENGTH = 2;
 

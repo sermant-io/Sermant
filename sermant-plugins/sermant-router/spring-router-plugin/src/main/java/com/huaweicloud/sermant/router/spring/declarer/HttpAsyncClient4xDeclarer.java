@@ -32,8 +32,8 @@ public class HttpAsyncClient4xDeclarer extends BaseRegistryPluginAdaptationDecla
      * 增强类的全限定名 http请求
      */
     private static final String[] ENHANCE_CLASSES = {
-        "org.apache.http.impl.nio.client.InternalHttpAsyncClient",
-        "org.apache.http.impl.nio.client.MinimalHttpAsyncClient"
+            "org.apache.http.impl.nio.client.InternalHttpAsyncClient",
+            "org.apache.http.impl.nio.client.MinimalHttpAsyncClient"
     };
 
     /**

@@ -30,7 +30,7 @@ public class HttpUrlConnectionConnectDeclarer extends BaseRegistryPluginAdaptati
     private static final String METHOD_NAME = "connect";
 
     private static final String INTERCEPTOR_CLASS =
-        "com.huaweicloud.sermant.router.spring.interceptor.HttpUrlConnectionConnectInterceptor";
+            "com.huaweicloud.sermant.router.spring.interceptor.HttpUrlConnectionConnectInterceptor";
 
     @Override
     public ClassMatcher getClassMatcher() {
@@ -39,7 +39,7 @@ public class HttpUrlConnectionConnectDeclarer extends BaseRegistryPluginAdaptati
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[] {
-            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME), INTERCEPTOR_CLASS)};
+        return new InterceptDeclarer[]{
+                InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME), INTERCEPTOR_CLASS)};
     }
 }

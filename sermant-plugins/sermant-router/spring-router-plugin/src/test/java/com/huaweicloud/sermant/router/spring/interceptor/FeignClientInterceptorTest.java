@@ -64,7 +64,7 @@ public class FeignClientInterceptorTest {
         headers.put("bar", Collections.singletonList("bar1"));
         headers.put("foo", Collections.singletonList("foo1"));
         arguments[0] = Request.create("GET", "http://www.domain.com/path?a=b", headers, new byte[]{},
-            StandardCharsets.UTF_8);
+                StandardCharsets.UTF_8);
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
     }
 

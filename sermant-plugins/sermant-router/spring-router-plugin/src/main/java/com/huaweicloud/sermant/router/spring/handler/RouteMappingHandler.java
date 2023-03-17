@@ -42,7 +42,7 @@ public class RouteMappingHandler extends AbstractMappingHandler {
      */
     @Override
     public Map<String, List<String>> getRequestTag(String path, String methodName, Map<String, List<String>> headers,
-        Map<String, List<String>> parameters) {
+            Map<String, List<String>> parameters) {
         Set<String> matchKeys = configService.getMatchKeys();
         if (CollectionUtils.isEmpty(matchKeys)) {
             return Collections.emptyMap();

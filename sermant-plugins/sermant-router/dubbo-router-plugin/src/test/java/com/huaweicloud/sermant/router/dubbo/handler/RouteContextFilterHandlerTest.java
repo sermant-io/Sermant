@@ -54,7 +54,7 @@ public class RouteContextFilterHandlerTest {
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         mockServiceManager.when(() -> ServiceManager.getService(DubboConfigService.class))
-            .thenReturn(DUBBO_CONFIG_SERVICE);
+                .thenReturn(DUBBO_CONFIG_SERVICE);
     }
 
     /**

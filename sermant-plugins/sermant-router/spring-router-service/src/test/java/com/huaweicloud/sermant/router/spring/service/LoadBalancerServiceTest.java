@@ -64,7 +64,7 @@ public class LoadBalancerServiceTest {
         config.setRequestTags(Arrays.asList("foo", "bar", "version"));
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-            .thenReturn(config);
+                .thenReturn(config);
         loadBalancerService = new LoadBalancerServiceImpl();
     }
 
@@ -98,7 +98,7 @@ public class LoadBalancerServiceTest {
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar1"));
         List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances,
-            new RequestData(header, null, null));
+                new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
         ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());
@@ -119,7 +119,7 @@ public class LoadBalancerServiceTest {
         metadata.put("group", "red");
         AppCache.INSTANCE.setMetadata(metadata);
         List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances,
-            new RequestData(null, null, null));
+                new RequestData(null, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
         ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());
@@ -146,7 +146,7 @@ public class LoadBalancerServiceTest {
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar1"));
         List<Object> targetInstances = loadBalancerService.getTargetInstances("foo", instances,
-            new RequestData(header, null, null));
+                new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
         ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());

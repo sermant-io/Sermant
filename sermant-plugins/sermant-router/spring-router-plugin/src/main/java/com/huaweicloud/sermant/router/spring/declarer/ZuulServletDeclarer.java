@@ -28,7 +28,7 @@ public class ZuulServletDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "com.netflix.zuul.http.ZuulServlet";
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.ZuulServletInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.ZuulServletInterceptor";
 
     private static final String METHOD_NAME = "service";
 

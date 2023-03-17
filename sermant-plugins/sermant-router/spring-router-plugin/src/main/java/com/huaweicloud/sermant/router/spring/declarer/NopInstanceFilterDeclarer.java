@@ -30,7 +30,7 @@ public class NopInstanceFilterDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "com.huawei.discovery.service.lb.filter.NopInstanceFilter";
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.NopInstanceFilterInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.NopInstanceFilterInterceptor";
 
     private static final String METHOD_NAME = "filter";
 

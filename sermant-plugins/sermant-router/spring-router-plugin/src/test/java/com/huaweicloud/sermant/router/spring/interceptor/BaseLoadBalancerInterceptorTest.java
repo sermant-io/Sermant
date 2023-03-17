@@ -68,11 +68,11 @@ public class BaseLoadBalancerInterceptorTest {
         //        configService = new TestSpringConfigService();
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         mockServiceManager.when(() -> ServiceManager.getService(LoadBalancerService.class))
-            .thenReturn(new TestLoadBalancerService());
+                .thenReturn(new TestLoadBalancerService());
 
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-            .thenReturn(new RouterConfig());
+                .thenReturn(new RouterConfig());
     }
 
     /**
@@ -88,7 +88,7 @@ public class BaseLoadBalancerInterceptorTest {
         interceptor = new BaseLoadBalancerInterceptor();
         loadBalancer = new BaseLoadBalancer();
         context = ExecuteContext.forMemberMethod(loadBalancer, String.class.getMethod("trim"), null, null,
-            null);
+                null);
     }
 
     /**

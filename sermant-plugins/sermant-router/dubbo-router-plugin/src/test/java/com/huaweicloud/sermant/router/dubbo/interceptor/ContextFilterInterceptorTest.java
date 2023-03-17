@@ -58,7 +58,7 @@ public class ContextFilterInterceptorTest {
         TestDubboConfigService testDubboConfigService = new TestDubboConfigService();
         testDubboConfigService.setReturnEmptyWhenGetMatchTags(true);
         mockServiceManager.when(() -> ServiceManager.getService(DubboConfigService.class))
-            .thenReturn(testDubboConfigService);
+                .thenReturn(testDubboConfigService);
     }
 
     /**

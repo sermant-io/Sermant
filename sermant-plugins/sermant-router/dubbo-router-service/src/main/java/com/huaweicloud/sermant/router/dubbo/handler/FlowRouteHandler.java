@@ -72,7 +72,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
 
     @Override
     public Object handle(String targetService, List<Object> invokers, Object invocation, Map<String, String> queryMap,
-                         String serviceInterface) {
+            String serviceInterface) {
         if (!shouldHandle(invokers)) {
             return invokers;
         }
@@ -91,8 +91,8 @@ public class FlowRouteHandler extends AbstractRouteHandler {
     }
 
     private List<Object> getTargetInvokersByRules(List<Object> invokers, Object invocation,
-                                                  Map<String, String> queryMap, String targetService,
-                                                  String serviceInterface) {
+            Map<String, String> queryMap, String targetService,
+            String serviceInterface) {
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
         if (RouterConfiguration.isInValid(configuration)) {
             return invokers;
@@ -195,8 +195,8 @@ public class FlowRouteHandler extends AbstractRouteHandler {
     /**
      * 获取匹配的路由
      *
-     * @param list        有效的规则
-     * @param arguments   dubbo的arguments参数
+     * @param list 有效的规则
+     * @param arguments dubbo的arguments参数
      * @param attachments dubbo的attachments参数
      * @return 匹配的路由
      */
@@ -225,7 +225,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
      * 根据arguments参数获取匹配的路由
      *
      * @param arguments dubbo的arguments参数
-     * @param rule      规则
+     * @param rule 规则
      * @return 匹配的路由
      */
     private static List<Route> getRoutesByArguments(Object[] arguments, Rule rule) {
@@ -266,7 +266,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
      * 根据attachments参数获取匹配的路由
      *
      * @param attachments dubbo的attachments参数
-     * @param rule        规则
+     * @param rule 规则
      * @return 匹配的路由
      */
     private static List<Route> getRoutesByAttachments(Map<String, Object> attachments, Rule rule) {

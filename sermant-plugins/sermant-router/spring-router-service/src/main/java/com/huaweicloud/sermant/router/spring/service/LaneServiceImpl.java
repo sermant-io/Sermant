@@ -39,7 +39,7 @@ import java.util.Map;
 public class LaneServiceImpl implements LaneService {
     @Override
     public Map<String, List<String>> getLaneByParameterArray(String path, String methodName,
-        Map<String, List<String>> headers, Map<String, String[]> parameters) {
+            Map<String, List<String>> headers, Map<String, String[]> parameters) {
         List<Rule> rules = getRules(path, methodName);
         List<Route> routes = RouteUtils.getLaneRoutesByParameterArray(rules, headers, parameters);
         return RuleUtils.getTargetLaneTags(routes);
@@ -47,7 +47,7 @@ public class LaneServiceImpl implements LaneService {
 
     @Override
     public Map<String, List<String>> getLaneByParameterList(String path, String methodName,
-        Map<String, List<String>> headers, Map<String, List<String>> parameters) {
+            Map<String, List<String>> headers, Map<String, List<String>> parameters) {
         List<Rule> rules = getRules(path, methodName);
         List<Route> routes = RouteUtils.getLaneRoutesByParameterList(rules, headers, parameters);
         return RuleUtils.getTargetLaneTags(routes);
@@ -59,6 +59,6 @@ public class LaneServiceImpl implements LaneService {
             return Collections.emptyList();
         }
         return RuleUtils
-            .getLaneRules(configuration, methodName, path, AppCache.INSTANCE.getAppName(), Protocol.HTTP);
+                .getLaneRules(configuration, methodName, path, AppCache.INSTANCE.getAppName(), Protocol.HTTP);
     }
 }

@@ -60,7 +60,7 @@ public class AbstractHandlerMappingInterceptorTest {
         TestSpringConfigService configService = new TestSpringConfigService();
         configService.setReturnEmptyWhenGetMatchTags(true);
         mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class))
-            .thenReturn(configService);
+                .thenReturn(configService);
     }
 
     /**
@@ -75,7 +75,7 @@ public class AbstractHandlerMappingInterceptorTest {
         interceptor = new AbstractHandlerMappingInterceptor();
         Object[] arguments = new Object[1];
         MockServerHttpRequest request = MockServerHttpRequest.get("")
-            .header("bar", "bar1").header("foo", "foo1").header("foo2", "foo2").build();
+                .header("bar", "bar1").header("foo", "foo1").header("foo2", "foo2").build();
         MockServerWebExchange exchange = MockServerWebExchange.from(request);
         arguments[0] = exchange;
         context = ExecuteContext.forMemberMethod(new RequestMappingHandlerMapping(), null, arguments, null, null);

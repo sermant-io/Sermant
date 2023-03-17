@@ -48,13 +48,13 @@ public class LaneContextFilterServiceImpl implements LaneContextFilterService {
      */
     @Override
     public Map<String, List<String>> getLane(String interfaceName, String methodName, Map<String, Object> attachments,
-        Object[] args) {
+            Object[] args) {
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
         if (RouterConfiguration.isInValid(configuration)) {
             return Collections.emptyMap();
         }
-        List<Rule> rules = RuleUtils
-            .getLaneRules(configuration, methodName, interfaceName, DubboCache.INSTANCE.getAppName(), Protocol.DUBBO);
+        List<Rule> rules = RuleUtils.getLaneRules(configuration, methodName, interfaceName,
+                DubboCache.INSTANCE.getAppName(), Protocol.DUBBO);
         List<Route> routes = RouteUtils.getLaneRoutes(rules, attachments, args);
         return RuleUtils.getTargetLaneTags(routes);
     }

@@ -26,7 +26,7 @@ import java.util.Set;
  * @author provenceee
  * @since 2023-02-21
  */
-public abstract class AbstractInterceptorHandler extends AbstractHandler {
+public abstract class AbstractRequestTagHandler extends AbstractHandler {
     /**
      * 获取透传的标记
      *
@@ -38,7 +38,7 @@ public abstract class AbstractInterceptorHandler extends AbstractHandler {
      * @return 透传的标记
      */
     public abstract Map<String, List<String>> getRequestTag(String path, String methodName,
-        Map<String, List<String>> headers, Map<String, String[]> parameters, Keys keys);
+            Map<String, List<String>> headers, Map<String, String[]> parameters, Keys keys);
 
     /**
      * 透传标记key实体

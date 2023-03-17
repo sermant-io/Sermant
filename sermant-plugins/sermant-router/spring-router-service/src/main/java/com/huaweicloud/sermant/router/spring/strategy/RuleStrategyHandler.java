@@ -80,7 +80,7 @@ public enum RuleStrategyHandler {
      * @return 路由匹配的实例
      */
     public List<Object> getMatchInstancesByRequest(String serviceName, List<Object> instances,
-        Map<String, String> tags) {
+            Map<String, String> tags) {
         return getRuleStrategy(instances).getMatchInstancesByRequest(serviceName, instances, tags);
     }
 
@@ -94,9 +94,9 @@ public enum RuleStrategyHandler {
      * @return 路由过滤后的实例
      */
     public List<Object> getMismatchInstances(String serviceName, List<Object> instances,
-        List<Map<String, String>> tags, boolean isReturnAllInstancesWhenMismatch) {
+            List<Map<String, String>> tags, boolean isReturnAllInstancesWhenMismatch) {
         return getRuleStrategy(instances)
-            .getMismatchInstances(serviceName, instances, tags, isReturnAllInstancesWhenMismatch);
+                .getMismatchInstances(serviceName, instances, tags, isReturnAllInstancesWhenMismatch);
     }
 
     private AbstractRuleStrategy<Object> getRuleStrategy(List<Object> instances) {

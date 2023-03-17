@@ -26,10 +26,10 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
  */
 public class AbstractHandlerMappingDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS
-        = "org.springframework.web.reactive.handler.AbstractHandlerMapping";
+            = "org.springframework.web.reactive.handler.AbstractHandlerMapping";
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.AbstractHandlerMappingInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.AbstractHandlerMappingInterceptor";
 
     private static final String METHOD_NAME = "getHandler";
 

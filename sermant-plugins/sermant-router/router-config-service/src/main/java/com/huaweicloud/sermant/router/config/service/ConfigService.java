@@ -63,7 +63,7 @@ public abstract class ConfigService {
     public void init(String cacheName, String serviceName) {
         if (StringUtils.isBlank(cacheName) || StringUtils.isBlank(serviceName)) {
             LOGGER.warning(
-                String.format(Locale.ROOT, "CacheName[%s] or serviceName[%s] is empty.", cacheName, serviceName));
+                    String.format(Locale.ROOT, "CacheName[%s] or serviceName[%s] is empty.", cacheName, serviceName));
             return;
         }
         if (init.compareAndSet(false, true)) {

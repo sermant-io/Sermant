@@ -29,7 +29,6 @@ import java.util.ServiceLoader;
  * @since 2023-02-24
  */
 public enum HandlerChainEntry {
-
     /**
      * 单例
      */
@@ -52,10 +51,10 @@ public enum HandlerChainEntry {
     /**
      * 调用路由处理器链
      *
-     * @param targetService    目标服务
-     * @param invokers         invokers
-     * @param invocation       invocation
-     * @param queryMap         RegistryDirectory的queryMap
+     * @param targetService 目标服务
+     * @param invokers invokers
+     * @param invocation invocation
+     * @param queryMap RegistryDirectory的queryMap
      * @param serviceInterface 接口名
      * @return invokers
      * @see org.apache.dubbo.registry.integration.RegistryDirectory
@@ -63,7 +62,7 @@ public enum HandlerChainEntry {
      * @see org.apache.dubbo.rpc.Invocation
      */
     public Object process(String targetService, List<Object> invokers, Object invocation,
-                          Map<String, String> queryMap, String serviceInterface) {
+            Map<String, String> queryMap, String serviceInterface) {
         return HANDLER_CHAIN.handle(targetService, invokers, invocation, queryMap, serviceInterface);
     }
 }

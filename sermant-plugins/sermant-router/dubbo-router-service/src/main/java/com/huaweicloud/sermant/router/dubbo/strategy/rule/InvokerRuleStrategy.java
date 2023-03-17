@@ -33,6 +33,6 @@ public class InvokerRuleStrategy extends AbstractRuleStrategy<Object> {
      */
     public InvokerRuleStrategy() {
         super("dubbo", new MatchInstanceStrategy(), new MismatchInstanceStrategy(),
-            obj -> DubboReflectUtils.getParameters(DubboReflectUtils.getUrl(obj)));
+                obj -> DubboReflectUtils.getParameters(DubboReflectUtils.getUrl(obj)));
     }
 }

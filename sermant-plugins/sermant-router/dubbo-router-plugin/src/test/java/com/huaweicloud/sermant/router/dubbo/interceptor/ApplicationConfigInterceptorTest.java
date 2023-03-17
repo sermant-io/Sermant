@@ -70,7 +70,7 @@ public class ApplicationConfigInterceptorTest {
         args[0] = "";
         ApplicationConfig applicationConfig = new ApplicationConfig();
         ExecuteContext context = ExecuteContext.forMemberMethod(applicationConfig,
-            ApplicationConfig.class.getMethod("setName", String.class), args, null, null);
+                ApplicationConfig.class.getMethod("setName", String.class), args, null, null);
 
         // 应用名为空
         interceptor.before(context);
@@ -94,7 +94,7 @@ public class ApplicationConfigInterceptorTest {
         Object[] args = new Object[1];
         args[0] = null;
         ExecuteContext context = ExecuteContext.forMemberMethod(new Object(),
-            ApplicationConfig.class.getMethod("setParameters", Map.class), args, null, null);
+                ApplicationConfig.class.getMethod("setParameters", Map.class), args, null, null);
 
         // map为null
         interceptor.before(context);
@@ -104,7 +104,7 @@ public class ApplicationConfigInterceptorTest {
         Assert.assertEquals(config.getZone(), parameters.get(RouterConstant.ZONE_KEY));
         Map<String, String> configParameters = config.getParameters();
         configParameters.forEach(
-            (key, value) -> Assert.assertEquals(value, parameters.get(RouterConstant.PARAMETERS_KEY_PREFIX + key)));
+                (key, value) -> Assert.assertEquals(value, parameters.get(RouterConstant.PARAMETERS_KEY_PREFIX + key)));
     }
 
     /**
@@ -118,7 +118,7 @@ public class ApplicationConfigInterceptorTest {
         Object[] args = new Object[1];
         args[0] = map;
         ExecuteContext context = ExecuteContext.forMemberMethod(new Object(),
-            ApplicationConfig.class.getMethod("setParameters", Map.class), args, null, null);
+                ApplicationConfig.class.getMethod("setParameters", Map.class), args, null, null);
         interceptor.before(context);
         Map<String, String> parameters = (Map<String, String>) context.getArguments()[0];
         Assert.assertEquals(config.getParameters().size() + 3, parameters.size());
@@ -126,8 +126,8 @@ public class ApplicationConfigInterceptorTest {
         Assert.assertEquals(config.getZone(), parameters.get(RouterConstant.ZONE_KEY));
         Map<String, String> configParameters = config.getParameters();
         configParameters.forEach(
-            (key, value) -> Assert.assertEquals(value, parameters.get(RouterConstant.PARAMETERS_KEY_PREFIX + key)));
+                (key, value) -> Assert.assertEquals(value, parameters.get(RouterConstant.PARAMETERS_KEY_PREFIX + key)));
         map.forEach(
-            (key, value) -> Assert.assertEquals(value, parameters.get(key)));
+                (key, value) -> Assert.assertEquals(value, parameters.get(key)));
     }
 }
