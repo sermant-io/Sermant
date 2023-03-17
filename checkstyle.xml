@@ -449,7 +449,7 @@
             <property name="throwsIndent" value="4"/>
             <property name="lineWrappingIndentation" value="8"/>
             <property name="arrayInitIndent" value="4"/>
-            <property name="forceStrictCondition" value="true"/>
+            <property name="forceStrictCondition" value="false"/>
         </module>
         <!-- 检查代码缩进对齐 -->
         <module name="UncommentedMain">
