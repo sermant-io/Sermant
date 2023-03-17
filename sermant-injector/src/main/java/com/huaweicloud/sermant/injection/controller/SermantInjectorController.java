@@ -394,15 +394,7 @@ public class SermantInjectorController {
 
             // 建一个exec和command
             addExecAndCommand(preStopNode, port);
-            return;
         }
-        if (containerNode.path(LIFECYCLE_PATH).path(PRE_STOP_PATH).hasNonNull(HTTP_GET_PATH)) {
-            // lifecycle不为null, preStop不为null, 存在httpGet情况无法再织入command，直接return
-            return;
-        }
-
-        // lifecycle不为null, preStop为null, 且已存在command，需要添加command
-        addCommands(objectNode, containerPath, containerNode, port);
     }
 
     private void injectReadinessProbe(ArrayNode arrayNode, Map<String, String> env, JsonNode containerNode,
@@ -523,26 +515,6 @@ public class SermantInjectorController {
         // 注入env
         envNode.put(NAME_KEY, key);
         envNode.put(VALUE_KEY, value);
-    }
-
-    private void addCommands(ObjectNode objectNode, String containerPath, JsonNode containerNode, int port) {
-        objectNode.put(PATH_KEY, containerPath + LIFECYCLE_PATH + PATH_SEPARATOR + PRE_STOP_PATH + PATH_SEPARATOR
-                + EXEC_PATH + PATH_SEPARATOR + COMMAND_KEY);
-        JsonNode commandsPath = containerNode.path(LIFECYCLE_PATH).path(PRE_STOP_PATH).path(EXEC_PATH)
-                .path(COMMAND_KEY);
-        Iterator<JsonNode> iterator = commandsPath.elements();
-        ArrayNode commands = objectNode.putArray(VALUE_KEY);
-        int index = 0;
-        int size = commandsPath.size();
-        while (iterator.hasNext()) {
-            JsonNode next = iterator.next();
-            String command = next.asText();
-            if (index == size - 1) {
-                command += ";" + PRE_STOP_COMMAND_PREFIX + port + PRE_STOP_COMMAND_SUFFIX;
-            }
-            commands.add(command);
-            index++;
-        }
     }
 
     private void addExecAndCommand(ObjectNode preStopNode, int port) {
