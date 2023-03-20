@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.router.config.strategy;
 
 import com.huaweicloud.sermant.router.config.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.Rule;
 
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,16 @@ public interface RuleStrategy<I> {
      * @return 路由过滤后的实例
      */
     List<I> getMatchInstances(String serviceName, List<I> instances, List<Route> routes);
+
+    /**
+     * 选取路由的实例
+     *
+     * @param serviceName 服务名
+     * @param instances 实例列表
+     * @param rule 规则
+     * @return 规则过滤后的实例
+     */
+    List<I> getMatchInstances(String serviceName, List<I> instances, Rule rule);
 
     /**
      * 根据请求信息选取路由的实例

@@ -66,6 +66,9 @@ public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object, L
         if (VERSION_KEY.equals(tag)) {
             return RouterConstant.VERSION_KEY;
         }
+        if (ZONE_KEY.equals(tag)) {
+            return RouterConstant.ZONE_KEY;
+        }
         return RouterConstant.PARAMETERS_KEY_PREFIX + tag;
     }
 }

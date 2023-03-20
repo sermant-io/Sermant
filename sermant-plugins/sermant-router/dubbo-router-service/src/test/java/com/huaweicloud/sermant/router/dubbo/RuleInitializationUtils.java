@@ -18,14 +18,7 @@ package com.huaweicloud.sermant.router.dubbo;
 
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
-import com.huaweicloud.sermant.router.config.entity.EntireRule;
-import com.huaweicloud.sermant.router.config.entity.Match;
-import com.huaweicloud.sermant.router.config.entity.MatchRule;
-import com.huaweicloud.sermant.router.config.entity.MatchStrategy;
-import com.huaweicloud.sermant.router.config.entity.Route;
-import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.entity.Rule;
-import com.huaweicloud.sermant.router.config.entity.ValueMatch;
+import com.huaweicloud.sermant.router.config.entity.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -342,4 +335,114 @@ public class RuleInitializationUtils {
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
         configuration.resetGlobalRule(Collections.singletonList(entireRule));
     }
+
+    public static void initAZTagMatchRule() {
+        ValueMatch valueMatch = new ValueMatch();
+        valueMatch.setMatchStrategy(MatchStrategy.EXACT);
+        valueMatch.setValues(Collections.singletonList("az1"));
+        MatchRule matchRule = new MatchRule();
+        matchRule.setValueMatch(valueMatch);
+        List<MatchRule> matchRuleList = new ArrayList<>();
+        matchRuleList.add(matchRule);
+        Map<String, List<MatchRule>> tagMatchRule = new HashMap<>();
+        tagMatchRule.put("zone", matchRuleList);
+        Match match = new Match();
+        match.setTags(tagMatchRule);
+        Rule rule = new Rule();
+        rule.setPrecedence(2);
+        rule.setMatch(match);
+        Route route = new Route();
+        route.setWeight(100);
+        Map<String, String> tags = new HashMap<>();
+        tags.put("zone", "az1");
+        route.setTags(tags);
+        List<Route> routeList = new ArrayList<>();
+        routeList.add(route);
+        rule.setRoute(routeList);
+        List<Rule> ruleList = new ArrayList<>();
+        ruleList.add(rule);
+        EntireRule entireRule = new EntireRule();
+        entireRule.setRules(ruleList);
+        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
+        configuration.resetGlobalRule(Collections.singletonList(entireRule));
+    }
+
+    public static void initAZTagMatchTriggerThresholdPolicyRule() {
+        ValueMatch valueMatch = new ValueMatch();
+        valueMatch.setMatchStrategy(MatchStrategy.EXACT);
+        valueMatch.setValues(Collections.singletonList("az1"));
+        MatchRule matchRule = new MatchRule();
+        matchRule.setValueMatch(valueMatch);
+        List<MatchRule> matchRuleList = new ArrayList<>();
+        matchRuleList.add(matchRule);
+        Map<String, List<MatchRule>> tagMatchRule = new HashMap<>();
+        tagMatchRule.put("zone", matchRuleList);
+        Match match = new Match();
+        match.setTags(tagMatchRule);
+        Policy policy = new Policy();
+        policy.setTriggerThreshold(60);
+        match.setPolicy(policy);
+        Rule rule = new Rule();
+        rule.setPrecedence(2);
+        rule.setMatch(match);
+        Route route = new Route();
+        route.setWeight(100);
+        Map<String, String> tags = new HashMap<>();
+        tags.put("zone", "az1");
+        route.setTags(tags);
+        List<Route> routeList = new ArrayList<>();
+        routeList.add(route);
+        rule.setRoute(routeList);
+        List<Rule> ruleList = new ArrayList<>();
+        ruleList.add(rule);
+        Map<String, List<EntireRule>> map = new HashMap<>();
+        EntireRule entireRule = new EntireRule();
+        entireRule.setRules(ruleList);
+        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        map.put("foo", Collections.singletonList(entireRule));
+        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
+        configuration.resetRouteRule(map);
+        configuration.resetGlobalRule(Collections.singletonList(entireRule));
+    }
+
+    public static void initAZTagMatchTriggerThresholdMinAllInstancesPolicyRule() {
+        ValueMatch valueMatch = new ValueMatch();
+        valueMatch.setMatchStrategy(MatchStrategy.EXACT);
+        valueMatch.setValues(Collections.singletonList("az1"));
+        MatchRule matchRule = new MatchRule();
+        matchRule.setValueMatch(valueMatch);
+        List<MatchRule> matchRuleList = new ArrayList<>();
+        matchRuleList.add(matchRule);
+        Map<String, List<MatchRule>> tagMatchRule = new HashMap<>();
+        tagMatchRule.put("zone", matchRuleList);
+        Match match = new Match();
+        match.setTags(tagMatchRule);
+        Policy policy = new Policy();
+        policy.setTriggerThreshold(50);
+        policy.setMinAllInstances(4);
+        match.setPolicy(policy);
+        Rule rule = new Rule();
+        rule.setPrecedence(2);
+        rule.setMatch(match);
+        Route route = new Route();
+        route.setWeight(100);
+        Map<String, String> tags = new HashMap<>();
+        tags.put("zone", "az1");
+        route.setTags(tags);
+        List<Route> routeList = new ArrayList<>();
+        routeList.add(route);
+        rule.setRoute(routeList);
+        List<Rule> ruleList = new ArrayList<>();
+        ruleList.add(rule);
+        Map<String, List<EntireRule>> map = new HashMap<>();
+        EntireRule entireRule = new EntireRule();
+        entireRule.setRules(ruleList);
+        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        map.put("foo", Collections.singletonList(entireRule));
+        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
+        configuration.resetRouteRule(map);
+        configuration.resetGlobalRule(Collections.singletonList(entireRule));
+    }
+
 }
