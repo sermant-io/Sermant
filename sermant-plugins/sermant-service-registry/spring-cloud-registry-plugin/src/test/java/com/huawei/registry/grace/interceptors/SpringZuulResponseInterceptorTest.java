@@ -27,6 +27,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Collections;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -47,7 +49,8 @@ public class SpringZuulResponseInterceptorTest extends ResponseTest {
         final RequestContext requestContext = new RequestContext();
         RequestContext.testSetCurrentContext(requestContext);
         final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        Mockito.when(response.getHeader(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT)).thenReturn(SHUTDOWN_ENDPOINT);
+        Mockito.when(response.getHeaders(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT))
+                .thenReturn(Collections.singletonList(SHUTDOWN_ENDPOINT));
         Mockito.when(response.getHeader(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME)).thenReturn("test");
         final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         final Object[] arguments = {request, response};
