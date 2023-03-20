@@ -77,9 +77,9 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
         AtomicReference<Request> rebuildRequest = new AtomicReference<>();
         rebuildRequest.set(request);
         invokerService.invoke(
-                buildInvokerFunc(uri, hostAndPath, request, rebuildRequest, context),
-                buildExFunc(rebuildRequest),
-                hostAndPath.get(HttpConstants.HTTP_URI_SERVICE))
+                        buildInvokerFunc(uri, hostAndPath, request, rebuildRequest, context),
+                        buildExFunc(rebuildRequest),
+                        hostAndPath.get(HttpConstants.HTTP_URI_SERVICE))
                 .ifPresent(o -> setResultOrThrow(context, o, uri.getPath()));
         return context;
     }
@@ -110,7 +110,7 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
     }
 
     private Function<InvokerContext, Object> buildInvokerFunc(URI uri, Map<String, String> hostAndPath,
-        Request request, AtomicReference<Request> rebuildRequest, ExecuteContext context) {
+            Request request, AtomicReference<Request> rebuildRequest, ExecuteContext context) {
         return invokerContext -> {
             final String method = request.method();
             Request newRequest = covertRequest(uri, hostAndPath, request, method, invokerContext.getServiceInstance());
@@ -138,6 +138,9 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
         return request
                 .newBuilder()
                 .url(newUrl)
+                .method(request.method(), request.body())
+                .headers(request.headers())
+                .tag(request.tag())
                 .build();
     }
 
