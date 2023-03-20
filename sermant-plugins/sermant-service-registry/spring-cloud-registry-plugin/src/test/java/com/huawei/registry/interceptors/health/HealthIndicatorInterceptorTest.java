@@ -39,6 +39,7 @@ public class HealthIndicatorInterceptorTest extends BaseRegistryTest {
         REGISTER_CONFIG.setEnableSpringRegister(true);
         final ExecuteContext context = interceptor.before(buildContext());
         Assert.assertTrue(context.isSkip());
+        RegisterDynamicConfig.INSTANCE.setClose(false);
     }
 
     @Override
