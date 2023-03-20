@@ -36,6 +36,7 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.util.EntityUtils;
 
 import java.io.Closeable;
@@ -80,9 +81,9 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
         }
         RequestInterceptorUtils.printRequestLog("HttpClient", hostAndPath);
         invokerService.invoke(
-                buildInvokerFunc(hostAndPath, httpRequest, context),
-                buildExFunc(httpRequest, Thread.currentThread().getContextClassLoader()),
-                hostAndPath.get(HttpConstants.HTTP_URI_SERVICE))
+                        buildInvokerFunc(hostAndPath, httpRequest, context),
+                        buildExFunc(httpRequest, Thread.currentThread().getContextClassLoader()),
+                        hostAndPath.get(HttpConstants.HTTP_URI_SERVICE))
                 .ifPresent(result -> this.setResultOrThrow(context, result,
                         hostAndPath.get(HttpConstants.HTTP_URI_PATH)));
         return context;
@@ -175,10 +176,23 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
             HttpPost oldHttpPost = (HttpPost) httpUriRequest;
             HttpPost httpPost = new HttpPost(uriNew);
             httpPost.setEntity(oldHttpPost.getEntity());
+            httpPost.setHeaders(oldHttpPost.getAllHeaders());
+            httpPost.setConfig(oldHttpPost.getConfig());
+            httpPost.setProtocolVersion(oldHttpPost.getProtocolVersion());
+            httpPost.setParams(oldHttpPost.getParams());
             return httpPost;
-        } else {
-            return new HttpCommonRequest(method, uriNew);
         }
+        if (httpUriRequest instanceof HttpPut) {
+            HttpPut oldHttpPut = (HttpPut) httpUriRequest;
+            HttpPut httpPut = new HttpPut(uriNew);
+            httpPut.setEntity(oldHttpPut.getEntity());
+            httpPut.setHeaders(oldHttpPut.getAllHeaders());
+            httpPut.setConfig(oldHttpPut.getConfig());
+            httpPut.setProtocolVersion(oldHttpPut.getProtocolVersion());
+            httpPut.setParams(oldHttpPut.getParams());
+            return httpPut;
+        }
+        return new HttpCommonRequest(httpUriRequest, method, uriNew);
     }
 
     @Override
