@@ -16,8 +16,6 @@
 
 package com.huawei.discovery.entity;
 
-import org.apache.http.HttpRequest;
-import org.apache.http.client.methods.HttpGet;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,8 +30,7 @@ public class HttpCommonRequestTest {
     public void test() {
         String uri = "http://www.ccc.com/test";
         String method = "GET";
-        HttpRequest httpRequest = new HttpGet("www.test.com");
-        final HttpCommonRequest httpCommonRequest = new HttpCommonRequest(httpRequest, method, uri);
+        final HttpCommonRequest httpCommonRequest = new HttpCommonRequest(method, uri);
         Assert.assertEquals(httpCommonRequest.getMethod(), method);
         Assert.assertEquals(httpCommonRequest.getRequestLine().getUri(), uri);
     }

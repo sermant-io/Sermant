@@ -35,6 +35,10 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.util.EntityUtils;
@@ -60,6 +64,18 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
     private static final String ERROR_RESPONSE_CLASS = "com.huawei.discovery.entity.ErrorCloseableHttpResponse";
 
     private static final String COMMON_REQUEST_CLASS = "com.huawei.discovery.entity.HttpCommonRequest";
+
+    private static final String HTTP_POST_NAME = "org.apache.http.client.methods.HttpPost";
+
+    private static final String HTTP_GET_NAME = "org.apache.http.client.methods.HttpGet";
+
+    private static final String HTTP_PUT_NAME = "org.apache.http.client.methods.HttpPut";
+
+    private static final String HTTP_DELETE_NAME = "org.apache.http.client.methods.HttpDelete";
+
+    private static final String HTTP_PATCH_NAME = "org.apache.http.client.methods.HttpPatch";
+
+    private static final String HTTP_HEAD_NAME = "org.apache.http.client.methods.HttpHead";
 
     private final AtomicBoolean isLoaded = new AtomicBoolean();
 
@@ -172,27 +188,78 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
     }
 
     private HttpRequest rebuildRequest(String uriNew, String method, HttpRequest httpUriRequest) {
-        if (httpUriRequest instanceof HttpPost) {
-            HttpPost oldHttpPost = (HttpPost) httpUriRequest;
-            HttpPost httpPost = new HttpPost(uriNew);
-            httpPost.setEntity(oldHttpPost.getEntity());
-            httpPost.setHeaders(oldHttpPost.getAllHeaders());
-            httpPost.setConfig(oldHttpPost.getConfig());
-            httpPost.setProtocolVersion(oldHttpPost.getProtocolVersion());
-            httpPost.setParams(oldHttpPost.getParams());
-            return httpPost;
+        switch (httpUriRequest.getClass().getName()) {
+            case HTTP_POST_NAME:
+                return buildHttpPost(uriNew, (HttpPost) httpUriRequest);
+            case HTTP_GET_NAME:
+                return buildHttpGet(uriNew, (HttpGet) httpUriRequest);
+            case HTTP_PUT_NAME:
+                return buildHttpPut(uriNew, (HttpPut) httpUriRequest);
+            case HTTP_DELETE_NAME:
+                return buildHttpDelete(uriNew, (HttpDelete) httpUriRequest);
+            case HTTP_PATCH_NAME:
+                return buildHttpPatch(uriNew, (HttpPatch) httpUriRequest);
+            case HTTP_HEAD_NAME:
+                return buildHttpHead(uriNew, (HttpHead) httpUriRequest);
+            default:
+                return new HttpCommonRequest(method, uriNew);
         }
-        if (httpUriRequest instanceof HttpPut) {
-            HttpPut oldHttpPut = (HttpPut) httpUriRequest;
-            HttpPut httpPut = new HttpPut(uriNew);
-            httpPut.setEntity(oldHttpPut.getEntity());
-            httpPut.setHeaders(oldHttpPut.getAllHeaders());
-            httpPut.setConfig(oldHttpPut.getConfig());
-            httpPut.setProtocolVersion(oldHttpPut.getProtocolVersion());
-            httpPut.setParams(oldHttpPut.getParams());
-            return httpPut;
-        }
-        return new HttpCommonRequest(httpUriRequest, method, uriNew);
+    }
+
+    private HttpHead buildHttpHead(String uriNew, HttpHead httpUriRequest) {
+        HttpHead httpHead = new HttpHead(uriNew);
+        httpHead.setHeaders(httpUriRequest.getAllHeaders());
+        httpHead.setConfig(httpUriRequest.getConfig());
+        httpHead.setProtocolVersion(httpUriRequest.getProtocolVersion());
+        httpHead.setParams(httpUriRequest.getParams());
+        return httpHead;
+    }
+
+    private HttpPatch buildHttpPatch(String uriNew, HttpPatch httpUriRequest) {
+        HttpPatch httpPatch = new HttpPatch(uriNew);
+        httpPatch.setHeaders(httpUriRequest.getAllHeaders());
+        httpPatch.setConfig(httpUriRequest.getConfig());
+        httpPatch.setProtocolVersion(httpUriRequest.getProtocolVersion());
+        httpPatch.setParams(httpUriRequest.getParams());
+        return httpPatch;
+    }
+
+    private HttpDelete buildHttpDelete(String uriNew, HttpDelete httpUriRequest) {
+        HttpDelete httpDelete = new HttpDelete(uriNew);
+        httpDelete.setHeaders(httpUriRequest.getAllHeaders());
+        httpDelete.setConfig(httpUriRequest.getConfig());
+        httpDelete.setProtocolVersion(httpUriRequest.getProtocolVersion());
+        httpDelete.setParams(httpUriRequest.getParams());
+        return httpDelete;
+    }
+
+    private HttpPut buildHttpPut(String uriNew, HttpPut httpUriRequest) {
+        HttpPut httpPut = new HttpPut(uriNew);
+        httpPut.setEntity(httpUriRequest.getEntity());
+        httpPut.setHeaders(httpUriRequest.getAllHeaders());
+        httpPut.setConfig(httpUriRequest.getConfig());
+        httpPut.setProtocolVersion(httpUriRequest.getProtocolVersion());
+        httpPut.setParams(httpUriRequest.getParams());
+        return httpPut;
+    }
+
+    private HttpGet buildHttpGet(String uriNew, HttpGet httpUriRequest) {
+        HttpGet httpGet = new HttpGet(uriNew);
+        httpGet.setHeaders(httpUriRequest.getAllHeaders());
+        httpGet.setConfig(httpUriRequest.getConfig());
+        httpGet.setProtocolVersion(httpUriRequest.getProtocolVersion());
+        httpGet.setParams(httpUriRequest.getParams());
+        return httpGet;
+    }
+
+    private HttpPost buildHttpPost(String uriNew, HttpPost httpUriRequest) {
+        HttpPost httpPost = new HttpPost(uriNew);
+        httpPost.setEntity(httpUriRequest.getEntity());
+        httpPost.setHeaders(httpUriRequest.getAllHeaders());
+        httpPost.setConfig(httpUriRequest.getConfig());
+        httpPost.setProtocolVersion(httpUriRequest.getProtocolVersion());
+        httpPost.setParams(httpUriRequest.getParams());
+        return httpPost;
     }
 
     @Override
