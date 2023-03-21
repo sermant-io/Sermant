@@ -32,4 +32,30 @@ public interface GatewayClient extends BaseService {
      * @param typeNum 数据类型号
      */
     void send(byte[] data, int typeNum);
+
+    /**
+     * 将传输对象序列化，并向统一网关发送数据
+     *
+     * @param object 待传输对象
+     * @param typeNum 消息类型
+     */
+    void send(Object object, int typeNum);
+
+    /**
+     * [立刻发送]向统一网关发送数据
+     *
+     * @param data 数据字节
+     * @param typeNum 数据类型号
+     * @return boolean 是否发送成功
+     */
+    boolean sendImmediately(byte[] data, int typeNum);
+
+    /**
+     * [立刻发送]将传输对象序列化，并向统一网关发送数据
+     *
+     * @param object 待传输对象
+     * @param typeNum 消息类型
+     * @return boolean 是否发送成功
+     */
+    boolean sendImmediately(Object object, int typeNum);
 }

@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.implement;
+package com.huaweicloud.sermant.implement.log;
 
 import com.huaweicloud.sermant.core.utils.StringUtils;
-
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.util.Locale;
 import java.util.logging.Level;
@@ -43,7 +41,7 @@ public class LoggerFactoryImpl {
      */
     public static Logger init() {
         Logger logger = java.util.logging.Logger.getLogger("sermant");
-        logger.addHandler(new SLF4JBridgeHandler());
+        logger.addHandler(new SermantBridgeHandler());
         logger.setUseParentHandlers(false);
         logger.setLevel(getLevel());
         return logger;

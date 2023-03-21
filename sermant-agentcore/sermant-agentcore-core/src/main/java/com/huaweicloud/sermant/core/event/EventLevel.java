@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.core.event.common;
+package com.huaweicloud.sermant.core.event;
 
 /**
  * 事件等级

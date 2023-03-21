@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.core.event;
+package com.huaweicloud.sermant.core.event.collector;
 
-import com.huaweicloud.sermant.core.event.common.EventLevel;
-import com.huaweicloud.sermant.core.event.common.EventType;
+import com.huaweicloud.sermant.core.event.EventLevel;
+import com.huaweicloud.sermant.core.event.EventType;
 
 /**
  * 日志事件定义

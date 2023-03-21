@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.implement.service.send.common;
+package com.huaweicloud.sermant.implement.service.send.netty;
 
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleStateEvent;
@@ -27,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * handler的基类不同数据类型选择处理方式，心跳触发等功能
+ * handler的基类不同数据类型选择处理方式
  *
  * @author lilai
  * @version 0.0.1
@@ -41,15 +40,6 @@ public abstract class BaseHandler extends SimpleChannelInboundHandler<Message.Ne
         // 获取收到的消息类型
         int type = msg.getMessageTypeValue();
         switch (type) {
-            // 如果收到消息类型为心跳PING，直接发送心跳PONG
-            case Message.NettyMessage.MessageType.HEARTBEAT_PING_VALUE:
-                sendPongMsg(ctx, msg);
-                break;
-
-            // 如果收到消息为PONG，证明对方状态正常，连接正常
-            case Message.NettyMessage.MessageType.HEARTBEAT_PONG_VALUE:
-                break;
-
             // 如果为业务数据进行各自的处理
             case Message.NettyMessage.MessageType.SERVICE_DATA_VALUE:
                 handlerData(ctx, msg);
@@ -67,30 +57,9 @@ public abstract class BaseHandler extends SimpleChannelInboundHandler<Message.Ne
      */
     protected abstract void handlerData(ChannelHandlerContext ctx, Message.NettyMessage msg);
 
-    /**
-     * 发送PING心跳
-     *
-     * @param ctx 上下文对象
-     */
-    protected void sendPingMsg(ChannelHandlerContext ctx) {
-        Message.NettyMessage msg =
-            Message.NettyMessage.newBuilder().setMessageType(Message.NettyMessage.MessageType.HEARTBEAT_PING)
-                .setHeartBeat(Message.HeartBeat.newBuilder().build()).build();
-        Channel channel = ctx.channel();
-        channel.writeAndFlush(msg);
-    }
-
-    private void sendPongMsg(ChannelHandlerContext ctx, Message.NettyMessage msg) {
-        Message.NettyMessage message =
-            msg.newBuilderForType().setMessageType(Message.NettyMessage.MessageType.HEARTBEAT_PONG)
-                .setHeartBeat(Message.HeartBeat.newBuilder().build()).build();
-        Channel channel = ctx.channel();
-        channel.writeAndFlush(message);
-    }
-
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
-        IdleStateEvent stateEvent = (IdleStateEvent)evt;
+        IdleStateEvent stateEvent = (IdleStateEvent) evt;
         switch (stateEvent.state()) {
             case READER_IDLE:
                 handlerReaderIdle(ctx);

@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.core.event.common;
+package com.huaweicloud.sermant.core.event;
+
+import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 
 /**
  * 事件
@@ -34,6 +36,41 @@ public class Event {
     private EventType eventType;
 
     private EventInfo eventInfo;
+
+    private LogInfo logInfo;
+
+    /**
+     * 用于事件的构造函数
+     *
+     * @param scope 事件触发区域
+     * @param eventLevel 事件级别
+     * @param eventType 事件类型
+     * @param eventInfo 事件信息
+     */
+    public Event(String scope, EventLevel eventLevel, EventType eventType, EventInfo eventInfo) {
+        // 暂用InstanceId
+        this.metaHash = BootArgsIndexer.getInstanceId();
+        this.time = System.currentTimeMillis();
+        this.scope = scope;
+        this.eventLevel = eventLevel;
+        this.eventType = eventType;
+        this.eventInfo = eventInfo;
+    }
+
+    /**
+     * 用于日志事件的构造函数(日志信息无法获取打印日志范围，可精确到日志发生的方法)
+     *
+     * @param eventLevel 事件级别
+     * @param eventType 事件类型
+     * @param logInfo 日志信息
+     */
+    public Event(EventLevel eventLevel, EventType eventType, LogInfo logInfo) {
+        this.metaHash = BootArgsIndexer.getInstanceId();
+        this.time = System.currentTimeMillis();
+        this.eventLevel = eventLevel;
+        this.eventType = eventType;
+        this.logInfo = logInfo;
+    }
 
     public String getMetaHash() {
         return metaHash;
@@ -81,5 +118,20 @@ public class Event {
 
     public void setEventInfo(EventInfo eventInfo) {
         this.eventInfo = eventInfo;
+    }
+
+    public LogInfo getLogInfo() {
+        return logInfo;
+    }
+
+    public void setLogInfo(LogInfo logInfo) {
+        this.logInfo = logInfo;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" + "metaHash='" + metaHash + '\'' + ", time=" + time + ", scope='" + scope + '\''
+                + ", eventLevel=" + eventLevel + ", eventType=" + eventType + ", eventInfo=" + eventInfo + ", logInfo="
+                + logInfo + '}';
     }
 }

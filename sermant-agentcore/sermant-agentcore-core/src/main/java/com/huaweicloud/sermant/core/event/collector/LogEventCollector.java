@@ -14,32 +14,31 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.core.event.common;
+package com.huaweicloud.sermant.core.event.collector;
+
+import com.huaweicloud.sermant.core.event.EventCollector;
 
 /**
- * 事件信息实体
+ * 日志事件采集器
  *
  * @author luanwenfei
- * @since 2023-03-02
+ * @since 2023-03-04
  */
-public class EventInfo {
-    private String name;
+public class LogEventCollector extends EventCollector {
+    private static LogEventCollector logEventCollector;
 
-    private String description;
-
-    public String getName() {
-        return name;
+    private LogEventCollector() {
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    /**
+     * 获取日志事件采集器单例
+     *
+     * @return 日志事件采集器单例
+     */
+    public static synchronized LogEventCollector getInstance() {
+        if (logEventCollector == null) {
+            logEventCollector = new LogEventCollector();
+        }
+        return logEventCollector;
     }
 }

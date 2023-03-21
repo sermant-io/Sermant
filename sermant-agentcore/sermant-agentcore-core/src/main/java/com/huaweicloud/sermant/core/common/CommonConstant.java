@@ -127,6 +127,16 @@ public class CommonConstant {
      */
     public static final String COLON = ":";
 
+    /**
+     * Bytebuddy日志中的错误字段
+     */
+    public static final String ERROR = "ERROR";
+
+    /**
+     * Bytebuddy日志中的字节码转换成功字段
+     */
+    public static final String TRANSFORM = "TRANSFORM";
+
     private CommonConstant() {
     }
 }

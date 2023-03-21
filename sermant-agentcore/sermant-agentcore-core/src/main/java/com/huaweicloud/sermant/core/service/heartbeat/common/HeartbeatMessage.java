@@ -35,7 +35,7 @@ public class HeartbeatMessage {
 
     private List<String> ip;
 
-    private final String appName;
+    private final String service;
 
     private final String appType;
 
@@ -55,7 +55,7 @@ public class HeartbeatMessage {
     public HeartbeatMessage() {
         this.hostName = NetworkUtils.getHostName();
         this.ip = NetworkUtils.getAllNetworkIp();
-        this.appName = BootArgsIndexer.getAppName();
+        this.service = BootArgsIndexer.getAppName();
         this.appType = BootArgsIndexer.getAppType();
         this.heartbeatTime = TimeUtils.currentTimeMillis();
         this.lastHeartbeatTime = TimeUtils.currentTimeMillis();
@@ -85,8 +85,8 @@ public class HeartbeatMessage {
         return ip;
     }
 
-    public String getAppName() {
-        return appName;
+    public String getService() {
+        return service;
     }
 
     public String getAppType() {

@@ -18,6 +18,8 @@ package com.huaweicloud.sermant.implement.service.send;
 
 import static org.mockito.Mockito.mock;
 
+import com.huaweicloud.sermant.implement.service.send.netty.ClientHandler;
+import com.huaweicloud.sermant.implement.service.send.netty.NettyClient;
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
 
 import io.netty.channel.embedded.EmbeddedChannel;
