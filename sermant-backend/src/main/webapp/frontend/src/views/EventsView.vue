@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%">
-    <el-page-header :title="'首页'" @back="goBack">
+    <el-page-header :title="'实例'" @back="goBack">
       <template #content>
         <span class="font-600 mr-3"> 事件监测 </span>
       </template>
@@ -83,7 +83,7 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="currentOption = 0">应用</el-dropdown-item>
+                  <el-dropdown-item @click="currentOption = 0">服务</el-dropdown-item>
                   <el-dropdown-item @click="currentOption = 1">IP</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -174,9 +174,9 @@
         <template #default="scope">
           <div style="display: flex; align-items: center">
             <span v-if="scope.row.type === 'log'">
-              LOG_{{ scope.row.info.logLevel }}
+              {{ eventName[scope.row.info.logLevel] }}
             </span>
-            <span v-if="scope.row.type !== 'log'">{{ scope.row.info.name }}</span>
+            <span v-if="scope.row.type !== 'log'">{{ eventName[scope.row.info.name] }}</span>
           </div>
         </template>
       </el-table-column>
@@ -214,7 +214,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column column-key="service" prop="meta.service" label="应用" />
+      <el-table-column column-key="service" prop="meta.service" label="服务" />
       <el-table-column column-key="ip" prop="meta.ip" label="IP" width="150" />
       <el-table-column column-key="scop" prop="scope" label="事件区域" width="150" />
       <el-table-column prop="time" label="上报时间" />
@@ -436,6 +436,34 @@ interface eventsResponse {
 
 const events = reactive({ events: [] });
 
+// 在此处添加事件
+const eventName = reactive(
+  {
+    // Framework事件
+    "SERMANT_START":"Agent启动",
+    "SERMANT_STOP":"Agent停止",
+    "SERMANT_TRANSFORM_SUCCESS":"增强成功",
+    "SERMANT_TRANSFORM_FAILURE":"增强失败",
+    "SERMANT_SERVICE_STOP":"服务停止",
+    "SERMANT_SERVICE_START":"服务启动",
+    "SERMANT_PLUGIN_LOAD":"插件加载",
+    // 日志事件
+    "WARNING":"警告日志",
+    "SEVERE":"错误日志",
+    "warning":"警告日志",
+    "severe":"错误日志",
+    // Flowcontrol事件
+    "TRAFFIC_LIMITING":"限流",
+    "CIRCUIT_BREAKER":"熔断",
+    "ADAPTIVE_OVERLOAD_PROTECTION":"自适应过载保护",
+    // ServiceRegistry事件
+    "GRACEFUL_ONLINE_BEGIN":"无损上线开始",
+    "GRACEFUL_ONLINE_END":"无损上线结束",
+    "GRACEFUL_OFFLINE_BEGIN":"无损下线开始",
+    "GRACEFUL_OFFLINE_END":"无损下线结束",
+  }
+);
+
 const displayState = reactive({
   totalPage: 1,
   pageSize: 10,
@@ -504,7 +532,6 @@ const getEvents = () => {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  background-color: #fafafa;
 }
 
 .grid-content {

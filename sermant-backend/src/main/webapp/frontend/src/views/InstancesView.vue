@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%">
-    <el-page-header>
+    <el-page-header :title="'事件'" @back="goBack">
       <template #content>
         <span class="font-600 mr-3"> 实例状态 </span>
       </template>
@@ -80,7 +80,7 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="currentOption = 0">应用</el-dropdown-item>
+              <el-dropdown-item @click="currentOption = 0">服务</el-dropdown-item>
               <el-dropdown-item @click="currentOption = 1">IP</el-dropdown-item>
               <el-dropdown-item @click="currentOption = 2">版本</el-dropdown-item>
             </el-dropdown-menu>
@@ -137,11 +137,20 @@
 
 <script setup lang="ts">
 import { nextTick, reactive, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
+
+// 路由
+const router = useRouter();
+
 
 onMounted(() => {
   getTableData();
 });
+
+const goBack = () => {
+  router.push("/events");
+};
 // 处理筛选标签
 const searchOption = ref(["服务", "IP", "版本"]);
 const currentOption = ref(0);
@@ -368,7 +377,6 @@ function searchHealth(health: string) {
   flex-direction: column;
   margin: 5px;
   width: 100%;
-  background-color: #fafafa;
 }
 .grid-content {
   text-align: center;
