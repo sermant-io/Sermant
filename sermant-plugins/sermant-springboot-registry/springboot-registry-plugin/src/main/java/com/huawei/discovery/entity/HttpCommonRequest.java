@@ -16,14 +16,12 @@
 
 package com.huawei.discovery.entity;
 
-import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
 
 import java.net.URI;
 
 /**
- * 定义Http请求, 除POST请求外其他均兼容
+ * 定义其他Http请求
  *
  * @author zhouss
  * @since 2022-10-11
@@ -36,16 +34,10 @@ public class HttpCommonRequest extends HttpGet {
      *
      * @param methodType 方法类型
      * @param uri 请求路径
-     * @param httpUriRequest 请求
      */
-    public HttpCommonRequest(HttpRequest httpUriRequest, String methodType, String uri) {
+    public HttpCommonRequest(String methodType, String uri) {
         this.methodType = methodType;
-        HttpRequestBase oldHttpRequest = (HttpRequestBase) httpUriRequest;
         setURI(URI.create(uri));
-        setHeaders(oldHttpRequest.getAllHeaders());
-        setConfig(oldHttpRequest.getConfig());
-        setProtocolVersion(oldHttpRequest.getProtocolVersion());
-        setParams(oldHttpRequest.getParams());
     }
 
     @Override
