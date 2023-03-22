@@ -26,7 +26,7 @@
       <el-table-column prop="address" label="操作">
         <template #default="scope">
           <el-button size="large" @click="editWebHook(scope.row)">编辑</el-button>
-          <el-button size="large">测试连接</el-button>
+          <el-button size="large" @click="testWebHook(scope.row)">测试连接</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -78,7 +78,7 @@ onBeforeMount(() => {
 
 const getWebHooks = () => {
   axios
-    .get(`http://192.168.95.193:8900/sermant/event/webhooks`)
+    .get(`${window.location.origin}/sermant/event/webhooks`)
     .then(function (response) {
       const data = response.data;
       for (let index = 0; index < data.webhooks.length; index++) {
@@ -86,15 +86,6 @@ const getWebHooks = () => {
         webhooks[data.webhooks[index].id].enable = data.webhooks[index].enable;
       }
     });
-  // axios
-  //   .get(`http://${window.location.origin}/sermant/event/webhooks`)
-  //   .then(function (response) {
-  //     const data = response.data;
-  //     for (let index = 0; index < data.webhooks.length; index++) {
-  //       webhooks[data.webhooks[index].id].url = data.webhooks[index].url;
-  //       webhooks[data.webhooks[index].id].enable = data.webhooks[index].enable;
-  //     }
-  //   });
 };
 
 const editWebHook = (webhook) => {
@@ -109,7 +100,7 @@ const setWebHook = (webhook) => {
   console.log(webhook);
   webhook.canEdit = false;
   axios
-    .put(`http://${window.location.origin}/sermant/event/webhooks/` + webhook.id, {
+    .put(`${window.location.origin}/sermant/event/webhooks/` + webhook.id, {
       url: webhook.url,
       enable: webhook.enable,
     })
@@ -120,7 +111,7 @@ const setWebHook = (webhook) => {
 
 const testWebHook = (webhook) => {
   axios
-    .post(`http://${window.location.origin}/sermant/event/webhooks/test`, {
+    .post(`${window.location.origin}/sermant/event/webhooks/test`, {
       id: webhook.id,
     })
     .catch(function (error) {
