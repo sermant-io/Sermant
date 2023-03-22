@@ -16,19 +16,20 @@
 
 package com.huaweicloud.sermant.router.dubbo.interceptor;
 
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
+
+import com.alibaba.dubbo.config.AbstractConfig;
+import com.alibaba.dubbo.config.ApplicationConfig;
+
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.alibaba.dubbo.config.AbstractConfig;
-import com.alibaba.dubbo.config.ApplicationConfig;
-import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.router.common.config.RouterConfig;
 
 /**
  * 测试AbstractConfigInterceptor
@@ -37,7 +38,6 @@ import com.huaweicloud.sermant.router.common.config.RouterConfig;
  * @since 2022-12-28
  */
 public class AbstractConfigInterceptorTest {
-
     private final AbstractConfigInterceptor interceptor;
 
     /**

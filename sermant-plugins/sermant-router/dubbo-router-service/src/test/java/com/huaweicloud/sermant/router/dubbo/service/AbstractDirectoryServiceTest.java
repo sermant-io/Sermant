@@ -20,19 +20,10 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
-import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
-import com.huaweicloud.sermant.router.config.entity.Match;
-import com.huaweicloud.sermant.router.config.entity.MatchRule;
-import com.huaweicloud.sermant.router.config.entity.MatchStrategy;
-import com.huaweicloud.sermant.router.config.entity.Route;
-import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.entity.Rule;
-import com.huaweicloud.sermant.router.config.entity.Strategy;
-import com.huaweicloud.sermant.router.config.entity.ValueMatch;
 import com.huaweicloud.sermant.router.dubbo.ApacheInvoker;
+import com.huaweicloud.sermant.router.dubbo.RuleInitializationUtils;
 import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 
 import org.apache.dubbo.common.utils.MapUtils;
@@ -76,7 +67,7 @@ public class AbstractDirectoryServiceTest {
         config.setRequestTags(Arrays.asList("foo", "bar", "version"));
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-            .thenReturn(config);
+                .thenReturn(config);
         service = new AbstractDirectoryServiceImpl();
     }
 
@@ -89,8 +80,6 @@ public class AbstractDirectoryServiceTest {
     }
 
     public AbstractDirectoryServiceTest() {
-        EnabledStrategy strategy = ConfigCache.getEnabledStrategy(RouterConstant.DUBBO_CACHE_NAME);
-        strategy.reset(Strategy.ALL, Collections.emptyList());
     }
 
     @Before
@@ -98,7 +87,6 @@ public class AbstractDirectoryServiceTest {
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "");
         ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
         config.setUseRequestRouter(false);
-        config.setRequestTags(null);
     }
 
     /**
@@ -106,7 +94,6 @@ public class AbstractDirectoryServiceTest {
      */
     @Test
     public void testSelectInvokersWhenInvalid() {
-        config.setEnabledDubboZoneRouter(false);
         List<Object> invokers = new ArrayList<>();
         ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0");
         invokers.add(invoker1);
@@ -129,16 +116,15 @@ public class AbstractDirectoryServiceTest {
         Object[] arguments = {invocation};
 
         // 初始化路由规则
-        initRule();
+        RuleInitializationUtils.initFlowMatchRule();
 
         // 测试传递attachment与queryMap为空
-        ThreadLocalUtils
-            .setRequestHeader(new RequestHeader(Collections.singletonMap("foo", Collections.singletonList("foo1"))));
+        ThreadLocalUtils.addRequestTag(Collections.singletonMap("foo", Collections.singletonList("foo1")));
         targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
         Assert.assertEquals(invokers, targetInvokers);
         Assert.assertEquals(2, targetInvokers.size());
         Assert.assertEquals("foo1", invocation.getAttachment("foo"));
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
 
         // side不为consumer
         testObject.getQueryMap().put("side", "");
@@ -159,7 +145,7 @@ public class AbstractDirectoryServiceTest {
         testObject.getQueryMap().put("side", "consumer");
         testObject.getQueryMap().put("interface", "com.huaweicloud.foo.FooTest");
         targetInvokers = (List<Object>) service
-            .selectInvokers(testObject, arguments, Collections.singletonList(invoker1));
+                .selectInvokers(testObject, arguments, Collections.singletonList(invoker1));
         Assert.assertEquals(1, targetInvokers.size());
         Assert.assertEquals(invoker1, targetInvokers.get(0));
 
@@ -170,16 +156,16 @@ public class AbstractDirectoryServiceTest {
         targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
         Assert.assertEquals(invokers, targetInvokers);
         Assert.assertEquals(2, targetInvokers.size());
+        ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }
 
     /**
-     * 测试命中路由时
+     * 测试getGetTargetInvokers方法(flow匹配规则)
      */
     @Test
-    public void testGetTargetInvokerByRules() {
+    public void testGetTargetInvokersByFlowRules() {
         // 初始化路由规则
-        initRule();
-        config.setEnabledDubboZoneRouter(false);
+        RuleInitializationUtils.initFlowMatchRule();
         List<Object> invokers = new ArrayList<>();
         ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0");
         invokers.add(invoker1);
@@ -198,126 +184,16 @@ public class AbstractDirectoryServiceTest {
         List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
         Assert.assertEquals(1, targetInvokers.size());
         Assert.assertEquals(invoker2, targetInvokers.get(0));
+        ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }
 
     /**
-     * 测试getTargetInstancesByRequest方法
+     * 测试getGetTargetInstances方法(tag匹配规则)
      */
     @Test
-    public void testGetTargetInstancesByRequest() {
-        config.setUseRequestRouter(true);
-        List<Object> invokers = new ArrayList<>();
-        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0",
-            Collections.singletonMap(RouterConstant.PARAMETERS_KEY_PREFIX + "bar", "bar1"));
-        invokers.add(invoker1);
-        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("1.0.1",
-            Collections.singletonMap(RouterConstant.PARAMETERS_KEY_PREFIX + "foo", "bar2"));
-        invokers.add(invoker2);
-        ApacheInvoker<Object> invoker3 = new ApacheInvoker<>("1.0.1");
-        invokers.add(invoker3);
-        TestObject testObject = new TestObject();
-        Invocation invocation = new ApacheInvocation();
-        Object[] arguments = new Object[]{invocation};
-        Map<String, String> queryMap = testObject.getQueryMap();
-        queryMap.put("side", "consumer");
-        queryMap.put("group", "fooGroup");
-        queryMap.put("version", "0.0.1");
-        queryMap.put("interface", "com.huaweicloud.foo.FooTest");
-        DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
-
-        // 测试无tags时
-        List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
-        Assert.assertEquals(invokers, targetInvokers);
-
-        // 设置tags
-        config.setRequestTags(Arrays.asList("foo", "bar", "version"));
-
-        // 匹配foo: bar2实例
-        invocation.setAttachment("foo", "bar2");
-        invocation.setAttachment("foo1", "bar2");
-        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
-        Assert.assertEquals(1, targetInvokers.size());
-        Assert.assertEquals(invoker2, targetInvokers.get(0));
-
-        // 匹配1.0.0版本实例
-        invocation.getObjectAttachments().clear();
-        invocation.setAttachment("version", "1.0.0");
-        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
-        Assert.assertEquals(1, targetInvokers.size());
-        Assert.assertEquals(invoker1, targetInvokers.get(0));
-    }
-
-    /**
-     * 测试getTargetInstancesByRequest方法不匹配时
-     */
-    @Test
-    public void testGetTargetInstancesByRequestWithMismatch() {
-        config.setUseRequestRouter(true);
-        config.setRequestTags(Arrays.asList("foo", "bar", "version"));
-        List<Object> invokers = new ArrayList<>();
-        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0",
-            Collections.singletonMap(RouterConstant.PARAMETERS_KEY_PREFIX + "foo", "bar1"));
-        invokers.add(invoker1);
-        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("1.0.1",
-            Collections.singletonMap(RouterConstant.PARAMETERS_KEY_PREFIX + "bar", "bar2"));
-        invokers.add(invoker2);
-        ApacheInvoker<Object> invoker3 = new ApacheInvoker<>("1.0.1");
-        invokers.add(invoker3);
-        TestObject testObject = new TestObject();
-        Invocation invocation = new ApacheInvocation();
-        Object[] arguments = new Object[]{invocation};
-        Map<String, String> queryMap = testObject.getQueryMap();
-        queryMap.put("side", "consumer");
-        queryMap.put("group", "fooGroup");
-        queryMap.put("version", "0.0.1");
-        queryMap.put("interface", "com.huaweicloud.foo.FooTest");
-        DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
-
-        // 不匹配bar: bar1实例时，匹配没有bar标签的实例
-        invocation.setAttachment("bar", "bar1");
-        List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
-        Assert.assertEquals(2, targetInvokers.size());
-        Assert.assertFalse(targetInvokers.contains(invoker2));
-
-        // 不匹配bar: bar1实例时，优先匹配没有bar标签的实例，如果没有无bar标签的实例，则返回空列表
-        List<Object> sameInvokers = new ArrayList<>();
-        ApacheInvoker<Object> sameInvoker1 = new ApacheInvoker<>("1.0.0",
-            Collections.singletonMap(RouterConstant.PARAMETERS_KEY_PREFIX + "bar", "bar3"));
-        sameInvokers.add(sameInvoker1);
-        ApacheInvoker<Object> sameInvoker2 = new ApacheInvoker<>("1.0.1",
-            Collections.singletonMap(RouterConstant.PARAMETERS_KEY_PREFIX + "bar", "bar2"));
-        sameInvokers.add(sameInvoker2);
-        invocation.getObjectAttachments().clear();
-        invocation.setAttachment("bar", "bar1");
-        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, sameInvokers);
-        Assert.assertEquals(0, targetInvokers.size());
-
-        // 不匹配version: 1.0.3实例时，返回所有版本的实例
-        invocation.getObjectAttachments().clear();
-        invocation.setAttachment("version", "1.0.3");
-        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
-        Assert.assertEquals(3, targetInvokers.size());
-
-        // 不传入attachment时，匹配无标签实例
-        invocation.getObjectAttachments().clear();
-        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
-        Assert.assertEquals(1, targetInvokers.size());
-        Assert.assertEquals(invoker3, targetInvokers.get(0));
-
-        // 不传入attachment时，优先匹配无标签实例，没有无标签实例时，返回全部实例
-        invocation.getObjectAttachments().clear();
-        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, sameInvokers);
-        Assert.assertEquals(sameInvokers, targetInvokers);
-    }
-
-    /**
-     * 测试没有命中路由时
-     */
-    @Test
-    public void testGetMissMatchInstances() {
+    public void testGetTargetInvokerByTagRules() {
         // 初始化路由规则
-        initRule();
-        config.setEnabledDubboZoneRouter(false);
+        RuleInitializationUtils.initTagMatchRule();
         List<Object> invokers = new ArrayList<>();
         ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0");
         invokers.add(invoker1);
@@ -325,76 +201,56 @@ public class AbstractDirectoryServiceTest {
         invokers.add(invoker2);
         TestObject testObject = new TestObject();
         Invocation invocation = new ApacheInvocation();
-        invocation.setAttachment("bar", "bar2");
+        invocation.setAttachment("bar", "bar1");
         Object[] arguments = new Object[]{invocation};
         Map<String, String> queryMap = testObject.getQueryMap();
         queryMap.put("side", "consumer");
-        queryMap.put("group", "fooGroup");
+        queryMap.put("group", "red");
         queryMap.put("version", "0.0.1");
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
-        DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
-        List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
-        Assert.assertEquals(1, targetInvokers.size());
-        Assert.assertEquals(invoker1, targetInvokers.get(0));
-    }
-
-    /**
-     * 测试没有命中路由时
-     */
-    @Test
-    public void testGetZoneInvokers() {
-        // 初始化路由规则
-        initRule();
-        config.setEnabledDubboZoneRouter(true);
-        List<Object> invokers = new ArrayList<>();
-        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.1", "bar");
-        invokers.add(invoker1);
-        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("1.0.1", "foo");
-        invokers.add(invoker2);
-        TestObject testObject = new TestObject();
-        Invocation invocation = new ApacheInvocation();
-        invocation.setAttachment("bar", "bar2");
-        Object[] arguments = new Object[]{invocation};
-        Map<String, String> queryMap = testObject.getQueryMap();
-        queryMap.put("side", "consumer");
-        queryMap.put("group", "fooGroup");
-        queryMap.put("version", "0.0.1");
-        queryMap.put("interface", "com.huaweicloud.foo.FooTest");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(RouterConstant.PARAMETERS_KEY_PREFIX + "group", "red");
+        DubboCache.INSTANCE.setParameters(parameters);
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
         List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
         Assert.assertEquals(1, targetInvokers.size());
         Assert.assertEquals(invoker2, targetInvokers.get(0));
+        ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }
 
-    private void initRule() {
-        ValueMatch valueMatch = new ValueMatch();
-        valueMatch.setMatchStrategy(MatchStrategy.EXACT);
-        valueMatch.setValues(Collections.singletonList("bar1"));
-        MatchRule matchRule = new MatchRule();
-        matchRule.setValueMatch(valueMatch);
-        List<MatchRule> matchRuleList = new ArrayList<>();
-        matchRuleList.add(matchRule);
-        Map<String, List<MatchRule>> attachments = new HashMap<>();
-        attachments.put("bar", matchRuleList);
-        Match match = new Match();
-        match.setAttachments(attachments);
-        Rule rule = new Rule();
-        rule.setPrecedence(2);
-        rule.setMatch(match);
-        Route route = new Route();
-        route.setWeight(100);
-        Map<String, String> tags = new HashMap<>();
-        tags.put("version", "1.0.1");
-        route.setTags(tags);
-        List<Route> routeList = new ArrayList<>();
-        routeList.add(route);
-        rule.setRoute(routeList);
-        List<Rule> ruleList = new ArrayList<>();
-        ruleList.add(rule);
-        Map<String, List<Rule>> map = new HashMap<>();
-        map.put("foo", ruleList);
-        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
-        configuration.resetRouteRule(map);
+    /**
+     * 测试getGetTargetInstances方法(flow匹配规则和tag匹配规则)
+     */
+    @Test
+    public void testGetTargetInvokerByAllRules() {
+        // 初始化路由规则
+        RuleInitializationUtils.initAllRules();
+        List<Object> invokers = new ArrayList<>();
+        Map<String, String> parameters1 = new HashMap<>();
+        parameters1.put(RouterConstant.PARAMETERS_KEY_PREFIX + "group", "red");
+        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0", parameters1);
+        invokers.add(invoker1);
+        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("1.0.1", parameters1);
+        invokers.add(invoker2);
+        Map<String, String> parameters2 = new HashMap<>();
+        parameters2.put(RouterConstant.PARAMETERS_KEY_PREFIX + "group", "green");
+        ApacheInvoker<Object> invoker3 = new ApacheInvoker<>("1.0.1", parameters2);
+        invokers.add(invoker3);
+        TestObject testObject = new TestObject();
+        Invocation invocation = new ApacheInvocation();
+        invocation.setAttachment("bar", "bar1");
+        Object[] arguments = new Object[]{invocation};
+        Map<String, String> queryMap = testObject.getQueryMap();
+        queryMap.put("side", "consumer");
+        queryMap.put("group", "fooGroup");
+        queryMap.put("version", "0.0.1");
+        queryMap.put("interface", "com.huaweicloud.foo.FooTest");
+        DubboCache.INSTANCE.setParameters(parameters1);
+        DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
+        List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
+        Assert.assertEquals(1, targetInvokers.size());
+        Assert.assertEquals(invoker2, targetInvokers.get(0));
+        ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }
 
     /**

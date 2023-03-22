@@ -22,8 +22,8 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
+import com.huaweicloud.sermant.router.config.entity.EntireRule;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
-import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 
 import com.alibaba.fastjson.JSONArray;
@@ -47,17 +47,20 @@ public class ServiceConfigHandler extends AbstractConfigHandler {
         RouterConfiguration configuration = ConfigCache.getLabel(cacheName);
         String serviceName = event.getKey().substring(RouterConstant.ROUTER_KEY_PREFIX.length() + 1);
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
-            configuration.getRouteRule().remove(serviceName);
+            configuration.removeServiceRule(serviceName);
             RuleUtils.updateMatchKeys(serviceName, Collections.emptyList());
             return;
         }
-        List<Rule> list = JSONArray.parseArray(JSONObject.toJSONString(getRule(event, serviceName)), Rule.class);
-        RuleUtils.removeInvalidRules(list);
+        List<EntireRule> list = JSONArray.parseArray(JSONObject.toJSONString(getRule(event, serviceName)),
+                EntireRule.class);
+        RuleUtils.removeInvalidRules(list, RouterConstant.DUBBO_CACHE_NAME.equals(cacheName));
         if (CollectionUtils.isEmpty(list)) {
-            configuration.getRouteRule().remove(serviceName);
+            configuration.removeServiceRule(serviceName);
         } else {
-            list.sort((o1, o2) -> o2.getPrecedence() - o1.getPrecedence());
-            configuration.getRouteRule().put(serviceName, list);
+            for (EntireRule rule : list) {
+                rule.getRules().sort((o1, o2) -> o2.getPrecedence() - o1.getPrecedence());
+            }
+            configuration.updateServiceRule(serviceName, list);
         }
         RuleUtils.updateMatchKeys(serviceName, list);
     }

@@ -7,6 +7,10 @@ runs:
       uses: ./.github/actions/common/entry
       with:
         log-dir: ./logs/dubbo-monitor
+    - name: package dubbo 2.5.x tests
+      shell: bash
+      if: matrix.dubbo-version == '2-5'
+      run: mvn package -Dalibaba.dubbo.version=2.5.${{ matrix.dubbo-versions }} -DskipTests -P260 --file sermant-integration-tests/dubbo-test/pom.xml
     - name: package monitor dubbo 2.6.0 tests
       shell: bash
       if: matrix.dubbo-version == '2-6' && matrix.dubbo-versions == '0'
@@ -25,7 +29,7 @@ runs:
         SERVER_PORT: 28054
         DUBBO_PROTOCOL_PORT: 28854
       run: |
-        nohup java -jar sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > ${{ env.logDir }}/monitor-provider.log 2>&1 &
+        nohup java -jar sermant-integration-tests/dubbo-test/dubbo-${{ env.projectPath }}-integration-provider/target/dubbo-integration-provider.jar > ${{ env.logDir }}/monitor-provider.log 2>&1 &
     - name: start monitor consumer service
       shell: bash
       env:
@@ -35,7 +39,7 @@ runs:
         FLOW_CONTROL_PLUGIN_ENABLE_START_MONITOR: true # 是否启动指标监控
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar \
-        sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar > ${{ env.logDir }}/monitor-consumer.log 2>&1 &
+        sermant-integration-tests/dubbo-test/dubbo-${{ env.projectPath }}-integration-consumer/target/dubbo-integration-consumer.jar > ${{ env.logDir }}/monitor-consumer.log 2>&1 &
     - name: waiting for monitor services start
       shell: bash
       run: |

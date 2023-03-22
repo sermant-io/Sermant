@@ -18,7 +18,6 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.router.common.request.RequestData;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
 import org.junit.Assert;
@@ -45,12 +44,10 @@ public class ClientHttpRequestInterceptorTest {
 
     public ClientHttpRequestInterceptorTest() {
         interceptor = new ClientHttpRequestInterceptor();
-        Object[] arguments = new Object[1];
         MockClientHttpRequest request = new MockClientHttpRequest();
         request.getHeaders().add("bar", "bar2");
         request.getHeaders().add("bar3", "bar3");
-        arguments[0] = request;
-        context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
+        context = ExecuteContext.forMemberMethod(request, null, null, null, null);
     }
 
     /**
@@ -58,7 +55,7 @@ public class ClientHttpRequestInterceptorTest {
      */
     @Before
     public void clear() {
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
         ThreadLocalUtils.removeRequestData();
     }
 
@@ -70,19 +67,17 @@ public class ClientHttpRequestInterceptorTest {
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar1"));
         header.put("foo", Collections.singletonList("foo1"));
-        RequestHeader requestHeader = new RequestHeader(header);
-        ThreadLocalUtils.setRequestHeader(requestHeader);
+        ThreadLocalUtils.addRequestTag(header);
         interceptor.before(context);
         RequestData requestData = ThreadLocalUtils.getRequestData();
         Assert.assertNotNull(requestData);
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
         Assert.assertEquals("/", requestData.getPath());
-        Map<String, List<String>> headerData = requestData.getHeader();
+        Map<String, List<String>> headerData = requestData.getTag();
         Assert.assertEquals(3, headerData.size());
         Assert.assertEquals("bar2", headerData.get("bar").get(0));
         Assert.assertEquals("foo1", headerData.get("foo").get(0));
         Assert.assertEquals("bar3", headerData.get("bar3").get(0));
-
     }
 
     /**

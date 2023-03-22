@@ -34,13 +34,13 @@ public class ControllerInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
         return context;
     }
 }

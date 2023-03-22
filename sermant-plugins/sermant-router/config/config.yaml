@@ -1,10 +1,4 @@
 router.plugin:
-  # 是否开启dubbo区域路由
-  enabled-dubbo-zone-router: false
-  # 是否开启spring cloud区域路由
-  enabled-spring-zone-router: false
-  # 是否开启注册插件（sermant-springboot-registry）区域路由
-  enabled-registry-zone-router: false
   # 是否适配注册插件
   enabled-registry-plugin-adaptation: false
   # 是否使用请求信息做路由

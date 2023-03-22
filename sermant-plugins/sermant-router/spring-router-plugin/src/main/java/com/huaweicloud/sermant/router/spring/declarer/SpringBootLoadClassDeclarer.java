@@ -42,8 +42,8 @@ public class SpringBootLoadClassDeclarer extends BaseRegistryPluginAdaptationDec
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME).and(MethodMatcher.isStaticMethod()),
-                INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME).and(MethodMatcher.isStaticMethod()),
+                        INTERCEPT_CLASS)
         };
     }
 }

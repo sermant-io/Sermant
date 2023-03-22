@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
@@ -26,6 +26,7 @@ import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableDefault;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -53,6 +54,15 @@ public class HystrixActionInterceptorTest {
     }
 
     /**
+     * 重置测试数据
+     */
+    @Before
+    public void clear() {
+        ThreadLocalUtils.removeRequestTag();
+        ThreadLocalUtils.removeRequestData();
+    }
+
+    /**
      * 测试before方法
      */
     @Test
@@ -60,19 +70,18 @@ public class HystrixActionInterceptorTest {
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar1"));
         header.put("foo", Collections.singletonList("foo1"));
-        RequestHeader requestHeader = new RequestHeader(header);
-        ThreadLocalUtils.setRequestHeader(requestHeader);
+        ThreadLocalUtils.addRequestTag(header);
         interceptor.before(context);
         HystrixRequestContext context = HystrixRequestContext.getContextForCurrentThread();
         Assert.assertNotNull(context);
         Map<HystrixRequestVariableDefault<?>, ?> state = ReflectUtils.getFieldValue(context, "state")
-            .map(value -> (Map<HystrixRequestVariableDefault<?>, ?>) value).orElse(Collections.emptyMap());
+                .map(value -> (Map<HystrixRequestVariableDefault<?>, ?>) value).orElse(Collections.emptyMap());
         for (Entry<HystrixRequestVariableDefault<?>, ?> entry : state.entrySet()) {
             Object lazyInitializer = entry.getValue();
             Object obj = ReflectUtils.getFieldValue(lazyInitializer, "value").orElse(null);
-            if (obj instanceof RequestHeader) {
+            if (obj instanceof RequestTag) {
                 entry.getKey().remove();
-                Assert.assertEquals(requestHeader, obj);
+                Assert.assertEquals(header, ((RequestTag) obj).getTag());
             }
         }
     }

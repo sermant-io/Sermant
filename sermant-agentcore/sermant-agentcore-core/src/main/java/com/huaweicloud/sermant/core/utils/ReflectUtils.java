@@ -294,11 +294,12 @@ public class ReflectUtils {
      * @param target 对象
      * @param fieldName 字段
      * @param value 值
+     * @return 是否成功
      */
-    public static void setFieldValue(Object target, String fieldName, Object value) {
+    public static boolean setFieldValue(Object target, String fieldName, Object value) {
         final Optional<Field> fieldOption = getField(target, fieldName);
         if (!fieldOption.isPresent()) {
-            return;
+            return false;
         }
         final Field field = fieldOption.get();
         if (isFinalField(field)) {
@@ -306,9 +307,11 @@ public class ReflectUtils {
         }
         try {
             field.set(target, value);
+            return true;
         } catch (IllegalAccessException ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Set value for field [%s] failed! %s", fieldName,
                 ex.getMessage()));
+            return false;
         }
     }
 

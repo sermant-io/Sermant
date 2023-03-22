@@ -28,7 +28,7 @@ public class SpringApplicationDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.springframework.boot.SpringApplication"};
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.dubbo.interceptor.SpringApplicationInterceptor";
+            = "com.huaweicloud.sermant.router.dubbo.interceptor.SpringApplicationInterceptor";
 
     private static final String METHOD_NAME = "run";
 

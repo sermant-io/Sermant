@@ -18,10 +18,13 @@ package com.huaweicloud.integration.service;
 
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.registry.RegistryFactory;
+import com.alibaba.dubbo.rpc.RpcContext;
 
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 测试接口
@@ -64,5 +67,14 @@ public class FooServiceImpl implements FooService {
         }
         return "I'm " + name + ", my version is " + version + ", my zone is " + zone + ", my parameters is ["
             + parameters + "].";
+    }
+
+    @Override
+    public Map<String, Object> getAttachments() {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(RpcContext.getContext().getAttachments());
+        map.put("version", version);
+        result.put(name, map);
+        return result;
     }
 }

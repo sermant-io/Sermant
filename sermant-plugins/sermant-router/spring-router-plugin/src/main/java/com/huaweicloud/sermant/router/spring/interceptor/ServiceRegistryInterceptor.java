@@ -63,7 +63,8 @@ public class ServiceRegistryInterceptor extends AbstractInterceptor {
             AbstractAutoServiceRegistration<?> serviceRegistration = (AbstractAutoServiceRegistration<?>) object;
             try {
                 Registration registration = (Registration) ReflectUtils.getAccessibleObject(
-                    serviceRegistration.getClass().getDeclaredMethod("getRegistration")).invoke(serviceRegistration);
+                        serviceRegistration.getClass().getDeclaredMethod("getRegistration"))
+                        .invoke(serviceRegistration);
                 AppCache.INSTANCE.setAppName(registration.getServiceId());
                 SpringRouterUtils.putMetaData(registration.getMetadata(), routerConfig);
             } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException ex) {

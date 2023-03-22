@@ -32,10 +32,10 @@ public class HttpClient4xDeclarer extends BaseRegistryPluginAdaptationDeclarer {
      * 增强类的全限定名 http请求
      */
     private static final String[] ENHANCE_CLASSES = {
-        "org.apache.http.impl.client.AbstractHttpClient",
-        "org.apache.http.impl.client.DefaultRequestDirector",
-        "org.apache.http.impl.client.InternalHttpClient",
-        "org.apache.http.impl.client.MinimalHttpClient"
+            "org.apache.http.impl.client.AbstractHttpClient",
+            "org.apache.http.impl.client.DefaultRequestDirector",
+            "org.apache.http.impl.client.InternalHttpClient",
+            "org.apache.http.impl.client.MinimalHttpClient"
     };
 
     /**

@@ -40,7 +40,7 @@ public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object, L
      */
     @Override
     public boolean isMatch(Object invoker, List<Map<String, String>> tags,
-        Function<Object, Map<String, String>> mapper) {
+            Function<Object, Map<String, String>> mapper) {
         // 由于mismatch里面的标签已经匹配过了且没有匹配上，所以要剔除掉，不能参与负载均衡，否则会导致流量比例不正确（会偏高）
         Map<String, String> metaData = getMetadata(invoker, mapper);
         for (Map<String, String> mismatchTag : tags) {

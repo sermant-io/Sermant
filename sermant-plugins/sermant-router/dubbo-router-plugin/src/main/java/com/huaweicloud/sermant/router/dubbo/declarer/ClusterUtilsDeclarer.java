@@ -26,10 +26,10 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  */
 public class ClusterUtilsDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.rpc.cluster.support.ClusterUtils",
-        "com.alibaba.dubbo.rpc.cluster.support.ClusterUtils"};
+            "com.alibaba.dubbo.rpc.cluster.support.ClusterUtils"};
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.dubbo.interceptor.ClusterUtilsInterceptor";
+            = "com.huaweicloud.sermant.router.dubbo.interceptor.ClusterUtilsInterceptor";
 
     private static final String METHOD_NAME = "mergeUrl";
 

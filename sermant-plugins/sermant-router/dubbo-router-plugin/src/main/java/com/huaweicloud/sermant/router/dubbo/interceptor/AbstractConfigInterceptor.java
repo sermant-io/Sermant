@@ -51,7 +51,7 @@ public class AbstractConfigInterceptor extends AbstractInterceptor {
         Object config = context.getArguments()[1];
         if (parameters instanceof Map<?, ?> && config instanceof ApplicationConfig) {
             context.getArguments()[0] = ParametersUtils.putParameters((Map<String, String>) parameters,
-                routerConfig);
+                    routerConfig);
         }
         return context;
     }

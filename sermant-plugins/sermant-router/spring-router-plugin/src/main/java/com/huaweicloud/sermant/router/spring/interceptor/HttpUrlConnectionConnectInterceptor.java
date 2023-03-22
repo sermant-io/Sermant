@@ -51,7 +51,7 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractInterceptor {
             Map<String, List<String>> headers = ((MessageHeader) requests.get()).getHeaders(null);
             String method = connection.getRequestMethod();
             if (StringUtils.isBlank(FlowContextUtils.getTagName()) || CollectionUtils
-                .isEmpty(headers.get(FlowContextUtils.getTagName()))) {
+                    .isEmpty(headers.get(FlowContextUtils.getTagName()))) {
                 ThreadLocalUtils.setRequestData(new RequestData(headers, getPath(connection), method));
                 return context;
             }

@@ -35,10 +35,10 @@ import java.util.Map;
  */
 public class ClusterUtilsServiceTest {
     private static final URL ALIBABA_URL =
-        URL.valueOf("dubbo://localhost:8080/com.huawei.foo.BarTest?bar=foo&application=bar");
+            URL.valueOf("dubbo://localhost:8080/com.huawei.foo.BarTest?bar=foo&application=bar");
 
     private static final org.apache.dubbo.common.URL APACHE_URL = org.apache.dubbo.common.URL
-        .valueOf("dubbo://localhost:8081/com.huawei.foo.FooTest?foo=bar&application=foo");
+            .valueOf("dubbo://localhost:8081/com.huawei.foo.FooTest?foo=bar&application=foo");
 
     private static final int EXPECT_LENGTH = 2;
 

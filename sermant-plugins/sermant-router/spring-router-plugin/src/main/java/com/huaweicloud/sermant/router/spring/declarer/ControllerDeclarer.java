@@ -31,7 +31,7 @@ public class ControllerDeclarer extends AbstractDeclarer {
     private static final String REST_CONTROLLER_ANNOTATION = "org.springframework.web.bind.annotation.RestController";
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.ControllerInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.ControllerInterceptor";
 
     private static final String REQUEST_MAPPING_NAME = "org.springframework.web.bind.annotation.RequestMapping";
 
@@ -55,16 +55,16 @@ public class ControllerDeclarer extends AbstractDeclarer {
     @Override
     public ClassMatcher getClassMatcher() {
         return ClassMatcher.isAnnotatedWith(CONTROLLER_ANNOTATION)
-            .or(ClassMatcher.isAnnotatedWith(REST_CONTROLLER_ANNOTATION));
+                .or(ClassMatcher.isAnnotatedWith(REST_CONTROLLER_ANNOTATION));
     }
 
     @Override
     public MethodMatcher getMethodMatcher() {
         return MethodMatcher.isAnnotatedWith(REQUEST_MAPPING_NAME)
-            .or(MethodMatcher.isAnnotatedWith(POST_MAPPING_NAME))
-            .or(MethodMatcher.isAnnotatedWith(GET_MAPPING_NAME))
-            .or(MethodMatcher.isAnnotatedWith(DELETE_MAPPING_NAME))
-            .or(MethodMatcher.isAnnotatedWith(PATCH_MAPPING_NAME))
-            .or(MethodMatcher.isAnnotatedWith(PUT_MAPPING_NAME));
+                .or(MethodMatcher.isAnnotatedWith(POST_MAPPING_NAME))
+                .or(MethodMatcher.isAnnotatedWith(GET_MAPPING_NAME))
+                .or(MethodMatcher.isAnnotatedWith(DELETE_MAPPING_NAME))
+                .or(MethodMatcher.isAnnotatedWith(PATCH_MAPPING_NAME))
+                .or(MethodMatcher.isAnnotatedWith(PUT_MAPPING_NAME));
     }
 }

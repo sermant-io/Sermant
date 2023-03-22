@@ -27,9 +27,7 @@ import com.huaweicloud.sermant.router.config.strategy.match.NoLessValueMatchStra
 import com.huaweicloud.sermant.router.config.strategy.match.PrefixValueMatchStrategy;
 import com.huaweicloud.sermant.router.config.strategy.match.RegexValueMatchStrategy;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 
 /**
@@ -103,15 +101,7 @@ public enum MatchStrategy {
             return valueMatchStrategy.isMatch(values, arg);
         }
 
-        // 如果大小写不敏感，则统一转成大写
-        List<String> list = new ArrayList<>(values);
-        ListIterator<String> listIterator = list.listIterator();
-        while (listIterator.hasNext()) {
-            String next = listIterator.next();
-            if (next != null) {
-                listIterator.set(next.toUpperCase(Locale.ROOT));
-            }
-        }
-        return valueMatchStrategy.isMatch(list, arg.toUpperCase(Locale.ROOT));
+        // 如果大小写不敏感，则把参数转为小写
+        return valueMatchStrategy.isMatch(values, arg.toLowerCase(Locale.ROOT));
     }
 }

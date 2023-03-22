@@ -68,7 +68,7 @@ public enum RuleStrategyHandler {
      * @return 路由匹配的实例
      */
     public List<Object> getMatchInstances(String serviceName, List<Object> instances, List<Route> routes) {
-        return getRuleStrategy(instances).getMatchInstances(serviceName, instances, routes, false);
+        return getRuleStrategy(instances).getMatchInstances(serviceName, instances, routes);
     }
 
     /**
@@ -80,7 +80,7 @@ public enum RuleStrategyHandler {
      * @return 路由匹配的实例
      */
     public List<Object> getMatchInstancesByRequest(String serviceName, List<Object> instances,
-        Map<String, String> tags) {
+            Map<String, String> tags) {
         return getRuleStrategy(instances).getMatchInstancesByRequest(serviceName, instances, tags);
     }
 
@@ -94,21 +94,9 @@ public enum RuleStrategyHandler {
      * @return 路由过滤后的实例
      */
     public List<Object> getMismatchInstances(String serviceName, List<Object> instances,
-        List<Map<String, String>> tags, boolean isReturnAllInstancesWhenMismatch) {
+            List<Map<String, String>> tags, boolean isReturnAllInstancesWhenMismatch) {
         return getRuleStrategy(instances)
-            .getMismatchInstances(serviceName, instances, tags, isReturnAllInstancesWhenMismatch);
-    }
-
-    /**
-     * 选取同区域的实例
-     *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @param zone 区域
-     * @return 路由过滤后的实例
-     */
-    public List<Object> getZoneInstances(String serviceName, List<Object> instances, String zone) {
-        return getRuleStrategy(instances).getZoneInstances(serviceName, instances, zone);
+                .getMismatchInstances(serviceName, instances, tags, isReturnAllInstancesWhenMismatch);
     }
 
     private AbstractRuleStrategy<Object> getRuleStrategy(List<Object> instances) {

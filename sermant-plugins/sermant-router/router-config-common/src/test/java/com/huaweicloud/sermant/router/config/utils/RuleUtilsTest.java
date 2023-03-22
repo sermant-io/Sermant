@@ -16,6 +16,8 @@
 
 package com.huaweicloud.sermant.router.config.utils;
 
+import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.router.config.entity.EntireRule;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.entity.Rule;
 
@@ -43,11 +45,11 @@ public class RuleUtilsTest {
     @Before
     public void before() {
         String json = "[{\"precedence\":3,\"match\":{\"headers\":{\"region\":{\"parameterName\":\"region\",\"exact\":1,"
-            + "\"operationMark\":\"~\",\"caseInsensitive\":false},\"id\":{\"parameterName\":\"region\",\"regex\":\"*\","
-            + "\"operationMark\":\"~\",\"caseInsensitive\":false},\"name\":{\"parameterName\":\"region\","
-            + "\"exact\":\"test\",\"operationMark\":\"~\",\"caseInsensitive\":false}}},\"route\":[{\"name\":\"foo\","
-            + "\"weight\":100,\"tags\":{\"version\":\"1.0.1\"}}]},{\"precedence\":2,\"route\":[{\"name\":\"bar\","
-            + "\"weight\":100,\"tags\":{\"version\":\"1.0.0\"}}]}]";
+                + "\"operationMark\":\"~\",\"caseInsensitive\":false},\"id\":{\"parameterName\":\"region\",\"regex\":\"*\","
+                + "\"operationMark\":\"~\",\"caseInsensitive\":false},\"name\":{\"parameterName\":\"region\","
+                + "\"exact\":\"test\",\"operationMark\":\"~\",\"caseInsensitive\":false}}},\"route\":[{\"name\":\"foo\","
+                + "\"weight\":100,\"tags\":{\"version\":\"1.0.1\"}}]},{\"precedence\":2,\"route\":[{\"name\":\"bar\","
+                + "\"weight\":100,\"tags\":{\"version\":\"1.0.0\"}}]}]";
         list = Collections.unmodifiableList(JSONArray.parseArray(json, Rule.class));
     }
 
@@ -56,7 +58,7 @@ public class RuleUtilsTest {
      */
     @Test
     public void testGetTags() {
-        List<Map<String, String>> tags = RuleUtils.getTags(list, false);
+        List<Map<String, String>> tags = RuleUtils.getTags(list);
         Assert.assertEquals(2, tags.size());
         Assert.assertEquals("1.0.1", tags.get(0).get("version"));
         Assert.assertEquals("1.0.0", tags.get(1).get("version"));
@@ -70,8 +72,11 @@ public class RuleUtilsTest {
         RouterConfiguration configuration = new RouterConfiguration();
         RuleUtils.initMatchKeys(configuration);
         Assert.assertTrue(RuleUtils.getMatchKeys().isEmpty());
-        Map<String, List<Rule>> map = new HashMap<>();
-        map.put("test", list);
+        Map<String, List<EntireRule>> map = new HashMap<>();
+        EntireRule entireRule = new EntireRule();
+        entireRule.setRules(list);
+        entireRule.setKind(RouterConstant.FLOW_MATCH_KIND);
+        map.put("test", Collections.singletonList(entireRule));
         configuration.resetRouteRule(map);
         RuleUtils.initMatchKeys(configuration);
         Set<String> keys = RuleUtils.getMatchKeys();
@@ -84,7 +89,10 @@ public class RuleUtilsTest {
     @Test
     public void testUpdateHeaderKeys() {
         Assert.assertTrue(RuleUtils.getMatchKeys().isEmpty());
-        RuleUtils.updateMatchKeys("test", list);
+        EntireRule entireRule = new EntireRule();
+        entireRule.setRules(list);
+        entireRule.setKind(RouterConstant.FLOW_MATCH_KIND);
+        RuleUtils.updateMatchKeys("test", Collections.singletonList(entireRule));
         Set<String> keys = RuleUtils.getMatchKeys();
         Assert.assertEquals(3, keys.size());
         RuleUtils.updateMatchKeys("test", Collections.emptyList());

@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.request.RequestData;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
@@ -64,7 +64,7 @@ public class FeignClientInterceptorTest {
         headers.put("bar", Collections.singletonList("bar1"));
         headers.put("foo", Collections.singletonList("foo1"));
         arguments[0] = Request.create("GET", "http://www.domain.com/path?a=b", headers, new byte[]{},
-            StandardCharsets.UTF_8);
+                StandardCharsets.UTF_8);
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
     }
 
@@ -85,7 +85,7 @@ public class FeignClientInterceptorTest {
      */
     @Before
     public void clear() {
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
         ThreadLocalUtils.removeRequestData();
     }
 
@@ -97,14 +97,13 @@ public class FeignClientInterceptorTest {
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar2"));
         header.put("foo3", Collections.singletonList("foo3"));
-        RequestHeader requestHeader = new RequestHeader(header);
-        ThreadLocalUtils.setRequestHeader(requestHeader);
+        ThreadLocalUtils.addRequestTag(header);
         interceptor.before(context);
         RequestData requestData = ThreadLocalUtils.getRequestData();
         Assert.assertNotNull(requestData);
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
         Assert.assertEquals("/path", requestData.getPath());
-        Map<String, List<String>> headerData = requestData.getHeader();
+        Map<String, List<String>> headerData = requestData.getTag();
         Assert.assertEquals(3, headerData.size());
         Assert.assertEquals("bar1", headerData.get("bar").get(0));
         Assert.assertEquals("foo1", headerData.get("foo").get(0));
@@ -119,16 +118,16 @@ public class FeignClientInterceptorTest {
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar2"));
         header.put("foo3", Collections.singletonList("foo3"));
-        RequestHeader requestHeader = new RequestHeader(header);
+        RequestTag requestTag = new RequestTag(header);
         HystrixRequestContext.initializeContext();
-        HystrixRequestVariableDefault<RequestHeader> hystrixRequest = new HystrixRequestVariableDefault<>();
-        hystrixRequest.set(requestHeader);
+        HystrixRequestVariableDefault<RequestTag> hystrixRequest = new HystrixRequestVariableDefault<>();
+        hystrixRequest.set(requestTag);
         interceptor.before(context);
         RequestData requestData = ThreadLocalUtils.getRequestData();
         Assert.assertNotNull(requestData);
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
         Assert.assertEquals("/path", requestData.getPath());
-        Map<String, List<String>> headerData = requestData.getHeader();
+        Map<String, List<String>> headerData = requestData.getTag();
         Assert.assertEquals(3, headerData.size());
         Assert.assertEquals("bar1", headerData.get("bar").get(0));
         Assert.assertEquals("foo1", headerData.get("foo").get(0));
@@ -145,7 +144,7 @@ public class FeignClientInterceptorTest {
         Assert.assertNotNull(requestData);
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
         Assert.assertEquals("/path", requestData.getPath());
-        Map<String, List<String>> headerData = requestData.getHeader();
+        Map<String, List<String>> headerData = requestData.getTag();
         Assert.assertEquals(2, headerData.size());
         Assert.assertEquals("bar1", headerData.get("bar").get(0));
         Assert.assertEquals("foo1", headerData.get("foo").get(0));
@@ -164,7 +163,7 @@ public class FeignClientInterceptorTest {
         Assert.assertNotNull(requestData);
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
         Assert.assertEquals("/path", requestData.getPath());
-        Map<String, List<String>> headerData = requestData.getHeader();
+        Map<String, List<String>> headerData = requestData.getTag();
         Assert.assertEquals(2, headerData.size());
         Assert.assertEquals("bar1", headerData.get("bar").get(0));
         Assert.assertEquals("foo1", headerData.get("foo").get(0));

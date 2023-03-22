@@ -38,6 +38,6 @@ public class EurekaMetadataMapper extends AbstractMetadataMapper<Object> {
     @Override
     public List<String> getName() {
         return Arrays.asList("org.springframework.cloud.netflix.ribbon.eureka.DomainExtractingServer",
-            "com.netflix.niws.loadbalancer.DiscoveryEnabledServer");
+                "com.netflix.niws.loadbalancer.DiscoveryEnabledServer");
     }
 }

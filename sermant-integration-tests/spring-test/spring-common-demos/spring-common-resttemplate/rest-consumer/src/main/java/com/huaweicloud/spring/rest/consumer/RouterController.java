@@ -21,8 +21,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 测试接口
@@ -33,6 +37,14 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @RequestMapping("/router")
 public class RouterController {
+    private static final String URL_PREFIX = "http://";
+
+    @Value("${spring.application.name}")
+    private String applicationName;
+
+    @Value("${service_meta_version:${SERVICE_META_VERSION:${service.meta.version:1.0.0}}}")
+    private String version;
+
     @Value("${down.serviceName}")
     private String downServiceName;
 
@@ -54,7 +66,8 @@ public class RouterController {
     @GetMapping("/boot/getMetadata")
     public String getMetadataByBoot(boolean exit) {
         return localRestTemplate
-            .getForObject("http://" + domain + "/" + downServiceName + "/router/metadata?exit=" + exit, String.class);
+                .getForObject(URL_PREFIX + domain + "/" + downServiceName + "/router/metadata?exit=" + exit,
+                        String.class);
     }
 
     /**
@@ -65,6 +78,33 @@ public class RouterController {
      */
     @GetMapping("/cloud/getMetadata")
     public String getMetadataByCloud(boolean exit) {
-        return restTemplate.getForObject("http://" + downServiceName + "/router/metadata?exit=" + exit, String.class);
+        return restTemplate.getForObject(URL_PREFIX + downServiceName + "/router/metadata?exit=" + exit, String.class);
+    }
+
+    /**
+     * 获取泳道信息
+     *
+     * @param name name
+     * @param id id
+     * @param enabled enabled
+     * @return 泳道信息
+     */
+    @GetMapping("/cloud/getLane")
+    public Map<String, Object> getLaneByCloud(@RequestParam(value = "name", defaultValue = "") String name,
+            @RequestParam(value = "id", defaultValue = "0") int id,
+            @RequestParam(value = "enabled", defaultValue = "false") boolean enabled) {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> map = restTemplate.getForObject(URL_PREFIX + downServiceName + "/router/lane", Map.class);
+        if (map != null) {
+            result.putAll(map);
+        }
+        result.put(applicationName, getMetadata());
+        return result;
+    }
+
+    private Map<String, Object> getMetadata() {
+        Map<String, Object> meta = new HashMap<>();
+        meta.put("version", version);
+        return meta;
     }
 }

@@ -17,16 +17,20 @@
 package com.huaweicloud.sermant.router.config.utils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
+import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+import com.huaweicloud.sermant.router.config.entity.EntireRule;
 import com.huaweicloud.sermant.router.config.entity.Match;
 import com.huaweicloud.sermant.router.config.entity.MatchRule;
+import com.huaweicloud.sermant.router.config.entity.Protocol;
 import com.huaweicloud.sermant.router.config.entity.Route;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.entity.Rule;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,6 +45,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * 路由工具类
@@ -53,62 +58,84 @@ public class RuleUtils {
 
     private static final Set<String> MATCH_KEYS = new CopyOnWriteArraySet<>();
 
+    private static final Set<String> GLOBAL_MATCH_KEYS = new CopyOnWriteArraySet<>();
+
     private static final Map<String, Set<String>> SERVICE_MATCH_KEYS = new ConcurrentHashMap<>();
+
+    private static final Set<String> INJECT_TAGS = new CopyOnWriteArraySet<>();
+
+    private static final Map<String, Set<String>> SERVICE_INJECT_TAGS = new ConcurrentHashMap<>();
 
     private static final int ONO_HUNDRED = 100;
 
-    private RuleUtils() {
-    }
+    private static final String VERSION = "version";
 
-    /**
-     * 获取目标规则
-     *
-     * @param configuration 路由配置
-     * @param targetService 目标服务
-     * @param path dubbo接口名/url路径
-     * @param serviceName 本服务服务名
-     * @return 目标规则
-     */
-    public static List<Rule> getRules(RouterConfiguration configuration, String targetService, String path,
-        String serviceName) {
-        if (RouterConfiguration.isInValid(configuration)) {
-            return Collections.emptyList();
-        }
-        Map<String, List<Rule>> routeRule = configuration.getRouteRule();
-        if (CollectionUtils.isEmpty(routeRule)) {
-            return Collections.emptyList();
-        }
-        List<Rule> rules = routeRule.get(targetService);
-        if (CollectionUtils.isEmpty(rules)) {
-            return Collections.emptyList();
-        }
-        List<Rule> list = new ArrayList<>();
-        for (Rule rule : rules) {
-            if (isTargetRule(rule, path, serviceName)) {
-                list.add(rule);
-            }
-        }
-        return list;
+    private static final String ZONE = "zone";
+
+    private static final RouterConfig ROUTER_CONFIG = PluginConfigManager.getConfig(RouterConfig.class);
+
+    private RuleUtils() {
     }
 
     /**
      * 获取所有标签
      *
      * @param rules 路由规则
-     * @param isReplaceDash 是否需要替换破折号为点号（dubbo需要）
      * @return 标签
      */
-    public static List<Map<String, String>> getTags(List<Rule> rules, boolean isReplaceDash) {
+    public static List<Map<String, String>> getTags(List<Rule> rules) {
         if (CollectionUtils.isEmpty(rules)) {
             return Collections.emptyList();
         }
         List<Map<String, String>> tags = new ArrayList<>();
         for (Rule rule : rules) {
             for (Route route : rule.getRoute()) {
-                tags.add(replaceDash(route.getTags(), isReplaceDash));
+                tags.add(route.getTags());
             }
         }
         return tags;
+    }
+
+    /**
+     * 获取具体规则
+     *
+     * @param configuration 路由标签缓存
+     * @param targetService 目标服务
+     * @param kind 规则类型
+     * @return 规则列表
+     */
+    public static List<Rule> getRules(RouterConfiguration configuration, String targetService, String kind) {
+        Map<String, Map<String, List<Rule>>> serviceRouteRule = configuration.getRouteRule();
+        if (CollectionUtils.isEmpty(serviceRouteRule)) {
+            return getGlobalRule(configuration, kind);
+        }
+
+        Map<String, List<Rule>> serviceRuleMap = serviceRouteRule.get(kind);
+        if (CollectionUtils.isEmpty(serviceRuleMap)) {
+            return getGlobalRule(configuration, kind);
+        }
+
+        List<Rule> rules = serviceRuleMap.get(targetService);
+        if (CollectionUtils.isEmpty(rules)) {
+            return getGlobalRule(configuration, kind);
+        }
+        return rules;
+    }
+
+    /**
+     * 获取全局规则
+     *
+     * @param configuration 路由标签缓存
+     * @param kind 规则类型
+     * @return 规则列表
+     */
+    public static List<Rule> getGlobalRule(RouterConfiguration configuration, String kind) {
+        Map<String, List<Rule>> globalRule = configuration.getGlobalRule();
+        if (CollectionUtils.isEmpty(globalRule)) {
+            return Collections.emptyList();
+        }
+
+        return globalRule.getOrDefault(kind, Collections.emptyList());
     }
 
     /**
@@ -118,12 +145,37 @@ public class RuleUtils {
      */
     public static void initMatchKeys(RouterConfiguration configuration) {
         MATCH_KEYS.clear();
+        INJECT_TAGS.clear();
         if (RouterConfiguration.isInValid(configuration)) {
             return;
         }
-        Map<String, List<Rule>> routeRules = configuration.getRouteRule();
-        for (List<Rule> rules : routeRules.values()) {
-            addKeys(rules, MATCH_KEYS);
+        Map<String, List<Rule>> routeRules = configuration.getRouteRule().get(RouterConstant.FLOW_MATCH_KIND);
+        if (!CollectionUtils.isEmpty(routeRules)) {
+            for (List<Rule> rules : routeRules.values()) {
+                addKeys(rules, MATCH_KEYS);
+            }
+        }
+        Map<String, List<Rule>> laneRules = configuration.getRouteRule().get(RouterConstant.LANE_MATCH_KIND);
+        if (!CollectionUtils.isEmpty(laneRules)) {
+            for (List<Rule> rules : routeRules.values()) {
+                addTags(rules, INJECT_TAGS);
+            }
+        }
+    }
+
+    /**
+     * 更新全局的header key
+     *
+     * @param configuration 路由配置
+     */
+    public static void initGlobalKeys(RouterConfiguration configuration) {
+        GLOBAL_MATCH_KEYS.clear();
+        if (RouterConfiguration.isInValid(configuration)) {
+            return;
+        }
+        List<Rule> rules = configuration.getGlobalRule().get(RouterConstant.FLOW_MATCH_KIND);
+        if (!CollectionUtils.isEmpty(rules)) {
+            addKeys(rules, GLOBAL_MATCH_KEYS);
         }
     }
 
@@ -131,16 +183,43 @@ public class RuleUtils {
      * 更新header key
      *
      * @param serviceName 服务名
-     * @param rules 路由规则
+     * @param entireRules 整体路由规则
      */
-    public static void updateMatchKeys(String serviceName, List<Rule> rules) {
-        if (CollectionUtils.isEmpty(rules)) {
+    public static void updateMatchKeys(String serviceName, List<EntireRule> entireRules) {
+        if (CollectionUtils.isEmpty(entireRules)) {
             SERVICE_MATCH_KEYS.remove(serviceName);
+            SERVICE_INJECT_TAGS.remove(serviceName);
             return;
         }
-        Set<String> keys = SERVICE_MATCH_KEYS.computeIfAbsent(serviceName, value -> new CopyOnWriteArraySet<>());
-        keys.clear();
-        addKeys(rules, keys);
+        List<Rule> flowRules = new ArrayList<>();
+        List<Rule> laneRules = new ArrayList<>();
+        boolean initFlowRules = false;
+        boolean initLaneRules = false;
+        for (EntireRule entireRule : entireRules) {
+            if (RouterConstant.FLOW_MATCH_KIND.equals(entireRule.getKind()) && !initFlowRules) {
+                flowRules = entireRule.getRules();
+                initFlowRules = true;
+                continue;
+            }
+            if (RouterConstant.LANE_MATCH_KIND.equals(entireRule.getKind()) && !initLaneRules) {
+                laneRules.addAll(entireRule.getRules());
+                initLaneRules = true;
+            }
+        }
+        if (CollectionUtils.isEmpty(flowRules)) {
+            SERVICE_MATCH_KEYS.remove(serviceName);
+        } else {
+            Set<String> keys = SERVICE_MATCH_KEYS.computeIfAbsent(serviceName, value -> new CopyOnWriteArraySet<>());
+            keys.clear();
+            addKeys(flowRules, keys);
+        }
+        if (CollectionUtils.isEmpty(laneRules)) {
+            SERVICE_INJECT_TAGS.remove(serviceName);
+        } else {
+            Set<String> tags = SERVICE_INJECT_TAGS.computeIfAbsent(serviceName, value -> new CopyOnWriteArraySet<>());
+            tags.clear();
+            addTags(laneRules, tags);
+        }
     }
 
     /**
@@ -150,7 +229,21 @@ public class RuleUtils {
      */
     public static Set<String> getMatchKeys() {
         Set<String> keys = new HashSet<>(MATCH_KEYS);
+        keys.addAll(GLOBAL_MATCH_KEYS);
         for (Set<String> value : SERVICE_MATCH_KEYS.values()) {
+            keys.addAll(value);
+        }
+        return Collections.unmodifiableSet(keys);
+    }
+
+    /**
+     * 获取染色的key
+     *
+     * @return 染色的key
+     */
+    public static Set<String> getMatchTags() {
+        Set<String> keys = new HashSet<>(INJECT_TAGS);
+        for (Set<String> value : SERVICE_INJECT_TAGS.values()) {
             keys.addAll(value);
         }
         return Collections.unmodifiableSet(keys);
@@ -160,10 +253,9 @@ public class RuleUtils {
      * 选取路由
      *
      * @param routes 路由规则
-     * @param isReplaceDash 是否需要替换破折号为点号（dubbo需要）
      * @return 目标路由
      */
-    public static RouteResult<?> getTargetTags(List<Route> routes, boolean isReplaceDash) {
+    public static RouteResult<?> getTargetTags(List<Route> routes) {
         List<Map<String, String>> tags = new ArrayList<>();
         int begin = 1;
         int num = ThreadLocalRandom.current().nextInt(ONO_HUNDRED) + 1;
@@ -172,7 +264,7 @@ public class RuleUtils {
             if (weight == null) {
                 continue;
             }
-            Map<String, String> currentTag = replaceDash(route.getTags(), isReplaceDash);
+            Map<String, String> currentTag = route.getTags();
             if (num >= begin && num <= begin + weight - 1) {
                 return new RouteResult<>(true, currentTag);
             }
@@ -183,35 +275,179 @@ public class RuleUtils {
     }
 
     /**
+     * 选取泳道标记
+     *
+     * @param routes 泳道规则
+     * @return 泳道标记
+     */
+    public static Map<String, List<String>> getTargetLaneTags(List<Route> routes) {
+        if (CollectionUtils.isEmpty(routes)) {
+            return Collections.emptyMap();
+        }
+        int begin = 1;
+        int num = ThreadLocalRandom.current().nextInt(ONO_HUNDRED) + 1;
+        for (Route route : routes) {
+            Integer weight = route.getWeight();
+            if (weight == null) {
+                continue;
+            }
+            if (num >= begin && num <= begin + weight - 1) {
+                return packageTags(route.getInjectTags());
+            }
+            begin += weight;
+        }
+        return Collections.emptyMap();
+    }
+
+    private static Map<String, List<String>> packageTags(Map<String, String> tags) {
+        Map<String, List<String>> map = new HashMap<>();
+        tags.forEach((key, value) -> map.put(key, Collections.singletonList(value)));
+        return map;
+    }
+
+    /**
      * 去掉无效的规则
      *
      * @param list 路由规则
+     * @param isReplaceDash 是否需要把"-"替换成"."
      */
-    public static void removeInvalidRules(List<Rule> list) {
+    public static void removeInvalidRules(List<EntireRule> list, boolean isReplaceDash) {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        Iterator<Rule> iterator = list.iterator();
-        while (iterator.hasNext()) {
-            Rule rule = iterator.next();
-            List<Route> routes = rule.getRoute();
+        Iterator<EntireRule> entireIterator = list.iterator();
+        while (entireIterator.hasNext()) {
+            EntireRule entireRule = entireIterator.next();
+            String kind = entireRule.getKind();
 
-            // 去掉没有配置路由的规则
-            if (CollectionUtils.isEmpty(routes)) {
-                LOGGER.warning("Routes are empty, rule will be removed.");
-                iterator.remove();
+            // 去掉没配置规则，或kind配置不正确的规则
+            if (CollectionUtils.isEmpty(entireRule.getRules()) || !RouterConstant.MATCH_KIND_LIST.contains(kind)) {
+                entireIterator.remove();
                 continue;
             }
 
-            // 去掉无效的规则
-            removeInvalidMatch(rule.getMatch());
+            Iterator<Rule> ruleIterator = entireRule.getRules().iterator();
+            while (ruleIterator.hasNext()) {
+                Rule rule = ruleIterator.next();
+                List<Route> routes = rule.getRoute();
 
-            // 无attachments规则，将headers规则更新到attachments规则
-            setAttachmentsByHeaders(rule.getMatch());
+                // 去掉没有配置路由的规则
+                if (CollectionUtils.isEmpty(routes)) {
+                    LOGGER.warning("Routes are empty, rule will be removed.");
+                    ruleIterator.remove();
+                    continue;
+                }
 
-            // 去掉无效的路由
-            removeInvalidRoute(routes);
+                // 去掉无效的路由和修复同标签规则的路由
+                removeInvalidRoute(routes, kind, isReplaceDash);
+
+                // 去掉全是无效路由的规则
+                if (CollectionUtils.isEmpty(routes)) {
+                    LOGGER.warning("Routes are invalid, rule will be removed.");
+                    ruleIterator.remove();
+                    continue;
+                }
+
+                if (RouterConstant.FLOW_MATCH_KIND.equals(kind)) {
+                    // 去掉无效的规则
+                    removeInvalidMatch(rule.getMatch());
+
+                    // 无attachments规则，将headers规则更新到attachments规则
+                    setAttachmentsByHeaders(rule.getMatch());
+                    continue;
+                }
+
+                if (RouterConstant.TAG_MATCH_KIND.equals(kind)) {
+                    // 去掉无效的规则
+                    removeInvalidTagMatch(rule.getMatch());
+                    continue;
+                }
+
+                if (RouterConstant.LANE_MATCH_KIND.equals(kind)) {
+                    // 去掉无效的规则
+                    removeInvalidLaneMatch(rule.getMatch());
+                }
+            }
+
+            // 去掉全是无效规则的配置
+            if (CollectionUtils.isEmpty(entireRule.getRules())) {
+                entireIterator.remove();
+            }
         }
+    }
+
+    /**
+     * 获取目标规则
+     *
+     * @param configuration 路由配置
+     * @param method 方法名
+     * @param path dubbo接口名/url路径
+     * @param serviceName 本服务服务名
+     * @param protocol 获取哪种协议的规则
+     * @return 目标规则
+     */
+    public static List<Rule> getLaneRules(RouterConfiguration configuration, String method, String path,
+            String serviceName, Protocol protocol) {
+        if (RouterConfiguration.isInValid(configuration)) {
+            return Collections.emptyList();
+        }
+        Map<String, List<Rule>> routeRule = configuration.getRouteRule().get(RouterConstant.LANE_MATCH_KIND);
+        if (CollectionUtils.isEmpty(routeRule)) {
+            return Collections.emptyList();
+        }
+        List<Rule> rules = routeRule.get(serviceName);
+        if (CollectionUtils.isEmpty(rules)) {
+            return Collections.emptyList();
+        }
+        List<Rule> list = new ArrayList<>();
+        for (Rule rule : rules) {
+            if (isTargetLaneRule(rule, method, path, protocol)) {
+                list.add(rule);
+            }
+        }
+        return list;
+    }
+
+    private static boolean isTargetLaneRule(Rule rule, String method, String path, Protocol protocol) {
+        if (rule == null) {
+            return false;
+        }
+        Match match = rule.getMatch();
+        if (match != null) {
+            if (protocol != match.getProtocol()) {
+                return false;
+            }
+            String matchPath = match.getPath();
+            if (StringUtils.isExist(matchPath)) {
+                if (!matchPath.equals(path) && !isPatternMatches(matchPath, path)) {
+                    return false;
+                }
+            }
+            String matchMethod = match.getMethod();
+            if (StringUtils.isExist(matchMethod)) {
+                // http方法不应区分大小写
+                if (!equals(matchMethod, method, protocol == Protocol.HTTP)) {
+                    return false;
+                }
+            }
+        }
+        return !CollectionUtils.isEmpty(rule.getRoute());
+    }
+
+    private static boolean isPatternMatches(String regex, String path) {
+        try {
+            return Pattern.matches(regex, path);
+        } catch (PatternSyntaxException ignored) {
+            // 正则表达式不符合，返回false
+            return false;
+        }
+    }
+
+    private static boolean equals(String str1, String str2, boolean ignoreCase) {
+        if (ignoreCase) {
+            return str1.equalsIgnoreCase(str2);
+        }
+        return str1.equals(str2);
     }
 
     /**
@@ -229,6 +465,33 @@ public class RuleUtils {
     }
 
     /**
+     * 去掉无效的tag匹配规则
+     *
+     * @param match 匹配规则
+     */
+    private static void removeInvalidTagMatch(Match match) {
+        if (match == null) {
+            return;
+        }
+        removeInvalidMatchRule(match.getTags());
+    }
+
+    /**
+     * 去掉无效的lane匹配规则
+     *
+     * @param match 匹配规则
+     */
+    private static void removeInvalidLaneMatch(Match match) {
+        if (match == null) {
+            return;
+        }
+        removeInvalidMatchRule(match.getHeaders());
+        removeInvalidMatchRule(match.getParameters());
+        removeInvalidMatchRule(match.getAttachments());
+        removeInvalidMatchRule(match.getArgs());
+    }
+
+    /**
      * 将headers规则写入attachments
      *
      * @param match headers匹配规则
@@ -243,12 +506,12 @@ public class RuleUtils {
     }
 
     /**
-     * 去掉无效的路由
+     * 去掉无效的路由和修复同标签规则的路由
      *
      * @param routeList 路由
      */
-    private static void removeInvalidRoute(List<Route> routeList) {
-        boolean removed = routeList.removeIf(RuleUtils::isInvalidRoute);
+    private static void removeInvalidRoute(List<Route> routeList, String kind, boolean isReplaceDash) {
+        boolean removed = routeList.removeIf(route -> isInvalidRoute(route, kind, isReplaceDash));
         if (removed) {
             LOGGER.warning("Some invalid routes had been removed, please check your router configuration.");
         }
@@ -263,66 +526,51 @@ public class RuleUtils {
         }
     }
 
-    private static boolean isTargetRule(Rule rule, String path, String serviceName) {
-        if (rule == null) {
-            return false;
-        }
-        Match match = rule.getMatch();
-        if (match != null) {
-            String source = match.getSource();
-            if (StringUtils.isExist(source) && !source.equals(serviceName)) {
-                return false;
-            }
-            String matchPath = match.getPath();
-            if (!CollectionUtils.isEmpty(match.getAttachments()) || !CollectionUtils.isEmpty(match.getHeaders())) {
-                if (StringUtils.isExist(matchPath) && !Pattern.matches(matchPath, getInterfaceName(path))) {
-                    return false;
-                }
-            } else if (!CollectionUtils.isEmpty(match.getArgs())) {
-                if (StringUtils.isBlank(matchPath) || !matchPath.equals(path)) {
-                    return false;
-                }
-            }
-        }
-        return !CollectionUtils.isEmpty(rule.getRoute());
-    }
-
-    /**
-     * 在attachment和header规则匹配是，删除接口中的方法名
-     *
-     * @param path path
-     * @return 去除方法名的path
-     */
-    private static String getInterfaceName(String path) {
-        String[] pathList = path.split(":");
-        pathList[0] = delMethodName(pathList[0]);
-        return String.join(":", pathList);
-    }
-
-    /**
-     * 删除方法名
-     *
-     * @param path path
-     * @return 删除方法名的path
-     */
-    private static String delMethodName(String path) {
-        ArrayList<String> list = new ArrayList<>(Arrays.asList(path.split("\\.")));
-        list.remove(list.size() - 1);
-        return String.join(".", list);
-    }
-
     private static boolean isInvalidType(Entry<String, List<MatchRule>> entry) {
         return StringUtils.isBlank(entry.getKey()) || CollectionUtils.isEmpty(entry.getValue());
     }
 
     private static boolean isInvalidMatchRule(MatchRule matchRule) {
         return matchRule == null || matchRule.getValueMatch() == null
-            || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
-            || matchRule.getValueMatch().getMatchStrategy() == null;
+                || CollectionUtils.isEmpty(matchRule.getValueMatch().getValues())
+                || matchRule.getValueMatch().getMatchStrategy() == null;
     }
 
-    private static boolean isInvalidRoute(Route route) {
-        return route == null || CollectionUtils.isEmpty(route.getTags());
+    private static boolean isInvalidRoute(Route route, String kind, boolean isReplaceDash) {
+        if (route == null) {
+            return true;
+        }
+        if (RouterConstant.LANE_MATCH_KIND.equals(kind)) {
+            return route.getWeight() == null || CollectionUtils.isEmpty(route.getInjectTags());
+        }
+
+        // 修正tag配置为保留字段CONSUMER_TAG的规则, 并将其权重设置为100
+        Map<String, String> tags = route.getTags();
+        if (CollectionUtils.isEmpty(tags)) {
+            return true;
+        }
+        for (String key : tags.keySet()) {
+            if (!RouterConstant.CONSUMER_TAG.equals(tags.get(key))) {
+                continue;
+            }
+            if (VERSION.equals(key)) {
+                tags.put(key, ROUTER_CONFIG.getRouterVersion());
+                route.setWeight(ONO_HUNDRED);
+                continue;
+            }
+            if (ZONE.equals(key)) {
+                tags.put(key, ROUTER_CONFIG.getZone());
+                route.setWeight(ONO_HUNDRED);
+                continue;
+            }
+            Map<String, String> parameters = ROUTER_CONFIG.getParameters();
+            if (!CollectionUtils.isEmpty(parameters)) {
+                tags.put(key, parameters.get(key));
+                route.setWeight(ONO_HUNDRED);
+            }
+        }
+        route.setTags(replaceDash(tags, isReplaceDash));
+        return route.getWeight() == null;
     }
 
     private static void addKeys(List<Rule> rules, Set<String> keys) {
@@ -346,15 +594,30 @@ public class RuleUtils {
         }
     }
 
+    private static void addTags(List<Rule> rules, Set<String> keys) {
+        for (Rule rule : rules) {
+            List<Route> routes = rule.getRoute();
+            if (CollectionUtils.isEmpty(routes)) {
+                continue;
+            }
+            for (Route route : routes) {
+                Map<String, String> tags = route.getInjectTags();
+                if (!CollectionUtils.isEmpty(tags)) {
+                    keys.addAll(tags.keySet());
+                }
+            }
+        }
+    }
+
     private static Map<String, String> replaceDash(Map<String, String> tags, boolean isReplaceDash) {
         if (!isReplaceDash) {
             return tags;
         }
         Map<String, String> map = new HashMap<>();
         tags.forEach((key, value) -> {
-            if (key != null && key.contains("-")) {
+            if (key != null && key.contains(RouterConstant.DASH)) {
                 // dubbo会把key中的"-"替换成"."
-                map.put(key.replace("-", "."), value);
+                map.put(key.replace(RouterConstant.DASH, RouterConstant.POINT), value);
             } else {
                 map.put(key, value);
             }

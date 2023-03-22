@@ -14,32 +14,42 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.router.spring.strategy.instance;
+package com.huaweicloud.sermant.router.common.request;
 
-import com.huaweicloud.sermant.router.config.strategy.AbstractInstanceStrategy;
+import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
 
 /**
- * 匹配同区域的实例
+ * 请求
  *
- * @param <I> 实例泛型
  * @author provenceee
- * @since 2022-09-27
+ * @since 2022-07-12
  */
-public class ZoneInstanceStrategy<I> extends AbstractInstanceStrategy<I, String> {
+public class RequestTag {
+    private final Map<String, List<String>> tag;
+
     /**
-     * 匹配同区域的实例
+     * 构造方法
      *
-     * @param instance 实例
-     * @param zone 区域
-     * @param mapper 获取metadata的方法
-     * @return 是否匹配
+     * @param tag 请求标记 header/attachment
      */
-    @Override
-    public boolean isMatch(I instance, String zone, Function<I, Map<String, String>> mapper) {
-        return Objects.equals(getMetadata(instance, mapper).get(ZONE_KEY), zone);
+    public RequestTag(Map<String, List<String>> tag) {
+        this.tag = CollectionUtils.isEmpty(tag) ? new HashMap<>() : tag;
+    }
+
+    public Map<String, List<String>> getTag() {
+        return tag;
+    }
+
+    /**
+     * 增加请求标记
+     *
+     * @param map 请求标记
+     */
+    public void addTag(Map<String, List<String>> map) {
+        this.tag.putAll(map);
     }
 }

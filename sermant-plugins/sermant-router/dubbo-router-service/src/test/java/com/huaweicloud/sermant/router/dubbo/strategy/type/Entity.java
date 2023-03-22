@@ -25,6 +25,8 @@ package com.huaweicloud.sermant.router.dubbo.strategy.type;
 public class Entity {
     private Boolean enabled;
 
+    private boolean exist;
+
     private String test;
 
     public Boolean isEnabled() {
@@ -33,6 +35,14 @@ public class Entity {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isExist() {
+        return exist;
+    }
+
+    public void setExist(boolean exist) {
+        this.exist = exist;
     }
 
     public String getTest() {

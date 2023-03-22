@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 区域路由测试
+ * 基于静态配置文件配置标签的路由测试(非下发动态配置规则)
  *
  * @author provenceee
  * @since 2022-11-02
@@ -114,8 +114,8 @@ public class RouterTest {
 
         // 停掉无路由标签的实例
         Assert.assertThrows(Exception.class, () -> REST_TEMPLATE
-            .exchange(FEIGN_BOOT_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
-                String.class));
+                .exchange(FEIGN_BOOT_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
+                        String.class));
 
         // 等待无路由标签的实例下线
         headers.clear();
@@ -125,7 +125,7 @@ public class RouterTest {
                 exchange = REST_TEMPLATE.exchange(FEIGN_BOOT_BASE_PATH + false, HttpMethod.GET, entity, String.class);
                 if (Objects.requireNonNull(exchange.getBody()).contains("Test-Env")) {
                     exchange = REST_TEMPLATE
-                        .exchange(FEIGN_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
+                            .exchange(FEIGN_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
                     if (Objects.requireNonNull(exchange.getBody()).contains("Test-Env")) {
                         // 下游实例已下线
                         break;
@@ -137,40 +137,25 @@ public class RouterTest {
             TimeUnit.SECONDS.sleep(1);
         }
 
-        // 测试没有路由请求头时，切换至无路由标签的实例，如果都有标签，则随机选取
+        // 停掉标签为Test-Env1=env-002的实例
         headers.clear();
-        entity = new HttpEntity<>(null, headers);
-        for (int i = 0; i < TIMES; i++) {
-            exchange = REST_TEMPLATE.exchange(FEIGN_BOOT_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            String body = Objects.requireNonNull(exchange.getBody());
-
-            // 优先选取同az实例
-            Assert.assertTrue(body.contains("Test-Env") && body.contains(zone));
-
-            exchange = REST_TEMPLATE.exchange(FEIGN_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            body = Objects.requireNonNull(exchange.getBody());
-
-            // 优先选取同az实例
-            Assert.assertTrue(body.contains("Test-Env") && body.contains(zone));
-        }
-
-        // 停掉az为bar的带有标签实例
+        headers.add("Test-Env1", "env-002");
         Assert.assertThrows(Exception.class, () -> REST_TEMPLATE
-            .exchange(FEIGN_BOOT_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
-                String.class));
+                .exchange(FEIGN_BOOT_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, headers),
+                        String.class));
 
-        // 等待az为bar的带有标签实例下线
+        // 等待标签为Test-Env1=env-002的实例下线
         headers.clear();
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < WAIT_SECONDS; i++) {
             try {
                 exchange = REST_TEMPLATE.exchange(FEIGN_BOOT_BASE_PATH + false, HttpMethod.GET, entity, String.class);
                 String body = Objects.requireNonNull(exchange.getBody());
-                if (body.contains("Test-Env") && !body.contains(zone)) {
+                if (!body.contains("Test-Env1")) {
                     exchange = REST_TEMPLATE
-                        .exchange(FEIGN_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
+                            .exchange(FEIGN_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
                     body = Objects.requireNonNull(exchange.getBody());
-                    if (body.contains("Test-Env") && !body.contains(zone)) {
+                    if (!body.contains("Test-Env1")) {
                         // 下游实例已下线
                         break;
                     }
@@ -185,18 +170,7 @@ public class RouterTest {
         headers.clear();
         headers.add("Test-Env", "env-005");
         Assert.assertThrows(Exception.class, () -> REST_TEMPLATE.exchange(FEIGN_BOOT_BASE_PATH + false, HttpMethod.GET,
-            new HttpEntity<>(null, new HttpHeaders(headers)), String.class));
-
-        // 测试同az实例下线时，切换至其它az实例
-        headers.clear();
-        entity = new HttpEntity<>(null, headers);
-        for (int i = 0; i < TIMES; i++) {
-            exchange = REST_TEMPLATE.exchange(FEIGN_BOOT_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains(zone));
-
-            exchange = REST_TEMPLATE.exchange(FEIGN_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains(zone));
-        }
+                new HttpEntity<>(null, new HttpHeaders(headers)), String.class));
     }
 
     /**
@@ -234,8 +208,8 @@ public class RouterTest {
 
         // 停掉无路由标签的实例
         Assert.assertThrows(Exception.class, () -> REST_TEMPLATE
-            .exchange(REST_CLOUD_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
-                String.class));
+                .exchange(REST_CLOUD_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
+                        String.class));
 
         // 等待无路由标签的实例下线
         headers.clear();
@@ -243,7 +217,7 @@ public class RouterTest {
         for (int i = 0; i < WAIT_SECONDS; i++) {
             try {
                 exchange = REST_TEMPLATE
-                    .exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
+                        .exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
                 if (Objects.requireNonNull(exchange.getBody()).contains("Test-Env")) {
                     // 下游实例已下线
                     break;
@@ -254,32 +228,21 @@ public class RouterTest {
             TimeUnit.SECONDS.sleep(1);
         }
 
-        // 测试没有路由请求头时，切换至无路由标签的实例，如果都有标签，则随机选取
+        // 停掉标签为Test-Env1=env-002的实例
         headers.clear();
-        entity = new HttpEntity<>(null, headers);
-        for (int i = 0; i < TIMES; i++) {
-            exchange = REST_TEMPLATE.exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            String body = Objects.requireNonNull(exchange.getBody());
-
-            // 优先选取同az实例
-            Assert.assertTrue(body.contains("Test-Env") && body.contains(zone));
-        }
-
-        // 停掉az为bar的带有标签实例
+        headers.add("Test-Env1", "env-002");
         Assert.assertThrows(Exception.class, () -> REST_TEMPLATE
-            .exchange(REST_CLOUD_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
-                String.class));
+                .exchange(REST_CLOUD_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, headers),
+                        String.class));
 
-        // 等待az为bar的带有标签实例下线
+        // 等待标签为Test-Env1=env-002的实例下线
         headers.clear();
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < WAIT_SECONDS; i++) {
             try {
-                exchange = REST_TEMPLATE
-                    .exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
+                exchange = REST_TEMPLATE.exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
                 String body = Objects.requireNonNull(exchange.getBody());
-                if (body.contains("Test-Env") && !body.contains(zone)) {
-                    // 下游实例已下线
+                if (!body.contains("Test-Env1")) {
                     break;
                 }
             } catch (Exception ignored) {
@@ -292,14 +255,6 @@ public class RouterTest {
         headers.clear();
         headers.add("Test-Env", "env-005");
         Assert.assertThrows(Exception.class, () -> REST_TEMPLATE.exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET,
-            new HttpEntity<>(null, new HttpHeaders(headers)), String.class));
-
-        // 测试同az实例下线时，切换至其它az实例
-        headers.clear();
-        entity = new HttpEntity<>(null, headers);
-        for (int i = 0; i < TIMES; i++) {
-            exchange = REST_TEMPLATE.exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains(zone));
-        }
+                new HttpEntity<>(null, new HttpHeaders(headers)), String.class));
     }
 }

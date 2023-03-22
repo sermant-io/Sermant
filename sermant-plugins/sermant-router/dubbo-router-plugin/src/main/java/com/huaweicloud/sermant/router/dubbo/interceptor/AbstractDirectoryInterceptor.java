@@ -45,7 +45,7 @@ public class AbstractDirectoryInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext after(ExecuteContext context) {
         context.changeResult(abstractDirectoryService.selectInvokers(context.getObject(), context.getArguments(),
-            context.getResult()));
+                context.getResult()));
         return context;
     }
 }

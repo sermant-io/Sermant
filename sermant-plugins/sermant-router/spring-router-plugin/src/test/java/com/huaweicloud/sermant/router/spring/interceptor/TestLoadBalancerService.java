@@ -16,10 +16,10 @@
 
 package com.huaweicloud.sermant.router.spring.interceptor;
 
+import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 测试负载均衡服务
@@ -29,17 +29,11 @@ import java.util.Map;
  */
 public class TestLoadBalancerService implements LoadBalancerService {
     @Override
-    public List<Object> getTargetInstances(String targetName, List<Object> instances, String path,
-        Map<String, List<String>> header) {
-        if (instances.size() > 1) {
-            instances.remove(0);
+    public List<Object> getTargetInstances(String targetName, List<Object> instances, RequestData requestData) {
+        if (requestData == null) {
+            return instances;
         }
-        return instances;
-    }
-
-    @Override
-    public List<Object> getZoneInstances(String targetName, List<Object> instances, boolean enabledZoneRouter) {
-        if (enabledZoneRouter && instances.size() > 1) {
+        if (instances.size() > 1) {
             instances.remove(0);
         }
         return instances;

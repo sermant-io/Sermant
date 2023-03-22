@@ -78,10 +78,12 @@ public class ReflectUtils {
      */
     public static <T extends AccessibleObject> T getAccessibleObject(T object) {
         return (T) ACCESSIBLE_OBJECT_MAP.computeIfAbsent(object.toString(), key ->
-            AccessController.doPrivileged((PrivilegedAction<T>) () -> {
-                object.setAccessible(true);
-                return object;
-            }));
+                AccessController.doPrivileged((PrivilegedAction<T>) () -> {
+                    if (!object.isAccessible()) {
+                        object.setAccessible(true);
+                    }
+                    return object;
+                }));
     }
 
     /**
@@ -92,7 +94,8 @@ public class ReflectUtils {
      * @return 值
      */
     public static String invokeWithNoneParameterAndReturnString(Object obj, String name) {
-        return (String) invokeWithNoneParameter(obj, name);
+        Object result = invokeWithNoneParameter(obj, name);
+        return result == null ? null : String.valueOf(result);
     }
 
     /**
@@ -120,13 +123,13 @@ public class ReflectUtils {
     }
 
     private static Optional<Object> invoke(Class<?> invokeClass, Object obj, String name, Object parameter,
-        Class<?> parameterClass) {
+            Class<?> parameterClass) {
         Optional<Method> method = METHOD_MAP.computeIfAbsent(buildMethodKey(invokeClass, name, parameterClass), key -> {
             try {
                 if (parameterClass == null) {
-                    return Optional.of(invokeClass.getMethod(name));
+                    return Optional.of(getAccessibleObject(invokeClass.getMethod(name)));
                 }
-                return Optional.of(invokeClass.getMethod(name, parameterClass));
+                return Optional.of(getAccessibleObject(invokeClass.getMethod(name, parameterClass)));
             } catch (NoSuchMethodException ignored) {
                 // 因版本的原因，有可能会找不到方法，所以可以忽略这些错误
             }
@@ -168,7 +171,7 @@ public class ReflectUtils {
 
         // 初始化StringBuilder的长度是为了性能
         StringBuilder sb = new StringBuilder(
-            className.length() + methodName.length() + parameterClassName.length() + EXTRA_LENGTH_FOR_METHOD_KEY);
+                className.length() + methodName.length() + parameterClassName.length() + EXTRA_LENGTH_FOR_METHOD_KEY);
         sb.append(className).append("#").append(methodName).append("(").append(parameterClassName).append(")");
         return sb.toString();
     }

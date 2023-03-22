@@ -17,9 +17,9 @@
 package com.huaweicloud.sermant.router.spring.service;
 
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.router.common.request.RequestData;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * BaseLoadBalancerInterceptor服务
@@ -33,20 +33,8 @@ public interface LoadBalancerService extends PluginService {
      *
      * @param targetName 目标服务
      * @param instances 实例
-     * @param path 请求路径
-     * @param header 请求头
+     * @param requestData 请求数据
      * @return 目标实例
      */
-    List<Object> getTargetInstances(String targetName, List<Object> instances, String path,
-        Map<String, List<String>> header);
-
-    /**
-     * 获取相同区域实例
-     *
-     * @param targetName 目标服务
-     * @param instances 实例
-     * @param enabledZoneRouter 是否开启区域路由
-     * @return 相同区域实例
-     */
-    List<Object> getZoneInstances(String targetName, List<Object> instances, boolean enabledZoneRouter);
+    List<Object> getTargetInstances(String targetName, List<Object> instances, RequestData requestData);
 }

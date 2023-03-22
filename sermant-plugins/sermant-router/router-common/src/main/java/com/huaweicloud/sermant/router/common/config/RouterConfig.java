@@ -47,24 +47,6 @@ public class RouterConfig implements PluginConfig {
     private String zone;
 
     /**
-     * 是否开启dubbo区域路由
-     */
-    @ConfigFieldKey("enabled-dubbo-zone-router")
-    private boolean enabledDubboZoneRouter;
-
-    /**
-     * 是否开启spring cloud区域路由
-     */
-    @ConfigFieldKey("enabled-spring-zone-router")
-    private boolean enabledSpringZoneRouter;
-
-    /**
-     * 是否开启服务注册发现插件区域路由
-     */
-    @ConfigFieldKey("enabled-registry-zone-router")
-    private boolean enabledRegistryZoneRouter;
-
-    /**
      * 是否适配注册插件
      */
     @ConfigFieldKey("enabled-registry-plugin-adaptation")
@@ -120,30 +102,6 @@ public class RouterConfig implements PluginConfig {
 
     public void setZone(String zone) {
         this.zone = zone;
-    }
-
-    public boolean isEnabledDubboZoneRouter() {
-        return enabledDubboZoneRouter;
-    }
-
-    public void setEnabledDubboZoneRouter(boolean enabledDubboZoneRouter) {
-        this.enabledDubboZoneRouter = enabledDubboZoneRouter;
-    }
-
-    public boolean isEnabledSpringZoneRouter() {
-        return enabledSpringZoneRouter;
-    }
-
-    public void setEnabledSpringZoneRouter(boolean enabledSpringZoneRouter) {
-        this.enabledSpringZoneRouter = enabledSpringZoneRouter;
-    }
-
-    public boolean isEnabledRegistryZoneRouter() {
-        return enabledRegistryZoneRouter;
-    }
-
-    public void setEnabledRegistryZoneRouter(boolean enabledRegistryZoneRouter) {
-        this.enabledRegistryZoneRouter = enabledRegistryZoneRouter;
     }
 
     public boolean isEnabledRegistryPluginAdaptation() {

@@ -36,4 +36,8 @@
 
     <bean id="metadataServiceImpl" class="com.huaweicloud.integration.service.MetadataServiceImpl"/>
     <dubbo:service interface="com.huaweicloud.integration.service.MetadataService" ref="metadataServiceImpl"/>
+
+    <!-- 泳道测试 -->
+    <bean id="laneServiceImpl" class="com.huaweicloud.integration.service.LaneServiceImpl"/>
+    <dubbo:service interface="com.huaweicloud.integration.service.LaneService" ref="laneServiceImpl"/>
 </beans>

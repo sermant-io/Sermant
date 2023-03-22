@@ -29,7 +29,7 @@ public class BaseLoadBalancerDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "com.netflix.loadbalancer.BaseLoadBalancer";
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.spring.interceptor.BaseLoadBalancerInterceptor";
+            = "com.huaweicloud.sermant.router.spring.interceptor.BaseLoadBalancerInterceptor";
 
     private static final String[] METHOD_NAME = {"getReachableServers", "getAllServers"};
 

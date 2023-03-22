@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.router.spring.interceptor;
+package com.huaweicloud.sermant.router.spring;
 
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -32,7 +33,9 @@ public class TestSpringConfigService implements SpringConfigService {
 
     private String serviceName;
 
-    private boolean invalid;
+    private boolean returnEmptyWhenGetMatchKeys;
+
+    private boolean returnEmptyWhenGetMatchTags;
 
     @Override
     public void init(String cacheName, String serviceName) {
@@ -40,13 +43,26 @@ public class TestSpringConfigService implements SpringConfigService {
         this.serviceName = serviceName;
     }
 
-    public void setInvalid(boolean invalid) {
-        this.invalid = invalid;
+    @Override
+    public Set<String> getMatchKeys() {
+        if (returnEmptyWhenGetMatchKeys) {
+            return Collections.emptySet();
+        }
+        Set<String> keys = new HashSet<>();
+        keys.add("bar");
+        keys.add("foo");
+        return keys;
     }
 
     @Override
-    public Set<String> getMatchKeys() {
-        return Collections.emptySet();
+    public Set<String> getMatchTags() {
+        if (returnEmptyWhenGetMatchTags) {
+            return Collections.emptySet();
+        }
+        Set<String> keys = new HashSet<>();
+        keys.add("bar");
+        keys.add("foo");
+        return keys;
     }
 
     public String getCacheName() {
@@ -55,5 +71,13 @@ public class TestSpringConfigService implements SpringConfigService {
 
     public String getServiceName() {
         return serviceName;
+    }
+
+    public void setReturnEmptyWhenGetMatchKeys(boolean returnEmptyWhenGetMatchKeys) {
+        this.returnEmptyWhenGetMatchKeys = returnEmptyWhenGetMatchKeys;
+    }
+
+    public void setReturnEmptyWhenGetMatchTags(boolean returnEmptyWhenGetMatchTags) {
+        this.returnEmptyWhenGetMatchTags = returnEmptyWhenGetMatchTags;
     }
 }

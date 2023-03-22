@@ -28,9 +28,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 流控测试
@@ -108,6 +116,36 @@ public class Feign15xServiceImpl extends ProviderController implements Feign15xS
             System.exit(0);
         }
         return "I'm " + name + ", my version is " + version + ", my zone is " + zone + ", my parameters is ["
-            + parameters + "].";
+                + parameters + "].";
+    }
+
+    /**
+     * 获取泳道信息
+     *
+     * @return msg
+     */
+    @Override
+    @GetMapping("/lane")
+    public Map<String, Object> getLane() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest();
+        Map<String, String> map = new HashMap<>();
+        Enumeration<?> enumeration = request.getHeaderNames();
+        while (enumeration.hasMoreElements()) {
+            String key = (String) enumeration.nextElement();
+            map.put(key, enumeration2List(request.getHeaders(key)).get(0));
+        }
+        map.put("version", version);
+        Map<String, Object> result = new HashMap<>();
+        result.put(name, map);
+        return result;
+    }
+
+    private List<String> enumeration2List(Enumeration<?> enumeration) {
+        List<String> collection = new ArrayList<>();
+        while (enumeration.hasMoreElements()) {
+            collection.add((String) enumeration.nextElement());
+        }
+        return collection;
     }
 }

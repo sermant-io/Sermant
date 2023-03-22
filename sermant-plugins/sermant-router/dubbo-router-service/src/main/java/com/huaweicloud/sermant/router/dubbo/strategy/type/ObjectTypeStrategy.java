@@ -29,9 +29,14 @@ import java.util.Optional;
  * @since 2021-10-13
  */
 public class ObjectTypeStrategy extends TypeStrategy {
+    private static final int INDEX_BETWEEN_LOWERCASE_LETTER_AND_UPPERCASE_LETTER = 32;
+
+    private static final String GET_METHOD_NAME_PREFIX = "get";
+
     @Override
     public Optional<String> getValue(Object arg, String type) {
-        return ReflectUtils.getFieldValue(arg, getKey(type)).map(String::valueOf);
+        String methodName = getMethodNameByFieldName(getKey(type));
+        return Optional.ofNullable(ReflectUtils.invokeWithNoneParameterAndReturnString(arg, methodName));
     }
 
     @Override
@@ -50,5 +55,16 @@ public class ObjectTypeStrategy extends TypeStrategy {
     @Override
     public String getEndFlag() {
         return "";
+    }
+
+    private String getMethodNameByFieldName(String fieldName) {
+        char[] chars = fieldName.toCharArray();
+        if (Character.getType(chars[0]) == Character.LOWERCASE_LETTER) {
+            // 首字母转大写
+            chars[0] -= INDEX_BETWEEN_LOWERCASE_LETTER_AND_UPPERCASE_LETTER;
+        }
+
+        // 字段名为xxx，转为方法名getXxx
+        return GET_METHOD_NAME_PREFIX + String.valueOf(chars);
     }
 }

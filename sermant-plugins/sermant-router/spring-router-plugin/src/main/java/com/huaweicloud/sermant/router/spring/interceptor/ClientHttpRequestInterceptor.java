@@ -19,13 +19,12 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.router.common.request.RequestData;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -40,13 +39,13 @@ import java.util.Map.Entry;
 public class ClientHttpRequestInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        Object argument = context.getArguments()[0];
-        if (argument instanceof HttpRequest) {
-            HttpRequest request = (HttpRequest) argument;
+        Object obj = context.getObject();
+        if (obj instanceof HttpRequest) {
+            HttpRequest request = (HttpRequest) obj;
             HttpHeaders headers = request.getHeaders();
             putIfAbsent(headers);
             String path = request.getURI().getPath();
-            ThreadLocalUtils.setRequestData(new RequestData(getHeader(headers), path, request.getMethod().name()));
+            ThreadLocalUtils.setRequestData(new RequestData(headers, path, request.getMethod().name()));
         }
         return context;
     }
@@ -64,21 +63,13 @@ public class ClientHttpRequestInterceptor extends AbstractInterceptor {
     }
 
     private void putIfAbsent(HttpHeaders headers) {
-        RequestHeader requestHeader = ThreadLocalUtils.getRequestHeader();
-        if (requestHeader != null) {
-            Map<String, List<String>> header = requestHeader.getHeader();
+        RequestTag requestTag = ThreadLocalUtils.getRequestTag();
+        if (requestTag != null) {
+            Map<String, List<String>> header = requestTag.getTag();
             for (Entry<String, List<String>> entry : header.entrySet()) {
                 // 使用上游传递的header
                 headers.putIfAbsent(entry.getKey(), new LinkedList<>(entry.getValue()));
             }
         }
-    }
-
-    private Map<String, List<String>> getHeader(HttpHeaders headers) {
-        Map<String, List<String>> map = new HashMap<>();
-        for (Entry<String, List<String>> entry : headers.entrySet()) {
-            map.put(entry.getKey(), entry.getValue());
-        }
-        return map;
     }
 }

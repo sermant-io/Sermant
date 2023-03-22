@@ -17,7 +17,6 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
 import org.junit.Assert;
@@ -47,7 +46,7 @@ public class ControllerInterceptorTest {
      */
     @Before
     public void clear() {
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
         ThreadLocalUtils.removeRequestData();
     }
 
@@ -56,11 +55,11 @@ public class ControllerInterceptorTest {
      */
     @Test
     public void testAfter() {
-        ThreadLocalUtils.setRequestHeader(new RequestHeader(Collections.emptyMap()));
+        ThreadLocalUtils.addRequestTag(Collections.emptyMap());
 
         // 测试after方法,验证是否释放线程变量
         interceptor.after(context);
-        Assert.assertNull(ThreadLocalUtils.getRequestHeader());
+        Assert.assertNull(ThreadLocalUtils.getRequestTag());
     }
 
     /**
@@ -68,10 +67,10 @@ public class ControllerInterceptorTest {
      */
     @Test
     public void testOnThrow() {
-        ThreadLocalUtils.setRequestHeader(new RequestHeader(Collections.emptyMap()));
+        ThreadLocalUtils.addRequestTag(Collections.emptyMap());
 
         // 测试onThrow方法,验证是否释放线程变量
         interceptor.onThrow(context);
-        Assert.assertNull(ThreadLocalUtils.getRequestHeader());
+        Assert.assertNull(ThreadLocalUtils.getRequestTag());
     }
 }

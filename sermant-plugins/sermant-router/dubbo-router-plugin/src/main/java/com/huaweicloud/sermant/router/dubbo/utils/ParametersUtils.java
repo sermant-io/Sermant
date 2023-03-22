@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -45,16 +46,27 @@ public class ParametersUtils {
      */
     public static Map<String, String> putParameters(Map<String, String> parameters, RouterConfig routerConfig) {
         Map<String, String> map = Optional.ofNullable(parameters).orElseGet(HashMap::new);
+        Map<String, String> cacheMap = new HashMap<>();
         map.put(RouterConstant.VERSION_KEY, routerConfig.getRouterVersion());
+        cacheMap.put(RouterConstant.VERSION_KEY, routerConfig.getRouterVersion());
         if (StringUtils.isExist(routerConfig.getZone())) {
             map.putIfAbsent(RouterConstant.ZONE_KEY, routerConfig.getZone());
+            cacheMap.put(RouterConstant.ZONE_KEY, map.get(RouterConstant.ZONE_KEY));
         }
         Map<String, String> metaParameters = routerConfig.getParameters();
         if (!CollectionUtils.isEmpty(metaParameters)) {
             metaParameters.forEach(
-                // 请求头在http请求中，会统一转成小写
-                (key, value) -> map.put(RouterConstant.PARAMETERS_KEY_PREFIX + key.toLowerCase(Locale.ROOT), value));
+                    (key, value) -> {
+                        // 请求头在http请求中，会统一转成小写
+                        String lowerCaseKey = key.toLowerCase(Locale.ROOT);
+
+                        // "-"替换成"."是为了流量路由兼容2.5.0 - 2.5.6
+                        map.put(RouterConstant.PARAMETERS_KEY_PREFIX + lowerCaseKey
+                                .replace(RouterConstant.DASH, RouterConstant.POINT), value);
+                        cacheMap.put(RouterConstant.PARAMETERS_KEY_PREFIX + lowerCaseKey, value);
+                    });
         }
+        DubboCache.INSTANCE.setParameters(cacheMap);
         return map;
     }
 }

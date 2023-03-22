@@ -18,19 +18,20 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.handler.Handler;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
-import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
+import com.huaweicloud.sermant.router.spring.handler.AbstractMappingHandler;
+import com.huaweicloud.sermant.router.spring.handler.LaneMappingHandler;
+import com.huaweicloud.sermant.router.spring.handler.RouteMappingHandler;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * webflux获取header拦截点
@@ -39,21 +40,32 @@ import java.util.Set;
  * @since 2022-10-10
  */
 public class AbstractHandlerMappingInterceptor extends AbstractInterceptor {
-    private final SpringConfigService configService;
+    private static final String EXCEPT_CLASS_NAME
+            = "org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping";
+
+    private final List<AbstractMappingHandler> handlers;
 
     /**
      * 构造方法
      */
     public AbstractHandlerMappingInterceptor() {
-        configService = ServiceManager.getService(SpringConfigService.class);
+        handlers = new ArrayList<>();
+        handlers.add(new LaneMappingHandler());
+        handlers.add(new RouteMappingHandler());
+        handlers.sort(Comparator.comparingInt(Handler::getOrder));
     }
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
         if (shouldHandle(context)) {
             ServerWebExchange exchange = (ServerWebExchange) context.getArguments()[0];
-            HttpHeaders headers = exchange.getRequest().getHeaders();
-            ThreadLocalUtils.setRequestHeader(new RequestHeader(getHeader(headers)));
+            ServerHttpRequest request = exchange.getRequest();
+            HttpHeaders headers = request.getHeaders();
+            String path = request.getURI().getPath();
+            String methodName = request.getMethod().name();
+            Map<String, List<String>> queryParams = request.getQueryParams();
+            handlers.forEach(handler -> ThreadLocalUtils
+                    .addRequestTag(handler.getRequestTag(path, methodName, headers, queryParams)));
         }
         return context;
     }
@@ -67,25 +79,14 @@ public class AbstractHandlerMappingInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
         if (shouldHandle(context)) {
-            ThreadLocalUtils.removeRequestHeader();
+            ThreadLocalUtils.removeRequestTag();
         }
         return context;
-    }
-
-    private Map<String, List<String>> getHeader(HttpHeaders headers) {
-        Map<String, List<String>> map = new HashMap<>();
-        Set<String> matchKeys = configService.getMatchKeys();
-        for (String headerKey : matchKeys) {
-            if (headers.containsKey(headerKey)) {
-                map.put(headerKey, headers.get(headerKey));
-            }
-        }
-        return map;
     }
 
     private boolean shouldHandle(ExecuteContext context) {
         Object[] arguments = context.getArguments();
         return arguments.length > 0 && arguments[0] instanceof ServerWebExchange
-            && context.getObject() instanceof RequestMappingHandlerMapping;
+                && EXCEPT_CLASS_NAME.equals(context.getObject().getClass().getName());
     }
 }

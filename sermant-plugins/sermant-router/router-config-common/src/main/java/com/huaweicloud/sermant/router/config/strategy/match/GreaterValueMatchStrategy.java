@@ -31,7 +31,7 @@ public class GreaterValueMatchStrategy implements ValueMatchStrategy {
     @Override
     public boolean isMatch(List<String> values, String arg) {
         try {
-            return !CollectionUtils.isEmpty(values) && Integer.parseInt(arg) > Integer.parseInt(values.get(0));
+            return !CollectionUtils.isEmpty(values) && Long.parseLong(arg) > Long.parseLong(values.get(0));
         } catch (NumberFormatException e) {
             return false;
         }

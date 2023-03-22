@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.utils.ClassUtils;
  */
 public class SpringBootLoadClassInterceptor extends AbstractInterceptor {
     private static final String REQUEST_CALLBACK_WRAPPER =
-        "com.huaweicloud.sermant.router.spring.wrapper.RequestCallbackWrapper";
+            "com.huaweicloud.sermant.router.spring.wrapper.RequestCallbackWrapper";
 
     @Override
     public ExecuteContext before(ExecuteContext context) {

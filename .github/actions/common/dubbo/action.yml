@@ -38,3 +38,24 @@ runs:
           ${{ runner.os }}-maven-
     - name: plugin change check
       uses: ./.github/actions/common/plugin-change-check
+    - name: adaptation for dubbo 2.5.0 - 2.5.6
+      shell: bash
+      if: matrix.dubbo-version == '2-5' && matrix.dubbo-versions < 7
+      run: |
+        sed -i '/dubbo:parameter/d' sermant-integration-tests/dubbo-test/dubbo-2-6-integration-consumer/src/main/resources/dubbo/dubbo.xml
+        sed -i '/\/dubbo:application/d' sermant-integration-tests/dubbo-test/dubbo-2-6-integration-consumer/src/main/resources/dubbo/dubbo.xml
+        sed -i 's/<dubbo:application name="dubbo-integration-consumer">/<dubbo:application name="dubbo-integration-consumer"\/>/' sermant-integration-tests/dubbo-test/dubbo-2-6-integration-consumer/src/main/resources/dubbo/dubbo.xml
+        sed -i '/dubbo:parameter/d' sermant-integration-tests/dubbo-test/dubbo-2-6-integration-controller/src/main/resources/dubbo/consumer.xml
+        sed -i '/\/dubbo:application/d' sermant-integration-tests/dubbo-test/dubbo-2-6-integration-controller/src/main/resources/dubbo/consumer.xml
+        sed -i 's/<dubbo:application name="dubbo-integration-controller">/<dubbo:application name="dubbo-integration-controller"\/>/' sermant-integration-tests/dubbo-test/dubbo-2-6-integration-controller/src/main/resources/dubbo/consumer.xml
+        sed -i '/dubbo:parameter/d' sermant-integration-tests/dubbo-test/dubbo-2-6-integration-provider/src/main/resources/dubbo/provider.xml
+        sed -i '/\/dubbo:application/d' sermant-integration-tests/dubbo-test/dubbo-2-6-integration-provider/src/main/resources/dubbo/provider.xml
+        sed -i 's/<dubbo:application name="dubbo-integration-provider">/<dubbo:application name="dubbo-integration-provider"\/>/' sermant-integration-tests/dubbo-test/dubbo-2-6-integration-provider/src/main/resources/dubbo/provider.xml
+    - name: configuration for 2.5.x - 2.6.x
+      if: matrix.dubbo-version == '2-5' || matrix.dubbo-version == '2-6'
+      shell: bash
+      run: echo "projectPath=2-6" >> $GITHUB_ENV
+    - name: configuration for 2.7.x
+      if: matrix.dubbo-version == '2-7'
+      shell: bash
+      run: echo "projectPath=2-7" >> $GITHUB_ENV

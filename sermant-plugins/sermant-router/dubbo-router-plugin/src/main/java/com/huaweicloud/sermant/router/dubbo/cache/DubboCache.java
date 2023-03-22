@@ -34,6 +34,9 @@ public enum DubboCache {
     // dubbo应用名
     private String appName;
 
+    // parameters中增加版本号、路由标签
+    private Map<String, String> parameters;
+
     private final Map<String, String> applicationCache;
 
     DubboCache() {
@@ -46,6 +49,14 @@ public enum DubboCache {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 
     /**

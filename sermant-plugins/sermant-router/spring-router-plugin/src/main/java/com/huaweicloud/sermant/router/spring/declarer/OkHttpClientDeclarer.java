@@ -32,7 +32,7 @@ public class OkHttpClientDeclarer extends BaseRegistryPluginAdaptationDeclarer {
      * 增强类的全限定名 okhttp请求
      */
     private static final String[] ENHANCE_CLASSES = {
-        "com.squareup.okhttp.Call"
+            "com.squareup.okhttp.Call"
     };
 
     /**
@@ -47,7 +47,7 @@ public class OkHttpClientDeclarer extends BaseRegistryPluginAdaptationDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[] {
+        return new InterceptDeclarer[]{
                 InterceptDeclarer.build(MethodMatcher.nameContains("execute", "getResponseWithInterceptorChain"),
                         INTERCEPT_CLASS)
         };

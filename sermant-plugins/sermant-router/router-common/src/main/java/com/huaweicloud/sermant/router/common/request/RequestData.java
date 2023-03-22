@@ -25,7 +25,7 @@ import java.util.Map;
  * @author provenceee
  * @since 2022-07-12
  */
-public class RequestData extends RequestHeader {
+public class RequestData extends RequestTag {
     private final String path;
 
     private final String httpMethod;

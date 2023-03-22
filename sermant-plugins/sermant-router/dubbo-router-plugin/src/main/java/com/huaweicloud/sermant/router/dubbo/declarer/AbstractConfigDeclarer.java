@@ -28,7 +28,7 @@ public class AbstractConfigDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"com.alibaba.dubbo.config.AbstractConfig"};
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.dubbo.interceptor.AbstractConfigInterceptor";
+            = "com.huaweicloud.sermant.router.dubbo.interceptor.AbstractConfigInterceptor";
 
     private static final String METHOD_NAME = "appendParameters";
 

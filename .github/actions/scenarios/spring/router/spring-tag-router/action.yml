@@ -49,8 +49,6 @@ runs:
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
-        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
-        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
         ROUTER_PLUGIN_ENABLED_REGISTRY_PLUGIN_ADAPTATION: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVICE_META_VERSION: 1.0.0
@@ -66,8 +64,6 @@ runs:
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
-        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
-        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
         ROUTER_PLUGIN_ENABLED_REGISTRY_PLUGIN_ADAPTATION: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVICE_META_PARAMETERS: group:gray
@@ -76,6 +72,22 @@ runs:
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
         sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-provider${{ env.tailVersion }}/target/feign-provider${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-provider2.log 2>&1 &
+    - name: start cse third feign provider service
+      shell: bash
+      env:
+        sermant.springboot.registry.enableRegistry: true
+        SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        ROUTER_PLUGIN_ENABLED_REGISTRY_PLUGIN_ADAPTATION: true
+        ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVICE_META_PARAMETERS: group:red
+        SERVICE_META_VERSION: 1.0.1
+        SERVER_PORT: 8011
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-provider${{ env.tailVersion }}/target/feign-provider${{ env.tailVersion }}.jar > ${{ env.logDir }}/feign-provider3.log 2>&1 &
     - name: start cse feign consumer service
       shell: bash
       env:
@@ -84,10 +96,9 @@ runs:
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
-        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
-        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
         ROUTER_PLUGIN_ENABLED_REGISTRY_PLUGIN_ADAPTATION: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVICE_META_PARAMETERS: group:gray
         SERVER_PORT: 8005
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
@@ -100,8 +111,6 @@ runs:
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
-        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
-        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
         ROUTER_PLUGIN_ENABLED_REGISTRY_PLUGIN_ADAPTATION: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVICE_META_VERSION: 1.0.0
@@ -117,8 +126,6 @@ runs:
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
-        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
-        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
         ROUTER_PLUGIN_ENABLED_REGISTRY_PLUGIN_ADAPTATION: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVICE_META_PARAMETERS: group:gray
@@ -127,6 +134,22 @@ runs:
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
         sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > ${{ env.logDir }}/rest-provider2.log 2>&1 &
+    - name: start third resttemplate provider service
+      shell: bash
+      env:
+        sermant.springboot.registry.enableRegistry: true
+        SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        ROUTER_PLUGIN_ENABLED_REGISTRY_PLUGIN_ADAPTATION: true
+        ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVICE_META_PARAMETERS: group:red
+        SERVICE_META_VERSION: 1.0.1
+        SERVER_PORT: 8010
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        sermant-integration-tests/spring-test/spring-common-demos/spring-common-resttemplate/rest-provider/target/rest-provider.jar > ${{ env.logDir }}/rest-provider3.log 2>&1 &
     - name: start cse resttemplate consumer service
       shell: bash
       env:
@@ -135,10 +158,9 @@ runs:
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
-        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
-        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
         ROUTER_PLUGIN_ENABLED_REGISTRY_PLUGIN_ADAPTATION: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
+        SERVICE_META_PARAMETERS: group:gray
         SERVER_PORT: 8002
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
@@ -152,8 +174,6 @@ runs:
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
-        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
-        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
         ROUTER_PLUGIN_ENABLED_REGISTRY_PLUGIN_ADAPTATION: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVER_PORT: 8001
@@ -170,8 +190,6 @@ runs:
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
-        ROUTER_PLUGIN_ENABLED_SPRING_ZONE_ROUTER: false
-        ROUTER_PLUGIN_ENABLED_REGISTRY_ZONE_ROUTER: false
         ROUTER_PLUGIN_ENABLED_REGISTRY_PLUGIN_ADAPTATION: true
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVER_PORT: 8000

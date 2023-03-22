@@ -63,12 +63,12 @@ public class NopInstanceFilterInterceptorTest {
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         mockServiceManager.when(() -> ServiceManager.getService(LoadBalancerService.class))
-            .thenReturn(new TestLoadBalancerService());
+                .thenReturn(new TestLoadBalancerService());
 
         config = new RouterConfig();
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-            .thenReturn(config);
+                .thenReturn(config);
     }
 
     /**
@@ -84,27 +84,7 @@ public class NopInstanceFilterInterceptorTest {
         interceptor = new NopInstanceFilterInterceptor();
         arguments = new Object[2];
         context = ExecuteContext.forMemberMethod(new Object(), String.class.getMethod("trim"), arguments, null,
-            null);
-    }
-
-    /**
-     * 测试getZoneInstances方法
-     */
-    @Test
-    public void testGetZoneInstances() {
-        config.setEnabledRegistryZoneRouter(true);
-        ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));
-        List<ServiceInstance> list = new ArrayList<>();
-        DefaultServiceInstance instance1 = new DefaultServiceInstance("foo1", "foo", "foo", 8080, false);
-        list.add(instance1);
-        DefaultServiceInstance instance2 = new DefaultServiceInstance("bar2", "foo", "bar", 8081, false);
-        list.add(instance2);
-        arguments[0] = "foo";
-        arguments[1] = list;
-        List<?> result = (List<?>) interceptor.before(context).getResult();
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals(instance2, result.get(0));
-        ThreadLocalUtils.removeRequestData();
+                null);
     }
 
     /**
@@ -112,7 +92,6 @@ public class NopInstanceFilterInterceptorTest {
      */
     @Test
     public void testGetTargetInstances() {
-        config.setEnabledRegistryZoneRouter(true);
         ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));
         List<ServiceInstance> list = new ArrayList<>();
         DefaultServiceInstance instance1 = new DefaultServiceInstance("foo1", "foo", "foo", 8080, false);

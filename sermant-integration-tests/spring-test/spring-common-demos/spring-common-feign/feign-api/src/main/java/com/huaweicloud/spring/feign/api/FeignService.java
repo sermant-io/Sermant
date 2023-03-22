@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Map;
+
 /**
  * feign测试
  *
@@ -215,4 +217,12 @@ public interface FeignService {
      */
     @RequestMapping(value = "testGraceful", method = RequestMethod.GET)
     String testGraceful();
+
+    /**
+     * 获取泳道信息
+     *
+     * @return msg
+     */
+    @GetMapping("/lane")
+    Map<String, Object> getLane();
 }

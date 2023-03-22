@@ -7,6 +7,10 @@ runs:
       uses: ./.github/actions/common/entry
       with:
         log-dir: ./logs/dubbo-visibility
+    - name: package dubbo 2.5.x tests
+      shell: bash
+      if: matrix.dubbo-version == '2-5'
+      run: mvn package -Dalibaba.dubbo.version=2.5.${{ matrix.dubbo-versions }} -DskipTests -P260 --file sermant-integration-tests/dubbo-test/pom.xml
     - name: package visibility dubbo 2.6.0 tests
       shell: bash
       if: matrix.dubbo-version == '2-6' && matrix.dubbo-versions == '0'
@@ -29,7 +33,7 @@ runs:
         AGENT_CONFIG_SERVICE_BLACK_LIST: com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-provider  -jar \
-        sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-provider/target/dubbo-integration-provider.jar > ${{ env.logDir }}/visibility-provider.log 2>&1 &
+        sermant-integration-tests/dubbo-test/dubbo-${{ env.projectPath }}-integration-provider/target/dubbo-integration-provider.jar > ${{ env.logDir }}/visibility-provider.log 2>&1 &
     - name: start visibility consumer service
       shell: bash
       env:
@@ -40,7 +44,7 @@ runs:
         AGENT_CONFIG_SERVICE_BLACK_LIST: com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar \
-        sermant-integration-tests/dubbo-test/dubbo-${{ matrix.dubbo-version }}-integration-consumer/target/dubbo-integration-consumer.jar > ${{ env.logDir }}/visibility-consumer.log 2>&1 &
+        sermant-integration-tests/dubbo-test/dubbo-${{ env.projectPath }}-integration-consumer/target/dubbo-integration-consumer.jar > ${{ env.logDir }}/visibility-consumer.log 2>&1 &
     - name: start visibility backend service
       shell: bash
       run: |

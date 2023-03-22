@@ -37,7 +37,7 @@ public class RequestCallbackWrapper implements RequestCallback {
      * 构造函数
      *
      * @param callback 真实需要包装的对象
-     * @param header   请求头信息
+     * @param header 请求头信息
      */
     public RequestCallbackWrapper(RequestCallback callback, Map<String, String> header) {
         this.callback = callback;

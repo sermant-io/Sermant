@@ -44,7 +44,7 @@ public class ZookeeperMetadataMapperTest {
         ZookeeperInstance instance = new ZookeeperInstance("id", "name", map);
         ServiceInstanceBuilder<ZookeeperInstance> builder = ServiceInstance.builder();
         ServiceInstance<ZookeeperInstance> serviceInstance =
-            builder.address("localhost").port(80).name("name").payload(instance).build();
+                builder.address("localhost").port(80).name("name").payload(instance).build();
         ZookeeperServer server = new ZookeeperServer(serviceInstance);
         ZookeeperMetadataMapper mapper = new ZookeeperMetadataMapper();
         Map<String, String> metadata = mapper.apply(server);

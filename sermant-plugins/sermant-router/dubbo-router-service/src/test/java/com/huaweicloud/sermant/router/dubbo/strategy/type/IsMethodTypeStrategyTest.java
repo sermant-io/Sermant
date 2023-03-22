@@ -27,15 +27,16 @@ import org.junit.Test;
  * @author provenceee
  * @since 2021-12-01
  */
-public class EnabledTypeStrategyTest {
+public class IsMethodTypeStrategyTest {
     /**
      * 测试enabled策略
      */
     @Test
     public void testValue() {
-        TypeStrategy strategy = new EnabledTypeStrategy();
+        TypeStrategy strategy = new IsMethodTypeStrategy();
         Entity entity = new Entity();
         entity.setEnabled(true);
+        entity.setExist(true);
 
         // 正常情况
         Assert.assertEquals(Boolean.TRUE.toString(), strategy.getValue(entity, ".isEnabled()").orElse(null));
@@ -44,6 +45,15 @@ public class EnabledTypeStrategyTest {
         Assert.assertEquals(Boolean.FALSE.toString(), strategy.getValue(entity, ".foo()").orElse(null));
 
         // 测试null
-        Assert.assertNotEquals(Boolean.TRUE.toString(), strategy.getValue(new Entity(), ".isEnabled()").orElse(null));
+        Assert.assertNull(strategy.getValue(new Entity(), ".isEnabled()").orElse(null));
+
+        // 正常情况
+        Assert.assertEquals(Boolean.TRUE.toString(), strategy.getValue(entity, ".isExist()").orElse(null));
+
+        // 测试找不到方法
+        Assert.assertEquals(Boolean.FALSE.toString(), strategy.getValue(entity, ".foo()").orElse(null));
+
+        // 测试null
+        Assert.assertEquals(Boolean.FALSE.toString(), strategy.getValue(new Entity(), ".isExist()").orElse(null));
     }
 }

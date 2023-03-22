@@ -65,11 +65,11 @@ public class ServiceInstanceListSupplierInterceptorTest {
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         mockServiceManager.when(() -> ServiceManager.getService(LoadBalancerService.class))
-            .thenReturn(new TestLoadBalancerService());
+                .thenReturn(new TestLoadBalancerService());
 
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-            .thenReturn(new RouterConfig());
+                .thenReturn(new RouterConfig());
     }
 
     /**
@@ -92,7 +92,7 @@ public class ServiceInstanceListSupplierInterceptorTest {
      */
     @Before
     public void reset() {
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
         ThreadLocalUtils.removeRequestData();
         List<ServiceInstance> list = new ArrayList<>();
         list.add(new DefaultServiceInstance("foo1", "foo", "foo", 8080, false));

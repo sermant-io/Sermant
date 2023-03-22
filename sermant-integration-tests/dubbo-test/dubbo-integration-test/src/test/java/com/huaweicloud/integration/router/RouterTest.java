@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package com.huaweicloud.integration.router;
 
+import com.huaweicloud.integration.support.KieClient;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -26,7 +28,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -45,17 +46,21 @@ public class RouterTest {
 
     private static final int WAIT_SECONDS = 30;
 
-    private final String zone;
-
     private final String testTagRouterBaseUrl;
+
+    private static final KieClient KIE_CLIENT = new KieClient(REST_TEMPLATE);
+
+    private static final String SERVICE_KEY = "servicecomb.routeRule.dubbo-integration-provider";
+
+    private static final String GLOBAL_KEY = "servicecomb.globalRouteRule";
 
     /**
      * 构造方法
      */
-    public RouterTest() {
-        zone = Optional.ofNullable(System.getenv("SERVICE_META_ZONE")).orElse("bar");
+    public RouterTest() throws InterruptedException {
         testTagRouterBaseUrl =
-            "http://127.0.0.1:" + System.getProperty("controller.port", "28019") + "/controller/getMetadataBy";
+                "http://127.0.0.1:" + System.getProperty("controller.port", "28019") + "/controller/getMetadataBy";
+        clearConfig();
     }
 
     /**
@@ -71,7 +76,7 @@ public class RouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE
-                .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
+                    .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
             Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:env-001"));
         }
 
@@ -81,7 +86,7 @@ public class RouterTest {
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE
-                .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
+                    .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
             Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:"));
         }
 
@@ -90,14 +95,14 @@ public class RouterTest {
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE
-                .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
+                    .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
             Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env"));
         }
 
         // 停掉无路由标签的实例
         Assertions.assertThrows(Exception.class, () -> REST_TEMPLATE
-            .exchange(BASE_URL + "getMetadata?exit=true", HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
-                String.class));
+                .exchange(BASE_URL + "getMetadata?exit=true", HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
+                        String.class));
 
         // 等待无路由标签的实例下线
         headers.clear();
@@ -105,7 +110,7 @@ public class RouterTest {
         for (int i = 0; i < WAIT_SECONDS; i++) {
             try {
                 exchange = REST_TEMPLATE
-                    .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
+                        .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
                 if (Objects.requireNonNull(exchange.getBody()).contains("Test-Env")) {
                     // 下游实例已下线
                     break;
@@ -116,32 +121,22 @@ public class RouterTest {
             TimeUnit.SECONDS.sleep(1);
         }
 
-        // 测试没有路由请求头时，切换至无路由标签的实例，如果都有标签，则随机选取
+        // 停掉标签为Test-Env1=env-002的实例
         headers.clear();
-        entity = new HttpEntity<>(null, headers);
-        for (int i = 0; i < TIMES; i++) {
-            exchange = REST_TEMPLATE
-                .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
-            String body = Objects.requireNonNull(exchange.getBody());
-            // 优先选取同az实例
-            Assertions.assertTrue(body.contains("Test-Env") && body.contains(zone));
-        }
-
-        // 停掉az为bar的带有标签实例
+        headers.add("Test-Env1", "env-002");
         Assertions.assertThrows(Exception.class, () -> REST_TEMPLATE
-            .exchange(BASE_URL + "getMetadata?exit=true", HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
-                String.class));
+                .exchange(BASE_URL + "getMetadata?exit=true", HttpMethod.GET, new HttpEntity<>(null, headers),
+                        String.class));
 
-        // 等待az为bar的带有标签实例下线
+        // 等待标签为Test-Env1=env-002的实例下线
         headers.clear();
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < WAIT_SECONDS; i++) {
             try {
                 exchange = REST_TEMPLATE
-                    .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
+                        .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
                 String body = Objects.requireNonNull(exchange.getBody());
-                if (body.contains("Test-Env") && !body.contains(zone)) {
-                    // 下游实例已下线
+                if (!body.contains("Test-Env1")) {
                     break;
                 }
             } catch (Exception ignored) {
@@ -154,40 +149,190 @@ public class RouterTest {
         headers.clear();
         headers.add("Test-Env", "env-005");
         Assertions.assertThrows(Exception.class, () -> REST_TEMPLATE
-            .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET,
-                new HttpEntity<>(null, new HttpHeaders(headers)),
-                String.class));
+                .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET,
+                        new HttpEntity<>(null, new HttpHeaders(headers)),
+                        String.class));
+    }
 
-        // 测试同az实例下线时，切换至其它az实例
-        headers.clear();
-        entity = new HttpEntity<>(null, headers);
-        for (int i = 0; i < TIMES; i++) {
-            exchange = REST_TEMPLATE
-                .exchange(BASE_URL + "getMetadata?exit=false", HttpMethod.GET, entity, String.class);
-            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains(zone));
-        }
+
+    /**
+     * 测试标签路由: 只下发服务粒度的flow匹配规则
+     */
+    @Test
+    public void testRouterWithFlowMatchRule() throws InterruptedException {
+        testFlowMatchRule(SERVICE_KEY);
+        clearConfig();
     }
 
     /**
-     * 测试标签路由
+     * 测试标签路由: 只下发全局粒度的flow匹配规则
      */
     @Test
-    public void testTagRouter() {
+    public void testRouterWithGlobalFlowMatchRule() throws InterruptedException {
+        testFlowMatchRule(GLOBAL_KEY);
+        clearConfig();
+    }
+
+    /**
+     * 测试标签路由: 同时下发服务粒度和全局粒度的flow匹配规则
+     */
+    @Test
+    public void testRouterWithFlowMatchRuleAndGlobalRule() throws InterruptedException {
+        // 先下发flow匹配的全局路由规则
+        String CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/flow\n"
+                + "  description: flow-rule-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        headers:\n"
+                + "          id:\n"
+                + "            exact: '1'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            group-test: yellow\n"
+                + "          weight: 100\n"
+                + "    - precedence: 2\n"
+                + "      match:\n"
+                + "        headers:\n"
+                + "          name:\n"
+                + "            exact: 'bar'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            version: 0.0.0\n"
+                + "          weight: 100";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(GLOBAL_KEY, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
+        testFlowMatchRule(SERVICE_KEY);
+        clearConfig();
+    }
+
+    /**
+     * 测试标签路由: 只下发服务粒度的tag匹配规则
+     */
+    @Test
+    public void testRouterWithTagMatchRule() throws InterruptedException {
+        testTagMatchRule(SERVICE_KEY);
+        clearConfig();
+    }
+
+    /**
+     * 测试标签路由: 只下发全局粒度的tag匹配规则
+     */
+    @Test
+    public void testRouterWithGlobalTagMatchRule() throws InterruptedException {
+        testTagMatchRule(GLOBAL_KEY);
+        clearConfig();
+    }
+
+    /**
+     * 测试标签路由: 同时下发服务粒度和全局粒度的tag匹配规则
+     */
+    @Test
+    public void testRouterWithTagMatchRuleAndGlobalRule() throws InterruptedException {
+        // 先下发tag匹配的全局路由规则
+        String CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/tag\n"
+                + "  description: tag-rule-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          group-test:\n"
+                + "            exact: 'red'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            group-test: gray\n"
+                + "          weight: 100\n"
+                + "    - precedence: 2\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          group-test:\n"
+                + "            exact: 'gray'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            version: 1.0.1\n"
+                + "          weight: 100";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(GLOBAL_KEY, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
+        testTagMatchRule(SERVICE_KEY);
+        clearConfig();
+    }
+
+    /**
+     * 测试标签路由: 同时下发flow匹配规则和tag匹配规则
+     */
+    @Test
+    public void testRouterWithFlowAndTagRules() throws InterruptedException {
+        testFlowAndTagMatchRule();
+        clearConfig();
+    }
+
+    /**
+     * 标签路由测试：同标签路由场景测试（只下发tag匹配规则）
+     */
+    @Test
+    public void testRouterWithConsumerTagRule() throws InterruptedException {
+        testConsumerTagRule();
+        clearConfig();
+    }
+
+    /**
+     * 测试flow匹配规则的标签路由功能
+     */
+    private void testFlowMatchRule(String configKey) throws InterruptedException {
+        // 下发flow匹配的路由规则
+        String CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/flow\n"
+                + "  description: flow-rule-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        headers:\n"
+                + "          id:\n"
+                + "            exact: '1'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            group-test: gray\n"
+                + "          weight: 100\n"
+                + "    - precedence: 2\n"
+                + "      match:\n"
+                + "        headers:\n"
+                + "          name:\n"
+                + "            exact: 'bar'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            version: 1.0.1\n"
+                + "          weight: 100";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(configKey, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
         HttpHeaders headers = new HttpHeaders();
 
-        // 测试命中group:gray的实例
+        // 测试命中group-test:gray的实例
         headers.add("id", "1");
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
-            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
-            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
-            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group-test:gray"));
         }
 
         // 测试命中version:1.0.1的实例
@@ -212,15 +357,15 @@ public class RouterTest {
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
             String body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group-test:gray"));
         }
 
         // 测试没有命中version:1.0.1的实例
@@ -229,16 +374,227 @@ public class RouterTest {
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
             String body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
 
             body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group-test:gray"));
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group-test:gray"));
         }
+    }
+
+    /**
+     * 测试flow匹配规则的标签路由功能
+     */
+    private void testTagMatchRule(String configKey) throws InterruptedException {
+        // 下发tag匹配的路由规则
+        String CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/tag\n"
+                + "  description: tag-rule-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          group-test:\n"
+                + "            exact: 'red'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            group-test: gray\n"
+                + "          weight: 100\n"
+                + "    - precedence: 2\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          group-test:\n"
+                + "            exact: 'gray'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            version: 1.0.0\n"
+                + "          weight: 100";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(configKey, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
+        // 测试命中version:1.0.0的实例(consumer自身group-test:gray)
+        HttpEntity<String> entity = new HttpEntity<>(null, new HttpHeaders());
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.0"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.0"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.0"));
+        }
+
+        // 下发tag匹配的路由规则
+        CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/tag\n"
+                + "  description: tag-rule-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          group-test:\n"
+                + "            exact: 'gray'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            group-test: gray\n"
+                + "          weight: 100\n"
+                + "    - precedence: 2\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          group-test:\n"
+                + "            exact: 'red'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            version: 1.0.0\n"
+                + "          weight: 100";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(configKey, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
+        // 测试命中group-test:gray的实例(consumer自身group-test:gray)
+        entity = new HttpEntity<>(null, new HttpHeaders());
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group-test:gray"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group-test:gray"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group-test:gray"));
+        }
+    }
+
+    /**
+     * 测试同时存在flow和tag匹配规则的标签路由功能
+     */
+    private void testFlowAndTagMatchRule() throws InterruptedException {
+        // 下发flow和tag匹配的路由规则
+        String CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/flow\n"
+                + "  description: flow-rule-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        headers:\n"
+                + "          id:\n"
+                + "            exact: '1'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            group-test: red\n"
+                + "          weight: 100\n"
+                + "    - precedence: 2\n"
+                + "      match:\n"
+                + "        headers:\n"
+                + "          name:\n"
+                + "            exact: 'bar'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            version: 1.0.1\n"
+                + "          weight: 100\n"
+                + "- kind: routematcher.sermant.io/tag\n"
+                + "  description: tag-rule-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          group-test:\n"
+                + "            exact: 'gray'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            group-test: gray\n"
+                + "          weight: 100\n"
+                + "    - precedence: 2\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          group-test:\n"
+                + "            exact: 'red'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            version: 1.0.0\n"
+                + "          weight: 100";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(SERVICE_KEY, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
+        // 测试命中标签为version:1.0.1和group-test:gray标签的实例
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("name", "BAr");
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            String body = Objects.requireNonNull(exchange.getBody());
+            Assertions.assertTrue(body.contains("1.0.1") && body.contains("group-test:gray"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            body = Objects.requireNonNull(exchange.getBody());
+            Assertions.assertTrue(body.contains("1.0.1") && body.contains("group-test:gray"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            body = Objects.requireNonNull(exchange.getBody());
+            Assertions.assertTrue(body.contains("1.0.1") && body.contains("group-test:gray"));
+        }
+    }
+
+    /**
+     * 测试tag匹配规则的标签路由功能
+     */
+    private void testConsumerTagRule() throws InterruptedException {
+        // 下发同标签路由的路由规则
+        String CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/tag\n"
+                + "  description: tag-rule-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          group-test:\n"
+                + "            exact: 'gray'\n"
+                + "            caseInsensitive: false\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            group-test: CONSUMER_TAG\n";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(SERVICE_KEY, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
+        HttpHeaders headers = new HttpHeaders();
+
+        // 测试命中group-test:CONSUMER_TAG的实例(consumer自身group-test:gray)
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("gray"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("gray"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("gray"));
+        }
+    }
+
+    private void clearConfig() throws InterruptedException {
+        KIE_CLIENT.deleteKey(SERVICE_KEY);
+        KIE_CLIENT.deleteKey(GLOBAL_KEY);
+        TimeUnit.SECONDS.sleep(3);
     }
 }

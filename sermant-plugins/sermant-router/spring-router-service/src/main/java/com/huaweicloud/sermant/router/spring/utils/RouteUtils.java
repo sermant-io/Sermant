@@ -40,57 +40,117 @@ public class RouteUtils {
     }
 
     /**
-     * 获取匹配的路由
+     * 获取匹配的泳道
      *
      * @param list 有效的规则
-     * @param header header
-     * @return 匹配的路由
+     * @param headers header
+     * @param parameters parameters
+     * @return 匹配的泳道标记
      */
-    public static List<Route> getRoutes(List<Rule> list, Map<String, List<String>> header) {
+    public static List<Route> getLaneRoutesByParameterArray(List<Rule> list, Map<String, List<String>> headers,
+            Map<String, String[]> parameters) {
         for (Rule rule : list) {
-            List<Route> routeList = getRoutes(header, rule);
-            if (!CollectionUtils.isEmpty(routeList)) {
-                return routeList;
+            Match match = rule.getMatch();
+            if (match == null) {
+                return rule.getRoute();
+            }
+            if (isMatchByHeaders(match.getHeaders(), headers) && isMatchByParameterArray(match.getParameters(),
+                    parameters)) {
+                return rule.getRoute();
             }
         }
         return Collections.emptyList();
     }
 
-    private static List<Route> getRoutes(Map<String, List<String>> header, Rule rule) {
-        Match match = rule.getMatch();
-        if (match == null) {
-            return rule.getRoute();
+    /**
+     * 获取匹配的泳道
+     *
+     * @param list 有效的规则
+     * @param headers header
+     * @param parameters parameters
+     * @return 匹配的泳道标记
+     */
+    public static List<Route> getLaneRoutesByParameterList(List<Rule> list, Map<String, List<String>> headers,
+            Map<String, List<String>> parameters) {
+        for (Rule rule : list) {
+            Match match = rule.getMatch();
+            if (match == null) {
+                return rule.getRoute();
+            }
+            if (isMatchByHeaders(match.getHeaders(), headers) && isMatchByParameterList(match.getParameters(),
+                    parameters)) {
+                return rule.getRoute();
+            }
         }
-        boolean isFullMatch = match.isFullMatch();
-        Map<String, List<MatchRule>> headers = match.getHeaders();
-        if (CollectionUtils.isEmpty(headers)) {
-            return rule.getRoute();
+        return Collections.emptyList();
+    }
+
+    private static boolean isMatchByHeaders(Map<String, List<MatchRule>> matchHeaders,
+            Map<String, List<String>> headers) {
+        if (CollectionUtils.isEmpty(matchHeaders)) {
+            return true;
         }
-        for (Entry<String, List<MatchRule>> entry : headers.entrySet()) {
+        for (Entry<String, List<MatchRule>> entry : matchHeaders.entrySet()) {
             String key = entry.getKey();
             List<MatchRule> matchRuleList = entry.getValue();
             for (MatchRule matchRule : matchRuleList) {
                 ValueMatch valueMatch = matchRule.getValueMatch();
                 List<String> values = valueMatch.getValues();
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
-                List<String> list = header.get(key);
+                List<String> list = headers.get(key);
                 String arg = list == null ? null : list.get(0);
-                if (!isFullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 如果不是全匹配，且匹配了一个，那么直接return
-                    return rule.getRoute();
-                }
-                if (isFullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 如果是全匹配，且有一个不匹配，则继续下一个规则
-                    return Collections.emptyList();
+                if (!matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                    // 只要一个匹配不上，那就是不匹配
+                    return false;
                 }
             }
         }
-        if (isFullMatch) {
-            // 如果是全匹配，走到这里，说明没有不匹配的，直接return
-            return rule.getRoute();
-        }
+        return true;
+    }
 
-        // 如果不是全匹配，走到这里，说明没有一个规则能够匹配上，则继续下一个规则
-        return Collections.emptyList();
+    private static boolean isMatchByParameterArray(Map<String, List<MatchRule>> matchParameters,
+            Map<String, String[]> parameters) {
+        if (CollectionUtils.isEmpty(matchParameters)) {
+            return true;
+        }
+        for (Entry<String, List<MatchRule>> entry : matchParameters.entrySet()) {
+            String key = entry.getKey();
+            List<MatchRule> matchRuleList = entry.getValue();
+            for (MatchRule matchRule : matchRuleList) {
+                ValueMatch valueMatch = matchRule.getValueMatch();
+                List<String> values = valueMatch.getValues();
+                MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
+                String[] arr = parameters.get(key);
+                String arg = (arr == null || arr.length == 0) ? null : arr[0];
+                if (!matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                    // 只要一个匹配不上，那就是不匹配
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean isMatchByParameterList(Map<String, List<MatchRule>> matchParameters,
+            Map<String, List<String>> parameters) {
+        if (CollectionUtils.isEmpty(matchParameters)) {
+            return true;
+        }
+        for (Entry<String, List<MatchRule>> entry : matchParameters.entrySet()) {
+            String key = entry.getKey();
+            List<MatchRule> matchRuleList = entry.getValue();
+            for (MatchRule matchRule : matchRuleList) {
+                ValueMatch valueMatch = matchRule.getValueMatch();
+                List<String> values = valueMatch.getValues();
+                MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
+                List<String> list = parameters.get(key);
+                String arg = CollectionUtils.isEmpty(list) ? null : list.get(0);
+                if (!matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
+                    // 只要一个匹配不上，那就是不匹配
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

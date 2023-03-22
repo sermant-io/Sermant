@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  * @author provenceee
  * @since 2021-10-13
  */
-public class EnabledTypeStrategy extends TypeStrategy {
+public class IsMethodTypeStrategy extends TypeStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
@@ -46,16 +46,22 @@ public class EnabledTypeStrategy extends TypeStrategy {
 
     @Override
     public boolean isMatch(String type) {
-        return RouterConstant.ENABLED_METHOD_NAME.equals(type);
+        return checkType(type);
     }
 
     @Override
     public String getBeginFlag() {
-        return ".";
+        return RouterConstant.IS_METHOD_PREFIX;
     }
 
     @Override
     public String getEndFlag() {
-        return "()";
+        return RouterConstant.IS_METHOD_SUFFIX;
+    }
+
+    @Override
+    public String getKey(String type) {
+        // type形如.isXxx()，切掉"."与"()"，即为方法名
+        return type.substring(1, type.length() - getEndFlag().length());
     }
 }

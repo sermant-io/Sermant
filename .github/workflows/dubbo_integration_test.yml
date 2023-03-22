@@ -66,20 +66,12 @@ jobs:
   test-for-dubbo:
     name: Test for dubbo
     runs-on: ubuntu-latest
-    needs: [ download-midwares-and-cache, build-agent-and-cache ]
+    needs: [download-midwares-and-cache, build-agent-and-cache]
     strategy:
       matrix:
-        dubbo-version: [ '2-6','2-7' ]
-        dubbo-versions: [ '0','5','6','7','8','9','10','11','12' ]
+        dubbo-version: ['2-5','2-6','2-7']
+        dubbo-versions: ['0','1','2','3','4','5','6','7','8','9','10','11','12']
         include:
-          - dubbo-version: '2-6'
-            dubbo-versions: '1'
-          - dubbo-version: '2-6'
-            dubbo-versions: '2'
-          - dubbo-version: '2-6'
-            dubbo-versions: '3'
-          - dubbo-version: '2-6'
-            dubbo-versions: '4'
           - dubbo-version: '2-6'
             dubbo-versions: '10.1'
           - dubbo-version: '2-7'
@@ -90,6 +82,19 @@ jobs:
             dubbo-versions: '14'
           - dubbo-version: '2-7'
             dubbo-versions: '15'
+        exclude:
+          - dubbo-version: '2-5'
+            dubbo-versions: '11'
+          - dubbo-version: '2-5'
+            dubbo-versions: '12'
+          - dubbo-version: '2-7'
+            dubbo-versions: '1'
+          - dubbo-version: '2-7'
+            dubbo-versions: '2'
+          - dubbo-version: '2-7'
+            dubbo-versions: '3'
+          - dubbo-version: '2-7'
+            dubbo-versions: '4'
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
@@ -97,15 +102,18 @@ jobs:
           fetch-depth: 100
       - name: common operations
         uses: ./.github/actions/common/dubbo
-      - name: (dubbo router) test for ${{ matrix.dubbo-version }}
+      - name: (dubbo router) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
         if: env.enableDubboRouter == 'true'
         uses: ./.github/actions/scenarios/dubbo/router
-      - name: monitor test for ${{ matrix.dubbo-version }}
+      - name: monitor test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
         if: env.enableMonitor == 'true'
         uses: ./.github/actions/scenarios/dubbo/monitor
-      - name: visibility test for ${{ matrix.dubbo-version }}
+      - name: visibility test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
         if: env.enableVisibility == 'true'
         uses: ./.github/actions/scenarios/dubbo/visibility
-      - name: (dubbo common) test for ${{ matrix.dubbo-version }}
+      - name: (dubbo common) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
         if: env.enableDubboCommon == 'true'
         uses: ./.github/actions/scenarios/dubbo/dubbo-common
+      - name: (dubbo lane) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
+        if: env.enableDubboLane == 'true'
+        uses: ./.github/actions/scenarios/dubbo/lane

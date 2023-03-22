@@ -30,16 +30,29 @@ import java.util.Map;
  */
 public class DubboReflectUtils {
     private static final String QUERY_MAP_FIELD_NAME = "queryMap";
+
     private static final String GET_PARAMETER_METHOD_NAME = "getParameter";
+
     private static final String GET_PARAMETERS_METHOD_NAME = "getParameters";
+
     private static final String GET_URL_METHOD_NAME = "getUrl";
+
     private static final String GET_SERVICE_INTERFACE_METHOD_NAME = "getServiceInterface";
+
+    private static final String GET_SERVICE_KEY_METHOD_NAME = "getServiceKey";
+
     private static final String GET_METHOD_NAME_METHOD_NAME = "getMethodName";
+
     private static final String GET_ARGUMENTS_METHOD_NAME = "getArguments";
+
     private static final String SET_PARAMETERS_METHOD_NAME = "setParameters";
+
     private static final String GET_CONTEXT_METHOD_NAME = "getContext";
+
     private static final String ALIBABA_RPC_CONTEXT_CLASS_NAME = "com.alibaba.dubbo.rpc.RpcContext";
+
     private static final String APACHE_RPC_CONTEXT_CLASS_NAME = "org.apache.dubbo.rpc.RpcContext";
+
     private static final String ATTACHMENTS_FIELD = "attachments";
 
     private DubboReflectUtils() {
@@ -107,6 +120,18 @@ public class DubboReflectUtils {
     }
 
     /**
+     * 获取服务接口名
+     *
+     * @param obj url
+     * @return 服务接口名
+     * @see com.alibaba.dubbo.common.URL
+     * @see org.apache.dubbo.common.URL
+     */
+    public static String getServiceKey(Object obj) {
+        return ReflectUtils.invokeWithNoneParameterAndReturnString(obj, GET_SERVICE_KEY_METHOD_NAME);
+    }
+
+    /**
      * 获取dubbo请求方法名
      *
      * @param obj invocation
@@ -157,7 +182,7 @@ public class DubboReflectUtils {
             return Collections.emptyMap();
         }
         String className = obj.getClass().getName().startsWith("com.alibaba.dubbo")
-            ? ALIBABA_RPC_CONTEXT_CLASS_NAME : APACHE_RPC_CONTEXT_CLASS_NAME;
+                ? ALIBABA_RPC_CONTEXT_CLASS_NAME : APACHE_RPC_CONTEXT_CLASS_NAME;
         Map<String, Object> attachments = new HashMap<>(getAttachmentsFromContext(className));
         attachments.putAll(getAttachmentsByInvocation(obj));
         return Collections.unmodifiableMap(attachments);
@@ -176,13 +201,14 @@ public class DubboReflectUtils {
             return Collections.emptyMap();
         }
         return ReflectUtils.getFieldValue(obj, ATTACHMENTS_FIELD).map(map -> (Map<String, Object>) map)
-            .orElse(Collections.emptyMap());
+                .orElse(Collections.emptyMap());
     }
 
     private static Map<String, Object> getAttachmentsFromContext(String contextClazz) {
         return com.huaweicloud.sermant.core.utils.ReflectUtils
-            .invokeMethod(contextClazz, GET_CONTEXT_METHOD_NAME, null, null)
-            .map(context -> ReflectUtils.getFieldValue(context, ATTACHMENTS_FIELD)
-                .map(map -> (Map<String, Object>) map).orElse(Collections.emptyMap())).orElse(Collections.emptyMap());
+                .invokeMethod(contextClazz, GET_CONTEXT_METHOD_NAME, null, null)
+                .map(context -> ReflectUtils.getFieldValue(context, ATTACHMENTS_FIELD)
+                        .map(map -> (Map<String, Object>) map).orElse(Collections.emptyMap()))
+                .orElse(Collections.emptyMap());
     }
 }

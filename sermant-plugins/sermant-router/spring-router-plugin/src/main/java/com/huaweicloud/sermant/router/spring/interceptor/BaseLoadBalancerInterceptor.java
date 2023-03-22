@@ -18,10 +18,9 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.request.RequestData;
+import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
@@ -49,8 +48,6 @@ import javax.servlet.http.HttpServletRequest;
 public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
     private final LoadBalancerService loadBalancerService;
 
-    private final RouterConfig routerConfig;
-
     private final boolean canLoadZuul;
 
     /**
@@ -58,7 +55,6 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
      */
     public BaseLoadBalancerInterceptor() {
         loadBalancerService = ServiceManager.getService(LoadBalancerService.class);
-        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
         canLoadZuul = canLoadZuul();
     }
 
@@ -73,14 +69,8 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
             BaseLoadBalancer loadBalancer = (BaseLoadBalancer) object;
             String name = loadBalancer.getName();
             RequestData requestData = getRequestData().orElse(null);
-            if (requestData == null) {
-                return context.skip(Collections.unmodifiableList(loadBalancerService
-                    .getZoneInstances(name, serverList, routerConfig.isEnabledSpringZoneRouter())));
-            }
-            List<Object> targetInstances = loadBalancerService
-                .getTargetInstances(name, serverList, requestData.getPath(), requestData.getHeader());
-            context.skip(Collections.unmodifiableList(
-                loadBalancerService.getZoneInstances(name, targetInstances, routerConfig.isEnabledSpringZoneRouter())));
+            List<Object> targetInstances = loadBalancerService.getTargetInstances(name, serverList, requestData);
+            context.skip(Collections.unmodifiableList(targetInstances));
         }
         return context;
     }
@@ -93,7 +83,7 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
     private List<Object> getServerList(String methodName, Object obj) {
         String fieldName = "getAllServers".equals(methodName) ? "allServerList" : "upServerList";
         return ReflectUtils.getFieldValue(obj, fieldName).map(value -> (List<Object>) value)
-            .orElse(Collections.emptyList());
+                .orElse(Collections.emptyList());
     }
 
     private Optional<RequestData> getRequestData() {
@@ -109,6 +99,10 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
             return Optional.empty();
         }
         Map<String, List<String>> header = new HashMap<>();
+        RequestTag requestTag = ThreadLocalUtils.getRequestTag();
+        if (requestTag != null) {
+            header.putAll(requestTag.getTag());
+        }
         HttpServletRequest request = context.getRequest();
         Enumeration<?> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {

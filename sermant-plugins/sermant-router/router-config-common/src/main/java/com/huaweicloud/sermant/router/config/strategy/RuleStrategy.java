@@ -35,10 +35,9 @@ public interface RuleStrategy<I> {
      * @param serviceName 服务名
      * @param instances 实例列表
      * @param routes 路由规则
-     * @param isReplaceDash 是否需要替换破折号为点号（dubbo需要）
      * @return 路由过滤后的实例
      */
-    List<I> getMatchInstances(String serviceName, List<I> instances, List<Route> routes, boolean isReplaceDash);
+    List<I> getMatchInstances(String serviceName, List<I> instances, List<Route> routes);
 
     /**
      * 根据请求信息选取路由的实例
@@ -60,15 +59,5 @@ public interface RuleStrategy<I> {
      * @return 路由过滤后的实例
      */
     List<I> getMismatchInstances(String serviceName, List<I> instances, List<Map<String, String>> tags,
-        boolean isReturnAllInstancesWhenMismatch);
-
-    /**
-     * 选取同区域的实例
-     *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @param zone 区域
-     * @return 路由过滤后的实例
-     */
-    List<I> getZoneInstances(String serviceName, List<I> instances, String zone);
+            boolean isReturnAllInstancesWhenMismatch);
 }

@@ -55,7 +55,7 @@ public abstract class AbstractDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(getMethodMatcher(), interceptClass)
+                InterceptDeclarer.build(getMethodMatcher(), interceptClass)
         };
     }
 

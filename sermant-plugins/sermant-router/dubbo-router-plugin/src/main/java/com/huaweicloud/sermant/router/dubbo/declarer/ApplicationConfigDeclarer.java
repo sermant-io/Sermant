@@ -26,10 +26,10 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  */
 public class ApplicationConfigDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.ApplicationConfig",
-        "com.alibaba.dubbo.config.ApplicationConfig"};
+            "com.alibaba.dubbo.config.ApplicationConfig"};
 
     private static final String INTERCEPT_CLASS
-        = "com.huaweicloud.sermant.router.dubbo.interceptor.ApplicationConfigInterceptor";
+            = "com.huaweicloud.sermant.router.dubbo.interceptor.ApplicationConfigInterceptor";
 
     private static final String[] METHOD_NAME = {"setName", "setParameters"};
 

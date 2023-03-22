@@ -28,9 +28,11 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  */
 public class RestTemplateDeclarer extends BaseRegistryPluginAdaptationDeclarer {
     private static final String ENHANCE_CLASS = "org.springframework.web.client.RestTemplate";
+
     private static final String ENHANCE_METHOD = "doExecute";
+
     private static final String INTERCEPTOR_CLASS =
-        "com.huaweicloud.sermant.router.spring.interceptor.RestTemplateInterceptor";
+            "com.huaweicloud.sermant.router.spring.interceptor.RestTemplateInterceptor";
 
     @Override
     public ClassMatcher getClassMatcher() {
@@ -39,7 +41,7 @@ public class RestTemplateDeclarer extends BaseRegistryPluginAdaptationDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[] {
-            InterceptDeclarer.build(MethodMatcher.nameEquals(ENHANCE_METHOD), INTERCEPTOR_CLASS)};
+        return new InterceptDeclarer[]{
+                InterceptDeclarer.build(MethodMatcher.nameEquals(ENHANCE_METHOD), INTERCEPTOR_CLASS)};
     }
 }

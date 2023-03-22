@@ -17,9 +17,9 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.router.common.request.RequestData;
-import com.huaweicloud.sermant.router.common.request.RequestHeader;
+import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.spring.TestSpringConfigService;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 import org.junit.AfterClass;
@@ -33,10 +33,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 测试RouteHandlerInterceptor
@@ -47,6 +45,8 @@ import java.util.Set;
 public class RouteHandlerInterceptorTest {
     private final RouteHandlerInterceptor interceptor;
 
+    private static TestSpringConfigService configService;
+
     private static MockedStatic<ServiceManager> mockServiceManager;
 
     /**
@@ -55,20 +55,9 @@ public class RouteHandlerInterceptorTest {
     @BeforeClass
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
+        configService = new TestSpringConfigService();
         mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class))
-            .thenReturn(new SpringConfigService() {
-                @Override
-                public void init(String cacheName, String serviceName) {
-                }
-
-                @Override
-                public Set<String> getMatchKeys() {
-                    Set<String> keys = new HashSet<>();
-                    keys.add("bar");
-                    keys.add("foo");
-                    return keys;
-                }
-            });
+                .thenReturn(configService);
     }
 
     /**
@@ -88,7 +77,7 @@ public class RouteHandlerInterceptorTest {
      */
     @Before
     public void clear() {
-        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestTag();
         ThreadLocalUtils.removeRequestData();
     }
 
@@ -104,10 +93,18 @@ public class RouteHandlerInterceptorTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         Object obj = new Object();
 
-        // 测试preHandle方法
+        // 测试keys全为空
+        configService.setReturnEmptyWhenGetMatchTags(true);
+        configService.setReturnEmptyWhenGetMatchKeys(true);
         interceptor.preHandle(request, response, obj);
-        RequestHeader requestHeader = ThreadLocalUtils.getRequestHeader();
-        Map<String, List<String>> header = requestHeader.getHeader();
+        Assert.assertNull(ThreadLocalUtils.getRequestTag());
+
+        // 测试preHandle方法，getMatchKeys不为空
+        configService.setReturnEmptyWhenGetMatchTags(true);
+        configService.setReturnEmptyWhenGetMatchKeys(false);
+        interceptor.preHandle(request, response, obj);
+        RequestTag requestTag = ThreadLocalUtils.getRequestTag();
+        Map<String, List<String>> header = requestTag.getTag();
         Assert.assertNotNull(header);
         Assert.assertEquals(2, header.size());
         Assert.assertEquals("bar1", header.get("bar").get(0));
@@ -119,10 +116,11 @@ public class RouteHandlerInterceptorTest {
      */
     @Test
     public void testAfterCompletion() {
-        ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));
+        ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar", Collections.singletonList("foo")));
+        Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
 
         // 测试afterCompletion,验证是否释放线程变量
         interceptor.afterCompletion(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), null);
-        Assert.assertNull(ThreadLocalUtils.getRequestHeader());
+        Assert.assertNull(ThreadLocalUtils.getRequestTag());
     }
 }
