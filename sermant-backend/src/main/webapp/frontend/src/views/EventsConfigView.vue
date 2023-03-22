@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%">
-    <el-page-header @back="goBack">
+    <el-page-header :title="'事件'" @back="goBack">
       <template #content>
         <span class="font-600 mr-3"> 事件配置 </span>
       </template>
