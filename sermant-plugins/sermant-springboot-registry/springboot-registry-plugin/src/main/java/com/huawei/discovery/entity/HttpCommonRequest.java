@@ -21,7 +21,7 @@ import org.apache.http.client.methods.HttpGet;
 import java.net.URI;
 
 /**
- * 定义Http请求, 除POST请求外其他均兼容
+ * 定义Http请求
  *
  * @author zhouss
  * @since 2022-10-11
