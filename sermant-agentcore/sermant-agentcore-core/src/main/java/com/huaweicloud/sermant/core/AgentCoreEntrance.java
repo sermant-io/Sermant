@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.event.EventManager;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.plugin.PluginSystemEntrance;
 import com.huaweicloud.sermant.core.service.ServiceManager;
@@ -41,7 +42,7 @@ public class AgentCoreEntrance {
     /**
      * 入口方法
      *
-     * @param argsMap         参数集
+     * @param argsMap 参数集
      * @param instrumentation Instrumentation对象
      * @throws Exception agent core执行异常
      */
@@ -63,6 +64,9 @@ public class AgentCoreEntrance {
 
         // 启动核心服务
         ServiceManager.initServices();
+
+        // 初始化事件系统
+        EventManager.init();
 
         // 初始化插件
         PluginSystemEntrance.initialize(instrumentation);

@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.service.tracing.common.SpanEvent;
 import com.huaweicloud.sermant.core.service.tracing.common.TracingRequest;
 import com.huaweicloud.sermant.core.utils.TracingUtils;
 
-import com.huaweicloud.sermant.implement.service.send.NettyGatewayClient;
+import com.huaweicloud.sermant.implement.service.send.netty.NettyGatewayClient;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Assert;
 import org.junit.Before;

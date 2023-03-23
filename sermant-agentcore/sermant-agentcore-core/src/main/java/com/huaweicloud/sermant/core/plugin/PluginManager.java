@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.core.plugin;
 import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.exception.SchemaException;
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
 import com.huaweicloud.sermant.core.plugin.common.PluginConstant;
@@ -54,6 +55,9 @@ public class PluginManager {
      * 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private PluginManager() {
+    }
 
     /**
      * 初始化插件包、配置、插件服务包等插件相关的内容
@@ -141,6 +145,7 @@ public class PluginManager {
         loadConfig(PluginConstant.getPluginConfigFile(pluginPath), classLoader);
         initService(classLoader);
         setDefaultVersion(pluginName);
+        FrameworkEventCollector.getInstance().collectPluginsLoadEvent(pluginName);
     }
 
     /**
@@ -277,7 +282,8 @@ public class PluginManager {
             if (jarFile != null) {
                 try {
                     jarFile.close();
-                } catch (IOException ignored) {
+                } catch (IOException ioException) {
+                    LOGGER.severe("Occurred ioException when close jar.");
                 }
             }
         }
@@ -303,6 +309,8 @@ public class PluginManager {
 
     /**
      * JarFile消费者
+     *
+     * @since 2021-11-12
      */
     private interface JarFileConsumer {
         /**

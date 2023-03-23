@@ -45,7 +45,7 @@ public class LoggerFactory {
         FrameworkClassLoader frameworkClassLoader = ClassLoaderManager.getFrameworkClassLoader();
         try {
             Method initMethod = frameworkClassLoader
-                    .loadClass("com.huaweicloud.sermant.implement.LoggerFactoryImpl").getMethod("init");
+                    .loadClass("com.huaweicloud.sermant.implement.log.LoggerFactoryImpl").getMethod("init");
             logger = (Logger) initMethod.invoke(null);
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
                  | InvocationTargetException e) {

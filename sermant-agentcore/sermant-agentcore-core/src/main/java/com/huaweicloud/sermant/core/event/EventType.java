@@ -16,25 +16,48 @@
 
 package com.huaweicloud.sermant.core.event;
 
-import com.huaweicloud.sermant.core.event.common.Event;
-import com.huaweicloud.sermant.core.event.common.EventCollector;
-
 /**
- * 日志事件采集器
+ * 事件种类
  *
  * @author luanwenfei
  * @since 2023-03-04
  */
-public class LogEventCollector extends EventCollector {
-    @Override
-    public boolean offerEvent(Event event) {
-        /**
-         * todo 判断当前事件类型5min内是否上报过 如果上报过 就压缩 统计个数
-         */
+public enum EventType {
+    /**
+     * 运行事件
+     */
+    OPERATION(0, "operation"),
 
-        /**
-         * todo 判断该收集器中的事件缓存是否已满，满了则主动上报后再添加
-         */
-        return super.offerEvent(event);
+    /**
+     * 治理事件
+     */
+    GOVERNANCE(1, "governance"),
+
+    /**
+     * 日志事件
+     */
+    LOG(2, "log");
+
+    /**
+     * 事件种类的整型标识
+     */
+    private final int type;
+
+    /**
+     * 事件种类描述
+     */
+    private final String description;
+
+    EventType(int type, String description) {
+        this.type = type;
+        this.description = description;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.core.event;
+package com.huaweicloud.sermant.core.event.collector;
 
-import com.huaweicloud.sermant.core.event.common.EventLevel;
-import com.huaweicloud.sermant.core.event.common.EventType;
+import com.huaweicloud.sermant.core.event.EventLevel;
+import com.huaweicloud.sermant.core.event.EventType;
 
 /**
  * 框架事件的事件定义
@@ -86,5 +86,9 @@ public enum FrameworkEventDefinitions {
 
     public EventLevel getEventLevel() {
         return eventLevel;
+    }
+
+    public String getScope() {
+        return "framework";
     }
 }

@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.send.api.GatewayClient;
 import com.huaweicloud.sermant.core.service.tracing.common.SpanEvent;
+import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -41,8 +42,6 @@ import java.util.logging.Logger;
 public class TracingSender {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final int TRACING_DATA_TYPE = 10;
-
     private static final int MAX_SPAN_EVENT_COUNT = 512;
 
     private static final long TRACING_SENDER_MINIMAL_INTERVAL = 1000L;
@@ -50,10 +49,10 @@ public class TracingSender {
     private static final long STOP_TIME_OUT = 3000L;
 
     private static final ArrayBlockingQueue<SpanEvent> SPAN_EVENT_DATA_QUEUE =
-        new ArrayBlockingQueue<>(MAX_SPAN_EVENT_COUNT);
+            new ArrayBlockingQueue<>(MAX_SPAN_EVENT_COUNT);
 
     private static final ExecutorService EXECUTOR =
-        Executors.newSingleThreadExecutor(runnable -> new Thread(runnable, "tracing-sender-thread"));
+            Executors.newSingleThreadExecutor(runnable -> new Thread(runnable, "tracing-sender-thread"));
 
     private static TracingSender tracingSender = null;
 
@@ -116,8 +115,8 @@ public class TracingSender {
                 timeDuring += TRACING_SENDER_MINIMAL_INTERVAL;
             } catch (InterruptedException e) {
                 LOGGER.severe(String.format(Locale.ROOT,
-                    "Exception [%s] occurs for [%s] when waiting to stop TracingSender service. ", e.getClass(),
-                    e.getMessage()));
+                        "Exception [%s] occurs for [%s] when waiting to stop TracingSender service. ", e.getClass(),
+                        e.getMessage()));
             }
         }
         SPAN_EVENT_DATA_QUEUE.clear();
@@ -157,7 +156,7 @@ public class TracingSender {
                         Thread.sleep(TRACING_SENDER_MINIMAL_INTERVAL);
                     } catch (InterruptedException e) {
                         LOGGER.severe(String.format(Locale.ROOT, "Exception [%s] occurs for [%s] when waiting queue. ",
-                            e.getClass(), e.getMessage()));
+                                e.getClass(), e.getMessage()));
                     }
                     continue;
                 }
@@ -179,9 +178,10 @@ public class TracingSender {
 
         private void sendMessage(TracingMessage tracingMessage) {
             LOGGER.info(String.format(Locale.ROOT, "Sending tracing message traceId : [%s] , spanId : [%s] .",
-                tracingMessage.getBody().getTraceId(), tracingMessage.getBody().getSpanId()));
+                    tracingMessage.getBody().getTraceId(), tracingMessage.getBody().getSpanId()));
             String serializedMessage = JSON.toJSONString(tracingMessage, SerializerFeature.WriteMapNullValue);
-            gatewayClient.send(serializedMessage.getBytes(StandardCharsets.UTF_8), TRACING_DATA_TYPE);
+            gatewayClient.send(serializedMessage.getBytes(StandardCharsets.UTF_8),
+                    Message.ServiceData.DataType.TRACING_DATA_VALUE);
         }
     }
 }

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.implement.service.send;
+package com.huaweicloud.sermant.implement.service.send.netty;
 
-import com.huaweicloud.sermant.implement.service.send.common.BaseHandler;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
 
 import io.netty.channel.ChannelHandlerContext;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Locale;
+import java.util.logging.Logger;
 
 /**
  * client消息处理类
@@ -32,9 +32,9 @@ import org.slf4j.LoggerFactory;
  * @since 2022-03-26
  */
 public class ClientHandler extends BaseHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private NettyClient client;
+    private final NettyClient client;
 
     /**
      * 构造函数
@@ -52,17 +52,16 @@ public class ClientHandler extends BaseHandler {
     @Override
     protected void handlerAllIdle(ChannelHandlerContext ctx) {
         super.handlerAllIdle(ctx);
-        sendPingMsg(ctx);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        LOGGER.error("Server channel is inaction");
+        LOGGER.severe("Server channel is inaction");
         client.doConnect();
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        LOGGER.error("Exception occurs. Exception info: {}", cause);
+        LOGGER.severe(String.format(Locale.ROOT, "Exception occurs. Exception info: %s", cause.getMessage()));
     }
 }

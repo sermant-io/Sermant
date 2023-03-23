@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.classloader.FrameworkClassLoader;
 import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDescription;
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
@@ -145,10 +146,11 @@ public class BufferedAgentBuilder {
         return addAction(new BuilderAction() {
             @Override
             public AgentBuilder process(AgentBuilder builder) {
-                return builder.with(
-                        new AgentBuilder.Listener.StreamWriting(new PrintStream(new ByteArrayOutputStream() {
+                return builder
+                        .with(new AgentBuilder.Listener.StreamWriting(new PrintStream(new ByteArrayOutputStream() {
                             private final byte[] separatorBytes =
                                     System.lineSeparator().getBytes(CommonConstant.DEFAULT_CHARSET);
+
                             private final int separatorLength = separatorBytes.length;
 
                             @Override
@@ -161,8 +163,20 @@ public class BufferedAgentBuilder {
                                         return;
                                     }
                                 }
-                                LOGGER.info(new String(Arrays.copyOf(buf, count - separatorLength)));
+                                String enhanceLog = new String(Arrays.copyOf(buf, count - separatorLength));
+                                logAndCollectEvent(enhanceLog);
                                 reset();
+                            }
+
+                            private void logAndCollectEvent(String enhanceLog) {
+                                if (enhanceLog.contains(CommonConstant.ERROR)) {
+                                    FrameworkEventCollector.getInstance().collectTransformFailureEvent(enhanceLog);
+                                    return;
+                                }
+                                if (enhanceLog.contains(CommonConstant.TRANSFORM)) {
+                                    FrameworkEventCollector.getInstance().collectTransformSuccessEvent(enhanceLog);
+                                }
+                                LOGGER.info(enhanceLog);
                             }
                         }, true)));
             }
@@ -271,9 +285,9 @@ public class BufferedAgentBuilder {
 
         @Override
         public boolean matches(TypeDescription typeDesc, ClassLoader classLoader, JavaModule javaModule,
-            Class<?> classBeingRedefined, ProtectionDomain protectionDomain) {
+                Class<?> classBeingRedefined, ProtectionDomain protectionDomain) {
             return isArrayOrPrimitive(typeDesc) || checkClassLoader(typeDesc, classLoader)
-                || isIgnoredPrefixes(typeDesc) || isIgnoredInterfaces(typeDesc);
+                    || isIgnoredPrefixes(typeDesc) || isIgnoredInterfaces(typeDesc);
         }
 
         private boolean isArrayOrPrimitive(TypeDescription typeDesc) {

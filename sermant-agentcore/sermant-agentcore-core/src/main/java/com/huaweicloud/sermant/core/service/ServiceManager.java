@@ -25,6 +25,7 @@ package com.huaweicloud.sermant.core.service;
 import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.exception.DupServiceException;
 import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
 import com.huaweicloud.sermant.core.utils.SpiLoadUtils;
@@ -75,6 +76,7 @@ public class ServiceManager {
             if (!AGENT_CONFIG.getServiceBlackList().contains(service.getClass().getName())
                 && loadService(service, service.getClass(), BaseService.class)) {
                 service.start();
+                FrameworkEventCollector.getInstance().collectServiceStartEvent(service.getClass().getName());
             }
         }
         addStopHook(); // 加载完所有服务再启动服务
@@ -142,6 +144,7 @@ public class ServiceManager {
                 for (BaseService baseService : new HashSet<>(SERVICES.values())) {
                     try {
                         baseService.stop();
+                        FrameworkEventCollector.getInstance().collectServiceStopEvent(baseService.getClass().getName());
                     } catch (Exception ex) {
                         LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
                             "Error occurs while stopping service: %s", baseService.getClass().toString()), ex);

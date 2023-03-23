@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.implement.service.send;
+package com.huaweicloud.sermant.implement.service.send.netty;
 
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.service.send.config.BackendConfig;
@@ -30,16 +30,16 @@ import java.util.Map;
  * @since 2022-03-26
  */
 public class NettyClientFactory {
-    private static NettyClientFactory factory = new NettyClientFactory();
+    private static final NettyClientFactory FACTORY = new NettyClientFactory();
 
-    private static Map<String, NettyClient> clientMap = new HashMap<>();
+    private static final Map<String, NettyClient> CLIENT_MAP = new HashMap<>();
 
     public static NettyClientFactory getInstance() {
-        return factory;
+        return FACTORY;
     }
 
     private static void refreshClientMap(String address, NettyClient client) {
-        clientMap.put(address, client);
+        CLIENT_MAP.put(address, client);
     }
 
     /**
@@ -61,8 +61,8 @@ public class NettyClientFactory {
      */
     public synchronized NettyClient getNettyClient(String serverIp, int serverPort) {
         String address = serverIp + ":" + serverPort;
-        if (clientMap.containsKey(address)) {
-            return clientMap.get(address);
+        if (CLIENT_MAP.containsKey(address)) {
+            return CLIENT_MAP.get(address);
         }
 
         NettyClient client = new NettyClient(serverIp, serverPort);

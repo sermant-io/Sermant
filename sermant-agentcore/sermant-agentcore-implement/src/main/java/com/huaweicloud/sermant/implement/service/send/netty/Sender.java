@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.implement.service.send;
+package com.huaweicloud.sermant.implement.service.send.netty;
 
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
 
@@ -61,7 +61,7 @@ public class Sender implements Runnable {
             list = new ArrayList<>();
             queue.drainTo(list);
             Message.NettyMessage message = Message.NettyMessage.newBuilder()
-                .setMessageType(Message.NettyMessage.MessageType.SERVICE_DATA).addAllServiceData(list).build();
+                    .setMessageType(Message.NettyMessage.MessageType.SERVICE_DATA).addAllServiceData(list).build();
             if (channel == null) {
                 LOGGER.warn("channel is null");
             } else {
