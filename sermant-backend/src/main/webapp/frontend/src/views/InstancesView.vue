@@ -97,15 +97,15 @@
     </el-input>
     <div>
       <el-table :data="state.tableData" style="width: 100%" :border="true" stripe>
-        <el-table-column label="状态" prop="health">
+        <el-table-column label="状态" prop="health" width="100">
           <template #default="scope">
             <div class="dot normal-dot" v-if="scope.row.health"></div>
             <div class="dot abnormal-dot" v-if="!scope.row.health"></div>
           </template>
         </el-table-column>
-        <el-table-column prop="service" label="服务" width="100"> </el-table-column>
+        <el-table-column prop="service" label="服务" width="120"> </el-table-column>
         <el-table-column prop="instanceId" label="实例ID" width="320"> </el-table-column>
-        <el-table-column prop="version" label="版本" width="100"> </el-table-column>
+        <el-table-column prop="version" label="版本" width="120"> </el-table-column>
         <el-table-column prop="ipAddress" label="IP" width="180"> </el-table-column>
         <el-table-column prop="heartbeatTime" label="心跳时间" width="180">
         </el-table-column>
@@ -164,18 +164,22 @@ const versionTag = reactive([]);
 
 const handleCloseApplicationTag = (tag: string) => {
   applicationTag.splice(applicationTag.indexOf(tag), 1);
+  search();
 };
 
 const handleCloseServiceTag = (tag: string) => {
   serviceTag.splice(serviceTag.indexOf(tag), 1);
+  search();
 };
 
 const handleCloseIpTag = (tag: string) => {
   ipTag.splice(ipTag.indexOf(tag), 1);
+  search();
 };
 
 const handleCloseVersionTag = (tag: string) => {
   versionTag.splice(versionTag.indexOf(tag), 1);
+  search();
 };
 
 const handleInputConfirm = () => {
@@ -259,23 +263,24 @@ async function getTableData() {
     const res = await axios.get(`${window.location.origin}/sermant/getPluginsInfo`);
     // 清理统计服务
     tagCount.serviceCount = [];
-    http: innerData = res.data;
+    innerData = res.data;
     innerData.forEach((item) => {
       if (item.health) {
         state.normalCount++;
       } else {
         state.abnormalCount++;
       }
+      // 统计服务数
+      if (tagCount.serviceCount.indexOf(item.service) === -1) {
+        tagCount.serviceCount.push(item.service);
+      }
     });
-    // 统计服务数
-    if (tagCount.serviceCount.indexOf(item.service) === -1) {
-      tagCount.serviceCount.push(item.service);
-    }
     showData = JSON.parse(JSON.stringify(res.data));
     state.total = showData.length;
     const result = JSON.parse(JSON.stringify(showData.slice(0, state.pageSize)));
     state.tableData = handle(result);
   } catch (err) {
+    console.log(err);
   } finally {
     state.loading = false;
   }
@@ -283,7 +288,6 @@ async function getTableData() {
 function handle(result: any[]) {
   result.forEach((item: any) => {
     if (item.ip instanceof Array) {
-      // item.ip = item.ip.join(",");
       item.ipAddress = item.ip.join(",");
     }
     const heartbeatDate = new Date(item.heartbeatTime);
@@ -318,10 +322,6 @@ function search() {
     // 筛选服务
     if (serviceTag.length !== 0) {
       isMatch = isMatch && serviceTag.indexOf(item.service) !== -1;
-      // 统计服务数
-      if (tagCount.serviceCount.indexOf(item.service) === -1) {
-        tagCount.serviceCount.push(item.service);
-      }
     }
     // 筛选IP
     if (ipTag.length !== 0) {
@@ -339,6 +339,10 @@ function search() {
       isMatch = isMatch && versionTag.indexOf(item.version) !== -1;
     }
     if (isMatch) {
+      // 统计服务数
+      if (tagCount.serviceCount.indexOf(item.service) === -1) {
+        tagCount.serviceCount.push(item.service);
+      }
       showData.push(item);
     }
   });

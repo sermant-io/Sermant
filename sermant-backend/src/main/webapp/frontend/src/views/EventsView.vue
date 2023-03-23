@@ -485,7 +485,7 @@ const requestParam = reactive({
 
 const pageChange = (pageNubmber: number) => {
   axios
-    .get(`http://${window.location.origin}/sermant/event/events/page`, {
+    .get(`${window.location.origin}/sermant/event/events/page`, {
       params: { page: pageNubmber },
     })
     .then(function (response) {
