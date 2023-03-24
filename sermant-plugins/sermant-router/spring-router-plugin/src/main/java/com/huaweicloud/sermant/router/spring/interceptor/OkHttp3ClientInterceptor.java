@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.utils.LogUtils;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.request.RequestData;
@@ -49,6 +50,7 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
      */
     @Override
     public ExecuteContext doBefore(ExecuteContext context) throws Exception {
+        LogUtils.printHttpRequestBeforePoint(context);
         final Optional<Request> rawRequest = getRequest(context);
         if (!rawRequest.isPresent() || StringUtils.isBlank(FlowContextUtils.getTagName())) {
             return context;
@@ -74,12 +76,14 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
         ThreadLocalUtils.removeRequestData();
+        LogUtils.printHttpRequestAfterPoint(context);
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
         ThreadLocalUtils.removeRequestData();
+        LogUtils.printHttpRequestOnThrowPoint(context);
         return context;
     }
 
