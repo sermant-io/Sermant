@@ -17,8 +17,8 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>spring-test</artifactId>
         <groupId>com.huawei.spring.test</groupId>
@@ -42,6 +42,12 @@
                 <module>spring-common-feign</module>
                 <module>spring-common-resttemplate</module>
             </modules>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>flowcontrol-test-1.5.x</id>
@@ -49,6 +55,23 @@
                 <module>spring-common-feign-1.5.x</module>
                 <module>spring-common-resttemplate</module>
             </modules>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>com.netflix.ribbon</groupId>
+                            <artifactId>ribbon-loadbalancer</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>com.netflix.ribbon</groupId>
+                    <artifactId>ribbon-loadbalancer</artifactId>
+                    <version>2.2.5</version>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>common-test</id>
@@ -56,6 +79,12 @@
                 <module>spring-common-feign</module>
                 <module>spring-common-resttemplate</module>
             </modules>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>common-test-1.5.x</id>
@@ -63,18 +92,47 @@
                 <module>spring-common-feign-1.5.x</module>
                 <module>spring-common-resttemplate</module>
             </modules>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>com.netflix.ribbon</groupId>
+                            <artifactId>ribbon-loadbalancer</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>com.netflix.ribbon</groupId>
+                    <artifactId>ribbon-loadbalancer</artifactId>
+                    <version>2.2.5</version>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>zuul</id>
             <modules>
                 <module>spring-common-zuul</module>
             </modules>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>gateway</id>
             <modules>
                 <module>spring-common-gateway</module>
             </modules>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 
@@ -82,10 +140,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

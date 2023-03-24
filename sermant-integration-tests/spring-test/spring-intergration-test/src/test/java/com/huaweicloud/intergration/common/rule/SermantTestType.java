@@ -73,6 +73,11 @@ public enum SermantTestType {
     TAG_ROUTER,
 
     /**
+     * 同AZ优先标签路由测试
+     */
+    TAG_ROUTER_AZ,
+
+    /**
      * 优雅上下线测试
      */
     GRACEFUL,

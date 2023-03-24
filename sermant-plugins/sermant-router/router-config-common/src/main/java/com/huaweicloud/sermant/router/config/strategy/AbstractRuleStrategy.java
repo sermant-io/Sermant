@@ -18,7 +18,10 @@ package com.huaweicloud.sermant.router.config.strategy;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+import com.huaweicloud.sermant.router.config.entity.Match;
+import com.huaweicloud.sermant.router.config.entity.Policy;
 import com.huaweicloud.sermant.router.config.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils.RouteResult;
 
@@ -72,6 +75,36 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
     public List<I> getMatchInstances(String serviceName, List<I> instances, List<Route> routes) {
         RouteResult<?> result = RuleUtils.getTargetTags(routes);
         return getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName, instances, true);
+    }
+
+    /**
+     * 根据rule规则获取匹配上的实例
+     *
+     * @param serviceName 服务名
+     * @param instances 实例列表
+     * @param rule rule规则
+     * @return 返回rule规则筛选过滤实例
+     */
+    @Override
+    public List<I> getMatchInstances(String serviceName, List<I> instances, Rule rule) {
+        RouteResult<?> result = RuleUtils.getTargetTags(rule.getRoute());
+        List<I> matchInstances = getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName, instances,
+                false);
+        Match match = rule.getMatch();
+        if (match == null) {
+            return matchInstances;
+        }
+        Policy policy = match.getPolicy();
+
+        // 1.全部可用实例数小于全部实例最小可用阈值，则同AZ优先
+        // 2.未设置全部实例最小可用阈值，未超过同AZ比例阈值，则同AZ优先
+        // 3.设置了全部实例最小可用阈值，但其小于全部AZ可用实例，未超过同AZ比例阈值，则同AZ优先
+        if (policy == null || policy.getMinAllInstances() > instances.size()
+                || instances.size() * policy.getTriggerThreshold() < matchInstances.size()) {
+            return matchInstances;
+        }
+        LOGGER.warning("not matched, return all instances");
+        return instances;
     }
 
     @Override

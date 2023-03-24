@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,9 @@ public class MatchInstanceStrategy extends AbstractInstanceStrategy<Object, Map<
     private String getKey(String tag) {
         if (VERSION_KEY.equals(tag)) {
             return RouterConstant.VERSION_KEY;
+        }
+        if (ZONE_KEY.equals(tag)) {
+            return RouterConstant.ZONE_KEY;
         }
         return RouterConstant.PARAMETERS_KEY_PREFIX + tag;
     }

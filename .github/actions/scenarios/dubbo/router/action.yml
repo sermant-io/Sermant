@@ -107,6 +107,7 @@ runs:
         SERVICE_META_ENVIRONMENT: development
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVICE_META_VERSION: 1.0.0
+        SERVICE_META_ZONE: az1
         SERVER_PORT: 18021
         DUBBO_PROTOCOL_PORT: 18821
       run: |
@@ -122,6 +123,7 @@ runs:
         SERVICE_META_ENVIRONMENT: development
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVICE_META_PARAMETERS: group-test:gray
+        SERVICE_META_ZONE: az1
         SERVICE_META_VERSION: 1.0.1
         SERVER_PORT: 18022
         DUBBO_PROTOCOL_PORT: 18822
@@ -138,6 +140,7 @@ runs:
         SERVICE_META_ENVIRONMENT: development
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVICE_META_PARAMETERS: group-test:red
+        SERVICE_META_ZONE: az2
         SERVICE_META_VERSION: 1.0.1
         SERVER_PORT: 18023
         DUBBO_PROTOCOL_PORT: 18823
@@ -159,6 +162,7 @@ runs:
         SERVICE_META_ENVIRONMENT: development
         ROUTER_PLUGIN_USE_REQUEST_ROUTER: false
         SERVICE_META_PARAMETERS: group-test:gray
+        SERVICE_META_ZONE: az1
         SERVER_PORT: 18020
         DUBBO_PROTOCOL_PORT: 18820
       run: |

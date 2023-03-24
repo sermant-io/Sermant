@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.router.dubbo.strategy;
 
 import com.huaweicloud.sermant.router.config.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.strategy.RuleStrategy;
 import com.huaweicloud.sermant.router.dubbo.strategy.rule.InvokerRuleStrategy;
 
@@ -51,6 +52,18 @@ public enum RuleStrategyHandler {
      */
     public List<Object> getMatchInvokers(String serviceName, List<Object> invokers, List<Route> routes) {
         return ruleStrategy.getMatchInstances(serviceName, invokers, routes);
+    }
+
+    /**
+     * 根据rule选取标签应用的invokers
+     *
+     * @param serviceName 服务名
+     * @param invokers dubbo invokers
+     * @param rule 规则
+     * @return 标签应用的invokers
+     */
+    public List<Object> getMatchInvokers(String serviceName, List<Object> invokers, Rule rule) {
+        return ruleStrategy.getMatchInstances(serviceName, invokers, rule);
     }
 
     /**

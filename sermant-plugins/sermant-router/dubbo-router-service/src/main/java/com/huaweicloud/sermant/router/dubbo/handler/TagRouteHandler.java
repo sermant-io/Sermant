@@ -33,6 +33,7 @@ import com.huaweicloud.sermant.router.dubbo.strategy.RuleStrategyHandler;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * tag匹配方式的路由处理器
@@ -41,6 +42,17 @@ import java.util.Map;
  * @since 2023-02-24
  */
 public class TagRouteHandler extends AbstractRouteHandler {
+
+    /**
+     * 版本key
+     */
+    private static final String VERSION_KEY = "version";
+
+    /**
+     * 区域key
+     */
+    private static final String ZONE_KEY = "zone";
+
     @Override
     public Object handle(String targetService, List<Object> invokers, Object invocation, Map<String, String> queryMap,
             String serviceInterface) {
@@ -63,30 +75,21 @@ public class TagRouteHandler extends AbstractRouteHandler {
             return invokers;
         }
         List<Rule> rules = TagRuleUtils.getTagRules(configuration, targetService, DubboCache.INSTANCE.getAppName());
-        List<Route> routes = getRoutes(rules);
-        if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, routes);
+        Optional<Rule> rule = getRule(rules);
+        if (rule.isPresent() && !CollectionUtils.isEmpty(rule.get().getRoute())) {
+            return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, rule.get());
         }
         return invokers;
     }
 
-    /**
-     * 获取匹配的路由
-     *
-     * @param list 有效的规则
-     * @return 匹配的路由
-     */
-    private List<Route> getRoutes(List<Rule> list) {
-        if (DubboCache.INSTANCE.getParameters() == null) {
-            return Collections.emptyList();
-        }
+    private Optional<Rule> getRule(List<Rule> list) {
         for (Rule rule : list) {
             List<Route> routeList = getRoutes(rule);
             if (!CollectionUtils.isEmpty(routeList)) {
-                return routeList;
+                return Optional.of(rule);
             }
         }
-        return Collections.emptyList();
+        return Optional.empty();
     }
 
     private List<Route> getRoutes(Rule rule) {
@@ -106,7 +109,21 @@ public class TagRouteHandler extends AbstractRouteHandler {
                 ValueMatch valueMatch = matchRule.getValueMatch();
                 List<String> values = valueMatch.getValues();
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
-                String tagValue = DubboCache.INSTANCE.getParameters().get(RouterConstant.PARAMETERS_KEY_PREFIX + key);
+                Map<String, String> parameters = DubboCache.INSTANCE.getParameters();
+                if (parameters == null) {
+                    return Collections.emptyList();
+                }
+                String tagValue;
+                switch (key) {
+                    case VERSION_KEY:
+                        tagValue = parameters.get(RouterConstant.VERSION_KEY);
+                        break;
+                    case ZONE_KEY:
+                        tagValue = parameters.get(RouterConstant.ZONE_KEY);
+                        break;
+                    default:
+                        tagValue = parameters.get(RouterConstant.PARAMETERS_KEY_PREFIX + key);
+                }
                 if (!isFullMatch && matchStrategy.isMatch(values, tagValue, matchRule.isCaseInsensitive())) {
                     // 如果不是全匹配，且匹配了一个，那么直接return
                     return rule.getRoute();

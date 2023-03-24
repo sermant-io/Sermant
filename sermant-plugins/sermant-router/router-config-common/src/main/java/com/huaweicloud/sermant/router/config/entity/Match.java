@@ -89,6 +89,11 @@ public class Match {
     @JSONField(deserializeUsing = ValueMatchDeserializer.class)
     private Map<String, List<MatchRule>> tags;
 
+    /**
+     * 阈值策略
+     */
+    private Policy policy;
+
     public String getSource() {
         return source;
     }
@@ -175,5 +180,13 @@ public class Match {
 
     public void setTags(Map<String, List<MatchRule>> tags) {
         this.tags = tags;
+    }
+
+    public Policy getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(Policy policy) {
+        this.policy = policy;
     }
 }

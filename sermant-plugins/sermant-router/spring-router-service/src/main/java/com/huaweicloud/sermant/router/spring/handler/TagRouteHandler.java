@@ -34,6 +34,7 @@ import com.huaweicloud.sermant.router.spring.strategy.RuleStrategyHandler;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * tag匹配方式的路由处理器
@@ -63,30 +64,21 @@ public class TagRouteHandler extends AbstractRouteHandler {
             return instances;
         }
         List<Rule> rules = TagRuleUtils.getTagRules(configuration, targetName, AppCache.INSTANCE.getAppName());
-        List<Route> routes = getRoutes(rules);
-        if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getMatchInstances(targetName, instances, routes);
+        Optional<Rule> rule = getRule(rules);
+        if (rule.isPresent() && !CollectionUtils.isEmpty(rule.get().getRoute())) {
+            return RuleStrategyHandler.INSTANCE.getMatchInstances(targetName, instances, rule.get());
         }
         return instances;
     }
 
-    /**
-     * 获取匹配的路由
-     *
-     * @param list 有效的规则
-     * @return 匹配的路由
-     */
-    private List<Route> getRoutes(List<Rule> list) {
-        if (AppCache.INSTANCE.getMetadata() == null) {
-            return Collections.emptyList();
-        }
+    private Optional<Rule> getRule(List<Rule> list) {
         for (Rule rule : list) {
             List<Route> routeList = getRoutes(rule);
             if (!CollectionUtils.isEmpty(routeList)) {
-                return routeList;
+                return Optional.of(rule);
             }
         }
-        return Collections.emptyList();
+        return Optional.empty();
     }
 
     private List<Route> getRoutes(Rule rule) {

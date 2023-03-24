@@ -25,6 +25,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
@@ -282,6 +283,84 @@ public class RouterTest {
     @Test
     public void testRouterWithConsumerTagRule() throws InterruptedException {
         testConsumerTagRule();
+        clearConfig();
+    }
+
+    /**
+     * given：标签路由测试：同标签路由场景测试（规则含有TriggerThreshold的policy）
+     * when：触发大于triggerThreshold
+     * then：同AZ优先策略
+     *
+     * @throws InterruptedException
+     */
+    @Test
+    public void testRouterWithTriggerThresholdPolicyRuleOne() throws InterruptedException {
+        testTriggerThresholdPolicyAZRuleOne();
+        clearConfig();
+    }
+
+    /**
+     * given：标签路由测试：同标签路由场景测试（规则含有TriggerThreshold的policy）
+     * when：触发小于triggerThreshold
+     * then：非同AZ优先策略
+     *
+     * @throws InterruptedException
+     */
+    @Test
+    public void testRouterWithTriggerThresholdPolicyRuleTwo() throws InterruptedException {
+        testTriggerThresholdPolicyAZRuleTwo();
+        clearConfig();
+    }
+
+    /**
+     * given：测试tag匹配规则同AZ优先标签路由功能：规则含有TriggerThreshold和minAllInstances的policy
+     * when：大于minAllInstances和大于triggerThreshold场景
+     * then：同AZ优先策略
+     *
+     * @throws InterruptedException
+     */
+    @Test
+    public void testRouterPolicyRuleOne() throws InterruptedException {
+        testPolicyAZRuleOne();
+        clearConfig();
+    }
+
+    /**
+     * given：测试tag匹配规则同AZ优先标签路由功能：规则含有TriggerThreshold和minAllInstances的policy
+     * when：大于minAllInstances和小于triggerThreshold场景
+     * then：非同AZ优先策略
+     *
+     * @throws InterruptedException
+     */
+    @Test
+    public void testRouterPolicyRuleTwo() throws InterruptedException {
+        testPolicyAZRuleTwo();
+        clearConfig();
+    }
+
+    /**
+     * given：测试tag匹配规则同AZ优先标签路由功能：规则含有TriggerThreshold和minAllInstances的policy
+     * when：小于minAllInstances和大于triggerThreshold场景
+     * then：同AZ优先策略
+     *
+     * @throws InterruptedException
+     */
+    @Test
+    public void testRouterPolicyRuleThree() throws InterruptedException {
+        testPolicyAZRuleThree();
+        clearConfig();
+    }
+
+    /**
+     * given：测试tag匹配规则同AZ优先标签路由功能：规则含有TriggerThreshold和minAllInstances的policy
+     * when：小于minAllInstances和小于triggerThreshold场景
+     * then：同AZ优先策略
+     *
+     * @throws InterruptedException
+     */
+    @Test
+    public void testRouterPolicyRuleFour() throws InterruptedException {
+        testPolicyAZRuleFour();
         clearConfig();
     }
 
@@ -589,6 +668,312 @@ public class RouterTest {
 
             exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
             Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("gray"));
+        }
+    }
+
+    /**
+     * 测试tag匹配规则同AZ优先标签路由功能：规则含有TriggerThreshold的policy
+     * 触发大于triggerThreshold
+     */
+    private void testTriggerThresholdPolicyAZRuleOne() throws InterruptedException {
+        // 规则含有TriggerThreshold的policy
+        String CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/tag\n"
+                + "  description: tag-az-rule-trigger-threshold-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          zone:\n"
+                + "            exact: 'az1'\n"
+                + "            caseInsensitive: false\n"
+                + "        policy:\n"
+                + "          triggerThreshold: 40\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            zone: CONSUMER_TAG\n";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(SERVICE_KEY, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
+        HttpHeaders headers = new HttpHeaders();
+
+        // 测试命中group:CONSUMER_TAG的实例(consumer自身zone:az1)
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+        }
+    }
+
+    /**
+     * 测试tag匹配规则同AZ优先标签路由功能：规则含有TriggerThreshold的policy
+     * 触发小于triggerThreshold
+     */
+    private void testTriggerThresholdPolicyAZRuleTwo() throws InterruptedException {
+        // 规则含有TriggerThreshold的policy
+        String CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/tag\n"
+                + "  description: tag-az-rule-trigger-threshold-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          zone:\n"
+                + "            exact: 'az1'\n"
+                + "            caseInsensitive: false\n"
+                + "        policy:\n"
+                + "          triggerThreshold: 90\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            zone: CONSUMER_TAG\n";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(SERVICE_KEY, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
+        HttpHeaders headers = new HttpHeaders();
+
+        // 测试命中group:CONSUMER_TAG的实例(consumer自身group:gray)
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        int dubboAZ1 = 0, dubboAZ2 = 0;
+        int feignAZ1 = 0, feignAZ2 = 0;
+        int restAZ1 = 0, restAZ2 = 0;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            if (Objects.requireNonNull(exchange.getBody()).contains("az1")) {
+                dubboAZ1++;
+            } else if (Objects.requireNonNull(exchange.getBody()).contains("az2")) {
+                dubboAZ2++;
+            }
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            if (Objects.requireNonNull(exchange.getBody()).contains("az1")) {
+                feignAZ1++;
+            } else if (Objects.requireNonNull(exchange.getBody()).contains("az2")) {
+                feignAZ2++;
+            }
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            if (Objects.requireNonNull(exchange.getBody()).contains("az1")) {
+                restAZ1++;
+            } else if (Objects.requireNonNull(exchange.getBody()).contains("az2")) {
+                restAZ2++;
+            }
+        }
+        Assertions.assertNotEquals(0, dubboAZ1);
+        Assertions.assertNotEquals(0, dubboAZ2);
+        Assertions.assertNotEquals(0, feignAZ1);
+        Assertions.assertNotEquals(0, feignAZ2);
+        Assertions.assertNotEquals(0, restAZ1);
+        Assertions.assertNotEquals(0, restAZ2);
+    }
+
+    /**
+     * 测试tag匹配规则同AZ优先标签路由功能：规则含有TriggerThreshold和minAllInstances的policy
+     * 大于minAllInstances和大于triggerThreshold场景
+     * 同AZ优先策略
+     *
+     * @throws InterruptedException
+     */
+
+    private void testPolicyAZRuleOne() throws InterruptedException {
+        String CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/tag\n"
+                + "  description: tag-az-rule-trigger-threshold-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          zone:\n"
+                + "            exact: 'az1'\n"
+                + "            caseInsensitive: false\n"
+                + "        policy:\n"
+                + "          triggerThreshold: 40\n"
+                + "          minAllInstances: 2\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            zone: CONSUMER_TAG\n";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(SERVICE_KEY, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
+        HttpHeaders headers = new HttpHeaders();
+
+        // 测试命中group:CONSUMER_TAG的实例(consumer自身zone:az1)
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+        }
+    }
+
+    /**
+     * 测试tag匹配规则同AZ优先标签路由功能：规则含有TriggerThreshold和minAllInstances的policy
+     * 大于minAllInstances和小于triggerThreshold场景
+     * 非同AZ优先策略
+     *
+     * @throws InterruptedException
+     */
+    private void testPolicyAZRuleTwo() throws InterruptedException {
+        String CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/tag\n"
+                + "  description: tag-az-rule-trigger-threshold-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          zone:\n"
+                + "            exact: 'az1'\n"
+                + "            caseInsensitive: false\n"
+                + "        policy:\n"
+                + "          triggerThreshold: 90\n"
+                + "          minAllInstances: 2\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            zone: CONSUMER_TAG\n";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(SERVICE_KEY, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
+        HttpHeaders headers = new HttpHeaders();
+
+        // 测试命中group:CONSUMER_TAG的实例(consumer自身zone:az1)
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        int dubboAZ1 = 0, dubboAZ2 = 0;
+        int feignAZ1 = 0, feignAZ2 = 0;
+        int restAZ1 = 0, restAZ2 = 0;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            if (Objects.requireNonNull(exchange.getBody()).contains("az1")) {
+                dubboAZ1++;
+            } else if (Objects.requireNonNull(exchange.getBody()).contains("az2")) {
+                dubboAZ2++;
+            }
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            if (Objects.requireNonNull(exchange.getBody()).contains("az1")) {
+                feignAZ1++;
+            } else if (Objects.requireNonNull(exchange.getBody()).contains("az2")) {
+                feignAZ2++;
+            }
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            if (Objects.requireNonNull(exchange.getBody()).contains("az1")) {
+                restAZ1++;
+            } else if (Objects.requireNonNull(exchange.getBody()).contains("az2")) {
+                restAZ2++;
+            }
+        }
+        Assertions.assertNotEquals(0, dubboAZ1);
+        Assertions.assertNotEquals(0, dubboAZ2);
+        Assertions.assertNotEquals(0, feignAZ1);
+        Assertions.assertNotEquals(0, feignAZ2);
+        Assertions.assertNotEquals(0, restAZ1);
+        Assertions.assertNotEquals(0, restAZ2);
+    }
+
+    /**
+     * 测试tag匹配规则同AZ优先标签路由功能：规则含有TriggerThreshold和minAllInstances的policy
+     * 小于minAllInstances和大于triggerThreshold场景
+     * 同AZ优先策略
+     *
+     * @throws InterruptedException
+     */
+
+    private void testPolicyAZRuleThree() throws InterruptedException {
+        String CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/tag\n"
+                + "  description: tag-az-rule-trigger-threshold-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          zone:\n"
+                + "            exact: 'az1'\n"
+                + "            caseInsensitive: false\n"
+                + "        policy:\n"
+                + "          triggerThreshold: 40\n"
+                + "          minAllInstances: 10\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            zone: CONSUMER_TAG\n";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(SERVICE_KEY, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
+        HttpHeaders headers = new HttpHeaders();
+
+        // 测试命中group:CONSUMER_TAG的实例(consumer自身zone:az1)
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+        }
+    }
+
+
+    /**
+     * 测试tag匹配规则同AZ优先标签路由功能：规则含有TriggerThreshold和minAllInstances的policy
+     * 小于minAllInstances和小于triggerThreshold场景
+     * 同AZ优先策略
+     *
+     * @throws InterruptedException
+     */
+
+    private void testPolicyAZRuleFour() throws InterruptedException {
+        String CONTENT = "---\n"
+                + "- kind: routematcher.sermant.io/tag\n"
+                + "  description: tag-az-rule-trigger-threshold-test\n"
+                + "  rules:\n"
+                + "    - precedence: 1\n"
+                + "      match:\n"
+                + "        tags:\n"
+                + "          zone:\n"
+                + "            exact: 'az1'\n"
+                + "            caseInsensitive: false\n"
+                + "        policy:\n"
+                + "          triggerThreshold: 90\n"
+                + "          minAllInstances: 10\n"
+                + "      route:\n"
+                + "        - tags:\n"
+                + "            zone: CONSUMER_TAG\n";
+
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(SERVICE_KEY, CONTENT));
+        TimeUnit.SECONDS.sleep(3);
+
+        HttpHeaders headers = new HttpHeaders();
+
+        // 测试命中group:CONSUMER_TAG的实例(consumer自身zone:az1)
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> exchange;
+        for (int i = 0; i < TIMES; i++) {
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Dubbo", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Feign", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+
+            exchange = REST_TEMPLATE.exchange(testTagRouterBaseUrl + "Rest", HttpMethod.GET, entity, String.class);
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
         }
     }
 

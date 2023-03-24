@@ -203,4 +203,263 @@ public class TagRouteHandlerTest {
         Assert.assertEquals(invoker1, targetInvokers.get(0));
         ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }
+
+    /**
+     * 测试rule规则如下：
+     * given: match为精确匹配az1，未设置policy，下游provider有az1实例
+     * when: route至az1
+     * then: 有能匹配到az1下游provider实例
+     */
+    @Test
+    public void testGetTargetInvokerByTagRulesWithoutPolicySceneOne() {
+        // 初始化路由规则
+        RuleInitializationUtils.initAZTagMatchRule();
+        List<Object> invokers = new ArrayList<>();
+        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0", "az1");
+        invokers.add(invoker1);
+        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("1.0.1", "az2");
+        invokers.add(invoker2);
+        Invocation invocation = new AbstractDirectoryServiceTest.ApacheInvocation();
+        Map<String, String> queryMap = new HashMap<>();
+        queryMap.put("zone", "az1");
+        queryMap.put("interface", "com.huaweicloud.foo.FooTest");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        DubboCache.INSTANCE.setParameters(parameters);
+        DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
+        List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
+                , invokers, invocation, queryMap, "com.huaweicloud.foo.FooTest");
+        Assert.assertEquals(1, targetInvokers.size());
+        Assert.assertEquals(invoker1, targetInvokers.get(0));
+        ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
+    }
+
+    /**
+     * 测试rule规则如下：
+     * given：match为精确匹配az1，未设置policy，下游provider无az1实例
+     * when：route至az1
+     * then：不能匹配到下游provider实例
+     */
+    @Test
+    public void testGetTargetInvokerByTagRulesWithoutPolicySceneTwo() {
+        // 初始化路由规则
+        RuleInitializationUtils.initAZTagMatchRule();
+        List<Object> invokers = new ArrayList<>();
+        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0", "az2");
+        invokers.add(invoker1);
+        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("1.0.1", "az3");
+        invokers.add(invoker2);
+        Invocation invocation = new AbstractDirectoryServiceTest.ApacheInvocation();
+        Map<String, String> queryMap = new HashMap<>();
+        queryMap.put("zone", "az1");
+        queryMap.put("interface", "com.huaweicloud.foo.FooTest");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        DubboCache.INSTANCE.setParameters(parameters);
+        DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
+        List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
+                , invokers, invocation, queryMap, "com.huaweicloud.foo.FooTest");
+        Assert.assertEquals(0, targetInvokers.size());
+        ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
+    }
+
+    /**
+     * 测试rule规则如下：
+     * given：match为精确匹配az1，设置policy的triggerThreshold为60，下游provider有az1实例
+     * when：route至az1
+     * then：能匹配到az1下游provider实例
+     */
+    @Test
+    public void testGetTargetInvokerByTagRulesWithPolicySceneOne() {
+        // 初始化路由规则
+        RuleInitializationUtils.initAZTagMatchTriggerThresholdPolicyRule();
+        List<Object> invokers = new ArrayList<>();
+        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0", "az1");
+        invokers.add(invoker1);
+        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("1.0.1", "az2");
+        invokers.add(invoker2);
+        ApacheInvoker<Object> invoker3 = new ApacheInvoker<>("1.0.1", "az1");
+        invokers.add(invoker3);
+        Invocation invocation = new AbstractDirectoryServiceTest.ApacheInvocation();
+        Map<String, String> queryMap = new HashMap<>();
+        queryMap.put("zone", "az1");
+        queryMap.put("interface", "com.huaweicloud.foo.FooTest");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        DubboCache.INSTANCE.setParameters(parameters);
+        DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
+        List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
+                , invokers, invocation, queryMap, "com.huaweicloud.foo.FooTest");
+        Assert.assertEquals(2, targetInvokers.size());
+        ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
+    }
+
+    /**
+     * 测试rule规则如下：
+     * given: match为精确匹配az1，设置policy的triggerThreshold为60，下游provider有/无az1实例
+     * when: route至az1，但是触发了阈值规则：az1可用实例数/ALL实例数小于triggerThreshold
+     * then: 返回所有实例
+     */
+    @Test
+    public void testGetTargetInvokerByTagRulesWithPolicySceneTwo() {
+        // 初始化路由规则
+        RuleInitializationUtils.initAZTagMatchTriggerThresholdPolicyRule();
+        // 场景一：下游provider有符合要求的实例
+        List<Object> invokers = new ArrayList<>();
+        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0", "az1");
+        invokers.add(invoker1);
+        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("1.0.1", "az2");
+        invokers.add(invoker2);
+        Invocation invocation = new AbstractDirectoryServiceTest.ApacheInvocation();
+        Map<String, String> queryMap = new HashMap<>();
+        queryMap.put("zone", "az1");
+        queryMap.put("interface", "com.huaweicloud.foo.FooTest");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        DubboCache.INSTANCE.setParameters(parameters);
+        DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
+        List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
+                , invokers, invocation, queryMap, "com.huaweicloud.foo.FooTest");
+        Assert.assertEquals(2, targetInvokers.size());
+
+        // 场景二：下游provider无符合要求的实例
+        List<Object> invokers2 = new ArrayList<>();
+        ApacheInvoker<Object> invoker3 = new ApacheInvoker<>("1.0.0", "az2");
+        invokers2.add(invoker3);
+        ApacheInvoker<Object> invoker4 = new ApacheInvoker<>("1.0.1", "az3");
+        invokers2.add(invoker4);
+        targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
+                , invokers2, invocation, queryMap, "com.huaweicloud.foo.FooTest");
+        Assert.assertEquals(2, targetInvokers.size());
+
+        ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
+    }
+
+    /**
+     * 测试rule规则如下：
+     * given: match为精确匹配az1，设置policy的triggerThreshold为50，minAllInstances为4，下游provider有az1实例
+     * when: route至az1，minAllInstances小于5，az1实例/ALL实例占比大于triggerThreshold
+     * then: 能匹配到az1的下游provider实例
+     */
+    @Test
+    public void testGetTargetInvokerByTagRulesWithPolicySceneThree() {
+        // 初始化路由规则
+        RuleInitializationUtils.initAZTagMatchTriggerThresholdMinAllInstancesPolicyRule();
+        // 场景一：下游provider有符合要求的实例
+        List<Object> invokers = new ArrayList<>();
+        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0", "az1");
+        invokers.add(invoker1);
+        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("1.0.0", "az2");
+        invokers.add(invoker2);
+        ApacheInvoker<Object> invoker3 = new ApacheInvoker<>("1.0.1", "az1");
+        invokers.add(invoker3);
+        ApacheInvoker<Object> invoker4 = new ApacheInvoker<>("1.0.1", "az2");
+        invokers.add(invoker4);
+        ApacheInvoker<Object> invoker5 = new ApacheInvoker<>("1.0.2", "az1");
+        invokers.add(invoker5);
+        Invocation invocation = new AbstractDirectoryServiceTest.ApacheInvocation();
+        Map<String, String> queryMap = new HashMap<>();
+        queryMap.put("zone", "az1");
+        queryMap.put("interface", "com.huaweicloud.foo.FooTest");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        DubboCache.INSTANCE.setParameters(parameters);
+        DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
+        List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
+                , invokers, invocation, queryMap, "com.huaweicloud.foo.FooTest");
+        Assert.assertEquals(3, targetInvokers.size());
+        ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
+    }
+
+    /**
+     * 测试rule规则如下：
+     * given：match为精确匹配az1，设置policy的triggerThreshold为50，minAllInstances为4，下游provider有az1实例
+     * when：route至az1，minAllInstances小于5，az1实例/ALL实例占比小于triggerThreshold
+     * then：返回所有下游provider实例
+     */
+    @Test
+    public void testGetTargetInvokerByTagRulesWithPolicySceneFour() {
+        // 初始化路由规则
+        RuleInitializationUtils.initAZTagMatchTriggerThresholdMinAllInstancesPolicyRule();
+        // 场景一：下游provider有符合要求的实例
+        List<Object> invokers = new ArrayList<>();
+        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0", "az1");
+        invokers.add(invoker1);
+        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("1.0.0", "az2");
+        invokers.add(invoker2);
+        ApacheInvoker<Object> invoker3 = new ApacheInvoker<>("1.0.1", "az1");
+        invokers.add(invoker3);
+        ApacheInvoker<Object> invoker4 = new ApacheInvoker<>("1.0.1", "az2");
+        invokers.add(invoker4);
+        ApacheInvoker<Object> invoker5 = new ApacheInvoker<>("1.0.2", "az2");
+        invokers.add(invoker5);
+        Invocation invocation = new AbstractDirectoryServiceTest.ApacheInvocation();
+        Map<String, String> queryMap = new HashMap<>();
+        queryMap.put("zone", "az1");
+        queryMap.put("interface", "com.huaweicloud.foo.FooTest");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        DubboCache.INSTANCE.setParameters(parameters);
+        DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
+        List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
+                , invokers, invocation, queryMap, "com.huaweicloud.foo.FooTest");
+        Assert.assertEquals(5, targetInvokers.size());
+        ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
+    }
+
+    /**
+     * 测试rule规则如下：
+     * given：match为精确匹配az1，设置policy的triggerThreshold为50，minAllInstances为4，下游provider有az1实例
+     * when：route至az1，minAllInstances大于3，az1实例/ALL实例占比小于或者大于triggerThreshold
+     * then：返回下游az1的provider实例
+     */
+    @Test
+    public void testGetTargetInvokerByTagRulesWithPolicySceneFive() {
+        // 初始化路由规则
+        RuleInitializationUtils.initAZTagMatchTriggerThresholdMinAllInstancesPolicyRule();
+        // 场景一: az1实例/ALL实例占比大于triggerThreshold
+        List<Object> invokers = new ArrayList<>();
+        ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0", "az1");
+        invokers.add(invoker1);
+        ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("1.0.0", "az2");
+        invokers.add(invoker2);
+        ApacheInvoker<Object> invoker3 = new ApacheInvoker<>("1.0.0", "az1");
+        invokers.add(invoker3);
+        Invocation invocation = new AbstractDirectoryServiceTest.ApacheInvocation();
+        Map<String, String> queryMap = new HashMap<>();
+        queryMap.put("zone", "az1");
+        queryMap.put("interface", "com.huaweicloud.foo.FooTest");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        DubboCache.INSTANCE.setParameters(parameters);
+        DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
+        List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
+                , invokers, invocation, queryMap, "com.huaweicloud.foo.FooTest");
+        Assert.assertEquals(2, targetInvokers.size());
+
+        // 场景二: az1实例/ALL实例占比小于triggerThreshold
+        List<Object> invokers2 = new ArrayList<>();
+        ApacheInvoker<Object> invoker4 = new ApacheInvoker<>("1.0.0", "az1");
+        invokers2.add(invoker4);
+        ApacheInvoker<Object> invoker5 = new ApacheInvoker<>("1.0.0", "az2");
+        invokers2.add(invoker5);
+        ApacheInvoker<Object> invoker6 = new ApacheInvoker<>("1.0.1", "az2");
+        invokers2.add(invoker6);
+        targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
+                , invokers2, invocation, queryMap, "com.huaweicloud.foo.FooTest");
+        Assert.assertEquals(1, targetInvokers.size());
+
+        List<Object> invokers3 = new ArrayList<>();
+        ApacheInvoker<Object> invoker7 = new ApacheInvoker<>("1.0.0", "az3");
+        invokers3.add(invoker7);
+        ApacheInvoker<Object> invoker8 = new ApacheInvoker<>("1.0.0", "az2");
+        invokers3.add(invoker8);
+        ApacheInvoker<Object> invoker9 = new ApacheInvoker<>("1.0.1", "az2");
+        invokers3.add(invoker9);
+        targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
+                , invokers3, invocation, queryMap, "com.huaweicloud.foo.FooTest");
+        Assert.assertEquals(0, targetInvokers.size());
+
+        ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
+    }
 }
