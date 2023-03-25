@@ -22,6 +22,7 @@ import com.huawei.monitor.util.MonitorCacheUtil;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.utils.LogUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,6 +37,7 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
+        LogUtils.printHttpRequestBeforePoint(context);
         if (checkContext(context)) {
             return context;
         }
@@ -46,6 +48,7 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext after(ExecuteContext context) {
         if (checkContext(context) || context.getExtMemberFieldValue(START_TIME) == null) {
+            LogUtils.printHttpRequestAfterPoint(context);
             return context;
         }
         HttpServletRequest request = (HttpServletRequest) context.getArguments()[0];
@@ -54,6 +57,7 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
         long startTime = (Long) context.getExtMemberFieldValue(START_TIME);
         metricCalEntity.getConsumeReqTimeNum().addAndGet(System.currentTimeMillis() - startTime);
         metricCalEntity.getSuccessFulReqNum().incrementAndGet();
+        LogUtils.printHttpRequestAfterPoint(context);
         return context;
     }
 
@@ -64,12 +68,14 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
         if (checkContext(context)) {
+            LogUtils.printHttpRequestOnThrowPoint(context);
             return context;
         }
         HttpServletRequest request = (HttpServletRequest) context.getArguments()[0];
         MetricCalEntity metricCalEntity = MonitorCacheUtil.getMetricCalEntity(request.getRequestURI());
         metricCalEntity.getReqNum().incrementAndGet();
         metricCalEntity.getFailedReqNum().incrementAndGet();
+        LogUtils.printHttpRequestOnThrowPoint(context);
         return context;
     }
 }

@@ -25,6 +25,7 @@ import com.huawei.discovery.utils.RequestInterceptorUtils;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.core.utils.LogUtils;
 
 import org.springframework.http.HttpMethod;
 
@@ -47,6 +48,7 @@ public class RestTemplateInterceptor extends MarkInterceptor {
 
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) throws Exception {
+        LogUtils.printHttpRequestBeforePoint(context);
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
         URI uri = (URI) context.getArguments()[0];
         HttpMethod httpMethod = (HttpMethod) context.getArguments()[1];
@@ -59,9 +61,9 @@ public class RestTemplateInterceptor extends MarkInterceptor {
         }
         RequestInterceptorUtils.printRequestLog("restTemplate", hostAndPath);
         Optional<Object> result = invokerService.invoke(
-            buildInvokerFunc(uri, hostAndPath, context, httpMethod),
-            ex -> ex,
-            hostAndPath.get(HttpConstants.HTTP_URI_SERVICE));
+                buildInvokerFunc(uri, hostAndPath, context, httpMethod),
+                ex -> ex,
+                hostAndPath.get(HttpConstants.HTTP_URI_SERVICE));
         if (result.isPresent()) {
             Object obj = result.get();
             if (obj instanceof Exception) {
@@ -95,10 +97,10 @@ public class RestTemplateInterceptor extends MarkInterceptor {
     }
 
     private Function<InvokerContext, Object> buildInvokerFunc(URI uri, Map<String, String> hostAndPath,
-        ExecuteContext context, HttpMethod httpMethod) {
+            ExecuteContext context, HttpMethod httpMethod) {
         return invokerContext -> {
             String url = RequestInterceptorUtils.buildUrlWithIp(uri, invokerContext.getServiceInstance(),
-                hostAndPath.get(HttpConstants.HTTP_URI_PATH), httpMethod.name());
+                    hostAndPath.get(HttpConstants.HTTP_URI_PATH), httpMethod.name());
             context.getArguments()[0] = rebuildUri(url, uri);
             return RequestInterceptorUtils.buildFunc(context, invokerContext).get();
         };
@@ -106,11 +108,13 @@ public class RestTemplateInterceptor extends MarkInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
+        LogUtils.printHttpRequestAfterPoint(context);
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+        LogUtils.printHttpRequestOnThrowPoint(context);
         return context;
     }
 }
