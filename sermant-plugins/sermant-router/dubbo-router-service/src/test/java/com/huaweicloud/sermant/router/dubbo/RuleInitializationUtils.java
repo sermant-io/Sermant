@@ -51,7 +51,7 @@ public class RuleInitializationUtils {
         Route route = new Route();
         route.setWeight(100);
         Map<String, String> tags = new HashMap<>();
-        tags.put("version", "1.0.1");
+        tags.put(RouterConstant.META_VERSION_KEY, "1.0.1");
         route.setTags(tags);
         List<Route> routeList = new ArrayList<>();
         routeList.add(route);
@@ -76,7 +76,7 @@ public class RuleInitializationUtils {
         List<MatchRule> matchRuleList = new ArrayList<>();
         matchRuleList.add(matchRule);
         Map<String, List<MatchRule>> tagMatchRule = new HashMap<>();
-        tagMatchRule.put("group", matchRuleList);
+        tagMatchRule.put(RouterConstant.PARAMETERS_KEY_PREFIX + "group", matchRuleList);
         Match match = new Match();
         match.setTags(tagMatchRule);
         Rule rule = new Rule();
@@ -85,7 +85,7 @@ public class RuleInitializationUtils {
         Route route = new Route();
         route.setWeight(100);
         Map<String, String> tags = new HashMap<>();
-        tags.put("version", "1.0.1");
+        tags.put(RouterConstant.META_VERSION_KEY, "1.0.1");
         route.setTags(tags);
         List<Route> routeList = new ArrayList<>();
         routeList.add(route);
@@ -120,7 +120,7 @@ public class RuleInitializationUtils {
         Route route1 = new Route();
         route1.setWeight(100);
         Map<String, String> tags1 = new HashMap<>();
-        tags1.put("version", "1.0.1");
+        tags1.put(RouterConstant.META_VERSION_KEY, "1.0.1");
         route1.setTags(tags1);
         List<Route> routeList1 = new ArrayList<>();
         routeList1.add(route1);
@@ -140,7 +140,7 @@ public class RuleInitializationUtils {
         List<MatchRule> matchRuleList = new ArrayList<>();
         matchRuleList.add(matchRule2);
         Map<String, List<MatchRule>> tagMatchRule = new HashMap<>();
-        tagMatchRule.put("group", matchRuleList);
+        tagMatchRule.put(RouterConstant.PARAMETERS_KEY_PREFIX + "group", matchRuleList);
         Match match2 = new Match();
         match2.setTags(tagMatchRule);
         Rule rule2 = new Rule();
@@ -149,7 +149,7 @@ public class RuleInitializationUtils {
         Route route2 = new Route();
         route2.setWeight(100);
         Map<String, String> tags2 = new HashMap<>();
-        tags2.put("group", "red");
+        tags2.put(RouterConstant.PARAMETERS_KEY_PREFIX + "group", "red");
         route2.setTags(tags2);
         List<Route> routeList2 = new ArrayList<>();
         routeList2.add(route2);
@@ -178,7 +178,7 @@ public class RuleInitializationUtils {
         List<MatchRule> matchRuleList = new ArrayList<>();
         matchRuleList.add(matchRule);
         Map<String, List<MatchRule>> tagMatchRule = new HashMap<>();
-        tagMatchRule.put("group", matchRuleList);
+        tagMatchRule.put(RouterConstant.PARAMETERS_KEY_PREFIX + "group", matchRuleList);
         Match match = new Match();
         match.setTags(tagMatchRule);
         Rule rule = new Rule();
@@ -186,7 +186,7 @@ public class RuleInitializationUtils {
         rule.setMatch(match);
         Route route = new Route();
         Map<String, String> tags = new HashMap<>();
-        tags.put("group", "red");
+        tags.put(RouterConstant.PARAMETERS_KEY_PREFIX + "group", "red");
         route.setWeight(100);
         route.setTags(tags);
         List<Route> routeList = new ArrayList<>();
@@ -225,7 +225,7 @@ public class RuleInitializationUtils {
         Route route = new Route();
         route.setWeight(100);
         Map<String, String> tags = new HashMap<>();
-        tags.put("version", "1.0.1");
+        tags.put(RouterConstant.META_VERSION_KEY, "1.0.1");
         route.setTags(tags);
         List<Route> routeList = new ArrayList<>();
         routeList.add(route);
@@ -257,7 +257,7 @@ public class RuleInitializationUtils {
         Route route = new Route();
         route.setWeight(100);
         Map<String, String> tags = new HashMap<>();
-        tags.put("version", "1.0.1");
+        tags.put(RouterConstant.META_VERSION_KEY, "1.0.1");
         route.setTags(tags);
         List<Route> routeList = new ArrayList<>();
         routeList.add(route);
@@ -281,7 +281,7 @@ public class RuleInitializationUtils {
         List<MatchRule> matchRuleList = new ArrayList<>();
         matchRuleList.add(matchRule);
         Map<String, List<MatchRule>> tagMatchRule = new HashMap<>();
-        tagMatchRule.put("group", matchRuleList);
+        tagMatchRule.put(RouterConstant.PARAMETERS_KEY_PREFIX + "group", matchRuleList);
         Match match = new Match();
         match.setTags(tagMatchRule);
         Rule rule = new Rule();
@@ -290,7 +290,7 @@ public class RuleInitializationUtils {
         Route route = new Route();
         route.setWeight(100);
         Map<String, String> tags = new HashMap<>();
-        tags.put("version", "1.0.1");
+        tags.put(RouterConstant.META_VERSION_KEY, "1.0.1");
         route.setTags(tags);
         List<Route> routeList = new ArrayList<>();
         routeList.add(route);
@@ -313,7 +313,7 @@ public class RuleInitializationUtils {
         List<MatchRule> matchRuleList = new ArrayList<>();
         matchRuleList.add(matchRule);
         Map<String, List<MatchRule>> tagMatchRule = new HashMap<>();
-        tagMatchRule.put("group", matchRuleList);
+        tagMatchRule.put(RouterConstant.PARAMETERS_KEY_PREFIX + "group", matchRuleList);
         Match match = new Match();
         match.setTags(tagMatchRule);
         Rule rule = new Rule();
@@ -322,7 +322,7 @@ public class RuleInitializationUtils {
         Route route = new Route();
         route.setWeight(100);
         Map<String, String> tags = new HashMap<>();
-        tags.put("version", "1.0.1");
+        tags.put(RouterConstant.META_VERSION_KEY, "1.0.1");
         route.setTags(tags);
         List<Route> routeList = new ArrayList<>();
         routeList.add(route);
@@ -345,7 +345,7 @@ public class RuleInitializationUtils {
         List<MatchRule> matchRuleList = new ArrayList<>();
         matchRuleList.add(matchRule);
         Map<String, List<MatchRule>> tagMatchRule = new HashMap<>();
-        tagMatchRule.put("zone", matchRuleList);
+        tagMatchRule.put(RouterConstant.META_ZONE_KEY, matchRuleList);
         Match match = new Match();
         match.setTags(tagMatchRule);
         Rule rule = new Rule();
@@ -354,7 +354,7 @@ public class RuleInitializationUtils {
         Route route = new Route();
         route.setWeight(100);
         Map<String, String> tags = new HashMap<>();
-        tags.put("zone", "az1");
+        tags.put(RouterConstant.META_ZONE_KEY, "az1");
         route.setTags(tags);
         List<Route> routeList = new ArrayList<>();
         routeList.add(route);
@@ -377,7 +377,7 @@ public class RuleInitializationUtils {
         List<MatchRule> matchRuleList = new ArrayList<>();
         matchRuleList.add(matchRule);
         Map<String, List<MatchRule>> tagMatchRule = new HashMap<>();
-        tagMatchRule.put("zone", matchRuleList);
+        tagMatchRule.put(RouterConstant.META_ZONE_KEY, matchRuleList);
         Match match = new Match();
         match.setTags(tagMatchRule);
         Policy policy = new Policy();
@@ -389,7 +389,7 @@ public class RuleInitializationUtils {
         Route route = new Route();
         route.setWeight(100);
         Map<String, String> tags = new HashMap<>();
-        tags.put("zone", "az1");
+        tags.put(RouterConstant.META_ZONE_KEY, "az1");
         route.setTags(tags);
         List<Route> routeList = new ArrayList<>();
         routeList.add(route);
@@ -415,7 +415,7 @@ public class RuleInitializationUtils {
         List<MatchRule> matchRuleList = new ArrayList<>();
         matchRuleList.add(matchRule);
         Map<String, List<MatchRule>> tagMatchRule = new HashMap<>();
-        tagMatchRule.put("zone", matchRuleList);
+        tagMatchRule.put(RouterConstant.META_ZONE_KEY, matchRuleList);
         Match match = new Match();
         match.setTags(tagMatchRule);
         Policy policy = new Policy();
@@ -428,7 +428,7 @@ public class RuleInitializationUtils {
         Route route = new Route();
         route.setWeight(100);
         Map<String, String> tags = new HashMap<>();
-        tags.put("zone", "az1");
+        tags.put(RouterConstant.META_ZONE_KEY, "az1");
         route.setTags(tags);
         List<Route> routeList = new ArrayList<>();
         routeList.add(route);
@@ -444,5 +444,4 @@ public class RuleInitializationUtils {
         configuration.resetRouteRule(map);
         configuration.resetGlobalRule(Collections.singletonList(entireRule));
     }
-
 }

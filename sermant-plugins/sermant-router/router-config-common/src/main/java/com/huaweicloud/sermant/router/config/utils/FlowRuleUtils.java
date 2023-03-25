@@ -50,7 +50,7 @@ public class FlowRuleUtils {
      */
     public static List<Rule> getFlowRules(RouterConfiguration configuration, String targetService, String path,
             String serviceName) {
-        if (RouterConfiguration.isInValid(configuration)) {
+        if (RouterConfiguration.isInValid(configuration, RouterConstant.FLOW_MATCH_KIND)) {
             return Collections.emptyList();
         }
 

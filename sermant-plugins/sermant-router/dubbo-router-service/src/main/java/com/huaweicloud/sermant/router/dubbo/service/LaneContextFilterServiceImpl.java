@@ -50,7 +50,7 @@ public class LaneContextFilterServiceImpl implements LaneContextFilterService {
     public Map<String, List<String>> getLane(String interfaceName, String methodName, Map<String, Object> attachments,
             Object[] args) {
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
-        if (RouterConfiguration.isInValid(configuration)) {
+        if (RouterConfiguration.isInValid(configuration, RouterConstant.LANE_MATCH_KIND)) {
             return Collections.emptyMap();
         }
         List<Rule> rules = RuleUtils.getLaneRules(configuration, methodName, interfaceName,

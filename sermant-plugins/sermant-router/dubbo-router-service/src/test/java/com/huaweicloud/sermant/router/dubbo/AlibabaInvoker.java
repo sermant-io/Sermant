@@ -54,8 +54,8 @@ public class AlibabaInvoker<T> implements Invoker<T> {
      */
     public AlibabaInvoker(String version, String zone) {
         Map<String, String> map = new HashMap<>();
-        map.put(RouterConstant.VERSION_KEY, version);
-        map.put(RouterConstant.ZONE_KEY, zone);
+        map.put(RouterConstant.META_VERSION_KEY, version);
+        map.put(RouterConstant.META_ZONE_KEY, zone);
         this.url = ALIBABA_URL.addParameters(map).setPort(8080);
     }
 

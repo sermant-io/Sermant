@@ -16,9 +16,8 @@
 
 package com.huaweicloud.sermant.router.dubbo.handler;
 
-import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.handler.Handler;
-import com.huaweicloud.sermant.router.dubbo.service.DubboConfigService;
+import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,27 +33,22 @@ import java.util.Set;
  * @since 2023-02-21
  */
 public abstract class AbstractContextFilterHandler implements Handler {
-    protected final DubboConfigService configService;
-
-    /**
-     * 构造方法
-     */
-    public AbstractContextFilterHandler() {
-        configService = ServiceManager.getService(DubboConfigService.class);
-    }
-
     /**
      * 获取透传标记
      *
      * @param invoker invoker
      * @param invocation invocation
+     * @param attachments attachments
+     * @param matchKeys 透传请求头
+     * @param injectTags 染色标记
      * @return 泳道标记
      * @see com.alibaba.dubbo.rpc.Invoker
      * @see org.apache.dubbo.rpc.Invoker
      * @see com.alibaba.dubbo.rpc.Invocation
      * @see org.apache.dubbo.rpc.Invocation
      */
-    public abstract Map<String, List<String>> getRequestTag(Object invoker, Object invocation);
+    public abstract Map<String, List<String>> getRequestTag(Object invoker, Object invocation,
+            Map<String, Object> attachments, Set<String> matchKeys, Set<String> injectTags);
 
     /**
      * 从attachments中，获取需要透传的请求标记
@@ -64,6 +58,9 @@ public abstract class AbstractContextFilterHandler implements Handler {
      * @return 请求标记
      */
     protected Map<String, List<String>> getRequestTag(Map<String, Object> attachments, Set<String> keys) {
+        if (CollectionUtils.isEmpty(keys)) {
+            return Collections.emptyMap();
+        }
         Map<String, List<String>> tag = new HashMap<>();
         keys.forEach(key -> {
             if (attachments.containsKey(key)) {

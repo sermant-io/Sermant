@@ -25,7 +25,6 @@ import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,7 +39,7 @@ public class ClientHttpRequestInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) {
         Object obj = context.getObject();
-        if (obj instanceof HttpRequest) {
+        if (obj instanceof HttpRequest && ThreadLocalUtils.getRequestData() == null) {
             HttpRequest request = (HttpRequest) obj;
             HttpHeaders headers = request.getHeaders();
             putIfAbsent(headers);
@@ -68,7 +67,7 @@ public class ClientHttpRequestInterceptor extends AbstractInterceptor {
             Map<String, List<String>> header = requestTag.getTag();
             for (Entry<String, List<String>> entry : header.entrySet()) {
                 // 使用上游传递的header
-                headers.putIfAbsent(entry.getKey(), new LinkedList<>(entry.getValue()));
+                headers.putIfAbsent(entry.getKey(), entry.getValue());
             }
         }
     }

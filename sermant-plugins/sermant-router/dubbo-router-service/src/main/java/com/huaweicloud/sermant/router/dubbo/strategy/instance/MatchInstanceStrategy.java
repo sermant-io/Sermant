@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.router.dubbo.strategy.instance;
 
-import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.strategy.AbstractInstanceStrategy;
 
 import java.util.Map;
@@ -45,20 +44,10 @@ public class MatchInstanceStrategy extends AbstractInstanceStrategy<Object, Map<
             if (value == null) {
                 continue;
             }
-            if (value.equals(metaData.get(getKey(entry.getKey())))) {
+            if (value.equals(metaData.get(entry.getKey()))) {
                 return true;
             }
         }
         return false;
-    }
-
-    private String getKey(String tag) {
-        if (VERSION_KEY.equals(tag)) {
-            return RouterConstant.VERSION_KEY;
-        }
-        if (ZONE_KEY.equals(tag)) {
-            return RouterConstant.ZONE_KEY;
-        }
-        return RouterConstant.PARAMETERS_KEY_PREFIX + tag;
     }
 }

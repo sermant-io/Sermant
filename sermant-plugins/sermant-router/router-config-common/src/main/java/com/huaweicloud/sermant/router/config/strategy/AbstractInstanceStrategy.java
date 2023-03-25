@@ -30,16 +30,6 @@ import java.util.function.Function;
  */
 public abstract class AbstractInstanceStrategy<I, T> implements InstanceStrategy<I, T> {
     /**
-     * 版本key
-     */
-    protected static final String VERSION_KEY = "version";
-
-    /**
-     * 区域key
-     */
-    protected static final String ZONE_KEY = "zone";
-
-    /**
      * 获取metadata
      *
      * @param instance 实例

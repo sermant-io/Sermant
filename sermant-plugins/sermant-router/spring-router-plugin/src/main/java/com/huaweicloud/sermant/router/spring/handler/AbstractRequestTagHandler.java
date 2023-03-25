@@ -49,25 +49,25 @@ public abstract class AbstractRequestTagHandler extends AbstractHandler {
     public static class Keys {
         private final Set<String> matchKeys;
 
-        private final Set<String> matchTags;
+        private final Set<String> injectTags;
 
         /**
          * 构造方法
          *
          * @param matchKeys 标签路由透传标记
-         * @param matchTags 泳道透传标记
+         * @param injectTags 泳道透传标记
          */
-        public Keys(Set<String> matchKeys, Set<String> matchTags) {
+        public Keys(Set<String> matchKeys, Set<String> injectTags) {
             this.matchKeys = matchKeys;
-            this.matchTags = matchTags;
+            this.injectTags = injectTags;
         }
 
         public Set<String> getMatchKeys() {
             return matchKeys;
         }
 
-        public Set<String> getMatchTags() {
-            return matchTags;
+        public Set<String> getInjectTags() {
+            return injectTags;
         }
     }
 }

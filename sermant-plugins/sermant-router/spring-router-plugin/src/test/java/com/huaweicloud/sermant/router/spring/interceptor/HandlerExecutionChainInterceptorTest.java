@@ -62,7 +62,7 @@ public class HandlerExecutionChainInterceptorTest {
                     }
 
                     @Override
-                    public Set<String> getMatchTags() {
+                    public Set<String> getInjectTags() {
                         return Collections.emptySet();
                     }
                 });

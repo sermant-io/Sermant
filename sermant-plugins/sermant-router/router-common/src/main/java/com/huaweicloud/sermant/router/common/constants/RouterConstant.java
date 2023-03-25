@@ -84,12 +84,12 @@ public class RouterConstant {
     /**
      * dubbo应用注册版本的key
      */
-    public static final String VERSION_KEY = "service.meta.version";
+    public static final String META_VERSION_KEY = "service.meta.version";
 
     /**
      * dubbo应用注册区域的key
      */
-    public static final String ZONE_KEY = "service.meta.zone";
+    public static final String META_ZONE_KEY = "service.meta.zone";
 
     /**
      * 根据流量进行匹配路由的类型
@@ -145,6 +145,16 @@ public class RouterConstant {
      * .
      */
     public static final String POINT = ".";
+
+    /**
+     * version
+     */
+    public static final String VERSION = "version";
+
+    /**
+     * zone
+     */
+    public static final String ZONE = "zone";
 
     private RouterConstant() {
     }

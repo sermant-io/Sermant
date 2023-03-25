@@ -47,7 +47,7 @@ public class TagRuleUtils {
      */
     public static List<Rule> getTagRules(RouterConfiguration configuration, String targetService,
             String serviceName) {
-        if (RouterConfiguration.isInValid(configuration)) {
+        if (RouterConfiguration.isInValid(configuration, RouterConstant.TAG_MATCH_KIND)) {
             return Collections.emptyList();
         }
 

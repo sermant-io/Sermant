@@ -51,8 +51,8 @@ public class ClusterUtilsServiceTest {
      */
     public ClusterUtilsServiceTest() {
         clusterUtilsService = new ClusterUtilsServiceImpl();
-        map.put(RouterConstant.VERSION_KEY, "0.0.1");
-        map.put(RouterConstant.ZONE_KEY, "foo");
+        map.put(RouterConstant.META_VERSION_KEY, "0.0.1");
+        map.put(RouterConstant.META_ZONE_KEY, "foo");
         map.put(RouterConstant.PARAMETERS_KEY_PREFIX + "bar", "bar");
         map.put(null, "foo");
     }
@@ -76,8 +76,8 @@ public class ClusterUtilsServiceTest {
         arguments[1] = map;
         clusterUtilsService.doBefore(arguments);
         Map<?, ?> resultMap = (Map<?, ?>) arguments[1];
-        Assert.assertNull(resultMap.get(RouterConstant.VERSION_KEY));
-        Assert.assertNull(resultMap.get(RouterConstant.ZONE_KEY));
+        Assert.assertNull(resultMap.get(RouterConstant.META_VERSION_KEY));
+        Assert.assertNull(resultMap.get(RouterConstant.META_ZONE_KEY));
         Assert.assertNull(resultMap.get(RouterConstant.PARAMETERS_KEY_PREFIX + "bar"));
         Assert.assertEquals("foo", resultMap.get(null));
         Assert.assertEquals("bar", DubboCache.INSTANCE.getApplication("com.huawei.foo.BarTest"));
@@ -107,8 +107,8 @@ public class ClusterUtilsServiceTest {
         arguments[1] = map;
         clusterUtilsService.doBefore(arguments);
         Map<?, ?> resultMap = (Map<?, ?>) arguments[1];
-        Assert.assertNull(resultMap.get(RouterConstant.VERSION_KEY));
-        Assert.assertNull(resultMap.get(RouterConstant.ZONE_KEY));
+        Assert.assertNull(resultMap.get(RouterConstant.META_VERSION_KEY));
+        Assert.assertNull(resultMap.get(RouterConstant.META_ZONE_KEY));
         Assert.assertNull(resultMap.get(RouterConstant.PARAMETERS_KEY_PREFIX + "bar"));
         Assert.assertEquals("foo", resultMap.get(null));
         Assert.assertEquals("foo", DubboCache.INSTANCE.getApplication("com.huawei.foo.FooTest"));

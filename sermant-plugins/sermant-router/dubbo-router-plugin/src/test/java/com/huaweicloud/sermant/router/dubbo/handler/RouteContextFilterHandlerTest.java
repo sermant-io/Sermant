@@ -16,17 +16,11 @@
 
 package com.huaweicloud.sermant.router.dubbo.handler;
 
-import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.dubbo.TestDubboConfigService;
-import com.huaweicloud.sermant.router.dubbo.service.DubboConfigService;
 
 import org.apache.dubbo.rpc.RpcInvocation;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,34 +33,15 @@ import java.util.Map;
  * @since 2023-02-25
  */
 public class RouteContextFilterHandlerTest {
-    private static final TestDubboConfigService DUBBO_CONFIG_SERVICE = new TestDubboConfigService();
-
-    private static MockedStatic<ServiceManager> mockServiceManager;
+    private final TestDubboConfigService configService;
 
     private final RouteContextFilterHandler routeContextFilterHandler;
 
     private final RpcInvocation invocation;
 
-    /**
-     * UT执行前进行mock
-     */
-    @BeforeClass
-    public static void before() {
-        mockServiceManager = Mockito.mockStatic(ServiceManager.class);
-        mockServiceManager.when(() -> ServiceManager.getService(DubboConfigService.class))
-                .thenReturn(DUBBO_CONFIG_SERVICE);
-    }
-
-    /**
-     * UT执行后释放mock对象
-     */
-    @AfterClass
-    public static void after() {
-        mockServiceManager.close();
-    }
-
     public RouteContextFilterHandlerTest() {
         routeContextFilterHandler = new RouteContextFilterHandler();
+        configService = new TestDubboConfigService();
         invocation = new RpcInvocation();
         invocation.setAttachmentIfAbsent("bar", "bar1");
         invocation.setAttachmentIfAbsent("foo", "foo1");
@@ -76,16 +51,19 @@ public class RouteContextFilterHandlerTest {
     @Test
     public void testGetRequestTag() {
         // 正常情况
-        DUBBO_CONFIG_SERVICE.setReturnEmptyWhenGetMatchKeys(false);
-        Map<String, List<String>> requestTag = routeContextFilterHandler.getRequestTag(null, invocation);
+        configService.setReturnEmptyWhenGetMatchKeys(false);
+        Map<String, List<String>> requestTag = routeContextFilterHandler
+                .getRequestTag(null, invocation, invocation.getObjectAttachments(),
+                        configService.getMatchKeys(), configService.getInjectTags());
         Assert.assertNotNull(requestTag);
         Assert.assertEquals(2, requestTag.size());
         Assert.assertEquals("bar1", requestTag.get("bar").get(0));
         Assert.assertEquals("foo1", requestTag.get("foo").get(0));
 
         // 测试getMatchKeys返回空
-        DUBBO_CONFIG_SERVICE.setReturnEmptyWhenGetMatchKeys(true);
-        requestTag = routeContextFilterHandler.getRequestTag(null, invocation);
+        configService.setReturnEmptyWhenGetMatchKeys(true);
+        requestTag = routeContextFilterHandler.getRequestTag(null, invocation, invocation.getObjectAttachments(),
+                configService.getMatchKeys(), configService.getInjectTags());
         Assert.assertEquals(Collections.emptyMap(), requestTag);
     }
 }

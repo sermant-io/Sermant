@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.router.dubbo.strategy.instance;
 
-import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.strategy.AbstractInstanceStrategy;
 
 import java.util.List;
@@ -46,7 +45,7 @@ public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object, L
         for (Map<String, String> mismatchTag : tags) {
             for (Map.Entry<String, String> entry : mismatchTag.entrySet()) {
                 String value = entry.getValue();
-                String key = getKey(entry.getKey());
+                String key = entry.getKey();
                 if (value == null) {
                     if (metaData.containsKey(key)) {
                         return false;
@@ -60,15 +59,5 @@ public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object, L
             }
         }
         return true;
-    }
-
-    private String getKey(String tag) {
-        if (VERSION_KEY.equals(tag)) {
-            return RouterConstant.VERSION_KEY;
-        }
-        if (ZONE_KEY.equals(tag)) {
-            return RouterConstant.ZONE_KEY;
-        }
-        return RouterConstant.PARAMETERS_KEY_PREFIX + tag;
     }
 }

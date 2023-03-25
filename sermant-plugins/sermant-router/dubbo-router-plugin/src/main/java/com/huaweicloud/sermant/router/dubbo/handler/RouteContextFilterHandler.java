@@ -18,7 +18,6 @@ package com.huaweicloud.sermant.router.dubbo.handler;
 
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
-import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,12 +32,12 @@ import java.util.Set;
  */
 public class RouteContextFilterHandler extends AbstractContextFilterHandler {
     @Override
-    public Map<String, List<String>> getRequestTag(Object invoker, Object invocation) {
-        Set<String> matchKeys = configService.getMatchKeys();
+    public Map<String, List<String>> getRequestTag(Object invoker, Object invocation, Map<String, Object> attachments,
+            Set<String> matchKeys, Set<String> injectTags) {
         if (CollectionUtils.isEmpty(matchKeys)) {
             return Collections.emptyMap();
         }
-        return getRequestTag(DubboReflectUtils.getAttachments(invocation), matchKeys);
+        return getRequestTag(attachments, matchKeys);
     }
 
     @Override

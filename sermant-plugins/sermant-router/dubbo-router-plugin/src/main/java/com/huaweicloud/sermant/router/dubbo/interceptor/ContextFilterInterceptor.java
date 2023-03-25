@@ -18,15 +18,20 @@ package com.huaweicloud.sermant.router.dubbo.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.handler.Handler;
+import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.dubbo.handler.AbstractContextFilterHandler;
 import com.huaweicloud.sermant.router.dubbo.handler.LaneContextFilterHandler;
 import com.huaweicloud.sermant.router.dubbo.handler.RouteContextFilterHandler;
+import com.huaweicloud.sermant.router.dubbo.service.DubboConfigService;
+import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 增强ContextFilter类的invoke方法
@@ -37,6 +42,8 @@ import java.util.List;
 public class ContextFilterInterceptor extends AbstractInterceptor {
     private final List<AbstractContextFilterHandler> handlers;
 
+    private final DubboConfigService configService;
+
     /**
      * 构造方法
      */
@@ -45,13 +52,21 @@ public class ContextFilterInterceptor extends AbstractInterceptor {
         handlers.add(new LaneContextFilterHandler());
         handlers.add(new RouteContextFilterHandler());
         handlers.sort(Comparator.comparingInt(Handler::getOrder));
+        configService = ServiceManager.getService(DubboConfigService.class);
     }
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
+        Set<String> matchKeys = configService.getMatchKeys();
+        Set<String> injectTags = configService.getInjectTags();
+        if (CollectionUtils.isEmpty(matchKeys) && CollectionUtils.isEmpty(injectTags)) {
+            // 染色标记为空，代表没有染色规则，直接return
+            return context;
+        }
+
         Object[] arguments = context.getArguments();
-        handlers.forEach(handler -> ThreadLocalUtils
-                .addRequestTag(handler.getRequestTag(arguments[0], arguments[1])));
+        handlers.forEach(handler -> ThreadLocalUtils.addRequestTag(handler.getRequestTag(
+                arguments[0], arguments[1], DubboReflectUtils.getAttachments(arguments[1]), matchKeys, injectTags)));
         return context;
     }
 

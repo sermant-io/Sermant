@@ -100,8 +100,8 @@ public class ApplicationConfigInterceptorTest {
         interceptor.before(context);
         Map<String, String> parameters = (Map<String, String>) context.getArguments()[0];
         Assert.assertEquals(config.getParameters().size() + 2, parameters.size());
-        Assert.assertEquals(config.getRouterVersion(), parameters.get(RouterConstant.VERSION_KEY));
-        Assert.assertEquals(config.getZone(), parameters.get(RouterConstant.ZONE_KEY));
+        Assert.assertEquals(config.getRouterVersion(), parameters.get(RouterConstant.META_VERSION_KEY));
+        Assert.assertEquals(config.getZone(), parameters.get(RouterConstant.META_ZONE_KEY));
         Map<String, String> configParameters = config.getParameters();
         configParameters.forEach(
                 (key, value) -> Assert.assertEquals(value, parameters.get(RouterConstant.PARAMETERS_KEY_PREFIX + key)));
@@ -122,8 +122,8 @@ public class ApplicationConfigInterceptorTest {
         interceptor.before(context);
         Map<String, String> parameters = (Map<String, String>) context.getArguments()[0];
         Assert.assertEquals(config.getParameters().size() + 3, parameters.size());
-        Assert.assertEquals(config.getRouterVersion(), parameters.get(RouterConstant.VERSION_KEY));
-        Assert.assertEquals(config.getZone(), parameters.get(RouterConstant.ZONE_KEY));
+        Assert.assertEquals(config.getRouterVersion(), parameters.get(RouterConstant.META_VERSION_KEY));
+        Assert.assertEquals(config.getZone(), parameters.get(RouterConstant.META_ZONE_KEY));
         Map<String, String> configParameters = config.getParameters();
         configParameters.forEach(
                 (key, value) -> Assert.assertEquals(value, parameters.get(RouterConstant.PARAMETERS_KEY_PREFIX + key)));

@@ -55,7 +55,7 @@ public class LaneServiceImpl implements LaneService {
 
     private List<Rule> getRules(String path, String methodName) {
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME);
-        if (RouterConfiguration.isInValid(configuration)) {
+        if (RouterConfiguration.isInValid(configuration, RouterConstant.LANE_MATCH_KIND)) {
             return Collections.emptyList();
         }
         return RuleUtils

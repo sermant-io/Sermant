@@ -47,5 +47,5 @@ public interface SpringConfigService extends PluginService {
      *
      * @return 染色的key
      */
-    Set<String> getMatchTags();
+    Set<String> getInjectTags();
 }

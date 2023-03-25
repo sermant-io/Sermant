@@ -56,7 +56,7 @@ public class ContextFilterInterceptorTest {
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         TestDubboConfigService testDubboConfigService = new TestDubboConfigService();
-        testDubboConfigService.setReturnEmptyWhenGetMatchTags(true);
+        testDubboConfigService.setReturnEmptyWhenGetInjectTags(true);
         mockServiceManager.when(() -> ServiceManager.getService(DubboConfigService.class))
                 .thenReturn(testDubboConfigService);
     }

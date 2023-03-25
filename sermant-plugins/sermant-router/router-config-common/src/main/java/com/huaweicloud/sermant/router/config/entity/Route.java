@@ -16,8 +16,13 @@
 
 package com.huaweicloud.sermant.router.config.entity;
 
+import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,7 +46,7 @@ public class Route {
      * 路由标签
      */
     @JSONField(name = "tag-inject")
-    private Map<String, String> injectTags;
+    private Map<String, List<String>> injectTags;
 
     public void setWeight(Integer weight) {
         this.weight = weight;
@@ -59,11 +64,22 @@ public class Route {
         return this.tags;
     }
 
-    public Map<String, String> getInjectTags() {
+    public Map<String, List<String>> getInjectTags() {
         return injectTags;
     }
 
+    /**
+     * 存入染色标记
+     *
+     * @param injectTags 染色标记
+     */
     public void setInjectTags(Map<String, String> injectTags) {
-        this.injectTags = injectTags;
+        if (CollectionUtils.isEmpty(injectTags)) {
+            this.injectTags = Collections.emptyMap();
+        } else {
+            Map<String, List<String>> map = new HashMap<>();
+            injectTags.forEach((key, value) -> map.put(key, Collections.singletonList(value)));
+            this.injectTags = map;
+        }
     }
 }

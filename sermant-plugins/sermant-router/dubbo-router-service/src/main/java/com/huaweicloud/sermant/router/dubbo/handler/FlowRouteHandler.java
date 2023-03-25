@@ -63,11 +63,12 @@ public class FlowRouteHandler extends AbstractRouteHandler {
         allMismatchTags = new HashMap<>();
         for (String requestTag : routerConfig.getRequestTags()) {
             // dubbo会把key中的"-"替换成"."
-            allMismatchTags.put(requestTag.replace(RouterConstant.DASH, RouterConstant.POINT), null);
+            allMismatchTags.put(RuleUtils.getMetaKey(requestTag.replace(RouterConstant.DASH, RouterConstant.POINT)),
+                    null);
         }
 
         // 所有实例都含有version，所以不能存入null值
-        allMismatchTags.remove(RouterConstant.DUBBO_VERSION_KEY);
+        allMismatchTags.remove(RouterConstant.META_VERSION_KEY);
     }
 
     @Override
@@ -94,7 +95,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
             Map<String, String> queryMap, String targetService,
             String serviceInterface) {
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
-        if (RouterConfiguration.isInValid(configuration)) {
+        if (RouterConfiguration.isInValid(configuration, RouterConstant.FLOW_MATCH_KIND)) {
             return invokers;
         }
         String interfaceName = getGroup(queryMap) + "/" + serviceInterface + RouterConstant.POINT
@@ -134,17 +135,17 @@ public class FlowRouteHandler extends AbstractRouteHandler {
                 // dubbo会把key中的"-"替换成"."
                 replaceDashKey = replaceDashKey.replace(RouterConstant.DASH, RouterConstant.POINT);
             }
-            mismatchTags.put(replaceDashKey, null);
+            mismatchTags.put(RuleUtils.getMetaKey(replaceDashKey), null);
             String value = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);
             if (StringUtils.isExist(value)) {
-                tags.put(replaceDashKey, value);
+                tags.put(RuleUtils.getMetaKey(replaceDashKey), value);
             }
         }
-        if (StringUtils.isExist(tags.get(RouterConstant.DUBBO_VERSION_KEY))) {
-            mismatchTags.put(RouterConstant.DUBBO_VERSION_KEY, tags.get(RouterConstant.DUBBO_VERSION_KEY));
+        if (StringUtils.isExist(tags.get(RouterConstant.META_VERSION_KEY))) {
+            mismatchTags.put(RouterConstant.META_VERSION_KEY, tags.get(RouterConstant.META_VERSION_KEY));
         } else {
             // 所有实例都含有version，所以不能存入null值
-            mismatchTags.remove(RouterConstant.DUBBO_VERSION_KEY);
+            mismatchTags.remove(RouterConstant.META_VERSION_KEY);
         }
         boolean isReturnAllInstancesWhenMismatch = false;
         if (CollectionUtils.isEmpty(mismatchTags)) {

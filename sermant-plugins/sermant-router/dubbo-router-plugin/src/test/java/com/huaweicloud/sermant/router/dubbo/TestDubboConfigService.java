@@ -31,7 +31,7 @@ import java.util.Set;
 public class TestDubboConfigService implements DubboConfigService {
     private boolean returnEmptyWhenGetMatchKeys;
 
-    private boolean returnEmptyWhenGetMatchTags;
+    private boolean returnEmptyWhenGetInjectTags;
 
     @Override
     public void init(String cacheName, String serviceName) {
@@ -49,21 +49,21 @@ public class TestDubboConfigService implements DubboConfigService {
     }
 
     @Override
-    public Set<String> getMatchTags() {
-        if (returnEmptyWhenGetMatchTags) {
+    public Set<String> getInjectTags() {
+        if (returnEmptyWhenGetInjectTags) {
             return Collections.emptySet();
         }
-        Set<String> keys = new HashSet<>();
-        keys.add("bar");
-        keys.add("foo");
-        return keys;
+        Set<String> tags = new HashSet<>();
+        tags.add("bar");
+        tags.add("foo");
+        return tags;
     }
 
     public void setReturnEmptyWhenGetMatchKeys(boolean returnEmptyWhenGetMatchKeys) {
         this.returnEmptyWhenGetMatchKeys = returnEmptyWhenGetMatchKeys;
     }
 
-    public void setReturnEmptyWhenGetMatchTags(boolean returnEmptyWhenGetMatchTags) {
-        this.returnEmptyWhenGetMatchTags = returnEmptyWhenGetMatchTags;
+    public void setReturnEmptyWhenGetInjectTags(boolean returnEmptyWhenGetInjectTags) {
+        this.returnEmptyWhenGetInjectTags = returnEmptyWhenGetInjectTags;
     }
 }

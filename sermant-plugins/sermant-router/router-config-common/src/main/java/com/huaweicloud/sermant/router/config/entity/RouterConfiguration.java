@@ -147,10 +147,16 @@ public class RouterConfiguration {
      * 路由规则是否无效
      *
      * @param configuration 路由规则
+     * @param kind 类型
      * @return 是否无效
      */
-    public static boolean isInValid(RouterConfiguration configuration) {
-        return configuration == null || (CollectionUtils.isEmpty(configuration.getRouteRule())
-                && CollectionUtils.isEmpty(configuration.getGlobalRule()));
+    public static boolean isInValid(RouterConfiguration configuration, String kind) {
+        if (configuration == null) {
+            return true;
+        }
+        if (!CollectionUtils.isEmpty(configuration.getRouteRule().get(kind))) {
+            return false;
+        }
+        return CollectionUtils.isEmpty(configuration.getGlobalRule().get(kind));
     }
 }

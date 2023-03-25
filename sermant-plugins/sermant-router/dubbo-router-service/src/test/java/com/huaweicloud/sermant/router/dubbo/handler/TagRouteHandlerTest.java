@@ -16,8 +16,6 @@
 
 package com.huaweicloud.sermant.router.dubbo.handler;
 
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.dubbo.ApacheInvoker;
@@ -26,15 +24,11 @@ import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.service.AbstractDirectoryServiceTest;
 
 import org.apache.dubbo.rpc.Invocation;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -49,30 +43,12 @@ import java.util.Map;
 public class TagRouteHandlerTest {
     private static TagRouteHandler tagRouteHandler;
 
-    private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
-
-    private static RouterConfig config;
-
     /**
      * UT执行前进行mock
      */
     @BeforeClass
     public static void before() {
-        config = new RouterConfig();
-        config.setZone("foo");
-        config.setRequestTags(Arrays.asList("foo", "bar", "version"));
-        mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
-        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-                .thenReturn(config);
         tagRouteHandler = new TagRouteHandler();
-    }
-
-    /**
-     * UT执行后释放mock对象
-     */
-    @AfterClass
-    public static void after() {
-        mockPluginConfigManager.close();
     }
 
     /**
@@ -224,7 +200,7 @@ public class TagRouteHandlerTest {
         queryMap.put("zone", "az1");
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
         Map<String, String> parameters = new HashMap<>();
-        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        parameters.putIfAbsent(RouterConstant.META_ZONE_KEY, "az1");
         DubboCache.INSTANCE.setParameters(parameters);
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
         List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
@@ -254,7 +230,7 @@ public class TagRouteHandlerTest {
         queryMap.put("zone", "az1");
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
         Map<String, String> parameters = new HashMap<>();
-        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        parameters.putIfAbsent(RouterConstant.META_ZONE_KEY, "az1");
         DubboCache.INSTANCE.setParameters(parameters);
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
         List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
@@ -285,7 +261,7 @@ public class TagRouteHandlerTest {
         queryMap.put("zone", "az1");
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
         Map<String, String> parameters = new HashMap<>();
-        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        parameters.putIfAbsent(RouterConstant.META_ZONE_KEY, "az1");
         DubboCache.INSTANCE.setParameters(parameters);
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
         List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
@@ -315,7 +291,7 @@ public class TagRouteHandlerTest {
         queryMap.put("zone", "az1");
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
         Map<String, String> parameters = new HashMap<>();
-        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        parameters.putIfAbsent(RouterConstant.META_ZONE_KEY, "az1");
         DubboCache.INSTANCE.setParameters(parameters);
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
         List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
@@ -362,7 +338,7 @@ public class TagRouteHandlerTest {
         queryMap.put("zone", "az1");
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
         Map<String, String> parameters = new HashMap<>();
-        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        parameters.putIfAbsent(RouterConstant.META_ZONE_KEY, "az1");
         DubboCache.INSTANCE.setParameters(parameters);
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
         List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
@@ -398,7 +374,7 @@ public class TagRouteHandlerTest {
         queryMap.put("zone", "az1");
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
         Map<String, String> parameters = new HashMap<>();
-        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        parameters.putIfAbsent(RouterConstant.META_ZONE_KEY, "az1");
         DubboCache.INSTANCE.setParameters(parameters);
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
         List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
@@ -430,7 +406,7 @@ public class TagRouteHandlerTest {
         queryMap.put("zone", "az1");
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
         Map<String, String> parameters = new HashMap<>();
-        parameters.putIfAbsent(RouterConstant.ZONE_KEY, "az1");
+        parameters.putIfAbsent(RouterConstant.META_ZONE_KEY, "az1");
         DubboCache.INSTANCE.setParameters(parameters);
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
         List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")

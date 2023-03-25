@@ -87,7 +87,7 @@ public abstract class ConfigService {
      *
      * @return 染色的key
      */
-    public Set<String> getMatchTags() {
-        return RuleUtils.getMatchTags();
+    public Set<String> getInjectTags() {
+        return RuleUtils.getInjectTags();
     }
 }

@@ -18,7 +18,6 @@ package com.huaweicloud.sermant.router.spring.handler;
 
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.spring.TestSpringConfigService;
-import com.huaweicloud.sermant.router.spring.service.LaneService;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 import org.junit.AfterClass;
@@ -42,8 +41,6 @@ import java.util.Map;
 public class RouteMappingHandlerTest {
     private static MockedStatic<ServiceManager> mockServiceManager;
 
-    private static TestLaneService laneService;
-
     private static TestSpringConfigService configService;
 
     private final RouteMappingHandler handler;
@@ -54,9 +51,6 @@ public class RouteMappingHandlerTest {
     @BeforeClass
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
-        laneService = new TestLaneService();
-        mockServiceManager.when(() -> ServiceManager.getService(LaneService.class))
-                .thenReturn(laneService);
         configService = new TestSpringConfigService();
         mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class))
                 .thenReturn(configService);

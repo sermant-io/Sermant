@@ -55,8 +55,8 @@ public class ApacheInvoker<T> implements Invoker<T> {
      */
     public ApacheInvoker(String version, String zone) {
         Map<String, String> map = new HashMap<>();
-        map.put(RouterConstant.VERSION_KEY, version);
-        map.put(RouterConstant.ZONE_KEY, zone);
+        map.put(RouterConstant.META_VERSION_KEY, version);
+        map.put(RouterConstant.META_ZONE_KEY, zone);
         this.url = APACHE_URL.addParameters(map).setPort(8080);
     }
 
@@ -68,7 +68,7 @@ public class ApacheInvoker<T> implements Invoker<T> {
      */
     public ApacheInvoker(String version, Map<String, String> map) {
         Map<String, String> parameters = new HashMap<>(map);
-        parameters.put(RouterConstant.VERSION_KEY, version);
+        parameters.put(RouterConstant.META_VERSION_KEY, version);
         this.url = APACHE_URL.addParameters(parameters).setPort(8080);
     }
 
