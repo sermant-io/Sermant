@@ -16,10 +16,6 @@
 
 package com.huaweicloud.sermant.implement.log;
 
-import com.huaweicloud.sermant.core.event.Event;
-import com.huaweicloud.sermant.core.event.EventLevel;
-import com.huaweicloud.sermant.core.event.EventType;
-import com.huaweicloud.sermant.core.event.LogInfo;
 import com.huaweicloud.sermant.core.event.collector.LogEventCollector;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -42,12 +38,10 @@ public class SermantBridgeHandler extends SLF4JBridgeHandler {
 
         if (julLevelValue > Level.INFO.intValue() && julLevelValue <= Level.WARNING.intValue()) {
             // 记录警告级别日志
-            LogEventCollector.getInstance()
-                    .offerEvent(new Event(EventLevel.IMPORTANT, EventType.LOG, new LogInfo(record)));
+            LogEventCollector.getInstance().offerWarning(record);
         } else if (julLevelValue > Level.WARNING.intValue()) {
             // 记录错误级别日志
-            LogEventCollector.getInstance()
-                    .offerEvent(new Event(EventLevel.EMERGENCY, EventType.LOG, new LogInfo(record)));
+            LogEventCollector.getInstance().offerError(record);
         }
         super.callLocationAwareLogger(lal, record);
     }

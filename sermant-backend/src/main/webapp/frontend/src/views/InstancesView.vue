@@ -140,9 +140,10 @@ import { nextTick, reactive, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
+import moment from "moment";
+
 // 路由
 const router = useRouter();
-
 
 onMounted(() => {
   getTableData();
@@ -151,6 +152,12 @@ onMounted(() => {
 const goBack = () => {
   router.push("/events");
 };
+
+// 格式转换
+const time = (value) => {
+  return moment(value).format("YYYY-MM-DD HH:mm:ss");
+};
+
 // 处理筛选标签
 const searchOption = ref(["服务", "IP", "版本"]);
 const currentOption = ref(0);
@@ -199,6 +206,7 @@ const handleInputConfirm = () => {
     }
   }
   inputValue.value = "";
+  search();
 };
 
 // 各标签数据统计
@@ -291,9 +299,7 @@ function handle(result: any[]) {
       item.ipAddress = item.ip.join(",");
     }
     const heartbeatDate = new Date(item.heartbeatTime);
-    item.heartbeatTime = `${heartbeatDate.getFullYear()}-${
-      heartbeatDate.getMonth() + 1
-    }-${heartbeatDate.getDate()} ${heartbeatDate.getHours()}:${heartbeatDate.getMinutes()}:${heartbeatDate.getSeconds()}`;
+    item.heartbeatTime = time(item.heartbeatTime);
   });
   return result;
 }

@@ -25,6 +25,7 @@ package com.huaweicloud.sermant.core.service;
 import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.event.EventManager;
 import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.exception.DupServiceException;
 import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
@@ -72,9 +73,9 @@ public class ServiceManager {
      */
     public static void initServices() {
         for (final BaseService service : ServiceLoader.load(BaseService.class,
-            ClassLoaderManager.getFrameworkClassLoader())) {
+                ClassLoaderManager.getFrameworkClassLoader())) {
             if (!AGENT_CONFIG.getServiceBlackList().contains(service.getClass().getName())
-                && loadService(service, service.getClass(), BaseService.class)) {
+                    && loadService(service, service.getClass(), BaseService.class)) {
                 service.start();
                 FrameworkEventCollector.getInstance().collectServiceStartEvent(service.getClass().getName());
             }
@@ -86,13 +87,13 @@ public class ServiceManager {
      * 获取服务对象
      *
      * @param serviceClass 服务class
-     * @param <T>          服务泛型
+     * @param <T> 服务泛型
      * @return 服务实例对象
      */
     public static <T extends BaseService> T getService(Class<T> serviceClass) {
         final BaseService baseService = SERVICES.get(serviceClass.getName());
         if (baseService != null && serviceClass.isAssignableFrom(baseService.getClass())) {
-            return (T)baseService;
+            return (T) baseService;
         }
         throw new IllegalArgumentException("Service instance of [" + serviceClass + "] is not found. ");
     }
@@ -100,13 +101,13 @@ public class ServiceManager {
     /**
      * 加载服务对象至服务集中
      *
-     * @param service    服务对象
+     * @param service 服务对象
      * @param serviceCls 服务class
-     * @param baseCls    服务基class，用于spi
+     * @param baseCls 服务基class，用于spi
      * @return 是否加载成功
      */
     protected static boolean loadService(BaseService service, Class<?> serviceCls,
-        Class<? extends BaseService> baseCls) {
+            Class<? extends BaseService> baseCls) {
         if (serviceCls == null || serviceCls == baseCls || !baseCls.isAssignableFrom(serviceCls)) {
             return false;
         }
@@ -117,12 +118,12 @@ public class ServiceManager {
         }
         boolean isLoadSucceed = false;
         final BaseService betterService =
-            SpiLoadUtils.getBetter(oldService, service, new SpiLoadUtils.WeightEqualHandler<BaseService>() {
-                @Override
-                public BaseService handle(BaseService source, BaseService target) {
-                    throw new DupServiceException(serviceName);
-                }
-            });
+                SpiLoadUtils.getBetter(oldService, service, new SpiLoadUtils.WeightEqualHandler<BaseService>() {
+                    @Override
+                    public BaseService handle(BaseService source, BaseService target) {
+                        throw new DupServiceException(serviceName);
+                    }
+                });
         if (betterService != oldService) {
             SERVICES.put(serviceName, service);
             isLoadSucceed = true;
@@ -141,16 +142,27 @@ public class ServiceManager {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
+                offerEvent();
                 for (BaseService baseService : new HashSet<>(SERVICES.values())) {
                     try {
                         baseService.stop();
-                        FrameworkEventCollector.getInstance().collectServiceStopEvent(baseService.getClass().getName());
                     } catch (Exception ex) {
                         LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
-                            "Error occurs while stopping service: %s", baseService.getClass().toString()), ex);
+                                "Error occurs while stopping service: %s", baseService.getClass().toString()), ex);
                     }
                 }
             }
         }));
+    }
+
+    private static void offerEvent() {
+        // 上报服务关闭事件
+        for (BaseService baseService : new HashSet<>(SERVICES.values())) {
+            FrameworkEventCollector.getInstance().collectServiceStopEvent(baseService.getClass().getName());
+        }
+
+        // 上报Sermant关闭的事件
+        FrameworkEventCollector.getInstance().collectAgentStopEvent();
+        EventManager.shutdown();
     }
 }

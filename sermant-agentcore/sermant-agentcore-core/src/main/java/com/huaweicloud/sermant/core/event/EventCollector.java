@@ -44,8 +44,6 @@ public class EventCollector {
 
     private final ConcurrentHashMap<EventInfo, Long> eventInfoOfferTimeCache = new ConcurrentHashMap<>();
 
-    private final ConcurrentHashMap<LogInfo, Long> logInfoOfferTimeCache = new ConcurrentHashMap<>();
-
     /**
      * 构造方法
      */
@@ -76,22 +74,18 @@ public class EventCollector {
             if (checkEventInfoOfferInterval(event.getEventInfo())) {
                 eventInfoOfferTimeCache.put(event.getEventInfo(), System.currentTimeMillis());
             } else {
-                LOGGER.info("Event has been offered in offer interval.");
                 return false;
             }
         }
-        if (event.getLogInfo() != null) {
-            if (checkLogInfoOfferInterval(event.getLogInfo())) {
-                logInfoOfferTimeCache.put(event.getLogInfo(), System.currentTimeMillis());
-            } else {
-                LOGGER.info("Log has been offered in offer interval.");
-                return false;
-            }
+        return doOffer(event);
+    }
+
+    private boolean doOffer(Event event) {
+        if (eventQueue.offer(event)) {
+            return true;
         }
-        if (!eventQueue.offer(event)) {
-            LOGGER.info("Event queue is full when offer new event, send events initiative.");
-            sendEventInitiative();
-        }
+        LOGGER.info("Event queue is full when offer new event, send events initiative.");
+        sendEventInitiative();
         return eventQueue.offer(event);
     }
 
@@ -120,32 +114,13 @@ public class EventCollector {
     }
 
     /**
-     * 通过上报时间间隔，检查是否可以再次上报该日志
-     *
-     * @param logInfo 事件信息
-     * @return boolean 是否可以再次上报
+     * 定时清理事件的上报时间缓存
      */
-    private boolean checkLogInfoOfferInterval(LogInfo logInfo) {
-        Long lastOfferTime = logInfoOfferTimeCache.get(logInfo);
-        if (lastOfferTime == null) {
-            return true;
-        }
-        return System.currentTimeMillis() - lastOfferTime > eventConfig.getOfferInterval();
-    }
-
-    /**
-     * 定时清理事件及日志的上报时间缓存
-     */
-    private void cleanOfferTimeCacheMap() {
+    protected void cleanOfferTimeCacheMap() {
         long currentTime = System.currentTimeMillis();
         for (EventInfo eventInfo : eventInfoOfferTimeCache.keySet()) {
             if (currentTime - eventInfoOfferTimeCache.get(eventInfo) > eventConfig.getOfferInterval()) {
                 eventInfoOfferTimeCache.remove(eventInfo);
-            }
-        }
-        for (LogInfo logInfo : logInfoOfferTimeCache.keySet()) {
-            if (currentTime - logInfoOfferTimeCache.get(logInfo) > eventConfig.getOfferInterval()) {
-                logInfoOfferTimeCache.remove(logInfo);
             }
         }
     }

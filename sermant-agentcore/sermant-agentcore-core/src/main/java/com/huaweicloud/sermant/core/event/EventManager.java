@@ -75,6 +75,13 @@ public class EventManager {
     }
 
     /**
+     * 在程序终止时上报在内存中的事件
+     */
+    public static void shutdown() {
+        collectAll();
+    }
+
+    /**
      * 注册事件收集器
      *
      * @param eventCollector 事件收集器

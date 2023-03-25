@@ -13,6 +13,7 @@
     "@element-plus/icons-vue": "^2.1.0",
     "axios": "^1.3.4",
     "element-plus": "^2.2.36",
+    "moment": "^2.29.4",
     "qs": "^6.11.1",
     "vue": "^3.2.36",
     "vue-router": "^4.1.6"

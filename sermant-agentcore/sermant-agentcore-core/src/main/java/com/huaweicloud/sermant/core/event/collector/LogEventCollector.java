@@ -16,7 +16,16 @@
 
 package com.huaweicloud.sermant.core.event.collector;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.event.Event;
 import com.huaweicloud.sermant.core.event.EventCollector;
+import com.huaweicloud.sermant.core.event.EventLevel;
+import com.huaweicloud.sermant.core.event.EventType;
+import com.huaweicloud.sermant.core.event.LogInfo;
+import com.huaweicloud.sermant.core.event.config.EventConfig;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.LogRecord;
 
 /**
  * 日志事件采集器
@@ -26,6 +35,10 @@ import com.huaweicloud.sermant.core.event.EventCollector;
  */
 public class LogEventCollector extends EventCollector {
     private static LogEventCollector logEventCollector;
+
+    private final EventConfig eventConfig = ConfigManager.getConfig(EventConfig.class);
+
+    private final ConcurrentHashMap<LogInfo, Long> logInfoOfferTimeCache = new ConcurrentHashMap<>();
 
     private LogEventCollector() {
     }
@@ -40,5 +53,64 @@ public class LogEventCollector extends EventCollector {
             logEventCollector = new LogEventCollector();
         }
         return logEventCollector;
+    }
+
+    /**
+     * 上报警告日志
+     *
+     * @param record 日志记录
+     */
+    public void offerWarning(LogRecord record) {
+        if (!eventConfig.isEnable() || !eventConfig.isOfferWarnLog()) {
+            return;
+        }
+        LogInfo logInfo = new LogInfo(record);
+        if (checkLogInfoOfferInterval(logInfo)) {
+            logInfoOfferTimeCache.put(logInfo, System.currentTimeMillis());
+            offerEvent(new Event(EventLevel.IMPORTANT, EventType.LOG, logInfo));
+        }
+    }
+
+    /**
+     * 上报错误日志
+     *
+     * @param record 日志记录
+     */
+    public void offerError(LogRecord record) {
+        if (!eventConfig.isEnable() || !eventConfig.isOfferErrorLog()) {
+            return;
+        }
+        LogInfo logInfo = new LogInfo(record);
+        if (checkLogInfoOfferInterval(logInfo)) {
+            logInfoOfferTimeCache.put(logInfo, System.currentTimeMillis());
+            offerEvent(new Event(EventLevel.EMERGENCY, EventType.LOG, logInfo));
+        }
+    }
+
+    /**
+     * 通过上报时间间隔，检查是否可以再次上报该日志
+     *
+     * @param logInfo 事件信息
+     * @return boolean 是否可以再次上报
+     */
+    private boolean checkLogInfoOfferInterval(LogInfo logInfo) {
+        Long lastOfferTime = logInfoOfferTimeCache.get(logInfo);
+        if (lastOfferTime == null) {
+            return true;
+        }
+        return System.currentTimeMillis() - lastOfferTime > eventConfig.getOfferInterval();
+    }
+
+    /**
+     * 定时清理日志的上报时间缓存
+     */
+    @Override
+    protected void cleanOfferTimeCacheMap() {
+        long currentTime = System.currentTimeMillis();
+        for (LogInfo logInfo : logInfoOfferTimeCache.keySet()) {
+            if (currentTime - logInfoOfferTimeCache.get(logInfo) > eventConfig.getOfferInterval()) {
+                logInfoOfferTimeCache.remove(logInfo);
+            }
+        }
     }
 }
