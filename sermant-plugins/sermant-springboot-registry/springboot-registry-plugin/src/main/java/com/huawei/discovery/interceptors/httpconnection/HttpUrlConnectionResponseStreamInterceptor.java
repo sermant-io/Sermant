@@ -29,7 +29,6 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
-import com.huaweicloud.sermant.core.utils.LogUtils;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import sun.net.www.http.HttpClient;
@@ -69,7 +68,6 @@ public class HttpUrlConnectionResponseStreamInterceptor implements Interceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
-        LogUtils.printHttpRequestBeforePoint(context);
         final HttpConnectionContext connectionContext = HttpConnectionUtils.getContext();
         if (connectionContext == null) {
             return context;
@@ -90,9 +88,9 @@ public class HttpUrlConnectionResponseStreamInterceptor implements Interceptor {
                     context.getMethod().getName()), invokerContext.getEx());
         }
         Optional<Object> result = invokerService.invoke(
-                invokerContextObjectFunction,
-                ex -> ex,
-                urlInfo.get(HttpConstants.HTTP_URI_SERVICE));
+            invokerContextObjectFunction,
+            ex -> ex,
+            urlInfo.get(HttpConstants.HTTP_URI_SERVICE));
         if (result.isPresent()) {
             Object obj = result.get();
             if (obj instanceof Exception) {
@@ -186,13 +184,11 @@ public class HttpUrlConnectionResponseStreamInterceptor implements Interceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        LogUtils.printHttpRequestAfterPoint(context);
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-        LogUtils.printHttpRequestOnThrowPoint(context);
         return context;
     }
 }

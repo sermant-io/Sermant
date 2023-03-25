@@ -25,7 +25,6 @@ import com.huawei.discovery.utils.RequestInterceptorUtils;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
-import com.huaweicloud.sermant.core.utils.LogUtils;
 
 import feign.Request;
 
@@ -46,7 +45,6 @@ public class FeignInvokeInterceptor extends MarkInterceptor {
 
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) throws Exception {
-        LogUtils.printHttpRequestBeforePoint(context);
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
         Request request = (Request) context.getArguments()[0];
         Map<String, String> urlInfo = RequestInterceptorUtils.recoverUrl(request.url());
@@ -56,9 +54,9 @@ public class FeignInvokeInterceptor extends MarkInterceptor {
         }
         RequestInterceptorUtils.printRequestLog("feign", urlInfo);
         Optional<Object> result = invokerService.invoke(
-                buildInvokerFunc(context, request, urlInfo),
-                ex -> ex,
-                urlInfo.get(HttpConstants.HTTP_URI_SERVICE));
+            buildInvokerFunc(context, request, urlInfo),
+            ex -> ex,
+            urlInfo.get(HttpConstants.HTTP_URI_SERVICE));
         if (result.isPresent()) {
             Object obj = result.get();
             if (obj instanceof Exception) {
@@ -72,24 +70,22 @@ public class FeignInvokeInterceptor extends MarkInterceptor {
     }
 
     private Function<InvokerContext, Object> buildInvokerFunc(ExecuteContext context, Request request,
-            Map<String, String> urlInfo) {
+        Map<String, String> urlInfo) {
         return invokerContext -> {
             context.getArguments()[0] = Request.create(request.method(),
-                    RequestInterceptorUtils.buildUrl(urlInfo, invokerContext.getServiceInstance()),
-                    request.headers(), request.body(), request.charset());
+                RequestInterceptorUtils.buildUrl(urlInfo, invokerContext.getServiceInstance()),
+                request.headers(), request.body(), request.charset());
             return RequestInterceptorUtils.buildFunc(context, invokerContext).get();
         };
     }
 
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        LogUtils.printHttpRequestAfterPoint(context);
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-        LogUtils.printHttpRequestOnThrowPoint(context);
         return context;
     }
 }

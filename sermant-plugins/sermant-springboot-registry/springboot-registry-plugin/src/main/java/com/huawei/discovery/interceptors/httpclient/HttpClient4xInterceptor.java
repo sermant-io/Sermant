@@ -30,7 +30,6 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ClassUtils;
-import com.huaweicloud.sermant.core.utils.LogUtils;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -82,7 +81,6 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
 
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
-        LogUtils.printHttpRequestBeforePoint(context);
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
         HttpHost httpHost = (HttpHost) context.getArguments()[0];
         final HttpRequest httpRequest = (HttpRequest) context.getArguments()[1];
@@ -266,13 +264,11 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        LogUtils.printHttpRequestAfterPoint(context);
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
-        LogUtils.printHttpRequestOnThrowPoint(context);
         return context;
     }
 }

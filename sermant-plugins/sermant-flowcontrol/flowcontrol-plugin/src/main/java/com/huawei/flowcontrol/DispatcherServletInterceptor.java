@@ -23,7 +23,6 @@ import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 import com.huawei.flowcontrol.service.InterceptorSupporter;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.utils.LogUtils;
 
 import java.util.Collections;
 import java.util.Enumeration;
@@ -81,7 +80,6 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
 
     @Override
     protected final ExecuteContext doBefore(ExecuteContext context) throws Exception {
-        LogUtils.printHttpRequestBeforePoint(context);
         final Object[] allArguments = context.getArguments();
         final HttpServletRequest argument = (HttpServletRequest) allArguments[0];
         final FlowControlResult result = new FlowControlResult();
@@ -104,14 +102,12 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
     @Override
     protected final ExecuteContext doAfter(ExecuteContext context) {
         chooseHttpService().onAfter(className, context.getResult());
-        LogUtils.printHttpRequestAfterPoint(context);
         return context;
     }
 
     @Override
     protected final ExecuteContext doThrow(ExecuteContext context) {
         chooseHttpService().onThrow(className, context.getThrowable());
-        LogUtils.printHttpRequestOnThrowPoint(context);
         return context;
     }
 }
