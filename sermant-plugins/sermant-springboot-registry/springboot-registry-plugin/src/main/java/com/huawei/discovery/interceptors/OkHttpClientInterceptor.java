@@ -26,7 +26,6 @@ import com.huawei.discovery.utils.RequestInterceptorUtils;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
-import com.huaweicloud.sermant.core.utils.LogUtils;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.squareup.okhttp.HttpUrl;
@@ -60,7 +59,6 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
 
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) throws Exception {
-        LogUtils.printHttpRequestBeforePoint(context);
         final InvokerService invokerService = PluginServiceManager.getPluginService(InvokerService.class);
         final Optional<Request> rawRequest = getRequest(context);
         if (!rawRequest.isPresent()) {
@@ -166,13 +164,11 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        LogUtils.printHttpRequestAfterPoint(context);
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-        LogUtils.printHttpRequestOnThrowPoint(context);
         return context;
     }
 }

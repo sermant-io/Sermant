@@ -19,7 +19,6 @@ package com.huaweicloud.sermant.router.dubbo.interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.core.utils.LogUtils;
 import com.huaweicloud.sermant.router.dubbo.service.AbstractDirectoryService;
 
 /**
@@ -40,7 +39,6 @@ public class AbstractDirectoryInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        LogUtils.printDubboRequestBeforePoint(context);
         return context;
     }
 
@@ -48,7 +46,6 @@ public class AbstractDirectoryInterceptor extends AbstractInterceptor {
     public ExecuteContext after(ExecuteContext context) {
         context.changeResult(abstractDirectoryService.selectInvokers(context.getObject(), context.getArguments(),
                 context.getResult()));
-        LogUtils.printDubboRequestAfterPoint(context);
         return context;
     }
 }

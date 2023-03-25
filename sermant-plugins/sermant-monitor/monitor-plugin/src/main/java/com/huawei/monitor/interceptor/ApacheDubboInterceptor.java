@@ -23,7 +23,6 @@ import com.huawei.monitor.util.MonitorCacheUtil;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.utils.LogUtils;
 
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
@@ -44,7 +43,6 @@ public class ApacheDubboInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        LogUtils.printDubboRequestBeforePoint(context);
         if (context == null || context.getArguments() == null || context.getArguments().length < 1) {
             return context;
         }
@@ -67,7 +65,6 @@ public class ApacheDubboInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext after(ExecuteContext context) {
         if (context.getExtMemberFieldValue(MONITOR_NAME) == null) {
-            LogUtils.printDubboRequestAfterPoint(context);
             return context;
         }
         String name = (String) context.getExtMemberFieldValue(MONITOR_NAME);
@@ -76,21 +73,18 @@ public class ApacheDubboInterceptor extends AbstractInterceptor {
         long startTime = (Long) context.getExtMemberFieldValue(START_TIME);
         metricCalEntity.getConsumeReqTimeNum().addAndGet(System.currentTimeMillis() - startTime);
         metricCalEntity.getSuccessFulReqNum().incrementAndGet();
-        LogUtils.printDubboRequestAfterPoint(context);
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
         if (context.getExtMemberFieldValue(MONITOR_NAME) == null) {
-            LogUtils.printDubboRequestOnThrowPoint(context);
             return context;
         }
         String name = (String) context.getExtMemberFieldValue(MONITOR_NAME);
         MetricCalEntity metricCalEntity = MonitorCacheUtil.getMetricCalEntity(name);
         metricCalEntity.getFailedReqNum().incrementAndGet();
         metricCalEntity.getReqNum().incrementAndGet();
-        LogUtils.printDubboRequestOnThrowPoint(context);
         return context;
     }
 

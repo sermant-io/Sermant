@@ -31,7 +31,6 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ClassUtils;
-import com.huaweicloud.sermant.core.utils.LogUtils;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.apache.http.HttpHost;
@@ -80,7 +79,6 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
-        LogUtils.printHttpRequestBeforePoint(context);
         ready();
         HttpAsyncRequestProducer httpAsyncRequestProducer = (HttpAsyncRequestProducer) context.getArguments()[0];
         if (!PlugEffectWhiteBlackUtils.isHostEqualRealmName(httpAsyncRequestProducer.getTarget().getHostName())) {
@@ -132,7 +130,6 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
         } finally {
             HttpAsyncUtils.remove();
             Thread.currentThread().setContextClassLoader(appClassloader);
-            LogUtils.printHttpRequestAfterPoint(context);
         }
     }
 
@@ -243,7 +240,6 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
-        LogUtils.printHttpRequestOnThrowPoint(context);
         return context;
     }
 

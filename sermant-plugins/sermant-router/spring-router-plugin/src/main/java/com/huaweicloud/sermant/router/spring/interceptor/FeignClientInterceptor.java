@@ -18,7 +18,6 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.utils.LogUtils;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.request.RequestTag;
@@ -61,7 +60,6 @@ public class FeignClientInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        LogUtils.printHttpRequestBeforePoint(context);
         Object argument = context.getArguments()[0];
         if (argument instanceof Request) {
             Request request = (Request) argument;
@@ -76,14 +74,12 @@ public class FeignClientInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext after(ExecuteContext context) {
         ThreadLocalUtils.removeRequestData();
-        LogUtils.printHttpRequestAfterPoint(context);
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
         ThreadLocalUtils.removeRequestData();
-        LogUtils.printHttpRequestOnThrowPoint(context);
         return context;
     }
 
