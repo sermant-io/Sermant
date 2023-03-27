@@ -1,0 +1,91 @@
+/*
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.huaweicloud.sermant.cache;
+
+import com.huaweicloud.sermant.config.RemovalRule;
+import com.huaweicloud.sermant.entity.InstanceInfo;
+import com.huaweicloud.sermant.entity.RequestCountData;
+import com.huaweicloud.sermant.entity.RequestInfo;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.ArrayList;
+
+/**
+ * 服务实例缓存测试类
+ *
+ * @author zhp
+ * @since 2023-02-17
+ */
+public class InstanceCacheTest {
+    private static final String HOST = "127.0.0.1";
+
+    private static final String PORT = "8080";
+
+    private static final String KEY = "127.0.0.1:8080";
+
+    private static final int NUM = 10;
+
+    private static final float RATE = 0.5f;
+
+    @Test
+    public void saveInstanceInfo() {
+        long time = System.currentTimeMillis();
+        for (int i = 0; i < NUM; i++) {
+            RequestInfo requestInfo = new RequestInfo();
+            requestInfo.setHost(HOST);
+            requestInfo.setPort(PORT);
+            requestInfo.setResult(true);
+            requestInfo.setRequestTime(time);
+            InstanceCache.saveInstanceInfo(requestInfo);
+        }
+        for (int i = 0; i < NUM; i++) {
+            RequestInfo requestInfo = new RequestInfo();
+            requestInfo.setHost(HOST);
+            requestInfo.setPort(PORT);
+            requestInfo.setResult(false);
+            requestInfo.setRequestTime(time);
+            InstanceCache.saveInstanceInfo(requestInfo);
+        }
+        Assert.assertTrue(InstanceCache.INSTANCE_MAP.containsKey(KEY));
+        InstanceInfo instanceInfo = InstanceCache.INSTANCE_MAP.get(KEY);
+        Assert.assertEquals(instanceInfo.getHost(), HOST);
+        Assert.assertEquals(instanceInfo.getPort(), PORT);
+        Assert.assertEquals(instanceInfo.getRequestNum().get(), NUM * 2);
+        Assert.assertEquals(instanceInfo.getLastInvokeTime(), time);
+    }
+
+    @Test
+    public void isNeedRemoval() {
+        RemovalRule removalRule = new RemovalRule();
+        removalRule.setMinInstanceNum(0);
+        removalRule.setErrorRate(RATE);
+        InstanceInfo info = new InstanceInfo();
+        info.setHost(HOST);
+        info.setPort(PORT);
+        info.setCountDataList(new ArrayList<>());
+        for (int i = 0; i < NUM; i++) {
+            RequestCountData countInfo = new RequestCountData();
+            countInfo.setRequestNum(NUM);
+            countInfo.setRequestFailNum(NUM / 2);
+            info.getCountDataList().add(countInfo);
+        }
+        InstanceCache.INSTANCE_MAP.put(KEY, info);
+        Assert.assertTrue(InstanceCache.isNeedRemoval(InstanceCache.INSTANCE_MAP.get(KEY), removalRule));
+    }
+}

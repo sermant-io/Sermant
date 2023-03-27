@@ -39,6 +39,7 @@
                 <module>sermant-mq-consume-deny</module>
                 <module>sermant-monitor</module>
                 <module>sermant-service-visibility</module>
+                <module>sermant-service-removal</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -68,6 +69,7 @@
                 <module>sermant-springboot-registry</module>
                 <module>sermant-mq-consume-deny</module>
                 <module>sermant-service-visibility</module>
+                <module>sermant-service-removal</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -97,6 +99,7 @@
                 <module>sermant-springboot-registry</module>
                 <module>sermant-mq-consume-deny</module>
                 <module>sermant-service-visibility</module>
+                <module>sermant-service-removal</module>
             </modules>
         </profile>
     </profiles>
