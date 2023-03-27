@@ -28,6 +28,7 @@ import com.huawei.flowcontrol.service.InterceptorSupporter;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.utils.LogUtils;
 
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.rpc.Invocation;
@@ -97,6 +98,7 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
 
     @Override
     protected final ExecuteContext doBefore(ExecuteContext context) {
+        LogUtils.printDubboRequestBeforePoint(context);
         final Object[] allArguments = context.getArguments();
         final FlowControlResult result = new FlowControlResult();
         if (allArguments[1] instanceof Invocation) {
@@ -156,12 +158,14 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
         if (isProvider) {
             FlowControlContext.INSTANCE.clear();
         }
+        LogUtils.printDubboRequestAfterPoint(context);
         return context;
     }
 
     @Override
     protected final ExecuteContext doThrow(ExecuteContext context) {
         chooseDubboService().onThrow(className, context.getThrowable(), isProvider(context));
+        LogUtils.printDubboRequestOnThrowPoint(context);
         return context;
     }
 
