@@ -47,11 +47,11 @@ public class ParametersUtils {
     public static Map<String, String> putParameters(Map<String, String> parameters, RouterConfig routerConfig) {
         Map<String, String> map = Optional.ofNullable(parameters).orElseGet(HashMap::new);
         Map<String, String> cacheMap = new HashMap<>();
-        map.put(RouterConstant.VERSION_KEY, routerConfig.getRouterVersion());
-        cacheMap.put(RouterConstant.VERSION_KEY, routerConfig.getRouterVersion());
+        map.put(RouterConstant.META_VERSION_KEY, routerConfig.getRouterVersion());
+        cacheMap.put(RouterConstant.META_VERSION_KEY, routerConfig.getRouterVersion());
         if (StringUtils.isExist(routerConfig.getZone())) {
-            map.putIfAbsent(RouterConstant.ZONE_KEY, routerConfig.getZone());
-            cacheMap.put(RouterConstant.ZONE_KEY, map.get(RouterConstant.ZONE_KEY));
+            map.putIfAbsent(RouterConstant.META_ZONE_KEY, routerConfig.getZone());
+            cacheMap.put(RouterConstant.META_ZONE_KEY, map.get(RouterConstant.META_ZONE_KEY));
         }
         Map<String, String> metaParameters = routerConfig.getParameters();
         if (!CollectionUtils.isEmpty(metaParameters)) {

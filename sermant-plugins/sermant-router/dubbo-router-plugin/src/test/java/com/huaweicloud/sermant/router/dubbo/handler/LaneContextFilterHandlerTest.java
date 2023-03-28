@@ -18,7 +18,6 @@ package com.huaweicloud.sermant.router.dubbo.handler;
 
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.dubbo.TestDubboConfigService;
-import com.huaweicloud.sermant.router.dubbo.service.DubboConfigService;
 import com.huaweicloud.sermant.router.dubbo.service.LaneContextFilterService;
 import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtilsTest.ApacheInvoker;
 
@@ -42,13 +41,13 @@ import java.util.Map;
  * @since 2023-02-25
  */
 public class LaneContextFilterHandlerTest {
-    private static final TestDubboConfigService DUBBO_CONFIG_SERVICE = new TestDubboConfigService();
-
     private static final TestLaneContextFilterService LANE_CONTEXT_FILTER_SERVICE = new TestLaneContextFilterService();
 
     private static MockedStatic<ServiceManager> mockServiceManager;
 
     private final LaneContextFilterHandler laneContextFilterHandler;
+
+    private final TestDubboConfigService configService;
 
     private final RpcInvocation invocation;
 
@@ -60,8 +59,6 @@ public class LaneContextFilterHandlerTest {
     @BeforeClass
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
-        mockServiceManager.when(() -> ServiceManager.getService(DubboConfigService.class))
-                .thenReturn(DUBBO_CONFIG_SERVICE);
         mockServiceManager.when(() -> ServiceManager.getService(LaneContextFilterService.class))
                 .thenReturn(LANE_CONTEXT_FILTER_SERVICE);
     }
@@ -76,6 +73,7 @@ public class LaneContextFilterHandlerTest {
 
     public LaneContextFilterHandlerTest() {
         laneContextFilterHandler = new LaneContextFilterHandler();
+        configService = new TestDubboConfigService();
         invocation = new RpcInvocation();
         invocation.setAttachmentIfAbsent("bar", "bar1");
         invocation.setAttachmentIfAbsent("foo", "foo1");
@@ -88,22 +86,25 @@ public class LaneContextFilterHandlerTest {
     @Test
     public void testGetRequestTag() {
         // 测试getMatchTags返回空
-        DUBBO_CONFIG_SERVICE.setReturnEmptyWhenGetMatchTags(true);
-        Map<String, List<String>> requestTag = laneContextFilterHandler.getRequestTag(invoker, invocation);
+        configService.setReturnEmptyWhenGetInjectTags(true);
+        Map<String, List<String>> requestTag = laneContextFilterHandler.getRequestTag(invoker, invocation,
+                invocation.getObjectAttachments(), configService.getMatchKeys(), configService.getInjectTags());
         Assert.assertEquals(requestTag, Collections.emptyMap());
 
         // 测试getLane返回空
-        DUBBO_CONFIG_SERVICE.setReturnEmptyWhenGetMatchTags(false);
+        configService.setReturnEmptyWhenGetInjectTags(false);
         LANE_CONTEXT_FILTER_SERVICE.setReturnEmpty(true);
-        requestTag = laneContextFilterHandler.getRequestTag(invoker, invocation);
+        requestTag = laneContextFilterHandler.getRequestTag(invoker, invocation, invocation.getObjectAttachments(),
+                configService.getMatchKeys(), configService.getInjectTags());
         Assert.assertEquals(2, requestTag.size());
         Assert.assertEquals("bar1", requestTag.get("bar").get(0));
         Assert.assertEquals("foo1", requestTag.get("foo").get(0));
 
         // 测试getLane不为空
-        DUBBO_CONFIG_SERVICE.setReturnEmptyWhenGetMatchTags(false);
+        configService.setReturnEmptyWhenGetInjectTags(false);
         LANE_CONTEXT_FILTER_SERVICE.setReturnEmpty(false);
-        requestTag = laneContextFilterHandler.getRequestTag(invoker, invocation);
+        requestTag = laneContextFilterHandler.getRequestTag(invoker, invocation, invocation.getObjectAttachments(),
+                configService.getMatchKeys(), configService.getInjectTags());
         Assert.assertEquals(3, requestTag.size());
         Assert.assertEquals("bar1", requestTag.get("bar").get(0));
         Assert.assertEquals("foo1", requestTag.get("foo").get(0));

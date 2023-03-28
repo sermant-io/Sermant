@@ -66,8 +66,8 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) {
         Set<String> matchKeys = configService.getMatchKeys();
-        Set<String> matchTags = configService.getMatchTags();
-        if (CollectionUtils.isEmpty(matchKeys) && CollectionUtils.isEmpty(matchTags)) {
+        Set<String> injectTags = configService.getInjectTags();
+        if (CollectionUtils.isEmpty(matchKeys) && CollectionUtils.isEmpty(injectTags)) {
             // 染色标记为空，代表没有染色规则，直接return
             return true;
         }
@@ -76,7 +76,7 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
         String path = request.getRequestURI();
         String method = request.getMethod();
         handlers.forEach(handler -> ThreadLocalUtils.addRequestTag(
-                handler.getRequestTag(path, method, headers, parameterMap, new Keys(matchKeys, matchTags))));
+                handler.getRequestTag(path, method, headers, parameterMap, new Keys(matchKeys, injectTags))));
         return true;
     }
 

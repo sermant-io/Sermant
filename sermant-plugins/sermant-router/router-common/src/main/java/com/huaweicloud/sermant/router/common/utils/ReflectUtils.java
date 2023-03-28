@@ -16,10 +16,7 @@
 
 package com.huaweicloud.sermant.router.common.utils;
 
-import com.huaweicloud.sermant.core.common.LoggerFactory;
-
 import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.AccessController;
@@ -27,7 +24,6 @@ import java.security.PrivilegedAction;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 /**
  * 反射工具类
@@ -36,11 +32,7 @@ import java.util.logging.Logger;
  * @since 2022-02-07
  */
 public class ReflectUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
-
     private static final Map<String, AccessibleObject> ACCESSIBLE_OBJECT_MAP = new ConcurrentHashMap<>();
-
-    private static final Map<String, Optional<Field>> FIELD_MAP = new ConcurrentHashMap<>();
 
     private static final Map<String, Optional<Method>> METHOD_MAP = new ConcurrentHashMap<>();
 
@@ -57,16 +49,7 @@ public class ReflectUtils {
      * @return 私有字段值
      */
     public static Optional<Object> getFieldValue(Object obj, String fieldName) {
-        Optional<Field> field = getField(obj, fieldName);
-        if (field.isPresent()) {
-            try {
-                return Optional.ofNullable(field.get().get(obj));
-            } catch (IllegalAccessException ignored) {
-                // 忽略
-            }
-        }
-        LOGGER.warning("Cannot get the field, fieldName is " + fieldName);
-        return Optional.empty();
+        return com.huaweicloud.sermant.core.utils.ReflectUtils.getFieldValue(obj, fieldName);
     }
 
     /**
@@ -148,20 +131,6 @@ public class ReflectUtils {
         return Optional.empty();
     }
 
-    private static Optional<Field> getField(Object obj, String fieldName) {
-        return FIELD_MAP.computeIfAbsent(buildFieldKey(obj, fieldName), key -> {
-            Class<?> currClass = obj.getClass();
-            while (currClass != Object.class) {
-                try {
-                    return Optional.ofNullable(getAccessibleObject(currClass.getDeclaredField(fieldName)));
-                } catch (NoSuchFieldException e) {
-                    currClass = currClass.getSuperclass();
-                }
-            }
-            return Optional.empty();
-        });
-    }
-
     private static String buildMethodKey(Class<?> clazz, String methodName, Class<?> parameterClass) {
         String parameterClassName = "";
         if (parameterClass != null) {
@@ -173,14 +142,6 @@ public class ReflectUtils {
         StringBuilder sb = new StringBuilder(
                 className.length() + methodName.length() + parameterClassName.length() + EXTRA_LENGTH_FOR_METHOD_KEY);
         sb.append(className).append("#").append(methodName).append("(").append(parameterClassName).append(")");
-        return sb.toString();
-    }
-
-    private static String buildFieldKey(Object obj, String fieldName) {
-        // 初始化StringBuilder的长度是为了性能
-        String className = obj.getClass().getName();
-        StringBuilder sb = new StringBuilder(className.length() + fieldName.length() + 1);
-        sb.append(className).append(".").append(fieldName);
         return sb.toString();
     }
 }

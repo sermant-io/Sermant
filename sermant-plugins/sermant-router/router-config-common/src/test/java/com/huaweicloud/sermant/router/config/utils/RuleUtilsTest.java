@@ -68,7 +68,7 @@ public class RuleUtilsTest {
      * 测试初始化需要缓存的key
      */
     @Test
-    public void testInitHeaderKeys() {
+    public void testInitMatchKeys() {
         RouterConfiguration configuration = new RouterConfiguration();
         RuleUtils.initMatchKeys(configuration);
         Assert.assertTrue(RuleUtils.getMatchKeys().isEmpty());
@@ -84,18 +84,12 @@ public class RuleUtilsTest {
     }
 
     /**
-     * 测试更新header key
+     * 测试初始化需要缓存的key
      */
     @Test
-    public void testUpdateHeaderKeys() {
-        Assert.assertTrue(RuleUtils.getMatchKeys().isEmpty());
-        EntireRule entireRule = new EntireRule();
-        entireRule.setRules(list);
-        entireRule.setKind(RouterConstant.FLOW_MATCH_KIND);
-        RuleUtils.updateMatchKeys("test", Collections.singletonList(entireRule));
-        Set<String> keys = RuleUtils.getMatchKeys();
-        Assert.assertEquals(3, keys.size());
-        RuleUtils.updateMatchKeys("test", Collections.emptyList());
-        Assert.assertTrue(RuleUtils.getMatchKeys().isEmpty());
+    public void testGetMetaKey() {
+        Assert.assertEquals(RouterConstant.META_VERSION_KEY, RuleUtils.getMetaKey(RouterConstant.VERSION));
+        Assert.assertEquals(RouterConstant.META_ZONE_KEY, RuleUtils.getMetaKey(RouterConstant.ZONE));
+        Assert.assertEquals(RouterConstant.PARAMETERS_KEY_PREFIX + "group", RuleUtils.getMetaKey("group"));
     }
 }

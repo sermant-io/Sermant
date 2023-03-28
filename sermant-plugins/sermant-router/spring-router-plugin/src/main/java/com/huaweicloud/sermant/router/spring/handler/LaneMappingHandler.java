@@ -59,15 +59,15 @@ public class LaneMappingHandler extends AbstractMappingHandler {
     @Override
     public Map<String, List<String>> getRequestTag(String path, String methodName, Map<String, List<String>> headers,
             Map<String, List<String>> parameters) {
-        Set<String> matchTags = configService.getMatchTags();
-        if (CollectionUtils.isEmpty(matchTags)) {
+        Set<String> injectTags = configService.getInjectTags();
+        if (CollectionUtils.isEmpty(injectTags)) {
             // 染色标记为空，代表没有染色规则，直接return
             LOGGER.fine("Lane tags are empty.");
             return Collections.emptyMap();
         }
 
         // 上游透传的标记
-        Map<String, List<String>> tags = getRequestTag(headers, matchTags);
+        Map<String, List<String>> tags = getRequestTag(headers, injectTags);
 
         // 本次染色标记
         Map<String, List<String>> laneTag = laneService.getLaneByParameterList(path, methodName, headers, parameters);

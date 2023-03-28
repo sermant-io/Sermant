@@ -42,17 +42,6 @@ import java.util.Optional;
  * @since 2023-02-24
  */
 public class TagRouteHandler extends AbstractRouteHandler {
-
-    /**
-     * 版本key
-     */
-    private static final String VERSION_KEY = "version";
-
-    /**
-     * 区域key
-     */
-    private static final String ZONE_KEY = "zone";
-
     @Override
     public Object handle(String targetService, List<Object> invokers, Object invocation, Map<String, String> queryMap,
             String serviceInterface) {
@@ -71,7 +60,7 @@ public class TagRouteHandler extends AbstractRouteHandler {
 
     private List<Object> getTargetInvokersByRules(List<Object> invokers, String targetService) {
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
-        if (RouterConfiguration.isInValid(configuration)) {
+        if (RouterConfiguration.isInValid(configuration, RouterConstant.TAG_MATCH_KIND)) {
             return invokers;
         }
         List<Rule> rules = TagRuleUtils.getTagRules(configuration, targetService, DubboCache.INSTANCE.getAppName());
@@ -97,11 +86,15 @@ public class TagRouteHandler extends AbstractRouteHandler {
         if (match == null) {
             return rule.getRoute();
         }
-        boolean isFullMatch = match.isFullMatch();
         Map<String, List<MatchRule>> tagMatchRules = match.getTags();
         if (CollectionUtils.isEmpty(tagMatchRules)) {
             return rule.getRoute();
         }
+        Map<String, String> parameters = DubboCache.INSTANCE.getParameters();
+        if (CollectionUtils.isEmpty(parameters)) {
+            return Collections.emptyList();
+        }
+        boolean isFullMatch = match.isFullMatch();
         for (Map.Entry<String, List<MatchRule>> entry : tagMatchRules.entrySet()) {
             String key = entry.getKey();
             List<MatchRule> matchRuleList = entry.getValue();
@@ -109,21 +102,7 @@ public class TagRouteHandler extends AbstractRouteHandler {
                 ValueMatch valueMatch = matchRule.getValueMatch();
                 List<String> values = valueMatch.getValues();
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
-                Map<String, String> parameters = DubboCache.INSTANCE.getParameters();
-                if (parameters == null) {
-                    return Collections.emptyList();
-                }
-                String tagValue;
-                switch (key) {
-                    case VERSION_KEY:
-                        tagValue = parameters.get(RouterConstant.VERSION_KEY);
-                        break;
-                    case ZONE_KEY:
-                        tagValue = parameters.get(RouterConstant.ZONE_KEY);
-                        break;
-                    default:
-                        tagValue = parameters.get(RouterConstant.PARAMETERS_KEY_PREFIX + key);
-                }
+                String tagValue = parameters.get(key);
                 if (!isFullMatch && matchStrategy.isMatch(values, tagValue, matchRule.isCaseInsensitive())) {
                     // 如果不是全匹配，且匹配了一个，那么直接return
                     return rule.getRoute();

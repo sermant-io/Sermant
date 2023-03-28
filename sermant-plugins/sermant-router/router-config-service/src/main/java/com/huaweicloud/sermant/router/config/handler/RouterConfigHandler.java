@@ -46,7 +46,7 @@ public class RouterConfigHandler extends AbstractConfigHandler {
         RouterConfiguration configuration = ConfigCache.getLabel(cacheName);
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
             configuration.resetRouteRule(Collections.emptyMap());
-            RuleUtils.initMatchKeys(configuration);
+            RuleUtils.initKeys(configuration);
             return;
         }
         Map<String, String> routeRuleMap = getRouteRuleMap(event);
@@ -57,7 +57,8 @@ public class RouterConfigHandler extends AbstractConfigHandler {
                 continue;
             }
             List<EntireRule> list = JSONArray.parseArray(JSONObject.toJSONString(routeRuleList), EntireRule.class);
-            RuleUtils.removeInvalidRules(list, RouterConstant.DUBBO_CACHE_NAME.equals(cacheName));
+            RuleUtils.removeInvalidRules(list, RouterConstant.DUBBO_CACHE_NAME.equals(cacheName),
+                    RouterConstant.DUBBO_CACHE_NAME.equals(cacheName));
             if (!CollectionUtils.isEmpty(list)) {
                 for (EntireRule rule : list) {
                     rule.getRules().sort((o1, o2) -> o2.getPrecedence() - o1.getPrecedence());
@@ -66,7 +67,7 @@ public class RouterConfigHandler extends AbstractConfigHandler {
             }
         }
         configuration.resetRouteRule(routeRule);
-        RuleUtils.initMatchKeys(configuration);
+        RuleUtils.initKeys(configuration);
     }
 
     @Override

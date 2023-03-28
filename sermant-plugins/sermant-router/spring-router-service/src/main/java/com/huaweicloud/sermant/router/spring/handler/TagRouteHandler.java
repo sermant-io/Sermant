@@ -60,7 +60,7 @@ public class TagRouteHandler extends AbstractRouteHandler {
 
     private List<Object> getTargetInstancesByRules(String targetName, List<Object> instances) {
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME);
-        if (RouterConfiguration.isInValid(configuration)) {
+        if (RouterConfiguration.isInValid(configuration, RouterConstant.TAG_MATCH_KIND)) {
             return instances;
         }
         List<Rule> rules = TagRuleUtils.getTagRules(configuration, targetName, AppCache.INSTANCE.getAppName());

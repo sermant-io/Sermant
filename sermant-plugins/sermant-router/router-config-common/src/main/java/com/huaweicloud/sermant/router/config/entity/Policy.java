@@ -23,7 +23,6 @@ package com.huaweicloud.sermant.router.config.entity;
  * @since 2023-02-28
  */
 public class Policy {
-
     /**
      * 百分之一
      */

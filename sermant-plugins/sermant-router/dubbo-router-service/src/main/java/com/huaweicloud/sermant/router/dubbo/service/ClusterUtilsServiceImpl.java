@@ -67,9 +67,9 @@ public class ClusterUtilsServiceImpl implements ClusterUtilsService {
         if (key.startsWith(RouterConstant.PARAMETERS_KEY_PREFIX)) {
             return true;
         }
-        if (RouterConstant.VERSION_KEY.equals(key)) {
+        if (RouterConstant.META_VERSION_KEY.equals(key)) {
             return true;
         }
-        return RouterConstant.ZONE_KEY.equals(key);
+        return RouterConstant.META_ZONE_KEY.equals(key);
     }
 }

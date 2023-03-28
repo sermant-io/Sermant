@@ -55,14 +55,14 @@ public class TestSpringConfigService implements SpringConfigService {
     }
 
     @Override
-    public Set<String> getMatchTags() {
+    public Set<String> getInjectTags() {
         if (returnEmptyWhenGetMatchTags) {
             return Collections.emptySet();
         }
-        Set<String> keys = new HashSet<>();
-        keys.add("bar");
-        keys.add("foo");
-        return keys;
+        Set<String> tags = new HashSet<>();
+        tags.add("bar");
+        tags.add("foo");
+        return tags;
     }
 
     public String getCacheName() {

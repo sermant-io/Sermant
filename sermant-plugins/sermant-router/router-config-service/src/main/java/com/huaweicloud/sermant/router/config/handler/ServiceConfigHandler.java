@@ -48,12 +48,13 @@ public class ServiceConfigHandler extends AbstractConfigHandler {
         String serviceName = event.getKey().substring(RouterConstant.ROUTER_KEY_PREFIX.length() + 1);
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
             configuration.removeServiceRule(serviceName);
-            RuleUtils.updateMatchKeys(serviceName, Collections.emptyList());
+            RuleUtils.initKeys(configuration);
             return;
         }
         List<EntireRule> list = JSONArray.parseArray(JSONObject.toJSONString(getRule(event, serviceName)),
                 EntireRule.class);
-        RuleUtils.removeInvalidRules(list, RouterConstant.DUBBO_CACHE_NAME.equals(cacheName));
+        RuleUtils.removeInvalidRules(list, RouterConstant.DUBBO_CACHE_NAME.equals(cacheName),
+                RouterConstant.DUBBO_CACHE_NAME.equals(cacheName));
         if (CollectionUtils.isEmpty(list)) {
             configuration.removeServiceRule(serviceName);
         } else {
@@ -62,7 +63,7 @@ public class ServiceConfigHandler extends AbstractConfigHandler {
             }
             configuration.updateServiceRule(serviceName, list);
         }
-        RuleUtils.updateMatchKeys(serviceName, list);
+        RuleUtils.initKeys(configuration);
     }
 
     @Override

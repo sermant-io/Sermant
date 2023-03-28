@@ -17,7 +17,9 @@
 package com.huaweicloud.sermant.router.spring.handler;
 
 import com.huaweicloud.sermant.router.common.handler.Handler;
+import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,9 @@ public abstract class AbstractHandler implements Handler {
      * @return 请求标记
      */
     protected Map<String, List<String>> getRequestTag(Map<String, List<String>> headers, Set<String> keys) {
+        if (CollectionUtils.isEmpty(keys)) {
+            return Collections.emptyMap();
+        }
         Map<String, List<String>> map = new HashMap<>();
         for (String headerKey : keys) {
             if (headers.containsKey(headerKey)) {

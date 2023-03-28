@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 反射工具类，为了同时兼容alibaba和apache dubbo，所以需要用反射的方法进行类的操作
@@ -205,10 +206,12 @@ public class DubboReflectUtils {
     }
 
     private static Map<String, Object> getAttachmentsFromContext(String contextClazz) {
-        return com.huaweicloud.sermant.core.utils.ReflectUtils
-                .invokeMethod(contextClazz, GET_CONTEXT_METHOD_NAME, null, null)
-                .map(context -> ReflectUtils.getFieldValue(context, ATTACHMENTS_FIELD)
-                        .map(map -> (Map<String, Object>) map).orElse(Collections.emptyMap()))
-                .orElse(Collections.emptyMap());
+        Optional<Object> context = com.huaweicloud.sermant.core.utils.ReflectUtils
+                .invokeMethod(contextClazz, GET_CONTEXT_METHOD_NAME, null, null);
+        if (!context.isPresent()) {
+            return Collections.emptyMap();
+        }
+        Optional<Object> attachments = ReflectUtils.getFieldValue(context.get(), ATTACHMENTS_FIELD);
+        return attachments.map(obj -> (Map<String, Object>) obj).orElse(Collections.emptyMap());
     }
 }

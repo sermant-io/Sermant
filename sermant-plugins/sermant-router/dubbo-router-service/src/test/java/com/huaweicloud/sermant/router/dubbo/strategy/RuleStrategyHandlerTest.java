@@ -45,13 +45,13 @@ public class RuleStrategyHandlerTest {
     public RuleStrategyHandlerTest() {
         routes = new ArrayList<>();
         Map<String, String> tags1 = new HashMap<>();
-        tags1.put(RouterConstant.DUBBO_VERSION_KEY, "0.0.1");
+        tags1.put(RouterConstant.META_VERSION_KEY, "0.0.1");
         Route route1 = new Route();
         route1.setTags(tags1);
         route1.setWeight(100);
         routes.add(route1);
         Map<String, String> tags2 = new HashMap<>();
-        tags2.put(RouterConstant.DUBBO_VERSION_KEY, "0.0.2");
+        tags2.put(RouterConstant.META_VERSION_KEY, "0.0.2");
         Route route2 = new Route();
         route2.setTags(tags2);
         route2.setWeight(100);
@@ -85,7 +85,7 @@ public class RuleStrategyHandlerTest {
         AlibabaInvoker<Object> invoker2 = new AlibabaInvoker<>("0.0.2");
         invokers.add(invoker2);
         List<Object> matchInvokers = RuleStrategyHandler.INSTANCE.getMatchInvokersByRequest("foo", invokers,
-                Collections.singletonMap("version", "0.0.1"));
+                Collections.singletonMap(RouterConstant.META_VERSION_KEY, "0.0.1"));
         Assert.assertEquals(1, matchInvokers.size());
         Assert.assertEquals(invoker1, matchInvokers.get(0));
     }
@@ -142,7 +142,8 @@ public class RuleStrategyHandlerTest {
         ApacheInvoker<Object> invoker2 = new ApacheInvoker<>("0.0.2");
         invokers.add(invoker2);
         List<Object> matchInvokers = RuleStrategyHandler.INSTANCE
-                .getMatchInvokersByRequest("foo", invokers, Collections.singletonMap("version", "0.0.1"));
+                .getMatchInvokersByRequest("foo", invokers,
+                        Collections.singletonMap(RouterConstant.META_VERSION_KEY, "0.0.1"));
         Assert.assertEquals(100, routes.get(0).getWeight().intValue());
         Assert.assertEquals(1, matchInvokers.size());
         Assert.assertEquals(invoker1, matchInvokers.get(0));

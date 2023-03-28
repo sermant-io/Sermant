@@ -81,7 +81,9 @@ public class ConfigServiceTest {
         EntireRule entireRule = new EntireRule();
         entireRule.setKind(RouterConstant.FLOW_MATCH_KIND);
         entireRule.setRules(Collections.singletonList(rule));
-        RuleUtils.updateMatchKeys("bar", Collections.singletonList(entireRule));
+        RouterConfiguration configuration = new RouterConfiguration();
+        configuration.updateServiceRule("foo", Collections.singletonList(entireRule));
+        RuleUtils.initKeys(configuration);
         DubboConfigServiceImpl dubboConfigService = new DubboConfigServiceImpl();
         Set<String> headerKeys = dubboConfigService.getMatchKeys();
         Assert.assertEquals(1, headerKeys.size());
@@ -89,7 +91,7 @@ public class ConfigServiceTest {
         // 清除缓存
         RuleUtils.initMatchKeys(new RouterConfiguration());
 
-        RuleUtils.updateMatchKeys("bar", Collections.singletonList(entireRule));
+        RuleUtils.initKeys(configuration);
         SpringConfigServiceImpl springConfigService = new SpringConfigServiceImpl();
         headerKeys = springConfigService.getMatchKeys();
         Assert.assertEquals(1, headerKeys.size());
@@ -109,7 +111,9 @@ public class ConfigServiceTest {
         EntireRule entireRule = new EntireRule();
         entireRule.setKind(RouterConstant.FLOW_MATCH_KIND);
         entireRule.setRules(Collections.singletonList(rule));
-        RuleUtils.updateMatchKeys("bar", Collections.singletonList(entireRule));
+        RouterConfiguration configuration = new RouterConfiguration();
+        configuration.updateServiceRule("foo", Collections.singletonList(entireRule));
+        RuleUtils.initKeys(configuration);
         DubboConfigServiceImpl dubboConfigService = new DubboConfigServiceImpl();
         Set<String> headerKeys = dubboConfigService.getMatchKeys();
         Assert.assertEquals(3, headerKeys.size());
@@ -117,7 +121,8 @@ public class ConfigServiceTest {
         // 清除缓存
         RuleUtils.initMatchKeys(new RouterConfiguration());
 
-        RuleUtils.updateMatchKeys("bar", Collections.singletonList(entireRule));
+        configuration.updateServiceRule("foo", Collections.singletonList(entireRule));
+        RuleUtils.initKeys(configuration);
         SpringConfigServiceImpl springConfigService = new SpringConfigServiceImpl();
         headerKeys = springConfigService.getMatchKeys();
         Assert.assertEquals(3, headerKeys.size());

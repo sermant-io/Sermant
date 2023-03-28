@@ -17,9 +17,7 @@
 package com.huaweicloud.sermant.router.spring.handler;
 
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
-import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,9 +42,6 @@ public class RouteMappingHandler extends AbstractMappingHandler {
     public Map<String, List<String>> getRequestTag(String path, String methodName, Map<String, List<String>> headers,
             Map<String, List<String>> parameters) {
         Set<String> matchKeys = configService.getMatchKeys();
-        if (CollectionUtils.isEmpty(matchKeys)) {
-            return Collections.emptyMap();
-        }
         return getRequestTag(headers, matchKeys);
     }
 

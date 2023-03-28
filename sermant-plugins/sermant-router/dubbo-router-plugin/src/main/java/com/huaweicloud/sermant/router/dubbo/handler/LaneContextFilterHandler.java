@@ -49,17 +49,16 @@ public class LaneContextFilterHandler extends AbstractContextFilterHandler {
     }
 
     @Override
-    public Map<String, List<String>> getRequestTag(Object invoker, Object invocation) {
-        Set<String> matchTags = configService.getMatchTags();
-        if (CollectionUtils.isEmpty(matchTags)) {
+    public Map<String, List<String>> getRequestTag(Object invoker, Object invocation, Map<String, Object> attachments,
+            Set<String> matchKeys, Set<String> injectTags) {
+        if (CollectionUtils.isEmpty(injectTags)) {
             // 染色标记为空，代表没有染色规则，直接return
             LOGGER.fine("Lane tags are empty.");
             return Collections.emptyMap();
         }
 
         // 上游透传的标记
-        Map<String, Object> attachments = DubboReflectUtils.getAttachments(invocation);
-        Map<String, List<String>> requestTag = getRequestTag(attachments, matchTags);
+        Map<String, List<String>> requestTag = getRequestTag(attachments, injectTags);
 
         // 本次染色标记
         String interfaceName = DubboReflectUtils.getServiceKey(DubboReflectUtils.getUrl(invoker));

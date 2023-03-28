@@ -83,12 +83,13 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
     }
 
     private void putAttachment(Object invocation) {
+        RequestTag requestTag = ThreadLocalUtils.getRequestTag();
+        if (requestTag == null || CollectionUtils.isEmpty(requestTag.getTag())) {
+            return;
+        }
         Map<String, Object> attachments = DubboReflectUtils.getAttachmentsByInvocation(invocation);
         if (attachments != null) {
-            RequestTag requestTag = ThreadLocalUtils.getRequestTag();
-            if (requestTag != null) {
-                requestTag.getTag().forEach((key, value) -> attachments.putIfAbsent(key, value.get(0)));
-            }
+            requestTag.getTag().forEach((key, value) -> attachments.putIfAbsent(key, value.get(0)));
         }
     }
 }
