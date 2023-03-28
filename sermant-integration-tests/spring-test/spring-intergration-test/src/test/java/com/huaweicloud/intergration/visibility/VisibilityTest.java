@@ -22,10 +22,9 @@ import com.huaweicloud.intergration.visibility.entity.ServerInfo;
 
 import com.alibaba.fastjson.JSONArray;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
-import org.springframework.util.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,10 +35,8 @@ import java.util.List;
  * @author ZHP
  * @since 2002-11-24
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "VISIBILITY")
 public class VisibilityTest {
-    @Rule
-    public final TestRule visibilityControlTestRule = new VisibilityControlTestRule();
-
     /**
      * 服务信息采集URL
      */
@@ -52,20 +49,20 @@ public class VisibilityTest {
         RequestUtils.get(TEST_URL, new HashMap<>(), String.class);
         Thread.sleep(30000);
         String string = RequestUtils.get(URL, new HashMap<>(), String.class);
-        Assert.notNull(string, "服务信息采集失败");
+        Assertions.assertNotNull(string, "服务信息采集失败");
         List<ServerInfo> serverInfos = JSONArray.parseArray(string, ServerInfo.class);
-        Assert.notNull(serverInfos, "服务信息采集失败");
+        Assertions.assertNotNull(serverInfos, "服务信息采集失败");
         serverInfos.forEach(serverInfo -> {
-            Assert.notNull(serverInfo.getApplicationName(), "应用名称为空");
-            Assert.notNull(serverInfo.getGroupName(), "服务组名称为空");
-            Assert.notNull(serverInfo.getVersion(), "版本号信息为空");
+            Assertions.assertNotNull(serverInfo.getApplicationName(), "应用名称为空");
+            Assertions.assertNotNull(serverInfo.getGroupName(), "服务组名称为空");
+            Assertions.assertNotNull(serverInfo.getVersion(), "版本号信息为空");
             if (serverInfo.getConsanguinityList() != null && !serverInfo.getConsanguinityList().isEmpty()) {
                 serverInfo.getConsanguinityList().forEach(consanguinity ->
-                        Assert.notEmpty(consanguinity.getProviders(), "服务提供者信息为空"));
+                        Assertions.assertFalse(consanguinity.getProviders().isEmpty(), "服务提供者信息为空"));
             }
             if (serverInfo.getContractList() != null && !serverInfo.getContractList().isEmpty()) {
                 serverInfo.getContractList().forEach(contract ->
-                        Assert.notEmpty(contract.getMethodInfoList(),
+                        Assertions.assertFalse(contract.getMethodInfoList().isEmpty(),
                                 "契约信息中" + contract.getInterfaceName() + "方法信息为空"));
             }
         });

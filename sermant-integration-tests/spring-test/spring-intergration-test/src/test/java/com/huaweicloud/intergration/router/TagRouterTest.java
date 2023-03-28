@@ -18,9 +18,9 @@ package com.huaweicloud.intergration.router;
 
 import com.huaweicloud.intergration.config.supprt.KieClient;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -39,6 +39,7 @@ import java.util.concurrent.TimeUnit;
  * @author provenceee
  * @since 2022-11-14
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "TAG_ROUTER")
 public class TagRouterTest {
     private static final RestTemplate REST_TEMPLATE = new RestTemplate();
 
@@ -81,9 +82,6 @@ public class TagRouterTest {
     private static final String SERVICE_CONFIG = "SERVICE_CONFIG";
 
     private static final String GLOBAL_CONFIG = "GLOBAL_CONFIG";
-
-    @Rule
-    public final TagRouterRule routerRule = new TagRouterRule();
 
     public static final List<String> SPRING_CLOUD_VERSIONS_FOR_ZUUL = Arrays
             .asList("Edgware.SR2", "Finchley.RELEASE", "Greenwich.RELEASE", "Hoxton.RELEASE");
@@ -166,7 +164,7 @@ public class TagRouterTest {
                 + "            version: 0.0.0\n"
                 + "          weight: 100";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(GLOBAL_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(GLOBAL_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
@@ -246,7 +244,7 @@ public class TagRouterTest {
                 + "            version: 1.0.1\n"
                 + "          weight: 100";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(GLOBAL_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(GLOBAL_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
@@ -355,11 +353,11 @@ public class TagRouterTest {
                 + "          weight: 100";
 
         if (SERVICE_CONFIG.equals(type)) {
-            Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-            Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+            Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+            Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         }
         if (GLOBAL_CONFIG.equals(type)) {
-            Assert.assertTrue(KIE_CLIENT.publishConfig(GLOBAL_KEY, CONTENT));
+            Assertions.assertTrue(KIE_CLIENT.publishConfig(GLOBAL_KEY, CONTENT));
         }
         TimeUnit.SECONDS.sleep(3);
 
@@ -371,13 +369,13 @@ public class TagRouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
         }
 
         // 测试命中version:1.0.1的实例
@@ -386,13 +384,13 @@ public class TagRouterTest {
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.1"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.1"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.1"));
         }
 
         // 测试没有命中version:1.0.1的实例
@@ -402,15 +400,15 @@ public class TagRouterTest {
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
             String body = Objects.requireNonNull(exchange.getBody());
-            Assert.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assert.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assert.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
         }
 
         // 测试没有命中version:1.0.1的实例
@@ -419,15 +417,15 @@ public class TagRouterTest {
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
             String body = Objects.requireNonNull(exchange.getBody());
-            Assert.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assert.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assert.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
+            Assertions.assertTrue(!body.contains("1.0.1") && !body.contains("group:gray"));
         }
     }
 
@@ -462,11 +460,11 @@ public class TagRouterTest {
                 + "          weight: 100";
 
         if (SERVICE_CONFIG.equals(type)) {
-            Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-            Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+            Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+            Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         }
         if (GLOBAL_CONFIG.equals(type)) {
-            Assert.assertTrue(KIE_CLIENT.publishConfig(GLOBAL_KEY, CONTENT));
+            Assertions.assertTrue(KIE_CLIENT.publishConfig(GLOBAL_KEY, CONTENT));
         }
         TimeUnit.SECONDS.sleep(3);
 
@@ -477,13 +475,13 @@ public class TagRouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.0"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.0"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.0"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.0"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.0"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("1.0.0"));
         }
 
         // 下发tag匹配的路由规则
@@ -513,11 +511,11 @@ public class TagRouterTest {
                 + "          weight: 100";
 
         if (SERVICE_CONFIG.equals(type)) {
-            Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-            Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+            Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+            Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         }
         if (GLOBAL_CONFIG.equals(type)) {
-            Assert.assertTrue(KIE_CLIENT.publishConfig(GLOBAL_KEY, CONTENT));
+            Assertions.assertTrue(KIE_CLIENT.publishConfig(GLOBAL_KEY, CONTENT));
         }
         TimeUnit.SECONDS.sleep(3);
 
@@ -525,13 +523,13 @@ public class TagRouterTest {
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
         }
     }
 
@@ -588,8 +586,8 @@ public class TagRouterTest {
                 + "            version: 1.0.0\n"
                 + "          weight: 100";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
         // 测试命中标签为version:1.0.1和group:gray标签的实例
@@ -600,15 +598,15 @@ public class TagRouterTest {
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
             String body = Objects.requireNonNull(exchange.getBody());
-            Assert.assertTrue(body.contains("1.0.1") && body.contains("group:gray"));
+            Assertions.assertTrue(body.contains("1.0.1") && body.contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assert.assertTrue(body.contains("1.0.1") && body.contains("group:gray"));
+            Assertions.assertTrue(body.contains("1.0.1") && body.contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
             body = Objects.requireNonNull(exchange.getBody());
-            Assert.assertTrue(body.contains("1.0.1") && body.contains("group:gray"));
+            Assertions.assertTrue(body.contains("1.0.1") && body.contains("group:gray"));
         }
     }
 
@@ -631,8 +629,8 @@ public class TagRouterTest {
                 + "        - tags:\n"
                 + "            group: CONSUMER_TAG\n";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
         HttpHeaders headers = new HttpHeaders();
@@ -642,13 +640,13 @@ public class TagRouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("gray"));
         }
     }
 
@@ -671,8 +669,8 @@ public class TagRouterTest {
                 + "            group: gray\n"
                 + "          weight: 100\n";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
         // 不等于匹配测试，命中group:gray的实例
         HttpHeaders headers = new HttpHeaders();
@@ -681,13 +679,13 @@ public class TagRouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
         }
     }
 
@@ -710,8 +708,8 @@ public class TagRouterTest {
                 + "            group: gray\n"
                 + "          weight: 100\n";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
         // 大于等于匹配测试，命中group:gray的实例
         HttpHeaders headers = new HttpHeaders();
@@ -720,13 +718,13 @@ public class TagRouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
         }
     }
 
@@ -749,8 +747,8 @@ public class TagRouterTest {
                 + "            group: gray\n"
                 + "          weight: 100\n";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
         // 小于等于匹配测试，命中group:gray的实例
         HttpHeaders headers = new HttpHeaders();
@@ -759,13 +757,13 @@ public class TagRouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
         }
     }
 
@@ -788,8 +786,8 @@ public class TagRouterTest {
                 + "            group: gray\n"
                 + "          weight: 100\n";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
         // 大于匹配测试，命中group:gray的实例
         HttpHeaders headers = new HttpHeaders();
@@ -798,13 +796,13 @@ public class TagRouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
         }
     }
 
@@ -827,8 +825,8 @@ public class TagRouterTest {
                 + "            group: gray\n"
                 + "          weight: 100\n";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
         // 小于匹配测试，命中group:gray的实例
         HttpHeaders headers = new HttpHeaders();
@@ -837,13 +835,13 @@ public class TagRouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
         }
     }
 
@@ -868,8 +866,8 @@ public class TagRouterTest {
                 + "            group: gray\n"
                 + "          weight: 100\n";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
         // 小于匹配测试，命中group:gray的实例
         HttpHeaders headers = new HttpHeaders();
@@ -878,13 +876,13 @@ public class TagRouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
         }
     }
 
@@ -907,8 +905,8 @@ public class TagRouterTest {
                 + "            group: gray\n"
                 + "          weight: 100\n";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
         // 正则匹配测试，命中group:gray的实例
         HttpHeaders headers = new HttpHeaders();
@@ -917,13 +915,13 @@ public class TagRouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
         }
     }
 
@@ -946,8 +944,8 @@ public class TagRouterTest {
                 + "            group: gray\n"
                 + "          weight: 100\n";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
         // 大小写敏感测试，未命中group:gray的实例
         HttpHeaders headers = new HttpHeaders();
@@ -956,13 +954,13 @@ public class TagRouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
         }
     }
 
@@ -985,8 +983,8 @@ public class TagRouterTest {
                 + "            group: gray\n"
                 + "          weight: 0\n";
 
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
         // 0权重路由测试，未命中group:gray的实例
         HttpHeaders headers = new HttpHeaders();
@@ -995,13 +993,13 @@ public class TagRouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
+            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("group:gray"));
         }
     }
 

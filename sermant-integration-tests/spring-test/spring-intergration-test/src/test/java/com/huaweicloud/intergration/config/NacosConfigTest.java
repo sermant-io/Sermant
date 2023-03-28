@@ -18,7 +18,6 @@
 package com.huaweicloud.intergration.config;
 
 import com.huaweicloud.intergration.common.utils.RequestUtils;
-import com.huaweicloud.intergration.config.rule.NacosTestRule;
 import com.huaweicloud.intergration.config.supprt.KieClient;
 
 import com.alibaba.fastjson.JSONObject;
@@ -26,11 +25,10 @@ import com.alibaba.nacos.api.config.ConfigType;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.client.config.NacosConfigService;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -49,10 +47,8 @@ import java.util.function.Supplier;
  * @author zhouss
  * @since 2022-07-14
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "DYNAMIC_CONFIG_NACOS")
 public class NacosConfigTest {
-    @Rule
-    public final TestRule nacosRunCondition = new NacosTestRule();
-
     private static final Logger LOGGER = LoggerFactory.getLogger(NacosConfigTest.class);
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -78,7 +74,7 @@ public class NacosConfigTest {
      *
      * @throws Exception 运行报错
      */
-    @Before
+    @BeforeEach
     public void publishNacosConfig() throws Exception {
         kieClient = new KieClient(restTemplate, null, RequestUtils.get(serverUrl + "/labels", Collections.emptyMap(),
                 Map.class));
@@ -86,7 +82,7 @@ public class NacosConfigTest {
         properties.put("serverAddr", nacosUrl);
         properties.put("enableRemoteSyncConfig", "false");
         configService = new NacosConfigService(properties);
-        Assert.assertTrue(configService.publishConfig(dataId, group, "sermant.test=1\nsermant"
+        Assertions.assertTrue(configService.publishConfig(dataId, group, "sermant.test=1\nsermant"
                         + ".param1=a\nsermant.param2=b",
                 ConfigType.PROPERTIES.getType()));
     }
@@ -97,16 +93,16 @@ public class NacosConfigTest {
         if (config == null) {
             config = configService.getConfig(dataId, group, 10000L);
         }
-        Assert.assertNotNull(config);
+        Assertions.assertNotNull(config);
         final Properties properties = new Properties();
         final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
                 config.getBytes(StandardCharsets.UTF_8));
         properties.load(byteArrayInputStream);
         byteArrayInputStream.close();
         final String result = get("/dynamic/config/value", String.class);
-        Assert.assertEquals(result, properties.getProperty(key1));
+        Assertions.assertEquals(result, properties.getProperty(key1));
         final String property = get("/dynamic/config/property", String.class);
-        Assert.assertEquals(property, properties.getProperty(keyA) + "," + properties.getProperty(keyB));
+        Assertions.assertEquals(property, properties.getProperty(keyA) + "," + properties.getProperty(keyB));
     }
 
     /**
@@ -135,7 +131,7 @@ public class NacosConfigTest {
         if (!checkFunc.get()) {
             LOGGER.error("=======配置中心配置内容: [{}]==================", JSONObject.toJSONString(kieClient.query(null)));
         }
-        Assert.assertTrue(checkFunc.get());
+        Assertions.assertTrue(checkFunc.get());
     }
 
     private boolean checkAgentConfig() {

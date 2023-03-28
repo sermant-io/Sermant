@@ -17,8 +17,7 @@
 
 package com.huaweicloud.intergration.loadbalancer;
 
-import org.junit.Rule;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,10 +28,8 @@ import java.util.Map;
  * @author zhouss
  * @since 2022-08-17
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "LOAD_BALANCER")
 public class FeignLoadBalancerTest extends LoadbalancerTest {
-    @Rule(order = 100)
-    public final TestRule TEST_RULE = new LoadBalancerRule();
-
     @Override
     protected String getServiceName() {
         return "feign-provider";

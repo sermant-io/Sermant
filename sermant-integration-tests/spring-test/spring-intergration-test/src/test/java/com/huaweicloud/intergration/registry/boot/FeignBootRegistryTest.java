@@ -16,8 +16,8 @@
 
 package com.huaweicloud.intergration.registry.boot;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;
@@ -29,10 +29,8 @@ import java.util.Map;
  * @author zhouss
  * @since 2022-10-26
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "BOOT_REGISTRY")
 public class FeignBootRegistryTest extends BootRegistryTest {
-    @Rule(order = 200)
-    public final BootRegistryRule bootRegistryRule = new BootRegistryRule();
-    
     /**
      * 此处将模拟请求两次, 基于轮询负载均衡将拿到两个不同结果
      */

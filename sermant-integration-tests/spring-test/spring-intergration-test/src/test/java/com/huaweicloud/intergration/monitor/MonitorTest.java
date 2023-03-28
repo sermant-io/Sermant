@@ -19,10 +19,10 @@ package com.huaweicloud.intergration.monitor;
 
 import com.huaweicloud.intergration.common.MetricEnum;
 import com.huaweicloud.intergration.common.utils.RequestUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
-import org.springframework.util.Assert;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,10 +33,8 @@ import java.util.Map;
  * @author ZHP
  * @since 2002-11-24
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "MONITOR")
 public class MonitorTest {
-    @Rule
-    public final TestRule monitorControlTestRule = new MonitorControlTestRule();
-
     /**
      * 监控采集URL
      */
@@ -56,7 +54,7 @@ public class MonitorTest {
     @Test
     public void testMonitor() {
         String string = RequestUtils.get(URL, new HashMap<>(), String.class);
-        Assert.notNull(string, "指标信息查询失败");
+        Assertions.assertNotNull(string, "指标信息查询失败");
         String[] metrics = string.split("\n");
         Map<String, Double> map = new HashMap<>();
         for (String metric : metrics) {
@@ -68,18 +66,18 @@ public class MonitorTest {
                 map.put(data[0], Double.parseDouble(data[1]));
             }
         }
-        Assert.notEmpty(map, "解析响应结果获取指标信息失败");
+        Assertions.assertFalse(map.isEmpty(), "解析响应结果获取指标信息失败");
         for (MetricEnum metricEnum : MetricEnum.values()) {
-            Assert.isTrue(map.containsKey(metricEnum.getName()), "缺少指标信息" + metricEnum.getName());
+            Assertions.assertTrue(map.containsKey(metricEnum.getName()), "缺少指标信息" + metricEnum.getName());
         }
     }
 
     @Test
     public void testFlowControlMonitor() {
         String res = RequestUtils.get(REQ_URL, new HashMap<>(), String.class);
-        Assert.notNull(res, "熔断指标前置请求失败");
+        Assertions.assertNotNull(res, "熔断指标前置请求失败");
         String string = RequestUtils.get(URL_RD, new HashMap<>(), String.class);
-        Assert.notNull(string, "熔断指标信息查询失败");
+        Assertions.assertNotNull(string, "熔断指标信息查询失败");
         String[] metrics = string.split("\n");
         boolean qpsFlag = false;
         boolean tpsFlag = false;
@@ -95,7 +93,7 @@ public class MonitorTest {
                 tpsFlag = true;
             }
         }
-        Assert.isTrue(qpsFlag, "缺少qps指标信息");
-        Assert.isTrue(tpsFlag, "缺少tps指标信息");
+        Assertions.assertTrue(qpsFlag, "缺少qps指标信息");
+        Assertions.assertTrue(tpsFlag, "缺少tps指标信息");
     }
 }

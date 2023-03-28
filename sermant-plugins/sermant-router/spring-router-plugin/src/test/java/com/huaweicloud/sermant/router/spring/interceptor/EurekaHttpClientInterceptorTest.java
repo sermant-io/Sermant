@@ -17,14 +17,22 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
+import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.router.spring.TestSpringConfigService;
 import com.huaweicloud.sermant.router.spring.cache.AppCache;
+import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.appinfo.InstanceInfo.Builder;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -43,6 +51,28 @@ public class EurekaHttpClientInterceptorTest {
     private final RouterConfig routerConfig;
 
     private final ExecuteContext context;
+
+    private static TestSpringConfigService configService;
+
+    private static MockedStatic<ServiceManager> mockServiceManager;
+
+    /**
+     * UT执行前进行mock
+     */
+    @BeforeClass
+    public static void before() {
+        configService = new TestSpringConfigService();
+        mockServiceManager = Mockito.mockStatic(ServiceManager.class);
+        mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class)).thenReturn(configService);
+    }
+
+    /**
+     * UT执行后释放mock对象
+     */
+    @AfterClass
+    public static void after() {
+        mockServiceManager.close();
+    }
 
     public EurekaHttpClientInterceptorTest() throws IllegalAccessException, NoSuchFieldException {
         interceptor = new EurekaHttpClientInterceptor();
@@ -81,5 +111,16 @@ public class EurekaHttpClientInterceptorTest {
         Assert.assertEquals(routerConfig.getRouterVersion(), metadata.get("version"));
         Assert.assertEquals("bar1", metadata.get("bar"));
         Assert.assertEquals("foo2", metadata.get("foo"));
+    }
+
+    /**
+     * 测试after方法
+     */
+    @Test
+    public void testAfter() {
+        AppCache.INSTANCE.setAppName("FOO");
+        interceptor.after(context);
+        Assert.assertEquals(RouterConstant.SPRING_CACHE_NAME, configService.getCacheName());
+        Assert.assertEquals("FOO", configService.getServiceName());
     }
 }

@@ -19,8 +19,8 @@ package com.huaweicloud.intergration.registry.boot;
 import com.huaweicloud.intergration.common.utils.RequestUtils;
 import com.huaweicloud.intergration.config.supprt.KieClient;
 
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
@@ -42,7 +42,7 @@ public class BootRegistryTest {
 
     private final KieClient kieClient = new KieClient(restTemplate, null, getLabels());
 
-    @Before
+    @BeforeEach
     public void before() throws InterruptedException {
         if (ConfigGlobalStatus.INSTANCE.isOpen(getType())) {
             return;
@@ -70,7 +70,7 @@ public class BootRegistryTest {
         for (int i = 0; i < 2; i++) {
             result.add(req(api, httpMethod));
         }
-        Assert.assertTrue(result.size() > 1);
+        Assertions.assertTrue(result.size() > 1);
     }
 
     /**

@@ -17,9 +17,10 @@
 package com.huaweicloud.intergration.router;
 
 import com.huaweicloud.intergration.config.supprt.KieClient;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -38,7 +39,7 @@ import java.util.concurrent.TimeUnit;
  * @author robotLJW
  * @since 2023-3-9
  */
-
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "TAG_ROUTER_AZ")
 public class TagRouterAzTest {
     private static final RestTemplate REST_TEMPLATE = new RestTemplate();
 
@@ -75,11 +76,6 @@ public class TagRouterAzTest {
     private static final String GATEWAY_FEIGN_CLOUD_BASE_PATH = IP + GATEWAY_PORT + FEIGN_BASE_PATH + CLOUD_BASE_PATH;
 
     private static final int TIMES = 30;
-
-    private static final String SERVICE_CONFIG = "SERVICE_CONFIG";
-
-    @Rule
-    public final TagRouterAzRule routerAzRule = new TagRouterAzRule();
 
     public static final List<String> SPRING_CLOUD_VERSIONS_FOR_ZUUL = Arrays
             .asList("Edgware.SR2", "Finchley.RELEASE", "Greenwich.RELEASE", "Hoxton.RELEASE");
@@ -125,7 +121,6 @@ public class TagRouterAzTest {
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
         if (SPRING_CLOUD_VERSIONS_FOR_ZUUL.contains(springCloudVersion)) {
             testTriggerThresholdPolicyAZRuleTwo(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_BOOT_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH);
-            return;
         }
 
         // 测试gateway场景：SPRING_CLOUD_VERSIONS_FOR_GATEWAY中的版本，才带有gateway的依赖
@@ -148,7 +143,6 @@ public class TagRouterAzTest {
         // 测试zuul场景：SPRING_CLOUD_VERSIONS_FOR_ZUUL中的版本，才带有zuul的依赖
         if (SPRING_CLOUD_VERSIONS_FOR_ZUUL.contains(springCloudVersion)) {
             testPolicyAZRuleOne(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_BOOT_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH);
-            return;
         }
 
         // 测试gateway场景：SPRING_CLOUD_VERSIONS_FOR_GATEWAY中的版本，才带有gateway的依赖
@@ -247,8 +241,8 @@ public class TagRouterAzTest {
                 + "      route:\n"
                 + "        - tags:\n"
                 + "            zone: CONSUMER_TAG\n";
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
         HttpHeaders headers = new HttpHeaders();
@@ -258,13 +252,13 @@ public class TagRouterAzTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
         }
     }
 
@@ -294,8 +288,8 @@ public class TagRouterAzTest {
                 + "      route:\n"
                 + "        - tags:\n"
                 + "            zone: CONSUMER_TAG\n";
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
         HttpHeaders headers = new HttpHeaders();
@@ -328,12 +322,12 @@ public class TagRouterAzTest {
                 feignCloudAZ2++;
             }
         }
-        Assert.assertNotEquals(0, restCloudAZ1);
-        Assert.assertNotEquals(0, restCloudAZ2);
-        Assert.assertNotEquals(0, feignBootAZ1);
-        Assert.assertNotEquals(0, feignBootAZ2);
-        Assert.assertNotEquals(0, feignCloudAZ1);
-        Assert.assertNotEquals(0, feignCloudAZ2);
+        Assertions.assertNotEquals(0, restCloudAZ1);
+        Assertions.assertNotEquals(0, restCloudAZ2);
+        Assertions.assertNotEquals(0, feignBootAZ1);
+        Assertions.assertNotEquals(0, feignBootAZ2);
+        Assertions.assertNotEquals(0, feignCloudAZ1);
+        Assertions.assertNotEquals(0, feignCloudAZ2);
     }
 
     /**
@@ -364,8 +358,8 @@ public class TagRouterAzTest {
                 + "      route:\n"
                 + "        - tags:\n"
                 + "            zone: CONSUMER_TAG\n";
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
         HttpHeaders headers = new HttpHeaders();
@@ -375,13 +369,13 @@ public class TagRouterAzTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
         }
     }
 
@@ -413,8 +407,8 @@ public class TagRouterAzTest {
                 + "      route:\n"
                 + "        - tags:\n"
                 + "            zone: CONSUMER_TAG\n";
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
         HttpHeaders headers = new HttpHeaders();
@@ -447,12 +441,12 @@ public class TagRouterAzTest {
                 feignCloudAZ2++;
             }
         }
-        Assert.assertNotEquals(0, restCloudAZ1);
-        Assert.assertNotEquals(0, restCloudAZ2);
-        Assert.assertNotEquals(0, feignBootAZ1);
-        Assert.assertNotEquals(0, feignBootAZ2);
-        Assert.assertNotEquals(0, feignCloudAZ1);
-        Assert.assertNotEquals(0, feignCloudAZ2);
+        Assertions.assertNotEquals(0, restCloudAZ1);
+        Assertions.assertNotEquals(0, restCloudAZ2);
+        Assertions.assertNotEquals(0, feignBootAZ1);
+        Assertions.assertNotEquals(0, feignBootAZ2);
+        Assertions.assertNotEquals(0, feignCloudAZ1);
+        Assertions.assertNotEquals(0, feignCloudAZ2);
     }
 
     /**
@@ -483,8 +477,8 @@ public class TagRouterAzTest {
                 + "      route:\n"
                 + "        - tags:\n"
                 + "            zone: CONSUMER_TAG\n";
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
         HttpHeaders headers = new HttpHeaders();
@@ -494,13 +488,13 @@ public class TagRouterAzTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
         }
     }
 
@@ -532,8 +526,8 @@ public class TagRouterAzTest {
                 + "      route:\n"
                 + "        - tags:\n"
                 + "            zone: CONSUMER_TAG\n";
-        Assert.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(KIE_CLIENT.publishConfig(FEIGN_KEY, CONTENT));
         TimeUnit.SECONDS.sleep(3);
 
         HttpHeaders headers = new HttpHeaders();
@@ -543,13 +537,13 @@ public class TagRouterAzTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(restCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
 
             exchange = REST_TEMPLATE.exchange(feignBootBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
 
             exchange = REST_TEMPLATE.exchange(feignCloudBasePath, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("az1"));
         }
     }
 

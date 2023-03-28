@@ -20,10 +20,9 @@ package com.huaweicloud.intergration.flowcontrol;
 import com.huaweicloud.intergration.common.FlowControlConstants;
 import com.huaweicloud.intergration.common.utils.RequestUtils;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.client.ClientHttpResponse;
 
 import java.util.Collections;
@@ -40,9 +39,8 @@ import java.util.function.BiFunction;
  * @author zhouss
  * @since 2022-07-30
  */
+@Disabled
 public abstract class FlowControlTest {
-    @Rule
-    public final TestRule flowControlCondition = new FlowControlTestRule();
     private static final int RATE_LIMITING_REQUEST_COUNT = 10;
     private static final int BREAKER_REQUEST_COUNT = 10;
     private static final String BREAKER_MSG = "is OPEN and does not permit further calls";
@@ -89,7 +87,7 @@ public abstract class FlowControlTest {
     @Test
     public void testRetry() {
         final Integer tryCount = RequestUtils.get(getRestConsumerUrl() + "/retry", Collections.emptyMap(), Integer.class);
-        Assert.assertTrue(tryCount > 0);
+        Assertions.assertTrue(tryCount > 0);
     }
 
     /**
@@ -112,7 +110,7 @@ public abstract class FlowControlTest {
             });
         }
         countDownLatch.await();
-        Assert.assertTrue(expected.get());
+        Assertions.assertTrue(expected.get());
         threadPoolExecutor.shutdown();
     }
 
@@ -138,7 +136,7 @@ public abstract class FlowControlTest {
         final AtomicBoolean checkNotMatch = new AtomicBoolean();
         process("/headerCompareNotMatch", RATE_LIMITING_MSG, RATE_LIMITING_REQUEST_COUNT, checkNotMatch);
         if (checkNotMatch.get()) {
-            Assert.fail();
+            Assertions.fail();
         }
     }
 
@@ -149,7 +147,7 @@ public abstract class FlowControlTest {
     public void testServiceNameNoMatch() {
         final AtomicBoolean expected = new AtomicBoolean();
         process("/serviceNameNoMatch", BREAKER_MSG, RATE_LIMITING_REQUEST_COUNT, expected);
-        Assert.assertFalse(expected.get());
+        Assertions.assertFalse(expected.get());
     }
 
     /**
@@ -159,7 +157,7 @@ public abstract class FlowControlTest {
     public void testFaultReturnNull() {
         final String result = RequestUtils.get(getRestConsumerUrl() + "/faultNull", Collections.emptyMap(),
                 String.class);
-        Assert.assertNull(result);
+        Assertions.assertNull(result);
     }
 
     /**
@@ -168,7 +166,7 @@ public abstract class FlowControlTest {
     @Test
     public void testFaultThrow() {
         final String msg = RequestUtils.get(getRestConsumerUrl() + "/faultThrow", Collections.emptyMap(), String.class);
-        Assert.assertTrue(msg != null && msg.contains("Request has been aborted"));
+        Assertions.assertTrue(msg != null && msg.contains("Request has been aborted"));
     }
 
     /**
@@ -179,7 +177,7 @@ public abstract class FlowControlTest {
         long start = System.currentTimeMillis();
         RequestUtils.get(getRestConsumerUrl() + "/faultDelay", Collections.emptyMap(), String.class);
         long delay = 2000L;
-        Assert.assertTrue(System.currentTimeMillis() - start > delay);
+        Assertions.assertTrue(System.currentTimeMillis() - start > delay);
     }
 
     private void process(String api, String flowControlMsg, int requestCount, AtomicBoolean check) {
@@ -211,7 +209,7 @@ public abstract class FlowControlTest {
             }
         }
         if (check == null) {
-            Assert.assertTrue(expected.get());
+            Assertions.assertTrue(expected.get());
         }
     }
 

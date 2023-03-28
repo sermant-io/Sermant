@@ -18,9 +18,9 @@ package com.huaweicloud.intergration.registry.boot;
 
 import com.huaweicloud.intergration.common.utils.EnvUtils;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.http.HttpMethod;
 
 /**
@@ -29,10 +29,8 @@ import org.springframework.http.HttpMethod;
  * @author zhouss
  * @since 2022-10-26
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "BOOT_REGISTRY")
 public class HttpClientBootRegistryTest extends BootRegistryTest {
-    @Rule(order = 203)
-    public final BootRegistryRule bootRegistryRule = new BootRegistryRule();
-
     /**
      * 默认Client
      */
@@ -92,7 +90,7 @@ public class HttpClientBootRegistryTest extends BootRegistryTest {
             return;
         }
         final String result = req("httpClientRetry", HttpMethod.GET);
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
     }
 
     private boolean canTestSync() {

@@ -34,7 +34,7 @@ runs:
         bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8989/dynamic/config/check 120
     - name: integration test
       shell: bash
-      run: mvn test -Dsermant.integration.test.type=dynamic_config_zk --file sermant-integration-tests/spring-test/pom.xml
+      run: mvn test -Dsermant.integration.test.type=DYNAMIC_CONFIG_ZK --file sermant-integration-tests/spring-test/pom.xml
     - name: start service with enable origin config center
       shell: bash
       env:
@@ -54,7 +54,7 @@ runs:
       shell: bash
       run: |
         bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8989/dynamic/config/check 120
-        mvn test -Dsermant.integration.test.type=dynamic_config_zk --file sermant-integration-tests/spring-test/pom.xml
+        mvn test -Dsermant.integration.test.type=DYNAMIC_CONFIG_ZK --file sermant-integration-tests/spring-test/pom.xml
     - name: exit
       if: always()
       uses: ./.github/actions/common/exit
