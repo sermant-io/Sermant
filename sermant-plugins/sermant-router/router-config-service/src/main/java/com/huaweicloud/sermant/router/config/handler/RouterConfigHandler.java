@@ -19,12 +19,14 @@ package com.huaweicloud.sermant.router.config.handler;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.router.common.event.RouterEventCollector;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.config.entity.EntireRule;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -47,6 +49,8 @@ public class RouterConfigHandler extends AbstractConfigHandler {
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
             configuration.resetRouteRule(Collections.emptyMap());
             RuleUtils.initKeys(configuration);
+            RouterEventCollector.getInstance()
+                    .collectServiceRouteRuleEvent(JSON.toJSONString(configuration.getRouteRule()));
             return;
         }
         Map<String, String> routeRuleMap = getRouteRuleMap(event);
@@ -68,6 +72,8 @@ public class RouterConfigHandler extends AbstractConfigHandler {
         }
         configuration.resetRouteRule(routeRule);
         RuleUtils.initKeys(configuration);
+        RouterEventCollector.getInstance()
+                .collectServiceRouteRuleEvent(JSON.toJSONString(configuration.getRouteRule()));
     }
 
     @Override
