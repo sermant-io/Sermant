@@ -31,6 +31,8 @@ public class LogInfo {
 
     private String logMethod;
 
+    private int logLineNumber;
+
     private int logThreadId;
 
     private Throwable throwable;
@@ -81,6 +83,14 @@ public class LogInfo {
 
     public void setThrowable(Throwable throwable) {
         this.throwable = throwable;
+    }
+
+    public int getLogLineNumber() {
+        return logLineNumber;
+    }
+
+    public void setLogLineNumber(int logLineNumber) {
+        this.logLineNumber = logLineNumber;
     }
 
     @Override

@@ -14,53 +14,25 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.entity;
+package com.huaweicloud.sermant.backend.entity.event;
 
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
+import java.util.List;
+
 /**
- * 事件元数据
+ * 事件查询响应实体
  *
  * @author xuezechao
  * @since 2023-03-02
  */
 @Getter
 @Setter
-public class InstanceMeta {
+public class EventsResponseEntity {
 
-    /**
-     * 实例原数据哈希
-     */
-    private String metaHash;
-
-    /**
-     * 实例ID
-     */
-    private String instanceId;
-
-    /**
-     * 应用
-     */
-    private String service;
-
-    /**
-     * 节点
-     */
-    private NodeEntity node;
-
-    /**
-     * 集群
-     */
-    private ClusterEntity cluster;
-
-    /**
-     * 环境
-     */
-    private EnvironmentEntity environment;
-
-    /**
-     * 可用区
-     */
-    private String az;
+    private int totalPage;
+    private List<QueryResultEventInfoEntity> events;
+    private HashMap<String, Integer> eventCount;
 }

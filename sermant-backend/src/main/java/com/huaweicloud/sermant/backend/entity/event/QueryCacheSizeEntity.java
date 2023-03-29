@@ -14,53 +14,26 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.entity;
+package com.huaweicloud.sermant.backend.entity.event;
 
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 事件元数据
+ * 事件查询数量实体
  *
  * @author xuezechao
  * @since 2023-03-02
  */
 @Getter
 @Setter
-public class InstanceMeta {
+public class QueryCacheSizeEntity {
 
-    /**
-     * 实例原数据哈希
-     */
-    private String metaHash;
+    int emergencyNum;
 
-    /**
-     * 实例ID
-     */
-    private String instanceId;
+    int importantNum;
 
-    /**
-     * 应用
-     */
-    private String service;
+    int normalNum;
 
-    /**
-     * 节点
-     */
-    private NodeEntity node;
-
-    /**
-     * 集群
-     */
-    private ClusterEntity cluster;
-
-    /**
-     * 环境
-     */
-    private EnvironmentEntity environment;
-
-    /**
-     * 可用区
-     */
-    private String az;
+    int total;
 }

@@ -14,53 +14,23 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.entity;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.huaweicloud.sermant.backend.dao;
 
 /**
- * 事件元数据
+ * 数据库类型
  *
- * @author xuezechao
  * @since 2023-03-02
+ * @author xuezechao
  */
-@Getter
-@Setter
-public class InstanceMeta {
+public enum DatabaseType {
 
     /**
-     * 实例原数据哈希
+     * redis 数据库
      */
-    private String metaHash;
+    REDIS,
 
     /**
-     * 实例ID
+     * 内存
      */
-    private String instanceId;
-
-    /**
-     * 应用
-     */
-    private String service;
-
-    /**
-     * 节点
-     */
-    private NodeEntity node;
-
-    /**
-     * 集群
-     */
-    private ClusterEntity cluster;
-
-    /**
-     * 环境
-     */
-    private EnvironmentEntity environment;
-
-    /**
-     * 可用区
-     */
-    private String az;
+    MEMORY,
 }

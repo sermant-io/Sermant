@@ -57,6 +57,7 @@ public class DeleteTimeoutDataTask extends TimerTask {
     public void run() {
         deleteHeartbeatCache();
         deleteCollectorCache();
+        deleteRedisEvent();
     }
 
     private void deleteHeartbeatCache() {
@@ -89,5 +90,12 @@ public class DeleteTimeoutDataTask extends TimerTask {
                 it.remove();
             }
         }
+    }
+
+    /**
+     * 清理过期事件
+     */
+    private void deleteRedisEvent() {
+
     }
 }

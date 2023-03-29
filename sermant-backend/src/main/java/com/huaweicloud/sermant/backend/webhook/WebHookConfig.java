@@ -14,53 +14,69 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.entity;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.huaweicloud.sermant.backend.webhook;
 
 /**
- * 事件元数据
+ * webhook配置接口
  *
  * @author xuezechao
  * @since 2023-03-02
  */
-@Getter
-@Setter
-public class InstanceMeta {
+public interface WebHookConfig {
 
     /**
-     * 实例原数据哈希
+     * 设置url
+     *
+     * @param url webhook 地址
      */
-    private String metaHash;
+    void setUrl(String url);
 
     /**
-     * 实例ID
+     * 获取webhook 地址
+     *
+     * @return 地址
      */
-    private String instanceId;
+    String getUrl();
 
     /**
-     * 应用
+     * 设置webhook 名称
+     *
+     * @param name 名称
      */
-    private String service;
+    void setName(String name);
 
     /**
-     * 节点
+     * 获取webhook 名称
+     *
+     * @return 名称
      */
-    private NodeEntity node;
+    String getName();
 
     /**
-     * 集群
+     * 设置webhook状态
+     *
+     * @param enable 状态
      */
-    private ClusterEntity cluster;
+    void setEnable(boolean enable);
 
     /**
-     * 环境
+     * 获取webhook 状态
+     *
+     * @return 状态
      */
-    private EnvironmentEntity environment;
+    boolean getEnable();
 
     /**
-     * 可用区
+     * 获取webhook id
+     *
+     * @return id
      */
-    private String az;
+    int getId();
+
+    /**
+     * 设置webhook id
+     *
+     * @param id id
+     */
+    void setId(int id);
 }

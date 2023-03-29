@@ -14,53 +14,32 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.entity;
+package com.huaweicloud.sermant.backend.webhook;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.huaweicloud.sermant.backend.entity.event.QueryResultEventInfoEntity;
+
+import java.util.List;
 
 /**
- * 事件元数据
+ * webhook客户端接口定义
  *
  * @author xuezechao
  * @since 2023-03-02
  */
-@Getter
-@Setter
-public class InstanceMeta {
+public interface WebHookClient {
 
     /**
-     * 实例原数据哈希
+     * 推送事件
+     *
+     * @param eventList 事件信息
+     * @return 推送成功或失败
      */
-    private String metaHash;
+    boolean doNotify(List<QueryResultEventInfoEntity> eventList);
 
     /**
-     * 实例ID
+     * 获取webhook 配置
+     *
+     * @return 配置
      */
-    private String instanceId;
-
-    /**
-     * 应用
-     */
-    private String service;
-
-    /**
-     * 节点
-     */
-    private NodeEntity node;
-
-    /**
-     * 集群
-     */
-    private ClusterEntity cluster;
-
-    /**
-     * 环境
-     */
-    private EnvironmentEntity environment;
-
-    /**
-     * 可用区
-     */
-    private String az;
+    WebHookConfig getConfig();
 }

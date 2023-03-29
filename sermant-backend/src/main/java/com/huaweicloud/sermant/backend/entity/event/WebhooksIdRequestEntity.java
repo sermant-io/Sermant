@@ -14,53 +14,29 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.entity;
+package com.huaweicloud.sermant.backend.entity.event;
 
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 事件元数据
+ * webhook设置请求实体
  *
- * @author xuezechao
  * @since 2023-03-02
+ * @author xuezechao
  */
 @Getter
 @Setter
-public class InstanceMeta {
+public class WebhooksIdRequestEntity {
 
     /**
-     * 实例原数据哈希
+     * webhook 地址
      */
-    private String metaHash;
+    private String url;
 
     /**
-     * 实例ID
+     * webhook 状态
      */
-    private String instanceId;
+    private boolean enable;
 
-    /**
-     * 应用
-     */
-    private String service;
-
-    /**
-     * 节点
-     */
-    private NodeEntity node;
-
-    /**
-     * 集群
-     */
-    private ClusterEntity cluster;
-
-    /**
-     * 环境
-     */
-    private EnvironmentEntity environment;
-
-    /**
-     * 可用区
-     */
-    private String az;
 }
