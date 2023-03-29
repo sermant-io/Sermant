@@ -49,6 +49,34 @@ public class FrameworkEventCollector extends EventCollector {
     }
 
     /**
+     * 采集Agent启动事件
+     */
+    public void collectAgentStartEvent() {
+        if (!eventConfig.isEnable()) {
+            return;
+        }
+        String eventDescription = "Start Sermant-Agent done.";
+        offerEvent(new Event(FrameworkEventDefinitions.SERMANT_START.getScope(),
+                FrameworkEventDefinitions.SERMANT_START.getEventLevel(),
+                FrameworkEventDefinitions.SERMANT_START.getEventType(),
+                new EventInfo(FrameworkEventDefinitions.SERMANT_START.getName(), eventDescription)));
+    }
+
+    /**
+     * 采集Agent停止事件
+     */
+    public void collectAgentStopEvent() {
+        if (!eventConfig.isEnable()) {
+            return;
+        }
+        String eventDescription = "Stop Sermant-Agent.";
+        offerEvent(new Event(FrameworkEventDefinitions.SERMANT_STOP.getScope(),
+                FrameworkEventDefinitions.SERMANT_STOP.getEventLevel(),
+                FrameworkEventDefinitions.SERMANT_STOP.getEventType(),
+                new EventInfo(FrameworkEventDefinitions.SERMANT_STOP.getName(), eventDescription)));
+    }
+
+    /**
      * 采集服务启动事件
      *
      * @param serviceName 服务名
@@ -57,7 +85,7 @@ public class FrameworkEventCollector extends EventCollector {
         if (!eventConfig.isEnable()) {
             return;
         }
-        String eventDescription = "Start service: " + serviceName + ".";
+        String eventDescription = "Start service: [" + serviceName + "].";
         offerEvent(new Event(FrameworkEventDefinitions.SERMANT_SERVICE_START.getScope(),
                 FrameworkEventDefinitions.SERMANT_SERVICE_START.getEventLevel(),
                 FrameworkEventDefinitions.SERMANT_SERVICE_START.getEventType(),
@@ -73,7 +101,7 @@ public class FrameworkEventCollector extends EventCollector {
         if (!eventConfig.isEnable()) {
             return;
         }
-        String eventDescription = "Stop service: " + serviceName + ".";
+        String eventDescription = "Stop service: [" + serviceName + "].";
         offerEvent(new Event(FrameworkEventDefinitions.SERMANT_SERVICE_STOP.getScope(),
                 FrameworkEventDefinitions.SERMANT_SERVICE_STOP.getEventLevel(),
                 FrameworkEventDefinitions.SERMANT_SERVICE_STOP.getEventType(),
@@ -89,7 +117,7 @@ public class FrameworkEventCollector extends EventCollector {
         if (!eventConfig.isEnable()) {
             return;
         }
-        String eventDescription = "Load plugin: " + plugin + " successful.";
+        String eventDescription = "Load plugin: [" + plugin + "] successful.";
         offerEvent(new Event(FrameworkEventDefinitions.SERMANT_PLUGIN_LOAD.getScope(),
                 FrameworkEventDefinitions.SERMANT_PLUGIN_LOAD.getEventLevel(),
                 FrameworkEventDefinitions.SERMANT_PLUGIN_LOAD.getEventType(),

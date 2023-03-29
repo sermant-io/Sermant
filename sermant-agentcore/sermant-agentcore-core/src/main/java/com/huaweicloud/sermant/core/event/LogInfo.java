@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.core.event;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.LogRecord;
 
@@ -34,6 +35,8 @@ public class LogInfo {
 
     private String logMethod;
 
+    private int logLineNumber;
+
     private int logThreadId;
 
     private Throwable throwable;
@@ -48,6 +51,10 @@ public class LogInfo {
         this.logMessage = logRecord.getMessage();
         this.logClass = logRecord.getSourceClassName();
         this.logMethod = logRecord.getSourceMethodName();
+        Arrays.stream(Thread.currentThread().getStackTrace()).filter(traceElement -> traceElement.getClassName()
+                .equals(logRecord.getSourceClassName()) && traceElement.getMethodName()
+                .equals(logRecord.getSourceMethodName())).findFirst().ifPresent(
+                    traceElement -> this.logLineNumber = traceElement.getLineNumber());
         this.logThreadId = logRecord.getThreadID();
         this.throwable = logRecord.getThrown();
     }
@@ -100,11 +107,19 @@ public class LogInfo {
         this.throwable = throwable;
     }
 
+    public int getLogLineNumber() {
+        return logLineNumber;
+    }
+
+    public void setLogLineNumber(int logLineNumber) {
+        this.logLineNumber = logLineNumber;
+    }
+
     @Override
     public String toString() {
         return "LogInfo{" + "logLevel='" + logLevel + '\'' + ", logMessage='" + logMessage + '\'' + ", logClass='"
-                + logClass + '\'' + ", logMethod='" + logMethod + '\'' + ", logThreadId='" + logThreadId + '\''
-                + ", throwable=" + throwable + '}';
+                + logClass + '\'' + ", logMethod='" + logMethod + '\'' + ", logLineNumber=" + logLineNumber
+                + ", logThreadId=" + logThreadId + ", throwable=" + throwable + '}';
     }
 
     @Override
@@ -116,14 +131,18 @@ public class LogInfo {
             return false;
         }
         LogInfo logInfo = (LogInfo) obj;
-        return logThreadId == logInfo.logThreadId && Objects.equals(logLevel, logInfo.logLevel)
-                && Objects.equals(logMessage, logInfo.logMessage) && Objects.equals(logClass,
-                logInfo.logClass) && Objects.equals(logMethod, logInfo.logMethod) && Objects.equals(
-                throwable, logInfo.throwable);
+        return logLineNumber == logInfo.logLineNumber && logThreadId == logInfo.logThreadId && Objects.equals(
+                logLevel, logInfo.logLevel) && Objects.equals(logClass, logInfo.logClass)
+                && Objects.equals(logMethod, logInfo.logMethod);
     }
 
+    /**
+     * 通过日志级别、触发类、触发方法、触发行、触发线程ID来生成hashcode用一定时间内去重，避免日志事件上报中的日志告警风暴
+     *
+     * @return hashcode
+     */
     @Override
     public int hashCode() {
-        return Objects.hash(logLevel, logMessage, logClass, logMethod, logThreadId, throwable);
+        return Objects.hash(logLevel, logClass, logMethod, logLineNumber, logThreadId);
     }
 }

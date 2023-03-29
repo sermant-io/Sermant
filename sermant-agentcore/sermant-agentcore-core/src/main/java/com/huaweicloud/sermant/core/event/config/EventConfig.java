@@ -43,6 +43,16 @@ public class EventConfig implements BaseConfig {
     private boolean enable = false;
 
     /**
+     * 上报Error日志开关
+     */
+    private boolean offerErrorLog = false;
+
+    /**
+     * 上报Warn日志开关
+     */
+    private boolean offerWarnLog = false;
+
+    /**
      * 事件发送时间间隔(ms)
      */
     private long sendInterval = DEFAULT_SEND_INTERVAL;
@@ -58,6 +68,22 @@ public class EventConfig implements BaseConfig {
 
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+
+    public boolean isOfferErrorLog() {
+        return offerErrorLog;
+    }
+
+    public void setOfferErrorLog(boolean offerErrorLog) {
+        this.offerErrorLog = offerErrorLog;
+    }
+
+    public boolean isOfferWarnLog() {
+        return offerWarnLog;
+    }
+
+    public void setOfferWarnLog(boolean offerWarnLog) {
+        this.offerWarnLog = offerWarnLog;
     }
 
     public long getSendInterval() {

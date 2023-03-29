@@ -145,6 +145,10 @@
                 {{ props.row.info.logMethod }}
               </el-descriptions-item>
               <el-descriptions-item>
+                <template #label> 日志触发行号 </template>
+                {{ props.row.info.logLineNumber }}
+              </el-descriptions-item>
+              <el-descriptions-item>
                 <template #label> 线程ID </template>
                 {{ props.row.info.logThreadId }}
               </el-descriptions-item>
@@ -170,13 +174,15 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="eventInfo.name" label="事件">
+      <el-table-column prop="eventInfo.name" label="事件" width="150">
         <template #default="scope">
           <div style="display: flex; align-items: center">
             <span v-if="scope.row.type === 'log'">
               {{ eventName[scope.row.info.logLevel] }}
             </span>
-            <span v-if="scope.row.type !== 'log'">{{ eventName[scope.row.info.name] }}</span>
+            <span v-if="scope.row.type !== 'log'">{{
+              eventName[scope.row.info.name]
+            }}</span>
           </div>
         </template>
       </el-table-column>
@@ -185,16 +191,17 @@
         column-key="level"
         label="事件级别"
         :filters="eventLevel"
+        width="150"
       >
         <template #default="scope">
           <div style="display: flex; align-items: center">
-            <span v-if="scope.row.level === 'EMERGENCY'">
+            <span v-if="scope.row.level === 'emergency'">
               <el-tag class="ml-2" type="danger">紧急</el-tag>
             </span>
-            <span v-if="scope.row.level === 'IMPORTANT'">
+            <span v-if="scope.row.level === 'important'">
               <el-tag class="ml-2" type="warning">重要</el-tag>
             </span>
-            <span v-if="scope.row.level === 'NORMAL'">
+            <span v-if="scope.row.level === 'normal'">
               <el-tag class="ml-2" type="info">一般</el-tag>
             </span>
           </div>
@@ -205,6 +212,7 @@
         column-key="type"
         label="事件类型"
         :filters="eventType"
+        width="150"
       >
         <template #default="scope">
           <div style="display: flex; align-items: center">
@@ -214,10 +222,32 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column column-key="service" prop="meta.service" label="服务" />
+      <el-table-column
+        column-key="service"
+        prop="meta.service"
+        label="服务"
+        width="150"
+      />
       <el-table-column column-key="ip" prop="meta.ip" label="IP" width="150" />
-      <el-table-column column-key="scop" prop="scope" label="事件区域" width="150" />
-      <el-table-column prop="time" label="上报时间" />
+      <el-table-column column-key="scope" prop="scope" label="事件区域">
+        <template #default="scope">
+          <div style="display: flex; align-items: center">
+            <span v-if="scope.row.type !== 'log'">
+              {{ scope.row.scope }}
+            </span>
+            <span v-if="scope.row.type === 'log'">
+              {{ logScope(scope.row.info.logClass, scope.row.info.logMethod) }}
+            </span>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="time" label="上报时间">
+        <template #default="scope">
+          <div style="display: flex; align-items: center">
+            {{ time(scope.row.time) }}
+          </div>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="pagination-div">
       <el-pagination
@@ -233,6 +263,7 @@
 import { reactive, ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import qs from "qs";
+import moment from "moment";
 import axios from "axios";
 
 onBeforeMount(() => {
@@ -250,20 +281,31 @@ const goBack = () => {
   router.push("/");
 };
 
-// 筛选条件
+// 格式转换
+const time = (value) => {
+  return moment(value).format("YYYY-MM-DD HH:mm:ss");
+};
+
+const logScope = (classNmae, method) => {
+  const stringArray = classNmae.split(".");
+  const lastElement = stringArray[stringArray.length - 1];
+  return lastElement + "::" + method;
+};
+
 // 处理筛选标签
 const searchOption = ref(["服务", "IP"]);
 const currentOption = ref(0);
 const inputValue = ref("");
 
 // 过滤参数
-
 const handleCloseServiceTag = (tag: string) => {
   requestParam.service.splice(requestParam.service.indexOf(tag), 1);
+  getEvents();
 };
 
 const handleCloseIpTag = (tag: string) => {
   requestParam.ip.splice(requestParam.ip.indexOf(tag), 1);
+  getEvents();
 };
 
 const handleInputConfirm = () => {
@@ -279,6 +321,7 @@ const handleInputConfirm = () => {
     }
   }
   inputValue.value = "";
+  getEvents();
 };
 
 const eventLevel = ref([
@@ -423,6 +466,7 @@ interface event {
     logMessage: string;
     logClass: string;
     logMethod: string;
+    logLineNumber: string;
     logThreadId: string;
     throwable: string;
   };
@@ -437,32 +481,30 @@ interface eventsResponse {
 const events = reactive({ events: [] });
 
 // 在此处添加事件
-const eventName = reactive(
-  {
-    // Framework事件
-    "SERMANT_START":"Agent启动",
-    "SERMANT_STOP":"Agent停止",
-    "SERMANT_TRANSFORM_SUCCESS":"增强成功",
-    "SERMANT_TRANSFORM_FAILURE":"增强失败",
-    "SERMANT_SERVICE_STOP":"服务停止",
-    "SERMANT_SERVICE_START":"服务启动",
-    "SERMANT_PLUGIN_LOAD":"插件加载",
-    // 日志事件
-    "WARNING":"警告日志",
-    "SEVERE":"错误日志",
-    "warning":"警告日志",
-    "severe":"错误日志",
-    // Flowcontrol事件
-    "TRAFFIC_LIMITING":"限流",
-    "CIRCUIT_BREAKER":"熔断",
-    "ADAPTIVE_OVERLOAD_PROTECTION":"自适应过载保护",
-    // ServiceRegistry事件
-    "GRACEFUL_ONLINE_BEGIN":"无损上线开始",
-    "GRACEFUL_ONLINE_END":"无损上线结束",
-    "GRACEFUL_OFFLINE_BEGIN":"无损下线开始",
-    "GRACEFUL_OFFLINE_END":"无损下线结束",
-  }
-);
+const eventName = reactive({
+  // Framework事件
+  SERMANT_START: "Agent启动",
+  SERMANT_STOP: "Agent停止",
+  SERMANT_TRANSFORM_SUCCESS: "增强成功",
+  SERMANT_TRANSFORM_FAILURE: "增强失败",
+  SERMANT_SERVICE_STOP: "服务停止",
+  SERMANT_SERVICE_START: "服务启动",
+  SERMANT_PLUGIN_LOAD: "插件加载",
+  // 日志事件
+  WARNING: "警告日志",
+  SEVERE: "错误日志",
+  warning: "警告日志",
+  severe: "错误日志",
+  // Flowcontrol事件
+  TRAFFIC_LIMITING: "限流",
+  CIRCUIT_BREAKER: "熔断",
+  ADAPTIVE_OVERLOAD_PROTECTION: "自适应过载保护",
+  // ServiceRegistry事件
+  GRACEFUL_ONLINE_BEGIN: "无损上线开始",
+  GRACEFUL_ONLINE_END: "无损上线结束",
+  GRACEFUL_OFFLINE_BEGIN: "无损下线开始",
+  GRACEFUL_OFFLINE_END: "无损下线结束",
+});
 
 const displayState = reactive({
   totalPage: 1,

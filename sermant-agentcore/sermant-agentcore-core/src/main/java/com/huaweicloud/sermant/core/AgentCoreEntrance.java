@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.event.EventManager;
+import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.plugin.PluginSystemEntrance;
 import com.huaweicloud.sermant.core.service.ServiceManager;
@@ -70,5 +71,8 @@ public class AgentCoreEntrance {
 
         // 初始化插件
         PluginSystemEntrance.initialize(instrumentation);
+
+        // 上报Sermant启动事件
+        FrameworkEventCollector.getInstance().collectAgentStartEvent();
     }
 }
