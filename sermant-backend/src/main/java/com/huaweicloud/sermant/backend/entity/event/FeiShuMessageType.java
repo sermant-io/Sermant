@@ -14,53 +14,38 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.entity;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.huaweicloud.sermant.backend.entity.event;
 
 /**
- * 事件元数据
+ * 飞书支持的支持的数据类型
  *
  * @author xuezechao
  * @since 2023-03-02
  */
-@Getter
-@Setter
-public class InstanceMeta {
+public enum FeiShuMessageType {
 
     /**
-     * 实例原数据哈希
+     * 文本
      */
-    private String metaHash;
+    TEXT("text"),
 
     /**
-     * 实例ID
+     * 富文本
      */
-    private String instanceId;
+    POST("post"),
 
     /**
-     * 应用
+     * 消息卡片
      */
-    private String service;
+    INTERACTIVE("interactive");
 
-    /**
-     * 节点
-     */
-    private NodeEntity node;
+    private String type;
 
-    /**
-     * 集群
-     */
-    private ClusterEntity cluster;
+    FeiShuMessageType(String type) {
+        this.type = type;
+    }
 
-    /**
-     * 环境
-     */
-    private EnvironmentEntity environment;
-
-    /**
-     * 可用区
-     */
-    private String az;
+    public String getType() {
+        return type;
+    }
 }

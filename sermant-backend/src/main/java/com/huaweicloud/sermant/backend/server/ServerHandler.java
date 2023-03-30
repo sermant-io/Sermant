@@ -19,10 +19,13 @@ package com.huaweicloud.sermant.backend.server;
 import com.huaweicloud.sermant.backend.cache.CollectorCache;
 import com.huaweicloud.sermant.backend.cache.HeartbeatCache;
 import com.huaweicloud.sermant.backend.common.handler.BaseHandler;
+import com.huaweicloud.sermant.backend.entity.InstanceMeta;
+import com.huaweicloud.sermant.backend.entity.NodeEntity;
 import com.huaweicloud.sermant.backend.entity.event.EventMessage;
 import com.huaweicloud.sermant.backend.entity.heartbeat.HeartbeatMessage;
 import com.huaweicloud.sermant.backend.entity.visibility.OperateType;
 import com.huaweicloud.sermant.backend.entity.visibility.ServerInfo;
+import com.huaweicloud.sermant.backend.handler.EventPushHandler;
 import com.huaweicloud.sermant.backend.pojo.Message;
 import com.huaweicloud.sermant.backend.util.GzipUtils;
 
@@ -33,11 +36,15 @@ import io.netty.channel.ChannelHandlerContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
 
 /**
  * 网关服务端handler
@@ -46,15 +53,37 @@ import java.util.Map;
  * @version 0.0.1
  * @since 2021-08-07
  */
+@Component
 public class ServerHandler extends BaseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerHandler.class);
 
+    /**
+     * 网关服务端handler
+     */
+    private static ServerHandler serverHandler;
+
     private final Map<String, HeartbeatMessage> hbMessages = HeartbeatCache.getHeartbeatMessageMap();
+
+    @Autowired
+    private EventPushHandler eventPushHandler;
+
+    @Autowired
+    private EventServer eventServer;
 
     /**
      * ServerHandler
      */
     public ServerHandler() {
+    }
+
+    /**
+     * 初始化事件推送服务
+     */
+    @PostConstruct
+    public void init() {
+        serverHandler = this;
+        serverHandler.eventPushHandler = this.eventPushHandler;
+        serverHandler.eventServer = this.eventServer;
     }
 
     @Override
@@ -102,13 +131,36 @@ public class ServerHandler extends BaseHandler {
         // 缓存心跳数据
         HeartbeatMessage heartbeatMessage =
                 JSON.parseObject(new String(message, StandardCharsets.UTF_8), HeartbeatMessage.class);
+
+        // agent信息写入数据库
+        writeInstanceMeta(heartbeatMessage);
+
         List<String> ips = heartbeatMessage.getIp();
         if (ips != null && ips.size() != 0) {
             heartbeatMessage.setReceiveTime(System.currentTimeMillis());
             heartbeatMessage.setHealth(true);
-            hbMessages.put(heartbeatMessage.getAppName() + heartbeatMessage.getInstanceId(), heartbeatMessage);
+            hbMessages.put(heartbeatMessage.getService() + heartbeatMessage.getInstanceId(), heartbeatMessage);
         }
         setServiceValidityPeriod(heartbeatMessage.getInstanceId());
+    }
+
+    /**
+     * 存储实例元数据
+     *
+     * @param heartbeatMessage 心跳信息
+     */
+    private void writeInstanceMeta(HeartbeatMessage heartbeatMessage) {
+        InstanceMeta instanceMeta = new InstanceMeta();
+        instanceMeta.setInstanceId(heartbeatMessage.getInstanceId());
+        instanceMeta.setMetaHash(heartbeatMessage.getInstanceId());
+        instanceMeta.setService(heartbeatMessage.getService());
+        List<String> ips = heartbeatMessage.getIp();
+        if (ips != null && ips.size() != 0) {
+            NodeEntity nodeEntity = new NodeEntity();
+            nodeEntity.setIp(ips.get(0));
+            instanceMeta.setNode(nodeEntity);
+        }
+        serverHandler.eventServer.addEvent(instanceMeta);
     }
 
     /**
@@ -143,5 +195,6 @@ public class ServerHandler extends BaseHandler {
     private void handleEvent(byte[] message) {
         String messageStr = new String(message, StandardCharsets.UTF_8);
         EventMessage eventMessage = JSON.parseObject(messageStr, EventMessage.class);
+        serverHandler.eventPushHandler.pushEvent(eventMessage.getEvents());
     }
 }

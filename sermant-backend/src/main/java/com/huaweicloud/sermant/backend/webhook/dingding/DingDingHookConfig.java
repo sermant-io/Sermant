@@ -14,53 +14,25 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.entity;
+package com.huaweicloud.sermant.backend.webhook.dingding;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.huaweicloud.sermant.backend.webhook.WebHookConfig;
+import com.huaweicloud.sermant.backend.webhook.WebhookConfigImpl;
 
 /**
- * 事件元数据
+ * 钉钉webhook 配置
  *
  * @author xuezechao
  * @since 2023-03-02
  */
-@Getter
-@Setter
-public class InstanceMeta {
+public class DingDingHookConfig extends WebhookConfigImpl {
 
-    /**
-     * 实例原数据哈希
-     */
-    private String metaHash;
+    private static final WebHookConfig CONFIG = new WebhookConfigImpl();
 
-    /**
-     * 实例ID
-     */
-    private String instanceId;
+    private DingDingHookConfig() {
+    }
 
-    /**
-     * 应用
-     */
-    private String service;
-
-    /**
-     * 节点
-     */
-    private NodeEntity node;
-
-    /**
-     * 集群
-     */
-    private ClusterEntity cluster;
-
-    /**
-     * 环境
-     */
-    private EnvironmentEntity environment;
-
-    /**
-     * 可用区
-     */
-    private String az;
+    public static WebHookConfig getInstance() {
+        return CONFIG;
+    }
 }

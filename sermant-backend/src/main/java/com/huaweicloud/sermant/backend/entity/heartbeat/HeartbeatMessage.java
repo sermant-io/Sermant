@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 2022-03-19
  */
 public class HeartbeatMessage {
-    private String appName;
+    private String service;
 
     private String appType;
 
@@ -70,12 +70,12 @@ public class HeartbeatMessage {
         this.ip = ip;
     }
 
-    public String getAppName() {
-        return appName;
+    public String getService() {
+        return service;
     }
 
-    public void setAppName(String appName) {
-        this.appName = appName;
+    public void setService(String service) {
+        this.service = service;
     }
 
     public String getAppType() {

@@ -14,53 +14,22 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.entity;
+package com.huaweicloud.sermant.backend.entity.event;
 
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
+
 /**
- * 事件元数据
+ * 钉钉推送事件实体
  *
- * @author xuezechao
  * @since 2023-03-02
+ * @author xuezechao
  */
 @Getter
 @Setter
-public class InstanceMeta {
-
-    /**
-     * 实例原数据哈希
-     */
-    private String metaHash;
-
-    /**
-     * 实例ID
-     */
-    private String instanceId;
-
-    /**
-     * 应用
-     */
-    private String service;
-
-    /**
-     * 节点
-     */
-    private NodeEntity node;
-
-    /**
-     * 集群
-     */
-    private ClusterEntity cluster;
-
-    /**
-     * 环境
-     */
-    private EnvironmentEntity environment;
-
-    /**
-     * 可用区
-     */
-    private String az;
+public class DingDingEntity {
+    private String msgtype;
+    private HashMap<String, String> markdown;
 }

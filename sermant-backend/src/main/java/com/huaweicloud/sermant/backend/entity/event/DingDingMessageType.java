@@ -14,53 +14,38 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.entity;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.huaweicloud.sermant.backend.entity.event;
 
 /**
- * 事件元数据
+ * 钉钉推送支持的数据类型
  *
  * @author xuezechao
  * @since 2023-03-02
  */
-@Getter
-@Setter
-public class InstanceMeta {
+public enum DingDingMessageType {
 
     /**
-     * 实例原数据哈希
+     * 文本
      */
-    private String metaHash;
+    Text("text"),
 
     /**
-     * 实例ID
+     * 富文本
      */
-    private String instanceId;
+    LINK("link"),
 
     /**
-     * 应用
+     * markdown
      */
-    private String service;
+    MARKDOWN("markdown");
 
-    /**
-     * 节点
-     */
-    private NodeEntity node;
+    private final String type;
 
-    /**
-     * 集群
-     */
-    private ClusterEntity cluster;
+    DingDingMessageType(String type) {
+        this.type = type;
+    }
 
-    /**
-     * 环境
-     */
-    private EnvironmentEntity environment;
-
-    /**
-     * 可用区
-     */
-    private String az;
+    public String getType() {
+        return type;
+    }
 }

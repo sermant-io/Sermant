@@ -14,53 +14,32 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.entity;
+package com.huaweicloud.sermant.backend.entity.event;
 
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 事件元数据
+ * 飞书推送富文本格式
  *
  * @author xuezechao
  * @since 2023-03-02
  */
 @Getter
 @Setter
-public class InstanceMeta {
+public class FeiShuContentEntity {
+    private String tag;
+
+    private String text;
 
     /**
-     * 实例原数据哈希
+     * 构造函数
+     *
+     * @param tag 类型
+     * @param text 内容
      */
-    private String metaHash;
-
-    /**
-     * 实例ID
-     */
-    private String instanceId;
-
-    /**
-     * 应用
-     */
-    private String service;
-
-    /**
-     * 节点
-     */
-    private NodeEntity node;
-
-    /**
-     * 集群
-     */
-    private ClusterEntity cluster;
-
-    /**
-     * 环境
-     */
-    private EnvironmentEntity environment;
-
-    /**
-     * 可用区
-     */
-    private String az;
+    public FeiShuContentEntity(String tag, String text) {
+        this.tag = tag;
+        this.text = text;
+    }
 }
