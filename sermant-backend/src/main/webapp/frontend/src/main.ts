@@ -13,6 +13,8 @@ import 'uno.css'
 
 import "element-plus/theme-chalk/src/message.scss"
 
+console.log("欢迎加入Sermant社区: https://sermant.io");
+
 const app = createApp(App);
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

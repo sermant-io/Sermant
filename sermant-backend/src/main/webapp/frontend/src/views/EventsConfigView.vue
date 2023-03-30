@@ -59,13 +59,14 @@ const webhooks = reactive([
     enable: false,
     canEdit: false,
   },
-  {
-    id: 2,
-    name: "welink",
-    url: "",
-    enable: false,
-    canEdit: false,
-  },
+  // 暂不支持welink
+  // {
+  //   id: 2,
+  //   name: "welink",
+  //   url: "",
+  //   enable: false,
+  //   canEdit: false,
+  // },
 ]);
 
 const goBack = () => {
@@ -80,11 +81,22 @@ const getWebHooks = () => {
   axios
     .get(`${window.location.origin}/sermant/event/webhooks`)
     .then(function (response) {
+      ElMessage({
+        message: "获取WebHook配置成功",
+        type: "success",
+      });
       const data = response.data;
       for (let index = 0; index < data.webhooks.length; index++) {
         webhooks[data.webhooks[index].id].url = data.webhooks[index].url;
         webhooks[data.webhooks[index].id].enable = data.webhooks[index].enable;
       }
+    })
+    .catch(function (error) {
+      ElMessage({
+        message: "获取WebHook配置失败",
+        type: "error",
+      });
+      console.log(error);
     });
 };
 
@@ -104,9 +116,28 @@ const setWebHook = (webhook) => {
       url: webhook.url,
       enable: webhook.enable,
     })
+    .then(function (response) {
+      const data = response.data;
+      if (data) {
+        ElMessage({
+          message: "设置成功",
+          type: "success",
+        });
+      } else {
+        ElMessage({
+          message: "设置失败",
+          type: "error",
+        });
+      }
+    })
     .catch(function (error) {
+      ElMessage({
+        message: "设置失败",
+        type: "error",
+      });
       console.log(error);
     });
+  getWebHooks();
 };
 
 const testWebHook = (webhook) => {
@@ -114,7 +145,17 @@ const testWebHook = (webhook) => {
     .post(`${window.location.origin}/sermant/event/webhooks/test`, {
       id: webhook.id,
     })
+    .then(function (response) {
+      ElMessage({
+        message: "发起WebHook测试成功",
+        type: "success",
+      });
+    })
     .catch(function (error) {
+      ElMessage({
+        message: "发起WebHook测试失败",
+        type: "error",
+      });
       console.log(error);
     });
 };

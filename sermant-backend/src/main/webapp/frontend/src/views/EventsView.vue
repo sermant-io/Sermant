@@ -405,9 +405,17 @@ const autoRefreshTimer = ref(0);
 
 const changeAutoRefreshState = () => {
   if (autoRefresh.value) {
+    ElMessage({
+      message: "关闭自动刷新",
+      type: "info",
+    });
     autoRefresh.value = false;
     clearAutoRefreshTimer();
   } else {
+    ElMessage({
+      message: "开启自动刷新",
+      type: "info",
+    });
     autoRefresh.value = true;
     createAutoRefreshTimer();
   }
@@ -557,6 +565,17 @@ const getEvents = () => {
       eventCount.normal = data.eventCount.normal;
       events.events = data.events;
       displayState.totalPage = data.totalPage;
+      ElMessage({
+        message: "获取事件成功",
+        type: "success",
+      });
+    })
+    .catch(function (error) {
+      console.log(error);
+      ElMessage({
+        message: "获取事件失败",
+        type: "error",
+      });
     });
 };
 </script>
