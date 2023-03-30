@@ -22,7 +22,6 @@ import com.huaweicloud.sermant.backend.dao.DatabaseType;
 import com.huaweicloud.sermant.backend.dao.EventDao;
 import com.huaweicloud.sermant.backend.entity.InstanceMeta;
 import com.huaweicloud.sermant.backend.entity.event.Event;
-import com.huaweicloud.sermant.backend.entity.event.EventLevel;
 import com.huaweicloud.sermant.backend.entity.event.EventsRequestEntity;
 import com.huaweicloud.sermant.backend.entity.event.QueryCacheSizeEntity;
 import com.huaweicloud.sermant.backend.entity.event.QueryResultEventInfoEntity;
@@ -35,17 +34,21 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.params.ScanParams;
 import redis.clients.jedis.resps.ScanResult;
+import redis.clients.jedis.resps.Tuple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * redis单机客户端
@@ -53,9 +56,8 @@ import java.util.Map;
  * @author xuezechao
  * @since 2023-03-02
  */
+@Component
 public class RedisClientImpl implements EventDao {
-
-    private static final int EVENT_LEVEL_INDEX = 3;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisClientImpl.class);
 
@@ -113,13 +115,6 @@ public class RedisClientImpl implements EventDao {
 
             // 写入类型索引
             jedis.zadd(CommonConst.REDIS_EVENT_FIELD_SET_KEY, event.getTime(), field);
-            if (event.getEventLevel().equals(EventLevel.EMERGENCY)) {
-                jedis.incrBy(EventLevel.EMERGENCY.toString(), 1);
-            } else if (event.getEventLevel().equals(EventLevel.IMPORTANT)) {
-                jedis.incrBy(EventLevel.IMPORTANT.toString(), 1);
-            } else {
-                jedis.incrBy(EventLevel.NORMAL.toString(), 1);
-            }
             return true;
         } catch (IllegalStateException e) {
             LOGGER.error("add event failed, event:{}, error message:{}", event, e.getMessage());
@@ -178,15 +173,17 @@ public class RedisClientImpl implements EventDao {
     public List<QueryResultEventInfoEntity> queryEvent(EventsRequestEntity eventsRequestEntity) {
         String pattern = DbUtils.getPattern(eventsRequestEntity);
         try (Jedis jedis = jedisPool.getResource()) {
-            List<String> queryResultByTime = queryByTimeRange(CommonConst.REDIS_EVENT_FIELD_SET_KEY,
+            List<Tuple> queryResultByTime = queryByTimeRange(CommonConst.REDIS_EVENT_FIELD_SET_KEY,
                     eventsRequestEntity.getStartTime(),
                     eventsRequestEntity.getEndTime());
-            Collections.reverse(queryResultByTime);
             queryResultByTime = DbUtils.filterQueryResult(backendConfig, queryResultByTime, pattern);
+            List<String> eventKeys = queryResultByTime.stream().sorted(Comparator.comparing(Tuple::getScore))
+                    .map(Tuple::getElement).collect(Collectors.toList());
+            Collections.reverse(eventKeys);
             jedis.setex(
                     eventsRequestEntity.getSessionId(),
                     Integer.parseInt(backendConfig.getSessionTimeout()),
-                    JSONObject.toJSONString(queryResultByTime));
+                    JSONObject.toJSONString(eventKeys));
             return queryEventPage(eventsRequestEntity.getSessionId(), 1);
         } catch (IllegalStateException e) {
             LOGGER.error("query event failed, error message:{}", e.getMessage());
@@ -202,9 +199,9 @@ public class RedisClientImpl implements EventDao {
      * @param endTime 结束时间
      * @return 查询结果
      */
-    public List<String> queryByTimeRange(String key, long startTime, long endTime) {
+    public List<Tuple> queryByTimeRange(String key, long startTime, long endTime) {
         try (Jedis jedis = jedisPool.getResource()) {
-            return jedis.zrangeByScore(key, startTime, endTime);
+            return jedis.zrangeByScoreWithScores(key, startTime, endTime);
         } catch (IllegalStateException e) {
             LOGGER.error("query event by time failed, key:{}, startTime:{}, endTime:{}, error message:{}",
                     key, startTime, endTime, e.getMessage());
@@ -239,11 +236,9 @@ public class RedisClientImpl implements EventDao {
     public QueryCacheSizeEntity getQueryCacheSize(EventsRequestEntity eventsRequestEntity) {
         QueryCacheSizeEntity queryCacheSize = new QueryCacheSizeEntity();
         try (Jedis jedis = jedisPool.getResource()) {
-            queryCacheSize.setEmergencyNum(DbUtils.filterStr(jedis.get(EventLevel.EMERGENCY.toString())));
-            queryCacheSize.setImportantNum(DbUtils.filterStr(jedis.get(EventLevel.IMPORTANT.toString())));
-            queryCacheSize.setNormalNum(DbUtils.filterStr(jedis.get(EventLevel.NORMAL.toString())));
-            queryCacheSize.setTotal(queryCacheSize.getEmergencyNum()
-                    + queryCacheSize.getImportantNum() + queryCacheSize.getNormalNum());
+            String events = jedis.get(eventsRequestEntity.getSessionId());
+            List<String> keyList = JSONObject.parseArray(events, String.class);
+            queryCacheSize = DbUtils.getQueryCacheSize(keyList);
             return queryCacheSize;
         } catch (IllegalStateException e) {
             LOGGER.error("query event size failed, sessionId:{}, error message:{}",
@@ -255,17 +250,23 @@ public class RedisClientImpl implements EventDao {
     /**
      * 定时任务，清理过期数据
      */
+    @Scheduled(fixedDelayString = "${database.fixedDelay}")
     public void cleanOverDueEventTimerTask() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.SECOND, -Integer.parseInt(backendConfig.getExpire()));
-        List<String> needCleanEvent = queryByTimeRange(
-                CommonConst.REDIS_EVENT_FIELD_SET_KEY, 0, calendar.getTimeInMillis());
-        try (Jedis jedis = jedisPool.getResource()) {
-            jedis.hdel(CommonConst.REDIS_EVENT_KEY, needCleanEvent.toArray(new String[0]));
-            jedis.zrem(CommonConst.REDIS_EVENT_FIELD_SET_KEY, needCleanEvent.toArray(new String[0]));
-            cleanOverDueEventLevel(jedis, needCleanEvent);
-        } catch (IllegalStateException e) {
-            LOGGER.error("delete over dur event failed, error message:{}", e.getMessage());
+        if (backendConfig.getDatabase().equals(DatabaseType.REDIS)) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.SECOND, -Integer.parseInt(backendConfig.getExpire()));
+            List<Tuple> needCleanEvent = queryByTimeRange(
+                    CommonConst.REDIS_EVENT_FIELD_SET_KEY, 0, calendar.getTimeInMillis());
+            List<String> eventKeys = needCleanEvent.stream().map(Tuple::getElement).collect(Collectors.toList());
+            if (eventKeys.size() <= 0) {
+                return;
+            }
+            try (Jedis jedis = jedisPool.getResource()) {
+                jedis.hdel(CommonConst.REDIS_EVENT_KEY, eventKeys.toArray(new String[0]));
+                jedis.zrem(CommonConst.REDIS_EVENT_FIELD_SET_KEY, eventKeys.toArray(new String[0]));
+            } catch (IllegalStateException e) {
+                LOGGER.error("delete over dur event failed, error message:{}", e.getMessage());
+            }
         }
     }
 
@@ -282,34 +283,6 @@ public class RedisClientImpl implements EventDao {
         } catch (IllegalStateException e) {
             LOGGER.error("add event failed, event:{}, error message:{}", event, e.getMessage());
             return queryResultEventInfoEntity;
-        }
-    }
-
-    /**
-     * 删除过期事件同步设置事件级别数量
-     *
-     * @param jedis redis client
-     * @param needCleanEvent 需要删除的事件key
-     */
-    private void cleanOverDueEventLevel(Jedis jedis, List<String> needCleanEvent) {
-        if (backendConfig.getDatabase().equals(DatabaseType.REDIS)) {
-            for (String key : needCleanEvent) {
-                EventLevel level = EventLevel.valueOf(
-                        key.split(CommonConst.JOIN_REDIS_KEY)[EVENT_LEVEL_INDEX].toUpperCase(Locale.ROOT));
-                switch (level) {
-                    case EMERGENCY:
-                        jedis.decrBy(EventLevel.EMERGENCY.toString(), -1);
-                        break;
-                    case IMPORTANT:
-                        jedis.decrBy(EventLevel.IMPORTANT.toString(), -1);
-                        break;
-                    case NORMAL:
-                        jedis.decrBy(EventLevel.NORMAL.toString(), -1);
-                        break;
-                    default:
-                        break;
-                }
-            }
         }
     }
 }

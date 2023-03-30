@@ -20,9 +20,13 @@ import com.huaweicloud.sermant.backend.common.conf.BackendConfig;
 import com.huaweicloud.sermant.backend.common.conf.CommonConst;
 import com.huaweicloud.sermant.backend.entity.InstanceMeta;
 import com.huaweicloud.sermant.backend.entity.event.Event;
+import com.huaweicloud.sermant.backend.entity.event.EventLevel;
 import com.huaweicloud.sermant.backend.entity.event.EventType;
 import com.huaweicloud.sermant.backend.entity.event.EventsRequestEntity;
+import com.huaweicloud.sermant.backend.entity.event.QueryCacheSizeEntity;
 import com.huaweicloud.sermant.backend.entity.event.QueryResultEventInfoEntity;
+
+import redis.clients.jedis.resps.Tuple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +51,8 @@ import java.util.stream.Collectors;
 public class DbUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DbUtils.class);
+
+    private static final int EVENT_LEVEL_INDEX = 3;
 
     /**
      * 构造函数
@@ -119,7 +125,7 @@ public class DbUtils {
         QueryResultEventInfoEntity queryResultEventInfoEntity = new QueryResultEventInfoEntity();
         queryResultEventInfoEntity.setTime(event.getTime());
         queryResultEventInfoEntity.setScope(event.getScope());
-        queryResultEventInfoEntity.setLevel(event.getEventLevel().toString().toUpperCase(Locale.ROOT));
+        queryResultEventInfoEntity.setLevel(event.getEventLevel().toString().toLowerCase(Locale.ROOT));
         queryResultEventInfoEntity.setType(event.getEventType().getDescription());
         if (event.getEventType().getDescription().equals(EventType.LOG.getDescription())) {
             queryResultEventInfoEntity.setInfo(event.getLogInfo());
@@ -168,9 +174,9 @@ public class DbUtils {
      * @param pattern 过滤规则
      * @return 过滤结果
      */
-    public static List<String> filterQueryResult(BackendConfig backendConfig,
-                                                 List<String> queryResultByTime, String pattern) {
-        List<String> fanList = new ArrayList<>();
+    public static List<Tuple> filterQueryResult(BackendConfig backendConfig,
+                                                 List<Tuple> queryResultByTime, String pattern) {
+        List<Tuple> fanList = new ArrayList<>();
         if (queryResultByTime.size() <= 0) {
             return fanList;
         }
@@ -183,9 +189,9 @@ public class DbUtils {
             threadNum = dataSize / threadSize + 1;
         }
         ExecutorService exc = Executors.newFixedThreadPool(threadNum);
-        List<Callable<List<String>>> tasks = new ArrayList<>();
-        Callable<List<String>> task = null;
-        List<String> cutList = null;
+        List<Callable<List<Tuple>>> tasks = new ArrayList<>();
+        Callable<List<Tuple>> task = null;
+        List<Tuple> cutList = null;
         for (int i = 0; i < threadNum; i++) {
 
             // 切割list
@@ -195,13 +201,13 @@ public class DbUtils {
                 cutList = queryResultByTime.subList(i * threadSize, (i + 1) * threadSize);
             }
 
-            final List<String> finalCutList = cutList;
-            task = new Callable<List<String>>() {
+            final List<Tuple> finalCutList = cutList;
+            task = new Callable<List<Tuple>>() {
                 @Override
-                public List<String> call() throws Exception {
-                    List<String> newList = new ArrayList<>();
-                    for (String a : finalCutList) {
-                        if (a.matches(pattern)) {
+                public List<Tuple> call() throws Exception {
+                    List<Tuple> newList = new ArrayList<>();
+                    for (Tuple a : finalCutList) {
+                        if (a.getElement().matches(pattern)) {
                             newList.add(a);
                         }
                     }
@@ -212,8 +218,8 @@ public class DbUtils {
         }
 
         try {
-            List<Future<List<String>>> results = exc.invokeAll(tasks);
-            for (Future<List<String>> result : results) {
+            List<Future<List<Tuple>>> results = exc.invokeAll(tasks);
+            for (Future<List<Tuple>> result : results) {
                 fanList.addAll(result.get());
             }
         } catch (InterruptedException | ExecutionException e) {
@@ -221,5 +227,40 @@ public class DbUtils {
         }
         exc.shutdown();
         return fanList;
+    }
+
+    /**
+     * 获取查询结果数据量
+     *
+     * @param keyList 查询事件key
+     * @return 查询结果数据量
+     */
+    public static QueryCacheSizeEntity getQueryCacheSize(List<String> keyList) {
+        QueryCacheSizeEntity queryCacheSize = new QueryCacheSizeEntity();
+        int emergency = 0;
+        int important = 0;
+        int normal = 0;
+        for (String key : keyList) {
+            EventLevel level = EventLevel.valueOf(
+                    key.split(CommonConst.JOIN_REDIS_KEY)[EVENT_LEVEL_INDEX].toUpperCase(Locale.ROOT));
+            switch (level) {
+                case EMERGENCY:
+                    emergency++;
+                    break;
+                case IMPORTANT:
+                    important++;
+                    break;
+                case NORMAL:
+                    normal++;
+                    break;
+                default:
+                    break;
+            }
+        }
+        queryCacheSize.setEmergencyNum(emergency);
+        queryCacheSize.setImportantNum(important);
+        queryCacheSize.setNormalNum(normal);
+        queryCacheSize.setTotal(emergency + important + normal);
+        return queryCacheSize;
     }
 }
