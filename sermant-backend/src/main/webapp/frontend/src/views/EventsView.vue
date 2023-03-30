@@ -512,6 +512,8 @@ const eventName = reactive({
   GRACEFUL_ONLINE_END: "无损上线结束",
   GRACEFUL_OFFLINE_BEGIN: "无损下线开始",
   GRACEFUL_OFFLINE_END: "无损下线结束",
+  // 路由插件事件
+  ROUTER_RULE_TAKE_EFFECT: "路由插件规则生效",
 });
 
 const displayState = reactive({

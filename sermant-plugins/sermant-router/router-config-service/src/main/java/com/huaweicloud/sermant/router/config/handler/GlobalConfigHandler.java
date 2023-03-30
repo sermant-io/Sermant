@@ -20,12 +20,14 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.router.common.event.RouterEventCollector;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.config.entity.EntireRule;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -46,6 +48,8 @@ public class GlobalConfigHandler extends AbstractConfigHandler {
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
             configuration.resetGlobalRule(Collections.emptyList());
             RuleUtils.initMatchKeys(configuration);
+            RouterEventCollector.getInstance()
+                    .collectGlobalRouteRuleEvent(JSON.toJSONString(configuration.getGlobalRule()));
             return;
         }
         List<EntireRule> list = JSONArray.parseArray(JSONObject.toJSONString(getRule(event)), EntireRule.class);
@@ -60,6 +64,8 @@ public class GlobalConfigHandler extends AbstractConfigHandler {
             configuration.resetGlobalRule(list);
         }
         RuleUtils.initMatchKeys(configuration);
+        RouterEventCollector.getInstance()
+                .collectGlobalRouteRuleEvent(JSON.toJSONString(configuration.getGlobalRule()));
     }
 
     @Override
