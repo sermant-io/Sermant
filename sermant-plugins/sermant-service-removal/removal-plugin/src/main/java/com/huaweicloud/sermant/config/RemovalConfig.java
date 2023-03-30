@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 import java.util.List;
 
 /**
- * 离群实力摘除配置
+ * 离群实例摘除配置
  *
  * @author zhp
  * @since 2023-02-17
@@ -45,7 +45,7 @@ public class RemovalConfig implements PluginConfig {
     private List<String> exceptions;
 
     /**
-     * 离群实力摘除开关
+     * 离群实例摘除开关
      */
     private boolean enableRemoval;
 
