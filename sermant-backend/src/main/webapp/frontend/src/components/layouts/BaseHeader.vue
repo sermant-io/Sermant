@@ -32,7 +32,7 @@ const getAssetsImge = (url: string) => {
   <el-menu class="el-menu-demo" mode="horizontal">
     <el-image
       style="width: 15vh; margin-left: 10px"
-      :src="getAssetsImge('Sermant.png')"
+      :src="getAssetsImge('Sermant-logo.png')"
       :fit="'scale-down'"
     >
     </el-image>
