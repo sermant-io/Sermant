@@ -29,9 +29,6 @@ import redis.clients.jedis.exceptions.JedisDataException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -41,8 +38,6 @@ import java.util.List;
  * @author xuezechao
  * @since 2023-03-02
  */
-@Component
-@EnableScheduling
 public class EventDaoForRedis implements EventDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDaoForRedis.class);
@@ -114,12 +109,6 @@ public class EventDaoForRedis implements EventDao {
     @Override
     public QueryCacheSizeEntity getQueryCacheSize(EventsRequestEntity eventsRequestEntity) {
         return jedis.getQueryCacheSize(eventsRequestEntity);
-    }
-
-    @Override
-    @Scheduled(fixedDelayString = "${database.fixedDelay}")
-    public void cleanOverDueEventTimerTask() {
-        jedis.cleanOverDueEventTimerTask();
     }
 
     @Override

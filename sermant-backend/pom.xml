@@ -29,6 +29,7 @@
         <commons-lang3.version>3.9</commons-lang3.version>
         <jedis.version>4.3.1</jedis.version>
         <powermock.version>2.0.9</powermock.version>
+        <expiringmap.version>0.5.8</expiringmap.version>
         <webapp.path>${project.basedir}/src/main/webapp/frontend</webapp.path>
     </properties>
 
@@ -163,6 +164,11 @@
             <artifactId>powermock-module-junit4</artifactId>
             <version>${powermock.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.jodah</groupId>
+            <artifactId>expiringmap</artifactId>
+            <version>${expiringmap.version}</version>
         </dependency>
     </dependencies>
 

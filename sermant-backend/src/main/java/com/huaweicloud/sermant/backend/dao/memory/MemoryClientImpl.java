@@ -18,23 +18,24 @@ package com.huaweicloud.sermant.backend.dao.memory;
 
 import com.huaweicloud.sermant.backend.common.conf.BackendConfig;
 import com.huaweicloud.sermant.backend.common.conf.CommonConst;
-import com.huaweicloud.sermant.backend.dao.DatabaseType;
 import com.huaweicloud.sermant.backend.dao.EventDao;
 import com.huaweicloud.sermant.backend.entity.InstanceMeta;
 import com.huaweicloud.sermant.backend.entity.event.Event;
-import com.huaweicloud.sermant.backend.entity.event.EventLevel;
 import com.huaweicloud.sermant.backend.entity.event.EventsRequestEntity;
 import com.huaweicloud.sermant.backend.entity.event.QueryCacheSizeEntity;
 import com.huaweicloud.sermant.backend.entity.event.QueryResultEventInfoEntity;
 import com.huaweicloud.sermant.backend.util.DbUtils;
 
+import net.jodah.expiringmap.ExpirationPolicy;
+import net.jodah.expiringmap.ExpiringMap;
+
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -43,25 +44,15 @@ import java.util.stream.Collectors;
  * @author xuezechao
  * @since 2023-03-02
  */
+@Component
 public class MemoryClientImpl implements EventDao {
-
-    private static final int EVENT_LEVEL_INDEX = 3;
-
-    private BackendConfig backendConfig;
-
-    private HashMap<String, QueryResultEventInfoEntity> eventMap = new HashMap<>();
-
-    private HashMap<String, InstanceMeta> agentInstanceMap = new HashMap<>();
-
-    private HashMap<String, Long> eventTimeKeyMap = new HashMap<>();
-
-    private HashMap<String, List<String>> sessionMap = new HashMap<>();
-
-    private AtomicInteger emergency = new AtomicInteger();
-
-    private AtomicInteger important = new AtomicInteger();
-
-    private AtomicInteger normal = new AtomicInteger();
+    private ExpiringMap<String, QueryResultEventInfoEntity> eventMap;
+    private ExpiringMap<String, InstanceMeta> agentInstanceMap;
+    private ExpiringMap<String, Long> eventTimeKeyMap;
+    private ExpiringMap<String, List<String>> sessionMap;
+    private ExpiringMap<String, String> emergency;
+    private ExpiringMap<String, String> important;
+    private ExpiringMap<String, String> normal;
 
     /**
      * 构造函数
@@ -69,7 +60,26 @@ public class MemoryClientImpl implements EventDao {
      * @param backendConfig 配置
      */
     public MemoryClientImpl(BackendConfig backendConfig) {
-        this.backendConfig = backendConfig;
+        this.eventMap = ExpiringMap.builder().expiration(Long.parseLong(backendConfig.getExpire()), TimeUnit.SECONDS)
+                .expirationPolicy(ExpirationPolicy.CREATED).build();
+        this.agentInstanceMap = ExpiringMap.builder()
+                .expiration(Long.parseLong(backendConfig.getExpire()), TimeUnit.SECONDS)
+                .expirationPolicy(ExpirationPolicy.CREATED).build();
+        this.eventTimeKeyMap = ExpiringMap.builder()
+                .expiration(Long.parseLong(backendConfig.getExpire()), TimeUnit.SECONDS)
+                .expirationPolicy(ExpirationPolicy.CREATED).build();
+        this.sessionMap = ExpiringMap.builder()
+                .expiration(Long.parseLong(backendConfig.getSessionTimeout()), TimeUnit.SECONDS)
+                .expirationPolicy(ExpirationPolicy.CREATED).build();
+        this.emergency = ExpiringMap.builder()
+                .expiration(Long.parseLong(backendConfig.getExpire()), TimeUnit.SECONDS)
+                .expirationPolicy(ExpirationPolicy.CREATED).build();
+        this.important = ExpiringMap.builder()
+                .expiration(Long.parseLong(backendConfig.getExpire()), TimeUnit.SECONDS)
+                .expirationPolicy(ExpirationPolicy.CREATED).build();
+        this.normal = ExpiringMap.builder()
+                .expiration(Long.parseLong(backendConfig.getExpire()), TimeUnit.SECONDS)
+                .expirationPolicy(ExpirationPolicy.CREATED).build();
     }
 
     @Override
@@ -86,13 +96,13 @@ public class MemoryClientImpl implements EventDao {
         eventTimeKeyMap.put(field, event.getTime());
         switch (event.getEventLevel()) {
             case IMPORTANT:
-                important.incrementAndGet();
+                important.put(field, "");
                 break;
             case EMERGENCY:
-                emergency.incrementAndGet();
+                emergency.put(field, "");
                 break;
             case NORMAL:
-                normal.incrementAndGet();
+                normal.put(field, "");
                 break;
             default:
                 break;
@@ -112,8 +122,8 @@ public class MemoryClientImpl implements EventDao {
     public List<QueryResultEventInfoEntity> queryEvent(EventsRequestEntity eventsRequestEntity) {
         String pattern = DbUtils.getPattern(eventsRequestEntity);
         List<String> queryResultKey = getQueryEventKey(
-                eventsRequestEntity.getStartTime(), eventsRequestEntity.getEndTime());
-        queryResultKey = DbUtils.filterQueryResult(backendConfig, queryResultKey, pattern);
+                eventsRequestEntity.getStartTime(), eventsRequestEntity.getEndTime(), pattern);
+        Collections.reverse(queryResultKey);
         sessionMap.put(eventsRequestEntity.getSessionId(), queryResultKey);
         return queryEventPage(eventsRequestEntity.getSessionId(), 1);
     }
@@ -132,26 +142,8 @@ public class MemoryClientImpl implements EventDao {
 
     @Override
     public QueryCacheSizeEntity getQueryCacheSize(EventsRequestEntity eventsRequestEntity) {
-        QueryCacheSizeEntity queryCacheSize = new QueryCacheSizeEntity();
-        queryCacheSize.setEmergencyNum(emergency.get());
-        queryCacheSize.setImportantNum(important.get());
-        queryCacheSize.setNormalNum(normal.get());
-        queryCacheSize.setTotal(queryCacheSize.getEmergencyNum()
-                + queryCacheSize.getImportantNum() + queryCacheSize.getNormalNum());
-        return queryCacheSize;
-    }
-
-    @Override
-    public void cleanOverDueEventTimerTask() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.SECOND, -Integer.parseInt(backendConfig.getExpire()));
-        List<String> queryResultKey = getQueryEventKey(0, calendar.getTimeInMillis());
-        for (String key : queryResultKey) {
-            eventMap.remove(key);
-            eventTimeKeyMap.remove(key);
-            cleanOverDueEventLevel(key);
-        }
-
+        List<String> keyList = sessionMap.get(eventsRequestEntity.getSessionId());
+        return DbUtils.getQueryCacheSize(keyList);
     }
 
     @Override
@@ -165,38 +157,15 @@ public class MemoryClientImpl implements EventDao {
      *
      * @param startTime 开始事件
      * @param endTime 截止事件
+     * @param pattern 匹配规则
      * @return 事件key
      */
-    public List<String> getQueryEventKey(long startTime, long endTime) {
+    public List<String> getQueryEventKey(long startTime, long endTime, String pattern) {
         List<Map.Entry<String, Long>> queryResultByTime = eventTimeKeyMap.entrySet().stream().filter(
-                s -> s.getValue() >= startTime && s.getValue() <= endTime).collect(Collectors.toList());
-        return queryResultByTime.stream().map(Map.Entry::getKey)
-                .sorted().collect(Collectors.toList());
-    }
-
-    /**
-     * 删除过期事件同步设置事件级别数量
-     *
-     * @param key event key
-     */
-    private void cleanOverDueEventLevel(String key) {
-        if (backendConfig.getDatabase().equals(DatabaseType.MEMORY)) {
-            EventLevel level = EventLevel.valueOf(
-                    key.split(CommonConst.JOIN_REDIS_KEY)[EVENT_LEVEL_INDEX].toUpperCase(Locale.ROOT));
-            switch (level) {
-                case EMERGENCY:
-                    emergency.decrementAndGet();
-                    break;
-                case IMPORTANT:
-                    important.decrementAndGet();
-                    break;
-                case NORMAL:
-                    normal.decrementAndGet();
-                    break;
-                default:
-                    break;
-            }
-        }
+                s -> s.getValue() >= startTime && s.getValue() <= endTime && s.getKey().matches(pattern))
+                .collect(Collectors.toList());
+        return queryResultByTime.stream().sorted(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
     /**

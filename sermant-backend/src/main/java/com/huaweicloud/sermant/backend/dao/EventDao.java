@@ -74,11 +74,6 @@ public interface EventDao {
     QueryCacheSizeEntity getQueryCacheSize(EventsRequestEntity eventsRequestEntity);
 
     /**
-     * 清理过期事件
-     */
-    void cleanOverDueEventTimerTask();
-
-    /**
      * 获取 webhook推送消息
      *
      * @param event 事件
