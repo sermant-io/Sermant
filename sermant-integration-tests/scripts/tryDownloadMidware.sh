@@ -22,7 +22,7 @@ CSE_ADDRESS=https://cse-bucket.obs.cn-north-1.myhuaweicloud.com/LocalCSE/Local-C
 CSE_FILE_NAME=Local-CSE-2.1.3-linux-amd64.zip
 
 #======================================ZK配置======================================
-ZK_ADDRESS=https://dlcdn.apache.org/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz
+ZK_ADDRESS=https://archive.apache.org/dist/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz
 ZK_FILE_NAME=apache-zookeeper-3.6.3-bin.tar.gz
 
 #======================================Nacos server配置======================================
