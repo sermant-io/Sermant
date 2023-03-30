@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - master
+      - 0.8.x
       - develop
     paths:
       - 'sermant-agentcore/**'
