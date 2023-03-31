@@ -93,7 +93,7 @@ public abstract class BootArgsBuilder {
     /**
      * 通用获取参数值方式，优先从配置获取，在从环境变量获取
      *
-     * @param key       参数键
+     * @param key 参数键
      * @param configMap 配置集
      * @return 参数值
      */
@@ -103,9 +103,9 @@ public abstract class BootArgsBuilder {
     }
 
     /**
-     * 添加非空的键值对，涉及的参数均不可为空 appName、instanceName、appType
+     * 添加非空的键值对，涉及的参数均不可为空 appName、serviceName、instanceName、appType
      *
-     * @param argsMap   参数集
+     * @param argsMap 参数集
      * @param configMap 配置集
      */
     private static void addNotNullEntries(Map<String, Object> argsMap, Properties configMap) {
@@ -114,7 +114,7 @@ public abstract class BootArgsBuilder {
             final String value = getCommonValue(key, configMap);
             argsMap.put(key, value == null ? "default" : value);
         }
-        key = CommonConstant.INSTANCE_NAME_KEY;
+        key = CommonConstant.SERVICE_NAME_KEY;
         if (!argsMap.containsKey(key)) {
             final String value = getCommonValue(key, configMap);
             argsMap.put(key, value == null ? "default" : value);
@@ -122,14 +122,14 @@ public abstract class BootArgsBuilder {
         key = CommonConstant.APP_TYPE_KEY;
         if (!argsMap.containsKey(key)) {
             final String value = getCommonValue(key, configMap);
-            argsMap.put(key, value == null ? 0 : Integer.parseInt(value));
+            argsMap.put(key, value == null ? "default" : value);
         }
     }
 
     /**
      * 添加普通键值对，为空时不添加
      *
-     * @param argsMap   参数集
+     * @param argsMap 参数集
      * @param configMap 配置集
      */
     private static void addNormalEntries(Map<String, Object> argsMap, Properties configMap) {
@@ -166,7 +166,6 @@ public abstract class BootArgsBuilder {
                 return System.getProperty(key);
             }
             return defaultValue;
-
         }
         return configVal;
     }

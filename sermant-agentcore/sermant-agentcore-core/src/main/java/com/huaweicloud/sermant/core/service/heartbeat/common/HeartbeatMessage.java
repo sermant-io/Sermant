@@ -55,7 +55,7 @@ public class HeartbeatMessage {
     public HeartbeatMessage() {
         this.hostName = NetworkUtils.getHostName();
         this.ip = NetworkUtils.getAllNetworkIp();
-        this.service = BootArgsIndexer.getAppName();
+        this.service = BootArgsIndexer.getServiceName();
         this.appType = BootArgsIndexer.getAppType();
         this.heartbeatTime = TimeUtils.currentTimeMillis();
         this.lastHeartbeatTime = TimeUtils.currentTimeMillis();

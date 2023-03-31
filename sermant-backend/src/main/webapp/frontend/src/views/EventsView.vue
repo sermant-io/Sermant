@@ -253,6 +253,7 @@
       <el-pagination
         layout="prev, pager, next"
         :page-count="displayState.totalPage"
+        :current-page="displayState.currentPage"
         @current-change="pageChange"
       />
     </div>
@@ -432,7 +433,7 @@ const createAutoRefreshTimer = () => {
 
     getEvents();
     autoLoadingState.value = false;
-  }, 3000);
+  }, 30000);
 };
 
 const clearAutoRefreshTimer = () => {
@@ -519,6 +520,7 @@ const eventName = reactive({
 });
 
 const displayState = reactive({
+  currentPage: 1,
   totalPage: 1,
   pageSize: 10,
 });
@@ -538,6 +540,7 @@ const requestParam = reactive({
 });
 
 const pageChange = (pageNubmber: number) => {
+  displayState.currentPage = pageNubmber;
   axios
     .get(`${window.location.origin}/sermant/event/events/page`, {
       params: { page: pageNubmber },
@@ -569,6 +572,7 @@ const getEvents = () => {
       eventCount.normal = data.eventCount.normal;
       events.events = data.events;
       displayState.totalPage = data.totalPage;
+      displayState.currentPage = 1;
       ElMessage({
         message: "获取事件成功",
         type: "success",

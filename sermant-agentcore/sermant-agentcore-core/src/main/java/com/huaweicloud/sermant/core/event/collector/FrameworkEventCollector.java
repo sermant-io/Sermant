@@ -85,7 +85,7 @@ public class FrameworkEventCollector extends EventCollector {
         if (!eventConfig.isEnable()) {
             return;
         }
-        String eventDescription = "Start service: [" + serviceName + "].";
+        String eventDescription = "Start service:" + serviceName + ".";
         offerEvent(new Event(FrameworkEventDefinitions.SERMANT_SERVICE_START.getScope(),
                 FrameworkEventDefinitions.SERMANT_SERVICE_START.getEventLevel(),
                 FrameworkEventDefinitions.SERMANT_SERVICE_START.getEventType(),

@@ -28,6 +28,7 @@ import com.huaweicloud.sermant.core.service.heartbeat.common.HeartbeatMessage;
 import com.huaweicloud.sermant.core.service.heartbeat.common.PluginInfo;
 import com.huaweicloud.sermant.core.service.heartbeat.config.HeartbeatConfig;
 import com.huaweicloud.sermant.core.utils.JarFileUtils;
+import com.huaweicloud.sermant.core.utils.ThreadFactoryUtils;
 import com.huaweicloud.sermant.implement.service.send.netty.NettyClient;
 import com.huaweicloud.sermant.implement.service.send.netty.NettyClientFactory;
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
@@ -38,8 +39,9 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
@@ -59,89 +61,47 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     /**
      * 心跳额外参数
      */
-    private static final Map<String, ExtInfoProvider> EXT_INFO_MAP = new ConcurrentHashMap<String, ExtInfoProvider>();
+    private static final Map<String, ExtInfoProvider> EXT_INFO_MAP = new ConcurrentHashMap<>();
 
     /**
-     * 执行线程池，单例即可
+     * 心跳定时任务
      */
-    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(runnable -> {
-        final Thread daemonThread = new Thread(runnable);
-        daemonThread.setDaemon(true);
-        return daemonThread;
-    });
+    private static final ScheduledExecutorService EXECUTOR_SERVICE =
+            Executors.newScheduledThreadPool(1, new ThreadFactoryUtils("heartbeat-task"));
 
-    /**
-     * 运行标记
-     */
-    private static volatile boolean isRunning = false;
+    // 创建NettyClient
+    private final NettyClient nettyClient = NettyClientFactory.getInstance().getDefaultNettyClient();
 
-    private static final Object LOCK = new Object();
+    // 初始化心跳数据常量
+    private final HeartbeatMessage heartbeatMessage = new HeartbeatMessage();
 
     @Override
     public void start() {
-        synchronized (LOCK) {
-            isRunning = true;
-            EXECUTOR.execute(new Runnable() {
-                @Override
-                public void run() {
-                    execute();
-                }
-            });
-        }
+        EXECUTOR_SERVICE.scheduleAtFixedRate(this::execute, 0,
+                Math.max(ConfigManager.getConfig(HeartbeatConfig.class).getInterval(),
+                        HeartbeatConstant.HEARTBEAT_MINIMAL_INTERVAL),
+                TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void stop() {
-        synchronized (LOCK) {
-            if (!isRunning) {
-                LOGGER.warning("HeartbeatService has not started yet. ");
-                return;
-            }
-            isRunning = false;
-            EXECUTOR.shutdown();
-            EXT_INFO_MAP.clear();
-        }
+        EXECUTOR_SERVICE.shutdownNow();
     }
 
     /**
      * 执行循环
      */
     private void execute() {
-        // 创建NettyClient
-        final NettyClient nettyClient = NettyClientFactory.getInstance().getDefaultNettyClient();
-
-        // 初始化心跳数据常量
-        HeartbeatMessage heartbeatMessage = new HeartbeatMessage();
-
-        Map<String, PluginInfo> pluginInfoMap = heartbeatMessage.getPluginInfoMap();
-
-        // 循环运行
-        while (isRunning) {
-            // 获取插件名和版本集合
-            final Map<String, String> pluginVersionMap = PluginSchemaValidator.getPluginVersionMap();
-            for (Map.Entry<String, String> entry : pluginVersionMap.entrySet()) {
-                pluginInfoMap.putIfAbsent(entry.getKey(), new PluginInfo(entry.getKey(), entry.getValue()));
-                addExtInfo(entry.getKey(), pluginInfoMap.get(entry.getKey()));
-            }
-            heartbeatMessage.updateHeartbeatVersion();
-            nettyClient.sendInstantData(
-                    JSONObject.toJSONString(heartbeatMessage).getBytes(CommonConstant.DEFAULT_CHARSET),
-                    Message.ServiceData.DataType.HEARTBEAT_DATA);
-            sleep();
+        // 获取插件名和版本集合
+        final Map<String, String> pluginVersionMap = PluginSchemaValidator.getPluginVersionMap();
+        for (Map.Entry<String, String> entry : pluginVersionMap.entrySet()) {
+            heartbeatMessage.getPluginInfoMap().putIfAbsent(entry.getKey(),
+                    new PluginInfo(entry.getKey(), entry.getValue()));
+            addExtInfo(entry.getKey(), heartbeatMessage.getPluginInfoMap().get(entry.getKey()));
         }
-    }
-
-    /**
-     * 休眠
-     */
-    private void sleep() {
-        try {
-            final long interval = Math.max(ConfigManager.getConfig(HeartbeatConfig.class).getInterval(),
-                    HeartbeatConstant.HEARTBEAT_MINIMAL_INTERVAL);
-            Thread.sleep(interval);
-        } catch (InterruptedException ignored) {
-            LOGGER.warning("Unexpected interrupt heartbeat waiting. ");
-        }
+        heartbeatMessage.updateHeartbeatVersion();
+        nettyClient.sendInstantData(JSONObject.toJSONString(heartbeatMessage).getBytes(CommonConstant.DEFAULT_CHARSET),
+                Message.ServiceData.DataType.HEARTBEAT_DATA);
     }
 
     /**
