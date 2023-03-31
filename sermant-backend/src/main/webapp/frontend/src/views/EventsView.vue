@@ -514,6 +514,8 @@ const eventName = reactive({
   GRACEFUL_OFFLINE_END: "无损下线结束",
   // 路由插件事件
   ROUTER_RULE_TAKE_EFFECT: "路由插件规则生效",
+  INSTANCE_REMOVAL: "实例摘除",
+  INSTANCE_RECOVERY: "实例恢复"
 });
 
 const displayState = reactive({

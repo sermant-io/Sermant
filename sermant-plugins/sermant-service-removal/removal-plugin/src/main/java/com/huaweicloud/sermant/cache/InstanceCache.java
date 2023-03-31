@@ -69,7 +69,7 @@ public class InstanceCache {
      * 判断是否需要摘除实例
      *
      * @param info 实例信息
-     * @param rule 离群实力摘除规则
+     * @param rule 离群实例摘除规则
      * @return 是否需要摘除实例
      */
     public static boolean isNeedRemoval(InstanceInfo info, RemovalRule rule) {

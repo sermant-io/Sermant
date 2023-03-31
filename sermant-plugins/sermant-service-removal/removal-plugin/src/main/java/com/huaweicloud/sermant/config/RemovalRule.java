@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.config;
 
 /**
- * 离群实力规则
+ * 离群实例规则
  *
  * @author zhp
  * @since 2023-02-24

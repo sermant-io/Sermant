@@ -18,27 +18,18 @@ package com.huawei.discovery.service.retry;
 
 import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.config.LbConfig;
-import com.huawei.discovery.entity.Recorder;
-import com.huawei.discovery.entity.ServiceInstance;
 import com.huawei.discovery.retry.InvokerContext;
 import com.huawei.discovery.retry.Retry;
-import com.huawei.discovery.retry.Retry.RetryContext;
 import com.huawei.discovery.retry.RetryException;
 import com.huawei.discovery.retry.config.DefaultRetryConfig;
 import com.huawei.discovery.retry.config.RetryConfig;
 import com.huawei.discovery.service.InvokerService;
-import com.huawei.discovery.service.lb.DiscoveryManager;
-import com.huawei.discovery.service.lb.LbConstants;
-import com.huawei.discovery.service.lb.stats.InstanceStats;
-import com.huawei.discovery.service.lb.stats.ServiceStatsManager;
-import com.huawei.discovery.service.retry.policy.PolicyContext;
 import com.huawei.discovery.service.retry.policy.RetryPolicy;
 import com.huawei.discovery.service.retry.policy.RoundRobinRetryPolicy;
-
+import com.huawei.discovery.service.util.ApplyUtil;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
-import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -96,18 +87,18 @@ public class RetryServiceImpl implements InvokerService {
 
     @Override
     public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
-            String serviceName) {
+                                   String serviceName) {
         return invoke(invokeFunc, exFunc, serviceName, getRetry(null));
     }
 
     @Override
     public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
-            String serviceName, RetryConfig retryConfig) {
+                                   String serviceName, RetryConfig retryConfig) {
         return invoke(invokeFunc, exFunc, serviceName, getRetry(retryConfig));
     }
 
     private Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
-            String serviceName, Retry retry) {
+                                    String serviceName, Retry retry) {
         try {
             return invokeWithEx(invokeFunc, serviceName, retry);
         } catch (RetryException ex) {
@@ -135,59 +126,7 @@ public class RetryServiceImpl implements InvokerService {
 
     private Optional<Object> invokeWithEx(Function<InvokerContext, Object> invokeFunc, String serviceName, Retry retry)
             throws Exception {
-        final RetryContext<Recorder> context = retry.context();
         final InvokerContext invokerContext = new InvokerContext();
-        final PolicyContext policyContext = new PolicyContext();
-        boolean isInRetry = false;
-        do {
-            final long start = System.currentTimeMillis();
-            policyContext.setServiceInstance(invokerContext.getServiceInstance());
-            final Optional<ServiceInstance> instance = choose(serviceName, isInRetry, policyContext);
-            if (!instance.isPresent()) {
-                LOGGER.warning("Can not find provider service named : " + serviceName);
-                return Optional.empty();
-            }
-            invokerContext.setServiceInstance(instance.get());
-            final InstanceStats stats = ServiceStatsManager.INSTANCE.getInstanceStats(instance.get());
-            context.onBefore(stats);
-            long consumeTimeMs;
-            try {
-                final Object result = invokeFunc.apply(invokerContext);
-                consumeTimeMs = System.currentTimeMillis() - start;
-                isInRetry = true;
-                if (invokerContext.getEx() != null) {
-                    // 此处调用器, 若调用出现异常, 则以异常结果返回
-                    context.onError(stats, invokerContext.getEx(), consumeTimeMs);
-                    invokerContext.setEx(null);
-                    continue;
-                }
-                final boolean isNeedRetry = context.onResult(stats, result, consumeTimeMs);
-                if (!isNeedRetry) {
-                    context.onComplete(stats);
-                    return Optional.ofNullable(result);
-                }
-            } catch (Exception ex) {
-                handleEx(ex, context, stats, System.currentTimeMillis() - start);
-            }
-        } while (true);
-    }
-
-    private void handleEx(Exception ex, RetryContext<Recorder> context, InstanceStats stats, long consumeTimeMs)
-            throws Exception {
-        if (ex instanceof RetryException) {
-            throw ex;
-        }
-        context.onError(stats, ex, consumeTimeMs);
-    }
-
-    private Optional<ServiceInstance> choose(String serviceName, boolean isInRetry, PolicyContext policyContext) {
-        if (isInRetry) {
-            final Optional<ServiceInstance> select = retryPolicy.select(serviceName, policyContext);
-            select.ifPresent(instance -> LOGGER.info(String.format(Locale.ENGLISH,
-                    "Start retry for invoking instance [id: %s] of service [%s] at time %s",
-                    instance.getMetadata().get(LbConstants.SERMANT_DISCOVERY), serviceName, LocalDateTime.now())));
-            return select;
-        }
-        return DiscoveryManager.INSTANCE.choose(serviceName);
+        return ApplyUtil.invokeWithEx(invokeFunc, serviceName, retry, invokerContext, retryPolicy);
     }
 }

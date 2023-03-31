@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.service;
 import com.huaweicloud.sermant.cache.InstanceCache;
 import com.huaweicloud.sermant.config.RemovalConfig;
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.entity.InstanceInfo;
 
 import org.junit.AfterClass;
@@ -48,9 +49,13 @@ public class RequestDataCountTaskTest {
 
     private static MockedStatic<ConfigManager> configManagerMockedStatic;
 
+    private static MockedStatic<ServiceManager> serviceManagerMockedStatic;
+
     private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
     private static RequestDataCountTask requestDataCountTask;
+
+    private static RemovalEventService removalEventService = new RemovalEventServiceImpl();
 
     @BeforeClass
     public static void setUp() {
@@ -61,8 +66,11 @@ public class RequestDataCountTaskTest {
         removalConfig.setExpireTimes(6000);
         configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
         configManagerMockedStatic.when(() -> ConfigManager.getConfig(RemovalConfig.class)).thenReturn(removalConfig);
+        serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
+        serviceManagerMockedStatic.when(() -> ServiceManager.getService(RemovalEventService.class))
+                .thenReturn(removalEventService);
         scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-        scheduledThreadPoolExecutor.scheduleAtFixedRate(() -> {
+        scheduledThreadPoolExecutor.scheduleWithFixedDelay(() -> {
             InstanceInfo info = InstanceCache.INSTANCE_MAP.computeIfAbsent(KEY, s -> new InstanceInfo());
             info.getRequestNum().addAndGet(REQ_NUM);
             info.getRequestFailNum().addAndGet(REQ_FAIL_NUM);
@@ -95,6 +103,9 @@ public class RequestDataCountTaskTest {
         }
         if (requestDataCountTask != null) {
             requestDataCountTask.stop();
+        }
+        if (serviceManagerMockedStatic != null) {
+            serviceManagerMockedStatic.close();
         }
     }
 }

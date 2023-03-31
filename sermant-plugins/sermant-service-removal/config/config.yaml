@@ -6,7 +6,7 @@ removal.config:
     - org.apache.dubbo.remoting.TimeoutException
     - java.util.concurrent.TimeoutException
     - java.net.SocketTimeoutException
-  enableRemoval: false  # 离群实力摘除开关
+  enableRemoval: false  # 离群实例摘除开关
   recoveryTimes: 30000  # 实例摘除之后的恢复时间
   windowsTimes: 1000    # 离群实例异常统计窗口大小。单位：毫秒
   windowsNum: 10        # 离群实例异常统计窗口个数

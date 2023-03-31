@@ -57,7 +57,7 @@ public class RuleCache {
      * 获取规则信息
      *
      * @param key 维度信息
-     * @return 离群实力摘除规则
+     * @return 离群实例摘除规则
      */
     public static Optional<RemovalRule> getRule(String key) {
         return Optional.ofNullable(RULE_MAP.getOrDefault(key, RULE));
