@@ -18,8 +18,8 @@ package com.huaweicloud.intergration.registry.boot;
 
 import com.huaweicloud.intergration.common.utils.EnvUtils;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.http.HttpMethod;
 
 /**
@@ -28,10 +28,8 @@ import org.springframework.http.HttpMethod;
  * @author zhouss
  * @since 2022-10-26
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "BOOT_REGISTRY")
 public class OkClientBootRegistryTest extends BootRegistryTest {
-    @Rule(order = 204)
-    public final BootRegistryRule bootRegistryRule = new BootRegistryRule();
-
     /**
      * 测试rest
      */

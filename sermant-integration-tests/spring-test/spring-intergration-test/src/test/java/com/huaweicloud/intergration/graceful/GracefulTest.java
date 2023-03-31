@@ -16,14 +16,12 @@
 
 package com.huaweicloud.intergration.graceful;
 
-import com.huaweicloud.intergration.common.rule.DisableRule;
 import com.huaweicloud.intergration.common.utils.EnvUtils;
 import com.huaweicloud.intergration.common.utils.RequestUtils;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +38,8 @@ import java.util.Map;
  * @author zhouss
  * @since 2022-11-14
  */
-public class GracefulTest {
-    @Rule(order = 0)
-    public final TestRule rule = new DisableRule();
-
+@Disabled
+public abstract class GracefulTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(GracefulTest.class);
 
     private static final int MIN_PORT_SIZE = 2;
@@ -71,16 +67,16 @@ public class GracefulTest {
         }
         final Collection<Integer> values = statisticMap.values();
         if (values.size() < MIN_PORT_SIZE) {
-            Assert.fail();
+            Assertions.fail();
         }
         final Iterator<Integer> iterator = values.iterator();
         int portCount1 = iterator.next();
         int portCount2 = iterator.next();
         LOGGER.info("request result: {}", statisticMap);
         if (portCount2 > portCount1) {
-            Assert.assertTrue((portCount2 / portCount1) >= MIN_RATE);
+            Assertions.assertTrue((portCount2 / portCount1) >= MIN_RATE);
         } else {
-            Assert.assertTrue((portCount1 / portCount2) >= MIN_RATE);
+            Assertions.assertTrue((portCount1 / portCount2) >= MIN_RATE);
         }
     }
 
@@ -104,7 +100,7 @@ public class GracefulTest {
             }
         } catch (Exception exception) {
             LOGGER.error(exception.getMessage(), exception);
-            Assert.fail();
+            Assertions.fail();
         }
     }
 
@@ -119,7 +115,5 @@ public class GracefulTest {
         return String.format(Locale.ENGLISH, url + "/graceful/%s", api);
     }
 
-    protected String getBaseUrl() {
-        return "http://localhost:8005";
-    }
+    protected abstract String getBaseUrl();
 }

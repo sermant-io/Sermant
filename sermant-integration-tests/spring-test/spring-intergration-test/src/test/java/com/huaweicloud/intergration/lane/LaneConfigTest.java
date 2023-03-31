@@ -18,9 +18,9 @@ package com.huaweicloud.intergration.lane;
 
 import com.huaweicloud.intergration.config.supprt.KieClient;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -32,6 +32,7 @@ import java.util.Map;
  * @author provenceee
  * @since 2023-03-06
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "LANE_CONFIG")
 public class LaneConfigTest {
     private static final String REST_PROVIDER_KEY = "servicecomb.routeRule.rest-provider";
 
@@ -44,9 +45,6 @@ public class LaneConfigTest {
     private static final String ZUUL_KEY = "servicecomb.routeRule.spring-zuul";
 
     private static final String GATEWAY_KEY = "servicecomb.routeRule.spring-gateway";
-
-    @Rule
-    public final LaneConfigRule rule = new LaneConfigRule();
 
     private final KieClient kieClient;
 
@@ -110,8 +108,8 @@ public class LaneConfigTest {
             + "            x-sermant-flag3: gray3\n"
             + "            x-sermant-flag4: gray4\n"
             + "          weight: 100";
-        Assert.assertTrue(kieClient.publishConfig(ZUUL_KEY, content));
-        Assert.assertTrue(kieClient.publishConfig(GATEWAY_KEY, content));
+        Assertions.assertTrue(kieClient.publishConfig(ZUUL_KEY, content));
+        Assertions.assertTrue(kieClient.publishConfig(GATEWAY_KEY, content));
     }
 
     /**
@@ -165,7 +163,7 @@ public class LaneConfigTest {
             + "        - weight: 100\n"
             + "          tags:\n"
             + "            version: 1.0.1";
-        Assert.assertTrue(kieClient.publishConfig(REST_CONSUMER_KEY, restContent));
+        Assertions.assertTrue(kieClient.publishConfig(REST_CONSUMER_KEY, restContent));
 
         String feignContent = "---\n"
             + "- kind: route.sermant.io/lane\n"
@@ -212,7 +210,7 @@ public class LaneConfigTest {
             + "        - weight: 100\n"
             + "          tags:\n"
             + "            version: 1.0.1";
-        Assert.assertTrue(kieClient.publishConfig(FEIGN_CONSUMER_KEY, feignContent));
+        Assertions.assertTrue(kieClient.publishConfig(FEIGN_CONSUMER_KEY, feignContent));
     }
 
     /**
@@ -233,7 +231,7 @@ public class LaneConfigTest {
             + "        - weight: 100\n"
             + "          tags:\n"
             + "            version: 1.0.1";
-        Assert.assertTrue(kieClient.publishConfig(REST_PROVIDER_KEY, restContent));
+        Assertions.assertTrue(kieClient.publishConfig(REST_PROVIDER_KEY, restContent));
 
         String feignContent = "---\n"
             + "- kind: routematcher.sermant.io/flow\n"
@@ -248,6 +246,6 @@ public class LaneConfigTest {
             + "        - weight: 100\n"
             + "          tags:\n"
             + "            version: 1.0.1";
-        Assert.assertTrue(kieClient.publishConfig(FEIGN_PROVIDER_KEY, feignContent));
+        Assertions.assertTrue(kieClient.publishConfig(FEIGN_PROVIDER_KEY, feignContent));
     }
 }

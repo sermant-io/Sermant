@@ -18,9 +18,9 @@ package com.huaweicloud.intergration.router;
 
 import com.huaweicloud.intergration.config.supprt.KieClient;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -29,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
  * @author provenceee
  * @since 2022-11-07
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "TAG_ROUTER_CONFIG")
 public class TagRouterConfigTest {
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -67,16 +68,13 @@ public class TagRouterConfigTest {
             + "          version: 1.0.1\n"
             + "        weight: 100";
 
-    @Rule
-    public final TagRouterConfigRule rule = new TagRouterConfigRule();
-
     /**
      * 添加路由配置
      */
     @Test
     public void addRouterConfig() {
-        Assert.assertTrue(kieClient.publishConfig(REST_KEY, CONTENT));
-        Assert.assertTrue(kieClient.publishConfig(FEIGN_KEY, CONTENT));
+        Assertions.assertTrue(kieClient.publishConfig(REST_KEY, CONTENT));
+        Assertions.assertTrue(kieClient.publishConfig(FEIGN_KEY, CONTENT));
     }
 
     /**
@@ -84,6 +82,6 @@ public class TagRouterConfigTest {
      */
     @Test
     public void addStrategyConfig() {
-        Assert.assertTrue(kieClient.publishConfig(STRATEGY_KEY, STRATEGY_VALUE));
+        Assertions.assertTrue(kieClient.publishConfig(STRATEGY_KEY, STRATEGY_VALUE));
     }
 }

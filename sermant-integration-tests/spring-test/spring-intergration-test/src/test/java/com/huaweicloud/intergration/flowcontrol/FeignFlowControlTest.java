@@ -17,8 +17,7 @@
 
 package com.huaweicloud.intergration.flowcontrol;
 
-import org.junit.Rule;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 /**
  * feign 流控测试
@@ -26,10 +25,8 @@ import org.junit.rules.TestRule;
  * @author zhouss
  * @since 2022-08-02
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "FLOW_CONTROL")
 public class FeignFlowControlTest extends FlowControlTest {
-    @Rule
-    public final TestRule flowControlCondition = new FlowControlTestRule();
-
     @Override
     protected String getRestConsumerUrl() {
         return "http://127.0.0.1:8015/flowcontrol";

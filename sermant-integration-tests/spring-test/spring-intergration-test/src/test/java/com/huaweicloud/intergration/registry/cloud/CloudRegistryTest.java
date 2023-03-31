@@ -19,11 +19,10 @@ package com.huaweicloud.intergration.registry.cloud;
 import com.huaweicloud.intergration.common.utils.RequestUtils;
 import com.huaweicloud.intergration.config.supprt.KieClient;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -37,10 +36,8 @@ import java.util.Map;
  * @author zhouss
  * @since 2022-11-01
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "CLOUD_REGISTRY")
 public class CloudRegistryTest {
-    @Rule(order = 300)
-    public final TestRule rule = new CloudRegistryRule();
-
     private final RestTemplate restTemplate = new RestTemplate();
 
     private final KieClient kieClient = new KieClient(restTemplate, null, getLabels());
@@ -69,7 +66,7 @@ public class CloudRegistryTest {
         test(AppType.REST, 1);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         kieClient.deleteKey("sermant.agent.registry");
     }
@@ -80,7 +77,7 @@ public class CloudRegistryTest {
             ports.add(RequestUtils
                     .get(buildUrl(appType), Collections.emptyMap(), String.class));
         }
-        Assert.assertEquals(ports.size(), threshold);
+        Assertions.assertEquals(ports.size(), threshold);
     }
 
     private String buildUrl(AppType appType) {

@@ -17,18 +17,17 @@
 
 package com.huaweicloud.intergration.config;
 
-import com.alibaba.fastjson.JSONObject;
 import com.huaweicloud.intergration.common.utils.RequestUtils;
-import com.huaweicloud.intergration.config.rule.ZkTestRule;
 import com.huaweicloud.intergration.config.supprt.KieClient;
 import com.huaweicloud.intergration.config.supprt.ZkClient;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import com.alibaba.fastjson.JSONObject;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -43,10 +42,8 @@ import java.util.function.Supplier;
  * @author zhouss
  * @since 2022-08-16
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "DYNAMIC_CONFIG_ZK")
 public class ZookeeperConfigTest {
-    @Rule
-    public final TestRule nacosRunCondition = new ZkTestRule();
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperConfigTest.class);
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -66,14 +63,14 @@ public class ZookeeperConfigTest {
     /**
      * 发布zk配置
      */
-    @Before
+    @BeforeEach
     public void publishZkConfig() {
         kieClient = new KieClient(restTemplate, null, RequestUtils.get(serverUrl + "/labels", Collections.emptyMap(),
                 Map.class));
         zkClient = new ZkClient(null);
-        Assert.assertTrue(zkClient.publishConfig(key1, "1"));
-        Assert.assertTrue(zkClient.publishConfig(keyA, "a"));
-        Assert.assertTrue(zkClient.publishConfig(keyB, "b"));
+        Assertions.assertTrue(zkClient.publishConfig(key1, "1"));
+        Assertions.assertTrue(zkClient.publishConfig(keyA, "a"));
+        Assertions.assertTrue(zkClient.publishConfig(keyB, "b"));
     }
 
     /**
@@ -119,7 +116,7 @@ public class ZookeeperConfigTest {
         if (!checkFunc.get()) {
             LOGGER.error("=======配置中心配置内容: [{}]==================", JSONObject.toJSONString(kieClient.query(null)));
         }
-        Assert.assertTrue(checkFunc.get());
+        Assertions.assertTrue(checkFunc.get());
     }
 
     private void publishKieConfig() {
@@ -141,7 +138,7 @@ public class ZookeeperConfigTest {
         return restTemplate.getForObject(serverUrl + api, responseClass);
     }
 
-    @After
+    @AfterEach
     public void close() {
         zkClient.close();
     }

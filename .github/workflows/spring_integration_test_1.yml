@@ -14,6 +14,7 @@ on:
       - 'sermant-plugins/sermant-flowcontrol/**'
       - 'sermant-plugins/sermant-monitor/**'
       - 'sermant-plugins/sermant-loadbalancer/**'
+      - 'sermant-plugins/sermant-router/**'
       - 'sermant-plugins/sermant-service-registry/**'
       - 'sermant-plugins/sermant-springboot-registry/**'
       - 'sermant-plugins/sermant-service-visibility/**'

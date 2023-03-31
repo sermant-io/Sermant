@@ -16,9 +16,9 @@
 
 package com.huaweicloud.intergration.router;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -26,7 +26,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,6 +34,7 @@ import java.util.concurrent.TimeUnit;
  * @author provenceee
  * @since 2022-11-02
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "ROUTER")
 public class RouterTest {
     private static final RestTemplate REST_TEMPLATE = new RestTemplate();
 
@@ -58,18 +58,6 @@ public class RouterTest {
 
     private static final int WAIT_SECONDS = 300;
 
-    @Rule
-    public final RouterRule routerRule = new RouterRule();
-
-    private final String zone;
-
-    /**
-     * 构造方法
-     */
-    public RouterTest() {
-        zone = Optional.ofNullable(System.getenv("SERVICE_META_ZONE")).orElse("bar");
-    }
-
     /**
      * 测试根据请求信息路由，该测试用例会模拟停服务的情况，所以执行结果与用例顺序强相关
      */
@@ -83,10 +71,10 @@ public class RouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(FEIGN_BOOT_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:env-001"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:env-001"));
 
             exchange = REST_TEMPLATE.exchange(FEIGN_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:env-001"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:env-001"));
         }
 
         // 测试没有命中Test-Env:env-005的实例时，切换至无Test-Env的实例
@@ -95,10 +83,10 @@ public class RouterTest {
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(FEIGN_BOOT_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:"));
+            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:"));
 
             exchange = REST_TEMPLATE.exchange(FEIGN_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:"));
+            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:"));
         }
 
         // 测试没有路由请求头时，优先切换至无路由标签的实例
@@ -106,14 +94,14 @@ public class RouterTest {
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(FEIGN_BOOT_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env"));
+            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env"));
 
             exchange = REST_TEMPLATE.exchange(FEIGN_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env"));
+            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env"));
         }
 
         // 停掉无路由标签的实例
-        Assert.assertThrows(Exception.class, () -> REST_TEMPLATE
+        Assertions.assertThrows(Exception.class, () -> REST_TEMPLATE
                 .exchange(FEIGN_BOOT_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
                         String.class));
 
@@ -140,7 +128,7 @@ public class RouterTest {
         // 停掉标签为Test-Env1=env-002的实例
         headers.clear();
         headers.add("Test-Env1", "env-002");
-        Assert.assertThrows(Exception.class, () -> REST_TEMPLATE
+        Assertions.assertThrows(Exception.class, () -> REST_TEMPLATE
                 .exchange(FEIGN_BOOT_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, headers),
                         String.class));
 
@@ -169,7 +157,7 @@ public class RouterTest {
         // 测试没有命中Test-Env:env-005的实例时，切换至无Test-Env的实例，如果没有无Test-Env的实例，则返回空列表，即调用报错
         headers.clear();
         headers.add("Test-Env", "env-005");
-        Assert.assertThrows(Exception.class, () -> REST_TEMPLATE.exchange(FEIGN_BOOT_BASE_PATH + false, HttpMethod.GET,
+        Assertions.assertThrows(Exception.class, () -> REST_TEMPLATE.exchange(FEIGN_BOOT_BASE_PATH + false, HttpMethod.GET,
                 new HttpEntity<>(null, new HttpHeaders(headers)), String.class));
     }
 
@@ -186,7 +174,7 @@ public class RouterTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            Assert.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:env-001"));
+            Assertions.assertTrue(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:env-001"));
         }
 
         // 测试没有命中Test-Env:env-005的实例时，切换至无Test-Env的实例
@@ -195,7 +183,7 @@ public class RouterTest {
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:"));
+            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env:"));
         }
 
         // 测试没有路由请求头时，优先切换至无路由标签的实例
@@ -203,11 +191,11 @@ public class RouterTest {
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE.exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET, entity, String.class);
-            Assert.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env"));
+            Assertions.assertFalse(Objects.requireNonNull(exchange.getBody()).contains("Test-Env"));
         }
 
         // 停掉无路由标签的实例
-        Assert.assertThrows(Exception.class, () -> REST_TEMPLATE
+        Assertions.assertThrows(Exception.class, () -> REST_TEMPLATE
                 .exchange(REST_CLOUD_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, new HttpHeaders()),
                         String.class));
 
@@ -231,7 +219,7 @@ public class RouterTest {
         // 停掉标签为Test-Env1=env-002的实例
         headers.clear();
         headers.add("Test-Env1", "env-002");
-        Assert.assertThrows(Exception.class, () -> REST_TEMPLATE
+        Assertions.assertThrows(Exception.class, () -> REST_TEMPLATE
                 .exchange(REST_CLOUD_BASE_PATH + true, HttpMethod.GET, new HttpEntity<>(null, headers),
                         String.class));
 
@@ -254,7 +242,7 @@ public class RouterTest {
         // 测试没有命中Test-Env:env-005的实例时，切换至无Test-Env的实例，如果没有无Test-Env的实例，则返回空列表，即调用报错
         headers.clear();
         headers.add("Test-Env", "env-005");
-        Assert.assertThrows(Exception.class, () -> REST_TEMPLATE.exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET,
+        Assertions.assertThrows(Exception.class, () -> REST_TEMPLATE.exchange(REST_CLOUD_BASE_PATH + false, HttpMethod.GET,
                 new HttpEntity<>(null, new HttpHeaders(headers)), String.class));
     }
 }

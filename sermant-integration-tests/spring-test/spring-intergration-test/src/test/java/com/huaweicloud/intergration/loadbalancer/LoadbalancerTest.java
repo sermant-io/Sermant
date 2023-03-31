@@ -18,16 +18,14 @@
 package com.huaweicloud.intergration.loadbalancer;
 
 import com.huaweicloud.intergration.common.LoadbalancerConstants;
-import com.huaweicloud.intergration.common.rule.DisableRule;
 import com.huaweicloud.intergration.common.utils.EnvUtils;
 import com.huaweicloud.intergration.config.supprt.KieClient;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -45,10 +43,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author zhouss
  * @since 2022-08-17
  */
-public class LoadbalancerTest {
-    @Rule
-    public final TestRule TEST_RULE = new DisableRule();
-
+@Disabled
+public abstract class LoadbalancerTest {
     private static final String RELEASE_FLAG = "RELEASE";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadbalancerTest.class);
@@ -58,27 +54,28 @@ public class LoadbalancerTest {
     private final KieClient kieClient = new KieClient(restTemplate, null, getLabels());
 
     private final String lbKey = getLbKey();
+
     private final String lbMatchGroup = getLbMatchGroup();
 
     private final Map<String, String> ribbonLbRules = new HashMap<>();
-    private final Map<String, String> springLbRules = new HashMap<>();
 
+    private final Map<String, String> springLbRules = new HashMap<>();
 
     /**
      * spring boot版本号
      */
     private String springBootVersion;
 
-    @Before
+    @BeforeEach
     public void ready() {
         initRibbon();
         initSpring();
         final String property = EnvUtils.getEnv(LoadbalancerConstants.SPRING_BOOT_VERSION_ENV_KEY, null);
-        Assert.assertNotNull(property);
+        Assertions.assertNotNull(property);
         this.springBootVersion = property;
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         reset();
     }
@@ -162,7 +159,7 @@ public class LoadbalancerTest {
                 // ignored
             }
         }
-        Assert.assertEquals(result, expected);
+        Assertions.assertEquals(result, expected);
     }
 
     private String request(String api, String param) {
@@ -252,7 +249,5 @@ public class LoadbalancerTest {
      *
      * @return 订阅标签
      */
-    protected Map<String, String> getLabels() {
-        return null;
-    }
+    abstract protected  Map<String, String> getLabels();
 }

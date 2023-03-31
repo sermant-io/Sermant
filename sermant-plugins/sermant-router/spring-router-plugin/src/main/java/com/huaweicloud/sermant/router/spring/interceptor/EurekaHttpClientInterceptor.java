@@ -19,8 +19,11 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
+import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.spring.cache.AppCache;
+import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 import com.huaweicloud.sermant.router.spring.utils.SpringRouterUtils;
 
 import com.netflix.appinfo.InstanceInfo;
@@ -34,11 +37,14 @@ import com.netflix.appinfo.InstanceInfo;
 public class EurekaHttpClientInterceptor extends AbstractInterceptor {
     private final RouterConfig routerConfig;
 
+    private final SpringConfigService configService;
+
     /**
      * 构造方法
      */
     public EurekaHttpClientInterceptor() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+        configService = ServiceManager.getService(SpringConfigService.class);
     }
 
     @Override
@@ -54,6 +60,7 @@ public class EurekaHttpClientInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
+        configService.init(RouterConstant.SPRING_CACHE_NAME, AppCache.INSTANCE.getAppName());
         return context;
     }
 }

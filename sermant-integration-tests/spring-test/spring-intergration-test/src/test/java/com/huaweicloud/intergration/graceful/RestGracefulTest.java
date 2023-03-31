@@ -16,8 +16,7 @@
 
 package com.huaweicloud.intergration.graceful;
 
-import org.junit.Rule;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 /**
  * rest 优雅上下线测试测试
@@ -25,8 +24,10 @@ import org.junit.rules.TestRule;
  * @author zhouss
  * @since 2022-11-15
  */
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "GRACEFUL")
 public class RestGracefulTest extends GracefulTest {
-    @Rule(order = 302)
-    public final TestRule rule = new GracefulRule();
-
+    @Override
+    protected String getBaseUrl() {
+        return "http://localhost:8005";
+    }
 }
