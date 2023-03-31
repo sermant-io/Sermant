@@ -337,11 +337,14 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
             return httpPost;
         } else {
             final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(HttpClient.class.getClassLoader());
-            final Optional<Object> result = ReflectUtils
-                    .buildWithConstructor(COMMON_REQUEST_CLASS,
-                            new Class[]{String.class, String.class}, new Object[]{method, uriNew});
-            Thread.currentThread().setContextClassLoader(contextClassLoader);
+            final Optional<Object> result;
+            try {
+                Thread.currentThread().setContextClassLoader(HttpClient.class.getClassLoader());
+                result = ReflectUtils.buildWithConstructor(COMMON_REQUEST_CLASS,
+                        new Class[]{String.class, String.class}, new Object[]{method, uriNew});
+            } finally {
+                Thread.currentThread().setContextClassLoader(contextClassLoader);
+            }
             return (HttpRequest) result.orElse(null);
         }
     }
