@@ -164,6 +164,8 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
             LOGGER.log(Level.WARNING, "Can not query service instances from registry center!", exception);
             Thread.currentThread().setContextClassLoader(contextClassLoader);
             throw new QueryInstanceException(exception.getMessage());
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
     }
 
@@ -270,7 +272,9 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
      */
     public static class ZkInstanceSerializer<T> implements InstanceSerializer<T> {
         private final ObjectMapper mapper;
+
         private final Class<T> payloadClass;
+
         private final JavaType type;
 
         /**
