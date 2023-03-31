@@ -74,6 +74,8 @@ public class BootArgsIndexer {
 
     private static String appType;
 
+    private static String serviceName;
+
     private static String instanceId;
 
     private BootArgsIndexer() {
@@ -105,6 +107,10 @@ public class BootArgsIndexer {
 
     public static String getAppName() {
         return appName;
+    }
+
+    public static String getServiceName() {
+        return serviceName;
     }
 
     public static String getAppType() {
@@ -147,8 +153,9 @@ public class BootArgsIndexer {
 
         appName = argsMap.get(CommonConstant.APP_NAME_KEY).toString();
 
-        Object object = argsMap.get(CommonConstant.APP_TYPE_KEY);
-        appType = object == null ? "0" : object.toString();
+        appType = argsMap.get(CommonConstant.APP_TYPE_KEY).toString();
+
+        serviceName = argsMap.get(CommonConstant.SERVICE_NAME_KEY).toString();
 
         instanceId = UUID.randomUUID().toString();
     }

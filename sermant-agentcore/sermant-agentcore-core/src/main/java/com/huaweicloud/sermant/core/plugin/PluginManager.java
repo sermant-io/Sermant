@@ -62,7 +62,7 @@ public class PluginManager {
     /**
      * 初始化插件包、配置、插件服务包等插件相关的内容
      *
-     * @param pluginNames     插件名称集
+     * @param pluginNames 插件名称集
      * @param instrumentation Instrumentation对象
      * @return 是否有加载任何插件
      */
@@ -111,8 +111,8 @@ public class PluginManager {
     /**
      * 初始化一个插件，检查必要参数，并调用{@link #doInitPlugin}
      *
-     * @param pluginName      插件名称
-     * @param pluginPackage   插件包路径
+     * @param pluginName 插件名称
+     * @param pluginPackage 插件包路径
      * @param instrumentation Instrumentation对象
      */
     private static void initPlugin(String pluginName, String pluginPackage, Instrumentation instrumentation) {
@@ -135,8 +135,8 @@ public class PluginManager {
      *     5.设置默认插件版本
      * </pre>
      *
-     * @param pluginName      插件名称
-     * @param pluginPath      插件路径
+     * @param pluginName 插件名称
+     * @param pluginPath 插件路径
      * @param instrumentation Instrumentation对象
      */
     private static void doInitPlugin(String pluginName, String pluginPath, Instrumentation instrumentation) {
@@ -145,6 +145,7 @@ public class PluginManager {
         loadConfig(PluginConstant.getPluginConfigFile(pluginPath), classLoader);
         initService(classLoader);
         setDefaultVersion(pluginName);
+        LOGGER.info(String.format(Locale.ROOT, "Load plugin: [%s] successful.", pluginName));
         FrameworkEventCollector.getInstance().collectPluginsLoadEvent(pluginName);
     }
 
@@ -169,7 +170,7 @@ public class PluginManager {
     /**
      * 由{@link PluginConfigManager#loadServiceConfig(java.io.File, java.lang.ClassLoader)}方法加载插件配置信息
      *
-     * @param configFile  配置文件
+     * @param configFile 配置文件
      * @param classLoader 加载插件服务包的自定义类加载器
      */
     private static void loadConfig(File configFile, ClassLoader classLoader) {
@@ -223,7 +224,7 @@ public class PluginManager {
      * 获取插件所有jar包的URL，将进行jar包的校验和版本的校验
      *
      * @param pluginName 插件名称
-     * @param jars       jar包集
+     * @param jars jar包集
      * @return jar包的URL集
      */
     private static URL[] toUrls(String pluginName, File[] jars) {
@@ -257,10 +258,10 @@ public class PluginManager {
     /**
      * 将插件包文件转换为jar包，再做处理
      *
-     * @param pluginName    插件名称
-     * @param jar           插件包文件
+     * @param pluginName 插件名称
+     * @param jar 插件包文件
      * @param ifCheckSchema 是否做jar包元数据检查
-     * @param consumer      jar包消费者
+     * @param consumer jar包消费者
      * @return 是否无异常处理完毕
      */
     private static boolean processByJarFile(String pluginName, File jar, boolean ifCheckSchema,
@@ -292,8 +293,8 @@ public class PluginManager {
     /**
      * 加载所有插件包
      *
-     * @param pluginName      插件名称
-     * @param pluginDir       插件包目录
+     * @param pluginName 插件名称
+     * @param pluginDir 插件包目录
      * @param instrumentation Instrumentation对象
      */
     private static void loadPlugins(String pluginName, File pluginDir, Instrumentation instrumentation) {

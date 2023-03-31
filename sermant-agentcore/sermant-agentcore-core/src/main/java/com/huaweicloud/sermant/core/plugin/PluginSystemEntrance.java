@@ -70,7 +70,10 @@ public class PluginSystemEntrance {
     public static void initialize(Instrumentation instrumentation) {
         final PluginSetting pluginSetting = loadSetting();
         Set<String> plugins = getLoadPlugins(pluginSetting);
-        LOGGER.info(String.format(Locale.ROOT, "load plugins: %s", plugins.toString()));
+        if (plugins == null) {
+            LOGGER.info("No plugin is configured to be loaded.");
+            return;
+        }
         if (PluginManager.initPlugins(plugins, instrumentation)) {
             ByteEnhanceManager.enhance(instrumentation);
         }
@@ -85,7 +88,7 @@ public class PluginSystemEntrance {
         Reader reader = null;
         try {
             reader = new InputStreamReader(new FileInputStream(BootArgsIndexer.getPluginSettingFile()),
-                CommonConstant.DEFAULT_CHARSET);
+                    CommonConstant.DEFAULT_CHARSET);
             Optional<PluginSetting> pluginSettingOptional = YAML_CONVERTER.convert(reader, PluginSetting.class);
             return pluginSettingOptional.orElse(null);
         } catch (IOException ignored) {
@@ -103,10 +106,8 @@ public class PluginSystemEntrance {
     }
 
     /**
-     * 融合配置文件中的场景，插件，和环境变量中的场景信息
-     * 1. plugins配置的插件在任何场景都会加载
-     * 2. profile定义的场景优先级为: 环境变量 > 系统变量 > 配置文件。策略是优先级高的覆盖优先级低的。
-     * 3. 重复添加的插件名会进行去重处理
+     * 融合配置文件中的场景，插件，和环境变量中的场景信息 1. plugins配置的插件在任何场景都会加载 2. profile定义的场景优先级为: 环境变量 > 系统变量 > 配置文件。策略是优先级高的覆盖优先级低的。 3.
+     * 重复添加的插件名会进行去重处理
      *
      * @param pluginSetting 插件配置信息
      * @return 需要加载的插件列表
@@ -135,7 +136,7 @@ public class PluginSystemEntrance {
             if (profilesMap.containsKey(profile)) {
                 plugins.addAll(profilesMap.get(profile));
             } else {
-                LOGGER.warning(String.format(Locale.ROOT,"The value of profile: %s is Invalid", profile));
+                LOGGER.warning(String.format(Locale.ROOT, "The value of profile: %s is Invalid", profile));
             }
         });
         return plugins;

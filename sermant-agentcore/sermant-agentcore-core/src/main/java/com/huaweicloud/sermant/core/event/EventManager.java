@@ -48,6 +48,8 @@ public class EventManager {
 
     private static final EventConfig EVENT_CONFIG = ConfigManager.getConfig(EventConfig.class);
 
+    private static final long INITIAL_DELAY = 30000L;
+
     private EventManager() {
     }
 
@@ -70,7 +72,7 @@ public class EventManager {
         EventManager.registerCollector(LogEventCollector.getInstance());
 
         // 开启定时采集上报事件消息
-        EXECUTOR_SERVICE.scheduleAtFixedRate(EventManager::collectAll, 0, EVENT_CONFIG.getSendInterval(),
+        EXECUTOR_SERVICE.scheduleAtFixedRate(EventManager::collectAll, INITIAL_DELAY, EVENT_CONFIG.getSendInterval(),
                 TimeUnit.MILLISECONDS);
     }
 

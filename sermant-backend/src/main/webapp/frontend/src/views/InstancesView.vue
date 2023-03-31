@@ -268,9 +268,27 @@ const state: {
 async function getTableData() {
   try {
     state.loading = true;
-    const res = await axios
+    axios
       .get(`${window.location.origin}/sermant/getPluginsInfo`)
-      .then(function (response) {
+      .then(function (res) {
+        // 清理统计服务
+        tagCount.serviceCount = [];
+        innerData = res.data;
+        innerData.forEach((item) => {
+          if (item.health) {
+            state.normalCount++;
+          } else {
+            state.abnormalCount++;
+          }
+          // 统计服务数
+          if (tagCount.serviceCount.indexOf(item.service) === -1) {
+            tagCount.serviceCount.push(item.service);
+          }
+        });
+        showData = JSON.parse(JSON.stringify(res.data));
+        state.total = showData.length;
+        const result = JSON.parse(JSON.stringify(showData.slice(0, state.pageSize)));
+        state.tableData = handle(result);
         ElMessage({
           message: "获取实例数据成功",
           type: "success",
@@ -283,24 +301,6 @@ async function getTableData() {
         });
         console.log(error);
       });
-    // 清理统计服务
-    tagCount.serviceCount = [];
-    innerData = res.data;
-    innerData.forEach((item) => {
-      if (item.health) {
-        state.normalCount++;
-      } else {
-        state.abnormalCount++;
-      }
-      // 统计服务数
-      if (tagCount.serviceCount.indexOf(item.service) === -1) {
-        tagCount.serviceCount.push(item.service);
-      }
-    });
-    showData = JSON.parse(JSON.stringify(res.data));
-    state.total = showData.length;
-    const result = JSON.parse(JSON.stringify(showData.slice(0, state.pageSize)));
-    state.tableData = handle(result);
   } catch (err) {
     console.log(err);
   } finally {

@@ -137,7 +137,6 @@ const setWebHook = (webhook) => {
       });
       console.log(error);
     });
-  getWebHooks();
 };
 
 const testWebHook = (webhook) => {

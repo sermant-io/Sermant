@@ -31,6 +31,7 @@ import com.huaweicloud.sermant.core.exception.DupServiceException;
 import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
 import com.huaweicloud.sermant.core.utils.SpiLoadUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -72,14 +73,16 @@ public class ServiceManager {
      * 初始化所有服务
      */
     public static void initServices() {
+        ArrayList<String> startServiceArray = new ArrayList<>();
         for (final BaseService service : ServiceLoader.load(BaseService.class,
                 ClassLoaderManager.getFrameworkClassLoader())) {
             if (!AGENT_CONFIG.getServiceBlackList().contains(service.getClass().getName())
                     && loadService(service, service.getClass(), BaseService.class)) {
                 service.start();
-                FrameworkEventCollector.getInstance().collectServiceStartEvent(service.getClass().getName());
+                startServiceArray.add(service.getClass().getName());
             }
         }
+        FrameworkEventCollector.getInstance().collectServiceStartEvent(startServiceArray.toString());
         addStopHook(); // 加载完所有服务再启动服务
     }
 

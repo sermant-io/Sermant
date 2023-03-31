@@ -63,14 +63,14 @@ public class CommonConstant {
     public static final String APP_NAME_KEY = "appName";
 
     /**
-     * 启动配置中实例名称的键
-     */
-    public static final String INSTANCE_NAME_KEY = "instanceName";
-
-    /**
      * 启动配置中应用类型的键
      */
     public static final String APP_TYPE_KEY = "appType";
+
+    /**
+     * 启动配置中服务名称的键
+     */
+    public static final String SERVICE_NAME_KEY = "serviceName";
 
     /**
      * 启动配置中的agentPath
