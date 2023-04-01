@@ -39,7 +39,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.instrument.Instrumentation;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.ProtectionDomain;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -133,14 +138,14 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 设置输出日志的监听器，由{@link AgentConfig#isShowEnhanceLogEnable()}而定
+     * 设置输出日志的监听器，由{@link AgentConfig#isShowEnhanceLog()}而定
      * <p>使用{@link AgentBuilder.Listener.StreamWriting}转化为字符串信息后输出为日志
      * <p>注意，输出时使用的缓冲区将不会被释放，需要关注{@link AgentBuilder.Listener.StreamWriting}中单行信息的长度
      *
      * @return BufferedAgentBuilder本身
      */
     private BufferedAgentBuilder setLogListener() {
-        if (!config.isShowEnhanceLogEnable()) {
+        if (!config.isShowEnhanceLog()) {
             return this;
         }
         return addAction(new BuilderAction() {
@@ -187,22 +192,35 @@ public class BufferedAgentBuilder {
      * 设置输出增强后字节码的监听器，输出路径优先选择：
      * <pre>
      *     1.系统变量{@link #OUTPUT_PATH_SYSTEM_KEY}
-     *     2.配置{@link AgentConfig#getEnhancedClassOutputPath}
+     *     2.配置{@link AgentConfig#getEnhancedClassesOutputPath}
      * </pre>
      * 若两者都无法正确获取路径，则视为无需该监听器
      *
      * @return BufferedAgentBuilder本身
      */
     private BufferedAgentBuilder setOutputListener() {
-        String outputPath = System.getProperty(OUTPUT_PATH_SYSTEM_KEY);
-        if (outputPath == null || outputPath.length() <= 0) {
-            outputPath = config.getEnhancedClassOutputPath();
-        }
-        if (outputPath == null || outputPath.length() <= 0) {
+        if (!config.isOutputEnhancedClasses()) {
             return this;
         }
-        final File folder = new File(FileUtils.validatePath(outputPath));
-        if (!folder.exists() && !folder.mkdirs()) {
+
+        String outputPath = config.getEnhancedClassesOutputPath();
+        final Path outputDirectory;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+        String currentTime = LocalDateTime.now().format(formatter);
+        if (outputPath == null || outputPath.isEmpty()) {
+            outputDirectory = Paths.get(FileUtils.getAgentPath())
+                    .resolve(CommonConstant.ENHANCED_CLASS_OUTPUT_PARENT_DIR)
+                    .resolve(currentTime);
+        } else {
+            outputDirectory = Paths.get(outputPath)
+                    .resolve(CommonConstant.ENHANCED_CLASS_OUTPUT_PARENT_DIR)
+                    .resolve(currentTime);
+        }
+        final File file;
+        try {
+            file = Files.createDirectories(outputDirectory).toFile();
+        } catch (IOException e) {
+            LOGGER.warning("Create enhanced class output directory fail!");
             return this;
         }
         return addAction(builder -> builder.with(new AgentBuilder.Listener.Adapter() {
@@ -210,7 +228,7 @@ public class BufferedAgentBuilder {
             public void onTransformation(TypeDescription typeDescription, ClassLoader classLoader,
                     JavaModule module, boolean loaded, DynamicType dynamicType) {
                 try {
-                    dynamicType.saveIn(folder);
+                    dynamicType.saveIn(file);
                 } catch (IOException e) {
                     LOGGER.warning(String.format(
                             "Save class [%s] byte code failed. ", typeDescription.getTypeName()));

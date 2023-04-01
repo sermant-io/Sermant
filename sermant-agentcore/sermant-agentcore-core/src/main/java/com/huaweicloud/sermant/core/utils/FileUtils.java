@@ -52,6 +52,15 @@ public class FileUtils {
     }
 
     /**
+     * 获取sermant-agent-x.x.x/agent的文件夹绝对路径
+     *
+     * @return agent路径
+     */
+    public static String getAgentPath() {
+        return AGENT_PATH;
+    }
+
+    /**
      * 检验文件路径
      *
      * @param path 输入路径
@@ -121,7 +130,7 @@ public class FileUtils {
      *
      * @param sourceFile 源文件夹
      * @param targetPath 目标文件夹
-     * @param isCover    是否覆盖
+     * @param isCover 是否覆盖
      * @throws IOException 拷贝失败
      */
     public static void copyAllFiles(File sourceFile, String targetPath, boolean isCover) throws IOException {
@@ -166,7 +175,7 @@ public class FileUtils {
     /**
      * 通过通配符的方式检索子文件
      *
-     * @param dir   文件夹
+     * @param dir 文件夹
      * @param wcStr 通配符模式，允许','拼接多个
      * @return 子文件集
      */

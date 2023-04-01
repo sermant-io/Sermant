@@ -137,6 +137,11 @@ public class CommonConstant {
      */
     public static final String TRANSFORM = "TRANSFORM";
 
+    /**
+     * 默认的增强后字节码文件输出路径父目录
+     */
+    public static final String ENHANCED_CLASS_OUTPUT_PARENT_DIR = "enhancedClasses";
+
     private CommonConstant() {
     }
 }
