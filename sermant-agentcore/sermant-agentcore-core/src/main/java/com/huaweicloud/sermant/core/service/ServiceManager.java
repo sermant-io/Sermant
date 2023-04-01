@@ -28,7 +28,6 @@ import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.event.EventManager;
 import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.exception.DupServiceException;
-import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
 import com.huaweicloud.sermant.core.utils.SpiLoadUtils;
 
 import java.util.ArrayList;
@@ -59,9 +58,9 @@ public class ServiceManager {
     private static final Map<String, BaseService> SERVICES = new HashMap<String, BaseService>();
 
     /**
-     * agent配置
+     * Agent核心服务配置
      */
-    private static final AgentConfig AGENT_CONFIG = ConfigManager.getConfig(AgentConfig.class);
+    private static final ServiceConfig SERVICE_CONFIG = ConfigManager.getConfig(ServiceConfig.class);
 
     /**
      * Constructor.
@@ -76,8 +75,8 @@ public class ServiceManager {
         ArrayList<String> startServiceArray = new ArrayList<>();
         for (final BaseService service : ServiceLoader.load(BaseService.class,
                 ClassLoaderManager.getFrameworkClassLoader())) {
-            if (!AGENT_CONFIG.getServiceBlackList().contains(service.getClass().getName())
-                    && loadService(service, service.getClass(), BaseService.class)) {
+            if (SERVICE_CONFIG.checkServiceEnable(service.getClass().getName()) && loadService(service,
+                    service.getClass(), BaseService.class)) {
                 service.start();
                 startServiceArray.add(service.getClass().getName());
             }

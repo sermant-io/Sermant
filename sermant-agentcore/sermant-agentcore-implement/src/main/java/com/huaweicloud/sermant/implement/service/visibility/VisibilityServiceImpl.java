@@ -21,12 +21,12 @@ import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
+import com.huaweicloud.sermant.core.service.ServiceConfig;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.send.api.GatewayClient;
 import com.huaweicloud.sermant.core.service.visibility.api.VisibilityService;
 import com.huaweicloud.sermant.core.service.visibility.common.CollectorCache;
 import com.huaweicloud.sermant.core.service.visibility.common.OperateType;
-import com.huaweicloud.sermant.core.service.visibility.config.VisibilityServiceConfig;
 import com.huaweicloud.sermant.core.service.visibility.entity.ServerInfo;
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
 
@@ -45,7 +45,7 @@ import java.util.logging.Logger;
 public class VisibilityServiceImpl implements VisibilityService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private final VisibilityServiceConfig config = ConfigManager.getConfig(VisibilityServiceConfig.class);
+    private final ServiceConfig serviceConfig = ConfigManager.getConfig(ServiceConfig.class);
 
     private final ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
 
@@ -53,7 +53,7 @@ public class VisibilityServiceImpl implements VisibilityService {
 
     @Override
     public void reconnectHandler() {
-        if (!config.isEnableStart()) {
+        if (!serviceConfig.isVisibilityEnable()) {
             return;
         }
         initClient();
@@ -72,7 +72,7 @@ public class VisibilityServiceImpl implements VisibilityService {
 
     @Override
     public void stop() {
-        if (!config.isEnableStart()) {
+        if (!serviceConfig.isVisibilityEnable()) {
             return;
         }
         initClient();

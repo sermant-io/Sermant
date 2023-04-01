@@ -17,7 +17,10 @@
 package com.huaweicloud.sermant.implement.service.send.netty;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.service.ServiceConfig;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.service.send.config.GatewayConfig;
 import com.huaweicloud.sermant.core.service.visibility.api.VisibilityService;
 import com.huaweicloud.sermant.core.utils.ThreadFactoryUtils;
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
@@ -60,26 +63,16 @@ public class NettyClient {
     // 运行日志
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final int CONNECT_TIMEOUT = 9000;
-
-    private static final int WAIT_TIME = 30;
-
-    private static final int SEND_INTERNAL_MILLISECOND = 10000;
+    private static final int SEND_INTERNAL_SECOND = 10;
 
     private static final int RECONNECT_INTERVAL_SECOND = 10;
 
     // 阻塞队列，用于缓存消息，对于非即时消息，减少消息发送的频率，设置值为100条消息
     private final BlockingQueue<Message.ServiceData> queue = new ArrayBlockingQueue<>(100);
 
-    private final int writeOrReadWaitTime;
-
     private final String ip;
 
     private final int port;
-
-    private final int sendInterval;
-
-    private final int reconnectInterval;
 
     private Bootstrap bootstrap;
 
@@ -89,7 +82,7 @@ public class NettyClient {
 
     private ScheduledExecutorService executorService;
 
-    private final VisibilityService service = ServiceManager.getService(VisibilityService.class);
+    private VisibilityService visibilityService;
 
     private boolean connectionAvailable = false;
 
@@ -102,9 +95,6 @@ public class NettyClient {
     public NettyClient(String serverIp, int serverPort) {
         ip = serverIp;
         port = serverPort;
-        writeOrReadWaitTime = WAIT_TIME;
-        sendInterval = SEND_INTERNAL_MILLISECOND;
-        reconnectInterval = RECONNECT_INTERVAL_SECOND;
         bind();
     }
 
@@ -119,12 +109,15 @@ public class NettyClient {
         eventLoopGroup = new NioEventLoopGroup(new ThreadFactoryUtils("netty-nio-event-loop-group"));
         bootstrap = new Bootstrap();
         bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true)
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, CONNECT_TIMEOUT)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
+                        ConfigManager.getConfig(GatewayConfig.class).getNettyConnectTimeout())
                 .handler(new ChannelInitializer<Channel>() {
                     @Override
                     protected void initChannel(Channel newChannel) {
                         ChannelPipeline pipeline = newChannel.pipeline();
-                        pipeline.addLast(new IdleStateHandler(0, 0, writeOrReadWaitTime));
+                        pipeline.addLast(new IdleStateHandler(0, 0,
+                                ConfigManager.getConfig(GatewayConfig.class).getNettyWriteAndReadWaitTime(),
+                                TimeUnit.MILLISECONDS));
                         pipeline.addLast(new ProtobufVarint32FrameDecoder());
                         pipeline.addLast(new ProtobufDecoder(Message.NettyMessage.getDefaultInstance()));
                         pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
@@ -159,14 +152,20 @@ public class NettyClient {
                     Sender sender = new Sender(channel, queue);
                     LOGGER.info("Successfully Connected to server");
                     executorService = Executors.newScheduledThreadPool(1, new ThreadFactoryUtils("netty-send-thread"));
-                    executorService.scheduleAtFixedRate(sender, 0, sendInterval, TimeUnit.MILLISECONDS);
+                    executorService.scheduleAtFixedRate(sender, 0, SEND_INTERNAL_SECOND, TimeUnit.SECONDS);
                 }
-                service.reconnectHandler();
+                if (ConfigManager.getConfig(ServiceConfig.class).isVisibilityEnable()) {
+                    if (visibilityService == null) {
+                        visibilityService = ServiceManager.getService(VisibilityService.class);
+                    }
+                    visibilityService.reconnectHandler();
+                }
             } else {
                 // 失败则在X秒后重试连接
                 LOGGER.info(String.format(Locale.ROOT, "Failed to connect,try reconnecting after %s seconds ",
-                        reconnectInterval));
-                channelFuture.channel().eventLoop().schedule(this::doConnect, reconnectInterval, TimeUnit.SECONDS);
+                        RECONNECT_INTERVAL_SECOND));
+                channelFuture.channel().eventLoop()
+                        .schedule(this::doConnect, RECONNECT_INTERVAL_SECOND, TimeUnit.SECONDS);
             }
         });
     }
