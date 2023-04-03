@@ -32,6 +32,8 @@ import com.huaweicloud.sermant.event.RemovalEventDefinitions;
  * @since 2023-02-27
  */
 public class RemovalEventServiceImpl implements RemovalEventService {
+    private static final String CONNECTOR = ":";
+
     private final RemovalEventCollector removalEventCollector = new RemovalEventCollector();
 
     private final RemovalConfig removalConfig = PluginConfigManager.getConfig(RemovalConfig.class);
@@ -52,23 +54,25 @@ public class RemovalEventServiceImpl implements RemovalEventService {
 
     @Override
     public void reportRemovalEvent(InstanceInfo info) {
-        removalEventCollector.offerEvent(getEvent(RemovalEventDefinitions.INSTANCE_REMOVAL));
+        removalEventCollector.offerEvent(getEvent(RemovalEventDefinitions.INSTANCE_REMOVAL, info));
     }
 
     /**
      * 创建事件信息
      *
      * @param eventDefinition 事件定义
+     * @param info 实例信息
      * @return 事件信息
      */
-    private static Event getEvent(RemovalEventDefinitions eventDefinition) {
-        EventInfo eventInfo = new EventInfo(eventDefinition.getName(), eventDefinition.getDescription());
+    private static Event getEvent(RemovalEventDefinitions eventDefinition, InstanceInfo info) {
+        String description = eventDefinition.getDescription() + info.getHost() + CONNECTOR + info.getPort();
+        EventInfo eventInfo = new EventInfo(eventDefinition.getName(), description);
         return new Event(eventDefinition.getScope(), eventDefinition.getEventLevel(), eventDefinition.getEventType(),
                 eventInfo);
     }
 
     @Override
     public void reportRecoveryEvent(InstanceInfo info) {
-        removalEventCollector.offerEvent(getEvent(RemovalEventDefinitions.INSTANCE_RECOVERY));
+        removalEventCollector.offerEvent(getEvent(RemovalEventDefinitions.INSTANCE_RECOVERY, info));
     }
 }

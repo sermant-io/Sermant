@@ -30,13 +30,13 @@ public enum RemovalEventDefinitions {
      * 离群实例摘除事件
      */
     INSTANCE_REMOVAL("INSTANCE_REMOVAL", EventType.GOVERNANCE, EventLevel.IMPORTANT, "removal",
-            "Outlier instance removal"),
+            "The outlier instance is removed and the instance information is: "),
 
     /**
      * 离群实例恢复事件
      */
     INSTANCE_RECOVERY("INSTANCE_RECOVERY", EventType.GOVERNANCE, EventLevel.IMPORTANT, "removal",
-            "Outlier instance recovery"),;
+            "The outlier instance is recovery and the instance information is: "),;
     /**
      * 事件名称
      */
