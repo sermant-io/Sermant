@@ -53,14 +53,14 @@ public class RouterConfigHandler extends AbstractConfigHandler {
                     .collectServiceRouteRuleEvent(JSON.toJSONString(configuration.getRouteRule()));
             return;
         }
-        Map<String, String> routeRuleMap = getRouteRuleMap(event);
+        Map<String, List<Object>> routeRuleMap = getRouteRuleMap(event);
         Map<String, List<EntireRule>> routeRule = new HashMap<>();
-        for (Entry<String, String> entry : routeRuleMap.entrySet()) {
-            List<Map<String, String>> routeRuleList = yaml.load(entry.getValue());
-            if (CollectionUtils.isEmpty(routeRuleList)) {
+        for (Entry<String, List<Object>> entry : routeRuleMap.entrySet()) {
+            List<Object> value = entry.getValue();
+            if (CollectionUtils.isEmpty(value)) {
                 continue;
             }
-            List<EntireRule> list = JSONArray.parseArray(JSONObject.toJSONString(routeRuleList), EntireRule.class);
+            List<EntireRule> list = JSONArray.parseArray(JSONObject.toJSONString(value), EntireRule.class);
             RuleUtils.removeInvalidRules(list, RouterConstant.DUBBO_CACHE_NAME.equals(cacheName),
                     RouterConstant.DUBBO_CACHE_NAME.equals(cacheName));
             if (!CollectionUtils.isEmpty(list)) {
@@ -81,9 +81,9 @@ public class RouterConfigHandler extends AbstractConfigHandler {
         return RouterConstant.ROUTER_KEY_PREFIX.equals(key);
     }
 
-    private Map<String, String> getRouteRuleMap(DynamicConfigEvent event) {
+    private Map<String, List<Object>> getRouteRuleMap(DynamicConfigEvent event) {
         String content = event.getContent();
-        Map<String, String> routeRuleMap = yaml.load(content);
+        Map<String, List<Object>> routeRuleMap = yaml.load(content);
         if (CollectionUtils.isEmpty(routeRuleMap)) {
             return Collections.emptyMap();
         }

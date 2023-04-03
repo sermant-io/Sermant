@@ -26,7 +26,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
  * @since 2022-08-02
  */
 @EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "FLOW_CONTROL")
-public class RestFlowControlTest extends FlowControlTest{
+public class RestFlowControlTest extends FlowControlTest {
     @Override
     protected String getRestConsumerUrl() {
         return "http://127.0.0.1:8005/flowcontrol";
