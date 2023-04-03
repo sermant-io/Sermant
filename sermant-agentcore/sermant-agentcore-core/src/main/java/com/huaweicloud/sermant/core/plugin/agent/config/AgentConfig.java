@@ -51,12 +51,17 @@ public class AgentConfig implements BaseConfig {
     /**
      * 是否在增强过程中输出检索日志
      */
-    private boolean isShowEnhanceLogEnable = false;
+    private boolean isShowEnhanceLog = false;
+
+    /**
+     * 是否输出被增强的类的字节码文件
+     */
+    private boolean isOutputEnhancedClasses = false;
 
     /**
      * 被增强类的输出路径，如果为空，则不输出
      */
-    private String enhancedClassOutputPath;
+    private String enhancedClassesOutputPath;
 
     /**
      * 插件的合并策略，定义{@link PluginDeclarer}插件声明器的合并策略
@@ -97,20 +102,28 @@ public class AgentConfig implements BaseConfig {
         this.ignoredPrefixes = ignoredPrefixes;
     }
 
-    public boolean isShowEnhanceLogEnable() {
-        return isShowEnhanceLogEnable;
+    public boolean isShowEnhanceLog() {
+        return isShowEnhanceLog;
     }
 
-    public void setShowEnhanceLogEnable(boolean showEnhanceLogEnable) {
-        isShowEnhanceLogEnable = showEnhanceLogEnable;
+    public void setShowEnhanceLog(boolean showEnhanceLog) {
+        isShowEnhanceLog = showEnhanceLog;
     }
 
-    public String getEnhancedClassOutputPath() {
-        return enhancedClassOutputPath;
+    public boolean isOutputEnhancedClasses() {
+        return isOutputEnhancedClasses;
     }
 
-    public void setEnhancedClassOutputPath(String enhancedClassOutputPath) {
-        this.enhancedClassOutputPath = enhancedClassOutputPath;
+    public void setOutputEnhancedClasses(boolean outputEnhancedClasses) {
+        isOutputEnhancedClasses = outputEnhancedClasses;
+    }
+
+    public String getEnhancedClassesOutputPath() {
+        return enhancedClassesOutputPath;
+    }
+
+    public void setEnhancedClassesOutputPath(String enhancedClassesOutputPath) {
+        this.enhancedClassesOutputPath = enhancedClassesOutputPath;
     }
 
     public Set<String> getServiceBlackList() {
@@ -152,8 +165,7 @@ public class AgentConfig implements BaseConfig {
         NONE,
 
         /**
-         * 仅合并{@link PluginDeclarer#getClassMatcher}为{@link
-         * ClassTypeMatcher}的插件声明器，即通过匹配的类名合并
+         * 仅合并{@link PluginDeclarer#getClassMatcher}为{@link ClassTypeMatcher}的插件声明器，即通过匹配的类名合并
          * <p>插件较多，且主要是全限定名匹配的场景时，该策略有优势
          */
         BY_NAME,
