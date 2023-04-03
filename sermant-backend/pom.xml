@@ -15,8 +15,8 @@
         <jdk.version>1.8</jdk.version>
         <spring.boot.version>2.5.3</spring.boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <io.netty.version>4.1.75.Final</io.netty.version>
-        <spring-boot.version>2.5.8</spring-boot.version>
+        <io.netty.version>4.1.86.Final</io.netty.version>
+        <spring-boot.version>2.6.1</spring-boot.version>
         <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
         <protobuf-java.version>3.9.1</protobuf-java.version>
         <lombok.version>1.18.12</lombok.version>
@@ -30,6 +30,7 @@
         <jedis.version>4.3.1</jedis.version>
         <powermock.version>2.0.9</powermock.version>
         <expiringmap.version>0.5.8</expiringmap.version>
+        <jackson-databind.version>2.13.4.1</jackson-databind.version>
         <webapp.path>${project.basedir}/src/main/webapp/frontend</webapp.path>
     </properties>
 
@@ -46,6 +47,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
             <version>${spring-boot.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
