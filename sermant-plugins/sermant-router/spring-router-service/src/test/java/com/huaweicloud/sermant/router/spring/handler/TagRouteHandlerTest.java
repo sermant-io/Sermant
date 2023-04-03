@@ -16,6 +16,8 @@
 
 package com.huaweicloud.sermant.router.spring.handler;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.event.config.EventConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
@@ -23,9 +25,12 @@ import com.huaweicloud.sermant.router.spring.RuleInitializationUtils;
 import com.huaweicloud.sermant.router.spring.TestDefaultServiceInstance;
 import com.huaweicloud.sermant.router.spring.cache.AppCache;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.cloud.client.ServiceInstance;
 
 import java.util.ArrayList;
@@ -43,14 +48,29 @@ import java.util.Map;
 public class TagRouteHandlerTest {
     private static TagRouteHandler tagRouteHandler;
 
+    private static EventConfig config;
+
+    private static MockedStatic<ConfigManager> mockConfigManager;
+
     /**
      * UT执行前进行mock
      */
     @BeforeClass
     public static void before() {
+        config = new EventConfig();
+        config.setEnable(false);
+        mockConfigManager = Mockito.mockStatic(ConfigManager.class);
+        mockConfigManager.when(() -> ConfigManager.getConfig(EventConfig.class)).thenReturn(config);
         tagRouteHandler = new TagRouteHandler();
     }
 
+    /**
+     * UT执行后释放资源
+     */
+    @AfterClass
+    public static void after(){
+        mockConfigManager.close();
+    }
     /**
      * 测试getTargetInstancesByRules方法
      */
@@ -166,7 +186,7 @@ public class TagRouteHandlerTest {
      * 测试rule规则如下：
      * given：match为精确匹配az1，未设置policy，下游provider无az1实例
      * when：route至az1
-     * then：不能匹配到下游provider实例
+     * then：不能匹配到下游provider实例，则返回所有实例
      */
     @Test
     public void testGetTargetInstancesByTagRulesWithoutPolicySceneTwo() {
@@ -181,7 +201,7 @@ public class TagRouteHandlerTest {
         AppCache.INSTANCE.setMetadata(metadata);
         List<Object> targetInstances = tagRouteHandler.handle("foo", instances,
                 new RequestData(null, null, null));
-        Assert.assertEquals(0, targetInstances.size());
+        Assert.assertEquals(2, targetInstances.size());
         ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }
 
@@ -341,6 +361,7 @@ public class TagRouteHandlerTest {
                 new RequestData(null, null, null));
         Assert.assertEquals(1, targetInstances.size());
 
+        // 没有匹配上返回所有的实例
         List<Object> instances3 = new ArrayList<>();
         ServiceInstance instance7 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "az3");
         ServiceInstance instance8 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "az2");
@@ -350,7 +371,7 @@ public class TagRouteHandlerTest {
         instances3.add(instance9);
         targetInstances = tagRouteHandler.handle("foo", instances3,
                 new RequestData(null, null, null));
-        Assert.assertEquals(0, targetInstances.size());
+        Assert.assertEquals(3, targetInstances.size());
 
         ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }

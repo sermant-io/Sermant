@@ -17,11 +17,13 @@
 package com.huaweicloud.sermant.router.config.strategy;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.router.common.event.PolicyEvent;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.entity.Match;
 import com.huaweicloud.sermant.router.config.entity.Policy;
 import com.huaweicloud.sermant.router.config.entity.Route;
 import com.huaweicloud.sermant.router.config.entity.Rule;
+import com.huaweicloud.sermant.router.config.utils.PolicyEventUtils;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils.RouteResult;
 
@@ -90,20 +92,45 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
         RouteResult<?> result = RuleUtils.getTargetTags(rule.getRoute());
         List<I> matchInstances = getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName, instances,
                 false);
+
+        // 如果匹配到的实例数为0，则返回所以实例
+        if (CollectionUtils.isEmpty(matchInstances)) {
+            LOGGER.fine("not matched, return all instances");
+            return instances;
+        }
+
+        // 校验是否有同TAG优先规则
         Match match = rule.getMatch();
         if (match == null) {
             return matchInstances;
         }
         Policy policy = match.getPolicy();
-
-        // 1.全部可用实例数小于全部实例最小可用阈值，则同AZ优先
-        // 2.未设置全部实例最小可用阈值，未超过同AZ比例阈值，则同AZ优先
-        // 3.设置了全部实例最小可用阈值，但其小于全部AZ可用实例，未超过同AZ比例阈值，则同AZ优先
-        if (policy == null || policy.getMinAllInstances() > instances.size()
-                || instances.size() * policy.getTriggerThreshold() < matchInstances.size()) {
+        if (policy == null) {
+            LOGGER.fine("The same Tag priority rule is not configured (the Policy configuration is null)");
             return matchInstances;
         }
-        LOGGER.warning("not matched, return all instances");
+
+        // 情况一：全部实例最小可用阈值大于全部可用实例数，则同TAG优先
+        if (policy.getMinAllInstances() > instances.size()) {
+            PolicyEventUtils.notifySameTagMatchedEvent(PolicyEvent.SAME_TAG_MATCH_LESS_MIN_ALL_INSTANCES,
+                    match.getTags(), serviceName);
+            LOGGER.fine("Same tag rule match that less than the minimum available threshold for all instances");
+            return matchInstances;
+        }
+
+        // 情况二：未设置全部实例最小可用阈值，超过(大于等于)同TAG比例阈值，则同TAG优先
+        // 情况三：设置了全部实例最小可用阈值，但其小于全部TAG可用实例，超过（大于等于）同TAG比例阈值，则同TAG优先
+        if (matchInstances.size() >= instances.size() * policy.getTriggerThreshold()) {
+            PolicyEventUtils.notifySameTagMatchedEvent(PolicyEvent.SAME_TAG_MATCH_EXCEEDED_TRIGGER_THRESHOLD,
+                    match.getTags(), serviceName);
+            LOGGER.fine("Same tag rule match that exceeded trigger threshold");
+            return matchInstances;
+        }
+
+        // 情况四：未匹配上
+        PolicyEventUtils.notifySameTagMisMatchedEvent(PolicyEvent.SAME_TAG_MISMATCH,
+                match.getTags(), serviceName);
+        LOGGER.fine("not matched, return all instances");
         return instances;
     }
 

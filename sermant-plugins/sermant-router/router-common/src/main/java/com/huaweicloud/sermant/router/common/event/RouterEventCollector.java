@@ -85,4 +85,42 @@ public class RouterEventCollector extends EventCollector {
                 RouterEventDefinition.ROUTER_RULE_TAKE_EFFECT.getEventType(),
                 new EventInfo(RouterEventDefinition.ROUTER_RULE_TAKE_EFFECT.getName(), eventDescription)));
     }
+
+    /**
+     * 采集选取下游serviceName匹配有效事件
+     *
+     * @param tagMsg tags信息
+     * @param serviceName service名
+     * @param reason 原因
+     */
+    public void collectSameTagMatchedEvent(String tagMsg, String serviceName, String reason) {
+        if (!eventConfig.isEnable()) {
+            return;
+        }
+        String eventDescription = "The matching with the tag (" + tagMsg + ") rule takes effect when request "
+                + "service is " + serviceName + " (reason: " + reason + ")";
+        offerEvent(new Event(RouterEventDefinition.SAME_TAG_RULE_MATCH.getScope(),
+                RouterEventDefinition.SAME_TAG_RULE_MATCH.getEventLevel(),
+                RouterEventDefinition.SAME_TAG_RULE_MATCH.getEventType(),
+                new EventInfo(RouterEventDefinition.SAME_TAG_RULE_MATCH.getName(), eventDescription)));
+    }
+
+    /**
+     * 采集选取下游serviceName匹配无效事件
+     *
+     * @param tagMsg tags信息
+     * @param serviceName service名
+     * @param reason 原因
+     */
+    public void collectSameTagMisMatchedEvent(String tagMsg, String serviceName, String reason) {
+        if (!eventConfig.isEnable()) {
+            return;
+        }
+        String eventDescription = "The matching with the tag (" + tagMsg + ") rule did not take effect when request "
+                + "service is " + serviceName + " (reason: " + reason + ")";
+        offerEvent(new Event(RouterEventDefinition.SAME_TAG_RULE_MISMATCH.getScope(),
+                RouterEventDefinition.SAME_TAG_RULE_MISMATCH.getEventLevel(),
+                RouterEventDefinition.SAME_TAG_RULE_MISMATCH.getEventType(),
+                new EventInfo(RouterEventDefinition.SAME_TAG_RULE_MISMATCH.getName(), eventDescription)));
+    }
 }
