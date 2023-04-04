@@ -20,20 +20,27 @@ import com.huaweicloud.sermant.core.config.common.BaseConfig;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 
 /**
- * Backend配置
+ * gateway配置
  *
  * @author luanwenfei
  * @since 2022-03-24
  */
-@ConfigTypeKey("backend")
-public class BackendConfig implements BaseConfig {
+@ConfigTypeKey("gateway")
+public class GatewayConfig implements BaseConfig {
+    private static final int NETTY_DEFAULT_CONNECT_TIMEOUT = 5000;
+
+    private static final long NETTY_DEFAULT_WRITE_READ_WAIT_TIME = 60000L;
+
     private String nettyIp;
 
     private int nettyPort;
 
-    private String httpIp;
+    /**
+     * Netty 需要设置Integer型超时事件，故此处为int非long
+     */
+    private int nettyConnectTimeout = NETTY_DEFAULT_CONNECT_TIMEOUT;
 
-    private int httpPort;
+    private long nettyWriteAndReadWaitTime = NETTY_DEFAULT_WRITE_READ_WAIT_TIME;
 
     public String getNettyIp() {
         return nettyIp;
@@ -51,19 +58,19 @@ public class BackendConfig implements BaseConfig {
         this.nettyPort = nettyPort;
     }
 
-    public String getHttpIp() {
-        return httpIp;
+    public int getNettyConnectTimeout() {
+        return nettyConnectTimeout;
     }
 
-    public void setHttpIp(String httpIp) {
-        this.httpIp = httpIp;
+    public void setNettyConnectTimeout(int nettyConnectTimeout) {
+        this.nettyConnectTimeout = nettyConnectTimeout;
     }
 
-    public int getHttpPort() {
-        return httpPort;
+    public long getNettyWriteAndReadWaitTime() {
+        return nettyWriteAndReadWaitTime;
     }
 
-    public void setHttpPort(int httpPort) {
-        this.httpPort = httpPort;
+    public void setNettyWriteAndReadWaitTime(long nettyWriteAndReadWaitTime) {
+        this.nettyWriteAndReadWaitTime = nettyWriteAndReadWaitTime;
     }
 }

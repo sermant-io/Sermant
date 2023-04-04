@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.implement.service.send.netty;
 
 import com.huaweicloud.sermant.core.config.ConfigManager;
-import com.huaweicloud.sermant.core.service.send.config.BackendConfig;
+import com.huaweicloud.sermant.core.service.send.config.GatewayConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,8 +48,8 @@ public class NettyClientFactory {
      * @return NettyClient
      */
     public synchronized NettyClient getDefaultNettyClient() {
-        BackendConfig backendConfig = ConfigManager.getConfig(BackendConfig.class);
-        return getNettyClient(backendConfig.getNettyIp(), backendConfig.getNettyPort());
+        GatewayConfig gatewayConfig = ConfigManager.getConfig(GatewayConfig.class);
+        return getNettyClient(gatewayConfig.getNettyIp(), gatewayConfig.getNettyPort());
     }
 
     /**

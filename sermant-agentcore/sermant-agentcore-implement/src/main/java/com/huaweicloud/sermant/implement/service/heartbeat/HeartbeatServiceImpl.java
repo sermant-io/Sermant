@@ -69,14 +69,17 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     private static final ScheduledExecutorService EXECUTOR_SERVICE =
             Executors.newScheduledThreadPool(1, new ThreadFactoryUtils("heartbeat-task"));
 
-    // 创建NettyClient
-    private final NettyClient nettyClient = NettyClientFactory.getInstance().getDefaultNettyClient();
+    /**
+     * NettyClient
+     */
+    private NettyClient nettyClient;
 
     // 初始化心跳数据常量
     private final HeartbeatMessage heartbeatMessage = new HeartbeatMessage();
 
     @Override
     public void start() {
+        nettyClient = NettyClientFactory.getInstance().getDefaultNettyClient();
         EXECUTOR_SERVICE.scheduleAtFixedRate(this::execute, 0,
                 Math.max(ConfigManager.getConfig(HeartbeatConfig.class).getInterval(),
                         HeartbeatConstant.HEARTBEAT_MINIMAL_INTERVAL),
@@ -100,6 +103,10 @@ public class HeartbeatServiceImpl implements HeartbeatService {
             addExtInfo(entry.getKey(), heartbeatMessage.getPluginInfoMap().get(entry.getKey()));
         }
         heartbeatMessage.updateHeartbeatVersion();
+        if (nettyClient == null) {
+            LOGGER.warning("Netty client is null when send heartbeat message.");
+            return;
+        }
         nettyClient.sendInstantData(JSONObject.toJSONString(heartbeatMessage).getBytes(CommonConstant.DEFAULT_CHARSET),
                 Message.ServiceData.DataType.HEARTBEAT_DATA);
     }

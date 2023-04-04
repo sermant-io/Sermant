@@ -69,11 +69,6 @@ public class AgentConfig implements BaseConfig {
     private CombineStrategy combineStrategy = CombineStrategy.ALL;
 
     /**
-     * agent服务黑名单
-     */
-    private Set<String> serviceBlackList = Collections.emptySet();
-
-    /**
      * 拦截插件服务名单
      */
     private Set<String> serviceInjectList = Collections.emptySet();
@@ -124,14 +119,6 @@ public class AgentConfig implements BaseConfig {
 
     public void setEnhancedClassesOutputPath(String enhancedClassesOutputPath) {
         this.enhancedClassesOutputPath = enhancedClassesOutputPath;
-    }
-
-    public Set<String> getServiceBlackList() {
-        return serviceBlackList;
-    }
-
-    public void setServiceBlackList(Set<String> serviceBlackList) {
-        this.serviceBlackList = serviceBlackList;
     }
 
     public Set<String> getServiceInjectList() {

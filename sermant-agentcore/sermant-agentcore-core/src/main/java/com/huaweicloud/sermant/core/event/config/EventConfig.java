@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
  * @author luanwenfei
  * @since 2023-03-08
  */
-@ConfigTypeKey("event.config")
+@ConfigTypeKey("event")
 public class EventConfig implements BaseConfig {
     /**
      * 默认事件发送时间间隔

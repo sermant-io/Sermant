@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.implement.service.send.netty;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.service.send.api.GatewayClient;
-import com.huaweicloud.sermant.core.service.send.config.BackendConfig;
+import com.huaweicloud.sermant.core.service.send.config.GatewayConfig;
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
 
 import com.alibaba.fastjson.JSON;
@@ -41,9 +41,9 @@ public class NettyGatewayClient implements GatewayClient {
 
     @Override
     public void start() {
-        BackendConfig backendConfig = ConfigManager.getConfig(BackendConfig.class);
+        GatewayConfig gatewayConfig = ConfigManager.getConfig(GatewayConfig.class);
         nettyClient = NettyClientFactory.getInstance()
-                .getNettyClient(backendConfig.getNettyIp(), backendConfig.getNettyPort());
+                .getNettyClient(gatewayConfig.getNettyIp(), gatewayConfig.getNettyPort());
     }
 
     @Override
