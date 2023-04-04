@@ -52,8 +52,11 @@ public class BackendConfig {
     @Value("${database.password}")
     private String password;
 
-    @Value("${database.expire}")
-    private String expire;
+    @Value("${database.event.expire}")
+    private int eventExpire;
+
+    @Value("${database.field.expire}")
+    private int fieldExpire;
 
     @Value("${webhook.eventpush.level}")
     private String webhookPushEventThreshold;
@@ -71,10 +74,13 @@ public class BackendConfig {
     private String timeout;
 
     @Value("${session.expire}")
-    private String sessionTimeout;
+    private int sessionTimeout;
 
     @Value("${database.filter.thread.num}")
     private String filterThreadNum;
+
+    @Value("${max.effective.time:60000}")
+    private long heartbeatEffectiveTime;
 
     public String getUrl() {
         return url;
@@ -100,12 +106,28 @@ public class BackendConfig {
         return password;
     }
 
-    public String getExpire() {
-        return expire;
+    public int getEventExpire() {
+        return eventExpire;
     }
 
-    public void setExpire(String expire) {
-        this.expire = expire;
+    public void setExpire(int expire) {
+        this.eventExpire = expire;
+    }
+
+    public int getFieldExpire() {
+        return fieldExpire;
+    }
+
+    public void setFieldExpire(int fieldExpire) {
+        this.fieldExpire = fieldExpire;
+    }
+
+    public long getHeartbeatEffectiveTime() {
+        return heartbeatEffectiveTime;
+    }
+
+    public void setHeartbeatEffectiveTime(long heartbeatEffectiveTime) {
+        this.heartbeatEffectiveTime = heartbeatEffectiveTime;
     }
 
     public void setWebhookPushEventThreshold(String webhookPushEventThreshold) {
@@ -156,11 +178,11 @@ public class BackendConfig {
         this.timeout = timeout;
     }
 
-    public String getSessionTimeout() {
+    public int getSessionTimeout() {
         return sessionTimeout;
     }
 
-    public void setSessionTimeout(String sessionTimeout) {
+    public void setSessionTimeout(int sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
     }
 

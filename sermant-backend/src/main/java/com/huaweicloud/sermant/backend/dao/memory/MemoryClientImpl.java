@@ -60,25 +60,26 @@ public class MemoryClientImpl implements EventDao {
      * @param backendConfig 配置
      */
     public MemoryClientImpl(BackendConfig backendConfig) {
-        this.eventMap = ExpiringMap.builder().expiration(Long.parseLong(backendConfig.getExpire()), TimeUnit.SECONDS)
+        this.eventMap = ExpiringMap.builder().expiration(
+                backendConfig.getEventExpire(), TimeUnit.SECONDS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.agentInstanceMap = ExpiringMap.builder()
-                .expiration(Long.parseLong(backendConfig.getExpire()), TimeUnit.SECONDS)
+                .expiration(backendConfig.getEventExpire(), TimeUnit.SECONDS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.eventTimeKeyMap = ExpiringMap.builder()
-                .expiration(Long.parseLong(backendConfig.getExpire()), TimeUnit.SECONDS)
+                .expiration(backendConfig.getEventExpire(), TimeUnit.SECONDS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.sessionMap = ExpiringMap.builder()
-                .expiration(Long.parseLong(backendConfig.getSessionTimeout()), TimeUnit.SECONDS)
+                .expiration(backendConfig.getSessionTimeout(), TimeUnit.SECONDS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.emergency = ExpiringMap.builder()
-                .expiration(Long.parseLong(backendConfig.getExpire()), TimeUnit.SECONDS)
+                .expiration(backendConfig.getEventExpire(), TimeUnit.SECONDS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.important = ExpiringMap.builder()
-                .expiration(Long.parseLong(backendConfig.getExpire()), TimeUnit.SECONDS)
+                .expiration(backendConfig.getEventExpire(), TimeUnit.SECONDS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.normal = ExpiringMap.builder()
-                .expiration(Long.parseLong(backendConfig.getExpire()), TimeUnit.SECONDS)
+                .expiration(backendConfig.getEventExpire(), TimeUnit.SECONDS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
     }
 
