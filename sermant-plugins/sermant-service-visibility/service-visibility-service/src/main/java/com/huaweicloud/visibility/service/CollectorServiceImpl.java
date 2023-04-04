@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 public class CollectorServiceImpl implements CollectorService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final int VISIBILITY_MESSAGE = 12;
+    private static final int VISIBILITY_MESSAGE = 3;
 
     private final ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
 

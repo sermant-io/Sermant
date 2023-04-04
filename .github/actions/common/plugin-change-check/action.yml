@@ -58,7 +58,7 @@ runs:
     - name: env sermant-service-visibility
       shell: bash
       run: |
-        echo "sermantServiceVisibility=${{ steps.changed-sermant-service-visibility.outputs.changed }}" >> $GITHUB_ENV
+        echo "sermantServiceVisibilityChanged=${{ steps.changed-sermant-service-visibility.outputs.changed }}" >> $GITHUB_ENV
     - uses: marceloprado/has-changed-path@v1
       id: changed-sermant-service-registry
       with:
