@@ -82,6 +82,9 @@ public class NettyServer {
     @Value("${max.cache.time:600000}")
     private long maxCacheTime;
 
+    @Value("${netty.thread.num:20}")
+    private int threadNum;
+
     @Autowired
     private VisibilityConfig visibilityConfig;
 
@@ -98,10 +101,10 @@ public class NettyServer {
             DELETE_TIMEOUT_DATA_DELAY_TIME, DELETE_TIMEOUT_DATA_PERIOD_TIME);
 
         // 处理连接的线程组
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        EventLoopGroup bossGroup = new NioEventLoopGroup(threadNum);
 
         // 处理数据的线程组
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup(threadNum);
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)

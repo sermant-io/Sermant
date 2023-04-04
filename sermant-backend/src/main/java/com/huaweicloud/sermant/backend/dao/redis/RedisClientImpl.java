@@ -32,10 +32,9 @@ import com.alibaba.fastjson.JSONObject;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.params.ScanParams;
-import redis.clients.jedis.resps.ScanResult;
 import redis.clients.jedis.resps.Tuple;
 
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -47,7 +46,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -96,7 +94,7 @@ public class RedisClientImpl implements EventDao {
     @Override
     public boolean addEvent(Event event) {
         try (Jedis jedis = jedisPool.getResource()) {
-            String instanceMeta = jedis.hget(CommonConst.REDIS_HASH_KEY_OF_INSTANCE_META, event.getMetaHash());
+            String instanceMeta = jedis.get(event.getMetaHash());
             if (DbUtils.isEmpty(instanceMeta)) {
                 LOGGER.error("add event failed, event:{}, error message:[instance not exist]", event);
                 return false;
@@ -108,6 +106,9 @@ public class RedisClientImpl implements EventDao {
 
             // 检查是否有相同field
             field = field + CommonConst.JOIN_REDIS_KEY + getSameFieldNum(field);
+
+            // 设置已有field缓存 定时过期删除
+            jedis.setex(field, backendConfig.getFieldExpire(), Strings.EMPTY);
 
             // 写入事件
             jedis.hset(CommonConst.REDIS_EVENT_KEY, field,
@@ -125,13 +126,10 @@ public class RedisClientImpl implements EventDao {
     @Override
     public boolean addInstanceMeta(InstanceMeta instanceMeta) {
         try (Jedis jedis = jedisPool.getResource()) {
-            String meta = JSONObject.toJSONString(instanceMeta);
-            if (DbUtils.isEmpty(
-                    jedis.hget(CommonConst.REDIS_HASH_KEY_OF_INSTANCE_META,
-                            instanceMeta.getMetaHash()))) {
-                // 写入实例信息
-                jedis.hset(CommonConst.REDIS_HASH_KEY_OF_INSTANCE_META, instanceMeta.getMetaHash(), meta);
-            }
+            jedis.setex(
+                    instanceMeta.getMetaHash(),
+                    backendConfig.getHeartbeatEffectiveTime(),
+                    JSONObject.toJSONString(instanceMeta));
             return true;
         } catch (IllegalStateException e) {
             LOGGER.error("add instance meta failed, instance meta:{}, error message:{}", instanceMeta, e.getMessage());
@@ -146,26 +144,11 @@ public class RedisClientImpl implements EventDao {
      * @return 相同field 数量
      */
     private int getSameFieldNum(String field) {
-        int result = 0;
         try (Jedis jedis = jedisPool.getResource()) {
-            ScanResult<Map.Entry<String, String>> firstScanResult = jedis.hscan(
-                    CommonConst.REDIS_EVENT_KEY,
-                    String.valueOf(0),
-                    new ScanParams().match(field + "*"));
-            int cursor = Integer.parseInt(firstScanResult.getCursor());
-            result += firstScanResult.getResult().size();
-            while (cursor > 0) {
-                ScanResult<Map.Entry<String, String>> scanResult = jedis.hscan(
-                        CommonConst.REDIS_EVENT_KEY,
-                        String.valueOf(cursor),
-                        new ScanParams().match(field + "*"));
-                cursor = Integer.parseInt(scanResult.getCursor());
-                result += scanResult.getResult().size();
-            }
-            return result;
+            return jedis.keys(field + "*").size();
         } catch (IllegalStateException e) {
             LOGGER.error("query same field failed, field:{}, error message:{}", field, e.getMessage());
-            return result;
+            return 0;
         }
     }
 
@@ -182,7 +165,7 @@ public class RedisClientImpl implements EventDao {
             Collections.reverse(eventKeys);
             jedis.setex(
                     eventsRequestEntity.getSessionId(),
-                    Integer.parseInt(backendConfig.getSessionTimeout()),
+                    backendConfig.getSessionTimeout(),
                     JSONObject.toJSONString(eventKeys));
             return queryEventPage(eventsRequestEntity.getSessionId(), 1);
         } catch (IllegalStateException e) {
@@ -254,7 +237,7 @@ public class RedisClientImpl implements EventDao {
     public void cleanOverDueEventTimerTask() {
         if (backendConfig.getDatabase().equals(DatabaseType.REDIS)) {
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.SECOND, -Integer.parseInt(backendConfig.getExpire()));
+            calendar.add(Calendar.SECOND, -backendConfig.getEventExpire());
             List<Tuple> needCleanEvent = queryByTimeRange(
                     CommonConst.REDIS_EVENT_FIELD_SET_KEY, 0, calendar.getTimeInMillis());
             List<String> eventKeys = needCleanEvent.stream().map(Tuple::getElement).collect(Collectors.toList());
