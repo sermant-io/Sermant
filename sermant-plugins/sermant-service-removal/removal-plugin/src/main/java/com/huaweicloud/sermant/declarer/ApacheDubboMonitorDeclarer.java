@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.declarer;
 
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -27,7 +28,7 @@ import com.huaweicloud.sermant.interceptor.ApacheDubboInvokeInterceptor;
  * @author zhp
  * @since 2023-02-17
  */
-public class ApacheDubboMonitorDeclarer extends AbstractSwitchDeclarer {
+public class ApacheDubboMonitorDeclarer extends AbstractPluginDeclarer {
     private static final String ENHANCE_CLASS = "org.apache.dubbo.monitor.support.MonitorFilter";
 
     private static final String INTERCEPT_CLASS = ApacheDubboInvokeInterceptor.class.getCanonicalName();

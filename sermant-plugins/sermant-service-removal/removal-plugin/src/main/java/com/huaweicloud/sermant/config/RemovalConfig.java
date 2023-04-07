@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.config;
 
+import com.huaweicloud.sermant.common.RemovalConstants;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
@@ -32,12 +33,12 @@ public class RemovalConfig implements PluginConfig {
     /**
      * 实例过期时间
      */
-    private int expireTimes;
+    private int expireTime;
 
     /**
      * 恢复时间
      */
-    private int recoveryTimes;
+    private int recoveryTime;
 
     /**
      * 支持的异常类型
@@ -52,29 +53,37 @@ public class RemovalConfig implements PluginConfig {
     /**
      * 窗口时间
      */
-    private int windowsTimes;
+    private int windowsTime = RemovalConstants.WINDOWS_TIME;
 
     /**
      * 窗口数量
      */
-    private int windowsNum;
+    private int windowsNum = RemovalConstants.WINDOWS_NUM;
 
     private List<RemovalRule> rules;
 
-    public int getExpireTimes() {
-        return expireTimes;
+    public int getExpireTime() {
+        return expireTime;
     }
 
-    public void setExpireTimes(int expireTimes) {
-        this.expireTimes = expireTimes;
+    public void setExpireTime(int expireTime) {
+        this.expireTime = expireTime;
     }
 
-    public int getRecoveryTimes() {
-        return recoveryTimes;
+    public int getRecoveryTime() {
+        return recoveryTime;
     }
 
-    public void setRecoveryTimes(int recoveryTimes) {
-        this.recoveryTimes = recoveryTimes;
+    public void setRecoveryTime(int recoveryTime) {
+        this.recoveryTime = recoveryTime;
+    }
+
+    public int getWindowsTime() {
+        return windowsTime;
+    }
+
+    public void setWindowsTime(int windowsTime) {
+        this.windowsTime = windowsTime;
     }
 
     public List<String> getExceptions() {
@@ -91,14 +100,6 @@ public class RemovalConfig implements PluginConfig {
 
     public void setEnableRemoval(boolean enableRemoval) {
         this.enableRemoval = enableRemoval;
-    }
-
-    public int getWindowsTimes() {
-        return windowsTimes;
-    }
-
-    public void setWindowsTimes(int windowsTimes) {
-        this.windowsTimes = windowsTimes;
     }
 
     public int getWindowsNum() {

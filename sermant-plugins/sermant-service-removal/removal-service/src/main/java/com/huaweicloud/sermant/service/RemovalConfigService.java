@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.interceptor;
+package com.huaweicloud.sermant.service;
 
 import com.huaweicloud.sermant.common.RemovalConstants;
-import org.springframework.cloud.client.ServiceInstance;
+import com.huaweicloud.sermant.config.RemovalDynamicConfigListener;
+import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.plugin.subscribe.ConfigSubscriber;
+import com.huaweicloud.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
 
 /**
- * SpringCloud 服务调用增强类
+ * 配置监听服务
  *
  * @author zhp
- * @since 2023-02-17
+ * @since 2023-04-04
  */
-public class SpringCloudDiscoveryInterceptor extends AbstractRemovalInterceptor<ServiceInstance> {
-    @Override
-    protected String createKey(ServiceInstance serviceInstance) {
-        return serviceInstance.getHost() + RemovalConstants.CONNECTOR + serviceInstance.getPort();
-    }
+public class RemovalConfigService implements PluginService {
+    private static final String DEFAULT_SERVICE_NAME = "default";
 
     @Override
-    protected String getServiceKey(ServiceInstance instance) {
-        return instance.getServiceId();
+    public void start() {
+        ConfigSubscriber configSubscriber = new CseGroupConfigSubscriber(
+                DEFAULT_SERVICE_NAME, new RemovalDynamicConfigListener(), RemovalConstants.PLUGIN_NAME);
+        configSubscriber.subscribe();
     }
 }

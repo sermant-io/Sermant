@@ -40,7 +40,7 @@ public class DubboCache {
      * @param interfaceName 接口名
      * @param serviceName 服务名
      */
-    public static void putApplication(String interfaceName, String serviceName) {
+    public static void putService(String interfaceName, String serviceName) {
         SERVICE_CACHE.put(interfaceName, serviceName);
     }
 
