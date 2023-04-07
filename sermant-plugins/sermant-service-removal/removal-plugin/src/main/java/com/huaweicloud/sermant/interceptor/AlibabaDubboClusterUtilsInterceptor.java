@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.interceptor;
 
+import com.huaweicloud.sermant.common.RemovalConstants;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.alibaba.dubbo.common.URL;
@@ -27,7 +28,6 @@ import com.alibaba.dubbo.common.URL;
  * @since 2023-02-17
  */
 public class AlibabaDubboClusterUtilsInterceptor extends AbstractClusterUtilsInterceptor<URL> {
-    private static final String APPLICATION_KEY = "application";
 
     @Override
     protected String getInterfaceName(URL url) {
@@ -36,6 +36,6 @@ public class AlibabaDubboClusterUtilsInterceptor extends AbstractClusterUtilsInt
 
     @Override
     protected String getServiceName(URL url) {
-        return StringUtils.getString(url.getParameter(APPLICATION_KEY));
+        return StringUtils.getString(url.getParameter(RemovalConstants.APPLICATION_KEY));
     }
 }

@@ -28,14 +28,12 @@ import com.alibaba.dubbo.rpc.Invoker;
  * @since 2023-02-17
  */
 public class AlibabaDubboDirectoryInterceptor extends AbstractRemovalInterceptor<Invoker<?>> {
-    private static final String CONNECTOR = ":";
-
     @Override
     protected String createKey(Invoker<?> invoker) {
         if (invoker.getUrl() == null) {
             return StringUtils.EMPTY;
         }
-        return invoker.getUrl().getHost() + CONNECTOR + invoker.getUrl().getPort();
+        return invoker.getUrl().getAddress();
     }
 
     @Override
@@ -43,6 +41,6 @@ public class AlibabaDubboDirectoryInterceptor extends AbstractRemovalInterceptor
         if (invoker.getInterface() == null) {
             return StringUtils.EMPTY;
         }
-        return DubboCache.getServiceName(StringUtils.getString(invoker.getInterface().getName()));
+        return DubboCache.getServiceName(StringUtils.getString(invoker.getUrl().getServiceInterface()));
     }
 }

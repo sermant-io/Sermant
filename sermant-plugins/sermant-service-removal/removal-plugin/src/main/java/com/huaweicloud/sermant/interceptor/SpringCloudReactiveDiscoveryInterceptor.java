@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.interceptor;
 
+import com.huaweicloud.sermant.common.RemovalConstants;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import reactor.core.publisher.Flux;
@@ -31,10 +32,8 @@ import java.util.List;
  * @since 2023-02-17
  */
 public class SpringCloudReactiveDiscoveryInterceptor extends AbstractRemovalInterceptor<ServiceInstance> {
-    private static final String CONNECTOR = ":";
-
     @Override
-    public ExecuteContext after(ExecuteContext context) {
+    public ExecuteContext doAfter(ExecuteContext context) {
         if (context.getResult() == null || !(context.getResult() instanceof Flux)) {
             return context;
         }
@@ -48,7 +47,7 @@ public class SpringCloudReactiveDiscoveryInterceptor extends AbstractRemovalInte
 
     @Override
     protected String createKey(ServiceInstance serviceInstance) {
-        return serviceInstance.getHost() + CONNECTOR + serviceInstance.getPort();
+        return serviceInstance.getHost() + RemovalConstants.CONNECTOR + serviceInstance.getPort();
     }
 
     @Override

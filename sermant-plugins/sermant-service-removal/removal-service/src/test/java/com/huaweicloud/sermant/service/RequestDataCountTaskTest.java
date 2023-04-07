@@ -21,7 +21,6 @@ import com.huaweicloud.sermant.config.RemovalConfig;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.entity.InstanceInfo;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -61,9 +60,9 @@ public class RequestDataCountTaskTest {
     public static void setUp() {
         RemovalConfig removalConfig = new RemovalConfig();
         removalConfig.setEnableRemoval(true);
-        removalConfig.setWindowsTimes(1000);
+        removalConfig.setWindowsTime(1000);
         removalConfig.setWindowsNum(10);
-        removalConfig.setExpireTimes(6000);
+        removalConfig.setExpireTime(6000);
         configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
         configManagerMockedStatic.when(() -> ConfigManager.getConfig(RemovalConfig.class)).thenReturn(removalConfig);
         serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
@@ -75,7 +74,7 @@ public class RequestDataCountTaskTest {
             info.getRequestNum().addAndGet(REQ_NUM);
             info.getRequestFailNum().addAndGet(REQ_FAIL_NUM);
             info.setLastInvokeTime(System.currentTimeMillis());
-        }, removalConfig.getWindowsTimes(), removalConfig.getWindowsTimes(), TimeUnit.MILLISECONDS);
+        }, removalConfig.getWindowsTime(), removalConfig.getWindowsTime(), TimeUnit.MILLISECONDS);
     }
 
     @Test
@@ -88,7 +87,6 @@ public class RequestDataCountTaskTest {
         info.getCountDataList().forEach(requestCountData -> {
             Assert.assertEquals(REQ_NUM, requestCountData.getRequestNum());
             Assert.assertEquals(REQ_FAIL_NUM, requestCountData.getRequestFailNum());
-            Assert.assertEquals(ERROR_RATE, requestCountData.getErrorRate(), 0.0);
         });
     }
 

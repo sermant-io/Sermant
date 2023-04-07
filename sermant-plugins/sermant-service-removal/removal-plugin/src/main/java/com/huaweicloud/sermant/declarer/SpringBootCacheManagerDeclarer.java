@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.declarer;
 
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -27,7 +28,7 @@ import com.huaweicloud.sermant.interceptor.SpringBootCacheManagerInterceptor;
  * @author zhp
  * @since 2023-02-17
  */
-public class SpringBootCacheManagerDeclarer extends AbstractSwitchDeclarer {
+public class SpringBootCacheManagerDeclarer extends AbstractPluginDeclarer {
     private static final String ENHANCE_CLASS = "com.huawei.discovery.service.lb.cache.InstanceCacheManager";
 
     private static final String INTERCEPT_CLASS = SpringBootCacheManagerInterceptor.class.getCanonicalName();

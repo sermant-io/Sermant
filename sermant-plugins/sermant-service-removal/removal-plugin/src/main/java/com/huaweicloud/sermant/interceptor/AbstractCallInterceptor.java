@@ -17,10 +17,7 @@
 package com.huaweicloud.sermant.interceptor;
 
 import com.huaweicloud.sermant.cache.InstanceCache;
-import com.huaweicloud.sermant.config.RemovalConfig;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.entity.RequestInfo;
 
 import java.util.List;
@@ -28,29 +25,19 @@ import java.util.List;
 /**
  * 服务实例摘除抽象类
  *
+ * @param <T> 被调用的实例信息
  * @author zhp
  * @since 2023-02-21
- * @param <T> 被调用的实例信息
  */
-public abstract class AbstractCallInterceptor<T> extends AbstractInterceptor {
-    /**
-     * 离群实例摘除配置
-     */
-    protected final RemovalConfig removalConfig = PluginConfigManager.getConfig(RemovalConfig.class);
-
+public abstract class AbstractCallInterceptor<T> extends AbstractSwitchInterceptor {
     @Override
-    public ExecuteContext before(ExecuteContext context) {
+    public ExecuteContext doBefore(ExecuteContext context) {
         return context;
     }
 
     @Override
-    public ExecuteContext after(ExecuteContext context) {
+    public ExecuteContext doAfter(ExecuteContext context) {
         saveCallInfo(context);
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) {
         return context;
     }
 
@@ -68,7 +55,7 @@ public abstract class AbstractCallInterceptor<T> extends AbstractInterceptor {
             requestInfo.setHost(getHost(instance));
             requestInfo.setPort(getPort(instance));
             requestInfo.setRequestTime(System.currentTimeMillis());
-            requestInfo.setResult(isSuccess(context));
+            requestInfo.setSuccess(isSuccess(context));
             InstanceCache.saveInstanceInfo(requestInfo);
         }
     }
@@ -105,17 +92,19 @@ public abstract class AbstractCallInterceptor<T> extends AbstractInterceptor {
      * @return 调用结果成功或者失败
      */
     protected boolean isSuccess(ExecuteContext context) {
-        if (removalConfig.getExceptions() == null || removalConfig.getExceptions().isEmpty()) {
+        if (REMOVAL_CONFIG.getExceptions() == null || REMOVAL_CONFIG.getExceptions().isEmpty()) {
             return true;
         }
         if (context.getThrowable() == null) {
             return true;
         }
-        List<String> exceptions = removalConfig.getExceptions();
-        if (context.getThrowable().getCause() == null) {
+        List<String> exceptions = REMOVAL_CONFIG.getExceptions();
+        Throwable cause = context.getThrowable().getCause();
+
+        // Dubbo或者SpringCloud存在异常封装
+        if (cause == null) {
             return !exceptions.contains(context.getThrowable().getClass().getName());
         }
-        Throwable cause = context.getThrowable().getCause();
         if (cause.getCause() == null) {
             return !exceptions.contains(cause.getClass().getName());
         }

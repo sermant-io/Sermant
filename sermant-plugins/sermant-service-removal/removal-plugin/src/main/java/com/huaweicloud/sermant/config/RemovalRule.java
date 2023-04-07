@@ -24,7 +24,7 @@ package com.huaweicloud.sermant.config;
  */
 public class RemovalRule {
     /**
-     * 服务名称或者接口名称
+     * 服务名称
      */
     private String key;
 

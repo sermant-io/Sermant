@@ -48,7 +48,7 @@ public class InstanceInfo {
     private long removalTime;
 
     /**
-     * 摘除时间
+     * 恢复时间
      */
     private long recoveryTime;
 
@@ -71,6 +71,11 @@ public class InstanceInfo {
      * 服务调用统计信息
      */
     private List<RequestCountData> countDataList;
+
+    /**
+     * 错误率
+     */
+    private float errorRate;
 
     /**
      * 构造方法
@@ -153,6 +158,14 @@ public class InstanceInfo {
         this.recoveryTime = recoveryTime;
     }
 
+    public float getErrorRate() {
+        return errorRate;
+    }
+
+    public void setErrorRate(float errorRate) {
+        this.errorRate = errorRate;
+    }
+
     @Override
     public String toString() {
         return "InstanceInfo{"
@@ -165,6 +178,7 @@ public class InstanceInfo {
                 + ", port='" + port + '\''
                 + ", lastInvokeTime=" + lastInvokeTime
                 + ", countDataList=" + countDataList
+                + ", errorRate=" + errorRate
                 + '}';
     }
 }

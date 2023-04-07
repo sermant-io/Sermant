@@ -18,12 +18,9 @@ package com.huaweicloud.sermant.interceptor;
 
 import com.huaweicloud.sermant.cache.InstanceCache;
 import com.huaweicloud.sermant.cache.RuleCache;
-import com.huaweicloud.sermant.config.RemovalConfig;
 import com.huaweicloud.sermant.config.RemovalRule;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.entity.InstanceInfo;
 import com.huaweicloud.sermant.entity.RemovalCountInfo;
@@ -42,20 +39,18 @@ import java.util.logging.Logger;
  * @author zhp
  * @since 2023-02-21
  */
-public abstract class AbstractRemovalInterceptor<T> extends AbstractInterceptor {
-    private static final RemovalConfig REMOVAL_CONFIG = PluginConfigManager.getConfig(RemovalConfig.class);
-
+public abstract class AbstractRemovalInterceptor<T> extends AbstractSwitchInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final RemovalEventService removalEventService = ServiceManager.getService(RemovalEventService.class);
 
     @Override
-    public ExecuteContext before(ExecuteContext context) {
+    public ExecuteContext doBefore(ExecuteContext context) {
         return context;
     }
 
     @Override
-    public ExecuteContext after(ExecuteContext context) {
+    public ExecuteContext doAfter(ExecuteContext context) {
         if (context.getResult() == null || !(context.getResult() instanceof List)) {
             return context;
         }
@@ -83,7 +78,8 @@ public abstract class AbstractRemovalInterceptor<T> extends AbstractInterceptor 
                 continue;
             }
             if (info.getRemovalStatus().get() && System.currentTimeMillis() > info.getRecoveryTime()
-                    && info.getRemovalStatus().compareAndSet(true, false)) {
+                    && info.getRecoveryTime() > 0 && info.getRemovalStatus().compareAndSet(true, false)) {
+                info.setRecoveryTime(0);
                 LOGGER.info("The removal strength has reached the recovery time, and the removal is canceled");
                 removalEventService.reportRecoveryEvent(info);
                 continue;
@@ -132,12 +128,12 @@ public abstract class AbstractRemovalInterceptor<T> extends AbstractInterceptor 
             if (info == null || info.getCountDataList() == null || info.getCountDataList().size() == 0) {
                 continue;
             }
-            if (InstanceCache.isNeedRemoval(info, rule) && canRemovalNum >= 1
+            if (info.getErrorRate() >= rule.getErrorRate() && canRemovalNum >= 1
                     && info.getRemovalStatus().compareAndSet(false, true)) {
                 LOGGER.info("The current instance is an abnormal instance, and the removal status is set to true");
                 iterator.remove();
                 info.setRemovalTime(System.currentTimeMillis());
-                info.setRecoveryTime(System.currentTimeMillis() + REMOVAL_CONFIG.getRecoveryTimes());
+                info.setRecoveryTime(System.currentTimeMillis() + REMOVAL_CONFIG.getRecoveryTime());
                 canRemovalNum--;
                 removalEventService.reportRemovalEvent(info);
             }
