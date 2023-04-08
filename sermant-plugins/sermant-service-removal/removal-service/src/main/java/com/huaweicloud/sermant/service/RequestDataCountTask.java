@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  * @since 2023-02-28
  */
 public class RequestDataCountTask implements PluginService {
-    private static final int SCALE = 3;
+    private static final int SCALE = 2;
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
@@ -58,13 +58,13 @@ public class RequestDataCountTask implements PluginService {
     private void processData() {
         Map<String, InstanceInfo> instanceInfoMap = InstanceCache.INSTANCE_MAP;
         if (instanceInfoMap.isEmpty()) {
-            LOGGER.log(Level.FINE,"Instance information is empty");
+            LOGGER.info("Instance information is empty");
             return;
         }
         for (Iterator<Map.Entry<String, InstanceInfo>> iterator = instanceInfoMap.entrySet().iterator();
                 iterator.hasNext(); ) {
             InstanceInfo info = iterator.next().getValue();
-            if (System.currentTimeMillis() - info.getLastInvokeTime() >= removalConfig.getExpireTime()) {
+            if (System.currentTimeMillis() - info.getLastInvokeTime() >= removalConfig.getExpireTimes()) {
                 iterator.remove();
                 if (info.getRemovalStatus().get()) {
                     removalEventService.reportRemovalEvent(info);
@@ -73,7 +73,7 @@ public class RequestDataCountTask implements PluginService {
                 continue;
             }
             saveRequestCountData(info);
-            LOGGER.log(Level.FINE, "The Instance information is {0}", info);
+            LOGGER.log(Level.INFO, "The Instance information is {0}", info);
         }
     }
 
@@ -86,49 +86,43 @@ public class RequestDataCountTask implements PluginService {
         RequestCountData countData = new RequestCountData();
         countData.setRequestNum(info.getRequestNum().get());
         countData.setRequestFailNum(info.getRequestFailNum().get());
+        calErrorRate(countData);
         if (info.getCountDataList() == null) {
             info.setCountDataList(new ArrayList<>());
         }
         info.getCountDataList().add(countData);
-        LOGGER.log(Level.FINE, "The add countData is {0}", countData);
+        LOGGER.log(Level.INFO, "The add countData is {0}", countData);
         info.getRequestNum().getAndAdd(-countData.getRequestNum());
         info.getRequestFailNum().getAndAdd(-countData.getRequestFailNum());
         if (info.getCountDataList().size() > removalConfig.getWindowsNum()) {
             info.getCountDataList().remove(0);
         }
-        info.setErrorRate(calErrorRate(info));
     }
 
     /**
      * 计算错误率
      *
-     * @param info 实例信息
-     * @return 错误率
+     * @param countData 请求统计信息
      */
-    private float calErrorRate(InstanceInfo info) {
-        int requestCount = 0;
-        int requestFailCount = 0;
-        for (RequestCountData requestCountData : info.getCountDataList()) {
-            requestCount += requestCountData.getRequestNum();
-            requestFailCount += requestCountData.getRequestFailNum();
-        }
-        if (requestCount == 0 || requestFailCount == 0) {
-            return 0;
+    private void calErrorRate(RequestCountData countData) {
+        if (countData.getRequestNum() == 0 || countData.getRequestFailNum() == 0) {
+            countData.setErrorRate(0);
         } else {
-            BigDecimal count = new BigDecimal(requestCount);
-            BigDecimal failNum = new BigDecimal(requestFailCount);
-            return failNum.divide(count, SCALE, RoundingMode.HALF_UP).floatValue();
+            BigDecimal count = new BigDecimal(countData.getRequestNum());
+            BigDecimal failNum = new BigDecimal(countData.getRequestFailNum());
+            countData.setErrorRate(failNum.divide(count, SCALE, RoundingMode.HALF_UP).floatValue());
         }
     }
 
     @Override
     public void start() {
-        if (removalConfig.getWindowsTime() == 0 || removalConfig.getWindowsNum() == 0) {
+        if (!removalConfig.isEnableRemoval() || removalConfig.getWindowsTimes() == 0
+                || removalConfig.getWindowsNum() == 0) {
             return;
         }
         scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-        scheduledThreadPoolExecutor.scheduleWithFixedDelay(this::processData, removalConfig.getWindowsTime(),
-                removalConfig.getWindowsTime(), TimeUnit.MILLISECONDS);
+        scheduledThreadPoolExecutor.scheduleWithFixedDelay(this::processData, removalConfig.getWindowsTimes(),
+                removalConfig.getWindowsTimes(), TimeUnit.MILLISECONDS);
         removalEventService = ServiceManager.getService(RemovalEventService.class);
     }
 

@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.declarer;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -28,7 +27,7 @@ import com.huaweicloud.sermant.interceptor.SpringBootApplyInterceptor;
  * @author zhp
  * @since 2023-02-17
  */
-public class SpringBootApplyDeclarer extends AbstractPluginDeclarer {
+public class SpringBootApplyDeclarer extends AbstractSwitchDeclarer {
     private static final String ENHANCE_CLASS = "com.huawei.discovery.service.util.ApplyUtil";
 
     private static final String INTERCEPT_CLASS = SpringBootApplyInterceptor.class.getCanonicalName();

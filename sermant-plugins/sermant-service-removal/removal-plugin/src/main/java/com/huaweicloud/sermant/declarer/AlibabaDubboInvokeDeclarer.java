@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.declarer;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -28,7 +27,7 @@ import com.huaweicloud.sermant.interceptor.AlibabaDubboInvokeInterceptor;
  * @author zhp
  * @since 2023-02-17
  */
-public class AlibabaDubboInvokeDeclarer extends AbstractPluginDeclarer {
+public class AlibabaDubboInvokeDeclarer extends AbstractSwitchDeclarer {
     private static final String ENHANCE_CLASS = "com.alibaba.dubbo.rpc.protocol.dubbo.DubboInvoker";
 
     private static final String INTERCEPT_CLASS = AlibabaDubboInvokeInterceptor.class.getCanonicalName();

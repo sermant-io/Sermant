@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.declarer;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -28,7 +27,7 @@ import com.huaweicloud.sermant.interceptor.SpringCloudLoadBalancerClientIntercep
  * @author zhp
  * @since 2023-02-17
  */
-public class SpringCloudLoadBalancerClientDeclarer extends AbstractPluginDeclarer {
+public class SpringCloudLoadBalancerClientDeclarer extends AbstractSwitchDeclarer {
     private static final String ENHANCE_CLASS = "org.springframework.cloud.client.loadbalancer.LoadBalancerClient";
 
     private static final String[] PARAM_CLASS = {"java.lang.String", "org.springframework.cloud.client.ServiceInstance",

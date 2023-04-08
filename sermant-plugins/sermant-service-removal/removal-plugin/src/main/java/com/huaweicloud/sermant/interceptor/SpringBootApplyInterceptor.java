@@ -83,10 +83,10 @@ public class SpringBootApplyInterceptor extends AbstractCallInterceptor<Object> 
      * @return 调用结果成功或者失败
      */
     protected boolean isSuccess(ExecuteContext context) {
-        if (REMOVAL_CONFIG.getExceptions() == null || REMOVAL_CONFIG.getExceptions().isEmpty()) {
+        if (removalConfig.getExceptions() == null || removalConfig.getExceptions().isEmpty()) {
             return true;
         }
-        List<String> exceptions = REMOVAL_CONFIG.getExceptions();
+        List<String> exceptions = removalConfig.getExceptions();
         Optional<Object> exOptional = ReflectUtils.getFieldValue(context.getArguments()[1], EXCEPTION_NAME);
         if (!exOptional.isPresent() || !(exOptional.get() instanceof Throwable)) {
             return true;

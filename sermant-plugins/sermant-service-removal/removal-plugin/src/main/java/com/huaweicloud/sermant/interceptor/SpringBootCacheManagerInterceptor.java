@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.interceptor;
 
-import com.huaweicloud.sermant.common.RemovalConstants;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
@@ -35,13 +34,14 @@ public class SpringBootCacheManagerInterceptor extends AbstractRemovalIntercepto
 
     private static final String PORT_FILED_NAME = "port";
 
+    private static final String CONNECTOR = ":";
+
     @Override
     protected String createKey(Object instance) {
         Optional<Object> hostOptional = ReflectUtils.getFieldValue(instance, HOST_FILED_NAME);
         Optional<Object> portOptional = ReflectUtils.getFieldValue(instance, PORT_FILED_NAME);
         if (hostOptional.isPresent() && portOptional.isPresent()) {
-            return StringUtils.getString(hostOptional.get()) + RemovalConstants.CONNECTOR
-                    + StringUtils.getString(portOptional.get());
+            return StringUtils.getString(hostOptional.get()) + CONNECTOR + StringUtils.getString(portOptional.get());
         }
         return StringUtils.EMPTY;
     }

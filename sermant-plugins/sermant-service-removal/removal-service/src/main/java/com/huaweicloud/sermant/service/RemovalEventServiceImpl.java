@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.service;
 
-import com.huaweicloud.sermant.common.RemovalConstants;
 import com.huaweicloud.sermant.config.RemovalConfig;
 import com.huaweicloud.sermant.core.event.Event;
 import com.huaweicloud.sermant.core.event.EventInfo;
@@ -33,16 +32,24 @@ import com.huaweicloud.sermant.event.RemovalEventDefinitions;
  * @since 2023-02-27
  */
 public class RemovalEventServiceImpl implements RemovalEventService {
+    private static final String CONNECTOR = ":";
+
     private final RemovalEventCollector removalEventCollector = new RemovalEventCollector();
+
+    private final RemovalConfig removalConfig = PluginConfigManager.getConfig(RemovalConfig.class);
 
     @Override
     public void start() {
-        EventManager.registerCollector(removalEventCollector);
+        if (removalConfig.isEnableRemoval()) {
+            EventManager.registerCollector(removalEventCollector);
+        }
     }
 
     @Override
     public void stop() {
-        EventManager.unRegisterCollector(removalEventCollector);
+        if (removalConfig.isEnableRemoval()) {
+            EventManager.unRegisterCollector(removalEventCollector);
+        }
     }
 
     @Override
@@ -58,8 +65,7 @@ public class RemovalEventServiceImpl implements RemovalEventService {
      * @return 事件信息
      */
     private static Event getEvent(RemovalEventDefinitions eventDefinition, InstanceInfo info) {
-        String description = eventDefinition.getDescription() + info.getHost() + RemovalConstants.CONNECTOR
-                + info.getPort();
+        String description = eventDefinition.getDescription() + info.getHost() + CONNECTOR + info.getPort();
         EventInfo eventInfo = new EventInfo(eventDefinition.getName(), description);
         return new Event(eventDefinition.getScope(), eventDefinition.getEventLevel(), eventDefinition.getEventType(),
                 eventInfo);
