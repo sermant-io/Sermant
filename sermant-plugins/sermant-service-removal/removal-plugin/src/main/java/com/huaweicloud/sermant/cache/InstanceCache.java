@@ -16,12 +16,15 @@
 
 package com.huaweicloud.sermant.cache;
 
-import com.huaweicloud.sermant.common.RemovalConstants;
+import com.huaweicloud.sermant.config.RemovalRule;
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.entity.InstanceInfo;
 import com.huaweicloud.sermant.entity.RequestInfo;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 /**
  * 服务实例缓存类
@@ -35,6 +38,10 @@ public class InstanceCache {
      */
     public static final Map<String, InstanceInfo> INSTANCE_MAP = new ConcurrentHashMap<>();
 
+    private static final String CONNECTOR = ":";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private InstanceCache() {
     }
 
@@ -44,17 +51,57 @@ public class InstanceCache {
      * @param requestInfo 服务调用信息
      */
     public static void saveInstanceInfo(RequestInfo requestInfo) {
-        String key = requestInfo.getHost() + RemovalConstants.CONNECTOR + requestInfo.getPort();
+        String key = requestInfo.getHost() + CONNECTOR + requestInfo.getPort();
         InstanceInfo info = INSTANCE_MAP.computeIfAbsent(key, s -> {
             InstanceInfo instanceInfo = new InstanceInfo();
             instanceInfo.setHost(requestInfo.getHost());
             instanceInfo.setPort(requestInfo.getPort());
             return instanceInfo;
         });
-        if (!requestInfo.isSuccess()) {
+        if (!requestInfo.isResult()) {
             info.getRequestFailNum().getAndIncrement();
         }
         info.getRequestNum().getAndIncrement();
         info.setLastInvokeTime(requestInfo.getRequestTime());
+    }
+
+    /**
+     * 判断是否需要摘除实例
+     *
+     * @param info 实例信息
+     * @param rule 离群实例摘除规则
+     * @return 是否需要摘除实例
+     */
+    public static boolean isNeedRemoval(InstanceInfo info, RemovalRule rule) {
+        AtomicInteger requestCount = new AtomicInteger();
+        AtomicInteger requestFailCount = new AtomicInteger();
+        if (info.getCountDataList() == null || info.getCountDataList().isEmpty()) {
+            return false;
+        }
+        info.getCountDataList().forEach(requestCountData -> {
+            requestCount.getAndAdd(requestCountData.getRequestNum());
+            requestFailCount.getAndAdd(requestCountData.getRequestFailNum());
+        });
+        float errorRate = 0.0f;
+        if (requestCount.get() != 0) {
+            errorRate = (float) requestFailCount.get() / requestCount.get();
+        }
+        return errorRate >= rule.getErrorRate();
+    }
+
+    /**
+     * 摘除实例恢复
+     */
+    public static void recovery() {
+        if (INSTANCE_MAP.isEmpty()) {
+            return;
+        }
+        for (Map.Entry<String, InstanceInfo> entry : INSTANCE_MAP.entrySet()) {
+            InstanceInfo info = entry.getValue();
+            if (info != null && info.getRemovalStatus().get() && System.currentTimeMillis() > info.getRecoveryTime()
+                    && info.getRemovalStatus().compareAndSet(true, false)) {
+                LOGGER.info("The removal strength has reached the recovery time, and the removal is canceled");
+            }
+        }
     }
 }

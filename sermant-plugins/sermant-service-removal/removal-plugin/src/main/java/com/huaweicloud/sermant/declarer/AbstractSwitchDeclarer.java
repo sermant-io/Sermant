@@ -14,26 +14,23 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.interceptor;
+package com.huaweicloud.sermant.declarer;
 
-import org.springframework.cloud.client.ServiceInstance;
+import com.huaweicloud.sermant.config.RemovalConfig;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * SpringCloud 服务调用增强类
+ * 抽象服务拦截点
  *
  * @author zhp
  * @since 2023-02-17
  */
-public class SpringCloudDiscoveryInterceptor extends AbstractRemovalInterceptor<ServiceInstance> {
-    private static final String CONNECTOR = ":";
+public abstract class AbstractSwitchDeclarer extends AbstractPluginDeclarer {
+    private final RemovalConfig removalConfig = PluginConfigManager.getConfig(RemovalConfig.class);
 
     @Override
-    protected String createKey(ServiceInstance serviceInstance) {
-        return serviceInstance.getHost() + CONNECTOR + serviceInstance.getPort();
-    }
-
-    @Override
-    protected String getServiceKey(ServiceInstance instance) {
-        return instance.getServiceId();
+    public boolean isEnabled() {
+        return removalConfig.isEnableRemoval();
     }
 }

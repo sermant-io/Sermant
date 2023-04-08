@@ -16,11 +16,15 @@
 
 package com.huaweicloud.sermant.cache;
 
+import com.huaweicloud.sermant.config.RemovalRule;
 import com.huaweicloud.sermant.entity.InstanceInfo;
+import com.huaweicloud.sermant.entity.RequestCountData;
 import com.huaweicloud.sermant.entity.RequestInfo;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 /**
  * 服务实例缓存测试类
@@ -46,7 +50,7 @@ public class InstanceCacheTest {
             RequestInfo requestInfo = new RequestInfo();
             requestInfo.setHost(HOST);
             requestInfo.setPort(PORT);
-            requestInfo.setSuccess(true);
+            requestInfo.setResult(true);
             requestInfo.setRequestTime(time);
             InstanceCache.saveInstanceInfo(requestInfo);
         }
@@ -54,7 +58,7 @@ public class InstanceCacheTest {
             RequestInfo requestInfo = new RequestInfo();
             requestInfo.setHost(HOST);
             requestInfo.setPort(PORT);
-            requestInfo.setSuccess(false);
+            requestInfo.setResult(false);
             requestInfo.setRequestTime(time);
             InstanceCache.saveInstanceInfo(requestInfo);
         }
@@ -64,5 +68,24 @@ public class InstanceCacheTest {
         Assert.assertEquals(instanceInfo.getPort(), PORT);
         Assert.assertEquals(instanceInfo.getRequestNum().get(), NUM * 2);
         Assert.assertEquals(instanceInfo.getLastInvokeTime(), time);
+    }
+
+    @Test
+    public void isNeedRemoval() {
+        RemovalRule removalRule = new RemovalRule();
+        removalRule.setMinInstanceNum(0);
+        removalRule.setErrorRate(RATE);
+        InstanceInfo info = new InstanceInfo();
+        info.setHost(HOST);
+        info.setPort(PORT);
+        info.setCountDataList(new ArrayList<>());
+        for (int i = 0; i < NUM; i++) {
+            RequestCountData countInfo = new RequestCountData();
+            countInfo.setRequestNum(NUM);
+            countInfo.setRequestFailNum(NUM / 2);
+            info.getCountDataList().add(countInfo);
+        }
+        InstanceCache.INSTANCE_MAP.put(KEY, info);
+        Assert.assertTrue(InstanceCache.isNeedRemoval(InstanceCache.INSTANCE_MAP.get(KEY), removalRule));
     }
 }

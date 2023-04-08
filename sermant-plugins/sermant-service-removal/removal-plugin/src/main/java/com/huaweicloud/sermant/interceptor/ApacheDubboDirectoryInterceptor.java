@@ -28,12 +28,14 @@ import org.apache.dubbo.rpc.Invoker;
  * @since 2023-02-17
  */
 public class ApacheDubboDirectoryInterceptor extends AbstractRemovalInterceptor<Invoker<?>> {
+    private static final String CONNECTOR = ":";
+
     @Override
     protected String createKey(Invoker<?> invoker) {
         if (invoker.getUrl() == null) {
             return StringUtils.EMPTY;
         }
-        return invoker.getUrl().getAddress();
+        return invoker.getUrl().getHost() + CONNECTOR + invoker.getUrl().getPort();
     }
 
     @Override
@@ -41,6 +43,6 @@ public class ApacheDubboDirectoryInterceptor extends AbstractRemovalInterceptor<
         if (invoker.getInterface() == null) {
             return StringUtils.EMPTY;
         }
-        return DubboCache.getServiceName(StringUtils.getString(invoker.getUrl().getServiceInterface()));
+        return DubboCache.getServiceName(StringUtils.getString(invoker.getInterface().getName()));
     }
 }

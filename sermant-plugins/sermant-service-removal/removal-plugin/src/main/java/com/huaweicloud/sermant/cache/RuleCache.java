@@ -18,7 +18,7 @@ package com.huaweicloud.sermant.cache;
 
 import com.huaweicloud.sermant.config.RemovalConfig;
 import com.huaweicloud.sermant.config.RemovalRule;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import java.util.HashMap;
@@ -38,31 +38,19 @@ public class RuleCache {
      */
     protected static final Map<String, RemovalRule> RULE_MAP = new HashMap<>();
 
-    private static RemovalRule rule;
+    private static final RemovalRule RULE;
 
-    private static final String DEFAULT_RULE_NAME = "default-rule";
-
-    private static final RemovalConfig REMOVAL_CONFIG = PluginConfigManager.getConfig(RemovalConfig.class);
+    private static final RemovalConfig REMOVAL_CONFIG = ConfigManager.getConfig(RemovalConfig.class);
 
     private RuleCache() {
     }
 
     static {
-        updateCache(REMOVAL_CONFIG);
-    }
-
-    /**
-     * 更新缓存信息
-     *
-     * @param removalConfig 离群实例摘除配置
-     */
-    public static void updateCache(RemovalConfig removalConfig) {
-        cleanCache();
-        List<RemovalRule> rules = removalConfig.getRules();
+        List<RemovalRule> rules = REMOVAL_CONFIG.getRules();
         if (rules != null && !rules.isEmpty()) {
             rules.forEach(removalRule -> RULE_MAP.put(StringUtils.getString(removalRule.getKey()), removalRule));
         }
-        rule = RULE_MAP.get(DEFAULT_RULE_NAME);
+        RULE = RULE_MAP.get(StringUtils.EMPTY);
     }
 
     /**
@@ -72,13 +60,6 @@ public class RuleCache {
      * @return 离群实例摘除规则
      */
     public static Optional<RemovalRule> getRule(String key) {
-        return Optional.ofNullable(RULE_MAP.getOrDefault(key, rule));
-    }
-
-    /**
-     * 清除缓存
-     */
-    public static void cleanCache() {
-        RuleCache.RULE_MAP.clear();
+        return Optional.ofNullable(RULE_MAP.getOrDefault(key, RULE));
     }
 }

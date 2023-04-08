@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.declarer;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
@@ -28,7 +27,7 @@ import com.huaweicloud.sermant.interceptor.SpringCloudServerListInterceptor;
  * @author zhp
  * @since 2023-02-20
  */
-public class SpringCloudServerListDeclarer extends AbstractPluginDeclarer {
+public class SpringCloudServerListDeclarer extends AbstractSwitchDeclarer {
     private static final String ENHANCE_CLASS = "com.netflix.loadbalancer.ServerList";
 
     private static final String INTERCEPT_CLASS = SpringCloudServerListInterceptor.class.getCanonicalName();

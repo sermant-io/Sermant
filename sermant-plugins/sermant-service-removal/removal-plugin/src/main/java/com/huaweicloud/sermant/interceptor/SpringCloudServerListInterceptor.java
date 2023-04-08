@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.interceptor;
 
-import com.huaweicloud.sermant.common.RemovalConstants;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.netflix.loadbalancer.Server;
@@ -28,9 +27,11 @@ import com.netflix.loadbalancer.Server;
  * @since 2023-02-17
  */
 public class SpringCloudServerListInterceptor extends AbstractRemovalInterceptor<Server> {
+    private static final String CONNECTOR = ":";
+
     @Override
     protected String createKey(Server server) {
-        return server.getHost() + RemovalConstants.CONNECTOR + server.getPort();
+        return server.getHost() + CONNECTOR + server.getPort();
     }
 
     @Override
