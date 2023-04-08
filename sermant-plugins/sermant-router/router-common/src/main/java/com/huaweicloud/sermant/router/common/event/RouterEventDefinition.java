@@ -30,7 +30,18 @@ public enum RouterEventDefinition {
      * 路由插件规则生效事件
      */
 
-    ROUTER_RULE_TAKE_EFFECT("ROUTER_RULE_TAKE_EFFECT", EventType.GOVERNANCE, EventLevel.NORMAL);
+    ROUTER_RULE_TAKE_EFFECT("ROUTER_RULE_TAKE_EFFECT", EventType.GOVERNANCE, EventLevel.NORMAL),
+
+    /**
+     * 同TAG优先规则匹配生效
+     */
+    SAME_TAG_RULE_MATCH("SAME_TAG_RULE_MATCH", EventType.GOVERNANCE, EventLevel.NORMAL),
+
+    /**
+     * 同TAG优先规则匹配失效
+     */
+    SAME_TAG_RULE_MISMATCH("SAME_TAG_RULE_MISMATCH", EventType.GOVERNANCE,
+            EventLevel.NORMAL);
 
     private final String name;
 

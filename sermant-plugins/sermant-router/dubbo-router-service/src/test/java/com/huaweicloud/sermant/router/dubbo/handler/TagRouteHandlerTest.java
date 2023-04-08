@@ -16,6 +16,8 @@
 
 package com.huaweicloud.sermant.router.dubbo.handler;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.event.config.EventConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.dubbo.ApacheInvoker;
@@ -24,15 +26,19 @@ import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.service.AbstractDirectoryServiceTest;
 
 import org.apache.dubbo.rpc.Invocation;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Collections;
+
 
 /**
  * TagRouteHandler单元测试
@@ -43,12 +49,28 @@ import java.util.Map;
 public class TagRouteHandlerTest {
     private static TagRouteHandler tagRouteHandler;
 
+    private static EventConfig config;
+
+    private static MockedStatic<ConfigManager> mockConfigManager;
+
     /**
      * UT执行前进行mock
      */
     @BeforeClass
     public static void before() {
+        config = new EventConfig();
+        config.setEnable(false);
+        mockConfigManager = Mockito.mockStatic(ConfigManager.class);
+        mockConfigManager.when(() -> ConfigManager.getConfig(EventConfig.class)).thenReturn(config);
         tagRouteHandler = new TagRouteHandler();
+    }
+
+    /**
+     * UT执行后释放资源
+     */
+    @AfterClass
+    public static void after(){
+        mockConfigManager.close();
     }
 
     /**
@@ -214,7 +236,7 @@ public class TagRouteHandlerTest {
      * 测试rule规则如下：
      * given：match为精确匹配az1，未设置policy，下游provider无az1实例
      * when：route至az1
-     * then：不能匹配到下游provider实例
+     * then：不能匹配到下游provider实例，返回所有实例
      */
     @Test
     public void testGetTargetInvokerByTagRulesWithoutPolicySceneTwo() {
@@ -235,7 +257,7 @@ public class TagRouteHandlerTest {
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
         List<Object> targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
                 , invokers, invocation, queryMap, "com.huaweicloud.foo.FooTest");
-        Assert.assertEquals(0, targetInvokers.size());
+        Assert.assertEquals(2, targetInvokers.size());
         ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }
 
@@ -425,6 +447,7 @@ public class TagRouteHandlerTest {
                 , invokers2, invocation, queryMap, "com.huaweicloud.foo.FooTest");
         Assert.assertEquals(1, targetInvokers.size());
 
+        // 未匹配上则返回所有实例
         List<Object> invokers3 = new ArrayList<>();
         ApacheInvoker<Object> invoker7 = new ApacheInvoker<>("1.0.0", "az3");
         invokers3.add(invoker7);
@@ -434,7 +457,7 @@ public class TagRouteHandlerTest {
         invokers3.add(invoker9);
         targetInvokers = (List<Object>) tagRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud.foo.FooTest")
                 , invokers3, invocation, queryMap, "com.huaweicloud.foo.FooTest");
-        Assert.assertEquals(0, targetInvokers.size());
+        Assert.assertEquals(3, targetInvokers.size());
 
         ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
     }
