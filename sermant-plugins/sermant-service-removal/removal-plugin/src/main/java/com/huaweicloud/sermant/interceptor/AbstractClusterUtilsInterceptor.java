@@ -18,7 +18,6 @@ package com.huaweicloud.sermant.interceptor;
 
 import com.huaweicloud.sermant.cache.DubboCache;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 /**
  * 增强ClusterUtils类的mergeUrl方法
@@ -27,21 +26,21 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
  * @author zhp
  * @since 2023-02-17
  */
-public abstract class AbstractClusterUtilsInterceptor<T> extends AbstractInterceptor {
+public abstract class AbstractClusterUtilsInterceptor<T> extends AbstractSwitchInterceptor {
     private static final int ARG_LENGTH = 2;
 
     @Override
-    public ExecuteContext before(ExecuteContext context) {
+    public ExecuteContext doBefore(ExecuteContext context) {
         if (context.getArguments() == null || context.getArguments().length < ARG_LENGTH) {
             return context;
         }
         T url = (T) context.getArguments()[0];
-        DubboCache.putApplication(getInterfaceName(url), getServiceName(url));
+        DubboCache.putService(getInterfaceName(url), getServiceName(url));
         return context;
     }
 
     @Override
-    public ExecuteContext after(ExecuteContext context) {
+    public ExecuteContext doAfter(ExecuteContext context) {
         return context;
     }
 

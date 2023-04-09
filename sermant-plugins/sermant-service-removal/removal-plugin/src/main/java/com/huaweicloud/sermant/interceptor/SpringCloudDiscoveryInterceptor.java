@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.interceptor;
 
+import com.huaweicloud.sermant.common.RemovalConstants;
 import org.springframework.cloud.client.ServiceInstance;
 
 /**
@@ -25,11 +26,9 @@ import org.springframework.cloud.client.ServiceInstance;
  * @since 2023-02-17
  */
 public class SpringCloudDiscoveryInterceptor extends AbstractRemovalInterceptor<ServiceInstance> {
-    private static final String CONNECTOR = ":";
-
     @Override
     protected String createKey(ServiceInstance serviceInstance) {
-        return serviceInstance.getHost() + CONNECTOR + serviceInstance.getPort();
+        return serviceInstance.getHost() + RemovalConstants.CONNECTOR + serviceInstance.getPort();
     }
 
     @Override

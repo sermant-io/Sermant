@@ -29,9 +29,9 @@ public class RequestInfo {
     private long requestTime;
 
     /**
-     * 请求结果
+     * 是否请求成功
      */
-    private boolean result;
+    private boolean success;
 
     /**
      * 实例IP或者域名
@@ -51,12 +51,12 @@ public class RequestInfo {
         this.requestTime = requestTime;
     }
 
-    public boolean isResult() {
-        return result;
+    public boolean isSuccess() {
+        return success;
     }
 
-    public void setResult(boolean result) {
-        this.result = result;
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public String getHost() {
