@@ -27,3 +27,4 @@ com.huaweicloud.sermant.declarer.SpringBootCacheManagerDeclarer
 com.huaweicloud.sermant.declarer.SpringCloudReactiveDiscoveryDeclarer
 com.huaweicloud.sermant.declarer.SpringCloudDiscoveryDeclarer
 com.huaweicloud.sermant.declarer.SpringCloudClientDeclarer
+com.huaweicloud.sermant.declarer.SpringApplicationDeclarer

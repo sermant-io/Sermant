@@ -16,4 +16,4 @@
 
 com.huaweicloud.sermant.service.RemovalEventServiceImpl
 com.huaweicloud.sermant.service.RequestDataCountTask
-com.huaweicloud.sermant.service.RemovalConfigService
+com.huaweicloud.sermant.service.RemovalConfigServiceImpl
