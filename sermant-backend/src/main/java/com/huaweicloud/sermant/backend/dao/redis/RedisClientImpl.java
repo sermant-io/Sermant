@@ -237,7 +237,7 @@ public class RedisClientImpl implements EventDao {
     public void cleanOverDueEventTimerTask() {
         if (backendConfig.getDatabase().equals(DatabaseType.REDIS)) {
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.SECOND, -backendConfig.getEventExpire());
+            calendar.add(Calendar.DATE, -backendConfig.getEventExpire());
             List<Tuple> needCleanEvent = queryByTimeRange(
                     CommonConst.REDIS_EVENT_FIELD_SET_KEY, 0, calendar.getTimeInMillis());
             List<String> eventKeys = needCleanEvent.stream().map(Tuple::getElement).collect(Collectors.toList());
