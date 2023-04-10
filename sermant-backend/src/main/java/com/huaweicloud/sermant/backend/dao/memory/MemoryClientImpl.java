@@ -61,25 +61,25 @@ public class MemoryClientImpl implements EventDao {
      */
     public MemoryClientImpl(BackendConfig backendConfig) {
         this.eventMap = ExpiringMap.builder().expiration(
-                backendConfig.getEventExpire(), TimeUnit.SECONDS)
+                backendConfig.getEventExpire(), TimeUnit.DAYS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.agentInstanceMap = ExpiringMap.builder()
-                .expiration(backendConfig.getEventExpire(), TimeUnit.SECONDS)
+                .expiration(backendConfig.getEventExpire(), TimeUnit.DAYS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.eventTimeKeyMap = ExpiringMap.builder()
-                .expiration(backendConfig.getEventExpire(), TimeUnit.SECONDS)
+                .expiration(backendConfig.getEventExpire(), TimeUnit.DAYS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.sessionMap = ExpiringMap.builder()
                 .expiration(backendConfig.getSessionTimeout(), TimeUnit.SECONDS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.emergency = ExpiringMap.builder()
-                .expiration(backendConfig.getEventExpire(), TimeUnit.SECONDS)
+                .expiration(backendConfig.getEventExpire(), TimeUnit.DAYS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.important = ExpiringMap.builder()
-                .expiration(backendConfig.getEventExpire(), TimeUnit.SECONDS)
+                .expiration(backendConfig.getEventExpire(), TimeUnit.DAYS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.normal = ExpiringMap.builder()
-                .expiration(backendConfig.getEventExpire(), TimeUnit.SECONDS)
+                .expiration(backendConfig.getEventExpire(), TimeUnit.DAYS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
     }
 
