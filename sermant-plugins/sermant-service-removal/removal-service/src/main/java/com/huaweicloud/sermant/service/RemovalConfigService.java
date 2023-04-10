@@ -34,10 +34,6 @@ public class RemovalConfigService implements PluginService {
 
     private static final String ENVIRONMENT_CODE = "environment";
 
-    private static final String SERVICE_CODE = "service";
-
-    private static final String DEFAULT_SERVICE_NAME = "default";
-
     private static final String CONNECTOR = "&";
 
     private static final String EQUAL_SIGN = "=";
@@ -47,7 +43,7 @@ public class RemovalConfigService implements PluginService {
     @Override
     public void start() {
         String group = APP_CODE + EQUAL_SIGN + serviceMeta.getApplication() + CONNECTOR + ENVIRONMENT_CODE + EQUAL_SIGN
-                + serviceMeta.getEnvironment() + CONNECTOR + SERVICE_CODE + EQUAL_SIGN + DEFAULT_SERVICE_NAME;
+                + serviceMeta.getEnvironment();
         DynamicConfigService dynamicConfigService = ServiceManager.getService(DynamicConfigService.class);
         dynamicConfigService.addGroupListener(group, new RemovalDynamicConfigListener(), true);
     }
