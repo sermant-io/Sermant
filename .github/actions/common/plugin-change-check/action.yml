@@ -84,6 +84,14 @@ runs:
       run: |
         echo "sermantMqConsumerDenyChanged=${{ steps.changed-sermant-mq-consumer-deny.outputs.changed }}" >> $GITHUB_ENV
     - uses: marceloprado/has-changed-path@v1
+      id: changed-sermant-removal
+      with:
+        paths: sermant-plugins/sermant-service-removal
+    - name: env sermant-sermant-service-removal
+      shell: bash
+      run: |
+        echo "sermantServiceRemovalChanged=${{ steps.changed-sermant-removal.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1
       id: changed-workflow-or-test
       with:
         paths: ./.github/actions ./.github/workflows sermant-integration-tests
@@ -164,6 +172,12 @@ runs:
             ${{ env.sermantSpringbootRegistryChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
           echo "enableSpringLane=true" >> $GITHUB_ENV
         fi
+        
+        # ==========removal is needed to test?==========
+        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantServiceRemovalChanged }} == 'true' -o \
+            ${{ env.sermantSpringbootRegistryChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
+          echo "enableRemoval=true" >> $GITHUB_ENV
+        fi
 
         # all workflow will trigger while workflow changed
         if [ ${{ steps.changed-workflow-or-test.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
@@ -178,5 +192,6 @@ runs:
           echo "enableVisibility=true" >> $GITHUB_ENV
           echo "enableSpringLane=true" >> $GITHUB_ENV
           echo "enableDubboLane=true" >> $GITHUB_ENV
+          echo "enableRemoval=true" >> $GITHUB_ENV
         fi
 

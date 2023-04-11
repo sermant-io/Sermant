@@ -27,10 +27,12 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.security.KeyManagementException;
@@ -50,6 +52,9 @@ public class FlowcontrolConiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(FlowcontrolConiguration.class);
     private static final int TIME_OUT = 5 * 60 * 1000;
 
+    @Value("${timeout}")
+    private int timeout;
+
     /**
      * 注入请求器
      *
@@ -59,6 +64,20 @@ public class FlowcontrolConiguration {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    /**
+     * 注入请求器
+     *
+     * @return RestTemplate
+     */
+    @LoadBalanced
+    @Bean("removalRestTemplate")
+    public RestTemplate removalRestTemplate() {
+        RestTemplate template = new RestTemplate();
+        SimpleClientHttpRequestFactory rf = (SimpleClientHttpRequestFactory) template.getRequestFactory();
+        rf.setReadTimeout(timeout);
+        return template;
     }
 
     /**
@@ -99,10 +118,7 @@ public class FlowcontrolConiguration {
         SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, strategy).build();
         SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier());
         RequestConfig requestConfig = RequestConfig.custom()
-            .setSocketTimeout(TIME_OUT)
-            .setConnectTimeout(TIME_OUT)
-            .setConnectionRequestTimeout(TIME_OUT)
-            .build();
+                .setSocketTimeout(TIME_OUT).setConnectTimeout(TIME_OUT).setConnectionRequestTimeout(TIME_OUT).build();
         HttpClientBuilder httpClientBuilder = HttpClients.custom();
         httpClientBuilder.setDefaultRequestConfig(requestConfig);
         httpClientBuilder.setSSLSocketFactory(factory);
