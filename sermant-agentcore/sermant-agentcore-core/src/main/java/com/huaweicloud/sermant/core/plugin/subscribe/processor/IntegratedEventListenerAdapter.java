@@ -31,15 +31,19 @@ public class IntegratedEventListenerAdapter implements DynamicConfigListener {
 
     private final String rawGroup;
 
+    // 订阅时的类加载器
+    private final ClassLoader classLoader;
+
     /**
      * 构造器
      *
      * @param processor 配置处理器
-     * @param rawGroup  组标签
+     * @param rawGroup 组标签
      */
     public IntegratedEventListenerAdapter(ConfigProcessor processor, String rawGroup) {
         this.processor = processor;
         this.rawGroup = rawGroup;
+        this.classLoader = Thread.currentThread().getContextClassLoader();
     }
 
     @Override
@@ -47,6 +51,14 @@ public class IntegratedEventListenerAdapter implements DynamicConfigListener {
         if (processor == null) {
             return;
         }
-        processor.process(rawGroup, event);
+
+        // 订阅时的类加载器与配置监听时的类加载器有可能不是同一个，所以需要还原
+        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(classLoader);
+            processor.process(rawGroup, event);
+        } finally {
+            Thread.currentThread().setContextClassLoader(currentClassLoader);
+        }
     }
 }
