@@ -31,9 +31,30 @@ public class GatewayConfig implements BaseConfig {
 
     private static final long NETTY_DEFAULT_WRITE_READ_WAIT_TIME = 60000L;
 
+    /**
+     * netty服务端的地址
+     */
     private String nettyIp;
 
+    /**
+     * netty服务端的端口
+     */
     private int nettyPort;
+
+    /**
+     * netty发送消息的间隔，单位：秒
+     */
+    private int sendInternalTime;
+
+    /**
+     * netty连接后断开的初始重连时间，单位：秒
+     */
+    private int initReconnectInternalTime;
+
+    /**
+     * netty连接后断开的最大重连时间，单位：秒
+     */
+    private int maxReconnectInternalTime;
 
     /**
      * Netty 需要设置Integer型超时事件，故此处为int非long
@@ -72,5 +93,29 @@ public class GatewayConfig implements BaseConfig {
 
     public void setNettyWriteAndReadWaitTime(long nettyWriteAndReadWaitTime) {
         this.nettyWriteAndReadWaitTime = nettyWriteAndReadWaitTime;
+    }
+
+    public int getSendInternalTime() {
+        return sendInternalTime;
+    }
+
+    public void setSendInternalTime(int sendInternalTime) {
+        this.sendInternalTime = sendInternalTime;
+    }
+
+    public int getInitReconnectInternalTime() {
+        return initReconnectInternalTime;
+    }
+
+    public void setInitReconnectInternalTime(int initReconnectInternalTime) {
+        this.initReconnectInternalTime = initReconnectInternalTime;
+    }
+
+    public int getMaxReconnectInternalTime() {
+        return maxReconnectInternalTime;
+    }
+
+    public void setMaxReconnectInternalTime(int maxReconnectInternalTime) {
+        this.maxReconnectInternalTime = maxReconnectInternalTime;
     }
 }
