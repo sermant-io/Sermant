@@ -63,9 +63,30 @@ public class NettyClient {
     // 运行日志
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final int SEND_INTERNAL_SECOND = 10;
+    /**
+     * 指数退避因子
+     */
+    private static final int BACKOFF_FACTOR = 2;
 
-    private static final int RECONNECT_INTERVAL_SECOND = 10;
+    /**
+     * 消息发送间隔
+     */
+    private final int sendInternalTime;
+
+    /**
+     * 初始重连时间
+     */
+    private final int initReconnectInternalTime;
+
+    /**
+     * 最大重连时间
+     */
+    private final int maxReconnectInternalTime;
+
+    /**
+     * 比较数
+     */
+    private final int compareTime;
 
     // 阻塞队列，用于缓存消息，对于非即时消息，减少消息发送的频率，设置值为100条消息
     private final BlockingQueue<Message.ServiceData> queue = new ArrayBlockingQueue<>(100);
@@ -86,6 +107,8 @@ public class NettyClient {
 
     private boolean connectionAvailable = false;
 
+    private int reconnectInternalTime;
+
     /**
      * 构造函数
      *
@@ -93,8 +116,15 @@ public class NettyClient {
      * @param serverPort serverPort
      */
     public NettyClient(String serverIp, int serverPort) {
+        GatewayConfig gatewayConfig = ConfigManager.getConfig(GatewayConfig.class);
+        sendInternalTime = gatewayConfig.getSendInternalTime();
+        initReconnectInternalTime = gatewayConfig.getInitReconnectInternalTime();
+        maxReconnectInternalTime = gatewayConfig.getMaxReconnectInternalTime();
+        compareTime = maxReconnectInternalTime / BACKOFF_FACTOR;
         ip = serverIp;
         port = serverPort;
+        reconnectInternalTime = initReconnectInternalTime;
+
         bind();
     }
 
@@ -147,12 +177,13 @@ public class NettyClient {
 
             // 如果连接成功，启动发送线程，循环发送消息队列中的内容
             if (this.connectionAvailable) {
+                reconnectInternalTime = initReconnectInternalTime;
                 channel = channelFuture.channel();
                 if (channel.isActive()) {
                     Sender sender = new Sender(channel, queue);
                     LOGGER.info("Successfully Connected to server");
                     executorService = Executors.newScheduledThreadPool(1, new ThreadFactoryUtils("netty-send-thread"));
-                    executorService.scheduleAtFixedRate(sender, 0, SEND_INTERNAL_SECOND, TimeUnit.SECONDS);
+                    executorService.scheduleAtFixedRate(sender, 0, sendInternalTime, TimeUnit.SECONDS);
                 }
                 if (ConfigManager.getConfig(ServiceConfig.class).isVisibilityEnable()) {
                     if (visibilityService == null) {
@@ -161,11 +192,16 @@ public class NettyClient {
                     visibilityService.reconnectHandler();
                 }
             } else {
-                // 失败则在X秒后重试连接
+                // 若失败则指数退避重连，初始时间为5秒，最大重连时间为180秒
                 LOGGER.info(String.format(Locale.ROOT, "Failed to connect,try reconnecting after %s seconds ",
-                        RECONNECT_INTERVAL_SECOND));
+                        reconnectInternalTime));
                 channelFuture.channel().eventLoop()
-                        .schedule(this::doConnect, RECONNECT_INTERVAL_SECOND, TimeUnit.SECONDS);
+                        .schedule(this::doConnect, reconnectInternalTime, TimeUnit.SECONDS);
+                if (reconnectInternalTime > compareTime) {
+                    reconnectInternalTime = maxReconnectInternalTime;
+                } else {
+                    reconnectInternalTime = reconnectInternalTime * BACKOFF_FACTOR;
+                }
             }
         });
     }
