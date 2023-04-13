@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,26 @@
  *
  */
 
-package com.huaweicloud.spring.common;
+package com.huaweicloud.spring.feign.api;
+
+import com.huaweicloud.spring.common.FeignConstants;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * 定义feign应用的公共变量
+ * removal测试
  *
- * @author zhouss
- * @since 2022-08-17
+ * @author zhp
+ * @since 2023-03-16
  */
-public class FeignConstants {
+@FeignClient(qualifier = FeignConstants.REMOVAL_SERVICE_BEAN_NAME, name = "removal-provider")
+public interface RemovalService {
     /**
-     * feign client名称
+     * 限流测试
+     *
+     * @return ok
      */
-    public static final String FEIGN_SERVICE_BEAN_NAME = "FEIGN_SERVICE";
-
-    /**
-     * 离群实例摘除插件的feign client名称
-     */
-    public static final String REMOVAL_SERVICE_BEAN_NAME = "REMOVAL_SERVICE";
-
-    private FeignConstants() {
-    }
+    @RequestMapping("testRemoval")
+    String testRemoval();
 }

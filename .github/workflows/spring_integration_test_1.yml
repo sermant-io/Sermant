@@ -146,3 +146,6 @@ jobs:
       - name: visibility test for springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
         if: env.enableVisibility == 'true'
         uses: ./.github/actions/scenarios/spring/visibility
+      - name: removal test for springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
+        if: env.enableRemoval == 'true'
+        uses: ./.github/actions/scenarios/spring/removal

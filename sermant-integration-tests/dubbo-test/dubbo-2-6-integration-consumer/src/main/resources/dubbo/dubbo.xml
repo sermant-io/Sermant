@@ -19,6 +19,8 @@
     <dubbo:protocol name="dubbo" port="${dubbo.protocol.port}"/>
 
     <dubbo:reference id="barService" check="false" interface="com.huaweicloud.integration.service.BarService"/>
+    <dubbo:reference id="removalService" check="false" interface="com.huaweicloud.integration.service.RemovalService"
+        timeout="1000"/>
     <dubbo:reference id="bar2Service" check="false" interface="com.huaweicloud.integration.service.BarService"
             group="bar2"/>
     <dubbo:reference id="barGenericService" check="false" interface="com.huaweicloud.integration.service.BarService"

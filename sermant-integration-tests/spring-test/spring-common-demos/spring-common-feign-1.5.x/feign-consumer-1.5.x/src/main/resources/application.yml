@@ -12,6 +12,12 @@ feign:
       default:
         connectTimeout: 3000
         readTimeout: 6000
+      removal-provider:
+        connectTimeout: 1000
+        readTimeout: 1000
+      removalBootService:
+        connectTimeout: 1000
+        readTimeout: 1000
 
 management:
   endpoint:
