@@ -18,3 +18,4 @@ management:
     health:
       probes:
         enabled: true
+timeout: 0

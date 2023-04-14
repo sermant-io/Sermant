@@ -117,3 +117,6 @@ jobs:
       - name: (dubbo lane) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
         if: env.enableDubboLane == 'true'
         uses: ./.github/actions/scenarios/dubbo/lane
+      - name: removal test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
+        if: env.enableRemoval == 'true'
+        uses: ./.github/actions/scenarios/dubbo/removal

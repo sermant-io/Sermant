@@ -19,6 +19,9 @@
     <bean id="barServiceImpl" class="com.huaweicloud.integration.service.BarServiceImpl"/>
     <dubbo:service interface="com.huaweicloud.integration.service.BarService" ref="barServiceImpl"/>
 
+    <bean id="removalServiceImpl" class="com.huaweicloud.integration.service.RemovalServiceImpl"/>
+    <dubbo:service interface="com.huaweicloud.integration.service.RemovalService" ref="removalServiceImpl"/>
+
     <bean id="bar2ServiceImpl" class="com.huaweicloud.integration.service.Bar2ServiceImpl"/>
     <dubbo:service interface="com.huaweicloud.integration.service.BarService" ref="bar2ServiceImpl" group="bar2"/>
 

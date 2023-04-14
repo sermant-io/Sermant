@@ -136,3 +136,6 @@ jobs:
       - name: (spring lane) test for springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
         if: env.enableSpringLane == 'true'
         uses: ./.github/actions/scenarios/spring/lane
+      - name: removal test for springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
+        if: env.enableRemoval == 'true'
+        uses: ./.github/actions/scenarios/spring/removal
