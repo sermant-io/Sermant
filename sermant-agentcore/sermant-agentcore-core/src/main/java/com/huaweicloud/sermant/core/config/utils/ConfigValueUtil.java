@@ -84,15 +84,15 @@ public class ConfigValueUtil {
      * <li>service-meta-applicationname</li>
      */
     private static final KeyFormatter[] KEY_FORMATTERS = new KeyFormatter[]{
-        key -> key,
-        key -> key.replace('.', '_'),
-        key -> key.replace('.', '-'),
-        key -> key.toUpperCase(Locale.ROOT),
-        key -> key.toUpperCase(Locale.ROOT).replace('.', '_'),
-        key -> key.toUpperCase(Locale.ROOT).replace('.', '-'),
-        key -> key.toLowerCase(Locale.ROOT),
-        key -> key.toLowerCase(Locale.ROOT).replace('.', '_'),
-        key -> key.toLowerCase(Locale.ROOT).replace('.', '-'),
+            key -> key,
+            key -> key.replace('.', '_'),
+            key -> key.replace('.', '-'),
+            key -> key.toUpperCase(Locale.ROOT),
+            key -> key.toUpperCase(Locale.ROOT).replace('.', '_'),
+            key -> key.toUpperCase(Locale.ROOT).replace('.', '-'),
+            key -> key.toLowerCase(Locale.ROOT),
+            key -> key.toLowerCase(Locale.ROOT).replace('.', '_'),
+            key -> key.toLowerCase(Locale.ROOT).replace('.', '-'),
     };
 
     /**
@@ -101,12 +101,12 @@ public class ConfigValueUtil {
      */
     private static final List<ValueReferFunction<String, Map<String, Object>, String>>
             VALUE_REFER_FUNCTION = Arrays.asList(
-                (key, argsMap) -> {
+            (key, argsMap) -> {
                 final Object config = argsMap.get(key);
                 return config == null ? null : config.toString();
-                },
-                (key, argsMap) -> System.getenv(key),
-                (key, argsMap) -> System.getProperty(key)
+            },
+            (key, argsMap) -> System.getenv(key),
+            (key, argsMap) -> System.getProperty(key)
     );
 
     /**
@@ -115,13 +115,13 @@ public class ConfigValueUtil {
      */
     private static final List<ValueFixFunction<String, Map<String, Object>, FixedValueProvider, String>>
             VALUE_FIX_FUNCTIONS = Arrays.asList(
-                (key, argsMap, provider) -> {
-                    final Object config = argsMap.get(key);
-                    return config == null ? null : config.toString();
-                },
-                (key, argsMap, provider) -> System.getenv(key),
-                (key, argsMap, provider) -> System.getProperty(key),
-                (key, argsMap, provider) -> provider == null ? null : provider.getFixedValue(key)
+            (key, argsMap, provider) -> {
+                final Object config = argsMap.get(key);
+                return config == null ? null : config.toString();
+            },
+            (key, argsMap, provider) -> System.getenv(key),
+            (key, argsMap, provider) -> System.getProperty(key),
+            (key, argsMap, provider) -> provider == null ? null : provider.getFixedValue(key)
     );
 
     private ConfigValueUtil() {
@@ -251,7 +251,7 @@ public class ConfigValueUtil {
      */
     public static <R> R toBaseType(String configStr, Class<R> type) {
         Object result = null;
-        if (configStr == null) {
+        if (configStr == null || "".equals(configStr)) {
             return (R) result;
         }
         if (type == int.class) {
@@ -345,7 +345,7 @@ public class ConfigValueUtil {
      * 获取配置键的参考值，优先级：入参 > 环境变量 > 系统变量 > 配置
      * <p>修正不同配置格式获取值, 含'-','_','.',大写以及小写</p>
      *
-     * @param key       键
+     * @param key 键
      * @param configVal 配置值
      * @return 最终配置参考值
      */
@@ -369,10 +369,9 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 由KeyFormatter处理后读取环境变量
-     * 优先级：入参 > 环境变量 > 系统变量 > 配置
+     * 由KeyFormatter处理后读取环境变量 优先级：入参 > 环境变量 > 系统变量 > 配置
      *
-     * @param key     键
+     * @param key 键
      * @param argsMap 入参
      * @return 最终配置参考值
      */
@@ -466,7 +465,7 @@ public class ConfigValueUtil {
         /**
          * 应用修正
          *
-         * @param key              键
+         * @param key 键
          * @param bootstrapArgsMap 启动参数Map
          * @return 最终参考值
          */

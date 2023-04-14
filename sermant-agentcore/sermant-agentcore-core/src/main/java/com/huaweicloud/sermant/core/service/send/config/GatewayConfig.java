@@ -27,41 +27,51 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
  */
 @ConfigTypeKey("gateway")
 public class GatewayConfig implements BaseConfig {
-    private static final int NETTY_DEFAULT_CONNECT_TIMEOUT = 5000;
+    private static final int DEFAULT_INIT_RECONNECT_INTERNAL_TIME = 5;
 
-    private static final long NETTY_DEFAULT_WRITE_READ_WAIT_TIME = 60000L;
+    private static final int DEFAULT_MAX_RECONNECT_INTERNAL_TIME = 180;
+
+    private static final int DEFAULT_NETTY_CONNECT_TIMEOUT = 5000;
+
+    private static final long DEFAULT_NETTY_WRITE_READ_WAIT_TIME = 60000L;
+
+    private static final String DEFAULT_NETTY_IP = "127.0.0.1";
+
+    private static final int DEFAULT_NETTY_PORT = 6888;
+
+    private static final int DEFAULT_SEND_INTERNAL_TIME = 10;
 
     /**
      * netty服务端的地址
      */
-    private String nettyIp;
+    private String nettyIp = DEFAULT_NETTY_IP;
 
     /**
      * netty服务端的端口
      */
-    private int nettyPort;
+    private int nettyPort = DEFAULT_NETTY_PORT;
 
     /**
      * netty发送消息的间隔，单位：秒
      */
-    private int sendInternalTime;
+    private int sendInternalTime = DEFAULT_SEND_INTERNAL_TIME;
 
     /**
      * netty连接后断开的初始重连时间，单位：秒
      */
-    private int initReconnectInternalTime;
+    private int initReconnectInternalTime = DEFAULT_INIT_RECONNECT_INTERNAL_TIME;
 
     /**
      * netty连接后断开的最大重连时间，单位：秒
      */
-    private int maxReconnectInternalTime;
+    private int maxReconnectInternalTime = DEFAULT_MAX_RECONNECT_INTERNAL_TIME;
 
     /**
      * Netty 需要设置Integer型超时事件，故此处为int非long
      */
-    private int nettyConnectTimeout = NETTY_DEFAULT_CONNECT_TIMEOUT;
+    private int nettyConnectTimeout = DEFAULT_NETTY_CONNECT_TIMEOUT;
 
-    private long nettyWriteAndReadWaitTime = NETTY_DEFAULT_WRITE_READ_WAIT_TIME;
+    private long nettyWriteAndReadWaitTime = DEFAULT_NETTY_WRITE_READ_WAIT_TIME;
 
     public String getNettyIp() {
         return nettyIp;
