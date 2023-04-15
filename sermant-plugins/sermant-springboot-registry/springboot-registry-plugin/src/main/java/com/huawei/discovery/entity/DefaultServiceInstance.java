@@ -25,13 +25,15 @@ import java.util.Map;
  * @since 2022-09-26
  */
 public class DefaultServiceInstance extends HashedServiceInstance {
+    private static final int DEFAULT_PORT = 8080;
+
     private String serviceName;
 
     private String host;
 
     private String ip;
 
-    private int port;
+    private int port = DEFAULT_PORT;
 
     private String id;
 
