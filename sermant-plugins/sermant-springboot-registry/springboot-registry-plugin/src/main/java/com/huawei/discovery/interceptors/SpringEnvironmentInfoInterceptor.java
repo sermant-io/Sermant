@@ -20,6 +20,7 @@ import com.huawei.discovery.entity.RegisterContext;
 import com.huawei.discovery.entity.ServiceInstance.Status;
 import com.huawei.discovery.utils.HostIpAddressUtils;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
@@ -30,6 +31,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * 结束阶段设置服务相关信息
@@ -38,9 +40,11 @@ import java.util.Map;
  * @since 2022-10-09
  */
 public class SpringEnvironmentInfoInterceptor implements Interceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static final int DEFAULT_PORT = 8080;
 
-    private static final String DEFAULT_APPLICATION_NAME = "default-application";
+    private static final String DEFAULT_SERVICE_NAME = "default-service";
 
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
@@ -65,13 +69,31 @@ public class SpringEnvironmentInfoInterceptor implements Interceptor {
     private void setClientInfo(ConfigurableEnvironment environment, String ipAddress) {
         String address = environment.getProperty("server.address");
         String port = environment.getProperty("server.port");
-        String applicationName = environment.getProperty("spring.application.name");
+        String serviceName = environment.getProperty("spring.application.name");
         RegisterContext.INSTANCE.getServiceInstance().setHost(StringUtils.isEmpty(address) ? ipAddress : address);
         RegisterContext.INSTANCE.getServiceInstance().setIp(StringUtils.isEmpty(address) ? ipAddress : address);
-        RegisterContext.INSTANCE.getServiceInstance()
-                .setPort(StringUtils.isEmpty(port) ? DEFAULT_PORT : Integer.parseInt(port));
-        RegisterContext.INSTANCE.getServiceInstance()
-                .setServiceName(StringUtils.isEmpty(applicationName) ? DEFAULT_APPLICATION_NAME : applicationName);
+
+        // 避免重复初始化port
+        int currentPort = RegisterContext.INSTANCE.getServiceInstance().getPort();
+        if (currentPort == DEFAULT_PORT) {
+            if (!StringUtils.isEmpty(port)) {
+                try {
+                    RegisterContext.INSTANCE.getServiceInstance().setPort(Integer.parseInt(port));
+                } catch (NumberFormatException numberFormatException) {
+                    LOGGER.severe("The port value in environment server.port is not format, port is: " + port);
+                }
+            }
+        }
+
+        // 避免重复初始化serviceName
+        String currentServiceName = RegisterContext.INSTANCE.getServiceInstance().getServiceName();
+        if (StringUtils.isEmpty(currentServiceName) || DEFAULT_SERVICE_NAME.equals(currentServiceName)) {
+            if (StringUtils.isEmpty(serviceName)) {
+                RegisterContext.INSTANCE.getServiceInstance().setServiceName(DEFAULT_SERVICE_NAME);
+            } else {
+                RegisterContext.INSTANCE.getServiceInstance().setServiceName(serviceName);
+            }
+        }
         RegisterContext.INSTANCE.getServiceInstance().setId(RegisterContext.INSTANCE.getServiceInstance().getIp()
                 + ":" + RegisterContext.INSTANCE.getServiceInstance().getPort());
         RegisterContext.INSTANCE.getServiceInstance().setStatus(Status.UP.name());
