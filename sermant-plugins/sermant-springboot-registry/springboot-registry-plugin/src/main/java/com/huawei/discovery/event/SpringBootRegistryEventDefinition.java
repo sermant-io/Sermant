@@ -14,34 +14,33 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.router.common.event;
+package com.huawei.discovery.event;
 
 import com.huaweicloud.sermant.core.event.EventLevel;
 import com.huaweicloud.sermant.core.event.EventType;
 
 /**
- * 路由插件事件定义
+ * Springboot注册插件事件定义
  *
  * @author lilai
- * @since 2023-03-28
+ * @since 2023-04-14
  */
-public enum RouterEventDefinition {
+public enum SpringBootRegistryEventDefinition {
     /**
-     * 路由插件规则生效事件
+     * SpringBoot服务注册事件
      */
-
-    ROUTER_RULE_TAKE_EFFECT("ROUTER_RULE_TAKE_EFFECT", EventType.OPERATION, EventLevel.NORMAL),
-
-    /**
-     * 同TAG优先规则匹配生效
-     */
-    SAME_TAG_RULE_MATCH("SAME_TAG_RULE_MATCH", EventType.GOVERNANCE, EventLevel.NORMAL),
+    SPRINGBOOT_REGISTRY("SPRINGBOOT_REGISTRY", EventType.GOVERNANCE, EventLevel.IMPORTANT),
 
     /**
-     * 同TAG优先规则匹配失效
+     * SpringBoot注册插件灰度配置生效事件
      */
-    SAME_TAG_RULE_MISMATCH("SAME_TAG_RULE_MISMATCH", EventType.GOVERNANCE,
-            EventLevel.NORMAL);
+    SPRINGBOOT_GRAY_CONFIG_TAKE_EFFECT("SPRINGBOOT_GRAY_CONFIG_TAKE_EFFECT", EventType.OPERATION, EventLevel.NORMAL),
+
+    /**
+     * SpringBoot服务移除注册事件
+     */
+    SPRINGBOOT_UNREGISTRY("SPRINGBOOT_UNREGISTRY", EventType.GOVERNANCE,
+            EventLevel.IMPORTANT);
 
     private final String name;
 
@@ -49,7 +48,7 @@ public enum RouterEventDefinition {
 
     private final EventLevel eventLevel;
 
-    RouterEventDefinition(String name, EventType eventType, EventLevel eventLevel) {
+    SpringBootRegistryEventDefinition(String name, EventType eventType, EventLevel eventLevel) {
         this.name = name;
         this.eventType = eventType;
         this.eventLevel = eventLevel;
@@ -68,6 +67,6 @@ public enum RouterEventDefinition {
     }
 
     public String getScope() {
-        return "router-plugin";
+        return "springboot-registry-plugin";
     }
 }

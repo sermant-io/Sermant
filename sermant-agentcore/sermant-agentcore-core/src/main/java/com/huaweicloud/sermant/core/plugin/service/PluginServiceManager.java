@@ -17,8 +17,11 @@
 package com.huaweicloud.sermant.core.plugin.service;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
@@ -44,23 +47,27 @@ public class PluginServiceManager extends ServiceManager {
      * @param classLoader 插件服务包的ClassLoader
      */
     public static void initPluginService(ClassLoader classLoader) {
+        List<String> startServiceList = new ArrayList<>();
         for (PluginService service : ServiceLoader.load(PluginService.class, classLoader)) {
             if (loadService(service, service.getClass(), PluginService.class)) {
                 try {
                     service.start();
+                    startServiceList.add(service.getClass().getName());
                 } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "Error occurs while starting plugin service: %s",
+                    LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
+                            "Error occurs while starting plugin service: %s",
                             service.getClass()), ex);
                 }
             }
         }
+        FrameworkEventCollector.getInstance().collectServiceStartEvent(startServiceList.toString());
     }
 
     /**
      * 获取插件服务
      *
      * @param serviceClass 插件服务类
-     * @param <T>          插件服务类型
+     * @param <T> 插件服务类型
      * @return 插件服务实例
      */
     public static <T extends PluginService> T getPluginService(Class<T> serviceClass) {
