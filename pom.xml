@@ -80,6 +80,7 @@
         <gpg.plugin.version>3.0.1</gpg.plugin.version>
         <javadoc.plugin.version>3.3.2</javadoc.plugin.version>
         <nexus.staging.plugin.version>1.6.7</nexus.staging.plugin.version>
+        <frontend.plugin.version>1.12.1</frontend.plugin.version>
 
         <sermant.name>sermant-agent</sermant.name>
         <sermant.basedir>${pom.basedir}</sermant.basedir>
@@ -284,6 +285,11 @@
                 <artifactId>mockito-inline</artifactId>
                 <version>${mockito-inline.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>${frontend.plugin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

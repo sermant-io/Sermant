@@ -33,7 +33,7 @@ public class SpringEnvironmentInfoDeclarer extends BaseDeclarer {
 
     private static final String INTERCEPT_CLASS = SpringEnvironmentInfoInterceptor.class.getCanonicalName();
 
-    private static final String METHOD_NAME = "prepareEnvironment";
+    private static final String METHOD_NAME = "applyInitializers";
 
     @Override
     public ClassMatcher getClassMatcher() {
