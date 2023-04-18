@@ -131,4 +131,17 @@ public class DefaultServiceInstance extends HashedServiceInstance {
     public void setId(String id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "{"
+                + "serviceName='" + serviceName + '\''
+                + ", host='" + host + '\''
+                + ", ip='" + ip + '\''
+                + ", port=" + port
+                + ", id='" + id + '\''
+                + ", metadata=" + metadata
+                + ", status='" + status + '\''
+                + '}';
+    }
 }
