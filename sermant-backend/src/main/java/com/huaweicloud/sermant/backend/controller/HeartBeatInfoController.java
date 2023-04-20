@@ -27,9 +27,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 心跳信息Controller
@@ -49,6 +50,9 @@ public class HeartBeatInfoController {
 
     private List<HeartbeatMessage> getHeartbeatMessageCache() {
         Map<String, HeartbeatMessage> heartbeatMessages = HeartbeatCache.getHeartbeatMessageMap();
-        return new ArrayList<>(heartbeatMessages.values());
+        List<HeartbeatMessage> result = heartbeatMessages.values().stream()
+                .sorted(Comparator.comparing(HeartbeatMessage::getHeartbeatTime).reversed())
+                .collect(Collectors.toList());
+        return result;
     }
 }
