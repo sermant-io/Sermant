@@ -33,6 +33,7 @@
                 <module>router-common</module>
                 <module>router-config-common</module>
                 <module>router-config-service</module>
+                <module>router-transmit-plugin</module>
                 <module>spring-router-plugin</module>
                 <module>spring-router-service</module>
             </modules>
@@ -45,6 +46,7 @@
                 <module>router-common</module>
                 <module>router-config-common</module>
                 <module>router-config-service</module>
+                <module>router-transmit-plugin</module>
                 <module>spring-router-plugin</module>
                 <module>spring-router-service</module>
             </modules>
@@ -57,6 +59,7 @@
                 <module>router-common</module>
                 <module>router-config-common</module>
                 <module>router-config-service</module>
+                <module>router-transmit-plugin</module>
                 <module>spring-router-plugin</module>
                 <module>spring-router-service</module>
             </modules>

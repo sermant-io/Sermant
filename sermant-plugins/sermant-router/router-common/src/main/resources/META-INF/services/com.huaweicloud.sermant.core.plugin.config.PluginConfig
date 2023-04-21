@@ -3,3 +3,4 @@
 #
 
 com.huaweicloud.sermant.router.common.config.RouterConfig
+com.huaweicloud.sermant.router.common.config.TransmitConfig

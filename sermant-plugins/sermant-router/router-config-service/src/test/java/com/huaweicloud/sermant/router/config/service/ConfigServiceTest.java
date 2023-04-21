@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.router.config.service;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
+import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.entity.EntireRule;
 import com.huaweicloud.sermant.router.config.entity.Match;
@@ -57,6 +58,8 @@ public class ConfigServiceTest {
         config.setRequestTags(Arrays.asList("foo", "bar", "version"));
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class)).thenReturn(config);
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(TransmitConfig.class))
+                .thenReturn(new TransmitConfig());
     }
 
     /**

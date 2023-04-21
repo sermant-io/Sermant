@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,13 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
 /**
- * 增强Controller的RequestMapping方法
+ * 拦截ReactiveTypeHandler，同时引入spring-boot-starter-web、spring-boot-starter-webflux进行响应式编程时，需要在后置方法移除线程变量
+ * <p>spring cloud Finchley.RELEASE+
  *
  * @author provenceee
- * @since 2022-10-29
+ * @since 2023-06-09
  */
-public class ControllerInterceptor extends AbstractInterceptor {
+public class ReactiveTypeHandlerInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) {
         return context;
@@ -34,12 +35,14 @@ public class ControllerInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
+        ThreadLocalUtils.removeRequestData();
         ThreadLocalUtils.removeRequestTag();
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
+        ThreadLocalUtils.removeRequestData();
         ThreadLocalUtils.removeRequestTag();
         return context;
     }

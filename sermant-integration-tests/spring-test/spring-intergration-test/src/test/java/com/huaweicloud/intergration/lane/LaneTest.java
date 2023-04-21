@@ -57,9 +57,15 @@ public class LaneTest {
 
     private static final String ZUUL_FEIGN_CLOUD_BASE_PATH = IP + ZUUL_PORT + FEIGN_BASE_PATH + CLOUD_BASE_PATH;
 
+    private static final String ZUUL_WEBCLIENT_CLOUD_BASE_PATH =
+            IP + ZUUL_PORT + FEIGN_BASE_PATH + CLOUD_BASE_PATH + "ByWebclient";
+
     private static final String GATEWAY_REST_CLOUD_BASE_PATH = IP + GATEWAY_PORT + REST_BASE_PATH + CLOUD_BASE_PATH;
 
     private static final String GATEWAY_FEIGN_CLOUD_BASE_PATH = IP + GATEWAY_PORT + FEIGN_BASE_PATH + CLOUD_BASE_PATH;
+
+    private static final String GATEWAY_WEBCLIENT_CLOUD_BASE_PATH =
+            IP + GATEWAY_PORT + FEIGN_BASE_PATH + CLOUD_BASE_PATH + "ByWebclient";
 
     private static final int TIMES = 30;
 
@@ -73,19 +79,26 @@ public class LaneTest {
 
     private static final String VERSION_KEY = "version";
 
-    public static final List<String> SPRING_CLOUD_VERSIONS_FOR_ZUUL = Arrays
-        .asList("Edgware.SR2", "Finchley.RELEASE", "Greenwich.RELEASE", "Hoxton.RELEASE");
+    private static final List<String> SPRING_CLOUD_VERSIONS_FOR_ZUUL = Arrays
+            .asList("Edgware.SR2", "Finchley.RELEASE", "Greenwich.RELEASE", "Hoxton.RELEASE");
 
-    public static final List<String> SPRING_CLOUD_VERSIONS_FOR_GATEWAY = Arrays
-        .asList("Finchley.RELEASE", "Greenwich.RELEASE", "Hoxton.RELEASE", "2020.0.0", "2021.0.0", "2021.0.3");
+    private static final List<String> SPRING_CLOUD_VERSIONS_FOR_GATEWAY = Arrays
+            .asList("Finchley.RELEASE", "Greenwich.RELEASE", "Hoxton.RELEASE", "2020.0.0", "2021.0.0", "2021.0.3");
 
     private final String springCloudVersion;
+
+    private final boolean shouldTestWebclient;
 
     /**
      * 构造方法
      */
     public LaneTest() {
         springCloudVersion = Optional.ofNullable(System.getenv("SPRING_CLOUD_VERSION")).orElse("Hoxton.RELEASE");
+        String springBootVersion = Optional.ofNullable(System.getenv("SPRING_BOOT_VERSION")).orElse("2.2.0.RELEASE");
+        String[] parts = springBootVersion.split("\\.");
+
+        // spring boot版本从2.0.x才开始有webclient
+        shouldTestWebclient = Integer.parseInt(parts[0]) >= 2;
     }
 
     /**
@@ -98,9 +111,8 @@ public class LaneTest {
             return;
         }
 
-        testByGateway(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH);
-        testByWebInterceptor(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH);
-
+        testByGateway(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH, ZUUL_WEBCLIENT_CLOUD_BASE_PATH);
+        testByWebInterceptor(ZUUL_REST_CLOUD_BASE_PATH, ZUUL_FEIGN_CLOUD_BASE_PATH, ZUUL_WEBCLIENT_CLOUD_BASE_PATH);
     }
 
     /**
@@ -112,8 +124,9 @@ public class LaneTest {
         if (!SPRING_CLOUD_VERSIONS_FOR_GATEWAY.contains(springCloudVersion)) {
             return;
         }
-        testByGateway(GATEWAY_REST_CLOUD_BASE_PATH, GATEWAY_FEIGN_CLOUD_BASE_PATH);
-        testByWebInterceptor(GATEWAY_REST_CLOUD_BASE_PATH, GATEWAY_FEIGN_CLOUD_BASE_PATH);
+        testByGateway(GATEWAY_REST_CLOUD_BASE_PATH, GATEWAY_FEIGN_CLOUD_BASE_PATH, GATEWAY_WEBCLIENT_CLOUD_BASE_PATH);
+        testByWebInterceptor(GATEWAY_REST_CLOUD_BASE_PATH, GATEWAY_FEIGN_CLOUD_BASE_PATH,
+                GATEWAY_WEBCLIENT_CLOUD_BASE_PATH);
     }
 
     /**
@@ -122,7 +135,7 @@ public class LaneTest {
      * @param restPath rest路径
      * @param feignPath feign路径
      */
-    private void testByGateway(String restPath, String feignPath) {
+    private void testByGateway(String restPath, String feignPath, String webClientPath) {
         // 正常染色
         HttpHeaders headers = new HttpHeaders();
         headers.add("x-user-id", "101");
@@ -130,8 +143,8 @@ public class LaneTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE
-                .exchange(restPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
-                    String.class);
+                    .exchange(restPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
+                            String.class);
             JSONObject json = JSONObject.parseObject(exchange.getBody());
             JSONObject providerMsg = json.getJSONObject(REST_PROVIDER_NAME);
             JSONObject consumerMsg = json.getJSONObject(REST_CONSUMER_NAME);
@@ -141,16 +154,28 @@ public class LaneTest {
             Assertions.assertEquals("1.0.1", consumerMsg.getString(VERSION_KEY));
 
             exchange = REST_TEMPLATE
-                .exchange(feignPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
-                    String.class);
+                    .exchange(feignPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
+                            String.class);
             json = JSONObject.parseObject(exchange.getBody());
-            System.out.println(json);
             providerMsg = json.getJSONObject(FEIGN_PROVIDER_NAME);
             consumerMsg = json.getJSONObject(FEIGN_CONSUMER_NAME);
             Assertions.assertEquals("gray3", providerMsg.getString("x-sermant-flag3"));
             Assertions.assertEquals("gray4", providerMsg.getString("x-sermant-flag4"));
             Assertions.assertEquals("1.0.0", providerMsg.getString(VERSION_KEY));
             Assertions.assertEquals("1.0.1", consumerMsg.getString(VERSION_KEY));
+
+            if (shouldTestWebclient) {
+                exchange = REST_TEMPLATE
+                        .exchange(webClientPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
+                                String.class);
+                json = JSONObject.parseObject(exchange.getBody());
+                providerMsg = json.getJSONObject(FEIGN_PROVIDER_NAME);
+                consumerMsg = json.getJSONObject(FEIGN_CONSUMER_NAME);
+                Assertions.assertEquals("gray3", providerMsg.getString("x-sermant-flag3"));
+                Assertions.assertEquals("gray4", providerMsg.getString("x-sermant-flag4"));
+                Assertions.assertEquals("1.0.0", providerMsg.getString(VERSION_KEY));
+                Assertions.assertEquals("1.0.1", consumerMsg.getString(VERSION_KEY));
+            }
         }
 
         // 测试已传入泳道标记
@@ -161,8 +186,8 @@ public class LaneTest {
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE
-                .exchange(restPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
-                    String.class);
+                    .exchange(restPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
+                            String.class);
             JSONObject json = JSONObject.parseObject(exchange.getBody());
             JSONObject providerMsg = json.getJSONObject(REST_PROVIDER_NAME);
             JSONObject consumerMsg = json.getJSONObject(REST_CONSUMER_NAME);
@@ -173,8 +198,8 @@ public class LaneTest {
             Assertions.assertEquals("1.0.1", consumerMsg.getString(VERSION_KEY));
 
             exchange = REST_TEMPLATE
-                .exchange(feignPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
-                    String.class);
+                    .exchange(feignPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
+                            String.class);
             json = JSONObject.parseObject(exchange.getBody());
             providerMsg = json.getJSONObject(FEIGN_PROVIDER_NAME);
             consumerMsg = json.getJSONObject(FEIGN_CONSUMER_NAME);
@@ -183,6 +208,20 @@ public class LaneTest {
             Assertions.assertEquals("gray14", providerMsg.getString("x-sermant-flag4"));
             Assertions.assertEquals("1.0.0", providerMsg.getString(VERSION_KEY));
             Assertions.assertEquals("1.0.1", consumerMsg.getString(VERSION_KEY));
+
+            if (shouldTestWebclient) {
+                exchange = REST_TEMPLATE
+                        .exchange(webClientPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
+                                String.class);
+                json = JSONObject.parseObject(exchange.getBody());
+                providerMsg = json.getJSONObject(FEIGN_PROVIDER_NAME);
+                consumerMsg = json.getJSONObject(FEIGN_CONSUMER_NAME);
+                Assertions.assertEquals("gray12", providerMsg.getString("x-sermant-flag2"));
+                Assertions.assertEquals("gray3", providerMsg.getString("x-sermant-flag3"));
+                Assertions.assertEquals("gray14", providerMsg.getString("x-sermant-flag4"));
+                Assertions.assertEquals("1.0.0", providerMsg.getString(VERSION_KEY));
+                Assertions.assertEquals("1.0.1", consumerMsg.getString(VERSION_KEY));
+            }
         }
 
         // 测试不满足染色条件
@@ -191,8 +230,8 @@ public class LaneTest {
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE
-                .exchange(restPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
-                    String.class);
+                    .exchange(restPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
+                            String.class);
             JSONObject json = JSONObject.parseObject(exchange.getBody());
             JSONObject providerMsg = json.getJSONObject(REST_PROVIDER_NAME);
             JSONObject consumerMsg = json.getJSONObject(REST_CONSUMER_NAME);
@@ -204,8 +243,8 @@ public class LaneTest {
             Assertions.assertEquals("1.0.0", consumerMsg.getString(VERSION_KEY));
 
             exchange = REST_TEMPLATE
-                .exchange(feignPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
-                    String.class);
+                    .exchange(feignPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
+                            String.class);
             json = JSONObject.parseObject(exchange.getBody());
             providerMsg = json.getJSONObject(FEIGN_PROVIDER_NAME);
             consumerMsg = json.getJSONObject(FEIGN_CONSUMER_NAME);
@@ -215,6 +254,21 @@ public class LaneTest {
             Assertions.assertFalse(providerMsg.containsKey("x-sermant-flag4"));
             Assertions.assertEquals("1.0.0", providerMsg.getString(VERSION_KEY));
             Assertions.assertEquals("1.0.0", consumerMsg.getString(VERSION_KEY));
+
+            if (shouldTestWebclient) {
+                exchange = REST_TEMPLATE
+                        .exchange(webClientPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
+                                String.class);
+                json = JSONObject.parseObject(exchange.getBody());
+                providerMsg = json.getJSONObject(FEIGN_PROVIDER_NAME);
+                consumerMsg = json.getJSONObject(FEIGN_CONSUMER_NAME);
+                Assertions.assertFalse(providerMsg.containsKey("x-sermant-flag1"));
+                Assertions.assertFalse(providerMsg.containsKey("x-sermant-flag2"));
+                Assertions.assertFalse(providerMsg.containsKey("x-sermant-flag3"));
+                Assertions.assertFalse(providerMsg.containsKey("x-sermant-flag4"));
+                Assertions.assertEquals("1.0.0", providerMsg.getString(VERSION_KEY));
+                Assertions.assertEquals("1.0.0", consumerMsg.getString(VERSION_KEY));
+            }
         }
     }
 
@@ -224,7 +278,7 @@ public class LaneTest {
      * @param restPath rest路径
      * @param feignPath feign路径
      */
-    private void testByWebInterceptor(String restPath, String feignPath) {
+    private void testByWebInterceptor(String restPath, String feignPath, String webClientPath) {
         // 正常染色
         HttpHeaders headers = new HttpHeaders();
         headers.add("x-user-id", "99");
@@ -232,8 +286,8 @@ public class LaneTest {
         ResponseEntity<String> exchange;
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE
-                .exchange(restPath + "?name=BaR&id=11&enabled=true", HttpMethod.GET, entity,
-                    String.class);
+                    .exchange(restPath + "?name=BaR&id=11&enabled=true", HttpMethod.GET, entity,
+                            String.class);
             JSONObject json = JSONObject.parseObject(exchange.getBody());
             JSONObject providerMsg = json.getJSONObject(REST_PROVIDER_NAME);
             JSONObject consumerMsg = json.getJSONObject(REST_CONSUMER_NAME);
@@ -242,15 +296,26 @@ public class LaneTest {
             Assertions.assertEquals("1.0.0", consumerMsg.getString(VERSION_KEY));
 
             exchange = REST_TEMPLATE
-                .exchange(feignPath + "?name=FoO&id=9&enabled=true", HttpMethod.GET, entity,
-                    String.class);
+                    .exchange(feignPath + "?name=FoO&id=9&enabled=true", HttpMethod.GET, entity,
+                            String.class);
             json = JSONObject.parseObject(exchange.getBody());
-            System.out.println(json);
             providerMsg = json.getJSONObject(FEIGN_PROVIDER_NAME);
             consumerMsg = json.getJSONObject(FEIGN_CONSUMER_NAME);
             Assertions.assertEquals("gray6", providerMsg.getString("x-sermant-flag6"));
             Assertions.assertEquals("1.0.1", providerMsg.getString(VERSION_KEY));
             Assertions.assertEquals("1.0.0", consumerMsg.getString(VERSION_KEY));
+
+            if (shouldTestWebclient) {
+                exchange = REST_TEMPLATE
+                        .exchange(webClientPath + "?name=FoO&id=9&enabled=true", HttpMethod.GET, entity,
+                                String.class);
+                json = JSONObject.parseObject(exchange.getBody());
+                providerMsg = json.getJSONObject(FEIGN_PROVIDER_NAME);
+                consumerMsg = json.getJSONObject(FEIGN_CONSUMER_NAME);
+                Assertions.assertEquals("gray6", providerMsg.getString("x-sermant-flag6"));
+                Assertions.assertEquals("1.0.1", providerMsg.getString(VERSION_KEY));
+                Assertions.assertEquals("1.0.0", consumerMsg.getString(VERSION_KEY));
+            }
         }
 
         // 测试已传入泳道标记
@@ -260,8 +325,8 @@ public class LaneTest {
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE
-                .exchange(restPath + "?name=BaR&id=11&enabled=true", HttpMethod.GET, entity,
-                    String.class);
+                    .exchange(restPath + "?name=BaR&id=11&enabled=true", HttpMethod.GET, entity,
+                            String.class);
             JSONObject json = JSONObject.parseObject(exchange.getBody());
             JSONObject providerMsg = json.getJSONObject(REST_PROVIDER_NAME);
             JSONObject consumerMsg = json.getJSONObject(REST_CONSUMER_NAME);
@@ -271,8 +336,8 @@ public class LaneTest {
             Assertions.assertEquals("1.0.1", consumerMsg.getString(VERSION_KEY));
 
             exchange = REST_TEMPLATE
-                .exchange(feignPath + "?name=FoO&id=9&enabled=true", HttpMethod.GET, entity,
-                    String.class);
+                    .exchange(feignPath + "?name=FoO&id=9&enabled=true", HttpMethod.GET, entity,
+                            String.class);
             json = JSONObject.parseObject(exchange.getBody());
             providerMsg = json.getJSONObject(FEIGN_PROVIDER_NAME);
             consumerMsg = json.getJSONObject(FEIGN_CONSUMER_NAME);
@@ -280,6 +345,19 @@ public class LaneTest {
             Assertions.assertEquals("gray6", providerMsg.getString("x-sermant-flag6"));
             Assertions.assertEquals("1.0.1", providerMsg.getString(VERSION_KEY));
             Assertions.assertEquals("1.0.1", consumerMsg.getString(VERSION_KEY));
+
+            if (shouldTestWebclient) {
+                exchange = REST_TEMPLATE
+                        .exchange(webClientPath + "?name=FoO&id=9&enabled=true", HttpMethod.GET, entity,
+                                String.class);
+                json = JSONObject.parseObject(exchange.getBody());
+                providerMsg = json.getJSONObject(FEIGN_PROVIDER_NAME);
+                consumerMsg = json.getJSONObject(FEIGN_CONSUMER_NAME);
+                Assertions.assertEquals("gray1", providerMsg.getString("x-sermant-flag1"));
+                Assertions.assertEquals("gray6", providerMsg.getString("x-sermant-flag6"));
+                Assertions.assertEquals("1.0.1", providerMsg.getString(VERSION_KEY));
+                Assertions.assertEquals("1.0.1", consumerMsg.getString(VERSION_KEY));
+            }
         }
 
         // 测试不满足染色条件
@@ -288,8 +366,8 @@ public class LaneTest {
         entity = new HttpEntity<>(null, headers);
         for (int i = 0; i < TIMES; i++) {
             exchange = REST_TEMPLATE
-                .exchange(restPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
-                    String.class);
+                    .exchange(restPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
+                            String.class);
             JSONObject json = JSONObject.parseObject(exchange.getBody());
             JSONObject providerMsg = json.getJSONObject(REST_PROVIDER_NAME);
             JSONObject consumerMsg = json.getJSONObject(REST_CONSUMER_NAME);
@@ -303,8 +381,8 @@ public class LaneTest {
             Assertions.assertEquals("1.0.0", consumerMsg.getString(VERSION_KEY));
 
             exchange = REST_TEMPLATE
-                .exchange(feignPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
-                    String.class);
+                    .exchange(feignPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
+                            String.class);
             json = JSONObject.parseObject(exchange.getBody());
             providerMsg = json.getJSONObject(FEIGN_PROVIDER_NAME);
             consumerMsg = json.getJSONObject(FEIGN_CONSUMER_NAME);
@@ -316,6 +394,23 @@ public class LaneTest {
             Assertions.assertFalse(providerMsg.containsKey("x-sermant-flag6"));
             Assertions.assertEquals("1.0.0", providerMsg.getString(VERSION_KEY));
             Assertions.assertEquals("1.0.0", consumerMsg.getString(VERSION_KEY));
+
+            if (shouldTestWebclient) {
+                exchange = REST_TEMPLATE
+                        .exchange(webClientPath + "?name=BaR&id=9&enabled=true", HttpMethod.GET, entity,
+                                String.class);
+                json = JSONObject.parseObject(exchange.getBody());
+                providerMsg = json.getJSONObject(FEIGN_PROVIDER_NAME);
+                consumerMsg = json.getJSONObject(FEIGN_CONSUMER_NAME);
+                Assertions.assertFalse(providerMsg.containsKey("x-sermant-flag1"));
+                Assertions.assertFalse(providerMsg.containsKey("x-sermant-flag2"));
+                Assertions.assertFalse(providerMsg.containsKey("x-sermant-flag3"));
+                Assertions.assertFalse(providerMsg.containsKey("x-sermant-flag4"));
+                Assertions.assertFalse(providerMsg.containsKey("x-sermant-flag5"));
+                Assertions.assertFalse(providerMsg.containsKey("x-sermant-flag6"));
+                Assertions.assertEquals("1.0.0", providerMsg.getString(VERSION_KEY));
+                Assertions.assertEquals("1.0.0", consumerMsg.getString(VERSION_KEY));
+            }
         }
     }
 }
