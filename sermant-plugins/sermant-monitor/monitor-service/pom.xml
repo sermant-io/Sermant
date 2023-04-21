@@ -14,6 +14,7 @@
     <properties>
         <config.skip.flag>false</config.skip.flag>
         <package.plugin.type>service</package.plugin.type>
+        <common.version>1.0.0</common.version>
     </properties>
 
     <dependencies>
@@ -23,8 +24,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient</artifactId>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>sermant-common</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -41,11 +43,6 @@
             <artifactId>monitor-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient_httpserver</artifactId>
-            <version>${simpleclient.version}</version>
         </dependency>
     </dependencies>
 

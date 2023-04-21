@@ -16,6 +16,7 @@
         <package.temp.dir>${sermant.basedir}/${sermant.name}-${project.version}</package.temp.dir>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <simpleclient.version>0.16.0</simpleclient.version>
     </properties>
 
     <!--公共第三方依赖，在插件服务模块或implement模块中以provided方式引入sermant-common-->
@@ -27,6 +28,16 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient</artifactId>
+            <version>${simpleclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_httpserver</artifactId>
+            <version>${simpleclient.version}</version>
         </dependency>
     </dependencies>
 

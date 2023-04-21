@@ -40,11 +40,6 @@ public class MonitorTest {
      */
     private static final String URL = "http://127.0.0.1:12345/";
 
-    /**
-     * 监控采集URL
-     */
-    private static final String URL_RD = "http://127.0.0.1:12345/flowControl";
-
     private static final String REQ_URL = "http://127.0.0.1:28050/consumer/flow/cirEx";
 
     private static final String QPS = "qps";
@@ -76,7 +71,7 @@ public class MonitorTest {
     public void testFlowControlMonitor() {
         String res = RequestUtils.get(REQ_URL, new HashMap<>(), String.class);
         Assert.notNull(res, "熔断指标前置请求失败");
-        String string = RequestUtils.get(URL_RD, new HashMap<>(), String.class);
+        String string = RequestUtils.get(URL, new HashMap<>(), String.class);
         Assert.notNull(string, "熔断指标信息查询失败");
         String[] metrics = string.split("\n");
         boolean qpsFlag = false;
