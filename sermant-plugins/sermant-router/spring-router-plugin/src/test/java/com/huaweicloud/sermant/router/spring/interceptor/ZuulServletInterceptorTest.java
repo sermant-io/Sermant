@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.spring.BaseTransmitConfigTest;
 
 import com.netflix.zuul.context.RequestContext;
 
@@ -32,7 +33,7 @@ import java.util.Collections;
  * @author provenceee
  * @since 2023-02-28
  */
-public class ZuulServletInterceptorTest {
+public class ZuulServletInterceptorTest extends BaseTransmitConfigTest {
     private final ZuulServletInterceptor interceptor;
 
     public ZuulServletInterceptorTest() {

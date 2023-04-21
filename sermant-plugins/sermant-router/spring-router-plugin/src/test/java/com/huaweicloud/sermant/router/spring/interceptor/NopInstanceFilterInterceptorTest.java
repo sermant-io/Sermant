@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
+import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
@@ -54,8 +55,6 @@ public class NopInstanceFilterInterceptorTest {
 
     private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
 
-    private static RouterConfig config;
-
     /**
      * UT执行前进行mock
      */
@@ -65,10 +64,11 @@ public class NopInstanceFilterInterceptorTest {
         mockServiceManager.when(() -> ServiceManager.getService(LoadBalancerService.class))
                 .thenReturn(new TestLoadBalancerService());
 
-        config = new RouterConfig();
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-                .thenReturn(config);
+                .thenReturn(new RouterConfig());
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(TransmitConfig.class))
+                .thenReturn(new TransmitConfig());
     }
 
     /**
@@ -83,8 +83,7 @@ public class NopInstanceFilterInterceptorTest {
     public NopInstanceFilterInterceptorTest() throws NoSuchMethodException {
         interceptor = new NopInstanceFilterInterceptor();
         arguments = new Object[2];
-        context = ExecuteContext.forMemberMethod(new Object(), String.class.getMethod("trim"), arguments, null,
-                null);
+        context = ExecuteContext.forMemberMethod(new Object(), String.class.getMethod("trim"), arguments, null, null);
     }
 
     /**
@@ -103,5 +102,19 @@ public class NopInstanceFilterInterceptorTest {
         List<?> result = (List<?>) interceptor.before(context).getResult();
         Assert.assertEquals(1, result.size());
         Assert.assertEquals(instance2, result.get(0));
+    }
+
+    @Test
+    public void testAfter() {
+        ThreadLocalUtils.setRequestData(new RequestData(null, "", ""));
+        interceptor.after(context);
+        Assert.assertNull(ThreadLocalUtils.getRequestData());
+    }
+
+    @Test
+    public void testOnThrow() {
+        ThreadLocalUtils.setRequestData(new RequestData(null, "", ""));
+        interceptor.onThrow(context);
+        Assert.assertNull(ThreadLocalUtils.getRequestData());
     }
 }

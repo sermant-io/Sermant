@@ -50,4 +50,13 @@ public class RequestData extends RequestTag {
     public String getHttpMethod() {
         return httpMethod;
     }
+
+    @Override
+    public String toString() {
+        return "{"
+                + "path='" + path + '\''
+                + ", httpMethod='" + httpMethod + '\''
+                + ", tag='" + getTag() + '\''
+                + '}';
+    }
 }

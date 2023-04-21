@@ -7,3 +7,10 @@ router.plugin:
   request-tags: []
   # 需要解析的请求头的tag
   parse-header-tag: ''
+transmit.plugin:
+  # 是否在直接new Thread时传递标签
+  enabled-thread: true
+  # 是否在非定时线程池中传递标签
+  enabled-thread-pool: true
+  # 是否在定时线程池的schedule/scheduleAtFixedRate/scheduleWithFixedDelay方法中传递标签
+  enabled-scheduler: true

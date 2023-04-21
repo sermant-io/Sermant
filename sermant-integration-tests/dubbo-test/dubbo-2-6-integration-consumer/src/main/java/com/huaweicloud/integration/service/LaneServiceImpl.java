@@ -63,6 +63,9 @@ public class LaneServiceImpl implements LaneService {
     public Map<String, Object> getLaneByDubbo(String name, LaneTestEntity laneTestEntity, String[] arr,
             List<Integer> list, Map<String, Object> map) {
         RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
+
+        // dubbo 2.5.0 - 2.5.3存在bug，会传递异步调用，所以需要手动设置为同步
+        RpcContext.getContext().setAttachment("async", "false");
         Map<String, Object> result = new HashMap<>(fooService.getAttachments());
         result.put(applicationName, getMetadata());
         return result;
