@@ -1,0 +1,4 @@
+spring.beans.plugin:
+  enabled: false # 是否开启适配
+  excludeAutoConfigurations: "" # 需要从spring容器中剔除的自动装配的bean全路径名称，如com.xxx.xxx，多个用","隔开
+  excludeBeans: "" # 需要从spring容器中剔除的@Component注解装配的bean全路径名称,如com.xxx.xxx，多个用","隔开

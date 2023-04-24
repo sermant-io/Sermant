@@ -40,6 +40,7 @@
                 <module>sermant-monitor</module>
                 <module>sermant-service-visibility</module>
                 <module>sermant-service-removal</module>
+                <module>sermant-spring-beans-deal</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -70,6 +71,7 @@
                 <module>sermant-mq-consume-deny</module>
                 <module>sermant-service-visibility</module>
                 <module>sermant-service-removal</module>
+                <module>sermant-spring-beans-deal</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -100,6 +102,7 @@
                 <module>sermant-mq-consume-deny</module>
                 <module>sermant-service-visibility</module>
                 <module>sermant-service-removal</module>
+                <module>sermant-spring-beans-deal</module>
             </modules>
         </profile>
     </profiles>
