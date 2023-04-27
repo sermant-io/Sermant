@@ -16,20 +16,27 @@
 
 package com.huawei.discovery.interceptors;
 
+import com.huawei.discovery.entity.DefaultServiceInstance;
 import com.huawei.discovery.entity.RegisterContext;
 import com.huawei.discovery.entity.ServiceInstance.Status;
 import com.huawei.discovery.utils.HostIpAddressUtils;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 结束阶段设置服务相关信息
@@ -38,9 +45,11 @@ import java.util.Map;
  * @since 2022-10-09
  */
 public class SpringEnvironmentInfoInterceptor implements Interceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static final int DEFAULT_PORT = 8080;
 
-    private static final String DEFAULT_APPLICATION_NAME = "default-application";
+    private static final String DEFAULT_SERVICE_NAME = "default-service";
 
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
@@ -49,10 +58,15 @@ public class SpringEnvironmentInfoInterceptor implements Interceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        Object result = context.getResult();
-        String ipAddress = HostIpAddressUtils.getHostAddress();
-        if (result instanceof ConfigurableEnvironment) {
-            this.setClientInfo((ConfigurableEnvironment) result, ipAddress);
+        Object[] arguments = context.getArguments();
+        if (arguments != null && arguments.length > 0) {
+            Object argument = arguments[0];
+            if (argument instanceof ConfigurableApplicationContext) {
+                ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) argument;
+
+                // 这里有可能会进入多次，多次进入时，后面的优先级高于前面，所以直接覆盖更新就行
+                this.setClientInfo(applicationContext.getEnvironment(), HostIpAddressUtils.getHostAddress());
+            }
         }
         return context;
     }
@@ -65,23 +79,45 @@ public class SpringEnvironmentInfoInterceptor implements Interceptor {
     private void setClientInfo(ConfigurableEnvironment environment, String ipAddress) {
         String address = environment.getProperty("server.address");
         String port = environment.getProperty("server.port");
-        String applicationName = environment.getProperty("spring.application.name");
-        RegisterContext.INSTANCE.getServiceInstance().setHost(StringUtils.isEmpty(address) ? ipAddress : address);
-        RegisterContext.INSTANCE.getServiceInstance().setIp(StringUtils.isEmpty(address) ? ipAddress : address);
-        RegisterContext.INSTANCE.getServiceInstance()
-                .setPort(StringUtils.isEmpty(port) ? DEFAULT_PORT : Integer.parseInt(port));
-        RegisterContext.INSTANCE.getServiceInstance()
-                .setServiceName(StringUtils.isEmpty(applicationName) ? DEFAULT_APPLICATION_NAME : applicationName);
-        RegisterContext.INSTANCE.getServiceInstance().setId(RegisterContext.INSTANCE.getServiceInstance().getIp()
-                + ":" + RegisterContext.INSTANCE.getServiceInstance().getPort());
-        RegisterContext.INSTANCE.getServiceInstance().setStatus(Status.UP.name());
-        if (RegisterContext.INSTANCE.getServiceInstance().getMetadata() == null) {
+        String serviceName = environment.getProperty("spring.application.name");
+        DefaultServiceInstance instance = RegisterContext.INSTANCE.getServiceInstance();
+        instance.setHost(StringUtils.isEmpty(address) ? ipAddress : address);
+        instance.setIp(StringUtils.isEmpty(address) ? ipAddress : address);
+        instance.setPort(getProperty(instance.getPort(), value -> value == 0, port, Integer::parseInt, DEFAULT_PORT));
+        instance.setServiceName(getProperty(instance.getServiceName(), Objects::isNull, serviceName, value -> value,
+                DEFAULT_SERVICE_NAME));
+        instance.setId(instance.getIp() + ":" + instance.getPort());
+        instance.setStatus(Status.UP.name());
+        if (instance.getMetadata() == null) {
             Map<String, String> metadata = new HashMap<String, String>();
             ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
             if (StringUtils.isExist(serviceMeta.getZone())) {
                 metadata.put("zone", serviceMeta.getZone());
             }
-            RegisterContext.INSTANCE.getServiceInstance().setMetadata(metadata);
+            LOGGER.log(Level.INFO, "Instance''s metadata is {0}.", metadata);
+            instance.setMetadata(metadata);
         }
+        LOGGER.log(Level.INFO, "Instance''s msg is {0}.", instance);
+    }
+
+    private <T> T getProperty(T currentProperty, Function<T, Boolean> judgmentMapper, String env,
+            Function<String, T> envMapper, T defaultValue) {
+        // environment.getProperty不为空，覆盖
+        if (!StringUtils.isBlank(env)) {
+            T property = envMapper.apply(env);
+            LOGGER.log(Level.INFO, "Env is not null, current property is {0}, will return {1}.",
+                    new Object[]{currentProperty, property});
+            return property;
+        }
+
+        // environment.getProperty为空且当前值为null，存入默认值
+        if (judgmentMapper.apply(currentProperty)) {
+            LOGGER.log(Level.INFO, "Env is null, current property is invalid, will return {0}.", defaultValue);
+            return defaultValue;
+        }
+
+        // environment.getProperty为空且当前存在值，返回当前值
+        LOGGER.log(Level.INFO, "Env is null, current property is valid, will return {0}.", currentProperty);
+        return currentProperty;
     }
 }

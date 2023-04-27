@@ -16,16 +16,17 @@
 
 package com.huawei.discovery.interceptors;
 
+import com.huawei.discovery.entity.RegisterContext;
+
+import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-import com.huawei.discovery.entity.RegisterContext;
-import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-
 public class SpringEnvironmentInfoInterceptorTest extends BaseTest {
-
     private SpringEnvironmentInfoInterceptor interceptor;
 
     private final Object[] arguments;
@@ -34,7 +35,7 @@ public class SpringEnvironmentInfoInterceptorTest extends BaseTest {
      * 构造方法
      */
     public SpringEnvironmentInfoInterceptorTest() {
-        arguments = new Object[2];
+        arguments = new Object[1];
     }
 
     @Override
@@ -50,7 +51,9 @@ public class SpringEnvironmentInfoInterceptorTest extends BaseTest {
         Mockito.when(environment.getProperty("server.address")).thenReturn("192.168.0.157");
         Mockito.when(environment.getProperty("server.port")).thenReturn("8010");
         Mockito.when(environment.getProperty("spring.application.name")).thenReturn("zookeeper-provider-demo");
-        context.afterMethod(environment, null);
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext();
+        applicationContext.setEnvironment(environment);
+        arguments[0] = applicationContext;
         interceptor.after(context);
         Assert.assertEquals(RegisterContext.INSTANCE.getServiceInstance().getServiceName(), "zookeeper-provider-demo");
     }
