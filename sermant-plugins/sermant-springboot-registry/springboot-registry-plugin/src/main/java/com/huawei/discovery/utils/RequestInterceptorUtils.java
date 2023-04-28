@@ -38,6 +38,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,6 +66,8 @@ public class RequestInterceptorUtils {
      * {@link RequestInterceptorUtils#recoverUrl(String)}
      */
     private static final int MIN_LEN_FOR_VALID_URL = 4;
+
+    private static final Map<String, Method> METHOD_CACHE = new ConcurrentHashMap<>();
 
     private RequestInterceptorUtils() {
     }
@@ -228,11 +231,11 @@ public class RequestInterceptorUtils {
             InvokerContext invokerContext) {
         return () -> {
             try {
-                AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
-                    method.setAccessible(true);
-                    return method;
-                });
-                return method.invoke(target, arguments);
+                return METHOD_CACHE.computeIfAbsent(method.toString(),
+                        key -> AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+                            method.setAccessible(true);
+                            return method;
+                        })).invoke(target, arguments);
             } catch (IllegalAccessException e) {
                 LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "Can not invoke method [%s]",
                         method.getName()), e);
@@ -281,13 +284,12 @@ public class RequestInterceptorUtils {
             startIndex++;
         }
         String tempPath = path.substring(startIndex);
-        if (tempPath.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH) <= 0) {
+        int indexOf = tempPath.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH);
+        if (indexOf <= 0) {
             return result;
         }
-        result.put(HttpConstants.HTTP_URI_SERVICE,
-            tempPath.substring(0, tempPath.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH)));
-        result.put(HttpConstants.HTTP_URI_PATH,
-            tempPath.substring(tempPath.indexOf(HttpConstants.HTTP_URL_SINGLE_SLASH)));
+        result.put(HttpConstants.HTTP_URI_SERVICE, tempPath.substring(0, indexOf));
+        result.put(HttpConstants.HTTP_URI_PATH, tempPath.substring(indexOf));
         return result;
     }
 

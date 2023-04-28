@@ -464,25 +464,16 @@ public class ExecuteContext {
     }
 
     /**
-     * 获取局部属性集
-     *
-     * @return 局部属性集
-     */
-    private Map<String, Object> getLocalFields() {
-        if (localFields == null) {
-            localFields = new HashMap<>();
-        }
-        return localFields;
-    }
-
-    /**
      * 设置局部属性值
      *
      * @param fieldName 属性名
      * @param value     属性值
      */
     public void setLocalFieldValue(String fieldName, Object value) {
-        getLocalFields().put(fieldName, value);
+        if (localFields == null) {
+            localFields = new HashMap<>();
+        }
+        localFields.put(fieldName, value);
     }
 
     /**
@@ -492,7 +483,7 @@ public class ExecuteContext {
      * @return 属性值
      */
     public Object getLocalFieldValue(String fieldName) {
-        return getLocalFields().get(fieldName);
+        return localFields == null ? null : localFields.get(fieldName);
     }
 
     /**

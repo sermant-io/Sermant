@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+# Copyright (C) 2022-2023 Huawei Technologies Co., Ltd. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,4 +26,8 @@ com.huawei.discovery.declarers.SpringApplicationDeclarer
 com.huawei.discovery.declarers.httpconnection.HttpUrlConnectionConnectDeclarer
 com.huawei.discovery.declarers.httpconnection.HttpUrlConnectionResponseStreamDeclarer
 com.huawei.discovery.declarers.SpringContextDeclarer
-
+com.huawei.discovery.declarers.MonoHttpConnectDeclarer
+com.huawei.discovery.declarers.WebClientBuilderDeclarer
+com.huawei.discovery.declarers.HttpComponentsClientHttpConnectorDeclarer
+com.huawei.discovery.declarers.JettyRequestDeclarer
+com.huawei.discovery.declarers.JettyClientDeclarer

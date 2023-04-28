@@ -26,11 +26,10 @@ import java.util.Date;
  * @since 2022-09-14
  */
 public class HttpConstants {
-
     /**
-     * get请求
+     * 域名
      */
-    public static final String HTTP_GET = "GET";
+    public static final String HTTP_URI_HOST = "host";
 
     /**
      * 从url解析的服务名
@@ -38,9 +37,9 @@ public class HttpConstants {
     public static final String HTTP_URI_SERVICE = "serviceName";
 
     /**
-     * 域名
+     * 端口
      */
-    public static final String HTTP_URI_HOST = "host";
+    public static final String HTTP_URI_PORT = "port";
 
     /**
      * 路径
@@ -83,11 +82,9 @@ public class HttpConstants {
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private HttpConstants() {
-
     }
 
     /**
-     *
      * 获取当前时间
      *
      * @return 时间

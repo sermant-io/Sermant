@@ -77,22 +77,6 @@ public class PlugEffectWhiteBlackUtils {
     }
 
     /**
-     * 判断url是否包含指定域名
-     *
-     * @param url 拦截获取的域名
-     * @return 是否包含域名
-     */
-    public static boolean isUrlContainsRealmName(String url) {
-        final String[] names = getDomainNames();
-        for (String name : names) {
-            if (url.contains(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * 判断主机名称是否为设置的域名
      *
      * @param host 拦截获取的域名
@@ -120,10 +104,11 @@ public class PlugEffectWhiteBlackUtils {
                     domainNames = new String[0];
                 } else {
                     final String[] parts = realmName.split(COMMA);
-                    domainNames = new String[parts.length];
+                    String[] arr = new String[parts.length];
                     for (int i = 0; i < parts.length; i++) {
-                        domainNames[i] = parts[i].trim();
+                        arr[i] = parts[i].trim();
                     }
+                    domainNames = arr;
                 }
             }
         }

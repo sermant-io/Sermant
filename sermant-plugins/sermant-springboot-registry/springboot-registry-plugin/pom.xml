@@ -11,20 +11,21 @@
     </parent>
 
     <artifactId>springboot-registry-plugin</artifactId>
-    <version>1.0.0</version>
 
     <description>The plugin module of registry from springboot</description>
 
     <properties>
         <config.skip.flag>false</config.skip.flag>
         <package.plugin.type>plugin</package.plugin.type>
-        <spring-boot.version>2.3.4.RELEASE</spring-boot.version>
-        <spring-cloud.version>2.2.1.RELEASE</spring-cloud.version>
+        <spring.version>5.2.9.RELEASE</spring.version>
         <http.client.async.verion>4.1.5</http.client.async.verion>
         <okhttp.version>4.1.0</okhttp.version>
         <okhttp.sq.version>2.7.5</okhttp.sq.version>
         <httpclient.version>4.5.12</httpclient.version>
+        <httpclient5.version>5.1.1</httpclient5.version>
+        <jetty.client.version>9.4.11.v20180605</jetty.client.version>
         <feign.version>10.2.3</feign.version>
+        <reactor.netty.version>0.9.0.RELEASE</reactor.netty.version>
     </properties>
 
     <dependencies>
@@ -34,33 +35,33 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot.version}</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-commons</artifactId>
-            <version>${spring-cloud.version}</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
-            <version>${spring-cloud.version}</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webflux</artifactId>
+            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-consul-discovery</artifactId>
-            <version>${spring-cloud.version}</version>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient5.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>${spring-cloud.version}</version>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-client</artifactId>
+            <version>${jetty.client.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -69,7 +70,6 @@
             <version>${http.client.async.verion}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
@@ -102,12 +102,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito-core.version}</version>
@@ -122,7 +116,13 @@
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>sermant-agentcore-implement</artifactId>
-            <version>1.0.0</version>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor.netty</groupId>
+            <artifactId>reactor-netty</artifactId>
+            <version>${reactor.netty.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
