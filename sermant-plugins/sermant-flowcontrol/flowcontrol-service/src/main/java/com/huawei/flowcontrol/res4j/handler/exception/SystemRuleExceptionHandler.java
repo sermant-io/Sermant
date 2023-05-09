@@ -19,7 +19,9 @@ package com.huawei.flowcontrol.res4j.handler.exception;
 
 import com.huawei.flowcontrol.common.entity.FlowControlResponse;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
+import com.huawei.flowcontrol.common.event.FlowControlEventEntity;
 import com.huawei.flowcontrol.res4j.exceptions.SystemRuleException;
+import com.huawei.flowcontrol.res4j.util.FlowControlEventUtils;
 
 /**
  * 系统流控异常处理
@@ -31,6 +33,9 @@ public class SystemRuleExceptionHandler extends AbstractExceptionHandler<SystemR
 
     @Override
     protected FlowControlResponse getFlowControlResponse(SystemRuleException ex, FlowControlResult flowControlResult) {
+        FlowControlEventUtils.notifySameRuleMatchedEvent(
+                FlowControlEventEntity.FLOW_CONTROL_SYSTEM_ENABLE,
+                "System");
         return new FlowControlResponse(ex.getMsg(), ex.getSystemRule().getErrorCode());
     }
 

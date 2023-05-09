@@ -265,6 +265,11 @@ public class CommonConst {
      */
     public static final String REQUEST_START_TIME = "requestStartTime";
 
+    /**
+     * 插件名
+     */
+    public static final String PLUGIN_NAME = "FLOW_CONTROL";
+
     private CommonConst() {
     }
 }

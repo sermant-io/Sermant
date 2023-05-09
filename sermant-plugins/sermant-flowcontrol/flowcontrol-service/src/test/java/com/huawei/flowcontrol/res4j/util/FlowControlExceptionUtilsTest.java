@@ -26,14 +26,22 @@ import com.huawei.flowcontrol.res4j.adaptor.CircuitBreakerAdaptor;
 import com.huawei.flowcontrol.res4j.exceptions.CircuitBreakerException;
 import com.huawei.flowcontrol.res4j.exceptions.InstanceIsolationException;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.event.config.EventConfig;
+
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 /**
  * rest4j测试
@@ -43,6 +51,23 @@ import org.junit.Test;
  */
 public class FlowControlExceptionUtilsTest {
     private static final String RULE_NAME = "test";
+
+    private static EventConfig config;
+
+    private static MockedStatic<ConfigManager> mockConfigManager;
+
+    @Before
+    public void init() {
+        config = new EventConfig();
+        config.setEnable(false);
+        mockConfigManager = Mockito.mockStatic(ConfigManager.class);
+        mockConfigManager.when(() -> ConfigManager.getConfig(EventConfig.class)).thenReturn(config);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        mockConfigManager.close();
+    }
 
     /**
      * 测试异常处理

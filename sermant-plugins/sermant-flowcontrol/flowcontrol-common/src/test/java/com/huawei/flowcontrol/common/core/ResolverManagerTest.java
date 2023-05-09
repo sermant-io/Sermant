@@ -35,6 +35,8 @@ import com.huawei.flowcontrol.common.core.resolver.SystemRuleResolver;
 import com.huawei.flowcontrol.common.core.resolver.SystemRuleResolverTest;
 import com.huawei.flowcontrol.common.core.rule.AbstractRule;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.event.config.EventConfig;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
@@ -57,10 +59,18 @@ import java.util.Map;
 public class ResolverManagerTest {
     private ResolverManager instance;
 
+    private static EventConfig config;
+
+    private static MockedStatic<ConfigManager> mockConfigManager;
+
     private MockedStatic<OperationManager> operationManagerMockedStatic;
 
     @Before
     public void init() {
+        config = new EventConfig();
+        config.setEnable(false);
+        mockConfigManager = Mockito.mockStatic(ConfigManager.class);
+        mockConfigManager.when(() -> ConfigManager.getConfig(EventConfig.class)).thenReturn(config);
         operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
         operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
 
@@ -78,6 +88,7 @@ public class ResolverManagerTest {
     @After
     public void tearDown() throws Exception {
         operationManagerMockedStatic.close();
+        mockConfigManager.close();
     }
 
     @Test

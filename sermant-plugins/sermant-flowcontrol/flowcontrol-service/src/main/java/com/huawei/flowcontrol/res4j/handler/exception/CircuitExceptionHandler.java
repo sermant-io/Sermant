@@ -20,7 +20,9 @@ package com.huawei.flowcontrol.res4j.handler.exception;
 import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.entity.FlowControlResponse;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
+import com.huawei.flowcontrol.common.event.FlowControlEventEntity;
 import com.huawei.flowcontrol.res4j.exceptions.CircuitBreakerException;
+import com.huawei.flowcontrol.res4j.util.FlowControlEventUtils;
 
 /**
  * 熔断异常处理
@@ -32,6 +34,9 @@ public class CircuitExceptionHandler extends AbstractExceptionHandler<CircuitBre
     @Override
     protected FlowControlResponse getFlowControlResponse(CircuitBreakerException ex,
             FlowControlResult flowControlResult) {
+        FlowControlEventUtils.notifySameRuleMatchedEvent(
+                FlowControlEventEntity.FLOW_CONTROL_CIRCUITBREAKER_ENABLE,
+                "Circuit");
         return new FlowControlResponse(ex.getMessage(), getCode());
     }
 

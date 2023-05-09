@@ -23,6 +23,8 @@ import com.huawei.flowcontrol.common.core.rule.fault.FaultException;
 import com.huawei.flowcontrol.common.core.rule.fault.FaultRule;
 import com.huawei.flowcontrol.common.entity.FlowControlResponse;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
+import com.huawei.flowcontrol.common.event.FlowControlEventEntity;
+import com.huawei.flowcontrol.res4j.util.FlowControlEventUtils;
 
 /**
  * 错误注入异常处理
@@ -34,6 +36,9 @@ public class FaultExceptionHandler extends AbstractExceptionHandler<FaultExcepti
     @Override
     protected FlowControlResponse getFlowControlResponse(FaultException ex,
             FlowControlResult flowControlResult) {
+        FlowControlEventUtils.notifySameRuleMatchedEvent(
+                FlowControlEventEntity.FLOW_CONTROL_FAULTINJECTION_ENABLE,
+                "Fault");
         final FaultRule rule = ex.getRule();
         if (RuleConstants.FAULT_RULE_FALLBACK_NULL_TYPE.equals(rule.getFallbackType())) {
             return new FlowControlResponse(ex.getMsg(), CommonConst.HTTP_OK, null);

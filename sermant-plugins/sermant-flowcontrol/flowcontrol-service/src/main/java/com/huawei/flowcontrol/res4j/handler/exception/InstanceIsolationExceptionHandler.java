@@ -20,7 +20,9 @@ package com.huawei.flowcontrol.res4j.handler.exception;
 import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.entity.FlowControlResponse;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
+import com.huawei.flowcontrol.common.event.FlowControlEventEntity;
 import com.huawei.flowcontrol.res4j.exceptions.InstanceIsolationException;
+import com.huawei.flowcontrol.res4j.util.FlowControlEventUtils;
 
 /**
  * 熔断异常处理
@@ -32,6 +34,9 @@ public class InstanceIsolationExceptionHandler extends AbstractExceptionHandler<
     @Override
     protected FlowControlResponse getFlowControlResponse(InstanceIsolationException ex,
             FlowControlResult flowControlResult) {
+        FlowControlEventUtils.notifySameRuleMatchedEvent(
+                FlowControlEventEntity.FLOW_CONTROL_INSTANCEISOLATION_ENABLE,
+                "InstanceIsolation");
         return new FlowControlResponse(ex.getMessage(), CommonConst.INSTANCE_ISOLATION_REQUEST_CODE);
     }
 

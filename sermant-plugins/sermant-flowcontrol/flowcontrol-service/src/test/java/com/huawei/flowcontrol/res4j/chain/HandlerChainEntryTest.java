@@ -25,6 +25,8 @@ import com.huawei.flowcontrol.common.entity.RequestEntity;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 import com.huawei.flowcontrol.res4j.chain.context.ChainContext;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.event.config.EventConfig;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -62,6 +64,10 @@ public class HandlerChainEntryTest {
 
     private final Object methodResult = new Object();
 
+    private static EventConfig config;
+
+    private static MockedStatic<ConfigManager> mockConfigManager;
+
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     private MockedStatic<OperationManager> operationManagerMockedStatic;
@@ -71,6 +77,10 @@ public class HandlerChainEntryTest {
      */
     @Before
     public void setUp() {
+        config = new EventConfig();
+        config.setEnable(false);
+        mockConfigManager = Mockito.mockStatic(ConfigManager.class);
+        mockConfigManager.when(() -> ConfigManager.getConfig(EventConfig.class)).thenReturn(config);
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic
                 .when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
@@ -86,6 +96,7 @@ public class HandlerChainEntryTest {
     public void close() {
         pluginConfigManagerMockedStatic.close();
         operationManagerMockedStatic.close();
+        mockConfigManager.close();
         ChainContext.remove();
     }
 

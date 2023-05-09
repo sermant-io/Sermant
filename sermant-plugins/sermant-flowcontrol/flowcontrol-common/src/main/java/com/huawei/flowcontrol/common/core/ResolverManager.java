@@ -17,9 +17,11 @@
 
 package com.huawei.flowcontrol.common.core;
 
+import com.huawei.flowcontrol.common.config.CommonConst;
 import com.huawei.flowcontrol.common.core.match.MatchGroupResolver;
 import com.huawei.flowcontrol.common.core.resolver.AbstractResolver;
 import com.huawei.flowcontrol.common.core.resolver.listener.ConfigUpdateListener;
+import com.huawei.flowcontrol.common.event.FlowControlEventCollector;
 import com.huawei.flowcontrol.common.util.StringUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
@@ -113,6 +115,7 @@ public enum ResolverManager {
                 continue;
             }
             String businessKey = key.substring(resolverEntry.getKey().length());
+            String ruleName = key.split("\\.")[1].toUpperCase(Locale.ROOT);
 
             // 匹配以该配置打头的解析器，更新解析器内容
             final Optional<?> rule = resolverEntry.getValue().parseRule(businessKey, value, true, isForDelete);
@@ -120,6 +123,8 @@ public enum ResolverManager {
                 resolverEntry.getValue().notifyListeners(businessKey);
                 LoggerFactory.getLogger().info(String.format(Locale.ENGLISH,
                     "Config [%s] has been updated or deleted successfully, raw content: [%s]", key, value));
+                FlowControlEventCollector.getInstance().collectFlowControlRuleEvent(CommonConst.PLUGIN_NAME,
+                        CommonConst.PLUGIN_NAME + "_" + ruleName, "rule refresh:" + value);
             }
         }
     }

@@ -23,6 +23,8 @@ import com.huawei.flowcontrol.common.core.match.MatchGroupResolver;
 import com.huawei.flowcontrol.res4j.chain.HandlerChainEntry;
 import com.huawei.flowcontrol.res4j.chain.context.ChainContext;
 import com.huawei.flowcontrol.res4j.windows.WindowsArray;
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.event.config.EventConfig;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -54,6 +56,10 @@ public class RequestHandlerTest {
 
     private final List<RequestTest> testList = new ArrayList<>();
 
+    private static EventConfig config;
+
+    private static MockedStatic<ConfigManager> mockConfigManager;
+
     private MockedStatic<OperationManager> operationManagerMockedStatic;
 
     /**
@@ -61,6 +67,10 @@ public class RequestHandlerTest {
      */
     @Before
     public void setUp() {
+        config = new EventConfig();
+        config.setEnable(false);
+        mockConfigManager = Mockito.mockStatic(ConfigManager.class);
+        mockConfigManager.when(() -> ConfigManager.getConfig(EventConfig.class)).thenReturn(config);
         operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
         operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
@@ -99,6 +109,7 @@ public class RequestHandlerTest {
     public void close() {
         pluginConfigManagerMockedStatic.close();
         operationManagerMockedStatic.close();
+        mockConfigManager.close();
         ChainContext.remove();
     }
 

@@ -19,8 +19,10 @@ package com.huawei.flowcontrol.res4j.chain;
 
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
+import com.huawei.flowcontrol.common.event.FlowControlEventEntity;
 import com.huawei.flowcontrol.res4j.chain.context.ChainContext;
 import com.huawei.flowcontrol.res4j.chain.context.RequestContext;
+import com.huawei.flowcontrol.res4j.util.FlowControlEventUtils;
 import com.huawei.flowcontrol.res4j.util.FlowControlExceptionUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
@@ -59,6 +61,7 @@ public enum HandlerChainEntry {
             final RequestContext threadLocalContext = ChainContext.getThreadLocalContext(sourceName);
             threadLocalContext.setRequestEntity(requestEntity);
             chain.onBefore(threadLocalContext, null);
+            pushRuleDisableEvent();
         } catch (Exception ex) {
             flowControlResult.setRequestType(requestEntity.getRequestType());
             FlowControlExceptionUtils.handleException(ex, flowControlResult);
@@ -150,5 +153,29 @@ public enum HandlerChainEntry {
         final String formatSourceName = formatSourceName(sourceName, isProvider);
         configPrefix(formatSourceName, isProvider);
         onThrow(formatSourceName, throwable);
+    }
+
+    /**
+     * 规则失效事件通知
+     */
+    public void pushRuleDisableEvent() {
+        FlowControlEventUtils.notifySameRuleMatchedEvent(
+                FlowControlEventEntity.FLOW_CONTROL_BULKHEAD_DISENABLE,
+                "Bulkhead");
+        FlowControlEventUtils.notifySameRuleMatchedEvent(
+                FlowControlEventEntity.FLOW_CONTROL_CIRCUITBREAKER_DISENABLE,
+                "Circuit");
+        FlowControlEventUtils.notifySameRuleMatchedEvent(
+                FlowControlEventEntity.FLOW_CONTROL_FAULTINJECTION_DISENABLE,
+                "Fault");
+        FlowControlEventUtils.notifySameRuleMatchedEvent(
+                FlowControlEventEntity.FLOW_CONTROL_INSTANCEISOLATION_DISENABLE,
+                "InstanceIsolation");
+        FlowControlEventUtils.notifySameRuleMatchedEvent(
+                FlowControlEventEntity.FLOW_CONTROL_RATELIMITING_DISENABLE,
+                "RateLimiting");
+        FlowControlEventUtils.notifySameRuleMatchedEvent(
+                FlowControlEventEntity.FLOW_CONTROL_SYSTEM_DISENABLE,
+                "System");
     }
 }
