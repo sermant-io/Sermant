@@ -39,7 +39,6 @@
         <resilience4j.version>1.7.1</resilience4j.version>
         <jackson.version>2.13.4.1</jackson.version>
         <jackson.core.version>2.13.4</jackson.core.version>
-        <prometheus.version>0.16.0</prometheus.version>
     </properties>
 
     <dependencies>
@@ -79,21 +78,9 @@
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient</artifactId>
-            <version>${prometheus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient_httpserver</artifactId>
-            <version>${simpleclient.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-
         <!--provider依赖-->
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
@@ -106,7 +93,11 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>sermant-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!--测试依赖-->
         <dependency>
             <groupId>junit</groupId>

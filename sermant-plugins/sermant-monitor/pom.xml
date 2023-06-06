@@ -15,8 +15,6 @@
     <properties>
         <sermant.basedir>${pom.basedir}/../../..</sermant.basedir>
         <package.plugin.name>monitor</package.plugin.name>
-
-        <simpleclient.version>0.16.0</simpleclient.version>
     </properties>
 
     <profiles>
@@ -45,15 +43,5 @@
             </modules>
         </profile>
     </profiles>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient</artifactId>
-                <version>${simpleclient.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>

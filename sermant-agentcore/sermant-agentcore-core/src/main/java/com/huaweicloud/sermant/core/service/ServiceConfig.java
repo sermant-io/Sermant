@@ -43,9 +43,6 @@ public class ServiceConfig implements BaseConfig {
     @ConfigFieldKey("inject.enable")
     private boolean injectEnable = false;
 
-    @ConfigFieldKey("monitor.enable")
-    private boolean monitorEnable = false;
-
     @ConfigFieldKey("dynamic.config.enable")
     private boolean dynamicConfigEnable = false;
 
@@ -89,14 +86,6 @@ public class ServiceConfig implements BaseConfig {
         this.injectEnable = injectEnable;
     }
 
-    public boolean isMonitorEnable() {
-        return monitorEnable;
-    }
-
-    public void setMonitorEnable(boolean monitorEnable) {
-        this.monitorEnable = monitorEnable;
-    }
-
     public boolean isDynamicConfigEnable() {
         return dynamicConfigEnable;
     }
@@ -130,9 +119,6 @@ public class ServiceConfig implements BaseConfig {
         }
         if ("com.huaweicloud.sermant.implement.service.inject.InjectServiceImpl".equals(serviceName)) {
             return isInjectEnable();
-        }
-        if ("com.huaweicloud.sermant.implement.service.monitor.RegistryServiceImpl".equals(serviceName)) {
-            return isMonitorEnable();
         }
         return false;
     }
