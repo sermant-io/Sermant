@@ -64,10 +64,10 @@ public class RouterEventCollector extends EventCollector {
             return;
         }
         String eventDescription = "Service router rule refresh:" + System.lineSeparator() + rule;
-        offerEvent(new Event(RouterEventDefinition.ROUTER_RULE_TAKE_EFFECT.getScope(),
-                RouterEventDefinition.ROUTER_RULE_TAKE_EFFECT.getEventLevel(),
-                RouterEventDefinition.ROUTER_RULE_TAKE_EFFECT.getEventType(),
-                new EventInfo(RouterEventDefinition.ROUTER_RULE_TAKE_EFFECT.getName(), eventDescription)));
+        offerEvent(new Event(RouterEventDefinition.ROUTER_RULE_REFRESH.getScope(),
+                RouterEventDefinition.ROUTER_RULE_REFRESH.getEventLevel(),
+                RouterEventDefinition.ROUTER_RULE_REFRESH.getEventType(),
+                new EventInfo(RouterEventDefinition.ROUTER_RULE_REFRESH.getName(), eventDescription)));
     }
 
     /**
@@ -80,10 +80,10 @@ public class RouterEventCollector extends EventCollector {
             return;
         }
         String eventDescription = "Global router rule refresh:" + System.lineSeparator() + rule;
-        offerEvent(new Event(RouterEventDefinition.ROUTER_RULE_TAKE_EFFECT.getScope(),
-                RouterEventDefinition.ROUTER_RULE_TAKE_EFFECT.getEventLevel(),
-                RouterEventDefinition.ROUTER_RULE_TAKE_EFFECT.getEventType(),
-                new EventInfo(RouterEventDefinition.ROUTER_RULE_TAKE_EFFECT.getName(), eventDescription)));
+        offerEvent(new Event(RouterEventDefinition.ROUTER_RULE_REFRESH.getScope(),
+                RouterEventDefinition.ROUTER_RULE_REFRESH.getEventLevel(),
+                RouterEventDefinition.ROUTER_RULE_REFRESH.getEventType(),
+                new EventInfo(RouterEventDefinition.ROUTER_RULE_REFRESH.getName(), eventDescription)));
     }
 
     /**

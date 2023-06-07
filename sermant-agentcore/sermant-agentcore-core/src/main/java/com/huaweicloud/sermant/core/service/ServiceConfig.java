@@ -101,23 +101,22 @@ public class ServiceConfig implements BaseConfig {
      * @return 是否开启了该服务
      */
     public boolean checkServiceEnable(String serviceName) {
-        if ("com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl".equals(serviceName)) {
+        if (ServiceManager.HEARTBEAT_SERVICE_IMPL.equals(serviceName)) {
             return isHeartBeatEnable();
         }
-        if ("com.huaweicloud.sermant.implement.service.send.netty.NettyGatewayClient".equals(serviceName)) {
+        if (ServiceManager.NETTY_GATEWAY_CLIENT.equals(serviceName)) {
             return isGatewayEnable();
         }
-        if ("com.huaweicloud.sermant.implement.service.dynamicconfig.BufferedDynamicConfigService".equals(
-                serviceName)) {
+        if (ServiceManager.BUFFERED_DYNAMIC_CONFIG_SERVICE.equals(serviceName)) {
             return isDynamicConfigEnable();
         }
-        if ("com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl".equals(serviceName)) {
+        if (ServiceManager.TRACING_SERVICE_IMPL.equals(serviceName)) {
             return isTracingEnable();
         }
-        if ("com.huaweicloud.sermant.implement.service.visibility.VisibilityServiceImpl".equals(serviceName)) {
+        if (ServiceManager.VISIBILITY_SERVICE_IMPL.equals(serviceName)) {
             return isVisibilityEnable();
         }
-        if ("com.huaweicloud.sermant.implement.service.inject.InjectServiceImpl".equals(serviceName)) {
+        if (ServiceManager.INJECT_SERVICE_IMPL.equals(serviceName)) {
             return isInjectEnable();
         }
         return false;

@@ -17,6 +17,7 @@
 package com.huawei.discovery.interceptors;
 
 import com.huawei.discovery.entity.RegisterContext;
+import com.huawei.discovery.event.SpringBootRegistryEventCollector;
 import com.huawei.discovery.service.ConfigCenterService;
 import com.huawei.discovery.service.RegistryService;
 
@@ -58,6 +59,8 @@ public class SpringApplicationInterceptor extends AbstractInterceptor {
         if ((logStartupInfo instanceof Boolean) && (Boolean) logStartupInfo && INIT.compareAndSet(false, true)) {
             registryService.registry(RegisterContext.INSTANCE.getServiceInstance());
             configCenterService.init(RegisterContext.INSTANCE.getServiceInstance().getServiceName());
+            SpringBootRegistryEventCollector.getInstance().collectRegistryEvent(RegisterContext.INSTANCE
+                    .getServiceInstance());
         }
         return context;
     }
