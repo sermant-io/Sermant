@@ -20,15 +20,11 @@ import com.huawei.flowcontrol.common.enums.MetricType;
 import com.huawei.flowcontrol.res4j.util.MonitorUtils;
 
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
-import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.core.service.monitor.RegistryService;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.prometheus.client.Collector;
-import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.GaugeMetricFamily;
-import io.prometheus.client.exporter.HTTPServer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,13 +61,9 @@ public class ServiceCollectorService extends Collector implements PluginService 
 
     @Override
     public void start() {
-        if (!MonitorUtils.isStartMonitor()) {
-            return;
+        if (MonitorUtils.isStartMonitor()) {
+            this.register();
         }
-        this.register();
-        RegistryService registryService = ServiceManager.getService(RegistryService.class);
-        registryService.addHandler("flowControl",
-                new HTTPServer.HTTPMetricHandler(CollectorRegistry.defaultRegistry, null));
     }
 
     @Override
@@ -100,8 +92,8 @@ public class ServiceCollectorService extends Collector implements PluginService 
      * 采集熔断指标
      *
      * @param metricMap 指标采集Map
-     * @param k         指标标签值
-     * @param v         指标信息
+     * @param k 指标标签值
+     * @param v 指标信息
      */
     private void collectFuseMetric(Map<String, GaugeMetricFamily> metricMap, String k, MetricEntity v) {
         MetricEntity lastMetric;
@@ -177,9 +169,9 @@ public class ServiceCollectorService extends Collector implements PluginService 
     /**
      * 增加指标信息
      *
-     * @param metricMap  指标信息存储MAP
-     * @param type       指标类型
-     * @param value      指标值
+     * @param metricMap 指标信息存储MAP
+     * @param type 指标类型
+     * @param value 指标值
      * @param labelValue 指标标签值
      */
     private void addMetric(Map<String, GaugeMetricFamily> metricMap, MetricType type, double value, String labelValue) {

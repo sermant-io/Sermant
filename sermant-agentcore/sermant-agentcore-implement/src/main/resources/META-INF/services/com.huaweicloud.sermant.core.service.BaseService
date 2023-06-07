@@ -4,4 +4,3 @@ com.huaweicloud.sermant.implement.service.send.netty.NettyGatewayClient
 com.huaweicloud.sermant.implement.service.dynamicconfig.BufferedDynamicConfigService
 com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl
 com.huaweicloud.sermant.implement.service.inject.InjectServiceImpl
-com.huaweicloud.sermant.implement.service.monitor.RegistryServiceImpl

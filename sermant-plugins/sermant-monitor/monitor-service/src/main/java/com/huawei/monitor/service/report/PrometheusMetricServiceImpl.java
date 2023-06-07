@@ -21,21 +21,16 @@ import com.huawei.monitor.service.MetricReportService;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
-import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.core.service.monitor.RegistryService;
 import com.huaweicloud.sermant.core.utils.AesUtil;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.sun.net.httpserver.BasicAuthenticator;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.HTTPServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -66,17 +61,8 @@ public class PrometheusMetricServiceImpl implements MetricReportService {
         InetSocketAddress socketAddress =
                 new InetSocketAddress(monitorServiceConfig.getAddress(), monitorServiceConfig.getPort());
         try {
-            HttpServer server = HttpServer.create(socketAddress, TCP_NUM);
-            RegistryService registryService = ServiceManager.getService(RegistryService.class);
-            Map<String, HttpHandler> handlerMap = registryService.getHandlers();
-            if (!handlerMap.isEmpty()) {
-                for (Map.Entry<String, HttpHandler> entry : handlerMap.entrySet()) {
-                    server.createContext("/" + entry.getKey(), entry.getValue());
-                }
-                LOGGER.info("add other plugin metric collector");
-            }
-            HTTPServer.Builder builder = new HTTPServer.Builder().withHttpServer(server)
-                    .withRegistry(CollectorRegistry.defaultRegistry).withDaemonThreads(true);
+            HTTPServer.Builder builder = new HTTPServer.Builder()
+                    .withHttpServer(HttpServer.create(socketAddress, TCP_NUM)).withDaemonThreads(true);
             String key = monitorServiceConfig.getKey();
             if (StringUtils.isNoneBlank(key) && StringUtils.isNoneBlank(monitorServiceConfig.getUserName())
                     && StringUtils.isNoneBlank(monitorServiceConfig.getPassword())) {
