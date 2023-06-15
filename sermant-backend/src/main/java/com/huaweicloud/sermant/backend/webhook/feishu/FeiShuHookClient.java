@@ -125,7 +125,7 @@ public class FeiShuHookClient implements WebHookClient {
                 content.add(getContent("logMethod:" + logInfo.getLogMethod()));
                 content.add(getContent("logLineNumber:" + logInfo.getLogLineNumber()));
                 content.add(getContent("logThreadId" + logInfo.getLogThreadId()));
-                content.add(getContent("throwable:" + logInfo.getThrowable()));
+                content.add(getContent("throwable:" + logInfo.getLogThrowable()));
 
             } else {
                 EventInfo eventInfo = (EventInfo) event.getInfo();

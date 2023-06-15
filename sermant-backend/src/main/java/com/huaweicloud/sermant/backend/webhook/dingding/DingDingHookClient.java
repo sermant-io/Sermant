@@ -132,7 +132,7 @@ public class DingDingHookClient implements WebHookClient {
                         logInfo.getLogMethod(),
                         logInfo.getLogLineNumber(),
                         logInfo.getLogThreadId(),
-                        logInfo.getThrowable()));
+                        logInfo.getLogThrowable()));
             } else {
                 EventInfo eventInfo = (EventInfo) event.getInfo();
                 result.append(String.format(CommonConst.DINGDING_MARKDOWN_EVENT_FORMAT,

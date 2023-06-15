@@ -154,7 +154,7 @@
               </el-descriptions-item>
               <el-descriptions-item>
                 <template #label> 异常类型 </template>
-                {{ props.row.info.throwable }}
+                {{ props.row.info.logThrowable }}
               </el-descriptions-item>
             </el-descriptions>
           </div>
