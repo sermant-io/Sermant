@@ -17,6 +17,9 @@
 
 package com.huawei.flowcontrol.common.event;
 
+import com.huawei.flowcontrol.common.core.match.MatchManager;
+import com.huawei.flowcontrol.common.core.match.RequestMatcher;
+
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.event.Event;
 import com.huaweicloud.sermant.core.event.EventCollector;
@@ -25,6 +28,13 @@ import com.huaweicloud.sermant.core.event.EventLevel;
 import com.huaweicloud.sermant.core.event.EventManager;
 import com.huaweicloud.sermant.core.event.EventType;
 import com.huaweicloud.sermant.core.event.config.EventConfig;
+
+import com.alibaba.fastjson.JSON;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 流控插件事件采集器
@@ -73,7 +83,7 @@ public class FlowControlEventCollector extends EventCollector {
     }
 
     /**
-     * 采集灰度配置生效事件
+     * 采集流控配置生效事件
      *
      * @param event 事件
      */
@@ -83,5 +93,26 @@ public class FlowControlEventCollector extends EventCollector {
         }
         offerEvent(new Event(event.getScope(), event.getEventLevel(), event.getEventType(),
                 new EventInfo(event.getName(), event.getDescription())));
+    }
+
+    /**
+     * 采集触发业务流控的事件
+     *
+     * @param businessNames 业务场景名
+     */
+    public void collectBusinessEvent(Set<String> businessNames) {
+        if (!eventConfig.isEnable() || businessNames == null || businessNames.isEmpty()) {
+            return;
+        }
+        Object[] businessNamesArray = businessNames.toArray();
+        Map<String, List<RequestMatcher>> businessMatcherRule = new HashMap<>();
+        for (Object o : businessNamesArray) {
+            businessMatcherRule.put(o.toString(),
+                    MatchManager.INSTANCE.getMatchGroups(o.toString()).get(o.toString()).getMatches());
+        }
+        FlowControlEventEntity event = FlowControlEventEntity.FLOW_MATCH_SUCCESS;
+        offerEvent(new Event(event.getScope(), event.getEventLevel(), event.getEventType(),
+                new EventInfo(event.getName(),
+                        event.getDescription() + ", rule:" + JSON.toJSONString(businessMatcherRule))));
     }
 }

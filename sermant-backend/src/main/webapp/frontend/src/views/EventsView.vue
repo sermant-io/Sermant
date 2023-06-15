@@ -521,6 +521,7 @@ const eventName = reactive({
   INSTANCE_RECOVERY: "实例恢复",
 
   // 流控插件事件
+  FLOW_MATCH_SUCCESS: "流量匹配成功",
   FLOW_CONTROL_BULKHEAD: "隔离舱规则更新",
   FLOW_CONTROL_CIRCUITBREAKER: "熔断规则更新",
   FLOW_CONTROL_FAULTINJECTION: "错误注入规则更新",

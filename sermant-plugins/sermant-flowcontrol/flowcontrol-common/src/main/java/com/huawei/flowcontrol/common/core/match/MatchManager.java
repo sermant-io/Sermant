@@ -94,7 +94,13 @@ public enum MatchManager {
         return result.isEmpty() ? Collections.emptySet() : result;
     }
 
-    private Map<String, BusinessMatcher> getMatchGroups(String businessName) {
+    /**
+     * 根据流量匹配规则名称获取匹配规则
+     *
+     * @param businessName 流量匹配名称
+     * @return 匹配规则
+     */
+    public Map<String, BusinessMatcher> getMatchGroups(String businessName) {
         final Map<String, BusinessMatcher> matchGroups = getMatchGroupResolver().getRules();
         if (businessName == null) {
             return matchGroups;

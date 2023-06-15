@@ -19,6 +19,7 @@ package com.huawei.flowcontrol.res4j.chain;
 
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
+import com.huawei.flowcontrol.common.event.FlowControlEventCollector;
 import com.huawei.flowcontrol.common.event.FlowControlEventEntity;
 import com.huawei.flowcontrol.res4j.chain.context.ChainContext;
 import com.huawei.flowcontrol.res4j.chain.context.RequestContext;
@@ -27,6 +28,7 @@ import com.huawei.flowcontrol.res4j.util.FlowControlExceptionUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,14 +59,16 @@ public enum HandlerChainEntry {
      * @param flowControlResult 流控结果
      */
     public void onBefore(String sourceName, RequestEntity requestEntity, FlowControlResult flowControlResult) {
+        final RequestContext threadLocalContext = ChainContext.getThreadLocalContext(sourceName);
         try {
-            final RequestContext threadLocalContext = ChainContext.getThreadLocalContext(sourceName);
             threadLocalContext.setRequestEntity(requestEntity);
             chain.onBefore(threadLocalContext, null);
             pushRuleDisableEvent();
         } catch (Exception ex) {
             flowControlResult.setRequestType(requestEntity.getRequestType());
             FlowControlExceptionUtils.handleException(ex, flowControlResult);
+            Set<String> businessNames = threadLocalContext.get("__MATCHED_BUSINESS_NAMES__", Set.class);
+            FlowControlEventCollector.getInstance().collectBusinessEvent(businessNames);
             ChainContext.getThreadLocalContext(sourceName).save(HandlerConstants.OCCURRED_FLOW_EXCEPTION, ex);
             LOGGER.log(Level.FINE, ex, ex::getMessage);
         }
