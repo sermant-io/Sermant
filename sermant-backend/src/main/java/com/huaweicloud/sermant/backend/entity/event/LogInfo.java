@@ -35,7 +35,7 @@ public class LogInfo {
 
     private int logThreadId;
 
-    private Throwable throwable;
+    private String logThrowable;
 
     public String getLogLevel() {
         return logLevel;
@@ -77,12 +77,12 @@ public class LogInfo {
         this.logThreadId = logThreadId;
     }
 
-    public Throwable getThrowable() {
-        return throwable;
+    public String getLogThrowable() {
+        return logThrowable;
     }
 
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
+    public void setLogThrowable(String logThrowable) {
+        this.logThrowable = logThrowable;
     }
 
     public int getLogLineNumber() {
@@ -96,7 +96,7 @@ public class LogInfo {
     @Override
     public String toString() {
         return "LogInfo{" + "logLevel='" + logLevel + '\'' + ", logMessage='" + logMessage + '\'' + ", logClass='"
-            + logClass + '\'' + ", logMethod='" + logMethod + '\'' + ", logThreadId='" + logThreadId + '\''
-            + ", throwable=" + throwable + '}';
+                + logClass + '\'' + ", logMethod='" + logMethod + '\'' + ", logLineNumber=" + logLineNumber
+                + ", logThreadId=" + logThreadId + ", throwable=" + logThrowable + '}';
     }
 }
