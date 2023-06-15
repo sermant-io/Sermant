@@ -39,7 +39,7 @@ public class LogInfo {
 
     private int logThreadId;
 
-    private Throwable throwable;
+    private String logThrowable;
 
     /**
      * 通过LogRecord构造日志事件信息
@@ -53,10 +53,12 @@ public class LogInfo {
         this.logMethod = logRecord.getSourceMethodName();
         Arrays.stream(Thread.currentThread().getStackTrace()).filter(traceElement -> traceElement.getClassName()
                 .equals(logRecord.getSourceClassName()) && traceElement.getMethodName()
-                .equals(logRecord.getSourceMethodName())).findFirst().ifPresent(
-                    traceElement -> this.logLineNumber = traceElement.getLineNumber());
+                .equals(logRecord.getSourceMethodName())).findFirst().ifPresent(traceElement ->
+                this.logLineNumber = traceElement.getLineNumber());
         this.logThreadId = logRecord.getThreadID();
-        this.throwable = logRecord.getThrown();
+        if (logRecord.getThrown() != null) {
+            this.logThrowable = logRecord.getThrown().toString();
+        }
     }
 
     public String getLogLevel() {
@@ -99,12 +101,12 @@ public class LogInfo {
         this.logThreadId = logThreadId;
     }
 
-    public Throwable getThrowable() {
-        return throwable;
+    public String getLogThrowable() {
+        return logThrowable;
     }
 
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
+    public void setLogThrowable(String logThrowable) {
+        this.logThrowable = logThrowable;
     }
 
     public int getLogLineNumber() {
@@ -119,7 +121,7 @@ public class LogInfo {
     public String toString() {
         return "LogInfo{" + "logLevel='" + logLevel + '\'' + ", logMessage='" + logMessage + '\'' + ", logClass='"
                 + logClass + '\'' + ", logMethod='" + logMethod + '\'' + ", logLineNumber=" + logLineNumber
-                + ", logThreadId=" + logThreadId + ", throwable=" + throwable + '}';
+                + ", logThreadId=" + logThreadId + ", logThrowable=" + logThrowable + '}';
     }
 
     @Override
@@ -131,9 +133,9 @@ public class LogInfo {
             return false;
         }
         LogInfo logInfo = (LogInfo) obj;
-        return logLineNumber == logInfo.logLineNumber && logThreadId == logInfo.logThreadId && Objects.equals(
-                logLevel, logInfo.logLevel) && Objects.equals(logClass, logInfo.logClass)
-                && Objects.equals(logMethod, logInfo.logMethod);
+        return logLineNumber == logInfo.logLineNumber && logThreadId == logInfo.logThreadId
+                && Objects.equals(logLevel, logInfo.logLevel) && Objects.equals(logClass, logInfo.logClass)
+                && Objects.equals(logMethod, logInfo.logMethod) && Objects.equals(logThrowable, logInfo.logThrowable);
     }
 
     /**
@@ -143,6 +145,6 @@ public class LogInfo {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(logLevel, logClass, logMethod, logLineNumber, logThreadId);
+        return Objects.hash(logLevel, logClass, logMethod, logLineNumber, logThreadId, logThrowable);
     }
 }
