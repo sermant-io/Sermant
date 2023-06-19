@@ -24,9 +24,9 @@ import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.Collections;
 
@@ -57,7 +57,7 @@ public class SpringCloseEventInterceptorTest extends BaseTest {
                 AnnotationConfigApplicationContext.class))}));
         Mockito.verify(registryService, Mockito.times(0)).shutdown();
         springCloseEventInterceptor.before(buildContext(new Object[]{new ContextClosedEvent(Mockito.mock(
-                AnnotationConfigServletWebApplicationContext.class))}));
+                ClassPathXmlApplicationContext.class))}));
         Mockito.verify(registryService, Mockito.times(1)).shutdown();
         springCloseEventInterceptor.after(buildContext(new Object[]{"test"}));
     }

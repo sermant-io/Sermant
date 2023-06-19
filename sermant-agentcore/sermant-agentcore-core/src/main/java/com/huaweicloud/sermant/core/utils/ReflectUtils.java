@@ -57,6 +57,11 @@ public class ReflectUtils {
     private static final Map<String, Optional<Class<?>>> CLASS_CACHE = new ConcurrentHashMap<>();
 
     /**
+     * 构造方法缓存
+     */
+    private static final Map<String, Optional<Constructor<?>>> CONSTRUCTOR_CACHE = new ConcurrentHashMap<>();
+
+    /**
      * 针对单个类缓存的Field的初始化容量
      */
     private static final int INIT_CLASS_FILED_CACHE_SIZE = 4;
@@ -221,13 +226,8 @@ public class ReflectUtils {
      * @return 实例
      */
     public static Optional<Object> buildWithConstructor(String className, Class<?>[] paramsTypes, Object[] params) {
-        try {
-            final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
-            return buildWithConstructor(clazz, paramsTypes, params);
-        } catch (ClassNotFoundException exception) {
-            LOGGER.fine(String.format(Locale.ENGLISH, "Can not find class [%s]", className));
-        }
-        return Optional.empty();
+        final Class<?> clazz = loadClass(className).orElse(null);
+        return buildWithConstructor(clazz, paramsTypes, params);
     }
 
     /**
@@ -249,7 +249,7 @@ public class ReflectUtils {
         try {
             return Optional.of(constructor.get().newInstance(params));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            LOGGER.fine(String.format(Locale.ENGLISH,
+            LOGGER.warning(String.format(Locale.ENGLISH,
                     "Can not create constructor for class [%s] with params [%s]", clazz.getName(),
                     Arrays.toString(params)));
         }
@@ -267,13 +267,17 @@ public class ReflectUtils {
         if (clazz == null) {
             return Optional.empty();
         }
-        try {
-            return Optional.of(clazz.getDeclaredConstructor(paramsTypes));
-        } catch (NoSuchMethodException e) {
-            LOGGER.fine(String.format(Locale.ENGLISH, "Can not find constructor for class [%s] with params [%s]",
-                    clazz.getName(), Arrays.toString(paramsTypes)));
-        }
-        return Optional.empty();
+
+        // 增加构造方法缓存
+        return CONSTRUCTOR_CACHE.computeIfAbsent(buildMethodKey(clazz, "<init>", paramsTypes), key -> {
+            try {
+                return Optional.of(setAccessible(clazz.getDeclaredConstructor(paramsTypes)));
+            } catch (NoSuchMethodException e) {
+                LOGGER.warning(String.format(Locale.ENGLISH, "Can not find constructor for class [%s] with params [%s]",
+                        clazz.getName(), Arrays.toString(paramsTypes)));
+                return Optional.empty();
+            }
+        });
     }
 
     private static String buildMethodKey(Class<?> clazz, String methodName, Class<?>[] paramsType) {

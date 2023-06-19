@@ -25,7 +25,6 @@ import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
@@ -50,8 +49,9 @@ public class DefaultRetryConfig implements RetryConfig {
             SocketTimeoutException.class,
             TimeoutException.class);
 
-    private final List<String> rawRetryEx = Collections.singletonList(
-            "org.apache.http.conn.ConnectTimeoutException");
+    private final List<String> rawRetryEx = Arrays.asList(
+            "org.apache.http.conn.ConnectTimeoutException",
+            "org.springframework.web.reactive.function.client.WebClientRequestException");
 
     /**
      * 最大重试次数
