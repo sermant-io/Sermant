@@ -27,7 +27,7 @@ jobs:
     name: download and cache middlewares
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: cache middlewares
         uses: actions/cache@v3
         with:
@@ -45,9 +45,9 @@ jobs:
     name: package and cache agent
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 8
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '8'
           distribution: 'adopt'
@@ -97,7 +97,7 @@ jobs:
             dubbo-versions: '4'
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 100
       - name: common operations

@@ -3,7 +3,7 @@ description: "check file change for all plugins"
 runs:
   using: "composite"
   steps:
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-agentcore
       with:
         paths: sermant-agentcore
@@ -11,7 +11,7 @@ runs:
       shell: bash
       run: |
         echo "sermantAgentCoreChanged=${{ steps.changed-sermant-agentcore.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-router
       with:
         paths: sermant-plugins/sermant-router
@@ -19,7 +19,7 @@ runs:
       shell: bash
       run: |
         echo "sermantRouterChanged=${{ steps.changed-sermant-router.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-flowcontrol
       with:
         paths: sermant-plugins/sermant-flowcontrol
@@ -27,7 +27,7 @@ runs:
       shell: bash
       run: |
         echo "sermantFlowcontrolChanged=${{ steps.changed-sermant-flowcontrol.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-dynamic-config
       with:
         paths: sermant-plugins/sermant-dynamic-config
@@ -35,7 +35,7 @@ runs:
       shell: bash
       run: |
         echo "sermantDynamicConfigChanged=${{ steps.changed-sermant-dynamic-config.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-loadbalancer
       with:
         paths: sermant-plugins/sermant-loadbalancer
@@ -43,7 +43,7 @@ runs:
       shell: bash
       run: |
         echo "sermantLoadbalancerChanged=${{ steps.changed-sermant-loadbalancer.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-monitor
       with:
         paths: sermant-plugins/sermant-monitor
@@ -51,7 +51,7 @@ runs:
       shell: bash
       run: |
         echo "sermantMonitorChanged=${{ steps.changed-sermant-monitor.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-service-visibility
       with:
         paths: sermant-plugins/sermant-service-visibility
@@ -59,7 +59,7 @@ runs:
       shell: bash
       run: |
         echo "sermantServiceVisibilityChanged=${{ steps.changed-sermant-service-visibility.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-service-registry
       with:
         paths: sermant-plugins/sermant-service-registry
@@ -67,7 +67,7 @@ runs:
       shell: bash
       run: |
         echo "sermantServiceRegistryChanged=${{ steps.changed-sermant-service-registry.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-springboot-registry
       with:
         paths: sermant-plugins/sermant-springboot-registry
@@ -75,7 +75,7 @@ runs:
       shell: bash
       run: |
         echo "sermantSpringbootRegistryChanged=${{ steps.changed-sermant-springboot-registry.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-mq-consumer-deny
       with:
         paths: sermant-plugins/sermant-mq-consumer-deny
@@ -83,7 +83,7 @@ runs:
       shell: bash
       run: |
         echo "sermantMqConsumerDenyChanged=${{ steps.changed-sermant-mq-consumer-deny.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-removal
       with:
         paths: sermant-plugins/sermant-service-removal
@@ -91,7 +91,7 @@ runs:
       shell: bash
       run: |
         echo "sermantServiceRemovalChanged=${{ steps.changed-sermant-removal.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-workflow-or-test
       with:
         paths: ./.github/actions ./.github/workflows sermant-integration-tests

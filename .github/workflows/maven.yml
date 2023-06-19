@@ -14,7 +14,7 @@ jobs:
     name: Checkstyle
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: reviewdog/action-setup@v1
         with:
           reviewdog_version: latest
@@ -30,9 +30,9 @@ jobs:
     runs-on: windows-latest
     name: build
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 8
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '8'
           distribution: 'adopt'

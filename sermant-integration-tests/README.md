@@ -88,7 +88,7 @@ test-for-spring:
             nacosVersion: "2.0.0.RELEASE"
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 100
       - name: common operations
@@ -126,7 +126,7 @@ download-midwares-and-cache:
     name: download midwares and cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: cache local cse
         uses: actions/cache@v3
         with:
@@ -164,9 +164,9 @@ download-midwares-and-cache:
     name: build agent and cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 8
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '8'
           distribution: 'adopt'
@@ -272,7 +272,7 @@ runs:
   using: "composite"
   steps:
   	# 1. Check whether change files exist in the sermant-plugins/sermant-service-registry     directory.
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-service-registry
       with:
         paths: sermant-plugins/sermant-service-registry
@@ -281,7 +281,7 @@ runs:
       run: |
         echo "sermantServiceRegistryChanged=${{ steps.changed-sermant-service-registry.outputs.changed }}" >> $GITHUB_ENV
      # 2. Check whether the pipeline file is changed.
-    - uses: marceloprado/has-changed-path@v1
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-workflow-or-test
       with:
         paths: ./.github/actions ./.github/workflows sermant-integration-tests
@@ -369,7 +369,7 @@ download-midwares-and-cache:
     name: download midwares and cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: cache zookeeper
         uses: actions/cache@v3
         with:
