@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.config.RemovalConfig;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.entity.InstanceInfo;
+import com.huaweicloud.sermant.entity.RequestCountData;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -28,6 +29,7 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.Iterator;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -84,10 +86,12 @@ public class RequestDataCountTaskTest {
         Thread.sleep(15000);
         InstanceInfo info = InstanceCache.INSTANCE_MAP.get(KEY);
         Assert.assertTrue(info != null && info.getCountDataList().size() > 0);
-        info.getCountDataList().forEach(requestCountData -> {
+        Iterator<RequestCountData> requestCountDataIterator = info.getCountDataList().iterator();
+        while (requestCountDataIterator.hasNext()) {
+            RequestCountData requestCountData = requestCountDataIterator.next();
             Assert.assertEquals(REQ_NUM, requestCountData.getRequestNum());
             Assert.assertEquals(REQ_FAIL_NUM, requestCountData.getRequestFailNum());
-        });
+        }
     }
 
     @AfterClass

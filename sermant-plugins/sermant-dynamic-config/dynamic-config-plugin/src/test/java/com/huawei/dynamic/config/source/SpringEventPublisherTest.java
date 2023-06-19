@@ -20,10 +20,15 @@ package com.huawei.dynamic.config.source;
 import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.RefreshNotifier;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -41,6 +46,14 @@ public class SpringEventPublisherTest {
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+    }
+
     @Test
     public void test() {
         MockitoAnnotations.openMocks(this);
@@ -57,5 +70,10 @@ public class SpringEventPublisherTest {
             Mockito.verify(applicationEventPublisher, Mockito.times(1)).publishEvent(Mockito.any());
             originConfigCenterDisableListenerTest.getListeners().clear();
         }
+    }
+
+    @After
+    public void tearDown() {
+        operationManagerMockedStatic.close();
     }
 }
