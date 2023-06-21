@@ -23,6 +23,8 @@ import com.huawei.discovery.service.lb.discovery.zk.ZkService34;
 import com.huawei.discovery.service.lb.rule.BaseTest;
 import com.huawei.discovery.service.lb.utils.CommonUtils;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.event.config.EventConfig;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
@@ -53,6 +55,8 @@ public class RegistryImplTest extends BaseTest {
         MockitoAnnotations.openMocks(this);
         pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(ZkService34.class))
                 .thenReturn(zkService34);
+        configManagerMockedStatic.when(() -> ConfigManager.getConfig(EventConfig.class))
+                .thenReturn(new EventConfig());
         start();
     }
 

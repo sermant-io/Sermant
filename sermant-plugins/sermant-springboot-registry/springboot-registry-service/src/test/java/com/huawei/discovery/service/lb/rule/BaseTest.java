@@ -21,6 +21,7 @@ import com.huawei.discovery.config.LbConfig;
 import com.huawei.discovery.service.lb.discovery.zk.ZkClient;
 import com.huawei.discovery.service.lb.utils.CommonUtils;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
@@ -48,6 +49,8 @@ public class BaseTest {
 
     protected MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
+    protected MockedStatic<ConfigManager> configManagerMockedStatic;
+
     @Before
     public void setUp() {
         pluginConfigManagerMockedStatic = Mockito
@@ -58,6 +61,7 @@ public class BaseTest {
                 .thenReturn(new DiscoveryPluginConfig());
         pluginServiceManagerMockedStatic = Mockito
                 .mockStatic(PluginServiceManager.class);
+        configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
     }
 
     @After
@@ -65,6 +69,7 @@ public class BaseTest {
         CommonUtils.cleanServiceStats();
         pluginConfigManagerMockedStatic.close();
         pluginServiceManagerMockedStatic.close();
+        configManagerMockedStatic.close();
     }
 
     /**

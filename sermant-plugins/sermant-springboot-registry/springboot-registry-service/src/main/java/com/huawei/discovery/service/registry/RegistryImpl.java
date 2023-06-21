@@ -17,7 +17,9 @@
 package com.huawei.discovery.service.registry;
 
 import com.huawei.discovery.config.DiscoveryPluginConfig;
+import com.huawei.discovery.entity.RegisterContext;
 import com.huawei.discovery.entity.ServiceInstance;
+import com.huawei.discovery.event.SpringBootRegistryEventCollector;
 import com.huawei.discovery.service.RegistryService;
 import com.huawei.discovery.service.lb.DiscoveryManager;
 
@@ -71,6 +73,8 @@ public class RegistryImpl implements RegistryService {
                 LOGGER.log(Level.WARNING, "Stop lb service failed!", ex);
             } finally {
                 addStatusForHeartbeat();
+                SpringBootRegistryEventCollector.getInstance().collectUnRegistryEvent(RegisterContext.INSTANCE
+                        .getServiceInstance());
             }
         }
     }

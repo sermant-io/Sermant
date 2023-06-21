@@ -28,6 +28,7 @@ import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.event.EventManager;
 import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.exception.DupServiceException;
+import com.huaweicloud.sermant.core.service.send.api.GatewayClient;
 import com.huaweicloud.sermant.core.utils.SpiLoadUtils;
 
 import java.util.ArrayList;
@@ -47,6 +48,42 @@ import java.util.logging.Logger;
  * @since 2021-10-26
  */
 public class ServiceManager {
+    /**
+     * 动态配置服务类名
+     */
+    public static final String BUFFERED_DYNAMIC_CONFIG_SERVICE = "com.huaweicloud.sermant"
+            + ".implement.service.dynamicconfig.BufferedDynamicConfigService";
+
+    /**
+     * 心跳服务类名
+     */
+    public static final String HEARTBEAT_SERVICE_IMPL = "com.huaweicloud.sermant.implement.service.heartbeat"
+            + ".HeartbeatServiceImpl";
+
+    /**
+     * 注入服务类名
+     */
+    public static final String INJECT_SERVICE_IMPL = "com.huaweicloud.sermant.implement.service.inject"
+            + ".InjectServiceImpl";
+
+    /**
+     * netty网关服务类名
+     */
+    public static final String NETTY_GATEWAY_CLIENT = "com.huaweicloud.sermant.implement.service.send.netty"
+            + ".NettyGatewayClient";
+
+    /**
+     * 链路追踪服务类名
+     */
+    public static final String TRACING_SERVICE_IMPL = "com.huaweicloud.sermant.implement.service.tracing"
+            + ".TracingServiceImpl";
+
+    /**
+     * 服务可见性服务类名
+     */
+    public static final String VISIBILITY_SERVICE_IMPL = "com.huaweicloud.sermant.implement.service.visibility"
+            + ".VisibilityServiceImpl";
+
     /**
      * 日志
      */
@@ -141,17 +178,26 @@ public class ServiceManager {
      * 添加关闭服务的钩子
      */
     private static void addStopHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                offerEvent();
-                for (BaseService baseService : new HashSet<>(SERVICES.values())) {
-                    try {
-                        baseService.stop();
-                    } catch (Exception ex) {
-                        LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
-                                "Error occurs while stopping service: %s", baseService.getClass().toString()), ex);
-                    }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            BaseService nettyGateWayClient = SERVICES.get(NETTY_GATEWAY_CLIENT);
+            SERVICES.remove(NETTY_GATEWAY_CLIENT);
+            SERVICES.remove(GatewayClient.class.getCanonicalName());
+            for (BaseService baseService : new HashSet<>(SERVICES.values())) {
+                try {
+                    baseService.stop();
+                } catch (Exception ex) {
+                    LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
+                            "Error occurs while stopping service: %s", baseService.getClass().toString()), ex);
+                }
+            }
+            offerEvent();
+            if (nettyGateWayClient != null) {
+                try {
+                    nettyGateWayClient.stop();
+                } catch (Exception ex) {
+                    LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
+                            "Error occurs while stopping service: %s",
+                            nettyGateWayClient.getClass().toString()), ex);
                 }
             }
         }));
@@ -159,9 +205,11 @@ public class ServiceManager {
 
     private static void offerEvent() {
         // 上报服务关闭事件
+        ArrayList<String> stopServiceArray = new ArrayList<>();
         for (BaseService baseService : new HashSet<>(SERVICES.values())) {
-            FrameworkEventCollector.getInstance().collectServiceStopEvent(baseService.getClass().getName());
+            stopServiceArray.add(baseService.getClass().getName());
         }
+        FrameworkEventCollector.getInstance().collectServiceStopEvent(stopServiceArray.toString());
 
         // 上报Sermant关闭的事件
         FrameworkEventCollector.getInstance().collectAgentStopEvent();
