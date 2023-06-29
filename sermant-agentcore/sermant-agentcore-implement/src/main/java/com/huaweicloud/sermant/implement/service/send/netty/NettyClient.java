@@ -18,6 +18,9 @@ package com.huaweicloud.sermant.implement.service.send.netty;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.notification.NettyNotificationType;
+import com.huaweicloud.sermant.core.notification.NotificationInfo;
+import com.huaweicloud.sermant.core.notification.NotificationManager;
 import com.huaweicloud.sermant.core.service.ServiceConfig;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.send.config.GatewayConfig;
@@ -110,6 +113,11 @@ public class NettyClient {
     private int reconnectInternalTime;
 
     /**
+     * 状态标识：false链接失败 true链接成功。null 未建立链接
+     */
+    private Boolean isConnected = null;
+
+    /**
      * 构造函数
      *
      * @param serverIp serverIp
@@ -180,10 +188,14 @@ public class NettyClient {
                 reconnectInternalTime = initReconnectInternalTime;
                 channel = channelFuture.channel();
                 if (channel.isActive()) {
+                    isConnected = true;
                     Sender sender = new Sender(channel, queue);
                     LOGGER.info("Successfully Connected to server");
                     executorService = Executors.newScheduledThreadPool(1, new ThreadFactoryUtils("netty-send-thread"));
                     executorService.scheduleAtFixedRate(sender, 0, sendInternalTime, TimeUnit.SECONDS);
+                    if (NotificationManager.isEnable()) {
+                        NotificationManager.doNotify(new NotificationInfo(NettyNotificationType.CONNECTED, null));
+                    }
                 }
                 if (ConfigManager.getConfig(ServiceConfig.class).isVisibilityEnable()) {
                     if (visibilityService == null) {
@@ -192,6 +204,12 @@ public class NettyClient {
                     visibilityService.reconnectHandler();
                 }
             } else {
+                // 判断之前是否已链接 防止链接失败一直发通知，只有链接断开或者首次链接失败才发通知。
+                if ((isConnected == null || isConnected) && NotificationManager.isEnable()) {
+                    NotificationManager.doNotify(new NotificationInfo(NettyNotificationType.DISCONNECTED, null));
+                    isConnected = false;
+                }
+
                 // 若失败则指数退避重连，初始时间为5秒，最大重连时间为180秒
                 LOGGER.info(String.format(Locale.ROOT, "Failed to connect,try reconnecting after %s seconds ",
                         reconnectInternalTime));

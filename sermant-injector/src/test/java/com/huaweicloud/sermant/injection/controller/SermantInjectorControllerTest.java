@@ -45,7 +45,7 @@ public class SermantInjectorControllerTest {
         while ( iter.hasNext() )
         {
             JsonNode node = iter.next();
-            if (node.get("path").asText().equals("/spec/containers/0/env"))
+            if (node.get("path") != null && node.get("path").asText().equals("/spec/containers/0/env"))
             {
                 JsonNode jn = node.findValue("value");
                 Assertions.assertTrue(jn.toString().indexOf("key1") > 0);

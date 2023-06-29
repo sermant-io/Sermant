@@ -22,6 +22,9 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.event.EventManager;
 import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
+import com.huaweicloud.sermant.core.notification.NotificationInfo;
+import com.huaweicloud.sermant.core.notification.NotificationManager;
+import com.huaweicloud.sermant.core.notification.SermantNotificationType;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.plugin.PluginSystemEntrance;
 import com.huaweicloud.sermant.core.service.ServiceManager;
@@ -74,5 +77,9 @@ public class AgentCoreEntrance {
 
         // 上报Sermant启动事件
         FrameworkEventCollector.getInstance().collectAgentStartEvent();
+
+        if (NotificationManager.isEnable()) {
+            NotificationManager.doNotify(new NotificationInfo(SermantNotificationType.LOAD_COMPLETE, null));
+        }
     }
 }

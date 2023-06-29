@@ -19,6 +19,9 @@ package com.huaweicloud.sermant.implement.service.dynamicconfig.zookeeper;
 import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.notification.NotificationInfo;
+import com.huaweicloud.sermant.core.notification.NotificationManager;
+import com.huaweicloud.sermant.core.notification.ZookeeperNotificationType;
 import com.huaweicloud.sermant.core.service.dynamicconfig.config.DynamicConfig;
 import com.huaweicloud.sermant.core.utils.AesUtil;
 
@@ -75,7 +78,7 @@ public class ZooKeeperBufferedClient implements Closeable {
     /**
      * 新建ZooKeeperBufferedClient，初始化zk客户端，并提供过期重连机制
      *
-     * @param connectString  连接字符串，必须形如：{@code host:port[(,host:port)...]}
+     * @param connectString 连接字符串，必须形如：{@code host:port[(,host:port)...]}
      * @param sessionTimeout 会话超时时间
      * @throws ZooKeeperInitException 依赖动态配置情况下，zookeeper初始化失败，需要中断Sermant
      */
@@ -87,6 +90,7 @@ public class ZooKeeperBufferedClient implements Closeable {
                 if (event.getState() == Event.KeeperState.Expired) {
                     zkClient = newZkClient(connectString, sessionTimeout, this);
                 }
+                postZookeeperConnectNotification(event);
             }
         });
         checkConnect();
@@ -113,10 +117,26 @@ public class ZooKeeperBufferedClient implements Closeable {
                     waitConnect();
                     zkClient.addAuthInfo(SCHEME, authInfo.getBytes(CommonConstant.DEFAULT_CHARSET));
                 }
+                postZookeeperConnectNotification(event);
             }
         });
         checkConnect();
         zkClient.addAuthInfo(SCHEME, authInfo.getBytes(CommonConstant.DEFAULT_CHARSET));
+    }
+
+    /**
+     * 发送zookeeper链接通知
+     *
+     * @param event zookeeper事件信息
+     */
+    private static void postZookeeperConnectNotification(WatchedEvent event) {
+        if (NotificationManager.isEnable()) {
+            if (event.getState() == Watcher.Event.KeeperState.SyncConnected) {
+                NotificationManager.doNotify(new NotificationInfo(ZookeeperNotificationType.CONNECTED, null));
+            } else if (event.getState() == Watcher.Event.KeeperState.Disconnected) {
+                NotificationManager.doNotify(new NotificationInfo(ZookeeperNotificationType.DISCONNECTED, null));
+            }
+        }
     }
 
     /**
@@ -151,9 +171,9 @@ public class ZooKeeperBufferedClient implements Closeable {
     /**
      * 创建zk客户端
      *
-     * @param connectString  连接字符串，必须形如：{@code host:port[(,host:port)...]}
+     * @param connectString 连接字符串，必须形如：{@code host:port[(,host:port)...]}
      * @param sessionTimeout 会话超时时间
-     * @param watcher        默认观察器
+     * @param watcher 默认观察器
      * @return zk客户端
      * @throws ZooKeeperInitException zk初始化异常
      */
@@ -313,7 +333,7 @@ public class ZooKeeperBufferedClient implements Closeable {
      * <p>
      * 注意，当同一节点的其他监听器被精准移除时，由于该监听器无法鉴别到底是不是移除自身，因此会选择放弃循环注册
      *
-     * @param path    节点路径
+     * @param path 节点路径
      * @param watcher 实际执行的监听器
      * @param handler 监听器循环注册失败后的异常处理器
      * @return 是否成功添加循环的临时数据监听器
@@ -345,7 +365,7 @@ public class ZooKeeperBufferedClient implements Closeable {
     /**
      * 添加持久递归的监听器，对子孙节点有效
      *
-     * @param path    节点路径
+     * @param path 节点路径
      * @param watcher 监听器
      * @return 是否成功添加持久递归的监听器
      */
