@@ -16,6 +16,7 @@
 
 package com.huawei.discovery.interceptors;
 
+import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.config.PlugEffectWhiteBlackConstants;
 import com.huawei.discovery.entity.DefaultServiceInstance;
 import com.huawei.discovery.entity.PlugEffectStrategyCache;
@@ -23,6 +24,9 @@ import com.huawei.discovery.entity.ServiceInstance;
 import com.huawei.discovery.service.InvokerService;
 import com.huawei.discovery.utils.HttpConstants;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.config.common.BaseConfig;
+import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
@@ -98,6 +102,13 @@ public class OkHttp3ClientInterceptorTest extends BaseTest {
 
     @Test
     public void testRestTemplateInterceptor() throws Exception {
+        Optional<?> configMapOptional = ReflectUtils.getStaticFieldValue(ConfigManager.class, "CONFIG_MAP");
+        DiscoveryPluginConfig discoveryPluginConfig = new DiscoveryPluginConfig();
+        if (configMapOptional.isPresent()) {
+            Map<String, BaseConfig> configMap = (Map<String, BaseConfig>) configMapOptional.get();
+            configMap.put(DiscoveryPluginConfig.class.getAnnotation(ConfigTypeKey.class).value(),
+                    discoveryPluginConfig);
+        }
         OkHttpClient client = new OkHttpClient();
         Request request = createRequest(url);
         ExecuteContext context = ExecuteContext.forMemberMethod(client.newCall(request),
