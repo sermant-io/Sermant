@@ -19,9 +19,9 @@ package com.huaweicloud.sermant.service;
 import com.huaweicloud.sermant.cache.InstanceCache;
 import com.huaweicloud.sermant.config.RemovalConfig;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.entity.InstanceInfo;
 import com.huaweicloud.sermant.entity.RequestCountData;
 
@@ -46,7 +46,7 @@ public class RequestDataCountTask implements PluginService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private final RemovalConfig removalConfig = ConfigManager.getConfig(RemovalConfig.class);
+    private final RemovalConfig removalConfig = PluginConfigManager.getPluginConfig(RemovalConfig.class);
 
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
@@ -129,7 +129,7 @@ public class RequestDataCountTask implements PluginService {
         scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
         scheduledThreadPoolExecutor.scheduleWithFixedDelay(this::processData, removalConfig.getWindowsTime(),
                 removalConfig.getWindowsTime(), TimeUnit.MILLISECONDS);
-        removalEventService = ServiceManager.getService(RemovalEventService.class);
+        removalEventService = PluginServiceManager.getPluginService(RemovalEventService.class);
     }
 
     @Override

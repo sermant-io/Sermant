@@ -20,6 +20,7 @@ package com.huaweicloud.loadbalancer.rule;
 import com.huaweicloud.loadbalancer.service.RuleConverter;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.utils.StringUtils;
@@ -55,7 +56,7 @@ public class RuleManagerTest {
     @Test
     public void testResolve() {
         Mockito.mockStatic(ServiceManager.class)
-                .when(() -> ServiceManager.getService(RuleConverter.class))
+                .when(() -> PluginServiceManager.getPluginService(RuleConverter.class))
                 .thenReturn(new YamlRuleConverter());
         final AtomicBoolean isNotify = new AtomicBoolean();
         RuleManager.INSTANCE.addRuleListener((rule, event) -> {

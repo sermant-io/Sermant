@@ -23,7 +23,7 @@ import com.huawei.discovery.service.RegistryService;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -44,8 +44,8 @@ public class SpringApplicationInterceptor extends AbstractInterceptor {
      * 构造方法
      */
     public SpringApplicationInterceptor() {
-        registryService = ServiceManager.getService(RegistryService.class);
-        configCenterService = ServiceManager.getService(ConfigCenterService.class);
+        registryService = PluginServiceManager.getPluginService(RegistryService.class);
+        configCenterService = PluginServiceManager.getPluginService(ConfigCenterService.class);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class RuleCache {
 
     private static final String DEFAULT_RULE_NAME = "default-rule";
 
-    private static final RemovalConfig REMOVAL_CONFIG = PluginConfigManager.getConfig(RemovalConfig.class);
+    private static final RemovalConfig REMOVAL_CONFIG = PluginConfigManager.getPluginConfig(RemovalConfig.class);
 
     private RuleCache() {
     }

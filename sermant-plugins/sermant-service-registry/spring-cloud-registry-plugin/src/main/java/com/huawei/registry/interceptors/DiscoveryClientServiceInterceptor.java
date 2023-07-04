@@ -22,6 +22,7 @@ import com.huawei.registry.services.RegisterCenterService;
 import com.huawei.registry.support.InstanceInterceptorSupport;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import reactor.core.publisher.Flux;
@@ -47,7 +48,7 @@ public class DiscoveryClientServiceInterceptor extends InstanceInterceptorSuppor
         }
         try {
             mark();
-            final RegisterCenterService service = ServiceManager.getService(RegisterCenterService.class);
+            final RegisterCenterService service = PluginServiceManager.getPluginService(RegisterCenterService.class);
             final List<String> services = new ArrayList<>(service.getServices());
             final Object target = context.getObject();
             context.skip(isWebfLux(target) ? getServicesWithFlux(services, target) : getServices(services, target));

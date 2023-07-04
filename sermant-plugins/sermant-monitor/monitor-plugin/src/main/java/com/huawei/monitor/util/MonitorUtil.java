@@ -29,7 +29,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
  * @since 2022-11-02
  */
 public class MonitorUtil {
-    private static final MonitorServiceConfig CONFIG = PluginConfigManager.getConfig(MonitorServiceConfig.class);
+    private static final MonitorServiceConfig CONFIG = PluginConfigManager.getPluginConfig(MonitorServiceConfig.class);
 
     private MonitorUtil() {
     }

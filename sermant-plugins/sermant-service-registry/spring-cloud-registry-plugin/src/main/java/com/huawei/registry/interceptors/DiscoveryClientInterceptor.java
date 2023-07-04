@@ -25,6 +25,7 @@ import com.huawei.registry.utils.HostUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import reactor.core.publisher.Flux;
@@ -58,7 +59,7 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
         try {
             mark();
             String serviceId = (String) context.getArguments()[0];
-            final RegisterCenterService service = ServiceManager.getService(RegisterCenterService.class);
+            final RegisterCenterService service = PluginServiceManager.getPluginService(RegisterCenterService.class);
             final List<MicroServiceInstance> microServiceInstances = service.getServerList(serviceId);
             final Object target = context.getObject();
             if (!microServiceInstances.isEmpty()) {

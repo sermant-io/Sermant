@@ -60,7 +60,7 @@ public class RuleUtils {
 
     private static final int ONO_HUNDRED = 100;
 
-    private static final RouterConfig ROUTER_CONFIG = PluginConfigManager.getConfig(RouterConfig.class);
+    private static final RouterConfig ROUTER_CONFIG = PluginConfigManager.getPluginConfig(RouterConfig.class);
 
     private RuleUtils() {
     }

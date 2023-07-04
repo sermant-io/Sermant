@@ -18,7 +18,7 @@ package com.huaweicloud.sermant.router.dubbo.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.router.dubbo.service.ClusterUtilsService;
 
 /**
@@ -34,7 +34,7 @@ public class ClusterUtilsInterceptor extends AbstractInterceptor {
      * 构造方法
      */
     public ClusterUtilsInterceptor() {
-        clusterUtilsService = ServiceManager.getService(ClusterUtilsService.class);
+        clusterUtilsService = PluginServiceManager.getPluginService(ClusterUtilsService.class);
     }
 
     @Override

@@ -58,7 +58,7 @@ public class SpringFactoriesInterceptor extends RegisterSwitchSupport {
      * 初始化加载注入定义
      */
     public SpringFactoriesInterceptor() {
-        for (ClassInjectDefine define : ServiceLoader.load(ClassInjectDefine.class)) {
+        for (ClassInjectDefine define : ServiceLoader.load(ClassInjectDefine.class, this.getClass().getClassLoader())) {
             if (define.plugin() == Plugin.SPRING_REGISTRY_PLUGIN) {
                 CLASS_DEFINES.add(define);
             }

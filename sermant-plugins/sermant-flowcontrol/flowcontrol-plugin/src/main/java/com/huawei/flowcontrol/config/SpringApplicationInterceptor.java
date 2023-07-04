@@ -21,7 +21,7 @@ import com.huawei.flowcontrol.common.init.FlowControlInitServiceImpl;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -43,7 +43,8 @@ public class SpringApplicationInterceptor extends AbstractInterceptor {
     public ExecuteContext after(ExecuteContext context) {
         Object logStartupInfo = context.getMemberFieldValue("logStartupInfo");
         if ((logStartupInfo instanceof Boolean) && (Boolean) logStartupInfo && INIT.compareAndSet(false, true)) {
-            final FlowControlInitServiceImpl service = ServiceManager.getService(FlowControlInitServiceImpl.class);
+            final FlowControlInitServiceImpl service = PluginServiceManager.getPluginService(
+                    FlowControlInitServiceImpl.class);
             service.doStart();
         }
         return context;
