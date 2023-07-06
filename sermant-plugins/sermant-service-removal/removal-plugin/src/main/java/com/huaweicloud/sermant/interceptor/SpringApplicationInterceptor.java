@@ -18,7 +18,7 @@ package com.huaweicloud.sermant.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.service.RemovalConfigService;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,7 +38,7 @@ public class SpringApplicationInterceptor extends AbstractInterceptor {
      * 构造方法
      */
     public SpringApplicationInterceptor() {
-        removalConfigService = ServiceManager.getService(RemovalConfigService.class);
+        removalConfigService = PluginServiceManager.getPluginService(RemovalConfigService.class);
     }
 
     @Override

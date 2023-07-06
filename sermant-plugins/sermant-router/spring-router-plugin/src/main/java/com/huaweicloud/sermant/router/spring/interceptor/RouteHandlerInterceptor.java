@@ -16,7 +16,7 @@
 
 package com.huaweicloud.sermant.router.spring.interceptor;
 
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.router.common.handler.Handler;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
@@ -56,7 +56,7 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
      * 构造方法
      */
     public RouteHandlerInterceptor() {
-        configService = ServiceManager.getService(SpringConfigService.class);
+        configService = PluginServiceManager.getPluginService(SpringConfigService.class);
         handlers = new ArrayList<>();
         handlers.add(new LaneRequestTagHandler());
         handlers.add(new RouteRequestTagHandler());

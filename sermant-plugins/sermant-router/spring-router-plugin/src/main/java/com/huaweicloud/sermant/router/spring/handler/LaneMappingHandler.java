@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.router.spring.handler;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.spring.service.LaneService;
@@ -44,7 +44,7 @@ public class LaneMappingHandler extends AbstractMappingHandler {
      * 构造方法
      */
     public LaneMappingHandler() {
-        laneService = ServiceManager.getService(LaneService.class);
+        laneService = PluginServiceManager.getPluginService(LaneService.class);
     }
 
     /**

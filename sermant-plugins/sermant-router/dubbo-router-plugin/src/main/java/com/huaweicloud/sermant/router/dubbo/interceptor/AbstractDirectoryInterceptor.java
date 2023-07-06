@@ -18,7 +18,7 @@ package com.huaweicloud.sermant.router.dubbo.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.LogUtils;
 import com.huaweicloud.sermant.router.dubbo.service.AbstractDirectoryService;
 
@@ -35,7 +35,7 @@ public class AbstractDirectoryInterceptor extends AbstractInterceptor {
      * 构造方法
      */
     public AbstractDirectoryInterceptor() {
-        abstractDirectoryService = ServiceManager.getService(AbstractDirectoryService.class);
+        abstractDirectoryService = PluginServiceManager.getPluginService(AbstractDirectoryService.class);
     }
 
     @Override

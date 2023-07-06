@@ -31,7 +31,7 @@ public abstract class AbstractSwitchInterceptor extends AbstractInterceptor {
     /**
      * 离群实例摘除配置
      */
-    protected static final RemovalConfig REMOVAL_CONFIG = PluginConfigManager.getConfig(RemovalConfig.class);
+    protected static final RemovalConfig REMOVAL_CONFIG = PluginConfigManager.getPluginConfig(RemovalConfig.class);
 
     @Override
     public ExecuteContext before(ExecuteContext context) {

@@ -17,8 +17,8 @@
 
 package com.huaweicloud.visibility.declarer;
 
-import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.visibility.config.VisibilityConfig;
 
 /**
@@ -28,7 +28,7 @@ import com.huaweicloud.visibility.config.VisibilityConfig;
  * @since 2023-01-09
  */
 public abstract class AbstractCollectorDeclarer extends AbstractPluginDeclarer {
-    private VisibilityConfig visibilityConfig = ConfigManager.getConfig(VisibilityConfig.class);
+    private VisibilityConfig visibilityConfig = PluginConfigManager.getPluginConfig(VisibilityConfig.class);
 
     @Override
     public boolean isEnabled() {

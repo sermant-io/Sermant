@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
@@ -47,7 +47,7 @@ public class DiscoveryManagerInterceptor extends AbstractInterceptor {
      * 构造方法
      */
     public DiscoveryManagerInterceptor() {
-        configService = ServiceManager.getService(SpringConfigService.class);
+        configService = PluginServiceManager.getPluginService(SpringConfigService.class);
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
     }
 

@@ -23,6 +23,7 @@ import com.huawei.registry.entity.MicroServiceInstance;
 import com.huawei.registry.services.RegisterCenterService;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import org.junit.Assert;
@@ -50,7 +51,7 @@ public class RegistrationInterceptorTest extends BaseRegistryTest<RegistrationIn
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
-        serviceManagerMockedStatic.when(() -> ServiceManager.getService(RegisterCenterService.class))
+        pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(RegisterCenterService.class))
                 .thenReturn(new RegisterCenterService() {
                     @Override
                     public void register(FixedResult result) {

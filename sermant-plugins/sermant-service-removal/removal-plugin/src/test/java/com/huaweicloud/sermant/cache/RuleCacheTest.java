@@ -19,6 +19,8 @@ package com.huaweicloud.sermant.cache;
 import com.huaweicloud.sermant.config.RemovalConfig;
 import com.huaweicloud.sermant.config.RemovalRule;
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -57,7 +59,7 @@ public class RuleCacheTest {
         removalConfig.setRules(new ArrayList<>());
         removalConfig.getRules().add(removalRule);
         configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
-        configManagerMockedStatic.when(() -> ConfigManager.getConfig(RemovalConfig.class)).thenReturn(removalConfig);
+        configManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RemovalConfig.class)).thenReturn(removalConfig);
     }
 
     @Test

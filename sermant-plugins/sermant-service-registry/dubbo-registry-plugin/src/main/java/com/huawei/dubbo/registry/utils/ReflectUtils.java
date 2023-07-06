@@ -80,7 +80,7 @@ public class ReflectUtils {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             return Optional.of(ClassLoaderUtils.defineClass(className, contextClassLoader,
-                ClassLoaderUtils.getClassResource(ClassLoader.getSystemClassLoader(), className)));
+                ClassLoaderUtils.getClassResource(ReflectUtils.class.getClassLoader(), className)));
         } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | IOException e) {
             // 有可能已经加载过了，直接用contextClassLoader.loadClass加载
             try {

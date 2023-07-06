@@ -18,7 +18,7 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
@@ -54,7 +54,7 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
      * 构造方法
      */
     public BaseLoadBalancerInterceptor() {
-        loadBalancerService = ServiceManager.getService(LoadBalancerService.class);
+        loadBalancerService = PluginServiceManager.getPluginService(LoadBalancerService.class);
         canLoadZuul = canLoadZuul();
     }
 

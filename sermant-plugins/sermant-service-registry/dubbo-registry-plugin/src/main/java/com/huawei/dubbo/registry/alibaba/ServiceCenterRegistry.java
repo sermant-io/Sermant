@@ -18,7 +18,7 @@ package com.huawei.dubbo.registry.alibaba;
 
 import com.huawei.dubbo.registry.service.RegistryService;
 
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import com.alibaba.dubbo.registry.NotifyListener;
 import com.alibaba.dubbo.registry.support.FailbackRegistry;
@@ -39,7 +39,7 @@ public class ServiceCenterRegistry extends FailbackRegistry {
      */
     public ServiceCenterRegistry(com.alibaba.dubbo.common.URL url) {
         super(url);
-        registryService = ServiceManager.getService(RegistryService.class);
+        registryService = PluginServiceManager.getPluginService(RegistryService.class);
     }
 
     @Override

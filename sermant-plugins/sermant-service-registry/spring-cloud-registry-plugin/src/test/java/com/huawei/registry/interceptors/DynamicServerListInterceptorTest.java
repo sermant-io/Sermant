@@ -23,6 +23,7 @@ import com.huawei.registry.interceptors.cloud3.x.ZookeeperInstanceSupplierInterc
 import com.huawei.registry.services.RegisterCenterService;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.netflix.loadbalancer.DynamicServerListLoadBalancer;
 import com.netflix.loadbalancer.Server;
@@ -63,7 +64,7 @@ public class DynamicServerListInterceptorTest extends BaseRegistryTest<DynamicSe
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
-        serviceManagerMockedStatic.when(() -> ServiceManager.getService(RegisterCenterService.class))
+        pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(RegisterCenterService.class))
                 .thenReturn(registerCenterService);
         final ZookeeperInstanceSupplierInterceptorTest test = new ZookeeperInstanceSupplierInterceptorTest();
         instanceList.add(test.buildInstance(8001));

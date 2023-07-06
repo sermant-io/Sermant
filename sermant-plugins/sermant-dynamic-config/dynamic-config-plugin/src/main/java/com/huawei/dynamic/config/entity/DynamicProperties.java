@@ -19,7 +19,7 @@ package com.huawei.dynamic.config.entity;
 
 import com.huawei.dynamic.config.init.DynamicConfigInitializer;
 
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
@@ -44,7 +44,7 @@ public class DynamicProperties {
     @PostConstruct
     public void init() {
         ClientMeta.INSTANCE.setServiceName(serviceName);
-        final DynamicConfigInitializer service = ServiceManager.getService(DynamicConfigInitializer.class);
+        final DynamicConfigInitializer service = PluginServiceManager.getPluginService(DynamicConfigInitializer.class);
         service.doStart();
     }
 

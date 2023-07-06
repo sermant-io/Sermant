@@ -32,7 +32,7 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 import io.github.resilience4j.retry.RetryConfig;
 
@@ -110,9 +110,9 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
             lock.lock();
             try {
                 if (flowControlConfig.getFlowFramework() == FlowFramework.SENTINEL) {
-                    dubboService = ServiceManager.getService(DubboSenService.class);
+                    dubboService = PluginServiceManager.getPluginService(DubboSenService.class);
                 } else {
-                    dubboService = ServiceManager.getService(DubboRest4jService.class);
+                    dubboService = PluginServiceManager.getPluginService(DubboRest4jService.class);
                 }
             } finally {
                 lock.unlock();
@@ -131,9 +131,9 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
             lock.lock();
             try {
                 if (flowControlConfig.getFlowFramework() == FlowFramework.SENTINEL) {
-                    httpService = ServiceManager.getService(HttpSenService.class);
+                    httpService = PluginServiceManager.getPluginService(HttpSenService.class);
                 } else {
-                    httpService = ServiceManager.getService(HttpRest4jService.class);
+                    httpService = PluginServiceManager.getPluginService(HttpRest4jService.class);
                 }
             } finally {
                 lock.unlock();
@@ -145,10 +145,10 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     /**
      * 创建重试方法
      *
-     * @param obj          增强类
-     * @param method       目标方法
+     * @param obj 增强类
+     * @param method 目标方法
      * @param allArguments 方法参数
-     * @param result       默认结果
+     * @param result 默认结果
      * @return 方法
      */
     protected final Supplier<Object> createRetryFunc(Object obj, Method method, Object[] allArguments, Object result) {
@@ -168,8 +168,8 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     /**
      * 进行重试前的判断，若不满足条件直接返回， 防止多调用一次宿主应用接口
      *
-     * @param retry     重试执行器
-     * @param result    结果
+     * @param retry 重试执行器
+     * @param result 结果
      * @param throwable 第一次执行异常信息
      * @return 是否核对通过
      */
@@ -177,7 +177,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
         final long interval = retry.getRetryConfig().getIntervalBiFunction().apply(1, null);
         final RetryConfig retryConfig = retry.getRetryConfig();
         boolean isNeedRetry = isMatchResult(result, retryConfig.getResultPredicate()) || isTargetException(throwable,
-            retryConfig.getExceptionPredicate());
+                retryConfig.getExceptionPredicate());
         if (isNeedRetry) {
             try {
                 // 按照第一次等待时间等待
@@ -240,7 +240,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
      */
     protected final boolean canInjectClusterInvoker(String className) {
         boolean isClusterLoader =
-            APACHE_DUBBO_CLUSTER_CLASS_NAME.equals(className) || ALIBABA_DUBBO_CLUSTER_CLASS_NAME.equals(className);
+                APACHE_DUBBO_CLUSTER_CLASS_NAME.equals(className) || ALIBABA_DUBBO_CLUSTER_CLASS_NAME.equals(className);
         return isClusterLoader && !REFUSE_REPLACE_INVOKER.equals(flowControlConfig.getRetryClusterInvoker());
     }
 

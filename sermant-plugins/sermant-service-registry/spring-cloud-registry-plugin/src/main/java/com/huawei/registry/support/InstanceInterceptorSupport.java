@@ -100,7 +100,7 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
             Class<?> result = null;
             try {
                 result = ClassLoaderUtils.defineClass(className, contextClassLoader,
-                    ClassLoaderUtils.getClassResource(ClassLoader.getSystemClassLoader(), className));
+                    ClassLoaderUtils.getClassResource(this.getClass().getClassLoader(), className));
             } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | IOException e) {
                 // 有可能已经加载过了，直接用contextClassLoader.loadClass加载
                 try {

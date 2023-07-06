@@ -25,6 +25,7 @@ import com.huawei.registry.support.RegisterSwitchSupport;
 import com.huawei.registry.utils.HostUtils;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
@@ -50,7 +51,7 @@ public class DynamicServerListInterceptor extends RegisterSwitchSupport {
             return context;
         }
         DynamicServerListLoadBalancer<Server> serverListLoadBalancer = (DynamicServerListLoadBalancer<Server>) object;
-        final RegisterCenterService service = ServiceManager.getService(RegisterCenterService.class);
+        final RegisterCenterService service = PluginServiceManager.getPluginService(RegisterCenterService.class);
         final List<MicroServiceInstance> serverList = service.getServerList(serverListLoadBalancer.getName());
         final List<Server> mergeServerList = convertAndMerge(serverListLoadBalancer, serverList);
         ReflectUtils.invokeMethod(object, "updateAllServerList", new Class[]{List.class},

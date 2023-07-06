@@ -20,7 +20,7 @@ import com.huawei.dubbo.registry.entity.GovernanceCache;
 import com.huawei.dubbo.registry.entity.GovernanceData;
 import com.huawei.dubbo.registry.service.RegistryService;
 
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
@@ -43,7 +43,7 @@ public class GovernanceConfigListener implements DynamicConfigListener {
      * 构造方法
      */
     public GovernanceConfigListener() {
-        registryService = ServiceManager.getService(RegistryService.class);
+        registryService = PluginServiceManager.getPluginService(RegistryService.class);
     }
 
     @Override

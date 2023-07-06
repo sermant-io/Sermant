@@ -21,7 +21,7 @@ import com.huawei.monitor.config.MonitorServiceConfig;
 import com.huawei.monitor.service.MetricReportService;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
@@ -42,7 +42,7 @@ public class MetricServiceImpl implements PluginService {
     @Override
     public void start() {
         LOGGER.info("start monitor service");
-        MonitorServiceConfig config = ConfigManager.getConfig(MonitorServiceConfig.class);
+        MonitorServiceConfig config = PluginConfigManager.getPluginConfig(MonitorServiceConfig.class);
         if (config == null || StringUtils.isEmpty(config.getReportType()) || !config.isEnableStartService()) {
             LOGGER.info("monitor switch is close, not start monitor");
             return;

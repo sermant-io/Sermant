@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.spring.cache.AppCache;
@@ -44,7 +44,7 @@ public class EurekaHttpClientInterceptor extends AbstractInterceptor {
      */
     public EurekaHttpClientInterceptor() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
-        configService = ServiceManager.getService(SpringConfigService.class);
+        configService = PluginServiceManager.getPluginService(SpringConfigService.class);
     }
 
     @Override
