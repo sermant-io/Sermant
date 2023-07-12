@@ -49,6 +49,15 @@ import java.util.Optional;
 public class FeignClientInterceptor extends AbstractInterceptor {
     private static final int EXPECT_LENGTH = 4;
 
+    private final boolean canLoadHystrix;
+
+    /**
+     * 构造方法
+     */
+    public FeignClientInterceptor() {
+        canLoadHystrix = canLoadHystrix();
+    }
+
     @Override
     public ExecuteContext before(ExecuteContext context) {
         Object argument = context.getArguments()[0];
@@ -114,6 +123,9 @@ public class FeignClientInterceptor extends AbstractInterceptor {
         if (header != null) {
             return Optional.of(header);
         }
+        if (!canLoadHystrix) {
+            return Optional.empty();
+        }
         HystrixRequestContext context = HystrixRequestContext.getContextForCurrentThread();
         if (context == null) {
             return Optional.empty();
@@ -142,5 +154,14 @@ public class FeignClientInterceptor extends AbstractInterceptor {
             return Collections.unmodifiableMap(newHeaders);
         }
         return headers;
+    }
+
+    private boolean canLoadHystrix() {
+        try {
+            Class.forName(HystrixRequestContext.class.getCanonicalName());
+        } catch (NoClassDefFoundError | ClassNotFoundException error) {
+            return false;
+        }
+        return true;
     }
 }
