@@ -103,6 +103,6 @@ public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor 
             // 这种情况不处理，所以返回emptyList
             return Collections.emptyList();
         }
-        return (List<Object>) flux.next().block();
+        return (List<Object>) flux.next().toProcessor().block();
     }
 }
