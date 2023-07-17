@@ -1,0 +1,3 @@
+tag.transmission.plugin:
+  enabled: true
+  tagKeys: [id,name]

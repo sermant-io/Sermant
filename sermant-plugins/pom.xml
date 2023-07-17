@@ -41,6 +41,7 @@
                 <module>sermant-service-visibility</module>
                 <module>sermant-service-removal</module>
                 <module>sermant-spring-beans-deal</module>
+                <module>sermant-tag-transmission</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -72,6 +73,7 @@
                 <module>sermant-service-visibility</module>
                 <module>sermant-service-removal</module>
                 <module>sermant-spring-beans-deal</module>
+                <module>sermant-tag-transmission</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -103,6 +105,7 @@
                 <module>sermant-service-visibility</module>
                 <module>sermant-service-removal</module>
                 <module>sermant-spring-beans-deal</module>
+                <module>sermant-tag-transmission</module>
             </modules>
         </profile>
     </profiles>

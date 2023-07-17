@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.common;
+package com.huaweicloud.common;
 
 /**
  * JavaDoc启动类

@@ -10,6 +10,7 @@ plugins:
   - mq-consume-deny
   - service-removal
   - service-visibility
+  - tag-transmission
 profiles:
   cse:
     - flowcontrol
