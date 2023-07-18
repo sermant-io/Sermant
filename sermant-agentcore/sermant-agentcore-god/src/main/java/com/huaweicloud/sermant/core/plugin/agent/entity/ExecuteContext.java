@@ -16,12 +16,15 @@
 
 package com.huaweicloud.sermant.core.plugin.agent.entity;
 
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Map;
 
 /**
@@ -36,14 +39,17 @@ public class ExecuteContext {
      * 被增强的类
      */
     private final Class<?> rawCls;
+
     /**
      * 被增强的构造函数，注意：增强方法时为空
      */
     private final Constructor<?> constructor;
+
     /**
      * 被增强的方法，注意：增强构造函数时为空
      */
     private final Method method;
+
     /**
      * 被增强的对象，注意：
      * <pre>
@@ -52,6 +58,7 @@ public class ExecuteContext {
      * </pre>
      */
     private Object object;
+
     /**
      * 被增强的方法入参
      */
@@ -78,12 +85,12 @@ public class ExecuteContext {
     private Throwable throwableOut;
 
     /**
-     * 额外的静态属性
+     * 额外的静态属性，贯穿执行上下文过程
      */
     private Map<String, Object> extStaticFields;
 
     /**
-     * 额外的成员属性
+     * 额外的成员属性，贯穿执行上下文过程
      */
     private Map<String, Object> extMemberFields;
 
@@ -93,72 +100,71 @@ public class ExecuteContext {
     private Map<String, Object> localFields;
 
     /**
+     * 拦截器双向迭代器
+     */
+    private ListIterator<Interceptor> interceptorIterator;
+
+    /**
      * 原生字段集，每次获取的字段都会暂时保存在此
      */
     private Map<String, Field> rawFields;
 
     private ExecuteContext(Object object, Class<?> rawCls, Constructor<?> constructor, Method method,
-            Object[] arguments, Map<String, Object> extStaticFields, Map<String, Object> extMemberFields) {
+            Object[] arguments) {
         this.object = object;
         this.rawCls = rawCls;
         this.constructor = constructor;
         this.method = method;
         this.arguments = arguments;
-        this.isSkip = false;
-        this.result = null;
-        this.throwable = null;
-        this.extStaticFields = extStaticFields;
-        this.extMemberFields = extMemberFields;
-        this.localFields = null;
     }
 
     /**
      * 创建构造函数的执行上下文
      *
-     * @param cls             被增强的类
-     * @param constructor     被增强的构造函数
-     * @param arguments       构造函数入参
+     * @param cls 被增强的类
+     * @param constructor 被增强的构造函数
+     * @param arguments 构造函数入参
      * @param extStaticFields 额外的静态属性集
      * @return 执行上下文
      */
     public static ExecuteContext forConstructor(Class<?> cls, Constructor<?> constructor, Object[] arguments,
             Map<String, Object> extStaticFields) {
-        return new ExecuteContext(null, cls, constructor, null, arguments, extStaticFields, null);
+        return new ExecuteContext(null, cls, constructor, null, arguments);
     }
 
     /**
      * 创建成员方法的执行上下文
      *
-     * @param object          被增强的对象
-     * @param method          被增强的方法
-     * @param arguments       方法的入参
+     * @param object 被增强的对象
+     * @param method 被增强的方法
+     * @param arguments 方法的入参
      * @param extStaticFields 额外的静态属性集
      * @param extMemberFields 额外的成员属性集
      * @return 执行上下文
      */
     public static ExecuteContext forMemberMethod(Object object, Method method, Object[] arguments,
             Map<String, Object> extStaticFields, Map<String, Object> extMemberFields) {
-        return new ExecuteContext(object, object.getClass(), null, method, arguments, extStaticFields, extMemberFields);
+        return new ExecuteContext(object, object.getClass(), null, method, arguments);
     }
 
     /**
      * 构建静态方法的执行上下文
      *
-     * @param cls             被增强的类
-     * @param method          被增强的方法
-     * @param arguments       方法的入参
+     * @param cls 被增强的类
+     * @param method 被增强的方法
+     * @param arguments 方法的入参
      * @param extStaticFields 额外的静态属性集
      * @return 执行上下文
      */
     public static ExecuteContext forStaticMethod(Class<?> cls, Method method, Object[] arguments,
             Map<String, Object> extStaticFields) {
-        return new ExecuteContext(null, cls, null, method, arguments, extStaticFields, null);
+        return new ExecuteContext(null, cls, null, method, arguments);
     }
 
     /**
      * 适配增强构造函数时的后置触发点
      *
-     * @param thisObj             构造的对象
+     * @param thisObj 构造的对象
      * @param thisExtMemberFields 成员属性集
      * @return 执行上下文
      */
@@ -171,7 +177,7 @@ public class ExecuteContext {
     /**
      * 适配增强静态方法和成员方法时的后置触发点
      *
-     * @param methodResult    方法主要流程结果
+     * @param methodResult 方法主要流程结果
      * @param methodThrowable 方法主要流程异常
      * @return 执行上下文
      */
@@ -223,6 +229,15 @@ public class ExecuteContext {
 
     public Map<String, Object> getExtMemberFields() {
         return extMemberFields;
+    }
+
+    public ListIterator<Interceptor> getInterceptorIterator() {
+        return interceptorIterator;
+    }
+
+    public void setInterceptorIterator(
+            ListIterator<Interceptor> interceptorIterator) {
+        this.interceptorIterator = interceptorIterator;
     }
 
     /**
@@ -303,8 +318,8 @@ public class ExecuteContext {
      * 设置原生静态属性值
      *
      * @param fieldName 属性名
-     * @param value     属性值
-     * @throws NoSuchFieldException   找不到该属性
+     * @param value 属性值
+     * @throws NoSuchFieldException 找不到该属性
      * @throws IllegalAccessException 属性访问失败
      */
     public void setRawStaticFieldValue(String fieldName, Object value)
@@ -316,8 +331,9 @@ public class ExecuteContext {
      * 设置额外静态属性值
      *
      * @param fieldName 属性名
-     * @param value     属性值
+     * @param value 属性值
      */
+    @Deprecated
     public void setExtStaticFieldValue(String fieldName, Object value) {
         if (extStaticFields == null) {
             extStaticFields = new HashMap<>();
@@ -326,10 +342,46 @@ public class ExecuteContext {
     }
 
     /**
+     * 获取额外静态属性值
+     *
+     * @param fieldName 属性名
+     * @return 属性值
+     */
+    @Deprecated
+    public Object getExtStaticFieldValue(String fieldName) {
+        return extStaticFields == null ? null : extStaticFields.get(fieldName);
+    }
+
+    /**
+     * 设置额外成员属性值
+     *
+     * @param fieldName 属性名
+     * @param value 属性值
+     */
+    @Deprecated
+    public void setExtMemberFieldValue(String fieldName, Object value) {
+        if (extMemberFields == null) {
+            extMemberFields = new HashMap<>();
+        }
+        extMemberFields.put(fieldName, value);
+    }
+
+    /**
+     * 获取额外成员属性值
+     *
+     * @param fieldName 属性名
+     * @return 属性值
+     */
+    @Deprecated
+    public Object getExtMemberFieldValue(String fieldName) {
+        return extMemberFields == null ? null : extMemberFields.get(fieldName);
+    }
+
+    /**
      * 设置静态属性值，原生静态属性不存在时，写入额外静态属性集中
      *
      * @param fieldName 属性名
-     * @param value     属性值
+     * @param value 属性值
      */
     public void setStaticFieldValue(String fieldName, Object value) {
         try {
@@ -344,22 +396,12 @@ public class ExecuteContext {
      *
      * @param fieldName 属性名
      * @return 属性值
-     * @throws NoSuchFieldException   找不到该属性
+     * @throws NoSuchFieldException 找不到该属性
      * @throws IllegalAccessException 属性访问失败
      */
     public Object getRawStaticFieldValue(String fieldName)
             throws NoSuchFieldException, IllegalAccessException {
         return getStaticField(fieldName).get(null);
-    }
-
-    /**
-     * 获取额外静态属性值
-     *
-     * @param fieldName 属性名
-     * @return 属性值
-     */
-    public Object getExtStaticFieldValue(String fieldName) {
-        return extStaticFields == null ? null : extStaticFields.get(fieldName);
     }
 
     /**
@@ -380,26 +422,13 @@ public class ExecuteContext {
      * 设置原生成员属性值
      *
      * @param fieldName 属性名
-     * @param value     属性值
-     * @throws NoSuchFieldException   找不到该属性
+     * @param value 属性值
+     * @throws NoSuchFieldException 找不到该属性
      * @throws IllegalAccessException 属性访问失败
      */
     public void setRawMemberFieldValue(String fieldName, Object value)
             throws NoSuchFieldException, IllegalAccessException {
         getMemberField(fieldName).set(object, value);
-    }
-
-    /**
-     * 设置额外成员属性值
-     *
-     * @param fieldName 属性名
-     * @param value     属性值
-     */
-    public void setExtMemberFieldValue(String fieldName, Object value) {
-        if (extMemberFields == null) {
-            extMemberFields = new HashMap<>();
-        }
-        extMemberFields.put(fieldName, value);
     }
 
     /**
@@ -426,22 +455,12 @@ public class ExecuteContext {
      *
      * @param fieldName 属性名
      * @return 属性值
-     * @throws NoSuchFieldException   找不到该属性
+     * @throws NoSuchFieldException 找不到该属性
      * @throws IllegalAccessException 属性访问失败
      */
     public Object getRawMemberFieldValue(String fieldName)
             throws NoSuchFieldException, IllegalAccessException {
         return getMemberField(fieldName).get(object);
-    }
-
-    /**
-     * 获取额外成员属性值
-     *
-     * @param fieldName 属性名
-     * @return 属性值
-     */
-    public Object getExtMemberFieldValue(String fieldName) {
-        return extMemberFields == null ? null : extMemberFields.get(fieldName);
     }
 
     /**
@@ -479,7 +498,7 @@ public class ExecuteContext {
      * 设置局部属性值
      *
      * @param fieldName 属性名
-     * @param value     属性值
+     * @param value 属性值
      */
     public void setLocalFieldValue(String fieldName, Object value) {
         getLocalFields().put(fieldName, value);
