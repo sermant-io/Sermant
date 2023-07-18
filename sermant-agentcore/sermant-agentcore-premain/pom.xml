@@ -112,7 +112,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Premain-Class>com.huawei.sermant.premain.AgentPremain</Premain-Class>
+                            <Premain-Class>com.huawei.sermant.premain.AgentLauncher</Premain-Class>
                             <Can-Redefine-Classes>true</Can-Redefine-Classes>
                             <Can-Retransform-Classes>true</Can-Retransform-Classes>
                         </manifestEntries>

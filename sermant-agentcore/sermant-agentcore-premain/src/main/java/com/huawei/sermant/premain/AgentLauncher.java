@@ -30,6 +30,7 @@ import java.lang.instrument.Instrumentation;
 import java.net.BindException;
 import java.security.acl.NotOwnerException;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ConcurrentModificationException;
 import java.util.Locale;
 import java.util.Map;
@@ -42,18 +43,19 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import javax.naming.InsufficientResourcesException;
+
 /**
- * Agent Premain方法
+ * Agent 启动器，包含premain方式启动和AgentMain方式启动
  *
  * @author luanwenfei
  * @since 2022-03-26
  */
-public class AgentPremain {
-    private static boolean executeFlag = false;
-
+public class AgentLauncher {
     private static final Logger LOGGER = getLogger();
 
-    private AgentPremain() {
+    private static boolean installFlag = false;
+
+    private AgentLauncher() {
     }
 
     /**
@@ -61,26 +63,43 @@ public class AgentPremain {
      *
      * @param agentArgs agentArgs
      * @param instrumentation instrumentation
-     * @throws DupPremainException
      */
     public static void premain(String agentArgs, Instrumentation instrumentation) {
+        launchAgent(agentArgs, instrumentation, false);
+    }
+
+    /**
+     * agentmain
+     *
+     * @param agentArgs agentArgs
+     * @param instrumentation instrumentation
+     */
+    public static void agentmain(String agentArgs, Instrumentation instrumentation) {
+        launchAgent(agentArgs, instrumentation, true);
+    }
+
+    private static void launchAgent(String agentArgs, Instrumentation instrumentation, Boolean dynamicInstall) {
         try {
-            // 执行标记，防止重复运行
-            if (executeFlag) {
+            if (installFlag) {
                 throw new DupPremainException();
             }
-            executeFlag = true;
+
+            installFlag = true;
+
+            // 添加引导库
+            LOGGER.info("Loading god library into BootstrapClassLoader...");
+            loadGodLib(instrumentation);
 
             // 添加核心库
-            LOGGER.info("Loading core library... ");
+            LOGGER.info("Loading core library...");
             loadCoreLib(instrumentation);
 
             // 初始化启动参数
-            LOGGER.info("Building argument map... ");
+            LOGGER.info("Building argument map...");
             final Map<String, Object> argsMap = BootArgsBuilder.build(agentArgs);
 
             // agent core入口
-            LOGGER.info("Loading sermant agent... ");
+            LOGGER.info("Loading sermant agent...");
             AgentCoreEntrance.run(argsMap, instrumentation);
 
             LOGGER.info("Load sermant done. ");
@@ -90,7 +109,7 @@ public class AgentPremain {
             LOGGER.severe("Loading sermant agent failed. ");
         } catch (Exception e) {
             LOGGER.severe(
-                String.format(Locale.ROOT, "Loading sermant agent failed, %s. ", e));
+                    String.format(Locale.ROOT, "Loading sermant agent failed, %s. ", e));
         }
     }
 
@@ -99,40 +118,52 @@ public class AgentPremain {
         if (!coreDir.exists() || !coreDir.isDirectory()) {
             throw new RuntimeException("core directory is not exist or is not directory.");
         }
-        final File[] jars = coreDir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".jar");
-            }
-        });
-        if (jars == null || jars.length <= 0) {
+        final File[] jars = coreDir.listFiles((dir, name) -> name.endsWith(".jar"));
+        if (jars == null || jars.length == 0) {
             throw new RuntimeException("core directory is empty");
         }
         for (File jar : jars) {
-            JarFile jarFile = null;
-            try {
-                jarFile = new JarFile(jar);
+            try (JarFile jarFile = new JarFile(jar)) {
                 instrumentation.appendToSystemClassLoaderSearch(jarFile);
-            } finally {
-                if (jarFile != null) {
-                    try {
-                        jarFile.close();
-                    } catch (IOException ignored) {
-                        LOGGER.severe(ignored.getMessage());
-                    }
-                }
+            } catch (IOException ioException) {
+                LOGGER.severe(ioException.getMessage());
             }
         }
     }
 
-    private static Logger getLogger() {
+    private static void loadGodLib(Instrumentation instrumentation) throws IOException {
+        final File bootstrapDir = new File(PathDeclarer.getGodLibPath());
+        if (!bootstrapDir.exists() || !bootstrapDir.isDirectory()) {
+            throw new RuntimeException("God directory is not exist or is not directory.");
+        }
+        File[] jars = bootstrapDir.listFiles((dir, name) -> name.endsWith(".jar"));
+        if (jars == null || jars.length == 0) {
+            throw new RuntimeException("God directory is empty");
+        }
+
+        for (File jar : jars) {
+            try (JarFile jarFile = new JarFile(jar)) {
+                instrumentation.appendToBootstrapClassLoaderSearch(jarFile);
+            } catch (IOException ioException) {
+                LOGGER.severe(ioException.getMessage());
+            }
+        }
+    }
+
+    /**
+     * 获取sermant.agent日志
+     *
+     * @return Logger
+     */
+    public static Logger getLogger() {
         final Logger logger = Logger.getLogger("sermant.agent");
         final ConsoleHandler handler = new ConsoleHandler();
         final String lineSeparator = System.getProperty("line.separator");
         handler.setFormatter(new Formatter() {
             @Override
             public String format(LogRecord record) {
-                return "[" + record.getLevel() + "] " + record.getMessage() + lineSeparator;
+                String time = LocalDateTime.now().toString();
+                return "[" + time + "] " + "[" + record.getLevel() + "] " + record.getMessage() + lineSeparator;
             }
         });
         logger.addHandler(handler);
