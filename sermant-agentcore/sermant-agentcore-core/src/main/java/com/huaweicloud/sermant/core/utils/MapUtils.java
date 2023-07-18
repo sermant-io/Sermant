@@ -60,4 +60,14 @@ public class MapUtils {
             }
         }
     }
+
+    /**
+     * 判断Map是否为null或没有键值对
+     *
+     * @param map map
+     * @return 是否为空
+     */
+    public static boolean isEmpty(Map<?, ?> map) {
+        return map == null || map.isEmpty();
+    }
 }
