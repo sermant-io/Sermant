@@ -27,7 +27,6 @@ import com.huawei.registry.config.grace.GraceContext;
 import com.huawei.registry.utils.RefreshUtils;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.netflix.zuul.context.RequestContext;
 
@@ -61,11 +60,8 @@ public class SpringZuulResponseInterceptor extends GraceSwitchInterceptor {
             return context;
         }
         HttpServletResponse response = (HttpServletResponse) rawResponse;
-        final String endpoint = response.getHeader(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT);
-        if (StringUtils.isBlank(endpoint)) {
-            return context;
-        }
-        GraceContext.INSTANCE.getGraceShutDownManager().addShutdownEndpoint(endpoint);
+        GraceContext.INSTANCE.getGraceShutDownManager()
+            .addShutdownEndpoints(response.getHeaders(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT));
         HttpServletRequest request = (HttpServletRequest) rawRequest;
         RefreshUtils.refreshTargetServiceInstances(request.getRemoteHost(),
             Collections.singleton(response.getHeader(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME)));

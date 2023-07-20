@@ -30,6 +30,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -105,7 +106,7 @@ public enum HttpClientUtils {
      * @param header 请求头
      * @return HttpClientResult结果包装类
      */
-    public HttpClientResult doPost(String url, String json, Map<String, String> header) {
+    public HttpClientResult doPost(String url, String json, Map<String, Collection<String>> header) {
         // 创建http对象
         HttpPost httpPost = new HttpPost(url);
 
@@ -124,15 +125,18 @@ public enum HttpClientUtils {
     }
 
     private static HttpEntityEnclosingRequestBase packageParam(HttpEntityEnclosingRequestBase httpMethod, String json,
-        Map<String, String> header) throws UnsupportedEncodingException {
+        Map<String, Collection<String>> header) throws UnsupportedEncodingException {
         StringEntity entity = new StringEntity(json, Consts.UTF_8);
         entity.setContentType(new BasicHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString()));
         entity.setContentEncoding(Consts.UTF_8.name());
         httpMethod.setEntity(entity);
         if (header != null) {
-            Set<Entry<String, String>> entrySet = header.entrySet();
-            for (Entry<String, String> entry : entrySet) {
-                httpMethod.setHeader(entry.getKey(), entry.getValue());
+            Set<Entry<String, Collection<String>>> entrySet = header.entrySet();
+            for (Entry<String, Collection<String>> entry : entrySet) {
+                if (entry.getValue() == null) {
+                    continue;
+                }
+                entry.getValue().forEach(value -> httpMethod.addHeader(entry.getKey(), value));
             }
         }
         return httpMethod;
