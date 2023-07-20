@@ -14,6 +14,7 @@
 
     <modules>
         <module>tag-transmission-plugin</module>
+        <module>tag-transmission-service</module>
     </modules>
 
     <properties>
@@ -31,18 +32,21 @@
             </activation>
             <modules>
                 <module>tag-transmission-plugin</module>
+                <module>tag-transmission-service</module>
             </modules>
         </profile>
         <profile>
             <id>test</id>
             <modules>
                 <module>tag-transmission-plugin</module>
+                <module>tag-transmission-service</module>
             </modules>
         </profile>
         <profile>
             <id>release</id>
             <modules>
                 <module>tag-transmission-plugin</module>
+                <module>tag-transmission-service</module>
             </modules>
         </profile>
     </profiles>

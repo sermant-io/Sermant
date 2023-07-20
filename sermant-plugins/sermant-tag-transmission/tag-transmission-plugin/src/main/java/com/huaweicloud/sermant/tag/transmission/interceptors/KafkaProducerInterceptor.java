@@ -17,32 +17,46 @@
 package com.huaweicloud.sermant.tag.transmission.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
 
-import org.apache.http.HttpRequest;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.Headers;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
- * HttpClient 流量标签透传的拦截器, 仅针对4.x版本
+ * kafka生产者发送消息的拦截器，支持1.x, 2.x, 3.x
  *
  * @author lilai
- * @since 2023-07-17
+ * @since 2023-07-18
  */
-public class HttpClient4xInterceptor extends AbstractClientInterceptor {
+public class KafkaProducerInterceptor extends AbstractClientInterceptor {
+    private final TagTransmissionConfig tagTransmissionConfig;
+
+    /**
+     * 构造器
+     */
+    public KafkaProducerInterceptor() {
+        tagTransmissionConfig = PluginConfigManager.getPluginConfig(TagTransmissionConfig.class);
+    }
+
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
-        Object httpRequestObject = context.getArguments()[1];
-        if (httpRequestObject instanceof HttpRequest) {
-            final HttpRequest httpRequest = (HttpRequest) httpRequestObject;
+        Object producerRecordObject = context.getArguments()[0];
+        if (producerRecordObject instanceof ProducerRecord) {
+            final ProducerRecord<?, ?> producerRecord = (ProducerRecord<?, ?>) producerRecordObject;
+            Headers headers = producerRecord.headers();
             for (String key : tagTransmissionConfig.getTagKeys()) {
                 List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
                 if (CollectionUtils.isEmpty(values)) {
                     continue;
                 }
                 for (String value : values) {
-                    httpRequest.addHeader(key, value);
+                    headers.add(key, value.getBytes(StandardCharsets.UTF_8));
                 }
             }
         }
