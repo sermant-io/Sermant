@@ -17,6 +17,8 @@
 
 package com.huaweicloud.sermant.core.plugin.subscribe;
 
+import com.huaweicloud.sermant.core.plugin.subscribe.processor.DefaultConfigProcessor;
+import com.huaweicloud.sermant.core.plugin.subscribe.processor.IntegratedEventListenerAdapter;
 import com.huaweicloud.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huaweicloud.sermant.core.utils.LabelGroupUtils;
@@ -40,8 +42,8 @@ public class DefaultGroupConfigSubscriber extends AbstractGroupConfigSubscriber 
      * 默认配置订阅
      *
      * @param serviceName 服务名
-     * @param listener    监听器
-     * @param pluginName  插件名称
+     * @param listener 监听器
+     * @param pluginName 插件名称
      */
     public DefaultGroupConfigSubscriber(String serviceName, DynamicConfigListener listener, String pluginName) {
         this(serviceName, listener, null, pluginName);
@@ -50,10 +52,10 @@ public class DefaultGroupConfigSubscriber extends AbstractGroupConfigSubscriber 
     /**
      * 自定义配置中心实现
      *
-     * @param serviceName          服务名
-     * @param listener             监听器
+     * @param serviceName 服务名
+     * @param listener 监听器
      * @param dynamicConfigService 配置中心实现
-     * @param pluginName           插件名称
+     * @param pluginName 插件名称
      */
     public DefaultGroupConfigSubscriber(String serviceName, DynamicConfigListener listener,
             DynamicConfigService dynamicConfigService, String pluginName) {
@@ -64,8 +66,9 @@ public class DefaultGroupConfigSubscriber extends AbstractGroupConfigSubscriber 
 
     @Override
     protected Map<String, DynamicConfigListener> buildGroupSubscribers() {
-        return Collections.singletonMap(LabelGroupUtils
-            .createLabelGroup(Collections.singletonMap("service", serviceName)), listener);
+        return Collections
+                .singletonMap(LabelGroupUtils.createLabelGroup(Collections.singletonMap("service", serviceName)),
+                        new IntegratedEventListenerAdapter(new DefaultConfigProcessor(listener), null));
     }
 
     @Override
