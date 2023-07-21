@@ -15,4 +15,7 @@
 #
 #
 com.huaweicloud.sermant.tag.transmission.declarers.HttpClient4xDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.HttpServletDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.RocketmqConsumerDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.RocketmqProducerDeclarer
 
