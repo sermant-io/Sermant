@@ -17,18 +17,18 @@
 package com.huaweicloud.sermant.router.spring.declarer;
 
 /**
- * ClientHttpRequestInterceptor增强类，发起restTemplate请求方法
+ * ClientHttpRequest增强类，发起restTemplate请求方法
  *
  * @author provenceee
  * @since 2022-07-12
  */
 public class ClientHttpRequestDeclarer extends AbstractDeclarer {
-    private static final String ENHANCE_CLASS = "org.springframework.http.client.ClientHttpRequestInterceptor";
+    private static final String ENHANCE_CLASS = "org.springframework.http.client.ClientHttpRequest";
 
     private static final String INTERCEPT_CLASS
         = "com.huaweicloud.sermant.router.spring.interceptor.ClientHttpRequestInterceptor";
 
-    private static final String METHOD_NAME = "intercept";
+    private static final String METHOD_NAME = "execute";
 
     /**
      * 构造方法

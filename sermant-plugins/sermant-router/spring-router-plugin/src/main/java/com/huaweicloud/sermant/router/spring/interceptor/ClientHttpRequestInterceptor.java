@@ -25,8 +25,6 @@ import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,13 +38,13 @@ import java.util.Map.Entry;
 public class ClientHttpRequestInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        Object argument = context.getArguments()[0];
-        if (argument instanceof HttpRequest) {
-            HttpRequest request = (HttpRequest) argument;
+        Object obj = context.getObject();
+        if (obj instanceof HttpRequest && ThreadLocalUtils.getRequestData() == null) {
+            HttpRequest request = (HttpRequest) obj;
             HttpHeaders headers = request.getHeaders();
             putIfAbsent(headers);
             String path = request.getURI().getPath();
-            ThreadLocalUtils.setRequestData(new RequestData(getHeader(headers), path, request.getMethod().name()));
+            ThreadLocalUtils.setRequestData(new RequestData(headers, path, request.getMethod().name()));
         }
         return context;
     }
@@ -69,16 +67,8 @@ public class ClientHttpRequestInterceptor extends AbstractInterceptor {
             Map<String, List<String>> header = requestHeader.getHeader();
             for (Entry<String, List<String>> entry : header.entrySet()) {
                 // 使用上游传递的header
-                headers.putIfAbsent(entry.getKey(), new LinkedList<>(entry.getValue()));
+                headers.putIfAbsent(entry.getKey(), entry.getValue());
             }
         }
-    }
-
-    private Map<String, List<String>> getHeader(HttpHeaders headers) {
-        Map<String, List<String>> map = new HashMap<>();
-        for (Entry<String, List<String>> entry : headers.entrySet()) {
-            map.put(entry.getKey(), entry.getValue());
-        }
-        return map;
     }
 }
