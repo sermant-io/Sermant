@@ -45,12 +45,10 @@ public class ClientHttpRequestInterceptorTest {
 
     public ClientHttpRequestInterceptorTest() {
         interceptor = new ClientHttpRequestInterceptor();
-        Object[] arguments = new Object[1];
         MockClientHttpRequest request = new MockClientHttpRequest();
         request.getHeaders().add("bar", "bar2");
         request.getHeaders().add("bar3", "bar3");
-        arguments[0] = request;
-        context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
+        context = ExecuteContext.forMemberMethod(request, null, null, null, null);
     }
 
     /**
@@ -82,7 +80,6 @@ public class ClientHttpRequestInterceptorTest {
         Assert.assertEquals("bar2", headerData.get("bar").get(0));
         Assert.assertEquals("foo1", headerData.get("foo").get(0));
         Assert.assertEquals("bar3", headerData.get("bar3").get(0));
-
     }
 
     /**
