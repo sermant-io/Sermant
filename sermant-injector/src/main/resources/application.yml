@@ -34,6 +34,9 @@ sermant-agent:
     address: http://localhost:30100
   # sermant-agent 配置环境变量的configMap的名字
   configMap: sermant-agent-env
+  inject:
+    # 当宿主应用已存在JAVA_TOOL_OPTIONS变量时，sermant的注入行为，before为在原变量前注入（默认），after为在原变量后注入，ignore为不注入
+    action: before
 
 management:
   endpoint:

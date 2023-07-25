@@ -1,8 +1,10 @@
 namespace:
-  # injector部署的namespace(注意: 必须和certificate.sh中的namespace保持一致)
+  # injector部署的namespace
   name: default
 
 injector:
+  # 当宿主应用已存在JAVA_TOOL_OPTIONS变量时，injector的注入行为，before为在原变量前注入（默认），after为在原变量后注入，ignore为不注入
+  action: before
   # 实例数
   replicas: 2
   image:
@@ -24,8 +26,11 @@ config:
   # 配置中心类型: ZOOKEEPER/KIE
   type: ZOOKEEPER
   # 配置中心地址
-  endpoints: http://localhost:30110
+  endpoints: http://localhost:2181
+
 registry:
+  # 注册中心类型：SERVICE_COMB/NACOS
+  type: SERVICE_COMB
   # 注册中心地址
   endpoints: http://localhost:30100
 
