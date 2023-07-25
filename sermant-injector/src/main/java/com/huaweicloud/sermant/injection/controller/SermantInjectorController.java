@@ -210,6 +210,9 @@ public class SermantInjectorController {
     @Value("${sermant-agent.service.type:SERVICE_COMB}")
     private String serviceType;
 
+    @Value("${sermant-agent.inject.action:before}")
+    private String action;
+
     /**
      * 准入控制器接口
      *
@@ -452,7 +455,12 @@ public class SermantInjectorController {
         if (containerNode.hasNonNull(ENV_PATH)) {
             Iterator<JsonNode> elements = containerNode.path(ENV_PATH).elements();
             while (elements.hasNext()) {
-                envArray.add(elements.next());
+                JsonNode next = elements.next();
+
+                // JAVA_TOOL_OPTIONS以injector注入为准
+                if (!JVM_OPTIONS_KEY.equals(next.get(NAME_KEY).asText())) {
+                    envArray.add(next);
+                }
             }
         }
 
@@ -460,11 +468,8 @@ public class SermantInjectorController {
         String realMountPath = getNotEmptyValue(env, ENV_MOUNT_PATH_KEY, mountPath, value -> value);
 
         // jvm启动命令
-        String jvmOptions = JVM_OPTIONS_VALUE_PREFIX + realMountPath + JVM_OPTIONS_VALUE_SUFFIX;
-        String envJvmOptions = env.get(JVM_OPTIONS_KEY);
-        if (StringUtils.hasText(envJvmOptions)) {
-            jvmOptions = jvmOptions + envJvmOptions;
-        }
+        String jvmOptions = getJavaToolOptions(JVM_OPTIONS_VALUE_PREFIX + realMountPath + JVM_OPTIONS_VALUE_SUFFIX,
+                env.get(JVM_OPTIONS_KEY));
 
         // 注入jvm启动命令
         addEnv(envArray, JVM_OPTIONS_KEY, jvmOptions);
@@ -487,6 +492,19 @@ public class SermantInjectorController {
         for (Map.Entry<String, String> entry : annotationEnv.entrySet()) {
             addEnv(envArray, entry.getKey(), entry.getValue());
         }
+    }
+
+    private String getJavaToolOptions(String injectOptions, String originOptions) {
+        if (!StringUtils.hasText(originOptions)) {
+            return injectOptions;
+        }
+        if ("after".equalsIgnoreCase(action)) {
+            return originOptions + injectOptions;
+        }
+        if ("ignore".equalsIgnoreCase(action)) {
+            return originOptions;
+        }
+        return injectOptions + originOptions;
     }
 
     private void injectVolumeMounts(ArrayNode arrayNode, Map<String, String> env, JsonNode containerNode,
