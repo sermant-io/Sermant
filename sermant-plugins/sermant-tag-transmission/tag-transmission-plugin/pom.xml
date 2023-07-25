@@ -17,6 +17,8 @@
         <config.skip.flag>false</config.skip.flag>
         <package.plugin.type>plugin</package.plugin.type>
         <apache-httpclient.version>4.3</apache-httpclient.version>
+        <rocketmq-client.version>4.8.0</rocketmq-client.version>
+        <javax-servlet-api.version>3.0.1</javax-servlet-api.version>
         <kafka-clients.version>2.7.0</kafka-clients.version>
     </properties>
 
@@ -30,6 +32,18 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${apache-httpclient.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax-servlet-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>${rocketmq-client.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
