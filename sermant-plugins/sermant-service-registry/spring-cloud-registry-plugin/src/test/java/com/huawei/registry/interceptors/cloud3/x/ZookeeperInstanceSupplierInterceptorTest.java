@@ -82,6 +82,16 @@ public class ZookeeperInstanceSupplierInterceptorTest {
         Assert.assertTrue(result instanceof List);
         List<ServiceInstance> instances = (List<ServiceInstance>) result;
         assertEquals(instances.size(), (scInstances.size() + originInstances.size()));
+
+        // 测试去重
+        scInstances.clear();
+        originInstances.clear();
+        allInstances.clear();
+        final ExecuteContext contextRepeat = interceptor.doAfter(buildContextRepeatedly());
+        final Object resultRepeat = contextRepeat.getResult();
+        Assert.assertTrue(resultRepeat instanceof List);
+        List<ServiceInstance> instancesRepeat = (List<ServiceInstance>) resultRepeat;
+        assertEquals(instancesRepeat.size(), (scInstances.size() + originInstances.size() - 1));
         RegisterContext.INSTANCE.setAvailable(false);
     }
 
@@ -90,6 +100,24 @@ public class ZookeeperInstanceSupplierInterceptorTest {
         scInstances.add(new DiscoveryServiceInstance(buildInstance(8002), serviceName));
         scInstances.add(new DiscoveryServiceInstance(buildInstance(8003), serviceName));
         scInstances.add(new DiscoveryServiceInstance(buildInstance(8004), serviceName));
+        originInstances.add(new ZookeeperServiceInstance(serviceName, buildZkInstance(8005)));
+        originInstances.add(new ZookeeperServiceInstance(serviceName, buildZkInstance(8006)));
+        originInstances.add(new ZookeeperServiceInstance(serviceName, buildZkInstance(8007)));
+        originInstances.add(new ZookeeperServiceInstance(serviceName, buildZkInstance(8008)));
+        allInstances.addAll(originInstances);
+        allInstances.addAll(scInstances);
+        final ExecuteContext context = ExecuteContext.forMemberMethod(this, String.class.getDeclaredMethod("trim"),
+                new Object[]{allInstances}, null, null);
+        context.changeResult(originInstances);
+        return context;
+    }
+
+    private ExecuteContext buildContextRepeatedly() throws NoSuchMethodException {
+        scInstances.add(new DiscoveryServiceInstance(buildInstance(8001), serviceName));
+        scInstances.add(new DiscoveryServiceInstance(buildInstance(8002), serviceName));
+        scInstances.add(new DiscoveryServiceInstance(buildInstance(8003), serviceName));
+        scInstances.add(new DiscoveryServiceInstance(buildInstance(8004), serviceName));
+        scInstances.add(new DiscoveryServiceInstance(buildInstance(8005), serviceName));
         originInstances.add(new ZookeeperServiceInstance(serviceName, buildZkInstance(8005)));
         originInstances.add(new ZookeeperServiceInstance(serviceName, buildZkInstance(8006)));
         originInstances.add(new ZookeeperServiceInstance(serviceName, buildZkInstance(8007)));
@@ -111,9 +139,10 @@ public class ZookeeperInstanceSupplierInterceptorTest {
     public org.apache.curator.x.discovery.ServiceInstance buildZkInstance(int port) {
         final org.apache.curator.x.discovery.ServiceInstance serviceInstance = Mockito
                 .mock(org.apache.curator.x.discovery.ServiceInstance.class);
+        Mockito.when(serviceInstance.getSslPort()).thenReturn(port);
         Mockito.when(serviceInstance.getPort()).thenReturn(port);
-        Mockito.when(serviceInstance.getAddress()).thenReturn("localhost");
-        Mockito.when(serviceInstance.buildUriSpec()).thenReturn("http://localhost:" + port);
+        Mockito.when(serviceInstance.getAddress()).thenReturn("127.0.0.1");
+        Mockito.when(serviceInstance.buildUriSpec()).thenReturn("http://127.0.0.1:" + port);
         return serviceInstance;
     }
 

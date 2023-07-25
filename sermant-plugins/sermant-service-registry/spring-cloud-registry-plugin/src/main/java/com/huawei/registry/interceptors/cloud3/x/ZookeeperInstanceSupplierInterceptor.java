@@ -18,6 +18,7 @@ package com.huawei.registry.interceptors.cloud3.x;
 
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.support.InstanceInterceptorSupport;
+import com.huawei.registry.utils.HostUtils;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
@@ -26,7 +27,6 @@ import org.springframework.cloud.client.ServiceInstance;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -56,7 +56,7 @@ public class ZookeeperInstanceSupplierInterceptor extends InstanceInterceptorSup
         // 全量服务实例
         final Object allServiceInstances = context.getArguments()[0];
         final List<ServiceInstance> serviceInstances = filterDiscoveryServiceInstance(
-            (List<ServiceInstance>) allServiceInstances);
+                (List<ServiceInstance>) allServiceInstances);
         if (originServiceInstances instanceof List) {
             return convertAndMerge(serviceInstances, (List<ServiceInstance>) originServiceInstances);
         }
@@ -72,17 +72,23 @@ public class ZookeeperInstanceSupplierInterceptor extends InstanceInterceptorSup
      */
     private List<ServiceInstance> filterDiscoveryServiceInstance(List<ServiceInstance> serviceInstances) {
         return serviceInstances.stream()
-            .filter(serviceInstance -> SERVICE_INSTANCE_CLASS_NAME.equals(serviceInstance.getClass().getName()))
-            .collect(Collectors.toList());
+                .filter(serviceInstance -> SERVICE_INSTANCE_CLASS_NAME.equals(serviceInstance.getClass().getName()))
+                .collect(Collectors.toList());
     }
 
     private List<ServiceInstance> convertAndMerge(List<ServiceInstance> microServiceInstances,
-        List<ServiceInstance> originServiceInstances) {
-        List<ServiceInstance> result = new ArrayList<>(microServiceInstances);
+            List<ServiceInstance> originServiceInstances) {
+        List<ServiceInstance> result = new ArrayList<>();
         if (isOpenMigration() && RegisterContext.INSTANCE.isAvailable()) {
             result.addAll(originServiceInstances);
         }
-        return result.stream().distinct().filter(Objects::nonNull).collect(Collectors.toList());
+        for (ServiceInstance microServiceInstance : microServiceInstances) {
+            result.removeIf(originServiceInstance ->
+                    HostUtils.isSameInstance(originServiceInstance.getHost(), originServiceInstance.getPort(),
+                            microServiceInstance.getHost(), microServiceInstance.getPort()));
+            result.add(microServiceInstance);
+        }
+        return result;
     }
 
     /**
