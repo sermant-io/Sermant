@@ -9,33 +9,29 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tag-transmission-plugin</artifactId>
+    <artifactId>tag-transmission-service</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <config.skip.flag>false</config.skip.flag>
-        <package.plugin.type>plugin</package.plugin.type>
-        <apache-httpclient.version>4.3</apache-httpclient.version>
-        <kafka-clients.version>2.7.0</kafka-clients.version>
+        <package.plugin.type>service</package.plugin.type>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>sermant-agentcore-core</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${apache-httpclient.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>${kafka-clients.version}</version>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>tag-transmission-plugin</artifactId>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -48,5 +44,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

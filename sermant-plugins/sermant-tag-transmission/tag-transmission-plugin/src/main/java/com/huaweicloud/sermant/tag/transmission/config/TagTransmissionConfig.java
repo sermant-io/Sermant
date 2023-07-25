@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.tag.transmission.config;
 
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
+import com.huaweicloud.sermant.core.utils.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,5 +55,17 @@ public class TagTransmissionConfig implements PluginConfig {
 
     public void setTagKeys(List<String> tagKeys) {
         this.tagKeys = tagKeys;
+    }
+
+    public boolean isEffect() {
+        return enabled && !CollectionUtils.isEmpty(tagKeys);
+    }
+
+    @Override
+    public String toString() {
+        return "TagTransmissionConfig{"
+                + "enabled=" + enabled
+                + ", tagKeys=" + tagKeys
+                + '}';
     }
 }
