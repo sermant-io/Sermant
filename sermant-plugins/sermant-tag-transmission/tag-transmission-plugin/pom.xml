@@ -19,17 +19,13 @@
         <apache-httpclient.version>4.3</apache-httpclient.version>
         <rocketmq-client.version>4.8.0</rocketmq-client.version>
         <javax-servlet-api.version>3.0.1</javax-servlet-api.version>
+        <kafka-clients.version>2.7.0</kafka-clients.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>sermant-agentcore-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.huaweicloud.sermant</groupId>
-            <artifactId>sermant-common</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -48,6 +44,12 @@
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-client</artifactId>
             <version>${rocketmq-client.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka-clients.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
