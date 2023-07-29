@@ -46,6 +46,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>sermant-agentcore-god</module>
                 <module>sermant-agentcore-core</module>
                 <module>sermant-agentcore-premain</module>
                 <module>sermant-agentcore-config</module>
@@ -55,6 +56,7 @@
         <profile>
             <id>test</id>
             <modules>
+                <module>sermant-agentcore-god</module>
                 <module>sermant-agentcore-core</module>
                 <module>sermant-agentcore-premain</module>
                 <module>sermant-agentcore-config</module>
@@ -64,6 +66,7 @@
         <profile>
             <id>release</id>
             <modules>
+                <module>sermant-agentcore-god</module>
                 <module>sermant-agentcore-core</module>
                 <module>sermant-agentcore-premain</module>
                 <module>sermant-agentcore-implement</module>
