@@ -38,39 +38,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2022-02-22
  */
 public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
-    private final ThreadLocal<Object> threadLocal = new ThreadLocal<>();
-
     /**
      * 类缓存, 避免多次调用loadClass
      */
     private final Map<String, Class<?>> cacheClasses = new ConcurrentHashMap<>();
 
     private RegisterConfig config;
-
-    /**
-     * 标记当前线程方法调用
-     * <p></p>
-     * 默认标记, 确保下游调用不会存在再次mark的场景
-     */
-    protected final void mark() {
-        threadLocal.set(Boolean.TRUE);
-    }
-
-    /**
-     * 默认去除标记
-     */
-    protected final void unMark() {
-        threadLocal.remove();
-    }
-
-    /**
-     * 判断是否被标记
-     *
-     * @return 是否被标记
-     */
-    protected final boolean isMarked() {
-        return threadLocal.get() != null;
-    }
 
     /**
      * 是否开启注册中心迁移，双注册
@@ -100,7 +73,7 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
             Class<?> result = null;
             try {
                 result = ClassLoaderUtils.defineClass(className, contextClassLoader,
-                    ClassLoaderUtils.getClassResource(this.getClass().getClassLoader(), className));
+                        ClassLoaderUtils.getClassResource(this.getClass().getClassLoader(), className));
             } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | IOException e) {
                 // 有可能已经加载过了，直接用contextClassLoader.loadClass加载
                 try {
@@ -117,17 +90,17 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
      * 构建实例  由子类自行转换
      *
      * @param microServiceInstance 实例信息
-     * @param serviceName          服务名
+     * @param serviceName 服务名
      * @return Object
      */
     protected final Optional<Object> buildInstance(MicroServiceInstance microServiceInstance, String serviceName) {
         final Class<?> serverClass = getInstanceClass(getInstanceClassName());
         try {
             Constructor<?> declaredConstructor = serverClass
-                .getDeclaredConstructor(MicroServiceInstance.class, String.class);
+                    .getDeclaredConstructor(MicroServiceInstance.class, String.class);
             return Optional.of(declaredConstructor.newInstance(microServiceInstance, serviceName));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-            | InvocationTargetException ignored) {
+                 | InvocationTargetException ignored) {
             return Optional.empty();
         }
     }

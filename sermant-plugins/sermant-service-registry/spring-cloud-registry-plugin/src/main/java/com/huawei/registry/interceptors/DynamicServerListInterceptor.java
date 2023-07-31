@@ -26,7 +26,6 @@ import com.huawei.registry.utils.HostUtils;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
-import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import com.netflix.loadbalancer.DynamicServerListLoadBalancer;
@@ -69,8 +68,8 @@ public class DynamicServerListInterceptor extends RegisterSwitchSupport {
         }
         for (MicroServiceInstance microServiceInstance : microServiceInstances) {
             result.removeIf(originServiceInstance ->
-                            HostUtils.isSameInstance(originServiceInstance.getHost(), originServiceInstance.getPort(),
-                                    microServiceInstance.getHost(), microServiceInstance.getPort()));
+                    HostUtils.isSameInstance(originServiceInstance.getHost(), originServiceInstance.getPort(),
+                            microServiceInstance.getHost(), microServiceInstance.getPort()));
             result.add(new ScServer(microServiceInstance, serverListLoadBalancer.getName()));
         }
         return result;
