@@ -50,6 +50,7 @@ public class NacosHealthInterceptorTest extends BaseRegistryTest<NacosHealthInte
     public void doBefore() throws Exception {
         REGISTER_CONFIG.setEnableSpringRegister(true);
         REGISTER_CONFIG.setOpenMigration(true);
+        RegisterDynamicConfig.INSTANCE.setClose(false);
         final ExecuteContext context = interceptor.before(buildContext());
         Assert.assertFalse(context.isSkip());
         RegisterDynamicConfig.INSTANCE.setClose(true);

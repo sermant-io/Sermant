@@ -239,6 +239,15 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
+     * 匹配公有方法，见{@link #methodTypeMatches}
+     *
+     * @return 方法匹配器对象
+     */
+    public static MethodMatcher isPublicMethod() {
+        return methodTypeMatches(MethodType.PUBLIC);
+    }
+
+    /**
      * 匹配符合类型的方法，包括静态方法，构造函数和成员方法三种
      *
      * @param methodType 方法类型

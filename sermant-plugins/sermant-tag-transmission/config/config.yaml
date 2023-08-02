@@ -1,3 +1,15 @@
-tag.transmission.plugin:
+# 流量标签在各种通道间(http/rpc/消息队列等)传递的配置
+tag.transmission.config:
+  # 是否开启流量标签透传
   enabled: true
+  # 需要透传的流量标签的key
   tagKeys: [id,name]
+
+# 跨线程传递标签的配置,该能力可单独使用
+crossthread.config:
+  # 是否在直接new Thread时传递标签
+  enabled-thread: true
+  # 是否在非定时线程池中传递标签
+  enabled-thread-pool: true
+  # 是否在定时线程池的schedule/scheduleAtFixedRate/scheduleWithFixedDelay方法中传递标签
+  enabled-scheduler: true

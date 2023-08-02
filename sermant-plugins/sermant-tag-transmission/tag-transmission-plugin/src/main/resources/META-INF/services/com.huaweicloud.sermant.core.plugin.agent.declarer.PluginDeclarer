@@ -15,11 +15,13 @@
 #
 #
 com.huaweicloud.sermant.tag.transmission.declarers.HttpClient4xDeclarer
-
 com.huaweicloud.sermant.tag.transmission.declarers.HttpServletDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.RocketmqConsumerDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.RocketmqProducerDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.KafkaConsumerRecordDeclarer
-com.huaweicloud.sermant.tag.transmission.declarers.KafkaProviderDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.KafkaProducerDeclarer
+
+com.huaweicloud.sermant.tag.transmission.declarers.crossthread.ExecutorDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.crossthread.ScheduledExecutorServiceDeclarer
 
 
