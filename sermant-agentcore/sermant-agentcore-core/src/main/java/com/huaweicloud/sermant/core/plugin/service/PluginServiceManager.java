@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.core.plugin.service;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
+import com.huaweicloud.sermant.core.plugin.Plugin;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import java.util.ArrayList;
@@ -39,6 +40,17 @@ public class PluginServiceManager extends ServiceManager {
 
     private PluginServiceManager() {
         super();
+    }
+
+    /**
+     * 初始化插件服务
+     *
+     * @param plugin 插件
+     */
+    public static void initPluginService(Plugin plugin) {
+        ClassLoader classLoader =
+                plugin.getServiceClassLoader() != null ? plugin.getServiceClassLoader() : plugin.getPluginClassLoader();
+        initPluginService(classLoader);
     }
 
     /**

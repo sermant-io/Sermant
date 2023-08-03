@@ -17,8 +17,7 @@
 package com.huaweicloud.sermant.core.plugin.agent.collector;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.core.config.ConfigManager;
-import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
+import com.huaweicloud.sermant.core.plugin.Plugin;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDescription;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDescription;
@@ -31,7 +30,6 @@ import net.bytebuddy.utility.JavaModule;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,51 +43,20 @@ import java.util.logging.Logger;
 public class PluginCollectorManager {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    /**
-     * 通过spi检索所有配置的插件收集器
-     */
-    private static final Iterable<PluginCollector> COLLECTORS = ServiceLoader.load(PluginCollector.class);
-
     private PluginCollectorManager() {
     }
 
     /**
      * 从插件收集器中解析出所有的插件描述器，对插件声明器采用配置的合并策略
      *
+     * @param plugin 需要解析插件描述的插件
      * @return 插件描述器列表
      */
-    public static List<PluginDescription> getPlugins() {
-        return getPlugins(ConfigManager.getConfig(AgentConfig.class).getCombineStrategy());
-    }
-
-    /**
-     * 从插件收集器中解析出所有的插件描述器
-     *
-     * @param strategy 插件声明器的合并策略
-     * @return 插件描述器列表
-     */
-    public static List<PluginDescription> getPlugins(AgentConfig.CombineStrategy strategy) {
-        final List<PluginDescription> plugins = new ArrayList<>();
-        plugins.addAll(combinePlugins(getDeclarers()));
-        plugins.addAll(getDescriptions());
-        return plugins;
-    }
-
-    /**
-     * 从插件收集器中获取所有插件声明器
-     *
-     * @return 插件声明器集
-     */
-    private static List<? extends PluginDeclarer> getDeclarers() {
-        final List<PluginDeclarer> declares = new ArrayList<>();
-        for (PluginCollector collector : COLLECTORS) {
-            for (PluginDeclarer declarer : collector.getDeclarers()) {
-                if (declarer.isEnabled()) {
-                    declares.add(declarer);
-                }
-            }
-        }
-        return declares;
+    public static List<PluginDescription> getDescriptions(Plugin plugin) {
+        final List<PluginDescription> descriptions = new ArrayList<>();
+        descriptions.addAll(describeDeclarers(getDeclarers(plugin.getPluginClassLoader())));
+        descriptions.addAll(getDescriptions(plugin.getPluginClassLoader()));
+        return descriptions;
     }
 
     /**
@@ -97,28 +64,29 @@ public class PluginCollectorManager {
      *
      * @return 插件描述器集
      */
-    private static List<? extends PluginDescription> getDescriptions() {
+    private static List<? extends PluginDescription> getDescriptions(ClassLoader classLoader) {
         final List<PluginDescription> descriptions = new ArrayList<>();
-        for (PluginCollector collector : COLLECTORS) {
-            for (PluginDescription description : collector.getDescriptions()) {
-                descriptions.add(description);
-            }
+        PluginCollector pluginCollector = new DefaultPluginCollector();
+        for (PluginDescription description : pluginCollector.getDescriptions(classLoader)) {
+            descriptions.add(description);
         }
         return descriptions;
     }
 
     /**
-     * 合并所有的插件声明器
+     * 从插件收集器中获取所有插件声明器
      *
-     * @param declarers 插件声明器列表
-     * @return 合并所得的插件描述器列表
+     * @return 插件声明器集
      */
-    private static List<PluginDescription> combinePlugins(List<? extends PluginDeclarer> declarers) {
-        final List<PluginDescription> plugins = new ArrayList<>();
-        if (!declarers.isEmpty()) {
-            plugins.addAll(describeDeclarers(declarers));
+    private static List<? extends PluginDeclarer> getDeclarers(ClassLoader classLoader) {
+        final List<PluginDeclarer> declares = new ArrayList<>();
+        PluginCollector pluginCollector = new DefaultPluginCollector();
+        for (PluginDeclarer declarer : pluginCollector.getDeclarers(classLoader)) {
+            if (declarer.isEnabled()) {
+                declares.add(declarer);
+            }
         }
-        return plugins;
+        return declares;
     }
 
     /**
@@ -128,11 +96,11 @@ public class PluginCollectorManager {
      * @return 插件描述器
      */
     private static List<PluginDescription> describeDeclarers(Iterable<? extends PluginDeclarer> declarers) {
-        final List<PluginDescription> plugins = new ArrayList<>();
+        final List<PluginDescription> descriptions = new ArrayList<>();
         for (PluginDeclarer pluginDeclarer : declarers) {
-            plugins.add(describeDeclarer(pluginDeclarer));
+            descriptions.add(describeDeclarer(pluginDeclarer));
         }
-        return plugins;
+        return descriptions;
     }
 
     /**
@@ -151,7 +119,7 @@ public class PluginCollectorManager {
             @Override
             public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,
                     ClassLoader classLoader, JavaModule module) {
-                return new DefaultTransformer(declarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader()))
+                return new DefaultTransformer(declarer.getInterceptDeclarers(classLoader))
                         .transform(builder, typeDescription, classLoader, module);
             }
         };

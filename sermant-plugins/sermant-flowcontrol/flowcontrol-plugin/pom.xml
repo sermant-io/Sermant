@@ -150,22 +150,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
-                <configuration>
-                    <relocations>
-                        <relocation>
-                            <pattern>net.bytebuddy</pattern>
-                            <shadedPattern>${shade.common.prefix}.net.bytebuddy</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.yaml</pattern>
-                            <shadedPattern>${shade.common.prefix}.org.yaml</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>io</pattern>
-                            <shadedPattern>${flowcontrol.shade.path}.io</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,12 +37,30 @@ public interface PluginCollector {
      *
      * @return 插件声明器的集合
      */
+    @Deprecated
     Iterable<? extends PluginDeclarer> getDeclarers();
+
+    /**
+     * 获取插件声明器的集合
+     *
+     * @param classLoader 指定获取插件声明器时使用的类加载器
+     * @return 插件声明器的集合
+     */
+    Iterable<? extends PluginDeclarer> getDeclarers(ClassLoader classLoader);
 
     /**
      * 获取插件描述器的集合
      *
      * @return 描述器的集合
      */
+    @Deprecated
     Iterable<? extends PluginDescription> getDescriptions();
+
+    /**
+     * 获取插件描述器的集合
+     *
+     * @param classLoader 指定获取插件声明器时使用的类加载器
+     * @return 描述器的集合
+     */
+    Iterable<? extends PluginDescription> getDescriptions(ClassLoader classLoader);
 }

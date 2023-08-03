@@ -25,11 +25,10 @@ import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.agent.ByteEnhanceManager;
 import com.huaweicloud.sermant.core.plugin.config.PluginSetting;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.instrument.Instrumentation;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
@@ -57,25 +56,24 @@ public class PluginSystemEntrance {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final YamlConverter YAML_CONVERTER = OperationManager.getOperation(YamlConverter.class);
-
     private PluginSystemEntrance() {
     }
 
     /**
-     * 初始化插件相关的内容，分插件和适配器两种
+     * 初始化插件相关的内容,区分是否为动态挂载场景 isDynamic->true 仅加载支持动态安装的插件，默认不启动，通过下发指令启动插件 isDynamic->false
+     * 加载支持静态安装的插件，默认启动；加载支持动态安装的插件，默认不启动，通过下发指令启动插件
      *
-     * @param instrumentation Instrumentation对象
+     * @param isDynamic 是否为动态安装，基于premain方式启动及agentmain方式启动来判断
      */
-    public static void initialize(Instrumentation instrumentation) {
+    public static void initialize(boolean isDynamic) {
         final PluginSetting pluginSetting = loadSetting();
-        Set<String> plugins = getLoadPlugins(pluginSetting);
-        if (plugins == null) {
-            LOGGER.info("No plugin is configured to be loaded.");
-            return;
-        }
-        if (PluginManager.initPlugins(plugins, instrumentation)) {
-            ByteEnhanceManager.enhance(instrumentation);
+        Set<String> staticPlugins = pluginSetting.getPlugins();
+        if (!isDynamic) {
+            if (staticPlugins != null) {
+                PluginManager.initPlugins(staticPlugins);
+            } else {
+                LOGGER.info("No static-support-plugin is configured to be loaded.");
+            }
         }
     }
 
@@ -87,9 +85,10 @@ public class PluginSystemEntrance {
     private static PluginSetting loadSetting() {
         Reader reader = null;
         try {
-            reader = new InputStreamReader(new FileInputStream(BootArgsIndexer.getPluginSettingFile()),
+            reader = new InputStreamReader(Files.newInputStream(BootArgsIndexer.getPluginSettingFile().toPath()),
                     CommonConstant.DEFAULT_CHARSET);
-            Optional<PluginSetting> pluginSettingOptional = YAML_CONVERTER.convert(reader, PluginSetting.class);
+            Optional<PluginSetting> pluginSettingOptional =
+                    OperationManager.getOperation(YamlConverter.class).convert(reader, PluginSetting.class);
             return pluginSettingOptional.orElse(null);
         } catch (IOException ignored) {
             LOGGER.warning("Plugin setting file is not found. ");

@@ -132,18 +132,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <configuration>
-                    <relocations>
-                        <relocation>
-                            <pattern>net.bytebuddy</pattern>
-                            <shadedPattern>${shade.common.prefix}.net.bytebuddy</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.yaml</pattern>
-                            <shadedPattern>${shade.common.prefix}.org.yaml</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>

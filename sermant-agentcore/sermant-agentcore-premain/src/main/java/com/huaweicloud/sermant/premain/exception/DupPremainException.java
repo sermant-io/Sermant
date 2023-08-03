@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package com.huawei.sermant.premain.exception;
+package com.huaweicloud.sermant.premain.exception;
 
 /**
- * 初始化执行premain方法异常
+ * 重复执行premain方法异常
  *
  * @author HapThorin
  * @version 1.0.0
  * @since 2021-11-12
  */
-public class InitPremainException extends RuntimeException {
-    private static final long serialVersionUID = 2039195842465339347L;
+public class DupPremainException extends RuntimeException {
+    private static final long serialVersionUID = -7867167604375273742L;
 
     /**
      * 构造方法
-     *
-     * @param e exception
      */
-    public InitPremainException(Exception e) {
-        super("[" + e.getClass().getSimpleName() + "] " + e.getMessage());
+    public DupPremainException() {
+        super("Unable to execute sermant agent duplicated. ");
     }
 }

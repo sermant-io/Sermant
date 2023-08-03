@@ -51,7 +51,7 @@ public abstract class ConfigManager {
     private static final Map<String, BaseConfig> CONFIG_MAP = new HashMap<String, BaseConfig>();
 
     private static final Iterable<LoadConfigStrategy> LOAD_CONFIG_STRATEGIES =
-        ServiceLoader.load(LoadConfigStrategy.class, ClassLoaderManager.getFrameworkClassLoader());
+            ServiceLoader.load(LoadConfigStrategy.class, ClassLoaderManager.getFrameworkClassLoader());
 
     private static Map<String, Object> argsMap = null;
 
@@ -63,7 +63,7 @@ public abstract class ConfigManager {
      * @return 配置对象
      */
     public static <R extends BaseConfig> R getConfig(Class<R> cls) {
-        return (R)CONFIG_MAP.get(ConfigKeyUtil.getTypeKey(cls));
+        return (R) CONFIG_MAP.get(ConfigKeyUtil.getTypeKey(cls));
     }
 
     /**
@@ -84,15 +84,15 @@ public abstract class ConfigManager {
      */
     public static synchronized void initialize(Map<String, Object> args) {
         argsMap = args;
-        loadConfig(BootArgsIndexer.getConfigFile(), BaseConfig.class, ClassLoader.getSystemClassLoader());
+        loadConfig(BootArgsIndexer.getConfigFile(), BaseConfig.class, ClassLoaderManager.getSermantClassLoader());
     }
 
     /**
      * 加载配置文件，将配置信息读取到配置对象中
      *
-     * @param configFile     配置文件
-     * @param baseCls        配置对象的基类，该参数决定spi操作的源
-     * @param classLoader    类加载器，该参数决定从哪个classLoader中进行api操作
+     * @param configFile 配置文件
+     * @param baseCls 配置对象的基类，该参数决定spi操作的源
+     * @param classLoader 类加载器，该参数决定从哪个classLoader中进行api操作
      */
     protected static void loadConfig(File configFile, Class<? extends BaseConfig> baseCls, ClassLoader classLoader) {
         if (configFile.exists() && configFile.isFile()) {
@@ -105,8 +105,8 @@ public abstract class ConfigManager {
     /**
      * 加载默认配置
      *
-     * @param baseCls        配置对象的基类，该参数决定spi操作的源
-     * @param classLoader    类加载器，该参数决定从哪个classLoader中进行api操作
+     * @param baseCls 配置对象的基类，该参数决定spi操作的源
+     * @param classLoader 类加载器，该参数决定从哪个classLoader中进行api操作
      */
     private static synchronized void loadDefaultConfig(Class<? extends BaseConfig> baseCls, ClassLoader classLoader) {
         foreachConfig(new ConfigConsumer() {
@@ -123,15 +123,15 @@ public abstract class ConfigManager {
     /**
      * 配置执行从配置文件中加载
      *
-     * @param configFile     配置文件
-     * @param baseCls        配置对象的基类，该参数决定spi操作的源
-     * @param classLoader    类加载器，当前配置加载策略api在agentcore-implement包中，所以使用FrameworkClassLoader加载
+     * @param configFile 配置文件
+     * @param baseCls 配置对象的基类，该参数决定spi操作的源
+     * @param classLoader 类加载器，当前配置加载策略api在agentcore-implement包中，所以使用FrameworkClassLoader加载
      */
     private static synchronized void doLoadConfig(File configFile, Class<? extends BaseConfig> baseCls,
-        ClassLoader classLoader) {
+            ClassLoader classLoader) {
         // 通过FrameworkClassLoader 获取配置加载策略
         final LoadConfigStrategy<?> loadConfigStrategy =
-            getLoadConfigStrategy(configFile, ClassLoaderManager.getFrameworkClassLoader());
+                getLoadConfigStrategy(configFile, ClassLoaderManager.getFrameworkClassLoader());
         final Object holder = loadConfigStrategy.getConfigHolder(configFile, argsMap);
         foreachConfig(new ConfigConsumer() {
             @Override
@@ -139,13 +139,14 @@ public abstract class ConfigManager {
                 final String typeKey = ConfigKeyUtil.getTypeKey(config.getClass());
                 final BaseConfig retainedConfig = CONFIG_MAP.get(typeKey);
                 if (retainedConfig == null) {
-                    CONFIG_MAP.put(typeKey, ((LoadConfigStrategy)loadConfigStrategy).loadConfig(holder, config));
+                    CONFIG_MAP.put(typeKey, ((LoadConfigStrategy) loadConfigStrategy).loadConfig(holder, config));
                 } else if (retainedConfig.getClass() == config.getClass()) {
                     LOGGER.fine(
-                        String.format(Locale.ROOT, "Skip load config [%s] repeatedly. ", config.getClass().getName()));
+                            String.format(Locale.ROOT, "Skip load config [%s] repeatedly. ",
+                                    config.getClass().getName()));
                 } else {
-                    LOGGER.warning(String.format(Locale.ROOT, "Type key of %s is %s,  same as %s's. ",
-                        config.getClass().getName(), typeKey, retainedConfig.getClass().getName()));
+                    LOGGER.warning(String.format(Locale.ROOT, "Type key of %s is %s, same as %s's. ",
+                            config.getClass().getName(), typeKey, retainedConfig.getClass().getName()));
                 }
             }
         }, baseCls, classLoader);
@@ -158,7 +159,7 @@ public abstract class ConfigManager {
      * <p>如果未声明任何实现，使用默认的加载配置策略{@link LoadConfigStrategy.DefaultLoadConfigStrategy}
      * <p>该默认策略不会进行任何业务操作
      *
-     * @param configFile  配置文件
+     * @param configFile 配置文件
      * @param classLoader 用于查找加载策略的类加载器，允许在类加载中添加新的配置加载策略
      * @return 加载配置策略
      */
@@ -176,7 +177,7 @@ public abstract class ConfigManager {
             }
         }
         LOGGER.log(Level.WARNING, String.format(Locale.ROOT, "Missing implement of [%s], use [%s].",
-            LoadConfigStrategy.class.getName(), LoadConfigStrategy.DefaultLoadConfigStrategy.class.getName()));
+                LoadConfigStrategy.class.getName(), LoadConfigStrategy.DefaultLoadConfigStrategy.class.getName()));
         return new LoadConfigStrategy.DefaultLoadConfigStrategy();
     }
 
@@ -188,7 +189,7 @@ public abstract class ConfigManager {
      * @param configConsumer 配置处理方法
      */
     private static void foreachConfig(ConfigConsumer configConsumer, Class<? extends BaseConfig> baseCls,
-        ClassLoader classLoader) {
+            ClassLoader classLoader) {
         for (BaseConfig config : ServiceLoader.load(baseCls, classLoader)) {
             configConsumer.accept(config);
         }

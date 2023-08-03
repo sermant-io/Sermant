@@ -70,6 +70,11 @@ public class ExecuteContext {
     private boolean isSkip;
 
     /**
+     * 是否屏蔽方法抛出异常
+     */
+    private boolean isChangeThrowable;
+
+    /**
      * 被增强方法调用的结果
      */
     private Object result;
@@ -209,6 +214,10 @@ public class ExecuteContext {
 
     public boolean isSkip() {
         return isSkip;
+    }
+
+    public boolean isChangeThrowable() {
+        return isChangeThrowable;
     }
 
     public Object getResult() {
@@ -544,6 +553,23 @@ public class ExecuteContext {
             throw new UnsupportedOperationException("Change result method is not support when enhancing constructor. ");
         }
         this.result = fixedResult;
+        return this;
+    }
+
+    /**
+     * 修改方法异常抛出，注意，该方法不会校验结果的类型，需要使用者自行判断
+     *
+     * @param fixedThrowable 修正的结果, 修改为null时则方法不抛出异常
+     * @return 执行上下文
+     * @throws UnsupportedOperationException operation(null) is not supported
+     */
+    public ExecuteContext changeThrowable(Throwable fixedThrowable) {
+        if (method == null) {
+            throw new UnsupportedOperationException("Change throwable method is not support when enhancing "
+                    + "constructor. ");
+        }
+        this.throwable = fixedThrowable;
+        this.isChangeThrowable = true;
         return this;
     }
 

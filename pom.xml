@@ -536,12 +536,6 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <relocations>
-                            <relocation>
-                                <pattern>net.bytebuddy</pattern>
-                                <shadedPattern>${shade.common.prefix}.net.bytebuddy</shadedPattern>
-                            </relocation>
-                        </relocations>
                         <transformers>
                             <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer"/>

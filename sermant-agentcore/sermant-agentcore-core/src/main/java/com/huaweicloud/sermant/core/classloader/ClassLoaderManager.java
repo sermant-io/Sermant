@@ -17,7 +17,10 @@
 package com.huaweicloud.sermant.core.classloader;
 
 import com.huaweicloud.sermant.core.common.CommonConstant;
+import com.huaweicloud.sermant.core.plugin.classloader.PluginClassFinder;
+import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
 import com.huaweicloud.sermant.core.utils.FileUtils;
+import com.huaweicloud.sermant.god.common.SermantClassLoader;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -33,9 +36,11 @@ import java.util.Map;
  * @since 2022-06-20
  */
 public class ClassLoaderManager {
-    private static FrameworkClassLoader frameworkClassLoader;
+    private static SermantClassLoader sermantClassLoader;
 
-    private static CommonClassLoader commonClassLoader;
+    private static PluginClassFinder pluginClassFinder;
+
+    private static FrameworkClassLoader frameworkClassLoader;
 
     private ClassLoaderManager() {
     }
@@ -47,8 +52,35 @@ public class ClassLoaderManager {
      * @throws MalformedURLException MalformedURLException
      */
     public static void init(Map<String, Object> argsMap) throws MalformedURLException {
-        initCommonClassLoader(argsMap.get(CommonConstant.COMMON_DEPENDENCY_DIR_KEY).toString());
-        initFrameworkClassLoader(argsMap.get(CommonConstant.CORE_IMPLEMENT_DIR_KEY).toString());
+        sermantClassLoader = (SermantClassLoader) ClassLoaderManager.class.getClassLoader();
+
+        // 将Common包中的内容也加载进SermantClassLoader
+        // 这里引入的第三方依赖需要控制当前依赖并非需要在增强中使用的宿主服务依赖，否则，将会出现类型转换错误
+        sermantClassLoader
+                .appendUrls(listCommonLibUrls(argsMap.get(CommonConstant.COMMON_DEPENDENCY_DIR_KEY).toString()));
+        frameworkClassLoader = initFrameworkClassLoader(argsMap.get(CommonConstant.CORE_IMPLEMENT_DIR_KEY).toString());
+        pluginClassFinder = new PluginClassFinder();
+    }
+
+    private static FrameworkClassLoader initFrameworkClassLoader(String path) throws MalformedURLException {
+        if (frameworkClassLoader != null) {
+            return frameworkClassLoader;
+        }
+        URL[] coreImplementUrls = listCoreImplementUrls(path);
+        return new FrameworkClassLoader(coreImplementUrls, sermantClassLoader);
+    }
+
+    /**
+     * 创建一个插件类加载器
+     *
+     * @return PluginClassLoader
+     */
+    public static PluginClassLoader createPluginClassLoader() {
+        return new PluginClassLoader(new URL[0], sermantClassLoader);
+    }
+
+    public static SermantClassLoader getSermantClassLoader() {
+        return sermantClassLoader;
     }
 
     /**
@@ -60,18 +92,8 @@ public class ClassLoaderManager {
         return frameworkClassLoader;
     }
 
-    /**
-     * For getting CommonClassLoader
-     *
-     * @return A commonClassLoader that has been initialized.
-     */
-    public static CommonClassLoader getCommonClassLoader() {
-        return commonClassLoader;
-    }
-
-    private static void initFrameworkClassLoader(String path) throws MalformedURLException {
-        URL[] coreImplementUrls = listCoreImplementUrls(path);
-        frameworkClassLoader = new FrameworkClassLoader(coreImplementUrls, commonClassLoader);
+    public static PluginClassFinder getPluginClassFinder() {
+        return pluginClassFinder;
     }
 
     private static URL[] listCoreImplementUrls(String coreImplementPath) throws MalformedURLException {
@@ -80,7 +102,7 @@ public class ClassLoaderManager {
             throw new RuntimeException("core implement directory is not exist or is not directory.");
         }
         File[] jars = coreImplementDir.listFiles((file, name) -> name.endsWith(".jar"));
-        if (jars == null || jars.length <= 0) {
+        if (jars == null || jars.length == 0) {
             throw new RuntimeException("core implement directory is empty");
         }
         List<URL> urlList = new ArrayList<>();
@@ -90,18 +112,13 @@ public class ClassLoaderManager {
         return urlList.toArray(new URL[0]);
     }
 
-    private static void initCommonClassLoader(String path) throws MalformedURLException {
-        URL[] commonLibUrls = listCommonLibUrls(path);
-        commonClassLoader = new CommonClassLoader(commonLibUrls);
-    }
-
     private static URL[] listCommonLibUrls(String commonLibPath) throws MalformedURLException {
         File commonLibDir = new File(FileUtils.validatePath(commonLibPath));
         if (!commonLibDir.exists() || !commonLibDir.isDirectory()) {
             throw new RuntimeException("common lib is not exist or is not directory.");
         }
         File[] jars = commonLibDir.listFiles((file, name) -> name.endsWith(".jar"));
-        if (jars == null || jars.length <= 0) {
+        if (jars == null || jars.length == 0) {
             throw new RuntimeException("common lib directory is empty");
         }
         List<URL> urlList = new ArrayList<>();

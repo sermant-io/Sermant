@@ -78,12 +78,15 @@ public class TemplateForMember {
      */
     @Advice.OnMethodExit(onThrowable = Throwable.class)
     public static void onMethodExit(@Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object result,
-            @Advice.Thrown Throwable throwable,
+            @Advice.Thrown(readOnly = false) Throwable throwable,
             @Advice.Local(value = "_ADVICE_KEY_$SERMANT_LOCAL") String adviceKey,
             @Advice.Local(value = "_EXECUTE_CONTEXT_$SERMANT_LOCAL") Object context,
             @Advice.Local(value = "_IS_SKIP_$SERMANT_LOCAL") Boolean isSkip) throws Throwable {
         context = isSkip ? context : ((ExecuteContext) context).afterMethod(result, throwable);
         context = AdviserScheduler.onMethodExit(context, adviceKey);
         result = ((ExecuteContext) context).getResult();
+        if (((ExecuteContext) context).isChangeThrowable()) {
+            throwable = ((ExecuteContext) context).getThrowable();
+        }
     }
 }

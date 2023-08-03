@@ -55,15 +55,15 @@ public enum ConfigHolder {
     private final List<ConfigSource> configSources = new LinkedList<>();
 
     private final ExecutorService executorService = new ThreadPoolExecutor(1, 1, 0,
-        TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(QUEUE_SIZE), new DynamicConfigThreadFactory(
-        "DYNAMIC_CONFIG_REFRESH_THREAD"));
+            TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(QUEUE_SIZE), new DynamicConfigThreadFactory(
+            "DYNAMIC_CONFIG_REFRESH_THREAD"));
 
     ConfigHolder() {
         loadConfigSources();
     }
 
     private void loadConfigSources() {
-        for (ConfigSource configSource : ServiceLoader.load(ConfigSource.class)) {
+        for (ConfigSource configSource : ServiceLoader.load(ConfigSource.class, this.getClass().getClassLoader())) {
             if (configSource.isEnabled()) {
                 configSources.add(configSource);
             }
@@ -91,7 +91,7 @@ public enum ConfigHolder {
 
     private boolean doAccept(ConfigSource configSource, DynamicConfigEvent event) {
         return (configSource instanceof DynamicConfigSource)
-            && ((DynamicConfigSource) configSource).accept(event);
+                && ((DynamicConfigSource) configSource).accept(event);
     }
 
     /**

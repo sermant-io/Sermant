@@ -33,21 +33,6 @@ public class CommonConstant {
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     /**
-     * 启动配置文件名
-     */
-    public static final String BOOTSTRAP_CONFIG_FILE_NAME = "bootstrap.properties";
-
-    /**
-     * 核心配置文件名
-     */
-    public static final String CORE_CONFIG_FILE_NAME = "config.properties";
-
-    /**
-     * 插件设定文件名
-     */
-    public static final String PLUGIN_SETTING_FILE_NAME = "plugins.yaml";
-
-    /**
      * logback配置文件名
      */
     public static final String LOG_SETTING_FILE_NAME = "logback.xml";
@@ -71,11 +56,6 @@ public class CommonConstant {
      * 启动配置中服务名称的键
      */
     public static final String SERVICE_NAME_KEY = "serviceName";
-
-    /**
-     * 启动配置中的agentPath
-     */
-    public static final String AGENT_ROOT_DIR_KEY = "agentPath";
 
     /**
      * Sermant核心功能实现包的键
@@ -128,12 +108,12 @@ public class CommonConstant {
     public static final String COLON = ":";
 
     /**
-     * Bytebuddy日志中的错误字段
+     * Byte-buddy日志中的错误字段
      */
     public static final String ERROR = "ERROR";
 
     /**
-     * Bytebuddy日志中的字节码转换成功字段
+     * Byte-buddy日志中的字节码转换成功字段
      */
     public static final String TRANSFORM = "TRANSFORM";
 
@@ -141,6 +121,16 @@ public class CommonConstant {
      * 默认的增强后字节码文件输出路径父目录
      */
     public static final String ENHANCED_CLASS_OUTPUT_PARENT_DIR = "enhancedClasses";
+
+    /**
+     * Sermant项目中的包
+     */
+    public static final String[] LOAD_PREFIXES =
+            new String[]{"com.huawei.sermant", "com.huaweicloud.sermant", "com.huawei.dynamic.config",
+                    "com.huawei.flowcontrol", "com.huaweicloud.loadbalancer", "com.huawei.monitor",
+                    "com.huawei.dubbo.registry",
+                    "com.huawei.registry", "com.huaweicloud.visibility", "com.huawei.discovery",
+                    "sermant.plugin.flowcontrol"};
 
     private CommonConstant() {
     }
