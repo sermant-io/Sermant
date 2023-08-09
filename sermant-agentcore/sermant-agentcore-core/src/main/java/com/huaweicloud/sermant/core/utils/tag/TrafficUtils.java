@@ -28,9 +28,24 @@ import java.util.Map;
  * @since 2023-07-17
  */
 public class TrafficUtils {
-    private static final ThreadLocal<TrafficTag> TAG = new ThreadLocal<>();
+    private static ThreadLocal<TrafficTag> tag = new ThreadLocal<>();
+
+    private static ThreadLocal<TrafficData> data = new ThreadLocal<>();
 
     private TrafficUtils() {
+    }
+
+    /**
+     * 如果开启在new Thread时跨线程传递标签，需要把ThreadLocal初始化为InheritableThreadLocal
+     */
+    public static void setInheritableThreadLocal() {
+        if (!(tag instanceof InheritableThreadLocal)) {
+            tag = new InheritableThreadLocal<>();
+        }
+
+        if (!(data instanceof InheritableThreadLocal)) {
+            data = new InheritableThreadLocal<>();
+        }
     }
 
     /**
@@ -39,24 +54,33 @@ public class TrafficUtils {
      * @return 流量标签
      */
     public static TrafficTag getTrafficTag() {
-        return TAG.get();
+        return tag.get();
+    }
+
+    /**
+     * 获取线程中的流量信息
+     *
+     * @return 流量信息
+     */
+    public static TrafficData getTrafficData() {
+        return data.get();
     }
 
     /**
      * 更新线程中的流量标签
      *
-     * @param tag 流量标签map
+     * @param tagMap 流量标签map
      */
-    public static void updateTrafficTag(Map<String, List<String>> tag) {
-        if (MapUtils.isEmpty(tag)) {
+    public static void updateTrafficTag(Map<String, List<String>> tagMap) {
+        if (MapUtils.isEmpty(tagMap)) {
             return;
         }
-        TrafficTag trafficTag = TAG.get();
+        TrafficTag trafficTag = TrafficUtils.tag.get();
         if (trafficTag == null) {
-            TAG.set(new TrafficTag(tag));
+            TrafficUtils.tag.set(new TrafficTag(tagMap));
             return;
         }
-        trafficTag.updateTag(tag);
+        trafficTag.updateTag(tagMap);
     }
 
     /**
@@ -68,13 +92,29 @@ public class TrafficUtils {
         if (trafficTag == null) {
             return;
         }
-        TAG.set(trafficTag);
+        tag.set(trafficTag);
     }
 
     /**
      * 删除线程变量
      */
     public static void removeTrafficTag() {
-        TAG.remove();
+        tag.remove();
+    }
+
+    /**
+     * 流量信息存入线程变量
+     *
+     * @param value 线程变量
+     */
+    public static void setTrafficData(TrafficData value) {
+        data.set(value);
+    }
+
+    /**
+     * 删除流量信息
+     */
+    public static void removeTrafficData() {
+        data.remove();
     }
 }

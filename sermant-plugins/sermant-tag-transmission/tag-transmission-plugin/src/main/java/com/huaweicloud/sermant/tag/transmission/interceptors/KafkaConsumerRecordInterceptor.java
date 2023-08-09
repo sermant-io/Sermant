@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
 import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
 
@@ -52,7 +53,9 @@ public class KafkaConsumerRecordInterceptor extends AbstractServerInterceptor {
         if (consumerRecordObject instanceof ConsumerRecord) {
             final ConsumerRecord<?, ?> consumerRecord = (ConsumerRecord<?, ?>) consumerRecordObject;
             Map<String, List<String>> tagMap = extractTagMap(consumerRecord);
-            TrafficUtils.updateTrafficTag(tagMap);
+
+            // 消息队列消费者不会remove线程变量，需要每次set新对象，以保证父子线程之间的变量隔离
+            TrafficUtils.setTrafficTag(new TrafficTag(tagMap));
         }
         return context;
     }

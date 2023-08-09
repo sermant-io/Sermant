@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 流量标签透传插件配置
+ * 流量标签透传配置
  *
  * @author lilai
  * @since 2023-07-17
  */
-@ConfigTypeKey("tag.transmission.plugin")
+@ConfigTypeKey("tag.transmission.config")
 public class TagTransmissionConfig implements PluginConfig {
     /**
      * 是否开启适配
