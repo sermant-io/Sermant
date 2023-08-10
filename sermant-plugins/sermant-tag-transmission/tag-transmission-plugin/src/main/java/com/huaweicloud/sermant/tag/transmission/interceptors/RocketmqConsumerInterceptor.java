@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.tag.transmission.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
 
 import org.apache.rocketmq.common.message.Message;
@@ -51,7 +52,9 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor {
         if (context.getObject() instanceof Message) {
             Message message = (Message) context.getObject();
             Map<String, List<String>> tag = this.getTagFromMessage(message);
-            TrafficUtils.updateTrafficTag(tag);
+
+            // 消息队列消费者不会remove线程变量，需要每次set新对象，以保证父子线程之间的变量隔离
+            TrafficUtils.setTrafficTag(new TrafficTag(tag));
         }
         return context;
     }

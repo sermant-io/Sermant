@@ -10,12 +10,16 @@ data:
   SERMANT_AGENT_CONFIG_TYPE: {{ .Values.config.type }}
   # 配置中心地址
   SERMANT_AGENT_CONFIG_ADDRESS: {{ .Values.config.endpoints }}
+  # 注册中心类型
+  SERMANT_AGENT_SERVICE_TYPE: {{ .Values.registry.type }}
   # 注册中心地址
   SERMANT_AGENT_SERVICE_ADDRESS: {{ .Values.registry.endpoints }}
   # agent镜像地址
   SERMANT_AGENT_IMAGE_ADDR: {{ .Values.agent.image.addr }}
   # agent镜像拉取策略
   SERMANT_AGENT_IMAGE_PULLPOLICY: {{ .Values.agent.image.pullPolicy }}
+  # injector注入行为
+  SERMANT_AGENT_INJECT_ACTION: {{ .Values.injector.action }}
   {{- if not (and .Values.configMap.enabled .Values.configMap.namespaces) }}
   SERMANT_AGENT_CONFIGMAP: ""
   {{- end }}

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -91,7 +92,7 @@ public class ClassUtils {
         } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
             final String message = String.format(Locale.ENGLISH, "Can not load class [%s]!", className);
             if (isNeedWarn) {
-                LOGGER.warning(message);
+                LOGGER.log(Level.WARNING, message, ignored);
             } else {
                 LOGGER.fine(message);
             }

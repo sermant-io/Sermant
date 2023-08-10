@@ -28,7 +28,7 @@ import com.huaweicloud.sermant.tag.transmission.interceptors.KafkaProducerInterc
  * @author lilai
  * @since 2023-07-18
  */
-public class KafkaProviderDeclarer extends AbstractPluginDeclarer {
+public class KafkaProducerDeclarer extends AbstractPluginDeclarer {
     /**
      * 增强类的全限定名
      */
