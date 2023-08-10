@@ -108,24 +108,25 @@ public abstract class BootArgsBuilder {
      */
     private static void addNotNullEntries(Map<String, Object> argsMap, Properties configMap) {
         String key = BootConstant.ARTIFACT_NAME_KEY;
+        String defaultValue = "default";
         if (!argsMap.containsKey(key)) {
             final String value = getCommonValue(key, configMap);
-            argsMap.put(key, value == null ? "default" : value);
+            argsMap.put(key, value == null ? defaultValue : value);
         }
         key = BootConstant.APP_NAME_KEY;
         if (!argsMap.containsKey(key)) {
             final String value = getCommonValue(key, configMap);
-            argsMap.put(key, value == null ? "default" : value);
+            argsMap.put(key, value == null ? defaultValue : value);
         }
         key = BootConstant.SERVICE_NAME_KEY;
         if (!argsMap.containsKey(key)) {
             final String value = getCommonValue(key, configMap);
-            argsMap.put(key, value == null ? "default" : value);
+            argsMap.put(key, value == null ? defaultValue : value);
         }
         key = BootConstant.APP_TYPE_KEY;
         if (!argsMap.containsKey(key)) {
             final String value = getCommonValue(key, configMap);
-            argsMap.put(key, value == null ? "default" : value);
+            argsMap.put(key, value == null ? defaultValue : value);
         }
     }
 
@@ -162,10 +163,10 @@ public abstract class BootArgsBuilder {
             final String defaultValue = separatorIndex >= 0 ? envKey.substring(separatorIndex + 1) : "";
 
             // 优先级为环境变量 > 系统变量
-            if (isNotBlank(System.getenv(key))) {
+            if (!isBlank(System.getenv(key))) {
                 return System.getenv(key);
             }
-            if (isNotBlank(System.getProperty(key))) {
+            if (!isBlank(System.getProperty(key))) {
                 return System.getProperty(key);
             }
             return defaultValue;
@@ -194,16 +195,16 @@ public abstract class BootArgsBuilder {
      * @param charSequence charSequence
      * @return boolean
      */
-    public static boolean isNotBlank(final CharSequence charSequence) {
+    public static boolean isBlank(final CharSequence charSequence) {
         int charSequenceLen = charSequence == null ? 0 : charSequence.length();
         if (charSequenceLen == 0) {
-            return false;
+            return true;
         }
         for (int i = 0; i < charSequenceLen; i++) {
             if (!Character.isWhitespace(charSequence.charAt(i))) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }

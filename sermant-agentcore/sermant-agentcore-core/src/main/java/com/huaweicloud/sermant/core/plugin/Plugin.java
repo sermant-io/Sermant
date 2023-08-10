@@ -19,8 +19,6 @@ package com.huaweicloud.sermant.core.plugin;
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
 import com.huaweicloud.sermant.core.plugin.classloader.ServiceClassLoader;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,18 +29,39 @@ import java.util.List;
  * @since 2023-05-30
  */
 public class Plugin {
+    /**
+     * 插件名
+     */
     private String name;
 
+    /**
+     * 插件版本
+     */
     private String version;
 
+    /**
+     * 插件所在路径
+     */
     private String path;
 
+    /**
+     * 插件服务列表
+     */
     private List<String> serviceList = new ArrayList<>();
 
+    /**
+     * 插件配置列表
+     */
     private List<String> configList = new ArrayList<>();
 
+    /**
+     * 用于加载插件主模块的类加载器
+     */
     private PluginClassLoader pluginClassLoader;
 
+    /**
+     * 用于加载插件服务模块的类加载器
+     */
     private ServiceClassLoader serviceClassLoader;
 
     /**
@@ -112,31 +131,5 @@ public class Plugin {
 
     public void setServiceClassLoader(ServiceClassLoader serviceClassLoader) {
         this.serviceClassLoader = serviceClassLoader;
-    }
-
-    /**
-     * 构造插件服务类加载器
-     *
-     * @param urls 插件服务类加载器的搜索路径集合
-     */
-    public void createServiceClassLoader(URL[] urls) {
-        if (urls.length > 0) {
-            this.serviceClassLoader = new ServiceClassLoader(urls, this.pluginClassLoader);
-        }
-    }
-
-    /**
-     * 插件关闭
-     *
-     * @throws IOException IOException
-     */
-    public void close() throws IOException {
-        if (serviceClassLoader != null) {
-            serviceClassLoader.close();
-        }
-
-        if (pluginClassLoader != null) {
-            pluginClassLoader.close();
-        }
     }
 }

@@ -27,7 +27,6 @@
         <netflix-core.version>1.4.7.RELEASE</netflix-core.version>
         <spring.cloud.context.version>2.2.0.RELEASE</spring.cloud.context.version>
         <google.guava>31.1-jre</google.guava>
-        <flowcontrol.shade.path>sermant.plugin.flowcontrol</flowcontrol.shade.path>
     </properties>
     <dependencies>
         <!--compile依赖-->

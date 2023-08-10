@@ -21,11 +21,8 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,6 +72,7 @@ public abstract class InterceptDeclarer {
      * @return 拦截声明器
      * @throws IllegalArgumentException IllegalArgumentException
      */
+    @Deprecated
     public static InterceptDeclarer build(MethodMatcher methodMatcher, String... interceptors) {
         if (methodMatcher == null || interceptors == null || interceptors.length == 0) {
             throw new IllegalArgumentException("Matcher cannot be null and interceptor array cannot be empty. ");
@@ -88,11 +86,10 @@ public abstract class InterceptDeclarer {
             @Override
             public Interceptor[] getInterceptors(ClassLoader classLoader) {
                 try {
-                    return createInterceptors(interceptors, classLoader);
-                } catch (IOException | IllegalAccessException | NoSuchMethodException | InvocationTargetException
-                         | ClassNotFoundException | InstantiationException e) {
-                    LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                            "Unable to create instance of interceptors:  [%s]. ", Arrays.toString(interceptors)), e);
+                    return createInterceptors(interceptors);
+                } catch (IllegalAccessException | ClassNotFoundException | InstantiationException e) {
+                    LOGGER.log(Level.SEVERE,
+                            "Unable to create instance of interceptors: " + Arrays.toString(interceptors), e);
                 }
                 return new Interceptor[0];
             }
@@ -103,22 +100,18 @@ public abstract class InterceptDeclarer {
      * 使用被增强类的类加载器创建所有拦截器对象
      *
      * @param interceptors 拦截器全限定名集
-     * @param classLoader 被增强类的类加载器
      * @return 拦截器集
      * @throws ClassNotFoundException 找不到类
-     * @throws IOException 定义类失败
-     * @throws InvocationTargetException 调用addURL方法失败或调用defineClass方法失败
-     * @throws NoSuchMethodException 找不到addURL方法或defineClass方法
      * @throws IllegalAccessException 无法访问addURL方法或defineClass方法
      * @throws InstantiationException 实例化失败
      */
     @Deprecated
-    private static Interceptor[] createInterceptors(String[] interceptors, ClassLoader classLoader)
-            throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException,
-            IllegalAccessException, InstantiationException {
+    private static Interceptor[] createInterceptors(String[] interceptors)
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         final ArrayList<Interceptor> interceptorList = new ArrayList<>();
         for (String interceptor : interceptors) {
-            final Object instance = ClassLoaderManager.getPluginClassFinder().loadSermantClass(interceptor).newInstance();
+            final Object instance = ClassLoaderManager.getPluginClassFinder().loadSermantClass(interceptor)
+                    .newInstance();
             if (instance instanceof Interceptor) {
                 interceptorList.add((Interceptor) instance);
             }

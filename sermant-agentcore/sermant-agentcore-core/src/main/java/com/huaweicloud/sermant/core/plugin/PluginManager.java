@@ -22,6 +22,7 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.exception.SchemaException;
 import com.huaweicloud.sermant.core.plugin.agent.ByteEnhanceManager;
+import com.huaweicloud.sermant.core.plugin.classloader.ServiceClassLoader;
 import com.huaweicloud.sermant.core.plugin.common.PluginConstant;
 import com.huaweicloud.sermant.core.plugin.common.PluginSchemaValidator;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -67,33 +68,30 @@ public class PluginManager {
      * 初始化插件包、配置、插件服务包等插件相关的内容
      *
      * @param pluginNames 插件名称集
-     * @return boolean
      */
-    public static boolean initPlugins(Set<String> pluginNames) {
+    public static void initPlugins(Set<String> pluginNames) {
         if (pluginNames == null || pluginNames.isEmpty()) {
-            return false;
+            return;
         }
         final String pluginPackage;
         try {
             pluginPackage = BootArgsIndexer.getPluginPackageDir().getCanonicalPath();
-        } catch (IOException ignored) {
-            LOGGER.warning("Resolve plugin package failed. ");
-            return false;
+        } catch (IOException ioException) {
+            LOGGER.log(Level.SEVERE, "Resolve plugin package failed.", ioException);
+            return;
         }
         for (String pluginName : pluginNames) {
             if (PLUGIN_MAP.containsKey(pluginName)) {
-                LOGGER.log(Level.WARNING, "Plugin: {0} hsa bean installed. It cannot be loaded repeatedly.",
+                LOGGER.log(Level.WARNING, "Plugin: {0} has bean installed. It cannot be loaded repeatedly.",
                         pluginName);
                 continue;
             }
             try {
                 initPlugin(pluginName, pluginPackage);
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE,
-                        String.format(Locale.ENGLISH, "Load plugin failed, plugin name: %s", pluginName), ex);
+                LOGGER.log(Level.SEVERE, "Load plugin failed, plugin name: " + pluginName, ex);
             }
         }
-        return true;
     }
 
     /**
@@ -105,26 +103,40 @@ public class PluginManager {
     private static void initPlugin(String pluginName, String pluginPackage) {
         final String pluginPath = pluginPackage + File.separatorChar + pluginName;
         if (!new File(pluginPath).exists()) {
-            LOGGER.warning(String.format(Locale.ROOT, "Plugin directory %s does not exist, so skip initializing %s. ",
-                    pluginPath, pluginName));
+            LOGGER.log(Level.WARNING, "Plugin directory {0} does not exist, so skip initializing {1}. ",
+                    new String[]{pluginPath, pluginName});
             return;
         }
         doInitPlugin(new Plugin(pluginName, pluginPath, ClassLoaderManager.createPluginClassLoader()));
     }
 
     private static void doInitPlugin(Plugin plugin) {
-        loadPlugins(plugin);
-        plugin.createServiceClassLoader(toUrls(plugin.getName(), listJars(getServiceDir(plugin.getPath()))));
+        loadPluginLibs(plugin);
+        loadServiceLibs(plugin);
         PluginConfigManager.loadPluginConfig(plugin);
         PluginServiceManager.initPluginService(plugin);
+
+        // 适配逻辑，类加载器需要在字节码增强前加入到插件类检索器中，否则可能会在字节码增强时，找不到拦截器
+        ClassLoaderManager.getPluginClassFinder().addPluginClassLoader(plugin);
         ByteEnhanceManager.enhanceStaticPlugin(plugin);
 
         // 插件成功加载后步骤
         PLUGIN_MAP.put(plugin.getName(), plugin);
         PluginSchemaValidator.setDefaultVersion(plugin.getName());
-        ClassLoaderManager.getPluginClassFinder().addPluginClassLoader(plugin);
         FrameworkEventCollector.getInstance().collectPluginsLoadEvent(plugin.getName());
         LOGGER.log(Level.INFO, "Load plugin:{0} successful.", plugin.getName());
+    }
+
+    /**
+     * 构造插件服务类加载器
+     *
+     * @param plugin 插件
+     */
+    private static void loadServiceLibs(Plugin plugin) {
+        URL[] urls = toUrls(plugin.getName(), listJars(getServiceDir(plugin.getPath())));
+        if (urls.length > 0) {
+            plugin.setServiceClassLoader(new ServiceClassLoader(urls, plugin.getPluginClassLoader()));
+        }
     }
 
     /**
@@ -132,7 +144,7 @@ public class PluginManager {
      *
      * @param plugin 插件
      */
-    private static void loadPlugins(Plugin plugin) {
+    private static void loadPluginLibs(Plugin plugin) {
         for (File jar : listJars(getPluginDir(plugin.getPath()))) {
             processByJarFile(plugin.getName(), jar, true, new JarFileConsumer() {
                 @Override

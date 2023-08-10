@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.god.common;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -27,9 +28,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2023-05-24
  */
 public class SermantManager {
-    private static final ConcurrentHashMap<String, SermantClassLoader> SERMANT_MANAGE_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, SermantClassLoader> SERMANT_MANAGE_MAP = new ConcurrentHashMap<>();
 
-    private static final ConcurrentHashMap<String, Boolean> SERMANT_STATUS = new ConcurrentHashMap<>();
+    private static final Map<String, Boolean> SERMANT_STATUS = new ConcurrentHashMap<>();
 
     private SermantManager() {
     }

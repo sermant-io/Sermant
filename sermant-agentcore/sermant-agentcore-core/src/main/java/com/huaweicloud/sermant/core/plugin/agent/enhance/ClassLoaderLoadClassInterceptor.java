@@ -17,11 +17,13 @@
 package com.huaweicloud.sermant.core.plugin.agent.enhance;
 
 import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
-import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huaweicloud.sermant.core.service.inject.config.InjectConfig;
 
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +35,15 @@ import java.util.logging.Logger;
  */
 public class ClassLoaderLoadClassInterceptor implements Interceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private final Set<String> essentialPackage;
+
+    /**
+     * 构造函数
+     */
+    public ClassLoaderLoadClassInterceptor() {
+        essentialPackage = ConfigManager.getConfig(InjectConfig.class).getEssentialPackage();
+    }
 
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
@@ -50,18 +61,18 @@ public class ClassLoaderLoadClassInterceptor implements Interceptor {
         if (isSermantClass(name)) {
             try {
                 Class<?> sermantClazz = ClassLoaderManager.getPluginClassFinder().loadSermantClass(name);
-                LOGGER.log(Level.INFO,"Load class: {0} successfully by sermant.",name);
+                LOGGER.log(Level.INFO, "Load class: {0} successfully by sermant.", name);
                 context.changeResult(sermantClazz);
                 context.changeThrowable(null);
-            } catch (Exception exception) {
-                LOGGER.log(Level.SEVERE, "Class[{0}] can not load class by sermant. " + name);
+            } catch (ClassNotFoundException classNotFoundException) {
+                LOGGER.log(Level.WARNING, "Class can not load class by sermant. ", classNotFoundException.getMessage());
             }
         }
         return context;
     }
 
     private boolean isSermantClass(String name) {
-        for (String prefix : CommonConstant.LOAD_PREFIXES) {
+        for (String prefix : essentialPackage) {
             if (name.startsWith(prefix)) {
                 return true;
             }

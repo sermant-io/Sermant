@@ -51,8 +51,8 @@ public class AgentLauncher {
     /**
      * premain
      *
-     * @param agentArgs agentArgs
-     * @param instrumentation instrumentation
+     * @param agentArgs premain启动时携带的参数
+     * @param instrumentation 本次启动使用的instrumentation
      */
     public static void premain(String agentArgs, Instrumentation instrumentation) {
         launchAgent(agentArgs, instrumentation, false);
@@ -61,8 +61,8 @@ public class AgentLauncher {
     /**
      * agentmain
      *
-     * @param agentArgs agentArgs
-     * @param instrumentation instrumentation
+     * @param agentArgs agentmain启动时携带的参数
+     * @param instrumentation 本次启动使用的instrumentation
      */
     public static void agentmain(String agentArgs, Instrumentation instrumentation) {
         launchAgent(agentArgs, instrumentation, true);
@@ -83,7 +83,7 @@ public class AgentLauncher {
             String artifact = (String) argsMap.get(BootConstant.ARTIFACT_NAME_KEY);
 
             if (SermantManager.checkSermantStatus(artifact)) {
-                LOGGER.log(Level.INFO, "Sermant for artifact is running， artifact is: {0}." + artifact);
+                LOGGER.log(Level.WARNING, "Sermant for artifact is running，artifact is: " + artifact);
                 return;
             }
 
@@ -92,11 +92,11 @@ public class AgentLauncher {
             SermantClassLoader sermantClassLoader = SermantManager.createSermant(artifact, loadCoreLibUrls());
 
             // agent core入口
-            LOGGER.log(Level.INFO, "Loading sermant agent, artifact is: {0}." + artifact);
+            LOGGER.log(Level.INFO, "Loading sermant agent, artifact is: " + artifact);
             sermantClassLoader.loadClass("com.huaweicloud.sermant.core.AgentCoreEntrance")
                     .getDeclaredMethod("install", String.class, Map.class, Instrumentation.class, boolean.class)
                     .invoke(null, artifact, argsMap, instrumentation, isDynamic);
-            LOGGER.log(Level.INFO, "Load sermant done， artifact is: {0}." + artifact);
+            LOGGER.log(Level.INFO, "Load sermant done， artifact is: " + artifact);
             SermantManager.updateSermantStatus(artifact, true);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Loading sermant agent failed.", e);

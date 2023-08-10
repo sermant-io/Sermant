@@ -220,14 +220,14 @@ public class BufferedAgentBuilder {
      * 添加插件
      *
      * @param plugins 插件描述列表
-     * @return BufferedAgentBuilder本身
      */
-    public BufferedAgentBuilder addPlugins(Iterable<PluginDescription> plugins) {
-        return addAction(new BuilderAction() {
+    public void addPlugins(Iterable<PluginDescription> plugins) {
+        addAction(new BuilderAction() {
             @Override
             public AgentBuilder process(AgentBuilder builder) {
                 AgentBuilder newBuilder = builder;
                 for (PluginDescription plugin : plugins) {
+                    // 此处必须赋值给newBuilder，不可在原builder上重复操作，否则上次循环中的操作会不生效
                     newBuilder = newBuilder.type(plugin).transform(plugin);
                 }
                 return newBuilder;
@@ -236,41 +236,28 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 添加框架直接引入的字节码增强
+     * 基于{@link com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer}添加字节码增强
      *
      * @param pluginDeclarer 插件声明器
-     * @return BufferedAgentBuilder本身
      */
-    public BufferedAgentBuilder addEnhance(AbstractPluginDeclarer pluginDeclarer) {
-        return addAction(new BuilderAction() {
-            @Override
-            public AgentBuilder process(AgentBuilder builder) {
-                PluginDescription pluginDescription = new AbstractPluginDescription() {
-                    final AbstractPluginDeclarer abstractPluginDeclarer = pluginDeclarer;
+    public void addEnhance(AbstractPluginDeclarer pluginDeclarer) {
+        addAction(builder -> {
+            PluginDescription pluginDescription = new AbstractPluginDescription() {
+                final AbstractPluginDeclarer abstractPluginDeclarer = pluginDeclarer;
 
-                    @Override
-                    public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription,
-                            ClassLoader classLoader, JavaModule module) {
-                        return new DefaultTransformer(abstractPluginDeclarer.getInterceptDeclarers(classLoader))
-                                .transform(builder, typeDescription, classLoader, module);
-                    }
+                @Override
+                public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription,
+                        ClassLoader classLoader, JavaModule module) {
+                    return new DefaultTransformer(abstractPluginDeclarer.getInterceptDeclarers(classLoader))
+                            .transform(builder, typeDescription, classLoader, module);
+                }
 
-                    @Override
-                    public boolean matches(TypeDescription target) {
-                        try {
-                            return abstractPluginDeclarer.getClassMatcher().matches(target);
-                        } catch (Exception exception) {
-                            LOGGER.log(Level.WARNING,
-                                    "Exception occur when math target: " + target.getActualName() + ",{0}",
-                                    exception.getMessage());
-                            return false;
-                        }
-                    }
-                };
-                AgentBuilder newBuilder = builder;
-                newBuilder = newBuilder.type(pluginDescription).transform(pluginDescription);
-                return newBuilder;
-            }
+                @Override
+                public boolean matches(TypeDescription target) {
+                    return abstractPluginDeclarer.getClassMatcher().matches(target);
+                }
+            };
+            return builder.type(pluginDescription).transform(pluginDescription);
         });
     }
 

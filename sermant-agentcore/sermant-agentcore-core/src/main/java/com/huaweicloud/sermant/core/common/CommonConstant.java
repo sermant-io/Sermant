@@ -122,16 +122,6 @@ public class CommonConstant {
      */
     public static final String ENHANCED_CLASS_OUTPUT_PARENT_DIR = "enhancedClasses";
 
-    /**
-     * Sermant项目中的包
-     */
-    public static final String[] LOAD_PREFIXES =
-            new String[]{"com.huawei.sermant", "com.huaweicloud.sermant", "com.huawei.dynamic.config",
-                    "com.huawei.flowcontrol", "com.huaweicloud.loadbalancer", "com.huawei.monitor",
-                    "com.huawei.dubbo.registry",
-                    "com.huawei.registry", "com.huaweicloud.visibility", "com.huawei.discovery",
-                    "sermant.plugin.flowcontrol"};
-
     private CommonConstant() {
     }
 }

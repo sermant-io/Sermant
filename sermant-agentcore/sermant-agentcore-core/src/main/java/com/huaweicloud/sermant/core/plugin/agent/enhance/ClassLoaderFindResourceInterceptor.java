@@ -17,11 +17,15 @@
 package com.huaweicloud.sermant.core.plugin.agent.enhance;
 
 import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
-import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huaweicloud.sermant.core.service.inject.config.InjectConfig;
 
+import java.net.URL;
+import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +38,15 @@ import java.util.logging.Logger;
 public class ClassLoaderFindResourceInterceptor implements Interceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private final Set<String> essentialPackage;
+
+    /**
+     * 构造函数
+     */
+    public ClassLoaderFindResourceInterceptor() {
+        essentialPackage = ConfigManager.getConfig(InjectConfig.class).getEssentialPackage();
+    }
+
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         return context;
@@ -44,12 +57,13 @@ public class ClassLoaderFindResourceInterceptor implements Interceptor {
         if (context.getResult() == null) {
             String path = (String) context.getArguments()[0];
             if (isSermantResource(path)) {
-                try {
-                    context.changeResult(ClassLoaderManager.getPluginClassFinder().findSermantResource(path));
-                    LOGGER.log(Level.INFO,"Find resource: {0} successfully by sermant.",path);
-                } catch (Exception exception) {
-                    LOGGER.log(Level.SEVERE, "Can not find resource by sermant.And then find by " + context.getObject(),
-                            exception);
+                Optional<URL> url = ClassLoaderManager.getPluginClassFinder().findSermantResource(path);
+                if (!url.isPresent()) {
+                    LOGGER.log(Level.WARNING, "Can not find resource [{0}] by sermant.And then find by {1}. ",
+                            new Object[]{path, context.getObject()});
+                } else {
+                    context.changeResult(url.get());
+                    LOGGER.log(Level.INFO, "Find resource: {0} successfully by sermant.", path);
                 }
             }
         }
@@ -63,8 +77,8 @@ public class ClassLoaderFindResourceInterceptor implements Interceptor {
 
     private boolean isSermantResource(String path) {
         String name = path.replace('/', '.');
-        for (String excludePrefix : CommonConstant.LOAD_PREFIXES) {
-            if (name.startsWith(excludePrefix)) {
+        for (String prefix : essentialPackage) {
+            if (name.startsWith(prefix)) {
                 return true;
             }
         }

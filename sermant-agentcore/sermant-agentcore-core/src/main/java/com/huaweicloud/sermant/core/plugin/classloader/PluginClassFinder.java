@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.core.plugin.Plugin;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 用于适配从多个PluginClassLoader中寻找对应类和资源
@@ -50,7 +51,7 @@ public class PluginClassFinder {
     }
 
     /**
-     * 在多个插件类加载器中加载
+     * 在Sermant搜索路径下加载对应类名的类
      *
      * @param name 需要查找的类名
      * @return Class<?>
@@ -59,7 +60,7 @@ public class PluginClassFinder {
     public Class<?> loadSermantClass(String name) throws ClassNotFoundException {
         for (PluginClassLoader pluginClassLoader : pluginClassLoaderMap.values()) {
             try {
-                Class<?> clazz = pluginClassLoader.loadClass(name);
+                Class<?> clazz = pluginClassLoader.loadSermantClass(name);
                 if (clazz != null) {
                     return clazz;
                 }
@@ -71,18 +72,18 @@ public class PluginClassFinder {
     }
 
     /**
-     * Finds the resource with the given name from sermant library.
+     * 在Sermant搜索路径下查找对应资源路径的资源
      *
-     * @param path The resource path
-     * @return URL
+     * @param path 资源路径
+     * @return URL 资源对应的URL
      */
-    public URL findSermantResource(String path) {
+    public Optional<URL> findSermantResource(String path) {
         for (PluginClassLoader pluginClassLoader : pluginClassLoaderMap.values()) {
             URL url = pluginClassLoader.findResource(path);
             if (url != null) {
-                return url;
+                return Optional.of(url);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

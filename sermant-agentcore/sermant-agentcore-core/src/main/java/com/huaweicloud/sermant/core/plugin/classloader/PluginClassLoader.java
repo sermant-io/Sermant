@@ -16,7 +16,8 @@
 
 package com.huaweicloud.sermant.core.plugin.classloader;
 
-import com.huaweicloud.sermant.core.common.CommonConstant;
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -29,16 +30,22 @@ import java.util.HashMap;
  * @since 2023-04-27
  */
 public class PluginClassLoader extends URLClassLoader {
-    private final HashMap<Long, ClassLoader> tmpLoader = new HashMap<>();
+    private final HashMap<Long, ClassLoader> localLoader = new HashMap<>();
+
+    /**
+     * 是否允许使用线程上下文类加载器
+     */
+    private final boolean useContextLoader;
 
     /**
      * 构造方法
      *
-     * @param urls Url of sermant-xxx-plugin
-     * @param parent parent classloader
+     * @param urls 需要被该类加载器加载类所在lib的URL
+     * @param parent 双亲类加载器
      */
     public PluginClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
+        useContextLoader = ConfigManager.getConfig(AgentConfig.class).isUseContextLoader();
     }
 
     /**
@@ -65,32 +72,55 @@ public class PluginClassLoader extends URLClassLoader {
             // ignored
         }
 
-        // If not found in parent, try to load using the context class loader
-        if (clazz == null && !isSermantClass(name)) {
-            ClassLoader loader = tmpLoader.get(Thread.currentThread().getId());
+        // 无法从Sermant搜索路径中找到类，则尝试通过线程绑定的局部类加载器加载
+        if (clazz == null) {
+            ClassLoader loader = localLoader.get(Thread.currentThread().getId());
 
-            if (loader == null) {
+            if (loader == null && useContextLoader) {
                 loader = Thread.currentThread().getContextClassLoader();
             }
 
-            // Ensure the loader is not the same as this class loader to avoid StackOverflow
+            // 确保局部类加载器不是当前类加载器，否则会stackoverflow
             if (loader != null && !this.equals(loader)) {
                 try {
                     clazz = loader.loadClass(name);
                 } catch (ClassNotFoundException e) {
-                    // Class not found in the context class loader
+                    // 无法找到类，忽略，后续抛出异常
                 }
             }
         }
 
-        // If still not found, throw ClassNotFoundException
+        // 如果无法找到类，则抛出异常
         if (clazz == null) {
             throw new ClassNotFoundException("Sermant pluginClassLoader can not load class: " + name);
         }
 
-        // Resolve the class if needed
+        // 如果有需要则解析该类
         if (resolve) {
             resolveClass(clazz);
+        }
+        return clazz;
+    }
+
+    /**
+     * 只通过Sermant自身的搜索路径加载类，不利用局部类加载器，否则会stackoverflow
+     *
+     * @param name 类名
+     * @return Class<?>
+     * @throws ClassNotFoundException 无法通过类加载
+     */
+    public Class<?> loadSermantClass(String name) throws ClassNotFoundException {
+        Class<?> clazz = null;
+
+        try {
+            clazz = super.loadClass(name, false);
+        } catch (ClassNotFoundException ignored) {
+            // 无法找到类，忽略，后续抛出异常
+        }
+
+        // 如果无法找到类，则抛出异常
+        if (clazz == null) {
+            throw new ClassNotFoundException("Sermant pluginClassLoader can not load class: " + name);
         }
         return clazz;
     }
@@ -100,8 +130,8 @@ public class PluginClassLoader extends URLClassLoader {
      *
      * @param loader 类加载器
      */
-    public void setTmpLoader(ClassLoader loader) {
-        tmpLoader.put(Thread.currentThread().getId(), loader);
+    public void setLocalLoader(ClassLoader loader) {
+        localLoader.put(Thread.currentThread().getId(), loader);
     }
 
     /**
@@ -110,15 +140,6 @@ public class PluginClassLoader extends URLClassLoader {
      * @return 被移除的类加载器
      */
     public ClassLoader removeTmpLoader() {
-        return tmpLoader.remove(Thread.currentThread().getId());
-    }
-
-    private boolean isSermantClass(String name) {
-        for (String classPrefix : CommonConstant.LOAD_PREFIXES) {
-            if (name.startsWith(classPrefix)) {
-                return true;
-            }
-        }
-        return false;
+        return localLoader.remove(Thread.currentThread().getId());
     }
 }

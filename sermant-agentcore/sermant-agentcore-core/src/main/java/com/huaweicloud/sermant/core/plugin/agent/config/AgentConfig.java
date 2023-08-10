@@ -66,6 +66,11 @@ public class AgentConfig implements BaseConfig {
      */
     private Set<String> serviceInjectList = Collections.emptySet();
 
+    /**
+     * 允许从线程上下文中加载类，主要用于插件类加载器通过线程上下文类加载宿主服务的类，如果不允许可以在拦截器调用过程中指定
+     */
+    private boolean useContextLoader = false;
+
     public boolean isReTransformEnable() {
         return isReTransformEnable;
     }
@@ -120,5 +125,13 @@ public class AgentConfig implements BaseConfig {
 
     public void setServiceInjectList(Set<String> serviceInjectList) {
         this.serviceInjectList = serviceInjectList;
+    }
+
+    public boolean isUseContextLoader() {
+        return useContextLoader;
+    }
+
+    public void setUseContextLoader(boolean useContextLoader) {
+        this.useContextLoader = useContextLoader;
     }
 }
