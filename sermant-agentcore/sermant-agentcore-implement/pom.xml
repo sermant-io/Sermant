@@ -34,6 +34,8 @@
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>sermant-agentcore-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>

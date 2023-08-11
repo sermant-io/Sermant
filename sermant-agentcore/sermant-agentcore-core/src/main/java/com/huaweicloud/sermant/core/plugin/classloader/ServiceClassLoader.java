@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,51 +14,56 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.core.classloader;
+package com.huaweicloud.sermant.core.plugin.classloader;
 
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.CommonConstant;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 框架核心能力实现的类加载器
+ * 插件类加载器，用于加载插件服务包
  *
- * @author luanwenfei
- * @since 2022-06-18
+ * @author HapThorin
+ * @version 1.0.0
+ * @since 2021-11-12
  */
-public class FrameworkClassLoader extends URLClassLoader {
+public class ServiceClassLoader extends URLClassLoader {
     /**
-     * 对FrameClassLoader已经加载的类进行管理
+     * 对ClassLoader内部已加载的Class的管理
      */
-    private final Map<String, Class<?>> frameworkClassMap = new HashMap<>();
+    private final Map<String, Class<?>> serviceClassMap = new HashMap<>();
 
     /**
      * Constructor.
      *
-     * @param urls Url of sermant-agentcore-implement
+     * @param urls Url of plugin package
      * @param parent parent classloader
      */
-    public FrameworkClassLoader(URL[] urls, ClassLoader parent) {
+    public ServiceClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
     }
 
-    private Class<?> findFrameworkClass(String name) {
-        if (!frameworkClassMap.containsKey(name)) {
+    /**
+     * 加载插件服务包中的类并维护
+     *
+     * @param name 全限定名
+     * @return Class对象
+     */
+    private Class<?> loadPluginClass(String name) {
+        if (!serviceClassMap.containsKey(name)) {
             try {
-                frameworkClassMap.put(name, findClass(name));
+                serviceClassMap.put(name, findClass(name));
             } catch (ClassNotFoundException ignored) {
-                frameworkClassMap.put(name, null);
+                serviceClassMap.put(name, null);
             }
         }
-        return frameworkClassMap.get(name);
+        return serviceClassMap.get(name);
     }
 
     @Override
@@ -69,21 +74,15 @@ public class FrameworkClassLoader extends URLClassLoader {
     @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         synchronized (getClassLoadingLock(name)) {
-            Class<?> clazz = null;
-
-            // 对于core中已经加载的类则遵循双亲委派原则,其他类则破坏双亲委派机制
-            if (name != null) {
-                clazz = findFrameworkClass(name);
-            }
+            Class<?> clazz = loadPluginClass(name);
             if (clazz == null) {
                 clazz = super.loadClass(name, resolve);
 
-                // 通过FrameworkClassLoader的super.loadClass方法把从自身加载的类放入缓存
+                // 把从自身加载的类放入缓存
                 if (clazz != null && clazz.getClassLoader() == this) {
-                    frameworkClassMap.put(name, clazz);
+                    serviceClassMap.put(name, clazz);
                 }
             }
-
             if (resolve) {
                 resolveClass(clazz);
             }
@@ -95,7 +94,7 @@ public class FrameworkClassLoader extends URLClassLoader {
     public URL getResource(String name) {
         URL url = null;
 
-        // 针对日志配置文件，定制化getResource方法，获取FrameworkClassloader下资源文件中的logback.xml
+        // 针对日志配置文件，定制化getResource方法，首先获取agent/config/logback.xml,其次PluginClassloader下资源文件中的logback.xml
         if (CommonConstant.LOG_SETTING_FILE_NAME.equals(name)) {
             File logSettingFile = BootArgsIndexer.getLogSettingFile();
             if (logSettingFile.exists() && logSettingFile.isFile()) {
@@ -115,11 +114,7 @@ public class FrameworkClassLoader extends URLClassLoader {
     }
 
     @Override
-    public Enumeration<URL> getResources(String name) throws IOException {
-        // 由于类隔离的原因针对StaticLoggerBinder不再通过父类加载器获取重复资源，只返回加载器内的资源
-        if ("org/slf4j/impl/StaticLoggerBinder.class".equals(name)) {
-            return findResources(name);
-        }
-        return super.getResources(name);
+    public void addURL(URL url) {
+        super.addURL(url);
     }
 }

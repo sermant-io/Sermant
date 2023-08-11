@@ -4,6 +4,7 @@ com.huaweicloud.sermant.core.event.config.EventConfig
 com.huaweicloud.sermant.core.service.dynamicconfig.config.DynamicConfig
 com.huaweicloud.sermant.core.service.dynamicconfig.config.KieDynamicConfig
 com.huaweicloud.sermant.core.service.heartbeat.config.HeartbeatConfig
+com.huaweicloud.sermant.core.service.inject.config.InjectConfig
 com.huaweicloud.sermant.core.service.send.config.GatewayConfig
 com.huaweicloud.sermant.core.plugin.config.ServiceMeta
 com.huaweicloud.sermant.core.notification.config.NotificationConfig

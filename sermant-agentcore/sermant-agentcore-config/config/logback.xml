@@ -10,7 +10,7 @@
     <!-- 日志最大的历史 30天 -->
     <property name="log.maxHistory" value="${sermant_log_max_history:-30}"/>
     <property name="log.level" value="${sermant_log_level:-info}"/>
-    <property name="log.maxSize" value="${sermant_log_max_size:-5MB}" />
+    <property name="log.maxSize" value="${sermant_log_max_size:-50MB}" />
     <property name="log.totalSize" value="${sermant_log_total_size:-20GB}"/>
 
     <!-- 设置日志输出格式 -->

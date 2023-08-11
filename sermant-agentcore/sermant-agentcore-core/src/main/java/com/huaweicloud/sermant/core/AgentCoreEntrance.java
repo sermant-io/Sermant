@@ -27,6 +27,7 @@ import com.huaweicloud.sermant.core.notification.NotificationManager;
 import com.huaweicloud.sermant.core.notification.SermantNotificationType;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.plugin.PluginSystemEntrance;
+import com.huaweicloud.sermant.core.plugin.agent.ByteEnhanceManager;
 import com.huaweicloud.sermant.core.plugin.agent.adviser.AdviserScheduler;
 import com.huaweicloud.sermant.core.plugin.agent.template.DefaultAdviser;
 import com.huaweicloud.sermant.core.service.ServiceManager;
@@ -48,11 +49,14 @@ public class AgentCoreEntrance {
     /**
      * 入口方法
      *
+     * @param artifact 产品名
      * @param argsMap 参数集
      * @param instrumentation Instrumentation对象
+     * @param isDynamic 是否为动态安装 premain[false],agentmain[true]
      * @throws Exception agent core执行异常
      */
-    public static void run(Map<String, Object> argsMap, Instrumentation instrumentation) throws Exception {
+    public static void install(String artifact, Map<String, Object> argsMap, Instrumentation instrumentation,
+            boolean isDynamic) throws Exception {
         // 初始化框架类加载器
         ClassLoaderManager.init(argsMap);
 
@@ -74,12 +78,19 @@ public class AgentCoreEntrance {
         // 初始化事件系统
         EventManager.init();
 
+        // 初始化ByteEnhanceManager
+        ByteEnhanceManager.init(instrumentation);
+
         // 初始化插件
-        PluginSystemEntrance.initialize(instrumentation);
+        PluginSystemEntrance.initialize(isDynamic);
 
         // 注册Adviser
-        DefaultAdviser defaultAdviser = new DefaultAdviser();
-        AdviserScheduler.registry(defaultAdviser);
+        AdviserScheduler.registry(new DefaultAdviser());
+
+        // 增强静态插件
+        if (!isDynamic) {
+            ByteEnhanceManager.enhance();
+        }
 
         // 上报Sermant启动事件
         FrameworkEventCollector.getInstance().collectAgentStartEvent();

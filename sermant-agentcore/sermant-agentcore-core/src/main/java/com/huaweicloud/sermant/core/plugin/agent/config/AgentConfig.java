@@ -18,8 +18,6 @@ package com.huaweicloud.sermant.core.plugin.agent.config;
 
 import com.huaweicloud.sermant.core.config.common.BaseConfig;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
-import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer;
-import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassTypeMatcher;
 
 import java.util.Collections;
 import java.util.Set;
@@ -34,9 +32,9 @@ import java.util.Set;
 @ConfigTypeKey("agent.config")
 public class AgentConfig implements BaseConfig {
     /**
-     * 是否增强启动类加载器加载的类
+     * 是否允许字节码增强重转换
      */
-    private boolean isEnhanceBootStrapEnable = false;
+    private boolean isReTransformEnable = false;
 
     /**
      * 增强忽略集，该集合中定义的全限定名前缀用于排除增强过程中被忽略的类，默认包含{@code com.huawei.sermant}，非强制
@@ -64,21 +62,21 @@ public class AgentConfig implements BaseConfig {
     private String enhancedClassesOutputPath;
 
     /**
-     * 插件的合并策略，定义{@link PluginDeclarer}插件声明器的合并策略
-     */
-    private CombineStrategy combineStrategy = CombineStrategy.ALL;
-
-    /**
      * 拦截插件服务名单
      */
     private Set<String> serviceInjectList = Collections.emptySet();
 
-    public boolean isEnhanceBootStrapEnable() {
-        return isEnhanceBootStrapEnable;
+    /**
+     * 允许从线程上下文中加载类，主要用于插件类加载器通过线程上下文类加载宿主服务的类，如果不允许可以在拦截器调用过程中指定
+     */
+    private boolean useContextLoader = false;
+
+    public boolean isReTransformEnable() {
+        return isReTransformEnable;
     }
 
-    public void setEnhanceBootStrapEnable(boolean enhanceBootStrapEnable) {
-        isEnhanceBootStrapEnable = enhanceBootStrapEnable;
+    public void setReTransformEnable(boolean reTransformEnable) {
+        isReTransformEnable = reTransformEnable;
     }
 
     public Set<String> getIgnoredPrefixes() {
@@ -129,37 +127,11 @@ public class AgentConfig implements BaseConfig {
         this.serviceInjectList = serviceInjectList;
     }
 
-    public CombineStrategy getCombineStrategy() {
-        return combineStrategy;
+    public boolean isUseContextLoader() {
+        return useContextLoader;
     }
 
-    public void setCombineStrategy(
-            CombineStrategy combineStrategy) {
-        this.combineStrategy = combineStrategy;
-    }
-
-    /**
-     * 插件声明器的合并策略
-     * <p>通常，以下策略差异不大，没有决定性的影响，一般取{@link #ALL}即可
-     *
-     * @since 2021-01-25
-     */
-    public enum CombineStrategy {
-        /**
-         * 不合并，每个{@link PluginDeclarer}都会被当做是一个transformer
-         * <p>插件较少，且模糊匹配的较多的场景，该策略有优势
-         */
-        NONE,
-
-        /**
-         * 仅合并{@link PluginDeclarer#getClassMatcher}为{@link ClassTypeMatcher}的插件声明器，即通过匹配的类名合并
-         * <p>插件较多，且主要是全限定名匹配的场景时，该策略有优势
-         */
-        BY_NAME,
-
-        /**
-         * 对于所有{@link PluginDeclarer}，都会进行合并
-         */
-        ALL
+    public void setUseContextLoader(boolean useContextLoader) {
+        this.useContextLoader = useContextLoader;
     }
 }

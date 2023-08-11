@@ -90,8 +90,8 @@ public class OriginConfigCenterDisableListener implements BeanFactoryAware {
             tryAddDynamicSourceToFirst(environment);
 
             // 发布刷新事件补偿, 及时刷新禁用后的数据
-            springEventPublisher.publishRefreshEvent(DynamicConfigEvent.modifyEvent(event.getKey(), event.getGroup(),
-                    event.getContent()));
+            springEventPublisher.publishRefreshEvent(
+                    DynamicConfigEvent.modifyEvent(event.getKey(), event.getGroup(), event.getContent()));
         });
     }
 
@@ -113,8 +113,8 @@ public class OriginConfigCenterDisableListener implements BeanFactoryAware {
     }
 
     private void disableConfigCenter() {
-        ConfigHolder.INSTANCE.getConfigSources().add(new OriginConfigDisableSource(
-                DynamicConstants.DISABLE_CONFIG_SOURCE_NAME));
+        ConfigHolder.INSTANCE.getConfigSources()
+                .add(new OriginConfigDisableSource(DynamicConstants.DISABLE_CONFIG_SOURCE_NAME));
     }
 
     private boolean check() {
@@ -124,7 +124,8 @@ public class OriginConfigCenterDisableListener implements BeanFactoryAware {
     }
 
     private void loadClosers() {
-        for (ConfigCenterCloser closer : ServiceLoader.load(ConfigCenterCloser.class)) {
+        for (ConfigCenterCloser closer : ServiceLoader.load(ConfigCenterCloser.class,
+                this.getClass().getClassLoader())) {
             configCenterClosers.add(closer);
         }
     }

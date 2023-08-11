@@ -1,4 +1,4 @@
-package com.huawei.sermant.premain.common;
+package com.huaweicloud.sermant.premain.common;
 
 
 import static org.junit.Assert.assertEquals;

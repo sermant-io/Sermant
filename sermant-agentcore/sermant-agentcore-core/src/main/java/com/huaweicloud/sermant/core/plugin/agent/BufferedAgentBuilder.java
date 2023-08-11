@@ -22,8 +22,12 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDescription;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDescription;
+import com.huaweicloud.sermant.core.plugin.agent.transformer.DefaultTransformer;
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
+import com.huaweicloud.sermant.core.plugin.classloader.ServiceClassLoader;
 import com.huaweicloud.sermant.core.utils.FileUtils;
 
 import net.bytebuddy.agent.builder.AgentBuilder;
@@ -32,6 +36,7 @@ import net.bytebuddy.agent.builder.ResettableClassFileTransformer;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeList.Generic;
 import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.utility.JavaModule;
 
 import java.io.ByteArrayOutputStream;
@@ -66,11 +71,6 @@ public class BufferedAgentBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 增强后字节码输出路径的系统变量，优先级高于配置
-     */
-    private static final String OUTPUT_PATH_SYSTEM_KEY = "apm.agent.class.export.path";
-
-    /**
      * 增强配置
      */
     private final AgentConfig config = ConfigManager.getConfig(AgentConfig.class);
@@ -102,7 +102,7 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 设置字节码增强的重定义策略，由{@link AgentConfig#isEnhanceBootStrapEnable()}而定
+     * 设置字节码增强的重定义策略，由{@link AgentConfig#isReTransformEnable()}而定
      * <pre>
      *     1.若不增强启动类加载器加载的类，则直接使用默认规则{@link AgentBuilder.RedefinitionStrategy#DISABLED}
      *     1.若增强启动类加载器加载的类，则使用规则{@link AgentBuilder.RedefinitionStrategy#RETRANSFORMATION}
@@ -111,31 +111,21 @@ public class BufferedAgentBuilder {
      * @return BufferedAgentBuilder本身
      */
     private BufferedAgentBuilder setBootStrapStrategy() {
-        if (!config.isEnhanceBootStrapEnable()) {
+        if (!config.isReTransformEnable()) {
             return this;
         }
-        return addAction(new BuilderAction() {
-            @Override
-            public AgentBuilder process(AgentBuilder builder) {
-                return builder.with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION);
-            }
-        });
+        return addAction(builder -> builder.with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION));
     }
 
     /**
      * 设置扫描的过滤规则
-     * <p>注意，数组类型，8中基础类型，以及{@link PluginClassLoader},{@link FrameworkClassLoader}加载的类默认不增强，直接被过滤
+     * <p>注意，数组类型，8种基础类型，以及{@link ServiceClassLoader},{@link FrameworkClassLoader}加载的类默认不增强，直接被过滤
      * <p>其他类若符合配置中{@link AgentConfig#getIgnoredPrefixes}指定的前缀之一，则被过滤
      *
      * @return BufferedAgentBuilder本身
      */
     private BufferedAgentBuilder setIgnoredRule() {
-        return addAction(new BuilderAction() {
-            @Override
-            public AgentBuilder process(AgentBuilder builder) {
-                return builder.ignore(new IgnoredMatcher(config));
-            }
-        });
+        return addAction(builder -> builder.ignore(new IgnoredMatcher(config)));
     }
 
     /**
@@ -149,53 +139,44 @@ public class BufferedAgentBuilder {
         if (!config.isShowEnhanceLog()) {
             return this;
         }
-        return addAction(new BuilderAction() {
-            @Override
-            public AgentBuilder process(AgentBuilder builder) {
-                return builder
-                        .with(new AgentBuilder.Listener.StreamWriting(new PrintStream(new ByteArrayOutputStream() {
-                            private final byte[] separatorBytes =
-                                    System.lineSeparator().getBytes(CommonConstant.DEFAULT_CHARSET);
+        return addAction(builder -> builder
+                .with(new AgentBuilder.Listener.StreamWriting(new PrintStream(new ByteArrayOutputStream() {
+                    private final byte[] separatorBytes =
+                            System.lineSeparator().getBytes(CommonConstant.DEFAULT_CHARSET);
 
-                            private final int separatorLength = separatorBytes.length;
+                    private final int separatorLength = separatorBytes.length;
 
-                            @Override
-                            public void flush() {
-                                if (count < separatorLength) {
-                                    return;
-                                }
-                                for (int i = separatorLength - 1; i >= 0; i--) {
-                                    if (buf[count + i - separatorLength] != separatorBytes[i]) {
-                                        return;
-                                    }
-                                }
-                                String enhanceLog = new String(Arrays.copyOf(buf, count - separatorLength));
-                                logAndCollectEvent(enhanceLog);
-                                reset();
+                    @Override
+                    public void flush() {
+                        if (count < separatorLength) {
+                            return;
+                        }
+                        for (int i = separatorLength - 1; i >= 0; i--) {
+                            if (buf[count + i - separatorLength] != separatorBytes[i]) {
+                                return;
                             }
+                        }
+                        String enhanceLog = new String(Arrays.copyOf(buf, count - separatorLength));
+                        logAndCollectEvent(enhanceLog);
+                        reset();
+                    }
 
-                            private void logAndCollectEvent(String enhanceLog) {
-                                if (enhanceLog.contains(CommonConstant.ERROR)) {
-                                    FrameworkEventCollector.getInstance().collectTransformFailureEvent(enhanceLog);
-                                    return;
-                                }
-                                if (enhanceLog.contains(CommonConstant.TRANSFORM)) {
-                                    FrameworkEventCollector.getInstance().collectTransformSuccessEvent(enhanceLog);
-                                }
-                                LOGGER.info(enhanceLog);
-                            }
-                        }, true)));
-            }
-        });
+                    // 针对Byte-buddy中触发的Error及Warn级别日志上报事件
+                    private void logAndCollectEvent(String enhanceLog) {
+                        if (enhanceLog.contains(CommonConstant.ERROR)) {
+                            FrameworkEventCollector.getInstance().collectTransformFailureEvent(enhanceLog);
+                            return;
+                        }
+                        if (enhanceLog.contains(CommonConstant.TRANSFORM)) {
+                            FrameworkEventCollector.getInstance().collectTransformSuccessEvent(enhanceLog);
+                        }
+                        LOGGER.info(enhanceLog);
+                    }
+                }, true))));
     }
 
     /**
-     * 设置输出增强后字节码的监听器，输出路径优先选择：
-     * <pre>
-     *     1.系统变量{@link #OUTPUT_PATH_SYSTEM_KEY}
-     *     2.配置{@link AgentConfig#getEnhancedClassesOutputPath}
-     * </pre>
-     * 若两者都无法正确获取路径，则视为无需该监听器
+     * 设置输出增强后字节码的监听器
      *
      * @return BufferedAgentBuilder本身
      */
@@ -239,18 +220,44 @@ public class BufferedAgentBuilder {
      * 添加插件
      *
      * @param plugins 插件描述列表
-     * @return BufferedAgentBuilder本身
      */
-    public BufferedAgentBuilder addPlugins(Iterable<PluginDescription> plugins) {
-        return addAction(new BuilderAction() {
+    public void addPlugins(Iterable<PluginDescription> plugins) {
+        addAction(new BuilderAction() {
             @Override
             public AgentBuilder process(AgentBuilder builder) {
                 AgentBuilder newBuilder = builder;
                 for (PluginDescription plugin : plugins) {
+                    // 此处必须赋值给newBuilder，不可在原builder上重复操作，否则上次循环中的操作会不生效
                     newBuilder = newBuilder.type(plugin).transform(plugin);
                 }
                 return newBuilder;
             }
+        });
+    }
+
+    /**
+     * 基于{@link com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer}添加字节码增强
+     *
+     * @param pluginDeclarer 插件声明器
+     */
+    public void addEnhance(AbstractPluginDeclarer pluginDeclarer) {
+        addAction(builder -> {
+            PluginDescription pluginDescription = new AbstractPluginDescription() {
+                final AbstractPluginDeclarer abstractPluginDeclarer = pluginDeclarer;
+
+                @Override
+                public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription,
+                        ClassLoader classLoader, JavaModule module) {
+                    return new DefaultTransformer(abstractPluginDeclarer.getInterceptDeclarers(classLoader))
+                            .transform(builder, typeDescription, classLoader, module);
+                }
+
+                @Override
+                public boolean matches(TypeDescription target) {
+                    return abstractPluginDeclarer.getClassMatcher().matches(target);
+                }
+            };
+            return builder.type(pluginDescription).transform(pluginDescription);
         });
     }
 
@@ -314,6 +321,9 @@ public class BufferedAgentBuilder {
                 return true;
             }
             if (classLoader instanceof PluginClassLoader) {
+                return true;
+            }
+            if (classLoader instanceof ServiceClassLoader) {
                 return !serviceInjectList.contains(typeDesc.getTypeName());
             }
             return false;

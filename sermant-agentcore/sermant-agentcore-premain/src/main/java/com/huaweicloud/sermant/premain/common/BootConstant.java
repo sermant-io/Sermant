@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.core.common;
-
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+package com.huaweicloud.sermant.premain.common;
 
 /**
- * 通用常量管理类，
+ * 启动所需公共常量
  *
- * @author HapThorin
- * @version 1.0.0
- * @since 2021-11-27
+ * @author luanwenfei
+ * @since 2023-07-20
  */
-public class CommonConstant {
+public class BootConstant {
     /**
-     * 框架默认字符集
+     * 启动配置文件名
      */
-    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+    public static final String BOOTSTRAP_CONFIG_FILE_NAME = "bootstrap.properties";
+
+    /**
+     * 核心配置文件名
+     */
+    public static final String CORE_CONFIG_FILE_NAME = "config.properties";
+
+    /**
+     * 插件设定文件名
+     */
+    public static final String PLUGIN_SETTING_FILE_NAME = "plugins.yaml";
 
     /**
      * logback配置文件名
@@ -38,9 +44,9 @@ public class CommonConstant {
     public static final String LOG_SETTING_FILE_NAME = "logback.xml";
 
     /**
-     * 核心包版本键
+     * 启动配置中制品名的键
      */
-    public static final String CORE_VERSION_KEY = "Sermant-Version";
+    public static final String ARTIFACT_NAME_KEY = "artifact";
 
     /**
      * 启动配置中应用名称的键
@@ -56,6 +62,11 @@ public class CommonConstant {
      * 启动配置中服务名称的键
      */
     public static final String SERVICE_NAME_KEY = "serviceName";
+
+    /**
+     * 启动配置中的agentPath
+     */
+    public static final String AGENT_ROOT_DIR_KEY = "agentPath";
 
     /**
      * Sermant核心功能实现包的键
@@ -87,41 +98,6 @@ public class CommonConstant {
      */
     public static final String LOG_SETTING_FILE_KEY = "log.setting.file";
 
-    /**
-     * 插件加载场景键
-     */
-    public static final String PLUGIN_PROFILE = "profile";
-
-    /**
-     * 逗号
-     */
-    public static final String COMMA = ",";
-
-    /**
-     * 点号
-     */
-    public static final String DOT = ".";
-
-    /**
-     * 冒号
-     */
-    public static final String COLON = ":";
-
-    /**
-     * Byte-buddy日志中的错误字段
-     */
-    public static final String ERROR = "ERROR";
-
-    /**
-     * Byte-buddy日志中的字节码转换成功字段
-     */
-    public static final String TRANSFORM = "TRANSFORM";
-
-    /**
-     * 默认的增强后字节码文件输出路径父目录
-     */
-    public static final String ENHANCED_CLASS_OUTPUT_PARENT_DIR = "enhancedClasses";
-
-    private CommonConstant() {
+    private BootConstant() {
     }
 }

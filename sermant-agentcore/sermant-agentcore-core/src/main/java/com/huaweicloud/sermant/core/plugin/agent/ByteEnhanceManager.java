@@ -16,7 +16,11 @@
 
 package com.huaweicloud.sermant.core.plugin.agent;
 
+import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.plugin.Plugin;
 import com.huaweicloud.sermant.core.plugin.agent.collector.PluginCollectorManager;
+import com.huaweicloud.sermant.core.plugin.agent.enhance.ClassLoaderDeclarer;
+import com.huaweicloud.sermant.core.service.ServiceConfig;
 
 import java.lang.instrument.Instrumentation;
 
@@ -28,15 +32,52 @@ import java.lang.instrument.Instrumentation;
  * @since 2022-01-22
  */
 public class ByteEnhanceManager {
+    private static Instrumentation instrumentationCache;
+
+    private static BufferedAgentBuilder builder;
+
     private ByteEnhanceManager() {
     }
 
     /**
-     * 增强字节码
+     * 初始化
      *
-     * @param instrumentation Instrumentation对象
+     * @param instrumentation
      */
-    public static void enhance(Instrumentation instrumentation) {
-        BufferedAgentBuilder.build().addPlugins(PluginCollectorManager.getPlugins()).install(instrumentation);
+    public static void init(Instrumentation instrumentation) {
+        instrumentationCache = instrumentation;
+        builder = BufferedAgentBuilder.build();
+
+        // 初始化完成后，新增Action用于添加框架直接引入的字节码增强
+        enhanceForFramework();
+    }
+
+    /**
+     * 安装类加载器增强字节码，仅用于premain方式启动
+     */
+    public static void enhance() {
+        builder.install(instrumentationCache);
+    }
+
+    /**
+     * 基于支持静态安装的插件进行字节码增强
+     *
+     * @param plugin 支持静态安装的插件
+     */
+    public static void enhanceStaticPlugin(Plugin plugin) {
+        builder.addPlugins(PluginCollectorManager.getDescriptions(plugin));
+    }
+
+    private static void enhanceForFramework() {
+        enhanceForInjectService();
+    }
+
+    /**
+     * 引入对类加载器的增强，帮助inject的类可以使用到Sermant的类
+     */
+    private static void enhanceForInjectService() {
+        if (ConfigManager.getConfig(ServiceConfig.class).isInjectEnable()) {
+            builder.addEnhance(new ClassLoaderDeclarer());
+        }
     }
 }

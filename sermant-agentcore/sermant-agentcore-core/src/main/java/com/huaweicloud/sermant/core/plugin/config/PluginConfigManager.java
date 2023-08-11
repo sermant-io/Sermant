@@ -16,7 +16,11 @@
 
 package com.huaweicloud.sermant.core.plugin.config;
 
+import static com.huaweicloud.sermant.core.plugin.common.PluginConstant.CONFIG_DIR_NAME;
+import static com.huaweicloud.sermant.core.plugin.common.PluginConstant.CONFIG_FILE_NAME;
+
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.plugin.Plugin;
 
 import java.io.File;
 
@@ -29,9 +33,21 @@ import java.io.File;
  */
 public class PluginConfigManager extends ConfigManager {
     /**
+     * 加载插件配置
+     *
+     * @param plugin 插件
+     */
+    public static void loadPluginConfig(Plugin plugin) {
+        File pluginConfigFile = getPluginConfigFile(plugin.getPath());
+        ClassLoader classLoader =
+                plugin.getServiceClassLoader() != null ? plugin.getServiceClassLoader() : plugin.getPluginClassLoader();
+        loadServiceConfig(pluginConfigFile, classLoader);
+    }
+
+    /**
      * 加载插件服务包配置
      *
-     * @param configFile  配置文件夹
+     * @param configFile 配置文件夹
      * @param classLoader 加载插件服务包的类加载器
      */
     public static void loadServiceConfig(File configFile, ClassLoader classLoader) {
@@ -47,5 +63,15 @@ public class PluginConfigManager extends ConfigManager {
      */
     public static <R extends PluginConfig> R getPluginConfig(Class<R> cls) {
         return getConfig(cls);
+    }
+
+    /**
+     * 获取插件配置文件
+     *
+     * @param pluginPath 插件根目录
+     * @return 插件配置文件
+     */
+    public static File getPluginConfigFile(String pluginPath) {
+        return new File(pluginPath + File.separatorChar + CONFIG_DIR_NAME + File.separatorChar + CONFIG_FILE_NAME);
     }
 }
