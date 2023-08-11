@@ -19,13 +19,10 @@ package com.huaweicloud.sermant.tag.transmission.interceptors;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
 
-import org.apache.rocketmq.common.message.Message;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.header.Headers;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,24 +31,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试RocketmqConsumerInterceptor
+ * 测试KafkaConsumerRecordInterceptor
  *
  * @author tangle
  * @since 2023-07-27
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(RocketmqConsumerInterceptor.class)
-public class RocketmqConsumerInterceptorTest extends BaseTest {
-    private final RocketmqConsumerInterceptor interceptor;
+public class KafkaConsumerRecordInterceptorInterceptorTest extends BaseInterceptorTest {
+    private final KafkaConsumerRecordInterceptor interceptor;
 
-    public RocketmqConsumerInterceptorTest() throws Exception {
-        RocketmqConsumerInterceptor interceptorBase = new RocketmqConsumerInterceptor();
-        interceptor = PowerMockito.spy(interceptorBase);
-        PowerMockito.when(interceptor, "isAvailable").thenReturn(true);
+    public KafkaConsumerRecordInterceptorInterceptorTest() {
+        interceptor = new KafkaConsumerRecordInterceptor();
     }
 
     @Test
-    public void testRocketmqConsumer() {
+    public void testKafkaConsumer() {
         ExecuteContext context;
         Map<String, List<String>> addHeaders = new HashMap<>();
         Map<String, List<String>> tags = new HashMap<>();
@@ -71,10 +64,13 @@ public class RocketmqConsumerInterceptorTest extends BaseTest {
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("name"));
 
         // 有Headers有Tags
-        tags.put("id", Collections.singletonList("testId001"));
+        List<String> ids = new ArrayList<>();
+        ids.add("testId001");
+        ids.add("testId002");
+        tags.put("id", ids);
         context = buildContext(addHeaders, tags);
         interceptor.before(context);
-        Assert.assertEquals(TrafficUtils.getTrafficTag().getTag().get("id").get(0), "testId001");
+        Assert.assertEquals(TrafficUtils.getTrafficTag().getTag().get("id").size(), 2);
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("name"));
 
         // 第二次消费，测试tags是否污染其他消费
@@ -85,7 +81,7 @@ public class RocketmqConsumerInterceptorTest extends BaseTest {
         context = buildContext(addHeaders, tags);
         interceptor.before(context);
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("id"));
-        Assert.assertEquals(TrafficUtils.getTrafficTag().getTag().get("name").get(0), "testName001");
+        Assert.assertEquals(TrafficUtils.getTrafficTag().getTag().get("name").size(), 1);
 
         // 测试TagTransmissionConfig开关关闭时
         TrafficUtils.removeTrafficTag();
@@ -95,19 +91,20 @@ public class RocketmqConsumerInterceptorTest extends BaseTest {
     }
 
     private ExecuteContext buildContext(Map<String, List<String>> addHeaders, Map<String, List<String>> tags) {
-        Message message = new Message();
+        ConsumerRecord consumerRecord = new ConsumerRecord("topic", 1, 1L, "key", "value");
+        Headers headers = consumerRecord.headers();
         for (Map.Entry<String, List<String>> entry : addHeaders.entrySet()) {
             for (String val : entry.getValue()) {
-                message.putUserProperty(entry.getKey(), val);
+                headers.add(entry.getKey(), val.getBytes());
             }
         }
         for (Map.Entry<String, List<String>> tag : tags.entrySet()) {
             for (String val : tag.getValue()) {
-                message.putUserProperty(tag.getKey(), val);
+                headers.add(tag.getKey(), val.getBytes());
             }
         }
         return ExecuteContext.forMemberMethod(
-                message,
+                consumerRecord,
                 null,
                 null,
                 null,

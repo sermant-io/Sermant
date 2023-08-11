@@ -28,7 +28,6 @@ import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,12 +38,12 @@ import java.util.Map;
  * @author tangle
  * @since 2023-07-27
  */
-public class HttpServletInterceptorTest extends BaseTest {
+public class HttpServletInterceptorInterceptorTest extends BaseInterceptorTest {
     private final HttpServletInterceptor interceptor;
 
     private final Object[] arguments;
 
-    public HttpServletInterceptorTest() {
+    public HttpServletInterceptorInterceptorTest() {
         interceptor = new HttpServletInterceptor();
         arguments = new Object[2];
     }

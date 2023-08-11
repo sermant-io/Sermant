@@ -46,7 +46,8 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor {
 
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
-        if (!isAvailable()) {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        if (!isRocketMqStackTrace(stackTraceElements)) {
             return context;
         }
         if (context.getObject() instanceof Message) {
@@ -64,8 +65,7 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor {
      *
      * @return boolean
      */
-    private boolean isAvailable() {
-        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+    private boolean isRocketMqStackTrace(StackTraceElement[] stackTraceElements) {
         int stackTraceIdxMax = stackTraceElements.length - 1;
         for (int i = 0; i < stackTraceElements.length; i++) {
             if (!ROCKETMQ_SELECT_CLASSNAME.equals(stackTraceElements[i].getClassName())) {

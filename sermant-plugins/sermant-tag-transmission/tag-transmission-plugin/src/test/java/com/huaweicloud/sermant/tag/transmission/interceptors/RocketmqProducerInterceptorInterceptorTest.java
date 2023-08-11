@@ -34,12 +34,12 @@ import java.util.Map;
  * @author tangle
  * @since 2023-07-27
  */
-public class RocketmqProducerInterceptorTest extends BaseTest {
+public class RocketmqProducerInterceptorInterceptorTest extends BaseInterceptorTest {
     private final RocketmqProducerInterceptor interceptor;
 
     private final Object[] arguments;
 
-    public RocketmqProducerInterceptorTest() {
+    public RocketmqProducerInterceptorInterceptorTest() {
         interceptor = new RocketmqProducerInterceptor();
         arguments = new Object[12];
     }

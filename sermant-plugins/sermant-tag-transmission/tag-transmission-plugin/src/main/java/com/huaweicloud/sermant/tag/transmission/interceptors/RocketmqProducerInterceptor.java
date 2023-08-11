@@ -89,13 +89,6 @@ public class RocketmqProducerInterceptor extends AbstractClientInterceptor {
 
     @Override
     public ExecuteContext doAfter(ExecuteContext context) {
-        TrafficUtils.removeTrafficTag();
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) {
-        TrafficUtils.removeTrafficTag();
         return context;
     }
 }

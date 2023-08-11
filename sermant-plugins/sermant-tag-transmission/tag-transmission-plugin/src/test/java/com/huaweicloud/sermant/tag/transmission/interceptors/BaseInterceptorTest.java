@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.tag.transmission.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
 import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
 
 import org.junit.After;
@@ -33,12 +34,12 @@ import java.util.List;
  * @author tangle
  * @since 2023-07-27
  */
-public class BaseTest {
+public class BaseInterceptorTest {
     public final TagTransmissionConfig tagTransmissionConfig = new TagTransmissionConfig();
 
     public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
-    public BaseTest() {
+    public BaseInterceptorTest() {
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(TagTransmissionConfig.class))
                 .thenReturn(tagTransmissionConfig);
@@ -51,6 +52,7 @@ public class BaseTest {
         tagKeys.add("id");
         tagKeys.add("name");
         tagTransmissionConfig.setTagKeys(tagKeys);
+        TrafficUtils.removeTrafficTag();
     }
 
     @After
