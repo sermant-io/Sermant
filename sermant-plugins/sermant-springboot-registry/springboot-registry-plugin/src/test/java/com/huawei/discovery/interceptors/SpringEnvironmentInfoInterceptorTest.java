@@ -48,7 +48,7 @@ public class SpringEnvironmentInfoInterceptorTest extends BaseTest {
     public void testSpringEnvironmentInfoInterceptor() throws Exception {
         ExecuteContext context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
         final ConfigurableEnvironment environment = Mockito.mock(ConfigurableEnvironment.class);
-        Mockito.when(environment.getProperty("server.address")).thenReturn("127.0.0.1");
+        Mockito.when(environment.getProperty("server.address")).thenReturn("192.168.0.157");
         Mockito.when(environment.getProperty("server.port")).thenReturn("8010");
         Mockito.when(environment.getProperty("spring.application.name")).thenReturn("zookeeper-provider-demo");
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext();

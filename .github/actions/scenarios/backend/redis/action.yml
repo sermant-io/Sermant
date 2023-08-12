@@ -18,7 +18,7 @@ runs:
       env:
         DATABASE_TYPE: REDIS
         DATABASE_VERSION: "6.0"
-        DATABASE_PASSWORD: ""
+        DATABASE_PASSWORD: "123456"
       run: |
         nohup java -jar sermant-agent-${{ env.sermantVersion }}/server/sermant/sermant-backend-${{ env.sermantVersion }}.jar &
     - name: start demo
