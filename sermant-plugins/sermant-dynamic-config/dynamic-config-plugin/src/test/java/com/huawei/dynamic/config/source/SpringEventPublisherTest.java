@@ -20,10 +20,15 @@ package com.huawei.dynamic.config.source;
 import com.huawei.dynamic.config.DynamicConfiguration;
 import com.huawei.dynamic.config.RefreshNotifier;
 
+import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -38,15 +43,30 @@ import org.springframework.context.ApplicationEventPublisher;
  * @since 2022-09-05
  */
 public class SpringEventPublisherTest {
+    private MockedStatic<OperationManager> operationManagerMockedStatic;
+
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
+
+    @Before
+    public void setUp() {
+        operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
+                .thenReturn(new YamlConverterImpl());
+    }
+
+    @After
+    public void tearDown() {
+        operationManagerMockedStatic.close();
+    }
 
     @Test
     public void test() {
         MockitoAnnotations.openMocks(this);
-        try (final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class)){
+        try (final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
+                .mockStatic(PluginConfigManager.class)) {
             pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(DynamicConfiguration.class))
-                    .thenReturn(new DynamicConfiguration());
+                .thenReturn(new DynamicConfiguration());
             final SpringEventPublisher springEventPublisher = new SpringEventPublisher();
             springEventPublisher.setApplicationEventPublisher(applicationEventPublisher);
             final OriginConfigCenterDisableListenerTest originConfigCenterDisableListenerTest = new OriginConfigCenterDisableListenerTest();

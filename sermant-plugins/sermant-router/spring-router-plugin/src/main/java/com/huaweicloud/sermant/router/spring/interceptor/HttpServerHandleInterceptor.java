@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,16 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
+import reactor.netty.ConnectionObserver.State;
+
 /**
- * 增强Controller的RequestMapping方法
+ * 拦截HttpServerHandle，只引入spring-boot-starter-webflux进行响应式编程时，需要在后置方法移除线程变量
+ * <p>spring cloud Greenwich.RELEASE+
  *
  * @author provenceee
- * @since 2022-10-29
+ * @since 2023-06-09
  */
-public class ControllerInterceptor extends AbstractInterceptor {
+public class HttpServerHandleInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) {
         return context;
@@ -34,13 +37,28 @@ public class ControllerInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        ThreadLocalUtils.removeRequestHeader();
+        if (shouldHandle(context)) {
+            ThreadLocalUtils.removeRequestData();
+            ThreadLocalUtils.removeRequestHeader();
+        }
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
-        ThreadLocalUtils.removeRequestHeader();
+        if (shouldHandle(context)) {
+            ThreadLocalUtils.removeRequestData();
+            ThreadLocalUtils.removeRequestHeader();
+        }
         return context;
+    }
+
+    private boolean shouldHandle(ExecuteContext context) {
+        Object argument = context.getArguments()[1];
+        if (argument instanceof State) {
+            State state = (State) argument;
+            return state == State.DISCONNECTING;
+        }
+        return false;
     }
 }

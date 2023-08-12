@@ -25,8 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
  * @since 2022-07-12
  */
 public class LoadBalancerClientFilterDeclarer extends AbstractDeclarer {
-    private static final String[] ENHANCE_CLASS = {"org.springframework.cloud.gateway.filter.LoadBalancerClientFilter",
-        "org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter"};
+    private static final String ENHANCE_CLASS = "org.springframework.cloud.gateway.filter.LoadBalancerClientFilter";
 
     private static final String INTERCEPT_CLASS
         = "com.huaweicloud.sermant.router.spring.interceptor.LoadBalancerClientFilterInterceptor";
@@ -42,6 +41,6 @@ public class LoadBalancerClientFilterDeclarer extends AbstractDeclarer {
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameContains(ENHANCE_CLASS);
+        return ClassMatcher.nameEquals(ENHANCE_CLASS);
     }
 }

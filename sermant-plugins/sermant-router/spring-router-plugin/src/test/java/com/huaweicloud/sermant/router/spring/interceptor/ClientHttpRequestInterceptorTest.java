@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.request.RequestHeader;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.spring.BaseTransmitConfigTest;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,7 +39,7 @@ import java.util.Map;
  * @author provenceee
  * @since 2022-09-08
  */
-public class ClientHttpRequestInterceptorTest {
+public class ClientHttpRequestInterceptorTest extends BaseTransmitConfigTest {
     private final ClientHttpRequestInterceptor interceptor;
 
     private final ExecuteContext context;

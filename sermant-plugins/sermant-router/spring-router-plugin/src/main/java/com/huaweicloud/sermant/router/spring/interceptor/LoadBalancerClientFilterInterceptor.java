@@ -25,11 +25,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 /**
  * spring cloud gateway LoadBalancerClientFilter增强类，获取请求数据
  *
@@ -45,28 +40,22 @@ public class LoadBalancerClientFilterInterceptor extends AbstractInterceptor {
             HttpRequest request = exchange.getRequest();
             HttpHeaders headers = request.getHeaders();
             String path = request.getURI().getPath();
-            ThreadLocalUtils.setRequestData(new RequestData(getHeader(headers), path, request.getMethod().name()));
+            ThreadLocalUtils.setRequestData(new RequestData(headers, path, request.getMethod().name()));
         }
         return context;
     }
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
+        ThreadLocalUtils.removeRequestHeader();
         ThreadLocalUtils.removeRequestData();
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
+        ThreadLocalUtils.removeRequestHeader();
         ThreadLocalUtils.removeRequestData();
         return context;
-    }
-
-    private Map<String, List<String>> getHeader(HttpHeaders headers) {
-        Map<String, List<String>> map = new HashMap<>();
-        for (Entry<String, List<String>> entry : headers.entrySet()) {
-            map.put(entry.getKey(), entry.getValue());
-        }
-        return map;
     }
 }

@@ -20,12 +20,14 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.router.common.request.RequestHeader;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.spring.BaseTransmitConfigTest;
 
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategyDefault;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableDefault;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -40,7 +42,7 @@ import java.util.Map.Entry;
  * @author provenceee
  * @since 2022-09-08
  */
-public class HystrixActionInterceptorTest {
+public class HystrixActionInterceptorTest extends BaseTransmitConfigTest {
     private final HystrixActionInterceptor interceptor;
 
     private final ExecuteContext context;
@@ -50,6 +52,15 @@ public class HystrixActionInterceptorTest {
         Object[] arguments = new Object[1];
         arguments[0] = HystrixConcurrencyStrategyDefault.getInstance();
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
+    }
+
+    /**
+     * 重置测试数据
+     */
+    @Before
+    public void clear() {
+        ThreadLocalUtils.removeRequestHeader();
+        ThreadLocalUtils.removeRequestData();
     }
 
     /**
