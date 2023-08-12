@@ -18,7 +18,9 @@
 package com.huawei.registry.service.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -33,6 +35,7 @@ import com.alibaba.nacos.api.naming.NamingMaintainService;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.ListView;
 import com.huawei.registry.config.NacosRegisterConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.service.register.NacosServiceManager;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -49,9 +52,11 @@ public class NacosClientTest {
 
     private final NacosRegisterConfig registerConfig = new NacosRegisterConfig();
 
+    private final RegisterServiceCommonConfig commonConfig = new RegisterServiceCommonConfig();
+
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
-    private NacosServiceManager nacosServiceManager = new NacosServiceManager(registerConfig);
+    private NacosServiceManager nacosServiceManager;
 
     private NacosClient nacosClient;
 
@@ -62,8 +67,15 @@ public class NacosClientTest {
                 .mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(NacosRegisterConfig.class))
                 .thenReturn(registerConfig);
+        commonConfig.setSecure(true);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class))
+                .thenReturn(commonConfig);
         RegisterContext.INSTANCE.getClientInfo().setServiceId("test");
         nacosClient = new NacosClient();
+        nacosServiceManager = new NacosServiceManager();
+        Map<String, String> map = new HashMap<>();
+        map.put("foo", "123");
+        RegisterContext.INSTANCE.getClientInfo().setMeta(map);
     }
 
     @After

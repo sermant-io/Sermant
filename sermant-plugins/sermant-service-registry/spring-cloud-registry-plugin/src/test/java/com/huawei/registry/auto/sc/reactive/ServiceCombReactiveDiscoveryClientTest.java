@@ -110,6 +110,11 @@ public class ServiceCombReactiveDiscoveryClientTest {
             public Map<String, String> getMetadata() {
                 return null;
             }
+
+            @Override
+            public boolean isSecure() {
+                return false;
+            }
         };
     }
 

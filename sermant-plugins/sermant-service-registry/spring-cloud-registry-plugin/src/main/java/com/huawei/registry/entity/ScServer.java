@@ -41,7 +41,8 @@ public class ScServer extends Server {
      * @param serviceName          服务名
      */
     public ScServer(final MicroServiceInstance microServiceInstance, String serviceName) {
-        super(microServiceInstance.getIp(), microServiceInstance.getPort());
+        super(microServiceInstance.isSecure() ? "https" : "http", microServiceInstance.getIp(),
+            microServiceInstance.getPort());
         this.microServiceInstance = microServiceInstance;
         this.serviceName = serviceName;
     }

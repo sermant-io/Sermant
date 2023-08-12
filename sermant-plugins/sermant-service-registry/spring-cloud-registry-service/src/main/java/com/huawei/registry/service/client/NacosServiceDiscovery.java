@@ -16,6 +16,7 @@
 
 package com.huawei.registry.service.client;
 
+import com.huawei.registry.config.ConfigConstants;
 import com.huawei.registry.config.NacosRegisterConfig;
 import com.huawei.registry.service.register.NacosServiceInstance;
 import com.huawei.registry.service.register.NacosServiceManager;
@@ -40,8 +41,6 @@ import java.util.Optional;
  */
 public class NacosServiceDiscovery {
     private static final int DEFAULT_CAPACITY = 16;
-
-    private static final String SECURE_KEY = "secure";
 
     private final NacosRegisterConfig nacosRegisterConfig;
 
@@ -115,8 +114,8 @@ public class NacosServiceDiscovery {
         metadata.put("nacos.ephemeral", String.valueOf(instance.isEphemeral()));
         nacosServiceInstance.setMetadata(metadata);
 
-        if (metadata.containsKey(SECURE_KEY)) {
-            boolean secure = Boolean.parseBoolean(metadata.get(SECURE_KEY));
+        if (metadata.containsKey(ConfigConstants.SECURE)) {
+            boolean secure = Boolean.parseBoolean(metadata.get(ConfigConstants.SECURE));
             nacosServiceInstance.setSecure(secure);
         }
         return Optional.of(nacosServiceInstance);

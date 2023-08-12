@@ -18,10 +18,12 @@
 package com.huawei.registry.auto.sc;
 
 import com.huawei.registry.config.GraceConfig;
+import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huawei.registry.config.grace.GraceHelper;
 import com.huawei.registry.context.RegisterContext;
 import com.huawei.registry.entity.FixedResult;
 import com.huawei.registry.services.RegisterCenterService;
+import com.huawei.registry.utils.CommonUtils;
 import com.huawei.registry.utils.ZoneUtils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
@@ -101,7 +103,9 @@ public class ServiceCombRegistry implements ServiceRegistry<ServiceCombRegistrat
 
     private void fillClientInfo(Registration registration) {
         RegisterContext.INSTANCE.getClientInfo().setHost(registration.getHost());
-        RegisterContext.INSTANCE.getClientInfo().setMeta(registration.getMetadata());
+        RegisterServiceCommonConfig config = PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
+        RegisterContext.INSTANCE.getClientInfo().setMeta(CommonUtils.putSecureToMetaData(registration.getMetadata(),
+            config));
         RegisterContext.INSTANCE.getClientInfo().setPort(registration.getPort());
         RegisterContext.INSTANCE.getClientInfo().setServiceId(registration.getServiceId());
     }

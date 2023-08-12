@@ -24,7 +24,6 @@ import com.alibaba.nacos.client.naming.beat.BeatInfo;
 import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import org.junit.Assert;
 import org.junit.Test;

@@ -94,6 +94,7 @@ public class NacosServiceInstance implements MicroServiceInstance {
         this.secure = secure;
     }
 
+    @Override
     public boolean isSecure() {
         return secure;
     }

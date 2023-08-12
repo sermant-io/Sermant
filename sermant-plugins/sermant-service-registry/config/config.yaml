@@ -2,6 +2,7 @@ register.service:
   registerType: SERVICE_COMB # 注册服务类型，支持SERVICE_COMB/NACOS
   # 注册服务地址，service_comb：http://localhost:30100；nacos：127.0.0.1:8848
   address: http://localhost:30100
+  secure: false # 是否开启SSL，true为是，服务发现返回实例协议为https，false为否，服务发现返回实例协议为http
 servicecomb.service:
   heartbeatInterval: 15 # 服务实例心跳发送间隔（单位：秒）
   openMigration: false # 是否开启迁移功能
