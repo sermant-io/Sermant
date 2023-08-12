@@ -42,4 +42,11 @@ public class RequestHeader {
     public Map<String, List<String>> getHeader() {
         return Optional.ofNullable(header).orElse(Collections.emptyMap());
     }
+
+    @Override
+    public String toString() {
+        return "{"
+                + "header='" + getHeader() + '\''
+                + '}';
+    }
 }

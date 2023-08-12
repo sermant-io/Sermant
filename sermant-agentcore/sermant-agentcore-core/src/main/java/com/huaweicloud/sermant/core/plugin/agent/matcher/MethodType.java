@@ -52,6 +52,15 @@ public enum MethodType {
         public boolean match(MethodDescription methodDescription) {
             return !methodDescription.isStatic() && !methodDescription.isConstructor();
         }
+    },
+    /**
+     * 公有方法
+     */
+    PUBLIC() {
+        @Override
+        public boolean match(MethodDescription methodDescription) {
+            return methodDescription.isPublic();
+        }
     };
 
     /**

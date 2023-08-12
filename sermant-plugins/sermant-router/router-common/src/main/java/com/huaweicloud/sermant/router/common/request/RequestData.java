@@ -50,4 +50,13 @@ public class RequestData extends RequestHeader {
     public String getHttpMethod() {
         return httpMethod;
     }
+
+    @Override
+    public String toString() {
+        return "{"
+                + "path='" + path + '\''
+                + ", httpMethod='" + httpMethod + '\''
+                + ", header='" + getHeader() + '\''
+                + '}';
+    }
 }

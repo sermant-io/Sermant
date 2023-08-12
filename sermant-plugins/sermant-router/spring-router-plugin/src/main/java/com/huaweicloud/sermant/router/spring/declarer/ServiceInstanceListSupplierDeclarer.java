@@ -17,6 +17,8 @@
 package com.huaweicloud.sermant.router.spring.declarer;
 
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 
 /**
  * CachingServiceInstanceListSupplier/DiscoveryClientServiceInstanceListSupplier增强类，筛选下游实例
@@ -44,5 +46,10 @@ public class ServiceInstanceListSupplierDeclarer extends AbstractDeclarer {
     @Override
     public ClassMatcher getClassMatcher() {
         return ClassMatcher.nameContains(ENHANCE_CLASS);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return !PluginConfigManager.getPluginConfig(TransmitConfig.class).isEnabledThreadPool();
     }
 }
