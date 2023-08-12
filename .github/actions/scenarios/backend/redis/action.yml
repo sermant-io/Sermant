@@ -11,7 +11,6 @@ runs:
       shell: bash
       run: |
         sudo apt install redis-server -y
-        sudo sed -i 's/# requirepass foobared/requirepass 123456/g' /etc/redis/redis.conf
         sudo service redis restart
     - name: start backend with redis
       shell: bash
