@@ -25,8 +25,8 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDescription;
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
 import com.huaweicloud.sermant.core.utils.FileUtils;
 
-import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
+import net.bytebuddy.agent.builder.AgentBuilder.Default;
 import net.bytebuddy.agent.builder.ResettableClassFileTransformer;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeList.Generic;
@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -193,13 +194,12 @@ public class BufferedAgentBuilder {
         }
         return addAction(builder -> builder.with(new AgentBuilder.Listener.Adapter() {
             @Override
-            public void onTransformation(TypeDescription typeDescription, ClassLoader classLoader,
-                    JavaModule module, boolean loaded, DynamicType dynamicType) {
+            public void onTransformation(TypeDescription typeDescription, ClassLoader classLoader, JavaModule module,
+                    boolean loaded, DynamicType dynamicType) {
                 try {
                     dynamicType.saveIn(folder);
                 } catch (IOException e) {
-                    LOGGER.warning(String.format(
-                            "Save class [%s] byte code failed. ", typeDescription.getTypeName()));
+                    LOGGER.log(Level.WARNING, "Save class {0} byte code failed.", typeDescription.getTypeName());
                 }
             }
         }));
@@ -242,11 +242,10 @@ public class BufferedAgentBuilder {
      * @return 安装结果，可重置的转换器，若无类元信息改动，调用其reset方法即可重置
      */
     public ResettableClassFileTransformer install(Instrumentation instrumentation) {
-        AgentBuilder builder = new AgentBuilder.Default(new ByteBuddy());
+        AgentBuilder builder = new Default().disableClassFormatChanges();
         for (BuilderAction action : actions) {
             builder = action.process(builder);
         }
-        builder.disableClassFormatChanges();
         return builder.installOn(instrumentation);
     }
 
