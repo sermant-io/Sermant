@@ -10,6 +10,8 @@ on:
       - 'sermant-agentcore/**'
       - 'sermant-backend/**'
       - '.github/workflows/backend*.yml'
+      - '.github/actions/scenarios/backend/memory/action.yml'
+      - '.github/actions/scenarios/backend/redis/action.yml'
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
   cancel-in-progress: true
