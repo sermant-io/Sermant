@@ -22,6 +22,8 @@
         <kafka-clients.version>2.7.0</kafka-clients.version>
         <tomcat-embed-core.version>9.0.38</tomcat-embed-core.version>
         <powermock.version>2.0.9</powermock.version>
+        <dubbo.version>3.2.0</dubbo.version>
+        <alibaba.dubbo.version>2.6.12</alibaba.dubbo.version>
     </properties>
 
     <dependencies>
@@ -54,7 +56,18 @@
             <version>${kafka-clients.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!--测试依赖-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>${alibaba.dubbo.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>${dubbo.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
