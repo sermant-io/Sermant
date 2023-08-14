@@ -58,6 +58,9 @@ jobs:
     needs: [ build-agent-and-cache, download-midwares-and-cache ]
     steps:
       - uses: actions/checkout@v2
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
       - name: start backend use memory test
         uses: ./.github/actions/scenarios/backend/memory
       - name: start backend use redis test

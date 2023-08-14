@@ -26,7 +26,6 @@ import java.util.Optional;
  * @since 2022-08-02
  */
 public enum MemoryType {
-
     /**
      * 堆内存
      */
@@ -111,19 +110,19 @@ public enum MemoryType {
     OLD_EDEN_SPACE_SERIAL("Tenured Gen", MetricEnum.OLD_GEN_INIT, MetricEnum.OLD_GEN_USED, MetricEnum.OLD_GEN_MAX,
             MetricEnum.OLD_GEN_COMMITTED),
     /**
-     * SERIAL年轻代Eden指标信息
+     * G1年轻代Eden指标信息
      */
     EDEN_SPACE_G1("G1 Eden Space", MetricEnum.EDEN_INIT, MetricEnum.EDEN_USED, MetricEnum.EDEN_MAX,
             MetricEnum.EDEN_COMMITTED),
 
     /**
-     * SERIAL年轻代Survivor指标信息
+     * G1年轻代Survivor指标信息
      */
     SURVIVOR_SPACE_G1("G1 Survivor Space", MetricEnum.SURVIVOR_INIT, MetricEnum.SURVIVOR_USED,
             MetricEnum.SURVIVOR_MAX, MetricEnum.SURVIVOR_COMMITTED),
 
     /**
-     * SERIAL老年代指标枚举
+     * G1老年代指标枚举
      */
     OLD_EDEN_SPACE_G1("G1 Old Gen", MetricEnum.OLD_GEN_INIT, MetricEnum.OLD_GEN_USED, MetricEnum.OLD_GEN_MAX,
             MetricEnum.OLD_GEN_COMMITTED),
@@ -131,7 +130,36 @@ public enum MemoryType {
      * CodeCache内存池
      */
     CODE_CACHE_G1("CodeCache", MetricEnum.CODE_CACHE_INIT, MetricEnum.CODE_CACHE_USED, MetricEnum.CODE_CACHE_MAX,
-            MetricEnum.CODE_CACHE_COMMITTED);
+            MetricEnum.CODE_CACHE_COMMITTED),
+
+    /**
+     * JDK11存储经过性能分析的编译代码的codeCache内存池
+     */
+    PROFILED_NMETHODS("CodeHeap 'profiled nmethods'", MetricEnum.PROFILED_NMETHODS_INIT,
+            MetricEnum.PROFILED_NMETHODS_USED,
+            MetricEnum.PROFILED_NMETHODS_MAX,
+            MetricEnum.PROFILED_NMETHODS_COMMITTED),
+
+    /**
+     * JDK11存储未经过性能分析的编译代码的codeCache内存池
+     */
+    NON_PROFILED_NMETHODS("CodeHeap 'non-profiled nmethods'", MetricEnum.NON_PROFILED_NMETHODS_INIT,
+            MetricEnum.NON_PROFILED_NMETHODS_USED, MetricEnum.NON_PROFILED_NMETHODS_MAX,
+            MetricEnum.NON_PROFILED_NMETHODS_COMMITTED),
+
+    /**
+     * JDK11存储其他类型编译代码的codeCache内存池
+     */
+    NON_NMETHODS("CodeHeap 'non-nmethods'", MetricEnum.NON_NMETHODS_INIT, MetricEnum.NON_NMETHODS_USED,
+            MetricEnum.NON_NMETHODS_MAX,
+            MetricEnum.NON_NMETHODS_COMMITTED),
+
+    /**
+     * Epsilon收集器指标枚举
+     */
+    EPSILON_HEAP("Epsilon Heap", MetricEnum.EPSILON_HEAP_INIT, MetricEnum.EPSILON_HEAP_USED,
+            MetricEnum.EPSILON_HEAP_MAX,
+            MetricEnum.EPSILON_HEAP_COMMITTED);
 
     /**
      * 类型
@@ -161,10 +189,10 @@ public enum MemoryType {
     /**
      * 构造方法
      *
-     * @param type          类型
-     * @param initEnum      初始化枚举
-     * @param usedEnum      已使用对应的枚举
-     * @param maxEnum       最大值对应的枚举
+     * @param type 类型
+     * @param initEnum 初始化枚举
+     * @param usedEnum 已使用对应的枚举
+     * @param maxEnum 最大值对应的枚举
      * @param committedEnum 提交值对应的枚举
      */
     MemoryType(String type, MetricEnum initEnum, MetricEnum usedEnum, MetricEnum maxEnum, MetricEnum committedEnum) {

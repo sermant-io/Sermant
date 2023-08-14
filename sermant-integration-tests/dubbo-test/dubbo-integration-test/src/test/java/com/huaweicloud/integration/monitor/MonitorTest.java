@@ -19,12 +19,16 @@ package com.huaweicloud.integration.monitor;
 
 import com.huaweicloud.integration.common.MetricEnum;
 import com.huaweicloud.integration.utils.RequestUtils;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.util.Assert;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * 监控测试类
@@ -34,7 +38,6 @@ import java.util.Map;
  */
 @EnabledIfEnvironmentVariable(named = "TEST_TYPE", matches = "monitor")
 public class MonitorTest {
-
     /**
      * 监控采集URL
      */
@@ -45,6 +48,22 @@ public class MonitorTest {
     private static final String QPS = "qps";
 
     private static final String TPS = "tps";
+
+    private static final int JDK9_VERSION_INDEX = 9;
+
+    private static final Set<String> JDK8_MONOPOLIZE_INDEX_SET = new HashSet<>(
+            Arrays.asList("code_cache_init", "code_cache_max",
+                    "code_cache_used", "code_cache_committed"));
+
+    private static final Set<String> JDK9PLUS_MONOPOLIZE_INDEX_SET = new HashSet<>(Arrays.asList("non_nmethods_init",
+            "non_nmethods_max",
+            "non_nmethods_used", "non_nmethods_committed",
+            "profiled_nmethods_init", "profiled_nmethods_max",
+            "profiled_nmethods_used", "profiled_nmethods_committed",
+            "non_profiled_nmethods_init", "non_profiled_nmethods_max",
+            "non_profiled_nmethods_used", "non_profiled_nmethods_committed",
+            "epsilon_heap_init", "epsilon_heap_max",
+            "epsilon_heap_used", "epsilon_heap_committed"));
 
     @Test
     public void testMonitor() {
@@ -63,8 +82,22 @@ public class MonitorTest {
         }
         Assert.notEmpty(map, "解析响应结果获取指标信息失败");
         for (MetricEnum metricEnum : MetricEnum.values()) {
-            Assert.isTrue(map.containsKey(metricEnum.getName()), "缺少指标信息" + metricEnum.getName());
+            String metricEnumName = metricEnum.getName();
+            // 当JDK大于8时，JDK8独有的指标则忽略
+            if (javaVersionGreaterThanJDK8() && JDK8_MONOPOLIZE_INDEX_SET.contains(metricEnumName)) {
+                continue;
+            }
+            // 当JDK小于等于8时，JDK9及以上版本独有的指标则忽略
+            if (!javaVersionGreaterThanJDK8() && JDK9PLUS_MONOPOLIZE_INDEX_SET.contains(metricEnumName)) {
+                continue;
+            }
+            Assert.isTrue(map.containsKey(metricEnumName), "缺少指标信息" + metricEnumName);
         }
+    }
+
+    private boolean javaVersionGreaterThanJDK8() {
+        String javaVersion[] = System.getProperty("java.version").split("\\.");
+        return Integer.valueOf(javaVersion[0]) >= JDK9_VERSION_INDEX;
     }
 
     @Test

@@ -3,10 +3,10 @@ description: "Auto test for Backend"
 runs:
   using: "composite"
   steps:
-    - name: Set up JDK 8
+    - name: Set up JDK ${{ env.javaVersion }}
       uses: actions/setup-java@v2
       with:
-        java-version: '8'
+        java-version: ${{ env.javaVersion }}
         distribution: 'adopt'
         cache: maven
     - name: Set up python
