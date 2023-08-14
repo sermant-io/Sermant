@@ -17,11 +17,8 @@
 package com.huaweicloud.sermant.tag.transmission.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
-import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
 
 import org.apache.rocketmq.common.protocol.header.SendMessageRequestHeader;
 
@@ -34,7 +31,7 @@ import java.util.Map;
  * @author tangle
  * @since 2023-07-20
  */
-public class RocketmqProducerInterceptor extends AbstractInterceptor {
+public class RocketmqProducerInterceptor extends AbstractClientInterceptor {
     /**
      * SendMessageRequestHeader在sendMessage方法中的参数下标
      */
@@ -50,30 +47,12 @@ public class RocketmqProducerInterceptor extends AbstractInterceptor {
      */
     private static final char SPLIT_MARK = 2;
 
-    private final TagTransmissionConfig tagTransmissionConfig;
-
-    /**
-     * 构造器
-     */
-    public RocketmqProducerInterceptor() {
-        tagTransmissionConfig = PluginConfigManager.getPluginConfig(TagTransmissionConfig.class);
-    }
-
     @Override
-    public ExecuteContext before(ExecuteContext context) {
-        if (!tagTransmissionConfig.isEnabled()) {
-            return context;
-        }
-
-        TrafficTag trafficTag = TrafficUtils.getTrafficTag();
-        if (trafficTag == null) {
-            return context;
-        }
-
+    public ExecuteContext doBefore(ExecuteContext context) {
         if (context.getArguments()[ARGUMENT_INDEX] instanceof SendMessageRequestHeader) {
             SendMessageRequestHeader header = (SendMessageRequestHeader) context.getArguments()[ARGUMENT_INDEX];
             String oldProperties = header.getProperties();
-            String newProperties = this.insertTags2Properties(oldProperties, trafficTag);
+            String newProperties = this.insertTags2Properties(oldProperties, TrafficUtils.getTrafficTag());
             header.setProperties(newProperties);
         }
         return context;
@@ -109,14 +88,7 @@ public class RocketmqProducerInterceptor extends AbstractInterceptor {
     }
 
     @Override
-    public ExecuteContext after(ExecuteContext context) {
-        TrafficUtils.removeTrafficTag();
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) {
-        TrafficUtils.removeTrafficTag();
+    public ExecuteContext doAfter(ExecuteContext context) {
         return context;
     }
 }

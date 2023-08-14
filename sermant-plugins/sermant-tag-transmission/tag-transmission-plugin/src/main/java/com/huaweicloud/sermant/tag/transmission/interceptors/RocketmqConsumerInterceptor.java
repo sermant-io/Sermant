@@ -17,11 +17,8 @@
 package com.huaweicloud.sermant.tag.transmission.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
-import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
 
 import org.apache.rocketmq.common.message.Message;
 
@@ -36,7 +33,7 @@ import java.util.Map;
  * @author tangle
  * @since 2023-07-19
  */
-public class RocketmqConsumerInterceptor extends AbstractInterceptor {
+public class RocketmqConsumerInterceptor extends AbstractServerInterceptor {
     /**
      * getBody拦截方法的所在类名
      */
@@ -47,30 +44,11 @@ public class RocketmqConsumerInterceptor extends AbstractInterceptor {
      */
     private static final String ROCKETMQ_FILER_PREFIX = "org.apache.rocketmq";
 
-    private final TagTransmissionConfig tagTransmissionConfig;
-
-    /**
-     * 构造器
-     */
-    public RocketmqConsumerInterceptor() {
-        tagTransmissionConfig = PluginConfigManager.getPluginConfig(TagTransmissionConfig.class);
-    }
-
     @Override
-    public ExecuteContext before(ExecuteContext context) {
-        if (!tagTransmissionConfig.isEnabled()) {
-            return context;
-        }
+    public ExecuteContext doBefore(ExecuteContext context) {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        int stackTraceIdxMax = stackTraceElements.length - 1;
-        for (int i = 0; i < stackTraceElements.length; i++) {
-            if (!ROCKETMQ_SELECT_CLASSNAME.equals(stackTraceElements[i].getClassName())) {
-                continue;
-            }
-            if (i == stackTraceIdxMax || stackTraceElements[i + 1].getClassName()
-                    .startsWith(ROCKETMQ_FILER_PREFIX)) {
-                return context;
-            }
+        if (!isRocketMqStackTrace(stackTraceElements)) {
+            return context;
         }
         if (context.getObject() instanceof Message) {
             Message message = (Message) context.getObject();
@@ -80,6 +58,26 @@ public class RocketmqConsumerInterceptor extends AbstractInterceptor {
             TrafficUtils.setTrafficTag(new TrafficTag(tag));
         }
         return context;
+    }
+
+    /**
+     * 判断当前调用栈是否匹配拦截点进入的要求
+     *
+     * @return boolean
+     */
+    private boolean isRocketMqStackTrace(StackTraceElement[] stackTraceElements) {
+        int stackTraceIdxMax = stackTraceElements.length - 1;
+        for (int i = 0; i < stackTraceElements.length; i++) {
+            if (!ROCKETMQ_SELECT_CLASSNAME.equals(stackTraceElements[i].getClassName())) {
+                continue;
+            }
+            if (i == stackTraceIdxMax || stackTraceElements[i + 1].getClassName()
+                    .startsWith(ROCKETMQ_FILER_PREFIX)) {
+                return false;
+            }
+            break;
+        }
+        return true;
     }
 
     /**
@@ -102,7 +100,7 @@ public class RocketmqConsumerInterceptor extends AbstractInterceptor {
     }
 
     @Override
-    public ExecuteContext after(ExecuteContext context) {
+    public ExecuteContext doAfter(ExecuteContext context) {
         return context;
     }
 }

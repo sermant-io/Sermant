@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.tag.transmission;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
 import com.huaweicloud.sermant.tag.transmission.config.CrossThreadConfig;
 
 import org.junit.AfterClass;
@@ -38,6 +39,7 @@ public abstract class BaseTest {
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(CrossThreadConfig.class))
                 .thenReturn(new CrossThreadConfig());
+        TrafficUtils.removeTrafficTag();
     }
 
     /**

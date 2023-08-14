@@ -17,10 +17,7 @@
 package com.huaweicloud.sermant.tag.transmission.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
-import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
 
 import java.util.Collections;
 import java.util.Enumeration;
@@ -36,24 +33,15 @@ import javax.servlet.http.HttpServletRequest;
  * @author tangle
  * @since 2023-07-18
  */
-public class HttpServletInterceptor extends AbstractInterceptor {
+public class HttpServletInterceptor extends AbstractServerInterceptor {
     /**
      * 过滤一次处理过程中拦截器的多次调用
      */
     private static final ThreadLocal<Boolean> LOCK_MARK = new ThreadLocal<>();
 
-    private final TagTransmissionConfig tagTransmissionConfig;
-
-    /**
-     * 构造器
-     */
-    public HttpServletInterceptor() {
-        tagTransmissionConfig = PluginConfigManager.getPluginConfig(TagTransmissionConfig.class);
-    }
-
     @Override
-    public ExecuteContext before(ExecuteContext context) {
-        if (!tagTransmissionConfig.isEnabled() || LOCK_MARK.get() != null) {
+    public ExecuteContext doBefore(ExecuteContext context) {
+        if (LOCK_MARK.get() != null) {
             return context;
         }
         LOCK_MARK.set(Boolean.TRUE);
@@ -77,7 +65,7 @@ public class HttpServletInterceptor extends AbstractInterceptor {
     }
 
     @Override
-    public ExecuteContext after(ExecuteContext context) {
+    public ExecuteContext doAfter(ExecuteContext context) {
         TrafficUtils.removeTrafficTag();
         LOCK_MARK.remove();
         return context;
