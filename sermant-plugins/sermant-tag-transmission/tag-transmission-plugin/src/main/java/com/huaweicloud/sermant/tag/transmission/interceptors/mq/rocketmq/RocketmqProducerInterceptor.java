@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import org.apache.rocketmq.common.protocol.header.SendMessageRequestHeader;
 
@@ -31,7 +32,7 @@ import java.util.Map;
  * @author tangle
  * @since 2023-07-20
  */
-public class RocketmqProducerInterceptor extends AbstractClientInterceptor {
+public class RocketmqProducerInterceptor extends AbstractClientInterceptor<SendMessageRequestHeader> {
     /**
      * SendMessageRequestHeader在sendMessage方法中的参数下标
      */
@@ -50,12 +51,21 @@ public class RocketmqProducerInterceptor extends AbstractClientInterceptor {
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
         if (context.getArguments()[ARGUMENT_INDEX] instanceof SendMessageRequestHeader) {
-            SendMessageRequestHeader header = (SendMessageRequestHeader) context.getArguments()[ARGUMENT_INDEX];
-            String oldProperties = header.getProperties();
-            String newProperties = this.insertTags2Properties(oldProperties, TrafficUtils.getTrafficTag());
-            header.setProperties(newProperties);
+            injectTrafficTag2Carrier((SendMessageRequestHeader) context.getArguments()[ARGUMENT_INDEX]);
         }
         return context;
+    }
+
+    /**
+     * 向SendMessageRequestHeader中添加流量标签
+     *
+     * @param header RocketMQ 标签传递载体
+     */
+    @Override
+    protected void injectTrafficTag2Carrier(SendMessageRequestHeader header) {
+        String oldProperties = header.getProperties();
+        String newProperties = this.insertTags2Properties(oldProperties, TrafficUtils.getTrafficTag());
+        header.setProperties(newProperties);
     }
 
     /**

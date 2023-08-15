@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.declarers;
+package com.huaweicloud.sermant.tag.transmission.declarers.http.client.okhttp;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
-import com.huaweicloud.sermant.tag.transmission.interceptors.KafkaProducerInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.http.client.okhttp.OkHttp2xInterceptor;
 
 /**
- * kafka生产消息增强拦截点声明，支持1.x, 2.x, 3.x
+ * OkHttp 流量标签透传的增强声明, 仅针对2.x版本
  *
  * @author lilai
- * @since 2023-07-18
+ * @since 2023-08-08
  */
-public class KafkaProducerDeclarer extends AbstractPluginDeclarer {
+public class OkHttp2xDeclarer extends AbstractPluginDeclarer {
     /**
      * 增强类的全限定名
      */
-    private static final String ENHANCE_CLASSES = "org.apache.kafka.clients.producer.KafkaProducer";
+    private static final String ENHANCE_CLASSES = "com.squareup.okhttp.Request$Builder";
 
     /**
      * 拦截类的全限定名
      */
-    private static final String INTERCEPT_CLASS = KafkaProducerInterceptor.class.getCanonicalName();
+    private static final String INTERCEPT_CLASS = OkHttp2xInterceptor.class.getCanonicalName();
 
     @Override
     public ClassMatcher getClassMatcher() {
@@ -47,7 +47,8 @@ public class KafkaProducerDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                InterceptDeclarer.build(MethodMatcher.nameEquals("doSend"), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("build"),
+                        INTERCEPT_CLASS)
         };
     }
 }

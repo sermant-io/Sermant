@@ -14,39 +14,45 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.declarers;
+package com.huaweicloud.sermant.tag.transmission.declarers.http.client.httpclient;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
-import com.huaweicloud.sermant.tag.transmission.interceptors.RocketmqConsumerInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.http.client.httpclient.HttpClient3xInterceptor;
 
 /**
- * RocketMQ流量标签透传的消费者增强声明，支持RocketMQ4.8+
+ * HttpClient 流量标签透传的增强声明, 仅针对3.x版本
  *
- * @author tangle
- * @since 2023-07-19
+ * @author lilai
+ * @since 2023-08-08
  */
-public class RocketmqConsumerDeclarer extends AbstractPluginDeclarer {
+public class HttpClient3xDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名、拦截器、拦截方法
+     * 增强类的全限定名
      */
-    private static final String ENHANCE_CLASS = "org.apache.rocketmq.common.message.Message";
+    private static final String ENHANCE_CLASSES = "org.apache.commons.httpclient.HttpClient";
 
-    private static final String INTERCEPT_CLASS = RocketmqConsumerInterceptor.class.getCanonicalName();
-
-    private static final String METHOD_NAME = "getBody";
+    /**
+     * 拦截类的全限定名
+     */
+    private static final String INTERCEPT_CLASS = HttpClient3xInterceptor.class.getCanonicalName();
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameEquals(ENHANCE_CLASS);
+        return ClassMatcher.nameEquals(ENHANCE_CLASSES);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("executeMethod")
+                                .and(MethodMatcher.paramTypesEqual(
+                                        "org.apache.commons.httpclient.HostConfiguration",
+                                        "org.apache.commons.httpclient.HttpMethod",
+                                        "org.apache.commons.httpclient.HttpState")),
+                        INTERCEPT_CLASS)
         };
     }
 }

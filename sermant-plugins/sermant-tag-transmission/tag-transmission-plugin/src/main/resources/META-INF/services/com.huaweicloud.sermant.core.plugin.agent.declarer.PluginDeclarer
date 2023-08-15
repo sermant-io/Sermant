@@ -14,16 +14,20 @@
 # limitations under the License.
 #
 #
-com.huaweicloud.sermant.tag.transmission.declarers.HttpClient4xDeclarer
-com.huaweicloud.sermant.tag.transmission.declarers.HttpServletDeclarer
-com.huaweicloud.sermant.tag.transmission.declarers.RocketmqConsumerDeclarer
-com.huaweicloud.sermant.tag.transmission.declarers.RocketmqProducerDeclarer
-com.huaweicloud.sermant.tag.transmission.declarers.KafkaConsumerRecordDeclarer
-com.huaweicloud.sermant.tag.transmission.declarers.AlibabaDubboProviderDeclarer
-com.huaweicloud.sermant.tag.transmission.declarers.ApacheDubboProviderDeclarer
-com.huaweicloud.sermant.tag.transmission.declarers.ApacheDubboConsumerDeclarer
-com.huaweicloud.sermant.tag.transmission.declarers.AlibabaDubboConsumerDeclarer
-com.huaweicloud.sermant.tag.transmission.declarers.KafkaProducerDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.http.client.httpclient.HttpClient4xDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.http.server.HttpServletDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.mq.rocketmq.RocketmqConsumerDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.mq.rocketmq.RocketmqProducerDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.mq.kafka.KafkaConsumerRecordDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.rpc.dubbo.AlibabaDubboProviderDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.rpc.dubbo.ApacheDubboProviderDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.rpc.dubbo.ApacheDubboConsumerDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.rpc.dubbo.AlibabaDubboConsumerDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.mq.kafka.KafkaProducerDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.http.client.httpclient.HttpClient3xDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.http.client.okhttp.OkHttp2xDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.http.client.jdk.JdkHttpClientDeclarer
+
 com.huaweicloud.sermant.tag.transmission.declarers.crossthread.ExecutorDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.crossthread.ScheduledExecutorServiceDeclarer
 

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.dubbo;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.RpcInvocation;
@@ -33,7 +34,7 @@ import java.util.Map;
  * @author daizhenyu
  * @since 2023-08-02
  **/
-public class AlibabaDubboProviderInterceptor extends AbstractServerInterceptor {
+public class AlibabaDubboProviderInterceptor extends AbstractServerInterceptor<RpcInvocation> {
     /**
      * invoker参数在invoke方法的参数下标
      */
@@ -59,26 +60,35 @@ public class AlibabaDubboProviderInterceptor extends AbstractServerInterceptor {
      */
     private static final String DUBBO_SIDE = "side";
 
-    /**
-     * AlibabaDubboProviderInterceptor的无参构造方法
-     */
-    public AlibabaDubboProviderInterceptor() {
-    }
-
-    private boolean isConsumer(ExecuteContext context) {
-        Object invokerArgument = context.getArguments()[ARGUMENT_INVOKER_INDEX];
-        if (!(invokerArgument instanceof Invoker<?>)) {
-            return false;
+    @Override
+    protected ExecuteContext doBefore(ExecuteContext context) {
+        if (isConsumer(context)) {
+            return context;
         }
-        Invoker<?> invoker = (Invoker<?>) invokerArgument;
-        return isConsumer(invoker);
+
+        Object invocationArgument = context.getArguments()[ARGUMENT_INVOCATION_INDEX];
+        if (!(invocationArgument instanceof RpcInvocation)) {
+            return context;
+        }
+        TrafficUtils.updateTrafficTag(extractTrafficTagFromCarrier((RpcInvocation) invocationArgument));
+
+        return context;
     }
 
-    private boolean isConsumer(Invoker<?> invoker) {
-        return DUBBO_CONSUMER.equals(invoker.getUrl().getParameter(DUBBO_SIDE, DUBBO_PROVIDER));
+    @Override
+    protected ExecuteContext doAfter(ExecuteContext context) {
+        TrafficUtils.removeTrafficTag();
+        return context;
     }
 
-    private Map<String, List<String>> getTagFromInvocation(RpcInvocation invocation) {
+    /**
+     * 从RpcInvocation中解析流量标签
+     *
+     * @param invocation Alibaba Dubbo服务端的流量标签载体
+     * @return 流量标签
+     */
+    @Override
+    protected Map<String, List<String>> extractTrafficTagFromCarrier(RpcInvocation invocation) {
         Map<String, List<String>> tag = new HashMap<>();
         for (String key : tagTransmissionConfig.getTagKeys()) {
             String value = invocation.getAttachment(key);
@@ -94,29 +104,21 @@ public class AlibabaDubboProviderInterceptor extends AbstractServerInterceptor {
     }
 
     @Override
-    protected ExecuteContext doBefore(ExecuteContext context) {
-        if (isConsumer(context)) {
-            return context;
-        }
-
-        Object invocationArgument = context.getArguments()[ARGUMENT_INVOCATION_INDEX];
-        if (invocationArgument instanceof RpcInvocation) {
-            RpcInvocation rpcInvocation = (RpcInvocation) invocationArgument;
-            TrafficUtils.updateTrafficTag(getTagFromInvocation(rpcInvocation));
-        }
-
-        return context;
-    }
-
-    @Override
-    protected ExecuteContext doAfter(ExecuteContext context) {
-        TrafficUtils.removeTrafficTag();
-        return context;
-    }
-
-    @Override
     public ExecuteContext onThrow(ExecuteContext context) {
         TrafficUtils.removeTrafficTag();
         return context;
+    }
+
+    private boolean isConsumer(ExecuteContext context) {
+        Object invokerArgument = context.getArguments()[ARGUMENT_INVOKER_INDEX];
+        if (!(invokerArgument instanceof Invoker<?>)) {
+            return false;
+        }
+        Invoker<?> invoker = (Invoker<?>) invokerArgument;
+        return isConsumer(invoker);
+    }
+
+    private boolean isConsumer(Invoker<?> invoker) {
+        return DUBBO_CONSUMER.equals(invoker.getUrl().getParameter(DUBBO_SIDE, DUBBO_PROVIDER));
     }
 }

@@ -27,10 +27,16 @@ import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
 /**
  * 客户端拦截器抽象类，获取当前线程的流量标签并透传至下游进程，适用于http客户端/rpc客户端/消息队列生产者
  *
+ * @param <Carrier> 标签载体
  * @author lilai
  * @since 2023-07-18
  */
-public abstract class AbstractClientInterceptor extends AbstractInterceptor {
+public abstract class AbstractClientInterceptor<Carrier> extends AbstractInterceptor {
+    /**
+     * 过滤一次处理过程中拦截器的多次调用
+     */
+    protected static final ThreadLocal<Boolean> LOCK_MARK = new ThreadLocal<>();
+
     protected final TagTransmissionConfig tagTransmissionConfig;
 
     /**
@@ -74,4 +80,11 @@ public abstract class AbstractClientInterceptor extends AbstractInterceptor {
      * @return 执行上下文
      */
     protected abstract ExecuteContext doAfter(ExecuteContext context);
+
+    /**
+     * 将标签流量注入载体
+     *
+     * @param carrier 载体
+     */
+    protected abstract void injectTrafficTag2Carrier(Carrier carrier);
 }

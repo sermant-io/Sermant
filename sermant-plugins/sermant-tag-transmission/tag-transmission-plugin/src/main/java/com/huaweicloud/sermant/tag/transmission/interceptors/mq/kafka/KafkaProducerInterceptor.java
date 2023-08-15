@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.mq.kafka;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
-import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
+import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Headers;
@@ -34,37 +33,38 @@ import java.util.List;
  * @author lilai
  * @since 2023-07-18
  */
-public class KafkaProducerInterceptor extends AbstractClientInterceptor {
-    private final TagTransmissionConfig tagTransmissionConfig;
-
-    /**
-     * 构造器
-     */
-    public KafkaProducerInterceptor() {
-        tagTransmissionConfig = PluginConfigManager.getPluginConfig(TagTransmissionConfig.class);
-    }
-
+public class KafkaProducerInterceptor extends AbstractClientInterceptor<ProducerRecord<?, ?>> {
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
         Object producerRecordObject = context.getArguments()[0];
-        if (producerRecordObject instanceof ProducerRecord) {
-            final ProducerRecord<?, ?> producerRecord = (ProducerRecord<?, ?>) producerRecordObject;
-            Headers headers = producerRecord.headers();
-            for (String key : tagTransmissionConfig.getTagKeys()) {
-                List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
-                if (CollectionUtils.isEmpty(values)) {
-                    continue;
-                }
-                for (String value : values) {
-                    headers.add(key, value.getBytes(StandardCharsets.UTF_8));
-                }
-            }
+        if (!(producerRecordObject instanceof ProducerRecord)) {
+            return context;
         }
+        injectTrafficTag2Carrier((ProducerRecord<?, ?>) producerRecordObject);
         return context;
     }
 
     @Override
     public ExecuteContext doAfter(ExecuteContext context) {
         return context;
+    }
+
+    /**
+     * 向ProducerRecord中添加流量标签
+     *
+     * @param producerRecord kafka 标签传递载体
+     */
+    @Override
+    protected void injectTrafficTag2Carrier(ProducerRecord<?, ?> producerRecord) {
+        Headers headers = producerRecord.headers();
+        for (String key : tagTransmissionConfig.getTagKeys()) {
+            List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
+            if (CollectionUtils.isEmpty(values)) {
+                continue;
+            }
+            for (String value : values) {
+                headers.add(key, value.getBytes(StandardCharsets.UTF_8));
+            }
+        }
     }
 }

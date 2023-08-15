@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.interceptors.mq.kafka.KafkaConsumerRecordInterceptor;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Headers;

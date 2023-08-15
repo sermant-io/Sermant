@@ -14,11 +14,12 @@
  *   limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.dubbo;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
+import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import com.alibaba.dubbo.rpc.RpcInvocation;
 
@@ -31,45 +32,39 @@ import java.util.Map;
  * @author daizhenyu
  * @since 2023-08-12
  **/
-public class AlibabaDubboConsumerInterceptor extends AbstractClientInterceptor {
+public class AlibabaDubboConsumerInterceptor extends AbstractClientInterceptor<RpcInvocation> {
     /**
      * rpcInvocation参数在invoke方法的参数下标
      */
     private static final int ARGUMENT_INDEX = 1;
 
-    /**
-     * ApacheDubboV3ConsumerInterceptor类的无参构造方法
-     */
-    public AlibabaDubboConsumerInterceptor() {
-    }
-
-    private void addTag2Attachment(Object invocation, TrafficTag trafficTag) {
-        if (invocation == null) {
-            return;
-        }
-        if (invocation instanceof RpcInvocation) {
-            RpcInvocation rpcInvocation = (RpcInvocation) invocation;
-            addTag2Attachment(trafficTag.getTag(), rpcInvocation);
-        }
-    }
-
-    private void addTag2Attachment(Map<String, List<String>> tag, RpcInvocation invocation) {
-        for (Map.Entry<String, List<String>> entry : tag.entrySet()) {
-            if (entry.getKey() == null || entry.getValue() == null) {
-                continue;
-            }
-            invocation.setAttachment(entry.getKey(), entry.getValue().get(0));
-        }
-    }
-
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) {
-        this.addTag2Attachment(context.getArguments()[ARGUMENT_INDEX], TrafficUtils.getTrafficTag());
+        Object invocationObject = context.getArguments()[ARGUMENT_INDEX];
+        if (!(invocationObject instanceof RpcInvocation)) {
+            return context;
+        }
+        injectTrafficTag2Carrier((RpcInvocation) invocationObject);
         return context;
     }
 
     @Override
     protected ExecuteContext doAfter(ExecuteContext context) {
         return context;
+    }
+
+    /**
+     * 向RpcInvocation中添加流量标签
+     *
+     * @param invocation Alibaba Dubbo 标签传递载体
+     */
+    @Override
+    protected void injectTrafficTag2Carrier(RpcInvocation invocation) {
+        for (Map.Entry<String, List<String>> entry : TrafficUtils.getTrafficTag().getTag().entrySet()) {
+            if (entry.getKey() == null || CollectionUtils.isEmpty(entry.getValue())) {
+                continue;
+            }
+            invocation.setAttachment(entry.getKey(), entry.getValue().get(0));
+        }
     }
 }

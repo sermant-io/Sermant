@@ -14,39 +14,41 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.declarers;
+package com.huaweicloud.sermant.tag.transmission.declarers.http.client.jdk;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
-import com.huaweicloud.sermant.tag.transmission.interceptors.HttpServletInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.http.client.jdk.JdkHttpClientInterceptor;
 
 /**
- * HttpServlet 流量标签透传的增强声明,支持sevlet3.0+
+ * JDK HttpClient 流量标签透传的增强声明
  *
- * @author tangle
- * @since 2023-07-18
+ * @author lilai
+ * @since 2023-08-08
  */
-public class HttpServletDeclarer extends AbstractPluginDeclarer {
+public class JdkHttpClientDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名、拦截器、拦截方法
+     * 增强类的全限定名
      */
-    private static final String ENHANCE_CLASS = "javax.servlet.http.HttpServlet";
+    private static final String ENHANCE_CLASSES = "sun.net.www.http.HttpClient";
 
-    private static final String INTERCEPT_CLASS = HttpServletInterceptor.class.getCanonicalName();
-
-    private static final String METHOD_NAME = "service";
+    /**
+     * 拦截类的全限定名
+     */
+    private static final String INTERCEPT_CLASS = JdkHttpClientInterceptor.class.getCanonicalName();
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.isExtendedFrom(ENHANCE_CLASS);
+        return ClassMatcher.nameEquals(ENHANCE_CLASSES);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("writeRequests"),
+                        INTERCEPT_CLASS)
         };
     }
 }

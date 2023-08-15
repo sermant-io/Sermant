@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.http.server;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 
 import java.util.Collections;
 import java.util.Enumeration;
@@ -33,12 +34,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author tangle
  * @since 2023-07-18
  */
-public class HttpServletInterceptor extends AbstractServerInterceptor {
-    /**
-     * 过滤一次处理过程中拦截器的多次调用
-     */
-    private static final ThreadLocal<Boolean> LOCK_MARK = new ThreadLocal<>();
-
+public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServletRequest> {
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
         if (LOCK_MARK.get() != null) {
@@ -47,20 +43,12 @@ public class HttpServletInterceptor extends AbstractServerInterceptor {
         LOCK_MARK.set(Boolean.TRUE);
 
         Object httpServletRequestObject = context.getArguments()[0];
-        if (httpServletRequestObject instanceof HttpServletRequest) {
-            HttpServletRequest httpServletRequest = (HttpServletRequest) httpServletRequestObject;
-            Map<String, List<String>> tag = new HashMap<>();
-            for (String key : tagTransmissionConfig.getTagKeys()) {
-                Enumeration<String> valuesEnumeration = httpServletRequest.getHeaders(key);
-                if (valuesEnumeration.hasMoreElements()) {
-                    List<String> values = Collections.list(valuesEnumeration);
-                    tag.put(key, values);
-                }
-            }
-            if (!tag.isEmpty()) {
-                TrafficUtils.updateTrafficTag(tag);
-            }
+        if (!(httpServletRequestObject instanceof HttpServletRequest)) {
+            return context;
         }
+
+        Map<String, List<String>> tagMap = extractTrafficTagFromCarrier((HttpServletRequest) httpServletRequestObject);
+        TrafficUtils.updateTrafficTag(tagMap);
         return context;
     }
 
@@ -76,5 +64,27 @@ public class HttpServletInterceptor extends AbstractServerInterceptor {
         TrafficUtils.removeTrafficTag();
         LOCK_MARK.remove();
         return context;
+    }
+
+    /**
+     * 从HttpServletRequest中解析流量标签
+     *
+     * @param httpServletRequest servlet服务端的流量标签载体
+     * @return 流量标签
+     */
+    @Override
+    protected Map<String, List<String>> extractTrafficTagFromCarrier(HttpServletRequest httpServletRequest) {
+        Map<String, List<String>> tagMap = new HashMap<>();
+        for (String key : tagTransmissionConfig.getTagKeys()) {
+            Enumeration<String> valuesEnumeration = httpServletRequest.getHeaders(key);
+            if (valuesEnumeration == null) {
+                continue;
+            }
+            if (valuesEnumeration.hasMoreElements()) {
+                List<String> values = Collections.list(valuesEnumeration);
+                tagMap.put(key, values);
+            }
+        }
+        return tagMap;
     }
 }
