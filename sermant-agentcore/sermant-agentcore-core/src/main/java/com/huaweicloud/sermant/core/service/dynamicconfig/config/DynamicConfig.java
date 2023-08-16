@@ -36,6 +36,8 @@ public class DynamicConfig implements BaseConfig {
 
     private static final int CONNECT_RETRY_TIMES = 5;
 
+    private static final int REQUEST_TIMEOUT = 3000;
+
     /**
      * 服务器连接超时时间
      */
@@ -79,6 +81,12 @@ public class DynamicConfig implements BaseConfig {
     private String privateKey;
 
     private boolean enableAuth = false;
+
+    /**
+     * 请求超时时间，nacos每次getConfig需要设置一个超时时间
+     */
+    @ConfigFieldKey("requestTimeout")
+    private int requestTimeout = REQUEST_TIMEOUT;
 
     public int getTimeoutValue() {
         return timeoutValue;
@@ -158,5 +166,13 @@ public class DynamicConfig implements BaseConfig {
 
     public void setEnableAuth(boolean enableAuth) {
         this.enableAuth = enableAuth;
+    }
+
+    public int getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(int requestTimeout) {
+        this.requestTimeout = requestTimeout;
     }
 }
