@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.mq.kafka;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
-import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
+import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
@@ -37,30 +36,35 @@ import java.util.Map;
  * @author lilai
  * @since 2023-07-18
  */
-public class KafkaConsumerRecordInterceptor extends AbstractServerInterceptor {
-    private final TagTransmissionConfig tagTransmissionConfig;
-
-    /**
-     * 构造器
-     */
-    public KafkaConsumerRecordInterceptor() {
-        tagTransmissionConfig = PluginConfigManager.getPluginConfig(TagTransmissionConfig.class);
-    }
-
+public class KafkaConsumerRecordInterceptor extends AbstractServerInterceptor<ConsumerRecord<?, ?>> {
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
         Object consumerRecordObject = context.getObject();
-        if (consumerRecordObject instanceof ConsumerRecord) {
-            final ConsumerRecord<?, ?> consumerRecord = (ConsumerRecord<?, ?>) consumerRecordObject;
-            Map<String, List<String>> tagMap = extractTagMap(consumerRecord);
-
-            // 消息队列消费者不会remove线程变量，需要每次set新对象，以保证父子线程之间的变量隔离
-            TrafficUtils.setTrafficTag(new TrafficTag(tagMap));
+        if (!(consumerRecordObject instanceof ConsumerRecord)) {
+            return context;
         }
+
+        Map<String, List<String>> tagMap = extractTrafficTagFromCarrier((ConsumerRecord<?, ?>) consumerRecordObject);
+
+        // 消息队列消费者不会remove线程变量，需要每次set新对象，以保证父子线程之间的变量隔离
+        TrafficUtils.setTrafficTag(new TrafficTag(tagMap));
+
         return context;
     }
 
-    private Map<String, List<String>> extractTagMap(ConsumerRecord<?, ?> consumerRecord) {
+    @Override
+    public ExecuteContext doAfter(ExecuteContext context) {
+        return context;
+    }
+
+    /**
+     * 从ConsumerRecord中解析流量标签
+     *
+     * @param consumerRecord kafka 消费端的流量标签载体
+     * @return 流量标签
+     */
+    @Override
+    protected Map<String, List<String>> extractTrafficTagFromCarrier(ConsumerRecord<?, ?> consumerRecord) {
         Map<String, List<String>> headerMap = convertHeaders(consumerRecord);
         List<String> tagKeys = tagTransmissionConfig.getTagKeys();
         Map<String, List<String>> tagMap = new HashMap<>();
@@ -70,7 +74,7 @@ public class KafkaConsumerRecordInterceptor extends AbstractServerInterceptor {
         return tagMap;
     }
 
-    private static Map<String, List<String>> convertHeaders(ConsumerRecord<?, ?> consumerRecord) {
+    private Map<String, List<String>> convertHeaders(ConsumerRecord<?, ?> consumerRecord) {
         Map<String, List<String>> headerMap = new HashMap<>();
         for (Header header : consumerRecord.headers()) {
             String key = header.key();
@@ -78,10 +82,5 @@ public class KafkaConsumerRecordInterceptor extends AbstractServerInterceptor {
             headerMap.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
         }
         return headerMap;
-    }
-
-    @Override
-    public ExecuteContext doAfter(ExecuteContext context) {
-        return context;
     }
 }

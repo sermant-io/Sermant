@@ -14,27 +14,27 @@
  *   limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.declarers;
+package com.huaweicloud.sermant.tag.transmission.declarers.rpc.dubbo;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
-import com.huaweicloud.sermant.tag.transmission.interceptors.ApacheDubboProviderInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.rpc.dubbo.AlibabaDubboProviderInterceptor;
 
 /**
- * dubbo流量标签透传的provider端增强声明，支持dubbo2.7.x, 3.x
+ * dubbo流量标签透传的provider端增强声明，支持alibaba dubbo2.6.x版本
  *
  * @author daizhenyu
  * @since 2023-08-02
  **/
-public class ApacheDubboProviderDeclarer extends AbstractPluginDeclarer {
+public class AlibabaDubboProviderDeclarer extends AbstractPluginDeclarer {
     /**
      * 增强类的全限定名、拦截器、拦截方法
      */
-    private static final String ENHANCE_CLASS = "org.apache.dubbo.monitor.support.MonitorFilter";
+    private static final String ENHANCE_CLASS = "com.alibaba.dubbo.monitor.support.MonitorFilter";
 
-    private static final String INTERCEPT_CLASS = ApacheDubboProviderInterceptor.class.getCanonicalName();
+    private static final String INTERCEPT_CLASS = AlibabaDubboProviderInterceptor.class.getCanonicalName();
 
     private static final String METHOD_NAME = "invoke";
 

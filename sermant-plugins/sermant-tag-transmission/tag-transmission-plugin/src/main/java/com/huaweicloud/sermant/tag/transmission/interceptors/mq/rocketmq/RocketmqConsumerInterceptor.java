@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 
 import org.apache.rocketmq.common.message.Message;
 
@@ -33,7 +34,7 @@ import java.util.Map;
  * @author tangle
  * @since 2023-07-19
  */
-public class RocketmqConsumerInterceptor extends AbstractServerInterceptor {
+public class RocketmqConsumerInterceptor extends AbstractServerInterceptor<Message> {
     /**
      * getBody拦截方法的所在类名
      */
@@ -50,14 +51,40 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor {
         if (!isRocketMqStackTrace(stackTraceElements)) {
             return context;
         }
-        if (context.getObject() instanceof Message) {
-            Message message = (Message) context.getObject();
-            Map<String, List<String>> tag = this.getTagFromMessage(message);
-
-            // 消息队列消费者不会remove线程变量，需要每次set新对象，以保证父子线程之间的变量隔离
-            TrafficUtils.setTrafficTag(new TrafficTag(tag));
+        if (!(context.getObject() instanceof Message)) {
+            return context;
         }
+
+        Map<String, List<String>> tagMap = extractTrafficTagFromCarrier((Message) context.getObject());
+
+        // 消息队列消费者不会remove线程变量，需要每次set新对象，以保证父子线程之间的变量隔离
+        TrafficUtils.setTrafficTag(new TrafficTag(tagMap));
         return context;
+    }
+
+    @Override
+    public ExecuteContext doAfter(ExecuteContext context) {
+        return context;
+    }
+
+    /**
+     * 从Message中解析流量标签
+     *
+     * @param message RocketMQ 消费端的流量标签载体
+     * @return 流量标签
+     */
+    @Override
+    protected Map<String, List<String>> extractTrafficTagFromCarrier(Message message) {
+        Map<String, List<String>> tagMap = new HashMap<>();
+        for (String key : tagTransmissionConfig.getTagKeys()) {
+            String value = message.getProperty(key);
+            if (value != null) {
+                tagMap.put(key, Collections.singletonList(value));
+            } else {
+                tagMap.put(key, null);
+            }
+        }
+        return tagMap;
     }
 
     /**
@@ -78,29 +105,5 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor {
             break;
         }
         return true;
-    }
-
-    /**
-     * 获取message中的流量标签
-     *
-     * @param message 原始properties
-     * @return Map
-     */
-    private Map<String, List<String>> getTagFromMessage(Message message) {
-        Map<String, List<String>> tag = new HashMap<>();
-        for (String key : tagTransmissionConfig.getTagKeys()) {
-            String value = message.getProperty(key);
-            if (value != null) {
-                tag.put(key, Collections.singletonList(value));
-            } else {
-                tag.put(key, null);
-            }
-        }
-        return tag;
-    }
-
-    @Override
-    public ExecuteContext doAfter(ExecuteContext context) {
-        return context;
     }
 }

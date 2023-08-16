@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.dubbo;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 import com.huaweicloud.sermant.tag.transmission.utils.DubboUtils;
 
 import org.apache.dubbo.rpc.Invoker;
@@ -34,7 +35,7 @@ import java.util.Map;
  * @author daizhenyu
  * @since 2023-08-02
  **/
-public class ApacheDubboProviderInterceptor extends AbstractServerInterceptor {
+public class ApacheDubboProviderInterceptor extends AbstractServerInterceptor<RpcInvocation> {
     /**
      * invoker参数在invoke方法的参数下标
      */
@@ -60,26 +61,41 @@ public class ApacheDubboProviderInterceptor extends AbstractServerInterceptor {
      */
     private static final String DUBBO_SIDE = "side";
 
-    /**
-     * ApacheDubboProviderInterceptor的无参构造方法
-     */
-    public ApacheDubboProviderInterceptor() {
-    }
-
-    private boolean isConsumer(ExecuteContext context) {
-        Object invokerArgument = context.getArguments()[ARGUMENT_INVOKER_INDEX];
-        if (!(invokerArgument instanceof Invoker<?>)) {
-            return false;
+    @Override
+    protected ExecuteContext doBefore(ExecuteContext context) {
+        if (isConsumer(context)) {
+            return context;
         }
-        Invoker<?> invoker = (Invoker<?>) invokerArgument;
-        return isConsumer(invoker);
+
+        Object invocationArgument = context.getArguments()[ARGUMENT_INVOCATION_INDEX];
+        if (!(invocationArgument instanceof RpcInvocation)) {
+            return context;
+        }
+
+        TrafficUtils.updateTrafficTag(extractTrafficTagFromCarrier((RpcInvocation) invocationArgument));
+        return context;
     }
 
-    private boolean isConsumer(Invoker<?> invoker) {
-        return DUBBO_CONSUMER.equals(invoker.getUrl().getParameter(DUBBO_SIDE, DUBBO_PROVIDER));
+    @Override
+    protected ExecuteContext doAfter(ExecuteContext context) {
+        TrafficUtils.removeTrafficTag();
+        return context;
     }
 
-    private Map<String, List<String>> getTagFromInvocation(RpcInvocation invocation) {
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) {
+        TrafficUtils.removeTrafficTag();
+        return context;
+    }
+
+    /**
+     * 从RpcInvocation中解析流量标签
+     *
+     * @param invocation Apache Dubbo服务端的流量标签载体
+     * @return 流量标签
+     */
+    @Override
+    protected Map<String, List<String>> extractTrafficTagFromCarrier(RpcInvocation invocation) {
         Map<String, List<String>> tag = new HashMap<>();
 
         // 适配不同版本apache dubbo的RpcInvocation的attachments属性泛型不一致情况
@@ -101,29 +117,16 @@ public class ApacheDubboProviderInterceptor extends AbstractServerInterceptor {
         return tag;
     }
 
-    @Override
-    protected ExecuteContext doBefore(ExecuteContext context) {
-        if (isConsumer(context)) {
-            return context;
+    private boolean isConsumer(ExecuteContext context) {
+        Object invokerArgument = context.getArguments()[ARGUMENT_INVOKER_INDEX];
+        if (!(invokerArgument instanceof Invoker<?>)) {
+            return false;
         }
-
-        Object invocationArgument = context.getArguments()[ARGUMENT_INVOCATION_INDEX];
-        if (invocationArgument instanceof RpcInvocation) {
-            RpcInvocation rpcInvocation = (RpcInvocation) invocationArgument;
-            TrafficUtils.updateTrafficTag(getTagFromInvocation(rpcInvocation));
-        }
-        return context;
+        Invoker<?> invoker = (Invoker<?>) invokerArgument;
+        return isConsumer(invoker);
     }
 
-    @Override
-    protected ExecuteContext doAfter(ExecuteContext context) {
-        TrafficUtils.removeTrafficTag();
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) {
-        TrafficUtils.removeTrafficTag();
-        return context;
+    private boolean isConsumer(Invoker<?> invoker) {
+        return DUBBO_CONSUMER.equals(invoker.getUrl().getParameter(DUBBO_SIDE, DUBBO_PROVIDER));
     }
 }

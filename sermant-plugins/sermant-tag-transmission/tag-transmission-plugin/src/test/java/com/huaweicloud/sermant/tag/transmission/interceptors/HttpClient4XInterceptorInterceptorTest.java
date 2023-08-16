@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.interceptors.http.client.httpclient.HttpClient4xInterceptor;
 
 import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.HttpRequestBase;

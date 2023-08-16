@@ -14,13 +14,13 @@
  *   limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.declarers;
+package com.huaweicloud.sermant.tag.transmission.declarers.rpc.dubbo;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
-import com.huaweicloud.sermant.tag.transmission.interceptors.AlibabaDubboConsumerInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.rpc.dubbo.AlibabaDubboConsumerInterceptor;
 
 /**
  * dubbo流量标签透传的consumer端增强声明，支持alibaba dubbo2.6.x版本

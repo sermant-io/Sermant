@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.http.client.httpclient;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import org.apache.http.HttpRequest;
 
@@ -30,27 +31,37 @@ import java.util.List;
  * @author lilai
  * @since 2023-07-17
  */
-public class HttpClient4xInterceptor extends AbstractClientInterceptor {
+public class HttpClient4xInterceptor extends AbstractClientInterceptor<HttpRequest> {
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
         Object httpRequestObject = context.getArguments()[1];
-        if (httpRequestObject instanceof HttpRequest) {
-            final HttpRequest httpRequest = (HttpRequest) httpRequestObject;
-            for (String key : tagTransmissionConfig.getTagKeys()) {
-                List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
-                if (CollectionUtils.isEmpty(values)) {
-                    continue;
-                }
-                for (String value : values) {
-                    httpRequest.addHeader(key, value);
-                }
-            }
+        if (!(httpRequestObject instanceof HttpRequest)) {
+            return context;
         }
+        injectTrafficTag2Carrier((HttpRequest) httpRequestObject);
         return context;
     }
 
     @Override
     public ExecuteContext doAfter(ExecuteContext context) {
         return context;
+    }
+
+    /**
+     * 向HttpRequest中添加流量标签
+     *
+     * @param httpRequest httpclient 4.x 标签传递载体
+     */
+    @Override
+    protected void injectTrafficTag2Carrier(HttpRequest httpRequest) {
+        for (String key : tagTransmissionConfig.getTagKeys()) {
+            List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
+            if (CollectionUtils.isEmpty(values)) {
+                continue;
+            }
+            for (String value : values) {
+                httpRequest.addHeader(key, value);
+            }
+        }
     }
 }

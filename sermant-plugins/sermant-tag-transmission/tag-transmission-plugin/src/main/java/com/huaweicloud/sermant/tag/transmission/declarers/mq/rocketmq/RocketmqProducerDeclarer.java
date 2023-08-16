@@ -14,40 +14,42 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.declarers;
+package com.huaweicloud.sermant.tag.transmission.declarers.mq.rocketmq;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
-import com.huaweicloud.sermant.tag.transmission.interceptors.KafkaConsumerRecordInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq.RocketmqProducerInterceptor;
 
 /**
- * kafka获取消息内容的拦截点声明，支持1.x, 2.x, 3.x
+ * RocketMQ流量标签透传的生产者增强声明，支持RocketMQ4.8+
  *
- * @author lilai
- * @since 2023-07-18
+ * @author tangle
+ * @since 2023-07-20
  */
-public class KafkaConsumerRecordDeclarer extends AbstractPluginDeclarer {
+public class RocketmqProducerDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名
+     * 增强类的全限定名、拦截器、拦截方法
      */
-    private static final String ENHANCE_CLASSES = "org.apache.kafka.clients.consumer.ConsumerRecord";
+    private static final String ENHANCE_CLASS = "org.apache.rocketmq.client.impl.MQClientAPIImpl";
 
-    /**
-     * 拦截类的全限定名
-     */
-    private static final String INTERCEPT_CLASS = KafkaConsumerRecordInterceptor.class.getCanonicalName();
+    private static final String INTERCEPT_CLASS = RocketmqProducerInterceptor.class.getCanonicalName();
+
+    private static final String METHOD_NAME = "sendMessage";
+
+    private static final int PARAM_INDEX = 12;
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameEquals(ENHANCE_CLASSES);
+        return ClassMatcher.nameEquals(ENHANCE_CLASS);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                InterceptDeclarer.build(MethodMatcher.nameEquals("value"), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME)
+                        .and(MethodMatcher.paramCountEquals(PARAM_INDEX)), INTERCEPT_CLASS)
         };
     }
 }

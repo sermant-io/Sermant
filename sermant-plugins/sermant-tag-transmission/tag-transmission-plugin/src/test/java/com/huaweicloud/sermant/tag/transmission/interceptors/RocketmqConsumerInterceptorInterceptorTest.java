@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq.RocketmqConsumerInterceptor;
 
 import org.apache.rocketmq.common.message.Message;
 import org.junit.Assert;
