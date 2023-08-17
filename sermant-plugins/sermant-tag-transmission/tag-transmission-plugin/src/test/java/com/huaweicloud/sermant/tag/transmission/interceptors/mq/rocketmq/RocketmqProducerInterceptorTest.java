@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
-import com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq.RocketmqProducerInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.BaseInterceptorTest;
 
 import org.apache.rocketmq.common.protocol.header.SendMessageRequestHeader;
 import org.junit.Assert;
@@ -35,12 +35,12 @@ import java.util.Map;
  * @author tangle
  * @since 2023-07-27
  */
-public class RocketmqProducerInterceptorInterceptorTest extends BaseInterceptorTest {
+public class RocketmqProducerInterceptorTest extends BaseInterceptorTest {
     private final RocketmqProducerInterceptor interceptor;
 
     private final Object[] arguments;
 
-    public RocketmqProducerInterceptorInterceptorTest() {
+    public RocketmqProducerInterceptorTest() {
         interceptor = new RocketmqProducerInterceptor();
         arguments = new Object[12];
     }
@@ -51,6 +51,15 @@ public class RocketmqProducerInterceptorInterceptorTest extends BaseInterceptorT
         ExecuteContext resContext;
         Map<String, String> addHeaders = new HashMap<>();
         Map<String, List<String>> tags = new HashMap<>();
+        TrafficUtils.removeTrafficTag();
+
+        // 测试TagTransmissionConfig开关关闭时
+        tagTransmissionConfig.setEnabled(false);
+        TrafficUtils.updateTrafficTag(tags);
+        context = buildContext(addHeaders);
+        resContext = interceptor.before(context);
+        Assert.assertNull(((SendMessageRequestHeader) resContext.getArguments()[3]).getProperties());
+        tagTransmissionConfig.setEnabled(true);
         TrafficUtils.removeTrafficTag();
 
         // 包含Headers但不包含tags
@@ -68,6 +77,7 @@ public class RocketmqProducerInterceptorInterceptorTest extends BaseInterceptorT
         Assert.assertEquals(getTruthProperties(addHeaders, tags),
                 ((SendMessageRequestHeader) resContext.getArguments()[3]).getProperties());
         interceptor.after(context);
+        TrafficUtils.removeTrafficTag();
 
         // 第二次Message（不同tag）,测试tag数据不会污染其他Message
         tags.clear();
@@ -78,11 +88,7 @@ public class RocketmqProducerInterceptorInterceptorTest extends BaseInterceptorT
         Assert.assertEquals(getTruthProperties(addHeaders, tags),
                 ((SendMessageRequestHeader) resContext.getArguments()[3]).getProperties());
         interceptor.after(context);
-
-        // 测试TagTransmissionConfig开关关闭时
-        tagTransmissionConfig.setEnabled(false);
-        resContext = interceptor.before(context);
-        Assert.assertEquals(context, resContext);
+        TrafficUtils.removeTrafficTag();
     }
 
     private String getTruthProperties(Map<String, String> headers, Map<String, List<String>> tags) {

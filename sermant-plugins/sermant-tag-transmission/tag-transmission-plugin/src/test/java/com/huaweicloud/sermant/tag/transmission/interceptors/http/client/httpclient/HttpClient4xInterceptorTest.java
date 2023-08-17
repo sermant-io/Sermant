@@ -14,107 +14,98 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.http.client.httpclient;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
-import com.huaweicloud.sermant.tag.transmission.interceptors.mq.kafka.KafkaProducerInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.BaseInterceptorTest;
 
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.Headers;
+import org.apache.http.HttpRequest;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 测试KafkaProducerInterceptor
+ * 测试HttpClient4xInterceptor
  *
  * @author tangle
  * @since 2023-07-27
  */
-public class KafkaProducerInterceptorInterceptorTest extends BaseInterceptorTest {
-    private final KafkaProducerInterceptor interceptor;
+public class HttpClient4xInterceptorTest extends BaseInterceptorTest {
+    private final HttpClient4xInterceptor interceptor;
 
     private final Object[] arguments;
 
-    public KafkaProducerInterceptorInterceptorTest() {
-        interceptor = new KafkaProducerInterceptor();
+    public HttpClient4xInterceptorTest() {
+        interceptor = new HttpClient4xInterceptor();
         arguments = new Object[2];
     }
 
     @Test
-    public void testKafkaProducer() {
+    public void testClient() {
         ExecuteContext context;
         ExecuteContext resContext;
         Map<String, List<String>> addHeaders = new HashMap<>();
         Map<String, List<String>> tags = new HashMap<>();
         TrafficUtils.removeTrafficTag();
 
+        // 无Headers无Tags
+        context = buildContext(addHeaders);
+        TrafficUtils.updateTrafficTag(tags);
+        resContext = interceptor.before(context);
+        Assert.assertEquals(0, ((HttpRequest) resContext.getArguments()[1]).getAllHeaders().length);
+        TrafficUtils.removeTrafficTag();
+
         // 有Headers无Tags
         addHeaders.put("defaultKey", Collections.singletonList("defaultValue"));
         context = buildContext(addHeaders);
+        TrafficUtils.updateTrafficTag(tags);
         resContext = interceptor.before(context);
-        Assert.assertEquals(getValuesFromRecord(resContext, "defaultKey"), Collections.singletonList("defaultValue"));
+        Assert.assertEquals(1, ((HttpRequest) resContext.getArguments()[1]).getAllHeaders().length);
+        Assert.assertEquals("defaultValue", ((HttpRequest) resContext.getArguments()[1]).getAllHeaders()[0].getValue());
+        TrafficUtils.removeTrafficTag();
 
         // 有Headers有Tags
         List<String> ids = new ArrayList<>();
         ids.add("testId001");
         ids.add("testId002");
         tags.put("id", ids);
-        TrafficUtils.updateTrafficTag(tags);
         context = buildContext(addHeaders);
-        resContext = interceptor.before(context);
-        Assert.assertEquals(getValuesFromRecord(resContext, "id"), ids);
-
-        // 第二次生产，测试tags是否污染其他消费
-        tags.clear();
-        List<String> names = new ArrayList<>();
-        names.add("testName001");
-        tags.put("name", names);
         TrafficUtils.updateTrafficTag(tags);
-        context = buildContext(addHeaders);
         resContext = interceptor.before(context);
-        Assert.assertEquals(getValuesFromRecord(resContext, "id"), new ArrayList<>());
-        Assert.assertEquals(getValuesFromRecord(resContext, "name"), names);
+        Assert.assertEquals(2, ((HttpRequest) resContext.getArguments()[1]).getHeaders("id").length);
+        Assert.assertEquals("testId001", ((HttpRequest) resContext.getArguments()[1]).getHeaders("id")[0].getValue());
+        TrafficUtils.removeTrafficTag();
 
         // 测试TagTransmissionConfig开关关闭时
         tagTransmissionConfig.setEnabled(false);
+        context = buildContext(addHeaders);
+        TrafficUtils.updateTrafficTag(tags);
         resContext = interceptor.before(context);
-        Assert.assertEquals(context, resContext);
-    }
-
-    private List<String> getValuesFromRecord(ExecuteContext resContext, String key) {
-        Headers headers = ((ProducerRecord) resContext.getArguments()[0]).headers();
-        if (headers.headers(key) == null) {
-            return null;
-        }
-        List<String> res = new ArrayList<>();
-        Iterator<Header> iterator = headers.headers(key).iterator();
-        while (iterator.hasNext()) {
-            Header header = iterator.next();
-            byte[] bts = header.value();
-            res.add(new String(bts, Charset.forName("UTF-8")));
-        }
-        return res;
+        Assert.assertEquals(0, ((HttpRequest) resContext.getArguments()[1]).getHeaders("id").length);
+        tagTransmissionConfig.setEnabled(true);
+        TrafficUtils.removeTrafficTag();
     }
 
     private ExecuteContext buildContext(Map<String, List<String>> addHeaders) {
-        ProducerRecord producerRecord = new ProducerRecord<>("topic", "value");
-        Headers headers = producerRecord.headers();
+        HttpRequestBase httpRequestBase = new HttpRequestBase() {
+            @Override
+            public String getMethod() {
+                return null;
+            }
+        };
         for (Map.Entry<String, List<String>> entry : addHeaders.entrySet()) {
             for (String val : entry.getValue()) {
-                headers.add(entry.getKey(), val.getBytes());
+                httpRequestBase.addHeader(entry.getKey(), val);
             }
         }
-        arguments[0] = producerRecord;
+        arguments[1] = httpRequestBase;
         return ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
     }
 }

@@ -32,11 +32,6 @@ import java.util.Map;
  * @since 2023-07-18
  */
 public abstract class AbstractServerInterceptor<Carrier> extends AbstractInterceptor {
-    /**
-     * 过滤一次处理过程中拦截器的多次调用
-     */
-    protected static final ThreadLocal<Boolean> LOCK_MARK = new ThreadLocal<>();
-
     protected final TagTransmissionConfig tagTransmissionConfig;
 
     /**

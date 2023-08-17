@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.http.server;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
-import com.huaweicloud.sermant.tag.transmission.interceptors.http.server.HttpServletInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.BaseInterceptorTest;
 
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.connector.Request;
@@ -39,12 +39,12 @@ import java.util.Map;
  * @author tangle
  * @since 2023-07-27
  */
-public class HttpServletInterceptorInterceptorTest extends BaseInterceptorTest {
+public class HttpServletInterceptorTest extends BaseInterceptorTest {
     private final HttpServletInterceptor interceptor;
 
     private final Object[] arguments;
 
-    public HttpServletInterceptorInterceptorTest() {
+    public HttpServletInterceptorTest() {
         interceptor = new HttpServletInterceptor();
         arguments = new Object[2];
     }
