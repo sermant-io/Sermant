@@ -16,9 +16,9 @@
 
 ## What is Sermant?
 
-**Sermant** (also known as Java-mesh) is a proxyless **ser**vice **m**esh technology based on J**a**va Age**nt** . It leverages the [JavaAgent](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html) to instrument the host application with enhanced service governance function, in order to solve the service governance problem, in the massive micro-service architecture.
+**Sermant** (also known as Java-mesh) is a proxyless service mesh based on Java bytecode enhancement technology. It utilizes Java bytecode enhancement to provide service governance capabilities to applications, addressing service governance issues in large-scale microservices architectures. 
 
-Sermant's purpose also includes building a plugin-development ecosystem to help developers develop the service governance function more easily while not interfering the business code. The Sermant architecture is depicted as follows.
+Sermant's vision also includes building a plugin development ecosystem to assist developers in more easily creating service governance functionalities without interfering with the application's source code. The Sermant architecture is depicted as follows.
 
 ![pic](docs/binary-docs/sermant-product-arch.png)
 
@@ -63,12 +63,12 @@ After successful packaging，GET `spring-provider.jar` in `${path}/Sermant-examp
 
 ### Modify the Sermant configuration
 
-Modify the `agent.config.serviceBlackList` configuration in the `${path}/sermant-agent-x.x.x/agent/config/config.properties` file to be empty, as shown below:
+Modify the `agent.service.heartbeat.enable` and `agent.service.gateway.enable` configuration in the `${path}/sermant-agent-x.x.x/agent/config/config.properties` file to be true, which is to open the heartbeat service and the gateway service of Sermant, as shown below:
 
 ```properties
-agent.config.serviceBlackList=
+agent.service.heartbeat.enable=true
+agent.service.gateway.enable=true
 ```
-
 > Note: path is the path where the Sermant package is downloaded
 
 ### Start Backend
@@ -76,7 +76,7 @@ agent.config.serviceBlackList=
 Execute the following command in the `${path}/sermant-agent-x.x.x/server/sermant` directory:
 
 ```shell
-java -jar sermant-backend-lite.jar
+java -jar sermant-backend-x.x.x.jar
 ```
 
 > Note: path is the path where the Sermant package is downloaded
@@ -99,7 +99,7 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-
 
 Check running status of Sermant. In this example, open the browser and navigate to the URL `http://localhost:8900`.
 
-![pic](docs/binary-docs/backend_sermant_info.png)
+![pic](docs/binary-docs/backend_sermant_info.jpg)
 
 ## More Documents to Follow
 

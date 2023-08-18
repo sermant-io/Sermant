@@ -17,7 +17,7 @@
 
 ## Sermant
 
-**Sermant**(也称之为Java-mesh)是基于JavaAgent无代理的服务网格技术。其利用JavaAgent为宿主应用程序提供增强的服务治理功能，以解决大规模微服务体系结构中的服务治理问题。
+**Sermant**（也称之为Java-mesh）是基于Java字节码增强技术的无代理服务网格，其利用Java字节码增强技术为宿主应用程序提供服务治理功能，以解决大规模微服务体系结构中的服务治理问题。
 
 Sermant的愿景还包括构建插件开发生态系统，以帮助开发人员更容易地开发服务治理功能，同时不干扰业务代码。Sermant架构描述如下。
 
@@ -63,10 +63,11 @@ mvn clean package
 
 ### 修改Sermant配置
 
-修改`${path}/sermant-agent-x.x.x/agent/config/config.properties`文件中`agent.config.serviceBlackList`配置为空，如下所示：
+修改`${path}/sermant-agent-x.x.x/agent/config/config.properties`文件中`agent.service.heartbeat.enable`和`agent.service.gateway.enable`配置为true，以此来开启Sermant的心跳服务和网关服务，如下所示：
 
 ```properties
-agent.config.serviceBlackList=
+agent.service.heartbeat.enable=true
+agent.service.gateway.enable=true
 ```
 
 > 说明：path为Sermant包下载所在路径
@@ -76,7 +77,7 @@ agent.config.serviceBlackList=
 在`${path}/sermant-agent-x.x.x/server/sermant`目录执行以下命令：
 
 ```shell
-java -jar sermant-backend-lite.jar
+java -jar sermant-backend-x.x.x.jar
 ```
 
 > 说明：path为Sermant包下载所在路径
@@ -97,10 +98,10 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-
 
 ### 验证
 
-打开浏览器并导航到URL`http://localhost:8900`,如下图所示：
+打开浏览器并导航到URL`http://localhost:8900`，如下图所示：
 
 
-![pic](docs/binary-docs/backend_sermant_info.png)
+![pic](docs/binary-docs/backend_sermant_info.jpg)
 
 ## 更多文档
 
