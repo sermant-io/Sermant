@@ -24,7 +24,6 @@ package com.huawei.monitor.common;
  * @since 2022-08-02
  */
 public enum MetricEnum {
-
     /**
      * JVM内存指标信息
      */
@@ -329,7 +328,88 @@ public enum MetricEnum {
     /**
      * 平均响应时间
      */
-    AVG_RESPONSE_TIME("avg_response_time", "the number is  number of response time");
+    AVG_RESPONSE_TIME("avg_response_time", "the number is number of response time"),
+
+    /**
+     * JDK11存储其他类型编译代码的codeCache初始值
+     */
+    NON_NMETHODS_INIT("non_nmethods_init", "the number is init of non_nmethods"),
+
+    /**
+     * JDK11存储其他类型编译代码的codeCache使用值
+     */
+    NON_NMETHODS_USED("non_nmethods_used", "the number is used of non_nmethods"),
+
+    /**
+     * JDK11存储其他类型编译代码的codeCache最大值
+     */
+    NON_NMETHODS_MAX("non_nmethods_max", "the number is max of non_nmethods"),
+
+    /**
+     * JDK11存储其他类型编译代码的codeCache提交值
+     */
+    NON_NMETHODS_COMMITTED("non_nmethods_committed", "the number is committed of non_nmethods"),
+
+    /**
+     * JDK11存储经过性能分析的编译代码的codeCache初始值
+     */
+    PROFILED_NMETHODS_INIT("profiled_nmethods_init", "the number is init of profiled nmethods"),
+
+    /**
+     * JDK11存储经过性能分析的编译代码的codeCache使用值
+     */
+    PROFILED_NMETHODS_USED("profiled_nmethods_used", "the number is used of profiled nmethods"),
+
+    /**
+     * JDK11存储经过性能分析的编译代码的codeCache最大值
+     */
+    PROFILED_NMETHODS_MAX("profiled_nmethods_max", "the number is max of profiled nmethods"),
+
+    /**
+     * JDK11存储经过性能分析的编译代码的codeCache提交值
+     */
+    PROFILED_NMETHODS_COMMITTED("profiled_nmethods_committed", "the number is committed of profiled nmethods"),
+
+    /**
+     * JDK11存储未经过性能分析的编译代码的codeCache初始值
+     */
+    NON_PROFILED_NMETHODS_INIT("non_profiled_nmethods_init", "the number is init of non-profiled nmethods"),
+
+    /**
+     * JDK11存储未经过性能分析的编译代码的codeCache使用值
+     */
+    NON_PROFILED_NMETHODS_USED("non_profiled_nmethods_used", "the number is used of non-profiled nmethods"),
+
+    /**
+     * JDK11存储未经过性能分析的编译代码的codeCache最大值
+     */
+    NON_PROFILED_NMETHODS_MAX("non_profiled_nmethods_max", "the number is max of non-profiled nmethods"),
+
+    /**
+     * JDK11存储未经过性能分析的编译代码的codeCache提交值
+     */
+    NON_PROFILED_NMETHODS_COMMITTED("non_profiled_nmethods_committed",
+            "the number is committed of non-profiled nmethods"),
+
+    /**
+     * JDK11的Epsilon收集器初始值
+     */
+    EPSILON_HEAP_INIT("epsilon_heap_init", "the number is init of Epsilon Heap"),
+
+    /**
+     * JDK11的Epsilon收集器使用值
+     */
+    EPSILON_HEAP_USED("epsilon_heap_used", "the number is used of Epsilon Heap"),
+
+    /**
+     * JDK11的Epsilon收集器最大值
+     */
+    EPSILON_HEAP_MAX("epsilon_heap_max", "the number is max of Epsilon Heap"),
+
+    /**
+     * JDK11的Epsilon收集器提交值
+     */
+    EPSILON_HEAP_COMMITTED("epsilon_heap_committed", "the number is committed of Epsilon Heap");
 
     /**
      * 名称
