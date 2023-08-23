@@ -34,6 +34,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 import org.springframework.cloud.client.discovery.composite.reactive.ReactiveCompositeDiscoveryClient;
+
 import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
@@ -67,8 +68,6 @@ public class DiscoveryClientServiceInterceptorTest extends BaseRegistryTest<Disc
         services.add("test1");
         services.add("test2");
         Mockito.when(registerCenterService.getServices()).thenReturn(services);
-        Mockito.when(client.getServices()).thenReturn(originServices);
-        Mockito.when(reactiveCompositeDiscoveryClient.getServices()).thenReturn(Flux.fromIterable(originServices));
     }
 
     @After
@@ -82,22 +81,27 @@ public class DiscoveryClientServiceInterceptorTest extends BaseRegistryTest<Disc
 
     @Test
     public void doBefore() throws NoSuchMethodException {
+        // isAvailable为true的普通场景
         RegisterContext.INSTANCE.setAvailable(true);
         REGISTER_CONFIG.setEnableSpringRegister(true);
         REGISTER_CONFIG.setOpenMigration(true);
-        final ExecuteContext context = interceptor.doBefore(buildContext(client, null));
-        Assert.assertTrue(context.isSkip());
+        final ExecuteContext context = interceptor.doAfter(buildContext(client, null, originServices));
         Assert.assertTrue(context.getResult() instanceof List);
         Assert.assertEquals(((List<?>) context.getResult()).size(), originServices.size() + services.size());
 
-        // 测试flux
-        final ExecuteContext fluxContext = interceptor.doBefore(buildContext(reactiveCompositeDiscoveryClient, null));
-        Assert.assertTrue(fluxContext.isSkip());
+        // isAvailable为true的isWebfLux场景
+        final ExecuteContext fluxContext = interceptor.doAfter(
+                buildContext(reactiveCompositeDiscoveryClient, null, Flux.fromIterable(originServices)));
         Assert.assertTrue(fluxContext.getResult() instanceof Flux);
         final List<?> block = ((Flux<?>) fluxContext.getResult()).collectList().block();
         Assert.assertNotNull(block);
         Assert.assertEquals(block.size(), originServices.size() + services.size());
+
+        // isAvailable为false的普通场景
         RegisterContext.INSTANCE.setAvailable(false);
+        final ExecuteContext NotAvailableContext = interceptor.doBefore(
+                buildContext(client, null));
+        Assert.assertTrue(NotAvailableContext.isSkip());
         REGISTER_CONFIG.setEnableSpringRegister(false);
         REGISTER_CONFIG.setOpenMigration(false);
     }

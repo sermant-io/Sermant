@@ -64,7 +64,6 @@ public abstract class BaseRegistryTest<T extends Interceptor> {
                 RegisterServiceCommonConfig.class)).thenReturn(COMMON_CONFIG);
         pluginServiceManagerMockedStatic = Mockito.mockStatic(PluginServiceManager.class);
         serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
-
     }
 
     @AfterClass
@@ -79,7 +78,6 @@ public abstract class BaseRegistryTest<T extends Interceptor> {
     }
 
     /**
-     *
      * @return 测试拦截器
      */
     protected abstract T getInterceptor();
@@ -98,12 +96,29 @@ public abstract class BaseRegistryTest<T extends Interceptor> {
      * 构建基本的context
      *
      * @param arguments 参数
-     * @param target  对象
+     * @param target 对象
      * @return context
      * @throws NoSuchMethodException 不会抛出
      */
     protected ExecuteContext buildContext(Object target, Object[] arguments) throws NoSuchMethodException {
         return ExecuteContext.forMemberMethod(target, String.class.getDeclaredMethod("trim"),
                 arguments, null, null);
+    }
+
+    /**
+     * 构建基本的context
+     *
+     * @param arguments 参数
+     * @param target 对象
+     * @param result ExecuteContext的result
+     * @return context
+     * @throws NoSuchMethodException 不会抛出
+     */
+    protected ExecuteContext buildContext(Object target, Object[] arguments, Object result)
+            throws NoSuchMethodException {
+        ExecuteContext context = ExecuteContext.forMemberMethod(target, String.class.getDeclaredMethod("trim"),
+                arguments, null, null);
+        context.changeResult(result);
+        return context;
     }
 }

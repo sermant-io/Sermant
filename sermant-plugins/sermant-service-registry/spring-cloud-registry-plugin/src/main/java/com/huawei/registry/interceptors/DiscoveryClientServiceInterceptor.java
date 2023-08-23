@@ -23,14 +23,11 @@ import com.huawei.registry.support.InstanceInterceptorSupport;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
-import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import reactor.core.publisher.Flux;
 
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,43 +40,43 @@ import java.util.stream.Collectors;
 public class DiscoveryClientServiceInterceptor extends InstanceInterceptorSupport {
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
-        if (isMarked()) {
+        if (RegisterContext.INSTANCE.isAvailable()
+                && !RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()) {
             return context;
         }
-        try {
-            mark();
-            final RegisterCenterService service = PluginServiceManager.getPluginService(RegisterCenterService.class);
-            final List<String> services = new ArrayList<>(service.getServices());
-            final Object target = context.getObject();
-            context.skip(isWebfLux(target) ? getServicesWithFlux(services, target) : getServices(services, target));
-        } finally {
-            unMark();
-        }
+        final Object target = context.getObject();
+        context.skip(isWebfLux(target) ? Flux.fromIterable(Collections.emptyList()) : Collections.emptyList());
         return context;
     }
 
-    private Flux<String> getServicesWithFlux(List<String> services, Object target) {
-        return Flux.fromIterable(getServices(services, target));
+    @Override
+    public ExecuteContext doAfter(ExecuteContext context) {
+        final RegisterCenterService service = PluginServiceManager.getPluginService(RegisterCenterService.class);
+        final List<String> services = new ArrayList<>(service.getServices());
+        final Object target = context.getObject();
+        final Object contextResult = context.getResult();
+        context.changeResult(
+                isWebfLux(target) ? getServicesWithFlux(services, target, contextResult) : getServices(services,
+                        target, contextResult));
+        return context;
     }
 
-    private List<String> getServices(List<String> services, Object target) {
-        if (!RegisterContext.INSTANCE.isAvailable()
-                || RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()) {
-            return services;
-        }
+    private Flux<String> getServicesWithFlux(List<String> services, Object target, Object contextResult) {
+        return Flux.fromIterable(getServices(services, target, contextResult));
+    }
 
+    private List<String> getServices(List<String> services, Object target, Object contextResult) {
         // 合并两个注册中心
         if (isWebfLux(target)) {
-            ReactiveDiscoveryClient reactiveDiscoveryClient = (ReactiveDiscoveryClient) target;
-            final Flux<String> originServicesFlux = reactiveDiscoveryClient.getServices();
-            final List<String> originServices = originServicesFlux.collectList().block();
-            if (originServices == null) {
+            final Flux<String> originServicesFlux = (Flux<String>) contextResult;
+            final List<String> originServices = new ArrayList<>();
+            originServicesFlux.collectList().subscribe(originServices::addAll);
+            if (originServices.size() == 0) {
                 return services;
             }
             services.addAll(originServices);
         } else {
-            final DiscoveryClient discoveryClient = (DiscoveryClient) target;
-            services.addAll(discoveryClient.getServices());
+            services.addAll((List<String>) contextResult);
         }
         return services.stream().distinct().collect(Collectors.toList());
     }

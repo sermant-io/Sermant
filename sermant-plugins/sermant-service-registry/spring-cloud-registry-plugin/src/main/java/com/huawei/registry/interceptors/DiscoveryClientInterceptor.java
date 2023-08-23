@@ -23,23 +23,18 @@ import com.huawei.registry.services.RegisterCenterService;
 import com.huawei.registry.support.InstanceInterceptorSupport;
 import com.huawei.registry.utils.HostUtils;
 
-import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
-import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import reactor.core.publisher.Flux;
 
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient;
 import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -49,41 +44,56 @@ import java.util.stream.Collectors;
  * @since 2021-12-13
  */
 public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
+    private static final String SERVICE_ID = "serviceId";
+
+    private static final String MICRO_SERVICE_INSTANCES = "microServiceInstances";
 
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
-        if (isMarked()) {
+        String serviceId = (String) context.getArguments()[0];
+        final RegisterCenterService service = PluginServiceManager.getPluginService(RegisterCenterService.class);
+        final List<MicroServiceInstance> microServiceInstances = service.getServerList(serviceId);
+        if (microServiceInstances.isEmpty()) {
             return context;
         }
-        try {
-            mark();
-            String serviceId = (String) context.getArguments()[0];
-            final RegisterCenterService service = PluginServiceManager.getPluginService(RegisterCenterService.class);
-            final List<MicroServiceInstance> microServiceInstances = service.getServerList(serviceId);
+        context.setLocalFieldValue(SERVICE_ID, serviceId);
+        context.setLocalFieldValue(MICRO_SERVICE_INSTANCES, microServiceInstances);
+        if (RegisterContext.INSTANCE.isAvailable()
+                && !RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()) {
+            return context;
+        }
+        final Object target = context.getObject();
+        context.skip(isWebfLux(target) ? Flux.fromIterable(Collections.emptyList())
+                : Collections.emptyList());
+        return context;
+    }
+
+    @Override
+    public ExecuteContext doAfter(ExecuteContext context) {
+        final String serviceId = (String) context.getLocalFieldValue(SERVICE_ID);
+        final List<MicroServiceInstance> microServiceInstances =
+                (List<MicroServiceInstance>) context.getLocalFieldValue(MICRO_SERVICE_INSTANCES);
+        if (microServiceInstances != null && !microServiceInstances.isEmpty()) {
             final Object target = context.getObject();
-            if (!microServiceInstances.isEmpty()) {
-                context.skip(isWebfLux(target) ? convertAndMergeWithFlux(microServiceInstances, serviceId, target)
-                        : convertAndMerge(microServiceInstances, serviceId, target));
-            }
-        } finally {
-            unMark();
+            final Object contextResult = context.getResult();
+            context.changeResult(
+                    isWebfLux(target) ? convertAndMergeWithFlux(microServiceInstances, serviceId, target, contextResult)
+                            : convertAndMerge(microServiceInstances, serviceId, target, contextResult));
         }
         return context;
     }
 
-    private Flux<ServiceInstance> convertAndMergeWithFlux(List<MicroServiceInstance> microServiceInstances,
-            String serviceId, Object target) {
-        return Flux.fromIterable(convertAndMerge(microServiceInstances, serviceId, target));
+    private Flux<ServiceInstance> convertAndMergeWithFlux(
+            List<MicroServiceInstance> microServiceInstances,
+            String serviceId, Object target, Object contextResult) {
+        return Flux.fromIterable(convertAndMerge(microServiceInstances, serviceId, target, contextResult));
     }
 
-    private List<ServiceInstance> convertAndMerge(List<MicroServiceInstance> microServiceInstances, String serviceId,
-            Object target) {
+    private List<ServiceInstance> convertAndMerge(List<MicroServiceInstance> microServiceInstances,
+            String serviceId,
+            Object target, Object contextResult) {
         List<ServiceInstance> result = new ArrayList<>(microServiceInstances.size());
-        if (RegisterContext.INSTANCE.isAvailable()
-                && !RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter()) {
-            result.addAll(queryOriginInstances(target, serviceId));
-        }
+        result.addAll(queryOriginInstances(target, contextResult));
         for (MicroServiceInstance microServiceInstance : microServiceInstances) {
             result.removeIf(originServiceInstance ->
                     HostUtils.isSameInstance(originServiceInstance.getHost(), originServiceInstance.getPort(),
@@ -94,21 +104,15 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
         return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    private List<ServiceInstance> queryOriginInstances(Object target, String serviceId) {
-        try {
-            if (target instanceof CompositeDiscoveryClient) {
-                final CompositeDiscoveryClient discoveryClient = (CompositeDiscoveryClient) target;
-                return discoveryClient.getInstances(serviceId);
-            }
-            if (isWebfLux(target)) {
-                ReactiveDiscoveryClient reactiveDiscoveryClient = (ReactiveDiscoveryClient) target;
-                final Flux<ServiceInstance> instances = reactiveDiscoveryClient.getInstances(serviceId);
-                return instances.collectList().block();
-            }
-        } catch (Exception exception) {
-            LOGGER.warning(String.format(Locale.ENGLISH,
-                    "Query Instances from origin register center failed, may be it is not available! reason: %s",
-                    exception.getMessage()));
+    private List<ServiceInstance> queryOriginInstances(Object target, Object contextResult) {
+        if (target instanceof CompositeDiscoveryClient) {
+            return contextResult == null ? Collections.emptyList() : (List<ServiceInstance>) contextResult;
+        }
+        if (isWebfLux(target)) {
+            List<ServiceInstance> resultList = new ArrayList<>();
+            final Flux<ServiceInstance> instances = (Flux<ServiceInstance>) contextResult;
+            instances.collectList().subscribe(resultList::addAll);
+            return resultList;
         }
         return Collections.emptyList();
     }
