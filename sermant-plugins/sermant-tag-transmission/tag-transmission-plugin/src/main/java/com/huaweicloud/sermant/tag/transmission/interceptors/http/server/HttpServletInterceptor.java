@@ -35,6 +35,11 @@ import javax.servlet.http.HttpServletRequest;
  * @since 2023-07-18
  */
 public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServletRequest> {
+    /**
+     * 过滤一次处理过程中拦截器的多次调用
+     */
+    protected static final ThreadLocal<Boolean> LOCK_MARK = new ThreadLocal<>();
+
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
         if (LOCK_MARK.get() != null) {

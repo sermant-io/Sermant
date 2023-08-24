@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
-import com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq.RocketmqConsumerInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.BaseInterceptorTest;
 
 import org.apache.rocketmq.common.message.Message;
 import org.junit.Assert;
@@ -44,10 +44,10 @@ import java.util.Map;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(RocketmqConsumerInterceptor.class)
-public class RocketmqConsumerInterceptorInterceptorTest extends BaseInterceptorTest {
+public class RocketmqConsumerInterceptorTest extends BaseInterceptorTest {
     private final RocketmqConsumerInterceptor interceptor;
 
-    public RocketmqConsumerInterceptorInterceptorTest() throws Exception {
+    public RocketmqConsumerInterceptorTest() throws Exception {
         RocketmqConsumerInterceptor interceptorBase = new RocketmqConsumerInterceptor();
         interceptor = PowerMockito.spy(interceptorBase);
         PowerMockito.doReturn(true).when(interceptor, "isRocketMqStackTrace", Mockito.any());
@@ -101,7 +101,7 @@ public class RocketmqConsumerInterceptorInterceptorTest extends BaseInterceptorT
         tags.put("id", Collections.singletonList("testId001"));
         context = buildContext(addHeaders, tags);
         interceptor.before(context);
-        Assert.assertEquals(TrafficUtils.getTrafficTag().getTag().get("id").get(0), "testId001");
+        Assert.assertEquals("testId001", TrafficUtils.getTrafficTag().getTag().get("id").get(0));
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("name"));
 
         // 第二次消费，测试tags是否污染其他消费
@@ -112,7 +112,7 @@ public class RocketmqConsumerInterceptorInterceptorTest extends BaseInterceptorT
         context = buildContext(addHeaders, tags);
         interceptor.before(context);
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("id"));
-        Assert.assertEquals(TrafficUtils.getTrafficTag().getTag().get("name").get(0), "testName001");
+        Assert.assertEquals("testName001", TrafficUtils.getTrafficTag().getTag().get("name").get(0));
 
         // 测试TagTransmissionConfig开关关闭时
         TrafficUtils.removeTrafficTag();

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.http.client.jdk;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
-import com.huaweicloud.sermant.tag.transmission.interceptors.http.client.httpclient.HttpClient4xInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.BaseInterceptorTest;
 
-import org.apache.http.HttpRequest;
-import org.apache.http.client.methods.HttpRequestBase;
+import sun.net.www.MessageHeader;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,23 +32,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试HttpClient4xInterceptor
+ * JdkHttpClientInterceptor 单元测试
  *
- * @author tangle
- * @since 2023-07-27
+ * @author lilai
+ * @since 2023-08-17
  */
-public class HttpClient4XInterceptorInterceptorTest extends BaseInterceptorTest {
-    private final HttpClient4xInterceptor interceptor;
+public class JdkHttpClientInterceptorTest extends BaseInterceptorTest {
+    private final JdkHttpClientInterceptor interceptor;
 
     private final Object[] arguments;
 
-    public HttpClient4XInterceptorInterceptorTest() {
-        interceptor = new HttpClient4xInterceptor();
-        arguments = new Object[2];
+    public JdkHttpClientInterceptorTest() {
+        this.interceptor = new JdkHttpClientInterceptor();
+        this.arguments = new Object[1];
     }
 
     @Test
-    public void testClient() {
+    public void testHttpClient3() {
         ExecuteContext context;
         ExecuteContext resContext;
         Map<String, List<String>> addHeaders = new HashMap<>();
@@ -59,15 +59,18 @@ public class HttpClient4XInterceptorInterceptorTest extends BaseInterceptorTest 
         context = buildContext(addHeaders);
         TrafficUtils.updateTrafficTag(tags);
         resContext = interceptor.before(context);
-        Assert.assertEquals(((HttpRequest) resContext.getArguments()[1]).getAllHeaders().length, 0);
+        Assert.assertEquals(0, ((MessageHeader) resContext.getArguments()[0]).getHeaders().size());
+        TrafficUtils.removeTrafficTag();
 
         // 有Headers无Tags
         addHeaders.put("defaultKey", Collections.singletonList("defaultValue"));
         context = buildContext(addHeaders);
         TrafficUtils.updateTrafficTag(tags);
         resContext = interceptor.before(context);
-        Assert.assertEquals(((HttpRequest) resContext.getArguments()[1]).getAllHeaders().length, 1);
-        Assert.assertEquals(((HttpRequest) resContext.getArguments()[1]).getAllHeaders()[0].getValue(), "defaultValue");
+        Assert.assertEquals(1, ((MessageHeader) resContext.getArguments()[0]).getHeaders().size());
+        Assert.assertEquals("defaultValue",
+                ((MessageHeader) resContext.getArguments()[0]).getHeaders().get("defaultKey").get(0));
+        TrafficUtils.removeTrafficTag();
 
         // 有Headers有Tags
         List<String> ids = new ArrayList<>();
@@ -77,28 +80,31 @@ public class HttpClient4XInterceptorInterceptorTest extends BaseInterceptorTest 
         context = buildContext(addHeaders);
         TrafficUtils.updateTrafficTag(tags);
         resContext = interceptor.before(context);
-        Assert.assertEquals(((HttpRequest) resContext.getArguments()[1]).getHeaders("id").length, 2);
-        Assert.assertEquals(((HttpRequest) resContext.getArguments()[1]).getHeaders("id")[0].getValue(), "testId001");
+        Assert.assertEquals(2, ((MessageHeader) resContext.getArguments()[0]).getHeaders().get("id").size());
+        Assert.assertEquals("testId002",
+                ((MessageHeader) resContext.getArguments()[0]).getHeaders().get("id").get(0));
+        TrafficUtils.removeTrafficTag();
 
         // 测试TagTransmissionConfig开关关闭时
         tagTransmissionConfig.setEnabled(false);
+        addHeaders.clear();
+        context = buildContext(addHeaders);
+        TrafficUtils.updateTrafficTag(tags);
         resContext = interceptor.before(context);
-        Assert.assertEquals(context, resContext);
+        Assert.assertEquals(0, ((MessageHeader) resContext.getArguments()[0]).getHeaders().size());
+        tagTransmissionConfig.setEnabled(true);
+        TrafficUtils.removeTrafficTag();
     }
 
     private ExecuteContext buildContext(Map<String, List<String>> addHeaders) {
-        HttpRequestBase httpRequestBase = new HttpRequestBase() {
-            @Override
-            public String getMethod() {
-                return null;
-            }
-        };
+        MessageHeader messageHeader = new MessageHeader();
         for (Map.Entry<String, List<String>> entry : addHeaders.entrySet()) {
             for (String val : entry.getValue()) {
-                httpRequestBase.addHeader(entry.getKey(), val);
+                messageHeader.add(entry.getKey(), val);
             }
         }
-        arguments[1] = httpRequestBase;
+        arguments[0] = messageHeader;
+
         return ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
     }
 }

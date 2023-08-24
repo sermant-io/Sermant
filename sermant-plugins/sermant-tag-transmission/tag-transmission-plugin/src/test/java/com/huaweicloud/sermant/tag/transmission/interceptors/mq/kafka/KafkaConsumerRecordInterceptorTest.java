@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors;
+package com.huaweicloud.sermant.tag.transmission.interceptors.mq.kafka;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
-import com.huaweicloud.sermant.tag.transmission.interceptors.mq.kafka.KafkaConsumerRecordInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.BaseInterceptorTest;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Headers;
@@ -37,10 +37,10 @@ import java.util.Map;
  * @author tangle
  * @since 2023-07-27
  */
-public class KafkaConsumerRecordInterceptorInterceptorTest extends BaseInterceptorTest {
+public class KafkaConsumerRecordInterceptorTest extends BaseInterceptorTest {
     private final KafkaConsumerRecordInterceptor interceptor;
 
-    public KafkaConsumerRecordInterceptorInterceptorTest() {
+    public KafkaConsumerRecordInterceptorTest() {
         interceptor = new KafkaConsumerRecordInterceptor();
     }
 
@@ -71,7 +71,7 @@ public class KafkaConsumerRecordInterceptorInterceptorTest extends BaseIntercept
         tags.put("id", ids);
         context = buildContext(addHeaders, tags);
         interceptor.before(context);
-        Assert.assertEquals(TrafficUtils.getTrafficTag().getTag().get("id").size(), 2);
+        Assert.assertEquals(2, TrafficUtils.getTrafficTag().getTag().get("id").size());
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("name"));
 
         // 第二次消费，测试tags是否污染其他消费
@@ -82,7 +82,7 @@ public class KafkaConsumerRecordInterceptorInterceptorTest extends BaseIntercept
         context = buildContext(addHeaders, tags);
         interceptor.before(context);
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("id"));
-        Assert.assertEquals(TrafficUtils.getTrafficTag().getTag().get("name").size(), 1);
+        Assert.assertEquals(1, TrafficUtils.getTrafficTag().getTag().get("name").size());
 
         // 测试TagTransmissionConfig开关关闭时
         TrafficUtils.removeTrafficTag();

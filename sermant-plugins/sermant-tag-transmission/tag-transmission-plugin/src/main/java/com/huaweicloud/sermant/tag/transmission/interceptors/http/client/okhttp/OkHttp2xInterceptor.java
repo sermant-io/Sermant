@@ -32,6 +32,11 @@ import java.util.List;
  * @since 2023-08-08
  */
 public class OkHttp2xInterceptor extends AbstractClientInterceptor<Builder> {
+    /**
+     * 过滤一次处理过程中拦截器的多次调用
+     */
+    protected static final ThreadLocal<Boolean> LOCK_MARK = new ThreadLocal<>();
+
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
         if (LOCK_MARK.get() != null) {

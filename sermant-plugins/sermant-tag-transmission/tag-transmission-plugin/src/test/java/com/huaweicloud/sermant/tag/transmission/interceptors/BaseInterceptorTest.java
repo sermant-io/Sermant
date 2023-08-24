@@ -57,6 +57,7 @@ public class BaseInterceptorTest {
 
     @After
     public void after() {
+        TrafficUtils.removeTrafficTag();
         pluginConfigManagerMockedStatic.close();
     }
 }
