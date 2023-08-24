@@ -26,6 +26,7 @@
         <powermock.version>2.0.9</powermock.version>
         <dubbo.version>3.2.0</dubbo.version>
         <alibaba.dubbo.version>2.6.12</alibaba.dubbo.version>
+        <sofa-rpc.version>5.4.0</sofa-rpc.version>
     </properties>
 
     <dependencies>
@@ -78,6 +79,12 @@
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo</artifactId>
             <version>${dubbo.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>sofa-rpc-all</artifactId>
+            <version>${sofa-rpc.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
