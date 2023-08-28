@@ -28,6 +28,7 @@
         <gpg.plugin.version>3.0.1</gpg.plugin.version>
         <javadoc.plugin.version>3.3.2</javadoc.plugin.version>
         <nexus.staging.plugin.version>1.6.7</nexus.staging.plugin.version>
+        <nacos.version>2.1.0</nacos.version>
     </properties>
 
     <dependencies>
@@ -81,6 +82,11 @@
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
             <version>${zookeeper.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-client</artifactId>
+            <version>${nacos.version}</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,35 +14,23 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.core.service.dynamicconfig.common;
-
+package com.huaweicloud.sermant.implement.service.dynamicconfig.nacos;
 
 /**
+ * Nacos连接异常
  *
- * Enum for DynamicConfigType,
- * Currently support ZooKeeper, Kie, Nop.
- * Probably will support Nacos, etcd in the future.
- *
+ * @author tangle
+ * @since 2023-08-17
  */
-public enum DynamicConfigServiceType {
+public class NacosInitException extends RuntimeException {
+    private static final long serialVersionUID = -5916948812185593365L;
 
     /**
-     * zookeeper 配置中心
+     * nacos连接失败
+     *
+     * @param connectString 连接字符串
      */
-    ZOOKEEPER,
-
-    /**
-     * servicecomb-kie 配置中心
-     */
-    KIE,
-
-    /**
-     * Nacos 配置中心
-     */
-    NACOS,
-    /**
-     * 配置中心无实现
-     */
-    NOP;
-
+    public NacosInitException(String connectString) {
+        super("Connect to " + connectString + " failed. ");
+    }
 }
