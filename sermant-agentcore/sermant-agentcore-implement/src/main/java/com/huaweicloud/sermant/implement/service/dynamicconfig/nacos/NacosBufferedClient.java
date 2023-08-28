@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.config.DynamicConfig;
 import com.huaweicloud.sermant.core.utils.AesUtil;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.PropertyKeyConst;
@@ -28,6 +29,7 @@ import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
 
 import java.io.Closeable;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -193,10 +195,19 @@ public class NacosBufferedClient implements Closeable {
     private Properties createProperties(String connectString, int sessionTimeout, String namespace, String userName,
             String password) {
         Properties properties = this.createProperties(connectString, sessionTimeout, namespace);
-        properties.setProperty(PropertyKeyConst.USERNAME,
-                String.valueOf(AesUtil.decrypt(CONFIG.getPrivateKey(), userName)));
-        properties.setProperty(PropertyKeyConst.PASSWORD,
-                String.valueOf(AesUtil.decrypt(CONFIG.getPrivateKey(), password)));
+        if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password) || StringUtils.isEmpty(
+                CONFIG.getPrivateKey())) {
+            LOGGER.log(Level.SEVERE, "Nacos username, password or privateKey is Empty");
+            return properties;
+        }
+        Optional<String> userNameOptinal = AesUtil.decrypt(CONFIG.getPrivateKey(), userName);
+        Optional<String> passWordOptinal = AesUtil.decrypt(CONFIG.getPrivateKey(), password);
+        if (!userNameOptinal.isPresent() || !passWordOptinal.isPresent()) {
+            LOGGER.log(Level.SEVERE, "Nacos username and password parsing failed");
+            return properties;
+        }
+        properties.setProperty(PropertyKeyConst.USERNAME, userNameOptinal.get());
+        properties.setProperty(PropertyKeyConst.PASSWORD, passWordOptinal.get());
         return properties;
     }
 
@@ -229,7 +240,11 @@ public class NacosBufferedClient implements Closeable {
     private boolean connect(Properties properties) throws NacosException {
         int tryNum = 0;
         while (tryNum++ <= CONFIG.getConnectRetryTimes()) {
+            // nacos的客户端初始化时候会获取当前线程的类加载器，此处需要更改，并且随后改回原本类加载器
+            ClassLoader tempClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
             configService = NacosFactory.createConfigService(properties);
+            Thread.currentThread().setContextClassLoader(tempClassLoader);
             if (KEY_CONNECTED.equals(configService.getServerStatus())) {
                 return true;
             }
