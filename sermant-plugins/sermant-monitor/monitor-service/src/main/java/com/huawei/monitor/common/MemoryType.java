@@ -159,7 +159,14 @@ public enum MemoryType {
      */
     EPSILON_HEAP("Epsilon Heap", MetricEnum.EPSILON_HEAP_INIT, MetricEnum.EPSILON_HEAP_USED,
             MetricEnum.EPSILON_HEAP_MAX,
-            MetricEnum.EPSILON_HEAP_COMMITTED);
+            MetricEnum.EPSILON_HEAP_COMMITTED),
+
+    /**
+     * JDK17的Shenandoah收集器指标枚举
+     */
+    SHENANDOAH("Shenandoah", MetricEnum.SHENANDOAH_INIT, MetricEnum.SHENANDOAH_USED,
+            MetricEnum.SHENANDOAH_MAX,
+            MetricEnum.SHENANDOAH_COMMITTED);
 
     /**
      * 类型

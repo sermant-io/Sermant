@@ -247,9 +247,10 @@ public class BufferedAgentBuilder {
 
                 @Override
                 public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription,
-                        ClassLoader classLoader, JavaModule module) {
+                        ClassLoader classLoader,
+                        JavaModule module, ProtectionDomain protectionDomain) {
                     return new DefaultTransformer(abstractPluginDeclarer.getInterceptDeclarers(classLoader))
-                            .transform(builder, typeDescription, classLoader, module);
+                            .transform(builder, typeDescription, classLoader, module, protectionDomain);
                 }
 
                 @Override

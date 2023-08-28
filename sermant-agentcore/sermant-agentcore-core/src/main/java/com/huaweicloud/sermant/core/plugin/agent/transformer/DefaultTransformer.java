@@ -31,10 +31,12 @@ import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.method.MethodList;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
 
 import java.lang.reflect.InvocationTargetException;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -68,12 +70,13 @@ public class DefaultTransformer implements AgentBuilder.Transformer {
     }
 
     @Override
-    public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDesc,
-            ClassLoader classLoader, JavaModule module) {
+    public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription,
+            ClassLoader classLoader,
+            JavaModule module, ProtectionDomain protectionDomain) {
         if (interceptDeclarers == null || interceptDeclarers.length == 0) {
             return builder;
         }
-        return enhanceMethods(builder, typeDesc, classLoader);
+        return enhanceMethods(builder, typeDescription, classLoader);
     }
 
     /**

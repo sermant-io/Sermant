@@ -24,10 +24,11 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDescription;
 import com.huaweicloud.sermant.core.plugin.agent.transformer.DefaultTransformer;
 
 import net.bytebuddy.description.type.TypeDescription;
-import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.utility.JavaModule;
 
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -117,10 +118,11 @@ public class PluginCollectorManager {
             }
 
             @Override
-            public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,
-                    ClassLoader classLoader, JavaModule module) {
+            public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription,
+                    ClassLoader classLoader,
+                    JavaModule module, ProtectionDomain protectionDomain) {
                 return new DefaultTransformer(declarer.getInterceptDeclarers(classLoader))
-                        .transform(builder, typeDescription, classLoader, module);
+                        .transform(builder, typeDescription, classLoader, module, protectionDomain);
             }
         };
     }
