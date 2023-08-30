@@ -27,6 +27,7 @@
         <dubbo.version>3.2.0</dubbo.version>
         <alibaba.dubbo.version>2.6.12</alibaba.dubbo.version>
         <sofa-rpc.version>5.4.0</sofa-rpc.version>
+        <servicecomb-java-chassis.version>2.6.0</servicecomb-java-chassis.version>
     </properties>
 
     <dependencies>
@@ -87,6 +88,12 @@
             <groupId>com.alipay.sofa</groupId>
             <artifactId>sofa-rpc-all</artifactId>
             <version>${sofa-rpc.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicecomb</groupId>
+            <artifactId>java-chassis-core</artifactId>
+            <version>${servicecomb-java-chassis.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
