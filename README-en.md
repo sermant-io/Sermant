@@ -44,7 +44,7 @@ Below is a simple demo that guides new users to use Sermant in just 4 steps.
 
 ### Preparation
 
-- [Download](https://github.com/huaweicloud/Sermant/releases) Sermant package
+- [Download](https://github.com/huaweicloud/Sermant/releases/download/v1.1.0/sermant-1.1.0.tar.gz) Sermant package (The current version recommended is 1.1.0)
 - [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo application
 - [Download](https://zookeeper.apache.org/releases#download) and start zookeeper
 
@@ -83,7 +83,7 @@ java -jar sermant-backend-x.x.x.jar
 
 ### Start demo application
 
-Execute the following command in the `${path}/Sermant-examples/sermant-template/demo-application/target`directory：
+Execute the following command in the `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`directory：
 
 ```shell
 # linux mac

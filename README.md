@@ -44,7 +44,7 @@ Sermant中的JavaAgent广泛采用类隔离技术，以消除框架代码、插�
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant/releases) Sermant包
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.1.0/sermant-1.1.0.tar.gz) Sermant包（当前版本推荐1.1.0）
 - [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo应用
 - [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
 
@@ -84,7 +84,7 @@ java -jar sermant-backend-x.x.x.jar
 
 ### 启动demo应用
 
-在`${path}/Sermant-examples/sermant-template/demo-application/target`目录执行以下命令：
+在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`目录执行以下命令：
 
 ```shell
 # linux mac
