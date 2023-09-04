@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.implement.service.dynamicconfig;
 import com.huaweicloud.sermant.core.service.dynamicconfig.DynamicConfigService;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huaweicloud.sermant.implement.service.dynamicconfig.kie.KieDynamicConfigService;
+import com.huaweicloud.sermant.implement.service.dynamicconfig.nacos.NacosDynamicConfigService;
 import com.huaweicloud.sermant.implement.service.dynamicconfig.zookeeper.ZooKeeperDynamicConfigService;
 
 import java.util.List;
@@ -45,6 +46,9 @@ public class BufferedDynamicConfigService extends DynamicConfigService {
         switch (CONFIG.getServiceType()) {
             case KIE:
                 service = new KieDynamicConfigService();
+                break;
+            case NACOS:
+                service = new NacosDynamicConfigService();
                 break;
             default:
                 service = new ZooKeeperDynamicConfigService();
