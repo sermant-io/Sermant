@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
 import com.huaweicloud.sermant.tag.transmission.BaseTest;
 import com.huaweicloud.sermant.tag.transmission.RunnableAndCallable;
 import com.huaweicloud.sermant.tag.transmission.interceptors.crossthread.ExecutorInterceptor;
+import com.huaweicloud.sermant.tag.transmission.pojo.TrafficMessage;
 import com.huaweicloud.sermant.tag.transmission.wrapper.CallableWrapper;
 import com.huaweicloud.sermant.tag.transmission.wrapper.RunnableAndCallableWrapper;
 import com.huaweicloud.sermant.tag.transmission.wrapper.RunnableWrapper;
@@ -68,7 +69,8 @@ public class ExecutorInterceptorTest extends BaseTest {
         TrafficUtils.updateTrafficTag(Collections.singletonMap("foo", Collections.singletonList("bar")));
 
         // 测试已经包装过了
-        RunnableWrapper<?> runnableWrapper = new RunnableWrapper<>(null, null, null, false);
+        TrafficMessage trafficMessage = new TrafficMessage(null, null);
+        RunnableWrapper<?> runnableWrapper = new RunnableWrapper<>(null, trafficMessage, false, null);
         arguments[0] = runnableWrapper;
         interceptor.before(context);
         Assert.assertEquals(runnableWrapper, context.getArguments()[0]);

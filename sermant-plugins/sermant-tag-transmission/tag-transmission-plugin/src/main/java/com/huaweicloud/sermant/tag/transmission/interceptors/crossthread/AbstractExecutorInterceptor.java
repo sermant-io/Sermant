@@ -22,6 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.utils.tag.TrafficData;
 import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.pojo.TrafficMessage;
 import com.huaweicloud.sermant.tag.transmission.wrapper.CallableWrapper;
 import com.huaweicloud.sermant.tag.transmission.wrapper.RunnableAndCallableWrapper;
 import com.huaweicloud.sermant.tag.transmission.wrapper.RunnableWrapper;
@@ -61,54 +62,59 @@ public abstract class AbstractExecutorInterceptor extends AbstractInterceptor {
         if (trafficTag == null && trafficData == null) {
             return context;
         }
-
+        TrafficMessage trafficMessage = new TrafficMessage(trafficTag, trafficData);
+        Object executorObject = context.getObject();
+        String executorName = executorObject.getClass().getSimpleName();
         Object argument = arguments[0];
         if (argument instanceof RunnableAndCallableWrapper || argument instanceof RunnableWrapper
                 || argument instanceof CallableWrapper) {
             return context;
         }
         if (argument instanceof Runnable && argument instanceof Callable) {
-            return buildRunnableAndCallableWrapper(context, arguments, trafficTag, trafficData, argument);
+            return buildRunnableAndCallableWrapper(context, arguments, trafficMessage, argument, executorName);
         }
         if (argument instanceof Runnable) {
-            return buildRunnableWrapper(context, arguments, trafficTag, trafficData, argument);
+            return buildRunnableWrapper(context, arguments, trafficMessage, argument, executorName);
         }
         if (argument instanceof Callable) {
-            return buildCallableWrapper(context, arguments, trafficTag, trafficData, argument);
+            return buildCallableWrapper(context, arguments, trafficMessage, argument, executorName);
         }
         return context;
     }
 
-    private ExecuteContext buildCallableWrapper(ExecuteContext context, Object[] arguments, TrafficTag trafficTag,
-            TrafficData trafficData, Object argument) {
-        log(argument, trafficTag, trafficData, CallableWrapper.class.getCanonicalName());
-        arguments[0] = new CallableWrapper<>((Callable<?>) argument, trafficTag, trafficData,
-                cannotTransmit);
+    private ExecuteContext buildCallableWrapper(ExecuteContext context, Object[] arguments,
+            TrafficMessage trafficMessage,
+            Object argument,
+            String executorName) {
+        log(argument, trafficMessage, CallableWrapper.class.getCanonicalName());
+        arguments[0] = new CallableWrapper<>((Callable<?>) argument, trafficMessage,
+                cannotTransmit, executorName);
         return context;
     }
 
-    private ExecuteContext buildRunnableWrapper(ExecuteContext context, Object[] arguments, TrafficTag trafficTag,
-            TrafficData trafficData, Object argument) {
-        log(argument, trafficTag, trafficData, RunnableWrapper.class.getCanonicalName());
-        arguments[0] = new RunnableWrapper<>((Runnable) argument, trafficTag, trafficData,
-                cannotTransmit);
+    private ExecuteContext buildRunnableWrapper(ExecuteContext context, Object[] arguments,
+            TrafficMessage trafficMessage,
+            Object argument,
+            String executorName) {
+        log(argument, trafficMessage, RunnableWrapper.class.getCanonicalName());
+        arguments[0] = new RunnableWrapper<>((Runnable) argument, trafficMessage,
+                cannotTransmit, executorName);
         return context;
     }
 
     private ExecuteContext buildRunnableAndCallableWrapper(ExecuteContext context, Object[] arguments,
-            TrafficTag trafficTag,
-            TrafficData trafficData, Object argument) {
-        log(argument, trafficTag, trafficData, RunnableAndCallableWrapper.class.getCanonicalName());
+            TrafficMessage trafficMessage, Object argument, String executorName) {
+        log(argument, trafficMessage, RunnableAndCallableWrapper.class.getCanonicalName());
         arguments[0] = new RunnableAndCallableWrapper<>((Runnable) argument, (Callable<?>) argument,
-                trafficTag, trafficData, cannotTransmit);
+                trafficMessage, cannotTransmit, executorName);
         return context;
     }
 
-    private void log(Object argument, TrafficTag trafficTag, TrafficData trafficData, String wrapperClassName) {
+    private void log(Object argument, TrafficMessage trafficMessage, String wrapperClassName) {
         LOGGER.log(Level.FINE, "Class name is {0}, hash code is {1}, trafficTag is {2}, "
                         + "trafficData is {3}, will be converted to {4}.",
                 new Object[]{argument.getClass().getName(), Integer.toHexString(argument.hashCode()),
-                        trafficTag, trafficData, wrapperClassName});
+                        trafficMessage.getTrafficTag(), trafficMessage.getTrafficData(), wrapperClassName});
     }
 
     @Override
