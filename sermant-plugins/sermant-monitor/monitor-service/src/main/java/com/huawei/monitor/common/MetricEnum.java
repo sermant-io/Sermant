@@ -409,7 +409,27 @@ public enum MetricEnum {
     /**
      * JDK11的Epsilon收集器提交值
      */
-    EPSILON_HEAP_COMMITTED("epsilon_heap_committed", "the number is committed of Epsilon Heap");
+    EPSILON_HEAP_COMMITTED("epsilon_heap_committed", "the number is committed of Epsilon Heap"),
+
+    /**
+     * JDK17的Shenandoah收集器初始值
+     */
+    SHENANDOAH_INIT("shenandoah_init", "the number is init of Shenandoah"),
+
+    /**
+     * JDK17的Shenandoah收集器使用值
+     */
+    SHENANDOAH_USED("shenandoah_used", "the number is used of Shenandoah"),
+
+    /**
+     * JDK17的Shenandoah收集器最大值
+     */
+    SHENANDOAH_MAX("shenandoah_max", "the number is max of Shenandoah"),
+
+    /**
+     * JDK17的Shenandoah收集器提交值
+     */
+    SHENANDOAH_COMMITTED("shenandoah_committed", "the number is committed of Shenandoah");
 
     /**
      * 名称

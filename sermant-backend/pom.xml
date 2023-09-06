@@ -18,7 +18,7 @@
         <io.netty.version>4.1.86.Final</io.netty.version>
         <spring-boot.version>2.6.1</spring-boot.version>
         <protobuf-java.version>3.9.1</protobuf-java.version>
-        <lombok.version>1.18.12</lombok.version>
+        <lombok.version>1.18.22</lombok.version>
         <fastjson.version>1.2.83</fastjson.version>
         <commons-lang.version>2.6</commons-lang.version>
         <junit.version>4.13.1</junit.version>

@@ -43,7 +43,7 @@
         <sermant.basedir>${pom.basedir}/../..</sermant.basedir>
         <package.temp.dir>${sermant.basedir}/${sermant.name}-${project.version}</package.temp.dir>
 
-        <byte.buddy.version>1.10.14</byte.buddy.version>
+        <byte.buddy.version>1.12.19</byte.buddy.version>
 
         <shade.plugin.version>3.2.4</shade.plugin.version>
         <source.plugin.version>3.0.1</source.plugin.version>

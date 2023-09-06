@@ -49,7 +49,7 @@ import java.util.Set;
  */
 public class JvmCollectorService extends SwitchService implements PluginService {
     private static final Set<String> NEW_GEN_NAME_SET = new HashSet<>(Arrays.asList("PS Scavenge", "ParNew", "Copy",
-            "G1 Young Generation", "ZGC Cycles"));
+            "G1 Young Generation", "ZGC Cycles", "Shenandoah Cycles"));
 
     /**
      * JDK11中不分代的Epsilon GC的名称

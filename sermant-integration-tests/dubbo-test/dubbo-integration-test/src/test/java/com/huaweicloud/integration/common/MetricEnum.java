@@ -24,7 +24,6 @@ package com.huaweicloud.integration.common;
  * @since 2022-08-02
  */
 public enum MetricEnum {
-
     /**
      * JVM内存指标信息
      */
@@ -74,26 +73,6 @@ public enum MetricEnum {
      * 非堆内存提交
      */
     NON_HEAP_MEMORY_COMMITTED("non_heap_memory_committed", "the number is committed of non heap memory"),
-
-    /**
-     * codeCache初始值
-     */
-    CODE_CACHE_INIT("code_cache_init", "the number is init of code cache"),
-
-    /**
-     * codecCache 最大值
-     */
-    CODE_CACHE_MAX("code_cache_max", "the number is max of code cache"),
-
-    /**
-     * codeCache使用值
-     */
-    CODE_CACHE_USED("code_cache_used", "the number is used of code cache"),
-
-    /**
-     * codeCache提交值
-     */
-    CODE_CACHE_COMMITTED("code_cache_committed", "the committed is init of code cache"),
 
     /**
      * meta space 初始值
