@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.servicecomb;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 
 import org.apache.servicecomb.core.Invocation;
@@ -26,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * servicecombRPC provider端interceptor，支持servicecomb2.x版本
@@ -68,7 +70,11 @@ public class ServiceCombRpcProviderInterceptor extends AbstractServerInterceptor
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(Invocation invocation) {
         Map<String, List<String>> tag = new HashMap<>();
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        Set<String> keySet = invocation.getContext().keySet();
+        for (String key : keySet) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             String value = invocation.getContext().get(key);
             if (value != null) {
                 // consumer端使用servicecombrpc方式调用provider端

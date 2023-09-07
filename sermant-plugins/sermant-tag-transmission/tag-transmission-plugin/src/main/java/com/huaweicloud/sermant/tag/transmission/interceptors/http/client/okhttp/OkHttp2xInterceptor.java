@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.http.client.okhttp
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import com.squareup.okhttp.Request.Builder;
@@ -63,7 +64,10 @@ public class OkHttp2xInterceptor extends AbstractClientInterceptor<Builder> {
      */
     @Override
     protected void injectTrafficTag2Carrier(Builder builder) {
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        for (String key : TrafficUtils.getTrafficTag().getTag().keySet()) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
                 continue;

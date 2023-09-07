@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.dubbo;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 
 import com.alibaba.dubbo.rpc.Invoker;
@@ -27,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * dubbo流量标签透传的provider端拦截器，支持alibaba dubbo2.6.x版本
@@ -90,7 +92,11 @@ public class AlibabaDubboProviderInterceptor extends AbstractServerInterceptor<R
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(RpcInvocation invocation) {
         Map<String, List<String>> tag = new HashMap<>();
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        Set<String> keySet = invocation.getAttachments().keySet();
+        for (String key : keySet) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             String value = invocation.getAttachment(key);
 
             // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签

@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.http.client.httpcl
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import org.apache.commons.httpclient.HttpMethod;
@@ -54,7 +55,10 @@ public class HttpClient3xInterceptor extends AbstractClientInterceptor<HttpMetho
      */
     @Override
     protected void injectTrafficTag2Carrier(HttpMethod httpMethod) {
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        for (String key : TrafficUtils.getTrafficTag().getTag().keySet()) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
                 continue;

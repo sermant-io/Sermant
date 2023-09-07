@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.http.server;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 
 import java.util.Collections;
@@ -80,7 +81,12 @@ public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServle
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(HttpServletRequest httpServletRequest) {
         Map<String, List<String>> tagMap = new HashMap<>();
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        Enumeration<String> keyEnumeration = httpServletRequest.getHeaderNames();
+        while (keyEnumeration.hasMoreElements()) {
+            String key = keyEnumeration.nextElement();
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             Enumeration<String> valuesEnumeration = httpServletRequest.getHeaders(key);
             if (valuesEnumeration == null) {
                 continue;

@@ -19,12 +19,12 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.dubbo;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import org.apache.dubbo.rpc.RpcInvocation;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * dubbo流量标签透传consumer端的拦截器，支持dubbo2.7.x, 3.x版本
@@ -55,11 +55,15 @@ public class ApacheDubboConsumerInterceptor extends AbstractClientInterceptor<Rp
      */
     @Override
     protected void injectTrafficTag2Carrier(RpcInvocation invocation) {
-        for (Map.Entry<String, List<String>> entry : TrafficUtils.getTrafficTag().getTag().entrySet()) {
-            if (entry.getKey() == null || CollectionUtils.isEmpty(entry.getValue())) {
+        for (String key : TrafficUtils.getTrafficTag().getTag().keySet()) {
+            if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
-            invocation.setAttachment(entry.getKey(), entry.getValue().get(0));
+            List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
+            if (CollectionUtils.isEmpty(values)) {
+                continue;
+            }
+            invocation.setAttachment(key, values.get(0));
         }
     }
 

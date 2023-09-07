@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.mq.kafka;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -66,9 +67,11 @@ public class KafkaConsumerRecordInterceptor extends AbstractServerInterceptor<Co
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(ConsumerRecord<?, ?> consumerRecord) {
         Map<String, List<String>> headerMap = convertHeaders(consumerRecord);
-        List<String> tagKeys = tagTransmissionConfig.getTagKeys();
         Map<String, List<String>> tagMap = new HashMap<>();
-        for (String key : tagKeys) {
+        for (String key : headerMap.keySet()) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             tagMap.put(key, headerMap.get(key));
         }
         return tagMap;

@@ -26,7 +26,9 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 流量标签透传UT基础测试类
@@ -51,7 +53,9 @@ public class BaseInterceptorTest {
         List<String> tagKeys = new ArrayList<>();
         tagKeys.add("id");
         tagKeys.add("name");
-        tagTransmissionConfig.setTagKeys(tagKeys);
+        Map<String, List<String>> matchRule = new HashMap<>();
+        matchRule.put("equals", tagKeys);
+        tagTransmissionConfig.setMatchRule(matchRule);
         TrafficUtils.removeTrafficTag();
     }
 

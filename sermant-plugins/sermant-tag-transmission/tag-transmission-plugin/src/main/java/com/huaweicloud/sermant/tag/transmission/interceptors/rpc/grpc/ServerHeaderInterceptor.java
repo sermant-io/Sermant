@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.grpc;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
 import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 
 import io.grpc.ForwardingServerCall.SimpleForwardingServerCall;
 import io.grpc.Metadata;
@@ -30,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * grpc内部的server interceptor，从grpc的header中提取流量标签
@@ -65,7 +67,11 @@ public class ServerHeaderInterceptor implements ServerInterceptor {
 
     private void extractTrafficTagFromCarrier(Metadata requestHeaders) {
         Map<String, List<String>> tag = new HashMap<>();
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        Set<String> keySet = requestHeaders.keys();
+        for (String key : keySet) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             String value = requestHeaders.get(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER));
 
             // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签

@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.sofarpc;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 
 import com.alipay.sofa.rpc.core.request.SofaRequest;
@@ -26,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * sofarpc server端interceptor，支持5.0+版本
@@ -68,7 +70,11 @@ public class SofaRpcServerInterceptor extends AbstractServerInterceptor<SofaRequ
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(SofaRequest sofaRequest) {
         Map<String, List<String>> tag = new HashMap<>();
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        Set<String> keySet = sofaRequest.getRequestProps().keySet();
+        for (String key : keySet) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             Object value = sofaRequest.getRequestProp(key);
             if (value instanceof String) {
                 tag.put(key, Collections.singletonList((String) value));

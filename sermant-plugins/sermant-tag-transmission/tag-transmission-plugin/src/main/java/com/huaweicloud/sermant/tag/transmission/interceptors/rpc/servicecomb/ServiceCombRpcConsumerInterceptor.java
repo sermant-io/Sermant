@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.servicecomb;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import org.apache.servicecomb.core.Invocation;
@@ -57,7 +58,10 @@ public class ServiceCombRpcConsumerInterceptor extends AbstractClientInterceptor
      */
     @Override
     protected void injectTrafficTag2Carrier(Invocation invocation) {
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        for (String key : TrafficUtils.getTrafficTag().getTag().keySet()) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
                 continue;

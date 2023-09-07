@@ -2,8 +2,14 @@
 tag.transmission.config:
   # 是否开启流量标签透传
   enabled: true
-  # 需要透传的流量标签的key
-  tagKeys: [id,name]
+  # 需要透传的流量标签的key的匹配规则, 支持等于、前缀、后缀匹配
+  matchRule:
+    # 等于匹配
+    equals: ["id", "name"]
+    # 前缀匹配
+    prefix: []
+    # 后缀匹配
+    suffix: []
 
 # 跨线程传递标签的配置,该能力可单独使用
 crossthread.config:
