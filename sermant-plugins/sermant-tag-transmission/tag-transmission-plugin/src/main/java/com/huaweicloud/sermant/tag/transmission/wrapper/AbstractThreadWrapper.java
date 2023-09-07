@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.utils.tag.TrafficData;
 import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.pojo.TrafficMessage;
 
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -34,6 +35,11 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractThreadWrapper<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    /**
+     * 执行该线程对象的线程池名称
+     */
+    protected final String executorName;
 
     private final Runnable runnable;
 
@@ -50,22 +56,23 @@ public abstract class AbstractThreadWrapper<T> {
      *
      * @param runnable runnable
      * @param callable callable
-     * @param trafficTag 请求标记
-     * @param trafficData 请求数据
+     * @param trafficMessage 流量信息
      * @param cannotTransmit 执行方法之前是否需要删除线程变量
+     * @param executorName
      */
-    public AbstractThreadWrapper(Runnable runnable, Callable<T> callable, TrafficTag trafficTag,
-            TrafficData trafficData, boolean cannotTransmit) {
+    public AbstractThreadWrapper(Runnable runnable, Callable<T> callable, TrafficMessage trafficMessage,
+            boolean cannotTransmit, String executorName) {
         this.runnable = runnable;
         this.callable = callable;
         if (cannotTransmit) {
             this.trafficTag = null;
             this.trafficData = null;
         } else {
-            this.trafficTag = trafficTag;
-            this.trafficData = trafficData;
+            this.trafficTag = trafficMessage.getTrafficTag();
+            this.trafficData = trafficMessage.getTrafficData();
         }
         this.cannotTransmit = cannotTransmit;
+        this.executorName = executorName;
     }
 
     /**
@@ -95,7 +102,12 @@ public abstract class AbstractThreadWrapper<T> {
         }
     }
 
-    private void before(Object obj) {
+    /**
+     * 线程对象执行的前置方法
+     *
+     * @param obj 线程对象
+     */
+    protected void before(Object obj) {
         if (cannotTransmit) {
             // 当开启普通线程透传，不开启线程池透传时，需要在执行方法之前，删除由InheritableThreadLocal透传的数据
             TrafficUtils.removeTrafficTag();
@@ -113,7 +125,10 @@ public abstract class AbstractThreadWrapper<T> {
                         Integer.toHexString(obj.hashCode()), trafficTag, trafficData});
     }
 
-    private void after() {
+    /**
+     * 线程对象执行的后置方法
+     */
+    protected void after() {
         TrafficUtils.removeTrafficTag();
         TrafficUtils.removeTrafficData();
     }

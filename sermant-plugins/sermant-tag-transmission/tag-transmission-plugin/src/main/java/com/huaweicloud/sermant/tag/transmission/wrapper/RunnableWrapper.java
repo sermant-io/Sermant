@@ -16,8 +16,8 @@
 
 package com.huaweicloud.sermant.tag.transmission.wrapper;
 
-import com.huaweicloud.sermant.core.utils.tag.TrafficData;
-import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
+import com.huaweicloud.sermant.tag.transmission.enumeration.SpecialExecutor;
+import com.huaweicloud.sermant.tag.transmission.pojo.TrafficMessage;
 
 /**
  * Runnable包装类
@@ -31,11 +31,36 @@ public class RunnableWrapper<T> extends AbstractThreadWrapper<T> implements Runn
      * 构造方法
      *
      * @param runnable runnable
-     * @param trafficTag 请求标记
-     * @param trafficData 请求数据
+     * @param trafficMessage 流量信息
      * @param cannotTransmit 执行方法之前是否需要删除线程变量
+     * @param executorName 线程池名称
      */
-    public RunnableWrapper(Runnable runnable, TrafficTag trafficTag, TrafficData trafficData, boolean cannotTransmit) {
-        super(runnable, null, trafficTag, trafficData, cannotTransmit);
+    public RunnableWrapper(Runnable runnable, TrafficMessage trafficMessage, boolean cannotTransmit,
+            String executorName) {
+        super(runnable, null, trafficMessage, cannotTransmit, executorName);
+    }
+
+    @Override
+    protected void before(Object obj) {
+        // 处理特殊线程池，以下两类线程池会在调用对应线程池执行方法的线程中依次执行线程池队列中的任务，不需要重新设置流量标签
+        switch (SpecialExecutor.getSpecialExecutorByName(this.executorName)) {
+            case THREAD_LESS_EXECUTOR:
+            case SYNCHRONIZATION_CONTEXT:
+                return;
+            default:
+                super.before(obj);
+        }
+    }
+
+    @Override
+    protected void after() {
+        // 处理特殊线程池，以下两类线程池会在调用对应线程池执行方法的线程中依次执行线程池队列中的任务，防止误删流量标签
+        switch (SpecialExecutor.getSpecialExecutorByName(this.executorName)) {
+            case THREAD_LESS_EXECUTOR:
+            case SYNCHRONIZATION_CONTEXT:
+                return;
+            default:
+                super.after();
+        }
     }
 }

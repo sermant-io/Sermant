@@ -16,8 +16,7 @@
 
 package com.huaweicloud.sermant.tag.transmission.wrapper;
 
-import com.huaweicloud.sermant.core.utils.tag.TrafficData;
-import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
+import com.huaweicloud.sermant.tag.transmission.pojo.TrafficMessage;
 
 import java.util.concurrent.Callable;
 
@@ -33,12 +32,12 @@ public class CallableWrapper<T> extends AbstractThreadWrapper<T> implements Call
      * 构造方法
      *
      * @param callable callable
-     * @param trafficTag 请求标记
-     * @param trafficData 请求数据
+     * @param trafficMessage 流量信息
      * @param cannotTransmit 执行方法之前是否需要删除线程变量
+     * @param executorName 线程池名称
      */
-    public CallableWrapper(Callable<T> callable, TrafficTag trafficTag, TrafficData trafficData,
-            boolean cannotTransmit) {
-        super(null, callable, trafficTag, trafficData, cannotTransmit);
+    public CallableWrapper(Callable<T> callable, TrafficMessage trafficMessage,
+            boolean cannotTransmit, String executorName) {
+        super(null, callable, trafficMessage, cannotTransmit, executorName);
     }
 }

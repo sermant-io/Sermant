@@ -26,6 +26,8 @@
         <powermock.version>2.0.9</powermock.version>
         <dubbo.version>3.2.0</dubbo.version>
         <alibaba.dubbo.version>2.6.12</alibaba.dubbo.version>
+        <grpc.version>1.52.1</grpc.version>
+        <protobuf.version>3.18.0</protobuf.version>
         <sofa-rpc.version>5.4.0</sofa-rpc.version>
         <servicecomb-java-chassis.version>2.6.0</servicecomb-java-chassis.version>
     </properties>
@@ -70,6 +72,18 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>${kafka-clients.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>${grpc.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protobuf.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
