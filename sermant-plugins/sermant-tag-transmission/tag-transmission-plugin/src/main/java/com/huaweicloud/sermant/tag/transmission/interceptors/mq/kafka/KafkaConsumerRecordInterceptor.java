@@ -81,6 +81,10 @@ public class KafkaConsumerRecordInterceptor extends AbstractServerInterceptor<Co
         Map<String, List<String>> headerMap = new HashMap<>();
         for (Header header : consumerRecord.headers()) {
             String key = header.key();
+            if (header.value() == null) {
+                headerMap.computeIfAbsent(key, k -> null);
+                continue;
+            }
             String value = new String(header.value(), StandardCharsets.UTF_8);
             headerMap.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
         }

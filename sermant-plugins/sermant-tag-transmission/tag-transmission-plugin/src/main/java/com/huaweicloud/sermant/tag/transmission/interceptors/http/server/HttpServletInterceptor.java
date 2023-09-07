@@ -88,13 +88,14 @@ public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServle
                 continue;
             }
             Enumeration<String> valuesEnumeration = httpServletRequest.getHeaders(key);
-            if (valuesEnumeration == null) {
-                continue;
-            }
-            if (valuesEnumeration.hasMoreElements()) {
+            if (valuesEnumeration != null && valuesEnumeration.hasMoreElements()) {
                 List<String> values = Collections.list(valuesEnumeration);
                 tagMap.put(key, values);
+                continue;
             }
+
+            // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签
+            tagMap.put(key, null);
         }
         return tagMap;
     }

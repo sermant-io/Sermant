@@ -92,6 +92,9 @@ public class AlibabaDubboProviderInterceptor extends AbstractServerInterceptor<R
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(RpcInvocation invocation) {
         Map<String, List<String>> tag = new HashMap<>();
+        if (invocation.getAttachments() == null) {
+            return tag;
+        }
         Set<String> keySet = invocation.getAttachments().keySet();
         for (String key : keySet) {
             if (!TagKeyMatcher.isMatch(key)) {

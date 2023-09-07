@@ -75,7 +75,7 @@ public class ServerHeaderInterceptor implements ServerInterceptor {
             String value = requestHeaders.get(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER));
 
             // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签
-            if (value == null) {
+            if (value == null || "null".equals(value)) {
                 tag.put(key, null);
                 continue;
             }

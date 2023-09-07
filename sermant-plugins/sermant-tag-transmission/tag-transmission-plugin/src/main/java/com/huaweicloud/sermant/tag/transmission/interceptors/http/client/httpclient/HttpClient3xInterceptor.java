@@ -61,6 +61,7 @@ public class HttpClient3xInterceptor extends AbstractClientInterceptor<HttpMetho
             }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                httpMethod.setRequestHeader(key, null);
                 continue;
             }
 

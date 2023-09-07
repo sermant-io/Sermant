@@ -70,6 +70,7 @@ public class OkHttp2xInterceptor extends AbstractClientInterceptor<Builder> {
             }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                builder.addHeader(key, null);
                 continue;
             }
             for (String value : values) {

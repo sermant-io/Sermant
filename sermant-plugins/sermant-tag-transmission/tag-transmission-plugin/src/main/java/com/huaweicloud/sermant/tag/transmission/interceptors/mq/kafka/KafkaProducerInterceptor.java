@@ -64,6 +64,7 @@ public class KafkaProducerInterceptor extends AbstractClientInterceptor<Producer
             }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                headers.add(key, null);
                 continue;
             }
             for (String value : values) {

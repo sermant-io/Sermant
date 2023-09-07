@@ -70,13 +70,16 @@ public class SofaRpcServerInterceptor extends AbstractServerInterceptor<SofaRequ
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(SofaRequest sofaRequest) {
         Map<String, List<String>> tag = new HashMap<>();
+        if (sofaRequest.getRequestProps() == null) {
+            return tag;
+        }
         Set<String> keySet = sofaRequest.getRequestProps().keySet();
         for (String key : keySet) {
             if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
             Object value = sofaRequest.getRequestProp(key);
-            if (value instanceof String) {
+            if (value instanceof String && !"null".equals(value)) {
                 tag.put(key, Collections.singletonList((String) value));
                 continue;
             }

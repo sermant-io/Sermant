@@ -87,11 +87,11 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor<Messa
                 continue;
             }
             String value = message.getProperty(key);
-            if (value != null) {
-                tagMap.put(key, Collections.singletonList(value));
-            } else {
+            if (value == null || "null".equals(value)) {
                 tagMap.put(key, null);
+                continue;
             }
+            tagMap.put(key, Collections.singletonList(value));
         }
         return tagMap;
     }

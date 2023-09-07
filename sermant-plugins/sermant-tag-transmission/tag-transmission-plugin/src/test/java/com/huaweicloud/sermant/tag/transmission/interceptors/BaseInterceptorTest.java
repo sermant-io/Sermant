@@ -54,7 +54,7 @@ public class BaseInterceptorTest {
         tagKeys.add("id");
         tagKeys.add("name");
         Map<String, List<String>> matchRule = new HashMap<>();
-        matchRule.put("equals", tagKeys);
+        matchRule.put("exact", tagKeys);
         tagTransmissionConfig.setMatchRule(matchRule);
         TrafficUtils.removeTrafficTag();
     }

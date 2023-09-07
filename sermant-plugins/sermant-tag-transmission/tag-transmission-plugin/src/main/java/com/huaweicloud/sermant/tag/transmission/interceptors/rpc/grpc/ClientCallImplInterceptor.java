@@ -61,6 +61,8 @@ public class ClientCallImplInterceptor extends AbstractClientInterceptor<Metadat
             }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                // grpc 会对null校验，此处传递"null" 字符串
+                header.put(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER), "null");
                 continue;
             }
             header.put(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER), values.get(0));

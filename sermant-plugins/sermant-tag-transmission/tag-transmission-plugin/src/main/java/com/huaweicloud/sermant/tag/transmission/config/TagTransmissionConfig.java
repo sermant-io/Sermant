@@ -58,7 +58,7 @@ public class TagTransmissionConfig implements PluginConfig {
     public String toString() {
         return "TagTransmissionConfig{"
                 + "enabled=" + enabled
-                + ", tagKeys=" + matchRule
+                + ", matchRule=" + matchRule
                 + '}';
     }
 

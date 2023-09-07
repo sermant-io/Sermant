@@ -64,6 +64,8 @@ public class SofaRpcClientInterceptor extends AbstractClientInterceptor<SofaRequ
             }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                // sofa 无法添加value为null的键值对
+                sofaRequest.addRequestProp(key, "null");
                 continue;
             }
             sofaRequest.addRequestProp(key, values.get(0));

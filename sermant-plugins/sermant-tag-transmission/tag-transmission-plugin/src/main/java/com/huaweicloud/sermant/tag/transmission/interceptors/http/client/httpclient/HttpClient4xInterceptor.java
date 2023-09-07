@@ -61,6 +61,7 @@ public class HttpClient4xInterceptor extends AbstractClientInterceptor<HttpReque
             }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                httpRequest.addHeader(key, null);
                 continue;
             }
             for (String value : values) {

@@ -19,14 +19,14 @@ package com.huaweicloud.sermant.tag.transmission.config.strategy;
 import java.util.List;
 
 /**
- * 等于匹配策略
+ * 精确匹配策略
  *
  * @author lilai
  * @since 2023-09-07
  */
-public class EqualsMatchStrategy implements MatchStrategy {
+public class ExactMatchStrategy implements MatchStrategy {
     @Override
     public boolean isMatch(String key, List<String> keyConfigs) {
-        return keyConfigs.stream().anyMatch(configKey -> configKey.equals(key));
+        return keyConfigs.stream().anyMatch(key::equals);
     }
 }

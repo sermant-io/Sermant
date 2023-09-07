@@ -4,8 +4,8 @@ tag.transmission.config:
   enabled: true
   # 需要透传的流量标签的key的匹配规则, 支持等于、前缀、后缀匹配
   matchRule:
-    # 等于匹配
-    equals: ["id", "name"]
+    # 精确匹配
+    exact: ["id", "name"]
     # 前缀匹配
     prefix: []
     # 后缀匹配

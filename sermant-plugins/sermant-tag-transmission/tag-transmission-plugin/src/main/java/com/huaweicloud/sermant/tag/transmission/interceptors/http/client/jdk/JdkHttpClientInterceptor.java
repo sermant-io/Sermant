@@ -79,6 +79,7 @@ public class JdkHttpClientInterceptor extends AbstractClientInterceptor<MessageH
             }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                messageHeader.add(key, null);
                 continue;
             }
             for (String value : values) {

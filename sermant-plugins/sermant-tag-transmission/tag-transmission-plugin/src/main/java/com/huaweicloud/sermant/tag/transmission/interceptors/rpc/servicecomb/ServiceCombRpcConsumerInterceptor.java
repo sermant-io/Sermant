@@ -64,6 +64,7 @@ public class ServiceCombRpcConsumerInterceptor extends AbstractClientInterceptor
             }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                invocation.getContext().put(key, null);
                 continue;
             }
             invocation.getContext().put(key, values.get(0));

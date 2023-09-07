@@ -34,14 +34,14 @@ public class TagKeyMatcher {
     private static final TagTransmissionConfig CONFIG = PluginConfigManager.getPluginConfig(
             TagTransmissionConfig.class);
 
-    private static final String EQUALS_RULE_KEY = "equals";
+    private static final String EXACT_RULE_KEY = "exact";
 
     private static final String PREFIX_RULE_KEY = "prefix";
 
     private static final String SUFFIX_RULE_KEY = "suffix";
 
     static {
-        STRATEGY_MAP.put(EQUALS_RULE_KEY, new EqualsMatchStrategy());
+        STRATEGY_MAP.put(EXACT_RULE_KEY, new ExactMatchStrategy());
         STRATEGY_MAP.put(PREFIX_RULE_KEY, new PrefixMatchStrategy());
         STRATEGY_MAP.put(SUFFIX_RULE_KEY, new SuffixMatchStrategy());
     }

@@ -66,6 +66,7 @@ public class AlibabaDubboConsumerInterceptor extends AbstractClientInterceptor<R
             }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                invocation.setAttachment(key, null);
                 continue;
             }
             invocation.setAttachment(key, values.get(0));

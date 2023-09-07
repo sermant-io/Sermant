@@ -82,6 +82,10 @@ public class RocketmqProducerInterceptor extends AbstractClientInterceptor<SendM
             }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                newProperties.append(key);
+                newProperties.append(LINK_MARK);
+                newProperties.append((String) null);
+                newProperties.append(SPLIT_MARK);
                 continue;
             }
             newProperties.append(key);
