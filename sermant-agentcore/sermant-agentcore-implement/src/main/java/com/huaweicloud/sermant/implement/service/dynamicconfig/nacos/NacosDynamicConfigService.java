@@ -330,11 +330,6 @@ public class NacosDynamicConfigService extends DynamicConfigService {
      * @return nacos监听器
      */
     private Listener instantiateListener(String key, String validGroup, DynamicConfigListener listener) {
-        // 初始获取一次config
-        String config = nacosClient.getConfig(key, validGroup);
-        if (!StringUtils.isEmpty(config)) {
-            listener.process(DynamicConfigEvent.initEvent(key, validGroup, config));
-        }
         return new Listener() {
             private final Executor defaultExecutor = Executors.newSingleThreadExecutor();
 
