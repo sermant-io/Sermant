@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.dubbo;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 import com.huaweicloud.sermant.tag.transmission.utils.DubboUtils;
 
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * dubbo流量标签透传的provider端拦截器，支持dubbo2.7.x, 3.x
@@ -104,7 +106,11 @@ public class ApacheDubboProviderInterceptor extends AbstractServerInterceptor<Rp
                 .map(obj -> (Map<String, Object>) obj)
                 .orElse(new HashMap<>());
 
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        Set<String> keySet = attachments.keySet();
+        for (String key : keySet) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             Object value = attachments.get(key);
             if (value instanceof String) {
                 tag.put(key, Collections.singletonList((String) value));

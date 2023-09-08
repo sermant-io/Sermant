@@ -18,10 +18,11 @@ package com.huaweicloud.sermant.tag.transmission.config;
 
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
-import com.huaweicloud.sermant.core.utils.CollectionUtils;
+import com.huaweicloud.sermant.core.utils.MapUtils;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 流量标签透传配置
@@ -37,9 +38,9 @@ public class TagTransmissionConfig implements PluginConfig {
     private boolean enabled;
 
     /**
-     * 需要透传的标签的key
+     * 需要透传的标签的key的规则
      */
-    private List<String> tagKeys = new ArrayList<>();
+    private Map<String, List<String>> matchRule = new HashMap<>();
 
     public boolean isEnabled() {
         return enabled;
@@ -49,23 +50,23 @@ public class TagTransmissionConfig implements PluginConfig {
         this.enabled = enabled;
     }
 
-    public List<String> getTagKeys() {
-        return tagKeys;
-    }
-
-    public void setTagKeys(List<String> tagKeys) {
-        this.tagKeys = tagKeys;
-    }
-
     public boolean isEffect() {
-        return enabled && !CollectionUtils.isEmpty(tagKeys);
+        return enabled && !MapUtils.isEmpty(matchRule);
     }
 
     @Override
     public String toString() {
         return "TagTransmissionConfig{"
                 + "enabled=" + enabled
-                + ", tagKeys=" + tagKeys
+                + ", matchRule=" + matchRule
                 + '}';
+    }
+
+    public Map<String, List<String>> getMatchRule() {
+        return matchRule;
+    }
+
+    public void setMatchRule(Map<String, List<String>> matchRule) {
+        this.matchRule = matchRule;
     }
 }

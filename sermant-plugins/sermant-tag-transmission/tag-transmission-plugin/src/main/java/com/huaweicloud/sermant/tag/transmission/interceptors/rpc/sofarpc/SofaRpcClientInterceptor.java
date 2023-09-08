@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.sofarpc;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import com.alipay.sofa.rpc.core.request.SofaRequest;
@@ -57,9 +58,14 @@ public class SofaRpcClientInterceptor extends AbstractClientInterceptor<SofaRequ
      */
     @Override
     protected void injectTrafficTag2Carrier(SofaRequest sofaRequest) {
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        for (String key : TrafficUtils.getTrafficTag().getTag().keySet()) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                // sofa 无法添加value为null的键值对
+                sofaRequest.addRequestProp(key, "null");
                 continue;
             }
             sofaRequest.addRequestProp(key, values.get(0));

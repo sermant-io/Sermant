@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.grpc;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import io.grpc.Metadata;
@@ -54,9 +55,14 @@ public class ClientCallImplInterceptor extends AbstractClientInterceptor<Metadat
 
     @Override
     protected void injectTrafficTag2Carrier(Metadata header) {
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        for (String key : TrafficUtils.getTrafficTag().getTag().keySet()) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                // grpc 会对null校验，此处传递"null" 字符串
+                header.put(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER), "null");
                 continue;
             }
             header.put(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER), values.get(0));

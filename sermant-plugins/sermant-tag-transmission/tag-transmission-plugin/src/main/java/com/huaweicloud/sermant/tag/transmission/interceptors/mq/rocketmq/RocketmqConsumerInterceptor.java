@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 
 import org.apache.rocketmq.common.message.Message;
@@ -27,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * RocketMQ流量标签透传的消费者拦截器，支持RocketMQ4.8+
@@ -76,13 +78,20 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor<Messa
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(Message message) {
         Map<String, List<String>> tagMap = new HashMap<>();
-        for (String key : tagTransmissionConfig.getTagKeys()) {
-            String value = message.getProperty(key);
-            if (value != null) {
-                tagMap.put(key, Collections.singletonList(value));
-            } else {
-                tagMap.put(key, null);
+        if (message.getProperties() == null) {
+            return tagMap;
+        }
+        Set<String> keySet = message.getProperties().keySet();
+        for (String key : keySet) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
             }
+            String value = message.getProperty(key);
+            if (value == null || "null".equals(value)) {
+                tagMap.put(key, null);
+                continue;
+            }
+            tagMap.put(key, Collections.singletonList(value));
         }
         return tagMap;
     }

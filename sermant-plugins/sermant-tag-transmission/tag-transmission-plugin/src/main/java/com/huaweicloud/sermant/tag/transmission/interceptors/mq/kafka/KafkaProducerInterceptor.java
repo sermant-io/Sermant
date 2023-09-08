@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.mq.kafka;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -57,9 +58,13 @@ public class KafkaProducerInterceptor extends AbstractClientInterceptor<Producer
     @Override
     protected void injectTrafficTag2Carrier(ProducerRecord<?, ?> producerRecord) {
         Headers headers = producerRecord.headers();
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        for (String key : TrafficUtils.getTrafficTag().getTag().keySet()) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
             if (CollectionUtils.isEmpty(values)) {
+                headers.add(key, null);
                 continue;
             }
             for (String value : values) {

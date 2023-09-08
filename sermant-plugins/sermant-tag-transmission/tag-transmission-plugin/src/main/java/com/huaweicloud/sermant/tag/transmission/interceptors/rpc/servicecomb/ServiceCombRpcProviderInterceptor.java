@@ -18,14 +18,17 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.rpc.servicecomb;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 
 import org.apache.servicecomb.core.Invocation;
 
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * servicecombRPC provider端interceptor，支持servicecomb2.x版本
@@ -68,7 +71,20 @@ public class ServiceCombRpcProviderInterceptor extends AbstractServerInterceptor
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(Invocation invocation) {
         Map<String, List<String>> tag = new HashMap<>();
-        for (String key : tagTransmissionConfig.getTagKeys()) {
+        extractFromContext(invocation, tag);
+        extractFromRequestEx(invocation, tag);
+        return tag;
+    }
+
+    private void extractFromContext(Invocation invocation, Map<String, List<String>> tag) {
+        if (invocation.getContext() == null) {
+            return;
+        }
+        Set<String> keySet = invocation.getContext().keySet();
+        for (String key : keySet) {
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
             String value = invocation.getContext().get(key);
             if (value != null) {
                 // consumer端使用servicecombrpc方式调用provider端
@@ -76,16 +92,32 @@ public class ServiceCombRpcProviderInterceptor extends AbstractServerInterceptor
                 continue;
             }
 
+            // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签
+            tag.put(key, null);
+        }
+    }
+
+    private void extractFromRequestEx(Invocation invocation, Map<String, List<String>> tag) {
+        if (invocation.getRequestEx() == null) {
+            return;
+        }
+        Enumeration<String> headerNames = invocation.getRequestEx().getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = headerNames.nextElement();
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
+
             // consumer端使用非servicecombrpc方式调用provider端，比如httpclient，okhttp等
-            value = invocation.getRequestEx().getHeader(key);
-            if (value != null) {
-                tag.put(key, Collections.singletonList(value));
+            Enumeration<String> valuesEnumeration = invocation.getRequestEx().getHeaders(key);
+            if (valuesEnumeration != null && valuesEnumeration.hasMoreElements()) {
+                List<String> values = Collections.list(valuesEnumeration);
+                tag.put(key, values);
                 continue;
             }
 
             // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签
             tag.put(key, null);
         }
-        return tag;
     }
 }

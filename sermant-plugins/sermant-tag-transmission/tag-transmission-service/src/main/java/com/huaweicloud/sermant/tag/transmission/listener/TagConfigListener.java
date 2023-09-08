@@ -72,7 +72,7 @@ public class TagConfigListener implements DynamicConfigListener {
             return;
         }
         tagTransmissionConfig.setEnabled(dynamicConfig.isEnabled());
-        tagTransmissionConfig.setTagKeys(dynamicConfig.getTagKeys());
+        tagTransmissionConfig.setMatchRule(dynamicConfig.getMatchRule());
         LOGGER.info(String.format(Locale.ROOT, "Update tagTransmissionConfig, %s",
                 tagTransmissionConfig.toString()));
     }

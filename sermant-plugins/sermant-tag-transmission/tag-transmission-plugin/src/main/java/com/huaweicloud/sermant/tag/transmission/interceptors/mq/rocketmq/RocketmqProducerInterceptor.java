@@ -17,14 +17,14 @@
 package com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
+import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import org.apache.rocketmq.common.protocol.header.SendMessageRequestHeader;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * RocketMQ流量标签透传的生产者拦截器，支持RocketMQ4.8+
@@ -64,7 +64,7 @@ public class RocketmqProducerInterceptor extends AbstractClientInterceptor<SendM
     @Override
     protected void injectTrafficTag2Carrier(SendMessageRequestHeader header) {
         String oldProperties = header.getProperties();
-        String newProperties = this.insertTags2Properties(oldProperties, TrafficUtils.getTrafficTag());
+        String newProperties = this.insertTags2Properties(oldProperties);
         header.setProperties(newProperties);
     }
 
@@ -72,19 +72,25 @@ public class RocketmqProducerInterceptor extends AbstractClientInterceptor<SendM
      * 将流量标签插入到properties字符串中 原始properties的格式形如：key1[SOH]value1[STX]key2[SOH]value2，其中[SOH]为ASCII=1的符号，[STX]为ASCII=2的符号
      *
      * @param oldProperties 原始properties
-     * @param trafficTag 流量标签
      * @return String
      */
-    private String insertTags2Properties(String oldProperties, TrafficTag trafficTag) {
-        Map<String, List<String>> tags = trafficTag.getTag();
+    private String insertTags2Properties(String oldProperties) {
         StringBuilder newProperties = new StringBuilder();
-        for (Map.Entry<String, List<String>> entry : tags.entrySet()) {
-            if (entry.getValue() == null) {
+        for (String key : TrafficUtils.getTrafficTag().getTag().keySet()) {
+            if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
-            newProperties.append(entry.getKey());
+            List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
+            if (CollectionUtils.isEmpty(values)) {
+                newProperties.append(key);
+                newProperties.append(LINK_MARK);
+                newProperties.append((String) null);
+                newProperties.append(SPLIT_MARK);
+                continue;
+            }
+            newProperties.append(key);
             newProperties.append(LINK_MARK);
-            newProperties.append(entry.getValue().get(0));
+            newProperties.append(values.get(0));
             newProperties.append(SPLIT_MARK);
         }
         if (newProperties.length() == 0) {

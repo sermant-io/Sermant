@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.tag.transmission.interceptors.http.server;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
+import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
 
 import java.util.Collections;
@@ -80,15 +81,21 @@ public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServle
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(HttpServletRequest httpServletRequest) {
         Map<String, List<String>> tagMap = new HashMap<>();
-        for (String key : tagTransmissionConfig.getTagKeys()) {
-            Enumeration<String> valuesEnumeration = httpServletRequest.getHeaders(key);
-            if (valuesEnumeration == null) {
+        Enumeration<String> keyEnumeration = httpServletRequest.getHeaderNames();
+        while (keyEnumeration.hasMoreElements()) {
+            String key = keyEnumeration.nextElement();
+            if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
-            if (valuesEnumeration.hasMoreElements()) {
+            Enumeration<String> valuesEnumeration = httpServletRequest.getHeaders(key);
+            if (valuesEnumeration != null && valuesEnumeration.hasMoreElements()) {
                 List<String> values = Collections.list(valuesEnumeration);
                 tagMap.put(key, values);
+                continue;
             }
+
+            // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签
+            tagMap.put(key, null);
         }
         return tagMap;
     }
