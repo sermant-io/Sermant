@@ -1,4 +1,4 @@
-# 默认编译场景使用，不含示例工程
+# premain启动时生效，配置支持静态安装的插件，不允许卸载
 plugins:
   - flowcontrol
   - service-router
@@ -11,6 +11,12 @@ plugins:
   - service-removal
   - service-visibility
   - tag-transmission
+# agentmain启动时生效，配置支持动态安装插件，active类型插件将会主动启用, passive类型插件需通过指令或接口调用启用，允许卸载
+dynamicPlugins:
+  active:
+#    - active-plugin
+  passive:
+#    - passive-plugin
 profiles:
   cse:
     - flowcontrol

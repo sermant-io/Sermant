@@ -21,11 +21,12 @@ import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
+import com.huaweicloud.sermant.core.plugin.Plugin;
 import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDescription;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDescription;
-import com.huaweicloud.sermant.core.plugin.agent.transformer.DefaultTransformer;
+import com.huaweicloud.sermant.core.plugin.agent.transformer.ReentrantTransformer;
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
 import com.huaweicloud.sermant.core.plugin.classloader.ServiceClassLoader;
 import com.huaweicloud.sermant.core.utils.FileUtils;
@@ -79,6 +80,11 @@ public class BufferedAgentBuilder {
      * 构建行为集
      */
     private final List<BuilderAction> actions = new ArrayList<>();
+
+    /**
+     * 为对框架类的增强维护一个虚拟的插件，用于记录adviceKey锁和已经创建的拦截器
+     */
+    private final Plugin virtualPlugin = new Plugin("virtual-plugin", null, false, null);
 
     private BufferedAgentBuilder() {
     }
@@ -220,9 +226,10 @@ public class BufferedAgentBuilder {
      * 添加插件
      *
      * @param plugins 插件描述列表
+     * @return BufferedAgentBuilder AgentBuilder的封装
      */
-    public void addPlugins(Iterable<PluginDescription> plugins) {
-        addAction(new BuilderAction() {
+    public BufferedAgentBuilder addPlugins(Iterable<PluginDescription> plugins) {
+        return addAction(new BuilderAction() {
             @Override
             public AgentBuilder process(AgentBuilder builder) {
                 AgentBuilder newBuilder = builder;
@@ -249,7 +256,8 @@ public class BufferedAgentBuilder {
                 public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription,
                         ClassLoader classLoader,
                         JavaModule module, ProtectionDomain protectionDomain) {
-                    return new DefaultTransformer(abstractPluginDeclarer.getInterceptDeclarers(classLoader))
+                    return new ReentrantTransformer(abstractPluginDeclarer.getInterceptDeclarers(classLoader),
+                            virtualPlugin)
                             .transform(builder, typeDescription, classLoader, module, protectionDomain);
                 }
 

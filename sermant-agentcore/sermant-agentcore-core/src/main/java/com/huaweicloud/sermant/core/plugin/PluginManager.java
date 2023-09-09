@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.core.plugin;
 
+import com.huaweicloud.sermant.core.AgentCoreEntrance;
 import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
@@ -65,12 +66,46 @@ public class PluginManager {
     }
 
     /**
+     * 安装插件
+     *
+     * @param plugins 插件名集合，插件产物需要存在于pluginPackage中，否则无法安装成功
+     */
+    public static void install(Set<String> plugins) {
+        if (AgentCoreEntrance.isPremain()) {
+            LOGGER.log(Level.WARNING, "Plugins are not allowed to be installed when booting through premain.");
+            return;
+        }
+        initPlugins(plugins, true);
+    }
+
+    /**
+     * 卸载插件
+     *
+     * @param plugins 插件名集合
+     */
+    public static void unInstall(Set<String> plugins) {
+        if (AgentCoreEntrance.isPremain()) {
+            LOGGER.log(Level.WARNING, "Plugins are not allowed to be uninstalled when booting through premain.");
+            return;
+        }
+    }
+
+    /**
+     * 卸载全部插件
+     */
+    public static void unInstallAll() {
+
+    }
+
+    /**
      * 初始化插件包、配置、插件服务包等插件相关的内容
      *
      * @param pluginNames 插件名称集
+     * @param isDynamic 插件是否为动态
      */
-    public static void initPlugins(Set<String> pluginNames) {
+    public static void initPlugins(Set<String> pluginNames, boolean isDynamic) {
         if (pluginNames == null || pluginNames.isEmpty()) {
+            LOGGER.log(Level.WARNING, "Non plugin is configured to be initialized.");
             return;
         }
         final String pluginPackage;
@@ -82,32 +117,23 @@ public class PluginManager {
         }
         for (String pluginName : pluginNames) {
             if (PLUGIN_MAP.containsKey(pluginName)) {
-                LOGGER.log(Level.WARNING, "Plugin: {0} has bean installed. It cannot be loaded repeatedly.",
+                LOGGER.log(Level.WARNING, "Plugin: {0} has bean installed. It cannot be installed repeatedly.",
                         pluginName);
                 continue;
             }
             try {
-                initPlugin(pluginName, pluginPackage);
+                final String pluginPath = pluginPackage + File.separatorChar + pluginName;
+                if (!new File(pluginPath).exists()) {
+                    LOGGER.log(Level.WARNING, "Plugin directory {0} does not exist, so skip initializing {1}. ",
+                            new String[]{pluginPath, pluginName});
+                    return;
+                }
+                doInitPlugin(
+                        new Plugin(pluginName, pluginPath, isDynamic, ClassLoaderManager.createPluginClassLoader()));
             } catch (Exception ex) {
                 LOGGER.log(Level.SEVERE, "Load plugin failed, plugin name: " + pluginName, ex);
             }
         }
-    }
-
-    /**
-     * 初始化一个插件，检查必要参数，并调用{@link #doInitPlugin}
-     *
-     * @param pluginName 插件名称
-     * @param pluginPackage 插件包路径
-     */
-    private static void initPlugin(String pluginName, String pluginPackage) {
-        final String pluginPath = pluginPackage + File.separatorChar + pluginName;
-        if (!new File(pluginPath).exists()) {
-            LOGGER.log(Level.WARNING, "Plugin directory {0} does not exist, so skip initializing {1}. ",
-                    new String[]{pluginPath, pluginName});
-            return;
-        }
-        doInitPlugin(new Plugin(pluginName, pluginPath, ClassLoaderManager.createPluginClassLoader()));
     }
 
     private static void doInitPlugin(Plugin plugin) {
@@ -118,7 +144,13 @@ public class PluginManager {
 
         // 适配逻辑，类加载器需要在字节码增强前加入到插件类检索器中，否则可能会在字节码增强时，找不到拦截器
         ClassLoaderManager.getPluginClassFinder().addPluginClassLoader(plugin);
-        ByteEnhanceManager.enhanceStaticPlugin(plugin);
+
+        // 根据插件类型选择不同的字节码增强安装方式
+        if (plugin.isDynamic()) {
+            ByteEnhanceManager.enhanceDynamicPlugin(plugin);
+        } else {
+            ByteEnhanceManager.enhanceStaticPlugin(plugin);
+        }
 
         // 插件成功加载后步骤
         PLUGIN_MAP.put(plugin.getName(), plugin);

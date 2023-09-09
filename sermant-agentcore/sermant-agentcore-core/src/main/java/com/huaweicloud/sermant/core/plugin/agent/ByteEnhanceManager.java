@@ -18,11 +18,19 @@ package com.huaweicloud.sermant.core.plugin.agent;
 
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.Plugin;
-import com.huaweicloud.sermant.core.plugin.agent.collector.PluginCollectorManager;
+import com.huaweicloud.sermant.core.plugin.agent.collector.PluginCollector;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDescription;
 import com.huaweicloud.sermant.core.plugin.agent.enhance.ClassLoaderDeclarer;
 import com.huaweicloud.sermant.core.service.ServiceConfig;
 
+import net.bytebuddy.agent.builder.AgentBuilder;
+import net.bytebuddy.agent.builder.AgentBuilder.RedefinitionStrategy;
+import net.bytebuddy.agent.builder.AgentBuilder.RedefinitionStrategy.BatchAllocator.ForTotal;
+import net.bytebuddy.agent.builder.AgentBuilder.RedefinitionStrategy.DiscoveryStrategy.Reiterating;
+import net.bytebuddy.agent.builder.ResettableClassFileTransformer;
+
 import java.lang.instrument.Instrumentation;
+import java.util.List;
 
 /**
  * 字节码增强管理器
@@ -42,7 +50,7 @@ public class ByteEnhanceManager {
     /**
      * 初始化
      *
-     * @param instrumentation
+     * @param instrumentation instrumentation
      */
     public static void init(Instrumentation instrumentation) {
         instrumentationCache = instrumentation;
@@ -65,7 +73,39 @@ public class ByteEnhanceManager {
      * @param plugin 支持静态安装的插件
      */
     public static void enhanceStaticPlugin(Plugin plugin) {
-        builder.addPlugins(PluginCollectorManager.getDescriptions(plugin));
+        if (plugin.isDynamic()) {
+            return;
+        }
+        builder.addPlugins(PluginCollector.getDescriptions(plugin));
+    }
+
+    /**
+     * 基于支持动态安装的插件进行字节码增强
+     *
+     * @param plugin 支持动态安装的插件
+     */
+    public static void enhanceDynamicPlugin(Plugin plugin) {
+        if (!plugin.isDynamic()) {
+            return;
+        }
+        List<PluginDescription> plugins = PluginCollector.getDescriptions(plugin);
+        ResettableClassFileTransformer resettableClassFileTransformer = BufferedAgentBuilder.build()
+                .addPlugins(plugins).install(instrumentationCache);
+        plugin.setClassFileTransformer(resettableClassFileTransformer);
+    }
+
+    /**
+     * 卸载支持动态安装的插件的字节码增强
+     *
+     * @param plugin 支持动态安装的插件
+     */
+    public static void unEnhanceDynamicPlugin(Plugin plugin) {
+        if (!plugin.isDynamic()) {
+            return;
+        }
+        plugin.getClassFileTransformer().reset(instrumentationCache, RedefinitionStrategy.RETRANSFORMATION,
+                Reiterating.INSTANCE, ForTotal.INSTANCE,
+                AgentBuilder.RedefinitionStrategy.Listener.StreamWriting.toSystemOut());
     }
 
     private static void enhanceForFramework() {

@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.core.plugin.config;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,9 +33,9 @@ public class PluginSetting {
     private Set<String> plugins;
 
     /**
-     * 适配器名称集
+     * 支持动态安装的插件 分为active和passive两类
      */
-    private List<String> adaptors;
+    private Map<String, Set<String>> dynamicPlugins;
 
     /**
      * 场景与插件映射关系
@@ -56,12 +55,12 @@ public class PluginSetting {
         this.plugins = plugins;
     }
 
-    public List<String> getAdaptors() {
-        return adaptors;
+    public Map<String, Set<String>> getDynamicPlugins() {
+        return dynamicPlugins;
     }
 
-    public void setAdaptors(List<String> adaptors) {
-        this.adaptors = adaptors;
+    public void setDynamicPlugins(Map<String, Set<String>> dynamicPlugins) {
+        this.dynamicPlugins = dynamicPlugins;
     }
 
     public void setProfiles(Map<String, Set<String>> profiles) {

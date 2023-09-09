@@ -19,8 +19,13 @@ package com.huaweicloud.sermant.core.plugin;
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
 import com.huaweicloud.sermant.core.plugin.classloader.ServiceClassLoader;
 
+import net.bytebuddy.agent.builder.ResettableClassFileTransformer;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用于维护插件信息 插件名，插件包目录，插件服务，插件配置，插件主模块的类加载器，插件服务类加载器，插件的ResetTransformer
@@ -45,14 +50,29 @@ public class Plugin {
     private String path;
 
     /**
+     * 动态插件, true 则可动态安装 false 则不可动态安装
+     */
+    private boolean isDynamic;
+
+    /**
      * 插件服务列表
      */
-    private List<String> serviceList = new ArrayList<>();
+    private List<String> services = new ArrayList<>();
 
     /**
      * 插件配置列表
      */
-    private List<String> configList = new ArrayList<>();
+    private List<String> configs = new ArrayList<>();
+
+    /**
+     * 插件拦截器列表，需要通过adviceKey进行索引
+     */
+    private HashMap<String, Set<String>> interceptors = new HashMap<>();
+
+    /**
+     * 持有advice锁的adviceKey集合
+     */
+    private Set<String> adviceLocks = new HashSet<>();
 
     /**
      * 用于加载插件主模块的类加载器
@@ -65,15 +85,22 @@ public class Plugin {
     private ServiceClassLoader serviceClassLoader;
 
     /**
+     * 可重置的类文件转换器
+     */
+    private ResettableClassFileTransformer classFileTransformer;
+
+    /**
      * 构造方法
      *
      * @param name 插件名
      * @param path 插件路径
+     * @param isDynamic 插件是否为动态安装时加载
      * @param pluginClassLoader 插件类加载器
      */
-    public Plugin(String name, String path, PluginClassLoader pluginClassLoader) {
+    public Plugin(String name, String path, boolean isDynamic, PluginClassLoader pluginClassLoader) {
         this.name = name;
         this.path = path;
+        this.isDynamic = isDynamic;
         this.pluginClassLoader = pluginClassLoader;
     }
 
@@ -101,20 +128,44 @@ public class Plugin {
         this.path = path;
     }
 
-    public List<String> getServiceList() {
-        return serviceList;
+    public boolean isDynamic() {
+        return isDynamic;
     }
 
-    public void setServiceList(List<String> serviceList) {
-        this.serviceList = serviceList;
+    public void setDynamic(boolean dynamic) {
+        this.isDynamic = dynamic;
     }
 
-    public List<String> getConfigList() {
-        return configList;
+    public List<String> getServices() {
+        return services;
     }
 
-    public void setConfigList(List<String> configList) {
-        this.configList = configList;
+    public void setServices(List<String> services) {
+        this.services = services;
+    }
+
+    public List<String> getConfigs() {
+        return configs;
+    }
+
+    public void setConfigs(List<String> configs) {
+        this.configs = configs;
+    }
+
+    public HashMap<String, Set<String>> getInterceptors() {
+        return interceptors;
+    }
+
+    public void setInterceptors(HashMap<String, Set<String>> interceptors) {
+        this.interceptors = interceptors;
+    }
+
+    public Set<String> getAdviceLocks() {
+        return adviceLocks;
+    }
+
+    public void setAdviceLocks(Set<String> adviceLocks) {
+        this.adviceLocks = adviceLocks;
     }
 
     public PluginClassLoader getPluginClassLoader() {
@@ -131,5 +182,13 @@ public class Plugin {
 
     public void setServiceClassLoader(ServiceClassLoader serviceClassLoader) {
         this.serviceClassLoader = serviceClassLoader;
+    }
+
+    public ResettableClassFileTransformer getClassFileTransformer() {
+        return classFileTransformer;
+    }
+
+    public void setClassFileTransformer(ResettableClassFileTransformer classFileTransformer) {
+        this.classFileTransformer = classFileTransformer;
     }
 }

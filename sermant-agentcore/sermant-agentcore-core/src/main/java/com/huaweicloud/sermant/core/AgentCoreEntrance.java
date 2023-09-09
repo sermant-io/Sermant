@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.core;
 
 import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
+import com.huaweicloud.sermant.core.common.AgentType;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
@@ -34,6 +35,8 @@ import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import java.lang.instrument.Instrumentation;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * agent core入口
@@ -43,6 +46,13 @@ import java.util.Map;
  * @since 2021-11-12
  */
 public class AgentCoreEntrance {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    /**
+     * 缓存当前Agent的类型，默认为premain方式启动
+     */
+    private static int agentType = AgentType.PREMAIN.getValue();
+
     private AgentCoreEntrance() {
     }
 
@@ -57,6 +67,10 @@ public class AgentCoreEntrance {
      */
     public static void install(String artifact, Map<String, Object> argsMap, Instrumentation instrumentation,
             boolean isDynamic) throws Exception {
+        if (isDynamic) {
+            agentType = AgentType.AGENTMAIN.getValue();
+        }
+
         // 初始化框架类加载器
         ClassLoaderManager.init(argsMap);
 
@@ -95,8 +109,28 @@ public class AgentCoreEntrance {
         // 上报Sermant启动事件
         FrameworkEventCollector.getInstance().collectAgentStartEvent();
 
+        // 内部通知，Sermant启动完成通知
         if (NotificationManager.isEnable()) {
             NotificationManager.doNotify(new NotificationInfo(SermantNotificationType.LOAD_COMPLETE, null));
         }
+    }
+
+    /**
+     * 卸载当前Sermant
+     */
+    public static void unInstall() {
+        if (isPremain()) {
+            LOGGER.log(Level.WARNING, "Sermant are not allowed to be uninstall when booting through premain.");
+            return;
+        }
+    }
+
+    /**
+     * 该Sermant是否以premain方式启动
+     *
+     * @return boolean
+     */
+    public static boolean isPremain() {
+        return AgentType.PREMAIN.getValue() == agentType;
     }
 }

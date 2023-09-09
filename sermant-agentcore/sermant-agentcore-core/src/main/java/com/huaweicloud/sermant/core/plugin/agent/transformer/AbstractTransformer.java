@@ -19,20 +19,18 @@ package com.huaweicloud.sermant.core.plugin.agent.transformer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
-import com.huaweicloud.sermant.core.plugin.agent.template.BaseAdviseHandler;
 import com.huaweicloud.sermant.core.plugin.agent.template.MethodKeyCreator;
 import com.huaweicloud.sermant.core.plugin.agent.template.TemplateForCtor;
 import com.huaweicloud.sermant.core.plugin.agent.template.TemplateForMember;
 import com.huaweicloud.sermant.core.plugin.agent.template.TemplateForStatic;
 
 import net.bytebuddy.agent.builder.AgentBuilder;
-import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.method.MethodDescription;
+import net.bytebuddy.description.method.MethodDescription.InDefinedShape;
 import net.bytebuddy.description.method.MethodList;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.DynamicType.Builder;
-import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
 
 import java.lang.reflect.InvocationTargetException;
@@ -44,12 +42,12 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 类的Transformer，advice风格
+ * 抽象转换器
  *
  * @author luanwenfei
- * @since 2023-07-18
+ * @since 2023-09-08
  */
-public class DefaultTransformer implements AgentBuilder.Transformer {
+public abstract class AbstractTransformer implements AgentBuilder.Transformer {
     /**
      * 日志
      */
@@ -63,16 +61,15 @@ public class DefaultTransformer implements AgentBuilder.Transformer {
     /**
      * 构造方法
      *
-     * @param interceptDeclarers interceptDeclarers
+     * @param interceptDeclarers 拦截声明器数组
      */
-    public DefaultTransformer(InterceptDeclarer[] interceptDeclarers) {
+    public AbstractTransformer(InterceptDeclarer[] interceptDeclarers) {
         this.interceptDeclarers = interceptDeclarers;
     }
 
     @Override
-    public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription,
-            ClassLoader classLoader,
-            JavaModule module, ProtectionDomain protectionDomain) {
+    public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader,
+            JavaModule javaModule, ProtectionDomain protectionDomain) {
         if (interceptDeclarers == null || interceptDeclarers.length == 0) {
             return builder;
         }
@@ -80,8 +77,7 @@ public class DefaultTransformer implements AgentBuilder.Transformer {
     }
 
     /**
-     * 检查类定义的所有方法，并尝试增强，见{@link #enhanceMethod}
-     * <p>注意，native方法，抽象方法，及父类定义的方法不会被检查
+     * 检查类定义的所有方法，并尝试增强，见{@link #enhanceMethod} 注意，native方法，抽象方法，及父类定义的方法不会被检查
      *
      * @param builder 构建器
      * @param typeDesc 类定义
@@ -90,7 +86,7 @@ public class DefaultTransformer implements AgentBuilder.Transformer {
      */
     private DynamicType.Builder<?> enhanceMethods(DynamicType.Builder<?> builder, TypeDescription typeDesc,
             ClassLoader classLoader) {
-        final MethodList<MethodDescription.InDefinedShape> declaredMethods = typeDesc.getDeclaredMethods();
+        final MethodList<InDefinedShape> declaredMethods = typeDesc.getDeclaredMethods();
         DynamicType.Builder<?> newBuilder = builder;
         for (MethodDescription.InDefinedShape methodDesc : declaredMethods) {
             if (methodDesc.isNative() || methodDesc.isAbstract()) {
@@ -171,30 +167,21 @@ public class DefaultTransformer implements AgentBuilder.Transformer {
      * @throws NoSuchMethodException 无法找到方法，正常不会报出
      * @throws NoSuchFieldException 找不到属性
      */
-    private DynamicType.Builder<?> resolve(DynamicType.Builder<?> builder, MethodDescription.InDefinedShape methodDesc,
+    abstract DynamicType.Builder<?> resolve(DynamicType.Builder<?> builder, MethodDescription.InDefinedShape methodDesc,
             List<Interceptor> interceptors, Class<?> templateCls, ClassLoader classLoader)
-            throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, NoSuchFieldException {
-        final String adviceKey = getAdviceKey(templateCls, classLoader, methodDesc);
-        List<Interceptor> interceptorsForMethod = BaseAdviseHandler.getInterceptorListMap().get(adviceKey);
-        if (interceptorsForMethod == null) {
-            interceptorsForMethod = new ArrayList<>(interceptors);
-            BaseAdviseHandler.getInterceptorListMap().put(adviceKey, interceptorsForMethod);
-            return builder.visit(Advice.to(templateCls).on(ElementMatchers.is(methodDesc)));
-        } else {
-            interceptorsForMethod.addAll(interceptors);
-            return builder;
-        }
-    }
+            throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, NoSuchFieldException;
 
     /**
      * 组成AdviceKey的格式为[模板类标准类名_被增强方法元信息的hash值_被增强类的类加载器]，被增强方法元信息，见于{@link MethodKeyCreator#getMethodDescKey}
      *
      * @param templateCls 增强模板类
-     * @return 增强Adviser全限定名
+     * @param classLoader 被增强类的类加载器
+     * @param methodDesc 方法描述
+     * @return adviceKey
      */
-    private String getAdviceKey(Class<?> templateCls,
-            ClassLoader classLoader, MethodDescription.InDefinedShape methodDesc) {
-        return templateCls.getSimpleName() + "_"
-                + Integer.toHexString(MethodKeyCreator.getMethodDescKey(methodDesc).hashCode()) + "_" + classLoader;
+    protected String getAdviceKey(Class<?> templateCls, ClassLoader classLoader,
+            MethodDescription.InDefinedShape methodDesc) {
+        return templateCls.getSimpleName() + "_" + Integer.toHexString(
+                MethodKeyCreator.getMethodDescKey(methodDesc).hashCode()) + "_" + classLoader;
     }
 }
