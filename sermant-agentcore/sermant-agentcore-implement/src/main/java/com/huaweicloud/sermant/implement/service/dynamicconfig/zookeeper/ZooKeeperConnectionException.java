@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,20 @@
 package com.huaweicloud.sermant.implement.service.dynamicconfig.zookeeper;
 
 /**
- * zookeeper客户端初始化异常
+ * zookeeper连接异常
  *
- * @author HapThorin
- * @version 1.0.0
- * @since 2021-12-15
+ * @author zhp
+ * @since 2023-09-12
  */
-public class ZooKeeperInitException extends RuntimeException {
+public class ZooKeeperConnectionException extends RuntimeException {
     private static final long serialVersionUID = 5111014183835362572L;
 
     /**
-     * zookeeper连接失败
+     * zookeeper连接异常
      *
      * @param exceptionMessage 异常信息
      */
-    public ZooKeeperInitException(String exceptionMessage) {
+    public ZooKeeperConnectionException(String exceptionMessage) {
         super(exceptionMessage);
     }
 }

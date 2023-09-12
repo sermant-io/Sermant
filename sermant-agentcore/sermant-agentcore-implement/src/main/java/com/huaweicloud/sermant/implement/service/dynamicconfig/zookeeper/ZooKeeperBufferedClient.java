@@ -148,7 +148,7 @@ public class ZooKeeperBufferedClient implements Closeable {
         waitConnect();
         if (zkClient.getState() != ZooKeeper.States.CONNECTED
                 && zkClient.getState() != ZooKeeper.States.CONNECTEDREADONLY) {
-            throw new ZooKeeperInitException();
+            throw new ZooKeeperInitException("Unable to connect to the zookeeper server.");
         }
     }
 
@@ -181,7 +181,7 @@ public class ZooKeeperBufferedClient implements Closeable {
         try {
             return new ZooKeeper(connectString, sessionTimeout, watcher);
         } catch (IOException ignored) {
-            throw new ZooKeeperInitException(connectString);
+            throw new ZooKeeperInitException("Connect to " + connectString + "failed. ");
         }
     }
 
@@ -189,14 +189,14 @@ public class ZooKeeperBufferedClient implements Closeable {
      * 获取zk客户端，若客户端断开，则抛出异常
      *
      * @return zk客户端
-     * @throws ZooKeeperInitException zk初始化异常
+     * @throws ZooKeeperConnectionException zk连接异常
      */
     private ZooKeeper getZkClient() {
         final ZooKeeper.States state = zkClient.getState();
         if (state == ZooKeeper.States.CONNECTED || state == ZooKeeper.States.CONNECTEDREADONLY) {
             return zkClient;
         }
-        throw new ZooKeeperInitException();
+        throw new ZooKeeperConnectionException("Unable to connect to the zookeeper server, connection timeout.");
     }
 
     /**
