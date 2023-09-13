@@ -1,0 +1,99 @@
+name: Agent-core Integration Test
+env:
+  sermantVersion: 1.0.0
+on:
+  push:
+  pull_request:
+    branches:
+      - '*'
+    paths:
+      - 'sermant-agentcore/**'
+      - 'sermant-integration-tests/agentcore-test/**'
+      - '.github/workflows/agentcore*.yml'
+      - '.github/actions/common/agentcore/action.yml'
+      - '.github/actions/scenarios/agentcore/action.yml'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
+  cancel-in-progress: true
+jobs:
+  download-midwares-and-cache:
+    name: download midwares and cache
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: cache local cse
+        uses: actions/cache@v3
+        with:
+          path: Local-CSE-2.1.3-linux-amd64.zip
+          key: ${{ runner.os }}-local-cse
+          restore-keys: |
+            ${{ runner.os }}-local-cse
+      - name: download cse
+        run: |
+          export ROOT_PATH=$(pwd)
+          bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh cse
+      - name: cache zookeeper
+        uses: actions/cache@v3
+        with:
+          path: apache-zookeeper-3.6.3-bin.tar.gz
+          key: ${{ runner.os }}-apache-zookeeper-3.6.3
+          restore-keys: |
+            ${{ runner.os }}-apache-zookeeper-3.6.3
+      - name: download zookeeper
+        run: |
+          export ROOT_PATH=$(pwd)
+          bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh zk
+      - name: cache nacos server
+        uses: actions/cache@v3
+        with:
+          path: nacos-server-2.1.0.tar.gz
+          key: ${{ runner.os }}-nacos-server-2.1.0
+          restore-keys: |
+            ${{ runner.os }}-nacos-server-2.1.0
+      - name: download nacos
+        run: |
+          export ROOT_PATH=$(pwd)
+          bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh nacos210
+  build-agent-and-cache:
+    name: build agent and cache
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+          cache: maven
+      - name: cache agent
+        uses: actions/cache@v3
+        with:
+          path: sermant-agent-*/
+          key: ${{ runner.os }}-agent-${{ github.run_id }}
+      - name: package agent
+        run: |
+          sed -i '/sermant-injector/d' pom.xml
+          mvn package -DskipTests -Ptest --file pom.xml
+      - name: move test plugin
+        run: |
+          mkdir -p sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/agentcore-test-plugin/plugin
+          cp ./sermant-integration-tests/agentcore-test/agentcore-test-plugin/target/agentcore-test-plugin-1.0.0.jar sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/agentcore-test-plugin/plugin/
+          cp ./sermant-integration-tests/agentcore-test/agentcore-test-application/target/agentcore-test-application-1.0.0-jar-with-dependencies.jar sermant-agent-${{ env.sermantVersion }}/agent/
+          sed -i '/plugins:/a \  - agentcore-test-plugin' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml
+  test-for-agentcore:
+    name: Test for agentcore
+    runs-on: ubuntu-latest
+    needs: [ build-agent-and-cache, download-midwares-and-cache ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/agentcore
+      - name: start agentcore test
+        uses: ./.github/actions/scenarios/agentcore
+
+
