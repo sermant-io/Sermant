@@ -29,6 +29,8 @@ ZK_FILE_NAME=apache-zookeeper-3.6.3-bin.tar.gz
 NACOS_ADDRESS=https://github.com/alibaba/nacos/releases/download/1.4.2/nacos-server-1.4.2.tar.gz
 NACOS_FILE_NAME=nacos-server-1.4.2.tar.gz
 
+NACOS_ADDRESS_210=https://github.com/alibaba/nacos/releases/download/2.1.0/nacos-server-2.1.0.tar.gz
+NACOS_FILE_NAME_210=nacos-server-2.1.0.tar.gz
 #======================================Service Center配置======================================
 SERVICE_CENTER_ADDRESS=https://github.com/apache/servicecomb-service-center/releases/download/v2.1.0/apache-servicecomb-service-center-2.1.0-linux-amd64.tar.gz
 SERVICE_CENTER_FILE_NAME=apache-servicecomb-service-center-2.1.0-linux-amd64.tar.gz
@@ -69,6 +71,9 @@ if [ $midleware == "zk" ];then
 elif [ $midleware == "nacos" ]; then
   ADDRESS=$NACOS_ADDRESS
   FILE_NAME=$NACOS_FILE_NAME
+elif [ $midleware == "nacos210" ]; then
+  ADDRESS=$NACOS_ADDRESS_210
+  FILE_NAME=$NACOS_FILE_NAME_210
 elif [ $midleware == "sc" ]; then
   ADDRESS=$SERVICE_CENTER_ADDRESS
   FILE_NAME=$SERVICE_CENTER_FILE_NAME

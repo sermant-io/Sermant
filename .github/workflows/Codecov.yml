@@ -41,6 +41,11 @@ jobs:
           curl -o apache-zookeeper-3.6.3-bin.tar.gz -L https://archive.apache.org/dist/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz
           tar -zxf apache-zookeeper-3.6.3-bin.tar.gz
           bash apache-zookeeper-3.6.3-bin/bin/zkServer.sh start apache-zookeeper-3.6.3-bin/conf/zoo_sample.cfg
+      - name: download nacos
+        run: |
+          curl -o nacos-server-2.1.0.tar.gz -L  https://github.com/alibaba/nacos/releases/download/2.1.0/nacos-server-2.1.0.tar.gz
+          tar -zxf nacos-server-2.1.0.tar.gz
+          bash nacos/bin/startup.sh -m standalone
       - name: Build with Maven
         run: mvn test
       - name: Generate code coverage report
