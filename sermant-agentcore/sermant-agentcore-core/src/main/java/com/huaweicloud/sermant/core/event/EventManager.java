@@ -43,10 +43,7 @@ public class EventManager {
 
     private static final ConcurrentHashMap<String, EventCollector> EVENT_COLLECTORS = new ConcurrentHashMap<>();
 
-    private static final ScheduledExecutorService EXECUTOR_SERVICE =
-            Executors.newScheduledThreadPool(1, new ThreadFactoryUtils("event-collect-task"));
-
-    private static final EventConfig EVENT_CONFIG = ConfigManager.getConfig(EventConfig.class);
+    private static ScheduledExecutorService executorService;
 
     private static final long INITIAL_DELAY = 30000L;
 
@@ -57,10 +54,14 @@ public class EventManager {
      * 初始化，创建定时任务，定时上报事件
      */
     public static void init() {
-        if (!EVENT_CONFIG.isEnable()) {
-            LOGGER.info("Event is not enable.");
+        EventConfig eventConfig = ConfigManager.getConfig(EventConfig.class);
+        if (!eventConfig.isEnable()) {
+            LOGGER.info("Event is not enabled.");
             return;
         }
+
+        // 创建定时采集事件线程
+        executorService = Executors.newScheduledThreadPool(1, new ThreadFactoryUtils("event-collect-task"));
 
         // 初始化事件发送
         EventSender.init();
@@ -72,7 +73,7 @@ public class EventManager {
         EventManager.registerCollector(LogEventCollector.getInstance());
 
         // 开启定时采集上报事件消息
-        EXECUTOR_SERVICE.scheduleAtFixedRate(EventManager::collectAll, INITIAL_DELAY, EVENT_CONFIG.getSendInterval(),
+        executorService.scheduleAtFixedRate(EventManager::collectAll, INITIAL_DELAY, eventConfig.getSendInterval(),
                 TimeUnit.MILLISECONDS);
     }
 
@@ -80,7 +81,16 @@ public class EventManager {
      * 在程序终止时上报在内存中的事件
      */
     public static void shutdown() {
+        // 关闭定时采集事件线程
+        if (executorService != null) {
+            executorService.shutdown();
+        }
+
+        // 采集全部事件并上报
         collectAll();
+
+        // 清空注册的事件收集器
+        EVENT_COLLECTORS.clear();
     }
 
     /**

@@ -24,7 +24,9 @@ import com.huaweicloud.sermant.core.config.strategy.LoadConfigStrategy;
 import com.huaweicloud.sermant.core.config.utils.ConfigKeyUtil;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -48,12 +50,19 @@ public abstract class ConfigManager {
      * 配置对象集合，键为配置对象的实现类Class，值为加载完毕的配置对象
      * <p>通过{@link #getConfig(Class)}方法获取配置对象
      */
-    private static final Map<String, BaseConfig> CONFIG_MAP = new HashMap<String, BaseConfig>();
+    private static final Map<String, BaseConfig> CONFIG_MAP = new HashMap<>();
 
-    private static final Iterable<LoadConfigStrategy> LOAD_CONFIG_STRATEGIES =
-            ServiceLoader.load(LoadConfigStrategy.class, ClassLoaderManager.getFrameworkClassLoader());
+    private static final List<LoadConfigStrategy> LOAD_CONFIG_STRATEGIES = new ArrayList<>();
 
-    private static Map<String, Object> argsMap = null;
+    private static Map<String, Object> argsMap;
+
+    /**
+     * 关闭配置管理器
+     */
+    public static void shutdown() {
+        CONFIG_MAP.clear();
+        LOAD_CONFIG_STRATEGIES.clear();
+    }
 
     /**
      * 通过配置对象类型获取配置对象
@@ -84,31 +93,33 @@ public abstract class ConfigManager {
      */
     public static synchronized void initialize(Map<String, Object> args) {
         argsMap = args;
-        loadConfig(BootArgsIndexer.getConfigFile(), BaseConfig.class, ClassLoaderManager.getSermantClassLoader());
+        for (LoadConfigStrategy<?> strategy : ServiceLoader.load(LoadConfigStrategy.class,
+                ClassLoaderManager.getFrameworkClassLoader())) {
+            LOAD_CONFIG_STRATEGIES.add(strategy);
+        }
+        loadConfig(BootArgsIndexer.getConfigFile(), ClassLoaderManager.getSermantClassLoader());
     }
 
     /**
      * 加载配置文件，将配置信息读取到配置对象中
      *
      * @param configFile 配置文件
-     * @param baseCls 配置对象的基类，该参数决定spi操作的源
      * @param classLoader 类加载器，该参数决定从哪个classLoader中进行api操作
      */
-    protected static void loadConfig(File configFile, Class<? extends BaseConfig> baseCls, ClassLoader classLoader) {
+    protected static void loadConfig(File configFile, ClassLoader classLoader) {
         if (configFile.exists() && configFile.isFile()) {
-            doLoadConfig(configFile, baseCls, classLoader);
+            doLoadConfig(configFile, classLoader);
         } else {
-            loadDefaultConfig(baseCls, classLoader);
+            loadDefaultConfig(classLoader);
         }
     }
 
     /**
      * 加载默认配置
      *
-     * @param baseCls 配置对象的基类，该参数决定spi操作的源
      * @param classLoader 类加载器，该参数决定从哪个classLoader中进行api操作
      */
-    private static synchronized void loadDefaultConfig(Class<? extends BaseConfig> baseCls, ClassLoader classLoader) {
+    private static synchronized void loadDefaultConfig(ClassLoader classLoader) {
         foreachConfig(new ConfigConsumer() {
             @Override
             public void accept(BaseConfig config) {
@@ -117,39 +128,45 @@ public abstract class ConfigManager {
                     CONFIG_MAP.put(typeKey, config);
                 }
             }
-        }, baseCls, classLoader);
+        }, classLoader);
     }
 
     /**
      * 配置执行从配置文件中加载
      *
      * @param configFile 配置文件
-     * @param baseCls 配置对象的基类，该参数决定spi操作的源
      * @param classLoader 类加载器，当前配置加载策略api在agentcore-implement包中，所以使用FrameworkClassLoader加载
      */
-    private static synchronized void doLoadConfig(File configFile, Class<? extends BaseConfig> baseCls,
+    private static synchronized void doLoadConfig(File configFile,
             ClassLoader classLoader) {
-        // 通过FrameworkClassLoader 获取配置加载策略
-        final LoadConfigStrategy<?> loadConfigStrategy =
-                getLoadConfigStrategy(configFile, ClassLoaderManager.getFrameworkClassLoader());
-        final Object holder = loadConfigStrategy.getConfigHolder(configFile, argsMap);
-        foreachConfig(new ConfigConsumer() {
-            @Override
-            public void accept(BaseConfig config) {
-                final String typeKey = ConfigKeyUtil.getTypeKey(config.getClass());
-                final BaseConfig retainedConfig = CONFIG_MAP.get(typeKey);
-                if (retainedConfig == null) {
-                    CONFIG_MAP.put(typeKey, ((LoadConfigStrategy) loadConfigStrategy).loadConfig(holder, config));
-                } else if (retainedConfig.getClass() == config.getClass()) {
-                    LOGGER.fine(
-                            String.format(Locale.ROOT, "Skip load config [%s] repeatedly. ",
-                                    config.getClass().getName()));
-                } else {
-                    LOGGER.warning(String.format(Locale.ROOT, "Type key of %s is %s, same as %s's. ",
-                            config.getClass().getName(), typeKey, retainedConfig.getClass().getName()));
-                }
+        foreachConfig(config -> {
+            final String typeKey = ConfigKeyUtil.getTypeKey(config.getClass());
+            final BaseConfig retainedConfig = CONFIG_MAP.get(typeKey);
+            if (retainedConfig == null) {
+                CONFIG_MAP.put(typeKey, doLoad(configFile, config));
+            } else if (retainedConfig.getClass() == config.getClass()) {
+                LOGGER.fine(String.format(Locale.ROOT, "Skip load config [%s] repeatedly. ",
+                        config.getClass().getName()));
+            } else {
+                LOGGER.warning(String.format(Locale.ROOT, "Type key of %s is %s, same as %s's. ",
+                        config.getClass().getName(), typeKey, retainedConfig.getClass().getName()));
             }
-        }, baseCls, classLoader);
+        }, classLoader);
+    }
+
+    /**
+     * 加载配置逻辑
+     *
+     * @param configFile 配置文件
+     * @param baseConfig 配置类
+     * @return 加载后的配置类
+     */
+    public static BaseConfig doLoad(File configFile, BaseConfig baseConfig) {
+        // 通过FrameworkClassLoader 获取配置加载策略
+        final LoadConfigStrategy<?> loadConfigStrategy = getLoadConfigStrategy(configFile,
+                ClassLoaderManager.getFrameworkClassLoader());
+        final Object holder = loadConfigStrategy.getConfigHolder(configFile, argsMap);
+        return ((LoadConfigStrategy) loadConfigStrategy).loadConfig(holder, baseConfig);
     }
 
     /**
@@ -176,8 +193,9 @@ public abstract class ConfigManager {
                 }
             }
         }
-        LOGGER.log(Level.WARNING, String.format(Locale.ROOT, "Missing implement of [%s], use [%s].",
-                LoadConfigStrategy.class.getName(), LoadConfigStrategy.DefaultLoadConfigStrategy.class.getName()));
+        LOGGER.log(Level.WARNING,
+                String.format(Locale.ROOT, "Missing implement of [%s], use [%s].", LoadConfigStrategy.class.getName(),
+                        LoadConfigStrategy.DefaultLoadConfigStrategy.class.getName()));
         return new LoadConfigStrategy.DefaultLoadConfigStrategy();
     }
 
@@ -188,9 +206,9 @@ public abstract class ConfigManager {
      *
      * @param configConsumer 配置处理方法
      */
-    private static void foreachConfig(ConfigConsumer configConsumer, Class<? extends BaseConfig> baseCls,
+    private static void foreachConfig(ConfigConsumer configConsumer,
             ClassLoader classLoader) {
-        for (BaseConfig config : ServiceLoader.load(baseCls, classLoader)) {
+        for (BaseConfig config : ServiceLoader.load((Class<? extends BaseConfig>) BaseConfig.class, classLoader)) {
             configConsumer.accept(config);
         }
     }

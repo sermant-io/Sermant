@@ -18,7 +18,6 @@ package com.huaweicloud.sermant.core.service.heartbeat.common;
 
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.utils.NetworkUtils;
-import com.huaweicloud.sermant.core.utils.TimeUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -57,8 +56,8 @@ public class HeartbeatMessage {
         this.ip = NetworkUtils.getAllNetworkIp();
         this.service = BootArgsIndexer.getServiceName();
         this.appType = BootArgsIndexer.getAppType();
-        this.heartbeatTime = TimeUtils.currentTimeMillis();
-        this.lastHeartbeatTime = TimeUtils.currentTimeMillis();
+        this.heartbeatTime = System.currentTimeMillis();
+        this.lastHeartbeatTime = System.currentTimeMillis();
         this.version = BootArgsIndexer.getCoreVersion();
         this.instanceId = BootArgsIndexer.getInstanceId();
     }
@@ -68,7 +67,7 @@ public class HeartbeatMessage {
      */
     public void updateHeartbeatVersion() {
         this.lastHeartbeatTime = this.heartbeatTime;
-        this.heartbeatTime = TimeUtils.currentTimeMillis();
+        this.heartbeatTime = System.currentTimeMillis();
         this.hostName = NetworkUtils.getHostName();
         this.ip = NetworkUtils.getAllNetworkIp();
     }

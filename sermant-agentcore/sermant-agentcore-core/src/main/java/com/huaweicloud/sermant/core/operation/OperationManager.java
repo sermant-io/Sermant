@@ -41,7 +41,7 @@ public class OperationManager {
      */
     public static void initOperations() {
         for (final BaseOperation operation : ServiceLoader.load(BaseOperation.class,
-            ClassLoaderManager.getFrameworkClassLoader())) {
+                ClassLoaderManager.getFrameworkClassLoader())) {
             loadOperation(operation, operation.getClass(), BaseOperation.class);
         }
     }
@@ -57,7 +57,7 @@ public class OperationManager {
     public static <T extends BaseOperation> T getOperation(Class<T> operationClass) {
         final BaseOperation baseOperation = OPERATIONS.get(operationClass.getName());
         if (baseOperation != null && operationClass.isAssignableFrom(baseOperation.getClass())) {
-            return (T)baseOperation;
+            return (T) baseOperation;
         }
         throw new IllegalArgumentException("Operation instance of [" + operationClass + "] is not found. ");
     }
@@ -71,7 +71,7 @@ public class OperationManager {
      * @return 是否加载成功
      */
     private static boolean loadOperation(BaseOperation operation, Class<?> operationCls,
-        Class<? extends BaseOperation> baseCls) {
+            Class<? extends BaseOperation> baseCls) {
         if (operationCls == null || operationCls == baseCls || !baseCls.isAssignableFrom(operationCls)) {
             return false;
         }
@@ -93,5 +93,12 @@ public class OperationManager {
             isLoadSucceed |= loadOperation(operation, interfaceCls, baseCls);
         }
         return isLoadSucceed;
+    }
+
+    /**
+     * 关闭OperationManager
+     */
+    public static void shutdown() {
+        OPERATIONS.clear();
     }
 }

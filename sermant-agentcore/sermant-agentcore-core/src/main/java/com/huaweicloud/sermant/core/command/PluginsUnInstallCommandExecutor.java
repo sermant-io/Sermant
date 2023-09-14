@@ -41,6 +41,6 @@ public class PluginsUnInstallCommandExecutor implements CommandExecutor {
             return;
         }
         String[] pluginNames = args.split("\\|");
-        PluginManager.unInstall(Arrays.stream(pluginNames).collect(Collectors.toSet()));
+        PluginManager.uninstall(Arrays.stream(pluginNames).collect(Collectors.toSet()));
     }
 }

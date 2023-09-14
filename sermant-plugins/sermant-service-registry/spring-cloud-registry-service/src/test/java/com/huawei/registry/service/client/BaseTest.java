@@ -21,6 +21,7 @@ import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.config.common.BaseConfig;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import org.junit.BeforeClass;
 
@@ -42,8 +43,8 @@ public class BaseTest {
     @BeforeClass
     public static void init() throws IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
         currentClassLoader = Thread.currentThread().getContextClassLoader();
-        final Class<?> aClass = currentClassLoader.loadClass(ConfigManager.class.getName());
-        final Field configMap = aClass.getDeclaredField("CONFIG_MAP");
+        final Class<?> aClass = currentClassLoader.loadClass(PluginConfigManager.class.getName());
+        final Field configMap = aClass.getDeclaredField("PLUGIN_CONFIG_MAP");
         configMap.setAccessible(true);
         removeFinalModify(configMap);
 
