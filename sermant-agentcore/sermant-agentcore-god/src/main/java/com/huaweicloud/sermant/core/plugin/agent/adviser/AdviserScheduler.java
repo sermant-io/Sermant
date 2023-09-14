@@ -18,6 +18,9 @@ package com.huaweicloud.sermant.core.plugin.agent.adviser;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * 转换器调度器
  *
@@ -26,6 +29,8 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
  */
 public class AdviserScheduler {
     private static AdviserInterface currentAdviser;
+
+    private static final Map<String, Boolean> ADVICE_LOCKS = new ConcurrentHashMap<>();
 
     private AdviserScheduler() {
     }
@@ -78,5 +83,29 @@ public class AdviserScheduler {
             executeContext = currentAdviser.onMethodExit(executeContext, adviceKey);
         }
         return executeContext;
+    }
+
+    /**
+     * 对adviceKey加advice锁
+     *
+     * @param adviceKey 指明被增强的位置
+     * @return 是否能够获取锁
+     */
+    public static boolean lock(String adviceKey) {
+        Boolean adviceLock = ADVICE_LOCKS.get(adviceKey);
+        if (adviceLock == null || !adviceLock) {
+            ADVICE_LOCKS.put(adviceKey, Boolean.TRUE);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 释放对adviceKey的advice锁
+     *
+     * @param adviceKey 指明被增强的位置
+     */
+    public static void unLock(String adviceKey) {
+        ADVICE_LOCKS.put(adviceKey, Boolean.FALSE);
     }
 }

@@ -26,6 +26,7 @@ import com.huaweicloud.sermant.premain.utils.LoggerUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,8 +99,11 @@ public class AgentLauncher {
                     .invoke(null, artifact, argsMap, instrumentation, isDynamic);
             LOGGER.log(Level.INFO, "Load sermant done， artifact is: " + artifact);
             SermantManager.updateSermantStatus(artifact, true);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Loading sermant agent failed.", e);
+        } catch (InvocationTargetException invocationTargetException) {
+            LOGGER.log(Level.SEVERE,
+                    "Loading sermant agent failed: " + invocationTargetException.getTargetException().getMessage());
+        } catch (Exception exception) {
+            LOGGER.log(Level.SEVERE, "Loading sermant agent failed: " + exception.getMessage());
         }
     }
 

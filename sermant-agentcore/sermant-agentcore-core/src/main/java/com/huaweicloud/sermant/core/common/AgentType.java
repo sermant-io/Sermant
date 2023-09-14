@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,31 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.core.plugin.agent.declarer;
-
-import net.bytebuddy.agent.builder.AgentBuilder;
+package com.huaweicloud.sermant.core.common;
 
 /**
- * 插件描述，{@link PluginDeclarer}的低阶api
- * <p>用于描述插件的最终必要对象，由byte-buddy的{@link AgentBuilder.RawMatcher}和{@link AgentBuilder.Transformer}构成
+ * 描述agent类型
  *
- * @author HapThorin
- * @version 1.0.0
- * @since 2022-01-24
+ * @author luanwenfei
+ * @since 2023-09-09
  */
-public interface PluginDescription extends AgentBuilder.RawMatcher, AgentBuilder.Transformer {
+public enum AgentType {
+    /**
+     * premain方式启动的agent
+     */
+    PREMAIN(0),
+    /**
+     * agentmain方式启动的agent
+     */
+    AGENTMAIN(1);
+
+    private final int value;
+
+    AgentType(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
 }

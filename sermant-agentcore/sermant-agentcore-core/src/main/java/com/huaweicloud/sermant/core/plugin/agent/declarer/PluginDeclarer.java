@@ -16,12 +16,12 @@
 
 package com.huaweicloud.sermant.core.plugin.agent.declarer;
 
-import com.huaweicloud.sermant.core.plugin.agent.collector.PluginCollectorManager;
+import com.huaweicloud.sermant.core.plugin.agent.collector.PluginCollector;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
  * 插件声明，{@link PluginDescription}的高阶api
- * <p>该接口在组装时会尝试合并，见于{@link PluginCollectorManager}
+ * <p>该接口在组装时会尝试合并，见于{@link PluginCollector}
  * <p>因此建议使用者优先使用该接口定义增强插件
  *
  * @author HapThorin
