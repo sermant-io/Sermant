@@ -4,6 +4,7 @@ package com.huaweicloud.sermant.premain.common;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -104,5 +105,17 @@ public class BootArgsBuilderTest {
                 }
             }
         }
+    }
+
+    /**
+     * 测试参数解析
+     */
+    @Test
+    public void testParseArgs(){
+        String agentArgs = "appName=test,command=INSTALL_PLUGIN:monitor|flowcontrol,server.port=9000";
+        Map<String, Object> argsMap = BootArgsBuilder.build(agentArgs);
+        Assert.assertEquals("test", argsMap.get("appName"));
+        Assert.assertEquals("9000", argsMap.get("server.port"));
+        Assert.assertEquals("INSTALL_PLUGIN:monitor|flowcontrol", argsMap.get("command"));
     }
 }
