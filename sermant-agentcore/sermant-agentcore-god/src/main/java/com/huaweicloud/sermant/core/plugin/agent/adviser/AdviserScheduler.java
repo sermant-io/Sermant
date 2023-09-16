@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.core.plugin.agent.adviser;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2023-04-11
  */
 public class AdviserScheduler {
-    private static AdviserInterface currentAdviser;
+    private static final ArrayList<AdviserInterface> ADVISERS = new ArrayList<>();
 
     private static final Map<String, Boolean> ADVICE_LOCKS = new ConcurrentHashMap<>();
 
@@ -41,7 +42,7 @@ public class AdviserScheduler {
      * @param adviser adviser
      */
     public static void registry(AdviserInterface adviser) {
-        currentAdviser = adviser;
+        ADVISERS.add(adviser);
     }
 
     /**
@@ -50,7 +51,7 @@ public class AdviserScheduler {
      * @param adviser adviser
      */
     public static void unRegistry(AdviserInterface adviser) {
-        currentAdviser = null;
+        ADVISERS.remove(adviser);
     }
 
     /**
@@ -63,8 +64,12 @@ public class AdviserScheduler {
      */
     public static ExecuteContext onMethodEnter(Object context, String adviceKey) throws Throwable {
         ExecuteContext executeContext = (ExecuteContext) context;
-        if (currentAdviser != null) {
-            executeContext = currentAdviser.onMethodEnter(executeContext, adviceKey);
+
+        // 多Sermant场景下，method enter 顺序执行
+        for (AdviserInterface currentAdviser : ADVISERS) {
+            if (currentAdviser != null) {
+                executeContext = currentAdviser.onMethodEnter(executeContext, adviceKey);
+            }
         }
         return executeContext;
     }
@@ -79,8 +84,13 @@ public class AdviserScheduler {
      */
     public static ExecuteContext onMethodExit(Object context, String adviceKey) throws Throwable {
         ExecuteContext executeContext = (ExecuteContext) context;
-        if (currentAdviser != null) {
-            executeContext = currentAdviser.onMethodExit(executeContext, adviceKey);
+
+        // / 多Sermant场景下，method enter 倒叙执行
+        for (int i = ADVISERS.size() - 1; i >= 0; i--) {
+            AdviserInterface currentAdviser = ADVISERS.get(i);
+            if (currentAdviser != null) {
+                executeContext = currentAdviser.onMethodExit(executeContext, adviceKey);
+            }
         }
         return executeContext;
     }

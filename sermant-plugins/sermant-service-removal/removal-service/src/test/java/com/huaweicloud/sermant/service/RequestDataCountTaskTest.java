@@ -18,10 +18,11 @@ package com.huaweicloud.sermant.service;
 
 import com.huaweicloud.sermant.cache.InstanceCache;
 import com.huaweicloud.sermant.config.RemovalConfig;
-import com.huaweicloud.sermant.core.config.ConfigManager;
-import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.entity.InstanceInfo;
 import com.huaweicloud.sermant.entity.RequestCountData;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -48,9 +49,9 @@ public class RequestDataCountTaskTest {
 
     private static final double ERROR_RATE = 0.5;
 
-    private static MockedStatic<ConfigManager> configManagerMockedStatic;
+    private static MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
-    private static MockedStatic<ServiceManager> serviceManagerMockedStatic;
+    private static MockedStatic<PluginServiceManager> pluginServiceManagerMockedStatic;
 
     private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
@@ -65,10 +66,11 @@ public class RequestDataCountTaskTest {
         removalConfig.setWindowsTime(1000);
         removalConfig.setWindowsNum(10);
         removalConfig.setExpireTime(6000);
-        configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
-        configManagerMockedStatic.when(() -> ConfigManager.getConfig(RemovalConfig.class)).thenReturn(removalConfig);
-        serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
-        serviceManagerMockedStatic.when(() -> ServiceManager.getService(RemovalEventService.class))
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RemovalConfig.class))
+                .thenReturn(removalConfig);
+        pluginServiceManagerMockedStatic = Mockito.mockStatic(PluginServiceManager.class);
+        pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(RemovalEventService.class))
                 .thenReturn(removalEventService);
         scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
         scheduledThreadPoolExecutor.scheduleWithFixedDelay(() -> {
@@ -96,8 +98,8 @@ public class RequestDataCountTaskTest {
 
     @AfterClass
     public static void setDown() {
-        if (configManagerMockedStatic != null) {
-            configManagerMockedStatic.close();
+        if (pluginConfigManagerMockedStatic != null) {
+            pluginConfigManagerMockedStatic.close();
         }
         InstanceCache.INSTANCE_MAP.clear();
         if (scheduledThreadPoolExecutor != null) {
@@ -106,8 +108,8 @@ public class RequestDataCountTaskTest {
         if (requestDataCountTask != null) {
             requestDataCountTask.stop();
         }
-        if (serviceManagerMockedStatic != null) {
-            serviceManagerMockedStatic.close();
+        if (pluginServiceManagerMockedStatic != null) {
+            pluginServiceManagerMockedStatic.close();
         }
     }
 }

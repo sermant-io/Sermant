@@ -27,11 +27,14 @@ import com.huaweicloud.sermant.core.notification.NotificationInfo;
 import com.huaweicloud.sermant.core.notification.NotificationManager;
 import com.huaweicloud.sermant.core.notification.SermantNotificationType;
 import com.huaweicloud.sermant.core.operation.OperationManager;
+import com.huaweicloud.sermant.core.plugin.PluginManager;
 import com.huaweicloud.sermant.core.plugin.PluginSystemEntrance;
 import com.huaweicloud.sermant.core.plugin.agent.ByteEnhanceManager;
+import com.huaweicloud.sermant.core.plugin.agent.adviser.AdviserInterface;
 import com.huaweicloud.sermant.core.plugin.agent.adviser.AdviserScheduler;
 import com.huaweicloud.sermant.core.plugin.agent.template.DefaultAdviser;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.god.common.SermantManager;
 
 import java.lang.instrument.Instrumentation;
 import java.util.Map;
@@ -53,6 +56,16 @@ public class AgentCoreEntrance {
      */
     private static int agentType = AgentType.PREMAIN.getValue();
 
+    /**
+     * 缓存当前Agent的产品名
+     */
+    private static String artifactCache;
+
+    /**
+     * 缓存当前Agent的adviser
+     */
+    private static AdviserInterface adviserCache;
+
     private AgentCoreEntrance() {
     }
 
@@ -70,6 +83,8 @@ public class AgentCoreEntrance {
         if (isDynamic) {
             agentType = AgentType.AGENTMAIN.getValue();
         }
+        artifactCache = artifact;
+        adviserCache = new DefaultAdviser();
 
         // 初始化框架类加载器
         ClassLoaderManager.init(argsMap);
@@ -99,9 +114,9 @@ public class AgentCoreEntrance {
         PluginSystemEntrance.initialize(isDynamic);
 
         // 注册Adviser
-        AdviserScheduler.registry(new DefaultAdviser());
+        AdviserScheduler.registry(adviserCache);
 
-        // 增强静态插件
+        // 静态插件在全部加载结束后，统一增强，复用一个AgentBuilder
         if (!isDynamic) {
             ByteEnhanceManager.enhance();
         }
@@ -118,11 +133,32 @@ public class AgentCoreEntrance {
     /**
      * 卸载当前Sermant
      */
-    public static void unInstall() {
+    public static void uninstall() {
         if (isPremain()) {
             LOGGER.log(Level.WARNING, "Sermant are not allowed to be uninstall when booting through premain.");
             return;
         }
+
+        // 在Adviser调度器中取消注册当前Agent的Adviser
+        AdviserScheduler.unRegistry(adviserCache);
+
+        // 卸载全部的插件
+        PluginManager.uninstallAll();
+
+        // 关闭事件系统
+        EventManager.shutdown();
+
+        // 关闭所有服务
+        ServiceManager.shutdown();
+
+        // 清理操作类
+        OperationManager.shutdown();
+
+        // 清理配置类
+        ConfigManager.shutdown();
+
+        // 设置该artifact的Sermant状态为false，非运行状态
+        SermantManager.updateSermantStatus(artifactCache, false);
     }
 
     /**

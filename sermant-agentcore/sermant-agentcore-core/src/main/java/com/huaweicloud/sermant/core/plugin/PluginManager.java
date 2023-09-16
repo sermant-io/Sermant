@@ -16,18 +16,21 @@
 
 package com.huaweicloud.sermant.core.plugin;
 
-import com.huaweicloud.sermant.core.AgentCoreEntrance;
 import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.exception.SchemaException;
 import com.huaweicloud.sermant.core.plugin.agent.ByteEnhanceManager;
+import com.huaweicloud.sermant.core.plugin.agent.adviser.AdviserScheduler;
+import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
+import com.huaweicloud.sermant.core.plugin.agent.template.BaseAdviseHandler;
 import com.huaweicloud.sermant.core.plugin.classloader.ServiceClassLoader;
 import com.huaweicloud.sermant.core.plugin.common.PluginConstant;
 import com.huaweicloud.sermant.core.plugin.common.PluginSchemaValidator;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.core.utils.CollectionUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -68,33 +71,70 @@ public class PluginManager {
     /**
      * 安装插件
      *
-     * @param plugins 插件名集合，插件产物需要存在于pluginPackage中，否则无法安装成功
+     * @param pluginNames 插件名集合，插件产物需要存在于pluginPackage中，否则无法安装成功
      */
-    public static void install(Set<String> plugins) {
-        if (AgentCoreEntrance.isPremain()) {
-            LOGGER.log(Level.WARNING, "Plugins are not allowed to be installed when booting through premain.");
-            return;
-        }
-        initPlugins(plugins, true);
+    public static void install(Set<String> pluginNames) {
+        initPlugins(pluginNames, true);
     }
 
     /**
      * 卸载插件
      *
-     * @param plugins 插件名集合
+     * @param pluginNames 插件名集合
      */
-    public static void unInstall(Set<String> plugins) {
-        if (AgentCoreEntrance.isPremain()) {
-            LOGGER.log(Level.WARNING, "Plugins are not allowed to be uninstalled when booting through premain.");
+    public static void uninstall(Set<String> pluginNames) {
+        if (CollectionUtils.isEmpty(pluginNames)) {
+            LOGGER.log(Level.WARNING, "No plugin is configured to be uninstall.");
             return;
+        }
+        for (String name : pluginNames) {
+            Plugin plugin = PLUGIN_MAP.get(name);
+            if (plugin == null) {
+                LOGGER.log(Level.INFO, "Plugin {0} has not been installed.", name);
+                continue;
+            }
+            if (!plugin.isDynamic()) {
+                LOGGER.log(Level.INFO, "Plugin {0} is static-support-plugin,can not be uninstalled.", name);
+                continue;
+            }
+
+            // 释放所有的插件占用的锁
+            for (String adviceKey : plugin.getAdviceLocks()) {
+                AdviserScheduler.unLock(adviceKey);
+            }
+
+            // 取消字节码增强
+            ByteEnhanceManager.unEnhanceDynamicPlugin(plugin);
+
+            // 关闭插件服务
+            PluginServiceManager.shutdownPluginServices(plugin);
+
+            // 移除PluginClassLoaderFinder中plugin对应的PluginClassLoader
+            ClassLoaderManager.getPluginClassFinder().removePluginClassLoader(plugin);
+
+            // 清理该插件创建的Interceptor
+            Map<String, List<Interceptor>> interceptorListMap = BaseAdviseHandler.getInterceptorListMap();
+            for (List<Interceptor> interceptors : interceptorListMap.values()) {
+                interceptors.removeIf(
+                        interceptor -> plugin.getPluginClassLoader().equals(interceptor.getClass().getClassLoader()));
+            }
+
+            // 删除缓存的插件配置
+            PluginConfigManager.cleanPluginConfigs(plugin);
+
+            // 关闭插件的ClassLoader
+            closePluginLoaders(plugin);
+
+            // 从插件Map中清除该插件
+            PLUGIN_MAP.remove(name);
         }
     }
 
     /**
      * 卸载全部插件
      */
-    public static void unInstallAll() {
-
+    public static void uninstallAll() {
+        uninstall(PLUGIN_MAP.keySet());
     }
 
     /**
@@ -139,8 +179,8 @@ public class PluginManager {
     private static void doInitPlugin(Plugin plugin) {
         loadPluginLibs(plugin);
         loadServiceLibs(plugin);
-        PluginConfigManager.loadPluginConfig(plugin);
-        PluginServiceManager.initPluginService(plugin);
+        PluginConfigManager.loadPluginConfigs(plugin);
+        PluginServiceManager.initPluginServices(plugin);
 
         // 适配逻辑，类加载器需要在字节码增强前加入到插件类检索器中，否则可能会在字节码增强时，找不到拦截器
         ClassLoaderManager.getPluginClassFinder().addPluginClassLoader(plugin);
@@ -305,6 +345,19 @@ public class PluginManager {
      */
     private static File getServiceDir(String pluginPath) {
         return new File(pluginPath + File.separatorChar + PluginConstant.SERVICE_DIR_NAME);
+    }
+
+    private static void closePluginLoaders(Plugin plugin) {
+        try {
+            plugin.getServiceClassLoader().close();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Failed to close ServiceClassLoader for plugin:{0}", plugin.getName());
+        }
+        try {
+            plugin.getPluginClassLoader().close();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Failed to close PluginClassLoader for plugin:{0}", plugin.getName());
+        }
     }
 
     /**

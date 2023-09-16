@@ -21,9 +21,6 @@ import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.plugin.Plugin;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,32 +44,32 @@ public class PluginServiceManager extends ServiceManager {
      *
      * @param plugin 插件
      */
-    public static void initPluginService(Plugin plugin) {
+    public static void initPluginServices(Plugin plugin) {
         ClassLoader classLoader =
                 plugin.getServiceClassLoader() != null ? plugin.getServiceClassLoader() : plugin.getPluginClassLoader();
-        initPluginService(classLoader);
-    }
-
-    /**
-     * 初始化插件服务
-     *
-     * @param classLoader 插件服务包的ClassLoader
-     */
-    public static void initPluginService(ClassLoader classLoader) {
-        List<String> startServiceList = new ArrayList<>();
         for (PluginService service : ServiceLoader.load(PluginService.class, classLoader)) {
             if (loadService(service, service.getClass(), PluginService.class)) {
                 try {
+                    String serviceName = service.getClass().getName();
                     service.start();
-                    startServiceList.add(service.getClass().getName());
+                    plugin.getServices().add(serviceName);
                 } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
-                            "Error occurs while starting plugin service: %s",
-                            service.getClass()), ex);
+                    LOGGER.log(Level.SEVERE, "Error occurs while starting plugin service: " + service.getClass(), ex);
                 }
             }
         }
-        FrameworkEventCollector.getInstance().collectServiceStartEvent(startServiceList.toString());
+        FrameworkEventCollector.getInstance().collectServiceStartEvent(plugin.getServices().toString());
+    }
+
+    /**
+     * 关闭插件服务
+     *
+     * @param plugin 插件
+     */
+    public static void shutdownPluginServices(Plugin plugin) {
+        for (String serviceName : plugin.getServices()) {
+            stopService(serviceName);
+        }
     }
 
     /**

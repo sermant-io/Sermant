@@ -18,7 +18,6 @@ package com.huaweicloud.sermant.cache;
 
 import com.huaweicloud.sermant.config.RemovalConfig;
 import com.huaweicloud.sermant.config.RemovalRule;
-import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import org.junit.AfterClass;
@@ -46,7 +45,7 @@ public class RuleCacheTest {
 
     private static final String KEY = "SERVICE-A";
 
-    private static MockedStatic<ConfigManager> configManagerMockedStatic;
+    private static MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     @BeforeClass
     public static void setUp() {
@@ -58,8 +57,8 @@ public class RuleCacheTest {
         removalRule.setKey(KEY);
         removalConfig.setRules(new ArrayList<>());
         removalConfig.getRules().add(removalRule);
-        configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
-        configManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RemovalConfig.class)).thenReturn(removalConfig);
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RemovalConfig.class)).thenReturn(removalConfig);
     }
 
     @Test
@@ -74,8 +73,8 @@ public class RuleCacheTest {
 
     @AfterClass
     public static void setDown() {
-        if (configManagerMockedStatic != null) {
-            configManagerMockedStatic.close();
+        if (pluginConfigManagerMockedStatic != null) {
+            pluginConfigManagerMockedStatic.close();
         }
         InstanceCache.INSTANCE_MAP.clear();
     }

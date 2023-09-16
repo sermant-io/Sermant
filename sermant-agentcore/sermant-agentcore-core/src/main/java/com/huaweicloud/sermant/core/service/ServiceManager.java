@@ -34,9 +34,9 @@ import com.huaweicloud.sermant.core.utils.SpiLoadUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,38 +51,38 @@ public class ServiceManager {
     /**
      * 动态配置服务类名
      */
-    public static final String BUFFERED_DYNAMIC_CONFIG_SERVICE = "com.huaweicloud.sermant"
-            + ".implement.service.dynamicconfig.BufferedDynamicConfigService";
+    public static final String BUFFERED_DYNAMIC_CONFIG_SERVICE =
+            "com.huaweicloud.sermant.implement.service.dynamicconfig.BufferedDynamicConfigService";
 
     /**
      * 心跳服务类名
      */
-    public static final String HEARTBEAT_SERVICE_IMPL = "com.huaweicloud.sermant.implement.service.heartbeat"
-            + ".HeartbeatServiceImpl";
+    public static final String HEARTBEAT_SERVICE_IMPL =
+            "com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl";
 
     /**
      * 注入服务类名
      */
-    public static final String INJECT_SERVICE_IMPL = "com.huaweicloud.sermant.implement.service.inject"
-            + ".InjectServiceImpl";
+    public static final String INJECT_SERVICE_IMPL =
+            "com.huaweicloud.sermant.implement.service.inject.InjectServiceImpl";
 
     /**
      * netty网关服务类名
      */
-    public static final String NETTY_GATEWAY_CLIENT = "com.huaweicloud.sermant.implement.service.send.netty"
-            + ".NettyGatewayClient";
+    public static final String NETTY_GATEWAY_CLIENT =
+            "com.huaweicloud.sermant.implement.service.send.netty.NettyGatewayClient";
 
     /**
      * 链路追踪服务类名
      */
-    public static final String TRACING_SERVICE_IMPL = "com.huaweicloud.sermant.implement.service.tracing"
-            + ".TracingServiceImpl";
+    public static final String TRACING_SERVICE_IMPL =
+            "com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl";
 
     /**
      * 服务可见性服务类名
      */
-    public static final String VISIBILITY_SERVICE_IMPL = "com.huaweicloud.sermant.implement.service.visibility"
-            + ".VisibilityServiceImpl";
+    public static final String VISIBILITY_SERVICE_IMPL =
+            "com.huaweicloud.sermant.implement.service.visibility.VisibilityServiceImpl";
 
     /**
      * 日志
@@ -92,7 +92,7 @@ public class ServiceManager {
     /**
      * 服务集合
      */
-    private static final Map<String, BaseService> SERVICES = new HashMap<String, BaseService>();
+    private static final Map<String, BaseService> SERVICES = new HashMap<>();
 
     /**
      * Agent核心服务配置
@@ -128,6 +128,7 @@ public class ServiceManager {
      * @param serviceClass 服务class
      * @param <T> 服务泛型
      * @return 服务实例对象
+     * @throws IllegalArgumentException IllegalArgumentException 找不到对应的服务
      */
     public static <T extends BaseService> T getService(Class<T> serviceClass) {
         final BaseService baseService = SERVICES.get(serviceClass.getName());
@@ -175,29 +176,39 @@ public class ServiceManager {
     }
 
     /**
+     * 关闭服务
+     *
+     * @param serviceName 服务名
+     */
+    protected static void stopService(String serviceName) {
+        SERVICES.remove(serviceName).stop();
+    }
+
+    /**
      * 添加关闭服务的钩子
      */
     private static void addStopHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            BaseService nettyGateWayClient = SERVICES.get(NETTY_GATEWAY_CLIENT);
-            SERVICES.remove(NETTY_GATEWAY_CLIENT);
-            SERVICES.remove(GatewayClient.class.getCanonicalName());
-            for (BaseService baseService : new HashSet<>(SERVICES.values())) {
+            for (String serviceName : SERVICES.keySet()) {
+                if (serviceName.equals(NETTY_GATEWAY_CLIENT) || serviceName.equals(
+                        GatewayClient.class.getCanonicalName())) {
+                    continue;
+                }
                 try {
-                    baseService.stop();
+                    SERVICES.get(serviceName).stop();
                 } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
-                            "Error occurs while stopping service: %s", baseService.getClass().toString()), ex);
+                    LOGGER.log(Level.SEVERE, "Error occurs while stopping service: " + serviceName, ex);
                 }
             }
             offerEvent();
+            BaseService nettyGateWayClient = SERVICES.remove(NETTY_GATEWAY_CLIENT);
+            SERVICES.remove(GatewayClient.class.getCanonicalName());
             if (nettyGateWayClient != null) {
                 try {
                     nettyGateWayClient.stop();
                 } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH,
-                            "Error occurs while stopping service: %s",
-                            nettyGateWayClient.getClass().toString()), ex);
+                    LOGGER.log(Level.SEVERE, "Error occurs while stopping service: " + nettyGateWayClient.getClass(),
+                            ex);
                 }
             }
         }));
@@ -214,5 +225,16 @@ public class ServiceManager {
         // 上报Sermant关闭的事件
         FrameworkEventCollector.getInstance().collectAgentStopEvent();
         EventManager.shutdown();
+    }
+
+    /**
+     * 关闭服务管理器
+     */
+    public static void shutdown() {
+        Set<BaseService> services = new HashSet<>(SERVICES.values());
+        for (BaseService baseService : services) {
+            baseService.stop();
+        }
+        SERVICES.clear();
     }
 }

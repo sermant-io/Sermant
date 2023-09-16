@@ -27,6 +27,6 @@ import com.huaweicloud.sermant.core.AgentCoreEntrance;
 public class AgentUnInstallCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String args) {
-        AgentCoreEntrance.unInstall();
+        AgentCoreEntrance.uninstall();
     }
 }
