@@ -36,12 +36,12 @@ import java.util.Map;
  * @since 2023-07-27
  */
 public class RocketmqProducerInterceptorTest extends BaseInterceptorTest {
-    private final RocketmqProducerInterceptor interceptor;
+    private final RocketmqProducerSendInterceptor interceptor;
 
     private final Object[] arguments;
 
     public RocketmqProducerInterceptorTest() {
-        interceptor = new RocketmqProducerInterceptor();
+        interceptor = new RocketmqProducerSendInterceptor();
         arguments = new Object[12];
     }
 

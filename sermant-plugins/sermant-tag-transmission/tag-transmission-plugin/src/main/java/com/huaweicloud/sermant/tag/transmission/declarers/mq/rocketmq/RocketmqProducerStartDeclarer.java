@@ -20,36 +20,31 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
-import com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq.RocketmqProducerInterceptor;
+import com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq.RocketmqProducerStartInterceptor;
 
 /**
- * RocketMQ流量标签透传的生产者增强声明，支持RocketMQ4.8+
+ * RocketMQ流量标签透传的生产者启动时增强声明，支持RocketMQ4.8+
  *
- * @author tangle
- * @since 2023-07-20
+ * @author lilai
+ * @since 2023-09-16
  */
-public class RocketmqProducerDeclarer extends AbstractPluginDeclarer {
+public class RocketmqProducerStartDeclarer extends AbstractPluginDeclarer {
     /**
      * 增强类的全限定名、拦截器、拦截方法
      */
-    private static final String ENHANCE_CLASS = "org.apache.rocketmq.client.impl.MQClientAPIImpl";
+    private static final String ENHANCE_CLASS = "org.apache.rocketmq.client.producer.MQProducer";
 
-    private static final String INTERCEPT_CLASS = RocketmqProducerInterceptor.class.getCanonicalName();
-
-    private static final String METHOD_NAME = "sendMessage";
-
-    private static final int PARAM_INDEX = 12;
+    private static final String METHOD_NAME = "start";
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameEquals(ENHANCE_CLASS);
+        return ClassMatcher.isExtendedFrom(ENHANCE_CLASS);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME)
-                        .and(MethodMatcher.paramCountEquals(PARAM_INDEX)), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME), new RocketmqProducerStartInterceptor())
         };
     }
 }

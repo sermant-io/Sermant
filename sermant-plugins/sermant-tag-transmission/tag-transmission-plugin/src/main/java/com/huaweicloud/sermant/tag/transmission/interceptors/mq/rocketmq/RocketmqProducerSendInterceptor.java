@@ -32,7 +32,7 @@ import java.util.List;
  * @author tangle
  * @since 2023-07-20
  */
-public class RocketmqProducerInterceptor extends AbstractClientInterceptor<SendMessageRequestHeader> {
+public class RocketmqProducerSendInterceptor extends AbstractClientInterceptor<SendMessageRequestHeader> {
     /**
      * SendMessageRequestHeader在sendMessage方法中的参数下标
      */

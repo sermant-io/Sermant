@@ -40,6 +40,13 @@ import java.util.logging.Logger;
 public abstract class AbstractExecutorInterceptor extends AbstractInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private static final String RUNNABLE_WRAPPER_CLASS_NAME = RunnableWrapper.class.getCanonicalName();
+
+    private static final String CALLABLE_WRAPPER_CLASS_NAME = CallableWrapper.class.getCanonicalName();
+
+    private static final String RUNNABLE_AND_CALLABLE_WRAPPER_CLASS_NAME =
+            RunnableAndCallableWrapper.class.getCanonicalName();
+
     private final boolean cannotTransmit;
 
     /**
@@ -86,7 +93,7 @@ public abstract class AbstractExecutorInterceptor extends AbstractInterceptor {
             TrafficMessage trafficMessage,
             Object argument,
             String executorName) {
-        log(argument, trafficMessage, CallableWrapper.class.getCanonicalName());
+        log(argument, trafficMessage, CALLABLE_WRAPPER_CLASS_NAME);
         arguments[0] = new CallableWrapper<>((Callable<?>) argument, trafficMessage,
                 cannotTransmit, executorName);
         return context;
@@ -96,7 +103,7 @@ public abstract class AbstractExecutorInterceptor extends AbstractInterceptor {
             TrafficMessage trafficMessage,
             Object argument,
             String executorName) {
-        log(argument, trafficMessage, RunnableWrapper.class.getCanonicalName());
+        log(argument, trafficMessage, RUNNABLE_WRAPPER_CLASS_NAME);
         arguments[0] = new RunnableWrapper<>((Runnable) argument, trafficMessage,
                 cannotTransmit, executorName);
         return context;
@@ -104,17 +111,19 @@ public abstract class AbstractExecutorInterceptor extends AbstractInterceptor {
 
     private ExecuteContext buildRunnableAndCallableWrapper(ExecuteContext context, Object[] arguments,
             TrafficMessage trafficMessage, Object argument, String executorName) {
-        log(argument, trafficMessage, RunnableAndCallableWrapper.class.getCanonicalName());
+        log(argument, trafficMessage, RUNNABLE_AND_CALLABLE_WRAPPER_CLASS_NAME);
         arguments[0] = new RunnableAndCallableWrapper<>((Runnable) argument, (Callable<?>) argument,
                 trafficMessage, cannotTransmit, executorName);
         return context;
     }
 
     private void log(Object argument, TrafficMessage trafficMessage, String wrapperClassName) {
-        LOGGER.log(Level.FINE, "Class name is {0}, hash code is {1}, trafficTag is {2}, "
-                        + "trafficData is {3}, will be converted to {4}.",
-                new Object[]{argument.getClass().getName(), Integer.toHexString(argument.hashCode()),
-                        trafficMessage.getTrafficTag(), trafficMessage.getTrafficData(), wrapperClassName});
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.FINE, "Class name is {0}, hash code is {1}, trafficTag is {2}, "
+                            + "trafficData is {3}, will be converted to {4}.",
+                    new Object[]{argument.getClass().getName(), Integer.toHexString(argument.hashCode()),
+                            trafficMessage.getTrafficTag(), trafficMessage.getTrafficData(), wrapperClassName});
+        }
     }
 
     @Override

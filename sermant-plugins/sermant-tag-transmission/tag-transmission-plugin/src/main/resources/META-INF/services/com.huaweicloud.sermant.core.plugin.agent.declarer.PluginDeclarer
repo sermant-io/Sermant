@@ -17,7 +17,8 @@
 com.huaweicloud.sermant.tag.transmission.declarers.http.client.httpclient.HttpClient4xDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.http.server.HttpServletDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.mq.rocketmq.RocketmqConsumerDeclarer
-com.huaweicloud.sermant.tag.transmission.declarers.mq.rocketmq.RocketmqProducerDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.mq.rocketmq.RocketmqProducerSendDeclarer
+com.huaweicloud.sermant.tag.transmission.declarers.mq.rocketmq.RocketmqProducerStartDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.mq.kafka.KafkaConsumerRecordDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.rpc.dubbo.AlibabaDubboProviderDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.rpc.dubbo.ApacheDubboProviderDeclarer
