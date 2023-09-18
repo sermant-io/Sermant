@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
 import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
+import com.huaweicloud.sermant.tag.transmission.utils.RocketmqProducerMarkUtils;
 
 import org.apache.rocketmq.common.message.Message;
 
@@ -49,6 +50,9 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor<Messa
 
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
+        if (RocketmqProducerMarkUtils.isProducer()) {
+            return context;
+        }
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         if (!isRocketMqStackTrace(stackTraceElements)) {
             return context;

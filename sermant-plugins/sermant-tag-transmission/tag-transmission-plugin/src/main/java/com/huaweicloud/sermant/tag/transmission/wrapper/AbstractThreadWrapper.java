@@ -119,10 +119,12 @@ public abstract class AbstractThreadWrapper<T> {
         if (trafficData != null) {
             TrafficUtils.setTrafficData(trafficData);
         }
-        LOGGER.log(Level.FINE, "Current thread is {0}, class name is {1}, hash code is {2}, trafficTag is {3}, "
-                        + "trafficData is {4}, will be executed.",
-                new Object[]{Thread.currentThread().getName(), obj.getClass().getName(),
-                        Integer.toHexString(obj.hashCode()), trafficTag, trafficData});
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.FINE, "Current thread is {0}, class name is {1}, hash code is {2}, trafficTag is {3}, "
+                            + "trafficData is {4}, will be executed.",
+                    new Object[]{Thread.currentThread().getName(), obj.getClass().getName(),
+                            Integer.toHexString(obj.hashCode()), trafficTag, trafficData});
+        }
     }
 
     /**
