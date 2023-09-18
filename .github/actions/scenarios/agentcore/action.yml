@@ -1,0 +1,41 @@
+name: "Agent-core Common Test"
+description: "Auto test for spring common, include nacos dynamic config"
+runs:
+  using: "composite"
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/agentcore-test
+    - name: start applications
+      shell: bash
+      env:
+        dynamic.config.serverAddress: 127.0.0.1:8848
+        dynamic.config.dynamicConfigType: NACOS
+        service.meta.project: TestAgentCore
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar -jar \
+        sermant-agent-${{ env.sermantVersion }}/agent/agentcore-test-application-1.0.0-jar-with-dependencies.jar > ${{ env.logDir
+        }}/agentcore-test.log 2>&1 &
+    - name: waiting for agentcore services start
+      shell: bash
+      run: |
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8915/ping 120
+    - name: agentcore test module start
+      shell: bash
+      run: mvn test --file sermant-integration-tests/agentcore-test/agentcore-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: agentcore
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: agentcore-test-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2
