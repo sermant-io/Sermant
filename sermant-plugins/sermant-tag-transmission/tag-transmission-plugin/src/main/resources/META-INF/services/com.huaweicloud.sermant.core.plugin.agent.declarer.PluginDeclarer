@@ -28,7 +28,6 @@ com.huaweicloud.sermant.tag.transmission.declarers.rpc.sofarpc.SofaRpcServerDecl
 com.huaweicloud.sermant.tag.transmission.declarers.rpc.grpc.GrpcServerDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.rpc.grpc.ClientCallImplDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.rpc.servicecomb.ServiceCombRpcConsumerDeclarer
-com.huaweicloud.sermant.tag.transmission.declarers.rpc.servicecomb.ServiceCombRpcProviderDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.mq.kafka.KafkaProducerDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.http.client.httpclient.HttpClient3xDeclarer
 com.huaweicloud.sermant.tag.transmission.declarers.http.client.okhttp.OkHttp2xDeclarer

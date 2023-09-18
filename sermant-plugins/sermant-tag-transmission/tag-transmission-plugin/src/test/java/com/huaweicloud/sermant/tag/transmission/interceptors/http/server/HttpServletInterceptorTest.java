@@ -17,15 +17,20 @@
 package com.huaweicloud.sermant.tag.transmission.interceptors.http.server;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
 import com.huaweicloud.sermant.tag.transmission.interceptors.BaseInterceptorTest;
+import com.huaweicloud.sermant.tag.transmission.service.ServiceCombHeaderParseService;
 
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.RequestFacade;
 import org.apache.tomcat.util.http.MimeHeaders;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -40,11 +45,18 @@ import java.util.Map;
  * @since 2023-07-27
  */
 public class HttpServletInterceptorTest extends BaseInterceptorTest {
+    private final ServiceCombHeaderParseService parseService = Mockito.mock(ServiceCombHeaderParseService.class);
+
     private final HttpServletInterceptor interceptor;
 
     private final Object[] arguments;
 
+    public MockedStatic<PluginServiceManager> pluginServiceManagerMockedStatic;
+
     public HttpServletInterceptorTest() {
+        pluginServiceManagerMockedStatic = Mockito.mockStatic(PluginServiceManager.class);
+        pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(ServiceCombHeaderParseService.class))
+                .thenReturn(parseService);
         interceptor = new HttpServletInterceptor();
         arguments = new Object[2];
     }
@@ -102,5 +114,10 @@ public class HttpServletInterceptorTest extends BaseInterceptorTest {
         request.setCoyoteRequest(coyoteRequest);
         arguments[0] = new RequestFacade(request);
         return ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
+    }
+
+    @After
+    public void afterTest() {
+        pluginServiceManagerMockedStatic.close();
     }
 }

@@ -24,6 +24,10 @@
             <artifactId>snakeyaml</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>sermant-agentcore-core</artifactId>
             <scope>provided</scope>

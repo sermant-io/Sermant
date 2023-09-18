@@ -17,9 +17,12 @@
 package com.huaweicloud.sermant.tag.transmission.interceptors.http.server;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
 import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractServerInterceptor;
+import com.huaweicloud.sermant.tag.transmission.service.ServiceCombHeaderParseService;
 
 import java.util.Collections;
 import java.util.Enumeration;
@@ -40,6 +43,11 @@ public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServle
      * 过滤一次处理过程中拦截器的多次调用
      */
     protected static final ThreadLocal<Boolean> LOCK_MARK = new ThreadLocal<>();
+
+    private static final String SERVICECOMB_HEADER_KEY = "x-cse-context";
+
+    private static ServiceCombHeaderParseService parseService =
+            PluginServiceManager.getPluginService(ServiceCombHeaderParseService.class);
 
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
@@ -81,6 +89,27 @@ public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServle
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(HttpServletRequest httpServletRequest) {
         Map<String, List<String>> tagMap = new HashMap<>();
+
+        // servicecomb场景，consumer端为servicecomb rpc，需从http的request中获取servicecomb的header字符串并解析
+        String serviceCombHeaderValue = httpServletRequest.getHeader(SERVICECOMB_HEADER_KEY);
+        if (!StringUtils.isBlank(serviceCombHeaderValue)) {
+            Map<String, String> headers = parseService.parseHeaderFromJson(serviceCombHeaderValue);
+            for (String key : headers.keySet()) {
+                if (!TagKeyMatcher.isMatch(key)) {
+                    continue;
+                }
+                String value = headers.get(key);
+                if (value != null) {
+                    tagMap.put(key, Collections.singletonList(value));
+                    continue;
+                }
+
+                // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签
+                tagMap.put(key, null);
+            }
+        }
+
+        // 常规http访问场景
         Enumeration<String> keyEnumeration = httpServletRequest.getHeaderNames();
         while (keyEnumeration.hasMoreElements()) {
             String key = keyEnumeration.nextElement();
