@@ -17,6 +17,7 @@
 package com.huaweicloud.agentcore.test.application.controller;
 
 import com.huaweicloud.agentcore.test.application.results.DynamicConfigResults;
+import com.huaweicloud.agentcore.test.application.results.DynamicResults;
 import com.huaweicloud.agentcore.test.application.tests.dynamicconfig.DynamicConfigTest;
 
 import com.alibaba.fastjson.JSONObject;
@@ -56,6 +57,60 @@ public class TestController {
         } catch (InterruptedException exception) {
             resultMap.put(buildExceptionKey(exception), false);
         }
+        JSONObject jsonObject = new JSONObject(resultMap);
+        return jsonObject.toJSONString();
+    }
+
+    /**
+     * 测试动态安装插件
+     *
+     * @return 测试结果
+     */
+    public String testInstallPlugin() {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put(DynamicResults.DYNAMIC_INSTALL_PLUGIN_REPEAT_ENHANCE.name(),
+                DynamicResults.DYNAMIC_INSTALL_PLUGIN_REPEAT_ENHANCE.getResult());
+        JSONObject jsonObject = new JSONObject(resultMap);
+        return jsonObject.toJSONString();
+    }
+
+    /**
+     * 测试动态卸载插件
+     *
+     * @return 测试结果
+     */
+    public String testUninstallPlugin() {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put(DynamicResults.DYNAMIC_UNINSTALL_PLUGIN_INTERCEPTOR_FAILURE.name(),
+                DynamicResults.DYNAMIC_UNINSTALL_PLUGIN_INTERCEPTOR_FAILURE.getResult());
+        resultMap.put(DynamicResults.DYNAMIC_UNINSTALL_REPEAT_ENHANCE.name(),
+                DynamicResults.DYNAMIC_UNINSTALL_REPEAT_ENHANCE.getResult());
+        JSONObject jsonObject = new JSONObject(resultMap);
+        return jsonObject.toJSONString();
+    }
+
+    /**
+     * 测试动态卸载agent
+     *
+     * @return 测试结果
+     */
+    public String testUninstallAgent() {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put(DynamicResults.DYNAMIC_UNINSTALL_AGENT_PLUGIN_FAILURE.name(),
+                DynamicResults.DYNAMIC_UNINSTALL_AGENT_PLUGIN_FAILURE.getResult());
+        JSONObject jsonObject = new JSONObject(resultMap);
+        return jsonObject.toJSONString();
+    }
+
+    /**
+     * 测试动态重装agent
+     *
+     * @return 测试结果
+     */
+    public String testReInstallAgent() {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put(DynamicResults.DYNAMIC_REINSTALL_AGENT_PLUGIN_SUCCESS.name(),
+                DynamicResults.DYNAMIC_REINSTALL_AGENT_PLUGIN_SUCCESS.getResult());
         JSONObject jsonObject = new JSONObject(resultMap);
         return jsonObject.toJSONString();
     }

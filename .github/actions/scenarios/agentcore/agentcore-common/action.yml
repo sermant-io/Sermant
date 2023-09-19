@@ -1,12 +1,12 @@
 name: "Agent-core Common Test"
-description: "Auto test for spring common, include nacos dynamic config"
+description: "Auto test for agent-core common, include nacos dynamic config"
 runs:
   using: "composite"
   steps:
     - name: entry
       uses: ./.github/actions/common/entry
       with:
-        log-dir: ./logs/agentcore-test
+        log-dir: ./logs/agentcore-test/dynamic-config
     - name: start applications
       shell: bash
       env:
@@ -23,7 +23,7 @@ runs:
         bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8915/ping 120
     - name: agentcore test module start
       shell: bash
-      run: mvn test --file sermant-integration-tests/agentcore-test/agentcore-integration-test/pom.xml
+      run: mvn test -Dagentcore.test.type=DYNAMIC_CONFIG --file sermant-integration-tests/agentcore-test/agentcore-integration-test/pom.xml
     - name: exit
       if: always()
       uses: ./.github/actions/common/exit
