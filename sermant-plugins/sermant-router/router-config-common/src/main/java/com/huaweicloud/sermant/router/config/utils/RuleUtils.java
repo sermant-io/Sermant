@@ -71,14 +71,7 @@ public class RuleUtils {
      */
     public static List<Rule> getRules(RouterConfiguration configuration, String targetService, String path,
         String serviceName) {
-        if (RouterConfiguration.isInValid(configuration)) {
-            return Collections.emptyList();
-        }
-        Map<String, List<Rule>> routeRule = configuration.getRouteRule();
-        if (CollectionUtils.isEmpty(routeRule)) {
-            return Collections.emptyList();
-        }
-        List<Rule> rules = routeRule.get(targetService);
+        List<Rule> rules = configuration.getRules(targetService);
         if (CollectionUtils.isEmpty(rules)) {
             return Collections.emptyList();
         }
@@ -125,6 +118,7 @@ public class RuleUtils {
         for (List<Rule> rules : routeRules.values()) {
             addKeys(rules, MATCH_KEYS);
         }
+        addKeys(configuration.getGlobalRules(), MATCH_KEYS);
     }
 
     /**

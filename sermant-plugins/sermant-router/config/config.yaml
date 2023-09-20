@@ -13,6 +13,8 @@ router.plugin:
   request-tags: []
   # 需要解析的请求头的tag
   parse-header-tag: ''
+  # 区域路由默认策略，全部生效：ALL 全不生效：NONE 白名单策略：WHITE 黑名单策略：BLACK
+  zone-router-default-strategy: NONE
 transmit.plugin:
   # 是否在直接new Thread时传递标签
   enabled-thread: true

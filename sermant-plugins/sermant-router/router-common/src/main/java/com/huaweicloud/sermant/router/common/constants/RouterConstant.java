@@ -88,6 +88,11 @@ public class RouterConstant {
      */
     public static final String ZONE_KEY = "service.meta.zone";
 
+    /**
+     * 全局标签路由key
+     */
+    public static final String GLOBAL_ROUTER_KEY = "servicecomb.globalRouteRule";
+
     private RouterConstant() {
     }
 }

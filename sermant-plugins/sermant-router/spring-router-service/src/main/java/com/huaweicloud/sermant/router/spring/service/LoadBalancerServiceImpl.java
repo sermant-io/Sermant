@@ -92,7 +92,7 @@ public class LoadBalancerServiceImpl implements LoadBalancerService {
     private List<Object> getTargetInstancesByRules(String targetName, List<Object> instances, String path,
         Map<String, List<String>> header) {
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.SPRING_CACHE_NAME);
-        if (RouterConfiguration.isInValid(configuration)) {
+        if (RouterConfiguration.isInValid(configuration, targetName)) {
             return instances;
         }
         List<Rule> rules = RuleUtils.getRules(configuration, targetName, path, AppCache.INSTANCE.getAppName());
