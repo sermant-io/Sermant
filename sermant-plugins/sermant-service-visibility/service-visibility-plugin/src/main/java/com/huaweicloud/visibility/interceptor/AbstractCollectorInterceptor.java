@@ -20,12 +20,12 @@ package com.huaweicloud.visibility.interceptor;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
-import com.huaweicloud.sermant.core.service.visibility.common.ServiceType;
-import com.huaweicloud.sermant.core.service.visibility.entity.Consanguinity;
-import com.huaweicloud.sermant.core.service.visibility.entity.Contract;
-import com.huaweicloud.sermant.core.service.visibility.entity.MethodInfo;
-import com.huaweicloud.sermant.core.service.visibility.entity.ParamInfo;
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.visibility.common.ServiceType;
+import com.huaweicloud.visibility.entity.Consanguinity;
+import com.huaweicloud.visibility.entity.Contract;
+import com.huaweicloud.visibility.entity.MethodInfo;
+import com.huaweicloud.visibility.entity.ParamInfo;
 import com.huaweicloud.visibility.service.CollectorService;
 
 import org.springframework.cloud.client.ServiceInstance;

@@ -18,9 +18,9 @@
 package com.huaweicloud.visibility.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.service.visibility.common.CollectorCache;
-import com.huaweicloud.sermant.core.service.visibility.entity.Consanguinity;
-import com.huaweicloud.sermant.core.service.visibility.entity.ServerInfo;
+import com.huaweicloud.visibility.common.CollectorCache;
+import com.huaweicloud.visibility.entity.Consanguinity;
+import com.huaweicloud.visibility.entity.ServerInfo;
 
 import org.springframework.cloud.client.ServiceInstance;
 

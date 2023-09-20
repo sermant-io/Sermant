@@ -15,36 +15,41 @@
  *
  */
 
-package com.huaweicloud.sermant.core.service.visibility.entity;
+package com.huaweicloud.visibility.entity;
 
 import java.util.List;
 
 /**
- * 血缘关系信息
+ * 契约信息
  *
  * @author zhp
  * @since 2022-11-30
  */
-public class Consanguinity extends BaseInfo {
+public class Contract extends BaseInfo {
     /**
      * 接口名称
      */
     private String interfaceName;
 
     /**
-     * URL路径
-     */
-    private String url;
-
-    /**
-     * 服务注册时的key
+     * 服务注册的key
      */
     private String serviceKey;
 
     /**
-     * 服务提供者信息
+     * 请求路径
      */
-    private List<Contract> providers;
+    private String url;
+
+    /**
+     * 服务ID
+     */
+    private String serviceId;
+
+    /**
+     * 方法集合
+     */
+    private List<MethodInfo> methodInfoList;
 
     public String getInterfaceName() {
         return interfaceName;
@@ -62,12 +67,20 @@ public class Consanguinity extends BaseInfo {
         this.url = url;
     }
 
-    public List<Contract> getProviders() {
-        return providers;
+    public List<MethodInfo> getMethodInfoList() {
+        return methodInfoList;
     }
 
-    public void setProviders(List<Contract> providers) {
-        this.providers = providers;
+    public void setMethodInfoList(List<MethodInfo> methodInfoList) {
+        this.methodInfoList = methodInfoList;
+    }
+
+    public String getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 
     public String getServiceKey() {

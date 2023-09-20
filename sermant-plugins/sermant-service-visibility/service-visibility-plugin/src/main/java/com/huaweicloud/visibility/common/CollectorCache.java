@@ -15,11 +15,11 @@
  *
  */
 
-package com.huaweicloud.sermant.core.service.visibility.common;
+package com.huaweicloud.visibility.common;
 
-import com.huaweicloud.sermant.core.service.visibility.entity.BaseInfo;
-import com.huaweicloud.sermant.core.service.visibility.entity.Consanguinity;
-import com.huaweicloud.sermant.core.service.visibility.entity.Contract;
+import com.huaweicloud.visibility.entity.BaseInfo;
+import com.huaweicloud.visibility.entity.Consanguinity;
+import com.huaweicloud.visibility.entity.Contract;
 
 import java.util.Map;
 import java.util.Objects;
@@ -74,7 +74,7 @@ public class CollectorCache {
      */
     public static void saveConsanguinity(Consanguinity consanguinity) {
         if (CONSANGUINITY_MAP.containsKey(consanguinity.getServiceKey())) {
-            Consanguinity consanguinityOld = CONSANGUINITY_MAP.get(consanguinity.getInterfaceName());
+            Consanguinity consanguinityOld = CONSANGUINITY_MAP.get(consanguinity.getServiceKey());
             consanguinityOld.setProviders(consanguinity.getProviders());
         } else {
             CONSANGUINITY_MAP.putIfAbsent(consanguinity.getServiceKey(), consanguinity);

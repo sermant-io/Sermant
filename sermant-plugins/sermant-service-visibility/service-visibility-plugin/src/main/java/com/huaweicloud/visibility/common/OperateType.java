@@ -15,7 +15,7 @@
  *
  */
 
-package com.huaweicloud.sermant.core.service.visibility.common;
+package com.huaweicloud.visibility.common;
 
 /**
  * 操作类型

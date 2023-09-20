@@ -21,10 +21,7 @@ import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.notification.NettyNotificationType;
 import com.huaweicloud.sermant.core.notification.NotificationInfo;
 import com.huaweicloud.sermant.core.notification.NotificationManager;
-import com.huaweicloud.sermant.core.service.ServiceConfig;
-import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.send.config.GatewayConfig;
-import com.huaweicloud.sermant.core.service.visibility.api.VisibilityService;
 import com.huaweicloud.sermant.core.utils.ThreadFactoryUtils;
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
 import com.huaweicloud.sermant.implement.utils.GzipUtils;
@@ -105,8 +102,6 @@ public class NettyClient {
     private Channel channel;
 
     private ScheduledExecutorService executorService;
-
-    private VisibilityService visibilityService;
 
     private boolean connectionAvailable = false;
 
@@ -196,12 +191,6 @@ public class NettyClient {
                     if (NotificationManager.isEnable()) {
                         NotificationManager.doNotify(new NotificationInfo(NettyNotificationType.CONNECTED, null));
                     }
-                }
-                if (ConfigManager.getConfig(ServiceConfig.class).isVisibilityEnable()) {
-                    if (visibilityService == null) {
-                        visibilityService = ServiceManager.getService(VisibilityService.class);
-                    }
-                    visibilityService.reconnectHandler();
                 }
             } else {
                 // 判断之前是否已链接 防止链接失败一直发通知，只有链接断开或者首次链接失败才发通知。
