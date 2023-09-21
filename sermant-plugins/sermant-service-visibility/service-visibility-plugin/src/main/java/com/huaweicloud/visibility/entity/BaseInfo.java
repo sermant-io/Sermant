@@ -15,32 +15,51 @@
  *
  */
 
-package com.huaweicloud.sermant.core.service.visibility.common;
+package com.huaweicloud.visibility.entity;
 
 /**
- * 服务的框架类型
+ * 服务可见性基础信息
  *
  * @author zhp
- * @since 2022-12-06
+ * @since 2022-12-09
  */
-public enum ServiceType {
+public class BaseInfo {
     /**
-     * DUBBO服务
+     * 当前服务IP
      */
-    DUBBO("dubbo"),
+    private String ip;
 
     /**
-     * SpringCloud服务
+     * 当前服务端口
      */
-    SPRING_CLOUD("springCloud");
+    private String port;
 
-    private final String type;
+    /**
+     * 框架类型
+     */
+    private String serviceType;
 
-    ServiceType(String type) {
-        this.type = type;
+    public String getIp() {
+        return ip;
     }
 
-    public String getType() {
-        return type;
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
     }
 }

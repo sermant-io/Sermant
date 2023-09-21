@@ -15,38 +15,32 @@
  *
  */
 
-package com.huaweicloud.sermant.core.service.visibility.entity;
+package com.huaweicloud.visibility.common;
 
 /**
- * 参数信息
+ * 服务的框架类型
  *
  * @author zhp
- * @since 2022-11-30
+ * @since 2022-12-06
  */
-public class ParamInfo {
+public enum ServiceType {
     /**
-     * 参数类型
+     * DUBBO服务
      */
-    private String paramType;
+    DUBBO("dubbo"),
 
     /**
-     * 参数名称
+     * SpringCloud服务
      */
-    private String paramName;
+    SPRING_CLOUD("springCloud");
 
-    public String getParamType() {
-        return paramType;
+    private final String type;
+
+    ServiceType(String type) {
+        this.type = type;
     }
 
-    public void setParamType(String paramType) {
-        this.paramType = paramType;
-    }
-
-    public String getParamName() {
-        return paramName;
-    }
-
-    public void setParamName(String paramName) {
-        this.paramName = paramName;
+    public String getType() {
+        return type;
     }
 }

@@ -18,13 +18,13 @@
 package com.huaweicloud.visibility.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.service.visibility.common.CollectorCache;
-import com.huaweicloud.sermant.core.service.visibility.common.OperateType;
-import com.huaweicloud.sermant.core.service.visibility.common.ServiceType;
-import com.huaweicloud.sermant.core.service.visibility.entity.Contract;
-import com.huaweicloud.sermant.core.service.visibility.entity.ServerInfo;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
+import com.huaweicloud.visibility.common.CollectorCache;
 import com.huaweicloud.visibility.common.Constants;
+import com.huaweicloud.visibility.common.OperateType;
+import com.huaweicloud.visibility.common.ServiceType;
+import com.huaweicloud.visibility.entity.Contract;
+import com.huaweicloud.visibility.entity.ServerInfo;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.rpc.Exporter;

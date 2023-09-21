@@ -15,7 +15,7 @@
  *
  */
 
-package com.huaweicloud.sermant.core.service.visibility.entity;
+package com.huaweicloud.visibility.entity;
 
 import java.util.List;
 

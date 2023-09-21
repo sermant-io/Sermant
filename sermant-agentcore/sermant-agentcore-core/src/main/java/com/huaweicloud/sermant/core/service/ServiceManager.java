@@ -79,12 +79,6 @@ public class ServiceManager {
             "com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl";
 
     /**
-     * 服务可见性服务类名
-     */
-    public static final String VISIBILITY_SERVICE_IMPL =
-            "com.huaweicloud.sermant.implement.service.visibility.VisibilityServiceImpl";
-
-    /**
      * 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();

@@ -15,7 +15,7 @@
  *
  */
 
-package com.huaweicloud.sermant.core.service.visibility.entity;
+package com.huaweicloud.visibility.entity;
 
 import java.util.Date;
 import java.util.List;
@@ -46,12 +46,7 @@ public class ServerInfo extends BaseInfo {
     /**
      * 服务名称
      */
-    private String serverName;
-
-    /**
-     * 框架类型
-     */
-    private String serverType;
+    private String serviceName;
 
     /**
      * 操作类型
@@ -86,7 +81,7 @@ public class ServerInfo extends BaseInfo {
     /**
      * 注册信息
      */
-    private Map<String,BaseInfo> registryInfo;
+    private Map<String, BaseInfo> registryInfo;
 
     /**
      * 服务ID
@@ -103,20 +98,12 @@ public class ServerInfo extends BaseInfo {
      */
     private List<String> instanceIds;
 
-    public String getServerName() {
-        return serverName;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
-    }
-
-    public String getServerType() {
-        return serverType;
-    }
-
-    public void setServerType(String serverType) {
-        this.serverType = serverType;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     public String getApplicationName() {

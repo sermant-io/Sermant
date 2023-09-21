@@ -15,51 +15,38 @@
  *
  */
 
-package com.huaweicloud.sermant.core.service.visibility.entity;
+package com.huaweicloud.visibility.entity;
 
 /**
- * 服务可见性基础信息
+ * 参数信息
  *
  * @author zhp
- * @since 2022-12-09
+ * @since 2022-11-30
  */
-public class BaseInfo {
+public class ParamInfo {
     /**
-     * 当前服务IP
+     * 参数类型
      */
-    private String ip;
-
-    /**
-     * 当前服务端口
-     */
-    private String port;
+    private String paramType;
 
     /**
-     * 框架类型
+     * 参数名称
      */
-    private String serviceType;
+    private String paramName;
 
-    public String getIp() {
-        return ip;
+    public String getParamType() {
+        return paramType;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setParamType(String paramType) {
+        this.paramType = paramType;
     }
 
-    public String getPort() {
-        return port;
+    public String getParamName() {
+        return paramName;
     }
 
-    public void setPort(String port) {
-        this.port = port;
-    }
-
-    public String getServiceType() {
-        return serviceType;
-    }
-
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
+    public void setParamName(String paramName) {
+        this.paramName = paramName;
     }
 }

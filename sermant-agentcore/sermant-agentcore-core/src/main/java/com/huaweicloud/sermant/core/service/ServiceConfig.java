@@ -37,9 +37,6 @@ public class ServiceConfig implements BaseConfig {
     @ConfigFieldKey("tracing.enable")
     private boolean tracingEnable = false;
 
-    @ConfigFieldKey("visibility.enable")
-    private boolean visibilityEnable = false;
-
     @ConfigFieldKey("inject.enable")
     private boolean injectEnable = false;
 
@@ -68,14 +65,6 @@ public class ServiceConfig implements BaseConfig {
 
     public void setTracingEnable(boolean tracingEnable) {
         this.tracingEnable = tracingEnable;
-    }
-
-    public boolean isVisibilityEnable() {
-        return visibilityEnable;
-    }
-
-    public void setVisibilityEnable(boolean visibilityEnable) {
-        this.visibilityEnable = visibilityEnable;
     }
 
     public boolean isInjectEnable() {
@@ -112,9 +101,6 @@ public class ServiceConfig implements BaseConfig {
         }
         if (ServiceManager.TRACING_SERVICE_IMPL.equals(serviceName)) {
             return isTracingEnable();
-        }
-        if (ServiceManager.VISIBILITY_SERVICE_IMPL.equals(serviceName)) {
-            return isVisibilityEnable();
         }
         if (ServiceManager.INJECT_SERVICE_IMPL.equals(serviceName)) {
             return isInjectEnable();
