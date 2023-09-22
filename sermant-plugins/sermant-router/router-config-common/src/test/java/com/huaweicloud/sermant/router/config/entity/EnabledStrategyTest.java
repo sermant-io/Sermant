@@ -16,8 +16,15 @@
 
 package com.huaweicloud.sermant.router.config.entity;
 
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.Collections;
 
@@ -28,6 +35,26 @@ import java.util.Collections;
  * @since 2022-10-10
  */
 public class EnabledStrategyTest {
+    private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
+
+    /**
+     * 初始化
+     */
+    @BeforeClass
+    public static void init() {
+        RouterConfig config = new RouterConfig();
+        mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class)).thenReturn(config);
+    }
+
+    /**
+     * 清除mock
+     */
+    @AfterClass
+    public static void clear() {
+        mockPluginConfigManager.close();
+    }
+
 
     /**
      * 测试reset方法

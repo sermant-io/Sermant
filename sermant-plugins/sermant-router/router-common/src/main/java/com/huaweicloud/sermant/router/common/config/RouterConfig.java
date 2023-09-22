@@ -94,6 +94,12 @@ public class RouterConfig implements PluginConfig {
     private String parseHeaderTag;
 
     /**
+     * 区域路由默认策略
+     */
+    @ConfigFieldKey("zone-router-default-strategy")
+    private String zoneRouterDefaultStrategy = "NONE";
+
+    /**
      * 构造方法
      */
     public RouterConfig() {
@@ -194,5 +200,13 @@ public class RouterConfig implements PluginConfig {
 
     public void setParseHeaderTag(String parseHeaderTag) {
         this.parseHeaderTag = parseHeaderTag;
+    }
+
+    public String getZoneRouterDefaultStrategy() {
+        return zoneRouterDefaultStrategy;
+    }
+
+    public void setZoneRouterDefaultStrategy(String zoneRouterDefaultStrategy) {
+        this.zoneRouterDefaultStrategy = zoneRouterDefaultStrategy;
     }
 }

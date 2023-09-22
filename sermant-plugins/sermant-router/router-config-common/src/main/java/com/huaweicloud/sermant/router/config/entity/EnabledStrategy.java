@@ -16,8 +16,12 @@
 
 package com.huaweicloud.sermant.router.config.entity;
 
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -33,9 +37,23 @@ public class EnabledStrategy {
     private final List<String> value = new CopyOnWriteArrayList<>();
 
     /**
+     * 默认策略
+     */
+    private final Strategy defaultStrategy;
+
+    /**
      * 开启策略
      */
-    private Strategy strategy = Strategy.NONE;
+    private Strategy strategy;
+
+    /**
+     * 构造方法
+     */
+    public EnabledStrategy() {
+        RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+        defaultStrategy = Strategy.valueOf(routerConfig.getZoneRouterDefaultStrategy().toUpperCase(Locale.ROOT));
+        strategy = defaultStrategy;
+    }
 
     public Strategy getStrategy() {
         return strategy;
@@ -49,7 +67,7 @@ public class EnabledStrategy {
      * 重置配置
      */
     public void reset() {
-        reset(Strategy.NONE, Collections.emptyList());
+        reset(defaultStrategy, Collections.emptyList());
     }
 
     /**

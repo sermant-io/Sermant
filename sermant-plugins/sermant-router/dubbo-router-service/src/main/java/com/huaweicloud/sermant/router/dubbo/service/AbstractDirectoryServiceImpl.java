@@ -188,7 +188,7 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
     private List<Object> getTargetInvokersByRules(List<Object> invokers, Object invocation,
         Map<String, String> queryMap, String targetService, String serviceInterface) {
         RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
-        if (RouterConfiguration.isInValid(configuration)) {
+        if (RouterConfiguration.isInValid(configuration, targetService)) {
             return invokers;
         }
         String interfaceName = getGroup(queryMap) + "/" + serviceInterface + POINT
