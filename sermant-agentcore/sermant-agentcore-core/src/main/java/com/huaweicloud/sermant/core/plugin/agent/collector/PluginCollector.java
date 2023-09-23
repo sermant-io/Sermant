@@ -110,14 +110,14 @@ public class PluginCollector {
             @Override
             public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader,
                     JavaModule javaModule, ProtectionDomain protectionDomain) {
-                final List<PluginDeclarer> pluginDeclarers = nameCombinedMap.remove(typeDescription.getActualName());
+                final List<PluginDeclarer> pluginDeclarers = nameCombinedMap.get(typeDescription.getActualName());
                 final List<InterceptDeclarer> interceptDeclarers = new ArrayList<>();
                 for (PluginDeclarer pluginDeclarer : pluginDeclarers) {
                     interceptDeclarers.addAll(
                             Arrays.asList(pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
                 }
-                return new ReentrantTransformer(interceptDeclarers.toArray(new InterceptDeclarer[0]),
-                        plugin).transform(builder, typeDescription, classLoader, javaModule, protectionDomain);
+                return new ReentrantTransformer(interceptDeclarers.toArray(new InterceptDeclarer[0]), plugin).transform(
+                        builder, typeDescription, classLoader, javaModule, protectionDomain);
             }
 
             @Override
@@ -127,7 +127,9 @@ public class PluginCollector {
                     if (matchTarget(declarer.getClassMatcher(), target)) {
                         List<PluginDeclarer> declarers = nameCombinedMap.computeIfAbsent(typeName,
                                 k -> new ArrayList<>());
-                        declarers.add(declarer);
+                        if (!declarers.contains(declarer)) {
+                            declarers.add(declarer);
+                        }
                     }
                 }
                 return nameCombinedMap.containsKey(typeName);

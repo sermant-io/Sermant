@@ -95,11 +95,6 @@ public class ServiceManager {
     private static final Map<String, BaseService> SERVICES = new HashMap<>();
 
     /**
-     * Agent核心服务配置
-     */
-    private static final ServiceConfig SERVICE_CONFIG = ConfigManager.getConfig(ServiceConfig.class);
-
-    /**
      * Constructor.
      */
     protected ServiceManager() {
@@ -109,10 +104,11 @@ public class ServiceManager {
      * 初始化所有服务
      */
     public static void initServices() {
+        ServiceConfig serviceConfig = ConfigManager.getConfig(ServiceConfig.class);
         ArrayList<String> startServiceArray = new ArrayList<>();
         for (final BaseService service : ServiceLoader.load(BaseService.class,
                 ClassLoaderManager.getFrameworkClassLoader())) {
-            if (SERVICE_CONFIG.checkServiceEnable(service.getClass().getName()) && loadService(service,
+            if (serviceConfig.checkServiceEnable(service.getClass().getName()) && loadService(service,
                     service.getClass(), BaseService.class)) {
                 service.start();
                 startServiceArray.add(service.getClass().getName());
@@ -189,26 +185,12 @@ public class ServiceManager {
      */
     private static void addStopHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            offerEvent();
             for (String serviceName : SERVICES.keySet()) {
-                if (serviceName.equals(NETTY_GATEWAY_CLIENT) || serviceName.equals(
-                        GatewayClient.class.getCanonicalName())) {
-                    continue;
-                }
                 try {
                     SERVICES.get(serviceName).stop();
                 } catch (Exception ex) {
                     LOGGER.log(Level.SEVERE, "Error occurs while stopping service: " + serviceName, ex);
-                }
-            }
-            offerEvent();
-            BaseService nettyGateWayClient = SERVICES.remove(NETTY_GATEWAY_CLIENT);
-            SERVICES.remove(GatewayClient.class.getCanonicalName());
-            if (nettyGateWayClient != null) {
-                try {
-                    nettyGateWayClient.stop();
-                } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, "Error occurs while stopping service: " + nettyGateWayClient.getClass(),
-                            ex);
                 }
             }
         }));

@@ -36,16 +36,6 @@ public class SermantManager {
     }
 
     /**
-     * 当前产品是否安装过Sermant
-     *
-     * @param artifact 标识基于Sermant的产品
-     * @return boolean
-     */
-    public static boolean hasSermant(String artifact) {
-        return SERMANT_MANAGE_MAP.containsKey(artifact);
-    }
-
-    /**
      * 创建Sermant
      *
      * @param artifact 标识Sermant
@@ -62,10 +52,20 @@ public class SermantManager {
     }
 
     /**
+     * 获取Sermant
+     *
+     * @param artifact 标识Sermant
+     * @return SermantClassLoader
+     */
+    public static SermantClassLoader getSermant(String artifact) {
+        return SERMANT_MANAGE_MAP.get(artifact);
+    }
+
+    /**
      * 移除Sermant
      *
      * @param artifact 需要移除的Sermant的命名空间
-     * @exception RuntimeException RuntimeException
+     * @throws RuntimeException RuntimeException
      */
     public static void removeSermant(String artifact) {
         SermantClassLoader sermantClassLoader = SERMANT_MANAGE_MAP.get(artifact);
@@ -99,5 +99,15 @@ public class SermantManager {
      */
     public static void updateSermantStatus(String artifact, boolean status) {
         SERMANT_STATUS.put(artifact, status);
+    }
+
+    /**
+     * 当前产品是否安装过Sermant
+     *
+     * @param artifact 标识基于Sermant的产品
+     * @return boolean
+     */
+    private static boolean hasSermant(String artifact) {
+        return SERMANT_MANAGE_MAP.containsKey(artifact);
     }
 }

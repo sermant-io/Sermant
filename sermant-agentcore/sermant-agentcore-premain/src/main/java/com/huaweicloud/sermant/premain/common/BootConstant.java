@@ -98,6 +98,36 @@ public class BootConstant {
      */
     public static final String LOG_SETTING_FILE_KEY = "log.setting.file";
 
+    /**
+     * Agent参数中指令的键
+     */
+    public static final String COMMAND_KEY = "command";
+
+    /**
+     * Agent参数中agent路径的键
+     */
+    public static final String AGENT_PATH_KEY = "agentPath";
+
+    /**
+     * Agent中处理指令的类
+     */
+    public static final String COMMAND_PROCESSOR_CLASS = "com.huaweicloud.sermant.core.command.CommandProcessor";
+
+    /**
+     * Agent中处理指令的方法
+     */
+    public static final String COMMAND_PROCESS_METHOD = "process";
+
+    /**
+     * Agent入口类
+     */
+    public static final String AGENT_CORE_ENTRANCE_CLASS = "com.huaweicloud.sermant.core.AgentCoreEntrance";
+
+    /**
+     * Agent安装方法
+     */
+    public static final String AGENT_INSTALL_METHOD = "install";
+
     private BootConstant() {
     }
 }

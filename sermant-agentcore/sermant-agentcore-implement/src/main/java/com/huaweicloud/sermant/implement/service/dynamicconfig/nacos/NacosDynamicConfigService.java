@@ -64,8 +64,6 @@ import java.util.logging.Logger;
  * @since 2023-08-17
  */
 public class NacosDynamicConfigService extends DynamicConfigService {
-    private static final ServiceMeta SERVICE_META = ConfigManager.getConfig(ServiceMeta.class);
-
     /**
      * 日志
      */
@@ -115,6 +113,8 @@ public class NacosDynamicConfigService extends DynamicConfigService {
 
     private NacosBufferedClient nacosClient;
 
+    private final ServiceMeta serviceMeta;
+
     private final List<NacosListener> listeners;
 
     /**
@@ -137,16 +137,17 @@ public class NacosDynamicConfigService extends DynamicConfigService {
      */
     public NacosDynamicConfigService() {
         listeners = new ArrayList<>();
+        serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
     }
 
     @Override
     public void start() {
         if (CONFIG.isEnableAuth()) {
             nacosClient = new NacosBufferedClient(CONFIG.getServerAddress(), CONFIG.getTimeoutValue(),
-                    SERVICE_META.getProject(), CONFIG.getUserName(), CONFIG.getPassword());
+                    serviceMeta.getProject(), CONFIG.getUserName(), CONFIG.getPassword());
         } else {
             nacosClient = new NacosBufferedClient(CONFIG.getServerAddress(), CONFIG.getTimeoutValue(),
-                    SERVICE_META.getProject());
+                    serviceMeta.getProject());
         }
         scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
         scheduledThreadPoolExecutor.scheduleWithFixedDelay(this::updateConfigListener, UPDATE_TIME_INTERVAL,
@@ -156,8 +157,13 @@ public class NacosDynamicConfigService extends DynamicConfigService {
 
     @Override
     public void stop() {
-        nacosClient.close();
-        scheduledThreadPoolExecutor.shutdown();
+        if (nacosClient != null) {
+            nacosClient.close();
+        }
+        if (scheduledThreadPoolExecutor != null) {
+            scheduledThreadPoolExecutor.shutdown();
+        }
+        listeners.clear();
     }
 
     @Override
@@ -457,7 +463,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
                 .append("/nacos/v1/cs/configs?dataId=&group=&appName=&config_tags=&pageNo=1&pageSize=")
                 .append(pageSize)
                 .append("&tenant=")
-                .append(SERVICE_META.getProject())
+                .append(serviceMeta.getProject())
                 .append("&search=accurate");
         if (CONFIG.isEnableAuth()) {
             String accessToken = getToken();

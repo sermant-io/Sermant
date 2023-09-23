@@ -40,7 +40,7 @@ public class PluginsInstallCommandExecutor implements CommandExecutor {
             LOGGER.log(Level.WARNING, "The argument of command[INSTALL-PLUGINS] is empty.");
             return;
         }
-        String[] pluginNames = args.split("\\|");
+        String[] pluginNames = args.split("/");
         PluginManager.install(Arrays.stream(pluginNames).collect(Collectors.toSet()));
     }
 }
