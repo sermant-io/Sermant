@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq;
+package com.huaweicloud.sermant.tag.transmission.rocketmqv5.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.tag.transmission.utils.RocketmqProducerMarkUtils;
 
 /**
- * RocketMQ流量标签透传的生产者启动时的拦截器，支持RocketMQ4.x+
+ * RocketMQ流量标签透传的生产者启动时的拦截器，支持RocketMQ5.0+
  *
  * @author lilai
  * @since 2023-09-16

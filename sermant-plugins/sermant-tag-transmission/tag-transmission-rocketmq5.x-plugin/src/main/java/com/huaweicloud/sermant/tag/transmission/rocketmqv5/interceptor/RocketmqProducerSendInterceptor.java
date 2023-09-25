@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq;
+package com.huaweicloud.sermant.tag.transmission.rocketmqv5.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.CollectionUtils;
@@ -22,12 +22,12 @@ import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
 import com.huaweicloud.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
-import org.apache.rocketmq.common.protocol.header.SendMessageRequestHeader;
+import org.apache.rocketmq.remoting.protocol.header.SendMessageRequestHeader;
 
 import java.util.List;
 
 /**
- * RocketMQ流量标签透传的生产者拦截器，支持RocketMQ4.x
+ * RocketMQ流量标签透传的生产者拦截器，支持RocketMQ5.0+
  *
  * @author tangle
  * @since 2023-07-20

@@ -39,6 +39,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>tag-transmission-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${apache-httpclient.version}</version>

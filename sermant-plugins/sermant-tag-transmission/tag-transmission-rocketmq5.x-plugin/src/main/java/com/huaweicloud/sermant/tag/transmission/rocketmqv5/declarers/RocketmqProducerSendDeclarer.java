@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.tag.transmission.declarers.mq.rocketmq;
+package com.huaweicloud.sermant.tag.transmission.rocketmqv5.declarers;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
-import com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq.RocketmqProducerSendInterceptor;
+import com.huaweicloud.sermant.tag.transmission.rocketmqv5.interceptor.RocketmqProducerSendInterceptor;
 
 /**
- * RocketMQ流量标签透传的生产者增强声明，支持RocketMQ4.x
+ * RocketMQ流量标签透传的生产者增强声明，支持RocketMQ5.0+
  *
  * @author tangle
  * @since 2023-07-20
@@ -40,7 +40,7 @@ public class RocketmqProducerSendDeclarer extends AbstractPluginDeclarer {
             "java.lang.String",
             "java.lang.String",
             "org.apache.rocketmq.common.message.Message",
-            "org.apache.rocketmq.common.protocol.header.SendMessageRequestHeader",
+            "org.apache.rocketmq.remoting.protocol.header.SendMessageRequestHeader",
             "long",
             "org.apache.rocketmq.client.impl.CommunicationMode",
             "org.apache.rocketmq.client.producer.SendCallback",

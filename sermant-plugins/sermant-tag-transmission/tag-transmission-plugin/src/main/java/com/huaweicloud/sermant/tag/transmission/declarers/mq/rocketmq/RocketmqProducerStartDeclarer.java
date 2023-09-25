@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq.RocketmqProducerStartInterceptor;
 
 /**
- * RocketMQ流量标签透传的生产者启动时增强声明，支持RocketMQ4.8+
+ * RocketMQ流量标签透传的生产者启动时增强声明，支持RocketMQ4.x
  *
  * @author lilai
  * @since 2023-09-16
