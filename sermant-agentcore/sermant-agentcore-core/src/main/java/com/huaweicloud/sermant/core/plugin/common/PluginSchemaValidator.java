@@ -53,21 +53,31 @@ public class PluginSchemaValidator {
     /**
      * 当插件的版本不存在时，使用默认的版本号
      *
-     * @param name 插件名称
+     * @param pluginName 插件名称
      */
-    public static void setDefaultVersion(String name) {
-        if (!PLUGIN_VERSION_MAP.containsKey(name)) {
-            PLUGIN_VERSION_MAP.put(name, PluginConstant.PLUGIN_DEFAULT_VERSION);
+    public static void setDefaultVersion(String pluginName) {
+        if (!PLUGIN_VERSION_MAP.containsKey(pluginName)) {
+            PLUGIN_VERSION_MAP.put(pluginName, PluginConstant.PLUGIN_DEFAULT_VERSION);
         }
+    }
+
+    /**
+     * 清理插件的版本缓存
+     *
+     * @param pluginName 插件名
+     */
+    public static void removePluginVersionCache(String pluginName) {
+        PLUGIN_VERSION_MAP.remove(pluginName);
     }
 
     /**
      * 检查名称和版本
      *
-     * @param name    插件名称
+     * @param name 插件名称
      * @param jarFile 插件包
      * @return 为真时经过名称和版本校验，为插件包或插件服务包，为假时表示第三方jar包
      * @throws IOException 获取manifest文件异常
+     * @throws SchemaException 传入插件名和从资源文件中检索到的不一致
      */
     public static boolean checkSchema(String name, JarFile jarFile) throws IOException {
         final Object nameAttr = JarFileUtils.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
