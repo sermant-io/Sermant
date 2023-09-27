@@ -31,7 +31,13 @@ import java.util.logging.Logger;
  * @since 2022-03-26
  */
 public class LoggerFactory {
-    private static Logger logger = java.util.logging.Logger.getLogger("sermant");
+    private static final String LOGGER_FACTORY_IMPL_CLASS = "com.huaweicloud.sermant.implement.log.LoggerFactoryImpl";
+
+    private static final String LOGGER_INIT_METHOD = "init";
+
+    private static Logger defaultLogger;
+
+    private static Logger sermantLogger;
 
     private LoggerFactory() {
     }
@@ -39,17 +45,21 @@ public class LoggerFactory {
     /**
      * 初始化logback配置文件路径
      *
+     * @param artifact 归属产品
      * @throws RuntimeException RuntimeException
      */
-    public static void init() {
-        FrameworkClassLoader frameworkClassLoader = ClassLoaderManager.getFrameworkClassLoader();
-        try {
-            Method initMethod = frameworkClassLoader
-                    .loadClass("com.huaweicloud.sermant.implement.log.LoggerFactoryImpl").getMethod("init");
-            logger = (Logger) initMethod.invoke(null);
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
-                 | InvocationTargetException e) {
-            throw new RuntimeException(e);
+    public static void init(String artifact) {
+        if (sermantLogger == null) {
+            FrameworkClassLoader frameworkClassLoader = ClassLoaderManager.getFrameworkClassLoader();
+            try {
+                Method initMethod = frameworkClassLoader
+                        .loadClass(LOGGER_FACTORY_IMPL_CLASS)
+                        .getMethod(LOGGER_INIT_METHOD, String.class);
+                sermantLogger = (Logger) initMethod.invoke(null, artifact);
+            } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
+                     | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -59,6 +69,14 @@ public class LoggerFactory {
      * @return jul日志
      */
     public static Logger getLogger() {
-        return logger;
+        if (sermantLogger != null) {
+            return sermantLogger;
+        }
+
+        // 避免日志重复获取
+        if (defaultLogger == null) {
+            defaultLogger = java.util.logging.Logger.getLogger("sermant");
+        }
+        return defaultLogger;
     }
 }

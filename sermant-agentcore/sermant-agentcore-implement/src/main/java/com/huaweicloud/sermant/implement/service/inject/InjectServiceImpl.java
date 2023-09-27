@@ -70,7 +70,7 @@ public class InjectServiceImpl implements ClassInjectService {
         }
         defineInjectClasses(className, classLoader);
         final ClassInjectDefine[] requiredDefines = classInjectDefine.requiredDefines();
-        if (requiredDefines != null && requiredDefines.length > 0) {
+        if (requiredDefines != null) {
             for (ClassInjectDefine define : requiredDefines) {
                 injectConfiguration(target, define, classLoader, isUnmodifiable);
             }

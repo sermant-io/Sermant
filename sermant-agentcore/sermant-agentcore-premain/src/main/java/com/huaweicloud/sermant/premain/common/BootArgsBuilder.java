@@ -17,11 +17,12 @@
 package com.huaweicloud.sermant.premain.common;
 
 import com.huaweicloud.sermant.premain.utils.LoggerUtils;
+import com.huaweicloud.sermant.premain.utils.StringUtils;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -40,46 +41,27 @@ public abstract class BootArgsBuilder {
     /**
      * 构建启动参数
      *
-     * @param agentArgs 程序入参
-     * @return 启动参数
+     * @param argsMap 入参集
+     * @param agentPath agent路径
      */
-    public static Map<String, Object> build(String agentArgs) {
-        final Properties configMap = loadConfig();
-        final Map<String, Object> argsMap = toArgsMap(agentArgs);
+    public static void build(Map<String, Object> argsMap, String agentPath) {
+        final Properties configMap = loadConfig(agentPath);
         addNotNullEntries(argsMap, configMap);
         addNormalEntries(argsMap, configMap);
-        addPathEntries(argsMap);
-        return argsMap;
-    }
-
-    /**
-     * 构建入参集
-     *
-     * @param args 程序入参
-     * @return 入参集
-     */
-    private static Map<String, Object> toArgsMap(String args) {
-        final Map<String, Object> argsMap = new HashMap<String, Object>();
-        if (args == null) {
-            return argsMap;
-        }
-        for (String arg : args.trim().split(",")) {
-            final int index = arg.indexOf('=');
-            if (index >= 0) {
-                argsMap.put(arg.substring(0, index).trim(), arg.substring(index + 1).trim());
-            }
-        }
-        return argsMap;
+        addPathEntries(argsMap, agentPath);
     }
 
     /**
      * 读取启动配置
      *
+     * @param agentPath agent路径
      * @return 启动配置
      */
-    private static Properties loadConfig() {
+    private static Properties loadConfig(String agentPath) {
+        String realPath = StringUtils.isBlank(agentPath) ? PathDeclarer.getAgentPath() : agentPath;
         final Properties properties = new Properties();
-        try (InputStream configStream = new FileInputStream(PathDeclarer.getBootConfigPath())) {
+        try (InputStream configStream = Files.newInputStream(
+                Paths.get(PathDeclarer.getBootConfigPath(realPath)))) {
             properties.load(configStream);
         } catch (IOException ioException) {
             LOGGER.severe(String.format(Locale.ROOT, "Exception occurs when close config InputStream , %s .",
@@ -163,10 +145,10 @@ public abstract class BootArgsBuilder {
             final String defaultValue = separatorIndex >= 0 ? envKey.substring(separatorIndex + 1) : "";
 
             // 优先级为环境变量 > 系统变量
-            if (!isBlank(System.getenv(key))) {
+            if (!StringUtils.isBlank(System.getenv(key))) {
                 return System.getenv(key);
             }
-            if (!isBlank(System.getProperty(key))) {
+            if (!StringUtils.isBlank(System.getProperty(key))) {
                 return System.getProperty(key);
             }
             return defaultValue;
@@ -178,33 +160,17 @@ public abstract class BootArgsBuilder {
      * 添加路径键值对
      *
      * @param argsMap 参数集
+     * @param agentPath agent路径
      */
-    private static void addPathEntries(Map<String, Object> argsMap) {
-        argsMap.put(BootConstant.AGENT_ROOT_DIR_KEY, PathDeclarer.getAgentPath());
-        argsMap.put(BootConstant.CORE_IMPLEMENT_DIR_KEY, PathDeclarer.getImplementPath());
-        argsMap.put(BootConstant.CORE_CONFIG_FILE_KEY, PathDeclarer.getConfigPath());
-        argsMap.put(BootConstant.PLUGIN_SETTING_FILE_KEY, PathDeclarer.getPluginSettingPath());
-        argsMap.put(BootConstant.PLUGIN_PACKAGE_DIR_KEY, PathDeclarer.getPluginPackagePath());
-        argsMap.put(BootConstant.LOG_SETTING_FILE_KEY, PathDeclarer.getLogbackSettingPath());
-        argsMap.put(BootConstant.COMMON_DEPENDENCY_DIR_KEY, PathDeclarer.getCommonLibPath());
-    }
-
-    /**
-     * isNotBlank
-     *
-     * @param charSequence charSequence
-     * @return boolean
-     */
-    public static boolean isBlank(final CharSequence charSequence) {
-        int charSequenceLen = charSequence == null ? 0 : charSequence.length();
-        if (charSequenceLen == 0) {
-            return true;
-        }
-        for (int i = 0; i < charSequenceLen; i++) {
-            if (!Character.isWhitespace(charSequence.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
+    public static void addPathEntries(Map<String, Object> argsMap, String agentPath) {
+        // 如果指定的agent路径为空，则通过ProtectionDomain获取
+        String realPath = StringUtils.isBlank(agentPath) ? PathDeclarer.getAgentPath() : agentPath;
+        argsMap.put(BootConstant.AGENT_ROOT_DIR_KEY, realPath);
+        argsMap.put(BootConstant.CORE_IMPLEMENT_DIR_KEY, PathDeclarer.getImplementPath(realPath));
+        argsMap.put(BootConstant.CORE_CONFIG_FILE_KEY, PathDeclarer.getConfigPath(realPath));
+        argsMap.put(BootConstant.PLUGIN_SETTING_FILE_KEY, PathDeclarer.getPluginSettingPath(realPath));
+        argsMap.put(BootConstant.PLUGIN_PACKAGE_DIR_KEY, PathDeclarer.getPluginPackagePath(realPath));
+        argsMap.put(BootConstant.LOG_SETTING_FILE_KEY, PathDeclarer.getLogbackSettingPath(realPath));
+        argsMap.put(BootConstant.COMMON_DEPENDENCY_DIR_KEY, PathDeclarer.getCommonLibPath(realPath));
     }
 }

@@ -69,4 +69,14 @@ public class NettyClientFactory {
         refreshClientMap(address, client);
         return client;
     }
+
+    /**
+     * 关闭工厂，清空Client示例
+     */
+    public static void stop() {
+        for (String key : CLIENT_MAP.keySet()) {
+            CLIENT_MAP.get(key).stop();
+        }
+        CLIENT_MAP.clear();
+    }
 }
