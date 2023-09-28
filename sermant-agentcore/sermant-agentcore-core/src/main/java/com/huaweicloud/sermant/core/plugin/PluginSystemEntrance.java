@@ -22,11 +22,14 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.operation.OperationManager;
 import com.huaweicloud.sermant.core.operation.converter.api.YamlConverter;
 import com.huaweicloud.sermant.core.plugin.config.PluginSetting;
+import com.huaweicloud.sermant.core.utils.CollectionUtils;
+import com.huaweicloud.sermant.core.utils.MapUtils;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -57,7 +60,7 @@ public class PluginSystemEntrance {
         Set<String> staticPlugins = pluginSetting.getPlugins();
         if (!isDynamic) {
             // 初始化支持静态安装的插件 premain方式启动时执行
-            if (staticPlugins == null || staticPlugins.isEmpty()) {
+            if (CollectionUtils.isEmpty(staticPlugins)) {
                 LOGGER.info("Non static-support-plugin is configured to be loaded.");
                 return;
             }
@@ -66,9 +69,14 @@ public class PluginSystemEntrance {
 
         if (isDynamic) {
             // 初始化支持动态安装的主动启动插件 agentmain方式启动时执行
-            Set<String> activePlugins = pluginSetting.getDynamicPlugins().get("active");
-            if (activePlugins == null || activePlugins.isEmpty()) {
+            Map<String, Set<String>> dynamicPlugins = pluginSetting.getDynamicPlugins();
+            if (MapUtils.isEmpty(dynamicPlugins)) {
                 LOGGER.info("Non dynamic-support-plugin is configured to be loaded.");
+                return;
+            }
+            Set<String> activePlugins = dynamicPlugins.get("active");
+            if (CollectionUtils.isEmpty(activePlugins)) {
+                LOGGER.info("Non active dynamic-support-plugin is configured to be loaded.");
                 return;
             }
             PluginManager.initPlugins(activePlugins, true);

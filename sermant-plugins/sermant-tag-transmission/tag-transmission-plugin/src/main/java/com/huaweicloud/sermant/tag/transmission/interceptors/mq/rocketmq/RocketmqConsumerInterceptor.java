@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * RocketMQ流量标签透传的消费者拦截器，支持RocketMQ4.8+
+ * RocketMQ流量标签透传的消费者拦截器，支持RocketMQ4.x
  *
  * @author tangle
  * @since 2023-07-19

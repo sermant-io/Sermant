@@ -31,16 +31,35 @@ import java.util.logging.Logger;
 public class LoggerFactoryImpl {
     private static final String LOG_LEVEL_KEY = "sermant_log_level";
 
+    private static final String INFO = "info";
+
+    private static final String ALL = "all";
+
+    private static final String TRACE = "trace";
+
+    private static final String DEBUG = "debug";
+
+    private static final String WARN = "warn";
+
+    private static final String ERROR = "error";
+
+    private static final String OFF = "off";
+
     private LoggerFactoryImpl() {
     }
 
     /**
      * init
      *
-     * @return logger logger for sermant
+     * @param artifact 归属产品
+     * @return return logger logger for sermant
      */
-    public static Logger init() {
-        Logger logger = java.util.logging.Logger.getLogger("sermant");
+    public static Logger init(String artifact) {
+        Logger logger = java.util.logging.Logger.getLogger("sermant." + artifact);
+        return getLogger(logger);
+    }
+
+    private static Logger getLogger(Logger logger) {
         logger.addHandler(new SermantBridgeHandler());
         logger.setUseParentHandlers(false);
         logger.setLevel(getLevel());
@@ -51,21 +70,21 @@ public class LoggerFactoryImpl {
         // 环境变量 > 启动参数
         String level = System.getenv(LOG_LEVEL_KEY);
         if (StringUtils.isBlank(level)) {
-            level = System.getProperty(LOG_LEVEL_KEY, "info");
+            level = System.getProperty(LOG_LEVEL_KEY, INFO);
         }
         level = level.toLowerCase(Locale.ROOT);
         switch (level) {
-            case "all":
+            case ALL:
                 return Level.ALL;
-            case "trace":
+            case TRACE:
                 return Level.FINEST;
-            case "debug":
+            case DEBUG:
                 return Level.FINE;
-            case "warn":
+            case WARN:
                 return Level.WARNING;
-            case "error":
+            case ERROR:
                 return Level.SEVERE;
-            case "off":
+            case OFF:
                 return Level.OFF;
             default:
                 return Level.INFO;

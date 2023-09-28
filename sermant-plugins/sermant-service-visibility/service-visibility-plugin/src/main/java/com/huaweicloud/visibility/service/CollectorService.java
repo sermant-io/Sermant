@@ -18,7 +18,7 @@
 package com.huaweicloud.visibility.service;
 
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
-import com.huaweicloud.sermant.core.service.visibility.entity.ServerInfo;
+import com.huaweicloud.visibility.entity.ServerInfo;
 
 /**
  * 信息采集处理服务
@@ -33,4 +33,9 @@ public interface CollectorService extends PluginService {
      * @param serverInfo 采集信息
      */
     void sendServerInfo(ServerInfo serverInfo);
+
+    /**
+     * 服务重连处理
+     */
+    void reconnectHandler();
 }

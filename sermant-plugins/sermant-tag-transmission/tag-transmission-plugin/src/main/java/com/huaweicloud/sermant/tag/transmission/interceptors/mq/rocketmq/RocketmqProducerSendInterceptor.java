@@ -27,7 +27,7 @@ import org.apache.rocketmq.common.protocol.header.SendMessageRequestHeader;
 import java.util.List;
 
 /**
- * RocketMQ流量标签透传的生产者拦截器，支持RocketMQ4.8+
+ * RocketMQ流量标签透传的生产者拦截器，支持RocketMQ4.x
  *
  * @author tangle
  * @since 2023-07-20
@@ -81,22 +81,16 @@ public class RocketmqProducerSendInterceptor extends AbstractClientInterceptor<S
                 continue;
             }
             List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
-            if (CollectionUtils.isEmpty(values)) {
-                newProperties.append(key);
-                newProperties.append(LINK_MARK);
-                newProperties.append((String) null);
-                newProperties.append(SPLIT_MARK);
-                continue;
-            }
             newProperties.append(key);
             newProperties.append(LINK_MARK);
-            newProperties.append(values.get(0));
+            newProperties.append(CollectionUtils.isEmpty(values) ? null : values.get(0));
             newProperties.append(SPLIT_MARK);
         }
         if (newProperties.length() == 0) {
             return oldProperties;
         }
         if (oldProperties == null || oldProperties.length() == 0) {
+            // rocketmq的header为空，需要去除新header最后的分隔符
             newProperties.deleteCharAt(newProperties.length() - 1);
             return newProperties.toString();
         }

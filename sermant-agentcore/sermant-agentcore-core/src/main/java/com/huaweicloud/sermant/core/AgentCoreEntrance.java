@@ -90,7 +90,7 @@ public class AgentCoreEntrance {
         ClassLoaderManager.init(argsMap);
 
         // 初始化日志
-        LoggerFactory.init();
+        LoggerFactory.init(artifact);
 
         // 通过启动配置构建路径索引
         BootArgsIndexer.build(argsMap);

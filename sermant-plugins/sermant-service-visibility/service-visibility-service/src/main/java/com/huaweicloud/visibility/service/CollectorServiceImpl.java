@@ -20,15 +20,20 @@ package com.huaweicloud.visibility.service;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.notification.NettyNotificationType;
+import com.huaweicloud.sermant.core.notification.NotificationListener;
+import com.huaweicloud.sermant.core.notification.NotificationManager;
 import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.service.send.api.GatewayClient;
-import com.huaweicloud.sermant.core.service.visibility.common.OperateType;
-import com.huaweicloud.sermant.core.service.visibility.entity.ServerInfo;
+import com.huaweicloud.visibility.common.CollectorCache;
+import com.huaweicloud.visibility.common.OperateType;
+import com.huaweicloud.visibility.entity.ServerInfo;
 
 import com.alibaba.fastjson.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
@@ -46,19 +51,40 @@ public class CollectorServiceImpl implements CollectorService {
 
     private GatewayClient client;
 
-    /**
-     * 构造函数
-     */
-    public CollectorServiceImpl() {
+    private NotificationListener listener;
+
+    @Override
+    public void start() {
         try {
             this.client = ServiceManager.getService(GatewayClient.class);
         } catch (IllegalArgumentException e) {
-            LOGGER.warning("GatewayClient is not found");
+            LOGGER.warning("Exception occurred while obtaining GatewayClient");
+        }
+        if (client != null) {
+            listener = notificationInfo -> reconnectHandler();
+            NotificationManager.registry(listener, NettyNotificationType.CONNECTED.getClass());
+        } else {
+            LOGGER.warning("GatewayClient is null and cannot register Netty connection listening.");
         }
     }
 
     @Override
     public void sendServerInfo(ServerInfo serverInfo) {
+        if (client == null) {
+            return;
+        }
+        sendMessage(OperateType.ADD.getType(), serverInfo);
+    }
+
+    @Override
+    public void reconnectHandler() {
+        if (client == null) {
+            return;
+        }
+        ServerInfo serverInfo = new ServerInfo();
+        serverInfo.setContractList(new ArrayList<>(CollectorCache.CONTRACT_MAP.values()));
+        serverInfo.setConsanguinityList(new ArrayList<>(CollectorCache.CONSANGUINITY_MAP.values()));
+        serverInfo.setRegistryInfo(CollectorCache.REGISTRY_MAP);
         sendMessage(OperateType.ADD.getType(), serverInfo);
     }
 
@@ -66,19 +92,33 @@ public class CollectorServiceImpl implements CollectorService {
      * 发送采集信息
      *
      * @param operateType 操作类型
-     * @param serverInfo  采集信息
+     * @param serverInfo 采集信息
      */
     private void sendMessage(String operateType, ServerInfo serverInfo) {
-        if (client != null) {
-            serverInfo.setApplicationName(BootArgsIndexer.getAppName());
-            serverInfo.setGroupName(serviceMeta.getApplication());
-            serverInfo.setVersion(serviceMeta.getVersion());
-            serverInfo.setEnvironment(serviceMeta.getEnvironment());
-            serverInfo.setZone(serviceMeta.getZone());
-            serverInfo.setProject(serviceMeta.getProject());
-            serverInfo.setOperateType(operateType);
-            serverInfo.setInstanceId(BootArgsIndexer.getInstanceId());
-            client.send(JSONObject.toJSONString(serverInfo).getBytes(StandardCharsets.UTF_8), VISIBILITY_MESSAGE);
+        serverInfo.setApplicationName(BootArgsIndexer.getAppName());
+        serverInfo.setGroupName(serviceMeta.getApplication());
+        serverInfo.setVersion(serviceMeta.getVersion());
+        serverInfo.setEnvironment(serviceMeta.getEnvironment());
+        serverInfo.setZone(serviceMeta.getZone());
+        serverInfo.setProject(serviceMeta.getProject());
+        serverInfo.setOperateType(operateType);
+        serverInfo.setInstanceId(BootArgsIndexer.getInstanceId());
+        client.send(JSONObject.toJSONString(serverInfo).getBytes(StandardCharsets.UTF_8), VISIBILITY_MESSAGE);
+    }
+
+    @Override
+    public void stop() {
+        if (client == null) {
+            return;
+        }
+        ServerInfo serverInfo = new ServerInfo();
+        serverInfo.setContractList(new ArrayList<>());
+        serverInfo.setConsanguinityList(new ArrayList<>());
+        sendMessage(OperateType.DELETE.getType(), serverInfo);
+        if (listener != null) {
+            NotificationManager.unRegistry(listener, NettyNotificationType.CONNECTED.getClass());
+        } else {
+            LOGGER.warning("NotificationListener is null and cannot unregister Netty connection listening.");
         }
     }
 }

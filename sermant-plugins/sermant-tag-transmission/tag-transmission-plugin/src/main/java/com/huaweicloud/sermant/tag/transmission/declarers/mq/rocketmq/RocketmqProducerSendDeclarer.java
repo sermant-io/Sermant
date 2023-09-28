@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.interceptors.mq.rocketmq.RocketmqProducerSendInterceptor;
 
 /**
- * RocketMQ流量标签透传的生产者增强声明，支持RocketMQ4.8+
+ * RocketMQ流量标签透传的生产者增强声明，支持RocketMQ4.x
  *
  * @author tangle
  * @since 2023-07-20
@@ -36,7 +36,20 @@ public class RocketmqProducerSendDeclarer extends AbstractPluginDeclarer {
 
     private static final String METHOD_NAME = "sendMessage";
 
-    private static final int PARAM_INDEX = 12;
+    private static final String[] METHOD_PARAM_TYPES = {
+            "java.lang.String",
+            "java.lang.String",
+            "org.apache.rocketmq.common.message.Message",
+            "org.apache.rocketmq.common.protocol.header.SendMessageRequestHeader",
+            "long",
+            "org.apache.rocketmq.client.impl.CommunicationMode",
+            "org.apache.rocketmq.client.producer.SendCallback",
+            "org.apache.rocketmq.client.impl.producer.TopicPublishInfo",
+            "org.apache.rocketmq.client.impl.factory.MQClientInstance",
+            "int",
+            "org.apache.rocketmq.client.hook.SendMessageContext",
+            "org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl"
+    };
 
     @Override
     public ClassMatcher getClassMatcher() {
@@ -47,7 +60,7 @@ public class RocketmqProducerSendDeclarer extends AbstractPluginDeclarer {
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
                 InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME)
-                        .and(MethodMatcher.paramCountEquals(PARAM_INDEX)), new RocketmqProducerSendInterceptor())
+                        .and(MethodMatcher.paramTypesEqual(METHOD_PARAM_TYPES)), new RocketmqProducerSendInterceptor())
         };
     }
 }

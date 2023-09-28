@@ -18,10 +18,12 @@ package com.huaweicloud.sermant.premain;
 
 import com.huaweicloud.sermant.god.common.SermantClassLoader;
 import com.huaweicloud.sermant.god.common.SermantManager;
+import com.huaweicloud.sermant.premain.common.AgentArgsResolver;
 import com.huaweicloud.sermant.premain.common.BootArgsBuilder;
 import com.huaweicloud.sermant.premain.common.BootConstant;
 import com.huaweicloud.sermant.premain.common.PathDeclarer;
 import com.huaweicloud.sermant.premain.utils.LoggerUtils;
+import com.huaweicloud.sermant.premain.utils.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Agent Premain方法
+ * Agent启动方法，包括premain、agentmain两种方式
  *
  * @author luanwenfei
  * @since 2022-03-26
@@ -71,63 +73,91 @@ public class AgentLauncher {
 
     private static void launchAgent(String agentArgs, Instrumentation instrumentation, boolean isDynamic) {
         try {
-            if (!installFlag) {
-                // 添加引导库
-                LOGGER.info("Loading god library into BootstrapClassLoader.");
-                loadGodLib(instrumentation);
-                installFlag = true;
-            }
+            // 解析Agent参数
+            final Map<String, Object> argsMap = AgentArgsResolver.resolveAgentArgs(agentArgs);
 
-            // 初始化启动参数
+            installGodLibs(instrumentation);
+
+            // 通过配置文件初始化启动参数
             LOGGER.info("Building argument map by agent arguments.");
-            final Map<String, Object> argsMap = BootArgsBuilder.build(agentArgs);
+            String agentPath = (String) argsMap.get(BootConstant.AGENT_PATH_KEY);
+            BootArgsBuilder.build(argsMap, agentPath);
+
             String artifact = (String) argsMap.get(BootConstant.ARTIFACT_NAME_KEY);
 
-            // 添加核心库
-            LOGGER.info("Loading core library into SermantClassLoader.");
-            SermantClassLoader sermantClassLoader = SermantManager.createSermant(artifact, loadCoreLibUrls());
-            if (!SermantManager.checkSermantStatus(artifact)) {
-                // 当前artifact未安装，执行agent安装
-                LOGGER.log(Level.INFO, "Loading sermant agent, artifact is: " + artifact);
-                sermantClassLoader.loadClass("com.huaweicloud.sermant.core.AgentCoreEntrance")
-                        .getDeclaredMethod("install", String.class, Map.class, Instrumentation.class, boolean.class)
-                        .invoke(null, artifact, argsMap, instrumentation, isDynamic);
-                LOGGER.log(Level.INFO, "Load sermant done， artifact is: " + artifact);
-                SermantManager.updateSermantStatus(artifact, true);
-            } else {
-                LOGGER.log(Level.INFO, "Sermant for artifact is running, artifact is: " + artifact);
-            }
+            // 安装Agent
+            installAgent(instrumentation, isDynamic, artifact, argsMap, agentPath);
 
-            // 处理启动参数中的指令
-            sermantClassLoader.loadClass("com.huaweicloud.sermant.core.command.CommandProcessor")
-                    .getDeclaredMethod("process", String.class)
-                    .invoke(null, argsMap.get("command"));
-        } catch (InvocationTargetException invocationTargetException) {
-            LOGGER.log(Level.SEVERE,
-                    "Loading sermant agent failed: " + invocationTargetException.getTargetException().getMessage());
+            // 执行Agent参数中的指令
+            executeCommand(artifact, (String) argsMap.get(BootConstant.COMMAND_KEY));
         } catch (Exception exception) {
             LOGGER.log(Level.SEVERE, "Loading sermant agent failed: " + exception.getMessage());
         }
     }
 
-    private static URL[] loadCoreLibUrls() throws IOException {
-        final File coreDir = new File(PathDeclarer.getCorePath());
-        if (!coreDir.exists() || !coreDir.isDirectory()) {
-            throw new RuntimeException("Core directory is not exist or is not directory.");
+    private static void installAgent(Instrumentation instrumentation, boolean isDynamic, String artifact,
+            Map<String, Object> argsMap, String agentPath) {
+        try {
+            if (!SermantManager.checkSermantStatus(artifact)) {
+                // 添加核心库
+                LOGGER.info("Loading core library into SermantClassLoader.");
+                SermantClassLoader sermantClassLoader = SermantManager.createSermant(artifact, getCoreLibUrls(
+                        agentPath));
+
+                // 当前artifact未安装，执行agent安装
+                LOGGER.log(Level.INFO, "Loading sermant agent, artifact is: " + artifact);
+                sermantClassLoader.loadClass(BootConstant.AGENT_CORE_ENTRANCE_CLASS)
+                        .getDeclaredMethod(BootConstant.AGENT_INSTALL_METHOD, String.class, Map.class,
+                                Instrumentation.class, boolean.class)
+                        .invoke(null, artifact, argsMap, instrumentation, isDynamic);
+                LOGGER.log(Level.INFO, "Load sermant done, artifact is: " + artifact);
+                SermantManager.updateSermantStatus(artifact, true);
+            } else {
+                LOGGER.log(Level.INFO, "Sermant for artifact is running, artifact is: " + artifact);
+            }
+        } catch (InvocationTargetException invocationTargetException) {
+            LOGGER.log(Level.SEVERE,
+                    "Install agent failed: " + invocationTargetException.getTargetException().getMessage());
+        } catch (IOException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException exception) {
+            LOGGER.log(Level.SEVERE,
+                    "Install agent failed: " + exception.getMessage());
         }
-        final File[] jars = coreDir.listFiles((dir, name) -> name.endsWith(".jar"));
-        if (jars == null || jars.length == 0) {
-            throw new RuntimeException("Core directory is empty.");
-        }
-        List<URL> list = new ArrayList<>();
-        for (File jar : jars) {
-            list.add(jar.toURI().toURL());
-        }
-        return list.toArray(new URL[]{});
     }
 
-    private static void loadGodLib(Instrumentation instrumentation) throws IOException {
-        final File bootstrapDir = new File(PathDeclarer.getGodLibPath());
+    private static void installGodLibs(Instrumentation instrumentation) {
+        if (!installFlag) {
+            // 添加引导库
+            LOGGER.info("Loading god library into BootstrapClassLoader.");
+            appendGodLibToBootStrapClassLoaderSearch(instrumentation);
+            installFlag = true;
+        }
+    }
+
+    private static void executeCommand(String artifact, String command) {
+        // 处理启动参数中的指令
+        if (command == null || command.isEmpty()) {
+            return;
+        }
+        LOGGER.log(Level.INFO, "Execute command: " + command);
+        try {
+            SermantClassLoader sermantClassLoader = SermantManager.getSermant(artifact);
+            if (sermantClassLoader == null) {
+                LOGGER.log(Level.SEVERE,
+                        "Execute command failed, sermant has not been installed, artifact is: " + artifact);
+                return;
+            }
+            sermantClassLoader.loadClass(BootConstant.COMMAND_PROCESSOR_CLASS)
+                    .getDeclaredMethod(BootConstant.COMMAND_PROCESS_METHOD, String.class).invoke(null, command);
+        } catch (InvocationTargetException invocationTargetException) {
+            LOGGER.log(Level.SEVERE,
+                    "Execute command failed: " + invocationTargetException.getTargetException().getMessage());
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException exception) {
+            LOGGER.log(Level.SEVERE, "Execute command failed: " + exception.getMessage());
+        }
+    }
+
+    private static void appendGodLibToBootStrapClassLoaderSearch(Instrumentation instrumentation) {
+        final File bootstrapDir = new File(PathDeclarer.getGodLibPath(PathDeclarer.getAgentPath()));
         if (!bootstrapDir.exists() || !bootstrapDir.isDirectory()) {
             throw new RuntimeException("God directory is not exist or is not directory.");
         }
@@ -143,5 +173,22 @@ public class AgentLauncher {
                 LOGGER.severe(ioException.getMessage());
             }
         }
+    }
+
+    private static URL[] getCoreLibUrls(String agentPath) throws IOException {
+        String realPath = StringUtils.isBlank(agentPath) ? PathDeclarer.getAgentPath() : agentPath;
+        final File coreDir = new File(PathDeclarer.getCorePath(realPath));
+        if (!coreDir.exists() || !coreDir.isDirectory()) {
+            throw new RuntimeException("Core directory is not exist or is not directory.");
+        }
+        final File[] jars = coreDir.listFiles((dir, name) -> name.endsWith(".jar"));
+        if (jars == null || jars.length == 0) {
+            throw new RuntimeException("Core directory is empty.");
+        }
+        List<URL> list = new ArrayList<>();
+        for (File jar : jars) {
+            list.add(jar.toURI().toURL());
+        }
+        return list.toArray(new URL[]{});
     }
 }

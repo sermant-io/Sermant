@@ -37,7 +37,7 @@ public class ApacheDubboRegistryDeclarer extends AbstractCollectorDeclarer {
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameEquals(ENHANCE_CLASS);
+        return ClassMatcher.isExtendedFrom(ENHANCE_CLASS);
     }
 
     @Override

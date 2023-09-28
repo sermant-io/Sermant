@@ -1,6 +1,5 @@
 package com.huaweicloud.sermant.premain.common;
 
-
 import static org.junit.Assert.assertEquals;
 
 import org.junit.AfterClass;
@@ -61,7 +60,8 @@ public class BootArgsBuilderTest {
      * @throws NoSuchFieldException
      */
     @Test
-    public void testGetActualValue() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
+    public void testGetActualValue()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
         Method method = BootArgsBuilder.class.getDeclaredMethod("getActualValue", String.class);
         method.setAccessible(true);
         assertEquals("demo", method.invoke(BootArgsBuilder.class, "${serviceAName:A}"));
@@ -87,7 +87,8 @@ public class BootArgsBuilderTest {
             env1.putAll(envMap);
 
             // linux/macos系统
-            Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
+            Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField(
+                    "theCaseInsensitiveEnvironment");
             theCaseInsensitiveEnvironmentField.setAccessible(true);
             Map env2 = (Map) theCaseInsensitiveEnvironmentField.get(null);
             env2.putAll(envMap);
@@ -111,11 +112,12 @@ public class BootArgsBuilderTest {
      * 测试参数解析
      */
     @Test
-    public void testParseArgs(){
-        String agentArgs = "appName=test,command=INSTALL_PLUGIN:monitor|flowcontrol,server.port=9000";
-        Map<String, Object> argsMap = BootArgsBuilder.build(agentArgs);
+    public void testParseArgs() {
+        String agentArgs = "appName=test,command=INSTALL_PLUGIN:monitor/flowcontrol,server.port=9000";
+        Map<String, Object> argsMap = AgentArgsResolver.resolveAgentArgs(agentArgs);
+        BootArgsBuilder.build(argsMap, PathDeclarer.getAgentPath());
         Assert.assertEquals("test", argsMap.get("appName"));
         Assert.assertEquals("9000", argsMap.get("server.port"));
-        Assert.assertEquals("INSTALL_PLUGIN:monitor|flowcontrol", argsMap.get("command"));
+        Assert.assertEquals("INSTALL_PLUGIN:monitor/flowcontrol", argsMap.get("command"));
     }
 }
