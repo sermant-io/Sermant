@@ -129,6 +129,9 @@ public class PluginManager {
 
             // 从插件Map中清除该插件
             PLUGIN_MAP.remove(name);
+
+            // 清除插件信息缓存
+            PluginSchemaValidator.removePluginVersionCache(name);
         }
     }
 

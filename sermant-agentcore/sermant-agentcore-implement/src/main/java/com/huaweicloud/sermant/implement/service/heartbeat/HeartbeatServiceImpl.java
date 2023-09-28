@@ -102,6 +102,9 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     private void execute() {
         // 获取插件名和版本集合
         final Map<String, String> pluginVersionMap = PluginSchemaValidator.getPluginVersionMap();
+
+        // 清空插件信息缓存
+        heartbeatMessage.getPluginInfoMap().clear();
         for (Map.Entry<String, String> entry : pluginVersionMap.entrySet()) {
             heartbeatMessage.getPluginInfoMap().putIfAbsent(entry.getKey(),
                     new PluginInfo(entry.getKey(), entry.getValue()));
