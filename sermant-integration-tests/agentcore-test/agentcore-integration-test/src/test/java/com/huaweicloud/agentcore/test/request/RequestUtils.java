@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.agentcore.test.request.utils;
-
-import com.huaweicloud.agentcore.test.request.dynamicconfig.DynamicConfigTest;
+package com.huaweicloud.agentcore.test.request;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -42,6 +40,9 @@ import java.util.Map;
  */
 public class RequestUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestUtils.class);
+
+    private RequestUtils() {
+    }
 
     /**
      * 对测试请求结果进行断言判断

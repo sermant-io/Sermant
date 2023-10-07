@@ -1,5 +1,5 @@
-name: "Agent-core Dynamic Test"
-description: "Auto test for agent-core dynamic"
+name: "Agent-core Dynamic Install/Uninstall Test"
+description: "Auto test for agent-core dynamic install/uninstall"
 runs:
   using: "composite"
   steps:

@@ -70,7 +70,7 @@ public enum DynamicResults {
      */
     DynamicResults(String description) {
         this.description = description;
-        this.result = true;
+        this.result = false;
     }
 
     public boolean getResult() {

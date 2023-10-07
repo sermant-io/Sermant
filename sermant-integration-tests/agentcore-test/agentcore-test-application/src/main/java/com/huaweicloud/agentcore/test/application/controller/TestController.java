@@ -18,6 +18,7 @@ package com.huaweicloud.agentcore.test.application.controller;
 
 import com.huaweicloud.agentcore.test.application.results.DynamicConfigResults;
 import com.huaweicloud.agentcore.test.application.results.DynamicResults;
+import com.huaweicloud.agentcore.test.application.tests.dynamic.DynamicTest;
 import com.huaweicloud.agentcore.test.application.tests.dynamicconfig.DynamicConfigTest;
 
 import com.alibaba.fastjson.JSONObject;
@@ -68,6 +69,8 @@ public class TestController {
      */
     public String testInstallPlugin() {
         Map<String, Object> resultMap = new HashMap<>();
+        DynamicTest dynamicTest = new DynamicTest();
+        dynamicTest.testInstallPlugin();
         resultMap.put(DynamicResults.DYNAMIC_INSTALL_PLUGIN_REPEAT_ENHANCE.name(),
                 DynamicResults.DYNAMIC_INSTALL_PLUGIN_REPEAT_ENHANCE.getResult());
         JSONObject jsonObject = new JSONObject(resultMap);
@@ -81,6 +84,8 @@ public class TestController {
      */
     public String testUninstallPlugin() {
         Map<String, Object> resultMap = new HashMap<>();
+        DynamicTest dynamicTest = new DynamicTest();
+        dynamicTest.testUninstallPlugin();
         resultMap.put(DynamicResults.DYNAMIC_UNINSTALL_PLUGIN_INTERCEPTOR_FAILURE.name(),
                 DynamicResults.DYNAMIC_UNINSTALL_PLUGIN_INTERCEPTOR_FAILURE.getResult());
         resultMap.put(DynamicResults.DYNAMIC_UNINSTALL_REPEAT_ENHANCE.name(),
@@ -96,6 +101,8 @@ public class TestController {
      */
     public String testUninstallAgent() {
         Map<String, Object> resultMap = new HashMap<>();
+        DynamicTest dynamicTest = new DynamicTest();
+        dynamicTest.testUninstallAgent();
         resultMap.put(DynamicResults.DYNAMIC_UNINSTALL_AGENT_PLUGIN_FAILURE.name(),
                 DynamicResults.DYNAMIC_UNINSTALL_AGENT_PLUGIN_FAILURE.getResult());
         JSONObject jsonObject = new JSONObject(resultMap);
@@ -109,6 +116,8 @@ public class TestController {
      */
     public String testReInstallAgent() {
         Map<String, Object> resultMap = new HashMap<>();
+        DynamicTest dynamicTest = new DynamicTest();
+        dynamicTest.testReInstallAgent();
         resultMap.put(DynamicResults.DYNAMIC_REINSTALL_AGENT_PLUGIN_SUCCESS.name(),
                 DynamicResults.DYNAMIC_REINSTALL_AGENT_PLUGIN_SUCCESS.getResult());
         JSONObject jsonObject = new JSONObject(resultMap);
