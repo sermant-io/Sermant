@@ -394,7 +394,8 @@ public class RegistryServiceImpl implements RegistryService {
 
     private String getHost() {
         try {
-            return InetAddress.getLocalHost().getHostName();
+            String hostName = InetAddress.getLocalHost().getHostName();
+            return hostName.length() > 64 ? hostName.substring(0, 64) : hostName;
         } catch (UnknownHostException e) {
             LOGGER.warning("Cannot get the host.");
             return "";

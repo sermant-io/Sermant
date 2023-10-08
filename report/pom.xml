@@ -126,6 +126,27 @@
             <artifactId>spring-cloud-registry-service</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!--    tag-transmission    -->
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>tag-transmission-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>tag-transmission-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>tag-transmission-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>tag-transmission-rocketmq5.x-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>sermant-backend</artifactId>

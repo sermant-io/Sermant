@@ -418,7 +418,11 @@ public class ScClient {
     private void buildMicroServiceInstance() {
         microserviceInstance = new MicroserviceInstance();
         microserviceInstance.setStatus(MicroserviceInstanceStatus.UP);
-        microserviceInstance.setHostName(RegisterContext.INSTANCE.getClientInfo().getHost());
+        String hostName = RegisterContext.INSTANCE.getClientInfo().getHost();
+        if (hostName != null) {
+            hostName = hostName.length() > 64 ? hostName.substring(0, 64) : hostName;
+        }
+        microserviceInstance.setHostName(hostName);
         microserviceInstance.setEndpoints(buildEndpoints());
         HealthCheck healthCheck = new HealthCheck();
         healthCheck.setMode(HealthCheckMode.push);
