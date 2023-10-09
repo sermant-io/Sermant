@@ -1,17 +1,21 @@
 name: "Agent-core Common Test"
-description: "Auto test for agent-core common, include nacos dynamic config"
+description: "Auto test for agent-core common"
 runs:
   using: "composite"
   steps:
     - name: entry
       uses: ./.github/actions/common/entry
       with:
-        log-dir: ./logs/agentcore-test/dynamic-config
+        log-dir: ./logs/agentcore-test/common
+    - name: modify config
+      shell: bash
+      run: |
+        sed -i 's/service\.meta\.application=default/service.meta.application=testApplication/' sermant-agent-${{ env.sermantVersion }}/agent/config/config.properties
     - name: start applications
       shell: bash
       env:
-        dynamic.config.serverAddress: 127.0.0.1:8848
-        dynamic.config.dynamicConfigType: NACOS
+        dynamic.config.serverAddress: 127.0.0.1:2181
+        dynamic.config.dynamicConfigType: ZOOKEEPER
         service.meta.project: TestAgentCore
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar -jar \
@@ -21,9 +25,9 @@ runs:
       shell: bash
       run: |
         bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8915/ping 120
-    - name: agentcore test module start
+    - name: agentcore test config load start
       shell: bash
-      run: mvn test -Dagentcore.test.type=DYNAMIC_CONFIG --file sermant-integration-tests/agentcore-test/agentcore-integration-test/pom.xml
+      run: mvn test -Dagentcore.test.type=CONFIG_LOAD --file sermant-integration-tests/agentcore-test/agentcore-integration-test/pom.xml
     - name: exit
       if: always()
       uses: ./.github/actions/common/exit
@@ -33,7 +37,7 @@ runs:
       uses: actions/upload-artifact@v3
       if: ${{ failure() || cancelled() }}
       with:
-        name: agentcore-test-logs
+        name: agentcore-test-common-logs
         path: |
           ./*.log
           ./logs/**

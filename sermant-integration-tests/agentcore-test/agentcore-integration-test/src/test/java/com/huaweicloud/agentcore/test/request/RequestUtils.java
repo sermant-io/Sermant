@@ -50,12 +50,33 @@ public class RequestUtils {
      * @param url 测试请求接口的url
      */
     public static void testRequest(String url) throws IOException {
+        Map<String, Object> resultMap = convertHttpEntityToMap(getResponse(url));
+        for (Map.Entry<String, Object> entry : resultMap.entrySet()) {
+            Assertions.assertTrue((boolean) entry.getValue(), entry.getKey());
+        }
+    }
+
+    /**
+     * 对于backend的reponse解析
+     *
+     * @param url 测试请求接口的url
+     */
+    public static Map<String, Object> analyzingRequestBackend(String url) throws IOException {
+        String resultStr = getResponse(url);
+        resultStr = resultStr.substring(1, resultStr.length() - 1);
+        return convertHttpEntityToMap(resultStr);
+    }
+
+    /**
+     * 获取请求结果
+     *
+     * @param url 测试请求接口的url
+     * @return 请求结果Map
+     */
+    public static String getResponse(String url) throws IOException {
         String response = doGet(url);
         Assertions.assertNotEquals("", response, url + " Request Error. ");
-        Map<String, Boolean> resultMap = convertHttpEntityToMap(response);
-        for (Map.Entry<String, Boolean> entry : resultMap.entrySet()) {
-            Assertions.assertTrue(entry.getValue(), entry.getKey());
-        }
+        return response;
     }
 
     /**
@@ -90,11 +111,11 @@ public class RequestUtils {
      * @param response JSON数据
      * @return map数据
      */
-    private static Map<String, Boolean> convertHttpEntityToMap(String response) throws IOException {
-        Map<String, Boolean> result = new HashMap<>();
+    private static Map<String, Object> convertHttpEntityToMap(String response) throws IOException {
+        Map<String, Object> result = new HashMap<>();
         JSONObject jsonObject = JSONObject.parseObject(response);
         for (String key : jsonObject.keySet()) {
-            result.put(key, jsonObject.getBooleanValue(key));
+            result.put(key, jsonObject.get(key));
         }
         return result;
     }

@@ -16,8 +16,10 @@
 
 package com.huaweicloud.agentcore.test.application.controller;
 
+import com.huaweicloud.agentcore.test.application.results.ConfigResults;
 import com.huaweicloud.agentcore.test.application.results.DynamicConfigResults;
 import com.huaweicloud.agentcore.test.application.results.DynamicResults;
+import com.huaweicloud.agentcore.test.application.tests.configload.CoreAndPluginConfigLoadTest;
 import com.huaweicloud.agentcore.test.application.tests.dynamic.DynamicTest;
 import com.huaweicloud.agentcore.test.application.tests.dynamicconfig.DynamicConfigTest;
 
@@ -120,6 +122,59 @@ public class TestController {
         dynamicTest.testReInstallAgent();
         resultMap.put(DynamicResults.DYNAMIC_REINSTALL_AGENT_PLUGIN_SUCCESS.name(),
                 DynamicResults.DYNAMIC_REINSTALL_AGENT_PLUGIN_SUCCESS.getResult());
+        JSONObject jsonObject = new JSONObject(resultMap);
+        return jsonObject.toJSONString();
+    }
+
+    /**
+     * 测试premain启动
+     *
+     * @return 测试结果
+     */
+    public String testPremainStartup() {
+        Map<String, Object> resultMap = new HashMap<>();
+        DynamicTest dynamicTest = new DynamicTest();
+        dynamicTest.testPremainStartup();
+        resultMap.put(DynamicResults.PREMAIN_STATIC_PLUGIN_INTERCEPTOR_SUCCESS.name(),
+                DynamicResults.PREMAIN_STATIC_PLUGIN_INTERCEPTOR_SUCCESS.getResult());
+        resultMap.put(DynamicResults.PREMAIN_DYNAMIC_PLUGIN_INTERCEPTOR_FAILURE.name(),
+                DynamicResults.PREMAIN_DYNAMIC_PLUGIN_INTERCEPTOR_FAILURE.getResult());
+        JSONObject jsonObject = new JSONObject(resultMap);
+        return jsonObject.toJSONString();
+    }
+
+    /**
+     * 测试agentmain启动
+     *
+     * @return 测试结果
+     */
+    public String testAgentmainStartup() {
+        Map<String, Object> resultMap = new HashMap<>();
+        DynamicTest dynamicTest = new DynamicTest();
+        dynamicTest.testAgentmainStartup();
+        resultMap.put(DynamicResults.AGENTMAIN_STATIC_PLUGIN_INTERCEPTOR_FAILURE.name(),
+                DynamicResults.AGENTMAIN_STATIC_PLUGIN_INTERCEPTOR_FAILURE.getResult());
+        resultMap.put(DynamicResults.AGENTMAIN_ACTIVE_PLUGIN_INTERCEPTOR_SUCCESS.name(),
+                DynamicResults.AGENTMAIN_ACTIVE_PLUGIN_INTERCEPTOR_SUCCESS.getResult());
+        resultMap.put(DynamicResults.AGENTMAIN_PASSIVE_PLUGIN_INTERCEPTOR_FAILURE.name(),
+                DynamicResults.AGENTMAIN_PASSIVE_PLUGIN_INTERCEPTOR_FAILURE.getResult());
+        JSONObject jsonObject = new JSONObject(resultMap);
+        return jsonObject.toJSONString();
+    }
+
+    /**
+     * 测试配置加载功能
+     *
+     * @return 测试结果
+     */
+    public String testCoreAndPluginConfigLoad() {
+        Map<String, Object> resultMap = new HashMap<>();
+        CoreAndPluginConfigLoadTest configTest = new CoreAndPluginConfigLoadTest();
+        configTest.testCoreAndPluginConfigLoad();
+        resultMap.put(ConfigResults.PLUGIN_CONFIG_LOADED_SUCCESS.name(),
+                ConfigResults.PLUGIN_CONFIG_LOADED_SUCCESS.getResult());
+        resultMap.put(ConfigResults.CORE_CONFIG_LOADED_SUCCESS.name(),
+                ConfigResults.CORE_CONFIG_LOADED_SUCCESS.getResult());
         JSONObject jsonObject = new JSONObject(resultMap);
         return jsonObject.toJSONString();
     }

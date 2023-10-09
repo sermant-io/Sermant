@@ -1,0 +1,4 @@
+# 测试插件的config
+configload.config:
+  # 测试配置值
+  test-config-value: "test-config-value"

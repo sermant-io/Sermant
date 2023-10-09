@@ -79,15 +79,18 @@ jobs:
           mkdir -p sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/agentcore-test-plugin/plugin
           mkdir -p sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/dynamic-test-first-plugin/plugin
           mkdir -p sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/dynamic-test-second-plugin/plugin
+          mkdir -p sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/dynamic-test-third-plugin/plugin
           cp ./sermant-integration-tests/agentcore-test/agentcore-test-plugin/target/agentcore-test-plugin-1.0.0.jar sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/agentcore-test-plugin/plugin/
+          cp -r ./sermant-integration-tests/agentcore-test/config sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/agentcore-test-plugin/
           cp ./sermant-integration-tests/agentcore-test/dynamic-test-first-plugin/target/dynamic-test-first-plugin-1.0.0.jar sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/dynamic-test-first-plugin/plugin/
           cp ./sermant-integration-tests/agentcore-test/dynamic-test-second-plugin/target/dynamic-test-second-plugin-1.0.0.jar sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/dynamic-test-second-plugin/plugin/
+          cp ./sermant-integration-tests/agentcore-test/dynamic-test-third-plugin/target/dynamic-test-third-plugin-1.0.0.jar sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/dynamic-test-third-plugin/plugin/
           cp ./sermant-integration-tests/agentcore-test/agentcore-test-application/target/agentcore-test-application-1.0.0-jar-with-dependencies.jar sermant-agent-${{ env.sermantVersion }}/agent/
           sed -i '/plugins:/a \  - agentcore-test-plugin' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml
   test-for-agentcore-common:
     name: Test for agentcore common
     runs-on: ubuntu-latest
-    needs: [ build-agent-and-cache, download-midwares-and-cache ]
+    needs: [build-agent-and-cache, download-midwares-and-cache]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -98,7 +101,30 @@ jobs:
       - name: common operations
         uses: ./.github/actions/common/agentcore
       - name: start agentcore common test
-        uses: ./.github/actions/scenarios/agentcore/agentcore-common
+        uses: ./.github/actions/scenarios/agentcore/common
+  test-for-agentcore-dynamic-config:
+    name: Test for agentcore dynamic config
+    runs-on: ubuntu-latest
+    needs: [build-agent-and-cache, download-midwares-and-cache]
+    strategy:
+      matrix:
+        include:
+          - serviceAddress: "127.0.0.1:8848"
+            dynamicConfigType: "NACOS"
+          - serviceAddress: "127.0.0.1:2181"
+            dynamicConfigType: "ZOOKEEPER"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/agentcore
+      - name: test dynamic config for ${{ matrix.dynamicConfigType }}
+        uses: ./.github/actions/scenarios/agentcore/dynamic-config
   test-for-agentcore-dynamic:
     name: Test for agentcore dynamic
     runs-on: ubuntu-latest
@@ -114,5 +140,36 @@ jobs:
         uses: ./.github/actions/common/agentcore
       - name: start dynamic test
         uses: ./.github/actions/scenarios/agentcore/dynamic
+  test-for-agentcore-premain-startup:
+    name: Test for agentcore premain startup
+    runs-on: ubuntu-latest
+    needs: [build-agent-and-cache, download-midwares-and-cache]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/agentcore
+      - name: start dynamic test
+        uses: ./.github/actions/scenarios/agentcore/premain
+  test-for-agentcore-agentmain-startup:
+    name: Test for agentcore agentmain startup
+    runs-on: ubuntu-latest
+    needs: [build-agent-and-cache, download-midwares-and-cache]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/agentcore
+      - name: start dynamic test
+        uses: ./.github/actions/scenarios/agentcore/agentmain
+
 
 

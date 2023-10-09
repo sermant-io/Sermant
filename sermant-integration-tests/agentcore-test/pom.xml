@@ -17,6 +17,7 @@
         <module>agentcore-test-application</module>
         <module>dynamic-test-first-plugin</module>
         <module>dynamic-test-second-plugin</module>
+        <module>dynamic-test-third-plugin</module>
     </modules>
 
     <properties>
@@ -45,6 +46,7 @@
                 <module>agentcore-test-application</module>
                 <module>dynamic-test-first-plugin</module>
                 <module>dynamic-test-second-plugin</module>
+                <module>dynamic-test-third-plugin</module>
             </modules>
         </profile>
     </profiles>
