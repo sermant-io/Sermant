@@ -1,2 +1,12 @@
 com.huaweicloud.agentcore.tests.plugin.declarer.dynamicconfig.TestDynamicConfigDeclarer
 com.huaweicloud.agentcore.tests.plugin.declarer.configload.TestConfigLoadDeclarer
+com.huaweicloud.agentcore.tests.plugin.declarer.retransform.TestReTransformDeclarer
+com.huaweicloud.agentcore.tests.plugin.declarer.classmatch.TestAnnotationDeclarer
+com.huaweicloud.agentcore.tests.plugin.declarer.classmatch.TestAnnotationsDeclarer
+com.huaweicloud.agentcore.tests.plugin.declarer.classmatch.TestSuperTypeDeclarer
+com.huaweicloud.agentcore.tests.plugin.declarer.classmatch.TestSuperTypesDeclarer
+com.huaweicloud.agentcore.tests.plugin.declarer.classmatch.TestInfixDeclarer
+com.huaweicloud.agentcore.tests.plugin.declarer.classmatch.TestPrefixDeclarer
+com.huaweicloud.agentcore.tests.plugin.declarer.classmatch.TestSuffixDeclarer
+com.huaweicloud.agentcore.tests.plugin.declarer.methodmatch.TestMethodMatcherDeclarer
+com.huaweicloud.agentcore.tests.plugin.declarer.enhancement.TestExecuteContextDeclarer

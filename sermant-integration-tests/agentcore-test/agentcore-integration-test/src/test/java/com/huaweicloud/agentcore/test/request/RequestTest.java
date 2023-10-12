@@ -116,4 +116,28 @@ public class RequestTest {
     public void testCoreAndPluginConfigLoad() throws IOException {
         RequestUtils.testRequest("http://127.0.0.1:8915/testCoreAndPluginConfigLoad");
     }
+
+    @Test
+    @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "COMMON_ENHANCE")
+    public void testClassMatch() throws IOException {
+        RequestUtils.testRequest("http://127.0.0.1:8915/testClassMatch");
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "COMMON_ENHANCE")
+    public void testMethodMatch() throws IOException {
+        RequestUtils.testRequest("http://127.0.0.1:8915/testMethodMatch");
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "COMMON_ENHANCE")
+    public void testEnhancement() throws IOException {
+        RequestUtils.testRequest("http://127.0.0.1:8915/testEnhancement");
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "COMMON_ENHANCE")
+    public void testReTransform() throws IOException {
+        RequestUtils.testRequest("http://127.0.0.1:8915/testReTransform");
+    }
 }

@@ -68,6 +68,26 @@ public class RouterPath {
      */
     public static final String REQUEST_PATH_CORE_AND_PLUGIN_CONFIG_LOAD = "/testCoreAndPluginConfigLoad";
 
+    /**
+     * 测试类匹配
+     */
+    public static final String REQUEST_PATH_CLASS_MATCH = "/testClassMatch";
+
+    /**
+     * 测试方法匹配
+     */
+    public static final String REQUEST_PATH_METHOD_MATCH = "/testMethodMatch";
+
+    /**
+     * 测试增强功能
+     */
+    public static final String REQUEST_PATH_ENHANCEMENT = "/testEnhancement";
+
+    /**
+     * 测试对类的重转换能力
+     */
+    public static final String REQUEST_PATH_RE_TRANSFORM = "/testReTransform";
+
     private RouterPath() {
     }
 }
