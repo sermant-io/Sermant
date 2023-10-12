@@ -1,0 +1,53 @@
+name: "Agent-core Premain Startup Test"
+description: "Auto test for agent-core premain startup"
+runs:
+  using: "composite"
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/agentcore-test/premain
+    - name: (install agent) modify plugins file
+      shell: bash
+      run: |        
+        sed -i '/dynamic-test-first-plugin/d' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml
+        sed -i '/dynamic-test-second-plugin/d' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml
+        sed -i '/plugins:/a \  - dynamic-test-first-plugin' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml
+        sed -i '/  active:/a \  - dynamic-test-second-plugin' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml
+    - name: start backend with memory
+      shell: bash
+      run: |
+        nohup java -jar sermant-agent-${{ env.sermantVersion }}/server/sermant/sermant-backend-${{ env.sermantVersion }}.jar &
+    - name: start applications
+      shell: bash
+      env:
+        dynamic.config.serverAddress: 127.0.0.1:2181
+        dynamic.config.dynamicConfigType: ZOOKEEPER
+        service.meta.project: TestAgentCore
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar -jar \
+        sermant-agent-${{ env.sermantVersion }}/agent/agentcore-test-application-1.0.0-jar-with-dependencies.jar > ${{ env.logDir
+        }}/agentcore-test.log 2>&1 &
+    - name: waiting for agentcore services start
+      shell: bash
+      run: |
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8915/ping 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8900/sermant/event/webhooks 120
+    - name: test premain startup
+      shell: bash
+      run: mvn test -Dagentcore.test.type=PREMAIN_STARTUP --file sermant-integration-tests/agentcore-test/agentcore-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: agentcore
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: agentcore-test-premain-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

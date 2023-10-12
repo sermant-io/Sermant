@@ -91,6 +91,12 @@ public class ControllerHandler implements HttpHandler {
                 return testController.testUninstallAgent();
             case RouterPath.REQUEST_PATH_REINSTALL_AGENT:
                 return testController.testReInstallAgent();
+            case RouterPath.REQUEST_PATH_PREMAIN_STARTUP:
+                return testController.testPremainStartup();
+            case RouterPath.REQUEST_PATH_AGENTMAIN_STARTUP:
+                return testController.testAgentmainStartup();
+            case RouterPath.REQUEST_PATH_CORE_AND_PLUGIN_CONFIG_LOAD:
+                return testController.testCoreAndPluginConfigLoad();
             default:
                 return REQUEST_URL_NOT_FOUND;
         }

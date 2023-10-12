@@ -51,7 +51,32 @@ public enum DynamicResults {
     /**
      * 再次安装AGENT，插件生效
      */
-    DYNAMIC_REINSTALL_AGENT_PLUGIN_SUCCESS("Test dynamic reinstall agent, plugin success.");
+    DYNAMIC_REINSTALL_AGENT_PLUGIN_SUCCESS("Test dynamic reinstall agent, plugin success."),
+
+    /**
+     * premain启动，静态插件生效
+     */
+    PREMAIN_STATIC_PLUGIN_INTERCEPTOR_SUCCESS("Test premain startup, static plugin success."),
+
+    /**
+     * premain启动，动态插件失效
+     */
+    PREMAIN_DYNAMIC_PLUGIN_INTERCEPTOR_FAILURE("Test premain startup, dynamic plugin failure."),
+
+    /**
+     * agentmain启动，静态插件失效
+     */
+    AGENTMAIN_STATIC_PLUGIN_INTERCEPTOR_FAILURE("Test agentmain startup, static plugin failure."),
+
+    /**
+     * agentmain启动，active插件生效
+     */
+    AGENTMAIN_ACTIVE_PLUGIN_INTERCEPTOR_SUCCESS("Test agentmain startup, active plugin success."),
+
+    /**
+     * agentmain启动，passive插件失效
+     */
+    AGENTMAIN_PASSIVE_PLUGIN_INTERCEPTOR_FAILURE("Test agentmain startup, passive plugin failure.");
 
     /**
      * 用例描述

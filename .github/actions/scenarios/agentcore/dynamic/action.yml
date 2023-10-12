@@ -84,7 +84,7 @@ runs:
       uses: actions/upload-artifact@v3
       if: ${{ failure() || cancelled() }}
       with:
-        name: agentcore-test-logs
+        name: agentcore-test-dynamic-logs
         path: |
           ./*.log
           ./logs/**
