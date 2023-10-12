@@ -1,0 +1,19 @@
+# Spring Boot应用程序配置
+spring:
+  application:
+    name: alibaba-dubbo-consumer
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 9044
+
+# Dubbo配置
+dubbo:
+  application:
+    name: alibaba-dubbo-consumer
+    qos-port: 33335
+  registry:
+    address: zookeeper://localhost:2181
+  protocol:
+    name: dubbo
+    port: -1
