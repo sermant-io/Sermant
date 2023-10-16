@@ -101,6 +101,8 @@ public class ScClient {
 
     private static final int FLAG = -1;
 
+    private static final int MAX_HOST_NAME_LENGTH = 64;
+
     private final AtomicBoolean isDelayed = new AtomicBoolean();
 
     private ServiceCenterConfiguration serviceCenterConfiguration;
@@ -150,7 +152,7 @@ public class ScClient {
         }
         if (serviceCenterClient != null) {
             serviceCenterClient.deleteMicroserviceInstance(this.microservice.getServiceId(),
-                this.microserviceInstance.getInstanceId());
+                    this.microserviceInstance.getInstanceId());
         }
     }
 
@@ -161,8 +163,7 @@ public class ScClient {
      */
     public String getRegisterCenterStatus() {
         try {
-            final MicroserviceInstancesResponse response =
-                serviceCenterClient.getServiceCenterInstances();
+            final MicroserviceInstancesResponse response = serviceCenterClient.getServiceCenterInstances();
             if (response == null || response.getInstances() == null) {
                 return Register.DOWN;
             }
@@ -180,15 +181,14 @@ public class ScClient {
      */
     public String getInstanceStatus() {
         try {
-            MicroserviceInstance instance = serviceCenterClient
-                .getMicroserviceInstance(microserviceInstance.getServiceId(),
-                    microserviceInstance.getInstanceId());
+            MicroserviceInstance instance = serviceCenterClient.getMicroserviceInstance(
+                    microserviceInstance.getServiceId(), microserviceInstance.getInstanceId());
             final String status = instance.getStatus() != null ? instance.getStatus().name() : Register.UN_KNOWN;
             RegisterContext.INSTANCE.getClientInfo().setStatus(status);
             return status;
         } catch (OperationException ex) {
             LOGGER.severe(String.format(Locale.ENGLISH, "[RegistryPlugin] failed to get instance status, %s",
-                ex.getMessage()));
+                    ex.getMessage()));
         }
         return Register.DOWN;
     }
@@ -201,11 +201,11 @@ public class ScClient {
     public void updateInstanceStatus(String status) {
         try {
             serviceCenterClient.updateMicroserviceInstanceStatus(microserviceInstance.getServiceId(),
-                microserviceInstance.getInstanceId(), MicroserviceInstanceStatus.valueOf(status));
+                    microserviceInstance.getInstanceId(), MicroserviceInstanceStatus.valueOf(status));
             RegisterContext.INSTANCE.getClientInfo().setStatus(status);
         } catch (OperationException ex) {
-            LOGGER.severe(String.format(Locale.ENGLISH, "[RegistryPlugin] Updated instance status to %s failed",
-                status));
+            LOGGER.severe(
+                    String.format(Locale.ENGLISH, "[RegistryPlugin] Updated instance status to %s failed", status));
         }
     }
 
@@ -225,8 +225,8 @@ public class ScClient {
             }
         } catch (OperationException ex) {
             LOGGER.severe(String.format(Locale.ENGLISH,
-                "Queried service [%s] instance list from service center failed, reason [%s]", serviceName,
-                ex.getMessage()));
+                    "Queried service [%s] instance list from service center failed, reason [%s]", serviceName,
+                    ex.getMessage()));
         }
         if (instances == null) {
             return Collections.emptyList();
@@ -243,14 +243,13 @@ public class ScClient {
             return Collections.emptyList();
         }
         final List<Microservice> allServices = response.getServices();
-        final List<String> allServiceIds =
-            allServices.stream().filter(service -> StringUtils.equals(service.getServiceName(),
-                getRealServiceName(true, serviceName)))
+        final List<String> allServiceIds = allServices.stream()
+                .filter(service -> StringUtils.equals(service.getServiceName(), getRealServiceName(true, serviceName)))
                 .map(Microservice::getServiceId).distinct().collect(Collectors.toList());
         List<MicroserviceInstance> microserviceInstances = new ArrayList<>();
         allServiceIds.forEach(serviceId -> {
-            final MicroserviceInstancesResponse instanceResponse =
-                serviceCenterClient.getMicroserviceInstanceList(serviceId);
+            final MicroserviceInstancesResponse instanceResponse = serviceCenterClient.getMicroserviceInstanceList(
+                    serviceId);
             if (instanceResponse != null && instanceResponse.getInstances() != null) {
                 microserviceInstances.addAll(instanceResponse.getInstances());
             }
@@ -302,8 +301,8 @@ public class ScClient {
     private boolean regionAndAzMatch(MicroserviceInstance myself, MicroserviceInstance target) {
         if (myself.getDataCenterInfo() != null && target.getDataCenterInfo() != null) {
             return myself.getDataCenterInfo().getRegion().equals(target.getDataCenterInfo().getRegion())
-                && myself.getDataCenterInfo().getAvailableZone()
-                .equals(target.getDataCenterInfo().getAvailableZone());
+                    && myself.getDataCenterInfo().getAvailableZone()
+                    .equals(target.getDataCenterInfo().getAvailableZone());
         }
         return false;
     }
@@ -388,8 +387,8 @@ public class ScClient {
         if (serviceCenterClient == null) {
             return;
         }
-        serviceCenterRegistration =
-            new ServiceCenterRegistration(serviceCenterClient, serviceCenterConfiguration, EVENT_BUS);
+        serviceCenterRegistration = new ServiceCenterRegistration(serviceCenterClient, serviceCenterConfiguration,
+                EVENT_BUS);
         EVENT_BUS.register(this);
         serviceCenterRegistration.setMicroservice(buildMicroService());
         buildMicroServiceInstance();
@@ -407,18 +406,21 @@ public class ScClient {
         final AddressManager addressManager = createAddressManager(registerConfig.getProject(), getScUrls());
         final SSLProperties sslProperties = createSslProperties(registerConfig.isSslEnabled());
         serviceCenterClient = new ServiceCenterClient(addressManager, sslProperties,
-            signRequest -> Collections.emptyMap(), "default", Collections.emptyMap());
+                signRequest -> Collections.emptyMap(), "default", Collections.emptyMap());
     }
 
     private List<String> buildEndpoints() {
         return Collections.singletonList(String.format(Locale.ENGLISH, "rest://%s:%d", HostUtils.getMachineIp(),
-            RegisterContext.INSTANCE.getClientInfo().getPort()));
+                RegisterContext.INSTANCE.getClientInfo().getPort()));
     }
 
     private void buildMicroServiceInstance() {
         microserviceInstance = new MicroserviceInstance();
         microserviceInstance.setStatus(MicroserviceInstanceStatus.UP);
-        microserviceInstance.setHostName(RegisterContext.INSTANCE.getClientInfo().getHost());
+        String hostName = RegisterContext.INSTANCE.getClientInfo().getHost();
+        microserviceInstance.setHostName(
+                hostName != null && hostName.length() > MAX_HOST_NAME_LENGTH ? hostName.substring(0,
+                        MAX_HOST_NAME_LENGTH) : hostName);
         microserviceInstance.setEndpoints(buildEndpoints());
         HealthCheck healthCheck = new HealthCheck();
         healthCheck.setMode(HealthCheckMode.push);
@@ -459,7 +461,7 @@ public class ScClient {
         microservice = new Microservice();
         if (registerConfig.isAllowCrossApp()) {
             microservice.setAlias(registerConfig.getApplication() + ConfigConstants.APP_SERVICE_SEPARATOR
-                + RegisterContext.INSTANCE.getClientInfo().getServiceId());
+                    + RegisterContext.INSTANCE.getClientInfo().getServiceId());
         }
         microservice.setAppId(registerConfig.getApplication());
         microservice.setEnvironment(registerConfig.getEnvironment());

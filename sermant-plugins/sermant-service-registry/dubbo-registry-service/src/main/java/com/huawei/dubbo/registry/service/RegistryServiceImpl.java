@@ -117,6 +117,8 @@ public class RegistryServiceImpl implements RegistryService {
 
     private static final int REGISTRATION_WAITE_TIME = 30;
 
+    private static final int MAX_HOST_NAME_LENGTH = 64;
+
     private static final List<Subscription> PENDING_SUBSCRIBE_EVENT = new CopyOnWriteArrayList<>();
 
     private static final AtomicBoolean SHUTDOWN = new AtomicBoolean();
@@ -394,7 +396,11 @@ public class RegistryServiceImpl implements RegistryService {
 
     private String getHost() {
         try {
-            return InetAddress.getLocalHost().getHostName();
+            String hostName = InetAddress.getLocalHost().getHostName();
+
+            // ServiceComb不支持64个字符以上的hostname注册, 此处参考spring-cloud-huawei进行截断处理
+            return hostName != null && hostName.length() > MAX_HOST_NAME_LENGTH ? hostName.substring(0,
+                    MAX_HOST_NAME_LENGTH) : hostName;
         } catch (UnknownHostException e) {
             LOGGER.warning("Cannot get the host.");
             return "";
