@@ -28,6 +28,9 @@ runs:
     - name: agentcore test config load start
       shell: bash
       run: mvn test -Dagentcore.test.type=CONFIG_LOAD --file sermant-integration-tests/agentcore-test/agentcore-integration-test/pom.xml
+    - name: agentcore test enhancement
+      shell: bash
+      run: mvn test -Dagentcore.test.type=COMMON_ENHANCE --file sermant-integration-tests/agentcore-test/agentcore-integration-test/pom.xml
     - name: exit
       if: always()
       uses: ./.github/actions/common/exit

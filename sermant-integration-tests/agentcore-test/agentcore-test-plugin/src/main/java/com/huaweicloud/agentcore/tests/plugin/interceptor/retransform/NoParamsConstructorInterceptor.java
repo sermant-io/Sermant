@@ -30,8 +30,8 @@ import java.lang.reflect.Method;
 public class NoParamsConstructorInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
-        Class<?> targetClass = Class.forName("com.huaweicloud.agentcore.test.application.tests.bootstrap"
-                + ".BootstrapTest");
+        Class<?> targetClass = Class.forName(
+                "com.huaweicloud.agentcore.test.application.tests.retransform.ReTransformTest");
         Method targetMethod = targetClass.getMethod("setConstructorFlag", boolean.class);
         targetMethod.invoke(null, true);
         return context;
