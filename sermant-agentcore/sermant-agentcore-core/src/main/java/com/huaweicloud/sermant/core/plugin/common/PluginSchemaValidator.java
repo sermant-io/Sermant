@@ -73,28 +73,29 @@ public class PluginSchemaValidator {
     /**
      * 检查名称和版本
      *
-     * @param name 插件名称
+     * @param pluginName 插件名称
+     * @param realPluginName 实际插件名，插件名去除副本标记后的所使用的插件
      * @param jarFile 插件包
      * @return 为真时经过名称和版本校验，为插件包或插件服务包，为假时表示第三方jar包
      * @throws IOException 获取manifest文件异常
      * @throws SchemaException 传入插件名和从资源文件中检索到的不一致
      */
-    public static boolean checkSchema(String name, JarFile jarFile) throws IOException {
+    public static boolean checkSchema(String pluginName, String realPluginName, JarFile jarFile) throws IOException {
         final Object nameAttr = JarFileUtils.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);
         if (nameAttr == null) {
             return false;
         }
-        if (!nameAttr.toString().equals(name)) {
-            throw new SchemaException(SchemaException.UNEXPECTED_NAME, nameAttr.toString(), name);
+        if (!nameAttr.toString().equals(realPluginName)) {
+            throw new SchemaException(SchemaException.UNEXPECTED_NAME, nameAttr.toString(), pluginName);
         }
         final Object versionAttr = JarFileUtils.getManifestAttr(jarFile, PluginConstant.PLUGIN_VERSION_KEY);
         final String givingVersion =
                 versionAttr == null ? PluginConstant.PLUGIN_DEFAULT_VERSION : versionAttr.toString();
-        final String expectingVersion = PLUGIN_VERSION_MAP.get(name);
+        final String expectingVersion = PLUGIN_VERSION_MAP.get(pluginName);
         if (expectingVersion == null) {
-            PLUGIN_VERSION_MAP.put(name, givingVersion);
+            PLUGIN_VERSION_MAP.put(pluginName, givingVersion);
         } else if (!expectingVersion.equals(givingVersion)) {
-            throw new SchemaException(SchemaException.UNEXPECTED_VERSION, name, givingVersion, expectingVersion);
+            throw new SchemaException(SchemaException.UNEXPECTED_VERSION, pluginName, givingVersion, expectingVersion);
         }
         return true;
     }

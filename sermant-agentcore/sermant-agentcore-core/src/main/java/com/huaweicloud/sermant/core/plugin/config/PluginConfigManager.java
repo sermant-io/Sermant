@@ -63,28 +63,30 @@ public class PluginConfigManager {
         ClassLoader classLoader =
                 plugin.getServiceClassLoader() != null ? plugin.getServiceClassLoader() : plugin.getPluginClassLoader();
         for (BaseConfig config : ServiceLoader.load(PluginConfig.class, classLoader)) {
-            final String typeKey = ConfigKeyUtil.getTypeKey(config.getClass());
-            final BaseConfig retainedConfig = PLUGIN_CONFIG_MAP.get(typeKey);
+            Class<? extends BaseConfig> pluginConfigCls = config.getClass();
+            String pluginConfigKey = ConfigKeyUtil.getCLTypeKey(ConfigKeyUtil.getTypeKey(pluginConfigCls),
+                    pluginConfigCls.getClassLoader());
+            final BaseConfig retainedConfig = PLUGIN_CONFIG_MAP.get(pluginConfigKey);
             if (pluginConfigFile.exists() && pluginConfigFile.isFile()) {
                 if (retainedConfig == null) {
-                    PLUGIN_CONFIG_MAP.put(typeKey, ConfigManager.doLoad(pluginConfigFile, config));
-                    plugin.getConfigs().add(typeKey);
-                } else if (retainedConfig.getClass() == config.getClass()) {
+                    PLUGIN_CONFIG_MAP.put(pluginConfigKey, ConfigManager.doLoad(pluginConfigFile, config));
+                    plugin.getConfigs().add(pluginConfigKey);
+                } else if (retainedConfig.getClass() == pluginConfigCls) {
                     LOGGER.fine(String.format(Locale.ROOT, "Skip load config [%s] repeatedly. ",
-                            config.getClass().getName()));
+                            pluginConfigCls.getName()));
                 } else {
                     LOGGER.warning(String.format(Locale.ROOT, "Type key of %s is %s, same as %s's. ",
-                            config.getClass().getName(), typeKey, retainedConfig.getClass().getName()));
+                            pluginConfigCls.getName(), pluginConfigKey, retainedConfig.getClass().getName()));
                 }
                 continue;
             }
-            if (PLUGIN_CONFIG_MAP.containsKey(typeKey)) {
+            if (PLUGIN_CONFIG_MAP.containsKey(pluginConfigKey)) {
                 continue;
             }
 
             // 不能从文件加载，则为默认配置
-            PLUGIN_CONFIG_MAP.put(typeKey, config);
-            plugin.getConfigs().add(typeKey);
+            PLUGIN_CONFIG_MAP.put(pluginConfigKey, config);
+            plugin.getConfigs().add(pluginConfigKey);
         }
     }
 
@@ -107,7 +109,8 @@ public class PluginConfigManager {
      * @return 插件配置实例
      */
     public static <R extends PluginConfig> R getPluginConfig(Class<R> cls) {
-        return (R) PLUGIN_CONFIG_MAP.get(ConfigKeyUtil.getTypeKey(cls));
+        String pluginConfigKey = ConfigKeyUtil.getCLTypeKey(ConfigKeyUtil.getTypeKey(cls), cls.getClassLoader());
+        return (R) PLUGIN_CONFIG_MAP.get(pluginConfigKey);
     }
 
     /**

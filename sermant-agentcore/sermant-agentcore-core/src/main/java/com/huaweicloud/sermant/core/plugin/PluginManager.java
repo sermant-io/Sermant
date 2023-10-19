@@ -168,7 +168,8 @@ public class PluginManager {
                 continue;
             }
             try {
-                final String pluginPath = pluginPackage + File.separatorChar + pluginName;
+                // 去除插件名副本标记，获取实际所需要用到的资源目录
+                final String pluginPath = pluginPackage + File.separatorChar + getRealPluginName(pluginName);
                 if (!new File(pluginPath).exists()) {
                     LOGGER.log(Level.WARNING, "Plugin directory {0} does not exist, so skip initializing {1}. ",
                             new String[]{pluginPath, pluginName});
@@ -284,7 +285,8 @@ public class PluginManager {
         JarFile jarFile = null;
         try {
             jarFile = new JarFile(jar);
-            if (ifCheckSchema && !PluginSchemaValidator.checkSchema(pluginName, jarFile)) {
+            if (ifCheckSchema && !PluginSchemaValidator.checkSchema(pluginName, getRealPluginName(pluginName),
+                    jarFile)) {
                 throw new SchemaException(SchemaException.UNEXPECTED_EXT_JAR, jar.getPath());
             }
             if (consumer != null) {
@@ -303,6 +305,16 @@ public class PluginManager {
                 }
             }
         }
+    }
+
+    /**
+     * 形如 plugin-name#1 plugin-name#2 方式标记插件副本，共用资源文件，通过分隔插件名获取实际的插件名，对应插件目录名及Manifest中的插件标识
+     *
+     * @param pluginName 插件名
+     * @return 实际插件名
+     */
+    private static String getRealPluginName(String pluginName) {
+        return pluginName.split("#")[0];
     }
 
     /**
