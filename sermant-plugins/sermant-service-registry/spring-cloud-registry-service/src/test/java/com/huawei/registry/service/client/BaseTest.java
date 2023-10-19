@@ -17,10 +17,11 @@
 package com.huawei.registry.service.client;
 
 import com.huawei.registry.config.RegisterConfig;
-
 import com.huawei.registry.config.RegisterServiceCommonConfig;
+
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.config.common.BaseConfig;
+import com.huaweicloud.sermant.core.config.utils.ConfigKeyUtil;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 import org.junit.BeforeClass;
@@ -49,15 +50,18 @@ public class BaseTest {
         removeFinalModify(configMap);
 
         configManagerMap = (Map<String, BaseConfig>) configMap.get(null);
-        configManagerMap.put("servicecomb.service", new RegisterConfig());
-        configManagerMap.put("register.service", new RegisterServiceCommonConfig());
+        configManagerMap.put(ConfigKeyUtil.getCLTypeKey("servicecomb.service", RegisterConfig.class.getClassLoader()),
+                new RegisterConfig());
+        configManagerMap.put(
+                ConfigKeyUtil.getCLTypeKey("register.service", RegisterServiceCommonConfig.class.getClassLoader()),
+                new RegisterServiceCommonConfig());
     }
 
     /**
      * 移除final修饰符
      *
      * @param field 字段
-     * @throws NoSuchFieldException   无该字段抛出
+     * @throws NoSuchFieldException 无该字段抛出
      * @throws IllegalAccessException 无法拿到该字段抛出
      */
     protected static void removeFinalModify(Field field) throws NoSuchFieldException, IllegalAccessException {

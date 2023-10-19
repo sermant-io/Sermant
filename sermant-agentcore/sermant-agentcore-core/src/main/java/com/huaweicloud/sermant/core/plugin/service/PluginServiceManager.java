@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.plugin.Plugin;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.utils.KeyGenerateUtils;
 
 import java.util.ServiceLoader;
 import java.util.logging.Level;
@@ -50,9 +51,9 @@ public class PluginServiceManager extends ServiceManager {
         for (PluginService service : ServiceLoader.load(PluginService.class, classLoader)) {
             if (loadService(service, service.getClass(), PluginService.class)) {
                 try {
-                    String serviceName = service.getClass().getName();
+                    String pluginServiceKey = KeyGenerateUtils.generateClassKeyWithClassLoader(service.getClass());
                     service.start();
-                    plugin.getServices().add(serviceName);
+                    plugin.getServices().add(pluginServiceKey);
                 } catch (Exception ex) {
                     LOGGER.log(Level.SEVERE, "Error occurs while starting plugin service: " + service.getClass(), ex);
                 }
