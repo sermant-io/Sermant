@@ -1,0 +1,19 @@
+# Spring Boot应用程序配置
+spring:
+  application:
+    name: apache-dubbo-provider
+  main:
+    allow-bean-definition-overriding: true
+
+# Dubbo配置
+dubbo:
+  application:
+    name: apache-dubbo-provider
+    qos-port: 33334
+  registry:
+    address: zookeeper://127.0.0.1:2181
+  protocol:
+    name: dubbo
+    port: -1
+server:
+  port: 9044
