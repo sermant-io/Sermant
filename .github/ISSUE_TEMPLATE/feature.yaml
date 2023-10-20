@@ -1,13 +1,13 @@
-name: Enhancement Tracking
-description: Provide supporting details for a enhancement in development
-labels: kind/enhancement
+name: Feature Tracking
+description: Provide supporting details for a feature in development
+labels: kind/feature
 body:
   - type: textarea
     id: feature
     attributes:
-      label: What would you like to be enhanced?
+      label: What would you like to be added?
       description: |
-        I want to enhance xxx.
+        I want to add xxx.
     validations:
       required: true
 

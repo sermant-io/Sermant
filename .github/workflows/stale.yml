@@ -46,8 +46,8 @@ jobs:
             We close this issue because it hasn't been updated in a while. Remove **Stale** label if you want to reopen it.
           # issue不活跃判定时间，单位：天
           days-before-issue-stale: 29
-          # issue最终关闭间隔时间，单位：天
-          days-before-issue-close: 1
+          # issue最终关闭间隔时间，单位：天，-1不执行自动关闭
+          days-before-issue-close: -1
 
           # 为不活跃的pr添加的标签
           stale-pr-label: Stale
@@ -59,8 +59,8 @@ jobs:
             We close this PR because it hasn't been updated in a while. Remove **Stale** label if you want to reopen it.
           # pr不活跃判定时间，单位：天
           days-before-pr-stale: 14
-          # pr最终关闭间隔时间，单位：天
-          days-before-pr-close: 1
+          # pr最终关闭间隔时间，单位：天，-1不执行自动关闭
+          days-before-pr-close: -1
 
           # 每次运行处理issue和PR条数，如果待处理的数量过多，可修改该值
           operations-per-run: 100
