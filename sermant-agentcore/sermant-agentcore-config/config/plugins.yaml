@@ -14,6 +14,7 @@ plugins:
 # agentmain启动时生效，配置支持动态安装插件，active类型插件将会主动启用, passive类型插件需通过指令或接口调用启用，允许卸载
 dynamicPlugins:
   active:
+    - jsse
 #    - active-plugin
   passive:
 #    - passive-plugin

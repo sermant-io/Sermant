@@ -1,0 +1,6 @@
+jsse.config:
+  enable: false
+  delayTime: 1000
+  period: 1000
+  filePath: /tmp/java-data-
+  fileName: jsse-metric.txt
