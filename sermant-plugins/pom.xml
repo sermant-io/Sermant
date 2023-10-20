@@ -42,6 +42,7 @@
                 <module>sermant-service-removal</module>
                 <module>sermant-spring-beans-deal</module>
                 <module>sermant-tag-transmission</module>
+                <module>sermant-jsse</module>
                 <module>sermant-database-write-prohibition</module>
             </modules>
             <build>
@@ -75,6 +76,7 @@
                 <module>sermant-service-removal</module>
                 <module>sermant-spring-beans-deal</module>
                 <module>sermant-tag-transmission</module>
+                <module>sermant-jsse</module>
                 <module>sermant-database-write-prohibition</module>
             </modules>
             <build>
@@ -108,6 +110,7 @@
                 <module>sermant-service-removal</module>
                 <module>sermant-spring-beans-deal</module>
                 <module>sermant-tag-transmission</module>
+                <module>sermant-jsse</module>
                 <module>sermant-database-write-prohibition</module>
             </modules>
         </profile>
