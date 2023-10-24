@@ -22,6 +22,7 @@ plugins:
 #  2. passive类型插件需通过指令或接口调用启用
 dynamicPlugins:
   active:
+    - jsse
 #    - active-plugin
   passive:
 #    - passive-plugin
