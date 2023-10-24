@@ -1,0 +1,28 @@
+# override common configurations in common module
+servicecomb-config-order: 10
+
+servicecomb:
+  service:
+    application: servicecomb-test
+    name: servicecomb-consumer
+    version: 1.2.0
+    registry:
+      # Default using local service center
+      address: http://localhost:30100
+      # address: https://cse.cn-south-1.myhuaweicloud.com
+      instance:
+        watch: false
+
+  nacos:
+    serverAddr: http://localhost:8848
+    group: servicecomb
+    dataId: servicecomb-1
+    namespace: public
+    contentType: properties
+    addPrefix: false
+
+  rest:
+    address: 0.0.0.0:9058  # should be same with server.port to use web container
+
+server:
+  port: 9058
