@@ -28,7 +28,7 @@ import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.event.EventManager;
 import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.exception.DupServiceException;
-import com.huaweicloud.sermant.core.service.send.api.GatewayClient;
+import com.huaweicloud.sermant.core.utils.KeyGenerateUtils;
 import com.huaweicloud.sermant.core.utils.SpiLoadUtils;
 
 import java.util.ArrayList;
@@ -121,7 +121,8 @@ public class ServiceManager {
      * @throws IllegalArgumentException IllegalArgumentException 找不到对应的服务
      */
     public static <T extends BaseService> T getService(Class<T> serviceClass) {
-        final BaseService baseService = SERVICES.get(serviceClass.getName());
+        String serviceKey = KeyGenerateUtils.generateClassKeyWithClassLoader(serviceClass);
+        final BaseService baseService = SERVICES.get(serviceKey);
         if (baseService != null && serviceClass.isAssignableFrom(baseService.getClass())) {
             return (T) baseService;
         }
@@ -141,8 +142,8 @@ public class ServiceManager {
         if (serviceCls == null || serviceCls == baseCls || !baseCls.isAssignableFrom(serviceCls)) {
             return false;
         }
-        final String serviceName = serviceCls.getName();
-        final BaseService oldService = SERVICES.get(serviceName);
+        final String serviceKey = KeyGenerateUtils.generateClassKeyWithClassLoader(serviceCls);
+        final BaseService oldService = SERVICES.get(serviceKey);
         if (oldService != null && oldService.getClass() == service.getClass()) {
             return false;
         }
@@ -151,11 +152,11 @@ public class ServiceManager {
                 SpiLoadUtils.getBetter(oldService, service, new SpiLoadUtils.WeightEqualHandler<BaseService>() {
                     @Override
                     public BaseService handle(BaseService source, BaseService target) {
-                        throw new DupServiceException(serviceName);
+                        throw new DupServiceException(serviceKey);
                     }
                 });
         if (betterService != oldService) {
-            SERVICES.put(serviceName, service);
+            SERVICES.put(serviceKey, service);
             isLoadSucceed = true;
         }
         isLoadSucceed |= loadService(service, serviceCls.getSuperclass(), baseCls);

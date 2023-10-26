@@ -22,6 +22,7 @@ import com.huawei.dubbo.registry.service.RegistryService;
 
 import com.huaweicloud.sermant.core.service.BaseService;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.utils.KeyGenerateUtils;
 
 import com.alibaba.dubbo.common.URL;
 
@@ -47,7 +48,7 @@ public class RegistryFactoryTest {
         Field field = ServiceManager.class.getDeclaredField("SERVICES");
         field.setAccessible(true);
         Map<String, BaseService> map = (Map<String, BaseService>) field.get(null);
-        map.put(RegistryService.class.getCanonicalName(), new RegistryService() {
+        map.put(KeyGenerateUtils.generateClassKeyWithClassLoader(RegistryService.class), new RegistryService() {
             @Override
             public void startRegistration() {
             }
