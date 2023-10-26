@@ -16,14 +16,20 @@
 
 package com.huaweicloud.agentcore.test.application.controller;
 
+import com.huaweicloud.agentcore.test.application.results.ClassMatchResults;
 import com.huaweicloud.agentcore.test.application.results.ConfigResults;
 import com.huaweicloud.agentcore.test.application.results.DynamicConfigResults;
 import com.huaweicloud.agentcore.test.application.results.DynamicResults;
+import com.huaweicloud.agentcore.test.application.results.EnhanceResults;
+import com.huaweicloud.agentcore.test.application.results.MethodMatchResults;
+import com.huaweicloud.agentcore.test.application.results.ReTransformResults;
+import com.huaweicloud.agentcore.test.application.tests.classmatch.ClassMatchersTest;
 import com.huaweicloud.agentcore.test.application.tests.configload.CoreAndPluginConfigLoadTest;
 import com.huaweicloud.agentcore.test.application.tests.dynamic.DynamicTest;
 import com.huaweicloud.agentcore.test.application.tests.dynamicconfig.DynamicConfigTest;
-
-import com.alibaba.fastjson.JSONObject;
+import com.huaweicloud.agentcore.test.application.tests.enhancement.EnhancementTest;
+import com.huaweicloud.agentcore.test.application.tests.methodmatch.MethodMatchersTest;
+import com.huaweicloud.agentcore.test.application.tests.retransform.ReTransformTest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +55,7 @@ public class TestController {
      *
      * @return 测试结果
      */
-    public String testDynamicConfig() {
+    public Map<String, Object> testDynamicConfig() {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             DynamicConfigTest dynamicConfigTest = new DynamicConfigTest();
@@ -60,8 +66,7 @@ public class TestController {
         } catch (InterruptedException exception) {
             resultMap.put(buildExceptionKey(exception), false);
         }
-        JSONObject jsonObject = new JSONObject(resultMap);
-        return jsonObject.toJSONString();
+        return resultMap;
     }
 
     /**
@@ -69,14 +74,13 @@ public class TestController {
      *
      * @return 测试结果
      */
-    public String testInstallPlugin() {
+    public Map<String, Object> testInstallPlugin() {
         Map<String, Object> resultMap = new HashMap<>();
         DynamicTest dynamicTest = new DynamicTest();
         dynamicTest.testInstallPlugin();
         resultMap.put(DynamicResults.DYNAMIC_INSTALL_PLUGIN_REPEAT_ENHANCE.name(),
                 DynamicResults.DYNAMIC_INSTALL_PLUGIN_REPEAT_ENHANCE.getResult());
-        JSONObject jsonObject = new JSONObject(resultMap);
-        return jsonObject.toJSONString();
+        return resultMap;
     }
 
     /**
@@ -84,7 +88,7 @@ public class TestController {
      *
      * @return 测试结果
      */
-    public String testUninstallPlugin() {
+    public Map<String, Object> testUninstallPlugin() {
         Map<String, Object> resultMap = new HashMap<>();
         DynamicTest dynamicTest = new DynamicTest();
         dynamicTest.testUninstallPlugin();
@@ -92,8 +96,7 @@ public class TestController {
                 DynamicResults.DYNAMIC_UNINSTALL_PLUGIN_INTERCEPTOR_FAILURE.getResult());
         resultMap.put(DynamicResults.DYNAMIC_UNINSTALL_REPEAT_ENHANCE.name(),
                 DynamicResults.DYNAMIC_UNINSTALL_REPEAT_ENHANCE.getResult());
-        JSONObject jsonObject = new JSONObject(resultMap);
-        return jsonObject.toJSONString();
+        return resultMap;
     }
 
     /**
@@ -101,14 +104,13 @@ public class TestController {
      *
      * @return 测试结果
      */
-    public String testUninstallAgent() {
+    public Map<String, Object> testUninstallAgent() {
         Map<String, Object> resultMap = new HashMap<>();
         DynamicTest dynamicTest = new DynamicTest();
         dynamicTest.testUninstallAgent();
         resultMap.put(DynamicResults.DYNAMIC_UNINSTALL_AGENT_PLUGIN_FAILURE.name(),
                 DynamicResults.DYNAMIC_UNINSTALL_AGENT_PLUGIN_FAILURE.getResult());
-        JSONObject jsonObject = new JSONObject(resultMap);
-        return jsonObject.toJSONString();
+        return resultMap;
     }
 
     /**
@@ -116,14 +118,13 @@ public class TestController {
      *
      * @return 测试结果
      */
-    public String testReInstallAgent() {
+    public Map<String, Object> testReInstallAgent() {
         Map<String, Object> resultMap = new HashMap<>();
         DynamicTest dynamicTest = new DynamicTest();
         dynamicTest.testReInstallAgent();
         resultMap.put(DynamicResults.DYNAMIC_REINSTALL_AGENT_PLUGIN_SUCCESS.name(),
                 DynamicResults.DYNAMIC_REINSTALL_AGENT_PLUGIN_SUCCESS.getResult());
-        JSONObject jsonObject = new JSONObject(resultMap);
-        return jsonObject.toJSONString();
+        return resultMap;
     }
 
     /**
@@ -131,7 +132,7 @@ public class TestController {
      *
      * @return 测试结果
      */
-    public String testPremainStartup() {
+    public Map<String, Object> testPremainStartup() {
         Map<String, Object> resultMap = new HashMap<>();
         DynamicTest dynamicTest = new DynamicTest();
         dynamicTest.testPremainStartup();
@@ -139,8 +140,7 @@ public class TestController {
                 DynamicResults.PREMAIN_STATIC_PLUGIN_INTERCEPTOR_SUCCESS.getResult());
         resultMap.put(DynamicResults.PREMAIN_DYNAMIC_PLUGIN_INTERCEPTOR_FAILURE.name(),
                 DynamicResults.PREMAIN_DYNAMIC_PLUGIN_INTERCEPTOR_FAILURE.getResult());
-        JSONObject jsonObject = new JSONObject(resultMap);
-        return jsonObject.toJSONString();
+        return resultMap;
     }
 
     /**
@@ -148,7 +148,7 @@ public class TestController {
      *
      * @return 测试结果
      */
-    public String testAgentmainStartup() {
+    public Map<String, Object> testAgentmainStartup() {
         Map<String, Object> resultMap = new HashMap<>();
         DynamicTest dynamicTest = new DynamicTest();
         dynamicTest.testAgentmainStartup();
@@ -158,8 +158,7 @@ public class TestController {
                 DynamicResults.AGENTMAIN_ACTIVE_PLUGIN_INTERCEPTOR_SUCCESS.getResult());
         resultMap.put(DynamicResults.AGENTMAIN_PASSIVE_PLUGIN_INTERCEPTOR_FAILURE.name(),
                 DynamicResults.AGENTMAIN_PASSIVE_PLUGIN_INTERCEPTOR_FAILURE.getResult());
-        JSONObject jsonObject = new JSONObject(resultMap);
-        return jsonObject.toJSONString();
+        return resultMap;
     }
 
     /**
@@ -167,7 +166,7 @@ public class TestController {
      *
      * @return 测试结果
      */
-    public String testCoreAndPluginConfigLoad() {
+    public Map<String, Object> testCoreAndPluginConfigLoad() {
         Map<String, Object> resultMap = new HashMap<>();
         CoreAndPluginConfigLoadTest configTest = new CoreAndPluginConfigLoadTest();
         configTest.testCoreAndPluginConfigLoad();
@@ -175,8 +174,67 @@ public class TestController {
                 ConfigResults.PLUGIN_CONFIG_LOADED_SUCCESS.getResult());
         resultMap.put(ConfigResults.CORE_CONFIG_LOADED_SUCCESS.name(),
                 ConfigResults.CORE_CONFIG_LOADED_SUCCESS.getResult());
-        JSONObject jsonObject = new JSONObject(resultMap);
-        return jsonObject.toJSONString();
+        return resultMap;
+    }
+
+    /**
+     * 测试类匹配
+     *
+     * @return 测试结果
+     */
+    public Map<String, Object> testClassMatch() {
+        Map<String, Object> resultMap = new HashMap<>();
+        ClassMatchersTest classMatchersTest = new ClassMatchersTest();
+        classMatchersTest.testClassMatchers();
+        for (ClassMatchResults value : ClassMatchResults.values()) {
+            resultMap.put(value.name(), value.getResult());
+        }
+        return resultMap;
+    }
+
+    /**
+     * 测试方法匹配
+     *
+     * @return 测试结果
+     */
+    public Map<String, Object> testMethodMatch() {
+        Map<String, Object> resultMap = new HashMap<>();
+        MethodMatchersTest methodMatchersTest = new MethodMatchersTest(false);
+        methodMatchersTest.testMethodMatchers();
+        for (MethodMatchResults value : MethodMatchResults.values()) {
+            resultMap.put(value.name(), value.getResult());
+        }
+        return resultMap;
+    }
+
+    /**
+     * 测试方法增强
+     *
+     * @return 测试结果
+     */
+    public Map<String, Object> testEnhancement() {
+        Map<String, Object> resultMap = new HashMap<>();
+        EnhancementTest enhancementTest = new EnhancementTest();
+        enhancementTest.testEnhancement();
+        for (EnhanceResults value : EnhanceResults.values()) {
+            resultMap.put(value.name(), value.getResult());
+        }
+        return resultMap;
+    }
+
+    /**
+     * 测试类的重转换能力
+     *
+     * @return 测试结果
+     */
+    public Map<String, Object> testReTransform() {
+        Map<String, Object> resultMap = new HashMap<>();
+        ReTransformTest reTransformTest = new ReTransformTest();
+        reTransformTest.testReTransform();
+        for (ReTransformResults value : ReTransformResults.values()) {
+            resultMap.put(value.name(), value.getResult());
+        }
+        return resultMap;
     }
 
     private String buildExceptionKey(Exception e) {
