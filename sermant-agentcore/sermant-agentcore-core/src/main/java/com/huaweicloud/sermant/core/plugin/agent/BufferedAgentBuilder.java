@@ -30,6 +30,7 @@ import com.huaweicloud.sermant.core.plugin.agent.transformer.ReentrantTransforme
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
 import com.huaweicloud.sermant.core.plugin.classloader.ServiceClassLoader;
 import com.huaweicloud.sermant.core.utils.FileUtils;
+import com.huaweicloud.sermant.god.common.SermantClassLoader;
 
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.agent.builder.AgentBuilder.Default;
@@ -326,6 +327,9 @@ public class BufferedAgentBuilder {
         }
 
         private boolean checkClassLoader(TypeDescription typeDesc, ClassLoader classLoader) {
+            if (classLoader instanceof SermantClassLoader) {
+                return true;
+            }
             if (classLoader instanceof FrameworkClassLoader) {
                 return true;
             }
