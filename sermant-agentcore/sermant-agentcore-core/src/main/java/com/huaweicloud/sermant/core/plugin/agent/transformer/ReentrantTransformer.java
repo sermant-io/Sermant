@@ -19,8 +19,10 @@ package com.huaweicloud.sermant.core.plugin.agent.transformer;
 import com.huaweicloud.sermant.core.plugin.Plugin;
 import com.huaweicloud.sermant.core.plugin.agent.adviser.AdviserScheduler;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.info.EnhancementManager;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.template.BaseAdviseHandler;
+import com.huaweicloud.sermant.core.plugin.agent.template.MethodKeyCreator;
 
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.method.MethodDescription.InDefinedShape;
@@ -69,6 +71,8 @@ public class ReentrantTransformer extends AbstractTransformer {
                 createdInterceptorForAdviceKey.add(interceptor.getClass().getCanonicalName());
             }
         }
+        EnhancementManager.addEnhancements(plugin, interceptors, classLoader,
+                MethodKeyCreator.getMethodDescKey(methodDesc));
         if (checkAdviceLock(adviceKey)) {
             return builder.visit(Advice.to(templateCls).on(ElementMatchers.is(methodDesc)));
         }

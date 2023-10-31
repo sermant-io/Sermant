@@ -32,6 +32,7 @@ import com.huaweicloud.sermant.core.plugin.PluginSystemEntrance;
 import com.huaweicloud.sermant.core.plugin.agent.ByteEnhanceManager;
 import com.huaweicloud.sermant.core.plugin.agent.adviser.AdviserInterface;
 import com.huaweicloud.sermant.core.plugin.agent.adviser.AdviserScheduler;
+import com.huaweicloud.sermant.core.plugin.agent.info.EnhancementManager;
 import com.huaweicloud.sermant.core.plugin.agent.template.DefaultAdviser;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.god.common.SermantManager;
@@ -156,6 +157,9 @@ public class AgentCoreEntrance {
 
         // 清理配置类
         ConfigManager.shutdown();
+
+        // 清理增强信息类
+        EnhancementManager.shutdown();
 
         // 设置该artifact的Sermant状态为false，非运行状态
         SermantManager.updateSermantStatus(artifactCache, false);
