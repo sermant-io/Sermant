@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.tag.transmission.rocketmqv5.interceptor;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.CollectionUtils;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
@@ -25,6 +26,9 @@ import com.huaweicloud.sermant.tag.transmission.interceptors.AbstractClientInter
 import org.apache.rocketmq.remoting.protocol.header.SendMessageRequestHeader;
 
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * RocketMQ流量标签透传的生产者拦截器，支持RocketMQ5.0+
@@ -33,6 +37,8 @@ import java.util.List;
  * @since 2023-07-20
  */
 public class RocketmqProducerSendInterceptor extends AbstractClientInterceptor<SendMessageRequestHeader> {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     /**
      * SendMessageRequestHeader在sendMessage方法中的参数下标
      */
@@ -76,15 +82,17 @@ public class RocketmqProducerSendInterceptor extends AbstractClientInterceptor<S
      */
     private String insertTags2Properties(String oldProperties) {
         StringBuilder newProperties = new StringBuilder();
-        for (String key : TrafficUtils.getTrafficTag().getTag().keySet()) {
+        for (Map.Entry<String, List<String>> entry : TrafficUtils.getTrafficTag().getTag().entrySet()) {
+            String key = entry.getKey();
             if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
-            List<String> values = TrafficUtils.getTrafficTag().getTag().get(key);
+            List<String> values = entry.getValue();
             newProperties.append(key);
             newProperties.append(LINK_MARK);
             newProperties.append(CollectionUtils.isEmpty(values) ? null : values.get(0));
             newProperties.append(SPLIT_MARK);
+            LOGGER.log(Level.FINE, "Traffic tag {0} have been injected to rocketmq.", entry);
         }
         if (newProperties.length() == 0) {
             return oldProperties;

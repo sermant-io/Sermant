@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.tag.transmission.rocketmqv5.interceptor;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
@@ -29,7 +30,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * RocketMQ流量标签透传的消费者拦截器，支持RocketMQ5.0+
@@ -38,6 +40,8 @@ import java.util.Set;
  * @since 2023-07-19
  */
 public class RocketmqConsumerInterceptor extends AbstractServerInterceptor<Message> {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     /**
      * getBody拦截方法的所在类名
      */
@@ -85,17 +89,21 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor<Messa
         if (message.getProperties() == null) {
             return tagMap;
         }
-        Set<String> keySet = message.getProperties().keySet();
-        for (String key : keySet) {
+        for (Map.Entry<String, String> entry : message.getProperties().entrySet()) {
+            String key = entry.getKey();
             if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
-            String value = message.getProperty(key);
+            String value = entry.getValue();
             if (value == null || "null".equals(value)) {
                 tagMap.put(key, null);
+                LOGGER.log(Level.FINE, "Traffic tag {0} have been extracted from rocketmq.",
+                        entry);
                 continue;
             }
             tagMap.put(key, Collections.singletonList(value));
+            LOGGER.log(Level.FINE, "Traffic tag {0} have been extracted from rocketmq.",
+                    entry);
         }
         return tagMap;
     }
@@ -103,6 +111,7 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor<Messa
     /**
      * 判断当前调用栈是否匹配拦截点进入的要求
      *
+     * @param stackTraceElements 调用栈
      * @return boolean
      */
     private boolean isRocketMqStackTrace(StackTraceElement[] stackTraceElements) {
