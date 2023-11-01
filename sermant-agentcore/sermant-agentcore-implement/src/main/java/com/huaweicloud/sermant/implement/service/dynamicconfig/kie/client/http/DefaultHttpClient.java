@@ -66,7 +66,7 @@ import javax.net.ssl.SSLContext;
  * @since 2021-11-17
  */
 public class DefaultHttpClient
-    implements com.huaweicloud.sermant.implement.service.dynamicconfig.kie.client.http.HttpClient {
+        implements com.huaweicloud.sermant.implement.service.dynamicconfig.kie.client.http.HttpClient {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
@@ -88,10 +88,10 @@ public class DefaultHttpClient
      */
     public DefaultHttpClient(int timeout) {
         httpClient = HttpClientBuilder.create().setDefaultRequestConfig(
-            RequestConfig.custom().setConnectTimeout(timeout)
-                .setSocketTimeout(timeout)
-                .setConnectionRequestTimeout(timeout)
-                .build()
+                RequestConfig.custom().setConnectTimeout(timeout)
+                        .setSocketTimeout(timeout)
+                        .setConnectionRequestTimeout(timeout)
+                        .build()
         ).setConnectionManager(buildConnectionManager()).build();
     }
 
@@ -102,9 +102,9 @@ public class DefaultHttpClient
      */
     public DefaultHttpClient(RequestConfig requestConfig) {
         this.httpClient = HttpClientBuilder.create()
-            .setDefaultRequestConfig(requestConfig)
-            .setConnectionManager(buildConnectionManager())
-            .build();
+                .setDefaultRequestConfig(requestConfig)
+                .setConnectionManager(buildConnectionManager())
+                .build();
     }
 
     /**
@@ -120,7 +120,7 @@ public class DefaultHttpClient
         // 如果需配置SSL 在此处注册https
         Registry<ConnectionSocketFactory> connectionSocketFactoryRegistry = builder.build();
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(
-            connectionSocketFactoryRegistry);
+                connectionSocketFactoryRegistry);
         connectionManager.setMaxTotal(MAX_TOTAL);
         connectionManager.setDefaultMaxPerRoute(DEFAULT_MAX_PER_ROUTE);
         return connectionManager;
@@ -155,8 +155,9 @@ public class DefaultHttpClient
     /**
      * get请求
      *
-     * @param url     请求地址
+     * @param url 请求地址
      * @param headers 请求头
+     * @param requestConfig 请求配置
      * @return HttpResult
      */
     @Override
@@ -178,7 +179,7 @@ public class DefaultHttpClient
 
     @Override
     public HttpResult doPost(String url, Map<String, Object> params, RequestConfig requestConfig,
-        Map<String, String> headers) {
+            Map<String, String> headers) {
         HttpPost httpPost = new HttpPost(url);
         beforeRequest(httpPost, requestConfig, headers);
         addParams(httpPost, params);
@@ -264,12 +265,20 @@ public class DefaultHttpClient
 
     /**
      * 添加默认的请求头
+     *
+     * @param base http请求base
      */
     private void addDefaultHeaders(HttpRequestBase base) {
         base.addHeader(HttpHeaders.CONTENT_TYPE, "application/json; charset=utf-8");
         base.addHeader(HttpHeaders.USER_AGENT, "sermant/client");
     }
 
+    /**
+     * SSL信任策略
+     *
+     * @author zhouss
+     * @since 2021-11-17
+     */
     static class SslTrustStrategy implements TrustStrategy {
         @Override
         public boolean isTrusted(X509Certificate[] chain, String authType) {

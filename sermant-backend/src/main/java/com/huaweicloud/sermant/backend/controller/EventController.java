@@ -59,7 +59,6 @@ import javax.servlet.http.HttpSession;
 @RestController
 @RequestMapping("/sermant")
 public class EventController {
-
     @Autowired
     private BackendConfig backendConfig;
 
@@ -132,7 +131,7 @@ public class EventController {
      */
     @PutMapping("/event/webhooks/{id}")
     public boolean setWebhook(@RequestBody(required = false) WebhooksIdRequestEntity webhooksIdRequestEntity,
-                              @PathVariable String id) {
+            @PathVariable String id) {
         List<WebHookClient> webHookClients = eventPushHandler.getWebHookClients();
         for (WebHookClient webHookClient : webHookClients) {
             WebHookConfig config = webHookClient.getConfig();

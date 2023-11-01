@@ -363,7 +363,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
                 if (content == null) {
                     // 移除
                     isCreateOrModify = false;
-                    return DynamicConfigEvent.deleteEvent(key, validGroup, content);
+                    return DynamicConfigEvent.deleteEvent(key, validGroup, null);
                 } else if (isCreateOrModify) {
                     // 修改
                     return DynamicConfigEvent.modifyEvent(key, validGroup, content);

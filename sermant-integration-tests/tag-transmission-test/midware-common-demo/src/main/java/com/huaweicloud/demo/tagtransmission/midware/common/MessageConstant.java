@@ -17,7 +17,7 @@
 package com.huaweicloud.demo.tagtransmission.midware.common;
 
 /**
- * 消息中间件的公共常量
+ * 消息中间件的常量
  *
  * @author daizhenyu
  * @since 2023-09-28
@@ -51,7 +51,7 @@ public class MessageConstant {
     /**
      * rocketmq消费者组
      */
-    public static final String CONSUME_GROUP = "consume_group";
+    public static final String ROCKETMQ_CONSUME_GROUP = "consume_group";
 
     /**
      * rocketmq消息体

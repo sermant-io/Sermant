@@ -50,25 +50,17 @@ public class GzipUtils {
      * @return 压缩完成的数据
      */
     public static byte[] compress(byte[] data) {
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        // 压缩
-        compress(bais, baos);
-        byte[] output = baos.toByteArray();
-        try {
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            // 压缩
+            compress(bais, baos);
+            byte[] output = baos.toByteArray();
             baos.flush();
+            return output;
         } catch (IOException e) {
-            LOGGER.error("Exception occurs when compress. Exception info: {}", e);
-        } finally {
-            try {
-                baos.close();
-                bais.close();
-            } catch (IOException e) {
-                LOGGER.error("Exception occurs when close IOStream. Exception info: {}", e);
-            }
+            LOGGER.error("Exception occurs when compress or close IOStream. Exception info: {}", e);
+            return new byte[0];
         }
-        return output;
     }
 
     /**
@@ -113,7 +105,7 @@ public class GzipUtils {
 
         // 解压缩
         decompress(bais, baos);
-        data = baos.toByteArray();
+        byte[] newData = baos.toByteArray();
         try {
             baos.flush();
         } catch (IOException e) {
@@ -126,7 +118,7 @@ public class GzipUtils {
                 LOGGER.error("Exception occurs when close IOStream. Exception info: {}", e);
             }
         }
-        return data;
+        return newData;
     }
 
     /**

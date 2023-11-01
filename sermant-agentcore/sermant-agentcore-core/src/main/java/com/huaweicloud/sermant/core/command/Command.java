@@ -34,7 +34,13 @@ public enum Command {
     /**
      * 卸载插件指令
      */
-    UNINSTALL_PLUGINS("UNINSTALL-PLUGINS");
+    UNINSTALL_PLUGINS("UNINSTALL-PLUGINS"),
+
+    /**
+     * 增强查询指令
+     */
+    CHECK_ENHANCEMENT("CHECK-ENHANCEMENT");
+
     private final String value;
 
     Command(String value) {

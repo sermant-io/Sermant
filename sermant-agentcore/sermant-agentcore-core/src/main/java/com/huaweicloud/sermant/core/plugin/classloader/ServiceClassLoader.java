@@ -55,7 +55,7 @@ public class ServiceClassLoader extends URLClassLoader {
      * @param name 全限定名
      * @return Class对象
      */
-    private Class<?> loadPluginClass(String name) {
+    private Class<?> loadServiceClass(String name) {
         if (!serviceClassMap.containsKey(name)) {
             try {
                 serviceClassMap.put(name, findClass(name));
@@ -74,7 +74,7 @@ public class ServiceClassLoader extends URLClassLoader {
     @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         synchronized (getClassLoadingLock(name)) {
-            Class<?> clazz = loadPluginClass(name);
+            Class<?> clazz = loadServiceClass(name);
             if (clazz == null) {
                 clazz = super.loadClass(name, resolve);
 

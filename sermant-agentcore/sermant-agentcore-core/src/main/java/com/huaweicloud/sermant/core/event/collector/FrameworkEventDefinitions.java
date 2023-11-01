@@ -88,6 +88,10 @@ public enum FrameworkEventDefinitions {
         return eventLevel;
     }
 
+    /**
+     * 获取范围
+     * @return framework
+     */
     public String getScope() {
         return "framework";
     }

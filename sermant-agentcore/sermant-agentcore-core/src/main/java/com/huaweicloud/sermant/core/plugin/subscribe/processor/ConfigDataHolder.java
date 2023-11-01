@@ -58,6 +58,16 @@ public class ConfigDataHolder implements Comparable<ConfigDataHolder> {
         return Integer.compare(target.order, this.order);
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
     public String getGroup() {
         return group;
     }

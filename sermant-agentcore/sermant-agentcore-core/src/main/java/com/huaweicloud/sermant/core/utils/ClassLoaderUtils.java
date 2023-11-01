@@ -16,6 +16,8 @@
 
 package com.huaweicloud.sermant.core.utils;
 
+import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +25,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -64,7 +68,14 @@ public class ClassLoaderUtils {
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {
         if (classLoader instanceof URLClassLoader) {
             Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            addUrl.setAccessible(true);
+            // addUrl.setAccessible(true);
+            AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                @Override
+                public Object run() {
+                    addUrl.setAccessible(true);
+                    return null;
+                }
+            });
             addUrl.invoke(classLoader, jarUrl);
         } else {
             JarFile jarFile = null;
@@ -179,11 +190,25 @@ public class ClassLoaderUtils {
     public static Class<?> defineClass(String className, ClassLoader classLoader, byte[] bytes)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         final Method loadingLock = ClassLoader.class.getDeclaredMethod("getClassLoadingLock", String.class);
-        loadingLock.setAccessible(true);
+        // loadingLock.setAccessible(true);
+        AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            @Override
+            public Object run() {
+                loadingLock.setAccessible(true);
+                return null;
+            }
+        });
         synchronized (loadingLock.invoke(classLoader, className)) {
             final Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class,
                     int.class, int.class);
-            defineClass.setAccessible(true);
+            // defineClass.setAccessible(true);
+            AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                @Override
+                public Object run() {
+                    defineClass.setAccessible(true);
+                    return null;
+                }
+            });
             return (Class<?>) defineClass.invoke(classLoader, null, bytes, 0, bytes.length);
         }
 

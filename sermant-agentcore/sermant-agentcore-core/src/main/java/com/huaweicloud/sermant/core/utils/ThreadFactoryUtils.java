@@ -16,8 +16,13 @@
 
 package com.huaweicloud.sermant.core.utils;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * ThreadFactoryUtils
@@ -26,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2022-03-26
  */
 public class ThreadFactoryUtils implements ThreadFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final AtomicInteger FACTORY_NUMBER = new AtomicInteger(0);
 
@@ -70,6 +76,13 @@ public class ThreadFactoryUtils implements ThreadFactory {
     public Thread newThread(Runnable job) {
         String newThreadName = createThreadName();
         Thread thread = new Thread(job, newThreadName);
+        thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                LOGGER.log(Level.WARNING, "uncaughtException, thread is {0}, msg is {1}", new String[]{t.getName(),
+                        e.getMessage()});
+            }
+        });
         if (isDaemon) {
             thread.setDaemon(true);
         }

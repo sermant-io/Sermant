@@ -31,8 +31,14 @@ public abstract class AbstractClient implements Client {
      */
     private static final int DEFAULT_TIMEOUT_MS = 60000;
 
+    /**
+     * 客户端请求地址管理器
+     */
     protected final ClientUrlManager clientUrlManager;
 
+    /**
+     * http请求客户端
+     */
     protected HttpClient httpClient;
 
     /**

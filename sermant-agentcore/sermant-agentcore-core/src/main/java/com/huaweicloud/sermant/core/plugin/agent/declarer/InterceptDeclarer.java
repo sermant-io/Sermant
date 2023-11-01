@@ -71,6 +71,7 @@ public abstract class InterceptDeclarer {
      * @param interceptors 拦截器集
      * @return 拦截声明器
      * @throws IllegalArgumentException IllegalArgumentException
+     * @deprecated 已过时
      */
     @Deprecated
     public static InterceptDeclarer build(MethodMatcher methodMatcher, String... interceptors) {
@@ -104,6 +105,7 @@ public abstract class InterceptDeclarer {
      * @throws ClassNotFoundException 找不到类
      * @throws IllegalAccessException 无法访问addURL方法或defineClass方法
      * @throws InstantiationException 实例化失败
+     * @deprecated 已过时
      */
     @Deprecated
     private static Interceptor[] createInterceptors(String[] interceptors)

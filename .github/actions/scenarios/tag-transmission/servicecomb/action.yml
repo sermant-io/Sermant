@@ -1,0 +1,76 @@
+name: "Tag Transmission Plugin ServiceComb Test"
+description: "Auto test for tag transmission by ServiceComb"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/tag-transmission/servicecomb
+    - name: get local cse from cache
+      uses: actions/cache@v3
+      with:
+        path: Local-CSE-2.1.3-linux-amd64.zip
+        key: ${{ runner.os }}-local-cse
+        restore-keys: |
+          ${{ runner.os }}-local-cse
+    - name: start cse
+      shell: bash
+      run: |
+        export ROOT_PATH=$(pwd)
+        bash ./sermant-integration-tests/scripts/startCse.sh
+    - name: get nacos from cache
+      uses: actions/cache@v3
+      with:
+        path: nacos-server-1.4.2.tar.gz
+        key: ${{ runner.os }}-nacos-server-1.4.2
+        restore-keys: |
+          ${{ runner.os }}-nacos-server-1.4.2
+    - name: start nacos
+      shell: bash
+      run: |
+        tar -zxf nacos-server-1.4.2.tar.gz
+        bash nacos/bin/startup.sh -m standalone
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Dservicecomb.version=${{ matrix.serviceCombVersion }} -DskipTests -Pservicecomb-test --file \
+        sermant-integration-tests/tag-transmission-test/pom.xml
+    - name: start servicecomb consumer demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/servicecomb-consumer \
+        sermant-integration-tests/tag-transmission-test/servicecomb-consumer-demo/target/servicecomb-consumer-demo.jar > ${{ env.logDir }}/servicecomb-consumer.log 2>&1 &
+    - name: start servicecomb provider demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/servicecomb-provider \
+        sermant-integration-tests/tag-transmission-test/servicecomb-provider-demo/target/servicecomb-provider-demo.jar > ${{ env.logDir }}/servicecomb-provider.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9040/common/httpServer 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9058/serviceCombConsumer/testServiceCombRpc 120
+    - name: test servicecomb
+      shell: bash
+      run: |
+        mvn test -Dtag.transmission.integration.test.type=SERVICECOMB --file \
+        sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: httpserver-common|servicecomb
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-tag-transmission-servicecomb-(${{ matrix.serviceCombVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

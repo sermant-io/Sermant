@@ -46,7 +46,7 @@ public class DynamicConfigSubscribeTest extends NacosBaseTest {
         try {
             // 测试订阅
             TestListener testListener = new TestListener();
-            dynamicConfigSubscribe = new DynamicConfigSubscribe("testServiceName", testListener, "testPluginName",
+            dynamicConfigSubscribe = new DynamicConfigSubscribe("testServiceName", testListener,
                     "testSubscribeKey");
             Assert.assertTrue(dynamicConfigSubscribe.subscribe());
             Thread.sleep(SLEEP_TIME_MILLIS);

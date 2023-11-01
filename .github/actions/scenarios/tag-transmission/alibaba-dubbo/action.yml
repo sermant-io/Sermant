@@ -1,0 +1,61 @@
+name: "Tag Transmission Plugin AlibabaDubbo Test"
+description: "Auto test for tag transmission by AlibabaDubbo"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/tag-transmission/alibaba-dubbo
+    - name: alibaba.dubbo.version != 2.6.0
+      if: matrix.alibabaDubboVersion != '2.6.0'
+      shell: bash
+      run: |
+        sed -i '/<dependency>/{:a;N;/<\/dependency>/!ba};/<groupId>com.101tec<\/groupId>\s*<artifactId>zkclient<\/artifactId>/d' \
+        sermant-integration-tests/tag-transmission-test/alibaba-dubbo-consumer-demo/pom.xml
+        sed -i '/<dependency>/{:a;N;/<\/dependency>/!ba};/<groupId>com.101tec<\/groupId>\s*<artifactId>zkclient<\/artifactId>/d' \
+        sermant-integration-tests/tag-transmission-test/alibaba-dubbo-provider-demo/pom.xml
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Dalibaba.dubbo.version=${{ matrix.alibabaDubboVersion }} -DskipTests -Palibaba-dubbo-test --file \
+        sermant-integration-tests/tag-transmission-test/pom.xml
+    - name: start alibabadubbo provider demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/alibaba-dubbo-provider \
+        sermant-integration-tests/tag-transmission-test/alibaba-dubbo-provider-demo/target/alibaba-dubbo-provider-demo.jar > ${{ env.logDir }}/alibaba-dubbo-provider.log 2>&1 &
+    - name: start alibabadubbo consumer demo
+      shell: bash
+      run: |
+        sleep 5s
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/alibaba-dubbo-consumer \
+        sermant-integration-tests/tag-transmission-test/alibaba-dubbo-consumer-demo/target/alibaba-dubbo-consumer-demo.jar > ${{ env.logDir }}/alibaba-dubbo-consumer.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9040/common/httpServer 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9041/alibabaDubbo/testAlibabaDubbo 120
+    - name: test alibabadubbo
+      shell: bash
+      run: |
+        mvn test -Dtag.transmission.integration.test.type=ALIBABA_DUBBO --file \
+        sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: httpserver-common|alibaba-dubbo
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-tag-transmission-alibaba-dubbo-(${{ matrix.alibabaDubboVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -70,7 +69,7 @@ public class KieListenerWrapper {
         this.group = kieRequest.getLabelCondition();
         this.kvDataHolder = kvDataHolder;
         this.kieRequest = kieRequest;
-        addKeyListener(key, dynamicConfigListener, ifNotify);
+        this.addKeyListener(key, dynamicConfigListener, ifNotify);
     }
 
     /**
@@ -153,22 +152,16 @@ public class KieListenerWrapper {
             return;
         }
         for (VersionListener versionListener : versionListenerWrapper.listeners) {
-            try {
-                if (versionListener.version > currentVersion) {
-                    // 已通知的listener不再通知, 避免针对同一个group的多个不同key进行多次重复通知
-                    continue;
-                }
-                if (event.getEventType() == DynamicConfigEventType.INIT) {
-                    processInit(latestData, versionListener, event);
-                } else {
-                    versionListener.listener.process(event);
-                }
-                versionListener.version = currentVersion;
-            } catch (Exception ex) {
-                LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH,
-                        "Process config data failed, key: [%s], group: [%s]",
-                        event.getKey(), this.group), ex);
+            if (versionListener.version > currentVersion) {
+                // 已通知的listener不再通知, 避免针对同一个group的多个不同key进行多次重复通知
+                continue;
             }
+            if (event.getEventType() == DynamicConfigEventType.INIT) {
+                processInit(latestData, versionListener, event);
+            } else {
+                versionListener.listener.process(event);
+            }
+            versionListener.version = currentVersion;
         }
     }
 
@@ -198,7 +191,7 @@ public class KieListenerWrapper {
      * @param dynamicConfigListener 监听器
      * @param ifNotify 是否初始化通知
      */
-    public void addKeyListener(String key, DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
+    public final void addKeyListener(String key, DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
         VersionListenerWrapper versionListenerWrapper = keyListenerMap.get(key);
         if (versionListenerWrapper == null) {
             versionListenerWrapper = new VersionListenerWrapper();

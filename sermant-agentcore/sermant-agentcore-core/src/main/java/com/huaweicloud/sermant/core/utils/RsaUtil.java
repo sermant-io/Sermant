@@ -72,7 +72,7 @@ public class RsaUtil {
      * 加密
      *
      * @param publicKey 公钥
-     * @param text      报文
+     * @param text 报文
      * @return 密文
      */
     public static Optional<String> encrypt(String publicKey, String text) {
@@ -93,7 +93,7 @@ public class RsaUtil {
      * 解密
      *
      * @param privateKey 私钥
-     * @param text       报文
+     * @param text 报文
      * @return 明文
      */
     public static Optional<String> decrypt(String privateKey, String text) {

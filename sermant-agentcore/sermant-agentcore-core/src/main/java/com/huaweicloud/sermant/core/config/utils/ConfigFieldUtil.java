@@ -40,10 +40,33 @@ public class ConfigFieldUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
+     * boolean类型的get或set方法中属性名的最短长度
+     */
+    private static final int FIELD_NAME_MIN_LENGTH = 3;
+
+    /**
+     * boolean类型的get或set方法中属性名的首字母下标
+     */
+    private static final int FIELD_NAME_CHECK_INDEX = 2;
+
+    /**
+     * boolean类型的get方法前缀，首字母小写字母
+     */
+    private static final String BOOLEAN_FUNCTION_PREFIX_LOWERCASE = "is";
+
+    /**
+     * boolean类型的get方法前缀，首字母大写字母
+     */
+    private static final String BOOLEAN_FUNCTION_PREFIX_UPPERCASE = "Is";
+
+    private ConfigFieldUtil() {
+    }
+
+    /**
      * 设置值，优先查找{@code setter}调用，不存在时尝试直接赋值
      * <p>因此，要求配置对象的属性值需要拥有相应的{@code setter}，或者要求改属性值是公有的
      *
-     * @param obj   被设置值的对象
+     * @param obj 被设置值的对象
      * @param field 被设置的字段
      * @param value 被设置的字段值
      */
@@ -69,21 +92,23 @@ public class ConfigFieldUtil {
     /**
      * 通过属性名称获取{@code setter}
      *
-     * @param cls       配置对象类
+     * @param cls 配置对象类
      * @param fieldName 属性名称
-     * @param type      属性类型
+     * @param type 属性类型
      * @return setter方法
      */
     private static Method getSetter(Class<?> cls, String fieldName, Class<?> type) {
-        final String setterName;
-        if ((type == boolean.class || type == Boolean.class) &&
-                fieldName.length() >= 3 && (fieldName.startsWith("is") || fieldName.startsWith("Is")) &&
-                fieldName.charAt(2) >= 'A' && fieldName.charAt(2) <= 'Z') {
-            setterName = "set" + fieldName.substring(2);
-        } else {
-            final char head = fieldName.charAt(0);
-            setterName = "set" + (
-                    (head >= 'a' && head <= 'z') ? ((char) (head + 'A' - 'a')) + fieldName.substring(1) : fieldName);
+        String setterName;
+        final char head = fieldName.charAt(0);
+        setterName = "set" + (
+                (head >= 'a' && head <= 'z') ? ((char) (head + 'A' - 'a')) + fieldName.substring(1) : fieldName);
+        if ((type == boolean.class || type == Boolean.class) && fieldName.length() >= FIELD_NAME_MIN_LENGTH) {
+            if ((fieldName.startsWith(BOOLEAN_FUNCTION_PREFIX_LOWERCASE)
+                    || fieldName.startsWith(BOOLEAN_FUNCTION_PREFIX_UPPERCASE))
+                    && fieldName.charAt(FIELD_NAME_CHECK_INDEX) >= 'A'
+                    && fieldName.charAt(FIELD_NAME_CHECK_INDEX) <= 'Z') {
+                setterName = "set" + fieldName.substring(FIELD_NAME_CHECK_INDEX);
+            }
         }
         try {
             return cls.getMethod(setterName, type);
@@ -109,6 +134,13 @@ public class ConfigFieldUtil {
         }
     }
 
+    /**
+     * 获取属性对象
+     *
+     * @param obj 目标对象
+     * @param field 属性
+     * @return 属性对象
+     */
     public static Object getField(Object obj, Field field) {
         try {
             final Method getter = getGetter(field.getDeclaringClass(), field.getName(), field.getType());
@@ -129,15 +161,17 @@ public class ConfigFieldUtil {
     }
 
     private static Method getGetter(Class<?> cls, String fieldName, Class<?> type) {
-        final String getterName;
-        if ((type == boolean.class || type == Boolean.class) &&
-                fieldName.length() >= 3 && (fieldName.startsWith("is") || fieldName.startsWith("Is")) &&
-                fieldName.charAt(2) >= 'A' && fieldName.charAt(2) <= 'Z') {
-            getterName = "is" + fieldName.substring(2);
-        } else {
-            final char head = fieldName.charAt(0);
-            getterName = "get" + (
-                    (head >= 'a' && head <= 'z') ? ((char) (head + 'A' - 'a')) + fieldName.substring(1) : fieldName);
+        String getterName;
+        final char head = fieldName.charAt(0);
+        getterName = "get" + (
+                (head >= 'a' && head <= 'z') ? ((char) (head + 'A' - 'a')) + fieldName.substring(1) : fieldName);
+        if ((type == boolean.class || type == Boolean.class) && fieldName.length() >= FIELD_NAME_MIN_LENGTH) {
+            if ((fieldName.startsWith(BOOLEAN_FUNCTION_PREFIX_LOWERCASE)
+                    || fieldName.startsWith(BOOLEAN_FUNCTION_PREFIX_UPPERCASE))
+                    && fieldName.charAt(FIELD_NAME_CHECK_INDEX) >= 'A'
+                    && fieldName.charAt(FIELD_NAME_CHECK_INDEX) <= 'Z') {
+                getterName = "is" + fieldName.substring(FIELD_NAME_CHECK_INDEX);
+            }
         }
         try {
             return cls.getMethod(getterName);
