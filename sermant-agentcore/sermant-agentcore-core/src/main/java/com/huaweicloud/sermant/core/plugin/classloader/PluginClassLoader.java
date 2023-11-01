@@ -22,6 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 加载插件主模块的类加载器
@@ -38,6 +39,11 @@ public class PluginClassLoader extends URLClassLoader {
     private final boolean useContextLoader;
 
     /**
+     * 对ClassLoader内部已加载的Class的管理
+     */
+    private final Map<String, Class<?>> pluginClassMap = new HashMap<>();
+
+    /**
      * 构造方法
      *
      * @param urls 需要被该类加载器加载类所在lib的URL
@@ -46,6 +52,23 @@ public class PluginClassLoader extends URLClassLoader {
     public PluginClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
         useContextLoader = ConfigManager.getConfig(AgentConfig.class).isUseContextLoader();
+    }
+
+    /**
+     * 加载插件类并缓存
+     *
+     * @param name 全限定名
+     * @return Class对象
+     */
+    private Class<?> loadPluginClass(String name) {
+        if (!pluginClassMap.containsKey(name)) {
+            try {
+                pluginClassMap.put(name, findClass(name));
+            } catch (ClassNotFoundException ignored) {
+                pluginClassMap.put(name, null);
+            }
+        }
+        return pluginClassMap.get(name);
     }
 
     /**
@@ -64,42 +87,48 @@ public class PluginClassLoader extends URLClassLoader {
 
     @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        Class<?> clazz = null;
+        synchronized (getClassLoadingLock(name)) {
+            Class<?> clazz = loadPluginClass(name);
 
-        try {
-            clazz = super.loadClass(name, resolve);
-        } catch (ClassNotFoundException ignored) {
-            // ignored
-        }
-
-        // 无法从Sermant搜索路径中找到类，则尝试通过线程绑定的局部类加载器加载
-        if (clazz == null) {
-            ClassLoader loader = localLoader.get(Thread.currentThread().getId());
-
-            if (loader == null && useContextLoader) {
-                loader = Thread.currentThread().getContextClassLoader();
-            }
-
-            // 确保局部类加载器不是当前类加载器，否则会stackoverflow
-            if (loader != null && !this.equals(loader)) {
+            // 自身无法加载类，则通过Sermant搜索路径中加载
+            if (clazz == null) {
                 try {
-                    clazz = loader.loadClass(name);
-                } catch (ClassNotFoundException e) {
-                    // 无法找到类，忽略，后续抛出异常
+                    clazz = super.loadClass(name, resolve);
+                } catch (ClassNotFoundException ignored) {
+                    // 捕获类找不到的异常，下一步会进入localLoader中去加载类
+                    // ignored
                 }
             }
-        }
 
-        // 如果无法找到类，则抛出异常
-        if (clazz == null) {
-            throw new ClassNotFoundException("Sermant pluginClassLoader can not load class: " + name);
-        }
+            // 无法从Sermant搜索路径中找到类，则尝试通过线程绑定的局部类加载器加载
+            if (clazz == null) {
+                ClassLoader loader = localLoader.get(Thread.currentThread().getId());
 
-        // 如果有需要则解析该类
-        if (resolve) {
-            resolveClass(clazz);
+                if (loader == null && useContextLoader) {
+                    loader = Thread.currentThread().getContextClassLoader();
+                }
+
+                // 确保局部类加载器不是当前类加载器，否则会stackoverflow
+                if (loader != null && !this.equals(loader)) {
+                    try {
+                        clazz = loader.loadClass(name);
+                    } catch (ClassNotFoundException e) {
+                        // 无法找到类，忽略，后续抛出异常
+                    }
+                }
+            }
+
+            // 如果无法找到类，则抛出异常
+            if (clazz == null) {
+                throw new ClassNotFoundException("Sermant pluginClassLoader can not load class: " + name);
+            }
+
+            // 如果有需要则解析该类
+            if (resolve) {
+                resolveClass(clazz);
+            }
+            return clazz;
         }
-        return clazz;
     }
 
     /**
@@ -110,19 +139,23 @@ public class PluginClassLoader extends URLClassLoader {
      * @throws ClassNotFoundException 无法通过类加载
      */
     public Class<?> loadSermantClass(String name) throws ClassNotFoundException {
-        Class<?> clazz = null;
+        synchronized (getClassLoadingLock(name)) {
+            Class<?> clazz = loadPluginClass(name);
 
-        try {
-            clazz = super.loadClass(name, false);
-        } catch (ClassNotFoundException ignored) {
-            // 无法找到类，忽略，后续抛出异常
-        }
+            if (clazz == null) {
+                try {
+                    clazz = super.loadClass(name, false);
+                } catch (ClassNotFoundException ignored) {
+                    // 无法找到类，忽略，后续抛出异常
+                }
+            }
 
-        // 如果无法找到类，则抛出异常
-        if (clazz == null) {
-            throw new ClassNotFoundException("Sermant pluginClassLoader can not load class: " + name);
+            // 如果无法找到类，则抛出异常
+            if (clazz == null) {
+                throw new ClassNotFoundException("Sermant pluginClassLoader can not load class: " + name);
+            }
+            return clazz;
         }
-        return clazz;
     }
 
     /**
