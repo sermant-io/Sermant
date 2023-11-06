@@ -1,0 +1,53 @@
+name: "Tag Transmission Plugin JdkHttp and Jetty Test"
+description: "Auto test for tag transmission by JdkHttp and Jetty"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/tag-transmission/jdkhttp-jetty
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Dspring.boot.version=${{ matrix.springBootVersion }} -DskipTests -Pjdkhttp-jetty-test --file \
+        sermant-integration-tests/tag-transmission-test/pom.xml
+    - name: start jdkhttp demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/jdkhttp \
+        sermant-integration-tests/tag-transmission-test/jdkhttp-demo/target/jdkhttp-demo.jar > ${{ env.logDir }}/jdkhttp.log 2>&1 &
+    - name: start jetty demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/jetty \
+        sermant-integration-tests/tag-transmission-test/jetty-demo/target/jetty-demo.jar > ${{ env.logDir }}/jetty.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9040/common/httpServer 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9051/jetty/testJetty 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9050/jdkHttp/testJdkHttpAndJetty 120
+    - name: test jdkhttp and jetty
+      shell: bash
+      run: |
+        mvn test -Dtag.transmission.integration.test.type=JDKHTTP_JETTY --file \
+        sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: httpserver-common|jdkhttp|jetty
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-tag-transmission-jdkhttp-jetty-(${{ matrix.springBootVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

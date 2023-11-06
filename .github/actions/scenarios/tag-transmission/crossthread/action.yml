@@ -1,0 +1,46 @@
+name: "Tag Transmission Plugin CrossThread Test"
+description: "Auto test for tag transmission by CrossThread"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/tag-transmission/crossthread
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -DskipTests -Pcrossthread-test --file \
+        sermant-integration-tests/tag-transmission-test/pom.xml
+    - name: start crossthread demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/crossthread \
+        sermant-integration-tests/tag-transmission-test/crossthread-demo/target/crossthread-demo.jar > ${{ env.logDir }}/crossthread.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9040/common/httpServer 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9045/thread/testNewThread 120
+    - name: test crossthread
+      shell: bash
+      run: |
+        mvn test -Dtag.transmission.integration.test.type=CROSS_THREAD --file \
+        sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: httpserver-common|crossthread
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-tag-transmission-crossthread-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

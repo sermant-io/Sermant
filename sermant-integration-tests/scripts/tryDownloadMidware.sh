@@ -35,9 +35,9 @@ NACOS_FILE_NAME_210=nacos-server-2.1.0.tar.gz
 SERVICE_CENTER_ADDRESS=https://github.com/apache/servicecomb-service-center/releases/download/v2.1.0/apache-servicecomb-service-center-2.1.0-linux-amd64.tar.gz
 SERVICE_CENTER_FILE_NAME=apache-servicecomb-service-center-2.1.0-linux-amd64.tar.gz
 #======================================rocketmq配置======================================
-ROCKETMQ_ADDRESS=https://archive.apache.org/dist/rocketmq/4.8.0/rocketmq-all-4.8.0-source-release.zip
-ROCKETMQ_FILE_NAME=rocketmq-all-4.8.0-source-release.zip
-#======================================rocketmq配置======================================
+ROCKETMQ_ADDRESS=https://archive.apache.org/dist/rocketmq/4.8.0/rocketmq-all-4.8.0-bin-release.zip
+ROCKETMQ_FILE_NAME=rocketmq-all-4.8.0-bin-release.zip
+#======================================kafka配置======================================
 KAFKA_ADDRESS=https://archive.apache.org/dist/kafka/2.7.0/kafka_2.13-2.7.0.tgz
 KAFKA_FILE_NAME=kafka_2.13-2.7.0.tgz
 
