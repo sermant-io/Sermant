@@ -43,6 +43,7 @@
                 <module>sermant-spring-beans-deal</module>
                 <module>sermant-tag-transmission</module>
                 <module>sermant-database-write-prohibition</module>
+                <module>sermant-metrics</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -76,6 +77,7 @@
                 <module>sermant-spring-beans-deal</module>
                 <module>sermant-tag-transmission</module>
                 <module>sermant-database-write-prohibition</module>
+                <module>sermant-metrics</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -109,6 +111,7 @@
                 <module>sermant-spring-beans-deal</module>
                 <module>sermant-tag-transmission</module>
                 <module>sermant-database-write-prohibition</module>
+                <module>sermant-metrics</module>
             </modules>
         </profile>
     </profiles>
