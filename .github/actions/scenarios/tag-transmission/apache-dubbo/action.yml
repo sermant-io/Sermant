@@ -1,0 +1,53 @@
+name: "Tag Transmission Plugin ApacheDubbo Test"
+description: "Auto test for tag transmission by ApacheDubbo"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/tag-transmission/apache-dubbo
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Dapache.dubbo.version=${{ matrix.apacheDubboVersion }} -DskipTests -Papache-dubbo-test --file \
+        sermant-integration-tests/tag-transmission-test/pom.xml
+    - name: start apachedubbo provider demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/apache-dubbo-provider \
+        sermant-integration-tests/tag-transmission-test/apache-dubbo-provider-demo/target/apache-dubbo-provider-demo.jar > ${{ env.logDir }}/apache-dubbo-provider.log 2>&1 &
+    - name: start apachedubbo consumer demo
+      shell: bash
+      run: |
+        sleep 5s
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/apache-dubbo-consumer \
+        sermant-integration-tests/tag-transmission-test/apache-dubbo-consumer-demo/target/apache-dubbo-consumer-demo.jar > ${{ env.logDir }}/apache-dubbo-consumer.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9040/common/httpServer 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9043/apacheDubbo/testApacheDubbo 120
+    - name: test apachedubbo
+      shell: bash
+      run: |
+        mvn test -Dtag.transmission.integration.test.type=APACHE_DUBBO --file \
+        sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: httpserver-common|apache-dubbo
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-tag-transmission-apache-dubbo-(${{ matrix.apacheDubboVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

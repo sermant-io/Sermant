@@ -1,0 +1,72 @@
+name: "Tag Transmission Plugin rocketmq Test"
+description: "Auto test for tag transmission by rocketmq"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/tag-transmission/rocketmq
+    - name: get rocketmq from cache
+      uses: actions/cache@v3
+      with:
+        path: rocketmq-all-4.8.0-bin-release.zip
+        key: ${{ runner.os }}-rocketmq-all-4.8.0-bin-release
+        restore-keys: |
+          ${{ runner.os }}-rocketmq-all-4.8.0-bin-release
+    - name: start rocketmq server
+      shell: bash
+      run: |
+        unzip rocketmq-all-4.8.0-bin-release.zip
+        sed -i 's/if \[\[ "$JAVA_MAJOR_VERSION" -lt "9" \]\]/if [ "$JAVA_MAJOR_VERSION" -lt "9" ]/g' rocketmq-all-4.8.0-bin-release/bin/runserver.sh
+        sed -i 's/-Xms4g -Xmx4g -Xmn2g/-Xms1g -Xmx1g -Xmn1g/g' rocketmq-all-4.8.0-bin-release/bin/runserver.sh
+        nohup bash rocketmq-all-4.8.0-bin-release/bin/mqnamesrv &
+    - name: start rocketmq broker
+      shell: bash
+      run: |
+        sed -i 's/-Xms8g -Xmx8g -Xmn4g/-Xms1g -Xmx1g -Xmn1g/g' rocketmq-all-4.8.0-bin-release/bin/runbroker.sh
+        nohup bash rocketmq-all-4.8.0-bin-release/bin/mqbroker -n localhost:9876 &
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Drocketmq-client.version=${{ matrix.rocketMqVersion }} -DskipTests -Procketmq-test --file \
+        sermant-integration-tests/tag-transmission-test/pom.xml
+    - name: start rocketmq producer demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/rocketmq-producer \
+        sermant-integration-tests/tag-transmission-test/rocketmq-producer-demo/target/rocketmq-producer-demo.jar > ${{ env.logDir }}/rocketmq-producer.log 2>&1 &
+    - name: start rocketmq consumer demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/rocketmq-consumer \
+        sermant-integration-tests/tag-transmission-test/rocketmq-consumer-demo/target/rocketmq-consumer-demo.jar > ${{ env.logDir }}/rocketmq-consumer.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9040/common/httpServer 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9057/rocketMqProducer/checkRocketMqProducerStatus 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9056/rocketMqConsumer/queryRocketMqTag 120
+    - name: test rocketmq
+      shell: bash
+      run: |
+        mvn test -Dtag.transmission.integration.test.type=ROCKETMQ --file \
+        sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: httpserver-common|rocketmq
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-tag-transmission-rocketmq-(${{ matrix.rocketMqVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

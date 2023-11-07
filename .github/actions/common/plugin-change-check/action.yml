@@ -92,14 +92,6 @@ runs:
       run: |
         echo "sermantServiceRemovalChanged=${{ steps.changed-sermant-removal.outputs.changed }}" >> $GITHUB_ENV
     - uses: marceloprado/has-changed-path@v1.0.1
-      id: changed-sermant-tag-transmission
-      with:
-        paths: sermant-plugins/sermant-tag-transmission
-    - name: env sermant-sermant-tag-transmission
-      shell: bash
-      run: |
-        echo "sermantTagTransmissionChanged=${{ steps.changed-sermant-tag-transmission.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-workflow-or-test
       with:
         paths: ./.github/actions ./.github/workflows sermant-integration-tests
@@ -187,12 +179,6 @@ runs:
           echo "enableRemoval=true" >> $GITHUB_ENV
         fi
 
-        # *****************tagtransmission.yml*****************
-        # ==========tag transmission is needed to test?==========
-        if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantTagTransmissionChanged }} == 'true';then
-          echo "enableTagTransmission=true" >> $GITHUB_ENV
-        fi
-
         # all workflow will trigger while workflow changed
         if [ ${{ steps.changed-workflow-or-test.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
           echo "enableDubboRouter=true" >> $GITHUB_ENV
@@ -207,6 +193,4 @@ runs:
           echo "enableSpringLane=true" >> $GITHUB_ENV
           echo "enableDubboLane=true" >> $GITHUB_ENV
           echo "enableRemoval=true" >> $GITHUB_ENV
-          echo "enableTagTransmission=true" >> $GITHUB_ENV
         fi
-
