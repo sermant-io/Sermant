@@ -23,6 +23,7 @@ import com.huaweicloud.sermant.core.event.collector.FrameworkEventCollector;
 import com.huaweicloud.sermant.core.exception.SchemaException;
 import com.huaweicloud.sermant.core.plugin.agent.ByteEnhanceManager;
 import com.huaweicloud.sermant.core.plugin.agent.adviser.AdviserScheduler;
+import com.huaweicloud.sermant.core.plugin.agent.info.EnhancementManager;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.template.BaseAdviseHandler;
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
@@ -108,6 +109,9 @@ public class PluginManager {
             // 取消字节码增强
             ByteEnhanceManager.unEnhanceDynamicPlugin(plugin);
 
+            // 清除增强信息
+            EnhancementManager.removePluginEnhancements(plugin);
+
             // 关闭插件服务
             PluginServiceManager.shutdownPluginServices(plugin);
 
@@ -181,6 +185,10 @@ public class PluginManager {
                 LOGGER.log(Level.SEVERE, "Load plugin failed, plugin name: " + pluginName, ex);
             }
         }
+    }
+
+    public static Map<String, Plugin> getPluginMap() {
+        return PLUGIN_MAP;
     }
 
     private static void doInitPlugin(Plugin plugin) {
