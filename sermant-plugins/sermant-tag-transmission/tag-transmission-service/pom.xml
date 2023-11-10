@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
-            <artifactId>tag-transmission-plugin</artifactId>
+            <artifactId>tag-transmission-httpserver-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
