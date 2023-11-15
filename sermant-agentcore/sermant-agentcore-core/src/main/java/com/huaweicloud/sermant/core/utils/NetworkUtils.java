@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.core.utils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.exception.NetInterfacesCheckException;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -25,6 +26,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,7 +61,7 @@ public class NetworkUtils {
         try {
             Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
             if (netInterfaces == null) {
-                throw new RuntimeException("netInterfaces is null");
+                throw new NetInterfacesCheckException("netInterfaces is null");
             }
             InetAddress ip;
             while (netInterfaces.hasMoreElements()) {
@@ -90,13 +92,13 @@ public class NetworkUtils {
      *
      * @return String
      */
-    public static String getHostName() {
+    public static Optional<String> getHostName() {
         InetAddress ia;
         try {
             ia = InetAddress.getLocalHost();
-            return ia.getHostName();
+            return Optional.ofNullable(ia.getHostName());
         } catch (UnknownHostException e) {
-            return null;
+            return Optional.empty();
         }
 
     }

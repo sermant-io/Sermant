@@ -16,12 +16,15 @@
 
 package com.huaweicloud.sermant.core.plugin.classloader;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.Plugin;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 用于适配从多个PluginClassLoader中寻找对应类和资源
@@ -30,6 +33,11 @@ import java.util.Optional;
  * @since 2023-05-30
  */
 public class PluginClassFinder {
+    /**
+     * 日志
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private final Map<String, PluginClassLoader> pluginClassLoaderMap = new HashMap<>();
 
     /**
@@ -64,8 +72,8 @@ public class PluginClassFinder {
                 if (clazz != null) {
                     return clazz;
                 }
-            } catch (ClassNotFoundException ignore) {
-                // ignore
+            } catch (ClassNotFoundException e) {
+                LOGGER.log(Level.WARNING, "load sermant class failed, msg is {0}", e.getMessage());
             }
         }
         throw new ClassNotFoundException("Can not load class in pluginClassLoaders: " + name);

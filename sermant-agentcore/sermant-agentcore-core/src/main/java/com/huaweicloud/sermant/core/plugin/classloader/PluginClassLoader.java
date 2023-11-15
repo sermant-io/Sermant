@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.core.plugin.classloader;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.agent.config.AgentConfig;
 
@@ -23,6 +24,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 加载插件主模块的类加载器
@@ -31,6 +34,11 @@ import java.util.Map;
  * @since 2023-04-27
  */
 public class PluginClassLoader extends URLClassLoader {
+    /**
+     * 日志
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private final HashMap<Long, ClassLoader> localLoader = new HashMap<>();
 
     /**
@@ -94,9 +102,10 @@ public class PluginClassLoader extends URLClassLoader {
             if (clazz == null) {
                 try {
                     clazz = super.loadClass(name, resolve);
-                } catch (ClassNotFoundException ignored) {
+                } catch (ClassNotFoundException e) {
                     // 捕获类找不到的异常，下一步会进入localLoader中去加载类
                     // ignored
+                    LOGGER.log(Level.WARNING, "load class failed, msg is {0}", e.getMessage());
                 }
             }
 
@@ -114,6 +123,7 @@ public class PluginClassLoader extends URLClassLoader {
                         clazz = loader.loadClass(name);
                     } catch (ClassNotFoundException e) {
                         // 无法找到类，忽略，后续抛出异常
+                        LOGGER.log(Level.WARNING, "load class failed, msg is {0}", e.getMessage());
                     }
                 }
             }
@@ -145,8 +155,9 @@ public class PluginClassLoader extends URLClassLoader {
             if (clazz == null) {
                 try {
                     clazz = super.loadClass(name, false);
-                } catch (ClassNotFoundException ignored) {
+                } catch (ClassNotFoundException e) {
                     // 无法找到类，忽略，后续抛出异常
+                    LOGGER.log(Level.WARNING, "load sermant class failed, msg is {0}", e.getMessage());
                 }
             }
 

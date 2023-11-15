@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.core.classloader;
 
 import com.huaweicloud.sermant.core.common.CommonConstant;
+import com.huaweicloud.sermant.core.exception.FileCheckException;
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassFinder;
 import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
 import com.huaweicloud.sermant.core.utils.FileUtils;
@@ -25,6 +26,8 @@ import com.huaweicloud.sermant.god.common.SermantClassLoader;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +79,12 @@ public class ClassLoaderManager {
      * @return PluginClassLoader
      */
     public static PluginClassLoader createPluginClassLoader() {
-        return new PluginClassLoader(new URL[0], sermantClassLoader);
+        return AccessController.doPrivileged(new PrivilegedAction<PluginClassLoader>() {
+            @Override
+            public PluginClassLoader run() {
+                return new PluginClassLoader(new URL[0], sermantClassLoader);
+            }
+        });
     }
 
     public static SermantClassLoader getSermantClassLoader() {
@@ -99,11 +107,11 @@ public class ClassLoaderManager {
     private static URL[] listCoreImplementUrls(String coreImplementPath) throws MalformedURLException {
         File coreImplementDir = new File(FileUtils.validatePath(coreImplementPath));
         if (!coreImplementDir.exists() || !coreImplementDir.isDirectory()) {
-            throw new RuntimeException("core implement directory is not exist or is not directory.");
+            throw new FileCheckException("core implement directory is not exist or is not directory.");
         }
         File[] jars = coreImplementDir.listFiles((file, name) -> name.endsWith(".jar"));
         if (jars == null || jars.length == 0) {
-            throw new RuntimeException("core implement directory is empty");
+            throw new FileCheckException("core implement directory is empty");
         }
         List<URL> urlList = new ArrayList<>();
         for (File jar : jars) {
@@ -115,11 +123,11 @@ public class ClassLoaderManager {
     private static URL[] listCommonLibUrls(String commonLibPath) throws MalformedURLException {
         File commonLibDir = new File(FileUtils.validatePath(commonLibPath));
         if (!commonLibDir.exists() || !commonLibDir.isDirectory()) {
-            throw new RuntimeException("common lib is not exist or is not directory.");
+            throw new FileCheckException("common lib is not exist or is not directory.");
         }
         File[] jars = commonLibDir.listFiles((file, name) -> name.endsWith(".jar"));
         if (jars == null || jars.length == 0) {
-            throw new RuntimeException("common lib directory is empty");
+            throw new FileCheckException("common lib directory is empty");
         }
         List<URL> urlList = new ArrayList<>();
         for (File jar : jars) {

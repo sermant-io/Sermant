@@ -70,7 +70,7 @@ public class KieListenerWrapper {
         this.group = kieRequest.getLabelCondition();
         this.kvDataHolder = kvDataHolder;
         this.kieRequest = kieRequest;
-        addKeyListener(key, dynamicConfigListener, ifNotify);
+        this.addKeyListener(key, dynamicConfigListener, ifNotify);
     }
 
     /**
@@ -198,7 +198,7 @@ public class KieListenerWrapper {
      * @param dynamicConfigListener 监听器
      * @param ifNotify 是否初始化通知
      */
-    public void addKeyListener(String key, DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
+    public final void addKeyListener(String key, DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
         VersionListenerWrapper versionListenerWrapper = keyListenerMap.get(key);
         if (versionListenerWrapper == null) {
             versionListenerWrapper = new VersionListenerWrapper();

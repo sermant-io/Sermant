@@ -48,7 +48,6 @@ import java.util.List;
  * @since 2023-03-02
  */
 public class FeiShuHookClient implements WebHookClient {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(FeiShuHookClient.class);
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -69,11 +68,10 @@ public class FeiShuHookClient implements WebHookClient {
      * webhook推送事件
      *
      * @param events 事件信息
-     * @return
+     * @return 唤醒feishu的webhook结果
      */
     @Override
     public boolean doNotify(List<QueryResultEventInfoEntity> events) {
-
         FeiShuEntity feiShuEntity = new FeiShuEntity();
         feiShuEntity.setMsgType(FeiShuMessageType.POST.getType());
         feiShuEntity.setContent(new HashMap<String, Object>() {
@@ -126,7 +124,6 @@ public class FeiShuHookClient implements WebHookClient {
                 content.add(getContent("logLineNumber:" + logInfo.getLogLineNumber()));
                 content.add(getContent("logThreadId" + logInfo.getLogThreadId()));
                 content.add(getContent("throwable:" + logInfo.getLogThrowable()));
-
             } else {
                 EventInfo eventInfo = (EventInfo) event.getInfo();
                 content.add(getContent("name:" + eventInfo.getName()));

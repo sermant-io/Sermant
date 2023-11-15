@@ -23,7 +23,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Enumeration;
+import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -54,17 +57,23 @@ public class ClassLoaderUtils {
      * <p>若类加载不是{@link URLClassLoader}，则调用{@link #loadJarFile(ClassLoader, JarFile)}方法加载
      *
      * @param classLoader 类加载器
-     * @param jarUrl      jar包URL
-     * @throws NoSuchMethodException     无法找到addURL方法或defineClass方法，正常不会报出
+     * @param jarUrl jar包URL
+     * @throws NoSuchMethodException 无法找到addURL方法或defineClass方法，正常不会报出
      * @throws InvocationTargetException 调用addURL方法或defineClass方法错误
-     * @throws IllegalAccessException    无法访问addURL方法或defineClass方法，正常不会报出
-     * @throws IOException               从jar包中加载class文件失败
+     * @throws IllegalAccessException 无法访问addURL方法或defineClass方法，正常不会报出
+     * @throws IOException 从jar包中加载class文件失败
      */
     public static void loadJarFile(ClassLoader classLoader, URL jarUrl)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {
         if (classLoader instanceof URLClassLoader) {
             Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            addUrl.setAccessible(true);
+            AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                @Override
+                public Object run() {
+                    addUrl.setAccessible(true);
+                    return Optional.empty();
+                }
+            });
             addUrl.invoke(classLoader, jarUrl);
         } else {
             JarFile jarFile = null;
@@ -84,11 +93,11 @@ public class ClassLoaderUtils {
      * <p>注意，该方法不会加载任何resource，无法通过{@link ClassLoader#getResource(String)}获取本方法加载的内容
      *
      * @param classLoader 类加载器
-     * @param jarFile     jar包
-     * @throws IOException               从jar包中加载class文件失败
+     * @param jarFile jar包
+     * @throws IOException 从jar包中加载class文件失败
      * @throws InvocationTargetException 调用defineClass方法错误
-     * @throws IllegalAccessException    无法访问defineClass方法，正常不会报出
-     * @throws NoSuchMethodException     无法找到defineClass方法，正常不会报出
+     * @throws IllegalAccessException 无法访问defineClass方法，正常不会报出
+     * @throws NoSuchMethodException 无法找到defineClass方法，正常不会报出
      */
     public static void loadJarFile(ClassLoader classLoader, JarFile jarFile)
             throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -149,7 +158,7 @@ public class ClassLoaderUtils {
      * 从类加载器中获取类的字节码
      *
      * @param classLoader 类加载器
-     * @param clsName     类全限定名
+     * @param clsName 类全限定名
      * @return 类的字节码
      * @throws IOException 读取类失败
      */
@@ -168,24 +177,35 @@ public class ClassLoaderUtils {
     /**
      * 定义类到类加载器中
      *
-     * @param className   定义类的全限定名
+     * @param className 定义类的全限定名
      * @param classLoader 类加载器
-     * @param bytes       类字节码
+     * @param bytes 类字节码
      * @return 类对象
      * @throws InvocationTargetException 调用defineClass方法错误
-     * @throws IllegalAccessException    无法访问defineClass方法，正常不会报出
-     * @throws NoSuchMethodException     无法找到defineClass方法，正常不会报出
+     * @throws IllegalAccessException 无法访问defineClass方法，正常不会报出
+     * @throws NoSuchMethodException 无法找到defineClass方法，正常不会报出
      */
     public static Class<?> defineClass(String className, ClassLoader classLoader, byte[] bytes)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         final Method loadingLock = ClassLoader.class.getDeclaredMethod("getClassLoadingLock", String.class);
-        loadingLock.setAccessible(true);
+        AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            @Override
+            public Object run() {
+                loadingLock.setAccessible(true);
+                return Optional.empty();
+            }
+        });
         synchronized (loadingLock.invoke(classLoader, className)) {
             final Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class,
                     int.class, int.class);
-            defineClass.setAccessible(true);
+            AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                @Override
+                public Object run() {
+                    defineClass.setAccessible(true);
+                    return Optional.empty();
+                }
+            });
             return (Class<?>) defineClass.invoke(classLoader, null, bytes, 0, bytes.length);
         }
-
     }
 }

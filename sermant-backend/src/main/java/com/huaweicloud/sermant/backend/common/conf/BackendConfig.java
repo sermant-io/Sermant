@@ -33,7 +33,6 @@ import java.util.Locale;
 @Component
 @Configuration
 public class BackendConfig {
-
     /**
      * 数据库类型
      */
@@ -110,8 +109,8 @@ public class BackendConfig {
         return eventExpire;
     }
 
-    public void setExpire(int expire) {
-        this.eventExpire = expire;
+    public void setEventExpire(int eventExpire) {
+        this.eventExpire = eventExpire;
     }
 
     public int getFieldExpire() {

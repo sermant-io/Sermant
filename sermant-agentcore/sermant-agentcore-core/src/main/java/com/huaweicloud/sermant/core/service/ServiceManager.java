@@ -181,11 +181,11 @@ public class ServiceManager {
     private static void addStopHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             offerEvent();
-            for (String serviceName : SERVICES.keySet()) {
+            for (Map.Entry<String, BaseService> entry : SERVICES.entrySet()) {
                 try {
-                    SERVICES.get(serviceName).stop();
+                    entry.getValue().stop();
                 } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, "Error occurs while stopping service: " + serviceName, ex);
+                    LOGGER.log(Level.SEVERE, "Error occurs while stopping service: " + entry.getKey(), ex);
                 }
             }
         }));

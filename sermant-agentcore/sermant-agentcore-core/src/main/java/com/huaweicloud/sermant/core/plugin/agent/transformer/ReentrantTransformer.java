@@ -61,9 +61,9 @@ public class ReentrantTransformer extends AbstractTransformer {
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, NoSuchFieldException {
         final String adviceKey = getAdviceKey(templateCls, classLoader, methodDesc);
         List<Interceptor> interceptorsForAdviceKey = BaseAdviseHandler.getInterceptorListMap()
-                .computeIfAbsent(adviceKey, k -> new ArrayList<>());
+                .computeIfAbsent(adviceKey, key -> new ArrayList<>());
         Set<String> createdInterceptorForAdviceKey = plugin.getInterceptors()
-                .computeIfAbsent(adviceKey, k -> new HashSet<>());
+                .computeIfAbsent(adviceKey, key -> new HashSet<>());
         for (Interceptor interceptor : interceptors) {
             // 需要先校验该Interceptor是否被创建过
             if (checkInterceptor(adviceKey, interceptor.getClass().getCanonicalName())) {

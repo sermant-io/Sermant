@@ -49,7 +49,6 @@ import java.util.stream.Collectors;
  * @since 2023-03-02
  */
 public class DbUtils {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DbUtils.class);
 
     private static final int EVENT_LEVEL_INDEX = 3;
@@ -175,7 +174,7 @@ public class DbUtils {
      * @return 过滤结果
      */
     public static List<Tuple> filterQueryResult(BackendConfig backendConfig,
-                                                 List<Tuple> queryResultByTime, String pattern) {
+            List<Tuple> queryResultByTime, String pattern) {
         List<Tuple> fanList = new ArrayList<>();
         if (queryResultByTime.size() <= 0) {
             return fanList;
@@ -206,9 +205,9 @@ public class DbUtils {
                 @Override
                 public List<Tuple> call() throws Exception {
                     List<Tuple> newList = new ArrayList<>();
-                    for (Tuple a : finalCutList) {
-                        if (a.getElement().matches(pattern)) {
-                            newList.add(a);
+                    for (Tuple tuple : finalCutList) {
+                        if (tuple.getElement().matches(pattern)) {
+                            newList.add(tuple);
                         }
                     }
                     return newList;

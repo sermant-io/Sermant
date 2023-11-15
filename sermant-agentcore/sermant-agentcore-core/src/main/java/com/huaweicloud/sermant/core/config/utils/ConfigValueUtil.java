@@ -92,7 +92,7 @@ public class ConfigValueUtil {
             key -> key.toUpperCase(Locale.ROOT).replace('.', '-'),
             key -> key.toLowerCase(Locale.ROOT),
             key -> key.toLowerCase(Locale.ROOT).replace('.', '_'),
-            key -> key.toLowerCase(Locale.ROOT).replace('.', '-'),
+            key -> key.toLowerCase(Locale.ROOT).replace('.', '-')
     };
 
     /**
@@ -326,6 +326,7 @@ public class ConfigValueUtil {
      * @param key 键
      * @param defaultVal 默认值
      * @param provider 配置信息
+     * @param argsMap 参数Map
      * @return 环境变量或系统变量
      */
     private static String getFormatKeyFixVal(String key, String defaultVal, Map<String, Object> argsMap,
@@ -347,17 +348,18 @@ public class ConfigValueUtil {
      *
      * @param key 键
      * @param configVal 配置值
+     * @param argsMap 参数Map
      * @return 最终配置参考值
      */
     private static String getValByFixedKey(String key, String configVal, Map<String, Object> argsMap) {
-        // 1. xxx.xxx.appName直接获取 2. xxx.xxx.app-name处理为xxx.xxx.app.name再获取
+        // appName直接获取、app-name处理为app.name再获取
         String keyReplaceMiddleLine = transFromMiddleLine(key);
         Optional<String> fixedValue = getValueByOrder(argsMap, keyReplaceMiddleLine);
         if (fixedValue.isPresent()) {
             return fixedValue.get();
         }
 
-        // 3. xxx.xxx.appName分割为xxx.xxx.app.name
+        // appName分割为app.name
         String keyWithoutCamel = transFromCamel(keyReplaceMiddleLine);
         if (!keyReplaceMiddleLine.equals(keyWithoutCamel)) {
             fixedValue = getValueByOrder(argsMap, keyWithoutCamel);

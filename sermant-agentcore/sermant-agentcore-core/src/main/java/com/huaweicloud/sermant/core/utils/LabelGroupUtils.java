@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -84,7 +85,7 @@ public class LabelGroupUtils {
             String value = labels.get(key);
             if (key == null || value == null) {
                 LOGGER.warning(String.format(Locale.ENGLISH, "Invalid group label, key = %s, value = %s",
-                    key, value));
+                        key, value));
                 continue;
             }
             group.append(key).append(KV_SEPARATOR).append(value).append(GROUP_SEPARATOR);
@@ -148,8 +149,8 @@ public class LabelGroupUtils {
                     LOGGER.warning(String.format(Locale.ENGLISH, "Invalid label [%s]", label));
                 }
             }
-        } catch (UnsupportedEncodingException ignored) {
-            // ignored
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.log(Level.WARNING, "UnsupportedEncodingException, msg is {0}.", e.getMessage());
         }
         return result;
     }
@@ -169,8 +170,8 @@ public class LabelGroupUtils {
         final StringBuilder finalGroup = new StringBuilder();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             finalGroup.append(LABEL_PREFIX)
-                .append(buildSingleLabel(entry.getKey(), entry.getValue()))
-                .append(GROUP_SEPARATOR);
+                    .append(buildSingleLabel(entry.getKey(), entry.getValue()))
+                    .append(GROUP_SEPARATOR);
         }
         return finalGroup.deleteCharAt(finalGroup.length() - 1).toString();
     }
@@ -178,9 +179,9 @@ public class LabelGroupUtils {
     private static String buildSingleLabel(String key, String value) {
         try {
             return URLEncoder.encode(key + LABEL_QUERY_SEPARATOR + value, "UTF-8");
-        } catch (UnsupportedEncodingException ignored) {
-            // ignored
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.log(Level.WARNING, "UnsupportedEncodingException, msg is {0}.", e.getMessage());
+            return StringUtils.EMPTY;
         }
-        return StringUtils.EMPTY;
     }
 }

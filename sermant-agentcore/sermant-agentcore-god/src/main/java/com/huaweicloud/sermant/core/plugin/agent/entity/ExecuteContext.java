@@ -341,6 +341,7 @@ public class ExecuteContext {
      *
      * @param fieldName 属性名
      * @param value 属性值
+     * @deprecated 已经过时
      */
     @Deprecated
     public void setExtStaticFieldValue(String fieldName, Object value) {
@@ -355,6 +356,7 @@ public class ExecuteContext {
      *
      * @param fieldName 属性名
      * @return 属性值
+     * @deprecated 已经过时
      */
     @Deprecated
     public Object getExtStaticFieldValue(String fieldName) {
@@ -366,6 +368,7 @@ public class ExecuteContext {
      *
      * @param fieldName 属性名
      * @param value 属性值
+     * @deprecated 已经过时
      */
     @Deprecated
     public void setExtMemberFieldValue(String fieldName, Object value) {
@@ -380,6 +383,7 @@ public class ExecuteContext {
      *
      * @param fieldName 属性名
      * @return 属性值
+     * @deprecated 已经过时
      */
     @Deprecated
     public Object getExtMemberFieldValue(String fieldName) {

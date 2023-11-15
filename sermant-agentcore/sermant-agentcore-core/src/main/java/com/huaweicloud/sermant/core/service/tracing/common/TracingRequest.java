@@ -46,7 +46,7 @@ public class TracingRequest {
     /**
      * 构造函数
      *
-     * @param  traceId traceId
+     * @param traceId traceId
      * @param parentSpanId parentSpanId
      * @param spanIdPrefix spanIdPrefix
      * @param className className

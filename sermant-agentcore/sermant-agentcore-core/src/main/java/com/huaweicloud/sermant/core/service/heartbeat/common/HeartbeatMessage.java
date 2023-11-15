@@ -52,7 +52,7 @@ public class HeartbeatMessage {
      * 构造函数
      */
     public HeartbeatMessage() {
-        this.hostName = NetworkUtils.getHostName();
+        this.hostName = NetworkUtils.getHostName().orElse(null);
         this.ip = NetworkUtils.getAllNetworkIp();
         this.service = BootArgsIndexer.getServiceName();
         this.appType = BootArgsIndexer.getAppType();
@@ -68,7 +68,7 @@ public class HeartbeatMessage {
     public void updateHeartbeatVersion() {
         this.lastHeartbeatTime = this.heartbeatTime;
         this.heartbeatTime = System.currentTimeMillis();
-        this.hostName = NetworkUtils.getHostName();
+        this.hostName = NetworkUtils.getHostName().orElse(null);
         this.ip = NetworkUtils.getAllNetworkIp();
     }
 

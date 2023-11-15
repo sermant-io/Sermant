@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.backend.server;
 
 import com.huaweicloud.sermant.backend.common.conf.BackendConfig;
+import com.huaweicloud.sermant.backend.dao.DatabaseType;
 import com.huaweicloud.sermant.backend.dao.EventDao;
 import com.huaweicloud.sermant.backend.dao.memory.MemoryClientImpl;
 import com.huaweicloud.sermant.backend.dao.redis.EventDaoForRedis;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
@@ -43,12 +45,13 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class EventServer {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(EventServer.class);
+
     private static EventServer eventServer;
 
     @Autowired
     private BackendConfig backendConfig;
+
     private EventDao daoService;
 
     private EventServer() {
@@ -60,13 +63,10 @@ public class EventServer {
     @PostConstruct
     public void init() {
         eventServer = this;
-        switch (backendConfig.getDatabase()) {
-            case REDIS:
-                eventServer.daoService = new EventDaoForRedis(backendConfig);
-                break;
-            default:
-                eventServer.daoService = new MemoryClientImpl(backendConfig);
-                break;
+        if (Objects.requireNonNull(backendConfig.getDatabase()) == DatabaseType.REDIS) {
+            eventServer.daoService = new EventDaoForRedis(backendConfig);
+        } else {
+            eventServer.daoService = new MemoryClientImpl(backendConfig);
         }
     }
 

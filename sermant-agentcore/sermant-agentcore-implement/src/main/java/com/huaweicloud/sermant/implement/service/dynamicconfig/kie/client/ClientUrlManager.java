@@ -39,6 +39,7 @@ public class ClientUrlManager {
     private static final String KIE_PROTOCOL_SSL = "https://";
 
     private final UrlSelector urlSelector = new UrlSelector();
+
     private List<String> urls;
 
     /**
@@ -60,12 +61,11 @@ public class ClientUrlManager {
     }
 
     /**
-     * 解析url
-     * 默认多个url使用逗号隔开
+     * 解析url 默认多个url使用逗号隔开
      *
      * @param serverAddress 服务器地址字符串
      */
-    public void resolveUrls(String serverAddress) {
+    private void resolveUrls(String serverAddress) {
         if (serverAddress == null || serverAddress.trim().length() == 0) {
             return;
         }

@@ -16,16 +16,13 @@
 
 package com.huaweicloud.sermant.core.service.dynamicconfig.common;
 
-
 /**
+ * Enum for DynamicConfigType, Currently support ZooKeeper, Kie, Nop. Probably will support Nacos, etcd in the future.
  *
- * Enum for DynamicConfigType,
- * Currently support ZooKeeper, Kie, Nop.
- * Probably will support Nacos, etcd in the future.
- *
+ * @author yangyshdan, HapThorin
+ * @since 2021-12-27
  */
 public enum DynamicConfigServiceType {
-
     /**
      * zookeeper 配置中心
      */
@@ -40,9 +37,9 @@ public enum DynamicConfigServiceType {
      * Nacos 配置中心
      */
     NACOS,
+
     /**
      * 配置中心无实现
      */
     NOP;
-
 }

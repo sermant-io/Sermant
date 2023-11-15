@@ -75,6 +75,7 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
      * Yaml对象
      */
     private final Yaml yaml;
+
     /**
      * 启动参数
      */
@@ -153,7 +154,8 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
      * 修正键，如果属性被{@link ConfigFieldKey}修饰，则将{@link ConfigFieldKey#value()}转化为属性值
      *
      * @param typeMap 类对应的配置信息
-     * @param cls     类Class
+     * @param cls 类Class
+     * @return 类的字段map
      */
     private Map fixEntry(Map typeMap, Class<?> cls) {
         if (cls == Object.class || Map.class.isAssignableFrom(cls)) {
@@ -197,8 +199,9 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     /**
      * 修正值中形如"${}"的部分
      *
-     * @param configKey  配置键
-     * @param typeMap    父Map
+     * @param field 类的字段名
+     * @param configKey 配置键
+     * @param typeMap 父Map
      * @param subTypeVal 当前值
      * @return 修正后的值
      */
@@ -231,7 +234,7 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
                         subTypeVal.getClass());
             }
         } catch (ConstructorException exception) {
-            LOGGER.severe(String.format(Locale.ENGLISH,"Error occurs while parsing configKey: %s", configKey));
+            LOGGER.severe(String.format(Locale.ENGLISH, "Error occurs while parsing configKey: %s", configKey));
         }
 
         return fixedVal;

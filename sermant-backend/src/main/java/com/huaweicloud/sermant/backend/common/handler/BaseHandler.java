@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.backend.common.handler;
 
 import com.huaweicloud.sermant.backend.pojo.Message;
+import com.huaweicloud.sermant.backend.pojo.Message.NettyMessage.MessageType;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -26,8 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * handler的基类
- * 不同数据类型选择处理方式，心跳触发等功能
+ * handler的基类 不同数据类型选择处理方式，心跳触发等功能
  *
  * @author lilai
  * @version 0.0.1
@@ -40,13 +40,10 @@ public abstract class BaseHandler extends SimpleChannelInboundHandler<Message.Ne
     public void channelRead0(ChannelHandlerContext ctx, Message.NettyMessage msg) {
         // 获取收到的消息类型
         int type = msg.getMessageTypeValue();
-        switch (type) {
-            // 如果为业务数据进行各自的处理
-            case Message.NettyMessage.MessageType.SERVICE_DATA_VALUE:
-                handlerData(ctx, msg);
-                break;
-            default:
-                break;
+
+        // 如果为业务数据进行各自的处理
+        if (type == MessageType.SERVICE_DATA_VALUE) {
+            handlerData(ctx, msg);
         }
     }
 
@@ -60,7 +57,7 @@ public abstract class BaseHandler extends SimpleChannelInboundHandler<Message.Ne
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
-        IdleStateEvent stateEvent = (IdleStateEvent)evt;
+        IdleStateEvent stateEvent = (IdleStateEvent) evt;
         switch (stateEvent.state()) {
             case READER_IDLE:
                 handlerReaderIdle(ctx);
