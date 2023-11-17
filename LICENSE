@@ -445,3 +445,11 @@ The following files contain a portion of License Maven Plugin project.
 sermant-package/resources/third-party-license.ftl in this product is copied from /org/codehaus/mojo/license/third-party-file-groupByMultiLicense.ftl of License Maven Plugin project.
 
 License Maven Plugin project is published at https://github.com/mojohaus/license-maven-plugin and its license is GNU LGPL Version 3.0.
+
+====================================================================================
+
+The following files contain a portion of openEuler gala-gopher project.
+
+scripts/attach.c in this product is copied from  gala-gopher/src/probes/extends/ebpf.probe/src/stackprobe/jvmti/jvm_attach.c of openEuler gala-gopher project.
+
+openEuler gala-gopher project is published at https://gitee.com/openeuler/gala-gopher and its license is Mulan PSL v2.
