@@ -41,7 +41,7 @@ public class ServiceCombServer extends Server {
      */
     public ServiceCombServer(MicroServiceInstance microServiceInstance) {
         super(microServiceInstance.isSecure() ? "https" : "http", microServiceInstance.getIp(),
-            microServiceInstance.getPort());
+                microServiceInstance.getPort());
         this.microServiceInstance = microServiceInstance;
     }
 
@@ -61,5 +61,15 @@ public class ServiceCombServer extends Server {
      */
     public Map<String, String> getMetadata() {
         return microServiceInstance.getMetadata();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

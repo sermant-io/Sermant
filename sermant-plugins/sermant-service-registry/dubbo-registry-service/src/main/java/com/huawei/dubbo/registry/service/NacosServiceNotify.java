@@ -39,14 +39,23 @@ import java.util.logging.Logger;
  */
 public class NacosServiceNotify {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static final String ANY_VALUE = "*";
+
     private static final String DEFAULT_CATEGORY = "providers";
+
     private static final String CATEGORY_KEY = "category";
+
     private static final int DEFUALT_CAPACITY = 16;
+
     private static final String ENABLED_KEY = "enabled";
+
     private static final String GROUP_KEY = "group";
+
     private static final String VERSION_KEY = "version";
+
     private static final String CLASSIFIER_KEY = "classifier";
+
     private static final String REMOVE_VALUE_PREFIX = "-";
 
     /**
@@ -62,15 +71,15 @@ public class NacosServiceNotify {
             return;
         }
         Map<String, List<Object>> result = new HashMap<>(DEFUALT_CAPACITY);
-        for (Object u : urls) {
-            if (isMatch(url, u)) {
-                String category = ReflectUtils.getParameter(u, CATEGORY_KEY) == null ? DEFAULT_CATEGORY
-                    : ReflectUtils.getParameter(u, CATEGORY_KEY);
-                List<Object> categoryList = result.computeIfAbsent(category, k -> new ArrayList<>());
-                categoryList.add(u);
+        for (Object urlObj : urls) {
+            if (isMatch(url, urlObj)) {
+                String category = ReflectUtils.getParameter(urlObj, CATEGORY_KEY) == null ? DEFAULT_CATEGORY
+                        : ReflectUtils.getParameter(urlObj, CATEGORY_KEY);
+                List<Object> categoryList = result.computeIfAbsent(category, key -> new ArrayList<>());
+                categoryList.add(urlObj);
             }
         }
-        if (result.size() == 0) {
+        if (result.isEmpty()) {
             return;
         }
         for (Map.Entry<String, List<Object>> entry : result.entrySet()) {
@@ -103,7 +112,7 @@ public class NacosServiceNotify {
         String consumerGroup = ReflectUtils.getParameter(consumerUrl, GROUP_KEY);
         String consumerVersion = ReflectUtils.getParameter(consumerUrl, VERSION_KEY);
         String consumerClassifier = ReflectUtils.getParameter(consumerUrl, CLASSIFIER_KEY) == null ? ANY_VALUE
-            : ReflectUtils.getParameter(consumerUrl, CLASSIFIER_KEY);
+                : ReflectUtils.getParameter(consumerUrl, CLASSIFIER_KEY);
 
         String providerGroup = ReflectUtils.getParameter(providerUrl, GROUP_KEY);
         String providerVersion = ReflectUtils.getParameter(providerUrl, VERSION_KEY);
@@ -111,8 +120,8 @@ public class NacosServiceNotify {
                 : ReflectUtils.getParameter(consumerUrl, CLASSIFIER_KEY);
 
         boolean checkGroup = ANY_VALUE.equals(consumerGroup)
-            || StringUtils.equals(consumerGroup, providerGroup)
-            || StringUtils.contains(consumerGroup, providerGroup);
+                || StringUtils.equals(consumerGroup, providerGroup)
+                || StringUtils.contains(consumerGroup, providerGroup);
         boolean checkVersion = ANY_VALUE.equals(consumerVersion)
                 || StringUtils.equals(consumerVersion, providerVersion);
         boolean checkClassifier = consumerClassifier == null

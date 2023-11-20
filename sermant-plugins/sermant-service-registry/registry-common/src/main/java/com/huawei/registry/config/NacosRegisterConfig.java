@@ -89,7 +89,7 @@ public class NacosRegisterConfig implements PluginConfig {
     /**
      * 服务实例权重
      */
-    private float weight = 1;
+    private float weight = 1f;
 
     /**
      * 集群名称

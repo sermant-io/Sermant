@@ -49,7 +49,7 @@ public class PolicyEventUtils {
      * @param serviceName 服务名
      */
     public static void notifySameTagMatchedEvent(PolicyEvent newState, Map<String, List<MatchRule>> tags,
-                                                 String serviceName) {
+            String serviceName) {
         PolicyEvent previousState = POLICY_EVENT_CONCURRENT_HASH_MAP.get(serviceName);
         if (!newState.equals(previousState)) {
             POLICY_EVENT_CONCURRENT_HASH_MAP.put(serviceName, newState);

@@ -126,7 +126,8 @@ public class FlowRouteHandler extends AbstractRouteHandler {
 
         // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
         Map<String, String> mismatchTags = new HashMap<>();
-        for (String key : attachments.keySet()) {
+        for (Map.Entry<String, Object> entry : attachments.entrySet()) {
+            String key = entry.getKey();
             if (!requestTags.contains(key)) {
                 continue;
             }
@@ -136,7 +137,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
                 replaceDashKey = replaceDashKey.replace(RouterConstant.DASH, RouterConstant.POINT);
             }
             mismatchTags.put(RuleUtils.getMetaKey(replaceDashKey), null);
-            String value = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);
+            String value = Optional.ofNullable(entry.getValue()).map(String::valueOf).orElse(null);
             if (StringUtils.isExist(value)) {
                 tags.put(RuleUtils.getMetaKey(replaceDashKey), value);
             }

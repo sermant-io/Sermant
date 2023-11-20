@@ -29,7 +29,7 @@ public class ApacheInterfaceConfigDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.config.AbstractInterfaceConfig"};
 
     private static final String INTERCEPT_CLASS
-        = "com.huawei.dubbo.registry.interceptor.ApacheInterfaceConfigInterceptor";
+            = "com.huawei.dubbo.registry.interceptor.ApacheInterfaceConfigInterceptor";
 
     // 增强loadRegistriesFromBackwardConfig方法是为了兼容2.7.0-2.7.4.1，其它版本主要是增强setRegistries方法
     private static final String[] METHOD_NAME = {"setRegistries", "loadRegistriesFromBackwardConfig"};
@@ -44,7 +44,7 @@ public class ApacheInterfaceConfigDeclarer extends AbstractDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameContains(METHOD_NAME), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameContains(METHOD_NAME), INTERCEPT_CLASS)
         };
     }
 }

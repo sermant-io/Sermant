@@ -85,6 +85,11 @@ public enum RegisterContext {
         return this.isAvailable.compareAndSet(expect, target);
     }
 
+    /**
+     * 注册中心是否可用
+     *
+     * @return 是否可用的标识
+     */
     public boolean isAvailable() {
         return isAvailable.get();
     }

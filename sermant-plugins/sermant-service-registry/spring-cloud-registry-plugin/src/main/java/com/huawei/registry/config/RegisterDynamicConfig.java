@@ -37,10 +37,20 @@ public class RegisterDynamicConfig {
     RegisterDynamicConfig() {
     }
 
+    /**
+     * 是否需要关闭原始注册中心
+     *
+     * @return 是否需要关闭的标识
+     */
     public boolean isNeedCloseOriginRegisterCenter() {
         return needClose;
     }
 
+    /**
+     * 设置是否需要关闭原始注册中心的标识
+     *
+     * @param isNeedCloseOriginRegisterCenter 是否需要关闭原始注册中心的标识
+     */
     public void setClose(boolean isNeedCloseOriginRegisterCenter) {
         this.needClose = isNeedCloseOriginRegisterCenter;
     }

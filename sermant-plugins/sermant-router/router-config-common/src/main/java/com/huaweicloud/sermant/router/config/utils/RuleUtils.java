@@ -465,6 +465,9 @@ public class RuleUtils {
      * 去掉无效的路由和修复同标签规则的路由
      *
      * @param routeList 路由
+     * @param kind 规则类型
+     * @param isReplaceDash 是否替换破折号
+     * @param isAppendPrefix 是否拼接前缀
      */
     private static void removeInvalidRoute(List<Route> routeList, String kind, boolean isReplaceDash,
             boolean isAppendPrefix) {
@@ -506,8 +509,9 @@ public class RuleUtils {
         if (CollectionUtils.isEmpty(tags)) {
             return true;
         }
-        for (String key : tags.keySet()) {
-            if (!RouterConstant.CONSUMER_TAG.equals(tags.get(key))) {
+        for (Map.Entry<String, String> entry : tags.entrySet()) {
+            String key = entry.getKey();
+            if (!RouterConstant.CONSUMER_TAG.equals(entry.getValue())) {
                 continue;
             }
             if (RouterConstant.VERSION.equals(key)) {

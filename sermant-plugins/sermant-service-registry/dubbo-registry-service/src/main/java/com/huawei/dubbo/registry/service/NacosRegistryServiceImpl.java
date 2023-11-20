@@ -58,34 +58,55 @@ import java.util.stream.Collectors;
  */
 public class NacosRegistryServiceImpl implements NacosRegistryService {
     private static final int SERVICE_INTERFACE_INDEX = 1;
+
     private static final int SERVICE_NAME_COMPARE_LENGTH = 3;
+
     private static final String PROVIDER_SIDE = "provider";
+
     private static final String REGISTER_CONSUMER_URL_KEY = "register-consumer-url";
+
     private static final String INTERFACE_KEY = "interface";
+
     private static final String CATEGORY_KEY = "category";
+
     private static final String PROTOCOL_KEY = "protocol";
+
     private static final String PATH_KEY = "path";
+
     private static final String VERSION_KEY = "version";
+
     private static final String NAME_SEPARATOR = ":";
+
     private static final String DEFAULT_CATEGORY = "providers";
+
     private static final String SIDE_KEY = "side";
+
     private static final String CHECK_KEY = "check";
+
     private static final String STATUS_UP = "UP";
+
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
     /**
      * key对应关系：第一个Object -> URL，第二个Object -> NotifyListener
      */
     private final Map<Object, Map<Object, NacosAggregateListener>> originToAggregateListener =
             new ConcurrentHashMap<>();
+
     /**
      * key对应关系：Object -> URL，String -> serviceName
      */
     private final Map<Object, Map<NacosAggregateListener, Map<String, EventListener>>> nacosListeners =
             new ConcurrentHashMap<>();
+
     private NamingService namingService;
+
     private NacosRegisterConfig nacosRegisterConfig;
+
     private Instance registryInstance;
+
     private final NacosServiceNotify nacosServiceNotify = new NacosServiceNotify();
+
     private RegisterServiceCommonConfig commonConfig;
 
     @Override
@@ -108,7 +129,7 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
     public void doSubscribe(Object url, Object notifyListener) {
         NacosAggregateListener nacosAggregateListener = new NacosAggregateListener(notifyListener);
         originToAggregateListener.computeIfAbsent(url,
-            k -> new ConcurrentHashMap<>()).put(notifyListener, nacosAggregateListener);
+                key -> new ConcurrentHashMap<>()).put(notifyListener, nacosAggregateListener);
         Set<String> serviceNames = getServiceNames(url);
         if (isServiceNamesWithCompatibleMode(url)) {
             for (String serviceName : serviceNames) {
@@ -123,7 +144,7 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
             if (isServiceNamesWithCompatibleMode(url)) {
                 for (String serviceName : serviceNames) {
                     List<Instance> instances = namingService.getAllInstances(serviceName,
-                        nacosRegisterConfig.getGroup());
+                            nacosRegisterConfig.getGroup());
                     NacosInstanceManageUtil.initOrRefreshServiceInstanceList(serviceName, instances);
                     notifySubscriber(url, serviceName, listener, instances);
                     subscribeEventListener(serviceName, url, listener);
@@ -143,7 +164,7 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
                     parameters.put(CHECK_KEY, String.valueOf(false));
                     subscriberUrl = ReflectUtils.addParameters(subscriberUrl, parameters);
                     List<Instance> instances = new LinkedList<>(namingService.getAllInstances(serviceName,
-                        nacosRegisterConfig.getGroup()));
+                            nacosRegisterConfig.getGroup()));
                     notifySubscriber(subscriberUrl, serviceName, listener, instances);
                     subscribeEventListener(serviceName, subscriberUrl, listener);
                 }
@@ -157,11 +178,11 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
     private void subscribeEventListener(String serviceName, final Object url, final NacosAggregateListener listener)
             throws NacosException {
         Map<NacosAggregateListener, Map<String, EventListener>> listeners = nacosListeners.computeIfAbsent(url,
-            k -> new ConcurrentHashMap<>());
+                key -> new ConcurrentHashMap<>());
         Map<String, EventListener> eventListeners = listeners.computeIfAbsent(listener,
-            k -> new ConcurrentHashMap<>());
+                key -> new ConcurrentHashMap<>());
         EventListener eventListener = eventListeners.computeIfAbsent(serviceName,
-            k -> new RegistryChildListenerImpl(serviceName, url, listener));
+                key -> new RegistryChildListenerImpl(serviceName, url, listener));
         namingService.subscribe(serviceName, nacosRegisterConfig.getGroup(), eventListener);
     }
 
@@ -308,17 +329,17 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
         Set<String> serviceNames = new LinkedHashSet<>();
         try {
             serviceNames.addAll(namingService.getServicesOfServer(1, Integer.MAX_VALUE,
-                nacosRegisterConfig.getGroup()).getData()
-                .stream()
-                .filter(this::isConformRules)
-                .map(NacosServiceName::new)
-                .filter(serviceName::isCompatible)
-                .map(NacosServiceName::toString)
-                .collect(Collectors.toList()));
+                            nacosRegisterConfig.getGroup()).getData()
+                    .stream()
+                    .filter(this::isConformRules)
+                    .map(NacosServiceName::new)
+                    .filter(serviceName::isCompatible)
+                    .map(NacosServiceName::toString)
+                    .collect(Collectors.toList()));
             return serviceNames;
         } catch (NacosException e) {
             LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "filter serviceName failed"
-                + ", serviceName: {%s}，cause: {%s}", serviceName, e.getErrMsg()), e);
+                    + ", serviceName: {%s}，cause: {%s}", serviceName, e.getErrMsg()), e);
         }
         return serviceNames;
     }
@@ -368,8 +389,11 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
      */
     private class RegistryChildListenerImpl implements EventListener {
         private final RegistryNotifier notifier;
+
         private final String serviceName;
+
         private final Object consumerUrl;
+
         private final NacosAggregateListener listener;
 
         /**
