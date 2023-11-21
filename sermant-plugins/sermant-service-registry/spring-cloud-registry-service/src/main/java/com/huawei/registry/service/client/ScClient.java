@@ -67,7 +67,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -102,8 +101,6 @@ public class ScClient {
     private static final int FLAG = -1;
 
     private static final int MAX_HOST_NAME_LENGTH = 64;
-
-    private final AtomicBoolean isDelayed = new AtomicBoolean();
 
     private ServiceCenterConfiguration serviceCenterConfiguration;
 

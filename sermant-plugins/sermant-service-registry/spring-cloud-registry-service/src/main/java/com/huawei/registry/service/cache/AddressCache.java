@@ -56,6 +56,11 @@ public enum AddressCache {
         cache.put(address, "");
     }
 
+    /**
+     * 获取地址Set
+     *
+     * @return Set 地址Set
+     */
     public Set<String> getAddressSet() {
         return cache.asMap().keySet();
     }

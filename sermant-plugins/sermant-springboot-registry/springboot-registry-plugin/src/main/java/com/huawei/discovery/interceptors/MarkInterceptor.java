@@ -57,6 +57,5 @@ public abstract class MarkInterceptor implements Interceptor {
     /**
      * 调用前的准备
      */
-    protected void ready() {
-    }
+    protected abstract void ready();
 }

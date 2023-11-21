@@ -20,6 +20,7 @@ package com.huawei.registry.support;
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.entity.MicroServiceInstance;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.ClassLoaderUtils;
 import com.huaweicloud.sermant.core.utils.StringUtils;
@@ -30,6 +31,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 实例获取拦截器支持
@@ -38,6 +41,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2022-02-22
  */
 public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     /**
      * 类缓存, 避免多次调用loadClass
      */
@@ -79,7 +84,7 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
                 try {
                     result = contextClassLoader.loadClass(className);
                 } catch (ClassNotFoundException ignored) {
-                    // ignored
+                    LOGGER.log(Level.WARNING, "{0} class not found.", className);
                 }
             }
             return result;
@@ -100,7 +105,7 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
                     .getDeclaredConstructor(MicroServiceInstance.class, String.class);
             return Optional.of(declaredConstructor.newInstance(microServiceInstance, serviceName));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                 | InvocationTargetException ignored) {
+            | InvocationTargetException exception) {
             return Optional.empty();
         }
     }

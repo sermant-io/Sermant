@@ -82,8 +82,12 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
                         buildInvokerFunc(uri, hostAndPath, request, rebuildRequest, context),
                         buildExFunc(rebuildRequest),
                         hostAndPath.get(HttpConstants.HTTP_URI_SERVICE))
-                .ifPresent(o -> setResultOrThrow(context, o, uri.getPath()));
+                .ifPresent(object -> setResultOrThrow(context, object, uri.getPath()));
         return context;
+    }
+
+    @Override
+    protected void ready() {
     }
 
     private void setResultOrThrow(ExecuteContext context, Object result, String url) {
@@ -149,6 +153,7 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
     /**
      * 构建okHttp响应
      *
+     * @param request 请求对象
      * @param ex 指定异常
      * @return 响应
      */

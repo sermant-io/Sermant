@@ -66,6 +66,11 @@ public enum SpringBootRegistryEventDefinition {
         return eventLevel;
     }
 
+    /**
+     * 获取scope
+     *
+     * @return string 插件主模块名称
+     */
     public String getScope() {
         return "springboot-registry-plugin";
     }

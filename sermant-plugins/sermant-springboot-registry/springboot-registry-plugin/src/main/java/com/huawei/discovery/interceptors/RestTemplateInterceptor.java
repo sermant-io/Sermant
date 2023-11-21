@@ -76,6 +76,10 @@ public class RestTemplateInterceptor extends MarkInterceptor {
         return context;
     }
 
+    @Override
+    protected void ready() {
+    }
+
     private URI rebuildUri(String url, URI uri) {
         final Optional<URI> optionalUri = formatUri(url, uri);
         if (optionalUri.isPresent()) {

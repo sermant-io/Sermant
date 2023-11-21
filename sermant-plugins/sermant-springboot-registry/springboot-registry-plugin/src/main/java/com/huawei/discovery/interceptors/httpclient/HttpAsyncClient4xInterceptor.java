@@ -178,7 +178,7 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
                         new Class[]{HttpAsyncRequestProducer.class, Function.class, Function.class},
                         new Object[]{producer, buildRequestDecorator(uriNew, method),
                                 buildHostDecorator(uriNew)});
-        return result.map(o -> (HttpAsyncRequestProducer) o).orElse(producer);
+        return result.map(object -> (HttpAsyncRequestProducer) object).orElse(producer);
     }
 
     private BiFunction<Long, TimeUnit, HttpAsyncInvokerResult> buildInvokerBiFunc(HttpAsyncContext asyncContext,
@@ -225,7 +225,7 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
             return;
         }
         FutureCallback<HttpResponse> cur = (FutureCallback<HttpResponse>) callback;
-        if (response instanceof Throwable) {
+        if (response instanceof Exception) {
             cur.failed((Exception) response);
         } else {
             cur.completed((HttpResponse) response);

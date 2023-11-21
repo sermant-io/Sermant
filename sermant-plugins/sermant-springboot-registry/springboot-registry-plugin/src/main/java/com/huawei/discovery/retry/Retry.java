@@ -88,9 +88,9 @@ public interface Retry {
          * @param serviceInstanceStats 选择调用的实例
          * @param ex 调用异常时调用
          * @param consumeTimeMs 调用的消耗时间
-         * @throws Exception 不满足异常重试条件时抛出异常
+         * @throws RetryException 不满足异常重试条件时抛出异常
          */
-        void onError(T serviceInstanceStats, Throwable ex, long consumeTimeMs) throws Exception;
+        void onError(T serviceInstanceStats, Throwable ex, long consumeTimeMs) throws RetryException;
 
         /**
          * 最终结束, 在重试彻底结束后调用该方法

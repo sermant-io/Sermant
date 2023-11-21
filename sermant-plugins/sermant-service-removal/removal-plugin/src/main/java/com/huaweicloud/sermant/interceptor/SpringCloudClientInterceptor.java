@@ -28,6 +28,11 @@ import com.netflix.client.ClientRequest;
  */
 public class SpringCloudClientInterceptor extends AbstractCallInterceptor<ClientRequest> {
     @Override
+    protected int getIndex() {
+        return 0;
+    }
+
+    @Override
     protected String getHost(ClientRequest request) {
         if (request.getUri() == null) {
             return StringUtils.EMPTY;

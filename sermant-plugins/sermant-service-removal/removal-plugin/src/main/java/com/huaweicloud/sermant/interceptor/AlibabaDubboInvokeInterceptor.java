@@ -28,6 +28,11 @@ import com.alibaba.dubbo.rpc.Invocation;
  */
 public class AlibabaDubboInvokeInterceptor extends AbstractCallInterceptor<Invocation> {
     @Override
+    protected int getIndex() {
+        return 0;
+    }
+
+    @Override
     protected String getHost(Invocation invocation) {
         if (invocation == null || invocation.getInvoker() == null || invocation.getInvoker().getUrl() == null) {
             return StringUtils.EMPTY;
