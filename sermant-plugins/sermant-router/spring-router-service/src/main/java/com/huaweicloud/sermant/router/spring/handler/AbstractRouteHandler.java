@@ -50,4 +50,14 @@ public abstract class AbstractRouteHandler implements RouteHandler, Comparable<A
         // 实例数大于1才能路由
         return instances != null && instances.size() > 1;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

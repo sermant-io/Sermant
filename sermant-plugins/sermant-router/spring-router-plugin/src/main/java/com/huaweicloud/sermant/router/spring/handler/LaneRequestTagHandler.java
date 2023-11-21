@@ -50,6 +50,9 @@ public class LaneRequestTagHandler extends AbstractRequestTagHandler {
     /**
      * 获取透传的标记
      *
+     * @param path 请求路径
+     * @param methodName 方法名称
+     * @param headers http请求头
      * @return 透传的标记
      */
     @Override

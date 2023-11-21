@@ -30,7 +30,7 @@ import com.huaweicloud.sermant.core.event.config.EventConfig;
  * @since 2023-03-28
  */
 public class RouterEventCollector extends EventCollector {
-    private static volatile RouterEventCollector routerEventCollecter;
+    private static volatile RouterEventCollector routerEventCollector;
 
     private final EventConfig eventConfig = ConfigManager.getConfig(EventConfig.class);
 
@@ -43,15 +43,15 @@ public class RouterEventCollector extends EventCollector {
      * @return 路由插件事件采集器单例
      */
     public static RouterEventCollector getInstance() {
-        if (routerEventCollecter == null) {
+        if (routerEventCollector == null) {
             synchronized (RouterEventCollector.class) {
-                if (routerEventCollecter == null) {
-                    routerEventCollecter = new RouterEventCollector();
+                if (routerEventCollector == null) {
+                    routerEventCollector = new RouterEventCollector();
                     EventManager.registerCollector(RouterEventCollector.getInstance());
                 }
             }
         }
-        return routerEventCollecter;
+        return routerEventCollector;
     }
 
     /**

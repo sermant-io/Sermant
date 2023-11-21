@@ -82,13 +82,13 @@ public class ServiceCollectorService extends SwitchService implements PluginServ
      * @param currentTime 当前时间
      */
     private static void addMetricFamilySamples(List<MetricFamilySamples> metricFamilySamplesList,
-                                  String key, MetricCalEntity metricCalEntity, long currentTime) {
+            String key, MetricCalEntity metricCalEntity, long currentTime) {
         if (metricCalEntity == null || StringUtils.isBlank(key)) {
             return;
         }
-        double qps = 0;
-        double avgTime = 0;
-        double tps = 0;
+        double qps = 0d;
+        double avgTime = 0d;
+        double tps = 0d;
         if (lastCurrents != null && lastTime != 0) {
             MetricCalEntity lastMetric = lastCurrents.get(key);
             if (lastMetric != null

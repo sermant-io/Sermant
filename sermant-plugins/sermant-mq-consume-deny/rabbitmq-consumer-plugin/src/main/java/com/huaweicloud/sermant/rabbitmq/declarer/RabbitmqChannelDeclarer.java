@@ -38,6 +38,7 @@ public class RabbitmqChannelDeclarer extends AbstractPluginDeclarer {
      * basicConsume方法名
      */
     public static final String BASIC_CONSUME = "basicConsume";
+
     /**
      * basicAck方法名
      */
@@ -54,7 +55,7 @@ public class RabbitmqChannelDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[] {InterceptDeclarer.build(rabbitmqMatcher(), new RabbitmqChannelInterceptor())};
+        return new InterceptDeclarer[]{InterceptDeclarer.build(rabbitmqMatcher(), new RabbitmqChannelInterceptor())};
     }
 
     private MethodMatcher rabbitmqMatcher() {

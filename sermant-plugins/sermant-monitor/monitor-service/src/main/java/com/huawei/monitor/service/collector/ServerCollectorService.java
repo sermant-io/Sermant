@@ -85,7 +85,7 @@ public class ServerCollectorService extends SwitchService implements PluginServi
     }
 
     private void collectDiskMetric(List<MetricFamilySamples> metricList,
-                                   Optional<List<DiskCommand.DiskStats>> statsListOptional) {
+            Optional<List<DiskCommand.DiskStats>> statsListOptional) {
         Optional<List<DiskCommand.DiskStats>> currentStatsListOptional = CommandExecutor.execute(Command.DISK);
         if (!statsListOptional.isPresent() || !currentStatsListOptional.isPresent()) {
             return;
@@ -94,9 +94,9 @@ public class ServerCollectorService extends SwitchService implements PluginServi
         List<DiskCommand.DiskStats> currentStatsList = currentStatsListOptional.get();
         Map<String, DiskCommand.DiskStats> map = new HashMap<>();
         statsList.forEach(stats -> map.put(stats.getDeviceName(), stats));
-        double totalSectorsRead = 0L;
-        double totalSectorsWritten = 0L;
-        double totalIoSpent = 0L;
+        double totalSectorsRead = 0d;
+        double totalSectorsWritten = 0d;
+        double totalIoSpent = 0d;
         for (DiskCommand.DiskStats currentStats : currentStatsList) {
             DiskCommand.DiskStats stats = map.get(currentStats.getDeviceName());
             if (stats != null) {
@@ -119,7 +119,7 @@ public class ServerCollectorService extends SwitchService implements PluginServi
     }
 
     private void collectNetWorkMetric(List<MetricFamilySamples> metricFamilySamplesList,
-                                      Optional<NetworkCommand.NetDev> netDevOptional) {
+            Optional<NetworkCommand.NetDev> netDevOptional) {
         Optional<NetworkCommand.NetDev> currentNetDevOptional = CommandExecutor.execute(Command.NETWORK);
         if (!netDevOptional.isPresent() || !currentNetDevOptional.isPresent()) {
             return;
@@ -160,10 +160,10 @@ public class ServerCollectorService extends SwitchService implements PluginServi
      * 收集CPU指标信息 两次指标取差值
      *
      * @param metricFamilySamplesList 指标信息集合
-     * @param cpuStatOptional         cpu信息
+     * @param cpuStatOptional cpu信息
      */
     private void collectCpuMetric(List<MetricFamilySamples> metricFamilySamplesList,
-                                  Optional<CpuCommand.CpuStat> cpuStatOptional) {
+            Optional<CpuCommand.CpuStat> cpuStatOptional) {
         sleep();
         Optional<CpuCommand.CpuStat> currentCpuStatOptional = CommandExecutor.execute(Command.CPU);
         if (!cpuStatOptional.isPresent() || !currentCpuStatOptional.isPresent()) {

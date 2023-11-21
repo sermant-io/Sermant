@@ -99,12 +99,13 @@ public class FlowRouteHandler extends AbstractRouteHandler {
 
         // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
         Map<String, String> mismatchTags = new HashMap<>();
-        for (String key : header.keySet()) {
+        for (Map.Entry<String, List<String>> entry : header.entrySet()) {
+            String key = entry.getKey();
             if (!requestTags.contains(key)) {
                 continue;
             }
             mismatchTags.put(key, null);
-            List<String> values = header.get(key);
+            List<String> values = entry.getValue();
             if (!CollectionUtils.isEmpty(values) && StringUtils.isExist(values.get(0))) {
                 tags.put(key, values.get(0));
             }

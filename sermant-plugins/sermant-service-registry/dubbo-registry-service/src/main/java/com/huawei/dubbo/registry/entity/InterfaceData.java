@@ -56,7 +56,7 @@ public class InterfaceData extends InterfaceKey {
      * @param parameters 接口级的额外参数
      */
     public InterfaceData(String group, String version, String serviceName, Integer order,
-        Map<String, String> parameters) {
+            Map<String, String> parameters) {
         super(group, version);
         this.serviceName = serviceName;
         this.order = order;
@@ -93,5 +93,15 @@ public class InterfaceData extends InterfaceKey {
 
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

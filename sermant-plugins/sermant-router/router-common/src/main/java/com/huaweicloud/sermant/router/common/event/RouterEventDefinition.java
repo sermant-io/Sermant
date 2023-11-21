@@ -67,6 +67,11 @@ public enum RouterEventDefinition {
         return eventLevel;
     }
 
+    /**
+     * 获取事件触发区域
+     *
+     * @return 事件触发区域
+     */
     public String getScope() {
         return "router-plugin";
     }

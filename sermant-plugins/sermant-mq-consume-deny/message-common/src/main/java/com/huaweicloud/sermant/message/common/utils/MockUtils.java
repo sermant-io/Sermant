@@ -43,7 +43,8 @@ public final class MockUtils {
      * @return {@link Object}
      */
     public static Optional<Object> invokeMethod(Object mockObj, Method method, Object[] arguments) {
-        Optional<Method> methodOptional = METHODS.computeIfAbsent(method, m -> getMethod(mockObj, m));
+        Optional<Method> methodOptional = METHODS.computeIfAbsent(method, methodsMapKey -> getMethod(mockObj,
+                methodsMapKey));
         if (!methodOptional.isPresent()) {
             return Optional.empty();
         }

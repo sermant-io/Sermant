@@ -19,15 +19,13 @@ package com.huawei.registry.auto.sc;
 
 import com.huawei.registry.entity.MicroServiceInstance;
 
-import org.springframework.cloud.client.ServiceInstance;
-
 /**
  * ServiceComb服务信息
  *
  * @author zhouss
  * @since 2022-05-18
  */
-public class ServiceCombServiceInstance extends ServiceCombRegistration implements ServiceInstance {
+public class ServiceCombServiceInstance extends ServiceCombRegistration {
     /**
      * 构造器
      *

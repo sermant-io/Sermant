@@ -29,6 +29,9 @@ import java.util.Map;
  * @since 2023-02-21
  */
 public abstract class AbstractMappingHandler extends AbstractHandler {
+    /**
+     * 配置服务
+     */
     protected final SpringConfigService configService;
 
     /**

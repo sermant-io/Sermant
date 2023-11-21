@@ -47,10 +47,20 @@ public class RouterConfiguration {
      */
     private final Map<String, List<Rule>> globalRules = new ConcurrentHashMap<>();
 
+    /**
+     * 获取路由规则信息
+     *
+     * @return 路由规则信息
+     */
     public Map<String, Map<String, List<Rule>>> getRouteRule() {
         return rules;
     }
 
+    /**
+     * 获取全局的规则信息
+     *
+     * @return 全局的路由规则信息
+     */
     public Map<String, List<Rule>> getGlobalRule() {
         return globalRules;
     }
@@ -120,11 +130,11 @@ public class RouterConfiguration {
      */
     public void resetRouteRule(Map<String, List<EntireRule>> map) {
         rules.clear();
-        for (String serviceName : map.keySet()) {
-            for (EntireRule entireRule : map.get(serviceName)) {
+        for (Map.Entry<String, List<EntireRule>> ruleEntry : map.entrySet()) {
+            for (EntireRule entireRule : ruleEntry.getValue()) {
                 Map<String, List<Rule>> serviceRuleMap = rules.computeIfAbsent(entireRule.getKind(),
                         key -> new ConcurrentHashMap<>());
-                serviceRuleMap.putIfAbsent(serviceName, entireRule.getRules());
+                serviceRuleMap.putIfAbsent(ruleEntry.getKey(), entireRule.getRules());
             }
         }
     }
