@@ -19,7 +19,6 @@ package com.huawei.discovery.config;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
@@ -83,7 +82,7 @@ public class LbConfig implements PluginConfig {
 
     /**
      * 是否开启缓存代理, 针对{@link java.net.HttpURLConnection} 拦截该类, 针对每个host将生成一个代理缓存到map中, 见{@link
-     * com.huawei.discovery.interceptors.httpconnection.HttpUrlConnectionConnectInterceptor#getProxy(URL)} 开启此开关,
+     * com.huawei.discovery.interceptors.httpconnection.HttpUrlConnectionConnectInterceptor} getProxy方法 开启此开关,
      * 增加内存消耗, 但可避免频繁创建Proxy
      */
     private boolean enableCacheProxy = false;

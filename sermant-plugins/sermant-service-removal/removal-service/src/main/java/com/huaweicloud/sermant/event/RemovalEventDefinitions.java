@@ -37,6 +37,7 @@ public enum RemovalEventDefinitions {
      */
     INSTANCE_RECOVERY("INSTANCE_RECOVERY", EventType.GOVERNANCE, EventLevel.IMPORTANT, "removal",
             "The outlier instance is recovery and the instance information is: "),;
+
     /**
      * 事件名称
      */

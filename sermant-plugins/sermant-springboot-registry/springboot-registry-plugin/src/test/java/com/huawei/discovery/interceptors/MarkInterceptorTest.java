@@ -39,6 +39,10 @@ public class MarkInterceptorTest {
             }
 
             @Override
+            protected void ready() {
+            }
+
+            @Override
             public ExecuteContext after(ExecuteContext context) {
                 return context;
             }

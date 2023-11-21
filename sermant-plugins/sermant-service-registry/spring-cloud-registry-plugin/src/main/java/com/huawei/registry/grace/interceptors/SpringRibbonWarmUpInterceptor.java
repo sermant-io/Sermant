@@ -100,7 +100,8 @@ public class SpringRibbonWarmUpInterceptor extends GraceSwitchInterceptor {
     }
 
     private Map<String, String> getMetadata(Server server) {
-        if (StringUtils.equals(ZOOKEEPER_SERVER_NAME, server.getClass().getName())) {
+        if (StringUtils.equals(ZOOKEEPER_SERVER_NAME, server.getClass().getName())
+                && server instanceof ZookeeperServer) {
             ZookeeperServer zookeeperServer = (ZookeeperServer) server;
             return zookeeperServer.getInstance().getPayload().getMetadata();
         }

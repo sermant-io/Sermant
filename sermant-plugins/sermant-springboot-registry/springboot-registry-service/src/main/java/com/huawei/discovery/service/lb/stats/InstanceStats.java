@@ -86,6 +86,7 @@ public class InstanceStats implements Recorder {
     /**
      * 异常调用统计
      *
+     * @param consumeTimeMs 消费时间
      * @param ex 异常类型
      */
     @Override
@@ -96,6 +97,8 @@ public class InstanceStats implements Recorder {
 
     /**
      * 结果调用
+     *
+     * @param consumeTimeMs 消费时间
      */
     @Override
     public void afterRequest(long consumeTimeMs) {

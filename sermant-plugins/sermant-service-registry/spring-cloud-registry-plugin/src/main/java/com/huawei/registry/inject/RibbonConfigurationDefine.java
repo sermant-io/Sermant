@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.core.utils.ClassUtils;
  * @author zhouss
  * @since 2022-05-19
  */
-public class RibbonConfigurationDefine extends BaseAutoConfigurationDefine implements ClassInjectDefine {
+public class RibbonConfigurationDefine extends BaseAutoConfigurationDefine {
     @Override
     public String injectClassName() {
         return "com.huawei.registry.auto.sc.configuration.ServiceCombRibbonAutoConfiguration";

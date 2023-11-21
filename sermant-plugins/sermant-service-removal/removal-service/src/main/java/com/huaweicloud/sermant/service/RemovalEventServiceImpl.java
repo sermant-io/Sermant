@@ -17,11 +17,9 @@
 package com.huaweicloud.sermant.service;
 
 import com.huaweicloud.sermant.common.RemovalConstants;
-import com.huaweicloud.sermant.config.RemovalConfig;
 import com.huaweicloud.sermant.core.event.Event;
 import com.huaweicloud.sermant.core.event.EventInfo;
 import com.huaweicloud.sermant.core.event.EventManager;
-import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.entity.InstanceInfo;
 import com.huaweicloud.sermant.event.RemovalEventCollector;
 import com.huaweicloud.sermant.event.RemovalEventDefinitions;

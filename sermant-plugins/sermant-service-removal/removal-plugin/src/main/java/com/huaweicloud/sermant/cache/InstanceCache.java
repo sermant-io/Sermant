@@ -45,7 +45,7 @@ public class InstanceCache {
      */
     public static void saveInstanceInfo(RequestInfo requestInfo) {
         String key = requestInfo.getHost() + RemovalConstants.CONNECTOR + requestInfo.getPort();
-        InstanceInfo info = INSTANCE_MAP.computeIfAbsent(key, s -> {
+        InstanceInfo info = INSTANCE_MAP.computeIfAbsent(key, value -> {
             InstanceInfo instanceInfo = new InstanceInfo();
             instanceInfo.setHost(requestInfo.getHost());
             instanceInfo.setPort(requestInfo.getPort());

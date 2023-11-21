@@ -29,7 +29,6 @@ import com.huawei.registry.utils.ZoneUtils;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
-import com.huaweicloud.sermant.core.service.ServiceManager;
 
 import org.springframework.cloud.client.serviceregistry.Registration;
 
@@ -65,7 +64,7 @@ public class RegistrationInterceptor extends RegisterSwitchSupport {
         RegisterContext.INSTANCE.getClientInfo().setHost(registration.getHost());
         RegisterServiceCommonConfig config = PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
         RegisterContext.INSTANCE.getClientInfo().setMeta(CommonUtils.putSecureToMetaData(registration.getMetadata(),
-            config));
+                config));
         RegisterContext.INSTANCE.getClientInfo().setPort(registration.getPort());
         RegisterContext.INSTANCE.getClientInfo().setServiceId(registration.getServiceId());
     }

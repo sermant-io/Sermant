@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
  * @author zhouss
  * @since 2022-05-18
  */
-public class ScConfigurationInjectDefine extends BaseAutoConfigurationDefine implements ClassInjectDefine {
+public class ScConfigurationInjectDefine extends BaseAutoConfigurationDefine {
     @Override
     public String injectClassName() {
         return "com.huawei.registry.auto.sc.configuration.ServiceCombAutoDiscoveryConfiguration";

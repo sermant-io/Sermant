@@ -53,6 +53,7 @@ public class SpringBootApplyInterceptor extends AbstractCallInterceptor<Object> 
      *
      * @return 例信息的参数下标
      */
+    @Override
     protected int getIndex() {
         return 1;
     }
